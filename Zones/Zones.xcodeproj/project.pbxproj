@@ -164,6 +164,9 @@
 		A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0021729B02003D4BDA /* Main.storyboard */; };
 		A7245E0121729B18003D4BDA /* Details.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0321729B18003D4BDA /* Details.storyboard */; };
 		A7245E0921729FFE003D4BDA /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
+		A734EB7021E26EE500B9475F /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = A734EB6F21E26EE500B9475F /* Credits.rtfd */; };
+		A734EB7121E26EE500B9475F /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = A734EB6F21E26EE500B9475F /* Credits.rtfd */; };
+		A734EB7221E26EE500B9475F /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = A734EB6F21E26EE500B9475F /* Credits.rtfd */; };
 		A7395BAF21B877B600F5759F /* ZTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7395BAD21B877B600F5759F /* ZTextEditor.swift */; };
 		A7395BB021B877B600F5759F /* ZTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7395BAD21B877B600F5759F /* ZTextEditor.swift */; };
 		A7395BB121B877B600F5759F /* ZTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7395BAD21B877B600F5759F /* ZTextEditor.swift */; };
@@ -299,6 +302,7 @@
 		A7245DFF21729B02003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A7245E0221729B18003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Details.storyboard; sourceTree = "<group>"; };
 		A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZShortcutsController.swift; sourceTree = "<group>"; };
+		A734EB6F21E26EE500B9475F /* Credits.rtfd */ = {isa = PBXFileReference; lastKnownFileType = wrapper.rtfd; path = Credits.rtfd; sourceTree = "<group>"; };
 		A7395BAD21B877B600F5759F /* ZTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTextEditor.swift; sourceTree = "<group>"; };
 		A7395BAE21B877B600F5759F /* ZGraphEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphEditor.swift; sourceTree = "<group>"; };
 		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Shortcuts.storyboard; sourceTree = "<group>"; };
@@ -514,6 +518,7 @@
 			isa = PBXGroup;
 			children = (
 				0C39B3981F1988380091F4D1 /* Assets.xcassets */,
+				A734EB6F21E26EE500B9475F /* Credits.rtfd */,
 				0C39B3931F1988380091F4D1 /* iPad */,
 				0C39B3971F1988380091F4D1 /* iPhone */,
 				0C39B39B1F1988380091F4D1 /* desktop */,
@@ -817,6 +822,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A734EB7021E26EE500B9475F /* Credits.rtfd in Resources */,
 				A746D463219F613D00123A0A /* Shortcuts.storyboard in Resources */,
 				0C39B3AE1F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
 				0C50FD2F2053491000E1D9A9 /* everyone.thoughtful in Resources */,
@@ -829,6 +835,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A734EB7221E26EE500B9475F /* Credits.rtfd in Resources */,
 				A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */,
 				0C50FD312053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */,
@@ -841,6 +848,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A734EB7121E26EE500B9475F /* Credits.rtfd in Resources */,
 				A746D464219F613D00123A0A /* Shortcuts.storyboard in Resources */,
 				0C39B3A61F1988380091F4D1 /* Main.storyboard in Resources */,
 				0C50FD302053491000E1D9A9 /* everyone.thoughtful in Resources */,

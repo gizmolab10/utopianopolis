@@ -1191,49 +1191,49 @@ class ZGraphEditor: NSObject {
             if !doneOnce {
                 doneOnce  = true
                 var count = zones.count
-
-                if  count == 0 {
+                
+                let finish: Closure = {
                     grab?.grab()
                     onCompletion?()
-                    
-                    return
                 }
-                
-                let maybefinish: Closure = {
-                    count -= 1
-                    
-                    if  count == 0 {
-                        gBatches.bookmarks { iSame in
-                            var bookmarks = [Zone] ()
-                            
-                            for zone in zones {
-                                bookmarks += zone.fetchedBookmarks
-                            }
-                            
-                            if  bookmarks.count == 0 {
-                                grab?.grab()
-                                onCompletion?()
-                            } else {
+
+                if  count == 0 {
+                    finish()
+                } else {
+                    let deleteBookmarks: Closure = {
+                        count -= 1
+                        
+                        if  count == 0 {
+                            gBatches.bookmarks { iSame in
+                                var bookmarks = [Zone] ()
                                 
-                                ////////////////////////////////////////////
-                                // remove a bookmark whose target is zone //
-                                ////////////////////////////////////////////
+                                for zone in zones {
+                                    bookmarks += zone.fetchedBookmarks
+                                }
                                 
-                                self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { // recurse
-                                    grab?.grab()
-                                    onCompletion?()
+                                if  bookmarks.count == 0 {
+                                    finish()
+                                } else {
+                                    
+                                    //////////////////////////////////////////////////////////////
+                                    // remove any bookmarks the target of which is one of zones //
+                                    //////////////////////////////////////////////////////////////
+                                    
+                                    self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { // recurse
+                                        finish()
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                
-                for zone in zones {
-                    if  zone == iParent { // detect and avoid infinite recursion
-                        maybefinish()
-                    } else {
-                        self.deleteZone(zone, permanently: permanently) {
-                            maybefinish()
+                    
+                    for zone in zones {
+                        if  zone == iParent { // detect and avoid infinite recursion
+                            deleteBookmarks()
+                        } else {
+                            self.deleteZone(zone, permanently: permanently) {
+                                deleteBookmarks()
+                            }
                         }
                     }
                 }
@@ -1246,18 +1246,22 @@ class ZGraphEditor: NSObject {
         if  zone.isRoot {
             onCompletion?()
         } else {
-            let parent        = zone.parentZone
-            if  zone         == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
-                if  let     p = parent, p != zone {
-                    gHere     = p
+            let parent = zone.parentZone
+            if  zone  == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
+                let recurse: Closure = {
+                    
+                    /////////////
+                    // RECURSE //
+                    /////////////
+                    
+                    self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)
+                }
+                
+                if  let p = parent, p != zone {
+                    gHere = p
 
                     revealParentAndSiblingsOf(zone) { iCloudCalled in
-
-                        /////////////
-                        // RECURSE //
-                        /////////////
-
-                        self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)
+                        recurse()
                     }
                 } else {
 
@@ -1266,22 +1270,17 @@ class ZGraphEditor: NSObject {
                     ///////////////////////////////////////////////////////////////////////////////////////////////
 
                     gFavorites.refocus {                 // travel through current favorite, then ...
-
-                        /////////////
-                        // RECURSE //
-                        /////////////
-
                         if  gHere != zone {
-                            self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)
+                            recurse()
                         }
                     }
                 }
             } else {
                 let destructionIsAllowed = gCloudAccountIsActive || zone.databaseID != .mineID
-                let    eventuallyDestroy = permanently           || zone.isInTrash
-                let           destroyNow = destructionIsAllowed && eventuallyDestroy && gHasInternet
+                let    destroyEventually = permanently           || zone.isInTrash
+                let           destroyNow = destructionIsAllowed && destroyEventually && gHasInternet
 
-                let done : Closure = {
+                let deleteBookmarks: Closure = {
                     if  let            p = parent, p != zone {
                         p.fetchableCount = p.count                  // delete alters the count
                     }
@@ -1297,9 +1296,9 @@ class ZGraphEditor: NSObject {
                 
                 zone.addToPaste()
 
-                if !destroyNow && !eventuallyDestroy {
+                if !destroyNow && !destroyEventually {
                     moveZone(zone, to: zone.trashZone) {
-                        done()
+                        deleteBookmarks()
                     }
                 } else {
                     zone.traverseAllProgeny { iZone in
@@ -1310,10 +1309,10 @@ class ZGraphEditor: NSObject {
 
                     if !destroyNow {
                         moveZone(zone, to: zone.destroyZone) {
-                            done()
+                            deleteBookmarks()
                         }
                     } else {
-                        done()
+                        deleteBookmarks()
                     }
                 }
             }
