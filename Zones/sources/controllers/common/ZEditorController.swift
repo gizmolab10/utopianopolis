@@ -445,6 +445,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
         if  rect == nil || rubberbandStart == CGPoint.zero {
             editorView?.rubberbandRect = CGRect.zero
             
+            gSelecting.assureMinimalGrabs()
             restartGestureRecognition()
         } else {
             editorView?.rubberbandRect = rect
@@ -463,10 +464,6 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                         widget.widgetZone?.addToGrab()
                     }
                 }
-            }
-            
-            if  gSelecting.currentGrabs.count == 0 {
-                gHere.grab()
             }
         }
         
