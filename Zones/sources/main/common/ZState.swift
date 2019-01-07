@@ -42,6 +42,8 @@ var                 gIsLate:               Bool { return gBatches.isLate }
 var             gIsDragging:               Bool { return gDraggedZone != nil }
 var   gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
 var       gInsertionsFollow:               Bool { return gInsertionMode == .follow }
+var         gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
+var             gIsPrinting:               Bool { return NSPrintOperation.current != nil }
 var             gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 var              gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var               gDotWidth:             Double { return gDotHeight * 0.75 }
@@ -49,11 +51,10 @@ var     gChildrenViewOffset:             Double { return gDotWidth + Double(gGen
 var               gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
 var             gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var          gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
-var       gDefaultTextColor:             ZColor { return gIsDark ? ZColor.white : ZColor.black }
+var       gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? ZColor.white : ZColor.black }
 var  gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker (by: 4.0)  .cgColor }
 var gDarkishBackgroundColor:            CGColor { return gBackgroundColor.darkish(by: 1.028).cgColor }
 var gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter(by: 4.0)  .cgColor }
-var         gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var  gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - (gTimeOfSystemStartup ?? 0.0) - (gCurrentEvent?.timestamp ?? 0.0) }
 
 

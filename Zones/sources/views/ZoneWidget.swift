@@ -523,11 +523,9 @@ class ZoneWidget: ZView {
 
             if  zone.showingChildren {
                 if  !nowDrawLines && !gIsDragging && gEditorView?.rubberbandRect == nil {
-                    FOREGROUND {
-                        self.nowDrawLines = true
-
-                        self.setNeedsDisplay()
-                    }
+                    self.nowDrawLines = true
+                    
+                    self.draw(dirtyRect)
                 } else if !gMathewStyleUI {
                     for child in childrenWidgets {
                         drawLine(to: child)

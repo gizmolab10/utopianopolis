@@ -274,10 +274,11 @@ extension NSView {
         let      isWider = bounds.size.width > bounds.size.height
         let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
         let       length = Double(isWider ? bounds.size.width : bounds.size.height)
-        let        scale = 46800.0 / length // 72 dpi * 6.5 inches * 100 percent
+        let        scale = 46800.0 / length // 72 (dpi) * 6.5 (inches) * 100 (percent)
         
         PMSetScale(pmPageFormat, scale)
         PMSetOrientation(pmPageFormat, orientation, false)
+        printInfo.updateFromPMPrintSettings()
         printInfo.updateFromPMPageFormat()
         NSPrintOperation(view: self, printInfo: printInfo).run()
     }
@@ -506,16 +507,16 @@ extension ZoneWidget {
             let halfDotHeight = dotHeight / 2.0
             let thinThickness = thickness / 2.0
             let    targetMidY = targetFrame.midY
-            let    sourceMidY = sourceFrame  .midY
-            frame.origin   .x = sourceFrame  .midX
+            let    sourceMidY = sourceFrame.midY
+            frame.origin   .x = sourceFrame.midX
 
             switch kind! {
             case .above:
-                frame.origin   .y = sourceFrame.maxY - halfDotHeight + thickness
+                frame.origin   .y = sourceFrame.maxY
                 frame.size.height = abs(  targetMidY + thinThickness - frame.minY)
             case .below:
                 frame.origin   .y = targetFrame.minY + halfDotHeight - thickness  - thinThickness
-                frame.size.height = abs(  sourceMidY + thinThickness - frame.minY - halfDotHeight + 3.0)
+                frame.size.height = abs(  sourceMidY - frame.minY - halfDotHeight + 2.0) // + thinThickness
             case .straight:
                 frame.origin   .y =       targetMidY - thinThickness / 2.0
                 frame.origin   .x = sourceFrame.maxX

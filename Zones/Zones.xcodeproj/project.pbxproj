@@ -303,6 +303,7 @@
 		A7245E0221729B18003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Details.storyboard; sourceTree = "<group>"; };
 		A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZShortcutsController.swift; sourceTree = "<group>"; };
 		A734EB6F21E26EE500B9475F /* Credits.rtfd */ = {isa = PBXFileReference; lastKnownFileType = wrapper.rtfd; path = Credits.rtfd; sourceTree = "<group>"; };
+		A734EB7321E3CE2B00B9475F /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = "../../../sand/Library/Developer/Xcode/DerivedData/Zones-gfcygribdmuvnbewxyweurhrkltf/Build/Products/Debug/SnapKit.framework"; sourceTree = "<group>"; };
 		A7395BAD21B877B600F5759F /* ZTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTextEditor.swift; sourceTree = "<group>"; };
 		A7395BAE21B877B600F5759F /* ZGraphEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphEditor.swift; sourceTree = "<group>"; };
 		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Shortcuts.storyboard; sourceTree = "<group>"; };
@@ -608,6 +609,7 @@
 			children = (
 				0C05C8AB210AA9EE001F2015 /* PostgreSQL.framework */,
 				0C05C8AC210AA9EE001F2015 /* PostgreSQLDriver.framework */,
+				A734EB7321E3CE2B00B9475F /* SnapKit.framework */,
 				0CD921791D8F4C3200F80964 /* CloudKit.framework */,
 			);
 			name = OSX;
@@ -765,7 +767,7 @@
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = F8M94NY2TV;
 						LastSwiftMigration = 1010;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -1257,8 +1259,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.OSX;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1285,7 +1287,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Thoughtful Mac Distribution Profile";
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = debugging;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -1305,8 +1307,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.OSX;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1333,7 +1335,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Thoughtful Mac Distribution Profile";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = debugging;
 				STRIP_SWIFT_SYMBOLS = NO;

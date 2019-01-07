@@ -297,7 +297,7 @@ class Zone : ZRecord {
                 computed = computed.inverted
             }
 
-            if isBookmark {
+            if  isBookmark {
                 bookmarkTarget?.color  = newValue
             } else if          _color != computed {
                 _color                 = computed
