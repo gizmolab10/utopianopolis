@@ -35,6 +35,10 @@ class ZWidgets: NSObject {
     }
 
 
+    /// capture a ZoneWidget for later lookup by it's zone
+    /// (see widgetForZone)
+    ///
+    /// - Parameter widget: UI element containing text, drag and reveal dots and children widgets
     func registerWidget(_ widget: ZoneWidget) {
         if  let           zone = widget.widgetZone {
             widgets[zone.hash] = widget
@@ -42,6 +46,10 @@ class ZWidgets: NSObject {
     }
 
 
+    /// Lookup previously registered ZoneWidget by its zone
+    ///
+    /// - Parameter iZone: Zone associated with previously registered ZoneWidget
+    /// - Returns: ZoneWidget
     func widgetForZone(_ iZone: Zone?) -> ZoneWidget? {
         if  let zone = iZone {
             return widgets[zone.hash]
