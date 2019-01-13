@@ -433,6 +433,15 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Abd-wG-3Wh"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="Edit (with cursor at end)" id="ZgO-ci-dsa">
+                                                        <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Vqb-96-5tg"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="Select All" keyEquivalent="a" id="KFq-Lb-Zy0">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>

@@ -247,6 +247,7 @@ class ZShortcutsController: ZGenericTableController {
         "u    OPTION + KEY",
         "     \tARROWS     \trelocate selected idea",
         "     \tDELETE     \tretaining children",
+        "     \tRETURN     \tedit (with cursor at end)",
         "     \tTAB        \tnew idea containing",
         "     \tM          \trefetch entire subgraph of selection",
         "     \tN          \talphabetize backwards",

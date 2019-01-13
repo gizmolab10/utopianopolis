@@ -170,7 +170,7 @@ class ZFocusing: NSObject {
         // 3. is here       -> update in favorites
         // 4. is not here   -> become here
 
-        if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstGrab,
+        if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstSortedGrab,
             (!zone.isInFavorites || zone.isBookmark) {
             let focusClosure = { (zone: Zone) in
                 gHere = zone
@@ -299,7 +299,7 @@ class ZFocusing: NSObject {
                 ///////////////////////
 
                 there = gCloud?.maybeZoneForRecordID(targetRecordID)
-                let grabbed = gSelecting.firstGrab
+                let grabbed = gSelecting.firstSortedGrab
                 let    here = gHere
 
                 UNDO(self) { iUndoSelf in

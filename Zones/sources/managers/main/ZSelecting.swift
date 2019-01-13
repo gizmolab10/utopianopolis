@@ -64,14 +64,18 @@ class ZSnapshot: NSObject {
 class ZSelecting: NSObject {
 
 
-    var        hasGrab :  Bool  { return currentGrabs.count > 0 }
-    var     cousinList : [Zone] { get { maybeNewGrabUpdate(); return _cousinList  } set { _cousinList  = newValue }}
-    var    sortedGrabs : [Zone] { get { maybeNewGrabUpdate(); return _sortedGrabs } set { _sortedGrabs = newValue }}
-    var pasteableZones = [Zone: (Zone?, Int?)] ()
-    var   currentGrabs = [Zone] ()
-    var   _sortedGrabs = [Zone] ()
-    var    _cousinList = [Zone] ()
-    var     hasNewGrab :  Zone?
+    var         hasGrab :  Bool  { return currentGrabs.count > 0 }
+    var        lastGrab :  Zone  { return  lastGrab() }
+    var       firstGrab :  Zone  { return firstGrab() }
+    var  lastSortedGrab :  Zone  { return  lastGrab(using: sortedGrabs) }
+    var firstSortedGrab :  Zone  { return firstGrab(using: sortedGrabs) }
+    var      cousinList : [Zone] { get { maybeNewGrabUpdate(); return _cousinList  } set { _cousinList  = newValue }}
+    var     sortedGrabs : [Zone] { get { updateSortedGrabs();  return _sortedGrabs } set { _sortedGrabs = newValue }}
+    var  pasteableZones = [Zone: (Zone?, Int?)] ()
+    var    currentGrabs = [Zone] ()
+    var    _sortedGrabs = [Zone] ()
+    var     _cousinList = [Zone] ()
+    var      hasNewGrab :  Zone?
 
 
     var snapshot : ZSnapshot {
@@ -143,41 +147,7 @@ class ZSelecting: NSObject {
             }
         }
     }
-
-
-    var firstGrab: Zone {
-        let grabs = sortedGrabs
-        let count = grabs.count
-        var grabbed: Zone?
-
-        if  count > 0 {
-            grabbed = grabs[0]
-        }
-
-        if  grabbed == nil || grabbed!.record == nil {
-            grabbed = gHere
-        }
-
-        return grabbed!
-    }
-
-
-    var lastGrab: Zone {
-        let grabs = sortedGrabs
-        let count = grabs.count
-        var grabbed: Zone?
-
-        if  count > 0 {
-            grabbed = grabs[count - 1]
-        }
-
-        if  grabbed == nil || grabbed!.record == nil {
-            grabbed = gHere
-        }
-
-        return grabbed!
-    }
-
+    
 
     var rootMostMoveable: Zone {
         var candidate = currentMoveable
@@ -206,7 +176,7 @@ class ZSelecting: NSObject {
     var currentMoveable: Zone {
         var movable: Zone?
 
-        if  sortedGrabs.count > 0 {
+        if  currentGrabs.count > 0 {
             movable = firstGrab
         } else if let zone = gTextEditor.currentlyEditingZone {
             movable = zone
@@ -354,8 +324,42 @@ class ZSelecting: NSObject {
         }
     }
 
+    
+    private func firstGrab(using: [Zone]? = nil) -> Zone {
+        let grabs = using == nil ? currentGrabs : using!
+        let count = grabs.count
+        var grabbed: Zone?
+        
+        if  count > 0 {
+            grabbed = grabs[0]
+        }
+        
+        if  grabbed == nil || grabbed!.record == nil {
+            grabbed = gHere
+        }
+        
+        return grabbed!
+    }
+    
+    
+    private func lastGrab(using: [Zone]? = nil) -> Zone {
+        let grabs = using == nil ? currentGrabs : using!
+        let count = grabs.count
+        var grabbed: Zone?
+        
+        if  count > 0 {
+            grabbed = grabs[count - 1]
+        }
+        
+        if  grabbed == nil || grabbed!.record == nil {
+            grabbed = gHere
+        }
+        
+        return grabbed!
+    }
 
-    func deselectDragWithin(_ zone: Zone) {
+
+    func deselectGrabsWithin(_ zone: Zone) {
         zone.traverseAllProgeny { iZone in
             if iZone != zone && currentGrabs.contains(iZone), let index = currentGrabs.index(of: iZone) {
                 currentGrabs.remove(at: index)
@@ -382,7 +386,7 @@ class ZSelecting: NSObject {
         _sortedGrabs.removeAll()
         
         if let  level =  gCurrentBrowsingLevel {
-            let  zone = iZone != nil ? iZone! : currentMoveable
+            let  zone = iZone != nil ? iZone! : firstGrab
             let start =  zone.isInFavorites ? gFavoritesRoot : gHere
             start?.traverseAllVisibleProgeny { iChild in
                 if   iChild.level == level ||
@@ -393,6 +397,20 @@ class ZSelecting: NSObject {
                 if  currentGrabs.contains(iChild) {
                     _sortedGrabs.append(iChild)
                 }
+            }
+        }
+    }
+    
+    
+    func updateSortedGrabs() {
+        _sortedGrabs.removeAll()
+        
+        let  zone = firstGrab
+        let start = zone.isInFavorites ? gFavoritesRoot : gHere
+
+        start?.traverseAllVisibleProgeny { iChild in
+            if  currentGrabs.contains(iChild) {
+                _sortedGrabs.append(iChild)
             }
         }
     }

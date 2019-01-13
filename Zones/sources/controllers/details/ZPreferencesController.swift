@@ -40,7 +40,7 @@ class ZPreferencesController: ZGenericController {
 
     override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
         if  iKind != .eStartup {
-            let                           grabbed = gSelecting.firstGrab
+            let                           grabbed = gSelecting.firstSortedGrab
             insertionModeControl?.selectedSegment = gInsertionMode.rawValue
             browsingModeControl? .selectedSegment = gBrowsingMode.rawValue
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
@@ -94,7 +94,7 @@ class ZPreferencesController: ZGenericController {
 
 
     @IBAction func clearColorAction(_ button: ZButton) {
-        let           grab = gSelecting.firstGrab
+        let           grab = gSelecting.firstSortedGrab
         if  let      color = grab._color {
             UNDO(self) { iUndoSelf in
                 grab.color = color

@@ -446,6 +446,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
             editorView?.rubberbandRect = CGRect.zero
             
             gSelecting.assureMinimalGrabs()
+            gSelecting.updateCousinList()
             restartGestureRecognition()
         } else {
             editorView?.rubberbandRect = rect

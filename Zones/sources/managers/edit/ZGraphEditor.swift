@@ -41,6 +41,7 @@ class ZGraphEditor: NSObject {
 
     var previousEvent: ZEvent?
     var shortcutsController: NSWindowController?
+    let notPersistedZone = Zone()
 
 
     var undoManager: UndoManager {
@@ -161,14 +162,14 @@ class ZGraphEditor: NSObject {
                     case "?":      CONTROL ? openBrowserForFocusWebsite() : showHideKeyboardShortcuts()
                     case "'":      doFavorites(SHIFT, OPTION)
                     case "/":      SHIFT && OPTION ? showHideKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, COMMAND) { self.redrawSyncRedraw() }
-                    case "=":      gFocusing.maybeTravelThrough(gSelecting.firstGrab) { self.redrawSyncRedraw() }
+                    case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
                     case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case "z":      if COMMAND { if SHIFT { kUndoManager.redo() } else { kUndoManager.undo() } }
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
                     case kBackspace,
                          kDelete:  if OPTION || isWindow || COMMAND { delete(permanently: COMMAND && OPTION && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: OPTION && SHIFT) }
-                    case "\r":     if hasWidget { grabOrEdit(COMMAND) }
+                    case "\r":     if hasWidget { grabOrEdit(COMMAND, OPTION) }
                     default:       return false // false means key not handled
                     }
                 }
@@ -195,13 +196,14 @@ class ZGraphEditor: NSObject {
         }
 
         switch arrow {
-        case .down, .up:     move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
+        case .up, .down:     move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
         default:
             if !SHIFT {
                 switch arrow {
-                case .right,
-                     .left:  move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
+                case .left,
+                     .right: move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
                         gSelecting.updateBrowsingLevel()
+                        gSelecting.updateCousinList()
                         self.updateFavoritesRedrawSyncRedraw()  // relayout graph when travelling through a bookmark
                     }
                 default: break
@@ -349,21 +351,26 @@ class ZGraphEditor: NSObject {
     }
 
  
-    
     func swapWithParent() {
-        let child = gSelecting.firstGrab
+        let child = gSelecting.firstSortedGrab
 
+        // swap places with parent (children are swapped)
+        
         if  gSelecting.currentGrabs.count == 1,
             let  cIndex = child.siblingIndex,
             let  parent = child.parentZone,
             let  pIndex = parent.siblingIndex,
             let gParent = parent.parentZone {
             moveZone(child, into: gParent, at: pIndex, orphan: true) {
-                self.moveZones(parent.children, into: child) {
-                    self.moveZone(parent, into: child, at: cIndex, orphan: true) {
-                        parent.needCount()
-
-                        self.redrawSyncRedraw(child)
+                self.moveZones(parent.children, into: self.notPersistedZone) {
+                    self.moveZones(child.children, into: parent) {
+                        self.moveZones(self.notPersistedZone.children, into: child) {
+                            self.moveZone(parent, into: child, at: cIndex, orphan: true) {
+                                parent.needCount()
+                                
+                                self.redrawSyncRedraw(child)
+                            }
+                        }
                     }
                 }
             }
@@ -524,7 +531,7 @@ class ZGraphEditor: NSObject {
 
 
     func editTrait(for iType: ZTraitType) {
-        let  zone = gSelecting.firstGrab
+        let  zone = gSelecting.firstSortedGrab
         let trait = zone.trait(for: iType)
 
         gTextEditor.edit(trait)
@@ -584,7 +591,7 @@ class ZGraphEditor: NSObject {
 
 
     func alterOrdering(_ iBackwards: Bool = false, with sortClosure: ZonesToZonesClosure) {
-        var commonParent = gSelecting.firstGrab.parentZone ?? gSelecting.firstGrab
+        var commonParent = gSelecting.firstSortedGrab.parentZone ?? gSelecting.firstSortedGrab
         var        zones = gSelecting.simplifiedGrabs
 
         for zone in zones {
@@ -595,7 +602,7 @@ class ZGraphEditor: NSObject {
         }
 
         if  zones.count == 1 {
-            commonParent = gSelecting.firstGrab
+            commonParent = gSelecting.firstSortedGrab
             zones        = commonParent.children
         }
 
@@ -670,14 +677,16 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func grabOrEdit(_ COMMAND: Bool) {
-        if  !gSelecting.hasGrab {
-            gHere.grab()
-        } else if !COMMAND {
-            gTextEditor.edit(gSelecting.currentMoveable)
-        } else {
+    func grabOrEdit(_ COMMAND: Bool, _ OPTION: Bool) {
+        if  COMMAND {
             gTextEditor.stopCurrentEdit()
             gHere.grab()
+        } else {
+            gTextEditor.edit(gSelecting.currentMoveable)
+        
+            if OPTION {
+                gTextEditor.placeCursorAtEnd()
+            }
         }
     }
 
@@ -941,7 +950,7 @@ class ZGraphEditor: NSObject {
             }
 
             if !show {
-                gSelecting.deselectDragWithin(zone);
+                gSelecting.deselectGrabsWithin(zone);
             }
 
             apply()
@@ -1126,7 +1135,7 @@ class ZGraphEditor: NSObject {
 
 
     func addBookmark() {
-        let zone = gSelecting.firstGrab
+        let zone = gSelecting.firstSortedGrab
 
         if zone.databaseID != .favoritesID, !zone.isRoot {
             let closure = {
@@ -1160,7 +1169,7 @@ class ZGraphEditor: NSObject {
     // MARK:-
     
 
-    func paste() { pasteInto(gSelecting.firstGrab) }
+    func paste() { pasteInto(gSelecting.firstSortedGrab) }
 
 
     func copyToPaste() {
@@ -1392,7 +1401,7 @@ class ZGraphEditor: NSObject {
 
 
     func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: Closure?) {
-        let zone: Zone = gSelecting.firstGrab
+        let zone: Zone = gSelecting.firstSortedGrab
         let parentZone = zone.parentZone
         let complete: Closure = {
             onCompletion?()
@@ -1512,7 +1521,7 @@ class ZGraphEditor: NSObject {
     
 
     func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
-        let zone: Zone = gSelecting.firstGrab
+        let zone: Zone = gSelecting.firstSortedGrab
 
         if !selectionOnly {
             actuallyMove(zone, onCompletion: onCompletion)
@@ -1678,7 +1687,7 @@ class ZGraphEditor: NSObject {
 
 
     func duplicate() {
-        let commonParent = gSelecting.firstGrab.parentZone ?? gSelecting.firstGrab
+        let commonParent = gSelecting.firstSortedGrab.parentZone ?? gSelecting.firstSortedGrab
         var        zones = gSelecting.simplifiedGrabs
         var   duplicates = [Zone] ()
         var      indices = [Int] ()
@@ -1720,7 +1729,7 @@ class ZGraphEditor: NSObject {
 
 
     func reverse() {
-        var commonParent = gSelecting.firstGrab.parentZone ?? gSelecting.firstGrab
+        var commonParent = gSelecting.firstSortedGrab.parentZone ?? gSelecting.firstSortedGrab
         var        zones = gSelecting.simplifiedGrabs
         for zone in zones {
             if let parent = zone.parentZone, parent != commonParent {
@@ -1729,7 +1738,7 @@ class ZGraphEditor: NSObject {
         }
 
         if zones.count == 1 {
-            commonParent = gSelecting.firstGrab
+            commonParent = gSelecting.firstSortedGrab
             zones        = commonParent.children
         }
 
@@ -1859,6 +1868,12 @@ class ZGraphEditor: NSObject {
 
     func preserveChildrenOfGrabbedZones(convertToTitledLine: Bool = false, onCompletion: Closure?) {
         let grabs = gSelecting.simplifiedGrabs
+        
+        if  grabs.count > 1 && convertToTitledLine {
+            onCompletion?()
+         
+            return
+        }
 
         for zone in grabs {
             zone.needChildren()
@@ -1918,7 +1933,7 @@ class ZGraphEditor: NSObject {
 
 
     func moveOut(to: Zone, onCompletion: Closure?) {
-        let         zone = gSelecting.firstGrab
+        let         zone = gSelecting.firstSortedGrab
         var completedYet = false
 
         recursivelyRevealSiblings(zone, untilReaching: to) { iRevealedZone in
@@ -2152,7 +2167,7 @@ class ZGraphEditor: NSObject {
     
     
     func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
-        let original = iMoveUp ? gSelecting.firstGrab : gSelecting.lastGrab
+        let original = iMoveUp ? gSelecting.firstSortedGrab : gSelecting.lastSortedGrab
 
         moveUp(iMoveUp, original, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
             gControllers.syncToCloudAfterSignalFor(nil, regarding: iKind) {

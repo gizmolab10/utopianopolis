@@ -285,6 +285,11 @@ class ZTextEditor: ZTextView {
     }
     
     
+    func placeCursorAtEnd() {
+        setSelectedRange(NSMakeRange(-1, 0))
+    }
+    
+    
     func applyPreservingEdit(_ closure: Closure) {
         let e = currentEdit
         let o = currentOffset
@@ -428,7 +433,7 @@ class ZTextEditor: ZTextView {
         if  iMoveOut {
             quickStopCurrentEdit(clearOffset: true)
             gGraphEditor.moveOut {
-                let grabbed = gSelecting.firstGrab
+                let grabbed = gSelecting.firstSortedGrab
 
                 gSelecting.deselectGrabs()
                 gControllers.signalFor(nil, regarding: .eRelayout) {
@@ -441,7 +446,7 @@ class ZTextEditor: ZTextView {
         } else if currentlyEditingZone?.children.count ?? 0 > 0 {
             quickStopCurrentEdit(clearOffset: true)
             gGraphEditor.moveInto {
-                self.edit(gSelecting.firstGrab)
+                self.edit(gSelecting.firstSortedGrab)
                 self.setCursor(at: 0.0)
             }
         }
@@ -470,9 +475,9 @@ class ZTextEditor: ZTextView {
                     self.currentOffset = current?.widget?.textWidget.offset(for: self.selectedRange(), iMoveUp)  // offset will have changed when current == here
                     
                     if  stopEdit {
-                        original      = gSelecting.firstGrab
+                        original       = gSelecting.firstSortedGrab
                         
-                        if  original != current { // if move up (above) does nothing, ignore
+                        if  original  != current { // if move up (above) does nothing, ignore
                             self.edit(original)
                         } else {
                             self.currentEdit = e // restore after capture sets it to nill

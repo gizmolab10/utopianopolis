@@ -20,7 +20,7 @@ class ZWidgets: NSObject {
     var       widgets: [Int : ZoneWidget]  = [:]
     var currentEditingWidget: ZoneWidget? { return widgetForZone(gTextEditor.currentlyEditingZone) }
     var currentMovableWidget: ZoneWidget? { return widgetForZone(gSelecting.currentMoveable) }
-    var firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelecting.firstGrab) }
+    var firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelecting.firstSortedGrab) }
 
 
     var visibleWidgets: [ZoneWidget] {
