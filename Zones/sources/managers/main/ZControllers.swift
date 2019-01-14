@@ -1,5 +1,5 @@
 //
-//  ZControllersManager.swift
+//  ZControllers.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 11/11/16.

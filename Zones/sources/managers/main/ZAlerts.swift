@@ -1,5 +1,5 @@
 //
-//  ZAlertManager.swift
+//  ZAlert.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 10/30/17.

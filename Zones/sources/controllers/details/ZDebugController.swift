@@ -18,12 +18,13 @@ import Foundation
 class ZDebugController: ZGenericController {
 
 
-    @IBOutlet var    nameLabel: ZTextField?
-    @IBOutlet var   otherLabel: ZTextField?
-    @IBOutlet var  statusLabel: ZTextField?
-    @IBOutlet var  traitsLabel: ZTextField?
-    @IBOutlet var  recordLabel: ZTextField?
-    override var backgroundColor: CGColor { return gDarkishBackgroundColor }
+    @IBOutlet var       nameLabel: ZTextField?
+    @IBOutlet var      otherLabel: ZTextField?
+    @IBOutlet var     statusLabel: ZTextField?
+    @IBOutlet var     traitsLabel: ZTextField?
+    @IBOutlet var     recordLabel: ZTextField?
+    override  var backgroundColor: CGColor       { return gDarkishBackgroundColor }
+    override  var    controllerID: ZControllerID { return .debug }
     var grab: Zone?
 
 
@@ -88,13 +89,8 @@ class ZDebugController: ZGenericController {
         return "traits: " + text.joined(separator: ", ")
     }
 
-
-    override func setup() {
-        controllerID = .debug
-    }
-
-
-    override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+    
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         if ![.eSearch, .eFound].contains(iKind) {
             grab                   = gSelecting.firstGrab
             nameLabel?       .text = grab?.unwrappedName

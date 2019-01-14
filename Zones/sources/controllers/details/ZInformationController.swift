@@ -25,12 +25,8 @@ class ZInformationController: ZGenericController {
     @IBOutlet var     versionLabel: ZTextField?
     @IBOutlet var       levelLabel: ZTextField?
     var                currentZone: Zone    { return gSelecting.rootMostMoveable }
-    override var   backgroundColor: CGColor { return gDarkishBackgroundColor }
-
-
-    override func setup() {
-        controllerID = .information
-    }
+    override  var  backgroundColor: CGColor { return gDarkishBackgroundColor }
+    override  var     controllerID: ZControllerID { return .information }
 
 
     var versionText: String {
@@ -69,7 +65,7 @@ class ZInformationController: ZGenericController {
     }
     
 
-    override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         if ![.eSearch, .eFound].contains(iKind) {
             cloudStatusLabel?.text = cloudStatusText
             totalCountLabel? .text = totalCountsText

@@ -25,25 +25,24 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
     // MARK:-
 
     
-    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         application.applicationSupportsShakeToEdit = true
         // Do some additional configuration if needed here
 
         // application.registerUserNotificationSettings(.badgeSetting)
         application.registerForRemoteNotifications()
-        gControllersManager.startupCloudAndUI()
+        gControllers.startupCloudAndUI()
 
         return true
     }
 
 
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! ZStorageDictionary)
-
-        if note.notificationType == .query {
-            let queryNote: CKQueryNotification = note as! CKQueryNotification
-
-            gRemoteStoresManager.receivedUpdateFor(queryNote.recordID!)
+        let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo)
+        
+        if  note.notificationType == .query,
+            let queryNote = note as? CKQueryNotification {
+            gRemoteStorage.receiveFromCloud(queryNote)
         }
     }
 

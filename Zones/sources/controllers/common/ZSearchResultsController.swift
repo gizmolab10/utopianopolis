@@ -26,8 +26,9 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     var      resultsAreVisible = false
     var            inSearchBox = false
     var           foundRecords = [ZDatabaseID: [CKRecord]] ()
-    var                monitor: Any?
-    @IBOutlet var    tableView: ZTableView?
+    var                monitor:  Any?
+    override  var controllerID:  ZControllerID { return .searchResults }
+    @IBOutlet var    tableView:  ZTableView?
 
     
     var hasResults: Bool {
@@ -42,11 +43,6 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         }
         
         return result
-    }
-
-
-    override func setup() {
-        controllerID = .searchResults
     }
 
 
@@ -65,7 +61,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     // MARK:-
 
 
-    override func handleSignal(_ iObject: Any?, iKind: ZSignalKind) {
+    override func handleSignal(_ iObject: Any?, kind iKind: ZSignalKind) {
         if iKind == .eFound {
             resultsAreVisible = false
             

@@ -184,7 +184,7 @@ class ZCloud: ZRecords {
 //            if iRecord == nil { // nil means: we already received full response from cloud for this particular fetch
 //                onCompletion?(0)
 //            } else {
-//                let            root = gRemoteStoresManager.rootZone(for: self.databaseID)
+//                let            root = gRemoteStorage(for: self.databaseID)
 //                let         deleted = self.maybeZRecordForCKRecord(iRecord) as? Zone ?? Zone(record: iRecord, databaseID: self.databaseID)
 //
 //                if  deleted.parent != nil {

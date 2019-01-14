@@ -29,15 +29,15 @@ class ZActionsController : ZGenericController {
 
     @IBOutlet var actionsSelector: UISegmentedControl?
     override  var    controllerID: ZControllerID { return .actions }
-    var favorite: String { return gFavoritesManager.actionTitle }
+    var favorite: String { return gFavorites.actionTitle }
 
 
     // MARK:- events
     // MARK:-
 
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        if ![.search, .found].contains(kind),
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+        if ![.search, .found].contains(iKind),
             let          selector = actionsSelector {
             var             index = 0
             let            insert = { (iTitle: ZActionTitle) -> Void in
@@ -77,11 +77,11 @@ class ZActionsController : ZGenericController {
             case .eRefresh: refresh()
             case .eCut:     gGraphEditor.delete()
             case .eNew:     gGraphEditor.addIdea()
-            case .eHang:    gBatchManager.unHang()
-            case .eUndo:    gGraphEditor.undoManager.undo()
+            case .eHang:    gBatch.unHang()
+            case .eUndo:    gGraphEditor.undo.undo()
             case .eNext:    gGraphEditor.addNext() { iChild in iChild.edit() }
-            case .eFocus:   gFocusManager.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
-            case .eTravel:  gFocusManager.maybeTravelThrough(gSelecting.currentMoveable)
+            case .eFocus:   gFocus.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
+            case .eTravel:  gFocus.maybeTravelThrough(gSelecting.currentMoveable)
             case .ePrefs:   break
             case .eHelp:    break
             }
@@ -90,10 +90,10 @@ class ZActionsController : ZGenericController {
 
 
     func refresh() {
-        gBatchManager.unHang()
-        gWidgetsManager     .clear()
+        gBatch.unHang()
+        gWidgets     .clear()
         gEditorController?  .clear()
-        gControllersManager .startupCloudAndUI()
+        gControllers        .startupCloudAndUI()
     }
 
 

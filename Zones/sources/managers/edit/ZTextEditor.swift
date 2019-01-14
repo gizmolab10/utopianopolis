@@ -229,8 +229,8 @@ class ZTextEditor: ZTextView {
     var currentTextWidget: ZoneTextWidget? { return currentlyEditingZone?.widget?.textWidget }
     var currentZoneName: String { return currentlyEditingZone?.zoneName ?? "" }
     var currentFont: ZFont { return currentTextWidget?.font ?? gWidgetFont }
-    var atEnd:   Bool { return selectedRange().lowerBound == currentTextWidget?.text?.length ?? -1 }
-    var atStart: Bool { return selectedRange().upperBound == 0 }
+    var atEnd:   Bool { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
+    var atStart: Bool { return selectedRange.upperBound == 0 }
 
     
     // MARK:- editing
@@ -286,7 +286,7 @@ class ZTextEditor: ZTextView {
     
     
     func placeCursorAtEnd() {
-        setSelectedRange(NSMakeRange(-1, 0))
+        selectedRange = NSMakeRange(-1, 0)
     }
     
     
@@ -353,16 +353,7 @@ class ZTextEditor: ZTextView {
     // MARK:-
     
 
-    override func doCommand(by selector: Selector) {
-        switch selector {
-        case #selector(insertNewline): stopCurrentEdit()
-        case #selector(insertTab):     if currentEdit?.adequatelyPaused ?? false { gGraphEditor.addNext() { iChild in iChild.edit() } } // stupid OSX issues tab twice (to create the new idea, then AFTERWARDS
-        default:                       super.doCommand(by: selector)
-        }
-    }
-    
-
-    @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
+    @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) {
         if  gWorkMode == .graphMode {
             gGraphEditor.handleMenuItem(iItem)
         }
@@ -371,60 +362,6 @@ class ZTextEditor: ZTextView {
     
     // MARK:- arrow keys
     // MARK:-
-    
-
-    func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        if gIsShortcutsFrontmost { return }
-
-        let COMMAND = flags.isCommand
-        let  OPTION = flags.isOption
-        let   SHIFT = flags.isShift
-
-        switch arrow {
-        case .up,
-             .down: moveUp(arrow == .up, stopEdit: !OPTION)
-        case .left:
-            if  atStart {
-                moveOut(true)
-            } else {
-                clearOffset()
-                
-                if         COMMAND && !SHIFT {
-                    moveToBeginningOfLine(self)
-                } else if  COMMAND &&  SHIFT {
-                    moveToBeginningOfLineAndModifySelection(self)
-                } else if  OPTION  &&  SHIFT {
-                    moveWordLeftAndModifySelection(self)
-                } else if !OPTION  &&  SHIFT {
-                    moveLeftAndModifySelection(self)
-                } else if  OPTION  && !SHIFT {
-                    moveWordLeft(self)
-                } else {
-                    moveLeft(self)
-                }
-            }
-        case .right:
-            if atEnd {
-                moveOut(false)
-            } else {
-                clearOffset()
-                
-                if         COMMAND && !SHIFT {
-                    moveToEndOfLine(self)
-                } else if  COMMAND &&  SHIFT {
-                    moveToEndOfLineAndModifySelection(self)
-                } else if  OPTION  &&  SHIFT {
-                    moveWordRightAndModifySelection(self)
-                } else if !OPTION  &&  SHIFT {
-                    moveRightAndModifySelection(self)
-                } else if  OPTION  && !SHIFT {
-                    moveWordRight(self)
-                } else {
-                    moveRight(self)
-                }
-            }
-        }
-    }
     
     
     func moveOut(_ iMoveOut: Bool) {
@@ -454,7 +391,7 @@ class ZTextEditor: ZTextView {
     
     
     func editingOffset(_ atStart: Bool) -> CGFloat {
-        return currentTextWidget?.offset(for: selectedRange(), atStart) ?? 0.0
+        return currentTextWidget?.offset(for: selectedRange, atStart) ?? 0.0
     }
     
 
@@ -472,7 +409,7 @@ class ZTextEditor: ZTextView {
         if  var original = current {
             gGraphEditor.moveUp(iMoveUp, original, targeting: currentOffset) { iKind in
                 gControllers.signalFor(nil, regarding: iKind) {
-                    self.currentOffset = current?.widget?.textWidget.offset(for: self.selectedRange(), iMoveUp)  // offset will have changed when current == here
+                    self.currentOffset = current?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
                     
                     if  stopEdit {
                         original       = gSelecting.firstSortedGrab
@@ -512,7 +449,7 @@ class ZTextEditor: ZTextView {
             let     name = zone.unwrappedName
             let location = name.location(of: offset, using: currentFont)
             
-            self.setSelectedRange(NSMakeRange(location, 0))
+            self.selectedRange = NSMakeRange(location, 0)
         }
     }
     

@@ -19,7 +19,8 @@ import Foundation
 class ZToolsController: ZGenericTableController {
 
     
-    override var backgroundColor: CGColor { return gDarkishBackgroundColor }
+    override var backgroundColor: CGColor       { return gDarkishBackgroundColor }
+    override var    controllerID: ZControllerID { return .tools }
 
 
     enum ZToolKind: Int {
@@ -31,11 +32,6 @@ class ZToolsController: ZGenericTableController {
         case eTrash
     }
     
-
-    override func setup() {
-        controllerID = .tools
-    }
-
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
         return 0 + (gIsLate ? 1 : 0)

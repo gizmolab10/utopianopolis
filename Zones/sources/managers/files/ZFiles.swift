@@ -1,5 +1,5 @@
 //
-//  ZFileManager.swift
+//  ZFiles.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 10/8/16.
@@ -68,18 +68,6 @@ class ZFiles: NSObject {
 //		let panel = NSOpenPanel()
 	}
 
-	
-	func saveAs() {
-		let panel = NSSavePanel()
-		panel.nameFieldStringValue = "mine.thoughtful"
-		panel.begin { (response: NSApplication.ModalResponse) in
-			if  let path = panel.url?.absoluteString {
-				self.needWrite(for: .mineID)
-				self.writeFile(at: path, from: .mineID)
-			}
-		}
-    }
-
 
     func deferWrite(for  databaseID: ZDatabaseID?, restartTimer: Bool = false) {
         if  writeTimer?.isValid ?? false || restartTimer {
@@ -98,7 +86,7 @@ class ZFiles: NSObject {
 
     func needWrite(for  databaseID: ZDatabaseID?) {
         if  let  dbID = databaseID,
-            let index = index(of: dbID) {
+            let index = dbID.index {
 
             if !needsWrite[index] {
                 needsWrite[index] = true
@@ -111,7 +99,7 @@ class ZFiles: NSObject {
 
     func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
         if  let  dbID = iDatabaseID,
-            let index = index(of: dbID) {
+            let index = dbID.index {
             return isReading[index]
         }
 
@@ -129,7 +117,7 @@ class ZFiles: NSObject {
 	func writeToFile(from databaseID: ZDatabaseID?) {
 		if  let     dbID = databaseID,
 			dbID        != .favoritesID,
-			let    index = index(of: dbID),
+			let    index = dbID.index,
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {
 				let path = filePath(for: dbIndex)
 				writeFile(at: path, from: databaseID)
@@ -139,7 +127,7 @@ class ZFiles: NSObject {
 	
 	func readFile(into databaseID: ZDatabaseID) {
 		if  databaseID  != .favoritesID,
-			let    index = index(of: databaseID),
+			let    index = databaseID.index,
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {
 			let 	path = filePath(for: dbIndex)
 
@@ -147,79 +135,6 @@ class ZFiles: NSObject {
 		}
 	}
 
-
-    func importFromFile(asOutline: Bool, insertInto: Zone, onCompletion: Closure?) {
-        if !asOutline,
-            let  window = gApplication.mainWindow {
-            let  suffix = asOutline ? "outline" : "thoughtful"
-            let   panel = NSOpenPanel()
-            panel.title = "Import as \(suffix)"
-            panel.resolvesAliases = false
-            panel.canResolveUbiquitousConflicts = false
-            panel.canDownloadUbiquitousContents = false
-
-            panel.beginSheetModal(for: window) { (result) in
-                do {
-                    if  result.rawValue   == NSFileHandlingPanelOKButton,
-                        panel.urls.count > 0 {
-                        let  path = panel.urls[0].path
-
-                        if  let   data = FileManager.default.contents(atPath: path),
-                            data.count > 0,
-                            let   dbID = insertInto.databaseID,
-                            let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
-                            let   dict = self.dictFromJSON(json)
-                            let   zone = Zone(dict: dict, in: dbID)
-
-                            insertInto.addChild(zone, at: 0)
-                            onCompletion?()
-                        }
-                    }
-                } catch {
-                    print(error)    // de-serialization
-                }
-            }
-        }
-    }
-
-
-    func exportToFile(asOutline: Bool, for iFocus: Zone) {
-        let    suffix = asOutline ? "outline" : "thoughtful"
-        let     panel = NSSavePanel()
-        panel.message = "Export as \(suffix)"
-
-        if  let  name = iFocus.zoneName {
-            panel.nameFieldStringValue = "\(name).\(suffix)"
-        }
-
-        panel.begin { (result) -> Void in
-            if  result.rawValue == NSFileHandlingPanelOKButton,
-                let filename = panel.url {
-
-                if  asOutline {
-                    let string = iFocus.outlineString()
-
-                    do {
-                        try string.write(to: filename, atomically: true, encoding: String.Encoding.utf8)
-                    } catch {
-                        // failed to write file (bad permissions, bad filename etc.)
-                    }
-                } else {
-                    self.writtenRecordNames.removeAll()
-
-                    let     dict = iFocus.storageDictionary
-                    let jsonDict = self.jsonDictFrom(dict)
-                    let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
-
-                    do {
-                        try data.write(to: filename)
-                    } catch {
-                        print("ahah")
-                    }
-                }
-            }
-        }
-    }
 
 
     // MARK:- internals
@@ -230,7 +145,7 @@ class ZFiles: NSObject {
 		if  let           dbID = databaseID,
 			dbID              != .favoritesID,
             let        manager = gRemoteStorage.cloud(for: dbID),
-			let        index   = index(of: dbID),
+			let        index   = dbID.index,
 			needsWrite[index] == true,
 			isWriting [index] == false {    // prevent write during write
 			isWriting [index]  = true
@@ -302,7 +217,7 @@ class ZFiles: NSObject {
 	func readFile(from path: String, into databaseID: ZDatabaseID) {
 		if  databaseID      != .favoritesID,
             let       cloud  = gRemoteStorage.cloud(for: databaseID),
-			let       index  = index(of: databaseID) {
+			let       index  = databaseID.index {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
 			let  keys: types = [.date, .lost, .graph, .trash, .destroy, .favorites, .bookmarks ]
@@ -355,7 +270,7 @@ class ZFiles: NSObject {
 	
 
     func createDataDirectory() -> URL {
-        let cacheURL = try! FileManager().url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let cacheURL = try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let directoryURL = cacheURL.appendingPathComponent("Thoughtful", isDirectory: true)
 
         do {
@@ -460,7 +375,7 @@ class ZFiles: NSObject {
 
 
     func fileName(for index: ZDatabaseIndex, isGeneric: Bool = true) -> String? {
-        if  let dbID = databaseIDFrom(index) {
+        if  let dbID = index.databaseID {
             var name = dbID.rawValue
 
             if  dbID      == .mineID, !isGeneric,

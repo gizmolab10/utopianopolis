@@ -1,5 +1,5 @@
 //
-//  ZBookmarksManager.swift
+//  ZBookmarks.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 1/10/18.

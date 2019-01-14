@@ -26,7 +26,7 @@ class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableV
     func numberOfRows(in tableView: NSTableView) -> Int { return 1 }
 
 
-    override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         self.genericTableUpdate()
     }
     

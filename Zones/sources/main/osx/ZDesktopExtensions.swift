@@ -47,6 +47,7 @@ public typealias ZApplication               = NSApplication
 public typealias ZTableRowView              = NSTableRowView
 public typealias ZTableCellView             = NSTableCellView
 public typealias ZWindowDelegate            = NSWindowDelegate
+public typealias ZWindowController          = NSWindowController
 public typealias ZSegmentedControl          = NSSegmentedControl
 public typealias ZTextViewDelegate          = NSTextViewDelegate
 public typealias ZTextFieldDelegate         = NSTextFieldDelegate
@@ -65,7 +66,6 @@ public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 let        gVerticalWeight = 1.0
 let gHighlightHeightOffset = CGFloat(-3.0)
 let           gApplication = NSApplication.shared
-var     gDetailsController : ZDetailsController? { return gControllers.controllerForID(.details) as? ZDetailsController }
 
 
 protocol ZScrollDelegate : NSObjectProtocol {}
@@ -82,51 +82,50 @@ extension NSObject {
 
 
 extension String {
-    var arrow: ZArrowKey? {
-        if containsNonAscii {
-            let character = utf8CString[2]
 
-            for arrowKey in ZArrowKey.up.rawValue...ZArrowKey.right.rawValue {
-                if arrowKey == character {
-                    return ZArrowKey(rawValue: character)
-                }
-            }
-        }
 
-        return nil
+    func heightForFont(_ font: ZFont, options: NSString.DrawingOptions = []) -> CGFloat { return sizeWithFont(font, options: options).height }
+    func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
+    
+    
+    func rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
+        let attributes = convertToOptionalNSAttributedStringKeyDictionary([kCTFontAttributeName as String : font])
+        
+        return self.boundingRect(with: CGSize.big, options: options, attributes: attributes, context: nil)
     }
-
-
+    
     var cgPoint: CGPoint {
         let point = NSPointFromString(self)
 
         return CGPoint(x: point.x, y: point.y)
     }
 
-    
     var cgSize: CGSize {
         let size = NSSizeFromString(self)
         
         return CGSize(width: size.width, height: size.height)
     }
 
-    
     var cgRect: CGRect {
         let rect = NSRectFromString(self)
         
         return CGRect(x: rect.origin.x, y: rect.origin.y, width: rect.size.width, height: rect.size.height)
     }
 
-
-    var integerValue: Int? {
-        if let value = Int(self) {
-            return value
+    var arrow: ZArrowKey? {
+        if containsNonAscii {
+            let character = utf8CString[2]
+            
+            for arrowKey in ZArrowKey.up.rawValue...ZArrowKey.right.rawValue {
+                if arrowKey == character {
+                    return ZArrowKey(rawValue: character)
+                }
+            }
         }
-
+        
         return nil
     }
-
-
+    
     func openAsURL() {
         let urlString = (replacingOccurrences(of: "\\", with: "").replacingOccurrences(of: " ", with: "%20") as NSString).expandingTildeInPath
 
@@ -173,7 +172,9 @@ extension NSEvent {
 }
 
 
-extension NSColor {
+extension ZColor {
+
+
     var string: String {
         return "red:\(redComponent),blue:\(blueComponent),green:\(greenComponent)"
     }
@@ -189,6 +190,14 @@ extension NSColor {
     func lighter(by: CGFloat) -> NSColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent / (by / 2.0), brightness: brightnessComponent * (by / 3.0), alpha: alphaComponent)
     }
+    
+    var inverted: ZColor {
+        let b = max(0.0, min(1.0, 1.25 - brightnessComponent))
+        let s = max(0.0, min(1.0, 1.45 - saturationComponent))
+        
+        return ZColor(calibratedHue: hueComponent, saturation: s, brightness: b, alpha: alphaComponent)
+    }
+    
 }
 
 
@@ -301,6 +310,29 @@ extension NSWindow {
 }
 
 
+extension ZoneWindow {
+    
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        let        button = standardWindowButton(ZWindow.ButtonType.closeButton) // hide close button ... zoomButton miniaturizeButton
+        button!.isHidden  = true
+        delegate          = self
+        ZoneWindow.window = self
+        contentMinSize    = kDefaultWindowRect.size // smallest size user to which can shrink window
+        let          rect = gWindowRect
+        
+        setFrame(rect, display: true)
+        
+        observer = observe(\.effectiveAppearance) { _, _  in
+            gControllers.signalFor(nil, regarding: .eAppearance)
+        }
+    }
+    
+}
+
+
 extension NSButtonCell {
     override open var objectValue: Any? {
         get { return title }
@@ -362,7 +394,7 @@ extension NSTextField {
 
 
 extension ZoneTextWidget {
-    // override open var acceptsFirstResponder: Bool { return gBatchManager.isReady }    // fix a bug where root zone is editing on launch
+    // override open var acceptsFirstResponder: Bool { return gBatch.isReady }    // fix a bug where root zone is editing on launch
     override var acceptsFirstResponder : Bool  { return widgetZone?.userCanWrite ?? false }
 
 
@@ -415,21 +447,97 @@ extension ZoneTextWidget {
 }
 
 
+extension ZTextEditor {
+    
+    
+    override func doCommand(by selector: Selector) {
+        switch selector {
+        case #selector(insertNewline): stopCurrentEdit()
+        case #selector(insertTab):     if currentEdit?.adequatelyPaused ?? false { gGraphEditor.addNext() { iChild in iChild.edit() } } // stupid OSX issues tab twice (to create the new idea, then AFTERWARDS
+        default:                       super.doCommand(by: selector)
+        }
+    }
+    
+    
+    func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
+        if gIsShortcutsFrontmost { return }
+        
+        let COMMAND = flags.isCommand
+        let  OPTION = flags.isOption
+        let   SHIFT = flags.isShift
+        
+        switch arrow {
+        case .up,
+             .down: moveUp(arrow == .up, stopEdit: !OPTION)
+        case .left:
+            if  atStart {
+                moveOut(true)
+            } else {
+                clearOffset()
+                
+                if         COMMAND && !SHIFT {
+                    moveToBeginningOfLine(self)
+                } else if  COMMAND &&  SHIFT {
+                    moveToBeginningOfLineAndModifySelection(self)
+                } else if  OPTION  &&  SHIFT {
+                    moveWordLeftAndModifySelection(self)
+                } else if !OPTION  &&  SHIFT {
+                    moveLeftAndModifySelection(self)
+                } else if  OPTION  && !SHIFT {
+                    moveWordLeft(self)
+                } else {
+                    moveLeft(self)
+                }
+            }
+        case .right:
+            if atEnd {
+                moveOut(false)
+            } else {
+                clearOffset()
+                
+                if         COMMAND && !SHIFT {
+                    moveToEndOfLine(self)
+                } else if  COMMAND &&  SHIFT {
+                    moveToEndOfLineAndModifySelection(self)
+                } else if  OPTION  &&  SHIFT {
+                    moveWordRightAndModifySelection(self)
+                } else if !OPTION  &&  SHIFT {
+                    moveRightAndModifySelection(self)
+                } else if  OPTION  && !SHIFT {
+                    moveWordRight(self)
+                } else {
+                    moveRight(self)
+                }
+            }
+        }
+    }
+
+}
+
+
 extension NSSegmentedControl {
+
+
     var selectedSegmentIndex: Int {
         get { return selectedSegment }
         set { selectedSegment = newValue }
     }
+
 }
 
 
 extension NSProgressIndicator {
+
+
     func startAnimating() { startAnimation(self) }
     func  stopAnimating() {  stopAnimation(self) }
+
 }
 
 
 public extension NSImage {
+
+
     public func imageRotatedByDegrees(_ degrees: CGFloat) -> NSImage {
 
         var imageBounds = NSZeroRect ; imageBounds.size = self.size
@@ -459,6 +567,97 @@ public extension NSImage {
 
         return rotatedImage
     }
+}
+
+
+extension ZFiles {
+    
+    
+    func saveAs() {
+        let panel = NSSavePanel()
+        panel.nameFieldStringValue = "mine.thoughtful"
+        panel.begin { (response: NSApplication.ModalResponse) in
+            if  let path = panel.url?.absoluteString {
+                self.needWrite(for: .mineID)
+                self.writeFile(at: path, from: .mineID)
+            }
+        }
+    }
+
+    
+    func importFromFile(asOutline: Bool, insertInto: Zone, onCompletion: Closure?) {
+        if !asOutline,
+            let  window = gApplication.mainWindow {
+            let  suffix = asOutline ? "outline" : "thoughtful"
+            let   panel = NSOpenPanel()
+            panel.title = "Import as \(suffix)"
+            panel.resolvesAliases = false
+            panel.canResolveUbiquitousConflicts = false
+            panel.canDownloadUbiquitousContents = false
+            
+            panel.beginSheetModal(for: window) { (result) in
+                do {
+                    if  result.rawValue   == NSFileHandlingPanelOKButton,
+                        panel.urls.count > 0 {
+                        let  path = panel.urls[0].path
+                        
+                        if  let   data = FileManager.default.contents(atPath: path),
+                            data.count > 0,
+                            let   dbID = insertInto.databaseID,
+                            let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
+                            let   dict = self.dictFromJSON(json)
+                            let   zone = Zone(dict: dict, in: dbID)
+                            
+                            insertInto.addChild(zone, at: 0)
+                            onCompletion?()
+                        }
+                    }
+                } catch {
+                    print(error)    // de-serialization
+                }
+            }
+        }
+    }
+    
+    
+    func exportToFile(asOutline: Bool, for iFocus: Zone) {
+        let    suffix = asOutline ? "outline" : "thoughtful"
+        let     panel = NSSavePanel()
+        panel.message = "Export as \(suffix)"
+        
+        if  let  name = iFocus.zoneName {
+            panel.nameFieldStringValue = "\(name).\(suffix)"
+        }
+        
+        panel.begin { (result) -> Void in
+            if  result.rawValue == NSFileHandlingPanelOKButton,
+                let filename = panel.url {
+                
+                if  asOutline {
+                    let string = iFocus.outlineString()
+                    
+                    do {
+                        try string.write(to: filename, atomically: true, encoding: String.Encoding.utf8)
+                    } catch {
+                        // failed to write file (bad permissions, bad filename etc.)
+                    }
+                } else {
+                    self.writtenRecordNames.removeAll()
+                    
+                    let     dict = iFocus.storageDictionary
+                    let jsonDict = self.jsonDictFrom(dict)
+                    let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
+                    
+                    do {
+                        try data.write(to: filename)
+                    } catch {
+                        print("ahah")
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 
@@ -548,4 +747,32 @@ extension ZoneWidget {
 
         return ZBezierPath(ovalIn: rect)
     }
+}
+
+
+var gShortcutsController: ZWindowController?
+
+
+extension ZGraphEditor {
+
+
+    func showHideKeyboardShortcuts(hide: Bool? = nil) {
+        if  gShortcutsController == nil {
+            let       storyboard  = NSStoryboard(name: "Shortcuts", bundle: nil)
+            gShortcutsController  = storyboard.instantiateInitialController() as? NSWindowController
+        }
+        
+        if  let notShow = hide {
+            gShowShortcutWindow = !notShow
+        } else {
+            gShowShortcutWindow = !(gShortcutsController?.window?.isVisible ?? false)
+        }
+        
+        if  gShowShortcutWindow {
+            gShortcutsController?.showWindow(nil)
+        } else {
+            gShortcutsController?.window?.orderOut(self)
+        }
+    }
+
 }

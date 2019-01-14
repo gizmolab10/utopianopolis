@@ -26,7 +26,7 @@ public typealias ZView                      = UIView
 public typealias ZAlert                     = UIAlertController
 public typealias ZImage                     = UIImage
 public typealias ZColor                     = UIColor
-public typealias ZEvent                     = UIKeyCommand
+public typealias ZEvent                     = UIEvent
 public typealias ZButton                    = UIButton
 public typealias ZWindow                    = UIWindow
 public typealias ZSlider                    = UISlider
@@ -41,7 +41,9 @@ public typealias ZEventFlags                = UIKeyModifierFlags
 public typealias ZBezierPath                = UIBezierPath
 public typealias ZSearchField               = UISearchBar
 public typealias ZApplication               = UIApplication
+public typealias ZWindowDelegate            = ZNullProtocol
 public typealias ZScrollDelegate            = UIScrollViewDelegate
+public typealias ZWindowController          = UIWindowController
 public typealias ZSegmentedControl          = UISegmentedControl
 public typealias ZGestureRecognizer         = UIGestureRecognizer
 public typealias ZProgressIndicator         = UIActivityIndicatorView
@@ -53,8 +55,11 @@ public typealias ZApplicationDelegate       = UIApplicationDelegate
 public typealias ZPanGestureRecognizer      = UIPanGestureRecognizer
 public typealias ZClickGestureRecognizer    = UITapGestureRecognizer
 public typealias ZSwipeGestureRecognizer    = UISwipeGestureRecognizer
-public typealias ZGestureRecognizerState    = UIGestureRecognizerState
+public typealias ZGestureRecognizerState    = UIGestureRecognizer.State
 public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
+
+
+public protocol ZNullProtocol {}
 
 
 let      gHighlightHeightOffset = CGFloat(3.0)
@@ -64,12 +69,12 @@ var windowKeys: [UIKeyCommand]?
 
 
 func NSStringFromSize(_ size: CGSize) -> String {
-    return NSStringFromCGSize(size)
+    return NSCoder.string(for: size)
 }
 
 
 func NSStringFromPoint(_ point: CGPoint) -> String {
-    return NSStringFromCGPoint(point)
+    return NSCoder.string(for: point)
 }
 
 
@@ -120,8 +125,8 @@ extension UIKeyCommand {
 
 extension String {
 
-    var cgPoint: CGPoint { return CGPointFromString(self) }
-    var cgSize:   CGSize { return  CGSizeFromString(self) }
+    var cgPoint: CGPoint { return NSCoder.cgPoint(for: self) }
+    var cgSize:   CGSize { return  NSCoder.cgSize(for: self) }
     var arrow: ZArrowKey? {
         let value = utf8CString[0]
 
@@ -134,6 +139,15 @@ extension String {
         return nil
     }
 
+    func heightForFont(_ font: ZFont, options: String.DrawingOptions = []) -> CGFloat { return sizeWithFont(font, options: options).height }
+    func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
+    
+    
+    func rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
+        let attributes = convertToOptionalNSAttributedStringKeyDictionary([kCTFontAttributeName as String : font])
+        
+        return boundingRect(with: CGSize.big, options: options, attributes: attributes, context: nil)
+    }
 
     func openAsURL() {
         if let url = URL(string: self) {
@@ -152,50 +166,60 @@ extension UIBezierPath {
 }
 
 
-extension UIColor {
+extension ZColor {
 
     var string: String {
-        var   red: CGFloat = 0.0
-        var  blue: CGFloat = 0.0
-        var green: CGFloat = 0.0
-        var alpha: CGFloat = 0.0
+        let components = rgba
 
-        getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-
-        return "red:\(red),blue:\(blue),green:\(green)"
+        return "red:\(components.red),blue:\(components.blue),green:\(components.green)"
     }
-
-    func darker(by: CGFloat) -> UIColor {
-        var        hue: CGFloat = 0.0
-        var      alpha: CGFloat = 0.0
-        var saturation: CGFloat = 0.0
-        var brightness: CGFloat = 0.0
-
-        getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
-
-        return UIColor(hue: hue, saturation: saturation * 1.1, brightness: brightness / by, alpha: alpha)
-    }
-
-    func darkish(by: CGFloat) -> NSColor {
-        var        hue: CGFloat = 0.0
-        var      alpha: CGFloat = 0.0
-        var saturation: CGFloat = 0.0
-        var brightness: CGFloat = 0.0
+    
+    var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
         
-        getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+        self.getRed(&r, green: &g, blue: &b, alpha: &a)
         
-        return UIColor(hue: hue, saturation: saturation, brightness: brightness / by, alpha: alpha)
+        return (r, g, b, a)
+    }
+    
+    var hsba: (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
+        var h: CGFloat = 0
+        var s: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        
+        self.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        
+        return (h, s, b, a)
     }
 
-    func lighter(by: CGFloat) -> UIColor {
-        var        hue: CGFloat = 0.0
-        var      alpha: CGFloat = 0.0
-        var saturation: CGFloat = 0.0
-        var brightness: CGFloat = 0.0
+    var inverted: ZColor {
+        let components = hsba
+        let b = max(0.0, min(1.0, 1.25 - components.brightness))
+        let s = max(0.0, min(1.0, 1.45 - components.saturation))
+        
+        return ZColor(hue: components.hue, saturation: s, brightness: b, alpha: components.alpha)
+    }
 
-        getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+    func darker(by: CGFloat) -> ZColor {
+        let components = hsba
 
-        return UIColor(hue: hue, saturation: saturation * 0.9, brightness: brightness * by, alpha: alpha)
+        return ZColor(hue: components.hue, saturation: components.saturation * 1.1, brightness: components.brightness / by, alpha: components.alpha)
+    }
+
+    func darkish(by: CGFloat) -> ZColor {
+        let components = hsba
+
+        return ZColor(hue: components.hue, saturation: components.saturation, brightness: components.brightness / by, alpha: components.alpha)
+    }
+
+    func lighter(by: CGFloat) -> ZColor {
+        let components = hsba
+
+        return ZColor(hue: components.hue, saturation: components.saturation * 0.9, brightness: components.brightness * by, alpha: components.alpha)
     }
 
 }
@@ -300,8 +324,8 @@ extension UIView {
     }
 
 
-    override open func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
-        if  event?.subtype == UIEventSubtype.motionShake && !gKeyboardIsVisible {
+    override open func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if  event?.subtype == UIEvent.EventSubtype.motionShake && !gKeyboardIsVisible {
             gGraphEditor.recenter()
         }
     }
@@ -334,10 +358,10 @@ extension UIWindow {
                                                        "command option " :  commandOption,
                                                        "command "        : .command,
                                                        "shift "          : .shift]
-            let pairs:             [String: String] = ["up arrow"        : UIKeyInputUpArrow,
-                                                       "down arrow"      : UIKeyInputDownArrow,
-                                                       "left arrow"      : UIKeyInputLeftArrow,
-                                                       "right arrow"     : UIKeyInputRightArrow]
+            let pairs:             [String: String] = ["up arrow"        : UIKeyCommand.inputUpArrow,
+                                                       "down arrow"      : UIKeyCommand.inputDownArrow,
+                                                       "left arrow"      : UIKeyCommand.inputLeftArrow,
+                                                       "right arrow"     : UIKeyCommand.inputRightArrow]
 
             for (prefix, flags) in mods {
                 for (title, input) in pairs {
@@ -356,7 +380,7 @@ extension UIWindow {
     }
 
 
-    func keyHandler(command: UIKeyCommand) {
+    @objc func keyHandler(command: UIKeyCommand) {
         var event = command
 
         if  let title = command.discoverabilityTitle, title.contains(" arrow") { // flags need a .numericPad option added
@@ -373,13 +397,13 @@ extension UIWindow {
 extension UITextField {
 
     var isBordered : Bool { get { return borderStyle != .none } set { borderStyle = (newValue ? .line : .none) } }
-    override open var canBecomeFirstResponder: Bool { return true } // gBatchManager.isAvailable }    // fix a bug where root zone is editing on launch
+    override open var canBecomeFirstResponder: Bool { return true } // gBatch.isAvailable }    // fix a bug where root zone is editing on launch
     func enableUndo() {}
     func abortEditing() { resignFirstResponder() }
     func selectAllText() { selectAll(self) }
 
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    @objc func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         resignFirstResponder()
 
         return true
@@ -467,11 +491,21 @@ extension ZAlert {
     func showAlert(closure: AlertStatusClosure? = nil) {
         modalPresentationStyle = .popover
 
-        gControllersManager.currentController?.present(self, animated: true) {
+        gControllers.currentController?.present(self, animated: true) {
            // self.dismiss(animated: false, completion: nil)
-            closure?(.eShown)
+            closure?(.eStatusShown)
         }
     }
+
+}
+
+
+extension ZFiles {
+    
+    
+    func saveAs() {}
+    func exportToFile(asOutline: Bool, for iFocus: Zone) {}
+    func importFromFile(asOutline: Bool, insertInto: Zone, onCompletion: Closure?) {}
 
 }
 
@@ -514,17 +548,17 @@ extension ZoneWidget {
             switch kind! {
             case .below:
                 frame.origin   .y = leftFrame .minY + thinThickness + halfDotHeight
-                frame.size.height = fabs( rightMidY + thinThickness - frame.minY)
+                frame.size.height = abs(  rightMidY + thinThickness - frame.minY)
             case .above:
                 frame.origin   .y = rightFrame.maxY - halfDotHeight
-                frame.size.height = fabs(  leftMidY - thinThickness - frame.minY)
+                frame.size.height = abs(   leftMidY - thinThickness - frame.minY)
             case .straight:
                 frame.origin   .y =       rightMidY - thinThickness / 8.0
                 frame.origin   .x = leftFrame .maxX
                 frame.size.height =                   thinThickness / 4.0
             }
 
-            frame.size     .width = fabs(rightFrame.midX - frame.minX)
+            frame.size     .width = abs(rightFrame.midX - frame.minX)
         }
 
         return frame
@@ -549,3 +583,10 @@ extension ZoneWidget {
 
 }
 
+
+extension ZGraphEditor {
+    
+    
+    func showHideKeyboardShortcuts(hide: Bool? = nil) {}
+
+}

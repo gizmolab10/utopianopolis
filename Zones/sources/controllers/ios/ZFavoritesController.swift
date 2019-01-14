@@ -18,7 +18,7 @@ class ZFavoritesController : ZGenericController {
 
 
     var favorites: [Zone] {
-        var children = gFavoritesManager.workingFavorites
+        var children = gFavorites.workingFavorites
         var removals = IndexPath()
 
         for (iIndex, iChild) in children.enumerated() {
@@ -40,8 +40,8 @@ class ZFavoritesController : ZGenericController {
     // MARK:-
 
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        if ![.search, .found, .startup].contains(kind),
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+        if ![.search, .found, .startup].contains(iKind),
             let selector = favoritesSelector {
 
             selector.apportionsSegmentWidthsByContent = true
@@ -58,8 +58,8 @@ class ZFavoritesController : ZGenericController {
         let    index = iControl.numberOfSegments - iControl.selectedSegment - 1
         let favorite = favorites[index]
 
-        gFocusManager.focus(through: favorite) {
-            gControllersManager.syncToCloudAfterSignalFor(nil, regarding: .eRelayout, onCompletion: nil)
+        gFocus.focus(through: favorite) {
+            gControllers.syncToCloudAfterSignalFor(nil, regarding: .eRelayout, onCompletion: nil)
         }
     }
 

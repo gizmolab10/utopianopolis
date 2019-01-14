@@ -29,12 +29,11 @@ class ZShortcutsController: ZGenericTableController {
 
 
     var tabStops = [NSTextTab]()
+    override var controllerID: ZControllerID { return .shortcuts }
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        controllerID = .shortcuts
 
         for value in [20, 85, 290, 310, 375, 580, 600, 665] {
             tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: convertToNSTextTabOptionKeyDictionary([:])))
@@ -277,10 +276,4 @@ class ZShortcutsController: ZGenericTableController {
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertToNSTextTabOptionKeyDictionary(_ input: [String: Any]) -> [NSTextTab.OptionKey: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSTextTab.OptionKey(rawValue: key), value)})
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }

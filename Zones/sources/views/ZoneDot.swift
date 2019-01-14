@@ -279,7 +279,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let isInMain = widget?.isInMain ?? true
             let    ratio = CGFloat(isInMain ? 1.0 : Double(kFavoritesReduction))
             let     size = CGFloat(gDotHeight - 2.0) * ratio
-            let     font = NSFont.boldSystemFont(ofSize: size)
+            let     font = ZFont.boldSystemFont(ofSize: size)
             let   height = string.heightForFont(font, options: .usesDeviceMetrics) + (isInMain ? 1.0 : -2.5)
             let   xDelta = size / 3.3
             let   yDelta = ((height - iDirtyRect.height) / CGFloat(3.8))
@@ -373,11 +373,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 }
 
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
-}
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {

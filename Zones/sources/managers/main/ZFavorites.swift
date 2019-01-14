@@ -1,5 +1,5 @@
 //
-//  ZFavoritesManager.swift
+//  ZFavorites.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 11/24/16.

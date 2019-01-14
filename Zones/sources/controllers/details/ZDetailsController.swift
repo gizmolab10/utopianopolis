@@ -14,20 +14,23 @@
 #endif
 
 
+var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.details) as? ZDetailsController }
+
+
 class ZDetailsController: ZGenericController {
 
 
-    @IBOutlet var stackView: NSStackView?
+    @IBOutlet var stackView: ZStackView?
     var viewsByID = [Int: ZStackableView]()
+    override  var controllerID: ZControllerID { return .details }
 
 
     override func setup() {
-        controllerID = .details
         useDefaultBackgroundColor = false
     }
     
     
-    override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         update()
     }
 

@@ -25,7 +25,7 @@ class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
     override var isCommandDown: Bool { return modifiers?.contains(.command)   ?? false }
 
 
-    open func reset() {
+    open override func reset() {
         modifiers = ZEventFlags()
     }
 
@@ -46,7 +46,7 @@ class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
     override var isCommandDown: Bool { return modifiers?.contains(.command)   ?? false }
 
 
-    open func reset() {
+    open override func reset() {
         modifiers = ZEventFlags()
     }
 
@@ -67,7 +67,7 @@ class ZKeySwipeGestureRecognizer : ZSwipeGestureRecognizer {
     override var isCommandDown: Bool { return modifiers?.contains(.command)   ?? false }
 
 
-    open func reset() {
+    open override func reset() {
         modifiers = ZEventFlags()
     }
 

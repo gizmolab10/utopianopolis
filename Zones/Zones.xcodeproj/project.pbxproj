@@ -176,6 +176,15 @@
 		A746D463219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
 		A746D464219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
 		A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
+		A7D947D921EC110A00B7DBFC /* ZEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEvents.swift */; };
+		A7D947DA21EC118800B7DBFC /* ZSearching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearching.swift */; };
+		A7D947DB21EC118900B7DBFC /* ZSearching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearching.swift */; };
+		A7D947DC21EC11C600B7DBFC /* ZDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B22B1F182EBB0091F4D1 /* ZDetailsController.swift */; };
+		A7D947DD21EC11C800B7DBFC /* ZDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B22B1F182EBB0091F4D1 /* ZDetailsController.swift */; };
+		A7D947DE21EC127D00B7DBFC /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
+		A7D947DF21EC127E00B7DBFC /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
+		A7D947E021EC141F00B7DBFC /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
+		A7D947E121EC142000B7DBFC /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
 		A7FF100321A8DC70005CA5E1 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CD921791D8F4C3200F80964 /* CloudKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -783,7 +792,7 @@
 					0CA04B481D2ECF41001892E5 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = F8M94NY2TV;
-						LastSwiftMigration = 0940;
+						LastSwiftMigration = "";
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
@@ -887,6 +896,8 @@
 				0C39B2E31F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				A7395BAF21B877B600F5759F /* ZTextEditor.swift in Sources */,
 				0CABC9EF2022768D0019D8B0 /* ZEnumerations.swift in Sources */,
+				A7D947DD21EC11C800B7DBFC /* ZDetailsController.swift in Sources */,
+				A7D947E121EC142000B7DBFC /* ZShortcutsController.swift in Sources */,
 				0C4118DE1FA8110200A58004 /* ZAlerts.swift in Sources */,
 				0C39B2BF1F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
 				0C43EFD721010F62000976CE /* ZRemoteStorage.swift in Sources */,
@@ -897,6 +908,7 @@
 				0C39B28C1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
 				0C39B2B91F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
 				0C39B2AD1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
+				A7D947DF21EC127E00B7DBFC /* ZSearchResultsController.swift in Sources */,
 				0C39B3851F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
 				0C2E22D21F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
 				0C7152231FD8A1E400C7DA61 /* ZFocusing.swift in Sources */,
@@ -911,6 +923,7 @@
 				0C39B2C81F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0C43EFD421010F62000976CE /* ZRecords.swift in Sources */,
 				0C39B38E1F182EBB0091F4D1 /* ZStackableView.swift in Sources */,
+				A7D947DB21EC118900B7DBFC /* ZSearching.swift in Sources */,
 				0C39B2B01F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				0C39B2E91F182EBB0091F4D1 /* ZSelecting.swift in Sources */,
 				0C26F7301F799EEE00C2B978 /* ZoneSegmentedControl.swift in Sources */,
@@ -1002,6 +1015,7 @@
 				A7395BB021B877B600F5759F /* ZTextEditor.swift in Sources */,
 				0C39B2E41F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				0C39B2C01F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
+				A7D947D921EC110A00B7DBFC /* ZEvents.swift in Sources */,
 				0C7152241FD8A1E400C7DA61 /* ZFocusing.swift in Sources */,
 				0C39B38C1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
 				0C43EFD521010F62000976CE /* ZRecords.swift in Sources */,
@@ -1019,6 +1033,7 @@
 				0C39B31A1F182EBB0091F4D1 /* Zone.swift in Sources */,
 				0C39B2C91F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0CB619A01FB3C4660087B066 /* ZEditorController.swift in Sources */,
+				A7D947DA21EC118800B7DBFC /* ZSearching.swift in Sources */,
 				0C4118DF1FA8110200A58004 /* ZAlerts.swift in Sources */,
 				0C39B38F1F182EBB0091F4D1 /* ZStackableView.swift in Sources */,
 				0C63DA6E1FCF837D005EC548 /* ZFavorites.swift in Sources */,
@@ -1026,8 +1041,11 @@
 				0C39B2EA1F182EBB0091F4D1 /* ZSelecting.swift in Sources */,
 				0C43EFDB21010F62000976CE /* ZOperations.swift in Sources */,
 				0C367C381F463D93000FC914 /* ZoneDragView.swift in Sources */,
+				A7D947DE21EC127D00B7DBFC /* ZSearchResultsController.swift in Sources */,
+				A7D947DC21EC11C600B7DBFC /* ZDetailsController.swift in Sources */,
 				0C39B3891F182EBB0091F4D1 /* ZoneWidget.swift in Sources */,
 				A7395BB321B877B600F5759F /* ZGraphEditor.swift in Sources */,
+				A7D947E021EC141F00B7DBFC /* ZShortcutsController.swift in Sources */,
 				0C39B2BD1F182EBB0091F4D1 /* ZState.swift in Sources */,
 				0CAC18E22006A84800D641C4 /* ZBookmarks.swift in Sources */,
 				0C39B2B71F182EBB0091F4D1 /* ZReachability.swift in Sources */,
@@ -1372,12 +1390,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "c1766a51-307f-4f4c-891b-bbd6619906a6";
-				PROVISIONING_PROFILE_SPECIFIER = "focus development on iOS";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "sources/main/common/PadFocus-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "PadZones/PadFocus-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
@@ -1406,11 +1424,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "c1766a51-307f-4f4c-891b-bbd6619906a6";
-				PROVISIONING_PROFILE_SPECIFIER = "focus development on iOS";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "sources/main/common/PadFocus-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_OBJC_BRIDGING_HEADER = "PadZones/PadFocus-Bridging-Header.h";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 			};

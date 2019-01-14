@@ -30,15 +30,11 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var            thickness: ZSlider?
     @IBOutlet var              stretch: ZSlider?
     @IBOutlet var           ideasLabel: ZTextField?
-    override var backgroundColor: CGColor { return gDarkishBackgroundColor }
+    override  var      backgroundColor: CGColor { return gDarkishBackgroundColor }
+    override  var         controllerID: ZControllerID { return .preferences }
 
 
-    override func setup() {
-        controllerID = .preferences
-    }
-
-
-    override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         if  iKind != .eStartup {
             let                           grabbed = gSelecting.firstSortedGrab
             insertionModeControl?.selectedSegment = gInsertionMode.rawValue

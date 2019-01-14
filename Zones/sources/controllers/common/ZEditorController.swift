@@ -38,14 +38,13 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     var        moveDownGesture:  ZGestureRecognizer?
     var        moveLeftGesture:  ZGestureRecognizer?
     var       moveRightGesture:  ZGestureRecognizer?
+    override  var controllerID:  ZControllerID { return .editor }
     @IBOutlet var   editorView:  ZoneDragView?
     @IBOutlet var      spinner:  ZProgressIndicator?
     @IBOutlet var  spinnerView:  ZView?
 
 
     override func setup() {
-        controllerID = .editor
-
         restartGestureRecognition()
         editorView?.addSubview(editorRootWidget)
 
@@ -146,7 +145,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     }
 
     
-    override func handleSignal(_ iSignalObject: Any?, iKind: ZSignalKind) {
+    override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
         if [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
             if gWorkMode != .graphMode {
                 editorView?.snp.removeConstraints()

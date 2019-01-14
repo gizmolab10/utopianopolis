@@ -108,6 +108,16 @@ enum ZDatabaseID: String {
     }
     
     var identifier: String { return rawValue.substring(toExclusive: 1) }
+    var index:        Int? { return self.databaseIndex?.rawValue }
+    
+    
+    var databaseIndex: ZDatabaseIndex? {
+        switch self {
+        case .everyoneID: return .everyoneIndex
+        case     .mineID: return .mineIndex
+        default:          return nil
+        }
+    }
 
     static func create(from scope: CKDatabase.Scope) -> ZDatabaseID? {
         switch scope {
@@ -130,27 +140,13 @@ enum ZDatabaseID: String {
 enum ZDatabaseIndex: Int {
     case everyoneIndex
     case mineIndex
-}
 
-
-func index(of databaseID: ZDatabaseID) -> Int? {
-    return databaseIndex(from: databaseID)?.rawValue
-}
-
-
-func databaseIndex(from iID: ZDatabaseID) -> ZDatabaseIndex? {
-    switch iID {
-    case .everyoneID: return .everyoneIndex
-    case     .mineID: return .mineIndex
-    default:          return nil
-    }
-}
-
-
-func databaseIDFrom(_ index: ZDatabaseIndex) -> ZDatabaseID? {
-    switch index {
-    case .everyoneIndex: return .everyoneID
-    case .mineIndex:     return .mineID
+    
+    var databaseID: ZDatabaseID? {
+        switch self {
+        case .everyoneIndex: return .everyoneID
+        case .mineIndex:     return .mineID
+        }
     }
 }
 

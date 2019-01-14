@@ -24,24 +24,6 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     var observer: NSKeyValueObservation?
 
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
-        let        button = standardWindowButton(NSWindow.ButtonType.closeButton) // hide close button ... zoomButton miniaturizeButton
-        button!.isHidden  = true
-        delegate          = self
-        ZoneWindow.window = self
-        contentMinSize    = kDefaultWindowRect.size // smallest size user to which can shrink window
-        let          rect = gWindowRect
-        
-        setFrame(rect, display: true)
-
-        observer = observe(\.effectiveAppearance) { _, _  in
-            gControllers.signalFor(nil, regarding: .eAppearance)
-        }
-    }
-
-
     func windowDidResize(_ notification: Notification) {
         gWindowRect = frame
         

@@ -28,17 +28,16 @@ class ZMainController: ZGenericController {
     @IBOutlet var searchBoxView:      ZView?
     @IBOutlet var detailView:         ZView?
     @IBOutlet var editorView:         ZView?
+    override  var controllerID:       ZControllerID { return .main }
 
 
     override func setup() {
-        controllerID = .main
-
         searchBoxView?    .isHidden = true
         searchResultsView?.isHidden = true
     }
 
 
-    override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         let  hideSearch = gWorkMode != .searchMode
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 

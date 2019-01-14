@@ -611,18 +611,9 @@ extension String {
     static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
     func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }
     func substring(toExclusive:   Int) -> String  { return String(self[..<index(at: toExclusive)]) }
-    func widthForFont (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
-    func heightForFont(_ font: ZFont, options: NSString.DrawingOptions = []) -> CGFloat { return sizeWithFont(font, options: options).height }
-    func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
+    func widthForFont  (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
 
 
-    func rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
-        let attributes = convertToOptionalNSAttributedStringKeyDictionary([kCTFontAttributeName as String : font])
-
-        return self.boundingRect(with: CGSize.big, options: options, attributes: attributes, context: nil)
-    }
-    
-    
     func rect(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGRect {
         let bounds = rectWithFont(font)
         let xDelta = offset(using: font, for: iRange, atStart: atStart)
@@ -641,7 +632,16 @@ extension String {
         
         return startWidth + (atStart ? 0.0 : width)    // move down, use right side of selection
     }
+
     
+    var integerValue: Int? {
+        if let value = Int(self) {
+            return value
+        }
+        
+        return nil
+    }
+
 
     var color: ZColor? {
         if self != "" {
@@ -917,18 +917,6 @@ extension Date {
 }
 
 
-extension ZColor {
-    
-    var inverted: ZColor {
-        let b = max(0.0, min(1.0, 1.25 - brightnessComponent))
-        let s = max(0.0, min(1.0, 1.45 - saturationComponent))
-
-        return ZColor(calibratedHue: hueComponent, saturation: s, brightness: b, alpha: alphaComponent)
-    }
-    
-}
-
-
 extension ZGestureRecognizer {
 
     @objc var isShiftDown:   Bool { return false }
@@ -1006,9 +994,8 @@ extension ZTextField {
 }
 
 
-
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
 	guard let input = input else { return nil }
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }

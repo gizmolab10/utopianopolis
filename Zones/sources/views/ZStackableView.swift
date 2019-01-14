@@ -86,7 +86,7 @@ class ZStackableView: ZView {
     
 
     func update() {
-        titleButton?.state = NSControl.StateValue.on
+        titleButton?.state = ZControl.StateValue.on
         
         if  isDebugView {
             if !gShowDebugDetails {

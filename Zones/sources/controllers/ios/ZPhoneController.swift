@@ -36,8 +36,8 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     // MARK:-
 
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        if ![.search, .found, .startup].contains(kind) {
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+        if ![.search, .found, .startup].contains(iKind) {
             update()
         }
     }
@@ -147,7 +147,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
             cachedOffset         = gScrollOffset
 
             if  let       center = gEditorView?.bounds.center,
-                let       widget = gWidgetsManager.currentEditingWidget?.textWidget {
+                let       widget = gWidgets.currentEditingWidget?.textWidget {
                 let widgetOffset = widget.convert(widget.bounds.center, to: gEditorView)
                 gScrollOffset    = CGPoint(center - widgetOffset)
                 isCached         = true

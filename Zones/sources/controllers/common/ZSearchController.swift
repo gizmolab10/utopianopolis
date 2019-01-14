@@ -24,16 +24,10 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
 
     @IBOutlet var searchBox: ZSearchField?
+    override  var controllerID: ZControllerID { return .search }
 
 
-    override func setup() {
-        super.setup()
-        
-        controllerID = .search
-    }
-
-
-    override func handleSignal(_ object: Any?, iKind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         if  iKind == .eSearch && gWorkMode == .searchMode {
             gSearching.state = .entry
 

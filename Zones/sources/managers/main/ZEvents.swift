@@ -1,5 +1,5 @@
 //
-//  ZEventsManager.swift
+//  ZEvents.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 10/5/17.
@@ -42,7 +42,7 @@ class ZEvents: NSObject {
     
     func setup() {
         setupGlobalEventsMonitor()
-//        gNotificationCenter.addObserver(self, selector: #selector(ZEventsManager.handleDarkModeChange), name: Notification.Name("AppleInterfaceThemeChangedNotification"), object: nil)
+//        gNotificationCenter.addObserver(self, selector: #selector(ZEvents.handleDarkModeChange), name: Notification.Name("AppleInterfaceThemeChangedNotification"), object: nil)
     }
     
     

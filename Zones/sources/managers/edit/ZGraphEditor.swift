@@ -40,7 +40,6 @@ class ZGraphEditor: NSObject {
 
 
     var previousEvent: ZEvent?
-    var shortcutsController: NSWindowController?
     let notPersistedZone = Zone()
 
 
@@ -257,7 +256,7 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func menuType(for key: String, _ flags: NSEvent.ModifierFlags) -> ZMenuType {
+    func menuType(for key: String, _ flags: ZEvent.ModifierFlags) -> ZMenuType {
         let alterers = "ehiluw\r" + kMarkingCharacters
         let  COMMAND = flags.isCommand
 
@@ -283,7 +282,7 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func validateKey(_ key: String, _ flags: NSEvent.ModifierFlags) -> Bool {
+    func validateKey(_ key: String, _ flags: ZEvent.ModifierFlags) -> Bool {
         if gWorkMode != .graphMode {
             return false
         }
@@ -419,26 +418,6 @@ class ZGraphEditor: NSObject {
             gDetailsController?.toggleViewsFor(ids: [.Preferences])
         } else if gIsEditingText {
             gTextEditor.cancel()
-        }
-    }
-
-    
-    func showHideKeyboardShortcuts(hide: Bool? = nil) {
-        if  shortcutsController == nil {
-            let      storyboard  = NSStoryboard(name: "Shortcuts", bundle: nil)
-            shortcutsController  = storyboard.instantiateInitialController() as? NSWindowController
-        }
-
-        if  let notShow = hide {
-            gShowShortcutWindow = !notShow
-        } else {
-            gShowShortcutWindow = !(shortcutsController?.window?.isVisible ?? false)
-        }
-        
-        if  gShowShortcutWindow {
-            shortcutsController?.showWindow(nil)
-        } else {
-            shortcutsController?.window?.orderOut(self)
         }
     }
 
