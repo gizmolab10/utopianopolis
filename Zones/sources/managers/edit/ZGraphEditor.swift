@@ -101,7 +101,7 @@ class ZGraphEditor: NSObject {
                 } else if COMMAND || CONTROL || OPTION {
                     switch key {
                     case "a":      gEditedTextWidget?.selectAllText()
-                    case "d":      if SHIFT { addParentFromSelectedText(inside: editedZone) } else { addIdeaFromSelectedText(inside: editedZone) }
+                    case "d":      if OPTION { addParentFromSelectedText(inside: editedZone) } else { addIdeaFromSelectedText(inside: editedZone) }
                     case "f":      search(OPTION)
                     case "i":      toggleColorized()
                     case "?":      showHideKeyboardShortcuts()
@@ -121,6 +121,7 @@ class ZGraphEditor: NSObject {
             } else if  validateKey(key, flags) {
                 let    widget = gWidgets.currentMovableWidget
                 let hasWidget = widget != nil
+                let   SPECIAL = COMMAND && OPTION
                 let   FLAGGED = CONTROL || COMMAND || OPTION
                 
                 widget?.widgetZone?.deferWrite()
@@ -139,35 +140,35 @@ class ZGraphEditor: NSObject {
                     case "f":      search(OPTION)
                     case "h":      editTrait(for: .eHyperlink)
                     case "i":      toggleColorized()
-                    case "l", "u": alterCase(up: key == "u")
                     case "j":      gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() }
                     case "k":      gFiles  .exportToFile(asOutline: OPTION,        for: gSelecting.currentMoveable)
-                    case "m":      refetch(OPTION, COMMAND)
+                    case "l", "u": alterCase(up: key == "u")
+                    case "m":      refetch(COMMAND, OPTION)
                     case "n":      alphabetize(OPTION)
                     case "o":      if COMMAND { if OPTION { gFiles.showInFinder() } else { gFiles.open() } } else { orderByLength(OPTION) }
                     case "p":      gHere.widget?.printView()
-                    case "q":      ZApplication.shared.terminate(self)
+                    case "q":      gApplication.terminate(self)
                     case "r":      reverse()
                     case "s":      if COMMAND { gFiles.saveAs() } else { selectCurrentFavorite() }
                     case "t":      swapWithParent()
                     case "w":      rotateWritable()
-                    case "1":      if COMMAND && SHIFT { sendEmailBugReport() }
+                    case "y":      if SPECIAL { sendEmailBugReport() }
                     case "+":      divideChildren()
-                    case "-":      addLine()
+                    case "-":      if !COMMAND || !OPTION { addLine() } else { delete(permanently: false, preserveChildren: true, convertToTitledLine: true) }
                     case "`":      travelToOtherGraph()
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
                     case ";":      doFavorites(true,    false)
                     case "?":      CONTROL ? openBrowserForFocusWebsite() : showHideKeyboardShortcuts()
                     case "'":      doFavorites(SHIFT, OPTION)
-                    case "/":      SHIFT && OPTION ? showHideKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, COMMAND) { self.redrawSyncRedraw() }
+                    case "/":      SPECIAL ? showHideKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, COMMAND) { self.redrawSyncRedraw() }
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
                     case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case "z":      if COMMAND { if SHIFT { kUndoManager.redo() } else { kUndoManager.undo() } }
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
                     case kBackspace,
-                         kDelete:  if OPTION || isWindow || COMMAND { delete(permanently: COMMAND && OPTION && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: OPTION && SHIFT) }
+                         kDelete:  if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
                     case "\r":     if hasWidget { grabOrEdit(COMMAND, OPTION) }
                     default:       return false // false means key not handled
                     }
@@ -201,9 +202,7 @@ class ZGraphEditor: NSObject {
                 switch arrow {
                 case .left,
                      .right: move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
-                        gSelecting.updateBrowsingLevel()
-                        gSelecting.updateCousinList()
-                        self.updateFavoritesRedrawSyncRedraw()  // relayout graph when travelling through a bookmark
+                        gSelecting.updateAfterMove()  // relayout graph when travelling through a bookmark
                     }
                 default: break
                 }
@@ -256,7 +255,7 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func menuType(for key: String, _ flags: ZEvent.ModifierFlags) -> ZMenuType {
+    func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
         let alterers = "ehiluw\r" + kMarkingCharacters
         let  COMMAND = flags.isCommand
 
@@ -282,7 +281,7 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func validateKey(_ key: String, _ flags: ZEvent.ModifierFlags) -> Bool {
+    func validateKey(_ key: String, _ flags: ZEventFlags) -> Bool {
         if gWorkMode != .graphMode {
             return false
         }
@@ -611,8 +610,8 @@ class ZGraphEditor: NSObject {
 
     func alterCase(up: Bool) {
         for grab in gSelecting.currentGrabs {
-            if let text = grab.widget?.textWidget {
-                text.alterCase(up: up)
+            if  let tWidget = grab.widget?.textWidget {
+                tWidget.alterCase(up: up)
             }
         }
     }
@@ -670,7 +669,7 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func refetch(_ OPTION: Bool = false, _ COMMAND: Bool = false) {
+    func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false) {
         
         // plain is fetch children
         // COMMAND alone is fetch all
@@ -1043,25 +1042,41 @@ class ZGraphEditor: NSObject {
     // 2) titled line selected only -> convert back to plain line
     // 3) titled line is first of multiple -> convert titled line to plain title, selected, as parent of others
 
-    func addLine() {
+    func addLine(onCompletion: Closure? = nil) {
+        let grabs        = gSelecting.currentGrabs
+        let isMultiple   = grabs.count > 1
         if  let original = gSelecting.currentMoveableLine,
             let name     = original.zoneName {
+            let promoteToParent: ClosureClosure = { innerClosure in
+                original.convertFromLineWithTitle()
+                
+                self.moveZones(grabs, into: original) {
+                    original.grab()
+
+                    self.redrawAndSync() {
+                        innerClosure()
+                        onCompletion?()
+                    }
+                }
+            }
+            
             if  name.contains(kLineOfDashes) {  // state 1
                 original.assignAndColorize(kLineWithStubTitle)   // convert into a stub title
-                original.editAndSelect(in: NSMakeRange(12, 1))   // edit, selecting stub
+
+                if !isMultiple {
+                    original.editAndSelect(in: NSMakeRange(12, 1))   // edit, selecting stub
+                } else {
+                    promoteToParent {
+                        original.edit()
+                    }
+                }
                 
                 return
             } else if name.isLineWithTitle {
-                let grabs        = gSelecting.currentGrabs
-                if  grabs.count <= 1 {          // state 2
+                if !isMultiple {          // state 2
                     original.assignAndColorize(kLineOfDashes)
                 } else {                        // state 3
-                    original.grab()
-                    original.convertFromLineWithTitle()
-
-                    moveZones(grabs, into: original) {
-                        self.redrawAndSync()
-                    }
+                    promoteToParent {}
                 }
                 
                 return
@@ -1169,21 +1184,14 @@ class ZGraphEditor: NSObject {
     func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
         if  preserveChildren && !permanently {
             preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
-                self.updateFavoritesRedrawSyncRedraw()
+                gFavorites.updateFavoritesRedrawSyncRedraw()
             }
         } else {
             prepareUndoForDelete()
 
             deleteZones(gSelecting.simplifiedGrabs, permanently: permanently) {
-                self.updateFavoritesRedrawSyncRedraw()     // delete alters the list
+                gFavorites.updateFavoritesRedrawSyncRedraw()     // delete alters the list
             }
-        }
-    }
-
-
-    func updateFavoritesRedrawSyncRedraw(avoidRedraw: Bool = false) {
-        if  gFavorites.updateAllFavorites() || !avoidRedraw {
-            redrawSyncRedraw()
         }
     }
 
@@ -1517,7 +1525,7 @@ class ZGraphEditor: NSObject {
                     child.grab()
                 }
 
-                self.updateFavoritesRedrawSyncRedraw()
+                gFavorites.updateFavoritesRedrawSyncRedraw()
 
                 onCompletion?()
             }
@@ -1703,7 +1711,7 @@ class ZGraphEditor: NSObject {
             zones     .removeLast()
         }
 
-        updateFavoritesRedrawSyncRedraw()
+        gFavorites.updateFavoritesRedrawSyncRedraw()
     }
 
 
@@ -1804,7 +1812,7 @@ class ZGraphEditor: NSObject {
                     self.undoManager.endUndoGrouping()
                 }
 
-                self.updateFavoritesRedrawSyncRedraw()
+                gFavorites.updateFavoritesRedrawSyncRedraw()
             }
 
             let prepare = {
@@ -1849,7 +1857,9 @@ class ZGraphEditor: NSObject {
         let grabs = gSelecting.simplifiedGrabs
         
         if  grabs.count > 1 && convertToTitledLine {
-            onCompletion?()
+            addLine {
+                onCompletion?()
+            }
          
             return
         }
@@ -2135,7 +2145,7 @@ class ZGraphEditor: NSObject {
                     let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
                     offset       > anOffset + 25.0 { // half the distance from end of parent's text field to beginning of child's text field
                     grabThis     = child
-                } else if let level = gCurrentBrowsingLevel,
+                } else if let level = gCurrentBrowseLevel,
                     child.level == level {
                     grabThis     = child
                 } else {

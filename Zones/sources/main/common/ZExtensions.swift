@@ -18,6 +18,7 @@ import CloudKit
 
 
 typealias ZStorageDictionary = [ZStorageType : NSObject]
+let             gApplication = ZApplication.shared
 
 
 extension NSObject {

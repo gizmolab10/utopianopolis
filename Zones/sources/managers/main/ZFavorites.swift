@@ -252,6 +252,14 @@ class ZFavorites: NSObject {
         }
     }
 
+    
+    func updateFavoritesRedrawSyncRedraw(avoidRedraw: Bool = false) {
+        if  updateAllFavorites() || !avoidRedraw {
+            redrawSyncRedraw()
+        }
+    }
+
+    
 
     @discardableResult func updateAllFavorites() -> Bool {
 

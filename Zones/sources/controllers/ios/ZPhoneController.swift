@@ -37,15 +37,18 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-        if ![.search, .found, .startup].contains(iKind) {
+        let disallowed: [ZSignalKind] = [.eSearch, .eFound, .eStartup]
+
+        if !disallowed.contains(iKind) {
             update()
         }
     }
 
 
     @IBAction func goLeftButtonAction(iButton: UIButton) {
-        gGraphEditor.moveOut(selectionOnly: true, extreme: false)
-        update()
+        gGraphEditor.move(out: true) {
+            self.update()
+        }
     }
 
 
@@ -115,24 +118,24 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     var handleKeyboard: Bool? {
         get { return nil }
         set {
-            gNotificationCenter.removeObserver (self,                                                                name: .UIKeyboardWillShow, object: nil)
-            gNotificationCenter.removeObserver (self,                                                                name: .UIKeyboardWillHide, object: nil)
+            gNotificationCenter.removeObserver (self,                                                                name: UIResponder.keyboardWillShowNotification, object: nil)
+            gNotificationCenter.removeObserver (self,                                                                name: UIResponder.keyboardWillHideNotification, object: nil)
 
             if  newValue ?? false {
-                gNotificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: .UIKeyboardWillShow, object: nil)
-                gNotificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: .UIKeyboardWillHide, object: nil)
+                gNotificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: UIResponder.keyboardWillShowNotification, object: nil)
+                gNotificationCenter.addObserver(self, selector: #selector(ZPhoneController.updateHeightForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
             }
         }
     }
 
 
-    func updateHeightForKeyboard(_ notification: Notification) {
-        gKeyboardIsVisible     = notification.name == .UIKeyboardWillShow
+    @objc func updateHeightForKeyboard(_ notification: Notification) {
+        gKeyboardIsVisible     = notification.name == UIResponder.keyboardWillShowNotification
         keyboardHeight         = 0.0
 
         if  gKeyboardIsVisible,
             let info           = notification.userInfo,
-            let frame: NSValue = info[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+            let frame: NSValue = info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             keyboardHeight     = frame.cgRectValue.height
         }
 

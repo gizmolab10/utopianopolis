@@ -39,7 +39,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
-        let   string = event.input
+        let   string = event.input ?? ""
         let    flags = event.modifierFlags
         let  COMMAND = flags.isCommand
         let      key = string[string.startIndex].description

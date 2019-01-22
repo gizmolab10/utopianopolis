@@ -26,7 +26,7 @@ public typealias ZView                      = UIView
 public typealias ZAlert                     = UIAlertController
 public typealias ZImage                     = UIImage
 public typealias ZColor                     = UIColor
-public typealias ZEvent                     = UIEvent
+public typealias ZEvent                     = UIKeyCommand
 public typealias ZButton                    = UIButton
 public typealias ZWindow                    = UIWindow
 public typealias ZSlider                    = UISlider
@@ -34,6 +34,7 @@ public typealias ZControl                   = UIControl
 public typealias ZMenuItem                  = UIMenuItem
 public typealias ZTextView                  = UITextView
 public typealias ZTextField                 = UITextField
+public typealias ZStackView                 = UIStackView
 public typealias ZTableView                 = UITableView
 public typealias ZScrollView                = UIScrollView
 public typealias ZController                = UIViewController
@@ -41,9 +42,10 @@ public typealias ZEventFlags                = UIKeyModifierFlags
 public typealias ZBezierPath                = UIBezierPath
 public typealias ZSearchField               = UISearchBar
 public typealias ZApplication               = UIApplication
+public typealias ZTableColumn               = ZNullProtocol
 public typealias ZWindowDelegate            = ZNullProtocol
 public typealias ZScrollDelegate            = UIScrollViewDelegate
-public typealias ZWindowController          = UIWindowController
+public typealias ZWindowController          = ZNullProtocol
 public typealias ZSegmentedControl          = UISegmentedControl
 public typealias ZGestureRecognizer         = UIGestureRecognizer
 public typealias ZProgressIndicator         = UIActivityIndicatorView
@@ -64,8 +66,12 @@ public protocol ZNullProtocol {}
 
 let      gHighlightHeightOffset = CGFloat(3.0)
 let             gVerticalWeight = -1.0
-let                gApplication = UIApplication.shared
 var windowKeys: [UIKeyCommand]?
+
+
+var gIsPrinting: Bool {
+    return false
+}
 
 
 func NSStringFromSize(_ size: CGSize) -> String {
@@ -76,6 +82,10 @@ func NSStringFromSize(_ size: CGSize) -> String {
 func NSStringFromPoint(_ point: CGPoint) -> String {
     return NSCoder.string(for: point)
 }
+
+
+func NSStringFromRect(_ rect: CGRect)                                      -> String? { return NSCoder.string(for: rect) }
+func convertFromOptionalUserInterfaceItemIdentifier(_ identifier: String?) -> String? { return identifier } // Helper function inserted by Swift 4.2 migrator.
 
 
 extension NSObject {
@@ -89,44 +99,35 @@ extension NSObject {
 
 extension UIKeyCommand {
 
-    var key: String? {
-        var working = input
-
-        if  working.hasPrefix("UIKeyInput") {
-            working = String(input.dropFirst(10))
-
-            if working.count > 1 {
-                return nil
-            }
-        }
-
-        return working.character(at: 0)
-    }
-
-
     var arrow: ZArrowKey? {
-        var working = input
-
-        if  working.hasPrefix("UIKeyInput") {
-            working = String(input.dropFirst(10))
-
-            if working.count > 1 {
-                let value = working.character(at: 0)
-
-                return value.arrow
-            }
+        if  let arrowKey = key {
+            return arrowKey.arrow
         }
-
+        
         return nil
     }
 
+    var key: String? {
+        if  var working = input,
+            working.hasPrefix("UIKeyInput") {
+            working = String(working.dropFirst(10))
+
+            if working.count == 1 {
+                return working.character(at: 0)
+            }
+        }
+        
+        return nil
+    }
+    
 }
 
 
 extension String {
 
     var cgPoint: CGPoint { return NSCoder.cgPoint(for: self) }
-    var cgSize:   CGSize { return  NSCoder.cgSize(for: self) }
+    var cgRect:   CGRect { return NSCoder.cgRect (for: self) }
+    var cgSize:   CGSize { return NSCoder.cgSize (for: self) }
     var arrow: ZArrowKey? {
         let value = utf8CString[0]
 
@@ -139,19 +140,19 @@ extension String {
         return nil
     }
 
-    func heightForFont(_ font: ZFont, options: String.DrawingOptions = []) -> CGFloat { return sizeWithFont(font, options: options).height }
-    func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
+    func heightForFont(_ font: ZFont, options: NSStringDrawingOptions = []) -> CGFloat { return sizeWithFont(font, options: options).height }
+    func sizeWithFont (_ font: ZFont, options: NSStringDrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
     
     
-    func rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
+    func rectWithFont (_ font: ZFont, options: NSStringDrawingOptions = .usesFontLeading) -> CGRect {
         let attributes = convertToOptionalNSAttributedStringKeyDictionary([kCTFontAttributeName as String : font])
         
-        return boundingRect(with: CGSize.big, options: options, attributes: attributes, context: nil)
+        return self.boundingRect(with: CGSize.big, options: options, attributes: attributes, context: nil)
     }
 
     func openAsURL() {
         if let url = URL(string: self) {
-            UIApplication.shared.open(url)
+            gApplication.open(url)
         }
     }
 
@@ -236,24 +237,14 @@ extension UIKeyModifierFlags {
 }
 
 
-extension ZEditorController {
+extension   UISwipeGestureRecognizer.Direction {
 
-    func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor  .moveUp() }
-    func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor  .moveUp(false) }
-    func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor .moveOut() }
-    func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.moveInto() }
-
-}
-
-
-extension   UISwipeGestureRecognizerDirection {
-
-    var all:UISwipeGestureRecognizerDirection {     return
-            UISwipeGestureRecognizerDirection (     rawValue :
-            UISwipeGestureRecognizerDirection.right.rawValue +
-            UISwipeGestureRecognizerDirection .left.rawValue +
-            UISwipeGestureRecognizerDirection .down.rawValue +
-            UISwipeGestureRecognizerDirection   .up.rawValue
+    var all:UISwipeGestureRecognizer.Direction {     return
+            UISwipeGestureRecognizer.Direction (     rawValue :
+            UISwipeGestureRecognizer.Direction.right.rawValue +
+            UISwipeGestureRecognizer.Direction .left.rawValue +
+            UISwipeGestureRecognizer.Direction .down.rawValue +
+            UISwipeGestureRecognizer.Direction   .up.rawValue
         )
     }
 
@@ -272,11 +263,11 @@ extension UIView {
             clearGestures()
 
             if let e = newValue {
-                e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZEditorController       .clickEvent), clicksRequired: 1)
-                e.moveUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController      .moveUpEvent), direction: .up,    touchesRequired: 2)
-                e.moveDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController    .moveDownEvent), direction: .down,  touchesRequired: 2)
-                e.moveLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController    .moveLeftEvent), direction: .left,  touchesRequired: 2)
-                e.moveRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .moveRightEvent), direction: .right, touchesRequired: 2)
+                e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZEditorController      .clickEvent), clicksRequired: 1)
+                e.moveUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController     .moveUpEvent), direction: .up,    touchesRequired: 2)
+                e.moveDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .moveDownEvent), direction: .down,  touchesRequired: 2)
+                e.moveLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .moveLeftEvent), direction: .left,  touchesRequired: 2)
+                e.moveRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController  .moveRightEvent), direction: .right, touchesRequired: 2)
                 e.movementGesture  = createDragGestureRecognizer (e, action: #selector(ZEditorController.dragGestureEvent))
                 gDraggedZone       = nil
             }
@@ -287,7 +278,7 @@ extension UIView {
     func display() {}
 
 
-    @discardableResult func createSwipeGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, direction: UISwipeGestureRecognizerDirection, touchesRequired: Int) -> ZKeySwipeGestureRecognizer {
+    @discardableResult func createSwipeGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, direction: UISwipeGestureRecognizer.Direction, touchesRequired: Int) -> ZKeySwipeGestureRecognizer {
         let                     gesture = ZKeySwipeGestureRecognizer(target: target, action: action)
         gesture               .delegate = target
         gesture              .direction = direction
@@ -330,6 +321,37 @@ extension UIView {
         }
     }
 
+    func printView() {}
+
+}
+
+
+extension ZStackableView {
+    
+    var identity: ZDetailsViewID { return .All }    
+
+    func turnOnTitleButton() {}
+    
+}
+
+
+extension UITableView {
+    
+    var selectedRow: Int { return indexPathForSelectedRow?.row ?? -1 }
+    var numberOfRows: Int { return numberOfRows(inSection: 0) }
+    
+    func selectRowIndexes(_ rows: IndexSet, byExtendingSelection: Bool) {
+        let path = IndexPath(row: rows.first!, section: 0)
+
+        selectRow(at: path, animated: false, scrollPosition: .none)
+    }
+    
+    func scrollRowToVisible(_ row: Int) {
+        let path = IndexPath(row: row, section: 0)
+
+        scrollToRow(at: path, at: .none, animated: false)
+    }
+    
 }
 
 
@@ -340,7 +362,7 @@ extension UIWindow {
 
 
     override open var keyCommands: [UIKeyCommand]? {
-        if gTextEditor.isEditing != nil {
+        if  gIsEditingText {
             return nil
         }
 
@@ -383,9 +405,10 @@ extension UIWindow {
     @objc func keyHandler(command: UIKeyCommand) {
         var event = command
 
-        if  let title = command.discoverabilityTitle, title.contains(" arrow") { // flags need a .numericPad option added
+        if  let title = command.discoverabilityTitle, title.contains(" arrow"), // flags need a .numericPad option added
+            let input = command.input {
             let flags = UIKeyModifierFlags(rawValue: command.modifierFlags.rawValue + UIKeyModifierFlags.numericPad.rawValue)
-            event     = UIKeyCommand(input: command.input, modifierFlags: flags, action: #selector(UIWindow.keyHandler), discoverabilityTitle: command.discoverabilityTitle!)
+            event     = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(UIWindow.keyHandler), discoverabilityTitle: command.discoverabilityTitle!)
         }
 
         gGraphEditor.handleEvent(event, isWindow: true)
@@ -408,6 +431,13 @@ extension UITextField {
 
         return true
     }
+
+}
+
+
+extension UISearchBar {
+    
+    func selectAllText() { selectAll(self) }
 
 }
 
@@ -460,6 +490,7 @@ extension UIButton {
 extension UIApplication {
 
     func presentError(_ error: NSError) {}
+    func terminate(_ sender: Any?) {}
 
 
     func clearBadge() {
@@ -492,8 +523,53 @@ extension ZAlert {
         modalPresentationStyle = .popover
 
         gControllers.currentController?.present(self, animated: true) {
-           // self.dismiss(animated: false, completion: nil)
-            closure?(.eStatusShown)
+            self.dismiss(animated: false) {
+                closure?(.eStatusShown)
+            }
+        }
+    }
+
+}
+
+
+extension ZAlerts {
+    
+    
+    func openSystemPreferences() {
+        if let url = URL(string: "App-Prefs:root=General&path=Network") {
+            gApplication.open(url)
+        }
+    }
+    
+    
+    func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
+        alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { iAlert, iState in
+            switch iState {
+            case .eStatusShow:
+                iAlert?.showAlert { iResponse in
+//                    let window = iAlert?.window
+//
+//                    gApplication.abortModal()
+//                    window?.orderOut(iAlert)
+                    closure?(iResponse)
+                }
+            default:
+                closure?(iState)
+            }
+        }
+    }
+    
+    
+    func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertClosure? = nil) {
+        FOREGROUND(canBeDirect: true) {
+            let        a = ZAlert(title: iMessage, message: iExplain, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: iOKTitle, style: .default) { iAction in
+                closure?(a, .eStatusYes)
+            }
+            
+            a.addAction(okAction)
+            
+            closure?(a, .eStatusShow)
         }
     }
 
@@ -506,6 +582,13 @@ extension ZFiles {
     func saveAs() {}
     func exportToFile(asOutline: Bool, for iFocus: Zone) {}
     func importFromFile(asOutline: Bool, insertInto: Zone, onCompletion: Closure?) {}
+
+}
+
+
+extension ZTextEditor {
+
+    func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {}
 
 }
 
@@ -584,9 +667,26 @@ extension ZoneWidget {
 }
 
 
+extension ZEditorController {
+    
+    @objc func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(up: true) }
+    @objc func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(up: false) }
+    @objc func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(out: true)  { gSelecting.updateAfterMove() } }
+    @objc func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(out: false) { gSelecting.updateAfterMove() } }
+    
+}
+
+
 extension ZGraphEditor {
     
     
     func showHideKeyboardShortcuts(hide: Bool? = nil) {}
 
+}
+
+
+extension ZOnboarding {
+    
+    func getMAC() {}
+        
 }

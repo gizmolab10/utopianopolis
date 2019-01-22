@@ -26,10 +26,10 @@ var     gShowShortcutWindow                     = false
 var     gDebugDenyOwnership                     = false
 var   gDebugShowIdentifiers                     = false
 var  gMeasureOpsPerformance                     = true
-var   gCurrentBrowsingLevel:               Int?
-var    gTimeOfSystemStartup:      TimeInterval?
+var  gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event IS startup
+var    gTimeOfSystemStartup                     = Date.timeIntervalSinceReferenceDate
+var     gCurrentBrowseLevel:               Int?
 var        gDragDropIndices: NSMutableIndexSet?
-var           gCurrentEvent:            ZEvent?
 var           gDragRelation:         ZRelation?
 var           gDragDropZone:              Zone?
 var            gDraggedZone:              Zone?
@@ -43,7 +43,6 @@ var             gIsDragging:               Bool { return gDraggedZone != nil }
 var   gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
 var       gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var         gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
-var             gIsPrinting:               Bool { return NSPrintOperation.current != nil }
 var             gEditorView:      ZoneDragView? { return gEditorController?.editorView }
 var              gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var               gDotWidth:             Double { return gDotHeight * 0.75 }
@@ -55,27 +54,13 @@ var       gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrintin
 var  gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker (by: 4.0)  .cgColor }
 var gDarkishBackgroundColor:            CGColor { return gBackgroundColor.darkish(by: 1.028).cgColor }
 var gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter(by: 4.0)  .cgColor }
-var  gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - (gTimeOfSystemStartup ?? 0.0) - (gCurrentEvent?.timestamp ?? 0.0) }
+var  gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
 
 
-func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
-    if  let e  = event {
-        if  e == gCurrentEvent {
-            return true
-        } else {
-            gCurrentEvent = e
-
-            if  gTimeOfSystemStartup == nil {
-                gTimeOfSystemStartup  = Date.timeIntervalSinceReferenceDate - gCurrentEvent!.timestamp
-            }
-        }
+var gCurrentEvent: ZEvent? {
+    didSet {
+        gTimeUntilCurrentEvent = Date.timeIntervalSinceReferenceDate
     }
-    
-    if  item != nil {
-        return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4)
-    }
-    
-    return false
 }
 
 

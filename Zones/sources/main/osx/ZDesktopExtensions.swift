@@ -44,6 +44,7 @@ public typealias ZController                = NSViewController
 public typealias ZEventFlags                = NSEvent.ModifierFlags
 public typealias ZSearchField               = NSSearchField
 public typealias ZApplication               = NSApplication
+public typealias ZTableColumn               = NSTableColumn
 public typealias ZTableRowView              = NSTableRowView
 public typealias ZTableCellView             = NSTableCellView
 public typealias ZWindowDelegate            = NSWindowDelegate
@@ -65,10 +66,38 @@ public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
 
 let        gVerticalWeight = 1.0
 let gHighlightHeightOffset = CGFloat(-3.0)
-let           gApplication = NSApplication.shared
+
+
+var gIsPrinting: Bool {
+    return NSPrintOperation.current != nil
+}
 
 
 protocol ZScrollDelegate : NSObjectProtocol {}
+
+
+func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
+    if  let e  = event {
+        if  e == gCurrentEvent {
+            return true
+        } else {
+            gCurrentEvent = e
+        }
+    }
+    
+    if  item != nil {
+        return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4)
+    }
+    
+    return false
+}
+
+
+// Helper function inserted by Swift 4.2 migrator.
+func convertFromOptionalUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
+    guard let input = input else { return nil }
+    return input.rawValue
+}
 
 
 extension NSObject {
@@ -88,7 +117,7 @@ extension String {
     func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
     
     
-    func rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
+    func  rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
         let attributes = convertToOptionalNSAttributedStringKeyDictionary([kCTFontAttributeName as String : font])
         
         return self.boundingRect(with: CGSize.big, options: options, attributes: attributes, context: nil)
@@ -158,17 +187,9 @@ extension NSEvent.ModifierFlags {
 
 
 extension NSEvent {
-    var   key:    String? { return input.character(at: 0) }
     var arrow: ZArrowKey? { return key?.arrow }
-
-
-    var input: String {
-        if let result = charactersIgnoringModifiers {
-            return result as String
-        }
-
-        return ""
-    }
+    var   key:    String? { return input?.character(at: 0) }
+    var input:    String? { return charactersIgnoringModifiers }
 }
 
 
@@ -295,6 +316,29 @@ extension NSView {
 }
 
 
+extension ZStackableView {
+    
+    var identity: ZDetailsViewID {
+        if  let kind = convertFromOptionalUserInterfaceItemIdentifier(identifier) {
+            switch kind {
+            case "preferences": return .Preferences
+            case "information": return .Information
+            case       "debug": return .Debug
+            case       "tools": return .Tools
+            default:            return .All
+            }
+        }
+        
+        return .All
+    }
+    
+    func turnOnTitleButton() {
+        titleButton?.state = ZControl.StateValue.on
+    }
+
+}
+
+
 extension NSWindow {
 
     @IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .Preferences)?.toggleAction(self) }
@@ -363,6 +407,61 @@ extension ZAlert {
         closure?(status)
     }
 
+}
+
+
+extension ZAlerts {
+    
+    
+    func openSystemPreferences() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+    
+    
+    func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
+        alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { iAlert, iState in
+            switch iState {
+            case .eStatusShow:
+                iAlert?.showAlert { iResponse in
+                    let window = iAlert?.window
+                    
+                    ZApplication.shared.abortModal()
+                    window?.orderOut(iAlert)
+                    closure?(iResponse)
+                }
+            default:
+                closure?(iState)
+            }
+        }
+    }
+    
+    
+    func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertClosure? = nil) {
+        FOREGROUND(canBeDirect: true) {
+            let             a = ZAlert()
+            a    .messageText = iMessage
+            a.informativeText = iExplain ?? ""
+            
+            a.addButton(withTitle: iOKTitle)
+            
+            if  let cancel = iCancelTitle {
+                a.addButton(withTitle: cancel)
+            }
+            
+            if  let image = iImage {
+                let size = image.size
+                let frame = NSMakeRect(50, 50, size.width, size.height)
+                a.accessoryView = NSImageView(image: image)
+                a.accessoryView?.frame = frame
+                a.layout()
+            }
+            
+            closure?(a, .eStatusShow)
+        }
+    }
+    
 }
 
 
@@ -773,6 +872,63 @@ extension ZGraphEditor {
         } else {
             gShortcutsController?.window?.orderOut(self)
         }
+    }
+
+}
+
+
+extension ZOnboarding {
+    
+    func getMAC() {
+        if let intfIterator = findEthernetInterfaces() {
+            if  let macAddressAsArray = getMACAddress(intfIterator) {
+                let macAddressAsString = macAddressAsArray.map( { String(format:"%02x", $0) } )
+                    .joined(separator: ":")
+                macAddress = macAddressAsString
+            }
+            
+            IOObjectRelease(intfIterator)
+        }
+    }
+    
+    
+    func findEthernetInterfaces() -> io_iterator_t? {
+        
+        let matchingDict = IOServiceMatching("IOEthernetInterface") as NSMutableDictionary
+        matchingDict["IOPropertyMatch"] = [ "IOPrimaryInterface" : true]
+        
+        var matchingServices : io_iterator_t = 0
+        if IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDict, &matchingServices) != KERN_SUCCESS {
+            return nil
+        }
+        
+        return matchingServices
+    }
+    
+    
+    func getMACAddress(_ intfIterator : io_iterator_t) -> [UInt8]? {
+        
+        var macAddress : [UInt8]?
+        
+        var intfService = IOIteratorNext(intfIterator)
+        while intfService != 0 {
+            
+            var controllerService : io_object_t = 0
+            if IORegistryEntryGetParentEntry(intfService, "IOService", &controllerService) == KERN_SUCCESS {
+                
+                let dataUM = IORegistryEntryCreateCFProperty(controllerService, "IOMACAddress" as CFString, kCFAllocatorDefault, 0)
+                if let data = dataUM?.takeRetainedValue() as? NSData {
+                    macAddress = [0, 0, 0, 0, 0, 0]
+                    data.getBytes(&macAddress!, length: macAddress!.count)
+                }
+                IOObjectRelease(controllerService)
+            }
+            
+            IOObjectRelease(intfService)
+            intfService = IOIteratorNext(intfIterator)
+        }
+        
+        return macAddress
     }
 
 }

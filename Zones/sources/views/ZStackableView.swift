@@ -31,23 +31,6 @@ class ZStackableView: ZView {
     // MARK:-
     
 
-    var identity: ZDetailsViewID {
-        #if os(OSX)
-            if let kind = convertFromOptionalNSUserInterfaceItemIdentifier(identifier) {
-                switch kind {
-                case "preferences": return .Preferences
-                case "information": return .Information
-                case       "debug": return .Debug
-                case       "tools": return .Tools
-                default:            return .All
-                }
-            }
-        #endif
-
-        return .All
-    }
-
-
     var hideHideable: Bool {
         get {
             return !gIsReadyToShowUI || gHiddenDetailViewIDs.contains(identity)
@@ -84,10 +67,10 @@ class ZStackableView: ZView {
         hideHideable = !hideHideable
     }
     
-
+    
     func update() {
-        titleButton?.state = ZControl.StateValue.on
-        
+        turnOnTitleButton()
+
         if  isDebugView {
             if !gShowDebugDetails {
                 removeFromSuperview()
@@ -109,7 +92,7 @@ class ZStackableView: ZView {
             let gradientLayer = CAGradientLayer()
             gradientLayer.frame = gradientView.bounds
             gradientLayer.colors = [gDarkerBackgroundColor, gLighterBackgroundColor]
-            gradientView.zlayer = gradientLayer
+            gradientView.zlayer.insertSublayer(gradientLayer, at: 0)
         }
     }
 
@@ -166,10 +149,4 @@ class ZStackableView: ZView {
 //            }
         }
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromOptionalNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
-	guard let input = input else { return nil }
-	return input.rawValue
 }

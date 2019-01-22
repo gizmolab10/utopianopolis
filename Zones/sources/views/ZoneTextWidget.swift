@@ -38,21 +38,19 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     
     var selectionRange: NSRange {
-        if  var range = currentEditor()?.selectedRange {
-            if  range.length < 1 {
-                range.length = 1
+        var range = gTextEditor.selectedRange
 
-                if  range.location > 0 {
-                    range.location -= 1
-                }
-            }
+        if  range.length < 1 {
+            range.length = 1
             
-            return range
+            if  range.location > 0 {
+                range.location -= 1
+            }
         }
         
-        return NSRange()
+        return range
     }
-    
+
 
     func updateTextColor() {
         if  let  zone = widgetZone {
@@ -160,9 +158,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     func extractSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
         var extract: String?
         
-        if  let original = text,
-            let   editor = currentEditor() {
-            let    range = editor.selectedRange
+        if  let original = text {
+            let    range = gTextEditor.selectedRange
             extract      = original.substring(with: range)
             
             if  range.length < original.length {

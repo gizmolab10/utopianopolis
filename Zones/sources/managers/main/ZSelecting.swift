@@ -196,8 +196,15 @@ class ZSelecting: NSObject {
 
     func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextEditor.currentlyEditingZone == zone }
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
-    func updateBrowsingLevel()            { gCurrentBrowsingLevel = currentMoveable.level }
+    func updateBrowsingLevel()            { gCurrentBrowseLevel = currentMoveable.level }
     func clearPaste()                     { pasteableZones = [:] }
+    
+    
+    func updateAfterMove() {
+        updateBrowsingLevel()
+        updateCousinList()
+        gFavorites.updateFavoritesRedrawSyncRedraw()
+    }
     
     
     func assureMinimalGrabs() {
@@ -256,7 +263,7 @@ class ZSelecting: NSObject {
     
     func maybeClearBrowsingLevel() {
         if  currentGrabs.count == 0 {
-            gCurrentBrowsingLevel = nil
+            gCurrentBrowseLevel = nil
         }
     }
 
@@ -319,7 +326,7 @@ class ZSelecting: NSObject {
             addOneGrab(zone, single: true)
             
             if  updateBrowsingLevel {
-                gCurrentBrowsingLevel = zone.level
+                gCurrentBrowseLevel = zone.level
             }
         }
     }
@@ -385,7 +392,7 @@ class ZSelecting: NSObject {
         _cousinList.removeAll()
         _sortedGrabs.removeAll()
         
-        if let  level =  gCurrentBrowsingLevel {
+        if let  level =  gCurrentBrowseLevel {
             let  zone = iZone != nil ? iZone! : firstGrab
             let start =  zone.isInFavorites ? gFavoritesRoot : gHere
             start?.traverseAllVisibleProgeny { iChild in

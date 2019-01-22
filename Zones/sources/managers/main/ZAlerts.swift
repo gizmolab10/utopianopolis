@@ -10,7 +10,7 @@
 import CloudKit
 
 #if os(OSX)
-    import Cocoa
+    import AppKit
 #elseif os(iOS)
     import UIKit
 #endif
@@ -72,7 +72,6 @@ class ZAlerts : NSObject {
 
         if  let ckError: CKError = iError as? CKError {
             switch ckError.code {
-//          case .serviceUnavailable:
             case .notAuthenticated: closure?(true) // was showAlert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?", closure)
             case .networkFailure:   gHasInternet = false; closure?(true) // was alertNoInternet
             default:
@@ -136,72 +135,6 @@ class ZAlerts : NSObject {
                     self.openSystemPreferences()
                     onCompletion()
                 }
-        }
-    }
-
-
-    func openSystemPreferences() {
-        #if os(OSX)
-            if let url = URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
-                NSWorkspace.shared.open(url)
-            }
-        #else
-            if let url = URL(string: "App-Prefs:root=General&path=Network") {
-                UIApplication.shared.open(url)
-            }
-        #endif
-    }
-
-
-    func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
-        alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { iAlert, iState in
-            switch iState {
-            case .eStatusShow:
-                iAlert?.showAlert { iResponse in
-                    let window = iAlert?.window
-
-                    NSApp.abortModal()
-                    window?.orderOut(iAlert)
-                    closure?(iResponse)
-                }
-            default:
-                closure?(iState)
-            }
-        }
-    }
-
-
-    func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertClosure? = nil) {
-        FOREGROUND(canBeDirect: true) {
-            #if os(OSX)
-                let             a = ZAlert()
-                a    .messageText = iMessage
-                a.informativeText = iExplain ?? ""
-
-                a.addButton(withTitle: iOkayTitle)
-
-            if  let cancel = iCancelTitle {
-                a.addButton(withTitle: cancel)
-            }
-            
-            if  let image = iImage {
-                let size = image.size
-                let frame = NSMakeRect(50, 50, size.width, size.height)
-                a.accessoryView = NSImageView(image: image)
-                a.accessoryView?.frame = frame
-                a.layout()
-            }
-
-            #else
-                let    a = ZAlert(title: iMessage, message: iExplain, preferredStyle: .alert)
-                let okay = UIAlertAction(title: iOkayTitle, style: .default) { iAction in
-                    closure?(a, .eYes)
-                }
-
-                a.addAction(okay)
-            #endif
-
-            closure?(a, .eStatusShow)
         }
     }
 }

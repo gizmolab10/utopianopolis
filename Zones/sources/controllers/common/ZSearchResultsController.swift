@@ -265,34 +265,35 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
-        let       string = event.input
-        let        flags = event.modifierFlags
-        let      COMMAND = flags.isCommand
-        let          key = string[string.startIndex].description
-        let     exitKeys = ["\r", "f", kEscape]
-
-        if  let    arrow = key.arrow {
-            switch arrow {
-            case    .up:    moveSelection(up: true,  extreme: COMMAND)
-            case  .down:    moveSelection(up: false, extreme: COMMAND)
-            case  .left:    clear();    return nil
-            case .right: if resolve() { return nil }; break
-            }
-        } else if exitKeys.contains(key) { // N.B. test key first since getInput has a possible side-effect of exiting search
-            if  let controller = gSearchController,
-                let text = controller.searchBoxText,
-                text.length > 0 {
-
-                return controller.handleEvent(event)
-
-            } else {
-                clear()
-                resolve()
-
-                return nil
+        if  let       string = event.input {
+            let        flags = event.modifierFlags
+            let      COMMAND = flags.isCommand
+            let          key = string[string.startIndex].description
+            let     exitKeys = ["\r", "f", kEscape]
+            
+            if  let    arrow = key.arrow {
+                switch arrow {
+                case    .up:    moveSelection(up: true,  extreme: COMMAND)
+                case  .down:    moveSelection(up: false, extreme: COMMAND)
+                case  .left:    clear();    return nil
+                case .right: if resolve() { return nil }; break
+                }
+            } else if exitKeys.contains(key) { // N.B. test key first since getInput has a possible side-effect of exiting search
+                if  let controller = gSearchController,
+                    let text = controller.searchBoxText,
+                    text.length > 0 {
+                    
+                    return controller.handleEvent(event)
+                    
+                } else {
+                    clear()
+                    resolve()
+                    
+                    return nil
+                }
             }
         }
-
+        
         return event
     }
 

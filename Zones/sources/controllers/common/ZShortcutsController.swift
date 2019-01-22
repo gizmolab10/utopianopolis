@@ -47,7 +47,7 @@ class ZShortcutsController: ZGenericTableController {
         if  let    key = iEvent.key {
             let COMMAND = iEvent.modifierFlags.isCommand
             switch key {
-            case "?":              gGraphEditor.showHideKeyboardShortcuts()
+            case "?", "/":         gGraphEditor.showHideKeyboardShortcuts()
             case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
             default: break
             }
@@ -66,7 +66,7 @@ class ZShortcutsController: ZGenericTableController {
     }
     
     
-    func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+    func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
         let      paragraph = NSMutableParagraphStyle()
         paragraph.tabStops = tabStops
         let     attributed = attributedString(for: row, column: 0)
@@ -131,11 +131,11 @@ class ZShortcutsController: ZGenericTableController {
         "     \tRETURN     \tbegin or end typing",
         "     \tTAB        \tcreate next idea",
         "",
+        "u    COMMAND + OPTION + KEY",
+        "     \t/          \tshow or hide this window",
+        "",
         "u    COMMAND + KEY",
         "     \tCOMMA      \tshow or hide preferences",
-        "",
-        "u    COMMAND + SHIFT + KEY",
-        "     \t/          \tshow or hide this window",
         "",
         "u    OPTION + KEY",
         "     \tCOMMA      \tconfine browsing to one idea",
@@ -163,11 +163,11 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "b  WHILE EDITING AND TEXT IS SELECTED:",
         "",
-        "u    COMMAND + SHIFT + KEY",
+        "u    COMMAND + OPTION + KEY",
         "     \tD          \tcreate parent with text",
         "",
         "u    COMMAND + KEY",
-        "     \t-          \tconvert text to or from titled line",
+        "     \tHYPHEN     \tconvert text to or from titled line",
         "     \tD          \tcreate child with text",
         "     \tD          \tappend onto parent (if all selected)",
         "     \tL          \tlowercase",
@@ -182,19 +182,19 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "u    KEY",
         "     \tARROWS     \tnavigate within graph",
-        "     \tDELETE     \tselected idea",
+        "     \tDELETE     \tselected idea (and progeny)",
         "     \tCOMMA      \tcreated ideas precede",
+        "     \tHYPHEN     \tadd line, or [un]title it",
         "     \tPERIOD     \tcreated ideas follow",
         "     \tSPACE      \tcreate an idea",
+        "     \tmark with: \t" + kMarkingCharacters,
         "     \t/          \tfocus or create/select/delete favorite",
         "     \t;          \tprevious favorite",
         "     \t'          \tnext favorite",
-        "     \t[          \tgo back to prior focus",
-        "     \t]          \tgo forward, opposite of [",
-        "     \t-          \tadd line, or [un]title it",
+        "     \t[          \t-> back to prior focus",
+        "     \t]          \t-> forward, opposite of [",
         "     \t`          \tswitch to other graph",
         "     \t=          \tuse hyperlink or email",
-        "     \tmark with: \t" + kMarkingCharacters,
         "     \tA          \tselect all ideas",
         "     \tB          \tcreate a bookmark",
         "     \tC          \trecenter the graph",
@@ -205,18 +205,23 @@ class ZShortcutsController: ZGenericTableController {
         "     \tI          \tcolor the text",
         "     \tJ          \timport from Thoughtful file",
         "     \tK          \texport to a Thoughtful file",
-        "     \tL          \tconvert to lowercase",
+        "     \tL          \t-> lowercase",
         "     \tM          \trefetch children of selection",
         "     \tN          \talphabetize",
         "     \tO          \tsort by length",
         "     \tP          \tprint the graph",
         "     \tR          \treverse order",
         "     \tT          \tswap selected idea with parent",
-        "     \tU          \tconvert to uppercase",
+        "     \tU          \t-> uppercase",
         "",
         "u    SHIFT + MOUSE CLICK (with or without drag)",
         "     \t           \t[un]extend selection",
         "",
+        "b  WHILE SELECTING MORE THAN ONE IDEA:",
+        "",
+        "u    KEY",
+        "     \tHYPHEN     \tif first selected is line, -> parent",
+        "     \t#          \tmark with ascending numbers",
         ]
     
     
@@ -224,11 +229,9 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "",
         "",
-        "u    SHIFT + OPTION + KEY",
-        "     \tDELETE     \tconvert to titled line, retain children",
-        "",
         "u    COMMAND + OPTION + KEY",
         "     \tDELETE     \tpermanently (not into trash)",
+        "     \tHYPHEN     \t-> to[from] titled line, retain children",
         "     \tO          \tshow data files in Finder",
         "",
         "u    SHIFT + ARROW KEY",

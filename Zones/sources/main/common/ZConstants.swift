@@ -122,7 +122,7 @@ let          kLostAndFoundName = "lost and found"
 let         kFavoritesRootName = "favorites"
 let         kTriangleImageName = "yangle.png"
 let         kHelpMenuImageName = "help.menu"
-let         kMarkingCharacters = "0123456789_*$@#%^&!x" // §∞†∆…Ω÷•
+let         kMarkingCharacters = "0123456789_*$@#%^&!?x"
 let       kFavoritesAreVisible = "favorites are visible"
 let       kProductionEmailSent = "production email sent"
 

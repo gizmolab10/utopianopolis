@@ -60,7 +60,7 @@ class ZPreferencesController: ZGenericController {
     @IBAction func sliderAction(_ iSlider: ZSlider) {
         let value = CGFloat(iSlider.doubleValue)
 
-        if  let     identifier = convertFromOptionalNSUserInterfaceItemIdentifier(iSlider.identifier) {
+        if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iSlider.identifier) {
             switch (identifier) {
             case "thickness": gLineThickness = Double(value)
             case   "stretch": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
@@ -76,7 +76,7 @@ class ZPreferencesController: ZGenericController {
     @IBAction func colorBoxAction(_ iColorBox: ZColorWell) {
         let color = iColorBox.color
 
-        if  let     identifier = convertFromOptionalNSUserInterfaceItemIdentifier(iColorBox.identifier) {
+        if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iColorBox.identifier) {
             switch (identifier) {
             case "drag targets":               gRubberbandColor = color
             case   "background":               gBackgroundColor = color
@@ -106,7 +106,7 @@ class ZPreferencesController: ZGenericController {
 
     @IBAction func segmentedControlAction(_ iControl: ZSegmentedControl) {
         let          selection = iControl.selectedSegment
-        if  let     identifier = convertFromOptionalNSUserInterfaceItemIdentifier(iControl.identifier) {
+        if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
             switch (identifier) {
             case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; gControllers.signalFor(nil, regarding: .eRelayout)
             case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!
@@ -116,10 +116,4 @@ class ZPreferencesController: ZGenericController {
         }
     }
 
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromOptionalNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
-	guard let input = input else { return nil }
-	return input.rawValue
 }
