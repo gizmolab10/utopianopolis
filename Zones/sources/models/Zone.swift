@@ -929,13 +929,47 @@ class Zone : ZRecord {
         return false
     }
 
+    
+    var isVisible: Bool {
+        var isVisible = true
+        
+        traverseAncestors { iAncestor -> ZTraverseStatus in
+            let showing = iAncestor.showingChildren
+            
+            if      iAncestor != self {
+                if  iAncestor == gHere || !showing {
+                    isVisible = showing
+                }
+                
+                return .eStop
+            }
+            
+            return .eContinue
+        }
+        
+        return isVisible
+    }
+
+    
+    func asssureIsVisible() {
+        traverseAncestors { iAncestor -> ZTraverseStatus in
+            iAncestor.revealChildren()
+            
+            if  iAncestor == gHere {
+                return .eStop
+            }
+
+            return .eContinue
+        }
+    }
+    
 
     func spawnedBy(_ iZone: Zone?) -> Bool { return iZone == nil ? false : spawnedByAny(of: [iZone!]) }
     func traverseAncestors(_ block: ZoneToStatusClosure) { safeTraverseAncestors(visited: [], block) }
 
 
     func spawnedByAny(of iZones: [Zone]) -> Bool {
-        var wasSpawned: Bool = false
+        var wasSpawned = false
 
         if  iZones.count > 0 {
             traverseAncestors { iAncestor -> ZTraverseStatus in

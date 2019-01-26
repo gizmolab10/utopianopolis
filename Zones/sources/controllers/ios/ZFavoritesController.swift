@@ -41,7 +41,7 @@ class ZFavoritesController : ZGenericController {
 
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-        if ![.search, .found, .startup].contains(iKind),
+        if ![.eSearch, .eFound, .eStartup].contains(iKind),
             let selector = favoritesSelector {
 
             selector.apportionsSegmentWidthsByContent = true
@@ -58,7 +58,7 @@ class ZFavoritesController : ZGenericController {
         let    index = iControl.numberOfSegments - iControl.selectedSegment - 1
         let favorite = favorites[index]
 
-        gFocus.focus(through: favorite) {
+        gFocusing.focus(through: favorite) {
             gControllers.syncToCloudAfterSignalFor(nil, regarding: .eRelayout, onCompletion: nil)
         }
     }

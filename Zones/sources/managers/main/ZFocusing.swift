@@ -254,12 +254,22 @@ class ZFocusing: NSObject {
             let     targetDBID = targetZRecord.databaseID,
             let   targetRecord = targetZRecord.record {
             let targetRecordID = targetRecord.recordID
+            let        iTarget = iBookmark.bookmarkTarget
+            
             var   there: Zone?
 
             if  iBookmark.isInFavorites {
                 gFavorites.currentFavorite = iBookmark
             }
 
+            if let  target = iTarget, target.spawnedBy(gHere) {
+                target.asssureIsVisible()
+                target.grab()
+                atArrival(gHere, .eRelayout)
+
+                return
+            }
+            
             pushHere()
             debugDump()
 
@@ -270,7 +280,7 @@ class ZFocusing: NSObject {
                 // TRAVEL TO A DIFFERENT GRAPH //
                 /////////////////////////////////
 
-                if  let target = iBookmark.bookmarkTarget, target.isFetched { // e.g., default root favorite
+                if  let target = iTarget, target.isFetched { // e.g., default root favorite
                     focus {
                         gHere  = target
 
@@ -340,7 +350,7 @@ class ZFocusing: NSObject {
     }
 
 
-    func maybeTravelThrough(_ iZone: Zone, onCompletion: Closure?) {
+    func maybeTravelThrough(_ iZone: Zone, onCompletion: Closure? = nil) {
         if     !travelThroughBookmark(iZone, onCompletion: onCompletion) {
             if !travelThroughHyperlink(iZone) {
                 travelThroughEmail(iZone)

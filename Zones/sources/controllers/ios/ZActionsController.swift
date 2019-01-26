@@ -37,7 +37,9 @@ class ZActionsController : ZGenericController {
 
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-        if ![.search, .found].contains(iKind),
+        let ignoreThese: [ZSignalKind] = [.eSearch, .eFound]
+
+        if !ignoreThese.contains(iKind),
             let          selector = actionsSelector {
             var             index = 0
             let            insert = { (iTitle: ZActionTitle) -> Void in
@@ -77,11 +79,11 @@ class ZActionsController : ZGenericController {
             case .eRefresh: refresh()
             case .eCut:     gGraphEditor.delete()
             case .eNew:     gGraphEditor.addIdea()
-            case .eHang:    gBatch.unHang()
-            case .eUndo:    gGraphEditor.undo.undo()
+            case .eHang:    gBatches.unHang()
+            case .eUndo:    gGraphEditor.undoManager.undo()
             case .eNext:    gGraphEditor.addNext() { iChild in iChild.edit() }
-            case .eFocus:   gFocus.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
-            case .eTravel:  gFocus.maybeTravelThrough(gSelecting.currentMoveable)
+            case .eFocus:   gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
+            case .eTravel:  gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
             case .ePrefs:   break
             case .eHelp:    break
             }
@@ -90,8 +92,8 @@ class ZActionsController : ZGenericController {
 
 
     func refresh() {
-        gBatch.unHang()
-        gWidgets     .clear()
+        gBatches.unHang()
+        gWidgets            .clearRegistry()
         gEditorController?  .clear()
         gControllers        .startupCloudAndUI()
     }
