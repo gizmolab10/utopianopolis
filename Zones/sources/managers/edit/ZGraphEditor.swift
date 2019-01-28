@@ -158,9 +158,9 @@ class ZGraphEditor: NSObject {
                     case "`":      travelToOtherGraph()
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
-                    case ";":      doFavorites(true,    false)
-                    case "?":      CONTROL ? openBrowserForFocusWebsite() : showHideKeyboardShortcuts()
+                    case ";":      doFavorites(true,   false)
                     case "'":      doFavorites(SHIFT, OPTION)
+                    case "?":      CONTROL ? openBrowserForFocusWebsite() : showHideKeyboardShortcuts()
                     case "/":      SPECIAL ? showHideKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, COMMAND) { self.redrawSyncRedraw() }
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
                     case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }

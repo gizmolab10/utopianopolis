@@ -661,7 +661,7 @@ DQ
                                 </connections>
                             </containerView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="7Xp-a1-ELl">
-                                <rect key="frame" x="0.0" y="256" width="450" height="44"/>
+                                <rect key="frame" x="0.0" y="256" width="158" height="44"/>
                                 <subviews>
                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="FIL-gM-cda" userLabel="Insertion Mode Button" customClass="ZTriangleButton" customModule="Thoughtful" customModuleProvider="target">
                                         <rect key="frame" x="20" y="15" width="14" height="14"/>
@@ -718,7 +718,7 @@ DQ
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ZJm-cp-b2a" secondAttribute="trailing" constant="20" symbolic="YES" id="EdN-my-cCt"/>
                                     <constraint firstItem="ZJm-cp-b2a" firstAttribute="centerY" secondItem="7Xp-a1-ELl" secondAttribute="centerY" id="GAI-C2-CMh"/>
                                     <constraint firstItem="EPW-en-GHT" firstAttribute="centerY" secondItem="7Xp-a1-ELl" secondAttribute="centerY" id="KvO-zo-H7b"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Ose-Yo-X08" secondAttribute="trailing" constant="20" symbolic="YES" id="LLu-zi-3NN"/>
+                                    <constraint firstAttribute="trailing" secondItem="Ose-Yo-X08" secondAttribute="trailing" constant="20" symbolic="YES" id="LLu-zi-3NN"/>
                                     <constraint firstItem="Ose-Yo-X08" firstAttribute="leading" secondItem="EPW-en-GHT" secondAttribute="trailing" constant="8" id="OaM-Bo-xJz"/>
                                     <constraint firstItem="EPW-en-GHT" firstAttribute="leading" secondItem="ZJm-cp-b2a" secondAttribute="trailing" constant="8" id="Ovu-GH-YcO"/>
                                     <constraint firstItem="ZJm-cp-b2a" firstAttribute="leading" secondItem="FIL-gM-cda" secondAttribute="trailing" constant="8" id="ame-ZT-S7F"/>
@@ -761,7 +761,6 @@ DQ
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="DdE-29-U0K"/>
                             <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="F3i-M3-bpQ"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GKq-sx-Y6r"/>
-                            <constraint firstAttribute="trailing" secondItem="7Xp-a1-ELl" secondAttribute="trailing" id="GiG-PS-nay"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
                             <constraint firstItem="7Xp-a1-ELl" firstAttribute="bottom" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="JhQ-nB-Rkg"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="V3R-5b-vYA"/>

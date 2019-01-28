@@ -223,7 +223,7 @@ class ZFocusing: NSObject {
                 parent?.revealChildren()
                 parent?.needChildren()
                 travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
-                    gFavorites.updateAllFavorites()
+                    gFavorites.updateAllFavorites(iObject as? Zone)
                     atArrival()
                 }
 
@@ -262,10 +262,10 @@ class ZFocusing: NSObject {
                 gFavorites.currentFavorite = iBookmark
             }
 
-            if let  target = iTarget, target.spawnedBy(gHere) {
+            if  let target = iTarget, target.spawnedBy(gHere) {
                 target.asssureIsVisible()
                 target.grab()
-                atArrival(gHere, .eRelayout)
+                atArrival(target, .eRelayout)
 
                 return
             }

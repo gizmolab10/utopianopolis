@@ -233,8 +233,8 @@ class ZFavorites: NSObject {
     }
 
     
-    func updateCurrentFavorite(reveal: Bool = false) {
-        if  let     favorite = favoriteTargetting(gHere),
+    func updateCurrentFavorite(_ currentZone: Zone? = nil, reveal: Bool = false) {
+        if  let     favorite = favoriteTargetting(currentZone ?? gHere),
             let       target = favorite.bookmarkTarget,
             (gHere == target || !(currentFavorite?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
             currentFavorite = favorite
@@ -261,7 +261,7 @@ class ZFavorites: NSObject {
 
     
 
-    @discardableResult func updateAllFavorites() -> Bool {
+    @discardableResult func updateAllFavorites(_ currentZone: Zone? = nil) -> Bool {
 
         ////////////////////////////////////////////////
         // assure at least one root favorite per db   //
@@ -389,7 +389,7 @@ class ZFavorites: NSObject {
         }
 
         updateWorkingFavorites()
-        updateCurrentFavorite()
+        updateCurrentFavorite(currentZone)
         
         return missingLost || missingTrash || hasDuplicate
     }
@@ -428,6 +428,11 @@ class ZFavorites: NSObject {
             let zone = self.zoneAtIndex(iIndex)
 
             if !gFocusing.focus(through: zone, atArrival) {
+
+                ////////////////////
+                // error: RECURSE //
+                ////////////////////
+
                 bump?(self.next(iIndex, forward))
             }
         }
