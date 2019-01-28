@@ -22,20 +22,40 @@ var gMainController: ZMainController? { return gControllers.controllerForID(.mai
 class ZMainController: ZGenericController {
 
 
-    @IBOutlet var detailsWidth:       NSLayoutConstraint?
-    @IBOutlet var searchBoxHeight:    NSLayoutConstraint?
-    @IBOutlet var searchResultsView:  ZView?
-    @IBOutlet var searchBoxView:      ZView?
-    @IBOutlet var detailView:         ZView?
-    @IBOutlet var editorView:         ZView?
-    override  var controllerID:       ZControllerID { return .main }
+    @IBOutlet var detailsWidth:        NSLayoutConstraint?
+    @IBOutlet var searchBoxHeight:     NSLayoutConstraint?
+    @IBOutlet var searchResultsView:   ZView?
+    @IBOutlet var searchBoxView:       ZView?
+    @IBOutlet var detailView:          ZView?
+    @IBOutlet var editorView:          ZView?
+    @IBOutlet var browsingModeLabel:   ZTextField?
+    @IBOutlet var insertionModeLabel:  ZTextField?
+    @IBOutlet var browsingModeButton:  ZTriangleButton?
+    @IBOutlet var insertionModeButton: ZTriangleButton?
+    override  var controllerID:        ZControllerID { return .main }
 
 
     override func setup() {
         searchBoxView?    .isHidden = true
         searchResultsView?.isHidden = true
+        
+        updateModeInformation()
     }
 
+
+    @IBAction func insertionModeButtonAction(sender: ZButton) {
+        gInsertionMode = gInsertionsFollow ? .precede : .follow
+        
+        gControllers.signalFor(nil, multiple: [.ePreferences, .eMain])
+    }
+    
+    
+    @IBAction func browsingModeButtonAction(sender: ZButton) {
+        gBrowsingMode = gBrowsingIsConfined ? .cousinJumps : .confined
+        
+        gControllers.signalFor(nil, multiple: [.ePreferences, .eMain])
+    }
+    
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         let  hideSearch = gWorkMode != .searchMode
@@ -53,8 +73,17 @@ class ZMainController: ZGenericController {
 
                 assignAsFirstResponder(nil)
             }
-        default: break
+        default:
+            updateModeInformation()
         }
     }
 
+    
+    func updateModeInformation() {
+        insertionModeButton?.setState(gInsertionsFollow)
+        browsingModeButton? .setState(!gBrowsingIsConfined)
+        insertionModeLabel?.text = "new ideas " + (gInsertionsFollow ? "follow" : "precede")
+        browsingModeLabel? .text = "vertical browsing " + (gBrowsingIsConfined ? "is confined to" : "can jump outside") + " siblings"
+    }
+    
 }

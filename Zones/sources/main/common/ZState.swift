@@ -41,6 +41,7 @@ var                 gIsDark:               Bool { return gDarkMode == .Dark }
 var                 gIsLate:               Bool { return gBatches.isLate }
 var             gIsDragging:               Bool { return gDraggedZone != nil }
 var   gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
+var     gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
 var       gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var         gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var             gEditorView:      ZoneDragView? { return gEditorController?.editorView }

@@ -154,6 +154,7 @@
 		0CB6199F1FB3C4660087B066 /* ZEditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZEditorController.swift */; };
 		0CB619A01FB3C4660087B066 /* ZEditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZEditorController.swift */; };
 		0CB619A11FB3C4660087B066 /* ZEditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZEditorController.swift */; };
+		A70F850B21FEAC6100BEC649 /* ZTriangleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70F850921FEAAEA00BEC649 /* ZTriangleButton.swift */; };
 		A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0021729B02003D4BDA /* Main.storyboard */; };
 		A7245E0121729B18003D4BDA /* Details.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0321729B18003D4BDA /* Details.storyboard */; };
 		A7245E0921729FFE003D4BDA /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
@@ -303,6 +304,7 @@
 		0CB619941FB3C4660087B066 /* ZSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSearchController.swift; sourceTree = "<group>"; };
 		0CB619951FB3C4660087B066 /* ZEditorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEditorController.swift; sourceTree = "<group>"; };
 		0CD921791D8F4C3200F80964 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		A70F850921FEAAEA00BEC649 /* ZTriangleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTriangleButton.swift; sourceTree = "<group>"; };
 		A7245DFF21729B02003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A7245E0221729B18003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Details.storyboard; sourceTree = "<group>"; };
 		A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZShortcutsController.swift; sourceTree = "<group>"; };
@@ -310,7 +312,7 @@
 		A7395BAD21B877B600F5759F /* ZTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTextEditor.swift; sourceTree = "<group>"; };
 		A7395BAE21B877B600F5759F /* ZGraphEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphEditor.swift; sourceTree = "<group>"; };
 		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Shortcuts.storyboard; sourceTree = "<group>"; };
-		A746D466219F637A00123A0A /* desktop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = desktop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A746D466219F637A00123A0A /* Thoughtful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thoughtful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7D3C23C21F6A70300B64B83 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		A7D3C25821FAB6A000B64B83 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iPhone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhone.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -517,6 +519,7 @@
 				0C39B2891F182EBB0091F4D1 /* ZoneWidget.swift */,
 				0C39B28A1F182EBB0091F4D1 /* ZoneWindow.swift */,
 				0C39B28B1F182EBB0091F4D1 /* ZStackableView.swift */,
+				A70F850921FEAAEA00BEC649 /* ZTriangleButton.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -676,7 +679,7 @@
 			isa = PBXGroup;
 			children = (
 				0CA04B491D2ECF41001892E5 /* iPad.app */,
-				A746D466219F637A00123A0A /* desktop.app */,
+				A746D466219F637A00123A0A /* Thoughtful.app */,
 				A7D3C25F21FAB6ED00B64B83 /* iPhone.app */,
 			);
 			name = products;
@@ -712,9 +715,9 @@
 			productReference = A7D3C25F21FAB6ED00B64B83 /* iPhone.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0CA04B131D2ECF1A001892E5 /* desktop */ = {
+		0CA04B131D2ECF1A001892E5 /* Thoughtful */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "desktop" */;
+			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Thoughtful" */;
 			buildPhases = (
 				0CA04B101D2ECF1A001892E5 /* Sources */,
 				0C1EC7C820A8D91F005E2DA2 /* ShellScript */,
@@ -726,9 +729,9 @@
 			);
 			dependencies = (
 			);
-			name = desktop;
+			name = Thoughtful;
 			productName = Zones;
-			productReference = A746D466219F637A00123A0A /* desktop.app */;
+			productReference = A746D466219F637A00123A0A /* Thoughtful.app */;
 			productType = "com.apple.product-type.application";
 		};
 		0CA04B481D2ECF41001892E5 /* iPad */ = {
@@ -820,7 +823,7 @@
 			targets = (
 				0C69C9861F09CD95004D026D /* iPhone */,
 				0CA04B481D2ECF41001892E5 /* iPad */,
-				0CA04B131D2ECF1A001892E5 /* desktop */,
+				0CA04B131D2ECF1A001892E5 /* Thoughtful */,
 			);
 		};
 /* End PBXProject section */
@@ -952,6 +955,7 @@
 				0C39B2E51F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				0C39B2A61F182EBB0091F4D1 /* ZDetailsController.swift in Sources */,
 				0C39B38D1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
+				A70F850B21FEAC6100BEC649 /* ZTriangleButton.swift in Sources */,
 				0C39B3841F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
 				0CB619981FB3C4660087B066 /* ZSearchResultsController.swift in Sources */,
 				0C39B28E1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
@@ -1438,7 +1442,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "desktop" */ = {
+		0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Thoughtful" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0CA04B3D1D2ECF1B001892E5 /* Debug */,

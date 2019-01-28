@@ -88,7 +88,7 @@ class ZShortcutsController: ZGenericTableController {
         let          type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1)))
         let        prefix = text.substring(toExclusive: 4)
 
-        if  text.length == 0 {
+        if  text.isEmpty {
             text = "   \t         \t" // for empty lines, including after last row in first column array
         }
         

@@ -281,7 +281,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             } else if exitKeys.contains(key) { // N.B. test key first since getInput has a possible side-effect of exiting search
                 if  let controller = gSearchController,
                     let text = controller.searchBoxText,
-                    text.length > 0 {
+                    !text.isEmpty {
                     
                     return controller.handleEvent(event)
                     

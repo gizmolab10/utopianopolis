@@ -180,9 +180,14 @@ class ZControllers: NSObject {
             }
         }
     }
-
-
+    
+    
     func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure? = nil) {
+        signalFor(object, multiple: [regarding], onCompletion: onCompletion)
+    }
+
+
+    func signalFor(_ object: Any?, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
         FOREGROUND(canBeDirect: true) {
             self.updateNeededCounts() // clean up after adding or removing children
             
@@ -193,17 +198,19 @@ class ZControllers: NSObject {
                 let        isMain = identifier == .main
                 let      isDetail = isInformation || isPreferences || isDebug
                 
-                let closure = {
-                    signalObject.closure(object, regarding)                    
-                }
-
-                switch regarding {
-                case .eMain:        if isMain        { closure() }
-                case .eDebug:       if isDebug       { closure() }
-                case .eDetails:     if isDetail      { closure() }
-                case .eInformation: if isInformation { closure() }
-                case .ePreferences: if isPreferences { closure() }
-                default:                               closure()
+                for regarding in multiple {
+                    let closure = {
+                        signalObject.closure(object, regarding)
+                    }
+                    
+                    switch regarding {
+                    case .eMain:        if isMain        { closure() }
+                    case .eDebug:       if isDebug       { closure() }
+                    case .eDetails:     if isDetail      { closure() }
+                    case .eInformation: if isInformation { closure() }
+                    case .ePreferences: if isPreferences { closure() }
+                    default:                               closure()
+                    }
                 }
             }
 

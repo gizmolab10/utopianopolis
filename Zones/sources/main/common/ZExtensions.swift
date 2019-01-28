@@ -528,7 +528,7 @@ extension Array {
             if let message = closure(object) {
                 string.append("\(separator)\(message)")
 
-                if  separator.length == 0 {
+                if  separator.isEmpty {
                     separator.appendSpacesToLength(kLogTabStop)
 
                     separator = "\n\(separator)"
@@ -705,8 +705,8 @@ extension String {
             before = before.substring(toExclusive: before.length - 1) // strip trailing space
         }
 
-        if !before.ends(with: kSpace) && !after.starts(with: kSpace) {
-            before = before + kSpace // add missing space
+        if !before.ends(with: kSpace) && !after.starts(with: kSpace) && !after.isEmpty {
+            before = before + kSpace // add separator space when after is not empty
         }
         
         return before + after

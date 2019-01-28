@@ -405,14 +405,14 @@ class ZGraphEditor: NSObject {
             if  OPTION {
                 gBrowsingMode  = PERIOD ? .cousinJumps : .confined
             } else {
-                gInsertionMode = PERIOD ? .follow : .precede
+                gInsertionMode = PERIOD ? .follow      : .precede
                 
                 if  gIsEditingText {
                     swapAndResumeEdit()
                 }
             }
-            
-            gControllers.signalFor(nil, regarding: .ePreferences)
+
+            gControllers.signalFor(nil, multiple: [.ePreferences, .eMain])
         } else if !PERIOD {
             gDetailsController?.toggleViewsFor(ids: [.Preferences])
         } else if gIsEditingText {
@@ -2167,7 +2167,7 @@ class ZGraphEditor: NSObject {
 
     
     func moveUp(_ iMoveUp: Bool = true, _ original: Zone, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
-        let doCousinJump = gBrowsingMode == .cousinJumps
+        let doCousinJump = !gBrowsingIsConfined
         let       isHere = original == gHere
         let       parent = original.parentZone
 

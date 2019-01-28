@@ -109,8 +109,8 @@ class ZPreferencesController: ZGenericController {
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
             switch (identifier) {
             case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; gControllers.signalFor(nil, regarding: .eRelayout)
-            case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!
-            case "direction": gInsertionMode = ZInsertionMode(rawValue: selection)!
+            case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!; gControllers.signalFor(nil, regarding: .eMain)
+            case "direction": gInsertionMode = ZInsertionMode(rawValue: selection)!; gControllers.signalFor(nil, regarding: .eMain)
             default: break
             }
         }

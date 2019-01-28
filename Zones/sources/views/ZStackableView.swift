@@ -22,7 +22,7 @@ class ZStackableView: ZView {
     @IBOutlet var       bannerView : ZView?
     @IBOutlet var     hideableView : ZView?
     @IBOutlet var      titleButton : ZButton?
-    @IBOutlet var       toggleIcon : ZButton?
+    @IBOutlet var       toggleIcon : ZTriangleButton?
     @IBOutlet var   stackableBelow : ZStackableView?
     let               debugViewIDs : [ZDetailsViewID] = [.Debug, .Tools]
     var                isDebugView : Bool { return debugViewIDs.contains(identity) }
@@ -80,7 +80,7 @@ class ZStackableView: ZView {
         }
 
         if !isDebugView || gShowDebugDetails {
-            updateToggleImage()
+            toggleIcon?.setState(!hideHideable)
             updateBannerGradient()
             updateHideableView()
         }
@@ -94,19 +94,6 @@ class ZStackableView: ZView {
             gradientLayer.colors = [gDarkerBackgroundColor, gLighterBackgroundColor]
             gradientView.zlayer.insertSublayer(gradientLayer, at: 0)
         }
-    }
-
-
-    func updateToggleImage() {
-        #if os(OSX)
-        var image = ZImage(named: kTriangleImageName)
-
-        if !hideHideable {
-            image = (image?.imageRotatedByDegrees(180.0))! as ZImage
-        }
-
-        toggleIcon?.image = image
-        #endif
     }
 
 
