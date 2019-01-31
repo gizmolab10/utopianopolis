@@ -210,6 +210,18 @@ class ZFocusing: NSObject {
             }
         }
     }
+    
+    
+    func focus(on: Zone, _ atArrival: @escaping Closure) {
+        pushHere()
+        
+        gHere = on
+
+        focus {
+            gHere.grab()
+            atArrival()
+        }
+    }
 
 
     @discardableResult func focus(through iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {

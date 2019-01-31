@@ -30,13 +30,27 @@ class ZShortcutsController: ZGenericTableController {
 
     var tabStops = [NSTextTab]()
     override var controllerID: ZControllerID { return .shortcuts }
+    let bold = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        var values: [Int] = []
+        var offset = 0
+        
+        for _ in 0...3 {
+            values.append(offset)
+            values.append(offset + 20)
+            values.append(offset + 85)
+            
+            offset += 290
+        }
 
-        for value in [20, 85, 290, 310, 375, 580, 600, 665] {
-            tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: convertToNSTextTabOptionKeyDictionary([:])))
+        for value in values {
+            if value != 0 {
+                tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: convertToNSTextTabOptionKeyDictionary([:])))
+            }
         }
 
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
@@ -62,17 +76,19 @@ class ZShortcutsController: ZGenericTableController {
 
 
     override func numberOfRows(in tableView: ZTableView) -> Int {
-        return max(columnOne.count, max(columnTwo.count, columnThree.count))
+        return max(columnOne.count, max(columnTwo.count, max(columnThree.count, columnFour.count)))
     }
     
     
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
         let      paragraph = NSMutableParagraphStyle()
         paragraph.tabStops = tabStops
-        let     attributed = attributedString(for: row, column: 0)
+        let     attributed =  attributedString(for: row, column: 0)
 
-        attributed.append(   attributedString(for: row, column: 1))
-        attributed.append(   attributedString(for: row, column: 2))
+        for column in 1...3 {
+            attributed.append(attributedString(for: row, column: column))
+        }
+
         attributed.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, attributed.length))
 
         return attributed
@@ -80,12 +96,12 @@ class ZShortcutsController: ZGenericTableController {
     
     
     func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
-        let columnStrings = [columnOne, columnTwo, columnThree]
+        let columnStrings = [columnOne, columnTwo, columnThree, columnFour]
         let       strings = columnStrings[column]
         let           raw = row >= strings.count ? "" : strings[row]
-        var          text = raw.substring(with: NSMakeRange(1, raw.length - 1))
+        let          type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1))) // grab first character
+        var          text = raw.substring(with: NSMakeRange(1, raw.length - 1))             // grab remaining characters
         var    attributes = [String : Any] ()
-        let          type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1)))
         let        prefix = text.substring(toExclusive: 4)
 
         if  text.isEmpty {
@@ -94,7 +110,6 @@ class ZShortcutsController: ZGenericTableController {
         
         switch type {
         case .bold?:
-            let   bold = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
             attributes = [NSAttributedString.Key.font.rawValue: bold as Any]
         case .underline?:
             text       = text.substring(fromInclusive: 4) // remove underline from leading spaces
@@ -118,7 +133,7 @@ class ZShortcutsController: ZGenericTableController {
         }
 
         result.append(NSAttributedString(string: "      \t"))
-        
+
         return result
     }
 
@@ -143,6 +158,7 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "u    CONTROL + KEY",
         "     \tCOMMA      \tnext ideas precede",
+        "     \tDELETE     \tshow trash",
         "     \tPERIOD     \tnext ideas follow",
         "     \tSPACE      \tcreate an idea",
         "",
@@ -160,8 +176,12 @@ class ZShortcutsController: ZGenericTableController {
         "     \tCOMMA      \tnext ideas precede, move idea up",
         "     \tPERIOD     \tnext ideas follow, move idea down",
         "",
+    ]
+    
+    
+    let columnTwo: [String] = [
         "",
-        "b  WHILE EDITING AND TEXT IS SELECTED:",
+        "bWHILE EDITING AND TEXT IS SELECTED:",
         "",
         "u    COMMAND + OPTION + KEY",
         "     \tD          \tcreate parent with text",
@@ -173,22 +193,48 @@ class ZShortcutsController: ZGenericTableController {
         "     \tL          \tlowercase",
         "     \tU          \tuppercase",
         "",
+        "",
+        "bWHEN SEARCH BAR IS VISIBLE:",
+        "",
+        "u    KEY",
+        "     \tRETURN     \tperform search",
+        "     \tESCAPE     \tdismisss search bar",
+        "",
+        "u    COMMAND + KEY",
+        "     \tA          \tselect all search text",
+        "     \tF          \tdismisss search bar",
+        "",
+        "",
+        "bWHEN SEARCH RESULTS ARE VISIBLE:",
+        "",
+        "u    ARROW KEY",
+        "     \tRIGHT      \tfocus on selected result",
+        "",
+        "",
+        "bWHILE SELECTING MULTIPLE IDEAS:",
+        "",
+        "u    KEY",
+        "     \tHYPHEN     \tif first selected is line, -> parent",
+        "     \tN          \talphabetize",
+        "     \tO          \tsort by length",
+        "     \t#          \tmark with ascending numbers",
+        "",
     ]
 
 
-    let columnTwo: [String] = [
+    let columnThree: [String] = [
         "",
-        "b                                     WHILE BROWSING (NOT EDITING TEXT):",
+        "b                                  WHILE BROWSING (NOT EDITING TEXT):",
         "",
         "u    KEY",
         "     \tARROWS     \tnavigate within graph",
+        "     \tCOMMA      \tnext ideas precede",
         "     \tDELETE     \tselected idea (and progeny)",
-        "     \tCOMMA      \tcreated ideas precede",
         "     \tHYPHEN     \tadd line, or [un]title it",
-        "     \tPERIOD     \tcreated ideas follow",
+        "     \tPERIOD     \tnext ideas follow",
         "     \tSPACE      \tcreate an idea",
         "     \tmark with: \t" + kMarkingCharacters,
-        "     \t/          \tfocus or create/select/delete favorite",
+        "     \t/          \tbecome focus or manage favorite",
         "     \t;          \tprevious favorite",
         "     \t'          \tnext favorite",
         "     \t[          \t-> back to prior focus",
@@ -207,27 +253,19 @@ class ZShortcutsController: ZGenericTableController {
         "     \tK          \texport to a Thoughtful file",
         "     \tL          \t-> lowercase",
         "     \tM          \trefetch children of selection",
-        "     \tN          \talphabetize",
-        "     \tO          \tsort by length",
         "     \tP          \tprint the graph",
         "     \tR          \treverse order",
         "     \tT          \tswap selected idea with parent",
         "     \tU          \t-> uppercase",
+    ]
+    
+    
+    let columnFour: [String] = [
+        "",
+        "",
         "",
         "u    SHIFT + MOUSE CLICK (with or without drag)",
         "     \t           \t[un]extend selection",
-        "",
-        "b  WHILE SELECTING MORE THAN ONE IDEA:",
-        "",
-        "u    KEY",
-        "     \tHYPHEN     \tif first selected is line, -> parent",
-        "     \t#          \tmark with ascending numbers",
-        ]
-    
-    
-    let columnThree: [String] = [
-        "",
-        "",
         "",
         "u    COMMAND + OPTION + KEY",
         "     \tDELETE     \tpermanently (not into trash)",
@@ -237,7 +275,7 @@ class ZShortcutsController: ZGenericTableController {
         "u    SHIFT + ARROW KEY",
         "     \tRIGHT      \treveal children",
         "     \tLEFT       \thide children",
-        "     \tUP DOWN    \textend selection",
+        "     \tvertical   \textend selection",
         "",
         "u    COMMAND + KEY",
         "     \tARROWS     \textend all the way",
@@ -255,25 +293,8 @@ class ZShortcutsController: ZGenericTableController {
         "     \tN          \talphabetize backwards",
         "     \tO          \tsort backwards by length",
         "",
-        "",
-        "b        WHEN SEARCH BAR IS VISIBLE:",
-        "",
-        "u    KEY",
-        "     \tRETURN     \tperform search",
-        "     \tESCAPE     \tdismisss search bar",
-        "",
-        "u    COMMAND + KEY",
-        "     \tA          \tselect all search text",
-        "     \tF          \tdismisss search bar",
-        "",
-        "",
-        "b     WHEN SEARCH RESULTS ARE VISIBLE:",
-        "",
-        "u    ARROW KEY",
-        "     \tRIGHT      \tfocus on selected result",
-        "",
     ]
-    
+
 }
 
 // Helper function inserted by Swift 4.2 migrator.

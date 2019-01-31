@@ -83,6 +83,7 @@ class ZGraphEditor: NSObject {
             let COMMAND = flags.isCommand
             let  OPTION = flags.isOption
             var   SHIFT = flags.isShift
+            let FLAGGED = CONTROL || COMMAND || OPTION
             let   arrow = key.arrow
             
             if  key    != key.lowercased() {
@@ -98,7 +99,7 @@ class ZGraphEditor: NSObject {
                 let editedZone = gEditedTextWidget?.widgetZone
                 if  let      a = arrow {
                     gTextEditor.handleArrow(a, flags: flags)
-                } else if COMMAND || CONTROL || OPTION {
+                } else if FLAGGED {
                     switch key {
                     case "a":      gEditedTextWidget?.selectAllText()
                     case "d":      if OPTION { addParentFromSelectedText(inside: editedZone) } else { addIdeaFromSelectedText(inside: editedZone) }
@@ -109,6 +110,8 @@ class ZGraphEditor: NSObject {
                     case "/":      gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kSpace:   addIdea()
+                    case kBackspace,
+                         kDelete:  if CONTROL { focusOnTrash() }
                     default:       return false // false means key not handled
                     }
                 } else {
@@ -122,7 +125,6 @@ class ZGraphEditor: NSObject {
                 let    widget = gWidgets.currentMovableWidget
                 let hasWidget = widget != nil
                 let   SPECIAL = COMMAND && OPTION
-                let   FLAGGED = CONTROL || COMMAND || OPTION
                 
                 widget?.widgetZone?.deferWrite()
                 
@@ -168,7 +170,7 @@ class ZGraphEditor: NSObject {
                     case "z":      if COMMAND { if SHIFT { kUndoManager.redo() } else { kUndoManager.undo() } }
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
                     case kBackspace,
-                         kDelete:  if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
+                         kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
                     case "\r":     if hasWidget { grabOrEdit(COMMAND, OPTION) }
                     default:       return false // false means key not handled
                     }
@@ -329,6 +331,15 @@ class ZGraphEditor: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+    
+    
+    func focusOnTrash() {
+        if  let trash = gTrash {
+            gFocusing.focus(on: trash) {
+                gControllers.signalFor(nil, regarding: .eRelayout)
+            }
+        }
+    }
 
     
     func combineIntoParent(_ iChild: Zone?) {
@@ -1517,7 +1528,6 @@ class ZGraphEditor: NSObject {
         } else {
             zone.needChildren()
             zone.revealChildren()
-            gControllers.signalFor(nil, regarding: .eData)
 
             gBatches.children(.restore) { iSame in
                 if  zone.count > 0,
