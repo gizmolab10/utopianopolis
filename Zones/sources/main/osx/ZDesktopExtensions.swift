@@ -296,15 +296,30 @@ extension NSView {
 
         return gesture
     }
+    
+    
+    func scale(for isHorizontal: Bool) -> Double {
+        let       length = Double(isHorizontal ? bounds.size.width : bounds.size.height)
+        let     divident = 7200.0 * (isHorizontal ? 9.0 : 6.5) // (inches) * 72 (dpi) * 100 (percent)
+        let        scale = divident / length
 
+        return scale
+    }
+
+    
+    var scale: Double {
+        let wScale = scale(for: true)
+        let hScale = scale(for: false)
+
+        return min(wScale, hScale)
+    }
+    
 
     func printView() {
         let    printInfo = NSPrintInfo.shared
         let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
         let      isWider = bounds.size.width > bounds.size.height
         let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
-        let       length = Double(isWider ? bounds.size.width : bounds.size.height)
-        let        scale = 46800.0 / length // 72 (dpi) * 6.5 (inches) * 100 (percent)
         
         PMSetScale(pmPageFormat, scale)
         PMSetOrientation(pmPageFormat, orientation, false)

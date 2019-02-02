@@ -63,6 +63,8 @@ class ZShortcutsController: ZGenericTableController {
             switch key {
             case "?", "/":         gGraphEditor.showHideKeyboardShortcuts()
             case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
+            case "p":              gShortcuts?.view.printView()
+
             default: break
             }
         }
@@ -151,6 +153,7 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "u    COMMAND + KEY",
         "     \tCOMMA      \tshow or hide preferences",
+        "     \tP          \tprint the graph (or this window)",
         "",
         "u    OPTION + KEY",
         "     \tCOMMA      \tconfine browsing to one idea",
@@ -166,10 +169,10 @@ class ZShortcutsController: ZGenericTableController {
         "b                WHILE EDITING TEXT:",
         "",
         "u    KEY",
-        "     \tESCAPE     \tcancel edit, restore text",
+        "     \tESCAPE     \tcancel edit, discarding changes",
         "",
         "u    COMMAND + KEY",
-        "     \tPERIOD     \tcancel edit, restore text",
+        "     \tPERIOD     \tcancel edit, discarding changes",
         "     \tA          \tselect all text",
         "",
         "u    CONTROL + KEY",
@@ -248,7 +251,7 @@ class ZShortcutsController: ZGenericTableController {
         "     \tE          \tcreate or edit email",
         "     \tF          \tfind in cloud",
         "     \tH          \tcreate or edit hyperlink",
-        "     \tI          \tcolor the text",
+        "     \tI          \t[un]color the text",
         "     \tJ          \timport from Thoughtful file",
         "     \tK          \texport to a Thoughtful file",
         "     \tL          \t-> lowercase",

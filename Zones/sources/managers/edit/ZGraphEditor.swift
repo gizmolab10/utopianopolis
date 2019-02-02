@@ -91,11 +91,7 @@ class ZGraphEditor: NSObject {
                 SHIFT   = true
             }
 
-            if  gIsShortcutsFrontmost {
-                if  key == "p" {
-                    gShortcuts?.view.printView()
-                }
-            } else if gIsEditingText {
+            if  gIsEditingText {
                 let editedZone = gEditedTextWidget?.widgetZone
                 if  let      a = arrow {
                     gTextEditor.handleArrow(a, flags: flags)
@@ -105,6 +101,7 @@ class ZGraphEditor: NSObject {
                     case "d":      if OPTION { addParentFromSelectedText(inside: editedZone) } else { addIdeaFromSelectedText(inside: editedZone) }
                     case "f":      search(OPTION)
                     case "i":      toggleColorized()
+                    case "p":      gHere.widget?.printView()
                     case "?":      showHideKeyboardShortcuts()
                     case "-":      return editedZone?.convertToLine() ?? false // false means key not handled
                     case "/":      gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }

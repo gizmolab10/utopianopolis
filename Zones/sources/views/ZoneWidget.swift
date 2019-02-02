@@ -522,7 +522,7 @@ class ZoneWidget: ZView {
                 addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: zone.color.cgColor)
             }
 
-            if  (isGrabbed || isEditing) && !(kIsPhone && isHere) {
+            if  (isGrabbed || isEditing) && !gIsPrinting && !(kIsPhone && isHere) {
                 drawSelectionHighlight(isEditing)
             }
 
