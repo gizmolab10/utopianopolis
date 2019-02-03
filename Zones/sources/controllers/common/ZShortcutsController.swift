@@ -104,10 +104,10 @@ class ZShortcutsController: ZGenericTableController {
         let          type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1))) // grab first character
         var          text = raw.substring(with: NSMakeRange(1, raw.length - 1))             // grab remaining characters
         var    attributes = [String : Any] ()
-        let        prefix = text.substring(toExclusive: 4)
+        var        prefix = " "
 
         if  text.isEmpty {
-            text = "   \t         \t" // for empty lines, including after last row in first column array
+            text = "   \t         \t" // for empty lines, including after last row
         }
         
         switch type {
@@ -115,23 +115,18 @@ class ZShortcutsController: ZGenericTableController {
             attributes = [NSAttributedString.Key.font.rawValue: bold as Any]
         case .underline?:
             attributes = [NSAttributedString.Key.underlineStyle.rawValue: 1 as Any]
-            text       = text.substring(fromInclusive: 4) // remove underline from leading spaces
-            
-            
+            prefix     = "   "
         default:
             break
         }
 
         var result = NSMutableAttributedString(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
+        let intermediate = NSMutableAttributedString(string: prefix)
         
-        if  type  != nil && type! == .underline { // re-insert leading spaces
-            let intermediate = NSMutableAttributedString(string: prefix)
-
-            intermediate.append(result)
-
-            result = intermediate
-        }
+        intermediate.append(result)
         
+        result = intermediate
+
         if  text.length < 9 && row != 1 {
             result.append(NSAttributedString(string: "\t")) // KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough subsequent tabs
         }
@@ -146,22 +141,22 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "bALWAYS:\t",
         "",
-        "u    KEY",
+        "uKEY",
         "     \tRETURN     \tbegin or end typing",
         "     \tTAB        \tcreate next idea",
         "",
-        "u    + COMMAND + OPTION",
+        "u+ COMMAND + OPTION",
         "     \t/          \tshow or hide this window",
         "",
-        "u    + COMMAND",
+        "u+ COMMAND",
         "     \tCOMMA      \tshow or hide preferences",
         "     \tP          \tprint the graph (or this window)",
         "",
-        "u    + OPTION",
+        "u+ OPTION",
         "     \tCOMMA      \tconfine browsing to one idea",
         "     \tPERIOD     \tbrowse unconfined",
         "",
-        "u    + CONTROL",
+        "u+ CONTROL",
         "     \tCOMMA      \tnext ideas precede",
         "     \tDELETE     \tshow trash",
         "     \tPERIOD     \tnext ideas follow",
@@ -170,14 +165,14 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "bWHILE EDITING TEXT:",
         "",
-        "u    KEY",
+        "uKEY",
         "     \tESCAPE     \tcancel edit, discarding changes",
         "",
-        "u    + COMMAND",
+        "u+ COMMAND",
         "     \tPERIOD     \tcancel edit, discarding changes",
         "     \tA          \tselect all text",
         "",
-        "u    + CONTROL",
+        "u+ CONTROL",
         "     \tCOMMA      \tnext ideas precede, move idea up",
         "     \tPERIOD     \tnext ideas follow, move idea down",
     ]
@@ -187,10 +182,10 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "bWHILE EDITING AND TEXT IS SELECTED:",
         "",
-        "u    + COMMAND + OPTION",
+        "u+ COMMAND + OPTION",
         "     \tD          \tcreate parent with text",
         "",
-        "u    + COMMAND",
+        "u+ COMMAND",
         "     \tHYPHEN     \tconvert text to or from titled line",
         "",
         "     \tD          \tappend onto parent (if all selected)",
@@ -198,29 +193,29 @@ class ZShortcutsController: ZGenericTableController {
         "     \tU          \tuppercase",
         "",
         "",
-        "bWHEN SEARCH BAR IS VISIBLE:",
+        "bWITH VISIBLE SEARCH BAR:",
         "",
-        "u    KEY",
+        "uKEY",
         "     \tRETURN     \tperform search",
         "     \tESCAPE     \tdismisss search bar",
         "",
-        "u    + COMMAND",
+        "u+ COMMAND",
         "     \tA          \tselect all search text",
         "     \tF          \tdismisss search bar",
         "",
         "",
-        "bWHEN SEARCH RESULTS ARE VISIBLE:",
+        "bWITH VISIBLE SEARCH RESULTS:",
         "",
-        "u    ARROW KEY",
+        "uARROW KEY",
         "     \tRIGHT      \tfocus on selected result",
         "",
         "",
-        "bWHILE SELECTING MULTIPLE IDEAS:",
+        "bWITH MULTIPLE SELECTED IDEAS:",
         "",
-        "u    KEY",
+        "uKEY",
         "     \tHYPHEN     \tif first selected is line, -> parent",
-        "     \tN          \talphabetize",
-        "     \tO          \tsort by length",
+        "     \tM          \tsort by length (+ OPTION -> backwards)",
+        "     \tN          \talphabetize (+ OPTION -> backwards)",
         "     \t#          \tmark with ascending numbers",
     ]
 
@@ -229,21 +224,20 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "bWHILE BROWSING (NOT EDITING TEXT):",
         "",
-        "u    KEY",
+        "     \tmark with: \t" + kMarkingCharacters,
+        "",
+        "uKEY",
         "     \tARROWS     \tnavigate within graph",
         "     \tCOMMA      \tnext ideas precede",
         "     \tDELETE     \tselected idea (and progeny)",
         "     \tHYPHEN     \tadd line, or [un]title it",
         "     \tPERIOD     \tnext ideas follow",
         "     \tSPACE      \tcreate an idea",
-        "     \tmark with: \t" + kMarkingCharacters,
         "",
         "     \t/          \tbecome focus or manage favorite",
-        "     \t;          \tprevious favorite",
-        "     \t'          \tnext favorite",
+        "     \t\\         \tswitch to other graph",
         "     \t[          \t-> back to prior focus",
         "     \t]          \t-> forward, opposite of [",
-        "     \t`          \tswitch to other graph",
         "     \t=          \tuse hyperlink or email",
         "",
         "     \tA          \tselect all ideas",
@@ -251,17 +245,17 @@ class ZShortcutsController: ZGenericTableController {
         "     \tC          \trecenter the graph",
         "     \tD          \tduplicate",
         "     \tE          \tcreate or edit email",
-        "     \tF          \tfind in cloud",
+        "     \tF          \tsearch",
+        "     \tG          \trefetch children of selection",
         "     \tH          \tcreate or edit hyperlink",
         "     \tI          \t[un]color the text",
         "     \tL          \t-> lowercase",
-        "     \tM          \trefetch children of selection",
+        "     \tO          \timport from Thoughtful file",
         "     \tP          \tprint the graph",
         "     \tR          \treverse order",
+        "     \tS          \texport to a Thoughtful file",
         "     \tT          \tswap selected idea with parent",
         "     \tU          \t-> uppercase",
-        "     \tV          \timport from Thoughtful file",
-        "     \tW          \texport to a Thoughtful file",
     ]
     
     
@@ -269,19 +263,17 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "",
         "",
-        "u    + OPTION",
+        "u+ OPTION",
         "     \tARROWS     \trelocate selected idea",
         "     \tDELETE     \tretaining children",
         "     \tRETURN     \tedit (with cursor at end)",
         "     \tTAB        \tnew idea containing",
         "",
         "     \tM          \trefetch entire subgraph of selection",
-        "     \tN          \talphabetize backwards",
-        "     \tO          \tsort backwards by length",
-        "     \tV          \timport from outline file",
-        "     \tW          \texport to a outline file",
+        "     \tO          \timport from outline file",
+        "     \tS          \texport to a outline file",
         "",
-        "u    + COMMAND",
+        "u+ COMMAND",
         "     \tARROWS     \textend all the way",
         "     \tRETURN     \tdeselect",
         "",
@@ -289,18 +281,18 @@ class ZShortcutsController: ZGenericTableController {
         "     \tD          \tappend onto parent",
         "     \tM          \trefetch entire graph",
         "",
-        "u    + COMMAND + OPTION",
+        "u+ COMMAND + OPTION",
         "     \tDELETE     \tpermanently (not into trash)",
         "     \tHYPHEN     \t-> to[from] titled line, retain children",
         "",
         "     \tO          \tshow data files in Finder",
         "",
-        "u    SHIFT + ARROW KEY",
+        "uSHIFT + ARROW KEY",
         "     \tRIGHT      \treveal children",
         "     \tLEFT       \thide children",
         "     \tvertical   \textend selection",
         "",
-        "u    SHIFT + MOUSE CLICK (with or without drag)",
+        "uSHIFT + MOUSE CLICK (with or without drag)",
         "     \t           \t[un]extend selection",
     ]
 

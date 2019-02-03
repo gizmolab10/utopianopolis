@@ -43,7 +43,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         let    flags = event.modifierFlags
         let  COMMAND = flags.isCommand
         let      key = string[string.startIndex].description
-        let isReturn = key == "\r"
+        let isReturn = key == kReturn
         let    state = gSearching.state
         let  isEntry = state == .entry
         

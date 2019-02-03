@@ -654,8 +654,8 @@ class Zone : ZRecord {
 
 
     var nextAccess: ZoneAccess? {
-        let  inherited  = parentZone?.inheritedAccess
-        var     access  = next(after: directAccess) ?? next(after: inherited, allowReadOnly: false)
+        let  inherited  = parentZone?.inheritedAccess ?? .eProgenyWritable
+        var     access  = next(after: directAccess) ?? next(after: inherited)
         
         if  inherited  == .eProgenyWritable {
             if  access == .eWritable {
@@ -671,10 +671,10 @@ class Zone : ZRecord {
     }
     
     
-    func next(after: ZoneAccess?, allowReadOnly: Bool = true) -> ZoneAccess? {
+    func next(after: ZoneAccess?) -> ZoneAccess? {
         if  let    access = after {
             switch access {
-            case .eProgenyWritable: return allowReadOnly ? .eReadOnly : .eProgenyWritable
+            case .eProgenyWritable: return .eReadOnly
             case .eWritable:        return .eProgenyWritable
             case .eReadOnly:        return .eWritable
             default:                break
@@ -1463,7 +1463,7 @@ class Zone : ZRecord {
         let  margin = " " * (modulus * iInset)
         let    type = ZOutlineLevelType(rawValue: indices.character(at: iInset % modulus))
         let  letter = String.character(at: iIndex, for: type!)
-        var  string = margin + letter + marks.character(at: iInset / modulus) + " " + unwrappedName + "\r"
+        var  string = margin + letter + marks.character(at: iInset / modulus) + " " + unwrappedName + kReturn
 
         for (index, child) in children.enumerated() {
             string += child.outlineString(for: iInset + 1, at: index)

@@ -33,7 +33,7 @@
                 <customObject id="Upg-eY-ED5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <viewController id="cD6-C4-FJ5" customClass="ZShortcutsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="OMb-DG-XS6">
-                        <rect key="frame" x="0.0" y="0.0" width="1160" height="740"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1166" height="740"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView misplaced="YES" borderType="none" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
@@ -43,13 +43,13 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowSizeStyle="automatic" viewBased="YES" id="H0M-2O-9lo">
-                                            <rect key="frame" x="0.0" y="0.0" width="1163" height="740"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1169" height="740"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" white="1" alpha="0.0" colorSpace="deviceWhite"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn editable="NO" width="1160" minWidth="40" maxWidth="1200" id="d2P-5m-o56">
+                                                <tableColumn editable="NO" width="1166" minWidth="40" maxWidth="1200" id="d2P-5m-o56">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -73,7 +73,7 @@
                                 </clipView>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="740" id="JkF-QK-zNX"/>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="1160" id="Mj8-Ir-XUr"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="1166" id="Mj8-Ir-XUr"/>
                                 </constraints>
                                 <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="gZ2-AK-2KD">
                                     <rect key="frame" x="0.0" y="724" width="1160" height="16"/>

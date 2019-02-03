@@ -269,7 +269,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             let        flags = event.modifierFlags
             let      COMMAND = flags.isCommand
             let          key = string[string.startIndex].description
-            let     exitKeys = ["\r", "f", kEscape]
+            let     exitKeys = [kReturn, "f", kEscape]
             
             if  let    arrow = key.arrow {
                 switch arrow {

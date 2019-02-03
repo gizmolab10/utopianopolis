@@ -705,7 +705,9 @@ extension ZFiles {
             let  suffix = asOutline ? "outline" : "thoughtful"
             let   panel = NSOpenPanel()
             panel.title = "Import as \(suffix)"
-            panel.resolvesAliases = false
+            panel.allowedFileTypes = [suffix]
+            panel.resolvesAliases = true
+            panel.canChooseDirectories = false
             panel.canResolveUbiquitousConflicts = false
             panel.canDownloadUbiquitousContents = false
             

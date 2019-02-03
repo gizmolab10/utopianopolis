@@ -65,7 +65,7 @@
                                 <menu key="submenu" title="File" id="fri-jg-8iG">
                                     <items>
                                         <menuItem title="Show in Finder" keyEquivalent="o" id="tay-ah-w3c">
-                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="yol-4a-D1G"/>
                                             </connections>
@@ -87,17 +87,16 @@
                                                 </items>
                                             </menu>
                                         </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="HAP-GI-54c"/>
                                         <menuItem title="Export Selected Idea" id="MEe-fC-PR1">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Export Selected Idea" id="LGH-w5-scL">
                                                 <items>
-                                                    <menuItem title="As Thoughtful ..." keyEquivalent="w" id="rRM-8z-pgs">
+                                                    <menuItem title="As Thoughtful ..." keyEquivalent="s" id="rRM-8z-pgs">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Ap8-05-pSP"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="As Outline ..." keyEquivalent="w" id="0dE-tl-v2P">
+                                                    <menuItem title="As Outline ..." keyEquivalent="s" id="0dE-tl-v2P">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="3HO-Fu-Pct"/>
@@ -110,7 +109,7 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Import into Selected Idea" id="nne-nT-Cug">
                                                 <items>
-                                                    <menuItem title="From Thoughtful File ..." keyEquivalent="v" id="oOd-mA-5D1">
+                                                    <menuItem title="From Thoughtful File ..." keyEquivalent="o" id="oOd-mA-5D1">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="OI6-tT-JiO"/>
                                                         </connections>
@@ -466,16 +465,16 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="eu9-bn-x3u"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="Sort by Length" alternate="YES" keyEquivalent="m" id="j8B-vL-Xli">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="fkF-e4-fgy"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="Alphabetize" keyEquivalent="n" id="UXb-P4-5bD">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="7H4-rt-OwO"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Sort by Length" alternate="YES" keyEquivalent="o" id="j8B-vL-Xli">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="fkF-e4-fgy"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="Reverse" keyEquivalent="r" id="Ryh-sT-7Zr">

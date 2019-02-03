@@ -137,38 +137,36 @@ class ZGraphEditor: NSObject {
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
                     case "e":      editTrait(for: .eEmail)
                     case "f":      search(OPTION)
+                    case "g":      refetch(COMMAND, OPTION)
                     case "h":      editTrait(for: .eHyperlink)
                     case "i":      toggleColorized()
                     case "l":      alterCase(up: false)
-                    case "m":      refetch(COMMAND, OPTION)
+                    case "m":      orderByLength(OPTION)
                     case "n":      alphabetize(OPTION)
-                    case "o":      if COMMAND { if OPTION { gFiles.showInFinder() } else { gFiles.open() } } else { orderByLength(OPTION) }
+                    case "o":      if !FLAGGED { gFiles.showInFinder() } else { gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() } }
                     case "p":      gHere.widget?.printView()
                     case "q":      gApplication.terminate(self)
                     case "r":      reverse()
-                    case "s":      if COMMAND { gFiles.saveAs() } else { selectCurrentFavorite() }
+                    case "s":      gFiles.exportToFile(asOutline: OPTION, for: gSelecting.currentMoveable)
                     case "t":      swapWithParent()
                     case "u":      alterCase(up: true)
-                    case "v":      gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() }
-                    case "w":      gFiles  .exportToFile(asOutline: OPTION,        for: gSelecting.currentMoveable)
+                    case "w":      rotateWritable()
                     case "y":      if SPECIAL { sendEmailBugReport() }
-                    case "z":      if !COMMAND { rotateWritable() } else { if SHIFT { kUndoManager.redo() } else { kUndoManager.undo() } }
+                    case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
                     case "+":      divideChildren()
                     case "-":      if !COMMAND || !OPTION { addLine() } else { delete(permanently: false, preserveChildren: true, convertToTitledLine: true) }
-                    case "`":      travelToOtherGraph()
+                    case "\\":     travelToOtherGraph()
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
-                    case ";":      doFavorites(true,   false)
-                    case "'":      doFavorites(SHIFT, OPTION)
                     case "?":      CONTROL ? openBrowserForFocusWebsite() : showHideKeyboardShortcuts()
                     case "/":      SPECIAL ? showHideKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, COMMAND) { self.redrawSyncRedraw() }
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
-                    case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
+                    case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
-                    case "\r":     if hasWidget { grabOrEdit(COMMAND, OPTION) }
+                    case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) }
                     default:       return false // false means key not handled
                     }
                 }
@@ -255,7 +253,7 @@ class ZGraphEditor: NSObject {
 
 
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
-        let alterers = "ehiluw\r" + kMarkingCharacters
+        let alterers = "ehiltuw\r" + kMarkingCharacters
         let  COMMAND = flags.isCommand
 
         if  alterers.contains(key) {             return .eAlter
@@ -265,12 +263,11 @@ class ZGraphEditor: NSObject {
             case "?":                            return .eHelp
             case "f":                            return .eFind
             case "m":                            return .eCloud
-            case "t":                            return .eAlter
             case "z":                            return .eUndo
-            case "o", "r":                       return  COMMAND ? .eFiles : .eSort
+            case "#", "r":                       return .eSort
             case "x", kSpace:                    return .eChild
             case "b", kTab, kDelete, kBackspace: return .eParent
-            case "v", "w":                       return .eFiles
+            case "o", "s":                       return .eFiles
             case "d":                            return  COMMAND ? .eAlter : .eParent
             default:                             return .eAlways
             }
@@ -311,7 +308,6 @@ class ZGraphEditor: NSObject {
             case .eRedo:      valid = undo.canRedo
             case .eTravel:    valid = mover.canTravel
             case .eCloud:     valid = gHasInternet && gCloudAccountIsActive
-            case .eFiles:     valid = flags.contains(.command)
             default:          break
             }
         } else if arrow == nil {
