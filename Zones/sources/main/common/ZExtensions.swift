@@ -608,7 +608,36 @@ extension String {
         return before
     }
 
+    
+    /// remove underline from leading spaces
+    var smartStripped: String {     //
+        var altered = substring(fromInclusive: 4)
+//        let lastIndex = altered.length - 1
+//
+//        if  altered[lastIndex] == "+" {
+//            altered = altered.substring(toExclusive: lastIndex)
+//        }
 
+        altered = altered.stripped
+
+        return altered
+    }
+    
+    
+    subscript (r: Range<Int>) -> String {
+        let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)),
+                                            upper: min(length, max(0, r.upperBound))))
+        let start = index(startIndex, offsetBy: range.lowerBound)
+        let end = index(start, offsetBy: range.upperBound - range.lowerBound)
+        return String(self[start ..< end])
+    }
+
+
+    subscript (i: Int) -> String {
+        return self[i ..< i + 1]
+    }
+
+    
     static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
     func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }
     func substring(toExclusive:   Int) -> String  { return String(self[..<index(at: toExclusive)]) }

@@ -74,16 +74,16 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Refetch From Cloud" id="8DN-3Y-Czr">
                                                 <items>
-                                                    <menuItem title="Immediate Children" keyEquivalent="m" id="zJA-h5-V9Q">
+                                                    <menuItem title="Immediate Children" keyEquivalent="g" id="zJA-h5-V9Q">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="fGc-Io-AZM"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="All Progeny" keyEquivalent="m" id="gsR-6T-rn2">
+                                                    <menuItem title="All Progeny" keyEquivalent="g" id="gsR-6T-rn2">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                     </menuItem>
-                                                    <menuItem title="Entire Graph" keyEquivalent="m" id="aki-zt-Ii9"/>
+                                                    <menuItem title="Entire Graph" keyEquivalent="g" id="aki-zt-Ii9"/>
                                                 </items>
                                             </menu>
                                         </menuItem>
@@ -92,12 +92,12 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Export Selected Idea" id="LGH-w5-scL">
                                                 <items>
-                                                    <menuItem title="As Thoughtful ..." keyEquivalent="k" id="rRM-8z-pgs">
+                                                    <menuItem title="As Thoughtful ..." keyEquivalent="w" id="rRM-8z-pgs">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Ap8-05-pSP"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="As Outline ..." keyEquivalent="k" id="0dE-tl-v2P">
+                                                    <menuItem title="As Outline ..." keyEquivalent="w" id="0dE-tl-v2P">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="3HO-Fu-Pct"/>
@@ -110,7 +110,7 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Import into Selected Idea" id="nne-nT-Cug">
                                                 <items>
-                                                    <menuItem title="From Thoughtful File ..." keyEquivalent="j" id="oOd-mA-5D1">
+                                                    <menuItem title="From Thoughtful File ..." keyEquivalent="v" id="oOd-mA-5D1">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="OI6-tT-JiO"/>
                                                         </connections>
@@ -683,7 +683,7 @@ DQ
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="33" id="fbD-eT-5tV"/>
                                         </constraints>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="gSp-bf-Kfa">
-                                            <font key="font" metaFont="system" size="11"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -708,7 +708,7 @@ DQ
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="33" id="9eH-6V-Kh5"/>
                                         </constraints>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="X4i-cH-9id">
-                                            <font key="font" metaFont="system" size="11"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>

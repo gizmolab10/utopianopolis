@@ -139,9 +139,7 @@ class ZGraphEditor: NSObject {
                     case "f":      search(OPTION)
                     case "h":      editTrait(for: .eHyperlink)
                     case "i":      toggleColorized()
-                    case "j":      gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() }
-                    case "k":      gFiles  .exportToFile(asOutline: OPTION,        for: gSelecting.currentMoveable)
-                    case "l", "u": alterCase(up: key == "u")
+                    case "l":      alterCase(up: false)
                     case "m":      refetch(COMMAND, OPTION)
                     case "n":      alphabetize(OPTION)
                     case "o":      if COMMAND { if OPTION { gFiles.showInFinder() } else { gFiles.open() } } else { orderByLength(OPTION) }
@@ -150,8 +148,11 @@ class ZGraphEditor: NSObject {
                     case "r":      reverse()
                     case "s":      if COMMAND { gFiles.saveAs() } else { selectCurrentFavorite() }
                     case "t":      swapWithParent()
-                    case "w":      rotateWritable()
+                    case "u":      alterCase(up: true)
+                    case "v":      gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() }
+                    case "w":      gFiles  .exportToFile(asOutline: OPTION,        for: gSelecting.currentMoveable)
                     case "y":      if SPECIAL { sendEmailBugReport() }
+                    case "z":      if !COMMAND { rotateWritable() } else { if SHIFT { kUndoManager.redo() } else { kUndoManager.undo() } }
                     case "+":      divideChildren()
                     case "-":      if !COMMAND || !OPTION { addLine() } else { delete(permanently: false, preserveChildren: true, convertToTitledLine: true) }
                     case "`":      travelToOtherGraph()
@@ -164,7 +165,6 @@ class ZGraphEditor: NSObject {
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
                     case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
-                    case "z":      if COMMAND { if SHIFT { kUndoManager.redo() } else { kUndoManager.undo() } }
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
@@ -268,14 +268,12 @@ class ZGraphEditor: NSObject {
             case "t":                            return .eAlter
             case "z":                            return .eUndo
             case "o", "r":                       return  COMMAND ? .eFiles : .eSort
-            case "v", "x", kSpace:               return .eChild
+            case "x", kSpace:                    return .eChild
             case "b", kTab, kDelete, kBackspace: return .eParent
-            case "j", "k":                       return .eFiles
+            case "v", "w":                       return .eFiles
             case "d":                            return  COMMAND ? .eAlter : .eParent
-            default: break
+            default:                             return .eAlways
             }
-
-            return .eAlways
         }
     }
 

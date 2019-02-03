@@ -114,8 +114,10 @@ class ZShortcutsController: ZGenericTableController {
         case .bold?:
             attributes = [NSAttributedString.Key.font.rawValue: bold as Any]
         case .underline?:
-            text       = text.substring(fromInclusive: 4) // remove underline from leading spaces
             attributes = [NSAttributedString.Key.underlineStyle.rawValue: 1 as Any]
+            text       = text.substring(fromInclusive: 4) // remove underline from leading spaces
+            
+            
         default:
             break
         }
@@ -130,11 +132,11 @@ class ZShortcutsController: ZGenericTableController {
             result = intermediate
         }
         
-        if  text.length < 8 && column != (columnStrings.count - 1) {
+        if  text.length < 9 && row != 1 {
             result.append(NSAttributedString(string: "\t")) // KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough subsequent tabs
         }
 
-        result.append(NSAttributedString(string: "      \t"))
+        result.append(NSAttributedString(string: "     \t"))
 
         return result
     }
@@ -142,43 +144,42 @@ class ZShortcutsController: ZGenericTableController {
 
     let columnOne: [String] = [
         "",
-        "b                         ALWAYS:\t",
+        "bALWAYS:\t",
         "",
         "u    KEY",
         "     \tRETURN     \tbegin or end typing",
         "     \tTAB        \tcreate next idea",
         "",
-        "u    COMMAND + OPTION + KEY",
+        "u    + COMMAND + OPTION",
         "     \t/          \tshow or hide this window",
         "",
-        "u    COMMAND + KEY",
+        "u    + COMMAND",
         "     \tCOMMA      \tshow or hide preferences",
         "     \tP          \tprint the graph (or this window)",
         "",
-        "u    OPTION + KEY",
+        "u    + OPTION",
         "     \tCOMMA      \tconfine browsing to one idea",
         "     \tPERIOD     \tbrowse unconfined",
         "",
-        "u    CONTROL + KEY",
+        "u    + CONTROL",
         "     \tCOMMA      \tnext ideas precede",
         "     \tDELETE     \tshow trash",
         "     \tPERIOD     \tnext ideas follow",
         "     \tSPACE      \tcreate an idea",
         "",
         "",
-        "b                WHILE EDITING TEXT:",
+        "bWHILE EDITING TEXT:",
         "",
         "u    KEY",
         "     \tESCAPE     \tcancel edit, discarding changes",
         "",
-        "u    COMMAND + KEY",
+        "u    + COMMAND",
         "     \tPERIOD     \tcancel edit, discarding changes",
         "     \tA          \tselect all text",
         "",
-        "u    CONTROL + KEY",
+        "u    + CONTROL",
         "     \tCOMMA      \tnext ideas precede, move idea up",
         "     \tPERIOD     \tnext ideas follow, move idea down",
-        "",
     ]
     
     
@@ -186,12 +187,12 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "bWHILE EDITING AND TEXT IS SELECTED:",
         "",
-        "u    COMMAND + OPTION + KEY",
+        "u    + COMMAND + OPTION",
         "     \tD          \tcreate parent with text",
         "",
-        "u    COMMAND + KEY",
+        "u    + COMMAND",
         "     \tHYPHEN     \tconvert text to or from titled line",
-        "     \tD          \tcreate child with text",
+        "",
         "     \tD          \tappend onto parent (if all selected)",
         "     \tL          \tlowercase",
         "     \tU          \tuppercase",
@@ -203,7 +204,7 @@ class ZShortcutsController: ZGenericTableController {
         "     \tRETURN     \tperform search",
         "     \tESCAPE     \tdismisss search bar",
         "",
-        "u    COMMAND + KEY",
+        "u    + COMMAND",
         "     \tA          \tselect all search text",
         "     \tF          \tdismisss search bar",
         "",
@@ -221,13 +222,12 @@ class ZShortcutsController: ZGenericTableController {
         "     \tN          \talphabetize",
         "     \tO          \tsort by length",
         "     \t#          \tmark with ascending numbers",
-        "",
     ]
 
 
     let columnThree: [String] = [
         "",
-        "b                                  WHILE BROWSING (NOT EDITING TEXT):",
+        "bWHILE BROWSING (NOT EDITING TEXT):",
         "",
         "u    KEY",
         "     \tARROWS     \tnavigate within graph",
@@ -237,6 +237,7 @@ class ZShortcutsController: ZGenericTableController {
         "     \tPERIOD     \tnext ideas follow",
         "     \tSPACE      \tcreate an idea",
         "     \tmark with: \t" + kMarkingCharacters,
+        "",
         "     \t/          \tbecome focus or manage favorite",
         "     \t;          \tprevious favorite",
         "     \t'          \tnext favorite",
@@ -244,6 +245,7 @@ class ZShortcutsController: ZGenericTableController {
         "     \t]          \t-> forward, opposite of [",
         "     \t`          \tswitch to other graph",
         "     \t=          \tuse hyperlink or email",
+        "",
         "     \tA          \tselect all ideas",
         "     \tB          \tcreate a bookmark",
         "     \tC          \trecenter the graph",
@@ -252,14 +254,14 @@ class ZShortcutsController: ZGenericTableController {
         "     \tF          \tfind in cloud",
         "     \tH          \tcreate or edit hyperlink",
         "     \tI          \t[un]color the text",
-        "     \tJ          \timport from Thoughtful file",
-        "     \tK          \texport to a Thoughtful file",
         "     \tL          \t-> lowercase",
         "     \tM          \trefetch children of selection",
         "     \tP          \tprint the graph",
         "     \tR          \treverse order",
         "     \tT          \tswap selected idea with parent",
         "     \tU          \t-> uppercase",
+        "     \tV          \timport from Thoughtful file",
+        "     \tW          \texport to a Thoughtful file",
     ]
     
     
@@ -267,12 +269,30 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "",
         "",
-        "u    SHIFT + MOUSE CLICK (with or without drag)",
-        "     \t           \t[un]extend selection",
+        "u    + OPTION",
+        "     \tARROWS     \trelocate selected idea",
+        "     \tDELETE     \tretaining children",
+        "     \tRETURN     \tedit (with cursor at end)",
+        "     \tTAB        \tnew idea containing",
         "",
-        "u    COMMAND + OPTION + KEY",
+        "     \tM          \trefetch entire subgraph of selection",
+        "     \tN          \talphabetize backwards",
+        "     \tO          \tsort backwards by length",
+        "     \tV          \timport from outline file",
+        "     \tW          \texport to a outline file",
+        "",
+        "u    + COMMAND",
+        "     \tARROWS     \textend all the way",
+        "     \tRETURN     \tdeselect",
+        "",
+        "     \t/          \trefocus current favorite",
+        "     \tD          \tappend onto parent",
+        "     \tM          \trefetch entire graph",
+        "",
+        "u    + COMMAND + OPTION",
         "     \tDELETE     \tpermanently (not into trash)",
         "     \tHYPHEN     \t-> to[from] titled line, retain children",
+        "",
         "     \tO          \tshow data files in Finder",
         "",
         "u    SHIFT + ARROW KEY",
@@ -280,22 +300,8 @@ class ZShortcutsController: ZGenericTableController {
         "     \tLEFT       \thide children",
         "     \tvertical   \textend selection",
         "",
-        "u    COMMAND + KEY",
-        "     \tARROWS     \textend all the way",
-        "     \tRETURN     \tdeselect",
-        "     \t/          \trefocus current favorite",
-        "     \tD          \tappend onto parent",
-        "     \tM          \trefetch entire graph",
-        "",
-        "u    OPTION + KEY",
-        "     \tARROWS     \trelocate selected idea",
-        "     \tDELETE     \tretaining children",
-        "     \tRETURN     \tedit (with cursor at end)",
-        "     \tTAB        \tnew idea containing",
-        "     \tM          \trefetch entire subgraph of selection",
-        "     \tN          \talphabetize backwards",
-        "     \tO          \tsort backwards by length",
-        "",
+        "u    SHIFT + MOUSE CLICK (with or without drag)",
+        "     \t           \t[un]extend selection",
     ]
 
 }
