@@ -662,7 +662,7 @@ DQ
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="7Xp-a1-ELl">
                                 <rect key="frame" x="0.0" y="256" width="158" height="44"/>
                                 <subviews>
-                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="FIL-gM-cda" userLabel="Insertion Mode Button" customClass="ZTriangleButton" customModule="Thoughtful" customModuleProvider="target">
+                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="FIL-gM-cda" userLabel="Insertion Mode Button" customClass="ZToggleButton" customModule="Thoughtful" customModuleProvider="target">
                                         <rect key="frame" x="20" y="15" width="14" height="14"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="14" id="t3P-gB-8Wb"/>
@@ -687,7 +687,7 @@ DQ
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="EPW-en-GHT" userLabel="Browsing Mode Button" customClass="ZTriangleButton" customModule="Thoughtful">
+                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="EPW-en-GHT" userLabel="Browsing Mode Button" customClass="ZToggleButton" customModule="Thoughtful">
                                         <rect key="frame" x="83" y="15" width="14" height="14"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="14" id="0ry-c5-a9k"/>

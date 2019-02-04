@@ -583,17 +583,27 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    var         inheritedAccess: ZoneAccess { return zoneWithInheritedAccess.directAccess }
-    var          directReadOnly:       Bool { return directAccess == .eReadOnly || directAccess == .eProgenyWritable }
-    var             userCanMove:       Bool { return userHasDirectOwnership || inheritedAccess == .eWritable }
-    var            userCanWrite:       Bool { return userHasDirectOwnership || isTextEditable }
-    var    userCanMutateProgeny:       Bool { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
-    var  userHasDirectOwnership:       Bool { return databaseID == .mineID  || (!gDebugDenyOwnership && !isTrash && !isRootOfFavorites && !isRootOfLostAndFound && (zoneAuthor == gAuthorID || gIsMasterAuthor)) }
+    var      inheritedAccess: ZoneAccess { return zoneWithInheritedAccess.directAccess }
+    var       directReadOnly:       Bool { return directAccess == .eReadOnly || directAccess == .eProgenyWritable }
+    var          userCanMove:       Bool { return userHasDirectOwnership || inheritedAccess == .eWritable }
+    var         userCanWrite:       Bool { return userHasDirectOwnership || isTextEditable }
+    var userCanMutateProgeny:       Bool { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
+    
+    
+    var userHasDirectOwnership: Bool {
+        if  let    t = bookmarkTarget {
+            return t.userHasDirectOwnership
+        }
+        
+        return !isTrash && !isRootOfFavorites && !isRootOfLostAndFound && !gDebugDenyOwnership && (databaseID == .mineID || zoneAuthor == gAuthorID || gIsMasterAuthor)
+    }
 
 
     var directAccess: ZoneAccess {
         get {
-            if  let     value = zoneAccess?.intValue,
+            if  let    t = bookmarkTarget {
+                return t.directAccess
+            } else if let value = zoneAccess?.intValue,
                 ZoneAccess.isDirectlyValid(value) {
                 return ZoneAccess(rawValue: value)!
             }
@@ -602,11 +612,15 @@ class Zone : ZRecord {
         }
 
         set {
-            let                 value = newValue.rawValue
-            let oldValue = zoneAccess?.intValue ?? ZoneAccess.eInherit.rawValue
+            if let t = bookmarkTarget {
+                t.directAccess = newValue
+            } else {
+                let    value = newValue.rawValue
+                let oldValue = zoneAccess?.intValue ?? ZoneAccess.eInherit.rawValue
                 
-            if  oldValue != value {
-                zoneAccess = NSNumber(value: value)
+                if  oldValue != value {
+                    zoneAccess = NSNumber(value: value)
+                }
             }
         }
     }
@@ -641,15 +655,13 @@ class Zone : ZRecord {
     var isTextEditable: Bool {
         if  let    t = bookmarkTarget {
             return t.isTextEditable
-        }
-
-        if  directAccess == .eWritable {
+        } else if directAccess == .eWritable {
             return true
         } else if let p = parentZone, p != self {
             return p.directAccess == .eProgenyWritable || p.isTextEditable
+        } else {
+            return false
         }
-        
-        return false
     }
 
 

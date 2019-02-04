@@ -19,6 +19,7 @@ import Foundation
 enum ZShortcutType: String {
     case bold      = "b"
     case underline = "u"
+    case append    = "+"
 }
 
 
@@ -113,9 +114,14 @@ class ZShortcutsController: ZGenericTableController {
         switch type {
         case .bold?:
             attributes = [NSAttributedString.Key.font.rawValue: bold as Any]
-        case .underline?:
+        case .append?, .underline?:
             attributes = [NSAttributedString.Key.underlineStyle.rawValue: 1 as Any]
             prefix     = "   "
+            
+            if type == .append {
+                prefix += "+ "
+            }
+            
         default:
             break
         }
@@ -145,84 +151,80 @@ class ZShortcutsController: ZGenericTableController {
         "     \tRETURN     \tbegin or end typing",
         "     \tTAB        \tcreate next idea",
         "",
-        "u+ COMMAND + OPTION",
+        "+COMMAND + OPTION",
         "     \t/          \tshow or hide this window",
         "",
-        "u+ COMMAND",
+        "+COMMAND",
         "     \tCOMMA      \tshow or hide preferences",
         "     \tP          \tprint the graph (or this window)",
         "",
-        "u+ OPTION",
+        "+OPTION",
         "     \tCOMMA      \tconfine browsing to one idea",
         "     \tPERIOD     \tbrowse unconfined",
         "",
-        "u+ CONTROL",
+        "+CONTROL",
         "     \tCOMMA      \tnext ideas precede",
         "     \tDELETE     \tshow trash",
         "     \tPERIOD     \tnext ideas follow",
         "     \tSPACE      \tcreate an idea",
         "",
         "",
-        "bWHILE EDITING TEXT:",
-        "",
-        "uKEY",
-        "     \tESCAPE     \tcancel edit, discarding changes",
-        "",
-        "u+ COMMAND",
-        "     \tPERIOD     \tcancel edit, discarding changes",
-        "     \tA          \tselect all text",
-        "",
-        "u+ CONTROL",
-        "     \tCOMMA      \tnext ideas precede, move idea up",
-        "     \tPERIOD     \tnext ideas follow, move idea down",
-    ]
-    
-    
-    let columnTwo: [String] = [
-        "",
-        "bWHILE EDITING AND TEXT IS SELECTED:",
-        "",
-        "u+ COMMAND + OPTION",
-        "     \tD          \tcreate parent with text",
-        "",
-        "u+ COMMAND",
-        "     \tHYPHEN     \tconvert text to or from titled line",
-        "",
-        "     \tD          \tappend onto parent (if all selected)",
-        "     \tL          \tlowercase",
-        "     \tU          \tuppercase",
         "",
         "",
-        "bWITH VISIBLE SEARCH BAR:",
+        "",
+        "bSEARCH BAR:",
         "",
         "uKEY",
         "     \tRETURN     \tperform search",
         "     \tESCAPE     \tdismisss search bar",
         "",
-        "u+ COMMAND",
+        "+COMMAND",
         "     \tA          \tselect all search text",
         "     \tF          \tdismisss search bar",
         "",
+    ]
+
+    
+    let columnTwo: [String] = [
         "",
-        "bWITH VISIBLE SEARCH RESULTS:",
+        "bEDITING TEXT:",
+        "",
+        "uKEY",
+        "     \tESCAPE     \tcancel edit, discarding changes",
+        "",
+        "+COMMAND",
+        "     \tPERIOD     \tcancel edit, discarding changes",
+        "     \tA          \tselect all text",
+        "",
+        "+CONTROL",
+        "     \tCOMMA      \tnext ideas precede, move idea up",
+        "     \tPERIOD     \tnext ideas follow, move idea down",
+        "",
+        "",
+        "bEDITING, TEXT IS SELECTED:",
+        "",
+        "+COMMAND + OPTION",
+        "     \tD          \tcreate parent with text",
+        "",
+        "+COMMAND",
+        "     \tHYPHEN     \tconvert text to or from 'titled line'",
+        "     \tD          \tappend onto parent (if all selected)",
+        "     \tL          \tlowercase",
+        "     \tU          \tuppercase",
+        "",
+        "",
+        "",
+        "bSEARCH RESULTS:",
         "",
         "uARROW KEY",
         "     \tRIGHT      \tfocus on selected result",
         "",
-        "",
-        "bWITH MULTIPLE SELECTED IDEAS:",
-        "",
-        "uKEY",
-        "     \tHYPHEN     \tif first selected is line, -> parent",
-        "     \tM          \tsort by length (+ OPTION -> backwards)",
-        "     \tN          \talphabetize (+ OPTION -> backwards)",
-        "     \t#          \tmark with ascending numbers",
     ]
-
+    
 
     let columnThree: [String] = [
         "",
-        "bWHILE BROWSING (NOT EDITING TEXT):",
+        "bBROWSING (NOT EDITING TEXT):",
         "",
         "     \tmark with: \t" + kMarkingCharacters,
         "",
@@ -230,16 +232,14 @@ class ZShortcutsController: ZGenericTableController {
         "     \tARROWS     \tnavigate within graph",
         "     \tCOMMA      \tnext ideas precede",
         "     \tDELETE     \tselected idea (and progeny)",
-        "     \tHYPHEN     \tadd line, or [un]title it",
+        "     \tHYPHEN     \tadd 'line', or [un]title it",
         "     \tPERIOD     \tnext ideas follow",
         "     \tSPACE      \tcreate an idea",
-        "",
         "     \t/          \tbecome focus or manage favorite",
         "     \t\\         \tswitch to other graph",
         "     \t[          \t-> back to prior focus",
         "     \t]          \t-> forward, opposite of [",
         "     \t=          \tuse hyperlink or email",
-        "",
         "     \tA          \tselect all ideas",
         "     \tB          \tcreate a bookmark",
         "     \tC          \trecenter the graph",
@@ -252,39 +252,35 @@ class ZShortcutsController: ZGenericTableController {
         "     \tL          \t-> lowercase",
         "     \tO          \timport from Thoughtful file",
         "     \tP          \tprint the graph",
-        "     \tR          \treverse order",
+        "     \tR          \treverse order of children",
         "     \tS          \texport to a Thoughtful file",
         "     \tT          \tswap selected idea with parent",
         "     \tU          \t-> uppercase",
+        "",
     ]
     
     
     let columnFour: [String] = [
         "",
-        "",
-        "",
-        "u+ OPTION",
+        "+OPTION",
         "     \tARROWS     \trelocate selected idea",
         "     \tDELETE     \tretaining children",
         "     \tRETURN     \tedit (with cursor at end)",
         "     \tTAB        \tnew idea containing",
-        "",
-        "     \tM          \trefetch entire subgraph of selection",
+        "     \tG          \trefetch entire subgraph of selection",
         "     \tO          \timport from outline file",
         "     \tS          \texport to a outline file",
         "",
-        "u+ COMMAND",
+        "+COMMAND",
         "     \tARROWS     \textend all the way",
         "     \tRETURN     \tdeselect",
-        "",
         "     \t/          \trefocus current favorite",
         "     \tD          \tappend onto parent",
         "     \tM          \trefetch entire graph",
         "",
-        "u+ COMMAND + OPTION",
+        "+COMMAND + OPTION",
         "     \tDELETE     \tpermanently (not into trash)",
-        "     \tHYPHEN     \t-> to[from] titled line, retain children",
-        "",
+        "     \tHYPHEN     \t-> to[from] 'titled line,' retain children",
         "     \tO          \tshow data files in Finder",
         "",
         "uSHIFT + ARROW KEY",
@@ -294,8 +290,19 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "uSHIFT + MOUSE CLICK (with or without drag)",
         "     \t           \t[un]extend selection",
+        "",
+        "",
+        "bMULTIPLE SELECTED IDEAS:",
+        "",
+        "uKEY",
+        "     \tHYPHEN     \tif first selected idea is a 'line,' -> parent",
+        "     \t#          \tmark with ascending numbers",
+        "     \tM          \tsort by length (+ OPTION -> backwards)",
+        "     \tN          \talphabetize (+ OPTION -> backwards)",
+        "     \tR          \treverse order",
+        "",
     ]
-
+    
 }
 
 // Helper function inserted by Swift 4.2 migrator.

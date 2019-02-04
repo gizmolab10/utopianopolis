@@ -30,8 +30,8 @@ class ZMainController: ZGenericController {
     @IBOutlet var editorView:          ZView?
     @IBOutlet var browsingModeLabel:   ZTextField?
     @IBOutlet var insertionModeLabel:  ZTextField?
-    @IBOutlet var browsingModeButton:  ZTriangleButton?
-    @IBOutlet var insertionModeButton: ZTriangleButton?
+    @IBOutlet var browsingModeButton:  ZToggleButton?
+    @IBOutlet var insertionModeButton: ZToggleButton?
     override  var controllerID:        ZControllerID { return .main }
 
 
@@ -39,6 +39,7 @@ class ZMainController: ZGenericController {
         searchBoxView?    .isHidden = true
         searchResultsView?.isHidden = true
         
+        browsingModeButton?.setup(onImage: "arrows", offImage: "dot")
         updateModeInformation()
     }
 

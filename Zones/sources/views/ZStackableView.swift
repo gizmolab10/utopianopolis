@@ -22,7 +22,7 @@ class ZStackableView: ZView {
     @IBOutlet var       bannerView : ZView?
     @IBOutlet var     hideableView : ZView?
     @IBOutlet var      titleButton : ZButton?
-    @IBOutlet var       toggleIcon : ZTriangleButton?
+    @IBOutlet var       toggleIcon : ZToggleButton?
     @IBOutlet var   stackableBelow : ZStackableView?
     let               debugViewIDs : [ZDetailsViewID] = [.Debug, .Tools]
     var                isDebugView : Bool { return debugViewIDs.contains(identity) }
