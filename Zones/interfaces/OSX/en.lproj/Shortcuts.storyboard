@@ -25,7 +25,7 @@
                 </windowController>
                 <customObject id="Dg8-eT-TQQ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-178" y="137"/>
+            <point key="canvasLocation" x="819" y="-631"/>
         </scene>
         <!--Shortcuts Controller-->
         <scene sceneID="OeN-bO-80W">
@@ -36,8 +36,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <scrollView misplaced="YES" borderType="none" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
-                                <rect key="frame" x="0.0" y="60" width="1180" height="780"/>
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" allowsMagnification="YES" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
+                                <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="9Aa-9c-eI8">
                                     <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -75,29 +75,69 @@
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="780" id="JkF-QK-zNX"/>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="1180" id="Mj8-Ir-XUr"/>
                                 </constraints>
-                                <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="gZ2-AK-2KD">
-                                    <rect key="frame" x="0.0" y="764" width="1180" height="16"/>
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="gZ2-AK-2KD">
+                                    <rect key="frame" x="-100" y="-100" width="1165" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Bry-FJ-qLw">
-                                    <rect key="frame" x="1164" y="0.0" width="16" height="780"/>
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Bry-FJ-qLw">
+                                    <rect key="frame" x="-100" y="-100" width="15" height="780"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR">
+                                <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
+                                <subviews>
+                                    <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="FTn-Rn-TNb" userLabel="Short Vertical Line">
+                                        <rect key="frame" x="288" y="270" width="7" height="510"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="510" id="6Ls-A0-H7M"/>
+                                            <constraint firstAttribute="width" constant="3" id="dDP-Ju-Ssy"/>
+                                        </constraints>
+                                    </box>
+                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="GmD-YN-fyP" userLabel="Search Horizontal Line">
+                                        <rect key="frame" x="0.0" y="265" width="580" height="7"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="3" id="ZSv-3N-Vjv"/>
+                                            <constraint firstAttribute="width" constant="580" id="glR-Ny-152"/>
+                                        </constraints>
+                                    </box>
+                                    <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="omi-ld-OCo" userLabel="Center Vertical Line">
+                                        <rect key="frame" x="578" y="0.0" width="7" height="780"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="3" id="gLa-4Z-eGM"/>
+                                        </constraints>
+                                    </box>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="omi-ld-OCo" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="580" id="5Rt-po-OTH"/>
+                                    <constraint firstItem="omi-ld-OCo" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" id="MbP-WD-TWo"/>
+                                    <constraint firstItem="FTn-Rn-TNb" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" id="Vh5-G5-dbH"/>
+                                    <constraint firstItem="GmD-YN-fyP" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" id="Y78-fT-8jS"/>
+                                    <constraint firstItem="FTn-Rn-TNb" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="290" id="gfM-Lu-qfW"/>
+                                    <constraint firstItem="GmD-YN-fyP" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" constant="510" id="qSb-pn-zYT"/>
+                                    <constraint firstAttribute="bottom" secondItem="omi-ld-OCo" secondAttribute="bottom" id="zbL-KC-cTe"/>
+                                </constraints>
+                            </customView>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="zAE-6p-uHR" secondAttribute="trailing" id="8OS-JK-Q3i"/>
                             <constraint firstItem="lJB-I7-wvM" firstAttribute="top" secondItem="OMb-DG-XS6" secondAttribute="top" id="IKq-tX-7lH"/>
+                            <constraint firstAttribute="bottom" secondItem="zAE-6p-uHR" secondAttribute="bottom" id="Q5f-LB-96u"/>
                             <constraint firstAttribute="bottom" secondItem="lJB-I7-wvM" secondAttribute="bottom" id="SPn-h3-VIa"/>
+                            <constraint firstItem="zAE-6p-uHR" firstAttribute="leading" secondItem="OMb-DG-XS6" secondAttribute="leading" id="esZ-Pg-Lqu"/>
                             <constraint firstItem="lJB-I7-wvM" firstAttribute="leading" secondItem="OMb-DG-XS6" secondAttribute="leading" id="vz5-yW-oTj"/>
                             <constraint firstAttribute="trailing" secondItem="lJB-I7-wvM" secondAttribute="trailing" id="xhn-eP-rEE"/>
+                            <constraint firstItem="zAE-6p-uHR" firstAttribute="top" secondItem="OMb-DG-XS6" secondAttribute="top" id="xnq-2b-DMM"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="clipView" destination="9Aa-9c-eI8" id="ALa-Ct-6eI"/>
+                        <outlet property="gridView" destination="zAE-6p-uHR" id="5I0-ey-Ttn"/>
                         <outlet property="tableView" destination="H0M-2O-9lo" id="sLh-j8-4gt"/>
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="690" y="130"/>
+            <point key="canvasLocation" x="819" y="50"/>
         </scene>
     </scenes>
 </document>

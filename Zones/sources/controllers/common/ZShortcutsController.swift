@@ -29,6 +29,8 @@ var gShortcuts: ZShortcutsController? { return gControllers.controllerForID(.sho
 class ZShortcutsController: ZGenericTableController {
 
 
+    @IBOutlet var gridView: ZView?
+    @IBOutlet var clipView: ZView?
     var tabStops = [NSTextTab]()
     override var controllerID: ZControllerID { return .shortcuts }
     let bold = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
@@ -55,6 +57,17 @@ class ZShortcutsController: ZGenericTableController {
         }
 
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
+        
+        if let g = gridView {
+            g.removeFromSuperview()
+            clipView?.addSubview(g)
+
+            g.snp.makeConstraints { make in
+                make.top.bottom.left.right.equalTo(tableView)
+            }
+
+            g.zlayer.backgroundColor = CGColor.clear
+        }
     }
     
     
@@ -105,7 +118,7 @@ class ZShortcutsController: ZGenericTableController {
         let          type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1))) // grab first character
         var          text = raw.substring(with: NSMakeRange(1, raw.length - 1))             // grab remaining characters
         var    attributes = [String : Any] ()
-        var        prefix = " "
+        var        prefix = "   "
 
         if  text.isEmpty {
             text = "   \t         \t" // for empty lines, including after last row
@@ -116,13 +129,13 @@ class ZShortcutsController: ZGenericTableController {
             attributes = [NSAttributedString.Key.font.rawValue: bold as Any]
         case .append?, .underline?:
             attributes = [NSAttributedString.Key.underlineStyle.rawValue: 1 as Any]
-            prefix     = "   "
             
             if type == .append {
                 prefix += "+ "
             }
             
         default:
+            prefix     = " "
             break
         }
 
@@ -250,10 +263,10 @@ class ZShortcutsController: ZGenericTableController {
         "     \tH          \tcreate or edit hyperlink",
         "     \tI          \t[un]color the text",
         "     \tL          \t-> lowercase",
-        "     \tO          \timport from Thoughtful file",
+        "     \tO          \timport from a Thoughtful file",
         "     \tP          \tprint the graph",
         "     \tR          \treverse order of children",
-        "     \tS          \texport to a Thoughtful file",
+        "     \tS          \tsave to a Thoughtful file",
         "     \tT          \tswap selected idea with parent",
         "     \tU          \t-> uppercase",
         "",
