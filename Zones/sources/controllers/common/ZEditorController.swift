@@ -237,7 +237,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
                     }
                 } else { // click on background
                     gTextEditor.stopCurrentEdit()
-                    gHere.grab()
+                    gHereMaybe?.grab()
                     gControllers.signalFor(nil, regarding: .eDatum)
                 }
             }
@@ -407,7 +407,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     func widgetNearest(_ iGesture: ZGestureRecognizer?, isMain: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
         let      rootWidget = isMain ? editorRootWidget : favoritesRootWidget
         if  let    location = iGesture?.location(in: editorView),
-            let dropNearest = rootWidget.widgetNearestTo(location, in: editorView, gHere) {
+            let dropNearest = rootWidget.widgetNearestTo(location, in: editorView, gHereMaybe) {
             if  isMain, !kIsPhone,
 
                 //////////////////////////////////

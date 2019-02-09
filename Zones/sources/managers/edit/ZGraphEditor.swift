@@ -118,7 +118,7 @@ class ZGraphEditor: NSObject {
                     default:       return false // false means key not handled
                     }
                 }
-            } else if  validateKey(key, flags) {
+            } else if isValid(key, flags) {
                 let    widget = gWidgets.currentMovableWidget
                 let hasWidget = widget != nil
                 let   SPECIAL = COMMAND && OPTION
@@ -275,7 +275,7 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func validateKey(_ key: String, _ flags: ZEventFlags) -> Bool {
+    func isValid(_ key: String, _ flags: ZEventFlags) -> Bool {
         if gWorkMode != .graphMode {
             return false
         }

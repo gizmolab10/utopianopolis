@@ -314,7 +314,7 @@ class Zone : ZRecord {
             var        result = false
             let originalColor = color
 
-            if  let b = bookmarkTarget {
+            if  let  b = bookmarkTarget {
                 result = b.colorized
             } else {
                 traverseAncestors { iChild -> (ZTraverseStatus) in
@@ -323,7 +323,7 @@ class Zone : ZRecord {
                     }
                     
                     if  let attributes = iChild.zoneAttributes,
-                        attributes.contains(kReverseColor) {
+                        attributes.contains(kInvertColorize) {
                         result = !result
                     }
                     
@@ -339,13 +339,13 @@ class Zone : ZRecord {
                 b.colorized = newValue
             } else {
                 var attributes = zoneAttributes ?? ""
-                let   oldValue = attributes.contains(kReverseColor)
+                let oldValue   = attributes.contains(kInvertColorize)
                 
-                if  newValue != oldValue {
+                if  newValue  != oldValue {
                     if !newValue {
-                        attributes = attributes.replacingOccurrences(of: kReverseColor, with: "")
-                    } else if !attributes.contains(kReverseColor) {
-                        attributes.append(kReverseColor)
+                        attributes = attributes.replacingOccurrences(of: kInvertColorize, with: "")
+                    } else if !attributes.contains(kInvertColorize) {
+                        attributes.append(kInvertColorize)
                     }
                     
                     if  zoneAttributes != attributes {
@@ -360,7 +360,7 @@ class Zone : ZRecord {
 
 
     func toggleColorized() {
-        colorized = !(zoneAttributes?.contains(kReverseColor) ?? false)
+        colorized = !(zoneAttributes?.contains(kInvertColorize) ?? false)
     }
 
 

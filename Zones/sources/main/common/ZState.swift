@@ -101,6 +101,12 @@ var gHere: Zone {
 }
 
 
+var gHereMaybe: Zone? {
+    get { return gCloud?.hereZoneMaybe }
+    set { gCloud?.hereZoneMaybe = newValue }
+}
+
+
 var gMathewStyleUI : Bool {
     get { return getPreferencesBool(   for: kMathewStyle, defaultBool: false) }
     set { setPreferencesBool(newValue, for: kMathewStyle) }

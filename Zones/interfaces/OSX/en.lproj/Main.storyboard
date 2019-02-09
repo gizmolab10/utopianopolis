@@ -526,7 +526,7 @@ DQ
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
                                     <items>
                                         <menuItem title="Keyboard Shortcuts" keyEquivalent="/" id="EGs-Dm-LkH">
-                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" option="YES"/>
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="jw5-ox-sH4"/>
                                             </connections>

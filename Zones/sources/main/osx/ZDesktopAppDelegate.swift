@@ -86,7 +86,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
 
     open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
-        return gGraphEditor.validateKey(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
+        return gGraphEditor.isValid(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
     }
 
     

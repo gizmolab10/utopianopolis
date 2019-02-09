@@ -275,8 +275,13 @@ class ZFocusing: NSObject {
             }
 
             if  let target = iTarget, target.spawnedBy(gHere) {
-                target.asssureIsVisible()
-                target.grab()
+                if  target.isGrabbed {
+                    gHere = target
+                } else {
+                    target.asssureIsVisible()
+                    target.grab()
+                }
+
                 atArrival(target, .eRelayout)
 
                 return
@@ -396,15 +401,15 @@ class ZFocusing: NSObject {
 
 
     @discardableResult func travelThroughBookmark(_ bookmark: Zone, onCompletion: Closure?) -> Bool {
-        let doThis = bookmark.isBookmark
+        let doTryBookmark = bookmark.isBookmark
 
-        if  doThis {
+        if  doTryBookmark {
             travelThrough(bookmark) { object, kind in
                 onCompletion?()
             }
         }
 
-        return doThis
+        return doTryBookmark
     }
 
 }

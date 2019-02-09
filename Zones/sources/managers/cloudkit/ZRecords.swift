@@ -53,11 +53,17 @@ class ZRecords: NSObject {
         get { return gSelecting.hereRecordName(for: databaseID) }
         set { gSelecting.setHereRecordName(newValue ?? kRootName, for: databaseID) }
     }
-
-
+    
+    
+    var hereZoneMaybe: Zone? {
+        get { return maybeZoneForRecordName(hereRecordName) ?? rootZone }
+        set { hereRecordName = newValue?.recordName ?? kRootName }
+    }
+    
+    
     var hereZone: Zone {
         get { return maybeZoneForRecordName(hereRecordName) ?? rootZone! }
-        set { hereRecordName = newValue.recordName ?? kRootName }
+        set { hereZoneMaybe = newValue }
     }
 
 
