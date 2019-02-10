@@ -736,14 +736,18 @@ class Zone : ZRecord {
 
 
     func dragDotClicked(isCommand: Bool, isShift: Bool) {
-        let shouldFocus = isCommand || (isDoubleClick && isGrabbed)
+        let doubleClicked = isDoubleClick
+        let shouldFocus = isCommand || (doubleClicked && isGrabbed)
         
         timeOfLastDragDotClick = Date()
 
         if  shouldFocus {
             grab() // narrow selection to just this one zone
-            gFocusing.focus(kind: .eSelected) {
-                gGraphEditor.redrawSyncRedraw()
+            
+            if !(doubleClicked && self == gHere) {
+                gFocusing.focus(kind: .eSelected) {
+                    gGraphEditor.redrawSyncRedraw()
+                }
             }
         } else if isGrabbed {
             ungrab()

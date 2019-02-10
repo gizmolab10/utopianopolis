@@ -55,7 +55,7 @@ class ZShortcutsController: ZGenericTableController {
                 tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: convertToNSTextTabOptionKeyDictionary([:])))
             }
         }
-
+        
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
         
         if let g = gridView {
@@ -65,8 +65,20 @@ class ZShortcutsController: ZGenericTableController {
             g.snp.makeConstraints { make in
                 make.top.bottom.left.right.equalTo(tableView)
             }
-
+            
             g.zlayer.backgroundColor = CGColor.clear
+        }
+    }
+
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        
+        if let g = gridView {
+            for view in g.subviews {
+                if  view.identifier?.rawValue == kLineView {
+                    view.zlayer.backgroundColor = kLineColor
+                }
+            }
         }
     }
     

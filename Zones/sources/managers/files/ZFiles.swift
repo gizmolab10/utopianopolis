@@ -153,7 +153,6 @@ class ZFiles: NSObject {
 			var           dict = ZStorageDictionary ()
 			
             FOREGROUND {
-                gControllers.signalFor(nil, regarding: .eDebug)
                 self.writtenRecordNames.removeAll()
                 gRemoteStorage.recount()
 
@@ -206,8 +205,6 @@ class ZFiles: NSObject {
                     }
 
                     self.isWriting[index] = false // end prevention of write during write
-
-                    gControllers.signalFor(nil, regarding: .eDebug)
                 }
             }
 		}

@@ -175,8 +175,8 @@ class ZFocusing: NSObject {
             let focusClosure = { (zone: Zone) in
                 gHere = zone
 
-                zone.grab()
                 gFavorites.updateCurrentFavorite()
+                zone.grab()
                 atArrival()
             }
 
@@ -186,7 +186,6 @@ class ZFocusing: NSObject {
                 }
             } else if zone.isBookmark {     // state 2
                 gFavorites.delete(zone)
-                atArrival()
                 gFocusing.travelThrough(zone) { object, kind in
                     focusClosure(object as! Zone)
                 }

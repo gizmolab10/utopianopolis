@@ -538,11 +538,11 @@ class ZoneWidget: ZView {
                 }
             }
             
-            if zone == gFavoritesRoot {
-                FOREGROUND {
-                    gControllers.signalFor(nil, regarding: .eMain) // update UI elements for searching
-                }
-            }
+//            if zone == gFavoritesRoot {
+//                FOREGROUND {
+//                    gControllers.signalFor(nil, regarding: .eMain) // update UI elements for searching
+//                }
+//            }
 
             nowDrawLines = false
         }

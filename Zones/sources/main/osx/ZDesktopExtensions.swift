@@ -273,6 +273,15 @@ extension NSView {
     func setNeedsLayout () { needsLayout  = true }
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
 
+    
+    func setShortestDimension(to: CGFloat) {
+        if  frame.size.width  < frame.size.height {
+            frame.size.width  = to
+        } else {
+            frame.size.height = to
+        }
+    }
+    
 
     @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
         let                            gesture = ZKeyPanGestureRecognizer(target: target, action: action)

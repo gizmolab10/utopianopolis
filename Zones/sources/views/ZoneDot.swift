@@ -297,7 +297,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         super.draw(iDirtyRect)
 
         if  let              zone = widgetZone, isVisible(iDirtyRect) {
-            let isCurrentFavorite = zone.isCurrentFavorite
+            let isCurrentFavorite = zone.isCurrentFavorite && !zone.isInTrash
 
             if  revealDotIsVisible {
                 if  isInnerDot {

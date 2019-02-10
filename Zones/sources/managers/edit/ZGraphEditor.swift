@@ -159,7 +159,7 @@ class ZGraphEditor: NSObject {
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
                     case "?":      CONTROL ? openBrowserForFocusWebsite() : showHideKeyboardShortcuts()
-                    case "/":      SPECIAL ? showHideKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, COMMAND) { self.redrawSyncRedraw() }
+                    case "/":      SPECIAL ? showHideKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() }
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
@@ -352,23 +352,27 @@ class ZGraphEditor: NSObject {
 
  
     func swapWithParent() {
-        let child = gSelecting.firstSortedGrab
+        let grabbed = gSelecting.firstSortedGrab
 
         // swap places with parent (children are swapped)
         
         if  gSelecting.currentGrabs.count == 1,
-            let  cIndex = child.siblingIndex,
-            let  parent = child.parentZone,
+            let  sIndex = grabbed.siblingIndex,
+            let  parent = grabbed.parentZone,
             let  pIndex = parent.siblingIndex,
             let gParent = parent.parentZone {
-            moveZone(child, into: gParent, at: pIndex, orphan: true) {
+            moveZone(grabbed, into: gParent, at: pIndex, orphan: true) {
                 self.moveZones(parent.children, into: self.notPersistedZone) {
-                    self.moveZones(child.children, into: parent) {
-                        self.moveZones(self.notPersistedZone.children, into: child) {
-                            self.moveZone(parent, into: child, at: cIndex, orphan: true) {
+                    self.moveZones(grabbed.children, into: parent) {
+                        self.moveZones(self.notPersistedZone.children, into: grabbed) {
+                            self.moveZone(parent, into: grabbed, at: sIndex, orphan: true) {
                                 parent.needCount()
                                 
-                                self.redrawSyncRedraw(child)
+                                if  gHere == parent {
+                                    gHere  = grabbed
+                                }
+                                
+                                self.redrawSyncRedraw(grabbed)
                             }
                         }
                     }

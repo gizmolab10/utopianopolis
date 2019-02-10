@@ -87,35 +87,35 @@
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR">
                                 <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                                 <subviews>
-                                    <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="FTn-Rn-TNb" userLabel="Short Vertical Line">
-                                        <rect key="frame" x="288" y="270" width="7" height="510"/>
+                                    <customView identifier="lineView" translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line">
+                                        <rect key="frame" x="290" y="270" width="1" height="510"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="510" id="6Ls-A0-H7M"/>
-                                            <constraint firstAttribute="width" constant="3" id="dDP-Ju-Ssy"/>
+                                            <constraint firstAttribute="width" constant="1" id="5Gm-ni-LIH"/>
+                                            <constraint firstAttribute="height" constant="510" id="QjB-vW-W62"/>
                                         </constraints>
-                                    </box>
-                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="GmD-YN-fyP" userLabel="Search Horizontal Line">
-                                        <rect key="frame" x="0.0" y="265" width="580" height="7"/>
+                                    </customView>
+                                    <customView identifier="lineView" translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line">
+                                        <rect key="frame" x="0.0" y="269" width="580" height="1"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="3" id="ZSv-3N-Vjv"/>
-                                            <constraint firstAttribute="width" constant="580" id="glR-Ny-152"/>
+                                            <constraint firstAttribute="height" constant="1" id="Mym-7j-1Mo"/>
+                                            <constraint firstAttribute="width" constant="580" id="nfu-53-PXo"/>
                                         </constraints>
-                                    </box>
-                                    <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="omi-ld-OCo" userLabel="Center Vertical Line">
-                                        <rect key="frame" x="578" y="0.0" width="7" height="780"/>
+                                    </customView>
+                                    <customView identifier="lineView" translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line">
+                                        <rect key="frame" x="580" y="0.0" width="1" height="780"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="3" id="gLa-4Z-eGM"/>
+                                            <constraint firstAttribute="width" constant="1" id="OGt-RE-RO4"/>
                                         </constraints>
-                                    </box>
+                                    </customView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="omi-ld-OCo" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="580" id="5Rt-po-OTH"/>
-                                    <constraint firstItem="omi-ld-OCo" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" id="MbP-WD-TWo"/>
-                                    <constraint firstItem="FTn-Rn-TNb" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" id="Vh5-G5-dbH"/>
-                                    <constraint firstItem="GmD-YN-fyP" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" id="Y78-fT-8jS"/>
-                                    <constraint firstItem="FTn-Rn-TNb" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="290" id="gfM-Lu-qfW"/>
-                                    <constraint firstItem="GmD-YN-fyP" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" constant="510" id="qSb-pn-zYT"/>
-                                    <constraint firstAttribute="bottom" secondItem="omi-ld-OCo" secondAttribute="bottom" id="zbL-KC-cTe"/>
+                                    <constraint firstItem="4RI-nR-wiK" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" id="0Jg-oh-2na"/>
+                                    <constraint firstItem="Fa1-hb-kUk" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" id="2uF-5y-BaU"/>
+                                    <constraint firstItem="rdB-jZ-KsQ" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" id="BO6-bU-5Py"/>
+                                    <constraint firstItem="4RI-nR-wiK" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="580" id="IYu-Cm-Lck"/>
+                                    <constraint firstAttribute="bottom" secondItem="4RI-nR-wiK" secondAttribute="bottom" id="UwD-nR-va0"/>
+                                    <constraint firstItem="Fa1-hb-kUk" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" constant="510" id="W1S-XQ-Abf"/>
+                                    <constraint firstItem="rdB-jZ-KsQ" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="290" id="qzD-K9-Jby"/>
                                 </constraints>
                             </customView>
                         </subviews>
