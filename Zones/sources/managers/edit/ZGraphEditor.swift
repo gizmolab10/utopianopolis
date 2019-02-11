@@ -506,7 +506,7 @@ class ZGraphEditor: NSObject {
 
                 zone.zoneName             = name
 
-                gTextEditor.updateText(inZone: zone)
+                gTextEditor.updateText(inZone: zone)?.updateBookmarkAssociates()
             }
         }
 

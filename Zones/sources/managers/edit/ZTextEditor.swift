@@ -125,7 +125,6 @@ class ZTextPack: NSObject {
         }
 
         widget?.setNeedsDisplay()
-        packedZone?.grab()
     }
 
 
@@ -183,17 +182,8 @@ class ZTextPack: NSObject {
 
             captureTextAndUpdateWidgets(newText)
 
-            if  packedTrait == nil, // only if zone name is being edited
-                var zone = packedZone {
-                if  let    target = zone.bookmarkTarget {
-                    zone = target
-
-                    ZTextPack(target).captureTextAndUpdateWidgets(newText)
-                }
-
-                for bookmark in zone.fetchedBookmarks {
-                    ZTextPack(bookmark).captureTextAndUpdateWidgets(newText)
-                }
+            if  packedTrait == nil { // only if zone name is being edited
+                updateBookmarkAssociates()
             }
 
             gTextCapturing = false
@@ -202,6 +192,23 @@ class ZTextPack: NSObject {
         }
     }
 
+    
+    func updateBookmarkAssociates() {
+        if  var       zone = packedZone,
+            let    newText = zone.zoneName {
+
+            if  let target = zone.bookmarkTarget {
+                zone       = target
+                
+                ZTextPack(target).captureTextAndUpdateWidgets(newText)
+            }
+            
+            for bookmark in zone.fetchedBookmarks {
+                ZTextPack(bookmark).captureTextAndUpdateWidgets(newText)
+            }
+        }
+    }
+    
 
     func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
         if  let text = textWidget?.text,
@@ -251,12 +258,17 @@ class ZTextEditor: ZTextView {
             e.updateWidgetsForEndEdit()
         }
     }
-
-
-    func updateText(inZone: Zone?, isEditing: Bool = false) {
+    
+    
+    @discardableResult func updateText(inZone: Zone?, isEditing: Bool = false) -> ZTextPack? {
+        var pack: ZTextPack?
+        
         if  let zone = inZone {
-            ZTextPack(zone).updateText(isEditing: isEditing)
+            pack = ZTextPack(zone)
+            pack?.updateText(isEditing: isEditing)
         }
+        
+        return pack
     }
 
     
@@ -317,6 +329,7 @@ class ZTextEditor: ZTextView {
             clearEdit()
             fullResign()
             e.updateWidgetsForEndEdit()
+            e.packedZone?.grab()
         }
     }
 
