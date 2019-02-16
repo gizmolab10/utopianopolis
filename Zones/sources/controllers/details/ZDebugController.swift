@@ -65,7 +65,7 @@ class ZDebugController: ZGenericController {
         }
 
 //        if let debugView = view.window?.contentView {
-//        if let debugView = gEditorController?.editorRootWidget {
+//        if let debugView = gGraphController?.editorRootWidget {
         if let debugView = gEditorView {
 
             text.append("view \(debugView.bounds.size)")

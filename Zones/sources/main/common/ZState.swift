@@ -44,7 +44,7 @@ var   gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window
 var     gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
 var       gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var         gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
-var             gEditorView:      ZoneDragView? { return gEditorController?.editorView }
+var             gEditorView:      ZoneDragView? { return gGraphController?.editorView }
 var              gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var               gDotWidth:             Double { return gDotHeight * 0.75 }
 var     gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }

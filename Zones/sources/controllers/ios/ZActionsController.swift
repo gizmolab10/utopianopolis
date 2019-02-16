@@ -94,7 +94,7 @@ class ZActionsController : ZGenericController {
     func refresh() {
         gBatches.unHang()
         gWidgets            .clearRegistry()
-        gEditorController?  .clear()
+        gGraphController?  .clear()
         gControllers        .startupCloudAndUI()
     }
 

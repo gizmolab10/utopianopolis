@@ -319,8 +319,36 @@ class ZSelecting: NSObject {
             }
         }
     }
-
-
+    
+    
+    func makeVisibleAndGrab(_ iZone: Zone?, updateBrowsingLevel: Bool = true) {
+        makeVisible(iZone, updateBrowsingLevel: updateBrowsingLevel) {
+            iZone?.grab()
+        }
+    }
+    
+    
+    func makeVisible(_ iZone: Zone?, updateBrowsingLevel: Bool = true, onCompletion: Closure?) {
+        if  let zone = iZone,
+            let dbID = zone.databaseID,
+            let target = gRemoteStorage.cloud(for: dbID)?.hereZone {
+            zone.traverseAncestors { iAncestor -> ZTraverseStatus in
+                if  iAncestor != zone {
+                    iAncestor.revealChildren()
+                }
+                
+                if  iAncestor == target {
+                    return .eStop
+                }
+                
+                return .eContinue
+            }
+            
+            onCompletion?()
+        }
+    }
+    
+    
     func grab(_ iZone: Zone?, updateBrowsingLevel: Bool = true) {
         if  let zone = iZone {
             addOneGrab(zone, single: true)

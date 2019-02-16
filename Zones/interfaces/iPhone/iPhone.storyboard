@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="TpV-Kz-bkb">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="TpV-Kz-bkb">
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -18,11 +14,11 @@
                         <viewControllerLayoutGuide type="bottom" id="DKm-Wo-lL1"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="ECE-O8-JGv">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iNc-uN-Bhm" userLabel="Actions">
-                                <rect key="frame" x="20" y="620" width="289" height="45"/>
+                                <rect key="frame" x="20" y="553" width="514" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="b2L-wv-7LI"/>
                                 </constraints>
@@ -31,10 +27,10 @@
                                 </connections>
                             </containerView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qjg-kt-bl7" userLabel="Favorites and Editor View">
-                                <rect key="frame" x="0.0" y="65" width="375" height="558"/>
+                                <rect key="frame" x="0.0" y="65" width="600" height="491"/>
                                 <subviews>
                                     <containerView hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="YJm-q4-CkJ" userLabel="Favorites">
-                                        <rect key="frame" x="20" y="2" width="289" height="45"/>
+                                        <rect key="frame" x="20" y="2" width="514" height="45"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="q1j-Jl-lA5"/>
                                         </constraints>
@@ -43,13 +39,13 @@
                                         </connections>
                                     </containerView>
                                     <containerView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yzZ-hG-rzt" userLabel="Editor">
-                                        <rect key="frame" x="0.0" y="44" width="375" height="512"/>
+                                        <rect key="frame" x="0.0" y="44" width="600" height="445"/>
                                         <connections>
                                             <segue destination="wVv-ZA-i1M" kind="embed" id="Fe9-LU-jaw"/>
                                         </connections>
                                     </containerView>
                                     <button hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BOi-sm-qOe">
-                                        <rect key="frame" x="311" y="2" width="44" height="44"/>
+                                        <rect key="frame" x="536" y="2" width="44" height="44"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="44" id="1JM-HK-f2u"/>
@@ -76,14 +72,14 @@
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TAE-mz-TEf" userLabel="Horizontal Line">
-                                <rect key="frame" x="0.0" y="64" width="375" height="1"/>
+                                <rect key="frame" x="0.0" y="64" width="600" height="1"/>
                                 <color key="backgroundColor" red="0.17934990740000001" green="0.47574201109999997" blue="0.79180951290000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="9BU-lA-MAP"/>
                                 </constraints>
                             </view>
                             <button hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r8d-Tx-fdU">
-                                <rect key="frame" x="311" y="621" width="44" height="44"/>
+                                <rect key="frame" x="536" y="554" width="44" height="44"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="gDw-yl-UpD"/>
@@ -96,7 +92,7 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XAe-Nl-uaC" userLabel="Title and Button View">
-                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="20" width="600" height="44"/>
                                 <subviews>
                                     <button hidden="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mTE-ED-cHe">
                                         <rect key="frame" x="20" y="2" width="40" height="40"/>
@@ -107,7 +103,7 @@
                                         </connections>
                                     </button>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="W8u-BE-rDz" customClass="ZoneTextWidget">
-                                        <rect key="frame" x="137.5" y="11.5" width="100" height="21"/>
+                                        <rect key="frame" x="250" y="11.5" width="100" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="100" id="0yO-aT-OTN"/>
                                         </constraints>
@@ -166,10 +162,10 @@
             </objects>
             <point key="canvasLocation" x="290.39999999999998" y="24.7376311844078"/>
         </scene>
-        <!--Editor Controller-->
+        <!--Graph Controller-->
         <scene sceneID="9WU-We-u6g">
             <objects>
-                <viewController id="wVv-ZA-i1M" customClass="ZEditorController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="wVv-ZA-i1M" customClass="ZGraphController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ceC-hh-Sah"/>
                         <viewControllerLayoutGuide type="bottom" id="jqU-Hy-33R"/>

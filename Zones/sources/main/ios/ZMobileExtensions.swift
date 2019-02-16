@@ -257,18 +257,18 @@ extension UIView {
     var recognizers: [ZGestureRecognizer]? { return gestureRecognizers }
 
 
-    var gestureHandler: ZEditorController? {
+    var gestureHandler: ZGraphController? {
         get { return nil }
         set {
             clearGestures()
 
             if let e = newValue {
-                e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZEditorController      .clickEvent), clicksRequired: 1)
-                e.moveUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZEditorController     .moveUpEvent), direction: .up,    touchesRequired: 2)
-                e.moveDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .moveDownEvent), direction: .down,  touchesRequired: 2)
-                e.moveLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZEditorController   .moveLeftEvent), direction: .left,  touchesRequired: 2)
-                e.moveRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZEditorController  .moveRightEvent), direction: .right, touchesRequired: 2)
-                e.movementGesture  = createDragGestureRecognizer (e, action: #selector(ZEditorController.dragGestureEvent))
+                e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZGraphController      .clickEvent), clicksRequired: 1)
+                e.moveUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZGraphController     .moveUpEvent), direction: .up,    touchesRequired: 2)
+                e.moveDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZGraphController   .moveDownEvent), direction: .down,  touchesRequired: 2)
+                e.moveLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZGraphController   .moveLeftEvent), direction: .left,  touchesRequired: 2)
+                e.moveRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZGraphController  .moveRightEvent), direction: .right, touchesRequired: 2)
+                e.movementGesture  = createDragGestureRecognizer (e, action: #selector(ZGraphController.dragGestureEvent))
                 gDraggedZone       = nil
             }
         }
@@ -667,7 +667,7 @@ extension ZoneWidget {
 }
 
 
-extension ZEditorController {
+extension ZGraphController {
     
     @objc func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(up: true) }
     @objc func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(up: false) }

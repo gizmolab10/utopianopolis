@@ -166,15 +166,13 @@ class ZFavorites: NSObject {
                         return workingFavorite
                     }
 
-                    let        newLevel = targetOfWorking.level
+                    let newLevel        = targetOfWorking.level
 
-                    if         newLevel < level {
-                        let     spawned = iSpawned ? target.spawnedBy(targetOfWorking) : targetOfWorking.spawnedBy(target)
-
-                        if  spawned {
-                            level       = newLevel
-                            found       = workingFavorite
-                        }
+                    if  newLevel        < level,
+                        iSpawned,
+                        target.spawnedBy(targetOfWorking) {
+                        level       = newLevel
+                        found       = workingFavorite
                     }
                 }
             }
@@ -545,14 +543,15 @@ class ZFavorites: NSObject {
         // 3. not in favorites           -> create and grab new favorite (targetting here)
 
         if  let favorite = favoriteTargetting(here, iSpawned: false) {
-            favorite.grab()                                                     // state 1
+            favorite.makeVisibleAndGrab()                                                     // state 1
         } else {
             let    favorite = createBookmark(for: here, style: .addFavorite)    // state 3
             currentFavorite = favorite
 
-            favorite.grab()
-            updateAllFavorites()
+            favorite.makeVisibleAndGrab()
         }
+
+        updateAllFavorites()
     }
 
 

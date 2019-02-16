@@ -19,8 +19,8 @@ enum ZControllerID: Int {
     case shortcuts
     case details
     case actions
-    case editor
     case search
+    case graph
     case debug
     case tools
     case help

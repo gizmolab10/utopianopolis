@@ -163,7 +163,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         }
 
         if changed {
-            gEditorController?.layoutForCurrentScrollOffset()
+            gGraphController?.layoutForCurrentScrollOffset()
         }
     }
 

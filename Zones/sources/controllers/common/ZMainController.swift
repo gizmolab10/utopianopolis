@@ -56,7 +56,6 @@ class ZMainController: ZGenericController {
         
         gControllers.signalFor(nil, multiple: [.ePreferences, .eMain])
     }
-    
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         let  hideSearch = gWorkMode != .searchMode

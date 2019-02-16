@@ -1,5 +1,5 @@
 //
-//  ZEditorController.swift
+//  ZGraphController.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 7/2/16.
@@ -16,10 +16,10 @@ import SnapKit
 #endif
 
 
-var gEditorController: ZEditorController? { return gControllers.controllerForID(.editor) as? ZEditorController }
+var gGraphController: ZGraphController? { return gControllers.controllerForID(.graph) as? ZGraphController }
 
 
-class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
+class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
     
     
     // MARK:- initialization
@@ -38,7 +38,7 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     var        moveDownGesture:  ZGestureRecognizer?
     var        moveLeftGesture:  ZGestureRecognizer?
     var       moveRightGesture:  ZGestureRecognizer?
-    override  var controllerID:  ZControllerID { return .editor }
+    override  var controllerID:  ZControllerID { return .graph }
     @IBOutlet var   editorView:  ZoneDragView?
     @IBOutlet var      spinner:  ZProgressIndicator?
     @IBOutlet var  spinnerView:  ZView?
@@ -385,8 +385,12 @@ class ZEditorController: ZGenericController, ZGestureRecognizerDelegate, ZScroll
     }
 
 
-    // MARK:- spinner
+    // MARK:- large indicators
     // MARK:-
+    
+    
+    func toggleDirectionIndicators() {
+    }
 
 
     override func displayActivity(_ show: Bool) {

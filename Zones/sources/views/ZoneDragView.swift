@@ -62,13 +62,13 @@ class ZoneDragView: ZView, ZGestureRecognizerDelegate {
                 gScrollOffset.y += event.deltaY * multiply
             }
 
-            gEditorController?.layoutForCurrentScrollOffset()
+            gGraphController?.layoutForCurrentScrollOffset()
         }
     #endif
 
 
     func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
-        if  let e = gEditorController {
+        if  let e = gGraphController {
             return gestureRecognizer == e.clickGesture && otherGestureRecognizer == e.movementGesture
         }
 

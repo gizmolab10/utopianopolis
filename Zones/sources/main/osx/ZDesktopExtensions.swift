@@ -255,14 +255,14 @@ extension NSView {
     var recognizers: [NSGestureRecognizer]? { return gestureRecognizers }
 
 
-    var gestureHandler: ZEditorController? {
+    var gestureHandler: ZGraphController? {
         get { return nil }
         set {
             clearGestures()
 
             if let e = newValue {
-                e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZEditorController.dragGestureEvent))
-                e.clickGesture    = createPointGestureRecognizer(e, action: #selector(ZEditorController.clickEvent), clicksRequired: 1)
+                e.movementGesture = createDragGestureRecognizer (e, action: #selector(ZGraphController.dragGestureEvent))
+                e.clickGesture    = createPointGestureRecognizer(e, action: #selector(ZGraphController.clickEvent), clicksRequired: 1)
                 gDraggedZone      = nil
             }
         }

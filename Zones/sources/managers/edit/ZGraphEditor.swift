@@ -610,7 +610,7 @@ class ZGraphEditor: NSObject {
         gScaling      = 1.0
         gScrollOffset = CGPoint.zero
 
-        gEditorController?.layoutForCurrentScrollOffset()
+        gGraphController?.layoutForCurrentScrollOffset()
     }
 
 

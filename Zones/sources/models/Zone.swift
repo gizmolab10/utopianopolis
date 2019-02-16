@@ -734,7 +734,12 @@ class Zone : ZRecord {
         gSelecting.grab(self, updateBrowsingLevel: updateBrowsingLevel)
     }
 
+    
+    func makeVisibleAndGrab(updateBrowsingLevel: Bool = true) {
+        gSelecting.makeVisibleAndGrab(self, updateBrowsingLevel: updateBrowsingLevel)
+    }
 
+    
     func dragDotClicked(isCommand: Bool, isShift: Bool) {
         let doubleClicked = isDoubleClick
         let shouldFocus = isCommand || (doubleClicked && isGrabbed)
