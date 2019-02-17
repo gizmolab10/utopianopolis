@@ -212,6 +212,10 @@ extension ZColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent / (by / 2.0), brightness: brightnessComponent * (by / 3.0), alpha: alphaComponent)
     }
     
+    func lightish(by: CGFloat) -> NSColor {
+        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent,              brightness: brightnessComponent * by,         alpha: alphaComponent)
+    }
+
     var inverted: ZColor {
         let b = max(0.0, min(1.0, 1.25 - brightnessComponent))
         let s = max(0.0, min(1.0, 1.45 - saturationComponent))

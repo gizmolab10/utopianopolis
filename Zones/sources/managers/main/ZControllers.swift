@@ -35,6 +35,7 @@ enum ZSignalKind: Int {
     case eDebug
     case eError
     case eFound
+    case eGraph
     case eSearch
     case eStartup
     case eDetails
@@ -195,6 +196,7 @@ class ZControllers: NSObject {
                 let isInformation = identifier == .information
                 let isPreferences = identifier == .preferences
                 let       isDebug = identifier == .debug
+                let       isGraph = identifier == .graph
                 let        isMain = identifier == .main
                 let      isDetail = isInformation || isPreferences || isDebug
                 
@@ -205,6 +207,7 @@ class ZControllers: NSObject {
                     
                     switch regarding {
                     case .eMain:        if isMain        { closure() }
+                    case .eGraph:       if isGraph       { closure() }
                     case .eDebug:       if isDebug       { closure() }
                     case .eDetails:     if isDetail      { closure() }
                     case .eInformation: if isInformation { closure() }

@@ -26,22 +26,23 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     // MARK:-
     
     
-    let       editorRootWidget = ZoneWidget ()
-    let    favoritesRootWidget = ZoneWidget ()
-    var     rubberbandPreGrabs = [Zone] ()
-    var    priorScrollLocation = CGPoint.zero
-    var        rubberbandStart = CGPoint.zero
-    let              doneState: [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
-    var           clickGesture:  ZGestureRecognizer?
-    var          moveUpGesture:  ZGestureRecognizer?
-    var        movementGesture:  ZGestureRecognizer?
-    var        moveDownGesture:  ZGestureRecognizer?
-    var        moveLeftGesture:  ZGestureRecognizer?
-    var       moveRightGesture:  ZGestureRecognizer?
-    override  var controllerID:  ZControllerID { return .graph }
-    @IBOutlet var   editorView:  ZoneDragView?
-    @IBOutlet var      spinner:  ZProgressIndicator?
-    @IBOutlet var  spinnerView:  ZView?
+    let        editorRootWidget =  ZoneWidget ()
+    let     favoritesRootWidget =  ZoneWidget ()
+    var      rubberbandPreGrabs = [Zone] ()
+    var     priorScrollLocation =  CGPoint.zero
+    var         rubberbandStart =  CGPoint.zero
+    let               doneState : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
+    var            clickGesture :  ZGestureRecognizer?
+    var           moveUpGesture :  ZGestureRecognizer?
+    var         movementGesture :  ZGestureRecognizer?
+    var         moveDownGesture :  ZGestureRecognizer?
+    var         moveLeftGesture :  ZGestureRecognizer?
+    var        moveRightGesture :  ZGestureRecognizer?
+    override  var  controllerID :  ZControllerID { return .graph }
+    @IBOutlet var       spinner :  ZProgressIndicator?
+    @IBOutlet var    editorView :  ZoneDragView?
+    @IBOutlet var   spinnerView :  ZView?
+    @IBOutlet var indicatorView :  ZIndicatorView?
 
 
     override func setup() {
@@ -160,6 +161,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                 editorView?.setAllSubviewsNeedDisplay()
             }
         }
+
+        indicatorView?.setNeedsDisplay()
     }
 
     
@@ -390,6 +393,11 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     
     
     func toggleDirectionIndicators() {
+        if  let i = indicatorView {
+            i.isHidden = !i.isHidden
+
+            i.setNeedsDisplay()
+        }
     }
 
 

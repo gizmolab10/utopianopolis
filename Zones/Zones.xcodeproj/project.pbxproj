@@ -168,6 +168,7 @@
 		A7395BB421B877B600F5759F /* ZGraphEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7395BAE21B877B600F5759F /* ZGraphEditor.swift */; };
 		A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
 		A77758932207BCC600C37B49 /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77758922207BCC500C37B49 /* ZToggleButton.swift */; };
+		A7C96E3B221883CB00986631 /* ZIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZIndicatorView.swift */; };
 		A7CFA81B21F51697008DA880 /* ZSearching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearching.swift */; };
 		A7CFA81C21F516E0008DA880 /* ZSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619941FB3C4660087B066 /* ZSearchController.swift */; };
 		A7CFA81D21F51A9F008DA880 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B28B1F182EBB0091F4D1 /* ZStackableView.swift */; };
@@ -313,6 +314,7 @@
 		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Shortcuts.storyboard; sourceTree = "<group>"; };
 		A746D466219F637A00123A0A /* Thoughtful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thoughtful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A77758922207BCC500C37B49 /* ZToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToggleButton.swift; sourceTree = "<group>"; };
+		A7C96E392218838A00986631 /* ZIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIndicatorView.swift; sourceTree = "<group>"; };
 		A7D3C23C21F6A70300B64B83 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		A7D3C25821FAB6A000B64B83 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iPhone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhone.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -512,6 +514,7 @@
 			isa = PBXGroup;
 			children = (
 				0C4C23A12016B0930025E4DF /* ZContainerView.swift */,
+				A7C96E392218838A00986631 /* ZIndicatorView.swift */,
 				0C39B2871F182EBB0091F4D1 /* ZoneDot.swift */,
 				0C367C361F463D93000FC914 /* ZoneDragView.swift */,
 				0C26F72F1F799EEE00C2B978 /* ZoneSegmentedControl.swift */,
@@ -951,6 +954,7 @@
 			files = (
 				0C367C391F463D93000FC914 /* ZoneDragView.swift in Sources */,
 				0CABC9F12022768D0019D8B0 /* ZEnumerations.swift in Sources */,
+				A7C96E3B221883CB00986631 /* ZIndicatorView.swift in Sources */,
 				0C39B3211F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				0C39B2E51F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				0C39B2A61F182EBB0091F4D1 /* ZDetailsController.swift in Sources */,

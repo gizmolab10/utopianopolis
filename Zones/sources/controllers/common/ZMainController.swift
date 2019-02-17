@@ -47,14 +47,14 @@ class ZMainController: ZGenericController {
     @IBAction func insertionModeButtonAction(sender: ZButton) {
         gInsertionMode = gInsertionsFollow ? .precede : .follow
         
-        gControllers.signalFor(nil, multiple: [.ePreferences, .eMain])
+        gControllers.signalFor(nil, multiple: [.ePreferences, .eGraph, .eMain])
     }
     
     
     @IBAction func browsingModeButtonAction(sender: ZButton) {
         gBrowsingMode = gBrowsingIsConfined ? .cousinJumps : .confined
         
-        gControllers.signalFor(nil, multiple: [.ePreferences, .eMain])
+        gControllers.signalFor(nil, multiple: [.ePreferences, .eGraph, .eMain])
     }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {

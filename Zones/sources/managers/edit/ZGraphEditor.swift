@@ -418,7 +418,7 @@ class ZGraphEditor: NSObject {
                 }
             }
 
-            gControllers.signalFor(nil, multiple: [.ePreferences, .eMain])
+            gControllers.signalFor(nil, multiple: [.ePreferences, .eGraph, .eMain])
         } else if !PERIOD {
             gDetailsController?.toggleViewsFor(ids: [.Preferences])
         } else if gIsEditingText {
