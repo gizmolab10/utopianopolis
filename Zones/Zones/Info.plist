@@ -77,6 +77,10 @@
 				<array>
 					<string>com.zones.thoughtful</string>
 				</array>
+				<key>com.apple.ostype</key>
+				<array>
+					<string>zone</string>
+				</array>
 				<key>public.filename-extension</key>
 				<array>
 					<string>thoughtful</string>
@@ -98,6 +102,10 @@
 				<key>com.apple.nspboard-type</key>
 				<array>
 					<string>com.zones.thoughtful</string>
+				</array>
+				<key>com.apple.ostype</key>
+				<array>
+					<string>zone</string>
 				</array>
 				<key>public.filename-extension</key>
 				<array>

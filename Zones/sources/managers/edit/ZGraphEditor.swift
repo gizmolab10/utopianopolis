@@ -155,11 +155,11 @@ class ZGraphEditor: NSObject {
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
                     case "+":      divideChildren()
                     case "-":      if !COMMAND || !OPTION { addLine() } else { delete(permanently: false, preserveChildren: true, convertToTitledLine: true) }
+                    case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if !OPTION { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
                     case "\\":     travelToOtherGraph()
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
                     case "?":      CONTROL ? openBrowserForFocusWebsite() : showHideKeyboardShortcuts()
-                    case "/":      SPECIAL ? showHideKeyboardShortcuts() : gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() }
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }

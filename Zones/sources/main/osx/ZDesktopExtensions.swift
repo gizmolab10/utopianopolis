@@ -725,26 +725,30 @@ extension ZFiles {
             panel.canDownloadUbiquitousContents = false
             
             panel.beginSheetModal(for: window) { (result) in
-                do {
-                    if  result.rawValue   == NSFileHandlingPanelOKButton,
-                        panel.urls.count > 0 {
-                        let  path = panel.urls[0].path
-                        
-                        if  let   data = FileManager.default.contents(atPath: path),
-                            data.count > 0,
-                            let   dbID = insertInto.databaseID,
-                            let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
-                            let   dict = self.dictFromJSON(json)
-                            let   zone = Zone(dict: dict, in: dbID)
-                            
-                            insertInto.addChild(zone, at: 0)
-                            onCompletion?()
-                        }
-                    }
-                } catch {
-                    print(error)    // de-serialization
+                if  result.rawValue   == NSFileHandlingPanelOKButton,
+                    panel.urls.count > 0 {
+                    let  path = panel.urls[0].path
+                    self.importFile(from: path, insertInto: insertInto, onCompletion: onCompletion)
                 }
             }
+        }
+    }
+    
+    
+    func importFile(from path: String, insertInto: Zone, onCompletion: Closure?) {
+        do {
+            if  let   data = FileManager.default.contents(atPath: path),
+                data.count > 0,
+                let   dbID = insertInto.databaseID,
+                let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
+                let   dict = self.dictFromJSON(json)
+                let   zone = Zone(dict: dict, in: dbID)
+                
+                insertInto.addChild(zone, at: 0)
+                onCompletion?()
+            }
+        } catch {
+            print(error)    // de-serialization
         }
     }
     

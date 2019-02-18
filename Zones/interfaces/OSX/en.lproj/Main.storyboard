@@ -589,7 +589,7 @@ DQ
                         <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f9Z-GK-Klh" customClass="ZIndicatorView" customModule="Thoughtful" customModuleProvider="target">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="f9Z-GK-Klh" customClass="ZIndicatorView" customModule="Thoughtful" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="itU-Gt-Inh" customClass="ZoneDragView" customModule="Thoughtful" customModuleProvider="target">

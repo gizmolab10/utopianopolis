@@ -2,8 +2,8 @@
 //  ZToggleButton.swift
 //  iPhone
 //
-//  Created by Jonathan Richard Sand on 1/27/19.
-//  Copyright © 2019 Zones. All rights reserved.
+//  Created by Jonathan Sand on 1/27/19.
+//  Copyright © 2019 Jonathan Sand. All rights reserved.
 //
 
 import Foundation

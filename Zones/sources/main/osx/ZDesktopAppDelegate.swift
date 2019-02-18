@@ -50,12 +50,21 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     }
 
 	
-	func application(_ application: NSApplication, openFiles: [String]) {
-		for file in openFiles {
-			gRemoteStorage.cloud(for: .mineID)?.clear()
-			gFiles.readFile(from: file, into: .mineID)
-		}
-	}
+    func application(_ application: NSApplication, openFiles: [String]) {
+        var insertInto = gSelecting.currentMoveable
+        
+        if  insertInto.databaseID != .mineID {
+            if  let mineRoot = gMineCloud?.rootZone {
+                insertInto   = mineRoot
+            } else {
+                return
+            }
+        }
+        
+        for file in openFiles {
+            gFiles.importFile(from: file, insertInto: insertInto) { self.redrawSyncRedraw() }
+        }
+    }
 	
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {}

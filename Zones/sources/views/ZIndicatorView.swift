@@ -1,9 +1,9 @@
 //
 //  ZIndicatorView.swift
-//  iPhone
+//  Thoughtful
 //
-//  Created by Jonathan Richard Sand on 2/16/19.
-//  Copyright © 2019 Zones. All rights reserved.
+//  Created by Jonathan Sand on 2/16/19.
+//  Copyright © 2019 Jonathan Sand. All rights reserved.
 //
 
 import Foundation

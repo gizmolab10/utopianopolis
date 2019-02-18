@@ -185,7 +185,6 @@ class ZFocusing: NSObject {
                     atArrival()
                 }
             } else if zone.isBookmark {     // state 2
-                gFavorites.delete(zone)
                 gFocusing.travelThrough(zone) { object, kind in
                     focusClosure(object as! Zone)
                 }
