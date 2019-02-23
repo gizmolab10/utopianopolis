@@ -668,73 +668,6 @@ DQ
                                     <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                 </connections>
                             </containerView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="7Xp-a1-ELl">
-                                <rect key="frame" x="0.0" y="256" width="158" height="44"/>
-                                <subviews>
-                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="FIL-gM-cda" userLabel="Insertion Mode Button" customClass="ZToggleButton" customModule="Thoughtful" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="15" width="14" height="14"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="14" id="t3P-gB-8Wb"/>
-                                            <constraint firstAttribute="height" constant="14" id="xiV-GB-aS4"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="INh-CS-nGk">
-                                            <behavior key="behavior" lightByContents="YES"/>
-                                            <font key="font" metaFont="cellTitle"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="insertionModeButtonActionWithSender:" target="MXk-17-6Dz" id="qqk-M5-SkG"/>
-                                        </connections>
-                                    </button>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZJm-cp-b2a">
-                                        <rect key="frame" x="40" y="15" width="37" height="14"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="33" id="fbD-eT-5tV"/>
-                                        </constraints>
-                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="gSp-bf-Kfa">
-                                            <font key="font" metaFont="smallSystem"/>
-                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="EPW-en-GHT" userLabel="Browsing Mode Button" customClass="ZToggleButton" customModule="Thoughtful">
-                                        <rect key="frame" x="83" y="15" width="14" height="14"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="14" id="0ry-c5-a9k"/>
-                                            <constraint firstAttribute="height" constant="14" id="3U3-H5-dK2"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="Aqw-kj-EpD">
-                                            <behavior key="behavior" lightByContents="YES"/>
-                                            <font key="font" metaFont="cellTitle"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="browsingModeButtonActionWithSender:" target="MXk-17-6Dz" id="JcZ-oI-m6X"/>
-                                        </connections>
-                                    </button>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ose-Yo-X08" userLabel="Browsing Mode Label">
-                                        <rect key="frame" x="103" y="15" width="37" height="14"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="33" id="9eH-6V-Kh5"/>
-                                        </constraints>
-                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="X4i-cH-9id">
-                                            <font key="font" metaFont="smallSystem"/>
-                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ZJm-cp-b2a" secondAttribute="trailing" constant="20" symbolic="YES" id="EdN-my-cCt"/>
-                                    <constraint firstItem="ZJm-cp-b2a" firstAttribute="centerY" secondItem="7Xp-a1-ELl" secondAttribute="centerY" id="GAI-C2-CMh"/>
-                                    <constraint firstItem="EPW-en-GHT" firstAttribute="centerY" secondItem="7Xp-a1-ELl" secondAttribute="centerY" id="KvO-zo-H7b"/>
-                                    <constraint firstAttribute="trailing" secondItem="Ose-Yo-X08" secondAttribute="trailing" constant="20" symbolic="YES" id="LLu-zi-3NN"/>
-                                    <constraint firstItem="Ose-Yo-X08" firstAttribute="leading" secondItem="EPW-en-GHT" secondAttribute="trailing" constant="8" id="OaM-Bo-xJz"/>
-                                    <constraint firstItem="EPW-en-GHT" firstAttribute="leading" secondItem="ZJm-cp-b2a" secondAttribute="trailing" constant="8" id="Ovu-GH-YcO"/>
-                                    <constraint firstItem="ZJm-cp-b2a" firstAttribute="leading" secondItem="FIL-gM-cda" secondAttribute="trailing" constant="8" id="ame-ZT-S7F"/>
-                                    <constraint firstItem="Ose-Yo-X08" firstAttribute="centerY" secondItem="7Xp-a1-ELl" secondAttribute="centerY" id="nKz-pX-zfC"/>
-                                    <constraint firstItem="FIL-gM-cda" firstAttribute="centerY" secondItem="7Xp-a1-ELl" secondAttribute="centerY" id="rng-8f-nCS"/>
-                                    <constraint firstItem="FIL-gM-cda" firstAttribute="leading" secondItem="7Xp-a1-ELl" secondAttribute="leading" constant="20" id="tKV-aW-A1D"/>
-                                </constraints>
-                            </customView>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Box View">
                                 <rect key="frame" x="0.0" y="256" width="450" height="44"/>
                                 <constraints>
@@ -761,16 +694,13 @@ DQ
                             </containerView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="7Xp-a1-ELl" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="3qe-Yr-paK"/>
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="4E2-mZ-iVD"/>
-                            <constraint firstItem="7Xp-a1-ELl" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="4tj-A2-P8E"/>
                             <constraint firstAttribute="trailing" secondItem="cYx-gW-vNV" secondAttribute="trailing" id="737-qE-qR5"/>
                             <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="7YZ-rS-1rz"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="DdE-29-U0K"/>
                             <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="F3i-M3-bpQ"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GKq-sx-Y6r"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
-                            <constraint firstItem="7Xp-a1-ELl" firstAttribute="bottom" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="JhQ-nB-Rkg"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="V3R-5b-vYA"/>
                             <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="Xgc-lh-EwT"/>
                             <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="ZFw-Tj-cbj"/>
@@ -780,13 +710,9 @@ DQ
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="browsingModeButton" destination="EPW-en-GHT" id="oR0-AI-Np3"/>
-                        <outlet property="browsingModeLabel" destination="Ose-Yo-X08" id="bN0-62-AK3"/>
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="fDV-lr-VDw"/>
                         <outlet property="detailsWidth" destination="us8-K9-IEo" id="zgQ-PT-G1q"/>
                         <outlet property="editorView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
-                        <outlet property="insertionModeButton" destination="FIL-gM-cda" id="hhy-mt-2dT"/>
-                        <outlet property="insertionModeLabel" destination="ZJm-cp-b2a" id="YIn-r6-Shu"/>
                         <outlet property="searchBoxHeight" destination="lGr-3g-ayh" id="9xd-lu-oT0"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
@@ -906,7 +832,4 @@ DQ
             <point key="canvasLocation" x="-166" y="1117"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="yangle" width="395" height="395"/>
-    </resources>
 </document>

@@ -134,7 +134,7 @@ class ZOperations: NSObject {
     func unHang() { onCloudResponse?(0) }
 
 
-    @discardableResult func checkCloudStatus() -> Bool {
+    @discardableResult func cloudStatusChanged() -> Bool {
         let          hasInternet = isConnectedToNetwork
         let       changedConnect =              hasInternet != gHasInternet
         let       changedAccount = recentCloudAccountStatus != gCloudAccountStatus
@@ -148,8 +148,12 @@ class ZOperations: NSObject {
     func setupCloudTimer() {
         if  gCloudTimer == nil {
             gCloudFire   = { iTimer in
-                FOREGROUND {
-                    if  self.checkCloudStatus() {
+                FOREGROUND(canBeDirect: true) {
+                    let show = self.queue.operationCount > 0 && self.timeSinceOpStart > 1.0
+
+                    gControllers.displayActivity(show)
+
+                    if  self.cloudStatusChanged() {
                         gControllers.signalFor(nil, regarding: .eDetails) // inform user of change in cloud status
 
                         /////////////////////////////////////////////////
@@ -171,7 +175,7 @@ class ZOperations: NSObject {
                 }
             }
 
-            gCloudTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: gCloudFire!)
+            gCloudTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: gCloudFire!)
             gCloudFire?(nil)
         }
     }
@@ -207,13 +211,13 @@ class ZOperations: NSObject {
                     //////////////////////////////////////////////////////////////////
 
                     self.queue.isSuspended = true
-                    let              start = Date()
+                    self.lastOpStart       = Date()
                     self.currentOp         = operationID        // if hung, it happened inside this op
 
                     self.reportBeforePerformBlock()
 
                     self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
-                        self.reportOnCompletionOfPerformBlock(start)        // says nothing
+                        self.reportOnCompletionOfPerformBlock() // says nothing
 
                         FOREGROUND {
                             if self.currentOp == .oCompletion {
@@ -248,10 +252,13 @@ class ZOperations: NSObject {
         }
     }
 
+    var timeSinceOpStart: TimeInterval {
+        return -(lastOpStart?.timeIntervalSinceNow ?? 0.0)
+    }
 
-    func reportOnCompletionOfPerformBlock(_ start: Date) {
-        if  gMeasureOpsPerformance && false {
-            let   duration = Int(start.timeIntervalSinceNow) * -10
+    func reportOnCompletionOfPerformBlock() {
+        if  gMeasureOpsPerformance, false {
+            let   duration = Int(timeSinceOpStart) * -10
             let    message = "\(Float(duration) / 10.0)"
 
             columnarReport("  " + operationText, message)

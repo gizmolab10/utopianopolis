@@ -409,25 +409,25 @@ class ZTextEditor: ZTextView {
     
 
     func moveUp(_ iMoveUp: Bool, stopEdit: Bool) {
-        currentOffset = currentOffset ?? editingOffset(iMoveUp)
-        let current = currentlyEditingZone
-        let isHere = current == gHere
-        let e = currentEdit
+        currentOffset   = currentOffset ?? editingOffset(iMoveUp)
+        let currentZone = currentlyEditingZone
+        let      isHere = currentZone == gHere
+        let           e = currentEdit // for the case where stopEdit is true
 
         if  stopEdit {
             capture()
-            current?.grab()
+            currentZone?.grab()
         }
         
-        if  var original = current {
+        if  var original = currentZone {
             gGraphEditor.moveUp(iMoveUp, original, targeting: currentOffset) { iKind in
                 gControllers.signalFor(nil, regarding: iKind) {
-                    self.currentOffset = current?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
+                    self.currentOffset = currentZone?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
                     
                     if  stopEdit {
                         original       = gSelecting.firstSortedGrab
                         
-                        if  original  != current { // if move up (above) does nothing, ignore
+                        if  original  != currentZone { // if move up (above) does nothing, ignore
                             self.edit(original)
                         } else {
                             self.currentEdit = e // restore after capture sets it to nill

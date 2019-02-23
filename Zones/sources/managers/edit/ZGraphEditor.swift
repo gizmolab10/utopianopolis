@@ -105,7 +105,7 @@ class ZGraphEditor: NSObject {
                     case "?":      showHideKeyboardShortcuts()
                     case "-":      return editedZone?.convertToLine() ?? false // false means key not handled
                     case "/":      gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }
-                    case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
+                    case ",", ".": commaAndPeriod(COMMAND, with: key == ".")
                     case kSpace:   addIdea()
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() }
@@ -161,7 +161,7 @@ class ZGraphEditor: NSObject {
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
                     case "?":      CONTROL ? openBrowserForFocusWebsite() : showHideKeyboardShortcuts()
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
-                    case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
+                    case ",", ".": commaAndPeriod(COMMAND, with: key == ".")
                     case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
                     case kBackspace,
@@ -406,12 +406,12 @@ class ZGraphEditor: NSObject {
     }
     
     
-    func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
+    func commaAndPeriod(_ COMMAND: Bool, with PERIOD: Bool) {
         if     !COMMAND {
-            if  OPTION {
-                gBrowsingMode  = PERIOD ? .cousinJumps : .confined
+            if !PERIOD {
+                gBrowsingMode  = gBrowsingIsConfined ? .cousinJumps : .confined
             } else {
-                gInsertionMode = PERIOD ? .follow      : .precede
+                gInsertionMode = gInsertionsFollow   ? .precede     : .follow
                 
                 if  gIsEditingText {
                     swapAndResumeEdit()

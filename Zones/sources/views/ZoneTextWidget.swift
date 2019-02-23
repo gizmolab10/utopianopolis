@@ -114,7 +114,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             var   rect = name.rectWithFont(font)
             rect       = convert(rect, to: nil)
             
-            return rect.origin.x + offset
+            return rect.minX + offset
         }
         
         return nil

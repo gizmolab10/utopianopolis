@@ -89,7 +89,7 @@ class ZOnboarding : ZOperations {
             // ONBOARDING CONTINUES //
             //////////////////////////
 
-            checkCloudStatus()
+            cloudStatusChanged()
         }
 
         onCompletion()

@@ -420,7 +420,7 @@ class ZSelecting: NSObject {
         _cousinList.removeAll()
         _sortedGrabs.removeAll()
         
-        if let  level =  gCurrentBrowseLevel {
+        if  let level =  gCurrentBrowseLevel {
             let  zone = iZone != nil ? iZone! : firstGrab
             let start =  zone.isInFavorites ? gFavoritesRoot : gHere
             start?.traverseAllVisibleProgeny { iChild in

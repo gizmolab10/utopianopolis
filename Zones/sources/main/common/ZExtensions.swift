@@ -457,6 +457,22 @@ extension CGRect {
         return set
     }
 
+    
+    func offsetBy(fractionX: CGFloat, fractionY: CGFloat) -> CGRect {
+        let dX = size.width  * fractionX
+        let dY = size.height * fractionY
+        
+        return offsetBy(dx:dX, dy:dY)
+    }
+
+    
+    func insetBy(fractionX: CGFloat, fractionY: CGFloat) -> CGRect {
+        let dX = size.width  * fractionX
+        let dY = size.height * fractionY
+
+        return insetBy(dx:dX, dy:dY)
+    }
+
 }
 
 

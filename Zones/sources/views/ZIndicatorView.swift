@@ -20,13 +20,14 @@ class ZIndicatorView: ZView {
         rect               = rect.insetBy(dx: inset,       dy: inset)
         var   triangleRect = rect.insetBy(dx: 0,           dy: inset / 14.0)
         var     circleRect = rect.insetBy(dx: circleInset, dy: circleInset)
-        let      thickness = rect.size.height / 20.0
+        let      thickness = rect.size.height / 30.0
 
         let     multiplier = CGFloat(gInsertionsFollow ? 1 : -1)
         let verticalOffset = gInsertionsFollow ? 15.0 - triangleRect.minY : bounds.maxY - triangleRect.maxY - 15.0
         let   circleOffset = (circleInset / 1.8 * multiplier) + verticalOffset
         triangleRect       = triangleRect.offsetBy(dx: 0.0, dy: verticalOffset)
         circleRect         = circleRect  .offsetBy(dx: 0.0, dy: circleOffset)
+        let    circlesRect = triangleRect.insetBy(fractionX: 0.425, fractionY: 0.15)
 
         gBackgroundColor.lightish(by: 1.02).setStroke()
 
@@ -34,23 +35,32 @@ class ZIndicatorView: ZView {
         
         if  gBrowsingIsConfined {
             ZBezierPath.drawCircle(in: circleRect, fillWith: gBackgroundColor, thickness: thickness)
+        } else {
+            ZBezierPath.drawCircles(orientedUp: gInsertionsFollow, in: circlesRect, fillWith: gBackgroundColor, thickness: thickness)
         }
     }
 }
 
 
 extension ZBezierPath {
+
+    static func drawTriangle(orientedUp: Bool, in iRect: CGRect, fillWith iColor: ZColor, thickness: CGFloat) {
+        let path = ZBezierPath()
+        
+        path.appendTriangle(orientedUp: orientedUp, in: iRect)
+        path.draw(fillWith: iColor, thickness: thickness)
+    }
     
     static func drawCircle(in iRect: CGRect, fillWith iColor: ZColor, thickness: CGFloat) {
         let path = ZBezierPath(ovalIn: iRect)
         
         path.draw(fillWith: iColor, thickness: thickness)
     }
-
-    static func drawTriangle(orientedUp: Bool, in iRect: CGRect, fillWith iColor: ZColor, thickness: CGFloat) {
+    
+    static func drawCircles(orientedUp: Bool, in iRect: CGRect, fillWith iColor: ZColor, thickness: CGFloat) {
         let path = ZBezierPath()
         
-        path.appendTriangle(orientedUp: orientedUp, in: iRect)
+        path.appendCircles(orientedUp: orientedUp, in: iRect)
         path.draw(fillWith: iColor, thickness: thickness)
     }
 
@@ -59,7 +69,7 @@ extension ZBezierPath {
 
         iColor.setFill()
         stroke()
-//        fill()
+        // fill()
     }
     
     func appendTriangle(orientedUp: Bool, in iRect: CGRect) {
@@ -74,6 +84,19 @@ extension ZBezierPath {
         line(to: right)
         line(to: tip)
     }
+    
+    func appendCircles(orientedUp: Bool, in iRect: CGRect) {
+        let   rect = iRect.offsetBy(fractionX: 0.0, fractionY: orientedUp ? 0.1 : -0.1)
+        var    top = rect.insetBy(fractionX: 0.0, fractionY: 0.375)  // shrink to one-fifth size
+        let middle = top.offsetBy(dx: 0.0, dy: top.midY - rect.midY)
+        let bottom = top.offsetBy(dx: 0.0, dy: top.maxY - rect.maxY) // move to bottom
+        top        = top.offsetBy(dx: 0.0, dy: top.minY - rect.minY) // move to top
+        
+        appendOval(in: top)
+        appendOval(in: middle)
+        appendOval(in: bottom)
+    }
+
 }
 
 

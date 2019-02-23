@@ -313,8 +313,8 @@ extension NSView {
     
     func scale(for isHorizontal: Bool) -> Double {
         let       length = Double(isHorizontal ? bounds.size.width : bounds.size.height)
-        let     divident = 7200.0 * (isHorizontal ? 9.0 : 6.5) // (inches) * 72 (dpi) * 100 (percent)
-        let        scale = divident / length
+        let     dividend = 7200.0 * (isHorizontal ? 8.5 : 6.0) // (inches) * 72 (dpi) * 100 (percent)
+        let        scale = dividend / length
 
         return scale
     }
