@@ -132,7 +132,7 @@ class ZFocusing: NSObject {
             debugDump()
             gHere.grab()
             gFavorites.updateAllFavorites()
-            gControllers.signalFor(nil, regarding: .eRelayout)
+            redrawGraph()
         }
     }
 
@@ -164,14 +164,14 @@ class ZFocusing: NSObject {
 
     func focus(kind: ZFocusKind, _ COMMAND: Bool = false, _ atArrival: @escaping Closure) {
         
-        // four states:
+        // five states:
         // 1. COMMAND       -> select here
         // 2. is a bookmark -> target becomes here
         // 3. is here       -> update in favorites
-        // 4. is not here   -> become here
+        // 4. is a favorite -> grab here
+        // 5. is not here   -> become here
 
-        if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstSortedGrab,
-            (!zone.isInFavorites || zone.isBookmark) {
+        if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstSortedGrab {
             let focusClosure = { (zone: Zone) in
                 gHere = zone
 
@@ -191,7 +191,9 @@ class ZFocusing: NSObject {
             } else if zone == gHere {       // state 3
                 gFavorites.updateGrab()
                 atArrival()
-            } else {                        // state 4
+            } else if zone.isInFavorites {  // state 4
+                focusClosure(gHere)
+            } else {                        // state 5
                 focusClosure(zone)
             }
         }

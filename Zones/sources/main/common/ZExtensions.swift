@@ -28,6 +28,7 @@ extension NSObject {
     func           performance(_ iMessage: Any?)                { log(iMessage) }
     func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
     func        columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
+    func           redrawGraph(_ onCompletion: Closure? = nil)  { gControllers.signalFor(nil, regarding: .eRelayout, onCompletion: onCompletion) }
 
 
     func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {

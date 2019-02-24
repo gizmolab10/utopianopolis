@@ -44,29 +44,28 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         let  COMMAND = flags.isCommand
         let      key = string[string.startIndex].description
         let isReturn = key == kReturn
+        let      isF = key == "f"
+        let   isExit = kExitKeys.contains(key)
         let    state = gSearching.state
         let  isEntry = state == .entry
-        
-        if        !isReturn && isEntry {
-            gSearching.state = .find
-        } else if  isReturn {
-            if  gSearching.state == .list {
-                searchBox?.becomeFirstResponder()
-            } else if  let text = searchBoxText {
-                performSearch(for: text)
-            }
+        let   isList = state == .list
 
-            return nil
-        }
-        
-        if (isReturn && isEntry) || key == kEscape || (key == "f" && COMMAND) {
-            endSearch()
+        if       !isReturn, isEntry {
+            gSearching.state = .find
+        } else if isReturn, !isList, let text = searchBoxText {
+            performSearch(for: text)
             
             return nil
         }
         
-        if key == "a" && event.modifierFlags.isCommand {
+        if  key == "a" && COMMAND {
             searchBox?.selectAllText()
+            
+            return nil
+        }
+
+        if (isReturn && isEntry) || (isExit && !isF) || (isF && COMMAND) {
+            endSearch()
             
             return nil
         }

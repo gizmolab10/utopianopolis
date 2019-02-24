@@ -1361,7 +1361,7 @@ class ZCloud: ZRecords {
                         let                 record: CKRecord = (iResults?[0])!
                         object.record?[valueForPropertyName] = (record as! CKRecordValue)
 
-                        gControllers.signalFor(nil, regarding: .eRelayout)
+                        self.redrawGraph()
                     }
                 }
             }

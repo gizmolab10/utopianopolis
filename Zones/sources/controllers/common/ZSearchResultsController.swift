@@ -205,10 +205,10 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         zone?.grab()
         zone?.needChildren()
         zone?.revealChildren()
-        gControllers.signalFor(nil, regarding: .eRelayout)
+        redrawGraph()
 
         gBatches.sync { iSame in
-            gControllers.signalFor(nil, regarding: .eRelayout)
+            self.redrawGraph()
         }
     }
 
@@ -269,7 +269,6 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             let        flags = event.modifierFlags
             let      COMMAND = flags.isCommand
             let          key = string[string.startIndex].description
-            let     exitKeys = [kReturn, "f", kEscape]
             
             if  let    arrow = key.arrow {
                 switch arrow {
@@ -278,19 +277,10 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
                 case  .left:    clear();    return nil
                 case .right: if resolve() { return nil }; break
                 }
-            } else if exitKeys.contains(key) { // N.B. test key first since getInput has a possible side-effect of exiting search
-                if  let controller = gSearchController,
-                    let text = controller.searchBoxText,
-                    !text.isEmpty {
-                    
-                    return controller.handleEvent(event)
-                    
-                } else {
-                    clear()
-                    resolve()
-                    
-                    return nil
-                }
+            } else  if kExitKeys.contains(key) { // N.B. test key first since getInput has a possible side-effect of exiting search
+                resolve()
+                
+                return nil
             }
         }
         

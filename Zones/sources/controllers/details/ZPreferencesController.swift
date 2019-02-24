@@ -68,7 +68,7 @@ class ZPreferencesController: ZGenericController {
             default:           break
             }
 
-            gControllers.signalFor(nil, regarding: .eRelayout)
+            redrawGraph()
         }
     }
 
@@ -108,7 +108,7 @@ class ZPreferencesController: ZGenericController {
         let          selection = iControl.selectedSegment
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
             switch (identifier) {
-            case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; gControllers.signalFor(nil, regarding: .eRelayout)
+            case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; redrawGraph()
             case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!; gControllers.signalFor(nil, multiple: [.eMain, .eGraph])
             case "direction": gInsertionMode = ZInsertionMode(rawValue: selection)!; gControllers.signalFor(nil, multiple: [.eMain, .eGraph])
             default: break

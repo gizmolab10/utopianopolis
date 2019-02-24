@@ -411,7 +411,7 @@ CQ
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="aEl-vF-NGF"/>
-                                                    <menuItem title="Switch to Other Graph" keyEquivalent="`" id="pe6-aY-Rdr">
+                                                    <menuItem title="Switch to Other Graph" keyEquivalent="\" id="pe6-aY-Rdr">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="z5c-dU-PHU"/>
@@ -606,13 +606,13 @@ DQ
                                         </constraints>
                                     </progressIndicator>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oAP-8F-bnm">
-                                        <rect key="frame" x="-2" y="7" width="404" height="17"/>
+                                        <rect key="frame" x="-2" y="37" width="404" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="17" id="JJM-hu-6Pr"/>
                                         </constraints>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="please wait a moment ..." id="a2T-KG-FNZ">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="one moment please ... transferring data" id="a2T-KG-FNZ">
                                             <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="textColor" red="0.83188957253886009" green="0.1907018351993274" blue="0.1616285693195233" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
@@ -620,7 +620,7 @@ DQ
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="oAP-8F-bnm" secondAttribute="trailing" id="9el-X7-iis"/>
                                     <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="fSQ-gu-ejW" secondAttribute="centerX" id="Pch-gV-l5Q"/>
-                                    <constraint firstItem="oAP-8F-bnm" firstAttribute="centerY" secondItem="fSQ-gu-ejW" secondAttribute="centerY" constant="30" id="UQ9-fn-UFL"/>
+                                    <constraint firstItem="oAP-8F-bnm" firstAttribute="centerY" secondItem="fSQ-gu-ejW" secondAttribute="centerY" id="UQ9-fn-UFL"/>
                                     <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="fSQ-gu-ejW" secondAttribute="centerY" id="c2Q-JT-R0o"/>
                                     <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="fSQ-gu-ejW" secondAttribute="centerX" id="hki-e1-9s7"/>
                                     <constraint firstItem="oAP-8F-bnm" firstAttribute="leading" secondItem="fSQ-gu-ejW" secondAttribute="leading" id="nzY-6b-pNy"/>

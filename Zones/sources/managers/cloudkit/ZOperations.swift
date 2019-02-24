@@ -149,7 +149,7 @@ class ZOperations: NSObject {
         if  gCloudTimer == nil {
             gCloudFire   = { iTimer in
                 FOREGROUND(canBeDirect: true) {
-                    let show = self.queue.operationCount > 0 && self.timeSinceOpStart > 1.0
+                    let show = self.currentOp != .oCompletion && self.timeSinceOpStart > 0.5
 
                     gControllers.displayActivity(show)
 
@@ -168,7 +168,7 @@ class ZOperations: NSObject {
                                     gFavorites.updateAllFavorites()
                                 }
 
-                                gControllers.signalFor(nil, regarding: .eRelayout)
+                                self.redrawGraph()
                             }
                         }
                     }

@@ -83,7 +83,8 @@ class ZGraphEditor: NSObject {
             let COMMAND = flags.isCommand
             let  OPTION = flags.isOption
             var   SHIFT = flags.isShift
-            let FLAGGED = CONTROL || COMMAND || OPTION
+            let SPECIAL = COMMAND && OPTION
+            let FLAGGED = COMMAND || OPTION || CONTROL
             let   arrow = key.arrow
             
             if  key    != key.lowercased() {
@@ -121,7 +122,6 @@ class ZGraphEditor: NSObject {
             } else if isValid(key, flags) {
                 let    widget = gWidgets.currentMovableWidget
                 let hasWidget = widget != nil
-                let   SPECIAL = COMMAND && OPTION
                 
                 widget?.widgetZone?.deferWrite()
                 
@@ -143,11 +143,11 @@ class ZGraphEditor: NSObject {
                     case "l":      alterCase(up: false)
                     case "m":      orderByLength(OPTION)
                     case "n":      alphabetize(OPTION)
-                    case "o":      if !FLAGGED { gFiles.showInFinder() } else { gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() } }
+                    case "o":      if SPECIAL { gFiles.showInFinder() } else { gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() } }
                     case "p":      gHere.widget?.printView()
                     case "q":      gApplication.terminate(self)
                     case "r":      reverse()
-                    case "s":      gFiles.exportToFile(asOutline: OPTION, for: gSelecting.currentMoveable)
+                    case "s":      gFiles.exportToFile(asOutline: OPTION, for: gHere)
                     case "t":      swapWithParent()
                     case "u":      alterCase(up: true)
                     case "w":      rotateWritable()
@@ -161,6 +161,7 @@ class ZGraphEditor: NSObject {
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
                     case "?":      CONTROL ? openBrowserForFocusWebsite() : showHideKeyboardShortcuts()
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
+                    case ";", "'": gFavorites.switchToNext(key == "'") { self.syncAndRedraw() }
                     case ",", ".": commaAndPeriod(COMMAND, with: key == ".")
                     case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
@@ -327,7 +328,7 @@ class ZGraphEditor: NSObject {
     func focusOnTrash() {
         if  let trash = gTrash {
             gFocusing.focus(on: trash) {
-                gControllers.signalFor(nil, regarding: .eRelayout)
+                self.redrawGraph()
             }
         }
     }
@@ -397,7 +398,7 @@ class ZGraphEditor: NSObject {
             zone.ungrab()
             
             moveUp(atStart, zone, selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { iKind in
-                gControllers.signalFor(nil, regarding: .eRelayout) {
+                self.redrawGraph() {
                     t.edit(zone)
                     t.setCursor(at: offset)
                 }
@@ -445,7 +446,7 @@ class ZGraphEditor: NSObject {
         gHere.grab()
         gHere.revealChildren()
         gFavorites.updateAllFavorites()
-        gControllers.signalFor(nil, regarding: .eRelayout)
+        redrawGraph()
     }
 
 
@@ -657,7 +658,7 @@ class ZGraphEditor: NSObject {
             }
         }
 
-        gControllers.signalFor(nil, regarding: .eRelayout)
+        redrawGraph()
     }
 
 
@@ -683,7 +684,7 @@ class ZGraphEditor: NSObject {
         
         if  COMMAND && !OPTION {    // COMMAND alone
             gBatches.refetch { iSame in
-                gControllers.signalFor(nil, regarding: .eRelayout)
+                self.redrawGraph()
             }
         } else {
             for grab in gSelecting.currentGrabs {
@@ -695,7 +696,7 @@ class ZGraphEditor: NSObject {
             }
 
             gBatches.children { isSame in
-                gControllers.signalFor(nil, regarding: .eRelayout)
+                self.redrawGraph()
             }
         }
     }
@@ -714,7 +715,7 @@ class ZGraphEditor: NSObject {
                         iAncestor.revealChildren()
                     }
 
-                    gControllers.signalFor(nil, regarding: .eRelayout)
+                    self.redrawGraph()
                 }
             }
 
@@ -1027,7 +1028,7 @@ class ZGraphEditor: NSObject {
             addIdeaIn(parent, at: index, with: name) { iChild in
                 if let child = iChild {
                     if !containing {
-                        gControllers.signalFor(nil, regarding: .eRelayout) {
+                        self.redrawGraph() {
                             onCompletion?(child)
                         }
                     } else {
@@ -1147,7 +1148,7 @@ class ZGraphEditor: NSObject {
 
                 bookmark?.grab()
                 bookmark?.markNotFetched()
-                gControllers.signalFor(nil, regarding: .eRelayout)
+                self.redrawGraph()
                 gBatches.sync { iSame in
                 }
             }

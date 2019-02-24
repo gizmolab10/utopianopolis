@@ -47,7 +47,7 @@ class ZEvents: NSObject {
     
     
     func handleDarkModeChange(iNote: Notification) {
-        gControllers.signalFor(nil, regarding: .eRelayout)
+        redrawGraph()
     }
     
     
