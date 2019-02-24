@@ -596,17 +596,17 @@ DQ
                                 <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                             </customView>
                             <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fSQ-gu-ejW">
-                                <rect key="frame" x="0.0" y="178" width="400" height="240"/>
+                                <rect key="frame" x="0.0" y="253" width="400" height="90"/>
                                 <subviews>
                                     <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
-                                        <rect key="frame" x="100" y="20" width="200" height="200"/>
+                                        <rect key="frame" x="175" y="20" width="50" height="50"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="200" id="bAV-En-6Wv"/>
-                                            <constraint firstAttribute="width" constant="200" id="vJp-G5-N5A"/>
+                                            <constraint firstAttribute="height" constant="50" id="bAV-En-6Wv"/>
+                                            <constraint firstAttribute="width" constant="50" id="vJp-G5-N5A"/>
                                         </constraints>
                                     </progressIndicator>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oAP-8F-bnm">
-                                        <rect key="frame" x="-2" y="82" width="404" height="17"/>
+                                        <rect key="frame" x="-2" y="7" width="404" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="17" id="JJM-hu-6Pr"/>
                                         </constraints>

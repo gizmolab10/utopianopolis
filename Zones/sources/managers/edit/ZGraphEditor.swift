@@ -1515,12 +1515,15 @@ class ZGraphEditor: NSObject {
 
     func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
         let zone: Zone = gSelecting.firstSortedGrab
+        let isBrowsing = !gIsEditingText
 
         if !selectionOnly {
             actuallyMove(zone, onCompletion: onCompletion)
         } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
             gFocusing.maybeTravelThrough(zone, onCompletion: onCompletion)
         } else {
+            let needReveal = !zone.showingChildren
+
             zone.needChildren()
             zone.revealChildren()
 
@@ -1528,9 +1531,13 @@ class ZGraphEditor: NSObject {
                 if  zone.count > 0,
                     let child = gInsertionsFollow ? zone.children.last : zone.children.first {
                     child.grab()
+                    
+                    if  isBrowsing || needReveal {
+                        gControllers.signalFor(zone, regarding: .eRelayout)
+                    }
                 }
 
-                gFavorites.updateFavoritesRedrawSyncRedraw()
+                gFavorites.updateAllFavorites()
 
                 onCompletion?()
             }

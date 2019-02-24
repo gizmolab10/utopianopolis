@@ -238,9 +238,9 @@ class ZSelecting: NSObject {
     // MARK:-
 
 
-    func deselectGrabs(retaining zones: [Zone]? = nil) {
-        let    isEmpty = zones == nil || (zones?.count ?? 0) == 0
-        let       more = isEmpty ? [] : zones!
+    func deselectGrabs(retaining: [Zone]? = nil) {
+        let    isEmpty = retaining == nil || retaining!.count == 0
+        let       more = isEmpty ? [] : retaining!
         let    grabbed = currentGrabs + more
         currentGrabs   = []
         sortedGrabs    = []

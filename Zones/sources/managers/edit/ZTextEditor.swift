@@ -275,9 +275,9 @@ class ZTextEditor: ZTextView {
     func allowAsFirstResponder(_ iTextWidget: ZoneTextWidget) -> Bool {
         return !isEditingStateChanging && !iTextWidget.isFirstResponder && iTextWidget.widgetZone?.userCanWrite ?? false
     }
-
-
-    func edit(_ zRecord: ZRecord) {
+    
+    
+    func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, noPause: Bool = false) {
         if (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { // prevent infinite recursion inside becomeFirstResponder, called below
             let pack = ZTextPack(zRecord)
             if  pack.packedZone?.userCanWrite ?? false,
@@ -290,6 +290,17 @@ class ZTextEditor: ZTextView {
                 textWidget.enableUndo()
                 textWidget.layoutTextField()
                 textWidget.becomeFirstResponder()
+                
+                if  let o = setOffset {
+                    if  noPause {
+                        setCursor(at: o)
+                    } else {
+                        FOREGROUND(after: 0.001) {
+                            self.setCursor(at: o)
+                        }
+                    }
+                }
+                
                 textWidget.widget?.setNeedsDisplay()
                 deferEditingStateChange()
             }
@@ -302,18 +313,27 @@ class ZTextEditor: ZTextView {
     }
     
     
-    func applyPreservingEdit(_ closure: Closure) {
-        let e = currentEdit
+    func applyPreservingOffset(_ closure: Closure) {
         let o = currentOffset
-
+        
         closure()
         
-        currentEdit = e
         currentOffset = o
+    }
+    
+    
+    func applyPreservingEdit(_ closure: Closure) {
+        let e = currentEdit
+
+        applyPreservingOffset {
+            closure()
+        }
+        
+        currentEdit = e
     }
 
     
-    func quickStopCurrentEdit(clearOffset: Bool = false) {
+    func quickStopCurrentEdit() {
         if  let e = currentEdit {
             applyPreservingEdit {
                 capture()
@@ -379,25 +399,24 @@ class ZTextEditor: ZTextView {
     
     func moveOut(_ iMoveOut: Bool) {
         gArrowsDoNotBrowse = true
+        let       revealed = currentlyEditingZone?.showingChildren ?? false
 
+        let done: FloatClosure = { iOffset in
+            let grabbed = gSelecting.firstSortedGrab
+
+            gSelecting.deselectGrabs()
+            self.edit(grabbed, setOffset: iOffset, noPause: revealed)
+        }
+        
         if  iMoveOut {
-            quickStopCurrentEdit(clearOffset: true)
+            quickStopCurrentEdit()
             gGraphEditor.moveOut {
-                let grabbed = gSelecting.firstSortedGrab
-
-                gSelecting.deselectGrabs()
-                gControllers.signalFor(nil, regarding: .eRelayout) {
-                    FOREGROUND(after: 0.4) {
-                        self.edit(grabbed)
-                        self.setCursor(at: 100000000.0)
-                    }
-                }
+                done(100000000.0)
             }
         } else if currentlyEditingZone?.children.count ?? 0 > 0 {
-            quickStopCurrentEdit(clearOffset: true)
+            quickStopCurrentEdit()
             gGraphEditor.moveInto {
-                self.edit(gSelecting.firstSortedGrab)
-                self.setCursor(at: 0.0)
+                done(0.0)
             }
         }
     }
@@ -415,19 +434,23 @@ class ZTextEditor: ZTextView {
         let           e = currentEdit // for the case where stopEdit is true
 
         if  stopEdit {
-            capture()
-            currentZone?.grab()
+            applyPreservingOffset {
+                capture()
+                currentZone?.grab()
+            }
         }
         
         if  var original = currentZone {
             gGraphEditor.moveUp(iMoveUp, original, targeting: currentOffset) { iKind in
                 gControllers.signalFor(nil, regarding: iKind) {
-                    self.currentOffset = currentZone?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
+                    if  isHere {
+                        self.currentOffset = currentZone?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
+                    }
                     
                     if  stopEdit {
-                        original       = gSelecting.firstSortedGrab
+                        original = gSelecting.firstSortedGrab
                         
-                        if  original  != currentZone { // if move up (above) does nothing, ignore
+                        if  original != currentZone { // if move up (above) does nothing, ignore
                             self.edit(original)
                         } else {
                             self.currentEdit = e // restore after capture sets it to nill
@@ -437,12 +460,8 @@ class ZTextEditor: ZTextView {
                         }
                     } // else widgets are wrong
                     
-                    if !isHere {
+                    FOREGROUND(after: 0.01) {
                         self.setCursor(at: self.currentOffset)
-                    } else {
-                        FOREGROUND(after: 0.01) {
-                            self.setCursor(at: self.currentOffset)
-                        }
                     }
                 }
             }
