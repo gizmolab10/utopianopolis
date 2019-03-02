@@ -67,7 +67,9 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     }
 	
 
-    func applicationDidFinishLaunching(aNotification: NSNotification) {}
+    func applicationDidFinishLaunching(aNotification: NSNotification) {
+        print("hah!")
+    }
 
 
     func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {

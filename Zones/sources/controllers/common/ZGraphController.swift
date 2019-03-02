@@ -52,6 +52,11 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
         if  !kIsPhone {
             editorView?.addSubview(favoritesRootWidget)
         }
+        
+        guard let lighten = CIFilter(name: "CIColorControls") else { return }
+        lighten.setDefaults()
+        lighten.setValue(1, forKey: "inputBrightness")
+        spinner?.contentFilters = [lighten]
     }
 
 
@@ -401,13 +406,15 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     }
 
 
-    override func displayActivity(_ show: Bool) {
-        spinnerView?.isHidden = !show
+    func showSpinner(_ show: Bool) {
+        if  spinnerView?.isHidden == show {
+            spinnerView?.isHidden = !show
 
-        if show {
-            spinner?.startAnimating()
-        } else {
-            spinner?.stopAnimating()
+            if show {
+                spinner?.startAnimating()
+            } else {
+                spinner?.stopAnimating()
+            }
         }
     }
 

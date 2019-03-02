@@ -153,15 +153,6 @@ class ZControllers: NSObject {
     // MARK:-
 
 
-    func displayActivity(_ show: Bool) {
-        FOREGROUND {
-            for signalObject in self.signalObjectsByControllerID.values {
-                signalObject.controller.displayActivity(show)
-            }
-        }
-    }
-
-
     func updateNeededCounts() {
         for cloud in gRemoteStorage.allClouds {
             var alsoProgenyCounts = false

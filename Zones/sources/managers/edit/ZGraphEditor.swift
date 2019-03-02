@@ -106,7 +106,7 @@ class ZGraphEditor: NSObject {
                     case "?":      showHideKeyboardShortcuts()
                     case "-":      return editedZone?.convertToLine() ?? false // false means key not handled
                     case "/":      gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }
-                    case ",", ".": commaAndPeriod(COMMAND, with: key == ".")
+                    case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kSpace:   addIdea()
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() }
@@ -127,7 +127,7 @@ class ZGraphEditor: NSObject {
                 
                 if  let a = arrow, isWindow {
                     handleArrow(a, flags: flags)
-                } else if kMarkingCharacters.contains(key), !COMMAND {
+                } else if kMarkingCharacters.contains(key), !COMMAND, !CONTROL {
                     prefix(with: key)
                 } else {
                     switch key {
@@ -146,12 +146,11 @@ class ZGraphEditor: NSObject {
                     case "o":      if SPECIAL { gFiles.showInFinder() } else { gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() } }
                     case "p":      gHere.widget?.printView()
                     case "q":      gApplication.terminate(self)
-                    case "r":      reverse()
+                    case "r":      if SPECIAL { sendEmailBugReport() } else { reverse() }
                     case "s":      gFiles.exportToFile(asOutline: OPTION, for: gHere)
                     case "t":      swapWithParent()
                     case "u":      alterCase(up: true)
                     case "w":      rotateWritable()
-                    case "y":      if SPECIAL { sendEmailBugReport() }
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
                     case "+":      divideChildren()
                     case "-":      if !COMMAND || !OPTION { addLine() } else { delete(permanently: false, preserveChildren: true, convertToTitledLine: true) }
@@ -159,10 +158,10 @@ class ZGraphEditor: NSObject {
                     case "\\":     travelToOtherGraph()
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
-                    case "?":      CONTROL ? openBrowserForFocusWebsite() : showHideKeyboardShortcuts()
+                    case "?":      if CONTROL { openBrowserForFocusWebsite() }
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
                     case ";", "'": gFavorites.switchToNext(key == "'") { self.syncAndRedraw() }
-                    case ",", ".": commaAndPeriod(COMMAND, with: key == ".")
+                    case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
                     case kBackspace,
@@ -308,7 +307,7 @@ class ZGraphEditor: NSObject {
             case .eUndo:      valid = undo.canUndo
             case .eRedo:      valid = undo.canRedo
             case .eTravel:    valid = mover.canTravel
-            case .eCloud:     valid = gHasInternet && gCloudAccountIsActive
+            case .eCloud:     valid = gHasInternet && gCanAccessMyCloudDatabase
             default:          break
             }
         } else if arrow == nil {
@@ -397,6 +396,8 @@ class ZGraphEditor: NSObject {
             t.stopCurrentEdit(forceCapture: true)
             zone.ungrab()
             
+            gCurrentBrowseLevel = zone.level // so cousin list will not be empty
+            
             moveUp(atStart, zone, selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { iKind in
                 self.redrawGraph() {
                     t.edit(zone)
@@ -407,8 +408,8 @@ class ZGraphEditor: NSObject {
     }
     
     
-    func commaAndPeriod(_ COMMAND: Bool, with PERIOD: Bool) {
-        if     !COMMAND {
+    func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
+        if     !COMMAND || (OPTION && PERIOD) {
             if !PERIOD {
                 gBrowsingMode  = gBrowsingIsConfined ? .cousinJumps : .confined
             } else {
@@ -429,20 +430,7 @@ class ZGraphEditor: NSObject {
 
 
     func travelToOtherGraph() {
-        let here = gHere
-
         toggleDatabaseID()
-
-        if    !here.isRootOfFavorites {
-            if here.isRootOfLostAndFound {
-                gHere = gLostAndFound!
-            } else if here.isTrash {
-                gHere = gTrash!
-            } else if here.isRoot {
-                gHere = gRoot!
-            }
-        }
-
         gHere.grab()
         gHere.revealChildren()
         gFavorites.updateAllFavorites()
@@ -483,10 +471,11 @@ class ZGraphEditor: NSObject {
                             let      mark = nameParts[index]            // found: "(x"
                             let markParts = mark.components(separatedBy: before) // markParts[1] == x
 
-                            if  markParts.count > 1 && markParts[0].count == 0 && markParts[1].count <= 2 {
+                            if  markParts.count > 1 && markParts[0].count == 0 {
+                                let  part = markParts[1]
                                 index    += 1
 
-                                if  markParts[1].isDigit {
+                                if  part.count <= 2 && part.isDigit {
                                     add   = false
                                     break
                                 }
@@ -1307,11 +1296,7 @@ class ZGraphEditor: NSObject {
                     }
                 }
             } else {
-                let destructionIsAllowed = gCloudAccountIsActive || zone.databaseID != .mineID
-                let    destroyEventually = permanently           || zone.isInTrash
-                let           destroyNow = destructionIsAllowed && destroyEventually && gHasInternet
-
-                let deleteBookmarks: Closure = {
+                let deleteBookmarksClosure: Closure = {
                     if  let            p = parent, p != zone {
                         p.fetchableCount = p.count                  // delete alters the count
                     }
@@ -1327,9 +1312,9 @@ class ZGraphEditor: NSObject {
                 
                 zone.addToPaste()
 
-                if !destroyNow && !destroyEventually {
+                if  !permanently && !zone.isInTrash {
                     moveZone(zone, to: zone.trashZone) {
-                        deleteBookmarks()
+                        deleteBookmarksClosure()
                     }
                 } else {
                     zone.traverseAllProgeny { iZone in
@@ -1338,12 +1323,12 @@ class ZGraphEditor: NSObject {
                         iZone.orphan()
                     }
 
-                    if !destroyNow {
+                    if  zone.cloud?.cloudUnavailable ?? true {
                         moveZone(zone, to: zone.destroyZone) {
-                            deleteBookmarks()
+                            deleteBookmarksClosure()
                         }
                     } else {
-                        deleteBookmarks()
+                        deleteBookmarksClosure()
                     }
                 }
             }

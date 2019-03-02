@@ -40,16 +40,16 @@ class ZInformationController: ZGenericController {
 
 
     var totalCountsText: String {
-        let  count = gCloud?.rootZone?.progenyCount ?? 0
-        let suffix = count == 0 ? "" : "s"
+        let  count = (gCloud?.rootZone?.progenyCount ?? 0) + 1 // add one for root
+        let suffix = count == 1 ? "" : "s"
 
-        return "\(count + 1) idea\(suffix)"
+        return "\(count) idea\(suffix)"
     }
 
 
     var graphNameText: String {
         if let dbID = currentZone.databaseID {
-            return "in \(dbID.text) database"
+            return "in \(dbID.userReadableString) database"
         }
 
         return ""
@@ -57,7 +57,7 @@ class ZInformationController: ZGenericController {
 
 
     var cloudStatusText: String {
-        if !gCloudAccountIsActive { return "local storage only" }
+        if !gCanAccessMyCloudDatabase { return "local storage only" }
         
         let ops = // String.pluralized(gBatchManager.totalCount - 1,       unit: "batch", plural: "es", followedBy: ", ") +
                   String.pluralized(gBatches.queue.operationCount, unit: "iCloud request")

@@ -375,6 +375,21 @@ extension CKRecord {
 }
 
 
+extension BlockOperation {
+    
+    func invokeCompletions() {
+        if  let block = completionBlock {
+            block()
+        }
+        
+//        if  let recordBlock = perRecordCompletionBlock {
+//            recordBlock()
+//        }
+    }
+    
+}
+
+
 infix operator ** : MultiplicationPrecedence
 
 

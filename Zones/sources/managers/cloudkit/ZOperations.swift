@@ -77,6 +77,9 @@ let localOperations: [ZOperationID] = [.oHere, .oRoots, .oFound, .oReadFile, .oI
 class ZOperations: NSObject {
 
 
+    var    isIncomplete :         Bool  { return currentOp != .oCompletion }
+    var      shouldShow :         Bool  { return isIncomplete && timeSinceOpStart > 0.5 }
+    var    shouldCancel :         Bool  { return isIncomplete && timeSinceOpStart > 5.0 }
     var   debugTimeText :       String  { return !usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)" }
     var onCloudResponse :   AnyClosure?
     var     lastOpStart :         Date?
@@ -143,16 +146,18 @@ class ZOperations: NSObject {
 
         return changedConnect || changedAccount
     }
-
+    
 
     func setupCloudTimer() {
         if  gCloudTimer == nil {
             gCloudFire   = { iTimer in
                 FOREGROUND(canBeDirect: true) {
-                    let show = self.currentOp != .oCompletion && self.timeSinceOpStart > 0.5
+                    gGraphController?.showSpinner(self.shouldShow)
 
-                    gControllers.displayActivity(show)
-
+                    if  self.shouldCancel {
+                        gBatches.unHang()
+                    }
+                    
                     if  self.cloudStatusChanged() {
                         gControllers.signalFor(nil, regarding: .eDetails) // inform user of change in cloud status
 
@@ -161,10 +166,10 @@ class ZOperations: NSObject {
                         /////////////////////////////////////////////////
 
                         if  gHasInternet && gIsReadyToShowUI {
-                            let identifier: ZBatchID = gCloudAccountIsActive ? .bResumeCloud : .bNewAppleID
+                            let identifier: ZBatchID = gCanAccessMyCloudDatabase ? .bResumeCloud : .bNewAppleID
 
                             gBatches.batch(identifier) { iResult in
-                                if  gCloudAccountIsActive {
+                                if  gCanAccessMyCloudDatabase {
                                     gFavorites.updateAllFavorites()
                                 }
 
@@ -204,7 +209,7 @@ class ZOperations: NSObject {
                 // ignore operations that are not local when have no internet //
                 ////////////////////////////////////////////////////////////////
 
-                if  operationID.isLocal || gCloudAccountIsActive {
+                if  operationID.isLocal || gCanAccessMyCloudDatabase {
 
                     //////////////////////////////////////////////////////////////////
                     // susend queue until operation function calls its onCompletion //

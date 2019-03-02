@@ -21,7 +21,6 @@ class ZGenericController: ZController {
     var controllerID: ZControllerID { return .undefined }
     var backgroundColor: CGColor { return gBackgroundColor.cgColor }
     func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}
-    func displayActivity(_ show: Bool) {}
     func setup() {}
 
 

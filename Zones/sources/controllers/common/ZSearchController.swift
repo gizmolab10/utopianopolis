@@ -20,7 +20,7 @@ import CloudKit
 var gSearchController: ZSearchController? { return gControllers.controllerForID(.search) as? ZSearchController }
 
 
-class ZSearchController: ZGenericController, ZSearchFieldDelegate {
+class ZSearchController: ZGenericController {
 
 
     @IBOutlet var searchBox: ZSearchField?
@@ -52,25 +52,21 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
         if       !isReturn, isEntry {
             gSearching.state = .find
-        } else if isReturn, !isList, let text = searchBoxText {
-            performSearch(for: text)
-            
-            return nil
+
+            return event
         }
         
-        if  key == "a" && COMMAND {
+        if isReturn, !isList, let text = searchBoxText {
+            performSearch(for: text)
+        } else if  key == "a" && COMMAND {
             searchBox?.selectAllText()
-            
-            return nil
-        }
-
-        if (isReturn && isEntry) || (isExit && !isF) || (isF && COMMAND) {
+        } else if (isReturn && isEntry) || (isExit && !isF) || (isF && COMMAND) {
             endSearch()
-            
-            return nil
+        } else {
+            return event
         }
-
-        return event
+        
+        return nil
     }
 
 
@@ -97,30 +93,41 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         var combined = [ZDatabaseID: [Any]] ()
         var remaining = kAllDatabaseIDs.count
         
+        let done : Closure = {
+            if  remaining == 0 {
+                gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
+                gSearching.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
+                
+                gControllers.signalFor(nil, regarding: .eFound)
+            }
+        }
+        
         for cloud in gRemoteStorage.allClouds {
-            let  locals = cloud.searchLocal(for: searchString)
-            
-            cloud.search(for: searchString) { iObject in
-                FOREGROUND {
-                    var results = iObject as! [Any]
-                    remaining -= 1
-                    
-                    results.appendUnique(contentsOf: locals) { (a, b) in
-                        if  let alpha = a as? CKRecord,
-                            let  beta = b as? CKRecord {
-                            return alpha.recordID.recordName == beta.recordID.recordName
+            let locals = cloud.searchLocal(for: searchString)
+
+            if  gUser == nil {
+                combined[cloud.databaseID] = locals
+                remaining -= 1
+
+                done()
+            } else {
+                cloud.search(for: searchString) { iObject in
+                    FOREGROUND {
+                        var results = iObject as! [Any]
+                        remaining -= 1
+                        
+                        results.appendUnique(contentsOf: locals) { (a, b) in
+                            if  let alpha = a as? CKRecord,
+                                let  beta = b as? CKRecord {
+                                return alpha.recordID.recordName == beta.recordID.recordName
+                            }
+                            
+                            return false
                         }
                         
-                        return false
-                    }
-                    
-                    combined[cloud.databaseID] = results
-                    
-                    if  remaining == 0 {
-                        gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
-                        gSearching.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
+                        combined[cloud.databaseID] = results
                         
-                        gControllers.signalFor(nil, regarding: .eFound)
+                        done()
                     }
                 }
             }

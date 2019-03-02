@@ -290,7 +290,7 @@ class ZFiles: NSObject {
             let             name  = fileName(for: index) {
             let         cloudName = fileName(for: index, isGeneric: false)!
             let        isEveryone = index == .everyoneIndex
-            let        useGeneric = isEveryone || !gCloudAccountIsActive
+            let        useGeneric = isEveryone || !gCanAccessMyCloudDatabase
             let         backupURL = directoryURL.appendingPathComponent(name + backupExtension)
             let    genericFileURL = directoryURL.appendingPathComponent(name + normalExtension)
             let      cloudFileURL = directoryURL.appendingPathComponent(cloudName + normalExtension)

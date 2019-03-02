@@ -18,7 +18,7 @@ class ZCloud: ZRecords {
     var   cloudZonesByID = [CKRecordZone.ID : CKRecordZone] ()
     var         database :  CKDatabase? { return gRemoteStorage.databaseForID(databaseID) }
     var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
-    var cloudUnavailable :         Bool { return !gHasInternet || (databaseID == .mineID && !gCloudAccountIsActive) }
+    var cloudUnavailable :         Bool { return !gHasInternet || (databaseID == .mineID && !gCanAccessMyCloudDatabase) }
     var    isRemembering :         Bool = false
     var currentOperation : CKOperation?
     var currentPredicate : NSPredicate?
@@ -228,37 +228,21 @@ class ZCloud: ZRecords {
             return
         }
 
-        if      cloudUnavailable {
-            if  let ckRecord = maybeCKRecordForRecordName(ckRecordID.recordName),
-                hasCKRecordName(ckRecordID.recordName, forAnyOf: [.notFetched]) {
-                done(ckRecord)
-            }
-
+        if  let ckRecord = maybeCKRecordForRecordName(ckRecordID.recordName),
+            hasCKRecordName(ckRecordID.recordName, forAnyOf: [.notFetched]) {
+            done(ckRecord)
+        } else if cloudUnavailable {
             done(nil)
         } else {
-            BACKGROUND {     // not stall foreground processor
-                self.database?.fetch(withRecordID: ckRecordID) { (iFetchedCKRecord: CKRecord?, iFetchError: Error?) in
-                    gAlerts.alertError(iFetchError) { iHasError in
-                        if !iHasError {
-                            done(iFetchedCKRecord)
-                        } else if !mustCreate {
-                            done(nil)
-                        } else if let type = recordType {
-                            let brandNew: CKRecord = CKRecord(recordType: type, recordID: ckRecordID)
-
-                            self.database?.save(brandNew) { (iSavedRecord: CKRecord?, iSaveError: Error?) in
-                                gAlerts.detectError(iSaveError) { iHasSaveError in
-                                    if  iHasSaveError {
-                                        done(nil)
-                                    } else {
-                                        done(iSavedRecord)
-                                    }
-                                }
-                            }
-                        } else {
-                            done(nil)
-                        }
-                    }
+            reliableFetch(needed: [ckRecordID], properties: ZUser.cloudProperties()) { iCKRecords in
+                if iCKRecords.count != 0 {
+                    done(iCKRecords[0])
+                } else if !mustCreate {
+                    done(nil)
+                } else if let type = recordType {
+                    done(CKRecord(recordType: type, recordID: ckRecordID))
+                } else {
+                    done(nil)
                 }
             }
         }
@@ -802,12 +786,12 @@ class ZCloud: ZRecords {
     }
 
 
-    func reliableFetch(needed: [CKRecord.ID], _ onCompletion: RecordsClosure?) {
+    func reliableFetch(needed: [CKRecord.ID], properties: [String] = Zone.cloudProperties(), _ onCompletion: RecordsClosure?) {
         let count = needed.count
 
         if  count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
             var            retrieved = [CKRecord] ()
-            operation   .desiredKeys = Zone.cloudProperties()
+            operation   .desiredKeys = properties
             operation     .recordIDs = needed
 
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecord.ID?, iError: Error?) in
@@ -1192,7 +1176,7 @@ class ZCloud: ZRecords {
             } else {
                 let            rootID = rootIDs[iIndex]
                 let        recordName = rootID.rawValue
-                var              name = self.databaseID.text + " " + recordName
+                var              name = self.databaseID.userReadableString + " " + recordName
                 let establishNextRoot = { establishRootAt?(iIndex + 1) }
 
                 switch rootID {

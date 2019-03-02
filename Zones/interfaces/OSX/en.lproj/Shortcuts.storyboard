@@ -87,21 +87,21 @@
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR">
                                 <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                                 <subviews>
-                                    <customView identifier="lineView" translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line">
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line">
                                         <rect key="frame" x="290" y="270" width="1" height="510"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="5Gm-ni-LIH"/>
                                             <constraint firstAttribute="height" constant="510" id="QjB-vW-W62"/>
                                         </constraints>
                                     </customView>
-                                    <customView identifier="lineView" translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line">
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line">
                                         <rect key="frame" x="0.0" y="269" width="580" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="Mym-7j-1Mo"/>
                                             <constraint firstAttribute="width" constant="580" id="nfu-53-PXo"/>
                                         </constraints>
                                     </customView>
-                                    <customView identifier="lineView" translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line">
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line">
                                         <rect key="frame" x="580" y="0.0" width="1" height="780"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="OGt-RE-RO4"/>

@@ -277,7 +277,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
                 case  .left:    clear();    return nil
                 case .right: if resolve() { return nil }; break
                 }
-            } else  if kExitKeys.contains(key) { // N.B. test key first since getInput has a possible side-effect of exiting search
+            } else if key == kReturn { // N.B. test key first since getInput has a possible side-effect of exiting search
                 resolve()
                 
                 return nil

@@ -63,7 +63,7 @@ class ZTextPack: NSObject {
 
             switch gCountsMode {
             case .fetchable: need = zone.indirectCount
-            case .progeny:   need = zone.indirectCount + zone.progenyCount
+            case .progeny:   need = zone.progenyCount + 1
             default:         return result
             }
 
@@ -124,6 +124,7 @@ class ZTextPack: NSObject {
             t.layoutText()
         }
 
+        widget?.revealDot.setNeedsDisplay()
         widget?.setNeedsDisplay()
     }
 
@@ -291,17 +292,18 @@ class ZTextEditor: ZTextView {
                 textWidget.layoutTextField()
                 textWidget.becomeFirstResponder()
                 
-                if  let o = setOffset {
+                if  let at = setOffset {
                     if  noPause {
-                        setCursor(at: o)
+                        setCursor(at: at)
                     } else {
                         FOREGROUND(after: 0.001) {
-                            self.setCursor(at: o)
+                            self.setCursor(at: at)
                         }
                     }
                 }
                 
                 textWidget.widget?.setNeedsDisplay()
+//                textWidget.widget?.revealDot.setNeedsDisplay()
                 deferEditingStateChange()
             }
         }

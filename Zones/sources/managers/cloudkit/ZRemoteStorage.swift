@@ -11,16 +11,15 @@ import Foundation
 import CloudKit
 
 
-let    gRemoteStorage = ZRemoteStorage()
-var    gEveryoneCloud : ZCloud?     { return gRemoteStorage.cloud(for: .everyoneID) }
-var        gMineCloud : ZCloud?     { return gRemoteStorage.cloud(for: .mineID) }
-var            gCloud : ZCloud?     { return gRemoteStorage.currentCloud }
-var        gAllClouds : [ZCloud]    { return gRemoteStorage.allClouds }
-var     gLostAndFound : Zone?       { return gRemoteStorage.lostAndFoundZone }
-var    gFavoritesRoot : Zone?       { return gMineCloud?.favoritesZone }
-var            gTrash : Zone?       { return gRemoteStorage.trashZone }
-var             gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemoteStorage.rootZone  = newValue } }
-var gCloudUnavailable : Bool        { return gMineCloud?.cloudUnavailable ?? false }
+let gRemoteStorage = ZRemoteStorage()
+var gEveryoneCloud : ZCloud?     { return gRemoteStorage.cloud(for: .everyoneID) }
+var     gMineCloud : ZCloud?     { return gRemoteStorage.cloud(for: .mineID) }
+var         gCloud : ZCloud?     { return gRemoteStorage.currentCloud }
+var     gAllClouds : [ZCloud]    { return gRemoteStorage.allClouds }
+var  gLostAndFound : Zone?       { return gRemoteStorage.lostAndFoundZone }
+var gFavoritesRoot : Zone?       { return gMineCloud?.favoritesZone }
+var         gTrash : Zone?       { return gRemoteStorage.trashZone }
+var          gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemoteStorage.rootZone  = newValue } }
 
 
 class ZRemoteStorage: NSObject {

@@ -17,10 +17,10 @@ import CloudKit
 #endif
 
 
-var gCloudAccountIsActive    : Bool { return gCloudAccountStatus == .active }
-var gCloudAccountStatus      = ZCloudAccountStatus.begin
-var recentCloudAccountStatus = gCloudAccountStatus
-var gHasInternet             = true
+var gCanAccessMyCloudDatabase : Bool { return gCloudAccountStatus == .active }
+var gCloudAccountStatus       = ZCloudAccountStatus.begin
+var recentCloudAccountStatus  = gCloudAccountStatus
+var gHasInternet              = true
 
 
 class ZOnboarding : ZOperations {
@@ -50,6 +50,8 @@ class ZOnboarding : ZOperations {
 
 
     override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
+        onCloudResponse = { iAny in onCompletion(false) }
+
         switch operationID {
         case .oCheckAvailability: checkAvailability { onCompletion(true) }    // true means op is handled
         case .oFetchUserRecord:   fetchUserRecord   { onCompletion(true) }

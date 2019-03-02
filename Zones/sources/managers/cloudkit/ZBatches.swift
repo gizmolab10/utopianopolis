@@ -43,7 +43,7 @@ enum ZBatchID: Int {
              .bFinishUp,
              .bNewAppleID,
              .bResumeCloud: return false
-        case .bSaveToCloud: return gCloudAccountIsActive
+        case .bSaveToCloud: return gCanAccessMyCloudDatabase
         default:            return true
         }
     }
@@ -294,9 +294,9 @@ class ZBatches: ZOnboarding {
                 let               alwaysForBoth = [.oHere, .oRoots, .oReadFile].contains(operationID)
                 let               forMineIDOnly = [.oBookmarks, .oSubscribe, .oUnsubscribe].contains(operationID)
                 let                      isMine = restoreToID == .mineID
-                let               onlyCurrentID = (!gCloudAccountIsActive && !alwaysForBoth) || operationID == .oCompletion
+                let               onlyCurrentID = (!gCanAccessMyCloudDatabase && !alwaysForBoth) || operationID == .oCompletion
                 let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
-                let                      isNoop = !gCloudAccountIsActive && (requiresActive || (onlyCurrentID && isMine && operationID != .oFavorites))
+                let                      isNoop = !gCanAccessMyCloudDatabase && (requiresActive || (onlyCurrentID && isMine && operationID != .oFavorites))
                 var invokeForIndex: IntClosure?                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 
@@ -310,7 +310,7 @@ class ZBatches: ZOnboarding {
                         self.currentDatabaseID = databaseIDs[index]      // if hung, it happened in this id
 
                         self.invokeOperation(for: operationID) { (iResult: Any?) in
-                            self  .lastOpStart = nil
+//                            self  .lastOpStart = nil
 
                             FOREGROUND(canBeDirect: true) {
                                 let      error = iResult as? Error
