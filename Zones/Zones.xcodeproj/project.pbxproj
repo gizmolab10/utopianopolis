@@ -169,6 +169,7 @@
 		A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
 		A74D1BA622222FC900E69E44 /* eye.con-512.png in Resources */ = {isa = PBXBuildFile; fileRef = A74D1BA522222FC900E69E44 /* eye.con-512.png */; };
 		A77758932207BCC600C37B49 /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77758922207BCC500C37B49 /* ZToggleButton.swift */; };
+		A7988AD1222B69AE00256A71 /* ZGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7988AD0222B69AE00256A71 /* ZGradientView.swift */; };
 		A7C96E3B221883CB00986631 /* ZIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZIndicatorView.swift */; };
 		A7CFA81B21F51697008DA880 /* ZSearching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearching.swift */; };
 		A7CFA81C21F516E0008DA880 /* ZSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619941FB3C4660087B066 /* ZSearchController.swift */; };
@@ -316,6 +317,7 @@
 		A746D466219F637A00123A0A /* Thoughtful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thoughtful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A74D1BA522222FC900E69E44 /* eye.con-512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "eye.con-512.png"; path = "interfaces/Assets.xcassets/AppIcon.OSX.appiconset/eye.con-512.png"; sourceTree = "<group>"; };
 		A77758922207BCC500C37B49 /* ZToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToggleButton.swift; sourceTree = "<group>"; };
+		A7988AD0222B69AE00256A71 /* ZGradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGradientView.swift; sourceTree = "<group>"; };
 		A7C96E392218838A00986631 /* ZIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIndicatorView.swift; sourceTree = "<group>"; };
 		A7D3C23C21F6A70300B64B83 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/SnapKit.framework; sourceTree = "<group>"; };
 		A7D3C25821FAB6A000B64B83 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/iOS/SnapKit.framework; sourceTree = "<group>"; };
@@ -516,6 +518,7 @@
 			isa = PBXGroup;
 			children = (
 				0C4C23A12016B0930025E4DF /* ZContainerView.swift */,
+				A7988AD0222B69AE00256A71 /* ZGradientView.swift */,
 				A7C96E392218838A00986631 /* ZIndicatorView.swift */,
 				0C39B2871F182EBB0091F4D1 /* ZoneDot.swift */,
 				0C367C361F463D93000FC914 /* ZoneDragView.swift */,
@@ -965,6 +968,7 @@
 				0C39B38D1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
 				0C39B3841F182EBB0091F4D1 /* ZoneDot.swift in Sources */,
 				0CB619981FB3C4660087B066 /* ZSearchResultsController.swift in Sources */,
+				A7988AD1222B69AE00256A71 /* ZGradientView.swift in Sources */,
 				0C39B28E1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
 				A7395BB421B877B600F5759F /* ZGraphEditor.swift in Sources */,
 				0C39B2BB1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,

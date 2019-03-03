@@ -53,6 +53,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             editorView?.addSubview(favoritesRootWidget)
         }
         
+        indicatorView?.setup()
+
         guard let lighten = CIFilter(name: "CIColorControls") else { return }
         lighten.setDefaults()
         lighten.setValue(1, forKey: "inputBrightness")
@@ -167,6 +169,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             }
         }
 
+        indicatorView?.update()
         indicatorView?.setNeedsDisplay()
     }
 

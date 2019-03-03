@@ -17,45 +17,46 @@ import CloudKit
 #endif
 
 
-var               gWorkMode                     = ZWorkMode.startupMode
-var          gTextCapturing                     = false
-var        gIsReadyToShowUI                     = false
-var      gKeyboardIsVisible                     = false
-var      gArrowsDoNotBrowse                     = false
-var     gShowShortcutWindow                     = false
-var     gDebugDenyOwnership                     = false
-var   gDebugShowIdentifiers                     = false
-var  gMeasureOpsPerformance                     = true
-var  gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event IS startup
-var    gTimeOfSystemStartup                     = Date.timeIntervalSinceReferenceDate
-var     gCurrentBrowseLevel:               Int?
-var        gDragDropIndices: NSMutableIndexSet?
-var           gDragRelation:         ZRelation?
-var           gDragDropZone:              Zone?
-var            gDraggedZone:              Zone?
-var              gDragPoint:           CGPoint?
-var               gExpanded:          [String]?
+var                gWorkMode                     = ZWorkMode.startupMode
+var           gTextCapturing                     = false
+var         gIsReadyToShowUI                     = false
+var       gKeyboardIsVisible                     = false
+var       gArrowsDoNotBrowse                     = false
+var      gShowShortcutWindow                     = false
+var      gDebugDenyOwnership                     = false
+var    gDebugShowIdentifiers                     = false
+var   gMeasureOpsPerformance                     = true
+var     gTimeOfSystemStartup                     = Date.timeIntervalSinceReferenceDate
+var   gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event IS startup
+var      gCurrentBrowseLevel:               Int?
+var         gDragDropIndices: NSMutableIndexSet?
+var            gDragRelation:         ZRelation?
+var            gDragDropZone:              Zone?
+var             gDraggedZone:              Zone?
+var               gDragPoint:           CGPoint?
+var                gExpanded:          [String]?
 
-var               gDarkMode:     InterfaceStyle { return InterfaceStyle() }
-var                 gIsDark:               Bool { return gDarkMode == .Dark }
-var                 gIsLate:               Bool { return gBatches.isLate }
-var             gIsDragging:               Bool { return gDraggedZone != nil }
-var   gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
-var     gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
-var       gInsertionsFollow:               Bool { return gInsertionMode == .follow }
-var         gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
-var             gEditorView:      ZoneDragView? { return gGraphController?.editorView }
-var              gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
-var               gDotWidth:             Double { return gDotHeight * 0.75 }
-var     gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
-var               gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
-var             gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
-var          gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
-var       gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? ZColor.white : ZColor.black }
-var  gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker (by: 4.0)  .cgColor }
-var gDarkishBackgroundColor:            CGColor { return gBackgroundColor.darkish(by: 1.028).cgColor }
-var gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter(by: 4.0)  .cgColor }
-var  gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
+var                gDarkMode:     InterfaceStyle { return InterfaceStyle() }
+var                  gIsDark:               Bool { return gDarkMode == .Dark }
+var                  gIsLate:               Bool { return gBatches.isLate }
+var              gIsDragging:               Bool { return gDraggedZone != nil }
+var    gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
+var      gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
+var        gInsertionsFollow:               Bool { return gInsertionMode == .follow }
+var          gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
+var              gEditorView:      ZoneDragView? { return gGraphController?.editorView }
+var               gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
+var                gDotWidth:             Double { return gDotHeight * 0.75 }
+var      gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
+var                gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
+var              gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
+var           gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
+var        gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? ZColor.white : ZColor.black }
+var   gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker  (by: 4.0)  .cgColor }
+var  gDarkishBackgroundColor:            CGColor { return gBackgroundColor.darkish (by: 1.028).cgColor }
+var gLightishBackgroundColor:            CGColor { return gBackgroundColor.lightish(by: 1.02) .cgColor }
+var  gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter (by: 4.0)  .cgColor }
+var   gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
 
 
 var gCurrentEvent: ZEvent? {

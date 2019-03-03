@@ -24,8 +24,8 @@ class ZGenericController: ZController {
     func setup() {}
 
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
         gControllers.register(self, iID: controllerID) { object, kind in
             if  self.useDefaultBackgroundColor {

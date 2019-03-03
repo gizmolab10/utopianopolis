@@ -553,23 +553,30 @@ DQ
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="f9Z-GK-Klh" customClass="ZIndicatorView" customModule="Thoughtful" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
-                            </customView>
-                            <customView hidden="YES" appearanceType="aqua" translatesAutoresizingMaskIntoConstraints="NO" id="fSQ-gu-ejW">
-                                <rect key="frame" x="0.0" y="226" width="400" height="144"/>
                                 <subviews>
-                                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
-                                        <rect key="frame" x="168" y="40" width="64" height="64"/>
+                                    <customView hidden="YES" appearanceType="aqua" translatesAutoresizingMaskIntoConstraints="NO" id="fSQ-gu-ejW">
+                                        <rect key="frame" x="0.0" y="226" width="400" height="144"/>
+                                        <subviews>
+                                            <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
+                                                <rect key="frame" x="168" y="40" width="64" height="64"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="64" id="bAV-En-6Wv"/>
+                                                    <constraint firstAttribute="width" constant="64" id="vJp-G5-N5A"/>
+                                                </constraints>
+                                            </progressIndicator>
+                                        </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="64" id="bAV-En-6Wv"/>
-                                            <constraint firstAttribute="width" constant="64" id="vJp-G5-N5A"/>
+                                            <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="fSQ-gu-ejW" secondAttribute="centerX" id="Pch-gV-l5Q"/>
+                                            <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="fSQ-gu-ejW" secondAttribute="centerY" id="c2Q-JT-R0o"/>
+                                            <constraint firstItem="uBD-4n-5KN" firstAttribute="top" secondItem="fSQ-gu-ejW" secondAttribute="top" constant="40" id="ofp-Cu-1Ft"/>
+                                            <constraint firstAttribute="bottom" secondItem="uBD-4n-5KN" secondAttribute="bottom" constant="40" id="wyj-sa-dEL"/>
                                         </constraints>
-                                    </progressIndicator>
+                                    </customView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="fSQ-gu-ejW" secondAttribute="centerX" id="Pch-gV-l5Q"/>
-                                    <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="fSQ-gu-ejW" secondAttribute="centerY" id="c2Q-JT-R0o"/>
-                                    <constraint firstItem="uBD-4n-5KN" firstAttribute="top" secondItem="fSQ-gu-ejW" secondAttribute="top" constant="40" id="ofp-Cu-1Ft"/>
-                                    <constraint firstAttribute="bottom" secondItem="uBD-4n-5KN" secondAttribute="bottom" constant="40" id="wyj-sa-dEL"/>
+                                    <constraint firstAttribute="trailing" secondItem="fSQ-gu-ejW" secondAttribute="trailing" id="3QS-4F-pRb"/>
+                                    <constraint firstItem="fSQ-gu-ejW" firstAttribute="centerY" secondItem="f9Z-GK-Klh" secondAttribute="centerY" id="bWs-Og-fNK"/>
+                                    <constraint firstItem="fSQ-gu-ejW" firstAttribute="leading" secondItem="f9Z-GK-Klh" secondAttribute="leading" id="rg1-Up-WQw"/>
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="itU-Gt-Inh" customClass="ZoneDragView" customModule="Thoughtful" customModuleProvider="target">
@@ -578,13 +585,10 @@ DQ
                         </subviews>
                         <constraints>
                             <constraint firstItem="itU-Gt-Inh" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="2on-Rh-qaW"/>
-                            <constraint firstAttribute="trailing" secondItem="fSQ-gu-ejW" secondAttribute="trailing" id="6od-RB-BXu"/>
                             <constraint firstAttribute="trailing" secondItem="f9Z-GK-Klh" secondAttribute="trailing" id="Lsu-yO-S1b"/>
                             <constraint firstItem="f9Z-GK-Klh" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="PVk-XS-TJr"/>
-                            <constraint firstItem="fSQ-gu-ejW" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="Yh0-T4-Jea"/>
                             <constraint firstAttribute="bottom" secondItem="itU-Gt-Inh" secondAttribute="bottom" id="doe-l2-P4Y"/>
                             <constraint firstItem="itU-Gt-Inh" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="lzQ-yE-6cu"/>
-                            <constraint firstItem="fSQ-gu-ejW" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="nk8-yo-s9T"/>
                             <constraint firstItem="f9Z-GK-Klh" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="o4s-Jc-4ta"/>
                             <constraint firstAttribute="trailing" secondItem="itU-Gt-Inh" secondAttribute="trailing" id="pGy-4H-4Ky"/>
                             <constraint firstAttribute="bottom" secondItem="f9Z-GK-Klh" secondAttribute="bottom" id="zCE-bt-8M0"/>

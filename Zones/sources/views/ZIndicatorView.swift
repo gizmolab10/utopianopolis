@@ -6,9 +6,44 @@
 //  Copyright © 2019 Jonathan Sand. All rights reserved.
 //
 
-import Foundation
+import SnapKit
+
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 class ZIndicatorView: ZView {
+    
+    
+    let gradientView  = ZGradientView()
+    let gradientLayer = CAGradientLayer()
+
+    
+    func setup() {
+        addSubview(gradientView)
+
+        gradientView.zlayer.backgroundColor = CGColor.white // gBackgroundColor.cgColor
+
+        update()
+    }
+    
+    func update() {
+        gradientView.snp.removeConstraints()
+        gradientView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.height.equalTo(bounds.size.height / 3.0)
+
+            if  gInsertionsFollow {
+                make.bottom.equalToSuperview()
+            } else {
+                make.top.equalToSuperview()
+            }
+        }
+        
+        gradientView.invertMode = gInsertionsFollow
+    }
     
     
     override func draw(_ iDirtyRect: CGRect) {
@@ -29,9 +64,9 @@ class ZIndicatorView: ZView {
         circleRect         = circleRect  .offsetBy(dx: 0.0, dy: circleOffset)
         let    circlesRect = triangleRect.insetBy(fractionX: 0.425, fractionY: 0.15)
 
-        gBackgroundColor.lightish(by: 1.02).setStroke()
+        NSColor(cgColor: gLightishBackgroundColor)?.setStroke()
 
-        ZBezierPath.drawTriangle(orientedUp: gInsertionsFollow, in: triangleRect, fillWith: gBackgroundColor.darker(by: 0.75), thickness: thickness)
+      //  ZBezierPath.drawTriangle(orientedUp: gInsertionsFollow, in: triangleRect, fillWith: gBackgroundColor.darker(by: 0.75), thickness: thickness)
         
         if  gBrowsingIsConfined {
             ZBezierPath.drawCircle(in: circleRect, fillWith: gBackgroundColor, thickness: thickness)
