@@ -25,15 +25,14 @@ class ZIndicatorView: ZView {
         addSubview(gradientView)
 
         gradientView.zlayer.backgroundColor = CGColor.white // gBackgroundColor.cgColor
-
-        update()
     }
     
-    func update() {
+    override func layout() {
+        super.layout()
         gradientView.snp.removeConstraints()
         gradientView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
-            make.height.equalTo(bounds.size.height / 3.0)
+            make.height.equalTo(bounds.size.height / 5.0)
 
             if  gInsertionsFollow {
                 make.bottom.equalToSuperview()
@@ -66,7 +65,7 @@ class ZIndicatorView: ZView {
 
         NSColor(cgColor: gLightishBackgroundColor)?.setStroke()
 
-      //  ZBezierPath.drawTriangle(orientedUp: gInsertionsFollow, in: triangleRect, fillWith: gBackgroundColor.darker(by: 0.75), thickness: thickness)
+        ZBezierPath.drawTriangle(orientedUp: gInsertionsFollow, in: triangleRect, fillWith: gBackgroundColor.darker(by: 0.75), thickness: thickness)
         
         if  gBrowsingIsConfined {
             ZBezierPath.drawCircle(in: circleRect, fillWith: gBackgroundColor, thickness: thickness)

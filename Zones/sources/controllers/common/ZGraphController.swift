@@ -169,7 +169,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             }
         }
 
-        indicatorView?.update()
+        indicatorView?.layout()
         indicatorView?.setNeedsDisplay()
     }
 

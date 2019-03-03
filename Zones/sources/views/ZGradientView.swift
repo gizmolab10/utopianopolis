@@ -17,15 +17,15 @@ import UIKit
 @IBDesignable
 class ZGradientView: ZView {
     
-    @IBInspectable var startLocation: Double =   0.05 { didSet { updateLocations() }}
-    @IBInspectable var endLocation:   Double =   0.95 { didSet { updateLocations() }}
-    @IBInspectable var horizontalMode:  Bool =  false { didSet { updatePoints() }}
-    @IBInspectable var diagonalMode:    Bool =  false { didSet { updatePoints() }}
-    @IBInspectable var invertMode:      Bool =  false { didSet { updateColors() }}
+    @IBInspectable var startLocation: Double =   0.05 { didSet { update() }}
+    @IBInspectable var endLocation:   Double =   0.95 { didSet { update() }}
+    @IBInspectable var horizontalMode:  Bool =  false { didSet { update() }}
+    @IBInspectable var diagonalMode:    Bool =  false { didSet { update() }}
+    @IBInspectable var invertMode:      Bool =  false { didSet { update() }}
     
     private let mask = CAGradientLayer()
     
-    private func updatePoints() {
+    private func update() {
         if  horizontalMode {
             mask.startPoint = diagonalMode ? CGPoint(x: 1, y: 0) : CGPoint(x: 0, y: 0.5)
             mask.endPoint   = diagonalMode ? CGPoint(x: 0, y: 1) : CGPoint(x: 1, y: 0.5)
@@ -33,20 +33,12 @@ class ZGradientView: ZView {
             mask.startPoint = diagonalMode ? CGPoint(x: 0, y: 0) : CGPoint(x: 0.5, y: 0)
             mask.endPoint   = diagonalMode ? CGPoint(x: 1, y: 1) : CGPoint(x: 0.5, y: 1)
         }
-    }
-    
-    private func updateLocations() {
-        mask.locations = [startLocation as NSNumber, endLocation as NSNumber]
-    }
-    
-    private func updateSize() {
-        mask.frame = bounds
-    }
-    
-    private func updateColors() {
-        let a = ZColor.white.withAlphaComponent(0.8).cgColor
+
+        let a = ZColor.white.withAlphaComponent(0.6).cgColor
         let b = ZColor.clear.cgColor
         mask.colors = invertMode ? [a, b] : [b, a]
+        mask.locations = [startLocation as NSNumber, endLocation as NSNumber]
+        mask.frame = bounds
     }
     
     private func setupMask() {
@@ -65,9 +57,6 @@ class ZGradientView: ZView {
     
     override func layout() {
         super.layout()
-        updateSize()
-        updateColors()
-        updatePoints()
-        updateLocations()
+        update()
     }
 }
