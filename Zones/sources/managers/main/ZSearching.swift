@@ -21,6 +21,16 @@ enum ZSearchState: Int {
     case find
     case list
     case not
+    
+    func isOneOf(_ states: [ZSearchState]) -> Bool {
+        for state in states {
+            if self == state {
+                return true
+            }
+        }
+        
+        return false
+    }
 }
 
 

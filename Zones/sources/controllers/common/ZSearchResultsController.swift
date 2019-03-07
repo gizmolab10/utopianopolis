@@ -268,19 +268,22 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         if  let       string = event.input {
             let        flags = event.modifierFlags
             let      COMMAND = flags.isCommand
-            let          key = string[string.startIndex].description
+            let          key = string[string.startIndex].description        // N.B. test key first since getInput has a possible side-effect of exiting search
             
             if  let    arrow = key.arrow {
                 switch arrow {
-                case    .up:    moveSelection(up: true,  extreme: COMMAND)
-                case  .down:    moveSelection(up: false, extreme: COMMAND)
-                case  .left:    clear();    return nil
-                case .right: if resolve() { return nil }; break
+                case    .up:     moveSelection(up: true,  extreme: COMMAND)
+                case  .down:     moveSelection(up: false, extreme: COMMAND)
+                case  .left:               clear(); return nil
+                case .right:  if resolve()        { return nil }; break
                 }
-            } else if key == kReturn { // N.B. test key first since getInput has a possible side-effect of exiting search
-                resolve()
-                
-                return nil
+            } else {
+                switch key {
+                case kReturn: if resolve()        { return nil }; break
+//                case "f":     if COMMAND { clear(); return nil }; break
+//                case kEscape:              clear(); return nil
+                default:                                          break
+                }
             }
         }
         

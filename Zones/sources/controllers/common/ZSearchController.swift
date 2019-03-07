@@ -20,7 +20,7 @@ import CloudKit
 var gSearchController: ZSearchController? { return gControllers.controllerForID(.search) as? ZSearchController }
 
 
-class ZSearchController: ZGenericController {
+class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
 
     @IBOutlet var searchBox: ZSearchField?
@@ -49,19 +49,17 @@ class ZSearchController: ZGenericController {
         let    state = gSearching.state
         let  isEntry = state == .entry
         let   isList = state == .list
-
-        if       !isReturn, isEntry {
-            gSearching.state = .find
-
-            return event
-        }
         
-        if isReturn, !isList, let text = searchBoxText {
+        if         isReturn, !isList, let text = searchBoxText {
             performSearch(for: text)
         } else if  key == "a" && COMMAND {
             searchBox?.selectAllText()
         } else if (isReturn && isEntry) || (isExit && !isF) || (isF && COMMAND) {
             endSearch()
+        } else if !isReturn, isEntry {
+            gSearching.state = .find
+            
+            return event
         } else {
             return event
         }
