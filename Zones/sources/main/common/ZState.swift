@@ -44,6 +44,7 @@ var    gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.windo
 var      gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
 var        gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var          gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
+var   gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
 var              gEditorView:      ZoneDragView? { return gGraphController?.editorView }
 var               gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var                gDotWidth:             Double { return gDotHeight * 0.75 }
@@ -54,9 +55,9 @@ var           gFavoritesFont:              ZFont { return .systemFont(ofSize: gF
 var        gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? ZColor.white : ZColor.black }
 var   gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker  (by: 4.0)  .cgColor }
 var  gDarkishBackgroundColor:            CGColor { return gBackgroundColor.darkish (by: 1.028).cgColor }
+var gDirectionIndicatorColor:            CGColor { return gBackgroundColor.darker  (by: 1.3)  .cgColor }
 var gLightishBackgroundColor:            CGColor { return gBackgroundColor.lightish(by: 1.02) .cgColor }
 var  gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter (by: 4.0)  .cgColor }
-var   gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
 
 
 var gCurrentEvent: ZEvent? {

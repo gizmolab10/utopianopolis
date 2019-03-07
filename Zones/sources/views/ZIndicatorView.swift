@@ -66,7 +66,7 @@ class ZIndicatorView: ZView {
         circleRect         = circleRect  .offsetBy(dx: 0.0, dy: circleOffset)
         let    circlesRect = triangleRect.insetBy(fractionX: 0.425, fractionY: 0.15)
         
-        NSColor(cgColor: gDarkishBackgroundColor)?.setStroke()
+        NSColor(cgColor: gDirectionIndicatorColor)?.setStroke()
         
         if  gBrowsingIsConfined {
             ZBezierPath.drawCircle(in: circleRect, fillWith: gBackgroundColor, thickness: thickness)
@@ -75,37 +75,6 @@ class ZIndicatorView: ZView {
         }
     }
 
-    
-    func oldDraw(_ iDirtyRect: CGRect) {
-//        super.draw(iDirtyRect)
-        
-        layoutGradientView()
-        
-        var           rect = bounds.squareCenetered
-        let          inset = rect.size.width / 3.0
-        let    circleInset = inset / 3.85
-        rect               = rect.insetBy(dx: inset,       dy: inset)
-        var   triangleRect = rect.insetBy(dx: 0,           dy: inset / 14.0)
-        var     circleRect = rect.insetBy(dx: circleInset, dy: circleInset)
-        let      thickness = rect.size.height / 30.0
-
-        let     multiplier = CGFloat(gInsertionsFollow ? 1 : -1)
-        let verticalOffset = gInsertionsFollow ? 15.0 - triangleRect.minY : bounds.maxY - triangleRect.maxY - 15.0
-        let   circleOffset = (circleInset / 1.8 * multiplier) + verticalOffset
-        triangleRect       = triangleRect.offsetBy(dx: 0.0, dy: verticalOffset)
-        circleRect         = circleRect  .offsetBy(dx: 0.0, dy: circleOffset)
-        let    circlesRect = triangleRect.insetBy(fractionX: 0.425, fractionY: 0.15)
-
-        NSColor(cgColor: gLightishBackgroundColor)?.setStroke()
-
-        ZBezierPath.drawTriangle(orientedUp: gInsertionsFollow, in: triangleRect, fillWith: gBackgroundColor.darker(by: 0.75), thickness: thickness)
-        
-        if  gBrowsingIsConfined {
-            ZBezierPath.drawCircle(in: circleRect, fillWith: gBackgroundColor, thickness: thickness)
-        } else {
-            ZBezierPath.drawCircles(orientedUp: gInsertionsFollow, in: circlesRect, fillWith: gBackgroundColor, thickness: thickness)
-        }
-    }
 }
 
 

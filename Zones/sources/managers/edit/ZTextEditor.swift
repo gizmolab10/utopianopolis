@@ -117,15 +117,18 @@ class ZTextPack: NSObject {
 
 
     func updateWidgetsForEndEdit() {
-        if let t = textWidget {
+        if  let t = textWidget {
             t.abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
             t.deselectAllText()
             t.updateTextColor()
             t.layoutText()
         }
 
-        widget?.revealDot.setNeedsDisplay()
-        widget?.setNeedsDisplay()
+        if  let w = widget {
+            w.layoutDots()
+            w.revealDot.setNeedsDisplay()
+            w.setNeedsDisplay()
+        }
     }
 
 
@@ -302,8 +305,12 @@ class ZTextEditor: ZTextView {
                     }
                 }
                 
-                textWidget.widget?.setNeedsDisplay()
-//                textWidget.widget?.revealDot.setNeedsDisplay()
+                if  let widget = textWidget.widget {
+                    widget.layoutDots()
+                    widget.revealDot.setNeedsDisplay()
+                    widget.setNeedsDisplay()
+                }
+
                 deferEditingStateChange()
             }
         }

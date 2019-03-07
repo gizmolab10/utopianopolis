@@ -39,12 +39,10 @@ class ZGradientView: ZView {
     }
 
     private func update() {
-        isHidden = true
         let white = ZColor.white.cgColor
         let clear = ZColor.clear.cgColor
         mask.colors = invertMode ? [white, clear] : [clear, white]
         mask.frame = bounds
-        isHidden = false
     }
     
 }
