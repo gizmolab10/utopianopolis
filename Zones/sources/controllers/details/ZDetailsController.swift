@@ -56,7 +56,9 @@ class ZDetailsController: ZGenericController {
     
     func toggleViewsFor(ids: [ZDetailsViewID]) {
         for id in ids {
-            view(for: id)?.toggleHideableVisibility()
+            if  let v = view(for: id) {
+                v.toggleHideableVisibility()
+            }
         }
         
         update()

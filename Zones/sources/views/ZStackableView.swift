@@ -58,8 +58,13 @@ class ZStackableView: ZView {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        gDetailsController?.register(id: identity, for: self)
-        update()
+        self.update()
+
+        repeatUntil({ () -> (Bool) in
+            return gDetailsController != nil
+        }) {
+            gDetailsController?.register(id: self.identity, for: self)
+        }
     }
 
     

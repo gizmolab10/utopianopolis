@@ -558,18 +558,18 @@ DQ
                                         <rect key="frame" x="0.0" y="226" width="400" height="144"/>
                                         <subviews>
                                             <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
-                                                <rect key="frame" x="168" y="40" width="64" height="64"/>
+                                                <rect key="frame" x="128" y="0.0" width="144" height="144"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="64" id="bAV-En-6Wv"/>
-                                                    <constraint firstAttribute="width" constant="64" id="vJp-G5-N5A"/>
+                                                    <constraint firstAttribute="width" secondItem="uBD-4n-5KN" secondAttribute="height" id="uzZ-PZ-MaY"/>
                                                 </constraints>
                                             </progressIndicator>
                                         </subviews>
                                         <constraints>
                                             <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="fSQ-gu-ejW" secondAttribute="centerX" id="Pch-gV-l5Q"/>
+                                            <constraint firstAttribute="height" constant="144" id="byP-Jq-hYz"/>
                                             <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="fSQ-gu-ejW" secondAttribute="centerY" id="c2Q-JT-R0o"/>
-                                            <constraint firstItem="uBD-4n-5KN" firstAttribute="top" secondItem="fSQ-gu-ejW" secondAttribute="top" constant="40" id="ofp-Cu-1Ft"/>
-                                            <constraint firstAttribute="bottom" secondItem="uBD-4n-5KN" secondAttribute="bottom" constant="40" id="wyj-sa-dEL"/>
+                                            <constraint firstItem="uBD-4n-5KN" firstAttribute="top" secondItem="fSQ-gu-ejW" secondAttribute="top" id="ofp-Cu-1Ft"/>
+                                            <constraint firstAttribute="bottom" secondItem="uBD-4n-5KN" secondAttribute="bottom" id="wyj-sa-dEL"/>
                                         </constraints>
                                     </customView>
                                 </subviews>

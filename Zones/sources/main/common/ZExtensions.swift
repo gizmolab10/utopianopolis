@@ -63,6 +63,16 @@ extension NSObject {
         }
     }
 
+    
+    func repeatUntil(_ isDone: @escaping ToBooleanClosure, then: @escaping Closure) {
+        let _ = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { iTimer in
+            if  isDone() {
+                iTimer.invalidate()
+                then()
+            }
+        }
+    }
+    
 
     func syncAndRedraw(_ zone: Zone? = nil) {
         gControllers.sync(zone) {
@@ -1042,6 +1052,67 @@ extension ZView {
         superview?.applyToAllSuperviews(closure)
     }
 
+    
+    func drawDots(surrounding rect: CGRect, count: Int, radius: Double, color: ZColor?) {
+        let  bigRadius = Double(rect.size.height) / 2.0
+        var   dotCount = count
+        var    aHollow = false
+        var    bHollow = false
+        var      scale = 0.0
+        
+        while dotCount > 100 {
+            dotCount   = (dotCount + 5) / 10
+            scale      = 1.0
+            
+            if  bHollow {
+                aHollow = true
+            } else {
+                bHollow = true
+            }
+        }
+        
+        if  count > 0 {
+            let     aCount = count % 10
+            let     bCount = count / 10
+            let fullCircle = Double.pi * 2.0
+            let    aRadius = radius * (1.25 ** scale)
+            let     center = rect.center
+            
+            let closure: IntBooleanClosure = { (iCount, isB) in
+                let             oneSet = (isB ? aCount : bCount) == 0
+                if  iCount             > 0 {
+                    let         isEven = iCount % 2 == 0
+                    let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(iCount)
+                    for index in 0 ... iCount - 1 {
+                        let  increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)
+                        let startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 0.0 : 2.0 : isB ? 1.0 : 3.0)
+                        let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
+                        let  dotRadius = CGFloat(bigRadius + aRadius * (isB ? 2.0 : 1.6))
+                        let     offset = aRadius * (isB ? 2.1 : 1.13)
+                        let  offCenter = CGPoint(x: center.x - CGFloat(offset), y: center.y - CGFloat(offset))
+                        let          x = offCenter.x + (dotRadius * CGFloat(cos(angle)))
+                        let          y = offCenter.y + (dotRadius * CGFloat(sin(angle)))
+                        let   diameter = CGFloat((isB ? 4.0 : 2.5) * aRadius)
+                        let   ovalRect = CGRect(x: x, y: y, width: diameter, height: diameter)
+                        let       path = ZBezierPath(ovalIn: ovalRect)
+                        path.lineWidth = CGFloat(gLineThickness)
+                        path .flatness = 0.0001
+                        
+                        if  (!isB && aHollow) || (isB && bHollow) {
+                            color?.setStroke()
+                            path.stroke()
+                        } else {
+                            color?.setFill()
+                            path.fill()
+                        }
+                    }
+                }
+            }
+            
+            closure(aCount, false)
+            closure(bCount, true)
+        }
+    }
 }
 
 
