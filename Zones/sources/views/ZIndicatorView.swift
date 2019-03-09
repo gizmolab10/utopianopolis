@@ -66,9 +66,9 @@ class ZIndicatorView: ZView {
         circleRect         = circleRect  .offsetBy(dx: 0.0, dy: circleOffset)
         let    circlesRect = triangleRect.insetBy(fractionX: 0.425, fractionY: 0.15)
         let    strokeColor = NSColor(cgColor: gDirectionIndicatorColor)
-        var   surroundRect = circleRect
+        var   surroundRect = circleRect.insetBy(dx: -6.0, dy: -6.0)
         let      dotsCount = gFocusing.travelStack.count
-        var         radius = Double(surroundRect.size.width) / 18.0
+        var         radius = Double(surroundRect.size.width) / 27.0
 
         strokeColor?.setStroke()
         gBackgroundColor.setFill()
@@ -76,10 +76,9 @@ class ZIndicatorView: ZView {
         if  gBrowsingIsConfined {
             ZBezierPath               .drawCircle (in: circleRect,  thickness: thickness)
         } else {
-            surroundRect = ZBezierPath.drawCircles(in: circlesRect, thickness: thickness, orientedUp: gInsertionsFollow)
+            surroundRect = ZBezierPath.drawCircles(in: circlesRect, thickness: thickness, orientedUp: gInsertionsFollow).insetBy(dx: -6.0, dy: -6.0)
             radius      /= 2.0
         }
-
 
         drawDots(surrounding: surroundRect, count: dotsCount, radius: radius, color: strokeColor)
     }

@@ -177,7 +177,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func drawSurroundingCountDots(_ iDirtyRect: CGRect) {
+    func drawTinyCountDots(_ iDirtyRect: CGRect) {
         if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showingChildren || zone.isBookmark) {
             let count = (gCountsMode == .progeny) ? zone.progenyCount : zone.indirectCount
 
@@ -304,7 +304,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         // TINY COUNTER DOTS //
                         ///////////////////////
 
-                        drawSurroundingCountDots(iDirtyRect)
+                        drawTinyCountDots(iDirtyRect)
                     } else if isCurrentFavorite {
 
                         ///////////////////////////////////

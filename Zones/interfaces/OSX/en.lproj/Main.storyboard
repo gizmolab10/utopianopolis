@@ -16,8 +16,8 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Thoughtful" systemMenu="apple" id="uQy-DD-JDr">
                                     <items>
-                                        <menuItem title="About Thoughtful" id="5kV-Vb-QxS" userLabel="About Zones">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="About Thoughtful" keyEquivalent="a" id="5kV-Vb-QxS" userLabel="About Zones">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                             <connections>
                                                 <action selector="orderFrontStandardAboutPanel:" target="Ady-hI-5gd" id="Exp-CZ-Vem"/>
                                             </connections>

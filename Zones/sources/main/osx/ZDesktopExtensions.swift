@@ -455,7 +455,7 @@ extension ZAlerts {
                 iAlert?.showAlert { iResponse in
                     let window = iAlert?.window
                     
-                    ZApplication.shared.abortModal()
+                    gApplication.abortModal()
                     window?.orderOut(iAlert)
                     closure?(iResponse)
                 }

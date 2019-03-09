@@ -98,7 +98,7 @@ class ZGraphEditor: NSObject {
                     gTextEditor.handleArrow(a, flags: flags)
                 } else if FLAGGED {
                     switch key {
-                    case "a":      gEditedTextWidget?.selectAllText()
+                    case "a":      if CONTROL { showAbout() } else { gEditedTextWidget?.selectAllText() }
                     case "d":      if OPTION { addParentFromSelectedText(inside: editedZone) } else { addIdeaFromSelectedText(inside: editedZone) }
                     case "f":      search(OPTION)
                     case "i":      toggleColorized()
@@ -131,7 +131,7 @@ class ZGraphEditor: NSObject {
                     prefix(with: key)
                 } else {
                     switch key {
-                    case "a":      selectAll(progeny: OPTION)
+                    case "a":      if CONTROL { showAbout() } else { selectAll(progeny: OPTION) }
                     case "b":      addBookmark()
                     case "c":      recenter()
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
@@ -322,6 +322,21 @@ class ZGraphEditor: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
+    
+    
+    func showAbout() {
+        let windows = gApplication.windows
+        
+        for     window in windows {
+            if  window.title == "" {
+                window.close()
+                
+                return
+            }
+        }
+        
+        gApplication.orderFrontStandardAboutPanel(nil)
+    }
     
     
     func focusOnTrash() {
