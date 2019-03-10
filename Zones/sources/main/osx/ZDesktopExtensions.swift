@@ -905,7 +905,7 @@ extension ZGraphEditor {
         if  gShowShortcutWindow {
             gShortcutsController?.showWindow(nil)
         } else {
-            gShortcutsController?.window?.orderOut(self)
+            gShortcutsController?.window?.close()
         }
     }
 

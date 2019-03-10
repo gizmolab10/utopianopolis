@@ -98,7 +98,7 @@ class ZGraphEditor: NSObject {
                     gTextEditor.handleArrow(a, flags: flags)
                 } else if FLAGGED {
                     switch key {
-                    case "a":      if CONTROL { gApplication.showHideAbout() } else { gEditedTextWidget?.selectAllText() }
+                    case "a":      if SPECIAL { gApplication.showHideAbout() } else { gEditedTextWidget?.selectAllText() }
                     case "d":      if OPTION { addParentFromSelectedText(inside: editedZone) } else { addIdeaFromSelectedText(inside: editedZone) }
                     case "f":      search(OPTION)
                     case "i":      toggleColorized()
@@ -131,7 +131,7 @@ class ZGraphEditor: NSObject {
                     prefix(with: key)
                 } else {
                     switch key {
-                    case "a":      if CONTROL { gApplication.showHideAbout() } else { selectAll(progeny: OPTION) }
+                    case "a":      if SPECIAL { gApplication.showHideAbout() } else { selectAll(progeny: OPTION) }
                     case "b":      addBookmark()
                     case "c":      recenter()
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }

@@ -85,11 +85,12 @@ class ZShortcutsController: ZGenericTableController {
     
     func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
         if  let    key = iEvent.key {
-            let CONTROL = iEvent.modifierFlags.isControl
             let COMMAND = iEvent.modifierFlags.isCommand
+            let OPTION  = iEvent.modifierFlags.isOption
+            let SPECIAL = COMMAND && OPTION
             switch key {
             case "?", "/":         gGraphEditor.showHideKeyboardShortcuts()
-            case "a": if CONTROL { gApplication.showHideAbout() }
+            case "a": if SPECIAL { gApplication.showHideAbout() }
             case "p":              gShortcuts?.view.printView()
             case "r": if COMMAND { sendEmailBugReport() }
             case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
@@ -183,7 +184,6 @@ class ZShortcutsController: ZGenericTableController {
         "     \tCOMMA      \ttoggle browsing: un/confined",
         "     \tDELETE     \tshow trash",
         "     \tPERIOD     \ttoggle next ideas precede/follow",
-        "     \tA          \tshow About Thoughtful",
         "     \tSPACE      \tcreate an idea",
         "",
         "+COMMAND",
@@ -191,6 +191,7 @@ class ZShortcutsController: ZGenericTableController {
         "     \tP          \tprint the graph (or this window)",
         "",
         "+COMMAND + OPTION",
+        "     \tA          \tshow About Thoughtful",
         "     \tR          \treport a problem",
         "     \t/          \tshow or hide this window",
         "",
