@@ -623,6 +623,15 @@ extension String {
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var           length: Int  { return unicodeScalars.count }
     
+    
+    var opposite: String {
+        switch self {
+        case "[": return "]"
+        case "(": return ")"
+        default:  return self
+        }
+    }
+    
 
     var escaped: String {
         var result = "\(self)"
@@ -964,9 +973,7 @@ extension String {
 
         return romanValue
     }
-
-
-
+    
 }
 
 

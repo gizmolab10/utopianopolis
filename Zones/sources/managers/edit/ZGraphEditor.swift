@@ -105,7 +105,7 @@ class ZGraphEditor: NSObject {
                     case "p":      gHere.widget?.printView()
                     case "?":      showHideKeyboardShortcuts()
                     case "-":      return editedZone?.convertToLine() ?? false // false means key not handled
-                    case "/":      gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() }
+                    case "/":      if SPECIAL { showHideKeyboardShortcuts() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kSpace:   addIdea()
                     case kBackspace,
@@ -115,6 +115,7 @@ class ZGraphEditor: NSObject {
                 } else {
                     switch key {
                     case "-":      return editedZone?.convertToLine() ?? true
+                    case "[", "(", "\"": return editedZone?.surround(by: key) ?? false
                     case kEscape:  gTextEditor.cancel()
                     default:       return false // false means key not handled
                     }

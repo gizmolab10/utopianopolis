@@ -25,11 +25,6 @@ enum ZTextType: Int {
 
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
-    
-    func controlTextDidChange(_ obj: Notification) {
-        print(obj)
-    }
-    
 
     override var preferredFont : ZFont { return (widget?.isInMain ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return widget?.widgetZone }
@@ -155,6 +150,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         }
     }
     
+
     func extractSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
         var extract: String?
         

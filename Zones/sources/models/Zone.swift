@@ -1507,6 +1507,29 @@ class Zone : ZRecord {
     }
     
     
+    func surround(by: String) -> Bool {
+        let    range = gTextEditor.selectedRange
+        let     text = gTextEditor.string
+
+        if  range.length > 0 {
+            var    t = text.substring(with: range)
+            let    a = text.substring(  toExclusive: range.lowerBound)
+            let    b = text.substring(fromInclusive: range.upperBound)
+            let    r = NSRange(location: range.location + 1, length: range.length)
+            t        = a + by + t + by.opposite + b
+            zoneName = t
+
+            gTextEditor.updateText(inZone: self, isEditing: true)
+            widget?.textWidget.updateGUI()
+            editAndSelect(in: r)
+            
+            return true
+        }
+        
+        return false
+    }
+    
+    
     func convertToLine() -> Bool {
         if  let childName = widget?.textWidget.extractSelectedText(requiresAllOrTitleSelected: true) {
             

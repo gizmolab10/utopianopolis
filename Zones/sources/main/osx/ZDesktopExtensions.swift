@@ -496,17 +496,33 @@ extension ZAlerts {
 extension NSTextField {
     var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
     var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
-    func enableUndo()                  { cell?.allowsUndo = true }
 
+
+    func enableUndo() {
+        cell?.allowsUndo = true
+    }
     
-    func selectFromStart(toEnd: Bool = false) {
-        if  let t = text, let editor = currentEditor() {
-            select(withFrame: bounds, editor: editor, delegate: self, start: 0, length: toEnd ? t.length : 0)
-            gTextEditor.clearOffset()
+    
+    func select(range: NSRange) {
+        select(from: range.lowerBound, to: range.upperBound)
+    }
+
+
+    func select(from: Int, to: Int) {
+        if  let editor = currentEditor() {
+            select(withFrame: bounds, editor: editor, delegate: self, start: from, length: to)
         }
     }
     
     
+    func selectFromStart(toEnd: Bool = false) {
+        if  let t = text {
+            select(from: 0, to: toEnd ? t.length : 0)
+            gTextEditor.clearOffset()
+        }
+    }
+    
+
     func deselectAllText() {
         selectFromStart()
     }
