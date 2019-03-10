@@ -1650,7 +1650,7 @@ class Zone : ZRecord {
             for childDict: ZStorageDictionary in childrenDicts {
                 let child = Zone(dict: childDict, in: iDatabaseID)
 
-                child.temporarilyIgnoreNeeds {       // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                cloud?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent (intentionally) not being in childDict
                     addChild(child, at: nil)
                 }
             }
@@ -1662,7 +1662,7 @@ class Zone : ZRecord {
             for traitStore: ZStorageDictionary in traitsStore {
                 let trait = ZTrait(dict: traitStore, in: iDatabaseID)
 
-                trait.temporarilyIgnoreNeeds {       // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait (intentionally) not being in traits
                     addTrait(trait)
                 }
             }

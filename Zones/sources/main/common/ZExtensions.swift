@@ -582,10 +582,10 @@ extension Array {
     }
 
     
-    func containsCompare(_ with: AnyObject, using: CompareClosure? = nil) -> Bool {
+    func containsCompare(with other: AnyObject, using: CompareClosure? = nil) -> Bool {
         if  let compare = using {
             for item in self {
-                if  compare(item as AnyObject, with) {
+                if  compare(item as AnyObject, other) {
                     return true     // true means match
                 }
             }
@@ -600,7 +600,7 @@ extension Array {
         
         for item in items {
             if  !array.contains(item),
-                !containsCompare(item as AnyObject, using: compare) {
+                !containsCompare(with: item as AnyObject, using: compare) {
                 append(item)
             }
         }

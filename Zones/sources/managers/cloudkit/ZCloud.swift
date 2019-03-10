@@ -125,6 +125,7 @@ class ZCloud: ZRecords {
                             if  let zRecord = self.maybeZRecordForRecordID(ckRecord.recordID) {
                                 zRecord.useBest(record: ckRecord)
                                 ckRecord.maybeMarkAsFetched(self.databaseID)
+                                zRecord.removeState(.needsSave)
                             }
                         }
                     }

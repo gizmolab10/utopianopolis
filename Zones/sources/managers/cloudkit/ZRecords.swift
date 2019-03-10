@@ -359,6 +359,11 @@ class ZRecords: NSObject {
     var ignoredRecordName: String?
     let kIgnoreAllRecordNames = "all record names"
 
+    
+    func temporarilyIgnoreAllNeeds(_ closure: Closure) {
+        temporarilyForRecordNamed(kIgnoreAllRecordNames, ignoreNeeds: true, closure)
+    }
+    
 
     func temporarilyForRecordNamed(_ iRecordName: String?, ignoreNeeds: Bool, _ closure: Closure) {
         let         saved = ignoredRecordName
@@ -396,8 +401,6 @@ class ZRecords: NSObject {
                         if  name == "" {
                             name = iRecord.decoratedName
                         }
-
-//                        columnarReport("PREVENTING ADDING TWICE!", name + " (for: \(state))")
                     }
                 } else {
                     var names = recordNamesForState(state)
