@@ -899,7 +899,7 @@ extension ZGraphEditor {
         if  let notShow = hide {
             gShowShortcutWindow = !notShow
         } else {
-            gShowShortcutWindow = !(gShortcutsController?.window?.isMainWindow ?? false)
+            gShowShortcutWindow = !(gShortcutsController?.window?.isKeyWindow ?? false)
         }
         
         if  gShowShortcutWindow {

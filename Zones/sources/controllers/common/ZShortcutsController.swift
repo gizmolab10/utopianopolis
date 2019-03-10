@@ -85,12 +85,14 @@ class ZShortcutsController: ZGenericTableController {
     
     func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
         if  let    key = iEvent.key {
+            let CONTROL = iEvent.modifierFlags.isControl
             let COMMAND = iEvent.modifierFlags.isCommand
             switch key {
             case "?", "/":         gGraphEditor.showHideKeyboardShortcuts()
-            case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
-            case "r": if COMMAND { sendEmailBugReport() }
+            case "a": if CONTROL { gApplication.showHideAbout() }
             case "p":              gShortcuts?.view.printView()
+            case "r": if COMMAND { sendEmailBugReport() }
+            case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
 
             default: break
             }
