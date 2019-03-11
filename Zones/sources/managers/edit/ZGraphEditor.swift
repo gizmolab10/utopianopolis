@@ -115,7 +115,7 @@ class ZGraphEditor: NSObject {
                 } else {
                     switch key {
                     case "-":      return editedZone?.convertToLine() ?? true
-                    case "[", "(", "\"": return editedZone?.surround(by: key) ?? false
+                    case "[", "(", "{", "<", "\"": return editedZone?.surround(by: key) ?? false
                     case kEscape:  gTextEditor.cancel()
                     default:       return false // false means key not handled
                     }

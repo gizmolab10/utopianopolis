@@ -14,7 +14,7 @@
 				<string>thoughtful</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>Zones/interfaces/Assets.xcassets/AppIcon.OSX.appiconset/eye.con-512.png</string>
+			<string>eye.con-512.png</string>
 			<key>CFBundleTypeName</key>
 			<string>Thoughtful</string>
 			<key>CFBundleTypeRole</key>
@@ -68,6 +68,8 @@
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.text</string>
+				<string>public.content</string>
+				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>Thoughtful</string>

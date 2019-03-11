@@ -1513,10 +1513,21 @@ class Zone : ZRecord {
 
         if  range.length > 0 {
             var    t = text.substring(with: range)
-            let    a = text.substring(  toExclusive: range.lowerBound)
-            let    b = text.substring(fromInclusive: range.upperBound)
-            let    r = NSRange(location: range.location + 1, length: range.length)
-            t        = a + by + t + by.opposite + b
+            var    a = text.substring(  toExclusive: range.lowerBound)
+            var    b = text.substring(fromInclusive: range.upperBound)
+            var    o = 1
+            
+            if !a.hasSuffix(by) {
+                a    = a + by
+                b    = by.opposite + b
+            } else {
+                a    = a.substring(  toExclusive: a.length - 1)
+                b    = b.substring(fromInclusive: 1)
+                o    = -1
+            }
+            
+            t    = a + t + b
+            let    r = NSRange(location: range.location + o, length: range.length)
             zoneName = t
 
             gTextEditor.updateText(inZone: self, isEditing: true)

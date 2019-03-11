@@ -73,7 +73,7 @@ class ZInformationController: ZGenericController {
             versionLabel?    .text = versionText
 
             if iKind != .eStartup {
-                levelLabel?  .text = "your selection is at level \(currentZone.level + 1)"
+                levelLabel?  .text = "selection is at level \(currentZone.level + 1)"
             }
         }
     }

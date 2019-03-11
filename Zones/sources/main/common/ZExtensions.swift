@@ -628,6 +628,8 @@ extension String {
         switch self {
         case "[": return "]"
         case "(": return ")"
+        case "{": return "}"
+        case "<": return ">"
         default:  return self
         }
     }
