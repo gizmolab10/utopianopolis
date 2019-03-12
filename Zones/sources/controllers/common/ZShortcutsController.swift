@@ -58,7 +58,7 @@ class ZShortcutsController: ZGenericTableController {
         
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
         
-        if let g = gridView {
+        if  let g = gridView {
             g.removeFromSuperview()
             clipView?.addSubview(g)
 
@@ -76,7 +76,7 @@ class ZShortcutsController: ZGenericTableController {
         if let g = gridView {
             for view in g.subviews {
                 if  view.identifier?.rawValue == kLineView {
-                    view.zlayer.backgroundColor = kLineColor
+                    view.zlayer.backgroundColor = kGridColor
                 }
             }
         }
@@ -201,6 +201,7 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "",
         "",
+        "",
         "bSEARCH BAR:",
         "",
         "uKEY",
@@ -235,6 +236,7 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "+COMMAND",
         "     \tHYPHEN     \tconvert text to or from 'titled line'",
+        "     \t[ { ( < \" \tsurround",
         "     \tD          \tif all selected, append onto parent",
         "     \t           \tif not all selected, create as a child",
         "     \tL          \tlowercase",

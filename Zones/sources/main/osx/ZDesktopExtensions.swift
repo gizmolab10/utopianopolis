@@ -273,7 +273,7 @@ extension NSView {
     }
 
 
-    func setNeedsDisplay() { needsDisplay = true }
+    func setNeedsDisplay() { if !gDeferRedraw { needsDisplay = true } }
     func setNeedsLayout () { needsLayout  = true }
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
 

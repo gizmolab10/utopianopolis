@@ -87,21 +87,21 @@
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR">
                                 <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                                 <subviews>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line">
-                                        <rect key="frame" x="290" y="270" width="1" height="510"/>
+                                    <customView identifier="lineView" translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line">
+                                        <rect key="frame" x="290" y="250" width="1" height="530"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="5Gm-ni-LIH"/>
-                                            <constraint firstAttribute="height" constant="510" id="QjB-vW-W62"/>
+                                            <constraint firstAttribute="height" constant="530" id="QjB-vW-W62"/>
                                         </constraints>
                                     </customView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line">
-                                        <rect key="frame" x="0.0" y="269" width="580" height="1"/>
+                                    <customView identifier="lineView" translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line">
+                                        <rect key="frame" x="0.0" y="249" width="580" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="Mym-7j-1Mo"/>
                                             <constraint firstAttribute="width" constant="580" id="nfu-53-PXo"/>
                                         </constraints>
                                     </customView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line">
+                                    <customView identifier="lineView" translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line">
                                         <rect key="frame" x="580" y="0.0" width="1" height="780"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="OGt-RE-RO4"/>
@@ -114,7 +114,7 @@
                                     <constraint firstItem="rdB-jZ-KsQ" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" id="BO6-bU-5Py"/>
                                     <constraint firstItem="4RI-nR-wiK" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="580" id="IYu-Cm-Lck"/>
                                     <constraint firstAttribute="bottom" secondItem="4RI-nR-wiK" secondAttribute="bottom" id="UwD-nR-va0"/>
-                                    <constraint firstItem="Fa1-hb-kUk" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" constant="510" id="W1S-XQ-Abf"/>
+                                    <constraint firstItem="Fa1-hb-kUk" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" constant="530" id="W1S-XQ-Abf"/>
                                     <constraint firstItem="rdB-jZ-KsQ" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="290" id="qzD-K9-Jby"/>
                                 </constraints>
                             </customView>

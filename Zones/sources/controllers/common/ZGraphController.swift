@@ -154,8 +154,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
     
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-        if [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
-            if gWorkMode != .graphMode {
+        if  !gDeferRedraw,
+            [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
+            if  gWorkMode != .graphMode {
                 editorView?.snp.removeConstraints()
             } else if !gIsEditingText {
                 if iKind == .eRelayout {

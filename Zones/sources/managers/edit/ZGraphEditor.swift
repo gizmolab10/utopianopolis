@@ -75,7 +75,7 @@ class ZGraphEditor: NSObject {
         case eUseGrabs
         case eMultiple
     }
-
+    
 
     @discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
         if  var     key = iKey {
@@ -107,6 +107,7 @@ class ZGraphEditor: NSObject {
                     case "-":      return editedZone?.convertToLine() ?? false // false means key not handled
                     case "/":      if SPECIAL { showHideKeyboardShortcuts() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
+                    case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
                     case kSpace:   addIdea()
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() }
@@ -163,7 +164,7 @@ class ZGraphEditor: NSObject {
                     case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
                     case ";", "'": gFavorites.switchToNext(key == "'") { self.syncAndRedraw() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
-                    case kTab:     addNext(containing: OPTION) { iChild in iChild.edit() }
+                    case kTab:     addNextAndRedraw(containing: OPTION)
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
@@ -173,7 +174,7 @@ class ZGraphEditor: NSObject {
                 }
             }
         }
-        
+
         return true // true means key handled
     }
     
@@ -989,15 +990,10 @@ class ZGraphEditor: NSObject {
     func addNext(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
         let       zone = gSelecting.rootMostMoveable
 
-        if  var parent = zone.parentZone, parent.userCanMutateProgeny {
+        if  let parent = zone.parentZone, parent.userCanMutateProgeny {
             var  zones = gSelecting.currentGrabs
 
             if containing {
-                if  zones.count < 2 {
-                    zones  = zone.children
-                    parent = zone
-                }
-
                 zones.sort { (a, b) -> Bool in
                     return a.order < b.order
                 }
@@ -1034,6 +1030,26 @@ class ZGraphEditor: NSObject {
     }
 
     
+    func addNextAndRedraw(containing: Bool = false) {
+        deferRedraw { (iShoudRedraw) in
+            addNext(containing: containing) {
+                iChild in
+                gDeferRedraw = iShoudRedraw
+                self.redrawGraph {
+                    iChild.edit()
+                }
+            }
+        }
+    }
+    
+    
+    func deferRedraw(_ closure: BooleanClosure) {
+        let        saved = gDeferRedraw
+        gDeferRedraw     = true
+        closure(saved)
+    }
+    
+
     // three states:
     // 1) plain line -> insert and edit stub title
     // 2) titled line selected only -> convert back to plain line
@@ -1179,15 +1195,25 @@ class ZGraphEditor: NSObject {
 
 
     func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
-        if  preserveChildren && !permanently {
-            preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
-                gFavorites.updateFavoritesRedrawSyncRedraw()
-            }
-        } else {
-            prepareUndoForDelete()
+        deferRedraw { (iShoudRedraw) in
+            if  preserveChildren && !permanently {
+                preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
+                    gFavorites.updateFavoritesRedrawSyncRedraw {
+                        gDeferRedraw = iShoudRedraw
 
-            deleteZones(gSelecting.simplifiedGrabs, permanently: permanently) {
-                gFavorites.updateFavoritesRedrawSyncRedraw()     // delete alters the list
+                        self.redrawGraph()
+                    }
+                }
+            } else {
+                prepareUndoForDelete()
+                
+                deleteZones(gSelecting.simplifiedGrabs, permanently: permanently) {
+                    gFavorites.updateFavoritesRedrawSyncRedraw {    // delete alters the list
+                        gDeferRedraw = iShoudRedraw
+                        
+                        self.redrawGraph()
+                    }
+                }
             }
         }
     }
@@ -1875,6 +1901,7 @@ class ZGraphEditor: NSObject {
                 var     children = [Zone] ()
 
                 gSelecting.clearPaste()
+                gSelecting.currentGrabs = []
 
                 for grab in grabs {
                     if !convertToTitledLine {       // delete, add to paste

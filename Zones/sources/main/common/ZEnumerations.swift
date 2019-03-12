@@ -59,6 +59,7 @@ enum ZFileMode: Int {
 
 
 enum ZWorkMode: Int {
+    case noRedrawMode
     case startupMode
     case searchMode
     case graphMode

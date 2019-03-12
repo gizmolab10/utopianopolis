@@ -18,6 +18,7 @@ import CloudKit
 
 
 var                gWorkMode                     = ZWorkMode.startupMode
+var             gDeferRedraw                     = false
 var           gTextCapturing                     = false
 var         gIsReadyToShowUI                     = false
 var       gKeyboardIsVisible                     = false

@@ -38,7 +38,7 @@ let            kSmallBatchSize = 100
 let        kFavoritesReduction = CGFloat(0.8)
 let         kDefaultWindowRect = CGRect(x:0.0, y:0.0, width: 500.0, height: 500.0) // smallest size user to which can shrink window
 let          kDefaultZoneColor = ZColor.blue
-let                 kLineColor = ZColor.darkGray.cgColor
+let                 kGridColor = ZColor.darkGray.cgColor
 let                kClearColor = ZColor(white: 1.0, alpha: 0.0)
 let               kUndoManager = UndoManager()
 
