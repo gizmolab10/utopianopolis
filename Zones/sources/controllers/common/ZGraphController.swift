@@ -475,14 +475,12 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     
     func rubberbandUpdate(_ rect: CGRect? = nil, _ iGesture: ZGestureRecognizer? = nil) {
         if  let e = editorView {
-            if  rect == nil || rubberbandStart == CGPoint.zero {
-                e.rubberbandRect = CGRect.zero
+            if  rect == nil || rubberbandStart == .zero {
+                e.rubberbandRect = .zero
                 
                 gSelecting.assureMinimalGrabs()
                 gSelecting.updateCousinList()
                 restartGestureRecognition()
-            } else if rect!.isStillSmall && e.rubberbandRect == .zero {
-                clickEvent(iGesture)
             } else {
                 e.rubberbandRect = rect
                 let      widgets = gWidgets.visibleWidgets

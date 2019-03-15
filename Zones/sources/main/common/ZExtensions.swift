@@ -454,7 +454,6 @@ extension CGRect {
 
     var    center: CGPoint { return CGPoint(x: midX, y: midY) }
     var    extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
-    var isStillSmall: Bool { return size.width < 10.0 || size.height < 10.0 }
     
 
     public init(start: CGPoint, end: CGPoint) {
@@ -785,8 +784,8 @@ extension String {
         var before = self
         var  after = appending
 
-        while (before.ends(with: kSpace) || before == "") && after.starts(with: kSpace) {
-            after = after.substring(fromInclusive: 1) // strip extra space
+        while after.starts(with: kSpace) {
+            after = after.substring(fromInclusive: 1) // strip starting space
         }
 
         while before.ends(with: kSpace) && after == "" {
@@ -796,7 +795,11 @@ extension String {
         if !before.ends(with: kSpace) && !after.starts(with: kSpace) && !after.isEmpty {
             before = before + kSpace // add separator space when after is not empty
         }
-        
+
+        while before.starts(with: kSpace) {
+            before = before.substring(fromInclusive: 1) // strip starting space
+        }
+
         return before + after
     }
 

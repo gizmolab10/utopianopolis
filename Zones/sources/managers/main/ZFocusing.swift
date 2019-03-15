@@ -140,10 +140,12 @@ class ZFocusing: NSObject {
 
     
     func pop() {
-        if  travelStack.count > 1,
-            let i = isInStack {
+        if  travelStack.count > 1 {
             goBack()
-            travelStack.remove(at: i)
+
+            if let i = isInStack {
+                travelStack.remove(at: i)
+            }
         }
     }
     

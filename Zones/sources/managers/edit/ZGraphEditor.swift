@@ -99,7 +99,7 @@ class ZGraphEditor: NSObject {
                 } else if FLAGGED {
                     switch key {
                     case "a":      if SPECIAL { gApplication.showHideAbout() } else { gEditedTextWidget?.selectAllText() }
-                    case "d":      if OPTION { addParentFromSelectedText(inside: editedZone) } else { addIdeaFromSelectedText(inside: editedZone) }
+                    case "d":      tearApartCombine(OPTION, editedZone)
                     case "f":      search(OPTION)
                     case "i":      toggleColorized()
                     case "p":      gHere.widget?.printView()
@@ -326,7 +326,7 @@ class ZGraphEditor: NSObject {
     // MARK:- miscellaneous features
     // MARK:-
     
-    
+
     func focusOnTrash() {
         if  let trash = gTrash {
             gFocusing.focus(on: trash) {
@@ -1113,6 +1113,15 @@ class ZGraphEditor: NSObject {
     }
     
     
+    func tearApartCombine(_ OPTION: Bool, _ iZone: Zone?) {
+        if  OPTION {
+            addParentFromSelectedText(inside: iZone)
+        } else {
+            addIdeaFromSelectedText  (inside: iZone)
+        }
+    }
+    
+
     func addParentFromSelectedText(inside iZone: Zone?) {
         if  let     child = iZone,
             let     index = child.siblingIndex,
@@ -1550,11 +1559,12 @@ class ZGraphEditor: NSObject {
     
 
     func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
-        let zone: Zone = gSelecting.firstSortedGrab
+        let zone = gSelecting.firstSortedGrab
+//        let zones = gSelecting.sortedGrabs
         let isBrowsing = !gIsEditingText
 
         if !selectionOnly {
-            actuallyMove(zone, onCompletion: onCompletion)
+            actuallyMove([zone], onCompletion: onCompletion)
         } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
             gFocusing.maybeTravelThrough(zone, onCompletion: onCompletion)
         } else {
@@ -1581,7 +1591,8 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func actuallyMove(_ zone: Zone, onCompletion: Closure?) {
+    func actuallyMove(_ zones: [Zone], onCompletion: Closure?) {
+        let zone = zones[0]
         if  var           there = zone.parentZone {
             let        siblings = there.children
             
