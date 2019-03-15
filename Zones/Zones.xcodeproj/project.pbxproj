@@ -169,12 +169,13 @@
 		A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
 		A74D1BA622222FC900E69E44 /* eye.con-512.png in Resources */ = {isa = PBXBuildFile; fileRef = A74D1BA522222FC900E69E44 /* eye.con-512.png */; };
 		A77758932207BCC600C37B49 /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77758922207BCC500C37B49 /* ZToggleButton.swift */; };
+		A79867C122386D1E0057A109 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7D3C23C21F6A70300B64B83 /* SnapKit.framework */; };
+		A79867C222386D1E0057A109 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A7D3C23C21F6A70300B64B83 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A7988AD1222B69AE00256A71 /* ZGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7988AD0222B69AE00256A71 /* ZGradientView.swift */; };
 		A7C96E3B221883CB00986631 /* ZIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZIndicatorView.swift */; };
 		A7CFA81B21F51697008DA880 /* ZSearching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearching.swift */; };
 		A7CFA81C21F516E0008DA880 /* ZSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619941FB3C4660087B066 /* ZSearchController.swift */; };
 		A7CFA81D21F51A9F008DA880 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B28B1F182EBB0091F4D1 /* ZStackableView.swift */; };
-		A7D3C23D21F6A70300B64B83 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7D3C23C21F6A70300B64B83 /* SnapKit.framework */; };
 		A7D3C24721FAA4C600B64B83 /* ZSearching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearching.swift */; };
 		A7D3C24821FAA4E400B64B83 /* ZSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619941FB3C4660087B066 /* ZSearchController.swift */; };
 		A7D3C25B21FAB6AE00B64B83 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7D3C25821FAB6A000B64B83 /* SnapKit.framework */; };
@@ -192,12 +193,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		0C05C36B2103ED91001F2015 /* Embed Frameworks */ = {
+		A79867C322386D1E0057A109 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				A79867C222386D1E0057A109 /* SnapKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -338,7 +340,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7FF100321A8DC70005CA5E1 /* CloudKit.framework in Frameworks */,
-				A7D3C23D21F6A70300B64B83 /* SnapKit.framework in Frameworks */,
+				A79867C122386D1E0057A109 /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -732,7 +734,7 @@
 				0C1EC7C820A8D91F005E2DA2 /* ShellScript */,
 				0CA04B111D2ECF1A001892E5 /* Frameworks */,
 				0CA04B121D2ECF1A001892E5 /* Resources */,
-				0C05C36B2103ED91001F2015 /* Embed Frameworks */,
+				A79867C322386D1E0057A109 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1299,6 +1301,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/Zones/**",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Zones/Info.plist";
@@ -1345,6 +1348,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/Zones/**",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Zones/Info.plist";

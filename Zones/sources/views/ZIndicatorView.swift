@@ -17,8 +17,9 @@ import UIKit
 class ZIndicatorView: ZView {
     
     
-    let gradientView  = ZGradientView()
-    let gradientLayer = CAGradientLayer()
+    let   gradientView  = ZGradientView()
+    let   gradientLayer = CAGradientLayer()
+    var confinementRect = CGRect.zero
 
     
     func setupGradientView() {
@@ -74,10 +75,12 @@ class ZIndicatorView: ZView {
         gBackgroundColor.setFill()
         
         if  gBrowsingIsConfined {
-            ZBezierPath               .drawCircle (in: circleRect,  thickness: thickness)
+            ZBezierPath                  .drawCircle (in: circleRect,  thickness: thickness)
+            confinementRect = circleRect
         } else {
-            surroundRect = ZBezierPath.drawCircles(in: circlesRect, thickness: thickness, orientedUp: gInsertionsFollow).insetBy(dx: -6.0, dy: -6.0)
-            radius      /= 2.0
+            confinementRect = circlesRect
+            surroundRect    = ZBezierPath.drawCircles(in: circlesRect, thickness: thickness, orientedUp: gInsertionsFollow).insetBy(dx: -6.0, dy: -6.0)
+            radius         /= 2.0
         }
 
         drawDots(surrounding: surroundRect, count: dotsCount, radius: radius, color: strokeColor)

@@ -67,13 +67,7 @@ class ZShortcutsController: ZGenericTableController {
             }
             
             g.zlayer.backgroundColor = CGColor.clear
-        }
-    }
 
-    override func viewWillAppear() {
-        super.viewWillAppear()
-        
-        if let g = gridView {
             for view in g.subviews {
                 if  view.identifier?.rawValue == kLineView {
                     view.zlayer.backgroundColor = kGridColor
@@ -91,7 +85,7 @@ class ZShortcutsController: ZGenericTableController {
             switch key {
             case "?", "/":         gGraphEditor.showHideKeyboardShortcuts()
             case "a": if SPECIAL { gApplication.showHideAbout() }
-            case "p":              gShortcuts?.view.printView()
+            case "p":              view.printView()
             case "r": if COMMAND { sendEmailBugReport() }
             case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
 
@@ -177,7 +171,8 @@ class ZShortcutsController: ZGenericTableController {
         "bALWAYS:\t",
         "",
         "uKEY",
-        "     \tRETURN     \tbegin or end typing",
+        "     \tRETURN     \tbegin or end editing text",
+        "     \tSPACE      \tcreate an idea",
         "     \tTAB        \tcreate next idea",
         "",
         "+CONTROL",
@@ -185,6 +180,7 @@ class ZShortcutsController: ZGenericTableController {
         "     \tDELETE     \tshow trash",
         "     \tPERIOD     \ttoggle next ideas precede/follow",
         "     \tSPACE      \tcreate an idea",
+        "     \t/          \tremove from focus stack, -> prior",
         "",
         "+COMMAND",
         "     \tCOMMA      \tshow or hide preferences",
@@ -197,7 +193,6 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "uCONTROL + COMMAND + OPTION",
         "     \t           \tshow or hide indicators",
-        "",
         "",
         "",
         "",
@@ -234,9 +229,10 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "bEDITING, TEXT IS SELECTED:",
         "",
+        "     \tsurround:  \t| [ { ( < \" SPACE",
+        "",
         "+COMMAND",
         "     \tHYPHEN     \tconvert text to or from 'titled line'",
-        "     \t[ { ( < \" \tsurround",
         "     \tD          \tif all selected, append onto parent",
         "     \t           \tif not all selected, create as a child",
         "     \tL          \tlowercase",
@@ -258,7 +254,7 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "bBROWSING (NOT EDITING TEXT):",
         "",
-        "     \tmark with: \t" + kMarkingCharacters,
+        "     \tmark:      \t" + kMarkingCharacters,
         "",
         "uKEY",
         "     \tARROWS     \tnavigate within graph",
@@ -267,7 +263,7 @@ class ZShortcutsController: ZGenericTableController {
         "     \tHYPHEN     \tadd 'line', or [un]title it",
         "     \tPERIOD     \ttoggle next ideas precede/follow",
         "     \tSPACE      \tcreate an idea",
-        "     \t/          \t[re]focus or manage favorite",
+        "     \t/          \tfocus (also, manage favorite)",
         "     \t\\         \tswitch to other graph",
         "     \t;          \t-> prior favorite",
         "     \t'          \t-> next favorite",
@@ -315,13 +311,14 @@ class ZShortcutsController: ZGenericTableController {
         "     \tHYPHEN     \t-> to[from] titled line, retain children",
         "     \tO          \tshow data files in Finder",
         "",
+        "+MOUSE CLICK",
+        "     \tSHIFT      \t[un]extend selection",
+        "     \tCOMMAND    \tmove entire graph",
+        "",
         "uSHIFT + ARROW KEY (+ COMMAND -> all)",
         "     \tRIGHT      \treveal children",
         "     \tLEFT       \thide children",
         "     \tvertical   \textend selection",
-        "",
-        "uSHIFT + MOUSE CLICK (with or without drag)",
-        "     \t           \t[un]extend selection",
         "",
         "",
         "",

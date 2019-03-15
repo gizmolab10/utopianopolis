@@ -154,8 +154,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
     
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-        if  !gDeferRedraw,
-            [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
+        if  [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
             if  gWorkMode != .graphMode {
                 editorView?.snp.removeConstraints()
             } else if !gIsEditingText {
@@ -179,10 +178,10 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             gSearching.exitSearchMode()
         }
         
-        if let gesture = iGesture as? ZKeyPanGestureRecognizer,
+        if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
             let (_, dropNearest, location) = widgetNearest(gesture),
-            let         flags = gesture.modifiers {
-            let         state = gesture.state
+            let   flags = gesture.modifiers {
+            let   state = gesture.state
 
             dropNearest.widgetZone?.deferWrite()
 
@@ -193,9 +192,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             } else if gIsDragging {
                 dragMaybeStopEvent(iGesture)
             } else if state == .changed {       // changed
-                rubberbandUpdate(CGRect(start: rubberbandStart, end: location))
+                rubberbandUpdate(CGRect(start: rubberbandStart, end: location), iGesture)
             } else if state != .began {         // ended, cancelled or failed
-                rubberbandUpdate(nil)
+                rubberbandUpdate()
                 gControllers.signalFor(nil, regarding: .ePreferences) // so color well gets updated
             } else if let dot = detectDot(iGesture) {
                 if  !dot.isReveal {
@@ -216,28 +215,28 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             gSearching.exitSearchMode()
         }
         
-        if let gesture = iGesture as? ZKeyClickGestureRecognizer {
-            let           COMMAND = gesture.modifiers?.contains(.command) ?? false
-            let        textWidget = gEditedTextWidget
-            var            inText = false
+        if  let    gesture = iGesture {
+            let    COMMAND = gesture.isCommandDown
+            let      SHIFT = gesture.isShiftDown
+            let textWidget = gEditedTextWidget
+            var     inText = false
 
             textWidget?.widgetZone?.deferWrite()
 
             if  textWidget != nil {
-                let clickLocation = gesture.location(in: editorView)
-                let      textRect = textWidget!.convert(textWidget!.bounds, to: editorView)
-                inText            = textRect.contains(clickLocation)
+                let backgroundLocation = gesture.location(in: editorView)
+                let           textRect = textWidget!.convert(textWidget!.bounds, to: editorView)
+                inText                 = textRect.contains(backgroundLocation)
             }
 
             if !inText {
                 if  let   widget = detectWidget(gesture) {
                     if  let zone = widget.widgetZone,
-                        let  dot = detectDotIn(widget, gesture) {
-                        let isShift = gesture.isShiftDown
+                        let dot  = detectDotIn(widget, gesture) {
                         if  dot.isReveal {
                             gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: COMMAND)
                         } else {
-                            zone.dragDotClicked(isCommand: COMMAND, isShift: isShift)
+                            zone.dragDotClicked(isCommand: COMMAND, isShift: SHIFT)
                         }
 
                         gControllers.signalFor(nil, regarding: .eDetails)
@@ -248,7 +247,19 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                     }
                 } else { // click on background
                     gTextEditor.stopCurrentEdit()
-                    gHereMaybe?.grab()
+                    gHereMaybe?.grab() // safe version of here prevent crash early in launch
+                    
+
+                    if  let i = indicatorView, !i.isHidden {
+                        let gradientView     = i.gradientView
+                        let gradientLocation = gesture.location(in: gradientView)
+                        
+                        if  gradientView.bounds.contains(gradientLocation) {              // if in indicatorView
+                            let isConfinement = indicatorView?.confinementRect.contains(gradientLocation) ?? false
+                            toggleMode(isInsertion: !isConfinement)                                  //  if in confinement symbol, change confinement; else, change direction
+                        }
+                    }
+
                     gControllers.signalFor(nil, regarding: .eDatum)
                 }
             }
@@ -462,34 +473,38 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     }
 
     
-    func rubberbandUpdate(_ rect: CGRect?) {
-        if  rect == nil || rubberbandStart == CGPoint.zero {
-            editorView?.rubberbandRect = CGRect.zero
-            
-            gSelecting.assureMinimalGrabs()
-            gSelecting.updateCousinList()
-            restartGestureRecognition()
-        } else {
-            editorView?.rubberbandRect = rect
-            let                widgets = gWidgets.visibleWidgets
-
-            gSelecting.deselectGrabs(retaining: rubberbandPreGrabs)
-            gHere.ungrab()
-
-            for widget in widgets {
-                if  let    hitRect = widget.hitRect {
-                    let widgetRect = widget.convert(hitRect, to: editorView)
-
-                    if  let zone = widget.widgetZone, !zone.isRootOfFavorites,
+    func rubberbandUpdate(_ rect: CGRect? = nil, _ iGesture: ZGestureRecognizer? = nil) {
+        if  let e = editorView {
+            if  rect == nil || rubberbandStart == CGPoint.zero {
+                e.rubberbandRect = CGRect.zero
+                
+                gSelecting.assureMinimalGrabs()
+                gSelecting.updateCousinList()
+                restartGestureRecognition()
+            } else if rect!.isStillSmall && e.rubberbandRect == .zero {
+                clickEvent(iGesture)
+            } else {
+                e.rubberbandRect = rect
+                let      widgets = gWidgets.visibleWidgets
+                
+                gSelecting.deselectGrabs(retaining: rubberbandPreGrabs)
+                gHere.ungrab()
+                
+                for widget in widgets {
+                    if  let    hitRect = widget.hitRect {
+                        let widgetRect = widget.convert(hitRect, to: e)
                         
-                        widgetRect.intersects(rect!) {
-                        widget.widgetZone?.addToGrab()
+                        if  let zone = widget.widgetZone, !zone.isRootOfFavorites,
+                            
+                            widgetRect.intersects(rect!) {
+                            widget.widgetZone?.addToGrab()
+                        }
                     }
                 }
             }
+            
+            e.setAllSubviewsNeedDisplay()
         }
-        
-        editorView?.setAllSubviewsNeedDisplay()
     }
 
     

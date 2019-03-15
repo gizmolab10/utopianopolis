@@ -802,7 +802,7 @@ class Zone : ZRecord {
     }
 
 
-    func editAndSelect(in range: NSRange) {
+    func editAndSelect(range: NSRange) {
         edit()
         FOREGROUND {
             self.widget?.textWidget.selectCharacter(in: range)
@@ -1512,27 +1512,34 @@ class Zone : ZRecord {
         let     text = gTextEditor.string
 
         if  range.length > 0 {
-            var    t = text.substring(with: range)
-            var    a = text.substring(  toExclusive: range.lowerBound)
-            var    b = text.substring(fromInclusive: range.upperBound)
-            var    o = 1
-            
-            if !a.hasSuffix(by) {
-                a    = a + by
-                b    = by.opposite + b
+            var     t = text.substring(with: range)
+            var     a = text.substring(  toExclusive: range.lowerBound)
+            var     b = text.substring(fromInclusive: range.upperBound)
+            var     o = 1                                // 1 means add it
+            let    aa = by.isOpposite ? by.opposite : by
+            let    bb = by.isOpposite ? by          : by.opposite
+            let  aHas = a.hasSuffix(aa) || a.hasSuffix(bb)
+            let  bHas = b.hasSuffix(aa) || b.hasSuffix(bb)
+
+            if !aHas {    // if it is NOT already there
+                a     = a + aa                           // add it
+                b     = bb + b
             } else {
-                a    = a.substring(  toExclusive: a.length - 1)
-                b    = b.substring(fromInclusive: 1)
-                o    = -1
+                a     = a.substring(  toExclusive: a.length - 1)
+                o     = -1                               // -1 means remove it
+
+                if  bHas {
+                    b = b.substring(fromInclusive: 1)
+                }
             }
             
-            t    = a + t + b
-            let    r = NSRange(location: range.location + o, length: range.length)
-            zoneName = t
+            t         = a + t + b
+            let     r = NSRange(location: range.location + o, length: range.length)
+            zoneName  = t
 
             gTextEditor.updateText(inZone: self, isEditing: true)
             widget?.textWidget.updateGUI()
-            editAndSelect(in: r)
+            editAndSelect(range: r)
             
             return true
         }
@@ -1541,19 +1548,19 @@ class Zone : ZRecord {
     }
     
     
-    func convertToLine() -> Bool {
+    func convertToFromLine() -> Bool {
         if  let childName = widget?.textWidget.extractSelectedText(requiresAllOrTitleSelected: true) {
             
             if  zoneName != childName {
                 zoneName  = childName
                 colorized = false
                 
-                editAndSelect(in: NSMakeRange(0,  childName.length))
+                editAndSelect(range: NSMakeRange(0,  childName.length))
             } else {
                 zoneName  = kHalfLineOfDashes + " " + childName + " " + kHalfLineOfDashes
                 colorized = true
                 
-                editAndSelect(in: NSMakeRange(12, childName.length))
+                editAndSelect(range: NSMakeRange(12, childName.length))
             }
             
             return true

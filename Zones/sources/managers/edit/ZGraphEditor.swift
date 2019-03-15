@@ -1,4 +1,4 @@
- //
+//
 //  ZGraphEditor.swift
 //  Thoughtful
 //
@@ -104,8 +104,8 @@ class ZGraphEditor: NSObject {
                     case "i":      toggleColorized()
                     case "p":      gHere.widget?.printView()
                     case "?":      showHideKeyboardShortcuts()
-                    case "-":      return editedZone?.convertToLine() ?? false // false means key not handled
-                    case "/":      if SPECIAL { showHideKeyboardShortcuts() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
+                    case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
+                    case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
                     case kSpace:   addIdea()
@@ -113,10 +113,11 @@ class ZGraphEditor: NSObject {
                          kDelete:  if CONTROL { focusOnTrash() }
                     default:       return false // false means key not handled
                     }
+                } else if "|<>[]{}() \"".contains(key) {
+                    return         editedZone?.surround(by: key) ?? false
                 } else {
                     switch key {
-                    case "-":      return editedZone?.convertToLine() ?? true
-                    case "[", "(", "{", "<", "\"": return editedZone?.surround(by: key) ?? false
+                    case "-":      return editedZone?.convertToFromLine() ?? true
                     case kEscape:  gTextEditor.cancel()
                     default:       return false // false means key not handled
                     }
@@ -155,8 +156,8 @@ class ZGraphEditor: NSObject {
                     case "w":      rotateWritable()
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
                     case "+":      divideChildren()
-                    case "-":      if !COMMAND || !OPTION { addLine() } else { delete(permanently: false, preserveChildren: true, convertToTitledLine: true) }
-                    case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if !OPTION { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
+                    case "-":      if SPECIAL { convertToTitledLineAndRearrangeChildren() } else if COMMAND { return gSelecting.currentMoveable.convertToFromLine() } else { addLine() }
+                    case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
                     case "\\":     travelToOtherGraph()
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
@@ -345,14 +346,20 @@ class ZGraphEditor: NSObject {
             let       range = NSMakeRange(combined.length - childLength, childLength)
             parent.zoneName = combined
             parent.extractTraits(from: child)
-            moveZone(child, to: gTrash)
-            redrawSyncRedraw(child) {
-                parent.editAndSelect(in: range)
+
+            self.deferRedraw {
+                moveZone(child, to: gTrash)
+                redrawSyncRedraw(child) {
+                    gDeferRedraw = false
+
+                    gEditorView?.setAllSubviewsNeedDisplay()
+                    parent.editAndSelect(range: range)
+                }
             }
         }
     }
 
- 
+
     func swapWithParent() {
         let grabbed = gSelecting.firstSortedGrab
 
@@ -412,14 +419,10 @@ class ZGraphEditor: NSObject {
     
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
         if     !COMMAND || (OPTION && PERIOD) {
-            if !PERIOD {
-                gBrowsingMode  = gBrowsingIsConfined ? .cousinJumps : .confined
-            } else {
-                gInsertionMode = gInsertionsFollow   ? .precede     : .follow
-                
-                if  gIsEditingText {
-                    swapAndResumeEdit()
-                }
+            toggleMode(isInsertion:   PERIOD)
+            
+            if  gIsEditingText     && PERIOD {
+                swapAndResumeEdit()
             }
 
             gControllers.signalFor(nil, multiple: [.ePreferences, .eGraph, .eMain])
@@ -1031,10 +1034,10 @@ class ZGraphEditor: NSObject {
 
     
     func addNextAndRedraw(containing: Bool = false) {
-        deferRedraw { (iShoudRedraw) in
-            addNext(containing: containing) {
-                iChild in
-                gDeferRedraw = iShoudRedraw
+        deferRedraw {
+            addNext(containing: containing) { iChild in
+                gDeferRedraw = false
+
                 self.redrawGraph {
                     iChild.edit()
                 }
@@ -1043,10 +1046,14 @@ class ZGraphEditor: NSObject {
     }
     
     
-    func deferRedraw(_ closure: BooleanClosure) {
-        let        saved = gDeferRedraw
+    func deferRedraw(_ closure: Closure) {
         gDeferRedraw     = true
-        closure(saved)
+
+        closure()
+        
+        FOREGROUND(after: 0.4) {
+            gDeferRedraw = false   // in case closure doesn't set it
+        }
     }
     
 
@@ -1077,7 +1084,7 @@ class ZGraphEditor: NSObject {
                 original.assignAndColorize(kLineWithStubTitle)   // convert into a stub title
 
                 if !isMultiple {
-                    original.editAndSelect(in: NSMakeRange(12, 1))   // edit, selecting stub
+                    original.editAndSelect(range: NSMakeRange(12, 1))   // edit, selecting stub
                 } else {
                     promoteToParent {
                         original.edit()
@@ -1100,6 +1107,8 @@ class ZGraphEditor: NSObject {
             iChild.colorized = true
             
             iChild.grab()
+            
+            onCompletion?()
         }
     }
     
@@ -1110,10 +1119,15 @@ class ZGraphEditor: NSObject {
             let    parent = child.parentZone,
             let childName = child.widget?.textWidget.extractSelectedText() {
 
-            self.addIdeaIn(parent, at: index, with: childName) { iChild in
-                self.moveZone(child, to: iChild) {
-                    self.redrawAndSync()
-                    iChild?.edit()
+            deferRedraw {
+                self.addIdeaIn(parent, at: index, with: childName) { iChild in
+                    self.moveZone(child, to: iChild) {
+                        self.redrawAndSync()
+
+                        gDeferRedraw = false
+
+                        iChild?.edit()
+                    }
                 }
             }
         }
@@ -1123,17 +1137,21 @@ class ZGraphEditor: NSObject {
     func addIdeaFromSelectedText(inside iZone: Zone?) {
         if  let      zone  = iZone,
             let childName  = zone.widget?.textWidget.extractSelectedText() {
-
+            
             if  childName == zone.zoneName {
                 combineIntoParent(zone)
             } else {
                 zone.revealChildren()
                 zone.needChildren()
                 
-                gBatches.children { iSame in
-                    self.addIdeaIn(zone, at: gInsertionsFollow ? nil : 0, with: childName) { iChild in
-                        self.redrawAndSync()
-                        iChild?.edit()
+                self.deferRedraw {
+                    gBatches.children { iSame in
+                        self.addIdeaIn(zone, at: gInsertionsFollow ? nil : 0, with: childName) { iChild in
+                            gDeferRedraw = false
+
+                            self.redrawAndSync()
+                            iChild?.edit()
+                        }
                     }
                 }
             }
@@ -1193,13 +1211,18 @@ class ZGraphEditor: NSObject {
     // MARK:- delete
     // MARK:-
 
+    
+    func convertToTitledLineAndRearrangeChildren() {
+        delete(preserveChildren: true, convertToTitledLine: true)
+    }
+    
 
     func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
-        deferRedraw { (iShoudRedraw) in
+        deferRedraw {
             if  preserveChildren && !permanently {
                 preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
                     gFavorites.updateFavoritesRedrawSyncRedraw {
-                        gDeferRedraw = iShoudRedraw
+                        gDeferRedraw = false
 
                         self.redrawGraph()
                     }
@@ -1209,7 +1232,7 @@ class ZGraphEditor: NSObject {
                 
                 deleteZones(gSelecting.simplifiedGrabs, permanently: permanently) {
                     gFavorites.updateFavoritesRedrawSyncRedraw {    // delete alters the list
-                        gDeferRedraw = iShoudRedraw
+                        gDeferRedraw = false
                         
                         self.redrawGraph()
                     }

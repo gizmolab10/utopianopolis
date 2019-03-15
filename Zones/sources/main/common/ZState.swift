@@ -61,6 +61,15 @@ var gLightishBackgroundColor:            CGColor { return gBackgroundColor.light
 var  gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter (by: 4.0)  .cgColor }
 
 
+func toggleMode(isInsertion: Bool) {
+    if  isInsertion {
+        gInsertionMode = gInsertionsFollow   ? .precede     : .follow
+    } else {
+        gBrowsingMode  = gBrowsingIsConfined ? .cousinJumps : .confined
+    }
+}
+
+
 var gCurrentEvent: ZEvent? {
     didSet {
         gTimeUntilCurrentEvent = Date.timeIntervalSinceReferenceDate

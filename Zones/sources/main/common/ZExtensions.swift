@@ -62,7 +62,7 @@ extension NSObject {
             bam("blank graph !!!!!!")
         }
     }
-
+    
     
     func repeatUntil(_ isDone: @escaping ToBooleanClosure, then: @escaping Closure) {
         let _ = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { iTimer in
@@ -452,9 +452,10 @@ extension CGSize {
 
 extension CGRect {
 
-    var center: CGPoint { return CGPoint(x: midX, y: midY) }
-    var extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
-
+    var    center: CGPoint { return CGPoint(x: midX, y: midY) }
+    var    extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
+    var isStillSmall: Bool { return size.width < 10.0 || size.height < 10.0 }
+    
 
     public init(start: CGPoint, end: CGPoint) {
         self.init()
@@ -617,23 +618,28 @@ extension Array {
 extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
     var   asciiValue:  UInt32  { return asciiArray[0] }
+    var           length: Int  { return unicodeScalars.count }
     var          isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
     var   isAlphabetical: Bool { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
     var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
-    var           length: Int  { return unicodeScalars.count }
-    
+    var       isOpposite: Bool { return "]}>)".contains(self) }
+
     
     var opposite: String {
         switch self {
         case "[": return "]"
+        case "]": return "["
         case "(": return ")"
+        case ")": return "("
         case "{": return "}"
+        case "}": return "{"
         case "<": return ">"
+        case ">": return "<"
         default:  return self
         }
     }
-    
+
 
     var escaped: String {
         var result = "\(self)"
@@ -1058,8 +1064,10 @@ extension ZView {
 
 
     func setAllSubviewsNeedDisplay() {
-        applyToAllSubviews { iView in
-            iView.setNeedsDisplay()
+        if !gDeferRedraw {
+            applyToAllSubviews { iView in
+                iView.setNeedsDisplay()
+            }
         }
     }
 

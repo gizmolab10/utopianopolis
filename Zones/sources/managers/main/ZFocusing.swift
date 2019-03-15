@@ -28,7 +28,7 @@ class ZFocusing: NSObject {
     var currentIndex = -1
     var   priorIndex = -1
     var     topIndex : Int  { return travelStack.count - 1 }
-    var       atHere : Bool { return currentIndex >= 0 && gHere == travelStack[currentIndex] }
+    var       atHere : Bool { return currentIndex >= 0 && currentIndex <= topIndex && gHere == travelStack[currentIndex] }
 
 
     // MARK:- travel stack
@@ -49,6 +49,8 @@ class ZFocusing: NSObject {
 
 
     func debugDump() {
+        return
+
         for (index, zone) in travelStack.enumerated() {
             let isCurrentIndex = index == currentIndex
             let prefix = isCurrentIndex ? "                   •" : ""
@@ -136,6 +138,15 @@ class ZFocusing: NSObject {
         }
     }
 
+    
+    func pop() {
+        if  travelStack.count > 1,
+            let i = isInStack {
+            goBack()
+            travelStack.remove(at: i)
+        }
+    }
+    
 
     // MARK:- travel
     // MARK:-
@@ -165,11 +176,11 @@ class ZFocusing: NSObject {
     func focus(kind: ZFocusKind, _ COMMAND: Bool = false, _ atArrival: @escaping Closure) {
         
         // five states:
-        // 1. COMMAND       -> select here
-        // 2. is a bookmark -> target becomes here
-        // 3. is here       -> update in favorites
-        // 4. is a favorite -> grab here
-        // 5. is not here   -> become here
+        // 1. is a bookmark     -> target becomes here
+        // 2. is here           -> update in favorites
+        // 3. is a favorite     -> grab here
+        // 4. not here, COMMAND -> become here
+        // 5. not COMMAND       -> select here
 
         if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstSortedGrab {
             let focusClosure = { (zone: Zone) in
@@ -180,11 +191,7 @@ class ZFocusing: NSObject {
                 atArrival()
             }
 
-            if  COMMAND {                   // state 1
-                gFavorites.refocus {
-                    atArrival()
-                }
-            } else if zone.isBookmark {     // state 2
+            if zone.isBookmark {     // state 2
                 gFocusing.travelThrough(zone) { object, kind in
                     focusClosure(object as! Zone)
                 }
@@ -193,6 +200,10 @@ class ZFocusing: NSObject {
                 atArrival()
             } else if zone.isInFavorites {  // state 4
                 focusClosure(gHere)
+            } else if COMMAND {                   // state 1
+                gFavorites.refocus {
+                    atArrival()
+                }
             } else {                        // state 5
                 focusClosure(zone)
             }
