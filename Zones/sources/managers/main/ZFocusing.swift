@@ -35,7 +35,7 @@ class ZFocusing: NSObject {
     // MARK:-
 
 
-    var isInStack : Int? {
+    var indexOfHere : Int? {
         let     here  = gHere
 
         for (index, zone) in travelStack.enumerated() {
@@ -63,9 +63,9 @@ class ZFocusing: NSObject {
         var newIndex  = currentIndex + 1
 
         if topIndex  < 0 || !atHere {
-            if  let index = isInStack {
+            if  let index = indexOfHere {
                 newIndex  = index   // prevent duplicates in stack
-            } else if  topIndex == currentIndex {
+            } else if  topIndex <= currentIndex {
                 travelStack.append(gHere)
             } else {
                 if  currentIndex < 0 {
@@ -82,13 +82,13 @@ class ZFocusing: NSObject {
 
 
     func goBack(extreme: Bool = false) {
-        if  let    index = isInStack {
+        if  let    index = indexOfHere {
             currentIndex = index
         } else if !atHere {
             pushHere()
         }
 
-        if currentIndex <= 0 {
+        if  currentIndex <= 0 || currentIndex > topIndex {
             currentIndex = topIndex
         } else if extreme {
             currentIndex = 0
@@ -101,7 +101,7 @@ class ZFocusing: NSObject {
 
 
     func goForward(extreme: Bool = false) {
-        if  let    index = isInStack {
+        if  let    index = indexOfHere {
             currentIndex = index
         } else if !atHere {
             pushHere()
@@ -141,10 +141,11 @@ class ZFocusing: NSObject {
     
     func pop() {
         if  travelStack.count > 1 {
-            goBack()
-
-            if let i = isInStack {
+            if  let i = indexOfHere {
+                goBack()
                 travelStack.remove(at: i)
+            } else {
+                goBack()
             }
         }
     }

@@ -731,7 +731,7 @@ class Zone : ZRecord {
 
     
     func grab(updateBrowsingLevel: Bool = true) {
-        gSelecting.grab(self, updateBrowsingLevel: updateBrowsingLevel)
+        gSelecting.grab([self], updateBrowsingLevel: updateBrowsingLevel)
     }
 
     

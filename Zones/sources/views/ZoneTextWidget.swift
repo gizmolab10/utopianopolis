@@ -162,7 +162,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 if  !requiresAllOrTitleSelected {
                     text = original.stringBySmartReplacing(range, with: "")
                     
-                    gSelecting.deselectGrabs()
+                    gSelecting.ungrabAll()
                 } else if !original.isLineTitle(within: range) {
                     return nil
                 }

@@ -209,7 +209,7 @@ class ZSelecting: NSObject {
     
     func assureMinimalGrabs() {
         if  currentGrabs.count == 0 {
-            grab(gHere)
+            grab([gHere])
         }
     }
 
@@ -238,7 +238,7 @@ class ZSelecting: NSObject {
     // MARK:-
 
 
-    func deselectGrabs(retaining: [Zone]? = nil) {
+    func ungrabAll(retaining: [Zone]? = nil) {
         let    isEmpty = retaining == nil || retaining!.count == 0
         let       more = isEmpty ? [] : retaining!
         let    grabbed = currentGrabs + more
@@ -305,7 +305,7 @@ class ZSelecting: NSObject {
             gTextEditor.stopCurrentEdit()
 
             if  single {
-                deselectGrabs()
+                ungrabAll()
                 
                 hasNewGrab = zone
             }
@@ -349,16 +349,18 @@ class ZSelecting: NSObject {
     }
     
     
-    func grab(_ iZone: Zone?, updateBrowsingLevel: Bool = true) {
-        if  let zone = iZone {
-            addOneGrab(zone, single: true)
+    func grab(_ iZones: [Zone]?, updateBrowsingLevel: Bool = true) {
+        if  let zones = iZones {
+            ungrabAll()
+            addMultipleGrabs(zones)
             
-            if  updateBrowsingLevel {
-                gCurrentBrowseLevel = zone.level
+            if  updateBrowsingLevel,
+                let rootMost = zones.rootMost {
+                gCurrentBrowseLevel = rootMost.level
             }
         }
     }
-
+    
     
     private func firstGrab(using: [Zone]? = nil) -> Zone {
         let grabs = using == nil ? currentGrabs : using!

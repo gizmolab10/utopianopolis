@@ -614,6 +614,41 @@ extension Array {
 }
 
 
+extension Array where Element == Zone {
+
+    func traverseAncestors(_ block: ZoneToStatusClosure) {
+        for zone in self {
+            zone.safeTraverseAncestors(visited: [], block)
+        }
+    }
+
+    
+    func traverseAllAncestors(_ block: @escaping ZoneClosure) {
+        for zone in self {
+            zone.safeTraverseAncestors(visited: []) { iZone -> ZTraverseStatus in
+                block(iZone)
+                
+                return .eContinue
+            }
+        }
+    }
+
+
+    var rootMost: Zone? {
+        var candidate: Zone?
+        
+        for zone in self {
+            if  candidate == nil || zone.level < candidate!.level {
+                candidate = zone
+            }
+        }
+        
+        return candidate
+    }
+    
+}
+
+
 extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
     var   asciiValue:  UInt32  { return asciiArray[0] }

@@ -290,7 +290,7 @@ class ZTextEditor: ZTextView {
                 currentEdit        = pack
 
                 pack.updateText(isEditing: true)
-                gSelecting.deselectGrabs()
+                gSelecting.ungrabAll()
                 textWidget.enableUndo()
                 textWidget.layoutTextField()
                 textWidget.becomeFirstResponder()
@@ -413,7 +413,7 @@ class ZTextEditor: ZTextView {
         let done: FloatClosure = { iOffset in
             let grabbed = gSelecting.firstSortedGrab
 
-            gSelecting.deselectGrabs()
+            gSelecting.ungrabAll()
             self.edit(grabbed, setOffset: iOffset, noPause: revealed)
         }
         
@@ -450,7 +450,7 @@ class ZTextEditor: ZTextView {
         }
         
         if  var original = currentZone {
-            gGraphEditor.moveUp(iMoveUp, original, targeting: currentOffset) { iKind in
+            gGraphEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { iKind in
                 gControllers.signalFor(nil, regarding: iKind) {
                     if  isHere {
                         self.currentOffset = currentZone?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
@@ -464,7 +464,7 @@ class ZTextEditor: ZTextView {
                         } else {
                             self.currentEdit = e // restore after capture sets it to nill
 
-                            gSelecting.deselectGrabs()
+                            gSelecting.ungrabAll()
                             e?.textWidget?.becomeFirstResponder()
                         }
                     } // else widgets are wrong

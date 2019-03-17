@@ -337,7 +337,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
         }
         
         gTextEditor.stopCurrentEdit()
-        gSelecting.deselectGrabs(retaining: rubberbandPreGrabs)
+        gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
     }
 
 
@@ -485,7 +485,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                 e.rubberbandRect = rect
                 let      widgets = gWidgets.visibleWidgets
                 
-                gSelecting.deselectGrabs(retaining: rubberbandPreGrabs)
+                gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
                 gHere.ungrab()
                 
                 for widget in widgets {

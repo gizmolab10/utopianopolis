@@ -407,7 +407,7 @@ class ZGraphEditor: NSObject {
             
             gCurrentBrowseLevel = zone.level // so cousin list will not be empty
             
-            moveUp(atStart, zone, selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { iKind in
+            moveUp(atStart, [zone], selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { iKind in
                 self.redrawGraph() {
                     t.edit(zone)
                     t.setCursor(at: offset)
@@ -631,7 +631,7 @@ class ZGraphEditor: NSObject {
         var zone = gSelecting.currentMoveable
 
         if progeny {
-            gSelecting.deselectGrabs()
+            gSelecting.ungrabAll()
 
             zone.traverseAllProgeny { iChild in
                 iChild.addToGrab()
@@ -646,7 +646,7 @@ class ZGraphEditor: NSObject {
             }
 
             if  zone.showingChildren {
-                gSelecting.deselectGrabs(retaining: zone.children)
+                gSelecting.ungrabAll(retaining: zone.children)
             } else {
                 return // selection does not show its children
             }
@@ -780,8 +780,8 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func recursivelyRevealSiblings(_ descendent: Zone, untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {
-        if  descendent == iAncestor {
+    func recursivelyRevealSiblings(_ descendents: [Zone], untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {
+        if  descendents.contains(iAncestor) {
             onCompletion?(iAncestor)
             
             return
@@ -789,10 +789,10 @@ class ZGraphEditor: NSObject {
 
         var needRoot = true
 
-        descendent.traverseAllAncestors { iParent in
-            if  iParent != descendent {
+        descendents.traverseAllAncestors { iParent in
+            if  !descendents.contains(iParent) {
                 iParent.revealChildren()
-                iParent.needChildren() // need this to show "minimal flesh" on graph
+                iParent.needChildren()
             }
 
             if  iParent == iAncestor {
@@ -800,19 +800,21 @@ class ZGraphEditor: NSObject {
             }
         }
 
-        if  needRoot { // true means ideas graph in memory does not include root, so fetch it from iCloud
-            descendent.needRoot()
+        if  needRoot { // true means graph in memory does not include root, so fetch it from iCloud
+            for descendent in descendents {
+                descendent.needRoot()
+            }
         }
 
         gBatches.families { iSame in
             FOREGROUND {
-                descendent.traverseAncestors { iParent -> ZTraverseStatus in
+                descendents.traverseAncestors { iParent -> ZTraverseStatus in
                     let  gotThere = iParent == iAncestor || iParent.isRoot    // reached the ancestor or the root
                     let gotOrphan = iParent.parentZone == nil
 
                     if  gotThere || gotOrphan {
                         if !gotThere && !iParent.isFetched && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
-                            self.recursivelyRevealSiblings(iParent, untilReaching: iAncestor, onCompletion: onCompletion)
+                            self.recursivelyRevealSiblings([iParent], untilReaching: iAncestor, onCompletion: onCompletion)
                         } else {
                             iAncestor.revealChildren()
                             FOREGROUND(after: 0.1) {
@@ -831,7 +833,7 @@ class ZGraphEditor: NSObject {
 
 
     func revealSiblingsOf(_ descendent: Zone, untilReaching iAncestor: Zone) {
-        recursivelyRevealSiblings(descendent, untilReaching: iAncestor) { iZone in
+        recursivelyRevealSiblings([descendent], untilReaching: iAncestor) { iZone in
             if     iZone != descendent {
                 if iZone == iAncestor {
                     gHere = iAncestor
@@ -1560,11 +1562,11 @@ class ZGraphEditor: NSObject {
 
     func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
         let zone = gSelecting.firstSortedGrab
-//        let zones = gSelecting.sortedGrabs
+        let zones = gSelecting.sortedGrabs
         let isBrowsing = !gIsEditingText
 
         if !selectionOnly {
-            actuallyMove([zone], onCompletion: onCompletion)
+            actuallyMove(zones, onCompletion: onCompletion)
         } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
             gFocusing.maybeTravelThrough(zone, onCompletion: onCompletion)
         } else {
@@ -1592,19 +1594,37 @@ class ZGraphEditor: NSObject {
 
 
     func actuallyMove(_ zones: [Zone], onCompletion: Closure?) {
-        let zone = zones[0]
-        if  var           there = zone.parentZone {
-            let        siblings = there.children
+        if  var    there = zones[0].parentZone {
+            let siblings = Array(there.children)
             
-            if  let       index = zone.siblingIndex {
-                let cousinIndex = index == 0 ? 1 : index - 1 // always insert into sibling above, except at top
-                
-                if cousinIndex >= 0 && cousinIndex < siblings.count {
-                    there       = siblings[cousinIndex]
+            for zone in zones {
+                if  let       index  = zone.siblingIndex {
+                    var cousinIndex  = index == 0 ? 1 : index - 1 // always insert into sibling above, except at top
                     
-                    moveZone(zone, to: there, onCompletion: onCompletion)
+                    if  cousinIndex >= 0 && cousinIndex < siblings.count {
+                        var newThere = siblings[cousinIndex]
+                        
+                        if !zones.contains(newThere) {
+                            there    = newThere
+                            
+                            break
+                        } else {
+                            cousinIndex += 1
+                            newThere = siblings[cousinIndex]
+
+                            if !zones.contains(newThere) {
+                                there    = newThere
+                                
+                                break
+                            }
+                        }
+                    }
                 }
             }
+            
+            moveZones(zones, into: there, onCompletion: onCompletion)
+        } else {
+            onCompletion?()
         }
     }
 
@@ -1819,7 +1839,7 @@ class ZGraphEditor: NSObject {
 
 
     func undoDelete() {
-        gSelecting.deselectGrabs()
+        gSelecting.ungrabAll()
 
         for (child, (parent, index)) in gSelecting.pasteableZones {
             child.orphan()
@@ -1845,7 +1865,7 @@ class ZGraphEditor: NSObject {
             let action = {
                 var forUndo = [Zone] ()
 
-                gSelecting.deselectGrabs()
+                gSelecting.ungrabAll()
 
                 for (pastable, (parent, index)) in pastables {
                     let  pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy // for zones not in trash, paste a deep copy
@@ -1982,34 +2002,38 @@ class ZGraphEditor: NSObject {
 
 
     func moveOut(to: Zone, onCompletion: Closure?) {
-        let         zone = gSelecting.firstSortedGrab
+        let        zones = gSelecting.sortedGrabs.reversed() as [Zone]
         var completedYet = false
 
-        recursivelyRevealSiblings(zone, untilReaching: to) { iRevealedZone in
+        recursivelyRevealSiblings(zones, untilReaching: to) { iRevealedZone in
             if !completedYet && iRevealedZone == to {
                 completedYet     = true
-                var insert: Int? = zone.parentZone?.siblingIndex
-
-                if  zone.parentZone?.parentZone == to,
-                    let  i = insert {
-                    insert = i + 1
+                
+                for zone in zones {
+                    var insert: Int? = zone.parentZone?.siblingIndex
                     
-                    if  insert! >= to.count {
-                        insert   = nil // append at end
+                    if  zone.parentZone?.parentZone == to,
+                        let  i = insert {
+                        insert = i + 1
+                        
+                        if  insert! >= to.count {
+                            insert   = nil // append at end
+                        }
                     }
+                    
+                    if  let  from = zone.parentZone {
+                        let index = zone.siblingIndex
+                        
+                        self.UNDO(self) { iUndoSelf in
+                            iUndoSelf.moveZone(zone, into: from, at: index, orphan: true) { onCompletion?() }
+                        }
+                    }
+                    
+                    zone.orphan()
+                    
+                    to.addAndReorderChild(zone, at: insert)
                 }
 
-                if  let  from = zone.parentZone {
-                    let index = zone.siblingIndex
-
-                    self.UNDO(self) { iUndoSelf in
-                        iUndoSelf.moveZone(zone, into: from, at: index, orphan: true) { onCompletion?() }
-                    }
-                }
-
-                zone.orphan()
-
-                to.addAndReorderChild(zone, at: insert)
                 onCompletion?()
             }
         }
@@ -2103,7 +2127,7 @@ class ZGraphEditor: NSObject {
                         grabs = grabs.reversed()
                     }
                     
-                    gSelecting.deselectGrabs()
+                    gSelecting.ungrabAll()
 
                     for grab in grabs {
                         var beingMoved = grab
@@ -2216,9 +2240,7 @@ class ZGraphEditor: NSObject {
     
     
     func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
-        let original = iMoveUp ? gSelecting.firstSortedGrab : gSelecting.lastSortedGrab
-
-        moveUp(iMoveUp, original, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
+        moveUp(iMoveUp, gSelecting.sortedGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
             gControllers.syncToCloudAfterSignalFor(nil, regarding: iKind) {
                 gControllers.signalFor(nil, regarding: iKind)
             }
@@ -2226,181 +2248,201 @@ class ZGraphEditor: NSObject {
     }
 
     
-    func moveUp(_ iMoveUp: Bool = true, _ original: Zone, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
+    func moveUp(_ iMoveUp: Bool = true, _ originals: [Zone], selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
         let doCousinJump = !gBrowsingIsConfined
-        let       isHere = original == gHere
-        let       parent = original.parentZone
+        let       isHere = originals.contains(gHere)
 
-        if  isHere {
-            if !original.isRoot {
-                
-                ///////////////////////////
-                // parent is not visible //
-                ///////////////////////////
-                
-                let    snapshot = gSelecting.snapshot
-                let hasSiblings = original.hasSiblings
-                
-                revealParentAndSiblingsOf(original) { iCalledCloud in
-                    let keepGoing = hasSiblings && snapshot.isSame && (iCalledCloud || (isHere && parent != nil))
-
-                    if  let p = parent {
-                        gHere = p
-
-                        if  keepGoing {
-                            gSelecting.updateCousinList()
-                            self.moveUp(iMoveUp, original, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
-                        } else {
-                            gFavorites.updateAllFavorites()
+        if  let rootMost = originals.rootMost {
+            let   parent = rootMost.parentZone
+            
+            if  isHere {
+                if !rootMost.isRoot {
+                    
+                    ///////////////////////////
+                    // parent is not visible //
+                    ///////////////////////////
+                    
+                    let    snapshot = gSelecting.snapshot
+                    let hasSiblings = rootMost.hasSiblings
+                    
+                    revealParentAndSiblingsOf(rootMost) { iCalledCloud in
+                        let keepGoing = hasSiblings && snapshot.isSame && (iCalledCloud || (isHere && parent != nil))
+                        
+                        if  let p = parent {
+                            gHere = p
                             
-                            onCompletion?(.eRelayout)
-                        }
-                    }
-                }
-            }
-        } else if let   oParent = parent {
-            let     targetZones = doCousinJump ? gSelecting.cousinList : oParent.children
-            let     targetCount = targetZones.count
-            let       targetMax = targetCount - 1
-
-            if  let       index = targetZones.index(of: original) {
-                var    newIndex = index + (iMoveUp ? -1 : 1)
-                var  allGrabbed = true
-                var soloGrabbed = false
-                var     hasGrab = false
-                
-                let moveClosure: ZoneClosure = { iZone in
-                    if  let newParent = iZone.parentZone {
-                        var toIndex   = iZone.siblingIndex
-                        
-                        if  toIndex     != nil {
-                            if  parent  != newParent {
-                                toIndex  = toIndex! + (iMoveUp ? 1 : 0)
-                            }
-
-                            if  toIndex == newParent.count - 1 {
-                                toIndex  = nil
+                            if  keepGoing {
+                                gSelecting.updateCousinList()
+                                self.moveUp(iMoveUp, originals, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
+                            } else {
+                                gFavorites.updateAllFavorites()
+                                
+                                onCompletion?(.eRelayout)
                             }
                         }
-                        
-                        self.moveZone(original, into: newParent, at: toIndex, orphan: true) {
-                            original.grab()
-                            newParent.children.updateOrder()
-                            onCompletion?(.eRelayout)
+                    }
+                } else {
+                    onCompletion?(.eRelayout)
+                }
+            } else if let   oParent = parent {
+                let     targetZones = doCousinJump ? gSelecting.cousinList : oParent.children
+                let     targetCount = targetZones.count
+                let       targetMax = targetCount - 1
+                
+                if  let       index = targetZones.index(of: rootMost) {
+                    var    newIndex = index + (iMoveUp ? -1 : 1)
+                    var  allGrabbed = true
+                    var soloGrabbed = false
+                    var     hasGrab = false
+                    
+                    let moveClosure: ZonesClosure = { iZones in
+                        if  let   indexer = iMoveUp ? iZones.first : iZones.last,
+                            let newParent = indexer.parentZone {
+                            var   toIndex = indexer.siblingIndex
+                            var    moveUp = iMoveUp
+                            
+                            if  extreme {
+                                toIndex      = iMoveUp ? 0 : nil
+                            } else if var to = toIndex {
+                                to           = to + (iMoveUp ? -1 : 1)
+                                
+                                //////////////////////////
+                                // vertical wrap around //
+                                //////////////////////////
+                                
+                                toIndex      = to
+
+                                if  to      >= newParent.count {
+                                    toIndex  = 0
+                                    moveUp   = !moveUp
+                                } else if to < 0 {
+                                    toIndex  = nil
+                                    moveUp   = !moveUp
+                                }
+                            }
+
+                            let     moveThese = moveUp ? iZones.reversed() : iZones
+
+                            self.moveZones(moveThese, into: newParent, at: toIndex, orphan: true) {
+                                gSelecting.grab(moveThese)
+                                newParent.children.updateOrder()
+                                onCompletion?(.eRelayout)
+                            }
                         }
                     }
-                }
-                
-                /////////////////////////////////////
-                // detect grab for extend behavior //
-                /////////////////////////////////////
-                
-                for child in targetZones {
-                    if !child.isGrabbed {
-                        allGrabbed  = false
-                    } else if hasGrab {
-                        soloGrabbed = false
-                    } else {
-                        hasGrab     = true
-                        soloGrabbed = true
+                    
+                    /////////////////////////////////////
+                    // detect grab for extend behavior //
+                    /////////////////////////////////////
+                    
+                    for child in targetZones {
+                        if !child.isGrabbed {
+                            allGrabbed  = false
+                        } else if hasGrab {
+                            soloGrabbed = false
+                        } else {
+                            hasGrab     = true
+                            soloGrabbed = true
+                        }
                     }
-                }
-                
-                //////////////////////////
-                // vertical wrap around //
-                //////////////////////////
-                
-                if !growSelection {
-                    let    aboveTop = newIndex < 0
-                    let belowBottom = newIndex >= targetCount
                     
                     //////////////////////////
                     // vertical wrap around //
                     //////////////////////////
                     
-                    if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && belowBottom))) || ( iMoveUp && soloGrabbed && aboveTop) {
-                        newIndex = targetMax // bottom
-                    } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && aboveTop)))    || (!iMoveUp && soloGrabbed && belowBottom) {
-                        newIndex = 0         // top
-                    }
-                }
-                
-                if  newIndex >= 0 && newIndex < targetCount {
-                    var grabThis = targetZones[newIndex]
-                    
-                    ////////////////////////////
-                    // wrapping is not needed //
-                    ////////////////////////////
-
-                    if  isHere {
-                        gHere = oParent
+                    if !growSelection {
+                        let    aboveTop = newIndex < 0
+                        let belowBottom = newIndex >= targetCount
+                        
+                        //////////////////////////
+                        // vertical wrap around //
+                        //////////////////////////
+                        
+                        if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && belowBottom))) || ( iMoveUp && soloGrabbed && aboveTop) {
+                            newIndex = targetMax // bottom
+                        } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && aboveTop)))    || (!iMoveUp && soloGrabbed && belowBottom) {
+                            newIndex = 0         // top
+                        }
                     }
                     
-                    UNDO(self) { iUndoSelf in
-                        iUndoSelf.move(up: !iMoveUp, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
-                    }
-                    
-                    if !selectionOnly {
-                        moveClosure(grabThis)
-                    } else {
-                        if !growSelection {
-                            findChildMatching(&grabThis, iMoveUp, iOffset)
-                            grabThis.grab(updateBrowsingLevel: false)
-                        } else if !grabThis.isGrabbed || extreme {
-                            var grabThese = [grabThis]
-                            
-                            if extreme {
-                                
-                                ///////////////////
-                                // expand to end //
-                                ///////////////////
-                                
-                                if iMoveUp {
-                                    for i in 0 ..< newIndex {
-                                        grabThese.append(targetZones[i])
-                                    }
-                                } else {
-                                    for i in newIndex ..< targetCount {
-                                        grabThese.append(targetZones[i])
-                                    }
-                                }
-                            }
-                            
-                            gSelecting.addMultipleGrabs(grabThese)
+                    if  newIndex >= 0 && newIndex < targetCount {
+                        var grabThis = targetZones[newIndex]
+                        
+                        ////////////////////////////
+                        // wrapping is not needed //
+                        ////////////////////////////
+                        
+                        if  isHere {
+                            gHere = oParent
                         }
                         
-                        onCompletion?(.eRelayout)
+                        UNDO(self) { iUndoSelf in
+                            iUndoSelf.move(up: !iMoveUp, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
+                        }
+                        
+                        if !selectionOnly {
+                            moveClosure(originals)
+                        } else {
+                            if !growSelection {
+                                findChildMatching(&grabThis, iMoveUp, iOffset)
+                                grabThis.grab(updateBrowsingLevel: false)
+                            } else if !grabThis.isGrabbed || extreme {
+                                var grabThese = [grabThis]
+                                
+                                if extreme {
+                                    
+                                    ///////////////////
+                                    // expand to end //
+                                    ///////////////////
+                                    
+                                    if iMoveUp {
+                                        for i in 0 ..< newIndex {
+                                            grabThese.append(targetZones[i])
+                                        }
+                                    } else {
+                                        for i in newIndex ..< targetCount {
+                                            grabThese.append(targetZones[i])
+                                        }
+                                    }
+                                }
+                                
+                                gSelecting.addMultipleGrabs(grabThese)
+                            }
+                            
+                            onCompletion?(.eRelayout)
+                        }
+                    } else if doCousinJump,
+                        var index  = targetZones.index(of: rootMost) {
+                        
+                        /////////////////
+                        // cousin jump //
+                        /////////////////
+                        
+                        index     += (iMoveUp ? -1 : 1)
+                        
+                        if  index >= targetCount {
+                            index  = growSelection ? targetMax : 0
+                        } else if index < 0 {
+                            index  = growSelection ? 0 : targetMax
+                        }
+                        
+                        var grab = targetZones[index]
+                        
+                        findChildMatching(&grab, iMoveUp, iOffset)
+                        
+                        if !selectionOnly {
+                            moveClosure(originals)
+                        } else if growSelection {
+                            grab.addToGrab()
+                        } else {
+                            grab.grab(updateBrowsingLevel: false)
+                        }
+                        
+                        onCompletion?(.eData)
                     }
-                } else if doCousinJump,
-                    var index  = targetZones.index(of: original) {
-
-                    /////////////////
-                    // cousin jump //
-                    /////////////////
-                    
-                    index     += (iMoveUp ? -1 : 1)
-
-                    if  index >= targetCount {
-                        index  = growSelection ? targetMax : 0
-                    } else if index < 0 {
-                        index  = growSelection ? 0 : targetMax
-                    }
-                    
-                    var grab = targetZones[index]
-                    
-                    findChildMatching(&grab, iMoveUp, iOffset)
-                    
-                    if !selectionOnly {
-                        moveClosure(grab)
-                    } else if growSelection {
-                        grab.addToGrab()
-                    } else {
-                        grab.grab(updateBrowsingLevel: false)
-                    }
-
-                    onCompletion?(.eData)
                 }
             }
         }
     }
+
 }
