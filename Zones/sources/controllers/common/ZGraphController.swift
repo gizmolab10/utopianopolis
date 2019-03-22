@@ -233,6 +233,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                 if  let   widget = detectWidget(gesture) {
                     if  let zone = widget.widgetZone,
                         let dot  = detectDotIn(widget, gesture) {
+
                         if  dot.isReveal {
                             gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: COMMAND)
                         } else {

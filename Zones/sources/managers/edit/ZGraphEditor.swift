@@ -2335,7 +2335,7 @@ class ZGraphEditor: NSObject {
                         
                         if  newIndex  != nil, moveUp,
                             newIndex! == intoParent.count - 1 {
-                            newIndex   = nil
+                            newIndex   = nil // move BELOW bottom
                         }
                         
                         self.moveZones(moveThese, into: intoParent, at: newIndex, orphan: true) {

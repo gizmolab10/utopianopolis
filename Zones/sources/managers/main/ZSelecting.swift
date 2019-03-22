@@ -251,12 +251,21 @@ class ZSelecting: NSObject {
         }
         
         currentGrabs.append(contentsOf: more)
+        updateWidgets(for: grabbed)
+    }
+    
+    
+    func updateWidgets(for zones: [Zone]) {
+        for zone in zones {
+            updateWidget(for: zone)
+        }
+    }
 
-        for zone in grabbed {
-            if  let widget = zone.widget {
-                widget.dragDot.innerDot?.setNeedsDisplay()
-                widget                  .setNeedsDisplay()
-            }
+
+    func updateWidget(for zone: Zone?) {
+        if  zone != nil, let widget = zone!.widget {
+            widget                  .setNeedsDisplay()
+            widget.dragDot.innerDot?.setNeedsDisplay()
         }
     }
     
@@ -268,18 +277,10 @@ class ZSelecting: NSObject {
     }
 
 
-    func updateWidgetFor(_ zone: Zone?) {
-        if  zone != nil, let widget = zone!.widget {
-            widget                  .setNeedsDisplay()
-            widget.dragDot.innerDot?.setNeedsDisplay()
-        }
-    }
-
-
     func ungrab(_ iZone: Zone?) {
         if let zone = iZone, let index = currentGrabs.index(of: zone) {
             currentGrabs.remove(at: index)
-            updateWidgetFor(zone)
+            updateWidget(for: zone)
             maybeClearBrowsingLevel()
         }
     }
@@ -314,9 +315,7 @@ class ZSelecting: NSObject {
 
             currentGrabs = respectOrder(for: currentGrabs)
 
-            for grab in currentGrabs {
-                updateWidgetFor(grab)
-            }
+            updateWidgets(for: currentGrabs)
         }
     }
     
@@ -350,10 +349,12 @@ class ZSelecting: NSObject {
     
     
     func grab(_ iZones: [Zone]?, updateBrowsingLevel: Bool = true) {
-        if  let zones = iZones {
+        if  let    zones = iZones {
+            let    grabs = currentGrabs
             currentGrabs = [] // can't use ungrabAll because we need to keep cousinList
             sortedGrabs  = []
 
+            updateWidgets(for: grabs)
             addMultipleGrabs(zones)
             
             if  updateBrowsingLevel,
