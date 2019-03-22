@@ -505,63 +505,6 @@ extension CGRect {
 extension Array {
 
 
-    func updateOrder() { updateOrdering(start: 0.0, end: 1.0) }
-
-
-    func orderLimits() -> (start: Double, end: Double) {
-        var start = 1.0
-        var   end = 0.0
-
-        for element in self {
-            if  let   zone = element as? Zone {
-                let  order = zone.order
-                let  after = order > end
-                let before = order < start
-
-                if  before {
-                    start  = order
-                }
-
-                if  after {
-                    end    = order
-                }
-            }
-        }
-
-        return (start, end)
-    }
-
-
-    func sortedByReverseOrdering() -> Array {
-        return sorted { (a, b) -> Bool in
-            if  let zoneA = a as? Zone,
-                let zoneB = b as? Zone {
-                return zoneA.order > zoneB.order
-            }
-
-            return true
-        }
-    }
-
-
-    func updateOrdering(start: Double, end: Double) {
-        let increment = (end - start) / Double(self.count + 2)
-
-        for (index, element) in self.enumerated() {
-            if  let    child = element as? Zone {
-                let newOrder = start + (increment * Double(index + 1))
-                let    order = child.order
-
-                if  order      != newOrder {
-                    child.order = newOrder
-
-                    child.maybeNeedSave()
-                }
-            }
-        }
-    }
-
-
     func apply(closure: AnyToStringClosure) -> String {
         var separator = ""
         var    string = ""
@@ -616,6 +559,57 @@ extension Array {
 
 extension Array where Element == Zone {
 
+
+    func updateOrder() { updateOrdering(start: 0.0, end: 1.0) }
+    
+    
+    func orderLimits() -> (start: Double, end: Double) {
+        var start = 1.0
+        var   end = 0.0
+        
+        for zone in self {
+            let  order = zone.order
+            let  after = order > end
+            let before = order < start
+            
+            if  before {
+                start  = order
+            }
+            
+            if  after {
+                end    = order
+            }
+        }
+        
+        return (start, end)
+    }
+    
+    
+    func sortedByReverseOrdering() -> Array {
+        return sorted { (a, b) -> Bool in
+            return a.order > b.order
+        }
+    }
+    
+    
+    func updateOrdering(start: Double, end: Double) {
+        let increment = (end - start) / Double(self.count + 2)
+        
+        for (index, child) in self.enumerated() {
+            let newOrder = start + (increment * Double(index + 1))
+            let    order = child.order
+            
+            if  order      != newOrder {
+                child.order = newOrder
+                
+                child.maybeNeedSave()
+            }
+        }
+        
+        gSelecting.updateCousinList()
+    }
+    
+
     func traverseAncestors(_ block: ZoneToStatusClosure) {
         for zone in self {
             zone.safeTraverseAncestors(visited: [], block)
@@ -631,6 +625,40 @@ extension Array where Element == Zone {
                 return .eContinue
             }
         }
+    }
+    
+    
+    func rootMost(goingUp: Bool) -> Zone? {
+        guard count > 0 else { return nil }
+
+        var      candidate = first
+        
+        if count > 1 {
+            var candidates = [Zone] ()
+            var      level = candidate?.level ?? 100
+            var      order = goingUp ? 1.0 : 0.0
+
+            for zone in self {
+                if  level      == zone.level {
+                    candidates.append(zone)
+                } else {
+                    candidate   = zone
+                    level       = candidate!.level
+                    candidates  = [candidate!]
+                }
+            }
+            
+            for zone in candidates {
+                let    zOrder = zone.order
+
+                if  goingUp  ? (zOrder < order) : (zOrder > order) {
+                    order     = zOrder
+                    candidate = zone
+                }
+            }
+        }
+        
+        return candidate
     }
 
 

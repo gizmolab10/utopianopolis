@@ -269,6 +269,40 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     }
     
     
+    func rubberbandUpdate(_ rect: CGRect? = nil, _ iGesture: ZGestureRecognizer? = nil) {
+        if  let e = editorView {
+            if  rect == nil || rubberbandStart == .zero {
+                e.rubberbandRect = .zero
+                
+                gSelecting.assureMinimalGrabs()
+                gSelecting.updateCurrentBrowserLevel()
+                gSelecting.updateCousinList()
+                restartGestureRecognition()
+            } else {
+                e.rubberbandRect = rect
+                let      widgets = gWidgets.visibleWidgets
+                
+                gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
+                gHere.ungrab()
+                
+                for widget in widgets {
+                    if  let    hitRect = widget.hitRect {
+                        let widgetRect = widget.convert(hitRect, to: e)
+                        
+                        if  let zone = widget.widgetZone, !zone.isRootOfFavorites,
+                            
+                            widgetRect.intersects(rect!) {
+                            widget.widgetZone?.addToGrab()
+                        }
+                    }
+                }
+            }
+            
+            e.setAllSubviewsNeedDisplay()
+        }
+    }
+    
+    
     /////////////////////////////////////////////
     // next four are only called by controller //
     /////////////////////////////////////////////
@@ -298,7 +332,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
         if  dragEvent(iGesture) {
             cleanupAfterDrag()
             
-            if doneState.contains(iGesture!.state) {
+            if  doneState.contains(iGesture!.state) {
                 gControllers.signalFor(nil, regarding: .ePreferences) // so color well gets updated
                 restartGestureRecognition()
             }
@@ -470,39 +504,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
         }
 
         return nil
-    }
-
-    
-    func rubberbandUpdate(_ rect: CGRect? = nil, _ iGesture: ZGestureRecognizer? = nil) {
-        if  let e = editorView {
-            if  rect == nil || rubberbandStart == .zero {
-                e.rubberbandRect = .zero
-                
-                gSelecting.assureMinimalGrabs()
-                gSelecting.updateCousinList()
-                restartGestureRecognition()
-            } else {
-                e.rubberbandRect = rect
-                let      widgets = gWidgets.visibleWidgets
-                
-                gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
-                gHere.ungrab()
-                
-                for widget in widgets {
-                    if  let    hitRect = widget.hitRect {
-                        let widgetRect = widget.convert(hitRect, to: e)
-                        
-                        if  let zone = widget.widgetZone, !zone.isRootOfFavorites,
-                            
-                            widgetRect.intersects(rect!) {
-                            widget.widgetZone?.addToGrab()
-                        }
-                    }
-                }
-            }
-            
-            e.setAllSubviewsNeedDisplay()
-        }
     }
 
     

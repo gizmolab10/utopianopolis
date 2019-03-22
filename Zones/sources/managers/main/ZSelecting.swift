@@ -351,12 +351,14 @@ class ZSelecting: NSObject {
     
     func grab(_ iZones: [Zone]?, updateBrowsingLevel: Bool = true) {
         if  let zones = iZones {
-            ungrabAll()
+            currentGrabs = [] // can't use ungrabAll because we need to keep cousinList
+            sortedGrabs  = []
+
             addMultipleGrabs(zones)
             
             if  updateBrowsingLevel,
-                let rootMost = zones.rootMost {
-                gCurrentBrowseLevel = rootMost.level
+                let level = zones.rootMost?.level {
+                gCurrentBrowseLevel = level
             }
         }
     }
@@ -418,16 +420,25 @@ class ZSelecting: NSObject {
     }
     
     
+    func updateCurrentBrowserLevel() {
+        if  let level = currentGrabs.rootMost?.level {
+            gCurrentBrowseLevel = level
+        }
+    }
+    
+    
     func updateCousinList(for iZone: Zone? = nil) {
-        _cousinList.removeAll()
+        _cousinList .removeAll()
         _sortedGrabs.removeAll()
         
         if  let level =  gCurrentBrowseLevel {
             let  zone = iZone != nil ? iZone! : firstGrab
             let start =  zone.isInFavorites ? gFavoritesRoot : gHere
             start?.traverseAllVisibleProgeny { iChild in
-                if   iChild.level == level ||
-                    (iChild.level  < level && (iChild.count == 0 || !iChild.showingChildren)) {
+                let  cLevel  = iChild.level
+
+                if   cLevel == level ||
+                    (cLevel  < level && (iChild.count == 0 || !iChild.showingChildren)) {
                     _cousinList.append(iChild)
                 }
                 
