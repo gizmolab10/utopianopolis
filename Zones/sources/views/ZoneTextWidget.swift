@@ -151,13 +151,15 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
     
 
-    func extractSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
-        var extract: String?
-        
-        if  let original = text {
+    func extractTitleOrSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
+        var      extract = extractedTitle
+
+        if  let original = text, gIsEditingText {
             let    range = gTextEditor.selectedRange
             extract      = original.substring(with: range)
             
+            gTextEditor.stopCurrentEdit()
+
             if  range.length < original.length {
                 if  !requiresAllOrTitleSelected {
                     text = original.stringBySmartReplacing(range, with: "")
@@ -167,16 +169,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     return nil
                 }
             }
-            
-            gTextEditor.stopCurrentEdit()
         }
         
         return extract
     }
     
     
-    func extractTitleText() -> String? {
-        var extract: String?
+    var extractedTitle: String? {
+        var     extract  = text
         
         if  let original = text {
             let substrings = original.components(separatedBy: kHalfLineOfDashes)

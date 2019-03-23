@@ -1128,7 +1128,7 @@ class ZGraphEditor: NSObject {
         if  let     child = iZone,
             let     index = child.siblingIndex,
             let    parent = child.parentZone,
-            let childName = child.widget?.textWidget.extractSelectedText() {
+            let childName = child.widget?.textWidget.extractTitleOrSelectedText() {
 
             deferRedraw {
                 self.addIdeaIn(parent, at: index, with: childName) { iChild in
@@ -1147,7 +1147,7 @@ class ZGraphEditor: NSObject {
 
     func addIdeaFromSelectedText(inside iZone: Zone?) {
         if  let      zone  = iZone,
-            let childName  = zone.widget?.textWidget.extractSelectedText() {
+            let childName  = zone.widget?.textWidget.extractTitleOrSelectedText() {
             
             if  childName == zone.zoneName {
                 combineIntoParent(zone)

@@ -1549,7 +1549,7 @@ class Zone : ZRecord {
     
     
     func convertToFromLine() -> Bool {
-        if  let childName = widget?.textWidget.extractSelectedText(requiresAllOrTitleSelected: true) {
+        if  let childName = widget?.textWidget.extractTitleOrSelectedText(requiresAllOrTitleSelected: true) {
             
             if  zoneName != childName {
                 zoneName  = childName
@@ -1571,7 +1571,7 @@ class Zone : ZRecord {
     
     
     func convertFromLineWithTitle() {
-        if  let childName = widget?.textWidget.extractTitleText() {
+        if  let childName = widget?.textWidget.extractedTitle {
             zoneName  = childName
             colorized = false
         }
