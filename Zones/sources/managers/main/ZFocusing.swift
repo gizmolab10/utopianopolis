@@ -140,13 +140,11 @@ class ZFocusing: NSObject {
 
     
     func pop() {
-        if  travelStack.count > 1 {
-            if  let i = indexOfHere {
-                goBack()
-                travelStack.remove(at: i)
-            } else {
-                goBack()
-            }
+        if  let i = indexOfHere {
+            goBack()
+            travelStack.remove(at: i)
+        } else {
+            go()
         }
     }
     
@@ -187,6 +185,8 @@ class ZFocusing: NSObject {
 
         if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstSortedGrab {
             let focusClosure = { (zone: Zone) in
+                self.pushHere()
+
                 gHere = zone
 
                 gFavorites.updateCurrentFavorite()
@@ -289,11 +289,13 @@ class ZFocusing: NSObject {
             }
 
             if  let target = iTarget, target.spawnedBy(gHere) {
-                if  target.isGrabbed {
-                    gHere = target
-                } else {
+                if !target.isGrabbed {
                     target.asssureIsVisible()
                     target.grab()
+                } else {
+                    pushHere()
+
+                    gHere = target
                 }
 
                 atArrival(target, .eRelayout)
