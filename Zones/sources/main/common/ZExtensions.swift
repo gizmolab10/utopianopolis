@@ -922,6 +922,11 @@ extension String {
     }
 
     
+    var isDashedLine: Bool {
+        return contains(kHalfLineOfDashes)
+    }
+    
+
     var isLineWithTitle: Bool {
         let substrings = components(separatedBy: kHalfLineOfDashes)
         

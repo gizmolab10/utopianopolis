@@ -157,8 +157,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  let original = text, gIsEditingText {
             let    range = gTextEditor.selectedRange
             extract      = original.substring(with: range)
-            
-            gTextEditor.stopCurrentEdit()
 
             if  range.length < original.length {
                 if  !requiresAllOrTitleSelected {
@@ -166,9 +164,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     
                     gSelecting.ungrabAll()
                 } else if !original.isLineTitle(within: range) {
-                    return nil
+                    extract = nil
                 }
             }
+            
+            gTextEditor.stopCurrentEdit()
         }
         
         return extract

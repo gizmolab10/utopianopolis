@@ -79,7 +79,7 @@ class Zone : ZRecord {
     var     isRootOfLostAndFound:         Bool  { return recordName == kLostAndFoundName }
     var           spawnedByAGrab:         Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
-    var            isDoubleClick:         Bool  { return timeOfLastDragDotClick?.timeIntervalSinceNow ?? 10.0 < 0.5 }
+    var            isDoubleClick:         Bool  { return timeOfLastDragDotClick?.timeIntervalSinceNow ?? -10.0 > -0.8 }
 
 
     var deepCopy: Zone {
@@ -724,10 +724,11 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    func addToPaste() { gSelecting.pasteableZones[self] = (parentZone, siblingIndex) }
-    func  addToGrab() { gSelecting    .addOneGrab(self) }
-    func     ungrab() { gSelecting        .ungrab(self) }
-    func       edit() { gTextEditor         .edit(self) }
+    func        addToPaste() { gSelecting   .pasteableZones[self] = (parentZone, siblingIndex) }
+    func         addToGrab() { gSelecting       .addOneGrab(self) }
+    func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
+    func            ungrab() { gSelecting           .ungrab(self) }
+    func              edit() { gTextEditor            .edit(self) }
 
     
     func grab(updateBrowsingLevel: Bool = true) {
@@ -740,28 +741,32 @@ class Zone : ZRecord {
     }
 
     
-    func dragDotClicked(isCommand: Bool, isShift: Bool) {
-        let doubleClicked = isDoubleClick
-        let shouldFocus = isCommand || (doubleClicked && isGrabbed)
+    func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool) {
+        if self == gHere && isGrabbed { return }
+
+        let  CLICKTWICE = isDoubleClick
+        let shouldFocus = COMMAND || (CLICKTWICE && isGrabbed)
         
         timeOfLastDragDotClick = Date()
 
         if  shouldFocus {
             grab() // narrow selection to just this one zone
             
-            if !(doubleClicked && self == gHere) {
+            if !(CLICKTWICE && self == gHere) {
                 gFocusing.focus(kind: .eSelected) {
                     gGraphEditor.redrawSyncRedraw()
                 }
             }
         } else if isGrabbed {
-            ungrab()
-        } else if isShift {
+            ungrabAssuringOne()
+        } else if SHIFT {
             addToGrab()
         } else {
             grab()
         }
 
+        widget?.setNeedsDisplay()
+        
         gControllers.signalFor(nil, regarding: .eDetails)
     }
 
@@ -1498,12 +1503,9 @@ class Zone : ZRecord {
     // MARK:-
 
     
-    
     func convertToTitledLine() {
         zoneName  = kHalfLineOfDashes + " " + unwrappedName + " " + kHalfLineOfDashes
         colorized = true
-        
-        needSave()
     }
     
     
@@ -1557,9 +1559,7 @@ class Zone : ZRecord {
                 
                 editAndSelect(range: NSMakeRange(0,  childName.length))
             } else {
-                zoneName  = kHalfLineOfDashes + " " + childName + " " + kHalfLineOfDashes
-                colorized = true
-                
+                convertToTitledLine()
                 editAndSelect(range: NSMakeRange(12, childName.length))
             }
             

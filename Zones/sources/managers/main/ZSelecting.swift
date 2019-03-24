@@ -126,6 +126,35 @@ class ZSelecting: NSObject {
         return grabs
     }
 
+    
+    /// If currently only a single grab, auto-grab subsequent zones until the next non-line
+    var possiblyAutoGrabbed: [Zone] {
+        var s = simplifiedGrabs
+
+        if s.count == 1 {
+            let zone = s.first
+
+            if let parent = zone?.parentZone,
+                var index = zone?.siblingIndex {
+                let max = parent.count - 1
+
+                while index < max {
+                    index += 1 // skip past first
+
+                    let sibling = parent.children[index]
+
+                    if  sibling.zoneName?.isDashedLine ?? false {
+                        break // found another dashed line, no more extending
+                    } else {
+                        s.append(sibling)
+                    }
+                }
+            }
+        }
+        
+        return s
+    }
+    
 
     var currentGrabsHaveVisibleChildren: Bool {
         for     grab in currentGrabs {
@@ -276,6 +305,15 @@ class ZSelecting: NSObject {
         }
     }
 
+    
+    func ungrabAssuringOne(_ iZone: Zone?) {
+        ungrab(iZone)
+        
+        if currentGrabs.count == 0 {
+            grab([gHere])
+        }
+    }
+    
 
     func ungrab(_ iZone: Zone?) {
         if let zone = iZone, let index = currentGrabs.index(of: zone) {
@@ -349,16 +387,16 @@ class ZSelecting: NSObject {
     
     
     func grab(_ iZones: [Zone]?, updateBrowsingLevel: Bool = true) {
-        if  let    zones = iZones {
-            let    grabs = currentGrabs
+        if  let newGrabs = iZones {
+            let oldGrabs = currentGrabs
             currentGrabs = [] // can't use ungrabAll because we need to keep cousinList
             sortedGrabs  = []
 
-            updateWidgets(for: grabs)
-            addMultipleGrabs(zones)
-            
+            updateWidgets(for:oldGrabs)
+            addMultipleGrabs( newGrabs)
+
             if  updateBrowsingLevel,
-                let level = zones.rootMost?.level {
+                let level = newGrabs.rootMost?.level {
                 gCurrentBrowseLevel = level
             }
         }

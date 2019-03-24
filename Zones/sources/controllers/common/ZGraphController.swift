@@ -237,7 +237,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                         if  dot.isReveal {
                             gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: COMMAND)
                         } else {
-                            zone.dragDotClicked(isCommand: COMMAND, isShift: SHIFT)
+                            zone.dragDotClicked(COMMAND, SHIFT)
                         }
 
                         gControllers.signalFor(nil, regarding: .eDetails)
