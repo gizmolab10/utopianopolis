@@ -171,8 +171,10 @@ enum ZStorageType: String {
     case lost       = "lostAndFound"    // general
     case bookmarks  = "bookmarks"
     case favorites  = "favorites"
+    case manifest   = "manifest"
     case destroy    = "destroy"
     case userID     = "user ID"
+    case model      = "model"
     case graph      = "graph"
     case trash      = "trash"
     case date       = "date"
@@ -197,5 +199,7 @@ enum ZStorageType: String {
     case text       = "text"
     case data       = "data"
     case type       = "type"
+
+    case deleted    = "deleted"         // ZManifest
 }
 

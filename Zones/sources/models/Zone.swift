@@ -52,6 +52,7 @@ class Zone : ZRecord {
     var           bookmarkTarget:         Zone? { return crossLink as? Zone }
     var              destroyZone:         Zone? { return cloud?.destroyZone }
     var                trashZone:         Zone? { return cloud?.trashZone }
+    var                 manifest:    ZManifest? { return cloud?.manifest }
     var                   widget:   ZoneWidget? { return gWidgets.widgetForZone(self) }
     var           linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
     var           linkRecordName:       String? { return recordName(from: zoneLink) }
@@ -79,7 +80,7 @@ class Zone : ZRecord {
     var     isRootOfLostAndFound:         Bool  { return recordName == kLostAndFoundName }
     var           spawnedByAGrab:         Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
-    var            isDoubleClick:         Bool  { return timeOfLastDragDotClick?.timeIntervalSinceNow ?? -10.0 > -0.8 }
+    var            isDoubleClick:         Bool  { return timeOfLastDragDotClick?.timeIntervalSinceNow ?? -10.0 > -1.8 }
 
 
     var deepCopy: Zone {

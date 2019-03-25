@@ -87,7 +87,7 @@ class ZBatches: ZOnboarding {
             switch identifier {
             case .bSaveToCloud: return [                                    .oSaveToCloud          ]
             case .bSync:        return [             .oFetch,               .oSaveToCloud, .oTraits]
-            case .bRoot:        return [.oRoots,                            .oSaveToCloud, .oTraits]
+            case .bRoot:        return [.oRoots,                .oManifest, .oSaveToCloud, .oTraits]
             case .bFocus:       return [.oRoots,     .oFetch,                              .oTraits]
             case .bParents:     return [                                                   .oTraits]
             case .bChildren:    return [.oChildren,                                        .oTraits]
@@ -291,7 +291,7 @@ class ZBatches: ZOnboarding {
                 onCompletion(true)
             } else {
                 let              requiresActive = [.oSaveToCloud, .oTraits                ].contains(operationID)
-                let               alwaysForBoth = [.oHere, .oRoots, .oReadFile].contains(operationID)
+                let               alwaysForBoth = [.oHere, .oRoots, .oReadFile, .oManifest].contains(operationID)
                 let               forMineIDOnly = [.oBookmarks, .oSubscribe, .oUnsubscribe].contains(operationID)
                 let                      isMine = restoreToID == .mineID
                 let               onlyCurrentID = (!gCanAccessMyCloudDatabase && !alwaysForBoth) || operationID == .oCompletion

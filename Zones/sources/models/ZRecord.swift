@@ -44,7 +44,7 @@ class ZRecord: NSObject {
     var          recordName: String?            { return record?.recordID.recordName }
     var       unwrappedName: String             { return emptyName }
     var           emptyName: String             { return "" }
-
+    
 
     var record: CKRecord? {
         get {
@@ -528,7 +528,7 @@ class ZRecord: NSObject {
             if  let recordName = name {
                 ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecord.ID(recordName: recordName)) // YIKES this may be wildly out of date
             }
-
+            
             for keyPath in cloudProperties() + [kpModificationDate] {
                 if  let      type  = type(from: keyPath),
                     let    object  = dict[type],

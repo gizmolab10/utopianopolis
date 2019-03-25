@@ -136,8 +136,7 @@ class ZFiles: NSObject {
 	}
 
 
-
-    // MARK:- internals
+    // MARK:- heavy lifting
     // MARK:-
 
 
@@ -170,6 +169,10 @@ class ZFiles: NSObject {
 
                 if  let   destroy  = manager.destroyZone?.storageDictionary(for: dbID) {
                     dict[.destroy] = destroy as NSObject
+                }
+
+                if  let   manifest  = manager.manifest?.storageDictionary(for: dbID) {
+                    dict[.manifest] = manifest as NSObject
                 }
 
                 if  let   lost  = manager.lostAndFoundZone?.storageDictionary(for: dbID) {
@@ -217,7 +220,7 @@ class ZFiles: NSObject {
 			let       index  = databaseID.index {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
-			let  keys: types = [.date, .lost, .graph, .trash, .destroy, .favorites, .bookmarks ]
+			let  keys: types = [.date, .lost, .graph, .trash, .destroy, .manifest, .favorites, .bookmarks ]
 			
             FOREGROUND {
                 do {
@@ -227,28 +230,40 @@ class ZFiles: NSObject {
                         let   dict = self.dictFromJSON(json)
 
                         for key in keys {
-                            if  let   value = dict[key] {
+                            if  let value = dict[key] {
 
-                                if let date = value as? Date {
-                                    cloud.lastSyncDate = date
-                                } else if let subDict = value as? ZStorageDictionary {
-                                    let zone = Zone(dict: subDict, in: databaseID)
-
-                                    zone.updateRecordName(for: key)
-
-                                    switch key {
-                                    case .graph:     cloud.rootZone         = zone
-                                    case .trash:     cloud.trashZone        = zone
-                                    case .destroy:   cloud.destroyZone      = zone
-                                    case .favorites: cloud.favoritesZone    = zone
-                                    case .lost:      cloud.lostAndFoundZone = zone
-                                    default: break
+                                switch key {
+                                case .date:
+                                    if  let date = value as? Date {
+                                        cloud.lastSyncDate = date
                                     }
-                                } else if let array = value as? [ZStorageDictionary] {
-                                    for subDict in array {
-                                        let zone = Zone(dict: subDict, in: databaseID)
-
-                                        gBookmarks.registerBookmark(zone)
+                                case .manifest:
+                                    if  let    subDict = value as? ZStorageDictionary {
+                                        let   manifest = ZManifest(dict: subDict, in: databaseID)
+                                        cloud.manifest = manifest
+                                    }
+                                case .bookmarks:
+                                    if let array = value as? [ZStorageDictionary] {
+                                        for subDict in array {
+                                            let zone = Zone(dict: subDict, in: databaseID)
+                                            
+                                            gBookmarks.registerBookmark(zone)
+                                        }
+                                    }
+                                default:
+                                    if  let subDict = value as? ZStorageDictionary {
+                                        let    zone = Zone(dict: subDict, in: databaseID)
+                                        
+                                        zone.updateRecordName(for: key)
+                                        
+                                        switch key {
+                                        case .graph:     cloud.rootZone         = zone
+                                        case .trash:     cloud.trashZone        = zone
+                                        case .destroy:   cloud.destroyZone      = zone
+                                        case .favorites: cloud.favoritesZone    = zone
+                                        case .lost:      cloud.lostAndFoundZone = zone
+                                        default: break
+                                        }
                                     }
                                 }
                             }
@@ -266,31 +281,16 @@ class ZFiles: NSObject {
 	}
 	
 
-    func createDataDirectory() -> URL {
-        let cacheURL = try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let directoryURL = cacheURL.appendingPathComponent("Thoughtful", isDirectory: true)
-
-        do {
-            try manager.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            print(error)
-        }
-
-        return directoryURL
-    }
-
-
-    let normalExtension = ".thoughtful"
-    let backupExtension = ".backup"
-
-
     func filePath(for index: ZDatabaseIndex) -> String {
         var                 path  = filePaths[index.rawValue]
+        
         if                  path == nil,
             let             name  = fileName(for: index) {
             let         cloudName = fileName(for: index, isGeneric: false)!
             let        isEveryone = index == .everyoneIndex
             let        useGeneric = isEveryone || !gCanAccessMyCloudDatabase
+            let   normalExtension = ".thoughtful"
+            let   backupExtension = ".backup"
             let         backupURL = directoryURL.appendingPathComponent(name + backupExtension)
             let    genericFileURL = directoryURL.appendingPathComponent(name + normalExtension)
             let      cloudFileURL = directoryURL.appendingPathComponent(cloudName + normalExtension)
@@ -370,6 +370,24 @@ class ZFiles: NSObject {
         return path!
     }
 
+
+    // MARK:- internals
+    // MARK:-
+    
+    
+    func createDataDirectory() -> URL {
+        let cacheURL = try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let directoryURL = cacheURL.appendingPathComponent("Thoughtful", isDirectory: true)
+        
+        do {
+            try manager.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            print(error)
+        }
+        
+        return directoryURL
+    }
+    
 
     func fileName(for index: ZDatabaseIndex, isGeneric: Bool = true) -> String? {
         if  let dbID = index.databaseID {

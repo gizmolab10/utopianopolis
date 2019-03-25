@@ -41,6 +41,7 @@ class ZRecords: NSObject {
     var recordNamesByState = [ZRecordState :   [String]] ()
     var       lastSyncDate = Date(timeIntervalSince1970: 0)
     var         databaseID : ZDatabaseID
+    var           manifest : ZManifest?
     var   lostAndFoundZone : Zone?
     var      favoritesZone : Zone?     // only for .mineID manager
     var        destroyZone : Zone?

@@ -49,27 +49,28 @@ class ZCloud: ZRecords {
 
     func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
         switch identifier { // inner switch
-        case .oBookmarks:   fetchBookmarks  (cloudCallback)
-        case .oChildren:    fetchChildren   (cloudCallback)
-        case .oCloud:       fetchCloudZones (cloudCallback)
-        case .oEmptyTrash:  emptyTrash      (cloudCallback)
-        case .oFetch:       fetchZones      (cloudCallback)
-        case .oFetchLost:   fetchLost       (cloudCallback)
-        case .oFetchNew:    fetchNew        (cloudCallback)
-        case .oFetchAll:    fetchAll        (cloudCallback)
-        case .oFound:       found           (cloudCallback)
-        case .oHere:        establishHere   (cloudCallback)
-        case .oMerge:       merge           (cloudCallback)
-        case .oParents:     fetchParents    (cloudCallback)
-        case .oRefetch:     refetchZones    (cloudCallback)
-        case .oRoots:       establishRoots  (cloudCallback)
-        case .oSaveToCloud: save            (cloudCallback)
-        case .oSubscribe:   subscribe       (cloudCallback)
-        case .oTraits:      fetchTraits     (cloudCallback)
-        case .oUndelete:    undeleteAll     (cloudCallback)
-        case .oUnsubscribe: unsubscribe     (cloudCallback)
-        case .oRecount:     recount         (cloudCallback)
-        default:                             cloudCallback?(0)
+        case .oBookmarks:   fetchBookmarks    (cloudCallback)
+        case .oChildren:    fetchChildren     (cloudCallback)
+        case .oCloud:       fetchCloudZones   (cloudCallback)
+        case .oEmptyTrash:  emptyTrash        (cloudCallback)
+        case .oFetch:       fetchZones        (cloudCallback)
+        case .oFetchLost:   fetchLost         (cloudCallback)
+        case .oFetchNew:    fetchNew          (cloudCallback)
+        case .oFetchAll:    fetchAll          (cloudCallback)
+        case .oFound:       found             (cloudCallback)
+        case .oHere:        establishHere     (cloudCallback)
+        case .oMerge:       merge             (cloudCallback)
+        case .oParents:     fetchParents      (cloudCallback)
+        case .oRefetch:     refetchZones      (cloudCallback)
+        case .oRoots:       establishRoots    (cloudCallback)
+        case .oManifest:    establishManifest (cloudCallback)
+        case .oSaveToCloud: save              (cloudCallback)
+        case .oSubscribe:   subscribe         (cloudCallback)
+        case .oTraits:      fetchTraits       (cloudCallback)
+        case .oUndelete:    undeleteAll       (cloudCallback)
+        case .oUnsubscribe: unsubscribe       (cloudCallback)
+        case .oRecount:     recount           (cloudCallback)
+        default:                               cloudCallback?(0)
         }
     }
 
@@ -1166,8 +1167,15 @@ class ZCloud: ZRecords {
             }
         }
     }
-
-
+    
+    
+    func establishManifest(_ onCompletion: IntClosure?) {
+        if  manifest == nil {
+            manifest = ZManifest(databaseID: databaseID)
+        }
+    }
+    
+    
     func establishRoots(_ onCompletion: IntClosure?) {
         let         rootIDs: [ZRootID]   = [.favorites, .destroy, .trash, .graph, .lost]
         var establishRootAt: IntClosure?     // pre-declare so can recursively call from within
