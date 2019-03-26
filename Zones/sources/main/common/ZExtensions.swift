@@ -275,7 +275,34 @@ extension NSObject {
 }
 
 
+extension CKRecord.Reference {
+    
+
+    func storageDictionary() -> ZStorageDictionary {
+        var          dict = ZStorageDictionary()
+        dict[.recordName] = recordID.recordName as NSObject
+        
+        return dict
+    }
+    
+    
+    class func create(with dict: ZStorageDictionary, for iDatabaseID: ZDatabaseID) -> CKRecord.Reference? {
+        if  let name = dict[.recordName] as? String {
+            let id = CKRecord.ID(recordName: name)
+            
+            return CKRecord.Reference(recordID: id, action: .none)
+        }
+        
+        return nil
+    }
+    
+}
+
+
 extension CKRecord {
+    
+    
+    var reference: CKRecord.Reference { return CKRecord.Reference(recordID: recordID, action: .none) }
     
     
     var isEmpty: Bool {

@@ -410,13 +410,12 @@ class ZRecord: NSObject {
 
 
     func type(from keyPath: String) -> ZStorageType? {
-        let typeFromSuffixFollowing = { (iPrefix: String) -> (ZStorageType?) in
-            let           parts = keyPath.components(separatedBy: iPrefix)
+        func extractType(_ ignored: String) -> (ZStorageType?) {
+            let     parts = keyPath.lowercased().components(separatedBy: ignored)
 
-            if  parts.count > 1 {
-                let      suffix = parts[1].lowercased()
-
-                if  let    type = ZStorageType(rawValue: suffix) {
+            for     part in parts {
+                if  part.length > 0,
+                    let type = ZStorageType(rawValue: part) {
                     return type
                 }
             }
@@ -427,8 +426,9 @@ class ZRecord: NSObject {
         if            [kpParent, kpOwner]         .contains(keyPath) { return nil       // must be first ... ZStorageType now ignores two (owner and parent)
         } else if keyPath == kpModificationDate                      { return .date
         } else if let type = ZStorageType(rawValue:         keyPath) { return type
-        } else if let type = typeFromSuffixFollowing(  kpZonePrefix) { return type      // this deals with those two
-        } else if let type = typeFromSuffixFollowing(kpRecordPrefix) { return type
+        } else if let type = extractType(   kpRefSuffix) { return type
+        } else if let type = extractType(  kpZonePrefix) { return type      // this deals with those two
+        } else if let type = extractType(kpRecordPrefix) { return type
         } else                                                       { return nil
         }
     }
@@ -551,15 +551,23 @@ class ZRecord: NSObject {
     }
 
 
-    class func storageArray(for iZRecords: [ZRecord]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDictionary]? {
-        if  let   zRecords = iZRecords,
-            zRecords.count > 0 {
+    class func storageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDictionary]? {
+        if  let   items = iItems,
+            items.count > 0 {
             var   array = [ZStorageDictionary] ()
 
-            for zRecord in zRecords {
-                if  (allowEach == nil || allowEach!(zRecord)),
-                    let subDict = zRecord.storageDictionary(for: dbID, includeRecordName: includeRecordName) {
-                    array.append(subDict)
+            for item in items {
+                var dict: ZStorageDictionary?
+
+                if  let zRecord = item as? ZRecord,
+                    (allowEach == nil || allowEach!(zRecord)) {
+                    dict = zRecord.storageDictionary(for: dbID, includeRecordName: includeRecordName)
+                } else if let reference = item as? CKRecord.Reference {
+                    dict = reference.storageDictionary()
+                }
+
+                if  dict != nil {
+                    array.append(dict!)
                 }
             }
 

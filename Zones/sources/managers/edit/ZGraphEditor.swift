@@ -1397,6 +1397,7 @@ class ZGraphEditor: NSObject {
                         iZone.needDestroy()                     // gets written in file
                         iZone.concealAllProgeny()               // prevent gExpandedZones list from getting clogged with stale references
                         iZone.orphan()
+                        gManifest?.smartAppend(iZone)
                     }
 
                     if  zone.cloud?.cloudUnavailable ?? true {

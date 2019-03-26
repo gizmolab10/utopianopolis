@@ -198,12 +198,12 @@ class ZFiles: NSObject {
                 BACKGROUND(after: 1.0) {
                     dict [.date] = manager.lastSyncDate as NSObject
                     let jsonDict = self.jsonDictFrom(dict)
-                    let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
-                    let      url = URL(fileURLWithPath: path)
 
-                    do {
-                        try data.write(to: url)
-                    } catch {
+                    if  let data = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {
+                        let  url = URL(fileURLWithPath: path)
+
+                        try? data.write(to: url)
+                    } else {
                         print("ahah")
                     }
 
