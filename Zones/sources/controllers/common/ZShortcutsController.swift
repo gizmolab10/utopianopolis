@@ -322,7 +322,7 @@ class ZShortcutsController: ZGenericTableController {
         "",
         "",
         "",
-        "bMULTIPLE SELECTED IDEAS:",
+        "bBROWSING, MULTIPLE IDEAS SELECTED:",
         "",
         "uKEY",
         "     \tHYPHEN     \tif first selected idea is titled, -> parent",

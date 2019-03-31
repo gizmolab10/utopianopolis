@@ -83,7 +83,7 @@ class ZBookmarks: NSObject {
             let linkRecordName = bookmark.linkRecordName,
             var           dict = registry[linkDatabaseID],
             var          zones = dict[linkRecordName],
-            let          index = zones.index(of: bookmark) {
+            let          index = zones.firstIndex(of: bookmark) {
             zones.remove(at: index)
 
             dict[linkRecordName]     = zones

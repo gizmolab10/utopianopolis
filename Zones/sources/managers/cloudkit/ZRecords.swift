@@ -147,7 +147,7 @@ class ZRecords: NSObject {
             apply(to: name) { iRecords -> ([CKRecord]) in
                 var records = iRecords
 
-                if let index = records.index(of: record) {
+                if let index = records.firstIndex(of: record) {
                     records.remove(at: index)
                 }
 
@@ -391,21 +391,15 @@ class ZRecords: NSObject {
     }
 
 
-    @discardableResult func addCKRecord(_ iRecord: CKRecord, for states: [ZRecordState]) -> Bool {
+    @discardableResult func addCKRecord(_ iRecord: CKRecord?, for states: [ZRecordState]) -> Bool {
         var added = false
 
-        if !temporarilyIgnoring(iRecord.recordID.recordName) {
+        if  let ckRecord = iRecord,
+            !temporarilyIgnoring(ckRecord.recordID.recordName) {
             for state in states {
-                if  let  record  = registeredCKRecord(iRecord, forAnyOf: [state]) {
-                    if   record != iRecord {
-                        var name =  record.decoratedName
-                        if  name == "" {
-                            name = iRecord.decoratedName
-                        }
-                    }
-                } else {
+                if  registeredCKRecord(ckRecord, forAnyOf: [state]) == nil {
                     var names = recordNamesForState(state)
-                    let  name = iRecord.recordID.recordName
+                    let  name = ckRecord.recordID.recordName
 
                     if !names.contains(name) {
                         names.append(name)
@@ -501,7 +495,7 @@ class ZRecords: NSObject {
             for state in iStates {
                 var names = self.recordNamesForState(state)
 
-                if let index = names.index(of: name) {
+                if let index = names.firstIndex(of: name) {
                     names.remove(at: index)
 
                     self.recordNamesByState[state] = names

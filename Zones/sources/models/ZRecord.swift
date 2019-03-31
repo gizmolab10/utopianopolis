@@ -14,7 +14,7 @@ class ZRecord: NSObject {
     
 
     var             _record: CKRecord?
-    var     savedModifyDate: Date?
+    var   writtenModifyDate: Date?
     var          kvoContext: UInt8 = 1
     var          databaseID: ZDatabaseID?
     var  isInPublicDatabase: Bool               { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
@@ -101,7 +101,7 @@ class ZRecord: NSObject {
 
     func isExpanded(_ iRecordName: String?) -> Bool {
         if  let                      name   = iRecordName,
-            gExpandedZones.index(of: name) != nil {
+            gExpandedZones.firstIndex(of: name) != nil {
             return true
         }
 
@@ -124,7 +124,7 @@ class ZRecord: NSObject {
         var expansionSet = gExpandedZones
 
         if let  name = recordName {
-            while let index = expansionSet.index(of: name) {
+            while let index = expansionSet.firstIndex(of: name) {
                 expansionSet.remove(at: index)
             }
         }
@@ -177,6 +177,7 @@ class ZRecord: NSObject {
     func maybeNeedRoot() {}
     func debug(_  iMessage: String) {}
     func cloudProperties() -> [String] { return [] }
+    func ignoreKeyPathsForStorage() -> [String] { return [kpParent, kpOwner] }
     func   register() -> Bool { return cloud?.registerZRecord(self) ?? false }
     func unregister() { cloud?.unregisterZRecord(self) }
     func hasMissingChildren() -> Bool { return true }
@@ -230,10 +231,16 @@ class ZRecord: NSObject {
 
 
     func useBest(record iRecord: CKRecord) {
-        let myDate      = record?.modificationDate ?? savedModifyDate
+        let myDate      = record?.modificationDate ?? writtenModifyDate
         if  record     != iRecord,
             let newDate = iRecord.modificationDate,
             (myDate    == nil || newDate.timeIntervalSince(myDate!) > 10.0) {
+            
+            if  let r = record,
+                r.recordID.recordName != iRecord.recordID.recordName {
+                records?.addCKRecord(record, for: [.needsDestroy])
+            }
+
             record      = iRecord
         }
     }
@@ -423,10 +430,9 @@ class ZRecord: NSObject {
             return nil
         }
 
-        if            [kpParent, kpOwner]         .contains(keyPath) { return nil       // must be first ... ZStorageType now ignores two (owner and parent)
+        if              ignoreKeyPathsForStorage().contains(keyPath) { return nil       // must be first ... ZStorageType now ignores two (owner and parent)
         } else if keyPath == kpModificationDate                      { return .date
         } else if let type = ZStorageType(rawValue:         keyPath) { return type
-        } else if let type = extractType(   kpRefSuffix) { return type
         } else if let type = extractType(  kpZonePrefix) { return type      // this deals with those two
         } else if let type = extractType(kpRecordPrefix) { return type
         } else                                                       { return nil
@@ -537,7 +543,7 @@ class ZRecord: NSObject {
                     if  type != .date {
                         ckRecord[keyPath]  = value
                     } else if let interval = object as? Double {
-                        savedModifyDate = Date(timeIntervalSince1970: interval)
+                        writtenModifyDate = Date(timeIntervalSince1970: interval)
                     }
                 }
             }
@@ -562,8 +568,8 @@ class ZRecord: NSObject {
                 if  let zRecord = item as? ZRecord,
                     (allowEach == nil || allowEach!(zRecord)) {
                     dict = zRecord.storageDictionary(for: dbID, includeRecordName: includeRecordName)
-                } else if let reference = item as? CKRecord.Reference {
-                    dict = reference.storageDictionary()
+//                } else if let reference = item as? CKRecord.Reference {
+//                    dict = reference.storageDictionary()
                 }
 
                 if  dict != nil {

@@ -154,7 +154,7 @@ class ZTextPack: NSObject {
         if  let components = iText?.components(separatedBy: "  (") {
             newText        = components[0]
 
-            if  newText == displayType || newText == kNullLink || newText == "" {
+            if  newText == displayType || newText == "" {
                 newText  = nil
             }
         }
@@ -174,13 +174,13 @@ class ZTextPack: NSObject {
             let               newText = removeSuffix(from: iText)
             gTextCapturing            = true
 
-            if  let                 t = textWidget {
+            if  let                 w = textWidget {
                 let          original = originalText
                 prepareUndoForTextChange(kUndoManager) {
-                    self.originalText = t.text
+                    self.originalText = w.text
 
                     self.captureTextAndSync(original)
-                    t.updateGUI()
+                    w.updateGUI()
                 }
             }
 
@@ -249,8 +249,8 @@ class ZTextEditor: ZTextView {
     
 
     func clearOffset() { currentOffset = nil }
-    func clearEdit() { currentEdit = nil; clearOffset() }
-    func fullResign() { assignAsFirstResponder (nil) } // ios broken
+    func clearEdit()   { currentEdit = nil; clearOffset() }
+    func fullResign()  { assignAsFirstResponder (nil) } // ios broken
 
 
     func cancel() {

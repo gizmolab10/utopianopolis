@@ -167,8 +167,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     extract = nil
                 }
             }
-            
-            gTextEditor.stopCurrentEdit()
         }
         
         return extract

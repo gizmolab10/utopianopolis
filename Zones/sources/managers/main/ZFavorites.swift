@@ -311,7 +311,7 @@ class ZFavorites: NSObject {
 
                 if  hasDuplicate {
                     let isUnfetched: ZoneClosure = { iZone in
-                        if iZone.notFetched, let index = self.workingFavorites.index(of: iZone) {
+                        if iZone.notFetched, let index = self.workingFavorites.firstIndex(of: iZone) {
                             discards.append(index)
                         }
                     }
@@ -503,7 +503,7 @@ class ZFavorites: NSObject {
 
         let           count = parent.count
         var bookmark: Zone? = isBookmark ? iZone.deepCopy : nil
-        var           index = parent.children.index(of: iZone) ?? count
+        var           index = parent.children.firstIndex(of: iZone) ?? count
 
         if  style == .addFavorite {
             index           = nextFavoritesIndex(forward: gInsertionsFollow)

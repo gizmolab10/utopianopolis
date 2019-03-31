@@ -17,45 +17,117 @@ var gManifest: ZManifest? { return gCloud?.manifest }
 class ZManifest: ZRecord {
     
     
-    @objc dynamic var deletedRefs: [CKRecord.Reference]?
+    class ZDeleted: NSObject {
+        
+        
+        var name: String?
+        var date: Date?
+        var string: String? { if let n = name, let d = date { return ZDeleted.string(with: n, date: d) } else { return nil } }
+        class func string(with iName: String, date iDate: Date) -> String? { return iName + kSeparator + "\(iDate.timeIntervalSince1970)" }
+        
+        
+        init(with iName: String, date iDate: Date?) {
+            name = iName
+            date = iDate ?? Date()
+        }
+        
+        
+        init(with string: String) {
+            let    parts = string.components(separatedBy: kSeparator)
+            name         = parts[0]
+            let interval = parts[1]
+            
+            if  let    i = Double(interval) {
+                date     = Date(timeIntervalSince1970: i)
+            }
+        }
+        
+    }
+
+    
+    @objc dynamic var deleted: [String]?
+    var zDeleted = [ZDeleted]()
+
+
+    var updatedRefs: [String]? {
+        if  let d = deleted {
+            // merge deleted into zDeleted
+            for ref in d {
+                smartAppend(ref)
+            }
+        }
+
+        let zCount = zDeleted.count
+        let dCount = deleted?.count ?? 0
+
+        if  zCount > 0, zCount != dCount {
+            deleted = []
+            
+            // create deleted from zDeleted
+            for zd in zDeleted {
+                if  let   s = zd.string {
+                    deleted?.append(s)
+                }
+            }
+        }
+
+        return deleted
+    }
 
 
     func apply() {
-        
+        for deleteMe in zDeleted {
+            if  let      name = deleteMe.name,
+                let      dbID = databaseID {
+                let   records = gRemoteStorage.cloud(for: dbID)
+                if  let  zone = records?.maybeZRecordForRecordName(name) as? Zone,
+                    let trash = records?.trashZone {
+                    zone.orphan()
+                    trash.addChild(zone)
+                }
+            }
+        }
     }
     
     
-    func smartAppend(_ iItem: AnyObject) {
-        if  deletedRefs == nil {
-            deletedRefs = [CKRecord.Reference]()
-        }
-        
-        var reference   = iItem as? CKRecord.Reference
-        
-        if  let zRecord = iItem as? ZRecord {
-            reference   = zRecord.record?.reference
+    @discardableResult func smartAppend(_ iItem: Any) -> Bool {
+        let refString  = iItem as? String
+        let zRecord    = iItem as? ZRecord
+        var zd         = iItem as? ZDeleted
+        var name       = zd?.name ?? zRecord?.recordName
+        var date       = zd?.date ?? zRecord?.record?.creationDate
+
+        if  let     s  = refString {
+            zd         = ZDeleted(with: s)
+            name       = zd?.name
+            date       = zd?.date
         }
 
-        if  reference != nil {
-            deletedRefs?.append(reference!)
+        if  let     n  = name {
+            for ref in zDeleted {
+                if  n == ref.name {
+                    return false // already there, do not add (a duplicate)
+                }
+            }
+            
+            if  zd == nil {
+                zd  = ZDeleted(with: n, date: date)
+            }
+            
+            zDeleted.append(zd!)
             needSave()
+            
+            return true
         }
+
+        return false
     }
 
     
-    class func cloudProperties() -> [String] {
-        return[#keyPath(deletedRefs)]
-    }
-    
-    
-    override func cloudProperties() -> [String] {
-        return super.cloudProperties() + ZManifest.cloudProperties()
-    }
-    
-
-    convenience init(databaseID: ZDatabaseID?) {
-        self.init(record: CKRecord(recordType: kManifestType), databaseID: databaseID)
-    }
+    class func cloudProperties() -> [String] { return [#keyPath(deleted)] }
+    override func cloudProperties() -> [String] { return super.cloudProperties() + ZManifest.cloudProperties() }
+    override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deleted)] }
+    convenience init(databaseID: ZDatabaseID?) { self.init(record: CKRecord(recordType: kManifestType), databaseID: databaseID) }
     
     
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
@@ -69,11 +141,9 @@ class ZManifest: ZRecord {
         super.setStorageDictionary(dict, of: iRecordType, into: iDatabaseID)
         
         if  let deletedsArray = dict[.deleted] as? [ZStorageDictionary] {
-            for deletedDict: ZStorageDictionary in deletedsArray {
-                if let deleted = CKRecord.Reference.create(with: deletedDict, for: iDatabaseID) {
-                    cloud?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent (intentionally) not being in childDict
-                        gManifest?.smartAppend(deleted)
-                    }
+            for d in deletedsArray {
+                cloud?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                    gManifest?.smartAppend(d)
                 }
             }
         }
@@ -81,12 +151,12 @@ class ZManifest: ZRecord {
     
     
     override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) -> ZStorageDictionary? {
-        var dict              = super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName) ?? ZStorageDictionary ()
+        var dict           = super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName) ?? ZStorageDictionary ()
         
-        if  let deletedsArray = ZManifest.storageArray(for: deletedRefs, from: iDatabaseID, includeRecordName: includeRecordName) {
-            dict[.deleted]    = deletedsArray as NSObject?
+        if  let          d = updatedRefs as NSObject? {
+            dict[.deleted] = d
         }
-        
+
         return dict
     }
 

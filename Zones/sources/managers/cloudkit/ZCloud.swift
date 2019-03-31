@@ -70,7 +70,7 @@ class ZCloud: ZRecords {
         case .oUndelete:    undeleteAll       (cloudCallback)
         case .oUnsubscribe: unsubscribe       (cloudCallback)
         case .oRecount:     recount           (cloudCallback)
-        default:                               cloudCallback?(0)
+        default:                               cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
         }
     }
 
@@ -412,7 +412,7 @@ class ZCloud: ZRecords {
 
                         gAlerts.alertError("MERGE within \(self.databaseID) \(message!)")
 
-                        if let id = iID, let index = recordIDs.index(of: id) {
+                        if let id = iID, let index = recordIDs.firstIndex(of: id) {
                             recordIDs.remove(at: index)
                         }
                     } else if let record = iRecord {
@@ -594,7 +594,7 @@ class ZCloud: ZRecords {
                                 var seekParentIDs = parentIDs
 
                                 for recordID in missingIDs {
-                                    if  let index = seekParentIDs.index(of: recordID) {
+                                    if  let index = seekParentIDs.firstIndex(of: recordID) {
                                         seekParentIDs.remove(at: index)
                                     }
                                 }
@@ -612,7 +612,7 @@ class ZCloud: ZRecords {
 
                                     self.columnarReport("  FETCHED (\(iFetchedParents.count))", String.forCKRecords(iFetchedParents))
                                     for ckParent in iFetchedParents {
-                                        if  let index = seekParentIDs.index(of: ckParent.recordID) {
+                                        if  let index = seekParentIDs.firstIndex(of: ckParent.recordID) {
                                             seekParentIDs.remove(at: index)
 
                                             if isOrphaned(ckParent) {}
@@ -1009,6 +1009,35 @@ class ZCloud: ZRecords {
         }
     }
 
+    
+    func establishManifest(_ onCompletion: IntClosure?) {
+        var retrieved = [CKRecord] ()
+        let predicate = NSPredicate(value: true)
+
+        queryFor(kManifestType, with: predicate, properties: ZManifest.cloudProperties()) { (iRecord, iError) in
+            if let ckRecord = iRecord {
+                if !retrieved.contains(ckRecord) {
+                    retrieved.append(ckRecord)
+                }
+            } else { // nil means done
+                FOREGROUND {
+                    for ckRecord in retrieved {
+                        if  self.manifest == nil {
+                            self.manifest  = ZManifest(record: ckRecord, databaseID: self.databaseID)
+                        } else {
+                            self.manifest?.useBest(record: ckRecord)
+                        }
+                        
+                        self.manifest?.apply()
+                    }
+                    
+                    self.columnarReport("MANIFEST (\(retrieved.count))", iError)
+                    onCompletion?(0)
+                }
+            }
+        }
+    }
+    
 
     func fetchTraits(_ onCompletion: IntClosure?) {
         let    recordIDs = recordIDsWithMatchingStates([.needsTraits], pull: true)
@@ -1165,13 +1194,6 @@ class ZCloud: ZRecords {
                     onCompletion?(0)
                 }
             }
-        }
-    }
-    
-    
-    func establishManifest(_ onCompletion: IntClosure?) {
-        if  manifest == nil {
-            manifest = ZManifest(databaseID: databaseID)
         }
     }
     

@@ -565,7 +565,7 @@ class Zone : ZRecord {
 
     var siblingIndex: Int? {
         if let siblings = parentZone?.children {
-            if let index = siblings.index(of: self) {
+            if let index = siblings.firstIndex(of: self) {
                 return index
             } else {
                 for (index, sibling) in siblings.enumerated() {
@@ -1346,7 +1346,7 @@ class Zone : ZRecord {
 
 
     @discardableResult func removeChild(_ iChild: Zone?) -> Bool {
-        if  let child = iChild, let index = children.index(of: child) {
+        if  let child = iChild, let index = children.firstIndex(of: child) {
             children.remove(at: index)
 
             needCount()

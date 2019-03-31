@@ -155,15 +155,60 @@ extension String {
         return nil
     }
     
+    
     func openAsURL() {
-        let urlString = (replacingOccurrences(of: "\\", with: "").replacingOccurrences(of: " ", with: "%20") as NSString).expandingTildeInPath
-
-        if  var url = URL(string: urlString) {
+        let fileScheme = "file"
+        let filePrefix = fileScheme + "://"
+        let  urlString = (replacingOccurrences(of: "\\", with: "").replacingOccurrences(of: " ", with: "%20") as NSString).expandingTildeInPath
+        
+        if  var url = NSURL(string: urlString) {
             if  urlString.character(at: 0) == "/" {
-                url = URL(string: "file://" + urlString)!
+                url = NSURL(string: filePrefix + urlString)!
             }
 
-            NSWorkspace.shared.open(url)
+            if  url.scheme != fileScheme {
+                url.open()
+            } else if let path = url.path {
+                url = NSURL(fileURLWithPath: path)
+
+                url.openAsFile()
+            }
+        }
+    }
+    
+}
+
+
+extension NSURL {
+    
+    var directoryURL: URL? {
+        return nil
+    }
+
+    
+    func open() {
+        NSWorkspace.shared.open(self as URL)
+    }
+
+    
+    func openAsFile() {
+//        var isStale  = false
+//        let fileData = try self.bookmarkData(options: [.securityScopeAllowOnlyReadAccess], includingResourceValuesForKeys: nil, relativeTo: nil)
+//        let fileURL  = try URL(resolvingBookmarkData:fileData, bookmarkDataIsStale: &isStale)
+//        self.stopAccessingSecurityScopedResource()
+
+        if !self.openSecurely() {
+            ZFiles.presentOpenPanel() { (iAny) in
+                if  let url = iAny as? NSURL {
+                    url.open()
+                } else if let panel = iAny as? NSPanel {
+                    if    let  name = self.lastPathComponent {
+                        panel.title = "Open \(name)"
+                    }
+                    
+                    panel.setDirectoryAndExtensionFor(self as URL)
+                }
+            }
         }
     }
 
@@ -442,8 +487,8 @@ extension ZAlerts {
     
     
     func openSystemPreferences() {
-        if let url = URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
-            NSWorkspace.shared.open(url)
+        if  let url = NSURL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
+            url.open()
         }
     }
     
@@ -721,7 +766,7 @@ extension ZFiles {
         let panel = NSSavePanel()
         panel.nameFieldStringValue = "mine.thoughtful"
         panel.begin { (response: NSApplication.ModalResponse) in
-            if  let path = panel.url?.absoluteString {
+            if  let path = panel.url?.path {
                 self.needWrite(for: .mineID)
                 self.writeFile(at: path, from: .mineID)
             }
@@ -729,23 +774,38 @@ extension ZFiles {
     }
 
     
-    func importFromFile(asOutline: Bool, insertInto: Zone, onCompletion: Closure?) {
-        if !asOutline,
-            let  window = gApplication.mainWindow {
-            let  suffix = asOutline ? "outline" : "thoughtful"
+    class func presentOpenPanel(_ callback: AnyClosure? = nil) {
+        if  let  window = gApplication.mainWindow {
             let   panel = NSOpenPanel()
-            panel.title = "Import as \(suffix)"
-            panel.allowedFileTypes = [suffix]
-            panel.resolvesAliases = true
-            panel.canChooseDirectories = false
+
+            callback?(panel)
+
+            panel.resolvesAliases               = true
+            panel.canChooseDirectories          = false
             panel.canResolveUbiquitousConflicts = false
             panel.canDownloadUbiquitousContents = false
             
             panel.beginSheetModal(for: window) { (result) in
-                if  result.rawValue   == NSFileHandlingPanelOKButton,
+                if  result.rawValue == NSFileHandlingPanelOKButton,
                     panel.urls.count > 0 {
-                    let  path = panel.urls[0].path
-                    self.importFile(from: path, insertInto: insertInto, onCompletion: onCompletion)
+                    let url = panel.urls[0]
+                    
+                    callback?(url)
+                }
+            }
+        }
+    }
+    
+    
+    func importFromFile(asOutline: Bool, insertInto: Zone, onCompletion: Closure?) {
+        if !asOutline {
+            ZFiles.presentOpenPanel() { (iAny) in
+                if  let url = iAny as? URL {
+                    self.importFile(from: url.path, insertInto: insertInto, onCompletion: onCompletion)
+                } else if let panel = iAny as? NSPanel {
+                    let  suffix = asOutline ? "outline" : "thoughtful"
+                    panel.title = "Import as \(suffix)"
+                    panel.setAllowedFileType(suffix)
                 }
             }
         }
@@ -934,7 +994,7 @@ extension ZOnboarding {
         if let intfIterator = findEthernetInterfaces() {
             if  let macAddressAsArray = getMACAddress(intfIterator) {
                 let macAddressAsString = macAddressAsArray.map( { String(format:"%02x", $0) } )
-                    .joined(separator: ":")
+                    .joined(separator: kSeparator)
                 macAddress = macAddressAsString
             }
             

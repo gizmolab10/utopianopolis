@@ -117,7 +117,7 @@ class ZGraphEditor: NSObject {
                     return         editedZone?.surround(by: key) ?? false
                 } else {
                     switch key {
-                    case "-":      return editedZone?.convertToFromLine() ?? true
+                    case "-":      return editedZone?.convertToFromLine() ?? false
                     case kEscape:  gTextEditor.cancel()
                     default:       return false // false means key not handled
                     }
@@ -258,21 +258,23 @@ class ZGraphEditor: NSObject {
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
         let alterers = "ehiltuw\r" + kMarkingCharacters
         let  COMMAND = flags.isCommand
+        let  CONTROL = flags.isControl
 
         if  alterers.contains(key) {             return .eAlter
         } else {
             switch key {
-            case "=":                            return .eTravel
-            case "?":                            return .eHelp
-            case "f":                            return .eFind
-            case "m":                            return .eCloud
-            case "z":                            return .eUndo
-            case "#", "r":                       return .eSort
-            case "x", kSpace:                    return .eChild
-            case "b", kTab, kDelete, kBackspace: return .eParent
-            case "o", "s":                       return .eFiles
-            case "d":                            return  COMMAND ? .eAlter : .eParent
-            default:                             return .eAlways
+            case "=":                   return .eTravel
+            case "?":                   return .eHelp
+            case "f":                   return .eFind
+            case "m":                   return .eCloud
+            case "z":                   return .eUndo
+            case "#", "r":              return .eSort
+            case "o", "s":              return .eFiles
+            case "x", kSpace:           return .eChild
+            case "b", kTab, kBackspace: return  .eParent
+            case kDelete:               return  CONTROL ? .eAlways : .eParent
+            case "d":                   return  COMMAND ? .eAlter  : .eParent
+            default:                    return .eAlways
             }
         }
     }
@@ -338,7 +340,7 @@ class ZGraphEditor: NSObject {
     
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
         if     !COMMAND || (OPTION && PERIOD) {
-            toggleMode(isInsertion:   PERIOD)
+            toggleMode(isDirection:   PERIOD)
             
             if  gIsEditingText     && PERIOD {
                 swapAndResumeEdit()
@@ -1154,6 +1156,8 @@ class ZGraphEditor: NSObject {
             let     index = child.siblingIndex,
             let    parent = child.parentZone,
             let childName = child.widget?.textWidget.extractTitleOrSelectedText() {
+            
+            gTextEditor.stopCurrentEdit()
 
             deferRedraw {
                 self.addIdea(in: parent, at: index, with: childName) { iChild in
@@ -1174,6 +1178,8 @@ class ZGraphEditor: NSObject {
         if  let      zone  = iZone,
             let childName  = zone.widget?.textWidget.extractTitleOrSelectedText() {
             
+            gTextEditor.stopCurrentEdit()
+
             if  childName == zone.zoneName {
                 combineIntoParent(zone)
             } else {
@@ -2316,7 +2322,7 @@ class ZGraphEditor: NSObject {
             // parent is visible //
             ///////////////////////
             
-            if  let       index = targetZones.index(of: rootMost) {
+            if  let       index = targetZones.firstIndex(of: rootMost) {
                 var     toIndex = index + (iMoveUp ? -1 : 1)
                 var  allGrabbed = true
                 var soloGrabbed = false
@@ -2436,7 +2442,7 @@ class ZGraphEditor: NSObject {
                         gSelecting.addMultipleGrabs(grabThese)
                     }
                 } else if doCousinJump,
-                    var index  = targetZones.index(of: rootMost) {
+                    var index  = targetZones.firstIndex(of: rootMost) {
                     
                     /////////////////
                     // cousin jump //

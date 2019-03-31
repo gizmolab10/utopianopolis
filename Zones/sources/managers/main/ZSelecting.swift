@@ -316,7 +316,7 @@ class ZSelecting: NSObject {
     
 
     func ungrab(_ iZone: Zone?) {
-        if let zone = iZone, let index = currentGrabs.index(of: zone) {
+        if let zone = iZone, let index = currentGrabs.firstIndex(of: zone) {
             currentGrabs.remove(at: index)
             updateWidget(for: zone)
             maybeClearBrowsingLevel()
@@ -392,8 +392,8 @@ class ZSelecting: NSObject {
             currentGrabs = [] // can't use ungrabAll because we need to keep cousinList
             sortedGrabs  = []
 
-            updateWidgets(for:oldGrabs)
-            addMultipleGrabs( newGrabs)
+            updateWidgets(for: oldGrabs)
+            addMultipleGrabs  (newGrabs)
 
             if  updateBrowsingLevel,
                 let level = newGrabs.rootMost?.level {
@@ -439,7 +439,7 @@ class ZSelecting: NSObject {
 
     func deselectGrabsWithin(_ zone: Zone) {
         zone.traverseAllProgeny { iZone in
-            if iZone != zone && currentGrabs.contains(iZone), let index = currentGrabs.index(of: iZone) {
+            if iZone != zone && currentGrabs.contains(iZone), let index = currentGrabs.firstIndex(of: iZone) {
                 currentGrabs.remove(at: index)
             }
         }

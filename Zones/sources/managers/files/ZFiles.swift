@@ -60,7 +60,7 @@ class ZFiles: NSObject {
 
 
     func showInFinder() {
-        directoryURL.absoluteString.openAsURL()
+        (directoryURL as NSURL).open()
     }
 
 

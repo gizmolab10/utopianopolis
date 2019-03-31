@@ -14,6 +14,13 @@ import Cocoa
 import UIKit
 #endif
 
+
+enum ZIndicatorType: Int {
+    case eConfinement
+    case eDirection
+}
+
+
 class ZIndicatorView: ZView {
     
     
@@ -47,11 +54,20 @@ class ZIndicatorView: ZView {
     }
     
     
-    override func draw(_ iDirtyRect: CGRect) {
-        super.draw(iDirtyRect)
-        
-        layoutGradientView()
-        
+    func hitTest(_ rect: CGRect?) -> ZIndicatorType? {
+        if  let r = rect,
+            gradientView.frame.intersects(r) {
+            let (circleRect, circlesRect, _) = rects()
+            let    c = gBrowsingIsConfined ? circleRect : circlesRect
+            
+            return c.intersects(r) ? .eConfinement : .eDirection
+        }
+
+        return nil
+    }
+    
+    
+    func rects() -> (CGRect, CGRect, CGFloat) {
         var           rect = bounds.squareCenetered
         let          inset = rect.size.width / 3.0
         let    circleInset = inset / 3.85
@@ -59,13 +75,24 @@ class ZIndicatorView: ZView {
         var   triangleRect = rect.insetBy(dx: 0,           dy: inset / 14.0)
         var     circleRect = rect.insetBy(dx: circleInset, dy: circleInset)
         let      thickness = rect.size.height / 30.0
-        
         let     multiplier = CGFloat(gInsertionsFollow ? 1 : -1)
         let verticalOffset = gInsertionsFollow ? 15.0 - triangleRect.minY : bounds.maxY - triangleRect.maxY - 15.0
         let   circleOffset = (circleInset / -1.8 * multiplier) + verticalOffset
         triangleRect       = triangleRect.offsetBy(dx: 0.0, dy: circleOffset)
         circleRect         = circleRect  .offsetBy(dx: 0.0, dy: circleOffset)
         let    circlesRect = triangleRect.insetBy(fractionX: 0.425, fractionY: 0.15)
+
+        return (circleRect, circlesRect, thickness)
+    }
+    
+    
+    override func draw(_ iDirtyRect: CGRect) {
+        super.draw(iDirtyRect)
+        
+        layoutGradientView()
+        
+        let (circleRect, circlesRect, thickness) = rects()
+
         let    strokeColor = NSColor(cgColor: gDirectionIndicatorColor)
         var   surroundRect = circleRect.insetBy(dx: -6.0, dy: -6.0)
         let      dotsCount = gFocusing.travelStack.count

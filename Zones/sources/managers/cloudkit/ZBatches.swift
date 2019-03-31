@@ -138,13 +138,15 @@ class ZBatches: ZOnboarding {
             for value in from.rawValue...to.rawValue {
                 var add = true
 
-                for skip in skipping {
-                    if skip.rawValue == value {
+                for     skip in skipping {
+                    if  skip.rawValue == value {
                         add = false
+                        
+                        break
                     }
                 }
 
-                if add {
+                if  add {
                     operationIDs.append(ZOperationID(rawValue: value)!)
                 }
             }

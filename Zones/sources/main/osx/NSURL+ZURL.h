@@ -1,0 +1,15 @@
+//
+//  NSURL+ZURL.h
+//  Thoughtful
+//
+//  Created by Jonathan Sand on 3/31/19.
+//  Copyright © 2019 Zones. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface NSURL (ZURL)
+
+- (BOOL)openSecurely;
+
+@end

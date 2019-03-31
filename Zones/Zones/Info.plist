@@ -124,5 +124,7 @@
 			</dict>
 		</dict>
 	</array>
+	<key>com.apple.security.files.bookmarks.app-scope</key>
+	<true/>
 </dict>
 </plist>

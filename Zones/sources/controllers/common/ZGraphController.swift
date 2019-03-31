@@ -195,7 +195,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                 rubberbandUpdate(CGRect(start: rubberbandStart, end: location), iGesture)
             } else if state != .began {         // ended, cancelled or failed
                 rubberbandUpdate()
-                gControllers.signalFor(nil, regarding: .ePreferences) // so color well gets updated
+                gControllers.signalFor(nil, regarding: .eDatum) // so color well and indicators get updated
             } else if let dot = detectDot(iGesture) {
                 if  !dot.isReveal {
                     dragStartEvent(dot, iGesture)
@@ -257,7 +257,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                         
                         if  gradientView.bounds.contains(gradientLocation) {              // if in indicatorView
                             let isConfinement = indicatorView?.confinementRect.contains(gradientLocation) ?? false
-                            toggleMode(isInsertion: !isConfinement)                                  //  if in confinement symbol, change confinement; else, change direction
+                            toggleMode(isDirection: !isConfinement)                                  //  if in confinement symbol, change confinement; else, change direction
                         }
                     }
 
@@ -273,6 +273,10 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     func rubberbandUpdate(_ rect: CGRect? = nil, _ iGesture: ZGestureRecognizer? = nil) {
         if  let e = editorView {
             if  rect == nil || rubberbandStart == .zero {
+                if  let type = indicatorView?.hitTest(e.rubberbandRect) {
+                    toggleMode(isDirection: type == .eDirection)
+                }
+                
                 e.rubberbandRect = .zero
                 
                 gSelecting.assureMinimalGrabs()
