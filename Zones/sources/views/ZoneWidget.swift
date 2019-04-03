@@ -515,7 +515,7 @@ class ZoneWidget: ZView {
         super.draw(dirtyRect)
 
         if  let             zone = widgetZone {
-            let           isHere = zone == gHere
+            let           isHere = zone == gHereMaybe
             let        isGrabbed = zone.isGrabbed
             let        isEditing = textWidget.isFirstResponder // == gEditedTextWidget
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : gDefaultTextColor

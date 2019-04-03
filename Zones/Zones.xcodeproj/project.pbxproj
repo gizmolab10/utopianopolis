@@ -96,7 +96,7 @@
 		0C39B3A31F1988380091F4D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3951F1988380091F4D1 /* LaunchScreen.storyboard */; };
 		0C39B3A61F1988380091F4D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3961F1988380091F4D1 /* Main.storyboard */; };
 		0C39B3A81F1988380091F4D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3981F1988380091F4D1 /* Assets.xcassets */; };
-		0C39B3AB1F1988380091F4D1 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3991F1988380091F4D1 /* iPhone.storyboard */; };
+		0C39B3AB1F1988380091F4D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B3991F1988380091F4D1 /* Main.storyboard */; };
 		0C39B3AE1F1988380091F4D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C39B39A1F1988380091F4D1 /* LaunchScreen.storyboard */; };
 		0C3C12811F8D87DE00669432 /* ZEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEvents.swift */; };
 		0C3ECC231FA3023500F085EA /* ZUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3ECC221FA3023500F085EA /* ZUser.swift */; };
@@ -151,12 +151,21 @@
 		0CAC51F01F7859F300BDCECB /* ZActionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAC51EF1F7859F300BDCECB /* ZActionsController.swift */; };
 		0CB619981FB3C4660087B066 /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
 		0CB6199E1FB3C4660087B066 /* ZSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619941FB3C4660087B066 /* ZSearchController.swift */; };
-		0CB6199F1FB3C4660087B066 /* ZGraphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZGraphController.swift */; };
 		0CB619A01FB3C4660087B066 /* ZGraphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZGraphController.swift */; };
 		0CB619A11FB3C4660087B066 /* ZGraphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZGraphController.swift */; };
 		A70064DD22484808004E3A8D /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70064DC22484808004E3A8D /* ZManifest.swift */; };
 		A70064DE22484808004E3A8D /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70064DC22484808004E3A8D /* ZManifest.swift */; };
 		A70064DF22484808004E3A8D /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70064DC22484808004E3A8D /* ZManifest.swift */; };
+		A71484D72252CCDE00F54C0C /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71484D22252CCC200F54C0C /* SnapKit.framework */; };
+		A71484D82252CCDE00F54C0C /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71484D22252CCC200F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A71484DA2252FDE700F54C0C /* ZIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZIndicatorView.swift */; };
+		A71484DB2252FDF400F54C0C /* ZGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7988AD0222B69AE00256A71 /* ZGradientView.swift */; };
+		A714854E22552CA300F54C0C /* ZGraphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZGraphController.swift */; };
+		A714854F2255355000F54C0C /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77758922207BCC500C37B49 /* ZToggleButton.swift */; };
+		A7148551225542AA00F54C0C /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7148550225542AA00F54C0C /* CloudKit.framework */; };
+		A71485522255486800F54C0C /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77758922207BCC500C37B49 /* ZToggleButton.swift */; };
+		A71485532255487A00F54C0C /* ZIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZIndicatorView.swift */; };
+		A71485542255488A00F54C0C /* ZGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7988AD0222B69AE00256A71 /* ZGradientView.swift */; };
 		A717BF482251332D004F7993 /* NSPanel+ZPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = A717BF472251332D004F7993 /* NSPanel+ZPanel.m */; };
 		A717BF4B2251581D004F7993 /* NSURL+ZURL.m in Sources */ = {isa = PBXBuildFile; fileRef = A717BF4A2251581D004F7993 /* NSURL+ZURL.m */; };
 		A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0021729B02003D4BDA /* Main.storyboard */; };
@@ -192,19 +201,17 @@
 		A7D947DF21EC127E00B7DBFC /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
 		A7D947E021EC141F00B7DBFC /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
 		A7D947E121EC142000B7DBFC /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
-		A7E48018224EB0DF00CDBA17 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7E48017224EB0DF00CDBA17 /* SnapKit.framework */; };
-		A7E48019224EB0DF00CDBA17 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A7E48017224EB0DF00CDBA17 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A7FF100321A8DC70005CA5E1 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CD921791D8F4C3200F80964 /* CloudKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		A79867C322386D1E0057A109 /* Embed Frameworks */ = {
+		A71484D92252CCDE00F54C0C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A7E48019224EB0DF00CDBA17 /* SnapKit.framework in Embed Frameworks */,
+				A71484D82252CCDE00F54C0C /* SnapKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -235,8 +242,6 @@
 
 /* Begin PBXFileReference section */
 		0C05C287210274A0001F2015 /* ZPerfectPSQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZPerfectPSQL.swift; sourceTree = "<group>"; };
-		0C05C8AB210AA9EE001F2015 /* PostgreSQL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PostgreSQL.framework; path = Frameworks/PostgreSQL.framework; sourceTree = "<group>"; };
-		0C05C8AC210AA9EE001F2015 /* PostgreSQLDriver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PostgreSQLDriver.framework; path = Frameworks/PostgreSQLDriver.framework; sourceTree = "<group>"; };
 		0C05C8B1210AAA31001F2015 /* ZFluentPSQL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZFluentPSQL.swift; sourceTree = "<group>"; };
 		0C09A7D61FE5DEC600F3D736 /* ZGenericTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericTableController.swift; sourceTree = "<group>"; };
 		0C1651EA21012021003FF76C /* PadFocus-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PadFocus-Bridging-Header.h"; path = "PadZones/PadFocus-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -280,7 +285,7 @@
 		0C39B3951F1988380091F4D1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0C39B3961F1988380091F4D1 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		0C39B3981F1988380091F4D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0C39B3991F1988380091F4D1 /* iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = iPhone.storyboard; sourceTree = "<group>"; };
+		0C39B3991F1988380091F4D1 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		0C39B39A1F1988380091F4D1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0C39B3BA1F1989210091F4D1 /* iFocus.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = iFocus.entitlements; path = iFocus/iFocus.entitlements; sourceTree = "<group>"; };
 		0C39B3BB1F1989210091F4D1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = iFocus/Info.plist; sourceTree = "<group>"; };
@@ -315,6 +320,8 @@
 		0CB619951FB3C4660087B066 /* ZGraphController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphController.swift; sourceTree = "<group>"; };
 		0CD921791D8F4C3200F80964 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		A70064DC22484808004E3A8D /* ZManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZManifest.swift; sourceTree = "<group>"; };
+		A71484D22252CCC200F54C0C /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/OSX/SnapKit.framework; sourceTree = "<group>"; };
+		A7148550225542AA00F54C0C /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		A717BF462251332D004F7993 /* NSPanel+ZPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSPanel+ZPanel.h"; sourceTree = "<group>"; };
 		A717BF472251332D004F7993 /* NSPanel+ZPanel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSPanel+ZPanel.m"; sourceTree = "<group>"; };
 		A717BF492251581D004F7993 /* NSURL+ZURL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+ZURL.h"; sourceTree = "<group>"; };
@@ -333,8 +340,6 @@
 		A7C96E392218838A00986631 /* ZIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIndicatorView.swift; sourceTree = "<group>"; };
 		A7D3C25821FAB6A000B64B83 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iPhone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhone.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A7E48017224EB0DF00CDBA17 /* SnapKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SnapKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A7E4801B224EF2AD00CDBA17 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = "../../../sand/Library/Developer/Xcode/DerivedData/Zones-gfcygribdmuvnbewxyweurhrkltf/Build/Products/Debug/SnapKit.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -343,6 +348,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7D3C25D21FAB6ED00B64B83 /* SnapKit.framework in Frameworks */,
+				A7148551225542AA00F54C0C /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,7 +357,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7FF100321A8DC70005CA5E1 /* CloudKit.framework in Frameworks */,
-				A7E48018224EB0DF00CDBA17 /* SnapKit.framework in Frameworks */,
+				A71484D72252CCDE00F54C0C /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,6 +383,7 @@
 		0C09A7D81FE86FCC00F3D736 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A7148550225542AA00F54C0C /* CloudKit.framework */,
 				0C39B3C61F198CD00091F4D1 /* iOS */,
 				0C39B3C71F198CDC0091F4D1 /* OSX */,
 			);
@@ -574,7 +581,7 @@
 		0C39B3971F1988380091F4D1 /* iPhone */ = {
 			isa = PBXGroup;
 			children = (
-				0C39B3991F1988380091F4D1 /* iPhone.storyboard */,
+				0C39B3991F1988380091F4D1 /* Main.storyboard */,
 				0C39B39A1F1988380091F4D1 /* LaunchScreen.storyboard */,
 			);
 			path = iPhone;
@@ -642,10 +649,8 @@
 		0C39B3C71F198CDC0091F4D1 /* OSX */ = {
 			isa = PBXGroup;
 			children = (
-				0C05C8AB210AA9EE001F2015 /* PostgreSQL.framework */,
-				0C05C8AC210AA9EE001F2015 /* PostgreSQLDriver.framework */,
+				A71484D22252CCC200F54C0C /* SnapKit.framework */,
 				0CD921791D8F4C3200F80964 /* CloudKit.framework */,
-				A7E4801B224EF2AD00CDBA17 /* SnapKit.framework */,
 			);
 			name = OSX;
 			sourceTree = "<group>";
@@ -692,7 +697,6 @@
 		0CA04B0B1D2ECF1A001892E5 = {
 			isa = PBXGroup;
 			children = (
-				A7E48017224EB0DF00CDBA17 /* SnapKit.framework */,
 				A74D1BA522222FC900E69E44 /* eye.con-512.png */,
 				0C39B3C11F198BAA0091F4D1 /* configuration */,
 				0C50FD2D2053467600E1D9A9 /* data */,
@@ -751,7 +755,7 @@
 				0C1EC7C820A8D91F005E2DA2 /* ShellScript */,
 				0CA04B111D2ECF1A001892E5 /* Frameworks */,
 				0CA04B121D2ECF1A001892E5 /* Resources */,
-				A79867C322386D1E0057A109 /* Embed Frameworks */,
+				A71484D92252CCDE00F54C0C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -791,8 +795,9 @@
 				ORGANIZATIONNAME = Zones;
 				TargetAttributes = {
 					0C69C9861F09CD95004D026D = {
+						DevelopmentTeam = F8M94NY2TV;
 						LastSwiftMigration = 0940;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.iCloud = {
 								enabled = 1;
@@ -865,7 +870,7 @@
 				0C39B3AE1F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
 				0C50FD2F2053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				0C39B3A81F1988380091F4D1 /* Assets.xcassets in Resources */,
-				0C39B3AB1F1988380091F4D1 /* iPhone.storyboard in Resources */,
+				0C39B3AB1F1988380091F4D1 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -919,13 +924,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7395BB221B877B600F5759F /* ZGraphEditor.swift in Sources */,
+				A714854E22552CA300F54C0C /* ZGraphController.swift in Sources */,
 				0C39B31F1F182EBB0091F4D1 /* ZTrait.swift in Sources */,
+				A71484DA2252FDE700F54C0C /* ZIndicatorView.swift in Sources */,
 				0C39B2E31F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				A7395BAF21B877B600F5759F /* ZTextEditor.swift in Sources */,
 				0CABC9EF2022768D0019D8B0 /* ZEnumerations.swift in Sources */,
 				A7D947DD21EC11C800B7DBFC /* ZDetailsController.swift in Sources */,
 				A7D947E121EC142000B7DBFC /* ZShortcutsController.swift in Sources */,
 				0C4118DE1FA8110200A58004 /* ZAlerts.swift in Sources */,
+				A714854F2255355000F54C0C /* ZToggleButton.swift in Sources */,
+				A71484DB2252FDF400F54C0C /* ZGradientView.swift in Sources */,
 				0C39B2BF1F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
 				0C43EFD721010F62000976CE /* ZRemoteStorage.swift in Sources */,
 				0C39B38B1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
@@ -942,7 +951,6 @@
 				0C7152231FD8A1E400C7DA61 /* ZFocusing.swift in Sources */,
 				0C39B2CE1F182EBB0091F4D1 /* ZMobileExtensions.swift in Sources */,
 				0C2E22C51F75BB7D00B50A71 /* ZMainController.swift in Sources */,
-				0CB6199F1FB3C4660087B066 /* ZGraphController.swift in Sources */,
 				0C4C23A22016B0930025E4DF /* ZContainerView.swift in Sources */,
 				0C3ECC231FA3023500F085EA /* ZUser.swift in Sources */,
 				0C43EFDA21010F62000976CE /* ZOperations.swift in Sources */,
@@ -1047,10 +1055,12 @@
 			files = (
 				0CABC9F02022768D0019D8B0 /* ZEnumerations.swift in Sources */,
 				0C39B3201F182EBB0091F4D1 /* ZTrait.swift in Sources */,
+				A71485522255486800F54C0C /* ZToggleButton.swift in Sources */,
 				A7395BB021B877B600F5759F /* ZTextEditor.swift in Sources */,
 				0C39B2E41F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				0C39B2C01F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
 				A7D947D921EC110A00B7DBFC /* ZEvents.swift in Sources */,
+				A71485542255488A00F54C0C /* ZGradientView.swift in Sources */,
 				0C7152241FD8A1E400C7DA61 /* ZFocusing.swift in Sources */,
 				0C39B38C1F182EBB0091F4D1 /* ZoneWindow.swift in Sources */,
 				0C43EFD521010F62000976CE /* ZRecords.swift in Sources */,
@@ -1088,6 +1098,7 @@
 				0C39B3141F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C43EFDE21010F62000976CE /* ZBatches.swift in Sources */,
 				0C39B2ED1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
+				A71485532255487A00F54C0C /* ZIndicatorView.swift in Sources */,
 				0C2E22D11F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				0C43EFE121010F62000976CE /* ZCloud.swift in Sources */,
 				0C43EFBF21010F17000976CE /* ZFiles.swift in Sources */,
@@ -1137,8 +1148,8 @@
 				CODE_SIGN_ENTITLEMENTS = iFocus/iFocus.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F8M94NY2TV;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1170,8 +1181,8 @@
 				CODE_SIGN_ENTITLEMENTS = iFocus/iFocus.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F8M94NY2TV;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1325,6 +1336,7 @@
 					"$(PROJECT_DIR)/Zones/**",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)/Frameworks/OSX",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Zones/Info.plist";
@@ -1349,7 +1361,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -1372,6 +1384,7 @@
 					"$(PROJECT_DIR)/Zones/**",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)/Frameworks/OSX",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Zones/Info.plist";
@@ -1395,7 +1408,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Zones/Zones-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};

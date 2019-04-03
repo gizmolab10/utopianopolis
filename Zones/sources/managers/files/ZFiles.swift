@@ -59,11 +59,6 @@ class ZFiles: NSObject {
     // MARK:-
 
 
-    func showInFinder() {
-        (directoryURL as NSURL).open()
-    }
-
-
 	func open() {
 //		let panel = NSOpenPanel()
 	}

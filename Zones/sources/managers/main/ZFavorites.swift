@@ -46,7 +46,7 @@ class ZFavorites: NSObject {
 
 
     var actionTitle: String {
-        if  gHere.isGrabbed,
+        if  gHereMaybe?.isGrabbed ?? false,
             let currentTarget = currentFavorite?.bookmarkTarget {
             return (gHere == currentTarget) ? "Unfavorite" : "Favorite"
         }

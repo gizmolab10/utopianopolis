@@ -21,28 +21,28 @@ class ZGradientView: ZView {
     @IBInspectable var diagonalMode:    Bool =  false { didSet { setup() }}
     @IBInspectable var invertMode:      Bool =  false { didSet { update() }}
     
-    private var mask = CAGradientLayer()
+    private var gradientMask = CAGradientLayer()
     
     func setup() {
-        mask = CAGradientLayer()
-        zlayer.mask = mask
+        gradientMask = CAGradientLayer()
+        zlayer.mask  = gradientMask
 
         update()
 
         if  horizontalMode {
-            mask.startPoint = diagonalMode ? CGPoint(x: 1, y: 0) : CGPoint(x: 0, y: 0.5)
-            mask.endPoint   = diagonalMode ? CGPoint(x: 0, y: 1) : CGPoint(x: 1, y: 0.5)
+            gradientMask.startPoint = diagonalMode ? CGPoint(x: 1, y: 0) : CGPoint(x: 0, y: 0.5)
+            gradientMask.endPoint   = diagonalMode ? CGPoint(x: 0, y: 1) : CGPoint(x: 1, y: 0.5)
         } else {
-            mask.startPoint = diagonalMode ? CGPoint(x: 0, y: 0) : CGPoint(x: 0.5, y: 0)
-            mask.endPoint   = diagonalMode ? CGPoint(x: 1, y: 1) : CGPoint(x: 0.5, y: 1)
+            gradientMask.startPoint = diagonalMode ? CGPoint(x: 0, y: 0) : CGPoint(x: 0.5, y: 0)
+            gradientMask.endPoint   = diagonalMode ? CGPoint(x: 1, y: 1) : CGPoint(x: 0.5, y: 1)
         }
     }
 
     private func update() {
-        let white = ZColor.white.cgColor
-        let clear = ZColor.clear.cgColor
-        mask.colors = invertMode ? [white, clear] : [clear, white]
-        mask.frame = bounds
+        let white = kWhiteColor.cgColor
+        let clear = kClearColor.cgColor
+        gradientMask.colors = invertMode ? [white, clear] : [clear, white]
+        gradientMask.frame = bounds
     }
     
 }

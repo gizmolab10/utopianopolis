@@ -6,7 +6,7 @@
 //  Copyright © 2019 Zones. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 @interface NSURL (ZURL)
 

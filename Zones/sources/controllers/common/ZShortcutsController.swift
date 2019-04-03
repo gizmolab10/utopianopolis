@@ -58,24 +58,29 @@ class ZShortcutsController: ZGenericTableController {
         
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
         
-        if  let g = gridView {
+        if  let g = gridView,
+            let c = clipView {
             g.removeFromSuperview()
-            clipView?.addSubview(g)
+            c.addSubview(g)
 
             g.snp.makeConstraints { make in
-                make.top.bottom.left.right.equalTo(tableView)
+                make.top.bottom.left.right.equalTo(c)
             }
             
-            g.zlayer.backgroundColor = CGColor.clear
-
+            g.zlayer.backgroundColor = kClearColor.cgColor
+            #if os(OSX)
             for view in g.subviews {
                 if  view.identifier?.rawValue == kLineView {
                     view.zlayer.backgroundColor = kGridColor
                 }
             }
+            #endif
         }
     }
     
+    
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {} // this controller can ignore all signals
+
     
     func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
         if  let    key = iEvent.key {
@@ -85,7 +90,7 @@ class ZShortcutsController: ZGenericTableController {
             switch key {
             case "?", "/":         gGraphEditor.showHideKeyboardShortcuts()
             case "a": if SPECIAL { gApplication.showHideAbout() }
-            case "p":              view.printView()
+            case "p":              clipView?.printView()
             case "r": if COMMAND { sendEmailBugReport() }
             case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
 

@@ -15,26 +15,26 @@ import Foundation
     import UIKit
 #endif
 
-
-protocol ZGestureModifiers {
-    
-    var modifiers: ZEventFlags?
-    override var isShiftDown:   Bool
-    override var isOptionDown:  Bool
-    override var isCommandDown: Bool
-
-    
-}
-
-
-extension ZGestureRecognizer {
-    
-    var modifiers: ZEventFlags? = ZEventFlags()
-    override var isShiftDown:   Bool { return modifiers?.contains(.shift)     ?? false }
-    override var isOptionDown:  Bool { return modifiers?.contains(.alternate) ?? false }
-    override var isCommandDown: Bool { return modifiers?.contains(.command)   ?? false }
-
-}
+//
+//protocol ZGestureModifiers {
+//    
+//    var modifiers: ZEventFlags?
+//    override var isShiftDown:   Bool
+//    override var isOptionDown:  Bool
+//    override var isCommandDown: Bool
+//
+//    
+//}
+//
+//
+//extension ZGestureRecognizer {
+//    
+//    var modifiers: ZEventFlags? = ZEventFlags()
+//    override var isShiftDown:   Bool { return modifiers?.contains(.shift)     ?? false }
+//    override var isOptionDown:  Bool { return modifiers?.contains(.alternate) ?? false }
+//    override var isCommandDown: Bool { return modifiers?.contains(.command)   ?? false }
+//
+//}
 
 
 class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {

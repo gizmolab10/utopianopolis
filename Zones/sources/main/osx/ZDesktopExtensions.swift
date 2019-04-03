@@ -192,11 +192,6 @@ extension NSURL {
 
     
     func openAsFile() {
-//        var isStale  = false
-//        let fileData = try self.bookmarkData(options: [.securityScopeAllowOnlyReadAccess], includingResourceValuesForKeys: nil, relativeTo: nil)
-//        let fileURL  = try URL(resolvingBookmarkData:fileData, bookmarkDataIsStale: &isStale)
-//        self.stopAccessingSecurityScopedResource()
-
         if !self.openSecurely() {
             ZFiles.presentOpenPanel() { (iAny) in
                 if  let url = iAny as? NSURL {
@@ -215,10 +210,25 @@ extension NSURL {
 }
 
 
-extension NSApplication {
+extension ZApplication {
+
     func clearBadge() {
         dockTile.badgeLabel = ""
     }
+    
+    func showHideAbout() {
+        for     window in windows {
+            if  window.title == "",
+                window.isKeyWindow {
+                window.close()
+                
+                return
+            }
+        }
+        
+        orderFrontStandardAboutPanel(nil)
+    }
+    
 }
 
 
@@ -724,10 +734,10 @@ extension NSProgressIndicator {
 }
 
 
-public extension NSImage {
+public extension ZImage {
 
 
-    public func imageRotatedByDegrees(_ degrees: CGFloat) -> NSImage {
+    public func imageRotatedByDegrees(_ degrees: CGFloat) -> ZImage {
 
         var imageBounds = NSZeroRect ; imageBounds.size = self.size
         let pathBounds = NSBezierPath(rect: imageBounds)
@@ -761,6 +771,11 @@ public extension NSImage {
 
 extension ZFiles {
     
+    
+    func showInFinder() {
+        (directoryURL as NSURL).open()
+    }
+
     
     func saveAs() {
         let panel = NSSavePanel()

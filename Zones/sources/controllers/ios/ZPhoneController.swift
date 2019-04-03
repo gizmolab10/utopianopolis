@@ -71,7 +71,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         let                      emphasizedColor = ZColor.blue.lighter(by: 5.0)
         let                            textColor = ZColor.blue
         let                                 font = gWidgetFont
-        let                            hereTitle = gHere.zoneName ?? ""
+        let                            hereTitle = gHereMaybe?.zoneName ?? ""
         let                         actionsTitle = gActionsAreVisible   ? " -> " : " Actions "
         let                       favoritesTitle = gFavoritesAreVisible ? " -> " : " Favorites "
         let                       favoritesWidth = favoritesTitle.widthForFont(font) + 15.0
@@ -92,7 +92,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
                 button                    .title = iTitle
                 button          .backgroundColor = iHidden ? emphasizedColor : gBackgroundColor
 
-                button.setTitleColor(              iHidden ? ZColor.white    : textColor, for: .normal)
+                button.setTitleColor(              iHidden ? kWhiteColor     : textColor, for: .normal)
                 button.addBorder(thickness: 1.0, radius: 5.0, color: textColor.cgColor)
             }
         }

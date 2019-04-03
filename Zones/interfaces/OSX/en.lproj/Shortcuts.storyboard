@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="olH-Ix-aMb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="olH-Ix-aMb">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -132,8 +132,8 @@
                     </view>
                     <connections>
                         <outlet property="clipView" destination="9Aa-9c-eI8" id="ALa-Ct-6eI"/>
+                        <outlet property="genericTableView" destination="zAE-6p-uHR" id="6xh-VW-e1D"/>
                         <outlet property="gridView" destination="zAE-6p-uHR" id="5I0-ey-Ttn"/>
-                        <outlet property="tableView" destination="H0M-2O-9lo" id="sLh-j8-4gt"/>
                     </connections>
                 </viewController>
             </objects>

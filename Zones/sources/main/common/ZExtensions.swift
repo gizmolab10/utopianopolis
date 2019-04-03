@@ -1116,24 +1116,6 @@ extension ZGestureRecognizer {
 }
 
 
-extension ZApplication {
-    
-    func showHideAbout() {
-        for     window in windows {
-            if  window.title == "",
-                window.isKeyWindow {
-                window.close()
-                
-                return
-            }
-        }
-        
-        orderFrontStandardAboutPanel(nil)
-    }
-    
-}
-
-
 extension ZView {
     
     

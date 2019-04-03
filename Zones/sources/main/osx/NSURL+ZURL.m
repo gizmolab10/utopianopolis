@@ -11,6 +11,22 @@
 @implementation NSURL (ZURL)
 
 - (BOOL)openSecurely {
+    NSError *oError;
+    NSData *fileData = [self bookmarkDataWithOptions:NSURLBookmarkCreationSecurityScopeAllowOnlyReadAccess includingResourceValuesForKeys:NULL relativeToURL:NULL error:&oError];
+    
+    if (oError == nil) {
+        BOOL isStale;
+        NSURL *fileURL = [NSURL URLByResolvingBookmarkData:fileData options:NSURLBookmarkResolutionWithoutUI relativeToURL:NULL bookmarkDataIsStale:&isStale error:&oError];
+    
+        if (oError == nil) {
+            [fileURL startAccessingSecurityScopedResource];
+            [[NSWorkspace sharedWorkspace] openURL: fileURL];
+            [fileURL stopAccessingSecurityScopedResource];
+            
+            return YES;
+        }
+    }
+    
     return NO;
 }
 

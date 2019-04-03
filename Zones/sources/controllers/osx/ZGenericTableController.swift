@@ -20,7 +20,7 @@ class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableV
 
     
     @IBOutlet var tableHeight: NSLayoutConstraint?
-    @IBOutlet var   tableView: NSTableView!
+    @IBOutlet var genericTableView: NSTableView?
 
 
     func numberOfRows(in tableView: NSTableView) -> Int { return 1 }
@@ -32,7 +32,9 @@ class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableV
     
 
     func genericTableUpdate() {
-        tableView.reloadData()
-        tableHeight?.constant = CGFloat(numberOfRows(in: tableView)) * tableView.rowHeight
+        if let t = genericTableView {
+            t.reloadData()
+            tableHeight?.constant = CGFloat(numberOfRows(in: t)) * t.rowHeight
+        }
     }
 }

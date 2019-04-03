@@ -55,10 +55,12 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
         
         indicatorView?.setupGradientView()
 
+        #if os(OSX)
         guard let lighten = CIFilter(name: "CIColorControls") else { return }
         lighten.setDefaults()
         lighten.setValue(1, forKey: "inputBrightness")
         spinner?.contentFilters = [lighten]
+        #endif
     }
 
 
@@ -128,7 +130,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inMainGraph: Bool) {
         if !inMainGraph && kIsPhone { return }
 
-        let                        here = inMainGraph ? gHere : gFavoritesRoot
+        let                        here = inMainGraph ? gHereMaybe : gFavoritesRoot
         var specificWidget: ZoneWidget? = inMainGraph ? editorRootWidget : favoritesRootWidget
         var specificView:        ZView? = editorView
         var specificIndex:         Int?

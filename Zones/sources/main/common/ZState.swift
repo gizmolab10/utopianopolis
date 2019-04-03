@@ -53,7 +53,7 @@ var      gChildrenViewOffset:             Double { return gDotWidth + Double(gGe
 var                gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
 var              gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var           gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
-var        gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? ZColor.white : ZColor.black }
+var        gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : ZColor.black }
 var   gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker  (by: 4.0)  .cgColor }
 var  gDarkishBackgroundColor:            CGColor { return gBackgroundColor.darkish (by: 1.028).cgColor }
 var gDirectionIndicatorColor:            CGColor { return gBackgroundColor.darker  (by: 1.3)  .cgColor }

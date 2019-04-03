@@ -161,9 +161,9 @@ extension String {
 
 extension UIBezierPath {
 
-    func setClip()         { addClip() }
-    func line(to: CGPoint) { addLine(to: to) }
-
+    func setClip()                   { addClip() }
+    func line(to: CGPoint)           { addLine(to: to) }
+    func appendOval(in rect: CGRect) { append(UIBezierPath(ovalIn: rect)) }
 }
 
 
@@ -222,6 +222,12 @@ extension ZColor {
 
         return ZColor(hue: components.hue, saturation: components.saturation * 0.9, brightness: components.brightness * by, alpha: components.alpha)
     }
+    
+    func lightish(by: CGFloat) -> ZColor {
+        let components = hsba
+        
+        return ZColor(hue: components.hue, saturation: components.saturation, brightness: components.brightness * by, alpha: components.alpha)
+    }
 
 }
 
@@ -246,6 +252,15 @@ extension   UISwipeGestureRecognizer.Direction {
             UISwipeGestureRecognizer.Direction .down.rawValue +
             UISwipeGestureRecognizer.Direction   .up.rawValue
         )
+    }
+    
+}
+
+
+public extension ZImage {
+    
+    func imageRotatedByDegrees(_ degrees: CGFloat) -> ZImage {
+        return self
     }
 
 }
@@ -487,9 +502,10 @@ extension UIButton {
 }
 
 
-extension UIApplication {
+extension ZApplication {
 
-    func presentError(_ error: NSError) {}
+    func showHideAbout() {}
+    func presentError(_ error: NSError) {    }
     func terminate(_ sender: Any?) {}
 
 
@@ -580,6 +596,7 @@ extension ZFiles {
     
     
     func saveAs() {}
+    func showInFinder() {}
     func exportToFile(asOutline: Bool, for iFocus: Zone) {}
     func importFromFile(asOutline: Bool, insertInto: Zone, onCompletion: Closure?) {}
 
@@ -588,6 +605,7 @@ extension ZFiles {
 
 extension ZTextEditor {
 
+    var string: String { return text }
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {}
 
 }

@@ -253,7 +253,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     let childlessTraveller = zone.canTravel && zone.count == 0
                     let        dotIsFilled = isReveal ? (!zone.showingChildren || childlessTraveller || isDragDrop) : (zone.isGrabbed || isCurrentFavorite)
                     let        strokeColor = isReveal && isDragDrop ?  gRubberbandColor : zone.color
-                    var          fillColor = dotIsFilled ? strokeColor.lighter(by: 3.0) : ZColor.clear
+                    var          fillColor = dotIsFilled ? strokeColor.lighter(by: 3.0) : kClearColor
 
                     /////////
                     // DOT //
