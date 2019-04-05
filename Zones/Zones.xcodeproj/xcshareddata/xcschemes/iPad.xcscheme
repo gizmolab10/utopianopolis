@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1010"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0C69C9861F09CD95004D026D"
-               BuildableName = "iFocus.app"
-               BlueprintName = "iFocus"
+               BlueprintIdentifier = "0CA04B481D2ECF41001892E5"
+               BuildableName = "iPad.app"
+               BlueprintName = "iPad"
                ReferencedContainer = "container:Zones.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0C69C9861F09CD95004D026D"
-            BuildableName = "iFocus.app"
-            BlueprintName = "iFocus"
+            BlueprintIdentifier = "0CA04B481D2ECF41001892E5"
+            BuildableName = "iPad.app"
+            BlueprintName = "iPad"
             ReferencedContainer = "container:Zones.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -55,19 +55,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0C69C9861F09CD95004D026D"
-            BuildableName = "iFocus.app"
-            BlueprintName = "iFocus"
+            BlueprintIdentifier = "0CA04B481D2ECF41001892E5"
+            BuildableName = "iPad.app"
+            BlueprintName = "iPad"
             ReferencedContainer = "container:Zones.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "OS_ACTIVITY_MODE"
-            value = "disable"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -81,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0C69C9861F09CD95004D026D"
-            BuildableName = "iFocus.app"
-            BlueprintName = "iFocus"
+            BlueprintIdentifier = "0CA04B481D2ECF41001892E5"
+            BuildableName = "iPad.app"
+            BlueprintName = "iPad"
             ReferencedContainer = "container:Zones.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

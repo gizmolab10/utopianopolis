@@ -4,7 +4,4 @@
    <FileRef
       location = "group:Zones/Zones.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:Carthage/Checkouts/SnapKit/SnapKit.xcodeproj">
-   </FileRef>
 </Workspace>

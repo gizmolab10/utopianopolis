@@ -156,16 +156,19 @@
 		A70064DD22484808004E3A8D /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70064DC22484808004E3A8D /* ZManifest.swift */; };
 		A70064DE22484808004E3A8D /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70064DC22484808004E3A8D /* ZManifest.swift */; };
 		A70064DF22484808004E3A8D /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70064DC22484808004E3A8D /* ZManifest.swift */; };
-		A71484D72252CCDE00F54C0C /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71484D22252CCC200F54C0C /* SnapKit.framework */; };
-		A71484D82252CCDE00F54C0C /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71484D22252CCC200F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A71484DA2252FDE700F54C0C /* ZIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZIndicatorView.swift */; };
 		A71484DB2252FDF400F54C0C /* ZGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7988AD0222B69AE00256A71 /* ZGradientView.swift */; };
 		A714854E22552CA300F54C0C /* ZGraphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZGraphController.swift */; };
 		A714854F2255355000F54C0C /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77758922207BCC500C37B49 /* ZToggleButton.swift */; };
-		A7148551225542AA00F54C0C /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7148550225542AA00F54C0C /* CloudKit.framework */; };
 		A71485522255486800F54C0C /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77758922207BCC500C37B49 /* ZToggleButton.swift */; };
 		A71485532255487A00F54C0C /* ZIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZIndicatorView.swift */; };
 		A71485542255488A00F54C0C /* ZGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7988AD0222B69AE00256A71 /* ZGradientView.swift */; };
+		A714858A2256B34500F54C0C /* SnapKitFatty.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485852256AC6000F54C0C /* SnapKitFatty.framework */; };
+		A714858B2256B34500F54C0C /* SnapKitFatty.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485852256AC6000F54C0C /* SnapKitFatty.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A71485B52256D16C00F54C0C /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; };
+		A71485B62256D1A200F54C0C /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; };
+		A71485B72256D1A200F54C0C /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A71485BA2256D1F900F54C0C /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485A02256D15200F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A717BF482251332D004F7993 /* NSPanel+ZPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = A717BF472251332D004F7993 /* NSPanel+ZPanel.m */; };
 		A717BF4B2251581D004F7993 /* NSURL+ZURL.m in Sources */ = {isa = PBXBuildFile; fileRef = A717BF4A2251581D004F7993 /* NSURL+ZURL.m */; };
 		A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0021729B02003D4BDA /* Main.storyboard */; };
@@ -190,10 +193,6 @@
 		A7CFA81D21F51A9F008DA880 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B28B1F182EBB0091F4D1 /* ZStackableView.swift */; };
 		A7D3C24721FAA4C600B64B83 /* ZSearching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearching.swift */; };
 		A7D3C24821FAA4E400B64B83 /* ZSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619941FB3C4660087B066 /* ZSearchController.swift */; };
-		A7D3C25B21FAB6AE00B64B83 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7D3C25821FAB6A000B64B83 /* SnapKit.framework */; };
-		A7D3C25C21FAB6AE00B64B83 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A7D3C25821FAB6A000B64B83 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A7D3C25D21FAB6ED00B64B83 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7D3C25821FAB6A000B64B83 /* SnapKit.framework */; };
-		A7D3C25E21FAB6ED00B64B83 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A7D3C25821FAB6A000B64B83 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A7D947D921EC110A00B7DBFC /* ZEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEvents.swift */; };
 		A7D947DC21EC11C600B7DBFC /* ZDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B22B1F182EBB0091F4D1 /* ZDetailsController.swift */; };
 		A7D947DD21EC11C800B7DBFC /* ZDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B22B1F182EBB0091F4D1 /* ZDetailsController.swift */; };
@@ -201,17 +200,58 @@
 		A7D947DF21EC127E00B7DBFC /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
 		A7D947E021EC141F00B7DBFC /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
 		A7D947E121EC142000B7DBFC /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
-		A7FF100321A8DC70005CA5E1 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CD921791D8F4C3200F80964 /* CloudKit.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A71485722256AAAF00F54C0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EEBCC9D819CC627D0083B827;
+			remoteInfo = SnapKit;
+		};
+		A71485742256AAAF00F54C0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EEBCC9E219CC627E0083B827;
+			remoteInfo = "SnapKit Tests";
+		};
+		A71485842256AC6000F54C0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A714857B2256AB4D00F54C0C;
+			remoteInfo = SnapKitFatty;
+		};
+		A714858C2256B34500F54C0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A714857A2256AB4D00F54C0C;
+			remoteInfo = SnapKitFatty;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
-		A71484D92252CCDE00F54C0C /* Embed Frameworks */ = {
+		A71485B82256D1A200F54C0C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A71484D82252CCDE00F54C0C /* SnapKit.framework in Embed Frameworks */,
+				A71485B72256D1A200F54C0C /* SnapKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A71485BB2256D1F900F54C0C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A71485BA2256D1F900F54C0C /* SnapKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -222,18 +262,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A7D3C25C21FAB6AE00B64B83 /* SnapKit.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A7D3C25721FAB48000B64B83 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				A7D3C25E21FAB6ED00B64B83 /* SnapKit.framework in Embed Frameworks */,
+				A714858B2256B34500F54C0C /* SnapKitFatty.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -318,10 +347,10 @@
 		0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSearchResultsController.swift; sourceTree = "<group>"; };
 		0CB619941FB3C4660087B066 /* ZSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSearchController.swift; sourceTree = "<group>"; };
 		0CB619951FB3C4660087B066 /* ZGraphController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphController.swift; sourceTree = "<group>"; };
-		0CD921791D8F4C3200F80964 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		A70064DC22484808004E3A8D /* ZManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZManifest.swift; sourceTree = "<group>"; };
-		A71484D22252CCC200F54C0C /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/OSX/SnapKit.framework; sourceTree = "<group>"; };
-		A7148550225542AA00F54C0C /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
+		A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SnapKit.xcodeproj; path = ../Carthage/Checkouts/SnapKit/SnapKit.xcodeproj; sourceTree = "<group>"; };
+		A71485962256D13A00F54C0C /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SnapKit.framework; sourceTree = "<group>"; };
+		A71485A02256D15200F54C0C /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SnapKit.framework; sourceTree = "<group>"; };
 		A717BF462251332D004F7993 /* NSPanel+ZPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSPanel+ZPanel.h"; sourceTree = "<group>"; };
 		A717BF472251332D004F7993 /* NSPanel+ZPanel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSPanel+ZPanel.m"; sourceTree = "<group>"; };
 		A717BF492251581D004F7993 /* NSURL+ZURL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+ZURL.h"; sourceTree = "<group>"; };
@@ -338,8 +367,7 @@
 		A77758922207BCC500C37B49 /* ZToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToggleButton.swift; sourceTree = "<group>"; };
 		A7988AD0222B69AE00256A71 /* ZGradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGradientView.swift; sourceTree = "<group>"; };
 		A7C96E392218838A00986631 /* ZIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIndicatorView.swift; sourceTree = "<group>"; };
-		A7D3C25821FAB6A000B64B83 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Frameworks/iOS/SnapKit.framework; sourceTree = "<group>"; };
-		A7D3C25F21FAB6ED00B64B83 /* iPhone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iPhone.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7D3C25F21FAB6ED00B64B83 /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -347,8 +375,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7D3C25D21FAB6ED00B64B83 /* SnapKit.framework in Frameworks */,
-				A7148551225542AA00F54C0C /* CloudKit.framework in Frameworks */,
+				A71485B62256D1A200F54C0C /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,8 +383,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7FF100321A8DC70005CA5E1 /* CloudKit.framework in Frameworks */,
-				A71484D72252CCDE00F54C0C /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,7 +390,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7D3C25B21FAB6AE00B64B83 /* SnapKit.framework in Frameworks */,
+				A714858A2256B34500F54C0C /* SnapKitFatty.framework in Frameworks */,
+				A71485B52256D16C00F54C0C /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,9 +409,9 @@
 		0C09A7D81FE86FCC00F3D736 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A7148550225542AA00F54C0C /* CloudKit.framework */,
-				0C39B3C61F198CD00091F4D1 /* iOS */,
-				0C39B3C71F198CDC0091F4D1 /* OSX */,
+				A71485952256D13A00F54C0C /* iOS */,
+				A71485982256D15200F54C0C /* OSX */,
+				A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -638,23 +664,6 @@
 			name = desktop;
 			sourceTree = "<group>";
 		};
-		0C39B3C61F198CD00091F4D1 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				A7D3C25821FAB6A000B64B83 /* SnapKit.framework */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
-		0C39B3C71F198CDC0091F4D1 /* OSX */ = {
-			isa = PBXGroup;
-			children = (
-				A71484D22252CCC200F54C0C /* SnapKit.framework */,
-				0CD921791D8F4C3200F80964 /* CloudKit.framework */,
-			);
-			name = OSX;
-			sourceTree = "<group>";
-		};
 		0C43EFBC21010F17000976CE /* files */ = {
 			isa = PBXGroup;
 			children = (
@@ -712,9 +721,37 @@
 			children = (
 				0CA04B491D2ECF41001892E5 /* iPad.app */,
 				A746D466219F637A00123A0A /* Thoughtful.app */,
-				A7D3C25F21FAB6ED00B64B83 /* iPhone.app */,
+				A7D3C25F21FAB6ED00B64B83 /* iFocus.app */,
 			);
 			name = products;
+			sourceTree = "<group>";
+		};
+		A714856E2256AAAF00F54C0C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A71485732256AAAF00F54C0C /* SnapKit.framework */,
+				A71485852256AC6000F54C0C /* SnapKitFatty.framework */,
+				A71485752256AAAF00F54C0C /* SnapKit Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A71485952256D13A00F54C0C /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				A71485962256D13A00F54C0C /* SnapKit.framework */,
+			);
+			name = iOS;
+			path = Frameworks/iOS;
+			sourceTree = "<group>";
+		};
+		A71485982256D15200F54C0C /* OSX */ = {
+			isa = PBXGroup;
+			children = (
+				A71485A02256D15200F54C0C /* SnapKit.framework */,
+			);
+			name = OSX;
+			path = Frameworks/OSX;
 			sourceTree = "<group>";
 		};
 		A7395BAC21B877B600F5759F /* edit */ = {
@@ -729,22 +766,22 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0C69C9861F09CD95004D026D /* iPhone */ = {
+		0C69C9861F09CD95004D026D /* iFocus */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C69C9DC1F09CD95004D026D /* Build configuration list for PBXNativeTarget "iPhone" */;
+			buildConfigurationList = 0C69C9DC1F09CD95004D026D /* Build configuration list for PBXNativeTarget "iFocus" */;
 			buildPhases = (
 				0C69C9871F09CD95004D026D /* Sources */,
 				0C69C9D41F09CD95004D026D /* Frameworks */,
 				0C69C9D61F09CD95004D026D /* Resources */,
-				A7D3C25721FAB48000B64B83 /* Embed Frameworks */,
+				A71485B82256D1A200F54C0C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = iPhone;
+			name = iFocus;
 			productName = PadZones;
-			productReference = A7D3C25F21FAB6ED00B64B83 /* iPhone.app */;
+			productReference = A7D3C25F21FAB6ED00B64B83 /* iFocus.app */;
 			productType = "com.apple.product-type.application";
 		};
 		0CA04B131D2ECF1A001892E5 /* Thoughtful */ = {
@@ -755,7 +792,7 @@
 				0C1EC7C820A8D91F005E2DA2 /* ShellScript */,
 				0CA04B111D2ECF1A001892E5 /* Frameworks */,
 				0CA04B121D2ECF1A001892E5 /* Resources */,
-				A71484D92252CCDE00F54C0C /* Embed Frameworks */,
+				A71485BB2256D1F900F54C0C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -778,6 +815,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A714858D2256B34500F54C0C /* PBXTargetDependency */,
 			);
 			name = iPad;
 			productName = PadZones;
@@ -808,7 +846,7 @@
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = F8M94NY2TV;
 						LastSwiftMigration = 1010;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -852,14 +890,44 @@
 			mainGroup = 0CA04B0B1D2ECF1A001892E5;
 			productRefGroup = 0CA04B151D2ECF1A001892E5 /* products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = A714856E2256AAAF00F54C0C /* Products */;
+					ProjectRef = A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
-				0C69C9861F09CD95004D026D /* iPhone */,
+				0C69C9861F09CD95004D026D /* iFocus */,
 				0CA04B481D2ECF41001892E5 /* iPad */,
 				0CA04B131D2ECF1A001892E5 /* Thoughtful */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		A71485732256AAAF00F54C0C /* SnapKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SnapKit.framework;
+			remoteRef = A71485722256AAAF00F54C0C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A71485752256AAAF00F54C0C /* SnapKit Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "SnapKit Tests.xctest";
+			remoteRef = A71485742256AAAF00F54C0C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A71485852256AC6000F54C0C /* SnapKitFatty.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SnapKitFatty.framework;
+			remoteRef = A71485842256AC6000F54C0C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		0C69C9D61F09CD95004D026D /* Resources */ = {
@@ -1112,6 +1180,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		A714858D2256B34500F54C0C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SnapKitFatty;
+			targetProxy = A714858C2256B34500F54C0C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		A7245E0021729B02003D4BDA /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -1325,7 +1401,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1351,7 +1427,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Thoughtful Two Mac Development";
 				SKIP_INSTALL = YES;
 				STRIP_STYLE = debugging;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -1373,7 +1449,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1399,7 +1475,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Thoughtful Two Mac Development";
 				SKIP_INSTALL = NO;
 				STRIP_STYLE = debugging;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -1433,7 +1509,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "c1766a51-307f-4f4c-891b-bbd6619906a6";
+				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1465,7 +1541,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "c1766a51-307f-4f4c-891b-bbd6619906a6";
+				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1479,7 +1555,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0C69C9DC1F09CD95004D026D /* Build configuration list for PBXNativeTarget "iPhone" */ = {
+		0C69C9DC1F09CD95004D026D /* Build configuration list for PBXNativeTarget "iFocus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0C69C9DD1F09CD95004D026D /* Debug */,

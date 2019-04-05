@@ -79,7 +79,7 @@ class ZShortcutsController: ZGenericTableController {
     }
     
     
-    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {} // this controller can ignore all signals
+    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {} // this controller can IGNORE ALL SIGNALS
 
     
     func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
