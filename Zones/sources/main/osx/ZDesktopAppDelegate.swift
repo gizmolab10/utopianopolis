@@ -41,8 +41,9 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
 
     func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
-        if  let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo),
-            note.notificationType == .query,
+        let note = CKNotification(fromRemoteNotificationDictionary: userInfo)
+
+        if  note.notificationType == .query,
             let queryNote = note as? CKQueryNotification {
             gRemoteStorage.receiveFromCloud(queryNote)
         }

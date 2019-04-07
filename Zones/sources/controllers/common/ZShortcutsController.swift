@@ -70,7 +70,7 @@ class ZShortcutsController: ZGenericTableController {
             g.zlayer.backgroundColor = kClearColor.cgColor
             #if os(OSX)
             for view in g.subviews {
-                if  view.identifier?.rawValue == kLineView {
+                if  type(of: view) == ZLineView.self {
                     view.zlayer.backgroundColor = kGridColor
                 }
             }

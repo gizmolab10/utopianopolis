@@ -737,8 +737,7 @@ extension NSProgressIndicator {
 public extension ZImage {
 
 
-    public func imageRotatedByDegrees(_ degrees: CGFloat) -> ZImage {
-
+    func imageRotatedByDegrees(_ degrees: CGFloat) -> ZImage {
         var imageBounds = NSZeroRect ; imageBounds.size = self.size
         let pathBounds = NSBezierPath(rect: imageBounds)
         var transform = NSAffineTransform()
