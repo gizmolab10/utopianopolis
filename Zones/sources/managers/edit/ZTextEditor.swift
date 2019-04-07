@@ -411,10 +411,11 @@ class ZTextEditor: ZTextView {
         let       revealed = currentlyEditingZone?.showingChildren ?? false
 
         let done: FloatClosure = { iOffset in
-            let grabbed = gSelecting.firstSortedGrab
-
-            gSelecting.ungrabAll()
-            self.edit(grabbed, setOffset: iOffset, noPause: revealed)
+            if let grabbed = gSelecting.firstSortedGrab {
+                
+                gSelecting.ungrabAll()
+                self.edit(grabbed, setOffset: iOffset, noPause: revealed)
+            }
         }
         
         if  iMoveOut {
@@ -456,8 +457,9 @@ class ZTextEditor: ZTextView {
                         self.currentOffset = currentZone?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
                     }
                     
-                    if  stopEdit {
-                        original = gSelecting.firstSortedGrab
+                    if  stopEdit,
+                        let first = gSelecting.firstSortedGrab {
+                        original  = first
                         
                         if  original != currentZone { // if move up (above) does nothing, ignore
                             self.edit(original)

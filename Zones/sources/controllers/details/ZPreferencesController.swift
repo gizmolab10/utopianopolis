@@ -45,8 +45,8 @@ class ZPreferencesController: ZGenericController {
             stretch?                 .doubleValue = Double(gGenericOffset.width)
             dragTargetsColorBox?           .color = gRubberbandColor
             backgroundColorBox?            .color = gBackgroundColor
-            zoneColorBox?                  .color =  grabbed.color
-            clearColorButton?           .isHidden = !grabbed.hasColor
+            zoneColorBox?                  .color =   grabbed?.color ?? kDefaultZoneColor
+            clearColorButton?           .isHidden = !(grabbed?.hasColor ?? true)
 
             view.setAllSubviewsNeedDisplay()
         }
@@ -90,17 +90,18 @@ class ZPreferencesController: ZGenericController {
 
 
     @IBAction func clearColorAction(_ button: ZButton) {
-        let           grab = gSelecting.firstSortedGrab
-        if  let      color = grab._color {
-            UNDO(self) { iUndoSelf in
-                grab.color = color
-
-                gControllers.syncToCloudAfterSignalFor(grab, regarding: .eRelayout) {}
+        if  let     grab = gSelecting.firstSortedGrab {
+            if let color = grab._color {
+                UNDO(self) { iUndoSelf in
+                    grab.color = color
+                    
+                    gControllers.syncToCloudAfterSignalFor(grab, regarding: .eRelayout) {}
+                }
             }
+            
+            grab.clearColor()
+            gControllers.syncToCloudAfterSignalFor(grab, regarding: .eRelayout) {}
         }
-
-        grab.clearColor()
-        gControllers.syncToCloudAfterSignalFor(grab, regarding: .eRelayout) {}
     }
 
 

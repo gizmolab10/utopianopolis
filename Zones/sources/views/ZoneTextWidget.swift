@@ -209,7 +209,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             let path         = ZBezierPath(rect: rect)
             path  .lineWidth = 0.4
 
-            zone.color.setStroke()
+            zone.color?.setStroke()
             path.stroke()
         }
     }

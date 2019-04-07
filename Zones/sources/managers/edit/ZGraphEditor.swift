@@ -431,10 +431,11 @@ class ZGraphEditor: NSObject {
 
 
     func editTrait(for iType: ZTraitType) {
-        let  zone = gSelecting.firstSortedGrab
-        let trait = zone.trait(for: iType)
-
-        gTextEditor.edit(trait)
+        if  let  zone = gSelecting.firstSortedGrab {
+            let trait = zone.trait(for: iType)
+            
+            gTextEditor.edit(trait)
+        }
     }
 
     
@@ -505,7 +506,7 @@ class ZGraphEditor: NSObject {
 
 
     func alterOrdering(_ iBackwards: Bool = false, with sortClosure: ZonesToZonesClosure) {
-        var commonParent = gSelecting.firstSortedGrab.parentZone ?? gSelecting.firstSortedGrab
+        var commonParent = gSelecting.firstSortedGrab?.parentZone ?? gSelecting.firstSortedGrab
         var        zones = gSelecting.simplifiedGrabs
 
         for zone in zones {
@@ -517,18 +518,18 @@ class ZGraphEditor: NSObject {
 
         if  zones.count == 1 {
             commonParent = gSelecting.firstSortedGrab
-            zones        = commonParent.children
+            zones        = commonParent?.children ?? []
         }
 
-        commonParent.children.updateOrder()
+        commonParent?.children.updateOrder()
 
         if  zones.count > 1 {
             let (start, end) = zones.orderLimits()
             zones            = sortClosure(zones)
 
             zones.updateOrdering(start: start, end: end)
-            commonParent.respectOrder()
-            commonParent.children.updateOrder()
+            commonParent?.respectOrder()
+            commonParent?.children.updateOrder()
             redrawSyncRedraw()
         }
 
@@ -941,11 +942,11 @@ class ZGraphEditor: NSObject {
     
     
     func swapWithParent() {
-        let grabbed = gSelecting.firstSortedGrab
-        
+
         // swap places with parent (children are swapped)
         
         if  gSelecting.currentGrabs.count == 1,
+            let grabbed = gSelecting.firstSortedGrab,
             let  sIndex = grabbed.siblingIndex,
             let  parent = grabbed.parentZone,
             let  pIndex = parent.siblingIndex,
@@ -1197,9 +1198,8 @@ class ZGraphEditor: NSObject {
 
 
     func addBookmark() {
-        let zone = gSelecting.firstSortedGrab
-
-        if zone.databaseID != .favoritesID, !zone.isRoot {
+        if  let zone = gSelecting.firstSortedGrab,
+            zone.databaseID != .favoritesID, !zone.isRoot {
             let closure = {
                 var bookmark: Zone?
 
@@ -1463,110 +1463,111 @@ class ZGraphEditor: NSObject {
 
 
     func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: Closure?) {
-        let zone: Zone = gSelecting.firstSortedGrab
-        let parentZone = zone.parentZone
-        let complete: Closure = {
-            onCompletion?()
-        }
-
-        if zone.isRoot || zone.isTrash || parentZone == gFavoritesRoot {
-            complete() // avoid the ridiculous
-        } else if selectionOnly {
-
-            ////////////////////
-            // MOVE SELECTION //
-            ////////////////////
-
-            if extreme {
-                if  gHere.isRoot {
-                    gHere = zone // reverse what the last move out extreme did
-
-                    complete()
-                } else {
-                    let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
-
-                    zone.grab()
-                    revealZonesToRoot(from: zone) {
-                        self.revealSiblingsOf(here, untilReaching: gRoot!)
-                        complete()
-                    }
-                }
-            } else if let p = parentZone {
-                if  zone == gHere {
-                    revealParentAndSiblingsOf(zone) { iCloudCalled in
-                        self.revealSiblingsOf(zone, untilReaching: p)
-                        complete()
-                    }
-                } else {
-                    p.revealChildren()
-                    p.needChildren()
-                    p.grab()
-                    
-                    gBatches.children(.restore) { iSame in
-                        complete()
-                    }
-                }
-            } else {
-                // zone is an orphan
-                // change focus to bookmark of zone
-
-                if  let bookmark = zone.fetchedBookmark {
-                    gHere        = bookmark
-                }
-
-                complete()
+        if  let zone: Zone = gSelecting.firstSortedGrab {
+            let parentZone = zone.parentZone
+            let complete: Closure = {
+                onCompletion?()
             }
-        } else if let p = parentZone, !p.isRoot {
-
-            ///////////////
-            // MOVE ZONE //
-            ///////////////
-
-            let grandParentZone = p.parentZone
-
-            if zone == gHere && !force {
-                let grandParentName = grandParentZone?.zoneName
-                let   parenthetical = grandParentName == nil ? "" : " (\(grandParentName!))"
-
-                ////////////////////////////////////////////////////////////////////////
-                // present an alert asking if user really wants to move here leftward //
-                ////////////////////////////////////////////////////////////////////////
-
-                gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? "")\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
-                    if iStatus == .eStatusYes {
-                        self.moveOut(selectionOnly: selectionOnly, extreme: extreme, force: true, onCompletion: onCompletion)
-                    }
-                }
-            } else {
-
-                let moveOutToHere = { (iHere: Zone?) in
-                    if  let here = iHere {
-                        gHere = here
-                    }
-
-                    self.moveOut(to: gHere, onCompletion: onCompletion)
-                }
-
+            
+            if zone.isRoot || zone.isTrash || parentZone == gFavoritesRoot {
+                complete() // avoid the ridiculous
+            } else if selectionOnly {
+                
+                ////////////////////
+                // MOVE SELECTION //
+                ////////////////////
+                
                 if extreme {
                     if  gHere.isRoot {
-                        moveOut(to: gHere, onCompletion: onCompletion)
+                        gHere = zone // reverse what the last move out extreme did
+                        
+                        complete()
                     } else {
+                        let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
+                        
+                        zone.grab()
                         revealZonesToRoot(from: zone) {
-                            moveOutToHere(gRoot)
+                            self.revealSiblingsOf(here, untilReaching: gRoot!)
                             complete()
                         }
                     }
-                } else if   grandParentZone != nil {
-                    revealParentAndSiblingsOf(p) { iCloudCalled in
-                        if  grandParentZone!.spawnedBy(gHere) {
-                            self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
-                        } else {
-                            moveOutToHere(grandParentZone!)
+                } else if let p = parentZone {
+                    if  zone == gHere {
+                        revealParentAndSiblingsOf(zone) { iCloudCalled in
+                            self.revealSiblingsOf(zone, untilReaching: p)
+                            complete()
+                        }
+                    } else {
+                        p.revealChildren()
+                        p.needChildren()
+                        p.grab()
+                        
+                        gBatches.children(.restore) { iSame in
                             complete()
                         }
                     }
-                } else { // no available move
+                } else {
+                    // zone is an orphan
+                    // change focus to bookmark of zone
+                    
+                    if  let bookmark = zone.fetchedBookmark {
+                        gHere        = bookmark
+                    }
+                    
                     complete()
+                }
+            } else if let p = parentZone, !p.isRoot {
+                
+                ///////////////
+                // MOVE ZONE //
+                ///////////////
+                
+                let grandParentZone = p.parentZone
+                
+                if zone == gHere && !force {
+                    let grandParentName = grandParentZone?.zoneName
+                    let   parenthetical = grandParentName == nil ? "" : " (\(grandParentName!))"
+                    
+                    ////////////////////////////////////////////////////////////////////////
+                    // present an alert asking if user really wants to move here leftward //
+                    ////////////////////////////////////////////////////////////////////////
+                    
+                    gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? "")\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
+                        if iStatus == .eStatusYes {
+                            self.moveOut(selectionOnly: selectionOnly, extreme: extreme, force: true, onCompletion: onCompletion)
+                        }
+                    }
+                } else {
+                    
+                    let moveOutToHere = { (iHere: Zone?) in
+                        if  let here = iHere {
+                            gHere = here
+                        }
+                        
+                        self.moveOut(to: gHere, onCompletion: onCompletion)
+                    }
+                    
+                    if extreme {
+                        if  gHere.isRoot {
+                            moveOut(to: gHere, onCompletion: onCompletion)
+                        } else {
+                            revealZonesToRoot(from: zone) {
+                                moveOutToHere(gRoot)
+                                complete()
+                            }
+                        }
+                    } else if   grandParentZone != nil {
+                        revealParentAndSiblingsOf(p) { iCloudCalled in
+                            if  grandParentZone!.spawnedBy(gHere) {
+                                self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
+                            } else {
+                                moveOutToHere(grandParentZone!)
+                                complete()
+                            }
+                        }
+                    } else { // no available move
+                        complete()
+                    }
                 }
             }
         }
@@ -1583,33 +1584,34 @@ class ZGraphEditor: NSObject {
     
 
     func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
-        let zone = gSelecting.firstSortedGrab
-        let zones = gSelecting.sortedGrabs
-        let isBrowsing = !gIsEditingText
-
-        if !selectionOnly {
-            actuallyMoveInto(zones, onCompletion: onCompletion)
-        } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
-            gFocusing.maybeTravelThrough(zone, onCompletion: onCompletion)
-        } else {
-            let needReveal = !zone.showingChildren
-
-            zone.needChildren()
-            zone.revealChildren()
-
-            gBatches.children(.restore) { iSame in
-                if  zone.count > 0,
-                    let child = gInsertionsFollow ? zone.children.last : zone.children.first {
-                    child.grab()
-                    
-                    if  isBrowsing || needReveal {
-                        gControllers.signalFor(zone, regarding: .eRelayout)
+        if  let zone  = gSelecting.firstSortedGrab {
+            let zones = gSelecting.sortedGrabs
+            let isBrowsing = !gIsEditingText
+            
+            if !selectionOnly {
+                actuallyMoveInto(zones, onCompletion: onCompletion)
+            } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
+                gFocusing.maybeTravelThrough(zone, onCompletion: onCompletion)
+            } else {
+                let needReveal = !zone.showingChildren
+                
+                zone.needChildren()
+                zone.revealChildren()
+                
+                gBatches.children(.restore) { iSame in
+                    if  zone.count > 0,
+                        let child = gInsertionsFollow ? zone.children.last : zone.children.first {
+                        child.grab()
+                        
+                        if  isBrowsing || needReveal {
+                            gControllers.signalFor(zone, regarding: .eRelayout)
+                        }
                     }
+                    
+                    gFavorites.updateAllFavorites()
+                    
+                    onCompletion?()
                 }
-
-                gFavorites.updateAllFavorites()
-
-                onCompletion?()
             }
         }
     }
@@ -1776,7 +1778,7 @@ class ZGraphEditor: NSObject {
 
 
     func duplicate() {
-        let commonParent = gSelecting.firstSortedGrab.parentZone ?? gSelecting.firstSortedGrab
+        let commonParent = gSelecting.firstSortedGrab?.parentZone ?? gSelecting.firstSortedGrab
         var        zones = gSelecting.simplifiedGrabs
         var   duplicates = [Zone] ()
         var      indices = [Int] ()
@@ -1818,7 +1820,7 @@ class ZGraphEditor: NSObject {
 
 
     func reverse() {
-        var commonParent = gSelecting.firstSortedGrab.parentZone ?? gSelecting.firstSortedGrab
+        var commonParent = gSelecting.firstSortedGrab?.parentZone ?? gSelecting.firstSortedGrab
         var        zones = gSelecting.simplifiedGrabs
         for zone in zones {
             if let parent = zone.parentZone, parent != commonParent {
@@ -1828,7 +1830,7 @@ class ZGraphEditor: NSObject {
 
         if zones.count == 1 {
             commonParent = gSelecting.firstSortedGrab
-            zones        = commonParent.children
+            zones        = commonParent?.children ?? []
         }
 
         if zones.count > 1 {
@@ -1855,7 +1857,7 @@ class ZGraphEditor: NSObject {
 
             gSelecting.hasNewGrab = gSelecting.currentMoveable
 
-            commonParent.respectOrder()
+            commonParent?.respectOrder()
             redrawSyncRedraw()
         }
     }

@@ -232,7 +232,7 @@ class ZFavorites: NSObject {
 
     
     func updateCurrentFavorite(_ currentZone: Zone? = nil, reveal: Bool = false) {
-        if  let     favorite = favoriteTargetting(currentZone ?? gHere),
+        if  let     favorite = favoriteTargetting(currentZone ?? gHereMaybe),
             let       target = favorite.bookmarkTarget,
             (gHere == target || !(currentFavorite?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
             currentFavorite = favorite

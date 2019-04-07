@@ -499,7 +499,7 @@ class ZoneWidget: ZView {
             let  kind = lineKind(to: child)
             let  path = linePath(in: rect, kind: kind, isDragLine: false)
 
-            color.setStroke()
+            color?.setStroke()
             line(on: path)
         }
     }
@@ -520,8 +520,9 @@ class ZoneWidget: ZView {
             let        isEditing = textWidget.isFirstResponder // == gEditedTextWidget
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : gDefaultTextColor
 
-            if  gMathewStyleUI {
-                addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: zone.color.cgColor)
+            if  gMathewStyleUI,
+                let color = zone.color?.cgColor {
+                addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: color)
             }
 
             if  (isGrabbed || isEditing) && !gIsPrinting && !(kIsPhone && isHere) {

@@ -352,7 +352,7 @@ class ZFocusing: NSObject {
 
                     gHere = here
 
-                    grabbed.grab()
+                    grabbed?.grab()
                     atArrival(here, .eRelayout)
                 }
 
@@ -383,11 +383,12 @@ class ZFocusing: NSObject {
     }
 
 
-    func maybeTravelThrough(_ iZone: Zone, onCompletion: Closure? = nil) {
-        if     !travelThroughBookmark(iZone, onCompletion: onCompletion) {
-            if !travelThroughHyperlink(iZone) {
-                travelThroughEmail(iZone)
-            }
+    func maybeTravelThrough(_ iZone: Zone?, onCompletion: Closure? = nil) {
+        guard let zone = iZone else { onCompletion?(); return }
+
+        if  !travelThroughBookmark(zone, onCompletion: onCompletion),
+            !travelThroughHyperlink(zone) {
+            travelThroughEmail(zone)
         }
     }
 

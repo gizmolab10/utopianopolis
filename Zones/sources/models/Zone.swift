@@ -61,7 +61,7 @@ class Zone : ZRecord {
     var            decoratedName:       String  { return decoration + unwrappedName }
     var         fetchedBookmarks:       [Zone]  { return gBookmarks.bookmarks(for: self) ?? [] }
     var        isCurrentFavorite:         Bool  { return self == gFavorites.currentFavorite }
-    var         grabbedTextColor:       ZColor  { return color.darker(by: 3.0) }
+    var         grabbedTextColor:       ZColor? { return color?.darker(by: 3.0) }
     var        onlyShowRevealDot:         Bool  { return (isRootOfFavorites && showingChildren && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }
     var          dragDotIsHidden:         Bool  { return (isRootOfFavorites                    && !(widget?.isInMain ?? true)) || (kIsPhone && self == gHere) }    // always hide drag dot of favorites root
     var            hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
@@ -267,7 +267,7 @@ class Zone : ZRecord {
     }
 
 
-    var color: ZColor {
+    var color: ZColor? {
         get {
             var computed = _color
             
@@ -295,14 +295,14 @@ class Zone : ZRecord {
             var computed = newValue
 
             if  gIsDark {
-                computed = computed.inverted
+                computed = computed?.inverted
             }
 
             if  isBookmark {
                 bookmarkTarget?.color  = newValue
             } else if          _color != computed {
                 _color                 = computed
-                zoneColor              = computed.string
+                zoneColor              = computed?.string ?? ""
 
                 maybeNeedSave()
             }
