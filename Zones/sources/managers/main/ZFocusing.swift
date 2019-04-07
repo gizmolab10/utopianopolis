@@ -47,14 +47,14 @@ class ZFocusing: NSObject {
         return nil
     }
 
-
+    
     func debugDump() {
-        return
-
-        for (index, zone) in travelStack.enumerated() {
-            let isCurrentIndex = index == currentIndex
-            let prefix = isCurrentIndex ? "                   •" : ""
-            columnarReport(prefix, zone.zoneName)
+        if gDebugReport {
+            for (index, zone) in travelStack.enumerated() {
+                let isCurrentIndex = index == currentIndex
+                let prefix = isCurrentIndex ? "                   •" : ""
+                columnarReport(prefix, zone.zoneName)
+            }
         }
     }
 

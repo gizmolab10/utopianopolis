@@ -263,7 +263,7 @@ class ZOperations: NSObject {
     }
 
     func reportOnCompletionOfPerformBlock() {
-        if  gMeasureOpsPerformance, false {
+        if  gMeasureOpsPerformance, gDebugReport {
             let   duration = Int(timeSinceOpStart) * -10
             let    message = "\(Float(duration) / 10.0)"
 
