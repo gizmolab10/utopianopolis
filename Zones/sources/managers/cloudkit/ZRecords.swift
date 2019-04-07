@@ -99,8 +99,8 @@ class ZRecords: NSObject {
 
 
     func recount(_ onCompletion: IntClosure? = nil) {  // all progenyCounts for all progeny in all roots
-        hereZone         .updateCounts()
         trashZone?       .updateCounts()
+        hereZoneMaybe?   .updateCounts()
         favoritesZone?   .updateCounts()
         lostAndFoundZone?.updateCounts()
         onCompletion?(0)
@@ -778,7 +778,7 @@ class ZRecords: NSObject {
         if  zone == nil {
             zone  = Zone(record: CKRecord(recordType: kZoneType, recordID: reference.recordID), databaseID: databaseID)
 
-            zone?.fetchBeforeSave() // POTENTIALLY BAD DUMMY
+            zone?.fetchBeforeSave() // AVOID POTENTIALLY BAD DUMMY
             zone?.needFetch()
         }
 
@@ -786,7 +786,7 @@ class ZRecords: NSObject {
     }
 
 
-    func zone(for ckRecord: CKRecord) -> Zone {
+    func zone(for ckRecord: CKRecord, requireFetch: Bool = true) -> Zone {
         var     zone = maybeZoneForCKRecord(ckRecord)
 
         if let z = zone {
@@ -794,8 +794,10 @@ class ZRecords: NSObject {
         } else {
             zone = Zone(record: ckRecord, databaseID: databaseID)
 
-            zone?.fetchBeforeSave() // POTENTIALLY BAD DUMMY
-            zone?.needFetch()
+            if  requireFetch {
+                zone?.fetchBeforeSave() // POTENTIALLY BAD DUMMY
+                zone?.needFetch()
+            }
         }
 
         return zone!

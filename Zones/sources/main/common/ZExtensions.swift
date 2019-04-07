@@ -400,7 +400,7 @@ extension CKRecord {
 
 
     func maybeMarkAsFetched(_ databaseID: ZDatabaseID?) {
-        let states        = [ZRecordState.notFetched]
+        let states        = [ZRecordState.notFetched, ZRecordState.needsFetch]
         if  creationDate != nil,
             let dbID      = databaseID,
             let manager   = gRemoteStorage.cloud(for: dbID),

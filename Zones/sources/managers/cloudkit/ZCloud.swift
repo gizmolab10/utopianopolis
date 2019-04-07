@@ -216,10 +216,7 @@ class ZCloud: ZRecords {
     func detectIfRecordExists(withRecordID iCKRecordID: CKRecord.ID?, recordType: String?, mustCreate: Bool = false, onCompletion: @escaping RecordClosure) {
         let done:  RecordClosure = { (iCKRecord: CKRecord?) in
             FOREGROUND(canBeDirect: true) {
-                if  let ckRecord = iCKRecord {
-                    ckRecord.maybeMarkAsFetched(self.databaseID)
-                }
-
+                iCKRecord?.maybeMarkAsFetched(self.databaseID)
                 onCompletion(iCKRecord)
             }
         }
@@ -1158,7 +1155,7 @@ class ZCloud: ZRecords {
 
     func establishHere(_ onCompletion: IntClosure?) {
         let rootCompletion = {
-            self.hereZone = gRoot!
+            self.hereZoneMaybe = gRoot
 
             onCompletion?(0)
         }
@@ -1249,7 +1246,7 @@ class ZCloud: ZRecords {
                 record  = CKRecord(recordType: kZoneType, recordID: recordID)       // will create
             }
 
-            let           zone = self.zone(for: record!)                      // get / create
+            let           zone = self.zone(for: record!, requireFetch: false)       // get / create
             zone       .parent = nil
 
             if  zone.zoneName == nil {

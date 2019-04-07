@@ -93,7 +93,7 @@ class ZControllers: NSObject {
                 gWorkMode        = .graphMode
                 gIsReadyToShowUI = true
 
-                gHere.grab()
+                gHereMaybe?.grab()
                 gFavorites.updateAllFavorites()
                 gRemoteStorage.updateLastSyncDates()
                 gRemoteStorage.recount()
