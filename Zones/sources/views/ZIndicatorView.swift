@@ -110,7 +110,7 @@ class ZIndicatorView: ZView {
             radius         /= 2.0
         }
 
-        drawDots(surrounding: surroundRect, count: dotsCount, radius: radius, color: strokeColor)
+        drawDots(surrounding: surroundRect, count: dotsCount, radius: radius, color: strokeColor, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0))
     }
 
 }

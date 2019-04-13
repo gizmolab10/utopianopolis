@@ -1168,7 +1168,7 @@ extension ZView {
     }
 
     
-    func drawDots(surrounding rect: CGRect, count: Int, radius: Double, color: ZColor?) {
+    func drawDots(surrounding rect: CGRect, count: Int, radius: Double, color: ZColor?, startQuadrant: Double = 0.0) {
         let  bigRadius = Double(rect.size.height) / 2.0
         var   dotCount = count
         var    aHollow = false
@@ -1200,7 +1200,7 @@ extension ZView {
                     let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(iCount)
                     for index in 0 ... iCount - 1 {
                         let  increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)
-                        let startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 0.0 : 2.0 : isB ? 1.0 : 3.0)
+                        let startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 0.0 : 2.0 + startQuadrant : isB ? 1.0 : 3.0)
                         let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
                         let  dotRadius = CGFloat(bigRadius + aRadius * (isB ? 2.0 : 1.6))
                         let     offset = aRadius * (isB ? 2.1 : 1.13)
