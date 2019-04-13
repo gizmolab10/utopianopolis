@@ -106,7 +106,34 @@ class ZRecords: NSObject {
         onCompletion?(0)
     }
     
+    
+    func className(for recordType: String?) -> String? {
+        var     name = nil as String?
 
+        if  let    t = recordType {
+            switch t {
+            case     kUserType: name = "ZUser"
+            case     kZoneType: name = kZoneType
+            case    kTraitType: name = kTraitType
+            case kManifestType: name = kManifestType
+            default:            break
+            }
+        }
+
+        return name == nil ? nil : "Thoughtful." + name!
+    }
+    
+    
+    func properties(for recordType: String?) -> [String] {
+        if  let n = className(for: recordType),
+            let c = NSClassFromString(n),
+            let z = c as? ZRecord.Type {
+                return z.cloudProperties()
+        }
+        return []
+    }
+
+    
     // MARK:- registries
     // MARK:-
 

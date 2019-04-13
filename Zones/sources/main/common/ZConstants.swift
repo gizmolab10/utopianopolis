@@ -88,6 +88,7 @@ let                   kScaling = "scaling"
 let                   kCloudID = "iCloud.com.zones.Zones"
 let                  kAuthorID = "author id"
 let                  kUseCloud = "use cloud"
+let                  kUserType = CKRecord.SystemType.userRecord
 let                  kZoneType = "Zone"
 let                  kRootName = "root"
 let                  kNullLink = "no"

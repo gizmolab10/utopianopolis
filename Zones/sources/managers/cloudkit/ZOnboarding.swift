@@ -130,7 +130,7 @@ class ZOnboarding : ZOperations {
             let     recordName  = gUserRecordID {
             let     ckRecordID  = CKRecord.ID(recordName: recordName)
 
-            gEveryoneCloud?.assureRecordExists(withRecordID: ckRecordID, recordType: CKRecord.SystemType.userRecord) { (iUserRecord: CKRecord?) in
+            gEveryoneCloud?.assureRecordExists(withRecordID: ckRecordID, recordType: kUserType) { (iUserRecord: CKRecord?) in
                 if  let          record = iUserRecord {
                     let            user = ZUser(record: record, databaseID: gDatabaseID)
                     self          .user = user

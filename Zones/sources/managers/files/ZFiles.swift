@@ -17,7 +17,8 @@ import CoreFoundation
 #endif
 
 
-let gFiles = ZFiles()
+let gFiles    = ZFiles()
+let gUseFiles = false
 
 
 class ZFiles: NSObject {
@@ -210,7 +211,8 @@ class ZFiles: NSObject {
 	
 	
 	func readFile(from path: String, into databaseID: ZDatabaseID) {
-		if  databaseID      != .favoritesID,
+		if  gUseFiles,
+            databaseID      != .favoritesID,
             let       cloud  = gRemoteStorage.cloud(for: databaseID),
 			let       index  = databaseID.index {
 			isReading[index] = true

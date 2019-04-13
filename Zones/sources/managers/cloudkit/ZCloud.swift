@@ -233,7 +233,9 @@ class ZCloud: ZRecords {
         } else if cloudUnavailable {
             done(nil)
         } else {
-            reliableFetch(needed: [ckRecordID], properties: ZUser.cloudProperties()) { iCKRecords in
+            let p = properties(for: recordType)
+
+            reliableFetch(needed: [ckRecordID], properties: p) { iCKRecords in
                 if iCKRecords.count != 0 {
                     done(iCKRecords[0])
                 } else if !mustCreate {

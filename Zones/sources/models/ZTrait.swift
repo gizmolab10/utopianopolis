@@ -96,7 +96,7 @@ class ZTrait: ZRecord {
     }
 
 
-    class func cloudProperties() -> [String] {
+    override class func cloudProperties() -> [String] {
         return[#keyPath(type),
                #keyPath(data),
                #keyPath(text),

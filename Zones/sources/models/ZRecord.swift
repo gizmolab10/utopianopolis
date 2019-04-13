@@ -182,6 +182,7 @@ class ZRecord: NSObject {
     func unregister() { cloud?.unregisterZRecord(self) }
     func hasMissingChildren() -> Bool { return true }
     func hasMissingProgeny()  -> Bool { return true }
+    class func cloudProperties() -> [String] { return [] }
 
 
     // MARK:- properties

@@ -188,7 +188,7 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    class func cloudProperties() -> [String] {
+    override class func cloudProperties() -> [String] {
         return [#keyPath(parent),
                 #keyPath(zoneName),
                 #keyPath(zoneLink),
