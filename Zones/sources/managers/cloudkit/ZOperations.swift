@@ -32,9 +32,9 @@ enum ZOperationID: Int {
     case oCloud
     case oReadFile           // LOCAL
     case oFound              // LOCAL
+    case oFavorites
     case oRoots
     case oManifest
-    case oFavorites
     case oHere
     case oFetchNew
 
