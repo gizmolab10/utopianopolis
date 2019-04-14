@@ -217,7 +217,7 @@ class ZFiles: NSObject {
 			let       index  = databaseID.index {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
-			let  keys: types = [.date, .lost, .graph, .trash, .destroy, .manifest, .favorites, .bookmarks ]
+			let  keys: types = [.date, .manifest, .lost, .graph, .trash, .destroy, .favorites, .bookmarks ]
 			
             FOREGROUND {
                 do {
@@ -235,21 +235,25 @@ class ZFiles: NSObject {
                                         cloud.lastSyncDate = date
                                     }
                                 case .manifest:
-                                    if  let    subDict = value as? ZStorageDictionary {
-                                        let   manifest = ZManifest(dict: subDict, in: databaseID)
-                                        cloud.manifest = manifest
+                                    if  cloud.manifest == nil,
+                                        let    subDict  = value as? ZStorageDictionary {
+                                        let   manifest  = ZManifest(dict: subDict, in: databaseID)
+                                        cloud.manifest  = manifest
                                     }
                                 case .bookmarks:
                                     if let array = value as? [ZStorageDictionary] {
                                         for subDict in array {
-                                            let zone = Zone(dict: subDict, in: databaseID)
-                                            
-                                            gBookmarks.registerBookmark(zone)
+                                            if  !databaseID.isDeleted(dict: subDict) {
+                                                let zone = Zone(dict: subDict, in: databaseID)
+                                                
+                                                gBookmarks.registerBookmark(zone)
+                                            }
                                         }
                                     }
                                 default:
-                                    if  let subDict = value as? ZStorageDictionary {
-                                        let    zone = Zone(dict: subDict, in: databaseID)
+                                    if  let subDict = value as? ZStorageDictionary,
+                                        !databaseID.isDeleted(dict: subDict) {
+                                        let zone = Zone(dict: subDict, in: databaseID)
                                         
                                         zone.updateRecordName(for: key)
                                         

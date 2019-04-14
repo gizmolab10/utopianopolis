@@ -812,7 +812,8 @@ class ZCloud: ZRecords {
                             }
                         }
                     } else if let ckRecord = iRecord,
-                        !retrieved.contains(ckRecord) {
+                        !retrieved.contains(ckRecord),
+                        !ckRecord.isDeleted(dbID: self.databaseID) {
                         retrieved.append(ckRecord)
                         self.clearRecordName(ckRecord.recordID.recordName, for:[.requiresFetchBeforeSave, .needsFetch])
                     }

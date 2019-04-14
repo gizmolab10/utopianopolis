@@ -524,12 +524,12 @@ class ZRecord: NSObject {
             return nil
         }
     }
-
+    
 
     func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
-        databaseID   = iDatabaseID
-        let     name = dict[.recordName] as? String
         var ckRecord = CKRecord(recordType: iRecordType)
+        let     name = dict[.recordName] as? String
+        databaseID   = iDatabaseID
 
         if  name == nil || gRemoteStorage.zRecords(for: iDatabaseID)?.maybeCKRecordForRecordName(name) == nil {
             if  let recordName = name {
@@ -549,7 +549,7 @@ class ZRecord: NSObject {
                 }
             }
 
-            record = ckRecord    // any subsequent changes into any of this object's cloudProperties will fetch / save this record from / to iCloud
+            record = ckRecord    // any subsequent changes into any of this object's cloudProperties will save this record to iCloud
 
             if  let needs = dict[.needs] as? String {
                 addNeedsFromString(needs)

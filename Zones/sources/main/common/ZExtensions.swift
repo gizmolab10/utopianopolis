@@ -365,6 +365,11 @@ extension CKRecord {
         self.init(recordType: kZoneType, recordID: CKRecord.ID(recordName: name))
     }
 
+    
+    func isDeleted(dbID: ZDatabaseID) -> Bool {
+        return gRemoteStorage.cloud(for: dbID)?.manifest?.deleted?.contains(recordID.recordName) ?? false
+    }
+
 
     @discardableResult func copy(to iCopy: CKRecord?, properties: [String]) -> Bool {
         var  altered = false

@@ -122,19 +122,26 @@ enum ZDatabaseID: String {
 
     static func create(from scope: CKDatabase.Scope) -> ZDatabaseID? {
         switch scope {
-        case .public:  return ZDatabaseID.everyoneID
-        case .private: return ZDatabaseID.mineID
+        case .public:  return .everyoneID
+        case .private: return .mineID
         default:       return nil
         }
     }
 
     static func create(from id: String) -> ZDatabaseID? {
         switch id {
-        case "e": return ZDatabaseID.everyoneID
-        case "m": return ZDatabaseID.mineID
+        case "e": return .everyoneID
+        case "m": return .mineID
         default:  return nil
         }
     }
+    
+    func isDeleted(dict: ZStorageDictionary) -> Bool {
+        let    name = dict[.recordName] as? String
+        
+        return name == nil ? false : gRemoteStorage.cloud(for: self)?.manifest?.deleted?.contains(name!) ?? false
+    }
+    
 }
 
 

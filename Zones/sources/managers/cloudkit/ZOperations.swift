@@ -30,11 +30,11 @@ enum ZOperationID: Int {
     // startup
 
     case oCloud
+    case oManifest
     case oReadFile           // LOCAL
     case oFound              // LOCAL
     case oFavorites
     case oRoots
-    case oManifest
     case oHere
     case oFetchNew
 
