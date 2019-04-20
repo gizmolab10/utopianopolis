@@ -63,18 +63,11 @@ class ZShortcutsController: ZGenericTableController {
             g.removeFromSuperview()
             c.addSubview(g)
 
+            g.zlayer.backgroundColor = kClearColor.cgColor
+
             g.snp.makeConstraints { make in
                 make.top.bottom.left.right.equalTo(c)
             }
-            
-            g.zlayer.backgroundColor = kClearColor.cgColor
-            #if os(OSX)
-            for view in g.subviews {
-                if  type(of: view) == ZLineView.self {
-                    view.zlayer.backgroundColor = kGridColor
-                }
-            }
-            #endif
         }
     }
     
@@ -90,7 +83,7 @@ class ZShortcutsController: ZGenericTableController {
             switch key {
             case "?", "/":         gGraphEditor.showHideKeyboardShortcuts()
             case "a": if SPECIAL { gApplication.showHideAbout() }
-            case "p":              clipView?.printView()
+            case "p":              view.printView()
             case "r": if COMMAND { sendEmailBugReport() }
             case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
 
@@ -286,7 +279,7 @@ class ZShortcutsController: ZGenericTableController {
         "     \tI          \t[un]color the text",
         "     \tL          \t-> lowercase",
         "     \tO          \timport from a Thoughtful file",
-        "     \tP          \tprint the graph",
+        "     \tP          \tprint the topmost window",
         "     \tR          \treverse order of children",
         "     \tS          \tsave to a Thoughtful file",
         "     \tT          \tswap selected idea with parent",
@@ -320,7 +313,7 @@ class ZShortcutsController: ZGenericTableController {
         "     \tSHIFT      \t[un]extend selection",
         "     \tCOMMAND    \tmove entire graph",
         "",
-        "uSHIFT + ARROW KEY (+ COMMAND -> all)",
+        "uARROW KEY + SHIFT (+ COMMAND -> all)",
         "     \tRIGHT      \treveal children",
         "     \tLEFT       \thide children",
         "     \tvertical   \textend selection",

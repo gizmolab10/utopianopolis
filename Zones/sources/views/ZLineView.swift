@@ -11,4 +11,14 @@ import Foundation
 
 class ZLineView: ZView {
     
+    override func draw(_ iDirtyRect: CGRect) {
+        super.draw(iDirtyRect)
+        
+        kGridColor.setFill()
+        
+        let path = NSBezierPath(rect: bounds)
+
+        path.fill()
+    }
+
 }

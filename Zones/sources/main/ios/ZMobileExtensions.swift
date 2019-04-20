@@ -370,6 +370,13 @@ extension UITableView {
 }
 
 
+extension ZoneDragView {
+    
+    func updateMagnification(with event: ZEvent) {}
+    
+}
+
+
 extension UIWindow {
 
     var contentView: UIView? { return self }

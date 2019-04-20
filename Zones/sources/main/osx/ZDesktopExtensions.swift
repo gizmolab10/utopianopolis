@@ -395,7 +395,7 @@ extension NSView {
         printInfo.updateFromPMPageFormat()
         NSPrintOperation(view: self, printInfo: printInfo).run()
     }
-    
+        
 }
 
 
@@ -417,6 +417,30 @@ extension ZStackableView {
     
     func turnOnTitleButton() {
         titleButton?.state = ZControl.StateValue.on
+    }
+
+}
+
+
+extension ZoneDragView {
+    
+    func updateMagnification(with event: ZEvent) {
+        let     deltaY = event.deltaY
+        let adjustment = exp2(deltaY / 100.0)
+        gScaling      *= Double(adjustment)
+    }
+    
+
+    override func scrollWheel(with event: ZEvent) {
+        if  event.modifierFlags.contains(.command) {
+            updateMagnification(with: event)
+        } else {
+            let     multiply = CGFloat(1.5 * gScaling)
+            gScrollOffset.x += event.deltaX * multiply
+            gScrollOffset.y += event.deltaY * multiply
+        }
+        
+        gGraphController?.layoutForCurrentScrollOffset()
     }
 
 }

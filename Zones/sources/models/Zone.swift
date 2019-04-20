@@ -78,6 +78,7 @@ class Zone : ZRecord {
     var            isInFavorites:         Bool  { return root?.isRootOfFavorites    ?? false }
     var         isInLostAndFound:         Bool  { return root?.isRootOfLostAndFound ?? false }
     var     isRootOfLostAndFound:         Bool  { return recordName == kLostAndFoundName }
+    var            isSpecialRoot:         Bool  { return isRootOfLostAndFound || isRootOfFavorites || isTrash }
     var           spawnedByAGrab:         Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
     var            isDoubleClick:         Bool  { return timeOfLastDragDotClick?.timeIntervalSinceNow ?? -10.0 > -1.8 }
@@ -336,8 +337,8 @@ class Zone : ZRecord {
         }
 
         set {
-            if  let b = bookmarkTarget {
-                b.colorized = newValue
+            if  let          b = bookmarkTarget {   // changing a bookmark changes its target
+                b.colorized    = newValue           // when drawn, a bookmark gets its color from its target
             } else {
                 var attributes = zoneAttributes ?? ""
                 let oldValue   = attributes.contains(kInvertColorize)
@@ -1487,10 +1488,10 @@ class Zone : ZRecord {
         let   marks = ".)>"
         let indices = "A1ai"
         let modulus = indices.count
-        let  margin = " " * (modulus * iInset)
+        let  margin = " " * (4 * iInset)
         let    type = ZOutlineLevelType(rawValue: indices.character(at: iInset % modulus))
         let  letter = String.character(at: iIndex, for: type!)
-        var  string = margin + letter + marks.character(at: iInset / modulus) + " " + unwrappedName + kReturn
+        var  string = margin + letter + marks.character(at: (iInset / modulus) % marks.count) + " " + unwrappedName + kReturn
 
         for (index, child) in children.enumerated() {
             string += child.outlineString(for: iInset + 1, at: index)

@@ -221,8 +221,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             let    COMMAND = gesture.isCommandDown
             let      SHIFT = gesture.isShiftDown
             let textWidget = gEditedTextWidget
+            var       kind = ZSignalKind.eDatum
             var     inText = false
-
+            
             textWidget?.widgetZone?.deferWrite()
 
             if  textWidget != nil {
@@ -232,39 +233,38 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             }
 
             if !inText {
-                if  let   widget = detectWidget(gesture) {
-                    if  let zone = widget.widgetZone,
-                        let dot  = detectDotIn(widget, gesture) {
+                if  let    widget = detectWidget(gesture) {
+                    if  let  zone = widget.widgetZone,
+                        let   dot = detectDotIn(widget, gesture) {
+                        kind = .eDetails
 
                         if  dot.isReveal {
                             gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: COMMAND)
                         } else {
                             zone.dragDotClicked(COMMAND, SHIFT)
                         }
-
-                        gControllers.signalFor(nil, regarding: .eDetails)
                     } else {
+                        kind = .eSearch
+
                         gTextEditor.stopCurrentEdit()
                         widget.widgetZone?.grab()
-                        gControllers.signalFor(nil, regarding: .eSearch)
                     }
                 } else { // click on background
                     gTextEditor.stopCurrentEdit()
                     gHereMaybe?.grab() // safe version of here prevent crash early in launch
-                    
 
                     if  let i = indicatorView, !i.isHidden {
                         let gradientView     = i.gradientView
                         let gradientLocation = gesture.location(in: gradientView)
                         
-                        if  gradientView.bounds.contains(gradientLocation) {              // if in indicatorView
+                        if  gradientView.bounds.contains(gradientLocation) {    // if in indicatorView
                             let isConfinement = indicatorView?.confinementRect.contains(gradientLocation) ?? false
-                            toggleMode(isDirection: !isConfinement)                                  //  if in confinement symbol, change confinement; else, change direction
+                            toggleMode(isDirection: !isConfinement)             // if in confinement symbol, change confinement; else, change direction
                         }
                     }
-
-                    gControllers.signalFor(nil, regarding: .eDatum)
                 }
+
+                gControllers.signalFor(nil, regarding: kind)
             }
 
             restartGestureRecognition()

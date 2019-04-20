@@ -62,6 +62,7 @@ class ZGraphEditor: NSObject {
         case eHelp
         case eSort
         case eFind
+        case eTint
         case eChild
         case eAlter
         case eFiles
@@ -256,16 +257,17 @@ class ZGraphEditor: NSObject {
 
 
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
-        let alterers = "ehiltuw\r" + kMarkingCharacters
+        let alterers = "ehltuw\r" + kMarkingCharacters
         let  COMMAND = flags.isCommand
         let  CONTROL = flags.isControl
 
-        if  alterers.contains(key) {             return .eAlter
+        if  alterers.contains(key) {    return .eAlter
         } else {
             switch key {
             case "=":                   return .eTravel
             case "?":                   return .eHelp
             case "f":                   return .eFind
+            case "i":                   return .eTint
             case "m":                   return .eCloud
             case "z":                   return .eUndo
             case "#", "r":              return .eSort
@@ -290,21 +292,23 @@ class ZGraphEditor: NSObject {
         var valid = !gIsEditingText
 
         if  valid {
-            let   undo = undoManager
-            let      s = gSelecting
-            let  mover = s.currentMoveable
-            let wGrabs = s.writableGrabsCount
-            let  paste = s.pasteableZones.count
-            let  grabs = s.currentGrabs  .count
-            let  shown = s.currentGrabsHaveVisibleChildren
-            let  write = mover.userCanWrite
-            let   sort = mover.userCanMutateProgeny
-            let parent = mover.userCanMove
+            let    undo = undoManager
+            let  select = gSelecting
+            let  wGrabs = select.writableGrabsCount
+            let   paste = select.pasteableZones.count
+            let   grabs = select.currentGrabs  .count
+            let   shown = select.currentGrabsHaveVisibleChildren
+            let   mover = select.currentMoveable
+            let canTint = mover.isSpecialRoot || mover.bookmarkTarget?.isSpecialRoot ?? false
+            let   write = mover.userCanWrite
+            let    sort = mover.userCanMutateProgeny
+            let  parent = mover.userCanMove
 
             switch type {
             case .eParent:    valid =               parent
             case .eChild:     valid =               sort
             case .eAlter:     valid =               write
+            case .eTint:      valid =  canTint   || write
             case .ePaste:     valid =  paste > 0 && write
             case .eUseGrabs:  valid = wGrabs > 0 && write
             case .eMultiple:  valid =  grabs > 1

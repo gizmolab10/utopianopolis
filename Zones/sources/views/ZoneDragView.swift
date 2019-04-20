@@ -43,30 +43,6 @@ class ZoneDragView: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func updateMagnification(with event: ZEvent) {
-        #if os(OSX)
-            let      deltaY  = event.deltaY
-            let  adjustment  = exp2(deltaY / 100.0)
-            gScaling        *= Double(adjustment)
-        #endif
-    }
-
-
-    #if os(OSX)
-        override func scrollWheel(with event: ZEvent) {
-            if  event.modifierFlags.contains(.command) {
-                updateMagnification(with: event)
-            } else {
-                let     multiply = CGFloat(1.5 * gScaling)
-                gScrollOffset.x += event.deltaX * multiply
-                gScrollOffset.y += event.deltaY * multiply
-            }
-
-            gGraphController?.layoutForCurrentScrollOffset()
-        }
-    #endif
-
-
     func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
         if  let e = gGraphController {
             return gestureRecognizer == e.clickGesture && otherGestureRecognizer == e.movementGesture
