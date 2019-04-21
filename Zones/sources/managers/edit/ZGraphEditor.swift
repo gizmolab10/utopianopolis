@@ -103,7 +103,7 @@ class ZGraphEditor: NSObject {
                     case "d":      tearApartCombine(OPTION, editedZone)
                     case "f":      search(OPTION)
                     case "i":      toggleColorized()
-                    case "p":      gHere.widget?.printView()
+                    case "p":      printCurrentFocus()
                     case "?":      showHideKeyboardShortcuts()
                     case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
                     case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
@@ -148,7 +148,7 @@ class ZGraphEditor: NSObject {
                     case "m":      orderByLength(OPTION)
                     case "n":      alphabetize(OPTION)
                     case "o":      if SPECIAL { gFiles.showInFinder() } else { gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() } }
-                    case "p":      gHere.widget?.printView()
+                    case "p":      printCurrentFocus()
                     case "q":      gApplication.terminate(self)
                     case "r":      if SPECIAL { sendEmailBugReport() } else { reverse() }
                     case "s":      gFiles.exportToFile(asOutline: OPTION, for: gHere)

@@ -450,7 +450,6 @@ extension NSWindow {
 
     @IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .Preferences)?.toggleAction(self) }
     @IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
-    @IBAction func printHere         (_ sender:      Any?) { gHere.widget?.printView() }
     @IBAction func copy              (_ iItem: ZMenuItem?) { gGraphEditor.copyToPaste() }
     @IBAction func cut               (_ iItem: ZMenuItem?) { gGraphEditor.delete() }
     @IBAction func delete            (_ iItem: ZMenuItem?) { gGraphEditor.delete() }

@@ -29,6 +29,7 @@ extension NSObject {
     func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
     func        columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
     func           redrawGraph(_ onCompletion: Closure? = nil)  { gControllers.signalFor(nil, regarding: .eRelayout, onCompletion: onCompletion) }
+    func     printCurrentFocus()                                { gHere.widget?.printView() }
 
 
     func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {
@@ -129,7 +130,7 @@ extension NSObject {
         "mailto:sand@gizmolab.com".openAsURL()
     }
     
-
+    
     // MARK:- bookmarks
     // MARK:-
 
