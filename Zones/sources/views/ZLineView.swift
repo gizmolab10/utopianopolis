@@ -6,7 +6,12 @@
 //  Copyright © 2019 Zones. All rights reserved.
 //
 
-import Foundation
+
+#if os(OSX)
+import AppKit
+#elseif os(iOS)
+import UIKit
+#endif
 
 
 class ZLineView: ZView {
@@ -16,7 +21,7 @@ class ZLineView: ZView {
         
         kGridColor.setFill()
         
-        let path = NSBezierPath(rect: bounds)
+        let path = ZBezierPath(rect: bounds)
 
         path.fill()
     }

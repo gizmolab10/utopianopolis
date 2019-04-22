@@ -202,6 +202,7 @@
 		A7D947DF21EC127E00B7DBFC /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
 		A7D947E021EC141F00B7DBFC /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
 		A7D947E121EC142000B7DBFC /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
+		A7F7C42E226D343400D52637 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F7C42D226D343400D52637 /* CloudKit.framework */; };
 		A7FC59B92262798A005280D2 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485732256AAAF00F54C0C /* SnapKit.framework */; };
 		A7FC59BA2262798A005280D2 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485732256AAAF00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -380,6 +381,7 @@
 		A7988AD0222B69AE00256A71 /* ZGradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGradientView.swift; sourceTree = "<group>"; };
 		A7C96E392218838A00986631 /* ZIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIndicatorView.swift; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7F7C42D226D343400D52637 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -396,6 +398,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7FC59B92262798A005280D2 /* SnapKit.framework in Frameworks */,
+				A7F7C42E226D343400D52637 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -422,6 +425,7 @@
 		0C09A7D81FE86FCC00F3D736 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A7F7C42D226D343400D52637 /* CloudKit.framework */,
 				A71485952256D13A00F54C0C /* iOS */,
 				A71485982256D15200F54C0C /* OSX */,
 				A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */,
@@ -864,7 +868,7 @@
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Push = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.Sandbox = {
 								enabled = 1;
