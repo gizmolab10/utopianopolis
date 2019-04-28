@@ -163,9 +163,6 @@
 		A71485522255486800F54C0C /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77758922207BCC500C37B49 /* ZToggleButton.swift */; };
 		A71485532255487A00F54C0C /* ZIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZIndicatorView.swift */; };
 		A71485542255488A00F54C0C /* ZGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7988AD0222B69AE00256A71 /* ZGradientView.swift */; };
-		A714858A2256B34500F54C0C /* SnapKitFatty.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485852256AC6000F54C0C /* SnapKitFatty.framework */; };
-		A714858B2256B34500F54C0C /* SnapKitFatty.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485852256AC6000F54C0C /* SnapKitFatty.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A71485B52256D16C00F54C0C /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; };
 		A71485B62256D1A200F54C0C /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; };
 		A71485B72256D1A200F54C0C /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A717BF482251332D004F7993 /* NSPanel+ZPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = A717BF472251332D004F7993 /* NSPanel+ZPanel.m */; };
@@ -205,6 +202,9 @@
 		A7F7C42E226D343400D52637 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F7C42D226D343400D52637 /* CloudKit.framework */; };
 		A7FC59B92262798A005280D2 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485732256AAAF00F54C0C /* SnapKit.framework */; };
 		A7FC59BA2262798A005280D2 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485732256AAAF00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A7FDB3DD2276459500033337 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7FDB3DC2276459500033337 /* CloudKit.framework */; };
+		A7FDB3DF227648B800033337 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; };
+		A7FDB3E0227648B800033337 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -229,13 +229,6 @@
 			remoteGlobalIDString = A714857B2256AB4D00F54C0C;
 			remoteInfo = SnapKitFatty;
 		};
-		A714858C2256B34500F54C0C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = A714857A2256AB4D00F54C0C;
-			remoteInfo = SnapKitFatty;
-		};
 		A7FC59BB2262798B005280D2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */;
@@ -257,17 +250,6 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A7D3C24221F83B2F00B64B83 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				A714858B2256B34500F54C0C /* SnapKitFatty.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A7FC59BD2262798B005280D2 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -275,6 +257,17 @@
 			dstSubfolderSpec = 10;
 			files = (
 				A7FC59BA2262798A005280D2 /* SnapKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7FDB3E1227648B800033337 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A7FDB3E0227648B800033337 /* SnapKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -382,6 +375,7 @@
 		A7C96E392218838A00986631 /* ZIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIndicatorView.swift; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7F7C42D226D343400D52637 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		A7FDB3DC2276459500033337 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -406,8 +400,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A714858A2256B34500F54C0C /* SnapKitFatty.framework in Frameworks */,
-				A71485B52256D16C00F54C0C /* SnapKit.framework in Frameworks */,
+				A7FDB3DD2276459500033337 /* CloudKit.framework in Frameworks */,
+				A7FDB3DF227648B800033337 /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,6 +419,7 @@
 		0C09A7D81FE86FCC00F3D736 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A7FDB3DC2276459500033337 /* CloudKit.framework */,
 				A7F7C42D226D343400D52637 /* CloudKit.framework */,
 				A71485952256D13A00F54C0C /* iOS */,
 				A71485982256D15200F54C0C /* OSX */,
@@ -829,12 +824,11 @@
 				0CA04B451D2ECF41001892E5 /* Sources */,
 				0CA04B461D2ECF41001892E5 /* Frameworks */,
 				0CA04B471D2ECF41001892E5 /* Resources */,
-				A7D3C24221F83B2F00B64B83 /* Embed Frameworks */,
+				A7FDB3E1227648B800033337 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				A714858D2256B34500F54C0C /* PBXTargetDependency */,
 			);
 			name = iPad;
 			productName = PadZones;
@@ -1203,11 +1197,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		A714858D2256B34500F54C0C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = SnapKitFatty;
-			targetProxy = A714858C2256B34500F54C0C /* PBXContainerItemProxy */;
-		};
 		A7FC59BC2262798B005280D2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SnapKit;
