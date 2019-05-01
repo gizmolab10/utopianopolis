@@ -233,6 +233,7 @@ class ZFocusing: NSObject {
 
         focus {
             gHere.grab()
+            gFavorites.updateCurrentFavorite()
             atArrival()
         }
     }
