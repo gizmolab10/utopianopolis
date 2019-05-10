@@ -31,7 +31,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     var      rubberbandPreGrabs = [Zone] ()
     var     priorScrollLocation =  CGPoint.zero
     var         rubberbandStart =  CGPoint.zero
-    let               doneState : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
+    let              doneStates : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
     var            clickGesture :  ZGestureRecognizer?
     var           moveUpGesture :  ZGestureRecognizer?
     var         movementGesture :  ZGestureRecognizer?
@@ -54,28 +54,39 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
         }
         
         indicatorView?.setupGradientView()
+    }
 
-        #if os(OSX)
+    #if os(OSX)
+    
+    override func platformSetup() {
         guard let lighten = CIFilter(name: "CIColorControls") else { return }
         lighten.setDefaults()
         lighten.setValue(1, forKey: "inputBrightness")
         spinner?.contentFilters = [lighten]
-        #endif
     }
+    
+    #elseif os(iOS)
+    
+    @IBOutlet weak var keyInput: ZKeyInput?
+    
+    override func platformSetup() {
+        keyInput?.becomeFirstResponder()
+    }
+    
+    #endif
 
 
     // MARK:- gestures
     // MARK:-
 
+    
+    func restartGestureRecognition() { editorView?.gestureHandler = self }
+    func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
+
 
     func clear() {
         editorRootWidget   .widgetZone = nil
         favoritesRootWidget.widgetZone = nil
-    }
-
-    
-    func restartGestureRecognition() {
-        editorView?.gestureHandler = self
     }
     
     
@@ -163,7 +174,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                 if iKind == .eRelayout {
                     gWidgets.clearRegistry()
                 }
-
+                
                 layoutForCurrentScrollOffset()
                 layoutRootWidget(for: iSignalObject, iKind, inMainGraph: true)
                 layoutRootWidget(for: iSignalObject, iKind, inMainGraph: false)
@@ -336,10 +347,10 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     
     
     func dragMaybeStopEvent(_ iGesture: ZGestureRecognizer?) {
-        if  dragEvent(iGesture) {
+        if  dragDropMaybe(iGesture) {
             cleanupAfterDrag()
             
-            if  doneState.contains(iGesture!.state) {
+            if  isDoneGesture(iGesture) {
                 gControllers.signalFor(nil, regarding: .ePreferences) // so color well gets updated
                 restartGestureRecognition()
             }
@@ -382,7 +393,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     }
 
 
-    func dragEvent(_ iGesture: ZGestureRecognizer?) -> Bool {
+    func dragDropMaybe(_ iGesture: ZGestureRecognizer?) -> Bool {
         if  let draggedZone       = gDraggedZone {
             if  draggedZone.userCanMove,
                 let (isMain, dropNearest, location) = widgetNearest(iGesture) {
@@ -403,7 +414,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                 let    spawnCycle = dropZone?.spawnCycle ?? false
                 let        isNoop = dropIsGrabbed || spawnCycle || (sameIndex && dropIsParent) || index < 0
                 let         prior = gDragDropZone?.widget
-                let       dropNow = doneState.contains(iGesture!.state)
+                let       dropNow = isDoneGesture(iGesture)
                 gDragDropIndices  = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
                 gDragDropZone     = isNoop || dropNow ? nil : dropZone
                 gDragRelation     = isNoop || dropNow ? nil : relation

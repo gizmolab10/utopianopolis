@@ -64,7 +64,7 @@ public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
 public protocol ZNullProtocol {}
 
 
-let      gHighlightHeightOffset = CGFloat(3.0)
+let      gHighlightHeightOffset = CGFloat(-3.0)
 let             gVerticalWeight = -1.0
 var windowKeys: [UIKeyCommand]?
 
@@ -108,13 +108,12 @@ extension UIKeyCommand {
     }
 
     var key: String? {
-        if  var working = input,
-            working.hasPrefix("UIKeyInput") {
-            working = String(working.dropFirst(10))
-
-            if working.count == 1 {
-                return working.character(at: 0)
+        if  var working = input {
+            if  working.hasPrefix("UIKeyInput") {
+                working = String(working.dropFirst(10))
             }
+
+            return working.character(at: 0)
         }
         
         return nil
@@ -278,12 +277,12 @@ extension UIView {
             clearGestures()
 
             if let e = newValue {
-                e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZGraphController      .clickEvent), clicksRequired: 1)
-                e.moveUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZGraphController     .moveUpEvent), direction: .up,    touchesRequired: 2)
-                e.moveDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZGraphController   .moveDownEvent), direction: .down,  touchesRequired: 2)
-                e.moveLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZGraphController   .moveLeftEvent), direction: .left,  touchesRequired: 2)
-                e.moveRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZGraphController  .moveRightEvent), direction: .right, touchesRequired: 2)
-                e.movementGesture  = createDragGestureRecognizer (e, action: #selector(ZGraphController.dragGestureEvent))
+                e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZGraphController      .clickEvent),                     clicksRequired: 1)
+                e.moveUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZGraphController     .moveUpEvent), direction: .up,    touchesRequired: 1)
+                e.moveDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZGraphController   .moveDownEvent), direction: .down,  touchesRequired: 1)
+                e.moveLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZGraphController   .moveLeftEvent), direction: .left,  touchesRequired: 1)
+                e.moveRightGesture = createSwipeGestureRecognizer(e, action: #selector(ZGraphController  .moveRightEvent), direction: .right, touchesRequired: 1)
+//                e.movementGesture  = createDragGestureRecognizer (e, action: #selector(ZGraphController.dragGestureEvent))
                 gDraggedZone       = nil
             }
         }
@@ -392,14 +391,14 @@ extension UIWindow {
             windowKeys                              = [UIKeyCommand] ()
             let                             handler = #selector(UIWindow.keyHandler)
             let                              noMods = UIKeyModifierFlags(rawValue: 0)
-            let                         shiftOption = UIKeyModifierFlags(rawValue: UIKeyModifierFlags.alternate.rawValue + UIKeyModifierFlags.shift.rawValue)
-            let                       commandOption = UIKeyModifierFlags(rawValue: UIKeyModifierFlags.alternate.rawValue + UIKeyModifierFlags.command.rawValue)
-            let                        commandShift = UIKeyModifierFlags(rawValue: UIKeyModifierFlags    .shift.rawValue + UIKeyModifierFlags.command.rawValue)
+            let                       COMMAND_SHIFT = UIKeyModifierFlags(rawValue: UIKeyModifierFlags  .shift.rawValue + UIKeyModifierFlags  .command.rawValue)
+            let                        OPTION_SHIFT = UIKeyModifierFlags(rawValue: UIKeyModifierFlags  .shift.rawValue + UIKeyModifierFlags.alternate.rawValue)
+            let                             SPECIAL = UIKeyModifierFlags(rawValue: UIKeyModifierFlags.command.rawValue + UIKeyModifierFlags.alternate.rawValue)
             let mods: [String : UIKeyModifierFlags] = [""                :  noMods,
                                                        "option "         : .alternate,
-                                                       "option shift "   :  shiftOption,
-                                                       "command shift "  :  commandShift,
-                                                       "command option " :  commandOption,
+                                                       "option shift "   :  OPTION_SHIFT,
+                                                       "command shift "  :  COMMAND_SHIFT,
+                                                       "command option " :  SPECIAL,
                                                        "command "        : .command,
                                                        "shift "          : .shift]
             let pairs:             [String: String] = ["up arrow"        : UIKeyCommand.inputUpArrow,
@@ -473,6 +472,10 @@ extension ZoneTextWidget {
         return true
     }
 
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        gTextEditor.stopCurrentEdit()
+    }
+    
     func deselectAllText() {}
 
 }
@@ -615,6 +618,11 @@ extension ZTextEditor {
     var string: String { return text }
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {}
 
+    func fullResign()  {
+        assignAsFirstResponder (nil) // ios broken?
+        gGraphController?.keyInput?.becomeFirstResponder()
+    }
+
 }
 
 
@@ -698,8 +706,9 @@ extension ZGraphController {
     @objc func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(up: false) }
     @objc func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(out: true)  { gSelecting.updateAfterMove() } }
     @objc func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(out: false) { gSelecting.updateAfterMove() } }
-    
+        
 }
+
 
 
 extension ZGraphEditor {

@@ -671,6 +671,9 @@ extension ZoneTextWidget {
 extension ZTextEditor {
     
     
+    func fullResign()  { assignAsFirstResponder (nil) }
+
+    
     override func doCommand(by selector: Selector) {
         switch selector {
         case #selector(insertNewline):       stopCurrentEdit()

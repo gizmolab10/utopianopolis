@@ -12,8 +12,10 @@ import CloudKit
 
 #if os(OSX)
     import Cocoa
+    var gTextOffset: CGFloat?
 #elseif os(iOS)
     import UIKit
+var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 #endif
 
 

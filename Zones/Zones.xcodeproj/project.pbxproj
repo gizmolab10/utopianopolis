@@ -205,6 +205,8 @@
 		A7FDB3DD2276459500033337 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7FDB3DC2276459500033337 /* CloudKit.framework */; };
 		A7FDB3DF227648B800033337 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; };
 		A7FDB3E0227648B800033337 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A7FDB3E32276531D00033337 /* ZKeyInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FDB3E22276531D00033337 /* ZKeyInput.swift */; };
+		A7FDB3E42276533E00033337 /* ZKeyInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FDB3E22276531D00033337 /* ZKeyInput.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -374,8 +376,10 @@
 		A7988AD0222B69AE00256A71 /* ZGradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGradientView.swift; sourceTree = "<group>"; };
 		A7C96E392218838A00986631 /* ZIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIndicatorView.swift; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7F5D691227E6AEE009FB225 /* data flow.graffle */ = {isa = PBXFileReference; lastKnownFileType = file; path = "data flow.graffle"; sourceTree = "<group>"; };
 		A7F7C42D226D343400D52637 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		A7FDB3DC2276459500033337 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
+		A7FDB3E22276531D00033337 /* ZKeyInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKeyInput.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -583,6 +587,7 @@
 				0C4C23A12016B0930025E4DF /* ZContainerView.swift */,
 				A7988AD0222B69AE00256A71 /* ZGradientView.swift */,
 				A7C96E392218838A00986631 /* ZIndicatorView.swift */,
+				A7FDB3E22276531D00033337 /* ZKeyInput.swift */,
 				A7272909225AA29D002A5B6D /* ZLineView.swift */,
 				0C39B2871F182EBB0091F4D1 /* ZoneDot.swift */,
 				0C367C361F463D93000FC914 /* ZoneDragView.swift */,
@@ -722,6 +727,7 @@
 				A74D1BA522222FC900E69E44 /* eye.con-512.png */,
 				0C39B3C11F198BAA0091F4D1 /* configuration */,
 				0C50FD2D2053467600E1D9A9 /* data */,
+				A7F5D690227E6AEE009FB225 /* documentation */,
 				0C09A7D81FE86FCC00F3D736 /* Frameworks */,
 				0C39B3921F1988380091F4D1 /* interfaces */,
 				0CA04B151D2ECF1A001892E5 /* products */,
@@ -774,6 +780,14 @@
 				A7395BAE21B877B600F5759F /* ZGraphEditor.swift */,
 			);
 			path = edit;
+			sourceTree = "<group>";
+		};
+		A7F5D690227E6AEE009FB225 /* documentation */ = {
+			isa = PBXGroup;
+			children = (
+				A7F5D691227E6AEE009FB225 /* data flow.graffle */,
+			);
+			path = documentation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1026,6 +1040,7 @@
 				0C43EFDD21010F62000976CE /* ZBatches.swift in Sources */,
 				0C39B28C1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
 				0C39B2B91F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
+				A7FDB3E32276531D00033337 /* ZKeyInput.swift in Sources */,
 				0C39B2AD1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				A7D947DF21EC127E00B7DBFC /* ZSearchResultsController.swift in Sources */,
 				0C39B3851F182EBB0091F4D1 /* ZoneTextWidget.swift in Sources */,
@@ -1171,6 +1186,7 @@
 				0C367C381F463D93000FC914 /* ZoneDragView.swift in Sources */,
 				A70064DE22484808004E3A8D /* ZManifest.swift in Sources */,
 				A7D947DE21EC127D00B7DBFC /* ZSearchResultsController.swift in Sources */,
+				A7FDB3E42276533E00033337 /* ZKeyInput.swift in Sources */,
 				A7D947DC21EC11C600B7DBFC /* ZDetailsController.swift in Sources */,
 				0C39B3891F182EBB0091F4D1 /* ZoneWidget.swift in Sources */,
 				A7395BB321B877B600F5759F /* ZGraphEditor.swift in Sources */,

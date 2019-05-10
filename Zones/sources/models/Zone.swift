@@ -587,7 +587,7 @@ class Zone : ZRecord {
 
     var      inheritedAccess: ZoneAccess { return zoneWithInheritedAccess.directAccess }
     var       directReadOnly:       Bool { return directAccess == .eReadOnly || directAccess == .eProgenyWritable }
-    var          userCanMove:       Bool { return userHasDirectOwnership || inheritedAccess == .eWritable || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
+    var          userCanMove:       Bool { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
     var         userCanWrite:       Bool { return userHasDirectOwnership || isTextEditable }
     var userCanMutateProgeny:       Bool { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
     

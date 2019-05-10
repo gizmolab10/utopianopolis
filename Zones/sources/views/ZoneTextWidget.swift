@@ -123,7 +123,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 gSearching.exitSearchMode()
             }
             
-            gTextEditor.edit(zone)
+            gTextEditor.edit(zone, setOffset: gTextOffset)
             
             return true
         }

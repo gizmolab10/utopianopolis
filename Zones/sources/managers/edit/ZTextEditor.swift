@@ -233,6 +233,7 @@ class ZTextPack: NSObject {
 class ZTextEditor: ZTextView {
 
     
+    var cursorOffset: CGFloat? 
     var currentOffset: CGFloat?
     var currentEdit: ZTextPack?
     var isEditingStateChanging = false
@@ -250,7 +251,6 @@ class ZTextEditor: ZTextView {
 
     func clearOffset() { currentOffset = nil }
     func clearEdit()   { currentEdit = nil; clearOffset() }
-    func fullResign()  { assignAsFirstResponder (nil) } // ios broken
 
 
     func cancel() {

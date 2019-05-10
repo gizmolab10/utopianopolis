@@ -21,6 +21,7 @@ class ZGenericController: ZController {
     var controllerID: ZControllerID { return .undefined }
     var backgroundColor: CGColor { return gBackgroundColor.cgColor }
     func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}
+    func platformSetup() {}
     func setup() {}
 
 
@@ -45,6 +46,7 @@ class ZGenericController: ZController {
 
     override func viewDidAppear() {
         super.viewDidAppear()
+        platformSetup()
         setup()
     }
 
@@ -52,8 +54,10 @@ class ZGenericController: ZController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        platformSetup()
         setup()
     }
 
 #endif
+
 }
