@@ -931,6 +931,7 @@ class ZGraphEditor: NSObject {
             let       range = NSMakeRange(combined.length - childLength, childLength)
             parent.zoneName = combined
             parent.extractTraits(from: child)
+            parent.extractChildren(from: child)
             
             self.deferRedraw {
                 moveZone(child, to: gTrash)

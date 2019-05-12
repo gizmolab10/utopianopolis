@@ -232,7 +232,7 @@ class ZSelecting: NSObject {
     func updateAfterMove() {
         updateBrowsingLevel()
         updateCousinList()
-        gFavorites.updateFavoritesRedrawSyncRedraw(avoidRedraw: true)
+        gFavorites.updateFavoritesRedrawSyncRedraw()
     }
     
     

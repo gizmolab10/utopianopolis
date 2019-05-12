@@ -1358,6 +1358,14 @@ class Zone : ZRecord {
         return false
     }
 
+    
+    func extractChildren(from: Zone) {
+        for child in from.children.reversed() {
+            child.orphan()
+            addChild(child)
+        }
+    }
+    
 
     func recursivelyApplyDatabaseID(_ iID: ZDatabaseID?) {
         if  let             appliedID = iID,
