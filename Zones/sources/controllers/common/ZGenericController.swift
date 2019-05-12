@@ -28,7 +28,7 @@ class ZGenericController: ZController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        gControllers.register(self, iID: controllerID) { object, kind in
+        gControllers.setSignalHandler(for: self, iID: controllerID) { object, kind in
             if  self.useDefaultBackgroundColor {
                 self.view.zlayer.backgroundColor = self.backgroundColor
             }

@@ -49,23 +49,16 @@ class ZoneWidget: ZView {
 
 
     func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, isMain: Bool, visited: [Zone]) {
-        if  let thisView = inView {
-            if !thisView.subviews.contains(self) {
-                thisView.addSubview(self)
-            }
-            
-            if  atIndex == nil, isMain  {
-                snp.remakeConstraints { (make: ConstraintMaker) -> Void in
-                    make.center.equalTo(thisView)
-                }
-            }
+        if  let thisView = inView,
+            !thisView.subviews.contains(self) {
+            thisView.addSubview(self)
         }
 
         isInMain = isMain
 
-        #if os(iOS)
-            backgroundColor = kClearColor
-        #endif
+//        #if os(iOS)
+//            backgroundColor = kClearColor
+//        #endif
 
         gWidgets.registerWidget(self)
         addTextView()

@@ -732,7 +732,7 @@ class ZGraphEditor: NSObject {
             }
         }
 
-        gBatches.families { iSame in
+     //   gBatches.families { iSame in
             FOREGROUND {
                 descendents.traverseAncestors { iParent -> ZTraverseStatus in
                     let  gotThere = iParent == iAncestor || iParent.isRoot    // reached the ancestor or the root
@@ -754,7 +754,7 @@ class ZGraphEditor: NSObject {
                     return .eContinue
                 }
             }
-        }
+        //}
     }
 
 
@@ -1590,7 +1590,6 @@ class ZGraphEditor: NSObject {
     func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
         if  let zone  = gSelecting.firstSortedGrab {
             let zones = gSelecting.sortedGrabs
-            let isBrowsing = !gIsEditingText
             
             if !selectionOnly {
                 actuallyMoveInto(zones, onCompletion: onCompletion)
@@ -1599,15 +1598,15 @@ class ZGraphEditor: NSObject {
             } else {
                 let needReveal = !zone.showingChildren
                 
-                zone.needChildren()
+              //  zone.needChildren()
                 zone.revealChildren()
                 
-                gBatches.children(.restore) { iSame in
+              //  gBatches.children(.restore) { iSame in
                     if  zone.count > 0,
                         let child = gInsertionsFollow ? zone.children.last : zone.children.first {
                         child.grab()
                         
-                        if  isBrowsing || needReveal {
+                        if  needReveal {
                             gControllers.signalFor(zone, regarding: .eRelayout)
                         }
                     }
@@ -1615,7 +1614,7 @@ class ZGraphEditor: NSObject {
                     gFavorites.updateAllFavorites()
                     
                     onCompletion?()
-                }
+              //  }
             }
         }
     }

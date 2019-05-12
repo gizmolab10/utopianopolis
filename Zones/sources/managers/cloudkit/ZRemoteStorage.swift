@@ -81,6 +81,27 @@ class ZRemoteStorage: NSObject {
         }
     }
     
+    
+    func updateNeededCounts() {
+        for cloud in allClouds {
+            var alsoProgenyCounts = false
+            cloud.fullUpdate(for: [.needsCount]) { state, iZRecord in
+                if  let zone                 = iZRecord as? Zone {
+                    if  zone.fetchableCount != zone.count {
+                        zone.fetchableCount  = zone.count
+                        alsoProgenyCounts    = true
+                        
+                        zone.maybeNeedSave()
+                    }
+                }
+            }
+            
+            if  alsoProgenyCounts {
+                cloud.rootZone?.updateCounts()
+            }
+        }
+    }
+
 
     func zRecords(for iDatabaseID: ZDatabaseID?) -> ZRecords? {
         var zRecords: ZRecords?

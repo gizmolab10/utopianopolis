@@ -254,6 +254,8 @@ class ZFavorites: NSObject {
     func updateFavoritesRedrawSyncRedraw(avoidRedraw: Bool = false, _ onCompletion: Closure? = nil) {
         if  updateAllFavorites() || !avoidRedraw {
             redrawSyncRedraw { onCompletion?() }
+        } else {
+            onCompletion?()
         }
     }
 

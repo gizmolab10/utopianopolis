@@ -58,8 +58,8 @@ class ZControllers: NSObject {
 
 
     class ZSignalObject {
-        let    closure: SignalClosure!
-        let controller: ZGenericController!
+        let    closure : SignalClosure!
+        let controller : ZGenericController!
 
         init(_ iClosure: @escaping SignalClosure, forController iController: ZGenericController) {
             controller = iController
@@ -138,40 +138,19 @@ class ZControllers: NSObject {
     // MARK:-
 
 
-    func register(_ iController: ZGenericController, iID: ZControllerID, closure: @escaping SignalClosure) {
+    func setSignalHandler(for iController: ZGenericController, iID: ZControllerID, closure: @escaping SignalClosure) {
         signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
         currentController                = iController
     }
 
 
-    func unregister(_ at: ZControllerID) {
-        signalObjectsByControllerID[at] = nil
+    func clearSignalHandler(_ iID: ZControllerID) {
+        signalObjectsByControllerID[iID] = nil
     }
 
 
     // MARK:- signals
     // MARK:-
-
-
-    func updateNeededCounts() {
-        for cloud in gRemoteStorage.allClouds {
-            var alsoProgenyCounts = false
-            cloud.fullUpdate(for: [.needsCount]) { state, iZRecord in
-                if  let zone                 = iZRecord as? Zone {
-                    if  zone.fetchableCount != zone.count {
-                        zone.fetchableCount  = zone.count
-                        alsoProgenyCounts    = true
-
-                        zone.maybeNeedSave()
-                    }
-                }
-            }
-
-            if  alsoProgenyCounts {
-                cloud.rootZone?.updateCounts()
-            }
-        }
-    }
     
     
     func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure? = nil) {
@@ -181,7 +160,7 @@ class ZControllers: NSObject {
 
     func signalFor(_ object: Any?, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
         FOREGROUND(canBeDirect: true) {
-            self.updateNeededCounts() // clean up after adding or removing children
+            gRemoteStorage.updateNeededCounts() // clean up after adding or removing children
             
             for (identifier, signalObject) in self.signalObjectsByControllerID {
                 let isInformation = identifier == .information

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -592,11 +592,11 @@ DQ
                         <constraints>
                             <constraint firstItem="itU-Gt-Inh" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="2on-Rh-qaW"/>
                             <constraint firstAttribute="trailing" secondItem="f9Z-GK-Klh" secondAttribute="trailing" id="Lsu-yO-S1b"/>
-                            <constraint firstItem="f9Z-GK-Klh" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="PVk-XS-TJr"/>
-                            <constraint firstAttribute="bottom" secondItem="itU-Gt-Inh" secondAttribute="bottom" id="doe-l2-P4Y"/>
+                            <constraint firstAttribute="top" secondItem="f9Z-GK-Klh" secondAttribute="top" id="PVk-XS-TJr"/>
+                            <constraint firstItem="itU-Gt-Inh" firstAttribute="bottom" secondItem="m2S-Jp-Qdl" secondAttribute="bottom" id="doe-l2-P4Y"/>
                             <constraint firstItem="itU-Gt-Inh" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="lzQ-yE-6cu"/>
-                            <constraint firstItem="f9Z-GK-Klh" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="o4s-Jc-4ta"/>
-                            <constraint firstAttribute="trailing" secondItem="itU-Gt-Inh" secondAttribute="trailing" id="pGy-4H-4Ky"/>
+                            <constraint firstAttribute="leading" secondItem="f9Z-GK-Klh" secondAttribute="leading" id="o4s-Jc-4ta"/>
+                            <constraint firstItem="itU-Gt-Inh" firstAttribute="trailing" secondItem="m2S-Jp-Qdl" secondAttribute="trailing" id="pGy-4H-4Ky"/>
                             <constraint firstAttribute="bottom" secondItem="f9Z-GK-Klh" secondAttribute="bottom" id="zCE-bt-8M0"/>
                         </constraints>
                     </view>

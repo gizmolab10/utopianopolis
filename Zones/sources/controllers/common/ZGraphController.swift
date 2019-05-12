@@ -108,28 +108,24 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
     
     func layoutForCurrentScrollOffset() {
-        if  let e = editorView {
-            if kIsDesktop {
-                editorRootWidget.snp.removeConstraints()
-                editorRootWidget.snp.makeConstraints { make in
-                    make.centerY.equalTo(e).offset(gScrollOffset.y)
-                    make.centerX.equalTo(e).offset(gScrollOffset.x)
-                }
+        if  let e = editorView, !kIsPhone {
+            editorRootWidget.snp.removeConstraints()
+            editorRootWidget.snp.makeConstraints { make in
+                make.centerY.equalTo(e).offset(gScrollOffset.y)
+                make.centerX.equalTo(e).offset(gScrollOffset.x)
             }
 
-            if  !kIsPhone {
-                if favoritesRootWidget.superview == nil {
-                    editorView?.addSubview(favoritesRootWidget)
-                }
-
-                favoritesRootWidget.snp.removeConstraints()
-                favoritesRootWidget.snp.makeConstraints { make in
-                    make  .top.equalTo(e).offset(45.0 - Double(gGenericOffset.height / 3.0))
-                    make .left.equalTo(e).offset(15.0 - Double(gGenericOffset.width       ))
-                }
-
-                e.setNeedsDisplay()
+            if  favoritesRootWidget.superview == nil {
+                editorView?.addSubview(favoritesRootWidget)
             }
+            
+            favoritesRootWidget.snp.removeConstraints()
+            favoritesRootWidget.snp.makeConstraints { make in
+                make  .top.equalTo(e).offset(45.0 - Double(gGenericOffset.height / 3.0))
+                make .left.equalTo(e).offset(15.0 - Double(gGenericOffset.width       ))
+            }
+            
+            e.setNeedsDisplay()
         }
     }
     
@@ -158,11 +154,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             recursing        = [.eData, .eRelayout].contains(iKind)
         }
 
-        if iKind == .eRelayout {
-            specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isMain: inMainGraph, visited: [])
-        } else {
-            specificWidget?.setNeedsDisplay()
-        }
+        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isMain: inMainGraph, visited: [])
     }
 
     
