@@ -33,6 +33,10 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 
     #if os(OSX)
 
+	
+	func windowShouldClose(_ sender: NSWindow) -> Bool { return false }
+	
+	
     override open var acceptsFirstResponder: Bool { return true }
 
     // cannot declare this in extensions because compiler barfs about objective-c method conflict (and then compiler throws a seg fault)

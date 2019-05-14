@@ -466,8 +466,6 @@ extension ZoneWindow {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        let        button = standardWindowButton(ZWindow.ButtonType.closeButton) // hide close button ... zoomButton miniaturizeButton
-        button!.isHidden  = true
         delegate          = self
         ZoneWindow.window = self
         contentMinSize    = kDefaultWindowRect.size // smallest size user to which can shrink window
