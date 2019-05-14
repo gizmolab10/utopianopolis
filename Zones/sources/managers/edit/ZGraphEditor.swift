@@ -360,6 +360,7 @@ class ZGraphEditor: NSObject {
 
 
     func travelToOtherGraph() {
+		gFocusing.pushHere()
         toggleDatabaseID()
         gHere.grab()
         gHere.revealChildren()
