@@ -1031,7 +1031,7 @@ class ZCloud: ZRecords {
                         self.manifest?.apply()
                     }
                     
-                    self.columnarReport("MANIFEST (\(retrieved.count))", iError)
+                    self.columnarReport("    \(self.manifest?.deleted?.count ?? 0)", "\(self.databaseID.rawValue)")
                     onCompletion?(0)
                 }
             }

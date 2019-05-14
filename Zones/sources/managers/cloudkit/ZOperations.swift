@@ -63,16 +63,18 @@ enum ZOperationID: Int {
     case oMerge
     case oNone               // default operation
 
-    var isLocal: Bool { return localOperations.contains(self) }
-
+    var isLocal     : Bool { return localOperations.contains(self) }
+    var isDeprecated: Bool { return   deprecatedOps.contains(self) }
 }
 
+
+let deprecatedOps:   [ZOperationID] = [.oChildren, .oParents]
+let localOperations: [ZOperationID] = [.oHere, .oRoots, .oFound, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
 
 var gDebugTimer:             Timer?
 var gCloudTimer:             Timer?
 var gCloudFire:       TimerClosure?
 var gDebugTimerCount                = 0
-let localOperations: [ZOperationID] = [.oHere, .oRoots, .oFound, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
 
 
 class ZOperations: NSObject {
@@ -160,7 +162,7 @@ class ZOperations: NSObject {
                     }
                     
                     if  self.cloudStatusChanged() {
-                        gControllers.signalFor(nil, regarding: .eDetails) // inform user of change in cloud status
+                        gControllers.signalFor(nil, regarding: .eDetails) // show change in cloud status
 
                         /////////////////////////////////////////////////
                         // assure that we can perform cloud operations //
@@ -204,6 +206,8 @@ class ZOperations: NSObject {
         let         saved = gDatabaseID
 
         for operationID in operationIDs + [.oCompletion] {
+            if  operationID.isDeprecated { continue }
+
             let blockOperation = BlockOperation {
 
                 ////////////////////////////////////////////////////////////////

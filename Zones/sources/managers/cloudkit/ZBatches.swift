@@ -39,7 +39,6 @@ enum ZBatchID: Int {
         case .bSync,
              .bStartUp,
              .bRefetch,
-             .bChildren,
              .bFinishUp,
              .bNewAppleID,
              .bResumeCloud: return false
@@ -86,18 +85,18 @@ class ZBatches: ZOnboarding {
         var operations: [ZOperationID] {
             switch identifier {
             case .bSaveToCloud: return [                                    .oSaveToCloud          ]
+            case .bFetchLost:   return [.oFetchLost,                        .oSaveToCloud,         ]
+            case .bResumeCloud: return [             .oFetchAll,            .oSaveToCloud, .oTraits]
+            case .bRefetch:     return [             .oFetchAll, .oRecount, .oSaveToCloud, .oTraits]
             case .bSync:        return [             .oFetch,               .oSaveToCloud, .oTraits]
-            case .bRoot:        return [.oRoots,                .oManifest, .oSaveToCloud, .oTraits]
-            case .bFocus:       return [.oRoots,     .oFetch,                              .oTraits]
-            case .bParents:     return [                                                   .oTraits]
-            case .bChildren:    return [.oChildren,                                        .oTraits]
-            case .bFamilies:    return [             .oFetch,                              .oTraits]
             case .bBookmarks:   return [.oBookmarks, .oFetch,               .oSaveToCloud, .oTraits]
             case .bUndelete:    return [.oUndelete,  .oFetch,               .oSaveToCloud, .oTraits]
-            case .bFetchLost:   return [.oFetchLost,                        .oSaveToCloud,         ]
+            case .bRoot:        return [.oRoots,                .oManifest, .oSaveToCloud, .oTraits]
+            case .bFocus:       return [.oRoots,     .oFetch,                              .oTraits]
+            case .bFamilies:    return [             .oFetch,                              .oTraits]
+            case .bParents:     return [.oParents,                                         .oTraits]
+            case .bChildren:    return [.oChildren,                                        .oTraits]
             case .bEmptyTrash:  return [.oEmptyTrash                                               ]
-            case .bResumeCloud: return [.oFetchNew,  .oFetchAll,            .oSaveToCloud          ]
-            case .bRefetch:     return [             .oFetchAll, .oRecount, .oSaveToCloud          ]
             case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
             case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oFinishUp)
             case .bFinishUp:    return operationIDs(from: .oFinishUp,          to: .oDone)
@@ -341,8 +340,8 @@ class ZBatches: ZOnboarding {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
         switch identifier {
-        case .oFavorites: gFavorites.setup(                                                                              cloudCallback)
-        case .oReadFile:  gFiles                                        .readFile(into: currentDatabaseID!);             cloudCallback?(0)
+        case .oFavorites:                                                                               gFavorites.setup(cloudCallback)
+        case .oReadFile:      gFiles.readFile(into: currentDatabaseID!);                                                 cloudCallback?(0)
         default:          gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
         }
     }

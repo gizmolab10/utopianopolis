@@ -120,7 +120,10 @@ class ZFocusing: NSObject {
 
 
     func go() {
-        if  0          <= currentIndex, (!atHere ||
+        let         max = travelStack.count
+
+        if  0          <= currentIndex,
+            max         > currentIndex, (!atHere ||
             priorIndex != currentIndex) {
             priorIndex  = currentIndex
             let dbID    = gHere.databaseID

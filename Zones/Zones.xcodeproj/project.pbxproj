@@ -734,6 +734,7 @@
 				0C39B21E1F182EBB0091F4D1 /* sources */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		0CA04B151D2ECF1A001892E5 /* products */ = {
 			isa = PBXGroup;

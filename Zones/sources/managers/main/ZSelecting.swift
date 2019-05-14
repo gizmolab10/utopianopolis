@@ -331,19 +331,23 @@ class ZSelecting: NSObject {
     }
 
 
-    func addMultipleGrabs(_ iZones: [Zone]) {
+    func addMultipleGrabs(_ iZones: [Zone], clear: Bool = false) {
         for zone in iZones {
-            addOneGrab(zone)
+            addOneGrab(zone, clear: clear)
         }
+
+        updateWidgets(for: currentGrabs)
     }
 
 
-    func addOneGrab(_ iZone: Zone?, single: Bool = false) {
+    // private because it doesn't update widgets
+
+    private func addOneGrab(_ iZone: Zone?, clear: Bool = false) {
         if  let zone = iZone,
-            (!currentGrabs.contains(zone) || single) { // if onlyOne AND already grabbed, shrink grab list to iZone
+            (!currentGrabs.contains(zone) || clear) { // if clear AND already grabbed, shrink grab list to iZone
             gTextEditor.stopCurrentEdit()
 
-            if  single {
+            if  clear {
                 ungrabAll()
                 
                 hasNewGrab = zone
@@ -352,8 +356,6 @@ class ZSelecting: NSObject {
             currentGrabs.append(zone)
 
             currentGrabs = respectOrder(for: currentGrabs)
-
-            updateWidgets(for: currentGrabs)
         }
     }
     
@@ -393,7 +395,7 @@ class ZSelecting: NSObject {
             sortedGrabs  = []
 
             updateWidgets(for: oldGrabs)
-            addMultipleGrabs  (newGrabs)
+            addMultipleGrabs  (newGrabs, clear: true)
 
             if  updateBrowsingLevel,
                 let level = newGrabs.rootMost?.level {

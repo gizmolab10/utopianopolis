@@ -727,7 +727,7 @@ class Zone : ZRecord {
 
 
     func        addToPaste() { gSelecting   .pasteableZones[self] = (parentZone, siblingIndex) }
-    func         addToGrab() { gSelecting       .addOneGrab(self) }
+    func         addToGrab() { gSelecting.addMultipleGrabs([self]) }
     func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
     func            ungrab() { gSelecting           .ungrab(self) }
     func              edit() { gTextEditor            .edit(self) }

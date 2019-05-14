@@ -732,8 +732,8 @@ class ZGraphEditor: NSObject {
             }
         }
 
-     //   gBatches.families { iSame in
-            FOREGROUND {
+        gBatches.families { iSame in
+            FOREGROUND(canBeDirect: true) {
                 descendents.traverseAncestors { iParent -> ZTraverseStatus in
                     let  gotThere = iParent == iAncestor || iParent.isRoot    // reached the ancestor or the root
                     let gotOrphan = iParent.parentZone == nil
@@ -754,7 +754,7 @@ class ZGraphEditor: NSObject {
                     return .eContinue
                 }
             }
-        //}
+        }
     }
 
 
