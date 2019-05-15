@@ -34,7 +34,9 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     #if os(OSX)
 
 	
-	func windowShouldClose(_ sender: NSWindow) -> Bool { return false }
+	func windowWillClose(_ notification: Notification) {
+		gApplication.terminate(self)
+	}
 	
 	
     override open var acceptsFirstResponder: Bool { return true }
