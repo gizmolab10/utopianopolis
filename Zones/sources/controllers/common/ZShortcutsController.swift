@@ -19,7 +19,8 @@ import Foundation
 enum ZShortcutType: String {
     case bold      = "b"
     case underline = "u"
-    case append    = "+"
+	case append    = "+"
+	case plain     = "."
 }
 
 
@@ -144,62 +145,62 @@ class ZShortcutsController: ZGenericTableController {
 		}
 	}
 	
-
-	func string(for row: Int, column: Int, index: Int) -> String {
+	
+	func strings(for row: Int, column: Int) -> (String, String) {
 		let columnStrings = [columnOne, columnTwo, columnThree, columnFour]
 		let       strings = columnStrings[column]
-		let 		index = row * 2 + index
+		let 		index = row * 2
 		
-		return index >= strings.count ? "" : strings[index]
+		return index >= strings.count ? ("", "") : (strings[index], strings[index + 1])
 	}
 	
 	
 	func url(for row: Int, column: Int) -> String? {
 		let m = "https://medium.com/@sand_74696/"
-		let raw = string(for: row, column: column, index: 1)
-		
-		return raw.isEmpty ? nil : m + raw
+		let (_, url) = strings(for: row, column: column)
+
+		return url.isEmpty ? nil : m + url
 	}
 	
 	
 	func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
-		let  	   raw = string(for: row, column: column, index: 0)
+		let (raw, url) = strings(for: row, column: column)
         let       type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1))) // grab first character
-        var       text = raw.substring(with: NSMakeRange(1, raw.length - 1))             // grab remaining characters
+        let       text = raw.substring(with: NSMakeRange(1, raw.length - 1))             // grab remaining characters
         var attributes = [String : Any] ()
         var     prefix = "   "
 
-        if  text.isEmpty {
-            text = "   \t         \t" // for empty lines, including after last row
-        }
-        
         switch type {
         case .bold?:
-            attributes = [NSAttributedString.Key.font.rawValue: bold as Any]
+            attributes = [NSAttributedString.Key.font.rawValue : bold as Any]
         case .append?, .underline?:
-            attributes = [NSAttributedString.Key.underlineStyle.rawValue: 1 as Any]
+            attributes = [NSAttributedString.Key.underlineStyle.rawValue : 1 as Any]
             
             if type == .append {
                 prefix += "+ "
             }
             
-        default:
-            prefix     = " "
-            break
+		case .plain?:
+			if !url.isEmpty {
+				attributes = [NSAttributedString.Key.foregroundColor.rawValue : NSColor.blue.darker(by: 4.0) as Any, NSAttributedString.Key.underlineStyle.rawValue : 1 as Any]
+			}
+
+			prefix     = kTab
+
+		default:
+			prefix     = kTab		// for empty lines, including after last row
         }
 
-        var result = NSMutableAttributedString(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-        let intermediate = NSMutableAttributedString(string: prefix)
-        
-        intermediate.append(result)
-        
-        result = intermediate
+		let     result = NSMutableAttributedString(string: prefix)
+        let attributed = NSMutableAttributedString(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
+		
+        result.append(attributed)
 
         if  text.length < 9 && row != 1 {
-            result.append(NSAttributedString(string: "\t")) // KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough subsequent tabs
+            result.append(NSAttributedString(string: kTab)) // KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough subsequent tabs
         }
 
-        result.append(NSAttributedString(string: "     \t"))
+		result.append(NSAttributedString(string: kTab))
 
         return result
     }
@@ -210,41 +211,41 @@ class ZShortcutsController: ZGenericTableController {
         "bALWAYS:\t", "",
         "", "",
         "uKEY", "",
-        "     \tRETURN     \tbegin or end editing text", "",
-        "     \tSPACE      \tcreate an idea", "",
-        "     \tTAB        \tcreate next idea", "",
+        ".RETURN     \tbegin or end editing text", "",
+        ".SPACE      \tcreate an idea", "",
+        ".TAB        \tcreate next idea", "",
         "", "",
         "+CONTROL", "",
-        "     \tCOMMA      \ttoggle browsing: un/confined", "",
-        "     \tDELETE     \tshow trash", "",
-        "     \tPERIOD     \ttoggle next ideas precede/follow", "",
-        "     \tSPACE      \tcreate an idea", "",
-        "     \t/          \tremove from focus stack, -> prior", "",
+        ".COMMA      \ttoggle browsing: un/confined", "",
+        ".DELETE     \tshow trash", "",
+        ".PERIOD     \ttoggle next ideas precede/follow", "",
+        ".SPACE      \tcreate an idea", "",
+        "./          \tremove from focus stack, -> prior", "",
         "", "",
         "+COMMAND", "",
-        "     \tCOMMA      \tshow or hide preferences", "",
-        "     \tHYPHEN     \tconvert text to or from 'titled line'", "",
-        "     \tP          \tprint the graph (or this window)", "",
+        ".COMMA      \tshow or hide preferences", "",
+        ".HYPHEN     \tconvert text to or from 'titled line'", "lines-37426469b7c6",
+        ".P          \tprint the graph (or this window)", "",
         "", "",
         "+COMMAND + OPTION", "",
-        "     \tA          \tshow About Thoughtful", "",
-        "     \tR          \treport a problem", "",
-        "     \t/          \tshow or hide this window", "",
+        ".A          \tshow About Thoughtful", "",
+        ".R          \treport a problem", "",
+        "./          \tshow or hide this window", "",
         "", "",
         "uCONTROL + COMMAND + OPTION", "",
-        "     \t           \tshow or hide indicators", "",
+        ".           \tshow or hide indicators", "",
         "", "",
         "", "",
         "", "",
         "bSEARCH BAR:", "",
         "", "",
         "uKEY", "",
-        "     \tRETURN     \tperform search", "what-you-get-d565b064be7b",
-        "     \tESCAPE     \tdismisss search bar", "",
+        ".RETURN     \tperform search", "",
+        ".ESCAPE     \tdismisss search bar", "",
         "", "",
         "+COMMAND", "",
-        "     \tA          \tselect all search text", "",
-        "     \tF          \tdismisss search bar", "",
+        ".A          \tselect all search text", "",
+        ".F          \tdismisss search bar", "",
         "", "",
     ]
 
@@ -254,28 +255,28 @@ class ZShortcutsController: ZGenericTableController {
         "bEDITING TEXT:", "",
         "", "",
         "uKEY", "",
-        "     \tESCAPE     \tcancel edit, discarding changes", "",
+        ".ESCAPE     \tcancel edit, discarding changes", "",
         "", "",
         "+COMMAND", "",
-        "     \tPERIOD     \tcancel edit, discarding changes", "",
-        "     \tA          \tselect all text", "",
+        ".PERIOD     \tcancel edit, discarding changes", "",
+        ".A          \tselect all text", "",
         "", "",
         "+COMMAND + OPTION", "",
-		"     \tPERIOD     \ttoggle next ideas precede/follow,", "",
-		"                  \t(and) move idea up/down", "",
+		".PERIOD     \ttoggle next ideas precede/follow,", "",
+		".\t(and) move idea up/down", "",
 		"", "",
 		"", "",
 		"", "",
 		"bEDITING, TEXT IS SELECTED:", "",
 		"", "",
-		"     \tsurround:  \t| [ { ( < \" SPACE", "",
+		".surround:  \t| [ { ( < \" SPACE", "",
 		"", "",
 		"+COMMAND", "",
-		"     \tD          \tif all selected, append onto parent", "",
-		"     \t           \tif not all selected, create as a child", "",
-		"     \tL          \tlowercase", "",
-		"     \tT          \tcreate parent with text", "",
-		"     \tU          \tuppercase", "",
+		".D          \tif all selected, append onto parent", "",
+		".           \tif not all selected, create as a child", "",
+		".L          \tlowercase", "",
+		".T          \tcreate parent with text", "",
+		".U          \tuppercase", "",
 		"", "",
 		"", "",
 		"", "",
@@ -283,8 +284,8 @@ class ZShortcutsController: ZGenericTableController {
 		"bSEARCH RESULTS:", "",
 		"", "",
 		"uKEY", "",
-		"     \tRIGHT ARROW (or)", "",
-		"     \tRETURN    \tfocus on selected result", "",
+		".RIGHT ARROW (or)", "",
+		".RETURN    \tfocus on selected result", "",
 		"", "",
     ]
     
@@ -293,38 +294,38 @@ class ZShortcutsController: ZGenericTableController {
 		"", "",
 		"bBROWSING (NOT EDITING TEXT):", "",
 		"", "",
-		"     \tmark:      \t" + kMarkingCharacters, "",
+		".mark:      \t" + kMarkingCharacters, "",
 		"", "",
 		"uKEY", "",
-		"     \tARROWS     \tnavigate within graph", "",
-		"     \tCOMMA      \ttoggle browsing: un/confined", "",
-		"     \tDELETE     \tselected ideas and their progeny", "",
-		"     \tHYPHEN     \tadd 'line', or [un]title it", "",
-		"     \tPERIOD     \ttoggle next ideas precede/follow", "",
-		"     \tSPACE      \tcreate an idea", "",
-		"     \t/          \tfocus (also, manage favorite)", "",
-		"     \t\\         \tswitch to other graph", "",
-		"     \t;          \t-> prior favorite", "",
-		"     \t'          \t-> next favorite", "",
-		"     \t[          \t-> prior focus", "",
-		"     \t]          \t-> next focus", "",
-		"     \t=          \tuse hyperlink or email", "",
-		"     \tA          \tselect all ideas", "",
-		"     \tB          \tcreate a bookmark", "",
-		"     \tC          \trecenter the graph", "",
-		"     \tD          \tduplicate", "",
-		"     \tE          \tcreate or edit email", "",
-		"     \tF          \tsearch", "",
-		"     \tG          \trefetch children of selection", "",
-		"     \tH          \tcreate or edit hyperlink", "",
-		"     \tI          \t[un]color the text", "",
-		"     \tL          \t-> lowercase", "",
-		"     \tO          \timport from a Thoughtful file", "",
-		"     \tP          \tprint the topmost window", "",
-		"     \tR          \treverse order of children", "",
-		"     \tS          \tsave to a Thoughtful file", "",
-		"     \tT          \tswap selected idea with parent", "",
-		"     \tU          \t-> uppercase", "",
+		".ARROWS     \tnavigate within graph", "",
+		".COMMA      \ttoggle browsing: un/confined", "",
+		".DELETE     \tselected ideas and their progeny", "",
+		".HYPHEN     \tadd 'line', or [un]title it", "lines-37426469b7c6",
+		".PERIOD     \ttoggle next ideas precede/follow", "",
+		".SPACE      \tcreate an idea", "",
+		"./          \tfocus (also, manage favorite)", "",
+		".\\         \tswitch to other graph", "",
+		".;          \t-> prior favorite", "",
+		".'          \t-> next favorite", "",
+		".[          \t-> prior focus", "",
+		".]          \t-> next focus", "",
+		".=          \tuse hyperlink or email", "",
+		".A          \tselect all ideas", "",
+		".B          \tcreate a bookmark", "",
+		".C          \trecenter the graph", "",
+		".D          \tduplicate", "",
+		".E          \tcreate or edit email", "",
+		".F          \tsearch", "",
+		".G          \trefetch children of selection", "",
+		".H          \tcreate or edit hyperlink", "",
+		".I          \t[un]color the text", "",
+		".L          \t-> lowercase", "",
+		".O          \timport from a Thoughtful file", "",
+		".P          \tprint the topmost window", "",
+		".R          \treverse order of children", "",
+		".S          \tsave to a Thoughtful file", "",
+		".T          \tswap selected idea with parent", "",
+		".U          \t-> uppercase", "",
 		"", "",
     ]
     
@@ -332,43 +333,43 @@ class ZShortcutsController: ZGenericTableController {
     let columnFour: [String] = [
 		"", "",
 		"+OPTION", "",
-		"     \tARROWS     \trelocate selected idea", "",
-		"     \tDELETE     \tretaining children", "",
-		"     \tRETURN     \tedit (with cursor at end)", "",
-		"     \tTAB        \tnew idea containing", "",
-		"     \tG          \trefetch entire subgraph of selection", "",
-		"     \tS          \texport to a outline file", "",
+		".ARROWS     \trelocate selected idea", "",
+		".DELETE     \tretaining children", "",
+		".RETURN     \tedit (with cursor at end)", "",
+		".TAB        \tnew idea containing", "",
+		".G          \trefetch entire subgraph of selection", "",
+		".S          \texport to a outline file", "",
 		"", "",
 		"+COMMAND", "",
-		"     \tARROWS     \textend all the way", "",
-		"     \t/          \trefocus current favorite", "",
-		"     \tD          \tappend onto parent", "",
-		"     \tG          \trefetch entire graph", "",
+		".ARROWS     \textend all the way", "",
+		"./          \trefocus current favorite", "",
+		".D          \tappend onto parent", "",
+		".G          \trefetch entire graph", "",
 		"", "",
 		"+COMMAND + OPTION", "",
-		"     \tDELETE     \tpermanently (not into trash)", "",
-		"     \tHYPHEN     \t-> to[from] titled line, retain children", "",
-		"     \tO          \tshow data files in Finder", "",
+		".DELETE     \tpermanently (not into trash)", "",
+		".HYPHEN     \t-> to[from] titled line, retain children", "lines-37426469b7c6",
+		".O          \tshow data files in Finder", "",
 		"", "",
 		"+MOUSE CLICK", "",
-		"     \tSHIFT      \t[un]extend selection", "",
-		"     \tCOMMAND    \tmove entire graph", "",
+		".SHIFT      \t[un]extend selection", "",
+		".COMMAND    \tmove entire graph", "",
 		"", "",
 		"uARROW KEY + SHIFT (+ COMMAND -> all)", "",
-		"     \tRIGHT      \treveal children", "",
-		"     \tLEFT       \thide children", "",
-		"     \tvertical   \textend selection", "",
+		".RIGHT      \treveal children", "",
+		".LEFT       \thide children", "",
+		".vertical   \textend selection", "",
 		"", "",
 		"", "",
 		"", "",
 		"bBROWSING, MULTIPLE IDEAS SELECTED:", "",
 		"", "",
 		"uKEY", "",
-		"     \tHYPHEN     \tif first selected idea is titled, -> parent", "",
-		"     \t#          \tmark with ascending numbers", "",
-		"     \tM          \tsort by length (+ OPTION -> backwards)", "",
-		"     \tN          \talphabetize (+ OPTION -> backwards)", "",
-		"     \tR          \treverse order", "",
+		".HYPHEN     \tif first selected idea is titled, -> parent", "lines-37426469b7c6",
+		".#          \tmark with ascending numbers", "",
+		".M          \tsort by length (+ OPTION -> backwards)", "",
+		".N          \talphabetize (+ OPTION -> backwards)", "",
+		".R          \treverse order", "",
 		"", "",
     ]
     
