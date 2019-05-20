@@ -137,7 +137,7 @@ class ZGraphEditor: NSObject {
                     switch key {
                     case "a":      if SPECIAL { gApplication.showHideAbout() } else { selectAll(progeny: OPTION) }
                     case "b":      addBookmark()
-                    case "c":      recenter()
+                    case "c":      gGraphController?.recenter()
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
                     case "e":      editTrait(for: .eEmail)
                     case "f":      search(OPTION)
@@ -159,7 +159,7 @@ class ZGraphEditor: NSObject {
                     case "+":      divideChildren()
                     case "-":      if SPECIAL { convertToTitledLineAndRearrangeChildren() } else if COMMAND { return gSelecting.currentMoveable.convertToFromLine() } else { addDashedLine() }
                     case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
-                    case "\\":     travelToOtherGraph()
+					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
                     case "?":      if CONTROL { openBrowserForFocusWebsite() }
@@ -359,16 +359,6 @@ class ZGraphEditor: NSObject {
     }
 
 
-    func travelToOtherGraph() {
-		gFocusing.pushHere()
-        toggleDatabaseID()
-        gHere.grab()
-        gHere.revealChildren()
-        gFavorites.updateAllFavorites()
-        redrawGraph()
-    }
-
-
     func toggleColorized() {
         for zone in gSelecting.currentGrabs {
             zone.toggleColorized()
@@ -539,14 +529,6 @@ class ZGraphEditor: NSObject {
         }
 
         gSelecting.hasNewGrab = gSelecting.currentMoveable
-    }
-
-
-    func recenter() {
-        gScaling      = 1.0
-        gScrollOffset = CGPoint.zero
-
-        gGraphController?.layoutForCurrentScrollOffset()
     }
 
 

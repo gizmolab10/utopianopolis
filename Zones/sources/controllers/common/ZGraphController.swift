@@ -25,7 +25,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     // MARK:- initialization
     // MARK:-
     
-    
+	
+	let 			 clickLogic =  ZClickLogic()
     let        editorRootWidget =  ZoneWidget ()
     let     favoritesRootWidget =  ZoneWidget ()
     var      rubberbandPreGrabs = [Zone] ()
@@ -75,13 +76,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     
     #endif
 
-
-    // MARK:- gestures
-    // MARK:-
-
-    
-    func restartGestureRecognition() { editorView?.gestureHandler = self }
-    func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
+	
+	// MARK:- operations
+	// MARK:-
 
 
     func clear() {
@@ -106,7 +103,24 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     }
     #endif
 
-    
+	
+	func toggleGraphs() {
+		gFocusing.pushHere()
+		toggleDatabaseID()
+		gHere.grab()
+		gHere.revealChildren()
+		gFavorites.updateAllFavorites()
+	}
+	
+
+	func recenter() {
+		gScaling      = 1.0
+		gScrollOffset = CGPoint.zero
+		
+		layoutForCurrentScrollOffset()
+	}
+	
+
     func layoutForCurrentScrollOffset() {
         if  let e = editorView, !kIsPhone {
             editorRootWidget.snp.removeConstraints()
@@ -133,6 +147,10 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     // MARK:- events
     // MARK:-
 
+	
+	func restartGestureRecognition() { editorView?.gestureHandler = self }
+	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
+	
 
     func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inMainGraph: Bool) {
         if !inMainGraph && kIsPhone { return }
@@ -213,8 +231,26 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             }
         }
     }
-    
-    
+	
+	
+	class ZClickLogic : NSObject {
+
+		var lastClicked:   Zone?
+		var lastClickTime: Date?
+		
+		func isDoubleClick(on iZone: Zone? = nil) -> Bool {
+			let    isFast = lastClickTime?.timeIntervalSinceNow ?? -10.0 > -1.8
+			let  isRepeat = lastClicked == iZone
+			lastClickTime = Date()
+			lastClicked   = iZone
+			
+			columnarReport("repeat: \(isRepeat)", "fast: \(isFast)")
+			
+			return isRepeat ? isFast : false
+		}
+	}
+	
+
     @objc func clickEvent(_ iGesture: ZGestureRecognizer?) {
         if  gWorkMode != .graphMode {
             gSearching.exitSearchMode()
@@ -236,26 +272,26 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             }
 
             if !inText {
-                if  let    widget = detectWidget(gesture) {
-                    if  let  zone = widget.widgetZone,
-                        let   dot = detectDotIn(widget, gesture) {
-                        kind = .eDetails
-
-                        if  dot.isReveal {
-                            gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: COMMAND)
-                        } else {
-                            zone.dragDotClicked(COMMAND, SHIFT)
-                        }
-                    } else {
-                        kind = .eSearch
-
-                        gTextEditor.stopCurrentEdit()
-                        widget.widgetZone?.grab()
-                    }
-                } else { // click on background
+				if  let   widget = detectWidget(gesture) {
+					if  let zone = widget.widgetZone,
+						let  dot = detectDotIn(widget, gesture) {
+						if  dot.isReveal {
+							gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: COMMAND)
+						} else {
+							kind = .eDetails // update selection level
+							
+							zone.dragDotClicked(COMMAND, SHIFT, clickLogic.isDoubleClick(on: zone))
+						}
+					}
+				} else { // click on background
                     gTextEditor.stopCurrentEdit()
-                    gHereMaybe?.grab() // safe version of here prevent crash early in launch
 
+					if  clickLogic.isDoubleClick() {
+						recenter()
+					} else {
+						gHereMaybe?.grab() // safe version of here prevent crash early in launch
+					}
+					
                     if  let i = indicatorView, !i.isHidden {
                         let gradientView     = i.gradientView
                         let gradientLocation = gesture.location(in: gradientView)

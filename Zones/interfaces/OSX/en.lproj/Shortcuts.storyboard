@@ -132,7 +132,7 @@
                     </view>
                     <connections>
                         <outlet property="clipView" destination="9Aa-9c-eI8" id="ALa-Ct-6eI"/>
-                        <outlet property="genericTableView" destination="zAE-6p-uHR" id="6xh-VW-e1D"/>
+                        <outlet property="genericTableView" destination="H0M-2O-9lo" id="ihQ-JW-Kgd"/>
                         <outlet property="gridView" destination="zAE-6p-uHR" id="5I0-ey-Ttn"/>
                     </connections>
                 </viewController>

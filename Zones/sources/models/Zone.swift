@@ -44,7 +44,6 @@ class Zone : ZRecord {
     var               _crossLink:      ZRecord?
     var                   _color:       ZColor?
     var                   _email:       String?
-    var   timeOfLastDragDotClick:         Date?
     var                 children =                [Zone] ()
     var                   traits = [ZTraitType : ZTrait] ()
     var                    count:          Int  { return children.count }
@@ -81,7 +80,6 @@ class Zone : ZRecord {
     var            isSpecialRoot:         Bool  { return isRootOfLostAndFound || isRootOfFavorites || isTrash }
     var           spawnedByAGrab:         Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
-    var            isDoubleClick:         Bool  { return timeOfLastDragDotClick?.timeIntervalSinceNow ?? -10.0 > -1.8 }
 
 
     var deepCopy: Zone {
@@ -742,14 +740,11 @@ class Zone : ZRecord {
         gSelecting.makeVisibleAndGrab(self, updateBrowsingLevel: updateBrowsingLevel)
     }
 
-    
-    func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool) {
+	
+    func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool, _ CLICKTWICE: Bool) {
         if self == gHere && isGrabbed { return }
 
-        let  CLICKTWICE = isDoubleClick
         let shouldFocus = COMMAND || (CLICKTWICE && isGrabbed)
-        
-        timeOfLastDragDotClick = Date()
 
         if  shouldFocus {
             grab() // narrow selection to just this one zone
