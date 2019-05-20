@@ -150,6 +150,17 @@ class ZFocusing: NSObject {
             go()
         }
     }
+	
+	
+	func removeFromStack(_ iZone: Zone) {
+		for (index, zone) in travelStack.enumerated() {
+			if zone == iZone {
+				travelStack.remove(at: index)
+
+				return
+			}
+		}
+	}
     
 
     // MARK:- travel

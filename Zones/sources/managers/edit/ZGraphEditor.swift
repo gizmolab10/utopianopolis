@@ -1337,7 +1337,7 @@ class ZGraphEditor: NSObject {
             onCompletion?()
         } else {
             let parent = zone.parentZone
-            if  zone  == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
+            if  zone == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
                 let recurse: Closure = {
                     
                     /////////////
@@ -1392,6 +1392,7 @@ class ZGraphEditor: NSObject {
                         iZone.concealAllProgeny()               // prevent gExpandedZones list from getting clogged with stale references
                         iZone.orphan()
                         gManifest?.smartAppend(iZone)
+						gFocusing.removeFromStack(iZone)		// prevent focus stack from containing a zombie and thus getting stuck
                     }
 
                     if  zone.cloud?.cloudUnavailable ?? true {
