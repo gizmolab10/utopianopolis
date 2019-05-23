@@ -166,8 +166,9 @@ class ZShortcutsController: ZGenericTableController {
 	func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
 		let (raw, url) = strings(for: row, column: column)
         let       type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1))) // grab first character
-        let       text = raw.substring(with: NSMakeRange(1, raw.length - 1))             // grab remaining characters
+        var       text = raw.substring(with: NSMakeRange(1, raw.length - 1))             // grab remaining characters
         var attributes = [String : Any] ()
+		let     hasURL = !url.isEmpty
         var     prefix = "   "
 
         switch type {
@@ -181,28 +182,36 @@ class ZShortcutsController: ZGenericTableController {
             }
             
 		case .plain?:
-			if !url.isEmpty {
-				attributes = [NSAttributedString.Key.foregroundColor.rawValue : NSColor.blue.darker(by: 4.0) as Any, NSAttributedString.Key.underlineStyle.rawValue : 1 as Any]
+			if  hasURL {
+				attributes = [NSAttributedString.Key.foregroundColor.rawValue : NSColor.blue.darker(by: 5.0) as Any]
+				text.append(" ...")
 			}
 
-			prefix     = kTab
+			fallthrough
 
 		default:
-			prefix     = kTab		// for empty lines, including after last row
+			prefix = kTab		// for empty lines, including after last row
         }
 
-		var parts = text.components(separatedBy: kTab)
-		let result = NSMutableAttributedString(string: prefix)
-		
-		result.append(NSAttributedString(string: parts[0].stripped, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes)))
+		var parts   = text.components(separatedBy: kTab)
+		let result  = NSMutableAttributedString(string: prefix)
+		let main    = parts[0].stripped
+
+		if  type == .plain {
+			result.append(NSAttributedString(string: main))
+		} else {
+			result.append(NSAttributedString(string: main, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes)))
+		}
 
 		if  parts.count > 1 {
+			let explain = parts[1]
+
 			result.append(NSAttributedString(string: kTab))
-			result.append(NSAttributedString(string: parts[1], attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes)))
+			result.append(NSAttributedString(string: explain, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes)))
 		}
 
         if  text.length < 13 && row != 1 {
-            result.append(NSAttributedString(string: kTab)) // KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough subsequent tabs
+            result.append(NSAttributedString(string: kTab)) 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough subsequent tabs
         }
 
 		result.append(NSAttributedString(string: kTab))
@@ -217,7 +226,7 @@ class ZShortcutsController: ZGenericTableController {
         "", "",
         "uKEY", "",
 		" RETURN     \tbegin or end editing text", "",
-		" SPACE      \tcreate an idea", "",
+		" SPACE      \tcreate subordinate idea", "",
 		" TAB        \tcreate next idea", "",
         "", "",
         "+CONTROL", "",
@@ -225,11 +234,11 @@ class ZShortcutsController: ZGenericTableController {
 		" DELETE     \tshow trash", "",
 		" PERIOD     \ttoggle next ideas precede/follow", "",
 		" SPACE      \tcreate an idea", "",
-		" /          \tremove from focus stack, -> prior", "",
+		" /          \tremove from focus ring, -> prior", 				"focusing-your-thinking-a53adb16bba",
         "", "",
         "+COMMAND", "",
-		" COMMA      \tshow or hide preferences", "help-inspector-view-c360241147f2",
-		" HYPHEN     \tconvert text to or from 'titled line'", "lines-37426469b7c6",
+		" COMMA      \tshow or hide preferences", 						"help-inspector-view-c360241147f2",
+		" HYPHEN     \tconvert text to or from 'titled line'", 			"lines-37426469b7c6",
 		" P          \tprint the graph (or this window)", "",
         "", "",
         "+COMMAND + OPTION", "",
@@ -267,18 +276,18 @@ class ZShortcutsController: ZGenericTableController {
 		" A          \tselect all text", "",
         "", "",
         "+COMMAND + OPTION", "",
-		" PERIOD     \ttoggle next ideas precede/follow,", "",
+		" PERIOD     \ttoggle: next ideas precede/follow,", "",
 		" \t(and) move idea up/down", "",
 		"", "",
 		"", "",
 		"", "",
-		"bEDITING, TEXT IS SELECTED:", "",
+		"bEDITING (TEXT IS SELECTED):", "",
 		"", "",
 		" surround:  \t| [ { ( < \" SPACE", "",
 		"", "",
 		"+COMMAND", "",
-		" D          \tif all selected, append onto parent", "parent-child-tweaks-bf067abdf461",
-		"            \tif not all selected, create as a child", "parent-child-tweaks-bf067abdf461",
+		" D          \tif all selected, append onto parent", 			"parent-child-tweaks-bf067abdf461",
+		"            \tif not all selected, create as a child", 		"parent-child-tweaks-bf067abdf461",
 		" L          \t-> lowercase", "",
 		" U          \t-> uppercase", "",
 		"", "",
@@ -303,37 +312,36 @@ class ZShortcutsController: ZGenericTableController {
 		"", "",
 		"bBROWSING (NOT EDITING TEXT):", "",
 		"", "",
-		" mark:      \t" + kMarkingCharacters, "",
+		" mark:      \t" + kMarkingCharacters, 							"extras-2a9b1a7db21f",
 		"", "",
 		"uKEY", "",
-		" ARROWS     \tnavigate within graph", "",
+		" ARROWS     \tnavigate graph", "",
 		" COMMA      \ttoggle browsing: un/confined", "",
 		" DELETE     \tselected ideas and their progeny", "",
-		" HYPHEN     \tadd 'line', or [un]title it", "lines-37426469b7c6",
+		" HYPHEN     \tadd 'line', or un/title it", 					"lines-37426469b7c6",
 		" PERIOD     \ttoggle next ideas precede/follow", "",
 		" SPACE      \tcreate an idea", "",
-		" /          \tfocus (also, manage favorite)", "",
+		" /          \tfocus (also, manage favorite)", 					"focusing-your-thinking-a53adb16bba",
 		" \\         \tswitch to other graph", "",
-		" ;          \t-> prior favorite", "",
-		" '          \t-> next favorite", "",
-		" [          \t-> prior focus", "",
-		" ]          \t-> next focus", "",
+		" ;          \t-> prior favorite", 								"focusing-your-thinking-a53adb16bba",
+		" '          \t-> next favorite", 								"focusing-your-thinking-a53adb16bba",
+		" [          \t-> prior in focus ring", 						"focusing-your-thinking-a53adb16bba",
+		" ]          \t-> next in focus ring", 							"focusing-your-thinking-a53adb16bba",
 		" =          \tinvoke hyperlink or email", "",
 		" A          \tselect all ideas", "",
-		" B          \tcreate a bookmark", "",
+		" B          \tcreate a bookmark", 								"focusing-your-thinking-a53adb16bba",
 		" C          \trecenter the graph", "",
 		" D          \tduplicate", "",
-		" E          \tcreate or edit email", "",
+		" E          \tcreate or edit email", 							"extras-2a9b1a7db21f",
 		" F          \tsearch", "",
-		" G          \trefetch children of selection", "",
-		" H          \tcreate or edit hyperlink", "",
-		" I          \t[un]color the text", "",
+		" G          \trefetch children of selection", 					"cloud-vs-file-f3543f7281ac",
+		" H          \tcreate or edit hyperlink", 						"extras-2a9b1a7db21f",
+		" I          \tun/color the text", 								"extras-2a9b1a7db21f",
 		" L          \t-> lowercase", "",
-		" O          \timport from a Thoughtful file", "",
-		" P          \tprint the topmost window", "",
+		" O          \timport from a Thoughtful file", 					"cloud-vs-file-f3543f7281ac",
 		" R          \treverse order of children", "",
-		" S          \tsave to a Thoughtful file", "",
-		" T          \tswap selected idea with parent", "parent-child-tweaks-bf067abdf461",
+		" S          \tsave to a Thoughtful file", 						"cloud-vs-file-f3543f7281ac",
+		" T          \tswap selected idea with parent", 				"parent-child-tweaks-bf067abdf461",
 		" U          \t-> uppercase", "",
 		"", "",
     ]
@@ -342,42 +350,42 @@ class ZShortcutsController: ZGenericTableController {
     let columnFour: [String] = [
 		"", "",
 		"+OPTION", "",
-		" ARROWS     \trelocate selected idea", "",
+		" ARROWS     \tmove selected idea", "",
 		" DELETE     \tretaining children", "",
-		" RETURN     \tedit (with cursor at end)", "",
+		" RETURN     \tedit with cursor at end", "",
 		" TAB        \tnew idea containing", "",
-		" G          \trefetch entire subgraph of selection", "",
-		" S          \texport to a outline file", "",
+		" G          \trefetch entire subgraph of selection", 			"cloud-vs-file-f3543f7281ac",
+		" S          \texport to a outline file", 						"cloud-vs-file-f3543f7281ac",
 		"", "",
 		"+COMMAND", "",
-		" ARROWS     \textend all the way", "",
-		" /          \trefocus current favorite", "",
-		" D          \tappend onto parent", "parent-child-tweaks-bf067abdf461",
-		" G          \trefetch entire graph", "",
+		" ARROWS     \textend all the way", 							"selecting-ideas-cc2939720e53",
+		" /          \trefocus current favorite", 						"focusing-your-thinking-a53adb16bba",
+		" D          \tappend onto parent", 							"parent-child-tweaks-bf067abdf461",
+		" G          \trefetch entire graph", 							"cloud-vs-file-f3543f7281ac",
 		"", "",
 		"+COMMAND + OPTION", "",
 		" DELETE     \tpermanently (not into trash)", "",
-		" HYPHEN     \t-> to[from] titled line, retain children", "lines-37426469b7c6",
-		" O          \tshow data files in Finder", "",
+		" HYPHEN     \t-> to/from titled line, retain children", 		"lines-37426469b7c6",
+		" O          \tshow data files in Finder", 						"cloud-vs-file-f3543f7281ac",
 		"", "",
 		"+MOUSE CLICK", "",
 		" COMMAND    \tmove entire graph", "",
-		" SHIFT      \t[un]extend selection", "",
+		" SHIFT      \tun/extend selection", 							"selecting-ideas-cc2939720e53",
 		"", "",
 		"uARROW KEY + SHIFT (+ COMMAND -> all)", "",
-		" LEFT       \thide children", "",
-		" RIGHT      \treveal children", "",
-		" vertical   \textend selection", "",
+		" LEFT       \thide children", 									"focusing-your-thinking-a53adb16bba",
+		" RIGHT      \treveal children", 								"focusing-your-thinking-a53adb16bba",
+		" vertical   \textend selection", 								"selecting-ideas-cc2939720e53",
 		"", "",
 		"", "",
 		"", "",
-		"bBROWSING, MULTIPLE IDEAS SELECTED:", "",
+		"bBROWSING (MULTIPLE IDEAS SELECTED):", "",
 		"", "",
 		"uKEY", "",
-		" HYPHEN     \tif first selected idea is titled, -> parent", "lines-37426469b7c6",
-		" #          \tmark with ascending numbers", "",
-		" M          \tsort by length (+ OPTION -> backwards)", "",
-		" N          \talphabetize (+ OPTION -> backwards)", "",
+		" HYPHEN     \tif first selected idea is titled, -> parent", 	"lines-37426469b7c6",
+		" #          \tmark with ascending numbers", 					"extras-2a9b1a7db21f",
+		" M          \tsort by length (+ OPTION -> backwards)", 		"organize-fcdc44ac04e4",
+		" N          \talphabetize (+ OPTION -> backwards)", 			"organize-fcdc44ac04e4",
 		" R          \treverse order", "",
 		"", "",
     ]
