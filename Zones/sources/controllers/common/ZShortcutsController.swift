@@ -146,36 +146,36 @@ class ZShortcutsController: ZGenericTableController {
 	}
 	
 	
-	func strings(for row: Int, column: Int) -> (String, String) {
+	func strings(for row: Int, column: Int) -> (String, String, String) {
 		let columnStrings = [columnOne, columnTwo, columnThree, columnFour]
 		let       strings = columnStrings[column]
-		let 		index = row * 2
+		let 		index = row * 3
 		
-		return index >= strings.count ? ("", "") : (strings[index], strings[index + 1])
+		return index >= strings.count ? ("", "", "") : (strings[index], strings[index + 1], strings[index + 2])
 	}
 	
 	
 	func url(for row: Int, column: Int) -> String? {
 		let m = "https://medium.com/@sand_74696/"
-		let (_, url) = strings(for: row, column: column)
+		let (_, _, url) = strings(for: row, column: column)
 
 		return url.isEmpty ? nil : m + url
 	}
 	
 	
 	func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
-		let (raw, url) = strings(for: row, column: column)
-        let       type = ZShortcutType(rawValue: raw.substring(with: NSMakeRange(0, 1))) // grab first character
-        var       text = raw.substring(with: NSMakeRange(1, raw.length - 1))             // grab remaining characters
-        var attributes = [String : Any] ()
-		let     hasURL = !url.isEmpty
-        var     prefix = "   "
+		var (m, e, url) = strings(for: row, column: column)
+        let        type = ZShortcutType(rawValue: m.substring(with: NSMakeRange(0, 1))) // grab first character
+		let        main = m.substring(fromInclusive: 1)             // grab remaining characters
+        var  attributes = [String : Any] ()
+		let      hasURL = !url.isEmpty
+        var      prefix = "   "
 
         switch type {
         case .bold?:
-            attributes = [NSAttributedString.Key.font.rawValue : bold as Any]
+            attributes  = [NSAttributedString.Key.font.rawValue : bold as Any]
         case .append?, .underline?:
-            attributes = [NSAttributedString.Key.underlineStyle.rawValue : 1 as Any]
+            attributes  = [NSAttributedString.Key.underlineStyle.rawValue : 1 as Any]
             
             if type == .append {
                 prefix += "+ "
@@ -184,18 +184,16 @@ class ZShortcutsController: ZGenericTableController {
 		case .plain?:
 			if  hasURL {
 				attributes = [NSAttributedString.Key.foregroundColor.rawValue : NSColor.blue.darker(by: 5.0) as Any]
-				text.append(" ...")
+				e.append(kEllipsis)
 			}
 
 			fallthrough
 
 		default:
-			prefix = kTab		// for empty lines, including after last row
+			prefix  = kTab		// for empty lines, including after last row
         }
 
-		var parts   = text.components(separatedBy: kTab)
 		let result  = NSMutableAttributedString(string: prefix)
-		let main    = parts[0].stripped
 
 		if  type == .plain {
 			result.append(NSAttributedString(string: main))
@@ -203,14 +201,12 @@ class ZShortcutsController: ZGenericTableController {
 			result.append(NSAttributedString(string: main, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes)))
 		}
 
-		if  parts.count > 1 {
-			let explain = parts[1]
-
+		if  e.length > 3 {
 			result.append(NSAttributedString(string: kTab))
-			result.append(NSAttributedString(string: explain, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes)))
+			result.append(NSAttributedString(string: e, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes)))
 		}
 
-        if  text.length < 13 && row != 1 {
+        if  main.length + e.length < 11 && row != 1 && type != .plain {
             result.append(NSAttributedString(string: kTab)) 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough subsequent tabs
         }
 
@@ -221,173 +217,173 @@ class ZShortcutsController: ZGenericTableController {
 
 
     let columnOne: [String] = [
-        "", "",
-        "bALWAYS:\t", "",
-        "", "",
-        "uKEY", "",
-		" RETURN     \tbegin or end editing text", "",
-		" SPACE      \tcreate subordinate idea", "",
-		" TAB        \tcreate next idea", "",
-        "", "",
-        "+CONTROL", "",
-		" COMMA      \ttoggle browsing: un/confined", "",
-		" DELETE     \tshow trash", "",
-		" PERIOD     \ttoggle next ideas precede/follow", "",
-		" SPACE      \tcreate an idea", "",
-		" /          \tremove from focus ring, -> prior", 				"focusing-your-thinking-a53adb16bba",
-        "", "",
-        "+COMMAND", "",
-		" COMMA      \tshow or hide preferences", 						"help-inspector-view-c360241147f2",
-		" HYPHEN     \tconvert text to or from 'titled line'", 			"lines-37426469b7c6",
-		" P          \tprint the graph (or this window)", "",
-        "", "",
-        "+COMMAND + OPTION", "",
-		" A          \tshow About Thoughtful", "",
-		" R          \treport a problem", "",
-		" /          \tshow or hide this window", "",
-        "", "",
-        "uCONTROL + COMMAND + OPTION", "",
-		"            \tshow or hide indicators", "",
-        "", "",
-        "", "",
-        "", "",
-        "bSEARCH BAR:", "",
-        "", "",
-        "uKEY", "",
-		" RETURN     \tperform search", "",
-		" ESCAPE     \tdismisss search bar", "",
-        "", "",
-        "+COMMAND", "",
-		" A          \tselect all search text", "",
-		" F          \tdismisss search bar", "",
-        "", "",
+        "",				"", "",
+        "bALWAYS:\t",	"", "",
+		"",				"", "",
+        "uKEY", 		"", "",
+		" RETURN", 		"begin or end editing text", 					"edit-d05d18996df7",
+		" SPACE", 		"create subordinate idea", 						"edit-d05d18996df7",
+		" TAB", 		"create next idea", 							"edit-d05d18996df7",
+		"",				"", "",
+        "+CONTROL",		"", "",
+		" COMMA", 		"toggle browsing: un/confined", 				"",
+		" DELETE", 		"show trash", 									"",
+		" PERIOD", 		"toggle next ideas precede/follow", 			"",
+		" SPACE", 		"create an idea", 								"edit-d05d18996df7",
+		" /", 			"remove from focus ring, -> prior", 			"focusing-your-thinking-a53adb16bba",
+		"",				"", "",
+        "+COMMAND",		"", "",
+		" COMMA", 		"show or hide preferences", 					"help-inspector-view-c360241147f2",
+		" HYPHEN", 		"convert text to or from 'titled line'", 		"lines-37426469b7c6",
+		" P", 			"print the graph (or this window)", 			"",
+		"",				"", "",
+        "+COMMAND + OPTION", "", "",
+		" /", 			"show or hide this window", 					"",
+		" A", 			"show About Thoughtful", 						"",
+		" R", 			"report a problem", 							"",
+		"",				"", "",
+		"uCONTROL + COMMAND + OPTION", "", "",
+		"  ", 			"show or hide indicators", 						"",
+		"",				"", "",
+		"",				"", "",
+		"",				"", "",
+		"bSEARCH BAR:", "", "",
+		"",				"", "",
+		"uKEY",			"", "",
+		" RETURN", 		"perform search", 								"",
+		" ESCAPE", 		"dismisss search bar", 							"",
+		"",				"", "",
+		"+COMMAND",		"", "",
+		" A", 			"select all search text", 						"",
+		" F", 			"dismisss search bar", 							"",
+		"",				"", "",
     ]
 
     
     let columnTwo: [String] = [
-        "", "",
-        "bEDITING TEXT:", "",
-        "", "",
-        "uKEY", "",
-		" ESCAPE     \tcancel edit, discarding changes", "",
-        "", "",
-        "+COMMAND", "",
-		" PERIOD     \tcancel edit, discarding changes", "",
-		" A          \tselect all text", "",
-        "", "",
-        "+COMMAND + OPTION", "",
-		" PERIOD     \ttoggle: next ideas precede/follow,", "",
-		" \t(and) move idea up/down", "",
-		"", "",
-		"", "",
-		"", "",
-		"bEDITING (TEXT IS SELECTED):", "",
-		"", "",
-		" surround:  \t| [ { ( < \" SPACE", "",
-		"", "",
-		"+COMMAND", "",
-		" D          \tif all selected, append onto parent", 			"parent-child-tweaks-bf067abdf461",
-		"            \tif not all selected, create as a child", 		"parent-child-tweaks-bf067abdf461",
-		" L          \t-> lowercase", "",
-		" U          \t-> uppercase", "",
-		"", "",
-		"", "",
-		"", "",
-		"", "",
-		"", "",
-		"bSEARCH RESULTS:", "",
-		"", "",
-		"uKEY", "",
-		" RETURN    \tfocus on selected result", "",
-		"", "",
-		"uARROW KEY", "",
-		" LEFT      \texit search", "",
-		" RIGHT     \tfocus on selected result", "",
-		" vertical  \tbrowse results (wraps around)", "",
-		"", "",
+		"",				"", "",
+		"bEDITING TEXT:", "", "",
+		"",				"", "",
+		"uKEY",			"", "",
+		" ESCAPE", 		"cancel edit, discarding changes", 				"edit-d05d18996df7",
+		"",				"", "",
+		"+COMMAND",		"", "",
+		" PERIOD", 		"cancel edit, discarding changes", 				"edit-d05d18996df7",
+		" A", 			"select all text", 								"edit-d05d18996df7",
+		"",				"", "",
+		"+COMMAND + OPTION", "", "",
+		" PERIOD", 		"toggle: next ideas precede/follow,", "",
+		"", 			"(and) move idea up/down", 						"organize-fcdc44ac04e4",
+		"",				"", "",
+		"",				"", "",
+		"",				"", "",
+		"bEDITING (TEXT IS SELECTED):",	"", "",
+		"",				"", "",
+		" surround:", 	"| [ { ( < \" SPACE", 							"edit-d05d18996df7",
+		"",				"", "",
+		"+COMMAND",		"", "",
+		" D", 			"if all selected, append onto parent", 			"parent-child-tweaks-bf067abdf461",
+		"  ", 			"if not all selected, create as a child", 		"parent-child-tweaks-bf067abdf461",
+		" L", 			"-> lowercase", 								"edit-d05d18996df7",
+		" U", 			"-> uppercase", 								"edit-d05d18996df7",
+		"",				"", "",
+		"",				"", "",
+		"",				"", "",
+		"",				"", "",
+		"",				"", "",
+		"bSEARCH RESULTS:",	"", "",
+		"",				"", "",
+		"uKEY",			"", "",
+		" RETURN", 		"focus on selected result", 					"",
+		"",				"", "",
+		"uARROW KEY",	"", "",
+		" LEFT", 		"exit search", 									"",
+		" RIGHT", 		"focus on selected result", 					"",
+		" vertical", 	"browse results (wraps around)", 				"",
+		"",				"", "",
     ]
     
 
     let columnThree: [String] = [
-		"", "",
-		"bBROWSING (NOT EDITING TEXT):", "",
-		"", "",
-		" mark:      \t" + kMarkingCharacters, 							"extras-2a9b1a7db21f",
-		"", "",
-		"uKEY", "",
-		" ARROWS     \tnavigate graph", "",
-		" COMMA      \ttoggle browsing: un/confined", "",
-		" DELETE     \tselected ideas and their progeny", "",
-		" HYPHEN     \tadd 'line', or un/title it", 					"lines-37426469b7c6",
-		" PERIOD     \ttoggle next ideas precede/follow", "",
-		" SPACE      \tcreate an idea", "",
-		" /          \tfocus (also, manage favorite)", 					"focusing-your-thinking-a53adb16bba",
-		" \\         \tswitch to other graph", "",
-		" ;          \t-> prior favorite", 								"focusing-your-thinking-a53adb16bba",
-		" '          \t-> next favorite", 								"focusing-your-thinking-a53adb16bba",
-		" [          \t-> prior in focus ring", 						"focusing-your-thinking-a53adb16bba",
-		" ]          \t-> next in focus ring", 							"focusing-your-thinking-a53adb16bba",
-		" =          \tinvoke hyperlink or email", "",
-		" A          \tselect all ideas", "",
-		" B          \tcreate a bookmark", 								"focusing-your-thinking-a53adb16bba",
-		" C          \trecenter the graph", "",
-		" D          \tduplicate", "",
-		" E          \tcreate or edit email", 							"extras-2a9b1a7db21f",
-		" F          \tsearch", "",
-		" G          \trefetch children of selection", 					"cloud-vs-file-f3543f7281ac",
-		" H          \tcreate or edit hyperlink", 						"extras-2a9b1a7db21f",
-		" I          \tun/color the text", 								"extras-2a9b1a7db21f",
-		" L          \t-> lowercase", "",
-		" O          \timport from a Thoughtful file", 					"cloud-vs-file-f3543f7281ac",
-		" R          \treverse order of children", "",
-		" S          \tsave to a Thoughtful file", 						"cloud-vs-file-f3543f7281ac",
-		" T          \tswap selected idea with parent", 				"parent-child-tweaks-bf067abdf461",
-		" U          \t-> uppercase", "",
-		"", "",
+		"",				"", "",
+		"bBROWSING (NOT EDITING TEXT):", "", "",
+		"",				"", "",
+		" mark:", 		"" + kMarkingCharacters, 						"extras-2a9b1a7db21f",
+		"",				"", "",
+		"uKEY",			"", "",
+		" ARROWS", 		"navigate graph", 								"",
+		" COMMA", 		"toggle browsing: un/confined", 				"",
+		" DELETE", 		"selected ideas and their progeny", 			"organize-fcdc44ac04e4",
+		" HYPHEN", 		"add 'line', or un/title it", 					"lines-37426469b7c6",
+		" PERIOD", 		"toggle next ideas precede/follow", 			"",
+		" SPACE", 		"create an idea", 								"edit-d05d18996df7",
+		" /", 			"focus (also, manage favorite)", 				"focusing-your-thinking-a53adb16bba",
+		" \\", 			"switch to other graph", 						"",
+		" ;", 			"-> prior favorite", 							"focusing-your-thinking-a53adb16bba",
+		" '", 			"-> next favorite", 							"focusing-your-thinking-a53adb16bba",
+		" [", 			"-> prior in focus ring", 						"focusing-your-thinking-a53adb16bba",
+		" ]", 			"-> next in focus ring", 						"focusing-your-thinking-a53adb16bba",
+		" =", 			"invoke hyperlink or email", 					"extras-2a9b1a7db21f",
+		" A", 			"select all ideas", 							"selecting-ideas-cc2939720e53",
+		" B", 			"create a bookmark", 							"focusing-your-thinking-a53adb16bba",
+		" C", 			"recenter the graph", 							"",
+		" D", 			"duplicate", 									"",
+		" E", 			"create or edit email link", 					"extras-2a9b1a7db21f",
+		" F", 			"search", 										"",
+		" G", 			"refetch children of selection", 				"cloud-vs-file-f3543f7281ac",
+		" H", 			"create or edit hyperlink", 					"extras-2a9b1a7db21f",
+		" I", 			"un/color the text", 							"extras-2a9b1a7db21f",
+		" L", 			"-> lowercase", 								"edit-d05d18996df7",
+		" O", 			"import from a Thoughtful file", 				"cloud-vs-file-f3543f7281ac",
+		" R", 			"reverse order of children", 					"organize-fcdc44ac04e4",
+		" S", 			"save to a Thoughtful file", 					"cloud-vs-file-f3543f7281ac",
+		" T", 			"swap selected idea with parent", 				"parent-child-tweaks-bf067abdf461",
+		" U", 			"-> uppercase", 								"edit-d05d18996df7",
+		"",				"", "",
     ]
     
     
     let columnFour: [String] = [
-		"", "",
-		"+OPTION", "",
-		" ARROWS     \tmove selected idea", "",
-		" DELETE     \tretaining children", "",
-		" RETURN     \tedit with cursor at end", "",
-		" TAB        \tnew idea containing", "",
-		" G          \trefetch entire subgraph of selection", 			"cloud-vs-file-f3543f7281ac",
-		" S          \texport to a outline file", 						"cloud-vs-file-f3543f7281ac",
-		"", "",
-		"+COMMAND", "",
-		" ARROWS     \textend all the way", 							"selecting-ideas-cc2939720e53",
-		" /          \trefocus current favorite", 						"focusing-your-thinking-a53adb16bba",
-		" D          \tappend onto parent", 							"parent-child-tweaks-bf067abdf461",
-		" G          \trefetch entire graph", 							"cloud-vs-file-f3543f7281ac",
-		"", "",
-		"+COMMAND + OPTION", "",
-		" DELETE     \tpermanently (not into trash)", "",
-		" HYPHEN     \t-> to/from titled line, retain children", 		"lines-37426469b7c6",
-		" O          \tshow data files in Finder", 						"cloud-vs-file-f3543f7281ac",
-		"", "",
-		"+MOUSE CLICK", "",
-		" COMMAND    \tmove entire graph", "",
-		" SHIFT      \tun/extend selection", 							"selecting-ideas-cc2939720e53",
-		"", "",
-		"uARROW KEY + SHIFT (+ COMMAND -> all)", "",
-		" LEFT       \thide children", 									"focusing-your-thinking-a53adb16bba",
-		" RIGHT      \treveal children", 								"focusing-your-thinking-a53adb16bba",
-		" vertical   \textend selection", 								"selecting-ideas-cc2939720e53",
-		"", "",
-		"", "",
-		"", "",
-		"bBROWSING (MULTIPLE IDEAS SELECTED):", "",
-		"", "",
-		"uKEY", "",
-		" HYPHEN     \tif first selected idea is titled, -> parent", 	"lines-37426469b7c6",
-		" #          \tmark with ascending numbers", 					"extras-2a9b1a7db21f",
-		" M          \tsort by length (+ OPTION -> backwards)", 		"organize-fcdc44ac04e4",
-		" N          \talphabetize (+ OPTION -> backwards)", 			"organize-fcdc44ac04e4",
-		" R          \treverse order", "",
-		"", "",
+		"",				"", "",
+		"+OPTION",		"", "",
+		" ARROWS", 		"move selected idea", 							"organize-fcdc44ac04e4",
+		" DELETE", 		"retaining children", 							"organize-fcdc44ac04e4",
+		" RETURN", 		"edit with cursor at end", 						"edit-d05d18996df7",
+		" TAB", 		"new idea containing", 							"edit-d05d18996df7",
+		" G", 			"refetch entire subgraph of selection", 		"cloud-vs-file-f3543f7281ac",
+		" S", 			"export to a outline file", 					"cloud-vs-file-f3543f7281ac",
+		"",				"", "",
+		"+COMMAND",		"", "",
+		" ARROWS", 		"extend all the way", 							"selecting-ideas-cc2939720e53",
+		" /", 			"refocus current favorite", 					"focusing-your-thinking-a53adb16bba",
+		" D", 			"append onto parent", 							"parent-child-tweaks-bf067abdf461",
+		" G", 			"refetch entire graph", 						"cloud-vs-file-f3543f7281ac",
+		"",				"", "",
+		"+COMMAND + OPTION", "", "",
+		" DELETE", 		"permanently (not into trash)", 				"organize-fcdc44ac04e4",
+		" HYPHEN", 		"-> to/from titled line, retain children", 		"lines-37426469b7c6",
+		" O", 			"show data files in Finder", 					"cloud-vs-file-f3543f7281ac",
+		"",				"", "",
+		"+MOUSE CLICK",	"", "",
+		" COMMAND", 	"move entire graph", 							"mouse-e21b7a63020e",
+		" SHIFT", 		"un/extend selection", 							"selecting-ideas-cc2939720e53",
+		"",				"", "",
+		"uARROW KEY + SHIFT (+ COMMAND -> all)", "", "",
+		" LEFT ", 		"hide children", 								"focusing-your-thinking-a53adb16bba",
+		" RIGHT", 		"reveal children", 								"focusing-your-thinking-a53adb16bba",
+		" vertical", 	"extend selection", 							"selecting-ideas-cc2939720e53",
+		"",				"", "",
+		"",				"", "",
+		"",				"", "",
+		"bBROWSING (MULTIPLE IDEAS SELECTED):",	"", "",
+		"",				"", "",
+		"uKEY",			"", "",
+		" HYPHEN", 		"if first selected idea is titled, -> parent", 	"lines-37426469b7c6",
+		" #", 			"mark with ascending numbers", 					"extras-2a9b1a7db21f",
+		" M", 			"sort by length (+ OPTION -> backwards)", 		"organize-fcdc44ac04e4",
+		" N", 			"alphabetize (+ OPTION -> backwards)", 			"organize-fcdc44ac04e4",
+		" R", 			"reverse order", 								"organize-fcdc44ac04e4",
+		"",				"", "",
     ]
     
 }

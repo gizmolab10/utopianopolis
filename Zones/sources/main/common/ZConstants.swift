@@ -92,6 +92,7 @@ let                  kUserType = CKRecord.SystemType.userRecord
 let                  kZoneType = "Zone"
 let                  kRootName = "root"
 let                  kNullLink = "no"
+let                  kEllipsis = "\u{2026}"
 let                 kBackspace = "\u{8}"
 let                 kThickness = "line thickness"
 let                 kTraitType = "ZTrait"
