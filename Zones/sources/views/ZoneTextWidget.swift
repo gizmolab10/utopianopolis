@@ -163,7 +163,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                     text = original.stringBySmartReplacing(range, with: "")
                     
                     gSelecting.ungrabAll()
-                } else if !original.isLineTitle(within: range) {
+                } else if range.location != 0 && !original.isLineTitle(enclosing: range) {
                     extract = nil
                 }
             }

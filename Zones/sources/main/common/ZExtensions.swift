@@ -971,7 +971,7 @@ extension String {
     }
 
     
-    func isLineTitle(within range: NSRange) -> Bool {
+    func isLineTitle(enclosing range: NSRange) -> Bool {
         let a = substring(  toExclusive: range.lowerBound - 1)
         let b = substring(fromInclusive: range.upperBound + 1)
 

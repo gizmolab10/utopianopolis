@@ -1557,17 +1557,19 @@ class Zone : ZRecord {
     
     func convertToFromLine() -> Bool {
         if  let childName = widget?.textWidget.extractTitleOrSelectedText(requiresAllOrTitleSelected: true) {
+			var location = 12
             
             if  zoneName != childName {
                 zoneName  = childName
                 colorized = false
-                
-                editAndSelect(range: NSMakeRange(0,  childName.length))
+				location  = 0
             } else {
                 convertToTitledLine()
-                editAndSelect(range: NSMakeRange(12, childName.length))
             }
-            
+			
+			gTextEditor.stopCurrentEdit()
+			editAndSelect(range: NSMakeRange(location,  childName.length))
+
             return true
         }
         
