@@ -391,9 +391,70 @@ class ZTextEditor: ZTextView {
     }
 
     
-    // MARK:- events
+    // MARK:- inserting special characters (popup menu)
     // MARK:-
-    
+	
+	
+	enum ZPopupMenuType: String {
+		case eCommand = "c"
+		case eOption  = "o"
+		case eShift   = "s"
+		case eControl = "n"
+		case eArrow   = "-"
+		case eCancel  = "i"
+		
+		var converted: String {
+			switch self {
+			case .eCancel:  return ""
+			case .eCommand: return "⌘"
+			case .eOption:  return "⌥"
+			case .eShift:   return "⇧"
+			case .eControl: return "^"
+			case .eArrow:   return "->"
+			}
+		}
+	}
+	
+	
+	@objc func handlePopupMenu(_ sender: ZMenuItem) {
+		if  let type = ZPopupMenuType(rawValue: sender.keyEquivalent) {
+			let converted = type.converted
+			
+			insertText(converted)
+		}
+	}
+	
+	
+	func item(title: String, type: ZPopupMenuType) -> NSMenuItem {
+		let  	  i = NSMenuItem(title: title, action: #selector(handlePopupMenu(_:)), keyEquivalent: type.rawValue)
+		i.isEnabled = true
+		i.target 	= self
+		
+		if  type != .eCancel {
+			i.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
+		}
+		
+		return i
+	}
+	
+	
+	func showSpecialsPopup() {
+		let m = NSMenu(title: "foo")
+		m.autoenablesItems = false
+		
+		m.addItem(item(title: "Cancel",  type: .eCancel))
+		m.addItem(item(title: "Command", type: .eCommand))
+		m.addItem(item(title: "Option",  type: .eOption))
+		m.addItem(item(title: "Shift",   type: .eShift))
+		m.addItem(item(title: "Control", type: .eControl))
+		m.addItem(item(title: "->", 	 type: .eArrow))
+		m.popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
+	}
+
+	
+	// MARK:- events
+	// MARK:-
+
 
     @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) {
         if  gWorkMode == .graphMode {

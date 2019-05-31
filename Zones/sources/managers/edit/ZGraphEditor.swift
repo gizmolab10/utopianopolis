@@ -102,7 +102,7 @@ class ZGraphEditor: NSObject {
                     case "a":      if SPECIAL { gApplication.showHideAbout() } else { gEditedTextWidget?.selectAllText() }
                     case "d":      tearApartCombine(OPTION, editedZone)
                     case "f":      search(OPTION)
-                    case "i":      toggleColorized()
+                    case "i":      gTextEditor.showSpecialsPopup()
                     case "p":      printCurrentFocus()
                     case "?":      showHideKeyboardShortcuts()
                     case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
@@ -331,7 +331,7 @@ class ZGraphEditor: NSObject {
 
     // MARK:- miscellaneous features
     // MARK:-
-    
+	    
 
     func focusOnTrash() {
         if  let trash = gTrash {
