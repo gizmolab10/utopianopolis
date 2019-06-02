@@ -202,14 +202,13 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         gHere       = zone!
 
         clear()
-        zone?.grab()
-        zone?.needChildren()
-        zone?.revealChildren()
-        redrawGraph()
+		zone?.needChildren()
+		zone?.revealChildren()
+		redrawGraph()
 
-        gBatches.sync { iSame in
-            self.redrawGraph()
-        }
+		zone?.editAndSelect(text: gSearchController?.searchBox?.text)
+
+        gBatches.sync { iSame in }
     }
 
 

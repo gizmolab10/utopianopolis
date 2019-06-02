@@ -278,6 +278,14 @@ class ZTextEditor: ZTextView {
     
     func allowAsFirstResponder(_ iTextWidget: ZoneTextWidget) -> Bool {
         return !isEditingStateChanging && !iTextWidget.isFirstResponder && iTextWidget.widgetZone?.userCanWrite ?? false
+	}
+	
+	
+	func edit(_ zRecord: ZRecord, andSelect text: String?) {
+		edit(zRecord)
+		FOREGROUND {
+			self.selectText(text)
+		}
     }
     
     
@@ -390,7 +398,22 @@ class ZTextEditor: ZTextView {
         currentEdit?.prepareUndoForTextChange(manager, onUndo)
     }
 
-    
+	
+	// MARK:- selecting
+	// MARK:-
+	
+
+	func selectText(_ iText: String?) {
+		if  let t = iText?.lowercased(),
+			let parts = currentTextWidget?.text?.lowercased().components(separatedBy: t),
+			parts.count > 0 {
+			let range = NSRange(location: parts[0].length, length: t.length)
+			selectedRange = range
+			currentTextWidget?.selectCharacter(in: range)
+		}
+	}
+	
+
     // MARK:- inserting special characters (popup menu)
     // MARK:-
 	
@@ -403,21 +426,35 @@ class ZTextEditor: ZTextView {
 		case eArrow   = "-"
 		case eCancel  = "i"
 		
-		var converted: String {
+		static var activeTypes: [ZPopupMenuType] { return [.eCommand, .eOption, .eShift, .eControl, .eArrow] }
+
+		var both: (String, String) {
 			switch self {
-			case .eCancel:  return ""
-			case .eCommand: return "⌘"
-			case .eOption:  return "⌥"
-			case .eShift:   return "⇧"
-			case .eControl: return "^"
-			case .eArrow:   return "->"
+			case .eCancel:  return ("",  "Cancel")
+			case .eCommand: return ("⌘", "Command")
+			case .eOption:  return ("⌥", "Option")
+			case .eShift:   return ("⇧", "Shift")
+			case .eControl: return ("^", "Control")
+			case .eArrow:   return ("⇨", "⇨")
 			}
 		}
+		
+		var converted: String {
+			let (converted, _) = both
+			return converted
+		}
+		
+		var title: String {
+			let (_, title) = both
+			return title
+		}
+		
 	}
 	
 	
 	@objc func handlePopupMenu(_ sender: ZMenuItem) {
-		if  let type = ZPopupMenuType(rawValue: sender.keyEquivalent) {
+		if  let type = ZPopupMenuType(rawValue: sender.keyEquivalent),
+			type != .eCancel {
 			let converted = type.converted
 			
 			insertText(converted)
@@ -425,30 +462,30 @@ class ZTextEditor: ZTextView {
 	}
 	
 	
-	func item(title: String, type: ZPopupMenuType) -> NSMenuItem {
-		let  	  i = NSMenuItem(title: title, action: #selector(handlePopupMenu(_:)), keyEquivalent: type.rawValue)
-		i.isEnabled = true
-		i.target 	= self
+	func item(type: ZPopupMenuType) -> NSMenuItem {
+		let  	  item = NSMenuItem(title: type.title, action: #selector(handlePopupMenu(_:)), keyEquivalent: type.rawValue)
+		item.isEnabled = true
+		item.target    = self
 		
 		if  type != .eCancel {
-			i.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
+			item.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
 		}
 		
-		return i
+		return item
 	}
 	
 	
 	func showSpecialsPopup() {
-		let m = NSMenu(title: "foo")
-		m.autoenablesItems = false
+		let menu = NSMenu(title: "foo")
+		menu.autoenablesItems = false
 		
-		m.addItem(item(title: "Cancel",  type: .eCancel))
-		m.addItem(item(title: "Command", type: .eCommand))
-		m.addItem(item(title: "Option",  type: .eOption))
-		m.addItem(item(title: "Shift",   type: .eShift))
-		m.addItem(item(title: "Control", type: .eControl))
-		m.addItem(item(title: "->", 	 type: .eArrow))
-		m.popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
+		for type in ZPopupMenuType.activeTypes {
+			menu.addItem(item(type: type))
+		}
+
+		menu.addItem(NSMenuItem.separator())
+		menu.addItem(item(type: .eCancel))
+		menu.popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
 	}
 
 	

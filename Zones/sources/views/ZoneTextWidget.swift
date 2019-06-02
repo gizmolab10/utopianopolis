@@ -129,10 +129,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         }
 
         return false
-    }
-
-
-    override func selectCharacter(in range: NSRange) {
+	}
+	
+	
+	override func selectCharacter(in range: NSRange) {
         #if os(OSX)
         if  let e = currentEditor() {
             e.selectedRange = range

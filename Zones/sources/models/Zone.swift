@@ -657,7 +657,7 @@ class Zone : ZRecord {
             return t.isTextEditable
         } else if directAccess == .eWritable {
             return true
-        } else if let p = parentZone, p != self {
+        } else if let p = parentZone, p != self, p.parentZone != self {
             return p.directAccess == .eProgenyWritable || p.isTextEditable
         } else {
             return false
@@ -724,12 +724,13 @@ class Zone : ZRecord {
     // MARK:-
 
 
-    func        addToPaste() { gSelecting   .pasteableZones[self] = (parentZone, siblingIndex) }
-    func         addToGrab() { gSelecting.addMultipleGrabs([self]) }
-    func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
-    func            ungrab() { gSelecting           .ungrab(self) }
-    func              edit() { gTextEditor            .edit(self) }
-
+    func		         addToPaste() { gSelecting   .pasteableZones[self] = (parentZone, siblingIndex) }
+    func		          addToGrab() { gSelecting.addMultipleGrabs([self]) }
+    func 		  ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
+    func       			     ungrab() { gSelecting           .ungrab(self) }
+    func            		   edit() { gTextEditor            .edit(self) }
+	func editAndSelect(text: String?) { gTextEditor			   .edit(self, andSelect: text) }
+	
     
     func grab(updateBrowsingLevel: Bool = true) {
         gSelecting.grab([self], updateBrowsingLevel: updateBrowsingLevel)
@@ -801,10 +802,10 @@ class Zone : ZRecord {
             
             gTextEditor.updateText(inZone: self)
         }
-    }
-
-
-    func editAndSelect(range: NSRange) {
+	}
+	
+	
+	func editAndSelect(range: NSRange) {
         edit()
         FOREGROUND {
             self.widget?.textWidget.selectCharacter(in: range)
