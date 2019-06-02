@@ -680,61 +680,75 @@ extension ZTextEditor {
         default:                             super.doCommand(by: selector)
         }
     }
-    
-    
+	
+	
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
         if gIsShortcutsFrontmost { return }
-        
-        let COMMAND = flags.isCommand
-        let  OPTION = flags.isOption
-        let   SHIFT = flags.isShift
-        
+
         switch arrow {
         case .up,
-             .down: moveUp(arrow == .up, stopEdit: !OPTION)
+             .down: moveUp(arrow == .up, stopEdit: !flags.isOption)
         case .left:
             if  atStart {
                 moveOut(true)
             } else {
                 clearOffset()
-                
-                if         COMMAND && !SHIFT {
-                    moveToBeginningOfLine(self)
-                } else if  COMMAND &&  SHIFT {
-                    moveToBeginningOfLineAndModifySelection(self)
-                } else if  OPTION  &&  SHIFT {
-                    moveWordLeftAndModifySelection(self)
-                } else if !OPTION  &&  SHIFT {
-                    moveLeftAndModifySelection(self)
-                } else if  OPTION  && !SHIFT {
-                    moveWordLeft(self)
-                } else {
-                    moveLeft(self)
-                }
+                handleArrow(arrow, with: flags)
             }
         case .right:
-            if atEnd {
+            if  atEnd {
                 moveOut(false)
             } else {
                 clearOffset()
-                
-                if         COMMAND && !SHIFT {
-                    moveToEndOfLine(self)
-                } else if  COMMAND &&  SHIFT {
-                    moveToEndOfLineAndModifySelection(self)
-                } else if  OPTION  &&  SHIFT {
-                    moveWordRightAndModifySelection(self)
-                } else if !OPTION  &&  SHIFT {
-                    moveRightAndModifySelection(self)
-                } else if  OPTION  && !SHIFT {
-                    moveWordRight(self)
-                } else {
-                    moveRight(self)
-                }
+				handleArrow(arrow, with: flags)
             }
         }
     }
 
+}
+
+
+extension NSText {
+	
+	func handleArrow(_ arrow: ZArrowKey, with flags: ZEventFlags) {
+		let COMMAND = flags.isCommand
+		let  OPTION = flags.isOption
+		let   SHIFT = flags.isShift
+		
+		switch arrow {
+		case .up:    moveToBeginningOfLine(self)
+		case .down:  moveToEndOfLine(self)
+		case .right:
+			if         COMMAND && !SHIFT {
+				moveToEndOfLine(self)
+			} else if  COMMAND &&  SHIFT {
+				moveToEndOfLineAndModifySelection(self)
+			} else if  OPTION  &&  SHIFT {
+				moveWordRightAndModifySelection(self)
+			} else if !OPTION  &&  SHIFT {
+				moveRightAndModifySelection(self)
+			} else if  OPTION  && !SHIFT {
+				moveWordRight(self)
+			} else {
+				moveRight(self)
+			}
+			
+		case .left:
+			if         COMMAND && !SHIFT {
+				moveToBeginningOfLine(self)
+			} else if  COMMAND &&  SHIFT {
+				moveToBeginningOfLineAndModifySelection(self)
+			} else if  OPTION  &&  SHIFT {
+				moveWordLeftAndModifySelection(self)
+			} else if !OPTION  &&  SHIFT {
+				moveLeftAndModifySelection(self)
+			} else if  OPTION  && !SHIFT {
+				moveWordLeft(self)
+			} else {
+				moveLeft(self)
+			}
+		}
+	}
 }
 
 

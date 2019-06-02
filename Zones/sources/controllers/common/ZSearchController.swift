@@ -35,10 +35,10 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                 self.searchBox?.becomeFirstResponder()
             }
         }
-    }
-
-
-    func handleEvent(_ event: ZEvent) -> ZEvent? {
+	}
+	
+	
+	func handleEvent(_ event: ZEvent) -> ZEvent? {
         let   string = event.input ?? ""
         let    flags = event.modifierFlags
         let  COMMAND = flags.isCommand
@@ -60,6 +60,8 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
             gSearching.state = .find
             
             return event
+		} else if let arrow = key.arrow {
+			searchBox?.currentEditor()?.handleArrow(arrow, with: flags)
         } else {
             return event
         }
