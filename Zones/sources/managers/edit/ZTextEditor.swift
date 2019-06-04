@@ -404,10 +404,9 @@ class ZTextEditor: ZTextView {
 	
 
 	func selectText(_ iText: String?) {
-		if  let t = iText?.lowercased(),
-			let parts = currentTextWidget?.text?.lowercased().components(separatedBy: t),
-			parts.count > 0 {
-			let range = NSRange(location: parts[0].length, length: t.length)
+		if  let ranges = currentTextWidget?.text?.rangesMatching(iText),
+			ranges.count > 0 {
+			let range  = ranges[0]
 			selectedRange = range
 			currentTextWidget?.selectCharacter(in: range)
 		}

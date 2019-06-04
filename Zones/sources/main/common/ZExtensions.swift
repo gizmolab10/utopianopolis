@@ -868,11 +868,18 @@ extension String {
         return startIndex
     }
 
+	
+	func starts(with: String) -> Bool {
+		let start = substring(toExclusive: 1)
+		
+		return with.contains(start)
+	}
+
 
     func ends(with: String) -> Bool {
-        let    end = substring(fromInclusive: length - 1)
+        let end = substring(fromInclusive: length - 1)
 
-        return end == with
+        return with.contains(end)
     }
 
 
@@ -1085,7 +1092,51 @@ extension String {
 
         return romanValue
     }
+	
+	
+	func trimmed(by: Int = 1) -> String {
+		let t = substring(toExclusive: self.length - by)
+		return t.substring(fromInclusive: by)
+	}
     
+	
+	func rangesMatching(_ iText: String?, needSpaces: Bool = true) -> [NSRange]? {
+		if  let     t = iText?.lowercased() {
+			let parts = lowercased().components(separatedBy: t)
+			let count = parts.count - 1
+			let match = " -,:.;"
+
+			if  count > 0 {
+				var   ranges = [NSRange] ()
+				var location = 0
+				
+				for index in 0 ..< count {
+					let  this = parts[index]
+					let range = NSRange(location: location + this.length, length: t.length)
+					location  = range.upperBound
+					
+					if  needSpaces,
+						index + 1 < count {
+						let next = parts[index + 1]
+
+						if  (this.length > 0 && !this  .ends(with: match)) ||
+							(next.length > 0 && !next.starts(with: match)) {
+							continue
+						}
+					}
+
+					ranges.append(range)
+					
+					break
+				}
+				
+				return ranges
+			}
+		}
+		
+		return nil
+	}
+	
 }
 
 

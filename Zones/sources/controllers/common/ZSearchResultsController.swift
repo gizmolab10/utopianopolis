@@ -27,6 +27,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     var            inSearchBox = false
     var           foundRecords = [ZDatabaseID: [CKRecord]] ()
     var                monitor:  Any?
+	var     searchText: String?  { return gSearchController?.searchBox?.text }
     override  var controllerID:  ZControllerID { return .searchResults }
     @IBOutlet var    tableView:  ZTableView?
 
@@ -121,22 +122,35 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        var object = ""
-
         if  let (dbID, record) = identifierAndRecord(at: row) {
-
+			var string = ""
+			
             if  let zone = gRemoteStorage.cloud(for: dbID)?.maybeZoneForRecordID(record.recordID) {
-                object   =   zone.decoratedName
+                string =   zone.decoratedName
             } else {
-                object   = record.decoratedName
+                string = record.decoratedName
             }
 
-            if row == tableView.selectedRow {
-                object = "• \(object)"
-            }
+			if  let   text = searchText,
+				let ranges = string.rangesMatching(text) {				// find all matching substring ranges
+				var result = NSMutableAttributedString(string: string)
+
+				for range in ranges {
+					result.addAttribute(.backgroundColor, value: NSColor.systemYellow, range: range) // highlight matching substring in yellow
+				}
+
+				if  row == tableView.selectedRow {
+					let suffix = result
+					result     = NSMutableAttributedString(string: "• ")
+
+					result.append(suffix)
+				}
+
+				return result
+			}
         }
-
-        return object
+		
+		return nil
     }
 
     #else
@@ -206,7 +220,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 		zone?.revealChildren()
 		redrawGraph()
 
-		zone?.editAndSelect(text: gSearchController?.searchBox?.text)
+		zone?.editAndSelect(text: searchText)
 
         gBatches.sync { iSame in }
     }
