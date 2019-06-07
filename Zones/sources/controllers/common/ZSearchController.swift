@@ -29,7 +29,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         if  iKind == .eSearch && gWorkMode == .searchMode {
-            gSearching.state = .entry
+			gSearching.state = .sEntry
 
             FOREGROUND(after: 0.2) {
                 self.searchBox?.becomeFirstResponder()
@@ -37,32 +37,47 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         }
 	}
 	
+
+	var searchBoxIsFirstResponder : Bool {
+		if  let    first  = searchBox?.window?.firstResponder {
+			return first == searchBox?.currentEditor()
+		}
+		
+		return false
+	}
 	
+
 	func handleEvent(_ event: ZEvent) -> ZEvent? {
         let   string = event.input ?? ""
         let    flags = event.modifierFlags
         let  COMMAND = flags.isCommand
         let      key = string[string.startIndex].description
         let isReturn = key == kReturn
-        let      isF = key == "f"
+		let    isTab = key == kTab
+		let      isF = key == "f"
         let   isExit = kExitKeys.contains(key)
         let    state = gSearching.state
-        let  isEntry = state == .entry
-        let   isList = state == .list
-        
-        if         isReturn, !isList, let text = searchBoxText {
+		let  isInBox = searchBoxIsFirstResponder
+        let  isEntry = state == .sEntry
+        let   isList = state == .sList
+
+		if isList && !isInBox {
+			return gSearchResultsController?.handleEvent(event)
+		} else if isReturn, isInBox, let text = searchBoxText {
             performSearch(for: text)
         } else if  key == "a" && COMMAND {
             searchBox?.selectAllText()
         } else if (isReturn && isEntry) || (isExit && !isF) || (isF && COMMAND) {
             endSearch()
-        } else if !isReturn, isEntry {
-            gSearching.state = .find
-            
-            return event
+		} else if isTab {
+			assignAsFirstResponder(nil)
 		} else if let arrow = key.arrow {
 			searchBox?.currentEditor()?.handleArrow(arrow, with: flags)
-        } else {
+		} else {
+			if !isReturn, isEntry {
+				gSearching.state = .sFind
+			}
+            
             return event
         }
         
@@ -96,7 +111,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         let done : Closure = {
             if  remaining == 0 {
                 gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
-                gSearching.state = (gSearchResultsController?.hasResults ?? false) ? .list : .find
+				gSearching.state = (gSearchResultsController?.hasResults ?? false) ? .sList : .sFind
                 
                 gControllers.signalFor(nil, regarding: .eFound)
             }

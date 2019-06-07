@@ -17,10 +17,10 @@ import Foundation
 
 
 enum ZSearchState: Int {
-    case entry
-    case find
-    case list
-    case not
+    case sEntry
+    case sFind
+    case sList
+    case sNot
     
     func isOneOf(_ states: [ZSearchState]) -> Bool {
         for state in states {
@@ -40,12 +40,12 @@ let gSearching = ZSearching()
 class ZSearching: NSObject {
 
 
-    var state = ZSearchState.not
+	var state = ZSearchState.sNot
 
 
     func exitSearchMode() {
         gWorkMode = .graphMode
-        state     = .not
+		state     = .sNot
 
         gControllers.signalFor(nil, regarding: .eFound)
         gControllers.signalFor(nil, regarding: .eSearch)
@@ -53,10 +53,7 @@ class ZSearching: NSObject {
 
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
-        switch state {
-        case .list: return gSearchResultsController?.handleEvent(event)
-        default:    return gSearchController?       .handleEvent(event)
-        }
+		return gSearchController?.handleEvent(event)
     }
 
 }

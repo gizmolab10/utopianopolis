@@ -89,7 +89,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
                     
                     #if os(OSX)
                     FOREGROUND {
-                        self.tableView?.selectRowIndexes(NSIndexSet(index: 0) as IndexSet, byExtendingSelection: false)
+						self.assignAsFirstResponder(nil)
+                        self.tableView?.selectRowIndexes(IndexSet([0]), byExtendingSelection: false)
                     }
                     #endif
                 }
@@ -274,7 +275,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     }
 
 
-    // MARK:-
+	// MARK:- events
+	// MARK:-
 
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
@@ -285,22 +287,22 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             
             if  let    arrow = key.arrow {
                 switch arrow {
-                case    .up:     moveSelection(up: true,  extreme: COMMAND)
-                case  .down:     moveSelection(up: false, extreme: COMMAND)
-                case  .left:               clear(); return nil
-                case .right:  if resolve()        { return nil }; break
+				case       .up: moveSelection(up: true,  extreme: COMMAND); return event
+				case     .down: moveSelection(up: false, extreme: COMMAND); return event
+                case     .left: clear()
+                case    .right: if !resolve() { return event }
                 }
             } else {
                 switch key {
-                case kReturn: if resolve()        { return nil }; break
-//                case "f":     if COMMAND { clear(); return nil }; break
-//                case kEscape:              clear(); return nil
-                default:                                          break
+				case "f", kTab: gSearchController?.searchBox?.becomeFirstResponder()
+                case   kReturn: if !resolve() { return event }
+                case   kEscape: clear()
+                default: return event
                 }
             }
         }
         
-        return event
+        return nil
     }
 
 }

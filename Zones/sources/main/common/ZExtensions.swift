@@ -751,11 +751,11 @@ extension String {
     var stripped: String {
         var before = self
         
-        while before.starts(with: kSpace) {
+        while before.starts(withAnyCharacterIn: kSpace) {
             before = before.substring(fromInclusive: 1) // strip extra space
         }
         
-        while before.ends(with: kSpace) {
+        while before.ends(withAnyCharacterIn: kSpace) {
             before = before.substring(toExclusive: before.length - 1) // strip trailing space
         }
         
@@ -870,16 +870,23 @@ extension String {
 
 	
 	func starts(with: String) -> Bool {
+		let start = substring(toExclusive: with.length)
+		
+		return with == start
+	}
+	
+
+	func starts(withAnyCharacterIn: String) -> Bool {
 		let start = substring(toExclusive: 1)
 		
-		return with.contains(start)
+		return withAnyCharacterIn.contains(start)
 	}
 
 
-    func ends(with: String) -> Bool {
+    func ends(withAnyCharacterIn: String) -> Bool {
         let end = substring(fromInclusive: length - 1)
 
-        return with.contains(end)
+        return withAnyCharacterIn.contains(end)
     }
 
 
@@ -891,11 +898,11 @@ extension String {
             after = after.substring(fromInclusive: 1) // strip starting space
         }
 
-        while before.ends(with: kSpace) && after == "" {
+        while before.ends(withAnyCharacterIn: kSpace) && after == "" {
             before = before.substring(toExclusive: before.length - 1) // strip trailing space
         }
 
-        if !before.ends(with: kSpace) && !after.starts(with: kSpace) && !after.isEmpty {
+        if !before.ends(withAnyCharacterIn: kSpace) && !after.starts(withAnyCharacterIn: kSpace) && !after.isEmpty {
             before = before + kSpace // add separator space when after is not empty
         }
 
@@ -1119,8 +1126,8 @@ extension String {
 						index + 1 < count {
 						let next = parts[index + 1]
 
-						if  (this.length > 0 && !this  .ends(with: match)) ||
-							(next.length > 0 && !next.starts(with: match)) {
+						if  (this.length > 0 && !this  .ends(withAnyCharacterIn: match)) ||
+							(next.length > 0 && !next.starts(withAnyCharacterIn: match)) {
 							continue
 						}
 					}
