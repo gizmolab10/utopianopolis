@@ -166,6 +166,9 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
     // MARK:- user feel
     // MARK:-
+	
+	
+	func switchToSearchBox() { gSearchController?.searchBox?.becomeFirstResponder() }
 
 
     func identifierAndRecord(at iIndex: Int) -> (ZDatabaseID, CKRecord)? {
@@ -273,7 +276,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             t.scrollRowToVisible(row)
         }
     }
-
+	
 
 	// MARK:- events
 	// MARK:-
@@ -287,14 +290,14 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             
             if  let    arrow = key.arrow {
                 switch arrow {
-				case       .up: moveSelection(up: true,  extreme: COMMAND); return event
-				case     .down: moveSelection(up: false, extreme: COMMAND); return event
-                case     .left: clear()
-                case    .right: if !resolve() { return event }
+				case       .up: moveSelection(up: true,  extreme: COMMAND)
+				case     .down: moveSelection(up: false, extreme: COMMAND)
+				case    .right: if !resolve() { return event }
+                case     .left: switchToSearchBox()
                 }
             } else {
                 switch key {
-				case "f", kTab: gSearchController?.searchBox?.becomeFirstResponder()
+				case "f", kTab: switchToSearchBox()
                 case   kReturn: if !resolve() { return event }
                 case   kEscape: clear()
                 default: return event
