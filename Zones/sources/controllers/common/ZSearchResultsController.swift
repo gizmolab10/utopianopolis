@@ -24,9 +24,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 
     var      resultsAreVisible = false
-    var            inSearchBox = false
     var           foundRecords = [ZDatabaseID: [CKRecord]] ()
-    var                monitor:  Any?
 	var     searchText: String?  { return gSearchController?.searchBox?.text }
     override  var controllerID:  ZControllerID { return .searchResults }
     @IBOutlet var    tableView:  ZTableView?
@@ -60,43 +58,6 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
     // MARK:- content
     // MARK:-
-
-
-    override func handleSignal(_ iObject: Any?, kind iKind: ZSignalKind) {
-        if iKind == .eFound {
-            resultsAreVisible = false
-            
-            if  gWorkMode == .searchMode, foundRecords.count > 0 {
-                var dbID: ZDatabaseID?
-                var record: CKRecord?
-                var total = 0
-
-                for (databaseID, records) in foundRecords {
-                    let count  = records.count
-                    total     += count
-                    
-                    if  count == 1 {
-                        record = records[0]
-                        dbID   = databaseID
-                    }
-                }
-                
-                if total == 1 {
-                    self.resolveRecord(dbID!, record!) // not bother user if only one record found
-                } else if total > 0 {
-                    sortRecords()
-                    tableView?.reloadData()
-                    
-                    #if os(OSX)
-                    FOREGROUND {
-						self.assignAsFirstResponder(nil)
-                        self.tableView?.selectRowIndexes(IndexSet([0]), byExtendingSelection: false)
-                    }
-                    #endif
-                }
-            }
-        }
-    }
 
 
     func sortRecords() {
@@ -281,6 +242,43 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 	// MARK:- events
 	// MARK:-
 
+
+	override func handleSignal(_ iObject: Any?, kind iKind: ZSignalKind) {
+		if iKind == .eFound {
+			resultsAreVisible = false
+			
+			if  gWorkMode == .searchMode, foundRecords.count > 0 {
+				var dbID: ZDatabaseID?
+				var record: CKRecord?
+				var total = 0
+				
+				for (databaseID, records) in foundRecords {
+					let count  = records.count
+					total     += count
+					
+					if  count == 1 {
+						record = records[0]
+						dbID   = databaseID
+					}
+				}
+				
+				if total == 1 {
+					self.resolveRecord(dbID!, record!) // not bother user if only one record found
+				} else if total > 0 {
+					sortRecords()
+					tableView?.reloadData()
+					
+					#if os(OSX)
+					FOREGROUND {
+						self.assignAsFirstResponder(nil)
+						self.tableView?.selectRowIndexes(IndexSet([0]), byExtendingSelection: false)
+					}
+					#endif
+				}
+			}
+		}
+	}
+	
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
         if  let       string = event.input {
