@@ -56,9 +56,9 @@ class ZoneWidget: ZView {
 
         isInMain = isMain
 
-//        #if os(iOS)
-//            backgroundColor = kClearColor
-//        #endif
+        #if os(iOS)
+            backgroundColor = kClearColor
+        #endif
 
         gWidgets.registerWidget(self)
         addTextView()

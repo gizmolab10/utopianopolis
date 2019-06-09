@@ -18,7 +18,7 @@ import Foundation
 
 class ZGenericController: ZController {
     var useDefaultBackgroundColor = true
-    var controllerID: ZControllerID { return .undefined }
+	var controllerID: ZControllerID { return .idUndefined }
     var backgroundColor: CGColor { return gBackgroundColor.cgColor }
     func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}
     func platformSetup() {}

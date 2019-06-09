@@ -10,21 +10,21 @@ import Foundation
 
 
 enum ZControllerID: Int {
-    case undefined
-    case searchResults
-    case authenticate
-    case information
-    case preferences
-    case favorites
-    case shortcuts
-    case details
-    case actions
-    case search
-    case graph
-    case debug
-    case tools
-    case help
-    case main
+    case idUndefined
+    case idSearchResults
+    case idAuthenticate
+    case idInformation
+    case idPreferences
+    case idFavorites
+    case idShortcuts
+    case idDetails
+    case idActions
+    case idSearch
+    case idGraph
+    case idDebug
+    case idTools
+    case idHelp
+    case idMain
 }
 
 
@@ -163,11 +163,11 @@ class ZControllers: NSObject {
             gRemoteStorage.updateNeededCounts() // clean up after adding or removing children
             
             for (identifier, signalObject) in self.signalObjectsByControllerID {
-                let isInformation = identifier == .information
-                let isPreferences = identifier == .preferences
-                let       isDebug = identifier == .debug
-                let       isGraph = identifier == .graph
-                let        isMain = identifier == .main
+                let isInformation = identifier == .idInformation
+                let isPreferences = identifier == .idPreferences
+                let       isDebug = identifier == .idDebug
+                let       isGraph = identifier == .idGraph
+                let        isMain = identifier == .idMain
                 let      isDetail = isInformation || isPreferences || isDebug
                 
                 for regarding in multiple {

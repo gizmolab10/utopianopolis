@@ -20,7 +20,7 @@ class ZToolsController: ZGenericTableController {
 
     
     override var backgroundColor: CGColor       { return gDarkishBackgroundColor }
-    override var    controllerID: ZControllerID { return .tools }
+	override var    controllerID: ZControllerID { return .idTools }
 
 
     enum ZToolKind: Int {

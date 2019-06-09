@@ -17,7 +17,7 @@ import CloudKit
 #endif
 
 
-var gSearchResultsController: ZSearchResultsController? { return gControllers.controllerForID(.searchResults) as? ZSearchResultsController }
+var gSearchResultsController: ZSearchResultsController? { return gControllers.controllerForID(.idSearchResults) as? ZSearchResultsController }
 
 
 class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTableViewDelegate {
@@ -26,7 +26,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     var      resultsAreVisible = false
     var           foundRecords = [ZDatabaseID: [CKRecord]] ()
 	var     searchText: String?  { return gSearchController?.searchBox?.text }
-    override  var controllerID:  ZControllerID { return .searchResults }
+	override  var controllerID:  ZControllerID { return .idSearchResults }
     @IBOutlet var    tableView:  ZTableView?
 
     

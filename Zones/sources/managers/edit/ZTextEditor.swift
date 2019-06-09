@@ -452,41 +452,16 @@ class ZTextEditor: ZTextView {
 	
 	
 	@objc func handlePopupMenu(_ sender: ZMenuItem) {
+		#if os(OSX)
 		if  let type = ZPopupMenuType(rawValue: sender.keyEquivalent),
 			type != .eCancel {
 			let converted = type.converted
 			
 			insertText(converted)
 		}
+		#endif
 	}
 	
-	
-	func item(type: ZPopupMenuType) -> NSMenuItem {
-		let  	  item = NSMenuItem(title: type.title, action: #selector(handlePopupMenu(_:)), keyEquivalent: type.rawValue)
-		item.isEnabled = true
-		item.target    = self
-		
-		if  type != .eCancel {
-			item.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
-		}
-		
-		return item
-	}
-	
-	
-	func showSpecialsPopup() {
-		let menu = NSMenu(title: "foo")
-		menu.autoenablesItems = false
-		
-		for type in ZPopupMenuType.activeTypes {
-			menu.addItem(item(type: type))
-		}
-
-		menu.addItem(NSMenuItem.separator())
-		menu.addItem(item(type: .eCancel))
-		menu.popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
-	}
-
 	
 	// MARK:- events
 	// MARK:-

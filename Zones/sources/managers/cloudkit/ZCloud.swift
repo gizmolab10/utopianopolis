@@ -652,9 +652,7 @@ class ZCloud: ZRecords {
             if  iError   != nil {
                 if start == nil {
                     onCompletion?(retrieved) // NEED BETTER ERROR HANDLING
-                } else {
-                    let middle = start?.mid(to: end)                   // if error, fetch split by two
-
+				} else if let middle = start?.mid(to: end) {                  // if error, fetch split by two
                     self.fetch(for: type, properties: properties, since: start, before: middle) { iCKRecords in
                         retrieved.appendUnique(contentsOf: iCKRecords)
 

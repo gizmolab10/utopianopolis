@@ -671,7 +671,34 @@ extension ZTextEditor {
     
     func fullResign()  { assignAsFirstResponder (nil) }
 
-    
+	
+	func item(type: ZPopupMenuType) -> NSMenuItem {
+		let  	  item = NSMenuItem(title: type.title, action: #selector(handlePopupMenu(_:)), keyEquivalent: type.rawValue)
+		item.isEnabled = true
+		item.target    = self
+		
+		if  type != .eCancel {
+			item.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
+		}
+		
+		return item
+	}
+	
+	
+	func showSpecialsPopup() {
+		let menu = NSMenu(title: "foo")
+		menu.autoenablesItems = false
+		
+		for type in ZPopupMenuType.activeTypes {
+			menu.addItem(item(type: type))
+		}
+		
+		menu.addItem(NSMenuItem.separator())
+		menu.addItem(item(type: .eCancel))
+		menu.popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
+	}
+	
+
     override func doCommand(by selector: Selector) {
         switch selector {
         case #selector(insertNewline):       stopCurrentEdit()

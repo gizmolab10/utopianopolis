@@ -226,10 +226,19 @@ class ZGraphEditor: NSObject {
         }
     }
 
+	
+	func matchesPrevious(_ iEvent: ZEvent) -> Bool {
+		#if os(OSX)
+		return iEvent == previousEvent
+		#else
+		return false // on iOS events don't pile up??????
+		#endif
+	}
+	
 
     @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> ZEvent? {
         if  gWorkMode    == .graphMode,
-            iEvent       != previousEvent {
+            !matchesPrevious(iEvent) {
             let     flags = iEvent.modifierFlags
             previousEvent = iEvent
             
@@ -286,12 +295,16 @@ class ZGraphEditor: NSObject {
         if gWorkMode != .graphMode {
             return false
         }
+		
+		if  key.arrow != nil {
+			return true
+		}
 
         let  type = menuType(for: key, flags)
-        let arrow = key.arrow
         var valid = !gIsEditingText
 
-        if  valid {
+        if  valid,
+			type 	   != .eAlways {
             let    undo = undoManager
             let  select = gSelecting
             let  wGrabs = select.writableGrabsCount
@@ -319,10 +332,6 @@ class ZGraphEditor: NSObject {
             case .eCloud:     valid = gHasInternet && gCanAccessMyCloudDatabase
             default:          break
             }
-        } else if arrow == nil {
-            valid = type != .eTravel
-        } else {
-            valid = true
         }
 
         return valid

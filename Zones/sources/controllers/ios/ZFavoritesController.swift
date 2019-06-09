@@ -14,7 +14,7 @@ import UIKit
 class ZFavoritesController : ZGenericController {
 
     @IBOutlet var favoritesSelector: UISegmentedControl?
-    override  var      controllerID: ZControllerID { return .favorites }
+    override  var      controllerID: ZControllerID { return .idFavorites }
 
 
     var favorites: [Zone] {

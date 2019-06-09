@@ -28,7 +28,7 @@ enum ZActionTitle: String {
 class ZActionsController : ZGenericController {
 
     @IBOutlet var actionsSelector: UISegmentedControl?
-    override  var    controllerID: ZControllerID { return .actions }
+	override  var    controllerID: ZControllerID { return .idActions }
     var favorite: String { return gFavorites.actionTitle }
 
 

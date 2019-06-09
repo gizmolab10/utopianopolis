@@ -17,14 +17,14 @@ import CloudKit
 #endif
 
 
-var gSearchController: ZSearchController? { return gControllers.controllerForID(.search) as? ZSearchController }
+var gSearchController: ZSearchController? { return gControllers.controllerForID(.idSearch) as? ZSearchController }
 
 
 class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
 
     @IBOutlet var searchBox: ZSearchField?
-    override  var controllerID: ZControllerID { return .search }
+	override  var controllerID: ZControllerID { return .idSearch }
 
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
@@ -39,14 +39,23 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 	
 
 	var searchBoxIsFirstResponder : Bool {
+		#if os(OSX)
 		if  let    first  = searchBox?.window?.firstResponder {
 			return first == searchBox?.currentEditor()
 		}
+		#endif
 		
 		return false
 	}
 	
 
+	func handleArrow(_ arrow: ZArrowKey, with flags: ZEventFlags) {
+		#if os(OSX)
+		searchBox?.currentEditor()?.handleArrow(arrow, with: flags)
+		#endif
+	}
+
+	
 	func handleEvent(_ event: ZEvent) -> ZEvent? {
         let   string = event.input ?? ""
         let    flags = event.modifierFlags
@@ -72,7 +81,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 		} else if isTab {
 			assignAsFirstResponder(nil)
 		} else if let arrow = key.arrow {
-			searchBox?.currentEditor()?.handleArrow(arrow, with: flags)
+			handleArrow(arrow, with: flags)
 		} else {
 			if !isReturn, isEntry {
 				gSearching.state = .sFind

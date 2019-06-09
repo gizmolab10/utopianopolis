@@ -14,7 +14,7 @@
 #endif
 
 
-var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.details) as? ZDetailsController }
+var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
 
 
 class ZDetailsController: ZGenericController {
@@ -22,7 +22,7 @@ class ZDetailsController: ZGenericController {
 
     @IBOutlet var stackView: ZStackView?
     var viewsByID = [Int: ZStackableView]()
-    override  var controllerID: ZControllerID { return .details }
+	override  var controllerID: ZControllerID { return .idDetails }
 
 
     override func setup() {

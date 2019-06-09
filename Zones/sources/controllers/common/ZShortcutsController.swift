@@ -24,7 +24,7 @@ enum ZShortcutType: String {
 }
 
 
-var gShortcuts: ZShortcutsController? { return gControllers.controllerForID(.shortcuts) as? ZShortcutsController }
+var gShortcuts: ZShortcutsController? { return gControllers.controllerForID(.idShortcuts) as? ZShortcutsController }
 
 
 class ZShortcutsController: ZGenericTableController {
@@ -33,7 +33,7 @@ class ZShortcutsController: ZGenericTableController {
     @IBOutlet var gridView: ZView?
     @IBOutlet var clipView: ZView?
     var tabStops = [NSTextTab]()
-    override var controllerID: ZControllerID { return .shortcuts }
+    override var controllerID: ZControllerID { return .idShortcuts }
     let bold = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
 	let columnWidth = 290
 
@@ -102,6 +102,7 @@ class ZShortcutsController: ZGenericTableController {
 	
 	
 	var clickCoordinates: (Int, Int)? {
+		#if os(OSX)
 		if  let table = genericTableView,
 			let row = table.selectedRowIndexes.first {
 			let screenLocation = NSEvent.mouseLocation
@@ -113,6 +114,7 @@ class ZShortcutsController: ZGenericTableController {
 				return (row, min(3, column))
 			}
 		}
+		#endif
 		
 		return nil
 	}
@@ -183,7 +185,7 @@ class ZShortcutsController: ZGenericTableController {
             
 		case .plain?:
 			if  hasURL {
-				attributes = [NSAttributedString.Key.foregroundColor.rawValue : NSColor.blue.darker(by: 5.0) as Any]
+				attributes = [NSAttributedString.Key.foregroundColor.rawValue : ZColor.blue.darker(by: 5.0) as Any]
 				e.append(kEllipsis)
 			}
 

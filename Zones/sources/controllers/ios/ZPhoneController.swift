@@ -14,7 +14,7 @@ import UIKit
 class ZPhoneController: ZGenericController, UITabBarDelegate {
 
 
-    override  var                   controllerID: ZControllerID { return .main }
+    override  var                   controllerID: ZControllerID { return .idMain }
     @IBOutlet var favoritesButtonWidthConstraint: NSLayoutConstraint?
     @IBOutlet var   actionsButtonWidthConstraint: NSLayoutConstraint?
     @IBOutlet var         editorBottomConstraint: NSLayoutConstraint?

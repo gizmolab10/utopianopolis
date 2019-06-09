@@ -1156,9 +1156,13 @@ extension Character {
 
 extension Date {
 
-    func mid(to iEnd: Date?) -> Date {
+    func mid(to iEnd: Date?) -> Date? {
         let      end = iEnd ?? Date()
         let duration = timeIntervalSince(end) / 2.0
+		
+		if  duration > -1.0 {
+			return nil
+		}
 
         return addingTimeInterval(duration)
     }

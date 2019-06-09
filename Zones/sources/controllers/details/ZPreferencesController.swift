@@ -31,7 +31,7 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var              stretch: ZSlider?
     @IBOutlet var           ideasLabel: ZTextField?
     override  var      backgroundColor: CGColor { return gDarkishBackgroundColor }
-    override  var         controllerID: ZControllerID { return .preferences }
+	override  var         controllerID: ZControllerID { return .idPreferences }
 
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {

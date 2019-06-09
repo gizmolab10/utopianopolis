@@ -331,7 +331,7 @@ extension UIView {
 
     override open func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if  event?.subtype == UIEvent.EventSubtype.motionShake && !gKeyboardIsVisible {
-            gGraphEditor.recenter()
+            gGraphController?.recenter()
         }
     }
 
@@ -389,7 +389,7 @@ extension UIWindow {
 
         if  windowKeys                             == nil {
             windowKeys                              = [UIKeyCommand] ()
-            let                             handler = #selector(UIWindow.keyHandler)
+            let                             handler = #selector(UIWindow.handleKey)
             let                              noMods = UIKeyModifierFlags(rawValue: 0)
             let                       COMMAND_SHIFT = UIKeyModifierFlags(rawValue: UIKeyModifierFlags  .shift.rawValue + UIKeyModifierFlags  .command.rawValue)
             let                        OPTION_SHIFT = UIKeyModifierFlags(rawValue: UIKeyModifierFlags  .shift.rawValue + UIKeyModifierFlags.alternate.rawValue)
@@ -401,13 +401,13 @@ extension UIWindow {
                                                        "command option " :  SPECIAL,
                                                        "command "        : .command,
                                                        "shift "          : .shift]
-            let pairs:             [String: String] = ["up arrow"        : UIKeyCommand.inputUpArrow,
+            let inputs: [String: String]            = ["up arrow"        : UIKeyCommand.inputUpArrow,
                                                        "down arrow"      : UIKeyCommand.inputDownArrow,
                                                        "left arrow"      : UIKeyCommand.inputLeftArrow,
                                                        "right arrow"     : UIKeyCommand.inputRightArrow]
 
             for (prefix, flags) in mods {
-                for (title, input) in pairs {
+                for (title, input) in inputs {
                     windowKeys?.append(UIKeyCommand(input: input, modifierFlags: flags,  action: handler, discoverabilityTitle: prefix + title))
                 }
 
@@ -423,13 +423,13 @@ extension UIWindow {
     }
 
 
-    @objc func keyHandler(command: UIKeyCommand) {
+    @objc func handleKey(command: UIKeyCommand) {
         var event = command
 
-        if  let title = command.discoverabilityTitle, title.contains(" arrow"), // flags need a .numericPad option added
+        if  let title = command.discoverabilityTitle, title.contains(" arrow"),
             let input = command.input {
-            let flags = UIKeyModifierFlags(rawValue: command.modifierFlags.rawValue + UIKeyModifierFlags.numericPad.rawValue)
-            event     = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(UIWindow.keyHandler), discoverabilityTitle: command.discoverabilityTitle!)
+            let flags = UIKeyModifierFlags(rawValue: command.modifierFlags.rawValue + UIKeyModifierFlags.numericPad.rawValue) 	// add .numericPad to flags
+            event     = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(UIWindow.handleKey), discoverabilityTitle: command.discoverabilityTitle!)
         }
 
         gGraphEditor.handleEvent(event, isWindow: true)
@@ -617,12 +617,13 @@ extension ZTextEditor {
 
     var string: String { return text }
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {}
+	func showSpecialsPopup() {}
 
     func fullResign()  {
         assignAsFirstResponder (nil) // ios broken?
         gGraphController?.keyInput?.becomeFirstResponder()
-    }
-
+	}
+	
 }
 
 

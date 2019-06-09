@@ -24,7 +24,7 @@ class ZDebugController: ZGenericController {
     @IBOutlet var     traitsLabel: ZTextField?
     @IBOutlet var     recordLabel: ZTextField?
     override  var backgroundColor: CGColor       { return gDarkishBackgroundColor }
-    override  var    controllerID: ZControllerID { return .debug }
+	override  var    controllerID: ZControllerID { return .idDebug }
     var grab: Zone?
 
 

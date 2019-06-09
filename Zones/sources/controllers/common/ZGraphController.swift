@@ -16,7 +16,7 @@ import SnapKit
 #endif
 
 
-var gGraphController: ZGraphController? { return gControllers.controllerForID(.graph) as? ZGraphController }
+var gGraphController: ZGraphController? { return gControllers.controllerForID(.idGraph) as? ZGraphController }
 
 
 class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
@@ -39,7 +39,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     var         moveDownGesture :  ZGestureRecognizer?
     var         moveLeftGesture :  ZGestureRecognizer?
     var        moveRightGesture :  ZGestureRecognizer?
-    override  var  controllerID :  ZControllerID { return .graph }
+	override  var  controllerID :  ZControllerID { return .idGraph }
     @IBOutlet var       spinner :  ZProgressIndicator?
     @IBOutlet var    editorView :  ZoneDragView?
     @IBOutlet var   spinnerView :  ZView?
@@ -122,7 +122,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	
 
     func layoutForCurrentScrollOffset() {
-        if  let e = editorView, !kIsPhone {
+        if  let e = editorView {
             editorRootWidget.snp.removeConstraints()
             editorRootWidget.snp.makeConstraints { make in
                 make.centerY.equalTo(e).offset(gScrollOffset.y)
@@ -181,7 +181,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             if  gWorkMode != .graphMode {
                 editorView?.snp.removeConstraints()
             } else if !gIsEditingText {
-                if iKind == .eRelayout {
+                if  iKind == .eRelayout {
                     gWidgets.clearRegistry()
                 }
                 
@@ -192,7 +192,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             }
         }
 
-        indicatorView?.setNeedsDisplay()
+		indicatorView?.setNeedsDisplay()
     }
 
     

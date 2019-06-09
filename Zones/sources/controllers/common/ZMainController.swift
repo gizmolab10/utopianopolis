@@ -16,7 +16,7 @@ import SnapKit
 #endif
 
 
-var gMainController: ZMainController? { return gControllers.controllerForID(.main) as? ZMainController }
+var gMainController: ZMainController? { return gControllers.controllerForID(.idMain) as? ZMainController }
 
 
 class ZMainController: ZGenericController {
@@ -28,7 +28,7 @@ class ZMainController: ZGenericController {
     @IBOutlet var searchBoxView:       ZView?
     @IBOutlet var detailView:          ZView?
     @IBOutlet var editorView:          ZView?
-    override  var controllerID:        ZControllerID { return .main }
+    override  var controllerID:        ZControllerID { return .idMain }
 
 
     override func setup() {
