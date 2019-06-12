@@ -19,14 +19,15 @@ import Foundation
 class ZInformationController: ZGenericController {
 
 
-    @IBOutlet var cloudStatusLabel: ZTextField?
-    @IBOutlet var  totalCountLabel: ZTextField?
-    @IBOutlet var   graphNameLabel: ZTextField?
-    @IBOutlet var     versionLabel: ZTextField?
-    @IBOutlet var       levelLabel: ZTextField?
-    var                currentZone: Zone    { return gSelecting.rootMostMoveable }
-    override  var  backgroundColor: CGColor { return gDarkishBackgroundColor }
-    override  var     controllerID: ZControllerID { return .idInformation }
+	@IBOutlet var creationDateLabel: ZTextField?
+	@IBOutlet var  cloudStatusLabel: ZTextField?
+    @IBOutlet var   totalCountLabel: ZTextField?
+    @IBOutlet var    graphNameLabel: ZTextField?
+    @IBOutlet var      versionLabel: ZTextField?
+    @IBOutlet var        levelLabel: ZTextField?
+    var                 currentZone: Zone    { return gSelecting.rootMostMoveable }
+    override  var   backgroundColor: CGColor { return gDarkishBackgroundColor }
+    override  var      controllerID: ZControllerID { return .idInformation }
 
 
     var versionText: String {
@@ -57,23 +58,41 @@ class ZInformationController: ZGenericController {
 
 
     var cloudStatusText: String {
-        if !gCanAccessMyCloudDatabase { return "local storage only" }
+        if !gCanAccessMyCloudDatabase { return "local only" }
         
         let ops = // String.pluralized(gBatchManager.totalCount - 1,       unit: "batch", plural: "es", followedBy: ", ") +
                   String.pluralized(gBatches.queue.operationCount, unit: "iCloud request")
         return ops != "" ? ops : "synced with iCloud"
     }
+	
+	
+	var creationDateText: String {
+		var   date = currentZone.record?.modificationDate
+		var prefix = "last edited"
+
+		if  date == nil {
+			date = currentZone.record?.creationDate
+			prefix = "created"
+		}
+
+		if  let d = date {
+			return "\(prefix) on \(d.easyToReadDate) at \(d.easyToReadTime)"
+		}
+		
+		return ""
+	}
     
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         if ![.eSearch, .eFound].contains(iKind) {
-            cloudStatusLabel?.text = cloudStatusText
-            totalCountLabel? .text = totalCountsText
-            graphNameLabel?  .text = graphNameText
-            versionLabel?    .text = versionText
+			creationDateLabel?.text = creationDateText
+            cloudStatusLabel? .text = cloudStatusText
+            totalCountLabel?  .text = totalCountsText
+            graphNameLabel?   .text = graphNameText
+            versionLabel?     .text = versionText
 
             if iKind != .eStartup {
-                levelLabel?  .text = "selection is at level \(currentZone.level + 1)"
+                levelLabel?  .text = "is at level \(currentZone.level + 1)"
             }
         }
     }

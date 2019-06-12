@@ -1155,6 +1155,20 @@ extension Character {
 
 
 extension Date {
+	
+	var easyToReadDate: String {
+		let f = DateFormatter()
+		f.dateFormat = "MMM d, YYYY"
+		
+		return f.string(from: self)
+	}
+	
+	var easyToReadTime: String {
+		let f = DateFormatter()
+		f.dateFormat = "h:mm a"
+		
+		return f.string(from: self)
+	}
 
     func mid(to iEnd: Date?) -> Date? {
         let      end = iEnd ?? Date()
