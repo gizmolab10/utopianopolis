@@ -17,9 +17,9 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     override  var                 controllerID: ZControllerID { return .idMain }
     @IBOutlet var       editorBottomConstraint: NSLayoutConstraint?
     @IBOutlet var          editorTopConstraint: NSLayoutConstraint?
-    @IBOutlet var          hereWidthConstraint: NSLayoutConstraint?
     @IBOutlet var               hereTextWidget: ZoneTextWidget?
-    @IBOutlet var               focusOutButton: UIButton?
+	@IBOutlet var               focusOutButton: UIButton?
+	@IBOutlet var                   undoButton: UIButton?
     @IBOutlet var                  actionsView: UIView?
     @IBOutlet var                     lineView: UIView?
     var                               isCached: Bool    =  false
@@ -40,24 +40,29 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     }
 
 
-    @IBAction func goLeftButtonAction(iButton: UIButton) {
-        gGraphEditor.move(out: true) {
-            self.update()
-        }
-    }
+	@IBAction func moreButtonAction(iButton: UIButton) {
+		gGraphEditor.move(out: true) {
+			self.update()
+		}
+	}
+	
 
+	@IBAction func undoButtonAction(iButton: UIButton) {
+		gGraphEditor.undoManager.undo()
+	}
+	
 
     func update() {
         let               selectorHeight = CGFloat(48.0)
-        let                         font = gWidgetFont
         let                    hereTitle = gHereMaybe?.zoneName ?? ""
         editorBottomConstraint?.constant = gKeyboardIsVisible   ? keyboardHeight : gActionsAreVisible ? selectorHeight : 0.0
         editorTopConstraint?   .constant = gFavoritesAreVisible ? selectorHeight : 2.0
-        hereWidthConstraint?   .constant = hereTitle.widthForFont(font)
         hereTextWidget?            .text = hereTitle
 		focusOutButton?        .isHidden = false
 		actionsView?           .isHidden = false
+		undoButton?            .isHidden = false
 
+		gActionsController.update()
 		layoutForKeyboard()
     }
 

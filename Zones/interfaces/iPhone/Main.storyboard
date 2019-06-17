@@ -59,32 +59,47 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XAe-Nl-uaC" userLabel="Title and Button View">
                                 <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                                 <subviews>
-                                    <button hidden="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mTE-ED-cHe">
-                                        <rect key="frame" x="20" y="2" width="40" height="40"/>
+                                    <button hidden="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mTE-ED-cHe" userLabel="More Button">
+                                        <rect key="frame" x="20" y="-2" width="44" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="44" id="RzH-Mj-7F6"/>
+                                            <constraint firstAttribute="height" constant="44" id="vPd-Tz-Wyr"/>
+                                        </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <state key="normal" title="More"/>
                                         <connections>
-                                            <action selector="goLeftButtonActionWithIButton:" destination="TpV-Kz-bkb" eventType="touchUpInside" id="UPl-ef-tlt"/>
+                                            <action selector="moreButtonActionWithIButton:" destination="TpV-Kz-bkb" eventType="touchUpInside" id="UPl-ef-tlt"/>
                                         </connections>
                                     </button>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="W8u-BE-rDz" customClass="ZoneTextWidget">
-                                        <rect key="frame" x="157" y="11.5" width="100" height="21"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="100" id="0yO-aT-OTN"/>
-                                        </constraints>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="W8u-BE-rDz" customClass="ZoneTextWidget">
+                                        <rect key="frame" x="66" y="11.5" width="282" height="21"/>
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
+                                    <button hidden="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VfC-nQ-Lcv" userLabel="Undo Button">
+                                        <rect key="frame" x="350" y="0.0" width="44" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="44" id="7b9-pM-G13"/>
+                                            <constraint firstAttribute="height" constant="44" id="fMs-Vx-oe7"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <state key="normal" title="Undo"/>
+                                        <connections>
+                                            <action selector="undoButtonActionWithIButton:" destination="TpV-Kz-bkb" eventType="touchUpInside" id="ksh-A1-0Jb"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="W8u-BE-rDz" firstAttribute="centerX" secondItem="XAe-Nl-uaC" secondAttribute="centerX" id="3tH-eR-gOz"/>
-                                    <constraint firstItem="mTE-ED-cHe" firstAttribute="top" secondItem="XAe-Nl-uaC" secondAttribute="top" constant="2" id="6aX-im-pD4"/>
                                     <constraint firstAttribute="height" constant="44" id="Lqr-V8-gQm"/>
                                     <constraint firstItem="mTE-ED-cHe" firstAttribute="leading" secondItem="XAe-Nl-uaC" secondAttribute="leading" constant="20" id="NPO-tu-h49"/>
-                                    <constraint firstAttribute="bottom" secondItem="mTE-ED-cHe" secondAttribute="bottom" constant="2" id="Yy6-6n-QlE"/>
+                                    <constraint firstItem="VfC-nQ-Lcv" firstAttribute="leading" secondItem="W8u-BE-rDz" secondAttribute="trailing" constant="2" id="WBZ-kA-de2"/>
+                                    <constraint firstItem="W8u-BE-rDz" firstAttribute="leading" secondItem="mTE-ED-cHe" secondAttribute="trailing" constant="2" id="jtZ-L8-FP1"/>
                                     <constraint firstItem="W8u-BE-rDz" firstAttribute="centerY" secondItem="XAe-Nl-uaC" secondAttribute="centerY" id="mab-QJ-n6a"/>
+                                    <constraint firstAttribute="trailing" secondItem="VfC-nQ-Lcv" secondAttribute="trailing" constant="20" id="mhW-vV-XZT"/>
+                                    <constraint firstItem="VfC-nQ-Lcv" firstAttribute="centerY" secondItem="XAe-Nl-uaC" secondAttribute="centerY" id="tpc-jP-DqY"/>
+                                    <constraint firstAttribute="bottom" secondItem="mTE-ED-cHe" secondAttribute="bottom" constant="2" id="xMY-0k-e3N"/>
                                 </constraints>
                             </view>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="MXz-29-dtr">
@@ -121,8 +136,8 @@
                         <outlet property="editorTopConstraint" destination="RhG-IL-KJf" id="L01-JJ-qtV"/>
                         <outlet property="focusOutButton" destination="mTE-ED-cHe" id="shI-JR-t2G"/>
                         <outlet property="hereTextWidget" destination="W8u-BE-rDz" id="c3s-d7-wMU"/>
-                        <outlet property="hereWidthConstraint" destination="0yO-aT-OTN" id="gG7-he-2Xf"/>
                         <outlet property="lineView" destination="TAE-mz-TEf" id="TK5-zu-geP"/>
+                        <outlet property="undoButton" destination="VfC-nQ-Lcv" id="2Ts-Cd-voe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ILe-Hi-wFl" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -107,7 +107,9 @@ extension NSObject {
             ![window, responder].contains(window.firstResponder) {
             window.makeFirstResponder(responder)
         }
-    }
+	}
+	
+	func showMainFunctions() {}
 }
 
 

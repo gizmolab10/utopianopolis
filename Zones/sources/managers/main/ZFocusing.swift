@@ -232,10 +232,9 @@ class ZFocusing: NSObject {
         createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
 		gTextEditor.stopCurrentEdit()
         gBatches.focus { iSame in
-			#if os(iOS)
-			gActionsController.showMain()
-			#endif
-			
+			gShowMainGraph = true
+
+			self.showMainFunctions()			
             atArrival()
             gBatches.save { iSaveSame in
             }
@@ -299,8 +298,14 @@ class ZFocusing: NSObject {
             let   targetRecord = targetZRecord.record {
             let targetRecordID = targetRecord.recordID
             let        iTarget = iBookmark.bookmarkTarget
+			let complete : SignalClosure = { (iObject, iKind) in
+				gShowMainGraph = true
+
+				self.showMainFunctions()
+				atArrival(iObject, iKind)
+			}
             
-            var   there: Zone?
+            var there: Zone?
 
             if  iBookmark.isInFavorites {
                 gFavorites.currentFavorite = iBookmark
@@ -316,7 +321,7 @@ class ZFocusing: NSObject {
                     gHere = target
                 }
 
-                atArrival(target, .eRelayout)
+                complete(target, .eRelayout)
 
                 return
             }
@@ -336,7 +341,7 @@ class ZFocusing: NSObject {
                         gHere  = target
 
                         gHere.prepareForArrival()
-                        atArrival(gHere, .eRelayout)
+                        complete(gHere, .eRelayout)
                     }
                 } else {
                     gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
@@ -346,10 +351,10 @@ class ZFocusing: NSObject {
 
                             newHere.prepareForArrival()
                             self.focus {
-                                atArrival(newHere, .eRelayout)
+                                complete(newHere, .eRelayout)
                             }
                         } else {
-                            atArrival(gHere, .eRelayout)
+                            complete(gHere, .eRelayout)
                         }
                     }
                 }
@@ -365,20 +370,20 @@ class ZFocusing: NSObject {
 
                 UNDO(self) { iUndoSelf in
                     self.UNDO(self) { iRedoSelf in
-                        self.travelThrough(iBookmark, atArrival: atArrival)
+                        self.travelThrough(iBookmark, atArrival: complete)
                     }
 
                     gHere = here
 
                     grabbed?.grab()
-                    atArrival(here, .eRelayout)
+                    complete(here, .eRelayout)
                 }
 
                 let grabHere = {
                     gHere.prepareForArrival()
 
                     gBatches.children(.restore) { iSame in
-                        atArrival(gHere, .eRelayout)
+                        complete(gHere, .eRelayout)
                     }
                 }
 

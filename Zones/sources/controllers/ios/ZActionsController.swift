@@ -15,17 +15,16 @@ enum ZFunction: String {
 	case eGraph  	 = "Graph"
 	case ePrefs      = "Preferences"
 	case eHelp       = "Help"
-	case eHang       = "Reconnect"
 	case eMain       = "Main"
 
 	case eIdeas      = "Ideas"
-    case eCut        = "Cut"
+    case eDelete     = "Delete"
     case eNew        = "New"
     case eNext       = "Next"
-    case eUndo       = "Undo"
 	case eFocus      = "Focus"
     case eTravel     = "Travel"
 
+	case eHang       = "Reconnect"
 	case eStorage    = "Storage"
 	case eRefresh    = "Refresh"
 	case eRefreshAll = "Refresh All"
@@ -56,17 +55,37 @@ class ZActionsController : ZGenericController {
 			update()
         }
     }
-
 	
-	func title(for function: ZFunction) -> String {
-		switch function {
-		case .eFocus: return gFavorites.function
-		case .eGraph: return gShowMainGraph ? "Favorites" : "Graph"
-		default:      return function.rawValue
-		}
+	
+	@IBAction func actionsVisibilityButtonAction(iButton: UIButton) {
+		showMain()
 	}
 	
-	
+
+	@IBAction func selectorAction(iControl: UISegmentedControl) {
+		if  let    title = iControl.titleForSegment(at: iControl.selectedSegment),
+			let function = function(for: title) {
+			
+			switch function {
+			case .eStorage,
+				 .eIdeas,
+				 .eMain:	currentFunction = function; update()
+			case .eRefreshAll,
+				 .eRefresh: refresh(for: function == .eRefreshAll)
+			case .eGraph:   gShowMainGraph = !gShowMainGraph; gControllers.signalFor(nil, multiple: [.eRelayout])
+			case .eDelete:  gGraphEditor.delete()
+			case .eNew:     gGraphEditor.addIdea()
+			case .eHang:    gBatches.unHang()
+			case .eHelp:    openBrowserForFocusWebsite()
+			case .eNext:    gGraphEditor.addNext() { iChild in iChild.edit() }
+			case .eFocus:   gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
+			case .eTravel:  gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
+			default:        break
+			}
+		}
+	}
+
+
 	func update() {
 		if  let selector = actionsSelector {
 			let     font = UIFont.systemFont(ofSize: 17)
@@ -76,15 +95,15 @@ class ZActionsController : ZGenericController {
 			selector.removeAllSegments()
 
 			var index  = -1
-			let insert = { (iTitle: ZFunction) -> Void in
+			let insert = { (iFunction: ZFunction) -> Void in
 				index += 1
 
-				selector.insertSegment(withTitle: self.title(for: iTitle), at:index, animated: false)
+				selector.insertSegment(withTitle: self.title(for: iFunction), at:index, animated: false)
 			}
 
 			if  let                 button = actionsButton {
 				let 				 title = " <- "
-				actionsButtonWidthConstraint?.constant = isMainFunction ? 0 : title.widthForFont(gWidgetFont) + 15.0
+				actionsButtonWidthConstraint?.constant = isMainFunction ? 0.0 : title.widthForFont(gWidgetFont) + 15.0
 				
 				if !isMainFunction {
 					let    emphasizedColor = ZColor.blue.lighter(by: 5.0)
@@ -99,10 +118,9 @@ class ZActionsController : ZGenericController {
 
 			switch currentFunction {
 			case .eMain:
-				insert(.eGraph)
-				insert(.eUndo)
-				insert(.eIdeas)
 				insert(.ePrefs)
+				insert(.eIdeas)
+				insert(.eGraph)
 				insert(.eHelp)
 
 				if  gIsLate {
@@ -111,7 +129,7 @@ class ZActionsController : ZGenericController {
 					insert(.eStorage)
 				}
 			case .eIdeas:
-				insert(.eCut)
+				insert(.eDelete)
 				insert(.eNew)
 				insert(.eNext)
 				insert(.eFocus)
@@ -124,60 +142,44 @@ class ZActionsController : ZGenericController {
 		}
 	}
 	
-
-    @IBAction func selectorAction(iControl: UISegmentedControl) {
-        if  let    title = iControl.titleForSegment(at: iControl.selectedSegment),
-			let function = functionForTitle(title) {
-
-            switch function {
-			case .eStorage,
-				 .eIdeas,
-				 .eMain:	currentFunction = function; update()
-            case .eRefresh: refresh()
-			case .eGraph:   gShowMainGraph = !gShowMainGraph; gControllers.signalFor(nil, multiple: [.eRelayout])
-            case .eCut:     gGraphEditor.delete()
-            case .eNew:     gGraphEditor.addIdea()
-			case .eHang:    gBatches.unHang()
-			case .eHelp:    openBrowserForFocusWebsite()
-            case .eUndo:    gGraphEditor.undoManager.undo()
-            case .eNext:    gGraphEditor.addNext() { iChild in iChild.edit() }
-            case .eFocus:   gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
-			case .eTravel:  gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
-            default:        break
-            }
-        }
-    }
 	
+	// MARK:- functions
+	// MARK:-
+	
+
+	func title(for iFunction: ZFunction) -> String {
+		switch iFunction {
+		case .eFocus: return gFavorites.function
+		case .eGraph: return gShowMainGraph ? "Favorites" : "Graph"
+		default:      return iFunction.rawValue
+		}
+	}
+	
+
+    func function(for iTitle: String) -> ZFunction? {
+		switch iTitle {
+		case "Favorites": return .eGraph
+		default: if let function = ZFunction(rawValue: iTitle) {
+				return  function
+			}
+		}
+		
+		return nil
+    }
+
 	
 	func showMain() {
 		currentFunction = .eMain
 		
 		update()
 	}
-
-
-	@IBAction func actionsVisibilityButtonAction(iButton: UIButton) {
-		showMain()
+	
+	
+	func refresh(for iAll: Bool) {
+		gBatches		 .unHang()
+		gWidgets         .clearRegistry()
+		gGraphController?.clear()
+		gControllers     .startupCloudAndUI()
 	}
 	
-
-    func refresh() {
-        gBatches		 .unHang()
-        gWidgets         .clearRegistry()
-        gGraphController?.clear()
-        gControllers     .startupCloudAndUI()
-    }
-
-
-    func functionForTitle(_ iTitle: String) -> ZFunction? {
-        if  let function = ZFunction(rawValue: iTitle) {
-            return function
-        }
-
-		switch iTitle {
-		case "Favorites": return .eGraph
-		default:          return nil
-		}
-    }
-
 }
