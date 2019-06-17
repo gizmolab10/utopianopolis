@@ -20,48 +20,49 @@ enum ZArrowKey: CChar {
 }
 
 
-public typealias ZFont                      = NSFont
-public typealias ZView                      = NSView
-public typealias ZAlert                     = NSAlert
-public typealias ZEvent                     = NSEvent
-public typealias ZImage                     = NSImage
-public typealias ZColor                     = NSColor
-public typealias ZButton                    = NSButton
-public typealias ZSlider                    = NSSlider
-public typealias ZWindow                    = NSWindow
-public typealias ZControl                   = NSControl
-public typealias ZMenuItem                  = NSMenuItem
-public typealias ZClipView                  = NSClipView
-public typealias ZTextView                  = NSTextView
-public typealias ZTextField                 = NSTextField
-public typealias ZTableView                 = NSTableView
-public typealias ZStackView                 = NSStackView
-public typealias ZColorWell                 = NSColorWell
-public typealias ZButtonCell                = NSButtonCell
-public typealias ZBezierPath                = NSBezierPath
-public typealias ZScrollView                = NSScrollView
-public typealias ZController                = NSViewController
-public typealias ZEventFlags                = NSEvent.ModifierFlags
-public typealias ZSearchField               = NSSearchField
-public typealias ZApplication               = NSApplication
-public typealias ZTableColumn               = NSTableColumn
-public typealias ZTableRowView              = NSTableRowView
-public typealias ZTableCellView             = NSTableCellView
-public typealias ZWindowDelegate            = NSWindowDelegate
-public typealias ZWindowController          = NSWindowController
-public typealias ZSegmentedControl          = NSSegmentedControl
-public typealias ZTextViewDelegate          = NSTextViewDelegate
-public typealias ZTextFieldDelegate         = NSTextFieldDelegate
-public typealias ZGestureRecognizer         = NSGestureRecognizer
-public typealias ZProgressIndicator         = NSProgressIndicator
-public typealias ZTableViewDelegate         = NSTableViewDelegate
-public typealias ZTableViewDataSource       = NSTableViewDataSource
-public typealias ZSearchFieldDelegate       = NSSearchFieldDelegate
-public typealias ZApplicationDelegate       = NSApplicationDelegate
-public typealias ZPanGestureRecognizer      = NSPanGestureRecognizer
-public typealias ZClickGestureRecognizer    = NSClickGestureRecognizer
-public typealias ZGestureRecognizerState    = NSGestureRecognizer.State
-public typealias ZGestureRecognizerDelegate = NSGestureRecognizerDelegate
+public typealias ZFont                       = NSFont
+public typealias ZView                       = NSView
+public typealias ZAlert                      = NSAlert
+public typealias ZEvent                      = NSEvent
+public typealias ZImage                      = NSImage
+public typealias ZColor                      = NSColor
+public typealias ZButton                     = NSButton
+public typealias ZSlider                     = NSSlider
+public typealias ZWindow                     = NSWindow
+public typealias ZControl                    = NSControl
+public typealias ZMenuItem                   = NSMenuItem
+public typealias ZClipView                   = NSClipView
+public typealias ZTextView                   = NSTextView
+public typealias ZTextField                  = NSTextField
+public typealias ZTableView                  = NSTableView
+public typealias ZStackView                  = NSStackView
+public typealias ZColorWell                  = NSColorWell
+public typealias ZButtonCell                 = NSButtonCell
+public typealias ZBezierPath                 = NSBezierPath
+public typealias ZScrollView                 = NSScrollView
+public typealias ZController                 = NSViewController
+public typealias ZEventFlags                 = NSEvent.ModifierFlags
+public typealias ZSearchField                = NSSearchField
+public typealias ZApplication                = NSApplication
+public typealias ZTableColumn                = NSTableColumn
+public typealias ZTableRowView               = NSTableRowView
+public typealias ZTableCellView              = NSTableCellView
+public typealias ZWindowDelegate             = NSWindowDelegate
+public typealias ZWindowController           = NSWindowController
+public typealias ZSegmentedControl           = NSSegmentedControl
+public typealias ZTextViewDelegate           = NSTextViewDelegate
+public typealias ZTextFieldDelegate          = NSTextFieldDelegate
+public typealias ZGestureRecognizer          = NSGestureRecognizer
+public typealias ZProgressIndicator          = NSProgressIndicator
+public typealias ZTableViewDelegate          = NSTableViewDelegate
+public typealias ZTableViewDataSource        = NSTableViewDataSource
+public typealias ZSearchFieldDelegate        = NSSearchFieldDelegate
+public typealias ZApplicationDelegate        = NSApplicationDelegate
+public typealias ZPanGestureRecognizer       = NSPanGestureRecognizer
+public typealias ZClickGestureRecognizer     = NSClickGestureRecognizer
+public typealias ZGestureRecognizerState     = NSGestureRecognizer.State
+public typealias ZGestureRecognizerDelegate  = NSGestureRecognizerDelegate
+public typealias ZEdgeSwipeGestureRecognizer = NSNull
 
 
 let        gVerticalWeight = 1.0
@@ -422,7 +423,7 @@ extension ZStackableView {
 }
 
 
-extension ZoneDragView {
+extension ZDragView {
     
     func updateMagnification(with event: ZEvent) {
         let     deltaY = event.deltaY

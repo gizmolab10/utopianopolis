@@ -523,7 +523,7 @@ class ZoneWidget: ZView {
             }
 
             if  zone.showingChildren {
-                if  !nowDrawLines && !gIsDragging && gEditorView?.rubberbandRect == nil {
+                if  !nowDrawLines && !gIsDragging && gDragView?.rubberbandRect == nil {
                     self.nowDrawLines = true
                     
                     self.draw(dirtyRect)

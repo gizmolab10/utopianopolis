@@ -37,6 +37,9 @@ import Foundation
 //}
 
 
+class ZKeyEdgeSwipeGestureRecognizer : ZEdgeSwipeGestureRecognizer {}
+
+
 class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
 
 

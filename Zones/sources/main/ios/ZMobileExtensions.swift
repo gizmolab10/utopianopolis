@@ -21,44 +21,45 @@ enum ZArrowKey: Int8 {
 }
 
 
-public typealias ZFont                      = UIFont
-public typealias ZView                      = UIView
-public typealias ZAlert                     = UIAlertController
-public typealias ZImage                     = UIImage
-public typealias ZColor                     = UIColor
-public typealias ZEvent                     = UIKeyCommand
-public typealias ZButton                    = UIButton
-public typealias ZWindow                    = UIWindow
-public typealias ZSlider                    = UISlider
-public typealias ZControl                   = UIControl
-public typealias ZMenuItem                  = UIMenuItem
-public typealias ZTextView                  = UITextView
-public typealias ZTextField                 = UITextField
-public typealias ZStackView                 = UIStackView
-public typealias ZTableView                 = UITableView
-public typealias ZScrollView                = UIScrollView
-public typealias ZController                = UIViewController
-public typealias ZEventFlags                = UIKeyModifierFlags
-public typealias ZBezierPath                = UIBezierPath
-public typealias ZSearchField               = UISearchBar
-public typealias ZApplication               = UIApplication
-public typealias ZTableColumn               = ZNullProtocol
-public typealias ZWindowDelegate            = ZNullProtocol
-public typealias ZScrollDelegate            = UIScrollViewDelegate
-public typealias ZWindowController          = ZNullProtocol
-public typealias ZSegmentedControl          = UISegmentedControl
-public typealias ZGestureRecognizer         = UIGestureRecognizer
-public typealias ZProgressIndicator         = UIActivityIndicatorView
-public typealias ZTextFieldDelegate         = UITextFieldDelegate
-public typealias ZTableViewDelegate         = UITableViewDelegate
-public typealias ZSearchFieldDelegate       = UISearchBarDelegate
-public typealias ZTableViewDataSource       = UITableViewDataSource
-public typealias ZApplicationDelegate       = UIApplicationDelegate
-public typealias ZPanGestureRecognizer      = UIPanGestureRecognizer
-public typealias ZClickGestureRecognizer    = UITapGestureRecognizer
-public typealias ZSwipeGestureRecognizer    = UISwipeGestureRecognizer
-public typealias ZGestureRecognizerState    = UIGestureRecognizer.State
-public typealias ZGestureRecognizerDelegate = UIGestureRecognizerDelegate
+public typealias ZFont                       = UIFont
+public typealias ZView                       = UIView
+public typealias ZAlert                      = UIAlertController
+public typealias ZImage                      = UIImage
+public typealias ZColor                      = UIColor
+public typealias ZEvent                      = UIKeyCommand
+public typealias ZButton                     = UIButton
+public typealias ZWindow                     = UIWindow
+public typealias ZSlider                     = UISlider
+public typealias ZControl                    = UIControl
+public typealias ZMenuItem                   = UIMenuItem
+public typealias ZTextView                   = UITextView
+public typealias ZTextField                  = UITextField
+public typealias ZStackView                  = UIStackView
+public typealias ZTableView                  = UITableView
+public typealias ZScrollView                 = UIScrollView
+public typealias ZController                 = UIViewController
+public typealias ZEventFlags                 = UIKeyModifierFlags
+public typealias ZBezierPath                 = UIBezierPath
+public typealias ZSearchField                = UISearchBar
+public typealias ZApplication                = UIApplication
+public typealias ZTableColumn                = ZNullProtocol
+public typealias ZWindowDelegate             = ZNullProtocol
+public typealias ZScrollDelegate             = UIScrollViewDelegate
+public typealias ZWindowController           = ZNullProtocol
+public typealias ZSegmentedControl           = UISegmentedControl
+public typealias ZGestureRecognizer          = UIGestureRecognizer
+public typealias ZProgressIndicator          = UIActivityIndicatorView
+public typealias ZTextFieldDelegate          = UITextFieldDelegate
+public typealias ZTableViewDelegate          = UITableViewDelegate
+public typealias ZSearchFieldDelegate        = UISearchBarDelegate
+public typealias ZTableViewDataSource        = UITableViewDataSource
+public typealias ZApplicationDelegate        = UIApplicationDelegate
+public typealias ZPanGestureRecognizer       = UIPanGestureRecognizer
+public typealias ZClickGestureRecognizer     = UITapGestureRecognizer
+public typealias ZSwipeGestureRecognizer     = UISwipeGestureRecognizer
+public typealias ZGestureRecognizerState     = UIGestureRecognizer.State
+public typealias ZGestureRecognizerDelegate  = UIGestureRecognizerDelegate
+public typealias ZEdgeSwipeGestureRecognizer = UIScreenEdgePanGestureRecognizer
 
 
 public protocol ZNullProtocol {}
@@ -277,6 +278,7 @@ extension UIView {
             clearGestures()
 
             if  let e = newValue {
+//				e.edgeGesture      = createEdgeGestureRecognizer (e, action: #selector(ZGraphController     .leftEdgeEvent),    edge: .left)
                 e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZGraphController      .clickEvent),                     clicksRequired: 1)
                 e.moveUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZGraphController     .moveUpEvent), direction: .up,    touchesRequired: 1)
                 e.moveDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZGraphController   .moveDownEvent), direction: .down,  touchesRequired: 1)
@@ -290,7 +292,18 @@ extension UIView {
 
 
     func display() {}
+	
 
+	@discardableResult func createEdgeGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, edge: UIRectEdge) -> ZKeyEdgeSwipeGestureRecognizer {
+		let      gesture = ZKeyEdgeSwipeGestureRecognizer(target: target, action: action)
+		gesture.delegate = target
+		gesture   .edges = edge
+		
+		addGestureRecognizer(gesture)
+		
+		return gesture
+	}
+	
 
     @discardableResult func createSwipeGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, direction: UISwipeGestureRecognizer.Direction, touchesRequired: Int) -> ZKeySwipeGestureRecognizer {
         let                     gesture = ZKeySwipeGestureRecognizer(target: target, action: action)
@@ -369,7 +382,7 @@ extension UITableView {
 }
 
 
-extension ZoneDragView {
+extension ZDragView {
     
     func updateMagnification(with event: ZEvent) {}
     
@@ -467,7 +480,7 @@ extension ZoneTextWidget {
 
     @objc(textField:shouldChangeCharactersInRange:replacementString:) func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         layoutTextField()
-        gEditorView?.setAllSubviewsNeedDisplay()
+        gDragView?.setAllSubviewsNeedDisplay()
 
         return true
     }

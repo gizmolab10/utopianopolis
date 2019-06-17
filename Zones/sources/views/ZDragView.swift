@@ -1,5 +1,5 @@
 //
-//  ZoneDragView.swift
+//  ZDragView.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 8/17/17.
@@ -14,7 +14,7 @@
 #endif
 
 
-class ZoneDragView: ZView, ZGestureRecognizerDelegate {
+class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 
     var rubberbandRect: CGRect?
@@ -45,7 +45,8 @@ class ZoneDragView: ZView, ZGestureRecognizerDelegate {
 
     func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
         if  let e = gGraphController {
-            return gestureRecognizer == e.clickGesture && otherGestureRecognizer == e.movementGesture
+            return (gestureRecognizer == e.clickGesture && otherGestureRecognizer == e.movementGesture) ||
+				gestureRecognizer == e.edgeGesture
         }
 
         return false

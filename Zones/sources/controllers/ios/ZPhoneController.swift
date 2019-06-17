@@ -14,27 +14,22 @@ import UIKit
 class ZPhoneController: ZGenericController, UITabBarDelegate {
 
 
-    override  var                   controllerID: ZControllerID { return .idMain }
-    @IBOutlet var favoritesButtonWidthConstraint: NSLayoutConstraint?
-    @IBOutlet var   actionsButtonWidthConstraint: NSLayoutConstraint?
-    @IBOutlet var         editorBottomConstraint: NSLayoutConstraint?
-    @IBOutlet var            editorTopConstraint: NSLayoutConstraint?
-    @IBOutlet var            hereWidthConstraint: NSLayoutConstraint?
-    @IBOutlet var                 hereTextWidget: ZoneTextWidget?
-    @IBOutlet var                favoritesButton: UIButton?
-    @IBOutlet var                 focusOutButton: UIButton?
-    @IBOutlet var                  actionsButton: UIButton?
-    @IBOutlet var                  favoritesView: UIView?
-    @IBOutlet var                    actionsView: UIView?
-    @IBOutlet var                       lineView: UIView?
-    var                                 isCached: Bool               =  false
-    var                             cachedOffset: CGPoint            = .zero
-    var                           keyboardHeight: CGFloat            =  0.0
+    override  var                 controllerID: ZControllerID { return .idMain }
+    @IBOutlet var       editorBottomConstraint: NSLayoutConstraint?
+    @IBOutlet var          editorTopConstraint: NSLayoutConstraint?
+    @IBOutlet var          hereWidthConstraint: NSLayoutConstraint?
+    @IBOutlet var               hereTextWidget: ZoneTextWidget?
+    @IBOutlet var               focusOutButton: UIButton?
+    @IBOutlet var                  actionsView: UIView?
+    @IBOutlet var                     lineView: UIView?
+    var                               isCached: Bool    =  false
+    var                           cachedOffset: CGPoint = .zero
+    var                         keyboardHeight: CGFloat =  0.0
 
 
     // MARK:- hide and show
     // MARK:-
-
+	
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         let disallowed: [ZSignalKind] = [.eSearch, .eFound, .eStartup]
@@ -52,54 +47,18 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     }
 
 
-    @IBAction func favoritesVisibilityButtonAction(iButton: UIButton) {
-        gFavoritesAreVisible = !gFavoritesAreVisible
-
-        update()
-    }
-
-
-    @IBAction func actionsVisibilityButtonAction(iButton: UIButton) {
-        gActionsAreVisible = !gActionsAreVisible
-
-        update()
-    }
-
-
     func update() {
-        let                       selectorHeight = CGFloat(48.0)
-        let                      emphasizedColor = ZColor.blue.lighter(by: 5.0)
-        let                            textColor = ZColor.blue
-        let                                 font = gWidgetFont
-        let                            hereTitle = gHereMaybe?.zoneName ?? ""
-        let                         actionsTitle = gActionsAreVisible   ? " -> " : " Actions "
-        let                       favoritesTitle = gFavoritesAreVisible ? " -> " : " Favorites "
-        let                       favoritesWidth = favoritesTitle.widthForFont(font) + 15.0
-        actionsButtonWidthConstraint?  .constant = actionsTitle  .widthForFont(font) + 15.0
-        favoritesButtonWidthConstraint?.constant = favoritesWidth
-        editorBottomConstraint?        .constant = gKeyboardIsVisible   ? keyboardHeight : gActionsAreVisible ? selectorHeight : 0.0
-        editorTopConstraint?           .constant = gFavoritesAreVisible ? selectorHeight : 2.0
-        hereWidthConstraint?           .constant = hereTitle.widthForFont(font)
-        hereTextWidget?                    .text = hereTitle
-        favoritesButton?               .isHidden = false
-        focusOutButton?                .isHidden = false
-        actionsButton?                 .isHidden = false
-        favoritesView?                 .isHidden = false
-        actionsView?                   .isHidden = false
-        lineView?                      .isHidden = gFavoritesAreVisible
-        let                          buttonSetup = { (iButton: UIButton?, iTitle: String, iHidden: Bool) in
-            if  let                       button = iButton {
-                button                    .title = iTitle
-                button          .backgroundColor = iHidden ? emphasizedColor : gBackgroundColor
+        let               selectorHeight = CGFloat(48.0)
+        let                         font = gWidgetFont
+        let                    hereTitle = gHereMaybe?.zoneName ?? ""
+        editorBottomConstraint?.constant = gKeyboardIsVisible   ? keyboardHeight : gActionsAreVisible ? selectorHeight : 0.0
+        editorTopConstraint?   .constant = gFavoritesAreVisible ? selectorHeight : 2.0
+        hereWidthConstraint?   .constant = hereTitle.widthForFont(font)
+        hereTextWidget?            .text = hereTitle
+		focusOutButton?        .isHidden = false
+		actionsView?           .isHidden = false
 
-                button.setTitleColor(              iHidden ? kWhiteColor     : textColor, for: .normal)
-                button.addBorder(thickness: 1.0, radius: 5.0, color: textColor.cgColor)
-            }
-        }
-
-        buttonSetup(favoritesButton, favoritesTitle, gFavoritesAreVisible)
-        buttonSetup(  actionsButton,   actionsTitle,   gActionsAreVisible)
-        layoutForKeyboard()
+		layoutForKeyboard()
     }
 
 
@@ -149,9 +108,9 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         if  gKeyboardIsVisible && !isCached {
             cachedOffset         = gScrollOffset
 
-            if  let       center = gEditorView?.bounds.center,
+            if  let       center = gDragView?.bounds.center,
                 let       widget = gWidgets.currentEditingWidget?.textWidget {
-                let widgetOffset = widget.convert(widget.bounds.center, to: gEditorView)
+                let widgetOffset = widget.convert(widget.bounds.center, to: gDragView)
                 gScrollOffset    = CGPoint(center - widgetOffset)
                 isCached         = true
                 changed          = true

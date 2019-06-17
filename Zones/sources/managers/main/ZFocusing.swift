@@ -230,9 +230,12 @@ class ZFocusing: NSObject {
 
     func focus(_ atArrival: @escaping Closure) {
         createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
-
-        gTextEditor.stopCurrentEdit()
+		gTextEditor.stopCurrentEdit()
         gBatches.focus { iSame in
+			#if os(iOS)
+			gActionsController.showMain()
+			#endif
+			
             atArrival()
             gBatches.save { iSaveSame in
             }

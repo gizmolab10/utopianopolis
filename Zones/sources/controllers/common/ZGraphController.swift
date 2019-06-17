@@ -27,44 +27,45 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     
 	
 	let 		   clickManager =  ZClickManager()
-    let        editorRootWidget =  ZoneWidget ()
+    let         graphRootWidget =  ZoneWidget ()
     let     favoritesRootWidget =  ZoneWidget ()
     var      rubberbandPreGrabs = [Zone] ()
     var     priorScrollLocation =  CGPoint.zero
     var         rubberbandStart =  CGPoint.zero
-    let              doneStates : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
-    var            clickGesture :  ZGestureRecognizer?
-    var           moveUpGesture :  ZGestureRecognizer?
-    var         movementGesture :  ZGestureRecognizer?
-    var         moveDownGesture :  ZGestureRecognizer?
-    var         moveLeftGesture :  ZGestureRecognizer?
-    var        moveRightGesture :  ZGestureRecognizer?
+	var        moveRightGesture :  ZGestureRecognizer?
+	var         movementGesture :  ZGestureRecognizer?
+	var         moveDownGesture :  ZGestureRecognizer?
+	var         moveLeftGesture :  ZGestureRecognizer?
+	var           moveUpGesture :  ZGestureRecognizer?
+	var            clickGesture :  ZGestureRecognizer?
+	var             edgeGesture :  ZGestureRecognizer?
+	let              doneStates : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
 	override  var  controllerID :  ZControllerID { return .idGraph }
     @IBOutlet var       spinner :  ZProgressIndicator?
-    @IBOutlet var    editorView :  ZoneDragView?
+    @IBOutlet var      dragView :  ZDragView?
     @IBOutlet var   spinnerView :  ZView?
     @IBOutlet var indicatorView :  ZIndicatorView?
 	
 	
 	var rubberbandRect: CGRect? {
 		get {
-			return editorView?.rubberbandRect
+			return dragView?.rubberbandRect
 		}
 		
 		set {
-			if  let e = editorView {
+			if  let d = dragView {
 				if  newValue == nil || rubberbandStart == .zero {
-					if  let type = indicatorView?.hitTest(e.rubberbandRect) {
+					if  let type = indicatorView?.hitTest(d.rubberbandRect) {
 						toggleMode(isDirection: type == .eDirection)
 					}
 					
-					e.rubberbandRect = .zero
+					d.rubberbandRect = .zero
 					
 					gSelecting.assureMinimalGrabs()
 					gSelecting.updateCurrentBrowserLevel()
 					gSelecting.updateCousinList()
 				} else {
-					e.rubberbandRect = newValue
+					d.rubberbandRect = newValue
 					let      widgets = gWidgets.visibleWidgets
 					
 					gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
@@ -72,7 +73,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					
 					for widget in widgets {
 						if  let    hitRect = widget.hitRect {
-							let widgetRect = widget.convert(hitRect, to: e)
+							let widgetRect = widget.convert(hitRect, to: d)
 							
 							if  let zone = widget.widgetZone, !zone.isRootOfFavorites,
 								
@@ -83,7 +84,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					}
 				}
 				
-				e.setAllSubviewsNeedDisplay()
+				d.setAllSubviewsNeedDisplay()
 			}
 		}
 	}
@@ -91,10 +92,10 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
     override func setup() {
         restartGestureRecognition()
-        editorView?.addSubview(editorRootWidget)
+        dragView?.addSubview(graphRootWidget)
 
         if  !kIsPhone {
-            editorView?.addSubview(favoritesRootWidget)
+            dragView?.addSubview(favoritesRootWidget)
         }
         
         indicatorView?.setupGradientView()
@@ -125,14 +126,14 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
 
     func clear() {
-        editorRootWidget   .widgetZone = nil
+        graphRootWidget   .widgetZone = nil
         favoritesRootWidget.widgetZone = nil
     }
     
     
     #if os(iOS) && false
     private func updateMinZoomScaleForSize(_ size: CGSize) {
-        let           w = editorRootWidget
+        let           w = graphRootWidget
         let heightScale = size.height / w.bounds.height
         let  widthScale = size.width  / w.bounds.width
         let    minScale = min(widthScale, heightScale)
@@ -165,24 +166,29 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	
 
     func layoutForCurrentScrollOffset() {
-        if  let e = editorView {
-            editorRootWidget.snp.removeConstraints()
-            editorRootWidget.snp.makeConstraints { make in
-                make.centerY.equalTo(e).offset(gScrollOffset.y)
-                make.centerX.equalTo(e).offset(gScrollOffset.x)
+        if  let d = dragView {
+            graphRootWidget.snp.removeConstraints()
+            graphRootWidget.snp.makeConstraints { make in
+                make.centerY.equalTo(d).offset(gScrollOffset.y)
+                make.centerX.equalTo(d).offset(gScrollOffset.x)
             }
 
             if  favoritesRootWidget.superview == nil {
-                editorView?.addSubview(favoritesRootWidget)
+                d.addSubview(favoritesRootWidget)
             }
             
             favoritesRootWidget.snp.removeConstraints()
             favoritesRootWidget.snp.makeConstraints { make in
-                make  .top.equalTo(e).offset(45.0 - Double(gGenericOffset.height / 3.0))
-                make .left.equalTo(e).offset(15.0 - Double(gGenericOffset.width       ))
-            }
+				if kIsPhone {
+					make.centerY.equalTo(d).offset(gScrollOffset.y)
+					make.centerX.equalTo(d).offset(gScrollOffset.x)
+				} else {
+					make  .top.equalTo(d).offset(45.0 - Double(gGenericOffset.height / 3.0))
+					make .left.equalTo(d).offset(15.0 - Double(gGenericOffset.width       ))
+				}
+			}
             
-            e.setNeedsDisplay()
+            d.setNeedsDisplay()
         }
     }
     
@@ -191,16 +197,16 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     // MARK:-
 
 	
-	func restartGestureRecognition() { editorView?.gestureHandler = self }
+	func restartGestureRecognition() { dragView?.gestureHandler = self }
 	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
 	
 
     func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inMainGraph: Bool) {
-        if !inMainGraph && kIsPhone { return }
+        if  kIsPhone && (inMainGraph != gShowMainGraph) { return }
 
         let                        here = inMainGraph ? gHereMaybe : gFavoritesRoot
-        var specificWidget: ZoneWidget? = inMainGraph ? editorRootWidget : favoritesRootWidget
-        var specificView:        ZView? = editorView
+        var specificWidget: ZoneWidget? = inMainGraph ? graphRootWidget : favoritesRootWidget
+        var specificView:        ZView? = dragView
         var specificIndex:         Int?
         var                   recursing = true
         gTextCapturing                  = false
@@ -222,23 +228,38 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
         if  [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
             if  gWorkMode != .graphMode {
-                editorView?.snp.removeConstraints()
+                dragView?.snp.removeConstraints()
             } else if !gIsEditingText {
-                if  iKind == .eRelayout {
-                    gWidgets.clearRegistry()
-                }
-                
+				prepare(for: iKind)
                 layoutForCurrentScrollOffset()
                 layoutRootWidget(for: iSignalObject, iKind, inMainGraph: true)
                 layoutRootWidget(for: iSignalObject, iKind, inMainGraph: false)
-                editorView?.setAllSubviewsNeedDisplay()
+                dragView?.setAllSubviewsNeedDisplay()
             }
         }
 
 		indicatorView?.setNeedsDisplay()
     }
+	
+	
+	func prepare(for iKind: ZSignalKind) {
+		if  iKind == .eRelayout {
+			gWidgets.clearRegistry()
+		}
+		
+		if  kIsPhone {
+			favoritesRootWidget.isHidden =  gShowMainGraph
+			graphRootWidget	   .isHidden = !gShowMainGraph
+		}
+	}
 
-    
+	
+	func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
+		return (gestureRecognizer == clickGesture && otherGestureRecognizer == movementGesture) ||
+			otherGestureRecognizer == edgeGesture
+	}
+	
+
     @objc func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
         if  gWorkMode        != .graphMode {
             gSearching.exitSearchMode()
@@ -295,6 +316,13 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		}
 	}
 	
+	
+	@objc func leftEdgeEvent(_ iGesture: ZGestureRecognizer?) {
+		gShowMainGraph = !gShowMainGraph
+		
+		gControllers.signalFor(nil, multiple: [.eRelayout])
+	}
+	
 
     @objc func clickEvent(_ iGesture: ZGestureRecognizer?) {
         if  gWorkMode != .graphMode {
@@ -317,8 +345,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 				//   text that is being edited    //
 				////////////////////////////////////
 
-                let backgroundLocation = gesture.location(in: editorView)
-                let           textRect = editWidget!.convert(editWidget!.bounds, to: editorView)
+                let backgroundLocation = gesture.location(in: dragView)
+                let           textRect = editWidget!.convert(editWidget!.bounds, to: dragView)
                 withinEdit             = textRect.contains(backgroundLocation)
             }
 
@@ -477,7 +505,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
                 prior?           .displayForDrag() // erase  child lines
                 dropZone?.widget?.displayForDrag() // relayout child lines
-                editorView?     .setNeedsDisplay() // relayout drag: line and dot
+                dragView?       .setNeedsDisplay() // relayout drag: line and dot
 
                 // columnarReport(String(describing: gDragRelation), gDragDropZone?.unwrappedName)
 
@@ -541,9 +569,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
 
     func widgetNearest(_ iGesture: ZGestureRecognizer?, isMain: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
-        let      rootWidget = isMain ? editorRootWidget : favoritesRootWidget
-        if  let    location = iGesture?.location(in: editorView),
-            let dropNearest = rootWidget.widgetNearestTo(location, in: editorView, gHereMaybe) {
+        let      rootWidget = isMain ? graphRootWidget : favoritesRootWidget
+        if  let    location = iGesture?.location(in: dragView),
+            let dropNearest = rootWidget.widgetNearestTo(location, in: dragView, gHereMaybe) {
             if  isMain, !kIsPhone,
 
                 //////////////////////////////////
@@ -578,7 +606,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     
     func isEditingText(at location: CGPoint) -> Bool {
         if  gIsEditingText, let textWidget = gEditedTextWidget {
-            let rect = textWidget.convert(textWidget.bounds, to: editorView)
+            let rect = textWidget.convert(textWidget.bounds, to: dragView)
 
             return rect.contains(location)
         }
@@ -599,8 +627,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
         gDragPoint       = nil
 
         favoritesRootWidget.setNeedsDisplay()
-        editorRootWidget   .setNeedsDisplay()
-        editorView?        .setNeedsDisplay() // erase drag: line and dot
+        graphRootWidget    .setNeedsDisplay()
+        dragView?          .setNeedsDisplay() // erase drag: line and dot
         dot?               .setNeedsDisplay()
     }
 
@@ -610,7 +638,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
         if  iView     != nil {
             let margin = CGFloat(5.0)
-            let  point = editorView!.convert(iPoint, to: iView)
+            let  point = dragView!.convert(iPoint, to: iView)
             let   rect = iView!.bounds
             let      y = point.y
 
@@ -631,15 +659,15 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
     func detectWidget(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
         var hit: ZoneWidget?
-        if  let               e = editorView,
-            let        location = iGesture?.location(in: e),
-            e.bounds.contains(location) {
-            let         widgets = gWidgets.widgets.values
-            for         widget in widgets {
-                let        rect = widget.convert(widget.outerHitRect, to: e)
+        if  let        d = dragView,
+            let location = iGesture?.location(in: d),
+            d.bounds.contains(location) {
+            let  widgets = gWidgets.widgets.values
+            for  widget in widgets {
+                let rect = widget.convert(widget.outerHitRect, to: d)
 
                 if  rect.contains(location) {
-                    hit     = widget
+                    hit  = widget
 
                     break
                 }
@@ -653,10 +681,10 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
         var hit:        ZoneDot?
 
-        if  let                e = editorView,
-            let         location = iGesture?.location(in: e) {
+        if  let                d = dragView,
+            let         location = iGesture?.location(in: d) {
             let test: DotClosure = { iDot in
-                let         rect = iDot.convert(iDot.bounds, to: e)
+                let         rect = iDot.convert(iDot.bounds, to: d)
 
                 if  rect.contains(location) {
                     hit = iDot

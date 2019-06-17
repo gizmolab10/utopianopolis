@@ -930,7 +930,7 @@ class ZGraphEditor: NSObject {
                 redrawSyncRedraw(child) {
                     gDeferRedraw = false
                     
-                    gEditorView?.setAllSubviewsNeedDisplay()
+                    gDragView?.setAllSubviewsNeedDisplay()
                     parent.editAndSelect(range: range)
                 }
             }
