@@ -26,7 +26,7 @@ enum ZTextType: Int {
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
-    override var preferredFont : ZFont { return (widget?.isInMain ?? true) ? gWidgetFont : gFavoritesFont }
+    override var preferredFont : ZFont { return (widget?.isInThoughts ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return widget?.widgetZone }
     weak var            widget : ZoneWidget?
     var                   type = ZTextType.name

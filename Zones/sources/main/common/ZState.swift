@@ -11,10 +11,12 @@ import Foundation
 import CloudKit
 
 #if os(OSX)
-    import Cocoa
-    var gTextOffset: CGFloat?
+import Cocoa
+let gFontDelta = 15.0
+var gTextOffset: CGFloat?
 #elseif os(iOS)
-    import UIKit
+import UIKit
+let gFontDelta = 17.0
 var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 #endif
 
@@ -23,7 +25,7 @@ var                gWorkMode                     = ZWorkMode.startupMode
 var             gDeferRedraw                     = false
 var             gDebugReport                     = false
 var           gTextCapturing                     = false
-var      	  gShowMainGraph					 = false
+var      	  gShowThoughtsGraph					 = false
 var         gIsReadyToShowUI                     = false
 var       gKeyboardIsVisible                     = false
 var       gArrowsDoNotBrowse                     = false
@@ -54,7 +56,7 @@ var                gDragView:         ZDragView? { return gGraphController?.drag
 var               gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
 var                gDotWidth:             Double { return gDotHeight * 0.75 }
 var      gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
-var                gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(15.0) } // height 2 .. 20
+var                gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
 var              gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var           gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
 var        gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : ZColor.black }
@@ -184,45 +186,47 @@ func recordEmailSent(for type: ZSentEmailType) {
 
 
 var gFavoritesAreVisible: Bool {
-    get { return getPreferencesBool(   for: kFavoritesAreVisible, defaultBool: false) }
-    set { setPreferencesBool(newValue, for: kFavoritesAreVisible) }
-}
-
-
-var gActionsAreVisible: Bool {
-    get { return getPreferencesBool(   for: kActionsVisible, defaultBool: false) }
-    set { setPreferencesBool(newValue, for: kActionsVisible) }
+    get { return getPreferencesBool(   for: kFavoritesAreVisibleKey, defaultBool: false) }
+    set { setPreferencesBool(newValue, for: kFavoritesAreVisibleKey) }
 }
 
 
 var gBackgroundColor: ZColor {
-    get { return   getPreferencesColor( for: kBackgroundColor, defaultColor: ZColor(hue: 0.6, saturation: 0.1, brightness: kUnselectBrightness, alpha: 1)) }
-    set { setPreferencesColor(newValue, for: kBackgroundColor) }
+    get { return   getPreferencesColor( for: kBackgroundColorKey, defaultColor: ZColor(hue: 0.6, saturation: 0.1, brightness: kUnselectBrightness, alpha: 1)) }
+    set { setPreferencesColor(newValue, for: kBackgroundColorKey) }
 }
 
 
 var gRubberbandColor: ZColor {
-    get { return   getPreferencesColor( for: kRubberbandColor, defaultColor: ZColor.purple.darker(by: 1.5)) }
-    set { setPreferencesColor(newValue, for: kRubberbandColor) }
+    get { return   getPreferencesColor( for: kRubberbandColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
+    set { setPreferencesColor(newValue, for: kRubberbandColorKey) }
 }
 
 
 var gGenericOffset: CGSize {
-    get { return getPreferencesSize(for: kGenericOffset, defaultSize: CGSize(width: 30.0, height: 2.0)) }
-    set { setPreferencesSize(newValue, for: kGenericOffset) }
+    get {
+		var offset = getPreferencesSize(for: kGenericOffsetKey, defaultSize: CGSize(width: 30.0, height: 2.0))
+		
+		if kIsPhone {
+			offset.height += 5.0
+		}
+		
+		return offset
+	}
+    set { setPreferencesSize(newValue, for: kGenericOffsetKey) }
 }
 
 
 var gWindowRect: CGRect {
-    get { return getPreferencesRect(for: kWindowRect, defaultRect: kDefaultWindowRect) }
-    set { setPreferencesRect(newValue, for: kWindowRect) }
+    get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
+    set { setPreferencesRect(newValue, for: kWindowRectKey) }
 }
 
 
 var gScrollOffset: CGPoint {
     get {
         let  point = CGPoint(x: 0.0, y: 0.0)
-        let string = getPreferenceString(for: kScrollOffset) { return NSStringFromPoint(point) }
+        let string = getPreferenceString(for: kScrollOffsetKey) { return NSStringFromPoint(point) }
 
         return string?.cgPoint ?? point
     }
@@ -230,7 +234,7 @@ var gScrollOffset: CGPoint {
     set {
         let string = NSStringFromPoint(newValue)
 
-        setPreferencesString(string, for: kScrollOffset)
+        setPreferencesString(string, for: kScrollOffsetKey)
     }
 }
 

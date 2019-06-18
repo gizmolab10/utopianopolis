@@ -12,10 +12,10 @@ import UIKit
 
 
 enum ZFunction: String {
-	case eGraph  	 = "Graph"
+	case eThoughts   = "Thoughts"
 	case ePrefs      = "Preferences"
 	case eHelp       = "Help"
-	case eMain       = "Main"
+	case eFirst      = "First"
 
 	case eIdeas      = "Ideas"
     case eDelete     = "Delete"
@@ -40,8 +40,8 @@ class ZActionsController : ZGenericController {
     @IBOutlet var  			   actionsSelector : ZoneSegmentedControl?
 	@IBOutlet var actionsButtonWidthConstraint : NSLayoutConstraint?
 	override  var                 controllerID : ZControllerID { return .idActions }
-	var 						isMainFunction : Bool { return currentFunction == .eMain }
-	var 					   currentFunction = ZFunction.eMain
+	var 						isFirstFunction : Bool { return currentFunction == .eFirst }
+	var 					   currentFunction = ZFunction.eFirst
 
 
     // MARK:- events
@@ -58,7 +58,7 @@ class ZActionsController : ZGenericController {
 	
 	
 	@IBAction func actionsVisibilityButtonAction(iButton: UIButton) {
-		showMain()
+		showFirst()
 	}
 	
 
@@ -67,20 +67,19 @@ class ZActionsController : ZGenericController {
 			let function = function(for: title) {
 			
 			switch function {
-			case .eStorage,
-				 .eIdeas,
-				 .eMain:	currentFunction = function; update()
+			case .eStorage, .eIdeas,
+				 .eFirst:	 currentFunction = function; update()
 			case .eRefreshAll,
-				 .eRefresh: refresh(for: function == .eRefreshAll)
-			case .eGraph:   gShowMainGraph = !gShowMainGraph; gControllers.signalFor(nil, multiple: [.eRelayout])
-			case .eDelete:  gGraphEditor.delete()
-			case .eNew:     gGraphEditor.addIdea()
-			case .eHang:    gBatches.unHang()
-			case .eHelp:    openBrowserForFocusWebsite()
-			case .eNext:    gGraphEditor.addNext() { iChild in iChild.edit() }
-			case .eFocus:   gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
-			case .eTravel:  gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
-			default:        break
+				 .eRefresh:  refresh(for: function == .eRefreshAll)
+			case .eThoughts: gShowThoughtsGraph = !gShowThoughtsGraph; gControllers.signalFor(nil, multiple: [.eRelayout])
+			case .eDelete:   gGraphEditor.delete()
+			case .eNew:      gGraphEditor.addIdea()
+			case .eHang:     gBatches.unHang()
+			case .eHelp:     openBrowserForFocusWebsite()
+			case .eNext:     gGraphEditor.addNext() { iChild in iChild.edit() }
+			case .eFocus:    gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
+			case .eTravel:   gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
+			default:         break
 			}
 		}
 	}
@@ -103,9 +102,9 @@ class ZActionsController : ZGenericController {
 
 			if  let                 button = actionsButton {
 				let 				 title = " <- "
-				actionsButtonWidthConstraint?.constant = isMainFunction ? 0.0 : title.widthForFont(gWidgetFont) + 15.0
+				actionsButtonWidthConstraint?.constant = isFirstFunction ? 0.0 : title.widthForFont(gWidgetFont) + 15.0
 				
-				if !isMainFunction {
+				if !isFirstFunction {
 					let    emphasizedColor = ZColor.blue.lighter(by: 5.0)
 					let          textColor = ZColor.blue
 					button          .title = title
@@ -117,10 +116,10 @@ class ZActionsController : ZGenericController {
 			}
 
 			switch currentFunction {
-			case .eMain:
+			case .eFirst:
 				insert(.ePrefs)
 				insert(.eIdeas)
-				insert(.eGraph)
+				insert(.eThoughts)
 				insert(.eHelp)
 
 				if  gIsLate {
@@ -150,7 +149,7 @@ class ZActionsController : ZGenericController {
 	func title(for iFunction: ZFunction) -> String {
 		switch iFunction {
 		case .eFocus: return gFavorites.function
-		case .eGraph: return gShowMainGraph ? "Favorites" : "Graph"
+		case .eThoughts: return gShowThoughtsGraph ? "Favorites" : "Thoughts"
 		default:      return iFunction.rawValue
 		}
 	}
@@ -158,7 +157,7 @@ class ZActionsController : ZGenericController {
 
     func function(for iTitle: String) -> ZFunction? {
 		switch iTitle {
-		case "Favorites": return .eGraph
+		case "Favorites": return .eThoughts
 		default: if let function = ZFunction(rawValue: iTitle) {
 				return  function
 			}
@@ -168,8 +167,8 @@ class ZActionsController : ZGenericController {
     }
 
 	
-	func showMain() {
-		currentFunction = .eMain
+	func showFirst() {
+		currentFunction = .eFirst
 		
 		update()
 	}

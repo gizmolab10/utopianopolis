@@ -55,7 +55,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     func update() {
         let               selectorHeight = CGFloat(48.0)
         let                    hereTitle = gHereMaybe?.zoneName ?? ""
-        editorBottomConstraint?.constant = gKeyboardIsVisible   ? keyboardHeight : gActionsAreVisible ? selectorHeight : 0.0
+        editorBottomConstraint?.constant = gKeyboardIsVisible   ? keyboardHeight : selectorHeight
         editorTopConstraint?   .constant = gFavoritesAreVisible ? selectorHeight : 2.0
         hereTextWidget?            .text = hereTitle
 		focusOutButton?        .isHidden = false

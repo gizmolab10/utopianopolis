@@ -91,7 +91,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     func setupForWidget(_ iWidget: ZoneWidget, asReveal: Bool) {
         isReveal = asReveal
         widget   = iWidget
-
+		
         if isInnerDot {
             snp.removeConstraints()
             snp.makeConstraints { make in
@@ -109,13 +109,13 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 addSubview(innerDot!)
             }
 
-            innerDot!.setupForWidget(iWidget, asReveal: isReveal)
+            innerDot?.setupForWidget(iWidget, asReveal: isReveal)
             snp.removeConstraints()
             snp.makeConstraints { make in
                 var   width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
-                if !iWidget.isInMain {
+                if !iWidget.isInThoughts {
                     width  *= kFavoritesReduction
                 }
 
@@ -124,10 +124,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             }
         }
 
-        #if os(iOS)
-            backgroundColor = kClearColor
-        #endif
-        
+		#if os(iOS)
+		backgroundColor = kClearColor
+		#endif
+
         updateConstraints()
         setNeedsDisplay()
     }
@@ -193,7 +193,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
-        let     ratio = (widget?.isInMain ?? true) ? 1.0 : kFavoritesReduction
+        let     ratio = (widget?.isInThoughts ?? true) ? 1.0 : kFavoritesReduction
         var thickness = CGFloat(gLineThickness + 0.1) * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
         var      rect = CGRect.zero
@@ -225,11 +225,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         let types = iZone.traits.keys
         for type in types {
             let   string = type.rawValue
-            let isInMain = widget?.isInMain ?? true
-            let    ratio = CGFloat(isInMain ? 1.0 : Double(kFavoritesReduction))
+            let isInThoughts = widget?.isInThoughts ?? true
+            let    ratio = CGFloat(isInThoughts ? 1.0 : Double(kFavoritesReduction))
             let     size = CGFloat(gDotHeight - 2.0) * ratio
             let     font = ZFont.boldSystemFont(ofSize: size)
-            let   height = string.heightForFont(font, options: .usesDeviceMetrics) + (isInMain ? 1.0 : -2.5)
+            let   height = string.heightForFont(font, options: .usesDeviceMetrics) + (isInThoughts ? 1.0 : -2.5)
             let   xDelta = size / 3.3
             let   yDelta = ((height - iDirtyRect.height) / CGFloat(3.8))
             let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta)

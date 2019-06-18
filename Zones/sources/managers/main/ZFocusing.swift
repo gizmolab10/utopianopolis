@@ -232,9 +232,9 @@ class ZFocusing: NSObject {
         createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
 		gTextEditor.stopCurrentEdit()
         gBatches.focus { iSame in
-			gShowMainGraph = true
+			gShowThoughtsGraph = true
 
-			self.showMainFunctions()			
+			self.showFirstFunctions()
             atArrival()
             gBatches.save { iSaveSame in
             }
@@ -299,9 +299,9 @@ class ZFocusing: NSObject {
             let targetRecordID = targetRecord.recordID
             let        iTarget = iBookmark.bookmarkTarget
 			let complete : SignalClosure = { (iObject, iKind) in
-				gShowMainGraph = true
+				gShowThoughtsGraph = true
 
-				self.showMainFunctions()
+				self.showFirstFunctions()
 				atArrival(iObject, iKind)
 			}
             
