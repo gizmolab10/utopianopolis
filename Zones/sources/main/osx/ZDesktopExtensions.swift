@@ -109,7 +109,7 @@ extension NSObject {
         }
 	}
 	
-	func showFirstFunctions() {}
+	func showTopLevelFunctions() {}
 }
 
 

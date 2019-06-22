@@ -70,12 +70,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     var revealDotIsVisible: Bool {
-        var isHidden = false
-        if  let zone = widgetZone, isInnerDot, isReveal {
-            isHidden = !zone.canTravel && zone.count == 0 && zone.fetchableCount == 0 && !isDragDrop
+        var isVisible = true
+        if  let  zone = widgetZone, isReveal {
+            isVisible = isDragDrop || zone.canTravel || zone.count > 0
         }
         
-        return !isHidden
+        return isVisible
     }
 
 

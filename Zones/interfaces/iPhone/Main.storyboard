@@ -147,7 +147,6 @@
         <!--Graph Controller-->
         <scene sceneID="9WU-We-u6g">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="RYN-wx-Kkr" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="graph" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wVv-ZA-i1M" customClass="ZGraphController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ceC-hh-Sah"/>
@@ -175,6 +174,7 @@
                         <outlet property="dragView" destination="lbQ-ID-4Qi" id="1Qt-mC-p4t"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RYN-wx-Kkr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1241" y="-5"/>
         </scene>
@@ -190,13 +190,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="406" height="45"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aIl-bX-msY">
-                                <rect key="frame" x="46" y="0.0" width="360" height="45"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aIl-bX-msY">
+                                <rect key="frame" x="0.0" y="0.0" width="406" height="45"/>
                                 <subviews>
                                     <segmentedControl opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" momentary="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CxM-46-LlZ">
-                                        <rect key="frame" x="0.0" y="0.0" width="121" height="45"/>
+                                        <rect key="frame" x="142.5" y="0.5" width="121" height="45"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="44" id="VPu-hp-pxB"/>
+                                            <constraint firstAttribute="height" constant="44" id="L8m-kW-g8t"/>
                                         </constraints>
                                         <segments>
                                             <segment title="First"/>
@@ -208,37 +208,20 @@
                                     </segmentedControl>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="CxM-46-LlZ" firstAttribute="top" secondItem="aIl-bX-msY" secondAttribute="top" id="WBi-hF-NLC"/>
-                                    <constraint firstAttribute="trailing" secondItem="CxM-46-LlZ" secondAttribute="trailing" id="eYZ-qS-ygZ"/>
-                                    <constraint firstAttribute="bottom" secondItem="CxM-46-LlZ" secondAttribute="bottom" id="k0Z-YA-dHP"/>
-                                    <constraint firstItem="CxM-46-LlZ" firstAttribute="leading" secondItem="aIl-bX-msY" secondAttribute="leading" id="mpL-pH-BuQ"/>
+                                    <constraint firstItem="CxM-46-LlZ" firstAttribute="centerX" secondItem="aIl-bX-msY" secondAttribute="centerX" id="aaM-Cx-Nmc"/>
+                                    <constraint firstItem="CxM-46-LlZ" firstAttribute="centerY" secondItem="aIl-bX-msY" secondAttribute="centerY" id="r93-7J-Xyc"/>
                                 </constraints>
                             </scrollView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1hR-Id-mVP">
-                                <rect key="frame" x="0.0" y="0.0" width="44" height="45"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="44" id="AZB-E3-SKn"/>
-                                </constraints>
-                                <state key="normal" title="&lt;-"/>
-                                <connections>
-                                    <action selector="actionsVisibilityButtonActionWithIButton:" destination="Vxx-wL-Ggf" eventType="touchDown" id="bzf-lc-ATS"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="aIl-bX-msY" secondAttribute="trailing" id="0PE-cy-dDe"/>
                             <constraint firstAttribute="bottom" secondItem="aIl-bX-msY" secondAttribute="bottom" id="AVR-eM-bGh"/>
-                            <constraint firstItem="1hR-Id-mVP" firstAttribute="top" secondItem="500-EQ-J08" secondAttribute="top" id="C2g-kl-Y5k"/>
-                            <constraint firstItem="aIl-bX-msY" firstAttribute="leading" secondItem="1hR-Id-mVP" secondAttribute="trailing" constant="2" id="I4n-1T-XB7"/>
-                            <constraint firstAttribute="bottom" secondItem="1hR-Id-mVP" secondAttribute="bottom" id="JJE-3M-Mz4"/>
-                            <constraint firstItem="1hR-Id-mVP" firstAttribute="leading" secondItem="500-EQ-J08" secondAttribute="leading" id="f5p-oY-1bc"/>
+                            <constraint firstItem="aIl-bX-msY" firstAttribute="leading" secondItem="500-EQ-J08" secondAttribute="leading" id="hzf-Gz-u3g"/>
                             <constraint firstItem="aIl-bX-msY" firstAttribute="top" secondItem="500-EQ-J08" secondAttribute="top" id="qYQ-qA-BLj"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="actionsButton" destination="1hR-Id-mVP" id="Rv8-0B-oUu"/>
-                        <outlet property="actionsButtonWidthConstraint" destination="AZB-E3-SKn" id="cvF-tN-FGM"/>
                         <outlet property="actionsSelector" destination="CxM-46-LlZ" id="zi5-he-TPc"/>
                     </connections>
                 </viewController>

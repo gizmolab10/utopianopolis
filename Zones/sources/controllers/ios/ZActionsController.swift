@@ -12,22 +12,34 @@ import UIKit
 
 
 enum ZFunction: String {
+	case eTopLevel   = "TopLevel"
 	case eThoughts   = "Thoughts"
 	case ePrefs      = "Preferences"
 	case eHelp       = "Help"
-	case eFirst      = "First"
+	case eMore		 = "More"
+	case eBack		 = "  <-  "
 
-	case eIdeas      = "Ideas"
-    case eDelete     = "Delete"
+	case eCreate     = "Create"
     case eNew        = "New"
     case eNext       = "Next"
+	case eDelete     = "Delete"
+
+	case eSelection  = "Selection"
+	case eExpand     = "Expand"
+	case eCollapse   = "Collapse"
 	case eFocus      = "Focus"
     case eTravel     = "Travel"
+	
+	case eBrowse     = "Browse"
+	case eUp         = "Up"
+	case eDown       = "Down"
+	case eLeft       = "Left"
+	case eRight      = "Right"
 
 	case eHang       = "Reconnect"
 	case eStorage    = "Storage"
-	case eRefresh    = "Refresh"
-	case eRefreshAll = "Refresh All"
+	case eRefetch    = "Refetch"
+	case eRefetchAll = "Refetch All"
 }
 
 
@@ -36,12 +48,10 @@ var gActionsController: ZActionsController { return gControllers.controllerForID
 
 class ZActionsController : ZGenericController {
 
-	@IBOutlet var   			 actionsButton : UIButton?
-    @IBOutlet var  			   actionsSelector : ZoneSegmentedControl?
-	@IBOutlet var actionsButtonWidthConstraint : NSLayoutConstraint?
-	override  var                 controllerID : ZControllerID { return .idActions }
-	var 						isFirstFunction : Bool { return currentFunction == .eFirst }
-	var 					   currentFunction = ZFunction.eFirst
+    @IBOutlet var actionsSelector : ZoneSegmentedControl?
+	override  var    controllerID : ZControllerID { return .idActions }
+	var           isTopLevel : Bool { return currentFunction == .eTopLevel }
+	var           currentFunction = ZFunction.eTopLevel
 
 
     // MARK:- events
@@ -58,7 +68,7 @@ class ZActionsController : ZGenericController {
 	
 	
 	@IBAction func actionsVisibilityButtonAction(iButton: UIButton) {
-		showFirst()
+		showTopLevel()
 	}
 	
 
@@ -67,10 +77,10 @@ class ZActionsController : ZGenericController {
 			let function = function(for: title) {
 			
 			switch function {
-			case .eStorage, .eIdeas,
-				 .eFirst:	 currentFunction = function; update()
-			case .eRefreshAll,
-				 .eRefresh:  refresh(for: function == .eRefreshAll)
+			case .eSelection, .eTopLevel, .eStorage, .eBrowse,
+				 .eMore:     currentFunction = function; update()
+			case .eRefetchAll,
+				 .eRefetch:  refetch(for: function == .eRefetchAll)
 			case .eThoughts: gShowThoughtsGraph = !gShowThoughtsGraph; gControllers.signalFor(nil, multiple: [.eRelayout])
 			case .eDelete:   gGraphEditor.delete()
 			case .eNew:      gGraphEditor.addIdea()
@@ -79,6 +89,7 @@ class ZActionsController : ZGenericController {
 			case .eNext:     gGraphEditor.addNext() { iChild in iChild.edit() }
 			case .eFocus:    gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
 			case .eTravel:   gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
+			case .eBack:	 showTopLevel()
 			default:         break
 			}
 		}
@@ -100,43 +111,50 @@ class ZActionsController : ZGenericController {
 				selector.insertSegment(withTitle: self.title(for: iFunction), at:index, animated: false)
 			}
 
-			if  let                 button = actionsButton {
-				let 				 title = " <- "
-				actionsButtonWidthConstraint?.constant = isFirstFunction ? 0.0 : title.widthForFont(gWidgetFont) + 15.0
-				
-				if !isFirstFunction {
-					let    emphasizedColor = ZColor.blue.lighter(by: 5.0)
-					let          textColor = ZColor.blue
-					button          .title = title
-					button.backgroundColor = emphasizedColor
-					
-					button.setTitleColor(kWhiteColor, for: .normal)
-					button.addBorder(thickness: 1.0, radius: 5.0, color: textColor.cgColor)
-				}
+			if !isTopLevel {
+				insert(.eBack)
+//					let    emphasizedColor = ZColor.blue.lighter(by: 5.0)
+//					let        borderColor = ZColor.blue
+//
+//					button.backgroundColor = emphasizedColor
+//
+//					button.setTitleColor(kWhiteColor, for: .normal)
+//					button.addBorder(thickness: 1.0, radius: 5.0, color: borderColor.cgColor)
 			}
+			
 
 			switch currentFunction {
-			case .eFirst:
-				insert(.ePrefs)
-				insert(.eIdeas)
+			case .eTopLevel:
+				insert(.eSelection)
+				insert(.eBrowse)
 				insert(.eThoughts)
-				insert(.eHelp)
-
-				if  gIsLate {
-					insert(.eHang)
-				} else {
-					insert(.eStorage)
-				}
-			case .eIdeas:
-				insert(.eDelete)
+				insert( gIsLate ? .eHang : .eStorage )
+				insert(.eMore)
+			case .eCreate:
 				insert(.eNew)
 				insert(.eNext)
+				insert(.eDelete)
+			case .eSelection:
+				insert(.eExpand)
+				insert(.eCollapse)
 				insert(.eFocus)
 				insert(.eTravel)
+			case .eBrowse:
+				insert(.eUp)
+				insert(.eDown)
+				insert(.eLeft)
+				insert(.eRight)
 			case .eStorage:
-				insert(.eRefresh)
-				insert(.eRefreshAll)
+				insert(.eRefetch)
+				insert(.eRefetchAll)
+			case .eMore:
+				insert(.ePrefs)
+				insert(.eHelp)
 			default: break
+			}
+
+			if !isTopLevel {
+//				selector.Segment.left
 			}
 		}
 	}
@@ -167,14 +185,14 @@ class ZActionsController : ZGenericController {
     }
 
 	
-	func showFirst() {
-		currentFunction = .eFirst
+	func showTopLevel() {
+		currentFunction = .eTopLevel
 		
 		update()
 	}
 	
 	
-	func refresh(for iAll: Bool) {
+	func refetch(for iAll: Bool) {
 		gBatches		 .unHang()
 		gWidgets         .clearRegistry()
 		gGraphController?.clear()

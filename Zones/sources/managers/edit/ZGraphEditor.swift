@@ -86,6 +86,7 @@ class ZGraphEditor: NSObject {
             var   SHIFT = flags.isShift
             let SPECIAL = COMMAND && OPTION
             let FLAGGED = COMMAND || OPTION || CONTROL
+			let IGNORED = 			 OPTION && CONTROL
             let   arrow = key.arrow
             
             if  key    != key.lowercased() {
@@ -106,7 +107,7 @@ class ZGraphEditor: NSObject {
                     case "p":      printCurrentFocus()
                     case "?":      showHideKeyboardShortcuts()
                     case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
-                    case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
+					case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
                     case kSpace:   addIdea()
@@ -158,7 +159,7 @@ class ZGraphEditor: NSObject {
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
                     case "+":      divideChildren()
                     case "-":      if SPECIAL { convertToTitledLineAndRearrangeChildren() } else if COMMAND { return gSelecting.currentMoveable.convertToFromLine() } else { addDashedLine() }
-                    case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
+                    case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)

@@ -67,7 +67,7 @@ class ZInformationController: ZGenericController {
 	
 	
 	var creationDateText: String {
-		var   date = currentZone.record?.modificationDate
+		var   date: Date? // currentZone.record?.modificationDate
 		var prefix = "last edited"
 
 		if  date == nil {

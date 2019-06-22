@@ -95,8 +95,8 @@ extension NSObject {
         responder?.becomeFirstResponder()
     }
 
-	func showFirstFunctions() {
-		gActionsController.showFirst()
+	func showTopLevelFunctions() {
+		gActionsController.showTopLevel()
 	}
 
 }

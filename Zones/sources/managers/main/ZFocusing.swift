@@ -234,7 +234,7 @@ class ZFocusing: NSObject {
         gBatches.focus { iSame in
 			gShowThoughtsGraph = true
 
-			self.showFirstFunctions()
+			self.showTopLevelFunctions()
             atArrival()
             gBatches.save { iSaveSame in
             }
@@ -301,7 +301,7 @@ class ZFocusing: NSObject {
 			let complete : SignalClosure = { (iObject, iKind) in
 				gShowThoughtsGraph = true
 
-				self.showFirstFunctions()
+				self.showTopLevelFunctions()
 				atArrival(iObject, iKind)
 			}
             
