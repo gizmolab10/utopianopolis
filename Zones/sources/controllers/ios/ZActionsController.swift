@@ -17,9 +17,9 @@ enum ZFunction: String {
 	case ePrefs      = "Preferences"
 	case eHelp       = "Help"
 	case eMore		 = "More"
-	case eBack		 = "  <-  "
+	case eMain		 = "Main"
 
-	case eCreate     = "Create"
+	case eIdeas      = "Ideas"
     case eNew        = "New"
     case eNext       = "Next"
 	case eDelete     = "Delete"
@@ -31,10 +31,16 @@ enum ZFunction: String {
     case eTravel     = "Travel"
 	
 	case eBrowse     = "Browse"
-	case eUp         = "Up"
-	case eDown       = "Down"
-	case eLeft       = "Left"
-	case eRight      = "Right"
+	case eUp         = "⇧"
+	case eDown       = "⇩"
+	case eLeft       = "⇦"
+	case eRight      = "⇨"
+
+	case eMove       = "Move"
+	case eMoveUp     = "Move ⇧"
+	case eMoveDown   = "Move ⇩"
+	case eMoveLeft   = "Move ⇦"
+	case eMoveRight  = "Move ⇨"
 
 	case eHang       = "Reconnect"
 	case eStorage    = "Storage"
@@ -77,24 +83,34 @@ class ZActionsController : ZGenericController {
 			let function = function(for: title) {
 			
 			switch function {
-			case .eSelection, .eTopLevel, .eStorage, .eBrowse,
-				 .eMore:     currentFunction = function; update()
+			case .eSelection, .eTopLevel, .eStorage, .eBrowse, .eIdeas, .eMove,
+				 .eMore:      currentFunction = function; update()
 			case .eRefetchAll,
-				 .eRefetch:  refetch(for: function == .eRefetchAll)
-			case .eThoughts: gShowThoughtsGraph = !gShowThoughtsGraph; gControllers.signalFor(nil, multiple: [.eRelayout])
-			case .eDelete:   gGraphEditor.delete()
-			case .eNew:      gGraphEditor.addIdea()
-			case .eHang:     gBatches.unHang()
-			case .eHelp:     openBrowserForFocusWebsite()
-			case .eNext:     gGraphEditor.addNext() { iChild in iChild.edit() }
-			case .eFocus:    gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
-			case .eTravel:   gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
-			case .eBack:	 showTopLevel()
-			default:         break
+				 .eRefetch:   refetch(for: function == .eRefetchAll)
+			case .eThoughts:  gShowThoughtsGraph = !gShowThoughtsGraph; gControllers.signalFor(nil, multiple: [.eRelayout])
+			case .eDelete:    gGraphEditor.delete()
+			case .eNew:       gGraphEditor.addIdea()
+			case .eHang:      gBatches.unHang()
+			case .eHelp:      openBrowserForFocusWebsite()
+			case .eNext:      gGraphEditor.addNext() { iChild in iChild.edit() }
+			case .eFocus:     gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
+			case .eTravel:    gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
+			case .eRight:     gGraphEditor.move(out: false, selectionOnly: true)  {}
+			case .eLeft:      gGraphEditor.move(out: true,  selectionOnly: true)  {}
+			case .eMoveRight: gGraphEditor.move(out: false, selectionOnly: false) {}
+			case .eMoveLeft:  gGraphEditor.move(out: true,  selectionOnly: false) {}
+			case .eUp:		  gGraphEditor.move(up:  true,  selectionOnly: true)
+			case .eDown:      gGraphEditor.move(up:  false, selectionOnly: true)
+			case .eMoveUp:    gGraphEditor.move(up:  true,  selectionOnly: false)
+			case .eMoveDown:  gGraphEditor.move(up:  false, selectionOnly: false)
+			case .eCollapse,
+				 .eExpand:    expand(function == .eExpand)
+			case .eMain:	  showTopLevel()
+			default:          break
 			}
 		}
 	}
-
+	
 
 	func update() {
 		if  let selector = actionsSelector {
@@ -112,25 +128,19 @@ class ZActionsController : ZGenericController {
 			}
 
 			if !isTopLevel {
-				insert(.eBack)
-//					let    emphasizedColor = ZColor.blue.lighter(by: 5.0)
-//					let        borderColor = ZColor.blue
-//
-//					button.backgroundColor = emphasizedColor
-//
-//					button.setTitleColor(kWhiteColor, for: .normal)
-//					button.addBorder(thickness: 1.0, radius: 5.0, color: borderColor.cgColor)
+				insert(.eMain)
+				(selector.subviews[0] as UIView).tintColor = UIColor.red
 			}
 			
 
 			switch currentFunction {
 			case .eTopLevel:
+				insert(.eIdeas)
 				insert(.eSelection)
 				insert(.eBrowse)
 				insert(.eThoughts)
-				insert( gIsLate ? .eHang : .eStorage )
 				insert(.eMore)
-			case .eCreate:
+			case .eIdeas:
 				insert(.eNew)
 				insert(.eNext)
 				insert(.eDelete)
@@ -138,16 +148,23 @@ class ZActionsController : ZGenericController {
 				insert(.eExpand)
 				insert(.eCollapse)
 				insert(.eFocus)
-				insert(.eTravel)
+				insert(.eMove)
+			case .eMove:
+				insert(.eMoveUp)
+				insert(.eMoveDown)
+				insert(.eMoveLeft)
+				insert(.eMoveRight)
 			case .eBrowse:
 				insert(.eUp)
 				insert(.eDown)
 				insert(.eLeft)
 				insert(.eRight)
+				insert(.eTravel)
 			case .eStorage:
 				insert(.eRefetch)
 				insert(.eRefetchAll)
 			case .eMore:
+				insert( gIsLate ? .eHang : .eStorage )
 				insert(.ePrefs)
 				insert(.eHelp)
 			default: break
@@ -192,6 +209,13 @@ class ZActionsController : ZGenericController {
 	}
 	
 	
+	func expand(_ show: Bool) {
+		gGraphEditor.generationalUpdate(show: show, zone: gSelecting.currentMoveable) {
+			gGraphEditor.redrawSyncRedraw()
+		}
+	}
+	
+
 	func refetch(for iAll: Bool) {
 		gBatches		 .unHang()
 		gWidgets         .clearRegistry()

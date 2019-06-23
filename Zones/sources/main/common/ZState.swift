@@ -13,10 +13,12 @@ import CloudKit
 #if os(OSX)
 import Cocoa
 let gFontDelta = 15.0
+let gDotFactor = CGFloat(2.5)
 var gTextOffset: CGFloat?
 #elseif os(iOS)
 import UIKit
 let gFontDelta = 17.0
+let gDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 #endif
 
@@ -53,7 +55,7 @@ var        gInsertionsFollow:               Bool { return gInsertionMode == .fol
 var          gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var   gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
 var                gDragView:         ZDragView? { return gGraphController?.dragView }
-var               gDotHeight:             Double { return Double(gGenericOffset.height / 2.5 + 13.0) }
+var               gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor + 13.0) }
 var                gDotWidth:             Double { return gDotHeight * 0.75 }
 var      gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
 var                gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20

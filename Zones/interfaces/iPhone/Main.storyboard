@@ -48,9 +48,9 @@
                                 </constraints>
                             </view>
                             <containerView hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iNc-uN-Bhm" userLabel="Actions">
-                                <rect key="frame" x="0.0" y="815" width="406" height="45"/>
+                                <rect key="frame" x="2" y="814" width="410" height="46"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="45" id="b2L-wv-7LI"/>
+                                    <constraint firstAttribute="height" constant="46" id="b2L-wv-7LI"/>
                                 </constraints>
                                 <connections>
                                     <segue destination="Vxx-wL-Ggf" kind="embed" id="cPS-lq-5mG"/>
@@ -115,13 +115,13 @@
                             <constraint firstItem="MXz-29-dtr" firstAttribute="centerY" secondItem="ECE-O8-JGv" secondAttribute="centerY" id="8Wt-WQ-MhX"/>
                             <constraint firstItem="TAE-mz-TEf" firstAttribute="top" secondItem="XAe-Nl-uaC" secondAttribute="bottom" id="EwR-bQ-i8Z"/>
                             <constraint firstItem="XAe-Nl-uaC" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" id="FTa-8M-Fc6"/>
-                            <constraint firstItem="iNc-uN-Bhm" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" id="FYu-Rq-ipe"/>
+                            <constraint firstItem="iNc-uN-Bhm" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" constant="2" id="FYu-Rq-ipe"/>
                             <constraint firstItem="DKm-Wo-lL1" firstAttribute="top" secondItem="iNc-uN-Bhm" secondAttribute="bottom" constant="2" id="L2q-Cv-fbc"/>
                             <constraint firstItem="Qjg-kt-bl7" firstAttribute="top" secondItem="TAE-mz-TEf" secondAttribute="bottom" id="Lvf-2p-aTw"/>
                             <constraint firstItem="DKm-Wo-lL1" firstAttribute="top" secondItem="Qjg-kt-bl7" secondAttribute="bottom" constant="44" id="OXA-ap-uZE"/>
                             <constraint firstAttribute="trailing" secondItem="Qjg-kt-bl7" secondAttribute="trailing" id="U2A-YE-r5T"/>
                             <constraint firstItem="Qjg-kt-bl7" firstAttribute="leading" secondItem="ECE-O8-JGv" secondAttribute="leading" id="U3d-h6-pqq"/>
-                            <constraint firstAttribute="trailing" secondItem="iNc-uN-Bhm" secondAttribute="trailing" constant="8" id="lVs-ue-IZ8"/>
+                            <constraint firstAttribute="trailing" secondItem="iNc-uN-Bhm" secondAttribute="trailing" constant="2" id="lVs-ue-IZ8"/>
                             <constraint firstItem="XAe-Nl-uaC" firstAttribute="top" secondItem="ddY-8z-bXX" secondAttribute="bottom" id="lxF-nX-Hxc"/>
                             <constraint firstAttribute="trailing" secondItem="XAe-Nl-uaC" secondAttribute="trailing" id="r6E-WG-EgF"/>
                             <constraint firstAttribute="trailing" secondItem="TAE-mz-TEf" secondAttribute="trailing" id="xTN-m4-3c1"/>
@@ -187,14 +187,14 @@
                         <viewControllerLayoutGuide type="bottom" id="juo-SR-9yi"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="500-EQ-J08">
-                        <rect key="frame" x="0.0" y="0.0" width="406" height="45"/>
+                        <rect key="frame" x="0.0" y="0.0" width="410" height="46"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aIl-bX-msY">
-                                <rect key="frame" x="0.0" y="0.0" width="406" height="45"/>
+                                <rect key="frame" x="0.0" y="0.0" width="406" height="46"/>
                                 <subviews>
                                     <segmentedControl opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" momentary="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CxM-46-LlZ">
-                                        <rect key="frame" x="142.5" y="0.5" width="121" height="45"/>
+                                        <rect key="frame" x="144.5" y="1" width="121" height="45"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="44" id="L8m-kW-g8t"/>
                                         </constraints>
@@ -208,8 +208,9 @@
                                     </segmentedControl>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="CxM-46-LlZ" secondAttribute="bottom" constant="1" id="7lG-pH-F3U"/>
                                     <constraint firstItem="CxM-46-LlZ" firstAttribute="centerX" secondItem="aIl-bX-msY" secondAttribute="centerX" id="aaM-Cx-Nmc"/>
-                                    <constraint firstItem="CxM-46-LlZ" firstAttribute="centerY" secondItem="aIl-bX-msY" secondAttribute="centerY" id="r93-7J-Xyc"/>
+                                    <constraint firstItem="CxM-46-LlZ" firstAttribute="top" secondItem="aIl-bX-msY" secondAttribute="top" constant="1" id="pUM-0o-pqq"/>
                                 </constraints>
                             </scrollView>
                         </subviews>

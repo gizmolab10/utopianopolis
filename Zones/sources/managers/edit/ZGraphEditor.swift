@@ -886,12 +886,7 @@ class ZGraphEditor: NSObject {
             } else {
                 let show = !zone.showingChildren
 
-                if !zone.isRootOfFavorites {
-                    self.generationalUpdate(show: show, zone: zone) {
-                        self.redrawSyncRedraw()
-                    }
-                } else {
-
+                if  zone.isRootOfFavorites {
                     //////////////////////////////////////////////////////////////////
                     // avoid annoying user by treating favorites non-generationally //
                     //////////////////////////////////////////////////////////////////
@@ -899,6 +894,10 @@ class ZGraphEditor: NSObject {
                     zone.toggleChildrenVisibility()
 
                     self.redrawSyncRedraw()
+				} else {
+					self.generationalUpdate(show: show, zone: zone) {
+						self.redrawSyncRedraw()
+					}
                 }
             }
         }

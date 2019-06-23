@@ -80,10 +80,11 @@ var gDebugTimerCount                = 0
 class ZOperations: NSObject {
 
 
-    var    isIncomplete :         Bool  { return currentOp != .oCompletion }
+    var    isIncomplete :         Bool  { return !doneOps.contains(currentOp) }
     var      shouldShow :         Bool  { return isIncomplete && timeSinceOpStart > 0.5 }
     var    shouldCancel :         Bool  { return isIncomplete && timeSinceOpStart > 5.0 }
     var   debugTimeText :       String  { return !usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)" }
+	let			doneOps : [ZOperationID] = [.oNone, .oDone, .oCompletion]
     var onCloudResponse :   AnyClosure?
     var     lastOpStart :         Date?
     var       currentOp = ZOperationID.oNone
