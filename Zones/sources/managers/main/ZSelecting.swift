@@ -212,7 +212,7 @@ class ZSelecting: NSObject {
         }
 
         if  movable == nil {
-            movable = gHere
+            movable = gHereMaybe
         }
 
         return movable!
@@ -240,26 +240,6 @@ class ZSelecting: NSObject {
         if  currentGrabs.count == 0 {
             grab([gHere])
         }
-    }
-
-
-    func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
-        if  let         index = databaseID.index {
-            var    references = gHereRecordNames.components(separatedBy: kSeparator)
-            references[index] = iName
-            gHereRecordNames  = references.joined(separator: kSeparator)
-        }
-    }
-
-
-    func hereRecordName(for databaseID: ZDatabaseID) -> String? {
-        let references = gHereRecordNames.components(separatedBy: kSeparator)
-
-        if  let  index = databaseID.index {
-            return references[index]
-        }
-
-        return nil
     }
 
     

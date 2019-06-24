@@ -31,6 +31,26 @@ class ZFocusing: NSObject {
     var       atHere : Bool { return currentIndex >= 0 && currentIndex <= topIndex && gHere == travelStack[currentIndex] }
 
 
+	func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
+		if  let         index = databaseID.index {
+			var    references = gHereRecordNames.components(separatedBy: kSeparator)
+			references[index] = iName
+			gHereRecordNames  = references.joined(separator: kSeparator)
+		}
+	}
+	
+	
+	func hereRecordName(for databaseID: ZDatabaseID) -> String? {
+		let references = gHereRecordNames.components(separatedBy: kSeparator)
+		
+		if  let  index = databaseID.index {
+			return references[index]
+		}
+		
+		return nil
+	}
+	
+
     // MARK:- travel stack
     // MARK:-
 
@@ -232,7 +252,7 @@ class ZFocusing: NSObject {
         createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
 		gTextEditor.stopCurrentEdit()
         gBatches.focus { iSame in
-			gShowThoughtsGraph = true
+			showFavorites = false
 
 			self.showTopLevelFunctions()
             atArrival()
@@ -299,7 +319,7 @@ class ZFocusing: NSObject {
             let targetRecordID = targetRecord.recordID
             let        iTarget = iBookmark.bookmarkTarget
 			let complete : SignalClosure = { (iObject, iKind) in
-				gShowThoughtsGraph = true
+				showFavorites  = false
 
 				self.showTopLevelFunctions()
 				atArrival(iObject, iKind)

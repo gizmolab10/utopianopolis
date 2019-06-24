@@ -202,7 +202,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	
 
     func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inThoughtsGraph: Bool) {
-        if  kIsPhone && (inThoughtsGraph != gShowThoughtsGraph) { return }
+        if  kIsPhone && (inThoughtsGraph == showFavorites) { return }
 
         let                        here = inThoughtsGraph ? gHereMaybe : gFavoritesRoot
         var specificWidget: ZoneWidget? = inThoughtsGraph ? thoughtsRootWidget : favoritesRootWidget
@@ -248,8 +248,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		}
 		
 		if  kIsPhone {
-			favoritesRootWidget.isHidden =  gShowThoughtsGraph
-			thoughtsRootWidget	   .isHidden = !gShowThoughtsGraph
+			favoritesRootWidget.isHidden = !showFavorites
+			thoughtsRootWidget .isHidden =  showFavorites
 		}
 	}
 
@@ -314,13 +314,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 			
 			return isRepeat ? isFast : false
 		}
-	}
-	
-	
-	@objc func leftEdgeEvent(_ iGesture: ZGestureRecognizer?) {
-		gShowThoughtsGraph = !gShowThoughtsGraph
-		
-		gControllers.signalFor(nil, multiple: [.eRelayout])
 	}
 	
 

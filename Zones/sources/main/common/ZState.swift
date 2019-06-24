@@ -26,8 +26,8 @@ var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 var                gWorkMode                     = ZWorkMode.startupMode
 var             gDeferRedraw                     = false
 var             gDebugReport                     = false
+var       	   showFavorites					 = false
 var           gTextCapturing                     = false
-var      	  gShowThoughtsGraph					 = false
 var         gIsReadyToShowUI                     = false
 var       gKeyboardIsVisible                     = false
 var       gArrowsDoNotBrowse                     = false

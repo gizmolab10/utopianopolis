@@ -13,7 +13,6 @@ import UIKit
 
 enum ZFunction: String {
 	case eTopLevel   = "TopLevel"
-	case eThoughts   = "Thoughts"
 	case ePrefs      = "Preferences"
 	case eHelp       = "Help"
 	case eMore		 = "More"
@@ -28,19 +27,24 @@ enum ZFunction: String {
 	case eExpand     = "Expand"
 	case eCollapse   = "Collapse"
 	case eFocus      = "Focus"
-    case eTravel     = "Travel"
-	
-	case eBrowse     = "Browse"
-	case eUp         = "⇧"
-	case eDown       = "⇩"
-	case eLeft       = "⇦"
-	case eRight      = "⇨"
+
+	case eGraph      = "Graph"
+	case eFavorites  = "Favorites"
+	case eEveryone   = "Everyone"
+	case eMine       = "Mine"
 
 	case eMove       = "Move"
 	case eMoveUp     = "Move ⇧"
 	case eMoveDown   = "Move ⇩"
 	case eMoveLeft   = "Move ⇦"
 	case eMoveRight  = "Move ⇨"
+
+	case eBrowse     = "Browse"
+	case eUp         = " ⇧ "
+	case eDown       = " ⇩ "
+	case eLeft       = " ⇦ "
+	case eRight      = " ⇨ "
+	case eTravel     = "Travel"
 
 	case eHang       = "Reconnect"
 	case eStorage    = "Storage"
@@ -83,11 +87,12 @@ class ZActionsController : ZGenericController {
 			let function = function(for: title) {
 			
 			switch function {
-			case .eSelection, .eTopLevel, .eStorage, .eBrowse, .eIdeas, .eMove,
+			case .eSelection, .eTopLevel, .eStorage, .eBrowse, .eIdeas, .eMove, .eGraph,
 				 .eMore:      currentFunction = function; update()
 			case .eRefetchAll,
 				 .eRefetch:   refetch(for: function == .eRefetchAll)
-			case .eThoughts:  gShowThoughtsGraph = !gShowThoughtsGraph; gControllers.signalFor(nil, multiple: [.eRelayout])
+			case .eMine, .eEveryone,
+				 .eFavorites: switchGraph(to: function)
 			case .eDelete:    gGraphEditor.delete()
 			case .eNew:       gGraphEditor.addIdea()
 			case .eHang:      gBatches.unHang()
@@ -137,8 +142,8 @@ class ZActionsController : ZGenericController {
 			case .eTopLevel:
 				insert(.eIdeas)
 				insert(.eSelection)
+				insert(.eGraph)
 				insert(.eBrowse)
-				insert(.eThoughts)
 				insert(.eMore)
 			case .eIdeas:
 				insert(.eNew)
@@ -154,6 +159,10 @@ class ZActionsController : ZGenericController {
 				insert(.eMoveDown)
 				insert(.eMoveLeft)
 				insert(.eMoveRight)
+			case .eGraph:
+				insert(.eMine)
+				insert(.eEveryone)
+				insert(.eFavorites)
 			case .eBrowse:
 				insert(.eUp)
 				insert(.eDown)
@@ -169,10 +178,6 @@ class ZActionsController : ZGenericController {
 				insert(.eHelp)
 			default: break
 			}
-
-			if !isTopLevel {
-//				selector.Segment.left
-			}
 		}
 	}
 	
@@ -180,22 +185,36 @@ class ZActionsController : ZGenericController {
 	// MARK:- functions
 	// MARK:-
 	
+	
+	func switchGraph(to iFunction: ZFunction) {
+		let priorShown = showFavorites
+		let    priorID = gDatabaseID
+
+		switch iFunction {
+		case .eMine:      showFavorites = false; gDatabaseID = .mineID
+		case .eEveryone:  showFavorites = false; gDatabaseID = .everyoneID
+		case .eFavorites: showFavorites = true
+		default: break
+		}
+		
+		if  gDatabaseID != priorID || showFavorites != priorShown {
+			gSelecting.updateAfterMove()
+			gControllers.signalFor(nil, multiple: [.eRelayout])
+		}
+	}
+	
 
 	func title(for iFunction: ZFunction) -> String {
 		switch iFunction {
 		case .eFocus: return gFavorites.function
-		case .eThoughts: return gShowThoughtsGraph ? "Favorites" : "Thoughts"
 		default:      return iFunction.rawValue
 		}
 	}
 	
 
     func function(for iTitle: String) -> ZFunction? {
-		switch iTitle {
-		case "Favorites": return .eThoughts
-		default: if let function = ZFunction(rawValue: iTitle) {
-				return  function
-			}
+		if let function = ZFunction(rawValue: iTitle) {
+			return  function
 		}
 		
 		return nil

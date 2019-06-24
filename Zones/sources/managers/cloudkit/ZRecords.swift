@@ -51,8 +51,23 @@ class ZRecords: NSObject {
 
 
     var hereRecordName: String? {
-        get { return gSelecting.hereRecordName(for: databaseID) }
-        set { gSelecting.setHereRecordName(newValue ?? kRootName, for: databaseID) }
+		get {
+			let references = gHereRecordNames.components(separatedBy: kSeparator)
+			
+			if  let  index = databaseID.index {
+				return references[index]
+			}
+			
+			return nil
+		}
+
+		set {
+			if  let         index = databaseID.index {
+				var    references = gHereRecordNames.components(separatedBy: kSeparator)
+				references[index] = newValue ?? kRootName
+				gHereRecordNames  = references.joined(separator: kSeparator)
+			}
+		}
     }
     
     
