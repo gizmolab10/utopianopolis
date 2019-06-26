@@ -12,39 +12,27 @@ import UIKit
 
 
 enum ZFunction: String {
-	case eTopLevel   = "TopLevel"
-	case ePrefs      = "Preferences"
-	case eHelp       = "Help"
-	case eMore		 = "More"
-	case eMain		 = "Main"
+	case eTop        = "At 7Top"
+	case eToTop 	 = "Top"
 
-	case eIdeas      = "Ideas"
+	case eEdit       = "Edit"
     case eNew        = "New"
-    case eNext       = "Next"
+	case eNext       = "Next"
+	case eName       = "Name"
 	case eDelete     = "Delete"
 
-	case eSelection  = "Selection"
-	case eExpand     = "Expand"
-	case eCollapse   = "Collapse"
 	case eFocus      = "Focus"
-
-	case eGraph      = "Graph"
-	case eFavorites  = "Favorites"
-	case eEveryone   = "Everyone"
-	case eMine       = "Mine"
-
-	case eMove       = "Move"
-	case eMoveUp     = "Move ⇧"
-	case eMoveDown   = "Move ⇩"
-	case eMoveLeft   = "Move ⇦"
-	case eMoveRight  = "Move ⇨"
-
-	case eBrowse     = "Browse"
-	case eUp         = " ⇧ "
-	case eDown       = " ⇩ "
-	case eLeft       = " ⇦ "
-	case eRight      = " ⇨ "
+	case eNarrow     = "Narrow"
 	case eTravel     = "Travel"
+
+	case eView       = "View"
+	case eFavorites  = "Favorites"
+	case ePublic     = "Public"
+	case eMe         = "Me"
+	case ePrefs      = "Preferences"
+
+	case eMore		 = "More"
+	case eHelp       = "Help"
 
 	case eHang       = "Reconnect"
 	case eStorage    = "Storage"
@@ -60,8 +48,7 @@ class ZActionsController : ZGenericController {
 
     @IBOutlet var actionsSelector : ZoneSegmentedControl?
 	override  var    controllerID : ZControllerID { return .idActions }
-	var           isTopLevel : Bool { return currentFunction == .eTopLevel }
-	var           currentFunction = ZFunction.eTopLevel
+	var                     isTop : Bool { return gCurrentFunction == .eTop }
 
 
     // MARK:- events
@@ -78,7 +65,7 @@ class ZActionsController : ZGenericController {
 	
 	
 	@IBAction func actionsVisibilityButtonAction(iButton: UIButton) {
-		showTopLevel()
+		showTop()
 	}
 	
 
@@ -87,31 +74,21 @@ class ZActionsController : ZGenericController {
 			let function = function(for: title) {
 			
 			switch function {
-			case .eSelection, .eTopLevel, .eStorage, .eBrowse, .eIdeas, .eMove, .eGraph,
-				 .eMore:      currentFunction = function; update()
+			case .eFocus, .eTop, .eStorage, .eEdit, .eView,
+				 .eMore:      gCurrentFunction = function; update()
 			case .eRefetchAll,
 				 .eRefetch:   refetch(for: function == .eRefetchAll)
-			case .eMine, .eEveryone,
-				 .eFavorites: switchGraph(to: function)
+			case .ePrefs, .eMe, .ePublic,
+				 .eFavorites: switchView(to: function)
 			case .eDelete:    gGraphEditor.delete()
 			case .eNew:       gGraphEditor.addIdea()
 			case .eHang:      gBatches.unHang()
 			case .eHelp:      openBrowserForFocusWebsite()
 			case .eNext:      gGraphEditor.addNext() { iChild in iChild.edit() }
-			case .eFocus:     gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
+			case .eNarrow:    gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
 			case .eTravel:    gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
-			case .eRight:     gGraphEditor.move(out: false, selectionOnly: true)  {}
-			case .eLeft:      gGraphEditor.move(out: true,  selectionOnly: true)  {}
-			case .eMoveRight: gGraphEditor.move(out: false, selectionOnly: false) {}
-			case .eMoveLeft:  gGraphEditor.move(out: true,  selectionOnly: false) {}
-			case .eUp:		  gGraphEditor.move(up:  true,  selectionOnly: true)
-			case .eDown:      gGraphEditor.move(up:  false, selectionOnly: true)
-			case .eMoveUp:    gGraphEditor.move(up:  true,  selectionOnly: false)
-			case .eMoveDown:  gGraphEditor.move(up:  false, selectionOnly: false)
-			case .eCollapse,
-				 .eExpand:    expand(function == .eExpand)
-			case .eMain:	  showTopLevel()
-			default:          break
+			case .eToTop:	  showTop()
+			case .eName: break
 			}
 		}
 	}
@@ -132,49 +109,35 @@ class ZActionsController : ZGenericController {
 				selector.insertSegment(withTitle: self.title(for: iFunction), at:index, animated: false)
 			}
 
-			if !isTopLevel {
-				insert(.eMain)
+			if !isTop {
+				insert(.eToTop)
 				(selector.subviews[0] as UIView).tintColor = UIColor.red
 			}
-			
 
-			switch currentFunction {
-			case .eTopLevel:
-				insert(.eIdeas)
-				insert(.eSelection)
-				insert(.eGraph)
-				insert(.eBrowse)
+			switch gCurrentFunction {
+			case .eTop:
+				insert(.eEdit)
+				insert(.eFocus)
+				insert(.eView)
 				insert(.eMore)
-			case .eIdeas:
+			case .eEdit:
 				insert(.eNew)
 				insert(.eNext)
+				insert(.eName)
 				insert(.eDelete)
-			case .eSelection:
-				insert(.eExpand)
-				insert(.eCollapse)
-				insert(.eFocus)
-				insert(.eMove)
-			case .eMove:
-				insert(.eMoveUp)
-				insert(.eMoveDown)
-				insert(.eMoveLeft)
-				insert(.eMoveRight)
-			case .eGraph:
-				insert(.eMine)
-				insert(.eEveryone)
-				insert(.eFavorites)
-			case .eBrowse:
-				insert(.eUp)
-				insert(.eDown)
-				insert(.eLeft)
-				insert(.eRight)
+			case .eFocus:
+				insert(.eNarrow)
 				insert(.eTravel)
+			case .eView:
+				insert(.eFavorites)
+				insert(.ePublic)
+				insert(.eMe)
+				insert(.ePrefs)
 			case .eStorage:
 				insert(.eRefetch)
 				insert(.eRefetchAll)
 			case .eMore:
 				insert( gIsLate ? .eHang : .eStorage )
-				insert(.ePrefs)
 				insert(.eHelp)
 			default: break
 			}
@@ -186,13 +149,13 @@ class ZActionsController : ZGenericController {
 	// MARK:-
 	
 	
-	func switchGraph(to iFunction: ZFunction) {
+	func switchView(to iFunction: ZFunction) {
 		let priorShown = showFavorites
 		let    priorID = gDatabaseID
 
 		switch iFunction {
-		case .eMine:      showFavorites = false; gDatabaseID = .mineID
-		case .eEveryone:  showFavorites = false; gDatabaseID = .everyoneID
+		case .eMe:        showFavorites = false; gDatabaseID = .mineID
+		case .ePublic:    showFavorites = false; gDatabaseID = .everyoneID
 		case .eFavorites: showFavorites = true
 		default: break
 		}
@@ -206,9 +169,20 @@ class ZActionsController : ZGenericController {
 
 	func title(for iFunction: ZFunction) -> String {
 		switch iFunction {
-		case .eFocus: return gFavorites.function
+		case .eFocus: return favoritesFunction
 		default:      return iFunction.rawValue
 		}
+	}
+	
+
+	var favoritesFunction: String {
+		let zone  = gSelecting.currentMoveable
+		
+		if  zone == gHere {
+			return gFavorites.workingFavorites.contains(zone) ? "Unfavorite" : "Favorite"
+		}
+		
+		return "Focus"
 	}
 	
 
@@ -221,17 +195,10 @@ class ZActionsController : ZGenericController {
     }
 
 	
-	func showTopLevel() {
-		currentFunction = .eTopLevel
+	func showTop() {
+		gCurrentFunction = .eTop
 		
 		update()
-	}
-	
-	
-	func expand(_ show: Bool) {
-		gGraphEditor.generationalUpdate(show: show, zone: gSelecting.currentMoveable) {
-			gGraphEditor.redrawSyncRedraw()
-		}
 	}
 	
 

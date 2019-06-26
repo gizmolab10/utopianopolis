@@ -45,18 +45,6 @@ class ZFavorites: NSObject {
     }
 
 
-    var function: String {
-		let zone = gSelecting.currentMoveable
-
-		if  zone.isGrabbed,
-            let currentTarget = currentFavorite?.bookmarkTarget {
-            return (zone == currentTarget) ? "Unfavorite" : "Favorite"
-        }
-
-        return "Focus"
-    }
-
-
     var currentFavoriteID: String? {
         get {
             if  let    identifier = UserDefaults.standard.object(forKey: kCurrentFavorite) as? String {

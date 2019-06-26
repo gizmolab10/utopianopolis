@@ -95,10 +95,11 @@ enum ZOutlineLevelType: String {
 
 
 enum ZDatabaseID: String {
-    case favoritesID = "favorites"
-    case  everyoneID = "everyone"
-    case    sharedID = "shared"
-    case      mineID = "mine"
+	case preferencesID = "preferences"
+    case   favoritesID = "favorites"
+    case    everyoneID = "everyone"
+    case      sharedID = "shared"
+    case        mineID = "mine"
 
     var userReadableString: String {
         switch self {

@@ -206,6 +206,8 @@
 		A7FDB3E0227648B800033337 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A7FDB3E32276531D00033337 /* ZKeyInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FDB3E22276531D00033337 /* ZKeyInput.swift */; };
 		A7FDB3E42276533E00033337 /* ZKeyInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FDB3E22276531D00033337 /* ZKeyInput.swift */; };
+		A7FF042A22C1604D00714AD2 /* ZGridController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FF042922C1604D00714AD2 /* ZGridController.swift */; };
+		A7FF042C22C1824E00714AD2 /* ZGridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FF042B22C1824E00714AD2 /* ZGridCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -378,6 +380,8 @@
 		A7F7C42D226D343400D52637 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		A7FDB3DC2276459500033337 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		A7FDB3E22276531D00033337 /* ZKeyInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKeyInput.swift; sourceTree = "<group>"; };
+		A7FF042922C1604D00714AD2 /* ZGridController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGridController.swift; sourceTree = "<group>"; };
+		A7FF042B22C1824E00714AD2 /* ZGridCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGridCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -435,6 +439,7 @@
 			children = (
 				0CAC51EF1F7859F300BDCECB /* ZActionsController.swift */,
 				0C2E22CE1F75BEEA00B50A71 /* ZGenericTableController.swift */,
+				A7FF042922C1604D00714AD2 /* ZGridController.swift */,
 				0C2E22CF1F75BEEA00B50A71 /* ZPhoneController.swift */,
 			);
 			path = ios;
@@ -584,6 +589,7 @@
 				0C4C23A12016B0930025E4DF /* ZContainerView.swift */,
 				0C367C361F463D93000FC914 /* ZDragView.swift */,
 				A7988AD0222B69AE00256A71 /* ZGradientView.swift */,
+				A7FF042B22C1824E00714AD2 /* ZGridCell.swift */,
 				A7C96E392218838A00986631 /* ZIndicatorView.swift */,
 				A7FDB3E22276531D00033337 /* ZKeyInput.swift */,
 				A7272909225AA29D002A5B6D /* ZLineView.swift */,
@@ -1065,6 +1071,7 @@
 				0C39B2EC1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
 				0C43EFD121010F62000976CE /* ZOnboarding.swift in Sources */,
 				0C63DA6D1FCF837D005EC548 /* ZFavorites.swift in Sources */,
+				A7FF042A22C1604D00714AD2 /* ZGridController.swift in Sources */,
 				0C2E22D01F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				0C39B2AA1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				0C39B2B31F182EBB0091F4D1 /* ZGCD.swift in Sources */,
@@ -1073,6 +1080,7 @@
 				0C43EFBE21010F17000976CE /* ZFiles.swift in Sources */,
 				A7D3C24721FAA4C600B64B83 /* ZSearching.swift in Sources */,
 				0C39B31C1F182EBB0091F4D1 /* ZRecord.swift in Sources */,
+				A7FF042C22C1824E00714AD2 /* ZGridCell.swift in Sources */,
 				0CAC51F01F7859F300BDCECB /* ZActionsController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -96,7 +96,7 @@ extension NSObject {
     }
 
 	func showTopLevelFunctions() {
-		gActionsController.showTopLevel()
+		gActionsController.showTop()
 	}
 
 }

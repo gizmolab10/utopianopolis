@@ -377,6 +377,31 @@ var gDatabaseID: ZDatabaseID {
 }
 
 
+var gCurrentFunction : ZFunction {
+	get {
+		var function: ZFunction?
+		
+		if  let object = UserDefaults.standard.object(forKey:kActionFunction) {
+			function   = ZFunction(rawValue: object as! String)
+		}
+		
+		if  function  == nil {
+			function   = .eTop
+			
+			UserDefaults.standard.set(function!.rawValue, forKey:kActionFunction)
+			UserDefaults.standard.synchronize()
+		}
+		
+		return function!
+	}
+	
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kActionFunction)
+		UserDefaults.standard.synchronize()
+	}
+}
+
+
 var gHiddenDetailViewIDs: ZDetailsViewID {
     get {
         var state: ZDetailsViewID?

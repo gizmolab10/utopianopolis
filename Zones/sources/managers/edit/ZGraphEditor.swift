@@ -799,6 +799,13 @@ class ZGraphEditor: NSObject {
         }
     }
 
+	
+	func expand(_ show: Bool) {
+		generationalUpdate(show: show, zone: gSelecting.currentMoveable) {
+			self.redrawSyncRedraw()
+		}
+	}
+	
 
     func generationalUpdate(show: Bool, zone: Zone, to iLevel: Int? = nil, onCompletion: Closure?) {
         recursiveUpdate(show, zone, to: iLevel) {
