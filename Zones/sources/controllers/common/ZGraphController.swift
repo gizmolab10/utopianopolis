@@ -545,15 +545,13 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
 
     func showSpinner(_ show: Bool) {
-        if  spinnerView?.isHidden == show {
-            spinnerView?.isHidden = !show
+		spinnerView?.isHidden = !show
 
-            if show {
-                spinner?.startAnimating()
-            } else {
-                spinner?.stopAnimating()
-            }
-        }
+		if  show {
+			spinner?.startAnimating()
+		} else {
+			spinner?.stopAnimating()
+		}
     }
 
     
