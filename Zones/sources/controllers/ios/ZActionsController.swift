@@ -46,7 +46,7 @@ var gActionsController: ZActionsController { return gControllers.controllerForID
 
 class ZActionsController : ZGenericController {
 
-    @IBOutlet var actionsSelector : ZoneSegmentedControl?
+	@IBOutlet var actionsSelector : ZoneSegmentedControl?
 	override  var    controllerID : ZControllerID { return .idActions }
 	var                     isTop : Bool { return gCurrentFunction == .eTop }
 
@@ -75,20 +75,19 @@ class ZActionsController : ZGenericController {
 			
 			switch function {
 			case .eFocus, .eTop, .eStorage, .eEdit, .eView,
-				 .eMore:      gCurrentFunction = function; update()
+				 .eMore:    gCurrentFunction = function; update()
 			case .eRefetchAll,
-				 .eRefetch:   refetch(for: function == .eRefetchAll)
-			case .ePrefs, .eMe, .ePublic,
-				 .eFavorites: switchView(to: function)
-			case .eDelete:    gGraphEditor.delete()
-			case .eNew:       gGraphEditor.addIdea()
-			case .eHang:      gBatches.unHang()
-			case .eHelp:      openBrowserForFocusWebsite()
-			case .eNext:      gGraphEditor.addNext() { iChild in iChild.edit() }
-			case .eNarrow:    gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
-			case .eTravel:    gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
-			case .eToTop:	  showTop()
-			case .eName: break
+				 .eRefetch: refetch(for: function == .eRefetchAll)
+			case .ePrefs:   switchView(to: function)
+			case .eDelete:  gGraphEditor.delete()
+			case .eNew:     gGraphEditor.addIdea()
+			case .eHang:    gBatches.unHang()
+			case .eHelp:    openBrowserForFocusWebsite()
+			case .eNext:    gGraphEditor.addNext() { iChild in iChild.edit() }
+			case .eNarrow:  gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
+			case .eTravel:  gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
+			case .eToTop:   showTop()
+			default:        break
 			}
 		}
 	}
@@ -118,8 +117,9 @@ class ZActionsController : ZGenericController {
 			case .eTop:
 				insert(.eEdit)
 				insert(.eFocus)
-				insert(.eView)
 				insert(.eMore)
+				insert(.eHelp)
+				insert(.ePrefs)
 			case .eEdit:
 				insert(.eNew)
 				insert(.eNext)
@@ -128,17 +128,10 @@ class ZActionsController : ZGenericController {
 			case .eFocus:
 				insert(.eNarrow)
 				insert(.eTravel)
-			case .eView:
-				insert(.eFavorites)
-				insert(.ePublic)
-				insert(.eMe)
-				insert(.ePrefs)
-			case .eStorage:
+			case .eMore:
 				insert(.eRefetch)
 				insert(.eRefetchAll)
-			case .eMore:
-				insert( gIsLate ? .eHang : .eStorage )
-				insert(.eHelp)
+				if gIsLate { insert(.eHang) }
 			default: break
 			}
 		}

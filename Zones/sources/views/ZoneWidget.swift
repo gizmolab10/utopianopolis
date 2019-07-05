@@ -76,8 +76,8 @@ class ZoneWidget: ZView {
 
 
     func layoutChildren(_ iKind: ZSignalKind, visited: [Zone]) {
-        if  let                  zone = widgetZone, zone.showingChildren {
-            var                 index = childrenWidgets.count
+        if  let  zone = widgetZone, zone.showingChildren {
+            var index = childrenWidgets.count
             var previous: ZoneWidget?
 
             while index > 0 {
@@ -109,16 +109,20 @@ class ZoneWidget: ZView {
 
 
     func layoutDots() {
-        if !subviews.contains(dragDot) {
-            insertSubview(dragDot, belowSubview: textWidget)
-        }
+		let hideDragDot = widgetZone?.onlyShowRevealDot ?? true
 
-        dragDot.innerDot?.snp.removeConstraints()
-        dragDot.setupForWidget(self, asReveal: false)
-        dragDot.innerDot?.snp.makeConstraints { make in
-            make.right.equalTo(textWidget.snp.left).offset(-4.0)
-            make.centerY.equalTo(textWidget)
-        }
+		if !hideDragDot {
+			if !subviews.contains(dragDot) {
+				insertSubview(dragDot, belowSubview: textWidget)
+			}
+			
+			dragDot.innerDot?.snp.removeConstraints()
+			dragDot.setupForWidget(self, asReveal: false)
+			dragDot.innerDot?.snp.makeConstraints { make in
+				make.right.equalTo(textWidget.snp.left).offset(-4.0)
+				make.centerY.equalTo(textWidget)
+			}
+		}
 
         if !subviews.contains(revealDot) {
             insertSubview(revealDot, belowSubview: textWidget)
@@ -508,7 +512,6 @@ class ZoneWidget: ZView {
         super.draw(dirtyRect)
 
         if  let             zone = widgetZone {
-            let           isHere = zone == gHereMaybe
             let        isGrabbed = zone.isGrabbed
             let        isEditing = textWidget.isFirstResponder // == gEditedTextWidget
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : gDefaultTextColor
@@ -518,27 +521,21 @@ class ZoneWidget: ZView {
                 addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: color)
             }
 
-            if  (isGrabbed || isEditing) && !gIsPrinting && !(kIsPhone && isHere) {
+            if  (isGrabbed || isEditing) && !gIsPrinting {
                 drawSelectionHighlight(isEditing)
             }
 
             if  zone.showingChildren {
-                if  !nowDrawLines && !gIsDragging && gDragView?.rubberbandRect == nil {
-                    self.nowDrawLines = true
+                if !nowDrawLines && !gIsDragging && gDragView?.rubberbandRect == nil {
+                    nowDrawLines = true
                     
-                    self.draw(dirtyRect)
+                    draw(dirtyRect)
                 } else if !gMathewStyleUI {
                     for child in childrenWidgets {
                         drawLine(to: child)
                     }
                 }
             }
-            
-//            if zone == gFavoritesRoot {
-//                FOREGROUND {
-//                    gControllers.signalFor(nil, regarding: .eMain) // update UI elements for searching
-//                }
-//            }
 
             nowDrawLines = false
         }

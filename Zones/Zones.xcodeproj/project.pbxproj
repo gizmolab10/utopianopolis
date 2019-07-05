@@ -48,7 +48,6 @@
 		0C39B2BB1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2341F182EBB0091F4D1 /* ZRecursionLogic.swift */; };
 		0C39B2BC1F182EBB0091F4D1 /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2351F182EBB0091F4D1 /* ZState.swift */; };
 		0C39B2BD1F182EBB0091F4D1 /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2351F182EBB0091F4D1 /* ZState.swift */; };
-		0C39B2BE1F182EBB0091F4D1 /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2351F182EBB0091F4D1 /* ZState.swift */; };
 		0C39B2BF1F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2371F182EBB0091F4D1 /* ZMobileAppDelegate.swift */; };
 		0C39B2C01F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2371F182EBB0091F4D1 /* ZMobileAppDelegate.swift */; };
 		0C39B2C81F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B23A1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */; };
@@ -208,6 +207,7 @@
 		A7FDB3E42276533E00033337 /* ZKeyInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FDB3E22276531D00033337 /* ZKeyInput.swift */; };
 		A7FF042A22C1604D00714AD2 /* ZGridController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FF042922C1604D00714AD2 /* ZGridController.swift */; };
 		A7FF042C22C1824E00714AD2 /* ZGridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FF042B22C1824E00714AD2 /* ZGridCell.swift */; };
+		A7FF042D22CEA38100714AD2 /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2351F182EBB0091F4D1 /* ZState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1125,7 +1125,6 @@
 				0C39B29D1F182EBB0091F4D1 /* ZToolsController.swift in Sources */,
 				A717BF482251332D004F7993 /* NSPanel+ZPanel.m in Sources */,
 				0C39B38A1F182EBB0091F4D1 /* ZoneWidget.swift in Sources */,
-				0C39B2BE1F182EBB0091F4D1 /* ZState.swift in Sources */,
 				0C43EFC021010F17000976CE /* ZFiles.swift in Sources */,
 				A77758932207BCC600C37B49 /* ZToggleButton.swift in Sources */,
 				0C4C23A42016B0930025E4DF /* ZContainerView.swift in Sources */,
@@ -1148,6 +1147,7 @@
 				0C4118E01FA8110200A58004 /* ZAlerts.swift in Sources */,
 				0C43EFDF21010F62000976CE /* ZBatches.swift in Sources */,
 				0CAC18EB200ED0BB00D641C4 /* ZDebugController.swift in Sources */,
+				A7FF042D22CEA38100714AD2 /* ZState.swift in Sources */,
 				0C39B31E1F182EBB0091F4D1 /* ZRecord.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

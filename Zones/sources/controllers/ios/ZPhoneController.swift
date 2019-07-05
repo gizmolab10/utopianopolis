@@ -14,18 +14,27 @@ import UIKit
 class ZPhoneController: ZGenericController, UITabBarDelegate {
 
 
-    override  var                 controllerID: ZControllerID { return .idMain }
-    @IBOutlet var       editorBottomConstraint: NSLayoutConstraint?
-    @IBOutlet var          editorTopConstraint: NSLayoutConstraint?
-    @IBOutlet var               hereTextWidget: ZoneTextWidget?
-	@IBOutlet var               focusOutButton: UIButton?
-	@IBOutlet var                   undoButton: UIButton?
-    @IBOutlet var                  actionsView: UIView?
-    @IBOutlet var                     lineView: UIView?
-    var                               isCached: Bool    =  false
-    var                           cachedOffset: CGPoint = .zero
-    var                         keyboardHeight: CGFloat =  0.0
+    override  var           controllerID : ZControllerID { return .idMain }
+    @IBOutlet var editorBottomConstraint : NSLayoutConstraint?
+    @IBOutlet var    editorTopConstraint : NSLayoutConstraint?
+    @IBOutlet var         hereTextWidget : ZoneTextWidget?
+	@IBOutlet var           graphsButton : UIButton?
+	@IBOutlet var             undoButton : UIButton?
+    @IBOutlet var            actionsView : UIView?
+    @IBOutlet var               lineView : UIView?
+    var                         isCached : Bool      =  false
+    var                     cachedOffset : CGPoint   = .zero
+    var                   keyboardHeight : CGFloat   =  0.0
 
+	
+	var nextGraph: ZFunction {
+		switch gCurrentGraph {
+		case .eMe:     return .ePublic
+		case .ePublic: return .eFavorites
+		default:       return .eMe
+		}
+	}
+	
 
     // MARK:- hide and show
     // MARK:-
@@ -40,10 +49,11 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     }
 
 
-	@IBAction func moreButtonAction(iButton: UIButton) {
-		gGraphEditor.move(out: true) {
-			self.update()
-		}
+	@IBAction func graphsButtonAction(iButton: UIButton) {
+		gCurrentGraph = nextGraph
+
+		gActionsController.switchView(to: gCurrentGraph)
+		update()
 	}
 	
 
@@ -58,9 +68,11 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         editorBottomConstraint?.constant = gKeyboardIsVisible   ? keyboardHeight : selectorHeight
         editorTopConstraint?   .constant = gFavoritesAreVisible ? selectorHeight : 2.0
         hereTextWidget?            .text = hereTitle
-		focusOutButton?        .isHidden = false
+		graphsButton? 			  .title = gCurrentGraph.rawValue
+		graphsButton?          .isHidden = false
 		actionsView?           .isHidden = false
 		undoButton?            .isHidden = false
+		view.zlayer.backgroundColor      = gBackgroundColor.cgColor
 
 		gActionsController.update()
 		layoutForKeyboard()

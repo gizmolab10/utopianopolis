@@ -69,32 +69,11 @@ var gLightishBackgroundColor:            CGColor { return gBackgroundColor.light
 var  gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter (by: 4.0)  .cgColor }
 
 
-func toggleMode(isDirection: Bool) {
-    if  isDirection {
-        gInsertionMode = gInsertionsFollow   ? .precede     : .follow
-    } else {
-        gBrowsingMode  = gBrowsingIsConfined ? .cousinJumps : .confined
-    }
-}
-
-
 var gCurrentEvent: ZEvent? {
-    didSet {
-        gTimeUntilCurrentEvent = Date.timeIntervalSinceReferenceDate
-    }
+	didSet {
+		gTimeUntilCurrentEvent = Date.timeIntervalSinceReferenceDate
+	}
 }
-
-
-func toggleDatabaseID() {
-    switch        gDatabaseID {
-    case .mineID: gDatabaseID = .everyoneID
-    default:      gDatabaseID = .mineID
-    }
-}
-
-
-// MARK:- persistence
-// MARK:-
 
 
 var gExpandedZones : [String] {
@@ -175,38 +154,26 @@ var gEmailTypesSent: String {
 }
 
 
-func emailSent(for type: ZSentEmailType) -> Bool {
-    return gEmailTypesSent.contains(type.rawValue)
-}
-
-
-func recordEmailSent(for type: ZSentEmailType) {
-    if  !emailSent  (for: type) {
-        gEmailTypesSent.append(type.rawValue)
-    }
-}
-
-
 var gFavoritesAreVisible: Bool {
-    get { return getPreferencesBool(   for: kFavoritesAreVisibleKey, defaultBool: false) }
-    set { setPreferencesBool(newValue, for: kFavoritesAreVisibleKey) }
+	get { return getPreferencesBool(   for: kFavoritesAreVisibleKey, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kFavoritesAreVisibleKey) }
 }
 
 
 var gBackgroundColor: ZColor {
-    get { return   getPreferencesColor( for: kBackgroundColorKey, defaultColor: ZColor(hue: 0.6, saturation: 0.1, brightness: kUnselectBrightness, alpha: 1)) }
-    set { setPreferencesColor(newValue, for: kBackgroundColorKey) }
+	get { return   getPreferencesColor( for: kBackgroundColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) } //0.99 / 360.0, saturation: 0.13, brightness: kUnselectBrightness, alpha: 1)) }
+	set { setPreferencesColor(newValue, for: kBackgroundColorKey) }
 }
 
 
 var gRubberbandColor: ZColor {
-    get { return   getPreferencesColor( for: kRubberbandColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
-    set { setPreferencesColor(newValue, for: kRubberbandColorKey) }
+	get { return   getPreferencesColor( for: kRubberbandColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
+	set { setPreferencesColor(newValue, for: kRubberbandColorKey) }
 }
 
 
 var gGenericOffset: CGSize {
-    get {
+	get {
 		var offset = getPreferencesSize(for: kGenericOffsetKey, defaultSize: CGSize(width: 30.0, height: 2.0))
 		
 		if kIsPhone {
@@ -215,168 +182,194 @@ var gGenericOffset: CGSize {
 		
 		return offset
 	}
-    set { setPreferencesSize(newValue, for: kGenericOffsetKey) }
+	set { setPreferencesSize(newValue, for: kGenericOffsetKey) }
 }
 
 
 var gWindowRect: CGRect {
-    get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
-    set { setPreferencesRect(newValue, for: kWindowRectKey) }
+	get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
+	set { setPreferencesRect(newValue, for: kWindowRectKey) }
 }
 
 
 var gScrollOffset: CGPoint {
-    get {
-        let  point = CGPoint(x: 0.0, y: 0.0)
-        let string = getPreferenceString(for: kScrollOffsetKey) { return NSStringFromPoint(point) }
-
-        return string?.cgPoint ?? point
-    }
-
-    set {
-        let string = NSStringFromPoint(newValue)
-
-        setPreferencesString(string, for: kScrollOffsetKey)
-    }
+	get {
+		let  point = CGPoint(x: 0.0, y: 0.0)
+		let string = getPreferenceString(for: kScrollOffsetKey) { return NSStringFromPoint(point) }
+		
+		return string?.cgPoint ?? point
+	}
+	
+	set {
+		let string = NSStringFromPoint(newValue)
+		
+		setPreferencesString(string, for: kScrollOffsetKey)
+	}
 }
 
 
 var gBrowsingMode: ZBrowsingMode {
-    get {
-        let value  = UserDefaults.standard.object(forKey: kBrowsingMode) as? Int
-        var mode   = ZBrowsingMode.confined
-        
-        if  value != nil {
-            mode   = ZBrowsingMode(rawValue: value!)!
-        } else {
-            UserDefaults.standard.set(mode.rawValue, forKey:kBrowsingMode)
-            UserDefaults.standard.synchronize()
-        }
-        
-        return mode
-    }
-    
-    set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:kBrowsingMode)
-        UserDefaults.standard.synchronize()
-    }
+	get {
+		let value  = UserDefaults.standard.object(forKey: kBrowsingMode) as? Int
+		var mode   = ZBrowsingMode.confined
+		
+		if  value != nil {
+			mode   = ZBrowsingMode(rawValue: value!)!
+		} else {
+			UserDefaults.standard.set(mode.rawValue, forKey:kBrowsingMode)
+			UserDefaults.standard.synchronize()
+		}
+		
+		return mode
+	}
+	
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kBrowsingMode)
+		UserDefaults.standard.synchronize()
+	}
 }
 
 
 var gCountsMode: ZCountsMode {
-    get {
-        let value  = UserDefaults.standard.object(forKey: kCountsMode) as? Int
-        var mode   = ZCountsMode.dots
-
-        if  value != nil {
-            mode   = ZCountsMode(rawValue: value!)!
-        } else {
-            UserDefaults.standard.set(mode.rawValue, forKey:kCountsMode)
-            UserDefaults.standard.synchronize()
-        }
-
-        return mode
-    }
-
-    set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:kCountsMode)
-        UserDefaults.standard.synchronize()
-    }
+	get {
+		let value  = UserDefaults.standard.object(forKey: kCountsMode) as? Int
+		var mode   = ZCountsMode.dots
+		
+		if  value != nil {
+			mode   = ZCountsMode(rawValue: value!)!
+		} else {
+			UserDefaults.standard.set(mode.rawValue, forKey:kCountsMode)
+			UserDefaults.standard.synchronize()
+		}
+		
+		return mode
+	}
+	
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kCountsMode)
+		UserDefaults.standard.synchronize()
+	}
 }
 
 
 var gScaling: Double {
-    get {
-        var value: Double? = UserDefaults.standard.object(forKey: kScaling) as? Double
-
-        if value == nil {
-            value = 1.00
-
-            UserDefaults.standard.set(value, forKey:kScaling)
-            UserDefaults.standard.synchronize()
-        }
-
-        return value!
-    }
-
-    set {
-        UserDefaults.standard.set(newValue, forKey:kScaling)
-        UserDefaults.standard.synchronize()
-    }
+	get {
+		var value: Double? = UserDefaults.standard.object(forKey: kScaling) as? Double
+		
+		if value == nil {
+			value = 1.00
+			
+			UserDefaults.standard.set(value, forKey:kScaling)
+			UserDefaults.standard.synchronize()
+		}
+		
+		return value!
+	}
+	
+	set {
+		UserDefaults.standard.set(newValue, forKey:kScaling)
+		UserDefaults.standard.synchronize()
+	}
 }
 
 
 var gLineThickness: Double {
-    get {
-        var value: Double? = UserDefaults.standard.object(forKey: kThickness) as? Double
-
-        if value == nil {
-            value = 1.25
-
-            UserDefaults.standard.set(value, forKey:kThickness)
-            UserDefaults.standard.synchronize()
-        }
-
-        return value!
-    }
-
-    set {
-        UserDefaults.standard.set(newValue, forKey:kThickness)
-        UserDefaults.standard.synchronize()
-    }
+	get {
+		var value: Double? = UserDefaults.standard.object(forKey: kThickness) as? Double
+		
+		if value == nil {
+			value = 1.25
+			
+			UserDefaults.standard.set(value, forKey:kThickness)
+			UserDefaults.standard.synchronize()
+		}
+		
+		return value!
+	}
+	
+	set {
+		UserDefaults.standard.set(newValue, forKey:kThickness)
+		UserDefaults.standard.synchronize()
+	}
 }
 
 
 var gInsertionMode: ZInsertionMode {
-    get {
-        var mode: ZInsertionMode?
-
-        if let object = UserDefaults.standard.object(forKey:kInsertionMode) {
-            mode      = ZInsertionMode(rawValue: object as! Int)
-        }
-
-        if  mode == nil {
-            mode      = .follow
-
-            UserDefaults.standard.set(mode!.rawValue, forKey:kInsertionMode)
-            UserDefaults.standard.synchronize()
-        }
-
-        return mode!
-    }
-
-    set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:kInsertionMode)
-        UserDefaults.standard.synchronize()
-    }
+	get {
+		var mode: ZInsertionMode?
+		
+		if let object = UserDefaults.standard.object(forKey:kInsertionMode) {
+			mode      = ZInsertionMode(rawValue: object as! Int)
+		}
+		
+		if  mode == nil {
+			mode      = .follow
+			
+			UserDefaults.standard.set(mode!.rawValue, forKey:kInsertionMode)
+			UserDefaults.standard.synchronize()
+		}
+		
+		return mode!
+	}
+	
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kInsertionMode)
+		UserDefaults.standard.synchronize()
+	}
 }
 
 
 var gDatabaseID: ZDatabaseID {
-    get {
-        var dbID: ZDatabaseID?
-
-        if let object = UserDefaults.standard.object(forKey:kDatabaseID) {
-            dbID      = ZDatabaseID(rawValue: object as! String)
-        }
-
-        if  dbID     == nil {
-            dbID      = .everyoneID
-
-            UserDefaults.standard.set(dbID!.rawValue, forKey:kDatabaseID)
-            UserDefaults.standard.synchronize()
-        }
-
-        return dbID!
-    }
-
-    set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:kDatabaseID)
-        UserDefaults.standard.synchronize()
-    }
+	get {
+		var dbID: ZDatabaseID?
+		
+		if let object = UserDefaults.standard.object(forKey:kDatabaseID) {
+			dbID      = ZDatabaseID(rawValue: object as! String)
+		}
+		
+		if  dbID     == nil {
+			dbID      = .everyoneID
+			
+			UserDefaults.standard.set(dbID!.rawValue, forKey:kDatabaseID)
+			UserDefaults.standard.synchronize()
+		}
+		
+		return dbID!
+	}
+	
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kDatabaseID)
+		UserDefaults.standard.synchronize()
+	}
 }
 
 
+var gHiddenDetailViewIDs: ZDetailsViewID {
+	get {
+		var state: ZDetailsViewID?
+		
+		if let object = UserDefaults.standard.object(forKey:kDetailsState) {
+			state     = ZDetailsViewID(rawValue: object as! Int)
+		}
+		
+		if state == nil {
+			state     = .All
+			
+			UserDefaults.standard.set(state!.rawValue, forKey:kDetailsState)
+			UserDefaults.standard.synchronize()
+		}
+		
+		return state!
+	}
+	
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kDetailsState)
+		UserDefaults.standard.synchronize()
+	}
+}
+
+
+#if os(iOS)
 var gCurrentFunction : ZFunction {
 	get {
 		var function: ZFunction?
@@ -402,27 +395,61 @@ var gCurrentFunction : ZFunction {
 }
 
 
-var gHiddenDetailViewIDs: ZDetailsViewID {
-    get {
-        var state: ZDetailsViewID?
+var gCurrentGraph : ZFunction {
+	get {
+		var graph: ZFunction?
+		
+		if  let object = UserDefaults.standard.object(forKey:kCurrentGraph) {
+			graph      = ZFunction(rawValue: object as! String)
+		}
+		
+		if  graph     == nil {
+			graph      = .eMe
+			
+			UserDefaults.standard.set(graph!.rawValue, forKey:kActionFunction)
+			UserDefaults.standard.synchronize()
+		}
+		
+		return graph!
+	}
 
-        if let object = UserDefaults.standard.object(forKey:kDetailsState) {
-            state     = ZDetailsViewID(rawValue: object as! Int)
-        }
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kCurrentGraph)
+		UserDefaults.standard.synchronize()
+	}
+}
 
-        if state == nil {
-            state     = .All
+#endif
 
-            UserDefaults.standard.set(state!.rawValue, forKey:kDetailsState)
-            UserDefaults.standard.synchronize()
-        }
+// MARK:- actions
+// MARK:-
 
-        return state!
-    }
 
-    set {
-        UserDefaults.standard.set(newValue.rawValue, forKey:kDetailsState)
-        UserDefaults.standard.synchronize()
+func toggleMode(isDirection: Bool) {
+	if  isDirection {
+		gInsertionMode = gInsertionsFollow   ? .precede     : .follow
+	} else {
+		gBrowsingMode  = gBrowsingIsConfined ? .cousinJumps : .confined
+	}
+}
+
+
+func toggleDatabaseID() {
+	switch        gDatabaseID {
+	case .mineID: gDatabaseID = .everyoneID
+	default:      gDatabaseID = .mineID
+	}
+}
+
+
+func emailSent(for type: ZSentEmailType) -> Bool {
+    return gEmailTypesSent.contains(type.rawValue)
+}
+
+
+func recordEmailSent(for type: ZSentEmailType) {
+    if  !emailSent  (for: type) {
+        gEmailTypesSent.append(type.rawValue)
     }
 }
 
@@ -454,8 +481,9 @@ func setPreferencesRect(_ iRect: CGRect = CGRect.zero, for key: String) {
 func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {
     var color = defaultColor
 
-    if  let data = UserDefaults.standard.object(forKey: key) as? Data, let c = NSKeyedUnarchiver.unarchiveObject(with: data) as? ZColor {
-        color = c
+    if  let data = UserDefaults.standard.object(forKey: key) as? Data,
+		let    c = NSKeyedUnarchiver.unarchiveObject(with: data) as? ZColor {
+        color    = c
     } else {
         setPreferencesColor(color, for: key)
     }
