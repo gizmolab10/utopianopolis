@@ -14,6 +14,8 @@ import UIKit
 enum ZFunction: String {
 	case eTop        = "At 7Top"
 	case eToTop 	 = "Top"
+	case eHelp       = "Help"
+	case ePrefs      = "Preferences"
 
 	case eEdit       = "Edit"
     case eNew        = "New"
@@ -25,19 +27,14 @@ enum ZFunction: String {
 	case eNarrow     = "Narrow"
 	case eTravel     = "Travel"
 
-	case eView       = "View"
+	case eMore		 = "More"
+	case eHang       = "Reconnect"
+	case eRefetch    = "Refetch"
+	case eRefetchAll = "Refetch All"
+
 	case eFavorites  = "Favorites"
 	case ePublic     = "Public"
 	case eMe         = "Me"
-	case ePrefs      = "Preferences"
-
-	case eMore		 = "More"
-	case eHelp       = "Help"
-
-	case eHang       = "Reconnect"
-	case eStorage    = "Storage"
-	case eRefetch    = "Refetch"
-	case eRefetchAll = "Refetch All"
 }
 
 
@@ -72,9 +69,10 @@ class ZActionsController : ZGenericController {
 	@IBAction func selectorAction(iControl: UISegmentedControl) {
 		if  let    title = iControl.titleForSegment(at: iControl.selectedSegment),
 			let function = function(for: title) {
+			let     zone = gSelecting.currentMoveable
 			
 			switch function {
-			case .eFocus, .eTop, .eStorage, .eEdit, .eView,
+			case .eFocus, .eTop, .eEdit,
 				 .eMore:    gCurrentFunction = function; update()
 			case .eRefetchAll,
 				 .eRefetch: refetch(for: function == .eRefetchAll)
@@ -82,10 +80,11 @@ class ZActionsController : ZGenericController {
 			case .eDelete:  gGraphEditor.delete()
 			case .eNew:     gGraphEditor.addIdea()
 			case .eHang:    gBatches.unHang()
+			case .eName:    gTextEditor.edit(zone)
 			case .eHelp:    openBrowserForFocusWebsite()
 			case .eNext:    gGraphEditor.addNext() { iChild in iChild.edit() }
 			case .eNarrow:  gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
-			case .eTravel:  gFocusing.maybeTravelThrough(gSelecting.currentMoveable)
+			case .eTravel:  gFocusing.maybeTravelThrough(zone)
 			case .eToTop:   showTop()
 			default:        break
 			}
@@ -94,25 +93,25 @@ class ZActionsController : ZGenericController {
 	
 
 	func update() {
-		if  let selector = actionsSelector {
-			let     font = UIFont.systemFont(ofSize: 17)
+		if  let actions = actionsSelector {
+			let    font = UIFont.systemFont(ofSize: 17)
 			
-			selector.setTitleTextAttributes([NSAttributedString.Key.font : font], for: .normal)
-			selector.apportionsSegmentWidthsByContent = true
-			selector.removeAllSegments()
-
+			actions.setTitleTextAttributes([NSAttributedString.Key.font : font], for: .normal)
+			actions.apportionsSegmentWidthsByContent = true
+			actions.removeAllSegments()
+			
 			var index  = -1
 			let insert = { (iFunction: ZFunction) -> Void in
 				index += 1
-
-				selector.insertSegment(withTitle: self.title(for: iFunction), at:index, animated: false)
+				
+				actions.insertSegment(withTitle: self.title(for: iFunction), at:index, animated: false)
 			}
-
+			
 			if !isTop {
 				insert(.eToTop)
-				(selector.subviews[0] as UIView).tintColor = UIColor.red
+				(actions.subviews[0] as UIView).tintColor = UIColor.red
 			}
-
+			
 			switch gCurrentFunction {
 			case .eTop:
 				insert(.eEdit)
@@ -142,18 +141,26 @@ class ZActionsController : ZGenericController {
 	// MARK:-
 	
 	
+	func alignView() {
+		switch gDatabaseID {
+		case .everyoneID: gCurrentGraph = .ePublic
+		default:          gCurrentGraph = .eMe
+		}
+	}
+	
+	
 	func switchView(to iFunction: ZFunction) {
-		let priorShown = showFavorites
+		let priorShown = gShowFavorites
 		let    priorID = gDatabaseID
 
 		switch iFunction {
-		case .eMe:        showFavorites = false; gDatabaseID = .mineID
-		case .ePublic:    showFavorites = false; gDatabaseID = .everyoneID
-		case .eFavorites: showFavorites = true
+		case .eMe:        gShowFavorites = false; gDatabaseID = .mineID
+		case .ePublic:    gShowFavorites = false; gDatabaseID = .everyoneID
+		case .eFavorites: gShowFavorites = true
 		default: break
 		}
 		
-		if  gDatabaseID != priorID || showFavorites != priorShown {
+		if  gDatabaseID != priorID || gShowFavorites != priorShown {
 			gSelecting.updateAfterMove()
 			gControllers.signalFor(nil, multiple: [.eRelayout])
 		}
@@ -171,7 +178,7 @@ class ZActionsController : ZGenericController {
 	var favoritesFunction: String {
 		let zone  = gSelecting.currentMoveable
 		
-		if  zone == gHere {
+		if  zone == gHereMaybe {
 			return gFavorites.workingFavorites.contains(zone) ? "Unfavorite" : "Favorite"
 		}
 		

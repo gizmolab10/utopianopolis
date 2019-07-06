@@ -82,7 +82,7 @@ class ZSelecting: NSObject {
         let          snap = ZSnapshot()
         snap.currentGrabs = currentGrabs
         snap  .databaseID = gDatabaseID
-        snap        .here = gCloud?.hereIsValid ?? false ? gHere : nil
+        snap        .here = gHereMaybe
 
         return snap
     }
@@ -395,7 +395,7 @@ class ZSelecting: NSObject {
         }
         
         if  grabbed == nil || grabbed!.record == nil {
-            grabbed = gHereMaybe
+            grabbed = gHereMaybe ?? currentMoveable
         }
         
         return grabbed

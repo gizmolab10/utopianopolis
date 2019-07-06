@@ -176,7 +176,7 @@ class ZFiles: NSObject {
                 }
 
                 if                 dbID == .mineID {
-                    if  let   favorites  = manager.favoritesZone?.storageDictionary(for: dbID) {
+                    if  let   favorites  = gFavoritesRoot?.storageDictionary(for: dbID) {
                         dict[.favorites] = favorites as NSObject
                     }
 
@@ -258,11 +258,11 @@ class ZFiles: NSObject {
                                         zone.updateRecordName(for: key)
                                         
                                         switch key {
+										case .lost:      cloud.lostAndFoundZone = zone
                                         case .graph:     cloud.rootZone         = zone
                                         case .trash:     cloud.trashZone        = zone
                                         case .destroy:   cloud.destroyZone      = zone
-                                        case .favorites: cloud.favoritesZone    = zone
-                                        case .lost:      cloud.lostAndFoundZone = zone
+                                        case .favorites: gFavoritesRoot         = zone
                                         default: break
                                         }
                                     }

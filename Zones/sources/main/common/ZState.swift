@@ -26,7 +26,7 @@ var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 var                gWorkMode                     = ZWorkMode.startupMode
 var             gDeferRedraw                     = false
 var             gDebugReport                     = false
-var       	   showFavorites					 = false
+var       	  gShowFavorites					 = false
 var           gTextCapturing                     = false
 var         gIsReadyToShowUI                     = false
 var       gKeyboardIsVisible                     = false
@@ -94,15 +94,20 @@ var gExpandedZones : [String] {
 }
 
 
+var gRecords: ZRecords? {
+	get { return gShowFavorites ? gFavorites : gCloud }
+}
+
+
 var gHere: Zone {
-    get { return gCloud!.hereZone }
-    set { gCloud?.hereZone = newValue }
+	get { return gRecords!.hereZone }
+	set { gRecords?.hereZone = newValue }
 }
 
 
 var gHereMaybe: Zone? {
-    get { return gCloud?.hereZoneMaybe }
-    set { gCloud?.hereZoneMaybe = newValue }
+    get { return gRecords?.hereZoneMaybe }
+    set { gRecords?.hereZoneMaybe = newValue }
 }
 
 

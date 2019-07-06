@@ -473,7 +473,7 @@ extension CGPoint {
 
 extension CGSize {
 
-    var scalarDistance: CGFloat {
+    var hypontenuse: CGFloat {
         return sqrt(width * width + height * height)
     }
 

@@ -18,10 +18,10 @@ enum ZFavoriteStyle: Int {
 }
 
 
-let gFavorites = ZFavorites()
+let gFavorites = ZFavorites(ZDatabaseID.favoritesID)
 
 
-class ZFavorites: NSObject {
+class ZFavorites: ZRecords {
 
 
     // MARK:- initialization
@@ -185,7 +185,7 @@ class ZFavorites: NSObject {
         let finish = {
             self.createRootFavorites()
 
-            if  let root = mine?.favoritesZone {
+            if  let root = gFavoritesRoot {
                 root.needProgeny()
             }
 
@@ -193,16 +193,16 @@ class ZFavorites: NSObject {
         }
 
         if  let root = mine?.maybeZoneForRecordName(kFavoritesRootName) {
-            mine?.favoritesZone = root
+            gFavoritesRoot = root
 
             finish()
         } else {
             mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-                let       ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kFavoritesRootName))
-                let           root = Zone(record: ckRecord, databaseID: .mineID)
-                root.directAccess  = .eProgenyWritable
-                root.zoneName      = kFavoritesName
-                mine?.favoritesZone = root
+                let      ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kFavoritesRootName))
+                let          root = Zone(record: ckRecord, databaseID: .mineID)
+                root.directAccess = .eProgenyWritable
+                root.zoneName     = kFavoritesName
+                gFavoritesRoot    = root
 
                 finish()
             }

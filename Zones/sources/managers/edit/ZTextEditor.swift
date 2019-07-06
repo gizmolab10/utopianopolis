@@ -424,19 +424,21 @@ class ZTextEditor: ZTextView {
 		case eControl = "n"
 		case eArrow   = "-"
 		case eDouble  = "="
+		case eBack    = "+"
 		case eCancel  = "i"
 		
-		static var activeTypes: [ZPopupMenuType] { return [.eCommand, .eOption, .eShift, .eControl, .eArrow, eDouble] }
+		static var activeTypes: [ZPopupMenuType] { return [.eCommand, .eOption, .eShift, .eControl, .eArrow, .eBack, eDouble] }
 
 		var both: (String, String) {
 			switch self {
+			case .eShift:   return ("⇧", "Shift")
 			case .eCancel:  return ("",  "Cancel")
+			case .eControl: return ("^", "Control")
 			case .eCommand: return ("⌘", "Command")
 			case .eOption:  return ("⌥", "Option")
-			case .eShift:   return ("⇧", "Shift")
-			case .eControl: return ("^", "Control")
 			case .eDouble:  return ("⇿", "⇿")
 			case .eArrow:   return ("⇨", "⇨")
+			case .eBack:    return ("⇦", "⇦")
 			}
 		}
 		

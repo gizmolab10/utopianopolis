@@ -36,7 +36,7 @@ class ZGridController: UICollectionViewController {
 		update()
 	}
 	
-	
+
 	func update() {
 		collectionView.reloadData()
 	}
@@ -87,21 +87,26 @@ class ZGridController: UICollectionViewController {
 	
 	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if  let    gridIID = ZGridID(rawValue: indexPath.row) {
+
+			let complete = {
+				gSelecting.updateAfterMove()
+				gControllers.signalFor(nil, multiple: [.eRelayout])
+				self.update()
+			}
+
 			switch gridIID {
 			case .idCollapse,
 				 .idExpand:   gGraphEditor.expand(gridIID == .idExpand)
 			case .idUp:       gGraphEditor.move(up:  true,  selectionOnly: selectionOnly)
 			case .idDown:     gGraphEditor.move(up:  false, selectionOnly: selectionOnly)
-			case .idLeft:     gGraphEditor.move(out: true,  selectionOnly: selectionOnly)  {}
+			case .idLeft:     gGraphEditor.move(out: true,  selectionOnly: selectionOnly)  { complete() }
 			case .idFocus:    gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }; return
-			case .idRight:    gGraphEditor.move(out: false, selectionOnly: selectionOnly)  {}
+			case .idRight:    gGraphEditor.move(out: false, selectionOnly: selectionOnly)  { complete() }
 			case .idExtend:   break // extends = !extends
 			case .idMove:     selectionOnly = !selectionOnly
 			}
-
-			update()
-			gSelecting.updateAfterMove()
-			gControllers.signalFor(nil, multiple: [.eRelayout])
+			
+			complete()
 		}
 	}
 

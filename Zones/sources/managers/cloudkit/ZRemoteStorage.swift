@@ -17,9 +17,24 @@ var     gMineCloud : ZCloud?     { return gRemoteStorage.cloud(for: .mineID) }
 var         gCloud : ZCloud?     { return gRemoteStorage.currentCloud }
 var     gAllClouds : [ZCloud]    { return gRemoteStorage.allClouds }
 var  gLostAndFound : Zone?       { return gRemoteStorage.lostAndFoundZone }
-var gFavoritesRoot : Zone?       { return gMineCloud?.favoritesZone }
 var         gTrash : Zone?       { return gRemoteStorage.trashZone }
 var          gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemoteStorage.rootZone  = newValue } }
+
+
+var gFavoritesRoot : Zone? {
+	get {
+		return gFavorites.hereZoneMaybe
+	}
+
+	set {
+		if  let n = newValue {
+			gFavorites.hereZoneMaybe = n
+			gFavorites.recordRegistry[kRootName] = n
+
+			gFavorites.registerZRecord(n)
+		}
+	}
+}
 
 
 class ZRemoteStorage: NSObject {

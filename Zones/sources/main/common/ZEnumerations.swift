@@ -115,9 +115,10 @@ enum ZDatabaseID: String {
     
     var databaseIndex: ZDatabaseIndex? {
         switch self {
-        case .everyoneID: return .everyoneIndex
-        case     .mineID: return .mineIndex
-        default:          return nil
+		case .favoritesID: return .favoritesIndex
+        case  .everyoneID: return .everyoneIndex
+        case      .mineID: return .mineIndex
+        default:           return nil
         }
     }
 
@@ -147,14 +148,16 @@ enum ZDatabaseID: String {
 
 
 enum ZDatabaseIndex: Int {
-    case everyoneIndex
+	case everyoneIndex
     case mineIndex
+	case favoritesIndex
 
     
     var databaseID: ZDatabaseID? {
         switch self {
-        case .everyoneIndex: return .everyoneID
-        case .mineIndex:     return .mineID
+		case .favoritesIndex: return .favoritesID
+        case .everyoneIndex:  return .everyoneID
+        case .mineIndex:      return .mineID
         }
     }
 }

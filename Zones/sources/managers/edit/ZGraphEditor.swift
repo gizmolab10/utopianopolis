@@ -2280,7 +2280,8 @@ class ZGraphEditor: NSObject {
     
     func moveUp(_ iMoveUp: Bool = true, _ originals: [Zone], selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
         let doCousinJump = !gBrowsingIsConfined
-        let       isHere = originals.contains(gHere)
+		let    hereMaybe = gHereMaybe
+        let       isHere = hereMaybe != nil && originals.contains(hereMaybe!)
         
         guard let rootMost = originals.rootMost(goingUp: iMoveUp) else {
             onCompletion?(.eData)

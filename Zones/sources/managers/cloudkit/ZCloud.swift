@@ -1209,7 +1209,7 @@ class ZCloud: ZRecords {
                 let establishNextRoot = { establishRootAt?(iIndex + 1) }
 
                 switch rootID {
-                case .favorites: if self.favoritesZone    != nil || self.databaseID != .mineID { establishNextRoot(); return } else { name = kFavoritesName }
+                case .favorites: if gFavoritesRoot        != nil || self.databaseID != .mineID { establishNextRoot(); return } else { name = kFavoritesName }
                 case .graph:     if self.rootZone         != nil                               { establishNextRoot(); return } else { name = kFirstIdeaTitle }
                 case .lost:      if self.lostAndFoundZone != nil                               { establishNextRoot(); return }
                 case .trash:     if self.trashZone        != nil                               { establishNextRoot(); return }
@@ -1222,7 +1222,7 @@ class ZCloud: ZRecords {
                     }
 
                     switch rootID {
-                    case .favorites: self.favoritesZone    = iZone
+                    case .favorites: gFavoritesRoot        = iZone
                     case .destroy:   self.destroyZone      = iZone
                     case .trash:     self.trashZone        = iZone
                     case .graph:     self.rootZone         = iZone

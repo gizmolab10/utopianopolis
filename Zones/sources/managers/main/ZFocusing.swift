@@ -28,7 +28,7 @@ class ZFocusing: NSObject {
     var currentIndex = -1
     var   priorIndex = -1
     var     topIndex : Int  { return travelStack.count - 1 }
-    var       atHere : Bool { return currentIndex >= 0 && currentIndex <= topIndex && gHere == travelStack[currentIndex] }
+    var       atHere : Bool { return currentIndex >= 0 && currentIndex <= topIndex && gHereMaybe == travelStack[currentIndex] }
 
 
 	func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
@@ -56,13 +56,13 @@ class ZFocusing: NSObject {
 
 
     var indexOfHere : Int? {
-        let     here  = gHere
-
-        for (index, zone) in travelStack.enumerated() {
-            if  here == zone {
-                return index
-            }
-        }
+		if  let here = gHereMaybe {
+			for (index, zone) in travelStack.enumerated() {
+				if  here == zone {
+					return index
+				}
+			}
+		}
 
         return nil
     }
@@ -82,11 +82,13 @@ class ZFocusing: NSObject {
     func pushHere() {
         var newIndex  = currentIndex + 1
 
-        if topIndex  < 0 || !atHere {
+        if topIndex < 0 || !atHere {
             if  let index = indexOfHere {
                 newIndex  = index   // prevent duplicates in stack
-            } else if  topIndex <= currentIndex {
-                travelStack.append(gHere)
+            } else if topIndex <= currentIndex {
+				if  let here = gHereMaybe {
+					travelStack.append(here)
+				}
             } else {
                 if  currentIndex < 0 {
                     currentIndex = 0
@@ -188,23 +190,24 @@ class ZFocusing: NSObject {
 
 
     func createUndoForTravelBackTo(_ zone: Zone, atArrival: @escaping Closure) {
-        let   restoreID = gDatabaseID
-        let restoreHere = gHere
+		if  let restoreHere = gHereMaybe {
+			let   restoreID = gDatabaseID
 
-        UNDO(self) { iUndoSelf in
-            iUndoSelf.createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
-            iUndoSelf.pushHere()
-            self.debugDump()
-
-            gDatabaseID = restoreID
-
-            iUndoSelf.focus {
-                gHere = restoreHere
-
-                zone.grab()
-                atArrival()
-            }
-        }
+			UNDO(self) { iUndoSelf in
+				iUndoSelf.createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
+				iUndoSelf.pushHere()
+				self.debugDump()
+				
+				gDatabaseID = restoreID
+				
+				iUndoSelf.focus {
+					gHere = restoreHere
+					
+					zone.grab()
+					atArrival()
+				}
+			}
+		}
     }
 
 
@@ -252,7 +255,7 @@ class ZFocusing: NSObject {
         createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
 		gTextEditor.stopCurrentEdit()
         gBatches.focus { iSame in
-			showFavorites = false
+			gShowFavorites = false
 
 			self.showTopLevelFunctions()
             atArrival()
@@ -319,7 +322,7 @@ class ZFocusing: NSObject {
             let targetRecordID = targetRecord.recordID
             let        iTarget = iBookmark.bookmarkTarget
 			let complete : SignalClosure = { (iObject, iKind) in
-				showFavorites  = false
+				gShowFavorites  = false
 
 				self.showTopLevelFunctions()
 				atArrival(iObject, iKind)
@@ -331,7 +334,7 @@ class ZFocusing: NSObject {
                 gFavorites.currentFavorite = iBookmark
             }
 
-            if  let target = iTarget, target.spawnedBy(gHere) {
+            if  let target = iTarget, target.spawnedBy(gHereMaybe) {
                 if !target.isGrabbed {
                     target.asssureIsVisible()
                     target.grab()
@@ -400,10 +403,10 @@ class ZFocusing: NSObject {
                 }
 
                 let grabHere = {
-                    gHere.prepareForArrival()
+                    gHereMaybe?.prepareForArrival()
 
                     gBatches.children(.restore) { iSame in
-                        complete(gHere, .eRelayout)
+                        complete(gHereMaybe, .eRelayout)
                     }
                 }
 
@@ -465,6 +468,9 @@ class ZFocusing: NSObject {
 
         if  doTryBookmark {
             travelThrough(bookmark) { object, kind in
+				#if os(iOS)
+				gActionsController.alignView()
+				#endif
                 onCompletion?()
             }
         }

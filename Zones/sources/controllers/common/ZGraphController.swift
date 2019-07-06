@@ -202,7 +202,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	
 
     func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inThoughtsGraph: Bool) {
-        if  kIsPhone && (inThoughtsGraph == showFavorites) { return }
+        if  kIsPhone && (inThoughtsGraph == gShowFavorites) { return }
 
         let                        here = inThoughtsGraph ? gHereMaybe : gFavoritesRoot
         var specificWidget: ZoneWidget? = inThoughtsGraph ? thoughtsRootWidget : favoritesRootWidget
@@ -248,8 +248,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		}
 		
 		if  kIsPhone {
-			favoritesRootWidget.isHidden = !showFavorites
-			thoughtsRootWidget .isHidden =  showFavorites
+			favoritesRootWidget.isHidden = !gShowFavorites
+			thoughtsRootWidget .isHidden =  gShowFavorites
 		}
 	}
 
@@ -500,9 +500,10 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                 dropZone?.widget?.displayForDrag() // relayout child lines
                 dragView?       .setNeedsDisplay() // relayout drag: line and dot
 
-                // columnarReport(String(describing: gDragRelation), gDragDropZone?.unwrappedName)
+                //columnarReport(String(describing: gDragRelation), gDragDropZone?.unwrappedName)
 
-                if dropNow, let drop = dropZone, !isNoop {
+                if !isNoop,     dropNow,
+					let         drop = dropZone {
                     let   toBookmark = drop.isBookmark
                     var dropAt: Int? = index
 
@@ -560,35 +561,35 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
 
     func widgetNearest(_ iGesture: ZGestureRecognizer?, isThought: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
-        let      rootWidget = isThought ? thoughtsRootWidget : favoritesRootWidget
-        if  let    location = iGesture?.location(in: dragView),
-            let dropNearest = rootWidget.widgetNearestTo(location, in: dragView, gHereMaybe) {
+        let           rootWidget = isThought ? thoughtsRootWidget : favoritesRootWidget
+        if  let thoughtsLocation = iGesture?.location(in: dragView),
+            let thoughtsZone     = rootWidget.widgetNearestTo(thoughtsLocation, in: dragView, gHereMaybe) {
             if  isThought, !kIsPhone,
 
-                //////////////////////////////////
-                // recurse only for isMain true //
-                //////////////////////////////////
+                ////////////////////////////////////////
+				// recurse once: with isThought false //
+                ////////////////////////////////////////
 
-                let (_, otherDrop, otherLocation) = widgetNearest(iGesture, isThought: false) {
+                let (_, favoritesZone, favoritesLocation) = widgetNearest(iGesture, isThought: false) {
 
                 ///////////////////////////////////////////////
                 //     target zone found in both graphs      //
                 // deterimine which zone is closer to cursor //
                 ///////////////////////////////////////////////
 
-                let      dotN = dropNearest.dragDot
-                let      dotO = otherDrop  .dragDot
-                let distanceN = dotN.convert(dotN.bounds.center, to: view) - location
-                let distanceO = dotO.convert(dotO.bounds.center, to: view) - location
-                let   scalarN = distanceN.scalarDistance
-                let   scalarO = distanceO.scalarDistance
+				let locationT =  thoughtsZone.dragDot
+                let locationF = favoritesZone.dragDot
+                let twoSidesT = locationT.convert(locationT.bounds.center, to: view) - thoughtsLocation
+                let twoSidesF = locationF.convert(locationF.bounds.center, to: view) - thoughtsLocation
+                let   scalarT = twoSidesT.hypontenuse
+                let   scalarF = twoSidesF.hypontenuse
 
-                if scalarN > scalarO {
-                    return (false, otherDrop, otherLocation)
+                if  scalarT > scalarF {
+                    return (false, favoritesZone, favoritesLocation)
                 }
             }
 
-            return (true, dropNearest, location)
+            return (true, thoughtsZone, thoughtsLocation)
         }
 
         return nil

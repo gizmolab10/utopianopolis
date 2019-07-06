@@ -43,7 +43,6 @@ class ZRecords: NSObject {
     var         databaseID : ZDatabaseID
     var           manifest : ZManifest?
     var   lostAndFoundZone : Zone?
-    var      favoritesZone : Zone?     // only for .mineID manager
     var        destroyZone : Zone?
     var          trashZone : Zone?
     var           rootZone : Zone?
@@ -64,6 +63,11 @@ class ZRecords: NSObject {
 		set {
 			if  let         index = databaseID.index {
 				var    references = gHereRecordNames.components(separatedBy: kSeparator)
+				
+				while references.count < 3 {
+					references.append("")
+				}
+				
 				references[index] = newValue ?? kRootName
 				gHereRecordNames  = references.joined(separator: kSeparator)
 			}
@@ -72,13 +76,13 @@ class ZRecords: NSObject {
     
     
     var hereZoneMaybe: Zone? {
-        get { return maybeZoneForRecordName(hereRecordName) ?? rootZone }
-        set { hereRecordName = newValue?.recordName ?? kRootName }
+        get { return maybeZoneForRecordName(hereRecordName) }
+		set { hereRecordName = newValue?.recordName ?? (databaseID == .favoritesID ? kFavoritesRootName : kRootName) }
     }
     
     
     var hereZone: Zone {
-        get { return maybeZoneForRecordName(hereRecordName) ?? rootZone! }
+        get { return hereZoneMaybe ?? (databaseID == .favoritesID ? gFavoritesRoot : rootZone)! }
         set { hereZoneMaybe = newValue }
     }
 
@@ -116,7 +120,7 @@ class ZRecords: NSObject {
     func recount(_ onCompletion: IntClosure? = nil) {  // all progenyCounts for all progeny in all roots
         trashZone?       .updateCounts()
         hereZoneMaybe?   .updateCounts()
-        favoritesZone?   .updateCounts()
+        gFavoritesRoot?  .updateCounts()
         lostAndFoundZone?.updateCounts()
         onCompletion?(0)
     }
@@ -166,19 +170,25 @@ class ZRecords: NSObject {
                 nameRegistry[part] = records
             }
         }
-    }
-
-
-    func registerName(of iZone: Zone?) {
-        if  let record = iZone?.record,
-            let   name = iZone?.zoneName {
-            apply(to: name) { iRecords -> ([CKRecord]) in
-                var records = iRecords
-
-                records.append(record)
-
-                return records
-            }
+	}
+	
+	
+	func register(name: String, for iZone: Zone?) {
+		if  let record = iZone?.record {
+			apply(to: name) { iRecords -> ([CKRecord]) in
+				var records = iRecords
+				
+				records.append(record)
+				
+				return records
+			}
+		}
+	}
+	
+	
+	func registerName(of iZone: Zone?) {
+        if  let   name = iZone?.zoneName {
+			register(name: name, for: iZone)
         }
     }
 
@@ -212,7 +222,7 @@ class ZRecords: NSObject {
     }
 
 
-    func registerZRecord(_  iRecord : ZRecord?) -> Bool {
+    @discardableResult func registerZRecord(_  iRecord : ZRecord?) -> Bool {
         if  let      zRecord  = iRecord,
             let           id  = zRecord.recordName {
             if let oldRecord  = recordRegistry[id] {
@@ -229,7 +239,7 @@ class ZRecords: NSObject {
                     gBookmarks.registerBookmark(bookmark)
                 }
 
-                recordRegistry[id]  = zRecord
+                recordRegistry[id] = zRecord
 
                 registerName(of: zRecord as? Zone)
 
@@ -533,11 +543,11 @@ class ZRecords: NSObject {
 
 
     func clearRecordName(_ iName: String?, for iStates: [ZRecordState]) {
-        if  let name   = iName {
+        if  let name = iName {
             for state in iStates {
                 var names = self.recordNamesForState(state)
 
-                if let index = names.firstIndex(of: name) {
+                if  let index = names.firstIndex(of: name) {
                     names.remove(at: index)
 
                     self.recordNamesByState[state] = names
@@ -804,14 +814,14 @@ class ZRecords: NSObject {
     // MARK:-
 
 
-    func  maybeZRecordForRecordName (_ iRecordName:    String?) ->  ZRecord? { return iRecordName == nil ? nil : recordRegistry[iRecordName!] }
-    func maybeCKRecordForRecordName (_ iRecordName:    String?) -> CKRecord? { return maybeZRecordForRecordName (iRecordName)?.record }
-    func     maybeZoneForRecordName (_ iRecordName:    String?) ->     Zone? { return maybeZRecordForRecordName (iRecordName) as? Zone }
-    func       maybeZoneForRecordID (_ iRecordID:  CKRecord.ID?) ->     Zone? { return maybeZRecordForRecordID   (iRecordID)   as? Zone }
-    func      maybeZoneForReference (_ iReference: CKRecord.Reference) ->     Zone? { return maybeZoneForRecordID      (iReference.recordID) }
-    func       maybeZoneForCKRecord (_ iRecord:      CKRecord?) ->     Zone? { return maybeZoneForRecordID      (iRecord?.recordID) }
-    func    maybeZRecordForCKRecord (_ iRecord:      CKRecord?) ->  ZRecord? { return maybeZRecordForRecordName (iRecord?.recordID.recordName) }
-    func    maybeZRecordForRecordID (_ iRecordID:  CKRecord.ID?) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName) }
+    func      maybeZoneForReference (_ iReference: CKRecord.Reference) -> Zone? { return maybeZoneForRecordID      (iReference.recordID) }
+    func       maybeZoneForCKRecord (_ iRecord:    CKRecord?)          -> Zone? { return maybeZoneForRecordID      (iRecord?  .recordID) }
+    func    maybeZRecordForCKRecord (_ iRecord:    CKRecord?)       -> ZRecord? { return maybeZRecordForRecordName (iRecord?  .recordID.recordName) }
+    func    maybeZRecordForRecordID (_ iRecordID:  CKRecord.ID?)    -> ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName) }
+	func       maybeZoneForRecordID (_ iRecordID:  CKRecord.ID?)       -> Zone? { return maybeZRecordForRecordID   (iRecordID)   as? Zone }
+	func     maybeZoneForRecordName (_ iRecordName:     String?)       -> Zone? { return maybeZRecordForRecordName (iRecordName) as? Zone }
+	func maybeCKRecordForRecordName (_ iRecordName:     String?)   -> CKRecord? { return maybeZRecordForRecordName (iRecordName)?.record }
+	func  maybeZRecordForRecordName (_ iRecordName:     String?)    -> ZRecord? { return iRecordName == nil ? nil : recordRegistry[iRecordName!] }
 
 
     func zoneForReference(_ reference: CKRecord.Reference) -> Zone {
