@@ -27,7 +27,6 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         application.applicationSupportsShakeToEdit = true
-        // Do some additional configuration if needed here
 
         // application.registerUserNotificationSettings(.badgeSetting)
         application.registerForRemoteNotifications()

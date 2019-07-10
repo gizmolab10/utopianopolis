@@ -185,6 +185,16 @@ class ZRecord: NSObject {
     class func cloudProperties() -> [String] { return [] }
 
 
+	class func cloudProperties(for className: String) -> [String] {
+		switch className {
+		case kZoneType:     return Zone     .cloudProperties()
+		case kTraitType:    return ZTrait   .cloudProperties()
+		case kManifestType: return ZManifest.cloudProperties()
+		default:			return []
+		}
+	}
+
+	
     // MARK:- properties
     // MARK:-
 

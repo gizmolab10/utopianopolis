@@ -1309,18 +1309,19 @@ class ZCloud: ZRecords {
         if  cloudUnavailable {
             onCompletion?(0)
         } else {
-            let classNames = [kZoneType, kTraitType]
+            let classNames = [kZoneType, kTraitType, kManifestType]
             var      count = classNames.count
 
             onCompletion?(-1)
             for className: String in classNames {
-                let    predicate:          NSPredicate = NSPredicate(value: true)
-                let subscription:       CKSubscription = CKQuerySubscription(recordType: className, predicate: predicate, options: [.firesOnRecordUpdate])
-                let  information:   CKSubscription.NotificationInfo = CKSubscription.NotificationInfo()
-                information.alertLocalizationKey       = "new Thoughtful data has arrived";
-                information.shouldBadge                = true
-                information.shouldSendContentAvailable = true
-                subscription.notificationInfo          = information
+                let    predicate :                     NSPredicate = NSPredicate(value: true)
+                let subscription :                  CKSubscription = CKQuerySubscription(recordType: className, predicate: predicate, options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion])
+                let  information : CKSubscription.NotificationInfo = CKSubscription.NotificationInfo()
+				information                           .desiredKeys = ZRecord.cloudProperties(for: className)
+                information                  .alertLocalizationKey = "new Thoughtful data has arrived";
+				information            .shouldSendContentAvailable = true
+                information                           .shouldBadge = true
+                subscription                     .notificationInfo = information
 
                 database!.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSubscribeError: Error?) in
                     gAlerts.alertError(iSubscribeError) { iHasError in

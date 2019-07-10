@@ -68,7 +68,7 @@ enum ZOperationID: Int {
 }
 
 
-let deprecatedOps:   [ZOperationID] = [.oChildren, .oParents]
+let deprecatedOps:   [ZOperationID] = [.oParents]
 let localOperations: [ZOperationID] = [.oHere, .oRoots, .oFound, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
 
 var gDebugTimer:             Timer?

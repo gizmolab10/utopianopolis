@@ -14,8 +14,6 @@ import UIKit
 enum ZFunction: String {
 	case eTop        = "At 7Top"
 	case eToTop 	 = "Top"
-	case eHelp       = "Help"
-	case ePrefs      = "Preferences"
 
 	case eEdit       = "Edit"
     case eNew        = "New"
@@ -23,11 +21,11 @@ enum ZFunction: String {
 	case eName       = "Name"
 	case eDelete     = "Delete"
 
-	case eFocus      = "Focus"
-	case eNarrow     = "Narrow"
-	case eTravel     = "Travel"
-
 	case eMore		 = "More"
+	case eHelp       = "Help"
+	case ePrefs      = "Preferences"
+
+	case eCloud      = "Cloud"
 	case eHang       = "Reconnect"
 	case eRefetch    = "Refetch"
 	case eRefetchAll = "Refetch All"
@@ -68,11 +66,11 @@ class ZActionsController : ZGenericController {
 
 	@IBAction func selectorAction(iControl: UISegmentedControl) {
 		if  let    title = iControl.titleForSegment(at: iControl.selectedSegment),
-			let function = function(for: title) {
+			let function = ZFunction(rawValue: title) {
 			let     zone = gSelecting.currentMoveable
 			
 			switch function {
-			case .eFocus, .eTop, .eEdit,
+			case .eTop, .eEdit, .eCloud,
 				 .eMore:    gCurrentFunction = function; update()
 			case .eRefetchAll,
 				 .eRefetch: refetch(for: function == .eRefetchAll)
@@ -83,8 +81,6 @@ class ZActionsController : ZGenericController {
 			case .eName:    gTextEditor.edit(zone)
 			case .eHelp:    openBrowserForFocusWebsite()
 			case .eNext:    gGraphEditor.addNext() { iChild in iChild.edit() }
-			case .eNarrow:  gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }
-			case .eTravel:  gFocusing.maybeTravelThrough(zone)
 			case .eToTop:   showTop()
 			default:        break
 			}
@@ -104,7 +100,7 @@ class ZActionsController : ZGenericController {
 			let insert = { (iFunction: ZFunction) -> Void in
 				index += 1
 				
-				actions.insertSegment(withTitle: self.title(for: iFunction), at:index, animated: false)
+				actions.insertSegment(withTitle: iFunction.rawValue, at:index, animated: false)
 			}
 			
 			if !isTop {
@@ -115,22 +111,23 @@ class ZActionsController : ZGenericController {
 			switch gCurrentFunction {
 			case .eTop:
 				insert(.eEdit)
-				insert(.eFocus)
+				insert(.eCloud)
 				insert(.eMore)
-				insert(.eHelp)
-				insert(.ePrefs)
 			case .eEdit:
 				insert(.eNew)
 				insert(.eNext)
 				insert(.eName)
 				insert(.eDelete)
-			case .eFocus:
-				insert(.eNarrow)
-				insert(.eTravel)
+			case .eCloud:
+				if  gIsLate {
+					insert(.eHang)
+				} else {
+					insert(.eRefetch)
+					insert(.eRefetchAll)
+				}
 			case .eMore:
-				insert(.eRefetch)
-				insert(.eRefetchAll)
-				if gIsLate { insert(.eHang) }
+				insert(.eHelp)
+				insert(.ePrefs)
 			default: break
 			}
 		}
@@ -166,34 +163,6 @@ class ZActionsController : ZGenericController {
 		}
 	}
 	
-
-	func title(for iFunction: ZFunction) -> String {
-		switch iFunction {
-		case .eFocus: return favoritesFunction
-		default:      return iFunction.rawValue
-		}
-	}
-	
-
-	var favoritesFunction: String {
-		let zone  = gSelecting.currentMoveable
-		
-		if  zone == gHereMaybe {
-			return gFavorites.workingFavorites.contains(zone) ? "Unfavorite" : "Favorite"
-		}
-		
-		return "Focus"
-	}
-	
-
-    func function(for iTitle: String) -> ZFunction? {
-		if let function = ZFunction(rawValue: iTitle) {
-			return  function
-		}
-		
-		return nil
-    }
-
 	
 	func showTop() {
 		gCurrentFunction = .eTop

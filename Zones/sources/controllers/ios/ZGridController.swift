@@ -17,9 +17,9 @@ enum ZGridID : Int {
 	case idLeft
 	case idFocus
 	case idRight
-	case idExtend
-	case idDown
 	case idMove
+	case idDown
+	case idExtend
 }
 
 
@@ -64,9 +64,9 @@ class ZGridController: UICollectionViewController {
 			case .idLeft:     cell.title.text = "⇦"
 			case .idFocus:    cell.title.text = "/"
 			case .idRight:    cell.title.text = "⇨"
-			case .idExtend:   break // cell.title.text = "+"
-			case .idDown:     cell.title.text = "⇩"
 			case .idMove:     cell.title.text = "✍"
+			case .idDown:     cell.title.text = "⇩"
+			case .idExtend:   break // cell.title.text = "+"
 			}
 
 			switch gridIID {
