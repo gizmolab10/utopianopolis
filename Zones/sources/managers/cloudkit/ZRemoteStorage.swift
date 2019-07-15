@@ -21,22 +21,6 @@ var         gTrash : Zone?       { return gRemoteStorage.trashZone }
 var          gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemoteStorage.rootZone  = newValue } }
 
 
-var gFavoritesRoot : Zone? {
-	get {
-		return gFavorites.hereZoneMaybe
-	}
-
-	set {
-		if  let n = newValue {
-			gFavorites.hereZoneMaybe = n
-			gFavorites.recordRegistry[kRootName] = n
-
-			gFavorites.registerZRecord(n)
-		}
-	}
-}
-
-
 class ZRemoteStorage: NSObject {
 
 
@@ -181,10 +165,22 @@ class ZRemoteStorage: NSObject {
     func receiveFromCloud(_ notification: CKQueryNotification) {
         resetBadgeCounter()
 
-        if  let     dbID = ZDatabaseID.create(from: notification.databaseScope),
+        if  let     dbID = ZDatabaseID.convert(from: notification.databaseScope),
             let    cloud = cloud(for: dbID),
             let recordID = notification.recordID {
-            cloud.fetchRecord(for: recordID)
+			let ckRecord = cloud.maybeCKRecordForRecordName(recordID.recordName)
+
+			switch (notification.queryNotificationReason) {
+			case .recordCreated, .recordUpdated:
+				cloud.addCKRecord(ckRecord, for: [.needsFetch])
+				gBatches.syncAndRedraw()
+			case .recordDeleted:
+				if  let deleted = cloud.maybeZoneForCKRecord(ckRecord) {
+					gGraphEditor.deleteZones([deleted], permanently: true) {
+						gBatches.syncAndRedraw()
+					}
+				}
+			}
         }
     }
 

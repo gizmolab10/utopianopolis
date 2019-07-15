@@ -49,28 +49,28 @@ class ZCloud: ZRecords {
 
     func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
         switch identifier { // inner switch
-        case .oBookmarks:   fetchBookmarks    (cloudCallback)
-        case .oChildren:    fetchChildren     (cloudCallback)
-        case .oCloud:       fetchCloudZones   (cloudCallback)
-        case .oEmptyTrash:  emptyTrash        (cloudCallback)
-        case .oFetch:       fetchZones        (cloudCallback)
-        case .oFetchLost:   fetchLost         (cloudCallback)
-        case .oFetchNew:    fetchNew          (cloudCallback)
-        case .oFetchAll:    fetchAll          (cloudCallback)
-        case .oFound:       found             (cloudCallback)
-        case .oHere:        establishHere     (cloudCallback)
-        case .oMerge:       merge             (cloudCallback)
-        case .oParents:     fetchParents      (cloudCallback)
-        case .oRefetch:     refetchZones      (cloudCallback)
-        case .oRoots:       establishRoots    (cloudCallback)
-        case .oManifest:    establishManifest (cloudCallback)
-        case .oSaveToCloud: save              (cloudCallback)
-        case .oSubscribe:   subscribe         (cloudCallback)
-        case .oTraits:      fetchTraits       (cloudCallback)
-        case .oUndelete:    undeleteAll       (cloudCallback)
-        case .oUnsubscribe: unsubscribe       (cloudCallback)
-        case .oRecount:     recount           (cloudCallback)
-        default:                               cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
+        case .oBookmarks:     fetchBookmarks    (cloudCallback)
+        case .oChildren:      fetchChildren     (cloudCallback)
+        case .oCloud:         fetchCloudZones   (cloudCallback)
+        case .oEmptyTrash:    emptyTrash        (cloudCallback)
+        case .oFetchNeeded:   fetchNeeded       (cloudCallback)
+        case .oFetchLost:     fetchLost         (cloudCallback)
+        case .oFetchNew:      fetchNew          (cloudCallback)
+        case .oFetchAll:      fetchAll          (cloudCallback)
+        case .oFound:         found             (cloudCallback)
+        case .oHere:          establishHere     (cloudCallback)
+        case .oFetchAndMerge: fetchAndMerge     (cloudCallback)
+        case .oParents:       fetchParents      (cloudCallback)
+        case .oRefetch:       refetchZones      (cloudCallback)
+        case .oRoots:         establishRoots    (cloudCallback)
+        case .oManifest:      establishManifest (cloudCallback)
+        case .oSaveToCloud:   save              (cloudCallback)
+        case .oSubscribe:     subscribe         (cloudCallback)
+        case .oTraits:        fetchTraits       (cloudCallback)
+        case .oUndelete:      undeleteAll       (cloudCallback)
+        case .oUnsubscribe:   unsubscribe       (cloudCallback)
+        case .oRecount:       recount           (cloudCallback)
+        default:                                 cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
         }
     }
 
@@ -137,7 +137,7 @@ class ZCloud: ZRecords {
                         }
                     }
 
-                    self.merge { iCount in                 // process merges caused (before now) by save oplock errors
+                    self.fetchAndMerge { iCount in              // process merges caused (before now) by save oplock errors
                         if iCount == 0 {
                             self.save(onCompletion)         // process any remaining
                         }
@@ -253,14 +253,14 @@ class ZCloud: ZRecords {
     func fetchRecord(for recordID: CKRecord.ID) {
         
         /////////////////////////////////////////
-        // BUG: could be a trait or a deletion //
+		// BUG: could be a trait or a deletion //
         /////////////////////////////////////////
-        
+		
         detectIfRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
             if  let ckRecord = iUpdatedRecord, !ckRecord.isEmpty {
                 let     zone = self.zone(for: ckRecord)
                 if ckRecord == zone.record {    // record data is new (zone for just updated it)
-                    zone.resolve() { iZone in
+                    zone.addToParent() { iZone in
                         gControllers.signalFor(iZone, regarding: .eRelayout)
                     }
                 }
@@ -396,12 +396,12 @@ class ZCloud: ZRecords {
     }
 
 
-    func merge(_ onCompletion: IntClosure?) {
+    func fetchAndMerge(_ onCompletion: IntClosure?) {
         var recordIDs = recordIDsWithMatchingStates([.needsMerge])
         let     count = recordIDs.count
 
         if  count > 0, let           operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
-            var                    recordsByID = [CKRecord : CKRecord.ID?] ()
+            var                   receivedByID = [CKRecord : CKRecord.ID?] ()
             operation               .recordIDs = recordIDs
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iID: CKRecord.ID?, iError: Error?) in
                 gAlerts.detectError(iError) { iHasError in
@@ -415,7 +415,7 @@ class ZCloud: ZRecords {
                             recordIDs.remove(at: index)
                         }
                     } else if let record = iRecord {
-                        recordsByID[record] = iID
+                        receivedByID[record] = iID
                     }
                 }
 
@@ -424,19 +424,23 @@ class ZCloud: ZRecords {
 
             operation.completionBlock = {
                 FOREGROUND {
-                    if  recordsByID.count == 0 {
+                    if  receivedByID.count == 0 {
                         for ckRecordID in recordIDs {
-                            self.clearRecordName(ckRecordID.recordName, for: [.needsMerge])
+                            self.clearRecordName(ckRecordID.recordName, for: [.needsMerge]) // mark as merged
                         }
                     } else {
-                        for (iRecord, iID) in recordsByID {
+                        for (iReceivedRecord, iID) in receivedByID {
                             if  let zRecord = self.maybeZRecordForRecordID(iID) {
-                                zRecord.useBest(record: iRecord)
+                                zRecord.useBest(record: iReceivedRecord)
                             }
                         }
                     }
 
-                    self.merge(onCompletion)        // process remaining
+					///////////////////////
+					//      RECURSE      //
+					///////////////////////
+
+					self.fetchAndMerge(onCompletion)    // process remaining
                 }
             }
             
@@ -498,7 +502,7 @@ class ZCloud: ZRecords {
                 }
             }
 
-            fetchZones(onCompletion) // includes processing logic for retrieved records
+            fetchNeeded(onCompletion) // includes processing logic for retrieved records
         }
     }
 
@@ -736,7 +740,7 @@ class ZCloud: ZRecords {
     }
 
 
-    func fetchZones(_ onCompletion: IntClosure?) {
+    func fetchNeeded(_ onCompletion: IntClosure?) {
         let needed = recordIDsWithMatchingStates([.needsFetch, .requiresFetchBeforeSave], pull: true)
 
         fetchZones(needed: needed) { iCKRecords in
@@ -747,36 +751,47 @@ class ZCloud: ZRecords {
                 } else {
                     self.createZRecords(of: kZoneType, with: iCKRecords)
                     self.unorphanAll()
-                    self.fetchZones(onCompletion)                            // process remaining
+                    self.fetchNeeded(onCompletion)                            // process remaining
                 }
             }
         }
     }
 
 
-    func fetchZones(needed:  [CKRecord.ID], _ onCompletion: RecordsClosure?) {
-        var recordIDs = [CKRecord.ID] ()
-        var retrieved = [CKRecord] ()
-        var remainder = needed
+    func fetchZones(needed:   [CKRecord.ID], _ onCompletion: RecordsClosure?) {
+        var   IDsToFetchNow = [CKRecord.ID] ()
+        var       retrieved = [CKRecord] ()
+        var IDsToFetchLater = needed
         var fetchClosure : Closure?
 
         fetchClosure = {
-            let count = remainder.count
-            recordIDs = remainder
+            let count = IDsToFetchLater.count
+            IDsToFetchNow = IDsToFetchLater
 
             if  count == 0 {
+
+				//////////
+				// DONE //
+				//////////
+				
                 onCompletion?(retrieved)
             } else {
                 if  count <= kBatchSize {
-                    remainder = []
+                    IDsToFetchLater = []
                 } else {
-                    recordIDs.removeSubrange(kBatchSize ..< count)
-                    remainder.removeSubrange(0 ..< kBatchSize)
+					// remove -> remainder ... ids that don't fit batch size
+                    IDsToFetchNow.removeSubrange(kBatchSize ..< count)
+                    IDsToFetchLater.removeSubrange(0 ..< kBatchSize)
                 }
 
-                self.reliableFetch(needed: recordIDs) { iCKRecords in
+                self.reliableFetch(needed: IDsToFetchNow) { iCKRecords in
                     retrieved.append(contentsOf: iCKRecords)
-                    fetchClosure?()
+
+					/////////////
+					// RECURSE //
+					/////////////
+
+					fetchClosure?()
                 }
             }
         }
@@ -1287,15 +1302,18 @@ class ZCloud: ZRecords {
                             onCompletion?(0)
                         } else {
                             for subscription: CKSubscription in iSubscriptions! {
-                                self.database!.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (iSubscription: String?, iUnsubscribeError: Error?) in
-                                    gAlerts.alertError(iUnsubscribeError) { iHasError in }
-
-                                    count -= 1
-
-                                    if count == 0 {
-                                        onCompletion?(0)
-                                    }
-                                })
+								if  let querySubscription = subscription as? CKQuerySubscription,
+									querySubscription.querySubscriptionOptions != [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion] {
+									self.database!.delete(withSubscriptionID: querySubscription.subscriptionID, completionHandler: { (iSubscription: String?, iUnsubscribeError: Error?) in
+										gAlerts.alertError(iUnsubscribeError) { iHasError in }
+										
+										count -= 1
+										
+										if count == 0 {
+											onCompletion?(0)
+										}
+									})
+								}
                             }
                         }
                     }
@@ -1317,7 +1335,7 @@ class ZCloud: ZRecords {
                 let    predicate :                     NSPredicate = NSPredicate(value: true)
                 let subscription :                  CKSubscription = CKQuerySubscription(recordType: className, predicate: predicate, options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion])
                 let  information : CKSubscription.NotificationInfo = CKSubscription.NotificationInfo()
-				information                           .desiredKeys = ZRecord.cloudProperties(for: className)
+//				information                           .desiredKeys = ZRecord.cloudProperties(for: className)
                 information                  .alertLocalizationKey = "new Thoughtful data has arrived";
 				information            .shouldSendContentAvailable = true
                 information                           .shouldBadge = true

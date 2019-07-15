@@ -24,11 +24,11 @@ let gFocusing = ZFocusing()
 class ZFocusing: NSObject {
 
 
-    var  travelStack = [Zone] ()
+    var    focusRing = [Zone] ()
     var currentIndex = -1
     var   priorIndex = -1
-    var     topIndex : Int  { return travelStack.count - 1 }
-    var       atHere : Bool { return currentIndex >= 0 && currentIndex <= topIndex && gHereMaybe == travelStack[currentIndex] }
+    var     topIndex : Int  { return focusRing.count - 1 }
+    var       atHere : Bool { return currentIndex >= 0 && currentIndex <= topIndex && gHereMaybe == focusRing[currentIndex] }
 
 
 	func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
@@ -57,7 +57,7 @@ class ZFocusing: NSObject {
 
     var indexOfHere : Int? {
 		if  let here = gHereMaybe {
-			for (index, zone) in travelStack.enumerated() {
+			for (index, zone) in focusRing.enumerated() {
 				if  here == zone {
 					return index
 				}
@@ -70,7 +70,7 @@ class ZFocusing: NSObject {
     
     func debugDump() {
         if gDebugReport {
-            for (index, zone) in travelStack.enumerated() {
+            for (index, zone) in focusRing.enumerated() {
                 let isCurrentIndex = index == currentIndex
                 let prefix = isCurrentIndex ? "                   •" : ""
                 columnarReport(prefix, zone.zoneName)
@@ -87,7 +87,7 @@ class ZFocusing: NSObject {
                 newIndex  = index   // prevent duplicates in stack
             } else if topIndex <= currentIndex {
 				if  let here = gHereMaybe {
-					travelStack.append(here)
+					focusRing.append(here)
 				}
             } else {
                 if  currentIndex < 0 {
@@ -95,7 +95,7 @@ class ZFocusing: NSObject {
                     newIndex  = currentIndex + 1
                 }
 
-                travelStack.insert(gHere, at: newIndex)
+                focusRing.insert(gHere, at: newIndex)
             }
 
             currentIndex = newIndex
@@ -142,14 +142,14 @@ class ZFocusing: NSObject {
 
 
     func go() {
-        let         max = travelStack.count
+        let         max = focusRing.count
 
         if  0          <= currentIndex,
             max         > currentIndex, (!atHere ||
             priorIndex != currentIndex) {
             priorIndex  = currentIndex
             let dbID    = gHere.databaseID
-            let here    = travelStack[currentIndex]
+            let here    = focusRing[currentIndex]
             if  dbID   != here.databaseID {
                 toggleDatabaseID()         // update id before setting gHere
             }
@@ -167,7 +167,7 @@ class ZFocusing: NSObject {
     func pop() {
         if  let i = indexOfHere {
             goBack()
-            travelStack.remove(at: i)
+            focusRing.remove(at: i)
         } else {
             go()
         }
@@ -175,9 +175,9 @@ class ZFocusing: NSObject {
 	
 	
 	func removeFromStack(_ iZone: Zone) {
-		for (index, zone) in travelStack.enumerated() {
+		for (index, zone) in focusRing.enumerated() {
 			if zone == iZone {
-				travelStack.remove(at: index)
+				focusRing.remove(at: index)
 
 				return
 			}
@@ -255,7 +255,7 @@ class ZFocusing: NSObject {
         createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
 		gTextEditor.stopCurrentEdit()
         gBatches.focus { iSame in
-			gShowFavorites = false
+			gShowFavorites = gDatabaseID == .favoritesID
 
 			self.showTopLevelFunctions()
             atArrival()
@@ -265,10 +265,10 @@ class ZFocusing: NSObject {
     }
     
     
-    func focus(on: Zone, _ atArrival: @escaping Closure) {
+    func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
         pushHere()
         
-        gHere = on
+        gHere = iHere
 
         focus {
             gHere.grab()
@@ -278,7 +278,7 @@ class ZFocusing: NSObject {
     }
 
 
-    @discardableResult func focus(through iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
+    @discardableResult func focusThrough(_ iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
         if  let bookmark = iBookmark, bookmark.isBookmark {
             if  bookmark.isInFavorites {
                 let targetParent = bookmark.bookmarkTarget?.parentZone
@@ -321,9 +321,8 @@ class ZFocusing: NSObject {
             let   targetRecord = targetZRecord.record {
             let targetRecordID = targetRecord.recordID
             let        iTarget = iBookmark.bookmarkTarget
-			let complete : SignalClosure = { (iObject, iKind) in
-				gShowFavorites  = false
 
+			let complete : SignalClosure = { (iObject, iKind) in
 				self.showTopLevelFunctions()
 				atArrival(iObject, iKind)
 			}
@@ -344,88 +343,90 @@ class ZFocusing: NSObject {
                     gHere = target
                 }
 
-                complete(target, .eRelayout)
+				gShowFavorites = targetDBID == .favoritesID
 
-                return
-            }
-            
-            pushHere()
-            debugDump()
+				complete(target, .eRelayout)
+			} else {
+				pushHere()
+				debugDump()
 
-            if  gDatabaseID != targetDBID {
-                gDatabaseID  = targetDBID
+				gShowFavorites = targetDBID == .favoritesID
 
-                /////////////////////////////////
-                // TRAVEL TO A DIFFERENT GRAPH //
-                /////////////////////////////////
-
-                if  let target = iTarget, target.isFetched { // e.g., default root favorite
-                    focus {
-                        gHere  = target
-
-                        gHere.prepareForArrival()
-                        complete(gHere, .eRelayout)
-                    }
-                } else {
-                    gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
-                        if  let hereRecord = iRecord,
-                            let    newHere = gCloud?.zone(for: hereRecord) {
-                            gHere          = newHere
-
-                            newHere.prepareForArrival()
-                            self.focus {
-                                complete(newHere, .eRelayout)
-                            }
-                        } else {
-                            complete(gHere, .eRelayout)
-                        }
-                    }
-                }
-            } else {
-
-                ///////////////////////
-                // STAY WITHIN GRAPH //
-                ///////////////////////
-
-                there = gCloud?.maybeZoneForRecordID(targetRecordID)
-                let grabbed = gSelecting.firstSortedGrab
-                let    here = gHere
-
-                UNDO(self) { iUndoSelf in
-                    self.UNDO(self) { iRedoSelf in
-                        self.travelThrough(iBookmark, atArrival: complete)
-                    }
-
-                    gHere = here
-
-                    grabbed?.grab()
-                    complete(here, .eRelayout)
-                }
-
-                let grabHere = {
-                    gHereMaybe?.prepareForArrival()
-
-                    gBatches.children(.restore) { iSame in
-                        complete(gHereMaybe, .eRelayout)
-                    }
-                }
-
-                if  there != nil {
-                    gHere = there!
-
-                    grabHere()
-                } else if gCloud?.databaseID != .favoritesID { // favorites does not have a cloud database
-                    gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
-                        if  let hereRecord = iRecord,
-                            let    newHere = gCloud?.zone(for: hereRecord) {
-                            gHere          = newHere
-
-                            grabHere()
-                        }
-                    }
-                } // else ... favorites id with an unresolvable bookmark target
-            }
-        }
+				if  gDatabaseID != targetDBID {
+					gDatabaseID  = targetDBID
+					
+					/////////////////////////////////
+					// TRAVEL TO A DIFFERENT GRAPH //
+					/////////////////////////////////
+					
+					if  let target = iTarget, target.isFetched { // e.g., default root favorite
+						focus {
+							gHere  = target
+							
+							gHere.prepareForArrival()
+							complete(gHere, .eRelayout)
+						}
+					} else {
+						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
+							if  let hereRecord = iRecord,
+								let    newHere = gCloud?.zone(for: hereRecord) {
+								gHere          = newHere
+								
+								newHere.prepareForArrival()
+								self.focus {
+									complete(newHere, .eRelayout)
+								}
+							} else {
+								complete(gHere, .eRelayout)
+							}
+						}
+					}
+				} else {
+					
+					///////////////////////
+					// STAY WITHIN GRAPH //
+					///////////////////////
+					
+					there = gCloud?.maybeZoneForRecordID(targetRecordID)
+					let grabbed = gSelecting.firstSortedGrab
+					let    here = gHere
+					
+					UNDO(self) { iUndoSelf in
+						self.UNDO(self) { iRedoSelf in
+							self.travelThrough(iBookmark, atArrival: complete)
+						}
+						
+						gHere = here
+						
+						grabbed?.grab()
+						complete(here, .eRelayout)
+					}
+					
+					let grabHere = {
+						gHereMaybe?.prepareForArrival()
+						
+						gBatches.children(.restore) { iSame in
+							complete(gHereMaybe, .eRelayout)
+						}
+					}
+					
+					if  there != nil {
+						gHere = there!
+						
+						grabHere()
+					} else if gCloud?.databaseID != .favoritesID { // favorites does not have a cloud database
+						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
+							if  let hereRecord = iRecord,
+								let    newHere = gCloud?.zone(for: hereRecord) {
+								gHere          = newHere
+								
+								grabHere()
+							}
+						}
+					} // else ... favorites id with an unresolvable bookmark target
+				}
+			}
+		}
     }
 
 

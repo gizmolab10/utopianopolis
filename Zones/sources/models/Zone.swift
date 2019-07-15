@@ -61,8 +61,8 @@ class Zone : ZRecord {
     var         fetchedBookmarks:       [Zone]  { return gBookmarks.bookmarks(for: self) ?? [] }
     var        isCurrentFavorite:         Bool  { return self == gFavorites.currentFavorite }
     var         grabbedTextColor:       ZColor? { return color?.darker(by: 3.0) }
-    var        onlyShowRevealDot:         Bool  { return showingChildren && ((isRootOfFavorites && !(widget?.isInThoughts ?? true)) || (kIsPhone && self == gHere)) }
-    var          dragDotIsHidden:         Bool  { return                     (isRootOfFavorites && !(widget?.isInThoughts ?? true)) || (kIsPhone && self == gHere && showingChildren) } // always hide drag dot of favorites root
+    var        onlyShowRevealDot:         Bool  { return showingChildren && ((isRootOfFavorites && !(widget?.isInThoughts ?? true)) || (kIsPhone && self == gHereMaybe)) }
+    var          dragDotIsHidden:         Bool  { return                     (isRootOfFavorites && !(widget?.isInThoughts ?? true)) || (kIsPhone && self == gHereMaybe && showingChildren) } // always hide drag dot of favorites root
     var            hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
     var            hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }
     var              hasSiblings:         Bool  { return parentZone?.count ?? 0 > 1 }
@@ -1616,9 +1616,10 @@ class Zone : ZRecord {
     
     // MARK:- receive from cloud
     // MARK:-
-    
+	
+	// add tp graph
 
-    func resolve(_ onCompletion: ZoneMaybeClosure? = nil) {
+    func addToParent(_ onCompletion: ZoneMaybeClosure? = nil) {
         FOREGROUND(canBeDirect: true) {
             self._color = nil               // recompute color
             let parent  = self.resolveParent

@@ -100,6 +100,9 @@ enum ZDatabaseID: String {
     case    everyoneID = "everyone"
     case      sharedID = "shared"
     case        mineID = "mine"
+	
+	var identifier: String { return rawValue.substring(toExclusive: 1) }
+	var index:        Int? { return self.databaseIndex?.rawValue }
 
     var userReadableString: String {
         switch self {
@@ -108,10 +111,7 @@ enum ZDatabaseID: String {
         default:          return ""
         }
     }
-    
-    var identifier: String { return rawValue.substring(toExclusive: 1) }
-    var index:        Int? { return self.databaseIndex?.rawValue }
-    
+	
     
     var databaseIndex: ZDatabaseIndex? {
         switch self {
@@ -122,7 +122,7 @@ enum ZDatabaseID: String {
         }
     }
 
-    static func create(from scope: CKDatabase.Scope) -> ZDatabaseID? {
+    static func convert(from scope: CKDatabase.Scope) -> ZDatabaseID? {
         switch scope {
         case .public:  return .everyoneID
         case .private: return .mineID
@@ -130,7 +130,7 @@ enum ZDatabaseID: String {
         }
     }
 
-    static func create(from id: String) -> ZDatabaseID? {
+    static func convert(from id: String) -> ZDatabaseID? {
         switch id {
         case "e": return .everyoneID
         case "m": return .mineID

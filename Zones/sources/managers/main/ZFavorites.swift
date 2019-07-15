@@ -21,6 +21,19 @@ enum ZFavoriteStyle: Int {
 let gFavorites = ZFavorites(ZDatabaseID.favoritesID)
 
 
+var gFavoritesRoot : Zone? {
+	get {
+		return gMineCloud?.favoritesZone
+	}
+	
+	set {
+		if  let n = newValue {
+			gMineCloud?.favoritesZone = n
+		}
+	}
+}
+
+
 class ZFavorites: ZRecords {
 
 
@@ -186,7 +199,7 @@ class ZFavorites: ZRecords {
             self.createRootFavorites()
 
             if  let root = gFavoritesRoot {
-                root.needProgeny()
+                root.reallyNeedProgeny()
             }
 
             onCompletion?(0)
@@ -417,7 +430,7 @@ class ZFavorites: ZRecords {
         bump         = { (iIndex: Int) in
             let zone = self.zoneAtIndex(iIndex)
 
-            if !gFocusing.focus(through: zone, atArrival) {
+            if !gFocusing.focusThrough(zone, atArrival) {
 
                 ////////////////////
                 // error: RECURSE //
@@ -433,7 +446,7 @@ class ZFavorites: ZRecords {
 
     @discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
         if  let favorite = currentFavorite {
-            return gFocusing.focus(through: favorite, atArrival)
+            return gFocusing.focusThrough(favorite, atArrival)
         }
 
         return false

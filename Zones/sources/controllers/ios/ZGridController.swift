@@ -100,10 +100,10 @@ class ZGridController: UICollectionViewController {
 			case .idUp:       gGraphEditor.move(up:  true,  selectionOnly: selectionOnly)
 			case .idDown:     gGraphEditor.move(up:  false, selectionOnly: selectionOnly)
 			case .idLeft:     gGraphEditor.move(out: true,  selectionOnly: selectionOnly)  { complete() }
-			case .idFocus:    gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }; return
 			case .idRight:    gGraphEditor.move(out: false, selectionOnly: selectionOnly)  { complete() }
-			case .idExtend:   break // extends = !extends
-			case .idMove:     selectionOnly = !selectionOnly
+			case .idFocus:    gFocusing.focus(kind: .eSelected) { gGraphEditor.redrawSyncRedraw() }; return
+			case .idMove:     selectionOnly = !selectionOnly // only a toggle, does nothing else
+			case .idExtend:   break // extends = !extends // disabled for now
 			}
 			
 			complete()

@@ -171,6 +171,7 @@
 		A727290A225AA29D002A5B6D /* ZLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7272909225AA29D002A5B6D /* ZLineView.swift */; };
 		A727290D225AA482002A5B6D /* ZLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7272909225AA29D002A5B6D /* ZLineView.swift */; };
 		A727290E225AA483002A5B6D /* ZLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7272909225AA29D002A5B6D /* ZLineView.swift */; };
+		A7285AC622D6DD9E00880F0E /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7FDB3DC2276459500033337 /* CloudKit.framework */; };
 		A734EB7021E26EE500B9475F /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = A734EB6F21E26EE500B9475F /* Credits.rtfd */; };
 		A734EB7121E26EE500B9475F /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = A734EB6F21E26EE500B9475F /* Credits.rtfd */; };
 		A734EB7221E26EE500B9475F /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = A734EB6F21E26EE500B9475F /* Credits.rtfd */; };
@@ -390,6 +391,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A71485B62256D1A200F54C0C /* SnapKit.framework in Frameworks */,
+				A7285AC622D6DD9E00880F0E /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -880,7 +882,7 @@
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Push = {
-								enabled = 0;
+								enabled = 1;
 							};
 							com.apple.Sandbox = {
 								enabled = 1;

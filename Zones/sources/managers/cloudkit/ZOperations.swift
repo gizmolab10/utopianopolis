@@ -59,8 +59,8 @@ enum ZOperationID: Int {
     case oParents            // after fetch so colors resolve properly
     case oRefetch            // user defaults list of record ids
     case oTraits
-    case oFetch              // after children so favorite targets resolve properly
-    case oMerge
+    case oFetchNeeded              // after children so favorite targets resolve properly
+    case oFetchAndMerge
     case oNone               // default operation
 
     var isLocal     : Bool { return localOperations.contains(self) }

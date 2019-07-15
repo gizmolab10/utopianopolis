@@ -341,9 +341,13 @@ class ZSelecting: NSObject {
     
     
     func makeVisibleAndGrab(_ iZone: Zone?, updateBrowsingLevel: Bool = true) {
-        makeVisible(iZone, updateBrowsingLevel: updateBrowsingLevel) {
-            iZone?.grab()
-        }
+		if let zone = iZone {
+			makeVisible(zone, updateBrowsingLevel: updateBrowsingLevel) {
+				gShowFavorites = kIsPhone && zone.isInFavorites
+				
+				zone.grab()
+			}
+		}
     }
     
     

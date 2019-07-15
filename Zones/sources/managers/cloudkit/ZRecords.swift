@@ -43,7 +43,8 @@ class ZRecords: NSObject {
     var         databaseID : ZDatabaseID
     var           manifest : ZManifest?
     var   lostAndFoundZone : Zone?
-    var        destroyZone : Zone?
+	var      favoritesZone : Zone?
+	var        destroyZone : Zone?
     var          trashZone : Zone?
     var           rootZone : Zone?
     var        hereIsValid : Bool { return maybeZoneForRecordName(hereRecordName) != nil }
@@ -76,13 +77,13 @@ class ZRecords: NSObject {
     
     
     var hereZoneMaybe: Zone? {
-        get { return maybeZoneForRecordName(hereRecordName) }
+        get { return maybeZoneForRecordName(hereRecordName) ?? (databaseID == .favoritesID ? gFavoritesRoot : rootZone) }
 		set { hereRecordName = newValue?.recordName ?? (databaseID == .favoritesID ? kFavoritesRootName : kRootName) }
     }
     
     
     var hereZone: Zone {
-        get { return hereZoneMaybe ?? (databaseID == .favoritesID ? gFavoritesRoot : rootZone)! }
+        get { return hereZoneMaybe! }
         set { hereZoneMaybe = newValue }
     }
 

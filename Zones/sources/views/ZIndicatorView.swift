@@ -95,7 +95,7 @@ class ZIndicatorView: ZView {
 
         let    strokeColor = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
         var   surroundRect = circleRect.insetBy(dx: -6.0, dy: -6.0)
-        let      dotsCount = gFocusing.travelStack.count
+        let      dotsCount = gFocusing.focusRing.count
         var         radius = Double(surroundRect.size.width) / 27.0
 
         strokeColor.setStroke()

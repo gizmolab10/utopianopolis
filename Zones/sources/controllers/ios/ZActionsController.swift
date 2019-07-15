@@ -75,7 +75,7 @@ class ZActionsController : ZGenericController {
 			case .eRefetchAll,
 				 .eRefetch: refetch(for: function == .eRefetchAll)
 			case .ePrefs:   switchView(to: function)
-			case .eDelete:  gGraphEditor.delete()
+			case .eDelete:  gGraphEditor.deleteGrabbed()
 			case .eNew:     gGraphEditor.addIdea()
 			case .eHang:    gBatches.unHang()
 			case .eName:    gTextEditor.edit(zone)

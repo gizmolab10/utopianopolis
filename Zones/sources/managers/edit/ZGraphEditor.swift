@@ -170,7 +170,7 @@ class ZGraphEditor: NSObject {
                     case kTab:     addNextAndRedraw(containing: OPTION)
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
                     case kBackspace,
-                         kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
+                         kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { deleteGrabbed(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
                     case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) }
                     default:       return false // false means key not handled
                     }
@@ -345,7 +345,7 @@ class ZGraphEditor: NSObject {
 
     func focusOnTrash() {
         if  let trash = gTrash {
-            gFocusing.focus(on: trash) {
+            gFocusing.focusOn(trash) {
                 self.redrawGraph()
             }
         }
@@ -916,7 +916,7 @@ class ZGraphEditor: NSObject {
 
     
     func convertToTitledLineAndRearrangeChildren() {
-        delete(preserveChildren: true, convertToTitledLine: true)
+        deleteGrabbed(preserveChildren: true, convertToTitledLine: true)
     }
     
     
@@ -1253,7 +1253,7 @@ class ZGraphEditor: NSObject {
     // MARK:-
 
 
-    func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
+    func deleteGrabbed(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
         deferRedraw {
             if  preserveChildren && !permanently {
                 self.preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
@@ -1278,7 +1278,7 @@ class ZGraphEditor: NSObject {
     }
 
 
-    private func deleteZones(_ iZones: [Zone], permanently: Bool = false, in iParent: Zone? = nil, iShouldGrab: Bool = true, onCompletion: Closure?) {
+	func deleteZones(_ iZones: [Zone], permanently: Bool = false, in iParent: Zone? = nil, iShouldGrab: Bool = true, onCompletion: Closure?) {
         if  iZones.count == 0 {
             onCompletion?()
             
@@ -1879,7 +1879,7 @@ class ZGraphEditor: NSObject {
         gSelecting.clearPaste()
 
         UNDO(self) { iUndoSelf in
-            iUndoSelf.delete()
+            iUndoSelf.deleteGrabbed()
         }
 
         redrawSyncRedraw()

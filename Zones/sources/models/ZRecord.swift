@@ -315,16 +315,20 @@ class ZRecord: NSObject {
     }
 
     
-    func needProgeny() {
-        //        if !gAssumeAllFetched {
-        //            addState(.needsProgeny)
-        //            removeState(.needsChildren)
-        //        }
-    }
+	func needProgeny() {
+
+		// use reallyNeedProgeny. depricated for performance
+
+//		addState(.needsProgeny)
+//		removeState(.needsChildren)
+	}
 
     
     func reallyNeedProgeny() {
-        addState(.needsProgeny)
+		
+		// N.B., make sure your need is worth the performance hit
+
+		addState(.needsProgeny)
         removeState(.needsChildren)
     }
 
@@ -332,7 +336,7 @@ class ZRecord: NSObject {
     func needChildren() {
         if !isBookmark && // all bookmarks are childless, by design
             showingChildren &&
-            false, // !gAssumeAllFetched,
+            false, // !gAssumeAllFetched,     N.B., depricated for performance ... use reallyNeedChildren
             !needsProgeny {
             addState(.needsChildren)
         }
