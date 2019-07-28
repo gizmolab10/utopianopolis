@@ -145,12 +145,13 @@ class ZRecords: NSObject {
     
     
     func properties(for recordType: String?) -> [String] {
-        if  let n = className(for: recordType),
-            let c = NSClassFromString(n),
-            let z = c as? ZRecord.Type {
-                return z.cloudProperties()
+        if  let   name = className(for: recordType),
+            let  klass = NSClassFromString(name),
+            let zClass = klass as? ZRecord.Type {
+                return zClass.cloudProperties()
         }
-        return []
+
+		return []
     }
 
     

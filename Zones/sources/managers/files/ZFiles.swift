@@ -18,7 +18,7 @@ import CoreFoundation
 
 
 let gFiles    = ZFiles()
-let gUseFiles = !kIsPhone
+let gUseFiles = true
 
 
 class ZFiles: NSObject {

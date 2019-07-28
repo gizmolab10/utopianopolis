@@ -40,7 +40,6 @@ class ZGraphEditor: NSObject {
 
 
     var previousEvent: ZEvent?
-    let notPersistedZone = Zone()
 
 
     var undoManager: UndoManager {
@@ -945,34 +944,29 @@ class ZGraphEditor: NSObject {
     }
     
     
-    func swapWithParent() {
+	func swapWithParent() {
 
-        // swap places with parent (children are swapped)
-        
-        if  gSelecting.currentGrabs.count == 1,
-            let grabbed = gSelecting.firstSortedGrab,
-            let  sIndex = grabbed.siblingIndex,
-            let  parent = grabbed.parentZone,
-            let  pIndex = parent.siblingIndex,
-            let gParent = parent.parentZone {
-            moveZone(grabbed, into: gParent, at: pIndex, orphan: true) {
-                self.moveZones(parent.children, into: self.notPersistedZone) {
-                    self.moveZones(grabbed.children, into: parent) {
-                        self.moveZones(self.notPersistedZone.children, into: grabbed) {
-                            self.moveZone(parent, into: grabbed, at: sIndex, orphan: true) {
-                                parent.needCount()
-                                
-                                if  gHere == parent {
-                                    gHere  = grabbed
-                                }
-                                
-                                self.redrawSyncRedraw(grabbed)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // swap places with parent
+
+		if  gSelecting.currentGrabs.count == 1,
+            let  grabbed = gSelecting.firstSortedGrab,
+            let grabbedI = grabbed.siblingIndex,
+            let   parent = grabbed.parentZone,
+            let  parentI = parent.siblingIndex,
+			let   grandP = parent.parentZone {
+			
+			moveZone(grabbed, into: grandP, at: parentI, orphan: true) {
+				self.moveZone(parent, into: grabbed, at: grabbedI, orphan: true) {
+					parent.needCount()
+
+					if  gHere == parent {
+						gHere  = grabbed
+					}
+					
+					self.redrawSyncRedraw(grabbed)
+				}
+			}
+		}
     }
     
     

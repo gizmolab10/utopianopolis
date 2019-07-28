@@ -293,7 +293,7 @@ class ZBatches: ZOnboarding {
             } else {
                 let              requiresActive = [.oSaveToCloud, .oTraits                ].contains(operationID)
                 let               alwaysForBoth = [.oHere, .oRoots, .oReadFile, .oManifest].contains(operationID)
-                let               forMineIDOnly = [.oBookmarks, .oSubscribe, .oUnsubscribe].contains(operationID)
+                let               forMineIDOnly = [.oBookmarks, .oSubscribe               ].contains(operationID)
                 let                      isMine = restoreToID == .mineID
                 let               onlyCurrentID = (!gCanAccessMyCloudDatabase && !alwaysForBoth) || operationID == .oCompletion
                 let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
@@ -311,7 +311,6 @@ class ZBatches: ZOnboarding {
                         self.currentDatabaseID = databaseIDs[index]      // if hung, it happened in this id
 
                         self.invokeOperation(for: operationID) { (iResult: Any?) in
-//                            self  .lastOpStart = nil
 
                             FOREGROUND(canBeDirect: true) {
                                 let      error = iResult as? Error

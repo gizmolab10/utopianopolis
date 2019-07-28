@@ -68,7 +68,6 @@ class ZCloud: ZRecords {
         case .oSubscribe:     subscribe         (cloudCallback)
         case .oTraits:        fetchTraits       (cloudCallback)
         case .oUndelete:      undeleteAll       (cloudCallback)
-        case .oUnsubscribe:   unsubscribe       (cloudCallback)
         case .oRecount:       recount           (cloudCallback)
         default:                                 cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
         }
@@ -1212,23 +1211,23 @@ class ZCloud: ZRecords {
     
     
     func establishRoots(_ onCompletion: IntClosure?) {
+		var establishRootAt: IntClosure?     // pre-declare so can recursively call from within it
         let         rootIDs: [ZRootID]   = [.favorites, .destroy, .trash, .graph, .lost]
-        var establishRootAt: IntClosure?     // pre-declare so can recursively call from within
         establishRootAt                  = { iIndex in
             if iIndex >= rootIDs.count {
                 onCompletion?(0)
             } else {
-                let            rootID = rootIDs[iIndex]
-                let        recordName = rootID.rawValue
-                var              name = self.databaseID.userReadableString + " " + recordName
-                let establishNextRoot = { establishRootAt?(iIndex + 1) }
+                let      rootID = rootIDs[iIndex]
+                let  recordName = rootID.rawValue
+                var        name = self.databaseID.userReadableString + " " + recordName
+                let recurseNext = { establishRootAt?(iIndex + 1) }
 
                 switch rootID {
-                case .favorites: if gFavoritesRoot        != nil || self.databaseID != .mineID { establishNextRoot(); return } else { name = kFavoritesName }
-                case .graph:     if self.rootZone         != nil                               { establishNextRoot(); return } else { name = kFirstIdeaTitle }
-                case .lost:      if self.lostAndFoundZone != nil                               { establishNextRoot(); return }
-                case .trash:     if self.trashZone        != nil                               { establishNextRoot(); return }
-                case .destroy:   if self.destroyZone      != nil                               { establishNextRoot(); return }
+                case .favorites: if gFavoritesRoot        != nil || self.databaseID != .mineID { recurseNext(); return } else { name = kFavoritesName }
+                case .graph:     if self.rootZone         != nil                               { recurseNext(); return } else { name = kFirstIdeaTitle }
+                case .lost:      if self.lostAndFoundZone != nil                               { recurseNext(); return }
+                case .trash:     if self.trashZone        != nil                               { recurseNext(); return }
+                case .destroy:   if self.destroyZone      != nil                               { recurseNext(); return }
                 }
 
                 self.establishRootFor(name: name, recordName: recordName) { iZone in
@@ -1244,7 +1243,7 @@ class ZCloud: ZRecords {
                     case .lost:      self.lostAndFoundZone = iZone
                     }
 
-                    establishNextRoot()
+                    recurseNext()
                 }
             }
         }
@@ -1286,43 +1285,6 @@ class ZCloud: ZRecords {
     // MARK:-
 
 
-    func unsubscribe(_ onCompletion: IntClosure?) {
-        if  cloudUnavailable {
-            onCompletion?(0)
-        } else {
-            onCompletion?(-1)
-            database!.fetchAllSubscriptions { (iSubscriptions: [CKSubscription]?, iError: Error?) in
-                gAlerts.alertError(iError) { iHasError in
-                    if iHasError {
-                        onCompletion?(0)
-                    } else {
-                        var count: Int = iSubscriptions!.count
-
-                        if count == 0 {
-                            onCompletion?(0)
-                        } else {
-                            for subscription: CKSubscription in iSubscriptions! {
-								if  let querySubscription = subscription as? CKQuerySubscription,
-									querySubscription.querySubscriptionOptions != [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion] {
-									self.database!.delete(withSubscriptionID: querySubscription.subscriptionID, completionHandler: { (iSubscription: String?, iUnsubscribeError: Error?) in
-										gAlerts.alertError(iUnsubscribeError) { iHasError in }
-										
-										count -= 1
-										
-										if count == 0 {
-											onCompletion?(0)
-										}
-									})
-								}
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
     func subscribe(_ onCompletion: IntClosure?) {
         if  cloudUnavailable {
             onCompletion?(0)
@@ -1335,7 +1297,6 @@ class ZCloud: ZRecords {
                 let    predicate :                     NSPredicate = NSPredicate(value: true)
                 let subscription :                  CKSubscription = CKQuerySubscription(recordType: className, predicate: predicate, options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion])
                 let  information : CKSubscription.NotificationInfo = CKSubscription.NotificationInfo()
-//				information                           .desiredKeys = ZRecord.cloudProperties(for: className)
                 information                  .alertLocalizationKey = "new Thoughtful data has arrived";
 				information            .shouldSendContentAvailable = true
                 information                           .shouldBadge = true

@@ -27,7 +27,7 @@ enum ZOperationID: Int {
     case oFetchUserID
     case oFetchUserRecord
 
-    // startup
+    // continue
 
     case oCloud
     case oManifest
@@ -43,13 +43,14 @@ enum ZOperationID: Int {
     case oFinishUp
 	case oFetchAll
     case oRecount
-    case oUnsubscribe
     case oSubscribe
     case oDone
 
     // miscellaneous
 
-    case oSaveToCloud               // zones, traits, destroy
+	case oFetchAndMerge
+	case oFetchNeeded        // after children so favorite targets resolve properly
+    case oSaveToCloud        // zones, traits, destroy
     case oEmptyTrash
     case oCompletion
     case oBookmarks
@@ -59,8 +60,6 @@ enum ZOperationID: Int {
     case oParents            // after fetch so colors resolve properly
     case oRefetch            // user defaults list of record ids
     case oTraits
-    case oFetchNeeded              // after children so favorite targets resolve properly
-    case oFetchAndMerge
     case oNone               // default operation
 
     var isLocal     : Bool { return localOperations.contains(self) }
