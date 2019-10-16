@@ -26,7 +26,6 @@ var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 var                gWorkMode                     = ZWorkMode.startupMode
 var             gDeferRedraw                     = false
 var             gDebugReport                     = false
-var       	  gShowFavorites					 = false
 var           gTextCapturing                     = false
 var         gIsReadyToShowUI                     = false
 var       gKeyboardIsVisible                     = false
@@ -108,6 +107,12 @@ var gHere: Zone {
 var gHereMaybe: Zone? {
     get { return gRecords?.hereZoneMaybe }
     set { gRecords?.hereZoneMaybe = newValue }
+}
+
+
+var gShowFavorites : Bool {
+	get { return getPreferencesBool(   for: kShowFavorites, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kShowFavorites) }
 }
 
 

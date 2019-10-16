@@ -840,7 +840,7 @@ class ZRecords: NSObject {
     }
 
 
-    func zone(for ckRecord: CKRecord, requireFetch: Bool = true) -> Zone {
+    func zone(for ckRecord: CKRecord, requireFetch: Bool = true, preferFetch: Bool = false) -> Zone {
         var     zone = maybeZoneForCKRecord(ckRecord)
 
         if let z = zone {
@@ -848,10 +848,13 @@ class ZRecords: NSObject {
         } else {
             zone = Zone(record: ckRecord, databaseID: databaseID)
 
-            if  requireFetch {
+			if  requireFetch {
                 zone?.fetchBeforeSave() // POTENTIALLY BAD DUMMY
-                zone?.needFetch()
             }
+
+			if  preferFetch || requireFetch {
+				zone?.needFetch()
+			}
         }
 
         return zone!
