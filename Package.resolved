@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/PerfectlySoft/Perfect-CRUD.git",
         "state": {
           "branch": null,
-          "revision": "e79873e28ee9acf96fdf71b6784130a97a4b3f74",
-          "version": "1.0.4"
+          "revision": "5a947634b7ce0b991e8f455a61ce02449f2e6f36",
+          "version": "1.2.3"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/PerfectlySoft/Perfect-libpq.git",
         "state": {
           "branch": null,
-          "revision": "8b8ff3ceff9af35d9fa4da1f3a93e77dabfcc095",
-          "version": "2.0.1"
+          "revision": "71c77138037b3cfc97f944efd40af5301c8c7c1f",
+          "version": "2.1.0"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/PerfectlySoft/Perfect-PostgreSQL.git",
         "state": {
           "branch": null,
-          "revision": "cd8567143b3a822ca79270483e7987b180294ea7",
-          "version": "3.1.2"
+          "revision": "0ef4536fcd75fc6e165b0163e7000b190e76b297",
+          "version": "3.2.1"
         }
       }
     ]

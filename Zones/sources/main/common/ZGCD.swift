@@ -1,5 +1,5 @@
 //
-//  XBGCD.m
+//  ZGCD.m
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 3/30/16.

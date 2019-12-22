@@ -70,10 +70,10 @@ enum ZOperationID: Int {
 let deprecatedOps:   [ZOperationID] = [.oParents]
 let localOperations: [ZOperationID] = [.oHere, .oRoots, .oFound, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
 
-var gDebugTimer:             Timer?
-var gCloudTimer:             Timer?
-var gCloudFire:       TimerClosure?
-var gDebugTimerCount                = 0
+var gDebugTimerCount = 0
+var gDebugTimer: Timer?
+var gCloudTimer: Timer?
+var gCloudFire:  TimerClosure?
 
 
 class ZOperations: NSObject {
@@ -232,16 +232,16 @@ class ZOperations: NSObject {
                         FOREGROUND {
                             if self.currentOp == .oCompletion {
 
-                                //////////////////////////////////////
-                                // done with this set of operations //
-                                //////////////////////////////////////
+                                // /////////////////////////////////////
+                                // done with this batch of operations //
+								// /////////////////////////////////////
 
                                 onCompletion()
                             }
 
-                            ////////////////////////
+							// /////////////////////
                             // release suspension //
-                            ////////////////////////
+							// /////////////////////
 
                             self.queue.isSuspended = false
                         }

@@ -1086,7 +1086,7 @@ class Zone : ZRecord {
 
         if status == .eContinue {
             for child in children {
-                if visited.contains(child) {
+                if  visited.contains(child) {
                     status = .eSkip
 
                     break

@@ -236,8 +236,8 @@ extension NSObject {
 
 
     func jsonDictFrom(_ dict: ZStorageDictionary) -> [String : NSObject] {
-        var deferals = ZStorageDictionary ()
-        var   result = [String : NSObject] ()
+        var    last = ZStorageDictionary ()
+        var  result = [String : NSObject] ()
 
         let closure = { (key: ZStorageType, value: Any) in
             var goodValue       = value
@@ -260,13 +260,13 @@ extension NSObject {
 
         for (key, value) in dict {
             if [.children, .traits].contains(key) {
-                deferals[key] = value
+                last[key] = value
             } else {
                 closure(key, value)
             }
         }
 
-        for (key, value) in deferals {
+        for (key, value) in last {
             closure(key, value)
         }
 
