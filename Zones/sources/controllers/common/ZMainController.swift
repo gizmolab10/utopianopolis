@@ -39,10 +39,13 @@ class ZMainController: ZGenericController {
 
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+		let   hideEssay = gWorkMode != .essayMode
         let  hideSearch = gWorkMode != .searchMode
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
         switch iKind {
+		case .eEssay:
+			essayView?			  .isHidden = hideEssay
         case .eFound:
             searchBoxView?        .isHidden = hideSearch
             searchResultsView?    .isHidden = hideResults

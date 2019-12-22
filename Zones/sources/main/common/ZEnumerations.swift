@@ -63,7 +63,7 @@ enum ZWorkMode: Int {
     case startupMode
     case searchMode
     case graphMode
-    // case essayMode
+	case essayMode
     // case outlineMode
 }
 

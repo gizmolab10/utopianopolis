@@ -145,6 +145,7 @@ class ZGraphEditor: NSObject {
                     case "h":      editTrait(for: .eHyperlink)
                     case "i":      toggleColorized()
                     case "l":      alterCase(up: false)
+					case "k":      rotateWritable()
                     case "m":      orderByLength(OPTION)
                     case "n":      alphabetize(OPTION)
                     case "o":      if SPECIAL { gFiles.showInFinder() } else { gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() } }
@@ -154,7 +155,7 @@ class ZGraphEditor: NSObject {
                     case "s":      gFiles.exportToFile(asOutline: OPTION, for: gHere)
                     case "t":      swapWithParent()
                     case "u":      alterCase(up: true)
-                    case "w":      rotateWritable()
+                    case "w":      essay()
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
                     case "+":      divideChildren()
                     case "-":      if SPECIAL { convertToTitledLineAndRearrangeChildren() } else if COMMAND { return gSelecting.currentMoveable.convertToFromLine() } else { addDashedLine() }
@@ -394,7 +395,7 @@ class ZGraphEditor: NSObject {
                     name                  = nameParts[1]                // remove prefix
                 } else {
                     if  name.starts(with: before) {
-                        var     nameParts = name.components(separatedBy: after)
+                        let     nameParts = name.components(separatedBy: after)
                         var         index = 0
 
                         while nameParts.count > index + 1 {
@@ -559,6 +560,13 @@ class ZGraphEditor: NSObject {
     }
 
 
+	func essay() {
+		gWorkMode = (gWorkMode == .essayMode) ? .graphMode : .essayMode
+		
+		gControllers.signalFor(nil, regarding: .eEssay)
+	}
+	
+ 
     func selectAll(progeny: Bool = false) {
         var zone = gSelecting.currentMoveable
 
