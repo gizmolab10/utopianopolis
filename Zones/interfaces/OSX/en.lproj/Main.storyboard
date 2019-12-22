@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -526,7 +526,7 @@ DQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Thoughtful" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="57" y="-424"/>
+            <point key="canvasLocation" x="-71" y="649"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -547,7 +547,7 @@ DQ
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="192" y="224"/>
+            <point key="canvasLocation" x="392" y="84"/>
         </scene>
         <!--Graph-->
         <scene sceneID="hIz-AP-VOD">
@@ -609,7 +609,7 @@ DQ
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="681" y="1442"/>
+            <point key="canvasLocation" x="114" y="1442"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -669,7 +669,7 @@ DQ
                     <connections>
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="fDV-lr-VDw"/>
                         <outlet property="detailsWidth" destination="us8-K9-IEo" id="zgQ-PT-G1q"/>
-                        <outlet property="editorView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
+                        <outlet property="graphView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
                         <outlet property="searchBoxHeight" destination="lGr-3g-ayh" id="9xd-lu-oT0"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
@@ -677,7 +677,7 @@ DQ
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="191" y="757"/>
+            <point key="canvasLocation" x="391" y="649"/>
         </scene>
         <!--Search Controller-->
         <scene sceneID="Gwm-hS-Ozn">
@@ -711,7 +711,7 @@ DQ
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="697" y="757"/>
+            <point key="canvasLocation" x="-328" y="1167"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -729,14 +729,14 @@ DQ
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" id="z27-6x-Roi">
                                             <rect key="frame" x="0.0" y="0.0" width="408" height="574"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
                                                 <tableColumn width="405" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <font key="font" metaFont="label" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
@@ -778,7 +778,7 @@ DQ
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="191" y="1442"/>
+            <point key="canvasLocation" x="1155" y="1442"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -786,7 +786,57 @@ DQ
                 <controllerPlaceholder storyboardName="Details" id="yWa-SA-l1V" sceneMemberID="viewController"/>
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-166" y="1117"/>
+            <point key="canvasLocation" x="848" y="1158"/>
+        </scene>
+        <!--Essay-->
+        <scene sceneID="YUn-EI-h0m">
+            <objects>
+                <viewController id="8gW-F6-R6g" userLabel="Essay" customClass="ZEssayController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" identifier="drag view" id="LfD-Wf-rhW" userLabel="View">
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView hidden="YES" appearanceType="aqua" translatesAutoresizingMaskIntoConstraints="NO" id="TeG-e3-hfY">
+                                <rect key="frame" x="0.0" y="226" width="400" height="144"/>
+                                <subviews>
+                                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="jd5-cM-Ao6">
+                                        <rect key="frame" x="128" y="0.0" width="144" height="144"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="jd5-cM-Ao6" secondAttribute="height" id="WDb-zw-4NJ"/>
+                                        </constraints>
+                                    </progressIndicator>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="jd5-cM-Ao6" firstAttribute="centerY" secondItem="TeG-e3-hfY" secondAttribute="centerY" id="AOz-Lh-A5i"/>
+                                    <constraint firstAttribute="bottom" secondItem="jd5-cM-Ao6" secondAttribute="bottom" id="PZJ-Xq-vuB"/>
+                                    <constraint firstItem="jd5-cM-Ao6" firstAttribute="top" secondItem="TeG-e3-hfY" secondAttribute="top" id="TXk-D4-Fzb"/>
+                                    <constraint firstAttribute="height" constant="144" id="deE-hU-NPV"/>
+                                    <constraint firstItem="jd5-cM-Ao6" firstAttribute="centerX" secondItem="TeG-e3-hfY" secondAttribute="centerX" id="x2L-gF-Jim"/>
+                                </constraints>
+                            </customView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="HOI-yt-EwI" customClass="ZEssayView" customModule="Thoughtful" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="HOI-yt-EwI" firstAttribute="leading" secondItem="LfD-Wf-rhW" secondAttribute="leading" id="DcG-xC-2m5"/>
+                            <constraint firstItem="TeG-e3-hfY" firstAttribute="centerY" secondItem="LfD-Wf-rhW" secondAttribute="centerY" id="J2y-u7-npe"/>
+                            <constraint firstAttribute="trailing" secondItem="TeG-e3-hfY" secondAttribute="trailing" id="T5P-wt-3l0"/>
+                            <constraint firstItem="HOI-yt-EwI" firstAttribute="top" secondItem="LfD-Wf-rhW" secondAttribute="top" id="gcI-6p-l35"/>
+                            <constraint firstItem="HOI-yt-EwI" firstAttribute="bottom" secondItem="LfD-Wf-rhW" secondAttribute="bottom" id="jBV-Ff-pFi"/>
+                            <constraint firstItem="TeG-e3-hfY" firstAttribute="leading" secondItem="LfD-Wf-rhW" secondAttribute="leading" id="ogT-VO-XVE"/>
+                            <constraint firstItem="HOI-yt-EwI" firstAttribute="trailing" secondItem="LfD-Wf-rhW" secondAttribute="trailing" id="tkM-9E-vgG"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="essayView" destination="HOI-yt-EwI" id="KyM-sg-WOU"/>
+                        <outlet property="spinner" destination="jd5-cM-Ao6" id="Vp2-KU-0gj"/>
+                        <outlet property="spinnerView" destination="TeG-e3-hfY" id="11Q-9M-Qkw"/>
+                    </connections>
+                </viewController>
+                <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="561" y="1442"/>
         </scene>
     </scenes>
 </document>

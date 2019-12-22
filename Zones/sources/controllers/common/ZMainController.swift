@@ -27,7 +27,8 @@ class ZMainController: ZGenericController {
     @IBOutlet var searchResultsView:   ZView?
     @IBOutlet var searchBoxView:       ZView?
     @IBOutlet var detailView:          ZView?
-    @IBOutlet var editorView:          ZView?
+	@IBOutlet var graphView:           ZView?
+	@IBOutlet var essayView:           ZView?
     override  var controllerID:        ZControllerID { return .idMain }
 
 

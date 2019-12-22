@@ -22,6 +22,7 @@ enum ZControllerID: Int {
     case idSearch
     case idGraph
     case idDebug
+	case idEssay
     case idTools
     case idHelp
     case idMain
@@ -35,7 +36,8 @@ enum ZSignalKind: Int {
     case eDebug
     case eError
     case eFound
-    case eGraph
+	case eGraph
+	case eEssay
     case eSearch
     case eStartup
     case eDetails
