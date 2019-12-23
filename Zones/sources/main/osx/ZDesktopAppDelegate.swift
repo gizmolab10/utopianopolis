@@ -102,9 +102,11 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
     
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
-        if  gWorkMode == .graphMode {
-            gGraphEditor.handleMenuItem(iItem)
-        }
+		switch gWorkMode {
+			case .graphMode: gGraphEditor.handleMenuItem(iItem)
+			case .essayMode: gEssayEditor.handleMenuItem(iItem)
+			default: break
+		}
     }
 
 }

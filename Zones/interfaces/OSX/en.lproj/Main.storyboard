@@ -655,7 +655,7 @@ DQ
                                     <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
                                 </connections>
                             </containerView>
-                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
+                            <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                 <connections>
                                     <segue destination="8gW-F6-R6g" kind="embed" id="X02-Jc-hfC"/>
@@ -677,6 +677,7 @@ DQ
                             <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="ZFw-Tj-cbj"/>
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="gQc-MX-nbf"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="lap-td-b4Q"/>
+                            <constraint firstAttribute="bottom" secondItem="xfO-CE-WwN" secondAttribute="bottom" id="paZ-Ht-UuJ"/>
                             <constraint firstAttribute="trailing" secondItem="xfO-CE-WwN" secondAttribute="trailing" id="uie-T0-5GR"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="wPZ-B1-yXw"/>
                         </constraints>
@@ -751,7 +752,7 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="405" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="menu" size="11"/>
+                                                        <font key="font" metaFont="controlContent" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
