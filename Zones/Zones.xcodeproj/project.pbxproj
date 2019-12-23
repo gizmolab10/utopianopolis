@@ -172,6 +172,9 @@
 		A727290D225AA482002A5B6D /* ZLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7272909225AA29D002A5B6D /* ZLineView.swift */; };
 		A727290E225AA483002A5B6D /* ZLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7272909225AA29D002A5B6D /* ZLineView.swift */; };
 		A7285AC622D6DD9E00880F0E /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7FDB3DC2276459500033337 /* CloudKit.framework */; };
+		A72A0B6923B13CE6002A97E9 /* ZBaseEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */; };
+		A72A0B6A23B13CE6002A97E9 /* ZBaseEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */; };
+		A72A0B6B23B13CE6002A97E9 /* ZBaseEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */; };
 		A734EB7021E26EE500B9475F /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = A734EB6F21E26EE500B9475F /* Credits.rtfd */; };
 		A734EB7121E26EE500B9475F /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = A734EB6F21E26EE500B9475F /* Credits.rtfd */; };
 		A734EB7221E26EE500B9475F /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = A734EB6F21E26EE500B9475F /* Credits.rtfd */; };
@@ -376,6 +379,7 @@
 		A7245E0221729B18003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Details.storyboard; sourceTree = "<group>"; };
 		A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZShortcutsController.swift; sourceTree = "<group>"; };
 		A7272909225AA29D002A5B6D /* ZLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZLineView.swift; sourceTree = "<group>"; };
+		A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBaseEditor.swift; sourceTree = "<group>"; };
 		A734EB6F21E26EE500B9475F /* Credits.rtfd */ = {isa = PBXFileReference; lastKnownFileType = wrapper.rtfd; path = Credits.rtfd; sourceTree = "<group>"; };
 		A7395BAD21B877B600F5759F /* ZTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTextEditor.swift; sourceTree = "<group>"; };
 		A7395BAE21B877B600F5759F /* ZGraphEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphEditor.swift; sourceTree = "<group>"; };
@@ -796,6 +800,7 @@
 		A7395BAC21B877B600F5759F /* edit */ = {
 			isa = PBXGroup;
 			children = (
+				A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */,
 				A78A6E0923B021EA000F581F /* ZEssayEditor.swift */,
 				A7395BAD21B877B600F5759F /* ZTextEditor.swift */,
 				A7395BAE21B877B600F5759F /* ZGraphEditor.swift */,
@@ -1079,6 +1084,7 @@
 				0C39B38E1F182EBB0091F4D1 /* ZStackableView.swift in Sources */,
 				A78A6E0623B021B2000F581F /* ZEssayView.swift in Sources */,
 				0C39B2B01F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
+				A72A0B6923B13CE6002A97E9 /* ZBaseEditor.swift in Sources */,
 				0C39B2E91F182EBB0091F4D1 /* ZSelecting.swift in Sources */,
 				0C26F7301F799EEE00C2B978 /* ZoneSegmentedControl.swift in Sources */,
 				0C367C371F463D93000FC914 /* ZDragView.swift in Sources */,
@@ -1149,6 +1155,7 @@
 				0C43EFC021010F17000976CE /* ZFiles.swift in Sources */,
 				A78A6E0823B021B2000F581F /* ZEssayView.swift in Sources */,
 				A77758932207BCC600C37B49 /* ZToggleButton.swift in Sources */,
+				A72A0B6B23B13CE6002A97E9 /* ZBaseEditor.swift in Sources */,
 				0C4C23A42016B0930025E4DF /* ZContainerView.swift in Sources */,
 				0C48B0951F87197B00A247BC /* ZEvents.swift in Sources */,
 				0C39B2B81F182EBB0091F4D1 /* ZReachability.swift in Sources */,
@@ -1215,6 +1222,7 @@
 				0C367C381F463D93000FC914 /* ZDragView.swift in Sources */,
 				A70064DE22484808004E3A8D /* ZManifest.swift in Sources */,
 				A7D947DE21EC127D00B7DBFC /* ZSearchResultsController.swift in Sources */,
+				A72A0B6A23B13CE6002A97E9 /* ZBaseEditor.swift in Sources */,
 				A78A6E0B23B021EA000F581F /* ZEssayEditor.swift in Sources */,
 				A7FDB3E42276533E00033337 /* ZKeyInput.swift in Sources */,
 				A7D947DC21EC11C600B7DBFC /* ZDetailsController.swift in Sources */,

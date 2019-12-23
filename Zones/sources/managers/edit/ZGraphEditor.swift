@@ -23,8 +23,11 @@ let gGraphEditor = ZGraphEditor()
 // mix of zone mutations and web services requestss
 
 
-class ZGraphEditor: NSObject {
+class ZGraphEditor: ZBaseEditor {
+	override var workMode: ZWorkMode { return .graphMode }
 
+	// MARK:- events
+	// MARK:-
 
     class ZStalledEvent: NSObject {
         var event: ZEvent?
@@ -38,9 +41,7 @@ class ZGraphEditor: NSObject {
         }
     }
 
-
     var previousEvent: ZEvent?
-
 
     var undoManager: UndoManager {
         if  let w = gEditedTextWidget,
@@ -50,11 +51,6 @@ class ZGraphEditor: NSObject {
 
         return kUndoManager
     }
-    
-
-    // MARK:- events
-    // MARK:-
-
 
     enum ZMenuType: Int {
         case eUndo
@@ -76,8 +72,7 @@ class ZGraphEditor: NSObject {
         case eMultiple
     }
     
-
-    @discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
+    @discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
         if  var     key = iKey {
             let CONTROL = flags.isControl
             let COMMAND = flags.isCommand
@@ -181,7 +176,6 @@ class ZGraphEditor: NSObject {
         return true // true means key handled
     }
     
-
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
         if  gIsEditingText || gArrowsDoNotBrowse {
             gTextEditor.handleArrow(arrow, flags: flags)
@@ -250,21 +244,6 @@ class ZGraphEditor: NSObject {
 
         return iEvent
     }
-
-
-    func handleMenuItem(_ iItem: ZMenuItem?) {
-        #if os(OSX)
-            if !isDuplicate(item: iItem),
-                gWorkMode == .graphMode,
-                let   item = iItem {
-                let  flags = item.keyEquivalentModifierMask
-                let    key = item.keyEquivalent
-
-                handleKey(key, flags: flags, isWindow: true)
-            }
-        #endif
-    }
-
 
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
         let alterers = "ehltuw\r" + kMarkingCharacters
@@ -559,14 +538,6 @@ class ZGraphEditor: NSObject {
         }
     }
 
-
-	func essay() {
-		gWorkMode = (gWorkMode == .essayMode) ? .graphMode : .essayMode
-		
-		gControllers.signalFor(nil, regarding: .eEssay)
-	}
-	
- 
     func selectAll(progeny: Bool = false) {
         var zone = gSelecting.currentMoveable
 

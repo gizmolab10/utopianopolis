@@ -442,9 +442,9 @@ class ZTextEditor: ZTextView {
 			}
 		}
 		
-		var converted: String {
-			let (converted, _) = both
-			return converted
+		var text: String {
+			let (insert, _) = both
+			return insert
 		}
 		
 		var title: String {
@@ -455,32 +455,24 @@ class ZTextEditor: ZTextView {
 	}
 	
 	
-	@objc func handlePopupMenu(_ sender: ZMenuItem) {
+	@objc func handlePopupMenu(_ iItem: ZMenuItem) {
 		#if os(OSX)
-		if  let type = ZPopupMenuType(rawValue: sender.keyEquivalent),
+		if  let type = ZPopupMenuType(rawValue: iItem.keyEquivalent),
 			type != .eCancel {
-			let converted = type.converted
+			let text = type.text
 			
-			insertText(converted)
+			insertText(text)
 		}
 		#endif
 	}
 	
-	
 	// MARK:- events
 	// MARK:-
 
-
-    @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) {
-        if  gWorkMode == .graphMode {
-            gGraphEditor.handleMenuItem(iItem)
-        }
-    }
-    
+	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gDesktopAppDelegate?.genericMenuHandler(iItem) }
     
     // MARK:- arrow keys
     // MARK:-
-    
     
     func moveOut(_ iMoveOut: Bool) {
         gArrowsDoNotBrowse = true

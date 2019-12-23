@@ -16,9 +16,10 @@ import UIKit
 
 let gEssayEditor = ZEssayEditor()
 
-class ZEssayEditor: NSObject {
-	
-	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
+class ZEssayEditor: ZBaseEditor {
+	override var workMode: ZWorkMode { return .essayMode }
+
+	@discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
 		if  var     key = iKey {
 			let COMMAND = flags.isCommand
 			let  OPTION = flags.isOption
@@ -37,22 +38,6 @@ class ZEssayEditor: NSObject {
 		}
 		
 		return false
-	}
-
-	func handleMenuItem(_ iItem: ZMenuItem?) {
-		if  gWorkMode == .essayMode,
-			let   item = iItem {
-			let  flags = item.keyEquivalentModifierMask
-			let    key = item.keyEquivalent
-			
-			handleKey(key, flags: flags, isWindow: true)
-		}
-	}
-
-	func essay() {
-		gWorkMode = (gWorkMode == .essayMode) ? .graphMode : .essayMode
-		
-		gControllers.signalFor(nil, regarding: .eEssay)
 	}
 
 }
