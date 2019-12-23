@@ -39,5 +39,5 @@ class ZEssayEditor: ZBaseEditor {
 		
 		return false
 	}
-
+	
 }

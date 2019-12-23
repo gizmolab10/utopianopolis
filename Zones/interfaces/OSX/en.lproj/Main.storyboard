@@ -341,23 +341,30 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="LQ0-du-Ruk"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Add/Edit Email" tag="10" keyEquivalent="e" id="Wz4-j9-y63">
+                                                    <menuItem title="Add/Edit/Hide" id="FtB-kg-Qai">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="G3d-qF-1G9"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Add/Edit Hyperlink" tag="10" keyEquivalent="h" id="SSK-qb-nLz">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="mmb-N3-Zdp"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Add/Edit Essay" tag="10" keyEquivalent="w" id="heJ-xZ-mvA">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="sTg-br-wbd"/>
-                                                        </connections>
+                                                        <menu key="submenu" title="Add/Edit/Hide" id="TjQ-8Y-zNJ">
+                                                            <items>
+                                                                <menuItem title="Email" tag="10" keyEquivalent="e" id="oKh-cg-tNy">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="zlO-ix-pfH"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Hyperlink" tag="10" keyEquivalent="h" id="bGY-Q2-2NU">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="Tr6-4K-PYH"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Essay" tag="10" keyEquivalent="w" id="eHh-JD-vMS">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="8XL-y6-rFW"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                            </items>
+                                                        </menu>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="uVR-Bl-7cX"/>
                                                     <menuItem title="Select All (Children / Siblings)" keyEquivalent="a" id="KFq-Lb-Zy0">
@@ -685,6 +692,7 @@ DQ
                     <connections>
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="fDV-lr-VDw"/>
                         <outlet property="detailsWidth" destination="us8-K9-IEo" id="zgQ-PT-G1q"/>
+                        <outlet property="essayView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
                         <outlet property="graphView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
                         <outlet property="searchBoxHeight" destination="lGr-3g-ayh" id="9xd-lu-oT0"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
@@ -752,7 +760,7 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="405" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="controlContent" size="11"/>
+                                                        <font key="font" metaFont="message" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>

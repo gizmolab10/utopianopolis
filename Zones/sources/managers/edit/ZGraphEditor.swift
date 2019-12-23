@@ -41,8 +41,6 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-    var previousEvent: ZEvent?
-
     var undoManager: UndoManager {
         if  let w = gEditedTextWidget,
             w.undoManager != nil {
@@ -220,31 +218,7 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
     }
-
 	
-	func matchesPrevious(_ iEvent: ZEvent) -> Bool {
-		#if os(OSX)
-		return iEvent == previousEvent
-		#else
-		return false // on iOS events don't pile up??????
-		#endif
-	}
-	
-
-    @discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> ZEvent? {
-        if  gWorkMode    == .graphMode,
-            !matchesPrevious(iEvent) {
-            let     flags = iEvent.modifierFlags
-            previousEvent = iEvent
-            
-            if  handleKey(iEvent.key, flags: flags, isWindow: isWindow) {
-                return nil
-            }
-        }
-
-        return iEvent
-    }
-
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
         let alterers = "ehltuw\r" + kMarkingCharacters
         let  COMMAND = flags.isCommand

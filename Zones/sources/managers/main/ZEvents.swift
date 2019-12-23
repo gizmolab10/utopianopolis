@@ -73,17 +73,19 @@ class ZEvents: NSObject {
             self.monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
                 if !isDuplicate(event: event) {
                     switch gWorkMode {
-                    case .searchMode:
-                        return gSearching.handleEvent(event)
-                    case .graphMode:
-                        if  gIsShortcutsFrontmost {
-                            return gShortcuts?.handleEvent(event) ?? nil
-                        } else {
-                            return gGraphEditor.handleEvent(event, isWindow: true)
-                        }
-                    default: break
-                    }
-                }
+						case .searchMode:
+							return gSearching.handleEvent(event)
+						case .essayMode:
+							gEssayEditor.handleEvent(event, isWindow: true)
+						case .graphMode:
+							if  gIsShortcutsFrontmost {
+								return gShortcuts?.handleEvent(event) ?? nil
+							} else {
+								return gGraphEditor.handleEvent(event, isWindow: true)
+						}
+						default: break
+					}
+				}
 
                 return event
             }

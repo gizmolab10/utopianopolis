@@ -46,6 +46,12 @@ class ZMainController: ZGenericController {
         switch iKind {
 		case .eEssay:
 			essayView?			  .isHidden = hideEssay
+			
+			if  hideEssay {
+				essayView?.resignFirstResponder()
+			} else {
+				essayView?.becomeFirstResponder()
+			}
         case .eFound:
             searchBoxView?        .isHidden = hideSearch
             searchResultsView?    .isHidden = hideResults
