@@ -353,6 +353,12 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="mmb-N3-Zdp"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="Add/Edit Essay" tag="10" keyEquivalent="w" id="heJ-xZ-mvA">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="sTg-br-wbd"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="uVR-Bl-7cX"/>
                                                     <menuItem title="Select All (Children / Siblings)" keyEquivalent="a" id="KFq-Lb-Zy0">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
@@ -609,7 +615,7 @@ DQ
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="565" y="1442"/>
+            <point key="canvasLocation" x="113" y="1442"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -649,7 +655,7 @@ DQ
                                     <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
                                 </connections>
                             </containerView>
-                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN">
+                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                 <connections>
                                     <segue destination="8gW-F6-R6g" kind="embed" id="X02-Jc-hfC"/>
@@ -745,7 +751,7 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="405" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="label" size="11"/>
+                                                        <font key="font" metaFont="menu" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
@@ -845,20 +851,7 @@ DQ
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="116" y="1442"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="Daa-On-Kbs">
-            <objects>
-                <viewController id="gH7-Oc-18P" sceneMemberID="viewController">
-                    <view key="view" id="KWQ-1Z-kkM">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </view>
-                </viewController>
-                <customObject id="LJE-9D-SI9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-245" y="241"/>
+            <point key="canvasLocation" x="557" y="1442"/>
         </scene>
     </scenes>
 </document>
