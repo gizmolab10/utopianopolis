@@ -18,4 +18,8 @@ class ZEssayController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	@IBOutlet var    essayView : ZEssayView?
 	@IBOutlet var  spinnerView : ZView?
 
+	override func viewWillAppear() {
+		super.viewWillAppear()
+		essayView?.setup()
+	}
 }

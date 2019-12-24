@@ -29,7 +29,8 @@ class Zone : ZRecord {
 
 
     @objc dynamic var           parent:  CKRecord.Reference?
-    @objc dynamic var         zoneName:       String?
+	@objc dynamic var            essay:       String?
+	@objc dynamic var         zoneName:       String?
     @objc dynamic var         zoneLink:       String?
     @objc dynamic var        zoneColor:       String?
     @objc dynamic var   zoneAttributes:       String?
@@ -188,8 +189,9 @@ class Zone : ZRecord {
 
 
     override class func cloudProperties() -> [String] {
-        return [#keyPath(parent),
-                #keyPath(zoneName),
+		return [#keyPath(essay),
+				#keyPath(parent),
+				#keyPath(zoneName),
                 #keyPath(zoneLink),
                 #keyPath(zoneColor),
                 #keyPath(zoneCount),

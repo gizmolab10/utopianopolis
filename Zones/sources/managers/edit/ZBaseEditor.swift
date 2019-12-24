@@ -56,7 +56,7 @@ class ZBaseEditor: NSObject {
 		#endif
 	}
 
-	func essay() {
+	func swapGraphAndEssay() {
 		gWorkMode = (gWorkMode == .essayMode) ? .graphMode : .essayMode
 		
 		gControllers.signalFor(nil, regarding: .eEssay)

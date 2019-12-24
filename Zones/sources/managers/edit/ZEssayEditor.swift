@@ -18,6 +18,7 @@ let gEssayEditor = ZEssayEditor()
 
 class ZEssayEditor: ZBaseEditor {
 	override var workMode: ZWorkMode { return .essayMode }
+	var zone: Zone? { return gSelecting.firstGrab }
 
 	@discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
 		if  var     key = iKey {
@@ -31,7 +32,7 @@ class ZEssayEditor: ZBaseEditor {
 			
 			switch key {
 				case kEscape,
-					 "w": essay()
+					 "w": swapGraphAndEssay()
 				case "/": if SPECIAL { gGraphEditor.showHideKeyboardShortcuts() }
 				default:  break
 			}
