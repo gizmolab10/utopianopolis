@@ -41,7 +41,6 @@ enum ZOperationID: Int {
     // finish
 
     case oFinishUp
-	case oFetchAll
     case oRecount
     case oSubscribe
     case oDone
@@ -55,6 +54,7 @@ enum ZOperationID: Int {
     case oCompletion
     case oBookmarks
     case oFetchLost
+	case oFetchAll
     case oUndelete
     case oChildren
     case oParents            // after fetch so colors resolve properly
@@ -164,9 +164,9 @@ class ZOperations: NSObject {
                     if  self.cloudStatusChanged() {
                         gControllers.signalFor(nil, regarding: .eDetails) // show change in cloud status
 
-                        /////////////////////////////////////////////////
+                        // //////////////////////////////////////////////
                         // assure that we can perform cloud operations //
-                        /////////////////////////////////////////////////
+                        // //////////////////////////////////////////////
 
                         if  gHasInternet && gIsReadyToShowUI {
                             let identifier: ZBatchID = gCanAccessMyCloudDatabase ? .bResumeCloud : .bNewAppleID
@@ -210,15 +210,15 @@ class ZOperations: NSObject {
 
             let blockOperation = BlockOperation {
 
-                ////////////////////////////////////////////////////////////////
+                // /////////////////////////////////////////////////////////////
                 // ignore operations that are not local when have no internet //
-                ////////////////////////////////////////////////////////////////
+                // /////////////////////////////////////////////////////////////
 
                 if  operationID.isLocal || gCanAccessMyCloudDatabase {
 
-                    //////////////////////////////////////////////////////////////////
+                    // ///////////////////////////////////////////////////////////////
                     // susend queue until operation function calls its onCompletion //
-                    //////////////////////////////////////////////////////////////////
+                    // ///////////////////////////////////////////////////////////////
 
                     self.queue.isSuspended = true
                     self.lastOpStart       = Date()

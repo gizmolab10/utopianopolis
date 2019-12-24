@@ -450,9 +450,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
         rubberbandStart = location
         gDraggedZone    = nil
         
-        //////////////////////
+        // ///////////////////
         // detect SHIFT key //
-        //////////////////////
+        // ///////////////////
         
         if let gesture = iGesture, gesture.isShiftDown {
             rubberbandPreGrabs.append(contentsOf: gSelecting.currentGrabs)
@@ -566,16 +566,16 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             let thoughtsZone     = rootWidget.widgetNearestTo(thoughtsLocation, in: dragView, gHereMaybe) {
             if  isThought, !kIsPhone,
 
-                ////////////////////////////////////////
+                // /////////////////////////////////////
 				// recurse once: with isThought false //
-                ////////////////////////////////////////
+                // /////////////////////////////////////
 
                 let (_, favoritesZone, favoritesLocation) = widgetNearest(iGesture, isThought: false) {
 
-                ///////////////////////////////////////////////
+                // ////////////////////////////////////////////
                 //     target zone found in both graphs      //
                 // deterimine which zone is closer to cursor //
-                ///////////////////////////////////////////////
+                // ////////////////////////////////////////////
 
 				let locationT =  thoughtsZone.dragDot
                 let locationF = favoritesZone.dragDot

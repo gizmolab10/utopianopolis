@@ -251,9 +251,9 @@ class ZCloud: ZRecords {
     
     func fetchRecord(for recordID: CKRecord.ID) {
         
-        /////////////////////////////////////////
+        // //////////////////////////////////////
 		// BUG: could be a trait or a deletion //
-        /////////////////////////////////////////
+        // //////////////////////////////////////
 		
         detectIfRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
             if  let ckRecord = iUpdatedRecord, !ckRecord.isEmpty {
@@ -959,9 +959,9 @@ class ZCloud: ZRecords {
                 } else { // nil means: we already received full response from cloud for this particular fetch
                     FOREGROUND {
 
-                        ////////////////////////////
+                        // /////////////////////////
                         // now we can mutate heap //
-                        ////////////////////////////
+                        // /////////////////////////
 
                         for childRecord in retrieved {
                             let     identifier = childRecord.recordID
@@ -990,15 +990,15 @@ class ZCloud: ZRecords {
                                     if  let p = parent,
                                         !p.containsCKRecord(child.record) {
 
-                                        ///////////////////////////////////////
+                                        // ////////////////////////////////////
                                         // no child has matching record name //
-                                        ///////////////////////////////////////
+                                        // ////////////////////////////////////
 
                                         if  let target = child.bookmarkTarget {
 
-                                            /////////////////////////////////////////////////////
+                                            // //////////////////////////////////////////////////
                                             // bookmark targets need writable, color and fetch //
-                                            /////////////////////////////////////////////////////
+                                            // //////////////////////////////////////////////////
 
                                             target.needFetch()
                                             target.maybeNeedColor()
@@ -1179,9 +1179,9 @@ class ZCloud: ZRecords {
 
         if  name == kRootName {
 
-            /////////////////////////
+            // //////////////////////
             // first time for user //
-            /////////////////////////
+            // //////////////////////
 
             rootCompletion()
 

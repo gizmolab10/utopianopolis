@@ -255,9 +255,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     let        strokeColor = isReveal && isDragDrop ?  gRubberbandColor : zone.color
                     var          fillColor = dotIsFilled ? strokeColor?.lighter(by: 3.0) : gBackgroundColor
 
-                    /////////
+                    // //////
                     // DOT //
-                    /////////
+                    // //////
 
                     fillColor?.setFill()
                     strokeColor?.setStroke()
@@ -266,17 +266,17 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                     if  isReveal {
                         if  zone.isBookmark {
 
-                            /////////////////////
+                            // //////////////////
                             // TINY CENTER DOT //
-                            /////////////////////
+                            // //////////////////
 
                             gBackgroundColor.setFill()
                             drawTinyBookmarkDot(in: iDirtyRect)
                         } else if zone.canTravel {
 
-                            /////////////////////
+                            // //////////////////
                             // TRAIT INDICATOR //
-                            /////////////////////
+                            // //////////////////
 
                             drawTraitIndicator(for: zone, isFilled: dotIsFilled, in: iDirtyRect)
                         }
@@ -284,9 +284,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         let  type = zone.directAccess == .eProgenyWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
                         fillColor = dotIsFilled ? gBackgroundColor : strokeColor
 
-                        //////////////////////////////
+                        // ///////////////////////////
                         // WRITE-ACCESS DECORATIONS //
-                        //////////////////////////////
+                        // ///////////////////////////
 
                         fillColor?.setFill()
                         drawWriteAccessDecoration(of: type, in: iDirtyRect)
@@ -294,22 +294,22 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
                 } else {
 
-                    ////////////////////////////////
+                    // /////////////////////////////
                     // MOSTLY INVISIBLE OUTER DOT //
-                    ////////////////////////////////
+                    // /////////////////////////////
 
                     if isReveal {
 
-                        ///////////////////////
+                        // ////////////////////
                         // TINY COUNTER DOTS //
-                        ///////////////////////
+                        // ////////////////////
 
                         drawTinyCountDots(iDirtyRect)
                     } else if isCurrentFavorite {
 
-                        ///////////////////////////////////
+                        // ////////////////////////////////
                         // HIGHLIGHT OF CURRENT FAVORITE //
-                        ///////////////////////////////////
+                        // ////////////////////////////////
 
                         zone.color?.withAlphaComponent(0.7).setFill()
                         drawFavoritesHighlight(in: iDirtyRect)

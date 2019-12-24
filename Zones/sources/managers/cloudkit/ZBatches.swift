@@ -269,9 +269,9 @@ class ZBatches: ZOnboarding {
 
     func transferDeferred() {
 
-        ////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////
         // if current list is empty, transfer deferred to current //
-        ////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////
 
         if  currentBatches.count == 0 && deferredBatches.count > 0 {
             currentBatches  = deferredBatches
@@ -283,10 +283,10 @@ class ZBatches: ZOnboarding {
     override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
         super.invokeMultiple(for: operationID, restoreToID: restoreToID) { iCompleted in
 
-            //////////////////////////////////////////////////////////////////
+            // ///////////////////////////////////////////////////////////////
             //     first, allow onboarding superclass to perform block      //
             // iCompleted will be false if it does not handle the operation //
-            //////////////////////////////////////////////////////////////////
+            // ///////////////////////////////////////////////////////////////
 
             if  iCompleted {
                 onCompletion(true)
@@ -301,9 +301,9 @@ class ZBatches: ZOnboarding {
                 var invokeForIndex: IntClosure?                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 
-                    /////////////////////////////////
+                    // //////////////////////////////
                     // always called in foreground //
-                    /////////////////////////////////
+                    // //////////////////////////////
 
                     if  operationID == .oCompletion || isNoop || index >= databaseIDs.count {
                         onCompletion(true)

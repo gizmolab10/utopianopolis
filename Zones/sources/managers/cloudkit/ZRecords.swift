@@ -230,9 +230,9 @@ class ZRecords: NSObject {
             if let oldRecord  = recordRegistry[id] {
                 if oldRecord != zRecord {
 
-                    ///////////////////////////////////////
+                    // ////////////////////////////////////
                     // if already registered, must erase //
-                    ///////////////////////////////////////
+                    // ////////////////////////////////////
 
                     duplicates.append(zRecord)
                 }

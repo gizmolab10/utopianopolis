@@ -199,9 +199,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             !zone.isGrabbed,
             !isFirstResponder {
 
-            ////////////////////////////////////////////////////////
+            // /////////////////////////////////////////////////////
             // draw line underneath text indicating it can travel //
-            ////////////////////////////////////////////////////////
+            // /////////////////////////////////////////////////////
 
             var         rect = dirtyRect.insetBy(dx: 3.0, dy: 0.0)
             rect.size.height = 0.0

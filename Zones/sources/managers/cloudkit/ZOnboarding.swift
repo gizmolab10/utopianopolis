@@ -74,9 +74,9 @@ class ZOnboarding : ZOperations {
             if  iStatus            == .available {
                 gCloudAccountStatus = .available
 
-                //////////////////////////
+                // ///////////////////////
                 // ONBOARDING CONTINUES //
-                //////////////////////////
+                // ///////////////////////
             }
 
             onCompletion()
@@ -87,9 +87,9 @@ class ZOnboarding : ZOperations {
     func ubiquity(_ onCompletion: @escaping Closure) {
         if FileManager.default.ubiquityIdentityToken == nil {
 
-            //////////////////////////
+            // ///////////////////////
             // ONBOARDING CONTINUES //
-            //////////////////////////
+            // ///////////////////////
 
             cloudStatusChanged()
         }
@@ -106,16 +106,16 @@ class ZOnboarding : ZOperations {
                 gAlerts.alertError(iError, "failed to fetch user record id; reason unknown") { iHasError in
                     if !iHasError {
 
-                        ////////////////////////////////////////////////
+                        // /////////////////////////////////////////////
                         // persist for file read on subsequent launch //
                         //   also: for determining write permission   //
-                        ////////////////////////////////////////////////
+                        // /////////////////////////////////////////////
 
                         gUserRecordID = iRecordID?.recordName
 
-                        //////////////////////////
+                        // ///////////////////////
                         // ONBOARDING CONTINUES //
-                        //////////////////////////
+                        // ///////////////////////
                     }
 
                     onCompletion()
@@ -136,9 +136,9 @@ class ZOnboarding : ZOperations {
                     self          .user = user
                     gCloudAccountStatus = .active
 
-                    //////////////////////////
+                    // ///////////////////////
                     // ONBOARDING CONTINUES //
-                    //////////////////////////
+                    // ///////////////////////
 
                     if  user.authorID  == nil {
                         user.authorID   = UUID().uuidString
@@ -151,9 +151,9 @@ class ZOnboarding : ZOperations {
                     let            name = ckRecordID.recordName
                     gCloudAccountStatus = .none
 
-                    ////////////////////////
+                    // /////////////////////
                     //  ONBOARDING STOPS  //
-                    ////////////////////////
+                    // /////////////////////
 
                     // see: shouldPerform
 

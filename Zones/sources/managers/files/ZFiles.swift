@@ -151,9 +151,9 @@ class ZFiles: NSObject {
                 self.writtenRecordNames.removeAll()
                 gRemoteStorage.recount()
 
-                /////////////////////////////////////////////////
+                // //////////////////////////////////////////////
                 // take snapshots just before exit from method //
-                /////////////////////////////////////////////////
+                // //////////////////////////////////////////////
 
                 if  let   graph  = manager.rootZone?.storageDictionary(for: dbID)  {
                     dict[.graph] = graph as NSObject

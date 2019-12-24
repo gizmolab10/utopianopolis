@@ -54,9 +54,9 @@ class ZRecord: NSObject {
         set {
             if  _record != newValue {
 
-                ///////////////////////////////////////////
+                // ////////////////////////////////////////
                 // old registrations are no longer valid //
-                ///////////////////////////////////////////
+                // ////////////////////////////////////////
 
                 clearAllStates() // is this needed pr wanted?
                 gBookmarks.unregisterBookmark(self as? Zone)
@@ -75,9 +75,9 @@ class ZRecord: NSObject {
                         setupLinks()
                     }
 
-                    /////////////////////
+                    // //////////////////
                     // debugging tests //
-                    /////////////////////
+                    // //////////////////
 
                     let zone = self as? Zone
                     let name = zone?.zoneName ?? recordName ?? emptyName

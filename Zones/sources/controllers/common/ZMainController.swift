@@ -48,7 +48,7 @@ class ZMainController: ZGenericController {
 			essayView?			  .isHidden = hideEssay
 			
 			if  hideEssay {
-				essayView?.resignFirstResponder()
+				gControllers.signalFor(nil, regarding: .eRelayout) // pass signal along
 			} else {
 				essayView?.becomeFirstResponder()
 			}

@@ -69,9 +69,9 @@ class ZTextPack: NSObject {
 
             var suffix: String?
 
-            /////////////////////////////////////
+            // //////////////////////////////////
             // add suffix for "show counts as" //
-            /////////////////////////////////////
+            // //////////////////////////////////
 
             if  gDebugShowIdentifiers && zone.record != nil {
                 suffix = zone.recordName
@@ -290,7 +290,7 @@ class ZTextEditor: ZTextView {
     
     
     func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, noPause: Bool = false) {
-        if (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { // prevent infinite recursion inside becomeFirstResponder, called below
+        if (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { 		// prevent infinite recursion inside becomeFirstResponder, called below
             let pack = ZTextPack(zRecord)
             if  pack.packedZone?.userCanWrite ?? false,
                 let     textWidget = pack.textWidget,

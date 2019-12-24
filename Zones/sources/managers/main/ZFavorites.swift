@@ -66,9 +66,9 @@ class ZFavorites: ZRecords {
 
             if  let initialID = zoneAtIndex(0)?.recordName {
 
-                //////////////////////////////////////////////////////////////////////////////////////
+                // ///////////////////////////////////////////////////////////////////////////////////
                 // initial default value is first item in favorites list, whatever it happens to be //
-                //////////////////////////////////////////////////////////////////////////////////////
+                // ///////////////////////////////////////////////////////////////////////////////////
 
                 UserDefaults.standard.set(initialID, forKey: kCurrentFavorite)
 
@@ -242,9 +242,9 @@ class ZFavorites: ZRecords {
             
             if  reveal {
                 
-                //////////////////////////////////////////////////////////////////
+                // ///////////////////////////////////////////////////////////////
                 // not reveal current favorite if user has hidden all favorites //
-                //////////////////////////////////////////////////////////////////
+                // ///////////////////////////////////////////////////////////////
                 
                 favorite.traverseAllAncestors { iAncestor in
                     iAncestor.revealChildren()
@@ -266,10 +266,10 @@ class ZFavorites: ZRecords {
 
     @discardableResult func updateAllFavorites(_ currentZone: Zone? = nil) -> Bool {
 
-        ////////////////////////////////////////////////
+        // /////////////////////////////////////////////
         // assure at least one root favorite per db   //
         // call every time favorites MIGHT be altered //
-        ////////////////////////////////////////////////
+        // /////////////////////////////////////////////
 
         var   hasDatabaseIDs = [ZDatabaseID] ()
         var         discards = IndexPath()
@@ -280,10 +280,10 @@ class ZFavorites: ZRecords {
 
         updateWorkingFavorites()
 
-        /////////////////////////////////////
+        // //////////////////////////////////
         // detect ids which have bookmarks //
         //   remove unfetched duplicates   //
-        /////////////////////////////////////
+        // //////////////////////////////////
 
         for favorite in workingFavorites {
             if  let            link  = favorite.zoneLink { // always true: all working favorites have a zone link
@@ -310,9 +310,9 @@ class ZFavorites: ZRecords {
                     continue
                 }
 
-                //////////////////////////////////////////
+                // ///////////////////////////////////////
                 // mark to discard unfetched duplicates //
-                //////////////////////////////////////////
+                // ///////////////////////////////////////
 
                 if  hasDuplicate {
                     let isUnfetched: ZoneClosure = { iZone in
@@ -335,9 +335,9 @@ class ZFavorites: ZRecords {
             }
         }
 
-        ///////////////////////////////
+        // ////////////////////////////
         // discard marked duplicates //
-        ///////////////////////////////
+        // ////////////////////////////
 
         while   let   index = discards.popLast() {
             if  let discard = zoneAtIndex(index) {
@@ -346,9 +346,9 @@ class ZFavorites: ZRecords {
             }
         }
 
-        /////////////////////////////////////////////////
+        // //////////////////////////////////////////////
         // add missing trash + lost and found favorite //
-        /////////////////////////////////////////////////
+        // //////////////////////////////////////////////
 
         if  missingTrash {
             let          trash = Zone(databaseID: .mineID, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
@@ -376,9 +376,9 @@ class ZFavorites: ZRecords {
             lost?.markNotFetched()
         }
 
-        ////////////////////////////////
+        // /////////////////////////////
         // add missing root favorites //
-        ////////////////////////////////
+        // /////////////////////////////
 
         for template in databaseRootFavorites.children {
             if  let          dbID = template.linkDatabaseID, !hasDatabaseIDs.contains(dbID) {
@@ -432,9 +432,9 @@ class ZFavorites: ZRecords {
 
             if !gFocusing.focusThrough(zone, atArrival) {
 
-                ////////////////////
+                // /////////////////
                 // error: RECURSE //
-                ////////////////////
+                // /////////////////
 
                 bump?(self.next(iIndex, forward))
             }

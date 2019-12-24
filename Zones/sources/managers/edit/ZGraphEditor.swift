@@ -202,9 +202,9 @@ class ZGraphEditor: ZBaseEditor {
                 }
             } else if !OPTION {
 
-                //////////////////
+                // ///////////////
                 // GENERATIONAL //
-                //////////////////
+                // ///////////////
 
                 var show = true
 
@@ -762,9 +762,9 @@ class ZGraphEditor: ZBaseEditor {
     func generationalUpdate(show: Bool, zone: Zone, to iLevel: Int? = nil, onCompletion: Closure?) {
         recursiveUpdate(show, zone, to: iLevel) {
 
-            ///////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////
             // delay executing this until the last time it is called //
-            ///////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////
 
             onCompletion?()
         }
@@ -774,9 +774,9 @@ class ZGraphEditor: ZBaseEditor {
     func recursiveUpdate(_ show: Bool, _ zone: Zone, to iLevel: Int?, onCompletion: Closure?) {
         if !show && zone.isGrabbed && (zone.count == 0 || !zone.showingChildren) {
 
-            //////////////////////////////////
+            // ///////////////////////////////
             // COLLAPSE OUTWARD INTO PARENT //
-            //////////////////////////////////
+            // ///////////////////////////////
 
             zone.concealAllProgeny()
 
@@ -796,9 +796,9 @@ class ZGraphEditor: ZBaseEditor {
             }
         } else {
 
-            ////////////////////
+            // /////////////////
             // ALTER CHILDREN //
-            ////////////////////
+            // /////////////////
 
             let level = iLevel ?? zone.level + (show ? 1 : -1)
             let apply = {
@@ -846,9 +846,9 @@ class ZGraphEditor: ZBaseEditor {
                 let show = !zone.showingChildren
 
                 if  zone.isRootOfFavorites {
-                    //////////////////////////////////////////////////////////////////
+                    // ///////////////////////////////////////////////////////////////
                     // avoid annoying user by treating favorites non-generationally //
-                    //////////////////////////////////////////////////////////////////
+                    // ///////////////////////////////////////////////////////////////
 
                     zone.toggleChildrenVisibility()
 
@@ -926,9 +926,9 @@ class ZGraphEditor: ZBaseEditor {
     func swapAndResumeEdit() {
         let t = gTextEditor
         
-        /////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////
         // swap currently editing zone with sibling, resuming edit //
-        /////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////
         
         if  let    zone = t.currentlyEditingZone, zone.hasSiblings {
             let atStart = gInsertionMode == .precede
@@ -1048,9 +1048,9 @@ class ZGraphEditor: ZBaseEditor {
             
             if  name.contains(kLineOfDashes) {
                 
-                /////////////
+                // //////////
                 // state 1 //
-                /////////////
+                // //////////
 
                 original.assignAndColorize(kLineWithStubTitle)   // convert into a stub title
 
@@ -1066,16 +1066,16 @@ class ZGraphEditor: ZBaseEditor {
             } else if name.isLineWithTitle {
                 if !isMultiple {
                     
-                    /////////////
+                    // //////////
                     // state 2 //
-                    /////////////
+                    // //////////
 
                     original.assignAndColorize(kLineOfDashes)
                 } else {
                     
-                    /////////////
+                    // //////////
                     // state 3 //
-                    /////////////
+                    // //////////
 
                     promoteToParent {}
                 }
@@ -1268,9 +1268,9 @@ class ZGraphEditor: ZBaseEditor {
                                     finish()
                                 } else {
                                     
-                                    //////////////////////////////////////////////////////////////
+                                    // ///////////////////////////////////////////////////////////
                                     // remove any bookmarks the target of which is one of zones //
-                                    //////////////////////////////////////////////////////////////
+                                    // ///////////////////////////////////////////////////////////
                                     
                                     self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { // recurse
                                         finish()
@@ -1303,9 +1303,9 @@ class ZGraphEditor: ZBaseEditor {
             if  zone == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
                 let recurse: Closure = {
                     
-                    /////////////
+                    // //////////
                     // RECURSE //
-                    /////////////
+                    // //////////
                     
                     self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)
                 }
@@ -1318,9 +1318,9 @@ class ZGraphEditor: ZBaseEditor {
                     }
                 } else {
 
-                    ///////////////////////////////////////////////////////////////////////////////////////////////
+                    // ////////////////////////////////////////////////////////////////////////////////////////////
                     // SPECIAL CASE: delete here but here has no parent ... so, go somewhere useful and familiar //
-                    ///////////////////////////////////////////////////////////////////////////////////////////////
+                    // ////////////////////////////////////////////////////////////////////////////////////////////
 
                     gFavorites.refocus {                 // travel through current favorite, then ...
                         if  gHere != zone {
@@ -1334,9 +1334,9 @@ class ZGraphEditor: ZBaseEditor {
                         p.fetchableCount = p.count                  // delete alters the count
                     }
                     
-                    /////////////
+                    // //////////
                     // RECURSE //
-                    /////////////
+                    // //////////
                     
                     self.deleteZones(zone.fetchedBookmarks, permanently: permanently) {
                         onCompletion?()
@@ -1425,9 +1425,9 @@ class ZGraphEditor: ZBaseEditor {
                 complete() // avoid the ridiculous
             } else if selectionOnly {
                 
-                ////////////////////
+                // /////////////////
                 // MOVE SELECTION //
-                ////////////////////
+                // /////////////////
                 
                 if extreme {
                     if  gHere.isRoot {
@@ -1470,9 +1470,9 @@ class ZGraphEditor: ZBaseEditor {
                 }
             } else if let p = parentZone, !p.isRoot {
                 
-                ///////////////
+                // ////////////
                 // MOVE ZONE //
-                ///////////////
+                // ////////////
                 
                 let grandParentZone = p.parentZone
                 
@@ -1480,9 +1480,9 @@ class ZGraphEditor: ZBaseEditor {
                     let grandParentName = grandParentZone?.zoneName
                     let   parenthetical = grandParentName == nil ? "" : " (\(grandParentName!))"
                     
-                    ////////////////////////////////////////////////////////////////////////
+                    // /////////////////////////////////////////////////////////////////////
                     // present an alert asking if user really wants to move here leftward //
-                    ////////////////////////////////////////////////////////////////////////
+                    // /////////////////////////////////////////////////////////////////////
                     
                     gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? "")\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
                         if iStatus == .eStatusYes {
@@ -1612,9 +1612,9 @@ class ZGraphEditor: ZBaseEditor {
                 }
             } else if !there.isABookmark(spawnedBy: zone) {
 
-                //////////////////////////////////
+                // ///////////////////////////////
                 // MOVE ZONE THROUGH A BOOKMARK //
-                //////////////////////////////////
+                // ///////////////////////////////
 
                 var     movedZone = zone
                 let    targetLink = there.crossLink
@@ -2018,12 +2018,12 @@ class ZGraphEditor: ZBaseEditor {
 
     func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, _ COMMAND: Bool, onCompletion: Closure?) {
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         // 1. move a normal zone into another normal zone                                                           //
         // 2. move a normal zone through a bookmark                                                                 //
         // 3. move a normal zone into favorites -- create a favorite pointing at normal zone, then add the favorite //
         // 4. move a favorite into a normal zone -- convert favorite to a bookmark, then move the bookmark          //
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         let   toBookmark = iInto.isBookmark                      // type 2
         let  toFavorites = iInto.isInFavorites && !toBookmark    // type 3
@@ -2060,9 +2060,9 @@ class ZGraphEditor: ZBaseEditor {
             return a.order < b.order
         }
 
-        //////////////////////
+        // ///////////////////
         // prepare for UNDO //
-        //////////////////////
+        // ///////////////////
 
         if toBookmark {
             undoManager.beginUndoGrouping()
@@ -2081,9 +2081,9 @@ class ZGraphEditor: ZBaseEditor {
             onCompletion?()
         }
 
-        ////////////////
+        // /////////////
         // move logic //
-        ////////////////
+        // /////////////
 
         let finish = {
             var done = false
@@ -2141,9 +2141,9 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
 
-        ///////////////////////////////////////
+        // ////////////////////////////////////
         // deal with target being a bookmark //
-        ///////////////////////////////////////
+        // ////////////////////////////////////
 
         if !toBookmark || COMMAND {
             finish()
@@ -2189,12 +2189,12 @@ class ZGraphEditor: ZBaseEditor {
     
     fileprivate func findChildMatching(_ grabThis: inout Zone, _ iMoveUp: Bool, _ iOffset: CGFloat?) {
 
-        //////////////////////////////////////////////////////////////
+        // ///////////////////////////////////////////////////////////
         // IF text is being edited by user, grab another zone whose //
         //                  text contains offset                    //
         //                       else whose                         //
         //           level equals gCurrentBrowsingLevel             //
-        //////////////////////////////////////////////////////////////
+        // ///////////////////////////////////////////////////////////
         
         while grabThis.showingChildren, grabThis.count > 0,
             let length = grabThis.zoneName?.length {
@@ -2243,9 +2243,9 @@ class ZGraphEditor: ZBaseEditor {
                 onCompletion?(.eData)
             } else {
 
-                ///////////////////////////
+                // ////////////////////////
                 // parent is not visible //
-                ///////////////////////////
+                // ////////////////////////
                 
                 let    snapshot = gSelecting.snapshot
                 let hasSiblings = rootMost.hasSiblings
@@ -2272,9 +2272,9 @@ class ZGraphEditor: ZBaseEditor {
             let     targetCount = targetZones.count
             let       targetMax = targetCount - 1
             
-            ///////////////////////
+            // ////////////////////
             // parent is visible //
-            ///////////////////////
+            // ////////////////////
             
             if  let       index = targetZones.firstIndex(of: rootMost) {
                 var     toIndex = index + (iMoveUp ? -1 : 1)
@@ -2291,9 +2291,9 @@ class ZGraphEditor: ZBaseEditor {
                     
                     if  !extreme {
                         
-                        //////////////////////////
+                        // ///////////////////////
                         // vertical wrap around //
-                        //////////////////////////
+                        // ///////////////////////
                         
                         if  toIndex > targetMax {
                             toIndex = 0
@@ -2323,9 +2323,9 @@ class ZGraphEditor: ZBaseEditor {
                     }
                 }
                 
-                /////////////////////////////////////
+                // //////////////////////////////////
                 // detect grab for extend behavior //
-                /////////////////////////////////////
+                // //////////////////////////////////
                 
                 for child in targetZones {
                     if !child.isGrabbed {
@@ -2338,17 +2338,17 @@ class ZGraphEditor: ZBaseEditor {
                     }
                 }
                 
-                //////////////////////////
+                // ///////////////////////
                 // vertical wrap around //
-                //////////////////////////
+                // ///////////////////////
                 
                 if !growSelection {
                     let    aboveTop = toIndex < 0
                     let belowBottom = toIndex >= targetCount
                     
-                    //////////////////////////
+                    // ///////////////////////
                     // vertical wrap around //
-                    //////////////////////////
+                    // ///////////////////////
                     
                     if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && belowBottom))) || ( iMoveUp && soloGrabbed && aboveTop) {
                         toIndex = targetMax // bottom
@@ -2360,9 +2360,9 @@ class ZGraphEditor: ZBaseEditor {
                 if  toIndex >= 0 && toIndex < targetCount {
                     var grabThis = targetZones[toIndex]
                     
-                    /////////////////////////////
+                    // //////////////////////////
                     // no vertical wrap around //
-                    /////////////////////////////
+                    // //////////////////////////
                     
                     UNDO(self) { iUndoSelf in
                         iUndoSelf.move(up: !iMoveUp, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
@@ -2378,9 +2378,9 @@ class ZGraphEditor: ZBaseEditor {
                         
                         if extreme {
                             
-                            ///////////////////
+                            // ////////////////
                             // expand to end //
-                            ///////////////////
+                            // ////////////////
                             
                             if iMoveUp {
                                 for i in 0 ..< toIndex {
@@ -2398,9 +2398,9 @@ class ZGraphEditor: ZBaseEditor {
                 } else if doCousinJump,
                     var index  = targetZones.firstIndex(of: rootMost) {
                     
-                    /////////////////
+                    // //////////////
                     // cousin jump //
-                    /////////////////
+                    // //////////////
                     
                     index     += (iMoveUp ? -1 : 1)
                     

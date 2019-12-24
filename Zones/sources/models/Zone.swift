@@ -82,6 +82,25 @@ class Zone : ZRecord {
     var           spawnedByAGrab:         Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
 
+	var essayText: NSMutableAttributedString? {
+		get {
+			var text: NSMutableAttributedString?
+
+			if  let base64 = essay,
+				let   data = Data(base64Encoded: base64) {
+				text       = NSKeyedUnarchiver.unarchiveObject(with: data) as? NSMutableAttributedString
+			}
+
+			return text
+		}
+
+		set {
+			if  let  value = newValue {
+				let   data = NSKeyedArchiver.archivedData(withRootObject: value)
+				essay      = data.base64EncodedString()
+			}
+		}
+	}
 
     var deepCopy: Zone {
         let theCopy = Zone(databaseID: databaseID)
@@ -1383,10 +1402,10 @@ class Zone : ZRecord {
                     oldRecord?.copy(to: iZone.record, properties: iZone.cloudProperties())  // preserve new record id
                     iZone.needSave()                                                        // in new id's record manager
 
-                    ////////////////////////////////////////////////////////////////////
+                    // /////////////////////////////////////////////////////////////////
                     // (2) compute parent and parentLink using iZone's new databaseID //
                     //     a subsequent traverse will eventually use it (1, above)    //
-                    ////////////////////////////////////////////////////////////////////
+                    // /////////////////////////////////////////////////////////////////
 
                     iZone.parentZone  = newParentZone
                 }

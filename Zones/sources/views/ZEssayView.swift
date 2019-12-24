@@ -19,33 +19,33 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var label: ZTextField?
 	@IBOutlet var editor: ZTextView?
 	
-	func setup() {
+	override func awakeFromNib() {
 		editor?.delegate = self
+	}
+	
+	func setup() {
+		clearEditor()
 
-		if  let zone = gEssayEditor.zone,
-			let name = zone.zoneName {
-			label?.text = "editing: \(name)"
-			clearEditor()
-
-			if  let base64 = zone.essay,
-				let   data = Data(base64Encoded: base64),
-				let   text = NSKeyedUnarchiver.unarchiveObject(with: data) as? NSMutableAttributedString {
+		if  let zone = gEssayEditor.zone {
+			if  let name = zone.zoneName {
+				label?.text = "editing: \(name)"
+			}
+			
+			if  let text = zone.essayText {
 				editor?.insertText(text)
 			}
 		}
 	}
 	
 	func clearEditor() {
-		let length = editor?.textStorage?.length ?? 0
-		editor?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
+		if  let length = editor?.textStorage?.length, length > 0 {
+			editor?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
+		}
 	}
 	
 	func textView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
-		if  let   zone = gEssayEditor.zone,
-			let   text = editor?.textStorage {
-			let   data = NSKeyedArchiver.archivedData(withRootObject: text)
-			let  essay = data.base64EncodedString()
-			zone.essay = essay
+		if  let       zone = gEssayEditor.zone {
+			zone.essayText = editor?.textStorage
 			
 			zone.needSave()
 		}

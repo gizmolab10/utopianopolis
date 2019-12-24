@@ -221,9 +221,9 @@ class ZoneWidget: ZView {
         if  let zone = widgetZone {
             if !zone.showingChildren || zone.count == 0 {
 
-                /////////////////////////
+                // //////////////////////
                 // DOT IS STRAIGHT OUT //
-                /////////////////////////
+                // //////////////////////
 
                 if  let        dot = revealDot.innerDot {
                     let     insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
@@ -238,9 +238,9 @@ class ZoneWidget: ZView {
 
                     if  indices.count == 1 || lastIndex >= zone.count {
 
-                        ///////////////////////////
+                        // ////////////////////////
                         // DOT IS ABOVE OR BELOW //
-                        ///////////////////////////
+                        // ////////////////////////
 
                         let   relation = gDragRelation
                         let    isAbove = relation == .above || (!gInsertionsFollow && (lastIndex == 0 || relation == .upon))
@@ -251,9 +251,9 @@ class ZoneWidget: ZView {
 
                     } else if lastIndex < zone.count, let secondDot = dot(at: lastIndex) {
 
-                        //////////////////
+                        // ///////////////
                         // DOT IS TWEEN //
-                        //////////////////
+                        // ///////////////
 
                         let secondRect = secondDot.convert(secondDot.bounds, to: self)
                         let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)

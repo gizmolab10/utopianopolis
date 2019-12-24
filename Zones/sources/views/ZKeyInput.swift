@@ -22,11 +22,11 @@ class ZKeyInput : UIControl, UIKeyInput {
         super.init(coder: aDecoder)
     }
     
-    
-    @discardableResult override func becomeFirstResponder() -> Bool {
-        return super.becomeFirstResponder() 
-    }
-    
+//    
+//    @discardableResult override func becomeFirstResponder() -> Bool {
+//        return super.becomeFirstResponder() 
+//    }
+//    
     
     func deleteBackward() {}
 
