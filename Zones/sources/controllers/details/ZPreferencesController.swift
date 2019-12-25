@@ -61,12 +61,12 @@ class ZPreferencesController: ZGenericController {
         let value = CGFloat(iSlider.doubleValue)
 
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iSlider.identifier) {
-            switch (identifier) {
-            case "thickness": gLineThickness = Double(value)
-            case   "stretch": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
-            case  "vertical": gGenericOffset = CGSize(width: gGenericOffset.width, height: value)
-            default:           break
-            }
+			switch (identifier) {
+				case "thickness": gLineThickness = Double(value)
+				case   "stretch": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
+				case  "vertical": gGenericOffset = CGSize(width: gGenericOffset.width, height: value)
+				default:           break
+			}
 
             redrawGraph()
         }
@@ -77,12 +77,12 @@ class ZPreferencesController: ZGenericController {
         let color = iColorBox.color
 
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iColorBox.identifier) {
-            switch (identifier) {
-            case "drag targets":               gRubberbandColor = color
-            case   "background":               gBackgroundColor = color
-            case        "zones": gSelecting.grabbedColor = color
-            default:             break
-            }
+			switch (identifier) {
+				case "drag targets":               gRubberbandColor = color
+				case   "background":               gBackgroundColor = color
+				case        "zones": gSelecting.grabbedColor = color
+				default:             break
+			}
 
             gControllers.syncToCloudAfterSignalFor(nil, regarding: .eRelayout) {}
         }
@@ -108,12 +108,12 @@ class ZPreferencesController: ZGenericController {
     @IBAction func segmentedControlAction(_ iControl: ZSegmentedControl) {
         let          selection = iControl.selectedSegment
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
-            switch (identifier) {
-            case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; redrawGraph()
-            case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!; gControllers.signalFor(nil, multiple: [.eMain, .eGraph])
-            case "direction": gInsertionMode = ZInsertionMode(rawValue: selection)!; gControllers.signalFor(nil, multiple: [.eMain, .eGraph])
-            default: break
-            }
+			switch (identifier) {
+				case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; redrawGraph()
+				case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!; gControllers.signalFor(nil, multiple: [.eMain, .eGraph])
+				case "direction": gInsertionMode = ZInsertionMode(rawValue: selection)!; gControllers.signalFor(nil, multiple: [.eMain, .eGraph])
+				default: break
+			}
         }
     }
 

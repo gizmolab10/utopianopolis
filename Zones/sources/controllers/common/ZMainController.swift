@@ -28,7 +28,7 @@ class ZMainController: ZGenericController {
     @IBOutlet var searchBoxView:     ZView?
     @IBOutlet var detailView:        ZView?
 	@IBOutlet var graphView:         ZView?
-	@IBOutlet var essayView:         ZView?
+	@IBOutlet var essayView:    	 ZEssayView?
     override  var controllerID:      ZControllerID { return .idMain }
 
 
@@ -44,26 +44,33 @@ class ZMainController: ZGenericController {
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
         switch iKind {
-		case .eEssay:
-			essayView?			  .isHidden = hideEssay
-			
-			if  hideEssay {
-				gControllers.signalFor(nil, regarding: .eRelayout) // pass signal along
-			} else {
-				essayView?.becomeFirstResponder()
-			}
-        case .eFound:
-            searchBoxView?        .isHidden = hideSearch
-            searchResultsView?    .isHidden = hideResults
-        case .eSearch:
-            searchBoxView?        .isHidden = hideSearch
+			case .eEssay:
+				if  let view = essayView {
+					let grab = gSelecting.firstGrab
 
-            if  hideSearch {
-                searchResultsView?.isHidden = hideSearch
+					if !hideEssay {
+						view.becomeFirstResponder()
+					} else if let grabbed = grab {
+						FOREGROUND {
+							gTextEditor.cancel() 		// undo of: somehow become first responder is called on first favorite (first text field in the graph view)
+							grabbed.grab()		 		// undo of: somehow change focus is called
+						}
+					}
 
-                assignAsFirstResponder(nil)
-            }
-        default: break
+					view			  .isHidden = hideEssay
+				}
+			case .eFound:
+				searchBoxView?        .isHidden = hideSearch
+				searchResultsView?    .isHidden = hideResults
+			case .eSearch:
+				searchBoxView?        .isHidden = hideSearch
+
+				if  hideSearch {
+					searchResultsView?.isHidden = hideSearch
+
+					assignAsFirstResponder(nil)
+				}
+			default: break
         }
     }
     

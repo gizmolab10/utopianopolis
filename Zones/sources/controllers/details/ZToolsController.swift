@@ -39,14 +39,14 @@ class ZToolsController: ZGenericTableController {
 
 
     func text(for kind: ZToolKind) -> String {
-        switch kind {
-        case .eIdentifiers: return (gDebugShowIdentifiers ? "Visible"   : "Hidden")  + " Identifiers"
-        case .eAccess:      return (gDebugDenyOwnership   ? "Crippled"  : "Normal")  + " User Access"
-        case .eGather:      return "Gather Lost and Found"
-        case .eRetry:       return "Retry Cloud"
-        case .eTrash:       return "Show Trash"
-        case .eRecount:     return "Recount"
-        }
+		switch kind {
+			case .eIdentifiers: return (gDebugShowIdentifiers ? "Visible"   : "Hidden")  + " Identifiers"
+			case .eAccess:      return (gDebugDenyOwnership   ? "Crippled"  : "Normal")  + " User Access"
+			case .eGather:      return "Gather Lost and Found"
+			case .eRetry:       return "Retry Cloud"
+			case .eTrash:       return "Show Trash"
+			case .eRecount:     return "Recount"
+		}
     }
 
 
@@ -64,14 +64,14 @@ class ZToolsController: ZGenericTableController {
             tableView.deselectAll(self)
 
             if  let kind = ZToolKind(rawValue: row) {
-                switch kind {
-                case .eIdentifiers: self.toggleShowIdentifiers()
-                case .eAccess:      self.toggleUserAccess()
-                case .eRetry:       gBatches.unHang()
-                case .eTrash:       self.showTrashCan()
-                case .eGather:      self.gatherAndShowLost()
-                case .eRecount:     gRemoteStorage.recount(); gControllers.syncToCloudAfterSignalFor(nil, regarding: .eRelayout) {}
-                }
+				switch kind {
+					case .eIdentifiers: self.toggleShowIdentifiers()
+					case .eAccess:      self.toggleUserAccess()
+					case .eRetry:       gBatches.unHang()
+					case .eTrash:       self.showTrashCan()
+					case .eGather:      self.gatherAndShowLost()
+					case .eRecount:     gRemoteStorage.recount(); gControllers.syncToCloudAfterSignalFor(nil, regarding: .eRelayout) {}
+				}
             }
         }
 

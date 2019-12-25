@@ -327,36 +327,36 @@ extension CKRecord {
 
 
     var decoratedName: String {
-        switch recordType {
-        case kTraitType:
-            let text = self["text"] as? String ?? kNoValue
-            return    (self["type"] as? String ?? "") + " " + text
-        case kZoneType:
-            if  let      name = self[kpZoneName] as? String {
-                let separator = " "
-                var    prefix = ""
-
-                if  isBookmark {
-                    prefix.append("L")
-                }
-
-                if  let fetchable = self[kpZoneCount] as? Int, fetchable > 1 {
-                    if  prefix != "" {
-                        prefix.append(separator)
-                    }
-
-                    prefix.append("\(fetchable)")
-                }
-
-                if  prefix != "" {
-                    prefix  = "(" + prefix + ")  "
-                }
-
-                return prefix.appending(name)
-            }
-        default:
-            return recordID.recordName
-        }
+		switch recordType {
+			case kTraitType:
+				let text = self["text"] as? String ?? kNoValue
+				return    (self["type"] as? String ?? "") + " " + text
+			case kZoneType:
+				if  let      name = self[kpZoneName] as? String {
+					let separator = " "
+					var    prefix = ""
+					
+					if  isBookmark {
+						prefix.append("L")
+					}
+					
+					if  let fetchable = self[kpZoneCount] as? Int, fetchable > 1 {
+						if  prefix != "" {
+							prefix.append(separator)
+						}
+						
+						prefix.append("\(fetchable)")
+					}
+					
+					if  prefix != "" {
+						prefix  = "(" + prefix + ")  "
+					}
+					
+					return prefix.appending(name)
+			}
+			default:
+				return recordID.recordName
+		}
 
         return kNoValue
     }
@@ -722,17 +722,17 @@ extension String {
 
     
     var opposite: String {
-        switch self {
-        case "[": return "]"
-        case "]": return "["
-        case "(": return ")"
-        case ")": return "("
-        case "{": return "}"
-        case "}": return "{"
-        case "<": return ">"
-        case ">": return "<"
-        default:  return self
-        }
+		switch self {
+			case "[": return "]"
+			case "]": return "["
+			case "(": return ")"
+			case ")": return "("
+			case "{": return "}"
+			case "}": return "{"
+			case "<": return ">"
+			case ">": return "<"
+			default:  return self
+		}
     }
 
 
@@ -839,12 +839,12 @@ extension String {
                 let  value = Double(values[1])!
                 let    key = values[0]
 
-                switch key {
-                case   "red":   red = value
-                case  "blue":  blue = value
-                case "green": green = value
-                default:      break
-                }
+				switch key {
+					case   "red":   red = value
+					case  "blue":  blue = value
+					case "green": green = value
+					default:      break
+				}
             }
 
             return ZColor(red: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0)
@@ -1151,6 +1151,72 @@ extension Character {
     var asciiValue: UInt32? {
         return String(self).unicodeScalars.first?.value
     }
+}
+
+
+extension NSMutableAttributedString {
+	
+	var attributesAsString: String {
+		get {
+			var    string = ""
+			var separator = ""
+			
+			for (key, value) in attributeRanges {
+				string.append(separator + "\(key)" + kKeyValueSeparator + "\(value)")
+
+				separator = kAttributeSeparator
+			}
+			
+			return string
+		}
+
+		set {
+			var attributes = [NSAttributedString.Key : Any]()
+			let parts = newValue.components(separatedBy: kAttributeSeparator)
+			for part in parts {
+				let subparts = part.components(separatedBy: kKeyValueSeparator)
+				if  subparts.count > 1 {
+					let        aKey = subparts[0]
+					let       value = subparts[1]
+					let         key = NSAttributedString.Key(aKey)
+					attributes[key] = value
+				}
+			}
+			
+			attributeRanges = attributes
+		}
+	}
+	
+	var attributeRanges: [NSAttributedString.Key : Any] {
+		get {
+			var result = [NSAttributedString.Key : Any]()
+			let  range = NSRange(location: 0, length: length)
+			
+			enumerateAttributes(in: range, options: .reverse) { (dict, inRange, flag) in
+				for (key, value) in dict {
+					result[key] = "\(inRange.location)" + kAttributesSeparator + "\(inRange.length)" + kAttributesSeparator + "\(value)"
+				}
+			}
+			
+			return result
+		}
+		
+		set {
+			for (key, value) in newValue {
+				if  let   attRange = value as? String {
+					let      parts = attRange.components(separatedBy: kAttributesSeparator)
+					if       parts.count > 2,
+						let  start = parts[0].integerValue,
+						let  count = parts[1].integerValue {
+						let string = parts[2]
+						let  range = NSRange(location: start, length: count)
+
+						addAttribute(key, value: string, range: range)
+					}
+				}
+			}
+		}
+	}
 }
 
 

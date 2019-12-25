@@ -33,7 +33,8 @@ class Zone : ZRecord {
 	@objc dynamic var         zoneName:       String?
     @objc dynamic var         zoneLink:       String?
     @objc dynamic var        zoneColor:       String?
-    @objc dynamic var   zoneAttributes:       String?
+	@objc dynamic var   zoneAttributes:       String?
+	@objc dynamic var  essayAttributes:       String?
     @objc dynamic var       parentLink:       String?
     @objc dynamic var       zoneAuthor:       String?
     @objc dynamic var        zoneOrder:     NSNumber?
@@ -84,20 +85,21 @@ class Zone : ZRecord {
 
 	var essayText: NSMutableAttributedString? {
 		get {
-			var text: NSMutableAttributedString?
+			var string: NSMutableAttributedString?
 
-			if  let base64 = essay,
-				let   data = Data(base64Encoded: base64) {
-				text       = NSKeyedUnarchiver.unarchiveObject(with: data) as? NSMutableAttributedString
+			if  let  s = essay,
+				let  a = essayAttributes {
+				string = NSMutableAttributedString(string: s)
+				string?.attributesAsString = a
 			}
 
-			return text
+			return string
 		}
 
 		set {
-			if  let  value = newValue {
-				let   data = NSKeyedArchiver.archivedData(withRootObject: value)
-				essay      = data.base64EncodedString()
+			if  let string 		= newValue {
+				essayAttributes = string.attributesAsString
+				essay 			= string.string
 			}
 		}
 	}
@@ -219,7 +221,8 @@ class Zone : ZRecord {
                 #keyPath(zoneAccess),
                 #keyPath(parentLink),
                 #keyPath(zoneProgeny),
-                #keyPath(zoneAttributes)]
+				#keyPath(zoneAttributes),
+				#keyPath(essayAttributes)]
     }
 
 
@@ -1713,7 +1716,7 @@ class Zone : ZRecord {
     
 
     override func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
-        if let       name = dict[.name] as? String { zoneName = name }
+        if  let name = dict[.name] as? String { zoneName = name }
 
         super.setStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
 

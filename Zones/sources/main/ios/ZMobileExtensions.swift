@@ -586,18 +586,18 @@ extension ZAlerts {
     
     func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
         alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { iAlert, iState in
-            switch iState {
-            case .eStatusShow:
-                iAlert?.showAlert { iResponse in
-//                    let window = iAlert?.window
+			switch iState {
+				case .eStatusShow:
+					iAlert?.showAlert { iResponse in
+//						let window = iAlert?.window
 //
-//                    gApplication.abortModal()
-//                    window?.orderOut(iAlert)
-                    closure?(iResponse)
-                }
-            default:
-                closure?(iState)
-            }
+//						gApplication.abortModal()
+//						window?.orderOut(iAlert)
+						closure?(iResponse)
+				}
+				default:
+					closure?(iState)
+			}
         }
     }
     
@@ -678,20 +678,20 @@ extension ZoneWidget {
             let      leftMidY = leftFrame .midY
             frame.origin   .x = leftFrame .midX
 
-            switch kind! {
-            case .below:
-                frame.origin   .y = leftFrame .minY + thinThickness + halfDotHeight
-                frame.size.height = abs(  rightMidY + thinThickness - frame.minY)
-            case .above:
-                frame.origin   .y = rightFrame.maxY - halfDotHeight
-                frame.size.height = abs(   leftMidY - thinThickness - frame.minY)
-            case .straight:
-                frame.origin   .y =       rightMidY - thinThickness / 8.0
-                frame.origin   .x = leftFrame .maxX
-                frame.size.height =                   thinThickness / 4.0
-            }
+			switch kind! {
+				case .below:
+					frame.origin   .y = leftFrame .minY + thinThickness + halfDotHeight
+					frame.size.height = abs(  rightMidY + thinThickness - frame.minY)
+				case .above:
+					frame.origin   .y = rightFrame.maxY - halfDotHeight
+					frame.size.height = abs(   leftMidY - thinThickness - frame.minY)
+				case .straight:
+					frame.origin   .y =       rightMidY - thinThickness / 8.0
+					frame.origin   .x = leftFrame .maxX
+					frame.size.height =                   thinThickness / 4.0
+			}
 
-            frame.size     .width = abs(rightFrame.midX - frame.minX)
+            frame.size         .width = abs(rightFrame.midX - frame.minX)
         }
 
         return frame

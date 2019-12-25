@@ -15,7 +15,7 @@ import UIKit
 #endif
 
 class ZBaseEditor: NSObject {
-	var workMode: ZWorkMode { return .startupMode }
+	var workMode: ZWorkMode { return .startupMode } // filter whether menu and event handlers will call handle key
 	var previousEvent: ZEvent?
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool { return false }   // false means key not handled
@@ -25,7 +25,7 @@ class ZBaseEditor: NSObject {
 	}
 
 	func handleMenuItem(_ iItem: ZMenuItem?) {
-		if  gWorkMode == workMode,
+		if  gWorkMode == workMode,		 			// filter whether to call handle key
 			let   item = iItem {
 			let  flags = item.keyEquivalentModifierMask
 			let    key = item.keyEquivalent
@@ -35,7 +35,7 @@ class ZBaseEditor: NSObject {
 	}
 
 	@discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> ZEvent? {
-		if  gWorkMode    == workMode,
+		if  gWorkMode    == workMode,				// filter whether to call handle key
 			!matchesPrevious(iEvent) {
 			let     flags = iEvent.modifierFlags
 			previousEvent = iEvent
@@ -57,8 +57,13 @@ class ZBaseEditor: NSObject {
 	}
 
 	func swapGraphAndEssay() {
-		gWorkMode = (gWorkMode == .essayMode) ? .graphMode : .essayMode
-		
+		let stopEssay = gWorkMode == .essayMode
+		gWorkMode     = stopEssay ? .graphMode : .essayMode
+
+		if  stopEssay {
+			gEssayView?.endEditing()		
+		}
+
 		gControllers.signalFor(nil, regarding: .eEssay)
 	}
 

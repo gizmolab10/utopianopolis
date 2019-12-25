@@ -445,12 +445,12 @@ class ZRecord: NSObject {
             return nil
         }
 
-        if              ignoreKeyPathsForStorage().contains(keyPath) { return nil       // must be first ... ZStorageType now ignores two (owner and parent)
-        } else if keyPath == kpModificationDate                      { return .date
-        } else if let type = ZStorageType(rawValue:         keyPath) { return type
-        } else if let type = extractType(  kpZonePrefix) { return type      // this deals with those two
-        } else if let type = extractType(kpRecordPrefix) { return type
-        } else                                                       { return nil
+        if      ignoreKeyPathsForStorage().contains(keyPath) { return nil       // must be first ... ZStorageType now ignores two (owner and parent)
+        } else if keyPath == kpModificationDate              { return .date
+        } else if let type = ZStorageType(rawValue: keyPath) { return type
+        } else if let type = extractType(  kpZonePrefix) 	 { return type      // this deals with those two
+        } else if let type = extractType(kpRecordPrefix)	 { return type
+        } else                                               { return nil
         }
     }
 
@@ -467,13 +467,13 @@ class ZRecord: NSObject {
     func prepare(_ iObject: NSObject, of iType: ZStorageType) -> NSObject? {
         let object = iObject
 
-        switch iType {
-        case .link, .parentLink:
-            if  let link = object as? String, !isValid(link) {
-                return nil
-            }
-        default: break
-        }
+		switch iType {
+			case .link, .parentLink:
+				if  let link = object as? String, !isValid(link) {
+					return nil
+				}
+			default: break
+		}
 
         return object
     }
@@ -515,28 +515,25 @@ class ZRecord: NSObject {
 
 
     func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) -> ZStorageDictionary? {
-        if  let      name = recordName, !gFiles.writtenRecordNames.contains(name) {
-            let  keyPaths = cloudProperties() + (includeRecordName ? [kpRecordName] : []) + [kpModificationDate]
-            var      dict = ZStorageDictionary()
+		guard let name = recordName, !gFiles.writtenRecordNames.contains(name) else { return nil }
+		let   keyPaths = cloudProperties() + (includeRecordName ? [kpRecordName] : []) + [kpModificationDate]
+		var       dict = ZStorageDictionary()
 
-            gFiles.writtenRecordNames.append(name)
+		gFiles.writtenRecordNames.append(name)
 
-            for keyPath in keyPaths {
-                if  let       type = type(from: keyPath),
-                    let    extract = extract(valueOf: type, at: keyPath) ,
-                    let   prepared = prepare(extract, of: type) {
-                    dict[type]     = prepared
-                }
-            }
+		for keyPath in keyPaths {
+			if  let       type = type(from: keyPath),
+				let    extract = extract(valueOf: type, at: keyPath) ,
+				let   prepared = prepare(extract, of: type) {
+				dict[type]     = prepared
+			}
+		}
 
-            if  let   needs  = stringForNeeds(in: iDatabaseID) {
-                dict[.needs] = needs as NSObject?
-            }
+		if  let   needs  = stringForNeeds(in: iDatabaseID) {
+			dict[.needs] = needs as NSObject?
+		}
 
-            return dict
-        } else {
-            return nil
-        }
+		return dict
     }
     
 
@@ -557,6 +554,10 @@ class ZRecord: NSObject {
 
                     if  type != .date {
                         ckRecord[keyPath]  = value
+						
+						if  type == .essayAttributes {
+							print("  attributes: \(value)")
+						}
                     } else if let interval = object as? Double {
                         writtenModifyDate = Date(timeIntervalSince1970: interval)
                     }

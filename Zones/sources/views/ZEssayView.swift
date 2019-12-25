@@ -15,41 +15,46 @@ import UIKit
 #endif
 
 
-class ZEssayView: ZView, ZTextViewDelegate {
+var gEssayView: ZEssayView?
+
+class ZEssayView: ZView { //, ZTextViewDelegate {
 	@IBOutlet var label: ZTextField?
 	@IBOutlet var editor: ZTextView?
-	
-	override func awakeFromNib() {
-		editor?.delegate = self
-	}
-	
-	func setup() {
-		clearEditor()
 
-		if  let zone = gEssayEditor.zone {
-			if  let name = zone.zoneName {
-				label?.text = "editing: \(name)"
-			}
-			
-			if  let text = zone.essayText {
-				editor?.insertText(text)
-			}
-		}
-	}
-	
 	func clearEditor() {
 		if  let length = editor?.textStorage?.length, length > 0 {
 			editor?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
 		}
 	}
-	
-	func textView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
+
+	func beginEditing() {
+		clearEditor()
+
+		gEssayView = self
+
+		if  let zone = gEssayEditor.zone {
+			if  let name = zone.zoneName {
+				label?.text = "editing: \(name)"
+			}
+
+			if  let text = zone.essayText {
+				editor?.insertText(text)
+				becomeFirstResponder()
+			}
+		}
+	}
+
+	func endEditing() {
 		if  let       zone = gEssayEditor.zone {
 			zone.essayText = editor?.textStorage
-			
+
 			zone.needSave()
 		}
-			
+	}
+
+	func xtextView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
+		endEditing()
+
 		return true
 	}
 }

@@ -84,12 +84,12 @@ enum ZOutlineLevelType: String {
 
     var asciiValue: UInt32 { return rawValue.asciiValue }
     var level: Int {
-        switch self {
-        case .capital: return 0
-        case .number:  return 1
-        case .small:   return 2
-        case .roman:   return 3
-        }
+		switch self {
+			case .capital: return 0
+			case .number:  return 1
+			case .small:   return 2
+			case .roman:   return 3
+		}
     }
 }
 
@@ -105,37 +105,37 @@ enum ZDatabaseID: String {
 	var index:        Int? { return self.databaseIndex?.rawValue }
 
     var userReadableString: String {
-        switch self {
-        case .everyoneID: return "public"
-        case     .mineID: return "my"
-        default:          return ""
-        }
+		switch self {
+			case .everyoneID: return "public"
+			case     .mineID: return "my"
+			default:          return ""
+		}
     }
 	
     
     var databaseIndex: ZDatabaseIndex? {
-        switch self {
-		case .favoritesID: return .favoritesIndex
-        case  .everyoneID: return .everyoneIndex
-        case      .mineID: return .mineIndex
-        default:           return nil
-        }
+		switch self {
+			case .favoritesID: return .favoritesIndex
+			case  .everyoneID: return .everyoneIndex
+			case      .mineID: return .mineIndex
+			default:           return nil
+		}
     }
 
     static func convert(from scope: CKDatabase.Scope) -> ZDatabaseID? {
-        switch scope {
-        case .public:  return .everyoneID
-        case .private: return .mineID
-        default:       return nil
-        }
+		switch scope {
+			case .public:  return .everyoneID
+			case .private: return .mineID
+			default:       return nil
+		}
     }
 
     static func convert(from id: String) -> ZDatabaseID? {
-        switch id {
-        case "e": return .everyoneID
-        case "m": return .mineID
-        default:  return nil
-        }
+		switch id {
+			case "e": return .everyoneID
+			case "m": return .mineID
+			default:  return nil
+		}
     }
     
     func isDeleted(dict: ZStorageDictionary) -> Bool {
@@ -154,11 +154,11 @@ enum ZDatabaseIndex: Int {
 
     
     var databaseID: ZDatabaseID? {
-        switch self {
-		case .favoritesIndex: return .favoritesID
-        case .everyoneIndex:  return .everyoneID
-        case .mineIndex:      return .mineID
-        }
+		switch self {
+			case .favoritesIndex: return .favoritesID
+			case .everyoneIndex:  return .everyoneID
+			case .mineIndex:      return .mineID
+		}
     }
 }
 
@@ -179,38 +179,40 @@ struct ZDetailsViewID: OptionSet {
 
 
 enum ZStorageType: String {
-    case lost       = "lostAndFound"    // general
-    case bookmarks  = "bookmarks"
-    case favorites  = "favorites"
-    case manifest   = "manifest"
-    case destroy    = "destroy"
-    case userID     = "user ID"
-    case model      = "model"
-    case graph      = "graph"
-    case trash      = "trash"
-    case date       = "date"
+    case lost            = "lostAndFound"    // general
+    case bookmarks       = "bookmarks"
+    case favorites       = "favorites"
+    case manifest        = "manifest"
+    case destroy         = "destroy"
+    case userID          = "user ID"
+    case model           = "model"
+    case graph           = "graph"
+    case trash           = "trash"
+    case date            = "date"
 
-    case recordName = "recordName"      // zones
-    case parentLink = "parentLink"
-    case attributes = "attributes"
-    case children   = "children"
-    case progeny    = "progeny"
-    case traits     = "traits"
-    case access     = "access"
-    case author     = "author"
-    case order      = "order"
-    case color      = "color"
-    case count      = "count"
-    case needs      = "needs"
-    case link       = "link"
-    case name       = "name"
+	case essayAttributes = "essayAttributes" // zones
+    case recordName      = "recordName"
+    case parentLink      = "parentLink"
+    case attributes      = "attributes"
+    case children        = "children"
+    case progeny         = "progeny"
+    case traits          = "traits"
+    case access          = "access"
+    case author          = "author"
+	case essay           = "essay"
+	case order           = "order"
+    case color           = "color"
+    case count           = "count"
+    case needs           = "needs"
+    case link            = "link"
+    case name            = "name"
 
-    case asset      = "asset"           // traits
-    case time       = "time"
-    case text       = "text"
-    case data       = "data"
-    case type       = "type"
+    case asset           = "asset"           // traits
+    case time            = "time"
+    case text            = "text"
+    case data            = "data"
+    case type            = "type"
 
-    case deleted    = "deleted"         // ZManifest
+    case deleted         = "deleted"         // ZManifest
 }
 

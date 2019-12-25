@@ -82,15 +82,15 @@ class ZShortcutsController: ZGenericTableController {
             let COMMAND = iEvent.modifierFlags.isCommand
             let OPTION  = iEvent.modifierFlags.isOption
             let SPECIAL = COMMAND && OPTION
-            switch key {
-            case "?", "/":         gGraphEditor.showHideKeyboardShortcuts()
-            case "a": if SPECIAL { gApplication.showHideAbout() }
-            case "p":              view.printView()
-            case "r": if COMMAND { sendEmailBugReport() }
-            case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
-
-            default: break
-            }
+			switch key {
+				case "?", "/":         gGraphEditor.showHideKeyboardShortcuts()
+				case "a": if SPECIAL { gApplication.showHideAbout() }
+				case "p":              view.printView()
+				case "r": if COMMAND { sendEmailBugReport() }
+				case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
+				
+				default: break
+			}
         }
         
         return nil
@@ -173,27 +173,27 @@ class ZShortcutsController: ZGenericTableController {
 		let      hasURL = !url.isEmpty
         var      prefix = "   "
 
-        switch type {
-        case .bold?:
-            attributes  = [NSAttributedString.Key.font.rawValue : bold as Any]
-        case .append?, .underline?:
-            attributes  = [NSAttributedString.Key.underlineStyle.rawValue : 1 as Any]
-            
-            if type == .append {
-                prefix += "+ "
-            }
-            
-		case .plain?:
-			if  hasURL {
-				attributes = [NSAttributedString.Key.foregroundColor.rawValue : ZColor.blue.darker(by: 5.0) as Any]
-				e.append(kEllipsis)
+		switch type {
+			case .bold?:
+				attributes  = [NSAttributedString.Key.font.rawValue : bold as Any]
+			case .append?, .underline?:
+				attributes  = [NSAttributedString.Key.underlineStyle.rawValue : 1 as Any]
+				
+				if type == .append {
+					prefix += "+ "
 			}
-
-			fallthrough
-
-		default:
-			prefix  = kTab		// for empty lines, including after last row
-        }
+			
+			case .plain?:
+				if  hasURL {
+					attributes = [NSAttributedString.Key.foregroundColor.rawValue : ZColor.blue.darker(by: 5.0) as Any]
+					e.append(kEllipsis)
+				}
+				
+				fallthrough
+			
+			default:
+				prefix  = kTab		// for empty lines, including after last row
+		}
 
 		let result  = NSMutableAttributedString(string: prefix)
 
