@@ -19,7 +19,8 @@ class ZBaseEditor: NSObject {
 	var previousEvent: ZEvent?
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool { return false }   // false means key not handled
-	
+	func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool { return false }
+
 	@IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
 		gDesktopAppDelegate?.genericMenuHandler(iItem)
 	}

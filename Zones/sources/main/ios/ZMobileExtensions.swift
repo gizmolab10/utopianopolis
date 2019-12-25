@@ -728,7 +728,7 @@ extension ZGraphController {
 
 
 
-extension ZGraphEditor {
+extension ZBaseEditor {
     
     
     func showHideKeyboardShortcuts(hide: Bool? = nil) {}

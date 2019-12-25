@@ -20,6 +20,14 @@ class ZEssayEditor: ZBaseEditor {
 	override var workMode: ZWorkMode { return .essayMode }
 	var zone: Zone? { return gSelecting.firstGrab }
 
+	override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
+		if  gWorkMode != .essayMode || inWindow {
+			return false
+		}
+
+		return true
+	}
+
 	@discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
 		if  var     key = iKey {
 			let COMMAND = flags.isCommand
@@ -31,10 +39,10 @@ class ZEssayEditor: ZBaseEditor {
 			}
 			
 			switch key {
-				case kEscape,
-					 "w": swapGraphAndEssay()
-				case "/": if SPECIAL { gGraphEditor.showHideKeyboardShortcuts() }
-				default:  break
+				case kEscape: 		   swapGraphAndEssay()
+				case "w": if COMMAND { swapGraphAndEssay() }
+				case "/": if SPECIAL { showHideKeyboardShortcuts() }
+				default:  			   break
 			}
 		}
 		

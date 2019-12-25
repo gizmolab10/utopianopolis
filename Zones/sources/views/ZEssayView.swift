@@ -51,11 +51,5 @@ class ZEssayView: ZView { //, ZTextViewDelegate {
 			zone.needSave()
 		}
 	}
-
-	func xtextView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
-		endEditing()
-
-		return true
-	}
 }
 

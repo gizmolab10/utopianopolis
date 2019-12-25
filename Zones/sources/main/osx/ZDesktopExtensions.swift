@@ -1073,7 +1073,7 @@ extension ZoneWidget {
 var gShortcutsController: ZWindowController?
 
 
-extension ZGraphEditor {
+extension ZBaseEditor {
 
 
     func showHideKeyboardShortcuts(hide: Bool? = nil) {

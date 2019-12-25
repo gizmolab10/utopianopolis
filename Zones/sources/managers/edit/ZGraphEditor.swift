@@ -245,7 +245,7 @@ class ZGraphEditor: ZBaseEditor {
     }
 
 
-    func isValid(_ key: String, _ flags: ZEventFlags) -> Bool {
+    override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
         if gWorkMode != .graphMode {
             return false
         }

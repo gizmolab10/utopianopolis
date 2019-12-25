@@ -96,16 +96,22 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     }
 
 
+	var workingEditor: ZBaseEditor? {
+		switch gWorkMode {
+			case .graphMode: return gGraphEditor
+			case .essayMode: return gEssayEditor
+			default: 		 return nil
+		}
+	}
+
     open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
-        return gGraphEditor.isValid(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
+        return workingEditor?.isValid(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask) ?? true
     }
 
     
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
-		switch gWorkMode {
-			case .graphMode: gGraphEditor.handleMenuItem(iItem)
-			case .essayMode: gEssayEditor.handleMenuItem(iItem)
-			default: break
+		if  let e = workingEditor, let item = iItem, e.isValid(item.keyEquivalent, item.keyEquivalentModifierMask) {
+			e.handleMenuItem(item)
 		}
     }
 
