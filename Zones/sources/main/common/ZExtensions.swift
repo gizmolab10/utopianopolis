@@ -20,6 +20,19 @@ import CloudKit
 typealias ZStorageDictionary = [ZStorageType : NSObject]
 let             gApplication = ZApplication.shared
 
+func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
+	if  let t = test, !t() { return }
+	let fancy = (surround == nil) ? message : message.surround(with: surround!)
+	FOREGROUND {
+		print(fancy)
+	}
+}
+
+func printDebug(_ mode: ZDebugMode, prefix: String = "  ", _ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
+	if  gDebugMode.contains(mode) {
+		printFancy("\(mode): " + prefix + message, surround: surround, test)
+	}
+}
 
 extension NSObject {
 
@@ -42,7 +55,7 @@ extension NSObject {
 
     func log(_ iMessage: Any?) {
         if  let   message = iMessage as? String, message != "" {
-            print(message)
+            printDebug(.log, message)
         }
     }
 
@@ -1143,7 +1156,37 @@ extension String {
 		
 		return nil
 	}
-	
+
+	func repeatOf(_ length: Int) -> String {
+		var  count = length
+		var result = ""
+
+		while count > 0 {
+			count -= 1
+
+			result.append(self)
+		}
+
+		return result
+	}
+
+	func surround(with repeater: String) -> String {
+		let inner = smallSurround(with: " ").smallSurround(with: repeater)
+		let outer = repeater.repeatOf(count + 8)
+
+		if  repeater == "" {
+			return "\n\(inner)\n"
+		} else {
+			return "\n\(outer)\n\(inner)\n\(outer)\n"
+		}
+	}
+
+	func smallSurround(with repeater: String) -> String {
+		let small = repeater.repeatOf(2)
+
+		return "\(small)\(self)\(small)"
+	}
+
 }
 
 
@@ -1162,7 +1205,7 @@ extension NSMutableAttributedString {
 			var separator = ""
 			
 			for (key, value) in attributeRanges {
-				string.append(separator + "\(key)" + kKeyValueSeparator + "\(value)")
+				string.append(separator + "\(key.rawValue)" + kKeyValueSeparator + "\(value)")
 
 				separator = kAttributeSeparator
 			}
@@ -1194,15 +1237,31 @@ extension NSMutableAttributedString {
 			
 			enumerateAttributes(in: range, options: .reverse) { (dict, inRange, flag) in
 				for (key, value) in dict {
-					result[key] = "\(inRange.location)" + kAttributesSeparator + "\(inRange.length)" + kAttributesSeparator + "\(value)"
+					var string: Any?
+					let raw = key.rawValue
+					if  raw.contains("NSAttributedStringKey(_rawValue: ") { continue }
+					if  let font = value as? NSFont {
+						string = font.fontDescriptor
+					}
+
+					if  let color = value as? NSColor {
+						string = color.string
+					}
+
+					if  let s = string {
+						result[key] = "\(inRange.location)" + kAttributesSeparator + "\(inRange.length)" + kAttributesSeparator + "\(s)"
+					}
 				}
 			}
-			
+
 			return result
 		}
 		
 		set {
 			for (key, value) in newValue {
+				let raw = key.rawValue
+
+				if  raw.contains("NSParagraphStyle") { continue }
 				if  let   attRange = value as? String {
 					let      parts = attRange.components(separatedBy: kAttributesSeparator)
 					if       parts.count > 2,
@@ -1210,8 +1269,22 @@ extension NSMutableAttributedString {
 						let  count = parts[1].integerValue {
 						let string = parts[2]
 						let  range = NSRange(location: start, length: count)
+						var attribute: Any?
 
-						addAttribute(key, value: string, range: range)
+						switch key {
+							case .foregroundColor:
+								attribute = ZColor(string: string)
+							case .font:
+								let descriptor = NSFontDescriptor()
+								attribute = NSFont(descriptor: descriptor, textTransform: nil)
+							default:    break
+						}
+
+						if  let v = attribute {
+							printDebug(.essay, "add attribute over \(range) for \(raw): \(v)")
+
+							addAttribute(key, value: v, range: range)
+						}
 					}
 				}
 			}

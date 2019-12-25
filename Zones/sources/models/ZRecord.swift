@@ -556,7 +556,7 @@ class ZRecord: NSObject {
                         ckRecord[keyPath]  = value
 						
 						if  type == .essayAttributes {
-							print("  attributes: \(value)")
+							printDebug(.essay, "got essay attributes: \(value)")
 						}
                     } else if let interval = object as? Double {
                         writtenModifyDate = Date(timeIntervalSince1970: interval)

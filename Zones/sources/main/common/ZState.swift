@@ -24,6 +24,7 @@ var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 
 
 var                gWorkMode                     = ZWorkMode.startupMode
+var				  gDebugMode:		[ZDebugMode] = [.essay]
 var             gDeferRedraw                     = false
 var             gDebugReport                     = false
 var           gTextCapturing                     = false

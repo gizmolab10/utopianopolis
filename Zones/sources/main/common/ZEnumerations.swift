@@ -216,3 +216,27 @@ enum ZStorageType: String {
     case deleted         = "deleted"         // ZManifest
 }
 
+// MARK: - debug
+// MARK: -
+
+struct ZDebugMode: OptionSet, CustomStringConvertible {
+	static var structValue = 1
+	static var nextValue: Int { structValue *= 2; return structValue }
+	let rawValue: Int
+
+	init() { rawValue = ZDebugMode.nextValue }
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let      none = ZDebugMode(rawValue: 0)
+	static let       log = ZDebugMode(rawValue: 1)
+	static let     error = ZDebugMode()
+	static let     essay = ZDebugMode()
+
+	var description: String {
+		return [(.log,       "    log"),
+				(.error,     "  error"),
+				(.essay,     "  essay")]
+			.compactMap { (option, name) in contains(option) ? name : nil }
+			.joined(separator: " ")
+	}
+}

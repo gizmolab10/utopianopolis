@@ -253,10 +253,38 @@ extension NSEvent {
 
 extension ZColor {
 
+	convenience init(string: String) {
+		var r: CGFloat = 1
+		var g: CGFloat = 1
+		var b: CGFloat = 1
+		var a: CGFloat = 1
+		let parts = string.components(separatedBy: ",")
+		for part in parts {
+			let items = part.components(separatedBy: ":")
+			if  items.count > 1 {
+				let key = items[0]
+				let value = items[1]
+				let f = CGFloat(Double(value) ?? 1.0)
+				switch key {
+					case "red":   r = f
+					case "blue":  b = f
+					case "green": g = f
+					case "alpha": a = f
+					default: break
+				}
+			}
+		}
 
-    var string: String {
-        return "red:\(redComponent),blue:\(blueComponent),green:\(greenComponent)"
-    }
+		self.init(red: r, green: g, blue: b, alpha: a)
+	}
+
+	var string: String? {
+		if  let c = usingColorSpaceName(NSColorSpaceName.deviceRGB) {
+			return "red:\(c.redComponent),blue:\(c.blueComponent),green:\(c.greenComponent),alpha:\(c.alphaComponent)"
+		}
+
+		return nil
+	}
 
     func darker(by: CGFloat) -> NSColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * (by * 2.0), brightness: brightnessComponent / (by / 3.0), alpha: alphaComponent)
@@ -907,7 +935,7 @@ extension ZFiles {
                 onCompletion?()
             }
         } catch {
-            print(error)    // de-serialization
+            printDebug(.error, "\(error)")    // de-serialization
         }
     }
     
@@ -943,7 +971,7 @@ extension ZFiles {
                     do {
                         try data.write(to: filename)
                     } catch {
-                        print("ahah")
+                        printDebug(.error, "ahah")
                     }
                 }
             }

@@ -47,12 +47,12 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
 
 
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print(deviceToken)
+        printDebug(.error, deviceToken)
     }
 
 
     @nonobjc public func application(_ application: UIApplication, didRegister notificationSettings: UNNotificationSettings) {
-        print(notificationSettings)
+        printDebug(.error, notificationSettings)
     }
 
 
