@@ -29,12 +29,10 @@ class Zone : ZRecord {
 
 
     @objc dynamic var           parent:  CKRecord.Reference?
-	@objc dynamic var            essay:       String?
 	@objc dynamic var         zoneName:       String?
     @objc dynamic var         zoneLink:       String?
     @objc dynamic var        zoneColor:       String?
 	@objc dynamic var   zoneAttributes:       String?
-	@objc dynamic var  essayAttributes:       String?
     @objc dynamic var       parentLink:       String?
     @objc dynamic var       zoneAuthor:       String?
     @objc dynamic var        zoneOrder:     NSNumber?
@@ -82,27 +80,6 @@ class Zone : ZRecord {
     var            isSpecialRoot:         Bool  { return isRootOfLostAndFound || isRootOfFavorites || isTrash }
     var           spawnedByAGrab:         Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
-
-	var essayText: NSMutableAttributedString? {
-		get {
-			var string: NSMutableAttributedString?
-
-			if  let  s = essay,
-				let  a = essayAttributes {
-				string = NSMutableAttributedString(string: s)
-				string?.attributesAsString = a
-			}
-
-			return string
-		}
-
-		set {
-			if  let string 		= newValue {
-				essayAttributes = string.attributesAsString
-				essay 			= string.string
-			}
-		}
-	}
 
     var deepCopy: Zone {
         let theCopy = Zone(databaseID: databaseID)
@@ -210,8 +187,7 @@ class Zone : ZRecord {
 
 
     override class func cloudProperties() -> [String] {
-		return [#keyPath(essay),
-				#keyPath(parent),
+		return [#keyPath(parent),
 				#keyPath(zoneName),
                 #keyPath(zoneLink),
                 #keyPath(zoneColor),
@@ -221,8 +197,7 @@ class Zone : ZRecord {
                 #keyPath(zoneAccess),
                 #keyPath(parentLink),
                 #keyPath(zoneProgeny),
-				#keyPath(zoneAttributes),
-				#keyPath(essayAttributes)]
+				#keyPath(zoneAttributes)]
     }
 
 

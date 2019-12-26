@@ -15,11 +15,11 @@ enum ZTraitType: String {
     case eComposition = "c"
     case eDuration    = "d" // accumulative
 	case eEmail       = "e"
-	case eEssay       = "w"
     case eGraphic     = "g"
     case eHyperlink   = "h"
     case eMoney       = "m" // accumulative
     case eTime        = "t"
+	case eWrite       = "w"
 }
 
 
@@ -49,9 +49,10 @@ class ZTrait: ZRecord {
     override var emptyName: String {
         if  let tType = traitType {
             switch tType {
-            case .eEmail: return "email address"
-            case .eHyperlink: return "hyperlink"
-            default: break
+				case .eEmail: return "email address"
+				case .eWrite: return "write"
+				case .eHyperlink: return "hyperlink"
+				default: break
             }
         }
 
@@ -130,5 +131,27 @@ class ZTrait: ZRecord {
             needUnorphan()
         }
     }
+
+	var richText: NSMutableAttributedString? {
+		get {
+			var string: NSMutableAttributedString?
+
+			if  let  s = text,
+				let  a = format {
+				string = NSMutableAttributedString(string: s)
+
+				string?.attributesAsString = a
+			}
+
+			return string
+		}
+
+		set {
+			if  let string = newValue {
+				format 	   = string.attributesAsString
+				text 	   = string.string
+			}
+		}
+	}
 
 }

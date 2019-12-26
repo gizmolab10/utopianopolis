@@ -17,8 +17,8 @@ import UIKit
 
 var gEssayView: ZEssayView?
 
-class ZEssayView: ZView { //, ZTextViewDelegate {
-	@IBOutlet var label: ZTextField?
+class ZEssayView: ZView {
+	@IBOutlet var  label: ZTextField?
 	@IBOutlet var editor: ZTextView?
 
 	func clearEditor() {
@@ -37,18 +37,22 @@ class ZEssayView: ZView { //, ZTextViewDelegate {
 				label?.text = "editing: \(name)"
 			}
 
-			if  let text = zone.essayText {
+			if  let text = zone.trait(for: .eWrite).richText {
 				editor?.insertText(text)
-				becomeFirstResponder()
 			}
+
+			becomeFirstResponder()
 		}
 	}
 
 	func endEditing() {
-		if  let       zone = gEssayEditor.zone {
-			zone.essayText = editor?.textStorage
+		if  let  zone = gEssayEditor.zone {
+			let write = zone.trait(for: .eWrite)
 
-			zone.needSave()
+			write.richText = editor?.textStorage
+
+			write.needSave()
+			zone .needSave()
 		}
 	}
 }
