@@ -14,7 +14,8 @@ import CloudKit
 enum ZTraitType: String {
     case eComposition = "c"
     case eDuration    = "d" // accumulative
-    case eEmail       = "e"
+	case eEmail       = "e"
+	case eEssay       = "w"
     case eGraphic     = "g"
     case eHyperlink   = "h"
     case eMoney       = "m" // accumulative
@@ -25,11 +26,12 @@ enum ZTraitType: String {
 class ZTrait: ZRecord {
 
     
-    @objc dynamic var  type: String?
-    @objc dynamic var  text: String?
-    @objc dynamic var  data: Data?
-    @objc dynamic var asset: CKAsset?
-    @objc dynamic var owner: CKRecord.Reference?
+	@objc dynamic var format: String?
+    @objc dynamic var   type: String?
+	@objc dynamic var   text: String?
+    @objc dynamic var   data: Data?
+    @objc dynamic var  asset: CKAsset?
+    @objc dynamic var  owner: CKRecord.Reference?
     var _traitType: ZTraitType?
     var _ownerZone: Zone?
     override var unwrappedName: String { return text ?? emptyName }
