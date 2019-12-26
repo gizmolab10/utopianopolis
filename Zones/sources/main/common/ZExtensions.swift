@@ -1227,7 +1227,7 @@ extension NSMutableAttributedString {
 					}
 
 					if  let value = string {
-						result.append("\(inRange.location)" + kKeyValueSeparator + "\(inRange.length)" + kKeyValueSeparator + key.rawValue + kKeyValueSeparator + "\(value)")
+						result.append("\(inRange.location)" + kValueSeparator + "\(inRange.length)" + kValueSeparator + key.rawValue + kValueSeparator + "\(value)")
 					}
 				}
 			}
@@ -1237,7 +1237,7 @@ extension NSMutableAttributedString {
 		
 		set {
 			for string in newValue {
-				let      parts = string.components(separatedBy: kKeyValueSeparator)
+				let      parts = string.components(separatedBy: kValueSeparator)
 				if       parts.count > 3,
 					let  start = parts[0].integerValue,
 					let  count = parts[1].integerValue {

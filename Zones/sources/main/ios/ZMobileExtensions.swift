@@ -144,7 +144,7 @@ extension String {
         return nil
     }
 
-    func heightForFont(_ font: ZFont, options: NSStringDrawingOptions = []) -> CGFloat { return sizeWithFont(font, options: options).height }
+    func heightForFont(_ font: ZFont, options: NSStringDrawingOptions = .usesDeviceMetrics) -> CGFloat { return sizeWithFont(font, options: options).height }
     func sizeWithFont (_ font: ZFont, options: NSStringDrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
     
     

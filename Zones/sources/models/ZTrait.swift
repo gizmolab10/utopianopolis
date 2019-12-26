@@ -20,6 +20,15 @@ enum ZTraitType: String {
     case eMoney       = "m" // accumulative
     case eTime        = "t"
 	case eWrite       = "w"
+
+	var extraHeight: CGFloat {
+		switch self {
+			case .eHyperlink,
+				 .eDuration: return 1.0
+			case .eTime:	 return 0.8
+			default: 		 return 0.66667
+		}
+	}
 }
 
 

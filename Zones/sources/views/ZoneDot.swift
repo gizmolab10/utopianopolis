@@ -227,11 +227,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let   string = type.rawValue
             let isInThoughts = widget?.isInThoughts ?? true
             let    ratio = CGFloat(isInThoughts ? 1.0 : Double(kFavoritesReduction))
-            let     size = CGFloat(gDotHeight - 2.0) * ratio
-            let     font = ZFont.boldSystemFont(ofSize: size)
-            let   height = string.heightForFont(font, options: .usesDeviceMetrics) + (isInThoughts ? 1.0 : -2.5)
-            let   xDelta = size / 3.3
-            let   yDelta = ((height - iDirtyRect.height) / CGFloat(3.8))
+            let    width = CGFloat(gDotHeight - 2.0) * ratio
+            let     font = ZFont.boldSystemFont(ofSize: width)
+			let     size = string.sizeWithFont(font)
+			let   height = size.height * type.extraHeight + (isInThoughts ? 1.0 : -2.5)
+			let   xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
+            let   yDelta = ((height - iDirtyRect.height) / CGFloat(4.0))
             let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta)
             let    color = isFilled ? gBackgroundColor : iZone.color ?? gDefaultTextColor
 
