@@ -40,6 +40,7 @@ class ZEssayEditor: ZBaseEditor {
 			
 			switch key {
 				case kEscape: 		   swapGraphAndEssay()
+				case "a": if COMMAND { gEssayView?.editor?.selectAll(nil) }
 				case "w": if COMMAND { swapGraphAndEssay() }
 				case "/": if SPECIAL { showHideKeyboardShortcuts() }
 				default:  			   break

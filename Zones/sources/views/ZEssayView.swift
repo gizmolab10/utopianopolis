@@ -32,12 +32,12 @@ class ZEssayView: ZView {
 
 		gEssayView = self
 
-		if  let zone = gEssayEditor.zone {
-			if  let name = zone.zoneName {
-				label?.text = "editing: \(name)"
+		if  let        zone = gEssayEditor.zone {
+			if  let    name = zone.zoneName {
+				label?.text = "Essay for: \(name)"
 			}
 
-			if  let text = zone.trait(for: .eWrite).richText {
+			if  let    text = zone.trait(for: .eWrite).essayText {
 				editor?.insertText(text)
 			}
 
@@ -49,7 +49,7 @@ class ZEssayView: ZView {
 		if  let  zone = gEssayEditor.zone {
 			let write = zone.trait(for: .eWrite)
 
-			write.richText = editor?.textStorage
+			write.essayText = editor?.textStorage
 
 			write.needSave()
 			zone .needSave()

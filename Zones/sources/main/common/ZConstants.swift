@@ -134,9 +134,8 @@ let       kProductionEmailSent = "production email sent"
 let    kFavoritesAreVisibleKey = "favorites are visible"
 
 let                 kSeparator = ":"
-let         kKeyValueSeparator = ":::::"
-let        kAttributeSeparator = "|||||"
-let       kAttributesSeparator = ",,,,,"
-let    kFontAttributeSeparator = "?????"
-let   kFontAttributesSeparator = "....."
+let         kKeyValueSeparator = " (kv) "
+let        kAttributeSeparator = " (at) "
+let       kAttributesSeparator = " (a+) "
+let    kFontAttributeSeparator = " (fa) "
 

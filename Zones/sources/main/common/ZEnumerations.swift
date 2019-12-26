@@ -207,7 +207,8 @@ enum ZStorageType: String {
     case link            = "link"
     case name            = "name"
 
-    case asset           = "asset"           // traits
+	case format          = "format"          // traits
+	case asset           = "asset"
     case time            = "time"
     case text            = "text"
     case data            = "data"

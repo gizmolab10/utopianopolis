@@ -189,7 +189,7 @@ extension NSObject {
         if  iLink                   != nil,
             iLink                   != "",
             let                 name = recordName(from: iLink) {
-            var components: [String] = iLink!.components(separatedBy: kSeparator)
+            let components: [String] = iLink!.components(separatedBy: kSeparator)
             let recordID: CKRecord.ID = CKRecord.ID(recordName: name)
             let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)
             let        rawIdentifier = components[0]

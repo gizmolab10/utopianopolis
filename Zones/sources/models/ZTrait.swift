@@ -103,8 +103,9 @@ class ZTrait: ZRecord {
         return[#keyPath(type),
                #keyPath(data),
                #keyPath(text),
-               #keyPath(owner),
-               #keyPath(asset)]
+			   #keyPath(owner),
+			   #keyPath(asset),
+			   #keyPath(format)]
     }
 
 
@@ -132,15 +133,16 @@ class ZTrait: ZRecord {
         }
     }
 
-	var richText: NSMutableAttributedString? {
+	var essayText: NSMutableAttributedString? {
 		get {
 			var string: NSMutableAttributedString?
 
-			if  let  s = text,
-				let  a = format {
-				string = NSMutableAttributedString(string: s)
+			if  let     s = text {
+				string    = NSMutableAttributedString(string: s)
 
-				string?.attributesAsString = a
+				if  let a = format {
+					string?.attributesAsString = a
+				}
 			}
 
 			return string

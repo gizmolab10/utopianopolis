@@ -1711,6 +1711,10 @@ class Zone : ZRecord {
             for traitStore: ZStorageDictionary in traitsStore {
                 let trait = ZTrait(dict: traitStore, in: iDatabaseID)
 
+				if trait.type == "w" {
+					printDebug(.essay, "trait (in " + (zoneName ?? "unknown") + ") --> " + (trait.format ?? "empty"))
+				}
+
                 cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait (intentionally) not being in traits
                     addTrait(trait)
                 }
