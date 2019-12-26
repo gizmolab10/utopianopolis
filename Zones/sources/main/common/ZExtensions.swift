@@ -1200,56 +1200,30 @@ extension Character {
 extension NSMutableAttributedString {
 	
 	var attributesAsString: String {
-		get {
-			var    string = ""
-			var separator = ""
-			
-			for (key, value) in attributeRanges {
-				string.append(separator + "\(key.rawValue)" + kKeyValueSeparator + "\(value)")
-
-				separator = kAttributeSeparator
-			}
-			
-			return string
-		}
-
-		set {
-			var attributes = [NSAttributedString.Key : Any]()
-			let parts = newValue.components(separatedBy: kAttributeSeparator)
-			for part in parts {
-				let subparts = part.components(separatedBy: kKeyValueSeparator)
-				if  subparts.count > 1 {
-					let        aKey = subparts[0]
-					let       value = subparts[1]
-					let         key = NSAttributedString.Key(aKey)
-					attributes[key] = value
-				}
-			}
-			
-			attributeRanges = attributes
-		}
+		get { return attributeStrings.joined(separator: kAttributesSeparator) }
+		set { attributeStrings = newValue.components(separatedBy: kAttributesSeparator) }
 	}
 	
-	var attributeRanges: [NSAttributedString.Key : Any] {
+	var attributeStrings: [String] {
 		get {
-			var result = [NSAttributedString.Key : Any]()
+			var result = [String]()
 			let  range = NSRange(location: 0, length: length)
-			
-			enumerateAttributes(in: range, options: .reverse) { (dict, inRange, flag) in
-				for (key, value) in dict {
+			let keys: [NSAttributedString.Key] = [.font, .foregroundColor, .paragraphStyle]
+
+			for key in keys {
+				enumerateAttribute(key, in: range, options: .longestEffectiveRangeNotRequired) { (value, inRange, flag) in
 					var string: Any?
-					let raw = key.rawValue
-					if  raw.contains("NSAttributedStringKey(_rawValue: ") { continue }
-					if  let font = value as? NSFont {
-						string = font.fontDescriptor
+
+					if  let    font = value as? ZFont {
+						string      = font.string
 					}
 
-					if  let color = value as? NSColor {
-						string = color.string
+					if  let   color = value as? NSColor {
+						string      = color.string
 					}
 
-					if  let s = string {
-						result[key] = "\(inRange.location)" + kAttributesSeparator + "\(inRange.length)" + kAttributesSeparator + "\(s)"
+					if  let       s = string {
+						result.append("\(inRange.location)" + kKeyValueSeparator + "\(inRange.length)" + kKeyValueSeparator + key.rawValue + kKeyValueSeparator + "\(s)")
 					}
 				}
 			}
@@ -1258,37 +1232,80 @@ extension NSMutableAttributedString {
 		}
 		
 		set {
-			for (key, value) in newValue {
-				let raw = key.rawValue
+			for string in newValue {
+				let      parts = string.components(separatedBy: kKeyValueSeparator)
+				if       parts.count > 3,
+					let  start = parts[0].integerValue,
+					let  count = parts[1].integerValue {
+					let    raw = parts[2]
+					let string = parts[3]
+					let    key = NSAttributedString.Key(rawValue: raw)
+					let  range = NSRange(location: start, length: count)
+					var attribute: Any?
 
-				if  raw.contains("NSParagraphStyle") { continue }
-				if  let   attRange = value as? String {
-					let      parts = attRange.components(separatedBy: kAttributesSeparator)
-					if       parts.count > 2,
-						let  start = parts[0].integerValue,
-						let  count = parts[1].integerValue {
-						let string = parts[2]
-						let  range = NSRange(location: start, length: count)
-						var attribute: Any?
+					switch key {
+						case .foregroundColor:
+							attribute = ZColor(string: string)
+						case .font:
+							attribute = ZFont (string: string)
+						default:    break
+					}
 
-						switch key {
-							case .foregroundColor:
-								attribute = ZColor(string: string)
-							case .font:
-								let descriptor = NSFontDescriptor()
-								attribute = NSFont(descriptor: descriptor, textTransform: nil)
-							default:    break
-						}
+					if  let v = attribute {
+						printDebug(.essay, "add attribute over \(range) for \(raw): \(v)")
 
-						if  let v = attribute {
-							printDebug(.essay, "add attribute over \(range) for \(raw): \(v)")
-
-							addAttribute(key, value: v, range: range)
-						}
+						addAttribute(key, value: v, range: range)
 					}
 				}
 			}
 		}
+	}
+}
+
+
+extension ZFont {
+
+	var string: String { return fontDescriptor.string }
+
+	convenience init(string: String) {
+		let descriptor = NSFontDescriptor(string: string)
+
+		self.init(descriptor: descriptor, textTransform: nil)!
+	}
+
+}
+
+
+extension NSFontDescriptor {
+
+	var string: String {
+		var result = ""
+		var separator = ""
+
+		for (name, attribute) in fontAttributes {
+			result.append(separator + name.rawValue + kFontAttributeSeparator + "\(attribute)")
+			separator = kFontAttributesSeparator
+		}
+
+		return result
+	}
+
+	convenience init(string: String) {
+		let parts = string.components(separatedBy: kFontAttributesSeparator)
+		var dict  = [NSFontDescriptor.AttributeName : Any]()
+
+		for part in parts {
+			let subparts   = part.components(separatedBy: kFontAttributeSeparator)
+			if  subparts.count > 1 {
+				let    key = subparts[0]
+				let  value = subparts[1]
+				let   name = NSFontDescriptor.AttributeName(key)
+
+				dict[name] = value
+			}
+		}
+
+		self.init(fontAttributes: dict)
 	}
 }
 
