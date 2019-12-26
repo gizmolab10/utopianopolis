@@ -69,7 +69,7 @@ class Zone : ZRecord {
     var              isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
     var               isSelected:         Bool  { return gSelecting.isSelected(self) }
     var                isGrabbed:         Bool  { return gSelecting .isGrabbed(self) }
-    var                canTravel:         Bool  { return isBookmark || isHyperlink || isEmail || hasTrait(for: .eWrite) }
+    var                canTravel:         Bool  { return isBookmark || isHyperlink || isEmail || hasTrait(for: .eEssay) }
     var                 hasColor:         Bool  { return zoneColor != nil && zoneColor != "" }
     var                  isEmail:         Bool  { return hasTrait(for: .eEmail) && email != "" }
     var                  isTrash:         Bool  { return recordName == kTrashName }

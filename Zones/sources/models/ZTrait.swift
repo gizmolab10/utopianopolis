@@ -12,21 +12,20 @@ import CloudKit
 
 
 enum ZTraitType: String {
-    case eComposition = "c"
-    case eDuration    = "d" // accumulative
-	case eEmail       = "e"
-    case eGraphic     = "g"
-    case eHyperlink   = "h"
-    case eMoney       = "m" // accumulative
-    case eTime        = "t"
-	case eWrite       = "w"
+    case eDuration  = "+" // accumulative
+	case eEmail     = "e"
+	case eEssay     = "w"
+    case eGraphic   = "g"
+    case eHyperlink = "h"
+    case eMoney     = "$" // accumulative
+    case eTime      = "t"
 
 	var extraHeight: CGFloat {
 		switch self {
 			case .eHyperlink,
-				 .eDuration: return 1.0
-			case .eTime:	 return 0.8
-			default: 		 return 0.66667
+				 .eMoney: return 1.0
+			case .eTime:  return 0.8
+			default: 	  return 0.66667
 		}
 	}
 }
@@ -59,7 +58,7 @@ class ZTrait: ZRecord {
         if  let tType = traitType {
             switch tType {
 				case .eEmail: return "email address"
-				case .eWrite: return "write"
+				case .eEssay: return "write"
 				case .eHyperlink: return "hyperlink"
 				default: break
             }

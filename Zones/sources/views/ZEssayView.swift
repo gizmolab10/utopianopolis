@@ -37,7 +37,7 @@ class ZEssayView: ZView {
 				label?.text = "Essay for: \(name)"
 			}
 
-			if  let    text = zone.trait(for: .eWrite).essayText {
+			if  let    text = zone.trait(for: .eEssay).essayText {
 				editor?.insertText(text)
 			}
 
@@ -47,7 +47,7 @@ class ZEssayView: ZView {
 
 	func endEditing() {
 		if  let  zone = gEssayEditor.zone {
-			let write = zone.trait(for: .eWrite)
+			let write = zone.trait(for: .eEssay)
 
 			write.essayText = editor?.textStorage
 
