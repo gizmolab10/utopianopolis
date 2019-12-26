@@ -539,7 +539,7 @@ DQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Thoughtful" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-71" y="649"/>
+            <point key="canvasLocation" x="51" y="457"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -560,7 +560,7 @@ DQ
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="392" y="84"/>
+            <point key="canvasLocation" x="486" y="35"/>
         </scene>
         <!--Graph-->
         <scene sceneID="hIz-AP-VOD">
@@ -622,7 +622,7 @@ DQ
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="113" y="1442"/>
+            <point key="canvasLocation" x="551" y="1442"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -701,7 +701,7 @@ DQ
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="391" y="649"/>
+            <point key="canvasLocation" x="485" y="596"/>
         </scene>
         <!--Search Controller-->
         <scene sceneID="Gwm-hS-Ozn">
@@ -802,7 +802,7 @@ DQ
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1155" y="1442"/>
+            <point key="canvasLocation" x="1020" y="1442"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -810,7 +810,7 @@ DQ
                 <controllerPlaceholder storyboardName="Details" id="yWa-SA-l1V" sceneMemberID="viewController"/>
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="843" y="1158"/>
+            <point key="canvasLocation" x="1321" y="1158"/>
         </scene>
         <!--Essay-->
         <scene sceneID="YUn-EI-h0m">
@@ -909,7 +909,7 @@ DQ
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="557" y="1442"/>
+            <point key="canvasLocation" x="109" y="1442"/>
         </scene>
     </scenes>
 </document>

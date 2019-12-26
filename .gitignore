@@ -45,3 +45,5 @@ Apple ID Test.zip
 /Zones/docs
 /.gitfubar
 /Zones.xcworkspace/xcuserdata/sand.xcuserdatad/IDEFindNavigatorScopes.plist
+/Zones/Zones.xcodeproj/project.xcworkspace
+/.swiftpm
