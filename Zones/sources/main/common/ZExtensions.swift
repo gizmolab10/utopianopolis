@@ -40,15 +40,15 @@ extension NSObject {
     func                  note(_ iMessage: Any?)                { } // logk(iMessage) }
     func           performance(_ iMessage: Any?)                { log(iMessage) }
     func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
-    func        columnarReport(_ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(iFirst, iSecond) }
     func           redrawGraph(_ onCompletion: Closure? = nil)  { gControllers.signalFor(nil, regarding: .eRelayout, onCompletion: onCompletion) }
     func     printCurrentFocus()                                { gHere.widget?.printView() }
 
+	func columnarReport(mode: ZDebugMode = .log, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
 
-    func rawColumnarReport(_ iFirst: Any?, _ iSecond: Any?) {
+	func rawColumnarReport(mode: ZDebugMode = .log, _ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
             prefix.appendSpacesToLength(kLogTabStop)
-            log("\(prefix)\(iSecond ?? "")")
+            printDebug(mode, "\(prefix)\(iSecond ?? "")")
         }
     }
 

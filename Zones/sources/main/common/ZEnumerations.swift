@@ -229,12 +229,14 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let      none = ZDebugMode(rawValue: 0)
-	static let       log = ZDebugMode(rawValue: 1)
+	static let        op = ZDebugMode(rawValue: 1)
+	static let       log = ZDebugMode()
 	static let     error = ZDebugMode()
 	static let     essay = ZDebugMode()
 
 	var description: String {
-		return [(.log,       "    log"),
+		return [(.op,        "     op"),
+				(.log,       "    log"),
 				(.error,     "  error"),
 				(.essay,     "  essay")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
