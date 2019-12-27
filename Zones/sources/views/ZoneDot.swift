@@ -230,7 +230,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             let    width = CGFloat(gDotHeight - 2.0) * ratio
             let     font = ZFont.boldSystemFont(ofSize: width)
 			let     size = string.sizeWithFont(font)
-			let   height = size.height * type.extraHeight + (isInThoughts ? 1.0 : -2.5)
+			let   height = size.height * type.heightRatio + (isInThoughts ? 1.0 : -2.5)
 			let   xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
             let   yDelta = ((height - iDirtyRect.height) / CGFloat(4.0))
             let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta)

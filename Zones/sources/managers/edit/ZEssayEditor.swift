@@ -37,17 +37,57 @@ class ZEssayEditor: ZBaseEditor {
 			if  key    != key.lowercased() {
 				key     = key.lowercased()
 			}
-			
+
+			if  let arrow = key.arrow {
+				handleArrow(arrow, flags: flags)
+			}
+
+			if  COMMAND {
+				switch key {
+					case "a": gEssayView?.editor?.selectAll(nil)
+					case "s": gEssayView?.save()
+					case "w": swapGraphAndEssay()
+					case "/": if SPECIAL { showHideKeyboardShortcuts() }
+					default:  break
+				}
+			}
+
 			switch key {
-				case kEscape: 		   swapGraphAndEssay()
-				case "a": if COMMAND { gEssayView?.editor?.selectAll(nil) }
-				case "w": if COMMAND { swapGraphAndEssay() }
-				case "/": if SPECIAL { showHideKeyboardShortcuts() }
+				case kEscape: swapGraphAndEssay()
 				default:  			   break
 			}
 		}
 		
 		return false
 	}
-	
+
+	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
+		if  let  editor = gEssayView?.editor {
+			let COMMAND = flags.isCommand
+			let  OPTION = flags.isOption
+
+			if  COMMAND {
+				switch arrow {
+					case .up:    editor.moveToBeginningOfParagraph(nil)
+					case .down:  editor.moveToEndOfParagraph(nil)
+					case .left:  editor.moveToBeginningOfLine(nil)
+					case .right: editor.moveToEndOfLine(nil)
+				}
+			} else if  OPTION {
+				switch arrow {
+					case .up:    editor.moveToLeftEndOfLine(nil)
+					case .down:  editor.moveToRightEndOfLine(nil)
+					case .left:  editor.moveWordBackward(nil)
+					case .right: editor.moveWordForward(nil)
+				}
+			} else {
+				switch arrow {
+					case .up:    editor.moveUp(nil)
+					case .down:  editor.moveDown(nil)
+					case .left:  editor.moveLeft(nil)
+					case .right: editor.moveRight(nil)
+				}
+			}
+		}
+	}
 }

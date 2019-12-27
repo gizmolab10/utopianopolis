@@ -62,7 +62,7 @@ class ZBaseEditor: NSObject {
 		gWorkMode     = stopEssay ? .graphMode : .essayMode
 
 		if  stopEssay {
-			gEssayView?.endEditing()		
+			gEssayView?.save()
 		}
 
 		gControllers.signalFor(nil, regarding: .eEssay)

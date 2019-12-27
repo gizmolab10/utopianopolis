@@ -21,14 +21,14 @@ class ZEssayView: ZView {
 	@IBOutlet var  label: ZTextField?
 	@IBOutlet var editor: ZTextView?
 
-	func clearEditor() {
+	func clear() {
 		if  let length = editor?.textStorage?.length, length > 0 {
 			editor?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
 		}
 	}
 
-	func beginEditing() {
-		clearEditor()
+	func begin() {
+		clear() // discard previously edited text
 
 		gEssayView = self
 
@@ -45,7 +45,7 @@ class ZEssayView: ZView {
 		}
 	}
 
-	func endEditing() {
+	func save() {
 		if  let  zone = gEssayEditor.zone {
 			let write = zone.trait(for: .eEssay)
 

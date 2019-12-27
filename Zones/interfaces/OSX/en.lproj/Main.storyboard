@@ -855,7 +855,7 @@ DQ
                                             <rect key="frame" x="0.0" y="0.0" width="400" height="564"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" allowsDocumentBackgroundColorChange="YES" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4">
+                                                <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4">
                                                     <rect key="frame" x="0.0" y="0.0" width="400" height="564"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
