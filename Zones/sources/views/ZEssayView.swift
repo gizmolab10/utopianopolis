@@ -29,24 +29,22 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 	func begin() {
-		clear() // discard previously edited text
+		clear() 	// discard previously edited text
 
 		gEssayView         = self
 		editor?  .delegate = nil
 
 		if  let       zone = gEssayEditor.zone {
-			if  let   text = zone.trait(for: .eEssay).essayText {
-				textRange  = NSRange(location: titleRange.upperBound, length: text.length)
-				editor?.insertText(text, replacementRange: NSRange())
-			}
-
 			if  let   name = zone.zoneName,
-				let   font = ZFont(name: "Times", size: 36.0) {
+				let   font = ZFont(name: "Times", size: 36.0),
+				let   text = zone.trait(for: .eEssay).essayText {
 				let  title = name + "\n\n"
 				titleRange = NSRange(location: 0, length: title.length)
+				textRange  = NSRange(location: titleRange.upperBound, length: text.length)
 				let string = NSMutableAttributedString(string: title)
 
 				string.addAttribute(.font, value: font, range: titleRange)
+				editor?.insertText(text,   replacementRange: NSRange())
 				editor?.insertText(string, replacementRange: NSRange())
 			}
 
@@ -67,15 +65,16 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 			zone .needSave()
 			essay.needSave()
-
 			gControllers.signalFor(zone, multiple: [.eDatum])
 		}
 	}
 
 	func update(_ range:NSRange, _ length: Int) {
-		if  let       intersection = range.specialIntersection(textRange) {
+		if  let       intersection = range.specialIntersection(textRange, includeUpper: true) {
 			textRange     .length += length - intersection.length
-		} else if let intersection = range.specialIntersection(titleRange) {
+		}
+
+		if  let       intersection = range.specialIntersection(titleRange) {
 			let delta              = length - intersection.length
 			titleRange    .length += delta
 			textRange   .location += delta

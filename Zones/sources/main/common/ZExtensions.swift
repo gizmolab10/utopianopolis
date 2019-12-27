@@ -723,12 +723,12 @@ extension Array where Element == Zone {
 }
 
 extension NSRange {
-	func specialIntersection(_ other: NSRange) -> NSRange? {
+	func specialIntersection(_ other: NSRange, includeUpper: Bool = false) -> NSRange? {
 		if  let    i = intersection(other) {
 			return i
 		}
 
-		if  location == other.location || location == other.upperBound {
+		if  location == other.location || (location == other.upperBound && includeUpper) {
 			return NSRange()
 		}
 
