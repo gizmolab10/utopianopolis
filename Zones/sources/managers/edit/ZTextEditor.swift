@@ -457,11 +457,12 @@ class ZTextEditor: ZTextView {
 	
 	@objc func handlePopupMenu(_ iItem: ZMenuItem) {
 		#if os(OSX)
-		if  let type = ZPopupMenuType(rawValue: iItem.keyEquivalent),
-			type != .eCancel {
-			let text = type.text
+		if  let  type = ZPopupMenuType(rawValue: iItem.keyEquivalent),
+			let range = selectedRanges[0] as? NSRange,
+			type     != .eCancel {
+			let  text = type.text
 			
-			insertText(text, replacementRange: NSRange())
+			insertText(text, replacementRange: range)
 		}
 		#endif
 	}
@@ -470,10 +471,7 @@ class ZTextEditor: ZTextView {
 	// MARK:-
 
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gDesktopAppDelegate?.genericMenuHandler(iItem) }
-    
-    // MARK:- arrow keys
-    // MARK:-
-    
+
     func moveOut(_ iMoveOut: Bool) {
         gArrowsDoNotBrowse = true
         let       revealed = currentlyEditingZone?.showingChildren ?? false

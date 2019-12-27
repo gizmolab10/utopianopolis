@@ -31,21 +31,26 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	func begin() {
 		clear() 	// discard previously edited text
 
-		gEssayView         = self
-		editor?  .delegate = nil
+		gEssayView      		   = self
+		editor?  		 .delegate = nil
+		editor?.textContainerInset = NSSize(width: 10, height: 10)
 
 		if  let       zone = gEssayEditor.zone {
 			if  let   name = zone.zoneName,
-				let   font = ZFont(name: "Times", size: 36.0),
+				let  color = zone.color,
+				let   font = ZFont(name: "Times-Roman", size: 36.0),
 				let   text = zone.trait(for: .eEssay).essayText {
-				let  title = name + "\n\n"
-				titleRange = NSRange(location: 0, length: title.length)
-				textRange  = NSRange(location: titleRange.upperBound, length: text.length)
-				let string = NSMutableAttributedString(string: title)
+				let  title = NSMutableAttributedString(string: name)
+				let  blank = NSMutableAttributedString(string: "\n\n")
+				titleRange = NSRange(location: 0, length: name.length)
+				textRange  = NSRange(location: name.length + 2, length: text.length)
 
-				string.addAttribute(.font, value: font, range: titleRange)
-				editor?.insertText(text,   replacementRange: NSRange())
-				editor?.insertText(string, replacementRange: NSRange())
+				let atributes: [NSAttributedString.Key:Any] = [.font:font, .foregroundColor:color]
+
+				editor?.insertText(text,  replacementRange: NSRange()) 	// insert text first
+				editor?.insertText(blank, replacementRange: NSRange())
+				editor?.insertText(title, replacementRange: NSRange()) 	// insert title last
+				editor?.textStorage?.addAttributes(atributes, range: titleRange)
 			}
 
 			editor?.delegate = self
