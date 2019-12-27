@@ -17,9 +17,10 @@ import UIKit
 
 var gEssayView: ZEssayView?
 
-class ZEssayView: ZView {
-	@IBOutlet var  label: ZTextField?
+class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var editor: ZTextView?
+	var titleRange = NSRange()
+	var  textRange = NSRange()
 
 	func clear() {
 		if  let length = editor?.textStorage?.length, length > 0 {
@@ -30,30 +31,67 @@ class ZEssayView: ZView {
 	func begin() {
 		clear() // discard previously edited text
 
-		gEssayView = self
+		gEssayView         = self
+		editor?  .delegate = nil
 
-		if  let        zone = gEssayEditor.zone {
-			if  let    name = zone.zoneName {
-				label?.text = "Essay for: \(name)"
+		if  let       zone = gEssayEditor.zone {
+			if  let   name = zone.zoneName {
+				let  title = name + "\n\n"
+				titleRange = NSRange(location: 0, length: title.length)
+				let string = NSMutableAttributedString(string: title)
+
+				string.addAttribute(.font, value: ZFont.systemFont(ofSize: 48.0), range: titleRange)
+				editor?.insertText(string)
 			}
 
-			if  let    text = zone.trait(for: .eEssay).essayText {
+			if  let   text = zone.trait(for: .eEssay).essayText {
+				textRange  = NSRange(location: titleRange.upperBound, length: text.length)
 				editor?.insertText(text)
 			}
 
+			editor?.delegate = self
 			becomeFirstResponder()
 		}
 	}
 
 	func save() {
-		if  let  zone = gEssayEditor.zone {
-			let write = zone.trait(for: .eEssay)
+		if  let        zone = gEssayEditor.zone,
+			let  attributed = editor?.textStorage {
+			let      string = attributed.string
+			let        text = attributed.attributedSubstring(from: textRange)
+			let       title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
+			let       essay = zone.trait(for: .eEssay)
+			essay.essayText = text.mutableCopy() as? NSMutableAttributedString
+			zone  .zoneName = title
 
-			write.essayText = editor?.textStorage
-
-			write.needSave()
 			zone .needSave()
+			essay.needSave()
+
+			gControllers.signalFor(zone, multiple: [.eDatum])
 		}
 	}
+
+	func update(_ range:NSRange, _ length: Int) {
+		if  let       intersection = range.specialIntersection(textRange) {
+			textRange     .length += length - intersection.length
+		} else if let intersection = range.specialIntersection(titleRange) {
+			let delta              = length - intersection.length
+			titleRange    .length += delta
+			textRange   .location += delta
+		}
+	}
+
+	func textView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
+		if  let strings = replacementStrings {
+			for (index, value) in affectedRanges.enumerated() {
+				if  let range = value as? NSRange {
+					update(range, strings[index].length)
+				}
+			}
+		}
+
+		return true
+	}
+
 }
 

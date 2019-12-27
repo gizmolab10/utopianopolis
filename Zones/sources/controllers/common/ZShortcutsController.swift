@@ -134,7 +134,7 @@ class ZShortcutsController: ZGenericTableController {
             cellString.append(attributedString(for: row, column: column))
         }
 
-        cellString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, cellString.length))
+        cellString.addAttribute(.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, cellString.length))
 
         return cellString
 	}

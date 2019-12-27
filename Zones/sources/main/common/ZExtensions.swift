@@ -719,9 +719,159 @@ extension Array where Element == Zone {
         
         return candidate
     }
-    
+
 }
 
+extension NSRange {
+	func specialIntersection(_ other: NSRange) -> NSRange? {
+		if  let    i = intersection(other) {
+			return i
+		}
+
+		if  location == other.location || location == other.upperBound {
+			return NSRange()
+		}
+
+		return nil
+	}
+}
+
+extension NSMutableParagraphStyle {
+
+	var string: String { return "alignment" + kAttributeSeparator + "\(alignment)"}
+
+	convenience init(string: String) {
+		self.init()
+
+		let parts = string.components(separatedBy: kAttributeSeparator)
+
+		if  parts.count > 1,
+			parts[0] == "alignment",
+			let raw = parts[1].integerValue,
+			let a = NSTextAlignment(rawValue: raw) {
+			self.alignment = a
+
+			return
+		}
+	}
+
+}
+
+
+extension ZFont {
+
+	var string: String { return fontDescriptor.string }
+
+	convenience init(string: String) {
+		let descriptor = NSFontDescriptor(string: string)
+
+		self.init(descriptor: descriptor, textTransform: nil)!
+	}
+
+}
+
+
+extension NSFontDescriptor {
+
+	var string: String {
+		var result = ""
+		var separator = ""
+
+		for (name, attribute) in fontAttributes {
+			result.append(separator + name.rawValue + kFontAttributeSeparator + "\(attribute)")
+			separator = kAttributeSeparator
+		}
+
+		return result
+	}
+
+	convenience init(string: String) {
+		let parts = string.components(separatedBy: kAttributeSeparator)
+		var dict  = [NSFontDescriptor.AttributeName : Any]()
+
+		for part in parts {
+			let subparts   = part.components(separatedBy: kFontAttributeSeparator)
+			if  subparts.count > 1 {
+				let    key = subparts[0]
+				let  value = subparts[1]
+				let   name = NSFontDescriptor.AttributeName(key)
+
+				dict[name] = value
+			}
+		}
+
+		self.init(fontAttributes: dict)
+	}
+}
+
+extension NSMutableAttributedString {
+
+	var attributesAsString: String {
+		get { return attributeStrings.joined(separator: kAttributesSeparator) }
+		set { attributeStrings = newValue.components(separatedBy: kAttributesSeparator) }
+	}
+
+	var attributeStrings: [String] {
+		get {
+			var result = [String]()
+			let  range = NSRange(location: 0, length: length)
+			let keys: [NSAttributedString.Key] = [.font, .foregroundColor]
+
+			for key in keys {
+				enumerateAttribute(key, in: range, options: .reverse) { (value, inRange, flag) in
+					var string: Any?
+
+					if  let  font = value as? ZFont {
+						string    = font.string
+					}
+
+					if  let color = value as? NSColor {
+						string    = color.string
+					}
+
+					if  let style = value as? NSMutableParagraphStyle {
+						string    = style.string
+					}
+
+					if  let value = string {
+						result.append("\(inRange.location)" + kValueSeparator + "\(inRange.length)" + kValueSeparator + key.rawValue + kValueSeparator + "\(value)")
+					}
+				}
+			}
+
+			return result
+		}
+
+		set {
+			for string in newValue {
+				let      parts = string.components(separatedBy: kValueSeparator)
+				if       parts.count > 3,
+					let  start = parts[0].integerValue,
+					let  count = parts[1].integerValue {
+					let    raw = parts[2]
+					let string = parts[3]
+					let    key = NSAttributedString.Key(rawValue: raw)
+					let  range = NSRange(location: start, length: count)
+					var attribute: Any?
+
+					switch key {
+						case .foregroundColor: attribute = ZColor				  (string: string)
+						case .font:            attribute = ZFont 				  (string: string)
+						case .paragraphStyle:  attribute = NSMutableParagraphStyle(string: string)
+						default:    		   break
+					}
+
+					if  let value = attribute {
+						printDebug(.essay, "add attribute over \(range) for \(raw): \(value)")
+
+						addAttribute(key, value: value, range: range)
+					}
+				}
+			}
+		}
+	}
+
+}
 
 extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
@@ -934,7 +1084,6 @@ extension String {
 
         return a.stringBySmartly(appending: b.stringBySmartly(appending: c))
     }
-
 
     func substring(with range: NSRange) -> String {
         let iStart = index(at: range.lowerBound)
@@ -1194,144 +1343,6 @@ extension Character {
     var asciiValue: UInt32? {
         return String(self).unicodeScalars.first?.value
     }
-}
-
-
-extension NSMutableAttributedString {
-	
-	var attributesAsString: String {
-		get { return attributeStrings.joined(separator: kAttributesSeparator) }
-		set { attributeStrings = newValue.components(separatedBy: kAttributesSeparator) }
-	}
-	
-	var attributeStrings: [String] {
-		get {
-			var result = [String]()
-			let  range = NSRange(location: 0, length: length)
-			let keys: [NSAttributedString.Key] = [.font, .foregroundColor]
-
-			for key in keys {
-				enumerateAttribute(key, in: range, options: .reverse) { (value, inRange, flag) in
-					var string: Any?
-
-					if  let  font = value as? ZFont {
-						string    = font.string
-					}
-
-					if  let color = value as? NSColor {
-						string    = color.string
-					}
-
-					if  let style = value as? NSMutableParagraphStyle {
-						string    = style.string
-					}
-
-					if  let value = string {
-						result.append("\(inRange.location)" + kValueSeparator + "\(inRange.length)" + kValueSeparator + key.rawValue + kValueSeparator + "\(value)")
-					}
-				}
-			}
-
-			return result
-		}
-		
-		set {
-			for string in newValue {
-				let      parts = string.components(separatedBy: kValueSeparator)
-				if       parts.count > 3,
-					let  start = parts[0].integerValue,
-					let  count = parts[1].integerValue {
-					let    raw = parts[2]
-					let string = parts[3]
-					let    key = NSAttributedString.Key(rawValue: raw)
-					let  range = NSRange(location: start, length: count)
-					var attribute: Any?
-
-					switch key {
-						case .foregroundColor: attribute = ZColor				  (string: string)
-						case .font:            attribute = ZFont 				  (string: string)
-						case .paragraphStyle:  attribute = NSMutableParagraphStyle(string: string)
-						default:    		   break
-					}
-
-					if  let value = attribute {
-						printDebug(.essay, "add attribute over \(range) for \(raw): \(value)")
-
-						addAttribute(key, value: value, range: range)
-					}
-				}
-			}
-		}
-	}
-}
-
-
-extension NSMutableParagraphStyle {
-
-	var string: String { return "alignment" + kAttributeSeparator + "\(alignment)"}
-
-	convenience init(string: String) {
-		self.init()
-
-		let parts = string.components(separatedBy: kAttributeSeparator)
-
-		if  parts.count > 1,
-			parts[0] == "alignment",
-			let raw = parts[1].integerValue,
-			let a = NSTextAlignment(rawValue: raw) {
-			self.alignment = a
-
-			return
-		}
-	}
-
-}
-
-
-extension ZFont {
-
-	var string: String { return fontDescriptor.string }
-
-	convenience init(string: String) {
-		let descriptor = NSFontDescriptor(string: string)
-
-		self.init(descriptor: descriptor, textTransform: nil)!
-	}
-
-}
-
-
-extension NSFontDescriptor {
-
-	var string: String {
-		var result = ""
-		var separator = ""
-
-		for (name, attribute) in fontAttributes {
-			result.append(separator + name.rawValue + kFontAttributeSeparator + "\(attribute)")
-			separator = kAttributeSeparator
-		}
-
-		return result
-	}
-
-	convenience init(string: String) {
-		let parts = string.components(separatedBy: kAttributeSeparator)
-		var dict  = [NSFontDescriptor.AttributeName : Any]()
-
-		for part in parts {
-			let subparts   = part.components(separatedBy: kFontAttributeSeparator)
-			if  subparts.count > 1 {
-				let    key = subparts[0]
-				let  value = subparts[1]
-				let   name = NSFontDescriptor.AttributeName(key)
-
-				dict[name] = value
-			}
-		}
-
-		self.init(fontAttributes: dict)
-	}
 }
 
 

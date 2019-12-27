@@ -92,7 +92,7 @@ class ZActionsController : ZGenericController {
 		if  let actions = actionsSelector {
 			let    font = UIFont.systemFont(ofSize: 17)
 			
-			actions.setTitleTextAttributes([NSAttributedString.Key.font : font], for: .normal)
+			actions.setTitleTextAttributes([.font : font], for: .normal)
 			actions.apportionsSegmentWidthsByContent = true
 			actions.removeAllSegments()
 			

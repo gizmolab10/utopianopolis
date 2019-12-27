@@ -23,7 +23,7 @@ class ZoneSegmentedControl : ZSegmentedControl {
         setDividerImage(image, forLeftSegmentState:   .normal, rightSegmentState: .selected, barMetrics: .default)
         setDividerImage(image, forLeftSegmentState: .selected, rightSegmentState:   .normal, barMetrics: .default)
 
-        setTitleTextAttributes([NSAttributedString.Key.font : gWidgetFont], for: .normal)
+        setTitleTextAttributes([.font : gWidgetFont], for: .normal)
     }
 
 }
