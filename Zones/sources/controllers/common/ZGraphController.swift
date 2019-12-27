@@ -201,11 +201,11 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
 	
 
-    func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inThoughtsGraph: Bool) {
-        if  kIsPhone && (inThoughtsGraph == gShowFavorites) { return }
+    func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inPublicGraph: Bool) {
+        if  kIsPhone && (inPublicGraph == gShowFavorites) { return }
 
-        let                        here = inThoughtsGraph ? gHereMaybe : gFavoritesRoot
-        var specificWidget: ZoneWidget? = inThoughtsGraph ? thoughtsRootWidget : favoritesRootWidget
+        let                        here = inPublicGraph ? gHereMaybe : gFavoritesRoot
+        var specificWidget: ZoneWidget? = inPublicGraph ? thoughtsRootWidget : favoritesRootWidget
         var specificView:        ZView? = dragView
         var specificIndex:         Int?
         var                   recursing = true
@@ -214,14 +214,14 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
         if  let            zone  = iZone as? Zone,
             let          widget  = zone.widget,
-            widget.isInThoughts == inThoughtsGraph {
+            widget.isInPublic == inPublicGraph {
             specificWidget       = widget
             specificIndex        = zone.siblingIndex
             specificView         = specificWidget?.superview
             recursing            = [.eData, .eRelayout].contains(iKind)
         }
 
-        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isThought: inThoughtsGraph, visited: [])
+        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isThought: inPublicGraph, visited: [])
     }
 
     
@@ -232,8 +232,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             } else if !gIsEditingText {
 				prepare(for: iKind)
                 layoutForCurrentScrollOffset()
-                layoutRootWidget(for: iSignalObject, iKind, inThoughtsGraph: true)
-                layoutRootWidget(for: iSignalObject, iKind, inThoughtsGraph: false)
+                layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: true)
+                layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: false)
                 dragView?.setAllSubviewsNeedDisplay()
             }
         }

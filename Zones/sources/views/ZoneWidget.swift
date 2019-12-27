@@ -31,10 +31,10 @@ class ZoneWidget: ZView {
     let              textWidget = ZoneTextWidget ()
     let            childrenView = ZView          ()
     private var childrenWidgets = [ZoneWidget]   ()
-    var                isInThoughts = false
+    var                isInPublic = false
     weak var         widgetZone :       Zone?
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
-    var                   ratio :     CGFloat { return isInThoughts ? 1.0 : kFavoritesReduction }
+    var                   ratio :     CGFloat { return isInPublic ? 1.0 : kFavoritesReduction }
 
 
     deinit {
@@ -54,7 +54,7 @@ class ZoneWidget: ZView {
             thisView.addSubview(self)
         }
 
-        isInThoughts = isThought
+        isInPublic = isThought
 
         #if os(iOS)
             backgroundColor = kClearColor
@@ -85,7 +85,7 @@ class ZoneWidget: ZView {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone =            zone[index]
 
-                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, isThought: isInThoughts, visited: visited)
+                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, isThought: isInPublic, visited: visited)
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in
                     if  previous == nil {
@@ -159,7 +159,7 @@ class ZoneWidget: ZView {
 
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let ratio = isInThoughts ? 1.0 : kFavoritesReduction / 3.0
+            let ratio = isInPublic ? 1.0 : kFavoritesReduction / 3.0
 
             make.left.equalTo(textWidget.snp.right).offset(gChildrenViewOffset * Double(ratio))
             make.bottom.top.right.equalTo(self)
@@ -456,7 +456,7 @@ class ZoneWidget: ZView {
         let         shrink =  3.0 + (height / 6.0)
         let hiddenDotDelta = rightDot?.revealDotIsVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0   // expand around reveal dot, only if it is visible
         var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta, dy: -0.5 - delta).offsetBy(dx: -0.75, dy: 1.5)  // get size from text widget
-        rect.size .height += -0.5 + gHighlightHeightOffset + (isInThoughts ? 0.0 : 1.0)
+        rect.size .height += -0.5 + gHighlightHeightOffset + (isInPublic ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let     colorRatio = CGFloat(pale ? 0.5 : 1.0)
