@@ -461,7 +461,7 @@ class ZTextEditor: ZTextView {
 			type != .eCancel {
 			let text = type.text
 			
-			insertText(text)
+			insertText(text, replacementRange: NSRange())
 		}
 		#endif
 	}

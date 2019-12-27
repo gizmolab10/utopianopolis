@@ -35,18 +35,19 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		editor?  .delegate = nil
 
 		if  let       zone = gEssayEditor.zone {
-			if  let   name = zone.zoneName {
+			if  let   text = zone.trait(for: .eEssay).essayText {
+				textRange  = NSRange(location: titleRange.upperBound, length: text.length)
+				editor?.insertText(text, replacementRange: NSRange())
+			}
+
+			if  let   name = zone.zoneName,
+				let   font = ZFont(name: "Times", size: 36.0) {
 				let  title = name + "\n\n"
 				titleRange = NSRange(location: 0, length: title.length)
 				let string = NSMutableAttributedString(string: title)
 
-				string.addAttribute(.font, value: ZFont.systemFont(ofSize: 48.0), range: titleRange)
-				editor?.insertText(string)
-			}
-
-			if  let   text = zone.trait(for: .eEssay).essayText {
-				textRange  = NSRange(location: titleRange.upperBound, length: text.length)
-				editor?.insertText(text)
+				string.addAttribute(.font, value: font, range: titleRange)
+				editor?.insertText(string, replacementRange: NSRange())
 			}
 
 			editor?.delegate = self
