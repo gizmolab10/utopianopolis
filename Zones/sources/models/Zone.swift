@@ -28,137 +28,62 @@ import CloudKit
 class Zone : ZRecord {
 
 
-    @objc dynamic var           parent:  CKRecord.Reference?
-	@objc dynamic var         zoneName:       String?
-    @objc dynamic var         zoneLink:       String?
-    @objc dynamic var        zoneColor:       String?
-	@objc dynamic var   zoneAttributes:       String?
-    @objc dynamic var       parentLink:       String?
-    @objc dynamic var       zoneAuthor:       String?
-    @objc dynamic var        zoneOrder:     NSNumber?
-    @objc dynamic var        zoneCount:     NSNumber?
-    @objc dynamic var       zoneAccess:     NSNumber?
-    @objc dynamic var      zoneProgeny:     NSNumber?
-    var              _parentZone:         Zone?
-    var               _hyperLink:       String?
-    var               _crossLink:      ZRecord?
-    var                   _color:       ZColor?
-    var                   _email:       String?
-    var                 children =                [Zone] ()
-    var                   traits = [ZTraitType : ZTrait] ()
-    var                    count:          Int  { return children.count }
-    var            lowestExposed:          Int? { return exposed(upTo: highestExposed) }
-    var           bookmarkTarget:         Zone? { return crossLink as? Zone }
-    var              destroyZone:         Zone? { return cloud?.destroyZone }
-    var                trashZone:         Zone? { return cloud?.trashZone }
-    var                 manifest:    ZManifest? { return cloud?.manifest }
-    var                   widget:   ZoneWidget? { return gWidgets.widgetForZone(self) }
-    var           linkDatabaseID:  ZDatabaseID? { return databaseID(from: zoneLink) }
-    var           linkRecordName:       String? { return recordName(from: zoneLink) }
-    override var       emptyName:       String  { return "idea" }
-    override var   unwrappedName:       String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
-    var            decoratedName:       String  { return decoration + unwrappedName }
-    var         fetchedBookmarks:       [Zone]  { return gBookmarks.bookmarks(for: self) ?? [] }
-    var        isCurrentFavorite:         Bool  { return self == gFavorites.currentFavorite }
-    var         grabbedTextColor:       ZColor? { return color?.darker(by: 3.0) }
-    var        onlyShowRevealDot:         Bool  { return showingChildren && ((isRootOfFavorites && !(widget?.isInPublic ?? true)) || (kIsPhone && self == gHereMaybe)) }
-    var          dragDotIsHidden:         Bool  { return                     (isRootOfFavorites && !(widget?.isInPublic ?? true)) || (kIsPhone && self == gHereMaybe && showingChildren) } // always hide drag dot of favorites root
-    var            hasZonesBelow:         Bool  { return hasAnyZonesAbove(false) }
-    var            hasZonesAbove:         Bool  { return hasAnyZonesAbove(true) }
-    var              hasSiblings:         Bool  { return parentZone?.count ?? 0 > 1 }
-    var              isHyperlink:         Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
-    var               isSelected:         Bool  { return gSelecting.isSelected(self) }
-    var                isGrabbed:         Bool  { return gSelecting .isGrabbed(self) }
-    var                canTravel:         Bool  { return isBookmark || isHyperlink || isEmail || hasTrait(for: .eEssay) }
-    var                 hasColor:         Bool  { return zoneColor != nil && zoneColor != "" }
-    var                  isEmail:         Bool  { return hasTrait(for: .eEmail) && email != "" }
-    var                  isTrash:         Bool  { return recordName == kTrashName }
-    var                isInTrash:         Bool  { return root?.isTrash              ?? false }
-    var            isInFavorites:         Bool  { return root?.isRootOfFavorites    ?? false }
-    var         isInLostAndFound:         Bool  { return root?.isRootOfLostAndFound ?? false }
-    var     isRootOfLostAndFound:         Bool  { return recordName == kLostAndFoundName }
-    var            isSpecialRoot:         Bool  { return isRootOfLostAndFound || isRootOfFavorites || isTrash }
-    var           spawnedByAGrab:         Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
-    var               spawnCycle:         Bool  { return spawnedByAGrab || dropCycle }
+    @objc dynamic var         parent : CKRecord.Reference?
+	@objc dynamic var       zoneName :             String?
+    @objc dynamic var       zoneLink :             String?
+    @objc dynamic var      zoneColor :             String?
+	@objc dynamic var zoneAttributes :             String?
+    @objc dynamic var     parentLink :             String?
+    @objc dynamic var     zoneAuthor :             String?
+    @objc dynamic var      zoneOrder :           NSNumber?
+    @objc dynamic var      zoneCount :           NSNumber?
+    @objc dynamic var     zoneAccess :           NSNumber?
+    @objc dynamic var    zoneProgeny :           NSNumber?
+	var              parentZoneMaybe :               Zone?
+    var               hyperLinkMaybe :             String?
+    var               crossLinkMaybe :            ZRecord?
+    var                   colorMaybe :             ZColor?
+    var                   emailMaybe :             String?
+	var       		      essayMaybe :             ZEssay?
+	var                     children =          ZoneArray()
+	var                       traits =   ZTraitDictionary()
+    var                        count :                Int  { return children.count }
+    var                lowestExposed :                Int? { return exposed(upTo: highestExposed) }
+    var               bookmarkTarget :               Zone? { return crossLink as? Zone }
+    var                  destroyZone :               Zone? { return cloud?.destroyZone }
+    var                    trashZone :               Zone? { return cloud?.trashZone }
+	var             grabbedTextColor :             ZColor? { return color?.darker(by: 3.0) }
+    var                     manifest :          ZManifest? { return cloud?.manifest }
+    var                       widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
+    var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
+    var               linkRecordName :             String? { return recordName(from: zoneLink) }
+    override var           emptyName :             String  { return "idea" }
+    override var       unwrappedName :             String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
+    var                decoratedName :             String  { return decoration + unwrappedName }
+    var             fetchedBookmarks :             ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
+    var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
+    var            onlyShowRevealDot :               Bool  { return showingChildren && ((isRootOfFavorites && !(widget?.isInPublic ?? true)) || (kIsPhone && self == gHereMaybe)) }
+    var              dragDotIsHidden :               Bool  { return                     (isRootOfFavorites && !(widget?.isInPublic ?? true)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
+    var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
+    var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
+    var                  hasSiblings :               Bool  { return parentZone?.count ?? 0 > 1 }
+    var                  isHyperlink :               Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
+    var                   isSelected :               Bool  { return gSelecting.isSelected(self) }
+    var                    isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
+    var                    canTravel :               Bool  { return isBookmark || isHyperlink || isEmail || hasTrait(for: .eEssay) }
+    var                     hasColor :               Bool  { return zoneColor != nil && zoneColor != "" }
+    var                      isEmail :               Bool  { return hasTrait(for: .eEmail) && email != "" }
+    var                      isTrash :               Bool  { return recordName == kTrashName }
+    var                    isInTrash :               Bool  { return root?.isTrash              ?? false }
+    var                isInFavorites :               Bool  { return root?.isRootOfFavorites    ?? false }
+    var             isInLostAndFound :               Bool  { return root?.isRootOfLostAndFound ?? false }
+    var         isRootOfLostAndFound :               Bool  { return recordName == kLostAndFoundName }
+    var                isSpecialRoot :               Bool  { return isRootOfLostAndFound || isRootOfFavorites || isTrash }
+    var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
+    var                   spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
 
-    var deepCopy: Zone {
-        let theCopy = Zone(databaseID: databaseID)
-
-        copy(into: theCopy)
-
-        theCopy.parentZone = nil
-
-        for child in children {
-            theCopy.addChild(child.deepCopy)
-        }
-
-        for (_, trait) in traits {
-            theCopy.addTrait(trait.deepCopy)
-        }
-
-        return theCopy
-    }
-
-
-    var dropCycle: Bool {
-        if  let target = bookmarkTarget, let dragged = gDraggedZone, (target == dragged || target.spawnedBy(dragged) || target.children.contains(dragged)) {
-            return true
-        }
-
-        return false
-    }
-
-
-    var email: String? {
-        get {
-            if  _email == nil {
-                _email  = getTraitText(for: .eEmail)
-            }
-
-            return _email
-        }
-
-        set {
-            if  _email != newValue {
-                _email  = newValue
-
-                setTraitText(newValue, for: .eEmail)
-            }
-        }
-    }
-
-
-    var hyperLink: String? {
-        get {
-            if  _hyperLink == nil {
-                _hyperLink  = getTraitText(for: .eHyperlink)
-            }
-
-            return _hyperLink
-        }
-
-        set {
-            if  _hyperLink != newValue {
-                _hyperLink  = newValue
-
-                setTraitText(newValue, for: .eHyperlink)
-            }
-        }
-    }
-
-
-    var root: Zone? {
-        var base: Zone?
-
-        traverseAllAncestors { iZone in
-            if iZone.isRoot {
-                base = iZone
-            }
-        }
-
-        return base
-    }
-
+	// MARK:- setup
+	// MARK:-
 
     convenience init(databaseID: ZDatabaseID?, named: String? = nil, identifier: String? = nil) {
         var newRecord : CKRecord?
@@ -205,6 +130,89 @@ class Zone : ZRecord {
         return super.cloudProperties() + Zone.cloudProperties()
     }
 
+	var deepCopy: Zone {
+		let theCopy = Zone(databaseID: databaseID)
+
+		copy(into: theCopy)
+
+		theCopy.parentZone = nil
+
+		for child in children {
+			theCopy.addChild(child.deepCopy)
+		}
+
+		for (_, trait) in traits {
+			theCopy.addTrait(trait.deepCopy)
+		}
+
+		return theCopy
+	}
+
+
+	var dropCycle: Bool {
+		if  let target = bookmarkTarget, let dragged = gDraggedZone, (target == dragged || target.spawnedBy(dragged) || target.children.contains(dragged)) {
+			return true
+		}
+
+		return false
+	}
+
+
+	var email: String? {
+		get {
+			if  emailMaybe == nil {
+				emailMaybe  = getTraitText(for: .eEmail)
+			}
+
+			return emailMaybe
+		}
+
+		set {
+			if  emailMaybe != newValue {
+				emailMaybe  = newValue
+
+				setTraitText(newValue, for: .eEmail)
+			}
+		}
+	}
+
+	var essay: ZEssay {
+		if  essayMaybe == nil {
+			essayMaybe = ZEssay(self)
+		}
+
+		return essayMaybe!
+	}
+
+	var hyperLink: String? {
+		get {
+			if  hyperLinkMaybe == nil {
+				hyperLinkMaybe  = getTraitText(for: .eHyperlink)
+			}
+
+			return hyperLinkMaybe
+		}
+
+		set {
+			if  hyperLinkMaybe != newValue {
+				hyperLinkMaybe  = newValue
+
+				setTraitText(newValue, for: .eHyperlink)
+			}
+		}
+	}
+
+	var root: Zone? {
+		var base: Zone?
+
+		traverseAllAncestors { iZone in
+			if  iZone.isRoot {
+				base = iZone
+			}
+		}
+
+		return base
+	}
 
     var traitValues: [ZTrait] {
         var values = [ZTrait] ()
@@ -267,14 +275,14 @@ class Zone : ZRecord {
 
     var color: ZColor? {
         get {
-            var computed = _color
+            var computed = colorMaybe
             
-            if _color == nil {
+            if colorMaybe == nil {
                 if  let b = bookmarkTarget {
                     return b.color
                 } else if let c = zoneColor, c != "" {
                     computed    = c.color
-                    _color      = computed
+                    colorMaybe      = computed
                 } else if let p = parentZone, p != self, hasCompleteAncestorPath(toColor: true) {
                     return p.color
                 } else {
@@ -298,8 +306,8 @@ class Zone : ZRecord {
 
             if  isBookmark {
                 bookmarkTarget?.color  = newValue
-            } else if          _color != computed {
-                _color                 = computed
+            } else if          colorMaybe != computed {
+                colorMaybe                 = computed
                 zoneColor              = computed?.string ?? ""
 
                 maybeNeedSave()
@@ -365,7 +373,7 @@ class Zone : ZRecord {
 
     var crossLink: ZRecord? {
         get {
-            if _crossLink == nil {
+            if crossLinkMaybe == nil {
                 if  zoneLink == kTrashLink {
                     return gTrash
                 }
@@ -378,10 +386,10 @@ class Zone : ZRecord {
                     zoneLink = zoneLink?.replacingOccurrences(of: "Optional(\"", with: "").replacingOccurrences(of: "\")", with: "")
                 }
 
-                _crossLink = zoneFrom(zoneLink)
+                crossLinkMaybe = zoneFrom(zoneLink)
             }
 
-            return _crossLink
+            return crossLinkMaybe
         }
 
         set {
@@ -393,7 +401,7 @@ class Zone : ZRecord {
                 zoneLink      = "\(newValue!.databaseID!.rawValue)::\(reference)"
             }
 
-            _crossLink = nil
+            crossLinkMaybe = nil
         }
     }
 
@@ -497,14 +505,14 @@ class Zone : ZRecord {
         }
 
         parent          = nil
-        _parentZone     = nil
+        parentZoneMaybe     = nil
         parentLink      = kNullLink
     }
 
     
     var resolveParent: Zone? {
-        let     old = _parentZone
-        _parentZone = nil
+        let     old = parentZoneMaybe
+        parentZoneMaybe = nil
         let     new =  parentZone // recalculate _parentZone
 
         old?.removeChild(self)
@@ -518,26 +526,26 @@ class Zone : ZRecord {
         get {
             if  isRoot {
                 unlinkParentAndMaybeNeedSave()
-            } else if _parentZone == nil {
+            } else if parentZoneMaybe == nil {
                 if  let  parentRef = parent {
-                    _parentZone    = cloud?.zoneForReference(parentRef)
+                    parentZoneMaybe    = cloud?.zoneForReference(parentRef)
                 } else if let zone = zoneFrom(parentLink) {
-                    _parentZone    = zone
+                    parentZoneMaybe    = zone
                 }
             }
 
-            return _parentZone
+            return parentZoneMaybe
         }
 
         set {
             if  isRoot {
                 unlinkParentAndMaybeNeedSave()
-            } else if _parentZone          != newValue {
-                _parentZone                 = newValue
-                if  _parentZone            == nil {
+            } else if parentZoneMaybe          != newValue {
+                parentZoneMaybe                 = newValue
+                if  parentZoneMaybe            == nil {
                     unlinkParentAndMaybeNeedSave()
-                } else if let parentRecord  = _parentZone?.record,
-                    let      newParentDBID  = _parentZone?.databaseID {
+                } else if let parentRecord  = parentZoneMaybe?.record,
+                    let      newParentDBID  = parentZoneMaybe?.databaseID {
                     if       newParentDBID == databaseID {
                         if  parent?.recordID.recordName != parentRecord.recordID.recordName {
                             parentLink      = kNullLink
@@ -814,7 +822,7 @@ class Zone : ZRecord {
 
     func clearColor() {
         zoneColor = ""
-        _color    = nil
+        colorMaybe    = nil
 
         maybeNeedSave()
     }
@@ -888,13 +896,12 @@ class Zone : ZRecord {
             }
             
             switch (type) {
-            case .eEmail:     _email     = nil
-            case .eHyperlink: _hyperLink = nil
+            case .eEmail:     emailMaybe     = nil
+            case .eHyperlink: hyperLinkMaybe = nil
             default: break
             }
         }
     }
-
 
     func trait(for iType: ZTraitType) -> ZTrait {
         var trait            = traits[iType]
@@ -998,7 +1005,7 @@ class Zone : ZRecord {
     func traverseAncestors(_ block: ZoneToStatusClosure) { safeTraverseAncestors(visited: [], block) }
 
 
-    func spawnedByAny(of iZones: [Zone]) -> Bool {
+    func spawnedByAny(of iZones: ZoneArray) -> Bool {
         var wasSpawned = false
 
         if  iZones.count > 0 {
@@ -1026,7 +1033,7 @@ class Zone : ZRecord {
     }
 
 
-    func safeTraverseAncestors(visited: [Zone], _ block: ZoneToStatusClosure) {
+    func safeTraverseAncestors(visited: ZoneArray, _ block: ZoneToStatusClosure) {
         if  block(self) == .eContinue,  //        skip == stop
             !isRoot,                    //      isRoot == stop
             !visited.contains(self),    // graph cycle == stop
@@ -1087,7 +1094,7 @@ class Zone : ZRecord {
 
     // first call block on self
 
-    @discardableResult func safeTraverseProgeny(visited: [Zone], _ block: ZoneToStatusClosure) -> ZTraverseStatus {
+    @discardableResult func safeTraverseProgeny(visited: ZoneArray, _ block: ZoneToStatusClosure) -> ZTraverseStatus {
         var status = block(self)
 
         if status == .eContinue {
@@ -1117,8 +1124,8 @@ class Zone : ZRecord {
     }
 
 
-    func exposedProgeny(at iLevel: Int) -> [Zone] {
-        var     progeny = [Zone]()
+    func exposedProgeny(at iLevel: Int) -> ZoneArray {
+        var     progeny = ZoneArray()
         var begun: Bool = false
 
         traverseProgeny { iZone -> ZTraverseStatus in
@@ -1175,7 +1182,7 @@ class Zone : ZRecord {
     }
 
 
-    private func safeHasAnyZonesAbove(_ iAbove: Bool, _ visited: [Zone]) -> Bool {
+    private func safeHasAnyZonesAbove(_ iAbove: Bool, _ visited: ZoneArray) -> Bool {
         if self != gHere && !visited.contains(self) {
             if !hasZoneAbove(iAbove), let p = parentZone {
                 return p.safeHasAnyZonesAbove(iAbove, visited + [self])
@@ -1468,7 +1475,7 @@ class Zone : ZRecord {
             let        dbID = databaseID {
             var   divisions = ((count - 1) / optimumSize) + 1
             let        size = count / divisions
-            var     holders = [Zone] ()
+            var     holders = ZoneArray ()
 
             while divisions > 0 {
                 divisions  -= 1
@@ -1596,7 +1603,7 @@ class Zone : ZRecord {
     // MARK:-
     
 
-    func updateCounts(_ iVisited: [Zone] = []) {
+    func updateCounts(_ iVisited: ZoneArray = []) {
         if !iVisited.contains(self) {
             let visited = iVisited + [self]
             var counter = 0
@@ -1627,7 +1634,7 @@ class Zone : ZRecord {
 
     func addToParent(_ onCompletion: ZoneMaybeClosure? = nil) {
         FOREGROUND(canBeDirect: true) {
-            self._color = nil               // recompute color
+            self.colorMaybe = nil               // recompute color
             let parent  = self.resolveParent
             let done: Closure = {
                 parent?.respectOrder()      // assume newly fetched zone knows its order

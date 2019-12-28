@@ -27,9 +27,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     
 	
 	let 		   clickManager =  ZClickManager()
-    let      thoughtsRootWidget =  ZoneWidget ()
-    let     favoritesRootWidget =  ZoneWidget ()
-    var      rubberbandPreGrabs = [Zone] ()
+    let      thoughtsRootWidget =  ZoneWidget   ()
+    let     favoritesRootWidget =  ZoneWidget   ()
+    var      rubberbandPreGrabs =  ZoneArray    ()
     var     priorScrollLocation =  CGPoint.zero
     var         rubberbandStart =  CGPoint.zero
 	var        moveRightGesture :  ZGestureRecognizer?

@@ -16,7 +16,8 @@ import CloudKit
     import UIKit
 #endif
 
-
+typealias          ZoneArray = [Zone]
+typealias   ZTraitDictionary = [ZTraitType : ZTrait]
 typealias ZStorageDictionary = [ZStorageType : NSObject]
 let             gApplication = ZApplication.shared
 

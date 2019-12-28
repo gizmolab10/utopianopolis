@@ -48,7 +48,7 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, isThought: Bool, visited: [Zone]) {
+    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, isThought: Bool, visited: ZoneArray) {
         if  let thisView = inView,
             !thisView.subviews.contains(self) {
             thisView.addSubview(self)
@@ -75,7 +75,7 @@ class ZoneWidget: ZView {
     }
 
 
-    func layoutChildren(_ iKind: ZSignalKind, visited: [Zone]) {
+    func layoutChildren(_ iKind: ZSignalKind, visited: ZoneArray) {
         if  let  zone = widgetZone, zone.showingChildren {
             var index = childrenWidgets.count
             var previous: ZoneWidget?
@@ -297,7 +297,7 @@ class ZoneWidget: ZView {
     }
 
 
-    func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView?, _ iHere: Zone?, _ visited: [Zone] = []) -> ZoneWidget? {
+    func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView?, _ iHere: Zone?, _ visited: ZoneArray = []) -> ZoneWidget? {
         if  let    here = iHere,
             let    zone = widgetZone,
             !visited.contains(zone),

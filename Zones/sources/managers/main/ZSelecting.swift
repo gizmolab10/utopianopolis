@@ -29,7 +29,7 @@ let gSelecting = ZSelecting()
 class ZSnapshot: NSObject {
 
     
-    var currentGrabs = [Zone] ()
+    var currentGrabs = ZoneArray ()
     var   databaseID : ZDatabaseID?
     var         here : Zone?
     var       isSame : Bool { return gSelecting.snapshot == self }
@@ -69,12 +69,12 @@ class ZSelecting: NSObject {
     var       firstGrab :  Zone? { return firstGrab() }
     var  lastSortedGrab :  Zone  { return  lastGrab(using: sortedGrabs) }
     var firstSortedGrab :  Zone? { return firstGrab(using: sortedGrabs) }
-    var      cousinList : [Zone] { get { maybeNewGrabUpdate(); return _cousinList  } set { _cousinList  = newValue }}
-    var     sortedGrabs : [Zone] { get { updateSortedGrabs();  return _sortedGrabs } set { _sortedGrabs = newValue }}
+    var      cousinList : ZoneArray { get { maybeNewGrabUpdate(); return _cousinList  } set { _cousinList  = newValue }}
+    var     sortedGrabs : ZoneArray { get { updateSortedGrabs();  return _sortedGrabs } set { _sortedGrabs = newValue }}
     var  pasteableZones = [Zone: (Zone?, Int?)] ()
-    var    currentGrabs = [Zone] ()
-    var    _sortedGrabs = [Zone] ()
-    var     _cousinList = [Zone] ()
+    var    currentGrabs = ZoneArray ()
+    var    _sortedGrabs = ZoneArray ()
+    var     _cousinList = ZoneArray ()
     var      hasNewGrab :  Zone?
 
 
@@ -101,9 +101,9 @@ class ZSelecting: NSObject {
     }
 
 
-    var simplifiedGrabs: [Zone] {
+    var simplifiedGrabs: ZoneArray {
         let current = currentGrabs
-        var   grabs = [Zone] ()
+        var   grabs = ZoneArray ()
 
         for grab in current {
             var found = false
@@ -128,7 +128,7 @@ class ZSelecting: NSObject {
 
     
     /// If currently only a single grab, auto-grab subsequent zones until the next non-line
-    var possiblyAutoGrabbed: [Zone] {
+    var possiblyAutoGrabbed: ZoneArray {
         var s = simplifiedGrabs
 
         if s.count == 1 {
@@ -247,7 +247,7 @@ class ZSelecting: NSObject {
     // MARK:-
 
 
-    func ungrabAll(retaining: [Zone]? = nil) {
+    func ungrabAll(retaining: ZoneArray? = nil) {
         let    isEmpty = retaining == nil || retaining!.count == 0
         let       more = isEmpty ? [] : retaining!
         let    grabbed = currentGrabs + more
@@ -264,7 +264,7 @@ class ZSelecting: NSObject {
     }
     
     
-    func updateWidgets(for zones: [Zone]) {
+    func updateWidgets(for zones: ZoneArray) {
         for zone in zones {
             updateWidget(for: zone)
         }
@@ -304,14 +304,14 @@ class ZSelecting: NSObject {
     }
 
 
-    func respectOrder(for zones: [Zone]) -> [Zone] {
+    func respectOrder(for zones: ZoneArray) -> ZoneArray {
         return zones.sorted { (a, b) -> Bool in
             return a.order < b.order || a.level < b.level // compare levels from multiple parents
         }
     }
 
 
-    func addMultipleGrabs(_ iZones: [Zone], startFresh: Bool = false) {
+    func addMultipleGrabs(_ iZones: ZoneArray, startFresh: Bool = false) {
         for zone in iZones {
             addOneGrab(zone, startFresh: startFresh)
         }
@@ -372,7 +372,7 @@ class ZSelecting: NSObject {
     }
     
     
-    func grab(_ iZones: [Zone]?, updateBrowsingLevel: Bool = true) {
+    func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
         if  let newGrabs = iZones {
             let oldGrabs = currentGrabs
             currentGrabs = [] // can't use ungrabAll because we need to keep cousinList
@@ -389,7 +389,7 @@ class ZSelecting: NSObject {
     }
     
     
-    private func firstGrab(using: [Zone]? = nil) -> Zone? {
+    private func firstGrab(using: ZoneArray? = nil) -> Zone? {
         let grabs = using == nil ? currentGrabs : using!
         let count = grabs.count
         var grabbed: Zone?
@@ -406,7 +406,7 @@ class ZSelecting: NSObject {
     }
     
     
-    private func lastGrab(using: [Zone]? = nil) -> Zone {
+    private func lastGrab(using: ZoneArray? = nil) -> Zone {
         let grabs = using == nil ? currentGrabs : using!
         let count = grabs.count
         var grabbed: Zone?

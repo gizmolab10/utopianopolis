@@ -43,7 +43,8 @@ class ZEssayEditor: ZBaseEditor {
 
 			if  COMMAND {
 				switch key {
-					case "a": gEssayView?.editor?.selectAll(nil)
+					case "a": gEssayView?.editorView?.selectAll(nil)
+					case "e": gEssayView?.export()
 //					case "b": gEssayView?.editor?.bold(nil)
 					case "s": gEssayView?.save()
 					case "w": swapGraphAndEssay()
@@ -62,7 +63,7 @@ class ZEssayEditor: ZBaseEditor {
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-		if  let  editor = gEssayView?.editor {
+		if  let  editor = gEssayView?.editorView {
 			let COMMAND = flags.isCommand
 			let  OPTION = flags.isOption
 

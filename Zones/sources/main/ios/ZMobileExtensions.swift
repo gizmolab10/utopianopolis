@@ -623,8 +623,8 @@ extension ZFiles {
     
     func saveAs() {}
     func showInFinder() {}
-    func exportToFile(asOutline: Bool, for iFocus: Zone) {}
-    func importFromFile(asOutline: Bool, insertInto: Zone, onCompletion: Closure?) {}
+    func exportToFile(_ type: ZExportType, for iFocus: Zone) {}
+    func importFromFile(_ type: ZExportType, insertInto: Zone, onCompletion: Closure?) {}
 
 }
 

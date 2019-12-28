@@ -16,10 +16,14 @@ import CoreFoundation
     import UIKit
 #endif
 
-
 let gFiles    = ZFiles()
 let gUseFiles = !kIsPhone
 
+enum ZExportType: String {
+	case eThoughtful = "thoughtful"
+	case eOutline    = "outline"
+	case eEssay		 = "rtf"
+}
 
 class ZFiles: NSObject {
 

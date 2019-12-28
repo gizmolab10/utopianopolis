@@ -907,13 +907,13 @@ extension ZFiles {
     }
     
     
-    func importFromFile(asOutline: Bool, insertInto: Zone, onCompletion: Closure?) {
-        if !asOutline {
+    func importFromFile(_ type: ZExportType, insertInto: Zone, onCompletion: Closure?) {
+		if  type == .eThoughtful {
             ZFiles.presentOpenPanel() { (iAny) in
                 if  let url = iAny as? URL {
                     self.importFile(from: url.path, insertInto: insertInto, onCompletion: onCompletion)
                 } else if let panel = iAny as? NSPanel {
-                    let  suffix = asOutline ? "outline" : "thoughtful"
+					let  suffix = type.rawValue
                     panel.title = "Import as \(suffix)"
                     panel.setAllowedFileType(suffix)
                 }
@@ -940,40 +940,56 @@ extension ZFiles {
     }
     
     
-    func exportToFile(asOutline: Bool, for iFocus: Zone) {
-        let    suffix = asOutline ? "outline" : "thoughtful"
-        let     panel = NSSavePanel()
-        panel.message = "Export as \(suffix)"
+    func exportToFile(_ type: ZExportType, for iZone: Zone?) {
+		guard let zone = iZone else { return }
+		let     suffix = type.rawValue
+        let      panel = NSSavePanel()
+        panel.message  = "Export as \(suffix)"
         
-        if  let  name = iFocus.zoneName {
+        if  let  name = zone.zoneName {
             panel.nameFieldStringValue = "\(name).\(suffix)"
         }
         
-        panel.begin { (result) -> Void in
-            if  result.rawValue == NSFileHandlingPanelOKButton,
-                let filename = panel.url {
-                
-                if  asOutline {
-                    let string = iFocus.outlineString()
-                    
-                    do {
-                        try string.write(to: filename, atomically: true, encoding: String.Encoding.utf8)
-                    } catch {
-                        // failed to write file (bad permissions, bad filename etc.)
-                    }
-                } else {
-                    self.writtenRecordNames.removeAll()
-                    
-                    let     dict = iFocus.storageDictionary
-                    let jsonDict = self.jsonDictFrom(dict)
-                    let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
-                    
-                    do {
-                        try data.write(to: filename)
-                    } catch {
-                        printDebug(.error, "ahah")
-                    }
-                }
+        panel.begin { result in
+			if  result == .OK,
+                let fileURL = panel.url {
+
+				switch type {
+					case .eOutline:
+						let string = zone.outlineString()
+
+						do {
+							try string.write(to: fileURL, atomically: true, encoding: .utf8)
+						} catch {
+							printDebug(.error, "\(error)")
+						}
+					case .eThoughtful:
+						self.writtenRecordNames.removeAll()
+
+						let     dict = zone.storageDictionary
+						let jsonDict = self.jsonDictFrom(dict)
+						let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
+
+						do {
+							try data.write(to: fileURL)
+						} catch {
+							printDebug(.error, "\(error)")
+						}
+					case .eEssay:
+						if  let essay =  zone.essayMaybe,
+							let  text = essay.essayText {
+
+							do {
+								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtf])
+								let fileText = String(data: fileData, encoding: .utf8)
+
+								try fileText?.write(to: fileURL, atomically: false, encoding: .utf8)
+
+							} catch {
+								printDebug(.error, "\(error)")
+							}
+						}
+				}
             }
         }
     }

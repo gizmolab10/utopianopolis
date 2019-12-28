@@ -863,7 +863,7 @@ class ZCloud: ZRecords {
 
             operation.completionBlock = {
                 FOREGROUND {
-                    var forReport  = [Zone] ()
+                    var forReport  = ZoneArray ()
 
                     for (fetchedRecord, fetchedID) in fetchedRecordsByID {
                         var maybe  = self.maybeZoneForRecordID(fetchedID)

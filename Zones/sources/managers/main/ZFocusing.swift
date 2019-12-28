@@ -24,7 +24,7 @@ let gFocusing = ZFocusing()
 class ZFocusing: NSObject {
 
 
-    var    focusRing = [Zone] ()
+    var    focusRing = ZoneArray ()
     var currentIndex = -1
     var   priorIndex = -1
     var     topIndex : Int  { return focusRing.count - 1 }

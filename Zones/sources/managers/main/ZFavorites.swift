@@ -42,7 +42,7 @@ class ZFavorites: ZRecords {
 
 
     let databaseRootFavorites = Zone(record: nil, databaseID: nil)
-    var      workingFavorites = [Zone] ()
+    var      workingFavorites = ZoneArray ()
     var        favoritesIndex : Int { return indexOf(currentFavoriteID) ?? 0 }
     var                 count : Int { return gFavoritesRoot?.count ?? 0 }
 
@@ -100,7 +100,7 @@ class ZFavorites: ZRecords {
 
     var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {
         let enumeration = workingFavorites.enumerated()
-        var     rotated = [Zone] ()
+        var     rotated = ZoneArray ()
 
         for (index, favorite) in enumeration {
             if  index >= favoritesIndex {
@@ -273,7 +273,7 @@ class ZFavorites: ZRecords {
 
         var   hasDatabaseIDs = [ZDatabaseID] ()
         var         discards = IndexPath()
-        var      testedSoFar = [Zone] ()
+        var      testedSoFar = ZoneArray ()
         var      missingLost = true
         var     missingTrash = true
         var     hasDuplicate = false

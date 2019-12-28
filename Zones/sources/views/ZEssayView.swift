@@ -17,58 +17,51 @@ import UIKit
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZView, ZTextViewDelegate {
-	@IBOutlet var editor: ZTextView?
-	var _essay: ZEssay?
+	@IBOutlet var editorView: ZTextView?
+	var essay: ZEssay? { return zone?.essay }
+	var zone: Zone? { return gSelecting.firstGrab }
 
-	var  essay: ZEssay {
-		get {
-			if  _essay == nil {
-				_essay = ZEssay(gSelecting.firstGrab)
-			}
-
-			return _essay!
-		}
-	}
-
-	func save() { essay.save(editor?.textStorage) }
+	func save() { essay?.save(editorView?.textStorage) }
+	func export() { gFiles.exportToFile(.eEssay, for: zone) }
 
 	func clear() {
-		_essay = nil
+		zone?.essayMaybe = nil
 
-		if  let length = editor?.textStorage?.length, length > 0 {
-			editor?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
+		if  let length = editorView?.textStorage?.length, length > 0 {
+			editorView?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
 		}
 	}
-
 	func begin() {
-		clear() 								// discard previously edited text
+		clear() 									// discard previously edited text
 
-		if  let 				  text = essay.essayText {
-			editor?.textContainerInset = NSSize(width: 10, height: 10)
-			editor?  		 .delegate = nil	// clear so that delegate calls won't happen on insertText below
+		if  let 					  text = essay?.essayText {
+			editorView?.textContainerInset = NSSize(width: 10, height: 10)
+			editorView?  		 .delegate = nil	// clear so that delegate calls won't happen on insertText below
 
-			editor?.insertText(text, replacementRange: NSRange())
+			editorView?.insertText(text, replacementRange: NSRange())
 
-			editor?.delegate 	       = self 	// call after insertText so delegate calls won't happen
+			editorView?.delegate 	       = self 	// call after insertText so delegate calls won't happen
 
-			gWindow?.makeFirstResponder(editor)
+			gWindow?.makeFirstResponder(editorView)
 		}
 	}
+
 
 	func textView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
-		var should = true
+		var should             = true
 
-		if  let strings = replacementStrings {
+		if  let       strings  = replacementStrings {
 			for (index, value) in affectedRanges.enumerated() {
-				if  let range = value as? NSRange,
-					!essay.update(range, length: strings[index].length) {
+				if  let range  = value as? NSRange,
+					let     e  = essay,
+					!e.update(range, length: strings[index].length) {
 
-					if  range == essay.essayRange {
-						essay.delete()
+					if  range == e.essayRange {
+						e.delete()
 						gEssayEditor.swapGraphAndEssay()
 					}
 
-					should = false
+					should     = false
 
 					break
 				}

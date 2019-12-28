@@ -91,7 +91,7 @@ class ZPreferencesController: ZGenericController {
 
     @IBAction func clearColorAction(_ button: ZButton) {
         if  let     grab = gSelecting.firstSortedGrab {
-            if let color = grab._color {
+            if let color = grab.colorMaybe {
                 UNDO(self) { iUndoSelf in
                     grab.color = color
                     

@@ -16,11 +16,11 @@ let gBookmarks = ZBookmarks()
 class ZBookmarks: NSObject {
 
 
-    var registry = [ZDatabaseID : [String : [Zone]]] ()
+    var registry = [ZDatabaseID : [String : ZoneArray]] ()
 
 
-    var allBookmarks: [Zone] {
-        var bookmarks = [Zone] ()
+    var allBookmarks: ZoneArray {
+        var bookmarks = ZoneArray ()
 
         for dict in registry.values {
             for zones in dict.values {
@@ -92,7 +92,7 @@ class ZBookmarks: NSObject {
     }
 
 
-    func bookmarks(for iZone: Zone) -> [Zone]? {
+    func bookmarks(for iZone: Zone) -> ZoneArray? {
         if  let dbID = iZone.databaseID,
             let name = iZone.recordName,
             let dict = registry[dbID] {

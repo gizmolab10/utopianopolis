@@ -141,11 +141,11 @@ class ZGraphEditor: ZBaseEditor {
 					case "k":      rotateWritable()
                     case "m":      orderByLength(OPTION)
                     case "n":      alphabetize(OPTION)
-                    case "o":      if SPECIAL { gFiles.showInFinder() } else { gFiles.importFromFile(asOutline: OPTION, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() } }
+                    case "o":      if SPECIAL { gFiles.showInFinder() } else { gFiles.importFromFile(OPTION ? .eOutline : .eThoughtful, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() } }
                     case "p":      printCurrentFocus()
                     case "q":      gApplication.terminate(self)
                     case "r":      if SPECIAL { sendEmailBugReport() } else { reverse() }
-                    case "s":      gFiles.exportToFile(asOutline: OPTION, for: gHere)
+					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
                     case "t":      swapWithParent()
                     case "u":      alterCase(up: true)
                     case "w":      swapGraphAndEssay()
@@ -438,7 +438,7 @@ class ZGraphEditor: ZBaseEditor {
 
 
     func alphabetize(_ iBackwards: Bool = false) {
-        alterOrdering { iZones -> ([Zone]) in
+        alterOrdering { iZones -> (ZoneArray) in
             return iZones.sorted { (a, b) -> Bool in
                 let aName = a.unwrappedName
                 let bName = b.unwrappedName
@@ -452,7 +452,7 @@ class ZGraphEditor: ZBaseEditor {
     func orderByLength(_ iBackwards: Bool = false) {
         let font = gWidgetFont
 
-        alterOrdering { iZones -> ([Zone]) in
+        alterOrdering { iZones -> (ZoneArray) in
             return iZones.sorted { (a, b) -> Bool in
                 let aLength = a.zoneName?.widthForFont(font) ?? 0
                 let bLength = b.zoneName?.widthForFont(font) ?? 0
@@ -651,7 +651,7 @@ class ZGraphEditor: ZBaseEditor {
     }
 
 
-    func recursivelyRevealSiblings(_ descendents: [Zone], untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {
+    func recursivelyRevealSiblings(_ descendents: ZoneArray, untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {
         if  descendents.contains(iAncestor) {
             onCompletion?(iAncestor)
             
@@ -1225,7 +1225,7 @@ class ZGraphEditor: ZBaseEditor {
     }
 
 
-	func deleteZones(_ iZones: [Zone], permanently: Bool = false, in iParent: Zone? = nil, iShouldGrab: Bool = true, onCompletion: Closure?) {
+	func deleteZones(_ iZones: ZoneArray, permanently: Bool = false, in iParent: Zone? = nil, iShouldGrab: Bool = true, onCompletion: Closure?) {
         if  iZones.count == 0 {
             onCompletion?()
             
@@ -1258,7 +1258,7 @@ class ZGraphEditor: ZBaseEditor {
                         
                         if  count == 0 {
                             gBatches.bookmarks { iSame in
-                                var bookmarks = [Zone] ()
+                                var bookmarks = ZoneArray ()
                                 
                                 for zone in zones {
                                     bookmarks += zone.fetchedBookmarks
@@ -1371,7 +1371,7 @@ class ZGraphEditor: ZBaseEditor {
     }
 
 
-    func grabAppropriate(_ zones: [Zone]) -> Zone? {
+    func grabAppropriate(_ zones: ZoneArray) -> Zone? {
         if  let       grab = gInsertionsFollow ? zones.first : zones.last,
             let     parent = grab.parentZone {
             let   siblings = parent.children
@@ -1568,7 +1568,7 @@ class ZGraphEditor: ZBaseEditor {
     }
 
 
-    func actuallyMoveInto(_ zones: [Zone], onCompletion: Closure?) {
+    func actuallyMoveInto(_ zones: ZoneArray, onCompletion: Closure?) {
         if  var    there = zones[0].parentZone {
             let siblings = Array(there.children)
             
@@ -1651,7 +1651,7 @@ class ZGraphEditor: ZBaseEditor {
     }
 
 
-    func moveZones(_ zones: [Zone], into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
+    func moveZones(_ zones: ZoneArray, into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
         into.revealChildren()
         into.needChildren()
 
@@ -1731,7 +1731,7 @@ class ZGraphEditor: ZBaseEditor {
     func duplicate() {
         let commonParent = gSelecting.firstSortedGrab?.parentZone ?? gSelecting.firstSortedGrab
         var        zones = gSelecting.simplifiedGrabs
-        var   duplicates = [Zone] ()
+        var   duplicates = ZoneArray ()
         var      indices = [Int] ()
 
         for zone in zones {
@@ -1839,7 +1839,7 @@ class ZGraphEditor: ZBaseEditor {
         if pastables.count > 0, let zone = iZone {
             let isBookmark = zone.isBookmark
             let action = {
-                var forUndo = [Zone] ()
+                var forUndo = ZoneArray ()
 
                 gSelecting.ungrabAll()
 
@@ -1928,7 +1928,7 @@ class ZGraphEditor: ZBaseEditor {
             let        candidate = gSelecting.rootMostMoveable
             if  let       parent = candidate.parentZone {
                 let siblingIndex = candidate.siblingIndex
-                var     children = [Zone] ()
+                var     children = ZoneArray ()
 
                 gSelecting.clearPaste()
                 gSelecting.currentGrabs = []
@@ -1978,7 +1978,7 @@ class ZGraphEditor: ZBaseEditor {
 
 
     func moveOut(to: Zone, onCompletion: Closure?) {
-        let        zones = gSelecting.sortedGrabs.reversed() as [Zone]
+        let        zones = gSelecting.sortedGrabs.reversed() as ZoneArray
         var completedYet = false
 
         recursivelyRevealSiblings(zones, untilReaching: to) { iRevealedZone in
@@ -2225,7 +2225,7 @@ class ZGraphEditor: ZBaseEditor {
     }
 
     
-    func moveUp(_ iMoveUp: Bool = true, _ originals: [Zone], selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
+    func moveUp(_ iMoveUp: Bool = true, _ originals: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
         let doCousinJump = !gBrowsingIsConfined
 		let    hereMaybe = gHereMaybe
         let       isHere = hereMaybe != nil && originals.contains(hereMaybe!)
