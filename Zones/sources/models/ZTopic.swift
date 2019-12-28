@@ -19,7 +19,9 @@ class ZTopic: NSObject {
 		self.zone = zone
 	}
 
-	func begin(_ editor: ZTextView?) {
+	var topicText: NSMutableAttributedString? {
+		var topic: NSMutableAttributedString?
+
 		if  let   name = zone?.zoneName,
 			let  color = zone?.color,
 			let   text = zone?.trait(for: .eEssay).essayText,
@@ -30,14 +32,15 @@ class ZTopic: NSObject {
 			titleRange = NSRange(location: 0, length: name.length)
 			textRange  = NSRange(location: length, length: text.length)
 			let  range = NSRange(location: 0, length: length)
+			topic      = NSMutableAttributedString()
 
-			let atributes: [NSAttributedString.Key:Any] = [.font:font, .foregroundColor:color]
-
-			editor?.insertText(text,  replacementRange: NSRange()) 	// insert text first
-			editor?.insertText(blank, replacementRange: NSRange())
-			editor?.insertText(title, replacementRange: NSRange()) 	// insert title last
-			editor?.textStorage?.addAttributes(atributes, range: range)
+			topic?.append(title)
+			topic?.append(blank)
+			topic?.append(text)
+			topic?.addAttributes([.font:font, .foregroundColor:color], range: range)
 		}
+
+		return topic
 	}
 
 	func save(_ attributedString: NSAttributedString?) {

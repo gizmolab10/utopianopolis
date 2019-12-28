@@ -44,7 +44,10 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		editor?  		 .delegate = nil
 		editor?.textContainerInset = NSSize(width: 10, height: 10)
 
-		topic.begin(editor)
+		if  let text = topic.topicText {
+			editor?.insertText(text, replacementRange: NSRange())
+		}
+
 		becomeFirstResponder()
 
 		editor?.delegate = self // call after begin editor so delegate calls won't happen on initial inserts
