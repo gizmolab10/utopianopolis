@@ -146,6 +146,10 @@ class ZTrait: ZRecord {
 		get {
 			var string: NSMutableAttributedString?
 
+			if  text     == nil {
+				text      = ""
+			}
+
 			if  let     s = text {
 				string    = NSMutableAttributedString(string: s)
 

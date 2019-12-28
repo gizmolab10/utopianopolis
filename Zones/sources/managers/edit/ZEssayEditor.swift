@@ -44,6 +44,7 @@ class ZEssayEditor: ZBaseEditor {
 			if  COMMAND {
 				switch key {
 					case "a": gEssayView?.editor?.selectAll(nil)
+//					case "b": gEssayView?.editor?.bold(nil)
 					case "s": gEssayView?.save()
 					case "w": swapGraphAndEssay()
 					case "/": if SPECIAL { showHideKeyboardShortcuts() }

@@ -14,47 +14,45 @@ import Cocoa
 import UIKit
 #endif
 
-
-var gEssayView: ZEssayView?
+var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var editor: ZTextView?
-	var _topic: ZTopic?
+	var _essay: ZEssay?
 
-	var topic: ZTopic {
+	var  essay: ZEssay {
 		get {
-			if  _topic == nil {
-				_topic = ZTopic(gSelecting.firstGrab)
+			if  _essay == nil {
+				_essay = ZEssay(gSelecting.firstGrab)
 			}
 
-			return _topic!
+			return _essay!
 		}
 	}
 
+	func save() { essay.save(editor?.textStorage) }
+
 	func clear() {
+		_essay = nil
+
 		if  let length = editor?.textStorage?.length, length > 0 {
 			editor?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
 		}
 	}
 
 	func begin() {
-		clear() 	// discard previously edited text
+		clear() 								// discard previously edited text
 
-		gEssayView      		   = self
-		editor?  		 .delegate = nil
-		editor?.textContainerInset = NSSize(width: 10, height: 10)
+		if  let 				  text = essay.essayText {
+			editor?.textContainerInset = NSSize(width: 10, height: 10)
+			editor?  		 .delegate = nil	// clear so that delegate calls won't happen on insertText below
 
-		if  let text = topic.topicText {
 			editor?.insertText(text, replacementRange: NSRange())
+
+			editor?.delegate 	       = self 	// call after insertText so delegate calls won't happen
+
+			gWindow?.makeFirstResponder(editor)
 		}
-
-		becomeFirstResponder()
-
-		editor?.delegate = self // call after begin editor so delegate calls won't happen on initial inserts
-	}
-
-	func save() {
-		topic.save(editor?.textStorage)
 	}
 
 	func textView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
@@ -63,7 +61,13 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		if  let strings = replacementStrings {
 			for (index, value) in affectedRanges.enumerated() {
 				if  let range = value as? NSRange,
-					!topic.update(range, strings[index].length) {
+					!essay.update(range, length: strings[index].length) {
+
+					if  range == essay.essayRange {
+						essay.delete()
+						gEssayEditor.swapGraphAndEssay()
+					}
+
 					should = false
 
 					break

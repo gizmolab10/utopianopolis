@@ -65,7 +65,7 @@ class ZBaseEditor: NSObject {
 			gEssayView?.save()
 		}
 
-		gControllers.signalFor(nil, regarding: .eEssay)
+		gControllers.signalFor(gSelecting.firstGrab, multiple: [.eEssay, .eDatum])
 	}
 
 }

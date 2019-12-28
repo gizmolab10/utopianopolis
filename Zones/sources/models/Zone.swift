@@ -909,6 +909,13 @@ class Zone : ZRecord {
         return trait!
     }
 
+	func removeTrait(for iType: ZTraitType) {
+		let     trait = traits[iType]
+		traits[iType] = nil
+
+		trait?.needDestroy()
+		needSave()
+	}
 
     // MARK:- traverse ancestors
     // MARK:-
