@@ -47,7 +47,7 @@ class ZEssay: NSObject {
 
 	func save(_ attributedString: NSAttributedString?) {
 		if  let  attributed = attributedString,
-			let       essay = zone?.trait(for: .eEssay) {
+			let       essay = zone?.traits[.eEssay] {
 			let      string = attributed.string
 			let        text = attributed.attributedSubstring(from: textRange)
 			let       title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
