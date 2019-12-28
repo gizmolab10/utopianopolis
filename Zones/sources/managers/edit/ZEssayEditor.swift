@@ -18,7 +18,6 @@ let gEssayEditor = ZEssayEditor()
 
 class ZEssayEditor: ZBaseEditor {
 	override var workMode: ZWorkMode { return .essayMode }
-	var zone: Zone? { return gSelecting.firstGrab }
 
 	override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
 		if  gWorkMode != .essayMode || inWindow {

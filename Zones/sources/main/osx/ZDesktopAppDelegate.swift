@@ -53,7 +53,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     func application(_ application: NSApplication, openFiles: [String]) {
         var insertInto = gSelecting.currentMoveable
         
-        if  insertInto.databaseID != .mineID {
+        if  insertInto != nil, insertInto.databaseID != .mineID {
             if  let mineRoot = gMineCloud?.rootZone {
                 insertInto   = mineRoot
             } else {
