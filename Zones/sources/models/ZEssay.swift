@@ -8,83 +8,95 @@
 
 import Foundation
 
-class ZEssay: NSObject {
-	var essayIndex = 0
-	var titleRange = NSRange()
-	var  textRange = NSRange()
-	var essayRange : NSRange { return NSRange(location: titleRange.location, length: textRange.upperBound) }
-	var      trait : ZTrait? { return zone?.trait(for: .eEssay) }
-	var       zone : Zone?
-	func delete() { zone?.removeTrait(for: .eEssay) }
+class ZEssay: ZEssayPart {
+	var children = [ZEssayPart]()
 
-	init(_ zone: Zone?) {
-		super.init()
-
-		self.zone = zone
-	}
-
-	var essayText: NSMutableAttributedString? {
-		var essay: NSMutableAttributedString?
-
-		if  let   name = zone?.zoneName,
-			let  color = zone?.color,
-			let   text = trait?.essayText,
-			let   font = ZFont(name: "Times-Roman", size: 36.0) {
-			let length = name.length + 2
-			let  title = NSMutableAttributedString(string: name, attributes: [.font:font, .foregroundColor:color])
-			let  blank = NSMutableAttributedString(string: "\n\n")
-			titleRange = NSRange(location: 0, length: name.length)
-			textRange  = NSRange(location: length, length: text.length)
-			essay      = NSMutableAttributedString()
-
-			essay?.insert(text,  at: 0)
-			essay?.insert(blank, at: 0)
-			essay?.insert(title, at: 0)
-		}
-
-		return essay
-	}
-
-	func save(_ attributedString: NSAttributedString?) {
-		if  let  attributed = attributedString,
-			let       essay = zone?.traits[.eEssay] {
-			let      string = attributed.string
-			let        text = attributed.attributedSubstring(from: textRange)
-			let       title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
-			essay.essayText = text.mutableCopy() as? NSMutableAttributedString
-			zone? .zoneName = title
-
-			zone?.needSave()
-			essay.needSave()
-			gControllers.signalFor(zone, multiple: [.eDatum])
-		}
-	}
-
-	func intersectsLocked(_ range:NSRange) -> Bool {
-		return
-			(range.location    > titleRange.upperBound && range.location   <  textRange.location) ||
-			(range.upperBound  > titleRange.upperBound && range.upperBound <  textRange.location) ||
-			(range.location    < titleRange.upperBound && range.upperBound >= textRange.lowerBound)
-	}
-
-	func update(_ range:NSRange, length: Int) -> Bool {
-		var 	altered 			= false
-
-		if !intersectsLocked(range) {
-			if  let    intersection = range.inclusiveIntersection(textRange) {
-				textRange  .length += length - intersection.length
-				altered             = true
+	func setupChildren() {
+		zone?.traverseAllProgeny {   iChild in
+			if  iChild.hasTrait(for: .eEssay) {
+				self.children.append(iChild.essay)
 			}
+		}
+	}
 
-			if  let    intersection = range.inclusiveIntersection(titleRange) {
-				let delta           = length - intersection.length
-				titleRange .length += delta
-				textRange.location += delta
-				altered             = true
+	override var essayText: NSMutableAttributedString? {
+		var result: NSMutableAttributedString?
+		var count  = children.count
+		var offset = 0
+
+		for child in children.reversed() {
+			count         -= 1
+
+			if  let   text = child.partialText {
+				result     = NSMutableAttributedString()
+				result?.insert(text, at: 0)
+
+				if  count != 0 {
+					result?.insert(blankLine, at: 0)
+				}
 			}
 		}
 
-		return 	altered
+		if  result == nil {    // detect when no partial text has been added
+			let   e = ZEssayPart(zone)
+
+			if  let text = e.partialText {
+				result?.insert(text, at: 0)
+			}
+		}
+
+		for child in children {	// update essayIndices
+			child.partOffset = offset
+			offset          += child.textRange.upperBound
+		}
+
+		return result
+	}
+
+	override func save(_ attributedString: NSAttributedString?) {
+		if  let  attributed = attributedString {
+			for child in children {
+				let sub = attributed.attributedSubstring(from: child.partRange)
+
+				if  child == self {
+					super.save(sub)
+				} else {
+					child.save(sub)
+				}
+			}
+		}
+	}
+
+	override func update(_ range:NSRange, length: Int) -> ZAlterationType {
+		var result = ZAlterationType.eAlter
+		let equal  = range.inclusiveIntersection(partRange) == partRange
+
+		for child in children {
+			if  equal {
+				child.delete()
+			} else {
+				var alter = ZAlterationType.eAlter
+
+				if  self == child {
+					alter = super.updatePart(range, length: length)
+				} else {
+					alter = child.updatePart(range, length: length)
+				}
+
+				if  alter == .eLock {
+					result = .eLock
+
+					break
+				}
+			}
+		}
+
+		if  equal {
+			result = .eDelete
+			gEssayEditor.swapGraphAndEssay()
+		}
+
+		return 	result
 	}
 
 }

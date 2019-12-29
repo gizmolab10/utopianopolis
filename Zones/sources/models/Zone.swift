@@ -11,7 +11,7 @@ import Foundation
 import CloudKit
 
 
- enum ZoneAccess: Int, CaseIterable {
+enum ZoneAccess: Int, CaseIterable {
     case eInherit
     case eReadOnly
     case eProgenyWritable
@@ -44,7 +44,7 @@ class Zone : ZRecord {
     var               crossLinkMaybe :            ZRecord?
     var                   colorMaybe :             ZColor?
     var                   emailMaybe :             String?
-	var       		      essayMaybe :             ZEssay?
+	var       		      essayMaybe :         ZEssayPart?
 	var                     children =          ZoneArray()
 	var                       traits =   ZTraitDictionary()
     var                        count :                Int  { return children.count }
@@ -176,9 +176,28 @@ class Zone : ZRecord {
 		}
 	}
 
-	var essay: ZEssay {
+	var hasNoEssays: Bool {
+		var result = true
+
+		traverseAllProgeny { zone in
+			if zone.hasTrait(for: .eEssay) {
+				result = false
+			}
+		}
+
+		return result
+	}
+
+	var essay: ZEssayPart {
 		if  essayMaybe == nil {
-			essayMaybe = ZEssay(self)
+			if  hasNoEssays {
+				essayMaybe = ZEssayPart(self)
+			} else {
+				let  essay = ZEssay(self)
+				essayMaybe = essay
+
+				essay.setupChildren()
+			}
 		}
 
 		return essayMaybe!

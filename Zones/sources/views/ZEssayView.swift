@@ -18,8 +18,8 @@ var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var editorView: ZTextView?
-	var essay: ZEssay? { return zone?.essay }
-	var zone: Zone? { return gSelecting.firstGrab }
+	var essay: ZEssayPart? { return zone?.essay }
+	var zone:  Zone?       { return gSelecting.firstGrab }
 
 	func save() { essay?.save(editorView?.textStorage) }
 	func export() { gFiles.exportToFile(.eEssay, for: zone) }
@@ -54,12 +54,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			for (index, value) in affectedRanges.enumerated() {
 				if  let range  = value as? NSRange,
 					let     e  = essay,
-					!e.update(range, length: strings[index].length) {
-
-					if  range == e.essayRange {
-						e.delete()
-						gEssayEditor.swapGraphAndEssay()
-					}
+					e.update(range, length: strings[index].length) != .eAlter {
 
 					should     = false
 

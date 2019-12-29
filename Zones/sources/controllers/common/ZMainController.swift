@@ -45,19 +45,14 @@ class ZMainController: ZGenericController {
 
         switch iKind {
 			case .eEssay:
-				if  let view = essayView {
-					let grab = gSelecting.firstGrab
+				if  let 	   view = essayView {
+					let        grab = gSelecting.firstGrab
+					view  .isHidden = hideEssay
 
-					if !hideEssay {
-						view.becomeFirstResponder()
-					} else if let grabbed = grab {
-						FOREGROUND {
-							gTextEditor.cancel() 		// undo of: somehow become first responder is called on first favorite (first text field in the graph view)
-							grabbed.grab()		 		// undo of: somehow change focus is called
-						}
+					if  let grabbed = grab, hideEssay {
+						gTextEditor.cancel() 		// undo of: somehow become first responder is called on first favorite (first text field in the graph view)
+						grabbed.grab()		 		// undo of: somehow change focus is called
 					}
-
-					view			  .isHidden = hideEssay
 				}
 			case .eFound:
 				searchBoxView?        .isHidden = hideSearch
