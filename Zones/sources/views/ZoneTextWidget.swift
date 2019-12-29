@@ -122,8 +122,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             if  gWorkMode != .graphMode {
                 gSearching.exitSearchMode()
             }
-            
-            gTextEditor.edit(zone, setOffset: gTextOffset)
+
+			if  let w = widgetZone,
+				gSelecting.currentGrabs.contains(w) {
+				gTextEditor.edit(zone, setOffset: gTextOffset)
+			}
             
             return true
         }

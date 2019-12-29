@@ -250,14 +250,13 @@ class ZTextEditor: ZTextView {
     
 
     func clearOffset() { currentOffset = nil }
-    func clearEdit()   { currentEdit = nil; clearOffset() }
+	func clearEdit()   { currentEdit = nil; clearOffset(); fullResign() }
 
 
     func cancel() {
         if  let    e = currentEdit,
             let zone = currentlyEditingZone {
             clearEdit()
-            fullResign()
             zone.grab()
             e.updateWidgetsForEndEdit()
         }

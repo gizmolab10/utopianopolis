@@ -56,19 +56,21 @@ class ZEssay: ZEssayPart {
 	override func save(_ attributedString: NSAttributedString?) {
 		if  let  attributed = attributedString {
 			for child in children {
-				let sub = attributed.attributedSubstring(from: child.partRange)
+				if  child.partRange.upperBound <= attributed.length {
+					let sub = attributed.attributedSubstring(from: child.partRange)
 
-				if  child == self {
-					super.save(sub)
-				} else {
-					child.save(sub)
+					if  child == self {
+						super.save(sub)
+					} else {
+						child.save(sub)
+					}
 				}
 			}
 		}
 	}
 
 	override func update(_ range:NSRange, length: Int) -> ZAlterationType {
-		var result = ZAlterationType.eAlter
+		var result = ZAlterationType.eLock
 		let equal  = range.inclusiveIntersection(partRange) == partRange
 
 		for child in children {
@@ -83,8 +85,8 @@ class ZEssay: ZEssayPart {
 					alter = child.updatePart(range, length: length)
 				}
 
-				if  alter == .eLock {
-					result = .eLock
+				if  alter == .eAlter {
+					result = .eAlter
 
 					break
 				}
