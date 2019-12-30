@@ -28,7 +28,7 @@ class ZEssay: ZEssayPart {
 			count         -= 1
 
 			if  let   text = child.partialText {
-				result     = NSMutableAttributedString()
+				result     = result ?? NSMutableAttributedString()
 				result?.insert(text, at: 0)
 
 				if  count != 0 {
@@ -59,11 +59,7 @@ class ZEssay: ZEssayPart {
 				if  child.partRange.upperBound <= attributed.length {
 					let sub = attributed.attributedSubstring(from: child.partRange)
 
-					if  child == self {
-						super.save(sub)
-					} else {
-						child.save(sub)
-					}
+					child.savePart(sub)
 				}
 			}
 		}
@@ -77,13 +73,7 @@ class ZEssay: ZEssayPart {
 			if  equal {
 				child.delete()
 			} else {
-				var alter = ZAlterationType.eAlter
-
-				if  self == child {
-					alter = super.updatePart(range, length: length)
-				} else {
-					alter = child.updatePart(range, length: length)
-				}
+				let alter = child.updatePart(range, length: length)
 
 				if  alter == .eAlter {
 					result = .eAlter

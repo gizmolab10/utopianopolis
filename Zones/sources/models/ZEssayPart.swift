@@ -26,6 +26,7 @@ class ZEssayPart: NSObject {
 	var       zone : Zone?
 
 	func delete() { zone?.removeTrait(for: .eEssay) }
+	func save(_ attributedString: NSAttributedString?) { savePart(attributedString) }
 	func update(_ range: NSRange, length: Int) -> ZAlterationType { return updatePart(range, length: length) }
 
 	init(_ zone: Zone?) {
@@ -37,8 +38,7 @@ class ZEssayPart: NSObject {
 	var partialText: NSMutableAttributedString? {
 		var result:  NSMutableAttributedString?
 
-		if  //zone?.hasTrait(for: .eEssay) ?? false,
-			let   name = zone?.zoneName,
+		if  let   name = zone?.zoneName,
 			let  color = zone?.color,
 			let   text = essayTrait?.essayText,
 			let   font = ZFont(name: "Times-Roman", size: 36.0) {
@@ -56,7 +56,7 @@ class ZEssayPart: NSObject {
 		return result
 	}
 
-	func save(_ attributedString: NSAttributedString?) {
+	func savePart(_ attributedString: NSAttributedString?) {
 		if  let  attributed = attributedString,
 			let       essay = essayMaybe {
 			let      string = attributed.string
@@ -77,25 +77,27 @@ class ZEssayPart: NSObject {
 			(range.lowerBound < titleRange.upperBound && range.upperBound >= textRange.lowerBound)
 	}
 
-	func updatePart(_ range: NSRange, length: Int) -> ZAlterationType {
-		var 	result  			= ZAlterationType.eLock
+	func updatePart(_ iRange: NSRange, length: Int) -> ZAlterationType {
+		var 	result  		    	= ZAlterationType.eLock
 
-		if  range == partRange {
-			delete()
-			gEssayEditor.swapGraphAndEssay()
+		if  let range 		            = iRange.inclusiveIntersection(partRange)?.offsetBy(-partOffset) {
+			if  range                  == partRange {
+				delete()
+				gEssayEditor.swapGraphAndEssay()
 
-			result					= .eDelete
-		} else if !isLocked(for: range) {
-			if  let    intersection = range.inclusiveIntersection(textRange) {
-				textRange  .length += length - intersection.length
-				result              = .eAlter
-			}
+				result					= .eDelete
+			} else if !isLocked(for: range) {
+				if  let    intersection = range.inclusiveIntersection(textRange) {
+					textRange  .length += length - intersection.length
+					result              = .eAlter
+				}
 
-			if  let    intersection = range.inclusiveIntersection(titleRange) {
-				let delta           = length - intersection.length
-				titleRange .length += delta
-				textRange.location += delta
-				result              = .eAlter
+				if  let    intersection = range.inclusiveIntersection(titleRange) {
+					let delta           = length - intersection.length
+					titleRange .length += delta
+					textRange.location += delta
+					result              = .eAlter
+				}
 			}
 		}
 

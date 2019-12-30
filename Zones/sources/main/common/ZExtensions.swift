@@ -735,6 +735,14 @@ extension NSRange {
 
 		return nil
 	}
+
+	func offsetBy(_ offset: Int, length: Int = 0) -> NSRange {
+		let newLocation = location + offset
+		let newLength   = length   + length
+
+		return NSRange(location: newLocation, length: newLength)
+	}
+
 }
 
 extension NSMutableParagraphStyle {
