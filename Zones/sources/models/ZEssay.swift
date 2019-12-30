@@ -32,7 +32,7 @@ class ZEssay: ZEssayPart {
 				result?.insert(text, at: 0)
 
 				if  count != 0 {
-					result?.insert(blankLine, at: 0)
+					result?.insert(kBlankLine, at: 0)
 				}
 			}
 		}
@@ -56,8 +56,10 @@ class ZEssay: ZEssayPart {
 	override func save(_ attributedString: NSAttributedString?) {
 		if  let  attributed = attributedString {
 			for child in children {
-				if  child.partRange.upperBound <= attributed.length {
-					let sub = attributed.attributedSubstring(from: child.partRange)
+				let range   = child.partRange
+
+				if  range.upperBound <= attributed.length {
+					let sub = attributed.attributedSubstring(from: range)
 
 					child.savePart(sub)
 				}
@@ -73,12 +75,10 @@ class ZEssay: ZEssayPart {
 			if  equal {
 				child.delete()
 			} else {
-				let alter = child.updatePart(range, length: length)
+				let alter  = child.updatePart(range, length: length)
 
 				if  alter == .eAlter {
 					result = .eAlter
-
-					break
 				}
 			}
 		}

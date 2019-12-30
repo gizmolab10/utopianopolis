@@ -724,6 +724,9 @@ extension Array where Element == Zone {
 }
 
 extension NSRange {
+
+	func offsetBy(_ offset: Int) -> NSRange { return NSRange(location: offset + location, length: length) }
+
 	func inclusiveIntersection(_ other: NSRange, includeUpper: Bool = true) -> NSRange? {
 		if  let    i = intersection(other) {
 			return i
@@ -734,13 +737,6 @@ extension NSRange {
 		}
 
 		return nil
-	}
-
-	func offsetBy(_ offset: Int, length: Int = 0) -> NSRange {
-		let newLocation = location + offset
-		let newLength   = length   + length
-
-		return NSRange(location: newLocation, length: newLength)
 	}
 
 }

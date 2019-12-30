@@ -21,7 +21,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	var essay: ZEssayPart? { return zone?.essay }
 	var zone:  Zone?       { return gSelecting.firstGrab }
 
-	func save() { essay?.save(editorView?.textStorage) }
+	func save()   { essay?.save(editorView?.textStorage) }
 	func export() { gFiles.exportToFile(.eEssay, for: zone) }
 
 	func clear() {
@@ -31,6 +31,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			editorView?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
 		}
 	}
+
 	func begin() {
 		clear() 									// discard previously edited text
 
@@ -46,18 +47,16 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
-
 	func textView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
-		var should             = true
+		var         should     = false
 
-		if  let       strings  = replacementStrings {
+		if  let     strings    = replacementStrings,
+			let     e  		   = essay {
 			for (index, value) in affectedRanges.enumerated() {
 				if  let range  = value as? NSRange,
-					let     e  = essay,
-					e.update(range, length: strings[index].length) != .eAlter {
-
-					should     = false
-
+					e.update(range, length: strings[index].length) == .eAlter {
+					should     = true
+				} else {
 					break
 				}
 			}

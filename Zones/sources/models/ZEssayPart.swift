@@ -16,7 +16,6 @@ enum ZAlterationType: Int {
 
 class ZEssayPart: NSObject {
 	var partOffset = 0
-	let	 blankLine = NSMutableAttributedString(string: "\n\n")
 	var  essayText : NSMutableAttributedString? { return partialText }
 	var  partRange : NSRange { return NSRange(location: partOffset, length: textRange.upperBound) }
 	var titleRange = NSRange ()
@@ -49,7 +48,7 @@ class ZEssayPart: NSObject {
 			result     = NSMutableAttributedString()
 
 			result?.insert(text,      at: 0)
-			result?.insert(blankLine, at: 0)
+			result?.insert(kBlankLine, at: 0)
 			result?.insert(title,     at: 0)
 		}
 
