@@ -898,6 +898,7 @@ class ZGraphEditor: ZBaseEditor {
     
     
 	func swapWithParent() {
+		let scratchZone = Zone()
 
         // swap places with parent
 
@@ -908,15 +909,22 @@ class ZGraphEditor: ZBaseEditor {
             let  parentI = parent.siblingIndex,
 			let   grandP = parent.parentZone {
 			
-			moveZone(grabbed, into: grandP, at: parentI, orphan: true) {
-				self.moveZone(parent, into: grabbed, at: grabbedI, orphan: true) {
-					parent.needCount()
+			self.moveZones(grabbed.children, into: scratchZone) {
+				self.moveZone(grabbed, into: grandP, at: parentI, orphan: true) {
+					self.moveZones(parent.children, into: grabbed) {
+						self.moveZone(parent, into: grabbed, at: grabbedI, orphan: true) {
+							self.moveZones(scratchZone.children, into: parent) {
+								parent.needCount()
+								parent.grab()
 
-					if  gHere == parent {
-						gHere  = grabbed
+								if  gHere == parent {
+									gHere  = grabbed
+								}
+
+								self.redrawSyncRedraw(grabbed)
+							}
+						}
 					}
-					
-					self.redrawSyncRedraw(grabbed)
 				}
 			}
 		}
