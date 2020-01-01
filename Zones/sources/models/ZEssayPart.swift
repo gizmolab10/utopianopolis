@@ -9,9 +9,9 @@
 import Foundation
 
 enum ZAlterationType: Int {
-	case eDelete
 	case eAlter
 	case eLock
+	case eExit
 }
 
 class ZEssayPart: NSObject {
@@ -80,11 +80,11 @@ class ZEssayPart: NSObject {
 		var 	result  		    	= ZAlterationType.eLock
 
 		if  let range 		            = iRange.inclusiveIntersection(partRange)?.offsetBy(-partOffset) {
-			if  range                  == partRange {
+			if  range                  == partRange.offsetBy(-partOffset) {
 				delete()
 				gEssayEditor.swapGraphAndEssay()
 
-				result					= .eDelete
+				result					= .eExit
 			} else if !isLocked(for: range) {
 				if  let    intersection = range.inclusiveIntersection(textRange) {
 					textRange  .length += length - intersection.length

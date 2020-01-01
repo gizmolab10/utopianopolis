@@ -89,7 +89,7 @@ class ZEssay: ZEssayPart {
 		}
 
 		if  equal {
-			result = .eDelete
+			result = .eExit
 			gEssayEditor.swapGraphAndEssay()
 		}
 
