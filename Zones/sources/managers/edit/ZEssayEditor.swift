@@ -42,19 +42,21 @@ class ZEssayEditor: ZBaseEditor {
 			}
 
 			if  COMMAND {
-				switch key {
-					case "a": gEssayView?.editorView?.selectAll(nil)
-					case "e": gEssayView?.export()
-					case "s": gEssayView?.save()
-					case "w": gEssayView?.save(); swapGraphAndEssay()
-					case "/": if SPECIAL { showHideKeyboardShortcuts() }
-					default:  break
-				}
-			}
+				let e = gEssayView
 
-			switch key {
-				case kEscape: swapGraphAndEssay()
-				default:  	  break
+				switch key {
+					case "a":     e?.editorView?.selectAll(nil)
+					case "e":     e?.export()
+					case "s":     e?.save()
+					case kReturn: e?.save();   swapGraphAndEssay()
+					case "/":     if SPECIAL { showHideKeyboardShortcuts() }
+					default:      break
+				}
+			} else {
+				switch key {
+					case kEscape: swapGraphAndEssay()
+					default:  	  break
+				}
 			}
 		}
 		

@@ -103,6 +103,7 @@ class ZGraphEditor: ZBaseEditor {
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
                     case kSpace:   addIdea()
+					case kReturn:  if COMMAND { grabOrEdit(COMMAND, OPTION) }
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() }
                     default:       return false // false means key not handled
@@ -148,7 +149,6 @@ class ZGraphEditor: ZBaseEditor {
 					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
                     case "t":      swapWithParent()
                     case "u":      alterCase(up: true)
-                    case "w":      swapGraphAndEssay(single: !COMMAND)
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
                     case "+":      divideChildren()
                     case "-":      if SPECIAL { convertToTitledLineAndRearrangeChildren() } else if COMMAND { return gSelecting.currentMoveable.convertToFromLine() } else { addDashedLine() }
@@ -399,8 +399,10 @@ class ZGraphEditor: ZBaseEditor {
     
     func grabOrEdit(_ COMMAND: Bool, _ OPTION: Bool) {
         if  COMMAND {
-            gTextEditor.stopCurrentEdit()
-            gHere.grab()
+			gCreateMultipleEssay    =  OPTION
+
+			gTextEditor.stopCurrentEdit()
+			swapGraphAndEssay()
         } else {
             gTextEditor.edit(gSelecting.currentMoveable)
             
