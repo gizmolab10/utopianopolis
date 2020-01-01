@@ -45,9 +45,12 @@ class ZEssay: ZEssayPart {
 			}
 		}
 
+		count = children.count
+
 		for child in children {	// update essayIndices
 			child.partOffset = offset
-			offset          += child.textRange.upperBound
+			count           -= 1
+			offset          += child.textRange.upperBound + (count == 0 ? 0 : 2)
 		}
 
 		return result

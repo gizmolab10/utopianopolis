@@ -47,9 +47,9 @@ class ZEssayPart: NSObject {
 			textRange  = NSRange(location: offset, length: text.length)
 			result     = NSMutableAttributedString()
 
-			result?.insert(text,      at: 0)
-			result?.insert(kBlankLine, at: 0)
-			result?.insert(title,     at: 0)
+			result?.insert(title,      at: 0)
+			result?.insert(kBlankLine, at: result!.length)
+			result?.insert(text,       at: result!.length)
 		}
 
 		return result
