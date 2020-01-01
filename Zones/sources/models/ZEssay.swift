@@ -12,9 +12,11 @@ class ZEssay: ZEssayPart {
 	var children = [ZEssayPart]()
 
 	func setupChildren() {
-		zone?.traverseAllProgeny {   iChild in
-			if  iChild.hasTrait(for: .eEssay) {
-				self.children.append(iChild.essay)
+		if  gCreateMultipleEssay {
+			zone?.traverseAllProgeny {   iChild in
+				if  iChild.hasTrait(for: .eEssay) {
+					self.children.append(iChild.essay)
+				}
 			}
 		}
 	}
@@ -56,7 +58,7 @@ class ZEssay: ZEssayPart {
 		return result
 	}
 
-	override func save(_ attributedString: NSAttributedString?) {
+	override func saveEssay(_ attributedString: NSAttributedString?) {
 		if  let  attributed = attributedString {
 			for child in children {
 				let range   = child.partRange

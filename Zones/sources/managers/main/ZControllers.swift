@@ -86,7 +86,7 @@ class ZControllers: NSObject {
 
     func startupCloudAndUI() {
         gBatches         .usingDebugTimer = true
-		gTextEditor.refusesFirstResponder = true
+		gTextEditor.refusesFirstResponder = true			// WORKAROUND new feature of mac os x
 
         gRemoteStorage.clear()
         self.signalFor(nil, regarding: .eRelayout)

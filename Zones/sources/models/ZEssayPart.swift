@@ -25,7 +25,7 @@ class ZEssayPart: NSObject {
 	var       zone : Zone?
 
 	func delete() { zone?.removeTrait(for: .eEssay) }
-	func save(_ attributedString: NSAttributedString?) { savePart(attributedString) }
+	func saveEssay(_ attributedString: NSAttributedString?) { savePart(attributedString) }
 	func updateEssay(_ range: NSRange, length: Int) -> ZAlterationType { return updatePart(range, length: length) }
 
 	init(_ zone: Zone?) {

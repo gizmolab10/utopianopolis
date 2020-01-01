@@ -190,7 +190,7 @@ class Zone : ZRecord {
 
 	var essay: ZEssayPart {
 		if  essayMaybe == nil {
-			if  hasNoEssays {
+			if  hasNoEssays || !gCreateMultipleEssay {
 				essayMaybe = ZEssayPart(self)
 			} else {
 				let  essay = ZEssay(self)

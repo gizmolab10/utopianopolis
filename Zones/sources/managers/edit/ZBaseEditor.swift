@@ -57,10 +57,11 @@ class ZBaseEditor: NSObject {
 		#endif
 	}
 
-	func swapGraphAndEssay() {
+	func swapGraphAndEssay(single: Bool = true) {
 		let stopEssay 				= gWorkMode == .essayMode
 		let multiple: [ZSignalKind] = !stopEssay ? [.eEssay] : [.eEssay, .eRelayout]
 		gWorkMode     				=  stopEssay ? .graphMode : .essayMode
+		gCreateMultipleEssay        = !single
 
 		gControllers.signalFor(gSelecting.firstGrab, multiple: multiple)
 	}

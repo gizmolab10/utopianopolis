@@ -33,6 +33,7 @@ var       gKeyboardIsVisible                     = false
 var       gArrowsDoNotBrowse                     = false
 var      gShowShortcutWindow                     = false
 var      gDebugDenyOwnership                     = false
+var     gCreateMultipleEssay 					 = false
 var    gDebugShowIdentifiers                     = false
 var     gDebugOpsPerformance                     = true
 var     gTimeOfSystemStartup                     = Date.timeIntervalSinceReferenceDate

@@ -148,7 +148,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
                     case "t":      swapWithParent()
                     case "u":      alterCase(up: true)
-                    case "w":      swapGraphAndEssay()
+                    case "w":      swapGraphAndEssay(single: !COMMAND)
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
                     case "+":      divideChildren()
                     case "-":      if SPECIAL { convertToTitledLineAndRearrangeChildren() } else if COMMAND { return gSelecting.currentMoveable.convertToFromLine() } else { addDashedLine() }

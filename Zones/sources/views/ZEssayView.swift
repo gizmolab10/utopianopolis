@@ -22,7 +22,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	var zone:  Zone?       { return gSelecting.firstGrab }
 
 	func export() { gFiles.exportToFile(.eEssay, for: zone) }
-	func save()   { essay?.save(editorView?.textStorage) }
+	func save()   { essay?.saveEssay(editorView?.textStorage) }
 
 	func clear() {
 		zone?.essayMaybe = nil
