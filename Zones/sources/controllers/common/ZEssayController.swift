@@ -14,9 +14,7 @@ var gEssayController: ZEssayController? { return gControllers.controllerForID(.i
 
 class ZEssayController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
 	override  var controllerID : ZControllerID { return .idEssay }
-	@IBOutlet var      spinner : ZProgressIndicator?
 	@IBOutlet var    essayView : ZEssayView?
-	@IBOutlet var  spinnerView : ZView?
 
 	override func viewWillAppear() {
 		super.viewWillAppear()

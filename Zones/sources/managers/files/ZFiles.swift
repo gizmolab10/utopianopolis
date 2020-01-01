@@ -227,7 +227,7 @@ class ZFiles: NSObject {
                 do {
                     if  let   data = FileManager.default.contents(atPath: path),
                         data.count > 0,
-                        let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
+                        let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
                         let   dict = self.dictFromJSON(json)
 
                         for key in keys {

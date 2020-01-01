@@ -74,14 +74,14 @@ class ZEvents: NSObject {
                 if !isDuplicate(event: event) {
                     switch gWorkMode {
 						case .searchMode:
-							return       gSearching.handleEvent(event)
+							return           gSearching.handleEvent(event)
 						case .essayMode:
-							return     gEssayEditor.handleEvent(event, isWindow: true)
+							return         gEssayEditor.handleEvent(event, isWindow: true)
 						case .graphMode:
-							if  gIsShortcutsFrontmost {
-								return  gShortcuts?.handleEvent(event) ?? nil
+							if  gIsGraphShortcutsFrontmost {
+								return gGraphShortcuts?.handleEvent(event) ?? nil
 							} else {
-								return gGraphEditor.handleEvent(event, isWindow: true)
+								return     gGraphEditor.handleEvent(event, isWindow: true)
 						}
 						default: break
 					}

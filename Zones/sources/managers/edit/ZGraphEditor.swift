@@ -185,7 +185,7 @@ class ZGraphEditor: ZBaseEditor {
         let  OPTION = flags.isOption
         let   SHIFT = flags.isShift
 
-        if (OPTION && !gSelecting.currentMoveable.userCanMove) || gIsShortcutsFrontmost {
+        if (OPTION && !gSelecting.currentMoveable.userCanMove) || gIsGraphShortcutsFrontmost {
             return
         }
 

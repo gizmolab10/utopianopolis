@@ -40,7 +40,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     }
 
 
-    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
+    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: ZStringKeyDictionary) {
         let note = CKNotification(fromRemoteNotificationDictionary: userInfo)
 
         if  note.notificationType == .query,

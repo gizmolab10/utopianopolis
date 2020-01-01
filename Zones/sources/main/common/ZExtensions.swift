@@ -16,10 +16,13 @@ import CloudKit
     import UIKit
 #endif
 
-typealias          ZoneArray = [Zone]
-typealias   ZTraitDictionary = [ZTraitType : ZTrait]
-typealias ZStorageDictionary = [ZStorageType : NSObject]
-let             gApplication = ZApplication.shared
+typealias               ZoneArray = [Zone]
+typealias        ZTraitDictionary = [ZTraitType : ZTrait]
+typealias      ZStorageDictionary = [ZStorageType : NSObject]
+typealias    ZStringKeyDictionary = [String : Any]
+typealias ZStringObjectDictionary = [String : NSObject]
+typealias   ZAttributesDictionary = [NSAttributedString.Key : Any]
+let                  gApplication = ZApplication.shared
 
 func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
 	if  let t = test, !t() { return }
@@ -209,7 +212,7 @@ extension NSObject {
     // MARK:-
 
 
-    func dictFromJSON(_ dict: [String : NSObject]) -> ZStorageDictionary {
+    func dictFromJSON(_ dict: ZStringObjectDictionary) -> ZStorageDictionary {
         var                   result = ZStorageDictionary ()
 
         for (key, value) in dict {
@@ -228,9 +231,9 @@ extension NSObject {
                 }
 
                 if !translated {
-                    if  let     subDict = value as? [String : NSObject] {
+                    if  let     subDict = value as? ZStringObjectDictionary {
                         goodValue       = dictFromJSON(subDict) as NSObject
-                    } else if let array = value as? [[String : NSObject]] {
+                    } else if let array = value as? [ZStringObjectDictionary] {
                         var   goodArray = [ZStorageDictionary] ()
 
                         for subDict in array {
@@ -249,9 +252,9 @@ extension NSObject {
     }
 
 
-    func jsonDictFrom(_ dict: ZStorageDictionary) -> [String : NSObject] {
+    func jsonDictFrom(_ dict: ZStorageDictionary) -> ZStringObjectDictionary {
         var    last = ZStorageDictionary ()
-        var  result = [String : NSObject] ()
+        var  result = ZStringObjectDictionary ()
 
         let closure = { (key: ZStorageType, value: Any) in
             var goodValue       = value
@@ -260,7 +263,7 @@ extension NSObject {
             } else if let  date = value as? Date {
                 goodValue       = kTimeInterval + ":\(date.timeIntervalSinceReferenceDate)"
             } else if let array = value as? [ZStorageDictionary] {
-                var jsonArray   = [[String : NSObject]] ()
+                var jsonArray   = [ZStringObjectDictionary] ()
 
                 for subDict in array {
                     jsonArray.append(self.jsonDictFrom(subDict))

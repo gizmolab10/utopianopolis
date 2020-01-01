@@ -23,51 +23,51 @@ var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 #endif
 
 
-var                gWorkMode                     = ZWorkMode.startupMode
-var				  gDebugMode:		[ZDebugMode] = [.error]
-var             gDeferRedraw                     = false
-var             gDebugReport                     = false
-var           gTextCapturing                     = false
-var         gIsReadyToShowUI                     = false
-var       gKeyboardIsVisible                     = false
-var       gArrowsDoNotBrowse                     = false
-var      gShowShortcutWindow                     = false
-var      gDebugDenyOwnership                     = false
-var     gCreateMultipleEssay 					 = false
-var    gDebugShowIdentifiers                     = false
-var     gDebugOpsPerformance                     = true
-var     gTimeOfSystemStartup                     = Date.timeIntervalSinceReferenceDate
-var   gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event IS startup
-var      gCurrentBrowseLevel:               Int?
-var         gDragDropIndices: NSMutableIndexSet?
-var            gDragRelation:         ZRelation?
-var            gDragDropZone:              Zone?
-var             gDraggedZone:              Zone?
-var               gDragPoint:           CGPoint?
-var                gExpanded:          [String]?
+var                  gWorkMode                     = ZWorkMode.startupMode
+var  				  gDebugMode:		[ZDebugMode] = [.error]
+var               gDeferRedraw                     = false
+var               gDebugReport                     = false
+var             gTextCapturing                     = false
+var           gIsReadyToShowUI                     = false
+var         gKeyboardIsVisible                     = false
+var         gArrowsDoNotBrowse                     = false
+var        gShowShortcutWindow                     = false
+var        gDebugDenyOwnership                     = false
+var       gCreateMultipleEssay 					 = false
+var      gDebugShowIdentifiers                     = false
+var       gDebugOpsPerformance                     = true
+var       gTimeOfSystemStartup                     = Date.timeIntervalSinceReferenceDate
+var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event IS startup
+var        gCurrentBrowseLevel:               Int?
+var           gDragDropIndices: NSMutableIndexSet?
+var              gDragRelation:         ZRelation?
+var              gDragDropZone:              Zone?
+var               gDraggedZone:              Zone?
+var                 gDragPoint:           CGPoint?
+var                  gExpanded:          [String]?
 
-var                gDarkMode:     InterfaceStyle { return InterfaceStyle() }
-var                  gIsDark:               Bool { return gDarkMode == .Dark }
-var                  gIsLate:               Bool { return gBatches.isLate }
-var              gIsDragging:               Bool { return gDraggedZone != nil }
-var    gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
-var      gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
-var        gInsertionsFollow:               Bool { return gInsertionMode == .follow }
-var          gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
-var   gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
-var                gDragView:         ZDragView? { return gGraphController?.dragView }
-var               gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor + 13.0) }
-var                gDotWidth:             Double { return gDotHeight * 0.75 }
-var      gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
-var                gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
-var              gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
-var           gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
-var        gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : ZColor.black }
-var   gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker  (by: 4.0)  .cgColor }
-var  gDarkishBackgroundColor:            CGColor { return gBackgroundColor.darkish (by: 1.028).cgColor }
-var gDirectionIndicatorColor:            CGColor { return gBackgroundColor.darker  (by: 1.3)  .cgColor }
-var gLightishBackgroundColor:            CGColor { return gBackgroundColor.lightish(by: 1.02) .cgColor }
-var  gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter (by: 4.0)  .cgColor }
+var                  gDarkMode:     InterfaceStyle { return InterfaceStyle() }
+var                    gIsDark:               Bool { return gDarkMode == .Dark }
+var                    gIsLate:               Bool { return gBatches.isLate }
+var                gIsDragging:               Bool { return gDraggedZone != nil }
+var gIsGraphShortcutsFrontmost:               Bool { return gGraphShortcuts?.view.window?.isKeyWindow ?? false }
+var        gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
+var          gInsertionsFollow:               Bool { return gInsertionMode == .follow }
+var            gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
+var     gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
+var                  gDragView:         ZDragView? { return gGraphController?.dragView }
+var                 gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor + 13.0) }
+var                  gDotWidth:             Double { return gDotHeight * 0.75 }
+var        gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
+var                  gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
+var                gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
+var             gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
+var          gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : ZColor.black }
+var     gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker  (by: 4.0)  .cgColor }
+var    gDarkishBackgroundColor:            CGColor { return gBackgroundColor.darkish (by: 1.028).cgColor }
+var   gDirectionIndicatorColor:            CGColor { return gBackgroundColor.darker  (by: 1.3)  .cgColor }
+var   gLightishBackgroundColor:            CGColor { return gBackgroundColor.lightish(by: 1.02) .cgColor }
+var    gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter (by: 4.0)  .cgColor }
 
 
 var gCurrentEvent: ZEvent? {

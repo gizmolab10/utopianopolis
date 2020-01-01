@@ -771,7 +771,7 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="405" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="menu" size="11"/>
+                                                        <font key="font" metaFont="label" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
@@ -831,24 +831,6 @@ DQ
                         <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView hidden="YES" appearanceType="aqua" translatesAutoresizingMaskIntoConstraints="NO" id="TeG-e3-hfY">
-                                <rect key="frame" x="0.0" y="226" width="400" height="144"/>
-                                <subviews>
-                                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="jd5-cM-Ao6">
-                                        <rect key="frame" x="128" y="0.0" width="144" height="144"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="jd5-cM-Ao6" secondAttribute="height" id="WDb-zw-4NJ"/>
-                                        </constraints>
-                                    </progressIndicator>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="jd5-cM-Ao6" firstAttribute="centerY" secondItem="TeG-e3-hfY" secondAttribute="centerY" id="AOz-Lh-A5i"/>
-                                    <constraint firstAttribute="bottom" secondItem="jd5-cM-Ao6" secondAttribute="bottom" id="PZJ-Xq-vuB"/>
-                                    <constraint firstItem="jd5-cM-Ao6" firstAttribute="top" secondItem="TeG-e3-hfY" secondAttribute="top" id="TXk-D4-Fzb"/>
-                                    <constraint firstAttribute="height" constant="144" id="deE-hU-NPV"/>
-                                    <constraint firstItem="jd5-cM-Ao6" firstAttribute="centerX" secondItem="TeG-e3-hfY" secondAttribute="centerX" id="x2L-gF-Jim"/>
-                                </constraints>
-                            </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="HOI-yt-EwI" customClass="ZEssayView" customModule="Thoughtful" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                                 <subviews>
@@ -866,6 +848,9 @@ DQ
                                                     <size key="minSize" width="400" height="596"/>
                                                     <size key="maxSize" width="400" height="10000000"/>
                                                     <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="HOI-yt-EwI" id="keQ-lr-jOU"/>
+                                                    </connections>
                                                 </textView>
                                             </subviews>
                                         </clipView>
@@ -892,18 +877,13 @@ DQ
                         </subviews>
                         <constraints>
                             <constraint firstItem="HOI-yt-EwI" firstAttribute="leading" secondItem="LfD-Wf-rhW" secondAttribute="leading" id="DcG-xC-2m5"/>
-                            <constraint firstItem="TeG-e3-hfY" firstAttribute="centerY" secondItem="LfD-Wf-rhW" secondAttribute="centerY" id="J2y-u7-npe"/>
-                            <constraint firstAttribute="trailing" secondItem="TeG-e3-hfY" secondAttribute="trailing" id="T5P-wt-3l0"/>
                             <constraint firstItem="HOI-yt-EwI" firstAttribute="top" secondItem="LfD-Wf-rhW" secondAttribute="top" id="gcI-6p-l35"/>
                             <constraint firstItem="HOI-yt-EwI" firstAttribute="bottom" secondItem="LfD-Wf-rhW" secondAttribute="bottom" id="jBV-Ff-pFi"/>
-                            <constraint firstItem="TeG-e3-hfY" firstAttribute="leading" secondItem="LfD-Wf-rhW" secondAttribute="leading" id="ogT-VO-XVE"/>
                             <constraint firstItem="HOI-yt-EwI" firstAttribute="trailing" secondItem="LfD-Wf-rhW" secondAttribute="trailing" id="tkM-9E-vgG"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="essayView" destination="HOI-yt-EwI" id="KyM-sg-WOU"/>
-                        <outlet property="spinner" destination="jd5-cM-Ao6" id="Vp2-KU-0gj"/>
-                        <outlet property="spinnerView" destination="TeG-e3-hfY" id="11Q-9M-Qkw"/>
                     </connections>
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

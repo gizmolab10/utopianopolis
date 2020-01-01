@@ -24,10 +24,10 @@ enum ZShortcutType: String {
 }
 
 
-var gShortcuts: ZShortcutsController? { return gControllers.controllerForID(.idShortcuts) as? ZShortcutsController }
+var gGraphShortcuts: ZGraphShortcutsController? { return gControllers.controllerForID(.idShortcuts) as? ZGraphShortcutsController }
 
 
-class ZShortcutsController: ZGenericTableController {
+class ZGraphShortcutsController: ZGenericTableController {
 
 
     @IBOutlet var gridView: ZView?
@@ -169,7 +169,7 @@ class ZShortcutsController: ZGenericTableController {
 		var (m, e, url) = strings(for: row, column: column)
         let        type = ZShortcutType(rawValue: m.substring(with: NSMakeRange(0, 1))) // grab first character
 		let        main = m.substring(fromInclusive: 1)             // grab remaining characters
-        var  attributes = [String : Any] ()
+        var  attributes = ZStringKeyDictionary ()
 		let      hasURL = !url.isEmpty
         var      prefix = "   "
 

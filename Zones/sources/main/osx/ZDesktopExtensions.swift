@@ -741,7 +741,7 @@ extension ZTextEditor {
 	
 	
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        if gIsShortcutsFrontmost { return }
+        if gIsGraphShortcutsFrontmost { return }
 
         switch arrow {
         case .up,
@@ -927,7 +927,7 @@ extension ZFiles {
             if  let   data = FileManager.default.contents(atPath: path),
                 data.count > 0,
                 let   dbID = insertInto.databaseID,
-                let   json = try JSONSerialization.jsonObject(with: data) as? [String : NSObject] {
+                let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
                 let   dict = self.dictFromJSON(json)
                 let   zone = Zone(dict: dict, in: dbID)
                 
@@ -1094,7 +1094,7 @@ extension ZBaseEditor {
 
     func showHideKeyboardShortcuts(hide: Bool? = nil) {
         if  gShortcutsController == nil {
-            let       storyboard  = NSStoryboard(name: "Shortcuts", bundle: nil)
+            let       storyboard  = NSStoryboard(name: "GraphShortcuts", bundle: nil)
             gShortcutsController  = storyboard.instantiateInitialController() as? NSWindowController
         }
         

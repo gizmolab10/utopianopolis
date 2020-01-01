@@ -170,7 +170,7 @@
 		A7229FB123B84B4300FA2841 /* ZEssayPart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7229FAC23B84B4300FA2841 /* ZEssayPart.swift */; };
 		A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0021729B02003D4BDA /* Main.storyboard */; };
 		A7245E0121729B18003D4BDA /* Details.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0321729B18003D4BDA /* Details.storyboard */; };
-		A7245E0921729FFE003D4BDA /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
+		A7245E0921729FFE003D4BDA /* ZGraphShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZGraphShortcutsController.swift */; };
 		A727290A225AA29D002A5B6D /* ZLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7272909225AA29D002A5B6D /* ZLineView.swift */; };
 		A727290D225AA482002A5B6D /* ZLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7272909225AA29D002A5B6D /* ZLineView.swift */; };
 		A727290E225AA483002A5B6D /* ZLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7272909225AA29D002A5B6D /* ZLineView.swift */; };
@@ -187,7 +187,7 @@
 		A7395BB221B877B600F5759F /* ZGraphEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7395BAE21B877B600F5759F /* ZGraphEditor.swift */; };
 		A7395BB321B877B600F5759F /* ZGraphEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7395BAE21B877B600F5759F /* ZGraphEditor.swift */; };
 		A7395BB421B877B600F5759F /* ZGraphEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7395BAE21B877B600F5759F /* ZGraphEditor.swift */; };
-		A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
+		A746D465219F613D00123A0A /* GraphShortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* GraphShortcuts.storyboard */; };
 		A74D1BA622222FC900E69E44 /* eye.con-512.png in Resources */ = {isa = PBXBuildFile; fileRef = A74D1BA522222FC900E69E44 /* eye.con-512.png */; };
 		A77758932207BCC600C37B49 /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77758922207BCC500C37B49 /* ZToggleButton.swift */; };
 		A78A6E0223B02164000F581F /* ZEssayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78A6DFF23B02163000F581F /* ZEssayController.swift */; };
@@ -214,8 +214,8 @@
 		A7D947DD21EC11C800B7DBFC /* ZDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B22B1F182EBB0091F4D1 /* ZDetailsController.swift */; };
 		A7D947DE21EC127D00B7DBFC /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
 		A7D947DF21EC127E00B7DBFC /* ZSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */; };
-		A7D947E021EC141F00B7DBFC /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
-		A7D947E121EC142000B7DBFC /* ZShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */; };
+		A7D947E021EC141F00B7DBFC /* ZGraphShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZGraphShortcutsController.swift */; };
+		A7D947E121EC142000B7DBFC /* ZGraphShortcutsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZGraphShortcutsController.swift */; };
 		A7F7C42E226D343400D52637 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F7C42D226D343400D52637 /* CloudKit.framework */; };
 		A7FC59B92262798A005280D2 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485732256AAAF00F54C0C /* SnapKit.framework */; };
 		A7FC59BA2262798A005280D2 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485732256AAAF00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -384,13 +384,13 @@
 		A7229FAC23B84B4300FA2841 /* ZEssayPart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEssayPart.swift; sourceTree = "<group>"; };
 		A7245DFF21729B02003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A7245E0221729B18003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Details.storyboard; sourceTree = "<group>"; };
-		A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZShortcutsController.swift; sourceTree = "<group>"; };
+		A7245E0821729FFE003D4BDA /* ZGraphShortcutsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphShortcutsController.swift; sourceTree = "<group>"; };
 		A7272909225AA29D002A5B6D /* ZLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZLineView.swift; sourceTree = "<group>"; };
 		A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBaseEditor.swift; sourceTree = "<group>"; };
 		A734EB6F21E26EE500B9475F /* Credits.rtfd */ = {isa = PBXFileReference; lastKnownFileType = wrapper.rtfd; path = Credits.rtfd; sourceTree = "<group>"; };
 		A7395BAD21B877B600F5759F /* ZTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTextEditor.swift; sourceTree = "<group>"; };
 		A7395BAE21B877B600F5759F /* ZGraphEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphEditor.swift; sourceTree = "<group>"; };
-		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Shortcuts.storyboard; sourceTree = "<group>"; };
+		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/GraphShortcuts.storyboard; sourceTree = "<group>"; };
 		A746D466219F637A00123A0A /* Thoughtful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thoughtful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A74D1BA522222FC900E69E44 /* eye.con-512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "eye.con-512.png"; path = "interfaces/Assets.xcassets/AppIcon.OSX.appiconset/eye.con-512.png"; sourceTree = "<group>"; };
 		A77758922207BCC500C37B49 /* ZToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToggleButton.swift; sourceTree = "<group>"; };
@@ -500,10 +500,10 @@
 				A78A6DFF23B02163000F581F /* ZEssayController.swift */,
 				0C39B2211F182EBB0091F4D1 /* ZGenericController.swift */,
 				0CB619951FB3C4660087B066 /* ZGraphController.swift */,
+				A7245E0821729FFE003D4BDA /* ZGraphShortcutsController.swift */,
 				0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */,
 				0CB619941FB3C4660087B066 /* ZSearchController.swift */,
 				0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */,
-				A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -669,7 +669,7 @@
 			children = (
 				A7245E0321729B18003D4BDA /* Details.storyboard */,
 				A7245E0021729B02003D4BDA /* Main.storyboard */,
-				A746D461219F613D00123A0A /* Shortcuts.storyboard */,
+				A746D461219F613D00123A0A /* GraphShortcuts.storyboard */,
 			);
 			name = desktop;
 			path = OSX;
@@ -1014,7 +1014,7 @@
 				0C50FD312053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				A74D1BA622222FC900E69E44 /* eye.con-512.png in Resources */,
 				0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */,
-				A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */,
+				A746D465219F613D00123A0A /* GraphShortcuts.storyboard in Resources */,
 				A7245E0121729B18003D4BDA /* Details.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1064,7 +1064,7 @@
 				A7395BAF21B877B600F5759F /* ZTextEditor.swift in Sources */,
 				0CABC9EF2022768D0019D8B0 /* ZEnumerations.swift in Sources */,
 				A7D947DD21EC11C800B7DBFC /* ZDetailsController.swift in Sources */,
-				A7D947E121EC142000B7DBFC /* ZShortcutsController.swift in Sources */,
+				A7D947E121EC142000B7DBFC /* ZGraphShortcutsController.swift in Sources */,
 				A7C7AF5923B6D0A000AAD593 /* ZEssay.swift in Sources */,
 				0C4118DE1FA8110200A58004 /* ZAlerts.swift in Sources */,
 				A7229FAF23B84B4300FA2841 /* ZEssayPart.swift in Sources */,
@@ -1160,7 +1160,7 @@
 				0CAC18E32006A84800D641C4 /* ZBookmarks.swift in Sources */,
 				0C39B2DC1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0CB619A11FB3C4660087B066 /* ZGraphController.swift in Sources */,
-				A7245E0921729FFE003D4BDA /* ZShortcutsController.swift in Sources */,
+				A7245E0921729FFE003D4BDA /* ZGraphShortcutsController.swift in Sources */,
 				0C63DA6F1FCF837D005EC548 /* ZFavorites.swift in Sources */,
 				0C39B2A01F182EBB0091F4D1 /* ZInformationController.swift in Sources */,
 				0C39B29D1F182EBB0091F4D1 /* ZToolsController.swift in Sources */,
@@ -1245,7 +1245,7 @@
 				0C39B3891F182EBB0091F4D1 /* ZoneWidget.swift in Sources */,
 				A7229FB023B84B4300FA2841 /* ZEssayPart.swift in Sources */,
 				A7395BB321B877B600F5759F /* ZGraphEditor.swift in Sources */,
-				A7D947E021EC141F00B7DBFC /* ZShortcutsController.swift in Sources */,
+				A7D947E021EC141F00B7DBFC /* ZGraphShortcutsController.swift in Sources */,
 				0C39B2BD1F182EBB0091F4D1 /* ZState.swift in Sources */,
 				0CAC18E22006A84800D641C4 /* ZBookmarks.swift in Sources */,
 				A727290E225AA483002A5B6D /* ZLineView.swift in Sources */,
@@ -1292,12 +1292,12 @@
 			name = Details.storyboard;
 			sourceTree = "<group>";
 		};
-		A746D461219F613D00123A0A /* Shortcuts.storyboard */ = {
+		A746D461219F613D00123A0A /* GraphShortcuts.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				A746D462219F613D00123A0A /* en */,
 			);
-			name = Shortcuts.storyboard;
+			name = GraphShortcuts.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

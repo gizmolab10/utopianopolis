@@ -41,28 +41,23 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 			editorView?.insertText(text, replacementRange: NSRange())
 
-			editorView?.delegate 	       = self 	// call after insertText so delegate calls won't happen
+			editorView?.delegate 	     = self 	// call after insertText so delegate calls won't happen
+			editorView?.usesRuler        = true
+			editorView?.isRulerVisible   = true
+			editorView?.usesInspectorBar = true
 
 			gWindow?.makeFirstResponder(editorView)
 		}
 	}
 
-	func textView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
-		var         should     = false
-
-		if  let     strings    = replacementStrings,
-			let     e  		   = essay {
-			for (index, value) in affectedRanges.enumerated() {
-				if  let range  = value as? NSRange,
-					e.updateEssay(range, length: strings[index].length) == .eAlter {
-					should     = true
-				} else {
-					break
-				}
-			}
+	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
+		if  let string = text,
+			let  alter = essay?.updateEssay(range, length: string.length),
+			alter     == .eAlter {
+			return true
 		}
 
-		return should
+		return text == nil
 	}
 
 }
