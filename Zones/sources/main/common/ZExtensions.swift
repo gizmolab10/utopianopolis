@@ -733,7 +733,7 @@ extension NSRange {
 		}
 
 		if  location == other.location || (location == other.upperBound && includeUpper) {
-			return NSRange()
+			return NSRange(location: location, length: other.upperBound - location)
 		}
 
 		return nil

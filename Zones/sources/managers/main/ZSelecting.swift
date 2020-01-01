@@ -260,18 +260,18 @@ class ZSelecting: NSObject {
         }
         
         currentGrabs.append(contentsOf: more)
-        updateWidgets(for: grabbed)
+        updateWidgetsNeedDisplay(for: grabbed)
     }
     
     
-    func updateWidgets(for zones: ZoneArray) {
+    func updateWidgetsNeedDisplay(for zones: ZoneArray) {
         for zone in zones {
-            updateWidget(for: zone)
+            updateWidgetNeedDisplay(for: zone)
         }
     }
 
 
-    func updateWidget(for zone: Zone?) {
+    func updateWidgetNeedDisplay(for zone: Zone?) {
         if  zone != nil, let widget = zone!.widget {
             widget                  .setNeedsDisplay()
             widget.dragDot.innerDot?.setNeedsDisplay()
@@ -298,7 +298,7 @@ class ZSelecting: NSObject {
     func ungrab(_ iZone: Zone?) {
         if let zone = iZone, let index = currentGrabs.firstIndex(of: zone) {
             currentGrabs.remove(at: index)
-            updateWidget(for: zone)
+            updateWidgetNeedDisplay(for: zone)
             maybeClearBrowsingLevel()
         }
     }
@@ -316,7 +316,7 @@ class ZSelecting: NSObject {
             addOneGrab(zone, startFresh: startFresh)
         }
 
-        updateWidgets(for: currentGrabs)
+        updateWidgetsNeedDisplay(for: currentGrabs)
     }
 
 
@@ -378,7 +378,7 @@ class ZSelecting: NSObject {
             currentGrabs = [] // can't use ungrabAll because we need to keep cousinList
             sortedGrabs  = []
 
-            updateWidgets(for: oldGrabs)
+            updateWidgetsNeedDisplay(for: oldGrabs)
             addMultipleGrabs(newGrabs, startFresh: true)
 
             if  updateBrowsingLevel,

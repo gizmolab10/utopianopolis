@@ -34,7 +34,7 @@ var       gArrowsDoNotBrowse                     = false
 var      gShowShortcutWindow                     = false
 var      gDebugDenyOwnership                     = false
 var    gDebugShowIdentifiers                     = false
-var   gMeasureOpsPerformance                     = true
+var     gDebugOpsPerformance                     = true
 var     gTimeOfSystemStartup                     = Date.timeIntervalSinceReferenceDate
 var   gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event IS startup
 var      gCurrentBrowseLevel:               Int?

@@ -236,6 +236,7 @@ class ZTextEditor: ZTextView {
     var cursorOffset: CGFloat? 
     var currentOffset: CGFloat?
     var currentEdit: ZTextPack?
+	var refusesFirstResponder  = false
     var isEditingStateChanging = false
     var currentlyEditingZone: Zone? { return currentEdit?.packedZone }
     var currentTextWidget: ZoneTextWidget? { return currentlyEditingZone?.widget?.textWidget }
@@ -276,7 +277,7 @@ class ZTextEditor: ZTextView {
 
     
     func allowAsFirstResponder(_ iTextWidget: ZoneTextWidget) -> Bool {
-        return !isEditingStateChanging && !iTextWidget.isFirstResponder && iTextWidget.widgetZone?.userCanWrite ?? false
+        return !refusesFirstResponder && !isEditingStateChanging && !iTextWidget.isFirstResponder && iTextWidget.widgetZone?.userCanWrite ?? false
 	}
 	
 	
@@ -420,10 +421,10 @@ class ZTextEditor: ZTextView {
 		case eOption  = "o"
 		case eShift   = "s"
 		case eControl = "n"
-		case eArrow   = "-"
-		case eDouble  = "="
-		case eBack    = "+"
-		case eCancel  = "i"
+		case eArrow   = "i"
+		case eDouble  = "u"
+		case eBack    = "k"
+		case eCancel  = "\r"
 		
 		static var activeTypes: [ZPopupMenuType] { return [.eCommand, .eOption, .eShift, .eControl, .eArrow, .eBack, eDouble] }
 

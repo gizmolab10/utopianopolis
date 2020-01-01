@@ -85,7 +85,8 @@ class ZControllers: NSObject {
 
 
     func startupCloudAndUI() {
-        gBatches.usingDebugTimer = true
+        gBatches         .usingDebugTimer = true
+		gTextEditor.refusesFirstResponder = true
 
         gRemoteStorage.clear()
         self.signalFor(nil, regarding: .eRelayout)
@@ -104,7 +105,8 @@ class ZControllers: NSObject {
                 
                 gBatches.finishUp { iSame in
                     FOREGROUND {
-                        gBatches.usingDebugTimer = false
+                        gBatches		 .usingDebugTimer = false
+						gTextEditor.refusesFirstResponder = false
 
                         self.blankScreenDebug()
                         gFiles.writeAll()

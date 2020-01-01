@@ -67,7 +67,7 @@ class ZEssay: ZEssayPart {
 		}
 	}
 
-	override func update(_ range:NSRange, length: Int) -> ZAlterationType {
+	override func updateEssay(_ range:NSRange, length: Int) -> ZAlterationType {
 		var result = ZAlterationType.eLock
 		let equal  = range.inclusiveIntersection(partRange) == partRange
 

@@ -126,7 +126,7 @@ class ZOperations: NSObject {
                 gDebugTimerCount += 1
             }
 
-            if  gMeasureOpsPerformance && newValue {
+            if  gDebugOpsPerformance && newValue {
                 gDebugTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: fire)
                 fire(nil)
             } else if gDebugTimer != nil && !newValue {
@@ -256,7 +256,7 @@ class ZOperations: NSObject {
     }
 
     func reportBeforePerformBlock() {
-        if  gMeasureOpsPerformance {
+        if  gDebugOpsPerformance {
 			printOp(debugTimeText)
         }
     }
@@ -266,7 +266,7 @@ class ZOperations: NSObject {
     }
 
     func reportOnCompletionOfPerformBlock() {
-        if  gMeasureOpsPerformance, gDebugReport {
+        if  gDebugOpsPerformance, gDebugReport {
             let duration = Int(timeSinceOpStart) * -10
             let  message = "\(Float(duration) / 10.0)"
 

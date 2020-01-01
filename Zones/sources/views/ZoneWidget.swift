@@ -511,9 +511,10 @@ class ZoneWidget: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-        if  let             zone = widgetZone {
+		if  gWorkMode           == .graphMode,
+			let             zone = widgetZone {
             let        isGrabbed = zone.isGrabbed
-            let        isEditing = textWidget.isFirstResponder // == gEditedTextWidget
+            let        isEditing = textWidget.isFirstResponder
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : gDefaultTextColor
 
             if  gMathewStyleUI,
@@ -521,7 +522,7 @@ class ZoneWidget: ZView {
                 addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: color)
             }
 
-            if  (isGrabbed || isEditing) && !gIsPrinting {
+			if  (isGrabbed || isEditing) && !gIsPrinting {
                 drawSelectionHighlight(isEditing)
             }
 

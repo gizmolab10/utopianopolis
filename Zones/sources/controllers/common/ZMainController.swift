@@ -46,11 +46,10 @@ class ZMainController: ZGenericController {
         switch iKind {
 			case .eEssay:
 				if  let 	   			   view = essayView {
+					let                       e = gTextEditor
+					e    .refusesFirstResponder = true			// WORKAROUND new feature of mac os x
 					view  			  .isHidden = hideEssay
-
-					if  hideEssay {
-						gTextEditor.clearEdit() 		// undo of: somehow become first responder is called on first favorite (first text field in the graph view)
-					}
+					e    .refusesFirstResponder = false
 				}
 			case .eFound:
 				searchBoxView?        .isHidden = hideSearch

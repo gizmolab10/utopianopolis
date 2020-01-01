@@ -117,18 +117,17 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-        if  gTextEditor.allowAsFirstResponder(self), let zone = widgetZone,
-            super.becomeFirstResponder() {  // becomeFirstResponder is called first so delegate methods will be called
-            if  gWorkMode != .graphMode {
+		if  let zone = widgetZone,
+			gTextEditor.allowAsFirstResponder(self),
+			super.becomeFirstResponder() {  // becomeFirstResponder is called first so delegate methods will be called
+
+			if  gWorkMode != .graphMode {
                 gSearching.exitSearchMode()
             }
 
-			if  let w = widgetZone,
-				gSelecting.currentGrabs.contains(w) {
-				gTextEditor.edit(zone, setOffset: gTextOffset)
-			}
-            
-            return true
+			gTextEditor.edit(zone, setOffset: gTextOffset)
+
+			return true
         }
 
         return false
@@ -200,7 +199,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         if  let zone = widgetZone,
              zone.canTravel,
             !zone.isGrabbed,
-            !isFirstResponder {
+            !isFirstResponder,
+			gWorkMode == .graphMode {
 
             // /////////////////////////////////////////////////////
             // draw line underneath text indicating it can travel //
