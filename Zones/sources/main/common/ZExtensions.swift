@@ -497,6 +497,21 @@ extension CGSize {
     static var big: CGSize {
         return CGSize(width: 1000000, height: 1000000)
     }
+
+	func offsetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
+		return CGSize(width: width + x, height: height + y)
+	}
+
+	func force(horizotal: Bool, into range: NSRange) -> CGSize {
+		if  horizotal {
+			let value = max(min(width,  CGFloat(range.upperBound)), CGFloat(range.lowerBound))
+			return CGSize(width: value, height: height)
+		} else {
+			let value = max(min(height, CGFloat(range.upperBound)), CGFloat(range.lowerBound))
+			return CGSize(width: width, height: value)
+		}
+	}
+
 }
 
 

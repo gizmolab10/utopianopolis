@@ -41,12 +41,13 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 			editorView?.insertText(text, replacementRange: NSRange())
 
-			editorView?.delegate 	     = self 	// call after insertText so delegate calls won't happen
-			editorView?.usesRuler        = true
-			editorView?.isRulerVisible   = true
-			editorView?.usesInspectorBar = true
+			editorView?.delegate 	       = self 	// call after insertText so delegate calls won't happen
+			editorView?.usesRuler          = true
+			editorView?.isRulerVisible     = true
+			editorView?.usesInspectorBar   = true
 
 			gWindow?.makeFirstResponder(editorView)
+			editorView?.selectLine(nil)
 		}
 	}
 

@@ -194,7 +194,9 @@ var gGenericOffset: CGSize {
 		
 		return offset
 	}
-	set { setPreferencesSize(newValue, for: kGenericOffsetKey) }
+	set {
+		setPreferencesSize(newValue, for: kGenericOffsetKey)
+	}
 }
 
 

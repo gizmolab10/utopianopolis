@@ -64,7 +64,7 @@ class ZPreferencesController: ZGenericController {
 			switch (identifier) {
 				case "thickness": gLineThickness = Double(value)
 				case   "stretch": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
-				case  "vertical": gGenericOffset = CGSize(width: gGenericOffset.width, height: value)
+				case      "size": gGenericOffset = CGSize(width: gGenericOffset.width, height: value)
 				default:           break
 			}
 

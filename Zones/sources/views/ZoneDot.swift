@@ -232,11 +232,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 			let     size = string.sizeWithFont(font)
 			let   height = size.height * type.heightRatio + (inPublic ? 1.0 : -2.5)
 			let   xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
-            let   yDelta = ((height - iDirtyRect.height) / CGFloat(4.0))
-            let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta)
+			let   yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
+			let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: height / 12.0)
             let    color = isFilled ? gBackgroundColor : iZone.color ?? gDefaultTextColor
 
-            string.draw(in: rect, withAttributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(.foregroundColor) : color, convertFromNSAttributedStringKey(.font): font]))
+            string.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
 
             return
         }

@@ -150,14 +150,14 @@ class ZGraphEditor: ZBaseEditor {
                     case "t":      swapWithParent()
                     case "u":      alterCase(up: true)
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
-                    case "+":      divideChildren()
-                    case "-":      if SPECIAL { convertToTitledLineAndRearrangeChildren() } else if COMMAND { return gSelecting.currentMoveable.convertToFromLine() } else { addDashedLine() }
+					case "+":      divideChildren()
+					case "-":      return handleHyphen(COMMAND, OPTION)
                     case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
                     case "?":      if CONTROL { openBrowserForFocusWebsite() }
-                    case "=":      gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() }
+					case "=":      if COMMAND { updateSize(up: true) } else { gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() } }
                     case ";", "'": gFavorites.switchToNext(key == "'") { self.syncAndRedraw() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addNextAndRedraw(containing: OPTION)
@@ -173,7 +173,7 @@ class ZGraphEditor: ZBaseEditor {
 
         return true // true means key handled
     }
-    
+
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
         if  gIsEditingText || gArrowsDoNotBrowse {
             gTextEditor.handleArrow(arrow, flags: flags)
@@ -227,7 +227,6 @@ class ZGraphEditor: ZBaseEditor {
         if  alterers.contains(key) {    return .eAlter
         } else {
             switch key {
-            case "=":                   return .eTravel
             case "?":                   return .eHelp
             case "f":                   return .eFind
             case "i":                   return .eTint
@@ -238,6 +237,7 @@ class ZGraphEditor: ZBaseEditor {
             case "x", kSpace:           return .eChild
             case "b", kTab, kBackspace: return  .eParent
             case kDelete:               return  CONTROL ? .eAlways : .eParent
+			case "=":                   return  COMMAND ? .eAlways : .eTravel
             case "d":                   return  COMMAND ? .eAlter  : .eParent
             default:                    return .eAlways
             }
@@ -294,7 +294,31 @@ class ZGraphEditor: ZBaseEditor {
 
     // MARK:- miscellaneous features
     // MARK:-
-	    
+
+	func updateSize(up: Bool) {
+		let      delta = CGFloat(up ? 1 : -1)
+		var       size = gGenericOffset.offsetBy(0, delta)
+		size           = size.force(horizotal: false, into: NSRange(location: 2, length: 10))
+		gGenericOffset = size
+
+		gControllers.signalFor(nil, regarding: .eRelayout)
+	}
+
+	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {
+		let SPECIAL = COMMAND && OPTION
+
+		if  SPECIAL {
+			convertToTitledLineAndRearrangeChildren()
+		} else if OPTION {
+			return gSelecting.currentMoveable.convertToFromLine()
+		} else if COMMAND {
+			updateSize(up: false)
+		} else {
+			addDashedLine()
+		}
+
+		return true
+	}
 
     func focusOnTrash() {
         if  let trash = gTrash {
