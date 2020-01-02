@@ -1540,7 +1540,7 @@ extension ZTextField {
 
 
 // Helper function inserted by Swift 4.2 migrator.
-func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> ZAttributesDictionary? {
 	guard let input = input else { return nil }
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }

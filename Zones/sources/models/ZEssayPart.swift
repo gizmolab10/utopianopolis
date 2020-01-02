@@ -34,18 +34,32 @@ class ZEssayPart: NSObject {
 		self.zone = zone
 	}
 
+	var titleAttributes: ZAttributesDictionary? {
+		var result: ZAttributesDictionary?
+
+		if	let      z = zone,
+			let   font = ZFont(name: "Times-Roman", size: 36.0) {
+			result     = [.font : font]
+
+			if  z.colorized,
+				let  c = z.color {
+				result = [.font : font, .foregroundColor : c, .backgroundColor : c.lighter(by: 20.0)]
+			}
+		}
+
+		return result
+	}
+
 	var partialText: NSMutableAttributedString? {
 		var result:  NSMutableAttributedString?
 
 		if  let   name = zone?.zoneName,
-			let  color = zone?.color,
-			let   text = essayTrait?.essayText,
-			let   font = ZFont(name: "Times-Roman", size: 36.0) {
+			let   text = essayTrait?.essayText {
 			let offset = name.length + 2
-			let  title = NSMutableAttributedString(string: name, attributes: [.font:font, .foregroundColor:color])
+			let  title = NSMutableAttributedString(string: name, attributes: titleAttributes)
+			result     = NSMutableAttributedString()
 			titleRange = NSRange(location: 0,      length: name.length)
 			textRange  = NSRange(location: offset, length: text.length)
-			result     = NSMutableAttributedString()
 
 			result?.insert(title,      at: 0)
 			result?.insert(kBlankLine, at: result!.length)

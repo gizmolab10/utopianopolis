@@ -36,7 +36,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		clear() 									// discard previously edited text
 
 		if  let 					  text = essay?.essayText {
-			editorView?.textContainerInset = NSSize(width: 10, height: 10)
+			editorView?.textContainerInset = NSSize(width: 30, height: 10)
 			editorView?  		 .delegate = nil	// clear so that delegate calls won't happen on insertText below
 
 			editorView?.insertText(text, replacementRange: NSRange())
@@ -47,7 +47,6 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			editorView?.usesInspectorBar   = true
 
 			gWindow?.makeFirstResponder(editorView)
-			editorView?.selectLine(nil)
 		}
 	}
 
