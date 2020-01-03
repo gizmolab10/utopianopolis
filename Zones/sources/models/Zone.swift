@@ -44,7 +44,7 @@ class Zone : ZRecord {
     var               crossLinkMaybe :            ZRecord?
     var                   colorMaybe :             ZColor?
     var                   emailMaybe :             String?
-	var       		      essayMaybe :         ZEssayPart?
+	var       		      essayMaybe :         ZParagraph?
 	var                     children =          ZoneArray()
 	var                       traits =   ZTraitDictionary()
     var                        count :                Int  { return children.count }
@@ -188,10 +188,10 @@ class Zone : ZRecord {
 		return result
 	}
 
-	var essay: ZEssayPart {
+	var essay: ZParagraph {
 		if  essayMaybe == nil {
 			if  hasNoEssays || !gCreateMultipleEssay {
-				essayMaybe = ZEssayPart(self)
+				essayMaybe = ZParagraph(self)
 			} else {
 				let  essay = ZEssay(self)
 				essayMaybe = essay

@@ -18,7 +18,7 @@ var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var editorView: ZTextView?
-	var essay: ZEssayPart? { return zone?.essay }
+	var essay: ZParagraph? { return zone?.essay }
 	var zone:  Zone?       { return gSelecting.firstGrab }
 
 	func export() { gFiles.exportToFile(.eEssay, for: zone) }
@@ -36,15 +36,15 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		clear() 									// discard previously edited text
 
 		if  let 					  text = essay?.essayText {
-			editorView?.textContainerInset = NSSize(width: 30, height: 10)
 			editorView?  		 .delegate = nil	// clear so that delegate calls won't happen on insertText below
+			editorView?         .usesRuler = true
+			editorView?    .isRulerVisible = true
+			editorView?  .usesInspectorBar = true
+			editorView?.textContainerInset = NSSize(width: 20, height: 20)
 
 			editorView?.insertText(text, replacementRange: NSRange())
 
 			editorView?.delegate 	       = self 	// call after insertText so delegate calls won't happen
-			editorView?.usesRuler          = true
-			editorView?.isRulerVisible     = true
-			editorView?.usesInspectorBar   = true
 
 			gWindow?.makeFirstResponder(editorView)
 		}

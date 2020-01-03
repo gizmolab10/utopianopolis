@@ -1,5 +1,5 @@
 //
-//  ZEssayPart.swift
+//  ZParagraph.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 12/27/19.
@@ -14,9 +14,9 @@ enum ZAlterationType: Int {
 	case eExit
 }
 
-class ZEssayPart: NSObject {
+class ZParagraph: NSObject {
 	var partOffset = 0
-	var  essayText : NSMutableAttributedString? { return partialText }
+	var  essayText : NSMutableAttributedString? { return paragraphText }
 	var  partRange : NSRange { return NSRange(location: partOffset, length: textRange.upperBound) }
 	var titleRange = NSRange ()
 	var  textRange = NSRange ()
@@ -25,8 +25,8 @@ class ZEssayPart: NSObject {
 	var       zone : Zone?
 
 	func delete() { zone?.removeTrait(for: .eEssay) }
-	func saveEssay(_ attributedString: NSAttributedString?) { savePart(attributedString) }
-	func updateEssay(_ range: NSRange, length: Int) -> ZAlterationType { return updatePart(range, length: length) }
+	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }
+	func updateEssay(_ range: NSRange, length: Int) -> ZAlterationType { return updateParagraph(range, length: length) }
 
 	init(_ zone: Zone?) {
 		super.init()
@@ -50,26 +50,28 @@ class ZEssayPart: NSObject {
 		return result
 	}
 
-	var partialText: NSMutableAttributedString? {
+	var paragraphText: NSMutableAttributedString? {
 		var result:  NSMutableAttributedString?
 
 		if  let   name = zone?.zoneName,
 			let   text = essayTrait?.essayText {
-			let offset = name.length + 2
-			let  title = NSMutableAttributedString(string: name, attributes: titleAttributes)
+			let spacer = "  "
+			let  inset = spacer.length
+			let offset = name.length + kBlankLine.length + (inset * 2)
+			let  title = NSMutableAttributedString(string: spacer + name + spacer, attributes: titleAttributes)
 			result     = NSMutableAttributedString()
-			titleRange = NSRange(location: 0,      length: name.length)
+			titleRange = NSRange(location: inset,  length: name.length)
 			textRange  = NSRange(location: offset, length: text.length)
 
+			result?.insert(text,       at: 0)
+			result?.insert(kBlankLine, at: 0)
 			result?.insert(title,      at: 0)
-			result?.insert(kBlankLine, at: result!.length)
-			result?.insert(text,       at: result!.length)
 		}
 
 		return result
 	}
 
-	func savePart(_ attributedString: NSAttributedString?) {
+	func saveParagraph(_ attributedString: NSAttributedString?) {
 		if  let  attributed = attributedString,
 			let       essay = essayMaybe {
 			let      string = attributed.string
@@ -90,7 +92,7 @@ class ZEssayPart: NSObject {
 			(range.lowerBound < titleRange.upperBound && range.upperBound >= textRange.lowerBound)
 	}
 
-	func updatePart(_ iRange: NSRange, length: Int) -> ZAlterationType {
+	func updateParagraph(_ iRange: NSRange, length: Int) -> ZAlterationType {
 		var 	result  		    	= ZAlterationType.eLock
 
 		if  let range 		            = iRange.inclusiveIntersection(partRange)?.offsetBy(-partOffset) {

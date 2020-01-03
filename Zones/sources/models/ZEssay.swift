@@ -8,8 +8,8 @@
 
 import Foundation
 
-class ZEssay: ZEssayPart {
-	var children = [ZEssayPart]()
+class ZEssay: ZParagraph {
+	var children = [ZParagraph]()
 
 	func setupChildren() {
 		if  gCreateMultipleEssay {
@@ -29,7 +29,7 @@ class ZEssay: ZEssayPart {
 		for child in children.reversed() {
 			count         -= 1
 
-			if  let   text = child.partialText {
+			if  let   text = child.paragraphText {
 				result     = result ?? NSMutableAttributedString()
 				result?.insert(text, at: 0)
 
@@ -40,9 +40,9 @@ class ZEssay: ZEssayPart {
 		}
 
 		if  result == nil {    // detect when no partial text has been added
-			let   e = ZEssayPart(zone)
+			let   e = ZParagraph(zone)
 
-			if  let text = e.partialText {
+			if  let text = e.paragraphText {
 				result?.insert(text, at: 0)
 			}
 		}
@@ -66,7 +66,7 @@ class ZEssay: ZEssayPart {
 				if  range.upperBound <= attributed.length {
 					let sub = attributed.attributedSubstring(from: range)
 
-					child.savePart(sub)
+					child.saveParagraph(sub)
 				}
 			}
 		}
@@ -80,7 +80,7 @@ class ZEssay: ZEssayPart {
 			if  equal {
 				child.delete()
 			} else {
-				let alter  = child.updatePart(range, length: length)
+				let alter  = child.updateParagraph(range, length: length)
 
 				if  alter == .eAlter {
 					result = .eAlter
