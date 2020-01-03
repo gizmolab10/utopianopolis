@@ -19,9 +19,8 @@ import CloudKit
 typealias               ZoneArray = [Zone]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
 typealias      ZStorageDictionary = [ZStorageType : NSObject]
-typealias    ZStringKeyDictionary = [String : Any]
-typealias ZStringObjectDictionary = [String : NSObject]
 typealias   ZAttributesDictionary = [NSAttributedString.Key : Any]
+typealias ZStringObjectDictionary = [String : NSObject]
 let                  gApplication = ZApplication.shared
 
 func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
@@ -1536,11 +1535,4 @@ extension ZTextField {
     @objc func selectCharacter(in range: NSRange) {}
     @objc func alterCase(up: Bool) {}
     @objc func setup() {}
-}
-
-
-// Helper function inserted by Swift 4.2 migrator.
-func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> ZAttributesDictionary? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }

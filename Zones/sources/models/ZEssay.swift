@@ -52,7 +52,7 @@ class ZEssay: ZParagraph {
 		for child in children {	// update essayIndices
 			child.partOffset = offset
 			count           -= 1
-			offset          += child.textRange.upperBound + (count == 0 ? 0 : 2)
+			offset          += child.textRange.upperBound + (count == 0 ? 0 : kBlankLine.length)
 		}
 
 		return result

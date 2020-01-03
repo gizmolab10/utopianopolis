@@ -121,9 +121,7 @@ extension String {
     
     
     func  rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
-        let attributes = convertToOptionalNSAttributedStringKeyDictionary([kCTFontAttributeName as String : font])
-        
-        return self.boundingRect(with: CGSize.big, options: options, attributes: attributes, context: nil)
+        return self.boundingRect(with: CGSize.big, options: options, attributes: [.font : font])
     }
     
     var cgPoint: CGPoint {

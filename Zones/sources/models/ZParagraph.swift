@@ -34,16 +34,24 @@ class ZParagraph: NSObject {
 		self.zone = zone
 	}
 
+	var paragraphStyle: NSMutableParagraphStyle {
+		let tabStop = NSTextTab(textAlignment: .right, location: 6000.0, options: [:])
+		let paragraph = NSMutableParagraphStyle()
+		paragraph.tabStops = [tabStop]
+
+		return paragraph
+	}
+
 	var titleAttributes: ZAttributesDictionary? {
 		var result: ZAttributesDictionary?
 
 		if	let      z = zone,
 			let   font = ZFont(name: "Times-Roman", size: 36.0) {
-			result     = [.font : font]
+			result     = [.font : font, .paragraphStyle : paragraphStyle]
 
 			if  z.colorized,
 				let  c = z.color {
-				result = [.font : font, .foregroundColor : c, .backgroundColor : c.lighter(by: 20.0)]
+				result = [.font : font, .paragraphStyle : paragraphStyle, .foregroundColor : c, .backgroundColor : c.lighter(by: 20.0)]
 			}
 		}
 
@@ -53,19 +61,20 @@ class ZParagraph: NSObject {
 	var paragraphText: NSMutableAttributedString? {
 		var result:  NSMutableAttributedString?
 
-		if  let   name = zone?.zoneName,
-			let   text = essayTrait?.essayText {
-			let spacer = "  "
-			let  inset = spacer.length
-			let offset = name.length + kBlankLine.length + (inset * 2)
-			let  title = NSMutableAttributedString(string: spacer + name + spacer, attributes: titleAttributes)
-			result     = NSMutableAttributedString()
-			titleRange = NSRange(location: inset,  length: name.length)
-			textRange  = NSRange(location: offset, length: text.length)
+		if  let    name = zone?.zoneName,
+			let    text = essayTrait?.essayText {
+			let  spacer = "  "
+			let tOffset = spacer.length + kBlankLine.length
+			let pOffset = tOffset + name.length + kBlankLine.length + 1
+			let   title = NSMutableAttributedString(string: spacer + name + kTab, attributes: titleAttributes)
+			result      = NSMutableAttributedString()
+			titleRange  = NSRange(location: tOffset, length: name.length)
+			textRange   = NSRange(location: pOffset, length: text.length)
 
 			result?.insert(text,       at: 0)
 			result?.insert(kBlankLine, at: 0)
 			result?.insert(title,      at: 0)
+			result?.insert(kBlankLine, at: 0)
 		}
 
 		return result

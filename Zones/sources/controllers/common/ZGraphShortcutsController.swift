@@ -54,7 +54,7 @@ class ZGraphShortcutsController: ZGenericTableController {
 
         for value in values {
             if value != 0 {
-                tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: convertToNSTextTabOptionKeyDictionary([:])))
+                tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
             }
         }
         
@@ -169,15 +169,15 @@ class ZGraphShortcutsController: ZGenericTableController {
 		var (m, e, url) = strings(for: row, column: column)
         let        type = ZShortcutType(rawValue: m.substring(with: NSMakeRange(0, 1))) // grab first character
 		let        main = m.substring(fromInclusive: 1)             // grab remaining characters
-        var  attributes = ZStringKeyDictionary ()
+        var  attributes = ZAttributesDictionary ()
 		let      hasURL = !url.isEmpty
         var      prefix = "   "
 
 		switch type {
 			case .bold?:
-				attributes  = [NSAttributedString.Key.font.rawValue : bold as Any]
+				attributes  = [.font : bold]
 			case .append?, .underline?:
-				attributes  = [NSAttributedString.Key.underlineStyle.rawValue : 1 as Any]
+				attributes  = [.underlineStyle : 1]
 				
 				if type == .append {
 					prefix += "+ "
@@ -185,7 +185,7 @@ class ZGraphShortcutsController: ZGenericTableController {
 			
 			case .plain?:
 				if  hasURL {
-					attributes = [NSAttributedString.Key.foregroundColor.rawValue : ZColor.blue.darker(by: 5.0) as Any]
+					attributes = [.foregroundColor : ZColor.blue.darker(by: 5.0)]
 					e.append(kEllipsis)
 				}
 				
@@ -200,12 +200,12 @@ class ZGraphShortcutsController: ZGenericTableController {
 		if  type == .plain {
 			result.append(NSAttributedString(string: main))
 		} else {
-			result.append(NSAttributedString(string: main, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes)))
+			result.append(NSAttributedString(string: main, attributes: attributes))
 		}
 
 		if  e.length > 3 {
 			result.append(NSAttributedString(string: kTab))
-			result.append(NSAttributedString(string: e, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes)))
+			result.append(NSAttributedString(string: e, attributes: attributes))
 		}
 
         if  main.length + e.length < 11 && row != 1 && type != .plain {
@@ -227,6 +227,10 @@ class ZGraphShortcutsController: ZGenericTableController {
 		" SPACE", 		"create subordinate idea", 						"edit-d05d18996df7",
 		" TAB", 		"create next idea", 							"edit-d05d18996df7",
 		"",				"", "",
+		"+COMMAND",		"", "",
+		" COMMA", 		"show or hide preferences", 					"help-inspector-view-c360241147f2",
+		" P", 			"print the graph (or this window)", 			"",
+		"",				"", "",
         "+CONTROL",		"", "",
 		" COMMA", 		"toggle browsing: un/confined", 				"",
 		" DELETE", 		"show trash", 									"organize-fcdc44ac04e4",
@@ -234,18 +238,14 @@ class ZGraphShortcutsController: ZGenericTableController {
 		" SPACE", 		"create an idea", 								"edit-d05d18996df7",
 		" /", 			"remove from focus ring, -> prior", 			"focusing-your-thinking-a53adb16bba",
 		"",				"", "",
-        "+COMMAND",		"", "",
-		" COMMA", 		"show or hide preferences", 					"help-inspector-view-c360241147f2",
-		" HYPHEN", 		"convert text to or from 'titled line'", 		"lines-37426469b7c6",
-		" P", 			"print the graph (or this window)", 			"",
-		"",				"", "",
-        "+COMMAND + OPTION", "", "",
+		"+COMMAND + OPTION", "", "",
 		" /", 			"show or hide this window", 					"",
 		" A", 			"show About Thoughtful", 						"",
 		" R", 			"report a problem", 							"",
 		"",				"", "",
 		"uCONTROL + COMMAND + OPTION", "", "",
 		"  ", 			"show or hide indicators", 						"",
+		"",				"", "",
 		"",				"", "",
 		"",				"", "",
 		"",				"", "",
@@ -342,6 +342,10 @@ class ZGraphShortcutsController: ZGenericTableController {
 		" T", 			"swap selected idea with parent", 				"parent-child-tweaks-bf067abdf461",
 		" U", 			"-> uppercase", 								"edit-d05d18996df7",
 		"",				"", "",
+		"+MOUSE CLICK",	"", "",
+		" COMMAND", 	"move entire graph", 							"mouse-e21b7a63020e",
+		" SHIFT", 		"un/extend selection", 							"selecting-ideas-cc2939720e53",
+		"",				"", "",
     ]
     
     
@@ -351,12 +355,15 @@ class ZGraphShortcutsController: ZGenericTableController {
 		" ARROWS", 		"move selected idea", 							"organize-fcdc44ac04e4",
 		" DELETE", 		"retaining children", 							"organize-fcdc44ac04e4",
 		" RETURN", 		"edit with cursor at end", 						"edit-d05d18996df7",
+		" HYPHEN", 		"convert text to or from 'titled line'", 		"lines-37426469b7c6",
 		" TAB", 		"new idea containing", 							"edit-d05d18996df7",
 		" G", 			"refetch entire subgraph of selection", 		"cloud-vs-file-f3543f7281ac",
 		" S", 			"export to a outline file", 					"cloud-vs-file-f3543f7281ac",
 		"",				"", "",
 		"+COMMAND",		"", "",
 		" ARROWS", 		"extend all the way", 							"selecting-ideas-cc2939720e53",
+		" HYPHEN", 		"reduce font size", 							"",
+		" +", 		    "increase font size", 							"",
 		" /", 			"refocus current favorite", 					"focusing-your-thinking-a53adb16bba",
 		" D", 			"append onto parent", 							"parent-child-tweaks-bf067abdf461",
 		" G", 			"refetch entire graph", 						"cloud-vs-file-f3543f7281ac",
@@ -365,10 +372,6 @@ class ZGraphShortcutsController: ZGenericTableController {
 		" DELETE", 		"permanently (not into trash)", 				"organize-fcdc44ac04e4",
 		" HYPHEN", 		"-> to/from titled line, retain children", 		"lines-37426469b7c6",
 		" O", 			"show data files in Finder", 					"cloud-vs-file-f3543f7281ac",
-		"",				"", "",
-		"+MOUSE CLICK",	"", "",
-		" COMMAND", 	"move entire graph", 							"mouse-e21b7a63020e",
-		" SHIFT", 		"un/extend selection", 							"selecting-ideas-cc2939720e53",
 		"",				"", "",
 		"uARROW KEY + SHIFT (+ COMMAND -> all)", "", "",
 		" LEFT ", 		"hide children", 								"focusing-your-thinking-a53adb16bba",
@@ -388,9 +391,4 @@ class ZGraphShortcutsController: ZGenericTableController {
 		"",				"", "",
     ]
     
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToNSTextTabOptionKeyDictionary(_ input: [String: Any]) -> [NSTextTab.OptionKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSTextTab.OptionKey(rawValue: key), value)})
 }

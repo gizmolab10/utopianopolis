@@ -40,7 +40,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			editorView?         .usesRuler = true
 			editorView?    .isRulerVisible = true
 			editorView?  .usesInspectorBar = true
-			editorView?.textContainerInset = NSSize(width: 20, height: 20)
+			editorView?.textContainerInset = NSSize(width: 20, height: 0)
 
 			editorView?.insertText(text, replacementRange: NSRange())
 

@@ -40,7 +40,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     }
 
 
-    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: ZStringKeyDictionary) {
+    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
         let note = CKNotification(fromRemoteNotificationDictionary: userInfo)
 
         if  note.notificationType == .query,
@@ -53,7 +53,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     func application(_ application: NSApplication, openFiles: [String]) {
         var insertInto = gSelecting.currentMoveable
         
-        if  insertInto != nil, insertInto.databaseID != .mineID {
+        if  insertInto.databaseID != .mineID {
             if  let mineRoot = gMineCloud?.rootZone {
                 insertInto   = mineRoot
             } else {
