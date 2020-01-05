@@ -24,20 +24,19 @@ var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 
 
 var                  gWorkMode                     = ZWorkMode.startupMode
-var  				  gDebugMode:		[ZDebugMode] = [.error]
 var               gDeferRedraw                     = false
 var               gDebugReport                     = false
 var             gTextCapturing                     = false
 var           gIsReadyToShowUI                     = false
 var         gKeyboardIsVisible                     = false
 var         gArrowsDoNotBrowse                     = false
-var        gShowShortcutWindow                     = false
 var        gDebugDenyOwnership                     = false
-var       gCreateMultipleEssay 					 = false
+var       gCreateMultipleEssay 			   		   = false
 var      gDebugShowIdentifiers                     = false
 var       gDebugOpsPerformance                     = true
 var       gTimeOfSystemStartup                     = Date.timeIntervalSinceReferenceDate
 var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event IS startup
+var  			    gDebugMode:		  [ZDebugMode] = [.error, .log]
 var        gCurrentBrowseLevel:               Int?
 var           gDragDropIndices: NSMutableIndexSet?
 var              gDragRelation:         ZRelation?
@@ -50,7 +49,7 @@ var                  gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var                    gIsDark:               Bool { return gDarkMode == .Dark }
 var                    gIsLate:               Bool { return gBatches.isLate }
 var                gIsDragging:               Bool { return gDraggedZone != nil }
-var gIsGraphShortcutsFrontmost:               Bool { return gGraphShortcuts?.view.window?.isKeyWindow ?? false }
+var      gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
 var        gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
 var          gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var            gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }

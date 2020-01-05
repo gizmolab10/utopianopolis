@@ -739,7 +739,7 @@ extension ZTextEditor {
 	
 	
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        if gIsGraphShortcutsFrontmost { return }
+        if gIsShortcutsFrontmost { return }
 
         switch arrow {
         case .up,
@@ -1082,35 +1082,6 @@ extension ZoneWidget {
         return ZBezierPath(ovalIn: rect)
     }
 }
-
-
-var gShortcutsController: ZWindowController?
-
-
-extension ZBaseEditor {
-
-
-    func showHideKeyboardShortcuts(hide: Bool? = nil) {
-        if  gShortcutsController == nil {
-            let       storyboard  = NSStoryboard(name: "GraphShortcuts", bundle: nil)
-            gShortcutsController  = storyboard.instantiateInitialController() as? NSWindowController
-        }
-        
-        if  let notShow = hide {
-            gShowShortcutWindow = !notShow
-        } else {
-            gShowShortcutWindow = !(gShortcutsController?.window?.isKeyWindow ?? false)
-        }
-        
-        if  gShowShortcutWindow {
-            gShortcutsController?.showWindow(nil)
-        } else {
-            gShortcutsController?.window?.close()
-        }
-    }
-
-}
-
 
 extension ZOnboarding {
     

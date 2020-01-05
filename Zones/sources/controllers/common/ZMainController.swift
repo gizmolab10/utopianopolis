@@ -65,5 +65,5 @@ class ZMainController: ZGenericController {
 			default: break
         }
     }
-    
+
 }

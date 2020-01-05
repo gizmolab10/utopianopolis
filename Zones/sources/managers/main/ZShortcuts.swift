@@ -1,196 +1,82 @@
 //
-//  ZShortcutsController.swift
-//  Thoughtful
+//  ZShortcuts.swift
+//  Zones
 //
-//  Created by Jonathan Sand on 4/13/17.
-//  Copyright © 2017 Jonathan Sand. All rights reserved.
+//  Created by Jonathan Sand on 1/4/20.
+//  Copyright © 2020 Zones. All rights reserved.
 //
-
 
 import Foundation
 
-#if os(OSX)
-    import Cocoa
-#elseif os(iOS)
-    import UIKit
-#endif
+class ZShortcuts : NSObject {
 
-
-enum ZShortcutType: String {
-    case bold      = "b"
-    case underline = "u"
-	case append    = "+"
-	case plain     = " "
-}
-
-
-var gGraphShortcuts: ZGraphShortcutsController? { return gControllers.controllerForID(.idShortcuts) as? ZGraphShortcutsController }
-
-
-class ZGraphShortcutsController: ZGenericTableController {
-
-
-    @IBOutlet var gridView: ZView?
-    @IBOutlet var clipView: ZView?
-    var tabStops = [NSTextTab]()
-    override var controllerID: ZControllerID { return .idShortcuts }
-    let bold = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
+	var numberOfRows: Int { return max(graphColumnOne.count, max(graphColumnTwo.count, max(graphColumnThree.count, graphColumnFour.count))) }
+	var tabStops = [NSTextTab]()
+	let bold = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
 	let columnWidth = 290
 
+	func setup() {
+		var values: [Int] = []
+		var offset = 0
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        var values: [Int] = []
-        var offset = 0
-        
-        for _ in 0...3 {
-            values.append(offset)
-            values.append(offset + 20)
-            values.append(offset + 85)
-            
-            offset += columnWidth
-        }
+		for _ in 0...3 {
+			values.append(offset)
+			values.append(offset + 20)
+			values.append(offset + 85)
 
-        for value in values {
-            if value != 0 {
-                tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
-            }
-        }
-        
-        view.zlayer.backgroundColor = gBackgroundColor.cgColor
-        
-        if  let g = gridView,
-            let c = clipView {
-            g.removeFromSuperview()
-            c.addSubview(g)
+			offset += columnWidth
+		}
 
-            g.zlayer.backgroundColor = kClearColor.cgColor
-
-            g.snp.makeConstraints { make in
-                make.top.bottom.left.right.equalTo(c)
-            }
-        }
-    }
-    
-    
-    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {} // this controller can IGNORE ALL SIGNALS
-
-    
-    func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
-        if  let    key = iEvent.key {
-            let COMMAND = iEvent.modifierFlags.isCommand
-            let OPTION  = iEvent.modifierFlags.isOption
-            let SPECIAL = COMMAND && OPTION
-			switch key {
-				case "?", "/":         gGraphEditor.showHideKeyboardShortcuts()
-				case "a": if SPECIAL { gApplication.showHideAbout() }
-				case "p":              view.printView()
-				case "r": if COMMAND { sendEmailBugReport() }
-				case "w": if COMMAND { gGraphEditor.showHideKeyboardShortcuts(hide: true) }
-				
-				default: break
-			}
-        }
-        
-        return nil
-    }
-
-
-    // MARK:- shortcuts table
-    // MARK:-
-	
-	
-	var clickCoordinates: (Int, Int)? {
-		#if os(OSX)
-		if  let table = genericTableView,
-			let row = table.selectedRowIndexes.first {
-			let screenLocation = NSEvent.mouseLocation
-			if  let windowLocation = table.window?.convertPoint(fromScreen: screenLocation) {
-				let l = table.convert(windowLocation, from: nil)
-				let column = Int(floor(l.x / CGFloat(columnWidth)))
-				table.deselectRow(row)
-				
-				return (row, min(3, column))
+		for value in values {
+			if value != 0 {
+				tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
 			}
 		}
-		#endif
-		
-		return nil
 	}
 
-
-    override func numberOfRows(in tableView: ZTableView) -> Int {
-        return max(columnOne.count, max(columnTwo.count, max(columnThree.count, columnFour.count)))
-    }
-    
-    
-    func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
-		let     cellString = NSMutableAttributedString()
-        let      paragraph = NSMutableParagraphStyle()
-        paragraph.tabStops = tabStops
-
-        for column in 0...3 {
-            cellString.append(attributedString(for: row, column: column))
-        }
-
-        cellString.addAttribute(.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, cellString.length))
-
-        return cellString
-	}
-	
-	
-	func tableViewSelectionIsChanging(_ notification: Notification) {
-		if  let (row, column) = clickCoordinates,
-			let hyperlink = url(for: row, column: column) {
-			hyperlink.openAsURL()
-		}
-	}
-	
-	
 	func strings(for row: Int, column: Int) -> (String, String, String) {
-		let columnStrings = [columnOne, columnTwo, columnThree, columnFour]
+		let columnStrings = [graphColumnOne, graphColumnTwo, graphColumnThree, graphColumnFour]
 		let       strings = columnStrings[column]
 		let 		index = row * 3
-		
+
 		return index >= strings.count ? ("", "", "") : (strings[index], strings[index + 1], strings[index + 2])
 	}
-	
-	
+
+
 	func url(for row: Int, column: Int) -> String? {
 		let m = "https://medium.com/@sand_74696/"
 		let (_, _, url) = strings(for: row, column: column)
 
 		return url.isEmpty ? nil : m + url
 	}
-	
-	
+
+
 	func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
 		var (m, e, url) = strings(for: row, column: column)
-        let        type = ZShortcutType(rawValue: m.substring(with: NSMakeRange(0, 1))) // grab first character
+		let        type = ZShortcutType(rawValue: m.substring(with: NSMakeRange(0, 1))) // grab first character
 		let        main = m.substring(fromInclusive: 1)             // grab remaining characters
-        var  attributes = ZAttributesDictionary ()
+		var  attributes = ZAttributesDictionary ()
 		let      hasURL = !url.isEmpty
-        var      prefix = "   "
+		var      prefix = "   "
 
 		switch type {
 			case .bold?:
 				attributes  = [.font : bold]
 			case .append?, .underline?:
 				attributes  = [.underlineStyle : 1]
-				
+
 				if type == .append {
 					prefix += "+ "
-			}
-			
+				}
+
 			case .plain?:
 				if  hasURL {
 					attributes = [.foregroundColor : ZColor.blue.darker(by: 5.0)]
 					e.append(kEllipsis)
 				}
-				
+
 				fallthrough
-			
+
 			default:
 				prefix  = kTab		// for empty lines, including after last row
 		}
@@ -208,21 +94,21 @@ class ZGraphShortcutsController: ZGenericTableController {
 			result.append(NSAttributedString(string: e, attributes: attributes))
 		}
 
-        if  main.length + e.length < 11 && row != 1 && type != .plain {
-            result.append(NSAttributedString(string: kTab)) 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough subsequent tabs
-        }
+		if  main.length + e.length < 11 && row != 1 && type != .plain {
+			result.append(NSAttributedString(string: kTab)) 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough subsequent tabs
+		}
 
 		result.append(NSAttributedString(string: kTab))
 
-        return result
-    }
+		return result
+	}
 
 
-    let columnOne: [String] = [
-        "",				"", "",
-        "bALWAYS:\t",	"", "",
+	let graphColumnOne: [String] = [
 		"",				"", "",
-        "uKEY", 		"", "",
+		"bALWAYS:\t",	"", "",
+		"",				"", "",
+		"uKEY", 		"", "",
 		" RETURN", 		"begin or end editing text", 					"edit-d05d18996df7",
 		" SPACE", 		"create subordinate idea", 						"edit-d05d18996df7",
 		" TAB", 		"create next idea", 							"edit-d05d18996df7",
@@ -231,7 +117,7 @@ class ZGraphShortcutsController: ZGenericTableController {
 		" COMMA", 		"show or hide preferences", 					"help-inspector-view-c360241147f2",
 		" P", 			"print the graph (or this window)", 			"",
 		"",				"", "",
-        "+CONTROL",		"", "",
+		"+CONTROL",		"", "",
 		" COMMA", 		"toggle browsing: un/confined", 				"",
 		" DELETE", 		"show trash", 									"organize-fcdc44ac04e4",
 		" PERIOD", 		"toggle next ideas precede/follow", 			"",
@@ -259,10 +145,10 @@ class ZGraphShortcutsController: ZGenericTableController {
 		" A", 			"select all search text", 						"search-2a996591375a",
 		" F", 			"dismisss search bar", 							"search-2a996591375a",
 		"",				"", "",
-    ]
+	]
 
-    
-    let columnTwo: [String] = [
+
+	let graphColumnTwo: [String] = [
 		"",				"", "",
 		"bEDITING TEXT:", "", "",
 		"",				"", "",
@@ -303,10 +189,10 @@ class ZGraphShortcutsController: ZGenericTableController {
 		" RIGHT", 		"focus on selected result", 					"search-2a996591375a",
 		" vertical", 	"browse results (wraps around)", 				"search-2a996591375a",
 		"",				"", "",
-    ]
-    
+	]
 
-    let columnThree: [String] = [
+
+	let graphColumnThree: [String] = [
 		"",				"", "",
 		"bBROWSING (NOT EDITING TEXT):", "", "",
 		"",				"", "",
@@ -346,10 +232,10 @@ class ZGraphShortcutsController: ZGenericTableController {
 		" COMMAND", 	"move entire graph", 							"mouse-e21b7a63020e",
 		" SHIFT", 		"un/extend selection", 							"selecting-ideas-cc2939720e53",
 		"",				"", "",
-    ]
-    
-    
-    let columnFour: [String] = [
+	]
+
+
+	let graphColumnFour: [String] = [
 		"",				"", "",
 		"+OPTION",		"", "",
 		" ARROWS", 		"move selected idea", 							"organize-fcdc44ac04e4",
@@ -389,6 +275,5 @@ class ZGraphShortcutsController: ZGenericTableController {
 		" N", 			"alphabetize (+ OPTION -> backwards)", 			"organize-fcdc44ac04e4",
 		" R", 			"reverse order", 								"organize-fcdc44ac04e4",
 		"",				"", "",
-    ]
-    
+	]
 }

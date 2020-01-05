@@ -68,6 +68,14 @@ enum ZWorkMode: Int {
 }
 
 
+enum ZShortcutType: String {
+	case bold      = "b"
+	case underline = "u"
+	case append    = "+"
+	case plain     = " "
+}
+
+
 enum ZCountsMode: Int { // do not change the order, they are persisted
     case none
     case dots

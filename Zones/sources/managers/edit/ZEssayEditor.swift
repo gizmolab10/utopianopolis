@@ -49,7 +49,7 @@ class ZEssayEditor: ZBaseEditor {
 					case "e":     e?.export()
 					case "s":     e?.save()
 					case kReturn: e?.save();   swapGraphAndEssay()
-					case "/":     if SPECIAL { showHideKeyboardShortcuts() }
+					case "/":     if SPECIAL { ZShortcutsController.showShortcuts() }
 					default:      break
 				}
 			} else {

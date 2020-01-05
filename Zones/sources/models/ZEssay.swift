@@ -24,35 +24,30 @@ class ZEssay: ZParagraph {
 	override var essayText: NSMutableAttributedString? {
 		var result: NSMutableAttributedString?
 		var count  = children.count
-		var offset = 0
 
-		for child in children.reversed() {
-			count         -= 1
-
-			if  let   text = child.paragraphText {
-				result     = result ?? NSMutableAttributedString()
-				result?.insert(text, at: 0)
-
-				if  count != 0 {
-					result?.insert(kBlankLine, at: 0)
-				}
-			}
-		}
-
-		if  result == nil {    // detect when no partial text has been added
-			let   e = ZParagraph(zone)
+		if  count == 0 {    // the first time
+			let        e = ZParagraph(zone)
 
 			if  let text = e.paragraphText {
 				result?.insert(text, at: 0)
 			}
-		}
+		} else {
+			for child in children.reversed() {
+				count         -= 1
 
-		count = children.count
+				if  let   text = child.paragraphText {
+					result     = result ?? NSMutableAttributedString()
+					result?.insert(kBlankLine, at: 0)
+					result?.insert(text,       at: 0)
+				}
+			}
 
-		for child in children {	// update essayIndices
-			child.partOffset = offset
-			count           -= 1
-			offset          += child.textRange.upperBound + (count == 0 ? 0 : kBlankLine.length)
+			var offset = 0
+
+			for child in children {	// update essayIndices
+				child.partOffset = offset
+				offset          += child.textRange.upperBound + kBlankLine.length
+			}
 		}
 
 		return result
@@ -82,14 +77,14 @@ class ZEssay: ZParagraph {
 			} else {
 				let alter  = child.updateParagraph(range, length: length)
 
-				if  alter == .eAlter {
+				if  alter != .eLock {
 					result = .eAlter
 				}
 			}
 		}
 
 		if  equal {
-			result = .eExit
+			result = .eDelete
 			gEssayEditor.swapGraphAndEssay()
 		}
 

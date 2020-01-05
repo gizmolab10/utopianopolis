@@ -9,9 +9,9 @@
 import Foundation
 
 enum ZAlterationType: Int {
+	case eDelete
 	case eAlter
 	case eLock
-	case eExit
 }
 
 class ZParagraph: NSObject {
@@ -45,13 +45,12 @@ class ZParagraph: NSObject {
 	var titleAttributes: ZAttributesDictionary? {
 		var result: ZAttributesDictionary?
 
-		if	let      z = zone,
-			let   font = ZFont(name: "Times-Roman", size: 36.0) {
-			result     = [.font : font, .paragraphStyle : paragraphStyle]
+		if	let      z = zone {
+			result     = [.font : kEssayTitleFont, .paragraphStyle : paragraphStyle]
 
 			if  z.colorized,
 				let  c = z.color {
-				result = [.font : font, .paragraphStyle : paragraphStyle, .foregroundColor : c, .backgroundColor : c.lighter(by: 20.0)]
+				result = [.font : kEssayTitleFont, .paragraphStyle : paragraphStyle, .foregroundColor : c, .backgroundColor : c.lighter(by: 20.0)]
 			}
 		}
 
@@ -106,10 +105,9 @@ class ZParagraph: NSObject {
 
 		if  let range 		            = iRange.inclusiveIntersection(partRange)?.offsetBy(-partOffset) {
 			if  range                  == partRange.offsetBy(-partOffset) {
-				delete()
-				gEssayEditor.swapGraphAndEssay()
+				result					= .eDelete
 
-				result					= .eExit
+				delete()
 			} else if !isLocked(for: range) {
 				if  let    intersection = range.inclusiveIntersection(textRange) {
 					textRange  .length += length - intersection.length

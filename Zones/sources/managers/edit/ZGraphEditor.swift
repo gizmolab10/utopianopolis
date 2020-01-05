@@ -97,9 +97,9 @@ class ZGraphEditor: ZBaseEditor {
                     case "f":      search(OPTION)
                     case "i":      gTextEditor.showSpecialsPopup()
                     case "p":      printCurrentFocus()
-                    case "?":      showHideKeyboardShortcuts()
+                    case "?":      ZShortcutsController.showShortcuts()
                     case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
-					case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
+					case "/":      if SPECIAL { ZShortcutsController.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
                     case kSpace:   addIdea()
@@ -152,7 +152,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
-                    case "/":      if SPECIAL { showHideKeyboardShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
+                    case "/":      if SPECIAL { ZShortcutsController.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
@@ -185,7 +185,7 @@ class ZGraphEditor: ZBaseEditor {
         let  OPTION = flags.isOption
         let   SHIFT = flags.isShift
 
-        if (OPTION && !gSelecting.currentMoveable.userCanMove) || gIsGraphShortcutsFrontmost {
+        if (OPTION && !gSelecting.currentMoveable.userCanMove) || gIsShortcutsFrontmost {
             return
         }
 

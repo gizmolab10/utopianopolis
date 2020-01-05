@@ -27,11 +27,11 @@
             </objects>
             <point key="canvasLocation" x="819" y="-631"/>
         </scene>
-        <!--Graph Shortcuts Controller-->
+        <!--Shortcuts Controller-->
         <scene sceneID="OeN-bO-80W">
             <objects>
                 <customObject id="Upg-eY-ED5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <viewController id="cD6-C4-FJ5" customClass="ZGraphShortcutsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="cD6-C4-FJ5" customClass="ZShortcutsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="OMb-DG-XS6">
                         <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                         <autoresizingMask key="autoresizingMask"/>

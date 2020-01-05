@@ -52,9 +52,19 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
 		if  let string = text,
-			let  alter = essay?.updateEssay(range, length: string.length),
-			alter     == .eAlter {
-			return true
+			let result = essay?.updateEssay(range, length: string.length) {
+
+			switch result {
+				case .eAlter:
+					return true
+				case .eDelete:
+					FOREGROUND {
+						self.begin()		// reset all text and restore cursor position
+					}
+
+					return true
+				default: break
+			}
 		}
 
 		return text == nil
