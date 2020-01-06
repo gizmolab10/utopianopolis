@@ -176,12 +176,12 @@ class Zone : ZRecord {
 		}
 	}
 
-	var hasNoEssays: Bool {
-		var result = true
+	var paragraphs:  [Zone] {
+		var result = [Zone]()
 
 		traverseAllProgeny { zone in
-			if zone.hasTrait(for: .eEssay) {
-				result = false
+			if  zone.hasTrait(for: .eEssay) {
+				result.append(zone)
 			}
 		}
 
@@ -189,14 +189,20 @@ class Zone : ZRecord {
 	}
 
 	var essay: ZParagraph {
-		if  essayMaybe == nil {
-			if  hasNoEssays || !gCreateMultipleEssay {
-				essayMaybe = ZParagraph(self)
-			} else {
+		if  isBookmark {
+			return bookmarkTarget!.essay
+		} else if essayMaybe == nil {
+			let array = paragraphs
+			let count = array.count
+			if  count > 1 && gCreateMultipleEssay {
 				let  essay = ZEssay(self)
 				essayMaybe = essay
 
 				essay.setupChildren()
+			} else if count == 0 {
+				essayMaybe = ZParagraph(self)
+			} else {
+				essayMaybe = ZParagraph(array[0])
 			}
 		}
 
@@ -891,7 +897,11 @@ class Zone : ZRecord {
 
 
     func hasTrait(for iType: ZTraitType) -> Bool {
-        return traits[iType] != nil
+		if isBookmark {
+			return bookmarkTarget!.hasTrait(for: iType)
+		} else {
+			return traits[iType] != nil
+		}
     }
 
     

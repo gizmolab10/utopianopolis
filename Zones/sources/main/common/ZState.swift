@@ -35,8 +35,8 @@ var       gCreateMultipleEssay 			   		   = false
 var      gDebugShowIdentifiers                     = false
 var       gDebugOpsPerformance                     = true
 var       gTimeOfSystemStartup                     = Date.timeIntervalSinceReferenceDate
-var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event IS startup
-var  			    gDebugMode:		  [ZDebugMode] = [.error, .log]
+var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
+var  			    gDebugMode:		  [ZDebugMode] = []
 var        gCurrentBrowseLevel:               Int?
 var           gDragDropIndices: NSMutableIndexSet?
 var              gDragRelation:         ZRelation?

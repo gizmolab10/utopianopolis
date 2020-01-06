@@ -31,7 +31,7 @@ let kUnselectBrightness: CGFloat = 0.98
 
 
 let                 kBatchSize = 250
-let                kLogTabStop = 21
+let                kLogTabStop = 25
 let              kMaxBatchSize = 1000
 let             kRemoteTimeout = 10.0
 let            kSmallBatchSize = 100
