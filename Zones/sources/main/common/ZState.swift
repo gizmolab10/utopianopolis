@@ -34,7 +34,7 @@ var        gDebugDenyOwnership                     = false
 var       gCreateMultipleEssay 			   		   = false
 var      gDebugShowIdentifiers                     = false
 var       gDebugOpsPerformance                     = true
-var       gTimeOfSystemStartup                     = Date.timeIntervalSinceReferenceDate
+var 	   gEssayTitleFontSize 					   = CGFloat(36.0)
 var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var  			    gDebugMode:		  [ZDebugMode] = []
 var        gCurrentBrowseLevel:               Int?
@@ -67,6 +67,8 @@ var    gDarkishBackgroundColor:            CGColor { return gBackgroundColor.dar
 var   gDirectionIndicatorColor:            CGColor { return gBackgroundColor.darker  (by: 1.3)  .cgColor }
 var   gLightishBackgroundColor:            CGColor { return gBackgroundColor.lightish(by: 1.02) .cgColor }
 var    gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter (by: 4.0)  .cgColor }
+var            gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
+var					gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 
 
 var gCurrentEvent: ZEvent? {

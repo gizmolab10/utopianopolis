@@ -37,7 +37,7 @@ class ZEssay: ZParagraph {
 
 				if  let   text = child.paragraphText {
 					result     = result ?? NSMutableAttributedString()
-					result?.insert(kBlankLine, at: 0)
+					result?.insert(gBlankLine, at: 0)
 					result?.insert(text,       at: 0)
 				}
 			}
@@ -46,7 +46,7 @@ class ZEssay: ZParagraph {
 
 			for child in children {	// update essayIndices
 				child.partOffset = offset
-				offset          += child.textRange.upperBound + kBlankLine.length
+				offset          += child.textRange.upperBound + gBlankLine.length
 			}
 		}
 
@@ -84,11 +84,20 @@ class ZEssay: ZParagraph {
 		}
 
 		if  equal {
-			result = .eDelete
-			gEssayEditor.swapGraphAndEssay()
+			result = .eExit
 		}
 
 		return 	result
+	}
+
+	override func updateFontSize(_ increment: Bool) -> Bool {
+		var updated = false
+
+		for child in children {
+		    updated = child.updateTraitFontSize(increment) || updated
+		}
+
+		return updated
 	}
 
 }

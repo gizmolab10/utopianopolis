@@ -12,6 +12,7 @@ enum ZAlterationType: Int {
 	case eDelete
 	case eAlter
 	case eLock
+	case eExit
 }
 
 class ZParagraph: NSObject {
@@ -26,7 +27,8 @@ class ZParagraph: NSObject {
 
 	func delete() { zone?.removeTrait(for: .eEssay) }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }
-	func updateEssay(_ range: NSRange, length: Int) -> ZAlterationType { return updateParagraph(range, length: length) }
+	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
+	func updateTraitFontSize(_ increment: Bool) -> Bool { return essayTrait?.updateEssayFontSize(increment) ?? false }
 
 	init(_ zone: Zone?) {
 		super.init()
@@ -46,11 +48,11 @@ class ZParagraph: NSObject {
 		var result: ZAttributesDictionary?
 
 		if	let      z = zone {
-			result     = [.font : kEssayTitleFont, .paragraphStyle : paragraphStyle]
+			result     = [.font : gEssayTitleFont, .paragraphStyle : paragraphStyle]
 
 			if  z.colorized,
 				let  c = z.color {
-				result = [.font : kEssayTitleFont, .paragraphStyle : paragraphStyle, .foregroundColor : c, .backgroundColor : c.lighter(by: 20.0)]
+				result = [.font : gEssayTitleFont, .paragraphStyle : paragraphStyle, .foregroundColor : c, .backgroundColor : c.lighter(by: 20.0)]
 			}
 		}
 
@@ -63,17 +65,17 @@ class ZParagraph: NSObject {
 		if  let    name = zone?.zoneName,
 			let    text = essayTrait?.essayText {
 			let  spacer = "  "
-			let tOffset = spacer.length + kBlankLine.length
-			let pOffset = tOffset + name.length + kBlankLine.length + 1
+			let tOffset = spacer.length + gBlankLine.length
+			let pOffset = tOffset + name.length + gBlankLine.length + 1
 			let   title = NSMutableAttributedString(string: spacer + name + kTab, attributes: titleAttributes)
 			result      = NSMutableAttributedString()
 			titleRange  = NSRange(location: tOffset, length: name.length)
 			textRange   = NSRange(location: pOffset, length: text.length)
 
 			result?.insert(text,       at: 0)
-			result?.insert(kBlankLine, at: 0)
+			result?.insert(gBlankLine, at: 0)
 			result?.insert(title,      at: 0)
-			result?.insert(kBlankLine, at: 0)
+			result?.insert(gBlankLine, at: 0)
 		}
 
 		return result
@@ -124,6 +126,16 @@ class ZParagraph: NSObject {
 		}
 
 		return 	result
+	}
+
+	func updateEssay(_ range: NSRange, length: Int) -> ZAlterationType {
+		let result  = updateParagraph(range, length: length)
+
+		if  result == .eDelete {
+			return .eExit
+		}
+
+		return result
 	}
 
 }

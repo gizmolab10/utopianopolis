@@ -199,7 +199,7 @@ class Zone : ZRecord {
 				essayMaybe = essay
 
 				essay.setupChildren()
-			} else if count == 0 {
+			} else if count == 0 || !gCreateMultipleEssay {
 				essayMaybe = ZParagraph(self)
 			} else {
 				essayMaybe = ZParagraph(array[0])

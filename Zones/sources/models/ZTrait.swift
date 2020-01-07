@@ -169,4 +169,35 @@ class ZTrait: ZRecord {
 		}
 	}
 
+	func updateEssayFontSize(_ increment: Bool) -> Bool {
+		var updated       = false
+
+		if  let f         = format {
+			let separator = "NSFontSizeAttribute (f) "
+			var parts     = f.components(separatedBy: separator)
+
+			for (index, part) in parts.enumerated() {
+				if  index              != 0 {
+					var subparts        = part.components(separatedBy: " ")
+					let number          = subparts[0]
+
+					if  var value       = number.integerValue {
+						value          += (increment ? 1 : -1) * 6
+
+						if value       >= 12 {
+							subparts[0] = "\(value)"
+							updated     = true
+						}
+					}
+
+					parts[index]        = subparts.joined(separator: " ")
+				}
+			}
+
+			format = parts.joined(separator: separator)
+		}
+
+		return updated
+	}
+
 }

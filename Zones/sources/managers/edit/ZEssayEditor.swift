@@ -45,12 +45,13 @@ class ZEssayEditor: ZBaseEditor {
 				let e = gEssayView
 
 				switch key {
-					case "a":     e?.editorView?.selectAll(nil)
-					case "e":     e?.export()
-					case "s":     e?.save()
-					case kReturn: e?.save();   swapGraphAndEssay()
-					case "/":     if SPECIAL { ZShortcutsController.showShortcuts() }
-					default:      break
+					case "a":      e?.textView?.selectAll(nil)
+					case "e":      e?.export()
+					case "s":      e?.save()
+					case kReturn:  e?.save();   swapGraphAndEssay()
+					case "/":      if SPECIAL { ZShortcutsController.showShortcuts() }
+					case "=", "-": updateFontSize(key == "=")
+					default:       break
 				}
 			} else {
 				switch key {
@@ -64,7 +65,7 @@ class ZEssayEditor: ZBaseEditor {
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-		if  let  editor = gEssayView?.editorView {
+		if  let  editor = gEssayView?.textView {
 			let COMMAND = flags.isCommand
 			let  OPTION = flags.isOption
 
@@ -92,4 +93,16 @@ class ZEssayEditor: ZBaseEditor {
 			}
 		}
 	}
+
+	func updateFontSize(_ increment: Bool) {
+		if  let v = gEssayView,
+			let e = v.essay,
+			e.updateFontSize(increment) {
+			gEssayTitleFontSize += CGFloat((increment ? 1.0 : -1.0) * 6.0)
+
+			v.setup()
+		}
+	}
+
 }
+
