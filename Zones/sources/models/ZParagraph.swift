@@ -16,14 +16,14 @@ enum ZAlterationType: Int {
 }
 
 class ZParagraph: NSObject {
-	var partOffset = 0
-	var  essayText : NSMutableAttributedString? { return paragraphText }
-	var  partRange : NSRange { return NSRange(location: partOffset, length: textRange.upperBound) }
-	var titleRange = NSRange ()
-	var  textRange = NSRange ()
-	var essayMaybe : ZTrait? { return zone?.traits[    .eEssay] }
-	var essayTrait : ZTrait? { return zone?.trait(for: .eEssay) }
-	var       zone : Zone?
+	var paragraphOffset = 0
+	var       essayText : NSMutableAttributedString? { return paragraphText }
+	var  paragraphRange : NSRange { return NSRange(location: paragraphOffset, length: textRange.upperBound) }
+	var      titleRange = NSRange ()
+	var       textRange = NSRange ()
+	var      essayMaybe : ZTrait? { return zone?.traits[    .eEssay] }
+	var      essayTrait : ZTrait? { return zone?.trait(for: .eEssay) }
+	var            zone : Zone?
 
 	func delete() { zone?.removeTrait(for: .eEssay) }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }
@@ -102,22 +102,24 @@ class ZParagraph: NSObject {
 			(range.lowerBound < titleRange.upperBound && range.upperBound >= textRange.lowerBound)
 	}
 
-	func updateParagraph(_ iRange: NSRange, length: Int) -> ZAlterationType {
+	func updateParagraph(_ iRange: NSRange, length: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
 		var 	result  		    	= ZAlterationType.eLock
+		var      delta                  = 0
 
-		if  let range 		            = iRange.inclusiveIntersection(partRange)?.offsetBy(-partOffset) {
-			if  range                  == partRange.offsetBy(-partOffset) {
+		if  let range 		            = iRange.inclusiveIntersection(paragraphRange)?.offsetBy(-paragraphOffset) {
+			if  range                  == paragraphRange.offsetBy(-paragraphOffset) {
 				result					= .eDelete
 
 				delete()
 			} else if !isLocked(for: range) {
 				if  let    intersection = range.inclusiveIntersection(textRange) {
-					textRange  .length += length - intersection.length
+					delta               = length - intersection.length
+					textRange  .length += delta
 					result              = .eAlter
 				}
 
 				if  let    intersection = range.inclusiveIntersection(titleRange) {
-					let delta           = length - intersection.length
+					delta               = length - intersection.length
 					titleRange .length += delta
 					textRange.location += delta
 					result              = .eAlter
@@ -125,11 +127,13 @@ class ZParagraph: NSObject {
 			}
 		}
 
-		return 	result
+		paragraphOffset += adjustment
+
+		return 	(result, delta)
 	}
 
 	func updateEssay(_ range: NSRange, length: Int) -> ZAlterationType {
-		let result  = updateParagraph(range, length: length)
+		let (result, _)  = updateParagraph(range, length: length)
 
 		if  result == .eDelete {
 			return .eExit

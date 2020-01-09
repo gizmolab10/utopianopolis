@@ -45,8 +45,8 @@ class ZEssay: ZParagraph {
 			var offset = 0
 
 			for child in children {	// update essayIndices
-				child.partOffset = offset
-				offset          += child.textRange.upperBound + gBlankLine.length
+				child.paragraphOffset = offset
+				offset               += child.textRange.upperBound + gBlankLine.length
 			}
 		}
 
@@ -54,9 +54,9 @@ class ZEssay: ZParagraph {
 	}
 
 	override func saveEssay(_ attributedString: NSAttributedString?) {
-		if  let  attributed = attributedString {
+		if  let attributed  = attributedString {
 			for child in children {
-				let range   = child.partRange
+				let range   = child.paragraphRange
 
 				if  range.upperBound <= attributed.length {
 					let sub = attributed.attributedSubstring(from: range)
@@ -68,14 +68,18 @@ class ZEssay: ZParagraph {
 	}
 
 	override func updateEssay(_ range:NSRange, length: Int) -> ZAlterationType {
+		let equal  = range.inclusiveIntersection(paragraphRange) == paragraphRange
 		var result = ZAlterationType.eLock
-		let equal  = range.inclusiveIntersection(partRange) == partRange
+		var adjust = 0
 
 		for child in children {
 			if  equal {
+				adjust    -= child.paragraphRange.length
+
 				child.delete()
 			} else {
-				let alter  = child.updateParagraph(range, length: length)
+				let (alter,  delta) = child.updateParagraph(range, length: length, adjustment: adjust)
+				adjust    += delta
 
 				if  alter != .eLock {
 					result = .eAlter
@@ -87,7 +91,7 @@ class ZEssay: ZParagraph {
 			result = .eExit
 		}
 
-		return 	result
+		return result
 	}
 
 	override func updateFontSize(_ increment: Bool) -> Bool {
