@@ -10,6 +10,7 @@ import Foundation
 
 class ZEssay: ZParagraph {
 	var children = [ZParagraph]()
+	var essayRange: NSRange { return NSRange(location: 0, length: essayText?.length ?? 0) }
 
 	func setupChildren() {
 		if  gCreateMultipleEssay {
@@ -68,7 +69,7 @@ class ZEssay: ZParagraph {
 	}
 
 	override func updateEssay(_ range:NSRange, length: Int) -> ZAlterationType {
-		let equal  = range.inclusiveIntersection(paragraphRange) == paragraphRange
+		let equal  = range.inclusiveIntersection(essayRange) == essayRange
 		var result = ZAlterationType.eLock
 		var adjust = 0
 

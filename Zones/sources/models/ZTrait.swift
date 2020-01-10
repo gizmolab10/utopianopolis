@@ -12,21 +12,20 @@ import CloudKit
 
 
 enum ZTraitType: String {
-	case eMoney     = "$" // accumulative
-    case eDuration  = "+" //      "
+	case eDate      = "d"
+	case eHyperlink = "h"
+	case eDuration  = "+" // accumulative
+	case eMoney     = "$" //      "
+	case eImage     = "i" // allow multiple
 	case eEmail     = "e"
 	case eEssay     = "w"
-    case eImage     = "i"
-    case eTime      = "t"
-	case eHyperlink = "h"
 
 	var heightRatio: CGFloat {
 		switch self {
-			case .eHyperlink,
-				 .eMoney: return 1.0
-			case .eImage,
-			     .eTime:  return 0.8
-			default: 	  return 0.66667
+			case .eDuration,
+				 .eEmail,
+				 .eEssay: return 0.66667
+			default: 	  return 1.0
 		}
 	}
 }
@@ -34,12 +33,11 @@ enum ZTraitType: String {
 
 class ZTrait: ZRecord {
 
-    
 	@objc dynamic var format: String?
     @objc dynamic var   type: String?
 	@objc dynamic var   text: String?
-    @objc dynamic var   data: Data?
-    @objc dynamic var  asset: CKAsset?
+	@objc dynamic var  asset: CKAsset?
+	@objc dynamic var offset: NSNumber?
     @objc dynamic var  owner: CKRecord.Reference?
     var _traitType: ZTraitType?
     var _ownerZone: Zone?
@@ -58,10 +56,9 @@ class ZTrait: ZRecord {
     override var emptyName: String {
         if  let tType = traitType {
             switch tType {
-				case .eEmail: return "email address"
-				case .eEssay: return "write"
+				case .eEmail:     return "email address"
 				case .eHyperlink: return "hyperlink"
-				default: break
+				default:          break
             }
         }
 
@@ -110,10 +107,10 @@ class ZTrait: ZRecord {
 
     override class func cloudProperties() -> [String] {
         return[#keyPath(type),
-               #keyPath(data),
                #keyPath(text),
 			   #keyPath(owner),
 			   #keyPath(asset),
+			   #keyPath(offset),
 			   #keyPath(format)]
     }
 
@@ -145,9 +142,10 @@ class ZTrait: ZRecord {
 	var essayText: NSMutableAttributedString? {
 		get {
 			var string: NSMutableAttributedString?
+			let isEmpty   = text == nil || text!.isEmpty
 
 			if  text     == nil {
-				text      = ""
+				text      = "placeholder"
 			}
 
 			if  let     s = text {
@@ -155,6 +153,8 @@ class ZTrait: ZRecord {
 
 				if  let a = format {
 					string?.attributesAsString = a
+				} else if isEmpty {
+					string?.addAttribute(.font, value: gDefaultEssayFont, range: NSRange(location: 0, length: text!.length))
 				}
 			}
 

@@ -66,6 +66,7 @@ var    gDarkishBackgroundColor:            CGColor { return gBackgroundColor.dar
 var   gDirectionIndicatorColor:            CGColor { return gBackgroundColor.darker  (by: 1.3)  .cgColor }
 var   gLightishBackgroundColor:            CGColor { return gBackgroundColor.lightish(by: 1.02) .cgColor }
 var    gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter (by: 4.0)  .cgColor }
+var          gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var            gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var					gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 
@@ -209,7 +210,6 @@ var gEssayTitleFontSize: CGFloat {
 	get { return getPreferencesAmount(for: kEssayTitleFontSize, defaultAmount: kDefaultEssayTitleFontSize) }
 	set { setPreferencesAmount(newValue, for: kEssayTitleFontSize) }
 }
-
 
 var gScrollOffset: CGPoint {
 	get {
