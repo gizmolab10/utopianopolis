@@ -10,7 +10,15 @@ import Foundation
 
 class ZEssay: ZParagraph {
 	var children = [ZParagraph]()
-	var essayRange: NSRange { return NSRange(location: 0, length: essayText?.length ?? 0) }
+	var essayRange: NSRange { return NSRange(location: 0, length: essayLength) }
+
+	override var lastTextRange: NSRange? {
+		if  let    last = children.last {
+			return last.textRange.offsetBy(last.paragraphOffset)
+		}
+
+		return nil
+	}
 
 	func setupChildren() {
 		if  gCreateMultipleEssay {
@@ -51,6 +59,8 @@ class ZEssay: ZParagraph {
 			}
 		}
 
+		essayLength = result?.length ?? 0
+
 		return result
 	}
 
@@ -68,7 +78,7 @@ class ZEssay: ZParagraph {
 		}
 	}
 
-	override func updateEssay(_ range:NSRange, length: Int) -> ZAlterationType {
+	override func updateEssay(_ range:NSRange, length: Int) -> (ZAlterationType, Int) {
 		let equal  = range.inclusiveIntersection(essayRange) == essayRange
 		var result = ZAlterationType.eLock
 		var adjust = 0
@@ -92,7 +102,7 @@ class ZEssay: ZParagraph {
 			result = .eExit
 		}
 
-		return result
+		return (result, adjust)
 	}
 
 	override func updateFontSize(_ increment: Bool) -> Bool {

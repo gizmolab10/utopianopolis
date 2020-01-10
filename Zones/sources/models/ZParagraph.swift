@@ -16,14 +16,16 @@ enum ZAlterationType: Int {
 }
 
 class ZParagraph: NSObject {
+	var zone            : Zone?
 	var paragraphOffset = 0
-	var       essayText : NSMutableAttributedString? { return paragraphText }
-	var  paragraphRange : NSRange { return NSRange(location: paragraphOffset, length: textRange.upperBound) }
-	var      titleRange = NSRange ()
-	var       textRange = NSRange ()
-	var      essayMaybe : ZTrait? { return zone?.traits[    .eEssay] }
-	var      essayTrait : ZTrait? { return zone?.trait(for: .eEssay) }
-	var            zone : Zone?
+	var essayLength     = 0
+	var essayMaybe      : ZTrait?  { return zone?.traits[    .eEssay] }
+	var essayTrait      : ZTrait?  { return zone?.trait(for: .eEssay) }
+	var essayText       : NSMutableAttributedString? { return paragraphText }
+	var  paragraphRange : NSRange  { return NSRange(location: paragraphOffset, length: textRange.upperBound) }
+	var   lastTextRange : NSRange? { return textRange }
+	var      titleRange = NSRange()
+	var       textRange = NSRange()
 
 	func delete() { zone?.removeTrait(for: .eEssay) }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }
@@ -132,14 +134,14 @@ class ZParagraph: NSObject {
 		return 	(result, delta)
 	}
 
-	func updateEssay(_ range: NSRange, length: Int) -> ZAlterationType {
-		let (result, _)  = updateParagraph(range, length: length)
+	func updateEssay(_ range: NSRange, length: Int) -> (ZAlterationType, Int) {
+		var (result, delta) = updateParagraph(range, length: length)
 
 		if  result == .eDelete {
-			return .eExit
+			result  = .eExit
 		}
 
-		return result
+		return (result, delta)
 	}
 
 }

@@ -44,6 +44,10 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 			textView?.insertText(text, replacementRange: NSRange())
 
+			if  let range = essay?.lastTextRange {
+				textView?.setSelectedRange(range)
+			}
+
 			textView?.delegate 	         = self 	// set delegate after insertText
 
 			gWindow?.makeFirstResponder(textView)
@@ -52,7 +56,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
 		if  let length = text?.length,
-			let result = essay?.updateEssay(range, length: length) {
+			let (result, delta) = essay?.updateEssay(range, length: length) {
 
 			switch result {
 				case .eAlter: 		return true
@@ -63,6 +67,8 @@ class ZEssayView: ZView, ZTextViewDelegate {
 						self.setup()		// reset all text and restore cursor position
 					}
 			}
+
+			essay!.essayLength += delta
 
 			return true
 		}
