@@ -32,7 +32,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
-	func setup() {
+	func setup(applySelection: Int? = nil) {
 		clear() 									// discard previously edited text
 
 		if  let 			 	    text = essay?.essayText {
@@ -44,7 +44,11 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 			textView?.insertText(text, replacementRange: NSRange())
 
-			if  let range = essay?.lastTextRange {
+			if  var range      = essay?.lastTextRange {
+				if  let offset = applySelection {
+					range      = NSRange(location: offset, length: 0)
+				}
+
 				textView?.setSelectedRange(range)
 			}
 
@@ -63,8 +67,8 @@ class ZEssayView: ZView, ZTextViewDelegate {
 				case .eLock: 		return false
 				case .eExit: 		gEssayEditor.swapGraphAndEssay()
 				case .eDelete:
-					FOREGROUND {			// defer until after this method returns
-						self.setup()		// reset all text and restore cursor position
+					FOREGROUND {							// defer until after this method returns
+						self.setup(applySelection: delta)	// reset all text and restore cursor position
 					}
 			}
 

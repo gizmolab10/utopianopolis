@@ -82,6 +82,7 @@ class ZEssay: ZParagraph {
 		let equal  = range.inclusiveIntersection(essayRange) == essayRange
 		var result = ZAlterationType.eLock
 		var adjust = 0
+		var offset : Int?
 
 		for child in children {
 			if  equal {
@@ -94,12 +95,19 @@ class ZEssay: ZParagraph {
 
 				if  alter != .eLock {
 					result = .eAlter
+
+					if  alter == .eDelete {
+						offset = child.paragraphOffset
+					}
 				}
 			}
 		}
 
 		if  equal {
 			result = .eExit
+		} else if let o = offset {
+			result = .eDelete
+			adjust = o
 		}
 
 		return (result, adjust)
