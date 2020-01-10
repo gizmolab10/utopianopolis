@@ -1001,13 +1001,21 @@ extension String {
         return startWidth + (atStart ? 0.0 : width)    // move down, use right side of selection
     }
 
-    
-    var integerValue: Int? {
-        if let value = Int(self) {
-            return value
-        }
-        
-        return nil
+
+	var integerValue: Int? {
+		if  let    value = Int(self) {
+			return value
+		}
+
+		return nil
+	}
+
+    var floatValue: CGFloat? {
+		if  let doubleValue = Double(self) {
+			return CGFloat(doubleValue)
+		}
+
+		return nil
     }
 
 

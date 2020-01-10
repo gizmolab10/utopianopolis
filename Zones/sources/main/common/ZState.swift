@@ -34,7 +34,6 @@ var        gDebugDenyOwnership                     = false
 var       gCreateMultipleEssay 			   		   = false
 var      gDebugShowIdentifiers                     = false
 var       gDebugOpsPerformance                     = true
-var 	   gEssayTitleFontSize 					   = CGFloat(36.0)
 var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var  			    gDebugMode:		  [ZDebugMode] = []
 var        gCurrentBrowseLevel:               Int?
@@ -206,6 +205,11 @@ var gWindowRect: CGRect {
 	set { setPreferencesRect(newValue, for: kWindowRectKey) }
 }
 
+var gEssayTitleFontSize: CGFloat {
+	get { return getPreferencesAmount(for: kEssayTitleFontSize, defaultAmount: kDefaultEssayTitleFontSize) }
+	set { setPreferencesAmount(newValue, for: kEssayTitleFontSize) }
+}
+
 
 var gScrollOffset: CGPoint {
 	get {
@@ -266,7 +270,6 @@ var gCountsMode: ZCountsMode {
 	}
 }
 
-
 var gScaling: Double {
 	get {
 		var value: Double? = UserDefaults.standard.object(forKey: kScaling) as? Double
@@ -292,7 +295,7 @@ var gLineThickness: Double {
 	get {
 		var value: Double? = UserDefaults.standard.object(forKey: kThickness) as? Double
 		
-		if value == nil {
+		if  value == nil {
 			value = 1.25
 			
 			UserDefaults.standard.set(value, forKey:kThickness)
@@ -471,6 +474,15 @@ func recordEmailSent(for type: ZSentEmailType) {
 
 // MARK:- internals
 // MARK:-
+
+func getPreferencesAmount(for key: String, defaultAmount: CGFloat = 0.0) -> CGFloat {
+	return getPreferenceString(for: key) { return "\(defaultAmount)" }?.floatValue ?? defaultAmount
+}
+
+
+func setPreferencesAmount(_ iAmount: CGFloat = 0.0, for key: String) {
+	setPreferencesString("\(iAmount)", for: key)
+}
 
 
 func getPreferencesSize(for key: String, defaultSize: CGSize = CGSize.zero) -> CGSize {

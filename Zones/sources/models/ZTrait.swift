@@ -178,19 +178,20 @@ class ZTrait: ZRecord {
 
 			for (index, part) in parts.enumerated() {
 				if  index              != 0 {
-					var subparts        = part.components(separatedBy: " ")
-					let number          = subparts[0]
+					let subSeparator    = " "
+					var subParts        = part.components(separatedBy: subSeparator)
+					let number          = subParts[0]
 
 					if  var value       = number.integerValue {
 						value          += (increment ? 1 : -1) * 6
 
-						if value       >= 12 {
-							subparts[0] = "\(value)"
+						if  value      >= 12 { 	    // minimum font size is 12
+							subParts[0] = "\(value)"
 							updated     = true
 						}
 					}
 
-					parts[index]        = subparts.joined(separator: " ")
+					parts[index]        = subParts.joined(separator: subSeparator)
 				}
 			}
 
