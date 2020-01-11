@@ -50,11 +50,13 @@ class ZParagraph: NSObject {
 		var result: ZAttributesDictionary?
 
 		if	let      z = zone {
-			result     = [.font : gEssayTitleFont, .paragraphStyle : paragraphStyle]
+			let offset = NSNumber(floatLiteral: Double(gEssayTitleFontSize) / 7.0)
+			result     = [.font : gEssayTitleFont, .paragraphStyle : paragraphStyle, .baselineOffset : offset]
 
 			if  z.colorized,
 				let  c = z.color {
-				result = [.font : gEssayTitleFont, .paragraphStyle : paragraphStyle, .foregroundColor : c, .backgroundColor : c.lighter(by: 20.0)]
+				result?[.foregroundColor] = c
+				result?[.backgroundColor] = c.lighter(by: 20.0)
 			}
 		}
 
@@ -78,6 +80,7 @@ class ZParagraph: NSObject {
 			result?.insert(gBlankLine, at: 0)
 			result?.insert(title,      at: 0)
 			result?.insert(gBlankLine, at: 0)
+			result?.fixAttributes(in: paragraphRange.offsetBy(-paragraphOffset))
 		}
 
 		return result

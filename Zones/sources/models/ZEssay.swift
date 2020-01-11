@@ -61,6 +61,8 @@ class ZEssay: ZParagraph {
 
 		essayLength = result?.length ?? 0
 
+		result?.fixAttributes(in: NSRange(location: 0, length: essayLength))
+
 		return result
 	}
 
