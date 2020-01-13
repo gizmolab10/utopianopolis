@@ -23,6 +23,7 @@ class ZParagraph: NSObject {
 	var essayTrait      : ZTrait?  { return zone?.trait(for: .eEssay) }
 	var essayText       : NSMutableAttributedString? { return paragraphText }
 	var  paragraphRange : NSRange  { return NSRange(location: paragraphOffset, length: textRange.upperBound) }
+	var  fullTitleRange : NSRange  { var range = titleRange; range.location += paragraphOffset - 2; range.length += 3; return range }
 	var   lastTextRange : NSRange? { return textRange }
 	var      titleRange = NSRange()
 	var       textRange = NSRange()
@@ -56,7 +57,7 @@ class ZParagraph: NSObject {
 			if  z.colorized,
 				let  c = z.color {
 				result?[.foregroundColor] = c
-				result?[.backgroundColor] = c.lighter(by: 20.0)
+//				result?[.backgroundColor] = c.lighter(by: 20.0)
 			}
 		}
 
@@ -80,7 +81,8 @@ class ZParagraph: NSObject {
 			result?.insert(gBlankLine, at: 0)
 			result?.insert(title,      at: 0)
 			result?.insert(gBlankLine, at: 0)
-			result?.fixAttributes(in: paragraphRange.offsetBy(-paragraphOffset))
+
+			result?.fixAllAttributes()
 		}
 
 		return result

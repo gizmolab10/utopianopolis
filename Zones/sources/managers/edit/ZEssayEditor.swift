@@ -47,6 +47,7 @@ class ZEssayEditor: ZBaseEditor {
 				switch key {
 					case "a":      e?.textView?.selectAll(nil)
 					case "e":      e?.export()
+					case "h":      e?.showHyperlinkPopup()
 					case "s":      e?.save()
 					case kReturn:  e?.save();   swapGraphAndEssay()
 					case "/":      if SPECIAL { ZShortcutsController.showShortcuts() }

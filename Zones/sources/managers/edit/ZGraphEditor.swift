@@ -137,9 +137,10 @@ class ZGraphEditor: ZBaseEditor {
                     case "f":      search(OPTION)
                     case "g":      refetch(COMMAND, OPTION)
                     case "h":      editTrait(for: .eHyperlink)
-                    case "i":      toggleColorized()
+					case "i":      editImage()
                     case "l":      alterCase(up: false)
-					case "k":      rotateWritable()
+					case "j":      rotateWritable()
+					case "k":      toggleColorized()
                     case "m":      orderByLength(OPTION)
                     case "n":      alphabetize(OPTION)
                     case "o":      if SPECIAL { gFiles.showInFinder() } else { gFiles.importFromFile(OPTION ? .eOutline : .eThoughtful, insertInto: gSelecting.currentMoveable) { self.redrawSyncRedraw() } }
@@ -229,7 +230,7 @@ class ZGraphEditor: ZBaseEditor {
             switch key {
             case "?":                   return .eHelp
             case "f":                   return .eFind
-            case "i":                   return .eTint
+            case "k":                   return .eTint
             case "m":                   return .eCloud
             case "z":                   return .eUndo
             case "#", "r":              return .eSort
@@ -410,6 +411,12 @@ class ZGraphEditor: ZBaseEditor {
 
         redrawAndSync()
     }
+
+	func editImage() {
+//		if  let  zone = gSelecting.firstSortedGrab {
+//			let trait = zone.trait(for: .eImage)
+//		}
+	}
 
 
     func editTrait(for iType: ZTraitType) {

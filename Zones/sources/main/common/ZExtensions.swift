@@ -892,6 +892,10 @@ extension NSMutableAttributedString {
 		}
 	}
 
+	func fixAllAttributes() {
+		fixAttributes(in: NSRange(location: 0, length: self.length))
+	}
+
 }
 
 extension String {

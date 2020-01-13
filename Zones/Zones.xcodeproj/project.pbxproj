@@ -504,10 +504,10 @@
 				A78A6DFF23B02163000F581F /* ZEssayController.swift */,
 				0C39B2211F182EBB0091F4D1 /* ZGenericController.swift */,
 				0CB619951FB3C4660087B066 /* ZGraphController.swift */,
-				A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */,
 				0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */,
 				0CB619941FB3C4660087B066 /* ZSearchController.swift */,
 				0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */,
+				A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */,
 			);
 			path = common;
 			sourceTree = "<group>";

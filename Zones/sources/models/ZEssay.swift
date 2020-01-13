@@ -56,12 +56,18 @@ class ZEssay: ZParagraph {
 			for child in children {	// update essayIndices
 				child.paragraphOffset = offset
 				offset               += child.textRange.upperBound + gBlankLine.length
+
+				if  let     z = child.zone, z.colorized,
+					let color = z.color?.lighter(by: 20.0) {
+
+					result?.addAttribute(.backgroundColor, value: color, range: child.fullTitleRange)
+				}
 			}
 		}
 
 		essayLength = result?.length ?? 0
 
-		result?.fixAttributes(in: NSRange(location: 0, length: essayLength))
+		result?.fixAllAttributes()
 
 		return result
 	}
@@ -78,6 +84,8 @@ class ZEssay: ZParagraph {
 				}
 			}
 		}
+
+		gControllers.syncAndRedraw()
 	}
 
 	override func updateEssay(_ range:NSRange, length: Int) -> (ZAlterationType, Int) {

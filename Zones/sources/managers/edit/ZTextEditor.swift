@@ -416,7 +416,7 @@ class ZTextEditor: ZTextView {
     // MARK:-
 	
 	
-	enum ZPopupMenuType: String {
+	enum ZSpecialsMenuType: String {
 		case eCommand = "c"
 		case eOption  = "o"
 		case eShift   = "s"
@@ -426,7 +426,7 @@ class ZTextEditor: ZTextView {
 		case eBack    = "k"
 		case eCancel  = "\r"
 		
-		static var activeTypes: [ZPopupMenuType] { return [.eCommand, .eOption, .eShift, .eControl, .eArrow, .eBack, eDouble] }
+		static var activeTypes: [ZSpecialsMenuType] { return [.eCommand, .eOption, .eShift, .eControl, .eArrow, .eBack, eDouble] }
 
 		var both: (String, String) {
 			switch self {
@@ -456,7 +456,7 @@ class ZTextEditor: ZTextView {
 	
 	@objc func handlePopupMenu(_ iItem: ZMenuItem) {
 		#if os(OSX)
-		if  let  type = ZPopupMenuType(rawValue: iItem.keyEquivalent),
+		if  let  type = ZSpecialsMenuType(rawValue: iItem.keyEquivalent),
 			let range = selectedRanges[0] as? NSRange,
 			type     != .eCancel {
 			let  text = type.text

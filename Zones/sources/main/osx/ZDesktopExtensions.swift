@@ -701,7 +701,7 @@ extension ZTextEditor {
     func fullResign()  { assignAsFirstResponder (nil) }
 
 	
-	func item(type: ZPopupMenuType) -> NSMenuItem {
+	func item(type: ZSpecialsMenuType) -> NSMenuItem {
 		let  	  item = NSMenuItem(title: type.title, action: #selector(handlePopupMenu(_:)), keyEquivalent: type.rawValue)
 		item.isEnabled = true
 		item.target    = self
@@ -718,7 +718,7 @@ extension ZTextEditor {
 		let menu = NSMenu(title: "foo")
 		menu.autoenablesItems = false
 		
-		for type in ZPopupMenuType.activeTypes {
+		for type in ZSpecialsMenuType.activeTypes {
 			menu.addItem(item(type: type))
 		}
 		

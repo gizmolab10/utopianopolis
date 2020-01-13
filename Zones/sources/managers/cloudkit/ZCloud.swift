@@ -26,10 +26,12 @@ class ZCloud: ZRecords {
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
         if  database != nil {
-            operation.timeoutIntervalForResource = kRemoteTimeout
-            operation .timeoutIntervalForRequest = kRemoteTimeout
-            operation          .qualityOfService = .background
-            operation                 .container = gContainer
+			let                        configuration = operation.configuration ?? CKOperation.Configuration()
+			configuration.timeoutIntervalForResource = kRemoteTimeout
+            configuration.timeoutIntervalForRequest  = kRemoteTimeout
+            configuration                 .container = gContainer
+			operation                 .configuration = configuration
+			operation              .qualityOfService = .background
 
             return operation
         }
