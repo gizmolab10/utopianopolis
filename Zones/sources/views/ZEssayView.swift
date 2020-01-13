@@ -37,7 +37,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var textView: ZTextView?
 	var essay: ZParagraph? { return zone?.essay }
 	var zone:  Zone?       { return gSelecting.firstGrab }
-	var selectionRange = NSRange()
+	var selectionRect = CGRect()
 
 	func export() { gFiles.exportToFile(.eEssay, for: zone) }
 	func save()   { essay?.saveEssay(textView?.textStorage) }
@@ -77,16 +77,14 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 	func showHyperlinkPopup() {
-		if  let rect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) {
-			let menu = NSMenu(title: "foo")
-			menu.autoenablesItems = false
+		let menu = NSMenu(title: "create a hyperlink")
+		menu.autoenablesItems = false
 
-			for type in ZHyperlinkMenuType.all {
-				menu.addItem(item(type: type))
-			}
-
-			menu.popUp(positioning: nil, at: rect.origin, in: nil)
+		for type in ZHyperlinkMenuType.all {
+			menu.addItem(item(type: type))
 		}
+
+		menu.popUp(positioning: nil, at: selectionRect.origin, in: nil)
 	}
 
 	func item(type: ZHyperlinkMenuType) -> NSMenuItem {
@@ -103,12 +101,12 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		if  let  type = ZHyperlinkMenuType(rawValue: iItem.keyEquivalent) {
 			let  text = type.rawValue
 
-			print(text + " \(selectionRange)")
+			print(text + " \(selectionRect)")
 		}
 	}
 
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange, toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
-		selectionRange = newSelectedCharRange
+		selectionRect = textView.firstRect(forCharacterRange: newSelectedCharRange, actualRange: nil)
 
 		return newSelectedCharRange
 	}

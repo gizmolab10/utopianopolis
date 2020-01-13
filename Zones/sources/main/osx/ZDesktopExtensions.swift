@@ -715,7 +715,7 @@ extension ZTextEditor {
 	
 	
 	func showSpecialsPopup() {
-		let menu = NSMenu(title: "foo")
+		let menu = NSMenu(title: "add a special character")
 		menu.autoenablesItems = false
 		
 		for type in ZSpecialsMenuType.activeTypes {
