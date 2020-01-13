@@ -37,6 +37,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var textView: ZTextView?
 	var essay: ZParagraph? { return zone?.essay }
 	var zone:  Zone?       { return gSelecting.firstGrab }
+	var selectionRange = NSRange()
 	var selectionRect = CGRect()
 
 	func export() { gFiles.exportToFile(.eEssay, for: zone) }
@@ -50,11 +51,15 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
-	func setup(applySelection: Int? = nil) {
-		clear() 									// discard previously edited text
+	func setup(restoreSelection: Int? = nil) {
+		let exitSetup = (essay?.essayMaybe?.needsSave ?? false) && restoreSelection == nil
+
+		if  exitSetup { return }								// has not yet been saved. don't overwrite
+
+		clear() 												// discard previously edited text
 
 		if  let 					text = essay?.essayText {
-			textView?		   .delegate = nil	    // clear so that shouldChangeTextIn won't be called on insertText below
+			textView?		   .delegate = nil	    			// clear so that shouldChangeTextIn won't be called on insertText below
 			textView?         .usesRuler = true
 			textView?    .isRulerVisible = true
 			textView?  .usesInspectorBar = true
@@ -62,10 +67,10 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 			textView?.insertText(text, replacementRange: NSRange())
 
-			textView?.delegate 	         = self 	// set delegate after insertText
+			textView?.delegate 	         = self 				// set delegate after insertText
 
 			if  var range      = essay?.lastTextRange {
-				if  let offset = applySelection {
+				if  let offset = restoreSelection {
 					range      = NSRange(location: offset, length: 0)
 				}
 
@@ -98,15 +103,15 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 	@objc func handlePopupMenu(_ iItem: ZMenuItem) {
-		if  let  type = ZHyperlinkMenuType(rawValue: iItem.keyEquivalent) {
-			let  text = type.rawValue
-
-			print(text + " \(selectionRect)")
+		if  let type = ZHyperlinkMenuType(rawValue: iItem.keyEquivalent) {
+			textView?.textStorage?.addAttribute(.link, value: type.title.lowercased(), range: selectionRange)
+			zone?.essay.essayMaybe?.needSave()
 		}
 	}
 
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange, toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
-		selectionRect = textView.firstRect(forCharacterRange: newSelectedCharRange, actualRange: nil)
+		selectionRect  = textView.firstRect(forCharacterRange: newSelectedCharRange, actualRange: nil)
+		selectionRange = newSelectedCharRange
 
 		return newSelectedCharRange
 	}
@@ -121,7 +126,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 				case .eExit: 		gEssayEditor.swapGraphAndEssay()
 				case .eDelete:
 					FOREGROUND {							// defer until after this method returns
-						self.setup(applySelection: delta)	// reset all text and restore cursor position
+						self.setup(restoreSelection: delta)	// reset all text and restore cursor position
 					}
 			}
 

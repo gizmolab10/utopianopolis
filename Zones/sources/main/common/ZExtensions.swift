@@ -836,26 +836,32 @@ extension NSMutableAttributedString {
 		get {
 			var result = [String]()
 			let  range = NSRange(location: 0, length: length)
-			let keys: [NSAttributedString.Key] = [.font, .foregroundColor]
+			let keys: [NSAttributedString.Key] = [.font, .link, .foregroundColor]
 
 			for key in keys {
-				enumerateAttribute(key, in: range, options: .reverse) { (value, inRange, flag) in
+				enumerateAttribute(key, in: range, options: .reverse) { (item, inRange, flag) in
 					var string: Any?
 
-					if  let  font = value as? ZFont {
-						string    = font.string
-					}
+					if  let value = item {
+						if  let  font = value as? ZFont {
+							string    = font.string
+						}
 
-					if  let color = value as? NSColor {
-						string    = color.string
-					}
+						if  key      == .link {
+							string    = "\(value)"
+						}
 
-					if  let style = value as? NSMutableParagraphStyle {
-						string    = style.string
-					}
+						if  let color = value as? NSColor {
+							string    = color.string
+						}
 
-					if  let value = string {
-						result.append("\(inRange.location)" + kValueSeparator + "\(inRange.length)" + kValueSeparator + key.rawValue + kValueSeparator + "\(value)")
+						if  let style = value as? NSMutableParagraphStyle {
+							string    = style.string
+						}
+
+						if  let append = string as? String {
+							result.append("\(inRange.location)" + kValueSeparator + "\(inRange.length)" + kValueSeparator + key.rawValue + kValueSeparator + append)
+						}
 					}
 				}
 			}
@@ -876,8 +882,9 @@ extension NSMutableAttributedString {
 					var attribute: Any?
 
 					switch key {
-						case .foregroundColor: attribute = ZColor				  (string: string)
+						case .link:            attribute =                                 string
 						case .font:            attribute = ZFont 				  (string: string)
+						case .foregroundColor: attribute = ZColor				  (string: string)
 						case .paragraphStyle:  attribute = NSMutableParagraphStyle(string: string)
 						default:    		   break
 					}

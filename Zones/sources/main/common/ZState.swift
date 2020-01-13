@@ -32,6 +32,7 @@ var         gKeyboardIsVisible                     = false
 var         gArrowsDoNotBrowse                     = false
 var        gDebugDenyOwnership                     = false
 var       gCreateMultipleEssay 			   		   = false
+var       gHasCompletedStartup                     = false
 var      gDebugShowIdentifiers                     = false
 var       gDebugOpsPerformance                     = true
 var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup

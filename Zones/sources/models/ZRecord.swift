@@ -353,9 +353,13 @@ class ZRecord: NSObject {
 
 
     func maybeNeedSave() {
-        if !needsDestroy, !needsSave, (canSaveWithoutFetch || !needsFetch) {
+        if !needsDestroy, !needsSave, gHasCompletedStartup, (canSaveWithoutFetch || !needsFetch) {
             removeState(.needsMerge)
             addState   (.needsSave)
+
+			if  isKind(of: ZTrait.self) {
+				print(self)
+			}
         }
 
         gFiles.needWrite(for: databaseID)

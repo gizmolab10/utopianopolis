@@ -107,6 +107,7 @@ class ZControllers: NSObject {
                     FOREGROUND {
                         gBatches		 .usingDebugTimer = false
 						gTextEditor.refusesFirstResponder = false
+						gHasCompletedStartup              = true
 
                         self.blankScreenDebug()
                         gFiles.writeAll()

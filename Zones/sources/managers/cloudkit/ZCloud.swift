@@ -1330,7 +1330,7 @@ class ZCloud: ZRecords {
                 record[property] = value as? CKRecordValue
 
                 if  let string = value as? String, string == kNullLink {
-                    // stupid freakin icloud does not store this value. ack!!!!!!
+                    // icloud does not store this value, sigh
                 } else if object.canSaveWithoutFetch {
                     object.needSave()
                 } else {
