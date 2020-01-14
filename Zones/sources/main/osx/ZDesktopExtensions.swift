@@ -258,7 +258,7 @@ extension ZColor {
 		var a: CGFloat = 1
 		let parts = string.components(separatedBy: ",")
 		for part in parts {
-			let items = part.components(separatedBy: ":")
+			let items = part.components(separatedBy: kSeparator)
 			if  items.count > 1 {
 				let key = items[0]
 				let value = items[1]

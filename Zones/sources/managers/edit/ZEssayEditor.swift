@@ -99,9 +99,10 @@ class ZEssayEditor: ZBaseEditor {
 		if  let v = gEssayView,
 			let e = v.essay,
 			e.updateFontSize(increment) {
+			let offset = v.selectionRange.location
 			gEssayTitleFontSize += CGFloat((increment ? 1.0 : -1.0) * 6.0)
 
-			v.setup()
+			v.setup(restoreSelection: offset)
 		}
 	}
 

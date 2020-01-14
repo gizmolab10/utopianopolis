@@ -817,8 +817,8 @@
 			children = (
 				A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */,
 				A78A6E0923B021EA000F581F /* ZEssayEditor.swift */,
-				A7395BAD21B877B600F5759F /* ZTextEditor.swift */,
 				A7395BAE21B877B600F5759F /* ZGraphEditor.swift */,
+				A7395BAD21B877B600F5759F /* ZTextEditor.swift */,
 			);
 			path = edit;
 			sourceTree = "<group>";

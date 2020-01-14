@@ -16,12 +16,12 @@ enum ZAlterationType: Int {
 }
 
 class ZParagraph: NSObject {
-	var zone            : Zone?
 	var paragraphOffset = 0
-	var essayLength     = 0
-	var essayMaybe      : ZTrait?  { return zone?.traits[    .eEssay] }
-	var essayTrait      : ZTrait?  { return zone?.trait(for: .eEssay) }
-	var essayText       : NSMutableAttributedString? { return paragraphText }
+	var     essayLength = 0
+	var     essayMaybe  : ZTrait?  { return zone?.traits[    .eEssay] }
+	var     essayTrait  : ZTrait?  { return zone?.trait(for: .eEssay) }
+	var     essayText   : NSMutableAttributedString? { return paragraphText }
+	var     zone        : Zone?
 	var  paragraphRange : NSRange  { return NSRange(location: paragraphOffset, length: textRange.upperBound) }
 	var  fullTitleRange : NSRange  { var range = titleRange; range.location += paragraphOffset - 2; range.length += 3; return range }
 	var   lastTextRange : NSRange? { return textRange }
@@ -57,7 +57,6 @@ class ZParagraph: NSObject {
 			if  z.colorized,
 				let  c = z.color {
 				result?[.foregroundColor] = c
-//				result?[.backgroundColor] = c.lighter(by: 20.0)
 			}
 		}
 

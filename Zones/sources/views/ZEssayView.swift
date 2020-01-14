@@ -16,19 +16,26 @@ import UIKit
 
 enum ZHyperlinkMenuType: String {
 	case eWeb   = "h"
-	case eZone  = "t"
-	case eImage = "i"
+	case eIdea  = "i"
+	case eEssay = "e"
 
 	var title: String {
 		switch self {
 			case .eWeb:   return "Internet"
-			case .eZone:  return "Idea"
-			case .eImage: return "Image"
+			case .eIdea:  return "Idea"
+			case .eEssay: return "Essay"
 		}
 	}
 
-	var both: (String, String) { return (rawValue, title) }
-	static var all: [ZHyperlinkMenuType] { return [.eWeb, .eZone, .eImage] }
+	var linkType: String {
+		switch self {
+			case .eWeb:   return "http"
+			case .eIdea:  return "idea"
+			case .eEssay: return "essay"
+		}
+	}
+
+	static var all: [ZHyperlinkMenuType] { return [.eWeb, .eIdea, .eEssay] }
 
 }
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
@@ -38,10 +45,13 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	var essay: ZParagraph? { return zone?.essay }
 	var zone:  Zone?       { return gSelecting.firstGrab }
 	var selectionRange = NSRange()
-	var selectionRect = CGRect()
+	var selectionRect  = CGRect()
 
 	func export() { gFiles.exportToFile(.eEssay, for: zone) }
 	func save()   { essay?.saveEssay(textView?.textStorage) }
+
+	// MARK:- setup
+	// MARK:-
 
 	func clear() {
 		zone?.essayMaybe = nil
@@ -81,6 +91,9 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
+	// MARK:- hyperlinks
+	// MARK:-
+
 	func showHyperlinkPopup() {
 		let menu = NSMenu(title: "create a hyperlink")
 		menu.autoenablesItems = false
@@ -94,36 +107,106 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	func item(type: ZHyperlinkMenuType) -> NSMenuItem {
 		let  	  item = NSMenuItem(title: type.title, action: #selector(handlePopupMenu(_:)), keyEquivalent: type.rawValue)
+		item   .target = self
 		item.isEnabled = true
-		item.target    = self
 
 		item.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
 
 		return item
 	}
 
+	var pasteBuffer: String? {
+		let pastables = gSelecting.pasteableZones
+
+		if  pastables.count > 0 {
+			let (pastable, (_, _)) = pastables.first!
+
+			return pastable.recordName
+		}
+
+		return nil
+	}
+
+
 	@objc func handlePopupMenu(_ iItem: ZMenuItem) {
 		if  let type = ZHyperlinkMenuType(rawValue: iItem.keyEquivalent) {
-			textView?.textStorage?.addAttribute(.link, value: type.title.lowercased(), range: selectionRange)
+			var link = type.linkType + kSeparator
+
+			switch type {
+				case .eWeb:   link.append("//apple.com")
+				case .eIdea:  if let b = pasteBuffer { link.append(b) } else { return }
+				case .eEssay: link.append("//apple.com")
+			}
+
+			textView?.textStorage?.addAttribute(.link, value: link, range: selectionRange)
+
 			zone?.essay.essayMaybe?.needSave()
 		}
 	}
 
+	var currentLink: Any? {
+		var found: Any?
+		var range = selectionRange
+
+		if  let       length = textView?.textStorage?.length,
+		    range.upperBound < length,
+			range.length    == 0 {
+			range.length     = 1
+		}
+
+		textView?.textStorage?.enumerateAttribute(.link, in: range, options: .reverse) { (item, inRange, flag) in
+			found = item
+		}
+
+		return found
+	}
+
+	@discardableResult func followCurrentLink(within range: NSRange) -> Bool {
+		selectionRect  = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect()
+		selectionRange = range
+
+		if  let   link = currentLink as? String {
+			let  parts = link.components(separatedBy: kSeparator)
+
+			if   parts.count > 1,
+				let t = parts.first?.first,
+				let rID = parts.last,
+				let type = ZHyperlinkMenuType(rawValue: String(t)) {
+				switch type {
+					case .eIdea:
+						// focus on zone with rID
+						print(rID)
+						return true
+					default: break
+				}
+			}
+		}
+
+		return false
+
+	}
+
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange, toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
-		selectionRect  = textView.firstRect(forCharacterRange: newSelectedCharRange, actualRange: nil)
-		selectionRange = newSelectedCharRange
+		followCurrentLink(within: newSelectedCharRange)
 
 		return newSelectedCharRange
 	}
+
+	func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {
+		return followCurrentLink(within: NSRange(location: charIndex, length: 0))
+	}
+
+	// MARK:- lockout editing of "extra" characters
+	// MARK:-
 
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
 		if  let length = text?.length,
 			let (result, delta) = essay?.updateEssay(range, length: length) {
 
 			switch result {
-				case .eAlter: 		return true
-				case .eLock: 		return false
-				case .eExit: 		gEssayEditor.swapGraphAndEssay()
+				case .eAlter: return true
+				case .eLock:  return false
+				case .eExit:  gEssayEditor.swapGraphAndEssay()
 				case .eDelete:
 					FOREGROUND {							// defer until after this method returns
 						self.setup(restoreSelection: delta)	// reset all text and restore cursor position
