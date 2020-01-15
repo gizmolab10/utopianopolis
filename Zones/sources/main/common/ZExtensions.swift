@@ -899,6 +899,15 @@ extension NSMutableAttributedString {
 		}
 	}
 
+	func removeAllAttributes() {
+		let range = NSRange(location: 0, length: length)
+		let keys: [NSAttributedString.Key] = [.font, .link, .foregroundColor]
+
+		for key in keys {
+			removeAttribute(key, range: range)
+		}
+	}
+
 	func fixAllAttributes() {
 		fixAttributes(in: NSRange(location: 0, length: self.length))
 	}

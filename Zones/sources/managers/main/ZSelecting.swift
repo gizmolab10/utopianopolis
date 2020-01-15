@@ -370,7 +370,20 @@ class ZSelecting: NSObject {
             onCompletion?()
         }
     }
-    
+
+	func zone(with recordName: String) -> Zone? {
+		var found: Zone?
+
+		for records in gRemoteStorage.allRecordsArrays {
+			if  let zone = records.maybeZoneForRecordName(recordName) {
+				found = zone
+
+				break
+			}
+		}
+
+		return found
+	}
     
     func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
         if  let newGrabs = iZones {

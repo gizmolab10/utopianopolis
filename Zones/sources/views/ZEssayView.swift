@@ -75,11 +75,11 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			textView?  .usesInspectorBar = true
 			textView?.textContainerInset = NSSize(width: 20, height: 0)
 
-			textView?.insertText(text, replacementRange: NSRange())
+			textView?.setText(text)
 
 			textView?.delegate 	         = self 				// set delegate after insertText
 
-			if  var range      = essay?.lastTextRange {
+			if  var range      = essay?.lastTextRange {			// select entire text of final essay
 				if  let offset = restoreSelection {
 					range      = NSRange(location: offset, length: 0)
 				}
@@ -162,28 +162,40 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 	@discardableResult func followCurrentLink(within range: NSRange) -> Bool {
-		selectionRect  = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect()
+		selectionRect  = textView?.firstRect(forCharacterRange: range, actualRange: nil) ?? CGRect()
 		selectionRange = range
 
 		if  let   link = currentLink as? String {
 			let  parts = link.components(separatedBy: kSeparator)
 
 			if   parts.count > 1,
-				let t = parts.first?.first,
-				let rID = parts.last,
+				let    t = parts.first?.first,
+				let  rID = parts.last,
 				let type = ZHyperlinkMenuType(rawValue: String(t)) {
 				switch type {
 					case .eIdea:
-						// focus on zone with rID
-						print(rID)
-						return true
+						if  let   grab = gSelecting.zone(with: rID),			// find zone with rID
+							let common = zone?.closestCommonParent(of: grab) {
+							gHere      = common
+
+							grab  .grab()										// focus on zone with rID
+							grab  .asssureIsVisible()
+							zone? .asssureIsVisible()
+							essay?.essayMaybe?.clearSave()
+
+							FOREGROUND {
+								gEssayEditor.swapGraphAndEssay()
+								gControllers.signalFor(nil, regarding: .eRelayout)
+							}
+
+							return true
+						}
 					default: break
 				}
 			}
 		}
 
 		return false
-
 	}
 
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange, toCharacterRange newSelectedCharRange: NSRange) -> NSRange {

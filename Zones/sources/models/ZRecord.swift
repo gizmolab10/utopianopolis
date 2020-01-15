@@ -294,17 +294,16 @@ class ZRecord: NSObject {
     func markNotFetched()        {    addState(.notFetched) }
     func fetchBeforeSave()       {    addState(.requiresFetchBeforeSave) }
     func allowSaveWithoutFetch() { removeState(.requiresFetchBeforeSave)}
+	func clearSave() 			 { removeState(.needsSave) }
     func needColor()             {} //    if !gAssumeAllFetched { addState(.needsColor) } }
     func needTraits()            {} //    if !gAssumeAllFetched { addState(.needsTraits) } }
     func needParent()            {} //    if !gAssumeAllFetched { addState(.needsParent) } }
     func needWritable()          {} //    if !gAssumeAllFetched { addState(.needsWritable) } }
 
-
     func needSave() {
         allowSaveWithoutFetch()
         maybeNeedSave()
     }
-
 
     func needDestroy() {
         if  canSaveWithoutFetch {

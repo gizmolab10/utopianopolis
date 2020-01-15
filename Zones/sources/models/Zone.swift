@@ -1228,6 +1228,29 @@ class Zone : ZRecord {
         return iSibling != nil && parentZone == iSibling!.parentZone
     }
 
+
+	func closestCommonParent(of other: Zone) -> Zone? {
+		var ancestors = [Zone]()
+		var common: Zone?
+
+		if databaseID == other.databaseID {
+			traverseAllAncestors { zone in
+				if  zone != self {
+					ancestors.append(zone)
+				}
+			}
+
+			other.traverseAllAncestors { zone in
+				if  ancestors.contains(zone),
+					common == nil {
+					common  = zone
+				}
+			}
+		}
+
+		return common
+	}
+
     
     // MARK:- state
     // MARK:-

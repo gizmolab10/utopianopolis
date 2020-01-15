@@ -338,6 +338,22 @@ extension NSBezierPath {
 }
 
 
+extension ZTextView {
+
+	func setText(_ text: Any) {
+		if let string = text as? NSMutableAttributedString {
+			insertText(string, replacementRange: NSRange(location: 0, length: string.length))
+			textStorage?.removeAllAttributes()
+			textStorage?.attributesAsString = string.attributesAsString
+		} else if let s = text as? String {
+			insertText(text, replacementRange: NSRange(location: 0, length: s.length))
+		} else {
+			insertText(text, replacementRange: NSRange())
+		}
+	}
+}
+
+
 extension NSView {
     var      zlayer:                CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
     var recognizers: [NSGestureRecognizer]? { return gestureRecognizers }
