@@ -471,7 +471,7 @@ class ZFocusing: NSObject {
 	}
 
 	@discardableResult func invokeEssay(_ iZone: Zone) -> Bool { // false means not handled
-		if  iZone.essayMaybe != nil {
+		if  iZone.hasEssay {
 			gEssayEditor.swapGraphAndEssay()
 
 			return true

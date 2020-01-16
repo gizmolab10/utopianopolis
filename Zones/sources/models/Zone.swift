@@ -66,14 +66,14 @@ class Zone : ZRecord {
     var              dragDotIsHidden :               Bool  { return                     (isRootOfFavorites && !(widget?.isInPublic ?? true)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
     var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
     var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
-    var                  hasSiblings :               Bool  { return parentZone?.count ?? 0 > 1 }
-    var                  isHyperlink :               Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
+    var                 hasHyperlink :               Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
+	var                  hasSiblings :               Bool  { return parentZone?.count ?? 0 > 1 }
     var                   isSelected :               Bool  { return gSelecting.isSelected(self) }
     var                    isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
-    var                    canTravel :               Bool  { return isBookmark || isHyperlink || isEmail || isEssay }
+    var                    canTravel :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasEssay }
     var                     hasColor :               Bool  { return zoneColor != nil && zoneColor != "" }
-	var                      isEmail :               Bool  { return hasTrait(for: .eEmail) && email != "" }
-	var                      isEssay :               Bool  { return hasTrait(for: .eEssay) && essayMaybe != nil }
+	var                     hasEmail :               Bool  { return hasTrait(for: .eEmail) && email != "" }
+	var                     hasEssay :               Bool  { return hasTrait(for: .eEssay) }
     var                      isTrash :               Bool  { return recordName == kTrashName }
     var                    isInTrash :               Bool  { return root?.isTrash              ?? false }
     var                isInFavorites :               Bool  { return root?.isRootOfFavorites    ?? false }
