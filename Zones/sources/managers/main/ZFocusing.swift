@@ -431,16 +431,46 @@ class ZFocusing: NSObject {
 
 
     func maybeTravelThrough(_ iZone: Zone?, onCompletion: Closure? = nil) {
-        guard let zone = iZone else { onCompletion?(); return }
+        guard let zone = iZone else {
+			onCompletion?()
+
+			return
+		}
 
         if  !invokeBookmark(zone, onCompletion: onCompletion),
             !invokeHyperlink(zone),
-			!revealEssay(zone) {
+			!invokeEssay(zone) {
             invokeEmail(zone)
         }
     }
 
-	func revealEssay(_ iZone: Zone) -> Bool { // false means not handled
+	@discardableResult func invokeBookmark(_ bookmark: Zone, onCompletion: Closure?) -> Bool { // false means not traveled
+		let doTryBookmark = bookmark.isBookmark
+
+		if  doTryBookmark {
+			travelThrough(bookmark) { object, kind in
+				#if os(iOS)
+				gActionsController.alignView()
+				#endif
+				onCompletion?()
+			}
+		}
+
+		return doTryBookmark
+	}
+
+	@discardableResult func invokeHyperlink(_ iZone: Zone) -> Bool { // false means not traveled
+		if  let link = iZone.hyperLink,
+			link    != kNullLink {
+			link.openAsURL()
+
+			return true
+		}
+
+		return false
+	}
+
+	@discardableResult func invokeEssay(_ iZone: Zone) -> Bool { // false means not handled
 		if  iZone.essayMaybe != nil {
 			gEssayEditor.swapGraphAndEssay()
 
@@ -451,7 +481,7 @@ class ZFocusing: NSObject {
 	}
 
     @discardableResult func invokeEmail(_ iZone: Zone) -> Bool { // false means not traveled
-        if  let link  = iZone.email {
+        if  let  link = iZone.email {
             let email = "mailTo:" + link
             email.openAsURL()
 
@@ -459,34 +489,6 @@ class ZFocusing: NSObject {
         }
 
         return false
-    }
-
-
-    @discardableResult func invokeHyperlink(_ iZone: Zone) -> Bool { // false means not traveled
-        if  let link = iZone.hyperLink,
-            link    != kNullLink {
-            link.openAsURL()
-
-            return true
-        }
-
-        return false
-    }
-
-
-    @discardableResult func invokeBookmark(_ bookmark: Zone, onCompletion: Closure?) -> Bool { // false means not traveled
-        let doTryBookmark = bookmark.isBookmark
-
-        if  doTryBookmark {
-            travelThrough(bookmark) { object, kind in
-				#if os(iOS)
-				gActionsController.alignView()
-				#endif
-                onCompletion?()
-            }
-        }
-
-        return doTryBookmark
     }
 
 }
