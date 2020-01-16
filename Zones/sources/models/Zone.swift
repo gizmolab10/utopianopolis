@@ -70,9 +70,10 @@ class Zone : ZRecord {
     var                  isHyperlink :               Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
     var                   isSelected :               Bool  { return gSelecting.isSelected(self) }
     var                    isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
-    var                    canTravel :               Bool  { return isBookmark || isHyperlink || isEmail || hasTrait(for: .eEssay) }
+    var                    canTravel :               Bool  { return isBookmark || isHyperlink || isEmail || isEssay }
     var                     hasColor :               Bool  { return zoneColor != nil && zoneColor != "" }
-    var                      isEmail :               Bool  { return hasTrait(for: .eEmail) && email != "" }
+	var                      isEmail :               Bool  { return hasTrait(for: .eEmail) && email != "" }
+	var                      isEssay :               Bool  { return hasTrait(for: .eEssay) && essayMaybe != nil }
     var                      isTrash :               Bool  { return recordName == kTrashName }
     var                    isInTrash :               Bool  { return root?.isTrash              ?? false }
     var                isInFavorites :               Bool  { return root?.isRootOfFavorites    ?? false }

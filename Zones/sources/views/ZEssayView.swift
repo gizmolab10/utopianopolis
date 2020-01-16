@@ -18,24 +18,25 @@ enum ZHyperlinkMenuType: String {
 	case eWeb   = "h"
 	case eIdea  = "i"
 	case eEssay = "e"
+	case eClear = "c"
 
 	var title: String {
 		switch self {
 			case .eWeb:   return "Internet"
 			case .eIdea:  return "Idea"
 			case .eEssay: return "Essay"
+			case .eClear: return "Clear"
 		}
 	}
 
 	var linkType: String {
 		switch self {
-			case .eWeb:   return "http"
-			case .eIdea:  return "idea"
-			case .eEssay: return "essay"
+			case .eWeb: return "http"
+			default:    return title.lowercased()
 		}
 	}
 
-	static var all: [ZHyperlinkMenuType] { return [.eWeb, .eIdea, .eEssay] }
+	static var all: [ZHyperlinkMenuType] { return [.eWeb, .eIdea, .eEssay, .eClear] }
 
 }
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
@@ -91,6 +92,23 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
+	func handleKey(_ iKey: String?) -> Bool {   // false means key not handled
+		guard let key = iKey else {
+			return false
+		}
+
+		switch key {
+			case "a":     textView?.selectAll(nil)
+			case "e":     export()
+			case "h":     showHyperlinkPopup()
+			case "s":     save()
+			case kReturn: save(); gEssayEditor.swapGraphAndEssay()
+			default:      return false
+		}
+
+		return true
+	}
+
 	// MARK:- hyperlinks
 	// MARK:-
 
@@ -130,15 +148,19 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	@objc func handlePopupMenu(_ iItem: ZMenuItem) {
 		if  let type = ZHyperlinkMenuType(rawValue: iItem.keyEquivalent) {
-			var link = type.linkType + kSeparator
+			var link: String? = type.linkType + kSeparator
 
 			switch type {
-				case .eWeb:   link.append("//apple.com")
-				case .eIdea:  if let b = pasteBuffer { link.append(b) } else { return }
-				case .eEssay: link.append("//apple.com")
+				case .eClear: link = nil
+				case .eWeb:   link?.append("//apple.com")
+				default:      if let b = pasteBuffer { link?.append(b) } else { return }
 			}
 
-			textView?.textStorage?.addAttribute(.link, value: link, range: selectionRange)
+			if  link == nil {
+				textView?.textStorage?.removeAttribute(.link,               range: selectionRange)
+			} else {
+				textView?.textStorage?   .addAttribute(.link, value: link!, range: selectionRange)
+			}
 
 			zone?.essay.essayMaybe?.needSave()
 		}
@@ -172,16 +194,32 @@ class ZEssayView: ZView, ZTextViewDelegate {
 				let    t = parts.first?.first,
 				let  rID = parts.last,
 				let type = ZHyperlinkMenuType(rawValue: String(t)) {
+				let grab = gSelecting.zone(with: rID)	// find zone with rID
 				switch type {
-					case .eIdea:
-						if  let   grab = gSelecting.zone(with: rID),			// find zone with rID
-							let common = zone?.closestCommonParent(of: grab) {
-							gHere      = common
+					case .eEssay:
+						if  let grabbed = grab,
+							let  common = zone?.closestCommonParent(of: grabbed) {
+							gHere       = common
 
-							grab  .grab()										// focus on zone with rID
-							grab  .asssureIsVisible()
-							zone? .asssureIsVisible()
-							essay?.essayMaybe?.clearSave()
+							grabbed.grab()										// focus on zone with rID
+							essay? .essayMaybe?.clearSave()
+
+							FOREGROUND {
+								self.setup()
+								gControllers.signalFor(nil, regarding: .eRelayout)
+							}
+
+							return true
+						}
+					case .eIdea:
+						if  let grabbed = grab,
+							let  common = zone?.closestCommonParent(of: grabbed) {
+							gHere       = common
+
+							grabbed.grab()										// focus on zone with rID
+							grabbed.asssureIsVisible()
+							zone?  .asssureIsVisible()
+							essay? .essayMaybe?.clearSave()
 
 							FOREGROUND {
 								gEssayEditor.swapGraphAndEssay()
@@ -220,7 +258,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 				case .eLock:  return false
 				case .eExit:  gEssayEditor.swapGraphAndEssay()
 				case .eDelete:
-					FOREGROUND {							// defer until after this method returns
+					FOREGROUND {							// defer until after this method returns ... avoids corrupting newly setup text
 						self.setup(restoreSelection: delta)	// reset all text and restore cursor position
 					}
 			}

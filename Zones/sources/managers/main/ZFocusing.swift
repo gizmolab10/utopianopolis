@@ -232,7 +232,7 @@ class ZFocusing: NSObject {
             }
 
             if zone.isBookmark {     // state 2
-                gFocusing.travelThrough(zone) { object, kind in
+                travelThrough(zone) { object, kind in
                     focusClosure(object as! Zone)
                 }
             } else if zone == gHere {       // state 3
@@ -433,14 +433,24 @@ class ZFocusing: NSObject {
     func maybeTravelThrough(_ iZone: Zone?, onCompletion: Closure? = nil) {
         guard let zone = iZone else { onCompletion?(); return }
 
-        if  !travelThroughBookmark(zone, onCompletion: onCompletion),
-            !travelThroughHyperlink(zone) {
-            travelThroughEmail(zone)
+        if  !invokeBookmark(zone, onCompletion: onCompletion),
+            !invokeHyperlink(zone),
+			!revealEssay(zone) {
+            invokeEmail(zone)
         }
     }
 
+	func revealEssay(_ iZone: Zone) -> Bool { // false means not handled
+		if  iZone.essayMaybe != nil {
+			gEssayEditor.swapGraphAndEssay()
 
-    @discardableResult func travelThroughEmail(_ iZone: Zone) -> Bool {
+			return true
+		}
+
+		return false
+	}
+
+    @discardableResult func invokeEmail(_ iZone: Zone) -> Bool { // false means not traveled
         if  let link  = iZone.email {
             let email = "mailTo:" + link
             email.openAsURL()
@@ -452,7 +462,7 @@ class ZFocusing: NSObject {
     }
 
 
-    @discardableResult func travelThroughHyperlink(_ iZone: Zone) -> Bool {
+    @discardableResult func invokeHyperlink(_ iZone: Zone) -> Bool { // false means not traveled
         if  let link = iZone.hyperLink,
             link    != kNullLink {
             link.openAsURL()
@@ -464,7 +474,7 @@ class ZFocusing: NSObject {
     }
 
 
-    @discardableResult func travelThroughBookmark(_ bookmark: Zone, onCompletion: Closure?) -> Bool {
+    @discardableResult func invokeBookmark(_ bookmark: Zone, onCompletion: Closure?) -> Bool { // false means not traveled
         let doTryBookmark = bookmark.isBookmark
 
         if  doTryBookmark {

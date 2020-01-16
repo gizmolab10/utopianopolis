@@ -104,6 +104,7 @@ class ZGraphEditor: ZBaseEditor {
                     case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
                     case kSpace:   addIdea()
 					case kReturn:  if COMMAND { grabOrEdit(COMMAND, OPTION) }
+					case kEscape:               grabOrEdit(   true,   true)
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() }
                     default:       return false // false means key not handled
@@ -166,6 +167,7 @@ class ZGraphEditor: ZBaseEditor {
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { deleteGrabbed(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
                     case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) }
+					case kEscape:  if hasWidget { grabOrEdit(   true,  false) }
                     default:       return false // false means key not handled
                     }
                 }
@@ -429,15 +431,15 @@ class ZGraphEditor: ZBaseEditor {
 
     
     func grabOrEdit(_ COMMAND: Bool, _ OPTION: Bool) {
-        if  COMMAND {
-			gCreateMultipleEssay    =  OPTION
+        if  COMMAND {							// switch to essay edit mode
+			gCreateMultipleEssay    = !OPTION 	// default is multiple, option drives it to single
 
 			gTextEditor.stopCurrentEdit()
 			swapGraphAndEssay()
-        } else {
+        } else {								// switch to idea edit mode
             gTextEditor.edit(gSelecting.currentMoveable)
             
-            if OPTION {
+            if !OPTION {
                 gTextEditor.placeCursorAtEnd()
             }
         }

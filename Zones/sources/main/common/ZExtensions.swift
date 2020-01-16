@@ -758,22 +758,70 @@ extension NSRange {
 
 }
 
+extension NSTextTab {
+
+	var string: String {
+		return kAlignment + kLevelSixSeparator + "\(alignment.rawValue)" + kLevelFiveSeparator + kLocation + kLevelSixSeparator + "\(location)"
+	}
+
+	convenience init(string: String) {
+		var location: CGFloat = 0.0
+		var alignment = NSTextAlignment.natural
+
+		let parts = string.components(separatedBy: kLevelFiveSeparator)
+
+		for part in parts {
+			let subparts = part.components(separatedBy: kLevelSixSeparator)
+			let    value = subparts[1]
+			switch subparts[0] {
+				case kLocation:  if let v = value.floatValue                                         { location  = v }
+				case kAlignment: if let v = value.integerValue, let a = NSTextAlignment(rawValue: v) { alignment = a }
+				default: break
+			}
+		}
+
+		self.init(textAlignment: alignment, location: location, options: [:])
+	}
+}
+
 extension NSMutableParagraphStyle {
 
-	var string: String { return "alignment" + kAttributeSeparator + "\(alignment)"}
+	var string: String {
+		var result = kAlignment + kLevelThreeSeparator + "\(alignment.rawValue)"
+
+		if  let stops = tabStops {
+			result.append(kLevelTwoSeparator + kStops)
+
+			for stop in stops {
+				result.append(kLevelThreeSeparator + stop.string)
+			}
+		}
+
+		return result
+	}
 
 	convenience init(string: String) {
 		self.init()
 
-		let parts = string.components(separatedBy: kAttributeSeparator)
+		let parts = string.components(separatedBy: kLevelTwoSeparator)
 
-		if  parts.count > 1,
-			parts[0] == "alignment",
-			let raw = parts[1].integerValue,
-			let a = NSTextAlignment(rawValue: raw) {
-			self.alignment = a
+		for part in parts {
+			let subparts = part.components(separatedBy: kLevelThreeSeparator)
 
-			return
+			if  subparts.count > 1 {
+				switch subparts[0] {
+					case kAlignment:
+						if  let   raw = subparts[1].integerValue,
+							let     a = NSTextAlignment(rawValue: raw) {
+							alignment = a
+						}
+					case kStops:
+						let string = subparts[1]
+						let   stop = NSTextTab(string: string)
+						tabStops   = [stop]
+					default: break
+				}
+			}
 		}
 	}
 
@@ -799,19 +847,19 @@ extension NSFontDescriptor {
 		var separator = ""
 
 		for (name, attribute) in fontAttributes {
-			result.append(separator + name.rawValue + kFontAttributeSeparator + "\(attribute)")
-			separator = kAttributeSeparator
+			result.append(separator + name.rawValue + kLevelThreeSeparator + "\(attribute)")
+			separator = kLevelTwoSeparator
 		}
 
 		return result
 	}
 
 	convenience init(string: String) {
-		let parts = string.components(separatedBy: kAttributeSeparator)
+		let parts = string.revised.components(separatedBy: kLevelTwoSeparator)
 		var dict  = [NSFontDescriptor.AttributeName : Any]()
 
 		for part in parts {
-			let subparts   = part.components(separatedBy: kFontAttributeSeparator)
+			let subparts   = part.components(separatedBy: kLevelThreeSeparator)
 			if  subparts.count > 1 {
 				let    key = subparts[0]
 				let  value = subparts[1]
@@ -827,40 +875,41 @@ extension NSFontDescriptor {
 
 extension NSMutableAttributedString {
 
+	var allKeys: [NSAttributedString.Key] { return [.font, .link, .paragraphStyle, .foregroundColor, .backgroundColor] }
+
 	var attributesAsString: String {
-		get { return attributeStrings.joined(separator: kAttributesSeparator) }
-		set { attributeStrings = newValue.components(separatedBy: kAttributesSeparator) }
+		get { return attributeStrings.joined(separator: kLevelOneSeparator) }
+		set { attributeStrings = newValue.components(separatedBy: kLevelOneSeparator) }
 	}
 
 	var attributeStrings: [String] {
 		get {
 			var result = [String]()
 			let  range = NSRange(location: 0, length: length)
-			let keys: [NSAttributedString.Key] = [.font, .link, .foregroundColor]
 
-			for key in keys {
+			for key in allKeys {
 				enumerateAttribute(key, in: range, options: .reverse) { (item, inRange, flag) in
 					var string: Any?
 
-					if  let value = item {
-						if  let  font = value as? ZFont {
-							string    = font.string
+					if  let value      = item {
+						if  let   font = value as? ZFont {
+							string     = font.string
 						}
 
-						if  key      == .link {
-							string    = "\(value)"
+						if  key       == .link {
+							string     = "\(value)"
 						}
 
-						if  let color = value as? NSColor {
-							string    = color.string
+						if  let  color = value as? NSColor {
+							string     = color.string
 						}
 
-						if  let style = value as? NSMutableParagraphStyle {
-							string    = style.string
+						if  let  style = value as? NSMutableParagraphStyle {
+							string     = style.string
 						}
 
 						if  let append = string as? String {
-							result.append("\(inRange.location)" + kValueSeparator + "\(inRange.length)" + kValueSeparator + key.rawValue + kValueSeparator + append)
+							result.append("\(inRange.location)" + kLevelFourSeparator + "\(inRange.length)" + kLevelFourSeparator + key.rawValue + kLevelFourSeparator + append)
 						}
 					}
 				}
@@ -871,7 +920,7 @@ extension NSMutableAttributedString {
 
 		set {
 			for string in newValue {
-				let      parts = string.components(separatedBy: kValueSeparator)
+				let      parts = string.components(separatedBy: kLevelFourSeparator)
 				if       parts.count > 3,
 					let  start = parts[0].integerValue,
 					let  count = parts[1].integerValue {
@@ -901,9 +950,8 @@ extension NSMutableAttributedString {
 
 	func removeAllAttributes() {
 		let range = NSRange(location: 0, length: length)
-		let keys: [NSAttributedString.Key] = [.font, .link, .foregroundColor]
 
-		for key in keys {
+		for key in allKeys {
 			removeAttribute(key, range: range)
 		}
 	}
@@ -924,6 +972,12 @@ extension String {
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var       isOpposite: Bool { return "]}>)".contains(self) }
 
+	var revised: String {
+		return replacingOccurrences(of: kOldLevelOneSeparator, with: kLevelOneSeparator)
+		.replacingOccurrences(of: kOldLevelTwoSeparator, with: kLevelTwoSeparator)
+		.replacingOccurrences(of: kOldLevelThreeSeparator, with: kLevelThreeSeparator)
+		.replacingOccurrences(of: kOldLevelFourSeparator, with: kLevelFourSeparator)
+	}
     
     var opposite: String {
 		switch self {

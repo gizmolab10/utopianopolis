@@ -341,15 +341,18 @@ extension NSBezierPath {
 extension ZTextView {
 
 	func setText(_ text: Any) {
-		if let string = text as? NSMutableAttributedString {
-			insertText(string, replacementRange: NSRange(location: 0, length: string.length))
-			textStorage?.removeAllAttributes()
-			textStorage?.attributesAsString = string.attributesAsString
-		} else if let s = text as? String {
-			insertText(text, replacementRange: NSRange(location: 0, length: s.length))
-		} else {
-			insertText(text, replacementRange: NSRange())
+		let range = NSRange(location: 0, length: textStorage?.length ?? 0)
+
+		guard let string = text as? NSMutableAttributedString else {
+			insertText(text, replacementRange: range)
+
+			return
 		}
+
+		insertText(string.string, replacementRange: range)
+		textStorage?.removeAllAttributes()
+
+		textStorage?.attributesAsString = string.attributesAsString
 	}
 }
 
