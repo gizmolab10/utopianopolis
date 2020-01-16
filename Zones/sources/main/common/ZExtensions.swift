@@ -6,7 +6,6 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
 
@@ -37,8 +36,9 @@ func printDebug(_ mode: ZDebugMode, prefix: String = "  ", _ message: String, su
 	}
 }
 
-extension NSObject {
+func gSeparator(at level: Int) -> String { return " ( \(level) ) " }
 
+extension NSObject {
 
     func                  note(_ iMessage: Any?)                { } // logk(iMessage) }
     func           performance(_ iMessage: Any?)                { log(iMessage) }
@@ -55,13 +55,11 @@ extension NSObject {
         }
     }
 
-
     func log(_ iMessage: Any?) {
         if  let   message = iMessage as? String, message != "" {
             printDebug(.log, message)
         }
     }
-
 
     func time(of title: String, _ closure: Closure) {
         let start = Date()
@@ -73,14 +71,12 @@ extension NSObject {
         columnarReport(title, duration)
     }
 
-
     func blankScreenDebug() {
         if  let w = gGraphController?.thoughtsRootWidget.bounds.size.width, w < 1.0 {
             bam("blank graph !!!!!!")
         }
     }
-    
-    
+
     func repeatUntil(_ isDone: @escaping ToBooleanClosure, then: @escaping Closure) {
         let _ = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { iTimer in
             if  isDone() {
@@ -89,26 +85,22 @@ extension NSObject {
             }
         }
     }
-    
 
     func syncAndRedraw(_ zone: Zone? = nil) {
         gControllers.sync(zone) {
             gControllers.signalFor(zone, regarding: .eRelayout, onCompletion: nil)
         }
     }
-    
 
     func redrawAndSync(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
         gControllers.syncToCloudAfterSignalFor(zone, regarding: .eRelayout, onCompletion: onCompletion)
     }
-    
 
     func redrawSyncRedraw(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
         redrawAndSync(zone) {
             gControllers.signalFor(zone, regarding: .eRelayout, onCompletion: onCompletion)
         }
     }
-
 
     @discardableResult func detectWithMode(_ dbID: ZDatabaseID, block: ToBooleanClosure) -> Bool {
         gRemoteStorage.pushDatabaseID(dbID)
@@ -120,7 +112,6 @@ extension NSObject {
         return result
     }
 
-
     func invokeUsingDatabaseID(_ dbID: ZDatabaseID?, block: Closure) {
         if  dbID != nil && dbID != gDatabaseID {
             detectWithMode(dbID!) { block(); return false }
@@ -129,32 +120,26 @@ extension NSObject {
         }
     }
 
-
     func UNDO<TargetType : AnyObject>(_ target: TargetType, handler: @escaping (TargetType) -> Swift.Void) {
         kUndoManager.registerUndo(withTarget:target, handler: { iTarget in
             handler(iTarget)
         })
     }
 
-
     func openBrowserForFocusWebsite() {
         "https://medium.com/@sand_74696/what-you-get-d565b064be7b".openAsURL()
     }
 
-    
     func sendEmailBugReport() {
         "mailto:sand@gizmolab.com".openAsURL()
     }
-    
-    
+
     // MARK:- bookmarks
     // MARK:-
-
 
     func isValid(_ iLink: String?) -> Bool {
         return components(of: iLink) != nil
     }
-
 
     func components(of iLink: String?) -> [String]? {
         if  let       link = iLink {
@@ -167,7 +152,6 @@ extension NSObject {
         return nil
     }
 
-
     func recordName(from iLink: String?) -> String? {
         if  let components = components(of: iLink) {
             let      name  = components[2]
@@ -177,7 +161,6 @@ extension NSObject {
         return nil
     }
 
-
     func databaseID(from iLink: String?) -> ZDatabaseID? {
         if  let components = components(of: iLink) {
             let      dbID  = components[0]
@@ -186,7 +169,6 @@ extension NSObject {
 
         return nil
     }
-
 
     func zoneFrom(_ iLink: String?) -> Zone? {
         if  iLink                   != nil,
@@ -206,10 +188,8 @@ extension NSObject {
         return nil
     }
 
-
     // MARK:- JSON
     // MARK:-
-
 
     func dictFromJSON(_ dict: ZStringObjectDictionary) -> ZStorageDictionary {
         var                   result = ZStorageDictionary ()
@@ -250,7 +230,6 @@ extension NSObject {
         return result
     }
 
-
     func jsonDictFrom(_ dict: ZStorageDictionary) -> ZStringObjectDictionary {
         var    last = ZStorageDictionary ()
         var  result = ZStringObjectDictionary ()
@@ -290,10 +269,9 @@ extension NSObject {
     }
 
 }
-//
-//
+
+
 //extension CKRecord.Reference {
-//    
 //
 //    func storageDictionary() -> ZStorageDictionary {
 //        var          dict = ZStorageDictionary()
@@ -301,7 +279,6 @@ extension NSObject {
 //        
 //        return dict
 //    }
-//    
 //    
 //    class func create(with dict: ZStorageDictionary, for iDatabaseID: ZDatabaseID) -> CKRecord.Reference? {
 //        if  let name = dict[.recordName] as? String {
@@ -315,13 +292,10 @@ extension NSObject {
 //    
 //}
 
-
 extension CKRecord {
-    
-    
+
     var reference: CKRecord.Reference { return CKRecord.Reference(recordID: recordID, action: .none) }
-    
-    
+
     var isEmpty: Bool {
         for key in [kpZoneName, kpParent, kpZoneParentLink] {
             if  self[key] != nil {
@@ -331,7 +305,6 @@ extension CKRecord {
 
         return true
     }
-    
 
     var isBookmark: Bool {
         if  let    link = self[kpZoneLink] as? String {
@@ -340,7 +313,6 @@ extension CKRecord {
 
         return false
     }
-
 
     var decoratedName: String {
 		switch recordType {
@@ -369,7 +341,7 @@ extension CKRecord {
 					}
 					
 					return prefix.appending(name)
-			}
+				}
 			default:
 				return recordID.recordName
 		}
@@ -377,16 +349,13 @@ extension CKRecord {
         return kNoValue
     }
 
-
     convenience init(for name: String) {
         self.init(recordType: kZoneType, recordID: CKRecord.ID(recordName: name))
     }
 
-    
     func isDeleted(dbID: ZDatabaseID) -> Bool {
         return gRemoteStorage.cloud(for: dbID)?.manifest?.deleted?.contains(recordID.recordName) ?? false
     }
-
 
     @discardableResult func copy(to iCopy: CKRecord?, properties: [String]) -> Bool {
         var  altered = false
@@ -404,11 +373,9 @@ extension CKRecord {
         return altered
     }
 
-
     func hasKey(_ key: String) -> Bool {
         return allKeys().contains(key)
     }
-
 
     func index(within iReferences: [CKRecord.ID]) -> Int? {
         for (index, identifier) in iReferences.enumerated() {
@@ -419,7 +386,6 @@ extension CKRecord {
 
         return nil
     }
-
 
     func maybeMarkAsFetched(_ databaseID: ZDatabaseID?) {
         let states        = [ZRecordState.notFetched, ZRecordState.needsFetch]
@@ -432,7 +398,6 @@ extension CKRecord {
     }
 
 }
-
 
 extension BlockOperation {
     
@@ -448,9 +413,7 @@ extension BlockOperation {
     
 }
 
-
 infix operator ** : MultiplicationPrecedence
-
 
 extension Double {
     static func ** (base: Double, power: Double) -> Double{
@@ -458,9 +421,7 @@ extension Double {
     }
 }
 
-
 infix operator -- : AdditionPrecedence
-
 
 extension CGPoint {
 
@@ -471,11 +432,9 @@ extension CGPoint {
         y = size.height
     }
 
-
     static func - ( left: CGPoint, right: CGPoint) -> CGSize {
         return CGSize(width: left.x - right.x, height: left.y - right.y)
     }
-
 
     static func -- ( left: CGPoint, right: CGPoint) -> CGFloat {
         let  width = Double(left.x - right.x)
@@ -485,7 +444,6 @@ extension CGPoint {
     }
 
 }
-
 
 extension CGSize {
 
@@ -513,12 +471,10 @@ extension CGSize {
 
 }
 
-
 extension CGRect {
 
     var    center: CGPoint { return CGPoint(x: midX, y: midY) }
     var    extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
-    
 
     public init(start: CGPoint, end: CGPoint) {
         self.init()
@@ -537,7 +493,6 @@ extension CGRect {
         }
     }
 
-
     func indices(within iBounds: CGRect, radix: Int) -> IndexSet {
         let c = center
         var set = IndexSet()
@@ -547,7 +502,6 @@ extension CGRect {
         return set
     }
 
-    
     func offsetBy(fractionX: CGFloat, fractionY: CGFloat) -> CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY
@@ -555,7 +509,6 @@ extension CGRect {
         return offsetBy(dx:dX, dy:dY)
     }
 
-    
     func insetBy(fractionX: CGFloat, fractionY: CGFloat) -> CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY
@@ -565,9 +518,7 @@ extension CGRect {
 
 }
 
-
 extension Array {
-
 
     func apply(closure: AnyToStringClosure) -> String {
         var separator = ""
@@ -588,7 +539,6 @@ extension Array {
         return string
     }
 
-    
     func containsCompare(with other: AnyObject, using: CompareClosure? = nil) -> Bool {
         if  let compare = using {
             for item in self {
@@ -600,7 +550,6 @@ extension Array {
         
         return false    // false means unique
     }
-    
 
     mutating func appendUnique(contentsOf items: Array, compare: CompareClosure? = nil) {
         let array = self as NSArray
@@ -613,20 +562,16 @@ extension Array {
         }
     }
 
-    
     func intersection<S>(_ other: Array<Array<Element>.Element>) -> S where Element: Hashable {
         return Array(Set(self).intersection(Set(other))) as! S
     }
     
 }
 
-
 extension Array where Element == Zone {
 
-
     func updateOrder() { updateOrdering(start: 0.0, end: 1.0) }
-    
-    
+
     func orderLimits() -> (start: Double, end: Double) {
         var start = 1.0
         var   end = 0.0
@@ -647,15 +592,13 @@ extension Array where Element == Zone {
         
         return (start, end)
     }
-    
-    
+
     func sortedByReverseOrdering() -> Array {
         return sorted { (a, b) -> Bool in
             return a.order > b.order
         }
     }
-    
-    
+
     func updateOrdering(start: Double, end: Double) {
         let increment = (end - start) / Double(self.count + 2)
         
@@ -672,7 +615,6 @@ extension Array where Element == Zone {
         
         gSelecting.updateCousinList()
     }
-    
 
     func traverseAncestors(_ block: ZoneToStatusClosure) {
         for zone in self {
@@ -680,7 +622,6 @@ extension Array where Element == Zone {
         }
     }
 
-    
     func traverseAllAncestors(_ block: @escaping ZoneClosure) {
         for zone in self {
             zone.safeTraverseAncestors(visited: []) { iZone -> ZTraverseStatus in
@@ -690,8 +631,7 @@ extension Array where Element == Zone {
             }
         }
     }
-    
-    
+
     func rootMost(goingUp: Bool) -> Zone? {
         guard count > 0 else { return nil }
 
@@ -724,7 +664,6 @@ extension Array where Element == Zone {
         
         return candidate
     }
-
 
     var rootMost: Zone? {
         var candidate: Zone?
@@ -761,7 +700,7 @@ extension NSRange {
 extension NSTextTab {
 
 	var string: String {
-		return kAlignment + gSeparatorAt(6) + "\(alignment.rawValue)" + gSeparatorAt(5) + kLocation + gSeparatorAt(6) + "\(location)"
+		return kAlignment + gSeparator(at: 6) + "\(alignment.rawValue)" + gSeparator(at: 5) + kLocation + gSeparator(at: 6) + "\(location)"
 	}
 
 	convenience init(string: String) {
@@ -787,13 +726,13 @@ extension NSTextTab {
 extension NSMutableParagraphStyle {
 
 	var string: String {
-		var result = kAlignment + gSeparatorAt(3) + "\(alignment.rawValue)"
+		var result = kAlignment + gSeparator(at: 3) + "\(alignment.rawValue)"
 
 		if  let stops = tabStops {
-			result.append(gSeparatorAt(2) + kStops)
+			result.append(gSeparator(at: 2) + kStops)
 
 			for stop in stops {
-				result.append(gSeparatorAt(3) + stop.string)
+				result.append(gSeparator(at: 3) + stop.string)
 			}
 		}
 
@@ -827,7 +766,6 @@ extension NSMutableParagraphStyle {
 
 }
 
-
 extension ZFont {
 
 	var string: String { return fontDescriptor.string }
@@ -839,7 +777,6 @@ extension ZFont {
 	}
 }
 
-
 extension NSFontDescriptor {
 
 	var string: String {
@@ -847,8 +784,8 @@ extension NSFontDescriptor {
 		var separator = ""
 
 		for (name, attribute) in fontAttributes {
-			result.append(separator + name.rawValue + gSeparatorAt(3) + "\(attribute)")
-			separator = gSeparatorAt(2)
+			result.append(separator + name.rawValue + gSeparator(at: 3) + "\(attribute)")
+			separator = gSeparator(at: 2)
 		}
 
 		return result
@@ -878,7 +815,7 @@ extension NSMutableAttributedString {
 	var allKeys: [NSAttributedString.Key] { return [.font, .link, .paragraphStyle, .foregroundColor, .backgroundColor] }
 
 	var attributesAsString: String {
-		get { return attributeStrings.joined(separator: gSeparatorAt(1)) }
+		get { return attributeStrings.joined(separator: gSeparator(at: 1)) }
 		set { attributeStrings = newValue.components(at: 1) }
 	}
 
@@ -909,7 +846,7 @@ extension NSMutableAttributedString {
 						}
 
 						if  let append = string as? String {
-							result.append("\(inRange.location)" + gSeparatorAt(4) + "\(inRange.length)" + gSeparatorAt(4) + key.rawValue + gSeparatorAt(4) + append)
+							result.append("\(inRange.location)" + gSeparator(at: 4) + "\(inRange.length)" + gSeparator(at: 4) + key.rawValue + gSeparator(at: 4) + append)
 						}
 					}
 				}
@@ -972,17 +909,6 @@ extension String {
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var       isOpposite: Bool { return "]}>)".contains(self) }
 
-	var modern: String {
-		return replacingOccurrences(of: kLevelOneSeparator,   with: gSeparatorAt(1))
-		.replacingOccurrences      (of: kLevelTwoSeparator,   with: gSeparatorAt(2))
-		.replacingOccurrences      (of: kLevelThreeSeparator, with: gSeparatorAt(3))
-		.replacingOccurrences      (of: kLevelFourSeparator,  with: gSeparatorAt(4))
-	}
-
-	func components(at level: Int) -> [String] {
-		return components(separatedBy: gSeparatorAt(level))
-	}
-
     var opposite: String {
 		switch self {
 			case "[": return "]"
@@ -997,7 +923,6 @@ extension String {
 		}
     }
 
-
     var escaped: String {
         var result = "\(self)"
         for character in "\\\"\'`" {
@@ -1008,8 +933,7 @@ extension String {
 
         return result
     }
-    
-    
+
     var stripped: String {
         var before = self
         
@@ -1024,9 +948,9 @@ extension String {
         return before
     }
 
-    
     /// remove underline from leading spaces
-    var smartStripped: String {     //
+
+	var smartStripped: String {     //
         var altered = substring(fromInclusive: 4)
 //        let lastIndex = altered.length - 1
 //
@@ -1038,9 +962,19 @@ extension String {
 
         return altered
     }
-    
-    
-    subscript (r: Range<Int>) -> String {
+
+	var modern: String {
+		return replacingOccurrences(of: kLevelOneSeparator,   with: gSeparator(at: 1))
+			.replacingOccurrences      (of: kLevelTwoSeparator,   with: gSeparator(at: 2))
+			.replacingOccurrences      (of: kLevelThreeSeparator, with: gSeparator(at: 3))
+			.replacingOccurrences      (of: kLevelFourSeparator,  with: gSeparator(at: 4))
+	}
+
+	func components(at level: Int) -> [String] {
+		return components(separatedBy: gSeparator(at: level))
+	}
+
+	subscript (r: Range<Int>) -> String {
         let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)),
                                             upper: min(length, max(0, r.upperBound))))
         let start = index(startIndex, offsetBy: range.lowerBound)
@@ -1048,17 +982,14 @@ extension String {
         return String(self[start ..< end])
     }
 
-
-    subscript (i: Int) -> String {
+	subscript (i: Int) -> String {
         return self[i ..< i + 1]
     }
 
-    
     static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
     func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }
     func substring(toExclusive:   Int) -> String  { return String(self[..<index(at: toExclusive)]) }
     func widthForFont  (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
-
 
     func rect(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGRect {
         let bounds = rectWithFont(font)
@@ -1067,7 +998,6 @@ extension String {
         return bounds.offsetBy(dx: xDelta, dy: 0.0)
     }
 
-    
     func offset(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGFloat {
         let            end = iRange.lowerBound
         let     startRange = NSMakeRange(0, end)
@@ -1078,7 +1008,6 @@ extension String {
         
         return startWidth + (atStart ? 0.0 : width)    // move down, use right side of selection
     }
-
 
 	var integerValue: Int? {
 		if  let    value = Int(self) {
@@ -1095,7 +1024,6 @@ extension String {
 
 		return nil
     }
-
 
     var color: ZColor? {
         if self != "" {
@@ -1122,7 +1050,6 @@ extension String {
 
         return nil
     }
-
 
     func index(at: Int) -> Index {
         var position = at
@@ -1152,13 +1079,11 @@ extension String {
 		return withAnyCharacterIn.contains(start)
 	}
 
-
     func ends(withAnyCharacterIn: String) -> Bool {
         let end = substring(fromInclusive: length - 1)
 
         return withAnyCharacterIn.contains(end)
     }
-
 
     func stringBySmartly(appending: String) -> String {
         var before = self
@@ -1183,7 +1108,6 @@ extension String {
         return before + after
     }
 
-
     func stringBySmartReplacing(_ range: NSRange, with replacement: String) -> String {
         let a = substring(toExclusive:   range.lowerBound)
         let b = replacement
@@ -1198,8 +1122,7 @@ extension String {
 
         return String(self[iStart ..< iEnd])
     }
-    
-    
+
     func location(of offset: CGFloat, using font: ZFont) -> Int {
         var location = 0
         var total = CGFloat(0.0)
@@ -1221,13 +1144,11 @@ extension String {
         return location
     }
 
-
     func character(at iOffset: Int) -> String {
         let index = self.index(startIndex, offsetBy: iOffset)
 
         return self[index].description
     }
-
 
     mutating func appendSpacesToLength(_ iLength: Int) {
         if 0 < iLength {
@@ -1237,11 +1158,9 @@ extension String {
         }
     }
 
-    
     var isDashedLine: Bool {
         return contains(kHalfLineOfDashes)
     }
-    
 
     var isLineWithTitle: Bool {
         let substrings = components(separatedBy: kHalfLineOfDashes)
@@ -1253,14 +1172,12 @@ extension String {
         return false
     }
 
-    
     func isLineTitle(enclosing range: NSRange) -> Bool {
         let a = substring(  toExclusive: range.lowerBound - 1)
         let b = substring(fromInclusive: range.upperBound + 1)
 
         return a == kHalfLineOfDashes && b == kHalfLineOfDashes
     }
-
 
     static func forZones(_ zones: [Zone]?) -> String {
         return zones?.apply()  { object -> (String?) in
@@ -1275,7 +1192,6 @@ extension String {
             } ?? ""
     }
 
-
     static func forCKRecords(_ records: [CKRecord]?) -> String {
         return records?.apply() { object -> (String?) in
             if  let  record  = object as? CKRecord {
@@ -1288,7 +1204,6 @@ extension String {
             return nil
             } ?? ""
     }
-
 
     static func forReferences(_ references: [CKRecord.Reference]?, in databaseID: ZDatabaseID) -> String {
         return references?.apply()  { object -> (String?) in
@@ -1303,7 +1218,6 @@ extension String {
             } ?? ""
     }
 
-
     static func forOperationIDs (_ iIDs: [ZOperationID]?) -> String {
         return iIDs?.apply()  { object -> (String?) in
             if  let operation  = object as? ZOperationID {
@@ -1317,11 +1231,9 @@ extension String {
             } ?? ""
     }
 
-
     static func pluralized(_ iValue: Int, unit: String = "", plural: String = "s", followedBy: String = "") -> String {
         return iValue <= 0 ? "" : "\(iValue) \(unit)\(iValue == 1 ? "" : "\(plural)")\(followedBy)"
     }
-
 
     static func *(_ input: String, _ multiplier: Int) -> String {
         var  count = multiplier
@@ -1335,7 +1247,6 @@ extension String {
         return output
     }
 
-
     static func character(at index: Int, for levelType: ZOutlineLevelType) -> String {
         if levelType == .roman {
             return toRoman(number: index + 1)
@@ -1345,7 +1256,6 @@ extension String {
             return String.from(levelType.asciiValue + UInt32(index))
         }
     }
-
 
     static func toRoman(number: Int) -> String {
         let romanValues = ["m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv", "i"]
@@ -1445,13 +1355,11 @@ extension String {
 
 }
 
-
 extension Character {
     var asciiValue: UInt32? {
         return String(self).unicodeScalars.first?.value
     }
 }
-
 
 extension Date {
 	
@@ -1482,13 +1390,11 @@ extension Date {
 
 }
 
-
 extension ZGestureRecognizer {
 
     @objc var isShiftDown:   Bool { return false }
     @objc var isOptionDown:  Bool { return false }
     @objc var isCommandDown: Bool { return false }
-
 
     func cancel() {
         isEnabled = false
@@ -1496,10 +1402,8 @@ extension ZGestureRecognizer {
     }
 }
 
-
 extension ZView {
 
-    
     func clearGestures() {
         if recognizers != nil {
             for recognizer in recognizers! {
@@ -1507,7 +1411,6 @@ extension ZView {
             }
         }
     }
-    
 
     func addBorder(thickness: CGFloat, inset: CGFloat = 0.0, radius: CGFloat, color: CGColor) {
         zlayer.cornerRadius = radius
@@ -1515,14 +1418,12 @@ extension ZView {
         zlayer.borderColor  = color
     }
 
-
     func addBorderRelative(thickness: CGFloat, radius: CGFloat, color: CGColor) {
         let            size = self.bounds.size
         let radius: CGFloat = min(size.height, size.width) * radius
 
         self.addBorder(thickness: thickness, radius: radius, color: color)
     }
-
 
     func setAllSubviewsNeedDisplay() {
         if !gDeferRedraw {
@@ -1532,7 +1433,6 @@ extension ZView {
         }
     }
 
-
     func applyToAllSubviews(_ closure: ViewClosure) {
         closure(self)
 
@@ -1541,14 +1441,12 @@ extension ZView {
         }
     }
 
-
     func applyToAllSuperviews(_ closure: ViewClosure) {
         closure(self)
 
         superview?.applyToAllSuperviews(closure)
     }
 
-    
     func drawDots(surrounding rect: CGRect, count: Int, radius: Double, color: ZColor?, startQuadrant: Double = 0.0) {
         let  bigRadius = Double(rect.size.height) / 2.0
         var   dotCount = count
@@ -1610,7 +1508,6 @@ extension ZView {
         }
     }
 }
-
 
 extension ZTextField {
 

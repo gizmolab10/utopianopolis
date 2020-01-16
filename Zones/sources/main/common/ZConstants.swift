@@ -145,5 +145,3 @@ let         kLevelOneSeparator = "  ((a))  "
 let         kLevelTwoSeparator = " (a|a) "
 let       kLevelThreeSeparator = " (f) "
 let        kLevelFourSeparator = " (v) "
-
-func gSeparatorAt(_ level: Int) -> String { return " ( \(level) ) " }
