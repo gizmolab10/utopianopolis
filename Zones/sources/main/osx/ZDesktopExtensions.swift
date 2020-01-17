@@ -718,34 +718,22 @@ extension ZTextEditor {
     
     
     func fullResign()  { assignAsFirstResponder (nil) }
-
-	
-	func item(type: ZSpecialsMenuType) -> NSMenuItem {
-		let  	  item = NSMenuItem(title: type.title, action: #selector(handlePopupMenu(_:)), keyEquivalent: type.rawValue)
-		item.isEnabled = true
-		item.target    = self
-		
-		if  type != .eCancel {
-			item.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
-		}
-		
-		return item
-	}
-	
 	
 	func showSpecialsPopup() {
-		let menu = NSMenu(title: "add a special character")
-		menu.autoenablesItems = false
-		
-		for type in ZSpecialsMenuType.activeTypes {
-			menu.addItem(item(type: type))
-		}
-		
-		menu.addItem(NSMenuItem.separator())
-		menu.addItem(item(type: .eCancel))
-		menu.popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
+		NSMenu.specialsPopup(target: self, action: #selector(handlePopupMenu(_:))).popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
 	}
-	
+
+	@objc func handlePopupMenu(_ iItem: ZMenuItem) {
+		#if os(OSX)
+		if  let  type = ZSpecialsMenuType(rawValue: iItem.keyEquivalent),
+			let range = selectedRanges[0] as? NSRange,
+			type     != .eCancel {
+			let  text = type.text
+
+			insertText(text, replacementRange: range)
+		}
+		#endif
+	}
 
     override func doCommand(by selector: Selector) {
         switch selector {
@@ -782,6 +770,39 @@ extension ZTextEditor {
 
 }
 
+extension NSMenu {
+
+	static func specialsPopup(target: AnyObject, action: Selector) -> NSMenu {
+		let menu = NSMenu(title: "add a special character")
+		menu.autoenablesItems = false
+
+		for type in ZSpecialsMenuType.activeTypes {
+			menu.addItem(item(type: type, target: target, action: action))
+		}
+
+		menu.addItem(NSMenuItem.separator())
+		menu.addItem(item(type: .eCancel, target: target, action: action))
+
+		return menu
+	}
+
+	static func item(type: ZSpecialsMenuType, target: AnyObject, action: Selector) -> NSMenuItem {
+		let  	  item = NSMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
+		item.isEnabled = true
+		item.target    = target
+
+		if  type != .eCancel {
+			item.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
+		}
+
+		return item
+	}
+
+	static func handleMenu() {
+		
+	}
+
+}
 
 extension NSText {
 	

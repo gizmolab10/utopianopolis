@@ -430,7 +430,7 @@ class ZFocusing: NSObject {
     }
 
 
-    func maybeTravelThrough(_ iZone: Zone?, onCompletion: Closure? = nil) {
+    func invokeTravel(_ iZone: Zone?, onCompletion: Closure? = nil) {
         guard let zone = iZone else {
 			onCompletion?()
 

@@ -138,7 +138,6 @@ class ZGraphEditor: ZBaseEditor {
                     case "f":      search(OPTION)
                     case "g":      refetch(COMMAND, OPTION)
                     case "h":      editTrait(for: .eHyperlink)
-					case "i":      editImage()
                     case "l":      alterCase(up: false)
 					case "j":      rotateWritable()
 					case "k":      toggleColorized()
@@ -159,7 +158,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
                     case "?":      if CONTROL { openBrowserForFocusWebsite() }
-					case "=":      if COMMAND { updateSize(up: true) } else { gFocusing.maybeTravelThrough(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() } }
+					case "=":      if COMMAND { updateSize(up: true) } else { gFocusing.invokeTravel(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() } }
                     case ";", "'": gFavorites.switchToNext(key == "'") { self.syncAndRedraw() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addNextAndRedraw(containing: OPTION)
@@ -168,13 +167,13 @@ class ZGraphEditor: ZBaseEditor {
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { deleteGrabbed(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
                     case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) }
 					case kEscape:  if hasWidget { grabOrEdit(   true,  false) }
-                    default:       return false // false means key not handled
+                    default:       return false // indicate key was not handled
                     }
                 }
             }
         }
 
-        return true // true means key handled
+        return true // indicate key was handled
     }
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
@@ -413,13 +412,6 @@ class ZGraphEditor: ZBaseEditor {
 
         redrawAndSync()
     }
-
-	func editImage() {
-//		if  let  zone = gSelecting.firstSortedGrab {
-//			let trait = zone.trait(for: .eImage)
-//		}
-	}
-
 
     func editTrait(for iType: ZTraitType) {
         if  let  zone = gSelecting.firstSortedGrab {
@@ -874,7 +866,7 @@ class ZGraphEditor: ZBaseEditor {
             }
 
             if  zone.canTravel && (isCommand || (zone.fetchableCount == 0 && zone.count == 0)) {
-                gFocusing.maybeTravelThrough(zone) { // email, hyperlink, bookmark
+                gFocusing.invokeTravel(zone) { // email, hyperlink, bookmark, essay
                     self.redrawSyncRedraw()
                 }
             } else {
@@ -1585,27 +1577,24 @@ class ZGraphEditor: ZBaseEditor {
             if !selectionOnly {
                 actuallyMoveInto(zones, onCompletion: onCompletion)
             } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
-                gFocusing.maybeTravelThrough(zone, onCompletion: onCompletion)
+                gFocusing.invokeTravel(zone, onCompletion: onCompletion)
             } else {
                 let needReveal = !zone.showingChildren
                 
-              //  zone.needChildren()
                 zone.revealChildren()
                 
-              //  gBatches.children(.restore) { iSame in
-                    if  zone.count > 0,
-                        let child = gInsertionsFollow ? zone.children.last : zone.children.first {
-                        child.grab()
-                        
-                        if  needReveal {
-                            gControllers.signalFor(zone, regarding: .eRelayout)
-                        }
-                    }
-                    
-                    gFavorites.updateAllFavorites()
-                    
-                    onCompletion?()
-              //  }
+				if  zone.count > 0,
+					let child = gInsertionsFollow ? zone.children.last : zone.children.first {
+					child.grab()
+
+					if  needReveal {
+						gControllers.signalFor(zone, regarding: .eRelayout)
+					}
+				}
+
+				gFavorites.updateAllFavorites()
+
+				onCompletion?()
             }
         }
     }

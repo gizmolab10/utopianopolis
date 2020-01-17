@@ -39,6 +39,7 @@ enum ZHyperlinkMenuType: String {
 	static var all: [ZHyperlinkMenuType] { return [.eWeb, .eIdea, .eEssay, .eClear] }
 
 }
+
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZView, ZTextViewDelegate {
@@ -56,6 +57,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	func clear() {
 		zone?.essayMaybe = nil
+		textView?.delegate = nil	    			// clear so that shouldChangeTextIn won't be called on insertText below
 
 		if  let length = textView?.textStorage?.length, length > 0 {
 			textView?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
@@ -70,15 +72,12 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		clear() 												// discard previously edited text
 
 		if  let 					text = essay?.essayText {
-			textView?		   .delegate = nil	    			// clear so that shouldChangeTextIn won't be called on insertText below
 			textView?         .usesRuler = true
 			textView?    .isRulerVisible = true
 			textView?  .usesInspectorBar = true
 			textView?.textContainerInset = NSSize(width: 20, height: 0)
 
 			textView?.setText(text)
-
-			textView?.delegate 	         = self 				// set delegate after insertText
 
 			if  var range      = essay?.lastTextRange {			// select entire text of final essay
 				if  let offset = restoreSelection {
@@ -87,6 +86,8 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 				textView?.setSelectedRange(range)
 			}
+
+			textView?.delegate 	         = self 				// set delegate after insertText
 
 			gWindow?.makeFirstResponder(textView)
 		}
@@ -101,12 +102,29 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			case "a":     textView?.selectAll(nil)
 			case "e":     export()
 			case "h":     showHyperlinkPopup()
+			case "i":     showSpecialsPopup()
 			case "s":     save()
 			case kReturn: save(); gEssayEditor.swapGraphAndEssay()
 			default:      return false
 		}
 
 		return true
+	}
+
+	// MARK:- special characters
+	// MARK:-
+
+	func showSpecialsPopup() {
+		NSMenu.specialsPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: nil)
+	}
+
+	@objc func handleSpecialsPopupMenu(_ iItem: ZMenuItem) {
+		if  let  type = ZSpecialsMenuType(rawValue: iItem.keyEquivalent),
+			type     != .eCancel {
+			let  text = type.text
+
+			textView?.insertText(text, replacementRange: selectionRange)
+		}
 	}
 
 	// MARK:- hyperlinks
@@ -124,7 +142,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 	func item(type: ZHyperlinkMenuType) -> NSMenuItem {
-		let  	  item = NSMenuItem(title: type.title, action: #selector(handlePopupMenu(_:)), keyEquivalent: type.rawValue)
+		let  	  item = NSMenuItem(title: type.title, action: #selector(handleHyperlinkPopupMenu(_:)), keyEquivalent: type.rawValue)
 		item   .target = self
 		item.isEnabled = true
 
@@ -146,7 +164,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 
-	@objc func handlePopupMenu(_ iItem: ZMenuItem) {
+	@objc func handleHyperlinkPopupMenu(_ iItem: ZMenuItem) {
 		if  let type = ZHyperlinkMenuType(rawValue: iItem.keyEquivalent) {
 			var link: String? = type.linkType + kSeparator
 
@@ -183,9 +201,13 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		return found
 	}
 
-	@discardableResult func followCurrentLink(within range: NSRange) -> Bool {
+	func setSelectionRange(_ range: NSRange) {
 		selectionRect  = textView?.firstRect(forCharacterRange: range, actualRange: nil) ?? CGRect()
 		selectionRange = range
+	}
+
+	@discardableResult func followCurrentLink(within range: NSRange) -> Bool {
+		setSelectionRange(range)
 
 		if  let   link = currentLink as? String {
 			let  parts = link.components(separatedBy: kSeparator)
@@ -236,17 +258,17 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		return false
 	}
 
-	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange, toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
-		followCurrentLink(within: newSelectedCharRange)
+	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldRange: NSRange, toCharacterRange newRange: NSRange) -> NSRange {
+		setSelectionRange(newRange)
 
-		return newSelectedCharRange
+		return newRange
 	}
 
 	func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {
 		return followCurrentLink(within: NSRange(location: charIndex, length: 0))
 	}
 
-	// MARK:- lockout editing of "extra" characters
+	// MARK:- lockout editing of added whitespace
 	// MARK:-
 
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
