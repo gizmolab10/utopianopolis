@@ -754,7 +754,7 @@ extension NSMutableParagraphStyle {
 							let     a = NSTextAlignment(rawValue: raw) {
 							alignment = a
 						}
-					case kStops:
+					case kStops:  // TODO: can have more than one stop
 						let string = subparts[1]
 						let   stop = NSTextTab(string: string)
 						tabStops   = [stop]
@@ -870,7 +870,8 @@ extension NSMutableAttributedString {
 					switch key {
 						case .link:            attribute =                                 string
 						case .font:            attribute = ZFont 				  (string: string)
-						case .foregroundColor: attribute = ZColor				  (string: string)
+						case .foregroundColor,
+							 .backgroundColor: attribute = ZColor				  (string: string)
 						case .paragraphStyle:  attribute = NSMutableParagraphStyle(string: string)
 						default:    		   break
 					}

@@ -138,7 +138,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "f":      search(OPTION)
                     case "g":      refetch(COMMAND, OPTION)
                     case "h":      editTrait(for: .eHyperlink)
-                    case "l":      alterCase(up: false)
+                    case "l", "u": alterCase(up: key == "u")
 					case "j":      rotateWritable()
 					case "k":      toggleColorized()
                     case "m":      orderByLength(OPTION)
@@ -149,7 +149,6 @@ class ZGraphEditor: ZBaseEditor {
                     case "r":      if SPECIAL { sendEmailBugReport() } else { reverse() }
 					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
                     case "t":      swapWithParent()
-                    case "u":      alterCase(up: true)
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)

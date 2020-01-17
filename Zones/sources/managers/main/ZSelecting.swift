@@ -217,7 +217,18 @@ class ZSelecting: NSObject {
 
         return movable!
     }
-    
+
+	var pastableRecordName: String? {
+		let pastables = pasteableZones
+
+		if  pastables.count > 0 {
+			let (pastable, (_, _)) = pastables.first!
+
+			return pastable.recordName
+		}
+
+		return nil
+	}
 
     // MARK:- convenience
     // MARK:-

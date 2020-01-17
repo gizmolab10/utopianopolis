@@ -26,6 +26,7 @@ class ZParagraph: NSObject {
 	var   lastTextRange : NSRange? { return textRange }
 	var      titleRange = NSRange()
 	var       textRange = NSRange()
+	var        children = [ZParagraph]()
 
 	func delete() { zone?.removeTrait(for: .eEssay) }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }

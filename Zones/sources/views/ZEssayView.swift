@@ -46,7 +46,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var textView: ZTextView?
 	var essay: ZParagraph? { return zone?.essay }
 	var zone:  Zone?       { return gSelecting.firstGrab }
-	var selectionRange = NSRange()
+	var selectionRange = NSRange() { didSet { selectionRect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect() } }
 	var selectionRect  = CGRect()
 
 	func export() { gFiles.exportToFile(.eEssay, for: zone) }
@@ -56,7 +56,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	// MARK:-
 
 	func clear() {
-		zone?.essayMaybe = nil
+		zone?.essayMaybe   = nil
 		textView?.delegate = nil	    			// clear so that shouldChangeTextIn won't be called on insertText below
 
 		if  let length = textView?.textStorage?.length, length > 0 {
@@ -99,16 +99,25 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 
 		switch key {
-			case "a":     textView?.selectAll(nil)
-			case "e":     export()
-			case "h":     showHyperlinkPopup()
-			case "i":     showSpecialsPopup()
-			case "s":     save()
-			case kReturn: save(); gEssayEditor.swapGraphAndEssay()
-			default:      return false
+			case "a":      textView?.selectAll(nil)
+			case "e":      export()
+			case "h":      showHyperlinkPopup()
+			case "i":      showSpecialsPopup()
+			case "l", "u": alterCase(up: key == "u")
+			case "s":      save()
+			case kReturn:  save(); gEssayEditor.swapGraphAndEssay()
+			default:       return false
 		}
 
 		return true
+	}
+
+	func alterCase(up: Bool) {
+		if  let        text = textView?.textStorage?.attributedSubstring(from: selectionRange).string {
+			let replacement = up ? text.uppercased() : text.lowercased()
+
+			textView?.insertText(replacement, replacementRange: selectionRange)
+		}
 	}
 
 	// MARK:- special characters
@@ -151,27 +160,14 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		return item
 	}
 
-	var pasteBuffer: String? {
-		let pastables = gSelecting.pasteableZones
-
-		if  pastables.count > 0 {
-			let (pastable, (_, _)) = pastables.first!
-
-			return pastable.recordName
-		}
-
-		return nil
-	}
-
-
 	@objc func handleHyperlinkPopupMenu(_ iItem: ZMenuItem) {
 		if  let type = ZHyperlinkMenuType(rawValue: iItem.keyEquivalent) {
 			var link: String? = type.linkType + kSeparator
 
 			switch type {
-				case .eClear: link = nil
+				case .eClear: link = nil // to remove existing hyperlink
 				case .eWeb:   link?.append("//apple.com")
-				default:      if let b = pasteBuffer { link?.append(b) } else { return }
+				default:      if let b = gSelecting.pastableRecordName { link?.append(b) } else { return }
 			}
 
 			if  link == nil {
@@ -179,8 +175,6 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			} else {
 				textView?.textStorage?   .addAttribute(.link, value: link!, range: selectionRange)
 			}
-
-			zone?.essay.essayMaybe?.needSave()
 		}
 	}
 
@@ -201,13 +195,8 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		return found
 	}
 
-	func setSelectionRange(_ range: NSRange) {
-		selectionRect  = textView?.firstRect(forCharacterRange: range, actualRange: nil) ?? CGRect()
-		selectionRange = range
-	}
-
 	@discardableResult func followCurrentLink(within range: NSRange) -> Bool {
-		setSelectionRange(range)
+		selectionRange = range
 
 		if  let   link = currentLink as? String {
 			let  parts = link.components(separatedBy: kSeparator)
@@ -224,11 +213,18 @@ class ZEssayView: ZView, ZTextViewDelegate {
 							gHere       = common
 
 							grabbed.grab()										// focus on zone with rID
-							essay? .essayMaybe?.clearSave()
 
 							FOREGROUND {
-								self.setup()
 								gControllers.signalFor(nil, regarding: .eRelayout)
+
+								if  let e = grabbed.essayMaybe,
+									self.essay?.children.contains(e) ?? false {
+									self.textView?.setSelectedRange(e.textRange) // select text range of grabbed essay
+								} else {
+									self.essay?.essayMaybe?.clearSave()
+
+									self.setup()
+								}
 							}
 
 							return true
@@ -258,8 +254,11 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		return false
 	}
 
+	// MARK:- delegates
+	// MARK:-
+
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldRange: NSRange, toCharacterRange newRange: NSRange) -> NSRange {
-		setSelectionRange(newRange)
+		selectionRange = newRange
 
 		return newRange
 	}
