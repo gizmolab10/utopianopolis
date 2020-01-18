@@ -16,17 +16,18 @@ enum ZAlterationType: Int {
 }
 
 class ZParagraph: NSObject {
-	var paragraphOffset = 0
-	var     essayLength = 0
-	var     essayMaybe  : ZTrait?  { return zone?.traits[    .eEssay] }
-	var     essayTrait  : ZTrait?  { return zone?.trait(for: .eEssay) }
-	var     zone        : Zone?
-	var  paragraphRange : NSRange  { return NSRange(location: paragraphOffset, length: textRange.upperBound) }
-	var  fullTitleRange : NSRange  { var range = titleRange; range.location += paragraphOffset - 2; range.length += 3; return range }
-	var   lastTextRange : NSRange? { return textRange }
-	var      titleRange = NSRange()
-	var       textRange = NSRange()
-	var        children = [ZParagraph]()
+	var   paragraphOffset = 0
+	var       essayLength = 0
+	var       essayMaybe  : ZTrait?  { return zone?.traits[    .eEssay] }
+	var       essayTrait  : ZTrait?  { return zone?.trait(for: .eEssay) }
+	var       zone        : Zone?
+	var lastTextIsDefault : Bool     { return essayMaybe?.text == kEssayDefault }
+	var    paragraphRange : NSRange  { return NSRange(location: paragraphOffset, length: textRange.upperBound) }
+	var    fullTitleRange : NSRange  { var range = titleRange; range.location += paragraphOffset - 2; range.length += 3; return range }
+	var     lastTextRange : NSRange? { return textRange }
+	var        titleRange = NSRange()
+	var         textRange = NSRange()
+	var          children = [ZParagraph]()
 
 	func delete() { zone?.removeTrait(for: .eEssay) }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }

@@ -430,7 +430,7 @@ class ZGraphEditor: ZBaseEditor {
         } else {								// switch to idea edit mode
             gTextEditor.edit(gSelecting.currentMoveable)
             
-            if !OPTION {
+            if  OPTION {
                 gTextEditor.placeCursorAtEnd()
             }
         }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CloudKit
 
 #if os(OSX)
 import Cocoa
@@ -44,6 +45,7 @@ var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var textView: ZTextView?
+	var essayID:            CKRecord.ID?
 	var essay: ZParagraph? { return zone?.essay }
 	var zone:  Zone?       { return gSelecting.firstGrab }
 	var selectionRange = NSRange() { didSet { selectionRect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect() } }
@@ -56,8 +58,12 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	// MARK:-
 
 	func clear() {
-		zone?.essayMaybe   = nil
-		textView?.delegate = nil	    			// clear so that shouldChangeTextIn won't be called on insertText below
+		zone?		     .essayMaybe = nil
+		textView?		   .delegate = nil	    			// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
+		textView?         .usesRuler = true
+		textView?    .isRulerVisible = true
+		textView?  .usesInspectorBar = true
+		textView?.textContainerInset = NSSize(width: 20, height: 0)
 
 		if  let length = textView?.textStorage?.length, length > 0 {
 			textView?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
@@ -65,31 +71,33 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 	func setup(restoreSelection: Int? = nil) {
-		let exitSetup = (essay?.essayMaybe?.needsSave ?? false) && restoreSelection == nil
+		let exitSetup = restoreSelection == nil && (essay?.essayMaybe?.needsSave ?? false) && (essayID == nil || essayID! == zone?.record?.recordID)
 
 		if  exitSetup { return }								// has not yet been saved. don't overwrite
 
 		clear() 												// discard previously edited text
 
-		if  let 					text = essay?.essayText {
-			textView?         .usesRuler = true
-			textView?    .isRulerVisible = true
-			textView?  .usesInspectorBar = true
-			textView?.textContainerInset = NSSize(width: 20, height: 0)
+		if  let text = essay?.essayText {
+			essayID  = zone?.record?.recordID
 
 			textView?.setText(text)
+			select(restoreSelection: restoreSelection)
 
-			if  var range      = essay?.lastTextRange {			// select entire text of final essay
-				if  let offset = restoreSelection {
-					range      = NSRange(location: offset, length: 0)
-				}
-
-				textView?.setSelectedRange(range)
-			}
-
-			textView?.delegate 	         = self 				// set delegate after insertText
+			textView?.delegate = self 				// set delegate after insertText
 
 			gWindow?.makeFirstResponder(textView)
+		}
+	}
+
+	func select(restoreSelection: Int? = nil) {
+		if  let e = essay,
+			e.lastTextIsDefault,
+			var range      = e.lastTextRange {			// select entire text of final essay
+			if  let offset = restoreSelection {
+				range      = NSRange(location: offset, length: 0)
+			}
+
+			textView?.setSelectedRange(range)
 		}
 	}
 
@@ -212,17 +220,18 @@ class ZEssayView: ZView, ZTextViewDelegate {
 							let  common = zone?.closestCommonParent(of: grabbed) {
 							gHere       = common
 
-							grabbed.grab()										// focus on zone with rID
-
 							FOREGROUND {
 								gControllers.signalFor(nil, regarding: .eRelayout)
 
 								if  let e = grabbed.essayMaybe,
 									self.essay?.children.contains(e) ?? false {
-									self.textView?.setSelectedRange(e.textRange) // select text range of grabbed essay
+									grabbed.grab()									// focus on zone with rID (after grabbing essay, which uses current grab)
+									self.textView?.setSelectedRange(e.textRange) 	// select text range of grabbed essay
 								} else {
-									self.essay?.essayMaybe?.clearSave()
+									gCreateMultipleEssay = true
 
+									grabbed.grab()									// focus on zone with rID (before calling setup, which uses current grab)
+									self.essay?.essayMaybe?.clearSave()
 									self.setup()
 								}
 							}

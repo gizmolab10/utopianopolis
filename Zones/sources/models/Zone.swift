@@ -1231,20 +1231,24 @@ class Zone : ZRecord {
 
 
 	func closestCommonParent(of other: Zone) -> Zone? {
-		var ancestors = [Zone]()
+		var ancestors = [self]
 		var common: Zone?
 
-		if databaseID == other.databaseID {
+		if  databaseID == other.databaseID {
 			traverseAllAncestors { zone in
 				if  zone != self {
 					ancestors.append(zone)
 				}
 			}
 
-			other.traverseAllAncestors { zone in
-				if  ancestors.contains(zone),
-					common == nil {
-					common  = zone
+			if  ancestors.contains(other) {
+				common = other
+			} else {
+				other.traverseAllAncestors { zone in
+					if  ancestors.contains(zone),
+						common == nil {
+						common  = zone
+					}
 				}
 			}
 		}

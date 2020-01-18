@@ -145,7 +145,7 @@ class ZTrait: ZRecord {
 			let isEmpty   = text == nil || text!.isEmpty
 
 			if  text     == nil {
-				text      = "placeholder"
+				text      = kEssayDefault
 			}
 
 			if  let     s = text {
@@ -178,7 +178,7 @@ class ZTrait: ZRecord {
 
 			for (index, part) in parts.enumerated() {
 				if  index              != 0 {
-					let subSeparator    = " "
+					let subSeparator    = kSeparator
 					var subParts        = part.components(separatedBy: subSeparator)
 					let number          = subParts[0]
 

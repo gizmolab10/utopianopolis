@@ -10,6 +10,7 @@ import Foundation
 
 class ZEssay: ZParagraph {
 	var essayRange: NSRange { return NSRange(location: 0, length: essayLength) }
+	override var lastTextIsDefault: Bool { return children.last?.lastTextIsDefault ?? false }
 
 	override var lastTextRange: NSRange? {
 		if  let    last = children.last {
@@ -22,8 +23,8 @@ class ZEssay: ZParagraph {
 	func setupChildren() {
 		if  gCreateMultipleEssay {
 			zone?.traverseAllProgeny {   iChild in
-				if  let e = iChild.essayMaybe {
-					self.children.append(e)
+				if  iChild.hasTrait(for: .eEssay) { // do not use essayMaybe as it may not yet be initialized
+					self.children.append(iChild.essay)
 				}
 			}
 		}
