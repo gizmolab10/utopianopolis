@@ -199,6 +199,10 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			found = item
 		}
 
+		if  let f = found as? NSURL {
+			found = f.absoluteString
+		}
+
 		return found
 	}
 
@@ -222,15 +226,13 @@ class ZEssayView: ZView, ZTextViewDelegate {
 							FOREGROUND {
 								gControllers.signalFor(nil, regarding: .eRelayout)
 
-								if  let e = grabbed.essayMaybe,
-									self.essay?.children.contains(e) ?? false {
-									grabbed.grab()									// focus on zone with rID (after grabbing essay, which uses current grab)
-									self.textView?.setSelectedRange(e.textRange) 	// select text range of grabbed essay
+								if  let e = grabbed.essayMaybe, self.essay?.children.contains(e) ?? false {
+									self.textView?.setSelectedRange(e.essayTextRange) 	// select text range of grabbed essay
 								} else {
 									gCreateMultipleEssay = true
 
 									grabbed.asssureIsVisible()
-									grabbed.grab()									// focus on zone with rID (before calling setup, which uses current grab)
+									grabbed.grab()										// focus on zone with rID (before calling setup, which uses current grab)
 									self.essay?.essayMaybe?.clearSave()
 									self.setup()
 								}
@@ -243,7 +245,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 							let  common = zone?.closestCommonParent(of: grabbed) {
 							gHere       = common
 
-							grabbed.grab()										// focus on zone with rID
+							grabbed.grab()												// focus on zone with rID
 							grabbed.asssureIsVisible()
 							zone?  .asssureIsVisible()
 							essay? .essayMaybe?.clearSave()
@@ -262,9 +264,6 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 		return false
 	}
-
-	// MARK:- delegates
-	// MARK:-
 
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldRange: NSRange, toCharacterRange newRange: NSRange) -> NSRange {
 		selectionRange = newRange
