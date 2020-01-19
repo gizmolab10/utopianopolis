@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 enum ZControllerID: Int {
     case idUndefined
     case idSearchResults
@@ -27,7 +26,6 @@ enum ZControllerID: Int {
     case idHelp
     case idMain
 }
-
 
 enum ZSignalKind: Int {
     case eData
@@ -48,18 +46,14 @@ enum ZSignalKind: Int {
     case ePreferences
 }
 
-
 let gControllers = ZControllers()
-
 
 class ZControllers: NSObject {
 
-
-    var currentController: ZGenericController?
+	var currentController: ZGenericController?
     var signalObjectsByControllerID = [ZControllerID : ZSignalObject] ()
 
-
-    class ZSignalObject {
+	class ZSignalObject {
         let    closure : SignalClosure!
         let controller : ZGenericController!
 
@@ -69,8 +63,7 @@ class ZControllers: NSObject {
         }
     }
 
-
-    func controllerForID(_ iID: ZControllerID?) -> ZGenericController? {
+	func controllerForID(_ iID: ZControllerID?) -> ZGenericController? {
         if  let identifier = iID,
             let     object = signalObjectsByControllerID[identifier] {
             return object.controller
@@ -79,12 +72,33 @@ class ZControllers: NSObject {
         return nil
     }
 
+	// MARK:- hide / reveal
+	// MARK:-
+
+	func swapGraphAndEssay() {
+		FOREGROUND { 	// avoid generic menu handler invoking graph editor's handle key
+			let stopEssay 				= gWorkMode == .essayMode
+			let multiple: [ZSignalKind] = !stopEssay ? [.eEssay] : [.eEssay, .eRelayout]
+			gWorkMode     				=  stopEssay ? .graphMode : .essayMode
+
+			self.signalFor(gSelecting.firstGrab, multiple: multiple)
+		}
+	}
+
+	func showShortcuts(_ show: Bool? = nil) {
+		if  let shorts = gShortcutsController {
+			if  show ?? !(shorts.window?.isKeyWindow ?? false) {
+				shorts.showWindow(nil)
+			} else {
+				shorts.window?.close()
+			}
+		}
+	}
 
     // MARK:- startup
     // MARK:-
 
-
-    func startupCloudAndUI() {
+	func startupCloudAndUI() {
         gBatches         .usingDebugTimer = true
 		gTextEditor.refusesFirstResponder = true			// WORKAROUND new feature of mac os x
 
@@ -117,8 +131,7 @@ class ZControllers: NSObject {
         }
     }
 
-    
-    func requestFeedback() {
+	func requestFeedback() {
         if       !emailSent(for: .eBetaTesting) {
             recordEmailSent(for: .eBetaTesting)
 
@@ -137,33 +150,27 @@ class ZControllers: NSObject {
             }
         }
     }
-    
 
-    // MARK:- registry
+	// MARK:- registry
     // MARK:-
 
-
-    func setSignalHandler(for iController: ZGenericController, iID: ZControllerID, closure: @escaping SignalClosure) {
+	func setSignalHandler(for iController: ZGenericController, iID: ZControllerID, closure: @escaping SignalClosure) {
         signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
         currentController                = iController
     }
 
-
-    func clearSignalHandler(_ iID: ZControllerID) {
+	func clearSignalHandler(_ iID: ZControllerID) {
         signalObjectsByControllerID[iID] = nil
     }
 
-
-    // MARK:- signals
+	// MARK:- signals
     // MARK:-
-    
-    
-    func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure? = nil) {
+
+	func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure? = nil) {
         signalFor(object, multiple: [regarding], onCompletion: onCompletion)
     }
 
-
-    func signalFor(_ object: Any?, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
+	func signalFor(_ object: Any?, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
         FOREGROUND(canBeDirect: true) {
             gRemoteStorage.updateNeededCounts() // clean up after adding or removing children
             
@@ -195,17 +202,16 @@ class ZControllers: NSObject {
             onCompletion?()
         }
     }
-    
-    
-    func sync(_ zone: Zone?, onCompletion: Closure?) {
+
+	func sync(_ zone: Zone?, onCompletion: Closure?) {
         gBatches.sync { iSame in
             onCompletion?()
         }
     }
-    
-    
-    func syncToCloudAfterSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
+
+	func syncToCloudAfterSignalFor(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
         signalFor(zone, regarding: regarding, onCompletion: nil)
         sync(zone, onCompletion: onCompletion)
     }
+
 }

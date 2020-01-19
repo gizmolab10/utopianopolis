@@ -42,12 +42,17 @@ class ZEssay: ZParagraph {
 			}
 		} else {
 			for child in children.reversed() {
-				count         -= 1
+				count       -= 1
 
-				if  let   text = child.paragraphText {
-					result     = result ?? NSMutableAttributedString()
+				if  let text = child.paragraphText {
+					result   = result ?? NSMutableAttributedString()
 					result?.insert(gBlankLine, at: 0)
 					result?.insert(text,       at: 0)
+
+					if  count != 0 {
+						result?.insert(gBlankLine, at: 0)
+						child.bumpRanges(by: gBlankLine.length)
+					}
 				}
 			}
 

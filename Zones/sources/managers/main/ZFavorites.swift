@@ -547,13 +547,13 @@ class ZFavorites: ZRecords {
         // 2. in favorites, grabbed      -> doesn't invoke this method
         // 3. not in favorites           -> create and grab new favorite (targetting here)
 
-        if  let favorite = favoriteTargetting(here, iSpawned: false) {
-            favorite.makeVisibleAndGrab()                                                     // state 1
+        if  let    favorite = favoriteTargetting(here, iSpawned: false) {
+            favorite.asssureIsVisibleAndGrab()                                  // state 1
         } else {
             let    favorite = createBookmark(for: here, style: .addFavorite)    // state 3
             currentFavorite = favorite
 
-            favorite.makeVisibleAndGrab()
+            favorite.asssureIsVisibleAndGrab()
         }
 
         updateAllFavorites()

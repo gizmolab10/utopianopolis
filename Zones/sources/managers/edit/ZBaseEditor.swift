@@ -57,14 +57,4 @@ class ZBaseEditor: NSObject {
 		#endif
 	}
 
-	func swapGraphAndEssay() {
-		FOREGROUND { 	// avoid generic menu handler invoking graph editor's handle key
-			let stopEssay 				= gWorkMode == .essayMode
-			let multiple: [ZSignalKind] = !stopEssay ? [.eEssay] : [.eEssay, .eRelayout]
-			gWorkMode     				=  stopEssay ? .graphMode : .essayMode
-
-			gControllers.signalFor(gSelecting.firstGrab, multiple: multiple)
-		}
-	}
-
 }

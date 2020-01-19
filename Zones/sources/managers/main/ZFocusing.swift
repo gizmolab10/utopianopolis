@@ -474,7 +474,7 @@ class ZFocusing: NSObject {
 		if  iZone.hasEssay {
 			iZone.grab()
 
-			gEssayEditor.swapGraphAndEssay()
+			gControllers.swapGraphAndEssay()
 
 			return true
 		}

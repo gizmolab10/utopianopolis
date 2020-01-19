@@ -82,7 +82,7 @@ class ZParagraph: NSObject {
 		if  let    name = zone?.zoneName,
 			let    text = essayTrait?.essayText {
 			let  spacer = "  "
-			let tOffset = spacer.length + gBlankLine.length
+			let tOffset = spacer.length
 			let pOffset = tOffset + name.length + gBlankLine.length + 1
 			let   title = NSMutableAttributedString(string: spacer + name + kTab, attributes: titleAttributes)
 			result      = NSMutableAttributedString()
@@ -92,12 +92,16 @@ class ZParagraph: NSObject {
 			result?.insert(text,       at: 0)
 			result?.insert(gBlankLine, at: 0)
 			result?.insert(title,      at: 0)
-			result?.insert(gBlankLine, at: 0)
 
 			result?.fixAllAttributes()
 		}
 
 		return result
+	}
+
+	func bumpRanges(by offset: Int) {
+		titleRange = titleRange.offsetBy(offset)
+		textRange  = textRange .offsetBy(offset)
 	}
 
 	func saveParagraph(_ attributedString: NSAttributedString?) {

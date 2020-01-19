@@ -43,13 +43,13 @@ class ZEssayEditor: ZBaseEditor {
 
 			if  COMMAND {
 				switch key {
-					case "/":      if SPECIAL { ZShortcutsController.showShortcuts() }
+					case "/":      if SPECIAL { gControllers.showShortcuts() }
 					case "=", "-": updateFontSize(key == "=")
 					default:       return gEssayView?.handleKey(iKey) ?? false
 				}
 			} else {
 				switch key {
-					case kEscape: swapGraphAndEssay()
+					case kEscape: gControllers.swapGraphAndEssay()
 					default:  	  break
 				}
 			}

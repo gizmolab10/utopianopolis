@@ -97,9 +97,9 @@ class ZGraphEditor: ZBaseEditor {
                     case "f":      search(OPTION)
                     case "i":      gTextEditor.showSpecialsPopup()
                     case "p":      printCurrentFocus()
-                    case "?":      ZShortcutsController.showShortcuts()
+                    case "?":      gControllers.showShortcuts()
                     case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
-					case "/":      if SPECIAL { ZShortcutsController.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
+					case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
                     case kSpace:   addIdea()
@@ -132,7 +132,7 @@ class ZGraphEditor: ZBaseEditor {
                     switch key {
                     case "a":      if SPECIAL { gApplication.showHideAbout() } else { selectAll(progeny: OPTION) }
                     case "b":      addBookmark()
-                    case "c":      gGraphController?.recenter()
+					case "c":      if COMMAND { copyToPaste() } else { gGraphController?.recenter() }
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
                     case "e":      editTrait(for: .eEmail)
                     case "f":      search(OPTION)
@@ -152,7 +152,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
-                    case "/":      if SPECIAL { ZShortcutsController.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
+                    case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
                     case "[":      gFocusing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusing.goForward(extreme: FLAGGED)
@@ -426,7 +426,7 @@ class ZGraphEditor: ZBaseEditor {
 			gCreateMultipleEssay    = !OPTION 	// default is multiple, option drives it to single
 
 			gTextEditor.stopCurrentEdit()
-			swapGraphAndEssay()
+			gControllers.swapGraphAndEssay()
         } else {								// switch to idea edit mode
             gTextEditor.edit(gSelecting.currentMoveable)
             
@@ -602,9 +602,7 @@ class ZGraphEditor: ZBaseEditor {
             current.needRoot()
             gBatches.families { iSame in
                 if  let parent = current.parentZone {
-                    parent.traverseAllAncestors { iAncestor in
-                        iAncestor.revealChildren()
-                    }
+                    parent.asssureIsVisible()
 
                     self.redrawGraph()
                 }

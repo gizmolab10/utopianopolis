@@ -350,38 +350,6 @@ class ZSelecting: NSObject {
         }
     }
     
-    
-    func makeVisibleAndGrab(_ iZone: Zone?, updateBrowsingLevel: Bool = true) {
-		if let zone = iZone {
-			makeVisible(zone, updateBrowsingLevel: updateBrowsingLevel) {
-				gShowFavorites = kIsPhone && zone.isInFavorites
-				
-				zone.grab()
-			}
-		}
-    }
-    
-    
-    func makeVisible(_ iZone: Zone?, updateBrowsingLevel: Bool = true, onCompletion: Closure?) {
-        if  let zone = iZone,
-            let dbID = zone.databaseID,
-            let target = gRemoteStorage.cloud(for: dbID)?.hereZone {
-            zone.traverseAncestors { iAncestor -> ZTraverseStatus in
-                if  iAncestor != zone {
-                    iAncestor.revealChildren()
-                }
-                
-                if  iAncestor == target {
-                    return .eStop
-                }
-                
-                return .eContinue
-            }
-            
-            onCompletion?()
-        }
-    }
-
 	func zone(with recordName: String) -> Zone? {
 		var found: Zone?
 

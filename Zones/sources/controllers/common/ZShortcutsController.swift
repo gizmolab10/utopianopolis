@@ -6,7 +6,6 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 
 #if os(OSX)
@@ -15,11 +14,8 @@ import Foundation
     import UIKit
 #endif
 
-
-
 var gShortcuts: ZShortcutsController? { return gControllers.controllerForID(.idShortcuts) as? ZShortcutsController }
-let gShortcutsController = NSStoryboard(name: "Shortcuts", bundle: nil).instantiateInitialController() as? NSWindowController
-
+let gShortcutsController = NSStoryboard(name: "Shortcuts", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
 class ZShortcutsController: ZGenericTableController {
 
@@ -27,14 +23,6 @@ class ZShortcutsController: ZGenericTableController {
     @IBOutlet var clipView: ZView?
     override var controllerID: ZControllerID { return .idShortcuts }
 	let shortcuts = ZShortcuts()
-
-	static func showShortcuts(_ show: Bool? = nil) {
-		if  show ?? !(gShortcutsController?.window?.isKeyWindow ?? false) {
-			gShortcutsController?.showWindow(nil)
-		} else {
-			gShortcutsController?.window?.close()
-		}
-	}
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,11 +54,11 @@ class ZShortcutsController: ZGenericTableController {
             let OPTION  = flags.isOption
             let SPECIAL = COMMAND && OPTION
 			switch key {
-				case "?", "/":         ZShortcutsController.showShortcuts()
+				case "?", "/":         gControllers.showShortcuts()
 				case "a": if SPECIAL { gApplication.showHideAbout() }
 				case "p":              view.printView()
 				case "r": if COMMAND { sendEmailBugReport() }
-				case "w": if COMMAND { ZShortcutsController.showShortcuts(false) }
+				case "w": if COMMAND { gControllers.showShortcuts(false) }
 				
 				default: break
 			}
@@ -79,11 +67,9 @@ class ZShortcutsController: ZGenericTableController {
         return nil
     }
 
-
-    // MARK:- shortcuts table
+	// MARK:- shortcuts table
     // MARK:-
-	
-	
+
 	var clickCoordinates: (Int, Int)? {
 		#if os(OSX)
 		if  let table = genericTableView,
@@ -102,13 +88,11 @@ class ZShortcutsController: ZGenericTableController {
 		return nil
 	}
 
-
-    override func numberOfRows(in tableView: ZTableView) -> Int {
+	override func numberOfRows(in tableView: ZTableView) -> Int {
 		return shortcuts.numberOfRows
     }
-    
-    
-    func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
+
+	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
 		let     cellString = NSMutableAttributedString()
         let      paragraph = NSMutableParagraphStyle()
 		paragraph.tabStops = shortcuts.tabStops
@@ -121,14 +105,12 @@ class ZShortcutsController: ZGenericTableController {
 
         return cellString
 	}
-	
-	
+
 	func tableViewSelectionIsChanging(_ notification: Notification) {
 		if  let (row, column) = clickCoordinates,
 			let hyperlink = shortcuts.url(for: row, column: column) {
 			hyperlink.openAsURL()
 		}
 	}
-	
 
 }

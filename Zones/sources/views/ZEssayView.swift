@@ -90,8 +90,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 	func select(restoreSelection: Int? = nil) {
-		if  let e = essay,
-			e.lastTextIsDefault,
+		if  let e = essay,   e.lastTextIsDefault,
 			var range      = e.lastTextRange {			// select entire text of final essay
 			if  let offset = restoreSelection {
 				range      = NSRange(location: offset, length: 0)
@@ -113,7 +112,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			case "i":      showSpecialsPopup()
 			case "l", "u": alterCase(up: key == "u")
 			case "s":      save()
-			case kReturn:  save(); gEssayEditor.swapGraphAndEssay()
+			case kReturn:  save(); gControllers.swapGraphAndEssay()
 			default:       return false
 		}
 
@@ -230,6 +229,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 								} else {
 									gCreateMultipleEssay = true
 
+									grabbed.asssureIsVisible()
 									grabbed.grab()									// focus on zone with rID (before calling setup, which uses current grab)
 									self.essay?.essayMaybe?.clearSave()
 									self.setup()
@@ -249,7 +249,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 							essay? .essayMaybe?.clearSave()
 
 							FOREGROUND {
-								gEssayEditor.swapGraphAndEssay()
+								gControllers.swapGraphAndEssay()
 								gControllers.signalFor(nil, regarding: .eRelayout)
 							}
 
@@ -286,7 +286,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			switch result {
 				case .eAlter: return true
 				case .eLock:  return false
-				case .eExit:  gEssayEditor.swapGraphAndEssay()
+				case .eExit:  gControllers.swapGraphAndEssay()
 				case .eDelete:
 					FOREGROUND {							// defer until after this method returns ... avoids corrupting newly setup text
 						self.setup(restoreSelection: delta)	// reset all text and restore cursor position
