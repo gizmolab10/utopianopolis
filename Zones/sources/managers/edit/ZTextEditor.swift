@@ -73,14 +73,14 @@ class ZTextPack: NSObject {
             // add suffix for "show counts as" //
             // //////////////////////////////////
 
-            if  gDebugShowIdentifiers && zone.record != nil {
+			if  gDebugMode.contains(.names) && zone.record != nil {
                 suffix = zone.recordName
             } else if (need > 1) && (!zone.showingChildren || (gCountsMode == .progeny)) {
                 suffix = String(describing: need)
             }
 
             if  let s = suffix {
-                result.append("  (" + s + ")")
+                result.append("  ( \(s) )")
             }
         }
 

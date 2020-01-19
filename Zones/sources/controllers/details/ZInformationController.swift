@@ -99,7 +99,7 @@ class ZInformationController: ZGenericController {
 
 
     @IBAction func debugButtonAction(_ sender: Any?) {
-        gShowDebugDetails = !gShowDebugDetails
+		ZDebugMode.toggle(.info)
 
         gDetailsController?.displayViewsFor(ids: [.Tools, .Debug])
     }

@@ -430,7 +430,7 @@ class ZFavorites: ZRecords {
         bump         = { (iIndex: Int) in
             let zone = self.zoneAtIndex(iIndex)
 
-            if !gFocusing.focusThrough(zone, atArrival) {
+            if !gFocusRing.focusThrough(zone, atArrival) {
 
                 // /////////////////
                 // error: RECURSE //
@@ -446,7 +446,7 @@ class ZFavorites: ZRecords {
 
     @discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
         if  let favorite = currentFavorite {
-            return gFocusing.focusThrough(favorite, atArrival)
+            return gFocusRing.focusThrough(favorite, atArrival)
         }
 
         return false

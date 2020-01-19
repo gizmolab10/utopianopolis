@@ -99,7 +99,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "p":      printCurrentFocus()
                     case "?":      gControllers.showShortcuts()
                     case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
-					case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
+					case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawSyncRedraw() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
                     case kSpace:   addIdea()
@@ -152,12 +152,12 @@ class ZGraphEditor: ZBaseEditor {
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
-                    case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusing.pop() } else { gFocusing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
+                    case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
-                    case "[":      gFocusing.goBack(   extreme: FLAGGED)
-                    case "]":      gFocusing.goForward(extreme: FLAGGED)
+                    case "[":      gFocusRing.goBack(   extreme: FLAGGED)
+                    case "]":      gFocusRing.goForward(extreme: FLAGGED)
                     case "?":      if CONTROL { openBrowserForFocusWebsite() }
-					case "=":      if COMMAND { updateSize(up: true) } else { gFocusing.invokeTravel(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() } }
+					case "=":      if COMMAND { updateSize(up: true) } else { gFocusRing.invokeTravel(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() } }
                     case ";", "'": gFavorites.switchToNext(key == "'") { self.syncAndRedraw() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addNextAndRedraw(containing: OPTION)
@@ -323,7 +323,7 @@ class ZGraphEditor: ZBaseEditor {
 
     func focusOnTrash() {
         if  let trash = gTrash {
-            gFocusing.focusOn(trash) {
+            gFocusRing.focusOn(trash) {
                 self.redrawGraph()
             }
         }
@@ -863,7 +863,7 @@ class ZGraphEditor: ZBaseEditor {
             }
 
             if  zone.canTravel && (isCommand || (zone.fetchableCount == 0 && zone.count == 0)) {
-                gFocusing.invokeTravel(zone) { // email, hyperlink, bookmark, essay
+                gFocusRing.invokeTravel(zone) { // email, hyperlink, bookmark, essay
                     self.redrawSyncRedraw()
                 }
             } else {
@@ -1387,7 +1387,7 @@ class ZGraphEditor: ZBaseEditor {
                         iZone.concealAllProgeny()               // prevent gExpandedZones list from getting clogged with stale references
                         iZone.orphan()
                         gManifest?.smartAppend(iZone)
-						gFocusing.removeFromStack(iZone)		// prevent focus stack from containing a zombie and thus getting stuck
+						gFocusRing.removeFromStack(iZone)		// prevent focus stack from containing a zombie and thus getting stuck
                     }
 
                     if  zone.cloud?.cloudUnavailable ?? true {
@@ -1574,7 +1574,7 @@ class ZGraphEditor: ZBaseEditor {
             if !selectionOnly {
                 actuallyMoveInto(zones, onCompletion: onCompletion)
             } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
-                gFocusing.invokeTravel(zone, onCompletion: onCompletion)
+                gFocusRing.invokeTravel(zone, onCompletion: onCompletion)
             } else {
                 let needReveal = !zone.showingChildren
                 
@@ -1649,7 +1649,7 @@ class ZGraphEditor: ZBaseEditor {
                 let    targetLink = there.crossLink
                 let     sameGraph = zone.databaseID == targetLink?.databaseID
                 let grabAndTravel = {
-                    gFocusing.travelThrough(there) { object, kind in
+                    gFocusRing.travelThrough(there) { object, kind in
                         let there = object as! Zone
 
                         self.moveZone(movedZone, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
@@ -1929,7 +1929,7 @@ class ZGraphEditor: ZBaseEditor {
                 prepare()
             } else {
                 undoManager.beginUndoGrouping()
-                gFocusing.travelThrough(zone) { (iAny, iSignalKind) in
+                gFocusRing.travelThrough(zone) { (iAny, iSignalKind) in
                     prepare()
                 }
             }
@@ -2177,7 +2177,7 @@ class ZGraphEditor: ZBaseEditor {
         if !toBookmark || COMMAND {
             finish()
         } else {
-            gFocusing.travelThrough(iInto) { (iAny, iSignalKind) in
+            gFocusRing.travelThrough(iInto) { (iAny, iSignalKind) in
                 finish()
             }
         }

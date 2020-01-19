@@ -68,7 +68,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 	
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        printDebug(.error, "hah!")
+        printDebug(.errors, "hah!")
     }
 
 
@@ -78,7 +78,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
 
     func application(_ application: NSApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        printDebug(.error, "\(error)")
+        printDebug(.errors, "\(error)")
     }
     
 

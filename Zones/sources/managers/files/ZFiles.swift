@@ -204,7 +204,7 @@ class ZFiles: NSObject {
 
                         try? data.write(to: url)
                     } else {
-						printDebug(.error, "ahah")
+						printDebug(.errors, "ahah")
                     }
 
                     self.isWriting[index] = false // end prevention of write during write
@@ -275,7 +275,7 @@ class ZFiles: NSObject {
                         }
                     }
                 } catch {
-                    printDebug(.error, "\(error)")    // de-serialization
+                    printDebug(.errors, "\(error)")    // de-serialization
                 }
 
                 gRemoteStorage.zRecords(for: databaseID)?.removeDuplicates()
@@ -366,7 +366,7 @@ class ZFiles: NSObject {
                     }
                 }
             } catch {
-                printDebug(.error, "\(error)")
+                printDebug(.errors, "\(error)")
             }
 
             filePaths[index.rawValue] = path
@@ -387,7 +387,7 @@ class ZFiles: NSObject {
         do {
             try manager.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true, attributes: nil)
         } catch {
-            printDebug(.error, "\(error)")
+            printDebug(.errors, "\(error)")
         }
         
         return directoryURL

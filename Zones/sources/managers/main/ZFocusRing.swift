@@ -1,35 +1,28 @@
 //
-//  ZFocusing.swift
+//  ZFocusRing.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 11/20/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
-
-
 
 enum ZFocusKind: Int {
     case eSelected
     case eEdited
 }
 
+let gFocusRing = ZFocusRing()
 
-let gFocusing = ZFocusing()
+class ZFocusRing: NSObject {
 
-
-class ZFocusing: NSObject {
-
-
-    var    focusRing = ZoneArray ()
+    var         ring = ZRecordArray ()
     var currentIndex = -1
     var   priorIndex = -1
-    var     topIndex : Int  { return focusRing.count - 1 }
-    var       atHere : Bool { return currentIndex >= 0 && currentIndex <= topIndex && gHereMaybe == focusRing[currentIndex] }
-
+    var     topIndex : Int  { return ring.count - 1 }
+    var       atHere : Bool { return currentIndex >= 0 && currentIndex <= topIndex && gHereMaybe == ring[currentIndex] }
 
 	func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
 		if  let         index = databaseID.index {
@@ -38,8 +31,7 @@ class ZFocusing: NSObject {
 			gHereRecordNames  = references.joined(separator: kSeparator)
 		}
 	}
-	
-	
+
 	func hereRecordName(for databaseID: ZDatabaseID) -> String? {
 		let references = gHereRecordNames.components(separatedBy: kSeparator)
 		
@@ -49,16 +41,14 @@ class ZFocusing: NSObject {
 		
 		return nil
 	}
-	
 
-    // MARK:- travel stack
+    // MARK:- ring
     // MARK:-
-
 
     var indexOfHere : Int? {
 		if  let here = gHereMaybe {
-			for (index, zone) in focusRing.enumerated() {
-				if  here == zone {
+			for (index, record) in ring.enumerated() {
+				if  here == record {
 					return index
 				}
 			}
@@ -67,27 +57,29 @@ class ZFocusing: NSObject {
         return nil
     }
 
-    
-    func debugDump() {
-        if gDebugReport {
-            for (index, zone) in focusRing.enumerated() {
+	func index(for essay: Bool = false) -> Int? {
+		return indexOfHere
+	}
+
+    func dump() {
+        if  gDebugMode.contains(.focus) {
+            for (index, record) in ring.enumerated() {
                 let isCurrentIndex = index == currentIndex
                 let prefix = isCurrentIndex ? "                   •" : ""
-                columnarReport(prefix, zone.zoneName)
+                columnarReport(prefix, record.unwrappedName)
             }
         }
     }
 
-
-    func pushHere() {
+	func push(essay: Bool = false) {
         var newIndex  = currentIndex + 1
 
         if topIndex < 0 || !atHere {
-            if  let index = indexOfHere {
+            if  let index = index(for: essay) {
                 newIndex  = index   // prevent duplicates in stack
             } else if topIndex <= currentIndex {
 				if  let here = gHereMaybe {
-					focusRing.append(here)
+					ring.append(here)
 				}
             } else {
                 if  currentIndex < 0 {
@@ -95,19 +87,18 @@ class ZFocusing: NSObject {
                     newIndex  = currentIndex + 1
                 }
 
-                focusRing.insert(gHere, at: newIndex)
+                ring.insert(gHere, at: newIndex)
             }
 
             currentIndex = newIndex
         }
     }
 
-
-    func goBack(extreme: Bool = false) {
-        if  let    index = indexOfHere {
+    func goBack(extreme: Bool = false, essay: Bool = false) {
+        if  let    index = index(for: essay) {
             currentIndex = index
         } else if !atHere {
-            pushHere()
+            push(essay: essay)
         }
 
         if  currentIndex <= 0 || currentIndex > topIndex {
@@ -118,15 +109,14 @@ class ZFocusing: NSObject {
             currentIndex -= 1
         }
 
-        go()
+        go(essay: essay)
     }
 
-
-    func goForward(extreme: Bool = false) {
-        if  let    index = indexOfHere {
+    func goForward(extreme: Bool = false, essay: Bool = false) {
+        if  let    index = index(for: essay) {
             currentIndex = index
         } else if !atHere {
-            pushHere()
+            push(essay: essay)
         }
 
         if  currentIndex == topIndex {
@@ -137,57 +127,55 @@ class ZFocusing: NSObject {
             currentIndex += 1
         }
 
-        go()
+        go(essay: essay)
     }
 
-
-    func go() {
-        let         max = focusRing.count
+    func go(essay: Bool = false) {
+        let         max = ring.count
 
         if  0          <= currentIndex,
             max         > currentIndex, (!atHere ||
             priorIndex != currentIndex) {
             priorIndex  = currentIndex
             let dbID    = gHere.databaseID
-            let here    = focusRing[currentIndex]
+            let here    = ring[currentIndex]
             if  dbID   != here.databaseID {
                 toggleDatabaseID()         // update id before setting gHere
             }
 
-            gHere       = here
+			if !essay {
+				gHere   = here as! Zone
 
-            debugDump()
-            gHere.grab()
-            gFavorites.updateAllFavorites()
-            redrawGraph()
+				gHere.grab()
+				gFavorites.updateAllFavorites()
+				redrawGraph()
+			}
+
+			dump()
         }
     }
 
-    
-    func pop() {
-        if  let i = indexOfHere {
-            goBack()
-            focusRing.remove(at: i)
+    func pop(essay: Bool = false) {
+        if  let i = index(for: essay) {
+            goBack(essay: essay)
+            ring.remove(at: i)
         } else {
             go()
         }
     }
-	
-	
+
 	func removeFromStack(_ iZone: Zone) {
-		for (index, zone) in focusRing.enumerated() {
+		for (index, zone) in ring.enumerated() {
 			if zone == iZone {
-				focusRing.remove(at: index)
+				ring.remove(at: index)
 
 				return
 			}
 		}
 	}
-    
 
     // MARK:- travel
     // MARK:-
-
 
     func createUndoForTravelBackTo(_ zone: Zone, atArrival: @escaping Closure) {
 		if  let restoreHere = gHereMaybe {
@@ -195,8 +183,8 @@ class ZFocusing: NSObject {
 
 			UNDO(self) { iUndoSelf in
 				iUndoSelf.createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
-				iUndoSelf.pushHere()
-				self.debugDump()
+				iUndoSelf.push()
+				self.dump()
 				
 				gDatabaseID = restoreID
 				
@@ -210,7 +198,6 @@ class ZFocusing: NSObject {
 		}
     }
 
-
     func focus(kind: ZFocusKind, _ COMMAND: Bool = false, _ atArrival: @escaping Closure) {
         
         // five states:
@@ -222,7 +209,7 @@ class ZFocusing: NSObject {
 
         if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstSortedGrab {
             let focusClosure = { (zone: Zone) in
-                self.pushHere()
+                self.push()
 
                 gHere = zone
 
@@ -250,7 +237,6 @@ class ZFocusing: NSObject {
         }
     }
 
-
     func focus(_ atArrival: @escaping Closure) {
         createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
 		gTextEditor.stopCurrentEdit()
@@ -263,10 +249,9 @@ class ZFocusing: NSObject {
             }
         }
     }
-    
-    
+
     func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
-        pushHere()
+        push()
         
         gHere = iHere
 
@@ -276,7 +261,6 @@ class ZFocusing: NSObject {
             atArrival()
         }
     }
-
 
     @discardableResult func focusThrough(_ iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
         if  let bookmark = iBookmark, bookmark.isBookmark {
@@ -295,8 +279,8 @@ class ZFocusing: NSObject {
 
                 return true
             } else if let dbID = bookmark.crossLink?.databaseID {
-                pushHere()
-                debugDump()
+                push()
+                dump()
 
                 gDatabaseID = dbID
 
@@ -313,7 +297,6 @@ class ZFocusing: NSObject {
 
         return false
     }
-
 
     func travelThrough(_ iBookmark: Zone, atArrival: @escaping SignalClosure) {
         if  let  targetZRecord = iBookmark.crossLink,
@@ -338,7 +321,7 @@ class ZFocusing: NSObject {
                     target.asssureIsVisible()
                     target.grab()
                 } else {
-                    pushHere()
+                    push()
 
                     gHere = target
                 }
@@ -347,8 +330,8 @@ class ZFocusing: NSObject {
 
 				complete(target, .eRelayout)
 			} else {
-				pushHere()
-				debugDump()
+				push()
+				dump()
 
 				gShowFavorites = targetDBID == .favoritesID
 
@@ -428,7 +411,6 @@ class ZFocusing: NSObject {
 			}
 		}
     }
-
 
     func invokeTravel(_ iZone: Zone?, onCompletion: Closure? = nil) {
         guard let zone = iZone else {

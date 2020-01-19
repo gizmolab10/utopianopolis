@@ -42,7 +42,7 @@ class ZRecord: NSObject {
     var             records: ZRecords?          { return gRemoteStorage.zRecords(for: databaseID) }
     var               cloud: ZCloud?            { return records as? ZCloud }
     var          recordName: String?            { return record?.recordID.recordName }
-    var       unwrappedName: String             { return emptyName }
+    var       unwrappedName: String             { return recordName ?? emptyName }
     var           emptyName: String             { return "" }
     
 
@@ -559,7 +559,7 @@ class ZRecord: NSObject {
                         ckRecord[keyPath]  = value
 						
 						if  type == .essayAttributes {
-							printDebug(.essay, "got essay attributes: \(value)")
+							printDebug(.essays, "got essay attributes: \(value)")
 						}
                     } else if let interval = object as? Double {
                         writtenModifyDate = Date(timeIntervalSince1970: interval)

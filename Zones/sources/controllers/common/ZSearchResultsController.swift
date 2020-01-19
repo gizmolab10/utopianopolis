@@ -168,8 +168,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 
     func resolveRecord(_ dbID: ZDatabaseID, _ record: CKRecord) {
-        gFocusing.pushHere()
-        gFocusing.debugDump()
+        gFocusRing.push()
+        gFocusRing.dump()
 
         gDatabaseID = dbID
         var zone    = gCloud?.maybeZoneForRecordID(record.recordID)

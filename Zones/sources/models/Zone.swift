@@ -599,7 +599,7 @@ class Zone : ZRecord {
             return t.userHasDirectOwnership
         }
         
-        return !isTrash && !isRootOfFavorites && !isRootOfLostAndFound && !gDebugDenyOwnership && (databaseID == .mineID || zoneAuthor == gAuthorID || gIsMasterAuthor)
+        return !isTrash && !isRootOfFavorites && !isRootOfLostAndFound && !gDebugMode.contains(.access) && (databaseID == .mineID || zoneAuthor == gAuthorID || gIsMasterAuthor)
     }
 
     var directAccess: ZoneAccess {
@@ -750,7 +750,7 @@ class Zone : ZRecord {
             grab() // narrow selection to just this one zone
             
             if !(CLICKTWICE && self == gHere) {
-                gFocusing.focus(kind: .eSelected) {
+                gFocusRing.focus(kind: .eSelected) {
                     gGraphEditor.redrawSyncRedraw()
                 }
             }
@@ -1676,12 +1676,15 @@ class Zone : ZRecord {
             respectOrder()
         }
 
-        if let traitsStore: [ZStorageDictionary] = dict[.traits] as! [ZStorageDictionary]? {
-            for traitStore: ZStorageDictionary in traitsStore {
-                let trait = ZTrait(dict: traitStore, in: iDatabaseID)
+        if  let traitsStore: [ZStorageDictionary] = dict[.traits] as! [ZStorageDictionary]? {
+            for  traitStore:  ZStorageDictionary in traitsStore {
+                let    trait = ZTrait(dict: traitStore, in: iDatabaseID)
 
-				if trait.type == "w" {
-					printDebug(.essay, "trait (in " + (zoneName ?? "unknown") + ") --> " + (trait.format ?? "empty"))
+				if  gDebugMode.contains(.essays),
+					let   tt = trait.type,
+					let type = ZTraitType(rawValue: tt),
+					type    == .eEssay {
+					printDebug(.essays, "trait (in " + (zoneName ?? "unknown") + ") --> " + (trait.format ?? "empty"))
 				}
 
                 cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait (intentionally) not being in traits

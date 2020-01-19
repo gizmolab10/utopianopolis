@@ -88,7 +88,7 @@ class ZOperations: NSObject {
     var   debugTimeText :        String  { return !usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)" }
     var onCloudResponse :   AnyClosure?
     var     lastOpStart :         Date?
-	func printOp(_ message: String) { columnarReport(mode: .op, operationText, message) }
+	func printOp(_ message: String) { columnarReport(mode: .ops, operationText, message) }
 
     var operationText: String {
         var s = String(describing: currentOp)
@@ -126,7 +126,7 @@ class ZOperations: NSObject {
                 gDebugTimerCount += 1
             }
 
-            if  gDebugOpsPerformance && newValue {
+            if  gDebugMode.contains(.speed) && newValue {
                 gDebugTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: fire)
                 fire(nil)
             } else if gDebugTimer != nil && !newValue {
@@ -256,7 +256,7 @@ class ZOperations: NSObject {
     }
 
     func reportBeforePerformBlock() {
-        if  gDebugOpsPerformance {
+        if  gDebugMode.contains(.speed) {
 			printOp(debugTimeText)
         }
     }
@@ -266,7 +266,7 @@ class ZOperations: NSObject {
     }
 
     func reportOnCompletionOfPerformBlock() {
-        if  gDebugOpsPerformance, gDebugReport {
+		if  gDebugMode.contains(.speed), gDebugMode.contains(.ops) {
             let duration = Int(timeSinceOpStart) * -10
             let  message = "\(Float(duration) / 10.0)"
 

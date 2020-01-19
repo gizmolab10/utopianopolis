@@ -149,7 +149,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
 	
 	func toggleGraphs() {
-		gFocusing.pushHere()
+		gFocusRing.push()
 		toggleDatabaseID()
 		gHere.grab()
 		gHere.revealChildren()

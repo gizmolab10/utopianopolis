@@ -273,18 +273,36 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	init() { rawValue = ZDebugMode.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let      none = ZDebugMode(rawValue: 0)
-	static let        op = ZDebugMode(rawValue: 1)
-	static let       log = ZDebugMode()
-	static let     error = ZDebugMode()
-	static let     essay = ZDebugMode()
+	static let   none = ZDebugMode(rawValue: 0)
+	static let    ops = ZDebugMode(rawValue: 1)
+	static let    log = ZDebugMode()
+	static let   info = ZDebugMode()
+	static let  names = ZDebugMode()
+	static let  focus = ZDebugMode()
+	static let  speed = ZDebugMode()
+	static let errors = ZDebugMode()
+	static let essays = ZDebugMode()
+	static let access = ZDebugMode()
 
 	var description: String {
-		return [(.op,        "     op"),
-				(.log,       "    log"),
-				(.error,     "  error"),
-				(.essay,     "  essay")]
+		return [(.ops,    "     op"),
+				(.log,    "    log"),
+				(.info,   "   info"),
+				(.names,  "   name"),
+				(.focus,  "  focus"),
+				(.speed,  "  speed"),
+				(.errors, "  error"),
+				(.essays, "  essay"),
+				(.access, " access")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: " ")
+	}
+
+	static func toggle(_ mode: ZDebugMode) {
+		if  let index = gDebugMode.index(of: mode) {
+			gDebugMode.remove(at: index)
+		} else {
+			gDebugMode.append(mode)
+		}
 	}
 }

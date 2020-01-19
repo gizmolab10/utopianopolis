@@ -25,18 +25,14 @@ var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 
 var                  gWorkMode                     = ZWorkMode.startupMode
 var               gDeferRedraw                     = false
-var               gDebugReport                     = false
 var             gTextCapturing                     = false
 var           gIsReadyToShowUI                     = false
 var         gKeyboardIsVisible                     = false
 var         gArrowsDoNotBrowse                     = false
-var        gDebugDenyOwnership                     = false
 var       gCreateMultipleEssay 			   		   = false
 var       gHasCompletedStartup                     = false
-var      gDebugShowIdentifiers                     = false
-var       gDebugOpsPerformance                     = true
+var  			    gDebugMode:		  [ZDebugMode] = [.focus, .speed]
 var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
-var  			    gDebugMode:		  [ZDebugMode] = []
 var        gCurrentBrowseLevel:               Int?
 var           gDragDropIndices: NSMutableIndexSet?
 var              gDragRelation:         ZRelation?
@@ -124,13 +120,6 @@ var gMathewStyleUI : Bool {
     get { return getPreferencesBool(   for: kMathewStyle, defaultBool: false) }
     set { setPreferencesBool(newValue, for: kMathewStyle) }
 }
-
-
-var gShowDebugDetails : Bool {
-    get { return getPreferencesBool(   for: kDebugDetails, defaultBool: false) }
-    set { setPreferencesBool(newValue, for: kDebugDetails) }
-}
-
 
 var gHereRecordNames: String {
     get { return getPreferenceString(    for: kHereRecordIDs) { return kRootName + kSeparator + kRootName }! }

@@ -76,15 +76,17 @@ class ZStackableView: ZView {
     func update() {
         turnOnTitleButton()
 
+		let show = gDebugMode.contains(.info)
+
         if  isDebugView {
-            if !gShowDebugDetails {
+            if !show {
                 removeFromSuperview()
             } else if superview == nil {
                 gDetailsController?.view.addSubview(self)
             }
         }
 
-        if !isDebugView || gShowDebugDetails {
+		if !isDebugView || show {
             toggleIcon?.setState(!hideHideable)
             updateBannerGradient()
             updateHideableView()

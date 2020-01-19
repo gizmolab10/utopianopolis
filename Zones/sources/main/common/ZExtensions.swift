@@ -16,6 +16,7 @@ import CloudKit
 #endif
 
 typealias               ZoneArray = [Zone]
+typealias            ZRecordArray = [ZRecord]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
 typealias      ZStorageDictionary = [ZStorageType : NSObject]
 typealias   ZAttributesDictionary = [NSAttributedString.Key : Any]
@@ -877,7 +878,7 @@ extension NSMutableAttributedString {
 					}
 
 					if  let value = attribute {
-						printDebug(.essay, "add attribute over \(range) for \(raw): \(value)")
+						printDebug(.essays, "add attribute over \(range) for \(raw): \(value)")
 
 						addAttribute(key, value: value, range: range)
 					}

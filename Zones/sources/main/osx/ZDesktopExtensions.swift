@@ -973,7 +973,7 @@ extension ZFiles {
                 onCompletion?()
             }
         } catch {
-            printDebug(.error, "\(error)")    // de-serialization
+            printDebug(.errors, "\(error)")    // de-serialization
         }
     }
     
@@ -999,7 +999,7 @@ extension ZFiles {
 						do {
 							try string.write(to: fileURL, atomically: true, encoding: .utf8)
 						} catch {
-							printDebug(.error, "\(error)")
+							printDebug(.errors, "\(error)")
 						}
 					case .eThoughtful:
 						self.writtenRecordNames.removeAll()
@@ -1011,7 +1011,7 @@ extension ZFiles {
 						do {
 							try data.write(to: fileURL)
 						} catch {
-							printDebug(.error, "\(error)")
+							printDebug(.errors, "\(error)")
 						}
 					case .eEssay:
 						if  let essay =  zone.essayMaybe,
@@ -1024,7 +1024,7 @@ extension ZFiles {
 								try fileText?.write(to: fileURL, atomically: false, encoding: .utf8)
 
 							} catch {
-								printDebug(.error, "\(error)")
+								printDebug(.errors, "\(error)")
 							}
 						}
 				}

@@ -27,9 +27,9 @@ class ZToolsController: ZGenericTableController {
         case eRetry
         case eRecount
         case eAccess
-        case eIdentifiers
-        case eGather
-        case eTrash
+		case eGather
+		case eNames
+		case eTrash
     }
     
 
@@ -40,12 +40,12 @@ class ZToolsController: ZGenericTableController {
 
     func text(for kind: ZToolKind) -> String {
 		switch kind {
-			case .eIdentifiers: return (gDebugShowIdentifiers ? "Visible"   : "Hidden")  + " Identifiers"
-			case .eAccess:      return (gDebugDenyOwnership   ? "Crippled"  : "Normal")  + " User Access"
-			case .eGather:      return "Gather Lost and Found"
-			case .eRetry:       return "Retry Cloud"
-			case .eTrash:       return "Show Trash"
-			case .eRecount:     return "Recount"
+			case .eNames: 	return (gDebugMode.contains(.names)     ? "Visible"   : "Hidden")  + " Identifiers"
+			case .eAccess:  return (gDebugMode.contains(.access) ? "Crippled"  : "Normal")  + " User Access"
+			case .eGather:  return "Gather Lost and Found"
+			case .eRetry:   return "Retry Cloud"
+			case .eTrash:   return "Show Trash"
+			case .eRecount: return "Recount"
 		}
     }
 
@@ -65,12 +65,12 @@ class ZToolsController: ZGenericTableController {
 
             if  let kind = ZToolKind(rawValue: row) {
 				switch kind {
-					case .eIdentifiers: self.toggleShowIdentifiers()
-					case .eAccess:      self.toggleUserAccess()
-					case .eRetry:       gBatches.unHang()
-					case .eTrash:       self.showTrashCan()
-					case .eGather:      self.gatherAndShowLost()
-					case .eRecount:     gRemoteStorage.recount(); gControllers.syncToCloudAfterSignalFor(nil, regarding: .eRelayout) {}
+					case .eAccess:  ZDebugMode.toggle(.access)
+					case .eNames: 	ZDebugMode.toggle(.names)
+					case .eRetry:   gBatches.unHang()
+					case .eTrash:   self.showTrashCan()
+					case .eGather:  self.gatherAndShowLost()
+					case .eRecount: gRemoteStorage.recount(); gControllers.syncToCloudAfterSignalFor(nil, regarding: .eRelayout) {}
 				}
             }
         }
@@ -81,11 +81,6 @@ class ZToolsController: ZGenericTableController {
 
     // MARK:- actions
     // MARK:-
-
-
-    func toggleShowIdentifiers() { gDebugShowIdentifiers = !gDebugShowIdentifiers }
-    func      toggleUserAccess() {   gDebugDenyOwnership = !gDebugDenyOwnership }
-
 
     func showTrashCan() {
         if let trash = gTrash {
