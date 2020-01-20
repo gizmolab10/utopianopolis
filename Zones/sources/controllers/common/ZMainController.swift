@@ -44,13 +44,6 @@ class ZMainController: ZGenericController {
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
         switch iKind {
-			case .eEssay:
-				if  let 	   			   view = essayView {
-					let                       e = gTextEditor
-					e    .refusesFirstResponder = true			// WORKAROUND new feature of mac os x
-					view  			  .isHidden = hideEssay
-					e    .refusesFirstResponder = false
-				}
 			case .eFound:
 				searchBoxView?        .isHidden = hideSearch
 				searchResultsView?    .isHidden = hideResults
@@ -61,6 +54,13 @@ class ZMainController: ZGenericController {
 					searchResultsView?.isHidden = hideSearch
 
 					assignAsFirstResponder(nil)
+				}
+			case .eEssay:
+				if  let 	   			   view = essayView {
+					let                       e = gTextEditor
+					e    .refusesFirstResponder = true			// WORKAROUND new feature of mac os x
+					view  			  .isHidden = hideEssay
+					e    .refusesFirstResponder = false
 				}
 			default: break
         }

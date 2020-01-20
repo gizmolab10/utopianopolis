@@ -35,6 +35,7 @@ var  			    gDebugMode:		  [ZDebugMode] = [.focus, .speed]
 var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var        gCurrentBrowseLevel:               Int?
 var           gDragDropIndices: NSMutableIndexSet?
+var              gCurrentEssay:        ZParagraph?
 var              gDragRelation:         ZRelation?
 var              gDragDropZone:              Zone?
 var               gDraggedZone:              Zone?

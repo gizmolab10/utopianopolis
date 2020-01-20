@@ -45,7 +45,7 @@ class ZEssayEditor: ZBaseEditor {
 				switch key {
 					case "/":      if SPECIAL { gControllers.showShortcuts() }
 					case "=", "-": updateFontSize(key == "=")
-					default:       return gEssayView?.handleKey(iKey) ?? false
+					default:       return gEssayView?.handleCommandKey(iKey) ?? false
 				}
 			} else {
 				switch key {
@@ -90,7 +90,7 @@ class ZEssayEditor: ZBaseEditor {
 
 	func updateFontSize(_ increment: Bool) {
 		if  let v = gEssayView,
-			let e = v.essay,
+			let e = gCurrentEssay,
 			e.updateFontSize(increment) {
 			let offset = v.selectionRange.location
 			gEssayTitleFontSize += CGFloat((increment ? 1.0 : -1.0) * 6.0)

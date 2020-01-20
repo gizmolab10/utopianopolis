@@ -154,8 +154,8 @@ class ZGraphEditor: ZBaseEditor {
 					case "-":      return handleHyphen(COMMAND, OPTION)
                     case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
-                    case "[":      gFocusRing.goBack(   extreme: FLAGGED)
-                    case "]":      gFocusRing.goForward(extreme: FLAGGED)
+                    case "]":      gFocusRing.goBack(   extreme: FLAGGED)
+                    case "[":      gFocusRing.goForward(extreme: FLAGGED)
                     case "?":      if CONTROL { openBrowserForFocusWebsite() }
 					case "=":      if COMMAND { updateSize(up: true) } else { gFocusRing.invokeTravel(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() } }
                     case ";", "'": gFavorites.switchToNext(key == "'") { self.syncAndRedraw() }

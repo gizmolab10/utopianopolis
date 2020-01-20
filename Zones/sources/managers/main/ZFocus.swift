@@ -1,5 +1,5 @@
 //
-//  ZFocusRing.swift
+//  ZFocus.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 11/20/16.
@@ -14,15 +14,18 @@ enum ZFocusKind: Int {
     case eEdited
 }
 
-let gFocusRing = ZFocusRing()
+let gFocusRing = ZFocus()
 
-class ZFocusRing: NSObject {
+class ZFocus: ZRing {
 
-    var         ring = ZRecordArray ()
-    var currentIndex = -1
-    var   priorIndex = -1
-    var     topIndex : Int  { return ring.count - 1 }
-    var       atHere : Bool { return currentIndex >= 0 && currentIndex <= topIndex && gHereMaybe == ring[currentIndex] }
+	override var   prime : AnyObject? { return gHereMaybe }
+	override var isEssay : Bool       { return false }
+
+	override var isPrime : Bool {
+		guard let zone = ringPrime as? Zone else { return false }
+
+		return gHereMaybe == zone
+	}
 
 	func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
 		if  let         index = databaseID.index {
@@ -42,162 +45,6 @@ class ZFocusRing: NSObject {
 		return nil
 	}
 
-    // MARK:- ring
-    // MARK:-
-
-    var indexOfHere : Int? {
-		if  let here = gHereMaybe {
-			for (index, record) in ring.enumerated() {
-				if  here == record {
-					return index
-				}
-			}
-		}
-
-        return nil
-    }
-
-	func index(for essay: Bool = false) -> Int? {
-		return indexOfHere
-	}
-
-    func dump() {
-        if  gDebugMode.contains(.focus) {
-            for (index, record) in ring.enumerated() {
-                let isCurrentIndex = index == currentIndex
-                let prefix = isCurrentIndex ? "                   •" : ""
-                columnarReport(prefix, record.unwrappedName)
-            }
-        }
-    }
-
-	func push(essay: Bool = false) {
-        var newIndex  = currentIndex + 1
-
-        if topIndex < 0 || !atHere {
-            if  let index = index(for: essay) {
-                newIndex  = index   // prevent duplicates in stack
-            } else if topIndex <= currentIndex {
-				if  let here = gHereMaybe {
-					ring.append(here)
-				}
-            } else {
-                if  currentIndex < 0 {
-                    currentIndex = 0
-                    newIndex  = currentIndex + 1
-                }
-
-                ring.insert(gHere, at: newIndex)
-            }
-
-            currentIndex = newIndex
-        }
-    }
-
-    func goBack(extreme: Bool = false, essay: Bool = false) {
-        if  let    index = index(for: essay) {
-            currentIndex = index
-        } else if !atHere {
-            push(essay: essay)
-        }
-
-        if  currentIndex <= 0 || currentIndex > topIndex {
-            currentIndex = topIndex
-        } else if extreme {
-            currentIndex = 0
-        } else if currentIndex == topIndex || atHere {
-            currentIndex -= 1
-        }
-
-        go(essay: essay)
-    }
-
-    func goForward(extreme: Bool = false, essay: Bool = false) {
-        if  let    index = index(for: essay) {
-            currentIndex = index
-        } else if !atHere {
-            push(essay: essay)
-        }
-
-        if  currentIndex == topIndex {
-            currentIndex  = 0
-        } else if  extreme {
-            currentIndex = topIndex
-        } else if  currentIndex < topIndex {
-            currentIndex += 1
-        }
-
-        go(essay: essay)
-    }
-
-    func go(essay: Bool = false) {
-        let         max = ring.count
-
-        if  0          <= currentIndex,
-            max         > currentIndex, (!atHere ||
-            priorIndex != currentIndex) {
-            priorIndex  = currentIndex
-            let dbID    = gHere.databaseID
-            let here    = ring[currentIndex]
-            if  dbID   != here.databaseID {
-                toggleDatabaseID()         // update id before setting gHere
-            }
-
-			if !essay {
-				gHere   = here as! Zone
-
-				gHere.grab()
-				gFavorites.updateAllFavorites()
-				redrawGraph()
-			}
-
-			dump()
-        }
-    }
-
-    func pop(essay: Bool = false) {
-        if  let i = index(for: essay) {
-            goBack(essay: essay)
-            ring.remove(at: i)
-        } else {
-            go()
-        }
-    }
-
-	func removeFromStack(_ iZone: Zone) {
-		for (index, zone) in ring.enumerated() {
-			if zone == iZone {
-				ring.remove(at: index)
-
-				return
-			}
-		}
-	}
-
-    // MARK:- travel
-    // MARK:-
-
-    func createUndoForTravelBackTo(_ zone: Zone, atArrival: @escaping Closure) {
-		if  let restoreHere = gHereMaybe {
-			let   restoreID = gDatabaseID
-
-			UNDO(self) { iUndoSelf in
-				iUndoSelf.createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
-				iUndoSelf.push()
-				self.dump()
-				
-				gDatabaseID = restoreID
-				
-				iUndoSelf.focus {
-					gHere = restoreHere
-					
-					zone.grab()
-					atArrival()
-				}
-			}
-		}
-    }
-
     func focus(kind: ZFocusKind, _ COMMAND: Bool = false, _ atArrival: @escaping Closure) {
         
         // five states:
@@ -209,7 +56,7 @@ class ZFocusRing: NSObject {
 
         if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstSortedGrab {
             let focusClosure = { (zone: Zone) in
-                self.push()
+                gFocusRing.push()
 
                 gHere = zone
 
@@ -237,6 +84,45 @@ class ZFocusRing: NSObject {
         }
     }
 
+	override func update(_ item: AnyObject?) {
+		if  let here  = item as? Zone {
+			let dbID  = gHere.databaseID
+			if  dbID != here.databaseID {
+				toggleDatabaseID()         // update id before setting gHere
+			}
+
+			gHere     = here
+
+			gHere.grab()
+			gFavorites.updateAllFavorites()
+			redrawGraph()
+		}
+	}
+
+	// MARK:- travel
+	// MARK:-
+
+	func createUndoForTravelBackTo(_ zone: Zone, atArrival: @escaping Closure) {
+		if  let restoreHere = gHereMaybe {
+			let   restoreID = gDatabaseID
+
+			UNDO(self) { iUndoSelf in
+				iUndoSelf.createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
+				gFocusRing.push()
+				gFocusRing.dump()
+
+				gDatabaseID = restoreID
+
+				iUndoSelf.focus {
+					gHere = restoreHere
+
+					zone.grab()
+					atArrival()
+				}
+			}
+		}
+	}
+
     func focus(_ atArrival: @escaping Closure) {
         createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
 		gTextEditor.stopCurrentEdit()
@@ -251,7 +137,7 @@ class ZFocusRing: NSObject {
     }
 
     func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
-        push()
+        gFocusRing.push()
         
         gHere = iHere
 
@@ -279,8 +165,8 @@ class ZFocusRing: NSObject {
 
                 return true
             } else if let dbID = bookmark.crossLink?.databaseID {
-                push()
-                dump()
+                gFocusRing.push()
+                gFocusRing.dump()
 
                 gDatabaseID = dbID
 
@@ -321,7 +207,7 @@ class ZFocusRing: NSObject {
                     target.asssureIsVisible()
                     target.grab()
                 } else {
-                    push()
+					gFocusRing.push()
 
                     gHere = target
                 }
@@ -330,8 +216,8 @@ class ZFocusRing: NSObject {
 
 				complete(target, .eRelayout)
 			} else {
-				push()
-				dump()
+				gFocusRing.push()
+				gFocusRing.dump()
 
 				gShowFavorites = targetDBID == .favoritesID
 

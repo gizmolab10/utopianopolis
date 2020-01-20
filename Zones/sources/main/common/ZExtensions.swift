@@ -45,6 +45,7 @@ extension NSObject {
     func           performance(_ iMessage: Any?)                { log(iMessage) }
     func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
     func           redrawGraph(_ onCompletion: Closure? = nil)  { gControllers.signalFor(nil, regarding: .eRelayout, onCompletion: onCompletion) }
+	func             drawEssay()                                { gEssayView?.setup() }
     func     printCurrentFocus()                                { gHere.widget?.printView() }
 
 	func columnarReport(mode: ZDebugMode = .log, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }

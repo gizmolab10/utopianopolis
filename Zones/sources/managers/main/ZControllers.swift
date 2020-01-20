@@ -80,6 +80,7 @@ class ZControllers: NSObject {
 			let stopEssay 				= gWorkMode == .essayMode
 			let multiple: [ZSignalKind] = !stopEssay ? [.eEssay] : [.eEssay, .eRelayout]
 			gWorkMode     				=  stopEssay ? .graphMode : .essayMode
+			gCurrentEssay               = gSelecting.firstGrab?.essay
 
 			self.signalFor(gSelecting.firstGrab, multiple: multiple)
 		}

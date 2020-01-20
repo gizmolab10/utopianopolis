@@ -44,21 +44,20 @@ enum ZHyperlinkMenuType: String {
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZView, ZTextViewDelegate {
-	@IBOutlet var textView: ZTextView?
-	var essayID:            CKRecord.ID?
-	var essay: ZParagraph? { return zone?.essay }
-	var zone:  Zone?       { return gSelecting.firstGrab }
-	var selectionRange = NSRange() { didSet { selectionRect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect() } }
-	var selectionRect  = CGRect()
+	@IBOutlet var textView : ZTextView?
+	var essayID            : CKRecord.ID?
+	var grabbedZone 	   : Zone? { return gCurrentEssay?.zone }
+	var selectionRange 	   = NSRange() { didSet { selectionRect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect() } }
+	var selectionRect      = CGRect()
 
-	func export() { gFiles.exportToFile(.eEssay, for: zone) }
-	func save()   { essay?.saveEssay(textView?.textStorage) }
+	func export() { gFiles.exportToFile(.eEssay, for: grabbedZone) }
+	func save()   { gCurrentEssay?.saveEssay(textView?.textStorage) }
 
 	// MARK:- setup
 	// MARK:-
 
 	func clear() {
-		zone?		     .essayMaybe = nil
+		grabbedZone?     .essayMaybe = nil
 		textView?		   .delegate = nil	    			// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
 		textView?         .usesRuler = true
 		textView?    .isRulerVisible = true
@@ -71,15 +70,20 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 	func setup(restoreSelection: Int? = nil) {
-		let exitSetup = restoreSelection == nil && (essay?.essayMaybe?.needsSave ?? false) && (essayID == nil || essayID! == zone?.record?.recordID)
+		if  restoreSelection == nil,				// if called from viewWillAppear
+			gCurrentEssay?.essayMaybe?.needsSave ?? false,
+			essayID != nil,							// been here before
+			essayID == grabbedZone?.record?.recordID {
 
-		if  exitSetup { return }								// has not yet been saved. don't overwrite
+			return									// has not yet been saved. don't overwrite
+		}
 
-		clear() 												// discard previously edited text
+		clear() 									// discard previously edited text
 
-		if  let text = essay?.essayText {
-			essayID  = zone?.record?.recordID
+		if  let text = gCurrentEssay?.essayText {
+			essayID  = grabbedZone?.record?.recordID
 
+			gEsssyRing.push()
 			textView?.setText(text)
 			select(restoreSelection: restoreSelection)
 
@@ -90,7 +94,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 	func select(restoreSelection: Int? = nil) {
-		if  let e = essay,   e.lastTextIsDefault,
+		if  let e = gCurrentEssay, e.lastTextIsDefault,
 			var range      = e.lastTextRange {			// select entire text of final essay
 			if  let offset = restoreSelection {
 				range      = NSRange(location: offset, length: 0)
@@ -100,7 +104,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
-	func handleKey(_ iKey: String?) -> Bool {   // false means key not handled
+	func handleCommandKey(_ iKey: String?) -> Bool {   // false means key not handled
 		guard let key = iKey else {
 			return false
 		}
@@ -112,6 +116,8 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			case "i":      showSpecialsPopup()
 			case "l", "u": alterCase(up: key == "u")
 			case "s":      save()
+			case "]":      gEsssyRing.goBack()
+			case "[":      gEsssyRing.goForward()
 			case kReturn:  save(); gControllers.swapGraphAndEssay()
 			default:       return false
 		}
@@ -220,20 +226,21 @@ class ZEssayView: ZView, ZTextViewDelegate {
 				switch type {
 					case .eEssay:
 						if  let grabbed = grab,
-							let  common = zone?.closestCommonParent(of: grabbed) {
+							let  common = grabbedZone?.closestCommonParent(of: grabbed) {
 							gHere       = common
 
 							FOREGROUND {
 								gControllers.signalFor(nil, regarding: .eRelayout)
 
-								if  let e = grabbed.essayMaybe, self.essay?.children.contains(e) ?? false {
+								if  let e = grabbed.essayMaybe, gCurrentEssay?.children.contains(e) ?? false {
 									self.textView?.setSelectedRange(e.essayTextRange) 	// select text range of grabbed essay
 								} else {
 									gCreateMultipleEssay = true
+									gCurrentEssay = grabbed.essay
 
 									grabbed.asssureIsVisible()
 									grabbed.grab()										// focus on zone with rID (before calling setup, which uses current grab)
-									self.essay?.essayMaybe?.clearSave()
+									gCurrentEssay?.essayMaybe?.clearSave()
 									self.setup()
 								}
 							}
@@ -242,13 +249,13 @@ class ZEssayView: ZView, ZTextViewDelegate {
 						}
 					case .eIdea:
 						if  let grabbed = grab,
-							let  common = zone?.closestCommonParent(of: grabbed) {
+							let  common = grabbedZone?.closestCommonParent(of: grabbed) {
 							gHere       = common
 
-							grabbed.grab()												// focus on zone with rID
-							grabbed.asssureIsVisible()
-							zone?  .asssureIsVisible()
-							essay? .essayMaybe?.clearSave()
+							grabbed       .grab()												// focus on zone with rID
+							grabbed       .asssureIsVisible()
+							grabbedZone?  .asssureIsVisible()
+							gCurrentEssay?.essayMaybe?.clearSave()
 
 							FOREGROUND {
 								gControllers.swapGraphAndEssay()
@@ -280,7 +287,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
 		if  let length = text?.length,
-			let (result, delta) = essay?.updateEssay(range, length: length) {
+			let (result, delta) = gCurrentEssay?.updateEssay(range, length: length) {
 
 			switch result {
 				case .eAlter: return true
@@ -292,7 +299,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 					}
 			}
 
-			essay!.essayLength += delta
+			gCurrentEssay!.essayLength += delta
 
 			return true
 		}
