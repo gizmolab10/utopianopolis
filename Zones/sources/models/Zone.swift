@@ -1285,17 +1285,13 @@ class Zone : ZRecord {
     }
 
     func validIndex(from iIndex: Int?) -> Int {
-        var insertAt = iIndex
+        var index = iIndex ?? count		// bottom
 
-        if  let index = iIndex, index < count {
-            if  index < 0 {
-                insertAt = 0
-            }
-        } else {
-            insertAt = count
+        if (index < count && index < 0) || !gInsertionsFollow {
+			index = 0					// top
         }
 
-        return insertAt!
+        return index
     }
 
     @discardableResult func addChild(_ iChild: Zone?, at iIndex: Int?) -> Int? {

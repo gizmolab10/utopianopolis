@@ -1603,7 +1603,7 @@ class ZGraphEditor: ZBaseEditor {
             
             for zone in zones {
                 if  let       index  = zone.siblingIndex {
-                    var cousinIndex  = index == 0 ? 1 : index - 1 // always insert into sibling above, except at top
+                    var cousinIndex  = index == 0 ? 1 : index - 1 // ALWAYS INSERT INTO SIBLING ABOVE, EXCEPT AT TOP
                     
                     if  cousinIndex >= 0 && cousinIndex < siblings.count {
                         var newThere = siblings[cousinIndex]

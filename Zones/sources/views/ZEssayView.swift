@@ -101,6 +101,8 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			}
 
 			textView?.setSelectedRange(range)
+		} else {
+			textView?.scroll(CGPoint())					// scroll to top
 		}
 	}
 
