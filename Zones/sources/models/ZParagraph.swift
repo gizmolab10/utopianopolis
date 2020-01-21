@@ -79,17 +79,18 @@ class ZParagraph: NSObject {
 	}
 
 	var paragraphText: NSMutableAttributedString? {
-		var result:  NSMutableAttributedString?
+		var result:    NSMutableAttributedString?
 
-		if  let    name = zone?.zoneName,
-			let    text = essayTrait?.essayText {
-			let  spacer = "  "
-			let tOffset = spacer.length
-			let pOffset = tOffset + name.length + gBlankLine.length + 1
-			let   title = NSMutableAttributedString(string: spacer + name + kTab, attributes: titleAttributes)
-			result      = NSMutableAttributedString()
-			titleRange  = NSRange(location: tOffset, length: name.length)
-			textRange   = NSRange(location: pOffset, length: text.length)
+		if  let        name = zone?.zoneName,
+			let        text = essayTrait?.essayText {
+			let      spacer = "  "
+			let     tOffset = spacer.length
+			let     pOffset = tOffset + name.length + gBlankLine.length + 1
+			let       title = NSMutableAttributedString(string: spacer + name + kTab, attributes: titleAttributes)
+			result          = NSMutableAttributedString()
+			titleRange      = NSRange(location: tOffset, length: name.length)
+			textRange       = NSRange(location: pOffset, length: text.length)
+			paragraphOffset = 0
 
 			result?.insert(text,       at: 0)
 			result?.insert(gBlankLine, at: 0)

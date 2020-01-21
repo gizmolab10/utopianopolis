@@ -21,7 +21,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var textView : ZTextView?
 	var backwardButton     : ZButton?
 	var forwardButton      : ZButton?
-	var exitButton         : ZButton?
+	var cancelButton       : ZButton?
 	var doneButton         : ZButton?
 	var saveButton         : ZButton?
 	var essayID            : CKRecord.ID?
@@ -29,10 +29,10 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	var selectionRange 	   = NSRange() { didSet { selectionRect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect() } }
 	var selectionRect      = CGRect()
 
+	func save()   { gCurrentEssay?.saveEssay(textView?.textStorage); accountForSelection() }
 	func export() { gFiles.exportToFile(.eEssay, for: grabbedZone) }
 	func exit()   { gControllers.swapGraphAndEssay() }
-	func save()   { gCurrentEssay?.saveEssay(textView?.textStorage) }
-	func done()   { save(); accountForSelection(); exit() }
+	func done()   { save(); exit() }
 
 	// MARK:- setup
 	// MARK:-
@@ -65,17 +65,15 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			return									// has not yet been saved. don't overwrite
 		}
 
-		clear() 									// discard previously edited text
-
 		if  let text = gCurrentEssay?.essayText {
-			essayID  = grabbedZone?.record?.recordID
-
+			clear() 									// discard previously edited text
 			gEsssyRing.push()
+			updateButtons(true)
 			textView?.setText(text)
 			select(restoreSelection: restoreSelection)
-			updateButtons(true)
 
-			textView?.delegate = self 		// set delegate after insertText
+			essayID  		   = grabbedZone?.record?.recordID
+			textView?.delegate = self 		// set delegate after setText
 
 			gWindow?.makeFirstResponder(textView)
 		}
@@ -133,7 +131,10 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		gSelecting.ungrabAll()
 
 		for paragraph in selectedParagraphs {
-			paragraph.zone?.addToGrab()
+			if  let grab = paragraph.zone {
+				grab.asssureIsVisible()
+				grab.addToGrab()
+			}
 		}
 	}
 
@@ -182,29 +183,29 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	// MARK:-
 
 	enum ZTextButtonID : Int {
+		case idForward
+		case idCancel
 		case idBack
 		case idSave
 		case idDone
-		case idExit
-		case idForward
 
 		var title: String {
 			switch self {
 				case .idForward: return "􀓅"
-				case .idExit:    return "Exit"
+				case .idCancel:  return "Cancel"
 				case .idDone:    return "Done"
 				case .idSave:    return "Save"
 				case .idBack:    return "􀓄"
 			}
 		}
 
-		static var all: [ZTextButtonID] { return [.idBack, .idForward, .idDone, .idSave, .idExit] }
+		static var all: [ZTextButtonID] { return [.idBack, .idForward, .idDone, .idSave, .idCancel] }
 	}
 
 	func updateButtons(_ flag: Bool) {
 		doneButton?    .isEnabled = flag
 		saveButton?    .isEnabled = flag
-		exitButton?    .isEnabled = flag
+		cancelButton?  .isEnabled = flag
 		forwardButton? .isEnabled = flag
 		backwardButton?.isEnabled = flag
 	}
@@ -213,7 +214,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		if let tag = ZTextButtonID(rawValue: button.tag) {
 			switch tag {
 				case .idForward: forwardButton = button
-				case .idExit:       exitButton = button
+				case .idCancel:   cancelButton = button
 				case .idBack:   backwardButton = button
 				case .idDone:       doneButton = button
 				case .idSave:       saveButton = button
@@ -225,7 +226,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		if let buttonID = ZTextButtonID(rawValue: iButton.tag) {
 			switch buttonID {
 				case .idForward: gEsssyRing.goForward()
-				case .idExit:    exit()
+				case .idCancel:  exit()
 				case .idDone:    done()
 				case .idSave:    save()
 				case .idBack:    gEsssyRing.goBack()
@@ -369,31 +370,31 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	@discardableResult func followCurrentLink(within range: NSRange) -> Bool {
 		selectionRange = range
 
-		if  let   link = currentLink as? String {
-			let  parts = link.components(separatedBy: kSeparator)
+		if  let  link = currentLink as? String {
+			let parts = link.components(separatedBy: kSeparator)
 
-			if   parts.count > 1,
-				let    t = parts.first?.first,
+			if  parts.count > 1,
+				let    t = parts.first?.first, // first character of first part
 				let  rID = parts.last,
 				let type = ZHyperlinkMenuType(rawValue: String(t)) {
-				let grab = gSelecting.zone(with: rID)	// find zone with rID
+				let zone = gSelecting.zone(with: rID)	// find zone with rID
 				switch type {
 					case .eEssay:
-						if  let grabbed = grab,
-							let  common = grabbedZone?.closestCommonParent(of: grabbed) {
-							gHere       = common
+						if  let   grab = zone,
+							let common = grabbedZone?.closestCommonParent(of: grab) {
+							gHere      = common
 
 							FOREGROUND {
 								gControllers.signalFor(nil, regarding: .eRelayout)
 
-								if  let e = grabbed.essayMaybe, gCurrentEssay?.children.contains(e) ?? false {
+								if  let e = grab.essayMaybe, gCurrentEssay?.children.contains(e) ?? false {
 									self.textView?.setSelectedRange(e.essayTextRange) 	// select text range of grabbed essay
 								} else {
 									gCreateMultipleEssay = true
-									gCurrentEssay = grabbed.essay
+									gCurrentEssay        = grab.essay
 
-									grabbed.asssureIsVisible()
-									grabbed.grab()										// focus on zone with rID (before calling setup, which uses current grab)
+									grab.asssureIsVisible()
+									grab.grab()										// focus on zone with rID (before calling setup, which uses current grab)
 									gCurrentEssay?.essayMaybe?.clearSave()
 									self.setup()
 								}
@@ -402,12 +403,12 @@ class ZEssayView: ZView, ZTextViewDelegate {
 							return true
 						}
 					case .eIdea:
-						if  let grabbed = grab,
-							let  common = grabbedZone?.closestCommonParent(of: grabbed) {
-							gHere       = common
+						if  let   grab = zone,
+							let common = grabbedZone?.closestCommonParent(of: grab) {
+							gHere      = common
 
-							grabbed       .grab()												// focus on zone with rID
-							grabbed       .asssureIsVisible()
+							grab          .grab()												// focus on zone with rID
+							grab          .asssureIsVisible()
 							grabbedZone?  .asssureIsVisible()
 							gCurrentEssay?.essayMaybe?.clearSave()
 
