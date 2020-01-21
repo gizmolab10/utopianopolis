@@ -1287,7 +1287,7 @@ class Zone : ZRecord {
     func validIndex(from iIndex: Int?) -> Int {
         var index = iIndex ?? count		// bottom
 
-        if (index < count && index < 0) || !gInsertionsFollow {
+        if  index < 0 {
 			index = 0					// top
         }
 

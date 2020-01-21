@@ -56,6 +56,12 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	// MARK:- setup
 	// MARK:-
 
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		addControls()
+		setup()
+	}
+
 	func clear() {
 		grabbedZone?     .essayMaybe = nil
 		textView?		   .delegate = nil	    			// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
@@ -106,6 +112,9 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
+	// MARK:- events
+	// MARK:-
+
 	func handleCommandKey(_ iKey: String?) -> Bool {   // false means key not handled
 		guard let key = iKey else {
 			return false
@@ -132,6 +141,52 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			let replacement = up ? text.uppercased() : text.lowercased()
 
 			textView?.insertText(replacement, replacementRange: selectionRange)
+		}
+	}
+
+	enum ZTextButtonID : Int {
+		case idBack
+		case idForward
+
+		var title: String {
+			switch self {
+				case .idForward: return "􀓅"
+				case .idBack:    return "􀓄"
+			}
+		}
+	}
+
+	@objc func handleButtonPress(_ iButton: ZButton) {
+		if let buttonID = ZTextButtonID(rawValue: iButton.tag) {
+			switch buttonID {
+				case .idForward: gEsssyRing.goForward()
+				case .idBack:    gEsssyRing.goBack()
+			}
+		}
+	}
+
+	func addControls() {
+		FOREGROUND {
+			if  let w = gWindow,
+				let inspectorBar = w.titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view {
+
+				func addButton(_ tag: ZTextButtonID) {
+					let      index = inspectorBar.subviews.count - 1
+					var      frame = inspectorBar.subviews[index].frame
+					let          x = frame.maxX
+					let      title = tag.title
+					let     button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
+					frame    .size = button.bounds.insetBy(dx: 0.0, dy: 4.0).size
+					frame  .origin = CGPoint(x: x, y: 0.0)
+					button  .frame = frame
+					button    .tag = tag.rawValue
+
+					inspectorBar.addSubview(button)
+				}
+
+				addButton(.idBack)
+				addButton(.idForward)
+			}
 		}
 	}
 
