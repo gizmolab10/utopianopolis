@@ -15,53 +15,31 @@ import Cocoa
 import UIKit
 #endif
 
-enum ZHyperlinkMenuType: String {
-	case eWeb   = "h"
-	case eIdea  = "i"
-	case eEssay = "e"
-	case eClear = "c"
-
-	var title: String {
-		switch self {
-			case .eWeb:   return "Internet"
-			case .eIdea:  return "Idea"
-			case .eEssay: return "Essay"
-			case .eClear: return "Clear"
-		}
-	}
-
-	var linkType: String {
-		switch self {
-			case .eWeb: return "http"
-			default:    return title.lowercased()
-		}
-	}
-
-	static var all: [ZHyperlinkMenuType] { return [.eWeb, .eIdea, .eEssay, .eClear] }
-
-}
-
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var textView : ZTextView?
 	var backwardButton     : ZButton?
 	var forwardButton      : ZButton?
+	var exitButton         : ZButton?
+	var doneButton         : ZButton?
+	var saveButton         : ZButton?
 	var essayID            : CKRecord.ID?
 	var grabbedZone 	   : Zone? { return gCurrentEssay?.zone }
 	var selectionRange 	   = NSRange() { didSet { selectionRect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect() } }
 	var selectionRect      = CGRect()
 
 	func export() { gFiles.exportToFile(.eEssay, for: grabbedZone) }
+	func exit()   { gControllers.swapGraphAndEssay() }
 	func save()   { gCurrentEssay?.saveEssay(textView?.textStorage) }
-	func exit()   { save(); gControllers.swapGraphAndEssay() }
+	func done()   { save(); accountForSelection(); exit() }
 
 	// MARK:- setup
 	// MARK:-
 
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
-		addControls()
+		addButtons()
 		setup()
 	}
 
@@ -103,6 +81,41 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
+	// MARK:- events
+	// MARK:-
+
+	func handleCommandKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
+		guard let key = iKey else {
+			return false
+		}
+
+		switch key {
+			case "a":      textView?.selectAll(nil)
+			case "e":      export()
+			case "h":      showHyperlinkPopup()
+			case "i":      showSpecialsPopup()
+			case "l", "u": alterCase(up: key == "u")
+			case "s":      save()
+			case "]":      gEsssyRing.goBack()
+			case "[":      gEsssyRing.goForward()
+			case kReturn:  done()
+			default:       return false
+		}
+
+		return true
+	}
+
+	func alterCase(up: Bool) {
+		if  let        text = textView?.textStorage?.attributedSubstring(from: selectionRange).string {
+			let replacement = up ? text.uppercased() : text.lowercased()
+
+			textView?.insertText(replacement, replacementRange: selectionRange)
+		}
+	}
+
+	// MARK:- selection
+	// MARK:-
+
 	func select(restoreSelection: Int? = nil) {
 		if  let e = gCurrentEssay, e.lastTextIsDefault,
 			var range      = e.lastTextRange {			// select entire text of final essay
@@ -116,37 +129,6 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
-	func updateButtons(_ flag: Bool) {
-		forwardButton? .isEnabled = flag
-		backwardButton?.isEnabled = flag
-	}
-
-	// MARK:- events
-	// MARK:-
-
-	func handleCommandKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
-		guard let key = iKey else {
-			return false
-		}
-
-		let OPTION = flags.isOption
-
-		switch key {
-			case "a":      textView?.selectAll(nil)
-			case "e":      export()
-			case "h":      showHyperlinkPopup()
-			case "i":      showSpecialsPopup()
-			case "l", "u": alterCase(up: key == "u")
-			case "s":      save()
-			case "]":      gEsssyRing.goBack()
-			case "[":      gEsssyRing.goForward()
-			case kReturn:  if OPTION { accountForSelection() }; exit()
-			default:       return false
-		}
-
-		return true
-	}
-
 	func accountForSelection() {
 		gSelecting.ungrabAll()
 
@@ -155,61 +137,29 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
-	func alterCase(up: Bool) {
-		if  let        text = textView?.textStorage?.attributedSubstring(from: selectionRange).string {
-			let replacement = up ? text.uppercased() : text.lowercased()
+	// MARK:- lockout editing of added whitespace
+	// MARK:-
 
-			textView?.insertText(replacement, replacementRange: selectionRange)
-		}
-	}
+	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
+		if  let length = text?.length,
+			let (result, delta) = gCurrentEssay?.updateEssay(range, length: length) {
 
-	enum ZTextButtonID : Int {
-		case idBack
-		case idForward
-
-		var title: String {
-			switch self {
-				case .idForward: return "􀓅"
-				case .idBack:    return "􀓄"
-			}
-		}
-	}
-
-	@objc func handleButtonPress(_ iButton: ZButton) {
-		if let buttonID = ZTextButtonID(rawValue: iButton.tag) {
-			switch buttonID {
-				case .idForward: gEsssyRing.goForward()
-				case .idBack:    gEsssyRing.goBack()
-			}
-		}
-	}
-
-	func addControls() {
-		FOREGROUND {
-			if  let w = gWindow,
-				let inspectorBar = w.titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view {
-
-				func addButton(_ tag: ZTextButtonID) -> ZButton {
-					let        index = inspectorBar.subviews.count - 1
-					var        frame = inspectorBar.subviews[index].frame
-					let            x = frame.maxX - ((tag == .idBack) ? 0.0 : 6.0)
-					let        title = tag.title
-					let       button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
-					frame      .size = button.bounds.insetBy(dx: 0.0, dy: 4.0).size
-					frame    .origin = CGPoint(x: x, y: 0.0)
-					button    .frame = frame
-					button      .tag = tag.rawValue
-					button.isEnabled = false
-
-					inspectorBar.addSubview(button)
-
-					return button
+			switch result {
+				case .eAlter: return true
+				case .eLock:  return false
+				case .eExit:  gControllers.swapGraphAndEssay()
+				case .eDelete:
+					FOREGROUND {							// defer until after this method returns ... avoids corrupting newly setup text
+						self.setup(restoreSelection: delta)	// reset all text and restore cursor position
 				}
-
-				self.backwardButton = addButton(.idBack)
-				self.forwardButton  = addButton(.idForward)
 			}
+
+			gCurrentEssay!.essayLength += delta
+
+			return true
 		}
+
+		return text == nil
 	}
 
 	// MARK:- special characters
@@ -228,8 +178,119 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
+	// MARK:- buttons
+	// MARK:-
+
+	enum ZTextButtonID : Int {
+		case idBack
+		case idSave
+		case idDone
+		case idExit
+		case idForward
+
+		var title: String {
+			switch self {
+				case .idForward: return "􀓅"
+				case .idExit:    return "Exit"
+				case .idDone:    return "Done"
+				case .idSave:    return "Save"
+				case .idBack:    return "􀓄"
+			}
+		}
+
+		static var all: [ZTextButtonID] { return [.idBack, .idForward, .idDone, .idSave, .idExit] }
+	}
+
+	func updateButtons(_ flag: Bool) {
+		doneButton?    .isEnabled = flag
+		saveButton?    .isEnabled = flag
+		exitButton?    .isEnabled = flag
+		forwardButton? .isEnabled = flag
+		backwardButton?.isEnabled = flag
+	}
+
+	func setButton(_ button: ZButton) {
+		if let tag = ZTextButtonID(rawValue: button.tag) {
+			switch tag {
+				case .idForward: forwardButton = button
+				case .idExit:       exitButton = button
+				case .idBack:   backwardButton = button
+				case .idDone:       doneButton = button
+				case .idSave:       saveButton = button
+			}
+		}
+	}
+
+	@objc func handleButtonPress(_ iButton: ZButton) {
+		if let buttonID = ZTextButtonID(rawValue: iButton.tag) {
+			switch buttonID {
+				case .idForward: gEsssyRing.goForward()
+				case .idExit:    exit()
+				case .idDone:    done()
+				case .idSave:    save()
+				case .idBack:    gEsssyRing.goBack()
+			}
+		}
+	}
+
+	func addButtons() {
+		FOREGROUND {		// wait for application to fully load the inspector bar
+			if  let w = gWindow,
+				let inspectorBar = w.titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view {
+
+				func button(for tag: ZTextButtonID) -> ZButton {
+					let        index = inspectorBar.subviews.count - 1
+					var        frame = inspectorBar.subviews[index].frame
+					let            x = frame.maxX - ((tag == .idBack) ? 0.0 : 6.0)
+					let        title = tag.title
+					let       button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
+					frame      .size = button.bounds.insetBy(dx: 0.0, dy: 4.0).size
+					frame    .origin = CGPoint(x: x, y: 0.0)
+					button    .frame = frame
+					button      .tag = tag.rawValue
+					button.isEnabled = false
+
+					return button
+				}
+
+				for tag in ZTextButtonID.all {
+					let b = button(for: tag)
+
+					inspectorBar.addSubview(b)
+					self.setButton(b)
+				}
+			}
+		}
+	}
+
 	// MARK:- hyperlinks
 	// MARK:-
+
+	enum ZHyperlinkMenuType: String {
+		case eWeb   = "h"
+		case eIdea  = "i"
+		case eEssay = "e"
+		case eClear = "c"
+
+		var title: String {
+			switch self {
+				case .eWeb:   return "Internet"
+				case .eIdea:  return "Idea"
+				case .eEssay: return "Essay"
+				case .eClear: return "Clear"
+			}
+		}
+
+		var linkType: String {
+			switch self {
+				case .eWeb: return "http"
+				default:    return title.lowercased()
+			}
+		}
+
+		static var all: [ZHyperlinkMenuType] { return [.eWeb, .eIdea, .eEssay, .eClear] }
+
+	}
 
 	func showHyperlinkPopup() {
 		let menu = NSMenu(title: "create a hyperlink")
@@ -373,31 +434,6 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {
 		return followCurrentLink(within: NSRange(location: charIndex, length: 0))
-	}
-
-	// MARK:- lockout editing of added whitespace
-	// MARK:-
-
-	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
-		if  let length = text?.length,
-			let (result, delta) = gCurrentEssay?.updateEssay(range, length: length) {
-
-			switch result {
-				case .eAlter: return true
-				case .eLock:  return false
-				case .eExit:  gControllers.swapGraphAndEssay()
-				case .eDelete:
-					FOREGROUND {							// defer until after this method returns ... avoids corrupting newly setup text
-						self.setup(restoreSelection: delta)	// reset all text and restore cursor position
-					}
-			}
-
-			gCurrentEssay!.essayLength += delta
-
-			return true
-		}
-
-		return text == nil
 	}
 
 }
