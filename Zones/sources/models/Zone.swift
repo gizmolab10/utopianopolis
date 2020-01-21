@@ -179,6 +179,16 @@ class Zone : ZRecord {
 		return result
 	}
 
+	var freshEssay: ZParagraph {
+		if  isBookmark {
+			return bookmarkTarget!.freshEssay
+		}
+
+		essayMaybe = nil
+
+		return essay
+	}
+
 	var essay: ZParagraph {
 		if  isBookmark {
 			return bookmarkTarget!.essay

@@ -38,18 +38,18 @@ class ZEssayEditor: ZBaseEditor {
 			}
 
 			if  let arrow = key.arrow {
-				handleArrow(arrow, flags: flags)
+				handleArrow(arrow, flags: flags); 							  return true
 			}
 
 			if  COMMAND {
 				switch key {
-					case "/":      if SPECIAL { gControllers.showShortcuts() }
-					case "=", "-": updateFontSize(key == "=")
+					case "/":      if SPECIAL { gControllers.showShortcuts(); return true }
+					case "=", "-": updateFontSize(key == "="); 				  return true
 					default:       return gEssayView?.handleCommandKey(iKey) ?? false
 				}
 			} else {
 				switch key {
-					case kEscape: gControllers.swapGraphAndEssay()
+					case kEscape: gControllers.swapGraphAndEssay(); 		  return true
 					default:  	  break
 				}
 			}

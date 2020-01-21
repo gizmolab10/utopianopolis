@@ -77,11 +77,12 @@ class ZControllers: NSObject {
 
 	func swapGraphAndEssay() {
 		FOREGROUND { 	// avoid generic menu handler invoking graph editor's handle key
-			let stopEssay 				= gWorkMode == .essayMode
-			let multiple: [ZSignalKind] = !stopEssay ? [.eEssay] : [.eEssay, .eRelayout]
-			gWorkMode     				=  stopEssay ? .graphMode : .essayMode
-			gCurrentEssay               = gSelecting.firstGrab?.essay
+			let showEssay 				= gWorkMode == .graphMode
+			let multiple: [ZSignalKind] = showEssay ? [.eEssay] : [.eEssay, .eRelayout]
+			gWorkMode     				= showEssay ? .essayMode : .graphMode
+			gCurrentEssay               = gSelecting.firstGrab?.freshEssay
 
+			gEssayView?.updateButtons(showEssay)
 			self.signalFor(gSelecting.firstGrab, multiple: multiple)
 		}
 	}

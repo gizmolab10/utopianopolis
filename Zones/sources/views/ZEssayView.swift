@@ -45,6 +45,8 @@ var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZView, ZTextViewDelegate {
 	@IBOutlet var textView : ZTextView?
+	var backwardButton     : ZButton?
+	var forwardButton      : ZButton?
 	var essayID            : CKRecord.ID?
 	var grabbedZone 	   : Zone? { return gCurrentEssay?.zone }
 	var selectionRange 	   = NSRange() { didSet { selectionRect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect() } }
@@ -52,6 +54,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	func export() { gFiles.exportToFile(.eEssay, for: grabbedZone) }
 	func save()   { gCurrentEssay?.saveEssay(textView?.textStorage) }
+	func exit()   { save(); gControllers.swapGraphAndEssay() }
 
 	// MARK:- setup
 	// MARK:-
@@ -92,8 +95,9 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			gEsssyRing.push()
 			textView?.setText(text)
 			select(restoreSelection: restoreSelection)
+			updateButtons(true)
 
-			textView?.delegate = self 				// set delegate after insertText
+			textView?.delegate = self 		// set delegate after insertText
 
 			gWindow?.makeFirstResponder(textView)
 		}
@@ -110,6 +114,11 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		} else {
 			textView?.scroll(CGPoint())					// scroll to top
 		}
+	}
+
+	func updateButtons(_ flag: Bool) {
+		forwardButton? .isEnabled = flag
+		backwardButton?.isEnabled = flag
 	}
 
 	// MARK:- events
@@ -129,7 +138,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			case "s":      save()
 			case "]":      gEsssyRing.goBack()
 			case "[":      gEsssyRing.goForward()
-			case kReturn:  save(); gControllers.swapGraphAndEssay()
+			case kReturn:  exit()
 			default:       return false
 		}
 
@@ -170,22 +179,25 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			if  let w = gWindow,
 				let inspectorBar = w.titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view {
 
-				func addButton(_ tag: ZTextButtonID) {
-					let      index = inspectorBar.subviews.count - 1
-					var      frame = inspectorBar.subviews[index].frame
-					let          x = frame.maxX
-					let      title = tag.title
-					let     button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
-					frame    .size = button.bounds.insetBy(dx: 0.0, dy: 4.0).size
-					frame  .origin = CGPoint(x: x, y: 0.0)
-					button  .frame = frame
-					button    .tag = tag.rawValue
+				func addButton(_ tag: ZTextButtonID) -> ZButton {
+					let        index = inspectorBar.subviews.count - 1
+					var        frame = inspectorBar.subviews[index].frame
+					let            x = frame.maxX - ((tag == .idBack) ? 0.0 : 6.0)
+					let        title = tag.title
+					let       button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
+					frame      .size = button.bounds.insetBy(dx: 0.0, dy: 4.0).size
+					frame    .origin = CGPoint(x: x, y: 0.0)
+					button    .frame = frame
+					button      .tag = tag.rawValue
+					button.isEnabled = false
 
 					inspectorBar.addSubview(button)
+
+					return button
 				}
 
-				addButton(.idBack)
-				addButton(.idForward)
+				self.backwardButton = addButton(.idBack)
+				self.forwardButton  = addButton(.idForward)
 			}
 		}
 	}
