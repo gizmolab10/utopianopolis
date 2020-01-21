@@ -38,24 +38,22 @@ class ZEssayEditor: ZBaseEditor {
 			}
 
 			if  let arrow = key.arrow {
-				handleArrow(arrow, flags: flags); 							  return true
-			}
-
-			if  COMMAND {
+				handleArrow(arrow, flags: flags)
+			} else if  COMMAND {
 				switch key {
-					case "/":      if SPECIAL { gControllers.showShortcuts(); return true }
-					case "=", "-": updateFontSize(key == "="); 				  return true
-					default:       return gEssayView?.handleCommandKey(iKey) ?? false
+					case "/":      if SPECIAL { gControllers.showShortcuts() } else { return false }
+					case "=", "-": updateFontSize(key == "=")
+					default:       return gEssayView?.handleCommandKey(iKey, flags: flags) ?? false
 				}
 			} else {
 				switch key {
-					case kEscape: gControllers.swapGraphAndEssay(); 		  return true
-					default:  	  break
+					case kEscape: if OPTION { gEssayView?.accountForSelection() }; gControllers.swapGraphAndEssay()
+					default:  	  return false
 				}
 			}
 		}
 		
-		return false
+		return true
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {

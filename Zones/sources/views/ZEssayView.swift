@@ -124,10 +124,12 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	// MARK:- events
 	// MARK:-
 
-	func handleCommandKey(_ iKey: String?) -> Bool {   // false means key not handled
+	func handleCommandKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		guard let key = iKey else {
 			return false
 		}
+
+		let OPTION = flags.isOption
 
 		switch key {
 			case "a":      textView?.selectAll(nil)
@@ -138,11 +140,19 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			case "s":      save()
 			case "]":      gEsssyRing.goBack()
 			case "[":      gEsssyRing.goForward()
-			case kReturn:  exit()
+			case kReturn:  if OPTION { accountForSelection() }; exit()
 			default:       return false
 		}
 
 		return true
+	}
+
+	func accountForSelection() {
+		gSelecting.ungrabAll()
+
+		for paragraph in selectedParagraphs {
+			paragraph.zone?.addToGrab()
+		}
 	}
 
 	func alterCase(up: Bool) {
@@ -258,6 +268,20 @@ class ZEssayView: ZView, ZTextViewDelegate {
 				textView?.textStorage?   .addAttribute(.link, value: link!, range: selectionRange)
 			}
 		}
+	}
+
+	var selectedParagraphs: [ZParagraph] {
+		var array = [ZParagraph]()
+
+		if  let zones = grabbedZone?.paragraphs {
+			for zone in zones {
+				if  let paragraph = zone.essayMaybe, paragraph.paragraphRange.inclusiveIntersection(selectionRange) != nil {
+					array.append(paragraph)
+				}
+			}
+		}
+
+		return array
 	}
 
 	var currentLink: Any? {
