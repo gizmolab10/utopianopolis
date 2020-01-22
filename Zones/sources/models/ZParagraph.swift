@@ -128,7 +128,7 @@ class ZParagraph: NSObject {
 			(range.lowerBound < titleRange.upperBound && range.upperBound >= textRange.lowerBound)
 	}
 
-	func updateParagraph(_ iRange: NSRange, length: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
+	func shouldAlterParagraph(_ iRange: NSRange, length: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
 		var 	result  		    	= ZAlterationType.eLock
 		var      delta                  = 0
 
@@ -158,8 +158,8 @@ class ZParagraph: NSObject {
 		return 	(result, delta)
 	}
 
-	func updateEssay(_ range: NSRange, length: Int) -> (ZAlterationType, Int) {
-		var (result, delta) = updateParagraph(range, length: length)
+	func shouldAlterEssay(_ range: NSRange, length: Int) -> (ZAlterationType, Int) {
+		var (result, delta) = shouldAlterParagraph(range, length: length)
 
 		if  result == .eDelete {
 			result  = .eExit

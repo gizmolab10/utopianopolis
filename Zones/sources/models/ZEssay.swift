@@ -93,7 +93,7 @@ class ZEssay: ZParagraph {
 		gControllers.syncAndRedraw()
 	}
 
-	override func updateEssay(_ range:NSRange, length: Int) -> (ZAlterationType, Int) {
+	override func shouldAlterEssay(_ range:NSRange, length: Int) -> (ZAlterationType, Int) {
 		let equal  = range.inclusiveIntersection(essayRange) == essayRange
 		var result = ZAlterationType.eLock
 		var adjust = 0
@@ -105,7 +105,7 @@ class ZEssay: ZParagraph {
 
 				child.delete()
 			} else {
-				let (alter,  delta) = child.updateParagraph(range, length: length, adjustment: adjust)
+				let (alter,  delta) = child.shouldAlterParagraph(range, length: length, adjustment: adjust)
 				adjust    += delta
 
 				if  alter != .eLock {

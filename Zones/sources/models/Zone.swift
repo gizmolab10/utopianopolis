@@ -193,21 +193,25 @@ class Zone : ZRecord {
 		if  isBookmark {
 			return bookmarkTarget!.essay
 		} else if essayMaybe == nil {
-			let array = paragraphs
-			let count = array.count
-			if  count > 1 && gCreateMultipleEssay {
-				let  essay = ZEssay(self)
-				essayMaybe = essay
-
-				essay.setupChildren()
-			} else if count == 0 || !gCreateMultipleEssay {
-				essayMaybe = ZParagraph(self)
-			} else {
-				essayMaybe = ZParagraph(array[0])
-			}
+			createEssay()
 		}
 
 		return essayMaybe!
+	}
+
+	func createEssay() {
+		let array = paragraphs
+		let count = array.count
+		if  count > 1 && gCreateMultipleEssay {
+			let  essay = ZEssay(self)
+			essayMaybe = essay
+
+			essay.setupChildren()
+		} else if count == 0 || !gCreateMultipleEssay {
+			essayMaybe = ZParagraph(self)
+		} else {
+			essayMaybe = ZParagraph(array[0])
+		}
 	}
 
 	var hyperLink: String? {
@@ -594,6 +598,14 @@ class Zone : ZRecord {
 
         return nil
     }
+
+	var insertionIndex: Int? {
+		if let index = siblingIndex {
+			return index + (gInsertionsFollow ? 1 : 0)
+		}
+
+		return nil
+	}
 
     // MARK:- write access
     // MARK:-

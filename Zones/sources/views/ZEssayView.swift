@@ -25,9 +25,12 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	var doneButton         : ZButton?
 	var saveButton         : ZButton?
 	var essayID            : CKRecord.ID?
-	var grabbedZone 	   : Zone? { return gCurrentEssay?.zone }
-	var selectionRange 	   = NSRange() { didSet { selectionRect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect() } }
+	var grabbedZone 	   : Zone?     { return gCurrentEssay?.zone }
+	var selectionString    : String?   { return textView?.textStorage?.attributedSubstring(from: selectionRange).string }
+	var selectionRange     = NSRange() { didSet { selectionRect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect() } }
 	var selectionRect      = CGRect()
+	var selectionZone      : Zone?     { return selectedParagraphs.first?.zone }
+	var insertionIndex     : Int?      { return selectionZone?.insertionIndex }
 
 	func save()   { gCurrentEssay?.saveEssay(textView?.textStorage); accountForSelection() }
 	func export() { gFiles.exportToFile(.eEssay, for: grabbedZone) }
@@ -56,6 +59,11 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
+	func reset(restoreSelection: Int? = nil) {
+		gCurrentEssay?.essayMaybe?.clearSave()
+		setup(restoreSelection: restoreSelection)
+	}
+
 	func setup(restoreSelection: Int? = nil) {
 		if  restoreSelection == nil,				// if called from viewWillAppear
 			gCurrentEssay?.essayMaybe?.needsSave ?? false,
@@ -79,16 +87,17 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- events
-	// MARK:-
-
 	func handleCommandKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		guard let key = iKey else {
 			return false
 		}
 
+		let CONTROL = flags.isControl
+		let  OPTION = flags.isOption
+
 		switch key {
 			case "a":      textView?.selectAll(nil)
+			case "d":      convertToChild(CONTROL && OPTION)
 			case "e":      export()
 			case "h":      showHyperlinkPopup()
 			case "i":      showSpecialsPopup()
@@ -96,15 +105,44 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			case "s":      save()
 			case "]":      gEsssyRing.goBack()
 			case "[":      gEsssyRing.goForward()
-			case kReturn:  done()
+			case kReturn:  grabbedZone?.grab(); done()
 			default:       return false
 		}
 
 		return true
 	}
 
-	func alterCase(up: Bool) {
-		if  let        text = textView?.textStorage?.attributedSubstring(from: selectionRange).string {
+	// MARK:- internals
+	// MARK:-
+
+	private func convertToChild(_ CONTROL: Bool) {
+		if  let text = selectionString {
+			let zone = Zone(databaseID: grabbedZone?.databaseID, named: text, identifier: nil)    // create new zone from text
+
+			textView?.insertText("", replacementRange: selectionRange)	// remove text
+			selectionZone?.addChild(zone, at: insertionIndex) 			// add it as child to zone, respecting insertion direction
+			zone.asssureIsVisible()
+			save()
+
+			if  CONTROL {
+				zone.setTraitText(kEssayDefault, for: .eEssay)			// create an essay in the new zone
+
+				gCurrentEssay = grabbedZone?.essay
+
+				reset()			    									// redraw essay with new paragraph selected
+			} else {
+				exit()
+				zone.grab()
+
+				FOREGROUND {
+					zone.edit()
+				}
+			}
+		}
+	}
+
+	private func alterCase(up: Bool) {
+		if  let        text = selectionString {
 			let replacement = up ? text.uppercased() : text.lowercased()
 
 			textView?.insertText(replacement, replacementRange: selectionRange)
@@ -118,12 +156,11 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		func setEssay(_ current: ZParagraph) {
 			gCurrentEssay = current
 
-			current.essayMaybe?.clearSave()
-			self.setup()
+			self.reset()
 		}
 
-		if !out, let selection = selectedParagraphs.last {
-			setEssay(selection)
+		if !out, let last = selection.last {
+			setEssay(last)
 		} else if out {
 			grabbedZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
 				if  ancestor != grabbedZone, ancestor.hasEssay {
@@ -137,10 +174,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- selection
-	// MARK:-
-
-	func select(restoreSelection: Int? = nil) {
+	private func select(restoreSelection: Int? = nil) {
 		if  let e = gCurrentEssay, e.lastTextIsDefault,
 			var range      = e.lastTextRange {			// select entire text of final essay
 			if  let offset = restoreSelection {
@@ -154,10 +188,15 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 	func accountForSelection() {
-		gSelecting.ungrabAll()
+		var needsUngrab = true
 
 		for paragraph in selectedParagraphs {
 			if  let grab = paragraph.zone {
+				if  needsUngrab {
+					needsUngrab = false
+					gSelecting.ungrabAll()
+				}
+
 				grab.asssureIsVisible()
 				grab.addToGrab()
 			}
@@ -169,7 +208,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
 		if  let length = text?.length,
-			let (result, delta) = gCurrentEssay?.updateEssay(range, length: length) {
+			let (result, delta) = gCurrentEssay?.shouldAlterEssay(range, length: length) {
 
 			switch result {
 				case .eAlter: return true
@@ -177,7 +216,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 				case .eExit:  gControllers.swapGraphAndEssay()
 				case .eDelete:
 					FOREGROUND {							// defer until after this method returns ... avoids corrupting newly setup text
-						self.setup(restoreSelection: delta)	// reset all text and restore cursor position
+						self.reset(restoreSelection: delta)	// reset all text and restore cursor position
 				}
 			}
 
@@ -192,11 +231,11 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	// MARK:- special characters
 	// MARK:-
 
-	func showSpecialsPopup() {
+	private func showSpecialsPopup() {
 		NSMenu.specialsPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: nil)
 	}
 
-	@objc func handleSpecialsPopupMenu(_ iItem: ZMenuItem) {
+	@objc private func handleSpecialsPopupMenu(_ iItem: ZMenuItem) {
 		if  let  type = ZSpecialsMenuType(rawValue: iItem.keyEquivalent),
 			type     != .eCancel {
 			let  text = type.text
@@ -236,7 +275,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		backwardButton?.isEnabled = flag
 	}
 
-	func setButton(_ button: ZButton) {
+	private func setButton(_ button: ZButton) {
 		if let tag = ZTextButtonID(rawValue: button.tag) {
 			switch tag {
 				case .idForward: forwardButton = button
@@ -248,19 +287,19 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
-	@objc func handleButtonPress(_ iButton: ZButton) {
+	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if let buttonID = ZTextButtonID(rawValue: iButton.tag) {
 			switch buttonID {
 				case .idForward: gEsssyRing.goForward()
-				case .idCancel:  exit()
-				case .idDone:    done()
+				case .idCancel:  grabbedZone?.grab(); exit()
+				case .idDone:    grabbedZone?.grab(); done()
 				case .idSave:    save()
 				case .idBack:    gEsssyRing.goBack()
 			}
 		}
 	}
 
-	func addButtons() {
+	private func addButtons() {
 		FOREGROUND {		// wait for application to fully load the inspector bar
 			if  let w = gWindow,
 				let inspectorBar = w.titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view {
@@ -319,7 +358,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	}
 
-	func showHyperlinkPopup() {
+	private func showHyperlinkPopup() {
 		let menu = NSMenu(title: "create a hyperlink")
 		menu.autoenablesItems = false
 
@@ -330,7 +369,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		menu.popUp(positioning: nil, at: selectionRect.origin, in: nil)
 	}
 
-	func item(type: ZHyperlinkMenuType) -> NSMenuItem {
+	private func item(type: ZHyperlinkMenuType) -> NSMenuItem {
 		let  	  item = NSMenuItem(title: type.title, action: #selector(handleHyperlinkPopupMenu(_:)), keyEquivalent: type.rawValue)
 		item   .target = self
 		item.isEnabled = true
@@ -340,7 +379,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		return item
 	}
 
-	@objc func handleHyperlinkPopupMenu(_ iItem: ZMenuItem) {
+	@objc private func handleHyperlinkPopupMenu(_ iItem: ZMenuItem) {
 		if  let type = ZHyperlinkMenuType(rawValue: iItem.keyEquivalent) {
 			var link: String? = type.linkType + kSeparator
 
@@ -369,6 +408,11 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			}
 		}
 
+		if  let e = grabbedZone?.essay,
+			array.count == 0 {
+			array.append(e)
+		}
+
 		return array
 	}
 
@@ -393,7 +437,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		return found
 	}
 
-	@discardableResult func followCurrentLink(within range: NSRange) -> Bool {
+	@discardableResult private func followCurrentLink(within range: NSRange) -> Bool {
 		selectionRange = range
 
 		if  let  link = currentLink as? String {
@@ -420,9 +464,8 @@ class ZEssayView: ZView, ZTextViewDelegate {
 									gCurrentEssay        = grab.essay
 
 									grab.asssureIsVisible()
-									grab.grab()										// focus on zone with rID (before calling setup, which uses current grab)
-									gCurrentEssay?.essayMaybe?.clearSave()
-									self.setup()
+									grab.grab()									// focus on zone with rID (before calling setup, which uses current grab)
+									self.reset()
 								}
 							}
 
@@ -436,7 +479,6 @@ class ZEssayView: ZView, ZTextViewDelegate {
 							grab          .grab()												// focus on zone with rID
 							grab          .asssureIsVisible()
 							grabbedZone?  .asssureIsVisible()
-							gCurrentEssay?.essayMaybe?.clearSave()
 
 							FOREGROUND {
 								gControllers.swapGraphAndEssay()

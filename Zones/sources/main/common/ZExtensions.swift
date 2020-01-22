@@ -690,7 +690,7 @@ extension NSRange {
 			return i
 		}
 
-		if  location == other.location || (location == other.upperBound && includeUpper) {
+		if  location == other.location || (includeUpper && (other.upperBound == location || other.upperBound == upperBound)) {
 			return NSRange(location: location, length: other.upperBound - location)
 		}
 
