@@ -57,11 +57,19 @@ class ZEssayEditor: ZBaseEditor {
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-		if  let  editor = gEssayView?.textView {
-			let COMMAND = flags.isCommand
+		if  let    view = gEssayView,
+			let  editor = view.textView {
 			let  OPTION = flags.isOption
+			let COMMAND = flags.isCommand
+			let SPECIAL = COMMAND && OPTION
 
-			if  COMMAND {
+			if         SPECIAL {
+				switch arrow {
+					case .left,
+						 .right: view.move(out: arrow == .left)
+					default:     break
+				}
+			} else if  COMMAND {
 				switch arrow {
 					case .up:    editor.moveToBeginningOfParagraph(nil)
 					case .down:  editor.moveToEndOfParagraph(nil)

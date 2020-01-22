@@ -111,6 +111,32 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		}
 	}
 
+	func move(out: Bool) {
+		gCreateMultipleEssay = true
+		let        selection = selectedParagraphs
+
+		func setEssay(_ current: ZParagraph) {
+			gCurrentEssay = current
+
+			current.essayMaybe?.clearSave()
+			self.setup()
+		}
+
+		if !out, let selection = selectedParagraphs.last {
+			setEssay(selection)
+		} else if out {
+			grabbedZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
+				if  ancestor != grabbedZone, ancestor.hasEssay {
+					setEssay(ancestor.essay)
+
+					return .eStop
+				}
+
+				return .eContinue
+			}
+		}
+	}
+
 	// MARK:- selection
 	// MARK:-
 
