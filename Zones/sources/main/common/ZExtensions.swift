@@ -17,6 +17,7 @@ import CloudKit
 
 typealias               ZoneArray = [Zone]
 typealias            ZRecordArray = [ZRecord]
+typealias          ZTinyDotsArray = [[ZTinyDotsType]]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
 typealias      ZStorageDictionary = [ZStorageType : NSObject]
 typealias   ZAttributesDictionary = [NSAttributedString.Key : Any]
@@ -1454,68 +1455,99 @@ extension ZView {
         closure(self)
 
         superview?.applyToAllSuperviews(closure)
-    }
+	}
 
-    func drawDots(surrounding rect: CGRect, count: Int, radius: Double, color: ZColor?, startQuadrant: Double = 0.0) {
-        let  bigRadius = Double(rect.size.height) / 2.0
-        var   dotCount = count
-        var    aHollow = false
-        var    bHollow = false
-        var      scale = 0.0
-        
-        while dotCount > 100 {
-            dotCount   = (dotCount + 5) / 10
-            scale      = 1.0
-            
-            if  bHollow {
-                aHollow = true
-            } else {
-                bHollow = true
-            }
-        }
-        
-        if  count > 0 {
-            let     aCount = count % 10
-            let     bCount = count / 10
-            let fullCircle = Double.pi * 2.0
-            let    aRadius = radius * (1.25 ** scale)
-            let     center = rect.center
-            
-            let closure: IntBooleanClosure = { (iCount, isB) in
-                let             oneSet = (isB ? aCount : bCount) == 0
-                if  iCount             > 0 {
-                    let         isEven = iCount % 2 == 0
-                    let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(iCount)
-                    for index in 0 ... iCount - 1 {
-                        let  increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)
-                        let startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 0.0 : 2.0 + startQuadrant : isB ? 1.0 : 3.0)
-                        let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
-                        let  dotRadius = CGFloat(bigRadius + aRadius * (isB ? 2.0 : 1.6))
-                        let     offset = aRadius * (isB ? 2.1 : 1.13)
-                        let  offCenter = CGPoint(x: center.x - CGFloat(offset), y: center.y - CGFloat(offset))
-                        let          x = offCenter.x + (dotRadius * CGFloat(cos(angle)))
-                        let          y = offCenter.y + (dotRadius * CGFloat(sin(angle)))
-                        let   diameter = CGFloat((isB ? 4.0 : 2.5) * aRadius)
-                        let   ovalRect = CGRect(x: x, y: y, width: diameter, height: diameter)
-                        let       path = ZBezierPath(ovalIn: ovalRect)
-                        path.lineWidth = CGFloat(gLineThickness)
-                        path .flatness = 0.0001
-                        
-                        if  (!isB && aHollow) || (isB && bHollow) {
-                            color?.setStroke()
-                            path.stroke()
-                        } else {
-                            color?.setFill()
-                            path.fill()
-                        }
-                    }
-                }
-            }
-            
-            closure(aCount, false)
-            closure(bCount, true)
-        }
-    }
+	func drawDots(surrounding rect: CGRect, count: Int, radius: Double, color: ZColor?, startQuadrant: Double = 0.0) {
+		var dots = ZTinyDotsArray()
+		var added = count
+
+		while added > 0 {
+			added -= 1
+			dots.append([.eIdea])
+		}
+
+		drawDots(surrounding: rect, dots: dots, radius: radius, color: color)
+	}
+
+	func drawDots(surrounding rect: CGRect, dots: ZTinyDotsArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0) {
+		let   bigRadius = Double(rect.size.height) / 2.0
+		let       count = dots.count
+		var    dotCount = count
+		var  tinyHollow = false
+		var   bigHollow = false
+		var giantHollow = false
+		var       scale = 0.0
+
+		while dotCount > 100 {
+			dotCount   = (dotCount + 5) / 10
+			scale      = 1.0
+
+			if  bigHollow {
+				tinyHollow = true
+			} else {
+				bigHollow = true
+			}
+		}
+
+		if  count > 0 {
+			let  tinyCount = count % 10
+			let   bigCount = count / 10
+			let fullCircle = Double.pi * 2.0
+			let tinyRadius = radius * (1.25 ** scale)
+			let     center = rect.center
+
+			let drawDots: IntBooleanClosure = { (iCount, isBig) in
+				let             oneSet = (isBig ? tinyCount : bigCount) == 0
+				if  iCount             > 0 {
+					let         isEven = iCount % 2 == 0
+					let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(iCount)
+					for index in 0 ... iCount - 1 {
+						let   increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)
+						let  startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 0.0 : 2.0 + startQuadrant : isBig ? 1.0 : 3.0)
+						let       angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
+						let    dotTypes = dots[index]
+						let     isEssay = dotTypes.contains(.eEssay)
+						let      isIdea = dotTypes.contains(.eIdea)
+						let giantHollow = !isIdea
+						let  hasTwoDots =  isIdea && isEssay
+
+						func drawDot(_ type: ZTinyDotsType) {
+							let  multiplier = (isEssay ? 2.0 : 1.0) * (isBig ? 2.0 : 1.6)
+							let   dotRadius = CGFloat(bigRadius + (tinyRadius * multiplier))
+							let      offset = tinyRadius * (isBig ? 2.1 : 1.13)
+							let   offCenter = CGPoint(x: center.x - CGFloat(offset), y: center.y - CGFloat(offset))
+							let           x = offCenter.x + (dotRadius * CGFloat(cos(angle)))
+							let           y = offCenter.y + (dotRadius * CGFloat(sin(angle)))
+							let    diameter = CGFloat((isBig ? 4.0 : 2.5) * tinyRadius)
+							let    ovalRect = CGRect(x: x, y: y, width: diameter, height: diameter)
+							let        path = ZBezierPath(ovalIn: ovalRect)
+							path .lineWidth = CGFloat(gLineThickness)
+							path  .flatness = 0.0001
+
+							if  (!isBig && tinyHollow) || (isBig && bigHollow) || giantHollow {
+								color?.setStroke()
+								path.stroke()
+							} else {
+								color?.setFill()
+								path.fill()
+							}
+						}
+
+						if isIdea {
+							drawDot(.eIdea)
+						}
+
+						if isEssay {
+							drawDot(.eEssay)
+						}
+					}
+				}
+			}
+
+			drawDots(tinyCount, false)
+			drawDots( bigCount, true)
+		}
+	}
 }
 
 extension ZTextField {

@@ -144,7 +144,6 @@ extension ZBezierPath {
         lineWidth = thickness
 
         stroke()
-        // fill()
     }
     
     func appendTriangle(orientedUp: Bool, in iRect: CGRect) {

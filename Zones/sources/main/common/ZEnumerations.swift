@@ -39,6 +39,18 @@ enum ZCloudAccountStatus: Int {
 }
 
 
+struct ZTinyDotsType: OptionSet {
+	let rawValue: Int
+
+	init(rawValue: Int) {
+		self.rawValue = rawValue
+	}
+
+	static let eIdea  = ZTinyDotsType(rawValue: 0x0001)
+	static let eEssay = ZTinyDotsType(rawValue: 0x0002)
+}
+
+
 enum ZInsertionMode: Int {
     case precede
     case follow
