@@ -20,16 +20,6 @@ class ZEssay: ZParagraph {
 		return nil
 	}
 
-	func setupChildren() {
-		if  gCreateMultipleEssay {
-			zone?.traverseAllProgeny {   iChild in
-				if  iChild.hasTrait(for: .eEssay) { // do not use essayMaybe as it may not yet be initialized
-					self.children.append(iChild.essay)
-				}
-			}
-		}
-	}
-
 	override var essayText: NSMutableAttributedString? {
 		var result: NSMutableAttributedString?
 		var count  = children.count
@@ -75,6 +65,18 @@ class ZEssay: ZParagraph {
 		result?.fixAllAttributes()
 
 		return result
+	}
+
+	override func setupChildren() {
+		if  gCreateMultipleEssay {
+			children.removeAll()
+
+			zone?.traverseAllProgeny {   iChild in
+				if  iChild.hasTrait(for: .eEssay) { // do not use essayMaybe as it may not yet be initialized
+					self.children.append(iChild.essay)
+				}
+			}
+		}
 	}
 
 	override func saveEssay(_ attributedString: NSAttributedString?) {

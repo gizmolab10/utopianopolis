@@ -30,7 +30,6 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	var selectionRange     = NSRange() { didSet { selectionRect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect() } }
 	var selectionRect      = CGRect()
 	var selectionZone      : Zone?     { return selectedParagraphs.first?.zone }
-	var insertionIndex     : Int?      { return selectionZone?.insertionIndex }
 
 	func save()   { gCurrentEssay?.saveEssay(textView?.textStorage); accountForSelection() }
 	func export() { gFiles.exportToFile(.eEssay, for: grabbedZone) }
@@ -60,7 +59,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	}
 
 	func reset(restoreSelection: Int? = nil) {
-		gCurrentEssay?.essayMaybe?.clearSave()
+		gCurrentEssay?.reset()
 		setup(restoreSelection: restoreSelection)
 	}
 
@@ -97,7 +96,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 		switch key {
 			case "a":      textView?.selectAll(nil)
-			case "d":      convertToChild(CONTROL && OPTION)
+			case "d":      convertToChild(createEssay: CONTROL && OPTION)
 			case "e":      export()
 			case "h":      showHyperlinkPopup()
 			case "i":      showSpecialsPopup()
@@ -115,27 +114,28 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	// MARK:- internals
 	// MARK:-
 
-	private func convertToChild(_ CONTROL: Bool) {
-		if  let text = selectionString {
-			let zone = Zone(databaseID: grabbedZone?.databaseID, named: text, identifier: nil)    // create new zone from text
+	private func convertToChild(createEssay: Bool) {
+		if  let   text = selectionString, text.length > 0,
+			let parent = selectionZone {
+			let  child = Zone(databaseID: grabbedZone?.databaseID, named: text, identifier: nil)    // create new zone from text
 
 			textView?.insertText("", replacementRange: selectionRange)	// remove text
-			selectionZone?.addChild(zone, at: insertionIndex) 			// add it as child to zone, respecting insertion direction
-			zone.asssureIsVisible()
+			parent.addChild(child, at: parent.insertionIndex) 			// add it as child to zone, respecting insertion mode
+			child.asssureIsVisible()
 			save()
 
-			if  CONTROL {
-				zone.setTraitText(kEssayDefault, for: .eEssay)			// create an essay in the new zone
+			if  createEssay {
+				child.setTraitText(kEssayDefault, for: .eEssay)			// create an essay in the new zone
 
 				gCurrentEssay = grabbedZone?.essay
 
 				reset()			    									// redraw essay with new paragraph selected
 			} else {
 				exit()
-				zone.grab()
+				child.grab()
 
 				FOREGROUND {
-					zone.edit()
+					child.edit()
 				}
 			}
 		}
@@ -201,31 +201,6 @@ class ZEssayView: ZView, ZTextViewDelegate {
 				grab.addToGrab()
 			}
 		}
-	}
-
-	// MARK:- lockout editing of added whitespace
-	// MARK:-
-
-	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
-		if  let length = text?.length,
-			let (result, delta) = gCurrentEssay?.shouldAlterEssay(range, length: length) {
-
-			switch result {
-				case .eAlter: return true
-				case .eLock:  return false
-				case .eExit:  gControllers.swapGraphAndEssay()
-				case .eDelete:
-					FOREGROUND {							// defer until after this method returns ... avoids corrupting newly setup text
-						self.reset(restoreSelection: delta)	// reset all text and restore cursor position
-				}
-			}
-
-			gCurrentEssay!.essayLength += delta
-
-			return true
-		}
-
-		return text == nil
 	}
 
 	// MARK:- special characters
@@ -450,9 +425,12 @@ class ZEssayView: ZView, ZTextViewDelegate {
 				let zone = gSelecting.zone(with: rID)	// find zone with rID
 				switch type {
 					case .eEssay:
-						if  let   grab = zone,
-							let common = grabbedZone?.closestCommonParent(of: grab) {
-							gHere      = common
+						if  let   grab = zone {
+							let common = grabbedZone?.closestCommonParent(of: grab)
+
+							if  let c  = common {
+								gHere  = c
+							}
 
 							FOREGROUND {
 								gControllers.signalFor(nil, regarding: .eRelayout)
@@ -472,9 +450,12 @@ class ZEssayView: ZView, ZTextViewDelegate {
 							return true
 						}
 					case .eIdea:
-						if  let   grab = zone,
-							let common = grabbedZone?.closestCommonParent(of: grab) {
-							gHere      = common
+						if  let   grab = zone {
+							let common = grabbedZone?.closestCommonParent(of: grab)
+
+							if  let  c = common {
+								gHere  = c
+							}
 
 							grab          .grab()												// focus on zone with rID
 							grab          .asssureIsVisible()
@@ -503,6 +484,31 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {
 		return followCurrentLink(within: NSRange(location: charIndex, length: 0))
+	}
+
+	// MARK:- lockout editing of added whitespace
+	// MARK:-
+
+	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
+		if  let length = text?.length,
+			let (result, delta) = gCurrentEssay?.shouldAlterEssay(range, length: length) {
+
+			switch result {
+				case .eAlter: return true
+				case .eLock:  return false
+				case .eExit:  gControllers.swapGraphAndEssay()
+				case .eDelete:
+					FOREGROUND {							// defer until after this method returns ... avoids corrupting reset text
+						self.reset(restoreSelection: delta)	// reset all text and restore cursor position
+				}
+			}
+
+			gCurrentEssay!.essayLength += delta
+
+			return true
+		}
+
+		return text == nil // does this return value matter?
 	}
 
 }

@@ -31,6 +31,7 @@ class ZParagraph: NSObject {
 	var         textRange = NSRange()
 	var          children = [ZParagraph]()
 
+	func setupChildren() {}
 	func delete() { zone?.removeTrait(for: .eEssay) }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
@@ -40,6 +41,11 @@ class ZParagraph: NSObject {
 		super.init()
 
 		self.zone = zone
+	}
+
+	func reset() {
+		essayMaybe?.clearSave()
+		setupChildren()
 	}
 
 	var paragraphStyle: NSMutableParagraphStyle {
