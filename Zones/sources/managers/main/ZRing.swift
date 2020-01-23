@@ -9,18 +9,18 @@
 import Foundation
 import CloudKit
 
-let gEsssyRing = ZRing()
+let gEssayRing = ZRing()
 
 class ZRing: NSObject {
 
-    var         ring = [AnyObject] ()
-    var currentIndex = -1
-    var   priorIndex = -1
-	var    ringPrime : AnyObject? { return ring[currentIndex] }
-	var        prime : AnyObject? { return gCurrentEssay }
-    var     topIndex : Int        { return ring.count - 1 }
-    var      atPrime : Bool       { return currentIndex >= 0 && currentIndex <= topIndex && isPrime }
-	var      isEssay : Bool       { return true }
+    var          ring = [AnyObject] ()
+    var  currentIndex = -1
+    var    priorIndex = -1
+	var     ringPrime : AnyObject? { return ring[currentIndex] }
+	var possiblePrime : AnyObject? { return gCurrentEssay }
+    var      topIndex : Int        { return ring.count - 1 }
+    var       atPrime : Bool       { return currentIndex >= 0 && currentIndex <= topIndex && isPrime }
+	var       isEssay : Bool       { return true }
 
 	var isPrime : Bool {
 		guard let essay = ringPrime as? ZParagraph else { return false }
@@ -32,7 +32,7 @@ class ZRing: NSObject {
     // MARK:-
 
     var primeIndex : Int? {
-		if  let p = prime {
+		if  let p = possiblePrime {
 			for (index, item) in ring.enumerated() {
 				if  p === item {
 					return index
@@ -53,6 +53,29 @@ class ZRing: NSObject {
         }
     }
 
+	func isInRing(_ item: AnyObject) -> Bool {
+		if  let o = item as? ZParagraph {
+			for ringItem in ring {
+				if  let r = ringItem as? ZParagraph,
+					o.zone == r.zone {
+					return true
+				}
+			}
+		}
+
+		return false
+	}
+
+	func insertIfUnique(_ newIndex: Int? = nil) {
+		if  let     item = possiblePrime, !isInRing(item) {
+			if let index = newIndex {
+				ring.insert(item, at: index)
+			} else {
+				ring.append(item)
+			}
+		}
+	}
+
 	func push() {
         var newIndex  = currentIndex + 1
 
@@ -60,18 +83,14 @@ class ZRing: NSObject {
             if  let index = primeIndex {
                 newIndex  = index   // prevent duplicates in stack
             } else if topIndex <= currentIndex {
-				if  let item = prime {
-					ring.append(item)
-				}
+				insertIfUnique()
             } else {
                 if  currentIndex < 0 {
                     currentIndex = 0
                     newIndex  = currentIndex + 1
                 }
 
-				if  let item = prime {
-					ring.insert(item, at: newIndex)
-				}
+				insertIfUnique(newIndex)
 			}
 
             currentIndex = newIndex

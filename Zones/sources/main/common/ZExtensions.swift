@@ -541,6 +541,12 @@ extension Array {
         return string
     }
 
+	func contains(_ other: AnyObject) -> Bool {
+		return containsCompare(with: other) { (item, another) in
+			return item === another
+		}
+	}
+
     func containsCompare(with other: AnyObject, using: CompareClosure? = nil) -> Bool {
         if  let compare = using {
             for item in self {

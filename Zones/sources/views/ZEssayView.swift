@@ -74,7 +74,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 		if  let text = gCurrentEssay?.essayText {
 			clear() 									// discard previously edited text
-			gEsssyRing.push()
+			gEssayRing.push()
 			updateButtons(true)
 			textView?.setText(text)
 			select(restoreSelection: restoreSelection)
@@ -102,8 +102,9 @@ class ZEssayView: ZView, ZTextViewDelegate {
 			case "i":      showSpecialsPopup()
 			case "l", "u": alterCase(up: key == "u")
 			case "s":      save()
-			case "]":      gEsssyRing.goBack()
-			case "[":      gEsssyRing.goForward()
+			case "/":      gEssayRing.pop()
+			case "]":      gEssayRing.goBack()
+			case "[":      gEssayRing.goForward()
 			case kReturn:  grabbedZone?.grab(); done()
 			default:       return false
 		}
@@ -129,7 +130,7 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 				gCurrentEssay = grabbedZone?.essay
 
-				reset()			    									// redraw essay with new paragraph selected
+				reset()			    									// redraw essay TODO: WITH NEW PARAGRAPH SELECTED
 			} else {
 				exit()
 				child.grab()
@@ -265,11 +266,11 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if let buttonID = ZTextButtonID(rawValue: iButton.tag) {
 			switch buttonID {
-				case .idForward: gEsssyRing.goForward()
+				case .idForward: gEssayRing.goForward()
 				case .idCancel:  grabbedZone?.grab(); exit()
 				case .idDone:    grabbedZone?.grab(); done()
 				case .idSave:    save()
-				case .idBack:    gEsssyRing.goBack()
+				case .idBack:    gEssayRing.goBack()
 			}
 		}
 	}

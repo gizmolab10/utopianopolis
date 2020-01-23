@@ -18,10 +18,10 @@ let gFocusRing = ZFocus()
 
 class ZFocus: ZRing {
 
-	override var   prime : AnyObject? { return gHereMaybe }
-	override var isEssay : Bool       { return false }
+	override var possiblePrime : AnyObject? { return gHereMaybe }
+	override var       isEssay : Bool       { return false }
 
-	override var isPrime : Bool {
+	override var       isPrime : Bool {
 		guard let zone = ringPrime as? Zone else { return false }
 
 		return gHereMaybe == zone

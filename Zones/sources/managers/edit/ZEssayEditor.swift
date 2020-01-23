@@ -41,8 +41,8 @@ class ZEssayEditor: ZBaseEditor {
 				handleArrow(arrow, flags: flags)
 			} else if  COMMAND {
 				switch key {
-					case "/":      if SPECIAL { gControllers.showShortcuts() } else { return false }
 					case "=", "-": updateFontSize(key == "=")
+					case "/":      if SPECIAL { gControllers.showShortcuts() } else { fallthrough }
 					default:       return gEssayView?.handleCommandKey(iKey, flags: flags) ?? false
 				}
 			} else {
