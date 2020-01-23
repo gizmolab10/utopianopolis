@@ -1457,18 +1457,6 @@ extension ZView {
         superview?.applyToAllSuperviews(closure)
 	}
 
-	func drawDots(surrounding rect: CGRect, count: Int, radius: Double, color: ZColor?, startQuadrant: Double = 0.0) {
-		var dots = ZTinyDotsArray()
-		var added = count
-
-		while added > 0 {
-			added -= 1
-			dots.append([.eIdea])
-		}
-
-		drawDots(surrounding: rect, dots: dots, radius: radius, color: color)
-	}
-
 	func drawDots(surrounding rect: CGRect, dots: ZTinyDotsArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0) {
 		let   bigRadius = Double(rect.size.height) / 2.0
 		let       count = dots.count

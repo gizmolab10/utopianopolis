@@ -43,6 +43,12 @@ class ZRing: NSObject {
         return nil
     }
 
+	var visibleDotTypes: ZTinyDotsArray {
+		var types = ZTinyDotsArray()
+
+		return types
+	}
+
     func dump() {
         if  gDebugMode.contains(.focus) {
 //            for (index, item) in ring.enumerated() {

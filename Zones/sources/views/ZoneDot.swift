@@ -186,7 +186,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 let color: ZColor? = isDragDrop ? gRubberbandColor : zone.color
                 let         radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)
                 
-                drawDots(surrounding: frame, count: count, radius: radius, color: color)
+				drawDots(surrounding: frame, dots: gFocusRing.visibleDotTypes, radius: radius, color: color)
             }
         }
     }

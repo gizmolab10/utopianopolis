@@ -84,8 +84,45 @@ class ZIndicatorView: ZView {
 
         return (circleRect, circlesRect, thickness)
     }
-    
-    
+
+	var visibleDotTypes: ZTinyDotsArray {
+		var   dots = ZTinyDotsArray()
+		var essayIndex = 0
+		var  ideaIndex = 0
+
+		while essayIndex < gEssayRing.ring.count || ideaIndex < gFocusRing.ring.count {
+			var essay: AnyObject?
+			var focus: AnyObject?
+
+			if  gEssayRing.ring.count > essayIndex {
+				essay = gEssayRing.ring[essayIndex]
+			}
+
+			if  gFocusRing.ring.count > ideaIndex {
+				focus = gFocusRing.ring[ideaIndex]
+			}
+
+			if  let idea = focus as? Zone {
+				ideaIndex += 1
+
+				if  let e = essay as? ZParagraph, idea == e.zone {
+					essayIndex += 1
+
+					dots.append([.eIdea, .eEssay])
+				} else {
+					dots.append([.eIdea])
+				}
+			} else if essay != nil {
+				essayIndex += 1
+
+				dots.append([.eEssay])
+			}
+		}
+
+
+		return dots
+	}
+
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
         
@@ -93,12 +130,12 @@ class ZIndicatorView: ZView {
         
         let (circleRect, circlesRect, thickness) = rects()
 
-        let    strokeColor = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
-        var   surroundRect = circleRect.insetBy(dx: -6.0, dy: -6.0)
-        let      dotsCount = gFocusRing.ring.count
-        var         radius = Double(surroundRect.size.width) / 27.0
+		var surroundRect = circleRect.insetBy(dx: -6.0, dy: -6.0)
+        var       radius = Double(surroundRect.size.width) / 27.0
+		let        color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
+		let         dots = visibleDotTypes
 
-        strokeColor.setStroke()
+        color.setStroke()
         gBackgroundColor.setFill()
         
         if  gBrowsingIsConfined {
@@ -110,7 +147,7 @@ class ZIndicatorView: ZView {
             radius         /= 2.0
         }
 
-        drawDots(surrounding: surroundRect, count: dotsCount, radius: radius, color: strokeColor, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0))
+		drawDots(surrounding: surroundRect, dots: dots, radius: radius, color: color, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0))
     }
 
 }

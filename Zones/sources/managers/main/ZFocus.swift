@@ -27,6 +27,18 @@ class ZFocus: ZRing {
 		return gHereMaybe == zone
 	}
 
+	override var visibleDotTypes: ZTinyDotsArray {
+		var  types = ZTinyDotsArray()
+		var  added = ring.count
+
+		while added > 0 {
+			added -= 1
+			types.append([.eIdea])
+		}
+
+		return types
+	}
+
 	func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
 		if  let         index = databaseID.index {
 			var    references = gHereRecordNames.components(separatedBy: kSeparator)
