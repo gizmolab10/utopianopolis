@@ -43,8 +43,8 @@ class ZRing: NSObject {
         return nil
     }
 
-	var visibleDotTypes: ZTinyDotsArray {
-		var types = ZTinyDotsArray()
+	var visibleTinyDotTypes: ZTinyDotTypeArray {
+		var types = ZTinyDotTypeArray()
 
 		return types
 	}

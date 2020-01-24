@@ -85,10 +85,10 @@ class ZIndicatorView: ZView {
         return (circleRect, circlesRect, thickness)
     }
 
-	var visibleDotTypes: ZTinyDotsArray {
-		var   dots = ZTinyDotsArray()
-		var essayIndex = 0
+	var visibleTinyDotTypes: ZTinyDotTypeArray {
+		var   tinyDotTypes = ZTinyDotTypeArray()
 		var  ideaIndex = 0
+		var essayIndex = 0
 
 		while essayIndex < gEssayRing.ring.count || ideaIndex < gFocusRing.ring.count {
 			var essay: AnyObject?
@@ -108,19 +108,19 @@ class ZIndicatorView: ZView {
 				if  let e = essay as? ZParagraph, idea == e.zone {
 					essayIndex += 1
 
-					dots.append([.eIdea, .eEssay])
+					tinyDotTypes.append([.eIdea, .eEssay])
 				} else {
-					dots.append([.eIdea])
+					tinyDotTypes.append([.eIdea])
 				}
 			} else if essay != nil {
 				essayIndex += 1
 
-				dots.append([.eEssay])
+				tinyDotTypes.append([.eEssay])
 			}
 		}
 
 
-		return dots
+		return tinyDotTypes
 	}
 
     override func draw(_ iDirtyRect: CGRect) {
@@ -128,26 +128,26 @@ class ZIndicatorView: ZView {
         
         layoutGradientView()
         
-        let (circleRect, circlesRect, thickness) = rects()
+        let (oneCircleRect, threeCirclesRect, thickness) = rects()
 
-		var surroundRect = circleRect.insetBy(dx: -6.0, dy: -6.0)
-        var       radius = Double(surroundRect.size.width) / 27.0
-		let        color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
-		let         dots = visibleDotTypes
+		var    surroundRect = oneCircleRect.insetBy(dx: -6.0, dy: -6.0)
+        var          radius = Double(surroundRect.size.width) / 27.0
+		let           color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
+		let       tinyDotTypes = visibleTinyDotTypes
 
         color.setStroke()
         gBackgroundColor.setFill()
         
         if  gBrowsingIsConfined {
-            ZBezierPath                  .drawCircle (in: circleRect,  thickness: thickness)
-            confinementRect = circleRect
+			confinementRect = oneCircleRect
+            ZBezierPath                  .drawCircle (in:    oneCircleRect, thickness: thickness)
         } else {
-            confinementRect = circlesRect
-            surroundRect    = ZBezierPath.drawCircles(in: circlesRect, thickness: thickness, orientedUp: gInsertionsFollow).insetBy(dx: -6.0, dy: -6.0)
+            confinementRect = threeCirclesRect
+            surroundRect    = ZBezierPath.drawCircles(in: threeCirclesRect, thickness: thickness, orientedUp: gInsertionsFollow).insetBy(dx: -6.0, dy: -6.0)
             radius         /= 2.0
         }
 
-		drawDots(surrounding: surroundRect, dots: dots, radius: radius, color: color, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0))
+		drawTinyDots(surrounding: surroundRect, tinyDotTypes: tinyDotTypes, radius: radius, color: color, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0))
     }
 
 }

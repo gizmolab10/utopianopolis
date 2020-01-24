@@ -177,7 +177,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func drawTinyCountDots(_ iDirtyRect: CGRect) {
+    func drawTinyCounterTinyDots(_ iDirtyRect: CGRect) {
         if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showingChildren || zone.isBookmark) {
             let count = (gCountsMode == .progeny) ? zone.progenyCount : zone.indirectCount
 
@@ -185,8 +185,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 let          frame = innerDot!.frame.offsetBy(dx: -0.1, dy: -0.1)
                 let color: ZColor? = isDragDrop ? gRubberbandColor : zone.color
                 let         radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)
-                
-				drawDots(surrounding: frame, dots: gFocusRing.visibleDotTypes, radius: radius, color: color)
+				let      ideaTypes = ZTinyDotTypeArray.ideaTypes(count)
+
+				drawTinyDots(surrounding: frame, tinyDotTypes: ideaTypes, radius: radius, color: color)
             }
         }
     }
@@ -301,11 +302,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
                     if isReveal {
 
-                        // ////////////////////
-                        // TINY COUNTER DOTS //
-                        // ////////////////////
+                        // /////////////////////
+                        // TINY COUNTER BEADS //
+                        // /////////////////////
 
-                        drawTinyCountDots(iDirtyRect)
+                        drawTinyCounterTinyDots(iDirtyRect)
                     } else if isCurrentFavorite {
 
                         // ////////////////////////////////

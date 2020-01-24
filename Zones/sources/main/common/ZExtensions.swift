@@ -17,7 +17,7 @@ import CloudKit
 
 typealias               ZoneArray = [Zone]
 typealias            ZRecordArray = [ZRecord]
-typealias          ZTinyDotsArray = [[ZTinyDotsType]]
+typealias         ZTinyDotTypeArray = [[ZTinyDotType]]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
 typealias      ZStorageDictionary = [ZStorageType : NSObject]
 typealias   ZAttributesDictionary = [NSAttributedString.Key : Any]
@@ -399,6 +399,22 @@ extension CKRecord {
             manager.clearCKRecords([self], for: states)
         }
     }
+
+}
+
+extension ZTinyDotTypeArray {
+
+	static func ideaTypes(_ count: Int) -> ZTinyDotTypeArray {
+		var  types = ZTinyDotTypeArray()
+		var  added = count
+
+		while added > 0 {
+			added  -= 1
+			types.append([.eIdea])
+		}
+
+		return types
+	}
 
 }
 
@@ -1457,62 +1473,73 @@ extension ZView {
         superview?.applyToAllSuperviews(closure)
 	}
 
-	func drawDots(surrounding rect: CGRect, dots: ZTinyDotsArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0) {
-		let   bigRadius = Double(rect.size.height) / 2.0
-		let       count = dots.count
-		var    dotCount = count
-		var  tinyHollow = false
-		var   bigHollow = false
-		var giantHollow = false
-		var       scale = 0.0
+	func drawTinyDots(surrounding rect: CGRect, tinyDotTypes: ZTinyDotTypeArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0) {
+		var       dotCount = tinyDotTypes.count
+		var      fatHollow = false
+		var     tinyHollow = false
+		var          scale = 1.0
 
-		while dotCount > 100 {
-			dotCount   = (dotCount + 5) / 10
-			scale      = 1.0
+		while     dotCount > 100 {
+			dotCount       = (dotCount + 5) / 10
+			scale          = 1.25
 
-			if  bigHollow {
+			if  fatHollow {
 				tinyHollow = true
 			} else {
-				bigHollow = true
+				fatHollow  = true
 			}
 		}
 
-		if  count > 0 {
-			let  tinyCount = count % 10
-			let   bigCount = count / 10
+		if  dotCount > 0 {
+			let  tinyCount = dotCount % 10
+			let   fatCount = dotCount / 10
 			let fullCircle = Double.pi * 2.0
-			let tinyRadius = radius * (1.25 ** scale)
-			let     center = rect.center
 
-			let drawDots: IntBooleanClosure = { (iCount, isBig) in
-				let             oneSet = (isBig ? tinyCount : bigCount) == 0
+			let drawTinyDots: IntBooleanClosure = { (iCount, isFat) in
+				let             oneSet = (isFat ? tinyCount : fatCount) == 0
+				var           isHollow : Bool { return (!isFat && tinyHollow) || (isFat && fatHollow) }
+
 				if  iCount             > 0 {
 					let         isEven = iCount % 2 == 0
 					let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(iCount)
+
 					for index in 0 ... iCount - 1 {
-						let   increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)
-						let  startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 0.0 : 2.0 + startQuadrant : isBig ? 1.0 : 3.0)
-						let       angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
-						let    dotTypes = dots[index]
-						let     isEssay = dotTypes.contains(.eEssay)
-						let      isIdea = dotTypes.contains(.eIdea)
-						let giantHollow = !isIdea
-						let  hasTwoDots =  isIdea && isEssay
+						let  increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)
+						let startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 0.0 : 2.0 + startQuadrant : isFat ? 1.0 : 3.0)
+						let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
 
-						func drawDot(_ type: ZTinyDotsType) {
-							let  multiplier = (isEssay ? 2.0 : 1.0) * (isBig ? 2.0 : 1.6)
-							let   dotRadius = CGFloat(bigRadius + (tinyRadius * multiplier))
-							let      offset = tinyRadius * (isBig ? 2.1 : 1.13)
-							let   offCenter = CGPoint(x: center.x - CGFloat(offset), y: center.y - CGFloat(offset))
-							let           x = offCenter.x + (dotRadius * CGFloat(cos(angle)))
-							let           y = offCenter.y + (dotRadius * CGFloat(sin(angle)))
-							let    diameter = CGFloat((isBig ? 4.0 : 2.5) * tinyRadius)
-							let    ovalRect = CGRect(x: x, y: y, width: diameter, height: diameter)
-							let        path = ZBezierPath(ovalIn: ovalRect)
-							path .lineWidth = CGFloat(gLineThickness)
-							path  .flatness = 0.0001
+						// essays are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)
+						// ideas  are ALWAYS tiny and SOMETIMES fat (if over ten) and SOMETIMES hollow (if over hundered)
+						//
+						// so, three booleans: isFat, isHollow, forEssay
+						//
+						// everything should always goes out more (regardless of no essays)
 
-							if  (!isBig && tinyHollow) || (isBig && bigHollow) || giantHollow {
+						func drawDot(forEssay: Bool) {
+							let     essayRatio = forEssay ? 1.5 : 1.0
+							let    offsetRatio = isFat    ? 2.1 : 1.28
+							let       fatRatio = isFat    ? 2.0 : 1.6
+							let       dotRatio = isFat    ? 4.0 : 2.5
+
+							let   scaledRadius = radius * scale
+							let  necklaceDelta = scaledRadius * 2.0 * 1.5
+							let      dotRadius = scaledRadius * fatRatio * essayRatio
+							let     rectRadius = Double(rect.size.height) / 2.0
+							let necklaceRadius = CGFloat(rectRadius + necklaceDelta)
+							let    dotDiameter = CGFloat(dotRadius  * dotRatio)
+							let         offset = CGFloat(dotRadius  * offsetRatio)
+
+							let     rectCenter = rect.center
+							let         center = CGPoint(x: rectCenter.x - offset, y: rectCenter.y - offset)
+							let              x = center.x + (necklaceRadius * CGFloat(cos(angle)))
+							let              y = center.y + (necklaceRadius * CGFloat(sin(angle)))
+
+							let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
+							let           path = ZBezierPath(ovalIn: ovalRect)
+							path    .lineWidth = CGFloat(gLineThickness * 4.0)
+							path     .flatness = 0.0001
+
+							if  isHollow || forEssay {
 								color?.setStroke()
 								path.stroke()
 							} else {
@@ -1521,19 +1548,23 @@ extension ZView {
 							}
 						}
 
-						if isIdea {
-							drawDot(.eIdea)
+						let   types = tinyDotTypes[index]   // element is an option set
+						let  asIdea = types.contains(.eIdea)
+						let asEssay = types.contains(.eEssay)
+
+						if  asEssay {
+							drawDot(forEssay: true)
 						}
 
-						if isEssay {
-							drawDot(.eEssay)
+						if  asIdea {
+							drawDot(forEssay: false)
 						}
 					}
 				}
 			}
 
-			drawDots(tinyCount, false)
-			drawDots( bigCount, true)
+			drawTinyDots( fatCount, true)  // isFat = true
+			drawTinyDots(tinyCount, false)
 		}
 	}
 }
