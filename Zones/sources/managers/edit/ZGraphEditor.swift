@@ -332,7 +332,7 @@ class ZGraphEditor: ZBaseEditor {
     
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
         if     !COMMAND || (OPTION && PERIOD) {
-            toggleMode(isDirection:   PERIOD)
+            toggleModes(isDirection:  PERIOD)
             
             if  gIsEditingText     && PERIOD {
                 swapAndResumeEdit()

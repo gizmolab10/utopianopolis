@@ -14,81 +14,47 @@ import Cocoa
 import UIKit
 #endif
 
-
 enum ZIndicatorType: Int {
     case eConfinement
     case eDirection
 }
 
-
 class ZIndicatorView: ZView {
-    
-    
+
     let   gradientView  = ZGradientView()
     let   gradientLayer = CAGradientLayer()
+	var    tinyDotRects = [Int : CGRect]()
     var confinementRect = CGRect.zero
+	func intersectsRing(_ rect: CGRect) -> Bool { return ringRect.intersects(rect) }
 
-    
-    func setupGradientView() {
-        addSubview(gradientView)
+	var ringRect : CGRect {
+		let (oneRingRect, threeRingsRect, _) = ringRects
 
-        gradientView.zlayer.backgroundColor = kWhiteColor.withAlphaComponent(0.6).cgColor
-        gradientView.setup()
-    }
-    
+		return gBrowsingIsConfined ? oneRingRect : threeRingsRect
+	}
 
-    func layoutGradientView() {
-        gradientView.snp.removeConstraints()
-        gradientView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
-            make.height.equalTo(bounds.size.height / 5.0)
+	var ringRects : (CGRect, CGRect, CGFloat) {
+		var           rect = bounds.squareCenetered
+		let          inset = rect.size.width / 3.0
+		let      ringInset = inset / 3.85
+		rect               = rect.insetBy(dx: inset,     dy: inset)
+		var   triangleRect = rect.insetBy(dx: 0,         dy: inset / 14.0)
+		var    oneRingRect = rect.insetBy(dx: ringInset, dy: ringInset)
+		let      thickness = rect.size.height / 30.0
+		let     multiplier = CGFloat(gInsertionsFollow ? 1 : -1)
+		let verticalOffset = gInsertionsFollow ? 15.0 - triangleRect.minY : bounds.maxY - triangleRect.maxY - 15.0
+		let     ringOffset = (ringInset / -1.8 * multiplier) + verticalOffset
+		oneRingRect        = oneRingRect .offsetBy(dx: 0.0, dy: ringOffset)
+		triangleRect       = triangleRect.offsetBy(dx: 0.0, dy: ringOffset)
+		let threeRingsRect = triangleRect .insetBy(fractionX: 0.425, fractionY: 0.15)
 
-            if  gInsertionsFollow {
-                make.bottom.equalToSuperview()
-            } else {
-                make.top.equalToSuperview()
-            }
-        }
-        
-        gradientView.invertMode = gInsertionsFollow
-    }
-    
-    
-    func hitTest(_ rect: CGRect?) -> ZIndicatorType? {
-        if  let r = rect,
-            gradientView.frame.intersects(r) {
-            let (circleRect, circlesRect, _) = rects()
-            let    c = gBrowsingIsConfined ? circleRect : circlesRect
-            
-            return c.intersects(r) ? .eConfinement : .eDirection
-        }
+		return (oneRingRect, threeRingsRect, thickness)
+	}
 
-        return nil
-    }
-    
-    
-    func rects() -> (CGRect, CGRect, CGFloat) {
-        var           rect = bounds.squareCenetered
-        let          inset = rect.size.width / 3.0
-        let    circleInset = inset / 3.85
-        rect               = rect.insetBy(dx: inset,       dy: inset)
-        var   triangleRect = rect.insetBy(dx: 0,           dy: inset / 14.0)
-        var     circleRect = rect.insetBy(dx: circleInset, dy: circleInset)
-        let      thickness = rect.size.height / 30.0
-        let     multiplier = CGFloat(gInsertionsFollow ? 1 : -1)
-        let verticalOffset = gInsertionsFollow ? 15.0 - triangleRect.minY : bounds.maxY - triangleRect.maxY - 15.0
-        let   circleOffset = (circleInset / -1.8 * multiplier) + verticalOffset
-        triangleRect       = triangleRect.offsetBy(dx: 0.0, dy: circleOffset)
-        circleRect         = circleRect  .offsetBy(dx: 0.0, dy: circleOffset)
-        let    circlesRect = triangleRect.insetBy(fractionX: 0.425, fractionY: 0.15)
-
-        return (circleRect, circlesRect, thickness)
-    }
-
-	var visibleTinyDotTypes: ZTinyDotTypeArray {
-		var   tinyDotTypes = ZTinyDotTypeArray()
-		var  ideaIndex = 0
+	var ringObjects : ZObjectsArray {
+		var  ringArray = ZObjectsArray()
 		var essayIndex = 0
+		var  ideaIndex = 0
 
 		while essayIndex < gEssayRing.ring.count || ideaIndex < gFocusRing.ring.count {
 			var essay: AnyObject?
@@ -108,46 +74,105 @@ class ZIndicatorView: ZView {
 				if  let e = essay as? ZParagraph, idea == e.zone {
 					essayIndex += 1
 
-					tinyDotTypes.append([.eIdea, .eEssay])
+					ringArray.append([idea, e])
 				} else {
-					tinyDotTypes.append([.eIdea])
+					ringArray.append([idea])
 				}
 			} else if essay != nil {
 				essayIndex += 1
 
-				tinyDotTypes.append([.eEssay])
+				ringArray.append([essay!])
 			}
 		}
 
+		return ringArray
+	}
+
+	var visibleTinyDotTypes: ZTinyDotTypeArray {
+		var tinyDotTypes =   ZTinyDotTypeArray()
+
+		for objects in ringObjects {
+			var types = [ZTinyDotType]()
+
+			for object in objects {
+				let isIdea = object.isKind(of: Zone.self)
+				types.append(isIdea ? .eIdea : .eEssay)
+			}
+
+			tinyDotTypes.append(types)
+		}
 
 		return tinyDotTypes
 	}
+
+    func setupGradientView() {
+        addSubview(gradientView)
+
+        gradientView.zlayer.backgroundColor = kWhiteColor.withAlphaComponent(0.6).cgColor
+        gradientView.setup()
+    }
+
+    func layoutGradientView() {
+        gradientView.snp.removeConstraints()
+        gradientView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.height.equalTo(bounds.size.height / 5.0)
+
+            if  gInsertionsFollow {
+                make.bottom.equalToSuperview()
+            } else {
+                make.top.equalToSuperview()
+            }
+        }
+        
+        gradientView.invertMode = gInsertionsFollow
+    }
+
+	func focusItems(containedIn rect: CGRect?) -> [AnyObject] {
+		if  let r = rect {
+			for (index, tinyRect) in tinyDotRects {
+				if  tinyRect.intersects(r) {
+					return ringObjects[index]
+				}
+			}
+		}
+
+		return []
+	}
+
+    func indicatorType(containedIn rect: CGRect?) -> ZIndicatorType? {
+        if  let r = rect, gradientView.frame.intersects(r) {
+            return intersectsRing(r) ? .eConfinement : .eDirection
+        }
+
+        return nil
+    }
 
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
         
         layoutGradientView()
         
-        let (oneCircleRect, threeCirclesRect, thickness) = rects()
-
-		var    surroundRect = oneCircleRect.insetBy(dx: -6.0, dy: -6.0)
-        var          radius = Double(surroundRect.size.width) / 27.0
-		let           color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
-		let       tinyDotTypes = visibleTinyDotTypes
+        let (one, three, thick) = ringRects
+		var        surroundRect = one.insetBy(dx: -6.0, dy: -6.0)
+		var              radius = Double(surroundRect.size.width) / 27.0
+		let               color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
 
         color.setStroke()
         gBackgroundColor.setFill()
         
         if  gBrowsingIsConfined {
-			confinementRect = oneCircleRect
-            ZBezierPath                  .drawCircle (in:    oneCircleRect, thickness: thickness)
+			confinementRect = one
+            ZBezierPath                  .drawCircle (in:   one, thickness: thick)
         } else {
-            confinementRect = threeCirclesRect
-            surroundRect    = ZBezierPath.drawCircles(in: threeCirclesRect, thickness: thickness, orientedUp: gInsertionsFollow).insetBy(dx: -6.0, dy: -6.0)
+            confinementRect = three
+            surroundRect    = ZBezierPath.drawCircles(in: three, thickness: thick, orientedUp: gInsertionsFollow).insetBy(dx: -6.0, dy: -6.0)
             radius         /= 2.0
         }
 
-		drawTinyDots(surrounding: surroundRect, tinyDotTypes: tinyDotTypes, radius: radius, color: color, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0))
+		drawTinyDots(surrounding: surroundRect, tinyDotTypes: visibleTinyDotTypes, radius: radius, color: color, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0)) { (index, rect) in
+			self.tinyDotRects[index] = rect
+		}
     }
 
 }

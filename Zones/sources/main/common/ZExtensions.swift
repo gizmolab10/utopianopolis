@@ -17,8 +17,9 @@ import CloudKit
 
 typealias               ZoneArray = [Zone]
 typealias            ZRecordArray = [ZRecord]
-typealias         ZTinyDotTypeArray = [[ZTinyDotType]]
+typealias           ZObjectsArray = [[AnyObject]]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
+typealias       ZTinyDotTypeArray = [[ZTinyDotType]]
 typealias      ZStorageDictionary = [ZStorageType : NSObject]
 typealias   ZAttributesDictionary = [NSAttributedString.Key : Any]
 typealias ZStringObjectDictionary = [String : NSObject]
@@ -1473,7 +1474,7 @@ extension ZView {
         superview?.applyToAllSuperviews(closure)
 	}
 
-	func drawTinyDots(surrounding rect: CGRect, tinyDotTypes: ZTinyDotTypeArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0) {
+	func drawTinyDots(surrounding rect: CGRect, tinyDotTypes: ZTinyDotTypeArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0, onEach: IntRectClosure? = nil) {
 		var       dotCount = tinyDotTypes.count
 		var      fatHollow = false
 		var     tinyHollow = false
@@ -1495,9 +1496,9 @@ extension ZView {
 			let   fatCount = dotCount / 10
 			let fullCircle = Double.pi * 2.0
 
-			let drawTinyDots: IntBooleanClosure = { (iCount, isFat) in
+			let drawNecklace: IntBooleanClosure = { (iCount, isFat) in
 				let             oneSet = (isFat ? tinyCount : fatCount) == 0
-				var           isHollow : Bool { return (!isFat && tinyHollow) || (isFat && fatHollow) }
+				var           isHollow = (isFat && fatHollow) || (!isFat && tinyHollow)
 
 				if  iCount             > 0 {
 					let         isEven = iCount % 2 == 0
@@ -1546,6 +1547,8 @@ extension ZView {
 								color?.setFill()
 								path.fill()
 							}
+
+							onEach?(index, ovalRect)
 						}
 
 						let   types = tinyDotTypes[index]   // element is an option set
@@ -1563,8 +1566,8 @@ extension ZView {
 				}
 			}
 
-			drawTinyDots( fatCount, true)  // isFat = true
-			drawTinyDots(tinyCount, false)
+			drawNecklace( fatCount, true)  // isFat = true
+			drawNecklace(tinyCount, false)
 		}
 	}
 }

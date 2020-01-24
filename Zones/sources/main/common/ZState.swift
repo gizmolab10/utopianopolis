@@ -434,7 +434,7 @@ var gCurrentGraph : ZFunction {
 // MARK:-
 
 
-func toggleMode(isDirection: Bool) {
+func toggleModes(isDirection: Bool) {
 	if  isDirection {
 		gInsertionMode = gInsertionsFollow   ? .precede     : .follow
 	} else {

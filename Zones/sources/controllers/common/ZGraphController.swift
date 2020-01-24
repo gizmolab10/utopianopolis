@@ -55,12 +55,15 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		set {
 			if  let d = dragView {
 				if  newValue == nil || rubberbandStart == .zero {
-					if  let type = indicatorView?.hitTest(d.rubberbandRect) {
-						toggleMode(isDirection: type == .eDirection)
+					let           rect = d.rubberbandRect
+					d  .rubberbandRect = .zero
+
+					if       let items = indicatorView?   .focusItems(containedIn: rect), items.count > 0 {
+						print(items)
+					} else if let type = indicatorView?.indicatorType(containedIn: rect) {
+						toggleModes(isDirection: type == .eDirection)
 					}
-					
-					d.rubberbandRect = .zero
-					
+
 					gSelecting.assureMinimalGrabs()
 					gSelecting.updateCurrentBrowserLevel()
 					gSelecting.updateCousinList()
@@ -196,10 +199,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     // MARK:- events
     // MARK:-
 
-	
 	func restartGestureRecognition() { dragView?.gestureHandler = self }
 	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
-	
 
     func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inPublicGraph: Bool) {
         if  kIsPhone && (inPublicGraph == gShowFavorites) { return }
@@ -377,10 +378,13 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                     if  let i = indicatorView, !i.isHidden {
                         let gradientView     = i.gradientView
                         let gradientLocation = gesture.location(in: gradientView)
+						let             rect = CGRect(origin: gesture.location(in: view), size: CGSize())
                         
-                        if  gradientView.bounds.contains(gradientLocation) {    // if in indicatorView
+						if  let items = indicatorView?.focusItems(containedIn: rect), items.count > 0 {
+							print(items)
+						} else if gradientView.bounds.contains(gradientLocation) {    // if in indicatorView
                             let isConfinement = indicatorView?.confinementRect.contains(gradientLocation) ?? false
-                            toggleMode(isDirection: !isConfinement)             // if in confinement symbol, change confinement; else, change direction
+                            toggleModes(isDirection: !isConfinement)            // if in confinement symbol, change confinement; else, change direction
                         }
                     }
                 }
