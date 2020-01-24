@@ -54,12 +54,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		set {
 			if  let d = dragView {
 				if  newValue == nil || rubberbandStart == .zero {
-					let           rect = d.rubberbandRect
-					d  .rubberbandRect = .zero
-
-					if  let       type = indicatorView?.indicatorType(containedIn: rect) {
-						toggleModes(isDirection: type == .eDirection)
-					}
+					d.rubberbandRect = .zero
 
 					gSelecting.assureMinimalGrabs()
 					gSelecting.updateCurrentBrowserLevel()
@@ -68,7 +63,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					d.rubberbandRect = newValue
 					let      widgets = gWidgets.visibleWidgets
 
-					if  !respondToFoci(in: newValue) {
+					if  !respondToClick(in: newValue) {
 						gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
 						gHere.ungrab()
 
@@ -91,25 +86,42 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		}
 	}
 
-	func respondToFoci(in rect: CGRect?) -> Bool {
-		if  let     foci = indicatorView?.focusItems(containedIn: rect), foci.count > 0 {
-			for focus in foci {
-				if  let             idea = focus as? Zone {
-					gFocusRing.focusOn(idea) {
-						print(idea.zoneName ?? "unknown zone")
-						gControllers.signalFor(idea, regarding: .eRelayout)
-					}
+	func focusOnIdea(_ item: AnyObject) -> Bool {
+		if  let idea = item as? Zone {
+			gFocusRing.focusOn(idea) {
+				print(idea.zoneName ?? "unknown zone")
+				gControllers.signalFor(idea, regarding: .eRelayout)
+			}
 
-					return true
-				} else if let      essay = focus as? ZParagraph {
-					gCurrentEssay        = essay
-					gCreateMultipleEssay = true
+			return true
+		}
 
-					gControllers.swapGraphAndEssay()
-					print(essay.zone?.zoneName ?? "unknown essay")
+		return false
+	}
 
-					return true
-				}
+	func focusOnEssay(_ item: AnyObject) -> Bool {
+		if  let            essay = item as? ZParagraph {
+			gCurrentEssay        = essay
+			gCreateMultipleEssay = true
+
+			gControllers.swapGraphAndEssay()
+			print(essay.zone?.zoneName ?? "unknown essay")
+
+			return true
+		}
+
+		return false
+	}
+
+	@discardableResult func respondToClick(in rect: CGRect?) -> Bool {
+		if  let focus = indicatorView?.focusItem(containedIn: rect) {
+			if  focusOnIdea(focus) || focusOnEssay(focus) {
+				return true
+			}
+
+			if  let (idea, essay) = focus as? (Zone, ZParagraph),
+				focusOnIdea(idea) || focusOnEssay(essay) {
+				return true
 			}
 		}
 
@@ -386,15 +398,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					}
 					
                     if  let i = indicatorView, !i.isHidden {
-                        let gradientView     = i.gradientView
-                        let gradientLocation = gesture.location(in: gradientView)
-						let             rect = CGRect(origin: gesture.location(in: view), size: CGSize())
+						let rect = CGRect(origin: gesture.location(in: view), size: CGSize())
                         
-						if  !respondToFoci(in: rect),
-							gradientView.bounds.contains(gradientLocation) {    // if in indicatorView
-                            let isConfinement = indicatorView?.confinementRect.contains(gradientLocation) ?? false
-                            toggleModes(isDirection: !isConfinement)            // if in confinement symbol, change confinement; else, change direction
-                        }
+						respondToClick(in: rect)
                     }
                 }
 

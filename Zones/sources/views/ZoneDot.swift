@@ -187,7 +187,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 let         radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)
 				let      ideaTypes = ZTinyDotTypeArray.ideaTypes(count)
 
-				drawTinyDots(surrounding: frame, tinyDotTypes: ideaTypes, radius: radius, color: color)
+				drawTinyDots(surrounding: frame, objects: zone.children, radius: radius, color: color)
             }
         }
     }

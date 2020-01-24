@@ -17,7 +17,7 @@ import CloudKit
 
 typealias               ZoneArray = [Zone]
 typealias            ZRecordArray = [ZRecord]
-typealias           ZObjectsArray = [[AnyObject]]
+typealias           ZObjectsArray = [AnyObject]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
 typealias       ZTinyDotTypeArray = [[ZTinyDotType]]
 typealias      ZStorageDictionary = [ZStorageType : NSObject]
@@ -1474,8 +1474,33 @@ extension ZView {
         superview?.applyToAllSuperviews(closure)
 	}
 
-	func drawTinyDots(surrounding rect: CGRect, tinyDotTypes: ZTinyDotTypeArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0, onEach: IntRectClosure? = nil) {
-		var       dotCount = tinyDotTypes.count
+	func analyze(_ object: AnyObject) -> (Bool, Bool, Bool, Bool) {
+		var essayFocus = false
+		var  ideaFocus = false
+		var    asEssay = false
+		var     asIdea = false
+
+		if let essay = object as? ZParagraph {
+			asEssay    = true
+			essayFocus = essay == gCurrentEssay
+		} else if let idea = object as? Zone {
+			asIdea     = true
+			ideaFocus  = idea == gHere
+		} else if let others = object as? ZObjectsArray {
+			for other in others {
+				let (newIdeaFocus, newIdea, newEssayFocus, newEssay) = analyze(other)
+				essayFocus = essayFocus || newEssayFocus
+				ideaFocus  = ideaFocus  || newIdeaFocus
+				asEssay    = asEssay    || newEssay
+				asIdea     = asIdea     || newIdea
+			}
+		}
+
+		return (ideaFocus, asIdea, essayFocus, asEssay)
+	}
+
+	func drawTinyDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0, onEach: IntRectClosure? = nil) {
+		var       dotCount = objects.count
 		var      fatHollow = false
 		var     tinyHollow = false
 		var          scale = 1.0
@@ -1508,6 +1533,7 @@ extension ZView {
 						let  increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)
 						let startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 0.0 : 2.0 + startQuadrant : isFat ? 1.0 : 3.0)
 						let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
+						let (ideaFocus, asIdea, essayFocus, asEssay) = self.analyze(objects[index])
 
 						// essays are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)
 						// ideas  are ALWAYS tiny and SOMETIMES fat (if over ten) and SOMETIMES hollow (if over hundered)
@@ -1516,7 +1542,7 @@ extension ZView {
 						//
 						// everything should always goes out more (regardless of no essays)
 
-						func drawDot(forEssay: Bool) {
+						func drawDot(forEssay: Bool, isFocus: Bool) {
 							let     essayRatio = forEssay ? 1.5 : 1.0
 							let    offsetRatio = isFat    ? 2.1 : 1.28
 							let       fatRatio = isFat    ? 2.0 : 1.6
@@ -1537,30 +1563,27 @@ extension ZView {
 
 							let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
 							let           path = ZBezierPath(ovalIn: ovalRect)
+							let       dotColor = isFocus ? gRubberbandColor : color
 							path    .lineWidth = CGFloat(gLineThickness * 4.0)
 							path     .flatness = 0.0001
 
 							if  isHollow || forEssay {
-								color?.setStroke()
+								dotColor?.setStroke()
 								path.stroke()
 							} else {
-								color?.setFill()
+								dotColor?.setFill()
 								path.fill()
 							}
 
 							onEach?(index, ovalRect)
 						}
 
-						let   types = tinyDotTypes[index]   // element is an option set
-						let  asIdea = types.contains(.eIdea)
-						let asEssay = types.contains(.eEssay)
-
 						if  asEssay {
-							drawDot(forEssay: true)
+							drawDot(forEssay:  true, isFocus: essayFocus)
 						}
 
 						if  asIdea {
-							drawDot(forEssay: false)
+							drawDot(forEssay: false, isFocus: ideaFocus)
 						}
 					}
 				}

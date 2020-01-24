@@ -74,35 +74,18 @@ class ZIndicatorView: ZView {
 				if  let e = essay as? ZParagraph, idea == e.zone {
 					essayIndex += 1
 
-					ringArray.append([idea, e])
+					ringArray.append([idea, e] as AnyObject)
 				} else {
-					ringArray.append([idea])
+					ringArray.append(idea)
 				}
 			} else if essay != nil {
 				essayIndex += 1
 
-				ringArray.append([essay!])
+				ringArray.append(essay!)
 			}
 		}
 
 		return ringArray
-	}
-
-	var visibleTinyDotTypes: ZTinyDotTypeArray {
-		var tinyDotTypes =   ZTinyDotTypeArray()
-
-		for objects in ringObjects {
-			var types = [ZTinyDotType]()
-
-			for object in objects {
-				let isIdea = object.isKind(of: Zone.self)
-				types.append(isIdea ? .eIdea : .eEssay)
-			}
-
-			tinyDotTypes.append(types)
-		}
-
-		return tinyDotTypes
 	}
 
     func setupGradientView() {
@@ -128,7 +111,7 @@ class ZIndicatorView: ZView {
         gradientView.invertMode = gInsertionsFollow
     }
 
-	func focusItems(containedIn rect: CGRect?) -> [AnyObject] {
+	func focusItem(containedIn rect: CGRect?) -> AnyObject? {
 		if  let r = rect {
 			for (index, tinyRect) in tinyDotRects {
 				if  tinyRect.intersects(r) {
@@ -137,7 +120,7 @@ class ZIndicatorView: ZView {
 			}
 		}
 
-		return []
+		return nil
 	}
 
     func indicatorType(containedIn rect: CGRect?) -> ZIndicatorType? {
@@ -170,7 +153,7 @@ class ZIndicatorView: ZView {
             radius         /= 2.0
         }
 
-		drawTinyDots(surrounding: surroundRect, tinyDotTypes: visibleTinyDotTypes, radius: radius, color: color, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0)) { (index, rect) in
+		drawTinyDots(surrounding: surroundRect, objects: ringObjects, radius: radius, color: color, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0)) { (index, rect) in
 			self.tinyDotRects[index] = rect
 		}
     }

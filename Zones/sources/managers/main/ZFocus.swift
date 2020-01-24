@@ -18,9 +18,9 @@ let gFocusRing = ZFocus()
 
 class ZFocus: ZRing {
 
-	override var          isEssay : Bool            { return false }
-	override var    possiblePrime : AnyObject?      { return gHereMaybe }
-	override var visibleTinyDotTypes : ZTinyDotTypeArray { return ZTinyDotTypeArray.ideaTypes(ring.count) }
+	override var          isEssay : Bool              { return false }
+	override var    possiblePrime : AnyObject?        { return gHereMaybe }
+	override var visibleRingTypes : ZTinyDotTypeArray { return ZTinyDotTypeArray.ideaTypes(ring.count) }
 
 	override var       isPrime : Bool {
 		guard let zone = ringPrime as? Zone else { return false }

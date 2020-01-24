@@ -13,14 +13,15 @@ let gEssayRing = ZRing()
 
 class ZRing: NSObject {
 
-    var          ring = [AnyObject] ()
-    var  currentIndex = -1
-    var    priorIndex = -1
-	var     ringPrime : AnyObject? { return ring[currentIndex] }
-	var possiblePrime : AnyObject? { return gCurrentEssay }
-    var      topIndex : Int        { return ring.count - 1 }
-    var       atPrime : Bool       { return currentIndex >= 0 && currentIndex <= topIndex && isPrime }
-	var       isEssay : Bool       { return true }
+    var             ring = [AnyObject] ()
+    var     currentIndex = -1
+    var       priorIndex = -1
+	var        ringPrime : AnyObject?        { return ring[currentIndex] }
+	var    possiblePrime : AnyObject?        { return gCurrentEssay }
+    var         topIndex : Int               { return ring.count - 1 }
+    var          atPrime : Bool              { return currentIndex >= 0 && currentIndex <= topIndex && isPrime }
+	var          isEssay : Bool              { return true }
+	var visibleRingTypes : ZTinyDotTypeArray { return ZTinyDotTypeArray() }
 
 	var isPrime : Bool {
 		guard let essay = ringPrime as? ZParagraph else { return false }
@@ -42,12 +43,6 @@ class ZRing: NSObject {
 
         return nil
     }
-
-	var visibleTinyDotTypes: ZTinyDotTypeArray {
-		var types = ZTinyDotTypeArray()
-
-		return types
-	}
 
     func dump() {
         if  gDebugMode.contains(.focus) {
