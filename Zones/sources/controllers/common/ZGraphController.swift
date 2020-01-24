@@ -45,8 +45,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     @IBOutlet var      dragView :  ZDragView?
     @IBOutlet var   spinnerView :  ZView?
     @IBOutlet var indicatorView :  ZIndicatorView?
-	
-	
+
 	var rubberbandRect: CGRect? {
 		get {
 			return dragView?.rubberbandRect
@@ -58,9 +57,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					let           rect = d.rubberbandRect
 					d  .rubberbandRect = .zero
 
-					if       let items = indicatorView?   .focusItems(containedIn: rect), items.count > 0 {
-						print(items)
-					} else if let type = indicatorView?.indicatorType(containedIn: rect) {
+					if  let       type = indicatorView?.indicatorType(containedIn: rect) {
 						toggleModes(isDirection: type == .eDirection)
 					}
 
@@ -70,18 +67,20 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 				} else {
 					d.rubberbandRect = newValue
 					let      widgets = gWidgets.visibleWidgets
-					
-					gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
-					gHere.ungrab()
-					
-					for widget in widgets {
-						if  let    hitRect = widget.hitRect {
-							let widgetRect = widget.convert(hitRect, to: d)
-							
-							if  let zone = widget.widgetZone, !zone.isRootOfFavorites,
-								
-								widgetRect.intersects(newValue!) {
-								widget.widgetZone?.addToGrab()
+
+					if  !respondToFoci(in: newValue) {
+						gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
+						gHere.ungrab()
+
+						for widget in widgets {
+							if  let    hitRect = widget.hitRect {
+								let widgetRect = widget.convert(hitRect, to: d)
+
+								if  let zone = widget.widgetZone, !zone.isRootOfFavorites,
+
+									widgetRect.intersects(newValue!) {
+									widget.widgetZone?.addToGrab()
+								}
 							}
 						}
 					}
@@ -92,6 +91,30 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		}
 	}
 
+	func respondToFoci(in rect: CGRect?) -> Bool {
+		if  let     foci = indicatorView?.focusItems(containedIn: rect), foci.count > 0 {
+			for focus in foci {
+				if  let             idea = focus as? Zone {
+					gFocusRing.focusOn(idea) {
+						print(idea.zoneName ?? "unknown zone")
+						gControllers.signalFor(idea, regarding: .eRelayout)
+					}
+
+					return true
+				} else if let      essay = focus as? ZParagraph {
+					gCurrentEssay        = essay
+					gCreateMultipleEssay = true
+
+					gControllers.swapGraphAndEssay()
+					print(essay.zone?.zoneName ?? "unknown essay")
+
+					return true
+				}
+			}
+		}
+
+		return false
+	}
 
     override func setup() {
         restartGestureRecognition()
@@ -123,17 +146,14 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     
     #endif
 
-	
 	// MARK:- operations
 	// MARK:-
-
 
     func clear() {
         thoughtsRootWidget   .widgetZone = nil
         favoritesRootWidget.widgetZone = nil
     }
-    
-    
+
     #if os(iOS) && false
     private func updateMinZoomScaleForSize(_ size: CGSize) {
         let           w = thoughtsRootWidget
@@ -150,7 +170,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     }
     #endif
 
-	
 	func toggleGraphs() {
 		gFocusRing.push()
 		toggleDatabaseID()
@@ -158,7 +177,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		gHere.revealChildren()
 		gFavorites.updateAllFavorites()
 	}
-	
 
 	func recenter() {
 		gScaling      = 1.0
@@ -166,7 +184,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		
 		layoutForCurrentScrollOffset()
 	}
-	
 
     func layoutForCurrentScrollOffset() {
         if  let d = dragView {
@@ -194,7 +211,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             d.setNeedsDisplay()
         }
     }
-    
     
     // MARK:- events
     // MARK:-
@@ -224,7 +240,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
         specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isThought: inPublicGraph, visited: [])
     }
-
     
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
         if  [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
@@ -242,7 +257,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		indicatorView?.setNeedsDisplay()
     }
 	
-	
 	func prepare(for iKind: ZSignalKind) {
 		if  iKind == .eRelayout {
 			gWidgets.clearRegistry()
@@ -253,13 +267,11 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 			thoughtsRootWidget .isHidden =  gShowFavorites
 		}
 	}
-
 	
 	func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
 		return (gestureRecognizer == clickGesture && otherGestureRecognizer == movementGesture) ||
 			otherGestureRecognizer == edgeGesture
 	}
-	
 
     @objc func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
         if  gWorkMode        != .graphMode {
@@ -299,7 +311,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
         }
     }
 	
-	
 	class ZClickManager : NSObject {
 
 		var lastClicked:   Zone?
@@ -315,8 +326,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 			
 			return isRepeat ? isFast : false
 		}
-	}
-	
+	}	
 
     @objc func clickEvent(_ iGesture: ZGestureRecognizer?) {
         if  gWorkMode != .graphMode {
@@ -334,10 +344,10 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
 			if  editWidget != nil {
 
-				////////////////////////////////////
+				// /////////////////////////////////
 				// ignore gestures located inside //
 				//   text that is being edited    //
-				////////////////////////////////////
+				// /////////////////////////////////
 
                 let backgroundLocation = gesture.location(in: dragView)
                 let           textRect = editWidget!.convert(editWidget!.bounds, to: dragView)
@@ -349,9 +359,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					if  let zone = widget.widgetZone,
 						let  dot = detectDotIn(widget, gesture) {
 						
-						///////////////
+						// ////////////
 						// dot event //
-						///////////////
+						// ////////////
 
 						if  dot.isReveal {
 							gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: COMMAND)
@@ -363,9 +373,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					}
 				} else { // click on background
 					
-					//////////////////////
+					// ///////////////////
 					// background event //
-					//////////////////////
+					// ///////////////////
 
 					gTextEditor.stopCurrentEdit()
 
@@ -380,9 +390,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                         let gradientLocation = gesture.location(in: gradientView)
 						let             rect = CGRect(origin: gesture.location(in: view), size: CGSize())
                         
-						if  let items = indicatorView?.focusItems(containedIn: rect), items.count > 0 {
-							print(items)
-						} else if gradientView.bounds.contains(gradientLocation) {    // if in indicatorView
+						if  !respondToFoci(in: rect),
+							gradientView.bounds.contains(gradientLocation) {    // if in indicatorView
                             let isConfinement = indicatorView?.confinementRect.contains(gradientLocation) ?? false
                             toggleModes(isDirection: !isConfinement)            // if in confinement symbol, change confinement; else, change direction
                         }
@@ -397,9 +406,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	}
 	
 	
-    /////////////////////////////////////////////
+    // //////////////////////////////////////////
     // next four are only called by controller //
-    /////////////////////////////////////////////
+    // //////////////////////////////////////////
     
     
     func dragStartEvent(_ dot: ZoneDot, _ iGesture: ZGestureRecognizer?) {
@@ -445,9 +454,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     }
     
     
-    /////////////////////////////////////////////
+    // //////////////////////////////////////////
     // next four are only called by controller //
-    /////////////////////////////////////////////
+    // //////////////////////////////////////////
     
     
     func rubberbandStartEvent(_ location: CGPoint, _ iGesture: ZGestureRecognizer?) {
@@ -503,8 +512,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
                 prior?           .displayForDrag() // erase  child lines
                 dropZone?.widget?.displayForDrag() // relayout child lines
                 dragView?       .setNeedsDisplay() // relayout drag: line and dot
-
-                //columnarReport(String(describing: gDragRelation), gDragDropZone?.unwrappedName)
 
                 if !isNoop,     dropNow,
 					let         drop = dropZone {

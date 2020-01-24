@@ -458,9 +458,9 @@ class ZEssayView: ZView, ZTextViewDelegate {
 								gHere  = c
 							}
 
-							grab          .grab()												// focus on zone with rID
-							grab          .asssureIsVisible()
-							grabbedZone?  .asssureIsVisible()
+							grab        .grab()												// focus on zone with rID
+							grab        .asssureIsVisible()
+							grabbedZone?.asssureIsVisible()
 
 							FOREGROUND {
 								gControllers.swapGraphAndEssay()

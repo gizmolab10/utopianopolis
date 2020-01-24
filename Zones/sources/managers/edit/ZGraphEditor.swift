@@ -424,8 +424,8 @@ class ZGraphEditor: ZBaseEditor {
     func grabOrEdit(_ COMMAND: Bool, _ OPTION: Bool) {
         if  COMMAND {							// switch to essay edit mode
 			gCreateMultipleEssay    = !OPTION 	// default is multiple, option drives it to single
+			gCurrentEssay           = gSelecting.firstGrab?.freshEssay
 
-			gTextEditor.stopCurrentEdit()
 			gControllers.swapGraphAndEssay()
         } else {								// switch to idea edit mode
             gTextEditor.edit(gSelecting.currentMoveable)

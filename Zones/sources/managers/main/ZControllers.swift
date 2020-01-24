@@ -80,8 +80,8 @@ class ZControllers: NSObject {
 			let showEssay 				= gWorkMode == .graphMode
 			let multiple: [ZSignalKind] = showEssay ? [.eEssay] : [.eEssay, .eRelayout]
 			gWorkMode     				= showEssay ? .essayMode : .graphMode
-			gCurrentEssay               = gSelecting.firstGrab?.freshEssay
 
+			gTextEditor.stopCurrentEdit()
 			gEssayView?.updateButtons(showEssay)
 			self.signalFor(gSelecting.firstGrab, multiple: multiple)
 		}

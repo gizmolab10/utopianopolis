@@ -127,6 +127,11 @@ class ZFocus: ZRing {
     func focus(_ atArrival: @escaping Closure) {
         createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
 		gTextEditor.stopCurrentEdit()
+
+		if  let    dbID = gHere.databaseID {
+			gDatabaseID = dbID
+		}
+
         gBatches.focus { iSame in
 			gShowFavorites = gDatabaseID == .favoritesID
 
@@ -143,7 +148,7 @@ class ZFocus: ZRing {
         gHere = iHere
 
         focus {
-            gHere.grab()
+			gHere.grab()
             gFavorites.updateCurrentFavorite()
             atArrival()
         }
@@ -342,6 +347,8 @@ class ZFocus: ZRing {
 	@discardableResult func invokeEssay(_ iZone: Zone) -> Bool { // false means not handled
 		if  iZone.hasEssay {
 			iZone.grab()
+
+			gCurrentEssay = iZone.freshEssay
 
 			gControllers.swapGraphAndEssay()
 
