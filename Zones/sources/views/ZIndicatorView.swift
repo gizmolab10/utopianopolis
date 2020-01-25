@@ -56,34 +56,24 @@ class ZIndicatorView: ZView {
 		var essayIndex = 0
 		var  ideaIndex = 0
 
-		while essayIndex < gEssayRing.ring.count || ideaIndex < gFocusRing.ring.count {
-			var essay: AnyObject?
-			var focus: AnyObject?
+		func sweep(_ ring: ZObjectsArray) {
+			for object in ring {
+				if  object.isKind(of: Zone.self) {
+					ringArray.append(object)
+				} else if let  essay = object as? ZParagraph,
+					let idea = essay.zone {
 
-			if  gEssayRing.ring.count > essayIndex {
-				essay = gEssayRing.ring[essayIndex]
-			}
-
-			if  gFocusRing.ring.count > ideaIndex {
-				focus = gFocusRing.ring[ideaIndex]
-			}
-
-			if  let idea = focus as? Zone {
-				ideaIndex += 1
-
-				if  let e = essay as? ZParagraph, idea == e.zone {
-					essayIndex += 1
-
-					ringArray.append([idea, e] as AnyObject)
-				} else {
-					ringArray.append(idea)
+					if  let index = ringArray.firstIndex(of: idea) {
+						ringArray[index] = [idea, essay] as NSObject
+					} else {
+						ringArray.append(object)
+					}
 				}
-			} else if essay != nil {
-				essayIndex += 1
-
-				ringArray.append(essay!)
 			}
 		}
+
+		sweep(gFocusRing.ring)
+		sweep(gEssayRing.ring)
 
 		return ringArray
 	}
@@ -111,11 +101,13 @@ class ZIndicatorView: ZView {
         gradientView.invertMode = gInsertionsFollow
     }
 
-	func focusItem(containedIn rect: CGRect?) -> AnyObject? {
+	func focusItem(containedIn rect: CGRect?) -> NSObject? {
 		if  let r = rect {
+			let items = ringObjects
 			for (index, tinyRect) in tinyDotRects {
-				if  tinyRect.intersects(r) {
-					return ringObjects[index]
+				if  items.count > index,
+					tinyRect.intersects(r) {
+					return items[index]
 				}
 			}
 		}

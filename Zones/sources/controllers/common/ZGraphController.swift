@@ -86,7 +86,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		}
 	}
 
-	func focusOnIdea(_ item: AnyObject) -> Bool {
+	func focusOnIdea(_ item: NSObject) -> Bool {
 		if  let idea = item as? Zone {
 			gFocusRing.focusOn(idea) {
 				print(idea.zoneName ?? "unknown zone")
@@ -99,7 +99,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 		return false
 	}
 
-	func focusOnEssay(_ item: AnyObject) -> Bool {
+	func focusOnEssay(_ item: NSObject) -> Bool {
 		if  let            essay = item as? ZParagraph {
 			gCurrentEssay        = essay
 			gCreateMultipleEssay = true
@@ -114,14 +114,19 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	}
 
 	@discardableResult func respondToClick(in rect: CGRect?) -> Bool {
-		if  let focus = indicatorView?.focusItem(containedIn: rect) {
-			if  focusOnIdea(focus) || focusOnEssay(focus) {
-				return true
-			}
+		func response(_ focus: NSObject) -> Bool {
+			return focusOnIdea(focus) || focusOnEssay(focus)
+		}
 
-			if  let (idea, essay) = focus as? (Zone, ZParagraph),
-				focusOnIdea(idea) || focusOnEssay(essay) {
+		if  let focus = indicatorView?.focusItem(containedIn: rect) {
+			if  response(focus) {
 				return true
+			} else if let foci = focus as? ZObjectsArray {
+				for focus in foci {
+					if  response(focus) {
+						return true
+					}
+				}
 			}
 		}
 

@@ -19,7 +19,7 @@ let gFocusRing = ZFocus()
 class ZFocus: ZRing {
 
 	override var          isEssay : Bool              { return false }
-	override var    possiblePrime : AnyObject?        { return gHereMaybe }
+	override var    possiblePrime : NSObject?         { return gHereMaybe }
 	override var visibleRingTypes : ZTinyDotTypeArray { return ZTinyDotTypeArray.ideaTypes(ring.count) }
 
 	override var       isPrime : Bool {
@@ -57,7 +57,7 @@ class ZFocus: ZRing {
 
         if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstSortedGrab {
             let focusClosure = { (zone: Zone) in
-                gFocusRing.push()
+                self.push()
 
                 gHere = zone
 
@@ -109,8 +109,8 @@ class ZFocus: ZRing {
 
 			UNDO(self) { iUndoSelf in
 				iUndoSelf.createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
-				gFocusRing.push()
-				gFocusRing.dump()
+				self.push()
+				self.dump()
 
 				gDatabaseID = restoreID
 
@@ -137,13 +137,12 @@ class ZFocus: ZRing {
 
 			self.showTopLevelFunctions()
             atArrival()
-            gBatches.save { iSaveSame in
-            }
+            gBatches.save { iSaveSame in }
         }
     }
 
     func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
-        gFocusRing.push()
+        push()
         
         gHere = iHere
 
@@ -171,8 +170,8 @@ class ZFocus: ZRing {
 
                 return true
             } else if let dbID = bookmark.crossLink?.databaseID {
-                gFocusRing.push()
-                gFocusRing.dump()
+                push()
+                dump()
 
                 gDatabaseID = dbID
 
@@ -213,7 +212,7 @@ class ZFocus: ZRing {
                     target.asssureIsVisible()
                     target.grab()
                 } else {
-					gFocusRing.push()
+					push()
 
                     gHere = target
                 }
@@ -222,8 +221,8 @@ class ZFocus: ZRing {
 
 				complete(target, .eRelayout)
 			} else {
-				gFocusRing.push()
-				gFocusRing.dump()
+				push()
+				dump()
 
 				gShowFavorites = targetDBID == .favoritesID
 

@@ -17,7 +17,7 @@ import CloudKit
 
 typealias               ZoneArray = [Zone]
 typealias            ZRecordArray = [ZRecord]
-typealias           ZObjectsArray = [AnyObject]
+typealias           ZObjectsArray = [NSObject]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
 typealias       ZTinyDotTypeArray = [[ZTinyDotType]]
 typealias      ZStorageDictionary = [ZStorageType : NSObject]
@@ -1388,6 +1388,22 @@ extension Character {
     }
 }
 
+extension ZColor {
+
+	static func + (left: ZColor, right: ZColor?) -> ZColor {
+		if right == nil { return left }
+
+		var (rLeft,  gLeft,  bLeft,  aLeft)  = (CGFloat(0), CGFloat(0), CGFloat(0), CGFloat(0))
+		var (rRight, gRight, bRight, aRight) = (CGFloat(0), CGFloat(0), CGFloat(0), CGFloat(0))
+
+		left  .getRed(&rLeft,  green: &gLeft,  blue: &bLeft,  alpha: &aLeft)
+		right!.getRed(&rRight, green: &gRight, blue: &bRight, alpha: &aRight)
+
+		return ZColor(red: (rLeft + rRight) / 2, green: (gLeft + gRight) / 2, blue: (bLeft + bRight) / 2, alpha: (aLeft + aRight) / 2)
+	}
+
+}
+
 extension Date {
 	
 	var easyToReadDate: String {
@@ -1563,7 +1579,7 @@ extension ZView {
 
 							let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
 							let           path = ZBezierPath(ovalIn: ovalRect)
-							let       dotColor = isFocus ? gRubberbandColor : color
+							let       dotColor = !isFocus ? color : gRubberbandColor + color
 							path    .lineWidth = CGFloat(gLineThickness * 4.0)
 							path     .flatness = 0.0001
 
