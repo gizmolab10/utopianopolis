@@ -444,13 +444,11 @@ class ZGraphEditor: ZBaseEditor {
             zone.needChildren()
         }
 
-        gBatches.children { iSame in
-            for zone in grabs {
-                zone.divideEvenly()
-            }
+		for zone in grabs {
+			zone.divideEvenly()
+		}
 
-            self.redrawSyncRedraw()
-        }
+		redrawSyncRedraw()
     }
 
 
@@ -586,9 +584,7 @@ class ZGraphEditor: ZBaseEditor {
                 }
             }
 
-            gBatches.children { isSame in
-                self.redrawGraph()
-            }
+            redrawGraph()
         }
     }
 
@@ -600,19 +596,18 @@ class ZGraphEditor: ZBaseEditor {
     func selectCurrentFavorite() {
         if  let current = gFavorites.currentFavorite {
             current.needRoot()
-            gBatches.families { iSame in
-                if  let parent = current.parentZone {
-                    parent.asssureIsVisible()
 
-                    self.redrawGraph()
-                }
-            }
+			if !current.isGrabbed {
+				current.grab()
+			} else {
+				gHere.grab()
+			}
 
-            if !current.isGrabbed {
-                current.grab()
-            } else {
-                gHere.grab()
-            }
+			if  let parent = current.parentZone {
+				parent.asssureIsVisible()
+
+				self.redrawGraph()
+			}
         }
     }
 
@@ -661,16 +656,12 @@ class ZGraphEditor: ZBaseEditor {
     }
 
 
-    func revealParentAndSiblingsOf(_ iZone: Zone, onCompletion: BooleanClosure?) {
+    func revealParentAndSiblingsOf(_ iZone: Zone) {
         if  let parent = iZone.parentZone {
             parent.revealChildren()
             parent.needChildren()
         } else {
             iZone.needParent()
-        }
-
-        gBatches.families { iSame in
-            onCompletion?(true)
         }
     }
 
@@ -701,29 +692,25 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
 
-        gBatches.families { iSame in
-            FOREGROUND(canBeDirect: true) {
-                descendents.traverseAncestors { iParent -> ZTraverseStatus in
-                    let  gotThere = iParent == iAncestor || iParent.isRoot    // reached the ancestor or the root
-                    let gotOrphan = iParent.parentZone == nil
+		descendents.traverseAncestors { iParent -> ZTraverseStatus in
+			let  gotThere = iParent == iAncestor || iParent.isRoot    // reached the ancestor or the root
+			let gotOrphan = iParent.parentZone == nil
 
-                    if  gotThere || gotOrphan {
-                        if !gotThere && !iParent.isFetched && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
-                            self.recursivelyRevealSiblings([iParent], untilReaching: iAncestor, onCompletion: onCompletion)
-                        } else {
-                            iAncestor.revealChildren()
-                            FOREGROUND(after: 0.1) {
-                                onCompletion?(iAncestor)
-                            }
-                        }
+			if  gotThere || gotOrphan {
+				if !gotThere && !iParent.isFetched && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
+					self.recursivelyRevealSiblings([iParent], untilReaching: iAncestor, onCompletion: onCompletion)
+				} else {
+					iAncestor.revealChildren()
+					FOREGROUND(after: 0.1) {
+						onCompletion?(iAncestor)
+					}
+				}
 
-                        return .eStop
-                    }
+				return .eStop
+			}
 
-                    return .eContinue
-                }
-            }
-        }
+			return .eContinue
+		}
     }
 
 
@@ -804,20 +791,20 @@ class ZGraphEditor: ZBaseEditor {
 
             zone.concealAllProgeny()
 
-            revealParentAndSiblingsOf(zone) { iCloudCalled in
-                if let  parent = zone.parentZone, parent != zone {
-                    if  gHere == zone {
-                        gHere  = parent
-                    }
-                    
-                    self.recursiveUpdate(show, parent, to: iLevel) {
-                        parent.grab()
-                        onCompletion?()
-                    }
-                } else {
-                    onCompletion?()
-                }
-            }
+            revealParentAndSiblingsOf(zone)
+
+			if let  parent = zone.parentZone, parent != zone {
+				if  gHere == zone {
+					gHere  = parent
+				}
+
+				self.recursiveUpdate(show, parent, to: iLevel) {
+					parent.grab()
+					onCompletion?()
+				}
+			} else {
+				onCompletion?()
+			}
         } else {
 
             // /////////////////
@@ -1030,9 +1017,10 @@ class ZGraphEditor: ZBaseEditor {
                         }
                     } else {
                         self.moveZones(zones, into: child) {
-                            self.redrawAndSync() {
-                                onCompletion?(child)
-                            }
+							self.redrawGraph() {
+								onCompletion?(child)
+								gControllers.sync()
+							}
                         }
                     }
                 }
@@ -1200,11 +1188,11 @@ class ZGraphEditor: ZBaseEditor {
             if gHere != zone {
                 closure()
             } else {
-                self.revealParentAndSiblingsOf(zone) { iCloudCalled in
-                    gHere = zone.parentZone ?? gHere
+                self.revealParentAndSiblingsOf(zone)
 
-                    closure()
-                }
+				gHere = zone.parentZone ?? gHere
+
+				closure()
             }
         }
     }
@@ -1272,58 +1260,56 @@ class ZGraphEditor: ZBaseEditor {
             zone.needProgeny()
         }
 
-        gBatches.children(.all) { iSame in // to make sure all progeny are acted upon
-            if !doneOnce {
-                doneOnce  = true
-                var count = zones.count
-                
-                let finish: Closure = {
-                    grab?.grab()
-                    onCompletion?()
-                }
+		if !doneOnce {
+			doneOnce  = true
+			var count = zones.count
 
-                if  count == 0 {
-                    finish()
-                } else {
-                    let deleteBookmarks: Closure = {
-                        count -= 1
-                        
-                        if  count == 0 {
-                            gBatches.bookmarks { iSame in
-                                var bookmarks = ZoneArray ()
-                                
-                                for zone in zones {
-                                    bookmarks += zone.fetchedBookmarks
-                                }
-                                
-                                if  bookmarks.count == 0 {
-                                    finish()
-                                } else {
-                                    
-                                    // ///////////////////////////////////////////////////////////
-                                    // remove any bookmarks the target of which is one of zones //
-                                    // ///////////////////////////////////////////////////////////
-                                    
-                                    self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { // recurse
-                                        finish()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    for zone in zones {
-                        if  zone == iParent { // detect and avoid infinite recursion
-                            deleteBookmarks()
-                        } else {
-                            self.deleteZone(zone, permanently: permanently) {
-                                deleteBookmarks()
-                            }
-                        }
-                    }
-                }
-            }
-        }
+			let finish: Closure = {
+				grab?.grab()
+				onCompletion?()
+			}
+
+			if  count == 0 {
+				finish()
+			} else {
+				let deleteBookmarks: Closure = {
+					count -= 1
+
+					if  count == 0 {
+						gBatches.bookmarks { iSame in
+							var bookmarks = ZoneArray ()
+
+							for zone in zones {
+								bookmarks += zone.fetchedBookmarks
+							}
+
+							if  bookmarks.count == 0 {
+								finish()
+							} else {
+
+								// ///////////////////////////////////////////////////////////
+								// remove any bookmarks the target of which is one of zones //
+								// ///////////////////////////////////////////////////////////
+
+								self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { // recurse
+									finish()
+								}
+							}
+						}
+					}
+				}
+
+				for zone in zones {
+					if  zone == iParent { // detect and avoid infinite recursion
+						deleteBookmarks()
+					} else {
+						self.deleteZone(zone, permanently: permanently) {
+							deleteBookmarks()
+						}
+					}
+				}
+			}
+		}
     }
 
 
@@ -1345,9 +1331,8 @@ class ZGraphEditor: ZBaseEditor {
                 if  let p = parent, p != zone {
                     gHere = p
 
-                    revealParentAndSiblingsOf(zone) { iCloudCalled in
-                        recurse()
-                    }
+                    revealParentAndSiblingsOf(zone)
+					recurse()
                 } else {
 
                     // ////////////////////////////////////////////////////////////////////////////////////////////
@@ -1477,18 +1462,14 @@ class ZGraphEditor: ZBaseEditor {
                     }
                 } else if let p = parentZone {
                     if  zone == gHere {
-                        revealParentAndSiblingsOf(zone) { iCloudCalled in
-                            self.revealSiblingsOf(zone, untilReaching: p)
-                            complete()
-                        }
+                        revealParentAndSiblingsOf(zone)
+						self.revealSiblingsOf(zone, untilReaching: p)
+						complete()
                     } else {
                         p.revealChildren()
                         p.needChildren()
                         p.grab()
-                        
-                        gBatches.children(.restore) { iSame in
-                            complete()
-                        }
+						complete()
                     }
                 } else {
                     // zone is an orphan
@@ -1541,14 +1522,14 @@ class ZGraphEditor: ZBaseEditor {
                             }
                         }
                     } else if   grandParentZone != nil {
-                        revealParentAndSiblingsOf(p) { iCloudCalled in
-                            if  grandParentZone!.spawnedBy(gHere) {
-                                self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
-                            } else {
-                                moveOutToHere(grandParentZone!)
-                                complete()
-                            }
-                        }
+                        revealParentAndSiblingsOf(p)
+
+						if  grandParentZone!.spawnedBy(gHere) {
+							self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
+						} else {
+							moveOutToHere(grandParentZone!)
+							complete()
+						}
                     } else { // no available move
                         complete()
                     }
@@ -1684,19 +1665,17 @@ class ZGraphEditor: ZBaseEditor {
         into.revealChildren()
         into.needChildren()
 
-        gBatches.children(.restore) { iSame in
-            for     zone in zones {
-                if  zone != into {
-                    if orphan {
-                        zone.orphan()
-                    }
-                    
-                    into.addAndReorderChild(zone, at: iIndex)
-                }
-            }
+		for     zone in zones {
+			if  zone != into {
+				if orphan {
+					zone.orphan()
+				}
 
-            onCompletion?()
-        }
+				into.addAndReorderChild(zone, at: iIndex)
+			}
+		}
+
+		onCompletion?()
     }
 
 
@@ -1742,16 +1721,7 @@ class ZGraphEditor: ZBaseEditor {
                 createAndAdd()
             } else {
                 parent.needChildren()
-
-                var     isFirstTime = true
-
-                gBatches.children(.restore) { iSame in
-                    if  isFirstTime {
-                        isFirstTime = false
-
-                        createAndAdd()
-                    }
-                }
+				createAndAdd()
             }
         }
     }
@@ -1900,29 +1870,13 @@ class ZGraphEditor: ZBaseEditor {
             }
 
             let prepare = {
-                var childrenAreMissing = false
-
                 for child in pastables.keys {
                     if !child.isInTrash {
                         child.needProgeny()
-
-                        childrenAreMissing = true
                     }
                 }
 
-                if !childrenAreMissing {
-                    action()
-                } else {
-                    var once = true
-
-                    gBatches.children(.all) { iSame in
-                        if  once {
-                            once = false
-
-                            action()
-                        }
-                    }
-                }
+				action()
             }
 
             if !isBookmark {
@@ -1938,8 +1892,9 @@ class ZGraphEditor: ZBaseEditor {
 
 
     func preserveChildrenOfGrabbedZones(convertToTitledLine: Bool = false, onCompletion: Closure?) {
-        let grabs = gSelecting.simplifiedGrabs
-        
+        let     grabs = gSelecting.simplifiedGrabs
+		let candidate = gSelecting.rootMostMoveable
+
         if  grabs.count > 1 && convertToTitledLine {
             addDashedLine {
                 onCompletion?()
@@ -1948,52 +1903,49 @@ class ZGraphEditor: ZBaseEditor {
             return
         }
 
-        for zone in grabs {
-            zone.needChildren()
-            zone.revealChildren()
+        for grab in grabs {
+            grab.needChildren()
+            grab.revealChildren()
         }
 
-        gBatches.children(.all) { iSame in // to make sure all progeny are acted upon
-            let        candidate = gSelecting.rootMostMoveable
-            if  let       parent = candidate.parentZone {
-                let siblingIndex = candidate.siblingIndex
-                var     children = ZoneArray ()
+		if  let       parent = candidate.parentZone {
+			let siblingIndex = candidate.siblingIndex
+			var     children = ZoneArray ()
 
-                gSelecting.clearPaste()
-                gSelecting.currentGrabs = []
+			gSelecting.clearPaste()
+			gSelecting.currentGrabs = []
 
-                for grab in grabs {
-                    if !convertToTitledLine {       // delete, add to paste
-                        grab.addToPaste()
-                        self.moveZone(grab, to: grab.trashZone)
-                    } else {                        // convert to titled line and insert above
-                        grab.convertToTitledLine()
-                        children.append(grab)
-                        grab.addToGrab()
-                    }
+			for grab in grabs {
+				if !convertToTitledLine {       // delete, add to paste
+					grab.addToPaste()
+					self.moveZone(grab, to: grab.trashZone)
+				} else {                        // convert to titled line and insert above
+					grab.convertToTitledLine()
+					children.append(grab)
+					grab.addToGrab()
+				}
 
-                    for child in grab.children {
-                        children.append(child)
-                        child.addToGrab()
-                    }
-                }
+				for child in grab.children {
+					children.append(child)
+					child.addToGrab()
+				}
+			}
 
-                children.reverse()
+			children.reverse()
 
-                for child in children {
-                    child.orphan()
-                    parent.addAndReorderChild(child, at: siblingIndex)
-                }
+			for child in children {
+				child.orphan()
+				parent.addAndReorderChild(child, at: siblingIndex)
+			}
 
-                self.UNDO(self) { iUndoSelf in
-                    iUndoSelf.prepareUndoForDelete()
-                    iUndoSelf.deleteZones(children, iShouldGrab: false) {}
-                    iUndoSelf.pasteInto(parent, honorFormerParents: true)
-                }
-            }
+			self.UNDO(self) { iUndoSelf in
+				iUndoSelf.prepareUndoForDelete()
+				iUndoSelf.deleteZones(children, iShouldGrab: false) {}
+				iUndoSelf.pasteInto(parent, honorFormerParents: true)
+			}
+		}
 
-            onCompletion?()
-        }
+		onCompletion?()
     }
 
     
@@ -2123,51 +2075,49 @@ class ZGraphEditor: ZBaseEditor {
 
             into.maybeNeedChildren()
 
-            gBatches.children(.all) { iSame in
-                if !done {
-                    done = true
-                    if  let firstGrab = grabs.first,
-                        let fromIndex = firstGrab.siblingIndex,
-                        (firstGrab.parentZone != into || fromIndex > (iIndex ?? 1000)) {
-                        grabs = grabs.reversed()
-                    }
-                    
-                    gSelecting.ungrabAll()
+			if !done {
+				done = true
+				if  let firstGrab = grabs.first,
+					let fromIndex = firstGrab.siblingIndex,
+					(firstGrab.parentZone != into || fromIndex > (iIndex ?? 1000)) {
+					grabs = grabs.reversed()
+				}
 
-                    for grab in grabs {
-                        var beingMoved = grab
+				gSelecting.ungrabAll()
 
-                        if  toFavorites && !beingMoved.isInFavorites && !beingMoved.isBookmark && !beingMoved.isInTrash {
-                            beingMoved = gFavorites.createBookmark(for: beingMoved, style: .favorite)
+				for grab in grabs {
+					var beingMoved = grab
 
-                            beingMoved.maybeNeedSave()
-                        } else {
-                            beingMoved.orphan()
+					if  toFavorites && !beingMoved.isInFavorites && !beingMoved.isBookmark && !beingMoved.isInTrash {
+						beingMoved = gFavorites.createBookmark(for: beingMoved, style: .favorite)
 
-                            if  beingMoved.databaseID != into.databaseID {
-                                beingMoved.traverseAllProgeny { iChild in
-                                    iChild.needDestroy()
-                                }
+						beingMoved.maybeNeedSave()
+					} else {
+						beingMoved.orphan()
 
-                                beingMoved = beingMoved.deepCopy
-                            }
-                        }
+						if  beingMoved.databaseID != into.databaseID {
+							beingMoved.traverseAllProgeny { iChild in
+								iChild.needDestroy()
+							}
 
-                        if !COMMAND {
-                            beingMoved.addToGrab()
-                        }
+							beingMoved = beingMoved.deepCopy
+						}
+					}
 
-                        into.addAndReorderChild(beingMoved, at: iIndex)
-                        beingMoved.recursivelyApplyDatabaseID(into.databaseID)
-                    }
+					if !COMMAND {
+						beingMoved.addToGrab()
+					}
 
-                    if  toBookmark && self.undoManager.groupingLevel > 0 {
-                        self.undoManager.endUndoGrouping()
-                    }
+					into.addAndReorderChild(beingMoved, at: iIndex)
+					beingMoved.recursivelyApplyDatabaseID(into.databaseID)
+				}
 
-                    onCompletion?()
-                }
-            }
+				if  toBookmark && self.undoManager.groupingLevel > 0 {
+					self.undoManager.endUndoGrouping()
+				}
+
+				onCompletion?()
+			}
         }
 
         // ////////////////////////////////////
@@ -2196,23 +2146,19 @@ class ZGraphEditor: ZBaseEditor {
         into.revealChildren()
         into.needChildren()
 
-        gBatches.children(.restore) { iSame in
-            let doGrab = !into.isInTrash
-            
-            if orphan {
-                zone.orphan()
-            }
+		if  orphan {
+			zone.orphan()
+		}
 
-            into.addAndReorderChild(zone, at: iIndex)
-            into.maybeNeedSave()
-            zone.maybeNeedSave()
+		into.addAndReorderChild(zone, at: iIndex)
+		into.maybeNeedSave()
+		zone.maybeNeedSave()
 
-            if  doGrab { // so grab won't disappear
-                zone.grab()
-            }
+		if  !into.isInTrash { // so grab won't disappear
+			zone.grab()
+		}
 
-            onCompletion?()
-        }
+		onCompletion?()
     }
     
     
@@ -2279,23 +2225,23 @@ class ZGraphEditor: ZBaseEditor {
                 let    snapshot = gSelecting.snapshot
                 let hasSiblings = rootMost.hasSiblings
                 
-                revealParentAndSiblingsOf(rootMost) { iCalledCloud in
-                    let recurse = hasSiblings && snapshot.isSame && (iCalledCloud || (rootMostParent != nil))
-                    
-                    if  let parent = rootMostParent {
-                        gHere = parent
-                        
-                        if  recurse {
-                            gSelecting.updateCousinList()
-                            self.moveUp(iMoveUp, originals, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
-                        } else {
-                            gFavorites.updateAllFavorites()
-                            
-                            onCompletion?(.eRelayout)
-                        }
-                    }
-                }
-            }
+                revealParentAndSiblingsOf(rootMost)
+
+				let recurse = hasSiblings && snapshot.isSame && (rootMostParent != nil)
+
+				if  let parent = rootMostParent {
+					gHere = parent
+
+					if  recurse {
+						gSelecting.updateCousinList()
+						self.moveUp(iMoveUp, originals, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
+					} else {
+						gFavorites.updateAllFavorites()
+
+						onCompletion?(.eRelayout)
+					}
+				}
+			}
         } else if let    parent = rootMostParent {
             let     targetZones = doCousinJump ? gSelecting.cousinList : parent.children
             let     targetCount = targetZones.count

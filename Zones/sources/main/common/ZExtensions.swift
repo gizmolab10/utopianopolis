@@ -91,7 +91,7 @@ extension NSObject {
     }
 
     func syncAndRedraw(_ zone: Zone? = nil) {
-        gControllers.sync(zone) {
+        gControllers.sync() {
             gControllers.signalFor(zone, regarding: .eRelayout, onCompletion: nil)
         }
     }

@@ -146,6 +146,7 @@ class ZCloud: ZRecords {
                 }
             }
 
+			onCompletion?(1)
             start(operation)
         } else {
             onCompletion?(0)

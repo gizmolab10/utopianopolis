@@ -31,7 +31,7 @@ var         gKeyboardIsVisible                     = false
 var         gArrowsDoNotBrowse                     = false
 var       gCreateMultipleEssay 			   		   = false
 var       gHasCompletedStartup                     = false
-var  			    gDebugMode:		  [ZDebugMode] = [.focus, .speed]
+var  			    gDebugMode:		  [ZDebugMode] = [.focus, .ops]
 var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var        gCurrentBrowseLevel:               Int?
 var           gDragDropIndices: NSMutableIndexSet?

@@ -78,16 +78,16 @@ var gCloudFire:  TimerClosure?
 
 class ZOperations: NSObject {
 
-
-	let           queue = OperationQueue()
-	let			doneOps : [ZOperationID] = [.oNone, .oDone, .oCompletion]
-	var       currentOp :  ZOperationID  =  .oNone
-    var    isIncomplete :          Bool  { return !doneOps.contains(currentOp) }
-    var      shouldShow :          Bool  { return isIncomplete && timeSinceOpStart > 0.5 }
-    var    shouldCancel :          Bool  { return isIncomplete && timeSinceOpStart > 5.0 }
-    var   debugTimeText :        String  { return !usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)" }
-    var onCloudResponse :   AnyClosure?
-    var     lastOpStart :         Date?
+	let            queue = OperationQueue()
+	var        currentOp :  ZOperationID  =  .oNone
+	let	 	 	 doneOps : [ZOperationID] = [.oNone, .oDone, .oCompletion]
+	var hiddenSpinnerOps : [ZOperationID] = [.oFetchAll, .oTraits, .oSaveToCloud]
+    var     isIncomplete :          Bool  { return !doneOps.contains(currentOp) }
+	var     shouldCancel :          Bool  { return isIncomplete && timeSinceOpStart > 5.0 }
+    var      showSpinner :          Bool  { return isIncomplete && timeSinceOpStart > 0.5 && !hiddenSpinnerOps.contains(currentOp) }
+    var    debugTimeText :        String  { return !usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)" }
+    var  onCloudResponse :   AnyClosure?
+    var      lastOpStart :       NSDate?
 	func printOp(_ message: String) { columnarReport(mode: .ops, operationText, message) }
 
     var operationText: String {
@@ -155,7 +155,7 @@ class ZOperations: NSObject {
         if  gCloudTimer == nil {
             gCloudFire   = { iTimer in
                 FOREGROUND(canBeDirect: true) {
-                    gGraphController?.showSpinner(self.shouldShow)
+                    gGraphController?.showSpinner(self.showSpinner)
 
                     if  self.shouldCancel {
                         gBatches.unHang()
@@ -196,7 +196,7 @@ class ZOperations: NSObject {
     func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
         setupCloudTimer()
 
-        if queue.operationCount > 10 {
+        if  queue.operationCount > 10 {
             gAlerts.showAlert("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
                // onCompletion()
             }
@@ -221,13 +221,13 @@ class ZOperations: NSObject {
                     // ///////////////////////////////////////////////////////////////
 
                     self.queue.isSuspended = true
-                    self.lastOpStart       = Date()
+					self.lastOpStart       = NSDate()
                     self.currentOp         = operationID        // if hung, it happened inside this op
 
                     self.reportBeforePerformBlock()
 
                     self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
-                        self.reportOnCompletionOfPerformBlock() // says nothing
+                        self.reportOnCompletionOfPerformBlock()
 
                         FOREGROUND {
                             if self.currentOp == .oCompletion {
@@ -266,11 +266,10 @@ class ZOperations: NSObject {
     }
 
     func reportOnCompletionOfPerformBlock() {
-		if  gDebugMode.contains(.speed), gDebugMode.contains(.ops) {
-            let duration = Int(timeSinceOpStart) * -10
-            let  message = "\(Float(duration) / 10.0)"
+		if  gDebugMode.contains(.ops) {
+            let duration = Float(Int(timeSinceOpStart * -10)) / 10.0 // round to nearest tenth of second
 
-            printOp(message)
+            printOp("\(duration)")
         }
     }
 

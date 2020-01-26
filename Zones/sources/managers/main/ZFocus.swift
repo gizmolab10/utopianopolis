@@ -278,10 +278,7 @@ class ZFocus: ZRing {
 					
 					let grabHere = {
 						gHereMaybe?.prepareForArrival()
-						
-						gBatches.children(.restore) { iSame in
-							complete(gHereMaybe, .eRelayout)
-						}
+						complete(gHereMaybe, .eRelayout)
 					}
 					
 					if  there != nil {

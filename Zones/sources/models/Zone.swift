@@ -1626,17 +1626,7 @@ class Zone : ZRecord {
                 p.addChild(self)
             }
             
-            if  parent == nil || !parent!.showingChildren {
-                done()
-            } else {
-                parent?.needChildren()
-                
-                gBatches.children(.restore) { iSame in
-                    FOREGROUND(canBeDirect: true) {
-                        done()
-                    }
-                }
-            }
+			done()
         }
     }
 

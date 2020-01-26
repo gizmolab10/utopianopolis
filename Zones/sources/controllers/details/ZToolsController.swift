@@ -87,9 +87,7 @@ class ZToolsController: ZGenericTableController {
             gHere = trash
 
             gHere.needChildren()
-            gBatches.children(.restore) { iSame in
-                self.redrawAndSync()
-            }
+			self.redrawAndSync()
         }
     }
 
@@ -103,9 +101,7 @@ class ZToolsController: ZGenericTableController {
 
                 lost.needChildren()
                 lost.revealChildren()
-                gBatches.children(.all) { iSame in
-                    self.grabChildless()
-                }
+				self.grabChildless()
             }
         }
     }
