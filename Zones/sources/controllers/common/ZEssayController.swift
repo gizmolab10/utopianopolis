@@ -18,6 +18,6 @@ class ZEssayController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
 	override func viewWillAppear() {
 		super.viewWillAppear()
-		essayView?.setup()
+		essayView?.updateText()
 	}
 }

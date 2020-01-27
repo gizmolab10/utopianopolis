@@ -31,7 +31,7 @@ var         gKeyboardIsVisible                     = false
 var         gArrowsDoNotBrowse                     = false
 var       gCreateMultipleEssay 			   		   = false
 var       gHasCompletedStartup                     = false
-var  			    gDebugMode:		  [ZDebugMode] = [.focus, .ops]
+var  			    gDebugMode:		  [ZDebugMode] = [.focus, .speed]
 var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var        gCurrentBrowseLevel:               Int?
 var           gDragDropIndices: NSMutableIndexSet?
@@ -52,7 +52,7 @@ var          gInsertionsFollow:               Bool { return gInsertionMode == .f
 var            gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var     gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
 var                  gDragView:         ZDragView? { return gGraphController?.dragView }
-var                 gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor + 13.0) }
+var                 gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
 var                  gDotWidth:             Double { return gDotHeight * 0.75 }
 var        gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
 var                  gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20

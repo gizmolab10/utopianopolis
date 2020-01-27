@@ -41,72 +41,94 @@ class ZEssayView: ZView, ZTextViewDelegate {
 
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
-		addButtons()
 		setup()
 	}
 
-	func clear() {
-		grabbedZone?     .essayMaybe = nil
-		textView?		   .delegate = nil	    			// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
+	private func setup() {
 		textView?         .usesRuler = true
 		textView?    .isRulerVisible = true
 		textView?  .usesInspectorBar = true
 		textView?.textContainerInset = NSSize(width: 20, height: 0)
+
+		addButtons()
+		updateText()
+	}
+
+	private func clear() {
+		grabbedZone?.essayMaybe = nil
+		textView?	.delegate   = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
 
 		if  let length = textView?.textStorage?.length, length > 0 {
 			textView?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
 		}
 	}
 
-	func reset(restoreSelection: Int? = nil) {
-		gCurrentEssay?.reset()
-		setup(restoreSelection: restoreSelection)
+	private func resetCurrentEssay(_  current: ZParagraph?) {
+		if  let     essay = current {
+			gCurrentEssay = essay
+
+			gCurrentEssay?.reset()
+			updateText()
+		}
 	}
 
-	func setup(restoreSelection: Int? = nil) {
-		if  restoreSelection == nil,				// if called from viewWillAppear
-			gCurrentEssay?.essayMaybe?.needsSave ?? false,
-			essayID != nil,							// been here before
-			essayID == grabbedZone?.record?.recordID {
+	private var overwrite: Bool {
+		if  let current = gCurrentEssay,
+			current.paragraphMaybe?.needsSave ?? false,
+			current.essayLength != 0,
+			let i = essayID,
+			i == grabbedZone?.record?.recordID {	// been here before
 
-			return									// has not yet been saved. don't overwrite
+			return false								// has not yet been saved. don't overwrite
 		}
 
-		if  let text = gCurrentEssay?.essayText {
-			clear() 									// discard previously edited text
+		return true
+	}
+
+	func updateText(restoreSelection: Int? = nil) {
+		if  (overwrite || restoreSelection != nil),
+			let text = gCurrentEssay?.essayText {
+			clear() 								// discard previously edited text
 			gEssayRing.push()
 			updateButtons(true)
-			textView?.setText(text)
+			textView?.setText(text)					// emplace text
 			select(restoreSelection: restoreSelection)
 
 			essayID  		   = grabbedZone?.record?.recordID
-			textView?.delegate = self 		// set delegate after setText
+			textView?.delegate = self 				// set delegate after setText
 
 			gWindow?.makeFirstResponder(textView)
 		}
 	}
 
-	func handleCommandKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
+	func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		guard let key = iKey else {
 			return false
 		}
 
+		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
-		let  OPTION = flags.isOption
 
-		switch key {
-			case "a":      textView?.selectAll(nil)
-			case "d":      convertToChild(createEssay: CONTROL && OPTION)
-			case "e":      export()
-			case "h":      showHyperlinkPopup()
-			case "i":      showSpecialsPopup()
-			case "l", "u": alterCase(up: key == "u")
-			case "s":      save()
-			case "/":      gEssayRing.pop()
-			case "]":      gEssayRing.goBack()
-			case "[":      gEssayRing.goForward()
-			case kReturn:  grabbedZone?.grab(); done()
-			default:       return false
+		if  COMMAND {
+			switch key {
+				case "a":      textView?.selectAll(nil)
+				case "d":      convertToChild()
+				case "e":      export()
+				case "h":      showHyperlinkPopup()
+				case "i":      showSpecialsPopup()
+				case "l", "u": alterCase(up: key == "u")
+				case "s":      save()
+				case "[":      gEssayRing.goForward()
+				case "]":      gEssayRing.goBack()
+				case "/":      gEssayRing.pop();    exit()
+				case kReturn:  grabbedZone?.grab(); done()
+				default:       return false
+			}
+		} else if CONTROL {
+			switch key {
+				case "d":      convertToChild(createEssay: true)
+				default:       return false
+			}
 		}
 
 		return true
@@ -115,27 +137,27 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	// MARK:- internals
 	// MARK:-
 
-	private func convertToChild(createEssay: Bool) {
+	private func convertToChild(createEssay: Bool = false) {
 		if  let   text = selectionString, text.length > 0,
+			let   dbID = grabbedZone?.databaseID,
 			let parent = selectionZone {
-			let  child = Zone(databaseID: grabbedZone?.databaseID, named: text, identifier: nil)    // create new zone from text
+			let  child = Zone(databaseID: dbID, named: text)    		// create new (to be child) zone from text
 
 			textView?.insertText("", replacementRange: selectionRange)	// remove text
-			parent.addChild(child, at: parent.insertionIndex) 			// add it as child to zone, respecting insertion mode
+			parent.addChild(child)
 			child.asssureIsVisible()
 			save()
 
 			if  createEssay {
-				child.setTraitText(kEssayDefault, for: .eEssay)			// create an essay in the new zone
+				child.setTraitText(kEssayDefault, for: .eEssay)			// create a placeholder essay in the child
+				grabbedZone?.createEssay()
 
-				gCurrentEssay = grabbedZone?.essay
-
-				reset()			    									// redraw essay TODO: WITH NEW PARAGRAPH SELECTED
+				resetCurrentEssay(grabbedZone?.essay)						// redraw essay TODO: WITH NEW PARAGRAPH SELECTED
 			} else {
 				exit()
 				child.grab()
 
-				FOREGROUND {
+				FOREGROUND {				// defer idea edit until after this function exits
 					child.edit()
 				}
 			}
@@ -154,18 +176,12 @@ class ZEssayView: ZView, ZTextViewDelegate {
 		gCreateMultipleEssay = true
 		let        selection = selectedParagraphs
 
-		func setEssay(_ current: ZParagraph) {
-			gCurrentEssay = current
-
-			self.reset()
-		}
-
 		if !out, let last = selection.last {
-			setEssay(last)
+			resetCurrentEssay(last)
 		} else if out {
 			grabbedZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
 				if  ancestor != grabbedZone, ancestor.hasEssay {
-					setEssay(ancestor.essay)
+					self.resetCurrentEssay(ancestor.essay)
 
 					return .eStop
 				}
@@ -426,25 +442,22 @@ class ZEssayView: ZView, ZTextViewDelegate {
 				let zone = gSelecting.zone(with: rID)	// find zone with rID
 				switch type {
 					case .eEssay:
-						if  let   grab = zone {
-							let common = grabbedZone?.closestCommonParent(of: grab)
+						if  let through = zone {
+							let  common = grabbedZone?.closestCommonParent(of: through)
 
-							if  let c  = common {
-								gHere  = c
+							if  let   c = common {
+								gHere   = c
 							}
 
 							FOREGROUND {
-								gControllers.signalFor(nil, regarding: .eRelayout)
-
-								if  let e = grab.essayMaybe, gCurrentEssay?.children.contains(e) ?? false {
-									self.textView?.setSelectedRange(e.essayTextRange) 	// select text range of grabbed essay
+								if  let e = through.essayMaybe, gCurrentEssay?.children.contains(e) ?? false {
+									self.textView?.setSelectedRange(e.offsetTextRange)		// select text range of through essay
 								} else {
 									gCreateMultipleEssay = true
-									gCurrentEssay        = grab.essay
 
-									grab.asssureIsVisible()
-									grab.grab()									// focus on zone with rID (before calling setup, which uses current grab)
-									self.reset()
+									through.grab()					// for later, when user exits essay mode
+									through.asssureIsVisible()
+									self.resetCurrentEssay(through.essay)
 								}
 							}
 
@@ -499,12 +512,13 @@ class ZEssayView: ZView, ZTextViewDelegate {
 				case .eLock:  return false
 				case .eExit:  gControllers.swapGraphAndEssay()
 				case .eDelete:
-					FOREGROUND {							// defer until after this method returns ... avoids corrupting reset text
-						self.reset(restoreSelection: delta)	// reset all text and restore cursor position
+					FOREGROUND {										// defer until after this method returns ... avoids corrupting reset text
+						gCurrentEssay?.reset()
+						self.updateText(restoreSelection: delta)		// reset all text and restore cursor position
 				}
 			}
 
-			gCurrentEssay!.essayLength += delta
+			gCurrentEssay!.essayLength += delta							// compensate for change
 
 			return true
 		}

@@ -22,41 +22,38 @@ class ZEssay: ZParagraph {
 
 	override var essayText: NSMutableAttributedString? {
 		var result: NSMutableAttributedString?
-		var count  = children.count
+		var index  = children.count
 
-		if  count == 0 {    // the first time
-			let        e = ZParagraph(zone)
+		if  index == 0 {    // the first time
+			let paragraph = ZParagraph(zone)
 
-			if  let text = e.paragraphText {
+			if  let  text = paragraph.paragraphText {
 				result?.insert(text, at: 0)
 			}
 		} else {
 			for child in children.reversed() {
-				count       -= 1
+				index        -= 1
+				let 	 bump = gBlankLine.length
 
-				if  let text = child.paragraphText {
-					result   = result ?? NSMutableAttributedString()
+				if  let  text = child.paragraphText {
+					result    = result ?? NSMutableAttributedString()
 					result?.insert(gBlankLine, at: 0)
 					result?.insert(text,       at: 0)
 
-					if  count != 0 {
+					if  index > 0 {
 						result?.insert(gBlankLine, at: 0)
-						child.bumpRanges(by: gBlankLine.length)
+						child.bumpOffsets(by: bump)
 					}
 				}
 			}
 
 			var offset = 0
 
-			for child in children {	// update essayIndices
+			for child in children {				// update paragraph offsets
 				child.paragraphOffset = offset
-				offset               += child.textRange.upperBound + gBlankLine.length
+				offset                = child.offsetTextRange.upperBound + gBlankLine.length
 
-				if  let     z = child.zone, z.colorized,
-					let color = z.color?.lighter(by: 20.0) {
-
-					result?.addAttribute(.backgroundColor, value: color, range: child.fullTitleRange)
-				}
+				child.colorize(result)
 			}
 		}
 

@@ -16,26 +16,26 @@ enum ZAlterationType: Int {
 }
 
 class ZParagraph: NSObject {
-	var   paragraphOffset = 0
-	var       essayLength = 0
-	var       essayMaybe  : ZTrait?   { return zone?.traits[    .eEssay] }
-	var       essayTrait  : ZTrait?   { return zone?.trait(for: .eEssay) }
-	var       zone        : Zone?
-	var lastTextIsDefault : Bool      { return essayMaybe?.text == kEssayDefault }
-	var    paragraphRange : NSRange   { return NSRange(location: paragraphOffset, length: textRange.upperBound) }
-	var    fullTitleRange : NSRange   { var range = titleRange; range.location += paragraphOffset - 2; range.length += 3; return range }
-	var     lastTextRange : NSRange?  { return textRange }
-	var    essayTextRange : NSRange   { return textRange .offsetBy(paragraphOffset) }
-	var   essayTitleRange : NSRange   { return titleRange.offsetBy(paragraphOffset) }
-	var        titleRange = NSRange()
-	var         textRange = NSRange()
-	var          children = [ZParagraph]()
+	var   zone  	        : Zone?
+	var   children          = [ZParagraph]()
+	var   essayLength       = 0
+	var   paragraphOffset   = 0
+	var   paragraphMaybe    : ZTrait?   { return zone?.traits[    .eEssay] }
+	var   paragraphTrait    : ZTrait?   { return zone?.trait(for: .eEssay) }
+	var   fullTitleOffset   : Int       { return paragraphOffset + titleRange.location - 2 }
+	var   lastTextIsDefault : Bool      { return paragraphMaybe?.text == kEssayDefault }
+	var   fullTitleRange    : NSRange   { return NSRange(location:   fullTitleOffset, length: titleRange.length + 3) }
+	var   paragraphRange    : NSRange   { return NSRange(location:   paragraphOffset, length:  textRange.upperBound) }
+	var  offsetTextRange    : NSRange   { return textRange .offsetBy(paragraphOffset) }
+	var    lastTextRange    : NSRange?  { return textRange }
+	var       titleRange    = NSRange()
+	var        textRange    = NSRange()
 
 	func setupChildren() {}
 	func delete() { zone?.removeTrait(for: .eEssay) }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
-	func updateTraitFontSize(_ increment: Bool) -> Bool { return essayTrait?.updateEssayFontSize(increment) ?? false }
+	func updateTraitFontSize(_ increment: Bool) -> Bool { return paragraphTrait?.updateEssayFontSize(increment) ?? false }
 
 	init(_ zone: Zone?) {
 		super.init()
@@ -44,7 +44,7 @@ class ZParagraph: NSObject {
 	}
 
 	func reset() {
-		essayMaybe?.clearSave()
+		paragraphMaybe?.clearSave()
 		setupChildren()
 	}
 
@@ -73,29 +73,27 @@ class ZParagraph: NSObject {
 	}
 
 	var essayText : NSMutableAttributedString? {
-		let    result = paragraphText
+		let  result = paragraphText
+		essayLength = result?.length ?? 0
 
-		if  let     z = zone, z.colorized,
-			let color = z.color?.lighter(by: 20.0) {
-
-			result?.addAttribute(.backgroundColor, value: color, range: fullTitleRange)
-		}
+		colorize(result)
 
 		return result
+
 	}
 
 	var paragraphText: NSMutableAttributedString? {
 		var result:    NSMutableAttributedString?
 
 		if  let        name = zone?.zoneName,
-			let        text = essayTrait?.essayText {
+			let        text = paragraphTrait?.essayText {
 			let      spacer = "  "
-			let     tOffset = spacer.length
-			let     pOffset = tOffset + name.length + gBlankLine.length + 1
+			let     sOffset = spacer.length
+			let     tOffset = sOffset + name.length + gBlankLine.length + 1
 			let       title = NSMutableAttributedString(string: spacer + name + kTab, attributes: titleAttributes)
 			result          = NSMutableAttributedString()
-			titleRange      = NSRange(location: tOffset, length: name.length)
-			textRange       = NSRange(location: pOffset, length: text.length)
+			titleRange      = NSRange(location: sOffset, length: name.length)
+			textRange       = NSRange(location: tOffset, length: text.length)
 			paragraphOffset = 0
 
 			result?.insert(text,       at: 0)
@@ -108,14 +106,22 @@ class ZParagraph: NSObject {
 		return result
 	}
 
-	func bumpRanges(by offset: Int) {
+	func colorize(_ text: NSMutableAttributedString?) {
+		if  let     z = zone, z.colorized,
+			let color = z.color?.lighter(by: 20.0) {
+
+			text?.addAttribute(.backgroundColor, value: color, range: fullTitleRange)
+		}
+	}
+
+	func bumpOffsets(by offset: Int) {
 		titleRange = titleRange.offsetBy(offset)
 		textRange  = textRange .offsetBy(offset)
 	}
 
 	func saveParagraph(_ attributedString: NSAttributedString?) {
 		if  let  attributed = attributedString,
-			let       essay = essayMaybe {
+			let       essay = paragraphMaybe {
 			let      string = attributed.string
 			let        text = attributed.attributedSubstring(from: textRange)
 			let       title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")

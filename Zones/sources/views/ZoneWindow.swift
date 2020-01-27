@@ -53,7 +53,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     override func flagsChanged(with event: NSEvent) {
         let flags = event.modifierFlags
 
-        if  flags.isOption && flags.isCommand && flags.isControl {
+		if  flags.isOption && flags.isCommand && flags.isControl && gWorkMode == .graphMode {
             gGraphController?.toggleDirectionIndicators()
         }
 

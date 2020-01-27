@@ -1316,7 +1316,7 @@ class Zone : ZRecord {
         return index
     }
 
-    @discardableResult func addChild(_ iChild: Zone?, at iIndex: Int?) -> Int? {
+    @discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil) -> Int? {
         if  let        child = iChild {
             let     insertAt = validIndex(from: iIndex)
             child.parentZone = self
