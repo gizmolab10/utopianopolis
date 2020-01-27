@@ -44,7 +44,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     @IBOutlet var       spinner :  ZProgressIndicator?
     @IBOutlet var      dragView :  ZDragView?
     @IBOutlet var   spinnerView :  ZView?
-    @IBOutlet var indicatorView :  ZIndicatorView?
+    @IBOutlet var indicatorView :  ZRingView?
 
 	var rubberbandRect: CGRect? {
 		get {

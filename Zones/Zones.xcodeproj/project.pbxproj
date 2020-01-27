@@ -154,12 +154,12 @@
 		A70064DD22484808004E3A8D /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70064DC22484808004E3A8D /* ZManifest.swift */; };
 		A70064DE22484808004E3A8D /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70064DC22484808004E3A8D /* ZManifest.swift */; };
 		A70064DF22484808004E3A8D /* ZManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70064DC22484808004E3A8D /* ZManifest.swift */; };
-		A71484DA2252FDE700F54C0C /* ZIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZIndicatorView.swift */; };
+		A71484DA2252FDE700F54C0C /* ZRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZRingView.swift */; };
 		A71484DB2252FDF400F54C0C /* ZGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7988AD0222B69AE00256A71 /* ZGradientView.swift */; };
 		A714854E22552CA300F54C0C /* ZGraphController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZGraphController.swift */; };
 		A714854F2255355000F54C0C /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77758922207BCC500C37B49 /* ZToggleButton.swift */; };
 		A71485522255486800F54C0C /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77758922207BCC500C37B49 /* ZToggleButton.swift */; };
-		A71485532255487A00F54C0C /* ZIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZIndicatorView.swift */; };
+		A71485532255487A00F54C0C /* ZRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZRingView.swift */; };
 		A71485542255488A00F54C0C /* ZGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7988AD0222B69AE00256A71 /* ZGradientView.swift */; };
 		A71485B62256D1A200F54C0C /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; };
 		A71485B72256D1A200F54C0C /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -203,7 +203,7 @@
 		A7C7AF5923B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
 		A7C7AF5A23B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
 		A7C7AF5B23B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
-		A7C96E3B221883CB00986631 /* ZIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZIndicatorView.swift */; };
+		A7C96E3B221883CB00986631 /* ZRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C96E392218838A00986631 /* ZRingView.swift */; };
 		A7CFA81B21F51697008DA880 /* ZSearching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearching.swift */; };
 		A7CFA81C21F516E0008DA880 /* ZSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619941FB3C4660087B066 /* ZSearchController.swift */; };
 		A7CFA81D21F51A9F008DA880 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B28B1F182EBB0091F4D1 /* ZStackableView.swift */; };
@@ -405,7 +405,7 @@
 		A78A6E0923B021EA000F581F /* ZEssayEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEssayEditor.swift; sourceTree = "<group>"; };
 		A7988AD0222B69AE00256A71 /* ZGradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGradientView.swift; sourceTree = "<group>"; };
 		A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssay.swift; sourceTree = "<group>"; };
-		A7C96E392218838A00986631 /* ZIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZIndicatorView.swift; sourceTree = "<group>"; };
+		A7C96E392218838A00986631 /* ZRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZRingView.swift; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7E9A3AF23C115470064C89A /* ZShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZShortcuts.swift; sourceTree = "<group>"; };
 		A7EE20F023D536A400B48CB8 /* ZFocus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFocus.swift; sourceTree = "<group>"; };
@@ -630,7 +630,7 @@
 				A78A6E0523B021B1000F581F /* ZEssayView.swift */,
 				A7988AD0222B69AE00256A71 /* ZGradientView.swift */,
 				A7FF042B22C1824E00714AD2 /* ZGridCell.swift */,
-				A7C96E392218838A00986631 /* ZIndicatorView.swift */,
+				A7C96E392218838A00986631 /* ZRingView.swift */,
 				A7FDB3E22276531D00033337 /* ZKeyInput.swift */,
 				A7272909225AA29D002A5B6D /* ZLineView.swift */,
 				0C39B2871F182EBB0091F4D1 /* ZoneDot.swift */,
@@ -1068,7 +1068,7 @@
 				A78A6E0A23B021EA000F581F /* ZEssayEditor.swift in Sources */,
 				A714854E22552CA300F54C0C /* ZGraphController.swift in Sources */,
 				0C39B31F1F182EBB0091F4D1 /* ZTrait.swift in Sources */,
-				A71484DA2252FDE700F54C0C /* ZIndicatorView.swift in Sources */,
+				A71484DA2252FDE700F54C0C /* ZRingView.swift in Sources */,
 				0C39B2E31F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				A727290A225AA29D002A5B6D /* ZLineView.swift in Sources */,
 				A7395BAF21B877B600F5759F /* ZTextEditor.swift in Sources */,
@@ -1142,7 +1142,7 @@
 				0C367C391F463D93000FC914 /* ZDragView.swift in Sources */,
 				A78A6E0C23B021EA000F581F /* ZEssayEditor.swift in Sources */,
 				0CABC9F12022768D0019D8B0 /* ZEnumerations.swift in Sources */,
-				A7C96E3B221883CB00986631 /* ZIndicatorView.swift in Sources */,
+				A7C96E3B221883CB00986631 /* ZRingView.swift in Sources */,
 				0C39B3211F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				0C39B2E51F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				0C39B2A61F182EBB0091F4D1 /* ZDetailsController.swift in Sources */,
@@ -1269,7 +1269,7 @@
 				0C39B3141F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C43EFDE21010F62000976CE /* ZBatches.swift in Sources */,
 				0C39B2ED1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
-				A71485532255487A00F54C0C /* ZIndicatorView.swift in Sources */,
+				A71485532255487A00F54C0C /* ZRingView.swift in Sources */,
 				0C2E22D11F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				0C43EFE121010F62000976CE /* ZCloud.swift in Sources */,
 				0C43EFBF21010F17000976CE /* ZFiles.swift in Sources */,

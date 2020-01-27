@@ -177,7 +177,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     }
 
 
-    func drawTinyCounterTinyDots(_ iDirtyRect: CGRect) {
+    func drawTinyCounterDots(_ iDirtyRect: CGRect) {
         if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showingChildren || zone.isBookmark) {
             let count = (gCountsMode == .progeny) ? zone.progenyCount : zone.indirectCount
 
@@ -185,7 +185,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 let          frame = innerDot!.frame.offsetBy(dx: -0.1, dy: -0.1)
                 let color: ZColor? = isDragDrop ? gRubberbandColor : zone.color
                 let         radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)
-				let      ideaTypes = ZTinyDotTypeArray.ideaTypes(count)
 
 				drawTinyDots(surrounding: frame, objects: zone.children, radius: radius, color: color)
             }
@@ -234,7 +233,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 			let   height = size.height * type.heightRatio + (inPublic ? 1.0 : -2.5)
 			let   xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
 			let   yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
-			let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: height / 12.0)
+			let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: (height / 12.0) - 1)
             let    color = isFilled ? gBackgroundColor : iZone.color ?? gDefaultTextColor
 
             string.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
@@ -306,7 +305,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                         // TINY COUNTER BEADS //
                         // /////////////////////
 
-                        drawTinyCounterTinyDots(iDirtyRect)
+                        drawTinyCounterDots(iDirtyRect)
                     } else if isCurrentFavorite {
 
                         // ////////////////////////////////

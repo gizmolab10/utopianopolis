@@ -257,7 +257,7 @@ class ZShortcuts : NSObject {
 		"",				"", "",
 		"+COMMAND + OPTION", "", "",
 		" DELETE", 		"permanently (not into trash)", 				"organize-fcdc44ac04e4",
-		" HYPHEN", 		"-> to/from titled line, retain children", 		"lines-37426469b7c6",
+		" HYPHEN", 		"-> titled line to/from parent",			 	"lines-37426469b7c6",
 		" O", 			"show data files in Finder", 					"cloud-vs-file-f3543f7281ac",
 		"",				"", "",
 		"uARROW KEY + SHIFT (+ COMMAND -> all)", "", "",

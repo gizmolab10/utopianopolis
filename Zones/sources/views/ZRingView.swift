@@ -1,5 +1,5 @@
 //
-//  ZIndicatorView.swift
+//  ZRingView.swift
 //  Thoughtful
 //
 //  Created by Jonathan Sand on 2/16/19.
@@ -19,7 +19,7 @@ enum ZIndicatorType: Int {
     case eDirection
 }
 
-class ZIndicatorView: ZView {
+class ZRingView: ZView {
 
     let   gradientView  = ZGradientView()
     let   gradientLayer = CAGradientLayer()

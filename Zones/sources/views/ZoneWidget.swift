@@ -120,7 +120,7 @@ class ZoneWidget: ZView {
 			dragDot.setupForWidget(self, asReveal: false)
 			dragDot.innerDot?.snp.makeConstraints { make in
 				make.right.equalTo(textWidget.snp.left).offset(-4.0)
-				make.centerY.equalTo(textWidget)
+				make.centerY.equalTo(textWidget).offset(1.5)
 			}
 		}
 
@@ -132,7 +132,7 @@ class ZoneWidget: ZView {
         revealDot.setupForWidget(self, asReveal: true)
         revealDot.innerDot?.snp.makeConstraints { make in
             make.left.equalTo(textWidget.snp.right).offset(3.0)
-            make.centerY.equalTo(textWidget)
+            make.centerY.equalTo(textWidget).offset(1.5)
         }
     }
 
@@ -455,7 +455,7 @@ class ZoneWidget: ZView {
         let          inset = (height / -2.0) - 16.0
         let         shrink =  3.0 + (height / 6.0)
         let hiddenDotDelta = rightDot?.revealDotIsVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0   // expand around reveal dot, only if it is visible
-        var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta, dy: -0.5 - delta).offsetBy(dx: -0.75, dy: 1.5)  // get size from text widget
+        var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta, dy: -0.5 - delta).offsetBy(dx: -0.75, dy: 0.5)  // get size from text widget
         rect.size .height += -0.5 + gHighlightHeightOffset + (isInPublic ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
