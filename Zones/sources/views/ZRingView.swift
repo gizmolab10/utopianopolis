@@ -28,16 +28,18 @@ struct ZRingRects {
 
 class ZRingView: ZView {
 
-    let   gradientView  = ZGradientView()
-    let   gradientLayer = CAGradientLayer()
 	var    tinyDotRects = [Int : CGRect]()
     var confinementRect = CGRect.zero
-	func intersectsRing(_ rect: CGRect) -> Bool { return ringRect.intersects(rect) }
+	func intersectsRing(_ rect: CGRect) -> Bool { return rect.intersects(ringRect) }
 
 	var ringRect : CGRect {
 		let rects = ringRects
 
 		return gBrowsingIsConfined ? rects.one : rects.three
+	}
+
+	var controlRects : [CGRect] {
+		return [CGRect()]
 	}
 
 	var ringRects : ZRingRects {
@@ -85,36 +87,21 @@ class ZRingView: ZView {
 		return ringArray
 	}
 
-    func setupGradientView() {
-        addSubview(gradientView)
+	func ringItem(containedIn iRect: CGRect?) -> NSObject? {
+		if  let     rect = iRect {
+			let  objects = ringObjects 	// expensive computation: do once
+			let    count = objects.count
 
-        gradientView.zlayer.backgroundColor = kWhiteColor.withAlphaComponent(0.6).cgColor
-        gradientView.setup()
-    }
-
-    func layoutGradientView() {
-        gradientView.snp.removeConstraints()
-        gradientView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
-            make.height.equalTo(bounds.size.height / 5.0)
-
-            if  gInsertionsFollow {
-                make.bottom.equalToSuperview()
-            } else {
-                make.top.equalToSuperview()
-            }
-        }
-        
-        gradientView.invertMode = gInsertionsFollow
-    }
-
-	func focusItem(containedIn rect: CGRect?) -> NSObject? {
-		if  let r = rect {
-			let items = ringObjects
 			for (index, tinyRect) in tinyDotRects {
-				if  items.count > index,
-					tinyRect.intersects(r) {
-					return items[index]
+				if  index < count,
+					rect.intersects(tinyRect) {
+					return objects[index]
+				}
+			}
+
+			for (index, controlRect) in controlRects.enumerated() {
+				if  rect.intersects(controlRect) {
+					return nil
 				}
 			}
 		}
@@ -122,18 +109,8 @@ class ZRingView: ZView {
 		return nil
 	}
 
-    func indicatorType(containedIn rect: CGRect?) -> ZIndicatorType? {
-        if  let r = rect, gradientView.frame.intersects(r) {
-            return intersectsRing(r) ? .eConfinement : .eDirection
-        }
-
-        return nil
-    }
-
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
-        
-        layoutGradientView()
         
         let        rects = ringRects
 		var surroundRect = rects.one.insetBy(dx: -6.0, dy: -6.0)

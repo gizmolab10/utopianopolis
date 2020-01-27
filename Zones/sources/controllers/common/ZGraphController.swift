@@ -21,17 +21,11 @@ var gGraphController: ZGraphController? { return gControllers.controllerForID(.i
 
 class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
     
-    
-    // MARK:- initialization
-    // MARK:-
-    
-	
-	let 		   clickManager =  ZClickManager()
-    let      thoughtsRootWidget =  ZoneWidget   ()
-    let     favoritesRootWidget =  ZoneWidget   ()
-    var      rubberbandPreGrabs =  ZoneArray    ()
-    var     priorScrollLocation =  CGPoint.zero
-    var         rubberbandStart =  CGPoint.zero
+	override  var  controllerID :  ZControllerID { return .idGraph }
+	@IBOutlet var       spinner :  ZProgressIndicator?
+	@IBOutlet var      dragView :  ZDragView?
+	@IBOutlet var      ringView :  ZRingView?
+	@IBOutlet var   spinnerView :  ZView?
 	var        moveRightGesture :  ZGestureRecognizer?
 	var         movementGesture :  ZGestureRecognizer?
 	var         moveDownGesture :  ZGestureRecognizer?
@@ -40,11 +34,13 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	var            clickGesture :  ZGestureRecognizer?
 	var             edgeGesture :  ZGestureRecognizer?
 	let              doneStates : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
-	override  var  controllerID :  ZControllerID { return .idGraph }
-    @IBOutlet var       spinner :  ZProgressIndicator?
-    @IBOutlet var      dragView :  ZDragView?
-    @IBOutlet var   spinnerView :  ZView?
-    @IBOutlet var indicatorView :  ZRingView?
+	let 		   clickManager =  ZClickManager()
+	let      thoughtsRootWidget =  ZoneWidget   ()
+	let     favoritesRootWidget =  ZoneWidget   ()
+	var      rubberbandPreGrabs =  ZoneArray    ()
+	var     priorScrollLocation =  CGPoint.zero
+	var         rubberbandStart =  CGPoint.zero
+	func toggleDirectionIndicators() { gFullRingIsVisible = !gFullRingIsVisible }
 
 	var rubberbandRect: CGRect? {
 		get {
@@ -114,16 +110,16 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	}
 
 	@discardableResult func respondToClick(in rect: CGRect?) -> Bool {
-		func response(_ focus: NSObject) -> Bool {
-			return focusOnIdea(focus) || focusOnEssay(focus)
+		func respond(to item: NSObject) -> Bool {
+			return focusOnIdea(item) || focusOnEssay(item)
 		}
 
-		if  let focus = indicatorView?.focusItem(containedIn: rect) {
-			if  response(focus) {
+		if  let item = ringView?.ringItem(containedIn: rect) {
+			if  respond(to: item) {
 				return true
-			} else if let foci = focus as? ZObjectsArray {
-				for focus in foci {
-					if  response(focus) {
+			} else if let subitems = item as? ZObjectsArray {
+				for subitem in subitems {
+					if  respond(to: subitem) {
 						return true
 					}
 				}
@@ -141,7 +137,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             dragView?.addSubview(favoritesRootWidget)
         }
         
-        indicatorView?.setupGradientView()
+//        ringView?.setupGradientView()
     }
 
     #if os(OSX)
@@ -271,7 +267,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             }
         }
 
-		indicatorView?.setNeedsDisplay()
+		ringView?.setNeedsDisplay()
     }
 	
 	func prepare(for iKind: ZSignalKind) {
@@ -361,10 +357,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
 			if  editWidget != nil {
 
-				// /////////////////////////////////
-				// ignore gestures located inside //
-				//   text that is being edited    //
-				// /////////////////////////////////
+				// ////////////////////////////////////////
+				// detect click inside text being edited //
+				// ////////////////////////////////////////
 
                 let backgroundLocation = gesture.location(in: dragView)
                 let           textRect = editWidget!.convert(editWidget!.bounds, to: dragView)
@@ -376,9 +371,9 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					if  let zone = widget.widgetZone,
 						let  dot = detectDotIn(widget, gesture) {
 						
-						// ////////////
-						// dot event //
-						// ////////////
+						// ///////////////
+						// click in dot //
+						// ///////////////
 
 						if  dot.isReveal {
 							gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: COMMAND)
@@ -388,11 +383,12 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 							zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
 						}
 					}
-				} else { // click on background
-					
-					// ///////////////////
-					// background event //
-					// ///////////////////
+				} else {
+					let rect = CGRect(origin: gesture.location(in: view), size: CGSize())
+
+					// //////////////////////
+					// click in background //
+					// //////////////////////
 
 					gTextEditor.stopCurrentEdit()
 
@@ -401,12 +397,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					} else if !kIsPhone {	// default reaction to click on background: select here
 						gHereMaybe?.grab()  // safe version of here prevent crash early in launch
 					}
-					
-                    if  let i = indicatorView, !i.isHidden {
-						let rect = CGRect(origin: gesture.location(in: view), size: CGSize())
-                        
-						respondToClick(in: rect)
-                    }
+
+					respondToClick(in: rect)
                 }
 
                 gControllers.signalFor(nil, regarding: regarding)
@@ -556,16 +548,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
     // MARK:- large indicators
     // MARK:-
-    
-    
-    func toggleDirectionIndicators() {
-        if  let i = indicatorView {
-            i.isHidden = !i.isHidden
-
-            i.setNeedsDisplay()
-        }
-    }
-
 
     func showSpinner(_ show: Bool) {
 		spinnerView?.isHidden = !show

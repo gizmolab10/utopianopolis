@@ -631,7 +631,7 @@ DQ
                     </view>
                     <connections>
                         <outlet property="dragView" destination="itU-Gt-Inh" id="E7f-iE-OVJ"/>
-                        <outlet property="indicatorView" destination="f9Z-GK-Klh" id="cJ2-Fj-vUS"/>
+                        <outlet property="ringView" destination="f9Z-GK-Klh" id="cJ2-Fj-vUS"/>
                         <outlet property="spinner" destination="uBD-4n-5KN" id="l76-tc-ycD"/>
                         <outlet property="spinnerView" destination="fSQ-gu-ejW" id="Qog-ht-L9n"/>
                     </connections>
@@ -776,7 +776,7 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="405" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="menu" size="11"/>
+                                                        <font key="font" metaFont="label" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
