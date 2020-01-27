@@ -19,6 +19,13 @@ enum ZIndicatorType: Int {
     case eDirection
 }
 
+struct ZRingRects {
+	var one         = CGRect()
+	var three       = CGRect()
+	var equilateral = [CGRect]()
+	var thick       = CGFloat()
+}
+
 class ZRingView: ZView {
 
     let   gradientView  = ZGradientView()
@@ -28,27 +35,27 @@ class ZRingView: ZView {
 	func intersectsRing(_ rect: CGRect) -> Bool { return ringRect.intersects(rect) }
 
 	var ringRect : CGRect {
-		let (oneRingRect, threeRingsRect, _) = ringRects
+		let rects = ringRects
 
-		return gBrowsingIsConfined ? oneRingRect : threeRingsRect
+		return gBrowsingIsConfined ? rects.one : rects.three
 	}
 
-	var ringRects : (CGRect, CGRect, CGFloat) {
+	var ringRects : ZRingRects {
+		var         result = ZRingRects()
 		var           rect = bounds.squareCenetered
 		let          inset = rect.size.width / 3.0
 		let      ringInset = inset / 3.85
 		rect               = rect.insetBy(dx: inset,     dy: inset)
-		var   triangleRect = rect.insetBy(dx: 0,         dy: inset / 14.0)
-		var    oneRingRect = rect.insetBy(dx: ringInset, dy: ringInset)
-		let      thickness = rect.size.height / 30.0
-		let     multiplier = CGFloat(gInsertionsFollow ? 1 : -1)
-		let verticalOffset = gInsertionsFollow ? 15.0 - triangleRect.minY : bounds.maxY - triangleRect.maxY - 15.0
-		let     ringOffset = (ringInset / -1.8 * multiplier) + verticalOffset
-		oneRingRect        = oneRingRect .offsetBy(dx: 0.0, dy: ringOffset)
-		triangleRect       = triangleRect.offsetBy(dx: 0.0, dy: ringOffset)
-		let threeRingsRect = triangleRect .insetBy(fractionX: 0.425, fractionY: 0.15)
+		var          three = rect.insetBy(dx: 0,         dy: inset / 14.0)
+		let            one = rect.insetBy(dx: ringInset, dy: ringInset)
+		result      .thick = rect.size.height / 30.0
+		var         offset =  gInsertionsFollow ? 15.0 - three.minY : bounds.maxY - three.maxY - 15.0
+		offset            += (gInsertionsFollow ? -1.0 : 1.0) * ringInset / 1.8
+		result        .one = one  .offsetBy(dx: 0.0, dy: offset)
+		three              = three.offsetBy(dx: 0.0, dy: offset)
+		result      .three = three .insetBy(fractionX: 0.425, fractionY: 0.15)
 
-		return (oneRingRect, threeRingsRect, thickness)
+		return result
 	}
 
 	var ringObjects : ZObjectsArray {
@@ -56,7 +63,7 @@ class ZRingView: ZView {
 		var essayIndex = 0
 		var  ideaIndex = 0
 
-		func sweep(_ ring: ZObjectsArray) {
+		func pluck(from ring: ZObjectsArray) {
 			for object in ring {
 				if  object.isKind(of: Zone.self) {
 					ringArray.append(object)
@@ -72,8 +79,8 @@ class ZRingView: ZView {
 			}
 		}
 
-		sweep(gFocusRing.ring)
-		sweep(gEssayRing.ring)
+		pluck(from: gFocusRing.ring)
+		pluck(from: gEssayRing.ring)
 
 		return ringArray
 	}
@@ -128,20 +135,20 @@ class ZRingView: ZView {
         
         layoutGradientView()
         
-        let (one, three, thick) = ringRects
-		var        surroundRect = one.insetBy(dx: -6.0, dy: -6.0)
-		var              radius = Double(surroundRect.size.width) / 27.0
-		let               color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
+        let        rects = ringRects
+		var surroundRect = rects.one.insetBy(dx: -6.0, dy: -6.0)
+		var       radius = Double(surroundRect.size.width) / 27.0
+		let        color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
 
         color.setStroke()
         gBackgroundColor.setFill()
         
         if  gBrowsingIsConfined {
-			confinementRect = one
-            ZBezierPath                  .drawCircle (in:   one, thickness: thick)
+			confinementRect = rects.one
+            ZBezierPath                  .drawCircle (in:   rects.one, thickness: rects.thick)
         } else {
-            confinementRect = three
-            surroundRect    = ZBezierPath.drawCircles(in: three, thickness: thick, orientedUp: gInsertionsFollow).insetBy(dx: -6.0, dy: -6.0)
+            confinementRect = rects.three
+            surroundRect    = ZBezierPath.drawCircles(in: rects.three, thickness: rects.thick, orientedUp: gInsertionsFollow).insetBy(dx: -6.0, dy: -6.0)
             radius         /= 2.0
         }
 
