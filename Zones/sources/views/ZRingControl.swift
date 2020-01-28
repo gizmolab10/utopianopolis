@@ -11,38 +11,42 @@ import Foundation
 class ZRingControl: ZView {
 
 	enum ZControlType {
-		case eConfined
-		case eVisible
 		case eInsertion
+		case eVisible
+		case eConfined
 	}
 
 	var type: ZControlType = .eVisible
-	static let    controls = [confined, visible, insertion]
+	static let    controls = [insertion, visible, confined]
 
 	override func draw(_ rect: CGRect) {
 		super.draw(rect)
 
-		let thick = rect.width / 18.0
-		let inset = rect.width /  4.5
-		let  more = rect.width /  2.5
+		let width = rect.width
+		let thick = width / 20.0
+		let inset = width /  5.0
+		let  more = width /  2.5
 		let  tiny = rect.insetBy(dx: more,  dy: more)
-		let shape = rect.insetBy(dx: inset, dy: inset)
+		let large = rect.insetBy(dx: inset, dy: inset)
+		let color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
+
+		color.setStroke()
 
 		switch type           {
 			case .eInsertion  :
-				drawTriangle  (orientedUp: gInsertionsFollow, in: shape, thickness: thick)		// insertion direction
+				drawTriangle  (orientedUp: gInsertionsFollow, in: large, thickness: thick)		// insertion direction
 			case .eConfined   :
 				if  gBrowsingIsConfined {
-					drawCircle(                               in: shape, thickness: thick)		// inactive confinement dot
+					drawCircle(                               in: large, thickness: thick)		// inactive confinement dot
 					drawCircle(                               in:  tiny, thickness: thick)		// tiny dot
 				} else        {
-					drawCircle(orientedUp: false,             in: shape, thickness: thick)
-					drawCircle(orientedUp: true,              in: shape, thickness: thick)
+					drawCircle(orientedUp: false,             in:  tiny, thickness: thick)
+					drawCircle(orientedUp: true,              in:  tiny, thickness: thick)
 				}
 			case .eVisible    :
-				drawCircle    (                               in: shape, thickness: thick)		// active is-visible dot
+				drawCircle    (                               in:  tiny, thickness: thick)		// active is-visible dot
 				if !gFullRingIsVisible {
-					drawCircle(                               in:  tiny, thickness: thick)		// tiny dot
+					drawCircle(                               in: large, thickness: thick)		// tiny dot
 				}
 		}
 	}
@@ -70,8 +74,7 @@ class ZRingControl: ZView {
 		return control
 	}
 
-	private func drawTriangle(orientedUp: Bool, in iRect: CGRect, thickness: CGFloat) {
-		let rect = self.rect(orientedUp: orientedUp, in: iRect)
+	private func drawTriangle(orientedUp: Bool, in rect: CGRect, thickness: CGFloat) {
 		ZBezierPath.drawTriangle(orientedUp: orientedUp, in: rect, thickness: thickness )
 	}
 
@@ -85,7 +88,7 @@ class ZRingControl: ZView {
 	}
 
 	private func rect(orientedUp: Bool, in iRect: CGRect) -> CGRect {
-		let offset = iRect.height * 0.20 * (orientedUp ? -1.0 : 1.0)
+		let offset = iRect.height * 1.0 * (orientedUp ? -1.0 : 1.0)
 		let   rect = iRect.offsetBy(dx: 0.0, dy: offset)
 
 		return rect

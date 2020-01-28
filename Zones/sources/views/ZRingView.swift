@@ -67,8 +67,6 @@ class ZRingView: ZView {
 				self.necklaceDotRects[index] = rect
 			}
 
-			color.setStroke() // some tiny dots change the stroke color
-
 			for index in 0 ... (controlRects.count - 1) {
 				drawControl(for: index)
 			}
@@ -149,13 +147,13 @@ class ZRingView: ZView {
 	var controlRects : [CGRect] {
 		let   rect = ringGeometry.one
 		let radius = rect.width / 4.5
-		let offset = rect.width / 3.5
+		let offset = rect.width / 3.7
 		let center = rect.center
 		var result = [CGRect]()
 
 		for index in 0 ... 2 {
-			let increment = 2.0 * .pi / 3.5 	// 1/3.5 of circle (2 pi)
-			let     angle = (1.87 - Double(index)) * increment
+			let increment = 2.0 * .pi / 3.2 	// 1/3.2 of circle (2 pi)
+			let     angle = (1.8 - Double(index)) * increment
 			let         x = center.x + (offset * CGFloat(cos(angle)))
 			let         y = center.y + (offset * CGFloat(sin(angle)))
 			let   control = NSRect(origin: CGPoint(x: x, y: y), size: CGSize()).insetBy(dx: -radius, dy: -radius)
