@@ -14,37 +14,50 @@ import Cocoa
 import UIKit
 #endif
 
-enum ZIndicatorType: Int {
-    case eConfinement
-    case eDirection
-}
-
 struct ZRingRects {
-	var one         = CGRect()
-	var three       = CGRect()
-	var equilateral = [CGRect]()
-	var thick       = CGFloat()
+	var one   =  CGRect()
+	var three =  CGRect()
+	var thick =  CGFloat()
 }
 
 class ZRingView: ZView {
 
-	var    tinyDotRects = [Int : CGRect]()
-    var confinementRect = CGRect.zero
-	func intersectsRing(_ rect: CGRect) -> Bool { return rect.intersects(ringRect) }
+	var necklaceDotRects = [Int : CGRect]()
 
 	var ringRect : CGRect {
-		let rects = ringRects
+		let rects = necklaceRects
 
 		return gBrowsingIsConfined ? rects.one : rects.three
 	}
 
-	var controlRects : [CGRect] {
-		return [CGRect()]
+	func item(containedIn iRect: CGRect?) -> NSObject? {
+		if  let    rect = iRect {
+			let objects = necklaceObjects 	// expensive computation: do once
+			let   count = objects.count
+
+			for (index, tinyRect) in necklaceDotRects {
+				if  index < count,
+					rect.intersects(tinyRect) {
+					return objects[index]
+				}
+			}
+
+			for (index, controlRect) in controlRects.enumerated() {
+				if  rect.intersectsOval(within: controlRect) {
+					return ZRingControl.controls[index]
+				}
+			}
+		}
+
+		return nil
 	}
 
-	var ringRects : ZRingRects {
+	// MARK:- necklace
+	// MARK:-
+
+	var necklaceRects : ZRingRects {
 		var         result = ZRingRects()
-		var           rect = bounds.squareCenetered
+		var           rect = bounds.squareCentered
 		let          inset = rect.size.width / 3.0
 		let      ringInset = inset / 3.85
 		rect               = rect.insetBy(dx: inset,     dy: inset)
@@ -60,7 +73,7 @@ class ZRingView: ZView {
 		return result
 	}
 
-	var ringObjects : ZObjectsArray {
+	var necklaceObjects : ZObjectsArray {
 		var  ringArray = ZObjectsArray()
 		var essayIndex = 0
 		var  ideaIndex = 0
@@ -87,55 +100,119 @@ class ZRingView: ZView {
 		return ringArray
 	}
 
-	func ringItem(containedIn iRect: CGRect?) -> NSObject? {
-		if  let     rect = iRect {
-			let  objects = ringObjects 	// expensive computation: do once
-			let    count = objects.count
+	// MARK:- controls
+	// MARK:-
 
-			for (index, tinyRect) in tinyDotRects {
-				if  index < count,
-					rect.intersects(tinyRect) {
-					return objects[index]
-				}
+	var controlRects : [CGRect] {
+		let   rect = necklaceRects.one
+		let radius = rect.width / 4.5
+		let offset = rect.width / 3.5
+		let center = rect.center
+		var result = [CGRect]()
+
+		for index in 0 ... 2 {
+			let angle = .pi / -1.5 * (Double(index) - 0.75)
+			let x = center.x + (offset * CGFloat(cos(angle)))
+			let y = center.y + (offset * CGFloat(sin(angle)))
+			let control = NSRect(origin: CGPoint(x: x, y: y), size: CGSize()).insetBy(dx: -radius, dy: -radius)
+
+			result.append(control)
+		}
+
+		return result
+	}
+
+	func respondToRingControl(_ item: NSObject) -> Bool {
+		if  let control = item as? ZRingControl {
+			return control.response()
+		}
+
+		return false
+	}
+
+	func focusOnIdea(_ item: NSObject) -> Bool {
+		if  let idea = item as? Zone {
+			gFocusRing.focusOn(idea) {
+				print(idea.zoneName ?? "unknown zone")
+				gControllers.signalFor(idea, regarding: .eRelayout)
 			}
 
-			for (index, controlRect) in controlRects.enumerated() {
-				if  rect.intersects(controlRect) {
-					return nil
+			return true
+		}
+
+		return false
+	}
+
+	func focusOnEssay(_ item: NSObject) -> Bool {
+		if  let            essay = item as? ZParagraph {
+			gCurrentEssay        = essay
+			gCreateMultipleEssay = true
+
+			gControllers.swapGraphAndEssay()
+			print(essay.zone?.zoneName ?? "unknown essay")
+
+			return true
+		}
+
+		return false
+	}
+
+	@discardableResult func respondToClick(in rect: CGRect?) -> Bool {
+		func respond(to item: NSObject) -> Bool {
+			return focusOnIdea(item) || focusOnEssay(item)
+		}
+
+		if  let item = self.item(containedIn: rect) {
+			if  respond(to: item) || respondToRingControl(item) {
+				return true
+			} else if let subitems = item as? ZObjectsArray {
+				for subitem in subitems {
+					if  respond(to: subitem) {
+						return true
+					}
 				}
 			}
 		}
 
-		return nil
+		return false
 	}
+
+	// MARK:- render
+	// MARK:-
 
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
-        
-        let        rects = ringRects
-		var surroundRect = rects.one.insetBy(dx: -6.0, dy: -6.0)
-		var       radius = Double(surroundRect.size.width) / 27.0
-		let        color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
 
-        color.setStroke()
-        gBackgroundColor.setFill()
-        
-        if  gBrowsingIsConfined {
-			confinementRect = rects.one
-            ZBezierPath                  .drawCircle (in:   rects.one, thickness: rects.thick)
-        } else {
-            confinementRect = rects.three
-            surroundRect    = ZBezierPath.drawCircles(in: rects.three, thickness: rects.thick, orientedUp: gInsertionsFollow).insetBy(dx: -6.0, dy: -6.0)
-            radius         /= 2.0
-        }
+        let rects = necklaceRects
+		let color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
 
-		drawTinyDots(surrounding: surroundRect, objects: ringObjects, radius: radius, color: color, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0)) { (index, rect) in
-			self.tinyDotRects[index] = rect
+		color.setStroke()
+		gBackgroundColor.setFill()
+
+		if !gFullRingIsVisible {
+			ZBezierPath.drawCircle(in: controlRects[0], thickness: rects.thick)
+		} else {
+			var surroundRect = rects.one.insetBy(dx: -6.0, dy: -6.0)
+			var       radius = Double(surroundRect.size.width) / 27.0
+
+			if  gBrowsingIsConfined {
+				ZBezierPath               .drawCircle (in:   rects.one, thickness: rects.thick)
+			} else {
+				surroundRect = ZBezierPath.drawCircles(in: rects.three, thickness: rects.thick, orientedUp: gInsertionsFollow).insetBy(dx: -6.0, dy: -6.0)
+				radius      /= 2.0
+			}
+
+			drawTinyDots(surrounding: surroundRect, objects: necklaceObjects, radius: radius, color: color, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0)) { (index, rect) in
+				self.necklaceDotRects[index] = rect
+			}
+
+			for controlRect in controlRects {
+				ZBezierPath.drawCircle(in: controlRect, thickness: rects.thick)
+			}
 		}
-    }
+	}
 
 }
-
 
 extension ZBezierPath {
 
@@ -196,16 +273,26 @@ extension ZBezierPath {
 
 }
 
-
 extension CGRect {
-    var squareCenetered: CGRect {
+    var squareCentered: CGRect {
         let length = size.minimumDimension
         let origin = CGPoint(x: minX + (size.width - length) / 2.0, y: minY + (size.height - length) / 2.0)
 
         return CGRect(origin: origin, size: CGSize(width: length, height: length))
     }
-}
 
+	func intersectsOval(within other: CGRect) -> Bool {
+		let center =  other.center
+		let radius = (other.height + other.width) / 4.0
+		let deltaX = center.x - max(minX, min(center.x, maxX))
+		let deltaY = center.y - max(minY, min(center.y, maxY))
+		let  delta = radius - sqrt(deltaX * deltaX + deltaY * deltaY)
+
+		print(delta)
+
+		return delta > 0
+	}
+}
 
 extension CGSize {
     

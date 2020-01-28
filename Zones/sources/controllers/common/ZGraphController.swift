@@ -40,9 +40,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	var      rubberbandPreGrabs =  ZoneArray    ()
 	var     priorScrollLocation =  CGPoint.zero
 	var         rubberbandStart =  CGPoint.zero
-	func toggleDirectionIndicators() { gFullRingIsVisible = !gFullRingIsVisible }
 
-	var rubberbandRect: CGRect? {
+	var rubberbandRect: CGRect? { // wrapper with new value logic
 		get {
 			return dragView?.rubberbandRect
 		}
@@ -57,18 +56,17 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					gSelecting.updateCousinList()
 				} else {
 					d.rubberbandRect = newValue
-					let      widgets = gWidgets.visibleWidgets
+					let       inRing = ringView?.respondToClick(in: newValue) ?? false
 
-					if  !respondToClick(in: newValue) {
+					if  !inRing {
 						gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
 						gHere.ungrab()
 
-						for widget in widgets {
+						for widget in gWidgets.visibleWidgets {
 							if  let    hitRect = widget.hitRect {
 								let widgetRect = widget.convert(hitRect, to: d)
 
-								if  let zone = widget.widgetZone, !zone.isRootOfFavorites,
-
+								if  let   zone = widget.widgetZone, !zone.isRootOfFavorites,
 									widgetRect.intersects(newValue!) {
 									widget.widgetZone?.addToGrab()
 								}
@@ -80,53 +78,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 				d.setAllSubviewsNeedDisplay()
 			}
 		}
-	}
-
-	func focusOnIdea(_ item: NSObject) -> Bool {
-		if  let idea = item as? Zone {
-			gFocusRing.focusOn(idea) {
-				print(idea.zoneName ?? "unknown zone")
-				gControllers.signalFor(idea, regarding: .eRelayout)
-			}
-
-			return true
-		}
-
-		return false
-	}
-
-	func focusOnEssay(_ item: NSObject) -> Bool {
-		if  let            essay = item as? ZParagraph {
-			gCurrentEssay        = essay
-			gCreateMultipleEssay = true
-
-			gControllers.swapGraphAndEssay()
-			print(essay.zone?.zoneName ?? "unknown essay")
-
-			return true
-		}
-
-		return false
-	}
-
-	@discardableResult func respondToClick(in rect: CGRect?) -> Bool {
-		func respond(to item: NSObject) -> Bool {
-			return focusOnIdea(item) || focusOnEssay(item)
-		}
-
-		if  let item = ringView?.ringItem(containedIn: rect) {
-			if  respond(to: item) {
-				return true
-			} else if let subitems = item as? ZObjectsArray {
-				for subitem in subitems {
-					if  respond(to: subitem) {
-						return true
-					}
-				}
-			}
-		}
-
-		return false
 	}
 
     override func setup() {
@@ -384,7 +335,8 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 						}
 					}
 				} else {
-					let rect = CGRect(origin: gesture.location(in: view), size: CGSize())
+					let   rect = CGRect(origin: gesture.location(in: view), size: CGSize())
+					let inRing = ringView?.respondToClick(in: rect) ?? false
 
 					// //////////////////////
 					// click in background //
@@ -392,13 +344,13 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 
 					gTextEditor.stopCurrentEdit()
 
-					if  clickManager.isDoubleClick() {
-						recenter()
-					} else if !kIsPhone {	// default reaction to click on background: select here
-						gHereMaybe?.grab()  // safe version of here prevent crash early in launch
+					if !inRing {
+						if  clickManager.isDoubleClick() {
+							recenter()
+						} else if !kIsPhone {	// default reaction to click on background: select here
+							gHereMaybe?.grab()  // safe version of here prevent crash early in launch
+						}
 					}
-
-					respondToClick(in: rect)
                 }
 
                 gControllers.signalFor(nil, regarding: regarding)

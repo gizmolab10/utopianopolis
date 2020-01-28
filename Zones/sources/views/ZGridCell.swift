@@ -1,9 +1,9 @@
 //
 //  ZGridCell.swift
-//  iFocus
+//  Thoughtful
 //
 //  Created by Jonathan Sand on 6/24/19.
-//  Copyright © 2019 Zones. All rights reserved.
+//  Copyright © 2019 Jonathan Sand. All rights reserved.
 //
 
 import Foundation
