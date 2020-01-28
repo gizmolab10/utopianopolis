@@ -289,6 +289,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let    ops = ZDebugMode(rawValue: 1)
 	static let    log = ZDebugMode()
 	static let   info = ZDebugMode()
+	static let   ring = ZDebugMode()
 	static let  names = ZDebugMode()
 	static let  focus = ZDebugMode()
 	static let  speed = ZDebugMode()
@@ -300,6 +301,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 		return [(.ops,    "     op"),
 				(.log,    "    log"),
 				(.info,   "   info"),
+				(.ring,   "   ring"),
 				(.names,  "   name"),
 				(.focus,  "  focus"),
 				(.speed,  "  speed"),

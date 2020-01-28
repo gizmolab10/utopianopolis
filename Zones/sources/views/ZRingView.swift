@@ -23,6 +23,21 @@ class ZRingView: ZView {
 
 	var necklaceDotRects = [Int : CGRect]()
 
+	var ringGeometry  : ZRingGeometry {
+		var    result = ZRingGeometry()
+		var    square = bounds.squareCentered
+		let     inset = square.width / 3.0
+		let  oneInset = inset / 3.85
+		square        = square.insetBy(dx: inset,     dy: inset)
+		let     three = square.insetBy(dx: 0,         dy: inset / 14.0)
+		let       one = square.insetBy(dx: oneInset, dy: oneInset)
+		let    offset = bounds.maxY - three.maxY - 15.0 + oneInset / 1.8
+		result   .one = one  .offsetBy(dx: 0.0, dy: offset)
+		result .thick = square.height / 30.0
+
+		return result
+	}
+
 	// MARK:- draw
 	// MARK:-
 
@@ -48,7 +63,7 @@ class ZRingView: ZView {
 
 			ZBezierPath.drawCircle (in: rect, thickness: g.thick)
 
-			drawTinyDots(surrounding: surroundRect, objects: necklaceObjects, radius: radius, color: color, startQuadrant: (gInsertionsFollow ? 1.0 : -1.0)) { (index, rect) in
+			drawTinyDots(surrounding: surroundRect, objects: necklaceObjects, radius: radius, color: color, startQuadrant: -1.0) { (index, rect) in
 				self.necklaceDotRects[index] = rect
 			}
 
@@ -63,7 +78,9 @@ class ZRingView: ZView {
 
 	func respondToRingControl(_ item: NSObject) -> Bool {
 		if  let control = item as? ZRingControl {
-			return control.response()
+			control.response()
+
+			return true
 		}
 
 		return false
@@ -72,7 +89,7 @@ class ZRingView: ZView {
 	func focusOnIdea(_ item: NSObject) -> Bool {
 		if  let idea = item as? Zone {
 			gFocusRing.focusOn(idea) {
-				print(idea.zoneName ?? "unknown zone")
+				printDebug(.ring, idea.zoneName ?? "unknown zone")
 				gControllers.signalFor(idea, regarding: .eRelayout)
 			}
 
@@ -88,7 +105,7 @@ class ZRingView: ZView {
 			gCreateMultipleEssay = true
 
 			gControllers.swapGraphAndEssay()
-			print(essay.zone?.zoneName ?? "unknown essay")
+			printDebug(.ring, essay.zone?.zoneName ?? "unknown essay")
 
 			return true
 		}
@@ -98,21 +115,6 @@ class ZRingView: ZView {
 
 	// MARK:- necklace
 	// MARK:-
-
-	var ringGeometry  : ZRingGeometry {
-		var    result = ZRingGeometry()
-		var      rect = bounds.squareCentered
-		let     inset = rect.size.width / 3.0
-		let ringInset = inset / 3.85
-		rect          = rect.insetBy(dx: inset,     dy: inset)
-		let     three = rect.insetBy(dx: 0,         dy: inset / 14.0)
-		let       one = rect.insetBy(dx: ringInset, dy: ringInset)
-		result .thick = rect.size.height / 30.0
-		let    offset = bounds.maxY - three.maxY - 15.0 + ringInset / 1.8
-		result   .one = one  .offsetBy(dx: 0.0, dy: offset)
-
-		return result
-	}
 
 	var necklaceObjects : ZObjectsArray {
 		var ringArray = ZObjectsArray()
@@ -150,8 +152,8 @@ class ZRingView: ZView {
 		var result = [CGRect]()
 
 		for index in 0 ... 2 {
-			let increment = 2.0 * .pi / 4.0 	// 1/4 of circle (2 pi)
-			let     angle = (2.0 - Double(index)) * increment
+			let increment = 2.0 * .pi / 3.5 	// 1/3.5 of circle (2 pi)
+			let     angle = (1.87 - Double(index)) * increment
 			let         x = center.x + (offset * CGFloat(cos(angle)))
 			let         y = center.y + (offset * CGFloat(sin(angle)))
 			let   control = NSRect(origin: CGPoint(x: x, y: y), size: CGSize()).insetBy(dx: -radius, dy: -radius)
