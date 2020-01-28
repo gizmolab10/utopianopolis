@@ -23,17 +23,17 @@ class ZRingView: ZView {
 
 	var necklaceDotRects = [Int : CGRect]()
 
-	var ringGeometry  : ZRingGeometry {
-		var    result = ZRingGeometry()
-		var    square = bounds.squareCentered
-		let     inset = square.width / 3.0
-		let  oneInset = inset / 3.85
-		square        = square.insetBy(dx: inset,     dy: inset)
-		let     three = square.insetBy(dx: 0,         dy: inset / 14.0)
-		let       one = square.insetBy(dx: oneInset, dy: oneInset)
-		let    offset = bounds.maxY - three.maxY - 15.0 + oneInset / 1.8
-		result   .one = one  .offsetBy(dx: 0.0, dy: offset)
-		result .thick = square.height / 30.0
+	var ringGeometry    : ZRingGeometry {
+		var      result = ZRingGeometry()
+		var      square = bounds.squareCentered
+		let squareInset = square.width / 3.0
+		let       inset = squareInset  / 3.85
+		square          = square.insetBy(dx: squareInset, dy: squareInset)
+		let         one = square.insetBy(dx: inset,       dy: inset)
+		let     xOffset = bounds.maxX - square.maxX - 15.0 +  inset / 1.8
+		let     yOffset = bounds.maxY - square.maxY - 15.0 +  inset / 1.8
+		result     .one = one  .offsetBy(dx: xOffset, dy: yOffset)
+		result   .thick = square.height / 30.0
 
 		return result
 	}
@@ -66,6 +66,8 @@ class ZRingView: ZView {
 			drawTinyDots(surrounding: surroundRect, objects: necklaceObjects, radius: radius, color: color, startQuadrant: -1.0) { (index, rect) in
 				self.necklaceDotRects[index] = rect
 			}
+
+			color.setStroke() // some tiny dots change the stroke color
 
 			for index in 0 ... (controlRects.count - 1) {
 				drawControl(for: index)
