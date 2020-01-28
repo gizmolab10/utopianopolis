@@ -6,7 +6,6 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 
 #if os(OSX)
@@ -15,23 +14,18 @@ import Foundation
     import UIKit
 #endif
 
-
 class ZGenericController: ZController {
-    var useDefaultBackgroundColor = true
-	var controllerID: ZControllerID { return .idUndefined }
-    var backgroundColor: CGColor { return gBackgroundColor.cgColor }
-    func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}
-    func platformSetup() {}
-    func setup() {}
 
+	var controllerID    : ZControllerID { return .idUndefined }
+    var backgroundColor : CGColor       { return kClearColor.cgColor }
+    func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}
+	func setup() {}
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         gControllers.setSignalHandler(for: self, iID: controllerID) { object, kind in
-            if  self.useDefaultBackgroundColor {
-                self.view.zlayer.backgroundColor = self.backgroundColor
-            }
+			self.view.zlayer.backgroundColor = self.backgroundColor
 
             if  kind != .eError && gIsReadyToShowUI {
                 self.handleSignal(object, kind: kind)
@@ -41,12 +35,10 @@ class ZGenericController: ZController {
         setup()
     }
 
-
 #if os(OSX)
 
     override func viewDidAppear() {
         super.viewDidAppear()
-        platformSetup()
         setup()
     }
 
@@ -54,7 +46,6 @@ class ZGenericController: ZController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        platformSetup()
         setup()
     }
 

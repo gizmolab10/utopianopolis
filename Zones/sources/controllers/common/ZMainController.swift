@@ -6,7 +6,6 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import SnapKit
 
 #if os(OSX)
@@ -15,12 +14,9 @@ import SnapKit
     import UIKit
 #endif
 
-
 var gMainController: ZMainController? { return gControllers.controllerForID(.idMain) as? ZMainController }
 
-
 class ZMainController: ZGenericController {
-
 
     @IBOutlet var detailsWidth:      NSLayoutConstraint?
     @IBOutlet var searchBoxHeight:   NSLayoutConstraint?
@@ -31,12 +27,11 @@ class ZMainController: ZGenericController {
 	@IBOutlet var essayView:    	 ZView?
     override  var controllerID:      ZControllerID { return .idMain }
 
-
     override func setup() {
-        searchBoxView?    .isHidden = true
+		searchBoxView?    .isHidden = true
         searchResultsView?.isHidden = true
+		view.zlayer.backgroundColor = gBackgroundColor.cgColor
     }
-
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		let   hideEssay = gWorkMode != .essayMode

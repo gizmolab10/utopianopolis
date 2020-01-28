@@ -26,7 +26,6 @@ class ZInformationController: ZGenericController {
     @IBOutlet var      versionLabel: ZTextField?
     @IBOutlet var        levelLabel: ZTextField?
     var                 currentZone: Zone          { return gSelecting.rootMostMoveable }
-    override  var   backgroundColor: CGColor       { return gDarkishBackgroundColor }
     override  var      controllerID: ZControllerID { return .idInformation }
 
 

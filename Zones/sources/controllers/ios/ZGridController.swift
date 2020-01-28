@@ -50,8 +50,8 @@ class ZGridController: UICollectionViewController {
 	override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "gridCell", for: indexPath as IndexPath) as! ZGridCell
 		cell.addBorder(thickness: 0.5, radius: 5.0, color: ZColor.lightGray.cgColor)
-		cell.backgroundColor = ZColor.clear
-		cell.title.textColor = ZColor.blue
+		cell.backgroundColor = .clear
+		cell.title.textColor = .blue
 		cell.title.text = ""
 		cell.title.font = ZFont.systemFont(ofSize: 24.0)
 		cell.title.isUserInteractionEnabled = false

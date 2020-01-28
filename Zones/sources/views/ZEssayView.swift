@@ -17,7 +17,7 @@ import UIKit
 
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
-class ZEssayView: ZView, ZTextViewDelegate {
+class ZEssayView: ZGenericView, ZTextViewDelegate {
 	@IBOutlet var textView : ZTextView?
 	var backwardButton     : ZButton?
 	var forwardButton      : ZButton?
@@ -39,16 +39,13 @@ class ZEssayView: ZView, ZTextViewDelegate {
 	// MARK:- setup
 	// MARK:-
 
-	required init?(coder: NSCoder) {
-		super.init(coder: coder)
-		setup()
-	}
-
-	private func setup() {
-		textView?         .usesRuler = true
-		textView?    .isRulerVisible = true
-		textView?  .usesInspectorBar = true
-		textView?.textContainerInset = NSSize(width: 20, height: 0)
+	override func setup() {
+		textView?             .usesRuler = true
+		textView?        .isRulerVisible = true
+		textView?      .usesInspectorBar = true
+		textView?    .textContainerInset = NSSize(width: 20, height: 0)
+		textView?.zlayer.backgroundColor = kClearColor.cgColor
+		textView?       .backgroundColor = kClearColor
 
 		addButtons()
 		updateText()

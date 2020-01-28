@@ -8,16 +8,20 @@
 
 import Foundation
 
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 var gEssayController: ZEssayController? { return gControllers.controllerForID(.idEssay) as? ZEssayController }
 
-
 class ZEssayController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
-	override  var controllerID : ZControllerID { return .idEssay }
-	@IBOutlet var    essayView : ZEssayView?
+	override  var backgroundColor : CGColor       { return kClearColor.cgColor }
+	override  var    controllerID : ZControllerID { return .idEssay }
+	@IBOutlet var       essayView : ZEssayView?
 
-	override func viewWillAppear() {
-		super.viewWillAppear()
+	override func setup() {
 		essayView?.updateText()
 	}
 }

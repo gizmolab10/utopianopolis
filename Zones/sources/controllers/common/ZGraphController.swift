@@ -24,7 +24,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	override  var  controllerID :  ZControllerID { return .idGraph }
 	@IBOutlet var       spinner :  ZProgressIndicator?
 	@IBOutlet var      dragView :  ZDragView?
-	@IBOutlet var      ringView :  ZRingView?
 	@IBOutlet var   spinnerView :  ZView?
 	var        moveRightGesture :  ZGestureRecognizer?
 	var         movementGesture :  ZGestureRecognizer?
@@ -56,7 +55,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					gSelecting.updateCousinList()
 				} else {
 					d.rubberbandRect = newValue
-					let       inRing = ringView?.respondToClick(in: newValue) ?? false
+					let       inRing = gRingView?.respondToClick(in: newValue) ?? false
 
 					if  !inRing {
 						gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
@@ -81,19 +80,18 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	}
 
     override func setup() {
+		platformSetup()
         restartGestureRecognition()
         dragView?.addSubview(thoughtsRootWidget)
 
         if  !kIsPhone {
             dragView?.addSubview(favoritesRootWidget)
         }
-        
-//        ringView?.setupGradientView()
     }
 
     #if os(OSX)
     
-    override func platformSetup() {
+    func platformSetup() {
         guard let lighten = CIFilter(name: "CIColorControls") else { return }
         lighten.setDefaults()
         lighten.setValue(1, forKey: "inputBrightness")
@@ -104,7 +102,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     
     @IBOutlet weak var keyInput: ZKeyInput?
     
-    override func platformSetup() {
+    func platformSetup() {
         keyInput?.becomeFirstResponder()
     }
     
@@ -218,7 +216,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
             }
         }
 
-		ringView?.setNeedsDisplay()
+		gRingView?.setNeedsDisplay()
     }
 	
 	func prepare(for iKind: ZSignalKind) {
@@ -336,7 +334,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 					}
 				} else {
 					let   rect = CGRect(origin: gesture.location(in: view), size: CGSize())
-					let inRing = ringView?.respondToClick(in: rect) ?? false
+					let inRing = gRingView?.respondToClick(in: rect) ?? false
 
 					// //////////////////////
 					// click in background //

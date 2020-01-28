@@ -19,7 +19,7 @@ struct ZRingGeometry {
 	var thick =  CGFloat()
 }
 
-class ZRingView: ZView {
+class ZRingView: ZGenericView {
 
 	var necklaceDotRects = [Int : CGRect]()
 
@@ -38,6 +38,11 @@ class ZRingView: ZView {
 		return result
 	}
 
+	
+	override func setup() {
+		zlayer.backgroundColor = kClearColor.cgColor
+	}
+
 	// MARK:- draw
 	// MARK:-
 
@@ -51,7 +56,7 @@ class ZRingView: ZView {
 		let color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
 
 		color.setStroke()
-		gBackgroundColor.setFill()
+		kClearColor.setFill()
 
 		if !gFullRingIsVisible {
 			drawControl(for: 1)

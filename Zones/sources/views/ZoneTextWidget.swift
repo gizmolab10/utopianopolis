@@ -55,7 +55,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     override func setup() {
-        delegate                   = self
+		super.setup()
+
+		delegate                   = self
         isBordered                 = false
         textAlignment              = .left
         backgroundColor            = kClearColor

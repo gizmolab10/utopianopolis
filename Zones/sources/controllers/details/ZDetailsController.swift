@@ -6,39 +6,28 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 #if os(OSX)
     import Cocoa
 #elseif os(iOS)
     import UIKit
 #endif
 
-
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
-
 
 class ZDetailsController: ZGenericController {
 
-
+	var viewsByID = [Int : ZStackableView]()
     @IBOutlet var stackView: ZStackView?
-    var viewsByID = [Int: ZStackableView]()
 	override  var controllerID: ZControllerID { return .idDetails }
+	override  var backgroundColor : CGColor       { return kClearColor.cgColor }
 
-
-    override func setup() {
-        useDefaultBackgroundColor = false
-    }
-    
-    
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         update()
     }
 
-    
     func register(id: ZDetailsViewID, for view: ZStackableView) {
         viewsByID[id.rawValue] = view
     }
-    
 
     func update() {
         let ids: [ZDetailsViewID] = [.Tools, .Debug, .Preferences, .Information]
@@ -48,11 +37,9 @@ class ZDetailsController: ZGenericController {
         }
     }
     
-    
     func view(for id: ZDetailsViewID) -> ZStackableView? {
         return viewsByID[id.rawValue]
     }
-    
     
     func toggleViewsFor(ids: [ZDetailsViewID]) {
         for id in ids {
@@ -63,7 +50,6 @@ class ZDetailsController: ZGenericController {
         
         update()
     }
-
     
     func displayViewsFor(ids: [ZDetailsViewID]) {
         for id in ids {
@@ -72,4 +58,5 @@ class ZDetailsController: ZGenericController {
 
         update()
     }
+
 }

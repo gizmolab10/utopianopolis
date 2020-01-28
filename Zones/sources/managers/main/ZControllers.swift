@@ -24,7 +24,8 @@ enum ZControllerID: Int {
 	case idEssay
     case idTools
     case idHelp
-    case idMain
+	case idMain
+	case idRing
 }
 
 enum ZSignalKind: Int {
