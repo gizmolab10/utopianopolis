@@ -467,6 +467,10 @@ extension CGPoint {
 
 extension CGSize {
 
+	var smallDimension: CGFloat {
+		return min(height, width)
+	}
+
     var hypontenuse: CGFloat {
         return sqrt(width * width + height * height)
     }
@@ -535,6 +539,81 @@ extension CGRect {
 
         return insetBy(dx:dX, dy:dY)
     }
+
+	var squareCentered: CGRect {
+		let length = size.smallDimension
+		let origin = CGPoint(x: minX + (size.width - length) / 2.0, y: minY + (size.height - length) / 2.0)
+
+		return CGRect(origin: origin, size: CGSize(width: length, height: length))
+	}
+
+	func intersectsOval(within other: CGRect) -> Bool {
+		let center =  other.center
+		let radius = (other.height + other.width) / 4.0
+		let deltaX = center.x - max(minX, min(center.x, maxX))
+		let deltaY = center.y - max(minY, min(center.y, maxY))
+		let  delta = radius - sqrt(deltaX * deltaX + deltaY * deltaY)
+
+		return delta > 0
+	}
+}
+
+extension ZBezierPath {
+
+	static func drawTriangle(orientedUp: Bool, in iRect: CGRect, thickness: CGFloat) {
+		let path = ZBezierPath()
+
+		path.appendTriangle(orientedUp: orientedUp, in: iRect)
+		path.draw(thickness: thickness)
+	}
+
+	static func drawCircle(in iRect: CGRect, thickness: CGFloat) {
+		let path = ZBezierPath(ovalIn: iRect)
+
+		path.draw(thickness: thickness)
+	}
+
+	static func drawCircles(in iRect: CGRect, thickness: CGFloat, orientedUp: Bool) -> CGRect {
+		let path = ZBezierPath()
+		let rect = path.appendCircles(orientedUp: orientedUp, in: iRect)
+
+		path.draw(thickness: thickness)
+
+		return rect
+	}
+
+	func draw(thickness: CGFloat) {
+		lineWidth = thickness
+
+		stroke()
+	}
+
+	func appendTriangle(orientedUp: Bool, in iRect: CGRect) {
+		let yStart = orientedUp ? iRect.minY : iRect.maxY
+		let   yEnd = orientedUp ? iRect.maxY : iRect.minY
+		let    tip = CGPoint(x: iRect.midX, y: yStart)
+		let   left = CGPoint(x: iRect.minX, y: yEnd)
+		let  right = CGPoint(x: iRect.maxX, y: yEnd)
+
+		move(to: tip)
+		line(to: left)
+		line(to: right)
+		line(to: tip)
+	}
+
+	func appendCircles(orientedUp: Bool, in iRect: CGRect) -> CGRect {
+		let   rect = iRect.offsetBy(fractionX: 0.0, fractionY: orientedUp ? 0.1 : -0.1)
+		var    top = rect.insetBy(fractionX: 0.0, fractionY: 0.375)  // shrink to one-fifth size
+		let middle = top.offsetBy(dx: 0.0, dy: top.midY - rect.midY)
+		let bottom = top.offsetBy(dx: 0.0, dy: top.maxY - rect.maxY) // move to bottom
+		top        = top.offsetBy(dx: 0.0, dy: top.minY - rect.minY) // move to top
+
+		appendOval(in: top)
+		appendOval(in: middle)
+		appendOval(in: bottom)
+
+		return orientedUp ? top : bottom
+	}
 
 }
 
