@@ -37,11 +37,13 @@ enum ZSignalKind: Int {
     case eFound
 	case eGraph
 	case eEssay
+	case eResize
     case eSearch
-    case eStartup
+	case eStartup
     case eDetails
     case eRelayout
     case eFavorites
+	case eLaunchDone
     case eAppearance
     case eInformation
     case ePreferences
@@ -117,7 +119,7 @@ class ZControllers: NSObject {
                 gFavorites.updateAllFavorites()
                 gRemoteStorage.updateLastSyncDates()
                 gRemoteStorage.recount()
-                self.signalFor(nil, regarding: .eRelayout)
+				self.signalFor(nil, multiple: [.eRelayout, .eLaunchDone])
                 self.requestFeedback()
                 
                 gBatches.finishUp { iSame in

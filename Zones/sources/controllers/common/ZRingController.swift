@@ -19,4 +19,11 @@ class ZRingController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDe
 	override  var backgroundColor : CGColor       { return gBackgroundColor.cgColor }
 	override  var    controllerID : ZControllerID { return .idRing }
 	@IBOutlet var        ringView : ZRingView?
+
+	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+		if  [.eResize, .eLaunchDone].contains(iKind) {
+			ringView?.update()
+		}
+	}
+
 }

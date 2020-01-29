@@ -14,17 +14,21 @@ import Cocoa
 import UIKit
 #endif
 
-struct ZRingGeometry {
-	var one   =  CGRect()
-	var thick =  CGFloat()
-}
-
 class ZRingView: ZGenericView {
 
-	var necklaceDotRects = [Int : CGRect]()
+	struct ZRingGeometry {
+		var one   =  CGRect()
+		var thick =  CGFloat()
+	}
 
-	var ringGeometry    : ZRingGeometry {
-		var      result = ZRingGeometry()
+	var necklaceDotRects = [Int : CGRect]()
+	var geometry = ZRingGeometry()
+
+	override func setup() {
+		zlayer.backgroundColor = kClearColor.cgColor
+	}
+
+	func update() {
 		var      square = bounds.squareCentered
 		let squareInset = square.width / 3.0
 		let       inset = squareInset  / 3.85
@@ -32,15 +36,8 @@ class ZRingView: ZGenericView {
 		let         one = square.insetBy(dx: inset,       dy: inset)
 		let     xOffset = bounds.maxX - square.maxX - 15.0 +  inset / 1.8
 		let     yOffset = bounds.maxY - square.maxY - 15.0 +  inset / 1.8
-		result     .one = one  .offsetBy(dx: xOffset, dy: yOffset)
-		result   .thick = square.height / 30.0
-
-		return result
-	}
-
-	
-	override func setup() {
-		zlayer.backgroundColor = kClearColor.cgColor
+		geometry   .one = one  .offsetBy(dx: xOffset, dy: yOffset)
+		geometry .thick = square.height / 30.0
 	}
 
 	// MARK:- draw
@@ -61,7 +58,7 @@ class ZRingView: ZGenericView {
 		if !gFullRingIsVisible {
 			drawControl(for: 1)
 		} else {
-			let            g = ringGeometry
+			let            g = geometry
 			let         rect = g.one
 			let surroundRect = rect.insetBy(dx: -6.0, dy: -6.0)
 			let       radius = Double(surroundRect.size.width) / 27.0
@@ -150,7 +147,7 @@ class ZRingView: ZGenericView {
 	// MARK:-
 
 	var controlRects : [CGRect] {
-		let   rect = ringGeometry.one
+		let   rect = geometry.one
 		let radius = rect.width / 4.5
 		let offset = rect.width / 3.7
 		let center = rect.center
@@ -171,11 +168,11 @@ class ZRingView: ZGenericView {
 
 	private func item(containedIn iRect: CGRect?) -> NSObject? {
 		if  let    rect = iRect {
-			let objects = necklaceObjects 	// expensive computation: do once
+			let objects = necklaceObjects 				// expensive computation: do once
 			let   count = objects.count
 
 			for (index, tinyRect) in necklaceDotRects {
-				if  index < count,
+				if  index < count, 						// avoid crash
 					rect.intersects(tinyRect) {
 					return objects[index]
 				}
