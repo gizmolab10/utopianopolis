@@ -19,8 +19,7 @@ import Foundation
 class ZToolsController: ZGenericTableController {
 
     
-    override var backgroundColor: CGColor       { return gDarkishBackgroundColor }
-	override var    controllerID: ZControllerID { return .idTools }
+	override var controllerID: ZControllerID { return .idTools }
 
 
     enum ZToolKind: Int {

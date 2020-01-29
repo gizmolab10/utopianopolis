@@ -17,9 +17,8 @@ import UIKit
 var gEssayController: ZEssayController? { return gControllers.controllerForID(.idEssay) as? ZEssayController }
 
 class ZEssayController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
-	override  var backgroundColor : CGColor       { return kClearColor.cgColor }
-	override  var    controllerID : ZControllerID { return .idEssay }
-	@IBOutlet var       essayView : ZEssayView?
+	override  var controllerID : ZControllerID { return .idEssay }
+	@IBOutlet var    essayView : ZEssayView?
 
 	override func setup() {
 		essayView?.updateText()

@@ -18,14 +18,13 @@ import Foundation
 class ZDebugController: ZGenericController {
 
 
-    @IBOutlet var       nameLabel: ZTextField?
-    @IBOutlet var      otherLabel: ZTextField?
-    @IBOutlet var     statusLabel: ZTextField?
-    @IBOutlet var     traitsLabel: ZTextField?
-    @IBOutlet var     recordLabel: ZTextField?
-    override  var backgroundColor: CGColor       { return gDarkishBackgroundColor }
-	override  var    controllerID: ZControllerID { return .idDebug }
-    var grab: Zone?
+    @IBOutlet var    nameLabel: ZTextField?
+    @IBOutlet var   otherLabel: ZTextField?
+    @IBOutlet var  statusLabel: ZTextField?
+    @IBOutlet var  traitsLabel: ZTextField?
+    @IBOutlet var  recordLabel: ZTextField?
+	override  var controllerID: ZControllerID { return .idDebug }
+    var                   grab: Zone?
 
 
     var statusText: String {

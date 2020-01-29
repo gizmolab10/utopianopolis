@@ -75,6 +75,24 @@ class ZControllers: NSObject {
         return nil
     }
 
+	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
+		if  let id = iID {
+			switch id {
+				case .idDetails,
+					 .idGraph,
+					 .idEssay,
+					 .idRing:  return kClearColor
+				case .idInformation,
+					 .idPreferences,
+					 .idTools,
+					 .idDebug: return gDarkishBackgroundColor
+				default:       return gBackgroundColor
+			}
+		}
+
+		return gBackgroundColor
+	}
+
 	// MARK:- hide / reveal
 	// MARK:-
 
@@ -144,7 +162,7 @@ class ZControllers: NSObject {
                 let image = ZImage(named: kHelpMenuImageName)
                 
                 gAlerts.showAlert("Please forgive my interruption",
-                                        "Thank you for downloading Thoughtful. You are one of my first customers. \n\nMy other product (no longer available) received 99% positive customer satisfaction. Receiving the same for Thoughtful would mean a lot to me, of course. I built Thoughtful alone so far, but it's getting hefty. Might you be interested in helping me beta test Thoughtful, giving me feedback about it (good and bad)? \n\nYou can let me know at any time, by selecting Report an Issue under the Help menu (red arrow), or now, by clicking the Reply button below.",
+                                        "Thank you for downloading Thoughtful. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)? \n\nYou can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below.",
                                         "Reply in an email",
                                         "Dismiss",
                                         image) { iObject in

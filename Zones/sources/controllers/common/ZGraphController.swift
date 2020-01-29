@@ -21,7 +21,6 @@ var gGraphController: ZGraphController? { return gControllers.controllerForID(.i
 
 class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
     
-	override  var backgroundColor :  CGColor       { return kClearColor.cgColor }
 	override  var    controllerID :  ZControllerID { return .idGraph }
 	@IBOutlet var         spinner :  ZProgressIndicator?
 	@IBOutlet var        dragView :  ZDragView?

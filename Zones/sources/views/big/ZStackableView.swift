@@ -98,7 +98,7 @@ class ZStackableView: ZView {
         if  let gradientView = bannerView {
             let gradientLayer = CAGradientLayer()
             gradientLayer.frame = gradientView.bounds
-            gradientLayer.colors = [gDarkerBackgroundColor, gLighterBackgroundColor]
+			gradientLayer.colors = [gDarkerBackgroundColor.cgColor, gLighterBackgroundColor.cgColor]
             gradientView.zlayer.insertSublayer(gradientLayer, at: 0)
         }
     }

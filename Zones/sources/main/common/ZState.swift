@@ -59,11 +59,11 @@ var                  gFontSize:            CGFloat { return gGenericOffset.heigh
 var                gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var             gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
 var          gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : ZColor.black }
-var     gDarkerBackgroundColor:            CGColor { return gBackgroundColor.darker  (by: 4.0)  .cgColor }
-var    gDarkishBackgroundColor:            CGColor { return gBackgroundColor.darkish (by: 1.028).cgColor }
-var   gDirectionIndicatorColor:            CGColor { return gBackgroundColor.darker  (by: 1.3)  .cgColor }
-var   gLightishBackgroundColor:            CGColor { return gBackgroundColor.lightish(by: 1.02) .cgColor }
-var    gLighterBackgroundColor:            CGColor { return gBackgroundColor.lighter (by: 4.0)  .cgColor }
+var     gDarkerBackgroundColor:             ZColor { return gBackgroundColor.darker  (by: 4.0)   }
+var    gDarkishBackgroundColor:             ZColor { return gBackgroundColor.darkish (by: 1.028) }
+var   gDirectionIndicatorColor:             ZColor { return gBackgroundColor.darker  (by: 1.3)   }
+var   gLightishBackgroundColor:             ZColor { return gBackgroundColor.lightish(by: 1.02)  }
+var    gLighterBackgroundColor:             ZColor { return gBackgroundColor.lighter (by: 4.0)   }
 var          gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var            gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var					gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }

@@ -52,7 +52,7 @@ class ZRingView: ZGenericView {
 	override func draw(_ iDirtyRect: CGRect) {
 		super.draw(iDirtyRect)
 
-		let color = ZColor(ciColor: CIColor(cgColor: gDirectionIndicatorColor))
+		let color = gDirectionIndicatorColor
 
 		color.setStroke()
 		kClearColor.setFill()
