@@ -21,8 +21,8 @@ class ZRingView: ZGenericView {
 		var thick =  CGFloat()
 	}
 
+	var geometry         = ZRingGeometry()
 	var necklaceDotRects = [Int : CGRect]()
-	var geometry = ZRingGeometry()
 
 	override func setup() {
 		zlayer.backgroundColor = kClearColor.cgColor
@@ -39,6 +39,8 @@ class ZRingView: ZGenericView {
 		geometry   .one = one  .offsetBy(dx: xOffset, dy: yOffset)
 		geometry .thick = square.height / 30.0
 	}
+
+	override func mouseDown(with event: NSEvent) {}
 
 	// MARK:- draw
 	// MARK:-

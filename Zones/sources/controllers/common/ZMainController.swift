@@ -18,19 +18,18 @@ var gMainController: ZMainController? { return gControllers.controllerForID(.idM
 
 class ZMainController: ZGenericController {
 
-    @IBOutlet var detailsWidth:      NSLayoutConstraint?
-    @IBOutlet var searchBoxHeight:   NSLayoutConstraint?
-    @IBOutlet var searchResultsView: ZView?
-    @IBOutlet var searchBoxView:     ZView?
-    @IBOutlet var detailView:        ZView?
-	@IBOutlet var graphView:         ZView?
-	@IBOutlet var essayView:    	 ZView?
-    override  var controllerID:      ZControllerID { return .idMain }
+    @IBOutlet var detailsWidth      : NSLayoutConstraint?
+    @IBOutlet var searchBoxHeight   : NSLayoutConstraint?
+    @IBOutlet var searchResultsView : ZView?
+    @IBOutlet var searchBoxView     : ZView?
+    @IBOutlet var detailView        :  ZView?
+	@IBOutlet var graphView         : ZView?
+	@IBOutlet var essayView     	   : ZView?
+    override  var controllerID      : ZControllerID { return .idMain }
 
     override func setup() {
 		searchBoxView?    .isHidden = true
         searchResultsView?.isHidden = true
-		view.zlayer.backgroundColor = gBackgroundColor.cgColor
     }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {

@@ -21,24 +21,25 @@ var gGraphController: ZGraphController? { return gControllers.controllerForID(.i
 
 class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
     
-	override  var  controllerID :  ZControllerID { return .idGraph }
-	@IBOutlet var       spinner :  ZProgressIndicator?
-	@IBOutlet var      dragView :  ZDragView?
-	@IBOutlet var   spinnerView :  ZView?
-	var        moveRightGesture :  ZGestureRecognizer?
-	var         movementGesture :  ZGestureRecognizer?
-	var         moveDownGesture :  ZGestureRecognizer?
-	var         moveLeftGesture :  ZGestureRecognizer?
-	var           moveUpGesture :  ZGestureRecognizer?
-	var            clickGesture :  ZGestureRecognizer?
-	var             edgeGesture :  ZGestureRecognizer?
-	let              doneStates : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
-	let 		   clickManager =  ZClickManager()
-	let      thoughtsRootWidget =  ZoneWidget   ()
-	let     favoritesRootWidget =  ZoneWidget   ()
-	var      rubberbandPreGrabs =  ZoneArray    ()
-	var     priorScrollLocation =  CGPoint.zero
-	var         rubberbandStart =  CGPoint.zero
+	override  var backgroundColor :  CGColor       { return kClearColor.cgColor }
+	override  var    controllerID :  ZControllerID { return .idGraph }
+	@IBOutlet var         spinner :  ZProgressIndicator?
+	@IBOutlet var        dragView :  ZDragView?
+	@IBOutlet var     spinnerView :  ZView?
+	var          moveRightGesture :  ZGestureRecognizer?
+	var           movementGesture :  ZGestureRecognizer?
+	var           moveDownGesture :  ZGestureRecognizer?
+	var           moveLeftGesture :  ZGestureRecognizer?
+	var             moveUpGesture :  ZGestureRecognizer?
+	var              clickGesture :  ZGestureRecognizer?
+	var               edgeGesture :  ZGestureRecognizer?
+	let                doneStates : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
+	let 		     clickManager =  ZClickManager()
+	let        thoughtsRootWidget =  ZoneWidget   ()
+	let       favoritesRootWidget =  ZoneWidget   ()
+	var        rubberbandPreGrabs =  ZoneArray    ()
+	var       priorScrollLocation =  CGPoint.zero
+	var           rubberbandStart =  CGPoint.zero
 
 	var rubberbandRect: CGRect? { // wrapper with new value logic
 		get {

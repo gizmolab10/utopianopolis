@@ -13,7 +13,6 @@ import UIKit
 
 class ZPhoneController: ZGenericController, UITabBarDelegate {
 
-
     override  var           controllerID : ZControllerID { return .idMain }
     @IBOutlet var editorBottomConstraint : NSLayoutConstraint?
     @IBOutlet var    editorTopConstraint : NSLayoutConstraint?
@@ -72,7 +71,6 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 		graphsButton?          .isHidden = false
 		actionsView?           .isHidden = false
 		undoButton?            .isHidden = false
-		view.zlayer.backgroundColor      = gBackgroundColor.cgColor
 
 		gActionsController.update()
 		layoutForKeyboard()

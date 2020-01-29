@@ -16,7 +16,7 @@ var gRingView:       ZRingView?       { return gRingController?.ringView }
 var gRingController: ZRingController? { return gControllers.controllerForID(.idRing) as? ZRingController }
 
 class ZRingController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
-	override  var backgroundColor : CGColor       { return gBackgroundColor.cgColor }
+	override  var backgroundColor : CGColor       { return kClearColor.cgColor }
 	override  var    controllerID : ZControllerID { return .idRing }
 	@IBOutlet var        ringView : ZRingView?
 

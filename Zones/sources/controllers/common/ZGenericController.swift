@@ -17,16 +17,16 @@ import Foundation
 class ZGenericController: ZController {
 
 	var controllerID    : ZControllerID { return .idUndefined }
-    var backgroundColor : CGColor       { return kClearColor.cgColor }
+    var backgroundColor : CGColor       { return gBackgroundColor.cgColor }
     func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}
 	func setup() {}
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        gControllers.setSignalHandler(for: self, iID: controllerID) { object, kind in
-			self.view.zlayer.backgroundColor = self.backgroundColor
+		view.zlayer.backgroundColor = self.backgroundColor
 
+        gControllers.setSignalHandler(for: self, iID: controllerID) { object, kind in
             if  kind != .eError && gIsReadyToShowUI {
                 self.handleSignal(object, kind: kind)
             }

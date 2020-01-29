@@ -16,9 +16,9 @@ var gDetailsController : ZDetailsController? { return gControllers.controllerFor
 
 class ZDetailsController: ZGenericController {
 
-	var viewsByID = [Int : ZStackableView]()
-    @IBOutlet var stackView: ZStackView?
-	override  var controllerID: ZControllerID { return .idDetails }
+	var                 viewsByID = [Int : ZStackableView]()
+    @IBOutlet var       stackView : ZStackView?
+	override  var    controllerID : ZControllerID { return .idDetails }
 	override  var backgroundColor : CGColor       { return kClearColor.cgColor }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
