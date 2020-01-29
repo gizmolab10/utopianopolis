@@ -108,7 +108,7 @@ class ZParagraph: NSObject {
 
 	func colorize(_ text: NSMutableAttributedString?) {
 		if  let     z = zone, z.colorized,
-			let color = z.color?.lighter(by: 20.0) {
+			let color = z.color?.lighter(by: 20.0).withAlphaComponent(0.5) {
 
 			text?.addAttribute(.backgroundColor, value: color, range: fullTitleRange)
 		}

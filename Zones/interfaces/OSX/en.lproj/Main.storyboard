@@ -858,7 +858,7 @@ DQ
         <scene sceneID="YUn-EI-h0m">
             <objects>
                 <viewController id="8gW-F6-R6g" userLabel="Essay" customClass="ZEssayController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" identifier="drag view" id="LfD-Wf-rhW" userLabel="View">
+                    <view key="view" id="LfD-Wf-rhW" userLabel="View">
                         <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
@@ -875,7 +875,7 @@ DQ
                                                     <rect key="frame" x="0.0" y="0.0" width="385" height="596"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <color key="backgroundColor" white="1" alpha="0.00016505281690140845" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <size key="minSize" width="385" height="596"/>
                                                     <size key="maxSize" width="400" height="10000000"/>
                                                     <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -884,6 +884,7 @@ DQ
                                                     </connections>
                                                 </textView>
                                             </subviews>
+                                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                         </clipView>
                                         <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="BbU-ti-g5d">
                                             <rect key="frame" x="-100" y="-100" width="240" height="16"/>
