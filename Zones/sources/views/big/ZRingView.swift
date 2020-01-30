@@ -197,10 +197,14 @@ class ZRingView: ZView {
 
 		if  let item = self.item(containedIn: rect) {
 			if  respond(to: item) || respondToRingControl(item) {
+				setNeedsDisplay()
+
 				return true
 			} else if let subitems = item as? ZObjectsArray {
 				for subitem in subitems {
 					if  respond(to: subitem) {
+						setNeedsDisplay()
+
 						return true
 					}
 				}

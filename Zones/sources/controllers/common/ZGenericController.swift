@@ -30,8 +30,6 @@ class ZGenericController: ZController {
                 self.handleSignal(object, kind: kind)
             }
         }
-
-        setup()
     }
 
 #if os(OSX)

@@ -99,6 +99,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
+	override func mouseDown(with event: ZEvent) {
+		let   rect = CGRect(origin: event.locationInWindow, size: CGSize())
+		let inRing = gRingView?.respondToClick(in: rect) ?? false
+
+		if !inRing {
+			super.mouseDown(with: event)
+		}
+	}
+
 	func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		guard let key = iKey else {
 			return false

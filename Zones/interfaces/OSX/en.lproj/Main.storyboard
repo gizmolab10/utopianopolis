@@ -555,7 +555,7 @@ DQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Thoughtful" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-201" y="735"/>
+            <point key="canvasLocation" x="-48" y="596"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -564,7 +564,7 @@ DQ
                     <window key="window" title="Thoughtful" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="ZoneWindow" customModule="Thoughtful" customModuleProvider="target">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="196" y="19" width="719" height="491"/>
+                        <rect key="contentRect" x="196" y="309" width="450" height="201"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="Laa-WY-25V"/>
@@ -576,18 +576,18 @@ DQ
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="486" y="35"/>
+            <point key="canvasLocation" x="485" y="175"/>
         </scene>
         <!--Graph-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" userLabel="Graph" customClass="ZGraphController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="View">
-                        <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="269"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView hidden="YES" appearanceType="aqua" translatesAutoresizingMaskIntoConstraints="NO" id="fSQ-gu-ejW">
-                                <rect key="frame" x="0.0" y="226" width="400" height="144"/>
+                                <rect key="frame" x="0.0" y="63" width="400" height="144"/>
                                 <subviews>
                                     <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
                                         <rect key="frame" x="128" y="0.0" width="144" height="144"/>
@@ -605,7 +605,7 @@ DQ
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="itU-Gt-Inh" customClass="ZDragView" customModule="Thoughtful" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
+                                <rect key="frame" x="0.0" y="0.0" width="400" height="269"/>
                             </customView>
                         </subviews>
                         <constraints>
@@ -627,7 +627,7 @@ DQ
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="727" y="1768"/>
+            <point key="canvasLocation" x="665" y="1192.5"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -750,18 +750,18 @@ DQ
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-201" y="1130"/>
+            <point key="canvasLocation" x="1063" y="557"/>
         </scene>
         <!--Ring Controller-->
         <scene sceneID="2ar-AS-rBz">
             <objects>
                 <viewController id="HwM-RS-z3y" customClass="ZRingController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="EdY-JG-Pjl">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <rect key="frame" x="0.0" y="0.0" width="408" height="269"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="f9Z-GK-Klh" customClass="ZRingView" customModule="Thoughtful" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                                <rect key="frame" x="0.0" y="0.0" width="408" height="269"/>
                             </customView>
                         </subviews>
                         <constraints>
@@ -777,24 +777,24 @@ DQ
                 </viewController>
                 <customObject id="LOz-oN-o0B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-201" y="1620"/>
+            <point key="canvasLocation" x="-170" y="1192.5"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
             <objects>
                 <viewController id="Hxl-Pi-4li" customClass="ZSearchResultsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Yjc-TG-nmv">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="596"/>
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="269"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZRy-EY-PDd">
-                                <rect key="frame" x="20" y="20" width="410" height="576"/>
+                                <rect key="frame" x="20" y="20" width="410" height="249"/>
                                 <clipView key="contentView" id="xkU-Kc-9TS">
-                                    <rect key="frame" x="1" y="1" width="408" height="574"/>
+                                    <rect key="frame" x="1" y="1" width="408" height="247"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" id="z27-6x-Roi">
-                                            <rect key="frame" x="0.0" y="0.0" width="408" height="574"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="408" height="247"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -844,7 +844,7 @@ DQ
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1191" y="1405"/>
+            <point key="canvasLocation" x="1119" y="1192.5"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -852,28 +852,28 @@ DQ
                 <controllerPlaceholder storyboardName="Details" id="yWa-SA-l1V" sceneMemberID="viewController"/>
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="850" y="1121"/>
+            <point key="canvasLocation" x="901" y="632"/>
         </scene>
         <!--Essay-->
         <scene sceneID="YUn-EI-h0m">
             <objects>
                 <viewController id="8gW-F6-R6g" userLabel="Essay" customClass="ZEssayController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
                     <customView key="view" id="HOI-yt-EwI" customClass="ZView">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <rect key="frame" x="0.0" y="0.0" width="378" height="269"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
                             <scrollView appearanceType="aqua" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hqm-9J-YF3">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                                <rect key="frame" x="0.0" y="0.0" width="378" height="269"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="DDT-jd-TI8">
-                                    <rect key="frame" x="0.0" y="0.0" width="435" height="300"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="363" height="269"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4" customClass="ZEssayView" customModule="Thoughtful" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="435" height="300"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="363" height="269"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <color key="backgroundColor" white="1" alpha="0.00016505281690140845" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <size key="minSize" width="435" height="300"/>
+                                            <size key="minSize" width="363" height="269"/>
                                             <size key="maxSize" width="435" height="10000000"/>
                                             <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                         </textView>
@@ -885,7 +885,7 @@ DQ
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="edr-tD-Gmf">
-                                    <rect key="frame" x="435" y="0.0" width="15" height="300"/>
+                                    <rect key="frame" x="363" y="0.0" width="15" height="269"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
@@ -903,7 +903,7 @@ DQ
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="276" y="1620"/>
+            <point key="canvasLocation" x="250" y="1192.5"/>
         </scene>
     </scenes>
 </document>
