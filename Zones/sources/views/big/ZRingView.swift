@@ -32,12 +32,12 @@ class ZRingView: ZView {
 
 	func update() {
 		var      square = bounds.squareCentered
-		let squareInset = square.width / 3.0
-		let       inset = squareInset  / 3.85
+		let squareInset = square.width / 2.85 - 20.0
+		let       inset = squareInset  / 2.85
 		square          = square.insetBy(dx: squareInset, dy: squareInset)
 		let         one = square.insetBy(dx: inset,       dy: inset)
 		let     xOffset = bounds.maxX - square.maxX - 35.0 +  inset / 1.8
-		let     yOffset = bounds.maxY - square.maxY - 15.0 +  inset / 1.8
+		let     yOffset = bounds.maxY - square.maxY - 35.0 +  inset / 1.8
 		geometry   .one = one  .offsetBy(dx: xOffset, dy: yOffset)
 		geometry .thick = square.height / 30.0
 	}
@@ -117,7 +117,7 @@ class ZRingView: ZView {
 		return false
 	}
 
-	@discardableResult func respondToClick(in rect: CGRect?) -> Bool {
+	@discardableResult func respondToClick(in rect: CGRect?, _ COMMAND: Bool? = nil) -> Bool {
 		func respond(to item: NSObject) -> Bool {
 			return focusOnIdea(item) || focusOnEssay(item)
 		}
@@ -128,8 +128,7 @@ class ZRingView: ZView {
 
 				return true
 			} else if var subitems = item as? ZObjectsArray {
-
-				if  gWorkMode == .essayMode {
+				if  (gWorkMode == .essayMode) ^^ (COMMAND ?? false) {
 					subitems = subitems.reversed()
 				}
 

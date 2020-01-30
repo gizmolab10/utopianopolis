@@ -100,8 +100,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	override func mouseDown(with event: ZEvent) {
-		let   rect = CGRect(origin: event.locationInWindow, size: CGSize())
-		let inRing = gRingView?.respondToClick(in: rect) ?? false
+		let    rect = CGRect(origin: event.locationInWindow, size: CGSize())
+		let COMMAND = event.modifierFlags.isCommand
+		let  inRing = gRingView?.respondToClick(in: rect, COMMAND) ?? false
 
 		if !inRing {
 			super.mouseDown(with: event)

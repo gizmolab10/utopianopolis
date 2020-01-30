@@ -41,6 +41,24 @@ func printDebug(_ mode: ZDebugMode, prefix: String = "  ", _ message: String, su
 
 func gSeparator(at level: Int) -> String { return " ( \(level) ) " }
 
+precedencegroup BooleanPrecedence { associativity: left }
+infix operator ^^ : BooleanPrecedence
+/**
+Swift Logical XOR operator
+```
+true  ^^ true   // false
+true  ^^ false  // true
+false ^^ true   // true
+false ^^ false  // false
+```
+- parameter lhs: First value.
+- parameter rhs: Second value.
+*/
+
+func ^^(lhs: Bool, rhs: Bool) -> Bool {
+	return lhs != rhs
+}
+
 extension NSObject {
 
     func                  note(_ iMessage: Any?)                { } // logk(iMessage) }
