@@ -143,7 +143,11 @@ class ZFocus: ZRing {
 
     func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
         push()
-        
+
+		if  let    dbID = iHere.databaseID {
+			gDatabaseID = dbID
+		}
+
         gHere = iHere
 
         focus {

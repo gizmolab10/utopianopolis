@@ -97,15 +97,19 @@ class ZControllers: NSObject {
 	// MARK:- hide / reveal
 	// MARK:-
 
-	func swapGraphAndEssay() {
-		FOREGROUND { 	// avoid generic menu handler invoking graph editor's handle key
-			let showEssay 				= gWorkMode == .graphMode
-			let multiple: [ZSignalKind] = showEssay ? [.eEssay] : [.eEssay, .eRelayout]
-			gWorkMode     				= showEssay ? .essayMode : .graphMode
+	func swapGraphAndEssay(for mode: ZWorkMode? = nil) {
+		let newMode    			        = mode ?? ((gWorkMode == .graphMode) ? .essayMode : .graphMode)
 
-			gTextEditor.stopCurrentEdit()
-			gEssayView?.updateButtons(showEssay)
-			self.signalFor(gSelecting.firstGrab, multiple: multiple)
+		if  newMode != gWorkMode {
+			gWorkMode 					= newMode
+			let showEssay 			    = newMode == .essayMode
+			let multiple: [ZSignalKind] = showEssay ? [.eEssay] : [.eEssay, .eRelayout]
+
+			FOREGROUND { 	// avoid generic menu handler invoking graph editor's handle key
+				gTextEditor.stopCurrentEdit()
+				gEssayView?.updateButtons(showEssay)
+				self.signalFor(gSelecting.firstGrab, multiple: multiple)
+			}
 		}
 	}
 

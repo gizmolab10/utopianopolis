@@ -92,6 +92,7 @@ class ZRingView: ZView {
 
 	func focusOnIdea(_ item: NSObject) -> Bool {
 		if  let idea = item as? Zone {
+			gControllers.swapGraphAndEssay(for: .graphMode)
 			gFocusRing.focusOn(idea) {
 				printDebug(.ring, idea.zoneName ?? "unknown zone")
 				gControllers.signalFor(idea, regarding: .eRelayout)
@@ -108,7 +109,9 @@ class ZRingView: ZView {
 			gCurrentEssay        = essay
 			gCreateMultipleEssay = true
 
-			gControllers.swapGraphAndEssay()
+			gControllers.swapGraphAndEssay(for: .essayMode)
+			gEssayView?.updateText()
+
 			printDebug(.ring, essay.zone?.zoneName ?? "unknown essay")
 
 			return true
@@ -117,7 +120,36 @@ class ZRingView: ZView {
 		return false
 	}
 
-	// MARK:- necklace
+	@discardableResult func respondToClick(in rect: CGRect?) -> Bool {
+		func respond(to item: NSObject) -> Bool {
+			return focusOnIdea(item) || focusOnEssay(item)
+		}
+
+		if  let item = self.item(containedIn: rect) {
+			if  respond(to: item) || respondToRingControl(item) {
+				setNeedsDisplay()
+
+				return true
+			} else if var subitems = item as? ZObjectsArray {
+
+				if  gWorkMode == .essayMode {
+					subitems = subitems.reversed()
+				}
+
+				for subitem in subitems {
+					if  respond(to: subitem) {
+						setNeedsDisplay()
+
+						return true
+					}
+				}
+			}
+		}
+
+		return false
+	}
+
+	// MARK:- necklace and controls
 	// MARK:-
 
 	var necklaceObjects : ZObjectsArray {
@@ -144,9 +176,6 @@ class ZRingView: ZView {
 
 		return ringArray
 	}
-
-	// MARK:- controls
-	// MARK:-
 
 	var controlRects : [CGRect] {
 		let   rect = geometry.one
@@ -188,30 +217,6 @@ class ZRingView: ZView {
 		}
 
 		return nil
-	}
-
-	@discardableResult func respondToClick(in rect: CGRect?) -> Bool {
-		func respond(to item: NSObject) -> Bool {
-			return focusOnIdea(item) || focusOnEssay(item)
-		}
-
-		if  let item = self.item(containedIn: rect) {
-			if  respond(to: item) || respondToRingControl(item) {
-				setNeedsDisplay()
-
-				return true
-			} else if let subitems = item as? ZObjectsArray {
-				for subitem in subitems {
-					if  respond(to: subitem) {
-						setNeedsDisplay()
-
-						return true
-					}
-				}
-			}
-		}
-
-		return false
 	}
 
 }

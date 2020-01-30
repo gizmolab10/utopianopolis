@@ -1658,7 +1658,7 @@ extension ZView {
 
 							let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
 							let           path = ZBezierPath(ovalIn: ovalRect)
-							let       dotColor = !isFocus ? color : gRubberbandColor + color
+							let       dotColor = !isFocus ? color : gRubberbandColor.lighter(by: 4.0) + color
 							path    .lineWidth = CGFloat(gLineThickness * 4.0)
 							path     .flatness = 0.0001
 

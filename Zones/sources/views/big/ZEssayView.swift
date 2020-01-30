@@ -61,7 +61,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	private func resetCurrentEssay(_  current: ZParagraph?) {
+	private func resetCurrentEssay(_ current: ZParagraph?) {
 		if  let     essay = current {
 			gCurrentEssay = essay
 
@@ -77,7 +77,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let i = essayID,
 			i == grabbedZone?.record?.recordID {	// been here before
 
-			return false								// has not yet been saved. don't overwrite
+			return false							// has not yet been saved. don't overwrite
 		}
 
 		return true
@@ -89,11 +89,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			clear() 								// discard previously edited text
 			gEssayRing.push()
 			updateButtons(true)
-			setText(text)					// emplace text
+			setText(text)							// emplace text
 			select(restoreSelection: restoreSelection)
 
 			essayID  = grabbedZone?.record?.recordID
-			delegate = self 				// set delegate after setText
+			delegate = self 						// set delegate after setText
 
 			gWindow?.makeFirstResponder(self)
 		}

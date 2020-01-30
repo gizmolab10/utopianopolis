@@ -25,24 +25,22 @@ class ZGesturesController: ZGenericController, ZGestureRecognizerDelegate {
 	var               edgeGesture :  ZGestureRecognizer?
 	let                doneStates : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
 
-	func restartGestureRecognition() { gestureView?.gestureHandler = self; gDraggedZone = nil }
-	@objc func dragGestureEvent(_ iGesture: ZGestureRecognizer?) { defaultHandler(iGesture) }
+	func restartGestureRecognition() {} // gestureView?.gestureHandler = self; gDraggedZone = nil }
+	@objc func dragGestureEvent(_ iGesture: ZGestureRecognizer?) { ringHandler(iGesture) }
 
 	override func setup() {
 		super.setup()
 		restartGestureRecognition()
 	}
 
-	func defaultHandler(_ iGesture: ZGestureRecognizer?) {
+	func ringHandler(_ iGesture: ZGestureRecognizer?) {
 		if  let gesture = iGesture {
 			let    rect = CGRect(origin: gesture.location(in: gestureView), size: CGSize())
-			let  inRing = gRingView?.respondToClick(in: rect) ?? false
 
-			print(inRing)
-
+			gRingView?.respondToClick(in: rect)
 			restartGestureRecognition()
 		}
 	}
 
-	@objc func clickEvent(_ iGesture: ZGestureRecognizer?) { defaultHandler(iGesture) }
+	@objc func clickEvent(_ iGesture: ZGestureRecognizer?) { ringHandler(iGesture) }
 }

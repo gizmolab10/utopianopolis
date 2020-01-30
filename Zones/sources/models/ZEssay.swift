@@ -69,8 +69,8 @@ class ZEssay: ZParagraph {
 			children.removeAll()
 
 			zone?.traverseAllProgeny {   iChild in
-				if  iChild.hasTrait(for: .eEssay) { // do not use essayMaybe as it may not yet be initialized
-					self.children.append(iChild.essay)
+				if  iChild.hasTrait(for: .eEssay) {
+					self.children.append(iChild.essay)	// do not use essayMaybe as it may not yet be initialized
 				}
 			}
 		}

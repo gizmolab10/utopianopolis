@@ -248,9 +248,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
 	override func restartGestureRecognition() {
-		super.restartGestureRecognition()
-
-		gDraggedZone = nil
+		gestureView?.gestureHandler = self
+		gDraggedZone				= nil
 	}
 
 	@objc override func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
