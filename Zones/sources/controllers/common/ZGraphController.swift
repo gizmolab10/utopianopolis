@@ -19,26 +19,35 @@ import SnapKit
 var gGraphController: ZGraphController? { return gControllers.controllerForID(.idGraph) as? ZGraphController }
 
 
-class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
+class ZGraphController: ZGesturesController, ZScrollDelegate {
     
 	override  var    controllerID :  ZControllerID { return .idGraph }
 	@IBOutlet var         spinner :  ZProgressIndicator?
 	@IBOutlet var        dragView :  ZDragView?
 	@IBOutlet var     spinnerView :  ZView?
-	var          moveRightGesture :  ZGestureRecognizer?
-	var           movementGesture :  ZGestureRecognizer?
-	var           moveDownGesture :  ZGestureRecognizer?
-	var           moveLeftGesture :  ZGestureRecognizer?
-	var             moveUpGesture :  ZGestureRecognizer?
-	var              clickGesture :  ZGestureRecognizer?
-	var               edgeGesture :  ZGestureRecognizer?
-	let                doneStates : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
-	let 		     clickManager =  ZClickManager()
 	let        thoughtsRootWidget =  ZoneWidget   ()
 	let       favoritesRootWidget =  ZoneWidget   ()
 	var        rubberbandPreGrabs =  ZoneArray    ()
 	var       priorScrollLocation =  CGPoint.zero
 	var           rubberbandStart =  CGPoint.zero
+	let 		     clickManager =  ZClickManager()
+
+	class ZClickManager : NSObject {
+
+		var lastClicked:   Zone?
+		var lastClickTime: Date?
+
+		func isDoubleClick(on iZone: Zone? = nil) -> Bool {
+			let    isFast = lastClickTime?.timeIntervalSinceNow ?? -10.0 > -1.8
+			let  isRepeat = lastClicked == iZone
+			lastClickTime = Date()
+			lastClicked   = iZone
+
+			columnarReport("repeat: \(isRepeat)", "fast: \(isFast)")
+
+			return isRepeat ? isFast : false
+		}
+	}
 
 	var rubberbandRect: CGRect? { // wrapper with new value logic
 		get {
@@ -80,8 +89,10 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 	}
 
     override func setup() {
+		gestureView = dragView // do this before calling super setup
+
+		super.setup()
 		platformSetup()
-        restartGestureRecognition()
         dragView?.addSubview(thoughtsRootWidget)
 
         if  !kIsPhone {
@@ -93,9 +104,11 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     
     func platformSetup() {
         guard let lighten = CIFilter(name: "CIColorControls") else { return }
-        lighten.setDefaults()
+
+		lighten.setDefaults()
         lighten.setValue(1, forKey: "inputBrightness")
-        spinner?.contentFilters = [lighten]
+
+		spinner?.contentFilters = [lighten]
     }
     
     #elseif os(iOS)
@@ -177,7 +190,6 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
     // MARK:- events
     // MARK:-
 
-	func restartGestureRecognition() { dragView?.gestureHandler = self }
 	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
 
     func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inPublicGraph: Bool) {
@@ -235,7 +247,13 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 			otherGestureRecognizer == edgeGesture
 	}
 
-    @objc func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
+	override func restartGestureRecognition() {
+		super.restartGestureRecognition()
+
+		gDraggedZone = nil
+	}
+
+	@objc override func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
         if  gWorkMode        != .graphMode {
             gSearching.exitSearchMode()
         }
@@ -273,24 +291,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
         }
     }
 	
-	class ZClickManager : NSObject {
-
-		var lastClicked:   Zone?
-		var lastClickTime: Date?
-		
-		func isDoubleClick(on iZone: Zone? = nil) -> Bool {
-			let    isFast = lastClickTime?.timeIntervalSinceNow ?? -10.0 > -1.8
-			let  isRepeat = lastClicked == iZone
-			lastClickTime = Date()
-			lastClicked   = iZone
-			
-			columnarReport("repeat: \(isRepeat)", "fast: \(isFast)")
-			
-			return isRepeat ? isFast : false
-		}
-	}	
-
-    @objc func clickEvent(_ iGesture: ZGestureRecognizer?) {
+	@objc override func clickEvent(_ iGesture: ZGestureRecognizer?) {
         if  gWorkMode != .graphMode {
             gSearching.exitSearchMode()
         }
@@ -333,7 +334,7 @@ class ZGraphController: ZGenericController, ZGestureRecognizerDelegate, ZScrollD
 						}
 					}
 				} else {
-					let   rect = CGRect(origin: gesture.location(in: view), size: CGSize())
+					let   rect = CGRect(origin: gesture.location(in: dragView), size: CGSize())
 					let inRing = gRingView?.respondToClick(in: rect) ?? false
 
 					// //////////////////////

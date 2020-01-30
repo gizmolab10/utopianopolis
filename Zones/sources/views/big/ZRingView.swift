@@ -14,17 +14,19 @@ import Cocoa
 import UIKit
 #endif
 
-class ZRingView: ZGenericView {
+class ZRingView: ZView {
 
-	struct ZRingGeometry {
-		var one   =  CGRect()
-		var thick =  CGFloat()
+	struct ZGeometry {
+		var one   = CGRect()
+		var thick = CGFloat()
 	}
 
-	var geometry         = ZRingGeometry()
+	var geometry         = ZGeometry()
 	var necklaceDotRects = [Int : CGRect]()
 
-	override func setup() {
+	override func awakeFromNib() {
+		super.awakeFromNib()
+
 		zlayer.backgroundColor = kClearColor.cgColor
 	}
 
@@ -39,8 +41,6 @@ class ZRingView: ZGenericView {
 		geometry   .one = one  .offsetBy(dx: xOffset, dy: yOffset)
 		geometry .thick = square.height / 30.0
 	}
-
-	override func mouseDown(with event: NSEvent) {}
 
 	// MARK:- draw
 	// MARK:-

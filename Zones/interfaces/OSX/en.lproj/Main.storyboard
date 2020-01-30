@@ -555,7 +555,7 @@ DQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Thoughtful" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-227" y="735"/>
+            <point key="canvasLocation" x="-201" y="735"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -627,7 +627,7 @@ DQ
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-227" y="1996"/>
+            <point key="canvasLocation" x="727" y="1768"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -750,7 +750,7 @@ DQ
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-227" y="1130"/>
+            <point key="canvasLocation" x="-201" y="1130"/>
         </scene>
         <!--Ring Controller-->
         <scene sceneID="2ar-AS-rBz">
@@ -777,7 +777,7 @@ DQ
                 </viewController>
                 <customObject id="LOz-oN-o0B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="244" y="1848"/>
+            <point key="canvasLocation" x="-201" y="1620"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -802,7 +802,7 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="405" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="controlContent" size="11"/>
+                                                        <font key="font" metaFont="label" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
@@ -844,7 +844,7 @@ DQ
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1187" y="1996"/>
+            <point key="canvasLocation" x="1191" y="1405"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -852,75 +852,58 @@ DQ
                 <controllerPlaceholder storyboardName="Details" id="yWa-SA-l1V" sceneMemberID="viewController"/>
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1187" y="1121"/>
+            <point key="canvasLocation" x="850" y="1121"/>
         </scene>
         <!--Essay-->
         <scene sceneID="YUn-EI-h0m">
             <objects>
                 <viewController id="8gW-F6-R6g" userLabel="Essay" customClass="ZEssayController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="LfD-Wf-rhW" userLabel="View">
-                        <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                    <customView key="view" id="HOI-yt-EwI" customClass="ZView">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="HOI-yt-EwI" customClass="ZEssayView" customModule="Thoughtful" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
-                                <subviews>
-                                    <scrollView appearanceType="aqua" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hqm-9J-YF3">
-                                        <rect key="frame" x="0.0" y="0.0" width="400" height="596"/>
-                                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="DDT-jd-TI8">
-                                            <rect key="frame" x="0.0" y="0.0" width="385" height="596"/>
+                            <scrollView appearanceType="aqua" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hqm-9J-YF3">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                                <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="DDT-jd-TI8">
+                                    <rect key="frame" x="0.0" y="0.0" width="435" height="300"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4" customClass="ZEssayView" customModule="Thoughtful" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="435" height="300"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <subviews>
-                                                <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4">
-                                                    <rect key="frame" x="0.0" y="0.0" width="385" height="596"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <color key="backgroundColor" white="1" alpha="0.00016505281690140845" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <size key="minSize" width="385" height="596"/>
-                                                    <size key="maxSize" width="400" height="10000000"/>
-                                                    <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                    <connections>
-                                                        <outlet property="delegate" destination="HOI-yt-EwI" id="keQ-lr-jOU"/>
-                                                    </connections>
-                                                </textView>
-                                            </subviews>
-                                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
-                                        </clipView>
-                                        <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="BbU-ti-g5d">
-                                            <rect key="frame" x="-100" y="-100" width="240" height="16"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="edr-tD-Gmf">
-                                            <rect key="frame" x="385" y="0.0" width="15" height="596"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                    </scrollView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="hqm-9J-YF3" secondAttribute="bottom" id="Lra-OX-nVZ"/>
-                                    <constraint firstItem="hqm-9J-YF3" firstAttribute="leading" secondItem="HOI-yt-EwI" secondAttribute="leading" id="ZZW-hK-9Mg"/>
-                                    <constraint firstItem="hqm-9J-YF3" firstAttribute="top" secondItem="HOI-yt-EwI" secondAttribute="top" id="svi-Cg-ZxO"/>
-                                    <constraint firstAttribute="trailing" secondItem="hqm-9J-YF3" secondAttribute="trailing" id="ycB-H2-Aes"/>
-                                </constraints>
-                                <connections>
-                                    <outlet property="textView" destination="WXi-Uu-tc4" id="Q6f-HM-kPL"/>
-                                </connections>
-                            </customView>
+                                            <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <color key="backgroundColor" white="1" alpha="0.00016505281690140845" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <size key="minSize" width="435" height="300"/>
+                                            <size key="maxSize" width="435" height="10000000"/>
+                                            <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        </textView>
+                                    </subviews>
+                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                </clipView>
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="BbU-ti-g5d">
+                                    <rect key="frame" x="-100" y="-100" width="240" height="16"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="edr-tD-Gmf">
+                                    <rect key="frame" x="435" y="0.0" width="15" height="300"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="HOI-yt-EwI" firstAttribute="leading" secondItem="LfD-Wf-rhW" secondAttribute="leading" id="DcG-xC-2m5"/>
-                            <constraint firstItem="HOI-yt-EwI" firstAttribute="top" secondItem="LfD-Wf-rhW" secondAttribute="top" id="gcI-6p-l35"/>
-                            <constraint firstItem="HOI-yt-EwI" firstAttribute="bottom" secondItem="LfD-Wf-rhW" secondAttribute="bottom" id="jBV-Ff-pFi"/>
-                            <constraint firstItem="HOI-yt-EwI" firstAttribute="trailing" secondItem="LfD-Wf-rhW" secondAttribute="trailing" id="tkM-9E-vgG"/>
+                            <constraint firstAttribute="bottom" secondItem="hqm-9J-YF3" secondAttribute="bottom" id="Lra-OX-nVZ"/>
+                            <constraint firstItem="hqm-9J-YF3" firstAttribute="leading" secondItem="HOI-yt-EwI" secondAttribute="leading" id="ZZW-hK-9Mg"/>
+                            <constraint firstItem="hqm-9J-YF3" firstAttribute="top" secondItem="HOI-yt-EwI" secondAttribute="top" id="svi-Cg-ZxO"/>
+                            <constraint firstAttribute="trailing" secondItem="hqm-9J-YF3" secondAttribute="trailing" id="ycB-H2-Aes"/>
                         </constraints>
-                    </view>
+                    </customView>
                     <connections>
-                        <outlet property="essayView" destination="HOI-yt-EwI" id="KyM-sg-WOU"/>
+                        <outlet property="essayView" destination="WXi-Uu-tc4" id="yk5-5E-vaL"/>
                     </connections>
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="712" y="1996"/>
+            <point key="canvasLocation" x="276" y="1620"/>
         </scene>
     </scenes>
 </document>

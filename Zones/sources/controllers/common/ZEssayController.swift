@@ -16,11 +16,14 @@ import UIKit
 
 var gEssayController: ZEssayController? { return gControllers.controllerForID(.idEssay) as? ZEssayController }
 
-class ZEssayController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDelegate {
+class ZEssayController: ZGesturesController, ZScrollDelegate {
 	override  var controllerID : ZControllerID { return .idEssay }
 	@IBOutlet var    essayView : ZEssayView?
 
 	override func setup() {
+		gestureView = essayView // do this before calling super setup
+
+		super.setup()
 		essayView?.updateText()
 	}
 }

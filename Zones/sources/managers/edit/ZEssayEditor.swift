@@ -57,8 +57,7 @@ class ZEssayEditor: ZBaseEditor {
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-		if  let    view = gEssayView,
-			let  editor = view.textView {
+		if  let    view = gEssayView {
 			let  OPTION = flags.isOption
 			let COMMAND = flags.isCommand
 			let SPECIAL = COMMAND && OPTION
@@ -71,24 +70,24 @@ class ZEssayEditor: ZBaseEditor {
 				}
 			} else if  COMMAND {
 				switch arrow {
-					case .up:    editor.moveToBeginningOfParagraph(nil)
-					case .down:  editor.moveToEndOfParagraph(nil)
-					case .left:  editor.moveToBeginningOfLine(nil)
-					case .right: editor.moveToEndOfLine(nil)
+					case .up:    view.moveToBeginningOfParagraph(nil)
+					case .down:  view.moveToEndOfParagraph(nil)
+					case .left:  view.moveToBeginningOfLine(nil)
+					case .right: view.moveToEndOfLine(nil)
 				}
 			} else if  OPTION {
 				switch arrow {
-					case .up:    editor.moveToLeftEndOfLine(nil)
-					case .down:  editor.moveToRightEndOfLine(nil)
-					case .left:  editor.moveWordBackward(nil)
-					case .right: editor.moveWordForward(nil)
+					case .up:    view.moveToLeftEndOfLine(nil)
+					case .down:  view.moveToRightEndOfLine(nil)
+					case .left:  view.moveWordBackward(nil)
+					case .right: view.moveWordForward(nil)
 				}
 			} else {
 				switch arrow {
-					case .up:    editor.moveUp(nil)
-					case .down:  editor.moveDown(nil)
-					case .left:  editor.moveLeft(nil)
-					case .right: editor.moveRight(nil)
+					case .up:    view.moveUp(nil)
+					case .down:  view.moveDown(nil)
+					case .left:  view.moveLeft(nil)
+					case .right: view.moveRight(nil)
 				}
 			}
 		}

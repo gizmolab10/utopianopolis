@@ -17,8 +17,7 @@ import UIKit
 
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
-class ZEssayView: ZGenericView, ZTextViewDelegate {
-	@IBOutlet var textView : ZTextView?
+class ZEssayView: ZTextView, ZTextViewDelegate {
 	var backwardButton     : ZButton?
 	var forwardButton      : ZButton?
 	var cancelButton       : ZButton?
@@ -26,12 +25,12 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 	var saveButton         : ZButton?
 	var essayID            : CKRecord.ID?
 	var grabbedZone 	   : Zone?     { return gCurrentEssay?.zone }
-	var selectionString    : String?   { return textView?.textStorage?.attributedSubstring(from: selectionRange).string }
-	var selectionRange     = NSRange() { didSet { selectionRect = textView?.firstRect(forCharacterRange: selectionRange, actualRange: nil) ?? CGRect() } }
+	var selectionString    : String?   { return textStorage?.attributedSubstring(from: selectionRange).string }
+	var selectionRange     = NSRange() { didSet { selectionRect = firstRect(forCharacterRange: selectionRange, actualRange: nil) } }
 	var selectionRect      = CGRect()
 	var selectionZone      : Zone?     { return selectedParagraphs.first?.zone }
 
-	func save()   { gCurrentEssay?.saveEssay(textView?.textStorage); accountForSelection() }
+	func save()   { gCurrentEssay?.saveEssay(textStorage); accountForSelection() }
 	func export() { gFiles.exportToFile(.eEssay, for: grabbedZone) }
 	func exit()   { gControllers.swapGraphAndEssay() }
 	func done()   { save(); exit() }
@@ -39,13 +38,15 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 	// MARK:- setup
 	// MARK:-
 
-	override func setup() {
-		textView?             .usesRuler = true
-		textView?        .isRulerVisible = true
-		textView?      .usesInspectorBar = true
-		textView?    .textContainerInset = NSSize(width: 20, height: 0)
-		textView?.zlayer.backgroundColor = kClearColor.cgColor
-		textView?       .backgroundColor = kClearColor
+	override func awakeFromNib() {
+		super.awakeFromNib()
+
+		usesRuler              = true
+		isRulerVisible         = true
+		usesInspectorBar       = true
+		textContainerInset     = NSSize(width: 20, height: 0)
+		zlayer.backgroundColor = kClearColor.cgColor
+		backgroundColor        = kClearColor
 
 		addButtons()
 		updateText()
@@ -53,10 +54,10 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 
 	private func clear() {
 		grabbedZone?.essayMaybe = nil
-		textView?	.delegate   = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
+		delegate                = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
 
-		if  let length = textView?.textStorage?.length, length > 0 {
-			textView?.textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
+		if  let length = textStorage?.length, length > 0 {
+			textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
 		}
 	}
 
@@ -82,19 +83,19 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 		return true
 	}
 
-	func updateText(restoreSelection: Int? = nil) {
+	func updateText(restoreSelection: Int?  = nil) {
 		if  (overwrite || restoreSelection != nil),
 			let text = gCurrentEssay?.essayText {
 			clear() 								// discard previously edited text
 			gEssayRing.push()
 			updateButtons(true)
-			textView?.setText(text)					// emplace text
+			setText(text)					// emplace text
 			select(restoreSelection: restoreSelection)
 
-			essayID  		   = grabbedZone?.record?.recordID
-			textView?.delegate = self 				// set delegate after setText
+			essayID  = grabbedZone?.record?.recordID
+			delegate = self 				// set delegate after setText
 
-			gWindow?.makeFirstResponder(textView)
+			gWindow?.makeFirstResponder(self)
 		}
 	}
 
@@ -108,7 +109,7 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 
 		if  COMMAND {
 			switch key {
-				case "a":      textView?.selectAll(nil)
+				case "a":      selectAll(nil)
 				case "d":      convertToChild()
 				case "e":      export()
 				case "h":      showHyperlinkPopup()
@@ -140,7 +141,7 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 			let parent = selectionZone {
 			let  child = Zone(databaseID: dbID, named: text)    		// create new (to be child) zone from text
 
-			textView?.insertText("", replacementRange: selectionRange)	// remove text
+			insertText("", replacementRange: selectionRange)	// remove text
 			parent.addChild(child)
 			child.asssureIsVisible()
 			save()
@@ -165,7 +166,7 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 		if  let        text = selectionString {
 			let replacement = up ? text.uppercased() : text.lowercased()
 
-			textView?.insertText(replacement, replacementRange: selectionRange)
+			insertText(replacement, replacementRange: selectionRange)
 		}
 	}
 
@@ -195,9 +196,9 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 				range      = NSRange(location: offset, length: 0)
 			}
 
-			textView?.setSelectedRange(range)
+			setSelectedRange(range)
 		} else {
-			textView?.scroll(CGPoint())					// scroll to top
+			scroll(CGPoint())					// scroll to top
 		}
 	}
 
@@ -229,7 +230,7 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 			type     != .eCancel {
 			let  text = type.text
 
-			textView?.insertText(text, replacementRange: selectionRange)
+			insertText(text, replacementRange: selectionRange)
 		}
 	}
 
@@ -379,9 +380,9 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 			}
 
 			if  link == nil {
-				textView?.textStorage?.removeAttribute(.link,               range: selectionRange)
+				textStorage?.removeAttribute(.link,               range: selectionRange)
 			} else {
-				textView?.textStorage?   .addAttribute(.link, value: link!, range: selectionRange)
+				textStorage?   .addAttribute(.link, value: link!, range: selectionRange)
 			}
 		}
 	}
@@ -409,13 +410,13 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 		var found: Any?
 		var range = selectionRange
 
-		if  let       length = textView?.textStorage?.length,
+		if  let       length = textStorage?.length,
 		    range.upperBound < length,
 			range.length    == 0 {
 			range.length     = 1
 		}
 
-		textView?.textStorage?.enumerateAttribute(.link, in: range, options: .reverse) { (item, inRange, flag) in
+		textStorage?.enumerateAttribute(.link, in: range, options: .reverse) { (item, inRange, flag) in
 			found = item
 		}
 
@@ -448,7 +449,7 @@ class ZEssayView: ZGenericView, ZTextViewDelegate {
 
 							FOREGROUND {
 								if  let e = through.essayMaybe, gCurrentEssay?.children.contains(e) ?? false {
-									self.textView?.setSelectedRange(e.offsetTextRange)		// select text range of through essay
+									self.setSelectedRange(e.offsetTextRange)		// select text range of through essay
 								} else {
 									gCreateMultipleEssay = true
 
