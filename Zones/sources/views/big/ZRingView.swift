@@ -36,7 +36,7 @@ class ZRingView: ZView {
 		let       inset = squareInset  / 3.85
 		square          = square.insetBy(dx: squareInset, dy: squareInset)
 		let         one = square.insetBy(dx: inset,       dy: inset)
-		let     xOffset = bounds.maxX - square.maxX - 15.0 +  inset / 1.8
+		let     xOffset = bounds.maxX - square.maxX - 35.0 +  inset / 1.8
 		let     yOffset = bounds.maxY - square.maxY - 15.0 +  inset / 1.8
 		geometry   .one = one  .offsetBy(dx: xOffset, dy: yOffset)
 		geometry .thick = square.height / 30.0
@@ -105,12 +105,9 @@ class ZRingView: ZView {
 	}
 
 	func focusOnEssay(_ item: NSObject) -> Bool {
-		if  let            essay = item as? ZParagraph {
-			gCurrentEssay        = essay
-			gCreateMultipleEssay = true
-
+		if  let essay = item as? ZParagraph {
 			gControllers.swapGraphAndEssay(for: .essayMode)
-			gEssayView?.updateText()
+			gEssayView?.resetCurrentEssay(essay)
 
 			printDebug(.ring, essay.zone?.zoneName ?? "unknown essay")
 

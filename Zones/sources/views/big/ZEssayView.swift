@@ -61,7 +61,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	private func resetCurrentEssay(_ current: ZParagraph?) {
+	func resetCurrentEssay(_ current: ZParagraph?) {
 		if  let     essay = current {
 			gCurrentEssay = essay
 

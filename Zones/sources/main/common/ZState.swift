@@ -93,23 +93,28 @@ var gExpandedZones : [String] {
     }
 }
 
+var gHere: Zone {
+	get {
+		return gRecords!.hereZone
+	}
+
+	set {
+		if  let    dbID = newValue.databaseID {
+			gDatabaseID = dbID
+		}
+
+		gRecords?.hereZone = newValue
+	}
+}
 
 var gRecords: ZRecords? {
 	get { return gShowFavorites ? gFavorites : gCloud }
 }
 
-
-var gHere: Zone {
-	get { return gRecords!.hereZone }
-	set { gRecords?.hereZone = newValue }
-}
-
-
 var gHereMaybe: Zone? {
     get { return gRecords?.hereZoneMaybe }
     set { gRecords?.hereZoneMaybe = newValue }
 }
-
 
 var gShowFavorites : Bool {
 	get { return getPreferencesBool(   for: kShowFavorites, defaultBool: false) }

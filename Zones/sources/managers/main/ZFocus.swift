@@ -128,10 +128,6 @@ class ZFocus: ZRing {
         createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
 		gTextEditor.stopCurrentEdit()
 
-		if  let    dbID = gHere.databaseID {
-			gDatabaseID = dbID
-		}
-
         gBatches.focus { iSame in
 			gShowFavorites = gDatabaseID == .favoritesID
 
@@ -143,10 +139,6 @@ class ZFocus: ZRing {
 
     func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
         push()
-
-		if  let    dbID = iHere.databaseID {
-			gDatabaseID = dbID
-		}
 
         gHere = iHere
 
