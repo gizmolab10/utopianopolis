@@ -149,28 +149,28 @@ class ZRingView: ZView {
 	// MARK:-
 
 	var necklaceObjects : ZObjectsArray {
-		var ringArray = ZObjectsArray()
+		var results = ZObjectsArray()
 
-		func objects(in ring: ZObjectsArray) {
+		func copyObjects(from ring: ZObjectsArray) {
 			for object in ring {
 				if  object.isKind(of: Zone.self) {
-					ringArray.append(object)
+					results.append(object)
 				} else if let  essay = object as? ZParagraph,
 					let idea = essay.zone {
 
-					if  let index = ringArray.firstIndex(of: idea) {
-						ringArray[index] = [idea, essay] as NSObject
+					if  let index = results.firstIndex(of: idea) {
+						results[index] = [idea, essay] as NSObject
 					} else {
-						ringArray.append(object)
+						results.append(object)
 					}
 				}
 			}
 		}
 
-		objects(in: gFocusRing.ring)
-		objects(in: gEssayRing.ring)
+		copyObjects(from: gFocusRing.ring)
+		copyObjects(from: gEssayRing.ring)
 
-		return ringArray
+		return results
 	}
 
 	var controlRects : [CGRect] {
@@ -199,9 +199,9 @@ class ZRingView: ZView {
 			let    count = objects.count
 			let controls = ZRingControl.controls
 
-			for (index, tinyRect) in necklaceDotRects {
+			for (index, dotRect) in necklaceDotRects {
 				if  index < count, 						// avoid crash
-					rect.intersects(tinyRect) {
+					rect.intersects(dotRect) {
 					return objects[index]
 				}
 			}
@@ -226,10 +226,12 @@ class ZRingView: ZView {
 
 		for (index, tinyRect) in necklaceDotRects {
 			if  index < count { 							// avoid crash
-				let owner = objects[index]
-				let  rect = self.convert(tinyRect, to: toolView)
+				var      owner = objects[index]
+				let       rect = self.convert(tinyRect, to: toolView)
 
-				print(owner.description)
+				if  let owners = owner as? [NSObject] {
+					owner      = owners[0]
+				}
 
 				toolView.addToolTip(rect, owner: owner, userData: nil)
 			}
@@ -238,8 +240,6 @@ class ZRingView: ZView {
 		for (index, controlRect) in controlRects.enumerated() {
 			let  rect = self.convert(controlRect, to: toolView)
 			let owner = controls[index]
-
-			print(owner.description)
 
 			toolView.addToolTip(rect, owner: owner, userData: nil)
 		}

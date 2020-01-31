@@ -162,12 +162,17 @@ class ZRing: NSObject {
         }
     }
 
-	func removeFromStack(_ iItem: AnyObject) {
-		for (index, item) in ring.enumerated() {
-			if  item === iItem {
-				ring.remove(at: index)
+	func removeFromStack(_ iItem: NSObject) {
+		if  let paragraph = iItem as? ZParagraph,
+			let      zone = paragraph.zone {
+			for (index, item) in ring.enumerated() {
+				if  let other = item as? ZParagraph,
+					let ringZone = other.zone,
+					ringZone === zone {
+					ring.remove(at: index)
 
-				return
+					return
+				}
 			}
 		}
 	}

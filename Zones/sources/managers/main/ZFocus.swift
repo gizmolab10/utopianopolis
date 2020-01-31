@@ -100,6 +100,19 @@ class ZFocus: ZRing {
 		}
 	}
 
+	override func removeFromStack(_ iItem: NSObject) {
+		if  let zone = iItem as? Zone {
+			for (index, item) in ring.enumerated() {
+				if  let other = item as? Zone,
+					other === zone {
+					ring.remove(at: index)
+
+					return
+				}
+			}
+		}
+	}
+
 	// MARK:- travel
 	// MARK:-
 

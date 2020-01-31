@@ -33,7 +33,6 @@ class ZParagraph: NSObject {
 	var         textRange    = NSRange()
 
 	func setupChildren() {}
-	func delete() { zone?.removeTrait(for: .eEssay) }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return paragraphTrait?.updateEssayFontSize(increment) ?? false }
@@ -42,6 +41,12 @@ class ZParagraph: NSObject {
 		super.init()
 
 		self.zone = zone
+	}
+
+	func delete() {
+		zone?.removeTrait(for: .eEssay)
+		gEssayRing.removeFromStack(self)
+		gRingView?.setNeedsDisplay()
 	}
 
 	func reset() {
@@ -141,6 +146,16 @@ class ZParagraph: NSObject {
 			(range.lowerBound < titleRange.upperBound && range.upperBound >= textRange.lowerBound)
 	}
 
+	func shouldAlterEssay(_ range: NSRange, length: Int) -> (ZAlterationType, Int) {
+		var (result, delta) = shouldAlterParagraph(range, length: length)
+
+		if  result == .eDelete {
+			result  = .eExit
+		}
+
+		return (result, delta)
+	}
+
 	func shouldAlterParagraph(_ iRange: NSRange, length: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
 		var 	result  		    	= ZAlterationType.eLock
 		var      delta                  = 0
@@ -169,16 +184,6 @@ class ZParagraph: NSObject {
 		paragraphOffset += adjustment
 
 		return 	(result, delta)
-	}
-
-	func shouldAlterEssay(_ range: NSRange, length: Int) -> (ZAlterationType, Int) {
-		var (result, delta) = shouldAlterParagraph(range, length: length)
-
-		if  result == .eDelete {
-			result  = .eExit
-		}
-
-		return (result, delta)
 	}
 
 }

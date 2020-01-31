@@ -127,10 +127,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "i":      showSpecialsPopup()
 				case "l", "u": alterCase(up: key == "u")
 				case "s":      save()
-				case "[":      gEssayRing.goForward()
-				case "]":      gEssayRing.goBack()
-				case "/":      gEssayRing.pop();    exit()
-				case kReturn:  grabbedZone?.grab(); done()
+				case "]":      gEssayRing.goForward(); gCurrentEssay?.reset(); updateText()
+				case "[":      gEssayRing.goBack()   ; gCurrentEssay?.reset(); updateText()
+				case "/":      gEssayRing.pop()      ; exit()
+				case kReturn:  grabbedZone?.grab()   ; done()
 				default:       return false
 			}
 		} else if CONTROL {
@@ -143,7 +143,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return true
 	}
 
-	// MARK:- internals
+	// MARK:- private
 	// MARK:-
 
 	private func convertToChild(createEssay: Bool = false) {
@@ -499,21 +499,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return false
 	}
 
+	func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {
+		return followCurrentLink(within: NSRange(location: charIndex, length: 0))
+	}
+
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldRange: NSRange, toCharacterRange newRange: NSRange) -> NSRange {
 		selectionRange = newRange
 
 		return newRange
 	}
 
-	func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {
-		return followCurrentLink(within: NSRange(location: charIndex, length: 0))
-	}
-
 	// MARK:- lockout editing of added whitespace
 	// MARK:-
 
-	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
-		if  let length = text?.length,
+	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString replacement: String?) -> Bool {
+		if  let length = replacement?.length,
 			let (result, delta) = gCurrentEssay?.shouldAlterEssay(range, length: length) {
 
 			switch result {
@@ -521,9 +521,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .eLock:  return false
 				case .eExit:  gControllers.swapGraphAndEssay()
 				case .eDelete:
-					FOREGROUND {										// defer until after this method returns ... avoids corrupting reset text
+					FOREGROUND {										// defer until after this method returns ... avoids corrupting resulting text
 						gCurrentEssay?.reset()
-						self.updateText(restoreSelection: delta)		// reset all text and restore cursor position
+						self.updateText(restoreSelection: delta)		// recreate essay text and restore cursor position within it
 				}
 			}
 
@@ -532,7 +532,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return true
 		}
 
-		return text == nil // does this return value matter?
+		return replacement == nil // does this return value matter?
 	}
 
 }

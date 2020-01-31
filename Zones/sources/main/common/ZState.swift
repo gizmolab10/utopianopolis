@@ -35,7 +35,6 @@ var  			    gDebugMode:		  [ZDebugMode] = [.focus, .speed]
 var     gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var        gCurrentBrowseLevel:               Int?
 var           gDragDropIndices: NSMutableIndexSet?
-var              gCurrentEssay:        ZParagraph?
 var              gDragRelation:         ZRelation?
 var              gDragDropZone:              Zone?
 var               gDraggedZone:              Zone?
@@ -67,6 +66,7 @@ var    gLighterBackgroundColor:             ZColor { return gBackgroundColor.lig
 var          gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var            gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var					gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
+var              gCurrentEssay:        ZParagraph? { didSet { gFocusRing.push(); gRingView?.setNeedsDisplay() } }
 
 
 var gCurrentEvent: ZEvent? {

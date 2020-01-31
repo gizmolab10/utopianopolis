@@ -21,9 +21,9 @@ class ZRingControl: ZView {
 
 	override var description: String {
 		switch type {
-			case .eInsertion: return "insert \(gInsertionsFollow ? "down" : "up")"
-			case .eVisible:   return "\(gFullRingIsVisible ? "hide" : "show") these controls"
-			case .eConfined:  return gBrowsingIsConfined ? "within siblings" : "roam away"
+			case .eInsertion: return "insert at \(gInsertionsFollow ? "bottom"          : "top")"
+			case .eConfined:  return "browse \(gBrowsingIsConfined  ? "within one idea" : "to all visible")"
+			case .eVisible:   return "\(gFullRingIsVisible          ? "hide"            : "show") these controls"
 		}
 	}
 
