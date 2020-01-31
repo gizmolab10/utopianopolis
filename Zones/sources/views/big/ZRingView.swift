@@ -194,9 +194,10 @@ class ZRingView: ZView {
 	}
 
 	private func item(containedIn iRect: CGRect?) -> NSObject? {
-		if  let    rect = iRect {
-			let objects = necklaceObjects 				// expensive computation: do once
-			let   count = objects.count
+		if  let     rect = iRect {
+			let  objects = necklaceObjects 				// expensive computation: do once
+			let    count = objects.count
+			let controls = ZRingControl.controls
 
 			for (index, tinyRect) in necklaceDotRects {
 				if  index < count, 						// avoid crash
@@ -207,7 +208,7 @@ class ZRingView: ZView {
 
 			for (index, controlRect) in controlRects.enumerated() {
 				if  rect.intersectsOval(within: controlRect) {
-					return ZRingControl.controls[index]
+					return controls[index]
 				}
 			}
 		}
@@ -215,4 +216,28 @@ class ZRingView: ZView {
 		return nil
 	}
 
+	func addToolTips(for     iToolView: ZView?) {
+		guard let toolView = iToolView else { return }
+		let       controls = ZRingControl.controls
+		let        objects = necklaceObjects 				// expensive computation: do once
+		let          count = objects.count
+
+		toolView.removeAllToolTips()
+
+		for (index, tinyRect) in necklaceDotRects {
+			if  index < count { 							// avoid crash
+				let object = objects[index]
+				let   rect = self.convert(tinyRect, to: toolView)
+
+				toolView.addToolTip(rect, owner: object, userData: nil)
+			}
+		}
+
+		for (index, controlRect) in controlRects.enumerated() {
+			let    rect = self.convert(controlRect, to: toolView)
+			let control = controls[index]
+
+			toolView.addToolTip(rect, owner: control, userData: nil)
+		}
+	}
 }

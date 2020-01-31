@@ -6,19 +6,15 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
 #if os(OSX)
     import Cocoa
 #elseif os(iOS)
     import UIKit
 #endif
 
-
 class ZDragView: ZView, ZGestureRecognizerDelegate {
 
-
-    var rubberbandRect: CGRect?
-
+	var rubberbandRect: CGRect?
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
@@ -41,7 +37,6 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
             widget.drawDragLine(to: dotRect, in: self)
         }
     }
-
 
     func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
         if  let e = gGraphController {

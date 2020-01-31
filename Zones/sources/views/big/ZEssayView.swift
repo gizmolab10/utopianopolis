@@ -95,6 +95,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			essayID  = grabbedZone?.record?.recordID
 			delegate = self 						// set delegate after setText
 
+			gRingView?.addToolTips(for: self)
 			gWindow?.makeFirstResponder(self)
 		}
 	}

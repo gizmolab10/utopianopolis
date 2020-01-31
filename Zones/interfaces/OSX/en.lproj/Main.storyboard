@@ -858,7 +858,7 @@ DQ
         <scene sceneID="YUn-EI-h0m">
             <objects>
                 <viewController id="8gW-F6-R6g" userLabel="Essay" customClass="ZEssayController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
-                    <customView key="view" id="HOI-yt-EwI" customClass="ZView">
+                    <customView key="view" id="HOI-yt-EwI">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="269"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>

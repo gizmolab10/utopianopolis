@@ -264,7 +264,7 @@ enum ZSpecialsMenuType: String {
 
 	var text: String {
 		let (insert, _) = both
-		return insert
+		return insert + " "
 	}
 
 	var title: String {

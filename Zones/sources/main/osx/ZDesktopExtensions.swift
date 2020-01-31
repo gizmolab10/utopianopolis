@@ -476,7 +476,6 @@ extension ZDragView {
         let adjustment = exp2(deltaY / 100.0)
         gScaling      *= Double(adjustment)
     }
-    
 
     override func scrollWheel(with event: ZEvent) {
         if  event.modifierFlags.contains(.command) {
@@ -933,7 +932,7 @@ extension ZFiles {
             panel.canDownloadUbiquitousContents = false
             
             panel.beginSheetModal(for: window) { (result) in
-                if  result.rawValue == NSFileHandlingPanelOKButton,
+                if  result == NSApplication.ModalResponse.OK,
                     panel.urls.count > 0 {
                     let url = panel.urls[0]
                     
