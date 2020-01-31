@@ -23,7 +23,7 @@ class ZRingControl: ZView {
 		switch type {
 			case .eInsertion: return "insert at \(gInsertionsFollow ? "bottom"          : "top")"
 			case .eConfined:  return "browse \(gBrowsingIsConfined  ? "within one idea" : "to all visible")"
-			case .eVisible:   return "\(gFullRingIsVisible          ? "hide"            : "show") these controls"
+			case .eVisible:   return "\(gFullRingIsVisible          ? "hide these"      : "show") controls"
 		}
 	}
 

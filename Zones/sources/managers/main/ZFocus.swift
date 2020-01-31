@@ -50,33 +50,33 @@ class ZFocus: ZRing {
         
         // five states:
         // 1. is a bookmark     -> target becomes here
-        // 2. is here           -> update in favorites
+        // 2. is here           -> update in favorites, not push
         // 3. is a favorite     -> grab here
         // 4. not here, COMMAND -> become here
         // 5. not COMMAND       -> select here
 
         if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstSortedGrab {
             let focusClosure = { (zone: Zone) in
-                self.push()
-
                 gHere = zone
 
+				self.push()
                 gFavorites.updateCurrentFavorite()
                 zone.grab()
                 atArrival()
             }
 
-            if zone.isBookmark {     // state 2
+            if zone.isBookmark {     		// state 1
                 travelThrough(zone) { object, kind in
                     focusClosure(object as! Zone)
                 }
-            } else if zone == gHere {       // state 3
+            } else if zone == gHere {       // state 2
                 gFavorites.updateGrab()
                 atArrival()
-            } else if zone.isInFavorites {  // state 4
+            } else if zone.isInFavorites {  // state 3
                 focusClosure(gHere)
-            } else if COMMAND {                   // state 1
+            } else if COMMAND {             // state 4
                 gFavorites.refocus {
+					self.push()
                     atArrival()
                 }
             } else {                        // state 5
@@ -221,16 +221,15 @@ class ZFocus: ZRing {
                     target.asssureIsVisible()
                     target.grab()
                 } else {
-					push()
-
                     gHere = target
+
+					push()
                 }
 
 				gShowFavorites = targetDBID == .favoritesID
 
 				complete(target, .eRelayout)
 			} else {
-				push()
 				dump()
 
 				gShowFavorites = targetDBID == .favoritesID
@@ -246,6 +245,7 @@ class ZFocus: ZRing {
 						focus {
 							gHere  = target
 							
+							self.push()
 							gHere.prepareForArrival()
 							complete(gHere, .eRelayout)
 						}
@@ -255,11 +255,13 @@ class ZFocus: ZRing {
 								let    newHere = gCloud?.zone(for: hereRecord) {
 								gHere          = newHere
 								
+								self.push()
 								newHere.prepareForArrival()
 								self.focus {
 									complete(newHere, .eRelayout)
 								}
 							} else {
+								self.push()
 								complete(gHere, .eRelayout)
 							}
 						}
@@ -280,19 +282,21 @@ class ZFocus: ZRing {
 						}
 						
 						gHere = here
-						
+
+						self.push()
 						grabbed?.grab()
 						complete(here, .eRelayout)
 					}
 					
 					let grabHere = {
+						self.push()
 						gHereMaybe?.prepareForArrival()
 						complete(gHereMaybe, .eRelayout)
 					}
 					
 					if  there != nil {
 						gHere = there!
-						
+
 						grabHere()
 					} else if gCloud?.databaseID != .favoritesID { // favorites does not have a cloud database
 						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in

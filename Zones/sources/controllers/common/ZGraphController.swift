@@ -146,8 +146,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     #endif
 
 	func toggleGraphs() {
-		gFocusRing.push()
 		toggleDatabaseID()
+		gFocusRing.push()
 		gHere.grab()
 		gHere.revealChildren()
 		gFavorites.updateAllFavorites()

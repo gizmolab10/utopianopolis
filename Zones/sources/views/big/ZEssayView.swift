@@ -127,10 +127,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "i":      showSpecialsPopup()
 				case "l", "u": alterCase(up: key == "u")
 				case "s":      save()
-				case "]":      gEssayRing.goForward(); gCurrentEssay?.reset(); updateText()
-				case "[":      gEssayRing.goBack()   ; gCurrentEssay?.reset(); updateText()
-				case "/":      gEssayRing.pop()      ; exit()
-				case kReturn:  grabbedZone?.grab()   ; done()
+				case "]":      gEssayRing.goForward()
+				case "[":      gEssayRing.goBack()
+				case "/":      gEssayRing.pop(); exit()
+				case kReturn:  grabbedZone?.grab(); done()
 				default:       return false
 			}
 		} else if CONTROL {

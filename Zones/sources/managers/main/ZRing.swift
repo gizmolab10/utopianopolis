@@ -141,16 +141,11 @@ class ZRing: NSObject {
             priorIndex  = currentIndex
 
 			update(ring[currentIndex])
-			dump()
         }
     }
 
 	func update(_ item: AnyObject?) {
-		if  let     essay = item as? ZParagraph {
-			gCurrentEssay = essay
-
-			drawEssay()
-		}
+		gEssayView?.resetCurrentEssay(item as? ZParagraph)
 	}
 
     func pop() {

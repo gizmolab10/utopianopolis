@@ -138,6 +138,7 @@ class ZControllers: NSObject {
                 gWorkMode        = .graphMode
                 gIsReadyToShowUI = true
 
+				gFocusRing.push()
                 gHereMaybe?.grab()
                 gFavorites.updateAllFavorites()
                 gRemoteStorage.updateLastSyncDates()
