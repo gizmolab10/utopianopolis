@@ -16,20 +16,21 @@ enum ZAlterationType: Int {
 }
 
 class ZParagraph: NSObject {
-	var   zone  	        : Zone?
-	var   children          = [ZParagraph]()
-	var   essayLength       = 0
-	var   paragraphOffset   = 0
-	var   paragraphMaybe    : ZTrait?   { return zone?.traits[    .eEssay] }
-	var   paragraphTrait    : ZTrait?   { return zone?.trait(for: .eEssay) }
-	var   lastTextIsDefault : Bool      { return paragraphMaybe?.text == kEssayDefault }
-	var   fullTitleOffset   : Int       { return paragraphOffset + titleRange.location - 2 }
-	var   fullTitleRange    : NSRange   { return NSRange(location:   fullTitleOffset, length: titleRange.length + 3) }
-	var   paragraphRange    : NSRange   { return NSRange(location:   paragraphOffset, length:  textRange.upperBound) }
-	var  offsetTextRange    : NSRange   { return textRange .offsetBy(paragraphOffset) }
-	var    lastTextRange    : NSRange?  { return textRange }
-	var       titleRange    = NSRange()
-	var        textRange    = NSRange()
+	var    zone  	        : Zone?
+	var    children          = [ZParagraph]()
+	var    essayLength       = 0
+	var    paragraphOffset   = 0
+	var    paragraphMaybe    : ZTrait?   { return zone?.traits[    .eEssay] }
+	var    paragraphTrait    : ZTrait?   { return zone?.trait(for: .eEssay) }
+	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
+	var    lastTextIsDefault : Bool      { return paragraphMaybe?.text == kEssayDefault }
+	var    fullTitleOffset   : Int       { return paragraphOffset + titleRange.location - 2 }
+	var    fullTitleRange    : NSRange   { return NSRange(location:   fullTitleOffset, length: titleRange.length + 3) }
+	var    paragraphRange    : NSRange   { return NSRange(location:   paragraphOffset, length:  textRange.upperBound) }
+	var   offsetTextRange    : NSRange   { return textRange .offsetBy(paragraphOffset) }
+	var     lastTextRange    : NSRange?  { return textRange }
+	var        titleRange    = NSRange()
+	var         textRange    = NSRange()
 
 	func setupChildren() {}
 	func delete() { zone?.removeTrait(for: .eEssay) }

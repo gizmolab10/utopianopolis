@@ -19,6 +19,14 @@ class ZRingControl: ZView {
 	var type: ZControlType = .eVisible
 	static let    controls = [insertion, visible, confined]
 
+	override var description: String {
+		switch type {
+			case .eInsertion: return "insert \(gInsertionsFollow ? "down" : "up")"
+			case .eVisible:   return "\(gFullRingIsVisible ? "hide" : "show") these controls"
+			case .eConfined:  return gBrowsingIsConfined ? "within siblings" : "roam away"
+		}
+	}
+
 	override func draw(_ rect: CGRect) {
 		super.draw(rect)
 

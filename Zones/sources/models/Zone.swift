@@ -53,7 +53,8 @@ class Zone : ZRecord {
     var                       widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
     var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
     var               linkRecordName :             String? { return recordName(from: zoneLink) }
-    override var           emptyName :             String  { return "idea" }
+    override var           emptyName :             String  { return kEmptyIdea }
+	override var         description :             String  { return unwrappedName }
     override var       unwrappedName :             String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
     var                decoratedName :             String  { return decoration + unwrappedName }
     var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }

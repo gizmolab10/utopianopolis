@@ -226,18 +226,22 @@ class ZRingView: ZView {
 
 		for (index, tinyRect) in necklaceDotRects {
 			if  index < count { 							// avoid crash
-				let object = objects[index]
-				let   rect = self.convert(tinyRect, to: toolView)
+				let owner = objects[index]
+				let  rect = self.convert(tinyRect, to: toolView)
 
-				toolView.addToolTip(rect, owner: object, userData: nil)
+				print(owner.description)
+
+				toolView.addToolTip(rect, owner: owner, userData: nil)
 			}
 		}
 
 		for (index, controlRect) in controlRects.enumerated() {
-			let    rect = self.convert(controlRect, to: toolView)
-			let control = controls[index]
+			let  rect = self.convert(controlRect, to: toolView)
+			let owner = controls[index]
 
-			toolView.addToolTip(rect, owner: control, userData: nil)
+			print(owner.description)
+
+			toolView.addToolTip(rect, owner: owner, userData: nil)
 		}
 	}
 }
