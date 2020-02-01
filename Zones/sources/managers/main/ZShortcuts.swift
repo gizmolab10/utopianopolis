@@ -168,7 +168,7 @@ class ZShortcuts : NSObject {
 		"",				"", "",
 		"bEDITING (TEXT IS SELECTED):",	"", "",
 		"",				"", "",
-		" surround:", 	"| [ { ( < \" SPACE", 							"edit-d05d18996df7",
+		" surround:", 	"| [ { ( < \" ' SPACE",							"edit-d05d18996df7",
 		"",				"", "",
 		"+COMMAND",		"", "",
 		" D", 			"if all selected, append onto parent", 			"parent-child-tweaks-bf067abdf461",

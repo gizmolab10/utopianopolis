@@ -1513,25 +1513,25 @@ class Zone : ZRecord {
     }
 
     func surround(by: String) -> Bool {
-        let    range = gTextEditor.selectedRange
-        let     text = gTextEditor.string
+        let     range = gTextEditor.selectedRange
+        let      text = gTextEditor.string
 
         if  range.length > 0 {
             var     t = text.substring(with: range)
             var     a = text.substring(  toExclusive: range.lowerBound)
             var     b = text.substring(fromInclusive: range.upperBound)
-            var     o = 1                                // 1 means add it
+            var     o = 1                               // 1 means add it
             let    aa = by.isOpposite ? by.opposite : by
             let    bb = by.isOpposite ? by          : by.opposite
             let  aHas = a.hasSuffix(aa) || a.hasSuffix(bb)
-            let  bHas = b.hasSuffix(aa) || b.hasSuffix(bb)
+            let  bHas = b.hasPrefix(aa) || b.hasPrefix(bb)
 
-            if !aHas {    // if it is NOT already there
-                a     = a + aa                           // add it
+            if !aHas {    								// if it is NOT already there
+                a     = a + aa                          // add it
                 b     = bb + b
             } else {
                 a     = a.substring(  toExclusive: a.length - 1)
-                o     = -1                               // -1 means remove it
+                o     = -1                              // -1 means remove it
 
                 if  bHas {
                     b = b.substring(fromInclusive: 1)

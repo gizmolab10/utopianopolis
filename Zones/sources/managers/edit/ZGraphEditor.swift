@@ -109,7 +109,7 @@ class ZGraphEditor: ZBaseEditor {
                          kDelete:  if CONTROL { focusOnTrash() }
                     default:       return false // false means key not handled
                     }
-                } else if "|<>[]{}() \"".contains(key) {
+                } else if "|<>[]{}() \'\"".contains(key) {
                     return         editedZone?.surround(by: key) ?? false
                 } else {
                     switch key {
