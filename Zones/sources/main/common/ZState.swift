@@ -63,7 +63,7 @@ var    gDarkishBackgroundColor:             ZColor { return gBackgroundColor.dar
 var   gDirectionIndicatorColor:             ZColor { return gBackgroundColor.darker  (by: 1.3)   }
 var   gLightishBackgroundColor:             ZColor { return gBackgroundColor.lightish(by: 1.02)  }
 var    gLighterBackgroundColor:             ZColor { return gBackgroundColor.lighter (by: 4.0)   }
-var          gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
+var          gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var            gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var					gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 var              gCurrentEssay:        ZParagraph? { didSet { gFocusRing.push(); gRingView?.setNeedsDisplay() } }
@@ -206,7 +206,9 @@ var gWindowRect: CGRect {
 	set { setPreferencesRect(newValue, for: kWindowRectKey) }
 }
 
-var gEssayTitleFontSize: CGFloat {
+let gEssayTextFontSize = kDefaultEssayTextFontSize
+let gEssayTitleFontSize = kDefaultEssayTitleFontSize
+var gEssayTitleFontSizex: CGFloat {
 	get { return getPreferencesAmount(for: kEssayTitleFontSize, defaultAmount: kDefaultEssayTitleFontSize) }
 	set { setPreferencesAmount(newValue, for: kEssayTitleFontSize) }
 }

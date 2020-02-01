@@ -41,7 +41,7 @@ class ZEssayEditor: ZBaseEditor {
 				handleArrow(arrow, flags: flags)
 			} else if  COMMAND {
 				switch key {
-					case "=", "-": updateFontSize(key == "=")
+//					case "=", "-": updateFontSize(key == "=")
 					case "/":      if SPECIAL { gControllers.showShortcuts() } else { fallthrough }
 					default:       return gEssayView?.handleKey(iKey, flags: flags) ?? false
 				}
@@ -93,15 +93,15 @@ class ZEssayEditor: ZBaseEditor {
 		}
 	}
 
-	func updateFontSize(_ increment: Bool) {
-		if  let essayView = gEssayView,
-			let   current = gCurrentEssay, current.updateFontSize(increment) {
-			let    offset = essayView.selectionRange.location
-			gEssayTitleFontSize += CGFloat((increment ? 1.0 : -1.0) * 6.0)
-
-			essayView.updateText(restoreSelection: offset)
-		}
-	}
+//	func updateFontSize(_ increment: Bool) {
+//		if  let essayView = gEssayView,
+//			let   current = gCurrentEssay, current.updateFontSize(increment) {
+//			let    offset = essayView.selectionRange.location
+//			gEssayTitleFontSize += CGFloat((increment ? 1.0 : -1.0) * 6.0)
+//
+//			essayView.updateText(restoreSelection: offset)
+//		}
+//	}
 
 }
 

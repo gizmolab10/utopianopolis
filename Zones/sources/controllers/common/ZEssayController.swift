@@ -21,7 +21,7 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 	@IBOutlet var    essayView : ZEssayView?
 
 	override func setup() {
-		gestureView = essayView // do this before calling super setup
+		gestureView = essayView    // do this before calling super setup
 
 		super.setup()
 		essayView?.updateText()
