@@ -26,7 +26,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var essayID            : CKRecord.ID?
 	var grabbedZone 	   : Zone?     { return gCurrentEssay?.zone }
 	var selectionString    : String?   { return textStorage?.attributedSubstring(from: selectionRange).string }
-	var selectionRange     = NSRange() { didSet { selectionRect = firstRect(forCharacterRange: selectionRange, actualRange: nil) } }
+	var selectionRange     = NSRange() { didSet { selectionRect = rectForRange(selectionRange) } }
 	var selectionRect      = CGRect()
 	var selectionZone      : Zone?     { return selectedParagraphs.first?.zone }
 
@@ -451,22 +451,27 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				let zone = gSelecting.zone(with: rID)	// find zone with rID
 				switch type {
 					case .eEssay:
-						if  let through = zone {
-							let  common = grabbedZone?.closestCommonParent(of: through)
+						if  let target = zone {
+							let common = grabbedZone?.closestCommonParent(of: target)
 
-							if  let   c = common {
-								gHere   = c
+							if  let  c = common {
+								gHere  = c
 							}
 
 							FOREGROUND {
-								if  let e = through.essayMaybe, gCurrentEssay?.children.contains(e) ?? false {
-									self.setSelectedRange(e.offsetTextRange)		// select text range of through essay
+								if  let     e = target.essayMaybe, gCurrentEssay?.children.contains(e) ?? false {
+									let range = e.offsetTextRange	// text range of target essay
+									let start = NSRange(location: range.location, length: 1)
+									let  rect = self.convert(self.rectForRange(start), to: self).offsetBy(dx: 0.0, dy: -150.0)
+
+									self.setSelectedRange(range)
+									self.scroll(rect.origin)
 								} else {
 									gCreateMultipleEssay = true
 
-									through.grab()					// for later, when user exits essay mode
-									through.asssureIsVisible()
-									self.resetCurrentEssay(through.essay)
+									target.grab()					// for later, when user exits essay mode
+									target.asssureIsVisible()
+									self.resetCurrentEssay(target.essay)
 								}
 							}
 

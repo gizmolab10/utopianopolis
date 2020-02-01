@@ -803,6 +803,8 @@ extension Array where Element == Zone {
 
 extension NSRange {
 
+	var center: Int { return (lowerBound + upperBound) / 2 }
+
 	func offsetBy(_ offset: Int) -> NSRange { return NSRange(location: offset + location, length: length) }
 
 	func inclusiveIntersection(_ other: NSRange, includeUpper: Bool = true) -> NSRange? {
