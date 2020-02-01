@@ -89,7 +89,7 @@ class ZEssay: ZParagraph {
 			}
 		}
 
-		gControllers.syncAndRedraw()
+		gControllers.redrawAndSync()
 	}
 
 	override func shouldAlterEssay(_ range:NSRange, length: Int) -> (ZAlterationType, Int) {

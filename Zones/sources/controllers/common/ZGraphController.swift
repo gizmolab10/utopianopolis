@@ -500,15 +500,15 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     // MARK:- large indicators
     // MARK:-
 
-    func showSpinner(_ show: Bool) {
-		spinnerView?.isHidden = !show
-
-		if  show {
-			spinner?.startAnimating()
-		} else {
-			spinner?.stopAnimating()
-		}
-    }
+//    func showSpinner(_ show: Bool) {
+//		spinnerView?.isHidden = !show
+//
+//		if  show {
+//			spinner?.startAnimating()
+//		} else {
+//			spinner?.stopAnimating()
+//		}
+//    }
 
     
     // MARK:- internals

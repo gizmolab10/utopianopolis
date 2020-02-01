@@ -83,7 +83,7 @@ class ZPreferencesController: ZGenericController {
 				default:             break
 			}
 
-            gControllers.syncToCloudAfterSignalFor(nil, regarding: .eRelayout) {}
+            gControllers.signalAndSync(nil, regarding: .eRelayout) {}
         }
     }
 
@@ -94,12 +94,12 @@ class ZPreferencesController: ZGenericController {
                 UNDO(self) { iUndoSelf in
                     grab.color = color
                     
-                    gControllers.syncToCloudAfterSignalFor(grab, regarding: .eRelayout) {}
+                    gControllers.signalAndSync(grab, regarding: .eRelayout) {}
                 }
             }
             
             grab.clearColor()
-            gControllers.syncToCloudAfterSignalFor(grab, regarding: .eRelayout) {}
+            gControllers.signalAndSync(grab, regarding: .eRelayout) {}
         }
     }
 

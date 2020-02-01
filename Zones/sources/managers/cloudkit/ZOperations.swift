@@ -84,7 +84,7 @@ class ZOperations: NSObject {
 	var hiddenSpinnerOps : [ZOperationID] = [.oFetchAll, .oTraits, .oSaveToCloud]
     var     isIncomplete :          Bool  { return !doneOps.contains(currentOp) }
 	var     shouldCancel :          Bool  { return isIncomplete && timeSinceOpStart > 5.0 }
-    var      showSpinner :          Bool  { return isIncomplete && timeSinceOpStart > 0.5 && !hiddenSpinnerOps.contains(currentOp) }
+//    var      showSpinner :          Bool  { return isIncomplete && timeSinceOpStart > 0.5 && !hiddenSpinnerOps.contains(currentOp) }
     var    debugTimeText :        String  { return !usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)" }
     var  onCloudResponse :   AnyClosure?
     var      lastOpStart :       NSDate?
@@ -155,7 +155,7 @@ class ZOperations: NSObject {
         if  gCloudTimer == nil {
             gCloudFire   = { iTimer in
                 FOREGROUND(canBeDirect: true) {
-                    gGraphController?.showSpinner(self.showSpinner)
+//                    gGraphController?.showSpinner(self.showSpinner)
 
                     if  self.shouldCancel {
                         gBatches.unHang()

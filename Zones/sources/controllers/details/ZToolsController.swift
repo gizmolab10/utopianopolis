@@ -69,7 +69,7 @@ class ZToolsController: ZGenericTableController {
 					case .eRetry:   gBatches.unHang()
 					case .eTrash:   self.showTrashCan()
 					case .eGather:  self.gatherAndShowLost()
-					case .eRecount: gRemoteStorage.recount(); gControllers.syncToCloudAfterSignalFor(nil, regarding: .eRelayout) {}
+					case .eRecount: gRemoteStorage.recount(); gControllers.signalAndSync(nil, regarding: .eRelayout) {}
 				}
             }
         }

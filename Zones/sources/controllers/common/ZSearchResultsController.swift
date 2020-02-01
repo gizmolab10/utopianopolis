@@ -187,7 +187,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 		zone?.editAndSelect(text: searchText)
 
-        gBatches.sync { iSame in }
+        gControllers.sync()
     }
 
 

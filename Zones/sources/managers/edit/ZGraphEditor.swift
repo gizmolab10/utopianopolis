@@ -152,13 +152,13 @@ class ZGraphEditor: ZBaseEditor {
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
-                    case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.syncAndRedraw() } }
+                    case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.redrawAndSync() } }
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
                     case "[":      gFocusRing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusRing.goForward(extreme: FLAGGED)
                     case "?":      if CONTROL { openBrowserForFocusWebsite() }
 					case "=":      if COMMAND { updateSize(up: true) } else { gFocusRing.invokeTravel(gSelecting.firstSortedGrab) { self.redrawSyncRedraw() } }
-                    case ";", "'": gFavorites.switchToNext(key == "'") { self.syncAndRedraw() }
+                    case ";", "'": gFavorites.switchToNext(key == "'") { self.redrawAndSync() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addNextAndRedraw(containing: OPTION)
                     case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
@@ -1180,9 +1180,7 @@ class ZGraphEditor: ZBaseEditor {
 
                 bookmark?.grab()
                 bookmark?.markNotFetched()
-                self.redrawGraph()
-                gBatches.sync { iSame in
-                }
+                gControllers.redrawAndSync()
             }
 
             if gHere != zone {
@@ -1650,7 +1648,7 @@ class ZGraphEditor: ZBaseEditor {
 
                     movedZone = movedZone.deepCopy
 
-                    gBatches.sync { iSame in
+                    gControllers.redrawAndSync {
                         grabAndTravel()
                     }
                 }
@@ -2193,7 +2191,7 @@ class ZGraphEditor: ZBaseEditor {
     
     func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
         moveUp(iMoveUp, gSelecting.sortedGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
-            gControllers.syncToCloudAfterSignalFor(nil, regarding: iKind) {
+            gControllers.signalAndSync(nil, regarding: iKind) {
                 gControllers.signalFor(nil, regarding: iKind)
             }
         }
