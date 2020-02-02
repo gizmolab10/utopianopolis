@@ -158,10 +158,37 @@ class ZRing: NSObject {
     func pop() {
 		if  ring.count > (isEssay ? 0 : 1),
 			let i = primeIndex {
+			ring.remove(at: i)
             goBack()
-            ring.remove(at: i)
         }
-    }
+	}
+
+	func popAndRemoveEmpties() -> Bool {
+		pop()
+		removeEmpties()
+
+		return isEmpty
+	}
+
+	func removeEmpties() {
+		var removals = ZObjectsArray()
+
+		for item in ring {
+			if  let paragraph = item as? ZParagraph,
+				let zone = paragraph.zone,
+				!zone.hasTrait(for: .eEssay) {
+				removals.append(item)
+			}
+		}
+
+		for item in removals {
+			removeFromStack(item)
+		}
+
+		if  isEmpty {
+			gCurrentEssay = nil
+		}
+	}
 
 	func removeFromStack(_ iItem: NSObject) {
 		if  let paragraph = iItem as? ZParagraph,
@@ -171,6 +198,7 @@ class ZRing: NSObject {
 					let ringZone = other.zone,
 					ringZone === zone {
 					ring.remove(at: index)
+					removeEmpties()
 
 					if  isEmpty {
 						gCurrentEssay = nil

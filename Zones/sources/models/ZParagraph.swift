@@ -46,6 +46,7 @@ class ZParagraph: NSObject {
 	func delete() {
 		zone?.removeTrait(for: .eEssay)
 		gEssayRing.removeFromStack(self) // display prior essay
+		gRingView?.setNeedsDisplay()
 	}
 
 	func reset() {

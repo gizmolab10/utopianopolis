@@ -128,7 +128,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "s":      save()
 				case "]":      gEssayRing.goForward()
 				case "[":      gEssayRing.goBack()
-				case "/":      gEssayRing.pop(); if gEssayRing.isEmpty { exit() }
+				case "/":      if gEssayRing.popAndRemoveEmpties() { exit() }
 				case kReturn:  grabbedZone?.grab(); done()
 				default:       return false
 			}
