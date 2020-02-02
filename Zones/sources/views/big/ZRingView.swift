@@ -74,6 +74,8 @@ class ZRingView: ZView {
 			for index in 0 ... (controlRects.count - 1) {
 				drawControl(for: index)
 			}
+
+			addToolTips(for: self)
 		}
 	}
 
@@ -143,6 +145,16 @@ class ZRingView: ZView {
 		}
 
 		return false
+	}
+
+	override func mouseDown(with event: ZEvent) {
+		let    rect = CGRect(origin: event.locationInWindow, size: CGSize())
+		let COMMAND = event.modifierFlags.isCommand
+		let  inRing = respondToClick(in: rect, COMMAND)
+
+		if !inRing {
+			super.mouseDown(with: event)
+		}
 	}
 
 	// MARK:- necklace and controls

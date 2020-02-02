@@ -20,6 +20,7 @@ class ZRing: NSObject {
 	var    possiblePrime : NSObject?         { return gCurrentEssay }
     var         topIndex : Int               { return ring.count - 1 }
     var          atPrime : Bool              { return currentIndex >= 0 && currentIndex <= topIndex && isPrime }
+	var          isEmpty : Bool              { return ring.count == 0 || possiblePrime == nil }
 	var          isEssay : Bool              { return true }
 	var visibleRingTypes : ZTinyDotTypeArray { return ZTinyDotTypeArray() }
 
@@ -140,20 +141,25 @@ class ZRing: NSObject {
             priorIndex != currentIndex) {
             priorIndex  = currentIndex
 
-			update(ring[currentIndex])
+			update()
         }
     }
 
-	func update(_ item: AnyObject?) {
-		gEssayView?.resetCurrentEssay(item as? ZParagraph)
+	func update() {
+		if  isEmpty {
+			gControllers.swapGraphAndEssay()
+		} else if let item = ring[currentIndex] as? ZParagraph {
+			gEssayView?.resetCurrentEssay(item)
+		}
+
+		gRingView?.setNeedsDisplay()
 	}
 
     func pop() {
-        if  let i = primeIndex {
+		if  ring.count > (isEssay ? 0 : 1),
+			let i = primeIndex {
             goBack()
             ring.remove(at: i)
-        } else {
-            go()
         }
     }
 
@@ -165,6 +171,13 @@ class ZRing: NSObject {
 					let ringZone = other.zone,
 					ringZone === zone {
 					ring.remove(at: index)
+
+					if  isEmpty {
+						gCurrentEssay = nil
+					} else if index == currentIndex {
+						goBack()
+						go()
+					}
 
 					return
 				}

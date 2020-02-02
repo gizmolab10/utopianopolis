@@ -107,20 +107,8 @@ extension NSObject {
         }
     }
 
-    func syncAndRedraw(_ zone: Zone? = nil) {
-        gControllers.sync() {
-            gControllers.signalFor(zone, regarding: .eRelayout, onCompletion: nil)
-        }
-    }
-
     func redrawAndSync(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
         gControllers.signalAndSync(zone, regarding: .eRelayout, onCompletion: onCompletion)
-    }
-
-    func redrawSyncRedraw(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
-        redrawAndSync(zone) {
-            gControllers.signalFor(zone, regarding: .eRelayout, onCompletion: onCompletion)
-        }
     }
 
     @discardableResult func detectWithMode(_ dbID: ZDatabaseID, block: ToBooleanClosure) -> Bool {

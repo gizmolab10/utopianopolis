@@ -62,7 +62,7 @@ var gDesktopAppDelegate: ZDesktopAppDelegate?
         }
         
         for file in openFiles {
-            gFiles.importFile(from: file, insertInto: insertInto) { self.redrawSyncRedraw() }
+            gFiles.importFile(from: file, insertInto: insertInto) { self.redrawAndSync() }
         }
     }
 	

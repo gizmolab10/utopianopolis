@@ -85,10 +85,10 @@ class ZFocus: ZRing {
         }
     }
 
-	override func update(_ item: AnyObject?) {
-		if  let here  = item as? Zone {
-			let dbID  = gHere.databaseID
-			if  dbID != here.databaseID {
+	override func update() {
+		if !isEmpty,
+			let here = ring[currentIndex] as? Zone {
+			if  here.databaseID != gHere.databaseID {
 				toggleDatabaseID()         // update id before setting gHere
 			}
 
@@ -101,11 +101,19 @@ class ZFocus: ZRing {
 	}
 
 	override func removeFromStack(_ iItem: NSObject) {
-		if  let zone = iItem as? Zone {
+		if  ring.count > 1,
+			let zone = iItem as? Zone {
 			for (index, item) in ring.enumerated() {
 				if  let other = item as? Zone,
 					other === zone {
+
 					ring.remove(at: index)
+
+					if !isEmpty,
+						index == currentIndex {
+						goBack()
+						go()
+					}
 
 					return
 				}

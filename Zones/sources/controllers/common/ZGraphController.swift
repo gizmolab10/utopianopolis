@@ -225,7 +225,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: true)
                 layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: false)
                 dragView?.setAllSubviewsNeedDisplay()
-				gRingView?.addToolTips(for: dragView)
             }
         }
 

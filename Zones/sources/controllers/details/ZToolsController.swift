@@ -86,7 +86,7 @@ class ZToolsController: ZGenericTableController {
             gHere = trash
 
             gHere.needChildren()
-			self.redrawAndSync()
+			self.redrawGraph()
         }
     }
 
@@ -113,7 +113,7 @@ class ZToolsController: ZGenericTableController {
             }
         }
 
-        redrawAndSync()
+        redrawGraph()
     }
 
 

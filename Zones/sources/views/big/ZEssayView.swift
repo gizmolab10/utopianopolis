@@ -95,7 +95,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			essayID  = grabbedZone?.record?.recordID
 			delegate = self 						// set delegate after setText
 
-			gRingView?.addToolTips(for: self)
 			gWindow?.makeFirstResponder(self)
 		}
 	}
@@ -129,7 +128,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "s":      save()
 				case "]":      gEssayRing.goForward()
 				case "[":      gEssayRing.goBack()
-				case "/":      gEssayRing.pop(); exit()
+				case "/":      gEssayRing.pop(); if gEssayRing.isEmpty { exit() }
 				case kReturn:  grabbedZone?.grab(); done()
 				default:       return false
 			}
@@ -532,7 +531,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				}
 			}
 
-			gCurrentEssay!.essayLength += delta							// compensate for change
+			gCurrentEssay?.essayLength += delta							// compensate for change
 
 			return true
 		}

@@ -774,7 +774,7 @@ class Zone : ZRecord {
             
             if !(CLICKTWICE && self == gHere) {
                 gFocusRing.focus(kind: .eSelected) {
-                    gGraphEditor.redrawSyncRedraw()
+                    gGraphEditor.redrawAndSync()
                 }
             }
         } else if isGrabbed {

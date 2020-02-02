@@ -78,10 +78,9 @@ class ZControllers: NSObject {
 	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
 		if  let id = iID {
 			switch id {
-				case .idMain:  return gWorkMode == .essayMode ? .white : gBackgroundColor
+				case .idEssay: return .white
 				case .idDetails,
 					 .idGraph,
-					 .idEssay,
 					 .idRing:  return kClearColor
 				case .idInformation,
 					 .idPreferences,

@@ -254,9 +254,9 @@ class ZFavorites: ZRecords {
     }
 
     
-    func updateFavoritesRedrawSyncRedraw(avoidRedraw: Bool = false, _ onCompletion: Closure? = nil) {
+    func updateFavoritesRedrawAndSync(avoidRedraw: Bool = false, _ onCompletion: Closure? = nil) {
         if  updateAllFavorites() || !avoidRedraw {
-            redrawSyncRedraw { onCompletion?() }
+            redrawAndSync { onCompletion?() }
         } else {
             onCompletion?()
         }
