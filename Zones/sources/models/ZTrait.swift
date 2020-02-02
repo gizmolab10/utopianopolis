@@ -16,7 +16,7 @@ enum ZTraitType: String {
 	case eHyperlink = "h"
 	case eDuration  = "+" // accumulative
 	case eMoney     = "$" //      "
-	case eImage     = "i" // allow multiple
+	case eAsset     = "a" // allow multiple
 	case eEmail     = "e"
 	case eEssay     = "w"
 
@@ -121,7 +121,7 @@ class ZTrait: ZRecord {
 
 
     override func orphan() {
-        ownerZone?.setTraitText(nil, for: traitType)
+        ownerZone?.setTextTrait(nil, for: traitType)
 
         owner = nil
 

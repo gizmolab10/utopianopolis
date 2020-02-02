@@ -38,6 +38,7 @@ class Zone : ZRecord {
 	var              parentZoneMaybe :               Zone?
     var               hyperLinkMaybe :             String?
     var               crossLinkMaybe :            ZRecord?
+	var                   assetMaybe :            CKAsset?
     var                   colorMaybe :             ZColor?
     var                   emailMaybe :             String?
 	var       		      essayMaybe :         ZParagraph?
@@ -71,6 +72,7 @@ class Zone : ZRecord {
     var                     hasColor :               Bool  { return zoneColor != nil && zoneColor != "" }
 	var                     hasEmail :               Bool  { return hasTrait(for: .eEmail) && email != "" }
 	var                     hasEssay :               Bool  { return hasTrait(for: .eEssay) }
+	var                     hasAsset :               Bool  { return hasTrait(for: .eAsset) }
     var                      isTrash :               Bool  { return recordName == kTrashName }
     var                    isInTrash :               Bool  { return root?.isTrash              ?? false }
     var                isInFavorites :               Bool  { return root?.isRootOfFavorites    ?? false }
@@ -153,7 +155,7 @@ class Zone : ZRecord {
 	var email: String? {
 		get {
 			if  emailMaybe == nil {
-				emailMaybe  = getTraitText(for: .eEmail)
+				emailMaybe  = getTextTrait(for: .eEmail)
 			}
 
 			return emailMaybe
@@ -163,7 +165,25 @@ class Zone : ZRecord {
 			if  emailMaybe != newValue {
 				emailMaybe  = newValue
 
-				setTraitText(newValue, for: .eEmail)
+				setTextTrait(newValue, for: .eEmail)
+			}
+		}
+	}
+
+	var asset: CKAsset? {
+		get {
+			if  assetMaybe == nil {
+				assetMaybe  = getAssetTrait()
+			}
+
+			return assetMaybe
+		}
+
+		set {
+			if  assetMaybe != newValue {
+				assetMaybe  = newValue
+
+				setAssetTrait(assetMaybe)
 			}
 		}
 	}
@@ -218,7 +238,7 @@ class Zone : ZRecord {
 	var hyperLink: String? {
 		get {
 			if  hyperLinkMaybe == nil {
-				hyperLinkMaybe  = getTraitText(for: .eHyperlink)
+				hyperLinkMaybe  = getTextTrait(for: .eHyperlink)
 			}
 
 			return hyperLinkMaybe
@@ -228,7 +248,7 @@ class Zone : ZRecord {
 			if  hyperLinkMaybe != newValue {
 				hyperLinkMaybe  = newValue
 
-				setTraitText(newValue, for: .eHyperlink)
+				setTextTrait(newValue, for: .eHyperlink)
 			}
 		}
 	}
@@ -883,22 +903,22 @@ class Zone : ZRecord {
 		}
     }
 
-    func getTraitText(for iType: ZTraitType) -> String? {
+    func getTextTrait(for iType: ZTraitType) -> String? {
         return traits[iType]?.text
     }
 
-    func setTraitText(_ iText: String?, for iType: ZTraitType?) {
-        if  let  type        = iType {
-            if  iText       == nil {
-                traits[type]?.needDestroy()
-
-                traits[type] = nil
-            } else {
-                let    trait = self.trait(for: type)
-                trait.text   = iText
+    func setTextTrait(_ iText: String?, for iType: ZTraitType?) {
+        if  let       type = iType {
+            if  let   text = iText {
+                let  trait = self.trait(for: type)
+                trait.text = text
 
                 trait.updateCKRecordProperties()
                 trait.maybeNeedSave()
+			} else {
+				traits[type]?.needDestroy()
+
+				traits[type] = nil
             }
             
             switch (type) {
@@ -908,6 +928,24 @@ class Zone : ZRecord {
             }
         }
     }
+
+	func getAssetTrait() -> CKAsset? {
+		return traits[.eAsset]?.asset
+	}
+
+	func setAssetTrait(_ iAsset: CKAsset?) {
+		if  let   asset = iAsset {
+			let   trait = self.trait(for: .eAsset)
+			trait.asset = asset
+
+			trait.updateCKRecordProperties()
+			trait.maybeNeedSave()
+		} else {
+			traits[.eAsset]?.needDestroy()
+
+			traits[.eAsset] = nil
+		}
+	}
 
     func trait(for iType: ZTraitType) -> ZTrait {
         var trait            = traits[iType]

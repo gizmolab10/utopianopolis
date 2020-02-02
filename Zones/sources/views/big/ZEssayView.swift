@@ -157,7 +157,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			save()
 
 			if  createEssay {
-				child.setTraitText(kEssayDefault, for: .eEssay)			// create a placeholder essay in the child
+				child.setTextTrait(kEssayDefault, for: .eEssay)			// create a placeholder essay in the child
 				grabbedZone?.createEssay()
 
 				resetCurrentEssay(grabbedZone?.essay)						// redraw essay TODO: WITH NEW PARAGRAPH SELECTED

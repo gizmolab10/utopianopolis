@@ -136,7 +136,7 @@ class ZTextPack: NSObject {
         let text           = iText == displayType ? nil : iText
 
         if  let     trait  = packedTrait {      // traits take logical priority
-            trait.ownerZone?.setTraitText(text, for: trait.traitType)
+            trait.ownerZone?.setTextTrait(text, for: trait.traitType)
         } else if let zone = packedZone {       // ignore zone if editing a trait, above
             zone.records?.unregisterName(of: zone)
 

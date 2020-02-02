@@ -899,7 +899,6 @@ DQ
                     </customView>
                     <connections>
                         <outlet property="essayView" destination="WXi-Uu-tc4" id="yk5-5E-vaL"/>
-                        <outlet property="trailingConstraint" destination="ycB-H2-Aes" id="Or3-zw-rq2"/>
                     </connections>
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

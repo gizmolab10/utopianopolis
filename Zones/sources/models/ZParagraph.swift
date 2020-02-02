@@ -16,7 +16,7 @@ enum ZAlterationType: Int {
 }
 
 class ZParagraph: NSObject {
-	var    zone  	        : Zone?
+	var    zone  	         : Zone?
 	var    children          = [ZParagraph]()
 	var    essayLength       = 0
 	var    paragraphOffset   = 0
@@ -31,6 +31,7 @@ class ZParagraph: NSObject {
 	var     lastTextRange    : NSRange?  { return textRange }
 	var        titleRange    = NSRange()
 	var         textRange    = NSRange()
+	var            images    = [ZTrait]()
 
 	func setupChildren() {}
 	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }
