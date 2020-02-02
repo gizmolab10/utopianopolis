@@ -414,7 +414,7 @@ class ZGraphEditor: ZBaseEditor {
 
     func editTrait(for iType: ZTraitType) {
         if  let  zone = gSelecting.firstSortedGrab {
-            let trait = zone.trait(for: iType)
+            let trait = zone.traitFor(iType)
             
             gTextEditor.edit(trait)
         }

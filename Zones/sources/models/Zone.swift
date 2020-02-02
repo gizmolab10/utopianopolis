@@ -910,7 +910,7 @@ class Zone : ZRecord {
     func setTextTrait(_ iText: String?, for iType: ZTraitType?) {
         if  let       type = iType {
             if  let   text = iText {
-                let  trait = self.trait(for: type)
+                let  trait = traitFor(type)
                 trait.text = text
 
                 trait.updateCKRecordProperties()
@@ -935,7 +935,7 @@ class Zone : ZRecord {
 
 	func setAssetTrait(_ iAsset: CKAsset?) {
 		if  let   asset = iAsset {
-			let   trait = self.trait(for: .eAsset)
+			let   trait = traitFor(.eAsset)
 			trait.asset = asset
 
 			trait.updateCKRecordProperties()
@@ -947,7 +947,7 @@ class Zone : ZRecord {
 		}
 	}
 
-    func trait(for iType: ZTraitType) -> ZTrait {
+    func traitFor(_ iType: ZTraitType) -> ZTrait {
         var trait            = traits[iType]
         if  let            r = record,
             trait           == nil {

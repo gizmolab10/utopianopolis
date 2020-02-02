@@ -102,8 +102,8 @@ class ZRing: NSObject {
     func goBack(extreme: Bool = false) {
         if  let    index = primeIndex {
             currentIndex = index
-        } else if !atPrime {
-            push()
+//        } else if !atPrime {
+//            push()
         }
 
         if  currentIndex <= 0 || currentIndex > topIndex {
@@ -204,7 +204,6 @@ class ZRing: NSObject {
 						gCurrentEssay = nil
 					} else if index == currentIndex {
 						goBack()
-						go()
 					}
 
 					return

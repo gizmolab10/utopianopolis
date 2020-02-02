@@ -20,8 +20,8 @@ class ZParagraph: NSObject {
 	var    children          = [ZParagraph]()
 	var    essayLength       = 0
 	var    paragraphOffset   = 0
-	var    paragraphMaybe    : ZTrait?   { return zone?.traits[    .eEssay] }
-	var    paragraphTrait    : ZTrait?   { return zone?.trait(for: .eEssay) }
+	var    paragraphMaybe    : ZTrait?   { return zone?.traits[  .eEssay] }
+	var    paragraphTrait    : ZTrait?   { return zone?.traitFor(.eEssay) }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
 	var    lastTextIsDefault : Bool      { return paragraphMaybe?.text == kEssayDefault }
 	var    fullTitleOffset   : Int       { return paragraphOffset + titleRange.location - 2 }
@@ -31,7 +31,6 @@ class ZParagraph: NSObject {
 	var     lastTextRange    : NSRange?  { return textRange }
 	var        titleRange    = NSRange()
 	var         textRange    = NSRange()
-	var            images    = [ZTrait]()
 
 	func setupChildren() {}
 	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }
