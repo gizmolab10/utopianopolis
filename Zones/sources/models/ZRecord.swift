@@ -475,6 +475,14 @@ class ZRecord: NSObject {
 				if  let link = object as? String, !isValid(link) {
 					return nil
 				}
+			case .asset:
+				if  let  asset = object as? CKAsset,
+					let base64 = asset.data?.base64EncodedString() as NSObject? {
+
+					return base64
+				} else {
+					return nil
+			}
 			default: break
 		}
 
@@ -526,7 +534,7 @@ class ZRecord: NSObject {
 
 		for keyPath in keyPaths {
 			if  let       type = type(from: keyPath),
-				let    extract = extract(valueOf: type, at: keyPath) ,
+				let    extract = extract(valueOf: type, at: keyPath),
 				let   prepared = prepare(extract, of: type) {
 				dict[type]     = prepared
 			}
@@ -551,19 +559,24 @@ class ZRecord: NSObject {
             }
             
             for keyPath in cloudProperties() + [kpModificationDate] {
-                if  let      type  = type(from: keyPath),
-                    let    object  = dict[type],
-                    let     value  = object as? CKRecordValue {
+                if  let   type = type(from: keyPath),
+                    let object = dict[type],
+                    let  value = object as? CKRecordValue {
 
-                    if  type != .date {
-                        ckRecord[keyPath]  = value
-						
-						if  type == .essayAttributes {
-							printDebug(.essays, "got essay attributes: \(value)")
-						}
-                    } else if let interval = object as? Double {
-                        writtenModifyDate = Date(timeIntervalSince1970: interval)
-                    }
+					switch type {
+						case .date:
+							if  let      interval = object as? Double {
+								writtenModifyDate = Date(timeIntervalSince1970: interval)
+							}
+						case .asset:
+							if  let base64 = object as? String,
+								let   data = Data(base64Encoded: base64),
+								let  asset = data.asset {
+								ckRecord[keyPath] = asset
+							}
+						default:
+							ckRecord[keyPath] = value
+					}
                 }
             }
 

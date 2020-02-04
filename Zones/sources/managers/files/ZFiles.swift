@@ -6,7 +6,6 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CoreFoundation
 
@@ -27,16 +26,15 @@ enum ZExportType: String {
 
 class ZFiles: NSObject {
 
-
-    var            isReading = [false, false]
+	var            isReading = [false, false]
     var            isWriting = [false, false] // not allow another save while file is being written
     var           needsWrite = [false, false]
     var   writtenRecordNames = [String] ()
     var filePaths: [String?] = [nil, nil]
     var  writeTimer : Timer?
     var _directoryURL : URL?
+	var randomFilePath: String { return "CloudKit/assets/foobar.png" }
     let              manager = FileManager.default
-
 
     var isWritingNow: Bool {
         for writing in isWriting {
@@ -48,7 +46,6 @@ class ZFiles: NSObject {
         return false
     }
 
-
     var directoryURL: URL {
         get {
             if  _directoryURL == nil {
@@ -59,15 +56,12 @@ class ZFiles: NSObject {
         }
     }
 
-
     // MARK:- API
     // MARK:-
-
 
 	func open() {
 //		let panel = NSOpenPanel()
 	}
-
 
     func deferWrite(for  databaseID: ZDatabaseID?, restartTimer: Bool = false) {
         if  writeTimer?.isValid ?? false || restartTimer {
@@ -82,7 +76,6 @@ class ZFiles: NSObject {
             }
         }
     }
-	
 
     func needWrite(for  databaseID: ZDatabaseID?) {
         if  let  dbID = databaseID,
@@ -96,7 +89,6 @@ class ZFiles: NSObject {
         }
     }
 
-
     func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
         if  let  dbID = iDatabaseID,
             let index = dbID.index {
@@ -105,15 +97,13 @@ class ZFiles: NSObject {
 
         return false
 	}
-	
-    
+
     func writeAll() {
         for dbID in kAllDatabaseIDs {
             writeToFile(from: dbID)
         }
     }
-    
-	
+
 	func writeToFile(from databaseID: ZDatabaseID?) {
 		if  let     dbID = databaseID,
 			dbID        != .favoritesID,
@@ -123,8 +113,7 @@ class ZFiles: NSObject {
 				writeFile(at: path, from: databaseID)
 		}
 	}
-	
-	
+
 	func readFile(into databaseID: ZDatabaseID) {
 		if  databaseID  != .favoritesID,
 			let    index = databaseID.index,
@@ -135,10 +124,8 @@ class ZFiles: NSObject {
 		}
 	}
 
-
     // MARK:- heavy lifting
     // MARK:-
-
 
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) {
 		if  let           dbID = databaseID,
@@ -212,8 +199,7 @@ class ZFiles: NSObject {
             }
 		}
 	}
-	
-	
+
 	func readFile(from path: String, into databaseID: ZDatabaseID) {
 		if  gUseFiles,
             databaseID      != .favoritesID,
@@ -284,7 +270,6 @@ class ZFiles: NSObject {
             }
 		}
 	}
-	
 
     func filePath(for index: ZDatabaseIndex) -> String {
         var                 path  = filePaths[index.rawValue]
@@ -375,11 +360,9 @@ class ZFiles: NSObject {
         return path!
     }
 
-
     // MARK:- internals
     // MARK:-
-    
-    
+
     func createDataDirectory() -> URL {
         let cacheURL = try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let directoryURL = cacheURL.appendingPathComponent("Thoughtful", isDirectory: true)
@@ -392,7 +375,6 @@ class ZFiles: NSObject {
         
         return directoryURL
     }
-    
 
     func fileName(for index: ZDatabaseIndex, isGeneric: Bool = true) -> String? {
         if  let dbID = index.databaseID {

@@ -165,23 +165,25 @@ class ZRemoteStorage: NSObject {
     func receiveFromCloud(_ notification: CKQueryNotification) {
         resetBadgeCounter()
 
-        if  let     dbID = ZDatabaseID.convert(from: notification.databaseScope),
-            let    cloud = cloud(for: dbID),
-            let recordID = notification.recordID {
-			let ckRecord = cloud.maybeCKRecordForRecordName(recordID.recordName)
+		FOREGROUND {
+			if  let     dbID = ZDatabaseID.convert(from: notification.databaseScope),
+				let    cloud = self.cloud(for: dbID),
+				let recordID = notification.recordID {
+				let ckRecord = cloud.maybeCKRecordForRecordName(recordID.recordName)
 
-			switch (notification.queryNotificationReason) {
-			case .recordCreated, .recordUpdated:
-				cloud.addCKRecord(ckRecord, for: [.needsFetch])
-				gControllers.redrawAndSync()
-			case .recordDeleted:
-				if  let deleted = cloud.maybeZoneForCKRecord(ckRecord) {
-					gGraphEditor.deleteZones([deleted], permanently: true) {
+				switch (notification.queryNotificationReason) {
+					case .recordCreated, .recordUpdated:
+						cloud.addCKRecord(ckRecord, for: [.needsFetch])
 						gControllers.redrawAndSync()
+					case .recordDeleted:
+						if  let deleted = cloud.maybeZoneForCKRecord(ckRecord) {
+							gGraphEditor.deleteZones([deleted], permanently: true) {
+								gControllers.redrawAndSync()
+							}
 					}
 				}
 			}
-        }
+		}
     }
 
 }

@@ -170,24 +170,6 @@ class Zone : ZRecord {
 		}
 	}
 
-	var asset: CKAsset? {
-		get {
-			if  assetMaybe == nil {
-				assetMaybe  = getAssetTrait()
-			}
-
-			return assetMaybe
-		}
-
-		set {
-			if  assetMaybe != newValue {
-				assetMaybe  = newValue
-
-				setAssetTrait(assetMaybe)
-			}
-		}
-	}
-
 	var paragraphs:  [Zone] {
 		var result = [Zone]()
 
@@ -1132,20 +1114,18 @@ class Zone : ZRecord {
     // first call block on self
 
     @discardableResult func safeTraverseProgeny(visited: ZoneArray, _ block: ZoneToStatusClosure) -> ZTraverseStatus {
-        var status = block(self)
+        var status  = block(self)
 
-        if status == .eContinue {
+        if  status == .eContinue {
             for child in children {
                 if  visited.contains(child) {
-                    status = .eSkip
-
-                    break
+                    break						// do not traverse further inward
                 }
 
                 status = child.safeTraverseProgeny(visited: visited + [self], block)
 
-                if status == .eStop {
-                    break
+                if  status == .eStop {
+                    break						// halt traversal
                 }
             }
         }

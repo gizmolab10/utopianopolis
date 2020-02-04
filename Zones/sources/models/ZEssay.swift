@@ -68,9 +68,13 @@ class ZEssay: ZParagraph {
 		if  gCreateMultipleEssay {
 			children.removeAll()
 
-			zone?.traverseAllProgeny {   iChild in
+			zone?.traverseAllProgeny { iChild in
 				if  iChild.hasTrait(for: .eEssay) {
-					self.children.append(iChild.essay)	// do not use essayMaybe as it may not yet be initialized
+					let essay = iChild.essay
+
+					if !self.children.contains(essay) {
+						self.children.append(essay)	// do not use essayMaybe as it may not yet be initialized
+					}
 				}
 			}
 		}

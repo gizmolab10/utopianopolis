@@ -10,6 +10,7 @@
 import Foundation
 import AppKit
 import Cocoa
+import CloudKit
 
 
 enum ZArrowKey: CChar {
@@ -47,6 +48,7 @@ public typealias ZApplication                = NSApplication
 public typealias ZTableColumn                = NSTableColumn
 public typealias ZTableRowView               = NSTableRowView
 public typealias ZTableCellView              = NSTableCellView
+public typealias ZBitmapImageRep             = NSBitmapImageRep
 public typealias ZWindowDelegate             = NSWindowDelegate
 public typealias ZWindowController           = NSWindowController
 public typealias ZSegmentedControl           = NSSegmentedControl
@@ -918,14 +920,27 @@ public extension ZImage {
     }
 }
 
+extension ZBitmapImageRep {
+	var  png: Data? { representation(using: .png,  properties: [:]) }
+	var jpeg: Data? { representation(using: .jpeg, properties: [:]) }
+}
+
+extension Data {
+	var bitmap: ZBitmapImageRep? { ZBitmapImageRep(data: self) }
+	var  asset: CKAsset? { get { CKAsset(fileURL: url) } set {} }
+	var    url: URL { URL(fileURLWithPath: gFiles.randomFilePath) }
+}
+
+extension ZImage {
+	var  png: Data? { tiffRepresentation?.bitmap?.png }
+	var jpeg: Data? { tiffRepresentation?.bitmap?.jpeg }
+}
 
 extension ZFiles {
-    
-    
+
     func showInFinder() {
         (directoryURL as NSURL).open()
     }
-
     
     func saveAs() {
         let panel = NSSavePanel()
@@ -937,7 +952,6 @@ extension ZFiles {
             }
         }
     }
-
     
     class func presentOpenPanel(_ callback: AnyClosure? = nil) {
         if  let  window = gApplication.mainWindow {
@@ -1031,8 +1045,7 @@ extension ZFiles {
 							printDebug(.errors, "\(error)")
 						}
 					case .eEssay:
-						if  let essay =  zone.essayMaybe,
-							let  text = essay.essayText {
+						if  let text = zone.essay.essayText {
 
 							do {
 								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtf])

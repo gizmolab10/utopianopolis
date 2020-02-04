@@ -39,7 +39,7 @@ func printDebug(_ mode: ZDebugMode, prefix: String = "  ", _ message: String, su
 	}
 }
 
-func gSeparator(at level: Int) -> String { return " ( \(level) ) " }
+func gSeparatorAt(level: Int) -> String { return " ( \(level) ) " }
 
 precedencegroup BooleanPrecedence { associativity: left }
 infix operator ^^ : BooleanPrecedence
@@ -279,27 +279,21 @@ extension NSObject {
 
 }
 
+extension Data {
+	func asset(from: Data) -> CKAsset {
+		return CKAsset(fileURL: URL(fileURLWithPath: gFiles.randomFilePath))
+	}
 
-//extension CKRecord.Reference {
-//
-//    func storageDictionary() -> ZStorageDictionary {
-//        var          dict = ZStorageDictionary()
-//        dict[.recordName] = recordID.recordName as NSObject
-//        
-//        return dict
-//    }
-//    
-//    class func create(with dict: ZStorageDictionary, for iDatabaseID: ZDatabaseID) -> CKRecord.Reference? {
-//        if  let name = dict[.recordName] as? String {
-//            let id = CKRecord.ID(recordName: name)
-//            
-//            return CKRecord.Reference(recordID: id, action: .none)
-//        }
-//        
-//        return nil
-//    }
-//    
-//}
+	func write() -> URL? {
+		return nil
+	}
+}
+
+extension CKAsset {
+	var data: Data? {
+		FileManager.default.contents(atPath: "\(fileURL.path).png")
+	}
+}
 
 extension CKRecord {
 
@@ -812,17 +806,17 @@ extension NSRange {
 extension NSTextTab {
 
 	var string: String {
-		return kAlignment + gSeparator(at: 6) + "\(alignment.rawValue)" + gSeparator(at: 5) + kLocation + gSeparator(at: 6) + "\(location)"
+		return kAlignment + gSeparatorAt(level: 6) + "\(alignment.rawValue)" + gSeparatorAt(level: 5) + kLocation + gSeparatorAt(level: 6) + "\(location)"
 	}
 
 	convenience init(string: String) {
 		var location: CGFloat = 0.0
 		var alignment = NSTextAlignment.natural
 
-		let parts = string.components(at: 5)
+		let parts = string.componentsSeparatedAt(level: 5)
 
 		for part in parts {
-			let subparts = part.components(at: 6)
+			let subparts = part.componentsSeparatedAt(level: 6)
 			let    value = subparts[1]
 			switch subparts[0] {
 				case kLocation:  if let v = value.floatValue                                         { location  = v }
@@ -838,13 +832,13 @@ extension NSTextTab {
 extension NSMutableParagraphStyle {
 
 	var string: String {
-		var result = kAlignment + gSeparator(at: 3) + "\(alignment.rawValue)"
+		var result = kAlignment + gSeparatorAt(level: 3) + "\(alignment.rawValue)"
 
 		if  let stops = tabStops {
-			result.append(gSeparator(at: 2) + kStops)
+			result.append(gSeparatorAt(level: 2) + kStops)
 
 			for stop in stops {
-				result.append(gSeparator(at: 3) + stop.string)
+				result.append(gSeparatorAt(level: 3) + stop.string)
 			}
 		}
 
@@ -854,10 +848,10 @@ extension NSMutableParagraphStyle {
 	convenience init(string: String) {
 		self.init()
 
-		let parts = string.components(at: 2)
+		let parts = string.componentsSeparatedAt(level: 2)
 
 		for part in parts {
-			let subparts = part.components(at: 3)
+			let subparts = part.componentsSeparatedAt(level: 3)
 
 			if  subparts.count > 1 {
 				switch subparts[0] {
@@ -896,19 +890,19 @@ extension NSFontDescriptor {
 		var separator = ""
 
 		for (name, attribute) in fontAttributes {
-			result.append(separator + name.rawValue + gSeparator(at: 3) + "\(attribute)")
-			separator = gSeparator(at: 2)
+			result.append(separator + name.rawValue + gSeparatorAt(level: 3) + "\(attribute)")
+			separator = gSeparatorAt(level: 2)
 		}
 
 		return result
 	}
 
 	convenience init(string: String) {
-		let parts = string.modern.components(at: 2)
+		let parts = string.modern.componentsSeparatedAt(level: 2)
 		var dict  = [NSFontDescriptor.AttributeName : Any]()
 
 		for part in parts {
-			let subparts   = part.components(at: 3)
+			let subparts   = part.componentsSeparatedAt(level: 3)
 			if  subparts.count > 1 {
 				let    key = subparts[0]
 				let  value = subparts[1]
@@ -924,11 +918,32 @@ extension NSFontDescriptor {
 
 extension NSMutableAttributedString {
 
-	var allKeys: [NSAttributedString.Key] { return [.font, .link, .paragraphStyle, .foregroundColor, .backgroundColor] }
+	var allKeys: [NSAttributedString.Key] { return [.font, .link, .attachment, .paragraphStyle, .foregroundColor, .backgroundColor] }
+
+	var image: ZImage? {
+		get {
+			var found: ZImage?
+			let  range = NSRange(location: 0, length: length)
+
+			for key in allKeys {
+				enumerateAttribute(key, in: range, options: .reverse) { (item, inRange, flag) in
+					if  let  value = item,
+						let attach = value as? NSTextAttachment,
+						let   cell = attach.attachmentCell as? NSTextAttachmentCell {
+						found      = cell.image
+					}
+				}
+			}
+
+			return found
+		}
+
+		set {}
+	}
 
 	var attributesAsString: String {
-		get { return attributeStrings.joined(separator: gSeparator(at: 1)) }
-		set { attributeStrings = newValue.components(at: 1) }
+		get { return attributeStrings.joined(separator: gSeparatorAt(level: 1)) }
+		set { attributeStrings = newValue.componentsSeparatedAt(level: 1) }
 	}
 
 	var attributeStrings: [String] {
@@ -958,7 +973,7 @@ extension NSMutableAttributedString {
 						}
 
 						if  let append = string as? String {
-							result.append("\(inRange.location)" + gSeparator(at: 4) + "\(inRange.length)" + gSeparator(at: 4) + key.rawValue + gSeparator(at: 4) + append)
+							result.append("\(inRange.location)" + gSeparatorAt(level: 4) + "\(inRange.length)" + gSeparatorAt(level: 4) + key.rawValue + gSeparatorAt(level: 4) + append)
 						}
 					}
 				}
@@ -969,7 +984,7 @@ extension NSMutableAttributedString {
 
 		set {
 			for string in newValue {
-				let      parts = string.components(at: 4)
+				let      parts = string.componentsSeparatedAt(level: 4)
 				if       parts.count > 3,
 					let  start = parts[0].integerValue,
 					let  count = parts[1].integerValue {
@@ -1077,14 +1092,14 @@ extension String {
     }
 
 	var modern: String {
-		return replacingOccurrences(of: kLevelOneSeparator,   with: gSeparator(at: 1))
-			.replacingOccurrences      (of: kLevelTwoSeparator,   with: gSeparator(at: 2))
-			.replacingOccurrences      (of: kLevelThreeSeparator, with: gSeparator(at: 3))
-			.replacingOccurrences      (of: kLevelFourSeparator,  with: gSeparator(at: 4))
+		return replacingOccurrences(of: kLevelOneSeparator,   with: gSeparatorAt(level: 1))
+			.replacingOccurrences      (of: kLevelTwoSeparator,   with: gSeparatorAt(level: 2))
+			.replacingOccurrences      (of: kLevelThreeSeparator, with: gSeparatorAt(level: 3))
+			.replacingOccurrences      (of: kLevelFourSeparator,  with: gSeparatorAt(level: 4))
 	}
 
-	func components(at level: Int) -> [String] {
-		return components(separatedBy: gSeparator(at: level))
+	func componentsSeparatedAt(level: Int) -> [String] {
+		return components(separatedBy: gSeparatorAt(level: level))
 	}
 
 	subscript (r: Range<Int>) -> String {

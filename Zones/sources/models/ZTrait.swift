@@ -6,10 +6,8 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
-
 
 enum ZTraitType: String {
 	case eDate      = "d"
@@ -30,7 +28,6 @@ enum ZTraitType: String {
 	}
 }
 
-
 class ZTrait: ZRecord {
 
 	@objc dynamic var format: String?
@@ -43,7 +40,6 @@ class ZTrait: ZRecord {
     var _ownerZone: Zone?
     override var unwrappedName: String { return text ?? emptyName }
 
-
     var deepCopy: ZTrait {
         let theCopy = ZTrait(databaseID: databaseID)
 
@@ -51,7 +47,6 @@ class ZTrait: ZRecord {
 
         return theCopy
     }
-
 
     override var emptyName: String {
         if  let tType = traitType {
@@ -64,7 +59,6 @@ class ZTrait: ZRecord {
 
         return ""
     }
-
 
     var traitType: ZTraitType? {
         get {
@@ -83,7 +77,6 @@ class ZTrait: ZRecord {
         }
     }
 
-
     var ownerZone: Zone? {
         if  _ownerZone == nil {
             _ownerZone  = cloud?.maybeZoneForRecordID(owner?.recordID)
@@ -92,18 +85,15 @@ class ZTrait: ZRecord {
         return _ownerZone
     }
 
-
     convenience init(databaseID: ZDatabaseID?) {
         self.init(record: CKRecord(recordType: kTraitType), databaseID: databaseID)
     }
-
 
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
         self.init(record: nil, databaseID: dbID)
 
         setStorageDictionary(dict, of: kTraitType, into: dbID)
     }
-
 
     override class func cloudProperties() -> [String] {
         return[#keyPath(type),
@@ -114,11 +104,9 @@ class ZTrait: ZRecord {
 			   #keyPath(format)]
     }
 
-
     override func cloudProperties() -> [String] {
         return super.cloudProperties() + ZTrait.cloudProperties()
     }
-
 
     override func orphan() {
         ownerZone?.setTextTrait(nil, for: traitType)
@@ -127,7 +115,6 @@ class ZTrait: ZRecord {
 
         updateCKRecordProperties()
     }
-
 
     override func unorphan() {
         if  let traits = ownerZone?.traits, let t = traitType, traits[t] == nil {
@@ -164,6 +151,7 @@ class ZTrait: ZRecord {
 		set {
 			if  let string = newValue {
 				format 	   = string.attributesAsString
+				asset      = string.image?.jpeg?.asset
 				text 	   = string.string
 			}
 		}

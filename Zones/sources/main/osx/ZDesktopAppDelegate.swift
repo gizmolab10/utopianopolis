@@ -45,6 +45,7 @@ var gDesktopAppDelegate: ZDesktopAppDelegate?
 
         if  note.notificationType == .query,
             let queryNote = note as? CKQueryNotification {
+			
             gRemoteStorage.receiveFromCloud(queryNote)
         }
     }

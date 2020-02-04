@@ -210,8 +210,7 @@ enum ZStorageType: String {
     case trash           = "trash"
     case date            = "date"
 
-	case essayAttributes = "essayAttributes" // zones
-    case recordName      = "recordName"
+    case recordName      = "recordName"		 // zones
     case parentLink      = "parentLink"
     case attributes      = "attributes"
     case children        = "children"

@@ -102,12 +102,10 @@ class ZRing: NSObject {
     func goBack(extreme: Bool = false) {
         if  let    index = primeIndex {
             currentIndex = index
-//        } else if !atPrime {
-//            push()
         }
 
         if  currentIndex <= 0 || currentIndex > topIndex {
-            currentIndex = topIndex
+            currentIndex = topIndex	// wrap around
         } else if extreme {
             currentIndex = 0
         } else if currentIndex == topIndex || atPrime {
@@ -118,16 +116,14 @@ class ZRing: NSObject {
     }
 
     func goForward(extreme: Bool = false) {
-        if  let    index = primeIndex {
-            currentIndex = index
-        } else if !atPrime {
-            push()
+        if  let     index = primeIndex {
+            currentIndex  = index
         }
 
         if  currentIndex == topIndex {
-            currentIndex  = 0
+            currentIndex  = 0	// wrap around
         } else if  extreme {
-            currentIndex = topIndex
+            currentIndex  = topIndex
         } else if  currentIndex < topIndex {
             currentIndex += 1
         }
@@ -147,6 +143,8 @@ class ZRing: NSObject {
 
 	func update() {
 		if  isEmpty {
+			gCurrentEssay = nil
+
 			gControllers.swapGraphAndEssay()
 		} else if let item = ring[currentIndex] as? ZParagraph {
 			gEssayView?.resetCurrentEssay(item)
@@ -200,9 +198,8 @@ class ZRing: NSObject {
 					ring.remove(at: index)
 					removeEmpties()
 
-					if  isEmpty {
-						gCurrentEssay = nil
-					} else if index == currentIndex {
+					if !isEmpty,
+						index == currentIndex {
 						goBack()
 					}
 
