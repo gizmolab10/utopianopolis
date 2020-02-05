@@ -47,14 +47,11 @@ class ZEssay: ZParagraph {
 				}
 			}
 
-			var offset = 0
-
-			for child in children {				// update paragraph offsets
-				child.paragraphOffset = offset
-				offset                = child.offsetTextRange.upperBound + gBlankLine.length
-
+			for child in children {
 				child.colorize(result)
 			}
+
+			updateOffsets()
 		}
 
 		essayLength = result?.length ?? 0
@@ -77,6 +74,15 @@ class ZEssay: ZParagraph {
 					}
 				}
 			}
+		}
+	}
+
+	override func updateOffsets() {
+		var offset = 0
+
+		for child in children {				// update paragraph offsets
+			child.paragraphOffset = offset
+			offset                = child.offsetTextRange.upperBound + gBlankLine.length
 		}
 	}
 

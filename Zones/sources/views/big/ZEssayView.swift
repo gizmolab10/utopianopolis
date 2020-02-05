@@ -61,12 +61,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func resetCurrentEssay(_ current: ZParagraph?) {
+	func resetCurrentEssay(_ current: ZParagraph?, selecting: Zone? = nil) {
 		if  let     essay = current {
 			gCurrentEssay = essay
 
 			gCurrentEssay?.reset()
 			updateText()
+			gCurrentEssay?.updateOffsets()
+
+			if  let range = selecting?.essayMaybe?.offsetTextRange {
+				setSelectedRange(range)
+			}
 		}
 	}
 
@@ -116,11 +121,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
+		let  OPTION = flags.isOption
+//		let SPECIAL = COMMAND && OPTION
+		let    FULL = COMMAND && OPTION && CONTROL
 
 		if  COMMAND {
 			switch key {
 				case "a":      selectAll(nil)
-				case "d":      convertToChild()
+				case "d":      convertToChild(createEssay: FULL)
 				case "e":      export()
 				case "h":      showHyperlinkPopup()
 				case "i":      showSpecialsPopup()
@@ -128,13 +136,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "s":      save()
 				case "]":      gEssayRing.goForward()
 				case "[":      gEssayRing.goBack()
-				case "/":      if gEssayRing.popAndRemoveEmpties() { exit() }
 				case kReturn:  grabbedZone?.grab(); done()
 				default:       return false
 			}
 		} else if CONTROL {
 			switch key {
 				case "d":      convertToChild(createEssay: true)
+				case "/":      if gEssayRing.popAndRemoveEmpties() { exit() }
 				default:       return false
 			}
 		}
@@ -151,7 +159,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let parent = selectionZone {
 			let  child = Zone(databaseID: dbID, named: text)    		// create new (to be child) zone from text
 
-			insertText("", replacementRange: selectionRange)	// remove text
+			insertText("", replacementRange: selectionRange)			// remove text
 			parent.addChild(child)
 			child.asssureIsVisible()
 			save()
@@ -160,12 +168,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				child.setTextTrait(kEssayDefault, for: .eEssay)			// create a placeholder essay in the child
 				grabbedZone?.createEssay()
 
-				resetCurrentEssay(grabbedZone?.essay)						// redraw essay TODO: WITH NEW PARAGRAPH SELECTED
+				resetCurrentEssay(grabbedZone?.essay, selecting: child)	// redraw essay TODO: WITH NEW PARAGRAPH SELECTED
 			} else {
 				exit()
 				child.grab()
 
-				FOREGROUND {				// defer idea edit until after this function exits
+				FOREGROUND {											// defer idea edit until after this function exits
 					child.edit()
 				}
 			}
@@ -200,7 +208,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func select(restoreSelection: Int? = nil) {
-		if  let e = gCurrentEssay, e.lastTextIsDefault,
+		if  let e = gCurrentEssay, (e.lastTextIsDefault || restoreSelection != nil),
 			var range      = e.lastTextRange {			// select entire text of final essay
 			if  let offset = restoreSelection {
 				range      = NSRange(location: offset, length: 0)

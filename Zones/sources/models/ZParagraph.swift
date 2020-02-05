@@ -33,6 +33,7 @@ class ZParagraph: NSObject {
 	var         textRange    = NSRange()
 
 	func setupChildren() {}
+	func updateOffsets() {}
 	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return paragraphTrait?.updateEssayFontSize(increment) ?? false }
