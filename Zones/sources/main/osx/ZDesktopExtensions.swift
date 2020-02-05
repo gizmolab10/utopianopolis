@@ -927,8 +927,6 @@ extension ZBitmapImageRep {
 
 extension Data {
 	var bitmap: ZBitmapImageRep? { ZBitmapImageRep(data: self) }
-	var  asset: CKAsset? { get { CKAsset(fileURL: url) } set {} }
-	var    url: URL { URL(fileURLWithPath: gFiles.randomFilePath) }
 }
 
 extension ZImage {

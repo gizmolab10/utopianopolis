@@ -280,18 +280,32 @@ extension NSObject {
 }
 
 extension Data {
-	func asset(from: Data) -> CKAsset {
-		return CKAsset(fileURL: URL(fileURLWithPath: gFiles.randomFilePath))
-	}
 
-	func write() -> URL? {
+	func asset(_ fileName: String? = nil) -> CKAsset? {
+		if  let url = writeAsset(fileName) {
+			return CKAsset(fileURL: url)
+		}
+
 		return nil
 	}
+
+	func writeAsset(_ fileName: String? = nil) -> URL? {
+		let url = gFiles.assetURL(fileName)
+
+		do {
+			try write(to: url)
+		} catch {
+			return nil
+		}
+
+		return url
+	}
+
 }
 
 extension CKAsset {
 	var data: Data? {
-		FileManager.default.contents(atPath: "\(fileURL.path).png")
+		FileManager.default.contents(atPath: fileURL.path)
 	}
 }
 
@@ -920,25 +934,29 @@ extension NSMutableAttributedString {
 
 	var allKeys: [NSAttributedString.Key] { return [.font, .link, .attachment, .paragraphStyle, .foregroundColor, .backgroundColor] }
 
-	var image: ZImage? {
-		get {
-			var found: ZImage?
-			let  range = NSRange(location: 0, length: length)
+	var attachment: NSTextAttachment? {
+		let range = NSRange(location: 0, length: length)
+		var found : NSTextAttachment?
 
-			for key in allKeys {
-				enumerateAttribute(key, in: range, options: .reverse) { (item, inRange, flag) in
-					if  let  value = item,
-						let attach = value as? NSTextAttachment,
-						let   cell = attach.attachmentCell as? NSTextAttachmentCell {
-						found      = cell.image
-					}
-				}
+		enumerateAttribute(.attachment, in: range, options: .reverse) { (item, inRange, flag) in
+			if  let attach = item as? NSTextAttachment {
+				found      = attach
 			}
-
-			return found
 		}
 
-		set {}
+		return found
+	}
+
+	var assetFileName: String? {
+		return attachment?.fileWrapper?.preferredFilename
+	}
+
+	var image: ZImage? {
+		if  let cell = attachment?.attachmentCell as? NSTextAttachmentCell {
+			return cell.image
+		}
+
+		return nil
 	}
 
 	var attributesAsString: String {
@@ -966,6 +984,10 @@ extension NSMutableAttributedString {
 
 						if  let  color = value as? NSColor {
 							string     = color.string
+						}
+
+						if  let attach = value as? NSTextAttachment {
+							string     = attach.fileWrapper?.preferredFilename
 						}
 
 						if  let  style = value as? NSMutableParagraphStyle {
@@ -997,6 +1019,7 @@ extension NSMutableAttributedString {
 					switch key {
 						case .link:            attribute =                                 string
 						case .font:            attribute = ZFont 				  (string: string)
+						case .attachment:      attribute =                                 string.textAttachment
 						case .foregroundColor,
 							 .backgroundColor: attribute = ZColor				  (string: string)
 						case .paragraphStyle:  attribute = NSMutableParagraphStyle(string: string)
@@ -1036,6 +1059,16 @@ extension String {
     var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var       isOpposite: Bool { return "]}>)".contains(self) }
+
+	var textAttachment: NSTextAttachment? {
+		do {
+			return try NSTextAttachment(fileWrapper: FileWrapper(url: gFiles.assetURL(self), options: []))
+		} catch {
+			print(error)
+		}
+
+		return nil
+	}
 
     var opposite: String {
 		switch self {

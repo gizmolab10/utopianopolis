@@ -151,7 +151,7 @@ class ZTrait: ZRecord {
 		set {
 			if  let string = newValue {
 				format 	   = string.attributesAsString
-				asset      = string.image?.jpeg?.asset
+				asset      = string.image?.jpeg?.asset(string.assetFileName)
 				text 	   = string.string
 			}
 		}

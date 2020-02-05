@@ -33,7 +33,6 @@ class ZFiles: NSObject {
     var filePaths: [String?] = [nil, nil]
     var  writeTimer : Timer?
     var _directoryURL : URL?
-	var randomFilePath: String { return "CloudKit/assets/foobar.png" }
     let              manager = FileManager.default
 
     var isWritingNow: Bool {
@@ -375,6 +374,24 @@ class ZFiles: NSObject {
         
         return directoryURL
     }
+
+	var assetDirectoryURL : URL {
+		let url = directoryURL.appendingPathComponent("assets")
+
+		do {
+			try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true, attributes: nil)
+		} catch {
+			printDebug(.errors, "\(error)")
+		}
+
+		return url
+	}
+
+	func assetURL(_ assetFileName: String? = nil) -> URL {
+		let  name = assetFileName ?? UUID().uuidString
+
+		return assetDirectoryURL.appendingPathComponent(name)
+	}
 
     func fileName(for index: ZDatabaseIndex, isGeneric: Bool = true) -> String? {
         if  let dbID = index.databaseID {

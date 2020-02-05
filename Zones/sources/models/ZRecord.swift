@@ -476,10 +476,11 @@ class ZRecord: NSObject {
 					return nil
 				}
 			case .asset:
-				if  let  asset = object as? CKAsset,
-					let base64 = asset.data?.base64EncodedString() as NSObject? {
+				if  let    asset = object as? CKAsset,
+					let   base64 = asset.data?.base64EncodedString() {
+					let fileName = asset.fileURL.lastPathComponent
 
-					return base64
+					return (fileName + gSeparatorAt(level: 1) + base64) as NSObject?
 				} else {
 					return nil
 			}
@@ -569,10 +570,13 @@ class ZRecord: NSObject {
 								writtenModifyDate = Date(timeIntervalSince1970: interval)
 							}
 						case .asset:
-							if  let base64 = object as? String,
-								let   data = Data(base64Encoded: base64),
-								let  asset = data.asset {
-								ckRecord[keyPath] = asset
+							if  let      parts = (object as? String)?.componentsSeparatedAt(level: 1), parts.count > 1 {
+								let   fileName = parts[0]
+								let     base64 = parts[1]
+								if  let   data = Data(base64Encoded: base64),
+									let  asset = data.asset(fileName) {
+									ckRecord[keyPath] = asset
+								}
 							}
 						default:
 							ckRecord[keyPath] = value
