@@ -33,7 +33,7 @@ class ZMainController: ZGenericController {
     }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		let   hideEssay = gWorkMode != .essayMode
+		let   hideEssay = gWorkMode != .noteMode
         let  hideSearch = gWorkMode != .searchMode
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
@@ -49,7 +49,7 @@ class ZMainController: ZGenericController {
 
 					assignAsFirstResponder(nil)
 				}
-			case .eEssay:
+			case .eNote:
 				if  let 	   			  vEssay = essayView,
 					let                   vGraph = graphView {
 					let                   editor = gTextEditor

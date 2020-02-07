@@ -12,17 +12,17 @@ enum ZControllerID: Int {
     case idUndefined
     case idSearchResults
     case idAuthenticate
-    case idInformation
     case idPreferences
     case idFavorites
 	case idShortcuts
     case idDetails
     case idActions
+	case idStatus
     case idSearch
     case idGraph
     case idDebug
-	case idEssay
     case idTools
+	case idNote
     case idHelp
 	case idMain
 	case idRing
@@ -31,12 +31,13 @@ enum ZControllerID: Int {
 enum ZSignalKind: Int {
     case eData
     case eMain
+	case eNote
     case eDatum
     case eDebug
     case eError
     case eFound
 	case eGraph
-	case eEssay
+	case eStatus
 	case eResize
     case eSearch
 	case eStartup
@@ -45,7 +46,6 @@ enum ZSignalKind: Int {
     case eFavorites
 	case eLaunchDone
     case eAppearance
-    case eInformation
     case ePreferences
 }
 
@@ -78,11 +78,11 @@ class ZControllers: NSObject {
 	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
 		if  let id = iID {
 			switch id {
-				case .idEssay: return .white
+				case .idNote:  return .white
 				case .idDetails,
 					 .idGraph,
 					 .idRing:  return kClearColor
-				case .idInformation,
+				case .idStatus,
 					 .idPreferences,
 					 .idTools,
 					 .idDebug: return gDarkishBackgroundColor
@@ -97,12 +97,12 @@ class ZControllers: NSObject {
 	// MARK:-
 
 	func swapGraphAndEssay(for mode: ZWorkMode? = nil) {
-		let newMode    			        = mode ?? ((gWorkMode == .graphMode) ? .essayMode : .graphMode)
+		let newMode    			        = mode ?? ((gWorkMode == .graphMode) ? .noteMode : .graphMode)
 
 		if  newMode != gWorkMode {
 			gWorkMode 					= newMode
-			let showEssay 			    = newMode == .essayMode
-			let multiple: [ZSignalKind] = showEssay ? [.eEssay] : [.eEssay, .eRelayout]
+			let showEssay 			    = newMode == .noteMode
+			let multiple: [ZSignalKind] = showEssay ? [.eNote] : [.eNote, .eRelayout]
 
 			FOREGROUND { 	// avoid generic menu handler invoking graph editor's handle key
 				gTextEditor.stopCurrentEdit()
@@ -203,12 +203,12 @@ class ZControllers: NSObject {
             gRemoteStorage.updateNeededCounts() // clean up after adding or removing children
             
             for (identifier, signalObject) in self.signalObjectsByControllerID {
-                let isInformation = identifier == .idInformation
                 let isPreferences = identifier == .idPreferences
+				let      isStatus = identifier == .idStatus
                 let       isDebug = identifier == .idDebug
                 let       isGraph = identifier == .idGraph
                 let        isMain = identifier == .idMain
-                let      isDetail = isInformation || isPreferences || isDebug
+                let      isDetail = isPreferences || isStatus || isDebug
                 
                 for regarding in multiple {
                     let closure = {
@@ -219,8 +219,8 @@ class ZControllers: NSObject {
                     case .eMain:        if isMain        { closure() }
                     case .eGraph:       if isGraph       { closure() }
                     case .eDebug:       if isDebug       { closure() }
+					case .eStatus:      if isStatus      { closure() }
                     case .eDetails:     if isDetail      { closure() }
-                    case .eInformation: if isInformation { closure() }
                     case .ePreferences: if isPreferences { closure() }
                     default:                               closure()
                     }

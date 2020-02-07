@@ -6,10 +6,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Information Controller-->
+        <!--Status Controller-->
         <scene sceneID="SRV-hs-cwo">
             <objects>
-                <viewController id="fxO-Qj-JeN" customClass="ZInformationController" customModule="Thoughtful" sceneMemberID="viewController">
+                <viewController id="fxO-Qj-JeN" customClass="ZStatusController" customModule="Thoughtful" sceneMemberID="viewController">
                     <view key="view" id="mbO-Ma-L1E">
                         <rect key="frame" x="0.0" y="0.0" width="228" height="151"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -236,7 +236,7 @@
                                                 <subviews>
                                                     <button focusRingType="none" verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y">
                                                         <rect key="frame" x="0.0" y="2" width="226" height="15"/>
-                                                        <buttonCell key="cell" type="roundRect" title="Information" bezelStyle="roundedRect" alignment="center" state="on" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="nh5-Lk-WYv">
+                                                        <buttonCell key="cell" type="roundRect" title="Status" bezelStyle="roundedRect" alignment="center" state="on" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="nh5-Lk-WYv" userLabel="Status">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
@@ -275,7 +275,7 @@
                                                     <constraint firstAttribute="height" constant="1" id="C2O-FA-fBm"/>
                                                 </constraints>
                                             </box>
-                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Information">
+                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Status">
                                                 <rect key="frame" x="0.0" y="0.0" width="226" height="31"/>
                                                 <connections>
                                                     <segue destination="fxO-Qj-JeN" kind="embed" id="w7B-Py-09b"/>

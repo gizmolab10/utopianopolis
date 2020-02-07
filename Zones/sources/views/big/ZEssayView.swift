@@ -28,7 +28,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var selectionString    : String?   { return textStorage?.attributedSubstring(from: selectionRange).string }
 	var selectionRange     = NSRange() { didSet { selectionRect = rectForRange(selectionRange) } }
 	var selectionRect      = CGRect()
-	var selectionZone      : Zone?     { return selectedParagraphs.first?.zone }
+	var selectionZone      : Zone?     { return selectedNotes.first?.zone }
 
 	func save()   { gCurrentEssay?.saveEssay(textStorage); accountForSelection() }
 	func export() { gFiles.exportToFile(.eEssay, for: grabbedZone) }
@@ -61,7 +61,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func resetCurrentEssay(_ current: ZParagraph?, selecting: Zone? = nil) {
+	func resetCurrentEssay(_ current: ZNote?, selecting: Zone? = nil) {
 		if  let     essay = current {
 			gCurrentEssay = essay
 
@@ -77,7 +77,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	private var overwrite: Bool {
 		if  let current = gCurrentEssay,
-			current.paragraphMaybe?.needsSave ?? false,
+			current.noteMaybe?.needsSave ?? false,
 			current.essayLength != 0,
 			let i = essayID,
 			i == grabbedZone?.record?.recordID {	// been here before
@@ -139,15 +139,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case kReturn:  grabbedZone?.grab(); done()
 				default:       return false
 			}
+
+			return true
 		} else if CONTROL {
 			switch key {
 				case "d":      convertToChild(createEssay: true)
 				case "/":      if gEssayRing.popAndRemoveEmpties() { exit() }
 				default:       return false
 			}
+
+			return true
 		}
 
-		return true
+		return false
 	}
 
 	// MARK:- private
@@ -165,10 +169,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			save()
 
 			if  createEssay {
-				child.setTextTrait(kEssayDefault, for: .eEssay)			// create a placeholder essay in the child
+				child.setTextTrait(kEssayDefault, for: .eNote)			// create a placeholder essay in the child
 				grabbedZone?.createEssay()
 
-				resetCurrentEssay(grabbedZone?.essay, selecting: child)	// redraw essay TODO: WITH NEW PARAGRAPH SELECTED
+				resetCurrentEssay(grabbedZone?.essay, selecting: child)	// redraw essay TODO: WITH NEW NOTE SELECTED
 			} else {
 				exit()
 				child.grab()
@@ -189,8 +193,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func move(out: Bool) {
-		gCreateMultipleEssay = true
-		let        selection = selectedParagraphs
+		gCreateCombinedEssay = true
+		let        selection = selectedNotes
 
 		if !out, let last = selection.last {
 			resetCurrentEssay(last)
@@ -223,8 +227,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func accountForSelection() {
 		var needsUngrab = true
 
-		for paragraph in selectedParagraphs {
-			if  let grab = paragraph.zone {
+		for note in selectedNotes {
+			if  let grab = note.zone {
 				if  needsUngrab {
 					needsUngrab = false
 					gSelecting.ungrabAll()
@@ -240,7 +244,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	private func showSpecialsPopup() {
-		NSMenu.specialsPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: nil)
+		NSMenu.specialsPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: self)
 	}
 
 	@objc private func handleSpecialsPopupMenu(_ iItem: ZMenuItem) {
@@ -374,7 +378,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			menu.addItem(item(type: type))
 		}
 
-		menu.popUp(positioning: nil, at: selectionRect.origin, in: nil)
+		menu.popUp(positioning: nil, at: selectionRect.origin, in: self)
 	}
 
 	private func item(type: ZHyperlinkMenuType) -> NSMenuItem {
@@ -393,7 +397,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			switch type {
 				case .eClear: link = nil // to remove existing hyperlink
-				case .eWeb:   link?.append("//apple.com")
+				case .eWeb:   link = gEssayController?.modalForWebLink(textStorage?.string.substring(with: selectionRange))
 				default:      if let b = gSelecting.pastableRecordName { link?.append(b) } else { return }
 			}
 
@@ -405,13 +409,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	var selectedParagraphs: [ZParagraph] {
-		var array = [ZParagraph]()
+	var selectedNotes: [ZNote] {
+		var array = [ZNote]()
 
-		if  let zones = grabbedZone?.paragraphs {
+		if  let zones = grabbedZone?.notes {
 			for zone in zones {
-				if  let paragraph = zone.essayMaybe, paragraph.paragraphRange.inclusiveIntersection(selectionRange) != nil {
-					array.append(paragraph)
+				if  let note = zone.essayMaybe, note.noteRange.inclusiveIntersection(selectionRange) != nil {
+					array.append(note)
 				}
 			}
 		}
@@ -474,7 +478,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 									self.setSelectedRange(range)
 									self.scroll(rect.origin)
 								} else {
-									gCreateMultipleEssay = true
+									gCreateCombinedEssay = true
 
 									target.grab()					// for later, when user exits essay mode
 									target.asssureIsVisible()

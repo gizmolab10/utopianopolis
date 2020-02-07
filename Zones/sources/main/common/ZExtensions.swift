@@ -290,15 +290,17 @@ extension Data {
 	}
 
 	func writeAsset(_ fileName: String? = nil) -> URL? {
-		let url = gFiles.assetURL(fileName)
+		if  let url = gFiles.assetURL(fileName) {
+			do {
+				try write(to: url)
+			} catch {
+				return nil
+			}
 
-		do {
-			try write(to: url)
-		} catch {
-			return nil
+			return url
 		}
 
-		return url
+		return nil
 	}
 
 }
@@ -1060,16 +1062,6 @@ extension String {
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var       isOpposite: Bool { return "]}>)".contains(self) }
 
-	var textAttachment: NSTextAttachment? {
-		do {
-			return try NSTextAttachment(fileWrapper: FileWrapper(url: gFiles.assetURL(self), options: []))
-		} catch {
-			print(error)
-		}
-
-		return nil
-	}
-
     var opposite: String {
 		switch self {
 			case "[": return "]"
@@ -1339,6 +1331,18 @@ extension String {
 
         return a == kHalfLineOfDashes && b == kHalfLineOfDashes
     }
+
+	var textAttachment: NSTextAttachment? {
+		if  let url = gFiles.assetURL(self) {
+			do {
+				return try NSTextAttachment(fileWrapper: FileWrapper(url: url, options: []))
+			} catch {
+				print(error)
+			}
+		}
+
+		return nil
+	}
 
     static func forZones(_ zones: [Zone]?) -> String {
         return zones?.apply()  { object -> (String?) in
@@ -1630,7 +1634,7 @@ extension ZView {
 		var    asEssay = false
 		var     asIdea = false
 
-		if let essay = object as? ZParagraph {
+		if let   essay = object as? ZNote {
 			asEssay    = true
 			essayFocus = essay == gCurrentEssay
 		} else if let idea = object as? Zone {

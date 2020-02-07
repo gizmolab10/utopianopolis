@@ -422,7 +422,7 @@ class ZGraphEditor: ZBaseEditor {
 
 	func grabOrEdit(_ COMMAND: Bool, _  OPTION: Bool, _ ESCAPE: Bool = false) {
         if  COMMAND {								// switch to essay edit mode
-			gCreateMultipleEssay     = !OPTION		// default is multiple, option drives it to single
+			gCreateCombinedEssay     = !OPTION		// default is multiple, option drives it to single
 
 			if  gCurrentEssay == nil || OPTION || !ESCAPE {	// restore prior essay or create one fresh (OPTION forces the latter)
 				gCurrentEssay        =  gSelecting.firstGrab?.freshEssay

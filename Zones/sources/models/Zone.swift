@@ -41,7 +41,7 @@ class Zone : ZRecord {
 	var                   assetMaybe :            CKAsset?
     var                   colorMaybe :             ZColor?
     var                   emailMaybe :             String?
-	var       		      essayMaybe :         ZParagraph?
+	var       		      essayMaybe :         ZNote?
 	var                     children =          ZoneArray()
 	var                       traits =   ZTraitDictionary()
     var                        count :                Int  { return children.count }
@@ -71,7 +71,7 @@ class Zone : ZRecord {
     var                    canTravel :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasEssay }
     var                     hasColor :               Bool  { return zoneColor != nil && zoneColor != "" }
 	var                     hasEmail :               Bool  { return hasTrait(for: .eEmail) && email != "" }
-	var                     hasEssay :               Bool  { return hasTrait(for: .eEssay) }
+	var                     hasEssay :               Bool  { return hasTrait(for: .eNote) }
 	var                     hasAsset :               Bool  { return hasTrait(for: .eAsset) }
     var                      isTrash :               Bool  { return recordName == kTrashName }
     var                    isInTrash :               Bool  { return root?.isTrash              ?? false }
@@ -170,11 +170,11 @@ class Zone : ZRecord {
 		}
 	}
 
-	var paragraphs:  [Zone] {
+	var notes:  [Zone] {
 		var result = [Zone]()
 
 		traverseAllProgeny { zone in
-			if  zone.hasTrait(for: .eEssay) {
+			if  zone.hasTrait(for: .eNote) {
 				result.append(zone)
 			}
 		}
@@ -182,7 +182,7 @@ class Zone : ZRecord {
 		return result
 	}
 
-	var freshEssay: ZParagraph {
+	var freshEssay: ZNote {
 		if  isBookmark {
 			return bookmarkTarget!.freshEssay
 		}
@@ -192,7 +192,7 @@ class Zone : ZRecord {
 		return essay
 	}
 
-	var essay: ZParagraph {
+	var essay: ZNote {
 		if  isBookmark {
 			return bookmarkTarget!.essay
 		} else if essayMaybe == nil {
@@ -203,17 +203,17 @@ class Zone : ZRecord {
 	}
 
 	func createEssay() {
-		let array = paragraphs
+		let array = notes
 		let count = array.count
-		if  count > 1 && gCreateMultipleEssay {
+		if  count > 1 && gCreateCombinedEssay {
 			let  essay = ZEssay(self)
 			essayMaybe = essay
 
 			essay.setupChildren()
-		} else if count == 0 || gCreateMultipleEssay {
-			essayMaybe = ZParagraph(self)
+		} else if count == 0 || gCreateCombinedEssay {
+			essayMaybe = ZNote(self)
 		} else {
-			essayMaybe = ZParagraph(array[0])
+			essayMaybe = ZNote(array[0])
 		}
 	}
 
@@ -1710,7 +1710,7 @@ class Zone : ZRecord {
 				if  gDebugMode.contains(.essays),
 					let   tt = trait.type,
 					let type = ZTraitType(rawValue: tt),
-					type    == .eEssay {
+					type    == .eNote {
 					printDebug(.essays, "trait (in " + (zoneName ?? "unknown") + ") --> " + (trait.format ?? "empty"))
 				}
 

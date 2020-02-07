@@ -17,10 +17,10 @@ import UIKit
 let gEssayEditor = ZEssayEditor()
 
 class ZEssayEditor: ZBaseEditor {
-	override var workMode: ZWorkMode { return .essayMode }
+	override var workMode: ZWorkMode { return .noteMode }
 
 	override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
-		if  gWorkMode != .essayMode || inWindow {
+		if  gWorkMode != .noteMode || inWindow {
 			return false
 		}
 
@@ -47,8 +47,8 @@ class ZEssayEditor: ZBaseEditor {
 				}
 			} else {
 				switch key {
-					case kEscape: if OPTION { gEssayView?.accountForSelection() }; gControllers.swapGraphAndEssay()
-					default:  	  return false
+					case kEscape:  if OPTION { gEssayView?.accountForSelection() }; gControllers.swapGraphAndEssay()
+					default:       return gEssayView?.handleKey(iKey, flags: flags) ?? false
 				}
 			}
 		}

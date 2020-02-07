@@ -14,11 +14,12 @@ import Cocoa
 import UIKit
 #endif
 
-var gEssayController: ZEssayController? { return gControllers.controllerForID(.idEssay) as? ZEssayController }
+var gEssayController: ZEssayController? { return gControllers.controllerForID(.idNote) as? ZEssayController }
 
 class ZEssayController: ZGesturesController, ZScrollDelegate {
-	override  var controllerID : ZControllerID { return .idEssay }
-	@IBOutlet var    essayView : ZEssayView?
+	override  var      controllerID : ZControllerID { return .idNote }
+	@IBOutlet var webLinkController : ZWebLinkController?
+	@IBOutlet var         essayView : ZEssayView?
 
 	override func setup() {
 		gestureView = essayView    // do this before calling super setup
@@ -26,4 +27,20 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 		super.setup()
 		essayView?.updateText()
 	}
+
+	func modalForWebLink(_ title: String?) -> String? {
+		if  let name = title {
+			performSegue(withIdentifier: "webLink", sender: nil)
+//			let a = ZAlert()
+//
+//			a.accessoryView = webLinkController?.view
+//
+//			a.showAlert { status in
+//				print(name)
+//			}
+		}
+
+		return nil
+	}
+
 }

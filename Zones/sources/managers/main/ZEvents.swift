@@ -75,7 +75,7 @@ class ZEvents: NSObject {
                     switch gWorkMode {
 						case .searchMode:
 							return       gSearching.handleEvent(event)
-						case .essayMode:
+						case .noteMode:
 							if  gIsShortcutsFrontmost {
 								return  gShortcuts?.handleEvent(event) ?? nil
 							} else {

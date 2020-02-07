@@ -100,7 +100,7 @@ var gDesktopAppDelegate: ZDesktopAppDelegate?
 	var workingEditor: ZBaseEditor? {
 		switch gWorkMode {
 			case .graphMode: return gGraphEditor
-			case .essayMode: return gEssayEditor
+			case .noteMode: return gEssayEditor
 			default: 		 return nil
 		}
 	}

@@ -8,13 +8,13 @@
 
 import Foundation
 
-class ZEssay: ZParagraph {
+class ZEssay: ZNote {
 	var essayRange: NSRange { return NSRange(location: 0, length: essayLength) }
 	override var lastTextIsDefault: Bool { return children.last?.lastTextIsDefault ?? false }
 
 	override var lastTextRange: NSRange? {
 		if  let    last = children.last {
-			return last.textRange.offsetBy(last.paragraphOffset)
+			return last.textRange.offsetBy(last.noteOffset)
 		}
 
 		return nil
@@ -25,9 +25,9 @@ class ZEssay: ZParagraph {
 		var index  = children.count
 
 		if  index == 0 {    // the first time
-			let paragraph = ZParagraph(zone)
+			let     note = ZNote(zone)
 
-			if  let  text = paragraph.paragraphText {
+			if  let text = note.noteText {
 				result?.insert(text, at: 0)
 			}
 		} else {
@@ -35,7 +35,7 @@ class ZEssay: ZParagraph {
 				index        -= 1
 				let 	 bump = gBlankLine.length
 
-				if  let  text = child.paragraphText {
+				if  let  text = child.noteText {
 					result    = result ?? NSMutableAttributedString()
 					result?.insert(gBlankLine, at: 0)
 					result?.insert(text,       at: 0)
@@ -62,11 +62,11 @@ class ZEssay: ZParagraph {
 	}
 
 	override func setupChildren() {
-		if  gCreateMultipleEssay {
+		if  gCreateCombinedEssay {
 			children.removeAll()
 
 			zone?.traverseAllProgeny { iChild in
-				if  iChild.hasTrait(for: .eEssay) {
+				if  iChild.hasTrait(for: .eNote) {
 					let essay = iChild.essay
 
 					if !self.children.contains(essay) {
@@ -80,21 +80,21 @@ class ZEssay: ZParagraph {
 	override func updateOffsets() {
 		var offset = 0
 
-		for child in children {				// update paragraph offsets
-			child.paragraphOffset = offset
-			offset                = child.offsetTextRange.upperBound + gBlankLine.length
+		for child in children {				// update note offsets
+			child.noteOffset = offset
+			offset           = child.offsetTextRange.upperBound + gBlankLine.length
 		}
 	}
 
 	override func saveEssay(_ attributedString: NSAttributedString?) {
 		if  let attributed  = attributedString {
 			for child in children {
-				let range   = child.paragraphRange
+				let range   = child.noteRange
 
 				if  range.upperBound <= attributed.length {
 					let sub = attributed.attributedSubstring(from: range)
 
-					child.saveParagraph(sub)
+					child.saveNote(sub)
 				}
 			}
 		}
@@ -110,18 +110,18 @@ class ZEssay: ZParagraph {
 
 		for child in children {
 			if  equal {
-				adjust    -= child.paragraphRange.length
+				adjust    -= child.noteRange.length
 
 				child.delete()
 			} else {
-				let (alter,  delta) = child.shouldAlterParagraph(range, length: length, adjustment: adjust)
+				let (alter,  delta) = child.shouldAlterNote(range, length: length, adjustment: adjust)
 				adjust    += delta
 
 				if  alter != .eLock {
 					result = .eAlter
 
 					if  alter == .eDelete {
-						offset = child.paragraphOffset
+						offset = child.noteOffset
 					}
 				}
 			}

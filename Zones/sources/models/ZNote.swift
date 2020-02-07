@@ -1,5 +1,5 @@
 //
-//  ZParagraph.swift
+//  ZNote.swift
 //  Zones
 //
 //  Created by Jonathan Sand on 12/27/19.
@@ -15,28 +15,28 @@ enum ZAlterationType: Int {
 	case eExit
 }
 
-class ZParagraph: NSObject {
+class ZNote: NSObject {
 	var    zone  	         : Zone?
-	var    children          = [ZParagraph]()
+	var    children          = [ZNote]()
 	var    essayLength       = 0
-	var    paragraphOffset   = 0
-	var    paragraphMaybe    : ZTrait?   { return zone?.traits[  .eEssay] }
-	var    paragraphTrait    : ZTrait?   { return zone?.traitFor(.eEssay) }
+	var    noteOffset        = 0
+	var    noteMaybe         : ZTrait?   { return zone?.traits[  .eNote] }
+	var    noteTrait         : ZTrait?   { return zone?.traitFor(.eNote) }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
-	var    lastTextIsDefault : Bool      { return paragraphMaybe?.text == kEssayDefault }
-	var    fullTitleOffset   : Int       { return paragraphOffset + titleRange.location - 2 }
+	var    lastTextIsDefault : Bool      { return noteMaybe?.text == kEssayDefault }
+	var    fullTitleOffset   : Int       { return noteOffset + titleRange.location - 2 }
 	var    fullTitleRange    : NSRange   { return NSRange(location:   fullTitleOffset, length: titleRange.length + 3) }
-	var    paragraphRange    : NSRange   { return NSRange(location:   paragraphOffset, length:  textRange.upperBound) }
-	var   offsetTextRange    : NSRange   { return textRange .offsetBy(paragraphOffset) }
+	var         noteRange    : NSRange   { return NSRange(location:   noteOffset, length:  textRange.upperBound) }
+	var   offsetTextRange    : NSRange   { return textRange .offsetBy(noteOffset) }
 	var     lastTextRange    : NSRange?  { return textRange }
 	var        titleRange    = NSRange()
 	var         textRange    = NSRange()
 
 	func setupChildren() {}
 	func updateOffsets() {}
-	func saveEssay(_ attributedString: NSAttributedString?) { saveParagraph(attributedString) }
+	func saveEssay(_ attributedString: NSAttributedString?) { saveNote(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
-	func updateTraitFontSize(_ increment: Bool) -> Bool { return paragraphTrait?.updateEssayFontSize(increment) ?? false }
+	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
 
 	init(_ zone: Zone?) {
 		super.init()
@@ -45,13 +45,13 @@ class ZParagraph: NSObject {
 	}
 
 	func delete() {
-		zone?.removeTrait(for: .eEssay)
+		zone?.removeTrait(for: .eNote)
 		gEssayRing.removeFromStack(self) // display prior essay
 		gRingView?.setNeedsDisplay()
 	}
 
 	func reset() {
-		paragraphMaybe?.clearSave()
+		noteMaybe?.clearSave()
 		setupChildren()
 	}
 
@@ -80,7 +80,7 @@ class ZParagraph: NSObject {
 	}
 
 	var essayText : NSMutableAttributedString? {
-		let  result = paragraphText
+		let  result = noteText
 		essayLength = result?.length ?? 0
 
 		colorize(result)
@@ -89,19 +89,19 @@ class ZParagraph: NSObject {
 
 	}
 
-	var paragraphText: NSMutableAttributedString? {
+	var noteText: NSMutableAttributedString? {
 		var result:    NSMutableAttributedString?
 
-		if  let        name = zone?.zoneName,
-			let        text = paragraphTrait?.essayText {
-			let      spacer = "  "
-			let     sOffset = spacer.length
-			let     tOffset = sOffset + name.length + gBlankLine.length + 1
-			let       title = NSMutableAttributedString(string: spacer + name + kTab, attributes: titleAttributes)
-			result          = NSMutableAttributedString()
-			titleRange      = NSRange(location: sOffset, length: name.length)
-			textRange       = NSRange(location: tOffset, length: text.length)
-			paragraphOffset = 0
+		if  let    name = zone?.zoneName,
+			let    text = noteTrait?.essayText {
+			let  spacer = "  "
+			let sOffset = spacer.length
+			let tOffset = sOffset + name.length + gBlankLine.length + 1
+			let   title = NSMutableAttributedString(string: spacer + name + kTab, attributes: titleAttributes)
+			result      = NSMutableAttributedString()
+			titleRange  = NSRange(location: sOffset, length: name.length)
+			textRange   = NSRange(location: tOffset, length: text.length)
+			noteOffset  = 0
 
 			result?.insert(text,       at: 0)
 			result?.insert(gBlankLine, at: 0)
@@ -126,17 +126,17 @@ class ZParagraph: NSObject {
 		textRange  = textRange .offsetBy(offset)
 	}
 
-	func saveParagraph(_ attributedString: NSAttributedString?) {
-		if  let  attributed = attributedString,
-			let       essay = paragraphMaybe {
-			let      string = attributed.string
-			let        text = attributed.attributedSubstring(from: textRange)
-			let       title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
-			essay.essayText = text.mutableCopy() as? NSMutableAttributedString
-			zone? .zoneName = title
+	func saveNote(_ attributedString: NSAttributedString?) {
+		if  let attributed = attributedString,
+			let       note = noteMaybe {
+			let     string = attributed.string
+			let       text = attributed.attributedSubstring(from: textRange)
+			let      title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
+			note.essayText = text.mutableCopy() as? NSMutableAttributedString
+			zone?.zoneName = title
 
 			zone?.needSave()
-			essay.needSave()
+			note.needSave()
 		}
 	}
 
@@ -148,7 +148,7 @@ class ZParagraph: NSObject {
 	}
 
 	func shouldAlterEssay(_ range: NSRange, length: Int) -> (ZAlterationType, Int) {
-		var (result, delta) = shouldAlterParagraph(range, length: length)
+		var (result, delta) = shouldAlterNote(range, length: length)
 
 		if  result == .eDelete {
 			result  = .eExit
@@ -157,12 +157,12 @@ class ZParagraph: NSObject {
 		return (result, delta)
 	}
 
-	func shouldAlterParagraph(_ iRange: NSRange, length: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
+	func shouldAlterNote(_ iRange: NSRange, length: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
 		var 	result  		    	= ZAlterationType.eLock
 		var      delta                  = 0
 
-		if  let range 		            = iRange.inclusiveIntersection(paragraphRange)?.offsetBy(-paragraphOffset) {
-			if  range                  == paragraphRange.offsetBy(-paragraphOffset) {
+		if  let range 		            = iRange.inclusiveIntersection(noteRange)?.offsetBy(-noteOffset) {
+			if  range                  == noteRange.offsetBy(-noteOffset) {
 				result					= .eDelete
 
 				delete()
@@ -182,7 +182,7 @@ class ZParagraph: NSObject {
 			}
 		}
 
-		paragraphOffset += adjustment
+		noteOffset += adjustment
 
 		return 	(result, delta)
 	}

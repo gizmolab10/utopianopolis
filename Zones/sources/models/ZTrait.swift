@@ -10,20 +10,20 @@ import Foundation
 import CloudKit
 
 enum ZTraitType: String {
-	case eDate      = "d"
-	case eHyperlink = "h"
 	case eDuration  = "+" // accumulative
 	case eMoney     = "$" //      "
 	case eAsset     = "a" // allow multiple
+	case eHyperlink = "h"
 	case eEmail     = "e"
-	case eEssay     = "w"
+	case eDate      = "d"
+	case eNote      = "w"
 
 	var heightRatio: CGFloat {
 		switch self {
-			case .eDuration,
-				 .eEmail,
-				 .eEssay: return 0.66667
-			default: 	  return 1.0
+			case .eHyperlink,
+				 .eMoney,
+				 .eDate: return 1.0
+			default:     return 0.66667
 		}
 	}
 }

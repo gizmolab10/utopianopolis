@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 
-class ZInformationController: ZGenericController {
+class ZStatusController: ZGenericController {
 
 
 	@IBOutlet var creationDateLabel: ZTextField?
@@ -26,7 +26,7 @@ class ZInformationController: ZGenericController {
     @IBOutlet var      versionLabel: ZTextField?
     @IBOutlet var        levelLabel: ZTextField?
     var                 currentZone: Zone          { return gSelecting.rootMostMoveable }
-    override  var      controllerID: ZControllerID { return .idInformation }
+    override  var      controllerID: ZControllerID { return .idStatus }
 
 
     var versionText: String {

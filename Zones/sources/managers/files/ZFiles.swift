@@ -127,7 +127,7 @@ class ZFiles: NSObject {
     // MARK:-
 
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) {
-		if  let           dbID = databaseID,
+		if  let           dbID = databaseID, gUseFiles,
 			dbID              != .favoritesID,
             let        manager = gRemoteStorage.cloud(for: dbID),
 			let        index   = dbID.index,
@@ -387,10 +387,8 @@ class ZFiles: NSObject {
 		return url
 	}
 
-	func assetURL(_ assetFileName: String? = nil) -> URL {
-		let  name = assetFileName ?? UUID().uuidString
-
-		return assetDirectoryURL.appendingPathComponent(name)
+	func assetURL(_ assetFileName: String? = nil) -> URL? {
+		return assetFileName == nil ? nil : assetDirectoryURL.appendingPathComponent(assetFileName!)
 	}
 
     func fileName(for index: ZDatabaseIndex, isGeneric: Bool = true) -> String? {

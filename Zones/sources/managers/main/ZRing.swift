@@ -25,7 +25,7 @@ class ZRing: NSObject {
 	var visibleRingTypes : ZTinyDotTypeArray { return ZTinyDotTypeArray() }
 
 	var isPrime : Bool {
-		guard let essay = ringPrime as? ZParagraph else { return false }
+		guard let essay = ringPrime as? ZNote else { return false }
 
 		return gCurrentEssay == essay
 	}
@@ -56,9 +56,9 @@ class ZRing: NSObject {
     }
 
 	func isInRing(_ item: AnyObject) -> Bool {
-		if  let o = item as? ZParagraph {
+		if  let o = item as? ZNote {
 			for ringItem in ring {
-				if  let r = ringItem as? ZParagraph,
+				if  let r = ringItem as? ZNote,
 					o.zone == r.zone {
 					return true
 				}
@@ -146,7 +146,7 @@ class ZRing: NSObject {
 			gCurrentEssay = nil
 
 			gControllers.swapGraphAndEssay()
-		} else if let item = ring[currentIndex] as? ZParagraph {
+		} else if let item = ring[currentIndex] as? ZNote {
 			gEssayView?.resetCurrentEssay(item)
 		}
 
@@ -172,9 +172,9 @@ class ZRing: NSObject {
 		var removals = ZObjectsArray()
 
 		for item in ring {
-			if  let paragraph = item as? ZParagraph,
-				let zone = paragraph.zone,
-				!zone.hasTrait(for: .eEssay) {
+			if  let note = item as? ZNote,
+				let zone = note.zone,
+				!zone.hasTrait(for: .eNote) {
 				removals.append(item)
 			}
 		}
@@ -189,10 +189,10 @@ class ZRing: NSObject {
 	}
 
 	func removeFromStack(_ iItem: NSObject) {
-		if  let paragraph = iItem as? ZParagraph,
-			let      zone = paragraph.zone {
+		if  let note = iItem as? ZNote,
+			let zone = note.zone {
 			for (index, item) in ring.enumerated() {
-				if  let other = item as? ZParagraph,
+				if  let    other = item as? ZNote,
 					let ringZone = other.zone,
 					ringZone === zone {
 					ring.remove(at: index)

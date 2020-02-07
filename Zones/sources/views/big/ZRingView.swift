@@ -107,11 +107,11 @@ class ZRingView: ZView {
 	}
 
 	func focusOnEssay(_ item: NSObject) -> Bool {
-		if  let essay = item as? ZParagraph {
-			gControllers.swapGraphAndEssay(for: .essayMode)
-			gEssayView?.resetCurrentEssay(essay)
+		if  let note = item as? ZNote {
+			gControllers.swapGraphAndEssay(for: .noteMode)
+			gEssayView?.resetCurrentEssay(note)
 
-			printDebug(.ring, essay.zone?.zoneName ?? "unknown essay")
+			printDebug(.ring, note.zone?.zoneName ?? "unknown essay")
 
 			return true
 		}
@@ -130,7 +130,7 @@ class ZRingView: ZView {
 
 				return true
 			} else if var subitems = item as? ZObjectsArray {
-				if  (gWorkMode == .essayMode) ^^ (COMMAND ?? false) {
+				if  (gWorkMode == .noteMode) ^^ (COMMAND ?? false) {
 					subitems = subitems.reversed()
 				}
 
@@ -167,7 +167,7 @@ class ZRingView: ZView {
 			for object in ring {
 				if  object.isKind(of: Zone.self) {
 					results.append(object)
-				} else if let  essay = object as? ZParagraph,
+				} else if let  essay = object as? ZNote,
 					let idea = essay.zone {
 
 					if  let index = results.firstIndex(of: idea) {
