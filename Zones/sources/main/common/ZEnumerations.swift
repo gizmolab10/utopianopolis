@@ -224,7 +224,8 @@ enum ZStorageType: String {
     case count           = "count"
     case needs           = "needs"
     case link            = "link"
-    case name            = "name"
+	case name            = "name"
+	case note            = "note"
 
 	case format          = "format"          // traits
 	case asset           = "asset"
@@ -292,8 +293,8 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let  names = ZDebugMode()
 	static let  focus = ZDebugMode()
 	static let  speed = ZDebugMode()
+	static let  notes = ZDebugMode()
 	static let errors = ZDebugMode()
-	static let essays = ZDebugMode()
 	static let access = ZDebugMode()
 
 	var description: String {
@@ -302,10 +303,10 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.info,   "   info"),
 				(.ring,   "   ring"),
 				(.names,  "   name"),
+				(.notes,  "   note"),
 				(.focus,  "  focus"),
 				(.speed,  "  speed"),
 				(.errors, "  error"),
-				(.essays, "  essay"),
 				(.access, " access")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: " ")

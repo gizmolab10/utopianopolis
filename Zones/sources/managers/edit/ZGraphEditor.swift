@@ -130,7 +130,7 @@ class ZGraphEditor: ZBaseEditor {
                     prefix(with: key)
                 } else {
                     switch key {
-                    case "a":      if SPECIAL { gApplication.showHideAbout() } else { selectAll(progeny: OPTION) }
+					case "a":      if SPECIAL { gApplication.showHideAbout() } else if COMMAND { selectAll(progeny: OPTION) } else { alphabetize(OPTION) }
                     case "b":      addBookmark()
 					case "c":      if COMMAND { copyToPaste() } else { gGraphController?.recenter() }
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
@@ -142,7 +142,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "j":      rotateWritable()
 					case "k":      toggleColorized()
                     case "m":      orderByLength(OPTION)
-                    case "n":      alphabetize(OPTION)
+                    case "n":      grabOrEdit(true, OPTION, true)
                     case "o":      if SPECIAL { gFiles.showInFinder() } else { gFiles.importFromFile(OPTION ? .eOutline : .eThoughtful, insertInto: gSelecting.currentMoveable) { self.redrawAndSync() } }
                     case "p":      printCurrentFocus()
                     case "q":      gApplication.terminate(self)

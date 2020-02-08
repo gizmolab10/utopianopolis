@@ -41,7 +41,7 @@ class Zone : ZRecord {
 	var                   assetMaybe :            CKAsset?
     var                   colorMaybe :             ZColor?
     var                   emailMaybe :             String?
-	var       		      essayMaybe :         ZNote?
+	var       		       noteMaybe :              ZNote?
 	var                     children =          ZoneArray()
 	var                       traits =   ZTraitDictionary()
     var                        count :                Int  { return children.count }
@@ -187,33 +187,33 @@ class Zone : ZRecord {
 			return bookmarkTarget!.freshEssay
 		}
 
-		essayMaybe = nil
+		noteMaybe = nil
 
-		return essay
+		return note
 	}
 
-	var essay: ZNote {
+	var note: ZNote {
 		if  isBookmark {
-			return bookmarkTarget!.essay
-		} else if essayMaybe == nil {
-			createEssay()
+			return bookmarkTarget!.note
+		} else if noteMaybe == nil {
+			createNote()
 		}
 
-		return essayMaybe!
+		return noteMaybe!
 	}
 
-	func createEssay() {
+	func createNote() {
 		let array = notes
 		let count = array.count
 		if  count > 1 && gCreateCombinedEssay {
 			let  essay = ZEssay(self)
-			essayMaybe = essay
+			noteMaybe = essay
 
 			essay.setupChildren()
 		} else if count == 0 || gCreateCombinedEssay {
-			essayMaybe = ZNote(self)
+			noteMaybe = ZNote(self)
 		} else {
-			essayMaybe = ZNote(array[0])
+			noteMaybe = ZNote(array[0])
 		}
 	}
 
@@ -1707,11 +1707,11 @@ class Zone : ZRecord {
             for  traitStore:  ZStorageDictionary in traitsStore {
                 let    trait = ZTrait(dict: traitStore, in: iDatabaseID)
 
-				if  gDebugMode.contains(.essays),
+				if  gDebugMode.contains(.notes),
 					let   tt = trait.type,
 					let type = ZTraitType(rawValue: tt),
 					type    == .eNote {
-					printDebug(.essays, "trait (in " + (zoneName ?? "unknown") + ") --> " + (trait.format ?? "empty"))
+					printDebug(.notes, "trait (in " + (zoneName ?? "unknown") + ") --> " + (trait.format ?? "empty"))
 				}
 
                 cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait (intentionally) not being in traits

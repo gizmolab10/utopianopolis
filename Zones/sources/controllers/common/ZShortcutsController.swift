@@ -19,9 +19,9 @@ let gShortcutsController = NSStoryboard(name: "Shortcuts", bundle: nil).instanti
 
 class ZShortcutsController: ZGenericTableController {
 
-	@IBOutlet var gridView        : ZView?
-    @IBOutlet var clipView        : ZView?
-    override  var controllerID    : ZControllerID { return .idShortcuts }
+	@IBOutlet var gridView     : ZView?
+    @IBOutlet var clipView     : ZView?
+    override  var controllerID : ZControllerID { return .idShortcuts }
 	let shortcuts = ZShortcuts()
 
     override func viewDidLoad() {

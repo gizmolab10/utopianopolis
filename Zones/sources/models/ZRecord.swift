@@ -448,10 +448,11 @@ class ZRecord: NSObject {
             return nil
         }
 
-        if      ignoreKeyPathsForStorage().contains(keyPath) { return nil       // must be first ... ZStorageType now ignores two (owner and parent)
-        } else if keyPath == kpModificationDate              { return .date
-        } else if let type = ZStorageType(rawValue: keyPath) { return type
-        } else if let type = extractType(  kpZonePrefix) 	 { return type      // this deals with those two
+        if      ignoreKeyPathsForStorage().contains(keyPath) { return nil       // must be first ... ZStorageType now ignores owner and parent
+		} else if keyPath == kpEssay                         { return .note
+		} else if keyPath == kpModificationDate              { return .date
+		} else if let type = ZStorageType(rawValue: keyPath) { return type
+        } else if let type = extractType(  kpZonePrefix) 	 { return type      // this deals with owner and parent
         } else if let type = extractType(kpRecordPrefix)	 { return type
         } else                                               { return nil
         }
@@ -565,6 +566,15 @@ class ZRecord: NSObject {
                     let  value = object as? CKRecordValue {
 
 					switch type {
+						case .type: // convert essay trait to note trait
+							if  var string = object as? String,
+								let trait = ZTraitType(rawValue: string),
+								trait == .eEssay {
+								string = ZTraitType.eNote.rawValue
+								ckRecord[keyPath] = string as CKRecordValue
+							} else {
+								ckRecord[keyPath] = value
+							}
 						case .date:
 							if  let      interval = object as? Double {
 								writtenModifyDate = Date(timeIntervalSince1970: interval)

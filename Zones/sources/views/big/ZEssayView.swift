@@ -53,7 +53,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func clear() {
-		grabbedZone?.essayMaybe = nil
+		grabbedZone?.noteMaybe = nil
 		delegate                = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
 
 		if  let length = textStorage?.length, length > 0 {
@@ -69,7 +69,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			updateText()
 			gCurrentEssay?.updateOffsets()
 
-			if  let range = selecting?.essayMaybe?.offsetTextRange {
+			if  let range = selecting?.noteMaybe?.offsetTextRange {
 				setSelectedRange(range)
 			}
 		}
@@ -170,9 +170,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			if  createEssay {
 				child.setTextTrait(kEssayDefault, for: .eNote)			// create a placeholder essay in the child
-				grabbedZone?.createEssay()
+				grabbedZone?.createNote()
 
-				resetCurrentEssay(grabbedZone?.essay, selecting: child)	// redraw essay TODO: WITH NEW NOTE SELECTED
+				resetCurrentEssay(grabbedZone?.note, selecting: child)	// redraw essay TODO: WITH NEW NOTE SELECTED
 			} else {
 				exit()
 				child.grab()
@@ -201,7 +201,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if out {
 			grabbedZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
 				if  ancestor != grabbedZone, ancestor.hasEssay {
-					self.resetCurrentEssay(ancestor.essay)
+					self.resetCurrentEssay(ancestor.note)
 
 					return .eStop
 				}
@@ -414,13 +414,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  let zones = grabbedZone?.notes {
 			for zone in zones {
-				if  let note = zone.essayMaybe, note.noteRange.inclusiveIntersection(selectionRange) != nil {
+				if  let note = zone.noteMaybe, note.noteRange.inclusiveIntersection(selectionRange) != nil {
 					array.append(note)
 				}
 			}
 		}
 
-		if  let e = grabbedZone?.essay,
+		if  let e = grabbedZone?.note,
 			array.count == 0 {
 			array.append(e)
 		}
@@ -470,7 +470,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 							}
 
 							FOREGROUND {
-								if  let     e = target.essayMaybe, gCurrentEssay?.children.contains(e) ?? false {
+								if  let     e = target.noteMaybe, gCurrentEssay?.children.contains(e) ?? false {
 									let range = e.offsetTextRange	// text range of target essay
 									let start = NSRange(location: range.location, length: 1)
 									let  rect = self.convert(self.rectForRange(start), to: self).offsetBy(dx: 0.0, dy: -150.0)
@@ -482,7 +482,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 									target.grab()					// for later, when user exits essay mode
 									target.asssureIsVisible()
-									self.resetCurrentEssay(target.essay)
+									self.resetCurrentEssay(target.note)
 								}
 							}
 

@@ -67,7 +67,7 @@ class ZEssay: ZNote {
 
 			zone?.traverseAllProgeny { iChild in
 				if  iChild.hasTrait(for: .eNote) {
-					let essay = iChild.essay
+					let essay = iChild.note
 
 					if !self.children.contains(essay) {
 						self.children.append(essay)	// do not use essayMaybe as it may not yet be initialized

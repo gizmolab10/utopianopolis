@@ -232,7 +232,7 @@ extension NSObject {
                     }
                 }
 
-                result[storageKey]  = goodValue
+                result[storageKey]      = goodValue
             }
         }
 
@@ -244,25 +244,27 @@ extension NSObject {
         var  result = ZStringObjectDictionary ()
 
         let closure = { (key: ZStorageType, value: Any) in
-            var goodValue       = value
-            if  let     subDict = value as? ZStorageDictionary {
-                goodValue       = self.jsonDictFrom(subDict)
-            } else if let  date = value as? Date {
-                goodValue       = kTimeInterval + ":\(date.timeIntervalSinceReferenceDate)"
-            } else if let array = value as? [ZStorageDictionary] {
-                var jsonArray   = [ZStringObjectDictionary] ()
+            var goodValue        = value
+            if  let      subDict = value as? ZStorageDictionary {
+                goodValue        = self.jsonDictFrom(subDict)
+            } else if let   date = value as? Date {
+                goodValue        = kTimeInterval + ":\(date.timeIntervalSinceReferenceDate)"
+            } else if let  array = value as? [ZStorageDictionary] {
+                var jsonArray    = [ZStringObjectDictionary] ()
 
                 for subDict in array {
                     jsonArray.append(self.jsonDictFrom(subDict))
                 }
 
-                goodValue       = jsonArray
+                goodValue        = jsonArray
             }
 
-            result[key.rawValue]   = (goodValue as! NSObject)
+            result[key.rawValue] = (goodValue as! NSObject)
         }
 
-        for (key, value) in dict {
+        for (iKey, value) in dict {
+			let key = (iKey != .essay) ? iKey : .note
+
             if [.children, .traits].contains(key) {
                 last[key] = value
             } else {
@@ -1029,7 +1031,7 @@ extension NSMutableAttributedString {
 					}
 
 					if  let value = attribute {
-						printDebug(.essays, "add attribute over \(range) for \(raw): \(value)")
+						printDebug(.notes, "add attribute over \(range) for \(raw): \(value)")
 
 						addAttribute(key, value: value, range: range)
 					}

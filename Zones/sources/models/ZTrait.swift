@@ -15,8 +15,9 @@ enum ZTraitType: String {
 	case eAsset     = "a" // allow multiple
 	case eHyperlink = "h"
 	case eEmail     = "e"
+	case eEssay     = "w"
 	case eDate      = "d"
-	case eNote      = "w"
+	case eNote      = "n"
 
 	var heightRatio: CGFloat {
 		switch self {
@@ -126,7 +127,7 @@ class ZTrait: ZRecord {
         }
     }
 
-	var essayText: NSMutableAttributedString? {
+	var noteText: NSMutableAttributedString? {
 		get {
 			var string: NSMutableAttributedString?
 			let isEmpty   = text == nil || text!.isEmpty

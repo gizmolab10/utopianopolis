@@ -93,7 +93,7 @@ class ZNote: NSObject {
 		var result:    NSMutableAttributedString?
 
 		if  let    name = zone?.zoneName,
-			let    text = noteTrait?.essayText {
+			let    text = noteTrait?.noteText {
 			let  spacer = "  "
 			let sOffset = spacer.length
 			let tOffset = sOffset + name.length + gBlankLine.length + 1
@@ -132,7 +132,7 @@ class ZNote: NSObject {
 			let     string = attributed.string
 			let       text = attributed.attributedSubstring(from: textRange)
 			let      title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
-			note.essayText = text.mutableCopy() as? NSMutableAttributedString
+			note .noteText = text.mutableCopy() as? NSMutableAttributedString
 			zone?.zoneName = title
 
 			zone?.needSave()

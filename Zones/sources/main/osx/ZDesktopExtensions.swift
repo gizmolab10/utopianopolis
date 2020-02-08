@@ -1043,7 +1043,7 @@ extension ZFiles {
 							printDebug(.errors, "\(error)")
 						}
 					case .eEssay:
-						if  let text = zone.essay.essayText {
+						if  let text = zone.note.essayText {
 
 							do {
 								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtf])
