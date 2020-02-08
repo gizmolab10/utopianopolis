@@ -334,15 +334,15 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					}
 				} else {
 					let   rect = CGRect(origin: gesture.location(in: dragView), size: CGSize())
-					let inRing = gRingView?.respondToClick(in: rect, COMMAND) ?? false
+					let inRing = gRingView?.isInRect(rect) ?? false
 
 					// //////////////////////
 					// click in background //
 					// //////////////////////
 
-					gTextEditor.stopCurrentEdit()
-
 					if !inRing {
+						gTextEditor.stopCurrentEdit()
+
 						if  clickManager.isDoubleClick() {
 							recenter()
 						} else if !kIsPhone {	// default reaction to click on background: select here

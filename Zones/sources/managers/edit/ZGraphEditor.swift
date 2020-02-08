@@ -142,7 +142,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "j":      rotateWritable()
 					case "k":      toggleColorized()
                     case "m":      orderByLength(OPTION)
-                    case "n":      grabOrEdit(true, OPTION, true)
+                    case "n":      grabOrEdit(true, OPTION, false)
                     case "o":      if SPECIAL { gFiles.showInFinder() } else { gFiles.importFromFile(OPTION ? .eOutline : .eThoughtful, insertInto: gSelecting.currentMoveable) { self.redrawAndSync() } }
                     case "p":      printCurrentFocus()
                     case "q":      gApplication.terminate(self)
@@ -165,7 +165,7 @@ class ZGraphEditor: ZBaseEditor {
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { deleteGrabbed(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
                     case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) }
-					case kEscape:  if hasWidget { grabOrEdit(   true, OPTION, true) }
+					case kEscape:  if hasWidget { grabOrEdit(true,    OPTION, true) }
                     default:       return false // indicate key was not handled
                     }
                 }

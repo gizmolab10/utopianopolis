@@ -93,7 +93,7 @@ class ZRingView: ZView {
 	}
 
 	func focusOnIdea(_ item: NSObject) -> Bool {
-		if  let idea = item as? Zone {
+		if  let idea = item as? Zone, idea != gHere {
 			gControllers.swapGraphAndEssay(for: .graphMode)
 			gFocusRing.focusOn(idea) {
 				printDebug(.ring, idea.zoneName ?? "unknown zone")
@@ -117,6 +117,10 @@ class ZRingView: ZView {
 		}
 
 		return false
+	}
+
+	func isInRect(_ rect: CGRect?) -> Bool {
+		return item(containedIn: rect) != nil
 	}
 
 	@discardableResult func respondToClick(in rect: CGRect?, _ COMMAND: Bool? = nil) -> Bool {

@@ -30,6 +30,7 @@ class ZEssayEditor: ZBaseEditor {
 	@discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
 		if  var     key = iKey {
 			let COMMAND = flags.isCommand
+//			let CONTROL = flags.isControl
 			let  OPTION = flags.isOption
 			let SPECIAL = COMMAND && OPTION
 			
@@ -39,21 +40,23 @@ class ZEssayEditor: ZBaseEditor {
 
 			if  let arrow = key.arrow {
 				handleArrow(arrow, flags: flags)
+
+				return true
 			} else if  COMMAND {
 				switch key {
 //					case "=", "-": updateFontSize(key == "=")
-					case "/":      if SPECIAL { gControllers.showShortcuts() } else { fallthrough }
+					case "/":      if SPECIAL { gControllers.showShortcuts(); return true } else { fallthrough }
 					default:       return gEssayView?.handleKey(iKey, flags: flags) ?? false
 				}
 			} else {
 				switch key {
-					case kEscape:  if OPTION { gEssayView?.accountForSelection() }; gControllers.swapGraphAndEssay()
+					case kEscape:  if OPTION { gEssayView?.accountForSelection() }; gControllers.swapGraphAndEssay(); return true
 					default:       return gEssayView?.handleKey(iKey, flags: flags) ?? false
 				}
 			}
 		}
 		
-		return true
+		return false
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
