@@ -6,8 +6,6 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-import SnapKit
-
 #if os(OSX)
     import Cocoa
 #elseif os(iOS)
@@ -22,9 +20,9 @@ class ZMainController: ZGenericController {
     @IBOutlet var searchBoxHeight   : NSLayoutConstraint?
     @IBOutlet var searchResultsView : ZView?
     @IBOutlet var searchBoxView     : ZView?
-    @IBOutlet var detailView        :  ZView?
+    @IBOutlet var detailView        : ZView?
 	@IBOutlet var graphView         : ZView?
-	@IBOutlet var essayView     	   : ZView?
+	@IBOutlet var essayView     	: ZView?
     override  var controllerID      : ZControllerID { return .idMain }
 
     override func setup() {

@@ -6,8 +6,6 @@
 //  Copyright © 2019 Jonathan Sand. All rights reserved.
 //
 
-import SnapKit
-
 #if os(OSX)
 import Cocoa
 #elseif os(iOS)

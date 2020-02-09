@@ -85,8 +85,6 @@ class ZNote: NSObject {
 		let  result = noteText
 		essayLength = result?.length ?? 0
 
-		colorize(result)
-
 		return result
 
 	}
@@ -108,6 +106,8 @@ class ZNote: NSObject {
 			result?.insert(text,       at: 0)
 			result?.insert(gBlankLine, at: 0)
 			result?.insert(title,      at: 0)
+
+			colorize(result)
 
 			result?.fixAllAttributes()
 		}

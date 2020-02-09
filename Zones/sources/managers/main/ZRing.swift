@@ -94,9 +94,9 @@ class ZRing: NSObject {
 
 				insertIfUnique(newIndex)
 			}
-
-            currentIndex = newIndex
         }
+
+		currentIndex = newIndex
     }
 
     func goBack(extreme: Bool = false) {

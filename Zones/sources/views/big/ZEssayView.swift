@@ -22,7 +22,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var forwardButton   : ZButton?
 	var cancelButton    : ZButton?
 	var deleteButton    : ZButton?
-	var doneButton      : ZButton?
+	var hideButton      : ZButton?
 	var saveButton      : ZButton?
 	var essayID         : CKRecord.ID?
 	var grabbedZone		: Zone?     { return gCurrentEssay?.zone }
@@ -161,7 +161,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if CONTROL {
 			switch key {
 				case "d":      convertToChild(createEssay: true)
-				case "/":      pop()
+				case "/":      popAndUpdate()
 				default:       return false
 			}
 
@@ -174,7 +174,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- private
 	// MARK:-
 
-	func pop() {
+	func popAndUpdate() {
 		if  gEssayRing.popAndRemoveEmpties() {
 			exit()
 		} else {
@@ -292,24 +292,24 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		case idDelete
 		case idBack
 		case idSave
-		case idDone
+		case idHide
 
 		var title: String {
 			switch self {
 				case .idForward: return "􀓅"
 				case .idCancel:  return "Cancel"
 				case .idDelete:  return "Delete"
-				case .idDone:    return "Done"
+				case .idHide:    return "Hide"
 				case .idSave:    return "Save"
 				case .idBack:    return "􀓄"
 			}
 		}
 
-		static var all: [ZTextButtonID] { return [.idBack, .idForward, .idDone, .idSave, .idCancel, .idDelete] }
+		static var all: [ZTextButtonID] { return [.idBack, .idForward, .idHide, .idSave, .idCancel, .idDelete] }
 	}
 
 	func updateButtons(_ flag: Bool) {
-		doneButton?    .isEnabled = flag
+		hideButton?    .isEnabled = flag
 		saveButton?    .isEnabled = flag
 		cancelButton?  .isEnabled = flag
 		deleteButton?  .isEnabled = flag
@@ -324,7 +324,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idCancel:   cancelButton = button
 				case .idDelete:   deleteButton = button
 				case .idBack:   backwardButton = button
-				case .idDone:       doneButton = button
+				case .idHide:       hideButton = button
 				case .idSave:       saveButton = button
 			}
 		}
@@ -336,7 +336,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idForward: gEssayRing.goForward()
 				case .idCancel:  grabbedZone?.grab();     exit()
 				case .idDelete:  gCurrentEssay?.delete(); exit()
-				case .idDone:    grabbedZone?.grab();     done()
+				case .idHide:    grabbedZone?.grab();     done()
 				case .idSave:    save()
 				case .idBack:    gEssayRing.goBack()
 			}
@@ -379,6 +379,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	enum ZHyperlinkMenuType: String {
 		case eWeb   = "h"
 		case eIdea  = "i"
+		case eNote  = "n"
 		case eEssay = "e"
 		case eClear = "c"
 
@@ -386,6 +387,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch self {
 				case .eWeb:   return "Internet"
 				case .eIdea:  return "Idea"
+				case .eNote:  return "Note"
 				case .eEssay: return "Essay"
 				case .eClear: return "Clear"
 			}
@@ -398,7 +400,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 		}
 
-		static var all: [ZHyperlinkMenuType] { return [.eWeb, .eIdea, .eEssay, .eClear] }
+		static var all: [ZHyperlinkMenuType] { return [.eWeb, .eIdea, .eNote, .eEssay, .eClear] }
 
 	}
 
@@ -493,7 +495,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				let type = ZHyperlinkMenuType(rawValue: String(t)) {
 				let zone = gSelecting.zone(with: rID)	// find zone with rID
 				switch type {
-					case .eEssay:
+					case .eEssay, .eNote:
 						if  let target = zone {
 							let common = grabbedZone?.closestCommonParent(of: target)
 
@@ -502,15 +504,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 							}
 
 							FOREGROUND {
-								if  let     e = target.noteMaybe, gCurrentEssay?.children.contains(e) ?? false {
-									let range = e.offsetTextRange	// text range of target essay
+								if  let  note = target.noteMaybe, gCurrentEssay?.children.contains(note) ?? false {
+									let range = note.offsetTextRange	// text range of target essay
 									let start = NSRange(location: range.location, length: 1)
 									let  rect = self.convert(self.rectForRange(start), to: self).offsetBy(dx: 0.0, dy: -150.0)
 
 									self.setSelectedRange(range)
 									self.scroll(rect.origin)
 								} else {
-									gCreateCombinedEssay = true
+									gCreateCombinedEssay = type == .eEssay
 
 									target.grab()					// for later, when user exits essay mode
 									target.asssureIsVisible()

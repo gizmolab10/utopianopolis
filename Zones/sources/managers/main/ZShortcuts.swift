@@ -10,7 +10,7 @@ import Foundation
 
 class ZShortcuts : NSObject {
 
-	var numberOfRows: Int { return max(graphColumnOne.count, max(graphColumnTwo.count, max(graphColumnThree.count, graphColumnFour.count))) }
+	var numberOfRows: Int { return max(graphColumnOne.count, max(graphColumnTwo.count, max(graphColumnThree.count, graphColumnFour.count))) / 3 }
 	var tabStops = [NSTextTab]()
 	let bold = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
 	let columnWidth = 290

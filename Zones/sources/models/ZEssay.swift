@@ -47,10 +47,6 @@ class ZEssay: ZNote {
 				}
 			}
 
-			for child in children {
-				child.colorize(result)
-			}
-
 			updateOffsets()
 		}
 

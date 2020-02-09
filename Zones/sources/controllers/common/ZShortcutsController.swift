@@ -20,8 +20,8 @@ let gShortcutsController = NSStoryboard(name: "Shortcuts", bundle: nil).instanti
 class ZShortcutsController: ZGenericTableController {
 
 	@IBOutlet var gridView     : ZView?
-    @IBOutlet var clipView     : ZView?
-    override  var controllerID : ZControllerID { return .idShortcuts }
+	@IBOutlet var clipView     : ZView?
+	override  var controllerID : ZControllerID { return .idShortcuts }
 	let shortcuts = ZShortcuts()
 
     override func viewDidLoad() {
@@ -30,15 +30,15 @@ class ZShortcutsController: ZGenericTableController {
 
         view.zlayer.backgroundColor = gBackgroundColor.cgColor
         
-        if  let g = gridView,
-            let c = clipView {
+		if  let c = clipView,
+			let g = gridView {
             g.removeFromSuperview()
             c.addSubview(g)
 
             g.zlayer.backgroundColor = kClearColor.cgColor
 
             g.snp.makeConstraints { make in
-                make.top.bottom.left.right.equalTo(c)
+                make.top.bottom.left.right.equalTo(c) // text and grid scroll together
             }
         }
     }
