@@ -32,6 +32,7 @@ enum ZSignalKind: Int {
     case eData
     case eMain
 	case eNote
+	case eRing
     case eDatum
     case eDebug
     case eError
@@ -120,6 +121,12 @@ class ZControllers: NSObject {
 				shorts.window?.close()
 			}
 		}
+	}
+
+	func showHideRing() {
+		gFullRingIsVisible = !gFullRingIsVisible
+
+		signalFor(nil, regarding: .eRing)
 	}
 
     // MARK:- startup

@@ -54,7 +54,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
         let flags = event.modifierFlags
 
 		if  flags.isOption && flags.isCommand && flags.isControl && gWorkMode == .graphMode {
-            gFullRingIsVisible = !gFullRingIsVisible
+            gControllers.showHideRing()
         }
 
         super.flagsChanged(with: event)

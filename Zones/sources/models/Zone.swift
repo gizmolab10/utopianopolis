@@ -170,8 +170,8 @@ class Zone : ZRecord {
 		}
 	}
 
-	var notes:  [Zone] {
-		var result = [Zone]()
+	var zonesWithNotes: [Zone] {
+		var    result = [Zone]()
 
 		traverseAllProgeny { zone in
 			if  zone.hasTrait(for: .eNote) {
@@ -203,8 +203,8 @@ class Zone : ZRecord {
 	}
 
 	func createNote() {
-		let array = notes
-		let count = array.count
+		let zones = zonesWithNotes
+		let count = zones.count
 		if  count > 1 && gCreateCombinedEssay {
 			let  essay = ZEssay(self)
 			noteMaybe = essay
@@ -213,7 +213,7 @@ class Zone : ZRecord {
 		} else if count == 0 || gCreateCombinedEssay {
 			noteMaybe = ZNote(self)
 		} else {
-			noteMaybe = ZNote(array[0])
+			noteMaybe = ZNote(zones[0])
 		}
 	}
 

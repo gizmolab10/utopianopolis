@@ -18,22 +18,38 @@ import UIKit
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZTextView, ZTextViewDelegate {
-	var backwardButton     : ZButton?
-	var forwardButton      : ZButton?
-	var cancelButton       : ZButton?
-	var doneButton         : ZButton?
-	var saveButton         : ZButton?
-	var essayID            : CKRecord.ID?
-	var grabbedZone 	   : Zone?     { return gCurrentEssay?.zone }
-	var selectionString    : String?   { return textStorage?.attributedSubstring(from: selectionRange).string }
-	var selectionRange     = NSRange() { didSet { selectionRect = rectForRange(selectionRange) } }
-	var selectionRect      = CGRect()
-	var selectionZone      : Zone?     { return selectedNotes.first?.zone }
+	var backwardButton  : ZButton?
+	var forwardButton   : ZButton?
+	var cancelButton    : ZButton?
+	var deleteButton    : ZButton?
+	var doneButton      : ZButton?
+	var saveButton      : ZButton?
+	var essayID         : CKRecord.ID?
+	var grabbedZone		: Zone?     { return gCurrentEssay?.zone }
+	var selectionString : String?   { return textStorage?.attributedSubstring(from: selectionRange).string }
+	var selectionRange  = NSRange() { didSet { selectionRect = rectForRange(selectionRange) } }
+	var selectionZone   : Zone?     { return selectedNotes.first?.zone }
+	var selectionRect   = CGRect()
 
-	func save()   { gCurrentEssay?.saveEssay(textStorage); accountForSelection() }
 	func export() { gFiles.exportToFile(.eEssay, for: grabbedZone) }
-	func exit()   { gControllers.swapGraphAndEssay() }
 	func done()   { save(); exit() }
+
+	func exit() {
+		if  let e = gCurrentEssay,
+			e.lastTextIsDefault,
+			e.tentative {
+			e.delete()
+		}
+
+		gControllers.swapGraphAndEssay()
+	}
+
+	func save() {
+		if  let e = gCurrentEssay {
+			e.saveEssay(textStorage)
+			accountForSelection()
+		}
+	}
 
 	// MARK:- setup
 	// MARK:-
@@ -123,15 +139,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let CONTROL = flags.isControl
 		let  OPTION = flags.isOption
 //		let SPECIAL = COMMAND && OPTION
-		let    FULL = COMMAND && OPTION && CONTROL
+		let     ALL = COMMAND && OPTION && CONTROL
 
 		if  COMMAND {
 			switch key {
 				case "a":      selectAll(nil)
-				case "d":      convertToChild(createEssay: FULL)
+				case "d":      convertToChild(createEssay: ALL)
 				case "e":      export()
 				case "h":      showHyperlinkPopup()
 				case "i":      showSpecialsPopup()
+				case "j":      gControllers.showHideRing()
 				case "l", "u": alterCase(up: key == "u")
 				case "s":      save()
 				case "]":      gEssayRing.goForward()
@@ -144,7 +161,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if CONTROL {
 			switch key {
 				case "d":      convertToChild(createEssay: true)
-				case "/":      if gEssayRing.popAndRemoveEmpties() { exit() }
+				case "/":      pop()
 				default:       return false
 			}
 
@@ -156,6 +173,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	// MARK:- private
 	// MARK:-
+
+	func pop() {
+		if  gEssayRing.popAndRemoveEmpties() {
+			exit()
+		} else {
+			updateText()
+		}
+	}
 
 	private func convertToChild(createEssay: Bool = false) {
 		if  let   text = selectionString, text.length > 0,
@@ -195,6 +220,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func move(out: Bool) {
 		gCreateCombinedEssay = true
 		let        selection = selectedNotes
+
+		save()
 
 		if !out, let last = selection.last {
 			resetCurrentEssay(last)
@@ -262,6 +289,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	enum ZTextButtonID : Int {
 		case idForward
 		case idCancel
+		case idDelete
 		case idBack
 		case idSave
 		case idDone
@@ -270,19 +298,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch self {
 				case .idForward: return "􀓅"
 				case .idCancel:  return "Cancel"
+				case .idDelete:  return "Delete"
 				case .idDone:    return "Done"
 				case .idSave:    return "Save"
 				case .idBack:    return "􀓄"
 			}
 		}
 
-		static var all: [ZTextButtonID] { return [.idBack, .idForward, .idDone, .idSave, .idCancel] }
+		static var all: [ZTextButtonID] { return [.idBack, .idForward, .idDone, .idSave, .idCancel, .idDelete] }
 	}
 
 	func updateButtons(_ flag: Bool) {
 		doneButton?    .isEnabled = flag
 		saveButton?    .isEnabled = flag
 		cancelButton?  .isEnabled = flag
+		deleteButton?  .isEnabled = flag
 		forwardButton? .isEnabled = flag
 		backwardButton?.isEnabled = flag
 	}
@@ -292,6 +322,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch tag {
 				case .idForward: forwardButton = button
 				case .idCancel:   cancelButton = button
+				case .idDelete:   deleteButton = button
 				case .idBack:   backwardButton = button
 				case .idDone:       doneButton = button
 				case .idSave:       saveButton = button
@@ -303,8 +334,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if let buttonID = ZTextButtonID(rawValue: iButton.tag) {
 			switch buttonID {
 				case .idForward: gEssayRing.goForward()
-				case .idCancel:  grabbedZone?.grab(); exit()
-				case .idDone:    grabbedZone?.grab(); done()
+				case .idCancel:  grabbedZone?.grab();     exit()
+				case .idDelete:  gCurrentEssay?.delete(); exit()
+				case .idDone:    grabbedZone?.grab();     done()
 				case .idSave:    save()
 				case .idBack:    gEssayRing.goBack()
 			}
@@ -412,7 +444,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var selectedNotes: [ZNote] {
 		var array = [ZNote]()
 
-		if  let zones = grabbedZone?.notes {
+		if  let zones = grabbedZone?.zonesWithNotes {
 			for zone in zones {
 				if  let note = zone.noteMaybe, note.noteRange.inclusiveIntersection(selectionRange) != nil {
 					array.append(note)

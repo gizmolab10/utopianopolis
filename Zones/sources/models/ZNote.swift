@@ -18,6 +18,7 @@ enum ZAlterationType: Int {
 class ZNote: NSObject {
 	var    zone  	         : Zone?
 	var    children          = [ZNote]()
+	var    tentative         = false
 	var    essayLength       = 0
 	var    noteOffset        = 0
 	var    noteMaybe         : ZTrait?   { return zone?.traits[  .eNote] }
@@ -41,6 +42,7 @@ class ZNote: NSObject {
 	init(_ zone: Zone?) {
 		super.init()
 
+		tentative = true
 		self.zone = zone
 	}
 
@@ -134,6 +136,7 @@ class ZNote: NSObject {
 			let      title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
 			note .noteText = text.mutableCopy() as? NSMutableAttributedString
 			zone?.zoneName = title
+			tentative      = false
 
 			zone?.needSave()
 			note.needSave()

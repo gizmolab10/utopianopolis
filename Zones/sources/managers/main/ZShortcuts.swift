@@ -132,8 +132,7 @@ class ZShortcuts : NSObject {
 		" A", 			"show About Thoughtful", 						"",
 		" R", 			"report a problem", 							"",
 		"",				"", "",
-		"uCONTROL + COMMAND + OPTION", "", "",
-		"  ", 			"show or hide indicators", 						"",
+		"",				"", "",
 		"",				"", "",
 		"",				"", "",
 		"bSEARCH BAR:", "", "",
@@ -147,7 +146,6 @@ class ZShortcuts : NSObject {
 		" F", 			"dismisss search bar", 							"search-2a996591375a",
 		"",				"", "",
 	]
-
 
 	let graphColumnTwo: [String] = [
 		"",				"", "",
@@ -164,7 +162,6 @@ class ZShortcuts : NSObject {
 		"+COMMAND + OPTION", "", "",
 		" PERIOD", 		"toggle: next ideas precede/follow,", "",
 		"", 			"(and) move idea up/down", 						"organize-fcdc44ac04e4",
-		"",				"", "",
 		"",				"", "",
 		"",				"", "",
 		"",				"", "",
@@ -193,7 +190,6 @@ class ZShortcuts : NSObject {
 		"",				"", "",
 	]
 
-
 	let graphColumnThree: [String] = [
 		"",				"", "",
 		"bBROWSING (NOT EDITING TEXT):", "", "",
@@ -221,6 +217,7 @@ class ZShortcuts : NSObject {
 		" F", 			"search", 										"search-2a996591375a",
 		" G", 			"refetch children of selection", 				"cloud-vs-file-f3543f7281ac",
 		" H", 			"create or edit hidden hyperlink", 				"extras-2a9b1a7db21f",
+		" J", 			"show or hide jump controls",					"",
 		" L", 			"-> lowercase", 								"edit-d05d18996df7",
 		" K", 			"un/color the text", 							"extras-2a9b1a7db21f",
 		" N",			"create or edit hidden note",					"",
@@ -235,7 +232,6 @@ class ZShortcuts : NSObject {
 		" SHIFT", 		"un/extend selection", 							"selecting-ideas-cc2939720e53",
 		"",				"", "",
 	]
-
 
 	let graphColumnFour: [String] = [
 		"",				"", "",
@@ -266,7 +262,6 @@ class ZShortcuts : NSObject {
 		" LEFT ", 		"hide children", 								"focusing-your-thinking-a53adb16bba",
 		" RIGHT", 		"reveal children", 								"focusing-your-thinking-a53adb16bba",
 		" vertical", 	"extend selection", 							"selecting-ideas-cc2939720e53",
-		"",				"", "",
 		"",				"", "",
 		"",				"", "",
 		"",				"", "",
