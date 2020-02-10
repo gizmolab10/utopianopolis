@@ -1630,29 +1630,35 @@ extension ZView {
         superview?.applyToAllSuperviews(closure)
 	}
 
-	func analyze(_ object: AnyObject) -> (Bool, Bool, Bool, Bool) {
-		var essayFocus = false
-		var  ideaFocus = false
-		var    asEssay = false
-		var     asIdea = false
+	func analyze(_ object: AnyObject) -> (Bool, Bool, Bool, Bool, Bool) {
+		var noteFocus = false
+		var ideaFocus = false
+		var   asEssay = false
+		var    asNote = false
+		var    asIdea = false
 
-		if let   essay = object as? ZNote {
-			asEssay    = true
-			essayFocus = essay == gCurrentEssay
-		} else if let idea = object as? Zone {
-			asIdea     = true
-			ideaFocus  = idea == gHere
+		if let   idea = object as? Zone {
+			asIdea    = true
+			ideaFocus = idea == gHere
+		} else if let note = object as? ZNote {
+			asNote    = true
+			noteFocus = note == gCurrentEssay
+
+			if  note.isKind(of: ZEssay.self) {
+				asEssay = true
+			}
 		} else if let others = object as? ZObjectsArray {
 			for other in others {
-				let (newIdeaFocus, newIdea, newEssayFocus, newEssay) = analyze(other)
-				essayFocus = essayFocus || newEssayFocus
-				ideaFocus  = ideaFocus  || newIdeaFocus
-				asEssay    = asEssay    || newEssay
-				asIdea     = asIdea     || newIdea
+				let (newIdeaFocus, newIdea, newNoteFocus, newNote, newEssay) = analyze(other)
+				noteFocus = noteFocus || newNoteFocus
+				ideaFocus = ideaFocus || newIdeaFocus
+				asEssay   = asEssay   || newEssay
+				asNote    = asNote    || newNote
+				asIdea    = asIdea    || newIdea
 			}
 		}
 
-		return (ideaFocus, asIdea, essayFocus, asEssay)
+		return (ideaFocus, asIdea, noteFocus, asNote, asEssay)
 	}
 
 	func drawTinyDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0, onEach: IntRectClosure? = nil) {
@@ -1689,24 +1695,24 @@ extension ZView {
 						let  increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)
 						let startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 0.0 : 2.0 + startQuadrant : isFat ? 1.0 : 3.0)
 						let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
-						let (ideaFocus, asIdea, essayFocus, asEssay) = self.analyze(objects[index])
+						let (ideaFocus, asIdea, noteFocus, asNote, asEssay) = self.analyze(objects[index])
 
-						// essays are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)
-						// ideas  are ALWAYS tiny and SOMETIMES fat (if over ten) and SOMETIMES hollow (if over hundered)
+						// notes are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)
+						// ideas are ALWAYS tiny and SOMETIMES fat (if over ten) and SOMETIMES hollow (if over hundered)
 						//
-						// so, three booleans: isFat, isHollow, forEssay
+						// so, three booleans: isFat, isHollow, forNote
 						//
-						// everything should always goes out more (regardless of no essays)
+						// everything should always goes out more (regardless of no notes)
 
-						func drawDot(forEssay: Bool, isFocus: Bool) {
-							let     essayRatio = forEssay ? 1.5 : 1.0
-							let    offsetRatio = isFat    ? 2.1 : 1.28
-							let       fatRatio = isFat    ? 2.0 : 1.6
-							let       dotRatio = isFat    ? 4.0 : 2.5
+						func drawDot(forNote: Bool, isFocus: Bool, forEssay: Bool = false) {
+							let      noteRatio = forNote ? 1.5 : 1.0
+							let    offsetRatio = isFat   ? 2.1 : 1.28
+							let       fatRatio = isFat   ? 2.0 : 1.6
+							let       dotRatio = isFat   ? 4.0 : 2.5
 
 							let   scaledRadius = radius * scale
 							let  necklaceDelta = scaledRadius * 2.0 * 1.5
-							let      dotRadius = scaledRadius * fatRatio * essayRatio
+							let      dotRadius = scaledRadius * fatRatio * noteRatio
 							let     rectRadius = Double(rect.size.height) / 2.0
 							let necklaceRadius = CGFloat(rectRadius + necklaceDelta)
 							let    dotDiameter = CGFloat(dotRadius  * dotRatio)
@@ -1720,10 +1726,10 @@ extension ZView {
 							let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
 							let           path = ZBezierPath(ovalIn: ovalRect)
 							let       dotColor = !isFocus ? color : gRubberbandColor.lighter(by: 4.0) + color
-							path    .lineWidth = CGFloat(gLineThickness * 4.0)
+							path    .lineWidth = CGFloat(gLineThickness * (asEssay ? 7.0 : 3.0))
 							path     .flatness = 0.0001
 
-							if  isHollow || forEssay {
+							if  isHollow || forNote {
 								dotColor?.setStroke()
 								path.stroke()
 							} else {
@@ -1734,12 +1740,12 @@ extension ZView {
 							onEach?(index, ovalRect)
 						}
 
-						if  asEssay {
-							drawDot(forEssay:  true, isFocus: essayFocus)
+						if  asNote {
+							drawDot(forNote:  true, isFocus: noteFocus)
 						}
 
 						if  asIdea {
-							drawDot(forEssay: false, isFocus: ideaFocus)
+							drawDot(forNote: false, isFocus: ideaFocus)
 						}
 					}
 				}

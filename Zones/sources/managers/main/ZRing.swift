@@ -23,6 +23,7 @@ class ZRing: NSObject {
 	var          isEmpty : Bool              { return ring.count == 0 || possiblePrime == nil }
 	var          isEssay : Bool              { return true }
 	var visibleRingTypes : ZTinyDotTypeArray { return ZTinyDotTypeArray() }
+	func 		   clear() { ring.removeAll() }
 
 	var isPrime : Bool {
 		guard let essay = ringPrime as? ZNote else { return false }
@@ -188,7 +189,7 @@ class ZRing: NSObject {
 		}
 	}
 
-	func removeFromStack(_ iItem: NSObject) {
+	func removeFromStack(_ iItem: NSObject?) {
 		if  let note = iItem as? ZNote,
 			let zone = note.zone {
 			for (index, item) in ring.enumerated() {

@@ -97,6 +97,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "f":      search(OPTION)
                     case "i":      gTextEditor.showSpecialsPopup()
                     case "p":      printCurrentFocus()
+					case "x":      if SPECIAL { wipeRing() }
                     case "?":      gControllers.showShortcuts()
                     case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
 					case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
@@ -150,6 +151,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
                     case "t":      swapWithParent()
 					case "w":      rotateWritable()
+					case "x":      if SPECIAL { wipeRing() }
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
@@ -1373,6 +1375,7 @@ class ZGraphEditor: ZBaseEditor {
                         iZone.orphan()
                         gManifest?.smartAppend(iZone)
 						gFocusRing.removeFromStack(iZone)		// prevent focus stack from containing a zombie and thus getting stuck
+						gEssayRing.removeFromStack(iZone.noteMaybe)
                     }
 
                     if  zone.cloud?.cloudUnavailable ?? true {

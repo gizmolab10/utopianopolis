@@ -138,8 +138,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
 		let  OPTION = flags.isOption
-//		let SPECIAL = COMMAND && OPTION
-		let     ALL = COMMAND && OPTION && CONTROL
+		let SPECIAL = COMMAND && OPTION
+		let     ALL = SPECIAL && CONTROL
 
 		if  COMMAND {
 			switch key {

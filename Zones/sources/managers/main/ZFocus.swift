@@ -101,7 +101,7 @@ class ZFocus: ZRing {
 		}
 	}
 
-	override func removeFromStack(_ iItem: NSObject) {
+	override func removeFromStack(_ iItem: NSObject?) {
 		if  ring.count > 1,
 			let zone = iItem as? Zone {
 			for (index, item) in ring.enumerated() {

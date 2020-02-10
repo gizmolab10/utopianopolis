@@ -91,7 +91,7 @@ class ZRingView: ZView {
 	}
 
 	func focusOnIdea(_ item: NSObject) -> Bool {
-		if  let idea = item as? Zone, idea != gHere {
+		if  let idea = item as? Zone, ((idea != gHere) || (gWorkMode == .noteMode)) {
 			gControllers.swapGraphAndEssay(for: .graphMode)
 			gFocusRing.focusOn(idea) {
 				printDebug(.ring, idea.zoneName ?? "unknown zone")

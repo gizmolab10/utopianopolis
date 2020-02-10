@@ -210,7 +210,7 @@ class Zone : ZRecord {
 			noteMaybe = essay
 
 			essay.setupChildren()
-		} else if count == 0 || gCreateCombinedEssay {
+		} else if count == 0 || !gCreateCombinedEssay {
 			noteMaybe = ZNote(self)
 		} else {
 			noteMaybe = ZNote(zones[0])

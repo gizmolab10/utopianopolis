@@ -149,7 +149,7 @@ class ZShortcuts : NSObject {
 
 	let graphColumnTwo: [String] = [
 		"",				"", "",
-		"bEDITING TEXT:", "", "",
+		"bEDITING AN IDEA:", "", "",
 		"",				"", "",
 		"uKEY",			"", "",
 		" ESCAPE", 		"cancel edit, discarding changes", 				"edit-d05d18996df7",
@@ -192,7 +192,7 @@ class ZShortcuts : NSObject {
 
 	let graphColumnThree: [String] = [
 		"",				"", "",
-		"bBROWSING (NOT EDITING TEXT):", "", "",
+		"bBROWSING (NOT EDITING AN IDEA):", "", "",
 		"",				"", "",
 		" mark:", 		"" + kMarkingCharacters, 						"extras-2a9b1a7db21f",
 		"",				"", "",

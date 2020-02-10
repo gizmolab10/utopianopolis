@@ -45,6 +45,7 @@ class ZEssayEditor: ZBaseEditor {
 			} else if  COMMAND {
 				switch key {
 //					case "=", "-": updateFontSize(key == "=")
+					case "x":      if SPECIAL { wipeRing() }
 					case "/":      if SPECIAL { gControllers.showShortcuts(); return true } else { fallthrough }
 					default:       return gEssayView?.handleKey(iKey, flags: flags) ?? false
 				}

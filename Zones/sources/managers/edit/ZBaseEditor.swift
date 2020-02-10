@@ -57,4 +57,16 @@ class ZBaseEditor: NSObject {
 		#endif
 	}
 
+	func wipeRing() {
+		gEssayRing.clear()
+		gFocusRing.clear()
+		gFocusRing.push()
+
+		if  gWorkMode == .noteMode {
+			gControllers.swapGraphAndEssay()
+		}
+
+		gControllers.signalFor(nil, multiple: [.eRing])
+	}
+
 }
