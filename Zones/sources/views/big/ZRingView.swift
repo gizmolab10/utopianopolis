@@ -92,8 +92,8 @@ class ZRingView: ZView {
 	}
 
 	func focusOnIdea(_ item: NSObject) -> Bool {
-		if  let idea = item as? Zone, ((idea != gHere) || (gWorkMode == .noteMode)) {
-			gControllers.swapGraphAndEssay(for: .graphMode)
+		if  let idea = item as? Zone, ((idea != gHere) || gIsNoteMode) {
+			gControllers.swapGraphAndEssay(force: .graphMode)
 			gFocusRing.focusOn(idea) {
 				printDebug(.ring, idea.zoneName ?? "unknown zone")
 				gControllers.signalFor(idea, regarding: .eRelayout)
@@ -107,7 +107,7 @@ class ZRingView: ZView {
 
 	func focusOnEssay(_ item: NSObject) -> Bool {
 		if  let note = item as? ZNote {
-			gControllers.swapGraphAndEssay(for: .noteMode)
+			gControllers.swapGraphAndEssay(force: .noteMode)
 			gEssayView?.resetCurrentEssay(note)
 
 			printDebug(.ring, note.zone?.zoneName ?? "unknown essay")
@@ -133,7 +133,7 @@ class ZRingView: ZView {
 
 				return true
 			} else if var subitems = item as? ZObjectsArray {
-				if  (gWorkMode == .noteMode) ^^ (COMMAND ?? false) {
+				if  gIsNoteMode ^^ (COMMAND ?? false) {
 					subitems = subitems.reversed()
 				}
 

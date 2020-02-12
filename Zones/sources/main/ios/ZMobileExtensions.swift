@@ -397,7 +397,7 @@ extension UIWindow {
 
 
     override open var keyCommands: [UIKeyCommand]? {
-        if  gIsEditingText {
+        if  gIsIdeaMode {
             return nil
         }
 

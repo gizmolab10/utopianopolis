@@ -15,10 +15,10 @@ import UIKit
 #endif
 
 class ZBaseEditor: NSObject {
-	var workMode: ZWorkMode { return .startupMode } // filter whether menu and event handlers will call handle key
 	var previousEvent: ZEvent?
 
 	func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool { return false }
+	func canHandleKey() -> Bool { return false }   // filter whether menu and event handlers will call handle key
 
 	@IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
 		gDesktopAppDelegate?.genericMenuHandler(iItem)
@@ -47,8 +47,9 @@ class ZBaseEditor: NSObject {
 		return false    // false means key not handled
 	}
 
+
 	func handleMenuItem(_ iItem: ZMenuItem?) {
-		if  gWorkMode == workMode,		 			// filter whether to call handle key
+		if  canHandleKey(),
 			let   item = iItem {
 			let  flags = item.keyEquivalentModifierMask
 			let    key = item.keyEquivalent
@@ -58,7 +59,7 @@ class ZBaseEditor: NSObject {
 	}
 
 	@discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> ZEvent? {
-		if  gWorkMode    == workMode,				// filter whether to call handle key
+		if  canHandleKey(),
 			!matchesPrevious(iEvent) {
 			let     flags = iEvent.modifierFlags
 			previousEvent = iEvent
@@ -84,7 +85,7 @@ class ZBaseEditor: NSObject {
 		gFocusRing.clear()
 		gFocusRing.push()
 
-		if  gWorkMode == .noteMode {
+		if  gIsNoteMode {
 			gControllers.swapGraphAndEssay()
 		}
 

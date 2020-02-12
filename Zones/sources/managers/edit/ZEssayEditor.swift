@@ -17,10 +17,10 @@ import UIKit
 let gEssayEditor = ZEssayEditor()
 
 class ZEssayEditor: ZBaseEditor {
-	override var workMode: ZWorkMode { return .noteMode }
+	override func canHandleKey() -> Bool { return gIsNoteMode }
 
 	override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
-		if  gWorkMode != .noteMode || inWindow {
+		if !gIsNoteMode || inWindow {
 			return false
 		}
 
@@ -30,10 +30,9 @@ class ZEssayEditor: ZBaseEditor {
 	@discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
 		if !super.handleKey(iKey, flags: flags, isWindow: isWindow),
 			var     key = iKey {
-			let COMMAND = flags.isCommand
 			let  OPTION = flags.isOption
-			let SPECIAL = COMMAND && OPTION
-			
+			let COMMAND = flags.isCommand
+
 			if  key    != key.lowercased() {
 				key     = key.lowercased()
 			}
@@ -44,7 +43,6 @@ class ZEssayEditor: ZBaseEditor {
 				return true
 			} else if  COMMAND {
 				switch key {
-//					case "=", "-": updateFontSize(key == "=")
 					default:       return gEssayView?.handleKey(iKey, flags: flags) ?? false
 				}
 			} else {

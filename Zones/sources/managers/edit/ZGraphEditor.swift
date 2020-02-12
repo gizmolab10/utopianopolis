@@ -24,7 +24,7 @@ let gGraphEditor = ZGraphEditor()
 
 
 class ZGraphEditor: ZBaseEditor {
-	override var workMode: ZWorkMode { return .graphMode }
+	override func canHandleKey() -> Bool { return gIsGraphOrIdeaMode }
 
 	// MARK:- events
 	// MARK:-
@@ -87,7 +87,7 @@ class ZGraphEditor: ZBaseEditor {
                 SHIFT   = true
             }
 
-            if  gIsEditingText {
+            if  gIsIdeaMode {
                 let editedZone = gEditedTextWidget?.widgetZone
                 if  let      a = arrow {
                     gTextEditor.handleArrow(a, flags: flags)
@@ -177,7 +177,7 @@ class ZGraphEditor: ZBaseEditor {
     }
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        if  gIsEditingText || gArrowsDoNotBrowse {
+        if  gIsIdeaMode || gArrowsDoNotBrowse {
             gTextEditor.handleArrow(arrow, flags: flags)
             
             return
@@ -248,7 +248,7 @@ class ZGraphEditor: ZBaseEditor {
 
 
     override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
-        if gWorkMode != .graphMode {
+        if !gIsGraphOrIdeaMode {
             return false
         }
 		
@@ -257,7 +257,7 @@ class ZGraphEditor: ZBaseEditor {
 		}
 
         let  type = menuType(for: key, flags)
-        var valid = !gIsEditingText
+        var valid = !gIsIdeaMode
 
         if  valid,
 			type 	   != .eAlways {
@@ -335,14 +335,14 @@ class ZGraphEditor: ZBaseEditor {
         if     !COMMAND || (OPTION && PERIOD) {
             toggleModes(isDirection:  PERIOD)
             
-            if  gIsEditingText     && PERIOD {
+            if  gIsIdeaMode     && PERIOD {
                 swapAndResumeEdit()
             }
 
             gControllers.signalFor(nil, multiple: [.ePreferences, .eGraph, .eMain])
         } else if !PERIOD {
             gDetailsController?.toggleViewsFor(ids: [.Preferences])
-        } else if gIsEditingText {
+        } else if gIsIdeaMode {
             gTextEditor.cancel()
         }
     }
@@ -532,7 +532,7 @@ class ZGraphEditor: ZBaseEditor {
 
     func search(_ OPTION: Bool = false) {
         if  gDatabaseID != .favoritesID {
-            gWorkMode = (gWorkMode == .searchMode) ? .graphMode : .searchMode
+            gWorkMode = gIsSearchMode ? .graphMode : .searchMode
 
             gControllers.signalFor(nil, regarding: OPTION ? .eFound : .eSearch)
         }

@@ -31,8 +31,8 @@ class ZMainController: ZGenericController {
     }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		let   hideEssay = gWorkMode != .noteMode
-        let  hideSearch = gWorkMode != .searchMode
+		let   hideEssay = !gIsNoteMode
+        let  hideSearch = !gIsSearchMode
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
         switch iKind {

@@ -67,7 +67,7 @@ class ZFiles: NSObject {
             writeTimer?.invalidate()
 
             writeTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { iTimer in
-                if  gIsEditingText {
+                if  gIsIdeaMode {
                     self.deferWrite(for: databaseID, restartTimer: true)
                 } else {
                     self.writeToFile(from: databaseID)

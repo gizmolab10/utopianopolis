@@ -97,17 +97,17 @@ class ZControllers: NSObject {
 	// MARK:- hide / reveal
 	// MARK:-
 
-	func swapGraphAndEssay(for mode: ZWorkMode? = nil) {
-		let newMode    			        = mode ?? ((gWorkMode == .graphMode) ? .noteMode : .graphMode)
+	func swapGraphAndEssay(force mode: ZWorkMode? = nil) {
+		let newMode    			        = mode ?? (gIsNoteMode ? .graphMode : .noteMode)
 
 		if  newMode != gWorkMode {
 			gWorkMode 					= newMode
-			let showEssay 			    = newMode == .noteMode
-			let multiple: [ZSignalKind] = showEssay ? [.eNote] : [.eNote, .eRelayout]
+			let showNote 			    = newMode == .noteMode
+			let multiple: [ZSignalKind] = showNote ? [.eNote] : [.eNote, .eRelayout]
 
 			FOREGROUND { 	// avoid generic menu handler invoking graph editor's handle key
 				gTextEditor.stopCurrentEdit()
-				gEssayView?.updateButtons(showEssay)
+				gEssayView?.updateButtons(showNote)
 				self.signalFor(gSelecting.firstGrab, multiple: multiple)
 			}
 		}
@@ -141,9 +141,9 @@ class ZControllers: NSObject {
 
         gBatches.startUp { iSame in
             FOREGROUND {
-                gWorkMode        = .graphMode
                 gIsReadyToShowUI = true
 
+				gSetGraphMode()
 				gFocusRing.push()
                 gHereMaybe?.grab()
                 gFavorites.updateAllFavorites()

@@ -710,7 +710,9 @@ extension ZoneTextWidget {
 
 
     override func textDidEndEditing(_ notification: Notification) {
-        if  let       number = notification.userInfo?["NSTextMovement"] as? NSNumber, !gTextEditor.isEditingStateChanging {
+		if !gTextEditor.isEditingStateChanging,
+			gIsIdeaMode,
+			let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
             let        value = number.intValue
             let      isShift = NSEvent.modifierFlags.isShift
             var key: String?

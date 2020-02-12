@@ -153,7 +153,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         var resolved = false
 
         #if os(OSX)
-            if  gWorkMode         == .searchMode,
+            if  gIsSearchMode,
                 let          index = self.tableView?.selectedRow,
                 index             != -1,
                 let (dbID, record) = identifierAndRecord(at: index) {
@@ -194,8 +194,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
     func clear() {
         resultsAreVisible = false
         
-        if  gWorkMode != .graphMode {
-            gWorkMode  = .graphMode
+        if  gIsSearchMode {
+            gSetGraphMode()
 
             gControllers.signalFor(nil, regarding: .eSearch)
             gControllers.signalFor(nil, regarding: .eFound)
@@ -247,7 +247,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 		if iKind == .eFound {
 			resultsAreVisible = false
 			
-			if  gWorkMode == .searchMode, foundRecords.count > 0 {
+			if  gIsSearchMode, foundRecords.count > 0 {
 				var dbID: ZDatabaseID?
 				var record: CKRecord?
 				var total = 0

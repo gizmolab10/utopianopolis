@@ -123,7 +123,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 			gTextEditor.allowAsFirstResponder(self),
 			super.becomeFirstResponder() {  // becomeFirstResponder is called first so delegate methods will be called
 
-			if  gWorkMode != .graphMode {
+			if !gIsGraphOrIdeaMode {
                 gSearching.exitSearchMode()
             }
 
@@ -158,7 +158,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     func extractTitleOrSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
         var      extract = extractedTitle
 
-        if  let original = text, gIsEditingText {
+        if  let original = text, gIsIdeaMode {
             let    range = gTextEditor.selectedRange
             extract      = original.substring(with: range)
 
@@ -202,7 +202,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
              zone.canTravel,
             !zone.isGrabbed,
             !isFirstResponder,
-			gWorkMode == .graphMode {
+			gIsGraphOrIdeaMode {
 
             // /////////////////////////////////////////////////////
             // draw line underneath text indicating it can travel //

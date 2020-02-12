@@ -28,7 +28,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-        if  iKind == .eSearch && gWorkMode == .searchMode {
+        if  iKind == .eSearch && gIsSearchMode {
 			gSearching.state = .sEntry
 
             FOREGROUND(after: 0.2) {

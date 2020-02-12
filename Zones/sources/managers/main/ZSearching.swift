@@ -44,9 +44,9 @@ class ZSearching: NSObject {
 
 
     func exitSearchMode() {
-        gWorkMode = .graphMode
-		state     = .sNot
+		state = .sNot
 
+		gSetGraphMode()
         gControllers.signalFor(nil, regarding: .eFound)
         gControllers.signalFor(nil, regarding: .eSearch)
     }

@@ -16,7 +16,6 @@ import UIKit
 
 
 let gTextEditor = ZTextEditor()
-var gIsEditingText: Bool { return gTextEditor.currentEdit != nil }
 var gEditedTextWidget: ZoneTextWidget? { return gTextEditor.currentTextWidget }
 
 
@@ -235,7 +234,7 @@ class ZTextEditor: ZTextView {
     
     var cursorOffset: CGFloat? 
     var currentOffset: CGFloat?
-    var currentEdit: ZTextPack?
+	var currentEdit: ZTextPack? { didSet { gWorkMode = (currentEdit != nil) ? .ideaMode : .graphMode } }
 	var refusesFirstResponder  = false
     var isEditingStateChanging = false
     var currentlyEditingZone: Zone? { return currentEdit?.packedZone }

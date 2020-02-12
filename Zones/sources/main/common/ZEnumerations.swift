@@ -75,6 +75,7 @@ enum ZWorkMode: Int {
     case startupMode
     case searchMode
     case graphMode
+	case ideaMode
 	case noteMode
     // case outlineMode
 }

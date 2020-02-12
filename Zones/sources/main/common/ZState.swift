@@ -47,6 +47,11 @@ var    gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.windo
 var      gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
 var        gInsertionsFollow:               Bool { return gInsertionMode == .follow }
 var          gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
+var              gIsIdeaMode:               Bool { return gWorkMode == .ideaMode }
+var              gIsNoteMode:               Bool { return gWorkMode == .noteMode }
+var             gIsGraphMode:               Bool { return gWorkMode == .graphMode }
+var            gIsSearchMode:               Bool { return gWorkMode == .searchMode }
+var       gIsGraphOrIdeaMode:               Bool { return gIsGraphMode || gIsIdeaMode }
 var   gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
 var                gDragView:         ZDragView? { return gGraphController?.dragView }
 var               gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
@@ -65,6 +70,7 @@ var        gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Rom
 var          gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var	 			  gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 var            gCurrentEssay:             ZNote? { didSet { gFocusRing.push(); gRingView?.setNeedsDisplay() } }
+func           gSetGraphMode()                   { gWorkMode = .graphMode }
 
 var gCurrentEvent: ZEvent? {
 	didSet {

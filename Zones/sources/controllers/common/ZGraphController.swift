@@ -217,9 +217,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
         if  [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
-            if  gWorkMode != .graphMode {
+            if !gIsGraphMode {
                 dragView?.snp.removeConstraints()
-            } else if !gIsEditingText {
+            } else if !gIsIdeaMode {
 				prepare(for: iKind)
                 layoutForCurrentScrollOffset()
                 layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: true)
@@ -253,7 +253,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
 	@objc override func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
-        if  gWorkMode        != .graphMode {
+        if  gIsSearchMode {
             gSearching.exitSearchMode()
         }
         
@@ -291,7 +291,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     }
 	
 	@objc override func clickEvent(_ iGesture: ZGestureRecognizer?) {
-        if  gWorkMode != .graphMode {
+        if  gIsSearchMode {
             gSearching.exitSearchMode()
         }
         
@@ -551,7 +551,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     
     func isEditingText(at location: CGPoint) -> Bool {
-        if  gIsEditingText, let textWidget = gEditedTextWidget {
+        if  gIsIdeaMode, let textWidget = gEditedTextWidget {
             let rect = textWidget.convert(textWidget.bounds, to: dragView)
 
             return rect.contains(location)
