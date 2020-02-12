@@ -23,7 +23,8 @@ class ZRing: NSObject {
 	var          isEmpty : Bool              { return ring.count == 0 || possiblePrime == nil }
 	var          isEssay : Bool              { return true }
 	var visibleRingTypes : ZTinyDotTypeArray { return ZTinyDotTypeArray() }
-	func 		   clear() { ring.removeAll() }
+
+	func clear() { ring.removeAll() }
 
 	var isPrime : Bool {
 		guard let essay = ringPrime as? ZNote else { return false }
@@ -37,7 +38,7 @@ class ZRing: NSObject {
     var primeIndex : Int? {
 		if  let p = possiblePrime {
 			for (index, item) in ring.enumerated() {
-				if  p === item {
+				if  p == item {
 					return index
 				}
 			}
@@ -56,48 +57,51 @@ class ZRing: NSObject {
         }
     }
 
-	func isInRing(_ item: AnyObject) -> Bool {
+	private func indexInRing(_ item: AnyObject) -> Int? {
 		if  let o = item as? ZNote {
-			for ringItem in ring {
+			for (index, ringItem) in ring.enumerated() {
 				if  let r = ringItem as? ZNote,
 					o.zone == r.zone {
-					return true
+					return index
 				}
 			}
 		}
 
-		return false
+		return nil
 	}
 
-	func insertIfUnique(_ newIndex: Int? = nil) {
-		if  let     item = possiblePrime, !isInRing(item) {
-			if let index = newIndex {
+	private func insertIfUnique(_ newIndex: Int? = nil) -> Int? { // nil means not inserted
+		if  let     item = possiblePrime {
+			if let index = indexInRing(item) {
+				return index
+			} else if let index = newIndex {
 				ring.insert(item, at: index)
+
+				return index
 			} else {
 				ring.append(item)
+
+				return ring.count - 1
 			}
 		}
+
+		return nil
 	}
 
 	func push() {
-        var newIndex  = currentIndex + 1
+        currentIndex = currentIndex + 1
 
         if  topIndex < 0 || !atPrime {
             if  let index = primeIndex {
-                newIndex  = index   // prevent duplicates in stack
-            } else if topIndex <= currentIndex {
-				insertIfUnique()
-            } else {
-                if  currentIndex < 0 {
-                    currentIndex = 0
-                    newIndex  = currentIndex + 1
-                }
-
-				insertIfUnique(newIndex)
+                currentIndex = index   // prevent duplicates in stack
+            } else if currentIndex >= topIndex {
+				if let index = insertIfUnique() {
+					currentIndex = index
+				}
+            } else if let index = insertIfUnique(currentIndex) {
+				currentIndex = index
 			}
         }
-
-		currentIndex = newIndex
     }
 
     func goBack(extreme: Bool = false) {
@@ -158,8 +162,9 @@ class ZRing: NSObject {
 		if  ring.count > (isEssay ? 0 : 1),
 			let i = primeIndex {
 			ring.remove(at: i)
-            goBack()
         }
+
+		goBack()
 	}
 
 	func popAndRemoveEmpties() -> Bool {

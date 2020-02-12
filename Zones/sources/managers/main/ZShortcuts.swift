@@ -114,7 +114,7 @@ class ZShortcuts : NSObject {
 		" TAB", 		"create next idea", 							"edit-d05d18996df7",
 		"",				"", "",
 		"+COMMAND",		"", "",
-		" RETURN", 		"begin or end editing essay", 					"",
+		" RETURN", 		"begin or end editing note", 					"",
 		" COMMA", 		"show or hide preferences", 					"help-inspector-view-c360241147f2",
 		" A", 			"select all",	 								"",
 		" P", 			"print the graph (or this window)", 			"",

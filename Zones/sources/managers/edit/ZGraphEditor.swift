@@ -71,7 +71,8 @@ class ZGraphEditor: ZBaseEditor {
     }
     
     @discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
-        if  var     key = iKey {
+		if !super.handleKey(iKey, flags: flags, isWindow: isWindow),
+			var     key = iKey {
             let CONTROL = flags.isControl
             let COMMAND = flags.isCommand
             let  OPTION = flags.isOption
@@ -92,15 +93,14 @@ class ZGraphEditor: ZBaseEditor {
                     gTextEditor.handleArrow(a, flags: flags)
                 } else if FLAGGED {
                     switch key {
-                    case "a":      if SPECIAL { gApplication.showHideAbout() } else { gEditedTextWidget?.selectAllText() }
+                    case "a":      gEditedTextWidget?.selectAllText()
                     case "d":      tearApartCombine(OPTION, editedZone)
                     case "f":      search(OPTION)
                     case "i":      gTextEditor.showSpecialsPopup()
                     case "p":      printCurrentFocus()
-					case "x":      if SPECIAL { wipeRing() }
                     case "?":      gControllers.showShortcuts()
                     case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
-					case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
+					case "/":      if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
                     case kSpace:   addIdea()
@@ -131,7 +131,7 @@ class ZGraphEditor: ZBaseEditor {
                     prefix(with: key)
                 } else {
                     switch key {
-					case "a":      if SPECIAL { gApplication.showHideAbout() } else if COMMAND { selectAll(progeny: OPTION) } else { alphabetize(OPTION) }
+					case "a":      if COMMAND { selectAll(progeny: OPTION) } else { alphabetize(OPTION) }
                     case "b":      addBookmark()
 					case "c":      if COMMAND { copyToPaste() } else { gGraphController?.recenter() }
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
@@ -144,18 +144,16 @@ class ZGraphEditor: ZBaseEditor {
 					case "k":      toggleColorized()
                     case "m":      orderByLength(OPTION)
                     case "n":      grabOrEdit(true, OPTION, false)
-                    case "o":      if SPECIAL { gFiles.showInFinder() } else { gFiles.importFromFile(OPTION ? .eOutline : .eThoughtful, insertInto: gSelecting.currentMoveable) { self.redrawAndSync() } }
+                    case "o":      gFiles.importFromFile(OPTION ? .eOutline : .eThoughtful, insertInto: gSelecting.currentMoveable) { self.redrawAndSync() }
                     case "p":      printCurrentFocus()
-                    case "q":      gApplication.terminate(self)
                     case "r":      if SPECIAL { sendEmailBugReport() } else { reverse() }
 					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
                     case "t":      swapWithParent()
 					case "w":      rotateWritable()
-					case "x":      if SPECIAL { wipeRing() }
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
-                    case "/":      if SPECIAL { gControllers.showShortcuts() } else if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.redrawGraph() } }
+                    case "/":      if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.redrawGraph() } }
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
                     case "[":      gFocusRing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusRing.goForward(extreme: FLAGGED)
@@ -168,7 +166,7 @@ class ZGraphEditor: ZBaseEditor {
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { deleteGrabbed(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
                     case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) }
-					case kEscape:  if hasWidget { grabOrEdit(true,    OPTION, true) }
+					case kEscape:                 grabOrEdit(true,    OPTION, true)
                     default:       return false // indicate key was not handled
                     }
                 }

@@ -77,15 +77,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func resetCurrentEssay(_ current: ZNote?, selecting: Zone? = nil) {
-		if  let     essay = current {
-			gCurrentEssay = essay
+	func resetCurrentEssay(_ current: ZNote?, selecting zone: Zone? = nil) {
+		if  let      note = current {
+			gCurrentEssay = note
 
 			gCurrentEssay?.reset()
 			updateText()
 			gCurrentEssay?.updateOffsets()
+			gEssayRing.push()
 
-			if  let range = selecting?.noteMaybe?.offsetTextRange {
+			if  let range = zone?.noteMaybe?.offsetTextRange {
 				setSelectedRange(range)
 			}
 		}
@@ -509,14 +510,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 									let start = NSRange(location: range.location, length: 1)
 									let  rect = self.convert(self.rectForRange(start), to: self).offsetBy(dx: 0.0, dy: -150.0)
 
+									// highlight text of note, and scroll it to visible
+
 									self.setSelectedRange(range)
 									self.scroll(rect.origin)
 								} else {
 									gCreateCombinedEssay = type == .eEssay
 
-									target.grab()					// for later, when user exits essay mode
-									target.asssureIsVisible()
-									self.resetCurrentEssay(target.note)
+									target .grab()					// for later, when user exits essay mode
+									target .asssureIsVisible()
+									common?.asssureIsVisible()
+									self.resetCurrentEssay(target.note)     // change current note to that of target
 								}
 							}
 

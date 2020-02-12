@@ -46,6 +46,16 @@ class ZNote: NSObject {
 		self.zone = zone
 	}
 
+	static func == ( left: ZNote, right: ZNote) -> Bool {
+		let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
+
+		if  unequal && left.zone?.record != nil && right.zone?.record != nil {
+			return left.zone?.recordName == right.zone?.recordName
+		}
+
+		return !unequal
+	}
+
 	func delete() {
 		zone?.removeTrait(for: .eNote)
 		gEssayRing.removeFromStack(self) // display prior essay

@@ -18,11 +18,33 @@ class ZBaseEditor: NSObject {
 	var workMode: ZWorkMode { return .startupMode } // filter whether menu and event handlers will call handle key
 	var previousEvent: ZEvent?
 
-	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool { return false }   // false means key not handled
 	func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool { return false }
 
 	@IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
 		gDesktopAppDelegate?.genericMenuHandler(iItem)
+	}
+
+	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {
+		if  var     key = iKey {
+			let COMMAND = flags.isCommand
+			let  OPTION = flags.isOption
+			let SPECIAL = COMMAND && OPTION
+
+			if  key    != key.lowercased() {
+				key     = key.lowercased()
+			}
+
+			switch key {
+				case "a": if SPECIAL { gApplication.showHideAbout(); return true }
+				case "o": if SPECIAL { gFiles.showInFinder();        return true }
+				case "q": if COMMAND { gApplication.terminate(self); return true }
+				case "x": if SPECIAL { wipeRing();                   return true }
+				case "/": if SPECIAL { gControllers.showShortcuts(); return true }
+				default:  break
+			}
+		}
+
+		return false    // false means key not handled
 	}
 
 	func handleMenuItem(_ iItem: ZMenuItem?) {

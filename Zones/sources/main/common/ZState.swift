@@ -6,7 +6,6 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
 
@@ -21,7 +20,6 @@ let gFontDelta = 17.0
 let gDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 #endif
-
 
 var                gWorkMode                     = ZWorkMode.startupMode
 var             gDeferRedraw                     = false
@@ -68,13 +66,11 @@ var          gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewR
 var	 			  gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 var            gCurrentEssay:             ZNote? { didSet { gFocusRing.push(); gRingView?.setNeedsDisplay() } }
 
-
 var gCurrentEvent: ZEvent? {
 	didSet {
 		gTimeUntilCurrentEvent = Date.timeIntervalSinceReferenceDate
 	}
 }
-
 
 var gExpandedZones : [String] {
     get {
@@ -116,11 +112,15 @@ var gHereMaybe: Zone? {
     set { gRecords?.hereZoneMaybe = newValue }
 }
 
+var gRingContents: [String] {
+	get { return getPreferenceString(for: kRingContents, needDefault: nil)?.componentsSeparatedAt(level: 0) ?? [] }
+	set { setPreferencesString(newValue.joined(separator: gSeparatorAt(level: 0)), for: kRingContents)}
+}
+
 var gShowFavorites : Bool {
 	get { return getPreferencesBool(   for: kShowFavorites, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kShowFavorites) }
 }
-
 
 var gMathewStyleUI : Bool {
     get { return getPreferencesBool(   for: kMathewStyle, defaultBool: false) }
@@ -132,18 +132,15 @@ var gHereRecordNames: String {
     set { setPreferencesString(newValue, for: kHereRecordIDs) }
 }
 
-
 var gAuthorID: String? {    // persist for file read on launch
     get { return getPreferenceString(    for: kAuthorID) { return nil } }
     set { setPreferencesString(newValue, for: kAuthorID) }
 }
 
-
 var gUserRecordID: String? {    // persist for file read on launch
     get { return getPreferenceString(    for: kUserRecordID) }
     set { setPreferencesString(newValue, for: kUserRecordID) }
 }
-
 
 var gEmailTypesSent: String {
     get {
@@ -172,18 +169,15 @@ var gFavoritesAreVisible: Bool {
 	set { setPreferencesBool(newValue, for: kFavoritesAreVisibleKey) }
 }
 
-
 var gBackgroundColor: ZColor {
 	get { return   getPreferencesColor( for: kBackgroundColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) } //0.99 / 360.0, saturation: 0.13, brightness: kUnselectBrightness, alpha: 1)) }
 	set { setPreferencesColor(newValue, for: kBackgroundColorKey) }
 }
 
-
 var gRubberbandColor: ZColor {
 	get { return   getPreferencesColor( for: kRubberbandColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
 	set { setPreferencesColor(newValue, for: kRubberbandColorKey) }
 }
-
 
 var gGenericOffset: CGSize {
 	get {
@@ -199,7 +193,6 @@ var gGenericOffset: CGSize {
 		setPreferencesSize(newValue, for: kGenericOffsetKey)
 	}
 }
-
 
 var gWindowRect: CGRect {
 	get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
@@ -228,7 +221,6 @@ var gScrollOffset: CGPoint {
 	}
 }
 
-
 var gBrowsingMode: ZBrowsingMode {
 	get {
 		let value  = UserDefaults.standard.object(forKey: kBrowsingMode) as? Int
@@ -249,7 +241,6 @@ var gBrowsingMode: ZBrowsingMode {
 		UserDefaults.standard.synchronize()
 	}
 }
-
 
 var gCountsMode: ZCountsMode {
 	get {
@@ -291,7 +282,6 @@ var gScaling: Double {
 		UserDefaults.standard.synchronize()
 	}
 }
-
 
 var gLineThickness: Double {
 	get {
@@ -337,7 +327,6 @@ var gInsertionMode: ZInsertionMode {
 	}
 }
 
-
 var gDatabaseID: ZDatabaseID {
 	get {
 		var dbID: ZDatabaseID?
@@ -361,7 +350,6 @@ var gDatabaseID: ZDatabaseID {
 		UserDefaults.standard.synchronize()
 	}
 }
-
 
 var gHiddenDetailViewIDs: ZDetailsViewID {
 	get {
@@ -387,7 +375,6 @@ var gHiddenDetailViewIDs: ZDetailsViewID {
 	}
 }
 
-
 #if os(iOS)
 var gCurrentFunction : ZFunction {
 	get {
@@ -412,7 +399,6 @@ var gCurrentFunction : ZFunction {
 		UserDefaults.standard.synchronize()
 	}
 }
-
 
 var gCurrentGraph : ZFunction {
 	get {
@@ -443,7 +429,6 @@ var gCurrentGraph : ZFunction {
 // MARK:- actions
 // MARK:-
 
-
 func toggleModes(isDirection: Bool) {
 	if  isDirection {
 		gInsertionMode = gInsertionsFollow   ? .precede     : .follow
@@ -452,7 +437,6 @@ func toggleModes(isDirection: Bool) {
 	}
 }
 
-
 func toggleDatabaseID() {
 	switch        gDatabaseID {
 	case .mineID: gDatabaseID = .everyoneID
@@ -460,18 +444,15 @@ func toggleDatabaseID() {
 	}
 }
 
-
 func emailSent(for type: ZSentEmailType) -> Bool {
     return gEmailTypesSent.contains(type.rawValue)
 }
-
 
 func recordEmailSent(for type: ZSentEmailType) {
     if  !emailSent  (for: type) {
         gEmailTypesSent.append(type.rawValue)
     }
 }
-
 
 // MARK:- internals
 // MARK:-
@@ -480,31 +461,25 @@ func getPreferencesAmount(for key: String, defaultAmount: CGFloat = 0.0) -> CGFl
 	return getPreferenceString(for: key) { return "\(defaultAmount)" }?.floatValue ?? defaultAmount
 }
 
-
 func setPreferencesAmount(_ iAmount: CGFloat = 0.0, for key: String) {
 	setPreferencesString("\(iAmount)", for: key)
 }
-
 
 func getPreferencesSize(for key: String, defaultSize: CGSize = CGSize.zero) -> CGSize {
     return getPreferenceString(for: key) { return NSStringFromSize(defaultSize) }?.cgSize ?? defaultSize
 }
 
-
 func setPreferencesSize(_ iSize: CGSize = CGSize.zero, for key: String) {
     setPreferencesString(NSStringFromSize(iSize), for: key)
 }
-
 
 func getPreferencesRect(for key: String, defaultRect: CGRect = CGRect.zero) -> CGRect {
     return getPreferenceString(for: key) { return NSStringFromRect(defaultRect) }?.cgRect ?? defaultRect
 }
 
-
 func setPreferencesRect(_ iRect: CGRect = CGRect.zero, for key: String) {
     setPreferencesString(NSStringFromRect(iRect), for: key)
 }
-
 
 func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {
     var color = defaultColor
@@ -523,7 +498,6 @@ func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {
     return color
 }
 
-
 func setPreferencesColor(_ iColor: ZColor, for key: String) {
     var color = iColor
     
@@ -536,7 +510,6 @@ func setPreferencesColor(_ iColor: ZColor, for key: String) {
     UserDefaults.standard.set(data, forKey: key)
     UserDefaults.standard.synchronize()
 }
-
 
 func getPreferenceString(for key: String, needDefault: ToStringClosure? = nil) -> String? {
     if  let    string = UserDefaults.standard.object(forKey: key) as? String {
@@ -551,11 +524,9 @@ func getPreferenceString(for key: String, needDefault: ToStringClosure? = nil) -
     return defaultString
 }
 
-
 func getPreferencesString(for key: String, defaultString: String?) -> String? {
     return getPreferenceString(for: key) { return defaultString }
 }
-
 
 func setPreferencesString(_ iString: String?, for key: String) {
     if let string = iString {
@@ -563,7 +534,6 @@ func setPreferencesString(_ iString: String?, for key: String) {
         UserDefaults.standard.synchronize()
     }
 }
-
 
 func getPreferencesBool(for key: String, defaultBool: Bool) -> Bool {
     if  let value: NSNumber = UserDefaults.standard.object(forKey: key) as? NSNumber {
@@ -575,10 +545,7 @@ func getPreferencesBool(for key: String, defaultBool: Bool) -> Bool {
     return defaultBool
 }
 
-
 func setPreferencesBool(_ iBool: Bool, for key: String) {
     UserDefaults.standard.set(iBool, forKey: key)
     UserDefaults.standard.synchronize()
 }
-
-

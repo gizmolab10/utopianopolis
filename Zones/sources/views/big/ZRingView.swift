@@ -21,6 +21,7 @@ class ZRingView: ZView {
 
 	var geometry         = ZGeometry()
 	var necklaceDotRects = [Int : CGRect]()
+	let necklaceMax 	 = 16
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
@@ -65,7 +66,7 @@ class ZRingView: ZView {
 
 			ZBezierPath.drawCircle (in: rect, thickness: g.thick)
 
-			drawTinyDots(surrounding: surroundRect, objects: necklaceObjects, radius: radius, color: color, startQuadrant: -1.0) { (index, rect) in
+			drawTinyDots(surrounding: surroundRect, objects: necklaceObjects, radius: radius, color: color, startQuadrant: -1.0, countMax: necklaceMax + 1) { (index, rect) in
 				self.necklaceDotRects[index] = rect
 			}
 
@@ -184,7 +185,22 @@ class ZRingView: ZView {
 		copyObjects(from: gFocusRing.ring)
 		copyObjects(from: gEssayRing.ring)
 
+		while results.count > necklaceMax {
+			removeFromRings(results[0])
+			results.remove(at: 0)
+		}
+
 		return results
+	}
+
+	func removeFromRings(_ item: NSObject) {
+		if  let array = item as? ZObjectsArray {
+			gFocusRing.removeFromStack(array[0])
+			gEssayRing.removeFromStack(array[1])
+		} else {
+			gFocusRing.removeFromStack(item)
+			gEssayRing.removeFromStack(item)
+		}
 	}
 
 	var controlRects : [CGRect] {

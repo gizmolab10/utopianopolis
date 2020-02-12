@@ -1642,7 +1642,11 @@ extension ZView {
 			ideaFocus = idea == gHere
 		} else if let note = object as? ZNote {
 			asNote    = true
-			noteFocus = note == gCurrentEssay
+
+			if  let current = gCurrentEssay,
+				note == current {
+				noteFocus = true
+			}
 
 			if  note.isKind(of: ZEssay.self) {
 				asEssay = true
@@ -1661,14 +1665,14 @@ extension ZView {
 		return (ideaFocus, asIdea, noteFocus, asNote, asEssay)
 	}
 
-	func drawTinyDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0, onEach: IntRectClosure? = nil) {
+	func drawTinyDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0, countMax: Int = 10, onEach: IntRectClosure? = nil) {
 		var       dotCount = objects.count
 		var      fatHollow = false
 		var     tinyHollow = false
 		var          scale = 1.0
 
-		while     dotCount > 100 {
-			dotCount       = (dotCount + 5) / 10
+		while     dotCount > (countMax * countMax) {
+			dotCount       = (dotCount + (countMax / 2)) / countMax
 			scale          = 1.25
 
 			if  fatHollow {
@@ -1679,8 +1683,8 @@ extension ZView {
 		}
 
 		if  dotCount > 0 {
-			let  tinyCount = dotCount % 10
-			let   fatCount = dotCount / 10
+			let  tinyCount = dotCount % countMax
+			let   fatCount = dotCount / countMax
 			let fullCircle = Double.pi * 2.0
 
 			let drawNecklace: IntBooleanClosure = { (iCount, isFat) in
