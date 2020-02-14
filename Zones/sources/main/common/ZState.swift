@@ -29,7 +29,7 @@ var       gKeyboardIsVisible                     = false
 var       gArrowsDoNotBrowse                     = false
 var     gCreateCombinedEssay 			   		 = false
 var     gHasCompletedStartup                     = false
-var  			  gDebugMode:		[ZDebugMode] = [.focus, .speed]
+var  			  gDebugMode:		[ZDebugMode] = [.focus, .speed, .ops]
 var   gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var      gCurrentBrowseLevel:               Int?
 var         gDragDropIndices: NSMutableIndexSet?
@@ -116,11 +116,6 @@ var gRecords: ZRecords? {
 var gHereMaybe: Zone? {
     get { return gRecords?.hereZoneMaybe }
     set { gRecords?.hereZoneMaybe = newValue }
-}
-
-var gRingContents: [String] {
-	get { return getPreferenceString(for: kRingContents, needDefault: nil)?.componentsSeparatedAt(level: 0) ?? [] }
-	set { setPreferencesString(newValue.joined(separator: gSeparatorAt(level: 0)), for: kRingContents)}
 }
 
 var gShowFavorites : Bool {
@@ -458,6 +453,18 @@ func recordEmailSent(for type: ZSentEmailType) {
     if  !emailSent  (for: type) {
         gEmailTypesSent.append(type.rawValue)
     }
+}
+
+func key(for flag: Bool) -> String {
+	return "\(flag ? "note" : "focus") \(kRingContents)"
+}
+
+func getRingContents(for flag: Bool) -> [String] {
+	return getPreferenceString(for: key(for: flag)) { return nil }?.componentsSeparatedAt(level: 0) ?? []
+}
+
+func setRingContents(for flag: Bool, strings: [String]) {
+	setPreferencesString(strings.joined(separator: gSeparatorAt(level: 0)), for: key(for: flag))
 }
 
 // MARK:- internals

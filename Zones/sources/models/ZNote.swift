@@ -15,7 +15,7 @@ enum ZAlterationType: Int {
 	case eExit
 }
 
-class ZNote: NSObject {
+class ZNote: NSObject, ZIdentifiable {
 	var    zone  	         : Zone?
 	var    children          = [ZNote]()
 	var    tentative         = false
@@ -23,6 +23,7 @@ class ZNote: NSObject {
 	var    noteOffset        = 0
 	var    noteMaybe         : ZTrait?   { return zone?.traits[  .eNote] }
 	var    noteTrait         : ZTrait?   { return zone?.traitFor(.eNote) }
+	var    prefix            : String    { return "note" }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
 	var    lastTextIsDefault : Bool      { return noteMaybe?.text == kEssayDefault }
 	var    fullTitleOffset   : Int       { return noteOffset + titleRange.location - 2 }
@@ -39,11 +40,31 @@ class ZNote: NSObject {
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
 
+	func identifier() -> String? {
+		if  let id = zone?.recordName {
+			return prefix + kSeparator + id
+		}
+
+		return nil
+	}
+
 	init(_ zone: Zone?) {
 		super.init()
 
 		tentative = true
 		self.zone = zone
+	}
+
+	static func object(for id: String) -> NSObject? {
+		if  let       zone = gRemoteStorage.maybeZoneForRecordName(id),
+			zone.hasTrait(for: .eNote) {
+			let       note = ZNote(zone)
+			zone.noteMaybe = note
+
+			return note
+		}
+
+		return nil
 	}
 
 	static func == ( left: ZNote, right: ZNote) -> Bool {

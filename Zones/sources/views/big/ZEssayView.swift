@@ -496,6 +496,25 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				let type = ZHyperlinkMenuType(rawValue: String(t)) {
 				let zone = gSelecting.zone(with: rID)	// find zone with rID
 				switch type {
+					case .eIdea:
+						if  let   grab = zone {
+							let common = grabbedZone?.closestCommonParent(of: grab)
+
+							if  let  c = common {
+								gHere  = c
+							}
+
+							grab        .grab()												// focus on zone with rID
+							grab        .asssureIsVisible()
+							grabbedZone?.asssureIsVisible()
+
+							FOREGROUND {
+								gControllers.swapGraphAndEssay()
+								gControllers.signalFor(nil, regarding: .eRelayout)
+							}
+
+							return true
+						}
 					case .eEssay, .eNote:
 						if  let target = zone {
 							let common = grabbedZone?.closestCommonParent(of: target)
@@ -522,25 +541,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 									common?.asssureIsVisible()
 									self.resetCurrentEssay(target.note)     // change current note to that of target
 								}
-							}
-
-							return true
-						}
-					case .eIdea:
-						if  let   grab = zone {
-							let common = grabbedZone?.closestCommonParent(of: grab)
-
-							if  let  c = common {
-								gHere  = c
-							}
-
-							grab        .grab()												// focus on zone with rID
-							grab        .asssureIsVisible()
-							grabbedZone?.asssureIsVisible()
-
-							FOREGROUND {
-								gControllers.swapGraphAndEssay()
-								gControllers.signalFor(nil, regarding: .eRelayout)
 							}
 
 							return true

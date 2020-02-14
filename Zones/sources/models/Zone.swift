@@ -22,7 +22,7 @@ enum ZoneAccess: Int, CaseIterable {
     }
 }
 
-class Zone : ZRecord {
+class Zone : ZRecord, ZIdentifiable {
 
     @objc dynamic var         parent : CKRecord.Reference?
 	@objc dynamic var       zoneName :             String?
@@ -104,6 +104,9 @@ class Zone : ZRecord {
     class func randomZone(in dbID: ZDatabaseID) -> Zone {
         return Zone(databaseID: dbID, named: String(arc4random()))
     }
+
+	func identifier() -> String? { return recordName }
+	static func object(for id: String) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
     // MARK:- properties
     // MARK:-

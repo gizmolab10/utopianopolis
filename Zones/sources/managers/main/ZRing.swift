@@ -11,20 +11,32 @@ import CloudKit
 
 let gEssayRing = ZRing()
 
+protocol ZIdentifiable {
+	func identifier() -> String?
+	static func object(for id: String) -> NSObject?
+}
+
 class ZRing: NSObject {
 
     var             ring = ZObjectsArray ()
     var     currentIndex = -1
     var       priorIndex = -1
+	var         topIndex : Int               { return ring.count - 1 }
 	var        ringPrime : NSObject?         { return ring[currentIndex] }
 	var    possiblePrime : NSObject?         { return gCurrentEssay }
-    var         topIndex : Int               { return ring.count - 1 }
     var          atPrime : Bool              { return currentIndex >= 0 && currentIndex <= topIndex && isPrime }
 	var          isEmpty : Bool              { return ring.count == 0 || possiblePrime == nil }
 	var          isEssay : Bool              { return true }
 	var visibleRingTypes : ZTinyDotTypeArray { return ZTinyDotTypeArray() }
 
+	func storeRingIDs() { setRingContents(for: isEssay, strings: objectIDs) }
+	func fetchRingIDs() { objectIDs = getRingContents(for: isEssay) }
 	func clear() { ring.removeAll() }
+
+	override init() {
+		super.init()
+		fetchRingIDs()
+	}
 
 	var isPrime : Bool {
 		guard let essay = ringPrime as? ZNote else { return false }
@@ -46,6 +58,46 @@ class ZRing: NSObject {
 
         return nil
     }
+
+	var objectIDs: [String] {
+		get {
+			var ids = [String]()
+
+			for item in ring {
+				if  let object = item as? ZIdentifiable,
+					let     id = object.identifier() {
+					ids.append(id)
+				}
+			}
+
+			return ids
+		}
+
+		set {
+			let ids: [String] = newValue
+
+			for id in ids {
+				if  let object = object(for: id),
+					indexInRing(object) == nil {
+					ring.append(object)
+				}
+			}
+		}
+	}
+
+	func object(for id: String) -> NSObject? {
+		let parts = id.components(separatedBy: kSeparator)
+
+		if  parts.count == 2 {
+			if  parts[0] == "note" {
+				return ZNote .object(for: parts[1])
+			} else {
+				return ZEssay.object(for: parts[1])
+			}
+		}
+
+		return nil
+	}
 
     func dump() {
         if  gDebugMode.contains(.focus) {
@@ -70,16 +122,18 @@ class ZRing: NSObject {
 		return nil
 	}
 
-	private func insertIfUnique(_ newIndex: Int? = nil) -> Int? { // nil means not inserted
+	private func pushUnique(_ newIndex: Int? = nil) -> Int? { // nil means not inserted
 		if  let     item = possiblePrime {
 			if let index = indexInRing(item) {
 				return index
 			} else if let index = newIndex {
 				ring.insert(item, at: index)
+				storeRingIDs()
 
 				return index
 			} else {
 				ring.append(item)
+				storeRingIDs()
 
 				return ring.count - 1
 			}
@@ -95,10 +149,10 @@ class ZRing: NSObject {
             if  let index = primeIndex {
                 currentIndex = index   // prevent duplicates in stack
             } else if currentIndex >= topIndex {
-				if let index = insertIfUnique() {
+				if let index = pushUnique() {
 					currentIndex = index
 				}
-            } else if let index = insertIfUnique(currentIndex) {
+            } else if let index = pushUnique(currentIndex) {
 				currentIndex = index
 			}
         }
@@ -162,6 +216,7 @@ class ZRing: NSObject {
 		if  ring.count > (isEssay ? 0 : 1),
 			let i = primeIndex {
 			ring.remove(at: i)
+			storeRingIDs()
         }
 
 		goBack()
@@ -203,6 +258,7 @@ class ZRing: NSObject {
 					ringZone === zone {
 					ring.remove(at: index)
 					removeEmpties()
+					storeRingIDs()
 
 					if !isEmpty,
 						index == currentIndex {
