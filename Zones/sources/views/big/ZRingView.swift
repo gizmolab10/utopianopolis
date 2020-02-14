@@ -30,15 +30,10 @@ class ZRingView: ZView {
 	}
 
 	func update() {
-		var      square = bounds.squareCentered
-		let squareInset = square.width / 2.85 - 20.0
-		let       inset = squareInset  / 2.85
-		square          = square.insetBy(dx: squareInset, dy: squareInset)
-		let         one = square.insetBy(dx: inset,       dy: inset)
-		let     xOffset = bounds.maxX - square.maxX - 35.0 +  inset / 1.8
-		let     yOffset = bounds.maxY - square.maxY - 35.0 +  inset / 1.8
-		geometry   .one = one  .offsetBy(dx: xOffset, dy: yOffset)
-		geometry .thick = square.height / 30.0
+		let     square = CGSize(width: 130.0, height: 130.0)
+		let     origin = CGPoint(x: bounds.maxX - square.width - 50.0, y: bounds.maxY - square.height - 80.0)
+		geometry  .one = CGRect(origin: origin, size: square)
+		geometry.thick = square.height / 40.0
 	}
 
 	// MARK:- draw
@@ -111,6 +106,7 @@ class ZRingView: ZView {
 		if  let note = item as? ZNote {
 			gControllers.swapGraphAndEssay(force: .noteMode)
 			gEssayView?.resetCurrentEssay(note)
+			gControllers.signalFor(nil, regarding: .eMain) // update breadcrumbs
 
 			printDebug(.ring, note.zone?.zoneName ?? "unknown essay")
 

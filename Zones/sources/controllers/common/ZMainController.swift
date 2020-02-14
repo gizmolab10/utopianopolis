@@ -23,6 +23,7 @@ class ZMainController: ZGenericController {
     @IBOutlet var detailView        : ZView?
 	@IBOutlet var graphView         : ZView?
 	@IBOutlet var essayView     	: ZView?
+	@IBOutlet var breadcrumbLabel	: ZTextField?
     override  var controllerID      : ZControllerID { return .idMain }
 
     override func setup() {
@@ -30,10 +31,24 @@ class ZMainController: ZGenericController {
         searchResultsView?.isHidden = true
     }
 
+	func updateBreadcrumbs() {
+		var text: String?
+
+		switch gWorkMode {
+			case .graphMode: text = gHereMaybe?         .breadcrumbs
+			default:		 text = gCurrentEssay?.zone?.breadcrumbs
+		}
+
+		breadcrumbLabel?     .text = text ?? ""
+		breadcrumbLabel?.textColor = gBackgroundColor.darker(by: 5.0)
+	}
+
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		let   hideEssay = !gIsNoteMode
         let  hideSearch = !gIsSearchMode
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
+
+		updateBreadcrumbs()
 
         switch iKind {
 			case .eFound:

@@ -759,7 +759,7 @@ extension ZTextEditor {
     override func doCommand(by selector: Selector) {
         switch selector {
         case #selector(insertNewline):       stopCurrentEdit()
-        case #selector(insertTab):           if currentEdit?.adequatelyPaused ?? false { gGraphEditor.addNext() { iChild in iChild.edit() } } // stupid OSX issues tab twice (to create the new idea, then AFTERWARDS
+        case #selector(insertTab):           if currentEdit?.adequatelyPaused ?? true { gGraphEditor.addNext() { iChild in iChild.edit() } } // stupid OSX issues tab twice (to create the new idea, then once MORE
 		case #selector(cancelOperation(_:)): if gSearching.state.isOneOf([.sList, .sEntry]) { gSearching.exitSearchMode() }
         default:                             super.doCommand(by: selector)
         }

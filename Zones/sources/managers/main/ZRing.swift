@@ -209,7 +209,7 @@ class ZRing: NSObject {
 			gEssayView?.resetCurrentEssay(item)
 		}
 
-		gRingView?.setNeedsDisplay()
+		gControllers.signalFor(nil, multiple: [.eMain, .eRing]) // update breadcrumbs and ring
 	}
 
     func pop() {

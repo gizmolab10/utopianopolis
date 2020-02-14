@@ -155,6 +155,18 @@ class Zone : ZRecord, ZIdentifiable {
 		return false
 	}
 
+	var breadcrumbs: String {
+		var    result = ""
+		var separator = ""
+
+		traverseAllAncestors { ancestor in
+			result    = ancestor.unwrappedName + separator + result
+			separator = " ⇨ "
+		}
+
+		return result
+	}
+
 	var email: String? {
 		get {
 			if  emailMaybe == nil {

@@ -158,6 +158,7 @@ class ZControllers: NSObject {
 						gTextEditor.refusesFirstResponder = false
 						gHasCompletedStartup              = true
 
+						self.signalFor(nil, multiple: [.eRing])
                         self.blankScreenDebug()
                         gFiles.writeAll()
                     }

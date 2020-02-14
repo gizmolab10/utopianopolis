@@ -282,7 +282,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                     dragStartEvent(dot, iGesture)
                 } else if let zone = dot.widgetZone {
                     cleanupAfterDrag()
-                    gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: flags.isCommand)   // no dragging
+					gGraphEditor.clickActionOnRevealDot(for: zone, COMMAND: flags.isCommand, OPTION: flags.isOption)   // no dragging
                 }
             } else {                            // began
                 rubberbandStartEvent(location, iGesture)
@@ -297,7 +297,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         
         if  let    gesture = iGesture {
             let    COMMAND = gesture.isCommandDown
-            let      SHIFT = gesture.isShiftDown
+			let     OPTION = gesture.isOptionDown
+			let      SHIFT = gesture.isShiftDown
             let editWidget = gEditedTextWidget
             var  regarding = ZSignalKind.eDatum
             var withinEdit = false
@@ -325,7 +326,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 						// ///////////////
 
 						if  dot.isReveal {
-							gGraphEditor.clickActionOnRevealDot(for: zone, isCommand: COMMAND)
+							gGraphEditor.clickActionOnRevealDot(for: zone, COMMAND: COMMAND, OPTION: OPTION)
 						} else {
 							regarding = .eDetails // update selection level
 							

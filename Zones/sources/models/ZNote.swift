@@ -40,19 +40,39 @@ class ZNote: NSObject, ZIdentifiable {
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
 
-	func identifier() -> String? {
-		if  let id = zone?.recordName {
-			return prefix + kSeparator + id
-		}
-
-		return nil
-	}
-
 	init(_ zone: Zone?) {
 		super.init()
 
 		tentative = true
 		self.zone = zone
+	}
+
+	static func == ( left: ZNote, right: ZNote) -> Bool {
+		let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
+
+		if  unequal && left.zone?.record != nil && right.zone?.record != nil {
+			return left.zone?.recordName == right.zone?.recordName
+		}
+
+		return !unequal
+	}
+
+	// MARK:- persistency
+	// MARK:-
+
+	func saveNote(_ attributedString: NSAttributedString?) {
+		if  let attributed = attributedString,
+			let       note = noteMaybe {
+			let     string = attributed.string
+			let       text = attributed.attributedSubstring(from: textRange)
+			let      title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
+			note .noteText = text.mutableCopy() as? NSMutableAttributedString
+			zone?.zoneName = title
+			tentative      = false
+
+			zone?.needSave()
+			note.needSave()
+		}
 	}
 
 	static func object(for id: String) -> NSObject? {
@@ -67,25 +87,15 @@ class ZNote: NSObject, ZIdentifiable {
 		return nil
 	}
 
-	static func == ( left: ZNote, right: ZNote) -> Bool {
-		let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
+	// MARK:- properties
+	// MARK:-
 
-		if  unequal && left.zone?.record != nil && right.zone?.record != nil {
-			return left.zone?.recordName == right.zone?.recordName
+	func identifier() -> String? {
+		if  let id = zone?.recordName {
+			return prefix + kSeparator + id
 		}
 
-		return !unequal
-	}
-
-	func delete() {
-		zone?.removeTrait(for: .eNote)
-		gEssayRing.removeFromStack(self) // display prior essay
-		gRingView?.setNeedsDisplay()
-	}
-
-	func reset() {
-		noteMaybe?.clearSave()
-		setupChildren()
+		return nil
 	}
 
 	var paragraphStyle: NSMutableParagraphStyle {
@@ -159,19 +169,18 @@ class ZNote: NSObject, ZIdentifiable {
 		textRange  = textRange .offsetBy(offset)
 	}
 
-	func saveNote(_ attributedString: NSAttributedString?) {
-		if  let attributed = attributedString,
-			let       note = noteMaybe {
-			let     string = attributed.string
-			let       text = attributed.attributedSubstring(from: textRange)
-			let      title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
-			note .noteText = text.mutableCopy() as? NSMutableAttributedString
-			zone?.zoneName = title
-			tentative      = false
+	// MARK:- mutate
+	// MARK:-
 
-			zone?.needSave()
-			note.needSave()
-		}
+	func delete() {
+		zone?.removeTrait(for: .eNote)
+		gEssayRing.removeFromStack(self) // display prior essay
+		gRingView?.setNeedsDisplay()
+	}
+
+	func reset() {
+		noteMaybe?.clearSave()
+		setupChildren()
 	}
 
 	func isLocked(for range: NSRange) -> Bool {

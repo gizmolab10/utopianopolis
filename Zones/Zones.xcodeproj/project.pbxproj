@@ -847,9 +847,9 @@
 			children = (
 				A7B48A8823E0E80C00654DBD /* ZGridCell.swift */,
 				A7B48A8223E0E80C00654DBD /* ZLineView.swift */,
-				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
 				A7B48A8723E0E80C00654DBD /* ZoneDot.swift */,
 				A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */,
+				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
 				A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */,
 				A7B48A8523E0E80C00654DBD /* ZRingControl.swift */,
 				A7E5A5E923EFAE4F00A52F47 /* ZStackableView.swift */,

@@ -293,8 +293,7 @@ class ZGraphEditor: ZBaseEditor {
         return valid
     }
 
-
-    // MARK:- miscellaneous features
+    // MARK:- features
     // MARK:-
 
 	func updateSize(up: Bool) {
@@ -841,7 +840,7 @@ class ZGraphEditor: ZBaseEditor {
     }
 
 
-    func clickActionOnRevealDot(for iZone: Zone?, isCommand: Bool) {
+	func clickActionOnRevealDot(for iZone: Zone?, COMMAND: Bool, OPTION: Bool) {
         if  let zone = iZone {
             gTextEditor.stopCurrentEdit()
 
@@ -851,7 +850,7 @@ class ZGraphEditor: ZBaseEditor {
                 }
             }
 
-            if  zone.canTravel && (isCommand || (zone.fetchableCount == 0 && zone.count == 0)) {
+            if  zone.canTravel && (COMMAND || (zone.fetchableCount == 0 && zone.count == 0)) {
                 gFocusRing.invokeTravel(zone) { // email, hyperlink, bookmark, essay
                     self.redrawGraph()
                 }
