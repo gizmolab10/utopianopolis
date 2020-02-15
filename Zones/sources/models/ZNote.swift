@@ -210,17 +210,17 @@ class ZNote: NSObject, ZIdentifiable {
 
 				delete()
 			} else if !isLocked(for: range) {
-				if  let    intersection = range.inclusiveIntersection(textRange) {
-					delta               = length - intersection.length
-					textRange  .length += delta
-					result              = .eAlter
+				if  let  textIntersection = range.inclusiveIntersection(textRange) {
+					delta                 = length - textIntersection.length
+					textRange    .length += delta
+					result                = .eAlter
 				}
 
-				if  let    intersection = range.inclusiveIntersection(titleRange) {
-					delta               = length - intersection.length
-					titleRange .length += delta
-					textRange.location += delta
-					result              = .eAlter
+				if  let titleIntersection = range.inclusiveIntersection(titleRange) {
+					delta                 = length - titleIntersection.length
+					titleRange   .length += delta
+					textRange  .location += delta
+					result                = .eAlter
 				}
 			}
 		}

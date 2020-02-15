@@ -155,13 +155,11 @@ class Zone : ZRecord, ZIdentifiable {
 		return false
 	}
 
-	var breadcrumbs: String {
-		var    result = ""
-		var separator = ""
+	var breadcrumbs: [String] {
+		var result = [String]()
 
 		traverseAllAncestors { ancestor in
-			result    = ancestor.unwrappedName + separator + result
-			separator = " ⇨ "
+			result.append(ancestor.unwrappedName)
 		}
 
 		return result

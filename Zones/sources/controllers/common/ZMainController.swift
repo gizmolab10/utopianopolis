@@ -32,15 +32,20 @@ class ZMainController: ZGenericController {
     }
 
 	func updateBreadcrumbs() {
-		var text: String?
+		var color = gBackgroundColor
+		var zone: Zone?
 
 		switch gWorkMode {
-			case .graphMode: text = gHereMaybe?         .breadcrumbs
-			default:		 text = gCurrentEssay?.zone?.breadcrumbs
+			case .graphMode: zone = gHereMaybe
+			default:		 zone = gCurrentEssay?.zone
 		}
 
-		breadcrumbLabel?     .text = text ?? ""
-		breadcrumbLabel?.textColor = gBackgroundColor.darker(by: 5.0)
+		if  zone?.databaseID == .mineID {
+			color = color + gRubberbandColor
+		}
+
+		breadcrumbLabel?     .text = zone?.breadcrumbs ?? ""
+		breadcrumbLabel?.textColor = color.darker(by: 5.0)
 	}
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {

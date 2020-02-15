@@ -31,12 +31,13 @@ enum ZTraitType: String {
 
 class ZTrait: ZRecord {
 
-	@objc dynamic var format: String?
-    @objc dynamic var   type: String?
-	@objc dynamic var   text: String?
-	@objc dynamic var  asset: CKAsset?
-	@objc dynamic var offset: NSNumber?
-    @objc dynamic var  owner: CKRecord.Reference?
+	@objc dynamic var format:  String?
+    @objc dynamic var   type:  String?
+	@objc dynamic var   text:  String?
+	@objc dynamic var  asset:  CKAsset?
+	@objc dynamic var assets: [CKAsset]?
+	@objc dynamic var offset:  NSNumber?
+    @objc dynamic var  owner:  CKRecord.Reference?
     var _traitType: ZTraitType?
     var _ownerZone: Zone?
     override var unwrappedName: String { return text ?? emptyName }
@@ -101,6 +102,7 @@ class ZTrait: ZRecord {
                #keyPath(text),
 			   #keyPath(owner),
 			   #keyPath(asset),
+			   #keyPath(assets),
 			   #keyPath(offset),
 			   #keyPath(format)]
     }
@@ -152,7 +154,7 @@ class ZTrait: ZRecord {
 		set {
 			if  let string = newValue {
 				format 	   = string.attributesAsString
-				asset      = string.image?.jpeg?.asset(string.assetFileName)
+				assets     = string.assets
 				text 	   = string.string
 			}
 		}

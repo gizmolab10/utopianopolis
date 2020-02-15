@@ -951,8 +951,33 @@ extension NSMutableAttributedString {
 		return found
 	}
 
+	var attachments: [NSTextAttachment] {
+		let range = NSRange(location: 0, length: length)
+		var found = [NSTextAttachment]()
+
+		enumerateAttribute(.attachment, in: range, options: .reverse) { (item, inRange, flag) in
+			if  let attach = item as? NSTextAttachment {
+				found.append(attach)
+			}
+		}
+
+		return found
+	}
+
 	var assetFileName: String? {
 		return attachment?.fileWrapper?.preferredFilename
+	}
+
+	var assetFileNames: [String] {
+		var names = [String]()
+
+		for attachment in attachments {
+			if  let name = attachment.fileWrapper?.preferredFilename {
+				names.append(name)
+			}
+		}
+
+		return names
 	}
 
 	var image: ZImage? {
@@ -961,6 +986,32 @@ extension NSMutableAttributedString {
 		}
 
 		return nil
+	}
+
+	var images: [ZImage] {
+		var array = [ZImage] ()
+
+		for attachment in attachments {
+			if  let  cell = attachment.attachmentCell as? NSTextAttachmentCell,
+				let image = cell.image {
+				array.append(image)
+			}
+		}
+
+		return array
+	}
+
+	var assets: [CKAsset] {
+		let     i = images
+		var array = [CKAsset]()
+
+		for (index, name) in assetFileNames.enumerated() {
+			if  let a = i[index].jpeg?.asset(name) {
+				array.append(a)
+			}
+		}
+
+		return array
 	}
 
 	var attributesAsString: String {
