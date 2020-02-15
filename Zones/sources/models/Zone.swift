@@ -162,7 +162,7 @@ class Zone : ZRecord, ZIdentifiable {
 			result.append(ancestor.unwrappedName)
 		}
 
-		return result
+		return result.reversed()
 	}
 
 	var email: String? {
