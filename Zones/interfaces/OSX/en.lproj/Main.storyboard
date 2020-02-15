@@ -660,13 +660,13 @@ DQ
                                     <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                 </connections>
                             </containerView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vvq-Eh-Bua">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vvq-Eh-Bua" customClass="ZBreadcrumbsView" customModule="Thoughtful" customModuleProvider="target">
                                 <rect key="frame" x="18" y="268" width="321" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="EZn-DB-SIw"/>
                                 </constraints>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" id="PqB-cH-R8k">
-                                    <font key="font" metaFont="system" size="17"/>
+                                    <font key="font" metaFont="label" size="17"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -730,7 +730,7 @@ DQ
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="breadcrumbLabel" destination="vvq-Eh-Bua" id="6U4-Lf-Hqc"/>
+                        <outlet property="breadcrumbLabel" destination="vvq-Eh-Bua" id="Ehs-LR-IqE"/>
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="fDV-lr-VDw"/>
                         <outlet property="detailsWidth" destination="us8-K9-IEo" id="zgQ-PT-G1q"/>
                         <outlet property="essayView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
@@ -828,7 +828,7 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="254" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="controlContent" size="11"/>
+                                                        <font key="font" metaFont="label" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>

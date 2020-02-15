@@ -23,7 +23,7 @@ class ZMainController: ZGenericController {
     @IBOutlet var detailView        : ZView?
 	@IBOutlet var graphView         : ZView?
 	@IBOutlet var essayView     	: ZView?
-	@IBOutlet var breadcrumbLabel	: ZTextField?
+	@IBOutlet var breadcrumbLabel	: ZBreadcrumbsView?
     override  var controllerID      : ZControllerID { return .idMain }
 
 	override func setup() {
@@ -36,7 +36,7 @@ class ZMainController: ZGenericController {
         let  hideSearch = !gIsSearchMode
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
-		gBreadcrumbsController.updateCrumbs(in: breadcrumbLabel)
+		breadcrumbLabel?.updateCrumbs()
 
         switch iKind {
 			case .eFound:
