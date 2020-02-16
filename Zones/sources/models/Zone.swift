@@ -155,14 +155,14 @@ class Zone : ZRecord, ZIdentifiable {
 		return false
 	}
 
-	var breadcrumbs: [String] {
-		var result = [String]()
+	var crumbZones:   [Zone] {
+		var results = [Zone]()
 
 		traverseAllAncestors { ancestor in
-			result.append(ancestor.unwrappedName)
+			results.append(ancestor)
 		}
 
-		return result.reversed()
+		return results.reversed()
 	}
 
 	var email: String? {

@@ -514,8 +514,20 @@ extension CGSize {
 
 extension CGRect {
 
-    var    center: CGPoint { return CGPoint(x: midX, y: midY) }
-    var    extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
+    var extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
+
+	var center: CGPoint {
+		get { return CGPoint(x: midX, y: midY) }
+		set {
+			origin.x = newValue.x - (width  / 2.0)
+			origin.y = newValue.x - (height / 2.0)
+		}
+	}
+
+//	func cenerted(at: CGPoint) -> CGRect {
+//		let start = CGPoint(x: maxX - (2 * at.x), y: maxY - (2 * at.y))
+//		return
+//	}
 
     public init(start: CGPoint, end: CGPoint) {
         self.init()
@@ -1198,8 +1210,9 @@ extension String {
     func widthForFont  (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
 
     func rect(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGRect {
-        let bounds = rectWithFont(font)
-        let xDelta = offset(using: font, for: iRange, atStart: atStart)
+		let within = substring(with: iRange)
+		let bounds = within.rectWithFont(font)
+		let xDelta = offset(using: font, for: iRange, atStart: atStart)
         
         return bounds.offsetBy(dx: xDelta, dy: 0.0)
     }

@@ -19,8 +19,9 @@ enum ZControllerID: Int {
     case idActions
 	case idStatus
     case idSearch
+	case idCrumbs
     case idGraph
-    case idDebug
+	case idDebug
     case idTools
 	case idNote
     case idHelp

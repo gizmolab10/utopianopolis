@@ -14,14 +14,15 @@ import Cocoa
 import UIKit
 #endif
 
-// mouse over hit test -> index into breadcrumb strings array
-// change the color of the string at that index
-// mouse down -> change focus
-
-let gBreadcrumbsController = ZBreadcrumbsController()
+let gBreadcrumbsController = { return gControllers.controllerForID(.idCrumbs) as? ZBreadcrumbsController }
 
 class ZBreadcrumbsController: ZGenericController {
 
-	@IBOutlet var crumbsLabel : ZTextField?
+	@IBOutlet var  crumbsLabel : ZBreadcrumbsView?
+	override  var controllerID : ZControllerID { return .idCrumbs     }
+
+	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
+		crumbsLabel?.updateCrumbs()
+	}
 
 }

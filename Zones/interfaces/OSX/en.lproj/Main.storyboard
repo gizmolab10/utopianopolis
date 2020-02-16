@@ -660,17 +660,12 @@ DQ
                                     <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                 </connections>
                             </containerView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vvq-Eh-Bua" customClass="ZBreadcrumbsView" customModule="Thoughtful" customModuleProvider="target">
-                                <rect key="frame" x="18" y="268" width="321" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="20" id="EZn-DB-SIw"/>
-                                </constraints>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" id="PqB-cH-R8k">
-                                    <font key="font" metaFont="label" size="17"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR">
+                                <rect key="frame" x="0.0" y="256" width="357" height="44"/>
+                                <connections>
+                                    <segue destination="auf-AV-5qA" kind="embed" id="Frp-da-kE8"/>
+                                </connections>
+                            </containerView>
                             <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
                                 <rect key="frame" x="0.0" y="0.0" width="131" height="256"/>
                                 <connections>
@@ -703,6 +698,7 @@ DQ
                             </containerView>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="6sw-vi-DPR" secondAttribute="trailing" id="14S-eu-4mN"/>
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="4E2-mZ-iVD"/>
                             <constraint firstAttribute="trailing" secondItem="cYx-gW-vNV" secondAttribute="trailing" id="737-qE-qR5"/>
                             <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="7YZ-rS-1rz"/>
@@ -710,6 +706,7 @@ DQ
                             <constraint firstAttribute="trailing" secondItem="oEz-R7-9m9" secondAttribute="trailing" id="CM0-As-pVg"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="DdE-29-U0K"/>
                             <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="F3i-M3-bpQ"/>
+                            <constraint firstItem="6sw-vi-DPR" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="GGA-eb-oiW"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GKq-sx-Y6r"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
                             <constraint firstItem="oEz-R7-9m9" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="Mmj-ra-kdh"/>
@@ -718,9 +715,8 @@ DQ
                             <constraint firstItem="xfO-CE-WwN" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="X36-IN-HdX"/>
                             <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="Xgc-lh-EwT"/>
                             <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="ZFw-Tj-cbj"/>
-                            <constraint firstAttribute="trailing" secondItem="vvq-Eh-Bua" secondAttribute="trailing" constant="20" id="ZRa-QP-jy6"/>
-                            <constraint firstItem="vvq-Eh-Bua" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="20" id="egl-K8-5U7"/>
-                            <constraint firstItem="vvq-Eh-Bua" firstAttribute="centerY" secondItem="58m-fY-Oaa" secondAttribute="centerY" id="ekB-XZ-6pE"/>
+                            <constraint firstItem="6sw-vi-DPR" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="aKG-xO-qGq"/>
+                            <constraint firstItem="xfO-CE-WwN" firstAttribute="top" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="aPs-j1-UNe"/>
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="gQc-MX-nbf"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="lap-td-b4Q"/>
                             <constraint firstAttribute="bottom" secondItem="xfO-CE-WwN" secondAttribute="bottom" id="paZ-Ht-UuJ"/>
@@ -776,7 +772,7 @@ DQ
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="973" y="557"/>
+            <point key="canvasLocation" x="1056" y="625"/>
         </scene>
         <!--Ring Controller-->
         <scene sceneID="2ar-AS-rBz">
@@ -878,7 +874,7 @@ DQ
                 <controllerPlaceholder storyboardName="Details" id="yWa-SA-l1V" sceneMemberID="viewController"/>
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="811" y="632"/>
+            <point key="canvasLocation" x="894" y="700"/>
         </scene>
         <!--Essay-->
         <scene sceneID="YUn-EI-h0m">
@@ -968,6 +964,40 @@ DQ
                 <customObject id="IZh-Iz-IVH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="636" y="1448"/>
+        </scene>
+        <!--Breadcrumbs Controller-->
+        <scene sceneID="wXo-la-8OL">
+            <objects>
+                <viewController id="auf-AV-5qA" customClass="ZBreadcrumbsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="W43-uk-txK">
+                        <rect key="frame" x="0.0" y="0.0" width="397" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vvq-Eh-Bua" customClass="ZBreadcrumbsView" customModule="Thoughtful" customModuleProvider="target">
+                                <rect key="frame" x="18" y="12" width="361" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="EZn-DB-SIw"/>
+                                </constraints>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" id="PqB-cH-R8k">
+                                    <font key="font" metaFont="label" size="17"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="vvq-Eh-Bua" firstAttribute="centerY" secondItem="W43-uk-txK" secondAttribute="centerY" id="2nY-zf-G1A"/>
+                            <constraint firstItem="vvq-Eh-Bua" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" constant="20" id="TXr-bK-zHc"/>
+                            <constraint firstAttribute="trailing" secondItem="vvq-Eh-Bua" secondAttribute="trailing" constant="20" id="j01-79-SEm"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="crumbsLabel" destination="vvq-Eh-Bua" id="IK9-2K-ypL"/>
+                    </connections>
+                </viewController>
+                <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1055.5" y="501"/>
         </scene>
     </scenes>
 </document>
