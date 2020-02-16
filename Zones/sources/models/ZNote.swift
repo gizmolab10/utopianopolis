@@ -18,13 +18,14 @@ enum ZAlterationType: Int {
 class ZNote: NSObject, ZIdentifiable {
 	var    zone  	         : Zone?
 	var    children          = [ZNote]()
-	var    tentative         = false
+	var    autoDelete        = false		// true means delete this note on exit from essay mode
 	var    essayLength       = 0
 	var    noteOffset        = 0
 	var    noteMaybe         : ZTrait?   { return zone?.traits[  .eNote] }
 	var    noteTrait         : ZTrait?   { return zone?.traitFor(.eNote) }
 	var    prefix            : String    { return "note" }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
+	var    isNote            : Bool      { return isMember(of: ZNote.self) }
 	var    lastTextIsDefault : Bool      { return noteMaybe?.text == kEssayDefault }
 	var    fullTitleOffset   : Int       { return noteOffset + titleRange.location - 2 }
 	var    fullTitleRange    : NSRange   { return NSRange(location:   fullTitleOffset, length: titleRange.length + 3) }
@@ -43,7 +44,7 @@ class ZNote: NSObject, ZIdentifiable {
 	init(_ zone: Zone?) {
 		super.init()
 
-		tentative = true
+		autoDelete = true
 		self.zone = zone
 	}
 
@@ -68,7 +69,7 @@ class ZNote: NSObject, ZIdentifiable {
 			let      title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
 			note .noteText = text.mutableCopy() as? NSMutableAttributedString
 			zone?.zoneName = title
-			tentative      = false
+			autoDelete      = false
 
 			zone?.needSave()
 			note.needSave()

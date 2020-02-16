@@ -168,6 +168,9 @@
 		A764067C23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */; };
 		A764067D23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */; };
 		A764067E23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */; };
+		A764068023F9C2EB00D9EA3A /* ZNoteAndEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067F23F9C2EB00D9EA3A /* ZNoteAndEssay.swift */; };
+		A764068123F9C2EB00D9EA3A /* ZNoteAndEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067F23F9C2EB00D9EA3A /* ZNoteAndEssay.swift */; };
+		A764068223F9C2EB00D9EA3A /* ZNoteAndEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067F23F9C2EB00D9EA3A /* ZNoteAndEssay.swift */; };
 		A774ED1A23E225A500080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
 		A774ED1D23E2268D00080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
 		A774ED1E23E2268E00080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
@@ -412,6 +415,7 @@
 		A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsController.swift; sourceTree = "<group>"; };
 		A764067723F7E37600D9EA3A /* ZBreadcrumbsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsView.swift; sourceTree = "<group>"; };
 		A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbs.swift; sourceTree = "<group>"; };
+		A764067F23F9C2EB00D9EA3A /* ZNoteAndEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZNoteAndEssay.swift; sourceTree = "<group>"; };
 		A774ED1923E225A500080DC9 /* ZGesturesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGesturesController.swift; sourceTree = "<group>"; };
 		A78A6DFF23B02163000F581F /* ZEssayController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEssayController.swift; sourceTree = "<group>"; };
 		A78A6E0923B021EA000F581F /* ZEssayEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEssayEditor.swift; sourceTree = "<group>"; };
@@ -627,6 +631,7 @@
 				0C48B0941F87197B00A247BC /* ZEvents.swift */,
 				0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */,
 				A7EE20F023D536A400B48CB8 /* ZFocus.swift */,
+				A764067F23F9C2EB00D9EA3A /* ZNoteAndEssay.swift */,
 				0C7152221FD8A1E400C7DA61 /* ZRing.swift */,
 				0C6CAE1E1F88308E001960F7 /* ZSearching.swift */,
 				0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */,
@@ -1119,6 +1124,7 @@
 				0C39B2E31F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				A7395BAF21B877B600F5759F /* ZTextEditor.swift in Sources */,
 				0CABC9EF2022768D0019D8B0 /* ZEnumerations.swift in Sources */,
+				A764068023F9C2EB00D9EA3A /* ZNoteAndEssay.swift in Sources */,
 				A764067823F7E37600D9EA3A /* ZBreadcrumbsView.swift in Sources */,
 				A7D947DD21EC11C800B7DBFC /* ZDetailsController.swift in Sources */,
 				A7D947E121EC142000B7DBFC /* ZShortcutsController.swift in Sources */,
@@ -1199,6 +1205,7 @@
 				0C39B2A61F182EBB0091F4D1 /* ZDetailsController.swift in Sources */,
 				0CB619981FB3C4660087B066 /* ZSearchResultsController.swift in Sources */,
 				A7C7AF5B23B6D0A000AAD593 /* ZEssay.swift in Sources */,
+				A764068223F9C2EB00D9EA3A /* ZNoteAndEssay.swift in Sources */,
 				A764067A23F7E37600D9EA3A /* ZBreadcrumbsView.swift in Sources */,
 				A70064DF22484808004E3A8D /* ZManifest.swift in Sources */,
 				A7EE20F323D536A400B48CB8 /* ZFocus.swift in Sources */,
@@ -1293,6 +1300,7 @@
 				0C2E22D31F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
 				A7B48AB523E0E80C00654DBD /* ZGridCell.swift in Sources */,
 				A774ED1E23E2268E00080DC9 /* ZGesturesController.swift in Sources */,
+				A764068123F9C2EB00D9EA3A /* ZNoteAndEssay.swift in Sources */,
 				A764067D23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */,
 				A7E096CB23EB98FA0017EC32 /* ZWebLinkController.swift in Sources */,
 				A7CFA81C21F516E0008DA880 /* ZSearchController.swift in Sources */,

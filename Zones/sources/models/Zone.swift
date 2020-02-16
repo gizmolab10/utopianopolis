@@ -195,6 +195,20 @@ class Zone : ZRecord, ZIdentifiable {
 		return result
 	}
 
+	var countOfNotes: Int {
+		return zonesWithNotes.count
+	}
+
+	var currentNote: ZNote? {
+		let zones = zonesWithNotes
+
+		if  zones.count > 0 {
+			return ZNote(zones[0])
+		}
+
+		return nil
+	}
+
 	var freshEssay: ZNote {
 		if  isBookmark {
 			return bookmarkTarget!.freshEssay

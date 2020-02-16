@@ -69,7 +69,7 @@ var  gLighterBackgroundColor:             ZColor { return gBackgroundColor.light
 var        gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var          gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var	 			  gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
-var            gCurrentEssay:             ZNote? { didSet { gFocusRing.push(); gRingView?.setNeedsDisplay() } }
+var            gCurrentEssay:             ZNote? { didSet { gEssayRing.push(); gRingView?.setNeedsDisplay() } }
 func           gSetGraphMode()                   { gWorkMode = .graphMode }
 
 var gCurrentEvent: ZEvent? {

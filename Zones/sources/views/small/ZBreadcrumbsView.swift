@@ -12,14 +12,15 @@ class ZBreadcrumbsView : ZTextField {
 
 	var crumbRects: [CGRect] {
 		var        rects = [CGRect]()
+		let       string = gBreadcrumbs.crumbsText
 
 		if  let        f = font {
-			var    tRect = gBreadcrumbs.crumbsText.rect(using: f, for: NSRange(location: 0, length: gBreadcrumbs.crumbsText.length), atStart: true)
+			var    tRect = string.rect(using: f, for: NSRange(location: 0, length: string.length), atStart: true)
 			tRect.center = bounds.center
 			let   deltaX = tRect.minX
 
 			for range in gBreadcrumbs.crumbRanges {
-				let rect = gBreadcrumbs.crumbsText.rect(using: f, for: range, atStart: true).offsetBy(dx: deltaX, dy: 4.0)
+				let rect = string.rect(using: f, for: range, atStart: true).offsetBy(dx: deltaX, dy: 4.0)
 
 				rects.append(rect)
 			}
@@ -44,17 +45,28 @@ class ZBreadcrumbsView : ZTextField {
 		textColor = gBreadcrumbs.crumbsColor
 	}
 
+	// TODO: mouse over hit test -> index into breadcrumb strings array
+	// change the color of the string at that index
+
 	// mouse down -> change focus
-	override func mouseDown(with event: NSEvent) {
-		let COMMAND = event.modifierFlags.isCommand
-		let   point = convert(event.locationInWindow, from: nil)
+	func hitCrumb(_ event: NSEvent) -> Int? {
+		let point = convert(event.locationInWindow, from: nil)
 
 		for (index, rect) in crumbRects.enumerated() {
 			if  rect.contains(point) {
-				go(to: index, COMMAND: COMMAND)
-
-				break
+				return index
 			}
+		}
+
+		return nil
+	}
+
+	// mouse down -> change focus
+	override func mouseDown(with event: NSEvent) {
+		let COMMAND = event.modifierFlags.isCommand
+
+		if  let    index = hitCrumb(event) {
+			go(to: index, COMMAND: COMMAND)
 		}
 	}
 
@@ -83,8 +95,5 @@ class ZBreadcrumbsView : ZTextField {
 				gCurrentEssay = next.noteMaybe
 		}
 	}
-
-	// mouse over hit test -> index into breadcrumb strings array
-	// change the color of the string at that index
 
 }

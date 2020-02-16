@@ -479,8 +479,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                     }
 
                     if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
-                        let COMMAND = gesture.modifiers?.isCommand {
-                        gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, COMMAND) {
+                        let CONTROL = gesture.modifiers?.isControl {
+                        gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, CONTROL) {
                             gSelecting.updateBrowsingLevel()
                             gSelecting.updateCousinList()
                             self.restartGestureRecognition()

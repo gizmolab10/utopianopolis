@@ -2005,7 +2005,7 @@ class ZGraphEditor: ZBaseEditor {
     }
 
 
-    func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, _ COMMAND: Bool, onCompletion: Closure?) {
+    func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, _ CONTROL: Bool, onCompletion: Closure?) {
 
         // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         // 1. move a normal zone into another normal zone                                                           //
@@ -2064,7 +2064,7 @@ class ZGraphEditor: ZBaseEditor {
             }
 
             iUndoSelf.UNDO(self) { iUndoUndoSelf in
-                iUndoUndoSelf.moveGrabbedZones(into: iInto, at: iIndex, COMMAND, onCompletion: onCompletion)
+                iUndoUndoSelf.moveGrabbedZones(into: iInto, at: iIndex, CONTROL, onCompletion: onCompletion)
             }
 
             onCompletion?()
@@ -2077,7 +2077,7 @@ class ZGraphEditor: ZBaseEditor {
         let finish = {
             var done = false
 
-            if !COMMAND {
+            if !CONTROL {
                 into.revealChildren()
             }
 
@@ -2096,8 +2096,8 @@ class ZGraphEditor: ZBaseEditor {
 				for grab in grabs {
 					var beingMoved = grab
 
-					if  toFavorites && !beingMoved.isInFavorites && !beingMoved.isBookmark && !beingMoved.isInTrash {
-						beingMoved = gFavorites.createBookmark(for: beingMoved, style: .favorite)
+					if  toFavorites && !beingMoved.isInFavorites && !beingMoved.isBookmark && !beingMoved.isInTrash && !CONTROL {
+						beingMoved = gFavorites.createBookmark(for: beingMoved, style: .favorite)	// type 3
 
 						beingMoved.maybeNeedSave()
 					} else {
@@ -2112,7 +2112,7 @@ class ZGraphEditor: ZBaseEditor {
 						}
 					}
 
-					if !COMMAND {
+					if !CONTROL {
 						beingMoved.addToGrab()
 					}
 
@@ -2132,7 +2132,7 @@ class ZGraphEditor: ZBaseEditor {
         // deal with target being a bookmark //
         // ////////////////////////////////////
 
-        if !toBookmark || COMMAND {
+        if !toBookmark || CONTROL {
             finish()
         } else {
             gFocusRing.travelThrough(iInto) { (iAny, iSignalKind) in
