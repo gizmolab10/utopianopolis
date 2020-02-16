@@ -365,6 +365,7 @@ class ZTextEditor: ZTextView {
             fullResign()
             e.updateWidgetsForEndEdit()
             e.packedZone?.grab()
+			gControllers.signalFor(nil, regarding: .eCrumbs)
         }
     }
 

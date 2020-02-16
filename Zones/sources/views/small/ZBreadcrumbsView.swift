@@ -10,60 +10,16 @@ import Foundation
 
 class ZBreadcrumbsView : ZTextField {
 
-	var crumbZones: [Zone]      { return crumbsRootZone?.crumbZones ?? [] }
-	var crumbDBID: ZDatabaseID? { return crumbsRootZone?.databaseID }
-	var crumbsText: String      { return crumbs.joined(separator: " ⇨ ") }
-
-	var crumbs: [String] {
-		var result = [String]()
-
-		for zone in crumbZones {
-			result.append(zone.unwrappedName)
-		}
-
-		return result
-	}
-
-	var crumbsRootZone: Zone? {
-		switch gWorkMode {
-			case .graphMode: return gSelecting.firstGrab
-			default:		 return gCurrentEssay?.zone
-		}
-	}
-
-	var crumbsColor: ZColor {
-		var color = gBackgroundColor
-
-		if  crumbDBID == .mineID {
-			color = color + gRubberbandColor
-		}
-
-		return color.darker(by: 5.0)
-	}
-
-	var crumbRanges: [NSRange] {
-		var result = [NSRange]()
-
-		for crumb in crumbs {
-			if  let ranges = crumbsText.rangesMatching(crumb),
-				ranges.count > 0 {
-				result.append(ranges[0])
-			}
-		}
-
-		return result
-	}
-
 	var crumbRects: [CGRect] {
 		var        rects = [CGRect]()
 
 		if  let        f = font {
-			var    tRect = crumbsText.rect(using: f, for: NSRange(location: 0, length: crumbsText.length), atStart: true)
+			var    tRect = gBreadcrumbs.crumbsText.rect(using: f, for: NSRange(location: 0, length: gBreadcrumbs.crumbsText.length), atStart: true)
 			tRect.center = bounds.center
 			let   deltaX = tRect.minX
 
-			for range in crumbRanges {
-				let rect = crumbsText.rect(using: f, for: range, atStart: true).offsetBy(dx: deltaX, dy: 4.0)
+			for range in gBreadcrumbs.crumbRanges {
+				let rect = gBreadcrumbs.crumbsText.rect(using: f, for: range, atStart: true).offsetBy(dx: deltaX, dy: 4.0)
 
 				rects.append(rect)
 			}
@@ -84,32 +40,43 @@ class ZBreadcrumbsView : ZTextField {
 //	}
 
 	func updateCrumbs() {
-		text      = crumbsText
-		textColor = crumbsColor
+		text      = gBreadcrumbs.crumbsText
+		textColor = gBreadcrumbs.crumbsColor
 	}
 
 	// mouse down -> change focus
 	override func mouseDown(with event: NSEvent) {
-		let point = convert(event.locationInWindow, from: nil)
+		let COMMAND = event.modifierFlags.isCommand
+		let   point = convert(event.locationInWindow, from: nil)
 
 		for (index, rect) in crumbRects.enumerated() {
 			if  rect.contains(point) {
-				go(to: index)
+				go(to: index, COMMAND: COMMAND)
 
 				break
 			}
 		}
 	}
 
-	func go(to index: Int) {
-		let last = crumbsRootZone
-		let next = crumbZones[index]
+	func go(to index: Int, COMMAND: Bool) {
+		let next = gBreadcrumbs.crumbZones[index]
+		let last = gBreadcrumbs.crumbsRootZone
+		let here = gHere
 
 		switch gWorkMode {
 			case .graphMode:
 				gFocusRing.focusOn(next) {
-					last?.grab()
-					last?.asssureIsVisible()
+					if  COMMAND {
+						next.traverseAllProgeny { child in
+							child.concealChildren()
+						}
+					}
+
+					if  here != next {
+						last?.grab()
+						last?.asssureIsVisible()
+					}
+
 					gControllers.signalFor(next, regarding: .eRelayout)
 			}
 			default:

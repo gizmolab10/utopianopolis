@@ -802,7 +802,7 @@ class Zone : ZRecord, ZIdentifiable {
 
         widget?.setNeedsDisplay()
         
-        gControllers.signalFor(nil, regarding: .eDetails)
+		gControllers.signalFor(nil, multiple: [.eDetails, .eCrumbs])
     }
 
     override func debug(_  iMessage: String) {

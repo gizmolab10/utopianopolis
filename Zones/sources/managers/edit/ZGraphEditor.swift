@@ -202,7 +202,7 @@ class ZGraphEditor: ZBaseEditor {
                     }
                 default: break
                 }
-            } else if !OPTION {
+            } else {
 
                 // ///////////////
                 // GENERATIONAL //
@@ -216,7 +216,15 @@ class ZGraphEditor: ZBaseEditor {
                 default:     return
                 }
 
-                applyGenerationally(show, extreme: COMMAND)
+				if !OPTION {
+					applyGenerationally(show, extreme: COMMAND)
+				} else if let here = gBreadcrumbs.nextCrumb(arrow == .left) {
+//					let grabs = gSelecting.currentGrabs
+					gHere = here
+
+					gControllers.signalFor(here, regarding: .eRelayout)
+//					gSelecting.grab(grabs)
+				}
             }
         }
     }

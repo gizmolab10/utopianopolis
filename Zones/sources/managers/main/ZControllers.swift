@@ -41,7 +41,8 @@ enum ZSignalKind: Int {
 	case eGraph
 	case eStatus
 	case eResize
-    case eSearch
+	case eSearch
+	case eCrumbs
 	case eStartup
     case eDetails
     case eRelayout
@@ -214,6 +215,7 @@ class ZControllers: NSObject {
             for (identifier, signalObject) in self.signalObjectsByControllerID {
                 let isPreferences = identifier == .idPreferences
 				let      isStatus = identifier == .idStatus
+				let      isCrumbs = identifier == .idCrumbs
                 let       isDebug = identifier == .idDebug
                 let       isGraph = identifier == .idGraph
                 let        isMain = identifier == .idMain
@@ -229,6 +231,7 @@ class ZControllers: NSObject {
                     case .eGraph:       if isGraph       { closure() }
                     case .eDebug:       if isDebug       { closure() }
 					case .eStatus:      if isStatus      { closure() }
+					case .eCrumbs:      if isCrumbs      { closure() }
                     case .eDetails:     if isDetail      { closure() }
                     case .ePreferences: if isPreferences { closure() }
                     default:                               closure()
