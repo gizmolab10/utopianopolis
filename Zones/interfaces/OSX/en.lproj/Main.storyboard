@@ -974,9 +974,9 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vvq-Eh-Bua" customClass="ZBreadcrumbsView" customModule="Thoughtful" customModuleProvider="target">
-                                <rect key="frame" x="18" y="12" width="361" height="21"/>
+                                <rect key="frame" x="-2" y="10" width="401" height="24"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="21" id="EZn-DB-SIw"/>
+                                    <constraint firstAttribute="height" constant="24" id="EZn-DB-SIw"/>
                                 </constraints>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" id="PqB-cH-R8k">
                                     <font key="font" metaFont="label" size="17"/>
@@ -987,8 +987,8 @@ DQ
                         </subviews>
                         <constraints>
                             <constraint firstItem="vvq-Eh-Bua" firstAttribute="centerY" secondItem="W43-uk-txK" secondAttribute="centerY" id="2nY-zf-G1A"/>
-                            <constraint firstItem="vvq-Eh-Bua" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" constant="20" id="TXr-bK-zHc"/>
-                            <constraint firstAttribute="trailing" secondItem="vvq-Eh-Bua" secondAttribute="trailing" constant="20" id="j01-79-SEm"/>
+                            <constraint firstItem="vvq-Eh-Bua" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" id="TXr-bK-zHc"/>
+                            <constraint firstAttribute="trailing" secondItem="vvq-Eh-Bua" secondAttribute="trailing" id="j01-79-SEm"/>
                         </constraints>
                     </view>
                     <connections>

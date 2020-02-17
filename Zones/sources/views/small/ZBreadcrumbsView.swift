@@ -21,7 +21,7 @@ class ZBreadcrumbsView : ZTextField {
 			tRect.leftCenter = bounds.leftCenter
 
 			for range in gBreadcrumbs.crumbRanges {
-				let rect = string.rect(using: f, for: range, atStart: true).offsetBy(dx: 2.0, dy: 4.0)
+				let rect = string.rect(using: f, for: range, atStart: true).offsetBy(dx: 2.0, dy: 6.0)
 
 				rects.append(rect)
 			}

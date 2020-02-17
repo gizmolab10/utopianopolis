@@ -150,6 +150,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
                     case "t":      swapWithParent()
 					case "w":      rotateWritable()
+					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
@@ -216,23 +217,29 @@ class ZGraphEditor: ZBaseEditor {
                 default:     return
                 }
 
-				if !OPTION {
+				if  OPTION {
+					browseBreadcrumbs(arrow == .left)
+				} else {
 					applyGenerationally(show, extreme: COMMAND)
-				} else if let here = gBreadcrumbs.nextCrumb(arrow == .left) {
-					let last = gSelecting.currentGrabs
-					gHere    = here
-
-					here.traverseAllProgeny { child in
-						child.concealChildren()
-					}
-
-					gSelecting.grab(last)
-					gSelecting.firstGrab?.asssureIsVisible()
-					gControllers.signalFor(here, regarding: .eRelayout)
 				}
             }
         }
     }
+
+	func browseBreadcrumbs(_ out: Bool) {
+		if  let here = out ? gHere.parentZone : gBreadcrumbs.nextCrumb(false) {
+			let last = gSelecting.currentGrabs
+			gHere    = here
+
+			here.traverseAllProgeny { child in
+				child.concealChildren()
+			}
+
+			gSelecting.grab(last)
+			gSelecting.firstGrab?.asssureIsVisible()
+			gControllers.signalFor(here, regarding: .eRelayout)
+		}
+	}
 	
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
         let alterers = "ehltuw\r" + kMarkingCharacters

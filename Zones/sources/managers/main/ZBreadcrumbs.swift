@@ -14,7 +14,7 @@ class ZBreadcrumbs: NSObject {
 
 	var crumbZones  : [Zone]       { return crumbsRootZone?.crumbZones ?? [] }
 	var crumbDBID   : ZDatabaseID? { return crumbsRootZone?.databaseID }
-	var crumbsText  : String       { return crumbs.joined(separator: "      ") }
+	var crumbsText  : String       { return kCrumbSeparator + crumbs.joined(separator: kCrumbSeparator) + kCrumbSeparator }
 
 	var indexOfHere : Int? {
 		for (index, zone) in crumbZones.enumerated() {
@@ -31,6 +31,11 @@ class ZBreadcrumbs: NSObject {
 
 		for zone in crumbZones {
 			result.append(zone.unwrappedName)
+
+			if !gShowAllBreadcrumbs,
+				zone == gHere {
+				break
+			}
 		}
 
 		return result
@@ -57,9 +62,13 @@ class ZBreadcrumbs: NSObject {
 		var result = [NSRange]()
 
 		for crumb in crumbs {
-			if  let ranges = crumbsText.rangesMatching(crumb),
+			if  let ranges = crumbsText.rangesMatching(kCrumbSeparator + crumb + kCrumbSeparator),
 				ranges.count > 0 {
-				result.append(ranges[0])
+				let offset = kCrumbSeparator.length
+				var range = ranges[0]
+				range.location += offset
+				range.length -= offset * 2
+				result.append(range)
 			}
 		}
 
@@ -81,6 +90,12 @@ class ZBreadcrumbs: NSObject {
 		}
 
 		return nil
+	}
+
+	func toggleBreadcrumbExtent() {
+		gShowAllBreadcrumbs = !gShowAllBreadcrumbs
+
+		gControllers.signalRegarding(.eCrumbs)
 	}
 
 }
