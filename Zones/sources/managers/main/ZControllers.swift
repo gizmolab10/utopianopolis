@@ -105,7 +105,7 @@ class ZControllers: NSObject {
 		if  newMode != gWorkMode {
 			gWorkMode 					= newMode
 			let showNote 			    = newMode == .noteMode
-			let multiple: [ZSignalKind] = showNote ? [.eNote] : [.eNote, .eRelayout]
+			let multiple: [ZSignalKind] = showNote ? [.eNote, .eCrumbs] : [.eNote, .eRelayout]
 
 			FOREGROUND { 	// avoid generic menu handler invoking graph editor's handle key
 				gTextEditor.stopCurrentEdit()
@@ -128,7 +128,7 @@ class ZControllers: NSObject {
 	func showHideRing() {
 		gFullRingIsVisible = !gFullRingIsVisible
 
-		signalFor(nil, regarding: .eRing)
+		signalRegarding(.eRing)
 	}
 
     // MARK:- startup
@@ -139,7 +139,7 @@ class ZControllers: NSObject {
 		gTextEditor.refusesFirstResponder = true			// WORKAROUND new feature of mac os x
 
         gRemoteStorage.clear()
-        self.signalFor(nil, regarding: .eRelayout)
+        self.redrawGraph()
 
         gBatches.startUp { iSame in
             FOREGROUND {
@@ -160,7 +160,7 @@ class ZControllers: NSObject {
 						gTextEditor.refusesFirstResponder = false
 						gHasCompletedStartup              = true
 
-						self.signalFor(nil, multiple: [.eRing])
+						self.signalRegarding(.eRing)
                         self.blankScreenDebug()
                         gFiles.writeAll()
                     }
@@ -203,6 +203,10 @@ class ZControllers: NSObject {
 
 	// MARK:- signals
     // MARK:-
+
+	func signalRegarding(_ regarding: ZSignalKind) {
+		signalFor(nil, regarding: regarding)
+	}
 
 	func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure? = nil) {
         signalFor(object, multiple: [regarding], onCompletion: onCompletion)

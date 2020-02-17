@@ -197,8 +197,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         if  gIsSearchMode {
             gSetGraphMode()
 
-            gControllers.signalFor(nil, regarding: .eSearch)
-            gControllers.signalFor(nil, regarding: .eFound)
+            gControllers.signalRegarding(.eSearch)
+            gControllers.signalRegarding(.eFound)
         }
     }
 
@@ -209,7 +209,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         } else {
             resultsAreVisible = true
 
-            gControllers.signalFor(nil, regarding: .eSearch)
+            gControllers.signalRegarding(.eSearch)
         }
     }
 

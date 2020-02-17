@@ -22,7 +22,7 @@ class ZBreadcrumbsController: ZGenericController {
 	override  var controllerID : ZControllerID { return .idCrumbs     }
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-		crumbsLabel?.updateCrumbs()
+		crumbsLabel?.updateAndRedraw()
 	}
 
 }

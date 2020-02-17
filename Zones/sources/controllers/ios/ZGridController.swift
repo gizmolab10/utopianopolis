@@ -90,7 +90,7 @@ class ZGridController: UICollectionViewController {
 
 			let complete = {
 				gSelecting.updateAfterMove()
-				gControllers.signalFor(nil, multiple: [.eRelayout])
+				redrawGraph()
 				self.update()
 			}
 

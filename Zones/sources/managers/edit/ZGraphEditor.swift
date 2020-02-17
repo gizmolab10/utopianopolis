@@ -219,11 +219,16 @@ class ZGraphEditor: ZBaseEditor {
 				if !OPTION {
 					applyGenerationally(show, extreme: COMMAND)
 				} else if let here = gBreadcrumbs.nextCrumb(arrow == .left) {
-//					let grabs = gSelecting.currentGrabs
-					gHere = here
+					let last = gSelecting.currentGrabs
+					gHere    = here
 
+					here.traverseAllProgeny { child in
+						child.concealChildren()
+					}
+
+					gSelecting.grab(last)
+					gSelecting.firstGrab?.asssureIsVisible()
 					gControllers.signalFor(here, regarding: .eRelayout)
-//					gSelecting.grab(grabs)
 				}
             }
         }
@@ -310,7 +315,7 @@ class ZGraphEditor: ZBaseEditor {
 		size           = size.force(horizotal: false, into: NSRange(location: 2, length: 10))
 		gGenericOffset = size
 
-		gControllers.signalFor(nil, regarding: .eRelayout)
+		redrawGraph()
 	}
 
 	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {
@@ -541,7 +546,7 @@ class ZGraphEditor: ZBaseEditor {
         if  gDatabaseID != .favoritesID {
             gWorkMode = gIsSearchMode ? .graphMode : .searchMode
 
-            gControllers.signalFor(nil, regarding: OPTION ? .eFound : .eSearch)
+            gControllers.signalRegarding(OPTION ? .eFound : .eSearch)
         }
     }
 
@@ -2202,7 +2207,7 @@ class ZGraphEditor: ZBaseEditor {
     func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
         moveUp(iMoveUp, gSelecting.sortedGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
             gControllers.signalAndSync(nil, regarding: iKind) {
-                gControllers.signalFor(nil, regarding: iKind)
+                gControllers.signalRegarding(iKind)
             }
         }
     }

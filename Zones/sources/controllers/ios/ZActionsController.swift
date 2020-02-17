@@ -159,7 +159,7 @@ class ZActionsController : ZGenericController {
 		
 		if  gDatabaseID != priorID || gShowFavorites != priorShown {
 			gSelecting.updateAfterMove()
-			gControllers.signalFor(nil, multiple: [.eRelayout])
+			redrawGraph()
 		}
 	}
 	

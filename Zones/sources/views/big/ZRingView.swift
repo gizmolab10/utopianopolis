@@ -106,7 +106,7 @@ class ZRingView: ZView {
 		if  let note = item as? ZNote {
 			gControllers.swapGraphAndEssay(force: .noteMode)
 			gEssayView?.resetCurrentEssay(note)
-			gControllers.signalFor(nil, regarding: .eMain) // update breadcrumbs
+			gControllers.signalRegarding(.eCrumbs)
 
 			printDebug(.ring, note.zone?.zoneName ?? "unknown essay")
 

@@ -467,7 +467,7 @@ class ZoneWidget: ZView {
         path    .lineWidth = thickness
         path     .flatness = 0.0001
 
-        if pale {
+        if  pale {
             let pattern: [CGFloat] = [4.0, 4.0]
             path.setLineDash(pattern, count: 2, phase: 4.0)
         }

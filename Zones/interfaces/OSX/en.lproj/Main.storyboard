@@ -660,7 +660,7 @@ DQ
                                     <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                 </connections>
                             </containerView>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR">
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View">
                                 <rect key="frame" x="0.0" y="256" width="357" height="44"/>
                                 <connections>
                                     <segue destination="auf-AV-5qA" kind="embed" id="Frp-da-kE8"/>
@@ -978,7 +978,7 @@ DQ
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="EZn-DB-SIw"/>
                                 </constraints>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" id="PqB-cH-R8k">
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" id="PqB-cH-R8k">
                                     <font key="font" metaFont="label" size="17"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

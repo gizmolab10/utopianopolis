@@ -8,19 +8,20 @@
 
 import Foundation
 
+var gBreadcrumbsLabel: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbsLabel }
+
 class ZBreadcrumbsView : ZTextField {
 
 	var crumbRects: [CGRect] {
 		var        rects = [CGRect]()
 		let       string = gBreadcrumbs.crumbsText
 
-		if  let        f = font {
-			var    tRect = string.rect(using: f, for: NSRange(location: 0, length: string.length), atStart: true)
-			tRect.center = bounds.center
-			let   deltaX = tRect.minX
+		if  let            f = font {
+			var        tRect = string.rect(using: f, for: NSRange(location: 0, length: string.length), atStart: true)
+			tRect.leftCenter = bounds.leftCenter
 
 			for range in gBreadcrumbs.crumbRanges {
-				let rect = string.rect(using: f, for: range, atStart: true).offsetBy(dx: deltaX, dy: 4.0)
+				let rect = string.rect(using: f, for: range, atStart: true).offsetBy(dx: 2.0, dy: 4.0)
 
 				rects.append(rect)
 			}
@@ -29,20 +30,25 @@ class ZBreadcrumbsView : ZTextField {
 		return rects
 	}
 
-//	override func draw(_ dirtyRect: NSRect) {
-//		super.draw(dirtyRect)
-//
-//		for rect in crumbRects {
-//			let path = ZBezierPath.init(rect: rect)
-//
-//			ZColor.blue.setStroke()
-//			path.stroke()
-//		}
-//	}
+	override func draw(_ dirtyRect: NSRect) {
+		gRubberbandColor.setStroke()
+		super.draw(dirtyRect)
 
-	func updateCrumbs() {
-		text      = gBreadcrumbs.crumbsText
-		textColor = gBreadcrumbs.crumbsColor
+		if  let hIndex = gBreadcrumbs.indexOfHere {
+			for (index, rect) in crumbRects.enumerated() {
+				if index >= hIndex {
+					let  path = ZBezierPath(roundedRect: rect.insetBy(dx: -4.0, dy: 0.0), cornerRadius: 5.0)
+
+					path.stroke()
+				}
+			}
+		}
+	}
+
+	func updateAndRedraw() {
+		text         = gBreadcrumbs.crumbsText
+		textColor    = gBreadcrumbs.crumbsColor
+		needsDisplay = true
 	}
 
 	// TODO: mouse over hit test -> index into breadcrumb strings array

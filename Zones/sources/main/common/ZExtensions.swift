@@ -516,6 +516,14 @@ extension CGRect {
 
     var extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
 
+	var leftCenter: CGPoint {
+		get { return CGPoint(x: minX, y: midY) }
+		set {
+			origin.x = newValue.x
+			origin.y = newValue.y - (height / 2.0)
+		}
+	}
+
 	var center: CGPoint {
 		get { return CGPoint(x: midX, y: midY) }
 		set {

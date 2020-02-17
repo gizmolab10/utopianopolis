@@ -512,7 +512,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 							FOREGROUND {
 								gControllers.swapGraphAndEssay()
-								gControllers.signalFor(nil, regarding: .eRelayout)
+								self.redrawGraph()
 							}
 
 							return true
