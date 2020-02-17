@@ -576,7 +576,7 @@ DQ
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="309" width="354" height="201"/>
-                        <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="3840" height="1577"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="Laa-WY-25V"/>
                         </connections>
@@ -824,7 +824,7 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="254" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="label" size="11"/>
+                                                        <font key="font" metaFont="controlContent" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
@@ -974,12 +974,12 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vvq-Eh-Bua" customClass="ZBreadcrumbsView" customModule="Thoughtful" customModuleProvider="target">
-                                <rect key="frame" x="-2" y="10" width="401" height="24"/>
+                                <rect key="frame" x="-2" y="7" width="401" height="30"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="24" id="EZn-DB-SIw"/>
+                                    <constraint firstAttribute="height" constant="30" id="EZn-DB-SIw"/>
                                 </constraints>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" id="PqB-cH-R8k">
-                                    <font key="font" metaFont="label" size="17"/>
+                                    <font key="font" metaFont="system" size="17"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>

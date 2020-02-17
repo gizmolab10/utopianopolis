@@ -31,6 +31,8 @@ class ZBreadcrumbsView : ZTextField {
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
+		font = gFavoritesFont
+
 		gRubberbandColor.setStroke()
 		super.draw(dirtyRect)
 

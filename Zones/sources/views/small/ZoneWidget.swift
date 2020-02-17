@@ -94,7 +94,7 @@ class ZoneWidget: ZView {
                         make.bottom.equalTo(previous!.snp.top)
                     }
 
-                    if index == 0 {
+                    if  index == 0 {
                         make.top.equalTo(childrenView).priority(ConstraintPriority(250))
                     }
 

@@ -189,7 +189,7 @@ var gGenericOffset: CGSize {
 	get {
 		var offset = getPreferencesSize(for: kGenericOffsetKey, defaultSize: CGSize(width: 30.0, height: 2.0))
 		
-		if kIsPhone {
+		if  kIsPhone {
 			offset.height += 5.0
 		}
 		

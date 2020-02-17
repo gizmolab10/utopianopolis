@@ -31,7 +31,7 @@ class ZRing: NSObject {
 
 	func storeRingIDs() { setRingContents(for: isEssay, strings: objectIDs) }
 	func fetchRingIDs() { objectIDs = getRingContents(for: isEssay) }
-	func clear() { ring.removeAll() }
+	func clear() { ring.removeAll(); storeRingIDs() }
 
 	override init() {
 		super.init()
