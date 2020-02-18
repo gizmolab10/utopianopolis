@@ -29,7 +29,7 @@ var       gKeyboardIsVisible                     = false
 var       gArrowsDoNotBrowse                     = false
 var     gCreateCombinedEssay 			   		 = false
 var     gHasCompletedStartup                     = false
-var  			  gDebugMode:		[ZDebugMode] = [.focus, .speed, .ops]
+var  			  gDebugMode:		[ZDebugMode] = [.focus, .speed]
 var   gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var      gCurrentBrowseLevel:               Int?
 var         gDragDropIndices: NSMutableIndexSet?
@@ -61,11 +61,13 @@ var                gFontSize:            CGFloat { return gGenericOffset.height 
 var              gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var           gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
 var        gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : ZColor.black }
+var        gNecklaceDotColor:             ZColor { return gBackgroundColor.darker  (by: 1.3)   }
 var   gDarkerBackgroundColor:             ZColor { return gBackgroundColor.darker  (by: 4.0)   }
 var  gDarkishBackgroundColor:             ZColor { return gBackgroundColor.darkish (by: 1.028) }
-var gDirectionIndicatorColor:             ZColor { return gBackgroundColor.darker  (by: 1.3)   }
 var gLightishBackgroundColor:             ZColor { return gBackgroundColor.lightish(by: 1.02)  }
 var  gLighterBackgroundColor:             ZColor { return gBackgroundColor.lighter (by: 4.0)   }
+var  gLighterRubberbandColor:             ZColor { return gRubberbandColor.lighter (by: 4.0)   }
+var  gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gLighterRubberbandColor }
 var        gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var          gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var	 			  gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }

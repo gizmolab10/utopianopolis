@@ -185,10 +185,15 @@ class ZNote: NSObject, ZIdentifiable {
 	}
 
 	func isLocked(for range: NSRange) -> Bool {
+		let       end = range.upperBound
+		let     start = range.lowerBound
+		let  titleEnd = titleRange.upperBound
+		let textStart = textRange.lowerBound
+
 		return
-			(range.lowerBound > titleRange.upperBound && range.lowerBound <  textRange.lowerBound) ||
-			(range.upperBound > titleRange.upperBound && range.upperBound <  textRange.lowerBound) ||
-			(range.lowerBound < titleRange.upperBound && range.upperBound >= textRange.lowerBound)
+			(start > titleEnd && start <  textStart) ||
+			(  end > titleEnd &&   end <  textStart) ||
+			(start < titleEnd &&   end >= textStart)
 	}
 
 	func shouldAlterEssay(_ range: NSRange, length: Int) -> (ZAlterationType, Int) {
@@ -202,26 +207,26 @@ class ZNote: NSObject, ZIdentifiable {
 	}
 
 	func shouldAlterNote(_ iRange: NSRange, length: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
-		var 	result  		    	= ZAlterationType.eLock
+		var 	result  	  	        = ZAlterationType.eLock
 		var      delta                  = 0
 
 		if  let range 		            = iRange.inclusiveIntersection(noteRange)?.offsetBy(-noteOffset) {
 			if  range                  == noteRange.offsetBy(-noteOffset) {
-				result					= .eDelete
+				result				    = .eDelete
 
 				delete()
 			} else if !isLocked(for: range) {
-				if  let  textIntersection = range.inclusiveIntersection(textRange) {
-					delta                 = length - textIntersection.length
-					textRange    .length += delta
-					result                = .eAlter
+				if  let   textIntersect = range.inclusiveIntersection(textRange) {
+					delta               = length - textIntersect.length
+					textRange  .length += delta
+					result              = .eAlter
 				}
 
-				if  let titleIntersection = range.inclusiveIntersection(titleRange) {
-					delta                 = length - titleIntersection.length
-					titleRange   .length += delta
-					textRange  .location += delta
-					result                = .eAlter
+				if  let  titleIntersect = range.inclusiveIntersection(titleRange) {
+					delta               = length - titleIntersect.length
+					titleRange .length += delta
+					textRange.location += delta
+					result              = .eAlter
 				}
 			}
 		}

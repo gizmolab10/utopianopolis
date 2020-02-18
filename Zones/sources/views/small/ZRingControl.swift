@@ -36,7 +36,7 @@ class ZRingControl: ZView {
 		let  more = width /  2.5
 		let  tiny = rect.insetBy(dx: more,  dy: more)
 		let large = rect.insetBy(dx: inset, dy: inset)
-		let color = gDirectionIndicatorColor
+		let color = gNecklaceDotColor
 
 		color.setStroke()
 

@@ -162,12 +162,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	func swapBetweenNoteAndEssay() {
-		if  let current = gCurrentEssay,
-			let    zone = current.zone {
-			let toEssay = current.isNote
-			let   count = zone.countOfNotes
+		if  let          current = gCurrentEssay,
+			let             zone = current.zone {
+			gCreateCombinedEssay = current.isNote
+			let            count = zone.countOfNotes
 
-			if  toEssay {
+			if  gCreateCombinedEssay {
 				if  count > 1 {
 					resetCurrentEssay(zone.freshEssay)
 				}

@@ -12,8 +12,8 @@ let gBreadcrumbs = ZBreadcrumbs()
 
 class ZBreadcrumbs: NSObject {
 
-	var crumbZones  : [Zone]       { return crumbsRootZone?.crumbZones ?? [] }
 	var crumbDBID   : ZDatabaseID? { return crumbsRootZone?.databaseID }
+	var crumbZones  : [Zone]       { return crumbsRootZone?.ancestralPath ?? [] }
 	var crumbsText  : String       { return kCrumbSeparator + crumbs.joined(separator: kCrumbSeparator) + kCrumbSeparator }
 
 	var indexOfHere : Int? {
@@ -43,8 +43,8 @@ class ZBreadcrumbs: NSObject {
 
 	var crumbsRootZone: Zone? {
 		switch gWorkMode {
-			case .graphMode: return gSelecting.firstGrab
-			default:		 return gCurrentEssay?.zone
+			case .noteMode: return gCurrentEssay?.zone
+			default:        return gSelecting.firstGrab
 		}
 	}
 
@@ -60,9 +60,10 @@ class ZBreadcrumbs: NSObject {
 
 	var crumbRanges: [NSRange] {
 		var result = [NSRange]()
+		let string = crumbsText
 
 		for crumb in crumbs {
-			if  let ranges = crumbsText.rangesMatching(kCrumbSeparator + crumb + kCrumbSeparator),
+			if  let ranges = string.rangesMatching(kCrumbSeparator + crumb + kCrumbSeparator),
 				ranges.count > 0 {
 				let offset = kCrumbSeparator.length
 				var range = ranges[0]

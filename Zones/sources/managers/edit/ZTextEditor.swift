@@ -288,18 +288,20 @@ class ZTextEditor: ZTextView {
     }
     
     func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, noPause: Bool = false) {
-        if (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { 		// prevent infinite recursion inside becomeFirstResponder, called below
+        if (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
             let pack = ZTextPack(zRecord)
             if  pack.packedZone?.userCanWrite ?? false,
                 let     textWidget = pack.textWidget,
                 textWidget.window != nil {
                 currentEdit        = pack
+				let           zone = textWidget.widget?.widgetZone
 
                 pack.updateText(isEditing: true)
-                gSelecting.ungrabAll()
+				gSelecting.ungrabAll(retaining: zone == nil ? [] : [zone!])		// so crumbs will appear correctly
                 textWidget.enableUndo()
                 textWidget.layoutTextField()
                 textWidget.becomeFirstResponder()
+				gControllers.signalRegarding(.eCrumbs)
                 
                 if  let at = setOffset {
                     if  noPause {

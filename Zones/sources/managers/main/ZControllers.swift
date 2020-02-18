@@ -160,7 +160,7 @@ class ZControllers: NSObject {
 						gTextEditor.refusesFirstResponder = false
 						gHasCompletedStartup              = true
 
-						self.signalRegarding(.eRing)
+						self.signalMultiple([.eRing, .eCrumbs])
                         self.blankScreenDebug()
                         gFiles.writeAll()
                     }
@@ -206,6 +206,10 @@ class ZControllers: NSObject {
 
 	func signalRegarding(_ regarding: ZSignalKind) {
 		signalFor(nil, regarding: regarding)
+	}
+
+	func signalMultiple(_ multiple: [ZSignalKind]) {
+		signalFor(nil, multiple: multiple)
 	}
 
 	func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure? = nil) {

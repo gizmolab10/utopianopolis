@@ -27,7 +27,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     func windowDidResize(_ notification: Notification) {
         gWindowRect = frame
         
-		gControllers.signalFor(nil, multiple: [.eResize, .eDebug])
+		gControllers.signalMultiple([.eResize, .eDebug])
     }
 
 

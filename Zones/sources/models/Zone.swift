@@ -155,7 +155,7 @@ class Zone : ZRecord, ZIdentifiable {
 		return false
 	}
 
-	var crumbZones:   [Zone] {
+	var ancestralPath:   [Zone] {
 		var results = [Zone]()
 
 		traverseAllAncestors { ancestor in
@@ -232,6 +232,7 @@ class Zone : ZRecord, ZIdentifiable {
 	func createNote() {
 		let zones = zonesWithNotes
 		let count = zones.count
+
 		if  count > 1 && gCreateCombinedEssay {
 			let  essay = ZEssay(self)
 			noteMaybe = essay
@@ -816,7 +817,7 @@ class Zone : ZRecord, ZIdentifiable {
 
         widget?.setNeedsDisplay()
         
-		gControllers.signalFor(nil, multiple: [.eDetails, .eCrumbs])
+		gControllers.signalMultiple([.eDetails, .eCrumbs])
     }
 
     override func debug(_  iMessage: String) {

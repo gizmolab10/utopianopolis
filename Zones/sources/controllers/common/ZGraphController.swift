@@ -301,6 +301,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			let      SHIFT = gesture.isShiftDown
             let editWidget = gEditedTextWidget
             var  regarding = ZSignalKind.eDatum
+			let    inCrumb = gBreadcrumbsLabel != nil && gBreadcrumbsLabel!.hitCrumb(gesture.location(in: nil)) != nil
             var withinEdit = false
             
             editWidget?.widgetZone?.deferWrite()
@@ -316,7 +317,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 withinEdit             = textRect.contains(backgroundLocation)
             }
 
-            if !withinEdit {
+            if  !withinEdit, !inCrumb {
 				if  let   widget = detectWidget(gesture) {
 					if  let zone = widget.widgetZone,
 						let  dot = detectDotIn(widget, gesture) {
@@ -390,7 +391,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             cleanupAfterDrag()
             
             if  isDoneGesture(iGesture) {
-				gControllers.signalFor(nil, multiple: [.ePreferences, .eCrumbs]) // so color well gets updated
+				gControllers.signalMultiple([.ePreferences, .eCrumbs]) // so color well gets updated
                 restartGestureRecognition()
             }
         }

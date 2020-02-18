@@ -12,16 +12,20 @@ var gBreadcrumbsLabel: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbs
 
 class ZBreadcrumbsView : ZTextField {
 
+	@IBOutlet var heightConstraint: NSLayoutConstraint?
+
 	var crumbRects: [CGRect] {
-		var        rects = [CGRect]()
-		let       string = gBreadcrumbs.crumbsText
+		var  rects = [CGRect]()
+		let string = gBreadcrumbs.crumbsText
+		font       = gFavoritesFont
 
 		if  let            f = font {
 			var        tRect = string.rect(using: f, for: NSRange(location: 0, length: string.length), atStart: true)
 			tRect.leftCenter = bounds.leftCenter
+			let        delta = gFontSize / -40.0
 
 			for range in gBreadcrumbs.crumbRanges {
-				let rect = string.rect(using: f, for: range, atStart: true).offsetBy(dx: 2.0, dy: 6.0)
+				let rect = string.rect(using: f, for: range, atStart: true).offsetBy(dx: 2.0, dy: 3.0 - (delta * 5.0)).insetBy(dx: -2.0 + (delta * 4.0), dy: delta)
 
 				rects.append(rect)
 			}
@@ -30,16 +34,28 @@ class ZBreadcrumbsView : ZTextField {
 		return rects
 	}
 
-	override func draw(_ dirtyRect: NSRect) {
-		font = gFavoritesFont
+	override func awakeFromNib() {
+		super.awakeFromNib()
 
-		gRubberbandColor.setStroke()
-		super.draw(dirtyRect)
+		font = gFavoritesFont
+	}
+
+	override func draw(_ dirtyRect: NSRect) {
+		if  gHasCompletedStartup {
+			super.draw(dirtyRect)
+			drawEncirclements()
+		}
+	}
+
+	func drawEncirclements() {
+		heightConstraint?.constant = gFontSize * kFavoritesReduction * 1.8
+
+		gNecklaceSelectionColor.setStroke()
 
 		if  let hIndex = gBreadcrumbs.indexOfHere {
 			for (index, rect) in crumbRects.enumerated() {
 				if index >= hIndex {
-					let  path = ZBezierPath(roundedRect: rect.insetBy(dx: -4.0, dy: 0.0), cornerRadius: 5.0)
+					let  path = ZBezierPath(roundedRect: rect.insetBy(dx: -4.0, dy: 0.0), cornerRadius: rect.height / 2.0)
 
 					path.stroke()
 				}
@@ -48,6 +64,7 @@ class ZBreadcrumbsView : ZTextField {
 	}
 
 	func updateAndRedraw() {
+		font         = gFavoritesFont
 		text         = gBreadcrumbs.crumbsText
 		textColor    = gBreadcrumbs.crumbsColor
 		needsDisplay = true
@@ -57,8 +74,8 @@ class ZBreadcrumbsView : ZTextField {
 	// change the color of the string at that index
 
 	// mouse down -> change focus
-	func hitCrumb(_ event: NSEvent) -> Int? {
-		let point = convert(event.locationInWindow, from: nil)
+	func hitCrumb(_ iPoint: CGPoint) -> Int? {
+		let point = convert(iPoint, from: nil)
 
 		for (index, rect) in crumbRects.enumerated() {
 			if  rect.contains(point) {
@@ -72,8 +89,9 @@ class ZBreadcrumbsView : ZTextField {
 	// mouse down -> change focus
 	override func mouseDown(with event: NSEvent) {
 		let COMMAND = event.modifierFlags.isCommand
+		let   point = event.locationInWindow
 
-		if  let    index = hitCrumb(event) {
+		if  let    index = hitCrumb(point) {
 			go(to: index, COMMAND: COMMAND)
 		}
 	}
@@ -81,10 +99,11 @@ class ZBreadcrumbsView : ZTextField {
 	func go(to index: Int, COMMAND: Bool) {
 		let next = gBreadcrumbs.crumbZones[index]
 		let last = gBreadcrumbs.crumbsRootZone
-		let here = gHere
 
 		switch gWorkMode {
-			case .graphMode:
+			case .noteMode:
+				gCurrentEssay = next.noteMaybe
+			default:
 				gFocusRing.focusOn(next) {
 					if  COMMAND {
 						next.traverseAllProgeny { child in
@@ -92,15 +111,10 @@ class ZBreadcrumbsView : ZTextField {
 						}
 					}
 
-					if  here != next {
-						last?.grab()
-						last?.asssureIsVisible()
-					}
-
-					gControllers.signalFor(next, regarding: .eRelayout)
+					last?.asssureIsVisible()
+					last?.grab()
+					gControllers.signalFor(nil, regarding: .eRelayout)
 			}
-			default:
-				gCurrentEssay = next.noteMaybe
 		}
 	}
 

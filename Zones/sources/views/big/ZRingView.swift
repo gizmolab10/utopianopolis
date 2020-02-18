@@ -48,7 +48,7 @@ class ZRingView: ZView {
 
 		if !gHasCompletedStartup { return }
 
-		let color = gDirectionIndicatorColor
+		let color = gNecklaceDotColor
 
 		color.setStroke()
 		kClearColor.setFill()

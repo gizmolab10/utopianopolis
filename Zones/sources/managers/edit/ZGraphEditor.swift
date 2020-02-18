@@ -319,7 +319,7 @@ class ZGraphEditor: ZBaseEditor {
 	func updateSize(up: Bool) {
 		let      delta = CGFloat(up ? 1 : -1)
 		var       size = gGenericOffset.offsetBy(0, delta)
-		size           = size.force(horizotal: false, into: NSRange(location: 2, length: 10))
+		size           = size.force(horizotal: false, into: NSRange(location: 2, length: 7))
 		gGenericOffset = size
 
 		redrawGraph()
@@ -358,7 +358,7 @@ class ZGraphEditor: ZBaseEditor {
                 swapAndResumeEdit()
             }
 
-            gControllers.signalFor(nil, multiple: [.ePreferences, .eGraph, .eMain])
+            gControllers.signalMultiple([.ePreferences, .eGraph, .eMain])
         } else if !PERIOD {
             gDetailsController?.toggleViewsFor(ids: [.Preferences])
         } else if gIsIdeaMode {

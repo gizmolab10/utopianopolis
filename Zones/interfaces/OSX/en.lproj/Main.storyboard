@@ -654,16 +654,16 @@ DQ
                                     <segue destination="HwM-RS-z3y" kind="embed" id="7Jd-Pv-aHs"/>
                                 </connections>
                             </containerView>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
-                                <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
-                                <connections>
-                                    <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
-                                </connections>
-                            </containerView>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View">
                                 <rect key="frame" x="0.0" y="256" width="357" height="44"/>
                                 <connections>
                                     <segue destination="auf-AV-5qA" kind="embed" id="Frp-da-kE8"/>
+                                </connections>
+                            </containerView>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
+                                <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
+                                <connections>
+                                    <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                 </connections>
                             </containerView>
                             <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
@@ -772,7 +772,7 @@ DQ
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1056" y="625"/>
+            <point key="canvasLocation" x="1056" y="543"/>
         </scene>
         <!--Ring Controller-->
         <scene sceneID="2ar-AS-rBz">
@@ -997,7 +997,7 @@ DQ
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1055.5" y="501"/>
+            <point key="canvasLocation" x="1056" y="650"/>
         </scene>
     </scenes>
 </document>
