@@ -145,6 +145,7 @@ let        kEssayTitleFontSize = "essay title font size"
 let        kRubberbandColorKey = "rubberband color"
 let        kBackgroundColorKey = "background color"
 let       kProductionEmailSent = "production email sent"
+let     kToolTipsAlwaysVisible = "tool tips always visible"
 let    kFavoritesAreVisibleKey = "favorites are visible"
 
 let                 kSeparator = ":"

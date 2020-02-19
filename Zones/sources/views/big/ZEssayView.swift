@@ -137,7 +137,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "l", "u": alterCase(up: key == "u")
 				case "n":      swapBetweenNoteAndEssay()
 				case "s":      save()
-				case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
+				case "y":      if SPECIAL { gControllers.showHideTooltips() } else { gBreadcrumbs.toggleBreadcrumbExtent() }
 				case "]":      gEssayRing.goForward()
 				case "[":      gEssayRing.goBack()
 				case kReturn:  gNoteAndEssay.grabbedZone?.grab(); done()

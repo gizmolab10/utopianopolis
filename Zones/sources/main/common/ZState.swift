@@ -125,6 +125,11 @@ var gShowAllBreadcrumbs : Bool {
 	set { setPreferencesBool(newValue, for: kShowAllBreadcrumbs) }
 }
 
+var gToolTipsAlwaysVisible : Bool {
+	get { return getPreferencesBool(   for: kToolTipsAlwaysVisible, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kToolTipsAlwaysVisible) }
+}
+
 var gShowFavorites : Bool {
 	get { return getPreferencesBool(   for: kShowFavorites, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kShowFavorites) }
@@ -437,12 +442,16 @@ var gCurrentGraph : ZFunction {
 // MARK:- actions
 // MARK:-
 
-func toggleModes(isDirection: Bool) {
-	if  isDirection {
+func toggleModes(isDirection: Bool) -> Bool {
+	if !gFullRingIsVisible {
+		return false
+	} else if isDirection {
 		gInsertionMode = gInsertionsFollow   ? .precede     : .follow
 	} else {
 		gBrowsingMode  = gBrowsingIsConfined ? .cousinJumps : .confined
 	}
+
+	return true
 }
 
 func toggleDatabaseID() {

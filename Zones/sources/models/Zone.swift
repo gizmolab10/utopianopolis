@@ -22,7 +22,7 @@ enum ZoneAccess: Int, CaseIterable {
     }
 }
 
-class Zone : ZRecord, ZIdentifiable {
+class Zone : ZRecord, ZIdentifiable, ZToolable {
 
     @objc dynamic var         parent : CKRecord.Reference?
 	@objc dynamic var       zoneName :             String?
@@ -105,6 +105,7 @@ class Zone : ZRecord, ZIdentifiable {
         return Zone(databaseID: dbID, named: String(arc4random()))
     }
 
+	func toolName() -> String? { return unwrappedName }
 	func identifier() -> String? { return recordName }
 	static func object(for id: String) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
@@ -330,7 +331,9 @@ class Zone : ZRecord, ZIdentifiable {
         }
     }
 
-    var color: ZColor? {
+	func toolColor() -> ZColor? { return color }
+
+	var color: ZColor? {
         get {
             var computed = colorMaybe
             
@@ -644,7 +647,7 @@ class Zone : ZRecord, ZIdentifiable {
     var      inheritedAccess: ZoneAccess { return zoneWithInheritedAccess.directAccess }
     var       directReadOnly:       Bool { return directAccess == .eReadOnly || directAccess == .eProgenyWritable }
     var          userCanMove:       Bool { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
-    var         userCanWrite:       Bool { return userHasDirectOwnership || isTextEditable }
+    var         userCanWrite:       Bool { return userHasDirectOwnership || isIdeaEditable }
     var userCanMutateProgeny:       Bool { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
 
     var userHasDirectOwnership: Bool {
@@ -705,13 +708,13 @@ class Zone : ZRecord, ZIdentifiable {
         return zone
     }
 
-    var isTextEditable: Bool {
+    var isIdeaEditable: Bool {
         if  let    t = bookmarkTarget {
-            return t.isTextEditable
+            return t.isIdeaEditable
         } else if directAccess == .eWritable {
             return true
         } else if let p = parentZone, p != self, p.parentZone != self {
-            return p.directAccess == .eProgenyWritable || p.isTextEditable
+            return p.directAccess == .eProgenyWritable || p.isIdeaEditable
         } else {
             return false
         }

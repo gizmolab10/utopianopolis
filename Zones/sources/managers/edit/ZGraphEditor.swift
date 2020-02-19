@@ -98,6 +98,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "f":      search(OPTION)
                     case "i":      gTextEditor.showSpecialsPopup()
                     case "p":      printCurrentFocus()
+					case "y":      if SPECIAL { gControllers.showHideTooltips() } else { gBreadcrumbs.toggleBreadcrumbExtent() }
                     case "?":      gControllers.showShortcuts()
                     case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
 					case "/":      if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
@@ -150,7 +151,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
                     case "t":      swapWithParent()
 					case "w":      rotateWritable()
-					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
+					case "y":      if SPECIAL { gControllers.showHideTooltips() } else { gBreadcrumbs.toggleBreadcrumbExtent() }
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)

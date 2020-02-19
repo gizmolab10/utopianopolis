@@ -16,6 +16,11 @@ protocol ZIdentifiable {
 	static func object(for id: String) -> NSObject?
 }
 
+protocol ZToolable {
+	func toolName() -> String?
+	func toolColor() -> ZColor?
+}
+
 class ZRing: NSObject {
 
     var             ring = ZObjectsArray ()

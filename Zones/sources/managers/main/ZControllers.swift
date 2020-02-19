@@ -125,6 +125,12 @@ class ZControllers: NSObject {
 		}
 	}
 
+	func showHideTooltips() {
+		gToolTipsAlwaysVisible = !gToolTipsAlwaysVisible
+
+		signalRegarding(.eRing)
+	}
+
 	func showHideRing() {
 		gFullRingIsVisible = !gFullRingIsVisible
 

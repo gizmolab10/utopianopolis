@@ -31,7 +31,7 @@ class ZRingView: ZView {
 
 	func update() {
 		let     square = CGSize(width: 130.0, height: 130.0)
-		let     origin = CGPoint(x: bounds.maxX - square.width - 50.0, y: bounds.maxY - square.height - 80.0)
+		let     origin = CGPoint(x: bounds.maxX - square.width - 50.0, y: bounds.maxY - square.height - 90.0)
 		geometry  .one = CGRect(origin: origin, size: square)
 		geometry.thick = square.height / 40.0
 	}
@@ -71,7 +71,7 @@ class ZRingView: ZView {
 				drawControl(for: index)
 			}
 
-			addToolTips(for: self)
+			addToolTips()
 		}
 	}
 
@@ -80,9 +80,7 @@ class ZRingView: ZView {
 
 	func respondToRingControl(_ item: NSObject) -> Bool {
 		if  let control = item as? ZRingControl {
-			control.response()
-
-			return true
+			return control.response()
 		}
 
 		return false
@@ -92,7 +90,6 @@ class ZRingView: ZView {
 		if  let idea = item as? Zone, ((idea != gHere) || gIsNoteMode) {
 			gControllers.swapGraphAndEssay(force: .graphMode)
 			gFocusRing.focusOn(idea) {
-				printDebug(.ring, idea.zoneName ?? "unknown zone")
 				gControllers.signalFor(idea, regarding: .eRelayout)
 			}
 
@@ -103,12 +100,10 @@ class ZRingView: ZView {
 	}
 
 	func focusOnEssay(_ item: NSObject) -> Bool {
-		if  let note = item as? ZNote {
+		if  let note = item as? ZNote, ((note != gCurrentEssay) || !gIsNoteMode) {
 			gControllers.swapGraphAndEssay(force: .noteMode)
 			gEssayView?.resetCurrentEssay(note)
 			gControllers.signalRegarding(.eCrumbs)
-
-			printDebug(.ring, note.zone?.zoneName ?? "unknown essay")
 
 			return true
 		}
@@ -126,11 +121,11 @@ class ZRingView: ZView {
 		}
 
 		if  let item = self.item(containedIn: rect) {
-			if  respond(to: item) || respondToRingControl(item) {
+			if (gFullRingIsVisible && respond(to: item)) || respondToRingControl(item) { // single item
 				setNeedsDisplay()
 
 				return true
-			} else if var subitems = item as? ZObjectsArray {
+			} else if var subitems = item as? ZObjectsArray {	  // array of items
 				if  gIsNoteMode ^^ (COMMAND ?? false) {
 					subitems = subitems.reversed()
 				}
@@ -227,16 +222,20 @@ class ZRingView: ZView {
 			let    count = objects.count
 			let controls = ZRingControl.controls
 
+			for (index, controlRect) in controlRects.enumerated() {
+				if  rect.intersectsOval(within: controlRect) {
+					return controls[index]
+				}
+			}
+
+			if  rect.intersectsOval(within: geometry.one) {
+				return ZRingControl.tooltip
+			}
+
 			for (index, dotRect) in necklaceDotRects {
 				if  index < count, 						// avoid crash
 					rect.intersects(dotRect) {
 					return objects[index]
-				}
-			}
-
-			for (index, controlRect) in controlRects.enumerated() {
-				if  rect.intersectsOval(within: controlRect) {
-					return controls[index]
 				}
 			}
 		}
@@ -244,32 +243,51 @@ class ZRingView: ZView {
 		return nil
 	}
 
-	func addToolTips(for     iToolView: ZView?) {
-		guard let toolView = iToolView else { return }
+	@discardableResult override func addToolTip(_ rect: NSRect, owner: Any, userData data: UnsafeMutableRawPointer?) -> NSView.ToolTipTag {
+		if !gToolTipsAlwaysVisible {
+			return super.addToolTip(rect, owner: owner, userData: data)
+		} else if  let tool = owner as? ZToolable,
+			let        name = tool.toolName() {
+			var  attributes = [NSAttributedString.Key : Any]()
+			let        font = ZFont.systemFont(ofSize: gFontSize * kFavoritesReduction * kFavoritesReduction)
+			var    nameRect = name.rectWithFont(font, options: .usesFontLeading).insetBy(dx: -10.0, dy: 0.0)
+			nameRect.center = rect.offsetBy(dx: 10.0, dy: -20.0).center
+
+			if  let   color = tool.toolColor() {
+				attributes[.foregroundColor] = color.lighter(by: 3.0)
+			}
+
+			name.draw(in: nameRect, withAttributes: attributes)
+		}
+
+		return 0
+	}
+
+	func addToolTips() {
 		let       controls = ZRingControl.controls
 		let        objects = necklaceObjects 				// expensive computation: do once
 		let          count = objects.count
 
-		toolView.removeAllToolTips()
+		removeAllToolTips()
 
 		for (index, tinyRect) in necklaceDotRects {
 			if  index < count { 							// avoid crash
 				var      owner = objects[index]
-				let       rect = self.convert(tinyRect, to: toolView)
+				let       rect = self.convert(tinyRect, to: self)
 
 				if  let owners = owner as? [NSObject] {
 					owner      = owners[0]
 				}
 
-				toolView.addToolTip(rect, owner: owner, userData: nil)
+				addToolTip(rect, owner: owner, userData: nil)
 			}
 		}
 
 		for (index, controlRect) in controlRects.enumerated() {
-			let  rect = self.convert(controlRect, to: toolView)
+			let  rect = self.convert(controlRect, to: self)
 			let owner = controls[index]
 
-			toolView.addToolTip(rect, owner: owner, userData: nil)
+			addToolTip(rect, owner: owner, userData: nil)
 		}
 	}
 }

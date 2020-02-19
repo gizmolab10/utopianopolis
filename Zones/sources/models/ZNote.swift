@@ -15,7 +15,7 @@ enum ZAlterationType: Int {
 	case eExit
 }
 
-class ZNote: NSObject, ZIdentifiable {
+class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var    zone  	         : Zone?
 	var    children          = [ZNote]()
 	var    autoDelete        = false		// true means delete this note on exit from essay mode
@@ -90,6 +90,9 @@ class ZNote: NSObject, ZIdentifiable {
 
 	// MARK:- properties
 	// MARK:-
+
+	func toolName()  -> String? { return zone?.toolName() }
+	func toolColor() -> ZColor? { return zone?.toolColor() }
 
 	func identifier() -> String? {
 		if  let id = zone?.recordName {
@@ -210,7 +213,8 @@ class ZNote: NSObject, ZIdentifiable {
 		var 	result  	  	        = ZAlterationType.eLock
 		var      delta                  = 0
 
-		if  let range 		            = iRange.inclusiveIntersection(noteRange)?.offsetBy(-noteOffset) {
+		if  zone?.isIdeaEditable ?? false,
+		    let range 		            = iRange.inclusiveIntersection(noteRange)?.offsetBy(-noteOffset) {
 			if  range                  == noteRange.offsetBy(-noteOffset) {
 				result				    = .eDelete
 

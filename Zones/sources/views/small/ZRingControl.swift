@@ -14,6 +14,7 @@ class ZRingControl: ZView {
 		case eInsertion
 		case eVisible
 		case eConfined
+		case eToolTip
 	}
 
 	var type: ZControlType = .eVisible
@@ -24,6 +25,7 @@ class ZRingControl: ZView {
 			case .eInsertion: return "insert at \(gInsertionsFollow ? "bottom"          : "top")"
 			case .eConfined:  return "browse \(gBrowsingIsConfined  ? "within one idea" : "to all visible")"
 			case .eVisible:   return "\(gFullRingIsVisible          ? "hide these"      : "show") controls"
+			case .eToolTip:   return "\(gToolTipsAlwaysVisible      ? "hide"            : "show") tool tips"
 		}
 	}
 
@@ -56,21 +58,24 @@ class ZRingControl: ZView {
 				if !gFullRingIsVisible {
 					drawCircle(                               in: large, thickness: thick)		// tiny dot
 				}
+			default: break
 		}
 	}
 
-	func response() {
-		if gFullRingIsVisible { printDebug(.ring, "\(type)") }
-
+	func response() -> Bool {
 		switch type {
-			case .eVisible: gFullRingIsVisible = !gFullRingIsVisible
-			default:        toggleModes(isDirection: type == .eInsertion)
+			case .eVisible: gFullRingIsVisible     = !gFullRingIsVisible
+			case .eToolTip: gToolTipsAlwaysVisible = !gToolTipsAlwaysVisible
+			default: return toggleModes(isDirection: type == .eInsertion)
 		}
+
+		return true
 	}
 
 	// MARK:- private
 	// MARK:-
 
+	static let tooltip = create(.eToolTip)
 	private static let   visible = create(.eVisible)
 	private static let  confined = create(.eConfined)
 	private static let insertion = create(.eInsertion)

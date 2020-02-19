@@ -528,7 +528,7 @@ extension CGRect {
 		get { return CGPoint(x: midX, y: midY) }
 		set {
 			origin.x = newValue.x - (width  / 2.0)
-			origin.y = newValue.x - (height / 2.0)
+			origin.y = newValue.y - (height / 2.0)
 		}
 	}
 
@@ -1766,10 +1766,10 @@ extension ZView {
 				if  iCount             > 0 {
 					let         isEven = iCount % 2 == 0
 					let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(iCount)
+					let     startAngle = fullCircle / 4.0 * (oneSet ? (isEven ? 0.0 : 2.0) + startQuadrant : isFat ? 1.0 : 3.0)
 
 					for index in 0 ... iCount - 1 {
 						let  increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)
-						let startAngle = fullCircle / 4.0 * (oneSet ? isEven ? 0.0 : 2.0 + startQuadrant : isFat ? 1.0 : 3.0)
 						let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
 						let (ideaFocus, asIdea, noteFocus, asNote, asEssay) = self.analyze(objects[index])
 
