@@ -217,15 +217,15 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
         if  [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
-            if !gIsGraphMode {
-                dragView?.snp.removeConstraints()
-            } else if !gIsIdeaMode {
+//            if !gIsGraphMode {
+//                dragView?.snp.removeConstraints()
+//            } else {
 				prepare(for: iKind)
                 layoutForCurrentScrollOffset()
                 layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: true)
                 layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: false)
                 dragView?.setAllSubviewsNeedDisplay()
-            }
+//            }
         }
 
 		gRingView?.setNeedsDisplay()
@@ -299,7 +299,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             let    COMMAND = gesture.isCommandDown
 			let     OPTION = gesture.isOptionDown
 			let      SHIFT = gesture.isShiftDown
-            let editWidget = gEditedTextWidget
+            let editWidget = gCurrentlyEditingWidget
             var  regarding = ZSignalKind.eDatum
 			let    inCrumb = gBreadcrumbsLabel != nil && gBreadcrumbsLabel!.hitCrumb(gesture.location(in: nil)) != nil
             var withinEdit = false
@@ -553,7 +553,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     
     func isEditingText(at location: CGPoint) -> Bool {
-        if  gIsIdeaMode, let textWidget = gEditedTextWidget {
+        if  gIsIdeaMode, let textWidget = gCurrentlyEditingWidget {
             let rect = textWidget.convert(textWidget.bounds, to: dragView)
 
             return rect.contains(location)

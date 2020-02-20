@@ -16,7 +16,7 @@ import UIKit
 
 
 let gTextEditor = ZTextEditor()
-var gEditedTextWidget: ZoneTextWidget? { return gTextEditor.currentTextWidget }
+var gCurrentlyEditingWidget: ZoneTextWidget? { return gTextEditor.currentTextWidget }
 
 
 class ZTextPack: NSObject {
@@ -287,7 +287,7 @@ class ZTextEditor: ZTextView {
 		}
     }
     
-    func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, noPause: Bool = false) {
+    func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, immediately: Bool = false) {
         if (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
             let pack = ZTextPack(zRecord)
             if  pack.packedZone?.userCanWrite ?? false,
@@ -295,6 +295,8 @@ class ZTextEditor: ZTextView {
                 textWidget.window != nil {
                 currentEdit        = pack
 				let           zone = textWidget.widget?.widgetZone
+
+				print(zone?.unwrappedName ?? "")
 
                 pack.updateText(isEditing: true)
 				gSelecting.ungrabAll(retaining: zone == nil ? [] : [zone!])		// so crumbs will appear correctly
@@ -304,7 +306,7 @@ class ZTextEditor: ZTextView {
 				gControllers.signalRegarding(.eCrumbs)
                 
                 if  let at = setOffset {
-                    if  noPause {
+                    if  immediately {
                         setCursor(at: at)
                     } else {
                         FOREGROUND(after: 0.001) {
@@ -431,7 +433,7 @@ class ZTextEditor: ZTextView {
             if let grabbed = gSelecting.firstSortedGrab {
                 
                 gSelecting.ungrabAll()
-                self.edit(grabbed, setOffset: iOffset, noPause: revealed)
+                self.edit(grabbed, setOffset: iOffset, immediately: revealed)
             }
         }
         

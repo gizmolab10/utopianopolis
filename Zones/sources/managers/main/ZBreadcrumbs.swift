@@ -43,8 +43,10 @@ class ZBreadcrumbs: NSObject {
 
 	var crumbsRootZone: Zone? {
 		switch gWorkMode {
-			case .noteMode: return gCurrentEssay?.zone
-			default:        return gSelecting.firstGrab
+			case .noteMode:  return gCurrentEssay?.zone
+			case .graphMode: return gSelecting.firstGrab?.crumbRoot
+			case .ideaMode:  return gCurrentlyEditingWidget?.widgetZone
+			default:         return nil
 		}
 	}
 

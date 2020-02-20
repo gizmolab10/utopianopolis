@@ -264,6 +264,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	var crumbRoot: Zone? {
+		if  isBookmark {
+			return bookmarkTarget?.crumbRoot
+		}
+
+		return self
+	}
+
 	var root: Zone? {
 		var base: Zone?
 
@@ -711,7 +719,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var isIdeaEditable: Bool {
         if  let    t = bookmarkTarget {
             return t.isIdeaEditable
-        } else if directAccess == .eWritable {
+		} else if directAccess == .eWritable || databaseID != .everyoneID {
             return true
         } else if let p = parentZone, p != self, p.parentZone != self {
             return p.directAccess == .eProgenyWritable || p.isIdeaEditable
@@ -810,7 +818,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
                     gGraphEditor.redrawAndSync()
                 }
             }
-        } else if isGrabbed {
+        } else if isGrabbed && gCurrentlyEditingWidget == nil {
             ungrabAssuringOne()
         } else if SHIFT {
             addToGrab()
@@ -858,7 +866,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func editAndSelect(range: NSRange) {
         edit()
-        FOREGROUND {
+        FOREGROUND(canBeDirect: true) {
             self.widget?.textWidget.selectCharacter(in: range)
         }
     }

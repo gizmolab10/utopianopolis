@@ -48,6 +48,49 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
+	func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
+		guard let key = iKey else {
+			return false
+		}
+
+		let COMMAND = flags.isCommand
+		let CONTROL = flags.isControl
+		let  OPTION = flags.isOption
+		let SPECIAL = COMMAND && OPTION
+		let     ALL = SPECIAL && CONTROL
+
+		if  COMMAND {
+			switch key {
+				case "a":      selectAll(nil)
+				case "d":      convertToChild(createEssay: ALL)
+				case "e":      gNoteAndEssay.export()
+				case "h":      showHyperlinkPopup()
+				case "i":      showSpecialsPopup()
+				case "j":      gControllers.showHideRing()
+				case "l", "u": alterCase(up: key == "u")
+				case "n":      swapBetweenNoteAndEssay()
+				case "s":      save()
+				case "y":      if SPECIAL { gControllers.showHideTooltips() } else { gBreadcrumbs.toggleBreadcrumbExtent() }
+				case "]":      gEssayRing.goForward()
+				case "[":      gEssayRing.goBack()
+				case kReturn:  gNoteAndEssay.grabbedZone?.grab(); done()
+				default:       return false
+			}
+
+			return true
+		} else if CONTROL {
+			switch key {
+				case "d":      convertToChild(createEssay: true)
+				case "/":      popAndUpdate()
+				default:       return false
+			}
+
+			return true
+		}
+
+		return false
+	}
+
 	// MARK:- setup
 	// MARK:-
 
@@ -113,49 +156,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if !inRing {
 			super.mouseDown(with: event)
 		}
-	}
-
-	func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
-		guard let key = iKey else {
-			return false
-		}
-
-		let COMMAND = flags.isCommand
-		let CONTROL = flags.isControl
-		let  OPTION = flags.isOption
-		let SPECIAL = COMMAND && OPTION
-		let     ALL = SPECIAL && CONTROL
-
-		if  COMMAND {
-			switch key {
-				case "a":      selectAll(nil)
-				case "d":      convertToChild(createEssay: ALL)
-				case "e":      gNoteAndEssay.export()
-				case "h":      showHyperlinkPopup()
-				case "i":      showSpecialsPopup()
-				case "j":      gControllers.showHideRing()
-				case "l", "u": alterCase(up: key == "u")
-				case "n":      swapBetweenNoteAndEssay()
-				case "s":      save()
-				case "y":      if SPECIAL { gControllers.showHideTooltips() } else { gBreadcrumbs.toggleBreadcrumbExtent() }
-				case "]":      gEssayRing.goForward()
-				case "[":      gEssayRing.goBack()
-				case kReturn:  gNoteAndEssay.grabbedZone?.grab(); done()
-				default:       return false
-			}
-
-			return true
-		} else if CONTROL {
-			switch key {
-				case "d":      convertToChild(createEssay: true)
-				case "/":      popAndUpdate()
-				default:       return false
-			}
-
-			return true
-		}
-
-		return false
 	}
 
 	// MARK:- private
@@ -240,6 +240,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				return .eContinue
 			}
 		}
+
+		gControllers.signalRegarding(.eCrumbs)
 	}
 
 	private func select(restoreSelection: Int? = nil) {

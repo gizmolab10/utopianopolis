@@ -42,7 +42,7 @@ class ZGraphEditor: ZBaseEditor {
     }
 
     var undoManager: UndoManager {
-        if  let w = gEditedTextWidget,
+        if  let w = gCurrentlyEditingWidget,
             w.undoManager != nil {
             return w.undoManager!
         }
@@ -88,12 +88,12 @@ class ZGraphEditor: ZBaseEditor {
             }
 
             if  gIsIdeaMode {
-                let editedZone = gEditedTextWidget?.widgetZone
+                let editedZone = gCurrentlyEditingWidget?.widgetZone
                 if  let      a = arrow {
                     gTextEditor.handleArrow(a, flags: flags)
                 } else if FLAGGED {
                     switch key {
-                    case "a":      gEditedTextWidget?.selectAllText()
+                    case "a":      gCurrentlyEditingWidget?.selectAllText()
                     case "d":      tearApartCombine(OPTION, editedZone)
                     case "f":      search(OPTION)
                     case "i":      gTextEditor.showSpecialsPopup()

@@ -28,6 +28,10 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 		essayView?.updateText()
 	}
 
+	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+		essayView?.updateText()
+	}
+
 	func modalForWebLink(_ title: String?) -> String? {
 		if  let name = title {
 			performSegue(withIdentifier: "webLink", sender: nil)

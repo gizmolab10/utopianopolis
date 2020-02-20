@@ -28,7 +28,7 @@ var         gIsReadyToShowUI                     = false
 var       gKeyboardIsVisible                     = false
 var       gArrowsDoNotBrowse                     = false
 var     gCreateCombinedEssay 			   		 = false
-var     gHasCompletedStartup                     = false
+var     gHasFinishedStartup                     = false
 var  			  gDebugMode:		[ZDebugMode] = [.focus, .speed]
 var   gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var      gCurrentBrowseLevel:               Int?

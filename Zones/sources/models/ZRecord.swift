@@ -351,7 +351,7 @@ class ZRecord: NSObject {
 
 
     func maybeNeedSave() {
-        if !needsDestroy, !needsSave, gHasCompletedStartup, (canSaveWithoutFetch || !needsFetch) {
+        if !needsDestroy, !needsSave, gHasFinishedStartup, (canSaveWithoutFetch || !needsFetch) {
             removeState(.needsMerge)
             addState   (.needsSave)
 

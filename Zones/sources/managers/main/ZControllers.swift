@@ -164,7 +164,7 @@ class ZControllers: NSObject {
                     FOREGROUND {
                         gBatches		 .usingDebugTimer = false
 						gTextEditor.refusesFirstResponder = false
-						gHasCompletedStartup              = true
+						gHasFinishedStartup              = true
 
 						self.signalMultiple([.eRing, .eCrumbs])
                         self.blankScreenDebug()

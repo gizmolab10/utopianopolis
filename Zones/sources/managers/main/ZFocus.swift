@@ -57,7 +57,7 @@ class ZFocus: ZRing {
         // 4. not here, COMMAND -> become here
         // 5. not COMMAND       -> select here
 
-        if  let zone = (kind == .eEdited) ? gEditedTextWidget?.widgetZone : gSelecting.firstSortedGrab {
+        if  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab {
             let focusClosure = { (zone: Zone) in
                 gHere = zone
 
@@ -147,7 +147,7 @@ class ZFocus: ZRing {
 		}
 	}
 
-    func focus(_ atArrival: @escaping Closure) {
+	func focus(_ atArrival: @escaping Closure) {
         createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
 		gTextEditor.stopCurrentEdit()
 
@@ -165,9 +165,9 @@ class ZFocus: ZRing {
 
         gHere = iHere
 
-        focus {
+		focus {
 			gHere.grab()
-            gFavorites.updateCurrentFavorite()
+			gFavorites.updateCurrentFavorite()
             atArrival()
         }
     }

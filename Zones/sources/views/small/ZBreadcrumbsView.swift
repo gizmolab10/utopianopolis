@@ -41,7 +41,7 @@ class ZBreadcrumbsView : ZTextField {
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
-		if  gHasCompletedStartup {
+		if  gHasFinishedStartup {
 			super.draw(dirtyRect)
 			drawEncirclements()
 		}
@@ -97,23 +97,33 @@ class ZBreadcrumbsView : ZTextField {
 	}
 
 	func go(to index: Int, COMMAND: Bool) {
+		let edit = gCurrentlyEditingWidget?.widgetZone
 		let next = gBreadcrumbs.crumbZones[index]
 		let last = gBreadcrumbs.crumbsRootZone
+		let span = gTextEditor.selectedRange()
 
-		switch gWorkMode {
-			case .noteMode:
-				gCurrentEssay = next.noteMaybe
-			default:
-				gFocusRing.focusOn(next) {
-					if  COMMAND {
-						next.traverseAllProgeny { child in
-							child.concealChildren()
-						}
-					}
+		gFocusRing.focusOn(next) {
+			if  COMMAND {
+				next.traverseAllProgeny { child in
+					child.concealChildren()
+				}
+			}
 
-					last?.asssureIsVisible()
-					last?.grab()
-					gControllers.signalFor(nil, regarding: .eRelayout)
+			last?.asssureIsVisible()
+
+			if  let e = edit {
+				e.editAndSelect(range: span)
+			} else {
+				last?.grab()
+			}
+
+			if  gWorkMode == .noteMode,
+			    let note = next.noteMaybe {
+				gCurrentEssay = note
+
+				gControllers.signalRegarding(.eNote)
+			} else {
+				gControllers.signalRegarding(.eRelayout)
 			}
 		}
 	}

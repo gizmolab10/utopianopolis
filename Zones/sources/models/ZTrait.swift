@@ -132,7 +132,7 @@ class ZTrait: ZRecord {
 	var noteText: NSMutableAttributedString? {
 		get {
 			var string: NSMutableAttributedString?
-			let isEmpty   = text == nil || text!.isEmpty
+			let isEmpty   = text == nil || text!.isEmpty || text! == kEssayDefault
 
 			if  text     == nil {
 				text      = kEssayDefault
