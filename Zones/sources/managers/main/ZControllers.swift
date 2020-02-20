@@ -210,14 +210,6 @@ class ZControllers: NSObject {
 	// MARK:- signals
     // MARK:-
 
-	func signalRegarding(_ regarding: ZSignalKind) {
-		signalFor(nil, regarding: regarding)
-	}
-
-	func signalMultiple(_ multiple: [ZSignalKind]) {
-		signalFor(nil, multiple: multiple)
-	}
-
 	func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure? = nil) {
         signalFor(object, multiple: [regarding], onCompletion: onCompletion)
     }

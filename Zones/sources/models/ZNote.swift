@@ -213,7 +213,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		var 	result  	  	        = ZAlterationType.eLock
 		var      delta                  = 0
 
-		if  zone?.isIdeaEditable ?? false,
+		if  zone?.userCanWrite ?? false,
 		    let range 		            = iRange.inclusiveIntersection(noteRange)?.offsetBy(-noteOffset) {
 			if  range                  == noteRange.offsetBy(-noteOffset) {
 				result				    = .eDelete

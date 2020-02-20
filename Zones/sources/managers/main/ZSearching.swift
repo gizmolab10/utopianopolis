@@ -47,8 +47,8 @@ class ZSearching: NSObject {
 		state = .sNot
 
 		gSetGraphMode()
-        gControllers.signalRegarding(.eFound)
-        gControllers.signalRegarding(.eSearch)
+        signalRegarding(.eFound)
+        signalRegarding(.eSearch)
     }
 
 

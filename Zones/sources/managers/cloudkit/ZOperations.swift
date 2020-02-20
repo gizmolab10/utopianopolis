@@ -162,7 +162,7 @@ class ZOperations: NSObject {
                     }
                     
                     if  self.cloudStatusChanged() {
-                        gControllers.signalRegarding(.eDetails) // show change in cloud status
+                        self.signalRegarding(.eDetails) // show change in cloud status
 
                         // //////////////////////////////////////////////
                         // assure that we can perform cloud operations //

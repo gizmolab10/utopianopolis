@@ -716,7 +716,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         return zone
     }
 
-    var isIdeaEditable: Bool {
+    private var isIdeaEditable: Bool {    // this is a primitive, only called from userCanWrite
         if  let    t = bookmarkTarget {
             return t.isIdeaEditable
 		} else if directAccess == .eWritable || databaseID != .everyoneID {
@@ -828,7 +828,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
         widget?.setNeedsDisplay()
         
-		gControllers.signalMultiple([.eDetails, .eCrumbs])
+		signalMultiple([.eDetails, .eCrumbs])
     }
 
     override func debug(_  iMessage: String) {

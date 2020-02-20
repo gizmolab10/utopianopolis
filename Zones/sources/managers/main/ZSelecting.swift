@@ -92,7 +92,7 @@ class ZSelecting: NSObject {
         var count = 0
 
         for zone in currentGrabs {
-            if  zone.isIdeaEditable {
+            if  zone.userCanWrite {
                 count += 1
             }
         }

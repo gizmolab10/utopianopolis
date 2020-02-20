@@ -89,7 +89,7 @@ class ZBaseEditor: NSObject {
 			gControllers.swapGraphAndEssay()
 		}
 
-		gControllers.signalRegarding(.eRing)
+		signalRegarding(.eRing)
 	}
 
 }

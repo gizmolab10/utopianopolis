@@ -23,6 +23,8 @@ class ZRingView: ZView {
 	var necklaceDotRects = [Int : CGRect]()
 	let necklaceMax 	 = 16
 
+	func isInRect(_ rect: CGRect?) -> Bool { return item(containedIn: rect) != nil }
+
 	override func awakeFromNib() {
 		super.awakeFromNib()
 
@@ -86,11 +88,35 @@ class ZRingView: ZView {
 		return false
 	}
 
-	func focusOnIdea(_ item: NSObject) -> Bool {
+	func focusOnIdea(_ idea: Zone) {
+		gControllers.swapGraphAndEssay(force: .graphMode)
+		gFocusRing.focusOn(idea) {
+			gControllers.signalFor(idea, regarding: .eRelayout)
+		}
+	}
+
+	func focusOnEssay(_ note: ZNote) {
+		gControllers.swapGraphAndEssay(force: .noteMode)
+		gEssayView?.resetCurrentEssay(note)
+		signalMultiple([.eCrumbs, .eRing])
+	}
+
+	func respond(to item: NSObject, _ COMMAND: Bool = false) -> Bool {
 		if  let idea = item as? Zone, ((idea != gHere) || gIsNoteMode) {
-			gControllers.swapGraphAndEssay(force: .graphMode)
-			gFocusRing.focusOn(idea) {
-				gControllers.signalFor(idea, regarding: .eRelayout)
+			if  COMMAND, idea.countOfNotes > 0 {
+				focusOnEssay(idea.freshEssay)
+			} else {
+				focusOnIdea(idea)
+			}
+
+			return true
+		} else if  let note = item as? ZNote, ((note != gCurrentEssay) || !gIsNoteMode) {
+			if !COMMAND {
+				focusOnEssay(note)
+			} else if let idea = note.zone {
+				focusOnIdea(idea)
+			} else {
+				return false
 			}
 
 			return true
@@ -99,34 +125,14 @@ class ZRingView: ZView {
 		return false
 	}
 
-	func focusOnEssay(_ item: NSObject) -> Bool {
-		if  let note = item as? ZNote, ((note != gCurrentEssay) || !gIsNoteMode) {
-			gControllers.swapGraphAndEssay(force: .noteMode)
-			gEssayView?.resetCurrentEssay(note)
-			gControllers.signalRegarding(.eCrumbs)
-
-			return true
-		}
-
-		return false
-	}
-
-	func isInRect(_ rect: CGRect?) -> Bool {
-		return item(containedIn: rect) != nil
-	}
-
-	@discardableResult func respondToClick(in rect: CGRect?, _ COMMAND: Bool? = nil) -> Bool {
-		func respond(to item: NSObject) -> Bool {
-			return focusOnIdea(item) || focusOnEssay(item)
-		}
-
+	@discardableResult func respondToClick(in rect: CGRect?, _ COMMAND: Bool = false) -> Bool {
 		if  let item = self.item(containedIn: rect) {
-			if (gFullRingIsVisible && respond(to: item)) || respondToRingControl(item) { // single item
+			if (gFullRingIsVisible && respond(to: item, COMMAND)) || respondToRingControl(item) { // single item
 				setNeedsDisplay()
 
 				return true
 			} else if var subitems = item as? ZObjectsArray {	  // array of items
-				if  gIsNoteMode ^^ (COMMAND ?? false) {
+				if  gIsNoteMode ^^ COMMAND {
 					subitems = subitems.reversed()
 				}
 

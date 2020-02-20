@@ -107,6 +107,14 @@ extension NSObject {
         }
     }
 
+	func signalRegarding(_ regarding: ZSignalKind) {
+		gControllers.signalFor(nil, regarding: regarding)
+	}
+
+	func signalMultiple(_ multiple: [ZSignalKind]) {
+		gControllers.signalFor(nil, multiple: multiple)
+	}
+
     func redrawAndSync(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
         gControllers.signalAndSync(zone, regarding: .eRelayout, onCompletion: onCompletion)
     }

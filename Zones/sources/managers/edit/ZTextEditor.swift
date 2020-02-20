@@ -303,7 +303,7 @@ class ZTextEditor: ZTextView {
                 textWidget.enableUndo()
                 textWidget.layoutTextField()
                 textWidget.becomeFirstResponder()
-				gControllers.signalRegarding(.eCrumbs)
+				signalRegarding(.eCrumbs)
                 
                 if  let at = setOffset {
                     if  immediately {

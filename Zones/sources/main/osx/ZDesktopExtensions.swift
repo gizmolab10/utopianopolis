@@ -541,7 +541,7 @@ extension ZoneWindow {
         setFrame(rect, display: true)
         
         observer = observe(\.effectiveAppearance) { _, _  in
-            gControllers.signalRegarding(.eAppearance)
+            self.signalRegarding(.eAppearance)
         }
     }
     

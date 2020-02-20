@@ -241,7 +241,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 		}
 
-		gControllers.signalRegarding(.eCrumbs)
+		signalRegarding(.eCrumbs)
 	}
 
 	private func select(restoreSelection: Int? = nil) {

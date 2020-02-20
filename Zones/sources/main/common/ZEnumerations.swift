@@ -243,12 +243,13 @@ enum ZSpecialsMenuType: String {
 	case eOption  = "o"
 	case eShift   = "s"
 	case eControl = "n"
+	case eReturn  = "r"
 	case eArrow   = "i"
 	case eDouble  = "u"
 	case eBack    = "k"
 	case eCancel  = "\r"
 
-	static var activeTypes: [ZSpecialsMenuType] { return [.eCommand, .eOption, .eShift, .eControl, .eArrow, .eBack, eDouble] }
+	static var activeTypes: [ZSpecialsMenuType] { return [.eCommand, .eOption, .eShift, .eControl, eReturn, .eArrow, .eBack, eDouble] }
 
 	var both: (String, String) {
 		switch self {
@@ -257,6 +258,7 @@ enum ZSpecialsMenuType: String {
 			case .eControl: return ("^", "Control")
 			case .eCommand: return ("⌘", "Command")
 			case .eOption:  return ("⌥", "Option")
+			case .eReturn:  return ("􀅇", "Return")
 			case .eDouble:  return ("⇿", "⇿")
 			case .eArrow:   return ("⇨", "⇨")
 			case .eBack:    return ("⇦", "⇦")
