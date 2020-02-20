@@ -8,25 +8,56 @@
 
 import Foundation
 
-class ZRingControl: ZView {
+class ZRingControl: ZView, ZToolable {
 
 	enum ZControlType {
 		case eInsertion
 		case eVisible
 		case eConfined
-		case eToolTip
+		case eToolTips
 	}
 
 	var type: ZControlType = .eVisible
 	static let    controls = [insertion, visible, confined]
+	func toolColor() -> ZColor? { return gNecklaceDotColor }
+	func toolName()  -> String? { return description }
 
 	override var description: String {
 		switch type {
 			case .eInsertion: return "insert at \(gInsertionsFollow ? "bottom"          : "top")"
 			case .eConfined:  return "browse \(gBrowsingIsConfined  ? "within one idea" : "to all visible")"
 			case .eVisible:   return "\(gFullRingIsVisible          ? "hide these"      : "show") controls"
-			case .eToolTip:   return "\(gToolTipsAlwaysVisible      ? "hide"            : "show") tool tips"
+			case .eToolTips:  return "\(gToolTipsAlwaysVisible      ? "hide"            : "show") tool tips"
 		}
+	}
+
+	func shape(in rect: CGRect, contains point: CGPoint) -> Bool {
+		let width = rect.width
+		let inset = width /  5.0
+		let  more = width /  2.5
+		let  tiny = rect.insetBy(dx: more,  dy: more)
+		let large = rect.insetBy(dx: inset, dy: inset)
+
+		switch type           {
+			case .eInsertion  :
+				return point.intersectsTriangle  (orientedUp: gInsertionsFollow, in: large)		// insertion direction
+			case .eConfined   :
+				if  gBrowsingIsConfined {
+					return point.intersectsCircle(                               in: large) ||	// inactive confinement dot
+					point.intersectsCircle(		                                in:  tiny)		// tiny dot
+				} else        {
+					return point.intersectsCircle(orientedUp: false,             in:  tiny) ||
+					point.intersectsCircle(	 	 orientedUp: true,              in:  tiny)
+				}
+			case .eVisible    :
+				if !gFullRingIsVisible {
+					return point.intersectsCircle(                               in: large)		// tiny dot
+				} else {
+					return point.intersectsCircle(                               in:  tiny)		// active is-visible dot
+				}
+			default: return false
+		}
+
 	}
 
 	override func draw(_ rect: CGRect) {
@@ -62,11 +93,11 @@ class ZRingControl: ZView {
 		}
 	}
 
-	func response() -> Bool {
+	func respond() -> Bool {
 		switch type {
-			case .eVisible: gFullRingIsVisible     = !gFullRingIsVisible
-			case .eToolTip: gToolTipsAlwaysVisible = !gToolTipsAlwaysVisible
-			default: return toggleModes(isDirection: type == .eInsertion)
+			case .eVisible:  gFullRingIsVisible     = !gFullRingIsVisible
+			case .eToolTips: gToolTipsAlwaysVisible = !gToolTipsAlwaysVisible
+			default: return  toggleModes(isDirection: type == .eInsertion)
 		}
 
 		return true
@@ -75,7 +106,7 @@ class ZRingControl: ZView {
 	// MARK:- private
 	// MARK:-
 
-	static let tooltip = create(.eToolTip)
+	static         let  tooltips = create(.eToolTips)
 	private static let   visible = create(.eVisible)
 	private static let  confined = create(.eConfined)
 	private static let insertion = create(.eInsertion)

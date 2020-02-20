@@ -488,6 +488,20 @@ extension CGPoint {
         return CGFloat(sqrt(width * width + height * height))
     }
 
+	func intersectsTriangle(orientedUp: Bool, in iRect: CGRect) -> Bool {
+		return ZBezierPath.trianglePath(orientedUp: orientedUp, in: iRect).contains(self)
+	}
+
+	func intersectsCircle(in iRect: CGRect) -> Bool {
+		return ZBezierPath.circlePath(in: iRect).contains(self)
+	}
+
+	func intersectsCircle(orientedUp: Bool, in iRect: CGRect) -> Bool {
+		let (path, _) = ZBezierPath.circlesPath(orientedUp: orientedUp, in: iRect)
+
+		return path.contains(self)
+	}
+
 }
 
 extension CGSize {
@@ -601,26 +615,44 @@ extension CGRect {
 
 		return delta > 0
 	}
+
 }
 
 extension ZBezierPath {
 
-	static func drawTriangle(orientedUp: Bool, in iRect: CGRect, thickness: CGFloat) {
+	static func trianglePath(orientedUp: Bool, in iRect: CGRect) -> ZBezierPath {
 		let path = ZBezierPath()
 
 		path.appendTriangle(orientedUp: orientedUp, in: iRect)
+
+		return path
+	}
+
+	static func circlePath(in iRect: CGRect) -> ZBezierPath {
+		return ZBezierPath(ovalIn: iRect)
+	}
+
+	static func circlesPath(orientedUp: Bool, in iRect: CGRect) -> (ZBezierPath, CGRect) {
+		let path = ZBezierPath()
+		let rect = path.appendCircles(orientedUp: orientedUp, in: iRect)
+
+		return (path, rect)
+	}
+
+	static func drawTriangle(orientedUp: Bool, in iRect: CGRect, thickness: CGFloat) {
+		let path = trianglePath(orientedUp: orientedUp, in: iRect)
+
 		path.draw(thickness: thickness)
 	}
 
 	static func drawCircle(in iRect: CGRect, thickness: CGFloat) {
-		let path = ZBezierPath(ovalIn: iRect)
+		let path = circlePath(in: iRect)
 
 		path.draw(thickness: thickness)
 	}
 
 	static func drawCircles(in iRect: CGRect, thickness: CGFloat, orientedUp: Bool) -> CGRect {
-		let path = ZBezierPath()
-		let rect = path.appendCircles(orientedUp: orientedUp, in: iRect)
+		let (path, rect) = circlesPath(orientedUp: orientedUp, in: iRect)
 
 		path.draw(thickness: thickness)
 

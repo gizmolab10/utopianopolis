@@ -172,7 +172,9 @@ class ZSelecting: NSObject {
         get { return firstGrab?.color }
         set {
             for grab in currentGrabs {
-                grab.color = newValue
+				let  colorized = grab.colorized
+                grab.color     = newValue
+				grab.colorized = colorized
             }
         }
     }
@@ -323,8 +325,16 @@ class ZSelecting: NSObject {
 
 
     func addMultipleGrabs(_ iZones: ZoneArray, startFresh: Bool = false) {
-        for zone in iZones {
-            addOneGrab(zone, startFresh: startFresh)
+		if  startFresh {
+			ungrabAll()
+
+			if iZones.count > 0 {
+				hasNewGrab = iZones[0]
+			}
+		}
+
+		for zone in iZones {
+            addOneGrab(zone)
         }
 
         updateWidgetsNeedDisplay(for: currentGrabs)
@@ -333,17 +343,10 @@ class ZSelecting: NSObject {
 
     // private because it doesn't update widgets
 
-    private func addOneGrab(_ iZone: Zone?, startFresh: Bool = false) {
+    private func addOneGrab(_ iZone: Zone?) {
         if  let zone = iZone,
-            (!currentGrabs.contains(zone) || startFresh) {
+            (!currentGrabs.contains(zone)) {
             gTextEditor.stopCurrentEdit()
-
-            if  startFresh {
-                ungrabAll()
-                
-                hasNewGrab = zone
-            }
-
             currentGrabs.append(zone)
 
             currentGrabs = respectOrder(for: currentGrabs)

@@ -81,8 +81,8 @@ class ZRingView: ZView {
 	// MARK:-
 
 	func respondToRingControl(_ item: NSObject) -> Bool {
-		if  let control = item as? ZRingControl {
-			return control.response()
+		if  let    control = item as? ZRingControl {
+			return control.respond()
 		}
 
 		return false
@@ -102,18 +102,20 @@ class ZRingView: ZView {
 	}
 
 	func respond(to item: NSObject, _ COMMAND: Bool = false) -> Bool {
-		if  let idea = item as? Zone, ((idea != gHere) || gIsNoteMode) {
-			if  COMMAND, idea.countOfNotes > 0 {
+		if  let idea = item as? Zone {
+			if !COMMAND, ((idea != gHere) || gIsNoteMode) {
+				focusOnIdea(idea)
+			} else if COMMAND, idea.countOfNotes > 0 {
 				focusOnEssay(idea.freshEssay)
 			} else {
-				focusOnIdea(idea)
+				return false
 			}
 
 			return true
-		} else if  let note = item as? ZNote, ((note != gCurrentEssay) || !gIsNoteMode) {
-			if !COMMAND {
+		} else if  let note = item as? ZNote {
+			if !COMMAND, ((note != gCurrentEssay) || !gIsNoteMode) {
 				focusOnEssay(note)
-			} else if let idea = note.zone {
+			} else if COMMAND, let idea = note.zone {
 				focusOnIdea(idea)
 			} else {
 				return false
@@ -125,7 +127,7 @@ class ZRingView: ZView {
 		return false
 	}
 
-	@discardableResult func respondToClick(in rect: CGRect?, _ COMMAND: Bool = false) -> Bool {
+	@discardableResult func respondToClick(in rect: CGRect?, _ COMMAND: Bool = false) -> Bool {   // false means click was ignored
 		if  let item = self.item(containedIn: rect) {
 			if (gFullRingIsVisible && respond(to: item, COMMAND)) || respondToRingControl(item) { // single item
 				setNeedsDisplay()
@@ -230,12 +232,12 @@ class ZRingView: ZView {
 
 			for (index, controlRect) in controlRects.enumerated() {
 				if  rect.intersectsOval(within: controlRect) {
-					return controls[index]
-				}
-			}
+					let control = controls[index]
 
-			if  rect.intersectsOval(within: geometry.one) {
-				return ZRingControl.tooltip
+					if  control.shape(in: controlRect, contains: rect.origin) {
+						return control
+					}
+				}
 			}
 
 			for (index, dotRect) in necklaceDotRects {
@@ -243,6 +245,10 @@ class ZRingView: ZView {
 					rect.intersects(dotRect) {
 					return objects[index]
 				}
+			}
+
+			if  rect.intersectsOval(within: geometry.one.insetBy(dx: -30.0, dy: -30.0)) {
+				return ZRingControl.tooltips
 			}
 		}
 

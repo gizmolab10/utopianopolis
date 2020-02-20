@@ -32,13 +32,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func done() { save(); exit() }
 
 	func exit() {
-		if  let e = gCurrentEssay,
-			e.lastTextIsDefault,
-			e.autoDelete {
-			e.delete()
+		if  let e = gCurrentEssay {
+			if  e.lastTextIsDefault,
+				e.autoDelete {
+				e.delete()
+			}
+
+			if  let idea = e.zone {
+				gHere = idea
+
+				gFocusRing.push()
+			}
 		}
 
 		gControllers.swapGraphAndEssay()
+		signalRegarding(.eRelayout)
 	}
 
 	func save() {

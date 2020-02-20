@@ -224,7 +224,7 @@ class ZRing: NSObject {
 			storeRingIDs()
         }
 
-		goBack()
+		go()
 	}
 
 	func popAndRemoveEmpties() -> Bool {
