@@ -23,7 +23,7 @@ class ZRingView: ZView {
 	var necklaceDotRects = [Int : CGRect]()
 	let necklaceMax 	 = 16
 
-	func isInRect(_ rect: CGRect?) -> Bool { return item(containedIn: rect) != nil }
+	func itemInRect(_ rect: CGRect?) -> Bool { return item(containedIn: rect) != nil }
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
@@ -65,7 +65,7 @@ class ZRingView: ZView {
 
 			ZBezierPath.drawCircle (in: rect, thickness: g.thick)
 
-			drawTinyDots(surrounding: surroundRect, objects: necklaceObjects, radius: radius, color: color, startQuadrant: -1.0, countMax: necklaceMax + 1) { (index, rect) in
+			drawTinyDots(surrounding: surroundRect, objects: necklaceObjects, radius: radius, color: color, offsetAngle: (.pi / -2.0) + 0.005, countMax: necklaceMax + 1) { (index, rect) in
 				self.necklaceDotRects[index] = rect
 			}
 
@@ -101,8 +101,12 @@ class ZRingView: ZView {
 		signalMultiple([.eCrumbs, .eRing])
 	}
 
-	func respond(to item: NSObject, _ COMMAND: Bool = false) -> Bool {
-		if  let idea = item as? Zone {
+	func respond(to item: NSObject, CONTROL: Bool = false, COMMAND: Bool = false) -> Bool {
+		if  CONTROL {
+			if  removeFromRings(item) {
+				return true
+			}
+		} else if let idea = item as? Zone {
 			if !COMMAND, ((idea != gHere) || gIsNoteMode) {
 				focusOnIdea(idea)
 			} else if COMMAND, idea.countOfNotes > 0 {
@@ -112,7 +116,7 @@ class ZRingView: ZView {
 			}
 
 			return true
-		} else if  let note = item as? ZNote {
+		} else if let note = item as? ZNote {
 			if !COMMAND, ((note != gCurrentEssay) || !gIsNoteMode) {
 				focusOnEssay(note)
 			} else if COMMAND, let idea = note.zone {
@@ -127,9 +131,9 @@ class ZRingView: ZView {
 		return false
 	}
 
-	@discardableResult func respondToClick(in rect: CGRect?, _ COMMAND: Bool = false) -> Bool {   // false means click was ignored
+	@discardableResult func respondToClick(in rect: CGRect?, CONTROL: Bool = false, COMMAND: Bool = false) -> Bool {   // false means click was ignored
 		if  let item = self.item(containedIn: rect) {
-			if (gFullRingIsVisible && respond(to: item, COMMAND)) || respondToRingControl(item) { // single item
+			if (gFullRingIsVisible && respond(to: item, CONTROL: CONTROL, COMMAND: COMMAND)) || respondToRingControl(item) { // single item
 				setNeedsDisplay()
 
 				return true
@@ -139,13 +143,19 @@ class ZRingView: ZView {
 				}
 
 				for subitem in subitems {
-					if  respond(to: subitem) {
+					if  respond(to: subitem, CONTROL: CONTROL) {
 						setNeedsDisplay()
 
 						return true
 					}
 				}
 			}
+		} else if gIsNoteMode, let v = gEssayView, let r = rect, !v.frame.contains(r) {
+			v.save()
+			gControllers.swapGraphAndEssay(force: .graphMode)
+			signalRegarding(.eRelayout)
+
+			return true
 		}
 
 		return false
@@ -153,8 +163,9 @@ class ZRingView: ZView {
 
 	override func mouseDown(with event: ZEvent) {
 		let    rect = CGRect(origin: event.locationInWindow, size: CGSize())
+		let CONTROL = event.modifierFlags.isControl
 		let COMMAND = event.modifierFlags.isCommand
-		let  inRing = respondToClick(in: rect, COMMAND)
+		let  inRing = respondToClick(in: rect, CONTROL: CONTROL, COMMAND: COMMAND)
 
 		if !inRing {
 			super.mouseDown(with: event)
@@ -194,13 +205,11 @@ class ZRingView: ZView {
 		return results
 	}
 
-	func removeFromRings(_ item: NSObject) {
+	@discardableResult func removeFromRings(_ item: NSObject) -> Bool {
 		if  let array = item as? ZObjectsArray {
-			gFocusRing.removeFromStack(array[0])
-			gEssayRing.removeFromStack(array[1])
+			return gFocusRing.removeFromStack(array[0]) || gEssayRing.removeFromStack(array[1])
 		} else {
-			gFocusRing.removeFromStack(item)
-			gEssayRing.removeFromStack(item)
+			return gFocusRing.removeFromStack(item)     || gEssayRing.removeFromStack(item)
 		}
 	}
 

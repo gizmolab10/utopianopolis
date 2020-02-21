@@ -336,7 +336,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					}
 				} else {
 					let   rect = CGRect(origin: gesture.location(in: dragView), size: CGSize())
-					let inRing = gRingView?.isInRect(rect) ?? false
+					let inRing = gRingView?.itemInRect(rect) ?? false
 
 					// //////////////////////
 					// click in background //

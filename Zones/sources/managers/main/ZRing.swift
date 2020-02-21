@@ -254,7 +254,7 @@ class ZRing: NSObject {
 		}
 	}
 
-	func removeFromStack(_ iItem: NSObject?) {
+	@discardableResult func removeFromStack(_ iItem: NSObject?) -> Bool {
 		if  let note = iItem as? ZNote,
 			let zone = note.zone {
 			for (index, item) in ring.enumerated() {
@@ -270,10 +270,12 @@ class ZRing: NSObject {
 						goBack()
 					}
 
-					return
+					return true
 				}
 			}
 		}
+
+		return false
 	}
 
 }

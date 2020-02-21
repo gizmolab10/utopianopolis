@@ -792,6 +792,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	
     
     func grab(updateBrowsingLevel: Bool = true) {
+		gTextEditor.stopCurrentEdit()
         gSelecting.grab([self], updateBrowsingLevel: updateBrowsingLevel)
     }
 

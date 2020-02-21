@@ -1777,7 +1777,7 @@ extension ZView {
 		return (ideaFocus, asIdea, noteFocus, asNote, asEssay)
 	}
 
-	func drawTinyDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, startQuadrant: Double = 0.0, countMax: Int = 10, onEach: IntRectClosure? = nil) {
+	func drawTinyDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, offsetAngle: Double = 0.0, countMax: Int = 10, onEach: IntRectClosure? = nil) {
 		var       dotCount = objects.count
 		var      fatHollow = false
 		var     tinyHollow = false
@@ -1806,7 +1806,7 @@ extension ZView {
 				if  iCount             > 0 {
 					let         isEven = iCount % 2 == 0
 					let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(iCount)
-					let     startAngle = fullCircle / 4.0 * (oneSet ? (isEven ? 0.0 : 2.0) + startQuadrant : isFat ? 1.0 : 3.0)
+					let     startAngle = fullCircle / 4.0 * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0) + offsetAngle
 
 					for index in 0 ... iCount - 1 {
 						let  increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)

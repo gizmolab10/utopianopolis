@@ -324,15 +324,7 @@ class ZSelecting: NSObject {
     }
 
 
-    func addMultipleGrabs(_ iZones: ZoneArray, startFresh: Bool = false) {
-		if  startFresh {
-			ungrabAll()
-
-			if iZones.count > 0 {
-				hasNewGrab = iZones[0]
-			}
-		}
-
+    func addMultipleGrabs(_ iZones: ZoneArray) {
 		for zone in iZones {
             addOneGrab(zone)
         }
@@ -346,7 +338,6 @@ class ZSelecting: NSObject {
     private func addOneGrab(_ iZone: Zone?) {
         if  let zone = iZone,
             (!currentGrabs.contains(zone)) {
-            gTextEditor.stopCurrentEdit()
             currentGrabs.append(zone)
 
             currentGrabs = respectOrder(for: currentGrabs)
@@ -373,8 +364,12 @@ class ZSelecting: NSObject {
             currentGrabs = [] // can't use ungrabAll because we need to keep cousinList
             sortedGrabs  = []
 
+			if  newGrabs.count != 0 {
+				hasNewGrab = newGrabs[0]
+			}
+
             updateWidgetsNeedDisplay(for: oldGrabs)
-            addMultipleGrabs(newGrabs, startFresh: true)
+            addMultipleGrabs(newGrabs)
 
             if  updateBrowsingLevel,
                 let 		  level = newGrabs.rootMost?.level {

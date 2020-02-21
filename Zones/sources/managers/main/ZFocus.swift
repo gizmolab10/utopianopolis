@@ -102,7 +102,7 @@ class ZFocus: ZRing {
 		}
 	}
 
-	override func removeFromStack(_ iItem: NSObject?) {
+	@discardableResult override func removeFromStack(_ iItem: NSObject?) -> Bool {
 		if  ring.count > 1,
 			let zone = iItem as? Zone {
 			for (index, item) in ring.enumerated() {
@@ -117,10 +117,12 @@ class ZFocus: ZRing {
 						go()
 					}
 
-					return
+					return true
 				}
 			}
 		}
+
+		return false
 	}
 
 	// MARK:- travel

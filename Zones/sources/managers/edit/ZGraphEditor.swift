@@ -97,8 +97,9 @@ class ZGraphEditor: ZBaseEditor {
                     case "d":      tearApartCombine(OPTION, editedZone)
                     case "f":      search(OPTION)
                     case "i":      gTextEditor.showSpecialsPopup()
+					case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
                     case "p":      printCurrentFocus()
-					case "y":      if SPECIAL { gControllers.showHideTooltips() } else { gBreadcrumbs.toggleBreadcrumbExtent() }
+					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
                     case "?":      gControllers.showShortcuts()
                     case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
 					case "/":      if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
@@ -141,7 +142,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "g":      refetch(COMMAND, OPTION)
                     case "h":      editTrait(for: .eHyperlink)
                     case "l", "u": alterCase(up: key == "u")
-					case "j":      gControllers.showHideRing()
+					case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
 					case "k":      toggleColorized()
                     case "m":      orderByLength(OPTION)
                     case "n":      grabOrEdit(true, OPTION, false)
@@ -151,7 +152,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
                     case "t":      swapWithParent()
 					case "w":      rotateWritable()
-					case "y":      if SPECIAL { gControllers.showHideTooltips() } else { gBreadcrumbs.toggleBreadcrumbExtent() }
+					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)

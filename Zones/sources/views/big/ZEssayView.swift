@@ -74,11 +74,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "e":      gNoteAndEssay.export()
 				case "h":      showHyperlinkPopup()
 				case "i":      showSpecialsPopup()
-				case "j":      gControllers.showHideRing()
+				case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
 				case "l", "u": alterCase(up: key == "u")
 				case "n":      swapBetweenNoteAndEssay()
 				case "s":      save()
-				case "y":      if SPECIAL { gControllers.showHideTooltips() } else { gBreadcrumbs.toggleBreadcrumbExtent() }
+				case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
 				case "]":      gEssayRing.goForward()
 				case "[":      gEssayRing.goBack()
 				case kReturn:  gNoteAndEssay.grabbedZone?.grab(); done()
@@ -158,8 +158,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	override func mouseDown(with event: ZEvent) {
 		let    rect = CGRect(origin: event.locationInWindow, size: CGSize())
+		let CONTROL = event.modifierFlags.isControl
 		let COMMAND = event.modifierFlags.isCommand
-		let  inRing = gRingView?.respondToClick(in: rect, COMMAND) ?? false
+		let  inRing = gRingView?.respondToClick(in: rect, CONTROL: CONTROL, COMMAND: COMMAND) ?? false
 
 		if !inRing {
 			super.mouseDown(with: event)
