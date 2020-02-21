@@ -19,15 +19,15 @@ class ZRingControl: ZView, ZToolable {
 
 	var type: ZControlType = .eVisible
 	static let    controls = [insertion, visible, confined]
-	func toolColor() -> ZColor? { return gNecklaceDotColor }
+	func toolColor() -> ZColor? { return gDarkerBackgroundColor }
 	func toolName()  -> String? { return description }
 
 	override var description: String {
 		switch type {
-			case .eInsertion: return "insert at \(gInsertionsFollow ? "bottom"          : "top")"
-			case .eConfined:  return "browse \(gBrowsingIsConfined  ? "within one idea" : "to all visible")"
-			case .eVisible:   return "\(gFullRingIsVisible          ? "hide these"      : "show") controls"
-			case .eToolTips:  return "\(gToolTipsAlwaysVisible      ? "hide"            : "show") tool tips"
+			case .eInsertion: return gListsGrowDown         ? "bottom" : "top"
+			case .eConfined:  return gBrowsingIsConfined    ? "one"    : "all"
+			case .eVisible:   return gFullRingIsVisible     ? "hide"   : "show"
+			case .eToolTips:  return gToolTipsAlwaysVisible ? "hide"   : "show" + "tool tips"
 		}
 	}
 
@@ -40,14 +40,14 @@ class ZRingControl: ZView, ZToolable {
 
 		switch type           {
 			case .eInsertion  :
-				return point.intersectsTriangle  (orientedUp: gInsertionsFollow, in: large)		// insertion direction
+				return point.intersectsTriangle  (orientedUp: gListsGrowDown, in: large)		// insertion direction
 			case .eConfined   :
 				if  gBrowsingIsConfined {
 					return point.intersectsCircle(                               in: large) ||	// inactive confinement dot
-					point.intersectsCircle(		                                in:  tiny)		// tiny dot
+					point.intersectsCircle(		                                 in:  tiny)		// tiny dot
 				} else        {
 					return point.intersectsCircle(orientedUp: false,             in:  tiny) ||
-					point.intersectsCircle(	 	 orientedUp: true,              in:  tiny)
+					point.intersectsCircle(	 	 orientedUp: true,               in:  tiny)
 				}
 			case .eVisible    :
 				if !gFullRingIsVisible {
@@ -75,7 +75,7 @@ class ZRingControl: ZView, ZToolable {
 
 		switch type           {
 			case .eInsertion  :
-				drawTriangle  (orientedUp: gInsertionsFollow, in: large, thickness: thick)		// insertion direction
+				drawTriangle  (orientedUp: gListsGrowDown, in: large, thickness: thick)		// insertion direction
 			case .eConfined   :
 				if  gBrowsingIsConfined {
 					drawCircle(                               in: large, thickness: thick)		// inactive confinement dot

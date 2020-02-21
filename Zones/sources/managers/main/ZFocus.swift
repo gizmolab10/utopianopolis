@@ -61,7 +61,6 @@ class ZFocus: ZRing {
             let focusClosure = { (zone: Zone) in
                 gHere = zone
 
-				self.push()
                 gFavorites.updateCurrentFavorite()
                 zone.grab()
                 atArrival()
@@ -94,8 +93,9 @@ class ZFocus: ZRing {
 				toggleDatabaseID()         // update id before setting gHere
 			}
 
-			gHere     = here
+			gHere = here
 
+			push()
 			gHere.grab()
 			gFavorites.updateAllFavorites()
 			redrawGraph()
@@ -110,11 +110,10 @@ class ZFocus: ZRing {
 					other === zone {
 
 					ring.remove(at: index)
+					gRingView?.updateNecklace()
 
-					if !isEmpty,
-						index == currentIndex {
+					if  index == currentIndex || zone == gHere {
 						goBack()
-						go()
 					}
 
 					return true
@@ -134,8 +133,6 @@ class ZFocus: ZRing {
 
 			UNDO(self) { iUndoSelf in
 				iUndoSelf.createUndoForTravelBackTo(gSelecting.currentMoveable, atArrival: atArrival)
-				self.push()
-				self.dump()
 
 				gDatabaseID = restoreID
 
@@ -255,8 +252,7 @@ class ZFocus: ZRing {
 					if  let target = iTarget, target.isFetched { // e.g., default root favorite
 						focus {
 							gHere  = target
-							
-							self.push()
+
 							gHere.prepareForArrival()
 							complete(gHere, .eRelayout)
 						}
@@ -265,14 +261,12 @@ class ZFocus: ZRing {
 							if  let hereRecord = iRecord,
 								let    newHere = gCloud?.zone(for: hereRecord) {
 								gHere          = newHere
-								
-								self.push()
+
 								newHere.prepareForArrival()
 								self.focus {
 									complete(newHere, .eRelayout)
 								}
 							} else {
-								self.push()
 								complete(gHere, .eRelayout)
 							}
 						}
@@ -294,13 +288,11 @@ class ZFocus: ZRing {
 						
 						gHere = here
 
-						self.push()
 						grabbed?.grab()
 						complete(here, .eRelayout)
 					}
 					
 					let grabHere = {
-						self.push()
 						gHereMaybe?.prepareForArrival()
 						complete(gHereMaybe, .eRelayout)
 					}

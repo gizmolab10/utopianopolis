@@ -51,9 +51,9 @@ struct ZTinyDotType: OptionSet {
 }
 
 
-enum ZInsertionMode: Int {
-    case precede
-    case follow
+enum ZListGrowthMode: Int {
+    case up
+    case down
 }
 
 

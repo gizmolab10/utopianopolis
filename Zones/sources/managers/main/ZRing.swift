@@ -161,6 +161,8 @@ class ZRing: NSObject {
 				currentIndex = index
 			}
         }
+
+		gRingView?.updateNecklace()
     }
 
     func goBack(extreme: Bool = false) {
@@ -222,9 +224,9 @@ class ZRing: NSObject {
 			let i = primeIndex {
 			ring.remove(at: i)
 			storeRingIDs()
+			gRingView?.updateNecklace()
+			go()
         }
-
-		go()
 	}
 
 	func popAndRemoveEmpties() -> Bool {
@@ -240,7 +242,7 @@ class ZRing: NSObject {
 		for item in ring {
 			if  let note = item as? ZNote,
 				let zone = note.zone,
-				!zone.hasTrait(for: .eNote) {
+				!zone.hasTrait(for: .tNote) {
 				removals.append(item)
 			}
 		}
@@ -264,9 +266,11 @@ class ZRing: NSObject {
 					ring.remove(at: index)
 					removeEmpties()
 					storeRingIDs()
+					gRingView?.updateNecklace()
 
-					if !isEmpty,
-						index == currentIndex {
+					if  isEmpty {
+						gControllers.swapGraphAndEssay(force: .graphMode)
+					} else if index == currentIndex || note == gCurrentEssay {
 						goBack()
 					}
 

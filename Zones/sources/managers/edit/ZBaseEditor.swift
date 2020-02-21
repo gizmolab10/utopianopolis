@@ -88,8 +88,6 @@ class ZBaseEditor: NSObject {
 		if  gIsNoteMode {
 			gControllers.swapGraphAndEssay()
 		}
-
-		signalRegarding(.eRing)
 	}
 
 }

@@ -32,8 +32,8 @@ enum ZControllerID: Int {
 enum ZSignalKind: Int {
     case eData
     case eMain
-	case eNote
 	case eRing
+	case eSwap
     case eDatum
     case eDebug
     case eError
@@ -105,11 +105,11 @@ class ZControllers: NSObject {
 		if  newMode != gWorkMode {
 			gWorkMode 					= newMode
 			let showNote 			    = newMode == .noteMode
-			let multiple: [ZSignalKind] = showNote ? [.eNote, .eCrumbs] : [.eNote, .eRelayout]
+			let multiple: [ZSignalKind] = [.eSwap, (showNote ? .eCrumbs : .eRelayout)]
 
-			FOREGROUND { 	// avoid generic menu handler invoking graph editor's handle key
+			FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking graph editor's handle key)
 				gTextEditor.stopCurrentEdit()
-				gEssayView?.updateButtons(showNote)
+				gEssayView?.updateControlBarButtons(showNote)
 				self.signalFor(gSelecting.firstGrab, multiple: multiple)
 			}
 		}

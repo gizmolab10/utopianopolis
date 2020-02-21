@@ -21,8 +21,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var    autoDelete        = false		// true means delete this note on exit from essay mode
 	var    essayLength       = 0
 	var    noteOffset        = 0
-	var    noteMaybe         : ZTrait?   { return zone?.traits[  .eNote] }
-	var    noteTrait         : ZTrait?   { return zone?.traitFor(.eNote) }
+	var    noteMaybe         : ZTrait?   { return zone?.traits[  .tNote] }
+	var    noteTrait         : ZTrait?   { return zone?.traitFor(.tNote) }
 	var    prefix            : String    { return "note" }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
 	var    isNote            : Bool      { return isMember(of: ZNote.self) }
@@ -78,7 +78,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	static func object(for id: String) -> NSObject? {
 		if  let       zone = gRemoteStorage.maybeZoneForRecordName(id),
-			zone.hasTrait(for: .eNote) {
+			zone.hasTrait(for: .tNote) {
 			let       note = ZNote(zone)
 			zone.noteMaybe = note
 
@@ -177,7 +177,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK:-
 
 	func delete() {
-		zone?.removeTrait(for: .eNote)
+		zone?.removeTrait(for: .tNote)
 		gEssayRing.removeFromStack(self) // display prior essay
 		gRingView?.setNeedsDisplay()
 	}

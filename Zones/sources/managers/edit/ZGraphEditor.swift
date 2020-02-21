@@ -137,10 +137,10 @@ class ZGraphEditor: ZBaseEditor {
                     case "b":      addBookmark()
 					case "c":      if COMMAND { copyToPaste() } else { gGraphController?.recenter() }
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
-                    case "e":      editTrait(for: .eEmail)
+                    case "e":      editTrait(for: .tEmail)
                     case "f":      search(OPTION)
                     case "g":      refetch(COMMAND, OPTION)
-                    case "h":      editTrait(for: .eHyperlink)
+                    case "h":      editTrait(for: .tHyperlink)
                     case "l", "u": alterCase(up: key == "u")
 					case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
 					case "k":      toggleColorized()
@@ -973,7 +973,7 @@ class ZGraphEditor: ZBaseEditor {
         // //////////////////////////////////////////////////////////
         
         if  let    zone = t.currentlyEditingZone, zone.hasSiblings {
-            let atStart = gInsertionMode == .precede
+            let atStart = gListGrowthMode == .up
             let  offset = t.editingOffset(atStart)
             
             t.stopCurrentEdit(forceCapture: true)
@@ -999,7 +999,7 @@ class ZGraphEditor: ZBaseEditor {
         let parent = gSelecting.currentMoveable
         if !parent.isBookmark,
             parent.userCanMutateProgeny {
-            addIdea(in: parent, at: gInsertionsFollow ? nil : 0) { iChild in
+            addIdea(in: parent, at: gListsGrowDown ? nil : 0) { iChild in
                 gControllers.signalFor(parent, regarding: .eRelayout) {
                     iChild?.edit()
                 }
@@ -1029,7 +1029,7 @@ class ZGraphEditor: ZBaseEditor {
             var index   = zone.siblingIndex
 
             if  index  != nil {
-                index! += gInsertionsFollow ? 1 : 0
+                index! += gListsGrowDown ? 1 : 0
             }
 
             addIdea(in: parent, at: index, with: name) { iChild in
@@ -1179,7 +1179,7 @@ class ZGraphEditor: ZBaseEditor {
                 combineIntoParent(zone)
             } else {
                 self.deferRedraw {
-                    self.addIdea(in: zone, at: gInsertionsFollow ? nil : 0, with: childName) { iChild in
+                    self.addIdea(in: zone, at: gListsGrowDown ? nil : 0, with: childName) { iChild in
                         gDeferRedraw = false
                         
                         self.redrawAndSync()
@@ -1411,7 +1411,7 @@ class ZGraphEditor: ZBaseEditor {
 
 
     func grabAppropriate(_ zones: ZoneArray) -> Zone? {
-        if  let       grab = gInsertionsFollow ? zones.first : zones.last,
+        if  let       grab = gListsGrowDown ? zones.first : zones.last,
             let     parent = grab.parentZone {
             let   siblings = parent.children
             var      count = siblings.count
@@ -1427,14 +1427,14 @@ class ZGraphEditor: ZBaseEditor {
 
             if  var           index  = grab.siblingIndex, max > 0, count > 0 {
                 if !grab.isGrabbed {
-                    if        index == max &&   gInsertionsFollow {
+                    if        index == max &&   gListsGrowDown {
                         index        = 0
-                    } else if index == 0   &&  !gInsertionsFollow {
+                    } else if index == 0   &&  !gListsGrowDown {
                         index        = max
                     }
-                } else if     index  < max &&  (gInsertionsFollow || index == 0) {
+                } else if     index  < max &&  (gListsGrowDown || index == 0) {
                     index           += 1
-                } else if     index  > 0    && (!gInsertionsFollow || index == max) {
+                } else if     index  > 0    && (!gListsGrowDown || index == max) {
                     index           -= 1
                 }
 
@@ -1471,7 +1471,7 @@ class ZGraphEditor: ZBaseEditor {
                 if extreme {
                     if  gHere.isRoot {
                         gHere = zone // reverse what the last move out extreme did
-                        
+
                         complete()
                     } else {
                         let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
@@ -1584,7 +1584,7 @@ class ZGraphEditor: ZBaseEditor {
                 zone.revealChildren()
                 
 				if  zone.count > 0,
-					let child = gInsertionsFollow ? zone.children.last : zone.children.first {
+					let child = gListsGrowDown ? zone.children.last : zone.children.first {
 					child.grab()
 
 					if  needReveal {
@@ -1639,7 +1639,7 @@ class ZGraphEditor: ZBaseEditor {
     func moveZone(_ zone: Zone, to iThere: Zone?, onCompletion: Closure? = nil) {
         if  let there = iThere {
             if !there.isBookmark {
-                moveZone(zone, into: there, at: gInsertionsFollow ? nil : 0, orphan: true) {
+                moveZone(zone, into: there, at: gListsGrowDown ? nil : 0, orphan: true) {
                     onCompletion?()
                 }
             } else if !there.isABookmark(spawnedBy: zone) {
@@ -1655,7 +1655,7 @@ class ZGraphEditor: ZBaseEditor {
                     gFocusRing.travelThrough(there) { object, kind in
                         let there = object as! Zone
 
-                        self.moveZone(movedZone, into: there, at: gInsertionsFollow ? nil : 0, orphan: false) {
+                        self.moveZone(movedZone, into: there, at: gListsGrowDown ? nil : 0, orphan: false) {
                             movedZone.recursivelyApplyDatabaseID(targetLink?.databaseID)
                             movedZone.grab()
                             onCompletion?()
@@ -1776,7 +1776,7 @@ class ZGraphEditor: ZBaseEditor {
 
         while   var index = indices.last, let duplicate = duplicates.last, let zone = zones.last {
             if  let     p = zone.parentZone {
-                index    += (gInsertionsFollow ? 1 : 0)
+                index    += (gListsGrowDown ? 1 : 0)
 
                 p.addAndReorderChild(duplicate, at: index)
                 duplicate.grab()
@@ -1866,7 +1866,7 @@ class ZGraphEditor: ZBaseEditor {
 
                 for (pastable, (parent, index)) in pastables {
                     let  pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy // for zones not in trash, paste a deep copy
-                    let insertAt = index  != nil ? index : gInsertionsFollow ? nil : 0
+                    let insertAt = index  != nil ? index : gListsGrowDown ? nil : 0
                     let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
 
                     pasteMe.orphan()

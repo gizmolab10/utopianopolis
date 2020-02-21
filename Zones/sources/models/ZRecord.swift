@@ -568,8 +568,8 @@ class ZRecord: NSObject {
 						case .type: // convert essay trait to note trait
 							if  var string = object as? String,
 								let trait = ZTraitType(rawValue: string),
-								trait == .eEssay {
-								string = ZTraitType.eNote.rawValue
+								trait == .tEssay {
+								string = ZTraitType.tNote.rawValue
 								ckRecord[keyPath] = string as CKRecordValue
 							} else {
 								ckRecord[keyPath] = value

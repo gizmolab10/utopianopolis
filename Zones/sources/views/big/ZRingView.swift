@@ -20,6 +20,7 @@ class ZRingView: ZView {
 	}
 
 	var geometry         = ZGeometry()
+	var necklaceObjects  = ZObjectsArray()
 	var necklaceDotRects = [Int : CGRect]()
 	let necklaceMax 	 = 16
 
@@ -175,20 +176,20 @@ class ZRingView: ZView {
 	// MARK:- necklace and controls
 	// MARK:-
 
-	var necklaceObjects : ZObjectsArray {
-		var results = ZObjectsArray()
+	func updateNecklace() {
+		necklaceObjects.removeAll()
 
 		func copyObjects(from ring: ZObjectsArray) {
-			for object in ring {
+			for object in ring.reversed() {
 				if  object.isKind(of: Zone.self) {
-					results.append(object)
+					necklaceObjects.append(object)
 				} else if let  essay = object as? ZNote,
 					let idea = essay.zone {
 
-					if  let index = results.firstIndex(of: idea) {
-						results[index] = [idea, essay] as NSObject
+					if  let index = necklaceObjects.firstIndex(of: idea) {
+						necklaceObjects[index] = [idea, essay] as NSObject
 					} else {
-						results.append(object)
+						necklaceObjects.append(object)
 					}
 				}
 			}
@@ -197,12 +198,12 @@ class ZRingView: ZView {
 		copyObjects(from: gFocusRing.ring)
 		copyObjects(from: gEssayRing.ring)
 
-		while results.count > necklaceMax {
-			removeFromRings(results[0])
-			results.remove(at: 0)
+		while necklaceObjects.count > necklaceMax {
+			removeFromRings(necklaceObjects[0])
+			necklaceObjects.remove(at: 0)
 		}
 
-		return results
+		signalRegarding(.eRing)
 	}
 
 	@discardableResult func removeFromRings(_ item: NSObject) -> Bool {
@@ -256,7 +257,7 @@ class ZRingView: ZView {
 				}
 			}
 
-			if  rect.intersectsOval(within: geometry.one.insetBy(dx: -30.0, dy: -30.0)) {
+			if  rect.intersectsOval(within: geometry.one) {
 				return ZRingControl.tooltips
 			}
 		}
@@ -275,7 +276,7 @@ class ZRingView: ZView {
 			nameRect.center = rect.offsetBy(dx: 10.0, dy: -20.0).center
 
 			if  let   color = tool.toolColor() {
-				attributes[.foregroundColor] = color.lighter(by: 3.0)
+				attributes[.foregroundColor] = color
 			}
 
 			name.draw(in: nameRect, withAttributes: attributes)
@@ -305,7 +306,7 @@ class ZRingView: ZView {
 		}
 
 		for (index, controlRect) in controlRects.enumerated() {
-			let  rect = self.convert(controlRect, to: self)
+			let  rect = self.convert(controlRect, to: self).offsetBy(dx: 0.0, dy: -5.0)
 			let owner = controls[index]
 
 			addToolTip(rect, owner: owner, userData: nil)

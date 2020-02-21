@@ -511,7 +511,7 @@ class ZFavorites: ZRecords {
         var           index = parent.children.firstIndex(of: iZone) ?? count
 
         if  style == .addFavorite {
-            index           = nextFavoritesIndex(forward: gInsertionsFollow)
+            index           = nextFavoritesIndex(forward: gListsGrowDown)
         }
 
         bookmark            = create(withBookmark: bookmark, style, parent: parent, atIndex: index, iZone.zoneName)

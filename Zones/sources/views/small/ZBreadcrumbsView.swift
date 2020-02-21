@@ -121,7 +121,7 @@ class ZBreadcrumbsView : ZTextField {
 			    let note = next.noteMaybe {
 				gCurrentEssay = note
 
-				self.signalRegarding(.eNote)
+				self.signalRegarding(.eSwap)
 			} else {
 				self.signalRegarding(.eRelayout)
 			}

@@ -45,7 +45,7 @@ var                  gIsLate:               Bool { return gBatches.isLate }
 var              gIsDragging:               Bool { return gDraggedZone != nil }
 var    gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
 var      gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
-var        gInsertionsFollow:               Bool { return gInsertionMode == .follow }
+var           gListsGrowDown:               Bool { return gListGrowthMode == .down }
 var          gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var              gIsIdeaMode:               Bool { return gWorkMode == .ideaMode }
 var              gIsNoteMode:               Bool { return gWorkMode == .noteMode }
@@ -71,7 +71,7 @@ var  gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gL
 var        gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var          gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var	 			  gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
-var            gCurrentEssay:             ZNote? { didSet { gEssayRing.push(); gRingView?.setNeedsDisplay() } }
+var            gCurrentEssay:             ZNote? { didSet { gEssayRing.push() } }
 func           gSetGraphMode()                   { gWorkMode = .graphMode }
 
 var gCurrentEvent: ZEvent? {
@@ -108,6 +108,8 @@ var gHere: Zone {
 		}
 
 		gRecords?.hereZone = newValue
+
+		gFocusRing.push()
 	}
 }
 
@@ -316,16 +318,16 @@ var gLineThickness: Double {
 	}
 }
 
-var gInsertionMode: ZInsertionMode {
+var gListGrowthMode: ZListGrowthMode {
 	get {
-		var mode: ZInsertionMode?
+		var mode: ZListGrowthMode?
 		
 		if let object = UserDefaults.standard.object(forKey:kInsertionMode) {
-			mode      = ZInsertionMode(rawValue: object as! Int)
+			mode      = ZListGrowthMode(rawValue: object as! Int)
 		}
 		
 		if  mode == nil {
-			mode      = .follow
+			mode      = .down
 			
 			UserDefaults.standard.set(mode!.rawValue, forKey:kInsertionMode)
 			UserDefaults.standard.synchronize()
@@ -446,9 +448,9 @@ func toggleModes(isDirection: Bool) -> Bool {
 	if !gFullRingIsVisible {
 		return false
 	} else if isDirection {
-		gInsertionMode = gInsertionsFollow   ? .precede     : .follow
+		gListGrowthMode = gListsGrowDown      ? .up          : .down
 	} else {
-		gBrowsingMode  = gBrowsingIsConfined ? .cousinJumps : .confined
+		gBrowsingMode   = gBrowsingIsConfined ? .cousinJumps : .confined
 	}
 
 	return true

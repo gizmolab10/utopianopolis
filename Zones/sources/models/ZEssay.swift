@@ -63,7 +63,7 @@ class ZEssay: ZNote {
 			children.removeAll()
 
 			zone?.traverseAllProgeny { iChild in
-				if  iChild.hasTrait(for: .eNote) {
+				if  iChild.hasTrait(for: .tNote) {
 					let essay = iChild.note
 
 					if !self.children.contains(essay) {

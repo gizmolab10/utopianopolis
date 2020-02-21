@@ -40,8 +40,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			if  let idea = e.zone {
 				gHere = idea
-
-				gFocusRing.push()
 			}
 		}
 
@@ -144,8 +142,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  (gNoteAndEssay.shouldOverwrite || restoreSelection != nil),
 			let text = gCurrentEssay?.essayText {
 			clear() 								// discard previously edited text
-			gEssayRing.push()
-			updateButtons(true)
+			updateControlBarButtons(true)
 			setText(text)							// emplace text
 			select(restoreSelection: restoreSelection)
 
@@ -207,7 +204,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			save()
 
 			if  createEssay {
-				child.setTextTrait(kEssayDefault, for: .eNote)			// create a placeholder essay in the child
+				child.setTextTrait(kEssayDefault, for: .tNote)			// create a placeholder essay in the child
 				gNoteAndEssay.grabbedZone?.createNote()
 
 				resetCurrentEssay(gNoteAndEssay.grabbedZone?.note, selecting: child)	// redraw essay TODO: WITH NEW NOTE SELECTED
@@ -323,7 +320,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		static var all: [ZTextButtonID] { return [.idBack, .idForward, .idHide, .idSave, .idCancel, .idDelete] }
 	}
 
-	func updateButtons(_ flag: Bool) {
+	func updateControlBarButtons(_ flag: Bool) {
 		hideButton?    .isEnabled = flag
 		saveButton?    .isEnabled = flag
 		cancelButton?  .isEnabled = flag
@@ -392,30 +389,30 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	enum ZHyperlinkMenuType: String {
-		case eWeb   = "h"
-		case eIdea  = "i"
-		case eNote  = "n"
-		case eEssay = "e"
-		case eClear = "c"
+		case hWeb   = "h"
+		case hIdea  = "i"
+		case hNote  = "n"
+		case hEssay = "e"
+		case hClear = "c"
 
 		var title: String {
 			switch self {
-				case .eWeb:   return "Internet"
-				case .eIdea:  return "Idea"
-				case .eNote:  return "Note"
-				case .eEssay: return "Essay"
-				case .eClear: return "Clear"
+				case .hWeb:   return "Internet"
+				case .hIdea:  return "Idea"
+				case .hNote:  return "Note"
+				case .hEssay: return "Essay"
+				case .hClear: return "Clear"
 			}
 		}
 
 		var linkType: String {
 			switch self {
-				case .eWeb: return "http"
+				case .hWeb: return "http"
 				default:    return title.lowercased()
 			}
 		}
 
-		static var all: [ZHyperlinkMenuType] { return [.eWeb, .eIdea, .eNote, .eEssay, .eClear] }
+		static var all: [ZHyperlinkMenuType] { return [.hWeb, .hIdea, .hNote, .hEssay, .hClear] }
 
 	}
 
@@ -445,8 +442,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			var link: String? = type.linkType + kSeparator
 
 			switch type {
-				case .eClear: link = nil // to remove existing hyperlink
-				case .eWeb:   link = gEssayController?.modalForWebLink(textStorage?.string.substring(with: selectionRange))
+				case .hClear: link = nil // to remove existing hyperlink
+				case .hWeb:   link = gEssayController?.modalForWebLink(textStorage?.string.substring(with: selectionRange))
 				default:      if let b = gSelecting.pastableRecordName { link?.append(b) } else { return }
 			}
 
@@ -510,7 +507,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				let type = ZHyperlinkMenuType(rawValue: String(t)) {
 				let zone = gSelecting.zone(with: rID)	// find zone with rID
 				switch type {
-					case .eIdea:
+					case .hIdea:
 						if  let   grab = zone {
 							let common = gNoteAndEssay.grabbedZone?.closestCommonParent(of: grab)
 
@@ -529,7 +526,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 							return true
 						}
-					case .eEssay, .eNote:
+					case .hEssay, .hNote:
 						if  let target = zone {
 							let common = gNoteAndEssay.grabbedZone?.closestCommonParent(of: target)
 
@@ -548,7 +545,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 									self.setSelectedRange(range)
 									self.scroll(rect.origin)
 								} else {
-									gCreateCombinedEssay = type == .eEssay
+									gCreateCombinedEssay = type == .hEssay
 
 									target .grab()					// for later, when user exits essay mode
 									target .asssureIsVisible()

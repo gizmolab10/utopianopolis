@@ -47,7 +47,7 @@ class ZMainController: ZGenericController {
 
 					assignAsFirstResponder(nil)
 				}
-			case .eNote:
+			case .eSwap:
 				if  let 	   			  vEssay = essayView,
 					let                   vGraph = graphView {
 					let                   editor = gTextEditor

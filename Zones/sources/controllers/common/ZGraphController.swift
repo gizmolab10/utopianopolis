@@ -446,7 +446,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 let useDropParent = relation != .upon && !dropHere
                 ;        dropZone = dropIsGrabbed ? nil : useDropParent ? dropZone?.parentZone : dropZone
                 let lastDropIndex = dropZone == nil ? 0 : dropZone!.count
-                var         index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!gInsertionsFollow || dropIsGrabbed) ? 0 : lastDropIndex)
+                var         index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!gListsGrowDown || dropIsGrabbed) ? 0 : lastDropIndex)
                 ;           index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
                 let     dragIndex = draggedZone.siblingIndex
                 let     sameIndex = dragIndex == index || dragIndex == index - 1
@@ -474,7 +474,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                     var dropAt: Int? = index
 
                     if toBookmark {
-                        dropAt       = gInsertionsFollow ? nil : 0
+                        dropAt       = gListsGrowDown ? nil : 0
                     } else if dragIndex != nil && dragIndex! <= index && dropIsParent {
                         dropAt!     -= 1
                     }

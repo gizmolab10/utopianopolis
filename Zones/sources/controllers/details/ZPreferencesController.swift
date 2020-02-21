@@ -36,7 +36,7 @@ class ZPreferencesController: ZGenericController {
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         if  iKind != .eStartup {
             let                           grabbed = gSelecting.firstSortedGrab
-            insertionModeControl?.selectedSegment = gInsertionMode.rawValue
+            insertionModeControl?.selectedSegment = gListGrowthMode.rawValue
             browsingModeControl? .selectedSegment = gBrowsingMode.rawValue
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
             thickness?               .doubleValue = gLineThickness
@@ -110,7 +110,7 @@ class ZPreferencesController: ZGenericController {
 			switch (identifier) {
 				case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; redrawGraph()
 				case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!; signalMultiple([.eMain, .eGraph])
-				case "direction": gInsertionMode = ZInsertionMode(rawValue: selection)!; signalMultiple([.eMain, .eGraph])
+				case "direction": gListGrowthMode = ZListGrowthMode(rawValue: selection)!; signalMultiple([.eMain, .eGraph])
 				default: break
 			}
         }

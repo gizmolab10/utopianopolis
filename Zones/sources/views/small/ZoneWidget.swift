@@ -243,7 +243,7 @@ class ZoneWidget: ZView {
                         // ////////////////////////
 
                         let   relation = gDragRelation
-                        let    isAbove = relation == .above || (!gInsertionsFollow && (lastIndex == 0 || relation == .upon))
+                        let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))
                         let multiplier = (isAbove ? 1.0 : -1.0) * gVerticalWeight
                         let    gHeight = Double(gGenericOffset.height)
                         let      delta = (gHeight + gDotWidth) * multiplier

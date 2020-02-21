@@ -64,15 +64,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var              dragDotIsHidden :               Bool  { return                     (isRootOfFavorites && !(widget?.isInPublic ?? true)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
     var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
     var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
-    var                 hasHyperlink :               Bool  { return hasTrait(for: .eHyperlink) && hyperLink != kNullLink }
+    var                 hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }
 	var                  hasSiblings :               Bool  { return parentZone?.count ?? 0 > 1 }
     var                   isSelected :               Bool  { return gSelecting.isSelected(self) }
     var                    isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
     var                    canTravel :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasEssay }
     var                     hasColor :               Bool  { return zoneColor != nil && zoneColor != "" }
-	var                     hasEmail :               Bool  { return hasTrait(for: .eEmail) && email != "" }
-	var                     hasEssay :               Bool  { return hasTrait(for: .eNote) }
-	var                     hasAsset :               Bool  { return hasTrait(for: .eAsset) }
+	var                     hasEmail :               Bool  { return hasTrait(for: .tEmail) && email != "" }
+	var                     hasEssay :               Bool  { return hasTrait(for: .tNote) }
+	var                     hasAsset :               Bool  { return hasTrait(for: .tAsset) }
     var                      isTrash :               Bool  { return recordName == kTrashName }
     var                    isInTrash :               Bool  { return root?.isTrash              ?? false }
     var                isInFavorites :               Bool  { return root?.isRootOfFavorites    ?? false }
@@ -169,7 +169,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var email: String? {
 		get {
 			if  emailMaybe == nil {
-				emailMaybe  = getTextTrait(for: .eEmail)
+				emailMaybe  = getTextTrait(for: .tEmail)
 			}
 
 			return emailMaybe
@@ -179,7 +179,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  emailMaybe != newValue {
 				emailMaybe  = newValue
 
-				setTextTrait(newValue, for: .eEmail)
+				setTextTrait(newValue, for: .tEmail)
 			}
 		}
 	}
@@ -188,7 +188,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var    result = [Zone]()
 
 		traverseAllProgeny { zone in
-			if  zone.hasTrait(for: .eNote) {
+			if  zone.hasTrait(for: .tNote) {
 				result.append(zone)
 			}
 		}
@@ -249,7 +249,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var hyperLink: String? {
 		get {
 			if  hyperLinkMaybe == nil {
-				hyperLinkMaybe  = getTextTrait(for: .eHyperlink)
+				hyperLinkMaybe  = getTextTrait(for: .tHyperlink)
 			}
 
 			return hyperLinkMaybe
@@ -259,7 +259,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  hyperLinkMaybe != newValue {
 				hyperLinkMaybe  = newValue
 
-				setTextTrait(newValue, for: .eHyperlink)
+				setTextTrait(newValue, for: .tHyperlink)
 			}
 		}
 	}
@@ -339,7 +339,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         }
     }
 
-	func toolColor() -> ZColor? { return color }
+	func toolColor() -> ZColor? { return color?.lighter(by: 3.0) }
 
 	var color: ZColor? {
         get {
@@ -643,7 +643,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var insertionIndex: Int? {
 		if let index = siblingIndex {
-			return index + (gInsertionsFollow ? 1 : 0)
+			return index + (gListsGrowDown ? 1 : 0)
 		}
 
 		return nil
@@ -944,28 +944,28 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             }
             
             switch (type) {
-            case .eEmail:     emailMaybe     = nil
-            case .eHyperlink: hyperLinkMaybe = nil
+            case .tEmail:     emailMaybe     = nil
+            case .tHyperlink: hyperLinkMaybe = nil
             default: break
             }
         }
     }
 
 	func getAssetTrait() -> CKAsset? {
-		return traits[.eAsset]?.asset
+		return traits[.tAsset]?.asset
 	}
 
 	func setAssetTrait(_ iAsset: CKAsset?) {
 		if  let   asset = iAsset {
-			let   trait = traitFor(.eAsset)
+			let   trait = traitFor(.tAsset)
 			trait.asset = asset
 
 			trait.updateCKRecordProperties()
 			trait.maybeNeedSave()
 		} else {
-			traits[.eAsset]?.needDestroy()
+			traits[.tAsset]?.needDestroy()
 
-			traits[.eAsset] = nil
+			traits[.tAsset] = nil
 		}
 	}
 
@@ -1750,7 +1750,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  gDebugMode.contains(.notes),
 					let   tt = trait.type,
 					let type = ZTraitType(rawValue: tt),
-					type    == .eNote {
+					type    == .tNote {
 					printDebug(.notes, "trait (in " + (zoneName ?? "unknown") + ") --> " + (trait.format ?? "empty"))
 				}
 
