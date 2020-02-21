@@ -78,8 +78,9 @@ class ZGraphEditor: ZBaseEditor {
             let  OPTION = flags.isOption
             var   SHIFT = flags.isShift
             let SPECIAL = COMMAND && OPTION
-            let FLAGGED = COMMAND || OPTION || CONTROL
+			let     ALL = COMMAND && OPTION && CONTROL
 			let IGNORED = 			 OPTION && CONTROL
+			let FLAGGED = COMMAND || OPTION || CONTROL
             let   arrow = key.arrow
             
             if  key    != key.lowercased() {
@@ -94,15 +95,16 @@ class ZGraphEditor: ZBaseEditor {
                 } else if FLAGGED {
                     switch key {
                     case "a":      gCurrentlyEditingWidget?.selectAllText()
-                    case "d":      tearApartCombine(OPTION, editedZone)
+                    case "d":      tearApartCombine(ALL, editedZone)
                     case "f":      search(OPTION)
                     case "i":      gTextEditor.showSpecialsPopup()
 					case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
+					case "n":      grabOrEdit(true, OPTION)
                     case "p":      printCurrentFocus()
 					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
                     case "?":      gControllers.showShortcuts()
                     case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
-					case "/":      if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
+					case "/":      if IGNORED { return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
                     case kSpace:   addIdea()
@@ -145,7 +147,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
 					case "k":      toggleColorized()
                     case "m":      orderByLength(OPTION)
-                    case "n":      grabOrEdit(true, OPTION, false)
+                    case "n":      grabOrEdit(true, OPTION)
                     case "o":      gFiles.importFromFile(OPTION ? .eOutline : .eThoughtful, insertInto: gSelecting.currentMoveable) { self.redrawAndSync() }
                     case "p":      printCurrentFocus()
                     case "r":      if SPECIAL { sendEmailBugReport() } else { reverse() }
@@ -156,7 +158,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
-                    case "/":      if IGNORED { return false } else if CONTROL { gFocusRing.pop() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.redrawGraph() } }
+                    case "/":      if IGNORED { return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.redrawGraph() } }
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
                     case "[":      gFocusRing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusRing.goForward(extreme: FLAGGED)
@@ -178,6 +180,12 @@ class ZGraphEditor: ZBaseEditor {
 
         return true // indicate key was handled
     }
+
+	func popAndUpdate() {
+		gFocusRing.popAndRemoveEmpties()
+		redrawGraph()
+
+	}
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
         if  gIsIdeaMode || gArrowsDoNotBrowse {
@@ -1137,8 +1145,8 @@ class ZGraphEditor: ZBaseEditor {
     }
     
     
-    func tearApartCombine(_ OPTION: Bool, _ iZone: Zone?) {
-        if  OPTION {
+    func tearApartCombine(_ intoParent: Bool, _ iZone: Zone?) {
+        if  intoParent {
             addParentFromSelectedText(inside: iZone)
         } else {
             addIdeaFromSelectedText  (inside: iZone)
@@ -1151,7 +1159,7 @@ class ZGraphEditor: ZBaseEditor {
             let     index = child.siblingIndex,
             let    parent = child.parentZone,
             let childName = child.widget?.textWidget.extractTitleOrSelectedText() {
-            
+
             gTextEditor.stopCurrentEdit()
 
             deferRedraw {

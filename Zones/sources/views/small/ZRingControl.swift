@@ -24,10 +24,10 @@ class ZRingControl: ZView, ZToolable {
 
 	override var description: String {
 		switch type {
-			case .eInsertion: return gListsGrowDown         ? "bottom" : "top"
-			case .eConfined:  return gBrowsingIsConfined    ? "one"    : "all"
-			case .eVisible:   return gFullRingIsVisible     ? "hide"   : "show"
-			case .eToolTips:  return gToolTipsAlwaysVisible ? "hide"   : "show" + "tool tips"
+			case .eInsertion: return gListsGrowDown         ? "down" : "up"
+			case .eConfined:  return gBrowsingIsConfined    ? "list" : "all"
+			case .eVisible:   return gFullRingIsVisible     ? "hide" : "show"
+			case .eToolTips:  return gToolTipsAlwaysVisible ? "hide" : "show" + "tool tips"
 		}
 	}
 

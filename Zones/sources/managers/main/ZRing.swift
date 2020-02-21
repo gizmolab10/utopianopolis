@@ -128,8 +128,10 @@ class ZRing: NSObject {
 	}
 
 	private func pushUnique(_ newIndex: Int? = nil) -> Int? { // nil means not inserted
-		if  let     item = possiblePrime {
-			if let index = indexInRing(item) {
+		if  let       item  = possiblePrime {
+			if  let  index  = indexInRing(item) {
+				ring[index] = item
+
 				return index
 			} else if let index = newIndex {
 				ring.insert(item, at: index)
@@ -225,11 +227,11 @@ class ZRing: NSObject {
 			ring.remove(at: i)
 			storeRingIDs()
 			gRingView?.updateNecklace()
-			go()
+			goBack()
         }
 	}
 
-	func popAndRemoveEmpties() -> Bool {
+	@discardableResult func popAndRemoveEmpties() -> Bool {
 		pop()
 		removeEmpties()
 

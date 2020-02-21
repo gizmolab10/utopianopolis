@@ -188,15 +188,17 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	func isLocked(for range: NSRange) -> Bool {
-		let       end = range.upperBound
-		let     start = range.lowerBound
+		let     start = range     .lowerBound
+		let textStart = textRange .lowerBound
+		let       end = range     .upperBound
+		let   textEnd = textRange .upperBound
 		let  titleEnd = titleRange.upperBound
-		let textStart = textRange.lowerBound
 
 		return
 			(start > titleEnd && start <  textStart) ||
 			(  end > titleEnd &&   end <  textStart) ||
-			(start < titleEnd &&   end >= textStart)
+			(start < titleEnd &&   end >= textStart) ||
+			(                    start >= textEnd)
 	}
 
 	func shouldAlterEssay(_ range: NSRange, length: Int) -> (ZAlterationType, Int) {
