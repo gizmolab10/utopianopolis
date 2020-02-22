@@ -187,7 +187,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		setupChildren()
 	}
 
-	func isLocked(for range: NSRange) -> Bool {
+	func isLocked(for range: NSRange, _ length: Int) -> Bool {
 		let     start = range     .lowerBound
 		let textStart = textRange .lowerBound
 		let       end = range     .upperBound
@@ -195,10 +195,10 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		let  titleEnd = titleRange.upperBound
 
 		return
-			(start > titleEnd && start <  textStart) ||
-			(  end > titleEnd &&   end <  textStart) ||
-			(start < titleEnd &&   end >= textStart) ||
-			(                    start >= textEnd)
+			(start  > titleEnd && start <  textStart) ||
+			(  end  > titleEnd &&   end <  textStart) ||
+			(start  < titleEnd &&   end >= textStart) ||
+			(length == 0       && start >= textEnd)
 	}
 
 	func shouldAlterEssay(_ range: NSRange, length: Int) -> (ZAlterationType, Int) {
@@ -221,7 +221,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 				result				    = .eDelete
 
 				delete()
-			} else if !isLocked(for: range) {
+			} else if !isLocked(for: range, length) {
 				if  let   textIntersect = range.inclusiveIntersection(textRange) {
 					delta               = length - textIntersect.length
 					textRange  .length += delta

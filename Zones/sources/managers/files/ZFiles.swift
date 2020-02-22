@@ -66,7 +66,7 @@ class ZFiles: NSObject {
         if  writeTimer?.isValid ?? false || restartTimer {
             writeTimer?.invalidate()
 
-            writeTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { iTimer in
+            writeTimer = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) { iTimer in
                 if  gIsIdeaMode {
                     self.deferWrite(for: databaseID, restartTimer: true)
                 } else {
@@ -137,7 +137,7 @@ class ZFiles: NSObject {
 			needsWrite[index]  = false
 			var           dict = ZStorageDictionary ()
 			
-            FOREGROUND {
+            FOREGROUND(canBeDirect: true) {
                 self.writtenRecordNames.removeAll()
                 gRemoteStorage.recount()
 

@@ -103,7 +103,7 @@ class ZBreadcrumbsView : ZTextField {
 		let span = gTextEditor.selectedRange()
 
 		gFocusRing.focusOn(next) {
-			if  COMMAND {
+			if !COMMAND {
 				next.traverseAllProgeny { child in
 					child.concealChildren()
 				}

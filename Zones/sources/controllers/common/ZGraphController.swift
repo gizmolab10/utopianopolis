@@ -64,7 +64,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					gSelecting.updateCousinList()
 				} else {
 					d.rubberbandRect = newValue
-					let       inRing = gRingView?.respondToClick(in: newValue) ?? false
+					let       inRing = gRingView?.handleClick(in: newValue) ?? false
 
 					if  !inRing {
 						gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
@@ -252,7 +252,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 		gDraggedZone				= nil
 	}
 
-	@objc override func dragGestureEvent(_ iGesture: ZGestureRecognizer?) {
+	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) {
         if  gIsSearchMode {
             gSearching.exitSearchMode()
         }
@@ -290,7 +290,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         }
     }
 	
-	@objc override func clickEvent(_ iGesture: ZGestureRecognizer?) {
+	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
         if  gIsSearchMode {
             gSearching.exitSearchMode()
         }

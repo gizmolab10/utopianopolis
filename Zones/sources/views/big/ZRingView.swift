@@ -132,7 +132,7 @@ class ZRingView: ZView {
 		return false
 	}
 
-	@discardableResult func respondToClick(in rect: CGRect?, CONTROL: Bool = false, COMMAND: Bool = false) -> Bool {   // false means click was ignored
+	@discardableResult func handleClick(in rect: CGRect?, CONTROL: Bool = false, COMMAND: Bool = false) -> Bool {   // false means click was ignored
 		if  let item = self.item(containedIn: rect) {
 			if (gFullRingIsVisible && respond(to: item, CONTROL: CONTROL, COMMAND: COMMAND)) || respondToRingControl(item) { // single item
 				setNeedsDisplay()
@@ -151,7 +151,7 @@ class ZRingView: ZView {
 					}
 				}
 			}
-		} else if gIsNoteMode, let v = gEssayView, let r = rect, !v.frame.contains(r) {
+		} else if gIsNoteMode, let v = gEssayView, rect != nil, !v.frame.contains(rect!) {
 			v.save()
 			gControllers.swapGraphAndEssay(force: .graphMode)
 			signalRegarding(.eRelayout)
@@ -166,7 +166,7 @@ class ZRingView: ZView {
 		let    rect = CGRect(origin: event.locationInWindow, size: CGSize())
 		let CONTROL = event.modifierFlags.isControl
 		let COMMAND = event.modifierFlags.isCommand
-		let  inRing = respondToClick(in: rect, CONTROL: CONTROL, COMMAND: COMMAND)
+		let  inRing = handleClick(in: rect, CONTROL: CONTROL, COMMAND: COMMAND)
 
 		if !inRing {
 			super.mouseDown(with: event)

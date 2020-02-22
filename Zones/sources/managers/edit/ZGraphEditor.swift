@@ -362,7 +362,7 @@ class ZGraphEditor: ZBaseEditor {
     
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
         if     !COMMAND || (OPTION && PERIOD) {
-            toggleModes(isDirection:  PERIOD)
+            toggleRingControlModes(isDirection:  PERIOD)
             
             if  gIsIdeaMode     && PERIOD {
                 swapAndResumeEdit()

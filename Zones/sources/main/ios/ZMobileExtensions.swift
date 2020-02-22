@@ -280,7 +280,7 @@ extension UIView {
             clearGestures()
 
             if  let e = newValue {
-                e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZGraphController      .clickEvent),                     clicksRequired: 1)
+                e.clickGesture     = createPointGestureRecognizer(e, action: #selector(ZGraphController      .handleClickGesture),                     clicksRequired: 1)
 //                e.moveUpGesture    = createSwipeGestureRecognizer(e, action: #selector(ZGraphController     .moveUpEvent), direction: .up,    touchesRequired: 1)
 //                e.moveDownGesture  = createSwipeGestureRecognizer(e, action: #selector(ZGraphController   .moveDownEvent), direction: .down,  touchesRequired: 1)
 //                e.moveLeftGesture  = createSwipeGestureRecognizer(e, action: #selector(ZGraphController   .moveLeftEvent), direction: .left,  touchesRequired: 1)

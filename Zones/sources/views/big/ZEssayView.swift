@@ -157,7 +157,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let    rect = CGRect(origin: event.locationInWindow, size: CGSize())
 		let CONTROL = event.modifierFlags.isControl
 		let COMMAND = event.modifierFlags.isCommand
-		let  inRing = gRingView?.respondToClick(in: rect, CONTROL: CONTROL, COMMAND: COMMAND) ?? false
+		let  inRing = gRingView?.handleClick(in: rect, CONTROL: CONTROL, COMMAND: COMMAND) ?? false
 
 		if !inRing {
 			super.mouseDown(with: event)

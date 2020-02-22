@@ -444,7 +444,7 @@ var gCurrentGraph : ZFunction {
 // MARK:- actions
 // MARK:-
 
-func toggleModes(isDirection: Bool) -> Bool {
+@discardableResult func toggleRingControlModes(isDirection: Bool) -> Bool {
 	if !gFullRingIsVisible {
 		return false
 	} else if isDirection {

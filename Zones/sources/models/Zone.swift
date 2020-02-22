@@ -807,7 +807,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 
     func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool, _ CLICKTWICE: Bool) {
-        if self == gHere && isGrabbed { return }
+        if !gIsIdeaMode && isGrabbed && self == gHere { return } // nothing to do
 
         let shouldFocus = COMMAND || (CLICKTWICE && isGrabbed)
 

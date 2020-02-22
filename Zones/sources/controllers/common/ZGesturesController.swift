@@ -15,18 +15,18 @@ import UIKit
 #endif
 
 class ZGesturesController: ZGenericController, ZGestureRecognizerDelegate {
-	var               gestureView :  ZView?
-	var          moveRightGesture :  ZGestureRecognizer?
-	var           movementGesture :  ZGestureRecognizer?
-	var           moveDownGesture :  ZGestureRecognizer?
-	var           moveLeftGesture :  ZGestureRecognizer?
-	var             moveUpGesture :  ZGestureRecognizer?
-	var              clickGesture :  ZKeyClickGestureRecognizer?
-	var               edgeGesture :  ZGestureRecognizer?
-	let                doneStates : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
+	var      gestureView :  ZView?
+	var moveRightGesture :  ZGestureRecognizer?
+	var  movementGesture :  ZGestureRecognizer?
+	var  moveDownGesture :  ZGestureRecognizer?
+	var  moveLeftGesture :  ZGestureRecognizer?
+	var    moveUpGesture :  ZGestureRecognizer?
+	var     clickGesture :  ZKeyClickGestureRecognizer?
+	var      edgeGesture :  ZGestureRecognizer?
+	let       doneStates : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
 
 	func restartGestureRecognition() {} // gestureView?.gestureHandler = self; gDraggedZone = nil }
-	@objc func dragGestureEvent(_ iGesture: ZKeyClickGestureRecognizer?) { ringHandler(iGesture) }
+	@objc func handleDragGesture(_ iGesture: ZKeyClickGestureRecognizer?) { ringHandler(iGesture) }
 
 	override func setup() {
 		super.setup()
@@ -37,10 +37,10 @@ class ZGesturesController: ZGenericController, ZGestureRecognizerDelegate {
 		if  let gesture = iGesture {
 			let    rect = CGRect(origin: gesture.location(in: gestureView), size: CGSize())
 
-			gRingView?.respondToClick(in: rect)
+			gRingView?.handleClick(in: rect)
 			restartGestureRecognition()
 		}
 	}
 
-	@objc func clickEvent(_ iGesture: ZKeyClickGestureRecognizer?) { ringHandler(iGesture) }
+	@objc func handleClickGesture(_ iGesture: ZKeyClickGestureRecognizer?) { ringHandler(iGesture) }
 }
