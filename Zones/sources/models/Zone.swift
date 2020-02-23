@@ -105,8 +105,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         return Zone(databaseID: dbID, named: String(arc4random()))
     }
 
-	func toolName() -> String? { return unwrappedName }
+	func recordName() -> String? { return recordName }
 	func identifier() -> String? { return recordName }
+	func toolName()   -> String? { return unwrappedName }
 	static func object(for id: String) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
     // MARK:- properties
@@ -209,16 +210,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		return nil
 	}
-
-	var freshEssay: ZNote {
-		if  isBookmark {
-			return bookmarkTarget!.freshEssay
-		}
-
-		noteMaybe = nil
-
-		return note
-	}
+//
+//	var freshEssay: ZNote {
+//		if  isBookmark {
+//			return bookmarkTarget!.freshEssay
+//		}
+//
+//		noteMaybe = nil
+//
+//		return note
+//	}
 
 	var note: ZNote {
 		if  isBookmark {

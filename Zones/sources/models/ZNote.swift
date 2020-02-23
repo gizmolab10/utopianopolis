@@ -37,6 +37,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	func setupChildren() {}
 	func updateOffsets() {}
+	func recordName() -> String? { return zone?.recordName() }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveNote(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }

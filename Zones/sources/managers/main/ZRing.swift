@@ -12,6 +12,7 @@ import CloudKit
 let gEssayRing = ZRing()
 
 protocol ZIdentifiable {
+	func recordName() -> String?
 	func identifier() -> String?
 	static func object(for id: String) -> NSObject?
 }
@@ -158,12 +159,12 @@ class ZRing: NSObject {
                 currentIndex = index   // prevent duplicates in stack
             } else if currentIndex >= topIndex {
 				if  let index = pushUnique() {
-					gRingView?.alterNecklace(add: true, possiblePrime)
+					gRingView?.alterNecklace(add: true, ring[index])
 
 					currentIndex = index
 				}
             } else if let index = pushUnique(currentIndex) {
-				gRingView?.alterNecklace(add: true, possiblePrime)
+				gRingView?.alterNecklace(add: true, ring[index])
 
 				currentIndex = index
 			}

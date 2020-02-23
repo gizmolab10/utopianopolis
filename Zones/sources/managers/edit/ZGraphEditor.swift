@@ -455,7 +455,7 @@ class ZGraphEditor: ZBaseEditor {
 			gCreateCombinedEssay     = !OPTION		// default is multiple, option drives it to single
 
 			if  gCurrentEssay == nil || OPTION || !ESCAPE {	// restore prior essay or create one fresh (OPTION forces the latter)
-				gCurrentEssay        =  gSelecting.firstGrab?.freshEssay
+				gCurrentEssay        =  gSelecting.firstGrab?.note
 			}
 
 			gControllers.swapGraphAndEssay()

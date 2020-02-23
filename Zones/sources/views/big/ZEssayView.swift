@@ -175,7 +175,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			if  gCreateCombinedEssay {
 				if  count > 1 {
-					resetCurrentEssay(zone.freshEssay)
+					resetCurrentEssay(zone.note)
 				}
 			} else if count > 0,
 				let note = zone.currentNote {

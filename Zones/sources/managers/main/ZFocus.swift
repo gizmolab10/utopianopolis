@@ -360,7 +360,7 @@ class ZFocus: ZRing {
 		if  iZone.hasEssay {
 			iZone.grab()
 
-			gCurrentEssay = iZone.freshEssay
+			gCurrentEssay = iZone.note
 
 			gControllers.swapGraphAndEssay()
 

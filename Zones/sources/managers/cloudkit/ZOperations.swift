@@ -36,13 +36,13 @@ enum ZOperationID: Int {
     case oFavorites
     case oRoots
     case oHere
-    case oFetchNew
+	case oFetchNew
 
     // finish
 
     case oFinishUp
     case oRecount
-    case oSubscribe
+	case oSubscribe
     case oDone
 
     // miscellaneous

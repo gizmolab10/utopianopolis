@@ -111,16 +111,17 @@ class ZRingView: ZView {
 			if !COMMAND, ((idea != gHere) || gIsNoteMode) {
 				focusOnIdea(idea)
 			} else if COMMAND, idea.countOfNotes > 0 {
-				focusOnEssay(idea.freshEssay)
+				focusOnEssay(idea.note)
 			} else {
 				return false
 			}
 
 			return true
-		} else if let note = item as? ZNote {
-			if !COMMAND, ((note != gCurrentEssay) || !gIsNoteMode) {
+		} else if let note = item as? ZNote,
+			let idea = note.zone {
+			if !COMMAND, ((idea != gCurrentEssay?.zone) || !gIsNoteMode) {
 				focusOnEssay(note)
-			} else if COMMAND, let idea = note.zone {
+			} else if COMMAND {
 				focusOnIdea(idea)
 			} else {
 				return false
@@ -181,13 +182,19 @@ class ZRingView: ZView {
 			return (index, false)
 		}
 
+		let recordName = (item as? ZIdentifiable)?.recordName()
+
 		for (index, object) in necklaceObjects.enumerated() {
-			if  let items = object as? ZObjectsArray {
-				for subObject in items {
-					if subObject == item {
+			if  let subObjects = object as? ZObjectsArray {
+				for subObject in subObjects {
+					if  let subName = (subObject as? ZIdentifiable)?.recordName(),
+						subName == recordName {
 						return (index, true)
 					}
 				}
+			} else if let identifiable = object as? ZIdentifiable,
+				identifiable.recordName() == recordName {
+				return (index, false)
 			}
 		}
 
@@ -200,8 +207,23 @@ class ZRingView: ZView {
 				if !add {
 					if !dual {
 						necklaceObjects.remove(at: index)
+					} else if var objects = necklaceObjects[index] as? ZObjectsArray,
+						let subindex = objects.firstIndex(of: item) {
+						objects.remove(at: subindex)
+
+						necklaceObjects[index] = objects[0]
+					}
+				} else if !dual {
+					let object = necklaceObjects[index]
+
+					if  let zone  = object as? Zone {
+						necklaceObjects[index] = [zone, item] as NSObject
+					} else if let note = object as? ZNote {
+						necklaceObjects[index] = [item, note] as NSObject
 					}
 				}
+			} else if !add {
+				print("ack! not possible")
 			} else if add {
 				if  item.isKind(of: Zone.self) {
 					necklaceObjects.append(item)
@@ -240,15 +262,6 @@ class ZRingView: ZView {
 			}
 		}
 	}
-//
-//	func updateNecklace() {
-//		while necklaceObjects.count > necklaceMax {
-//			removeFromRings(necklaceObjects[0])
-//			necklaceObjects.remove(at: 0)
-//		}
-//
-//		signalRegarding(.eRing)
-//	}
 
 	@discardableResult func removeFromRings(_ item: NSObject) -> Bool {
 		if  let array = item as? ZObjectsArray {
