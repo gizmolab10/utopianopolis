@@ -176,35 +176,79 @@ class ZRingView: ZView {
 	// MARK:- necklace and controls
 	// MARK:-
 
-	func updateNecklace() {
-		necklaceObjects.removeAll()
+	func necklaceIndexOf(_ item: NSObject) -> (Int, Bool)? {
+		if  let index = necklaceObjects.firstIndex(of: item) {
+			return (index, false)
+		}
 
-		func copyObjects(from ring: ZObjectsArray) {
-			for object in ring.reversed() {
-				if  object.isKind(of: Zone.self) {
-					necklaceObjects.append(object)
-				} else if let  essay = object as? ZNote,
-					let idea = essay.zone {
-
-					if  let index = necklaceObjects.firstIndex(of: idea) {
-						necklaceObjects[index] = [idea, essay] as NSObject
-					} else {
-						necklaceObjects.append(object)
+		for (index, object) in necklaceObjects.enumerated() {
+			if  let items = object as? ZObjectsArray {
+				for subObject in items {
+					if subObject == item {
+						return (index, true)
 					}
 				}
 			}
 		}
 
-		copyObjects(from: gFocusRing.ring)
-		copyObjects(from: gEssayRing.ring)
-
-		while necklaceObjects.count > necklaceMax {
-			removeFromRings(necklaceObjects[0])
-			necklaceObjects.remove(at: 0)
-		}
-
-		signalRegarding(.eRing)
+		return nil
 	}
+
+	func alterNecklace(add: Bool, _ iItem: NSObject?) {
+		if  let item = iItem {
+			if  let (index, dual) = necklaceIndexOf(item) {
+				if !add {
+					if !dual {
+						necklaceObjects.remove(at: index)
+					}
+				}
+			} else if add {
+				if  item.isKind(of: Zone.self) {
+					necklaceObjects.append(item)
+				} else if let  essay = item as? ZNote,
+					let idea = essay.zone {
+
+					if  let index = necklaceObjects.firstIndex(of: idea) {
+						necklaceObjects[index] = [idea, essay] as NSObject
+					} else {
+						necklaceObjects.append(item)
+					}
+				}
+			}
+
+			while necklaceObjects.count > necklaceMax {
+				removeFromRings(necklaceObjects[0])
+				necklaceObjects.remove(at: 0)
+			}
+
+			signalRegarding(.eRing)
+		}
+	}
+
+	func copyObjects(from ring: ZObjectsArray) {
+		for object in ring.reversed() {
+			if  object.isKind(of: Zone.self) {
+				necklaceObjects.append(object)
+			} else if let  essay = object as? ZNote,
+				let idea = essay.zone {
+
+				if  let index = necklaceObjects.firstIndex(of: idea) {
+					necklaceObjects[index] = [idea, essay] as NSObject
+				} else {
+					necklaceObjects.append(object)
+				}
+			}
+		}
+	}
+//
+//	func updateNecklace() {
+//		while necklaceObjects.count > necklaceMax {
+//			removeFromRings(necklaceObjects[0])
+//			necklaceObjects.remove(at: 0)
+//		}
+//
+//		signalRegarding(.eRing)
+//	}
 
 	@discardableResult func removeFromRings(_ item: NSObject) -> Bool {
 		if  let array = item as? ZObjectsArray {
@@ -270,10 +314,10 @@ class ZRingView: ZView {
 			return super.addToolTip(rect, owner: owner, userData: data)
 		} else if  let tool = owner as? ZToolable,
 			let        name = tool.toolName() {
-			var  attributes = [NSAttributedString.Key : Any]()
-			let        font = ZFont.systemFont(ofSize: gFontSize * kFavoritesReduction * kFavoritesReduction)
+			let        font = gFavoritesFont
 			var    nameRect = name.rectWithFont(font, options: .usesFontLeading).insetBy(dx: -10.0, dy: 0.0)
 			nameRect.center = rect.offsetBy(dx: 10.0, dy: -20.0).center
+			var  attributes : [NSAttributedString.Key : Any] = [.font : font]
 
 			if  let   color = tool.toolColor() {
 				attributes[.foregroundColor] = color

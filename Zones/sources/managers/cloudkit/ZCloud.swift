@@ -1175,8 +1175,16 @@ class ZCloud: ZRecords {
         let rootCompletion = {
             self.hereZoneMaybe = gRoot
 
+			gFocusRing.push()
             onCompletion?(0)
         }
+
+		let hereCompletion = { (iHere: Zone) in
+			self.hereZone = iHere
+
+			gFocusRing.push()
+			onCompletion?(0)
+		}
 
         let name  = hereRecordName ?? kRootName
 
@@ -1189,9 +1197,7 @@ class ZCloud: ZRecords {
             rootCompletion()
 
         } else if let here = maybeZoneForRecordName(name) {
-            hereZone = here
-
-            onCompletion?(0)
+            hereCompletion(here)
         } else {
             let recordID = CKRecord.ID(recordName: name)
 
@@ -1199,14 +1205,13 @@ class ZCloud: ZRecords {
                 if  iHereRecord == nil || iHereRecord?[kpZoneName] == nil {
                     rootCompletion()
                 } else {
-                    let      here = self.zone(for: iHereRecord!)
-                    here  .record = iHereRecord
-                    self.hereZone = here
+                    let    here = self.zone(for: iHereRecord!)
+                    here.record = iHereRecord
 
                     here.maybeNeedChildren()
                     here.maybeNeedRoot()
                     here.fetchBeforeSave()
-                    onCompletion?(0)
+                    hereCompletion(here)
                 }
             }
         }

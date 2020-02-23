@@ -27,9 +27,9 @@ class ZRing: NSObject {
     var     currentIndex = -1
     var       priorIndex = -1
 	var         topIndex : Int               { return ring.count - 1 }
-	var        ringPrime : NSObject?         { return ring[currentIndex] }
+	var        ringPrime : NSObject?         { return currentIndex > topIndex ? nil : ring[currentIndex] }
 	var    possiblePrime : NSObject?         { return gCurrentEssay }
-    var          atPrime : Bool              { return currentIndex >= 0 && currentIndex <= topIndex && isPrime }
+    var          atPrime : Bool              { return isPrime && currentIndex >= 0 && currentIndex <= topIndex }
 	var          isEmpty : Bool              { return ring.count == 0 || possiblePrime == nil }
 	var          isEssay : Bool              { return true }
 	var visibleRingTypes : ZTinyDotTypeArray { return ZTinyDotTypeArray() }
@@ -41,6 +41,7 @@ class ZRing: NSObject {
 	override init() {
 		super.init()
 		fetchRingIDs()
+		gRingView?.copyObjects(from: ring)
 	}
 
 	var isPrime : Bool {
@@ -156,15 +157,17 @@ class ZRing: NSObject {
             if  let index = primeIndex {
                 currentIndex = index   // prevent duplicates in stack
             } else if currentIndex >= topIndex {
-				if let index = pushUnique() {
+				if  let index = pushUnique() {
+					gRingView?.alterNecklace(add: true, possiblePrime)
+
 					currentIndex = index
 				}
             } else if let index = pushUnique(currentIndex) {
+				gRingView?.alterNecklace(add: true, possiblePrime)
+
 				currentIndex = index
 			}
         }
-
-		gRingView?.updateNecklace()
     }
 
     func goBack(extreme: Bool = false) {
@@ -226,7 +229,7 @@ class ZRing: NSObject {
 			let i = primeIndex {
 			ring.remove(at: i)
 			storeRingIDs()
-			gRingView?.updateNecklace()
+			gRingView?.alterNecklace(add: false, possiblePrime)
 			goBack()
         }
 	}
@@ -268,7 +271,7 @@ class ZRing: NSObject {
 					ring.remove(at: index)
 					removeEmpties()
 					storeRingIDs()
-					gRingView?.updateNecklace()
+					gRingView?.alterNecklace(add: false, zone)
 
 					if  isEmpty {
 						gControllers.swapGraphAndEssay(force: .graphMode)

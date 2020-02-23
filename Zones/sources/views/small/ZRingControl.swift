@@ -97,7 +97,7 @@ class ZRingControl: ZView, ZToolable {
 		switch type {
 			case .eVisible:  gFullRingIsVisible     = !gFullRingIsVisible
 			case .eToolTips: gToolTipsAlwaysVisible = !gToolTipsAlwaysVisible
-			default: return  toggleRingControlModes(isDirection: type == .eInsertion)
+			default:         return !gFullRingIsVisible ? false : toggleRingControlModes(isDirection: type == .eInsertion)
 		}
 
 		return true

@@ -24,7 +24,7 @@ class ZFocus: ZRing {
 	override func object(for id: String) -> NSObject? { return Zone.object(for: id) }
 	override func removeEmpties() {}
 
-	override var       isPrime : Bool {
+	override var isPrime : Bool {
 		guard let zone = ringPrime as? Zone else { return false }
 
 		return gHereMaybe == zone
@@ -110,7 +110,7 @@ class ZFocus: ZRing {
 					other === zone {
 
 					ring.remove(at: index)
-					gRingView?.updateNecklace()
+					gRingView?.alterNecklace(add: false, zone)
 
 					if  index == currentIndex || zone == gHere {
 						goBack()

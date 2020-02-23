@@ -445,9 +445,7 @@ var gCurrentGraph : ZFunction {
 // MARK:-
 
 @discardableResult func toggleRingControlModes(isDirection: Bool) -> Bool {
-	if !gFullRingIsVisible {
-		return false
-	} else if isDirection {
+	if isDirection {
 		gListGrowthMode = gListsGrowDown      ? .up          : .down
 	} else {
 		gBrowsingMode   = gBrowsingIsConfined ? .cousinJumps : .confined
