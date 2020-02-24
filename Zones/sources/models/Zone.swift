@@ -107,7 +107,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func recordName() -> String? { return recordName }
 	func identifier() -> String? { return recordName }
-	func toolName()   -> String? { return unwrappedName }
+	func toolName()   -> String? { return clippedName }
 	static func object(for id: String) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
     // MARK:- properties
@@ -166,6 +166,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		return results.reversed()
 	}
+
+	var clippedName: String { return unwrappedName.clipped(to: 7) }
 
 	var email: String? {
 		get {

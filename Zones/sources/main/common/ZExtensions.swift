@@ -1257,6 +1257,16 @@ extension String {
     func substring(toExclusive:   Int) -> String  { return String(self[..<index(at: toExclusive)]) }
     func widthForFont  (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
 
+	func clipped(to: Int) -> String {
+		let clip = substring(toExclusive: to)
+
+		if  clip.length != length {
+			return clip + "..."
+		}
+
+		return self
+	}
+
     func rect(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGRect {
 		let within = substring(with: iRange)
 		let bounds = within.rectWithFont(font)

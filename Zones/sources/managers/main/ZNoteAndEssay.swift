@@ -19,16 +19,16 @@ let gNoteAndEssay = ZNoteAndEssay()
 
 class ZNoteAndEssay: NSObject {
 
-	var     essayID : CKRecord.ID?
-	var grabbedZone : Zone? { return gCurrentEssay?.zone }
-	func   export() { gFiles.exportToFile(.eEssay, for: grabbedZone) }
+	var   essayID : CKRecord.ID?
+	var essayZone : Zone? { return gCurrentEssay?.zone }
+	func export() { gFiles.exportToFile(.eEssay, for: essayZone) }
 
 	var shouldOverwrite: Bool {
 		if  let current = gCurrentEssay,
 			current.noteMaybe?.needsSave ?? false,
 			current.essayLength != 0,
 			let i = gNoteAndEssay.essayID,
-			i == grabbedZone?.record?.recordID {	// been here before
+			i == essayZone?.record?.recordID {	// been here before
 
 			return false							// has not yet been saved. don't overwrite
 		}

@@ -95,7 +95,6 @@ class ZFocus: ZRing {
 
 			gHere = here
 
-			push()
 			gHere.grab()
 			gFavorites.updateAllFavorites()
 			redrawGraph()
@@ -110,7 +109,7 @@ class ZFocus: ZRing {
 					other === zone {
 
 					ring.remove(at: index)
-					gRingView?.alterNecklace(add: false, zone)
+					gRingView?.updateNecklace()
 
 					if  index == currentIndex || zone == gHere {
 						goBack()

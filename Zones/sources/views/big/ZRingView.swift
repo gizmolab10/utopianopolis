@@ -66,7 +66,7 @@ class ZRingView: ZView {
 
 			ZBezierPath.drawCircle (in: rect, thickness: g.thick)
 
-			drawTinyDots(surrounding: surroundRect, objects: necklaceObjects, radius: radius, color: color, offsetAngle: (.pi / -2.0) + 0.005, countMax: necklaceMax + 1) { (index, rect) in
+			drawTinyDots(surrounding: surroundRect, objects: necklaceObjects, radius: radius, color: color, offsetAngle: (.pi / -2.0), countMax: necklaceMax + 1) { (index, rect) in
 				self.necklaceDotRects[index] = rect
 			}
 
@@ -104,7 +104,13 @@ class ZRingView: ZView {
 
 	func respond(to item: NSObject, CONTROL: Bool = false, COMMAND: Bool = false) -> Bool {
 		if  CONTROL {
-			if  removeFromRings(item) {
+			var removeMe = item
+
+			if  let dual = item as? ZObjectsArray {
+				removeMe = gIsNoteMode ? dual[1] : dual[0]
+			}
+
+			if  removeFromRings(removeMe) {
 				return true
 			}
 		} else if let idea = item as? Zone {
@@ -177,9 +183,9 @@ class ZRingView: ZView {
 	// MARK:- necklace and controls
 	// MARK:-
 
-	func necklaceIndexOf(_ item: NSObject) -> (Int, Bool)? {
+	func necklaceIndexOf(_ item: NSObject) -> (Int, Bool, Bool)? {
 		if  let index = necklaceObjects.firstIndex(of: item) {
-			return (index, false)
+			return (index, true, false)
 		}
 
 		let recordName = (item as? ZIdentifiable)?.recordName()
@@ -189,12 +195,12 @@ class ZRingView: ZView {
 				for subObject in subObjects {
 					if  let subName = (subObject as? ZIdentifiable)?.recordName(),
 						subName == recordName {
-						return (index, true)
+						return (index, true, true)
 					}
 				}
 			} else if let identifiable = object as? ZIdentifiable,
 				identifiable.recordName() == recordName {
-				return (index, false)
+				return (index, false, false)
 			}
 		}
 
@@ -203,7 +209,7 @@ class ZRingView: ZView {
 
 	func alterNecklace(add: Bool, _ iItem: NSObject?) {
 		if  let item = iItem {
-			if  let (index, dual) = necklaceIndexOf(item) {
+			if  let (index, same, dual) = necklaceIndexOf(item) {
 				if !add {
 					if !dual {
 						necklaceObjects.remove(at: index)
@@ -213,7 +219,7 @@ class ZRingView: ZView {
 
 						necklaceObjects[index] = objects[0]
 					}
-				} else if !dual {
+				} else if !dual, !same {
 					let object = necklaceObjects[index]
 
 					if  let zone  = object as? Zone {
@@ -249,7 +255,7 @@ class ZRingView: ZView {
 
 	func copyObjects(from ring: ZObjectsArray) {
 		for object in ring.reversed() {
-			if  object.isKind(of: Zone.self) {
+			if object.isKind(of: Zone.self) {
 				necklaceObjects.append(object)
 			} else if let  essay = object as? ZNote,
 				let idea = essay.zone {
@@ -261,6 +267,72 @@ class ZRingView: ZView {
 				}
 			}
 		}
+	}
+
+	func removeExtras() {
+		let array = Array(necklaceObjects)
+
+		for (index, object) in array.enumerated() {
+			if  object.isKind(of: Zone.self) {
+				if !gFocusRing.ring.contains(object) {
+					necklaceObjects.remove(at: index)
+				}
+			} else if object.isKind(of: ZNote.self) {
+				if !gEssayRing.ring.contains(object) {
+					necklaceObjects.remove(at: index)
+				}
+			} else if let dual = object as? ZObjectsArray {
+				let     zone = dual[0]
+				let     note = dual[1]
+				var keepZone = false
+				var keepNote = false
+
+				if  gFocusRing.ring.contains(zone) {
+					keepZone = true
+				}
+
+				if  gEssayRing.ring.contains(note) {
+					keepNote = true
+				}
+
+				if !keepZone && !keepNote {
+					necklaceObjects.remove(at: index)
+				} else if keepZone && !keepNote {
+					necklaceObjects[index] = zone
+				} else if keepNote && !keepZone {
+					necklaceObjects[index] = note
+				}
+			}
+		}
+
+		while necklaceObjects.count > necklaceMax {
+			removeFromRings(necklaceObjects[0])
+			necklaceObjects.remove(at: 0)
+		}
+	}
+
+	func appendUnique(from ring: ZObjectsArray) {
+		for object in ring.reversed() {
+			guard let (index, same, dual) = necklaceIndexOf(object) else {
+				necklaceObjects.append(object)
+
+				return
+			}
+
+			if !dual, !same {
+				let           original = necklaceObjects[index]
+				let             isZone = original.isKind(of: Zone.self)
+				let              array = isZone ? [original, object] : [object, original]
+				necklaceObjects[index] = array as NSObject
+			}
+		}
+	}
+
+	func updateNecklace() {
+		appendUnique(from: gFocusRing.ring)
+		appendUnique(from: gEssayRing.ring)
+		removeExtras()
+		signalRegarding(.eRing)
 	}
 
 	@discardableResult func removeFromRings(_ item: NSObject) -> Bool {

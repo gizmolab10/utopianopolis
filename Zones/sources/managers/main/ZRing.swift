@@ -152,19 +152,21 @@ class ZRing: NSObject {
 	}
 
 	func push() {
-        currentIndex = currentIndex + 1
+		if possiblePrime == nil { return }
+
+		currentIndex = currentIndex + 1
 
         if  topIndex < 0 || !atPrime {
             if  let index = primeIndex {
                 currentIndex = index   // prevent duplicates in stack
             } else if currentIndex >= topIndex {
 				if  let index = pushUnique() {
-					gRingView?.alterNecklace(add: true, ring[index])
+					gRingView?.updateNecklace()
 
 					currentIndex = index
 				}
             } else if let index = pushUnique(currentIndex) {
-				gRingView?.alterNecklace(add: true, ring[index])
+				gRingView?.updateNecklace()
 
 				currentIndex = index
 			}
@@ -230,7 +232,7 @@ class ZRing: NSObject {
 			let i = primeIndex {
 			ring.remove(at: i)
 			storeRingIDs()
-			gRingView?.alterNecklace(add: false, possiblePrime)
+			gRingView?.updateNecklace()
 			goBack()
         }
 	}
@@ -272,7 +274,7 @@ class ZRing: NSObject {
 					ring.remove(at: index)
 					removeEmpties()
 					storeRingIDs()
-					gRingView?.alterNecklace(add: false, zone)
+					gRingView?.updateNecklace()
 
 					if  isEmpty {
 						gControllers.swapGraphAndEssay(force: .graphMode)

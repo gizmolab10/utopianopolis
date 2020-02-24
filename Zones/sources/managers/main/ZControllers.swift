@@ -157,6 +157,7 @@ class ZControllers: NSObject {
                 gFavorites.updateAllFavorites()
                 gRemoteStorage.updateLastSyncDates()
                 gRemoteStorage.recount()
+				gEssayRing.fetchRingIDs()
 				self.signalFor(nil, multiple: [.eRelayout, .eLaunchDone])
                 self.requestFeedback()
                 

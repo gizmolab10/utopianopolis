@@ -79,7 +79,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
 				case "]":      gEssayRing.goForward()
 				case "[":      gEssayRing.goBack()
-				case kReturn:  gNoteAndEssay.grabbedZone?.grab(); done()
+				case kReturn:  gNoteAndEssay.essayZone?.grab(); done()
 				default:       return false
 			}
 
@@ -115,7 +115,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func clear() {
-		gNoteAndEssay.grabbedZone?.noteMaybe = nil
+		gNoteAndEssay.essayZone?.noteMaybe = nil
 		delegate = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
 
 		if  let length = textStorage?.length, length > 0 {
@@ -146,7 +146,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			setText(text)							// emplace text
 			select(restoreSelection: restoreSelection)
 
-			gNoteAndEssay.essayID  = gNoteAndEssay.grabbedZone?.record?.recordID
+			gNoteAndEssay.essayID  = gNoteAndEssay.essayZone?.record?.recordID
 			delegate = self 						// set delegate after setText
 
 			gWindow?.makeFirstResponder(self)
@@ -194,7 +194,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	private func convertToChild(createEssay: Bool = false) {
 		if  let   text = selectionString, text.length > 0,
-			let   dbID = gNoteAndEssay.grabbedZone?.databaseID,
+			let   dbID = gNoteAndEssay.essayZone?.databaseID,
 			let parent = selectionZone {
 			let  child = Zone(databaseID: dbID, named: text)    		// create new (to be child) zone from text
 
@@ -205,9 +205,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			if  createEssay {
 				child.setTextTrait(kEssayDefault, for: .tNote)			// create a placeholder essay in the child
-				gNoteAndEssay.grabbedZone?.createNote()
+				gNoteAndEssay.essayZone?.createNote()
 
-				resetCurrentEssay(gNoteAndEssay.grabbedZone?.note, selecting: child)	// redraw essay TODO: WITH NEW NOTE SELECTED
+				resetCurrentEssay(gNoteAndEssay.essayZone?.note, selecting: child)	// redraw essay TODO: WITH NEW NOTE SELECTED
 			} else {
 				exit()
 				child.grab()
@@ -236,8 +236,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if !out, let last = selection.last {
 			resetCurrentEssay(last)
 		} else if out {
-			gNoteAndEssay.grabbedZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
-				if  ancestor != gNoteAndEssay.grabbedZone, ancestor.hasEssay {
+			gNoteAndEssay.essayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
+				if  ancestor != gNoteAndEssay.essayZone, ancestor.hasEssay {
 					self.resetCurrentEssay(ancestor.note)
 
 					return .eStop
@@ -347,8 +347,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch buttonID {
 				case .idForward: gEssayRing.goForward()
 				case .idDelete:  gCurrentEssay?.delete(); 			exit()
-				case .idCancel:  gNoteAndEssay.grabbedZone?.grab(); exit()
-				case .idHide:    gNoteAndEssay.grabbedZone?.grab(); done()
+				case .idCancel:  gNoteAndEssay.essayZone?.grab(); exit()
+				case .idHide:    gNoteAndEssay.essayZone?.grab(); done()
 				case .idSave:    save()
 				case .idBack:    gEssayRing.goBack()
 			}
@@ -458,7 +458,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var selectedNotes: [ZNote] {
 		var array = [ZNote]()
 
-		if  let zones = gNoteAndEssay.grabbedZone?.zonesWithNotes {
+		if  let zones = gNoteAndEssay.essayZone?.zonesWithNotes {
 			for zone in zones {
 				if  let note = zone.noteMaybe, note.noteRange.inclusiveIntersection(selectionRange) != nil {
 					array.append(note)
@@ -466,7 +466,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 		}
 
-		if  let e = gNoteAndEssay.grabbedZone?.note,
+		if  let e = gNoteAndEssay.essayZone?.note,
 			array.count == 0 {
 			array.append(e)
 		}
@@ -509,7 +509,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				switch type {
 					case .hIdea:
 						if  let   grab = zone {
-							let common = gNoteAndEssay.grabbedZone?.closestCommonParent(of: grab)
+							let common = gNoteAndEssay.essayZone?.closestCommonParent(of: grab)
 
 							if  let  c = common {
 								gHere  = c
@@ -517,7 +517,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 							grab                      .grab()												// focus on zone with rID
 							grab                      .asssureIsVisible()
-							gNoteAndEssay.grabbedZone?.asssureIsVisible()
+							gNoteAndEssay.essayZone?.asssureIsVisible()
 
 							FOREGROUND {
 								gControllers.swapGraphAndEssay()
@@ -528,7 +528,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 						}
 					case .hEssay, .hNote:
 						if  let target = zone {
-							let common = gNoteAndEssay.grabbedZone?.closestCommonParent(of: target)
+							let common = gNoteAndEssay.essayZone?.closestCommonParent(of: target)
 
 							if  let  c = common {
 								gHere  = c
