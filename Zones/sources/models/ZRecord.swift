@@ -42,6 +42,7 @@ class ZRecord: NSObject {
     var             records: ZRecords?          { return gRemoteStorage.zRecords(for: databaseID) }
     var               cloud: ZCloud?            { return records as? ZCloud }
     var          recordName: String?            { return record?.recordID.recordName }
+	var unwrappedRecordName: String             { return recordName ?? "" }
     var       unwrappedName: String             { return recordName ?? emptyName }
     var           emptyName: String             { return "" }
     

@@ -112,7 +112,9 @@ var gDesktopAppDelegate: ZDesktopAppDelegate?
 
     
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
-		if  let e = workingEditor, let item = iItem, e.isValid(item.keyEquivalent, item.keyEquivalentModifierMask) {
+		if  let item = iItem,
+			let e = workingEditor,
+			validateMenuItem(item) {
 			e.handleMenuItem(item)
 		}
     }

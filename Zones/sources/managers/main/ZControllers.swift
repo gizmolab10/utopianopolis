@@ -99,22 +99,6 @@ class ZControllers: NSObject {
 	// MARK:- hide / reveal
 	// MARK:-
 
-	func swapGraphAndEssay(force mode: ZWorkMode? = nil) {
-		let newMode    			        = mode ?? (gIsNoteMode ? .graphMode : .noteMode)
-
-		if  newMode != gWorkMode {
-			gWorkMode 					= newMode
-			let showNote 			    = newMode == .noteMode
-			let multiple: [ZSignalKind] = [.eSwap, (showNote ? .eCrumbs : .eRelayout)]
-
-			FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking graph editor's handle key)
-				gTextEditor.stopCurrentEdit()
-				gEssayView?.updateControlBarButtons(showNote)
-				self.signalFor(gSelecting.firstGrab, multiple: multiple)
-			}
-		}
-	}
-
 	func showShortcuts(_ show: Bool? = nil) {
 		if  let shorts = gShortcutsController {
 			if  show ?? !(shorts.window?.isKeyWindow ?? false) {
@@ -135,6 +119,33 @@ class ZControllers: NSObject {
 		gFullRingIsVisible = !gFullRingIsVisible
 
 		signalRegarding(.eRing)
+	}
+
+	func showEssay(forGuide: Bool) {
+		let recordName = forGuide ? "75F7C2D3-4493-4E30-80D8-2F1F60DA7069" : "96689264-EB25-49CC-9324-913BA5CEBD56"
+
+		if  let    e = gEssayView,
+			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {
+			e.resetCurrentEssay(zone.note)
+			swapGraphAndEssay(force: .noteMode)
+			signalMultiple([.eCrumbs, .eRing])
+		}
+	}
+
+	func swapGraphAndEssay(force mode: ZWorkMode? = nil) {
+		let newMode    			        = mode ?? (gIsNoteMode ? .graphMode : .noteMode)
+
+		if  newMode != gWorkMode {
+			gWorkMode 					= newMode
+			let showNote 			    = newMode == .noteMode
+			let multiple: [ZSignalKind] = [.eSwap, (showNote ? .eCrumbs : .eRelayout)]
+
+			FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking graph editor's handle key)
+				gTextEditor.stopCurrentEdit()
+				gEssayView?.updateControlBarButtons(showNote)
+				self.signalFor(gSelecting.firstGrab, multiple: multiple)
+			}
+		}
 	}
 
     // MARK:- startup

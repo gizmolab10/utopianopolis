@@ -1051,7 +1051,7 @@ extension ZFiles {
 							// [fileWrapper writeToURL:yourFileURL options:NSFileWrapperWritingAtomic originalContentsURL:nil error:&error]
 
 							do {
-								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
+								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtf])
 								let  wrapper = FileWrapper(regularFileWithContents: fileData)
 
 								try  wrapper.write(to: fileURL, options: .atomic, originalContentsURL: nil)

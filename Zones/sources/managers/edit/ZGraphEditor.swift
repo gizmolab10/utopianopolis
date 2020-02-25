@@ -143,7 +143,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "f":      search(OPTION)
                     case "g":      refetch(COMMAND, OPTION)
                     case "h":      editTrait(for: .tHyperlink)
-                    case "l", "u": alterCase(up: key == "u")
+                    case "l":      alterCase(up: false)
 					case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
 					case "k":      toggleColorized()
                     case "m":      orderByLength(OPTION)
@@ -152,7 +152,8 @@ class ZGraphEditor: ZBaseEditor {
                     case "p":      printCurrentFocus()
                     case "r":      if SPECIAL { sendEmailBugReport() } else { reverse() }
 					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
-                    case "t":      swapWithParent()
+					case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
+					case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 					case "w":      rotateWritable()
 					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
@@ -162,15 +163,15 @@ class ZGraphEditor: ZBaseEditor {
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
                     case "[":      gFocusRing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusRing.goForward(extreme: FLAGGED)
-                    case "?":      if CONTROL { openBrowserForFocusWebsite() }
+                    case "?":      if CONTROL { openBrowserForFocusWebsite() } else { return false }
 					case "=":      if COMMAND { updateSize(up: true) } else { gFocusRing.invokeTravel(gSelecting.firstSortedGrab) { self.redrawGraph() } }
                     case ";", "'": gFavorites.switchToNext(key == "'") { self.redrawGraph() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addNextAndRedraw(containing: OPTION)
-                    case kSpace:   if OPTION || isWindow || CONTROL { addIdea() }
+					case kSpace:   if OPTION || isWindow || CONTROL { addIdea() } else { return false }
                     case kBackspace,
-                         kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { deleteGrabbed(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) }
-                    case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) }
+                         kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { deleteGrabbed(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { return false }
+                    case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) } else { return false }
 					case kEscape:                 grabOrEdit(true,    OPTION, true)
                     default:       return false // indicate key was not handled
                     }
@@ -253,21 +254,23 @@ class ZGraphEditor: ZBaseEditor {
 	
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
         let alterers = "ehltuw\r" + kMarkingCharacters
+		let  ALTERER = alterers.contains(key)
         let  COMMAND = flags.isCommand
         let  CONTROL = flags.isControl
+		let  FLAGGED = COMMAND || CONTROL
 
-        if  alterers.contains(key) {    return .eAlter
+        if  !FLAGGED && ALTERER {       return .eAlter
         } else {
             switch key {
-            case "?":                   return .eHelp
             case "f":                   return .eFind
             case "k":                   return .eTint
             case "m":                   return .eCloud
             case "z":                   return .eUndo
-            case "#", "r":              return .eSort
-            case "o", "s":              return .eFiles
+			case "o", "s":              return .eFiles
+            case "r", "#":              return .eSort
+			case "t", "u", "?":         return .eHelp
             case "x", kSpace:           return .eChild
-            case "b", kTab, kBackspace: return  .eParent
+            case "b", kTab, kBackspace: return .eParent
             case kDelete:               return  CONTROL ? .eAlways : .eParent
 			case "=":                   return  COMMAND ? .eAlways : .eTravel
             case "d":                   return  COMMAND ? .eAlter  : .eParent

@@ -30,7 +30,7 @@ class ZNoteAndEssay: NSObject {
 			let i = gNoteAndEssay.essayID,
 			i == essayZone?.record?.recordID {	// been here before
 
-			return false							// has not yet been saved. don't overwrite
+			return false						// has not yet been saved. don't overwrite
 		}
 
 		return true

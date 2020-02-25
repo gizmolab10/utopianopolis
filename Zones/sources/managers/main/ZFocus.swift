@@ -108,7 +108,7 @@ class ZFocus: ZRing {
 				if  let other = item as? Zone,
 					other === zone {
 
-					ring.remove(at: index)
+					debugRemove(index)
 					gRingView?.updateNecklace()
 
 					if  index == currentIndex || zone == gHere {

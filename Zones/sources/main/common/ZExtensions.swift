@@ -65,7 +65,8 @@ extension NSObject {
     func           performance(_ iMessage: Any?)                { log(iMessage) }
     func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
     func           redrawGraph(_ onCompletion: Closure? = nil)  { gControllers.signalFor(nil, regarding: .eRelayout, onCompletion: onCompletion) }
-    func     printCurrentFocus()                                { gHere.widget?.printView() }
+	func     printCurrentFocus()                                { gHere.widget?.printView() }
+	func     printCurrentEssay()                                { gEssayView?.printView() }
 
 	func columnarReport(mode: ZDebugMode = .log, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
 
@@ -1787,7 +1788,13 @@ extension ZView {
 		return (ideaFocus, asIdea, noteFocus, asNote, asEssay)
 	}
 
-	func drawTinyDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, offsetAngle: Double = 0.0, countMax: Int = 10, onEach: IntRectClosure? = nil) {
+	func drawNecklaceDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, countMax: Int = 10, onEach: IntRectClosure? = nil) {
+		let downAngle = .pi / -2.0
+
+		drawTinyDots(surrounding: rect, objects: objects, radius: radius, color: color, countMax: countMax, clockwise: true, offsetAngle: downAngle, onEach: onEach)
+	}
+
+	func drawTinyDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, offsetAngle: Double = 0.0, onEach: IntRectClosure? = nil) {
 		var       dotCount = objects.count
 		var      fatHollow = false
 		var     tinyHollow = false
@@ -1815,11 +1822,11 @@ extension ZView {
 
 				if  iCount             > 0 {
 					let         isEven = iCount % 2 == 0
-					let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(iCount)
-					let     startAngle = fullCircle / 4.0 * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0) + offsetAngle
+					let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(-iCount)
+					let     startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + offsetAngle
 
 					for index in 0 ... iCount - 1 {
-						let  increment = Double(index) + ((isEven && oneSet) ? 0.0 : 0.5)
+						let  increment = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
 						let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
 						let (ideaFocus, asIdea, noteFocus, asNote, asEssay) = self.analyze(objects[index])
 

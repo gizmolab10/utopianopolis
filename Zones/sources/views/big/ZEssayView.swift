@@ -73,9 +73,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "h":      showHyperlinkPopup()
 				case "i":      showSpecialsPopup()
 				case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
-				case "l", "u": alterCase(up: key == "u")
+				case "l":      alterCase(up: false)
 				case "n":      swapBetweenNoteAndEssay()
+				case "p":      printCurrentEssay()
 				case "s":      save()
+				case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { return false }
+				case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 				case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
 				case "]":      gEssayRing.goForward()
 				case "[":      gEssayRing.goBack()

@@ -86,7 +86,7 @@ class ZRing: NSObject {
 			for id in ids {
 				if  let object = object(for: id),
 					indexInRing(object) == nil {
-					ring.append(object)
+					debugAdd(object)
 				}
 			}
 		}
@@ -132,16 +132,16 @@ class ZRing: NSObject {
 	private func pushUnique(_ newIndex: Int? = nil) -> Int? { // nil means not inserted
 		if  let       item  = possiblePrime {
 			if  let  index  = indexInRing(item) {
-				ring[index] = item
+				debugAdd(item)
 
 				return index
 			} else if let index = newIndex {
-				ring.insert(item, at: index)
+				debugReplace(item, at: index)
 				storeRingIDs()
 
 				return index
 			} else {
-				ring.append(item)
+				debugAdd(item)
 				storeRingIDs()
 
 				return ring.count - 1
@@ -230,7 +230,7 @@ class ZRing: NSObject {
     func pop() {
 		if  ring.count > (isEssay ? 0 : 1),
 			let i = primeIndex {
-			ring.remove(at: i)
+			debugRemove(i)
 			storeRingIDs()
 			gRingView?.updateNecklace()
 			goBack()
@@ -271,7 +271,7 @@ class ZRing: NSObject {
 				if  let    other = item as? ZNote,
 					let ringZone = other.zone,
 					ringZone === zone {
-					ring.remove(at: index)
+					debugRemove(index)
 					removeEmpties()
 					storeRingIDs()
 					gRingView?.updateNecklace()
@@ -288,6 +288,24 @@ class ZRing: NSObject {
 		}
 
 		return false
+	}
+
+	func debugRemove(_ index: Int) {
+		print("r  remove: \(ring[index])")
+		ring.remove(at: index)
+	}
+
+	func debugReplace(_ object: NSObject, at index: Int) {
+		ring[index] = object
+		print("r replace: \(ring[index])")
+
+	}
+
+	func debugAdd(_ object: NSObject) {
+		let index = ring.count
+
+		ring.append(object)
+		print("r     add: \(ring[index])")
 	}
 
 }

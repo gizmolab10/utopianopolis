@@ -533,13 +533,25 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
                                     <items>
+                                        <menuItem title="Start Here" keyEquivalent="t" id="phV-0g-E3o">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="u91-DJ-Fp9"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="User Guide" keyEquivalent="u" id="xlW-GM-fja">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Bvg-6z-Co5"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Keyboard Shortcuts" keyEquivalent="/" id="EGs-Dm-LkH">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="jw5-ox-sH4"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Thoughtful Help" keyEquivalent="/" id="FKE-Sm-Kum">
+                                        <menuItem title="Thoughtful Site" keyEquivalent="/" id="FKE-Sm-Kum">
                                             <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES"/>
                                             <connections>
                                                 <action selector="displayHelp:" target="Ady-hI-5gd" id="yRj-nt-Ohd"/>
@@ -979,7 +991,7 @@ DQ
                                     <constraint firstAttribute="height" constant="30" id="EZn-DB-SIw"/>
                                 </constraints>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" id="PqB-cH-R8k">
-                                    <font key="font" metaFont="system" size="17"/>
+                                    <font key="font" metaFont="label" size="17"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
