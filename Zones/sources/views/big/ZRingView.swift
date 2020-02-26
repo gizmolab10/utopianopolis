@@ -212,11 +212,11 @@ class ZRingView: ZView {
 			index = necklaceObjects.count - 1
 		}
 
-		print("v     add: \(necklaceObjects[index!])")
+		printDebug(.ring, "v     add: \(necklaceObjects[index!])")
 	}
 
 	func removeFromNecklace(_ index: Int) {
-		print("v  remove: \(necklaceObjects[index])")
+		printDebug(.ring, "v  remove: \(necklaceObjects[index])")
 		necklaceObjects.remove(at: index)
 	}
 
@@ -275,12 +275,17 @@ class ZRingView: ZView {
 		}
 	}
 
-	func updateNecklace() {
+	func updateNecklace(okayToSignal: Bool = true) {
 		addUnique(from: gFocusRing.ring)
 		addUnique(from: gEssayRing.ring)
 		removeStale()
 		removeExtras()
-		signalRegarding(.eRing)
+
+		if  okayToSignal {
+			signalRegarding(.eRing)
+		} else {
+			setNeedsDisplay()
+		}
 	}
 
 	func necklaceIndexOf(_ item: NSObject) -> (Int, Bool, Bool)? {
@@ -384,7 +389,7 @@ class ZRingView: ZView {
 			let        name = tool.toolName() {
 			let        font = gFavoritesFont
 			var    nameRect = name.rectWithFont(font, options: .usesFontLeading).insetBy(dx: -10.0, dy: 0.0)
-			nameRect.center = rect.offsetBy(dx: 10.0, dy: -20.0).center
+			nameRect.center = rect.offsetBy(dx: 10.0, dy: 1.0).center
 			var  attributes : [NSAttributedString.Key : Any] = [.font : font]
 
 			if  let   color = tool.toolColor() {

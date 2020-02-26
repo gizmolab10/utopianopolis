@@ -2092,7 +2092,7 @@ class ZGraphEditor: ZBaseEditor {
         // prepare for UNDO //
         // ///////////////////
 
-        if toBookmark {
+        if  toBookmark {
             undoManager.beginUndoGrouping()
         }
 
@@ -2247,12 +2247,12 @@ class ZGraphEditor: ZBaseEditor {
     }
 
     
-    func moveUp(_ iMoveUp: Bool = true, _ originals: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
+    func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
         let doCousinJump = !gBrowsingIsConfined
 		let    hereMaybe = gHereMaybe
-        let       isHere = hereMaybe != nil && originals.contains(hereMaybe!)
+        let       isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
         
-        guard let rootMost = originals.rootMost(goingUp: iMoveUp) else {
+        guard let rootMost = originalGrabs.rootMost(goingUp: iMoveUp) else {
             onCompletion?(.eData)
             
             return
@@ -2281,7 +2281,7 @@ class ZGraphEditor: ZBaseEditor {
 
 					if  recurse {
 						gSelecting.updateCousinList()
-						self.moveUp(iMoveUp, originals, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
+						self.moveUp(iMoveUp, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
 					} else {
 						gFavorites.updateAllFavorites()
 
@@ -2391,7 +2391,7 @@ class ZGraphEditor: ZBaseEditor {
                     }
                     
                     if !selectionOnly {
-                        moveClosure(originals)
+                        moveClosure(originalGrabs)
                     } else if !growSelection {
                         findChildMatching(&grabThis, iMoveUp, iOffset) // should look at siblings, not children
                         grabThis.grab(updateBrowsingLevel: false)
@@ -2437,7 +2437,7 @@ class ZGraphEditor: ZBaseEditor {
                     findChildMatching(&grab, iMoveUp, iOffset)
                     
                     if !selectionOnly {
-                        moveClosure(originals)
+                        moveClosure(originalGrabs)
                     } else if growSelection {
                         grab.addToGrab()
                     } else {

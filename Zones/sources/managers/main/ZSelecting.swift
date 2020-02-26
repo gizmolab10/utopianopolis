@@ -60,9 +60,7 @@ class ZSnapshot: NSObject {
 
 }
 
-
 class ZSelecting: NSObject {
-
 
     var         hasGrab :  Bool  { return currentGrabs.count > 0 }
     var        lastGrab :  Zone  { return  lastGrab() }
@@ -77,6 +75,15 @@ class ZSelecting: NSObject {
     var     _cousinList = ZoneArray ()
     var      hasNewGrab :  Zone?
 
+	var traversalStart : Zone? {
+		var start: Zone?
+
+		if  let zone = firstGrab {
+			start = zone.isInFavorites ? gFavoritesRoot : zone.isInLostAndFound ? gLostAndFound : gHereMaybe
+		}
+
+		return start
+	}
 
     var snapshot : ZSnapshot {
         let          snap = ZSnapshot()
@@ -380,7 +387,7 @@ class ZSelecting: NSObject {
     
     
     private func firstGrab(using: ZoneArray? = nil) -> Zone? {
-        let grabs = using == nil ? currentGrabs : using!
+		let grabs = (using == nil || using!.count == 0) ? currentGrabs : using!
         let count = grabs.count
         var grabbed: Zone?
         
@@ -427,7 +434,7 @@ class ZSelecting: NSObject {
 
     
     func maybeNewGrabUpdate() {
-        if  let grab = hasNewGrab {
+        if  let   grab = hasNewGrab ?? firstGrab {
             hasNewGrab = nil
 
             updateCousinList(for: grab)
@@ -446,9 +453,8 @@ class ZSelecting: NSObject {
         _cousinList .removeAll()
         _sortedGrabs.removeAll()
         
-        if  let level =  gCurrentBrowseLevel,
-            let  zone = iZone ?? firstGrab,
-            let start =  zone.isInFavorites ? gFavoritesRoot : gHereMaybe {
+        if  let level = gCurrentBrowseLevel,
+            let start = traversalStart {
             start.traverseAllVisibleProgeny { iChild in
                 let  cLevel  = iChild.level
 
@@ -468,10 +474,8 @@ class ZSelecting: NSObject {
     func updateSortedGrabs() {
         _sortedGrabs.removeAll()
         
-        if  let  zone = firstGrab {
-            let start = zone.isInFavorites ? gFavoritesRoot : gHere
-            
-            start?.traverseAllVisibleProgeny { iChild in
+		if  let start = traversalStart {
+            start.traverseAllVisibleProgeny { iChild in
                 if  currentGrabs.contains(iChild) {
                     _sortedGrabs.append(iChild)
                 }

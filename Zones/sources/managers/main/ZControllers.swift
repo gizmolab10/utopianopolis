@@ -59,41 +59,63 @@ class ZControllers: NSObject {
 	var currentController: ZGenericController?
     var signalObjectsByControllerID = [ZControllerID : ZSignalObject] ()
 
-	class ZSignalObject {
-        let    closure : SignalClosure!
-        let controller : ZGenericController!
+	// MARK:- startup
+	// MARK:-
 
-        init(_ iClosure: @escaping SignalClosure, forController iController: ZGenericController) {
-            controller = iController
-            closure    = iClosure
-        }
-    }
+	func startupCloudAndUI() {
+		gBatches         .usingDebugTimer = true
+		gTextEditor.refusesFirstResponder = true			// WORKAROUND new feature of mac os x
 
-	func controllerForID(_ iID: ZControllerID?) -> ZGenericController? {
-        if  let identifier = iID,
-            let     object = signalObjectsByControllerID[identifier] {
-            return object.controller
-        }
+		gRemoteStorage.clear()
+		self.redrawGraph()
 
-        return nil
-    }
+		gBatches.startUp { iSame in
+			FOREGROUND {
+				gIsReadyToShowUI = true
 
-	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
-		if  let id = iID {
-			switch id {
-				case .idNote:  return .white
-				case .idDetails,
-					 .idGraph,
-					 .idRing:  return kClearColor
-				case .idStatus,
-					 .idPreferences,
-					 .idTools,
-					 .idDebug: return gDarkishBackgroundColor
-				default:       return gBackgroundColor
+				gSetGraphMode()
+				gFocusRing.push()
+				gHereMaybe?.grab()
+				gFavorites.updateAllFavorites()
+				gRemoteStorage.updateLastSyncDates()
+				gRemoteStorage.recount()
+				gEssayRing.fetchRingIDs()
+				self.signalFor(nil, multiple: [.eRelayout, .eLaunchDone])
+				self.requestFeedback()
+
+				gBatches.finishUp { iSame in
+					FOREGROUND {
+						gBatches		 .usingDebugTimer = false
+						gTextEditor.refusesFirstResponder = false
+						gHasFinishedStartup               = true
+
+						self.signalMultiple([.eRing, .eCrumbs])
+//						self.blankScreenDebug()
+//						gFiles.writeAll()
+					}
+				}
 			}
 		}
+	}
 
-		return gBackgroundColor
+	func requestFeedback() {
+		if       !emailSent(for: .eBetaTesting) {
+			recordEmailSent(for: .eBetaTesting)
+
+			FOREGROUND(after: 0.1) {
+				let image = ZImage(named: kHelpMenuImageName)
+
+				gAlerts.showAlert("Please forgive my interruption",
+								  "Thank you for downloading Thoughtful. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)? \n\nYou can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below.",
+								  "Reply in an email",
+								  "Dismiss",
+								  image) { iObject in
+									if  iObject != .eStatusNo {
+										self.sendEmailBugReport()
+									}
+				}
+			}
+		}
 	}
 
 	// MARK:- hide / reveal
@@ -148,67 +170,17 @@ class ZControllers: NSObject {
 		}
 	}
 
-    // MARK:- startup
-    // MARK:-
-
-	func startupCloudAndUI() {
-        gBatches         .usingDebugTimer = true
-		gTextEditor.refusesFirstResponder = true			// WORKAROUND new feature of mac os x
-
-        gRemoteStorage.clear()
-        self.redrawGraph()
-
-        gBatches.startUp { iSame in
-            FOREGROUND {
-                gIsReadyToShowUI = true
-
-				gSetGraphMode()
-				gFocusRing.push()
-                gHereMaybe?.grab()
-                gFavorites.updateAllFavorites()
-                gRemoteStorage.updateLastSyncDates()
-                gRemoteStorage.recount()
-				gEssayRing.fetchRingIDs()
-				self.signalFor(nil, multiple: [.eRelayout, .eLaunchDone])
-                self.requestFeedback()
-                
-                gBatches.finishUp { iSame in
-                    FOREGROUND {
-                        gBatches		 .usingDebugTimer = false
-						gTextEditor.refusesFirstResponder = false
-						gHasFinishedStartup              = true
-
-						self.signalMultiple([.eRing, .eCrumbs])
-                        self.blankScreenDebug()
-                        gFiles.writeAll()
-                    }
-                }
-            }
-        }
-    }
-
-	func requestFeedback() {
-        if       !emailSent(for: .eBetaTesting) {
-            recordEmailSent(for: .eBetaTesting)
-
-            FOREGROUND(after: 0.1) {
-                let image = ZImage(named: kHelpMenuImageName)
-                
-                gAlerts.showAlert("Please forgive my interruption",
-                                        "Thank you for downloading Thoughtful. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)? \n\nYou can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below.",
-                                        "Reply in an email",
-                                        "Dismiss",
-                                        image) { iObject in
-                                            if  iObject != .eStatusNo {
-                                                self.sendEmailBugReport()
-                                            }
-                }
-            }
-        }
-    }
-
 	// MARK:- registry
-    // MARK:-
+	// MARK:-
+
+	func controllerForID(_ iID: ZControllerID?) -> ZGenericController? {
+		if  let identifier = iID,
+			let     object = signalObjectsByControllerID[identifier] {
+			return  object.controller
+		}
+
+		return nil
+	}
 
 	func setSignalHandler(for iController: ZGenericController, iID: ZControllerID, closure: @escaping SignalClosure) {
         signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
@@ -219,8 +191,36 @@ class ZControllers: NSObject {
         signalObjectsByControllerID[iID] = nil
     }
 
+	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
+		if  let id = iID {
+			switch id {
+				case .idNote:  return .white
+				case .idDetails,
+					 .idGraph,
+					 .idRing:  return kClearColor
+				case .idStatus,
+					 .idPreferences,
+					 .idTools,
+					 .idDebug: return gDarkishBackgroundColor
+				default:       return gBackgroundColor
+			}
+		}
+
+		return gBackgroundColor
+	}
+
 	// MARK:- signals
     // MARK:-
+
+	class ZSignalObject {
+		let    closure : SignalClosure!
+		let controller : ZGenericController!
+
+		init(_ iClosure: @escaping SignalClosure, forController iController: ZGenericController) {
+			controller = iController
+			closure    = iClosure
+		}
+	}
 
 	func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure? = nil) {
         signalFor(object, multiple: [regarding], onCompletion: onCompletion)
@@ -236,6 +236,7 @@ class ZControllers: NSObject {
 				let      isCrumbs = identifier == .idCrumbs
                 let       isDebug = identifier == .idDebug
                 let       isGraph = identifier == .idGraph
+				let        isRing = identifier == .idRing
                 let        isMain = identifier == .idMain
                 let      isDetail = isPreferences || isStatus || isDebug
                 
@@ -245,7 +246,8 @@ class ZControllers: NSObject {
                     }
                     
                     switch regarding {
-                    case .eMain:        if isMain        { closure() }
+					case .eMain:        if isMain        { closure() }
+					case .eRing:        if isRing        { closure() }
                     case .eGraph:       if isGraph       { closure() }
                     case .eDebug:       if isDebug       { closure() }
 					case .eStatus:      if isStatus      { closure() }

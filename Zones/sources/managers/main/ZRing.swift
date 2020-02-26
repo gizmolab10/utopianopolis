@@ -129,49 +129,50 @@ class ZRing: NSObject {
 		return nil
 	}
 
-	private func pushUnique(onto newIndex: Int? = nil) -> Int? { // nil means not inserted
-		if  let       item  = possiblePrime {
-			if  let  index  = indexInRing(item) {
-				addToRing(item)
+	private func pushOrReplace(onto newIndex: Int? = nil) -> Int? { // nil means not inserted
+		var        result  : Int?
+		if  let      item  = possiblePrime {
+			if  let index  = indexInRing(item) {
+				result     = index
 
-				return index
+				replaceInRing(item, at: index)
 			} else if let index = newIndex {
+				result          = index
+
 				addToRing(item, at: index)
-				storeRingIDs()
-
-				return index
 			} else {
-				addToRing(item)
-				storeRingIDs()
+				result     = ring.count - 1
 
-				return ring.count - 1
+				addToRing(item)
 			}
+
+			storeRingIDs()
 		}
 
-		return nil
+		return result
 	}
 
 	func push() {
-		if possiblePrime == nil { return }
+		if  possiblePrime != nil {
+			currentIndex   = currentIndex + 1
 
-		currentIndex = currentIndex + 1
+			if  topIndex < 0 || !atPrime {
+				if  let        index = primeIndex {
+					currentIndex     = index   // prevent duplicates in stack
+				} else if currentIndex >= topIndex {
+					if  let    index = pushOrReplace() {
+						currentIndex = index
 
-        if  topIndex < 0 || !atPrime {
-            if  let index = primeIndex {
-                currentIndex = index   // prevent duplicates in stack
-            } else if currentIndex >= topIndex {
-				if  let index = pushUnique() {
+						gRingView?.updateNecklace()
+					}
+				} else if let  index = pushOrReplace(onto: currentIndex) { // BUG: wrong index
+					currentIndex     = index
+
 					gRingView?.updateNecklace()
-
-					currentIndex = index
 				}
-			} else if let index = pushUnique(onto: currentIndex) { // BUG: wrong index
-				gRingView?.updateNecklace()
-
-				currentIndex = index
 			}
-        }
-    }
+		}
+	}
 
     func goBack(extreme: Bool = false) {
         if  let    index = primeIndex {
@@ -291,8 +292,14 @@ class ZRing: NSObject {
 	}
 
 	func removeFromRing(at index: Int) {
-		print("r  remove: \(ring[index])")
+		printDebug(.ring, "r  remove: \(ring[index])")
 		ring.remove(at: index)
+	}
+
+	func replaceInRing(_ object: NSObject, at index: Int) {
+		ring[index] = object
+
+		printDebug(.ring, "r replace: \(ring[index])")
 	}
 
 	func addToRing(_ object: NSObject, at iIndex: Int? = nil) {
@@ -304,7 +311,7 @@ class ZRing: NSObject {
 			ring.insert(object, at: index)
 		}
 
-		print("r     add: \(ring[index])")
+		printDebug(.ring, "r     add: \(ring[index])")
 	}
 
 }
