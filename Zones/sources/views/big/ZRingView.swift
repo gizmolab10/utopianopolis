@@ -181,8 +181,107 @@ class ZRingView: ZView {
 		}
 	}
 
-	// MARK:- necklace and controls
+	// MARK:- necklace
 	// MARK:-
+
+	func addUnique(from ring: ZObjectsArray) {
+		for object in ring.reversed() {
+			guard let (index, same, dual) = necklaceIndexOf(object) else {
+				addToNecklace(object, at: nil)
+
+				continue
+			}
+
+			if !dual, !same {
+				let           original = necklaceObjects[index]
+				let             isZone = original.isKind(of: Zone.self)
+				let              array = isZone ? [original, object] : [object, original]
+
+				addToNecklace(array as NSObject, at: index)
+			}
+		}
+	}
+
+	func addToNecklace(_ object: NSObject, at iIndex: Int?) {
+		var index: Int? = iIndex
+
+		if  index != nil {
+			necklaceObjects[index!] = object
+		} else {
+			necklaceObjects.append(object)
+			index = necklaceObjects.count - 1
+		}
+
+		print("v     add: \(necklaceObjects[index!])")
+	}
+
+	func removeFromNecklace(_ index: Int) {
+		print("v  remove: \(necklaceObjects[index])")
+		necklaceObjects.remove(at: index)
+	}
+
+	@discardableResult func removeFromRings(_ item: NSObject, okayToRecurse: Bool = true) -> Bool {
+		guard let array = item as? ZObjectsArray else {
+			return gFocusRing.removeFromStack(item, okayToRecurse: okayToRecurse) || gEssayRing.removeFromStack(item, okayToRecurse: okayToRecurse) // recursion is okay: can call update necklace within
+		}
+
+		var result =           gFocusRing.removeFromStack(array[0], okayToRecurse: okayToRecurse)   // MUST invoke on both rings
+		result     = result || gEssayRing.removeFromStack(array[1], okayToRecurse: okayToRecurse)
+
+		return result
+	}
+
+	func removeStale() {
+		let array = Array(necklaceObjects.reversed())
+
+		for (reverseIndex, object) in array.enumerated() {
+			let index = array.count - reverseIndex - 1
+
+			if  necklaceObjects.count <= index {
+				continue
+			} else if object.isKind(of:  Zone.self), !gFocusRing.ring.contains(object) {
+				removeFromNecklace(index)
+			} else if object.isKind(of: ZNote.self), !gEssayRing.ring.contains(object) {
+				removeFromNecklace(index)
+			} else if let dual = object as? ZObjectsArray {
+				let     zone = dual[0]
+				let     note = dual[1]
+				var keepZone = false
+				var keepNote = false
+
+				if  gFocusRing.ring.contains(zone) {
+					keepZone = true
+				}
+
+				if  gEssayRing.ring.contains(note) {
+					keepNote = true
+				}
+
+				if !keepZone && !keepNote {
+					removeFromNecklace(index)
+				} else if keepZone && !keepNote {
+					addToNecklace(zone, at: index)
+				} else if keepNote && !keepZone {
+					addToNecklace(note, at: index)
+				}
+			}
+		}
+	}
+
+	func removeExtras() {
+		while necklaceObjects.count > necklaceMax {
+			removeFromRings(necklaceObjects[0], okayToRecurse: false)
+			removeFromNecklace(0)
+		}
+	}
+
+	func updateNecklace() {
+		addUnique(from: gFocusRing.ring)
+		addUnique(from: gEssayRing.ring)
+		removeStale()
+		removeExtras()
+		signalRegarding(.eRing)
+	}
 
 	func necklaceIndexOf(_ item: NSObject) -> (Int, Bool, Bool)? {
 		if  let index = necklaceObjects.firstIndex(of: item) {
@@ -208,168 +307,24 @@ class ZRingView: ZView {
 		return nil
 	}
 
-	func alterNecklace(add: Bool, _ iItem: NSObject?) {
-		if  let item = iItem {
-			if  let (index, same, dual) = necklaceIndexOf(item) {
-				if !add {
-					if !dual {
-						debugRemove(index)
-					} else if var objects = necklaceObjects[index] as? ZObjectsArray,
-						let subindex = objects.firstIndex(of: item) {
-						objects.remove(at: subindex)
-
-						debugAdd(objects[0], at: index)
-					}
-				} else if !dual, !same {
-					let object = necklaceObjects[index]
-
-					if  let zone  = object as? Zone {
-						debugAdd([zone, item] as NSObject, at: index)
-					} else if let note = object as? ZNote {
-						debugAdd([item, note] as NSObject, at: index)
-					}
-				}
-			} else if !add {
-				print("ack! not possible")
-			} else if add {
-				if  item.isKind(of: Zone.self) {
-					debugAdd(item, at: nil)
-
-				} else if let  essay = item as? ZNote,
-					let idea = essay.zone {
-
-					if  let index = necklaceObjects.firstIndex(of: idea) {
-						debugAdd([idea, essay] as NSObject, at: index)
-					} else {
-						debugAdd(item, at: nil)
-					}
-				}
-			}
-
-			while necklaceObjects.count > necklaceMax {
-				removeFromRings(necklaceObjects[0])
-				debugRemove(0)
-			}
-
-			signalRegarding(.eRing)
-		}
-	}
-
 	func copyObjects(from ring: ZObjectsArray) {
 		for object in ring {
 			if object.isKind(of: Zone.self) {
-				debugAdd(object, at: nil)
+				addToNecklace(object, at: nil)
 			} else if let  essay = object as? ZNote,
 				let idea = essay.zone {
 
 				if  let index = necklaceObjects.firstIndex(of: idea) {
-					debugAdd([idea, essay] as NSObject, at: index)
+					addToNecklace([idea, essay] as NSObject, at: index)
 				} else {
-					debugAdd(object, at: nil)
+					addToNecklace(object, at: nil)
 				}
 			}
 		}
 	}
 
-	func removeExtras() {
-		let array = Array(necklaceObjects)
-
-		for (iIndex, object) in array.reversed().enumerated() {
-			let index = array.count - iIndex - 1
-
-			if  necklaceObjects.count <= index {
-				continue
-			} else if object.isKind(of: Zone.self) {
-				if !gFocusRing.ring.contains(object) {
-					debugRemove(index)
-				}
-			} else if object.isKind(of: ZNote.self) {
-				if !gEssayRing.ring.contains(object) {
-					debugRemove(index)
-				}
-			} else if let dual = object as? ZObjectsArray {
-				let     zone = dual[0]
-				let     note = dual[1]
-				var keepZone = false
-				var keepNote = false
-
-				if  gFocusRing.ring.contains(zone) {
-					keepZone = true
-				}
-
-				if  gEssayRing.ring.contains(note) {
-					keepNote = true
-				}
-
-				if !keepZone && !keepNote {
-					debugRemove(index)
-				} else if keepZone && !keepNote {
-					debugAdd(zone, at: index)
-				} else if keepNote && !keepZone {
-					debugAdd(note, at: index)
-				}
-			}
-		}
-
-		while necklaceObjects.count > necklaceMax {
-			removeFromRings(necklaceObjects[0])
-			debugRemove(0)
-		}
-	}
-
-	func debugRemove(_ index: Int) {
-		print("v  remove: \(necklaceObjects[index])")
-		necklaceObjects.remove(at: index)
-	}
-
-	func debugAdd(_ object: NSObject, at iIndex: Int?) {
-		var index: Int? = iIndex
-
-		if  index != nil {
-			necklaceObjects[index!] = object
-		} else {
-			necklaceObjects.append(object)
-			index = necklaceObjects.count - 1
-		}
-
-		print("v     add: \(necklaceObjects[index!])")
-	}
-
-	func appendUnique(from ring: ZObjectsArray) {
-		for object in ring.reversed() {
-			guard let (index, same, dual) = necklaceIndexOf(object) else {
-				debugAdd(object, at: nil)
-
-				continue
-			}
-
-			if !dual, !same {
-				let           original = necklaceObjects[index]
-				let             isZone = original.isKind(of: Zone.self)
-				let              array = isZone ? [original, object] : [object, original]
-
-				debugAdd(array as NSObject, at: index)
-			}
-		}
-	}
-
-	func updateNecklace() {
-		appendUnique(from: gFocusRing.ring)
-		appendUnique(from: gEssayRing.ring)
-		removeExtras()
-		signalRegarding(.eRing)
-	}
-
-	@discardableResult func removeFromRings(_ item: NSObject) -> Bool {
-		guard let array = item as? ZObjectsArray else {
-			return gFocusRing.removeFromStack(item) || gEssayRing.removeFromStack(item)
-		}
-
-		var result =           gFocusRing.removeFromStack(array[0])   // MUST invoke on both rings
-		result     = result || gEssayRing.removeFromStack(array[1])
-
-		return result
-	}
+	// MARK:- controls
+	// MARK:-
 
 	var controlRects : [CGRect] {
 		let   rect = geometry.one

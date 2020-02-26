@@ -86,7 +86,7 @@ class ZRing: NSObject {
 			for id in ids {
 				if  let object = object(for: id),
 					indexInRing(object) == nil {
-					debugAdd(object)
+					addToRing(object)
 				}
 			}
 		}
@@ -129,19 +129,19 @@ class ZRing: NSObject {
 		return nil
 	}
 
-	private func pushUnique(_ newIndex: Int? = nil) -> Int? { // nil means not inserted
+	private func pushUnique(onto newIndex: Int? = nil) -> Int? { // nil means not inserted
 		if  let       item  = possiblePrime {
 			if  let  index  = indexInRing(item) {
-				debugAdd(item)
+				addToRing(item)
 
 				return index
 			} else if let index = newIndex {
-				debugReplace(item, at: index)
+				addToRing(item, at: index)
 				storeRingIDs()
 
 				return index
 			} else {
-				debugAdd(item)
+				addToRing(item)
 				storeRingIDs()
 
 				return ring.count - 1
@@ -165,7 +165,7 @@ class ZRing: NSObject {
 
 					currentIndex = index
 				}
-            } else if let index = pushUnique(currentIndex) {
+			} else if let index = pushUnique(onto: currentIndex) { // BUG: wrong index
 				gRingView?.updateNecklace()
 
 				currentIndex = index
@@ -230,7 +230,7 @@ class ZRing: NSObject {
     func pop() {
 		if  ring.count > (isEssay ? 0 : 1),
 			let i = primeIndex {
-			debugRemove(i)
+			removeFromRing(at: i)
 			storeRingIDs()
 			gRingView?.updateNecklace()
 			goBack()
@@ -264,14 +264,14 @@ class ZRing: NSObject {
 		}
 	}
 
-	@discardableResult func removeFromStack(_ iItem: NSObject?) -> Bool {
+	@discardableResult func removeFromStack(_ iItem: NSObject?, okayToRecurse: Bool = true) -> Bool {
 		if  let note = iItem as? ZNote,
 			let zone = note.zone {
 			for (index, item) in ring.enumerated() {
 				if  let    other = item as? ZNote,
 					let ringZone = other.zone,
 					ringZone === zone {
-					debugRemove(index)
+					removeFromRing(at: index)
 					removeEmpties()
 					storeRingIDs()
 					gRingView?.updateNecklace()
@@ -290,21 +290,20 @@ class ZRing: NSObject {
 		return false
 	}
 
-	func debugRemove(_ index: Int) {
+	func removeFromRing(at index: Int) {
 		print("r  remove: \(ring[index])")
 		ring.remove(at: index)
 	}
 
-	func debugReplace(_ object: NSObject, at index: Int) {
-		ring[index] = object
-		print("r replace: \(ring[index])")
+	func addToRing(_ object: NSObject, at iIndex: Int? = nil) {
+		let index = iIndex ?? ring.count
 
-	}
+		if  iIndex == nil {
+			ring.append(object)
+		} else {
+			ring.insert(object, at: index)
+		}
 
-	func debugAdd(_ object: NSObject) {
-		let index = ring.count
-
-		ring.append(object)
 		print("r     add: \(ring[index])")
 	}
 

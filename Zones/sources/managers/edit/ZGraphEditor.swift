@@ -1590,17 +1590,31 @@ class ZGraphEditor: ZBaseEditor {
             } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
                 gFocusRing.invokeTravel(zone, onCompletion: onCompletion)
             } else {
-                let needReveal = !zone.showingChildren
-                
-                zone.revealChildren()
-                
-				if  zone.count > 0,
-					let child = gListsGrowDown ? zone.children.last : zone.children.first {
-					child.grab()
+				var needReveal = false
+				var      child = zone
+				var     invoke = {}
 
-					if  needReveal {
-						gControllers.signalFor(zone, regarding: .eRelayout)
+				invoke = {
+					needReveal = needReveal || !child.showingChildren
+
+					child.revealChildren()
+
+					if  child.count > 0,
+						let grandchild = gListsGrowDown ? child.children.last : child.children.first {
+						grandchild.grab()
+
+						if  extreme {
+							child = grandchild
+
+							invoke()
+						}
 					}
+				}
+
+				invoke()
+
+				if  needReveal {
+					gControllers.signalFor(zone, regarding: .eRelayout)
 				}
 
 				gFavorites.updateAllFavorites()

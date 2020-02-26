@@ -101,15 +101,18 @@ class ZFocus: ZRing {
 		}
 	}
 
-	@discardableResult override func removeFromStack(_ iItem: NSObject?) -> Bool {
+	@discardableResult override func removeFromStack(_ iItem: NSObject?, okayToRecurse: Bool = true) -> Bool {
 		if  ring.count > 1,
 			let zone = iItem as? Zone {
 			for (index, item) in ring.enumerated() {
 				if  let other = item as? Zone,
 					other === zone {
 
-					debugRemove(index)
-					gRingView?.updateNecklace()
+					removeFromRing(at: index)     // TODO: MAJOR: recursive
+
+					if  okayToRecurse {
+						gRingView?.updateNecklace()
+					}
 
 					if  index == currentIndex || zone == gHere {
 						goBack()

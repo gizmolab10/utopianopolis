@@ -70,7 +70,7 @@ class ZBreadcrumbsView : ZTextField {
 		needsDisplay = true
 	}
 
-	// TODO: mouse over hit test -> index into breadcrumb strings array
+	// TODO: hit test -> index into breadcrumb strings array
 	// change the color of the string at that index
 
 	// mouse down -> change focus
@@ -103,7 +103,7 @@ class ZBreadcrumbsView : ZTextField {
 		let span = gTextEditor.selectedRange()
 
 		gFocusRing.focusOn(next) {
-			if !COMMAND {
+			if  COMMAND {
 				next.traverseAllProgeny { child in
 					child.concealChildren()
 				}
