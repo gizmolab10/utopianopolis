@@ -150,8 +150,8 @@ class ZManifest: ZRecord {
     }
     
     
-    override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) -> ZStorageDictionary? {
-        var dict           = super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName) ?? ZStorageDictionary ()
+    override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) throws -> ZStorageDictionary? {
+        var dict           = try super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName) ?? ZStorageDictionary ()
         
         if  let          d = updatedRefs as NSObject? {
             dict[.deleted] = d

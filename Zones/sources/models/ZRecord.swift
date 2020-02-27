@@ -38,7 +38,6 @@ class ZRecord: NSObject {
     var       needsChildren: Bool               { return  hasState(.needsChildren) }
     var      needsBookmarks: Bool               { return  hasState(.needsBookmarks) }
     var canSaveWithoutFetch: Bool               { return !hasState(.requiresFetchBeforeSave) }
-    var   storageDictionary: ZStorageDictionary { if let dbID = databaseID, let dict = storageDictionary(for: dbID, includeRecordName: false) { return dict } else { return [:] } }
     var             records: ZRecords?          { return gRemoteStorage.zRecords(for: databaseID) }
     var               cloud: ZCloud?            { return records as? ZCloud }
     var          recordName: String?            { return record?.recordID.recordName }
@@ -46,6 +45,15 @@ class ZRecord: NSObject {
     var       unwrappedName: String             { return recordName ?? emptyName }
     var           emptyName: String             { return "" }
     
+	func storageDictionary() throws -> ZStorageDictionary {
+		if  let dbID = databaseID,
+			let dict = try storageDictionary(for: dbID, includeRecordName: false) {
+
+			return dict
+		}
+
+		return [:]
+	}
 
     var record: CKRecord? {
         get {
@@ -527,7 +535,11 @@ class ZRecord: NSObject {
     }
 
 
-    func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) -> ZStorageDictionary? {
+    func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) throws -> ZStorageDictionary? {
+		if  gWindow?.mouseMoved ?? false {
+			throw(ZInterruptionError.userInterrupted)
+		}
+
 		guard let name = recordName, !gFiles.writtenRecordNames.contains(name) else { return nil }
 		let   keyPaths = cloudProperties() + (includeRecordName ? [kpRecordName] : []) + [kpModificationDate]
 		var       dict = ZStorageDictionary()
@@ -603,7 +615,7 @@ class ZRecord: NSObject {
     }
 
 
-    class func storageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, allowEach: ZRecordToBooleanClosure? = nil) -> [ZStorageDictionary]? {
+    class func storageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
         if  let   items = iItems,
             items.count > 0 {
             var   array = [ZStorageDictionary] ()
@@ -613,7 +625,7 @@ class ZRecord: NSObject {
 
                 if  let zRecord = item as? ZRecord,
                     (allowEach == nil || allowEach!(zRecord)) {
-                    dict = zRecord.storageDictionary(for: dbID, includeRecordName: includeRecordName)
+                    dict = try zRecord.storageDictionary(for: dbID, includeRecordName: includeRecordName)
 //                } else if let reference = item as? CKRecord.Reference {
 //                    dict = reference.storageDictionary()
                 }

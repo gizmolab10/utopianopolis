@@ -18,7 +18,6 @@ func FOREGROUND(canBeDirect: Bool = false, _ closure: @escaping Closure) {
     }
 }
 
-
 func BACKGROUND(_ closure: @escaping Closure) {
     DispatchQueue.global(qos: .background).async { closure() }
 }

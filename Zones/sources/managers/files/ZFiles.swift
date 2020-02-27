@@ -63,14 +63,18 @@ class ZFiles: NSObject {
 	}
 
     func deferWrite(for  databaseID: ZDatabaseID?, restartTimer: Bool = false) {
-        if  writeTimer?.isValid ?? false || restartTimer {
+		if  writeTimer == nil || !writeTimer!.isValid || restartTimer {
             writeTimer?.invalidate()
 
-            writeTimer = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) { iTimer in
+            writeTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { iTimer in
                 if  gIsIdeaMode {
                     self.deferWrite(for: databaseID, restartTimer: true)
                 } else {
-                    self.writeToFile(from: databaseID)
+					do {
+						try self.writeToFile(from: databaseID)
+					} catch {
+						self.deferWrite(for: databaseID, restartTimer: true)
+					}
                 }
             }
         }
@@ -97,19 +101,19 @@ class ZFiles: NSObject {
         return false
 	}
 
-    func writeAll() {
+    func writeAll() throws {
         for dbID in kAllDatabaseIDs {
-            writeToFile(from: dbID)
+            try writeToFile(from: dbID)
         }
     }
 
-	func writeToFile(from databaseID: ZDatabaseID?) {
+	func writeToFile(from databaseID: ZDatabaseID?) throws {
 		if  let     dbID = databaseID,
 			dbID        != .favoritesID,
 			let    index = dbID.index,
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {
 				let path = filePath(for: dbIndex)
-				writeFile(at: path, from: databaseID)
+				try writeFile(at: path, from: databaseID)
 		}
 	}
 
@@ -126,7 +130,7 @@ class ZFiles: NSObject {
     // MARK:- heavy lifting
     // MARK:-
 
-	func writeFile(at path: String, from databaseID: ZDatabaseID?) {
+	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
 		if  let           dbID = databaseID, gUseFiles,
 			dbID              != .favoritesID,
             let        manager = gRemoteStorage.cloud(for: dbID),
@@ -134,68 +138,72 @@ class ZFiles: NSObject {
 			needsWrite[index] == true,
 			isWriting [index] == false {    // prevent write during write
 			isWriting [index]  = true
-			needsWrite[index]  = false
 			var           dict = ZStorageDictionary ()
-			
-            FOREGROUND(canBeDirect: true) {
-                self.writtenRecordNames.removeAll()
-                gRemoteStorage.recount()
 
-                // //////////////////////////////////////////////
-                // take snapshots just before exit from method //
-                // //////////////////////////////////////////////
+			do {
+				self.writtenRecordNames.removeAll()
+				gRemoteStorage.recount()
 
-                if  let   graph  = manager.rootZone?.storageDictionary(for: dbID)  {
-                    dict[.graph] = graph as NSObject
-                }
+				// //////////////////////////////////////////////
+				// take snapshots just before exit from method //
+				// //////////////////////////////////////////////
 
-                if  let   trash  = manager.trashZone?.storageDictionary(for: dbID) {
-                    dict[.trash] = trash as NSObject
-                }
+				if  let   graph  = try manager.rootZone?.storageDictionary(for: dbID)  {
+					dict[.graph] = graph as NSObject
+				}
 
-                if  let   destroy  = manager.destroyZone?.storageDictionary(for: dbID) {
-                    dict[.destroy] = destroy as NSObject
-                }
+				if  let   trash  = try manager.trashZone?.storageDictionary(for: dbID) {
+					dict[.trash] = trash as NSObject
+				}
 
-                if  let   manifest  = manager.manifest?.storageDictionary(for: dbID) {
-                    dict[.manifest] = manifest as NSObject
-                }
+				if  let   destroy  = try manager.destroyZone?.storageDictionary(for: dbID) {
+					dict[.destroy] = destroy as NSObject
+				}
 
-                if  let   lost  = manager.lostAndFoundZone?.storageDictionary(for: dbID) {
-                    dict[.lost] = lost as NSObject
-                }
+				if  let   manifest  = try manager.manifest?.storageDictionary(for: dbID) {
+					dict[.manifest] = manifest as NSObject
+				}
 
-                if                 dbID == .mineID {
-                    if  let   favorites  = gFavoritesRoot?.storageDictionary(for: dbID) {
-                        dict[.favorites] = favorites as NSObject
-                    }
+				if  let   lost  = try manager.lostAndFoundZone?.storageDictionary(for: dbID) {
+					dict[.lost] = lost as NSObject
+				}
 
-                    if  let   bookmarks  = gBookmarks.storageArray(for: dbID) {
-                        dict[.bookmarks] = bookmarks as NSObject
-                    }
+				if                 dbID == .mineID {
+					if  let   favorites  = try gFavoritesRoot?.storageDictionary(for: dbID) {
+						dict[.favorites] = favorites as NSObject
+					}
 
-                    if  let       userID  = gUserRecordID {
-                        dict    [.userID] = userID as NSObject
-                    }
-                }
+					if  let   bookmarks  = try gBookmarks.storageArray(for: dbID) {
+						dict[.bookmarks] = bookmarks as NSObject
+					}
 
-                manager.updateLastSyncDate()
+					if  let       userID  = gUserRecordID {
+						dict    [.userID] = userID as NSObject
+					}
+				}
 
-                BACKGROUND(after: 1.0) {
-                    dict [.date] = manager.lastSyncDate as NSObject
-                    let jsonDict = self.jsonDictFrom(dict)
+				manager.updateLastSyncDate()
 
-                    if  let data = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {
-                        let  url = URL(fileURLWithPath: path)
+				BACKGROUND(after: 1.0) {
+					dict [.date] = manager.lastSyncDate as NSObject
+					let jsonDict = self.jsonDictFrom(dict)
 
-                        try? data.write(to: url)
-                    } else {
+					if  let data = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {
+						let  url = URL(fileURLWithPath: path)
+
+						try? data.write(to: url)
+					} else {
 						printDebug(.errors, "ahah")
-                    }
+					}
 
-                    self.isWriting[index] = false // end prevention of write during write
-                }
-            }
+					self.needsWrite[index] = false
+					self .isWriting[index] = false // end prevention of write during write
+				}
+			} catch {
+				self     .isWriting[index] = false // end prevention of write during write
+
+				throw(ZInterruptionError.userInterrupted)
+			}
 		}
 	}
 

@@ -84,10 +84,12 @@ var gDesktopAppDelegate: ZDesktopAppDelegate?
     
 
     func applicationWillTerminate(aNotification: NSNotification) {
-        for dbID in kAllDatabaseIDs {
-            gFiles.writeToFile(from: dbID)
-        }
-        
+		do {
+			try gFiles.writeAll()
+		} catch {
+			
+		}
+
         // Insert code here to tear down your application
     }
 

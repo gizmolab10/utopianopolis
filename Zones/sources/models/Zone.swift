@@ -1764,14 +1764,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         }
     }
 
-    override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) -> ZStorageDictionary? {
-        var dict            = super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName) ?? ZStorageDictionary ()
+    override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) throws -> ZStorageDictionary? {
+        var dict            = try super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName) ?? ZStorageDictionary ()
 
-        if  let   childDict = Zone.storageArray(for: children, from: iDatabaseID, includeRecordName: includeRecordName) {
+        if  let   childDict = try Zone.storageArray(for: children, from: iDatabaseID, includeRecordName: includeRecordName) {
             dict[.children] = childDict as NSObject?
         }
 
-        if  let  traitsDict = Zone.storageArray(for: traitValues, from: iDatabaseID, includeRecordName: includeRecordName) {
+        if  let  traitsDict = try Zone.storageArray(for: traitValues, from: iDatabaseID, includeRecordName: includeRecordName) {
             dict  [.traits] = traitsDict as NSObject?
         }
 

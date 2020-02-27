@@ -198,6 +198,9 @@ struct ZDetailsViewID: OptionSet {
     static let         All = ZDetailsViewID(rawValue: 0x001F)
 }
 
+enum ZInterruptionError : Error {
+	case userInterrupted
+}
 
 enum ZStorageType: String {
     case lost            = "lostAndFound"    // general

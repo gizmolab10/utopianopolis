@@ -19,26 +19,29 @@ var gWindow: ZoneWindow? { return ZoneWindow.window }
 
 class ZoneWindow: ZWindow, ZWindowDelegate {
 
-
     static var window: ZoneWindow?
     var observer: NSKeyValueObservation?
+	var lastLocation = NSPoint.zero
 
+	var mouseMoved: Bool {
+		let    last  = lastLocation
+		lastLocation = mouseLocationOutsideOfEventStream
 
-    func windowDidResize(_ notification: Notification) {
-        gWindowRect = frame
-        
+		return last != lastLocation
+	}
+
+	func windowDidResize(_ notification: Notification) {
+		gWindowRect = frame
+
 		signalMultiple([.eDebug, .eResize])
-    }
-
+	}
 
     #if os(OSX)
 
-	
 	func windowWillClose(_ notification: Notification) {
 		gApplication.terminate(self)
 	}
-	
-	
+
     override open var acceptsFirstResponder: Bool { return true }
 
     // cannot declare this in extensions because compiler barfs about objective-c method conflict (and then compiler throws a seg fault)

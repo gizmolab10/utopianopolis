@@ -948,7 +948,11 @@ extension ZFiles {
         panel.begin { (response: NSApplication.ModalResponse) in
             if  let path = panel.url?.path {
                 self.needWrite(for: .mineID)
-                self.writeFile(at: path, from: .mineID)
+				do {
+					try self.writeFile(at: path, from: .mineID)
+				} catch {
+					
+				}
             }
         }
     }
@@ -1035,11 +1039,11 @@ extension ZFiles {
 					case .eThoughtful:
 						self.writtenRecordNames.removeAll()
 
-						let     dict = zone.storageDictionary
-						let jsonDict = self.jsonDictFrom(dict)
-						let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
-
 						do {
+							let     dict = try zone.storageDictionary()
+							let jsonDict = self.jsonDictFrom(dict)
+							let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
+
 							try data.write(to: fileURL)
 						} catch {
 							printDebug(.errors, "\(error)")
