@@ -122,6 +122,11 @@ var gHereMaybe: Zone? {
     set { gRecords?.hereZoneMaybe = newValue }
 }
 
+var gClipBreadcrumbs : Bool {
+	get { return getPreferencesBool(   for: kClipBreadcrumbs, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kClipBreadcrumbs) }
+}
+
 var gShowAllBreadcrumbs : Bool {
 	get { return getPreferencesBool(   for: kShowAllBreadcrumbs, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kShowAllBreadcrumbs) }

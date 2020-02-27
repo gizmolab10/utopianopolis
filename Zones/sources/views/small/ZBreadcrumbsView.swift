@@ -12,11 +12,40 @@ var gBreadcrumbsLabel: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbs
 
 class ZBreadcrumbsView : ZTextField {
 
-	@IBOutlet var heightConstraint: NSLayoutConstraint?
+	var                showClipper = false
+	@IBOutlet var       clipButton : NSButton?
+	@IBOutlet var  widthConstraint : NSLayoutConstraint?
+	@IBOutlet var heightConstraint : NSLayoutConstraint?
+
+	var crumbsText : String {
+		let     limit = bounds.width - 10.0
+		var     array = gBreadcrumbs.crumbs
+		var    string = kCrumbSeparator + array.joined(separator: kCrumbSeparator) + kCrumbSeparator
+		showClipper   = false
+
+		if  let     f = font {
+			var tRect = string.rect(using: f, for: NSRange(location: 0, length: string.length), atStart: true)
+
+			while tRect.width > limit {
+				showClipper = true
+
+				array.remove(at: 0)
+
+				if !gClipBreadcrumbs {
+					break
+				}
+
+				string = kCrumbSeparator + array.joined(separator: kCrumbSeparator) + kCrumbSeparator
+				tRect  = string.rect(using: f, for: NSRange(location: 0, length: string.length), atStart: true)
+			}
+		}
+
+		return string
+	}
 
 	var crumbRects: [CGRect] {
 		var  rects = [CGRect]()
-		let string = gBreadcrumbs.crumbsText
+		let string = crumbsText
 		font       = gFavoritesFont
 
 		if  let            f = font {
@@ -24,7 +53,7 @@ class ZBreadcrumbsView : ZTextField {
 			tRect.leftCenter = bounds.leftCenter
 			let        delta = gFontSize / -40.0
 
-			for range in gBreadcrumbs.crumbRanges {
+			for range in crumbRanges {
 				let rect = string.rect(using: f, for: range, atStart: true).offsetBy(dx: 2.0, dy: 3.0 - (delta * 5.0)).insetBy(dx: -2.0 + (delta * 4.0), dy: delta)
 
 				rects.append(rect)
@@ -32,6 +61,24 @@ class ZBreadcrumbsView : ZTextField {
 		}
 
 		return rects
+	}
+
+	var crumbRanges: [NSRange] {
+		var result = [NSRange]()
+		let string = crumbsText
+
+		for crumb in gBreadcrumbs.crumbs {
+			if  let ranges = string.rangesMatching(kCrumbSeparator + crumb + kCrumbSeparator),
+				ranges.count > 0 {
+				let offset = kCrumbSeparator.length
+				var range = ranges[0]
+				range.location += offset
+				range.length -= offset * 2
+				result.append(range)
+			}
+		}
+
+		return result
 	}
 
 	override func awakeFromNib() {
@@ -64,10 +111,21 @@ class ZBreadcrumbsView : ZTextField {
 	}
 
 	func updateAndRedraw() {
-		font         = gFavoritesFont
-		text         = gBreadcrumbs.crumbsText
-		textColor    = gBreadcrumbs.crumbsColor
-		needsDisplay = true
+		font                 = gFavoritesFont
+		text                 = crumbsText
+		textColor            = gBreadcrumbs.crumbsColor
+		clipButton?.isHidden = !showClipper
+		clipButton?.image    = ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
+		needsDisplay         = true
+	}
+
+	// MARK:- events
+	// MARK:-
+
+	@IBAction func handleClipper(_ sender: Any?) {
+		gClipBreadcrumbs = !gClipBreadcrumbs
+
+		updateAndRedraw()
 	}
 
 	// TODO: hit test -> index into breadcrumb strings array

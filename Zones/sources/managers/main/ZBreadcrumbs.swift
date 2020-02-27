@@ -14,7 +14,6 @@ class ZBreadcrumbs: NSObject {
 
 	var crumbDBID   : ZDatabaseID? { return crumbsRootZone?.databaseID }
 	var crumbZones  : [Zone]       { return crumbsRootZone?.ancestralPath ?? [] }
-	var crumbsText  : String       { return kCrumbSeparator + crumbs.joined(separator: kCrumbSeparator) + kCrumbSeparator }
 
 	var indexOfHere : Int? {
 		for (index, zone) in crumbZones.enumerated() {
@@ -58,24 +57,6 @@ class ZBreadcrumbs: NSObject {
 		}
 
 		return color.darker(by: 5.0)
-	}
-
-	var crumbRanges: [NSRange] {
-		var result = [NSRange]()
-		let string = crumbsText
-
-		for crumb in crumbs {
-			if  let ranges = string.rangesMatching(kCrumbSeparator + crumb + kCrumbSeparator),
-				ranges.count > 0 {
-				let offset = kCrumbSeparator.length
-				var range = ranges[0]
-				range.location += offset
-				range.length -= offset * 2
-				result.append(range)
-			}
-		}
-
-		return result
 	}
 
 	func nextCrumb(_ out: Bool) -> Zone? {

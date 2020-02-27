@@ -836,7 +836,7 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="254" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="controlContent" size="11"/>
+                                                        <font key="font" metaFont="menu" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
@@ -878,7 +878,7 @@ DQ
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="956" y="1124"/>
+            <point key="canvasLocation" x="644" y="1124"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -938,7 +938,7 @@ DQ
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="635" y="1124"/>
+            <point key="canvasLocation" x="961" y="1124"/>
         </scene>
         <!--Web Link Controller-->
         <scene sceneID="yhj-YB-Xij">
@@ -986,7 +986,7 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vvq-Eh-Bua" customClass="ZBreadcrumbsView" customModule="Thoughtful" customModuleProvider="target">
-                                <rect key="frame" x="-2" y="7" width="401" height="30"/>
+                                <rect key="frame" x="-2" y="4" width="364" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="EZn-DB-SIw"/>
                                 </constraints>
@@ -995,12 +995,32 @@ DQ
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <outlet property="clipButton" destination="Ch1-Y5-6sD" id="oAW-ym-Kw5"/>
+                                    <outlet property="heightConstraint" destination="EZn-DB-SIw" id="zCw-xm-dKh"/>
+                                    <outlet property="widthConstraint" destination="knh-AW-gJ2" id="5xo-AH-apO"/>
+                                </connections>
                             </textField>
+                            <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ch1-Y5-6sD">
+                                <rect key="frame" x="368" y="18" width="21" height="14"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="21" id="knh-AW-gJ2"/>
+                                </constraints>
+                                <buttonCell key="cell" type="bevel" bezelStyle="rounded" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="1MZ-57-Tfm">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="label" size="17"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="handleClipper:" target="vvq-Eh-Bua" id="4Xr-E1-1wa"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="vvq-Eh-Bua" firstAttribute="centerY" secondItem="W43-uk-txK" secondAttribute="centerY" id="2nY-zf-G1A"/>
+                            <constraint firstItem="vvq-Eh-Bua" firstAttribute="top" secondItem="W43-uk-txK" secondAttribute="top" constant="10" id="38t-Y7-qxJ"/>
+                            <constraint firstItem="vvq-Eh-Bua" firstAttribute="centerY" secondItem="Ch1-Y5-6sD" secondAttribute="centerY" constant="6" id="3Ic-Ye-2tb"/>
+                            <constraint firstItem="Ch1-Y5-6sD" firstAttribute="leading" secondItem="vvq-Eh-Bua" secondAttribute="trailing" constant="8" id="SXP-oc-Hip"/>
+                            <constraint firstAttribute="trailing" secondItem="Ch1-Y5-6sD" secondAttribute="trailing" constant="8" id="T5q-LO-7rx"/>
                             <constraint firstItem="vvq-Eh-Bua" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" id="TXr-bK-zHc"/>
-                            <constraint firstAttribute="trailing" secondItem="vvq-Eh-Bua" secondAttribute="trailing" id="j01-79-SEm"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1009,7 +1029,7 @@ DQ
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1056" y="650"/>
+            <point key="canvasLocation" x="1055.5" y="650"/>
         </scene>
     </scenes>
 </document>
