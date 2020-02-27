@@ -1369,13 +1369,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
     func validIndex(from iIndex: Int?) -> Int {
-        var index = iIndex ?? count		// bottom
+		var index = iIndex ?? (gListsGrowDown ? count : 0)
 
         if  index < 0 {
-			index = 0					// top
+			index = 0
         }
 
-        return index
+		return index   // count is bottom, 0 is top
     }
 
     @discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil) -> Int? {

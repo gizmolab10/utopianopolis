@@ -12,6 +12,7 @@ var gBreadcrumbsLabel: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbs
 
 class ZBreadcrumbsView : ZTextField {
 
+	var              numberClipped = 0
 	var                showClipper = false
 	@IBOutlet var       clipButton : NSButton?
 	@IBOutlet var  widthConstraint : NSLayoutConstraint?
@@ -22,6 +23,7 @@ class ZBreadcrumbsView : ZTextField {
 		var     array = gBreadcrumbs.crumbs
 		var    string = kCrumbSeparator + array.joined(separator: kCrumbSeparator) + kCrumbSeparator
 		showClipper   = false
+		numberClipped = 0
 
 		if  let     f = font {
 			var tRect = string.rect(using: f, for: NSRange(location: 0, length: string.length), atStart: true)
@@ -35,15 +37,16 @@ class ZBreadcrumbsView : ZTextField {
 					break
 				}
 
-				string = kCrumbSeparator + array.joined(separator: kCrumbSeparator) + kCrumbSeparator
-				tRect  = string.rect(using: f, for: NSRange(location: 0, length: string.length), atStart: true)
+				numberClipped += 1
+				string         = kCrumbSeparator + array.joined(separator: kCrumbSeparator) + kCrumbSeparator
+				tRect          = string.rect(using: f, for: NSRange(location: 0, length: string.length), atStart: true)
 			}
 		}
 
 		return string
 	}
 
-	var crumbRects: [CGRect] {
+	var crumbRects:  [CGRect] {
 		var  rects = [CGRect]()
 		let string = crumbsText
 		font       = gFavoritesFont
@@ -101,7 +104,7 @@ class ZBreadcrumbsView : ZTextField {
 
 		if  let hIndex = gBreadcrumbs.indexOfHere {
 			for (index, rect) in crumbRects.enumerated() {
-				if index >= hIndex {
+				if  index >= hIndex - numberClipped {
 					let  path = ZBezierPath(roundedRect: rect.insetBy(dx: -4.0, dy: 0.0), cornerRadius: rect.height / 2.0)
 
 					path.stroke()
