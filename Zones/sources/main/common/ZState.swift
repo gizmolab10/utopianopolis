@@ -21,7 +21,6 @@ let gDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
 #endif
 
-var                gWorkMode                     = ZWorkMode.startupMode
 var             gDeferRedraw                     = false
 var           gTextCapturing                     = false
 var         gIsReadyToShowUI                     = false
@@ -71,7 +70,6 @@ var  gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gL
 var        gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var          gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var	 			  gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
-var            gCurrentEssay:             ZNote? { didSet { gEssayRing.push() } }
 func           gSetGraphMode()                   { gWorkMode = .graphMode }
 
 var gCurrentEvent: ZEvent? {
@@ -446,8 +444,37 @@ var gCurrentGraph : ZFunction {
 
 #endif
 
+var gWorkMode: ZWorkMode = .startupMode {
+	didSet {
+		setPreferencesInt(gWorkMode.rawValue, for: kWorkMode)
+	}
+}
+
+var gCurrentEssay: ZNote? {
+	didSet {
+		if  let e = gCurrentEssay {
+			gEssayRing.push()
+			setPreferencesString(e.identifier(), for: kCurrentEssay)
+		}
+	}
+}
+
 // MARK:- actions
 // MARK:-
+
+func gRefreshCurrentEssay() {
+	if  let identifier = getPreferencesString(for: kCurrentEssay, defaultString: nil),
+		let      essay = gEssayRing.object(for: identifier) as? ZNote {
+		gCurrentEssay  = essay
+	}
+}
+
+func gRefreshPersistentWorkMode() {
+	if  let     mode = getPreferencesInt(for: kWorkMode, defaultInt: ZWorkMode.startupMode.rawValue),
+		let workMode = ZWorkMode(rawValue: mode) {
+		gWorkMode    = workMode
+	}
+}
 
 @discardableResult func toggleRingControlModes(isDirection: Bool) -> Bool {
 	if isDirection {
@@ -567,6 +594,22 @@ func setPreferencesString(_ iString: String?, for key: String) {
         UserDefaults.standard.set(string, forKey: key)
         UserDefaults.standard.synchronize()
     }
+}
+
+func getPreferencesInt(for key: String, defaultInt: Int?) -> Int? {
+	if  let         i = defaultInt,
+		let    string = getPreferencesString(for: key, defaultString: "\(i)") {
+		return string.integerValue
+	}
+
+	return defaultInt
+}
+
+func setPreferencesInt(_ iInt: Int?, for key: String) {
+	if  let i = iInt {
+		UserDefaults.standard.set("\(i)", forKey: key)
+		UserDefaults.standard.synchronize()
+	}
 }
 
 func getPreferencesBool(for key: String, defaultBool: Bool) -> Bool {

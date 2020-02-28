@@ -79,6 +79,8 @@ class ZControllers: NSObject {
 				gRemoteStorage.updateLastSyncDates()
 				gRemoteStorage.recount()
 				gEssayRing.fetchRingIDs()
+				gRefreshCurrentEssay()
+				gRefreshPersistentWorkMode()
 				self.signalMultiple([.eSwap, .eRelayout, .eLaunchDone])
 				self.requestFeedback()
 

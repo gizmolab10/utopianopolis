@@ -14,7 +14,7 @@ let gEssayRing = ZRing()
 protocol ZIdentifiable {
 	func recordName() -> String?
 	func identifier() -> String?
-	static func object(for id: String) -> NSObject?
+	static func object(for id: String, isExpanded: Bool) -> NSObject?
 }
 
 protocol ZToolable {
@@ -97,9 +97,9 @@ class ZRing: NSObject {
 
 		if  parts.count == 2 {
 			if  parts[0] == "note" {
-				return ZNote .object(for: parts[1])
+				return ZNote .object(for: parts[1], isExpanded: false)
 			} else {
-				return ZEssay.object(for: parts[1])
+				return ZEssay.object(for: parts[1], isExpanded: true)
 			}
 		}
 

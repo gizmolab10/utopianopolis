@@ -108,7 +108,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func recordName() -> String? { return recordName }
 	func identifier() -> String? { return recordName }
 	func toolName()   -> String? { return clippedName }
-	static func object(for id: String) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
+	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
     // MARK:- properties
     // MARK:-

@@ -21,7 +21,7 @@ class ZFocus: ZRing {
 	override var          isEssay : Bool              { return false }
 	override var    possiblePrime : NSObject?         { return gHereMaybe }
 	override var visibleRingTypes : ZTinyDotTypeArray { return ZTinyDotTypeArray.ideaTypes(ring.count) }
-	override func object(for id: String) -> NSObject? { return Zone.object(for: id) }
+	override func object(for id: String) -> NSObject? { return Zone.object(for: id, isExpanded: false) }
 	override func removeEmpties() {}
 
 	override var isPrime : Bool {

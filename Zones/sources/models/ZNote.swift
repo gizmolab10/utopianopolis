@@ -77,16 +77,20 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		}
 	}
 
-	static func object(for id: String) -> NSObject? {
+	static func object(for id: String, isExpanded: Bool) -> NSObject? {
+		var object: ZNote?
+
 		if  let       zone = gRemoteStorage.maybeZoneForRecordName(id),
 			zone.hasTrait(for: .tNote) {
-			let       note = ZNote(zone)
-			zone.noteMaybe = note
 
-			return note
+			object = isExpanded ? ZEssay(zone) : ZNote(zone)
+
+			if  let note = object {
+				zone.noteMaybe = note
+			}
 		}
 
-		return nil
+		return object
 	}
 
 	// MARK:- properties

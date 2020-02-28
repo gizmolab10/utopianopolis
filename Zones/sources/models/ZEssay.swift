@@ -22,6 +22,10 @@ class ZEssay: ZNote {
 	}
 
 	override var essayText: NSMutableAttributedString? {
+		gCreateCombinedEssay = true
+
+		setupChildren()
+
 		var result: NSMutableAttributedString?
 		var index  = children.count
 
@@ -56,6 +60,18 @@ class ZEssay: ZNote {
 		result?.fixAllAttributes()
 
 		return result
+	}
+
+	static func swobject(for id: String) -> NSObject? {
+		if  let       zone = gRemoteStorage.maybeZoneForRecordName(id),
+			zone.hasTrait(for: .tNote) {
+			let       note = ZNote(zone)
+			zone.noteMaybe = note
+
+			return note
+		}
+
+		return nil
 	}
 
 	override func setupChildren() {
