@@ -58,15 +58,22 @@ class ZEssayEditor: ZBaseEditor {
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
 		if  let    view = gEssayView {
+			let   SHIFT = flags.isShift
 			let  OPTION = flags.isOption
 			let COMMAND = flags.isCommand
-			let SPECIAL = COMMAND && OPTION
 
-			if         SPECIAL {
+			if         COMMAND && OPTION {
 				switch arrow {
 					case .left,
 						 .right: view.move(out: arrow == .left)
 					default:     break
+				}
+			} else if  COMMAND && SHIFT {
+				switch arrow {
+					case .up:    view.moveToBeginningOfDocumentAndModifySelection(nil)
+					case .down:  view.moveToEndOfDocumentAndModifySelection(nil)
+					case .left:  view.moveToLeftEndOfLineAndModifySelection(nil)
+					case .right: view.moveToRightEndOfLineAndModifySelection(nil)
 				}
 			} else if  COMMAND {
 				switch arrow {
@@ -74,6 +81,20 @@ class ZEssayEditor: ZBaseEditor {
 					case .down:  view.moveToEndOfParagraph(nil)
 					case .left:  view.moveToBeginningOfLine(nil)
 					case .right: view.moveToEndOfLine(nil)
+				}
+			} else if  OPTION && SHIFT {
+				switch arrow {
+					case .up:    view.moveToBeginningOfParagraphAndModifySelection(nil)
+					case .down:  view.moveToEndOfParagraphAndModifySelection(nil)
+					case .left:  view.moveWordLeftAndModifySelection(nil)
+					case .right: view.moveWordRightAndModifySelection(nil)
+				}
+			} else if  SHIFT {
+				switch arrow {
+					case .up:    view.moveUpAndModifySelection(nil)
+					case .down:  view.moveDownAndModifySelection(nil)
+					case .left:  view.moveLeftAndModifySelection(nil)
+					case .right: view.moveRightAndModifySelection(nil)
 				}
 			} else if  OPTION {
 				switch arrow {

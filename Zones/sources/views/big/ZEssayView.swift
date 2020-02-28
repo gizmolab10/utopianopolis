@@ -29,28 +29,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var selectionZone   : Zone?     { return selectedNotes.first?.zone }
 	var selectionRect   = CGRect()
 
-	func done() { save(); exit() }
+	// MARK:- mouse, key
+	// MARK:-
 
-	func exit() {
-		if  let e = gCurrentEssay {
-			if  e.lastTextIsDefault,
-				e.autoDelete {
-				e.delete()
-			}
+	override func mouseDown(with event: ZEvent) {
+		let   rect = CGRect(origin: event.locationInWindow, size: CGSize.zero)
+		let inRing = gRingView?.handleClick(in: rect, flags: event.modifierFlags) ?? false
 
-			if  let idea = e.zone {
-				gHere = idea
-			}
-		}
-
-		gControllers.swapGraphAndEssay()
-		signalRegarding(.eRelayout)
-	}
-
-	func save() {
-		if  let e = gCurrentEssay {
-			e.saveEssay(textStorage)
-			accountForSelection()
+		if !inRing {
+			super.mouseDown(with: event)
 		}
 	}
 
@@ -103,6 +90,31 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- setup
 	// MARK:-
 
+	func done() { save(); exit() }
+
+	func exit() {
+		if  let e = gCurrentEssay {
+			if  e.lastTextIsDefault,
+				e.autoDelete {
+				e.delete()
+			}
+
+			if  let idea = e.zone {
+				gHere = idea
+			}
+		}
+
+		gControllers.swapGraphAndEssay()
+		signalRegarding(.eRelayout)
+	}
+
+	func save() {
+		if  let e = gCurrentEssay {
+			e.saveEssay(textStorage)
+			accountForSelection()
+		}
+	}
+
 	override func awakeFromNib() {
 		super.awakeFromNib()
 
@@ -153,17 +165,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			delegate = self 						// set delegate after setText
 
 			gWindow?.makeFirstResponder(self)
-		}
-	}
-
-	override func mouseDown(with event: ZEvent) {
-		let    rect = CGRect(origin: event.locationInWindow, size: CGSize())
-		let CONTROL = event.modifierFlags.isControl
-		let COMMAND = event.modifierFlags.isCommand
-		let  inRing = gRingView?.handleClick(in: rect, CONTROL: CONTROL, COMMAND: COMMAND) ?? false
-
-		if !inRing {
-			super.mouseDown(with: event)
 		}
 	}
 

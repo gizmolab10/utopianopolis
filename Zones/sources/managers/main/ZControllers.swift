@@ -73,14 +73,13 @@ class ZControllers: NSObject {
 			FOREGROUND {
 				gIsReadyToShowUI = true
 
-				gSetGraphMode()
 				gFocusRing.push()
 				gHereMaybe?.grab()
 				gFavorites.updateAllFavorites()
 				gRemoteStorage.updateLastSyncDates()
 				gRemoteStorage.recount()
 				gEssayRing.fetchRingIDs()
-				self.signalFor(nil, multiple: [.eRelayout, .eLaunchDone])
+				self.signalMultiple([.eSwap, .eRelayout, .eLaunchDone])
 				self.requestFeedback()
 
 				gBatches.finishUp { iSame in

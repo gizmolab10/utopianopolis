@@ -140,8 +140,11 @@ class ZRingView: ZView {
 		return false
 	}
 
-	@discardableResult func handleClick(in rect: CGRect?, CONTROL: Bool = false, COMMAND: Bool = false) -> Bool {   // false means click was ignored
+	@discardableResult func handleClick(in rect: CGRect?, flags: ZEventFlags = ZEventFlags()) -> Bool {   // false means click was ignored
 		if  let item = self.item(containedIn: rect) {
+			let CONTROL = flags.isControl
+			let COMMAND = flags.isCommand
+
 			if (gFullRingIsVisible && respond(to: item, CONTROL: CONTROL, COMMAND: COMMAND)) || respondToRingControl(item) { // single item
 				signalRegarding(.eRelayout)
 
@@ -171,10 +174,8 @@ class ZRingView: ZView {
 	}
 
 	override func mouseDown(with event: ZEvent) {
-		let    rect = CGRect(origin: event.locationInWindow, size: CGSize())
-		let CONTROL = event.modifierFlags.isControl
-		let COMMAND = event.modifierFlags.isCommand
-		let  inRing = handleClick(in: rect, CONTROL: CONTROL, COMMAND: COMMAND)
+		let   rect = CGRect(origin: event.locationInWindow, size: CGSize())
+		let inRing = handleClick(in: rect, flags: event.modifierFlags)
 
 		if !inRing {
 			super.mouseDown(with: event)
