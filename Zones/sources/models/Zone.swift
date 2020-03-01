@@ -73,12 +73,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     hasEmail :               Bool  { return hasTrait(for: .tEmail) && email != "" }
 	var                     hasEssay :               Bool  { return hasTrait(for: .tNote) }
 	var                     hasAsset :               Bool  { return hasTrait(for: .tAsset) }
-    var                      isTrash :               Bool  { return recordName == kTrashName }
-    var                    isInTrash :               Bool  { return root?.isTrash              ?? false }
+    var                    isInTrash :               Bool  { return root?.isRootOfTrash        ?? false }
+	var                isRootOfTrash :               Bool  { return recordName == kTrashName }
     var                isInFavorites :               Bool  { return root?.isRootOfFavorites    ?? false }
     var             isInLostAndFound :               Bool  { return root?.isRootOfLostAndFound ?? false }
     var         isRootOfLostAndFound :               Bool  { return recordName == kLostAndFoundName }
-    var                isSpecialRoot :               Bool  { return isRootOfLostAndFound || isRootOfFavorites || isTrash }
+    var               isReadOnlyRoot :               Bool  { return isRootOfLostAndFound || isRootOfFavorites || isRootOfTrash }
     var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var                   spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
 
@@ -652,6 +652,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
+	var canEditNow: Bool {
+		return !gRefusesFirstResponder
+			&& !gIsEditingStateChanging
+			&&  userCanWrite
+			&& (self == gCurrentMouseDownZone || gCurrentKeyPressed == kReturn || gCurrentKeyPressed?.arrow != nil )
+	}
+
     // MARK:- write access
     // MARK:-
 
@@ -666,7 +673,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             return t.userHasDirectOwnership
         }
         
-        return !isTrash && !isRootOfFavorites && !isRootOfLostAndFound && !gDebugMode.contains(.access) && (databaseID == .mineID || zoneAuthor == gAuthorID || gIsMasterAuthor)
+        return !isRootOfTrash && !isRootOfFavorites && !isRootOfLostAndFound && !gDebugMode.contains(.access) && (databaseID == .mineID || zoneAuthor == gAuthorID || gIsMasterAuthor)
     }
 
     var directAccess: ZoneAccess {
@@ -722,6 +729,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     private var isIdeaEditable: Bool {    // this is a primitive, only called from userCanWrite
         if  let    t = bookmarkTarget {
             return t.isIdeaEditable
+		} else if isReadOnlyRoot {
+			return false
 		} else if directAccess == .eWritable || databaseID != .everyoneID {
             return true
         } else if let p = parentZone, p != self, p.parentZone != self {
@@ -810,7 +819,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 
     func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool, _ CLICKTWICE: Bool) {
-        if !gIsIdeaMode && isGrabbed && self == gHere { return } // nothing to do
+        if !gIsEditIdeaMode && isGrabbed && self == gHere { return } // nothing to do
 
         let shouldFocus = COMMAND || (CLICKTWICE && isGrabbed)
 

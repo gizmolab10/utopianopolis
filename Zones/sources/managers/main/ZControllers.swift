@@ -63,8 +63,8 @@ class ZControllers: NSObject {
 	// MARK:-
 
 	func startupCloudAndUI() {
-		gBatches         .usingDebugTimer = true
-		gTextEditor.refusesFirstResponder = true			// WORKAROUND new feature of mac os x
+		gBatches.usingDebugTimer = true
+		gRefusesFirstResponder   = true			// WORKAROUND new feature of mac os x
 
 		gRemoteStorage.clear()
 		self.redrawGraph()
@@ -86,9 +86,9 @@ class ZControllers: NSObject {
 
 				gBatches.finishUp { iSame in
 					FOREGROUND {
-						gBatches		 .usingDebugTimer = false
-						gTextEditor.refusesFirstResponder = false
-						gHasFinishedStartup               = true
+						gBatches.usingDebugTimer = false
+						gRefusesFirstResponder   = false
+						gHasFinishedStartup      = true
 
 						self.signalMultiple([.eRing, .eCrumbs])
 //						self.blankScreenDebug()

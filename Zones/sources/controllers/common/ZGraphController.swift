@@ -304,7 +304,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			let    inCrumb = gBreadcrumbsLabel != nil && gBreadcrumbsLabel!.hitCrumb(gesture.location(in: nil)) != nil
             var withinEdit = false
             
-            editWidget?.widgetZone?.deferWrite()
+			gCurrentMouseDownZone = nil
+
+			editWidget?.widgetZone?.deferWrite()
 
 			if  editWidget != nil {
 
@@ -318,20 +320,25 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             }
 
             if  !withinEdit, !inCrumb {
-				if  let   widget = detectWidget(gesture) {
-					if  let zone = widget.widgetZone,
-						let  dot = detectDotIn(widget, gesture) {
-						
-						// ///////////////
-						// click in dot //
-						// ///////////////
+				gSetGraphMode()
 
-						if  dot.isReveal {
-							gGraphEditor.clickActionOnRevealDot(for: zone, COMMAND: COMMAND, OPTION: OPTION)
-						} else {
-							regarding = .eDetails // update selection level
-							
-							zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
+				if  let   widget = detectWidget(gesture) {
+					if  let zone = widget.widgetZone {
+						gCurrentMouseDownZone = zone
+
+						if  let dot = detectDotIn(widget, gesture) {
+
+							// ///////////////
+							// click in dot //
+							// ///////////////
+
+							if  dot.isReveal {
+								gGraphEditor.clickActionOnRevealDot(for: zone, COMMAND: COMMAND, OPTION: OPTION)
+							} else {
+								regarding = .eDetails // update selection level
+
+								zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
+							}
 						}
 					}
 				} else {
@@ -553,7 +560,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     
     func isEditingText(at location: CGPoint) -> Bool {
-        if  gIsIdeaMode, let textWidget = gCurrentlyEditingWidget {
+        if  gIsEditIdeaMode, let textWidget = gCurrentlyEditingWidget {
             let rect = textWidget.convert(textWidget.bounds, to: dragView)
 
             return rect.contains(location)

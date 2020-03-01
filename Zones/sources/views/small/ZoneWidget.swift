@@ -511,7 +511,7 @@ class ZoneWidget: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-		if  gIsGraphOrIdeaMode,
+		if  gIsGraphOrEditIdeaMode,
 			let             zone = widgetZone {
             let        isGrabbed = zone.isGrabbed
             let        isEditing = textWidget.isFirstResponder

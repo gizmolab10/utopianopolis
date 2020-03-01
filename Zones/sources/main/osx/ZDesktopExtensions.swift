@@ -710,8 +710,8 @@ extension ZoneTextWidget {
 
 
     override func textDidEndEditing(_ notification: Notification) {
-		if !gTextEditor.isEditingStateChanging,
-			gIsIdeaMode,
+		if !gIsEditingStateChanging,
+			gIsEditIdeaMode,
 			let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
             let        value = number.intValue
             let      isShift = NSEvent.modifierFlags.isShift
@@ -765,7 +765,48 @@ extension ZTextEditor {
         }
     }
 	
-	
+	func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
+		if  var        key = iKey {
+			let    CONTROL = flags.isControl
+			let    COMMAND = flags.isCommand
+			let     OPTION = flags.isOption
+			let    SPECIAL = COMMAND && OPTION
+			let    FLAGGED = COMMAND || OPTION || CONTROL
+//			var      SHIFT = flags.isShift
+			let editedZone = currentTextWidget?.widgetZone
+			let      arrow = key.arrow
+
+			if  key       != key.lowercased() {
+				key        = key.lowercased()
+//				SHIFT      = true
+			}
+
+			if  let      a = arrow {
+				gTextEditor.handleArrow(a, flags: flags)
+			} else if FLAGGED {
+				switch key {
+					case "i": showSpecialsPopup()
+					case "j": if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
+					case "y": gBreadcrumbs.toggleBreadcrumbExtent()
+					case "?": gControllers.showShortcuts()
+					case "-": return editedZone?.convertToFromLine() ?? false // false means key not handled
+					default:  return false
+				}
+			} else if "|<>[]{}() \'\"".contains(key) {
+				return        editedZone?.surround(by: key) ?? false
+			} else {
+				switch key {
+					case "-":      return editedZone?.convertToFromLine() ?? false
+					case kReturn:  stopCurrentEdit()
+					case kEscape:  cancel()
+					default:       return false // false means key not handled
+				}
+			}
+		}
+
+		return true
+	}
+
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
         if gIsShortcutsFrontmost { return }
 

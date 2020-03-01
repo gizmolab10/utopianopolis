@@ -75,7 +75,7 @@ enum ZWorkMode: Int {
     case startupMode
     case searchMode
     case graphMode
-	case ideaMode
+	case editIdeaMode
 	case noteMode
     // case outlineMode
 }
@@ -280,6 +280,8 @@ enum ZSpecialsMenuType: String {
 
 // MARK: - debug
 // MARK: -
+
+var gDebugMode: [ZDebugMode] = [.focus, .speed]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 1

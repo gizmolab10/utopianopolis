@@ -1892,7 +1892,7 @@ extension ZView {
 
 extension ZTextField {
 
-    var       isEditingText:  Bool { return gIsIdeaMode }
+    var       isEditingText:  Bool { return gIsEditIdeaMode }
     @objc var preferredFont: ZFont { return gWidgetFont }
 
     @objc func selectCharacter(in range: NSRange) {}

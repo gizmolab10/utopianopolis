@@ -14,21 +14,20 @@ import AppKit
 import UIKit
 #endif
 
-
 let gTextEditor = ZTextEditor()
 var gCurrentlyEditingWidget: ZoneTextWidget? { return gTextEditor.currentTextWidget }
 
-
 class ZTextPack: NSObject {
-    let          createdAt = Date()
-    var         packedZone:           Zone?
-    var        packedTrait:         ZTrait?
-    var       originalText:         String?
-    var         textWidget: ZoneTextWidget? { return widget?.textWidget }
-    var             widget:     ZoneWidget? { return packedZone?.widget }
-    var     isEditingEmail:            Bool { return packedTrait?.traitType == .tEmail }
-    var isEditingHyperlink:            Bool { return packedTrait?.traitType == .tHyperlink }
-    var   adequatelyPaused:            Bool { return Date().timeIntervalSince(createdAt) > 0.1 }
+
+	let          createdAt =           Date()
+    var         packedZone :           Zone?
+    var        packedTrait :         ZTrait?
+    var       originalText :         String?
+    var         textWidget : ZoneTextWidget? { return widget?.textWidget }
+    var             widget :     ZoneWidget? { return packedZone?.widget }
+    var     isEditingEmail :           Bool  { return packedTrait?.traitType == .tEmail }
+    var isEditingHyperlink :           Bool  { return packedTrait?.traitType == .tHyperlink }
+    var   adequatelyPaused :           Bool  { return Date().timeIntervalSince(createdAt) > 0.1 }
 
 
     var displayType: String {
@@ -89,9 +88,8 @@ class ZTextPack: NSObject {
     
     // MARK:- internals: editing zones and traits
     // MARK:-
-    
 
-    convenience init(_ iZRecord: ZRecord) {
+	convenience init(_ iZRecord: ZRecord) {
         self.init()
         self.edit(iZRecord)
     }
@@ -211,9 +209,8 @@ class ZTextPack: NSObject {
             }
         }
     }
-    
 
-    func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
+	func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
         if  let text = textWidget?.text,
             text    != originalText {
             manager?.registerUndo(withTarget:self) { iUndoSelf in
@@ -228,15 +225,11 @@ class ZTextPack: NSObject {
 
 }
 
-
 class ZTextEditor: ZTextView {
 
-    
-    var cursorOffset: CGFloat? 
+    var  cursorOffset: CGFloat?
     var currentOffset: CGFloat?
-	var currentEdit: ZTextPack? { didSet { gWorkMode = (currentEdit != nil) ? .ideaMode : .graphMode } }
-	var refusesFirstResponder  = false
-    var isEditingStateChanging = false
+	var currentEdit: ZTextPack?
     var currentlyEditingZone: Zone? { return currentEdit?.packedZone }
     var currentTextWidget: ZoneTextWidget? { return currentlyEditingZone?.widget?.textWidget }
     var currentZoneName: String { return currentlyEditingZone?.zoneName ?? "" }
@@ -244,14 +237,11 @@ class ZTextEditor: ZTextView {
     var atEnd:   Bool { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
     var atStart: Bool { return selectedRange.upperBound == 0 }
 
-    
     // MARK:- editing
     // MARK:-
-    
 
     func clearOffset() { currentOffset = nil }
-	func clearEdit()   { currentEdit = nil; clearOffset(); fullResign() }
-
+	func clearEdit()   { currentEdit = nil; clearOffset(); fullResign(); gSetGraphMode() }
 
     func cancel() {
         if  let    e = currentEdit,
@@ -261,8 +251,7 @@ class ZTextEditor: ZTextView {
             e.updateWidgetsForEndEdit()
         }
     }
-    
-    
+
     @discardableResult func updateText(inZone: Zone?, isEditing: Bool = false) -> ZTextPack? {
         var pack: ZTextPack?
         
@@ -274,21 +263,15 @@ class ZTextEditor: ZTextView {
         return pack
     }
 
-    
-    func allowAsFirstResponder(_ iTextWidget: ZoneTextWidget) -> Bool {
-        return !refusesFirstResponder && !isEditingStateChanging && !iTextWidget.isFirstResponder && iTextWidget.widgetZone?.userCanWrite ?? false
-	}
-	
-	
 	func edit(_ zRecord: ZRecord, andSelect text: String?) {
 		edit(zRecord)
 		FOREGROUND {
 			self.selectText(text)
 		}
     }
-    
+
     func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, immediately: Bool = false) {
-        if (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
+        if  (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
             let pack = ZTextPack(zRecord)
             if  pack.packedZone?.userCanWrite ?? false,
                 let     textWidget = pack.textWidget,
@@ -296,7 +279,7 @@ class ZTextEditor: ZTextView {
                 currentEdit        = pack
 				let           zone = textWidget.widget?.widgetZone
 
-				print(zone?.unwrappedName ?? "")
+				print("begin edit: " + (zone?.unwrappedName ?? ""))
 
                 pack.updateText(isEditing: true)
 				gSelecting.ungrabAll(retaining: zone == nil ? [] : [zone!])		// so crumbs will appear correctly
@@ -304,8 +287,9 @@ class ZTextEditor: ZTextView {
                 textWidget.layoutTextField()
                 textWidget.becomeFirstResponder()
 				signalRegarding(.eCrumbs)
-                
-                if  let at = setOffset {
+				gSetEditIdeaMode()
+
+                if  let at = setOffset ?? gCurrentMouseDownLocation?.x {
                     if  immediately {
                         setCursor(at: at)
                     } else {
@@ -315,33 +299,33 @@ class ZTextEditor: ZTextView {
                     }
                 }
                 
-                if  let widget = textWidget.widget {
-                    widget.layoutDots()
-                    widget.revealDot.setNeedsDisplay()
-                    widget.setNeedsDisplay()
-                }
+//                if  let widget = textWidget.widget {
+//                    widget.layoutDots()
+//                    widget.revealDot.setNeedsDisplay()
+//                    widget.setNeedsDisplay()
+//                }
 
-                deferEditingStateChange()
+				gCurrentMouseDownZone     = nil
+				gCurrentMouseDownLocation = nil
+
+				deferEditingStateChange()
             }
         }
     }
-    
-    
-    func placeCursorAtEnd() {
+
+	func placeCursorAtEnd() {
         selectedRange = NSMakeRange(-1, 0)
     }
-    
-    
-    func applyPreservingOffset(_ closure: Closure) {
+
+	func applyPreservingOffset(_ closure: Closure) {
         let o = currentOffset
         
         closure()
         
         currentOffset = o
     }
-    
-    
-    func applyPreservingEdit(_ closure: Closure) {
+
+	func applyPreservingEdit(_ closure: Closure) {
         let e = currentEdit
 
         applyPreservingOffset {
@@ -360,10 +344,9 @@ class ZTextEditor: ZTextView {
             }
         }
     }
-    
-    
-    func stopCurrentEdit(forceCapture: Bool = false) {
-        if  let e = currentEdit, !isEditingStateChanging {
+
+	func stopCurrentEdit(forceCapture: Bool = false) {
+        if  let e = currentEdit, !gIsEditingStateChanging {
             capture(force: forceCapture)
             clearEdit()
             fullResign()
@@ -375,27 +358,24 @@ class ZTextEditor: ZTextView {
 
 
     func deferEditingStateChange() {
-        isEditingStateChanging          = true
+        gIsEditingStateChanging     = true
 
         FOREGROUND(after: 0.1) {
-            self.isEditingStateChanging = false
+            gIsEditingStateChanging = false
         }
     }
 
-
-    func capture(force: Bool = false) {
+	func capture(force: Bool = false) {
         if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
             current.captureTextAndSync(text)
         }
     }
-
 
     func assign(_ iText: String?, to iZone: Zone?) {
         if  let zone = iZone {
             ZTextPack(zone).captureTextAndSync(iText)
         }
     }
-
 
     func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
         currentEdit?.prepareUndoForTextChange(manager, onUndo)
@@ -450,14 +430,12 @@ class ZTextEditor: ZTextView {
             }
         }
     }
-    
-    
-    func editingOffset(_ atStart: Bool) -> CGFloat {
+
+	func editingOffset(_ atStart: Bool) -> CGFloat {
         return currentTextWidget?.offset(for: selectedRange, atStart) ?? 0.0
     }
-    
 
-    func moveUp(_ iMoveUp: Bool, stopEdit: Bool) {
+	func moveUp(_ iMoveUp: Bool, stopEdit: Bool) {
         currentOffset   = currentOffset ?? editingOffset(iMoveUp)
         let currentZone = currentlyEditingZone
         let      isHere = currentZone == gHere
@@ -484,7 +462,7 @@ class ZTextEditor: ZTextView {
                         if  original != currentZone { // if move up (above) does nothing, ignore
                             self.edit(original)
                         } else {
-                            self.currentEdit = e // restore after capture sets it to nill
+                            self.currentEdit = e // restore after capture sets it to nil
 
                             gSelecting.ungrabAll()
                             e?.textWidget?.becomeFirstResponder()
@@ -498,17 +476,16 @@ class ZTextEditor: ZTextView {
             }
         }
     }
-    
-    
-    func setCursor(at iOffset: CGFloat?) {
+
+	func setCursor(at iOffset: CGFloat?) {
         gArrowsDoNotBrowse  = false
 
         if  var   offset = iOffset,
             let     zone = currentlyEditingZone,
             let       to = currentTextWidget {
-            var    point = CGPoint(x: offset, y: 0.0)
+			var    point = CGPoint.zero
             point        = to.convert(point, from: nil)
-            offset       = point.x
+            offset      += point.x
             let     name = zone.unwrappedName
             let location = name.location(of: offset, using: currentFont)
             

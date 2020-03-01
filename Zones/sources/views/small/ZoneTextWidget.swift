@@ -116,14 +116,23 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         
         return nil
     }
-    
+
+	override func mouseDown(with event: NSEvent) {
+		gCurrentMouseDownLocation = event.locationInWindow
+		gCurrentMouseDownZone     = widgetZone
+
+		if !becomeFirstResponder() {
+			super.mouseDown(with: event)
+		}
+	}
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-		if  let zone = widgetZone,
-			gTextEditor.allowAsFirstResponder(self),
-			super.becomeFirstResponder() {  // becomeFirstResponder is called first so delegate methods will be called
+		if !isFirstResponder,
+			let zone = widgetZone,
+			zone.canEditNow,                 // detect if mouse down inside widget OR key pressed
+			super.becomeFirstResponder() {   // becomeFirstResponder is called first so delegate methods will be called
 
-			if !gIsGraphOrIdeaMode {
+			if !gIsGraphOrEditIdeaMode {
                 gSearching.exitSearchMode()
             }
 
@@ -158,7 +167,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     func extractTitleOrSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
         var      extract = extractedTitle
 
-        if  let original = text, gIsIdeaMode {
+        if  let original = text, gIsEditIdeaMode {
             let    range = gTextEditor.selectedRange
             extract      = original.substring(with: range)
 
@@ -202,7 +211,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
              zone.canTravel,
             !zone.isGrabbed,
             !isFirstResponder,
-			gIsGraphOrIdeaMode {
+			gIsGraphOrEditIdeaMode {
 
             // /////////////////////////////////////////////////////
             // draw line underneath text indicating it can travel //

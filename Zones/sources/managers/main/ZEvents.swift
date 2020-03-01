@@ -81,7 +81,7 @@ class ZEvents: NSObject {
 							} else {
 								return gEssayEditor.handleEvent(event, isWindow: true)
 							}
-						case .graphMode, .ideaMode:
+						case .graphMode, .editIdeaMode:
 							if  gIsShortcutsFrontmost {
 								return  gShortcuts?.handleEvent(event) ?? nil
 							} else {

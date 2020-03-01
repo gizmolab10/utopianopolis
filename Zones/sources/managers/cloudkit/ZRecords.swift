@@ -300,7 +300,7 @@ class ZRecords: NSObject {
             if  let zone = zRecord as? Zone { // ONLY count zones
                 if !zone.canSaveWithoutFetch {
                     nCount += 1
-                } else if let root = zone.root, !root.isTrash, !root.isRootOfFavorites, !root.isRootOfLostAndFound {
+                } else if let root = zone.root, !root.isRootOfTrash, !root.isRootOfFavorites, !root.isRootOfLostAndFound {
                     continue
                 }
             }

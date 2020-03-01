@@ -49,7 +49,7 @@ class ZFavorites: ZRecords {
 
     var hasTrash: Bool {
         for favorite in workingFavorites {
-            if  let target = favorite.bookmarkTarget, target.isTrash {
+            if  let target = favorite.bookmarkTarget, target.isRootOfTrash {
                 return true
             }
         }

@@ -24,7 +24,7 @@ let gGraphEditor = ZGraphEditor()
 
 
 class ZGraphEditor: ZBaseEditor {
-	override func canHandleKey() -> Bool { return gIsGraphOrIdeaMode }
+	override func canHandleKey() -> Bool { return gIsGraphOrEditIdeaMode }
 
 	// MARK:- events
 	// MARK:-
@@ -71,8 +71,7 @@ class ZGraphEditor: ZBaseEditor {
     }
     
     @discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
-		if !super.handleKey(iKey, flags: flags, isWindow: isWindow),
-			var     key = iKey {
+		if  var     key = iKey {
             let CONTROL = flags.isControl
             let COMMAND = flags.isCommand
             let  OPTION = flags.isOption
@@ -88,45 +87,35 @@ class ZGraphEditor: ZBaseEditor {
                 SHIFT   = true
             }
 
-            if  gIsIdeaMode {
-                let editedZone = gCurrentlyEditingWidget?.widgetZone
-                if  let      a = arrow {
-                    gTextEditor.handleArrow(a, flags: flags)
-                } else if FLAGGED {
-                    switch key {
-                    case "a":      gCurrentlyEditingWidget?.selectAllText()
-                    case "d":      tearApartCombine(ALL, editedZone)
-                    case "f":      search(OPTION)
-                    case "i":      gTextEditor.showSpecialsPopup()
-					case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
-					case "n":      grabOrEdit(true, OPTION)
-                    case "p":      printCurrentFocus()
-					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
-                    case "?":      gControllers.showShortcuts()
-                    case "-":      return editedZone?.convertToFromLine() ?? false // false means key not handled
-					case "/":      if IGNORED { return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
-                    case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
-                    case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
-                    case kSpace:   addIdea()
-					case kReturn:  if COMMAND { grabOrEdit(COMMAND, OPTION) }
-					case kEscape:               grabOrEdit(   true, OPTION, true)
-                    case kBackspace,
-                         kDelete:  if CONTROL { focusOnTrash() }
-                    default:       return false // false means key not handled
-                    }
-                } else if "|<>[]{}() \'\"".contains(key) {
-                    return         editedZone?.surround(by: key) ?? false
-                } else {
-                    switch key {
-                    case "-":      return editedZone?.convertToFromLine() ?? false
-                    case kEscape:  gTextEditor.cancel()
-                    default:       return false // false means key not handled
-                    }
-                }
+            if  gIsEditIdeaMode {
+				if !gTextEditor.handleKey(iKey, flags: flags) {
+					if !FLAGGED {
+						return false
+					} else {
+						switch key {
+							case "a":      gCurrentlyEditingWidget?.selectAllText()
+							case "d":      tearApartCombine(ALL, gCurrentlyEditingWidget?.widgetZone)
+							case "f":      search(OPTION)
+							case "n":      grabOrEdit(true, OPTION)
+							case "p":      printCurrentFocus()
+							case "/":      if IGNORED { return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
+							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
+							case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
+							case kSpace:   addIdea()
+							case kReturn:  if COMMAND { grabOrEdit(COMMAND, OPTION) }
+							case kEscape:               grabOrEdit(   true, OPTION, true)
+							case kBackspace,
+								 kDelete:  if CONTROL { focusOnTrash() }
+							default:       return false // false means key not handled
+						}
+					}
+				}
             } else if isValid(key, flags) {
                 let    widget = gWidgets.currentMovableWidget
                 let hasWidget = widget != nil
-                
+
+				gCurrentKeyPressed = key
+
                 widget?.widgetZone?.deferWrite()
                 
                 if  let a = arrow, isWindow {
@@ -158,20 +147,20 @@ class ZGraphEditor: ZBaseEditor {
 					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
-					case "-":      return handleHyphen(COMMAND, OPTION)
-                    case "/":      if IGNORED { return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.redrawGraph() } }
+					case "-":      gCurrentKeyPressed = nil; return handleHyphen(COMMAND, OPTION)
+                    case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.redrawGraph() } }
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
                     case "[":      gFocusRing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusRing.goForward(extreme: FLAGGED)
-                    case "?":      if CONTROL { openBrowserForFocusWebsite() } else { return false }
+                    case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 					case "=":      if COMMAND { updateSize(up: true) } else { gFocusRing.invokeTravel(gSelecting.firstSortedGrab) { self.redrawGraph() } }
                     case ";", "'": gFavorites.switchToNext(key == "'") { self.redrawGraph() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addNextAndRedraw(containing: OPTION)
-					case kSpace:   if OPTION || isWindow || CONTROL { addIdea() } else { return false }
+					case kSpace:   if OPTION || isWindow || CONTROL { addIdea() } else { gCurrentKeyPressed = nil; return false }
                     case kBackspace,
-                         kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { deleteGrabbed(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { return false }
-                    case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) } else { return false }
+                         kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { deleteGrabbed(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
+                    case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) } else { gCurrentKeyPressed = nil; return false }
 					case kEscape:                 grabOrEdit(true,    OPTION, true)
                     default:       return false // indicate key was not handled
                     }
@@ -179,7 +168,9 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
 
-        return true // indicate key was handled
+        gCurrentKeyPressed = nil
+
+		return true // indicate key was handled
     }
 
 	func popAndUpdate() {
@@ -189,7 +180,7 @@ class ZGraphEditor: ZBaseEditor {
 	}
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        if  gIsIdeaMode || gArrowsDoNotBrowse {
+        if  gIsEditIdeaMode || gArrowsDoNotBrowse {
             gTextEditor.handleArrow(arrow, flags: flags)
             
             return
@@ -281,7 +272,7 @@ class ZGraphEditor: ZBaseEditor {
 
 
     override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
-        if !gIsGraphOrIdeaMode {
+        if !gIsGraphOrEditIdeaMode {
             return false
         }
 		
@@ -290,7 +281,7 @@ class ZGraphEditor: ZBaseEditor {
 		}
 
         let  type = menuType(for: key, flags)
-        var valid = !gIsIdeaMode
+        var valid = !gIsEditIdeaMode
 
         if  valid,
 			type 	   != .eAlways {
@@ -301,7 +292,7 @@ class ZGraphEditor: ZBaseEditor {
             let   grabs = select.currentGrabs  .count
             let   shown = select.currentGrabsHaveVisibleChildren
             let   mover = select.currentMoveable
-            let canTint = mover.isSpecialRoot || mover.bookmarkTarget?.isSpecialRoot ?? false
+            let canTint = mover.isReadOnlyRoot || mover.bookmarkTarget?.isReadOnlyRoot ?? false
             let   write = mover.userCanWrite
             let    sort = mover.userCanMutateProgeny
             let  parent = mover.userCanMove
@@ -367,14 +358,14 @@ class ZGraphEditor: ZBaseEditor {
         if     !COMMAND || (OPTION && PERIOD) {
             toggleRingControlModes(isDirection:  PERIOD)
             
-            if  gIsIdeaMode     && PERIOD {
+            if  gIsEditIdeaMode     && PERIOD {
                 swapAndResumeEdit()
             }
 
             signalMultiple([.eMain, .eGraph, .ePreferences])
         } else if !PERIOD {
             gDetailsController?.toggleViewsFor(ids: [.Preferences])
-        } else if gIsIdeaMode {
+        } else if gIsEditIdeaMode {
             gTextEditor.cancel()
         }
     }
@@ -463,7 +454,7 @@ class ZGraphEditor: ZBaseEditor {
 
 			gControllers.swapGraphAndEssay()
         } else {									// switch to idea edit mode
-            gTextEditor.edit(gSelecting.currentMoveable)
+			gTextEditor.edit(gSelecting.currentMoveable)
             
             if  OPTION {
                 gTextEditor.placeCursorAtEnd()
@@ -1471,7 +1462,7 @@ class ZGraphEditor: ZBaseEditor {
                 onCompletion?()
             }
             
-            if zone.isRoot || zone.isTrash || parentZone == gFavoritesRoot {
+            if zone.isRoot || zone.isRootOfTrash || parentZone == gFavoritesRoot {
                 complete() // avoid the ridiculous
             } else if selectionOnly {
                 

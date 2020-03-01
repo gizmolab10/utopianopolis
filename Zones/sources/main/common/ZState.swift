@@ -18,59 +18,64 @@ var gTextOffset: CGFloat?
 import UIKit
 let gFontDelta = 17.0
 let gDotFactor = CGFloat(1.25)
-var gTextOffset: CGFloat? { return gTextEditor.cursorOffset }
+var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
-var             gDeferRedraw                     = false
-var           gTextCapturing                     = false
-var         gIsReadyToShowUI                     = false
-var       gKeyboardIsVisible                     = false
-var       gArrowsDoNotBrowse                     = false
-var     gCreateCombinedEssay 			   		 = false
-var      gHasFinishedStartup                     = false
-var  			  gDebugMode:		[ZDebugMode] = [.focus, .speed]
-var   gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
-var      gCurrentBrowseLevel:               Int?
-var         gDragDropIndices: NSMutableIndexSet?
-var            gDragRelation:         ZRelation?
-var            gDragDropZone:              Zone?
-var             gDraggedZone:              Zone?
-var               gDragPoint:           CGPoint?
-var                gExpanded:          [String]?
+var              gDeferRedraw                     = false
+var            gTextCapturing                     = false
+var          gIsReadyToShowUI                     = false
+var        gKeyboardIsVisible                     = false
+var        gArrowsDoNotBrowse                     = false
+var       gHasFinishedStartup                     = false
+var      gCreateCombinedEssay 			   		  = false
+var    gRefusesFirstResponder                     = false
+var   gIsEditingStateChanging                     = false
+var    gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
+var gCurrentMouseDownLocation:           CGPoint?
+var     gCurrentMouseDownZone:              Zone?
+var       gCurrentBrowseLevel:               Int?
+var        gCurrentKeyPressed:            String?
+var          gDragDropIndices: NSMutableIndexSet?
+var             gDragRelation:         ZRelation?
+var             gDragDropZone:              Zone?
+var              gDraggedZone:              Zone?
+var                gDragPoint:           CGPoint?
+var                 gExpanded:          [String]?
 
-var                gDarkMode:     InterfaceStyle { return InterfaceStyle() }
-var                  gIsDark:               Bool { return gDarkMode == .Dark }
-var                  gIsLate:               Bool { return gBatches.isLate }
-var              gIsDragging:               Bool { return gDraggedZone != nil }
-var    gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
-var      gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
-var           gListsGrowDown:               Bool { return gListGrowthMode == .down }
-var          gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
-var              gIsIdeaMode:               Bool { return gWorkMode == .ideaMode }
-var              gIsNoteMode:               Bool { return gWorkMode == .noteMode }
-var             gIsGraphMode:               Bool { return gWorkMode == .graphMode }
-var            gIsSearchMode:               Bool { return gWorkMode == .searchMode }
-var       gIsGraphOrIdeaMode:               Bool { return gIsGraphMode || gIsIdeaMode }
-var   gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
-var                gDragView:         ZDragView? { return gGraphController?.dragView }
-var               gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
-var                gDotWidth:             Double { return gDotHeight * 0.75 }
-var      gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
-var                gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
-var              gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
-var           gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
-var        gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : ZColor.black }
-var        gNecklaceDotColor:             ZColor { return gBackgroundColor.darker  (by: 1.3)   }
-var   gDarkerBackgroundColor:             ZColor { return gBackgroundColor.darker  (by: 4.0)   }
-var  gDarkishBackgroundColor:             ZColor { return gBackgroundColor.darkish (by: 1.028) }
-var gLightishBackgroundColor:             ZColor { return gBackgroundColor.lightish(by: 1.02)  }
-var  gLighterBackgroundColor:             ZColor { return gBackgroundColor.lighter (by: 4.0)   }
-var  gLighterRubberbandColor:             ZColor { return gRubberbandColor.lighter (by: 4.0)   }
-var  gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gLighterRubberbandColor }
-var        gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
-var          gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
-var	 			  gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
-func           gSetGraphMode()                   { gWorkMode = .graphMode }
+var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
+var                   gIsDark:               Bool { return gDarkMode == .Dark }
+var                   gIsLate:               Bool { return gBatches.isLate }
+var               gIsDragging:               Bool { return gDraggedZone != nil }
+var     gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
+var       gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
+var            gListsGrowDown:               Bool { return gListGrowthMode == .down }
+var           gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
+var               gIsNoteMode:               Bool { return gWorkMode == .noteMode }
+var              gIsGraphMode:               Bool { return gWorkMode == .graphMode }
+var             gIsSearchMode:               Bool { return gWorkMode == .searchMode }
+var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIdeaMode }
+var    gIsGraphOrEditIdeaMode:               Bool { return gIsGraphMode || gIsEditIdeaMode }
+var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
+var                 gDragView:         ZDragView? { return gGraphController?.dragView }
+var                gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
+var                 gDotWidth:             Double { return gDotHeight * 0.75 }
+var       gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
+var                 gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
+var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
+var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
+var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : ZColor.black }
+var         gNecklaceDotColor:             ZColor { return gBackgroundColor.darker  (by: 1.3)   }
+var    gDarkerBackgroundColor:             ZColor { return gBackgroundColor.darker  (by: 4.0)   }
+var   gDarkishBackgroundColor:             ZColor { return gBackgroundColor.darkish (by: 1.028) }
+var  gLightishBackgroundColor:             ZColor { return gBackgroundColor.lightish(by: 1.02)  }
+var   gLighterBackgroundColor:             ZColor { return gBackgroundColor.lighter (by: 4.0)   }
+var   gLighterRubberbandColor:             ZColor { return gRubberbandColor.lighter (by: 4.0)   }
+var   gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gLighterRubberbandColor }
+var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
+var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
+var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
+func         gSetEditIdeaMode()                   { gWorkMode = .editIdeaMode }
+func            gSetGraphMode()                   { gWorkMode = .graphMode }
 
 var gCurrentEvent: ZEvent? {
 	didSet {
@@ -446,7 +451,9 @@ var gCurrentGraph : ZFunction {
 
 var gWorkMode: ZWorkMode = .startupMode {
 	didSet {
-		setPreferencesInt(gWorkMode.rawValue, for: kWorkMode)
+		if !gIsEditIdeaMode {
+			setPreferencesInt(gWorkMode.rawValue, for: kWorkMode)
+		}
 	}
 }
 

@@ -654,7 +654,7 @@ class ZCloud: ZRecords {
         let predicate = self.predicate(since: start, before: end)
         var retrieved = [CKRecord] ()
 
-        queryFor(type, with: predicate, properties: properties, batchSize: CKQueryOperation.maximumResults) { (iRecord, iError) in
+        queryFor(type, with: predicate, properties: properties, batchSize: kBatchSize) { (iRecord, iError) in
             if  iError   != nil {
                 if start == nil {
                     onCompletion?(retrieved) // NEED BETTER ERROR HANDLING

@@ -48,13 +48,10 @@ class ZMainController: ZGenericController {
 					assignAsFirstResponder(nil)
 				}
 			case .eSwap:
-				if  let 	   			  vEssay = essayView,
-					let                   vGraph = graphView {
-					let                   editor = gTextEditor
-					editor.refusesFirstResponder = true			// WORKAROUND new feature of mac os x
-					vEssay  		   .isHidden =  hideEssay
-					vGraph  		   .isHidden = !hideEssay
-					editor.refusesFirstResponder = false
+				if  let 	   			 vEssay = essayView,
+					let                  vGraph = graphView {
+					vEssay  		  .isHidden =  hideEssay
+					vGraph  	  	  .isHidden = !hideEssay
 				}
 			default: break
         }

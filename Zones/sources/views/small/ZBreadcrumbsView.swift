@@ -114,12 +114,11 @@ class ZBreadcrumbsView : ZTextField {
 	}
 
 	func updateAndRedraw() {
-		font                 = gFavoritesFont
-		text                 = crumbsText
-		textColor            = gBreadcrumbs.crumbsColor
-		clipButton?.isHidden = !showClipper
-		clipButton?.image    = ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
-		needsDisplay         = true
+		text              = crumbsText
+		font              = gFavoritesFont
+		textColor         = gBreadcrumbs.crumbsColor
+		clipButton?.image = !showClipper ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
+		needsDisplay      = true
 	}
 
 	// MARK:- events
