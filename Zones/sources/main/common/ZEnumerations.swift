@@ -281,7 +281,7 @@ enum ZSpecialsMenuType: String {
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = [.focus, .speed]
+var gDebugMode: [ZDebugMode] = [.file]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 1
@@ -295,6 +295,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let    ops = ZDebugMode(rawValue: 1)
 	static let    log = ZDebugMode()
 	static let   info = ZDebugMode()
+	static let   file = ZDebugMode()
 	static let   ring = ZDebugMode()
 	static let  names = ZDebugMode()
 	static let  focus = ZDebugMode()
@@ -306,6 +307,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	var description: String {
 		return [(.ops,    "     op"),
 				(.log,    "    log"),
+				(.file,   "   file"),
 				(.info,   "   info"),
 				(.ring,   "   info"),
 				(.names,  "   name"),

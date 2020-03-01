@@ -469,6 +469,12 @@ var gCurrentEssay: ZNote? {
 // MARK:- actions
 // MARK:-
 
+func gTestForUserInterrupt() throws {
+	if  let w = gWindow, (w.mouseMoved || w.keyPressed) {
+		throw(ZInterruptionError.userInterrupted)
+	}
+}
+
 func gRefreshCurrentEssay() {
 	if  let identifier = getPreferencesString(for: kCurrentEssay, defaultString: nil),
 		let      essay = gEssayRing.object(for: identifier) as? ZNote {

@@ -23,6 +23,11 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     var observer: NSKeyValueObservation?
 	var lastLocation = NSPoint.zero
 
+	var keyPressed: Bool {
+		let    e  = nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false)
+		return e != nil
+	}
+
 	var mouseMoved: Bool {
 		let    last  = lastLocation
 		lastLocation = mouseLocationOutsideOfEventStream

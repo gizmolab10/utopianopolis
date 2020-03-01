@@ -485,10 +485,11 @@ class ZTextEditor: ZTextView {
             let       to = currentTextWidget {
 			var    point = CGPoint.zero
             point        = to.convert(point, from: nil)
-            offset      += point.x
+			offset      += point.x - 3.0   // subtract half the average character width -> closer to user expectation
             let     name = zone.unwrappedName
             let location = name.location(of: offset, using: currentFont)
-            
+
+			print("cursor: \(location)")
             self.selectedRange = NSMakeRange(location, 0)
         }
     }

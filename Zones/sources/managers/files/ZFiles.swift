@@ -73,6 +73,7 @@ class ZFiles: NSObject {
 					do {
 						try self.writeToFile(from: databaseID)
 					} catch {
+						printDebug(.file, "defer")
 						self.deferWrite(for: databaseID, restartTimer: true)
 					}
                 }
@@ -184,7 +185,7 @@ class ZFiles: NSObject {
 
 				manager.updateLastSyncDate()
 
-				BACKGROUND(after: 1.0) {
+				BACKGROUND {
 					dict [.date] = manager.lastSyncDate as NSObject
 					let jsonDict = self.jsonDictFrom(dict)
 
@@ -195,6 +196,8 @@ class ZFiles: NSObject {
 					} else {
 						printDebug(.errors, "ahah")
 					}
+
+					printDebug(.file, "done")
 
 					self.needsWrite[index] = false
 					self .isWriting[index] = false // end prevention of write during write

@@ -536,9 +536,7 @@ class ZRecord: NSObject {
 
 
     func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) throws -> ZStorageDictionary? {
-		if  gWindow?.mouseMoved ?? false {
-			throw(ZInterruptionError.userInterrupted)
-		}
+		try gTestForUserInterrupt()
 
 		guard let name = recordName, !gFiles.writtenRecordNames.contains(name) else { return nil }
 		let   keyPaths = cloudProperties() + (includeRecordName ? [kpRecordName] : []) + [kpModificationDate]
