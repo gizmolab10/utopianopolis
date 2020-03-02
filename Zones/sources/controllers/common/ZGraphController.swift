@@ -217,15 +217,11 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
         if  [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
-//            if !gIsGraphMode {
-//                dragView?.snp.removeConstraints()
-//            } else {
-				prepare(for: iKind)
-                layoutForCurrentScrollOffset()
-                layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: true)
-                layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: false)
-                dragView?.setAllSubviewsNeedDisplay()
-//            }
+			prepare(for: iKind)
+			layoutForCurrentScrollOffset()
+			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: true)
+			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: false)
+			dragView?.setAllSubviewsNeedDisplay()
         }
 
 		gRingView?.setNeedsDisplay()
@@ -257,7 +253,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             gSearching.exitSearchMode()
         }
         
-        if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
+        if  gIsGraphOrEditIdeaMode,
+			let gesture = iGesture as? ZKeyPanGestureRecognizer,
             let (_, dropNearest, location) = widgetNearest(gesture),
             let   flags = gesture.modifiers {
             let   state = gesture.state
@@ -295,7 +292,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             gSearching.exitSearchMode()
         }
         
-        if  let    gesture = iGesture {
+        if  gIsGraphOrEditIdeaMode,
+			let    gesture = iGesture {
             let    COMMAND = gesture.isCommandDown
 			let     OPTION = gesture.isOptionDown
 			let      SHIFT = gesture.isShiftDown

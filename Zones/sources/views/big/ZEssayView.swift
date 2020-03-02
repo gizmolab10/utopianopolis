@@ -274,11 +274,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  let grab = note.zone {
 				if  needsUngrab {
 					needsUngrab = false
-					gSelecting.ungrabAll()
 				}
 
 				grab.asssureIsVisible()
-				grab.addToGrab()
 			}
 		}
 	}

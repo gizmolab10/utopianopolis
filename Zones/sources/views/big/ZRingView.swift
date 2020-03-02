@@ -98,8 +98,8 @@ class ZRingView: ZView {
 	}
 
 	func focusOnEssay(_ note: ZNote) {
-		gControllers.swapGraphAndEssay(force: .noteMode)
 		gEssayView?.resetCurrentEssay(note)
+		gControllers.swapGraphAndEssay(force: .noteMode)
 		signalMultiple([.eCrumbs, .eRing])
 	}
 
@@ -165,7 +165,6 @@ class ZRingView: ZView {
 		} else if gIsNoteMode, let v = gEssayView, rect != nil, !v.frame.contains(rect!) {
 			v.save()
 			gControllers.swapGraphAndEssay(force: .graphMode)
-			signalRegarding(.eRelayout)
 
 			return true
 		}

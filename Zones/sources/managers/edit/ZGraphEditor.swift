@@ -145,7 +145,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 					case "v":      if COMMAND { paste() }
 					case "w":      rotateWritable()
-					case "x":      if COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
+					case "x":      if COMMAND { delete(permanently: SPECIAL && isWindow) } else { gCurrentKeyPressed = nil; return false }
 					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
@@ -2319,13 +2319,8 @@ class ZGraphEditor: ZBaseEditor {
                     let        indexer = targetZones[toIndex]
                     
                     if  let intoParent = indexer.parentZone {
-                        var   newIndex = indexer.siblingIndex
+                        let   newIndex = indexer.siblingIndex
                         let  moveThese = moveUp ? iZones.reversed() : iZones
-                        
-                        if  newIndex  != nil, moveUp,
-                            newIndex! == intoParent.count - 1 {
-                            newIndex   = nil // move BELOW bottom
-                        }
                         
                         self.moveZones(moveThese, into: intoParent, at: newIndex, orphan: true) {
                             gSelecting.grab(moveThese)

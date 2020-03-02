@@ -166,7 +166,7 @@ class ZControllers: NSObject {
 			FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking graph editor's handle key)
 				gTextEditor.stopCurrentEdit()
 				gEssayView?.updateControlBarButtons(showNote)
-				self.signalFor(gSelecting.firstGrab, multiple: multiple)
+				self.signalFor(nil, multiple: multiple)
 			}
 		}
 	}
