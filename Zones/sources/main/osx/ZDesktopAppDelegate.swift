@@ -69,7 +69,7 @@ var gDesktopAppDelegate: ZDesktopAppDelegate?
 	
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        printDebug(.errors, "hah!")
+        printDebug(.error, "hah!")
     }
 
 
@@ -79,7 +79,7 @@ var gDesktopAppDelegate: ZDesktopAppDelegate?
 
 
     func application(_ application: NSApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        printDebug(.errors, "\(error)")
+        printDebug(.error, "\(error)")
     }
     
 

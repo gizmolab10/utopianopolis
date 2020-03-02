@@ -122,7 +122,7 @@ class ZGraphEditor: ZBaseEditor {
                     handleArrow(a, flags: flags)
                 } else if kMarkingCharacters.contains(key), !COMMAND, !CONTROL {
                     prefix(with: key)
-                } else {
+                } else if !super.handleKey(iKey, flags: flags, isWindow: isWindow) {
                     switch key {
 					case "a":      if COMMAND { selectAll(progeny: OPTION) } else { alphabetize(OPTION) }
                     case "b":      addBookmark()

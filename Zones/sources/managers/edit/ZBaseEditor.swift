@@ -37,22 +37,14 @@ class ZBaseEditor: NSObject {
 			gCurrentKeyPressed = key
 
 			switch key {
-				case "a": if SPECIAL { gApplication.showHideAbout() }
-				case "o": if SPECIAL { gFiles.showInFinder() }
-				case "q": if COMMAND { gApplication.terminate(self) }
-				case "x": if SPECIAL { wipeRing() }
-				case "/": if SPECIAL { gControllers.showShortcuts() }
-				default:  gCurrentKeyPressed = nil; return false
-
+				case "a": if SPECIAL { gApplication.showHideAbout(); gCurrentKeyPressed = nil; return true }
+				case "o": if SPECIAL { gFiles.showInFinder();        gCurrentKeyPressed = nil; return true }
+				case "q": if COMMAND { gApplication.terminate(self); gCurrentKeyPressed = nil; return true }
+				case "x": if SPECIAL { wipeRing();                   gCurrentKeyPressed = nil; return true }
+				case "/": if SPECIAL { gControllers.showShortcuts(); gCurrentKeyPressed = nil; return true }
+				default:  break
 			}
-		} else {
-			gCurrentKeyPressed = nil
-
-			return false    // false means key not handled
-		}
-
-		gCurrentKeyPressed = nil
-		return true
+		};                                                           gCurrentKeyPressed = nil; return false
 	}
 
 

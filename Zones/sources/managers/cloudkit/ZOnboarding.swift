@@ -157,7 +157,7 @@ class ZOnboarding : ZOperations {
 
                     // see: shouldPerform
 
-                    printDebug(.errors, "alert: user record \(name) does not exist")
+                    printDebug(.error, "alert: user record \(name) does not exist")
                 }
 
                 onCompletion()

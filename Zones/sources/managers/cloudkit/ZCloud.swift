@@ -100,7 +100,7 @@ class ZCloud: ZRecords {
                             record.maybeNeedMerge()
                         } else {
                             let message = iRecord?.description ?? ""
-                            printDebug(.errors, String(describing: iError!) + "\n" + message)
+                            printDebug(.error, String(describing: iError!) + "\n" + message)
                         }
                     }
                 }
@@ -134,7 +134,7 @@ class ZCloud: ZRecords {
 
                     gAlerts.detectError(iError, "") { iHasError in
                         if iHasError {
-                            printDebug(.errors, String(describing: iError!))
+                            printDebug(.error, String(describing: iError!))
                         }
                     }
 

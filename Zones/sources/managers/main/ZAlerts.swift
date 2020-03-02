@@ -75,7 +75,7 @@ class ZAlerts : NSObject {
            //  case .notAuthenticated: closure?(true) // was showAlert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?", closure)
             case .networkUnavailable: gHasInternet = false; closure?(true) // was alertNoInternet
             default:
-                printDebug(.errors, ckError.localizedDescription + text)
+                printDebug(.error, ckError.localizedDescription + text)
                 closure?(true)
             }
         } else if let nsError = iError as? NSError {
@@ -89,7 +89,7 @@ class ZAlerts : NSObject {
         } else {
             let error = iError as? String ?? ""
 
-            printDebug(.errors, error + text)
+            printDebug(.error, error + text)
             closure?(true)
         }
     }

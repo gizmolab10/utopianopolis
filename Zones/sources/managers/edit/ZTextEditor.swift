@@ -241,7 +241,15 @@ class ZTextEditor: ZTextView {
     // MARK:-
 
     func clearOffset() { currentOffset = nil }
-	func clearEdit()   { currentEdit = nil; clearOffset(); fullResign(); gSetGraphMode() }
+
+	func clearEdit() {
+		currentEdit 			  = nil
+		gCurrentMouseDownLocation = nil
+
+		clearOffset()
+		fullResign()
+		gSetGraphMode()
+	}
 
     func cancel() {
         if  let    e = currentEdit,
@@ -279,7 +287,7 @@ class ZTextEditor: ZTextView {
                 currentEdit        = pack
 				let           zone = textWidget.widget?.widgetZone
 
-				print("begin edit: " + (zone?.unwrappedName ?? ""))
+				printDebug(.edit, zone?.unwrappedName ?? "")
 
                 pack.updateText(isEditing: true)
 				gSelecting.ungrabAll(retaining: zone == nil ? [] : [zone!])		// so crumbs will appear correctly
@@ -347,7 +355,7 @@ class ZTextEditor: ZTextView {
 
 	func stopCurrentEdit(forceCapture: Bool = false) {
         if  let e = currentEdit, !gIsEditingStateChanging {
-            capture(force: forceCapture)
+			capture(force: forceCapture)
             clearEdit()
             fullResign()
             e.updateWidgetsForEndEdit()
@@ -367,6 +375,7 @@ class ZTextEditor: ZTextView {
 
 	func capture(force: Bool = false) {
         if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
+			printDebug(.edit, "capture \(text)")
             current.captureTextAndSync(text)
         }
     }
@@ -489,7 +498,7 @@ class ZTextEditor: ZTextView {
             let     name = zone.unwrappedName
             let location = name.location(of: offset, using: currentFont)
 
-			print("cursor: \(location)")
+			printDebug(.edit, "at \(location)")
             self.selectedRange = NSMakeRange(location, 0)
         }
     }

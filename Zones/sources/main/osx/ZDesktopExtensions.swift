@@ -221,11 +221,11 @@ extension ZApplication {
     
     func showHideAbout() {
         for     window in windows {
-            if  window.title == "",
-                window.isKeyWindow {
+			if  window.isKeyWindow,
+				window.isKind(of: NSPanel.self) { // check if about box is visible
                 window.close()
-                
-                return
+
+				return
             }
         }
         
@@ -1049,7 +1049,7 @@ extension ZFiles {
                 onCompletion?()
             }
         } catch {
-            printDebug(.errors, "\(error)")    // de-serialization
+            printDebug(.error, "\(error)")    // de-serialization
         }
     }
     
@@ -1075,7 +1075,7 @@ extension ZFiles {
 						do {
 							try string.write(to: fileURL, atomically: true, encoding: .utf8)
 						} catch {
-							printDebug(.errors, "\(error)")
+							printDebug(.error, "\(error)")
 						}
 					case .eThoughtful:
 						self.writtenRecordNames.removeAll()
@@ -1087,7 +1087,7 @@ extension ZFiles {
 
 							try data.write(to: fileURL)
 						} catch {
-							printDebug(.errors, "\(error)")
+							printDebug(.error, "\(error)")
 						}
 					case .eEssay:
 						if  let text = zone.note.essayText {
@@ -1106,7 +1106,7 @@ extension ZFiles {
 //								try fileText?.write(to: fileURL, atomically: false, encoding: .utf8)
 
 							} catch {
-								printDebug(.errors, "\(error)")
+								printDebug(.error, "\(error)")
 							}
 						}
 				}
