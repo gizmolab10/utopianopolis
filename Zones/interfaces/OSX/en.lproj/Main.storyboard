@@ -836,7 +836,7 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="254" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="menu" size="11"/>
+                                                        <font key="font" metaFont="message" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
@@ -986,7 +986,7 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vvq-Eh-Bua" customClass="ZBreadcrumbsView" customModule="Thoughtful" customModuleProvider="target">
-                                <rect key="frame" x="-2" y="4" width="364" height="30"/>
+                                <rect key="frame" x="-2" y="4" width="381" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="EZn-DB-SIw"/>
                                 </constraints>
@@ -1001,8 +1001,8 @@ DQ
                                     <outlet property="widthConstraint" destination="knh-AW-gJ2" id="5xo-AH-apO"/>
                                 </connections>
                             </textField>
-                            <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ch1-Y5-6sD">
-                                <rect key="frame" x="368" y="18" width="21" height="14"/>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ch1-Y5-6sD">
+                                <rect key="frame" x="368" y="14" width="21" height="14"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="21" id="knh-AW-gJ2"/>
                                 </constraints>
@@ -1017,10 +1017,10 @@ DQ
                         </subviews>
                         <constraints>
                             <constraint firstItem="vvq-Eh-Bua" firstAttribute="top" secondItem="W43-uk-txK" secondAttribute="top" constant="10" id="38t-Y7-qxJ"/>
-                            <constraint firstItem="vvq-Eh-Bua" firstAttribute="centerY" secondItem="Ch1-Y5-6sD" secondAttribute="centerY" constant="6" id="3Ic-Ye-2tb"/>
-                            <constraint firstItem="Ch1-Y5-6sD" firstAttribute="leading" secondItem="vvq-Eh-Bua" secondAttribute="trailing" constant="8" id="SXP-oc-Hip"/>
+                            <constraint firstItem="vvq-Eh-Bua" firstAttribute="centerY" secondItem="Ch1-Y5-6sD" secondAttribute="centerY" constant="2" id="3Ic-Ye-2tb"/>
                             <constraint firstAttribute="trailing" secondItem="Ch1-Y5-6sD" secondAttribute="trailing" constant="8" id="T5q-LO-7rx"/>
                             <constraint firstItem="vvq-Eh-Bua" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" id="TXr-bK-zHc"/>
+                            <constraint firstAttribute="trailing" secondItem="vvq-Eh-Bua" secondAttribute="trailing" constant="20" id="pZR-7I-S0t"/>
                         </constraints>
                     </view>
                     <connections>

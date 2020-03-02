@@ -658,7 +658,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			&&  userCanWrite
 			&&    (gCurrentMouseDownZone == nil
 				|| gCurrentMouseDownZone == self
-				|| gCurrentKeyPressed    == nil
 				|| gCurrentKeyPressed    == kReturn
 				|| gCurrentKeyPressed?.arrow != nil )
 	}

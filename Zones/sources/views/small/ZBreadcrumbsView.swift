@@ -130,10 +130,7 @@ class ZBreadcrumbsView : ZTextField {
 		updateAndRedraw()
 	}
 
-	// TODO: hit test -> index into breadcrumb strings array
-	// change the color of the string at that index
-
-	// mouse down -> change focus
+	// hit test -> index into breadcrumb strings array
 	func hitCrumb(_ iPoint: CGPoint) -> Int? {
 		let point = convert(iPoint, from: nil)
 
@@ -145,6 +142,8 @@ class ZBreadcrumbsView : ZTextField {
 
 		return nil
 	}
+
+	// TODO: change the color of the string at that index
 
 	// mouse down -> change focus
 	override func mouseDown(with event: NSEvent) {
@@ -177,14 +176,15 @@ class ZBreadcrumbsView : ZTextField {
 				last?.grab()
 			}
 
-			if  gWorkMode == .noteMode,
-			    let note = next.noteMaybe {
-				gCurrentEssay = note
-
-				self.signalRegarding(.eSwap)
-			} else {
-				self.signalRegarding(.eRelayout)
+			if  gWorkMode == .noteMode {
+			    if  let note = next.noteMaybe {
+					gEssayView?.resetCurrentEssay(note)
+				} else {
+					gSetGraphMode()
+				}
 			}
+
+			self.signalMultiple([.eSwap, .eRelayout])
 		}
 	}
 

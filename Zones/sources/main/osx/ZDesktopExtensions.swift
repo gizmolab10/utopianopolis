@@ -518,8 +518,8 @@ extension NSWindow {
     @IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .Preferences)?.toggleAction(self) }
     @IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
     @IBAction func copy              (_ iItem: ZMenuItem?) { gGraphEditor.copyToPaste() }
-    @IBAction func cut               (_ iItem: ZMenuItem?) { gGraphEditor.deleteGrabbed() }
-    @IBAction func delete            (_ iItem: ZMenuItem?) { gGraphEditor.deleteGrabbed() }
+    @IBAction func cut               (_ iItem: ZMenuItem?) { gGraphEditor.delete() }
+    @IBAction func delete            (_ iItem: ZMenuItem?) { gGraphEditor.delete() }
     @IBAction func paste             (_ iItem: ZMenuItem?) { gGraphEditor.paste() }
     @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gGraphEditor.search() }
     @IBAction func undo              (_ iItem: ZMenuItem?) { gGraphEditor.undoManager.undo() }

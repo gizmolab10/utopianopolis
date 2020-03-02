@@ -143,7 +143,9 @@ class ZGraphEditor: ZBaseEditor {
 					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
 					case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 					case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
+					case "v":      if COMMAND { paste() }
 					case "w":      rotateWritable()
+					case "x":      if COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
 					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
@@ -159,7 +161,7 @@ class ZGraphEditor: ZBaseEditor {
                     case kTab:     addNextAndRedraw(containing: OPTION)
 					case kSpace:   if OPTION || isWindow || CONTROL { addIdea() } else { gCurrentKeyPressed = nil; return false }
                     case kBackspace,
-                         kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { deleteGrabbed(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
+                         kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
                     case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) } else { gCurrentKeyPressed = nil; return false }
 					case kEscape:                 grabOrEdit(true,    OPTION, true)
                     default:       return false // indicate key was not handled
@@ -172,12 +174,6 @@ class ZGraphEditor: ZBaseEditor {
 
 		return true // indicate key was handled
     }
-
-	func popAndUpdate() {
-		gFocusRing.popAndRemoveEmpties()
-		redrawGraph()
-
-	}
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
         if  gIsEditIdeaMode || gArrowsDoNotBrowse {
@@ -319,6 +315,12 @@ class ZGraphEditor: ZBaseEditor {
 
     // MARK:- features
     // MARK:-
+
+	func popAndUpdate() {
+		gFocusRing.popAndRemoveEmpties()
+		redrawGraph()
+
+	}
 
 	func updateSize(up: Bool) {
 		let      delta = CGFloat(up ? 1 : -1)
@@ -904,7 +906,7 @@ class ZGraphEditor: ZBaseEditor {
 
     
     func convertToTitledLineAndRearrangeChildren() {
-        deleteGrabbed(preserveChildren: true, convertToTitledLine: true)
+        delete(preserveChildren: true, convertToTitledLine: true)
     }
     
     
@@ -1238,12 +1240,10 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-
     // MARK:- delete
     // MARK:-
 
-
-    func deleteGrabbed(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
+    func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
         deferRedraw {
             if  preserveChildren && !permanently {
                 self.preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
@@ -1266,7 +1266,6 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
     }
-
 
 	func deleteZones(_ iZones: ZoneArray, permanently: Bool = false, in iParent: Zone? = nil, iShouldGrab: Bool = true, onCompletion: Closure?) {
         if  iZones.count == 0 {
@@ -1863,7 +1862,7 @@ class ZGraphEditor: ZBaseEditor {
         gSelecting.clearPaste()
 
         UNDO(self) { iUndoSelf in
-            iUndoSelf.deleteGrabbed()
+            iUndoSelf.delete()
         }
 
         redrawAndSync()
