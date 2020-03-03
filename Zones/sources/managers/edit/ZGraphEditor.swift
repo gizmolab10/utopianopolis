@@ -99,7 +99,7 @@ class ZGraphEditor: ZBaseEditor {
 						switch key {
 							case "a":      gCurrentlyEditingWidget?.selectAllText()
 							case "d":      tearApartCombine(ALL, gCurrentlyEditingWidget?.widgetZone)
-							case "f":      search(OPTION)
+							case "f":      gControllers.showSearch(OPTION)
 							case "n":      grabOrEdit(true, OPTION)
 							case "p":      printCurrentFocus()
 							case "/":      if IGNORED { return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
@@ -133,7 +133,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "c":      if COMMAND { copyToPaste() } else { gGraphController?.recenter() }
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
                     case "e":      editTrait(for: .tEmail)
-                    case "f":      search(OPTION)
+                    case "f":      gControllers.showSearch(OPTION)
                     case "g":      refetch(COMMAND, OPTION)
                     case "h":      editTrait(for: .tHyperlink)
                     case "l":      alterCase(up: false)
@@ -451,21 +451,24 @@ class ZGraphEditor: ZBaseEditor {
     }
 
 	func grabOrEdit(_ COMMAND: Bool, _  OPTION: Bool, _ ESCAPE: Bool = false) {
-        if  COMMAND {								// switch to essay edit mode
-			gCreateCombinedEssay     = !OPTION		// default is multiple, option drives it to single
-
-			if  gCurrentEssay == nil || OPTION || !ESCAPE {	// restore prior essay or create one fresh (OPTION forces the latter)
-				gCurrentEssay        =  gSelecting.firstGrab?.note
-			}
-
-			gControllers.swapGraphAndEssay()
-        } else {									// switch to idea edit mode
+        if !COMMAND {											// switch to essay edit mode
 			gTextEditor.edit(gSelecting.currentMoveable)
             
             if  OPTION {
                 gTextEditor.placeCursorAtEnd()
             }
-        }
+		} else {												// switch to idea edit mode
+			if !gIsNoteMode {
+				gCreateCombinedEssay     = !OPTION				// default is multiple, option drives it to single
+
+				if  gCurrentEssay == nil || OPTION || !ESCAPE {	// restore prior essay or create one fresh (OPTION forces the latter)
+					gCurrentEssay        =  gSelecting.firstGrab?.note
+				}
+			}
+
+			gControllers.swapGraphAndEssay()
+			print("swap")
+		}
     }
 
     func divideChildren() {
@@ -555,15 +558,6 @@ class ZGraphEditor: ZBaseEditor {
             if  let tWidget = grab.widget?.textWidget {
                 tWidget.alterCase(up: up)
             }
-        }
-    }
-
-
-    func search(_ OPTION: Bool = false) {
-        if  gDatabaseID != .favoritesID {
-            gWorkMode = gIsSearchMode ? .graphMode : .searchMode
-
-            signalRegarding(OPTION ? .eFound : .eSearch)
         }
     }
 

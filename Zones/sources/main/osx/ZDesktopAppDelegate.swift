@@ -101,10 +101,10 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 
 	var workingEditor: ZBaseEditor? {
 		switch gWorkMode {
-			case .graphMode,
-				 .editIdeaMode: return gGraphEditor
-			case .noteMode: return gEssayEditor
-			default: 	    return nil
+			case .editIdeaMode,
+				 .graphMode: return gGraphEditor
+//			case .noteMode:  return gEssayEditor
+			default: 	     return nil
 		}
 	}
 

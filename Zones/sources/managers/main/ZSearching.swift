@@ -6,7 +6,6 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 
 #if os(OSX)
@@ -14,7 +13,6 @@ import Foundation
 #elseif os(iOS)
     import UIKit
 #endif
-
 
 enum ZSearchState: Int {
     case sEntry
@@ -33,24 +31,19 @@ enum ZSearchState: Int {
     }
 }
 
-
 let gSearching = ZSearching()
-
 
 class ZSearching: NSObject {
 
-
 	var state = ZSearchState.sNot
-
 
     func exitSearchMode() {
 		state = .sNot
 
-		gSetGraphMode()
+		gControllers.swapModes()
         signalRegarding(.eFound)
         signalRegarding(.eSearch)
     }
-
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
 		return gSearchController?.handleEvent(event)

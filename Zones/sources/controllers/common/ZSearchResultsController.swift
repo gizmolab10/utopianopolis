@@ -6,7 +6,6 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
 
@@ -16,20 +15,16 @@ import CloudKit
     import UIKit
 #endif
 
-
 var gSearchResultsController: ZSearchResultsController? { return gControllers.controllerForID(.idSearchResults) as? ZSearchResultsController }
-
 
 class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTableViewDelegate {
 
-
     var      resultsAreVisible = false
     var           foundRecords = [ZDatabaseID: [CKRecord]] ()
-	var     searchText: String?  { return gSearchController?.searchBox?.text }
-	override  var controllerID:  ZControllerID { return .idSearchResults }
-    @IBOutlet var    tableView:  ZTableView?
+	var             searchText : String?       { return gSearchController?.searchBox?.text }
+	override  var controllerID : ZControllerID { return .idSearchResults }
+    @IBOutlet var    tableView : ZTableView?
 
-    
     var hasResults: Bool {
         var     result = false
 
@@ -44,7 +39,6 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         return result
     }
 
-
     var foundRecordsCount: Int {
         var count = 0
 
@@ -55,10 +49,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         return count
     }
 
-
     // MARK:- content
     // MARK:-
-
 
     func sortRecords() {
         for (mode, records) in foundRecords {
@@ -73,15 +65,12 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         }
     }
 
-
     // MARK:- delegate
     // MARK:-
-
 
     #if os(OSX)
 
     func numberOfRows(in tableView: ZTableView) -> Int { return foundRecordsCount }
-
 
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
         if  let (dbID, record) = identifierAndRecord(at: row) {
@@ -117,20 +106,15 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
     #else
 
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int            { return foundRecordsCount }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { return UITableViewCell() }
 
-
     #endif
-
 
     // MARK:- user feel
     // MARK:-
-	
-	
-	func switchToSearchBox() { gSearchController?.searchBox?.becomeFirstResponder() }
 
+	func switchToSearchBox() { gSearchController?.searchBox?.becomeFirstResponder() }
 
     func identifierAndRecord(at iIndex: Int) -> (ZDatabaseID, CKRecord)? {
         var index = iIndex
@@ -147,7 +131,6 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
         return nil
     }
-
 
     @discardableResult func resolve() -> Bool {
         var resolved = false
@@ -212,18 +195,13 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         gControllers.sync()
     }
 
-
     func clear() {
         resultsAreVisible = false
         
         if  gIsSearchMode {
-            gSetGraphMode()
-
-            signalRegarding(.eSearch)
-            signalRegarding(.eFound)
+			gSearching.exitSearchMode()
         }
     }
-
 
     func reset() {
         if  resultsAreVisible || foundRecords.count == 0 {
@@ -234,7 +212,6 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
             signalRegarding(.eSearch)
         }
     }
-
 
     func moveSelection(up: Bool, extreme: Bool) {
         if  let             t = tableView {
@@ -260,10 +237,8 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         }
     }
 	
-
 	// MARK:- events
 	// MARK:-
-
 
 	override func handleSignal(_ iObject: Any?, kind iKind: ZSignalKind) {
 		if iKind == .eFound {
@@ -300,7 +275,6 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 			}
 		}
 	}
-	
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
         if  let       string = event.input {

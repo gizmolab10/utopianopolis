@@ -57,7 +57,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "a":      selectAll(nil)
 				case "d":      convertToChild(createEssay: ALL)
 				case "e":      gNoteAndEssay.export()
-				case "h":      showHyperlinkPopup()
+				case "f":      gControllers.showSearch(OPTION)
 				case "i":      showSpecialsPopup()
 				case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
 				case "l":      alterCase(up: false)
@@ -67,6 +67,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 				case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
+				case "/":      if SPECIAL { gControllers.showShortcuts() } else { return false }
 				case "]":      gEssayRing.goForward()
 				case "[":      gEssayRing.goBack()
 				case kReturn:  gNoteAndEssay.essayZone?.grab(); done()
@@ -77,6 +78,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if CONTROL {
 			switch key {
 				case "d":      convertToChild(createEssay: true)
+				case "h":      showHyperlinkPopup()
 				case "/":      popAndUpdate()
 				default:       return false
 			}
@@ -325,21 +327,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func updateControlBarButtons(_ flag: Bool) {
+		backwardButton?.isEnabled = flag
+		forwardButton? .isEnabled = flag
+		deleteButton?  .isEnabled = flag
+		cancelButton?  .isEnabled = flag
 		hideButton?    .isEnabled = flag
 		saveButton?    .isEnabled = flag
-		cancelButton?  .isEnabled = flag
-		deleteButton?  .isEnabled = flag
-		forwardButton? .isEnabled = flag
-		backwardButton?.isEnabled = flag
 	}
 
 	private func setButton(_ button: ZButton) {
 		if let tag = ZTextButtonID(rawValue: button.tag) {
 			switch tag {
+				case .idBack:   backwardButton = button
 				case .idForward: forwardButton = button
 				case .idCancel:   cancelButton = button
 				case .idDelete:   deleteButton = button
-				case .idBack:   backwardButton = button
 				case .idHide:       hideButton = button
 				case .idSave:       saveButton = button
 			}

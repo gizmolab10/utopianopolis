@@ -56,6 +56,7 @@ let gControllers = ZControllers()
 
 class ZControllers: NSObject {
 
+	var priorWorkMode: ZWorkMode?
 	var currentController: ZGenericController?
     var signalObjectsByControllerID = [ZControllerID : ZSignalObject] ()
 
@@ -121,6 +122,19 @@ class ZControllers: NSObject {
 
 	// MARK:- hide / reveal
 	// MARK:-
+
+	func swapModes() {
+		let      last = priorWorkMode ??        .graphMode
+		priorWorkMode = gIsSearchMode ? nil  :   gWorkMode
+		gWorkMode     = gIsSearchMode ? last : .searchMode
+	}
+
+	func showSearch(_ OPTION: Bool = false) {
+		if  gDatabaseID  != .favoritesID {
+			swapModes()
+			signalRegarding(OPTION ? .eFound : .eSearch)
+		}
+	}
 
 	func showShortcuts(_ show: Bool? = nil) {
 		if  let shorts = gShortcutsController {

@@ -17,6 +17,7 @@ import UIKit
 let gEssayEditor = ZEssayEditor()
 
 class ZEssayEditor: ZBaseEditor {
+
 	override func canHandleKey() -> Bool { return gIsNoteMode }
 
 	override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
@@ -43,12 +44,12 @@ class ZEssayEditor: ZBaseEditor {
 				return true
 			} else if  COMMAND {
 				switch key {
-					default:       return gEssayView?.handleKey(iKey, flags: flags) ?? false
+					default:      return gEssayView?.handleKey(iKey, flags: flags) ?? false
 				}
 			} else {
 				switch key {
-					case kEscape:  if OPTION { gEssayView?.accountForSelection() }; gControllers.swapGraphAndEssay(); return true
-					default:       return gEssayView?.handleKey(iKey, flags: flags) ?? false
+					case kEscape: if OPTION { gEssayView?.accountForSelection() }; gControllers.swapGraphAndEssay(); return true
+					default:      return gEssayView?.handleKey(iKey, flags: flags) ?? false
 				}
 			}
 		}
