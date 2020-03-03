@@ -138,7 +138,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func resetCurrentEssay(_ current: ZNote?, selecting zone: Zone? = nil) {
+	func resetCurrentEssay(_ current: ZNote?, selecting range: NSRange? = nil) {
 		if  let      note = current {
 			gCurrentEssay = note
 
@@ -147,8 +147,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gCurrentEssay?.updateOffsets()
 			gEssayRing.push()
 
-			if  let range = zone?.noteMaybe?.offsetTextRange {
-				setSelectedRange(range)
+			if  let r = range {
+				FOREGROUND {
+					self.setSelectedRange(r)
+				}
 			}
 		}
 	}
@@ -211,7 +213,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				child.setTextTrait(kEssayDefault, for: .tNote)			// create a placeholder essay in the child
 				gNoteAndEssay.essayZone?.createNote()
 
-				resetCurrentEssay(gNoteAndEssay.essayZone?.note, selecting: child)	// redraw essay TODO: WITH NEW NOTE SELECTED
+				resetCurrentEssay(gNoteAndEssay.essayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
 			} else {
 				exit()
 				child.grab()

@@ -183,9 +183,13 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 			return false
 		}
 
-		gEssayView?.resetCurrentEssay(zone.note)
+		let   note = zone.note
+		let ranges = note.noteText?.string.rangesMatching(searchText)
+		let range  = ranges == nil ? nil : ranges![0]
+
 		gControllers.swapGraphAndEssay(force: .noteMode)
 		signalRegarding(.eSwap)
+		gEssayView?.resetCurrentEssay(note, selecting: range)
 
 		return true
 	}

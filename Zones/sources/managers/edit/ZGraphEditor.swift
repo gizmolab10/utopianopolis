@@ -1106,7 +1106,7 @@ class ZGraphEditor: ZBaseEditor {
                 original.assignAndColorize(kLineWithStubTitle)   // convert into a stub title
 
                 if !isMultiple {
-                    original.editAndSelect(range: NSMakeRange(12, 1))   // edit, selecting stub
+                    original.editAndSelect(range: NSMakeRange(12, 1))   // edit selecting stub
                 } else {
                     promoteToParent {
                         original.edit()

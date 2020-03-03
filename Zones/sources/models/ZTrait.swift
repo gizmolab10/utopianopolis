@@ -34,7 +34,7 @@ class ZTrait: ZRecord {
 	@objc dynamic var strings: [String]?
 	@objc dynamic var  format:  String?
     @objc dynamic var    type:  String?
-	@objc dynamic var    text:  String? { didSet { strings = text?.components(separatedBy: ".").joined().components(separatedBy: " ") } }
+	@objc dynamic var    text:  String? { didSet { updateSearchableStrings() } }
 	@objc dynamic var   asset:  CKAsset?
 	@objc dynamic var  assets: [CKAsset]?
 	@objc dynamic var  offset:  NSNumber?
@@ -130,6 +130,15 @@ class ZTrait: ZRecord {
             needUnorphan()
         }
     }
+
+	func updateSearchableStrings() {
+		let searchables: [ZTraitType] = [.tNote, .tEssay]
+
+		if  let tt = traitType,
+			searchables.contains(tt) {
+			strings = text?.components(separatedBy: ".").joined().components(separatedBy: kReturn).joined(separator: " ").components(separatedBy: " ")
+		}
+	}
 
 	var noteText: NSMutableAttributedString? {
 		get {
