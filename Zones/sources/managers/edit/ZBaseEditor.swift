@@ -38,6 +38,7 @@ class ZBaseEditor: NSObject {
 
 			switch key {
 				case "a": if SPECIAL { gApplication.showHideAbout(); gCurrentKeyPressed = nil; return true }
+				case "h": if COMMAND { gApplication.hide(nil);       gCurrentKeyPressed = nil; return true }
 				case "o": if SPECIAL { gFiles.showInFinder();        gCurrentKeyPressed = nil; return true }
 				case "q": if COMMAND { gApplication.terminate(self); gCurrentKeyPressed = nil; return true }
 				case "x": if SPECIAL { wipeRing();                   gCurrentKeyPressed = nil; return true }

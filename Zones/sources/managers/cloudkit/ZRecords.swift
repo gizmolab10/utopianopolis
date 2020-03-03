@@ -217,7 +217,7 @@ class ZRecords: NSObject {
         apply(to: name) { iRecords -> ([CKRecord]) in
             results.appendUnique(contentsOf: iRecords)
 
-            return iRecords
+            return iRecords // no filtering is done, return input as output (identity filter)
         }
 
         return results
