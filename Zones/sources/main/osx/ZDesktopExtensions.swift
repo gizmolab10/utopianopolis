@@ -772,13 +772,11 @@ extension ZTextEditor {
 			let     OPTION = flags.isOption
 			let    SPECIAL = COMMAND && OPTION
 			let    FLAGGED = COMMAND || OPTION || CONTROL
-//			var      SHIFT = flags.isShift
 			let editedZone = currentTextWidget?.widgetZone
 			let      arrow = key.arrow
 
 			if  key       != key.lowercased() {
 				key        = key.lowercased()
-//				SHIFT      = true
 			}
 
 			if  let      a = arrow {
@@ -796,10 +794,10 @@ extension ZTextEditor {
 				return        editedZone?.surround(by: key) ?? false
 			} else {
 				switch key {
-					case "-":      return editedZone?.convertToFromLine() ?? false
-					case kReturn:  stopCurrentEdit()
-					case kEscape:  cancel()
-					default:       return false // false means key not handled
+					case "-":     return editedZone?.convertToFromLine() ?? false
+					case kReturn: stopCurrentEdit()
+					case kEscape: cancel()
+					default:      return false // false means key not handled
 				}
 			}
 		}

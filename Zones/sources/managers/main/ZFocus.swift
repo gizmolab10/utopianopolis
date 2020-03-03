@@ -109,6 +109,7 @@ class ZFocus: ZRing {
 					other === zone {
 
 					removeFromRing(at: index)     // TODO: MAJOR: recursive
+					storeRingIDs()
 
 					if  okayToRecurse {
 						gRingView?.updateNecklace()

@@ -87,11 +87,15 @@ class ZGraphEditor: ZBaseEditor {
                 SHIFT   = true
             }
 
+			gCurrentKeyPressed = key
+
             if  gIsEditIdeaMode {
 				if !gTextEditor.handleKey(iKey, flags: flags) {
 					if !FLAGGED {
 						return false
 					} else {
+						gCurrentKeyPressed = key
+
 						switch key {
 							case "a":      gCurrentlyEditingWidget?.selectAllText()
 							case "d":      tearApartCombine(ALL, gCurrentlyEditingWidget?.widgetZone)
@@ -114,8 +118,6 @@ class ZGraphEditor: ZBaseEditor {
                 let    widget = gWidgets.currentMovableWidget
                 let hasWidget = widget != nil
 
-				gCurrentKeyPressed = key
-
                 widget?.widgetZone?.deferWrite()
                 
                 if  let a = arrow, isWindow {
@@ -123,6 +125,8 @@ class ZGraphEditor: ZBaseEditor {
                 } else if kMarkingCharacters.contains(key), !COMMAND, !CONTROL {
                     prefix(with: key)
                 } else if !super.handleKey(iKey, flags: flags, isWindow: isWindow) {
+					gCurrentKeyPressed = key
+
                     switch key {
 					case "a":      if COMMAND { selectAll(progeny: OPTION) } else { alphabetize(OPTION) }
                     case "b":      addBookmark()

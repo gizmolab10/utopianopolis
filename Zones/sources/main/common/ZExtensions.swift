@@ -290,6 +290,20 @@ extension NSObject {
 
 }
 
+extension Dictionary {
+
+	subscript (i: Int) -> Any? {
+		if  i < count {
+			let k = Array(keys)
+
+			return self[k[i]]
+		}
+
+		return nil
+	}
+
+}
+
 extension Data {
 
 	func asset(_ fileName: String? = nil) -> CKAsset? {

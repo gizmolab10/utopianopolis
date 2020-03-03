@@ -656,10 +656,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return !gRefusesFirstResponder
 			&& !gIsEditingStateChanging
 			&&  userCanWrite
-			&&    (gCurrentMouseDownZone == nil
-				|| gCurrentMouseDownZone == self
-				|| gCurrentKeyPressed    == kReturn
-				|| gCurrentKeyPressed?.arrow != nil )
+			&&    (gCurrentKeyPressed        == kTab
+				|| gCurrentKeyPressed        == kSpace
+				|| gCurrentKeyPressed        == kReturn
+				|| gCurrentKeyPressed?.arrow != nil
+				|| gCurrentMouseDownZone     == self)
 	}
 
     // MARK:- write access

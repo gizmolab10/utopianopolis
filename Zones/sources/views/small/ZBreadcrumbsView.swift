@@ -130,13 +130,14 @@ class ZBreadcrumbsView : ZTextField {
 		updateAndRedraw()
 	}
 
-	// hit test -> index into breadcrumb strings array
+	// hit test -> index into the array of VISIBLE breadcrumb strings
 	func hitCrumb(_ iPoint: CGPoint) -> Int? {
 		let point = convert(iPoint, from: nil)
+		let delta = gBreadcrumbs.crumbZones.count - crumbRects.count
 
 		for (index, rect) in crumbRects.enumerated() {
 			if  rect.contains(point) {
-				return index
+				return index + delta
 			}
 		}
 
