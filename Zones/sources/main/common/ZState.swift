@@ -54,6 +54,7 @@ var               gIsNoteMode:               Bool { return gWorkMode == .noteMod
 var              gIsGraphMode:               Bool { return gWorkMode == .graphMode }
 var             gIsSearchMode:               Bool { return gWorkMode == .searchMode }
 var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIdeaMode }
+var          gCanSaveWorkMode:               Bool { return gIsGraphMode || gIsNoteMode }
 var    gIsGraphOrEditIdeaMode:               Bool { return gIsGraphMode || gIsEditIdeaMode }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
 var                 gDragView:         ZDragView? { return gGraphController?.dragView }
@@ -451,7 +452,7 @@ var gCurrentGraph : ZFunction {
 
 var gWorkMode: ZWorkMode = .startupMode {
 	didSet {
-		if !gIsEditIdeaMode {
+		if  gCanSaveWorkMode {
 			setPreferencesInt(gWorkMode.rawValue, for: kWorkMode)
 		}
 	}

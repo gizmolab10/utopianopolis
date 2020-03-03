@@ -820,6 +820,7 @@ class ZRecords: NSObject {
     func       maybeZoneForCKRecord (_ iRecord:    CKRecord?)          -> Zone? { return maybeZoneForRecordID      (iRecord?  .recordID) }
     func    maybeZRecordForCKRecord (_ iRecord:    CKRecord?)       -> ZRecord? { return maybeZRecordForRecordName (iRecord?  .recordID.recordName) }
     func    maybeZRecordForRecordID (_ iRecordID:  CKRecord.ID?)    -> ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName) }
+	func      maybeTraitForRecordID (_ iRecordID:  CKRecord.ID?)     -> ZTrait? { return maybeZRecordForRecordID   (iRecordID)   as? ZTrait }
 	func       maybeZoneForRecordID (_ iRecordID:  CKRecord.ID?)       -> Zone? { return maybeZRecordForRecordID   (iRecordID)   as? Zone }
 	func     maybeZoneForRecordName (_ iRecordName:     String?)       -> Zone? { return maybeZRecordForRecordName (iRecordName) as? Zone }
 	func maybeCKRecordForRecordName (_ iRecordName:     String?)   -> CKRecord? { return maybeZRecordForRecordName (iRecordName)?.record }

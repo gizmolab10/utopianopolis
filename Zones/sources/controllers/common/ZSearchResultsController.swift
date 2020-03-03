@@ -164,22 +164,41 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         #endif
 
         return resolved
+	}
+
+	func resolveRecord(_ dbID: ZDatabaseID, _ record: CKRecord) {
+		gDatabaseID = dbID
+
+		clear()
+
+		if !resolveAsTrait(     record) {
+			resolveAsZone(dbID, record)
+		}
     }
 
+	func resolveAsTrait(_ record: CKRecord) -> Bool {
+		guard let  trait = gCloud?.maybeTraitForRecordID(record.recordID),
+			let recordID = trait.owner?.recordID,
+			let     zone = gCloud?.maybeZoneForRecordID(recordID) else {
+			return false
+		}
 
-    func resolveRecord(_ dbID: ZDatabaseID, _ record: CKRecord) {
-        gFocusRing.push()
+		gEssayView?.resetCurrentEssay(zone.note)
+		gControllers.swapGraphAndEssay(force: .noteMode)
+		signalRegarding(.eSwap)
 
-        gDatabaseID = dbID
-        var zone    = gCloud?.maybeZoneForRecordID(record.recordID)
+		return true
+	}
 
-        if  zone   == nil {
-            zone    = Zone(record: record, databaseID: dbID)
+    func resolveAsZone(_ dbID: ZDatabaseID, _ record: CKRecord) {
+        var zone  = gCloud?.maybeZoneForRecordID(record.recordID)
+
+        if  zone == nil {
+            zone  = Zone(record: record, databaseID: dbID)
         }
 
-        gHere       = zone!
+        gHere     = zone!
 
-        clear()
 		zone?.needChildren()
 		zone?.revealChildren()
 		redrawGraph()

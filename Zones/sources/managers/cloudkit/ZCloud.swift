@@ -302,11 +302,13 @@ class ZCloud: ZRecords {
         }
     }
 
+	func queryForZonesWith(_ predicate: NSPredicate, batchSize: Int = kBatchSize, onCompletion: RecordErrorClosure?) {
+		queryFor(kZoneType, with: predicate, properties: Zone.cloudProperties(), batchSize: batchSize, onCompletion: onCompletion)
+	}
 
-    func queryForZonesWith(_ predicate: NSPredicate, batchSize: Int = kBatchSize, onCompletion: RecordErrorClosure?) {
-        queryFor(kZoneType, with: predicate, properties: Zone.cloudProperties(), batchSize: batchSize, onCompletion: onCompletion)
-    }
-
+	func queryForTraitsWith(_ predicate: NSPredicate, batchSize: Int = kBatchSize, onCompletion: RecordErrorClosure?) {
+		queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties(), batchSize: batchSize, onCompletion: onCompletion)
+	}
 
     func predicate(since iStart: Date?, before iEnd: Date?) -> NSPredicate {
         var predicate = NSPredicate(value: true)
@@ -323,8 +325,7 @@ class ZCloud: ZRecords {
         return predicate
     }
 
-
-    func searchPredicateFrom(_ searchString: String) -> NSPredicate? {
+    func zoneSearchPredicateFrom(_ searchString: String) -> NSPredicate? {
         let    tokens = searchString.components(separatedBy: " ")
         var    string = ""
         var separator = ""
@@ -339,6 +340,20 @@ class ZCloud: ZRecords {
         return string == "" ? nil : NSPredicate(format: string)
     }
 
+	func noteSearchPredicateFrom(_ searchString: String) -> NSPredicate? {
+		let    tokens = searchString.components(separatedBy: " ")
+		var    string = ""
+		var separator = ""
+
+		for token in tokens {
+			if  token    != "" {
+				string    = String(format: "%@%@SELF.strings CONTAINS \"%@\"", string, separator, token)
+				separator = " AND "
+			}
+		}
+
+		return string == "" ? nil : NSPredicate(format: string)
+	}
 
     func traitsPredicate(specificTo iRecordIDs: [CKRecord.ID]) -> NSPredicate? {
         if  iRecordIDs.count == 0 {
@@ -378,21 +393,30 @@ class ZCloud: ZRecords {
 
 
     func search(for searchString: String, onCompletion: ObjectClosure?) {
-        var retrieved = [CKRecord] ()
+		var retrieved = [CKRecord] ()
 
-        guard let predicate = searchPredicateFrom(searchString) else {
-            onCompletion?(retrieved as NSObject)
-            
-            return
-        }
+		guard let zonesPredicate = zoneSearchPredicateFrom(searchString),
+			let   notesPredicate = noteSearchPredicateFrom(searchString) else {
+			onCompletion?(retrieved as NSObject)
 
-        queryForZonesWith(predicate) { (iRecord, iError) in
-            if let ckRecord = iRecord {
+			return
+		}
+
+        queryForZonesWith(zonesPredicate) { (iRecord, iError) in
+            if  let ckRecord = iRecord {
                 if !retrieved.contains(ckRecord) {
                     retrieved.append(ckRecord)
                 }
             } else {
-                onCompletion?(retrieved as NSObject)
+				self.queryForTraitsWith(notesPredicate) { (iRecord, iError) in
+					if  let ckRecord = iRecord {
+						if !retrieved.contains(ckRecord) {
+							retrieved.append(ckRecord)
+						}
+					} else {
+						onCompletion?(retrieved as NSObject)
+					}
+				}
             }
         }
     }
@@ -1052,7 +1076,6 @@ class ZCloud: ZRecords {
             }
         }
     }
-    
 
     func fetchTraits(_ onCompletion: IntClosure?) {
         let    recordIDs = recordIDsWithMatchingStates([.needsTraits], pull: true)

@@ -507,7 +507,6 @@ class ZoneWidget: ZView {
 
     var nowDrawLines = false
 
-
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 

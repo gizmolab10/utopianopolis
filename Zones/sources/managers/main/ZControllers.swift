@@ -90,7 +90,7 @@ class ZControllers: NSObject {
 						gRefusesFirstResponder   = false
 						gHasFinishedStartup      = true
 
-						self.signalMultiple([.eRing, .eCrumbs])
+						self.signalMultiple([.eRing, .eCrumbs, .eRelayout])
 //						self.blankScreenDebug()
 //						gFiles.writeAll()
 					}

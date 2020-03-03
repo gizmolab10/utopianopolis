@@ -652,13 +652,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	var canEditNow: Bool {
+	var canEditNow: Bool {   // workaround recently introduced change in become first responder invocation logic [aka: fucked it up]
 		return !gRefusesFirstResponder
 			&& !gIsEditingStateChanging
 			&&  userCanWrite
-			&&    (gCurrentKeyPressed        == kTab
-				|| gCurrentKeyPressed        == kSpace
-				|| gCurrentKeyPressed        == kReturn
+			&& ([kTab, kSpace, kReturn].contains(gCurrentKeyPressed)
 				|| gCurrentKeyPressed?.arrow != nil
 				|| gCurrentMouseDownZone     == self)
 	}

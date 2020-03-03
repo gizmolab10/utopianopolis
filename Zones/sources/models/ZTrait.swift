@@ -31,13 +31,14 @@ enum ZTraitType: String {
 
 class ZTrait: ZRecord {
 
-	@objc dynamic var format:  String?
-    @objc dynamic var   type:  String?
-	@objc dynamic var   text:  String?
-	@objc dynamic var  asset:  CKAsset?
-	@objc dynamic var assets: [CKAsset]?
-	@objc dynamic var offset:  NSNumber?
-    @objc dynamic var  owner:  CKRecord.Reference?
+	@objc dynamic var strings: [String]?
+	@objc dynamic var  format:  String?
+    @objc dynamic var    type:  String?
+	@objc dynamic var    text:  String? { didSet { strings = text?.components(separatedBy: ".").joined().components(separatedBy: " ") } }
+	@objc dynamic var   asset:  CKAsset?
+	@objc dynamic var  assets: [CKAsset]?
+	@objc dynamic var  offset:  NSNumber?
+    @objc dynamic var   owner:  CKRecord.Reference?
     var _traitType: ZTraitType?
     var _ownerZone: Zone?
     override var unwrappedName: String { return text ?? emptyName }
@@ -104,7 +105,8 @@ class ZTrait: ZRecord {
 			   #keyPath(asset),
 			   #keyPath(assets),
 			   #keyPath(offset),
-			   #keyPath(format)]
+			   #keyPath(format),
+			   #keyPath(strings)]
     }
 
     override func cloudProperties() -> [String] {
