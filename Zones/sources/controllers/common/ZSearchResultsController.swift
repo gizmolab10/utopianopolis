@@ -17,13 +17,12 @@ import CloudKit
 
 var gSearchResultsController: ZSearchResultsController? { return gControllers.controllerForID(.idSearchResults) as? ZSearchResultsController }
 
-class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTableViewDelegate {
+class ZSearchResultsController: ZGenericTableController {
 
-    var      resultsAreVisible = false
-    var           foundRecords = [ZDatabaseID: [CKRecord]] ()
-	var             searchText : String?       { return gSearchController?.searchBox?.text }
-	override  var controllerID : ZControllerID { return .idSearchResults }
-    @IBOutlet var    tableView : ZTableView?
+    var     resultsAreVisible = false
+    var          foundRecords = [ZDatabaseID: [CKRecord]] ()
+	var            searchText : String?       { return gSearchController?.searchBoxText }
+	override var controllerID : ZControllerID { return .idSearchResults }
 
     var hasResults: Bool {
         var     result = false
@@ -70,7 +69,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
     #if os(OSX)
 
-    func numberOfRows(in tableView: ZTableView) -> Int { return foundRecordsCount }
+    override func numberOfRows(in tableView: ZTableView) -> Int { return foundRecordsCount }
 
     func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
         if  let (dbID, record) = identifierAndRecord(at: row) {
@@ -137,7 +136,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
         #if os(OSX)
             if  gIsSearchMode,
-                let          index = self.tableView?.selectedRow,
+                let          index = genericTableView?.selectedRow,
                 index             != -1,
                 let (dbID, record) = identifierAndRecord(at: index) {
                 resolved           = true
@@ -171,7 +170,7 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 		let range  = ranges == nil ? nil : ranges![0]
 
 		gControllers.swapGraphAndEssay(force: .noteMode)
-		signalRegarding(.eSwap)
+		signalMultiple([.eSwap])
 		gEssayView?.resetCurrentEssay(note, selecting: range)
 
 		return true
@@ -188,11 +187,9 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 
 		zone?.needChildren()
 		zone?.revealChildren()
-		redrawGraph()
-
+		gControllers.swapGraphAndEssay(force: .graphMode)
 		zone?.editAndSelect(text: searchText)
-
-        gControllers.sync()
+		signalMultiple([.eSwap, .eRelayout])
     }
 
     func clear() {
@@ -209,12 +206,12 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
         } else {
             resultsAreVisible = true
 
-            signalRegarding(.eSearch)
+            signalMultiple([.eSearch])
         }
     }
 
     func moveSelection(up: Bool, extreme: Bool) {
-        if  let             t = tableView {
+        if  let             t = genericTableView {
             var           row = t.selectedRow
             let       maximum = t.numberOfRows - 1
 
@@ -263,12 +260,12 @@ class ZSearchResultsController: ZGenericController, ZTableViewDataSource, ZTable
 					self.resolveRecord(dbID!, record!) // not bother user if only one record found
 				} else if total > 0 {
 					sortRecords()
-					tableView?.reloadData()
+					genericTableView?.reloadData()
 					
 					#if os(OSX)
 					FOREGROUND {
 						self.assignAsFirstResponder(nil)
-						self.tableView?.selectRowIndexes(IndexSet([0]), byExtendingSelection: false)
+						self.genericTableView?.selectRowIndexes(IndexSet([0]), byExtendingSelection: false)
 					}
 					#endif
 				}

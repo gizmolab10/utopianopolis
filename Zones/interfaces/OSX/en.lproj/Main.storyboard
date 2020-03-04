@@ -784,7 +784,7 @@ DQ
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1056" y="543"/>
+            <point key="canvasLocation" x="1055" y="626"/>
         </scene>
         <!--Ring Controller-->
         <scene sceneID="2ar-AS-rBz">
@@ -873,7 +873,7 @@ DQ
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="tableView" destination="z27-6x-Roi" id="jHj-dl-had"/>
+                        <outlet property="genericTableView" destination="z27-6x-Roi" id="Qo3-rd-obv"/>
                     </connections>
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -886,7 +886,7 @@ DQ
                 <controllerPlaceholder storyboardName="Details" id="yWa-SA-l1V" sceneMemberID="viewController"/>
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="894" y="700"/>
+            <point key="canvasLocation" x="893" y="692"/>
         </scene>
         <!--Essay-->
         <scene sceneID="YUn-EI-h0m">
@@ -975,7 +975,7 @@ DQ
                 </viewController>
                 <customObject id="IZh-Iz-IVH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="636" y="1448"/>
+            <point key="canvasLocation" x="962" y="1451"/>
         </scene>
         <!--Breadcrumbs Controller-->
         <scene sceneID="wXo-la-8OL">
@@ -1029,7 +1029,7 @@ DQ
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1055.5" y="650"/>
+            <point key="canvasLocation" x="1055" y="509"/>
         </scene>
     </scenes>
 </document>

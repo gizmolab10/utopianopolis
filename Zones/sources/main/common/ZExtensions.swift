@@ -108,7 +108,7 @@ extension NSObject {
         }
     }
 
-	func signalRegarding(_ regarding: ZSignalKind) {
+	func xsignalRegarding(_ regarding: ZSignalKind) {
 		gControllers.signalFor(nil, regarding: regarding)
 	}
 
@@ -358,11 +358,24 @@ extension CKRecord {
         return false
     }
 
+	var traitType: String {
+		var string = ""
+
+		if  let        type = self["type"] as? String,
+			let       trait = ZTraitType(rawValue: type),
+			let description = trait.description {
+			string          = "<\(description)>"
+		}
+
+		return string
+	}
+
     var decoratedName: String {
 		switch recordType {
 			case kTraitType:
 				let text = self["text"] as? String ?? kNoValue
-				return    (self["type"] as? String ?? "") + " " + text
+
+				return "\(traitType) \(text)"
 			case kZoneType:
 				if  let      name = self[kpZoneName] as? String {
 					let separator = " "
@@ -1246,13 +1259,39 @@ extension String {
 
 	var modern: String {
 		return replacingOccurrences(of: kLevelOneSeparator,   with: gSeparatorAt(level: 1))
-			.replacingOccurrences      (of: kLevelTwoSeparator,   with: gSeparatorAt(level: 2))
-			.replacingOccurrences      (of: kLevelThreeSeparator, with: gSeparatorAt(level: 3))
-			.replacingOccurrences      (of: kLevelFourSeparator,  with: gSeparatorAt(level: 4))
+			.replacingOccurrences  (of: kLevelTwoSeparator,   with: gSeparatorAt(level: 2))
+			.replacingOccurrences  (of: kLevelThreeSeparator, with: gSeparatorAt(level: 3))
+			.replacingOccurrences  (of: kLevelFourSeparator,  with: gSeparatorAt(level: 4))
+	}
+
+	var searchable: String {
+		return lowercased()
+			.replacingCharacters(",;!(){}\\\"",           with: "")
+			.replacingCharacters(".:_-='?/\r\n",          with: " ")
+			.replacingStrings(["%2f", "%3a", "  ", "  "], with: " ")
 	}
 
 	func componentsSeparatedAt(level: Int) -> [String] {
 		return components(separatedBy: gSeparatorAt(level: level))
+	}
+
+	func replacingCharacters(_ matchAgainst: String, with: String) -> String {
+		var        result = self
+		for character in matchAgainst {
+			let separator = String(character)
+			result        = result.replacingOccurrences(of: separator, with: with)
+		}
+
+		return result
+	}
+
+	func replacingStrings(_ matchAgainst: [String], with: String) -> String {
+		var result = self
+		for string in matchAgainst {
+			result = result.replacingOccurrences(of: string, with: with)
+		}
+
+		return result
 	}
 
 	subscript (r: Range<Int>) -> String {

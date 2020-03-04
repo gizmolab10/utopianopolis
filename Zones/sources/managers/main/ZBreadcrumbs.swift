@@ -79,7 +79,7 @@ class ZBreadcrumbs: NSObject {
 	func toggleBreadcrumbExtent() {
 		gShowAllBreadcrumbs = !gShowAllBreadcrumbs
 
-		signalRegarding(.eCrumbs)
+		signalMultiple([.eCrumbs])
 	}
 
 }

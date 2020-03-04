@@ -2229,7 +2229,7 @@ class ZGraphEditor: ZBaseEditor {
     func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
 		moveUp(iMoveUp, gSelecting.sortedGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
             gControllers.signalAndSync(nil, regarding: iKind) {
-                self.signalRegarding(iKind)
+                self.signalMultiple([iKind])
             }
         }
     }

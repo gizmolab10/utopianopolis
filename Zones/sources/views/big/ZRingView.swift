@@ -146,7 +146,7 @@ class ZRingView: ZView {
 			let COMMAND = flags.isCommand
 
 			if (gFullRingIsVisible && respond(to: item, CONTROL: CONTROL, COMMAND: COMMAND)) || respondToRingControl(item) { // single item
-				signalRegarding(.eRelayout)
+				signalMultiple([.eRelayout])
 
 				return true
 			} else if var subitems = item as? ZObjectsArray {	  // array of items
@@ -156,7 +156,7 @@ class ZRingView: ZView {
 
 				for subitem in subitems {
 					if  respond(to: subitem, CONTROL: CONTROL) {
-						signalRegarding(.eRelayout)
+						signalMultiple([.eRelayout])
 
 						return true
 					}
@@ -282,7 +282,7 @@ class ZRingView: ZView {
 		removeExtras()
 
 		if  okayToSignal {
-			signalRegarding(.eRing)
+			signalMultiple([.eRing])
 		} else {
 			setNeedsDisplay()
 		}

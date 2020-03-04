@@ -273,7 +273,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 rubberbandRect = nil
 
 				restartGestureRecognition()
-				signalRegarding(.eDatum) // so color well and indicators get updated
+				signalMultiple([.eDatum]) // so color well and indicators get updated
             } else if let dot = detectDot(iGesture) {
                 if  !dot.isReveal {
                     dragStartEvent(dot, iGesture)
@@ -358,7 +358,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					}
                 }
 
-                signalRegarding(regarding)
+                signalMultiple([regarding])
             }
 
             restartGestureRecognition()

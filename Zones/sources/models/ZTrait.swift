@@ -27,6 +27,17 @@ enum ZTraitType: String {
 			default:     return 0.66667
 		}
 	}
+
+	var description: String? {
+		switch self {
+			case .tHyperlink: return "LINK"
+			case .tEmail:     return "EMAIL"
+			case .tEssay:     return "ESSAY"
+			case .tNote:      return "NOTE"
+			default:          return nil
+		}
+	}
+
 }
 
 class ZTrait: ZRecord {
@@ -132,11 +143,10 @@ class ZTrait: ZRecord {
     }
 
 	func updateSearchableStrings() {
-		let searchables: [ZTraitType] = [.tNote, .tEssay]
+		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tHyperlink]
 
-		if  let tt = traitType,
-			searchables.contains(tt) {
-			strings = text?.components(separatedBy: ".").joined().components(separatedBy: kReturn).joined(separator: " ").components(separatedBy: " ")
+		if  let  tt = traitType, searchables.contains(tt) {
+			strings = text?.searchable.components(separatedBy: " ")
 		}
 	}
 

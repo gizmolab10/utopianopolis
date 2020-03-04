@@ -107,7 +107,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		gControllers.swapGraphAndEssay()
-		signalRegarding(.eRelayout)
+		signalMultiple([.eRelayout])
 	}
 
 	func save() {
@@ -255,7 +255,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 		}
 
-		signalRegarding(.eCrumbs)
+		signalMultiple([.eCrumbs])
 	}
 
 	private func select(restoreSelection: Int? = nil) {

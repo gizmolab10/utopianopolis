@@ -132,7 +132,7 @@ class ZControllers: NSObject {
 	func showSearch(_ OPTION: Bool = false) {
 		if  gDatabaseID  != .favoritesID {
 			swapModes()
-			signalRegarding(OPTION ? .eFound : .eSearch)
+			signalMultiple([OPTION ? .eFound : .eSearch])
 		}
 	}
 
@@ -149,13 +149,13 @@ class ZControllers: NSObject {
 	func showHideTooltips() {
 		gToolTipsAlwaysVisible = !gToolTipsAlwaysVisible
 
-		signalRegarding(.eRing)
+		signalMultiple([.eRing])
 	}
 
 	func showHideRing() {
 		gFullRingIsVisible = !gFullRingIsVisible
 
-		signalRegarding(.eRing)
+		signalMultiple([.eRing])
 	}
 
 	func showEssay(forGuide: Bool) {

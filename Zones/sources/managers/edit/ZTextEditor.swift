@@ -294,7 +294,7 @@ class ZTextEditor: ZTextView {
                 textWidget.enableUndo()
                 textWidget.layoutTextField()
                 textWidget.becomeFirstResponder()
-				signalRegarding(.eCrumbs)
+				signalMultiple([.eCrumbs])
 				gSetEditIdeaMode()
 
                 if  let at = setOffset ?? gCurrentMouseDownLocation?.x {

@@ -109,7 +109,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
             return nil
         }
 
-        return searchString
+		return searchString.searchable
     }
 
     
@@ -122,7 +122,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                 gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
 				gSearching.state = (gSearchResultsController?.hasResults ?? false) ? .sList : .sFind
                 
-                self.signalRegarding(.eFound)
+                self.signalMultiple([.eFound])
             }
         }
         
