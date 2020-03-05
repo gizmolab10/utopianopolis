@@ -452,8 +452,11 @@ class ZGraphEditor: ZBaseEditor {
 
 	func grabOrEdit(_ COMMAND: Bool, _  OPTION: Bool, _ ESCAPE: Bool = false) {
         if !COMMAND {											// switch to essay edit mode
-			gTextEditor.edit(gSelecting.currentMoveable)
-            
+			let zone = gSelecting.currentMoveable
+
+			gTemporarilySetMouseZone(zone)
+			gTextEditor.edit(zone)
+
             if  OPTION {
                 gTextEditor.placeCursorAtEnd()
             }

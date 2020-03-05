@@ -364,7 +364,7 @@ extension CKRecord {
 		if  let        type = self["type"] as? String,
 			let       trait = ZTraitType(rawValue: type),
 			let description = trait.description {
-			string          = "<\(description)>"
+			string          = description + kSearchSeparator
 		}
 
 		return string
@@ -1266,7 +1266,7 @@ extension String {
 
 	var searchable: String {
 		return lowercased()
-			.replacingCharacters(",;!(){}\\\"",           with: "")
+			.replacingCharacters(",;@!(){}\\\"",          with: "")
 			.replacingCharacters(".:_-='?/\r\n",          with: " ")
 			.replacingStrings(["%2f", "%3a", "  ", "  "], with: " ")
 	}

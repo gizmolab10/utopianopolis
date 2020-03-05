@@ -273,51 +273,40 @@ class ZTextEditor: ZTextView {
 
 	func edit(_ zRecord: ZRecord, andSelect text: String?) {
 		edit(zRecord)
-		FOREGROUND {
-			self.selectText(text)
-		}
+		self.selectText(text)
     }
 
     func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, immediately: Bool = false) {
-        if  (currentEdit  == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
-            let pack = ZTextPack(zRecord)
-            if  pack.packedZone?.userCanWrite ?? false,
-                let     textWidget = pack.textWidget,
-                textWidget.window != nil {
-                currentEdit        = pack
-				let           zone = textWidget.widget?.widgetZone
+        if  (currentEdit   == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
+            let        pack = ZTextPack(zRecord)
+			if  let    zone = pack.packedZone,
+				zone.userCanWrite {
+				currentEdit = pack
+				let mouseZone = gCurrentMouseDownZone
 
-				printDebug(.edit, zone?.unwrappedName ?? "")
+				printDebug(.edit, zone.unwrappedName)
 
-                pack.updateText(isEditing: true)
-				gSelecting.ungrabAll(retaining: zone == nil ? [] : [zone!])		// so crumbs will appear correctly
-                textWidget.enableUndo()
-                textWidget.layoutTextField()
-                textWidget.becomeFirstResponder()
-				signalMultiple([.eCrumbs])
+				pack.updateText(isEditing: true)
+				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
 				gSetEditIdeaMode()
 
-                if  let at = setOffset ?? gCurrentMouseDownLocation?.x {
-                    if  immediately {
-                        setCursor(at: at)
-                    } else {
-                        FOREGROUND(after: 0.001) {
-                            self.setCursor(at: at)
-                        }
-                    }
-                }
-                
-//                if  let widget = textWidget.widget {
-//                    widget.layoutDots()
-//                    widget.revealDot.setNeedsDisplay()
-//                    widget.setNeedsDisplay()
-//                }
+				if  let textWidget = self.currentTextWidget {
+					gTemporarilySetMouseZone(mouseZone)
+					textWidget.enableUndo()
+					textWidget.layoutTextField()
+					textWidget.becomeFirstResponder()
+				}
+
+				if  let at = setOffset ?? gCurrentMouseDownLocation?.x {
+					setCursor(at: at)
+				}
 
 				gCurrentMouseDownZone     = nil
 				gCurrentMouseDownLocation = nil
 
 				deferEditingStateChange()
-            }
+				signalMultiple([.eRelayout])
+			}
         }
     }
 
@@ -396,11 +385,11 @@ class ZTextEditor: ZTextView {
 	
 
 	func selectText(_ iText: String?) {
-		if  let ranges = currentTextWidget?.text?.rangesMatching(iText),
+		if	let   text =  currentTextWidget?.text?.searchable,
+			let ranges = text.rangesMatching(iText),
 			ranges.count > 0 {
 			let range  = ranges[0]
 			selectedRange = range
-			currentTextWidget?.selectCharacter(in: range)
 		}
 	}
 	

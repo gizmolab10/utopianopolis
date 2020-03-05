@@ -149,7 +149,7 @@ extension String {
             let character = utf8CString[2]
             
             for arrowKey in ZArrowKey.up.rawValue...ZArrowKey.right.rawValue {
-                if arrowKey == character {
+                if  arrowKey == character {
                     return ZArrowKey(rawValue: character)
                 }
             }

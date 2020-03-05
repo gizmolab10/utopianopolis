@@ -154,6 +154,7 @@ let    kFavoritesAreVisibleKey = "favorites are visible"
 
 let                 kSeparator = ":"
 let            kCrumbSeparator = "      "
+let           kSearchSeparator = ":1:2:"
 let         kLevelOneSeparator = "  ((a))  "
 let         kLevelTwoSeparator = " (a|a) "
 let       kLevelThreeSeparator = " (f) "

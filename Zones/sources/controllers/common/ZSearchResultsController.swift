@@ -81,23 +81,37 @@ class ZSearchResultsController: ZGenericTableController {
                 string = record.decoratedName
             }
 
-			if  let   text = searchText,
-				let ranges = string.rangesMatching(text) {				// find all matching substring ranges
-				var result = NSMutableAttributedString(string: string)
+			var result = NSMutableAttributedString(string: string)
 
-				for range in ranges {
-					result.addAttribute(.backgroundColor, value: NSColor.systemYellow, range: range) // highlight matching substring in yellow
+			if  let searched = searchText {
+				for text in searched.components(separatedBy: " ") {
+					if  let ranges = string.rangesMatching(text) {				// find all matching substring ranges
+						for range in ranges {
+							result.addAttribute(.backgroundColor, value: NSColor.systemTeal, range: range) // highlight matching substring in yellow
+						}
+					}
 				}
 
-				if  row == tableView.selectedRow {
-					let suffix = result
-					result     = NSMutableAttributedString(string: "• ")
+				if  let ranges = string.rangesMatching(kSearchSeparator) {				// find all matching substring ranges
+					let color = ZColor.systemYellow
 
-					result.append(suffix)
+					for range in ranges {
+						let r = NSRange(location: 0, length: range.location)
+
+						result.replaceCharacters(in: range, with: "")
+						result.addAttribute(.backgroundColor, value: color, range: r) // highlight prefix in teal
+					}
 				}
-
-				return result
 			}
+
+			if  row == tableView.selectedRow {
+				let suffix = result
+				result     = NSMutableAttributedString(string: "• ")
+
+				result.append(suffix)
+			}
+
+			return result
         }
 		
 		return nil
@@ -156,41 +170,43 @@ class ZSearchResultsController: ZGenericTableController {
 		if !resolveAsTrait(     record) {
 			resolveAsZone(dbID, record)
 		}
-    }
+	}
+
+	func resolveAsZone(_ dbID: ZDatabaseID, _ record: CKRecord) {
+		var zone  = gCloud?.maybeZoneForRecordID(record.recordID)
+
+		if  zone == nil {
+			zone  = Zone(record: record, databaseID: dbID)
+		}
+
+		zone?.resolveAndSelect(searchText)
+	}
 
 	func resolveAsTrait(_ record: CKRecord) -> Bool {
 		guard let  trait = gCloud?.maybeTraitForRecordID(record.recordID),
 			let recordID = trait.owner?.recordID,
-			let     zone = gCloud?.maybeZoneForRecordID(recordID) else {
+			let     zone = gCloud?.maybeZoneForRecordID(recordID),
+			let     type = trait.traitType else {
 			return false
 		}
 
+		switch type {
+			case .tEssay,
+				 .tNote: resolveAsNote(zone)
+			default:     zone.resolveAndSelect(nil)
+		}
+
+		return true
+	}
+
+	func resolveAsNote(_ zone: Zone) {
 		let   note = zone.note
 		let ranges = note.noteText?.string.rangesMatching(searchText)
 		let range  = ranges == nil ? nil : ranges![0]
 
 		gControllers.swapGraphAndEssay(force: .noteMode)
-		signalMultiple([.eSwap])
 		gEssayView?.resetCurrentEssay(note, selecting: range)
-
-		return true
 	}
-
-    func resolveAsZone(_ dbID: ZDatabaseID, _ record: CKRecord) {
-        var zone  = gCloud?.maybeZoneForRecordID(record.recordID)
-
-        if  zone == nil {
-            zone  = Zone(record: record, databaseID: dbID)
-        }
-
-        gHere     = zone!
-
-		zone?.needChildren()
-		zone?.revealChildren()
-		gControllers.swapGraphAndEssay(force: .graphMode)
-		zone?.editAndSelect(text: searchText)
-		signalMultiple([.eSwap, .eRelayout])
-    }
 
     func clear() {
         resultsAreVisible = false

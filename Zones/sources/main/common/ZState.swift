@@ -470,6 +470,15 @@ var gCurrentEssay: ZNote? {
 // MARK:- actions
 // MARK:-
 
+func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 1.0) {
+	let                  save = gCurrentMouseDownZone
+	gCurrentMouseDownZone     = zone
+
+	FOREGROUND(after: seconds) {
+		gCurrentMouseDownZone = save
+	}
+}
+
 func gTestForUserInterrupt() throws {
 	if  let w = gWindow, (w.mouseMoved || w.keyPressed) {
 		throw(ZInterruptionError.userInterrupted)

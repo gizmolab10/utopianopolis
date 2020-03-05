@@ -803,7 +803,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     func       			     ungrab() { gSelecting           .ungrab(self) }
     func            		   edit() { gTextEditor            .edit(self) }
 	func editAndSelect(text: String?) { gTextEditor			   .edit(self, andSelect: text) }
-	
+
+	func resolveAndSelect(_ searchText: String?) {
+		gHere = self
+
+		revealChildren()
+		gControllers.swapGraphAndEssay(force: .graphMode)
+		gTemporarilySetMouseZone(self)
+		self.editAndSelect(text: searchText)
+	}
     
     func grab(updateBrowsingLevel: Bool = true) {
 		gTextEditor.stopCurrentEdit()
