@@ -49,6 +49,12 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 
     override open var acceptsFirstResponder: Bool { return true }
 
+	func setasideTextWidget() {
+		if  let widget = gCurrentlyEditingWidget {
+			gWindow?.contentView?.addSubview(widget)
+		}
+	}
+
     // cannot declare this in extensions because compiler barfs about objective-c method conflict (and then compiler throws a seg fault)
 
     override func keyDown(with event: ZEvent) {

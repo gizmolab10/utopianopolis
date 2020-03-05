@@ -31,11 +31,10 @@ class ZoneWidget: ZView {
     let              textWidget = ZoneTextWidget ()
     let            childrenView = ZView          ()
     private var childrenWidgets = [ZoneWidget]   ()
-    var                isInPublic = false
-    weak var         widgetZone :       Zone?
+    var              isInPublic = false
+    var              widgetZone :       Zone?
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
     var                   ratio :     CGFloat { return isInPublic ? 1.0 : kFavoritesReduction }
-
 
     deinit {
         childrenWidgets.removeAll()
@@ -60,7 +59,6 @@ class ZoneWidget: ZView {
             backgroundColor = kClearColor
         #endif
 
-        gWidgets.registerWidget(self)
         addTextView()
         textWidget.layoutText()
         layoutDots()
@@ -81,9 +79,8 @@ class ZoneWidget: ZView {
             var previous: ZoneWidget?
 
             while index > 0 {
-                index                 -= 1 // go backwards down the children arrays, bottom and top constraints expect it
-                let childWidget        = childrenWidgets[index]
-                childWidget.widgetZone =            zone[index]
+                index          -= 1 // go backwards down the children arrays, bottom and top constraints expect it
+                let childWidget = childrenWidgets[index]
 
                 childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, isThought: isInPublic, visited: visited)
                 childWidget.snp.removeConstraints()
@@ -169,28 +166,21 @@ class ZoneWidget: ZView {
 
     func prepareChildrenWidgets() {
         if  let zone = widgetZone {
+			childrenWidgets.removeAll()
+			childrenView.removeAllSubviews()
 
-            if !zone.showingChildren {
-                childrenWidgets.removeAll()
-
-                for view in childrenView.subviews {
-                    view.removeFromSuperview()
-                }
-            } else {
+            if  zone.showingChildren {
                 var count = zone.count
 
                 if  count > 60 {
                     count = 60
                 }
 
-                while childrenWidgets.count < count {
-                    childrenWidgets.append(ZoneWidget())
-                }
-
-                while childrenWidgets.count > count {
-                    let widget = childrenWidgets.removeLast()
-
-                    widget.removeFromSuperview()
+				for index in 0 ..< count {
+					let      child = zone.children[index]
+					if  let widget = child.widget {
+						childrenWidgets.append(widget)
+					}
                 }
             }
         }
@@ -306,9 +296,9 @@ class ZoneWidget: ZView {
 
             if zone.showingChildren {
                 for child in zone.children {
-                    if  let            childWidget = child.widget,
-                        self        != childWidget,
-                        let    found = childWidget.widgetNearestTo(iPoint, in: iView, here, visited + [zone]) {
+					if  let   widget = child.widget,
+						self        != widget,
+                        let    found = widget.widgetNearestTo(iPoint, in: iView, here, visited + [zone]) {
                         return found
                     }
                 }

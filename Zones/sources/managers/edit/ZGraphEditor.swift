@@ -115,8 +115,7 @@ class ZGraphEditor: ZBaseEditor {
 					}
 				}
             } else if isValid(key, flags) {
-                let    widget = gWidgets.currentMovableWidget
-                let hasWidget = widget != nil
+				let widget = gSelecting.currentMoveable.widget
 
                 widget?.widgetZone?.deferWrite()
                 
@@ -166,8 +165,8 @@ class ZGraphEditor: ZBaseEditor {
 					case kSpace:   if OPTION || isWindow || CONTROL { addIdea() } else { gCurrentKeyPressed = nil; return false }
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
-                    case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) } else { gCurrentKeyPressed = nil; return false }
-					case kEscape:                 grabOrEdit(true,    OPTION, true)
+                    case kReturn:  grabOrEdit(COMMAND, OPTION)
+					case kEscape:  grabOrEdit(true,    OPTION, true)
                     default:       return false // indicate key was not handled
                     }
                 }
@@ -558,9 +557,7 @@ class ZGraphEditor: ZBaseEditor {
 
     func alterCase(up: Bool) {
         for grab in gSelecting.currentGrabs {
-            if  let tWidget = grab.widget?.textWidget {
-                tWidget.alterCase(up: up)
-            }
+			grab.widget?.textWidget.alterCase(up: up)
         }
     }
 

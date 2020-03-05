@@ -94,7 +94,7 @@ extension NSObject {
     }
 
     func blankScreenDebug() {
-        if  let w = gGraphController?.thoughtsRootWidget.bounds.size.width, w < 1.0 {
+        if  let w = gGraphController?.thoughtsRootWidget?.bounds.size.width, w < 1.0 {
             bam("blank graph !!!!!!")
         }
     }
@@ -1762,6 +1762,12 @@ extension ZGestureRecognizer {
 }
 
 extension ZView {
+
+	func removeAllSubviews() {
+		for view in subviews {
+			view.removeFromSuperview()
+		}
+	}
 
     func clearGestures() {
         if recognizers != nil {

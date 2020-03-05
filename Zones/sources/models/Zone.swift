@@ -42,6 +42,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var                   colorMaybe :             ZColor?
     var                   emailMaybe :             String?
 	var       		       noteMaybe :              ZNote?
+	var                       widget :         ZoneWidget?
 	var                     children =          ZoneArray()
 	var                       traits =   ZTraitDictionary()
     var                        count :                Int  { return children.count }
@@ -51,7 +52,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var                    trashZone :               Zone? { return cloud?.trashZone }
 	var             grabbedTextColor :             ZColor? { return color?.darker(by: 3.0) }
     var                     manifest :          ZManifest? { return cloud?.manifest }
-    var                       widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
     var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
     var               linkRecordName :             String? { return recordName(from: zoneLink) }
     override var           emptyName :             String  { return kEmptyIdea }
@@ -60,8 +60,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var                decoratedName :             String  { return decoration + unwrappedName }
     var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
     var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
-    var            onlyShowRevealDot :               Bool  { return showingChildren && ((isRootOfFavorites && !(widget?.isInPublic ?? true)) || (kIsPhone && self == gHereMaybe)) }
-    var              dragDotIsHidden :               Bool  { return                     (isRootOfFavorites && !(widget?.isInPublic ?? true)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
+    var            onlyShowRevealDot :               Bool  { return showingChildren && ((isRootOfFavorites && !isInPublicDatabase) || (kIsPhone && self == gHereMaybe)) }
+    var              dragDotIsHidden :               Bool  { return                     (isRootOfFavorites && !isInPublicDatabase) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
     var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
     var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
     var                 hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }
@@ -97,6 +97,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         self.init(record: newRecord!, databaseID: databaseID)
 
         zoneName      = named
+
+		FOREGROUND(canBeDirect: true) {
+			self.widget             = ZoneWidget()
+			self.widget?.widgetZone = self
+		}
 
         updateCKRecordProperties()
     }
@@ -1137,9 +1142,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         var visible = [ZoneWidget] ()
 
         traverseProgeny { iZone -> ZTraverseStatus in
-            if let w = iZone.widget {
-                visible.append(w)
-            }
+			if  let widget = iZone.widget {
+				visible.append(widget)
+			}
 
             return iZone.showingChildren ? .eContinue : .eSkip
         }
@@ -1716,6 +1721,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
         self.init(record: nil, databaseID: dbID)
+
+		widget             = ZoneWidget()
+		widget?.widgetZone = self
 
         temporarilyIgnoreNeeds {
             setStorageDictionary(dict, of: kZoneType, into: dbID)

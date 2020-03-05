@@ -292,7 +292,7 @@ class ZSelecting: NSObject {
 
 
     func updateWidgetNeedDisplay(for zone: Zone?) {
-        if  zone != nil, let widget = zone!.widget {
+        if  let widget = zone?.widget {
             widget                  .setNeedsDisplay()
             widget.dragDot.innerDot?.setNeedsDisplay()
         }

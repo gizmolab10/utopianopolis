@@ -58,9 +58,6 @@
 		0C39B2E91F182EBB0091F4D1 /* ZSelecting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */; };
 		0C39B2EA1F182EBB0091F4D1 /* ZSelecting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */; };
 		0C39B2EB1F182EBB0091F4D1 /* ZSelecting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */; };
-		0C39B2EC1F182EBB0091F4D1 /* ZWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B24A1F182EBB0091F4D1 /* ZWidgets.swift */; };
-		0C39B2ED1F182EBB0091F4D1 /* ZWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B24A1F182EBB0091F4D1 /* ZWidgets.swift */; };
-		0C39B2EE1F182EBB0091F4D1 /* ZWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B24A1F182EBB0091F4D1 /* ZWidgets.swift */; };
 		0C39B3131F182EBB0091F4D1 /* ZAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B25B1F182EBB0091F4D1 /* ZAction.swift */; };
 		0C39B3141F182EBB0091F4D1 /* ZAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B25B1F182EBB0091F4D1 /* ZAction.swift */; };
 		0C39B3151F182EBB0091F4D1 /* ZAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B25B1F182EBB0091F4D1 /* ZAction.swift */; };
@@ -1175,7 +1172,6 @@
 				0C39B2BC1F182EBB0091F4D1 /* ZState.swift in Sources */,
 				0C39B2B61F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B3131F182EBB0091F4D1 /* ZAction.swift in Sources */,
-				0C39B2EC1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
 				0C43EFD121010F62000976CE /* ZOnboarding.swift in Sources */,
 				0C63DA6D1FCF837D005EC548 /* ZFavorites.swift in Sources */,
 				A7FF042A22C1604D00714AD2 /* ZGridController.swift in Sources */,
@@ -1256,7 +1252,6 @@
 				A717BF4B2251581D004F7993 /* NSURL+ZURL.m in Sources */,
 				0C09A7D71FE5DEC600F3D736 /* ZGenericTableController.swift in Sources */,
 				0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */,
-				0C39B2EE1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
 				0C43EFE221010F62000976CE /* ZCloud.swift in Sources */,
 				A7E9A3B223C115470064C89A /* ZShortcuts.swift in Sources */,
 				0CB6199E1FB3C4660087B066 /* ZSearchController.swift in Sources */,
@@ -1339,7 +1334,6 @@
 				0C39B3141F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				A7B48AA923E0E80C00654DBD /* ZToggleButton.swift in Sources */,
 				0C43EFDE21010F62000976CE /* ZBatches.swift in Sources */,
-				0C39B2ED1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
 				0C2E22D11F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				A7E5A5EB23EFAE4F00A52F47 /* ZStackableView.swift in Sources */,
 				A7B48AB223E0E80C00654DBD /* ZoneDot.swift in Sources */,

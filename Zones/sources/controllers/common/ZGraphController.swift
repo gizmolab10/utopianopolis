@@ -25,8 +25,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	@IBOutlet var         spinner :  ZProgressIndicator?
 	@IBOutlet var        dragView :  ZDragView?
 	@IBOutlet var     spinnerView :  ZView?
-	let        thoughtsRootWidget =  ZoneWidget   ()
-	let       favoritesRootWidget =  ZoneWidget   ()
+	var        thoughtsRootWidget :  ZoneWidget? { return gHereMaybe?.widget }
+	var       favoritesRootWidget :  ZoneWidget? { return gFavoritesRoot?.widget }
 	var        rubberbandPreGrabs =  ZoneArray    ()
 	var       priorScrollLocation =  CGPoint.zero
 	var           rubberbandStart =  CGPoint.zero
@@ -70,7 +70,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 						gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
 						gHere.ungrab()
 
-						for widget in gWidgets.visibleWidgets {
+						let visibleWidgets = gHere.visibleWidgets + (gFavoritesRoot?.visibleWidgets ?? [])
+
+						for widget in visibleWidgets {
 							if  let    hitRect = widget.hitRect {
 								let widgetRect = widget.convert(hitRect, to: d)
 
@@ -93,10 +95,14 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 		super.setup()
 		platformSetup()
-        dragView?.addSubview(thoughtsRootWidget)
 
-        if  !kIsPhone {
-            dragView?.addSubview(favoritesRootWidget)
+		if  let widget = thoughtsRootWidget {
+			dragView?.addSubview(widget)
+		}
+
+        if  !kIsPhone,
+			let widget = favoritesRootWidget {
+            dragView?.addSubview(widget)
         }
     }
 
@@ -123,11 +129,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 	// MARK:- operations
 	// MARK:-
-
-    func clear() {
-        thoughtsRootWidget   .widgetZone = nil
-        favoritesRootWidget.widgetZone = nil
-    }
 
     #if os(iOS) && false
     private func updateMinZoomScaleForSize(_ size: CGSize) {
@@ -162,24 +163,28 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     func layoutForCurrentScrollOffset() {
         if  let d = dragView {
-            thoughtsRootWidget.snp.removeConstraints()
-            thoughtsRootWidget.snp.makeConstraints { make in
-                make.centerY.equalTo(d).offset(gScrollOffset.y)
-                make.centerX.equalTo(d).offset(gScrollOffset.x)
-            }
-
-            if  favoritesRootWidget.superview == nil {
-                d.addSubview(favoritesRootWidget)
-            }
-            
-            favoritesRootWidget.snp.removeConstraints()
-            favoritesRootWidget.snp.makeConstraints { make in
-				if kIsPhone {
+			if  let widget = thoughtsRootWidget {
+				widget.snp.removeConstraints()
+				widget.snp.makeConstraints { make in
 					make.centerY.equalTo(d).offset(gScrollOffset.y)
 					make.centerX.equalTo(d).offset(gScrollOffset.x)
-				} else {
-					make  .top.equalTo(d).offset(45.0 - Double(gGenericOffset.height / 3.0))
-					make .left.equalTo(d).offset(15.0 - Double(gGenericOffset.width       ))
+				}
+			}
+
+			if  let widget = favoritesRootWidget {
+				if  widget.superview == nil {
+					d.addSubview(widget)
+				}
+            
+				widget.snp.removeConstraints()
+				widget.snp.makeConstraints { make in
+					if kIsPhone {
+						make.centerY.equalTo(d).offset(gScrollOffset.y)
+						make.centerX.equalTo(d).offset(gScrollOffset.x)
+					} else {
+						make  .top.equalTo(d).offset(45.0 - Double(gGenericOffset.height / 3.0))
+						make .left.equalTo(d).offset(15.0 - Double(gGenericOffset.width       ))
+					}
 				}
 			}
             
@@ -195,7 +200,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inPublicGraph: Bool) {
         if  kIsPhone && (inPublicGraph == gShowFavorites) { return }
 
-        let                        here = inPublicGraph ? gHereMaybe : gFavoritesRoot
+        let                        here = inPublicGraph ? gHereMaybe         : gFavoritesRoot
         var specificWidget: ZoneWidget? = inPublicGraph ? thoughtsRootWidget : favoritesRootWidget
         var specificView:        ZView? = dragView
         var specificIndex:         Int?
@@ -203,13 +208,11 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         gTextCapturing                  = false
         specificWidget?     .widgetZone = here
 
-        if  let            zone  = iZone as? Zone,
-            let          widget  = zone.widget,
-            widget.isInPublic == inPublicGraph {
-            specificWidget       = widget
-            specificIndex        = zone.siblingIndex
-            specificView         = specificWidget?.superview
-            recursing            = [.eData, .eRelayout].contains(iKind)
+        if  let      zone  = iZone as? Zone {
+			specificWidget = zone.widget
+            specificIndex  = zone.siblingIndex
+            specificView   = specificWidget?.superview
+            recursing      = [.eData, .eRelayout].contains(iKind)
         }
 
         specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isThought: inPublicGraph, visited: [])
@@ -218,23 +221,24 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
         if  [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
 			prepare(for: iKind)
-			layoutForCurrentScrollOffset()
+			gWindow?.setasideTextWidget()
+			dragView?.removeAllSubviews()
 			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: true)
 			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: false)
-			dragView?.setAllSubviewsNeedDisplay()
+
+			if  dragView?.subviews.count ?? 0 > 0 {
+				layoutForCurrentScrollOffset()
+				dragView?.setAllSubviewsNeedDisplay()
+			}
         }
 
 		gRingView?.setNeedsDisplay()
     }
 	
 	func prepare(for iKind: ZSignalKind) {
-		if  iKind == .eRelayout {
-			gWidgets.clearRegistry()
-		}
-		
 		if  kIsPhone {
-			favoritesRootWidget.isHidden = !gShowFavorites
-			thoughtsRootWidget .isHidden =  gShowFavorites
+			favoritesRootWidget?.isHidden = !gShowFavorites
+			thoughtsRootWidget? .isHidden =  gShowFavorites
 		}
 	}
 	
@@ -471,7 +475,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
                 prior?           .displayForDrag() // erase  child lines
                 dropZone?.widget?.displayForDrag() // relayout child lines
-                dragView?       .setNeedsDisplay() // relayout drag: line and dot
+                dragView?        .setNeedsDisplay() // relayout drag: line and dot
 
                 if !isNoop,     dropNow,
 					let         drop = dropZone {
@@ -524,7 +528,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     func widgetNearest(_ iGesture: ZGestureRecognizer?, isThought: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
         let           rootWidget = isThought ? thoughtsRootWidget : favoritesRootWidget
         if  let thoughtsLocation = iGesture?.location(in: dragView),
-            let thoughtsZone     = rootWidget.widgetNearestTo(thoughtsLocation, in: dragView, gHereMaybe) {
+            let thoughtsZone     = rootWidget?.widgetNearestTo(thoughtsLocation, in: dragView, gHereMaybe) {
             if  isThought, !kIsPhone,
 
                 // /////////////////////////////////////
@@ -579,10 +583,10 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         gDragRelation    = nil
         gDragPoint       = nil
 
-        favoritesRootWidget.setNeedsDisplay()
-        thoughtsRootWidget    .setNeedsDisplay()
-        dragView?          .setNeedsDisplay() // erase drag: line and dot
-        dot?               .setNeedsDisplay()
+        favoritesRootWidget?.setNeedsDisplay()
+        thoughtsRootWidget? .setNeedsDisplay()
+        dragView?           .setNeedsDisplay() // erase drag: line and dot
+        dot?                .setNeedsDisplay()
     }
 
 
@@ -615,16 +619,21 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         if  let        d = dragView,
             let location = iGesture?.location(in: d),
             d.bounds.contains(location) {
-            let  widgets = gWidgets.widgets.values
-            for  widget in widgets {
-                let rect = widget.convert(widget.outerHitRect, to: d)
+			for zone in [gHere, gFavoritesRoot] {
+				zone!.traverseProgeny { child -> (ZTraverseStatus) in
+					if  let widget = child.widget {
+						let   rect = widget.convert(widget.outerHitRect, to: d)
 
-                if  rect.contains(location) {
-                    hit  = widget
+						if  rect.contains(location) {
+							hit    = widget
 
-                    break
-                }
-            }
+							return .eStop
+						}
+					}
+
+					return child.isVisible ? .eContinue : .eSkip
+				}
+			}
         }
 
         return hit
