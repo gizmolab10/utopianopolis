@@ -126,7 +126,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 		}
 	}
 
-    @discardableResult override func becomeFirstResponder() -> Bool {
+	override var canBecomeKeyView: Bool { return true }
+
+    @discardableResult @objc override func becomeFirstResponder() -> Bool {
 		if !isFirstResponder,
 			let zone = widgetZone,
 			zone.canEditNow,                 // detect if mouse down inside widget OR key pressed

@@ -288,13 +288,15 @@ class ZTextEditor: ZTextView {
 
 				pack.updateText(isEditing: true)
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
-				gSetEditIdeaMode()
 
-				if  let textWidget = self.currentTextWidget {
+				if  let     window = gWindow,
+					let textWidget = self.currentTextWidget {
 					gTemporarilySetMouseZone(mouseZone)
-					textWidget.enableUndo()
-					textWidget.layoutTextField()
-					textWidget.becomeFirstResponder()
+
+					if  window.makeFirstResponder(textWidget) {
+						textWidget.enableUndo()
+						textWidget.layoutTextField()
+					}
 				}
 
 				if  let at = setOffset ?? gCurrentMouseDownLocation?.x {
@@ -304,6 +306,7 @@ class ZTextEditor: ZTextView {
 				gCurrentMouseDownZone     = nil
 				gCurrentMouseDownLocation = nil
 
+				gSetEditIdeaMode()
 				deferEditingStateChange()
 				signalMultiple([.eRelayout])
 			}

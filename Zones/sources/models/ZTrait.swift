@@ -145,8 +145,12 @@ class ZTrait: ZRecord {
 	func updateSearchableStrings() {
 		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tHyperlink]
 
-		if  let  tt = traitType, searchables.contains(tt) {
-			strings = text?.searchable.components(separatedBy: " ")
+		if  let       tt = traitType, searchables.contains(tt) {
+			let    array = text?.searchable.components(separatedBy: " ")
+			if  strings?.count != array?.count ||
+				strings != array {
+				strings  = array
+			}
 		}
 	}
 

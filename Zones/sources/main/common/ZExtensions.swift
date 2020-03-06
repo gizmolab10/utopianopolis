@@ -1267,7 +1267,7 @@ extension String {
 	var searchable: String {
 		return lowercased()
 			.replacingCharacters(",;@!(){}\\\"",          with: "")
-			.replacingCharacters(".:_-='?/\r\n",          with: " ")
+			.replacingCharacters(".:_-~='?/\r\n",         with: " ")
 			.replacingStrings(["%2f", "%3a", "  ", "  "], with: " ")
 	}
 

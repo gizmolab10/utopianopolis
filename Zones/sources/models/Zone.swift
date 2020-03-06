@@ -815,6 +815,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		revealChildren()
 		gControllers.swapGraphAndEssay(force: .graphMode)
 		gTemporarilySetMouseZone(self)
+		gWindow?.reattachWidgetForZone(self)
 		self.editAndSelect(text: searchText)
 	}
     

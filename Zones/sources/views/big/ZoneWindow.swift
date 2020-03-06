@@ -49,8 +49,14 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 
     override open var acceptsFirstResponder: Bool { return true }
 
-	func setasideTextWidget() {
-		if  let widget = gCurrentlyEditingWidget {
+	func reattachWidgetForZone(_ zone: Zone?) {
+		if  let widget = zone?.widget?.textWidget {
+			gWindow?.contentView?.addSubview(widget)
+		}
+	}
+
+	func reattachTextWidget(_ iWidget: ZoneTextWidget?) {
+		if  let widget = iWidget {
 			gWindow?.contentView?.addSubview(widget)
 		}
 	}

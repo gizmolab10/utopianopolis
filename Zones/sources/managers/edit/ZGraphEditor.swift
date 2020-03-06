@@ -992,23 +992,21 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-
     // MARK:- add
     // MARK:-
-
 
     func addIdea() {
         let parent = gSelecting.currentMoveable
         if !parent.isBookmark,
             parent.userCanMutateProgeny {
             addIdea(in: parent, at: gListsGrowDown ? nil : 0) { iChild in
-                gControllers.signalFor(parent, regarding: .eRelayout) {
-                    iChild?.edit()
-                }
+				gControllers.signalFor(parent, regarding: .eRelayout) {
+					gWindow?.reattachWidgetForZone(iChild)    // zones own their widgets which own their text widget which relayout detaches from window (ack!)
+					iChild?.edit()
+				}
             }
         }
     }
-
 
     func addNext(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
         let       zone = gSelecting.rootMostMoveable
@@ -1053,7 +1051,6 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-    
     func addNextAndRedraw(containing: Bool = false) {
         deferRedraw {
             addNext(containing: containing) { iChild in

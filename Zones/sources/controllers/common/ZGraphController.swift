@@ -221,7 +221,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
         if  [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
 			prepare(for: iKind)
-			gWindow?.setasideTextWidget()
+			gWindow?.reattachTextWidget(gCurrentlyEditingWidget) // remove all subviews clobbers the first responder by setting its window to nil
 			dragView?.removeAllSubviews()
 			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: true)
 			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: false)
