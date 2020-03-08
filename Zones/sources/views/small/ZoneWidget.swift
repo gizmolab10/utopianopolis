@@ -47,10 +47,12 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, isThought: Bool, visited: ZoneArray) {
-        if  let thisView = inView,
-            !thisView.subviews.contains(self) {
-            thisView.addSubview(self)
+    func layoutInView(_ iView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, isThought: Bool, visited: ZoneArray) {
+//		gWindow?.protectViews([self])
+		
+        if  let inView = iView,
+            inView.window != window {
+            inView.addSubview(self)
         }
 
         isInPublic = isThought
@@ -83,21 +85,24 @@ class ZoneWidget: ZView {
                 let childWidget = childrenWidgets[index]
 
                 childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, isThought: isInPublic, visited: visited)
-                childWidget.snp.removeConstraints()
-                childWidget.snp.makeConstraints { make in
-                    if  previous == nil {
-                        make.bottom.equalTo(childrenView)
-                    } else {
-                        make.bottom.equalTo(previous!.snp.top)
-                    }
 
-                    if  index == 0 {
-                        make.top.equalTo(childrenView).priority(ConstraintPriority(250))
-                    }
+				if  childWidget.window != nil, childrenView.window != nil {
+					childWidget.snp.removeConstraints()
+					childWidget.snp.makeConstraints { make in
+						if  previous == nil {
+							make.bottom.equalTo(childrenView)
+						} else {
+							make.bottom.equalTo(previous!.snp.top)
+						}
 
-                    make.left.equalTo(childrenView)
-                    make.right.equalTo(childrenView)
-                }
+						if  index == 0 {
+							make.top.equalTo(childrenView).priority(ConstraintPriority(250))
+						}
+
+						make.left.equalTo(childrenView)
+						make.right.equalTo(childrenView)
+					}
+				}
                 
                 previous = childWidget
             }
@@ -437,11 +442,11 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func drawSelectionHighlight(_ pale: Bool) {
+    func drawSelectionHighlight(_ showAsDashes: Bool) {
         let      thickness = CGFloat(gDotWidth) / 3.5
         let       rightDot = revealDot.innerDot
         let         height = gGenericOffset.height
-        let          delta = height / 8.0
+        let          delta =  height / 8.0
         let          inset = (height / -2.0) - 16.0
         let         shrink =  3.0 + (height / 6.0)
         let hiddenDotDelta = rightDot?.revealDotIsVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0   // expand around reveal dot, only if it is visible
@@ -449,7 +454,7 @@ class ZoneWidget: ZView {
         rect.size .height += -0.5 + gHighlightHeightOffset + (isInPublic ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
-        let     colorRatio = CGFloat(pale ? 0.5 : 1.0)
+        let     colorRatio = CGFloat(showAsDashes ? 0.5 : 1.0)
         let          color = widgetZone?.color
         let      fillColor = color?.withAlphaComponent(colorRatio * 0.02)
         let    strokeColor = color?.withAlphaComponent(colorRatio * 0.30)
@@ -457,11 +462,12 @@ class ZoneWidget: ZView {
         path    .lineWidth = thickness
         path     .flatness = 0.0001
 
-        if  pale {
+        if  showAsDashes {
             let pattern: [CGFloat] = [4.0, 4.0]
             path.setLineDash(pattern, count: 2, phase: 4.0)
         }
-        
+
+//		printDebug(.edit, "[highlight]")
         strokeColor?.setStroke()
         fillColor?  .setFill()
         path.stroke()
@@ -503,7 +509,7 @@ class ZoneWidget: ZView {
 		if  gIsGraphOrEditIdeaMode,
 			let             zone = widgetZone {
             let        isGrabbed = zone.isGrabbed
-            let        isEditing = textWidget.isFirstResponder
+			let        isEditing = textWidget == gCurrentlyEditingWidget
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : gDefaultTextColor
 
             if  gMathewStyleUI,

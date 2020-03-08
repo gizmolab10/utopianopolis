@@ -15,22 +15,18 @@ import Foundation
     import UIKit
 #endif
 
-
 enum ZTextType: Int {
     case prefix
     case name
     case suffix
 }
 
-
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
-
 
     override var preferredFont : ZFont { return (widget?.isInPublic ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return widget?.widgetZone }
     weak var            widget : ZoneWidget?
     var                   type = ZTextType.name
-
     
     var selectionRange: NSRange {
         var range = gTextEditor.selectedRange
@@ -118,27 +114,42 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 	override func mouseDown(with event: NSEvent) {
-		gCurrentMouseDownLocation = event.locationInWindow
-		gCurrentMouseDownZone     = widgetZone
+		gTemporarilySetMouseDownLocation(event.locationInWindow.x)
+		gTemporarilySetMouseZone(widgetZone)
+		gSetEditIdeaMode()
 
-		if !becomeFirstResponder() {
+		if  isFirstResponder || !(gWindow?.makeFirstResponder(self) ?? false) {
 			super.mouseDown(with: event)
 		}
 	}
 
 	override var canBecomeKeyView: Bool { return true }
 
+	func setEditIdeaMode() -> Bool {
+		gSetEditIdeaMode()
+
+		return true
+	}
+
     @discardableResult @objc override func becomeFirstResponder() -> Bool {
-		if !isFirstResponder,
-			let zone = widgetZone,
-			zone.canEditNow,                 // detect if mouse down inside widget OR key pressed
-			super.becomeFirstResponder() {   // becomeFirstResponder is called first so delegate methods will be called
+		if  let zone = widgetZone,
+			zone.canEditNow,                               // detect if mouse down inside widget OR key pressed
+			setEditIdeaMode() {
+//			gWindow?.makeFirstResponder(self) ?? false {   // becomeFirstResponder is called first so delegate methods will be called
 
 			if !gIsGraphOrEditIdeaMode {
                 gSearching.exitSearchMode()
             }
 
-			gTextEditor.edit(zone, setOffset: gTextOffset)
+			if  let   offset = gTextOffset {
+				let location = convert(NSPoint(x: offset, y: 0.0), to: nil).x
+
+				gTemporarilySetMouseDownLocation(location)
+			}
+
+			printDebug(.edit, "[become]  \(zone)")
+			gTextEditor.currentTextWidget = self
+			gTextEditor.edit(zone)
 
 			return true
         }
@@ -150,6 +161,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 	override func selectCharacter(in range: NSRange) {
         #if os(OSX)
         if  let e = currentEditor() {
+			printDebug(.mode, "[select]  \(range)")
             e.selectedRange = range
         }
         #endif

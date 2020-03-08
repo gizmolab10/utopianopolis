@@ -105,9 +105,13 @@ func convertFromOptionalUserInterfaceItemIdentifier(_ input: NSUserInterfaceItem
 
 extension NSObject {
     func assignAsFirstResponder(_ responder: NSResponder?) {
-        if  let window = gWindow,
-            ![window, responder].contains(window.firstResponder) {
+		if  let window = gWindow, let first = window.firstResponder,
+            ![window, responder].contains(first) {
             window.makeFirstResponder(responder)
+
+			if  responder == nil {
+				printDebug(.mode, "[respond] WINDOW")
+			}
         }
 	}
 	
@@ -528,9 +532,8 @@ extension NSWindow {
 
 
 extension ZoneWindow {
-    
-    
-    override func awakeFromNib() {
+
+	override func awakeFromNib() {
         super.awakeFromNib()
         
         delegate          = self
@@ -539,12 +542,26 @@ extension ZoneWindow {
         let          rect = gWindowRect
         
         setFrame(rect, display: true)
-        
+		addObserver(self, forKeyPath: "firstResponder", options: [.new, .old], context: &kvoContext)
         observer = observe(\.effectiveAppearance) { _, _  in
             self.signalMultiple([.eAppearance])
         }
     }
-    
+
+	override func observeValue(forKeyPath keyPath: String?, of iObject: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+		if  context        == &kvoContext {
+			let    observer = iObject as! NSObject
+
+			if  gIsGraphMode && firstResponder != self {
+				makeFirstResponder(nil)
+			} else if let     value = observer.value(forKey: keyPath!) as? NSResponder {
+				let message = value.description
+
+				printDebug(.mode, "[RESPOND] \(message)")
+			}
+		}
+	}
+
 }
 
 
@@ -637,39 +654,24 @@ extension ZAlerts {
 
 
 extension NSTextField {
-    var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
+
+	var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
     var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
-
-
-    func enableUndo() {
-        cell?.allowsUndo = true
-    }
-    
-    
-    func select(range: NSRange) {
-        select(from: range.lowerBound, to: range.upperBound)
-    }
-
+    func enableUndo()           { cell?.allowsUndo = true }
+    func select(range: NSRange) { select(from: range.lowerBound, to: range.upperBound) }
+	func deselectAllText()      { selectFromStart() }
 
     func select(from: Int, to: Int) {
-        if  let editor = currentEditor() {
-            select(withFrame: bounds, editor: editor, delegate: self, start: from, length: to)
-        }
+		printDebug(.mode, "[field]   \(from) ... \(to)")
+		select(withFrame: bounds, editor: gTextEditor, delegate: self, start: from, length: to - from)
     }
-    
-    
+
     func selectFromStart(toEnd: Bool = false) {
         if  let t = text {
             select(from: 0, to: toEnd ? t.length : 0)
             gTextEditor.clearOffset()
         }
     }
-    
-
-    func deselectAllText() {
-        selectFromStart()
-    }
-    
     
     func selectAllText() {
         gTextEditor.deferEditingStateChange()
@@ -678,20 +680,18 @@ extension NSTextField {
     
 }
 
-
 extension ZoneTextWidget {
-    // override open var acceptsFirstResponder: Bool { return gBatch.isReady }    // fix a bug where root zone is editing on launch
+
+	// override open var acceptsFirstResponder: Bool { return gBatch.isReady }    // fix a bug where root zone is editing on launch
     override var acceptsFirstResponder : Bool  { return widgetZone?.userCanWrite ?? false }
 
-
     var isFirstResponder : Bool {
-        if  let    first = window?.firstResponder {
-            return first == currentEditor()
+        if  let    first  = window?.firstResponder {
+            return first == self
         }
 
         return false
     }
-
 
     override func textDidChange(_ iNote: Notification) {
         gTextEditor.prepareUndoForTextChange(undoManager) {

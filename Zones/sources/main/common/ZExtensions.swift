@@ -108,12 +108,12 @@ extension NSObject {
         }
     }
 
-	func xsignalRegarding(_ regarding: ZSignalKind) {
-		gControllers.signalFor(nil, regarding: regarding)
+	func xsignalRegarding(_ regarding: ZSignalKind, _ onCompletion: Closure? = nil) {
+		gControllers.signalFor(nil, regarding: regarding, onCompletion: onCompletion)
 	}
 
-	func signalMultiple(_ multiple: [ZSignalKind]) {
-		gControllers.signalFor(nil, multiple: multiple)
+	func signalMultiple(_ multiple: [ZSignalKind], _ onCompletion: Closure? = nil) {
+		gControllers.signalFor(nil, multiple: multiple, onCompletion: onCompletion)
 	}
 
     func redrawAndSync(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
@@ -1632,20 +1632,20 @@ extension String {
 	func rangesMatching(_ iText: String?, needSpaces: Bool = true) -> [NSRange]? {
 		if  let     t = iText?.lowercased() {
 			let parts = lowercased().components(separatedBy: t)
-			let count = parts.count - 1
+			let   max = parts.count - 1
 			let match = " -,:.;"
 
-			if  count > 0 {
+			if  max > 0 {
 				var   ranges = [NSRange] ()
 				var location = 0
 				
-				for index in 0 ..< count {
+				for index in 0 ... max {
 					let  this = parts[index]
 					let range = NSRange(location: location + this.length, length: t.length)
 					location  = range.upperBound
 					
 					if  needSpaces,
-						index + 1 < count {
+						index + 1 <= max {
 						let next = parts[index + 1]
 
 						if  (this.length > 0 && !this  .ends(withAnyCharacterIn: match)) ||
@@ -1654,9 +1654,9 @@ extension String {
 						}
 					}
 
-					ranges.append(range)
-					
-					break
+					if  t == lowercased().substring(with: range) {
+						ranges.append(range)
+					}
 				}
 				
 				return ranges
@@ -1766,6 +1766,18 @@ extension ZView {
 	func removeAllSubviews() {
 		for view in subviews {
 			view.removeFromSuperview()
+		}
+	}
+
+	func removeInvisibleWidgets() {
+		gHere.traverseProgeny { child -> (ZTraverseStatus) in
+			if !child.isVisible, let widget = child.widget {
+				widget.removeFromSuperview()
+
+				return .eSkip
+			}
+
+			return .eContinue
 		}
 	}
 

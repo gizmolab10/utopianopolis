@@ -31,7 +31,7 @@ var      gCreateCombinedEssay 			   		  = false
 var    gRefusesFirstResponder                     = false
 var   gIsEditingStateChanging                     = false
 var    gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
-var gCurrentMouseDownLocation:           CGPoint?
+var gCurrentMouseDownLocation:           CGFloat?
 var     gCurrentMouseDownZone:              Zone?
 var       gCurrentBrowseLevel:               Int?
 var        gCurrentKeyPressed:            String?
@@ -455,6 +455,10 @@ var gWorkMode: ZWorkMode = .startupMode {
 		if  gCanSaveWorkMode {
 			setPreferencesInt(gWorkMode.rawValue, for: kWorkMode)
 		}
+
+		if  gIsGraphOrEditIdeaMode {
+			printDebug(.mode, "[m]       \(gIsEditIdeaMode ? "idea " : "graph")")
+		}
 	}
 }
 
@@ -470,12 +474,33 @@ var gCurrentEssay: ZNote? {
 // MARK:- actions
 // MARK:-
 
-func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 1.0) {
-	let                  save = gCurrentMouseDownZone
-	gCurrentMouseDownZone     = zone
+var mouseLocationTimer: Timer?
 
-	FOREGROUND(after: seconds) {
-		gCurrentMouseDownZone = save
+func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double = 2.0) {
+	if  gCurrentMouseDownLocation    == nil {
+		if  let t                     = mouseLocationTimer {
+			t.invalidate()
+		}
+
+		gCurrentMouseDownLocation     = location
+		mouseLocationTimer            = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { iTimer in
+			gCurrentMouseDownLocation = nil
+		}
+	}
+}
+
+var mouseZoneTimer: Timer?
+
+func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 2.0) {
+	if  gCurrentMouseDownZone    == nil {
+		if  let t                 = mouseZoneTimer {
+			t.invalidate()
+		}
+
+		gCurrentMouseDownZone     = zone
+		mouseZoneTimer            = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { iTimer in
+			gCurrentMouseDownZone = nil
+		}
 	}
 }
 

@@ -6,22 +6,21 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 #if os(OSX)
     import Cocoa
 #elseif os(iOS)
     import UIKit
 #endif
 
-
 var gWindow: ZoneWindow? { return ZoneWindow.window }
-
 
 class ZoneWindow: ZWindow, ZWindowDelegate {
 
     static var window: ZoneWindow?
     var observer: NSKeyValueObservation?
 	var lastLocation = NSPoint.zero
+	var kvoContext: UInt8 = 1
+
 
 	var keyPressed: Bool {
 		let    e  = nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false)
@@ -55,9 +54,14 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 		}
 	}
 
-	func reattachTextWidget(_ iWidget: ZoneTextWidget?) {
-		if  let widget = iWidget {
-			gWindow?.contentView?.addSubview(widget)
+	func protectViews(_ iArray: [ZView?]?) {
+		if  let array = iArray {
+			for item in array {
+				if  let view = item,
+					view.superview != gWindow {
+					gWindow?.contentView?.addSubview(view)
+				}
+			}
 		}
 	}
 

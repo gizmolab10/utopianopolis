@@ -221,8 +221,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
         if  [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
 			prepare(for: iKind)
-			gWindow?.reattachTextWidget(gCurrentlyEditingWidget) // remove all subviews clobbers the first responder by setting its window to nil
-			dragView?.removeAllSubviews()
+			protectAndClearViews(and: iSignalObject as? Zone)
 			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: true)
 			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: false)
 
@@ -234,6 +233,11 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 		gRingView?.setNeedsDisplay()
     }
+
+	func protectAndClearViews(and zone: Zone?) {
+		gWindow?.protectViews([gCurrentlyEditingWidget]) // , zone?.widget] + (dragView?.subviews ?? []))     // protect the first responder and the widget of interest
+		dragView?.removeAllSubviews()
+	}
 	
 	func prepare(for iKind: ZSignalKind) {
 		if  kIsPhone {
@@ -323,6 +327,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
             if  !withinEdit, !inCrumb {
 				gSetGraphMode()
+				gTextEditor.clearEdit()
 
 				if  let   widget = detectWidget(gesture) {
 					if  let zone = widget.widgetZone {

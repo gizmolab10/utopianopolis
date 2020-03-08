@@ -426,7 +426,6 @@ class ZRecord: NSObject {
         }
     }
 
-
     override func observeValue(forKeyPath keyPath: String?, of iObject: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if context == &kvoContext {
             let observer = iObject as! NSObject

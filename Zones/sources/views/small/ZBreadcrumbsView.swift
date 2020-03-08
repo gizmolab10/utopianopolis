@@ -71,13 +71,33 @@ class ZBreadcrumbsView : ZTextField {
 		let string = crumbsText
 
 		for crumb in gBreadcrumbs.crumbs {
-			if  let ranges = string.rangesMatching(kCrumbSeparator + crumb + kCrumbSeparator),
-				ranges.count > 0 {
-				let offset = kCrumbSeparator.length
-				var range = ranges[0]
-				range.location += offset
-				range.length -= offset * 2
-				result.append(range)
+			if  let      ranges = string.rangesMatching(crumb, needSpaces: false),
+				ranges   .count > 0 {
+				let       extra = kCrumbSeparator.length
+				var        done = false
+				var       index = 0
+
+				repeat {
+					done       = true
+					let  range = ranges[index]
+					let entire = NSRange(location: range.location - extra, length: range.length + extra * 2)
+					if  string.substring(with: entire) != kCrumbSeparator + crumb + kCrumbSeparator {
+						done   = false
+						index += 1
+						printDebug(.crumbs, "[skip]    \(crumb)")
+					} else {
+						for prior in result {
+							if  prior == range {
+								done   = false
+								index += 1
+							}
+						}
+
+						if  done {
+							result.append(range)
+						}
+					}
+				} while !done && ranges.count > index
 			}
 		}
 
@@ -103,10 +123,14 @@ class ZBreadcrumbsView : ZTextField {
 		gNecklaceSelectionColor.setStroke()
 
 		if  let hIndex = gBreadcrumbs.indexOfHere {
-			for (index, rect) in crumbRects.enumerated() {
-				if  index >= hIndex - numberClipped {
-					let  path = ZBezierPath(roundedRect: rect.insetBy(dx: -4.0, dy: 0.0), cornerRadius: rect.height / 2.0)
+			let  start = hIndex - numberClipped
+			let  rects = crumbRects
 
+			for (index, rect) in rects.enumerated() {
+				if  index >= start {
+					let path = ZBezierPath(roundedRect: rect.insetBy(dx: -4.0, dy: 0.0), cornerRadius: rect.height / 2.0)
+
+					printDebug(.crumbs, "\(index) \(rect) \(gBreadcrumbs.crumbs[index])")
 					path.stroke()
 				}
 			}

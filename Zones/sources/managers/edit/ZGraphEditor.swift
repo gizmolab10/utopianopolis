@@ -444,7 +444,8 @@ class ZGraphEditor: ZBaseEditor {
     func editTrait(for iType: ZTraitType) {
         if  let  zone = gSelecting.firstSortedGrab {
             let trait = zone.traitFor(iType)
-            
+
+			gTemporarilySetMouseZone(zone)
             gTextEditor.edit(trait)
         }
     }
@@ -453,6 +454,7 @@ class ZGraphEditor: ZBaseEditor {
         if !COMMAND {											// switch to essay edit mode
 			let zone = gSelecting.currentMoveable
 
+//			gWindow?.protectViews(gGraphController?.dragView?.subviews)
 			gTemporarilySetMouseZone(zone)
 			gTextEditor.edit(zone)
 
