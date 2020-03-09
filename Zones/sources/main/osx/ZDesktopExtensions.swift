@@ -564,14 +564,12 @@ extension ZoneWindow {
 
 }
 
-
 extension NSButtonCell {
     override open var objectValue: Any? {
         get { return title }
         set { title = newValue as? String ?? "" }
     }
 }
-
 
 extension NSButton {
     var isCircular: Bool {
@@ -583,7 +581,6 @@ extension NSButton {
         get { return action }
         set { action = newValue; target = self } }
 }
-
 
 extension ZAlert {
 
@@ -597,17 +594,14 @@ extension ZAlert {
 
 }
 
-
 extension ZAlerts {
-    
-    
+
     func openSystemPreferences() {
         if  let url = NSURL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
             url.open()
         }
     }
-    
-    
+
     func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
         alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { iAlert, iState in
             switch iState {
@@ -624,8 +618,7 @@ extension ZAlerts {
             }
         }
     }
-    
-    
+
     func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertClosure? = nil) {
         FOREGROUND(canBeDirect: true) {
             let             a = ZAlert()
@@ -652,7 +645,6 @@ extension ZAlerts {
     
 }
 
-
 extension NSTextField {
 
 	var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
@@ -662,7 +654,7 @@ extension NSTextField {
 	func deselectAllText()      { selectFromStart() }
 
     func select(from: Int, to: Int) {
-		printDebug(.mode, "[field]   \(from) ... \(to)")
+		printDebug(.edit, "[field]   \(from) ... \(to)")
 		select(withFrame: bounds, editor: gTextEditor, delegate: self, start: from, length: to - from)
     }
 
@@ -708,8 +700,7 @@ extension ZoneTextWidget {
         }
     }
 
-
-    override func textDidEndEditing(_ notification: Notification) {
+	override func textDidEndEditing(_ notification: Notification) {
 		if !gIsEditingStateChanging,
 			gIsEditIdeaMode,
 			let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
@@ -734,10 +725,8 @@ extension ZoneTextWidget {
 
 }
 
-
 extension ZTextEditor {
-    
-    
+
     func fullResign()  { assignAsFirstResponder (nil) }
 	
 	func showSpecialsPopup() {

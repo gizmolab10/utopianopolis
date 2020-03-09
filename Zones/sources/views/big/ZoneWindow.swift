@@ -54,17 +54,6 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 		}
 	}
 
-	func protectViews(_ iArray: [ZView?]?) {
-		if  let array = iArray {
-			for item in array {
-				if  let view = item,
-					view.superview != gWindow {
-					gWindow?.contentView?.addSubview(view)
-				}
-			}
-		}
-	}
-
     // cannot declare this in extensions because compiler barfs about objective-c method conflict (and then compiler throws a seg fault)
 
     override func keyDown(with event: ZEvent) {

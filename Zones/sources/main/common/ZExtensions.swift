@@ -494,6 +494,16 @@ extension Double {
     }
 }
 
+extension CGFloat {
+
+	func convertLocation(from view: ZView) -> CGFloat {
+		let point = CGPoint(x: self, y: 0.0)
+		let other = view.convert(point, to: nil)
+
+		return other.x
+	}
+}
+
 infix operator -- : AdditionPrecedence
 
 extension CGPoint {

@@ -457,17 +457,15 @@ var gWorkMode: ZWorkMode = .startupMode {
 		}
 
 		if  gIsGraphOrEditIdeaMode {
-			printDebug(.mode, "[m]       \(gIsEditIdeaMode ? "idea " : "graph")")
+			printDebug(.edit, "[m]       \(gIsEditIdeaMode ? "idea " : "graph")")
 		}
 	}
 }
 
 var gCurrentEssay: ZNote? {
 	didSet {
-		if  let e = gCurrentEssay {
-			gEssayRing.push()
-			setPreferencesString(e.identifier(), for: kCurrentEssay)
-		}
+		gEssayRing.push()
+		setPreferencesString(gCurrentEssay?.identifier() ?? "", for: kCurrentEssay)
 	}
 }
 
@@ -476,31 +474,28 @@ var gCurrentEssay: ZNote? {
 
 var mouseLocationTimer: Timer?
 
-func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double = 2.0) {
-	if  gCurrentMouseDownLocation    == nil {
-		if  let t                     = mouseLocationTimer {
-			t.invalidate()
-		}
+func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double = 1.0) {
+	if  let t                     = mouseLocationTimer {
+		t.invalidate()
+	}
 
-		gCurrentMouseDownLocation     = location
-		mouseLocationTimer            = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { iTimer in
-			gCurrentMouseDownLocation = nil
-		}
+	printDebug(.edit, "[locate]  \(location?.description ?? "nil")")
+	gCurrentMouseDownLocation     = location
+	mouseLocationTimer            = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { iTimer in
+		gCurrentMouseDownLocation = nil
 	}
 }
 
 var mouseZoneTimer: Timer?
 
-func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 2.0) {
-	if  gCurrentMouseDownZone    == nil {
-		if  let t                 = mouseZoneTimer {
-			t.invalidate()
-		}
+func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 1.0) {
+	if  let t                 = mouseZoneTimer {
+		t.invalidate()
+	}
 
-		gCurrentMouseDownZone     = zone
-		mouseZoneTimer            = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { iTimer in
-			gCurrentMouseDownZone = nil
-		}
+	gCurrentMouseDownZone     = zone
+	mouseZoneTimer            = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { iTimer in
+		gCurrentMouseDownZone = nil
 	}
 }
 

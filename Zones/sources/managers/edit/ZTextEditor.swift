@@ -115,13 +115,13 @@ class ZTextPack: NSObject {
 
     func updateWidgetsForEndEdit() {
         if  let t = textWidget {
-            t.abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
-            t.deselectAllText()
+            t.abortEditing()     // this does NOT remove selection highlight !!!!!!!
+            t.deselectAllText()  // this does
             t.updateTextColor()
             t.layoutText()
         }
 
-        if  let w = widget {
+		if  let w = widget {
             w.layoutDots()
             w.revealDot.setNeedsDisplay()
             w.setNeedsDisplay()
@@ -167,11 +167,11 @@ class ZTextPack: NSObject {
 
 
     func captureTextAndSync(_ iText: String?) {
-		printDebug(.edit, "[stop]    \(iText ?? "")")
-
         if  originalText             != iText {
             let               newText = removeSuffix(from: iText)
             gTextCapturing            = true
+
+			printDebug(.edit, "[stop]    \(iText ?? "")")
 
             if  let                 w = textWidget {
                 let          original = originalText
@@ -191,7 +191,7 @@ class ZTextPack: NSObject {
 
             gTextCapturing = false
 
-            redrawAndSync()
+//            redrawAndSync()
         }
     }
 
@@ -286,7 +286,7 @@ class ZTextEditor: ZTextView {
 		let widget = zone.widget?.textWidget
 
 		if  currentTextWidget == nil { 			// prevent infinite recursion inside makeFirstResponder, called below
-			printDebug(.mode, "[make]    \(zone)")
+			printDebug(.edit, "[make]    \(zone)")
 			gWindow?.makeFirstResponder(widget)
 			widget?.enableUndo()
 		} else {
@@ -297,11 +297,9 @@ class ZTextEditor: ZTextView {
 				pack.updateText(isEditing: true)
 
 				deferEditingStateChange()
-//				gWindow?.protectViews([gWindow?.firstResponder as? ZView])
+				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
 				signalMultiple([.eRelayout]) {
-					gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
 					printDebug(.edit, "[edit]    \(zone)")
-//					gWindow?.makeFirstResponder(zone.widget?.textWidget)
 
 					if  let at = gCurrentMouseDownLocation {
 						self.setCursor(at: at)
@@ -352,7 +350,7 @@ class ZTextEditor: ZTextView {
             fullResign()
             e.updateWidgetsForEndEdit()
             e.packedZone?.grab()
-			gControllers.signalFor(nil, regarding: .eCrumbs)
+			signalMultiple([.eCrumbs])
         }
     }
 
@@ -388,12 +386,12 @@ class ZTextEditor: ZTextView {
 
     func moveOut(_ iMoveOut: Bool) {
         gArrowsDoNotBrowse = true
-        let       revealed = currentlyEditingZone?.showingChildren ?? false
 
-        let done: FloatClosure = { iOffset in
-            if  let grabbed = gSelecting.firstSortedGrab {
-                gSelecting.ungrabAll()
-				gTemporarilySetMouseDownLocation(iOffset)
+        let editAtOffset: FloatClosure = { iOffset in
+            if  let  grabbed = gSelecting.firstSortedGrab {
+				let location = iOffset.convertLocation(from: self)
+				printDebug(.edit, "[move]    \(location)")
+				gTemporarilySetMouseDownLocation(location)
                 self.edit(grabbed)
             }
 
@@ -403,12 +401,12 @@ class ZTextEditor: ZTextView {
         if  iMoveOut {
             quickStopCurrentEdit()
             gGraphEditor.moveOut {
-                done(100000000.0)
+                editAtOffset(100000000.0)
             }
         } else if currentlyEditingZone?.children.count ?? 0 > 0 {
             quickStopCurrentEdit()
             gGraphEditor.moveInto {
-                done(0.0)
+                editAtOffset(0.0)
             }
         }
     }
@@ -431,7 +429,7 @@ class ZTextEditor: ZTextView {
         }
         
         if  var original = currentZone {
-            gGraphEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { iKind in
+			gGraphEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { iKind in
                 gControllers.signalFor(nil, regarding: iKind) {
                     if  isHere {
                         self.currentOffset = currentZone?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here

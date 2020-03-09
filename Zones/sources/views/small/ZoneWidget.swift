@@ -48,8 +48,6 @@ class ZoneWidget: ZView {
 
 
     func layoutInView(_ iView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, isThought: Bool, visited: ZoneArray) {
-//		gWindow?.protectViews([self])
-		
         if  let inView = iView,
             inView.window != window {
             inView.addSubview(self)
@@ -117,12 +115,14 @@ class ZoneWidget: ZView {
 			if !subviews.contains(dragDot) {
 				insertSubview(dragDot, belowSubview: textWidget)
 			}
-			
-			dragDot.innerDot?.snp.removeConstraints()
-			dragDot.setupForWidget(self, asReveal: false)
-			dragDot.innerDot?.snp.makeConstraints { make in
-				make.right.equalTo(textWidget.snp.left).offset(-4.0)
-				make.centerY.equalTo(textWidget).offset(1.5)
+
+			if  window != nil {
+				dragDot.innerDot?.snp.removeConstraints()
+				dragDot.setupForWidget(self, asReveal: false)
+				dragDot.innerDot?.snp.makeConstraints { make in
+					make.right.equalTo(textWidget.snp.left).offset(-4.0)
+					make.centerY.equalTo(textWidget).offset(1.5)
+				}
 			}
 		}
 
@@ -130,12 +130,14 @@ class ZoneWidget: ZView {
             insertSubview(revealDot, belowSubview: textWidget)
         }
 
-        revealDot.innerDot?.snp.removeConstraints()
-        revealDot.setupForWidget(self, asReveal: true)
-        revealDot.innerDot?.snp.makeConstraints { make in
-            make.left.equalTo(textWidget.snp.right).offset(3.0)
-            make.centerY.equalTo(textWidget).offset(1.5)
-        }
+		if  window != nil {
+			revealDot.innerDot?.snp.removeConstraints()
+			revealDot.setupForWidget(self, asReveal: true)
+			revealDot.innerDot?.snp.makeConstraints { make in
+				make.left.equalTo(textWidget.snp.right).offset(3.0)
+				make.centerY.equalTo(textWidget).offset(1.5)
+			}
+		}
     }
 
 

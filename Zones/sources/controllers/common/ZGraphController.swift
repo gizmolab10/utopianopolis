@@ -235,7 +235,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     }
 
 	func protectAndClearViews(and zone: Zone?) {
-		gWindow?.protectViews([gCurrentlyEditingWidget]) // , zone?.widget] + (dragView?.subviews ?? []))     // protect the first responder and the widget of interest
 		dragView?.removeAllSubviews()
 	}
 	
@@ -269,7 +268,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
             dropNearest.widgetZone?.deferWrite()
 
-            if isEditingText(at: location) {
+            if  isEditingText(at: location) {
                 restartGestureRecognition()     // let text editor consume the gesture
             } else if flags.isCommand {
                 scrollEvent(move: state == .changed, to: location)
@@ -277,18 +276,25 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 dragMaybeStopEvent(iGesture)
             } else if state == .changed {       // changed
                 rubberbandRect = CGRect(start: rubberbandStart, end: location)
-            } else if state != .began {         // ended, cancelled or failed
+			} else if ![.began, .possible].contains(state) {         // ended, cancelled or failed
                 rubberbandRect = nil
 
 				restartGestureRecognition()
 				signalMultiple([.eDatum]) // so color well and indicators get updated
-            } else if let dot = detectDot(iGesture) {
-                if  !dot.isReveal {
-                    dragStartEvent(dot, iGesture)
-                } else if let zone = dot.widgetZone {
-                    cleanupAfterDrag()
+			} else  if  let  dot = detectDot(iGesture) {
+				if  !dot.isReveal {
+					dragStartEvent(dot, iGesture)
+				} else if let zone = dot.widgetZone {
+					cleanupAfterDrag()
 					gGraphEditor.clickActionOnRevealDot(for: zone, COMMAND: flags.isCommand, OPTION: flags.isOption)   // no dragging
-                }
+				}
+			} else if let widget = detectWidget(iGesture) {
+				if  let         zone = widget.widgetZone {
+					printDebug(.edit, "[detect]  \(zone)")
+					gTemporarilySetMouseDownLocation(location.x)
+					gTemporarilySetMouseZone(zone)
+					gTextEditor.edit(zone)
+				}
             } else {                            // began
                 rubberbandStartEvent(location, iGesture)
             }
@@ -309,12 +315,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             var  regarding = ZSignalKind.eDatum
 			let    inCrumb = gBreadcrumbsLabel != nil && gBreadcrumbsLabel!.hitCrumb(gesture.location(in: nil)) != nil
             var withinEdit = false
-            
-			gCurrentMouseDownZone = nil
-
-			editWidget?.widgetZone?.deferWrite()
 
 			if  editWidget != nil {
+				editWidget?.widgetZone?.deferWrite()
 
 				// ////////////////////////////////////////
 				// detect click inside text being edited //
@@ -331,7 +334,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 				if  let   widget = detectWidget(gesture) {
 					if  let zone = widget.widgetZone {
-						gCurrentMouseDownZone = zone
+						gTemporarilySetMouseZone(zone)
 
 						if  let dot = detectDotIn(widget, gesture) {
 
@@ -346,6 +349,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 								zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
 							}
+						} else {
+							gTextEditor.edit(zone)
 						}
 					}
 				} else {
@@ -632,6 +637,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 						if  rect.contains(location) {
 							hit    = widget
 
+							printDebug(.edit, "[hit]     \(child)")
+
 							return .eStop
 						}
 					}
@@ -644,13 +651,12 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         return hit
     }
 
-
     func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
         var hit:        ZoneDot?
 
         if  let                d = dragView,
             let         location = iGesture?.location(in: d) {
-            let test: DotClosure = { iDot in
+            let isIn: DotClosure = { iDot in
                 let         rect = iDot.convert(iDot.bounds, to: d)
 
                 if  rect.contains(location) {
@@ -658,13 +664,12 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 }
             }
 
-            test(widget.dragDot)
-            test(widget.revealDot)
+            isIn(widget.dragDot)
+            isIn(widget.revealDot)
         }
 
         return hit
     }
-
 
     func detectDot(_ iGesture: ZGestureRecognizer?) -> ZoneDot? {
         if  let widget = detectWidget(iGesture) {

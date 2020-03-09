@@ -454,7 +454,6 @@ class ZGraphEditor: ZBaseEditor {
         if !COMMAND {											// switch to essay edit mode
 			let zone = gSelecting.currentMoveable
 
-//			gWindow?.protectViews(gGraphController?.dragView?.subviews)
 			gTemporarilySetMouseZone(zone)
 			gTextEditor.edit(zone)
 
@@ -2197,6 +2196,7 @@ class ZGraphEditor: ZBaseEditor {
     
     
     fileprivate func findChildMatching(_ grabThis: inout Zone, _ iMoveUp: Bool, _ iOffset: CGFloat?) {
+		let original = grabThis
 
         // ///////////////////////////////////////////////////////////
         // IF text is being edited by user, grab another zone whose //
@@ -2204,15 +2204,24 @@ class ZGraphEditor: ZBaseEditor {
         //                       else whose                         //
         //           level equals gCurrentBrowsingLevel             //
         // ///////////////////////////////////////////////////////////
-        
+
+		let hasSharedAncestor = { () -> Bool in
+			if  let grab = gSelecting.firstGrab {
+				return original.ancestralPath.contains(grab)
+			}
+
+			return false
+		}
+
         while grabThis.showingChildren, grabThis.count > 0,
             let length = grabThis.zoneName?.length {
                 let range = NSRange(location: length, length: 0)
                 let index = iMoveUp ? grabThis.count - 1 : 0
                 let child = grabThis.children[index]
                 
-                if  let   offset = iOffset,
-                    let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
+				if (!gBrowsingIsConfined || hasSharedAncestor()),
+					let   offset = iOffset,
+					let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
                     offset       > anOffset + 25.0 { // half the distance from end of parent's text field to beginning of child's text field
                     grabThis     = child
                 } else if let level = gCurrentBrowseLevel,

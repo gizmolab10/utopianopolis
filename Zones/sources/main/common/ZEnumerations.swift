@@ -281,18 +281,18 @@ enum ZSpecialsMenuType: String {
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = [.error]
+var gDebugMode: [ZDebugMode] = [.edit]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
-	static var structValue = 1
-	static var nextValue: Int { structValue *= 2; return structValue }
+	static var structValue = 0
+	static var nextValue: Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
 	let rawValue: Int
 
 	init() { rawValue = ZDebugMode.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let   none = ZDebugMode(rawValue: 0)
-	static let    ops = ZDebugMode(rawValue: 1)
+	static let   none = ZDebugMode()
+	static let    ops = ZDebugMode()
 	static let    log = ZDebugMode()
 	static let   info = ZDebugMode()
 	static let   edit = ZDebugMode()

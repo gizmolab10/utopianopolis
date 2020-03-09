@@ -97,9 +97,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 make  .width.equalTo(width)
             }
         }
+	}
+
+	func windowOffset(for selectedRange: NSRange, _ atStart: Bool) -> CGFloat? {
+		let    o = offset(for: selectedRange, atStart)
+
+		return o?.convertLocation(from: self)
     }
 
-    
     func offset(for selectedRange: NSRange, _ atStart: Bool) -> CGFloat? {
         if  let   name = widgetZone?.unwrappedName {
             let   font = preferredFont
@@ -120,22 +125,15 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 		if  isFirstResponder || !(gWindow?.makeFirstResponder(self) ?? false) {
 			super.mouseDown(with: event)
-		}
+		} 
 	}
 
 	override var canBecomeKeyView: Bool { return true }
 
-	func setEditIdeaMode() -> Bool {
-		gSetEditIdeaMode()
-
-		return true
-	}
-
     @discardableResult @objc override func becomeFirstResponder() -> Bool {
 		if  let zone = widgetZone,
-			zone.canEditNow,                               // detect if mouse down inside widget OR key pressed
-			setEditIdeaMode() {
-//			gWindow?.makeFirstResponder(self) ?? false {   // becomeFirstResponder is called first so delegate methods will be called
+			zone.canEditNow {
+			gSetEditIdeaMode()
 
 			if !gIsGraphOrEditIdeaMode {
                 gSearching.exitSearchMode()

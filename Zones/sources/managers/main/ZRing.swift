@@ -278,6 +278,8 @@ class ZRing: NSObject {
 					gRingView?.updateNecklace()
 
 					if  isEmpty {
+						gCurrentEssay = nil
+
 						gControllers.swapGraphAndEssay(force: .graphMode)
 					} else if index == currentIndex || note == gCurrentEssay {
 						goBack()
