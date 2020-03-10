@@ -653,7 +653,7 @@ extension NSTextField {
 
     func select(from: Int, to: Int) {
         if  let editor = currentEditor() {
-            select(withFrame: bounds, editor: editor, delegate: self, start: from, length: to)
+            select(withFrame: bounds, editor: editor, delegate: self, start: from, length: to - from)
         }
     }
     

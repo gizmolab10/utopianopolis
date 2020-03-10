@@ -128,9 +128,10 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
         
         for cloud in gRemoteStorage.allClouds {
             let locals = cloud.searchLocal(for: searchString)
+			let   dbID = cloud.databaseID
 
             if  gUser == nil {
-                combined[cloud.databaseID] = locals
+                combined[dbID] = locals
                 remaining -= 1
 
                 done()
@@ -139,7 +140,16 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                     FOREGROUND {
                         var results = iObject as! [Any]
                         remaining -= 1
-                        
+
+						for item in results {
+							if  let record = item as? CKRecord,
+								cloud.maybeZRecordForCKRecord(record) == nil,
+								record.recordType == kTraitType {
+								let trait = ZTrait(record: record, databaseID: dbID)
+								cloud.registerZRecord(trait) // some records are being fetched first time
+							}
+						}
+
                         results.appendUnique(contentsOf: locals) { (a, b) in
                             if  let alpha = a as? CKRecord,
                                 let  beta = b as? CKRecord {
@@ -149,7 +159,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                             return false
                         }
                         
-                        combined[cloud.databaseID] = results
+                        combined[dbID] = results
                         
                         done()
                     }

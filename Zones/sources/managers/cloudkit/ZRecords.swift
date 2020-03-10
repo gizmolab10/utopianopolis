@@ -243,7 +243,9 @@ class ZRecords: NSObject {
 
                 recordRegistry[id] = zRecord
 
-                registerName(of: zRecord as? Zone)
+				if  let        zone = zRecord as? Zone {
+					registerName(of: zone)
+				}
 
                 return true
             }

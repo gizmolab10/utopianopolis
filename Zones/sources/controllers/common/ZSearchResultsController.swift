@@ -85,22 +85,21 @@ class ZSearchResultsController: ZGenericTableController {
 
 			if  let searched = searchText {
 				for text in searched.components(separatedBy: " ") {
-					if  let ranges = string.rangesMatching(text) {				// find all matching substring ranges
+					if  let ranges = string.rangesMatching(text) {				      // find all matching substring ranges
 						for range in ranges {
-							result.addAttribute(.backgroundColor, value: NSColor.systemTeal, range: range) // highlight matching substring in yellow
+							result.addAttribute(.backgroundColor, value: NSColor.systemTeal, range: range) // highlight matching substring in teal
 						}
 					}
 				}
 
-				if  let ranges = string.rangesMatching(kSearchSeparator) {				// find all matching substring ranges
-					let color = ZColor.systemYellow
+				if  let    ranges = string.rangesMatching(kSearchSeparator),		      // find any search separator
+					ranges.count > 0 {
+					let separator = ranges[0]
+					let     color = ZColor.systemYellow
+					let     range = NSRange(location: 0, length: separator.location)
 
-					for range in ranges {
-						let r = NSRange(location: 0, length: range.location)
-
-						result.replaceCharacters(in: range, with: "")
-						result.addAttribute(.backgroundColor, value: color, range: r) // highlight prefix in teal
-					}
+					result.replaceCharacters(in: separator, with: "")
+					result.addAttribute(.backgroundColor, value: color, range: range) // highlight trait type in yellow
 				}
 			}
 
@@ -133,12 +132,12 @@ class ZSearchResultsController: ZGenericTableController {
         var index = iIndex
         var count = 0
 
-        for (mode, records) in foundRecords {
+        for (dbID, records) in foundRecords {
             index -= count
             count  = records.count
 
-            if count > index {
-                return (mode, records[index])
+            if  count > index {
+                return (dbID, records[index])
             }
         }
 
@@ -153,47 +152,46 @@ class ZSearchResultsController: ZGenericTableController {
                 let          index = genericTableView?.selectedRow,
                 index             != -1,
                 let (dbID, record) = identifierAndRecord(at: index) {
-                resolved           = true
-
-                resolveRecord(dbID, record)
+                resolved           = resolveRecord(dbID, record)
             }
         #endif
 
         return resolved
 	}
 
-	func resolveRecord(_ dbID: ZDatabaseID, _ record: CKRecord) {
+	func resolveRecord(_ dbID: ZDatabaseID, _ record: CKRecord) -> Bool {
 		gDatabaseID = dbID
 
 		clear()
 
-		if !resolveAsTrait(     record) {
-			resolveAsZone(dbID, record)
-		}
+		return resolveAsTrait(dbID, record)
+			|| resolveAsZone (dbID, record)
 	}
 
-	func resolveAsZone(_ dbID: ZDatabaseID, _ record: CKRecord) {
-		var zone  = gCloud?.maybeZoneForRecordID(record.recordID)
+	func resolveAsZone(_ dbID: ZDatabaseID, _ record: CKRecord) -> Bool {
+		var zone  = gRemoteStorage.cloud(for: dbID)?.maybeZoneForRecordID(record.recordID)
 
-		if  zone == nil {
+		if  zone == nil, record.recordType == kZoneType {
 			zone  = Zone(record: record, databaseID: dbID)
 		}
 
 		zone?.resolveAndSelect(searchText)
+
+		return zone != nil
 	}
 
-	func resolveAsTrait(_ record: CKRecord) -> Bool {
-		guard let  trait = gCloud?.maybeTraitForRecordID(record.recordID),
-			let recordID = trait.owner?.recordID,
-			let     zone = gCloud?.maybeZoneForRecordID(recordID),
-			let     type = trait.traitType else {
+	func resolveAsTrait(_ dbID: ZDatabaseID, _ record: CKRecord) -> Bool {
+		guard let cloud = gRemoteStorage.cloud(for: dbID),
+			let   trait = cloud.maybeTraitForRecordID(record.recordID),
+			let   owner = trait.ownerZone,
+			let    type = trait.traitType else {
 			return false
 		}
 
 		switch type {
 			case .tEssay,
-				 .tNote: resolveAsNote(zone)
-			default:     zone.resolveAndSelect(nil)
+				 .tNote: resolveAsNote(owner)
+			default:     owner.resolveAndSelect(nil) // hyperlink or email
 		}
 
 		return true

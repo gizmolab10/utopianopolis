@@ -460,10 +460,8 @@ var gWorkMode: ZWorkMode = .startupMode {
 
 var gCurrentEssay: ZNote? {
 	didSet {
-		if  let e = gCurrentEssay {
-			gEssayRing.push()
-			setPreferencesString(e.identifier(), for: kCurrentEssay)
-		}
+		gEssayRing.push()
+		setPreferencesString(gCurrentEssay?.identifier() ?? "", for: kCurrentEssay)
 	}
 }
 
