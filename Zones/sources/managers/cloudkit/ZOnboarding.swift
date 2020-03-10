@@ -27,7 +27,7 @@ class ZOnboarding : ZOperations {
 
 
     var           user : ZUser?
-    var isMasterAuthor : Bool { return user?.access == .eMaster || macAddress == "f0:18:98:eb:68:b2" }
+    var isMasterAuthor : Bool { return user?.access == .eMaster || macAddress == "f0:18:98:eb:68:b2" || macAddress == "f4:0f:24:1f:1a:6a"}
     var     macAddress : String?
 
 

@@ -281,7 +281,6 @@ class ZTextEditor: ZTextView {
 			if  let    zone = pack.packedZone,
 				zone.userCanWrite {
 				currentEdit = pack
-				let mouseZone = gCurrentMouseDownZone
 
 				printDebug(.edit, zone.unwrappedName)
 
@@ -290,7 +289,6 @@ class ZTextEditor: ZTextView {
 				gSetEditIdeaMode()
 
 				if  let textWidget = self.currentTextWidget {
-					gTemporarilySetMouseZone(mouseZone)
 					textWidget.enableUndo()
 					textWidget.layoutTextField()
 					textWidget.becomeFirstResponder()
