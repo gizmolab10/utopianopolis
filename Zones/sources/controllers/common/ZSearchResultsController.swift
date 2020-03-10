@@ -152,14 +152,15 @@ class ZSearchResultsController: ZGenericTableController {
                 let          index = genericTableView?.selectedRow,
                 index             != -1,
                 let (dbID, record) = identifierAndRecord(at: index) {
-                resolved           = resolveRecord(dbID, record)
+                resolved           = true
+				resolveRecord(dbID, record)
             }
         #endif
 
         return resolved
 	}
 
-	func resolveRecord(_ dbID: ZDatabaseID, _ record: CKRecord) -> Bool {
+	@discardableResult func resolveRecord(_ dbID: ZDatabaseID, _ record: CKRecord) -> Bool {
 		gDatabaseID = dbID
 
 		clear()

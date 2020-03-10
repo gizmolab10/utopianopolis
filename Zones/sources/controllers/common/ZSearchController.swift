@@ -138,15 +138,28 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
             } else {
                 cloud.search(for: searchString) { iObject in
                     FOREGROUND {
-                        var results = iObject as! [Any]
-                        remaining -= 1
+                        var results = iObject as! [CKRecord]
+						var orphans = [CKRecord]()
+                        remaining  -= 1
 
-						for item in results {
-							if  let record = item as? CKRecord,
-								cloud.maybeZRecordForCKRecord(record) == nil,
-								record.recordType == kTraitType {
-								let trait = ZTrait(record: record, databaseID: dbID)
-								cloud.registerZRecord(trait) // some records are being fetched first time
+						for record in results {
+							if  cloud.maybeZRecordForCKRecord(record) == nil {
+								if  record.recordType != kTraitType {
+									orphans.append(record) // remove unregistered zones from results
+								} else {
+									let trait = ZTrait(record: record, databaseID: dbID)
+									if  trait.ownerZone != nil {
+										cloud.registerZRecord(trait) // some records are being fetched first time
+									} else {
+										orphans.append(record) // remove unowned traits from results
+									}
+								}
+							}
+						}
+
+						for orphan in orphans {
+							if let index = results.firstIndex(of: orphan) {
+								results.remove(at: index)
 							}
 						}
 

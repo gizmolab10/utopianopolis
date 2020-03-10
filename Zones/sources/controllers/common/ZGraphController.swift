@@ -301,8 +301,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             var  regarding = ZSignalKind.eDatum
 			let    inCrumb = gBreadcrumbsLabel != nil && gBreadcrumbsLabel!.hitCrumb(gesture.location(in: nil)) != nil
             var withinEdit = false
-            
-			gCurrentMouseDownZone = nil
 
 			editWidget?.widgetZone?.deferWrite()
 
@@ -322,7 +320,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 				if  let   widget = detectWidget(gesture) {
 					if  let zone = widget.widgetZone {
-						gCurrentMouseDownZone = zone
+						gTemporarilySetMouseZone(zone)
 
 						if  let dot = detectDotIn(widget, gesture) {
 

@@ -31,7 +31,7 @@ var      gCreateCombinedEssay 			   		  = false
 var    gRefusesFirstResponder                     = false
 var   gIsEditingStateChanging                     = false
 var    gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
-var gCurrentMouseDownLocation:           CGPoint?
+var gCurrentMouseDownLocation:           CGFloat?
 var     gCurrentMouseDownZone:              Zone?
 var       gCurrentBrowseLevel:               Int?
 var        gCurrentKeyPressed:            String?
@@ -468,12 +468,31 @@ var gCurrentEssay: ZNote? {
 // MARK:- actions
 // MARK:-
 
+var mouseZoneTimer: Timer?
+
 func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 1.0) {
-	let                  save = gCurrentMouseDownZone
+	if  let t = mouseZoneTimer {
+		t.invalidate()
+	}
+
 	gCurrentMouseDownZone     = zone
 
-	FOREGROUND(after: seconds) {
-		gCurrentMouseDownZone = save
+	mouseZoneTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { iTimer in
+		gCurrentMouseDownZone = nil
+	}
+}
+
+var mouseLocationTimer: Timer?
+
+func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double = 1.0) {
+	if  let t = mouseLocationTimer {
+		t.invalidate()
+	}
+
+	gCurrentMouseDownLocation     = location
+
+	mouseLocationTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { iTimer in
+		gCurrentMouseDownLocation = nil
 	}
 }
 

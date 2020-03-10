@@ -118,8 +118,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
     }
 
 	override func mouseDown(with event: NSEvent) {
-		gCurrentMouseDownLocation = event.locationInWindow
-		gCurrentMouseDownZone     = widgetZone
+		gTemporarilySetMouseDownLocation(event.locationInWindow.x)
+		gTemporarilySetMouseZone(widgetZone)
 
 		if !becomeFirstResponder() {
 			super.mouseDown(with: event)

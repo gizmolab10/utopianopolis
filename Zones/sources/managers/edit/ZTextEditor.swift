@@ -243,8 +243,7 @@ class ZTextEditor: ZTextView {
     func clearOffset() { currentOffset = nil }
 
 	func clearEdit() {
-		currentEdit 			  = nil
-		gCurrentMouseDownLocation = nil
+		currentEdit = nil
 
 		clearOffset()
 		fullResign()
@@ -297,12 +296,9 @@ class ZTextEditor: ZTextView {
 					textWidget.becomeFirstResponder()
 				}
 
-				if  let at = setOffset ?? gCurrentMouseDownLocation?.x {
+				if  let at = setOffset ?? gCurrentMouseDownLocation {
 					setCursor(at: at)
 				}
-
-				gCurrentMouseDownZone     = nil
-				gCurrentMouseDownLocation = nil
 
 				deferEditingStateChange()
 				signalMultiple([.eRelayout])
