@@ -260,7 +260,7 @@ extension ZColor {
 		var a: CGFloat = 1
 		let parts = string.components(separatedBy: ",")
 		for part in parts {
-			let items = part.components(separatedBy: kSeparator)
+			let items = part.components(separatedBy: kNameSeparator)
 			if  items.count > 1 {
 				let key = items[0]
 				let value = items[1]
@@ -1209,7 +1209,7 @@ extension ZOnboarding {
         if let intfIterator = findEthernetInterfaces() {
             if  let macAddressAsArray = getMACAddress(intfIterator) {
                 let macAddressAsString = macAddressAsArray.map( { String(format:"%02x", $0) } )
-                    .joined(separator: kSeparator)
+                    .joined(separator: kNameSeparator)
                 macAddress = macAddressAsString
             }
             

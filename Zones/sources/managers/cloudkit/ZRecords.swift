@@ -52,7 +52,7 @@ class ZRecords: NSObject {
 
     var hereRecordName: String? {
 		get {
-			let references = gHereRecordNames.components(separatedBy: kSeparator)
+			let references = gHereRecordNames.components(separatedBy: kNameSeparator)
 			
 			if  let  index = databaseID.index {
 				return references[index]
@@ -63,14 +63,14 @@ class ZRecords: NSObject {
 
 		set {
 			if  let         index = databaseID.index {
-				var    references = gHereRecordNames.components(separatedBy: kSeparator)
+				var    references = gHereRecordNames.components(separatedBy: kNameSeparator)
 				
 				while references.count < 3 {
 					references.append("")
 				}
 				
 				references[index] = newValue ?? kRootName
-				gHereRecordNames  = references.joined(separator: kSeparator)
+				gHereRecordNames  = references.joined(separator: kNameSeparator)
 			}
 		}
     }

@@ -656,7 +656,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return !gRefusesFirstResponder
 			&& !gIsEditingStateChanging
 			&&  userCanWrite
-			&& ([kTab, kSpace, kReturn].contains(gCurrentKeyPressed)
+			&& ([kTab, kSpace, kReturn, "e", "h"].contains(gCurrentKeyPressed)
 				|| gCurrentKeyPressed?.arrow != nil
 				|| gCurrentMouseDownZone     == self)
 	}

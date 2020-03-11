@@ -88,7 +88,7 @@ var gExpandedZones : [String] {
     get {
         if  gExpanded == nil {
             let  value = getPreferencesString(for: kExpandedZones, defaultString: "")
-            gExpanded  = value?.components(separatedBy: kSeparator)
+            gExpanded  = value?.components(separatedBy: kNameSeparator)
         }
 
         return gExpanded!
@@ -97,7 +97,7 @@ var gExpandedZones : [String] {
     set {
         gExpanded = newValue
 
-        setPreferencesString(newValue.joined(separator: kSeparator), for: kExpandedZones)
+        setPreferencesString(newValue.joined(separator: kNameSeparator), for: kExpandedZones)
     }
 }
 
@@ -152,7 +152,7 @@ var gMathewStyleUI : Bool {
 }
 
 var gHereRecordNames: String {
-    get { return getPreferenceString(    for: kHereRecordIDs) { return kRootName + kSeparator + kRootName }! }
+    get { return getPreferenceString(    for: kHereRecordIDs) { return kTutorialRecordName + kNameSeparator + kRootName }! }
     set { setPreferencesString(newValue, for: kHereRecordIDs) }
 }
 
@@ -503,14 +503,14 @@ func gTestForUserInterrupt() throws {
 }
 
 func gRefreshCurrentEssay() {
-	if  let identifier = getPreferencesString(for: kCurrentEssay, defaultString: nil),
+	if  let identifier = getPreferencesString(for: kCurrentEssay, defaultString: kTutorialRecordName),
 		let      essay = gEssayRing.object(for: identifier) as? ZNote {
 		gCurrentEssay  = essay
 	}
 }
 
 func gRefreshPersistentWorkMode() {
-	if  let     mode = getPreferencesInt(for: kWorkMode, defaultInt: ZWorkMode.startupMode.rawValue),
+	if  let     mode = getPreferencesInt(for: kWorkMode, defaultInt: ZWorkMode.noteMode.rawValue),
 		let workMode = ZWorkMode(rawValue: mode) {
 		gWorkMode    = workMode
 	}

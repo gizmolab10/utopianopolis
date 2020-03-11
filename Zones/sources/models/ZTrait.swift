@@ -190,7 +190,7 @@ class ZTrait: ZRecord {
 
 			for (index, part) in parts.enumerated() {
 				if  index              != 0 {
-					let subSeparator    = kSeparator
+					let subSeparator    = kNameSeparator
 					var subParts        = part.components(separatedBy: subSeparator)
 					let number          = subParts[0]
 

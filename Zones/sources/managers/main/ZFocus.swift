@@ -32,14 +32,14 @@ class ZFocus: ZRing {
 
 	func setHereRecordName(_ iName: String, for databaseID: ZDatabaseID) {
 		if  let         index = databaseID.index {
-			var    references = gHereRecordNames.components(separatedBy: kSeparator)
+			var    references = gHereRecordNames.components(separatedBy: kNameSeparator)
 			references[index] = iName
-			gHereRecordNames  = references.joined(separator: kSeparator)
+			gHereRecordNames  = references.joined(separator: kNameSeparator)
 		}
 	}
 
 	func hereRecordName(for databaseID: ZDatabaseID) -> String? {
-		let references = gHereRecordNames.components(separatedBy: kSeparator)
+		let references = gHereRecordNames.components(separatedBy: kNameSeparator)
 		
 		if  let  index = databaseID.index {
 			return references[index]

@@ -161,7 +161,7 @@ extension NSObject {
 
     func components(of iLink: String?) -> [String]? {
         if  let       link = iLink {
-            let components =  link.components(separatedBy: kSeparator)
+            let components =  link.components(separatedBy: kNameSeparator)
             if  components.count > 2 {
                 return components
             }
@@ -192,7 +192,7 @@ extension NSObject {
         if  iLink                   != nil,
             iLink                   != "",
             let                 name = recordName(from: iLink) {
-            let components: [String] = iLink!.components(separatedBy: kSeparator)
+            let components: [String] = iLink!.components(separatedBy: kNameSeparator)
             let recordID: CKRecord.ID = CKRecord.ID(recordName: name)
             let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)
             let        rawIdentifier = components[0]
@@ -218,7 +218,7 @@ extension NSObject {
                 var       translated = false
 
                 if  let string       = value as? String {
-                    let parts        = string.components(separatedBy: kTimeInterval + kSeparator)
+                    let parts        = string.components(separatedBy: kTimeInterval + kNameSeparator)
                     if  parts.count > 1,
                         parts[0]    == "",
                         let interval = TimeInterval(parts[1]) {
@@ -352,7 +352,7 @@ extension CKRecord {
 
     var isBookmark: Bool {
         if  let    link = self[kpZoneLink] as? String {
-            return link.contains(kSeparator)
+            return link.contains(kNameSeparator)
         }
 
         return false
@@ -1364,7 +1364,7 @@ extension String {
             var green = 0.0
 
             for pair in pairs {
-                let values = pair.components(separatedBy: kSeparator)
+                let values = pair.components(separatedBy: kNameSeparator)
                 let  value = Double(values[1])!
                 let    key = values[0]
 

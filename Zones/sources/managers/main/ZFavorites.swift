@@ -145,7 +145,7 @@ class ZFavorites: ZRecords {
             for (index, dbID) in kAllDatabaseIDs.enumerated() {
                 let          name = dbID.rawValue
                 let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: name + kFavoritesSuffix)
-                favorite.zoneLink =  "\(name)\(kSeparator)\(kSeparator)"
+                favorite.zoneLink =  "\(name)\(kNameSeparator)\(kNameSeparator)"
                 favorite   .order = Double(index) * 0.001
                 
                 favorite.clearAllStates()

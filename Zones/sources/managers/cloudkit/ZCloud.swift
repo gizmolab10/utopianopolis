@@ -510,7 +510,7 @@ class ZCloud: ZRecords {
                 scan(gFavoritesRoot)
 
                 self.columnarReport("REMEMBER (\(memorables.count))", "\(self.databaseID.rawValue)")
-                setPreferencesString(memorables.joined(separator: kSeparator), for: self.refetchingName)
+                setPreferencesString(memorables.joined(separator: kNameSeparator), for: self.refetchingName)
 
                 self.isRemembering = false
 
@@ -521,7 +521,7 @@ class ZCloud: ZRecords {
 
 
     func refetchZones(_ onCompletion: IntClosure?) {
-        if  let fetchables = getPreferencesString(for: refetchingName, defaultString: "")?.components(separatedBy: kSeparator) {
+        if  let fetchables = getPreferencesString(for: refetchingName, defaultString: "")?.components(separatedBy: kNameSeparator) {
             for fetchable in fetchables {
                 if fetchable != "" {
                     addCKRecord(CKRecord(for: fetchable), for: [.needsFetch])
