@@ -10,8 +10,16 @@ import Foundation
 
 class ZEssay: ZNote {
 	var essayRange: NSRange { return NSRange(location: 0, length: essayLength) }
-	override var lastTextIsDefault: Bool { return children.last?.lastTextIsDefault ?? false }
 	override var prefix: String { return "essay" }
+
+	override var lastTextIsDefault: Bool {
+		if  let last = children.last,
+			last    != self {
+			return last.lastTextIsDefault
+		}
+
+		return true
+	}
 
 	override var lastTextRange: NSRange? {
 		if  let    last = children.last {

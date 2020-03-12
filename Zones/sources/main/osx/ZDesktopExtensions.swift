@@ -1090,11 +1090,11 @@ extension ZFiles {
 					case .eEssay:
 						if  let text = zone.note.essayText {
 
-							// NSFileWrapper *fileWrapper = [imageAttrString fileWrapperFromRange:NSMakeRange(0, [imageAttrString length]) documentAttributes:@{NSDocumentTypeDocumentAttribute: NSRTFDTextDocumentType} error:&error];
-							// [fileWrapper writeToURL:yourFileURL options:NSFileWrapperWritingAtomic originalContentsURL:nil error:&error]
+//							NSFileWrapper *fileWrapper = [imageAttrString fileWrapperFromRange:NSMakeRange(0, [imageAttrString length]) documentAttributes:@{NSDocumentTypeDocumentAttribute: NSRTFDTextDocumentType} error:&error];
+//							[fileWrapper writeToURL:yourFileURL options:NSFileWrapperWritingAtomic originalContentsURL:nil error:&error]
 
 							do {
-								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtf])
+								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
 								let  wrapper = FileWrapper(regularFileWithContents: fileData)
 
 								try  wrapper.write(to: fileURL, options: .atomic, originalContentsURL: nil)

@@ -582,10 +582,14 @@ extension CGRect {
 		}
 	}
 
-//	func cenerted(at: CGPoint) -> CGRect {
-//		let start = CGPoint(x: maxX - (2 * at.x), y: maxY - (2 * at.y))
-//		return
-//	}
+	var cornerPoints: [CGPoint] {
+		var result = [CGPoint]()
+
+		result.append(origin)
+		result.append(extent)
+
+		return result
+	}
 
     public init(start: CGPoint, end: CGPoint) {
         self.init()
@@ -1022,6 +1026,11 @@ extension NSFontDescriptor {
 	}
 }
 
+struct ZRangedAttachment {
+	let range: NSRange
+	let attachment: NSTextAttachment
+}
+
 extension NSMutableAttributedString {
 
 	var allKeys: [NSAttributedString.Key] { return [.font, .link, .attachment, .paragraphStyle, .foregroundColor, .backgroundColor] }
@@ -1039,13 +1048,14 @@ extension NSMutableAttributedString {
 		return found
 	}
 
-	var attachments: [NSTextAttachment] {
+	var rangedAttachments: [ZRangedAttachment] {
 		let range = NSRange(location: 0, length: length)
-		var found = [NSTextAttachment]()
+		var found = [ZRangedAttachment]()
 
 		enumerateAttribute(.attachment, in: range, options: .reverse) { (item, inRange, flag) in
 			if  let attach = item as? NSTextAttachment {
-				found.append(attach)
+				let append = ZRangedAttachment(range: inRange, attachment: attach)
+				found.append(append)
 			}
 		}
 
@@ -1059,13 +1069,25 @@ extension NSMutableAttributedString {
 	var assetFileNames: [String] {
 		var names = [String]()
 
-		for attachment in attachments {
-			if  let name = attachment.fileWrapper?.preferredFilename {
+		for rangedAttach in rangedAttachments {
+			if  let name = rangedAttach.attachment.fileWrapper?.preferredFilename {
 				names.append(name)
 			}
 		}
 
 		return names
+	}
+
+	var attachmentCells: [NSTextAttachmentCell] {
+		var array = [NSTextAttachmentCell] ()
+
+		for rangedAttach in rangedAttachments {
+			if  let  cell = rangedAttach.attachment.attachmentCell as? NSTextAttachmentCell {
+				array.append(cell)
+			}
+		}
+
+		return array
 	}
 
 	var image: ZImage? {
@@ -1077,16 +1099,19 @@ extension NSMutableAttributedString {
 	}
 
 	var images: [ZImage] {
-		var array = [ZImage] ()
+		let array: [ZImage?] = attachmentCells.map { cell -> ZImage? in
+			return cell.image
+		}
 
-		for attachment in attachments {
-			if  let  cell = attachment.attachmentCell as? NSTextAttachmentCell,
-				let image = cell.image {
-				array.append(image)
+		var result = [ZImage]()
+
+		for item in array {
+			if  let image = item {
+				result.append(image)
 			}
 		}
 
-		return array
+		return result
 	}
 
 	var assets: [CKAsset] {
@@ -1189,6 +1214,14 @@ extension NSMutableAttributedString {
 
 	func fixAllAttributes() {
 		fixAttributes(in: NSRange(location: 0, length: self.length))
+	}
+
+}
+
+extension NSTextAttachmentCell {
+
+	var frame: CGRect {
+		return CGRect(origin: attachment?.bounds.origin ?? CGPoint.zero, size: cellSize())
 	}
 
 }

@@ -21,7 +21,7 @@ let gUseFiles = !kIsPhone
 enum ZExportType: String {
 	case eThoughtful = "thoughtful"
 	case eOutline    = "outline"
-	case eEssay		 = "rtf"
+	case eEssay		 = "rtfd"
 }
 
 class ZFiles: NSObject {

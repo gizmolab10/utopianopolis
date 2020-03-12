@@ -24,22 +24,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var deleteButton    : ZButton?
 	var hideButton      : ZButton?
 	var saveButton      : ZButton?
-	var selectionString : String?   { return textStorage?.attributedSubstring(from: selectionRange).string }
-	var selectionRange  = NSRange() { didSet { selectionRect = rectForRange(selectionRange) } }
-	var selectionZone   : Zone?     { return selectedNotes.first?.zone }
-	var selectionRect   = CGRect()
+	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectionRange).string }
+	var selectionRange  = NSRange()          { didSet { if selectionRange.location != 0 { selectionRect = rectForRange(selectionRange) } } }
+	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
+	var selectedAttach  : ZRangedAttachment? { didSet { if selectedAttach != nil { selectionRange = NSRange() } } }
+	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { selectedAttach = nil } } }
 
-	// MARK:- mouse, key
+	// MARK:- input
 	// MARK:-
-
-	override func mouseDown(with event: ZEvent) {
-		let   rect = CGRect(origin: event.locationInWindow, size: CGSize.zero)
-		let inRing = gRingView?.handleClick(in: rect, flags: event.modifierFlags) ?? false
-
-		if !inRing {
-			super.mouseDown(with: event)
-		}
-	}
 
 	func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		guard let key = iKey else {
@@ -89,6 +81,75 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return false
 	}
 
+	override func mouseDown(with event: ZEvent) {
+		let  rect = CGRect(origin: event.locationInWindow, size: CGSize.zero)
+		let flags = event.modifierFlags
+
+		if  !(gRingView?.handleClick(in: rect, flags: flags) ?? false) &&
+			!handleClick            (in: rect, flags: flags) {
+			super.mouseDown(with: event)
+		}
+	}
+
+	func handleClick(in rect: CGRect, flags: ZEvent.ModifierFlags) -> Bool {
+		if  let     array = textStorage?.rangedAttachments {
+			for item in array {
+				let range = item.range
+
+				if  let iRect = rectForRange(range),
+					iRect.intersects(rect) {
+					selectedAttach = item
+
+					return true
+				}
+			}
+		}
+
+		return false
+	}
+
+	// MARK:- output
+	// MARK:-
+
+	override func draw(_ dirtyRect: NSRect) {
+		super.draw(dirtyRect)
+
+		let inset = CGFloat(-5.0)
+
+		if  let selected = selectedAttach,
+			let     rect = rectForRange(selected.range)?.offsetBy(dx: 20.0, dy: 0.0) {
+			let     path = ZBezierPath(rect: rect)
+			gRubberbandColor.setStroke()
+
+			path.stroke()
+
+			for corner in rect.cornerPoints {
+				let cornerRect = CGRect(origin: corner, size: CGSize.zero).insetBy(dx: inset, dy: inset)
+				let cornerPath = ZBezierPath.circlePath(in: cornerRect)
+
+				cornerPath.stroke()
+			}
+		}
+	}
+
+	func rectForRange(_ range: NSRange) -> CGRect? {
+		if  let      managers = textStorage?.layoutManagers,
+			managers.count > 0 {
+			let layoutManager = managers[0]
+			let    containers = layoutManager.textContainers
+
+			if  containers.count > 0 {
+				let textContainer = containers[0]
+				var    glyphRange = NSRange()
+
+				layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &glyphRange)
+				return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
+			}
+		}
+
+		return nil
+	}
+
 	// MARK:- setup
 	// MARK:-
 
@@ -123,6 +184,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		usesRuler              = true
 		isRulerVisible         = true
 		usesInspectorBar       = true
+		allowsImageEditing     = true
 		textContainerInset     = NSSize(width: 20, height: 0)
 		zlayer.backgroundColor = kClearColor.cgColor
 		backgroundColor        = kClearColor
@@ -445,7 +507,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	@objc private func handleHyperlinkPopupMenu(_ iItem: ZMenuItem) {
 		if  let type = ZHyperlinkMenuType(rawValue: iItem.keyEquivalent) {
-			var link: String? = type.linkType + kSeparator
+			var link: String? = type.linkType + kNameSeparator
 
 			switch type {
 				case .hClear: link = nil // to remove existing hyperlink
@@ -505,7 +567,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		selectionRange = range
 
 		if  let  link = currentLink as? String {
-			let parts = link.components(separatedBy: kSeparator)
+			let parts = link.components(separatedBy: kNameSeparator)
 
 			if  parts.count > 1,
 				let    t = parts.first?.first, // first character of first part
