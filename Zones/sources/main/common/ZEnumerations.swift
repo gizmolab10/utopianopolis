@@ -6,10 +6,8 @@
 //  Copyright © 2018 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
-
 
 enum InterfaceStyle : String {
     case Dark, Light
@@ -21,7 +19,6 @@ enum InterfaceStyle : String {
     }
 }
 
-
 enum ZRootID: String {
     case graph     = "root"
     case trash     = "trash"
@@ -30,14 +27,12 @@ enum ZRootID: String {
     case lost      = "lost and found"
 }
 
-
 enum ZCloudAccountStatus: Int {
     case none
     case begin
     case available
     case active
 }
-
 
 struct ZTinyDotType: OptionSet {
 	let rawValue: Int
@@ -50,25 +45,21 @@ struct ZTinyDotType: OptionSet {
 	static let eEssay = ZTinyDotType(rawValue: 0x0002)
 }
 
-
 enum ZListGrowthMode: Int {
     case up
     case down
 }
-
 
 enum ZBrowsingMode: Int {
     case confined
     case cousinJumps
 }
 
-
 enum ZFileMode: Int {
     case localOnly
     case cloudOnly
     case all
 }
-
 
 enum ZWorkMode: Int {
     case noRedrawMode
@@ -80,7 +71,6 @@ enum ZWorkMode: Int {
     // case outlineMode
 }
 
-
 enum ZShortcutType: String {
 	case bold      = "b"
 	case underline = "u"
@@ -88,14 +78,12 @@ enum ZShortcutType: String {
 	case plain     = " "
 }
 
-
 enum ZCountsMode: Int { // do not change the order, they are persisted
     case none
     case dots
     case fetchable
     case progeny
 }
-
 
 enum ZOutlineLevelType: String {
     case capital = "A"
@@ -113,7 +101,6 @@ enum ZOutlineLevelType: String {
 		}
     }
 }
-
 
 enum ZDatabaseID: String {
 	case preferencesID = "preferences"
@@ -167,7 +154,6 @@ enum ZDatabaseID: String {
     
 }
 
-
 enum ZDatabaseIndex: Int {
 	case everyoneIndex
     case mineIndex
@@ -182,7 +168,6 @@ enum ZDatabaseIndex: Int {
 		}
     }
 }
-
 
 struct ZDetailsViewID: OptionSet {
     let rawValue: Int
@@ -200,6 +185,13 @@ struct ZDetailsViewID: OptionSet {
 
 enum ZInterruptionError : Error {
 	case userInterrupted
+}
+
+enum ZCorner : Int {
+	case topLeft
+	case topRight
+	case bottomLeft
+	case bottomRight
 }
 
 enum ZStorageType: String {

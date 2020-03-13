@@ -565,8 +565,8 @@ extension CGSize {
 extension CGRect {
 
 	var     extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
-	var upperRight: CGPoint { return CGPoint(x: maxX, y: minY) }
-	var  lowerLeft: CGPoint { return CGPoint(x: minX, y: maxY) }
+	var topRight: CGPoint { return CGPoint(x: maxX, y: minY) }
+	var  bottomLeft: CGPoint { return CGPoint(x: minX, y: maxY) }
 
 	var leftCenter: CGPoint {
 		get { return CGPoint(x: minX, y: midY) }
@@ -584,13 +584,13 @@ extension CGRect {
 		}
 	}
 
-	var cornerPoints: [CGPoint] {
-		var result = [CGPoint]()
+	var cornerPoints: [ZCorner : CGPoint] {
+		var  result = [ZCorner : CGPoint]()
 
-		result.append(origin)
-		result.append(upperRight)
-		result.append(lowerLeft)
-		result.append(extent)
+		result[.topLeft]     = origin
+		result[.topRight]    = topRight
+		result[.bottomLeft]  = bottomLeft
+		result[.bottomRight] = extent
 
 		return result
 	}
@@ -1843,6 +1843,10 @@ extension ZView {
         superview?.applyToAllSuperviews(closure)
 	}
 
+	func rectFromEvent(_ event: ZEvent) -> CGRect {
+		return convert(CGRect(origin: event.locationInWindow, size: CGSize.zero), from: nil)
+	}
+
 	func analyze(_ object: AnyObject) -> (Bool, Bool, Bool, Bool, Bool) {
 		var noteFocus = false
 		var ideaFocus = false
@@ -1978,6 +1982,7 @@ extension ZView {
 			drawNecklace(tinyCount, false)
 		}
 	}
+
 }
 
 extension ZTextField {
