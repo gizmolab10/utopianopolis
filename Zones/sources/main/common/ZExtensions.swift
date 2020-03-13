@@ -564,7 +564,9 @@ extension CGSize {
 
 extension CGRect {
 
-    var extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var     extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var upperRight: CGPoint { return CGPoint(x: maxX, y: minY) }
+	var  lowerLeft: CGPoint { return CGPoint(x: minX, y: maxY) }
 
 	var leftCenter: CGPoint {
 		get { return CGPoint(x: minX, y: midY) }
@@ -586,6 +588,8 @@ extension CGRect {
 		var result = [CGPoint]()
 
 		result.append(origin)
+		result.append(upperRight)
+		result.append(lowerLeft)
 		result.append(extent)
 
 		return result

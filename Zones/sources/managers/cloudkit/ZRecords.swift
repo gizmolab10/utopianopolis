@@ -158,12 +158,10 @@ class ZRecords: NSObject {
     // MARK:- registries
     // MARK:-
 
-
-    func apply(to iName: String, onEach: RecordsToRecordsClosure) {
+    func appendNameRegistry(from iName: String, onEach: RecordsToRecordsClosure) {
         for part in iName.components(separatedBy: " ") {
             if  part != "" {
                 var records  = nameRegistry[part]
-
                 if  records == nil {
                     records  = []
                 }
@@ -174,10 +172,9 @@ class ZRecords: NSObject {
         }
 	}
 	
-	
 	func register(name: String, for iZone: Zone?) {
 		if  let record = iZone?.record {
-			apply(to: name) { iRecords -> ([CKRecord]) in
+			appendNameRegistry(from: name) { iRecords -> ([CKRecord]) in
 				var records = iRecords
 				
 				records.append(record)
@@ -198,7 +195,7 @@ class ZRecords: NSObject {
     func unregisterName(of iZone: Zone?) {
         if  let record = iZone?.record,
             let   name = iZone?.zoneName {
-            apply(to: name) { iRecords -> ([CKRecord]) in
+            appendNameRegistry(from: name) { iRecords -> ([CKRecord]) in
                 var records = iRecords
 
                 if let index = records.firstIndex(of: record) {
@@ -210,19 +207,17 @@ class ZRecords: NSObject {
         }
     }
 
-
     func searchLocal(for name: String) -> [CKRecord] {
         var results = [CKRecord] ()
 
-        apply(to: name) { iRecords -> ([CKRecord]) in
-            results.appendUnique(contentsOf: iRecords)
+        appendNameRegistry(from: name) { iRecords -> ([CKRecord]) in
+			results = results.intersection(iRecords)
 
             return iRecords // no filtering is done, return input as output (identity filter)
         }
 
         return results
     }
-
 
     @discardableResult func registerZRecord(_  iRecord : ZRecord?) -> Bool {
         if  let      zRecord  = iRecord,

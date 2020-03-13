@@ -24,11 +24,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var deleteButton    : ZButton?
 	var hideButton      : ZButton?
 	var saveButton      : ZButton?
+	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectionRange).string }
 	var selectionRange  = NSRange()          { didSet { if selectionRange.location != 0 { selectionRect = rectForRange(selectionRange) } } }
-	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
-	var selectedAttach  : ZRangedAttachment? { didSet { if selectedAttach != nil { selectionRange = NSRange() } } }
 	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { selectedAttach = nil } } }
+	var selectedAttach  : ZRangedAttachment? { didSet { if selectedAttach != nil { selectionRange = NSRange() } } }
+	let selectedRadius  = CGFloat(-10.0)
 
 	// MARK:- input
 	// MARK:-
@@ -91,21 +92,74 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func handleClick(in rect: CGRect, flags: ZEvent.ModifierFlags) -> Bool {
-		if  let     array = textStorage?.rangedAttachments {
+	override func mouseDragged(with event: ZEvent) {
+		let  rect = CGRect(origin: event.locationInWindow, size: CGSize.zero)
+
+		printDebug(.images, "\(rect.origin)")
+	}
+
+	override func mouseMoved(with event: ZEvent) {
+		let  rect = CGRect(origin: event.locationInWindow, size: CGSize.zero)
+
+		NSCursor.iBeam.set()
+
+		if  let      item = attachmentHit(at: rect),
+			let imageRect = rectForRangedAttachment(item) {
+			let localRect = convert(rect, from: nil)
+
+			NSCursor.openHand.set()
+
+			for corner in imageRect.cornerPoints {
+				let cornerRect = CGRect(origin: corner, size: CGSize.zero).insetBy(dx: selectedRadius, dy: selectedRadius)
+
+				if  cornerRect.intersects(localRect) {
+					NSCursor.crosshair.set()
+				}
+			}
+		}
+	}
+
+	func handleClick(in iRect: CGRect, flags: ZEvent.ModifierFlags) -> Bool {
+		if  let     attach = attachmentHit(at: iRect) {
+			selectedAttach = attach
+
+			return true
+		}
+
+		return false
+	}
+
+	func attachmentHit(at iRect: CGRect) -> ZRangedAttachment? {
+		let      rect = convert(iRect, from: nil)
+
+		if  let array = textStorage?.rangedAttachments {
 			for item in array {
-				let range = item.range
+				if  let imageRect = rectForRangedAttachment(item)?.insetBy(dx: selectedRadius, dy: selectedRadius),
+					imageRect.intersects(rect) {
 
-				if  let iRect = rectForRange(range),
-					iRect.intersects(rect) {
-					selectedAttach = item
-
-					return true
+					return item
 				}
 			}
 		}
 
-		return false
+		return nil
+	}
+
+	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {
+		if  let      managers = textStorage?.layoutManagers, managers.count > 0 {
+			let layoutManager = managers[0] as NSLayoutManager
+			let    containers = layoutManager.textContainers
+
+			if  containers.count > 0 {
+				let textContainer = containers[0]
+				var    glyphRange = NSRange()
+
+				layoutManager.characterRange(forGlyphRange: attach.range, actualGlyphRange: &glyphRange)
+				return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer).offsetBy(dx: 20.0, dy: 0.0)
+			}
+		}
+
+		return nil
 	}
 
 	// MARK:- output
@@ -114,40 +168,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)
 
-		let inset = CGFloat(-5.0)
-
 		if  let selected = selectedAttach,
-			let     rect = rectForRange(selected.range)?.offsetBy(dx: 20.0, dy: 0.0) {
-			let     path = ZBezierPath(rect: rect)
+			let     rect = rectForRangedAttachment(selected) {
+
 			gRubberbandColor.setStroke()
 
-			path.stroke()
-
 			for corner in rect.cornerPoints {
-				let cornerRect = CGRect(origin: corner, size: CGSize.zero).insetBy(dx: inset, dy: inset)
+				let cornerRect = CGRect(origin: corner, size: CGSize.zero).insetBy(dx: selectedRadius, dy: selectedRadius)
 				let cornerPath = ZBezierPath.circlePath(in: cornerRect)
 
 				cornerPath.stroke()
 			}
 		}
-	}
-
-	func rectForRange(_ range: NSRange) -> CGRect? {
-		if  let      managers = textStorage?.layoutManagers,
-			managers.count > 0 {
-			let layoutManager = managers[0]
-			let    containers = layoutManager.textContainers
-
-			if  containers.count > 0 {
-				let textContainer = containers[0]
-				var    glyphRange = NSRange()
-
-				layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &glyphRange)
-				return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
-			}
-		}
-
-		return nil
 	}
 
 	// MARK:- setup
