@@ -516,6 +516,14 @@ extension CGPoint {
         return CGFloat(sqrt(width * width + height * height))
     }
 
+	func offsetBy(_ delta: CGSize) -> CGPoint {
+		return CGPoint(x: x + delta.width, y: y + delta.height)
+	}
+
+	func offsetBy(_ xOffset: CGFloat, _ yOffset: CGFloat) -> CGPoint {
+		return CGPoint(x: x + xOffset, y: y + yOffset)
+	}
+
 	func intersectsTriangle(orientedUp: Bool, in iRect: CGRect) -> Bool {
 		return ZBezierPath.trianglePath(orientedUp: orientedUp, in: iRect).contains(self)
 	}
@@ -546,8 +554,29 @@ extension CGSize {
         return CGSize(width: 1000000, height: 1000000)
     }
 
+	func multiplyBy(_ multiplier: CGFloat) -> CGSize {
+		return CGSize(width: width * multiplier, height: height * multiplier)
+	}
+
+	func multiplyBy(_ multiplier: CGSize) -> CGSize {
+		return CGSize(width: width * multiplier.width, height: height * multiplier.height)
+	}
+
+	func growBy(_ fraction: CGSize) -> CGSize {
+		let  fractionWidth = abs(fraction.width / width)
+		let fractionHeight = abs(fraction.height / height)
+		let        byWidth = min(fractionWidth, fractionHeight) == fractionWidth
+		let     multiplier = (byWidth ? fraction.width : fraction.height) - 1.0
+
+		return CGSize(width: width * multiplier, height: height * multiplier)
+	}
+
 	func offsetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
 		return CGSize(width: width + x, height: height + y)
+	}
+
+	func offsetBy(_ delta: CGSize) -> CGSize {
+		return CGSize(width: width + delta.width, height: height + delta.height)
 	}
 
 	func force(horizotal: Bool, into range: NSRange) -> CGSize {
@@ -564,8 +593,8 @@ extension CGSize {
 
 extension CGRect {
 
-	var     extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
-	var topRight: CGPoint { return CGPoint(x: maxX, y: minY) }
+	var      extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var    topRight: CGPoint { return CGPoint(x: maxX, y: minY) }
 	var  bottomLeft: CGPoint { return CGPoint(x: minX, y: maxY) }
 
 	var leftCenter: CGPoint {
@@ -1952,9 +1981,9 @@ extension ZView {
 
 							let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
 							let           path = ZBezierPath(ovalIn: ovalRect)
-							let       dotColor = !isFocus ? color : gNecklaceSelectionColor
 							path    .lineWidth = CGFloat(gLineThickness * (asEssay ? 7.0 : 3.0))
 							path     .flatness = 0.0001
+							let       dotColor = !isFocus ? color : gNecklaceSelectionColor
 
 							if  isHollow || forNote {
 								dotColor?.setStroke()

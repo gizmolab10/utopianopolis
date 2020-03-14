@@ -96,58 +96,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func handleClick(in rect: CGRect, flags: ZEvent.ModifierFlags) -> Bool {
-		if  let     attach = attachmentHit(at: rect) {
-			imageCorner =     cornerHit(at: rect)
+		if  let      attach = attachmentHit(at: rect) {
+			imageCorner     =     cornerHit(at: rect)
 			imageAttachment = attach
+
+			setNeedsDisplay()
 
 			return true
 		}
 
 		return false
-	}
-
-	// MARK:- image resize
-	// MARK:-
-
-	// indicate action possible for thing under cursor by changing cursor
-
-	override func mouseMoved(with event: ZEvent) {
-		let  rect = rectFromEvent(event)
-
-		NSCursor.iBeam.set()
-
-		if  let      item = attachmentHit(at: rect),
-			let imageRect = rectForRangedAttachment(item) {
-
-			NSCursor.openHand.set()
-
-			for point in imageRect.cornerPoints.values {
-				let cornerRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: cornerRadius, dy: cornerRadius)
-
-				if  cornerRect.intersects(rect) {
-					NSCursor.crosshair.set()
-				}
-			}
-		}
-	}
-
-	override func mouseDragged(with event: ZEvent) {
-		if  imageCorner != nil {
-			let     rect = rectFromEvent(event)
-
-			if  imageDragStart == nil {
-				imageDragStart  = rect.origin
-			} else {
-				updateImageDragRect(from: rect.origin - imageDragStart!)
-			}
-		}
-	}
-
-	func updateImageDragRect(from delta: CGSize) {
-		// compute imageDragRect from delta and image rect
-		// preserving aspect ratio
-
-		printDebug(.images, "\(imageCorner!) \(delta)")
 	}
 
 	func attachmentHit(at rect: CGRect) -> ZRangedAttachment? {
@@ -165,7 +123,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func cornerHit(at rect: CGRect) -> ZCorner? {
- 		if  let         item = imageAttachment,
+		if  let         item = imageAttachment,
 			let    imageRect = rectForRangedAttachment(item) {
 			let cornerPoints = imageRect.cornerPoints
 
@@ -200,14 +158,114 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return nil
 	}
 
+	// MARK:- resize image
+	// MARK:-
+
+	func clearDrag() {
+		imageDragStart = nil
+		imageDragRect  = nil
+		imageCorner    = nil
+	}
+
+	// change cursor to indicate action possible on what's under cursor
+
+	override func mouseMoved(with event: ZEvent) {
+		let  rect = rectFromEvent(event)
+
+		NSCursor.iBeam.set()
+
+		if  let      item = attachmentHit(at: rect),
+			let imageRect = rectForRangedAttachment(item) {
+
+			NSCursor.openHand.set()
+
+			for point in imageRect.cornerPoints.values {
+				let cornerRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: cornerRadius, dy: cornerRadius)
+
+				if  cornerRect.intersects(rect) {
+					NSCursor.crosshair.set()
+				}
+			}
+		}
+	}
+
+	override func mouseDragged(with event: ZEvent) {
+		if  imageCorner  != nil {
+			let mouseRect = rectFromEvent(event)
+
+			if  imageDragStart == nil {
+				imageDragStart  = mouseRect.origin
+			} else {
+				updateImageDragRect(for: mouseRect.origin - imageDragStart!)
+			}
+
+			setNeedsDisplay()
+		}
+	}
+
+	override func mouseUp(with event: ZEvent) {
+		updateImageWithDragRect()
+		clearDrag()
+		setNeedsDisplay()
+	}
+
+	func updateImageWithDragRect() {
+
+	}
+
+	func updateImageDragRect(for delta: CGSize) {
+
+		// compute imageDragRect from delta, image rect and corner
+		// preserving aspect ratio
+
+		if  let   corner = imageCorner,
+			let   attach = imageAttachment,
+			let     rect = rectForRangedAttachment(attach) {
+			let    width = rect.width
+			let   height = rect.height
+			var     size = rect.size
+			var   origin = rect.origin
+			let fraction = CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height)
+			let   growth = size.growBy(fraction)
+
+			switch corner {
+				case .topLeft,
+					 .topRight:    size = size.offsetBy(growth)
+				case .bottomLeft,
+					 .bottomRight: size = size.offsetBy(-growth.width, -growth.height)
+			}
+
+			switch corner {
+				case .topLeft:     origin = origin.offsetBy(-growth.width, -growth.height)
+				case .topRight:    origin = origin.offsetBy( 0.0,          -growth.height)
+				case .bottomLeft:  origin = origin.offsetBy( growth.width,  0.0)
+				case .bottomRight: break
+			}
+
+			let imageRect = CGRect(origin: origin, size: size)
+			imageDragRect = imageRect
+
+//			printDebug(.images, "\(corner) \(growth)")
+		}
+	}
+
 	// MARK:- output
 	// MARK:-
 
 	override func draw(_ dirtyRect: NSRect) {
+		if  imageDragRect == nil {
+			let path = ZBezierPath(rect: frame)
+
+			kClearColor.setFill()
+			path.fill()
+		}
+
 		super.draw(dirtyRect)
 
-		if  let rect = imageDragRect {
-			let path = ZBezierPath(rect: rect)
+		if  let       rect = imageDragRect {
+			let       path = ZBezierPath(rect: rect)
+			path.lineWidth = CGFloat(gLineThickness * 5.0)
+			path.flatness  = 0.0001
 
 			gRubberbandColor.setStroke()
 			path.stroke()
