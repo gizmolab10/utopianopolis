@@ -221,31 +221,29 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let   corner = imageCorner,
 			let   attach = imageAttachment,
 			let     rect = rectForRangedAttachment(attach) {
-			let    width = rect.width
-			let   height = rect.height
 			var     size = rect.size
 			var   origin = rect.origin
-			let fraction = CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height)
+			let fraction = size.fraction(delta)
 			let   growth = size.growBy(fraction)
 
 			switch corner {
-				case .topLeft,
-					 .topRight:    size = size.offsetBy(growth)
-				case .bottomLeft,
-					 .bottomRight: size = size.offsetBy(-growth.width, -growth.height)
+				case .topLeft:     size = size.offsetBy(-growth.width, -growth.height)
+				case .topRight:    break
+				case .bottomLeft:  size = size.offsetBy(-growth.width, -growth.height)
+				default:           break
 			}
 
 			switch corner {
-				case .topLeft:     origin = origin.offsetBy(-growth.width, -growth.height)
+				case .topLeft:     origin = origin.offsetBy( growth)
 				case .topRight:    origin = origin.offsetBy( 0.0,          -growth.height)
 				case .bottomLeft:  origin = origin.offsetBy( growth.width,  0.0)
-				case .bottomRight: break
+				default:           break
 			}
 
 			let imageRect = CGRect(origin: origin, size: size)
 			imageDragRect = imageRect
 
-//			printDebug(.images, "\(corner) \(growth)")
+			printDebug(.images, "\(corner) \(growth)")
 		}
 	}
 

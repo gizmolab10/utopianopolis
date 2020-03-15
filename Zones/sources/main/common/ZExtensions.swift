@@ -543,7 +543,15 @@ extension CGPoint {
 extension CGSize {
 
 	var smallDimension: CGFloat {
-		return min(height, width)
+		return min(abs(height), abs(width))
+	}
+
+	var largeDimension: CGFloat {
+		return max(abs(height), abs(width))
+	}
+
+	var widthIsSmaller: Bool {
+		return smallDimension == abs(width)
 	}
 
     var hypontenuse: CGFloat {
@@ -554,21 +562,36 @@ extension CGSize {
         return CGSize(width: 1000000, height: 1000000)
     }
 
-	func multiplyBy(_ multiplier: CGFloat) -> CGSize {
-		return CGSize(width: width * multiplier, height: height * multiplier)
+	func multiplyBy(_ fraction: CGFloat) -> CGSize {
+		return CGSize(width: width * fraction, height: height * fraction)
 	}
 
-	func multiplyBy(_ multiplier: CGSize) -> CGSize {
-		return CGSize(width: width * multiplier.width, height: height * multiplier.height)
+	func multiplyBy(_ fraction: CGSize) -> CGSize {
+		return CGSize(width: width * fraction.width, height: height * fraction.height)
+	}
+
+	func resizeBy(_ fraction: CGSize) -> CGSize {
+		return multiplyBy(resizeMultiplier(fraction))
 	}
 
 	func growBy(_ fraction: CGSize) -> CGSize {
-		let  fractionWidth = abs(fraction.width / width)
-		let fractionHeight = abs(fraction.height / height)
-		let        byWidth = min(fractionWidth, fractionHeight) == fractionWidth
-		let     multiplier = (byWidth ? fraction.width : fraction.height) - 1.0
+		return multiplyBy(1.0 - fraction.largeDimension)
+	}
 
-		return CGSize(width: width * multiplier, height: height * multiplier)
+	func fraction(_ delta: CGSize) -> CGSize {
+		CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height)
+	}
+
+	func resizeMultiplier(_ fraction: CGSize) -> CGFloat {
+		return fraction.widthIsSmaller ? resizedWidth(fraction) : resizedHeight(fraction)
+	}
+
+	func resizedWidth(_ fraction: CGSize) -> CGFloat {
+		return fraction.width * width
+	}
+
+	func resizedHeight(_ fraction: CGSize) -> CGFloat {
+		return fraction.height * height
 	}
 
 	func offsetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
