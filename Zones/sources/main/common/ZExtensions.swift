@@ -574,7 +574,11 @@ extension CGSize {
 		return multiplyBy(resizeMultiplier(fraction))
 	}
 
-	func growBy(_ fraction: CGSize) -> CGSize {
+	func minGrowBy(_ fraction: CGSize) -> CGSize {
+		return multiplyBy(1.0 - fraction.smallDimension)
+	}
+
+	func maxGrowBy(_ fraction: CGSize) -> CGSize {
 		return multiplyBy(1.0 - fraction.largeDimension)
 	}
 

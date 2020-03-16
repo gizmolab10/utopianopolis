@@ -224,26 +224,28 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			var     size = rect.size
 			var   origin = rect.origin
 			let fraction = size.fraction(delta)
-			let   growth = size.growBy(fraction)
+			let   growth = 1.0 - fraction.width
+			let    wGrow = size.width  * growth
+			let    hGrow = size.height * growth
 
 			switch corner {
-				case .topLeft:     size = size.offsetBy(-growth.width, -growth.height)
-				case .topRight:    break
-				case .bottomLeft:  size = size.offsetBy(-growth.width, -growth.height)
-				default:           break
+				case .topLeft:     size = size.offsetBy(-wGrow, -hGrow)
+				case .topRight:    size = size.offsetBy( wGrow,  hGrow)
+				case .bottomLeft:  size = size.offsetBy(-wGrow, -hGrow)
+				case .bottomRight: size = size.offsetBy( wGrow,  hGrow)
 			}
 
 			switch corner {
-				case .topLeft:     origin = origin.offsetBy( growth)
-				case .topRight:    origin = origin.offsetBy( 0.0,          -growth.height)
-				case .bottomLeft:  origin = origin.offsetBy( growth.width,  0.0)
+				case .topLeft:     origin = origin.offsetBy( wGrow,  hGrow)
+				case .topRight:    origin = origin.offsetBy( 0.0,   -hGrow)
+				case .bottomLeft:  origin = origin.offsetBy( wGrow,  0.0)
 				default:           break
 			}
 
 			let imageRect = CGRect(origin: origin, size: size)
 			imageDragRect = imageRect
 
-			printDebug(.images, "\(corner) \(growth)")
+//			printDebug(.images, "\(corner) \(wGrow) \(hGrow)")
 		}
 	}
 
