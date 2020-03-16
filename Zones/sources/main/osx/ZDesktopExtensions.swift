@@ -930,19 +930,32 @@ extension NSProgressIndicator {
 
 public extension ZImage {
 
+	var  png: Data? { tiffRepresentation?.bitmap?.png }
+	var jpeg: Data? { tiffRepresentation?.bitmap?.jpeg }
+
+	func resizedTo(_ newSize: CGSize) -> ZImage {
+		let newImage = ZImage(size: newSize)
+		newImage.lockFocus()
+		draw(in: CGRect(origin: CGPoint(), size: newSize), from: CGRect(origin: CGPoint(), size: size), operation: .sourceOver, fraction: CGFloat(1))
+		newImage.unlockFocus()
+		newImage.size = newSize
+
+		return newImage
+	}
 
     func imageRotatedByDegrees(_ degrees: CGFloat) -> ZImage {
         var imageBounds = NSZeroRect ; imageBounds.size = self.size
         let pathBounds = NSBezierPath(rect: imageBounds)
         var transform = NSAffineTransform()
-        transform.rotate(byDegrees: degrees)
-        pathBounds.transform(using: transform as AffineTransform)
-        let rotatedBounds:CGRect = NSMakeRect(NSZeroPoint.x, NSZeroPoint.y , self.size.width, self.size.height )
-        let rotatedImage = NSImage(size: rotatedBounds.size)
+		let rotatedBounds:CGRect = NSMakeRect(NSZeroPoint.x, NSZeroPoint.y , self.size.width, self.size.height )
+		let rotatedImage = NSImage(size: rotatedBounds.size)
 
-        //Center the image within the rotated bounds
-        imageBounds.origin.x = NSMidX(rotatedBounds) - (NSWidth(imageBounds) / 2)
-        imageBounds.origin.y  = NSMidY(rotatedBounds) - (NSHeight(imageBounds) / 2)
+		//Center the image within the rotated bounds
+		imageBounds.origin.x = NSMidX(rotatedBounds) - (NSWidth(imageBounds) / 2)
+		imageBounds.origin.y = NSMidY(rotatedBounds) - (NSHeight(imageBounds) / 2)
+
+		transform.rotate(byDegrees: degrees)
+        pathBounds.transform(using: transform as AffineTransform)
 
         // Start a new transform
         transform = NSAffineTransform()
@@ -954,11 +967,12 @@ public extension ZImage {
         // Draw the original image, rotated, into the new image
         rotatedImage.lockFocus()
         transform.concat()
-        self.draw(in: imageBounds, from: NSZeroRect, operation: .copy, fraction: 1.0)
+        draw(in: imageBounds, from: NSZeroRect, operation: .copy, fraction: 1.0)
         rotatedImage.unlockFocus()
 
         return rotatedImage
     }
+
 }
 
 extension ZBitmapImageRep {
@@ -968,11 +982,6 @@ extension ZBitmapImageRep {
 
 extension Data {
 	var bitmap: ZBitmapImageRep? { ZBitmapImageRep(data: self) }
-}
-
-extension ZImage {
-	var  png: Data? { tiffRepresentation?.bitmap?.png }
-	var jpeg: Data? { tiffRepresentation?.bitmap?.jpeg }
 }
 
 extension ZFiles {

@@ -330,10 +330,34 @@ extension Data {
 
 }
 
+extension URL {
+
+	var imageSize: CGSize? {
+		if  let         imageSource = CGImageSourceCreateWithURL(self as CFURL, nil) {
+			if  let imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as Dictionary? {
+				let     pixelHeight = imageProperties[kCGImagePropertyPixelHeight] as! Int
+				let     pixelWidth  = imageProperties[kCGImagePropertyPixelWidth]  as! Int
+
+				return CGSize(width: pixelWidth, height: pixelHeight)
+			}
+		}
+
+		return nil
+	}
+
+}
+
 extension CKAsset {
+
 	var data: Data? {
 		FileManager.default.contents(atPath: fileURL.path)
 	}
+
+	var imageSize: CGSize? {
+		get { return fileURL.imageSize }
+		set {}
+	}
+
 }
 
 extension CKRecord {
@@ -546,14 +570,6 @@ extension CGSize {
 		return min(abs(height), abs(width))
 	}
 
-	var largeDimension: CGFloat {
-		return max(abs(height), abs(width))
-	}
-
-	var widthIsSmaller: Bool {
-		return smallDimension == abs(width)
-	}
-
     var hypontenuse: CGFloat {
         return sqrt(width * width + height * height)
     }
@@ -570,32 +586,8 @@ extension CGSize {
 		return CGSize(width: width * fraction.width, height: height * fraction.height)
 	}
 
-	func resizeBy(_ fraction: CGSize) -> CGSize {
-		return multiplyBy(resizeMultiplier(fraction))
-	}
-
-	func minGrowBy(_ fraction: CGSize) -> CGSize {
-		return multiplyBy(1.0 - fraction.smallDimension)
-	}
-
-	func maxGrowBy(_ fraction: CGSize) -> CGSize {
-		return multiplyBy(1.0 - fraction.largeDimension)
-	}
-
 	func fraction(_ delta: CGSize) -> CGSize {
 		CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height)
-	}
-
-	func resizeMultiplier(_ fraction: CGSize) -> CGFloat {
-		return fraction.widthIsSmaller ? resizedWidth(fraction) : resizedHeight(fraction)
-	}
-
-	func resizedWidth(_ fraction: CGSize) -> CGFloat {
-		return fraction.width * width
-	}
-
-	func resizedHeight(_ fraction: CGSize) -> CGFloat {
-		return fraction.height * height
 	}
 
 	func offsetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
@@ -1282,6 +1274,25 @@ extension NSTextAttachmentCell {
 
 	var frame: CGRect {
 		return CGRect(origin: attachment?.bounds.origin ?? CGPoint.zero, size: cellSize())
+	}
+}
+
+extension NSTextAttachment {
+
+	var image: ZImage? {
+		get {
+			if  let cell = attachmentCell as? NSTextAttachmentCell {
+				return cell.image
+			}
+
+			return nil
+		}
+
+		set {
+			if  let   cell = attachmentCell as? NSTextAttachmentCell {
+				cell.image = newValue
+			}
+		}
 	}
 
 }

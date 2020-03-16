@@ -210,12 +210,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func updateImageWithDragRect() {
-
+		if  let    size  = imageDragRect?.size,
+			let  attach  = imageAttachment?.attachment,
+			let   image  = attach.image {
+			let oldSize  = image.size
+			if  oldSize != size {
+				attach.image = image.resizedTo(size)
+			}
+		}
 	}
 
 	func updateImageDragRect(for delta: CGSize) {
 
-		// compute imageDragRect from delta, image rect and corner
+		// compute imageDragRect from delta.width, image rect and corner
 		// preserving aspect ratio
 
 		if  let   corner = imageCorner,
@@ -229,10 +236,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let    hGrow = size.height * growth
 
 			switch corner {
-				case .topLeft:     size = size.offsetBy(-wGrow, -hGrow)
-				case .topRight:    size = size.offsetBy( wGrow,  hGrow)
-				case .bottomLeft:  size = size.offsetBy(-wGrow, -hGrow)
-				case .bottomRight: size = size.offsetBy( wGrow,  hGrow)
+				case .topLeft,
+					 .bottomLeft:  size = size.offsetBy(-wGrow, -hGrow)
+				case .topRight,
+					 .bottomRight: size = size.offsetBy( wGrow,  hGrow)
 			}
 
 			switch corner {
@@ -244,8 +251,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			let imageRect = CGRect(origin: origin, size: size)
 			imageDragRect = imageRect
-
-//			printDebug(.images, "\(corner) \(wGrow) \(hGrow)")
 		}
 	}
 
