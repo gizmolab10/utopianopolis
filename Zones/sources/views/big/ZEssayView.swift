@@ -26,7 +26,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var saveButton      : ZButton?
 	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectionRange).string }
-	var selectionRange  = NSRange()          { didSet { if selectionRange.location != 0 { selectionRect = rectForRange(selectionRange) } } }
+	var selectionRange  = NSRange()          { didSet { if selectionRange.location != 0, let rect = rectForRange(selectionRange) { selectionRect = rect } } }
 	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { imageAttachment = nil } } }
 	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { selectionRange = NSRange() } } }
 	var imageDragStart  : CGPoint?
@@ -108,65 +108,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return false
 	}
 
-	func attachmentHit(at rect: CGRect) -> ZRangedAttachment? {
-		if  let array = textStorage?.rangedAttachments {
-			for item in array {
-				if  let imageRect = rectForRangedAttachment(item)?.insetBy(dx: cornerRadius, dy: cornerRadius),
-					imageRect.intersects(rect) {
-
-					return item
-				}
-			}
-		}
-
-		return nil
-	}
-
-	func cornerHit(at rect: CGRect) -> ZCorner? {
-		if  let         item = imageAttachment,
-			let    imageRect = rectForRangedAttachment(item) {
-			let cornerPoints = imageRect.cornerPoints
-
-			for corner in cornerPoints.keys {
-				if  let point = cornerPoints[corner] {
-					let cornerRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: cornerRadius, dy: cornerRadius)
-
-					if  cornerRect.intersects(rect) {
-						return corner
-					}
-				}
-			}
-		}
-
-		return nil
-	}
-
-	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {
-		if  let      managers = textStorage?.layoutManagers, managers.count > 0 {
-			let layoutManager = managers[0] as NSLayoutManager
-			let    containers = layoutManager.textContainers
-
-			if  containers.count > 0 {
-				let textContainer = containers[0]
-				var    glyphRange = NSRange()
-
-				layoutManager.characterRange(forGlyphRange: attach.range, actualGlyphRange: &glyphRange)
-				return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer).offsetBy(dx: 20.0, dy: 0.0)
-			}
-		}
-
-		return nil
-	}
-
-	// MARK:- resize image
-	// MARK:-
-
-	func clearDrag() {
-		imageDragStart = nil
-		imageDragRect  = nil
-		imageCorner    = nil
-	}
-
 	// change cursor to indicate action possible on what's under cursor
 
 	override func mouseMoved(with event: ZEvent) {
@@ -174,8 +115,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		NSCursor.iBeam.set()
 
-		if  let      item = attachmentHit(at: rect),
-			let imageRect = rectForRangedAttachment(item) {
+		if  linkHit(at: rect) {
+			NSCursor.arrow.set()
+		} else if let item = attachmentHit(at: rect),
+			let  imageRect = rectForRangedAttachment(item) {
 
 			NSCursor.openHand.set()
 
@@ -188,6 +131,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 		}
 	}
+
+	// MARK:- resize image
+	// MARK:-
 
 	override func mouseDragged(with event: ZEvent) {
 		if  imageCorner  != nil {
@@ -207,6 +153,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		updateImageWithDragRect()
 		clearDrag()
 		setNeedsDisplay()
+	}
+
+	func clearDrag() {
+		imageDragStart = nil
+		imageDragRect  = nil
+		imageCorner    = nil
 	}
 
 	func updateImageWithDragRect() {
@@ -363,6 +315,80 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	// MARK:- private
 	// MARK:-
+
+	func linkHit(at rect: CGRect) -> Bool {
+		if  let array = textStorage?.linkRanges {
+			for range in array {
+				let linkRects = rectsForRange(range)
+				let count = linkRects.count
+
+				if  count > 0 {
+					for index in 0 ..< count {
+						let lineRect = linkRects[index]
+
+						if  range.length    < 150,
+							lineRect.width  < 250.0,
+							lineRect.height <  25.0,
+							lineRect.intersects(rect) {
+							return true
+						}
+					}
+				}
+			}
+		}
+
+		return false
+	}
+
+	func attachmentHit(at rect: CGRect) -> ZRangedAttachment? {
+		if  let array = textStorage?.rangedAttachments {
+			for item in array {
+				if  let imageRect = rectForRangedAttachment(item)?.insetBy(dx: cornerRadius, dy: cornerRadius),
+					imageRect.intersects(rect) {
+
+					return item
+				}
+			}
+		}
+
+		return nil
+	}
+
+	func cornerHit(at rect: CGRect) -> ZCorner? {
+		if  let         item = imageAttachment,
+			let    imageRect = rectForRangedAttachment(item) {
+			let cornerPoints = imageRect.cornerPoints
+
+			for corner in cornerPoints.keys {
+				if  let point = cornerPoints[corner] {
+					let cornerRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: cornerRadius, dy: cornerRadius)
+
+					if  cornerRect.intersects(rect) {
+						return corner
+					}
+				}
+			}
+		}
+
+		return nil
+	}
+
+	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {
+		if  let      managers = textStorage?.layoutManagers, managers.count > 0 {
+			let layoutManager = managers[0] as NSLayoutManager
+			let    containers = layoutManager.textContainers
+
+			if  containers.count > 0 {
+				let textContainer = containers[0]
+				var    glyphRange = NSRange()
+
+				layoutManager.characterRange(forGlyphRange: attach.range, actualGlyphRange: &glyphRange)
+				return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer).offsetBy(dx: 20.0, dy: 0.0)
+			}
+		}
+
+		return nil
+	}
 
 	func swapBetweenNoteAndEssay() {
 		if  let          current = gCurrentEssay,
@@ -733,12 +759,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 								if  let  note = target.noteMaybe, gCurrentEssay?.children.contains(note) ?? false {
 									let range = note.offsetTextRange	// text range of target essay
 									let start = NSRange(location: range.location, length: 1)
-									let  rect = self.convert(self.rectForRange(start), to: self).offsetBy(dx: 0.0, dy: -150.0)
-
-									// highlight text of note, and scroll it to visible
 
 									self.setSelectedRange(range)
-									self.scroll(rect.origin)
+
+									if  let    r = self.rectForRange(start) {
+										let rect = self.convert(r, to: self).offsetBy(dx: 0.0, dy: -150.0)
+
+										// highlight text of note, and scroll it to visible
+
+										self.scroll(rect.origin)
+									}
 								} else {
 									gCreateCombinedEssay = type == .hEssay
 

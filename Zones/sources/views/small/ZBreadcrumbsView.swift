@@ -12,11 +12,12 @@ var gBreadcrumbsLabel: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbs
 
 class ZBreadcrumbsView : ZTextField {
 
-	var              numberClipped = 0
-	var                showClipper = false
-	@IBOutlet var       clipButton : NSButton?
-	@IBOutlet var  widthConstraint : NSLayoutConstraint?
-	@IBOutlet var heightConstraint : NSLayoutConstraint?
+	var               numberClipped = 0
+	var                 showClipper = false
+	@IBOutlet var        clipButton : NSButton?
+	@IBOutlet var dbIndicatorButton : NSButton?
+	@IBOutlet var  heightConstraint : NSLayoutConstraint?
+	@IBOutlet var   widthConstraint : NSLayoutConstraint?
 
 	var crumbsText : String {
 		let     limit = bounds.width - 10.0
@@ -114,11 +115,12 @@ class ZBreadcrumbsView : ZTextField {
 	}
 
 	func updateAndRedraw() {
-		text              = crumbsText
-		font              = gFavoritesFont
-		textColor         = gBreadcrumbs.crumbsColor
-		clipButton?.image = !showClipper ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
-		needsDisplay      = true
+		text                     = crumbsText
+		font                     = gFavoritesFont
+		textColor                = gBreadcrumbs.crumbsColor
+		dbIndicatorButton?.title = gDatabaseID == .everyoneID ? "e" : "m"
+		clipButton?.image        = !showClipper ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
+		needsDisplay             = true
 	}
 
 	// MARK:- events
@@ -127,6 +129,12 @@ class ZBreadcrumbsView : ZTextField {
 	@IBAction func handleClipper(_ sender: Any?) {
 		gClipBreadcrumbs = !gClipBreadcrumbs
 
+		updateAndRedraw()
+	}
+
+	@IBAction func handleDatabaseIndicatorAction(_ button: ZButton) {
+		gGraphController?.toggleGraphs()
+		gGraphEditor.redrawGraph()
 		updateAndRedraw()
 	}
 

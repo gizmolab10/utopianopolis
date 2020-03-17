@@ -1087,13 +1087,13 @@ extension NSMutableAttributedString {
 
 	var allKeys: [NSAttributedString.Key] { return [.font, .link, .attachment, .paragraphStyle, .foregroundColor, .backgroundColor] }
 
-	var attachment: NSTextAttachment? {
+	var linkRanges: [NSRange] {
 		let range = NSRange(location: 0, length: length)
-		var found : NSTextAttachment?
+		var found = [NSRange]()
 
-		enumerateAttribute(.attachment, in: range, options: .reverse) { (item, inRange, flag) in
-			if  let attach = item as? NSTextAttachment {
-				found      = attach
+		enumerateAttribute(.link, in: range, options: []) { (item, inRange, flag) in
+			if  inRange.length < 100 {
+				found.append(inRange)
 			}
 		}
 
@@ -1112,10 +1112,6 @@ extension NSMutableAttributedString {
 		}
 
 		return found
-	}
-
-	var assetFileName: String? {
-		return attachment?.fileWrapper?.preferredFilename
 	}
 
 	var assetFileNames: [String] {
@@ -1140,14 +1136,6 @@ extension NSMutableAttributedString {
 		}
 
 		return array
-	}
-
-	var image: ZImage? {
-		if  let cell = attachment?.attachmentCell as? NSTextAttachmentCell {
-			return cell.image
-		}
-
-		return nil
 	}
 
 	var images: [ZImage] {

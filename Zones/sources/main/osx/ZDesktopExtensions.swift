@@ -357,19 +357,25 @@ extension ZTextView {
 		textStorage?.attributesAsString = string.attributesAsString
 	}
 
-	func rectForRange(_ range: NSRange) -> NSRect {
-		var lineRectCount = 0
-		var        result = NSZeroRect
+	func rectForRange(_ range: NSRange) -> CGRect? {
+		let rects = rectsForRange(range)
 
-		if  let lineRectsForRange = layoutManager!.rectArray(forCharacterRange: range,
-															 withinSelectedCharacterRange: NSMakeRange(NSNotFound, 0),
-															 in: textContainer!,
-															 rectCount: &lineRectCount),
-			lineRectCount > 0 {
-			let  y = lineRectsForRange[0].origin.y
-			let  h = lineRectsForRange[0].size.height
-			let  w = bounds.size.width
-			result = NSOffsetRect(NSMakeRect(0, y, w, h), textContainerOrigin.x, textContainerOrigin.y)
+		if  rects.count > 0 {
+			return rects[0]
+		}
+
+		return nil
+	}
+
+	func rectsForRange(_ range: NSRange) -> [CGRect] {
+		var result = [CGRect]()
+
+		if  let  m = layoutManager,
+			let  c = textContainer {
+
+			m.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: c) { (rect, flag) in
+				result.append(rect.offsetBy(dx: 20.0, dy: 0.0))
+			}
 		}
 
 		return result
