@@ -285,8 +285,8 @@ class ZControllers: NSObject {
     }
 
 	func signalAndSync(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
-        signalFor(zone, regarding: regarding, onCompletion: nil)
-        sync(onCompletion: onCompletion)
+        signalFor(zone, regarding: regarding, onCompletion: onCompletion)
+        sync()
     }
 
 }

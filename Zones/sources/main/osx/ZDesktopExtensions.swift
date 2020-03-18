@@ -676,7 +676,6 @@ extension NSTextField {
         selectFromStart()
     }
     
-    
     func selectAllText() {
         gTextEditor.deferEditingStateChange()
         selectFromStart(toEnd: true)

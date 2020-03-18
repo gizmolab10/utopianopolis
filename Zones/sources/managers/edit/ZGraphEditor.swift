@@ -1187,8 +1187,13 @@ class ZGraphEditor: ZBaseEditor {
                     self.addIdea(in: zone, at: gListsGrowDown ? nil : 0, with: childName) { iChild in
                         gDeferRedraw = false
                         
-                        self.redrawAndSync()
-                        iChild?.edit()
+						self.redrawAndSync {
+							let e = iChild?.edit()
+
+							FOREGROUND(after: 0.2) {
+								e?.selectAllText()
+							}
+						}
                     }
                 }
             }

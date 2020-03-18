@@ -1107,6 +1107,7 @@ extension NSMutableAttributedString {
 		enumerateAttribute(.attachment, in: range, options: .reverse) { (item, inRange, flag) in
 			if  let attach = item as? NSTextAttachment {
 				let append = ZRangedAttachment(range: inRange, attachment: attach)
+
 				found.append(append)
 			}
 		}

@@ -270,12 +270,14 @@ class ZTextEditor: ZTextView {
         return pack
     }
 
-	func edit(_ zRecord: ZRecord, andSelect text: String?) {
-		edit(zRecord)
-		self.selectText(text)
-    }
+//	@discardableResult func edit(_ zRecord: ZRecord, andSelect text: String?) -> ZTextEditor {
+//		edit(zRecord)
+//		selectText(text)
+//
+//		return self
+//    }
 
-    func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, immediately: Bool = false) {
+    @discardableResult func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, immediately: Bool = false) -> ZTextEditor {
         if  (currentEdit   == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
             let        pack = ZTextPack(zRecord)
 			if  let    zone = pack.packedZone,
@@ -302,6 +304,8 @@ class ZTextEditor: ZTextView {
 				signalMultiple([.eRelayout])
 			}
         }
+
+		return self
     }
 
 	func placeCursorAtEnd() {
@@ -376,7 +380,13 @@ class ZTextEditor: ZTextView {
 	
 	// MARK:- selecting
 	// MARK:-
-	
+
+	func selectAllText() {
+		let range = NSRange(location: 0, length: currentTextWidget?.text?.length ?? 0)
+
+		deferEditingStateChange()
+		selectedRange = range
+	}
 
 	func selectText(_ iText: String?) {
 		if	let   text =  currentTextWidget?.text?.searchable,

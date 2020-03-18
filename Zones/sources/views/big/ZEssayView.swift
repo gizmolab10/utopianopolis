@@ -32,6 +32,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var imageDragStart  : CGPoint?
 	var imageDragRect   : CGRect?
 	var imageCorner     : ZCorner?
+	var imageNote       : ZNote?            // for restoring cursor and scroll locations
 	let cornerRadius    = CGFloat(-10.0)
 
 	// MARK:- input
@@ -89,18 +90,20 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let  rect = CGRect(origin: event.locationInWindow, size: CGSize.zero)
 		let flags = event.modifierFlags
 
-		if  !(gRingView?.handleClick(in: rect,                 flags: flags) ?? false) &&
-			!handleClick            (in: rectFromEvent(event), flags: flags) {
-			super.mouseDown(with: event)
+		if  !(gRingView?.handleClick(in: rect,    flags: flags) ?? false) &&
+			!handleClick            (with: event) {
+			super.mouseDown         (with: event)
 		}
 	}
 
-	func handleClick(in rect: CGRect, flags: ZEvent.ModifierFlags) -> Bool {
+	func handleClick(with event: ZEvent) -> Bool {
+		let            rect = rectFromEvent(event)
 		if  let      attach = attachmentHit(at: rect) {
-			imageCorner     =     cornerHit(at: rect)
+			imageCorner     = cornerHit(in: attach, at: rect)
+			imageDragStart  = rect.origin
 			imageAttachment = attach
 
-			setNeedsDisplay()
+			mouseDragged(with: event)
 
 			return true
 		}
@@ -135,44 +138,50 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- resize image
 	// MARK:-
 
-	override func mouseDragged(with event: ZEvent) {
-		if  imageCorner  != nil {
-			let mouseRect = rectFromEvent(event)
-
-			if  imageDragStart == nil {
-				imageDragStart  = mouseRect.origin
-			} else {
-				updateImageDragRect(for: mouseRect.origin - imageDragStart!)
-			}
-
-			setNeedsDisplay()
-		}
-	}
-
-	override func mouseUp(with event: ZEvent) {
-		updateImageWithDragRect()
-		clearDrag()
-		setNeedsDisplay()
-	}
-
 	func clearDrag() {
 		imageDragStart = nil
 		imageDragRect  = nil
 		imageCorner    = nil
 	}
 
-	func updateImageWithDragRect() {
-		if  let    size  = imageDragRect?.size,
-			let  attach  = imageAttachment?.attachment,
-			let   image  = attach.image {
-			let oldSize  = image.size
-			if  oldSize != size {
-				attach.image = image.resizedTo(size)
+	override func mouseDragged(with event: ZEvent) {
+		if  imageCorner != nil,
+			let    start = imageDragStart {
+			let    delta = rectFromEvent(event).origin - start
+
+			updateDragRect(for: delta)
+			setNeedsDisplay()
+		}
+	}
+
+	override func mouseUp(with event: ZEvent) {
+		if  imageCorner != nil {
+			updateImage()
+
+			if  let attach = imageAttachment {
+				let  range = attach.range
+
+				save()
+				clearDrag()
+				setNeedsLayout()
+				setNeedsDisplay()
+				updateText(restoreSelection: range.location)
 			}
 		}
 	}
 
-	func updateImageDragRect(for delta: CGSize) {
+	func updateImage() {
+		if  let    size  = imageDragRect?.size,
+			let       a  = imageAttachment?.attachment,
+			let   image  = a.image {
+			let oldSize  = image.size
+			if  oldSize != size {
+				a.image  = image.resizedTo(size)
+			}
+		}
+	}
+
+	func updateDragRect(for delta: CGSize) {
 
 		// compute imageDragRect from delta.width, image rect and corner
 		// preserving aspect ratio
@@ -354,8 +363,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return nil
 	}
 
-	func cornerHit(at rect: CGRect) -> ZCorner? {
-		if  let         item = imageAttachment,
+	func cornerHit(in attach: ZRangedAttachment?, at rect: CGRect) -> ZCorner? {
+		if  let         item = attach,
 			let    imageRect = rectForRangedAttachment(item) {
 			let cornerPoints = imageRect.cornerPoints
 
@@ -474,16 +483,24 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func select(restoreSelection: Int? = nil) {
-		if  let e = gCurrentEssay, (e.lastTextIsDefault || restoreSelection != nil),
-			var range      = e.lastTextRange {			// select entire text of final essay
+		var point = CGPoint()                     // scroll to top
+
+		if  let e = gCurrentEssay,
+			(e.lastTextIsDefault || restoreSelection != nil),
+			var range      = e.lastTextRange {    // select entire text of final essay
 			if  let offset = restoreSelection {
 				range      = NSRange(location: offset, length: 0)
 			}
 
+			if  let   r = rectForRange(range) {
+				point   = r.origin
+				point.y = max(0.0, point.y - 100.0)
+			}
+
 			setSelectedRange(range)
-		} else {
-			scroll(CGPoint())					// scroll to top
 		}
+
+		scroll(point)
 	}
 
 	func accountForSelection() {

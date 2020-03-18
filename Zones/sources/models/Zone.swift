@@ -797,12 +797,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     // MARK:- convenience
     // MARK:-
 
-    func		         addToPaste() { gSelecting   .pasteableZones[self] = (parentZone, siblingIndex) }
-    func		          addToGrab() { gSelecting.addMultipleGrabs([self]) }
-    func 		  ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
-    func       			     ungrab() { gSelecting           .ungrab(self) }
-    func            		   edit() { gTextEditor            .edit(self) }
-	func editAndSelect(text: String?) { gTextEditor			   .edit(self, andSelect: text) }
+    func        addToPaste() { gSelecting   .pasteableZones[self] = (parentZone, siblingIndex) }
+    func         addToGrab() { gSelecting.addMultipleGrabs([self]) }
+    func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
+    func            ungrab() { gSelecting           .ungrab(self) }
+
+	@discardableResult func edit() -> ZTextEditor? {
+		return gTextEditor.edit(self)
+	}
 
 	func resolveAndSelect(_ searchText: String?) {
 		gHere = self
@@ -810,7 +812,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		revealChildren()
 		gControllers.swapGraphAndEssay(force: .graphMode)
 		gTemporarilySetMouseZone(self)
-		self.editAndSelect(text: searchText)
+
+		let e = edit()
+
+		FOREGROUND(after: 0.2) {
+			e?.selectText(searchText)
+		}
 	}
     
     func grab(updateBrowsingLevel: Bool = true) {

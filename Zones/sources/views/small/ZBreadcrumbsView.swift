@@ -115,12 +115,13 @@ class ZBreadcrumbsView : ZTextField {
 	}
 
 	func updateAndRedraw() {
-		text                     = crumbsText
-		font                     = gFavoritesFont
-		textColor                = gBreadcrumbs.crumbsColor
-		dbIndicatorButton?.title = gDatabaseID == .everyoneID ? "e" : "m"
-		clipButton?.image        = !showClipper ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
-		needsDisplay             = true
+		text                        = crumbsText
+		font                        = gFavoritesFont
+		textColor                   = gBreadcrumbs.crumbsColor
+		dbIndicatorButton?.isHidden = !gIsGraphOrEditIdeaMode
+		dbIndicatorButton?.title    = gDatabaseID == .everyoneID ? "e" : "m"
+		clipButton?.image           = !showClipper ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
+		needsDisplay                = true
 	}
 
 	// MARK:- events
