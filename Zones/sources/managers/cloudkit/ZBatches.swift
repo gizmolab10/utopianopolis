@@ -21,6 +21,7 @@ enum ZBatchID: Int {
     case bUndelete
     case bFinishUp
     case bUserTest
+	case bAllTraits
     case bBookmarks
     case bFetchLost
     case bEmptyTrash
@@ -34,6 +35,7 @@ enum ZBatchID: Int {
              .bStartUp,
              .bRefetch,
              .bFinishUp,
+			 .bAllTraits,
              .bNewAppleID,
              .bResumeCloud: return false
         case .bSaveToCloud: return gCanAccessMyCloudDatabase
@@ -81,6 +83,7 @@ class ZBatches: ZOnboarding {
             case .bUndelete:    return [.oUndelete,  .oFetchNeeded,         .oSaveToCloud, .oTraits]
 			case .bRoot:        return [.oRoots,        .oManifest,         .oSaveToCloud, .oTraits]
 			case .bFocus:       return [.oRoots,     .oFetchNeeded,                        .oTraits]
+			case .bAllTraits:   return [                                                .oAllTraits]
 			case .bEmptyTrash:  return [.oEmptyTrash                                               ]
             case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
             case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oFinishUp)
@@ -149,12 +152,13 @@ class ZBatches: ZOnboarding {
     func       root(_ onCompletion: @escaping BooleanClosure) { batch(.bRoot,        onCompletion) }
     func       sync(_ onCompletion: @escaping BooleanClosure) { batch(.bSync,        onCompletion) }
     func      focus(_ onCompletion: @escaping BooleanClosure) { batch(.bFocus,       onCompletion) }
-    func    startUp(_ onCompletion: @escaping BooleanClosure) { batch(.bStartUp,     onCompletion) }
-    func    refetch(_ onCompletion: @escaping BooleanClosure) { batch(.bRefetch,     onCompletion) }
+	func    startUp(_ onCompletion: @escaping BooleanClosure) { batch(.bStartUp,     onCompletion) }
+	func    refetch(_ onCompletion: @escaping BooleanClosure) { batch(.bRefetch,     onCompletion) }
     func   finishUp(_ onCompletion: @escaping BooleanClosure) { batch(.bFinishUp,    onCompletion) }
     func   undelete(_ onCompletion: @escaping BooleanClosure) { batch(.bUndelete,    onCompletion) }
     func   userTest(_ onCompletion: @escaping BooleanClosure) { batch(.bUserTest,    onCompletion) }
-    func  bookmarks(_ onCompletion: @escaping BooleanClosure) { batch(.bBookmarks,   onCompletion) }
+	func  allTraits(_ onCompletion: @escaping BooleanClosure) { batch(.bAllTraits,   onCompletion) }
+	func  bookmarks(_ onCompletion: @escaping BooleanClosure) { batch(.bBookmarks,   onCompletion) }
     func  fetchLost(_ onCompletion: @escaping BooleanClosure) { batch(.bFetchLost,   onCompletion) }
     func emptyTrash(_ onCompletion: @escaping BooleanClosure) { batch(.bEmptyTrash,  onCompletion) }
 

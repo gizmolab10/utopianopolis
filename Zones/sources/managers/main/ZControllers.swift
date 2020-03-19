@@ -64,7 +64,6 @@ class ZControllers: NSObject {
 	// MARK:-
 
 	func startupCloudAndUI() {
-		gBatches.usingDebugTimer = true
 		gRefusesFirstResponder   = true			// WORKAROUND new feature of mac os x
 
 		gRemoteStorage.clear()
@@ -87,7 +86,6 @@ class ZControllers: NSObject {
 
 				gBatches.finishUp { iSame in
 					FOREGROUND {
-						gBatches.usingDebugTimer = false
 						gRefusesFirstResponder   = false
 						gHasFinishedStartup      = true
 
@@ -147,7 +145,7 @@ class ZControllers: NSObject {
 	}
 
 	func showHideTooltips() {
-		gToolTipsAlwaysVisible = !gToolTipsAlwaysVisible
+		gToolTipsAreVisible = !gToolTipsAreVisible
 
 		signalMultiple([.eRing])
 	}

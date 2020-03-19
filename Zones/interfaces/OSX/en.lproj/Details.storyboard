@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14868"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -145,7 +145,7 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-224" y="1535"/>
+            <point key="canvasLocation" x="-222" y="1647"/>
         </scene>
         <!--Tools Controller-->
         <scene sceneID="OQa-jH-o6A">
@@ -238,7 +238,7 @@
                                                         <rect key="frame" x="0.0" y="2" width="226" height="15"/>
                                                         <buttonCell key="cell" type="roundRect" title="Status" bezelStyle="roundedRect" alignment="center" state="on" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="nh5-Lk-WYv" userLabel="Status">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
+                                                            <font key="font" metaFont="label" size="12"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="M2W-8y-R0e" id="t9H-CJ-EpI"/>
@@ -252,7 +252,7 @@
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="7oD-gH-cVi">
                                                             <behavior key="behavior" lightByContents="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
+                                                            <font key="font" metaFont="label" size="12"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="M2W-8y-R0e" id="JcK-VM-VH9"/>
@@ -312,7 +312,7 @@
                                                         <rect key="frame" x="0.0" y="2" width="226" height="15"/>
                                                         <buttonCell key="cell" type="roundRect" title="Preferences" bezelStyle="roundedRect" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="TVl-I9-b5f">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
+                                                            <font key="font" metaFont="label" size="12"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="9j5-fI-wCz" id="Jfv-dJ-JP1"/>
@@ -326,7 +326,7 @@
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="Ztr-89-MNY">
                                                             <behavior key="behavior" lightByContents="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
+                                                            <font key="font" metaFont="label" size="12"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="9j5-fI-wCz" id="VR5-UC-UOw"/>
@@ -385,7 +385,7 @@
                                                         <rect key="frame" x="0.0" y="2" width="226" height="15"/>
                                                         <buttonCell key="cell" type="roundRect" title="Debug" bezelStyle="roundedRect" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="wSg-ju-1ou">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
+                                                            <font key="font" metaFont="label" size="12"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="UhT-Vl-h0f" id="Rba-6s-Moz"/>
@@ -399,7 +399,7 @@
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="7RM-CN-VDz">
                                                             <behavior key="behavior" lightByContents="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
+                                                            <font key="font" metaFont="label" size="12"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="UhT-Vl-h0f" id="C1z-Ji-2Nd"/>
@@ -458,7 +458,7 @@
                                                         <rect key="frame" x="0.0" y="2" width="226" height="15"/>
                                                         <buttonCell key="cell" type="roundRect" title="Tools" bezelStyle="roundedRect" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="E7f-qi-w77">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
+                                                            <font key="font" metaFont="label" size="12"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="q69-Nq-Tsm" id="PpA-Ow-ZZJ"/>
@@ -472,7 +472,7 @@
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="1ad-Lc-twh">
                                                             <behavior key="behavior" lightByContents="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
+                                                            <font key="font" metaFont="label" size="12"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="q69-Nq-Tsm" id="mwf-ix-goc"/>
@@ -572,76 +572,16 @@
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-638" y="2160.5"/>
+            <point key="canvasLocation" x="-636" y="2162"/>
         </scene>
         <!--Preferences Controller-->
         <scene sceneID="n3v-Vu-MZq">
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Thoughtful" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="232" height="318"/>
+                        <rect key="frame" x="0.0" y="0.0" width="232" height="240"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box autoresizesSubviews="NO" borderType="none" title="from current idea, new ideas" translatesAutoresizingMaskIntoConstraints="NO" id="anJ-MD-zAh">
-                                <rect key="frame" x="5" y="275" width="222" height="35"/>
-                                <view key="contentView" id="qnC-vV-W8u">
-                                    <rect key="frame" x="0.0" y="0.0" width="222" height="20"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <segmentedControl identifier="direction" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="i0m-vf-1Of">
-                                            <rect key="frame" x="1" y="-2" width="220" height="21"/>
-                                            <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="spU-aj-Ylf">
-                                                <font key="font" metaFont="message" size="11"/>
-                                                <segments>
-                                                    <segment label="precede" width="106" selected="YES"/>
-                                                    <segment label="follow" width="103" tag="1"/>
-                                                </segments>
-                                            </segmentedCell>
-                                            <connections>
-                                                <action selector="segmentedControlAction:" target="Naq-se-Exq" id="bRP-gj-WVJ"/>
-                                            </connections>
-                                        </segmentedControl>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="i0m-vf-1Of" firstAttribute="leading" secondItem="qnC-vV-W8u" secondAttribute="leading" constant="3" id="4PO-4H-bn6"/>
-                                        <constraint firstItem="i0m-vf-1Of" firstAttribute="centerY" secondItem="qnC-vV-W8u" secondAttribute="centerY" constant="1" id="RcY-GY-4bm"/>
-                                        <constraint firstAttribute="trailing" secondItem="i0m-vf-1Of" secondAttribute="trailing" constant="3" id="yWf-oI-oWp"/>
-                                    </constraints>
-                                </view>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="31" id="9eg-3P-j9J"/>
-                                </constraints>
-                            </box>
-                            <box autoresizesSubviews="NO" borderType="none" title="vertical browsing is confined to" translatesAutoresizingMaskIntoConstraints="NO" id="0d2-7W-Jxg" userLabel="browsing">
-                                <rect key="frame" x="5" y="236" width="222" height="35"/>
-                                <view key="contentView" id="l9n-tF-CCv">
-                                    <rect key="frame" x="0.0" y="0.0" width="222" height="20"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <segmentedControl identifier="browsing" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xql-tK-B1R">
-                                            <rect key="frame" x="1" y="-1" width="220" height="21"/>
-                                            <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="XJ8-gh-4cf">
-                                                <font key="font" metaFont="message" size="11"/>
-                                                <segments>
-                                                    <segment label="one idea" width="93" selected="YES"/>
-                                                    <segment label="all visible ideas" width="115" tag="1"/>
-                                                </segments>
-                                            </segmentedCell>
-                                            <connections>
-                                                <action selector="segmentedControlAction:" target="Naq-se-Exq" id="qXF-Sd-MJp"/>
-                                            </connections>
-                                        </segmentedControl>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="Xql-tK-B1R" firstAttribute="leading" secondItem="l9n-tF-CCv" secondAttribute="leading" constant="3" id="E1c-od-0C1"/>
-                                        <constraint firstAttribute="centerY" secondItem="Xql-tK-B1R" secondAttribute="centerY" id="sjq-iZ-rEQ"/>
-                                        <constraint firstAttribute="trailing" secondItem="Xql-tK-B1R" secondAttribute="trailing" constant="3" id="yOV-BF-t6R"/>
-                                    </constraints>
-                                </view>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="31" id="CET-xg-IvB"/>
-                                </constraints>
-                            </box>
                             <box autoresizesSubviews="NO" borderType="none" title="counts of subordinate ideas show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="children counts">
                                 <rect key="frame" x="5" y="197" width="222" height="35"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
@@ -689,7 +629,7 @@
                                                         <constraint firstAttribute="height" constant="22" id="E1u-F7-yma"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="thickness" id="Ukl-QF-qxm">
-                                                        <font key="font" metaFont="cellTitle"/>
+                                                        <font key="font" metaFont="label" size="12"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -700,7 +640,7 @@
                                                         <constraint firstAttribute="height" constant="22" id="ads-0v-NG0"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="size" id="xJc-At-88z">
-                                                        <font key="font" metaFont="cellTitle"/>
+                                                        <font key="font" metaFont="label" size="12"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -711,7 +651,7 @@
                                                         <constraint firstAttribute="height" constant="22" id="BNZ-fl-QS2"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="stretch" id="mLK-OR-6f6">
-                                                        <font key="font" metaFont="cellTitle"/>
+                                                        <font key="font" metaFont="label" size="12"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -805,7 +745,7 @@
                                                         <constraint firstAttribute="height" constant="17" id="vRd-P4-pC3"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="ideas" id="pmv-x4-CVc">
-                                                        <font key="font" metaFont="cellTitle"/>
+                                                        <font key="font" metaFont="label" size="12"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -816,7 +756,7 @@
                                                         <constraint firstAttribute="height" constant="17" id="9dI-E4-9GB"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="drag, rubberband" id="qjf-lf-hsF">
-                                                        <font key="font" metaFont="cellTitle"/>
+                                                        <font key="font" metaFont="label" size="12"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -827,7 +767,7 @@
                                                         <constraint firstAttribute="height" constant="17" id="RsG-gF-fWk"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="background" id="QHW-3R-d1w">
-                                                        <font key="font" metaFont="cellTitle"/>
+                                                        <font key="font" metaFont="label" size="12"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -923,32 +863,24 @@
                             </box>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" constant="8" id="2pV-uL-tll"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="9a4-Qq-RLi"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="top" secondItem="mS1-t0-150" secondAttribute="bottom" constant="8" id="Jes-2S-tC8"/>
                             <constraint firstItem="mS1-t0-150" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="8" id="K7u-1l-PFu"/>
                             <constraint firstItem="ay3-pv-TvT" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="L8F-B3-k88"/>
-                            <constraint firstItem="anJ-MD-zAh" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="Lcr-4J-M0E"/>
-                            <constraint firstItem="0d2-7W-Jxg" firstAttribute="top" secondItem="anJ-MD-zAh" secondAttribute="bottom" constant="8" id="UVf-o7-mpr"/>
                             <constraint firstAttribute="trailing" secondItem="1dG-7h-ePD" secondAttribute="trailing" constant="8" id="aFt-c9-QQn"/>
                             <constraint firstAttribute="trailing" secondItem="ay3-pv-TvT" secondAttribute="trailing" constant="8" id="dfi-pb-wOI"/>
-                            <constraint firstAttribute="trailing" secondItem="0d2-7W-Jxg" secondAttribute="trailing" constant="8" id="hEM-ZR-fdb"/>
                             <constraint firstAttribute="bottom" secondItem="1dG-7h-ePD" secondAttribute="bottom" constant="8" id="lHH-CZ-CgI"/>
-                            <constraint firstItem="0d2-7W-Jxg" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="lTM-Cy-Pdz"/>
                             <constraint firstAttribute="trailing" secondItem="mS1-t0-150" secondAttribute="trailing" constant="8" id="m1Q-hz-0Mf"/>
-                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="0d2-7W-Jxg" secondAttribute="bottom" constant="8" id="rPO-r9-nS9"/>
                             <constraint firstItem="mS1-t0-150" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="xTu-eG-2S7"/>
-                            <constraint firstAttribute="trailing" secondItem="anJ-MD-zAh" secondAttribute="trailing" constant="8" id="yIM-eQ-RB8"/>
-                            <constraint firstItem="anJ-MD-zAh" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" constant="8" id="zHv-Qb-rAp"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="backgroundColorBox" destination="wsy-Dq-H7s" id="lQ4-nS-6Bk"/>
-                        <outlet property="browsingModeControl" destination="Xql-tK-B1R" id="HlG-1A-VLz"/>
                         <outlet property="clearColorButton" destination="0Qp-4d-Tu8" id="6Al-nd-9pG"/>
                         <outlet property="countsModeControl" destination="hRI-S8-ys7" id="7ig-ZZ-v8Z"/>
                         <outlet property="dragTargetsColorBox" destination="j0f-8D-Ds5" id="FRZ-SF-WJ1"/>
                         <outlet property="ideasLabel" destination="g4o-CN-FHf" id="oGt-VV-tet"/>
-                        <outlet property="insertionModeControl" destination="i0m-vf-1Of" id="8fw-1D-fHn"/>
                         <outlet property="stretch" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
                         <outlet property="thickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>
                         <outlet property="verticalSpacing" destination="X28-Kf-ltl" id="bZA-x3-VXU"/>
@@ -957,7 +889,7 @@
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-222" y="1868.5"/>
+            <point key="canvasLocation" x="-222" y="1910"/>
         </scene>
         <!--Debug Controller-->
         <scene sceneID="1Md-xJ-Z7k">

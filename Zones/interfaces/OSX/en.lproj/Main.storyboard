@@ -83,7 +83,9 @@
                                                     <menuItem title="All Progeny" keyEquivalent="g" id="gsR-6T-rn2">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                     </menuItem>
-                                                    <menuItem title="Entire Graph" keyEquivalent="g" id="aki-zt-Ii9"/>
+                                                    <menuItem isSeparatorItem="YES" id="wWZ-Nj-MtK"/>
+                                                    <menuItem title="All Ideas" keyEquivalent="g" id="aki-zt-Ii9"/>
+                                                    <menuItem title="All Traits" keyEquivalent="t" id="8l5-Eh-vTY"/>
                                                 </items>
                                             </menu>
                                         </menuItem>
@@ -836,7 +838,7 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="254" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="menu" size="11"/>
+                                                        <font key="font" metaFont="message" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>

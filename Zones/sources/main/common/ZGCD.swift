@@ -9,30 +9,30 @@
 
 import Foundation
 
+var gFOREGROUND = DispatchQueue.main
+var gBACKGROUND = DispatchQueue.global(qos: .background)
 
 func FOREGROUND(canBeDirect: Bool = false, _ closure: @escaping Closure) {
     if  canBeDirect && Thread.isMainThread {
         closure()
     } else {
-        DispatchQueue.main.async { closure() }
+        gFOREGROUND.async { closure() }
     }
 }
 
 func BACKGROUND(_ closure: @escaping Closure) {
-    DispatchQueue.global(qos: .background).async { closure() }
+    gBACKGROUND.async { closure() }
 }
-
 
 func FOREGROUND(after seconds: Double, closure: @escaping Closure) {
     let when = DispatchTime.now() + Double(Int64(seconds * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
 
-    DispatchQueue.main.asyncAfter(deadline: when) { closure() }
+    gFOREGROUND.asyncAfter(deadline: when) { closure() }
 }
-
 
 func BACKGROUND(after seconds: Double, closure: @escaping Closure) {
     let when = DispatchTime.now() + Double(Int64(seconds * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
 
-    DispatchQueue.global(qos: .background).asyncAfter(deadline: when) { closure() }
+    gBACKGROUND.asyncAfter(deadline: when) { closure() }
 }
 

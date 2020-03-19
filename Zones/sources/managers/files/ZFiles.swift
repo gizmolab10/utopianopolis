@@ -132,7 +132,8 @@ class ZFiles: NSObject {
     // MARK:-
 
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
-		if  let           dbID = databaseID, gUseFiles,
+		if  gUseFiles,
+			let           dbID = databaseID,
 			dbID              != .favoritesID,
             let        manager = gRemoteStorage.cloud(for: dbID),
 			let        index   = dbID.index,

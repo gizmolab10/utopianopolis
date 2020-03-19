@@ -68,7 +68,8 @@ class ZCloud: ZRecords {
         case .oManifest:      establishManifest (cloudCallback)
         case .oSaveToCloud:   save              (cloudCallback)
         case .oSubscribe:     subscribe         (cloudCallback)
-        case .oTraits:        fetchTraits       (cloudCallback)
+		case .oAllTraits:     fetchAllTraits    (cloudCallback)
+		case .oTraits:        fetchTraits       (cloudCallback)
         case .oUndelete:      undeleteAll       (cloudCallback)
         case .oRecount:       recount           (cloudCallback)
         default:                                 cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
@@ -357,7 +358,7 @@ class ZCloud: ZRecords {
 
     func traitsPredicate(specificTo iRecordIDs: [CKRecord.ID]) -> NSPredicate? {
         if  iRecordIDs.count == 0 {
-            return gIsReadyToShowUI ? nil : NSPredicate(value: true)
+            return !gIsReadyToShowUI ? nil : NSPredicate(value: true)
         } else {
             var predicate = ""
             var separator = ""
@@ -1075,10 +1076,17 @@ class ZCloud: ZRecords {
                 }
             }
         }
+	}
+
+	func fetchAllTraits(_ onCompletion: IntClosure?) {
+		fetchTraits(with: [], onCompletion)
+	}
+
+	func fetchTraits(_ onCompletion: IntClosure?) {
+		fetchTraits(with: recordIDsWithMatchingStates([.needsTraits], pull: true), onCompletion)
     }
 
-    func fetchTraits(_ onCompletion: IntClosure?) {
-        let    recordIDs = recordIDsWithMatchingStates([.needsTraits], pull: true)
+	func fetchTraits(with recordIDs: [CKRecord.ID], _ onCompletion: IntClosure?) {
         var    retrieved = [CKRecord] ()
         if let predicate = traitsPredicate(specificTo: recordIDs) {
             queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties()) { (iRecord, iError) in

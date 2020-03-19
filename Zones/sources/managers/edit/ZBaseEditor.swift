@@ -41,13 +41,13 @@ class ZBaseEditor: NSObject {
 				case "h": if COMMAND { gApplication.hide(nil);       gCurrentKeyPressed = nil; return true }
 				case "o": if SPECIAL { gFiles.showInFinder();        gCurrentKeyPressed = nil; return true }
 				case "q": if COMMAND { gApplication.terminate(self); gCurrentKeyPressed = nil; return true }
+				case "t": if COMMAND { fetchTraits();                gCurrentKeyPressed = nil; return true }
 				case "x": if SPECIAL { wipeRing();                   gCurrentKeyPressed = nil; return true }
 				case "/": if SPECIAL { gControllers.showShortcuts(); gCurrentKeyPressed = nil; return true }
 				default:  break
 			}
 		};                                                           gCurrentKeyPressed = nil; return false
 	}
-
 
 	func handleMenuItem(_ iItem: ZMenuItem?) {
 		if  canHandleKey(),
@@ -88,6 +88,12 @@ class ZBaseEditor: NSObject {
 
 		if  gIsNoteMode {
 			gControllers.swapGraphAndEssay()
+		}
+	}
+
+	func fetchTraits() {
+		gBatches.allTraits { flag in
+			self.signalMultiple([.eRelayout])
 		}
 	}
 

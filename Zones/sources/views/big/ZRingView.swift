@@ -383,9 +383,8 @@ class ZRingView: ZView {
 	}
 
 	@discardableResult override func addToolTip(_ rect: NSRect, owner: Any, userData data: UnsafeMutableRawPointer?) -> NSView.ToolTipTag {
-		if !gToolTipsAlwaysVisible {
-			return super.addToolTip(rect, owner: owner, userData: data)
-		} else if  let tool = owner as? ZToolable,
+		if  gToolTipsAreVisible,
+			let        tool = owner as? ZToolable,
 			let        name = tool.toolName() {
 			let        font = gFavoritesFont
 			var    nameRect = name.rectWithFont(font, options: .usesFontLeading).insetBy(dx: -10.0, dy: 0.0)
@@ -399,7 +398,7 @@ class ZRingView: ZView {
 			name.draw(in: nameRect, withAttributes: attributes)
 		}
 
-		return 0
+		return super.addToolTip(rect, owner: owner, userData: data)
 	}
 
 	func addToolTips() {

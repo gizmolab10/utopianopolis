@@ -546,12 +546,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		var title: String {
 			switch self {
-				case .idForward: return "􀓅"
+				case .idForward: return "⇨"
 				case .idCancel:  return "Cancel"
 				case .idDelete:  return "Delete"
 				case .idHide:    return "Hide"
 				case .idSave:    return "Save"
-				case .idBack:    return "􀓄"
+				case .idBack:    return "⇦"
 			}
 		}
 

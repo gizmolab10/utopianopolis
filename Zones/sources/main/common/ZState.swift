@@ -21,6 +21,7 @@ let gDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
+var               gLaunchedAt                     = Date()
 var              gDeferRedraw                     = false
 var            gTextCapturing                     = false
 var          gIsReadyToShowUI                     = false
@@ -57,6 +58,7 @@ var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIde
 var          gCanSaveWorkMode:               Bool { return gIsGraphMode || gIsNoteMode }
 var    gIsGraphOrEditIdeaMode:               Bool { return gIsGraphMode || gIsEditIdeaMode }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
+var   gDeciSecondsSinceLaunch:                Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
 var                 gDragView:         ZDragView? { return gGraphController?.dragView }
 var                gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
 var                 gDotWidth:             Double { return gDotHeight * 0.75 }
@@ -136,7 +138,7 @@ var gShowAllBreadcrumbs : Bool {
 	set { setPreferencesBool(newValue, for: kShowAllBreadcrumbs) }
 }
 
-var gToolTipsAlwaysVisible : Bool {
+var gToolTipsAreVisible : Bool {
 	get { return getPreferencesBool(   for: kToolTipsAlwaysVisible, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kToolTipsAlwaysVisible) }
 }

@@ -54,6 +54,7 @@ enum ZOperationID: Int {
     case oCompletion
     case oBookmarks
     case oFetchLost
+	case oAllTraits
 	case oFetchAll
     case oUndelete
     case oChildren
@@ -70,11 +71,9 @@ enum ZOperationID: Int {
 let deprecatedOps:   [ZOperationID] = [.oParents]
 let localOperations: [ZOperationID] = [.oHere, .oRoots, .oFound, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
 
-var gDebugTimerCount = 0
 var gDebugTimer: Timer?
 var gCloudTimer: Timer?
 var gCloudFire:  TimerClosure?
-
 
 class ZOperations: NSObject {
 
@@ -83,9 +82,8 @@ class ZOperations: NSObject {
 	let	 	 	 doneOps : [ZOperationID] = [.oNone, .oDone, .oCompletion]
 	var hiddenSpinnerOps : [ZOperationID] = [.oFetchAll, .oTraits, .oSaveToCloud]
     var     isIncomplete :          Bool  { return !doneOps.contains(currentOp) }
-	var     shouldCancel :          Bool  { return isIncomplete && timeSinceOpStart > 5.0 }
-//    var      showSpinner :          Bool  { return isIncomplete && timeSinceOpStart > 0.5 && !hiddenSpinnerOps.contains(currentOp) }
-    var    debugTimeText :        String  { return !usingDebugTimer ? "" : "\(Float(gDebugTimerCount) / 10.0)" }
+	var     shouldCancel :          Bool  { return isIncomplete && -(negativeTimeSinceOpStart ?? 0.0) > 5.0 }
+	var    debugTimeText :        String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
     var  onCloudResponse :   AnyClosure?
     var      lastOpStart :       NSDate?
 	func printOp(_ message: String) { columnarReport(mode: .ops, operationText, message) }
@@ -98,7 +96,6 @@ class ZOperations: NSObject {
 
         return c + s
     }
-
     
     var isConnectedToNetwork: Bool {
         var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags(rawValue: 0)
@@ -114,31 +111,7 @@ class ZOperations: NSObject {
         return isReachable && !needsConnection
     }
 
-
-    var usingDebugTimer: Bool {
-        get { return gDebugTimer?.isValid ?? false }
-        set {
-            let fire: TimerClosure = { iTimer in
-                if gDebugTimerCount % 10 == 0 || gDebugTimer?.isValid == false {
-                   // self.columnarReport("---- TIME ----", "\(Float(gDebugTimerCount) / 10.0) -----------")
-                }
-
-                gDebugTimerCount += 1
-            }
-
-            if  gDebugMode.contains(.speed) && newValue {
-                gDebugTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: fire)
-                fire(nil)
-            } else if gDebugTimer != nil && !newValue {
-                gDebugTimer?.invalidate()
-                fire(nil)
-            }
-        }
-    }
-
-
     func unHang() { onCloudResponse?(0) }
-
 
     @discardableResult func cloudStatusChanged() -> Bool {
         let          hasInternet = isConnectedToNetwork
@@ -149,14 +122,11 @@ class ZOperations: NSObject {
 
         return changedConnect || changedAccount
     }
-    
 
     func setupCloudTimer() {
         if  gCloudTimer == nil {
             gCloudFire   = { iTimer in
                 FOREGROUND(canBeDirect: true) {
-//                    gGraphController?.showSpinner(self.showSpinner)
-
                     if  self.shouldCancel {
                         gBatches.unHang()
                     }
@@ -256,23 +226,23 @@ class ZOperations: NSObject {
     }
 
     func reportBeforePerformBlock() {
-        if  gDebugMode.contains(.speed) {
+		if !gHasFinishedStartup {
 			printOp(debugTimeText)
-        }
-    }
+		}
+	}
 
-    var timeSinceOpStart: TimeInterval {
-        return -(lastOpStart?.timeIntervalSinceNow ?? 0.0)
+    var negativeTimeSinceOpStart: TimeInterval? {
+        return lastOpStart?.timeIntervalSinceNow
     }
 
     func reportOnCompletionOfPerformBlock() {
-		if  gDebugMode.contains(.ops) {
-            let duration = Float(Int(timeSinceOpStart * -10)) / 10.0 // round to nearest tenth of second
+		if  gHasFinishedStartup,
+			let negative = negativeTimeSinceOpStart {
+            let duration = Float(Int(negative * -10)) / 10.0 // round to nearest tenth of second
 
             printOp("\(duration)")
         }
     }
-
 
     func add(_ operation: BlockOperation) {
         if let prior = queue.operations.last {
