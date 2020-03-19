@@ -470,7 +470,6 @@ class ZGraphEditor: ZBaseEditor {
 			}
 
 			gControllers.swapGraphAndEssay()
-			print("swap")
 		}
     }
 

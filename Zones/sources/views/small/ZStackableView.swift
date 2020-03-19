@@ -90,13 +90,21 @@ class ZStackableView: ZView {
         }
     }
 
+	var colors: [CGColor] {
+		let lighter = gBackgroundColor.lighter(by: 4.0).cgColor
+		let  darker = gBackgroundColor.darker (by: 4.0).cgColor
+
+		return gIsDark ? [lighter, darker] : [darker, lighter]
+	}
 
     func updateBannerGradient() {
-        if  let gradientView = bannerView {
-            let gradientLayer = CAGradientLayer()
-            gradientLayer.frame = gradientView.bounds
-			gradientLayer.colors = [gDarkerBackgroundColor.cgColor, gLighterBackgroundColor.cgColor]
-            gradientView.zlayer.insertSublayer(gradientLayer, at: 0)
+        if  let gradientView     = bannerView {
+            let gradientLayer    = CAGradientLayer()
+            gradientLayer.frame  = gradientView.bounds
+			gradientLayer.colors = colors
+
+			gradientView.zlayer.removeAllSublayers()
+			gradientView.zlayer.insertSublayer(gradientLayer, at: 0)
         }
     }
 
@@ -118,26 +126,6 @@ class ZStackableView: ZView {
                 make.top.equalTo((self.bannerView?.snp.bottom)!)
                 make.left.right.bottom.equalTo(self)
             }
-//
-//            let  isLast = stackableBelow?.superview == nil
-//            let isFirst = identity == .Information
-//
-//            snp.removeConstraints()
-//            snp.makeConstraints { make in
-//                if isFirst {
-//                    make.top.equalToSuperview()
-//                }
-//
-//                if  isLast {
-//                    make.bottom.equalToSuperview()
-//                } else {
-//                    make.bottom.equalTo(stackableBelow!)
-//                }
-//            }
-
-//            FOREGROUND(after: 0.2) {
-//                self.hideableView?.setNeedsDisplay()
-//            }
         }
     }
 }

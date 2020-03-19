@@ -286,6 +286,10 @@ extension ZColor {
 		return nil
 	}
 
+	var accountingForDarkMode: NSColor {
+		return gIsDark ? inverted : self
+	}
+
     func darker(by: CGFloat) -> NSColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * (by * 2.0), brightness: brightnessComponent / (by / 3.0), alpha: alphaComponent)
     }
@@ -383,6 +387,16 @@ extension ZTextView {
 
 }
 
+extension CALayer {
+
+	func removeAllSublayers() {
+		if  let subs = sublayers {
+			for sub in subs {
+				sub.removeFromSuperlayer()
+			}
+		}
+	}
+}
 
 extension NSView {
     var      zlayer:                CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }

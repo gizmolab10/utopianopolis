@@ -300,7 +300,7 @@ class ZRing: NSObject {
 	func replaceInRing(_ object: NSObject, at index: Int) {
 		ring[index] = object
 
-		printDebug(.ring, "r replace: \(ring[index])")
+		printDebug(.ring, "r replace: \(object)")
 	}
 
 	func addToRing(_ object: NSObject, at iIndex: Int? = nil) {
@@ -312,7 +312,7 @@ class ZRing: NSObject {
 			ring.insert(object, at: index)
 		}
 
-		printDebug(.ring, "r     add: \(ring[index])")
+		printDebug(.ring, "r     add: \(object)")
 	}
 
 }

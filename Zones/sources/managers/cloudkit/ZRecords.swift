@@ -821,8 +821,18 @@ class ZRecords: NSObject {
 	func       maybeZoneForRecordID (_ iRecordID:  CKRecord.ID?)       -> Zone? { return maybeZRecordForRecordID   (iRecordID)   as? Zone }
 	func     maybeZoneForRecordName (_ iRecordName:     String?)       -> Zone? { return maybeZRecordForRecordName (iRecordName) as? Zone }
 	func maybeCKRecordForRecordName (_ iRecordName:     String?)   -> CKRecord? { return maybeZRecordForRecordName (iRecordName)?.record }
-	func  maybeZRecordForRecordName (_ iRecordName:     String?)    -> ZRecord? { return iRecordName == nil ? nil : recordRegistry[iRecordName!] }
 
+	func  maybeZRecordForRecordName (_ iRecordName:     String?)    -> ZRecord? {
+		if  let name = iRecordName {
+			if  databaseID.rawValue == name {
+				return rootZone
+			}
+
+			return recordRegistry[name]
+		}
+
+		return nil
+	}
 
     func zoneForReference(_ reference: CKRecord.Reference) -> Zone {
         var zone  = maybeZoneForReference(reference)

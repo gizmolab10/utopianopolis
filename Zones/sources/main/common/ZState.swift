@@ -67,11 +67,9 @@ var                 gFontSize:            CGFloat { return gGenericOffset.height
 var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
 var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : ZColor.black }
-var         gNecklaceDotColor:             ZColor { return gBackgroundColor.darker  (by: 2.0)   }
-var    gDarkerBackgroundColor:             ZColor { return gBackgroundColor.darker  (by: 4.0)   }
+var         gNecklaceDotColor:             ZColor { return gIsDark ? gBackgroundColor.inverted.darker(by: 5.0) :  gBackgroundColor.darker(by: 2.0) }
 var   gDarkishBackgroundColor:             ZColor { return gBackgroundColor.darkish (by: 1.028) }
 var  gLightishBackgroundColor:             ZColor { return gBackgroundColor.lightish(by: 1.02)  }
-var   gLighterBackgroundColor:             ZColor { return gBackgroundColor.lighter (by: 4.0)   }
 var   gLighterRubberbandColor:             ZColor { return gRubberbandColor.lighter (by: 4.0)   }
 var   gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gLighterRubberbandColor }
 var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
@@ -593,22 +591,12 @@ func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {
     } else {
         setPreferencesColor(color, for: key)
     }
-    
-    if  gIsDark {
-        color = color.inverted
-    }
 
-    return color
+    return color.accountingForDarkMode
 }
 
-func setPreferencesColor(_ iColor: ZColor, for key: String) {
-    var color = iColor
-    
-    if  gIsDark {
-        color = color.inverted
-    }
-
-    let data: Data = NSKeyedArchiver.archivedData(withRootObject: color)
+func setPreferencesColor(_ color: ZColor, for key: String) {
+	let data: Data = NSKeyedArchiver.archivedData(withRootObject: color.accountingForDarkMode)
 
     UserDefaults.standard.set(data, forKey: key)
     UserDefaults.standard.synchronize()

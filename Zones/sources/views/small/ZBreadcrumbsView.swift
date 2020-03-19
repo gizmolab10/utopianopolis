@@ -91,6 +91,9 @@ class ZBreadcrumbsView : ZTextField {
 		font = gFavoritesFont
 	}
 
+	// MARK:- output
+	// MARK:-
+
 	override func draw(_ dirtyRect: NSRect) {
 		if  gHasFinishedStartup {
 			super.draw(dirtyRect)
@@ -117,7 +120,7 @@ class ZBreadcrumbsView : ZTextField {
 	func updateAndRedraw() {
 		text                        = crumbsText
 		font                        = gFavoritesFont
-		textColor                   = gBreadcrumbs.crumbsColor
+		textColor                   = gBreadcrumbs.crumbsColor.accountingForDarkMode
 		dbIndicatorButton?.isHidden = !gIsGraphOrEditIdeaMode
 		dbIndicatorButton?.title    = gDatabaseID == .everyoneID ? "e" : "m"
 		clipButton?.image           = !showClipper ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)

@@ -1912,7 +1912,7 @@ extension ZView {
 
 		if let   idea = object as? Zone {
 			asIdea    = true
-			ideaFocus = idea == gHere
+			ideaFocus = idea.identifier() == gHere.identifier()
 		} else if let note = object as? ZNote {
 			asNote    = true
 

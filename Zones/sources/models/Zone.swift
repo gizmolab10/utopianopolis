@@ -106,7 +106,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
 	func recordName() -> String? { return recordName }
-	func identifier() -> String? { return recordName }
+	func identifier() -> String? { return isRoot ? databaseID?.rawValue : recordName }
 	func toolName()   -> String? { return clippedName }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
@@ -362,7 +362,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             }
 
             if  gIsDark {
-                computed        = computed?.inverted
+				computed        = computed?.inverted.lighter(by: 5.0)
             }
 
             return computed!

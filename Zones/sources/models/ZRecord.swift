@@ -5,13 +5,10 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
 
-
 class ZRecord: NSObject {
-    
 
     var             _record: CKRecord?
     var   writtenModifyDate: Date?
@@ -363,10 +360,6 @@ class ZRecord: NSObject {
         if !needsDestroy, !needsSave, gHasFinishedStartup, (canSaveWithoutFetch || !needsFetch) {
             removeState(.needsMerge)
             addState   (.needsSave)
-
-			if  isKind(of: ZTrait.self) {
-				print(self)
-			}
         }
 
         gFiles.needWrite(for: databaseID)

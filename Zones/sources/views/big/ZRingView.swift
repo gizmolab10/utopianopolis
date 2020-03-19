@@ -193,26 +193,28 @@ class ZRingView: ZView {
 			}
 
 			if !dual, !same {
-				let           original = necklaceObjects[index]
-				let             isZone = original.isKind(of: Zone.self)
-				let              array = isZone ? [original, object] : [object, original]
+				let  original = necklaceObjects[index]
+				let   wasZone = original.isKind(of: Zone.self)
+				let    isZone =   object.isKind(of: Zone.self)
+				if     isZone != wasZone {
+					let array = isZone ? [object, original] : [original, object]
 
-				addToNecklace(array as NSObject, at: index)
+					addToNecklace(array as NSObject, at: index)
+				}
 			}
 		}
 	}
 
-	func addToNecklace(_ object: NSObject, at iIndex: Int?) {
-		var index: Int? = iIndex
+	func addToNecklace(_ object: NSObject, at index: Int?) {
+		if !necklaceObjects.contains(object) {
+			if  index != nil {
+				necklaceObjects[index!] = object
+			} else {
+				necklaceObjects.append(object)
+			}
 
-		if  index != nil {
-			necklaceObjects[index!] = object
-		} else {
-			necklaceObjects.append(object)
-			index = necklaceObjects.count - 1
+			printDebug(.ring, "v     add: \(object)")
 		}
-
-		printDebug(.ring, "v     add: \(necklaceObjects[index!])")
 	}
 
 	func removeFromNecklace(_ index: Int) {
@@ -293,18 +295,18 @@ class ZRingView: ZView {
 			return (index, true, false)
 		}
 
-		let recordName = (item as? ZIdentifiable)?.recordName()
+		let identifier = (item as? ZIdentifiable)?.identifier()
 
 		for (index, object) in necklaceObjects.enumerated() {
 			if  let subObjects = object as? ZObjectsArray {
 				for subObject in subObjects {
-					if  let subName = (subObject as? ZIdentifiable)?.recordName(),
-						subName == recordName {
+					if  let subName = (subObject as? ZIdentifiable)?.identifier(),
+						subName == identifier {
 						return (index, true, true)
 					}
 				}
 			} else if let identifiable = object as? ZIdentifiable,
-				identifiable.recordName() == recordName {
+				identifiable.identifier() == identifier {
 				return (index, false, false)
 			}
 		}
