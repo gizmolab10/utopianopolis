@@ -89,6 +89,8 @@ class ZBaseEditor: NSObject {
 		if  gIsNoteMode {
 			gControllers.swapGraphAndEssay()
 		}
+
+		gCurrentEssay = nil
 	}
 
 	func fetchTraits() {

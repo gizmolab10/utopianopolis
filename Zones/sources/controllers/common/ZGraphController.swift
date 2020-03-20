@@ -49,7 +49,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 		}
 	}
 
-	var rubberbandRect: CGRect? { // wrapper with new value logic
+	var draggingRubberbandRect: CGRect? { // wrapper with new value logic
 		get {
 			return dragView?.rubberbandRect
 		}
@@ -63,21 +63,16 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					gSelecting.updateCurrentBrowserLevel()
 					gSelecting.updateCousinList()
 				} else {
-					d.rubberbandRect = newValue
-					let       inRing = gRingView?.handleClick(in: newValue) ?? false
+					gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
+					gHere.ungrab()
 
-					if  !inRing {
-						gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
-						gHere.ungrab()
+					for widget in gWidgets.visibleWidgets {
+						if  let    hitRect = widget.hitRect {
+							let widgetRect = widget.convert(hitRect, to: d)
 
-						for widget in gWidgets.visibleWidgets {
-							if  let    hitRect = widget.hitRect {
-								let widgetRect = widget.convert(hitRect, to: d)
-
-								if  let   zone = widget.widgetZone, !zone.isRootOfFavorites,
-									widgetRect.intersects(newValue!) {
-									widget.widgetZone?.addToGrab()
-								}
+							if  let   zone = widget.widgetZone, !zone.isRootOfFavorites,
+								widgetRect.intersects(newValue!) {
+								widget.widgetZone?.addToGrab()
 							}
 						}
 					}
@@ -268,9 +263,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             } else if gIsDragging {
                 dragMaybeStopEvent(iGesture)
             } else if state == .changed {       // changed
-                rubberbandRect = CGRect(start: rubberbandStart, end: location)
+                draggingRubberbandRect = CGRect(start: rubberbandStart, end: location)
             } else if state != .began {         // ended, cancelled or failed
-                rubberbandRect = nil
+                draggingRubberbandRect = nil
 
 				restartGestureRecognition()
 				signalMultiple([.eDatum]) // so color well and indicators get updated

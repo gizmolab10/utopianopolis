@@ -95,7 +95,7 @@ class ZBreadcrumbsView : ZTextField {
 	// MARK:-
 
 	override func draw(_ dirtyRect: NSRect) {
-		if  gHasFinishedStartup {
+		if  gIsReadyToShowUI {
 			super.draw(dirtyRect)
 			drawEncirclements()
 		}

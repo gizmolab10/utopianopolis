@@ -167,7 +167,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return results.reversed()
 	}
 
-	var clippedName: String { return unwrappedName.clipped(to: 7) }
+	var clippedName: String {
+		switch gToolTipsLength {
+			case .clip: return unwrappedName.clipped(to: 7)
+			case .full: return unwrappedName
+			default:    return ""
+		}
+
+	}
 
 	var email: String? {
 		get {

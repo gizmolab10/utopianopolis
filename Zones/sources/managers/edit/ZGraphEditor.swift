@@ -137,7 +137,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "g":      refetch(COMMAND, OPTION)
                     case "h":      editTrait(for: .tHyperlink)
                     case "l":      alterCase(up: false)
-					case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
+					case "j":      gControllers.updateRingState(SPECIAL)
 					case "k":      toggleColorized()
                     case "m":      orderByLength(OPTION)
                     case "n":      grabOrEdit(true, OPTION)

@@ -43,6 +43,8 @@ enum ZOperationID: Int {
     case oFinishUp
     case oRecount
 	case oSubscribe
+	case oAllTraits
+	case oFetchAll
     case oDone
 
     // miscellaneous
@@ -54,8 +56,6 @@ enum ZOperationID: Int {
     case oCompletion
     case oBookmarks
     case oFetchLost
-	case oAllTraits
-	case oFetchAll
     case oUndelete
     case oChildren
     case oParents            // after fetch so colors resolve properly

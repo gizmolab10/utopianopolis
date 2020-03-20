@@ -102,28 +102,33 @@ class ZFiles: NSObject {
         return false
 	}
 
-    func writeAll() throws {
-        for dbID in kAllDatabaseIDs {
-            try writeToFile(from: dbID)
-        }
-    }
+	func writeMinimal() {
+		do {
+			try writeToFile(from: .everyoneID)
+			try writeToFile(from: .mineID, minimal: true)
+		} catch {
 
-	func writeToFile(from databaseID: ZDatabaseID?) throws {
-		if  let     dbID = databaseID,
-			dbID        != .favoritesID,
-			let    index = dbID.index,
-			let  dbIndex = ZDatabaseIndex(rawValue: index) {
-				let path = filePath(for: dbIndex)
-				try writeFile(at: path, from: databaseID)
+		}
+	}
+
+    func writeAll() {
+		do {
+			for dbID in kAllDatabaseIDs {
+				try writeToFile(from: dbID)
+			}
+		} catch {
+
+		}
+	}
+
+	func writeToFile(from databaseID: ZDatabaseID?, minimal: Bool = false) throws {
+		if  let path = filePath(    from: databaseID, minimal: minimal) {
+			try writeFile(at: path, from: databaseID, minimal: minimal)
 		}
 	}
 
 	func readFile(into databaseID: ZDatabaseID) {
-		if  databaseID  != .favoritesID,
-			let    index = databaseID.index,
-			let  dbIndex = ZDatabaseIndex(rawValue: index) {
-			let 	path = filePath(for: dbIndex)
-
+		if  let path = filePath( from: databaseID) {
 			readFile(from: path, into: databaseID)
 		}
 	}
@@ -131,7 +136,7 @@ class ZFiles: NSObject {
     // MARK:- heavy lifting
     // MARK:-
 
-	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
+	func writeFile(at path: String, from databaseID: ZDatabaseID?, minimal: Bool = false) throws {
 		if  gUseFiles,
 			let           dbID = databaseID,
 			dbID              != .favoritesID,
@@ -282,7 +287,25 @@ class ZFiles: NSObject {
 		}
 	}
 
-    func filePath(for index: ZDatabaseIndex) -> String {
+	func index(from databaseID: ZDatabaseID?) -> ZDatabaseIndex? {
+		if  let    dbID = databaseID,
+			dbID       != .favoritesID,
+			let   index = dbID.index {
+				return ZDatabaseIndex(rawValue: index)
+		}
+
+		return nil
+	}
+
+	func filePath(from databaseID: ZDatabaseID?, minimal: Bool = false) -> String? {
+		if  let dbIndex = index(from: databaseID) {
+			return filePath(for: dbIndex, minimal: minimal)
+		}
+
+		return nil
+	}
+
+    func filePath(for index: ZDatabaseIndex, minimal: Bool = false) -> String {
         var                 path  = filePaths[index.rawValue]
         
         if                  path == nil,

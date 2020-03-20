@@ -24,10 +24,10 @@ class ZRingControl: ZView, ZToolable {
 
 	override var description: String {
 		switch type {
-			case .eInsertion: return gListsGrowDown      ? "down" : "up"
-			case .eConfined:  return gBrowsingIsConfined ? "list" : "all"
-			case .eVisible:   return gFullRingIsVisible  ? "hide" : "show"
-			case .eToolTips:  return gToolTipsAreVisible ? "hide" : "show" + "tool tips"
+			case .eInsertion: return gListsGrowDown           ? "down" : "up"
+			case .eConfined:  return gBrowsingIsConfined      ? "list" : "all"
+			case .eVisible:   return gFullRingIsVisible       ? "hide" : "show"
+			case .eToolTips:  return gToolTipsLength != .none ? "hide" : "show" + "tool tips"
 		}
 	}
 
@@ -96,7 +96,7 @@ class ZRingControl: ZView, ZToolable {
 	func respond() -> Bool {
 		switch type {
 			case .eVisible:  gFullRingIsVisible  = !gFullRingIsVisible
-			case .eToolTips: gToolTipsAreVisible = !gToolTipsAreVisible
+			case .eToolTips: gToolTipsLength = gToolTipsLength.rotated
 			default:         return !gFullRingIsVisible ? false : toggleRingControlModes(isDirection: type == .eInsertion)
 		}
 

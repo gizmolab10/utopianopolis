@@ -42,7 +42,7 @@ class ZRing: NSObject {
 	override init() {
 		super.init()
 		fetchRingIDs()
-		gRingView?.copyObjects(from: ring)
+		gRingView?.addUnique(from: ring)
 	}
 
 	var isPrime : Bool {

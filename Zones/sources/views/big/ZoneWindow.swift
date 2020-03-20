@@ -62,7 +62,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
         let flags = event.modifierFlags
 
 		if  flags.isOption && flags.isCommand && flags.isControl && gIsGraphMode {
-            gControllers.showHideRing()
+            gControllers.updateRingState()
         }
 
         super.flagsChanged(with: event)

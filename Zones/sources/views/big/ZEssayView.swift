@@ -56,7 +56,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "e":      gNoteAndEssay.export()
 				case "f":      gControllers.showSearch(OPTION)
 				case "i":      showSpecialsPopup()
-				case "j":      if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
+				case "j":      gControllers.updateRingState(SPECIAL)
 				case "l":      alterCase(up: false)
 				case "n":      swapBetweenNoteAndEssay()
 				case "p":      printCurrentEssay()

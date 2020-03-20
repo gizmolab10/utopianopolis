@@ -79,10 +79,25 @@ enum ZShortcutType: String {
 }
 
 enum ZCountsMode: Int { // do not change the order, they are persisted
-    case none
-    case dots
-    case fetchable
-    case progeny
+	case none
+	case dots
+	case fetchable
+	case progeny
+}
+
+enum ZToolTipsLength: Int { // do not change the order, they are persisted
+	case none
+	case clip
+	case full
+
+	var rotated: ZToolTipsLength {
+		if  self == .full {
+			return .none
+		}
+
+		return ZToolTipsLength(rawValue: rawValue + 1)!
+	}
+
 }
 
 enum ZOutlineLevelType: String {

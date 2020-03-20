@@ -504,7 +504,9 @@ extension ZStackableView {
     }
     
     func turnOnTitleButton() {
-        titleButton?.state = ZControl.StateValue.on
+//		titleButton?.titleLabel
+        titleButton?.state = .on
+		titleButton?.highlight(false)
     }
 
 }
@@ -803,7 +805,7 @@ extension ZTextEditor {
 			} else if FLAGGED {
 				switch key {
 					case "i": showSpecialsPopup()
-					case "j": if SPECIAL { gControllers.showHideTooltips() } else { gControllers.showHideRing() }
+					case "j": gControllers.updateRingState(SPECIAL)
 					case "y": gBreadcrumbs.toggleBreadcrumbExtent()
 					case "?": gControllers.showShortcuts()
 					case "-": return editedZone?.convertToFromLine() ?? false // false means key not handled

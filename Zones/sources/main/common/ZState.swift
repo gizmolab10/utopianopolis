@@ -136,11 +136,6 @@ var gShowAllBreadcrumbs : Bool {
 	set { setPreferencesBool(newValue, for: kShowAllBreadcrumbs) }
 }
 
-var gToolTipsAreVisible : Bool {
-	get { return getPreferencesBool(   for: kToolTipsAlwaysVisible, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kToolTipsAlwaysVisible) }
-}
-
 var gShowFavorites : Bool {
 	get { return getPreferencesBool(   for: kShowFavorites, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kShowFavorites) }
@@ -264,6 +259,28 @@ var gBrowsingMode: ZBrowsingMode {
 		UserDefaults.standard.set(newValue.rawValue, forKey:kBrowsingMode)
 		UserDefaults.standard.synchronize()
 	}
+}
+
+var gToolTipsLength : ZToolTipsLength {
+	get {
+		let value  = UserDefaults.standard.object(forKey: kToolTipsLength) as? Int
+		var length = ZToolTipsLength.clip
+
+		if  value != nil {
+			length = ZToolTipsLength(rawValue: value!)!
+		} else {
+			UserDefaults.standard.set(length.rawValue, forKey:kToolTipsLength)
+			UserDefaults.standard.synchronize()
+		}
+
+		return length
+	}
+
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kToolTipsLength)
+		UserDefaults.standard.synchronize()
+	}
+
 }
 
 var gCountsMode: ZCountsMode {

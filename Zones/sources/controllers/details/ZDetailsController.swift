@@ -13,6 +13,7 @@
 #endif
 
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
+private let  detailIds : [ZDetailsViewID] = [.Preferences, .Information]
 
 class ZDetailsController: ZGenericController {
 
@@ -29,12 +30,14 @@ class ZDetailsController: ZGenericController {
     }
 
     func update() {
-        let ids: [ZDetailsViewID] = [.Tools, .Debug, .Preferences, .Information]
+		if  gIsReadyToShowUI {
+			stackView?.isHidden = false
 
-        for id in ids {
-            view(for: id)?.update()
-        }
-    }
+			for id in detailIds {
+				view(for: id)?.update()
+			}
+		}
+	}
     
     func view(for id: ZDetailsViewID) -> ZStackableView? {
         return viewsByID[id.rawValue]

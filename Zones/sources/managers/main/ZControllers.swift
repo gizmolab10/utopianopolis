@@ -81,17 +81,18 @@ class ZControllers: NSObject {
 				gEssayRing.fetchRingIDs()
 				gRefreshCurrentEssay()
 				gRefreshPersistentWorkMode()
-				self.signalMultiple([.eSwap, .eRelayout, .eLaunchDone])
+				self.signalMultiple([.eSwap, .eRing, .eCrumbs, .eRelayout, .eLaunchDone])
 				self.requestFeedback()
 
 				gBatches.finishUp { iSame in
 					FOREGROUND {
-						gRefusesFirstResponder   = false
-						gHasFinishedStartup      = true
+						gRefusesFirstResponder = false
+						gHasFinishedStartup    = true
 
-						self.signalMultiple([.eRing, .eCrumbs, .eRelayout])
-//						self.blankScreenDebug()
-//						gFiles.writeAll()
+						self.signalMultiple([.eRelayout])
+						gDetailsController?.toggleViewsFor(ids: [.Preferences])
+						gDetailsController?.toggleViewsFor(ids: [.Preferences])
+						gFiles.writeAll()
 					}
 				}
 			}
@@ -144,14 +145,12 @@ class ZControllers: NSObject {
 		}
 	}
 
-	func showHideTooltips() {
-		gToolTipsAreVisible = !gToolTipsAreVisible
-
-		signalMultiple([.eRing])
-	}
-
-	func showHideRing() {
-		gFullRingIsVisible = !gFullRingIsVisible
+	func updateRingState(_ updateToolTips: Bool = false) {
+		if  updateToolTips {
+			gToolTipsLength    = gToolTipsLength.rotated
+		} else {
+			gFullRingIsVisible = !gFullRingIsVisible
+		}
 
 		signalMultiple([.eRing])
 	}
@@ -243,17 +242,17 @@ class ZControllers: NSObject {
         FOREGROUND(canBeDirect: true) {
             gRemoteStorage.updateNeededCounts() // clean up after adding or removing children
             
-            for (identifier, signalObject) in self.signalObjectsByControllerID {
-                let isPreferences = identifier == .idPreferences
-				let      isStatus = identifier == .idStatus
-				let      isCrumbs = identifier == .idCrumbs
-                let       isDebug = identifier == .idDebug
-                let       isGraph = identifier == .idGraph
-				let        isRing = identifier == .idRing
-                let        isMain = identifier == .idMain
-                let      isDetail = isPreferences || isStatus || isDebug
+			for regarding in multiple {
+				for (identifier, signalObject) in self.signalObjectsByControllerID {
+					let isPreferences = identifier == .idPreferences
+					let      isStatus = identifier == .idStatus
+					let      isCrumbs = identifier == .idCrumbs
+					let       isDebug = identifier == .idDebug
+					let       isGraph = identifier == .idGraph
+					let        isRing = identifier == .idRing
+					let        isMain = identifier == .idMain
+					let      isDetail = isPreferences || isStatus || isDebug
                 
-                for regarding in multiple {
                     let closure = {
                         signalObject.closure(object, regarding)
                     }

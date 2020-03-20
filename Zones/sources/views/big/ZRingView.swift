@@ -49,7 +49,7 @@ class ZRingView: ZView {
 	override func draw(_ iDirtyRect: CGRect) {
 		super.draw(iDirtyRect)
 
-		if !gHasFinishedStartup { return }
+		if !gIsReadyToShowUI { return }
 
 		let color = gNecklaceDotColor
 
@@ -295,39 +295,23 @@ class ZRingView: ZView {
 			return (index, true, false)
 		}
 
-		let identifier = (item as? ZIdentifiable)?.identifier()
-
-		for (index, object) in necklaceObjects.enumerated() {
-			if  let subObjects = object as? ZObjectsArray {
-				for subObject in subObjects {
-					if  let subName = (subObject as? ZIdentifiable)?.identifier(),
-						subName == identifier {
-						return (index, true, true)
+		if  let recordName = (item as? ZIdentifiable)?.recordName() {
+			for (index, object) in necklaceObjects.enumerated() {
+				if  let subObjects = object as? ZObjectsArray {
+					for subObject in subObjects {
+						if  let subName = (subObject as? ZIdentifiable)?.recordName(),
+							subName == recordName {
+							return (index, true, true)
+						}
 					}
+				} else if let identifiable = object as? ZIdentifiable,
+					identifiable.recordName() == recordName {
+					return (index, false, false)
 				}
-			} else if let identifiable = object as? ZIdentifiable,
-				identifiable.identifier() == identifier {
-				return (index, false, false)
 			}
 		}
 
 		return nil
-	}
-
-	func copyObjects(from ring: ZObjectsArray) {
-		for object in ring {
-			if object.isKind(of: Zone.self) {
-				addToNecklace(object, at: nil)
-			} else if let  essay = object as? ZNote,
-				let idea = essay.zone {
-
-				if  let index = necklaceObjects.firstIndex(of: idea) {
-					addToNecklace([idea, essay] as NSObject, at: index)
-				} else {
-					addToNecklace(object, at: nil)
-				}
-			}
-		}
 	}
 
 	// MARK:- controls
@@ -385,15 +369,15 @@ class ZRingView: ZView {
 	}
 
 	@discardableResult override func addToolTip(_ rect: NSRect, owner: Any, userData data: UnsafeMutableRawPointer?) -> NSView.ToolTipTag {
-		if  gToolTipsAreVisible,
-			let        tool = owner as? ZToolable,
-			let        name = tool.toolName() {
-			let        font = gFavoritesFont
-			var    nameRect = name.rectWithFont(font, options: .usesFontLeading).insetBy(dx: -10.0, dy: 0.0)
-			nameRect.center = rect.offsetBy(dx: 10.0, dy: 1.0).center
-			var  attributes : [NSAttributedString.Key : Any] = [.font : font]
+		if  gToolTipsLength != .none,
+			let         tool = owner as? ZToolable,
+			let         name = tool.toolName() {
+			let         font = gFavoritesFont
+			var     nameRect = name.rectWithFont(font, options: .usesFontLeading).insetBy(dx: -10.0, dy: 0.0)
+			nameRect.center  = rect.offsetBy(dx: 10.0, dy: 1.0).center
+			var   attributes : [NSAttributedString.Key : Any] = [.font : font]
 
-			if  let   color = tool.toolColor() {
+			if  let    color = tool.toolColor() {
 				attributes[.foregroundColor] = color
 			}
 

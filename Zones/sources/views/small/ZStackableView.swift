@@ -12,9 +12,7 @@
     import UIKit
 #endif
 
-
 class ZStackableView: ZView {
-
 
     @IBOutlet var     bannerView : ZView?
     @IBOutlet var   hideableView : ZView?
@@ -26,7 +24,6 @@ class ZStackableView: ZView {
 
     // MARK:- identity
     // MARK:-
-    
 
     var hideHideable: Bool {
         get {
@@ -42,16 +39,8 @@ class ZStackableView: ZView {
         }
     }
 
-
-    // MARK:- update to UI
+    // MARK:- update UI
     // MARK:-
-    
-
-    @IBAction func toggleAction(_ sender: Any) {
-        toggleHideableVisibility()
-        update()
-    }
-
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -64,30 +53,20 @@ class ZStackableView: ZView {
         }
     }
 
-    
+	@IBAction func toggleAction(_ sender: Any) {
+		toggleHideableVisibility()
+		update()
+	}
+
     func toggleHideableVisibility() {
         hideHideable = !hideHideable
     }
     
-    
     func update() {
         turnOnTitleButton()
-
-		let show = gDebugMode.contains(.info)
-
-        if  isDebugView {
-            if !show {
-                removeFromSuperview()
-            } else if superview == nil {
-                gDetailsController?.view.addSubview(self)
-            }
-        }
-
-		if !isDebugView || show {
-            toggleIcon?.setState(!hideHideable)
-            updateBannerGradient()
-            updateHideableView()
-        }
+		toggleIcon?.setState(!hideHideable)
+		updateBannerGradient()
+		updateHideableView()
     }
 
 	var colors: [CGColor] {
@@ -110,15 +89,15 @@ class ZStackableView: ZView {
 
 
     func updateHideableView() {
-        let  hide = hideHideable
-        let shown = subviews.contains(hideableView!)
+        let    hide = hideHideable
+        let visible = subviews.contains(hideableView!)
 
-        if  hide && shown {
+        if  hide && visible {
             hideableView?.removeFromSuperview()
             bannerView?.snp.makeConstraints { make in
                 make.bottom.equalTo(self)
             }
-        } else if !hide && !shown {
+        } else if !hide && !visible {
             addSubview(hideableView!)
             
             bannerView?.snp.removeConstraints()
