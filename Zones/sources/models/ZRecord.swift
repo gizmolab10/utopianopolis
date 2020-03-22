@@ -362,12 +362,12 @@ class ZRecord: NSObject {
             addState   (.needsSave)
         }
 
-        gFiles.needWrite(for: databaseID)
+        needWrite()
     }
 
 
-    func deferWrite() {
-        gFiles.deferWrite(for: databaseID)
+    func needWrite() {
+        gFiles.needWrite(for: databaseID)
     }
 
 
@@ -528,7 +528,7 @@ class ZRecord: NSObject {
     }
 
 
-    func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true) throws -> ZStorageDictionary? {
+	func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true) throws -> ZStorageDictionary? {
 		try gTestForUserInterrupt()
 
 		guard let name = recordName, !gFiles.writtenRecordNames.contains(name) else { return nil }
@@ -606,7 +606,7 @@ class ZRecord: NSObject {
     }
 
 
-    class func storageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
+    class func storageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
         if  let   items = iItems,
             items.count > 0 {
             var   array = [ZStorageDictionary] ()
@@ -616,9 +616,7 @@ class ZRecord: NSObject {
 
                 if  let zRecord = item as? ZRecord,
                     (allowEach == nil || allowEach!(zRecord)) {
-                    dict = try zRecord.storageDictionary(for: dbID, includeRecordName: includeRecordName)
-//                } else if let reference = item as? CKRecord.Reference {
-//                    dict = reference.storageDictionary()
+                    dict = try zRecord.storageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles)
                 }
 
                 if  dict != nil {

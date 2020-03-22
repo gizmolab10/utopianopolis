@@ -79,7 +79,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 
     func updateGUI() {
-        widget?.widgetZone?.deferWrite()
+        widget?.widgetZone?.needWrite()
         layoutTextField()
         widget?.setNeedsDisplay()
     }

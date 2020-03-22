@@ -566,6 +566,10 @@ extension CGPoint {
 
 extension CGSize {
 
+	static var big: CGSize {
+		return CGSize(width: 1000000, height: 1000000)
+	}
+
 	var smallDimension: CGFloat {
 		return min(abs(height), abs(width))
 	}
@@ -574,9 +578,9 @@ extension CGSize {
         return sqrt(width * width + height * height)
     }
 
-    static var big: CGSize {
-        return CGSize(width: 1000000, height: 1000000)
-    }
+	func isLargerThan(_ other: CGSize) -> Bool {
+		return hypontenuse > other.hypontenuse
+	}
 
 	func multiplyBy(_ fraction: CGFloat) -> CGSize {
 		return CGSize(width: width * fraction, height: height * fraction)

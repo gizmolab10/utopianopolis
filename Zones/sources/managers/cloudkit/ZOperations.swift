@@ -6,13 +6,8 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import SystemConfiguration.SCNetworkConnection
-
-
-typealias TimerClosure = (Timer?) -> (Void)
-
 
 enum ZOperationID: Int {
 
@@ -71,10 +66,6 @@ enum ZOperationID: Int {
 let deprecatedOps:   [ZOperationID] = [.oParents]
 let localOperations: [ZOperationID] = [.oHere, .oRoots, .oFound, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
 
-var gDebugTimer: Timer?
-var gCloudTimer: Timer?
-var gCloudFire:  TimerClosure?
-
 class ZOperations: NSObject {
 
 	let            queue = OperationQueue()
@@ -85,6 +76,7 @@ class ZOperations: NSObject {
 	var     shouldCancel :          Bool  { return isIncomplete && -(negativeTimeSinceOpStart ?? 0.0) > 5.0 }
 	var    debugTimeText :        String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
     var  onCloudResponse :   AnyClosure?
+	var        cloudFire : TimerClosure?
     var      lastOpStart :       NSDate?
 	func printOp(_ message: String) { columnarReport(mode: .ops, operationText, message) }
 
@@ -124,8 +116,8 @@ class ZOperations: NSObject {
     }
 
     func setupCloudTimer() {
-        if  gCloudTimer == nil {
-            gCloudFire   = { iTimer in
+        if  cloudFire == nil {
+            cloudFire  = { iTimer in
                 FOREGROUND(canBeDirect: true) {
                     if  self.shouldCancel {
                         gBatches.unHang()
@@ -153,8 +145,8 @@ class ZOperations: NSObject {
                 }
             }
 
-            gCloudTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: gCloudFire!)
-            gCloudFire?(nil)
+			gTimers.setTimer(for: .tCloudAvailable, withTimeInterval: 0.2, repeats: true, block: cloudFire!)
+            cloudFire?(nil)
         }
     }
 

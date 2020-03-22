@@ -14,7 +14,7 @@
 
 class ZDragView: ZView, ZGestureRecognizerDelegate {
 
-	var rubberbandRect: CGRect?
+	var drawingRubberbandRect: CGRect?
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
@@ -22,7 +22,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
         kClearColor.setFill()
         ZBezierPath(rect: bounds).fill()
 
-        if  let rect = rubberbandRect {
+        if  let rect = drawingRubberbandRect {
             gRubberbandColor.lighter(by: 2.0).setStroke()
             ZBezierPath(rect: rect).stroke()
         }

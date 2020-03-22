@@ -485,30 +485,18 @@ var gCurrentEssay: ZNote? {
 // MARK:- actions
 // MARK:-
 
-var mouseZoneTimer: Timer?
-
 func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 1.0) {
-	if  let t = mouseZoneTimer {
-		t.invalidate()
-	}
+	gCurrentMouseDownZone = zone
 
-	gCurrentMouseDownZone     = zone
-
-	mouseZoneTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { iTimer in
+	gTimers.setTimer(for: .tMouseZone, withTimeInterval: seconds) { iTimer in
 		gCurrentMouseDownZone = nil
 	}
 }
 
-var mouseLocationTimer: Timer?
-
 func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double = 1.0) {
-	if  let t = mouseLocationTimer {
-		t.invalidate()
-	}
+	gCurrentMouseDownLocation = location
 
-	gCurrentMouseDownLocation     = location
-
-	mouseLocationTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { iTimer in
+	gTimers.setTimer(for: .tMouseLocation, withTimeInterval: seconds) { iTimer in
 		gCurrentMouseDownLocation = nil
 	}
 }

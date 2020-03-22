@@ -31,8 +31,7 @@ class ZFiles: NSObject {
     var           needsWrite = [false, false]
     var   writtenRecordNames = [String] ()
     var filePaths: [String?] = [nil, nil]
-    var  writeTimer : Timer?
-    var _directoryURL : URL?
+    var        _directoryURL : URL?
     let              manager = FileManager.default
 
     var isWritingNow: Bool {
@@ -62,33 +61,37 @@ class ZFiles: NSObject {
 //		let panel = NSOpenPanel()
 	}
 
-    func deferWrite(for  databaseID: ZDatabaseID?, restartTimer: Bool = false) {
-		if  writeTimer == nil || !writeTimer!.isValid || restartTimer {
-            writeTimer?.invalidate()
+	func writeMinimal() {
+		deferWrite(for: .tMinimal)
+		deferWrite(for: .tEveryone)
+		deferWrite(for: .tMine)
+	}
 
-            writeTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { iTimer in
-                if  gIsEditIdeaMode {
-                    self.deferWrite(for: databaseID, restartTimer: true)
-                } else {
-					do {
-						try self.writeToFile(from: databaseID)
-					} catch {
-						printDebug(.file, "defer")
-						self.deferWrite(for: databaseID, restartTimer: true)
-					}
-                }
-            }
-        }
-    }
+	func deferWrite(for timerID: ZTimerID?, restartTimer: Bool = false) {
+		if  let id = timerID {
+			gTimers.assureCompletion(for: id, withTimeInterval: 2.0, restartTimer: restartTimer) {
+				if  gIsEditIdeaMode {
+					throw(ZInterruptionError.userInterrupted)
+				} else {
+					try self.writeToFile(from: ZDatabaseID.convert(from: id), minimal: timerID == .tMinimal)
+				}
+			}
+		}
+	}
 
     func needWrite(for  databaseID: ZDatabaseID?) {
-        if  let  dbID = databaseID,
-            let index = dbID.index {
+        if  let   dbID  = databaseID,
+			let  index  = dbID.index,
+			let     id  = ZTimerID(rawValue: index) {
 
             if !needsWrite[index] {
                 needsWrite[index] = true
             } else {
-                deferWrite(for: databaseID, restartTimer: true)
+				if  id == .tMine {
+					deferWrite(for: .tMinimal)
+				}
+
+				deferWrite(for: id)
             }
         }
     }
@@ -102,26 +105,7 @@ class ZFiles: NSObject {
         return false
 	}
 
-	func writeMinimal() {
-		do {
-			try writeToFile(from: .everyoneID)
-			try writeToFile(from: .mineID, minimal: true)
-		} catch {
-
-		}
-	}
-
-    func writeAll() {
-		do {
-			for dbID in kAllDatabaseIDs {
-				try writeToFile(from: dbID)
-			}
-		} catch {
-
-		}
-	}
-
-	func writeToFile(from databaseID: ZDatabaseID?, minimal: Bool = false) throws {
+	func writeToFile(from databaseID: ZDatabaseID?,   minimal: Bool = false) throws {
 		if  let path = filePath(    from: databaseID, minimal: minimal) {
 			try writeFile(at: path, from: databaseID, minimal: minimal)
 		}
@@ -155,8 +139,12 @@ class ZFiles: NSObject {
 				// take snapshots just before exit from method //
 				// //////////////////////////////////////////////
 
-				if  let   graph  = try manager.rootZone?.storageDictionary(for: dbID)  {
-					dict[.graph] = graph as NSObject
+				if  minimal {
+					if  let small      = try manager.hereZoneMaybe?.storageDictionary(for: dbID, includeInvisibles: false) {
+						dict[.minimal] = small as NSObject
+					}
+				} else if let graph = try manager.rootZone?.storageDictionary(for: dbID)  {
+					dict[.graph]    = graph as NSObject
 				}
 
 				if  let   trash  = try manager.trashZone?.storageDictionary(for: dbID) {

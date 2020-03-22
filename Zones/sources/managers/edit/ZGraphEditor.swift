@@ -118,7 +118,7 @@ class ZGraphEditor: ZBaseEditor {
                 let    widget = gWidgets.currentMovableWidget
                 let hasWidget = widget != nil
 
-                widget?.widgetZone?.deferWrite()
+                widget?.widgetZone?.needWrite()
                 
                 if  let a = arrow, isWindow {
                     handleArrow(a, flags: flags)

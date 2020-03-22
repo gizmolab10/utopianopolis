@@ -22,7 +22,7 @@ class ZCloud: ZRecords {
     var    isRemembering :         Bool = false
     var currentOperation : CKOperation?
     var currentPredicate : NSPredicate?
-
+	var recordsToProcess = [CKRecord]()
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
         if  database != nil {
@@ -694,37 +694,37 @@ class ZCloud: ZRecords {
                         }
                     }
                 }
-            } else if let ckRecord = iRecord {
-                retrieved.appendUnique(contentsOf: [ckRecord])
-            } else { // nil means: we already received full response from cloud for this particular fetch
+			} else if let ckRecord = iRecord {
+				retrieved.appendUnique(contentsOf: [ckRecord])
+			} else { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?(retrieved)
             }
         }
     }
 
-
     func createZRecords(of type: String, with iCKRecords: [CKRecord], title iTitle: String? = nil) {
-        if iCKRecords.count != 0 {
-            for ckRecord in iCKRecords {
-                var zRecord = self.maybeZRecordForRecordName(ckRecord.recordID.recordName)
+        if  iCKRecords.count != 0,
+			let timerID = ZTimerID.recordsID(for: databaseID) {
+			recordsToProcess.appendUnique(contentsOf: iCKRecords)
+			gTimers.assureCompletion(for: timerID, now: true, withTimeInterval: 1.0) {
+				repeat {
+					if  let ckRecord = self.recordsToProcess.dropFirst().first {
+						var  zRecord = self.maybeZRecordForRecordName(ckRecord.recordID.recordName)
 
-                if  let link = ckRecord[kpZoneLink] as? String,
-                    link == kTrashLink {
-                    bam("")
-                }
+						if  zRecord != nil {
+							zRecord?.useBest(record: ckRecord) // fetched has same record id
+						} else {
+							switch type {
+								case kZoneType:  zRecord =   Zone(record: ckRecord, databaseID: self.databaseID)
+								case kTraitType: zRecord = ZTrait(record: ckRecord, databaseID: self.databaseID)
+								default: break
+							}
+						}
 
-                if  zRecord != nil {
-                    zRecord?.useBest(record: ckRecord) // fetched has same record id
-                } else {
-                    switch type {
-                    case kZoneType:  zRecord =   Zone(record: ckRecord, databaseID: self.databaseID)
-                    case kTraitType: zRecord = ZTrait(record: ckRecord, databaseID: self.databaseID)
-                    default: break
-                    }
-                }
-
-                zRecord?.unorphan()
-            }
+						zRecord?.unorphan()
+						try gTestForUserInterrupt()					}
+				} while self.recordsToProcess.count > 0
+			}
 
             self.columnarReport("FETCH\(iTitle ?? "") (\(iCKRecords.count))", String.forCKRecords(iCKRecords))
         }
@@ -751,17 +751,16 @@ class ZCloud: ZRecords {
 
         fetch(for: kZoneType, properties: Zone.cloudProperties(), since: date) { iZoneCKRecords in
             FOREGROUND {
-                self.createZRecords(of: kZoneType, with: iZoneCKRecords, title: date != nil ? " NEW" : " ALL")
-
-                self.unorphanAll()
-                self.recount()
-
                 self.fetch(for: kTraitType, properties: ZTrait.cloudProperties(), since: date) { iTraitCKRecords in
                     FOREGROUND {
                         self.createZRecords(of: kTraitType, with: iTraitCKRecords, title: " TRAITS")
                         onCompletion?(0)
                     }
                 }
+
+				self.createZRecords(of: kZoneType, with: iZoneCKRecords, title: date != nil ? " NEW" : " ALL")
+				self.unorphanAll()
+				self.recount()
             }
         }
     }

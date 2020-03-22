@@ -157,6 +157,9 @@
 		A7395BB421B877B600F5759F /* ZGraphEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7395BAE21B877B600F5759F /* ZGraphEditor.swift */; };
 		A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
 		A74D1BA622222FC900E69E44 /* eye.con-512.png in Resources */ = {isa = PBXBuildFile; fileRef = A74D1BA522222FC900E69E44 /* eye.con-512.png */; };
+		A759F70124269D29008CEA59 /* ZTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A759F70024269D29008CEA59 /* ZTimers.swift */; };
+		A759F70224269D29008CEA59 /* ZTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A759F70024269D29008CEA59 /* ZTimers.swift */; };
+		A759F70324269D29008CEA59 /* ZTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A759F70024269D29008CEA59 /* ZTimers.swift */; };
 		A764067423F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */; };
 		A764067523F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */; };
 		A764067623F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */; };
@@ -408,6 +411,7 @@
 		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Shortcuts.storyboard; sourceTree = "<group>"; };
 		A746D466219F637A00123A0A /* Thoughtful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thoughtful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A74D1BA522222FC900E69E44 /* eye.con-512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "eye.con-512.png"; path = "interfaces/Assets.xcassets/AppIcon.OSX.appiconset/eye.con-512.png"; sourceTree = "<group>"; };
+		A759F70024269D29008CEA59 /* ZTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTimers.swift; sourceTree = "<group>"; };
 		A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsController.swift; sourceTree = "<group>"; };
 		A764067723F7E37600D9EA3A /* ZBreadcrumbsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsView.swift; sourceTree = "<group>"; };
 		A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbs.swift; sourceTree = "<group>"; };
@@ -630,6 +634,7 @@
 				0C6CAE1E1F88308E001960F7 /* ZSearching.swift */,
 				0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */,
 				A7E9A3AF23C115470064C89A /* ZShortcuts.swift */,
+				A759F70024269D29008CEA59 /* ZTimers.swift */,
 				0C39B24A1F182EBB0091F4D1 /* ZWidgets.swift */,
 			);
 			path = main;
@@ -1168,6 +1173,7 @@
 				A7B48A9F23E0E80C00654DBD /* ZDragView.swift in Sources */,
 				0C39B2BC1F182EBB0091F4D1 /* ZState.swift in Sources */,
 				0C39B2B61F182EBB0091F4D1 /* ZReachability.swift in Sources */,
+				A759F70124269D29008CEA59 /* ZTimers.swift in Sources */,
 				0C39B3131F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C39B2EC1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
 				0C43EFD121010F62000976CE /* ZOnboarding.swift in Sources */,
@@ -1212,6 +1218,7 @@
 				0C43EFDC21010F62000976CE /* ZOperations.swift in Sources */,
 				A774ED1D23E2268D00080DC9 /* ZGesturesController.swift in Sources */,
 				0C6CAE211F88308E001960F7 /* ZSearching.swift in Sources */,
+				A759F70324269D29008CEA59 /* ZTimers.swift in Sources */,
 				0C39B2AF1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C3ECC251FA3023500F085EA /* ZUser.swift in Sources */,
 				A764067623F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */,
@@ -1291,6 +1298,7 @@
 				0C39B2AE1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C2E22D31F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
 				A7B48AB523E0E80C00654DBD /* ZGridCell.swift in Sources */,
+				A759F70224269D29008CEA59 /* ZTimers.swift in Sources */,
 				A774ED1E23E2268E00080DC9 /* ZGesturesController.swift in Sources */,
 				A764068123F9C2EB00D9EA3A /* ZNoteAndEssay.swift in Sources */,
 				A764067D23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */,

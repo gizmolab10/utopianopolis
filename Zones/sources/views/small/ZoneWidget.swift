@@ -211,7 +211,7 @@ class ZoneWidget: ZView {
     
 
     var outerHitRect: CGRect {
-        return CGRect(start: dragDot.convert(dragDot.bounds.origin, to: self), end: revealDot.convert(revealDot.bounds.extent, to: self))
+		return CGRect(start: dragDot.convert(CGPoint.zero, to: self), end: revealDot.convert(revealDot.bounds.extent, to: self))
     }
 
 
@@ -526,7 +526,7 @@ class ZoneWidget: ZView {
             }
 
             if  zone.showingChildren {
-                if !nowDrawLines && !gIsDragging && gDragView?.rubberbandRect == nil {
+                if !nowDrawLines && !gIsDragging && gDragView?.drawingRubberbandRect == nil {
                     nowDrawLines = true
                     
                     draw(dirtyRect)

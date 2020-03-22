@@ -134,8 +134,7 @@ enum ZDatabaseID: String {
 			default:          return ""
 		}
     }
-	
-    
+
     var databaseIndex: ZDatabaseIndex? {
 		switch self {
 			case .favoritesID: return .favoritesIndex
@@ -144,6 +143,15 @@ enum ZDatabaseID: String {
 			default:           return nil
 		}
     }
+
+	static func convert(from timerID: ZTimerID) -> ZDatabaseID? {
+		switch timerID {
+			case .tEveryone: return .everyoneID
+			case .tMinimal,
+				 .tMine:     return .mineID
+			default:         return nil
+		}
+	}
 
     static func convert(from scope: CKDatabase.Scope) -> ZDatabaseID? {
 		switch scope {
@@ -214,7 +222,8 @@ enum ZStorageType: String {
     case bookmarks       = "bookmarks"
     case favorites       = "favorites"
     case manifest        = "manifest"
-    case destroy         = "destroy"
+	case minimal         = "minimal"
+	case destroy         = "destroy"
     case userID          = "user ID"
     case model           = "model"
     case graph           = "graph"
