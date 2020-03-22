@@ -17,18 +17,18 @@ import UIKit
 let gTimers = ZTimers()
 
 enum ZTimerID : Int {
-	case tEveryone
-	case tMine
-	case tMinimal
-	case tCloudAvailable
+	case tFileEveryone
+	case tFileMine
+	case tFileMinimal
+	case tRecordsEveryone
+	case tRecordsMine
 	case tMouseZone
 	case tMouseLocation
-	case tEveryoneRecords
-	case tMineRecords
+	case tCloudAvailable
 
 	static func recordsID(for databaseID: ZDatabaseID?) -> ZTimerID? {
 		if  let index = databaseID?.index {
-			return ZTimerID(rawValue: index + ZTimerID.tEveryoneRecords.rawValue)
+			return ZTimerID(rawValue: index + ZTimerID.tRecordsEveryone.rawValue)
 		}
 
 		return nil
@@ -61,10 +61,9 @@ class ZTimers: NSObject {
 	func assureCompletion(for timerID: ZTimerID, now: Bool = false, withTimeInterval interval: TimeInterval, restartTimer: Bool = false, block: @escaping ThrowsClosure) {
 		FOREGROUND { // timers must have a runloop
 			if  restartTimer || self.isInvalidTimer(for: timerID) {
-				let   index = timerID.rawValue
-				var  bBlock : Closure? = nil
-				var isBegun = false
-				var  isDone = false
+				let  index = timerID.rawValue
+				var bBlock : Closure? = nil
+				var isDone = false
 
 				let clear: Closure = {
 					self.timers[index]?.invalidate()
@@ -76,7 +75,7 @@ class ZTimers: NSObject {
 					bBlock?()
 				}
 
-				let sTimer: Closure = {
+				let setTimer: Closure = {
 					clear()
 
 					let          timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false, block: tBlock)
@@ -87,16 +86,13 @@ class ZTimers: NSObject {
 					clear()
 
 					if !isDone {
-						if !isBegun {
-							isBegun = true
+						do {
+							try block()
 
-							do {
-								try block()
-							} catch {
-								sTimer()
-							}
-
-							isDone  = true
+							isDone = true
+						} catch {
+							printDebug(.ops, "DEFER \(timerID)")
+							setTimer()
 						}
 					}
 				}
@@ -104,7 +100,7 @@ class ZTimers: NSObject {
 				if  now {
 					bBlock?()
 				} else {
-					sTimer()
+					setTimer()
 				}
 			}
 		}

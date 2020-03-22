@@ -502,7 +502,7 @@ func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double 
 }
 
 func gTestForUserInterrupt() throws {
-	if  let w = gWindow, (w.mouseMoved || w.keyPressed) {
+	if  let w = gWindow, w.isKeyWindow, (w.mouseMoved || w.keyPressed) {
 		throw(ZInterruptionError.userInterrupted)
 	}
 }

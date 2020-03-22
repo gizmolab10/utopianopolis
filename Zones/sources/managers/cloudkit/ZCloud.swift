@@ -22,7 +22,7 @@ class ZCloud: ZRecords {
     var    isRemembering :         Bool = false
     var currentOperation : CKOperation?
     var currentPredicate : NSPredicate?
-	var recordsToProcess = [CKRecord]()
+	var recordsToProcess = [String : CKRecord]()
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
         if  database != nil {
@@ -703,13 +703,19 @@ class ZCloud: ZRecords {
     }
 
     func createZRecords(of type: String, with iCKRecords: [CKRecord], title iTitle: String? = nil) {
-        if  iCKRecords.count != 0,
+		for record in iCKRecords {
+			recordsToProcess[record.recordID.recordName] = record
+		}
+
+		if  recordsToProcess.count != 0,
 			let timerID = ZTimerID.recordsID(for: databaseID) {
-			recordsToProcess.appendUnique(contentsOf: iCKRecords)
 			gTimers.assureCompletion(for: timerID, now: true, withTimeInterval: 1.0) {
-				repeat {
-					if  let ckRecord = self.recordsToProcess.dropFirst().first {
+				while self.recordsToProcess.count > 0 {
+					if  let      key = self.recordsToProcess.keys.first,
+						let ckRecord = self.recordsToProcess[key] {
 						var  zRecord = self.maybeZRecordForRecordName(ckRecord.recordID.recordName)
+
+						self.recordsToProcess[key] = nil
 
 						if  zRecord != nil {
 							zRecord?.useBest(record: ckRecord) // fetched has same record id
@@ -723,7 +729,7 @@ class ZCloud: ZRecords {
 
 						zRecord?.unorphan()
 						try gTestForUserInterrupt()					}
-				} while self.recordsToProcess.count > 0
+				}
 			}
 
             self.columnarReport("FETCH\(iTitle ?? "") (\(iCKRecords.count))", String.forCKRecords(iCKRecords))

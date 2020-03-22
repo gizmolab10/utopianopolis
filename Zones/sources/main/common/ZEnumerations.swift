@@ -146,9 +146,9 @@ enum ZDatabaseID: String {
 
 	static func convert(from timerID: ZTimerID) -> ZDatabaseID? {
 		switch timerID {
-			case .tEveryone: return .everyoneID
-			case .tMinimal,
-				 .tMine:     return .mineID
+			case .tFileEveryone: return .everyoneID
+			case .tFileMinimal,
+				 .tFileMine:     return .mineID
 			default:         return nil
 		}
 	}

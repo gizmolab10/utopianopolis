@@ -30,7 +30,7 @@ class ZFiles: NSObject {
     var            isWriting = [false, false] // not allow another save while file is being written
     var           needsWrite = [false, false]
     var   writtenRecordNames = [String] ()
-    var filePaths: [String?] = [nil, nil]
+    var filePaths: [String?] = [nil, nil, nil]
     var        _directoryURL : URL?
     let              manager = FileManager.default
 
@@ -62,9 +62,9 @@ class ZFiles: NSObject {
 	}
 
 	func writeMinimal() {
-		deferWrite(for: .tMinimal)
-		deferWrite(for: .tEveryone)
-		deferWrite(for: .tMine)
+		deferWrite(for: .tFileMinimal)
+		deferWrite(for: .tFileEveryone)
+		deferWrite(for: .tFileMine)
 	}
 
 	func deferWrite(for timerID: ZTimerID?, restartTimer: Bool = false) {
@@ -73,7 +73,7 @@ class ZFiles: NSObject {
 				if  gIsEditIdeaMode {
 					throw(ZInterruptionError.userInterrupted)
 				} else {
-					try self.writeToFile(from: ZDatabaseID.convert(from: id), minimal: timerID == .tMinimal)
+					try self.writeToFile(from: ZDatabaseID.convert(from: id), minimal: timerID == .tFileMinimal)
 				}
 			}
 		}
@@ -87,8 +87,8 @@ class ZFiles: NSObject {
             if !needsWrite[index] {
                 needsWrite[index] = true
             } else {
-				if  id == .tMine {
-					deferWrite(for: .tMinimal)
+				if  id == .tFileMine {
+					deferWrite(for: .tFileMinimal)
 				}
 
 				deferWrite(for: id)
@@ -294,15 +294,16 @@ class ZFiles: NSObject {
 	}
 
     func filePath(for index: ZDatabaseIndex, minimal: Bool = false) -> String {
-        var                 path  = filePaths[index.rawValue]
-        
+		let             pathIndex = index.rawValue + (minimal ? 1 : 0)
+        var                 path  = filePaths[pathIndex]
         if                  path == nil,
             let             name  = fileName(for: index) {
             let         cloudName = fileName(for: index, isGeneric: false)!
             let        isEveryone = index == .everyoneIndex
             let        useGeneric = isEveryone || !gCanAccessMyCloudDatabase
-            let   normalExtension = ".thoughtful"
-            let   backupExtension = ".backup"
+			let   prefixExtension = minimal ? ".minimal" : ""
+            let   normalExtension = prefixExtension + ".thoughtful"
+            let   backupExtension = prefixExtension + ".backup"
             let         backupURL = directoryURL.appendingPathComponent(name + backupExtension)
             let    genericFileURL = directoryURL.appendingPathComponent(name + normalExtension)
             let      cloudFileURL = directoryURL.appendingPathComponent(cloudName + normalExtension)
@@ -376,7 +377,7 @@ class ZFiles: NSObject {
                 printDebug(.error, "\(error)")
             }
 
-            filePaths[index.rawValue] = path
+            filePaths[pathIndex] = path
         }
 
         return path!

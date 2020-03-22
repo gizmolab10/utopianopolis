@@ -835,7 +835,7 @@ extension Array {
     func intersection<S>(_ other: Array<Array<Element>.Element>) -> S where Element: Hashable {
         return Array(Set(self).intersection(Set(other))) as! S
     }
-    
+
 }
 
 extension Array where Element == Zone {

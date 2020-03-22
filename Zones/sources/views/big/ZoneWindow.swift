@@ -29,8 +29,12 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 	}
 
 	var mouseMoved: Bool {
-		let    last  = lastLocation
-		lastLocation = mouseLocationOutsideOfEventStream
+		let last = lastLocation
+		let  now = mouseLocationOutsideOfEventStream
+
+		if  contentView?.frame.contains(now) ?? false {
+			lastLocation = now
+		}
 
 		return last != lastLocation
 	}
