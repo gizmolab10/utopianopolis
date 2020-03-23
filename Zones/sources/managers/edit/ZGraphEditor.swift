@@ -153,7 +153,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
                     case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
 					case "+":      divideChildren()
-					case "-":      gCurrentKeyPressed = nil; return handleHyphen(COMMAND, OPTION)
+					case "-":      return handleHyphen(COMMAND, OPTION)
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.redrawGraph() } }
 					case "\\":     gGraphController?.toggleGraphs(); redrawGraph()
                     case "[":      gFocusRing.goBack(   extreme: FLAGGED)
@@ -1145,7 +1145,7 @@ class ZGraphEditor: ZBaseEditor {
         if  intoParent {
             addParentFromSelectedText(inside: iZone)
         } else {
-            addIdeaFromSelectedText  (inside: iZone)
+            createChildIdeaFromSelectedText  (inside: iZone)
         }
     }
     
@@ -1173,7 +1173,7 @@ class ZGraphEditor: ZBaseEditor {
     }
     
 
-    func addIdeaFromSelectedText(inside iZone: Zone?) {
+    func createChildIdeaFromSelectedText(inside iZone: Zone?) {
         if  let      zone  = iZone,
             let childName  = zone.widget?.textWidget.extractTitleOrSelectedText() {
             

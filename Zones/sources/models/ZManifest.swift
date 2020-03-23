@@ -150,8 +150,8 @@ class ZManifest: ZRecord {
     }
     
     
-    override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true) throws -> ZStorageDictionary? {
-		var dict           = try super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles) ?? ZStorageDictionary ()
+    override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
+		var dict           = try super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
         
         if  let          d = updatedRefs as NSObject? {
             dict[.deleted] = d

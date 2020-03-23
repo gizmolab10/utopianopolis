@@ -663,7 +663,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return !gRefusesFirstResponder
 			&& !gIsEditingStateChanging
 			&&  userCanWrite
-			&& ([kTab, kSpace, kReturn, "e", "h"].contains(gCurrentKeyPressed)
+			&& ([kTab, kSpace, kReturn, "-", "d", "e", "h"].contains(gCurrentKeyPressed)
 				|| gCurrentKeyPressed?.arrow != nil
 				|| gCurrentMouseDownZone     == self)
 	}
@@ -1797,15 +1797,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         }
     }
 
-    override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true) throws -> ZStorageDictionary? {
-		var dict            = try super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles) ?? ZStorageDictionary ()
+    override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
+		var dict            = try super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
 
 		if  (includeInvisibles || showingChildren),
-			let   childDict = try Zone.storageArray(for: children, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles) {
+			let   childDict = try Zone.storageArray(for: children, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
             dict[.children] = childDict as NSObject?
         }
 
-        if  let  traitsDict = try Zone.storageArray(for: traitValues, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles) {
+        if  let  traitsDict = try Zone.storageArray(for: traitValues, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
             dict  [.traits] = traitsDict as NSObject?
         }
 

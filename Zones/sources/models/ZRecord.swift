@@ -528,7 +528,7 @@ class ZRecord: NSObject {
     }
 
 
-	func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true) throws -> ZStorageDictionary? {
+	func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
 		try gTestForUserInterrupt()
 
 		guard let name = recordName, !gFiles.writtenRecordNames.contains(name) else { return nil }
@@ -606,7 +606,7 @@ class ZRecord: NSObject {
     }
 
 
-    class func storageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
+    class func storageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
         if  let   items = iItems,
             items.count > 0 {
             var   array = [ZStorageDictionary] ()
@@ -616,7 +616,7 @@ class ZRecord: NSObject {
 
                 if  let zRecord = item as? ZRecord,
                     (allowEach == nil || allowEach!(zRecord)) {
-                    dict = try zRecord.storageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles)
+                    dict = try zRecord.storageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors)
                 }
 
                 if  dict != nil {

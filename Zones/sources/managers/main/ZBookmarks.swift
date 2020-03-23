@@ -103,7 +103,7 @@ class ZBookmarks: NSObject {
     }
 
 
-    func storageArray(for iDatabaseID: ZDatabaseID, includeInvisibles: Bool = true) throws -> [ZStorageDictionary]? {
+    func storageArray(for iDatabaseID: ZDatabaseID, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> [ZStorageDictionary]? {
         return try Zone.storageArray(for: allBookmarks, from: iDatabaseID, includeInvisibles: includeInvisibles) { zRecord -> Bool in
             if  let    bookmark = zRecord as? Zone,
                 let        root = bookmark.root {

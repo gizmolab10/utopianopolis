@@ -62,18 +62,18 @@ class ZFiles: NSObject {
 	}
 
 	func writeMinimal() {
-		deferWrite(for: .tFileMinimal)
-		deferWrite(for: .tFileEveryone)
-		deferWrite(for: .tFileMine)
+		deferWrite(for: .tWriteMinimal)
+		deferWrite(for: .tWriteEveryone)
+		deferWrite(for: .tWriteMine)
 	}
 
 	func deferWrite(for timerID: ZTimerID?, restartTimer: Bool = false) {
 		if  let id = timerID {
-			gTimers.assureCompletion(for: id, withTimeInterval: 2.0, restartTimer: restartTimer) {
+			gTimers.assureCompletion(for: id, withTimeInterval: 10.0, restartTimer: restartTimer) {
 				if  gIsEditIdeaMode {
 					throw(ZInterruptionError.userInterrupted)
 				} else {
-					try self.writeToFile(from: ZDatabaseID.convert(from: id), minimal: timerID == .tFileMinimal)
+					try self.writeToFile(from: ZDatabaseID.convert(from: id), minimal: timerID == .tWriteMinimal)
 				}
 			}
 		}
@@ -87,8 +87,8 @@ class ZFiles: NSObject {
             if !needsWrite[index] {
                 needsWrite[index] = true
             } else {
-				if  id == .tFileMine {
-					deferWrite(for: .tFileMinimal)
+				if  id == .tWriteMine {
+					deferWrite(for: .tWriteMinimal)
 				}
 
 				deferWrite(for: id)
@@ -164,7 +164,7 @@ class ZFiles: NSObject {
 				}
 
 				if                 dbID == .mineID {
-					if  let   favorites  = try gFavoritesRoot?.storageDictionary(for: dbID) {
+					if  let   favorites  = try gFavoritesRoot?.storageDictionary(for: dbID, includeAncestors: minimal) {
 						dict[.favorites] = favorites as NSObject
 					}
 

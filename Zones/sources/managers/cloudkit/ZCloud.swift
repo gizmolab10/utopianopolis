@@ -709,7 +709,7 @@ class ZCloud: ZRecords {
 
 		if  recordsToProcess.count != 0,
 			let timerID = ZTimerID.recordsID(for: databaseID) {
-			gTimers.assureCompletion(for: timerID, now: true, withTimeInterval: 1.0) {
+			gTimers.assureCompletion(for: timerID, now: true, withTimeInterval: 4.0) {
 				while self.recordsToProcess.count > 0 {
 					if  let      key = self.recordsToProcess.keys.first,
 						let ckRecord = self.recordsToProcess[key] {

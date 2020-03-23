@@ -146,9 +146,9 @@ enum ZDatabaseID: String {
 
 	static func convert(from timerID: ZTimerID) -> ZDatabaseID? {
 		switch timerID {
-			case .tFileEveryone: return .everyoneID
-			case .tFileMinimal,
-				 .tFileMine:     return .mineID
+			case .tWriteEveryone: return .everyoneID
+			case .tWriteMinimal,
+				 .tWriteMine:     return .mineID
 			default:         return nil
 		}
 	}
@@ -298,7 +298,7 @@ enum ZSpecialsMenuType: String {
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = [.ops]
+var gDebugMode: [ZDebugMode] = [.timers, .ops]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
@@ -323,6 +323,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let access = ZDebugMode()
 	static let search = ZDebugMode()
 	static let images = ZDebugMode()
+	static let timers = ZDebugMode()
 
 	var description: String {
 		return [(.ops,    "     op"),
@@ -338,7 +339,8 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.error,  "  error"),
 				(.access, " access"),
 				(.search, " search"),
-				(.images, " images")]
+				(.images, " images"),
+				(.timers, " timers")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: " ")
 	}
