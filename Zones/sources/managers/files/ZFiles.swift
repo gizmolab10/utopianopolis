@@ -30,8 +30,9 @@ class ZFiles: NSObject {
     var            isWriting = [false, false] // not allow another save while file is being written
     var           needsWrite = [false, false]
     var   writtenRecordNames = [String] ()
-    var filePaths: [String?] = [nil, nil, nil]
-    var        _directoryURL : URL?
+    var filePaths: [String?] = [nil, nil]
+    var  writeTimer : Timer?
+    var _directoryURL : URL?
     let              manager = FileManager.default
 
     var isWritingNow: Bool {
@@ -61,37 +62,32 @@ class ZFiles: NSObject {
 //		let panel = NSOpenPanel()
 	}
 
-	func writeMinimal() {
-		deferWrite(for: .tWriteMinimal)
-		deferWrite(for: .tWriteEveryone)
-		deferWrite(for: .tWriteMine)
+	func writeAll() {
+		needWrite(for: .mineID)
+		needWrite(for: .everyoneID)
 	}
 
-	func deferWrite(for timerID: ZTimerID?, restartTimer: Bool = false) {
-		if  let id = timerID {
-			gTimers.assureCompletion(for: id, withTimeInterval: 10.0, restartTimer: restartTimer) {
+	func deferWrite(for  databaseID: ZDatabaseID?, restartTimer: Bool = false) {
+		if  let timerID = ZTimerID.convert(from: databaseID) {
+			gTimers.assureCompletion(for: timerID, withTimeInterval: 10.0, restartTimer: restartTimer) {
 				if  gIsEditIdeaMode {
 					throw(ZInterruptionError.userInterrupted)
 				} else {
-					try self.writeToFile(from: ZDatabaseID.convert(from: id), minimal: timerID == .tWriteMinimal)
+					try self.writeToFile(from: databaseID)
 				}
 			}
 		}
 	}
 
+
     func needWrite(for  databaseID: ZDatabaseID?) {
-        if  let   dbID  = databaseID,
-			let  index  = dbID.index,
-			let     id  = ZTimerID(rawValue: index) {
+        if  let  dbID = databaseID,
+            let index = dbID.index {
 
             if !needsWrite[index] {
                 needsWrite[index] = true
             } else {
-				if  id == .tWriteMine {
-					deferWrite(for: .tWriteMinimal)
-				}
-
-				deferWrite(for: id)
+                deferWrite(for: databaseID, restartTimer: true)
             }
         }
     }
@@ -105,14 +101,22 @@ class ZFiles: NSObject {
         return false
 	}
 
-	func writeToFile(from databaseID: ZDatabaseID?,   minimal: Bool = false) throws {
-		if  let path = filePath(    from: databaseID, minimal: minimal) {
-			try writeFile(at: path, from: databaseID, minimal: minimal)
+	func writeToFile(from databaseID: ZDatabaseID?) throws {
+		if  let     dbID = databaseID,
+			dbID        != .favoritesID,
+			let    index = dbID.index,
+			let  dbIndex = ZDatabaseIndex(rawValue: index) {
+				let path = filePath(for: dbIndex)
+				try writeFile(at: path, from: databaseID)
 		}
 	}
 
 	func readFile(into databaseID: ZDatabaseID) {
-		if  let path = filePath( from: databaseID) {
+		if  databaseID  != .favoritesID,
+			let    index = databaseID.index,
+			let  dbIndex = ZDatabaseIndex(rawValue: index) {
+			let 	path = filePath(for: dbIndex)
+
 			readFile(from: path, into: databaseID)
 		}
 	}
@@ -120,7 +124,7 @@ class ZFiles: NSObject {
     // MARK:- heavy lifting
     // MARK:-
 
-	func writeFile(at path: String, from databaseID: ZDatabaseID?, minimal: Bool = false) throws {
+	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
 		if  gUseFiles,
 			let           dbID = databaseID,
 			dbID              != .favoritesID,
@@ -139,12 +143,8 @@ class ZFiles: NSObject {
 				// take snapshots just before exit from method //
 				// //////////////////////////////////////////////
 
-				if  minimal {
-					if  let small      = try manager.hereZoneMaybe?.storageDictionary(for: dbID, includeInvisibles: false) {
-						dict[.minimal] = small as NSObject
-					}
-				} else if let graph = try manager.rootZone?.storageDictionary(for: dbID)  {
-					dict[.graph]    = graph as NSObject
+				if  let   graph  = try manager.rootZone?.storageDictionary(for: dbID)  {
+					dict[.graph] = graph as NSObject
 				}
 
 				if  let   trash  = try manager.trashZone?.storageDictionary(for: dbID) {
@@ -164,7 +164,7 @@ class ZFiles: NSObject {
 				}
 
 				if                 dbID == .mineID {
-					if  let   favorites  = try gFavoritesRoot?.storageDictionary(for: dbID, includeAncestors: minimal) {
+					if  let   favorites  = try gFavoritesRoot?.storageDictionary(for: dbID) {
 						dict[.favorites] = favorites as NSObject
 					}
 
@@ -275,35 +275,16 @@ class ZFiles: NSObject {
 		}
 	}
 
-	func index(from databaseID: ZDatabaseID?) -> ZDatabaseIndex? {
-		if  let    dbID = databaseID,
-			dbID       != .favoritesID,
-			let   index = dbID.index {
-				return ZDatabaseIndex(rawValue: index)
-		}
-
-		return nil
-	}
-
-	func filePath(from databaseID: ZDatabaseID?, minimal: Bool = false) -> String? {
-		if  let dbIndex = index(from: databaseID) {
-			return filePath(for: dbIndex, minimal: minimal)
-		}
-
-		return nil
-	}
-
-    func filePath(for index: ZDatabaseIndex, minimal: Bool = false) -> String {
-		let             pathIndex = index.rawValue + (minimal ? 1 : 0)
-        var                 path  = filePaths[pathIndex]
+    func filePath(for index: ZDatabaseIndex) -> String {
+        var                 path  = filePaths[index.rawValue]
+        
         if                  path == nil,
             let             name  = fileName(for: index) {
             let         cloudName = fileName(for: index, isGeneric: false)!
             let        isEveryone = index == .everyoneIndex
             let        useGeneric = isEveryone || !gCanAccessMyCloudDatabase
-			let   prefixExtension = minimal ? ".minimal" : ""
-            let   normalExtension = prefixExtension + ".thoughtful"
-            let   backupExtension = prefixExtension + ".backup"
+            let   normalExtension = ".thoughtful"
+            let   backupExtension = ".backup"
             let         backupURL = directoryURL.appendingPathComponent(name + backupExtension)
             let    genericFileURL = directoryURL.appendingPathComponent(name + normalExtension)
             let      cloudFileURL = directoryURL.appendingPathComponent(cloudName + normalExtension)
@@ -377,7 +358,7 @@ class ZFiles: NSObject {
                 printDebug(.error, "\(error)")
             }
 
-            filePaths[pathIndex] = path
+            filePaths[index.rawValue] = path
         }
 
         return path!

@@ -92,7 +92,7 @@ class ZControllers: NSObject {
 						self.signalMultiple([.eRelayout])
 						gDetailsController?.toggleViewsFor(ids: [.Preferences])
 						gDetailsController?.toggleViewsFor(ids: [.Preferences])
-						gFiles.writeMinimal()
+						gFiles.writeAll()
 					}
 				}
 			}

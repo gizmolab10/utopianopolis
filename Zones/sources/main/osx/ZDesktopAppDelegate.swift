@@ -84,7 +84,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     
 
     func applicationWillTerminate(aNotification: NSNotification) {
-		gFiles.writeMinimal()
+		gFiles.writeAll()
 
         // Insert code here to tear down your application
     }

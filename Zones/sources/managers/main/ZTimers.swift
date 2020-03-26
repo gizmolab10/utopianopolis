@@ -19,7 +19,6 @@ let gTimers = ZTimers()
 enum ZTimerID : Int {
 	case tWriteEveryone
 	case tWriteMine
-	case tWriteMinimal
 	case tRecordsEveryone
 	case tRecordsMine
 	case tMouseZone
@@ -29,6 +28,18 @@ enum ZTimerID : Int {
 	static func recordsID(for databaseID: ZDatabaseID?) -> ZTimerID? {
 		if  let index = databaseID?.index {
 			return ZTimerID(rawValue: index + ZTimerID.tRecordsEveryone.rawValue)
+		}
+
+		return nil
+	}
+
+	static func convert(from databaseID: ZDatabaseID?) -> ZTimerID? {
+		if  let id = databaseID {
+			switch id {
+				case .everyoneID: return .tWriteEveryone
+				case .mineID:     return .tWriteMine
+				default:          return nil
+			}
 		}
 
 		return nil

@@ -144,15 +144,6 @@ enum ZDatabaseID: String {
 		}
     }
 
-	static func convert(from timerID: ZTimerID) -> ZDatabaseID? {
-		switch timerID {
-			case .tWriteEveryone: return .everyoneID
-			case .tWriteMinimal,
-				 .tWriteMine:     return .mineID
-			default:         return nil
-		}
-	}
-
     static func convert(from scope: CKDatabase.Scope) -> ZDatabaseID? {
 		switch scope {
 			case .public:  return .everyoneID
