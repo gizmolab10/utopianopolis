@@ -124,7 +124,7 @@ class ZOperations: NSObject {
                     }
                     
                     if  self.cloudStatusChanged() {
-                        self.signalMultiple([.eDetails]) // show change in cloud status
+                        self.signalMultiple([.eStatus]) // show change in cloud status
 
                         // //////////////////////////////////////////////
                         // assure that we can perform cloud operations //
@@ -192,12 +192,13 @@ class ZOperations: NSObject {
                         self.reportOnCompletionOfPerformBlock()
 
                         FOREGROUND {
-                            if self.currentOp == .oCompletion {
+                            if  self.currentOp == .oCompletion {
 
                                 // /////////////////////////////////////
                                 // done with this batch of operations //
 								// /////////////////////////////////////
 
+								self.signalMultiple([.eStatus]) // show change in cloud status
                                 onCompletion()
                             }
 

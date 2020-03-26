@@ -69,7 +69,7 @@ class ZFiles: NSObject {
 
 	func deferWrite(for  databaseID: ZDatabaseID?, restartTimer: Bool = false) {
 		if  let timerID = ZTimerID.convert(from: databaseID) {
-			gTimers.assureCompletion(for: timerID, withTimeInterval: 10.0, restartTimer: restartTimer) {
+			gTimers.assureCompletion(for: timerID, withTimeInterval: 5.0, restartTimer: restartTimer) {
 				if  gIsEditIdeaMode {
 					throw(ZInterruptionError.userInterrupted)
 				} else {

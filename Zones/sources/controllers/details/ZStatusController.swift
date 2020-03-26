@@ -55,15 +55,12 @@ class ZStatusController: ZGenericController {
         return ""
     }
 
+    var operationStatusText: String {
+        let    opStatus = gBatches.operationStatusText
+		let timerStatus =  gTimers.operationStatusText
 
-    var cloudStatusText: String {
-        if !gCanAccessMyCloudDatabase { return "local only" }
-        
-        let ops = // String.pluralized(gBatchManager.totalCount - 1,       unit: "batch", plural: "es", followedBy: ", ") +
-                  String.pluralized(gBatches.queue.operationCount, unit: "iCloud request")
-        return ops != "" ? ops : "synced with iCloud"
-    }
-	
+		return opStatus != "" ? opStatus : timerStatus != "" ? timerStatus : gCanAccessMyCloudDatabase ? "data saved" : "local data saved"
+    }	
 	
 	var creationDateText: String {
 		var   date: Date? // currentZone.record?.modificationDate
@@ -85,7 +82,7 @@ class ZStatusController: ZGenericController {
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		if ![.eSearch, .eFound, .eCrumbs, .eSwap, .eRing].contains(iKind) {
 			creationDateLabel?.text = creationDateText
-            cloudStatusLabel? .text = cloudStatusText
+            cloudStatusLabel? .text = operationStatusText
             totalCountLabel?  .text = totalCountsText
             graphNameLabel?   .text = graphNameText
             versionLabel?     .text = versionText
@@ -96,10 +93,4 @@ class ZStatusController: ZGenericController {
         }
     }
 
-
-    @IBAction func debugButtonAction(_ sender: Any?) {
-		ZDebugMode.toggle(.info)
-
-        gDetailsController?.displayViewsFor(ids: [.Tools, .Debug])
-    }
 }

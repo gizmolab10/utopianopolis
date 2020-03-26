@@ -190,10 +190,8 @@ struct ZDetailsViewID: OptionSet {
         self.rawValue = rawValue
     }
 
-    static let Information = ZDetailsViewID(rawValue: 0x0001)
-    static let Preferences = ZDetailsViewID(rawValue: 0x0002)
-    static let       Tools = ZDetailsViewID(rawValue: 0x0008)
-    static let       Debug = ZDetailsViewID(rawValue: 0x0010)
+	static let Preferences = ZDetailsViewID(rawValue: 0x0001)
+    static let      Status = ZDetailsViewID(rawValue: 0x0002)
     static let         All = ZDetailsViewID(rawValue: 0x001F)
 }
 

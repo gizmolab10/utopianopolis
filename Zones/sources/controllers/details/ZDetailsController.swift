@@ -13,7 +13,7 @@
 #endif
 
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
-private let  detailIds : [ZDetailsViewID] = [.Preferences, .Information]
+private let  detailIds : [ZDetailsViewID] = [.Preferences, .Status]
 
 class ZDetailsController: ZGenericController {
 
@@ -50,14 +50,6 @@ class ZDetailsController: ZGenericController {
             }
         }
         
-        update()
-    }
-    
-    func displayViewsFor(ids: [ZDetailsViewID]) {
-        for id in ids {
-            gHiddenDetailViewIDs.remove(id)
-        }
-
         update()
     }
 

@@ -330,7 +330,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 							if  dot.isReveal {
 								gGraphEditor.clickActionOnRevealDot(for: zone, COMMAND: COMMAND, OPTION: OPTION)
 							} else {
-								regarding = .eDetails // update selection level
+								regarding = .eStatus // update selection level
 
 								zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
 							}

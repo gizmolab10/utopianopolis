@@ -493,9 +493,7 @@ extension ZStackableView {
         if  let kind = convertFromOptionalUserInterfaceItemIdentifier(identifier) {
             switch kind {
             case "preferences": return .Preferences
-            case "information": return .Information
-            case       "debug": return .Debug
-            case       "tools": return .Tools
+            case "status":      return .Status
             default:            return .All
             }
         }

@@ -108,25 +108,9 @@
                                     </constraints>
                                 </view>
                             </box>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="II2-Qf-krY" userLabel="Easter Egg Button">
-                                <rect key="frame" x="-6" y="123" width="33" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="21" id="10P-ob-279"/>
-                                    <constraint firstAttribute="height" constant="21" id="xh0-PK-ZNa"/>
-                                </constraints>
-                                <buttonCell key="cell" type="round" bezelStyle="circular" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="HGg-Pn-x3Y">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="debugButtonAction:" target="fxO-Qj-JeN" id="vZp-Ab-kwm"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="II2-Qf-krY" firstAttribute="top" secondItem="mbO-Ma-L1E" secondAttribute="top" id="Joh-CX-pbH"/>
                             <constraint firstAttribute="trailing" secondItem="AUf-tY-f9E" secondAttribute="trailing" constant="8" id="LKl-z1-sFI"/>
-                            <constraint firstItem="II2-Qf-krY" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="MsG-oT-THs"/>
                             <constraint firstAttribute="bottom" secondItem="kOk-k7-jTQ" secondAttribute="bottom" constant="8" id="T92-XS-nnJ"/>
                             <constraint firstAttribute="trailing" secondItem="kOk-k7-jTQ" secondAttribute="trailing" constant="8" id="VT7-EK-Kww"/>
                             <constraint firstItem="AUf-tY-f9E" firstAttribute="top" secondItem="mbO-Ma-L1E" secondAttribute="top" constant="4" id="Wmh-vK-WZj"/>
@@ -158,7 +142,7 @@
                             <stackView hidden="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
                                 <rect key="frame" x="0.0" y="0.0" width="226" height="275"/>
                                 <subviews>
-                                    <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
+                                    <customView identifier="status" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZStackableView" customModule="Thoughtful" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="51" width="226" height="224"/>
                                         <subviews>
                                             <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">

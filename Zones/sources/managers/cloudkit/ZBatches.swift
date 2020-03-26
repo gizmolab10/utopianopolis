@@ -139,11 +139,12 @@ class ZBatches: ZOnboarding {
 
     }
 
-    var    currentBatches = [ZBatch] ()
-    var   deferredBatches = [ZBatch] ()
-    var currentDatabaseID : ZDatabaseID?
-    var        totalCount :  Int { return currentBatches.count + deferredBatches.count }
-    var            isLate : Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
+    var      currentBatches = [ZBatch] ()
+    var     deferredBatches = [ZBatch] ()
+    var   currentDatabaseID : ZDatabaseID?
+    var          totalCount :    Int { return currentBatches.count + deferredBatches.count }
+	var              isLate :   Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
+	var operationStatusText : String { return String.pluralized(gBatches.queue.operationCount, unit: "iCloud request") }
 
     // MARK:- API
     // MARK:-

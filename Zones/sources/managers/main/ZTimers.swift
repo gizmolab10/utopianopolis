@@ -45,11 +45,34 @@ enum ZTimerID : Int {
 		return nil
 	}
 
+	var description: String {
+		switch self {
+			case .tWriteEveryone:   return "writing local public data file"
+			case .tWriteMine:       return "writing local private data file"
+			case .tRecordsEveryone: return "acquiring public cloud data"
+			case .tRecordsMine:     return "acquiring private cloud data"
+			default:                return ""
+		}
+	}
+
 }
 
 class ZTimers: NSObject {
 
 	var timers = [Int: Timer]()
+
+	var operationStatusText: String {
+		let hasStatus: [ZTimerID] = [.tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
+
+		for key in timers.keys {
+			if  let id = ZTimerID(rawValue: key),
+				hasStatus.contains(id) {
+				return id.description
+			}
+		}
+
+		return ""
+	}
 
 	func setTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping (Timer) -> Void) {
 		guard let index = timerID?.rawValue else { return }
@@ -58,15 +81,15 @@ class ZTimers: NSObject {
 
 		timers[index]   = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: block)
 	}
-	
+
 	func isInvalidTimer(for timerID: ZTimerID) -> Bool {
-		var   restart = true
+		var   invalid = true
 		let     index = timerID.rawValue
 		if  let timer = timers[index] {
-			restart   = !timer.isValid
+			invalid   = !timer.isValid
 		}
 
-		return restart
+		return invalid
 	}
 
 	func assureCompletion(for timerID: ZTimerID, now: Bool = false, withTimeInterval interval: TimeInterval, restartTimer: Bool = false, block: @escaping ThrowsClosure) {
@@ -74,38 +97,42 @@ class ZTimers: NSObject {
 			if  restartTimer || self.isInvalidTimer(for: timerID) {
 				let    index = timerID.rawValue
 				var tryCatch : Closure = {}
-				var   isDone = false
+				let    start = Date()
 
-				let stopTimer: Closure = {
+				let clearTimer: Closure = {
 					self.timers[index]?.invalidate()
-
-					self.timers[index] = nil
+					self.timers[index]         = nil
 				}
 
 				let setTimer:  Closure = {
-					stopTimer()
+					clearTimer()
 
 					self.timers[index] = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { iTimer in
+						clearTimer()
 						tryCatch()
 					}
 				}
 
+				let debug: StringClosure = { prefix in
+					let interval = Date().timeIntervalSince(start)
+					let duration = Float(Int(interval) * 10) / 10.0 // round to nearest tenth of second
+
+					self.columnarReport(mode: .timers, "\(prefix) \(timerID)", "\(duration)")
+				}
+
 				tryCatch = {
-					stopTimer()
-
-					if !isDone {
-						do {
-							try block()
-
-							isDone = true
-						} catch {
-							printDebug(.timers, ". \(timerID)")
-							setTimer()
-						}
+					do {
+						try block()
+						debug("•")
+						self.signalMultiple([.eStatus]) // show change in timer status
+					} catch {
+						setTimer()
+						debug("-")
 					}
 				}
 
 				if  now {
+					clearTimer() // in case timer was already set up
 					tryCatch()
 				} else {
 					setTimer()

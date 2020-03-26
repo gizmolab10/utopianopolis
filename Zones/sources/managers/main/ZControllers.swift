@@ -21,8 +21,6 @@ enum ZControllerID: Int {
     case idSearch
 	case idCrumbs
     case idGraph
-	case idDebug
-    case idTools
 	case idNote
     case idHelp
 	case idMain
@@ -35,7 +33,6 @@ enum ZSignalKind: Int {
 	case eRing
 	case eSwap
     case eDatum
-    case eDebug
     case eError
     case eFound
 	case eGraph
@@ -44,7 +41,6 @@ enum ZSignalKind: Int {
 	case eSearch
 	case eCrumbs
 	case eStartup
-    case eDetails
     case eRelayout
     case eFavorites
 	case eLaunchDone
@@ -206,15 +202,13 @@ class ZControllers: NSObject {
 	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
 		if  let id = iID {
 			switch id {
-				case .idNote:  return .white
+				case .idNote:   return .white
 				case .idDetails,
 					 .idGraph,
-					 .idRing:  return kClearColor
-				case .idStatus,
-					 .idPreferences,
-					 .idTools,
-					 .idDebug: return gDarkishBackgroundColor
-				default:       return gBackgroundColor
+					 .idRing:   return kClearColor
+				case .idPreferences,
+					 .idStatus: return gDarkishBackgroundColor
+				default:        return gBackgroundColor
 			}
 		}
 
@@ -247,11 +241,9 @@ class ZControllers: NSObject {
 					let isPreferences = identifier == .idPreferences
 					let      isStatus = identifier == .idStatus
 					let      isCrumbs = identifier == .idCrumbs
-					let       isDebug = identifier == .idDebug
 					let       isGraph = identifier == .idGraph
 					let        isRing = identifier == .idRing
 					let        isMain = identifier == .idMain
-					let      isDetail = isPreferences || isStatus || isDebug
                 
                     let closure = {
                         signalObject.closure(object, regarding)
@@ -261,10 +253,8 @@ class ZControllers: NSObject {
 					case .eMain:        if isMain        { closure() }
 					case .eRing:        if isRing        { closure() }
                     case .eGraph:       if isGraph       { closure() }
-                    case .eDebug:       if isDebug       { closure() }
 					case .eStatus:      if isStatus      { closure() }
 					case .eCrumbs:      if isCrumbs      { closure() }
-                    case .eDetails:     if isDetail      { closure() }
                     case .ePreferences: if isPreferences { closure() }
                     default:                               closure()
                     }
