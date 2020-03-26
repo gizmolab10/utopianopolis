@@ -28,3 +28,5 @@ build
 /Zones/Zones.xcodeproj/project.xcworkspace
 /.swiftpm
 ZParagraph.swift
+/development
+/Zones/sources/managers/files/ZFiles copy.swift
