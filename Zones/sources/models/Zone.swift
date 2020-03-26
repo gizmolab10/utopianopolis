@@ -865,7 +865,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
         widget?.setNeedsDisplay()
         
-		signalMultiple([.ePreferences, .eStatus, .eCrumbs])
+		signal([.ePreferences, .eStatus, .eCrumbs])
     }
 
     override func debug(_  iMessage: String) {

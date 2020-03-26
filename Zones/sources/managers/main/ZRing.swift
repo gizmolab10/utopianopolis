@@ -225,7 +225,7 @@ class ZRing: NSObject {
 			gEssayView?.resetCurrentEssay(item)
 		}
 
-		signalMultiple([.eMain, .eCrumbs, .eRing]) // update breadcrumbs and ring
+		signal([.eMain, .eCrumbs, .eRing]) // update breadcrumbs and ring
 	}
 
     func pop() {

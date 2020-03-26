@@ -368,7 +368,7 @@ class ZGraphEditor: ZBaseEditor {
                 swapAndResumeEdit()
             }
 
-            signalMultiple([.eMain, .eGraph, .ePreferences])
+            signal([.eMain, .eGraph, .ePreferences])
         } else if !PERIOD {
             gDetailsController?.toggleViewsFor(ids: [.Preferences])
         } else if gIsEditIdeaMode {
@@ -2236,7 +2236,7 @@ class ZGraphEditor: ZBaseEditor {
     func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
 		moveUp(iMoveUp, gSelecting.sortedGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
             gControllers.signalAndSync(nil, regarding: iKind) {
-                self.signalMultiple([iKind])
+                self.signal([iKind])
             }
         }
     }

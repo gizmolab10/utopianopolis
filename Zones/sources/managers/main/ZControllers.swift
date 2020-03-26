@@ -77,7 +77,7 @@ class ZControllers: NSObject {
 				gEssayRing.fetchRingIDs()
 				gRefreshCurrentEssay()
 				gRefreshPersistentWorkMode()
-				self.signalMultiple([.eSwap, .eRing, .eCrumbs, .eRelayout, .eLaunchDone])
+				self.signal([.eSwap, .eRing, .eCrumbs, .eRelayout, .eLaunchDone])
 				self.requestFeedback()
 
 				gBatches.finishUp { iSame in
@@ -85,7 +85,7 @@ class ZControllers: NSObject {
 						gRefusesFirstResponder = false
 						gHasFinishedStartup    = true
 
-						self.signalMultiple([.eRelayout])
+						self.signal([.eRelayout])
 						gDetailsController?.toggleViewsFor(ids: [.Preferences])
 						gDetailsController?.toggleViewsFor(ids: [.Preferences])
 						gFiles.writeAll()
@@ -127,7 +127,7 @@ class ZControllers: NSObject {
 	func showSearch(_ OPTION: Bool = false) {
 		if  gDatabaseID  != .favoritesID {
 			swapModes()
-			signalMultiple([OPTION ? .eFound : .eSearch])
+			signal([OPTION ? .eFound : .eSearch])
 		}
 	}
 
@@ -148,7 +148,7 @@ class ZControllers: NSObject {
 			gFullRingIsVisible = !gFullRingIsVisible
 		}
 
-		signalMultiple([.eRing])
+		signal([.eRing])
 	}
 
 	func showEssay(forGuide: Bool) {
@@ -158,7 +158,7 @@ class ZControllers: NSObject {
 			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {
 			e.resetCurrentEssay(zone.note)
 			swapGraphAndEssay(force: .noteMode)
-			signalMultiple([.eCrumbs, .eRing])
+			signal([.eCrumbs, .eRing])
 		}
 	}
 

@@ -108,7 +108,7 @@ extension NSObject {
         }
     }
 
-	func signalMultiple(_ multiple: [ZSignalKind]) {
+	func signal(_ multiple: [ZSignalKind]) {
 		gControllers.signalFor(nil, multiple: multiple)
 	}
 

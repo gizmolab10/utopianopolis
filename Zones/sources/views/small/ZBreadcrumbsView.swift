@@ -197,7 +197,7 @@ class ZBreadcrumbsView : ZTextField {
 				}
 			}
 
-			self.signalMultiple([.eSwap, .eRelayout])
+			self.signal([.eSwap, .eRelayout])
 		}
 	}
 

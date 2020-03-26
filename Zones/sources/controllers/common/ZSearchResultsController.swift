@@ -221,7 +221,7 @@ class ZSearchResultsController: ZGenericTableController {
         } else {
             resultsAreVisible = true
 
-            signalMultiple([.eSearch])
+            signal([.eSearch])
         }
     }
 

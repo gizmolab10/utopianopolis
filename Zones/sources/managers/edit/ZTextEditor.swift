@@ -301,7 +301,7 @@ class ZTextEditor: ZTextView {
 				}
 
 				deferEditingStateChange()
-				signalMultiple([.eRelayout])
+				signal([.eRelayout])
 			}
         }
 

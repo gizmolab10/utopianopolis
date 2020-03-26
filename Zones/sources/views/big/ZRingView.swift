@@ -100,7 +100,7 @@ class ZRingView: ZView {
 	func focusOnEssay(_ note: ZNote) {
 		gEssayView?.resetCurrentEssay(note)
 		gControllers.swapGraphAndEssay(force: .noteMode)
-		signalMultiple([.eCrumbs, .eRing])
+		signal([.eCrumbs, .eRing])
 	}
 
 	func respond(to item: NSObject, CONTROL: Bool = false, COMMAND: Bool = false) -> Bool {
@@ -146,7 +146,7 @@ class ZRingView: ZView {
 			let COMMAND = flags.isCommand
 
 			if (gFullRingIsVisible && respond(to: item, CONTROL: CONTROL, COMMAND: COMMAND)) || respondToRingControl(item) { // single item
-				signalMultiple([.eRelayout])
+				signal([.eRelayout])
 
 				return true
 			} else if var subitems = item as? ZObjectsArray {	  // array of items
@@ -156,7 +156,7 @@ class ZRingView: ZView {
 
 				for subitem in subitems {
 					if  respond(to: subitem, CONTROL: CONTROL) {
-						signalMultiple([.eRelayout])
+						signal([.eRelayout])
 
 						return true
 					}
@@ -284,7 +284,7 @@ class ZRingView: ZView {
 		removeExtras()
 
 		if  okayToSignal {
-			signalMultiple([.eRing])
+			signal([.eRing])
 		} else {
 			setNeedsDisplay()
 		}

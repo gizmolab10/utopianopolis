@@ -41,8 +41,8 @@ class ZSearching: NSObject {
 		state = .sNot
 
 		gControllers.swapModes()
-        signalMultiple([.eFound])
-        signalMultiple([.eSearch])
+        signal([.eFound])
+        signal([.eSearch])
     }
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
