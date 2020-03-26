@@ -114,10 +114,12 @@ class ZTimers: NSObject {
 				}
 
 				let debug: StringClosure = { prefix in
-					let interval = Date().timeIntervalSince(start)
-					let duration = Float(Int(interval) * 10) / 10.0 // round to nearest tenth of second
+					if  prefix == "" {
+						let interval = Date().timeIntervalSince(start)
+						let duration = Float(Int(interval) * 10) / 10.0 // round to nearest tenth of second
 
-					self.columnarReport(mode: .timers, "\(prefix) \(timerID)", "\(duration)")
+						self.columnarReport(mode: .timers, "\(prefix) \(timerID)", "\(duration)")
+					}
 				}
 
 				tryCatch = {
