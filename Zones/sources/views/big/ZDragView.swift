@@ -15,6 +15,7 @@
 class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 	var drawingRubberbandRect: CGRect?
+	var showRubberband: Bool { return drawingRubberbandRect != nil && drawingRubberbandRect != .zero }
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)

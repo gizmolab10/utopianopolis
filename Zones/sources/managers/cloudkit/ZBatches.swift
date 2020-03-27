@@ -70,7 +70,7 @@ class ZBatches: ZOnboarding {
     class ZBatch: NSObject {
         var       completions : [ZBatchCompletion]
         var        identifier :  ZBatchID
-        var allowedOperations : [ZOperationID] { return gHasInternet ? operations : localOperations }
+        var allowedOperations : [ZOperationID] { return gHasInternet ? operations : localBatchOperations }
 
         var operations: [ZOperationID] {
             switch identifier {
@@ -92,11 +92,11 @@ class ZBatches: ZOnboarding {
             }
         }
 
-        var localOperations : [ZOperationID] {
+        var localBatchOperations : [ZOperationID] {
             var ids = [ZOperationID] ()
 
             for operation in operations {
-                if operation.isLocal {
+                if  operation.isLocal {
                     ids.append(operation)
                 }
             }
@@ -144,7 +144,7 @@ class ZBatches: ZOnboarding {
     var   currentDatabaseID : ZDatabaseID?
     var          totalCount :    Int { return currentBatches.count + deferredBatches.count }
 	var              isLate :   Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
-	var operationStatusText : String { return String.pluralized(gBatches.queue.operationCount, unit: "iCloud request") }
+	var          statusText : String { return currentOp.isDone ? "" : currentOp.description }
 
     // MARK:- API
     // MARK:-

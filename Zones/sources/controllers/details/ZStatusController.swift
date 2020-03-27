@@ -55,13 +55,17 @@ class ZStatusController: ZGenericController {
         return ""
     }
 
-    var operationStatusText: String {
-        let    opStatus = gBatches.operationStatusText
-		let timerStatus =  gTimers.operationStatusText
+    var statusText: String {
+        let    opStatus = gBatches.statusText
+		let timerStatus =  gTimers.statusText
 
-		return opStatus != "" ? opStatus : timerStatus != "" ? timerStatus : gCanAccessMyCloudDatabase ? "data saved" : "local data saved"
-    }	
-	
+		return opStatus != "" ? opStatus : timerStatus != "" ? timerStatus : gCanAccessMyCloudDatabase ? "all data synchronized" : "all data saved locally"
+    }
+
+	var zoneRecordNameText: String {
+		return currentZone.recordName ?? ""
+	}
+
 	var creationDateText: String {
 		var   date: Date? // currentZone.record?.modificationDate
 		var prefix = "last edited"
@@ -81,8 +85,8 @@ class ZStatusController: ZGenericController {
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		if ![.eSearch, .eFound, .eCrumbs, .eSwap, .eRing].contains(iKind) {
-			creationDateLabel?.text = creationDateText
-            cloudStatusLabel? .text = operationStatusText
+			creationDateLabel?.text = zoneRecordNameText // creationDateText
+            cloudStatusLabel? .text = statusText
             totalCountLabel?  .text = totalCountsText
             graphNameLabel?   .text = graphNameText
             versionLabel?     .text = versionText

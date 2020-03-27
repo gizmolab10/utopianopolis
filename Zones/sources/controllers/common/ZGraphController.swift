@@ -56,9 +56,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 		
 		set {
 			if  let d = dragView {
-				if  newValue == nil || newValue == .zero {
-					d.drawingRubberbandRect = .zero
+				d.drawingRubberbandRect = newValue
 
+				if  newValue == nil || newValue == .zero {
 					gSelecting.assureMinimalGrabs()
 					gSelecting.updateCurrentBrowserLevel()
 					gSelecting.updateCousinList()
@@ -75,10 +75,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 								widget.widgetZone?.addToGrab()
 							}
 						}
-					}
-
-					if  gSelecting.currentGrabs.count > 0 {
-						d.drawingRubberbandRect = newValue
 					}
 				}
 				

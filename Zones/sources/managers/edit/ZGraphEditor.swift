@@ -134,7 +134,6 @@ class ZGraphEditor: ZBaseEditor {
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
                     case "e":      editTrait(for: .tEmail)
                     case "f":      gControllers.showSearch(OPTION)
-                    case "g":      refetch(COMMAND, OPTION)
                     case "h":      editTrait(for: .tHyperlink)
                     case "l":      alterCase(up: false)
 					case "j":      gControllers.updateRingState(SPECIAL)
@@ -590,31 +589,6 @@ class ZGraphEditor: ZBaseEditor {
 
         redrawGraph()
     }
-
-
-    func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false) {
-        
-        // plain is fetch children
-        // COMMAND alone is fetch all
-        // OPTION alone or both is all progeny
-        
-        if  COMMAND && !OPTION {    // COMMAND alone
-            gBatches.refetch { iSame in
-                self.redrawGraph()
-            }
-        } else {
-            for grab in gSelecting.currentGrabs {
-                if !OPTION {    // plain
-                    grab.reallyNeedChildren()
-                } else {        // OPTION alone or both
-                    grab.reallyNeedProgeny()
-                }
-            }
-
-            redrawGraph()
-        }
-    }
-
 
     // MARK:- focus and travel
     // MARK:-

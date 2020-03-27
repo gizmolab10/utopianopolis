@@ -141,11 +141,6 @@ var gShowFavorites : Bool {
 	set { setPreferencesBool(newValue, for: kShowFavorites) }
 }
 
-var gMathewStyleUI : Bool {
-    get { return getPreferencesBool(   for: kMathewStyle, defaultBool: false) }
-    set { setPreferencesBool(newValue, for: kMathewStyle) }
-}
-
 var gHereRecordNames: String {
     get { return getPreferenceString(    for: kHereRecordIDs) { return kTutorialRecordName + kNameSeparator + kRootName }! }
     set { setPreferencesString(newValue, for: kHereRecordIDs) }
@@ -484,6 +479,14 @@ var gCurrentEssay: ZNote? {
 
 // MARK:- actions
 // MARK:-
+
+func gTemporarilySetKey(_ key: String, for seconds: Double = 1.0) {
+	gCurrentKeyPressed = key
+
+	gTimers.setTimer(for: .tKey, withTimeInterval: seconds) { iTimer in
+		gCurrentKeyPressed = nil
+	}
+}
 
 func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 1.0) {
 	gCurrentMouseDownZone = zone

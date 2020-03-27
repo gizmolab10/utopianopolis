@@ -1364,6 +1364,26 @@ extension String {
 			.replacingStrings(["%2f", "%3a", "  ", "  "], with: " ")
 	}
 
+	var unCamelcased: String {
+		guard self.count > 0 else { return self }
+
+		var newString: String = ""
+		let         uppercase = CharacterSet.uppercaseLetters
+		let             first = unicodeScalars.first!
+
+		newString.append(Character(first))
+
+		for scalar in unicodeScalars.dropFirst() {
+			if  uppercase.contains(scalar) {
+				newString.append(" ")
+			}
+			let character = Character(scalar)
+			newString.append(character)
+		}
+
+		return newString.lowercased()
+	}
+
 	func componentsSeparatedAt(level: Int) -> [String] {
 		return components(separatedBy: gSeparatorAt(level: level))
 	}

@@ -516,21 +516,16 @@ class ZoneWidget: ZView {
             let        isEditing = textWidget.isFirstResponder
             textWidget.textColor = isGrabbed ? zone.grabbedTextColor : gDefaultTextColor
 
-            if  gMathewStyleUI,
-                let color = zone.color?.cgColor {
-                addBorder(thickness: CGFloat(gLineThickness), radius: CGFloat(50.0) / CGFloat(zone.level + 1), color: color)
-            }
-
 			if  (isGrabbed || isEditing) && !gIsPrinting {
                 drawSelectionHighlight(isEditing)
             }
 
             if  zone.showingChildren {
-                if !nowDrawLines && !gIsDragging && gDragView?.drawingRubberbandRect == nil {
+                if !nowDrawLines && !gIsDragging && !(gDragView?.showRubberband ?? false) {
                     nowDrawLines = true
                     
                     draw(dirtyRect)
-                } else if !gMathewStyleUI {
+                } else {
                     for child in childrenWidgets {
                         drawLine(to: child)
                     }

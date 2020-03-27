@@ -17,13 +17,14 @@ import UIKit
 let gTimers = ZTimers()
 
 enum ZTimerID : Int {
-	case tWriteEveryone
-	case tWriteMine
 	case tRecordsEveryone
-	case tRecordsMine
-	case tMouseZone
-	case tMouseLocation
 	case tCloudAvailable
+	case tMouseLocation
+	case tWriteEveryone
+	case tRecordsMine
+	case tWriteMine
+	case tMouseZone
+	case tKey
 
 	static func recordsID(for databaseID: ZDatabaseID?) -> ZTimerID? {
 		if  let index = databaseID?.index {
@@ -47,8 +48,8 @@ enum ZTimerID : Int {
 
 	var description: String {
 		switch self {
-			case .tWriteEveryone:   return "writing local public data file"
-			case .tWriteMine:       return "writing local private data file"
+			case .tWriteEveryone:   return "writing public local data"
+			case .tWriteMine:       return "writing private local data"
 			case .tRecordsEveryone: return "acquiring public cloud data"
 			case .tRecordsMine:     return "acquiring private cloud data"
 			default:                return ""
@@ -61,7 +62,7 @@ class ZTimers: NSObject {
 
 	var timers = [Int: Timer]()
 
-	var operationStatusText: String {
+	var statusText: String {
 		let hasStatus: [ZTimerID] = [.tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
 
 		for key in timers.keys {
@@ -114,12 +115,10 @@ class ZTimers: NSObject {
 				}
 
 				let debug: StringClosure = { prefix in
-					if  prefix == "" {
-						let interval = Date().timeIntervalSince(start)
-						let duration = Float(Int(interval) * 10) / 10.0 // round to nearest tenth of second
+					let interval = Date().timeIntervalSince(start)
+					let duration = Float(Int(interval) * 10) / 10.0 // round to nearest tenth of second
 
-						self.columnarReport(mode: .timers, "\(prefix) \(timerID)", "\(duration)")
-					}
+					self.columnarReport(mode: .timers, "\(prefix) \(timerID)", "\(duration)")
 				}
 
 				tryCatch = {

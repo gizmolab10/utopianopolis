@@ -60,24 +60,26 @@ enum ZOperationID: Int {
 
     var isLocal     : Bool { return localOperations.contains(self) }
     var isDeprecated: Bool { return   deprecatedOps.contains(self) }
+	var isDone      : Bool { return         doneOps.contains(self) }
+
+	var description : String { return "\(self)".substring(fromInclusive: 1).unCamelcased }
 }
 
-
-let deprecatedOps:   [ZOperationID] = [.oParents]
-let localOperations: [ZOperationID] = [.oHere, .oRoots, .oFound, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
+let	        doneOps : [ZOperationID] = [.oNone, .oDone, .oCompletion]
+let   deprecatedOps : [ZOperationID] = [.oParents]
+let localOperations : [ZOperationID] = [.oHere, .oRoots, .oFound, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion,
+										.oMacAddress, .oFetchUserID, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
 
 class ZOperations: NSObject {
 
 	let            queue = OperationQueue()
 	var        currentOp :  ZOperationID  =  .oNone
-	let	 	 	 doneOps : [ZOperationID] = [.oNone, .oDone, .oCompletion]
 	var hiddenSpinnerOps : [ZOperationID] = [.oFetchAll, .oTraits, .oSaveToCloud]
-    var     isIncomplete :          Bool  { return !doneOps.contains(currentOp) }
-	var     shouldCancel :          Bool  { return isIncomplete && -(negativeTimeSinceOpStart ?? 0.0) > 5.0 }
+	var     shouldCancel :          Bool  { return !currentOp.isDone && -(negativeTimeSinceOpStart ?? 0.0) > 5.0 }
 	var    debugTimeText :        String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
-    var  onCloudResponse :   AnyClosure?
-	var        cloudFire : TimerClosure?
-    var      lastOpStart :       NSDate?
+    var  onCloudResponse :    AnyClosure?
+	var        cloudFire :  TimerClosure?
+    var      lastOpStart :        NSDate?
 	func printOp(_ message: String) { columnarReport(mode: .ops, operationText, message) }
 
     var operationText: String {
@@ -150,10 +152,8 @@ class ZOperations: NSObject {
         }
     }
 
-
     func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {}
     func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
-
 
     func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
         setupCloudTimer()
@@ -192,13 +192,14 @@ class ZOperations: NSObject {
                         self.reportOnCompletionOfPerformBlock()
 
                         FOREGROUND {
-                            if  self.currentOp == .oCompletion {
+							self.signal([.eStatus]) // show change in cloud status
+
+							if  self.currentOp == .oCompletion {
 
                                 // /////////////////////////////////////
                                 // done with this batch of operations //
 								// /////////////////////////////////////
 
-								self.signal([.eStatus]) // show change in cloud status
                                 onCompletion()
                             }
 
@@ -213,6 +214,7 @@ class ZOperations: NSObject {
             }
 
             add(blockOperation)
+			signal([.eStatus]) // show change in cloud status
         }
 
         queue.isSuspended = false

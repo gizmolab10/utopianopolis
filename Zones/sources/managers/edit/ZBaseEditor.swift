@@ -25,28 +25,33 @@ class ZBaseEditor: NSObject {
 	}
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {
+		var     handled = false
 		if  var     key = iKey {
 			let COMMAND = flags.isCommand
 			let  OPTION = flags.isOption
-			let SPECIAL = COMMAND && OPTION
+			let SPECIAL =  COMMAND && OPTION
+			let ONEFLAG = (COMMAND || OPTION) && !SPECIAL
 
 			if  key    != key.lowercased() {
 				key     = key.lowercased()
 			}
 
-			gCurrentKeyPressed = key
+			gTemporarilySetKey(key)
 
 			switch key {
-				case "a": if SPECIAL { gApplication.showHideAbout(); gCurrentKeyPressed = nil; return true }
-				case "h": if COMMAND { gApplication.hide(nil);       gCurrentKeyPressed = nil; return true }
-				case "o": if SPECIAL { gFiles.showInFinder();        gCurrentKeyPressed = nil; return true }
-				case "q": if COMMAND { gApplication.terminate(self); gCurrentKeyPressed = nil; return true }
-				case "t": if COMMAND { fetchTraits();                gCurrentKeyPressed = nil; return true }
-				case "x": if SPECIAL { wipeRing();                   gCurrentKeyPressed = nil; return true }
-				case "/": if SPECIAL { gControllers.showShortcuts(); gCurrentKeyPressed = nil; return true }
+				case "a": if SPECIAL { gApplication.showHideAbout(); handled = true }
+				case "g":              refetch(COMMAND, OPTION);     handled = true
+				case "h": if COMMAND { gApplication.hide(nil);       handled = true }
+				case "o": if SPECIAL { gFiles.showInFinder();        handled = true }
+				case "q": if COMMAND { gApplication.terminate(self); handled = true }
+				case "t": if ONEFLAG { fetchTraits();                handled = true }
+				case "x": if SPECIAL { wipeRing();                   handled = true }
+				case "/": if SPECIAL { gControllers.showShortcuts(); handled = true }
 				default:  break
 			}
-		};                                                           gCurrentKeyPressed = nil; return false
+		}
+
+		return handled
 	}
 
 	func handleMenuItem(_ iItem: ZMenuItem?) {
@@ -72,7 +77,32 @@ class ZBaseEditor: NSObject {
 		
 		return iEvent
 	}
-	
+
+	func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false) {
+
+		// plain is fetch children
+		// COMMAND alone is fetch all
+		// OPTION alone or both is all progeny
+
+		if  COMMAND && !OPTION {    // COMMAND alone
+			gBatches.refetch { iSame in
+				self.redrawGraph()
+			}
+		} else {
+			for grab in gSelecting.currentGrabs {
+				if !OPTION {    // plain
+					grab.reallyNeedChildren()
+				} else {        // OPTION alone or both
+					grab.reallyNeedProgeny()
+				}
+			}
+
+			gBatches.sync { iSame in
+				self.redrawGraph()
+			}
+		}
+	}
+
 	func matchesPrevious(_ iEvent: ZEvent) -> Bool {
 		#if os(OSX)
 		return iEvent == previousEvent
