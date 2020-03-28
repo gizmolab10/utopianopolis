@@ -84,14 +84,14 @@ class ZStatusController: ZGenericController {
     
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if ![.eSearch, .eFound, .eCrumbs, .eSwap, .eRing].contains(iKind) {
+		if ![.sSearch, .sFound, .sCrumbs, .sSwap, .sRing].contains(iKind) {
 			creationDateLabel?.text = zoneRecordNameText // creationDateText
             cloudStatusLabel? .text = statusText
             totalCountLabel?  .text = totalCountsText
             graphNameLabel?   .text = graphNameText
             versionLabel?     .text = versionText
 
-            if iKind != .eStartup {
+            if iKind != .sStartup {
                 levelLabel?  .text = "is at level \(currentZone.level + 1)"
             }
         }

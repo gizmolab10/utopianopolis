@@ -26,7 +26,7 @@ class ZGenericController: ZController {
         gControllers.setSignalHandler(for: self, iID: controllerID) { object, kind in
 			self.view.zlayer.backgroundColor = gControllers.backgroundColorFor(self.controllerID).cgColor
 
-			if  kind != .eError && gIsReadyToShowUI {
+			if  kind != .sError && gIsReadyToShowUI {
                 self.handleSignal(object, kind: kind)
             }
         }

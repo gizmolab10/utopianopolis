@@ -238,7 +238,7 @@ class ZGraphEditor: ZBaseEditor {
 
 			gSelecting.grab(last)
 			gSelecting.firstGrab?.asssureIsVisible()
-			gControllers.signalFor(here, regarding: .eRelayout)
+			gControllers.signalFor(here, regarding: .sRelayout)
 		}
 	}
 	
@@ -367,7 +367,7 @@ class ZGraphEditor: ZBaseEditor {
                 swapAndResumeEdit()
             }
 
-            signal([.eMain, .eGraph, .ePreferences])
+            signal([.sMain, .sGraph, .sPreferences])
         } else if !PERIOD {
             gDetailsController?.toggleViewsFor(ids: [.Preferences])
         } else if gIsEditIdeaMode {
@@ -978,7 +978,7 @@ class ZGraphEditor: ZBaseEditor {
         if !parent.isBookmark,
             parent.userCanMutateProgeny {
             addIdea(in: parent, at: gListsGrowDown ? nil : 0) { iChild in
-                gControllers.signalFor(parent, regarding: .eRelayout) {
+                gControllers.signalFor(parent, regarding: .sRelayout) {
                     iChild?.edit()
                 }
             }
@@ -1583,7 +1583,7 @@ class ZGraphEditor: ZBaseEditor {
 				invoke()
 
 				if  needReveal {
-					gControllers.signalFor(zone, regarding: .eRelayout)
+					gControllers.signalFor(zone, regarding: .sRelayout)
 				}
 
 				gFavorites.updateAllFavorites()
@@ -2222,7 +2222,7 @@ class ZGraphEditor: ZBaseEditor {
         let       isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
         
         guard let rootMost = originalGrabs.rootMost(goingUp: iMoveUp) else {
-            onCompletion?(.eData)
+            onCompletion?(.sData)
             
             return
         }
@@ -2231,7 +2231,7 @@ class ZGraphEditor: ZBaseEditor {
         
         if  isHere {
             if  rootMost.isRoot {
-                onCompletion?(.eData)
+                onCompletion?(.sData)
             } else {
 
                 // ////////////////////////
@@ -2254,7 +2254,7 @@ class ZGraphEditor: ZBaseEditor {
 					} else {
 						gFavorites.updateAllFavorites()
 
-						onCompletion?(.eRelayout)
+						onCompletion?(.sRelayout)
 					}
 				}
 			}
@@ -2304,7 +2304,7 @@ class ZGraphEditor: ZBaseEditor {
                         self.moveZones(moveThese, into: intoParent, at: newIndex, orphan: true) {
                             gSelecting.grab(moveThese)
                             intoParent.children.updateOrder()
-                            onCompletion?(.eRelayout)
+                            onCompletion?(.sRelayout)
                         }
                     }
                 }
@@ -2409,7 +2409,7 @@ class ZGraphEditor: ZBaseEditor {
                     }
                 }
                 
-                onCompletion?(.eRelayout)
+                onCompletion?(.sRelayout)
             }
         }
     }

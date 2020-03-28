@@ -64,7 +64,7 @@ extension NSObject {
     func                  note(_ iMessage: Any?)                { } // logk(iMessage) }
     func           performance(_ iMessage: Any?)                { log(iMessage) }
     func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
-    func           redrawGraph(_ onCompletion: Closure? = nil)  { gControllers.signalFor(nil, regarding: .eRelayout, onCompletion: onCompletion) }
+    func           redrawGraph(_ onCompletion: Closure? = nil)  { gControllers.signalFor(nil, regarding: .sRelayout, onCompletion: onCompletion) }
 	func     printCurrentFocus()                                { gHere.widget?.printView() }
 	func     printCurrentEssay()                                { gEssayView?.printView() }
 
@@ -113,7 +113,7 @@ extension NSObject {
 	}
 
     func redrawAndSync(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
-        gControllers.signalAndSync(zone, regarding: .eRelayout, onCompletion: onCompletion)
+        gControllers.signalAndSync(zone, regarding: .sRelayout, onCompletion: onCompletion)
     }
 
     @discardableResult func detectWithMode(_ dbID: ZDatabaseID, block: ToBooleanClosure) -> Bool {

@@ -28,12 +28,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectionRange).string }
 	var selectionRange  = NSRange()          { didSet { if selectionRange.location != 0, let rect = rectForRange(selectionRange) { selectionRect = rect } } }
 	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { imageAttachment = nil } } }
-	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { selectionRange = NSRange() } } }
+	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { selectionRange = NSRange() } else { priorAttachment = oldValue } } }
+	var priorAttachment : ZRangedAttachment?
 	var imageDragStart  : CGPoint?
 	var imageDragRect   : CGRect?
 	var imageCorner     : ZCorner?
 	var imageNote       : ZNote?            // for restoring cursor and scroll locations
-	let cornerRadius    = CGFloat(-10.0)
+	let cornerRadius    = CGFloat(-5.0)
 
 	// MARK:- input
 	// MARK:-
@@ -98,12 +99,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func handleClick(with event: ZEvent) -> Bool {
 		let            rect = rectFromEvent(event)
+		imageAttachment     = nil
 		if  let      attach = attachmentHit(at: rect) {
 			imageCorner     = cornerHit(in: attach, at: rect)
 			imageDragStart  = rect.origin
 			imageAttachment = attach
 
-			mouseDragged(with: event)
+			printDebug(.images, "clicked")
 
 			return true
 		}
@@ -219,11 +221,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	override func draw(_ dirtyRect: NSRect) {
-		if  imageDragRect == nil {
-			let path = ZBezierPath(rect: frame)
+		kClearColor.setFill()
 
-			kClearColor.setFill()
-			path.fill()
+		if  imageAttachment == nil {
+			kClearColor.setStroke()
+		} else {
+			gRubberbandColor.setStroke()
+		}
+
+		if  imageDragRect == nil {
+			let path = ZBezierPath(rect: dirtyRect)
+
+			path.fill() // erase rubberband
 		}
 
 		super.draw(dirtyRect)
@@ -233,8 +242,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			path.lineWidth = CGFloat(gLineThickness * 5.0)
 			path.flatness  = 0.0001
 
-			gRubberbandColor.setStroke()
 			path.stroke()
+		}
+
+		if  let    attach = imageAttachment ?? priorAttachment,
+			let imageRect = rectForRangedAttachment(attach) {
+			printDebug(.images, "\(imageRect)")
+			for point in imageRect.cornerPoints.values {
+				let cornerRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: cornerRadius, dy: cornerRadius)
+				let path = ZBezierPath(ovalIn: cornerRect)
+
+				path.stroke()
+			}
 		}
 	}
 
@@ -256,7 +275,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		gControllers.swapGraphAndEssay()
-		signal([.eRelayout])
+		signal([.sRelayout])
 	}
 
 	func save() {
@@ -479,7 +498,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 		}
 
-		signal([.eCrumbs])
+		signal([.sCrumbs])
 	}
 
 	private func select(restoreSelection: Int? = nil) {

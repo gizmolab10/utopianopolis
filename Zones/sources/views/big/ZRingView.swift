@@ -32,7 +32,7 @@ class ZRingView: ZView {
 		zlayer.backgroundColor = kClearColor.cgColor
 	}
 
-	func update() {
+	func updateGeometry() {
 		let     square = CGSize(width: 130.0, height: 130.0)
 		let     origin = CGPoint(x: bounds.maxX - square.width - 50.0, y: bounds.maxY - square.height - 90.0)
 		geometry  .one = CGRect(origin: origin, size: square)
@@ -93,14 +93,14 @@ class ZRingView: ZView {
 	func focusOnIdea(_ idea: Zone) {
 		gControllers.swapGraphAndEssay(force: .graphMode)
 		gFocusRing.focusOn(idea) {
-			gControllers.signalFor(idea, regarding: .eRelayout)
+			gControllers.signalFor(idea, regarding: .sRelayout)
 		}
 	}
 
 	func focusOnEssay(_ note: ZNote) {
 		gEssayView?.resetCurrentEssay(note)
 		gControllers.swapGraphAndEssay(force: .noteMode)
-		signal([.eCrumbs, .eRing])
+		signal([.sCrumbs, .sRing])
 	}
 
 	func respond(to item: NSObject, CONTROL: Bool = false, COMMAND: Bool = false) -> Bool {
@@ -146,7 +146,7 @@ class ZRingView: ZView {
 			let COMMAND = flags.isCommand
 
 			if (gFullRingIsVisible && respond(to: item, CONTROL: CONTROL, COMMAND: COMMAND)) || respondToRingControl(item) { // single item
-				signal([.eRelayout])
+				signal([.sRelayout])
 
 				return true
 			} else if var subitems = item as? ZObjectsArray {	  // array of items
@@ -156,7 +156,7 @@ class ZRingView: ZView {
 
 				for subitem in subitems {
 					if  respond(to: subitem, CONTROL: CONTROL) {
-						signal([.eRelayout])
+						signal([.sRelayout])
 
 						return true
 					}
@@ -277,16 +277,16 @@ class ZRingView: ZView {
 		}
 	}
 
-	func updateNecklace(okayToSignal: Bool = true) {
+	func updateNecklace(doNotResignal: Bool = false) {
 		addUnique(from: gFocusRing.ring)
 		addUnique(from: gEssayRing.ring)
 		removeStale()
 		removeExtras()
 
-		if  okayToSignal {
-			signal([.eRing])
-		} else {
+		if  doNotResignal {
 			setNeedsDisplay()
+		} else {
+			signal([.sRing])
 		}
 	}
 

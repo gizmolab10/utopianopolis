@@ -221,7 +221,7 @@ class ZSearchResultsController: ZGenericTableController {
         } else {
             resultsAreVisible = true
 
-            signal([.eSearch])
+            signal([.sSearch])
         }
     }
 
@@ -253,7 +253,7 @@ class ZSearchResultsController: ZGenericTableController {
 	// MARK:-
 
 	override func handleSignal(_ iObject: Any?, kind iKind: ZSignalKind) {
-		if iKind == .eFound {
+		if iKind == .sFound {
 			resultsAreVisible = false
 			
 			if  gIsSearchMode, foundRecords.count > 0 {

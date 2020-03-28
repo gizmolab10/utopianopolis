@@ -34,7 +34,7 @@ class ZPreferencesController: ZGenericController {
 
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if ![.eLaunchDone, .eStartup, .eSearch, .eFound, .eCrumbs, .eSwap, .eRing].contains(iKind) {
+		if ![.sLaunchDone, .sStartup, .sSearch, .sFound, .sCrumbs, .sSwap, .sRing].contains(iKind) {
             let                           grabbed = gSelecting.firstSortedGrab
             insertionModeControl?.selectedSegment = gListGrowthMode.rawValue
             browsingModeControl? .selectedSegment = gBrowsingMode.rawValue
@@ -83,7 +83,7 @@ class ZPreferencesController: ZGenericController {
 				default:             break
 			}
 
-            gControllers.signalAndSync(nil, regarding: .eRelayout) {}
+            gControllers.signalAndSync(nil, regarding: .sRelayout) {}
         }
     }
 
@@ -94,12 +94,12 @@ class ZPreferencesController: ZGenericController {
                 UNDO(self) { iUndoSelf in
                     grab.color = color
                     
-                    gControllers.signalAndSync(grab, regarding: .eRelayout) {}
+                    gControllers.signalAndSync(grab, regarding: .sRelayout) {}
                 }
             }
             
             grab.clearColor()
-            gControllers.signalAndSync(grab, regarding: .eRelayout) {}
+            gControllers.signalAndSync(grab, regarding: .sRelayout) {}
         }
     }
 
@@ -108,9 +108,9 @@ class ZPreferencesController: ZGenericController {
         let          selection = iControl.selectedSegment
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
 			switch (identifier) {
-				case "counts":    gCountsMode    = ZCountsMode   (rawValue: selection)!; redrawGraph()
-				case "browsing":  gBrowsingMode  = ZBrowsingMode (rawValue: selection)!; signal([.eMain, .eGraph])
-				case "direction": gListGrowthMode = ZListGrowthMode(rawValue: selection)!; signal([.eMain, .eGraph])
+				case "counts":    gCountsMode     = ZCountsMode    (rawValue: selection)!; redrawGraph()
+				case "browsing":  gBrowsingMode   = ZBrowsingMode  (rawValue: selection)!; signal([.sMain, .sGraph])
+				case "direction": gListGrowthMode = ZListGrowthMode(rawValue: selection)!; signal([.sMain, .sGraph])
 				default: break
 			}
         }

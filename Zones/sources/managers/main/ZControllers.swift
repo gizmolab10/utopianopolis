@@ -28,24 +28,24 @@ enum ZControllerID: Int {
 }
 
 enum ZSignalKind: Int {
-    case eData
-    case eMain
-	case eRing
-	case eSwap
-    case eDatum
-    case eError
-    case eFound
-	case eGraph
-	case eStatus
-	case eResize
-	case eSearch
-	case eCrumbs
-	case eStartup
-    case eRelayout
-    case eFavorites
-	case eLaunchDone
-    case eAppearance
-    case ePreferences
+    case sData
+    case sMain
+	case sRing
+	case sSwap
+    case sDatum
+    case sError
+    case sFound
+	case sGraph
+	case sStatus
+	case sResize
+	case sSearch
+	case sCrumbs
+	case sStartup
+    case sRelayout
+    case sFavorites
+	case sLaunchDone
+    case sAppearance
+    case sPreferences
 }
 
 let gControllers = ZControllers()
@@ -77,7 +77,7 @@ class ZControllers: NSObject {
 				gEssayRing.fetchRingIDs()
 				gRefreshCurrentEssay()
 				gRefreshPersistentWorkMode()
-				self.signal([.eSwap, .eRing, .eCrumbs, .eRelayout, .eLaunchDone])
+				self.signal([.sSwap, .sRing, .sCrumbs, .sRelayout, .sLaunchDone])
 				self.requestFeedback()
 
 				gBatches.finishUp { iSame in
@@ -85,7 +85,7 @@ class ZControllers: NSObject {
 						gRefusesFirstResponder = false
 						gHasFinishedStartup    = true
 
-						self.signal([.eRelayout])
+						self.signal([.sRelayout])
 						gDetailsController?.toggleViewsFor(ids: [.Preferences])
 						gDetailsController?.toggleViewsFor(ids: [.Preferences])
 						gFiles.writeAll()
@@ -127,7 +127,7 @@ class ZControllers: NSObject {
 	func showSearch(_ OPTION: Bool = false) {
 		if  gDatabaseID  != .favoritesID {
 			swapModes()
-			signal([OPTION ? .eFound : .eSearch])
+			signal([OPTION ? .sFound : .sSearch])
 		}
 	}
 
@@ -148,7 +148,7 @@ class ZControllers: NSObject {
 			gFullRingIsVisible = !gFullRingIsVisible
 		}
 
-		signal([.eRing])
+		signal([.sRing])
 	}
 
 	func showEssay(forGuide: Bool) {
@@ -158,7 +158,7 @@ class ZControllers: NSObject {
 			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {
 			e.resetCurrentEssay(zone.note)
 			swapGraphAndEssay(force: .noteMode)
-			signal([.eCrumbs, .eRing])
+			signal([.sCrumbs, .sRing])
 		}
 	}
 
@@ -168,7 +168,7 @@ class ZControllers: NSObject {
 		if  newMode != gWorkMode {
 			gWorkMode 					= newMode
 			let showNote 			    = newMode == .noteMode
-			let multiple: [ZSignalKind] = [.eSwap, (showNote ? .eCrumbs : .eRelayout)]
+			let multiple: [ZSignalKind] = [.sSwap, (showNote ? .sCrumbs : .sRelayout)]
 
 			FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking graph editor's handle key)
 				gTextEditor.stopCurrentEdit()
@@ -250,12 +250,12 @@ class ZControllers: NSObject {
                     }
                     
                     switch regarding {
-					case .eMain:        if isMain        { closure() }
-					case .eRing:        if isRing        { closure() }
-                    case .eGraph:       if isGraph       { closure() }
-					case .eStatus:      if isStatus      { closure() }
-					case .eCrumbs:      if isCrumbs      { closure() }
-                    case .ePreferences: if isPreferences { closure() }
+					case .sMain:        if isMain        { closure() }
+					case .sRing:        if isRing        { closure() }
+                    case .sGraph:       if isGraph       { closure() }
+					case .sStatus:      if isStatus      { closure() }
+					case .sCrumbs:      if isCrumbs      { closure() }
+                    case .sPreferences: if isPreferences { closure() }
                     default:                               closure()
                     }
                 }

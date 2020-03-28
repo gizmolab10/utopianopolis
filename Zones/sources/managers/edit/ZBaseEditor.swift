@@ -125,7 +125,7 @@ class ZBaseEditor: NSObject {
 
 	func fetchTraits() {
 		gBatches.allTraits { flag in
-			self.signal([.eRelayout])
+			self.signal([.sRelayout])
 		}
 	}
 

@@ -126,7 +126,7 @@ class ZOperations: NSObject {
                     }
                     
                     if  self.cloudStatusChanged() {
-                        self.signal([.eStatus]) // show change in cloud status
+                        self.signal([.sStatus]) // show change in cloud status
 
                         // //////////////////////////////////////////////
                         // assure that we can perform cloud operations //
@@ -192,7 +192,7 @@ class ZOperations: NSObject {
                         self.reportOnCompletionOfPerformBlock()
 
                         FOREGROUND {
-							self.signal([.eStatus]) // show change in cloud status
+							self.signal([.sStatus]) // show change in cloud status
 
 							if  self.currentOp == .oCompletion {
 
@@ -214,7 +214,7 @@ class ZOperations: NSObject {
             }
 
             add(blockOperation)
-			signal([.eStatus]) // show change in cloud status
+			signal([.sStatus]) // show change in cloud status
         }
 
         queue.isSuspended = false

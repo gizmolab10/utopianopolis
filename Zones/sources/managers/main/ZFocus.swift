@@ -239,7 +239,7 @@ class ZFocus: ZRing {
 
 				gShowFavorites = targetDBID == .favoritesID
 
-				complete(target, .eRelayout)
+				complete(target, .sRelayout)
 			} else {
 				dump()
 
@@ -257,7 +257,7 @@ class ZFocus: ZRing {
 							gHere  = target
 
 							gHere.prepareForArrival()
-							complete(gHere, .eRelayout)
+							complete(gHere, .sRelayout)
 						}
 					} else {
 						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
@@ -267,10 +267,10 @@ class ZFocus: ZRing {
 
 								newHere.prepareForArrival()
 								self.focus {
-									complete(newHere, .eRelayout)
+									complete(newHere, .sRelayout)
 								}
 							} else {
-								complete(gHere, .eRelayout)
+								complete(gHere, .sRelayout)
 							}
 						}
 					}
@@ -292,12 +292,12 @@ class ZFocus: ZRing {
 						gHere = here
 
 						grabbed?.grab()
-						complete(here, .eRelayout)
+						complete(here, .sRelayout)
 					}
 					
 					let grabHere = {
 						gHereMaybe?.prepareForArrival()
-						complete(gHereMaybe, .eRelayout)
+						complete(gHereMaybe, .sRelayout)
 					}
 					
 					if  there != nil {

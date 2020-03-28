@@ -36,10 +36,10 @@ class ZMainController: ZGenericController {
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
         switch iKind {
-			case .eFound:
+			case .sFound:
 				searchBoxView?        .isHidden = hideSearch
 				searchResultsView?    .isHidden = hideResults
-			case .eSearch:
+			case .sSearch:
 				searchBoxView?        .isHidden = hideSearch
 
 				if  hideSearch {
@@ -47,7 +47,7 @@ class ZMainController: ZGenericController {
 
 					assignAsFirstResponder(nil)
 				}
-			case .eSwap:
+			case .sSwap:
 				if  let 	   			 vEssay = essayView,
 					let                  vGraph = graphView {
 					vEssay  		  .isHidden =  hideEssay

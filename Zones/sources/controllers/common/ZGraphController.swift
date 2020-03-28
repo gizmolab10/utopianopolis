@@ -204,14 +204,14 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             specificWidget       = widget
             specificIndex        = zone.siblingIndex
             specificView         = specificWidget?.superview
-            recursing            = [.eData, .eRelayout].contains(iKind)
+            recursing            = [.sData, .sRelayout].contains(iKind)
         }
 
         specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isThought: inPublicGraph, visited: [])
     }
     
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-        if  [.eDatum, .eData, .eRelayout].contains(iKind) { // ignore for preferences, search, information, startup
+        if  [.sDatum, .sData, .sRelayout].contains(iKind) { // ignore for preferences, search, information, startup
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
 			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: true)
@@ -223,7 +223,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     }
 	
 	func prepare(for iKind: ZSignalKind) {
-		if  iKind == .eRelayout {
+		if  iKind == .sRelayout {
 			gWidgets.clearRegistry()
 		}
 		
@@ -268,7 +268,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 rubberbandRect = nil
 
 				restartGestureRecognition()
-				signal([.eDatum]) // so color well and indicators get updated
+				signal([.sDatum]) // so color well and indicators get updated
             } else if let dot = detectDot(iGesture) {
                 if  !dot.isReveal {
                     dragStartEvent(dot, iGesture)
@@ -293,7 +293,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			let     OPTION = gesture.isOptionDown
 			let      SHIFT = gesture.isShiftDown
             let editWidget = gCurrentlyEditingWidget
-            var  regarding = ZSignalKind.eDatum
+            var  regarding = ZSignalKind.sDatum
 			let    inCrumb = gBreadcrumbsLabel != nil && gBreadcrumbsLabel!.hitCrumb(gesture.location(in: nil)) != nil
             var withinEdit = false
 
@@ -326,7 +326,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 							if  dot.isReveal {
 								gGraphEditor.clickActionOnRevealDot(for: zone, COMMAND: COMMAND, OPTION: OPTION)
 							} else {
-								regarding = .eStatus // update selection level
+								regarding = .sStatus // update selection level
 
 								zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
 							}
@@ -389,7 +389,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             cleanupAfterDrag()
             
             if  isDoneGesture(iGesture) {
-				signal([.ePreferences, .eCrumbs]) // so color well gets updated
+				signal([.sPreferences, .sCrumbs]) // so color well gets updated
                 restartGestureRecognition()
             }
         }

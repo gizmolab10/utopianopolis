@@ -301,7 +301,6 @@ class ZTextEditor: ZTextView {
 				}
 
 				deferEditingStateChange()
-				signal([.eRelayout])
 			}
         }
 
@@ -347,7 +346,7 @@ class ZTextEditor: ZTextView {
             fullResign()
             e.updateWidgetsForEndEdit()
             e.packedZone?.grab()
-			gControllers.signalFor(nil, regarding: .eCrumbs)
+			gControllers.signalFor(nil, regarding: .sCrumbs)
         }
     }
 

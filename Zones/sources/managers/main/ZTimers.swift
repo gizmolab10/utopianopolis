@@ -125,7 +125,7 @@ class ZTimers: NSObject {
 					do {
 						try block()
 						debug("•")
-						self.signal([.eStatus]) // show change in timer status
+//						self.signal([.sStatus]) // show change in timer status
 					} catch {
 						setTimer()
 						debug("-")

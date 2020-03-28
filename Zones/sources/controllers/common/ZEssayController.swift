@@ -29,7 +29,7 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if gIsNoteMode {
+		if  gIsNoteMode && iKind != .sRelayout {
 			essayView?.updateText()
 		}
 	}

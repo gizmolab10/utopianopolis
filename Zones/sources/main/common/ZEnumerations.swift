@@ -287,7 +287,7 @@ enum ZSpecialsMenuType: String {
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = [.ops]
+var gDebugMode: [ZDebugMode] = [.images]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
