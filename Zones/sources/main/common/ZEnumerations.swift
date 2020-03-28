@@ -199,7 +199,11 @@ enum ZInterruptionError : Error {
 	case userInterrupted
 }
 
-enum ZCorner : Int {
+enum ZDirection : Int {
+	case top
+	case left
+	case right
+	case bottom
 	case topLeft
 	case topRight
 	case bottomLeft

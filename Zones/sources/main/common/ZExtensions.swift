@@ -612,9 +612,12 @@ extension CGSize {
 
 extension CGRect {
 
-	var      extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
-	var    topRight: CGPoint { return CGPoint(x: maxX, y: minY) }
-	var  bottomLeft: CGPoint { return CGPoint(x: minX, y: maxY) }
+	var       extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var     topRight: CGPoint { return CGPoint(x: maxX, y: minY) }
+	var    topCenter: CGPoint { return CGPoint(x: midX, y: minY) }
+	var   bottomLeft: CGPoint { return CGPoint(x: minX, y: maxY) }
+	var  rightCenter: CGPoint { return CGPoint(x: maxX, y: midY) }
+	var bottomCenter: CGPoint { return CGPoint(x: midX, y: maxY) }
 
 	var leftCenter: CGPoint {
 		get { return CGPoint(x: minX, y: midY) }
@@ -632,13 +635,22 @@ extension CGRect {
 		}
 	}
 
-	var cornerPoints: [ZCorner : CGPoint] {
-		var  result = [ZCorner : CGPoint]()
-
+	var cornerPoints: [ZDirection : CGPoint] {
+		var           result = [ZDirection : CGPoint]()
 		result[.topLeft]     = origin
 		result[.topRight]    = topRight
 		result[.bottomLeft]  = bottomLeft
 		result[.bottomRight] = extent
+
+		return result
+	}
+
+	var selectionPoints: [ZDirection : CGPoint] {
+		var           result = cornerPoints
+		result[.top]         = topCenter
+		result[.left]        = leftCenter
+		result[.right]       = rightCenter
+		result[.bottom]      = bottomCenter
 
 		return result
 	}

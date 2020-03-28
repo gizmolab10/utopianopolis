@@ -30,9 +30,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { imageAttachment = nil } } }
 	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { selectionRange = NSRange() } else { priorAttachment = oldValue } } }
 	var priorAttachment : ZRangedAttachment?
-	var imageDragStart  : CGPoint?
-	var imageDragRect   : CGRect?
-	var imageCorner     : ZCorner?
+	var resizeDragStart : CGPoint?
+	var resizeDragRect  : CGRect?
+	var resizeDirection : ZDirection?
 	var imageNote       : ZNote?            // for restoring cursor and scroll locations
 	let cornerRadius    = CGFloat(-5.0)
 
@@ -101,8 +101,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let            rect = rectFromEvent(event)
 		imageAttachment     = nil
 		if  let      attach = attachmentHit(at: rect) {
-			imageCorner     = cornerHit(in: attach, at: rect)
-			imageDragStart  = rect.origin
+			resizeDirection = directionHit(in: attach, at: rect)
+			resizeDragStart = rect.origin
 			imageAttachment = attach
 
 			printDebug(.images, "clicked")
@@ -127,7 +127,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			NSCursor.openHand.set()
 
-			for point in imageRect.cornerPoints.values {
+			for point in imageRect.selectionPoints.values {
 				let cornerRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: cornerRadius, dy: cornerRadius)
 
 				if  cornerRect.intersects(rect) {
@@ -141,14 +141,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	func clearDrag() {
-		imageDragStart = nil
-		imageDragRect  = nil
-		imageCorner    = nil
+		resizeDragRect  = nil
+		resizeDragStart = nil
+		resizeDirection = nil
 	}
 
 	override func mouseDragged(with event: ZEvent) {
-		if  imageCorner != nil,
-			let    start = imageDragStart {
+		if  resizeDirection != nil,
+			let    start = resizeDragStart {
 			let    delta = rectFromEvent(event).origin - start
 
 			updateDragRect(for: delta)
@@ -157,7 +157,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	override func mouseUp(with event: ZEvent) {
-		if  imageCorner != nil {
+		if  resizeDirection != nil {
 			updateImage()
 
 			if  let attach = imageAttachment {
@@ -173,7 +173,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func updateImage() {
-		if  let    size  = imageDragRect?.size,
+		if  let    size  = resizeDragRect?.size,
 			let       a  = imageAttachment?.attachment,
 			let   image  = a.image {
 			let oldSize  = image.size
@@ -188,32 +188,36 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		// compute imageDragRect from delta.width, image rect and corner
 		// preserving aspect ratio
 
-		if  let   corner = imageCorner,
-			let   attach = imageAttachment,
-			let     rect = rectForRangedAttachment(attach) {
-			var     size = rect.size
-			var   origin = rect.origin
-			let fraction = size.fraction(delta)
-			let   growth = 1.0 - fraction.width
-			let    wGrow = size.width  * growth
-			let    hGrow = size.height * growth
+		if  let direction = resizeDirection,
+			let    attach = imageAttachment,
+			let      rect = rectForRangedAttachment(attach) {
+			var      size = rect.size
+			var    origin = rect.origin
+			let  fraction = size.fraction(delta)
+			let     wGrow = size.width  * (1.0 - fraction.width)
+			let     hGrow = size.height * (1.0 - fraction.height)
 
-			switch corner {
-				case .topLeft,
-					 .bottomLeft:  size = size.offsetBy(-wGrow, -hGrow)
-				case .topRight,
-					 .bottomRight: size = size.offsetBy( wGrow,  hGrow)
+			switch direction {
+				case .topLeft:     size   = size  .offsetBy(-wGrow, -hGrow)
+				case .bottomLeft:  size   = size  .offsetBy(-wGrow,  hGrow)
+				case .topRight:    size   = size  .offsetBy( wGrow, -hGrow)
+				case .bottomRight: size   = size  .offsetBy( wGrow,  hGrow)
+				case .left:        size   = size  .offsetBy(-wGrow,  0.0)
+				case .right:       size   = size  .offsetBy( wGrow,  0.0)
+				case .top:         size   = size  .offsetBy( 0.0,   -hGrow)
+				case .bottom:      size   = size  .offsetBy( 0.0,    hGrow)
 			}
 
-			switch corner {
+			switch direction {
 				case .topLeft:     origin = origin.offsetBy( wGrow,  hGrow)
-				case .topRight:    origin = origin.offsetBy( 0.0,   -hGrow)
-				case .bottomLeft:  origin = origin.offsetBy( wGrow,  0.0)
+				case .top,
+					 .topRight:    origin = origin.offsetBy( 0.0,    hGrow)
+				case .left,
+					 .bottomLeft:  origin = origin.offsetBy( wGrow,  0.0)
 				default:           break
 			}
 
-			let imageRect = CGRect(origin: origin, size: size)
-			imageDragRect = imageRect
+			resizeDragRect = CGRect(origin: origin, size: size)
 		}
 	}
 
@@ -229,7 +233,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gRubberbandColor.setStroke()
 		}
 
-		if  imageDragRect == nil {
+		if  resizeDragRect == nil {
 			let path = ZBezierPath(rect: dirtyRect)
 
 			path.fill() // erase rubberband
@@ -237,7 +241,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		super.draw(dirtyRect)
 
-		if  let       rect = imageDragRect {
+		if  let       rect = resizeDragRect {
 			let       path = ZBezierPath(rect: rect)
 			path.lineWidth = CGFloat(gLineThickness * 5.0)
 			path.flatness  = 0.0001
@@ -248,7 +252,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let    attach = imageAttachment ?? priorAttachment,
 			let imageRect = rectForRangedAttachment(attach) {
 			printDebug(.images, "\(imageRect)")
-			for point in imageRect.cornerPoints.values {
+			for point in imageRect.selectionPoints.values {
 				let cornerRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: cornerRadius, dy: cornerRadius)
 				let path = ZBezierPath(ovalIn: cornerRect)
 
@@ -382,17 +386,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return nil
 	}
 
-	func cornerHit(in attach: ZRangedAttachment?, at rect: CGRect) -> ZCorner? {
-		if  let         item = attach,
-			let    imageRect = rectForRangedAttachment(item) {
-			let cornerPoints = imageRect.cornerPoints
+	func directionHit(in attach: ZRangedAttachment?, at rect: CGRect) -> ZDirection? {
+		if  let      item = attach,
+			let imageRect = rectForRangedAttachment(item) {
+			let    points = imageRect.selectionPoints
 
-			for corner in cornerPoints.keys {
-				if  let point = cornerPoints[corner] {
-					let cornerRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: cornerRadius, dy: cornerRadius)
+			for direction in points.keys {
+				if  let point = points[direction] {
+					let selectionRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: cornerRadius, dy: cornerRadius)
 
-					if  cornerRect.intersects(rect) {
-						return corner
+					if  selectionRect.intersects(rect) {
+						return direction
 					}
 				}
 			}
