@@ -33,8 +33,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var resizeDragStart : CGPoint?
 	var resizeDragRect  : CGRect?
 	var resizeDot       : ZDirection?
-	var imageNote       : ZNote?            // for restoring cursor and scroll locations
-	let dotRadius    = CGFloat(-5.0)
+	var imageNote       : ZNote?             // for restoring cursor and scroll locations
+	let dotRadius       = CGFloat(-5.0)
 
 	// MARK:- input
 	// MARK:-
@@ -94,8 +94,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  !(gRingView?.handleClick(in: rect, flags: flags) ?? false) &&
 			!handleClick   (with: event) {
 			super.mouseDown(with: event)
-
-			printDebug(.images, "unclicked")
 		}
 	}
 
@@ -105,8 +103,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			resizeDot       = resizeDotHit(in: attach, at: rect)
 			resizeDragStart = rect.origin
 			imageAttachment = attach
-
-			printDebug(.images, "clicked")
 
 			return resizeDot != nil // true means do not further process this event
 		}
@@ -162,21 +158,20 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	override func mouseUp(with event: ZEvent) {
-		if  resizeDot != nil {
-			updateImage()
+		if  resizeDot != nil,
+			updateImage(),
+			let attach = imageAttachment {
+			let  range = attach.range
 
-			if  let attach = imageAttachment {
-				let  range = attach.range
-
-				save()
-				setNeedsLayout()
-				setNeedsDisplay()
-				updateText(restoreSelection: range.location)
-			}
+			save()
+			clearResizing()
+			setNeedsLayout()
+			setNeedsDisplay()
+			updateText(restoreSelection: range.location)
 		}
 	}
 
-	func updateImage() {
+	func updateImage() -> Bool {
 		if  let    size  = resizeDragRect?.size,
 			let       a  = imageAttachment?.attachment,
 			let   image  = a.image {
@@ -184,9 +179,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  oldSize != size {
 				a.image  = image.resizedTo(size)
 
-				clearResizing()
+				return true
 			}
 		}
+
+		return false
 	}
 
 	func updateDragRect(for delta: CGSize) {
@@ -246,7 +243,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else {
 			kClearColor     .setStroke()
 			kClearColor     .setFill()
-//			printDebug(.images, "erased")
 		}
 
 		if  let       rect = resizeDragRect {
@@ -260,7 +256,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			drawDots(in: rect)
 		} else if let attach = imageAttachment ?? eraseAttachment,
 			let         rect = rectForRangedAttachment(attach) {
-//			printDebug(.images, "\(rect)")
 			drawDots(in: rect)
 		}
 	}
@@ -777,25 +772,22 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let parts = link.components(separatedBy: kNameSeparator)
 
 			if  parts.count > 1,
-				let    t = parts.first?.first, // first character of first part
+				let    t = parts.first?.first,                          // first character of first part
 				let  rID = parts.last,
 				let type = ZHyperlinkMenuType(rawValue: String(t)) {
-				let zone = gSelecting.zone(with: rID)	// find zone with rID
+				let zone = gSelecting.zone(with: rID)	                // find zone with rID
 				switch type {
 					case .hIdea:
-						if  let   grab = zone {
-							let common = gNoteAndEssay.essayZone?.closestCommonParent(of: grab)
+						if  let  grab = zone {
+							gHere     = grab
+							let eZone = gNoteAndEssay.essayZone
 
-							if  let  c = common {
-								gHere  = c
-							}
-
-							grab                      .grab()												// focus on zone with rID
-							grab                      .asssureIsVisible()
-							gNoteAndEssay.essayZone?.asssureIsVisible()
+							grab  .grab()			                    // focus on zone with rID
+							grab  .asssureIsVisible()
+							eZone?.asssureIsVisible()
 
 							FOREGROUND {
-								gControllers.swapGraphAndEssay()
+								gControllers.swapGraphAndEssay(force: .graphMode)
 								self.redrawGraph()
 							}
 

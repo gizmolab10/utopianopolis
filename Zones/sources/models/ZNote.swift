@@ -68,12 +68,11 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let     string = attributed.string
 			let       text = attributed.attributedSubstring(from: textRange)
 			let      title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
-			note .noteText = text.mutableCopy() as? NSMutableAttributedString
+			note .noteText = text.mutableCopy() as? NSMutableAttributedString // invokes note.needSave()
 			zone?.zoneName = title
-			autoDelete      = false
+			autoDelete     = false
 
 			zone?.needSave()
-			note.needSave()
 		}
 	}
 

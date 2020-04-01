@@ -469,19 +469,28 @@ extension NSView {
 
         return min(wScale, hScale)
     }
-    
 
-    func printView() {
-        let    printInfo = NSPrintInfo.shared
-        let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
-        let      isWider = bounds.size.width > bounds.size.height
-        let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
-        
-        PMSetScale(pmPageFormat, scale)
+	func printView() {
+		var view: NSView = self
+		var       vScale = scale
+		let      isWider = view.bounds.size.width > view.bounds.size.height
+		let    printInfo = NSPrintInfo.shared
+		var  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
+		let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
+		if  let    tView = view as? NSTextView {
+			let    nView = NSTextView(frame: tView.frame)
+			orientation  = PMOrientation(kPMPortrait)
+			view         = nView
+			vScale       = 72.0
+
+			nView.insertText(tView.textStorage as Any, replacementRange: NSRange())
+		}
+
+        PMSetScale(pmPageFormat, vScale)
         PMSetOrientation(pmPageFormat, orientation, false)
         printInfo.updateFromPMPrintSettings()
         printInfo.updateFromPMPageFormat()
-        NSPrintOperation(view: self, printInfo: printInfo).run()
+        NSPrintOperation(view: view, printInfo: printInfo).run()
     }
         
 }

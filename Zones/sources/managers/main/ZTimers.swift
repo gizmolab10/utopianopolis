@@ -100,32 +100,32 @@ class ZTimers: NSObject {
 				var tryCatch : Closure = {}
 				let    start = Date()
 
-				let clearTimer: Closure = {
-					self.timers[index]?.invalidate()
-					self.timers[index]         = nil
+				let clearTimer: Closure = { [weak self] in
+					self?.timers[index]?.invalidate()
+					self?.timers[index]         = nil
 				}
 
-				let setTimer:  Closure = {
+				let setTimer:  Closure = { [weak self] in
 					clearTimer()
 
-					self.timers[index] = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { iTimer in
+					self?.timers[index] = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { iTimer in
 						clearTimer()
 						tryCatch()
 					}
 				}
 
-				let debug: StringClosure = { prefix in
+				let debug: StringClosure = { [weak self] prefix in
 					let interval = Date().timeIntervalSince(start)
 					let duration = Float(Int(interval) * 10) / 10.0 // round to nearest tenth of second
 
-					self.columnarReport(mode: .timers, "\(prefix) \(timerID)", "\(duration)")
+					self?.columnarReport(mode: .timers, "\(prefix) \(timerID)", "\(duration)")
 				}
 
-				tryCatch = {
+				tryCatch = { [weak self] in
 					do {
 						try block()
 						debug("•")
-//						self.signal([.sStatus]) // show change in timer status
+						self?.signal([.sStatus]) // show change in timer status
 					} catch {
 						setTimer()
 						debug("-")

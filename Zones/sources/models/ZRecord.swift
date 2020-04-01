@@ -477,24 +477,34 @@ class ZRecord: NSObject {
 				if  let link = object as? String, !isValid(link) {
 					return nil
 				}
-			case .asset:
-				if  let    asset = object as? CKAsset,
-					let   base64 = asset.data?.base64EncodedString() {
-					let fileName = asset.fileURL.lastPathComponent
+			case .assets:
+				if  let  assets = object as? [CKAsset] {
+					var strings = [String]()
 
-					return (fileName + gSeparatorAt(level: 1) + base64) as NSObject?
-				} else {
-					return nil
-			}
+					for asset in assets {
+						if  let base64 = asset.data?.base64EncodedString() {
+							let fileName = asset.fileURL.lastPathComponent
+
+							strings.append(fileName + gSeparatorAt(level: 1) + base64)
+						}
+					}
+
+					if  strings.count != 0 {
+						let string = strings.joined(separator: gSeparatorAt(level: 2))
+
+						return string as NSObject
+					}
+				}
+
+				return nil
+
 			default: break
 		}
 
         return object
     }
 
-
     let kNeedsSeparator = ","
-
 
     func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {
         if  let       r = record,
@@ -582,15 +592,26 @@ class ZRecord: NSObject {
 							if  let      interval = object as? Double {
 								writtenModifyDate = Date(timeIntervalSince1970: interval)
 							}
-						case .asset:
-							if  let      parts = (object as? String)?.componentsSeparatedAt(level: 1), parts.count > 1 {
-								let   fileName = parts[0]
-								let     base64 = parts[1]
-								if  let   data = Data(base64Encoded: base64),
-									let  asset = data.asset(fileName) {
-									ckRecord[keyPath] = asset
+						case .assets:
+							if  let      assetStrings = (object as? String)?.componentsSeparatedAt(level: 2), assetStrings.count > 0 {
+								var            assets = [CKAsset]()
+								for assetString in assetStrings {
+									let         parts = assetString.componentsSeparatedAt(level: 1)
+									if  parts.count   > 1 {
+										let  fileName = parts[0]
+										let    base64 = parts[1]
+										if  let  data = Data(base64Encoded: base64),
+											let asset = data.asset(fileName) {
+											assets.append(asset)
+										}
+									}
+								}
+
+								if  assets.count > 0 {
+									ckRecord[keyPath] = assets
 								}
 							}
+
 						default:
 							ckRecord[keyPath] = value
 					}

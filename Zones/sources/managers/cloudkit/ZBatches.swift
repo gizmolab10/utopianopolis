@@ -144,7 +144,8 @@ class ZBatches: ZOnboarding {
     var   currentDatabaseID : ZDatabaseID?
     var          totalCount :    Int { return currentBatches.count + deferredBatches.count }
 	var              isLate :   Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
-	var          statusText : String { return currentOp.isDone ? "" : currentOp.description }
+	var          statusText : String { return currentOp.isDone ? "" : currentOp.description + remainingOpsText }
+	var    remainingOpsText : String { let count = queue.operationCount; return count == 0 ? "" : " + \(count)" }
 
     // MARK:- API
     // MARK:-
