@@ -156,6 +156,22 @@ var gUserRecordID: String? {    // persist for file read on launch
     set { setPreferencesString(newValue, for: kUserRecordID) }
 }
 
+var gUserRecord: CKRecord? {    // persist for file read on launch
+	get {
+		if  let  recordName = gUserRecordID,
+			let    storable = getPreferenceString(for: kUserRecord) {
+			let      record = CKRecord(recordType: kUserType, recordID: CKRecord.ID(recordName: recordName))
+			record.storable = storable
+
+			return record
+		}
+
+		return nil
+	}
+
+	set { setPreferencesString(newValue?.storable, for: kUserRecord) }
+}
+
 var gEmailTypesSent: String {
     get {
         let pref = getPreferenceString(for: kEmailTypesSent) ?? ""

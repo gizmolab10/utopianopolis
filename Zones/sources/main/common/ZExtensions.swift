@@ -383,6 +383,37 @@ extension CKRecord {
 
     var reference: CKRecord.Reference { return CKRecord.Reference(recordID: recordID, action: .none) }
 
+	var storable: String {
+		get {
+			var pairs = [String]()
+			let  keys = allKeys()
+
+			for key in keys {
+				if  let value = self[key] {
+					let pair = "\(key)\(gSeparatorAt(level: 2))\(value)"
+
+					pairs.append(pair)
+				}
+			}
+
+			return pairs.joined(separator: gSeparatorAt(level: 1))
+		}
+
+		set {
+			let pairs = newValue.componentsSeparatedAt(level: 1)
+
+			for pair in pairs {
+				let parts = pair.componentsSeparatedAt(level: 2)
+
+				if  parts.count > 1 {
+					let   key = parts[0]
+					let value = parts[1]
+					self[key] = value
+				}
+			}
+		}
+	}
+
     var isEmpty: Bool {
         for key in [kpZoneName, kpParent, kpZoneParentLink] {
             if  self[key] != nil {

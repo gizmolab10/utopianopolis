@@ -6,7 +6,6 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
 
@@ -16,24 +15,19 @@ import CloudKit
     import UIKit
 #endif
 
-
 var gCanAccessMyCloudDatabase : Bool { return gCloudAccountStatus == .active }
 var gCloudAccountStatus       = ZCloudAccountStatus.begin
 var recentCloudAccountStatus  = gCloudAccountStatus
 var gHasInternet              = true
 
-
 class ZOnboarding : ZOperations {
-
 
     var           user : ZUser?
     var isMasterAuthor : Bool { return user?.access == .eMaster || macAddress == "f0:18:98:eb:68:b2" || macAddress == "f4:0f:24:1f:1a:6a"}
     var     macAddress : String?
 
-
     // MARK:- internals
     // MARK:-
-
 
     @objc func completeOnboarding(_ notification: Notification) {
         FOREGROUND(canBeDirect: true) {
@@ -44,12 +38,10 @@ class ZOnboarding : ZOperations {
         }
     }
 
-
     // MARK:- operations
     // MARK:-
 
-
-    override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
+	override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
         onCloudResponse = { iAny in onCompletion(false) }
 
         switch operationID {
@@ -64,12 +56,10 @@ class ZOnboarding : ZOperations {
         }
     }
 
-
-    func observeUbiquity() { gNotificationCenter.addObserver(self, selector: #selector(ZOnboarding.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil) }
+	func observeUbiquity() { gNotificationCenter.addObserver(self, selector: #selector(ZOnboarding.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil) }
     func internet()        { gHasInternet = isConnectedToNetwork }
 
-
-    func checkAvailability(_ onCompletion: @escaping Closure) {
+	func checkAvailability(_ onCompletion: @escaping Closure) {
         gContainer.accountStatus { (iStatus, iError) in
             if  iStatus            == .available {
                 gCloudAccountStatus = .available
@@ -83,8 +73,7 @@ class ZOnboarding : ZOperations {
         }
     }
 
-
-    func ubiquity(_ onCompletion: @escaping Closure) {
+	func ubiquity(_ onCompletion: @escaping Closure) {
         if FileManager.default.ubiquityIdentityToken == nil {
 
             // ///////////////////////
@@ -97,8 +86,7 @@ class ZOnboarding : ZOperations {
         onCompletion()
     }
 
-
-    func fetchUserID(_ onCompletion: @escaping Closure) {
+	func fetchUserID(_ onCompletion: @escaping Closure) {
         if  gCloudAccountStatus != .available {
             onCompletion()
         } else {
@@ -124,17 +112,22 @@ class ZOnboarding : ZOperations {
         }
     }
 
+	func fetchUserRecord(_ onCompletion: @escaping Closure) {
+		if  let          record = gUserRecord {
+			user                = ZUser(record: record, databaseID: gDatabaseID)
+			gCloudAccountStatus = .active
 
-    func fetchUserRecord(_ onCompletion: @escaping Closure) {
-        if  gCloudAccountStatus == .available,
-            let     recordName  = gUserRecordID {
-            let     ckRecordID  = CKRecord.ID(recordName: recordName)
+			onCompletion()
+		} else if   gCloudAccountStatus == .available,
+            let      recordName = gUserRecordID {
+            let      ckRecordID = CKRecord.ID(recordName: recordName)
 
             gEveryoneCloud?.assureRecordExists(withRecordID: ckRecordID, recordType: kUserType) { (iUserRecord: CKRecord?) in
                 if  let          record = iUserRecord {
                     let            user = ZUser(record: record, databaseID: gDatabaseID)
                     self          .user = user
-                    gCloudAccountStatus = .active
+					gUserRecord         = record
+					gCloudAccountStatus = .active
 
                     // ///////////////////////
                     // ONBOARDING CONTINUES //
