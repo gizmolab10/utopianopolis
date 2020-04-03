@@ -28,7 +28,7 @@ enum ZRecordState: String {
     case needsFound              = "found"
     case needsTraits             = "traits"
     case needsWritable           = "writable"
-    case needsUnorphan           = "unorphan"
+    case needsAdoption           = "adopt"
 }
 
 
@@ -52,7 +52,7 @@ class ZRecords: NSObject {
 
     var hereRecordName: String? {
 		get {
-			let references = gHereRecordNames.components(separatedBy: kNameSeparator)
+			let references = gHereRecordNames.components(separatedBy: kColonSeparator)
 			
 			if  let  index = databaseID.index {
 				return references[index]
@@ -63,14 +63,14 @@ class ZRecords: NSObject {
 
 		set {
 			if  let         index = databaseID.index {
-				var    references = gHereRecordNames.components(separatedBy: kNameSeparator)
+				var    references = gHereRecordNames.components(separatedBy: kColonSeparator)
 				
 				while references.count < 3 {
 					references.append("")
 				}
 				
 				references[index] = newValue ?? kRootName
-				gHereRecordNames  = references.joined(separator: kNameSeparator)
+				gHereRecordNames  = references.joined(separator: kColonSeparator)
 			}
 		}
     }
@@ -347,13 +347,13 @@ class ZRecords: NSObject {
     }
 
 
-    func unorphanAll() {
-        let states = [ZRecordState.needsUnorphan]
+    func adoptAll() {
+        let states = [ZRecordState.needsAdoption]
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
             if  let zRecord = maybeZRecordForRecordName(iRecordName) {
                 clearRecordName(iRecordName, for: states)
-                zRecord.unorphan()
+                zRecord.adopt()
             }
         }
     }
@@ -647,12 +647,21 @@ class ZRecords: NSObject {
     }
 
 
-    func pullCKRecordsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecord] {
+    func pullCKRecordsForZonesAndTraitsWithMatchingStates(_ states: [ZRecordState]) -> [CKRecord] {
         var results = [CKRecord] ()
 
         applyToAllCKRecordsWithAnyMatchingStates(states) { iState, iCKRecord in
             if  results.count < kBatchSize && !results.contains(iCKRecord) {
                 results.append(iCKRecord)
+
+				// also grab traits
+				if  let zone = maybeZoneForCKRecord(iCKRecord) {
+					for trait in zone.traitValues {
+						if  let ckTraitRecord = trait.record, !results.contains(ckTraitRecord) {
+							results.append(ckTraitRecord)
+						}
+					}
+				}
             }
         }
 

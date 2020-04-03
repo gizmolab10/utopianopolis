@@ -76,8 +76,8 @@ class ZBatches: ZOnboarding {
             switch identifier {
             case .bSaveToCloud: return [                                    .oSaveToCloud          ]
             case .bFetchLost:   return [.oFetchLost,                        .oSaveToCloud,         ]
-			case .bRefetch:     return [             .oFetchAll, .oRecount, .oSaveToCloud, .oTraits]
-            case .bResumeCloud: return [             .oFetchAll,            .oSaveToCloud, .oTraits]
+			case .bRefetch:     return [             .oAllZones, .oRecount, .oSaveToCloud, .oTraits]
+            case .bResumeCloud: return [             .oAllZones,            .oSaveToCloud, .oTraits]
             case .bSync:        return [             .oFetchNeeded,         .oSaveToCloud, .oTraits]
             case .bBookmarks:   return [.oBookmarks, .oFetchNeeded,         .oSaveToCloud, .oTraits]
             case .bUndelete:    return [.oUndelete,  .oFetchNeeded,         .oSaveToCloud, .oTraits]
@@ -86,7 +86,7 @@ class ZBatches: ZOnboarding {
 			case .bAllTraits:   return [                                                .oAllTraits]
 			case .bEmptyTrash:  return [.oEmptyTrash                                               ]
             case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
-            case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oFinishUp)
+            case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oStartupDone)
             case .bFinishUp:    return operationIDs(from: .oFinishUp,          to: .oDone)
             case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
             }

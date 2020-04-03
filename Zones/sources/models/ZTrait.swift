@@ -12,7 +12,7 @@ import CloudKit
 enum ZTraitType: String {
 	case tDuration  = "+" // accumulative
 	case tMoney     = "$" //      "
-	case tAsset     = "a" // allow multiple
+	case tAssets    = "a" // allow multiple
 	case tHyperlink = "h"
 	case tEmail     = "e"
 	case tEssay     = "w"
@@ -42,17 +42,15 @@ enum ZTraitType: String {
 
 class ZTrait: ZRecord {
 
-	@objc dynamic var strings: [String]?
-	@objc dynamic var  format:  String?
-    @objc dynamic var    type:  String?
-	@objc dynamic var    text:  String? { didSet { updateSearchableStrings() } }
-	@objc dynamic var   asset:  CKAsset?
-	@objc dynamic var  assets: [CKAsset]?
-	@objc dynamic var  offset:  NSNumber?
-    @objc dynamic var   owner:  CKRecord.Reference?
-    var _traitType: ZTraitType?
-    var _ownerZone: Zone?
-    override var unwrappedName: String { return text ?? emptyName }
+	@objc dynamic var    owner :  CKRecord.Reference?
+	@objc dynamic var   assets : [CKAsset]?
+	@objc dynamic var  strings : [String]?
+	@objc dynamic var   format :  String?
+	@objc dynamic var     type :  String?
+	@objc dynamic var     text :  String? { didSet { updateSearchableStrings() } }
+    override var unwrappedName :  String  { return text ?? emptyName }
+	var             _traitType :  ZTraitType?
+	var             _ownerZone :  Zone?
 
     var deepCopy: ZTrait {
         let theCopy = ZTrait(databaseID: databaseID)
@@ -113,9 +111,7 @@ class ZTrait: ZRecord {
         return[#keyPath(type),
                #keyPath(text),
 			   #keyPath(owner),
-			   #keyPath(asset),
 			   #keyPath(assets),
-			   #keyPath(offset),
 			   #keyPath(format),
 			   #keyPath(strings)]
     }
@@ -132,13 +128,17 @@ class ZTrait: ZRecord {
         updateCKRecordProperties()
     }
 
-    override func unorphan() {
-        if  let traits = ownerZone?.traits, let t = traitType, traits[t] == nil {
-            ownerZone?.maybeMarkNotFetched()
+    override func adopt() {
+        if  let o = ownerZone, let traits = ownerZone?.traits, let t = traitType, traits[t] == nil {
+            o.maybeMarkNotFetched()
 
-            ownerZone?.traits[t] = self
+			if  databaseID == .mineID {
+				printDebug(.adopt, "t \(o)")
+			}
+
+            o.traits[t] = self
         } else {
-            needUnorphan()
+            needAdoption()
         }
     }
 
@@ -146,7 +146,7 @@ class ZTrait: ZRecord {
 		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tHyperlink]
 
 		if  let  tt = traitType, searchables.contains(tt) {
-			strings = text?.searchable.components(separatedBy: " ")
+			strings = text?.searchable.components(separatedBy: kSpace)
 		}
 	}
 
@@ -190,7 +190,7 @@ class ZTrait: ZRecord {
 
 			for (index, part) in parts.enumerated() {
 				if  index              != 0 {
-					let subSeparator    = kNameSeparator
+					let subSeparator    = kColonSeparator
 					var subParts        = part.components(separatedBy: subSeparator)
 					let number          = subParts[0]
 

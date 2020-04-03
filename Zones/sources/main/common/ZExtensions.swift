@@ -157,7 +157,7 @@ extension NSObject {
 
     func components(of iLink: String?) -> [String]? {
         if  let       link = iLink {
-            let components =  link.components(separatedBy: kNameSeparator)
+            let components =  link.components(separatedBy: kColonSeparator)
             if  components.count > 2 {
                 return components
             }
@@ -188,7 +188,7 @@ extension NSObject {
         if  iLink                   != nil,
             iLink                   != "",
             let                 name = recordName(from: iLink) {
-            let components: [String] = iLink!.components(separatedBy: kNameSeparator)
+            let components: [String] = iLink!.components(separatedBy: kColonSeparator)
             let recordID: CKRecord.ID = CKRecord.ID(recordName: name)
             let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)
             let        rawIdentifier = components[0]
@@ -214,7 +214,7 @@ extension NSObject {
                 var       translated = false
 
                 if  let string       = value as? String {
-                    let parts        = string.components(separatedBy: kTimeInterval + kNameSeparator)
+                    let parts        = string.components(separatedBy: kTimeInterval + kColonSeparator)
                     if  parts.count > 1,
                         parts[0]    == "",
                         let interval = TimeInterval(parts[1]) {
@@ -354,6 +354,29 @@ extension CKAsset {
 		set {}
 	}
 
+	var localURL: URL? {
+		let parts = description.components(separatedBy: kCommaSeparator)
+
+		for part in parts {
+			let subparts = part.components(separatedBy: kEquals)
+
+			if  subparts.count > 1 {
+				let   key = subparts[0].replacingOccurrences(of: kSpace, with: "")
+				let value = subparts[1].replacingOccurrences(of: ">", with: "")
+
+				switch key {
+					case "path":
+						let name = URL(string: value)!.pathExtension.appending(".png")
+
+						return gFiles.assetURL(name)
+					default: break
+				}
+			}
+		}
+
+		return nil
+	}
+
 }
 
 extension CKRecord {
@@ -372,7 +395,7 @@ extension CKRecord {
 
     var isBookmark: Bool {
         if  let    link = self[kpZoneLink] as? String {
-            return link.contains(kNameSeparator)
+            return link.contains(kColonSeparator)
         }
 
         return false
@@ -398,7 +421,7 @@ extension CKRecord {
 				return "\(traitType) \(text)"
 			case kZoneType:
 				if  let      name = self[kpZoneName] as? String {
-					let separator = " "
+					let separator = kSpace
 					var    prefix = ""
 					
 					if  isBookmark {
@@ -1167,7 +1190,7 @@ extension NSMutableAttributedString {
 		return result
 	}
 
-	var assets: [CKAsset] {
+	var assets: [CKAsset]? {
 		let     i = images
 		var array = [CKAsset]()
 
@@ -1177,7 +1200,7 @@ extension NSMutableAttributedString {
 			}
 		}
 
-		return array
+		return array.count == 0 ? nil : array
 	}
 
 	var attributesAsString: String {
@@ -1483,13 +1506,13 @@ extension String {
 
     var color: ZColor? {
         if self != "" {
-            let pairs = components(separatedBy: ",")
+            let pairs = components(separatedBy: kCommaSeparator)
             var   red = 0.0
             var  blue = 0.0
             var green = 0.0
 
             for pair in pairs {
-                let values = pair.components(separatedBy: kNameSeparator)
+                let values = pair.components(separatedBy: kColonSeparator)
                 let  value = Double(values[1])!
                 let    key = values[0]
 

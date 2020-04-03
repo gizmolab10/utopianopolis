@@ -26,9 +26,13 @@ enum ZTimerID : Int {
 	case tMouseZone
 	case tKey
 
-	static func recordsID(for databaseID: ZDatabaseID?) -> ZTimerID? {
-		if  let index = databaseID?.index {
-			return ZTimerID(rawValue: index + ZTimerID.tRecordsEveryone.rawValue)
+	static func recordsTimerID(for databaseID: ZDatabaseID?) -> ZTimerID? {
+		if  let    index = databaseID?.databaseIndex {
+			switch index {
+				case .mineIndex:     return .tRecordsMine
+				case .everyoneIndex: return .tRecordsEveryone
+				default:             break
+			}
 		}
 
 		return nil

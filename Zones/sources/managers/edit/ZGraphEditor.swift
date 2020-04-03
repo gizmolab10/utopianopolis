@@ -158,7 +158,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "[":      gFocusRing.goBack(   extreme: FLAGGED)
                     case "]":      gFocusRing.goForward(extreme: FLAGGED)
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-					case "=":      if COMMAND { updateSize(up: true) } else { gFocusRing.invokeTravel(gSelecting.firstSortedGrab) { self.redrawGraph() } }
+					case kEquals:  if COMMAND { updateSize(up: true) } else { gFocusRing.invokeTravel(gSelecting.firstSortedGrab) { self.redrawGraph() } }
                     case ";", "'": gFavorites.switchToNext(key == "'") { self.redrawGraph() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addNextAndRedraw(containing: OPTION)
@@ -262,7 +262,7 @@ class ZGraphEditor: ZBaseEditor {
             case "x", kSpace:           return .eChild
             case "b", kTab, kBackspace: return .eParent
             case kDelete:               return  CONTROL ? .eAlways : .eParent
-			case "=":                   return  COMMAND ? .eAlways : .eTravel
+			case kEquals:               return  COMMAND ? .eAlways : .eTravel
             case "d":                   return  COMMAND ? .eAlter  : .eParent
             default:                    return .eAlways
             }
@@ -747,21 +747,22 @@ class ZGraphEditor: ZBaseEditor {
 
 
     func applyGenerationally(_ show: Bool, extreme: Bool = false) {
-        let        zone = gSelecting.rootMostMoveable
-        var level: Int?
+		if  let zone = gSelecting.rootMostMoveable {
+			var level: Int?
 
-        if !show {
-            level = extreme ? zone.level - 1 : zone.highestExposed - 1
-        } else if  extreme {
-            level = Int.max
-        } else if let lowest = zone.lowestExposed {
-            level = lowest + 1
-        }
+			if !show {
+				level = extreme ? zone.level - 1 : zone.highestExposed - 1
+			} else if  extreme {
+				level = Int.max
+			} else if let lowest = zone.lowestExposed {
+				level = lowest + 1
+			}
 
-        generationalUpdate(show: show, zone: zone, to: level) {
-            self.redrawGraph()
-        }
-    }
+			generationalUpdate(show: show, zone: zone, to: level) {
+				self.redrawGraph()
+			}
+		}
+	}
 
 	
 	func expand(_ show: Bool) {
@@ -989,7 +990,7 @@ class ZGraphEditor: ZBaseEditor {
     func addNext(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
         let       zone = gSelecting.rootMostMoveable
 
-        if  let parent = zone.parentZone, parent.userCanMutateProgeny {
+        if  let parent = zone?.parentZone, parent.userCanMutateProgeny {
             var  zones = gSelecting.currentGrabs
 
             if containing {
@@ -1004,7 +1005,7 @@ class ZGraphEditor: ZBaseEditor {
                 parent.revealChildren()
             }
 
-            var index   = zone.siblingIndex
+            var index   = zone?.siblingIndex
 
             if  index  != nil {
                 index! += gListsGrowDown ? 1 : 0
@@ -1924,8 +1925,8 @@ class ZGraphEditor: ZBaseEditor {
             grab.revealChildren()
         }
 
-		if  let       parent = candidate.parentZone {
-			let siblingIndex = candidate.siblingIndex
+		if  let       parent = candidate?.parentZone {
+			let siblingIndex = candidate?.siblingIndex
 			var     children = ZoneArray ()
 
 			gSelecting.clearPaste()

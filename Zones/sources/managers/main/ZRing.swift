@@ -93,7 +93,7 @@ class ZRing: NSObject {
 	}
 
 	func object(for id: String) -> NSObject? {
-		let parts = id.components(separatedBy: kNameSeparator)
+		let parts = id.components(separatedBy: kColonSeparator)
 
 		if  parts.count == 2 {
 			if  parts[0] == "note" {

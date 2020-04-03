@@ -71,12 +71,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var                    canTravel :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasEssay }
     var                     hasColor :               Bool  { return zoneColor != nil && zoneColor != "" }
 	var                     hasEmail :               Bool  { return hasTrait(for: .tEmail) && email != "" }
+	var                     hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                     hasEssay :               Bool  { return hasTrait(for: .tNote) }
-	var                     hasAsset :               Bool  { return hasTrait(for: .tAsset) }
     var                    isInTrash :               Bool  { return root?.isRootOfTrash        ?? false }
-	var                isRootOfTrash :               Bool  { return recordName == kTrashName }
     var                isInFavorites :               Bool  { return root?.isRootOfFavorites    ?? false }
     var             isInLostAndFound :               Bool  { return root?.isRootOfLostAndFound ?? false }
+	var                isRootOfTrash :               Bool  { return recordName == kTrashName }
     var         isRootOfLostAndFound :               Bool  { return recordName == kLostAndFoundName }
     var               isReadOnlyRoot :               Bool  { return isRootOfLostAndFound || isRootOfFavorites || isRootOfTrash }
     var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
@@ -987,21 +987,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         }
     }
 
-	func getAssetTrait() -> CKAsset? {
-		return traits[.tAsset]?.asset
+	func getAssetsTrait() -> [CKAsset]? {
+		return traits[.tAssets]?.assets
 	}
 
-	func setAssetTrait(_ iAsset: CKAsset?) {
-		if  let   asset = iAsset {
-			let   trait = traitFor(.tAsset)
-			trait.asset = asset
+	func setAssetsTrait(_ iAssets: [CKAsset]?) {
+		if  let   assets = iAssets {
+			let    trait = traitFor(.tAssets)
+			trait.assets = assets
 
 			trait.updateCKRecordProperties()
 			trait.maybeNeedSave()
 		} else {
-			traits[.tAsset]?.needDestroy()
+			traits[.tAssets]?.needDestroy()
 
-			traits[.tAsset] = nil
+			traits[.tAssets] = nil
 		}
 	}
 
@@ -1362,17 +1362,22 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         return total < progenyCount
     }
 
-    override func unorphan() {
-        if !needsDestroy, let r = record, !r.isEmpty { // if record is empty, cannot unorphan nor mark needing unorphan
+    override func adopt() {
+        if !needsDestroy, needsAdoption, let r = record, !r.isEmpty { // if record is empty, cannot adopt nor mark needing adopt
             if  let p = parentZone, p != self {
                 p.maybeMarkNotFetched()
                 p.addChildAndRespectOrder(self)
-                
+				removeState(.needsAdoption)
+
+				if  databaseID == .mineID {
+					printDebug(.adopt, "z \(self)")
+				}
+
                 if  p.recordName == kFavoritesRootName, let b = bookmarkTarget, !b.isRoot {
                     bam(decoratedName)
                 }
             } else if !isRoot {
-                needUnorphan()
+                needAdoption()
             }
         }
     }
@@ -1586,7 +1591,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         let   marks = ".)>"
         let indices = "A1ai"
         let modulus = indices.count
-        let  margin = " " * (4 * iInset)
+        let  margin = kSpace * (4 * iInset)
         let    type = ZOutlineLevelType(rawValue: indices.character(at: iInset % modulus))
         let  letter = String.character(at: iIndex, for: type!)
         var  string = margin + letter + marks.character(at: (iInset / modulus) % marks.count) + " " + unwrappedName + kReturn

@@ -292,7 +292,7 @@ enum ZSpecialsMenuType: String {
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = [.images]
+var gDebugMode: [ZDebugMode] = [.ops, .images, .adopt]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
@@ -314,6 +314,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let  speed = ZDebugMode()
 	static let  notes = ZDebugMode()
 	static let  error = ZDebugMode()
+	static let  adopt = ZDebugMode()
 	static let access = ZDebugMode()
 	static let search = ZDebugMode()
 	static let images = ZDebugMode()
@@ -331,6 +332,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.focus,  "  focus"),
 				(.speed,  "  speed"),
 				(.error,  "  error"),
+				(.adopt,  "  adopt"),
 				(.access, " access"),
 				(.search, " search"),
 				(.images, " images"),

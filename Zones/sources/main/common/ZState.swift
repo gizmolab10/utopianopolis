@@ -88,7 +88,7 @@ var gExpandedZones : [String] {
     get {
         if  gExpanded == nil {
             let  value = getPreferencesString(for: kExpandedZones, defaultString: "")
-            gExpanded  = value?.components(separatedBy: kNameSeparator)
+            gExpanded  = value?.components(separatedBy: kColonSeparator)
         }
 
         return gExpanded!
@@ -97,7 +97,7 @@ var gExpandedZones : [String] {
     set {
         gExpanded = newValue
 
-        setPreferencesString(newValue.joined(separator: kNameSeparator), for: kExpandedZones)
+        setPreferencesString(newValue.joined(separator: kColonSeparator), for: kExpandedZones)
     }
 }
 
@@ -142,7 +142,7 @@ var gShowFavorites : Bool {
 }
 
 var gHereRecordNames: String {
-    get { return getPreferenceString(    for: kHereRecordIDs) { return kTutorialRecordName + kNameSeparator + kRootName }! }
+    get { return getPreferenceString(    for: kHereRecordIDs) { return kTutorialRecordName + kColonSeparator + kRootName }! }
     set { setPreferencesString(newValue, for: kHereRecordIDs) }
 }
 

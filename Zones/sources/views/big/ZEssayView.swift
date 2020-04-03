@@ -709,7 +709,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	@objc private func handleHyperlinkPopupMenu(_ iItem: ZMenuItem) {
 		if  let type = ZHyperlinkMenuType(rawValue: iItem.keyEquivalent) {
-			var link: String? = type.linkType + kNameSeparator
+			var link: String? = type.linkType + kColonSeparator
 
 			switch type {
 				case .hClear: link = nil // to remove existing hyperlink
@@ -769,7 +769,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		selectionRange = range
 
 		if  let  link = currentLink as? String {
-			let parts = link.components(separatedBy: kNameSeparator)
+			let parts = link.components(separatedBy: kColonSeparator)
 
 			if  parts.count > 1,
 				let    t = parts.first?.first,                          // first character of first part

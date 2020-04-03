@@ -31,15 +31,16 @@ enum ZOperationID: Int {
     case oFavorites
     case oRoots
     case oHere
-	case oFetchNew
+	case oStartupDone
 
     // finish
 
     case oFinishUp
-    case oRecount
+	case oNewZones
 	case oSubscribe
+	case oAllZones
 	case oAllTraits
-	case oFetchAll
+	case oRecount
     case oDone
 
     // miscellaneous
@@ -74,7 +75,7 @@ class ZOperations: NSObject {
 
 	let            queue = OperationQueue()
 	var        currentOp :  ZOperationID  =  .oNone
-	var hiddenSpinnerOps : [ZOperationID] = [.oFetchAll, .oTraits, .oSaveToCloud]
+	var hiddenSpinnerOps : [ZOperationID] = [.oAllZones, .oTraits, .oSaveToCloud]
 	var     shouldCancel :          Bool  { return !currentOp.isDone && -(negativeTimeSinceOpStart ?? 0.0) > 5.0 }
 	var    debugTimeText :        String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
     var  onCloudResponse :    AnyClosure?

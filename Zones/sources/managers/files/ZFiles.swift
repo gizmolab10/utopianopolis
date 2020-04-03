@@ -17,6 +17,7 @@ import CoreFoundation
 
 let gFiles    = ZFiles()
 let gUseFiles = !kIsPhone
+//let gUseFiles = false
 
 enum ZExportType: String {
 	case eThoughtful = "thoughtful"

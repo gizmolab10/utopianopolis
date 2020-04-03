@@ -33,7 +33,8 @@ class ZRecord: NSObject {
     var        needsProgeny: Bool               { return  hasState(.needsProgeny) }
     var       needsWritable: Bool               { return  hasState(.needsWritable) }
     var       needsChildren: Bool               { return  hasState(.needsChildren) }
-    var      needsBookmarks: Bool               { return  hasState(.needsBookmarks) }
+	var       needsAdoption: Bool               { return  hasState(.needsAdoption) }
+	var      needsBookmarks: Bool               { return  hasState(.needsBookmarks) }
     var canSaveWithoutFetch: Bool               { return !hasState(.requiresFetchBeforeSave) }
     var             records: ZRecords?          { return gRemoteStorage.zRecords(for: databaseID) }
     var               cloud: ZCloud?            { return records as? ZCloud }
@@ -167,7 +168,8 @@ class ZRecord: NSObject {
         if  let r = record {
             self.record = r
 
-            unorphan()
+			self.needAdoption()
+            adopt()
         }
     }
 
@@ -178,7 +180,7 @@ class ZRecord: NSObject {
 
 
     func orphan() {}
-    func unorphan() {}
+    func adopt() {}
     func maybeNeedRoot() {}
     func debug(_  iMessage: String) {}
     func cloudProperties() -> [String] { return [] }
@@ -252,7 +254,7 @@ class ZRecord: NSObject {
             let newDate = iRecord.modificationDate,
             (myDate    == nil || newDate.timeIntervalSince(myDate!) > 10.0) {
             
-            if  let r = record,
+            if  let   r = record,
                 r.recordID.recordName != iRecord.recordID.recordName {
                 records?.addCKRecord(record, for: [.needsDestroy])
             }
@@ -295,7 +297,7 @@ class ZRecord: NSObject {
     func needFound()             {    addState(.needsFound) }
     func needFetch()             {    addState(.needsFetch) }
     func needCount()             {    addState(.needsCount) }
-    func needUnorphan()          {    addState(.needsUnorphan) }
+    func needAdoption()          {    addState(.needsAdoption) }
     func markNotFetched()        {    addState(.notFetched) }
     func fetchBeforeSave()       {    addState(.requiresFetchBeforeSave) }
     func allowSaveWithoutFetch() { removeState(.requiresFetchBeforeSave)}
@@ -425,6 +427,7 @@ class ZRecord: NSObject {
             let observer = iObject as! NSObject
 
             if let value: NSObject = observer.value(forKey: keyPath!) as! NSObject? {
+				if keyPath == "assets", let values = value as? NSArray, values.count == 0 { return }
                 setValue(value, for: keyPath!)
             }
         }
@@ -504,8 +507,6 @@ class ZRecord: NSObject {
         return object
     }
 
-    let kNeedsSeparator = ","
-
     func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {
         if  let       r = record,
             let manager = gRemoteStorage.cloud(for: iDatabaseID) {
@@ -517,7 +518,7 @@ class ZRecord: NSObject {
             }
 
             if  marks.count > 0 {
-                return marks.joined(separator: kNeedsSeparator)
+                return marks.joined(separator: kCommaSeparator)
             }
         }
 
@@ -526,7 +527,7 @@ class ZRecord: NSObject {
 
 
     func addNeedsFromString(_ iNeeds: String) {
-        let needs = iNeeds.components(separatedBy: kNeedsSeparator)
+        let needs = iNeeds.components(separatedBy: kCommaSeparator)
 
         temporarilyMarkNeeds {
             for need in needs {

@@ -55,10 +55,10 @@ class ZCloud: ZRecords {
         case .oChildren:      fetchChildren     (cloudCallback)
         case .oCloud:         fetchCloudZones   (cloudCallback)
         case .oEmptyTrash:    emptyTrash        (cloudCallback)
-        case .oFetchNeeded:   fetchNeeded       (cloudCallback)
+        case .oFetchNeeded:   fetchNeededZones  (cloudCallback)
         case .oFetchLost:     fetchLost         (cloudCallback)
-        case .oFetchNew:      fetchNew          (cloudCallback)
-        case .oFetchAll:      fetchAll          (cloudCallback)
+        case .oNewZones:      fetchNewZones     (cloudCallback)
+        case .oAllZones:      fetchAllZones     (cloudCallback)
         case .oFound:         found             (cloudCallback)
         case .oHere:          establishHere     (cloudCallback)
         case .oFetchAndMerge: fetchAndMerge     (cloudCallback)
@@ -82,7 +82,7 @@ class ZCloud: ZRecords {
 
 
     func save(_ onCompletion: IntClosure?) {
-        let   saves = pullCKRecordsWithMatchingStates([.needsSave])
+        let   saves = pullCKRecordsForZonesAndTraitsWithMatchingStates([.needsSave])
         let destroy = pullRecordIDsWithHighestLevel(for: [.needsDestroy], batchSize: 20)
         let   count = saves.count + destroy.count
 
@@ -511,7 +511,7 @@ class ZCloud: ZRecords {
                 scan(gFavoritesRoot)
 
                 self.columnarReport("REMEMBER (\(memorables.count))", "\(self.databaseID.rawValue)")
-                setPreferencesString(memorables.joined(separator: kNameSeparator), for: self.refetchingName)
+                setPreferencesString(memorables.joined(separator: kColonSeparator), for: self.refetchingName)
 
                 self.isRemembering = false
 
@@ -522,14 +522,14 @@ class ZCloud: ZRecords {
 
 
     func refetchZones(_ onCompletion: IntClosure?) {
-        if  let fetchables = getPreferencesString(for: refetchingName, defaultString: "")?.components(separatedBy: kNameSeparator) {
+        if  let fetchables = getPreferencesString(for: refetchingName, defaultString: "")?.components(separatedBy: kColonSeparator) {
             for fetchable in fetchables {
                 if fetchable != "" {
                     addCKRecord(CKRecord(for: fetchable), for: [.needsFetch])
                 }
             }
 
-            fetchNeeded(onCompletion) // includes processing logic for retrieved records
+            fetchNeededZones(onCompletion) // includes processing logic for retrieved records
         }
     }
 
@@ -604,7 +604,7 @@ class ZCloud: ZRecords {
                     }
 
                     for ckRecord in fetched {
-                        if isOrphaned(ckRecord) {
+                        if  isOrphaned(ckRecord) {
                             toLose.append(ckRecord)
                         }
                     }
@@ -659,8 +659,6 @@ class ZCloud: ZRecords {
 
                                     FOREGROUND {
                                         addToLost(toLose)
-
-//                                        onCompletion?(0)
                                         fetchClosure?()
                                     }
                                 }
@@ -702,42 +700,48 @@ class ZCloud: ZRecords {
         }
     }
 
-    func createZRecords(of type: String, with iCKRecords: [CKRecord], title iTitle: String? = nil) {
+    func createZRecords(of type: String, with iCKRecords: [CKRecord], title iTitle: String? = nil, _ onCompletion: Closure? = nil) {
+		let dbID = databaseID
+
 		for record in iCKRecords {
-			recordsToProcess[record.recordID.recordName] = record
+			recordsToProcess[record.recordID.recordName] = record // assures no duplication
 		}
 
 		if  recordsToProcess.count != 0,
-			let timerID = ZTimerID.recordsID(for: databaseID) {
+			let timerID = ZTimerID.recordsTimerID(for: dbID) {
 			gTimers.assureCompletion(for: timerID, now: true, withTimeInterval: 4.0) {
 				while self.recordsToProcess.count > 0 {
 					if  let      key = self.recordsToProcess.keys.first,
 						let ckRecord = self.recordsToProcess[key] {
 						var  zRecord = self.maybeZRecordForRecordName(ckRecord.recordID.recordName)
 
-						self.recordsToProcess[key] = nil
+						self.recordsToProcess[key] = nil // assures no duplication
 
 						if  zRecord != nil {
 							zRecord?.useBest(record: ckRecord) // fetched has same record id
 						} else {
 							switch type {
-								case kZoneType:  zRecord =   Zone(record: ckRecord, databaseID: self.databaseID)
-								case kTraitType: zRecord = ZTrait(record: ckRecord, databaseID: self.databaseID)
+								case kZoneType:  zRecord =   Zone(record: ckRecord, databaseID: dbID)
+								case kTraitType: zRecord = ZTrait(record: ckRecord, databaseID: dbID)
 								default: break
 							}
 						}
 
-						zRecord?.unorphan()
-						try gTestForUserInterrupt()					}
+						zRecord?.adopt()
+						try gTestForUserInterrupt()
+					}
 				}
+
+				self.adoptAll()
+				onCompletion?()
 			}
 
-            self.columnarReport("FETCH\(iTitle ?? "") (\(iCKRecords.count))", String.forCKRecords(iCKRecords))
-        }
+			columnarReport("FETCH\(iTitle ?? "") (\(iCKRecords.count))", String.forCKRecords(iCKRecords))
+		}
     }
 
 
-    func fetchAll(_ onCompletion: IntClosure?) {
+    func fetchAllZones(_ onCompletion: IntClosure?) {
         if  !gIsReadyToShowUI && recordRegistry.values.count > 10 {
             onCompletion?(0)
         } else {
@@ -746,7 +750,7 @@ class ZCloud: ZRecords {
     }
 
 
-    func fetchNew(_ onCompletion: IntClosure?) {
+    func fetchNewZones(_ onCompletion: IntClosure?) {
         fetchSince(lastSyncDate, onCompletion)
     }
 
@@ -759,20 +763,20 @@ class ZCloud: ZRecords {
             FOREGROUND {
                 self.fetch(for: kTraitType, properties: ZTrait.cloudProperties(), since: date) { iTraitCKRecords in
                     FOREGROUND {
-                        self.createZRecords(of: kTraitType, with: iTraitCKRecords, title: " TRAITS")
+						self.createZRecords(of: kTraitType, with: iTraitCKRecords, title: " TRAITS")
                         onCompletion?(0)
                     }
                 }
 
-				self.createZRecords(of: kZoneType, with: iZoneCKRecords, title: date != nil ? " NEW" : " ALL")
-				self.unorphanAll()
-				self.recount()
+				self.createZRecords(of: kZoneType, with: iZoneCKRecords, title: date != nil ? " NEW" : " ALL") {
+					self.recount()
+				}
             }
         }
     }
 
 
-    func fetchNeeded(_ onCompletion: IntClosure?) {
+    func fetchNeededZones(_ onCompletion: IntClosure?) {
         let needed = recordIDsWithMatchingStates([.needsFetch, .requiresFetchBeforeSave], pull: true)
 
         fetchZones(needed: needed) { iCKRecords in
@@ -781,9 +785,9 @@ class ZCloud: ZRecords {
                     self.recount()
                     onCompletion?(0)
                 } else {
-                    self.createZRecords(of: kZoneType, with: iCKRecords)
-                    self.unorphanAll()
-                    self.fetchNeeded(onCompletion)                            // process remaining
+					self.createZRecords(of: kZoneType, with: iCKRecords) {
+						self.fetchNeededZones(onCompletion)                            // process remaining
+					}
                 }
             }
         }
@@ -948,7 +952,7 @@ class ZCloud: ZRecords {
                     
                     self.columnarReport("PARENT (\(forReport.count)) of", String.forZones(forReport))
                     self.clearRecordIDs(childrenIDs, for: fetchingStates)
-                    self.unorphanAll()
+                    self.adoptAll()
                     self.fetchParents(onCompletion)   // process remaining
                 }
             }
@@ -1045,7 +1049,7 @@ class ZCloud: ZRecords {
                         }
 
                         self.columnarReport("CHILDREN (\(childrenNeeded.count))", String.forReferences(childrenNeeded, in: self.databaseID))
-                        self.unorphanAll()
+                        self.adoptAll()
                         self.add(states: [.needsCount], to: childrenNeeded)
                         self.fetchChildren(onCompletion) // process remaining
                     }
@@ -1110,7 +1114,7 @@ class ZCloud: ZRecords {
                         }
 
                         self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
-                        self.unorphanAll()
+                        self.adoptAll()
                         onCompletion?(0)
                     }
                 }

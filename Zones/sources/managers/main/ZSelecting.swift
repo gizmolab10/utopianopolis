@@ -187,14 +187,16 @@ class ZSelecting: NSObject {
     }
     
 
-    var rootMostMoveable: Zone {
-        var candidate = currentMoveable
+    var rootMostMoveable: Zone? {
+        var candidate = currentMovableMaybe
 
-        for grabbed in currentGrabs {
-            if  grabbed.level < candidate.level {
-                candidate = grabbed
-            }
-        }
+		if  let level = candidate?.level {
+			for grabbed in currentGrabs {
+				if  grabbed.level < level {
+					candidate = grabbed
+				}
+			}
+		}
 
         return candidate
     }
@@ -210,8 +212,7 @@ class ZSelecting: NSObject {
         return nil
     }
 
-
-    var currentMoveable: Zone {
+	var currentMovableMaybe: Zone? {
         var movable: Zone?
 
         if  currentGrabs.count > 0 {
@@ -224,8 +225,10 @@ class ZSelecting: NSObject {
             movable = gHereMaybe
         }
 
-        return movable!
+        return movable
     }
+
+	var currentMoveable: Zone { return currentMovableMaybe! }
 
 	var pastableRecordName: String? {
 		let pastables = pasteableZones
@@ -396,7 +399,7 @@ class ZSelecting: NSObject {
         }
         
         if  grabbed == nil || grabbed!.record == nil {
-            grabbed = gHereMaybe ?? currentMoveable
+            grabbed = gHereMaybe ?? currentMovableMaybe
         }
         
         return grabbed

@@ -100,7 +100,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	func identifier() -> String? {
 		if  let id = zone?.identifier() {
-			return prefix + kNameSeparator + id
+			return prefix + kColonSeparator + id
 		}
 
 		return nil

@@ -23,7 +23,7 @@ class ZManifest: ZRecord {
         var name: String?
         var date: Date?
         var string: String? { if let n = name, let d = date { return ZDeleted.string(with: n, date: d) } else { return nil } }
-        class func string(with iName: String, date iDate: Date) -> String? { return iName + kNameSeparator + "\(iDate.timeIntervalSince1970)" }
+        class func string(with iName: String, date iDate: Date) -> String? { return iName + kColonSeparator + "\(iDate.timeIntervalSince1970)" }
         
         
         init(with iName: String, date iDate: Date?) {
@@ -33,7 +33,7 @@ class ZManifest: ZRecord {
         
         
         init(with string: String) {
-            let    parts = string.components(separatedBy: kNameSeparator)
+            let    parts = string.components(separatedBy: kColonSeparator)
             name         = parts[0]
             let interval = parts[1]
             

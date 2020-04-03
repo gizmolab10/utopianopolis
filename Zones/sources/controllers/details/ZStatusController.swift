@@ -25,7 +25,7 @@ class ZStatusController: ZGenericController {
     @IBOutlet var    graphNameLabel: ZTextField?
     @IBOutlet var      versionLabel: ZTextField?
     @IBOutlet var        levelLabel: ZTextField?
-    var                 currentZone: Zone          { return gSelecting.rootMostMoveable }
+    var                 currentZone: Zone?         { return gSelecting.rootMostMoveable }
     override  var      controllerID: ZControllerID { return .idStatus }
 
 
@@ -48,7 +48,7 @@ class ZStatusController: ZGenericController {
 
 
     var graphNameText: String {
-        if let dbID = currentZone.databaseID {
+        if  let dbID = currentZone?.databaseID {
             return "in \(dbID.userReadableString) database"
         }
 
@@ -63,15 +63,15 @@ class ZStatusController: ZGenericController {
     }
 
 	var zoneRecordNameText: String {
-		return currentZone.recordName ?? ""
+		return currentZone?.recordName ?? ""
 	}
 
 	var creationDateText: String {
-		var   date: Date? // currentZone.record?.modificationDate
+		var   date: Date? // currentZone?.record?.modificationDate
 		var prefix = "last edited"
 
 		if  date == nil {
-			date = currentZone.record?.creationDate
+			date = currentZone?.record?.creationDate
 			prefix = "created"
 		}
 
@@ -91,8 +91,8 @@ class ZStatusController: ZGenericController {
             graphNameLabel?   .text = graphNameText
             versionLabel?     .text = versionText
 
-            if iKind != .sStartup {
-                levelLabel?  .text = "is at level \(currentZone.level + 1)"
+            if iKind != .sStartup, let zone = currentZone {
+                levelLabel?   .text = "is at level \(zone.level + 1)"
             }
         }
     }
