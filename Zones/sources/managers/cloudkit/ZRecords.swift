@@ -15,20 +15,20 @@ enum ZRecordState: String {
     case requiresFetchBeforeSave = "requires fetch before save"     //
     case needsFetch              = "fetch"                          //
     case notFetched              = "not fetched"                    //
+	case needsAdoption           = "adopt"
     case needsBookmarks          = "bookmarks"
-    case needsCount              = "count"
     case needsChildren           = "children"
     case needsColor              = "color"
+	case needsCount              = "count"
     case needsDestroy            = "destroy"
+	case needsFound              = "found"
     case needsMerge              = "merge"
     case needsParent             = "parent"
     case needsProgeny            = "progeny"
     case needsRoot               = "root"
     case needsSave               = "save"
-    case needsFound              = "found"
     case needsTraits             = "traits"
     case needsWritable           = "writable"
-    case needsAdoption           = "adopt"
 }
 
 
@@ -265,11 +265,9 @@ class ZRecords: NSObject {
         gBookmarks.unregisterBookmark(zRecord as? Zone)
     }
 
-
     func notRegistered(_ recordID: CKRecord.ID?) -> Bool {
         return maybeZoneForRecordID(recordID) == nil
     }
-
 
     func removeDuplicates() {
         for duplicate in duplicates {
@@ -282,7 +280,6 @@ class ZRecords: NSObject {
 
         duplicates.removeAll()
     }
-
 
     // MARK:- record state
     // MARK:-
@@ -346,28 +343,23 @@ class ZRecords: NSObject {
         return states
     }
 
-
-    func adoptAll() {
+    func adoptAll(moveOrphansToLost: Bool = false) {
         let states = [ZRecordState.needsAdoption]
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
             if  let zRecord = maybeZRecordForRecordName(iRecordName) {
-                clearRecordName(iRecordName, for: states)
-                zRecord.adopt()
+				zRecord.adopt(moveOrphansToLost: moveOrphansToLost)
             }
         }
     }
-
 
     func hasCKRecordName(_ iName: String, forAnyOf iStates: [ZRecordState]) -> Bool {
         return registeredCKRecordForName(iName, forAnyOf: iStates) != nil
     }
 
-
     func hasCKRecordID(_ iRecordID: CKRecord.ID, forAnyOf iStates: [ZRecordState]) -> Bool {
         return registeredCKRecordForID(iRecordID, forAnyOf: iStates) != nil
     }
-
 
     func hasCKRecord(_ ckRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
         return registeredCKRecord(ckRecord, forAnyOf: iStates) != nil
@@ -777,13 +769,18 @@ class ZRecords: NSObject {
     }
 
 
-    func applyToAllRecordNamesWithAnyMatchingStates(_ iStates: [ZRecordState], onEach: StateRecordNameClosure) {
+	func applyToAllRecordNamesWithAnyMatchingStates(_ iStates: [ZRecordState], onEach: StateRecordNameClosure) {
         for state in iStates {
             let names = recordNamesForState(state)
 
             for name in names {
                 onEach(state, name)
             }
+
+			if  state == .needsAdoption {
+				let remaining = recordNamesForState(state)
+				printDebug(.dAdopt, "\(remaining.count)")
+			}
         }
     }
 
@@ -856,9 +853,8 @@ class ZRecords: NSObject {
         return zone!
     }
 
-
-    func zone(for ckRecord: CKRecord, requireFetch: Bool = true, preferFetch: Bool = false) -> Zone {
-        var     zone = maybeZoneForCKRecord(ckRecord)
+    func zoneForRecord(_ ckRecord: CKRecord, requireFetch: Bool = true, preferFetch: Bool = false) -> Zone {
+        var zone = maybeZoneForCKRecord(ckRecord)
 
         if let z = zone {
             z.useBest(record: ckRecord)

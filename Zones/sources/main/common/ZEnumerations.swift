@@ -20,11 +20,11 @@ enum InterfaceStyle : String {
 }
 
 enum ZRootID: String {
-    case graph     = "root"
-    case trash     = "trash"
-    case destroy   = "destroy"
-    case favorites = "favorites"
-    case lost      = "lost and found"
+    case graphID     = "root"
+    case trashID     = "trash"
+    case destroyID   = "destroy"
+    case favoritesID = "favorites"
+    case lostID      = "lost and found"
 }
 
 enum ZCloudAccountStatus: Int {
@@ -292,7 +292,7 @@ enum ZSpecialsMenuType: String {
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = [.ops, .images, .adopt]
+var gDebugMode: [ZDebugMode] = [.dImages, .dAdopt]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
@@ -302,41 +302,43 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	init() { rawValue = ZDebugMode.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let   none = ZDebugMode()
-	static let    ops = ZDebugMode()
-	static let    log = ZDebugMode()
-	static let   info = ZDebugMode()
-	static let   edit = ZDebugMode()
-	static let   file = ZDebugMode()
-	static let   ring = ZDebugMode()
-	static let  names = ZDebugMode()
-	static let  focus = ZDebugMode()
-	static let  speed = ZDebugMode()
-	static let  notes = ZDebugMode()
-	static let  error = ZDebugMode()
-	static let  adopt = ZDebugMode()
-	static let access = ZDebugMode()
-	static let search = ZDebugMode()
-	static let images = ZDebugMode()
-	static let timers = ZDebugMode()
+	static let   dNone = ZDebugMode()
+	static let    dOps = ZDebugMode()
+	static let    dLog = ZDebugMode()
+	static let   dInfo = ZDebugMode()
+	static let   dEdit = ZDebugMode()
+	static let   dFile = ZDebugMode()
+	static let   dRing = ZDebugMode()
+	static let  dNames = ZDebugMode()
+	static let  dFocus = ZDebugMode()
+	static let  dSpeed = ZDebugMode()
+	static let  dNotes = ZDebugMode()
+	static let  dError = ZDebugMode()
+	static let  dAdopt = ZDebugMode()
+	static let  dFetch = ZDebugMode()
+	static let dAccess = ZDebugMode()
+	static let dSearch = ZDebugMode()
+	static let dImages = ZDebugMode()
+	static let dTimers = ZDebugMode()
 
 	var description: String {
-		return [(.ops,    "     op"),
-				(.log,    "    log"),
-				(.file,   "   file"),
-				(.edit,   "   edit"),
-				(.info,   "   info"),
-				(.ring,   "   info"),
-				(.names,  "   name"),
-				(.notes,  "   note"),
-				(.focus,  "  focus"),
-				(.speed,  "  speed"),
-				(.error,  "  error"),
-				(.adopt,  "  adopt"),
-				(.access, " access"),
-				(.search, " search"),
-				(.images, " images"),
-				(.timers, " timers")]
+		return [(.dOps,    "     op"),
+				(.dLog,    "    log"),
+				(.dFile,   "   file"),
+				(.dEdit,   "   edit"),
+				(.dInfo,   "   info"),
+				(.dRing,   "   info"),
+				(.dNames,  "   name"),
+				(.dNotes,  "   note"),
+				(.dFocus,  "  focus"),
+				(.dSpeed,  "  speed"),
+				(.dError,  "  error"),
+				(.dAdopt,  "  adopt"),
+				(.dFetch,  "  fetch"),
+				(.dAccess, " access"),
+				(.dSearch, " search"),
+				(.dImages, " images"),
+				(.dTimers, " timers")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: " ")
 	}

@@ -28,7 +28,7 @@ class ZPostgresql: NSObject {
             case .success(let result):
                 print("name: \(result.rows.first?["name"] ?? "")")
             case .failure(let error):
-                printDebug(.error, "failed to excecute query: \(error)")
+                printDebug(.dError, "failed to excecute query: \(error)")
             }
         }
     }

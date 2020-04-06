@@ -16,8 +16,8 @@ import CoreFoundation
 #endif
 
 let gFiles    = ZFiles()
-let gUseFiles = !kIsPhone
-//let gUseFiles = false
+//let gUseFiles = !kIsPhone
+let gUseFiles = false
 
 enum ZExportType: String {
 	case eThoughtful = "thoughtful"
@@ -189,10 +189,10 @@ class ZFiles: NSObject {
 
 						try? data.write(to: url)
 					} else {
-						printDebug(.error, "ahah")
+						printDebug(.dError, "ahah")
 					}
 
-					printDebug(.file, "done")
+					printDebug(.dFile, "done")
 
 					self.needsWrite[index] = false
 					self .isWriting[index] = false // end prevention of write during write
@@ -266,7 +266,7 @@ class ZFiles: NSObject {
                         }
                     }
                 } catch {
-                    printDebug(.error, "\(error)")    // de-serialization
+                    printDebug(.dError, "\(error)")    // de-serialization
                 }
 
                 gRemoteStorage.zRecords(for: databaseID)?.removeDuplicates()
@@ -356,7 +356,7 @@ class ZFiles: NSObject {
                     }
                 }
             } catch {
-                printDebug(.error, "\(error)")
+                printDebug(.dError, "\(error)")
             }
 
             filePaths[index.rawValue] = path
@@ -375,7 +375,7 @@ class ZFiles: NSObject {
         do {
             try manager.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true, attributes: nil)
         } catch {
-            printDebug(.error, "\(error)")
+            printDebug(.dError, "\(error)")
         }
         
         return directoryURL
@@ -387,13 +387,13 @@ class ZFiles: NSObject {
 		do {
 			try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true, attributes: nil)
 		} catch {
-			printDebug(.error, "\(error)")
+			printDebug(.dError, "\(error)")
 		}
 
 		return url
 	}
 
-	func assetURL(_ assetFileName: String? = nil) -> URL? {
+	func localAssetURL(_ assetFileName: String? = nil) -> URL? {
 		return assetFileName == nil ? nil : assetDirectoryURL.appendingPathComponent(assetFileName!)
 	}
 

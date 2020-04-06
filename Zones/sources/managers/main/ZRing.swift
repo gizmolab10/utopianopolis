@@ -107,7 +107,7 @@ class ZRing: NSObject {
 	}
 
     func dump() {
-        if  gDebugMode.contains(.focus) {
+        if  gDebugMode.contains(.dFocus) {
 //            for (index, item) in ring.enumerated() {
 //                let isCurrentIndex = index == currentIndex
 //                let prefix = isCurrentIndex ? "                   •" : ""
@@ -293,14 +293,14 @@ class ZRing: NSObject {
 	}
 
 	func removeFromRing(at index: Int) {
-		printDebug(.ring, "r  remove: \(ring[index])")
+		printDebug(.dRing, "r  remove: \(ring[index])")
 		ring.remove(at: index)
 	}
 
 	func replaceInRing(_ object: NSObject, at index: Int) {
 		ring[index] = object
 
-		printDebug(.ring, "r replace: \(object)")
+		printDebug(.dRing, "r replace: \(object)")
 	}
 
 	func addToRing(_ object: NSObject, at iIndex: Int? = nil) {
@@ -312,7 +312,7 @@ class ZRing: NSObject {
 			ring.insert(object, at: index)
 		}
 
-		printDebug(.ring, "r     add: \(object)")
+		printDebug(.dRing, "r     add: \(object)")
 	}
 
 }

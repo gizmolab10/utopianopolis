@@ -286,7 +286,7 @@ class ZBatches: ZOnboarding {
 
                                 if     isError || result == 0 {
                                     if isError {
-										printDebug(.ops, "\(error!)")
+										printDebug(.dOps, "\(error!)")
                                     }
 
                                     invokeForIndex?(index + 1)         // recurse

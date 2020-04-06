@@ -47,7 +47,7 @@ class ZGraphEditor: ZBaseEditor {
             return w.undoManager!
         }
 
-        return kUndoManager
+        return gUndoManager
     }
 
     enum ZMenuType: Int {
@@ -150,7 +150,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "w":      rotateWritable()
 					case "x":      if COMMAND { delete(permanently: SPECIAL && isWindow) } else { gCurrentKeyPressed = nil; return false }
 					case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
-                    case "z":      if !SHIFT { kUndoManager.undo() } else { kUndoManager.redo() }
+                    case "z":      if !SHIFT { gUndoManager.undo() } else { gUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.redrawGraph() } }

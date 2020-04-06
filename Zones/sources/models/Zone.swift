@@ -568,13 +568,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
     func unlinkParentAndMaybeNeedSave() {
         if (recordName(from: parentLink) != nil ||
-            parent                 != nil) &&
+            parent                       != nil) &&
             canSaveWithoutFetch {
             needSave()
         }
 
         parent          = nil
-        parentZoneMaybe     = nil
+        parentZoneMaybe = nil
         parentLink      = kNullLink
     }
 
@@ -594,9 +594,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             if  isRoot {
                 unlinkParentAndMaybeNeedSave()
             } else if parentZoneMaybe == nil {
-                if  let  parentRef = parent {
-                    parentZoneMaybe    = cloud?.zoneForReference(parentRef)
-                } else if let zone = zoneFrom(parentLink) {
+                if  let     parentRef  = parent {
+                    parentZoneMaybe    = cloud?.maybeZoneForReference(parentRef)
+                } else if let    zone  = zoneFrom(parentLink) {
                     parentZoneMaybe    = zone
                 }
             }
@@ -607,9 +607,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         set {
             if  isRoot {
                 unlinkParentAndMaybeNeedSave()
-            } else if parentZoneMaybe          != newValue {
-                parentZoneMaybe                 = newValue
-                if  parentZoneMaybe            == nil {
+            } else if parentZoneMaybe      != newValue {
+                parentZoneMaybe             = newValue
+                if  parentZoneMaybe        == nil {
                     unlinkParentAndMaybeNeedSave()
                 } else if let parentRecord  = parentZoneMaybe?.record,
                     let      newParentDBID  = parentZoneMaybe?.databaseID {
@@ -682,7 +682,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             return t.userHasDirectOwnership
         }
         
-        return !isRootOfTrash && !isRootOfFavorites && !isRootOfLostAndFound && !gDebugMode.contains(.access) && (databaseID == .mineID || zoneAuthor == gAuthorID || gIsMasterAuthor)
+        return !isRootOfTrash && !isRootOfFavorites && !isRootOfLostAndFound && !gDebugMode.contains(.dAccess) && (databaseID == .mineID || zoneAuthor == gAuthorID || gIsMasterAuthor)
     }
 
     var directAccess: ZoneAccess {
@@ -987,21 +987,23 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         }
     }
 
-	func getAssetsTrait() -> [CKAsset]? {
-		return traits[.tAssets]?.assets
-	}
+	var assets: [CKAsset]? {
+		get {
+			return traits[.tAssets]?.assets
+		}
 
-	func setAssetsTrait(_ iAssets: [CKAsset]?) {
-		if  let   assets = iAssets {
-			let    trait = traitFor(.tAssets)
-			trait.assets = assets
+		set {
+			if  let   assets = newValue {
+				let    trait = traitFor(.tAssets)
+				trait.assets = assets
 
-			trait.updateCKRecordProperties()
-			trait.maybeNeedSave()
-		} else {
-			traits[.tAssets]?.needDestroy()
+				trait.updateCKRecordProperties()
+				trait.maybeNeedSave()
+			} else {
+				traits[.tAssets]?.needDestroy()
 
-			traits[.tAssets] = nil
+				traits[.tAssets] = nil
+			}
 		}
 	}
 
@@ -1362,24 +1364,30 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         return total < progenyCount
     }
 
-    override func adopt() {
-        if !needsDestroy, needsAdoption, let r = record, !r.isEmpty { // if record is empty, cannot adopt nor mark needing adopt
-            if  let p = parentZone, p != self {
-                p.maybeMarkNotFetched()
-                p.addChildAndRespectOrder(self)
+	override var isAdoptable: Bool { return parent != nil || parentLink != nil }
+
+    override func adopt(moveOrphansToLost: Bool = false) {
+		if  isRoot {
+			removeState(.needsAdoption)
+		} else if !needsDestroy, needsAdoption {
+			if let p = parentZone, p != self {
+				p.maybeMarkNotFetched()
+				p.addChildAndRespectOrder(self)
 				removeState(.needsAdoption)
 
-				if  databaseID == .mineID {
-					printDebug(.adopt, "z \(self)")
-				}
+//				if  databaseID == .mineID {
+//					printDebug(.dadopt, "z \(self)")
+//				}
 
-                if  p.recordName == kFavoritesRootName, let b = bookmarkTarget, !b.isRoot {
-                    bam(decoratedName)
-                }
-            } else if !isRoot {
-                needAdoption()
-            }
-        }
+				if  p.parentZone == nil, !p.isRoot {
+					p.needAdoption()
+					p.adopt()
+				}
+			} else if moveOrphansToLost, let r = record, r.isOrphaned {
+				gLostAndFound?.addChild(self)
+				removeState(.needsAdoption)
+			}
+		}
     }
 
    override func orphan() {
@@ -1545,7 +1553,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     @discardableResult func addChild(for iCKRecord: CKRecord?) -> Zone? {
         var child: Zone?    = nil
         if  let childRecord = iCKRecord, !containsCKRecord(childRecord) {
-            child           = gCloud?.zone(for: childRecord)
+            child           = gCloud?.zoneForRecord(childRecord)
 
             if  child != nil {
                 addChild(child)
@@ -1788,11 +1796,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             for  traitStore:  ZStorageDictionary in traitsStore {
                 let    trait = ZTrait(dict: traitStore, in: iDatabaseID)
 
-				if  gDebugMode.contains(.notes),
+				if  gDebugMode.contains(.dNotes),
 					let   tt = trait.type,
 					let type = ZTraitType(rawValue: tt),
 					type    == .tNote {
-					printDebug(.notes, "trait (in " + (zoneName ?? "unknown") + ") --> " + (trait.format ?? "empty"))
+					printDebug(.dNotes, "trait (in " + (zoneName ?? "unknown") + ") --> " + (trait.format ?? "empty"))
 				}
 
                 cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait (intentionally) not being in traits

@@ -6,7 +6,6 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 
 #if os(OSX)
@@ -15,9 +14,7 @@ import Foundation
     import UIKit
 #endif
 
-
 class ZStatusController: ZGenericController {
-
 
 	@IBOutlet var creationDateLabel: ZTextField?
 	@IBOutlet var  cloudStatusLabel: ZTextField?
@@ -28,7 +25,6 @@ class ZStatusController: ZGenericController {
     var                 currentZone: Zone?         { return gSelecting.rootMostMoveable }
     override  var      controllerID: ZControllerID { return .idStatus }
 
-
     var versionText: String {
         if  let     version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
             let buildNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion")            as? String {
@@ -38,14 +34,12 @@ class ZStatusController: ZGenericController {
         return "BUILD ERROR --- NO VERSION"
     }
 
-
     var totalCountsText: String {
         let  count = (gCloud?.rootZone?.progenyCount ?? 0) + 1 // add one for root
         let suffix = count == 1 ? "" : "s"
 
         return "\(count) idea\(suffix)"
     }
-
 
     var graphNameText: String {
         if  let dbID = currentZone?.databaseID {
@@ -80,8 +74,7 @@ class ZStatusController: ZGenericController {
 		}
 		
 		return ""
-	}
-    
+	}    
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		if ![.sSearch, .sFound, .sCrumbs, .sSwap, .sRing].contains(iKind) {

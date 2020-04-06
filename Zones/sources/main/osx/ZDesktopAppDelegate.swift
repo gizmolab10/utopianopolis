@@ -69,17 +69,17 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
 	
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        printDebug(.error, "hah!")
+        printDebug(.dError, "hah!")
     }
 
 
     func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        // printDebug(.error, deviceToken)
+        // printDebug(.dError, deviceToken)
     }
 
 
     func application(_ application: NSApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        printDebug(.error, "\(error)")
+        printDebug(.dError, "\(error)")
     }
     
 

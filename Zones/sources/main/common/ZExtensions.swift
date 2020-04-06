@@ -68,9 +68,9 @@ extension NSObject {
 	func     printCurrentFocus()                                { gHere.widget?.printView() }
 	func     printCurrentEssay()                                { gEssayView?.printView() }
 
-	func columnarReport(mode: ZDebugMode = .log, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
+	func columnarReport(mode: ZDebugMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
 
-	func rawColumnarReport(mode: ZDebugMode = .log, _ iFirst: Any?, _ iSecond: Any?) {
+	func rawColumnarReport(mode: ZDebugMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
             prefix.appendSpacesToLength(kLogTabStop)
             printDebug(mode, "\(prefix)\(iSecond ?? "")")
@@ -79,7 +79,7 @@ extension NSObject {
 
     func log(_ iMessage: Any?) {
         if  let   message = iMessage as? String, message != "" {
-            printDebug(.log, message)
+            printDebug(.dLog, message)
         }
     }
 
@@ -135,7 +135,7 @@ extension NSObject {
     }
 
     func UNDO<TargetType : AnyObject>(_ target: TargetType, handler: @escaping (TargetType) -> Swift.Void) {
-        kUndoManager.registerUndo(withTarget:target, handler: { iTarget in
+        gUndoManager.registerUndo(withTarget:target, handler: { iTarget in
             handler(iTarget)
         })
     }
@@ -194,7 +194,7 @@ extension NSObject {
             let        rawIdentifier = components[0]
             let   dbID: ZDatabaseID? = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
             let             zRecords = gRemoteStorage.zRecords(for: dbID)
-            let                 zone = zRecords?.zone(for: ckRecord) ?? Zone(record: ckRecord, databaseID: dbID) // BAD DUMMY ?
+            let                 zone = zRecords?.zoneForRecord(ckRecord) ?? Zone(record: ckRecord, databaseID: dbID) // BAD DUMMY ?
 
             return zone
         }
@@ -311,7 +311,7 @@ extension Data {
 	}
 
 	func writeAsset(_ fileName: String? = nil) -> URL? {
-		if  let url = gFiles.assetURL(fileName) {
+		if  let url = gFiles.localAssetURL(fileName) {
 			do {
 				try write(to: url)
 			} catch {
@@ -368,7 +368,7 @@ extension CKAsset {
 					case "path":
 						let name = URL(string: value)!.pathExtension.appending(".png")
 
-						return gFiles.assetURL(name)
+						return gFiles.localAssetURL(name)
 					default: break
 				}
 			}
@@ -382,6 +382,29 @@ extension CKAsset {
 extension CKRecord {
 
     var reference: CKRecord.Reference { return CKRecord.Reference(recordID: recordID, action: .none) }
+
+	var isOrphaned: Bool {
+		var parentRecordName : String?
+		var parentRef        = self[kpParent] as? CKRecord.Reference
+
+		if  parentRef == nil {
+			if  let     link = self[kpZoneParentLink] as? String {
+				parentRecordName = recordName(from: link) // parent is in other db
+			} else {
+				parentRef    = self[kpOwner] as? CKRecord.Reference
+			}
+		}
+
+		if  let ref = parentRef {
+			parentRecordName = ref.recordID.recordName
+		}
+
+		if  parentRecordName != nil {
+			return gRemoteStorage.maybeZoneForRecordName(parentRecordName) == nil
+		}
+
+		return true
+	}
 
 	var storable: String {
 		get {
@@ -1302,7 +1325,7 @@ extension NSMutableAttributedString {
 					}
 
 					if  let value = attribute {
-						printDebug(.notes, "add attribute over \(range) for \(raw): \(value)")
+						printDebug(.dNotes, "add attribute over \(range) for \(raw): \(value)")
 
 						addAttribute(key, value: value, range: range)
 					}
@@ -1690,7 +1713,7 @@ extension String {
     }
 
 	var textAttachment: NSTextAttachment? {
-		if  let url = gFiles.assetURL(self) {
+		if  let url = gFiles.localAssetURL(self) {
 			do {
 				return try NSTextAttachment(fileWrapper: FileWrapper(url: url, options: []))
 			} catch {

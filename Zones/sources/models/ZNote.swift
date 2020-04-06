@@ -21,12 +21,12 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var    autoDelete        = false		// true means delete this note on exit from essay mode
 	var    essayLength       = 0
 	var    noteOffset        = 0
-	var    noteMaybe         : ZTrait?   { return zone?.traits[  .tNote] }
+	var    noteTraitMaybe    : ZTrait?   { return zone?.traits[  .tNote] }
 	var    noteTrait         : ZTrait?   { return zone?.traitFor(.tNote) }
 	var    prefix            : String    { return "note" }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
 	var    isNote            : Bool      { return isMember(of: ZNote.self) }
-	var    lastTextIsDefault : Bool      { return noteMaybe?.text == kEssayDefault }
+	var    lastTextIsDefault : Bool      { return noteTraitMaybe?.text == kEssayDefault }
 	var    fullTitleOffset   : Int       { return noteOffset + titleRange.location - 2 }
 	var    fullTitleRange    : NSRange   { return NSRange(location:   fullTitleOffset, length: titleRange.length + 3) }
 	var         noteRange    : NSRange   { return NSRange(location:   noteOffset, length:  textRange.upperBound) }
@@ -64,7 +64,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	func saveNote(_ attributedString: NSAttributedString?) {
 		if  let attributed = attributedString,
-			let       note = noteMaybe {
+			let       note = noteTraitMaybe {
 			let     string = attributed.string
 			let       text = attributed.attributedSubstring(from: textRange)
 			let      title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
@@ -187,7 +187,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	func reset() {
-		noteMaybe?.clearSave()
+		noteTraitMaybe?.clearSave()
 		setupChildren()
 	}
 

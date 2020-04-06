@@ -60,12 +60,10 @@ class ZRemoteStorage: NSObject {
         
         return recordsArray
     }
-
     
     func cloud(for dbID: ZDatabaseID) -> ZCloud? { return zRecords(for: dbID) as? ZCloud }
     func clear()                                 { records =    [ZDatabaseID  :   ZCloud] () }
     func cancel()                                { currentCloud?.currentOperation?.cancel() }
-
 
     func recount() {  // all progenyCounts for all progeny in all databases in all roots
         for records in allRecordsArrays {
@@ -73,13 +71,11 @@ class ZRemoteStorage: NSObject {
         }
     }
 
-
     func updateLastSyncDates() {
         for records in allRecordsArrays {
             records.updateLastSyncDate()
         }
     }
-    
     
     func updateNeededCounts() {
         for cloud in allClouds {
@@ -100,6 +96,14 @@ class ZRemoteStorage: NSObject {
             }
         }
     }
+
+	func adoptAll(moveOrphansToLost: Bool = false) {
+		for cloud in allClouds {
+			cloud.adoptAll(moveOrphansToLost: moveOrphansToLost)
+		}
+
+		
+	}
 
 	func maybeZoneForRecordName (_ iRecordName: String?) -> Zone? {
 		if  let name = iRecordName {

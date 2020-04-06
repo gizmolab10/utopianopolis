@@ -122,7 +122,7 @@ class ZTimers: NSObject {
 					let interval = Date().timeIntervalSince(start)
 					let duration = Float(Int(interval) * 10) / 10.0 // round to nearest tenth of second
 
-					self?.columnarReport(mode: .timers, "\(prefix) \(timerID)", "\(duration)")
+					self?.columnarReport(mode: .dTimers, "\(prefix) \(timerID)", "\(duration)")
 				}
 
 				tryCatch = { [weak self] in

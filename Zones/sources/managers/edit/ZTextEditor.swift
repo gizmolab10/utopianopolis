@@ -71,7 +71,7 @@ class ZTextPack: NSObject {
             // add suffix for "show counts as" //
             // //////////////////////////////////
 
-			if  gDebugMode.contains(.names) && zone.record != nil {
+			if  gDebugMode.contains(.dNames) && zone.record != nil {
                 suffix = zone.recordName
             } else if (need > 1) && (!zone.showingChildren || (gCountsMode == .progeny)) {
                 suffix = String(describing: need)
@@ -173,7 +173,7 @@ class ZTextPack: NSObject {
 
             if  let                 w = textWidget {
                 let          original = originalText
-                prepareUndoForTextChange(kUndoManager) {
+                prepareUndoForTextChange(gUndoManager) {
                     self.originalText = w.text
 
                     self.captureTextAndSync(original)
@@ -284,7 +284,7 @@ class ZTextEditor: ZTextView {
 				zone.userCanWrite {
 				currentEdit = pack
 
-				printDebug(.edit, zone.unwrappedName)
+				printDebug(.dEdit, zone.unwrappedName)
 
 				pack.updateText(isEditing: true)
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
@@ -361,7 +361,7 @@ class ZTextEditor: ZTextView {
 
 	func capture(force: Bool = false) {
         if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
-			printDebug(.edit, "capture \(text)")
+			printDebug(.dEdit, "capture \(text)")
             current.captureTextAndSync(text)
         }
     }
@@ -490,7 +490,7 @@ class ZTextEditor: ZTextView {
             let     name = zone.unwrappedName
             let location = name.location(of: offset, using: currentFont)
 
-			printDebug(.edit, "at \(location)")
+			printDebug(.dEdit, "at \(location)")
             self.selectedRange = NSMakeRange(location, 0)
         }
     }

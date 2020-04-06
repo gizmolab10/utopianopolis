@@ -165,22 +165,24 @@ class ZRecord: NSObject {
 
         self.databaseID = databaseID
 
-        if  let r = record {
+		if  let r = record {
             self.record = r
 
-			self.needAdoption()
-            adopt()
-        }
-    }
-
+			if  isAdoptable {
+				self.needAdoption()
+				adopt()
+			}
+		}
+	}
 
     deinit {
         teardownKVO()
     }
 
+	var isAdoptable: Bool { return false }
 
     func orphan() {}
-    func adopt() {}
+    func adopt(moveOrphansToLost: Bool = false) {}
     func maybeNeedRoot() {}
     func debug(_  iMessage: String) {}
     func cloudProperties() -> [String] { return [] }
@@ -487,6 +489,8 @@ class ZRecord: NSObject {
 					for asset in assets {
 						if  let base64 = asset.data?.base64EncodedString() {
 							let fileName = asset.fileURL.lastPathComponent
+
+							printDebug(.dImages, "[PREPARE] " + fileName)
 
 							strings.append(fileName + gSeparatorAt(level: 1) + base64)
 						}

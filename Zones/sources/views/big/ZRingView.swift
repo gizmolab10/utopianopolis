@@ -213,12 +213,12 @@ class ZRingView: ZView {
 				necklaceObjects.append(object)
 			}
 
-			printDebug(.ring, "v     add: \(object)")
+			printDebug(.dRing, "v     add: \(object)")
 		}
 	}
 
 	func removeFromNecklace(_ index: Int) {
-		printDebug(.ring, "v  remove: \(necklaceObjects[index])")
+		printDebug(.dRing, "v  remove: \(necklaceObjects[index])")
 		necklaceObjects.remove(at: index)
 	}
 

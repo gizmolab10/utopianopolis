@@ -43,12 +43,12 @@ enum ZTraitType: String {
 class ZTrait: ZRecord {
 
 	@objc dynamic var    owner :  CKRecord.Reference?
-	@objc dynamic var   assets : [CKAsset]?
 	@objc dynamic var  strings : [String]?
 	@objc dynamic var   format :  String?
 	@objc dynamic var     type :  String?
-	@objc dynamic var     text :  String? { didSet { updateSearchableStrings() } }
-    override var unwrappedName :  String  { return text ?? emptyName }
+	@objc dynamic var     text :  String?   { didSet { updateSearchableStrings() } }
+	@objc dynamic var   assets : [CKAsset]? { didSet { if let a = assets, a.count > 0, let o = ownerZone { printDebug(.dImages, "[SET] \(o)") } } }
+    override var unwrappedName :  String    { return text ?? emptyName }
 	var             _traitType :  ZTraitType?
 	var             _ownerZone :  Zone?
 
@@ -128,17 +128,16 @@ class ZTrait: ZRecord {
         updateCKRecordProperties()
     }
 
-    override func adopt() {
+	override var isAdoptable: Bool { return owner != nil }
+
+	override func adopt(moveOrphansToLost: Bool = false) {
         if  let o = ownerZone, let traits = ownerZone?.traits, let t = traitType, traits[t] == nil {
             o.maybeMarkNotFetched()
-
-			if  databaseID == .mineID {
-				printDebug(.adopt, "t \(o)")
-			}
+			removeState(.needsAdoption)
 
             o.traits[t] = self
-        } else {
-            needAdoption()
+		} else if moveOrphansToLost, let r = record, !r.isOrphaned {
+			removeState(.needsAdoption)
         }
     }
 

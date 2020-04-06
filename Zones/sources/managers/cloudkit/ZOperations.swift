@@ -81,7 +81,7 @@ class ZOperations: NSObject {
     var  onCloudResponse :    AnyClosure?
 	var        cloudFire :  TimerClosure?
     var      lastOpStart :        NSDate?
-	func printOp(_ message: String) { columnarReport(mode: .ops, operationText, message) }
+	func printOp(_ message: String) { columnarReport(mode: .dOps, operationText, message) }
 
     var operationText: String {
         var s = String(describing: currentOp)

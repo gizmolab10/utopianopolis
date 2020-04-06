@@ -101,7 +101,7 @@ class ZCloud: ZRecords {
                             record.maybeNeedMerge()
                         } else {
                             let message = iRecord?.description ?? ""
-                            printDebug(.error, String(describing: iError!) + "\n" + message)
+                            printDebug(.dError, String(describing: iError!) + "\n" + message)
                         }
                     }
                 }
@@ -135,7 +135,7 @@ class ZCloud: ZRecords {
 
                     gAlerts.detectError(iError, "") { iHasError in
                         if iHasError {
-                            printDebug(.error, String(describing: iError!))
+                            printDebug(.dError, String(describing: iError!))
                         }
                     }
 
@@ -261,7 +261,7 @@ class ZCloud: ZRecords {
 		
         detectIfRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
             if  let ckRecord = iUpdatedRecord, !ckRecord.isEmpty {
-                let     zone = self.zone(for: ckRecord)
+                let     zone = self.zoneForRecord(ckRecord)
                 if ckRecord == zone.record {    // record data is new (zone for just updated it)
                     zone.addToParent() { iZone in
                         gControllers.signalFor(iZone, regarding: .sRelayout)
@@ -563,13 +563,12 @@ class ZCloud: ZRecords {
                 }
             } else { // nil means: we already received full response from cloud for this particular fetch
                 FOREGROUND {
-                    let          parentKey = "parent"
                     var               lost = self.createRandomLost()
                     var          parentIDs = [CKRecord.ID] ()
                     var             toLose = [CKRecord] ()
                     var childrenRecordsFor = [CKRecord.ID : [CKRecord]] ()
                     let         isOrphaned = { (iCKRecord: CKRecord) -> Bool in
-                        if  let  parentRef = iCKRecord[parentKey] as? CKRecord.Reference {
+                        if  let  parentRef = iCKRecord[kpParent] as? CKRecord.Reference {
                             let  parentID  = parentRef.recordID
 
                             if  self.notRegistered(parentID) {
@@ -709,7 +708,8 @@ class ZCloud: ZRecords {
 
 		if  recordsToProcess.count != 0,
 			let timerID = ZTimerID.recordsTimerID(for: dbID) {
-			gTimers.assureCompletion(for: timerID, now: true, withTimeInterval: 4.0) {
+			gTimers.assureCompletion(for: timerID, now: true, withTimeInterval: 0.2) {
+				printDebug(.dFetch, "\(self.recordsToProcess.count)")
 				while self.recordsToProcess.count > 0 {
 					if  let      key = self.recordsToProcess.keys.first,
 						let ckRecord = self.recordsToProcess[key] {
@@ -781,7 +781,7 @@ class ZCloud: ZRecords {
 
         fetchZones(needed: needed) { iCKRecords in
             FOREGROUND {
-                if iCKRecords.count == 0 {
+                if  iCKRecords.count == 0 {
                     self.recount()
                     onCompletion?(0)
                 } else {
@@ -798,7 +798,7 @@ class ZCloud: ZRecords {
         var   IDsToFetchNow = [CKRecord.ID] ()
         var       retrieved = [CKRecord] ()
         var IDsToFetchLater = needed
-        var fetchClosure : Closure?
+        var    fetchClosure : Closure?  // declare unassigned so can be called recursively
 
         fetchClosure = {
             let count = IDsToFetchLater.count
@@ -806,9 +806,9 @@ class ZCloud: ZRecords {
 
             if  count == 0 {
 
-				//////////
+				// ///////
 				// DONE //
-				//////////
+				// ///////
 				
                 onCompletion?(retrieved)
             } else {
@@ -823,9 +823,9 @@ class ZCloud: ZRecords {
                 self.reliableFetch(needed: IDsToFetchNow) { iCKRecords in
                     retrieved.append(contentsOf: iCKRecords)
 
-					/////////////
+					// //////////
 					// RECURSE //
-					/////////////
+					// //////////
 
 					fetchClosure?()
                 }
@@ -907,7 +907,7 @@ class ZCloud: ZRecords {
                         if  maybe != nil {
                             maybe?.useBest(record: fetchedRecord)
                         } else {
-                            maybe  = self.zone(for: fetchedRecord)
+                            maybe  = self.zoneForRecord(fetchedRecord)
                         }
 
                         if  let    fetched = maybe,     // always not nil
@@ -1006,7 +1006,7 @@ class ZCloud: ZRecords {
                             if destroyedIDs.contains(identifier) {
                                 // self.columnarReport(" DESTROYED", child.decoratedName)
                             } else {
-                                let child = self.zone(for: childRecord)
+                                let child = self.zoneForRecord(childRecord)
 
                                 if  child.isRoot && child.parentZone != nil {
                                     child.orphan()  // avoids HANG ... a root can NOT be a child, by definition
@@ -1245,7 +1245,7 @@ class ZCloud: ZRecords {
                 if  iHereRecord == nil || iHereRecord?[kpZoneName] == nil {
                     rootCompletion()
                 } else {
-                    let    here = self.zone(for: iHereRecord!)
+                    let    here = self.zoneForRecord(iHereRecord!)
                     here.record = iHereRecord
 
                     here.maybeNeedChildren()
@@ -1260,7 +1260,7 @@ class ZCloud: ZRecords {
     
     func establishRoots(_ onCompletion: IntClosure?) {
 		var establishRootAt: IntClosure?     // pre-declare so can recursively call from within it
-        let         rootIDs: [ZRootID]   = [.favorites, .destroy, .trash, .graph, .lost]
+        let         rootIDs: [ZRootID]   = [.favoritesID, .destroyID, .trashID, .graphID, .lostID]
         establishRootAt                  = { iIndex in
             if iIndex >= rootIDs.count {
                 onCompletion?(0)
@@ -1271,24 +1271,24 @@ class ZCloud: ZRecords {
                 let recurseNext = { establishRootAt?(iIndex + 1) }
 
                 switch rootID {
-                case .favorites: if gFavoritesRoot        != nil || self.databaseID != .mineID { recurseNext(); return } else { name = kFavoritesName }
-                case .graph:     if self.rootZone         != nil                               { recurseNext(); return } else { name = kFirstIdeaTitle }
-                case .lost:      if self.lostAndFoundZone != nil                               { recurseNext(); return }
-                case .trash:     if self.trashZone        != nil                               { recurseNext(); return }
-                case .destroy:   if self.destroyZone      != nil                               { recurseNext(); return }
+                case .favoritesID: if gFavoritesRoot        != nil || self.databaseID != .mineID { recurseNext(); return } else { name = kFavoritesName }
+                case .graphID:     if self.rootZone         != nil                               { recurseNext(); return } else { name = kFirstIdeaTitle }
+                case .lostID:      if self.lostAndFoundZone != nil                               { recurseNext(); return }
+                case .trashID:     if self.trashZone        != nil                               { recurseNext(); return }
+                case .destroyID:   if self.destroyZone      != nil                               { recurseNext(); return }
                 }
 
                 self.establishRootFor(name: name, recordName: recordName) { iZone in
-                    if  rootID != .graph {
+                    if  rootID != .graphID {
                         iZone.directAccess = .eProgenyWritable
                     }
 
                     switch rootID {
-                    case .favorites: gFavoritesRoot        = iZone
-                    case .destroy:   self.destroyZone      = iZone
-                    case .trash:     self.trashZone        = iZone
-                    case .graph:     self.rootZone         = iZone
-                    case .lost:      self.lostAndFoundZone = iZone
+                    case .favoritesID: gFavoritesRoot        = iZone
+                    case .destroyID:   self.destroyZone      = iZone
+                    case .trashID:     self.trashZone        = iZone
+                    case .graphID:     self.rootZone         = iZone
+                    case .lostID:      self.lostAndFoundZone = iZone
                     }
 
                     recurseNext()
@@ -1309,7 +1309,7 @@ class ZCloud: ZRecords {
                 record  = CKRecord(recordType: kZoneType, recordID: recordID)       // will create
             }
 
-            let           zone = self.zone(for: record!, requireFetch: false)       // get / create
+            let           zone = self.zoneForRecord(record!, requireFetch: false)       // get / create
             zone       .parent = nil
 
             if  zone.zoneName == nil {

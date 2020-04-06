@@ -25,7 +25,7 @@ class ZNoteAndEssay: NSObject {
 
 	var shouldOverwrite: Bool {
 		if  let current = gCurrentEssay,
-			current.noteMaybe?.needsSave ?? false,
+			current.noteTraitMaybe?.needsSave ?? false,
 			current.essayLength != 0,
 			let i = gNoteAndEssay.essayID,
 			i == essayZone?.record?.recordID {	// been here before

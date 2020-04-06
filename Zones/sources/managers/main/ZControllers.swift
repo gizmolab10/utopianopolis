@@ -85,9 +85,13 @@ class ZControllers: NSObject {
 						gRefusesFirstResponder = false
 						gHasFinishedStartup    = true
 
+						gRemoteStorage.adoptAll()
 						self.signal([.sRelayout])
-						gDetailsController?.toggleViewsFor(ids: [.Preferences])
-						gDetailsController?.toggleViewsFor(ids: [.Preferences])
+
+						FOREGROUND(after: 1.0) {
+							gRemoteStorage.adoptAll()
+						}
+
 						gFiles.writeAll()
 					}
 				}
