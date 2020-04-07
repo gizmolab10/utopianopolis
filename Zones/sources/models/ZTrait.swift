@@ -43,13 +43,13 @@ enum ZTraitType: String {
 class ZTrait: ZRecord {
 
 	@objc dynamic var    owner :  CKRecord.Reference?
+	@objc dynamic var   assets : [CKAsset]?
 	@objc dynamic var  strings : [String]?
 	@objc dynamic var   format :  String?
 	@objc dynamic var     type :  String?
 	@objc dynamic var     text :  String?   { didSet { updateSearchableStrings() } }
-	@objc dynamic var   assets : [CKAsset]? { didSet { if let a = assets, a.count > 0, let o = ownerZone { printDebug(.dImages, "[SET] \(o)") } } }
     override var unwrappedName :  String    { return text ?? emptyName }
-	var             _traitType :  ZTraitType?
+ 	var             _traitType :  ZTraitType?
 	var             _ownerZone :  Zone?
 
     var deepCopy: ZTrait {

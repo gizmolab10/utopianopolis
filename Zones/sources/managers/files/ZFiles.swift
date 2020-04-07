@@ -393,8 +393,14 @@ class ZFiles: NSObject {
 		return url
 	}
 
-	func localAssetURL(_ assetFileName: String? = nil) -> URL? {
-		return assetFileName == nil ? nil : assetDirectoryURL.appendingPathComponent(assetFileName!)
+	func assetFileURL(_ assetFileName: String? = nil) -> URL? {
+		if  let name = assetFileName {
+			printDebug(.dImages, name)
+
+			return assetDirectoryURL.appendingPathComponent(name)
+		}
+
+		return nil
 	}
 
     func fileName(for index: ZDatabaseIndex, isGeneric: Bool = true) -> String? {

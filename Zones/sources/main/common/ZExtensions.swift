@@ -311,7 +311,7 @@ extension Data {
 	}
 
 	func writeAsset(_ fileName: String? = nil) -> URL? {
-		if  let url = gFiles.localAssetURL(fileName) {
+		if  let url = gFiles.assetFileURL(fileName) {
 			do {
 				try write(to: url)
 			} catch {
@@ -328,14 +328,16 @@ extension Data {
 
 extension URL {
 
-	var imageSize: CGSize? {
-		if  let         imageSource = CGImageSourceCreateWithURL(self as CFURL, nil) {
-			if  let imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as Dictionary? {
-				let     pixelHeight = imageProperties[kCGImagePropertyPixelHeight] as! Int
-				let     pixelWidth  = imageProperties[kCGImagePropertyPixelWidth]  as! Int
+	var imageSource: CGImageSource? { return CGImageSourceCreateWithURL(self as CFURL, nil) }
 
-				return CGSize(width: pixelWidth, height: pixelHeight)
-			}
+	var imageSize: CGSize? {
+		if  let          source = imageSource,
+			let imageProperties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as Dictionary? {
+			let     pixelHeight = imageProperties[kCGImagePropertyPixelHeight] as! Int
+			let     pixelWidth  = imageProperties[kCGImagePropertyPixelWidth]  as! Int
+
+			return CGSize(width: pixelWidth, height: pixelHeight)
+
 		}
 
 		return nil
@@ -345,16 +347,10 @@ extension URL {
 
 extension CKAsset {
 
-	var data: Data? {
-		FileManager.default.contents(atPath: fileURL.path)
-	}
+	var data      :   Data? { return FileManager.default.contents(atPath: fileURL.path) }
+	var imageSize : CGSize? { return fileURL.imageSize }
 
-	var imageSize: CGSize? {
-		get { return fileURL.imageSize }
-		set {}
-	}
-
-	var localURL: URL? {
+	var extractedLocalURL  : URL? {
 		let parts = description.components(separatedBy: kCommaSeparator)
 
 		for part in parts {
@@ -362,13 +358,13 @@ extension CKAsset {
 
 			if  subparts.count > 1 {
 				let   key = subparts[0].replacingOccurrences(of: kSpace, with: "")
-				let value = subparts[1].replacingOccurrences(of: ">", with: "")
+				let value = subparts[1].replacingOccurrences(of: ">",    with: "")
 
 				switch key {
 					case "path":
 						let name = URL(string: value)!.pathExtension.appending(".png")
 
-						return gFiles.localAssetURL(name)
+						return gFiles.assetFileURL(name)
 					default: break
 				}
 			}
@@ -1713,7 +1709,7 @@ extension String {
     }
 
 	var textAttachment: NSTextAttachment? {
-		if  let url = gFiles.localAssetURL(self) {
+		if  let url = gFiles.assetFileURL(self) {
 			do {
 				return try NSTextAttachment(fileWrapper: FileWrapper(url: url, options: []))
 			} catch {
