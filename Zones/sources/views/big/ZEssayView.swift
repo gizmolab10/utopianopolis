@@ -24,6 +24,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var deleteButton    : ZButton?
 	var hideButton      : ZButton?
 	var saveButton      : ZButton?
+	var dropped         : String?
 	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectionRange).string }
 	var selectionRange  = NSRange()          { didSet { if selectionRange.location != 0, let rect = rectForRange(selectionRange) { selectionRect = rect } } }
@@ -33,7 +34,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var resizeDragStart : CGPoint?
 	var resizeDragRect  : CGRect?
 	var resizeDot       : ZDirection?
-	var imageNote       : ZNote?             // for restoring cursor and scroll locations
 	let dotRadius       = CGFloat(-5.0)
 
 	// MARK:- input
@@ -553,11 +553,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	private func showSpecialsPopup() {
-		NSMenu.specialsPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: self)
+		NSMenu.symbolsPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: self)
 	}
 
-	@objc private func handleSpecialsPopupMenu(_ iItem: ZMenuItem) {
-		if  let  type = ZSpecialsMenuType(rawValue: iItem.keyEquivalent),
+	@objc private func handleSymbolsPopupMenu(_ iItem: ZMenuItem) {
+		if  let  type = ZSymbolsMenuType(rawValue: iItem.keyEquivalent),
 			type     != .eCancel {
 			let  text = type.text
 
@@ -567,28 +567,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	// MARK:- buttons
 	// MARK:-
-
-	enum ZTextButtonID : Int {
-		case idForward
-		case idCancel
-		case idDelete
-		case idBack
-		case idSave
-		case idHide
-
-		var title: String {
-			switch self {
-				case .idForward: return "⇨"
-				case .idCancel:  return "Cancel"
-				case .idDelete:  return "Delete"
-				case .idHide:    return "Hide"
-				case .idSave:    return "Save"
-				case .idBack:    return "⇦"
-			}
-		}
-
-		static var all: [ZTextButtonID] { return [.idBack, .idForward, .idHide, .idSave, .idCancel, .idDelete] }
-	}
 
 	func updateControlBarButtons(_ flag: Bool) {
 		backwardButton?.isEnabled = flag
@@ -600,7 +578,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func setButton(_ button: ZButton) {
-		if let tag = ZTextButtonID(rawValue: button.tag) {
+		if let tag = ZEssayButtonID(rawValue: button.tag) {
 			switch tag {
 				case .idBack:   backwardButton = button
 				case .idForward: forwardButton = button
@@ -613,7 +591,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	@objc private func handleButtonPress(_ iButton: ZButton) {
-		if let buttonID = ZTextButtonID(rawValue: iButton.tag) {
+		if let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
 				case .idForward: gEssayRing.goForward()
 				case .idDelete:  gCurrentEssay?.delete(); 			exit()
@@ -630,7 +608,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  let w = gWindow,
 				let inspectorBar = w.titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view {
 
-				func button(for tag: ZTextButtonID) -> ZButton {
+				func button(for tag: ZEssayButtonID) -> ZButton {
 					let        index = inspectorBar.subviews.count - 1
 					var        frame = inspectorBar.subviews[index].frame
 					let            x = frame.maxX - ((tag == .idBack) ? 0.0 : 6.0)
@@ -645,7 +623,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					return button
 				}
 
-				for tag in ZTextButtonID.all {
+				for tag in ZEssayButtonID.all {
 					let b = button(for: tag)
 
 					inspectorBar.addSubview(b)
@@ -658,46 +636,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- hyperlinks
 	// MARK:-
 
-	enum ZHyperlinkMenuType: String {
-		case hWeb   = "h"
-		case hIdea  = "i"
-		case hNote  = "n"
-		case hEssay = "e"
-		case hClear = "c"
-
-		var title: String {
-			switch self {
-				case .hWeb:   return "Internet"
-				case .hIdea:  return "Idea"
-				case .hNote:  return "Note"
-				case .hEssay: return "Essay"
-				case .hClear: return "Clear"
-			}
-		}
-
-		var linkType: String {
-			switch self {
-				case .hWeb: return "http"
-				default:    return title.lowercased()
-			}
-		}
-
-		static var all: [ZHyperlinkMenuType] { return [.hWeb, .hIdea, .hNote, .hEssay, .hClear] }
-
-	}
-
 	private func showHyperlinkPopup() {
 		let menu = NSMenu(title: "create a hyperlink")
 		menu.autoenablesItems = false
 
-		for type in ZHyperlinkMenuType.all {
+		for type in ZEssayHyperlinkType.all {
 			menu.addItem(item(type: type))
 		}
 
 		menu.popUp(positioning: nil, at: selectionRect.origin, in: self)
 	}
 
-	private func item(type: ZHyperlinkMenuType) -> NSMenuItem {
+	private func item(type: ZEssayHyperlinkType) -> NSMenuItem {
 		let  	  item = NSMenuItem(title: type.title, action: #selector(handleHyperlinkPopupMenu(_:)), keyEquivalent: type.rawValue)
 		item   .target = self
 		item.isEnabled = true
@@ -708,12 +658,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	@objc private func handleHyperlinkPopupMenu(_ iItem: ZMenuItem) {
-		if  let type = ZHyperlinkMenuType(rawValue: iItem.keyEquivalent) {
+		if  let type = ZEssayHyperlinkType(rawValue: iItem.keyEquivalent) {
 			var link: String? = type.linkType + kColonSeparator
 
 			switch type {
 				case .hClear: link = nil // to remove existing hyperlink
-				case .hWeb:   link = gEssayController?.modalForWebLink(textStorage?.string.substring(with: selectionRange))
+				case .hWeb:   link = gEssayController?.modalForHyperlink(textStorage?.string.substring(with: selectionRange))
 				default:      if let b = gSelecting.pastableRecordName { link?.append(b) } else { return }
 			}
 
@@ -774,7 +724,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  parts.count > 1,
 				let    t = parts.first?.first,                          // first character of first part
 				let  rID = parts.last,
-				let type = ZHyperlinkMenuType(rawValue: String(t)) {
+				let type = ZEssayHyperlinkType(rawValue: String(t)) {
 				let zone = gSelecting.zone(with: rID)	                // find zone with rID
 				switch type {
 					case .hIdea:
@@ -843,6 +793,20 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		selectionRange = newRange
 
 		return newRange
+	}
+
+	// MARK:- drop images
+	// MARK:-
+
+	override func draggingEntered(_ drag: NSDraggingInfo) -> NSDragOperation {
+		if  let    board = drag.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
+			let     path = board[0] as? String {
+			let     name = URL(fileURLWithPath: path).lastPathComponent
+			dropped = name
+			printDebug(.dImages, name)
+		}
+
+		return .copy
 	}
 
 	// MARK:- lockout editing of added whitespace

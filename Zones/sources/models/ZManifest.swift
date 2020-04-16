@@ -133,12 +133,12 @@ class ZManifest: ZRecord {
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
         self.init(record: nil, databaseID: dbID)
         
-        setStorageDictionary(dict, of: kManifestType, into: dbID)
+        extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
     }
     
 
-    override func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
-        super.setStorageDictionary(dict, of: iRecordType, into: iDatabaseID)
+    override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
+        super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID)
         
         if  let deletedsArray = dict[.deleted] as? [ZStorageDictionary] {
             for d in deletedsArray {
@@ -150,8 +150,8 @@ class ZManifest: ZRecord {
     }
     
     
-    override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
-		var dict           = try super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
+    override func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
+		var dict           = try super.createStorageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
         
         if  let          d = updatedRefs as NSObject? {
             dict[.deleted] = d

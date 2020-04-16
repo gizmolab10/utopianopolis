@@ -27,7 +27,7 @@ enum ZOperationID: Int {
     case oCloud
     case oManifest
     case oReadFile           // LOCAL
-    case oFound              // LOCAL
+    case oFoundIdeas         // LOCAL
     case oFavorites
     case oRoots
     case oHere
@@ -36,9 +36,9 @@ enum ZOperationID: Int {
     // finish
 
     case oFinishUp
-	case oNewZones
+	case oNewIdeas
 	case oSubscribe
-	case oAllZones
+	case oAllIdeas
 	case oAllTraits
 	case oRecount
     case oDone
@@ -46,15 +46,15 @@ enum ZOperationID: Int {
     // miscellaneous
 
 	case oFetchAndMerge
-	case oFetchNeeded        // after children so favorite targets resolve properly
+	case oNeededIdeas        // after children so favorite targets resolve properly
     case oSaveToCloud        // zones, traits, destroy
     case oEmptyTrash
     case oCompletion
     case oBookmarks
-    case oFetchLost
+    case oLostIdeas
     case oUndelete
-    case oChildren
-    case oParents            // after fetch so colors resolve properly
+    case oChildIdeas
+    case oParentIdeas        // after fetch so colors resolve properly
     case oRefetch            // user defaults list of record ids
     case oTraits
     case oNone               // default operation
@@ -67,15 +67,15 @@ enum ZOperationID: Int {
 }
 
 let	        doneOps : [ZOperationID] = [.oNone, .oDone, .oCompletion]
-let   deprecatedOps : [ZOperationID] = [.oParents]
-let localOperations : [ZOperationID] = [.oHere, .oRoots, .oFound, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion,
+let   deprecatedOps : [ZOperationID] = [.oParentIdeas]
+let localOperations : [ZOperationID] = [.oHere, .oRoots, .oFoundIdeas, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion,
 										.oMacAddress, .oFetchUserID, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
 
 class ZOperations: NSObject {
 
 	let            queue = OperationQueue()
 	var        currentOp :  ZOperationID  =  .oNone
-	var hiddenSpinnerOps : [ZOperationID] = [.oAllZones, .oTraits, .oSaveToCloud]
+	var hiddenSpinnerOps : [ZOperationID] = [.oAllIdeas, .oTraits, .oSaveToCloud]
 	var     shouldCancel :          Bool  { return !currentOp.isDone && -(negativeTimeSinceOpStart ?? 0.0) > 5.0 }
 	var    debugTimeText :        String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
     var  onCloudResponse :    AnyClosure?

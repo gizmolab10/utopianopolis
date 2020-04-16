@@ -35,6 +35,7 @@ class ZFiles: NSObject {
     var  writeTimer : Timer?
     var _directoryURL : URL?
     let              manager = FileManager.default
+	func imageURL(for fileName: String) -> URL { return assetsDirectoryURL.appendingPathComponent(fileName) }
 
     var isWritingNow: Bool {
         for writing in isWriting {
@@ -79,7 +80,6 @@ class ZFiles: NSObject {
 			}
 		}
 	}
-
 
     func needWrite(for  databaseID: ZDatabaseID?) {
         if  let  dbID = databaseID,
@@ -144,28 +144,28 @@ class ZFiles: NSObject {
 				// take snapshots just before exit from method //
 				// //////////////////////////////////////////////
 
-				if  let   graph  = try manager.rootZone?.storageDictionary(for: dbID)  {
+				if  let   graph  = try manager.rootZone?.createStorageDictionary(for: dbID)  {
 					dict[.graph] = graph as NSObject
 				}
 
-				if  let   trash  = try manager.trashZone?.storageDictionary(for: dbID) {
+				if  let   trash  = try manager.trashZone?.createStorageDictionary(for: dbID) {
 					dict[.trash] = trash as NSObject
 				}
 
-				if  let   destroy  = try manager.destroyZone?.storageDictionary(for: dbID) {
+				if  let   destroy  = try manager.destroyZone?.createStorageDictionary(for: dbID) {
 					dict[.destroy] = destroy as NSObject
 				}
 
-				if  let   manifest  = try manager.manifest?.storageDictionary(for: dbID) {
+				if  let   manifest  = try manager.manifest?.createStorageDictionary(for: dbID) {
 					dict[.manifest] = manifest as NSObject
 				}
 
-				if  let   lost  = try manager.lostAndFoundZone?.storageDictionary(for: dbID) {
+				if  let   lost  = try manager.lostAndFoundZone?.createStorageDictionary(for: dbID) {
 					dict[.lost] = lost as NSObject
 				}
 
 				if                 dbID == .mineID {
-					if  let   favorites  = try gFavoritesRoot?.storageDictionary(for: dbID) {
+					if  let   favorites  = try gFavoritesRoot?.createStorageDictionary(for: dbID) {
 						dict[.favorites] = favorites as NSObject
 					}
 
@@ -381,7 +381,7 @@ class ZFiles: NSObject {
         return directoryURL
     }
 
-	var assetDirectoryURL : URL {
+	var assetsDirectoryURL : URL {
 		let url = directoryURL.appendingPathComponent("assets")
 
 		do {
@@ -391,16 +391,6 @@ class ZFiles: NSObject {
 		}
 
 		return url
-	}
-
-	func assetFileURL(_ assetFileName: String? = nil) -> URL? {
-		if  let name = assetFileName {
-			printDebug(.dImages, name)
-
-			return assetDirectoryURL.appendingPathComponent(name)
-		}
-
-		return nil
 	}
 
     func fileName(for index: ZDatabaseIndex, isGeneric: Bool = true) -> String? {

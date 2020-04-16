@@ -88,11 +88,10 @@ class ZControllers: NSObject {
 						gRemoteStorage.adoptAll()
 						self.signal([.sRelayout])
 
-						FOREGROUND(after: 1.0) {
-							gRemoteStorage.adoptAll()
+						FOREGROUND(after: 10.0) {
+							gRemoteStorage.launchIsDone()
+							gFiles.writeAll()
 						}
-
-						gFiles.writeAll()
 					}
 				}
 			}

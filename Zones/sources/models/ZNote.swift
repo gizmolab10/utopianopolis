@@ -72,6 +72,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			zone?.zoneName = title
 			autoDelete     = false
 
+			noteTrait?.needSave()
 			zone?.needSave()
 		}
 	}

@@ -971,7 +971,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
                 let  trait = traitFor(type)
                 trait.text = text
 
-                trait.updateCKRecordProperties()
                 trait.maybeNeedSave()
 			} else {
 				traits[type]?.needDestroy()
@@ -993,11 +992,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		set {
-			if  let   assets = newValue {
+			if  let        a = newValue {
 				let    trait = traitFor(.tAssets)
-				trait.assets = assets
+				trait.assets = a
 
-				trait.updateCKRecordProperties()
 				trait.maybeNeedSave()
 			} else {
 				traits[.tAssets]?.needDestroy()
@@ -1745,7 +1743,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         self.init(record: nil, databaseID: dbID)
 
         temporarilyIgnoreNeeds {
-            setStorageDictionary(dict, of: kZoneType, into: dbID)
+            extractFromStorageDictionary(dict, of: kZoneType, into: dbID)
         }
     }
 
@@ -1764,7 +1762,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             recordName != name {
             record = CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: name)) // change record name by relacing record
             
-            updateCKRecordProperties() // transfer instance variables into record
             needSave()
             
             for child in children {
@@ -1775,10 +1772,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         }
     }
 
-    override func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
+    override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         if  let name = dict[.name] as? String { zoneName = name }
 
-        super.setStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
+        super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
 
         if let childrenDicts: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
             for childDict: ZStorageDictionary in childrenDicts {
@@ -1810,15 +1807,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         }
     }
 
-    override func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
-		var dict            = try super.storageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
+    override func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
+		var dict            = try super.createStorageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
 
 		if  (includeInvisibles || showingChildren),
-			let   childDict = try Zone.storageArray(for: children, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+			let   childDict = try Zone.createStorageArray(for: children, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
             dict[.children] = childDict as NSObject?
         }
 
-        if  let  traitsDict = try Zone.storageArray(for: traitValues, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+        if  let  traitsDict = try Zone.createStorageArray(for: traitValues, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
             dict  [.traits] = traitsDict as NSObject?
         }
 

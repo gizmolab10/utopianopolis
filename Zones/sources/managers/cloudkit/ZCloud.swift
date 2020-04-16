@@ -48,34 +48,32 @@ class ZCloud: ZRecords {
         }
     }
 
-
     func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
-        switch identifier { // inner switch
-        case .oBookmarks:     fetchBookmarks    (cloudCallback)
-        case .oChildren:      fetchChildren     (cloudCallback)
-        case .oCloud:         fetchCloudZones   (cloudCallback)
-        case .oEmptyTrash:    emptyTrash        (cloudCallback)
-        case .oFetchNeeded:   fetchNeededZones  (cloudCallback)
-        case .oFetchLost:     fetchLost         (cloudCallback)
-        case .oNewZones:      fetchNewZones     (cloudCallback)
-        case .oAllZones:      fetchAllZones     (cloudCallback)
-        case .oFound:         found             (cloudCallback)
-        case .oHere:          establishHere     (cloudCallback)
-        case .oFetchAndMerge: fetchAndMerge     (cloudCallback)
-        case .oParents:       fetchParents      (cloudCallback)
-        case .oRefetch:       refetchZones      (cloudCallback)
-        case .oRoots:         establishRoots    (cloudCallback)
-        case .oManifest:      establishManifest (cloudCallback)
-        case .oSaveToCloud:   save              (cloudCallback)
-        case .oSubscribe:     subscribe         (cloudCallback)
-		case .oAllTraits:     fetchAllTraits    (cloudCallback)
-		case .oTraits:        fetchTraits       (cloudCallback)
-        case .oUndelete:      undeleteAll       (cloudCallback)
-        case .oRecount:       recount           (cloudCallback)
-        default:                                 cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
-        }
+		switch identifier { // inner switch
+			case .oBookmarks:     fetchBookmarks    (cloudCallback)
+			case .oCloud:         fetchCloudZones   (cloudCallback)
+			case .oEmptyTrash:    emptyTrash        (cloudCallback)
+			case .oNeededIdeas:   fetchNeededIdeas  (cloudCallback)
+			case .oParentIdeas:   fetchParentIdeas  (cloudCallback)
+			case .oChildIdeas:    fetchChildIdeas   (cloudCallback)
+			case .oFoundIdeas:    foundIdeas        (cloudCallback)
+			case .oLostIdeas:     fetchLostIdeas    (cloudCallback)
+			case .oNewIdeas:      fetchNewIdeas     (cloudCallback)
+			case .oAllIdeas:      fetchAllIdeas     (cloudCallback)
+			case .oRefetch:       refetchIdeas      (cloudCallback)
+			case .oHere:          establishHere     (cloudCallback)
+			case .oFetchAndMerge: fetchAndMerge     (cloudCallback)
+			case .oRoots:         establishRoots    (cloudCallback)
+			case .oManifest:      establishManifest (cloudCallback)
+			case .oSaveToCloud:   save              (cloudCallback)
+			case .oSubscribe:     subscribe         (cloudCallback)
+			case .oAllTraits:     fetchAllTraits    (cloudCallback)
+			case .oTraits:        fetchTraits       (cloudCallback)
+			case .oUndelete:      undeleteAll       (cloudCallback)
+			case .oRecount:       recount           (cloudCallback)
+			default:                                 cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
+		}
     }
-
 
     // MARK:- push to cloud
     // MARK:-
@@ -521,7 +519,7 @@ class ZCloud: ZRecords {
     }
 
 
-    func refetchZones(_ onCompletion: IntClosure?) {
+    func refetchIdeas(_ onCompletion: IntClosure?) {
         if  let fetchables = getPreferencesString(for: refetchingName, defaultString: "")?.components(separatedBy: kColonSeparator) {
             for fetchable in fetchables {
                 if fetchable != "" {
@@ -529,12 +527,11 @@ class ZCloud: ZRecords {
                 }
             }
 
-            fetchNeededZones(onCompletion) // includes processing logic for retrieved records
+            fetchNeededIdeas(onCompletion) // includes processing logic for retrieved records
         }
     }
 
-
-    func found(_ onCompletion: IntClosure?) {
+    func foundIdeas(_ onCompletion: IntClosure?) {
         let states = [ZRecordState.needsFound]
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
@@ -549,8 +546,7 @@ class ZCloud: ZRecords {
         onCompletion?(0)
     }
 
-
-    func fetchLost(_ onCompletion: IntClosure?) {
+    func fetchLostIdeas(_ onCompletion: IntClosure?) {
         let    format = kpRecordName + " != \"" + kRootName + "\""
         let predicate = NSPredicate(format: format)
         var   fetched = [CKRecord] ()
@@ -741,7 +737,7 @@ class ZCloud: ZRecords {
     }
 
 
-    func fetchAllZones(_ onCompletion: IntClosure?) {
+    func fetchAllIdeas(_ onCompletion: IntClosure?) {
         if  !gIsReadyToShowUI && recordRegistry.values.count > 10 {
             onCompletion?(0)
         } else {
@@ -750,7 +746,7 @@ class ZCloud: ZRecords {
     }
 
 
-    func fetchNewZones(_ onCompletion: IntClosure?) {
+    func fetchNewIdeas(_ onCompletion: IntClosure?) {
         fetchSince(lastSyncDate, onCompletion)
     }
 
@@ -776,7 +772,7 @@ class ZCloud: ZRecords {
     }
 
 
-    func fetchNeededZones(_ onCompletion: IntClosure?) {
+    func fetchNeededIdeas(_ onCompletion: IntClosure?) {
         let needed = recordIDsWithMatchingStates([.needsFetch, .requiresFetchBeforeSave], pull: true)
 
         fetchZones(needed: needed) { iCKRecords in
@@ -786,7 +782,7 @@ class ZCloud: ZRecords {
                     onCompletion?(0)
                 } else {
 					self.createZRecords(of: kZoneType, with: iCKRecords) {
-						self.fetchNeededZones(onCompletion)                            // process remaining
+						self.fetchNeededIdeas(onCompletion)                            // process remaining
 					}
                 }
             }
@@ -880,7 +876,7 @@ class ZCloud: ZRecords {
     }
 
 
-    func fetchParents(_ onCompletion: IntClosure?) {
+    func fetchParentIdeas(_ onCompletion: IntClosure?) {
         let fetchingStates: [ZRecordState] = [.needsWritable, .needsParent, .needsColor, .needsRoot]
         let               missingParentIDs = parentIDsWithMatchingStates(fetchingStates)
         let                    childrenIDs = recordIDsWithMatchingStates(fetchingStates)
@@ -953,7 +949,7 @@ class ZCloud: ZRecords {
                     self.columnarReport("PARENT (\(forReport.count)) of", String.forZones(forReport))
                     self.clearRecordIDs(childrenIDs, for: fetchingStates)
                     self.adoptAll()
-                    self.fetchParents(onCompletion)   // process remaining
+                    self.fetchParentIdeas(onCompletion)   // process remaining
                 }
             }
 
@@ -964,7 +960,7 @@ class ZCloud: ZRecords {
     }
 
 
-    func fetchChildren(_ onCompletion: IntClosure?) {
+    func fetchChildIdeas(_ onCompletion: IntClosure?) {
         let childrenNeeded = childrenRefsWithMatchingStates([.needsChildren, .needsProgeny], batchSize: kSmallBatchSize)
         let          count = childrenNeeded.count
 
@@ -1051,7 +1047,7 @@ class ZCloud: ZRecords {
                         self.columnarReport("CHILDREN (\(childrenNeeded.count))", String.forReferences(childrenNeeded, in: self.databaseID))
                         self.adoptAll()
                         self.add(states: [.needsCount], to: childrenNeeded)
-                        self.fetchChildren(onCompletion) // process remaining
+                        self.fetchChildIdeas(onCompletion) // process remaining
                     }
                 }
             }

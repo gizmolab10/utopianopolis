@@ -240,9 +240,9 @@ enum ZStorageType: String {
 	case name            = "name"
 	case note            = "note"
 
-	case format          = "format"          // traits
+	case assetNames      = "assetNames"      // traits
 	case assets          = "assets"
-//	case asset           = "asset"
+	case format          = "format"
     case time            = "time"
     case text            = "text"
     case data            = "data"
@@ -251,7 +251,7 @@ enum ZStorageType: String {
     case deleted         = "deleted"         // ZManifest
 }
 
-enum ZSpecialsMenuType: String {
+enum ZSymbolsMenuType: String {
 	case eCommand = "c"
 	case eOption  = "o"
 	case eShift   = "s"
@@ -261,7 +261,7 @@ enum ZSpecialsMenuType: String {
 	case eBack    = "k"
 	case eCancel  = "\r"
 
-	static var activeTypes: [ZSpecialsMenuType] { return [.eCommand, .eOption, .eShift, .eControl, eReturn, .eArrow, .eBack] }
+	static var activeTypes: [ZSymbolsMenuType] { return [.eCommand, .eOption, .eShift, .eControl, eReturn, .eArrow, .eBack] }
 
 	var both: (String, String) {
 		switch self {
@@ -289,10 +289,60 @@ enum ZSpecialsMenuType: String {
 
 }
 
+enum ZEssayButtonID : Int {
+	case idForward
+	case idCancel
+	case idDelete
+	case idBack
+	case idSave
+	case idHide
+
+	var title: String {
+		switch self {
+			case .idForward: return "⇨"
+			case .idCancel:  return "Cancel"
+			case .idDelete:  return "Delete"
+			case .idHide:    return "Hide"
+			case .idSave:    return "Save"
+			case .idBack:    return "⇦"
+		}
+	}
+
+	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idHide, .idSave, .idCancel, .idDelete] }
+}
+
+enum ZEssayHyperlinkType: String {
+	case hWeb   = "h"
+	case hIdea  = "i"
+	case hNote  = "n"
+	case hEssay = "e"
+	case hClear = "c"
+
+	var title: String {
+		switch self {
+			case .hWeb:   return "Internet"
+			case .hIdea:  return "Idea"
+			case .hNote:  return "Note"
+			case .hEssay: return "Essay"
+			case .hClear: return "Clear"
+		}
+	}
+
+	var linkType: String {
+		switch self {
+			case .hWeb: return "http"
+			default:    return title.lowercased()
+		}
+	}
+
+	static var all: [ZEssayHyperlinkType] { return [.hWeb, .hIdea, .hNote, .hEssay, .hClear] }
+
+}
+
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = [.dImages, .dAdopt]
+var gDebugMode: [ZDebugMode] = [.dImages]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0

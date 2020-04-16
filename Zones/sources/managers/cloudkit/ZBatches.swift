@@ -75,14 +75,14 @@ class ZBatches: ZOnboarding {
         var operations: [ZOperationID] {
             switch identifier {
             case .bSaveToCloud: return [                                    .oSaveToCloud          ]
-            case .bFetchLost:   return [.oFetchLost,                        .oSaveToCloud,         ]
-			case .bRefetch:     return [             .oAllZones, .oRecount, .oSaveToCloud, .oTraits]
-            case .bResumeCloud: return [             .oAllZones,            .oSaveToCloud, .oTraits]
-            case .bSync:        return [             .oFetchNeeded,         .oSaveToCloud, .oTraits]
-            case .bBookmarks:   return [.oBookmarks, .oFetchNeeded,         .oSaveToCloud, .oTraits]
-            case .bUndelete:    return [.oUndelete,  .oFetchNeeded,         .oSaveToCloud, .oTraits]
+            case .bFetchLost:   return [.oLostIdeas,                        .oSaveToCloud,         ]
+			case .bRefetch:     return [             .oAllIdeas, .oRecount, .oSaveToCloud, .oTraits]
+            case .bResumeCloud: return [             .oAllIdeas,            .oSaveToCloud, .oTraits]
+            case .bSync:        return [             .oNeededIdeas,         .oSaveToCloud, .oTraits]
+            case .bBookmarks:   return [.oBookmarks, .oNeededIdeas,         .oSaveToCloud, .oTraits]
+            case .bUndelete:    return [.oUndelete,  .oNeededIdeas,         .oSaveToCloud, .oTraits]
 			case .bRoot:        return [.oRoots,        .oManifest,         .oSaveToCloud, .oTraits]
-			case .bFocus:       return [.oRoots,     .oFetchNeeded,                        .oTraits]
+			case .bFocus:       return [.oRoots,     .oNeededIdeas,                        .oTraits]
 			case .bAllTraits:   return [                                                .oAllTraits]
 			case .bEmptyTrash:  return [.oEmptyTrash                                               ]
             case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])

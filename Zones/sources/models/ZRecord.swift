@@ -45,7 +45,7 @@ class ZRecord: NSObject {
     
 	func storageDictionary() throws -> ZStorageDictionary {
 		if  let dbID = databaseID,
-			let dict = try storageDictionary(for: dbID, includeRecordName: false) {
+			let dict = try createStorageDictionary(for: dbID, includeRecordName: false) {
 
 			return dict
 		}
@@ -105,8 +105,7 @@ class ZRecord: NSObject {
         }
     }
 
-
-    func isExpanded(_ iRecordName: String?) -> Bool {
+	func isExpanded(_ iRecordName: String?) -> Bool {
         if  let                      name   = iRecordName,
             gExpandedZones.firstIndex(of: name) != nil {
             return true
@@ -115,8 +114,7 @@ class ZRecord: NSObject {
         return false
     }
 
-
-    func revealChildren() {
+	func revealChildren() {
         var expansionSet = gExpandedZones
 
         if  let name = recordName, !isBookmark, !expansionSet.contains(name) {
@@ -126,8 +124,7 @@ class ZRecord: NSObject {
         }
     }
 
-
-    func concealChildren() {
+	func concealChildren() {
         var expansionSet = gExpandedZones
 
         if let  name = recordName {
@@ -149,16 +146,13 @@ class ZRecord: NSObject {
         }
     }
 
-
     // MARK:- overrides
     // MARK:-
-
 
     override init() {
         super.init()
         self.setupKVO();
     }
-
 
     convenience init(record: CKRecord?, databaseID: ZDatabaseID?) {
         self.init()
@@ -193,7 +187,6 @@ class ZRecord: NSObject {
     func hasMissingProgeny()  -> Bool { return true }
     class func cloudProperties() -> [String] { return [] }
 
-
 	class func cloudProperties(for className: String) -> [String] {
 		switch className {
 		case kZoneType:     return Zone     .cloudProperties()
@@ -203,23 +196,18 @@ class ZRecord: NSObject {
 		}
 	}
 
-	
     // MARK:- properties
     // MARK:-
 
-
     func setupLinks() {}
-
 
     func temporarilyMarkNeeds(_ closure: Closure) {
         cloud?.temporarilyForRecordNamed(recordName, ignoreNeeds: false, closure)
     }
 
-
     func temporarilyIgnoreNeeds(_ closure: Closure) {
         cloud?.temporarilyForRecordNamed(recordName, ignoreNeeds: true, closure)
     }
-
 
     func updateInstanceProperties() {
         if  let r = record {
@@ -235,7 +223,6 @@ class ZRecord: NSObject {
         }
     }
 
-
     func updateCKRecordProperties() {
         if  let r = record {
             for keyPath in cloudProperties() {
@@ -248,7 +235,6 @@ class ZRecord: NSObject {
             }
         }
     }
-
 
     func useBest(record iRecord: CKRecord) {
         let myDate      = record?.modificationDate ?? writtenModifyDate
@@ -265,14 +251,12 @@ class ZRecord: NSObject {
         }
     }
 
-
     func copy(into iCopy: ZRecord) {
         iCopy.maybeNeedSave() // so KVO won't set needsMerge
         updateCKRecordProperties()
         record?.copy(to: iCopy.record, properties: cloudProperties())
         iCopy.updateInstanceProperties()
     }
-
 
     func mergeIntoAndTake(_ iRecord: CKRecord) {
         updateCKRecordProperties()
@@ -284,16 +268,13 @@ class ZRecord: NSObject {
         }
     }
 
-
     // MARK:- states
     // MARK:-
-
 
     func    hasState(_ state: ZRecordState) -> Bool { return records?.hasZRecord(self, forAnyOf:[state]) ?? false }
     func    addState(_ state: ZRecordState)         {        records?.addZRecord(self,     for: [state]) }
     func removeState(_ state: ZRecordState)         {        records?.clearRecordName(recordName, for:[state]) }
     func clearAllStates()                           {        records?.clearRecordName(recordName, for: records?.allStates ?? []) }
-
 
     func needRoot()              {    addState(.needsRoot) }
     func needFound()             {    addState(.needsFound) }
@@ -322,7 +303,6 @@ class ZRecord: NSObject {
         }
     }
 
-    
 	func needProgeny() {
 
 		// use reallyNeedProgeny. depricated for performance
@@ -331,7 +311,6 @@ class ZRecord: NSObject {
 //		removeState(.needsChildren)
 	}
 
-    
     func reallyNeedProgeny() {
 		
 		// N.B., make sure your need is worth the performance hit
@@ -340,7 +319,6 @@ class ZRecord: NSObject {
         removeState(.needsChildren)
     }
 
-    
     func needChildren() {
         if !isBookmark && // all bookmarks are childless, by design
             showingChildren &&
@@ -350,7 +328,6 @@ class ZRecord: NSObject {
         }
     }
 
-    
     func reallyNeedChildren() {
         if !isBookmark && // all bookmarks are childless, by design
             showingChildren &&
@@ -359,21 +336,19 @@ class ZRecord: NSObject {
         }
     }
 
-
     func maybeNeedSave() {
         if !needsDestroy, !needsSave, gHasFinishedStartup, (canSaveWithoutFetch || !needsFetch) {
             removeState(.needsMerge)
-            addState   (.needsSave)
+			addState   (.needsSave)
+			updateCKRecordProperties()
         }
 
         needWrite()
     }
 
-
     func needWrite() {
         gFiles.needWrite(for: databaseID)
     }
-
 
     func maybeMarkNotFetched() {
         if  record?.creationDate == nil {
@@ -381,13 +356,11 @@ class ZRecord: NSObject {
         }
     }
 
-
     func maybeNeedMerge() {
         if  isFetched, canSaveWithoutFetch, !needsSave, !needsMerge, !needsDestroy {
             addState(.needsMerge)
         }
     }
-
 
     func maybeMarkAsFetched() {
         if  let r = record {
@@ -395,20 +368,16 @@ class ZRecord: NSObject {
         }
     }
 
-
     // MARK:- accessors and KVO
     // MARK:-
-
 
     func setValue(_ value: NSObject, for property: String) {
         cloud?.setIntoObject(self, value: value, for: property)
     }
 
-
     func get(propertyName: String) {
         cloud?.getFromObject(self, valueForPropertyName: propertyName)
     }
-
 
     func teardownKVO() {
         for keyPath: String in cloudProperties() {
@@ -416,15 +385,13 @@ class ZRecord: NSObject {
         }
     }
 
-
-    func setupKVO() {
+	func setupKVO() {
         for keyPath: String in cloudProperties() {
             addObserver(self, forKeyPath: keyPath, options: [.new, .old], context: &kvoContext)
         }
     }
 
-
-    override func observeValue(forKeyPath keyPath: String?, of iObject: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+	override func observeValue(forKeyPath keyPath: String?, of iObject: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if context == &kvoContext {
             let observer = iObject as! NSObject
 
@@ -435,10 +402,8 @@ class ZRecord: NSObject {
         }
     }
 
-
     // MARK:- files
     // MARK:-
-
 
     func type(from keyPath: String) -> ZStorageType? {
         func extractType(_ ignored: String) -> (ZStorageType?) {
@@ -464,7 +429,6 @@ class ZRecord: NSObject {
         }
     }
 
-
     func extract(valueOf iType: ZStorageType, at iKeyPath: String) -> NSObject? {     // all properties are extracted from record, using iKeyPath as key
         switch iKeyPath {
         case kpRecordName:       return recordName as NSObject?      // except for the record name
@@ -472,7 +436,6 @@ class ZRecord: NSObject {
         default:                 return record?[iKeyPath] as? NSObject
         }
     }
-
 
     func prepare(_ iObject: NSObject, of iType: ZStorageType) -> NSObject? {
         let object = iObject
@@ -490,7 +453,7 @@ class ZRecord: NSObject {
 						if  let base64 = asset.data?.base64EncodedString() {
 							let fileName = asset.fileURL.lastPathComponent
 
-							printDebug(.dImages, "[PREPARE] " + fileName)
+							printDebug(.dImages, "PREPARE " + fileName)
 
 							strings.append(fileName + gSeparatorAt(level: 1) + base64)
 						}
@@ -529,7 +492,6 @@ class ZRecord: NSObject {
         return nil
     }
 
-
     func addNeedsFromString(_ iNeeds: String) {
         let needs = iNeeds.components(separatedBy: kCommaSeparator)
 
@@ -542,8 +504,7 @@ class ZRecord: NSObject {
         }
     }
 
-
-	func storageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
+	func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
 		try gTestForUserInterrupt()
 
 		guard let name = recordName, !gFiles.writtenRecordNames.contains(name) else { return nil }
@@ -568,7 +529,7 @@ class ZRecord: NSObject {
     }
     
 
-    func setStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
+    func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
         var ckRecord = CKRecord(recordType: iRecordType)
         let     name = dict[.recordName] as? String
         databaseID   = iDatabaseID
@@ -598,7 +559,8 @@ class ZRecord: NSObject {
 								writtenModifyDate = Date(timeIntervalSince1970: interval)
 							}
 						case .assets:
-							if  let      assetStrings = (object as? String)?.componentsSeparatedAt(level: 2), assetStrings.count > 0 {
+							if  let      assetStrings = (object as? String)?.componentsSeparatedAt(level: 2), assetStrings.count > 0,
+								let             trait = self as? ZTrait {
 								var            assets = [CKAsset]()
 								for assetString in assetStrings {
 									let         parts = assetString.componentsSeparatedAt(level: 1)
@@ -606,7 +568,8 @@ class ZRecord: NSObject {
 										let  fileName = parts[0]
 										let    base64 = parts[1]
 										if  let  data = Data(base64Encoded: base64),
-											let asset = data.asset(fileName) {
+											let image = ZImage(data: data),
+											let asset = trait.createAssetFromImage(image, for: fileName) {
 											assets.append(asset)
 										}
 									}
@@ -631,8 +594,7 @@ class ZRecord: NSObject {
         }
     }
 
-
-    class func storageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
+	class func createStorageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
         if  let   items = iItems,
             items.count > 0 {
             var   array = [ZStorageDictionary] ()
@@ -642,7 +604,7 @@ class ZRecord: NSObject {
 
                 if  let zRecord = item as? ZRecord,
                     (allowEach == nil || allowEach!(zRecord)) {
-                    dict = try zRecord.storageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors)
+                    dict = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors)
                 }
 
                 if  dict != nil {

@@ -19,6 +19,7 @@ typealias               ZoneArray = [Zone]
 typealias            ZRecordArray = [ZRecord]
 typealias           ZObjectsArray = [NSObject]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
+typealias       ZAssetsDictionary = [UUID : CKAsset]
 typealias       ZTinyDotTypeArray = [[ZTinyDotType]]
 typealias      ZStorageDictionary = [ZStorageType : NSObject]
 typealias   ZAttributesDictionary = [NSAttributedString.Key : Any]
@@ -300,41 +301,27 @@ extension Dictionary {
 
 }
 
-extension Data {
-
-	func asset(_ fileName: String? = nil) -> CKAsset? {
-		if  let url = writeAsset(fileName) {
-			return CKAsset(fileURL: url)
-		}
-
-		return nil
-	}
-
-	func writeAsset(_ fileName: String? = nil) -> URL? {
-		if  let url = gFiles.assetFileURL(fileName) {
-			do {
-				try write(to: url)
-			} catch {
-				return nil
-			}
-
-			return url
-		}
-
-		return nil
-	}
-
-}
-
 extension URL {
 
-	var imageSource: CGImageSource? { return CGImageSourceCreateWithURL(self as CFURL, nil) }
+	var originalImageName: String? { return CGImageSource.readFrom(self)?.originalImageName }
+
+	func destination(imageType: CFString = kUTTypeImage) -> CGImageDestination? {
+		return CGImageDestinationCreateWithURL(self as CFURL, imageType, 1, nil)
+	}
+
+	var imageProperties: [NSObject : AnyObject]? {
+		if  let          source = CGImageSource.readFrom(self),
+			let imageProperties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as [NSObject : AnyObject]? {
+			return imageProperties
+		}
+
+		return nil
+	}
 
 	var imageSize: CGSize? {
-		if  let          source = imageSource,
-			let imageProperties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as Dictionary? {
-			let     pixelHeight = imageProperties[kCGImagePropertyPixelHeight] as! Int
-			let     pixelWidth  = imageProperties[kCGImagePropertyPixelWidth]  as! Int
+		if  let properties  = imageProperties {
+			let pixelHeight = properties[kCGImagePropertyPixelHeight] as! Int
+			let pixelWidth  = properties[kCGImagePropertyPixelWidth]  as! Int
 
 			return CGSize(width: pixelWidth, height: pixelHeight)
 
@@ -343,35 +330,59 @@ extension URL {
 		return nil
 	}
 
+	func readImage() -> ZImage? {
+		return nil
+	}
+
+	func writeImage(_ image: ZImage, addOriginalImageName: String? = nil) -> Bool {
+		var  success = false
+
+		if  let data = image.jpeg {
+			do {
+				try data.write(to: self, options: Data.WritingOptions.atomic)
+
+				success = true
+			} catch {
+			}
+		}
+
+		return success
+	}
+
+	func testWriteImage(_ image: ZImage, addOriginalImageName: String? = nil) -> Bool {
+		if  let d = destination() {
+			let cgImage = image as! CGImage
+			var metadata = [String : Any]()
+
+			if  let name = addOriginalImageName {
+				metadata[kOrignalImageName] = name
+			}
+
+			CGImageDestinationAddImage(d, cgImage, metadata as CFDictionary)
+			CGImageDestinationFinalize(d)
+
+			return true
+		}
+
+		return false
+	}
+
+}
+
+extension CGImageSource {
+
+	class func readFrom(_ url: URL) -> CGImageSource? { return CGImageSourceCreateWithURL(url as CFURL, nil) }
+	var metadata: [String : Any]? { return CGImageSourceCopyPropertiesAtIndex(self, 0, nil) as? [String : Any] }
+	var originalImageName: String? { return metadata?[kOrignalImageName] as? String }
+
 }
 
 extension CKAsset {
 
-	var data      :   Data? { return FileManager.default.contents(atPath: fileURL.path) }
-	var imageSize : CGSize? { return fileURL.imageSize }
-
-	var extractedLocalURL  : URL? {
-		let parts = description.components(separatedBy: kCommaSeparator)
-
-		for part in parts {
-			let subparts = part.components(separatedBy: kEquals)
-
-			if  subparts.count > 1 {
-				let   key = subparts[0].replacingOccurrences(of: kSpace, with: "")
-				let value = subparts[1].replacingOccurrences(of: ">",    with: "")
-
-				switch key {
-					case "path":
-						let name = URL(string: value)!.pathExtension.appending(".png")
-
-						return gFiles.assetFileURL(name)
-					default: break
-				}
-			}
-		}
-
-		return nil
-	}
+	var data       :   Data? { return FileManager.default.contents(atPath: fileURL.path) }
+	var imageSize  : CGSize? { return fileURL.imageSize }
+	var uuidString : String? { return value(forKeyPath: "_UUID") as? String }
+	var length     :    Int? { return value(forKeyPath: "_size") as? Int }
 
 }
 
@@ -1200,7 +1211,7 @@ extension NSMutableAttributedString {
 		return found
 	}
 
-	var assetFileNames: [String] {
+	var imageFileNames: [String] {
 		var names = [String]()
 
 		for rangedAttach in rangedAttachments {
@@ -1240,19 +1251,6 @@ extension NSMutableAttributedString {
 		return result
 	}
 
-	var assets: [CKAsset]? {
-		let     i = images
-		var array = [CKAsset]()
-
-		for (index, name) in assetFileNames.enumerated() {
-			if  let a = i[index].jpeg?.asset(name) {
-				array.append(a)
-			}
-		}
-
-		return array.count == 0 ? nil : array
-	}
-
 	var attributesAsString: String {
 		get { return attributeStrings.joined(separator: gSeparatorAt(level: 1)) }
 		set { attributeStrings = newValue.componentsSeparatedAt(level: 1) }
@@ -1280,12 +1278,13 @@ extension NSMutableAttributedString {
 							string     = color.string
 						}
 
-						if  let attach = value as? NSTextAttachment {
-							string     = attach.fileWrapper?.preferredFilename
-						}
-
 						if  let  style = value as? NSMutableParagraphStyle {
 							string     = style.string
+						}
+
+						if  let attach = value as? NSTextAttachment,
+							let   wrap = attach.fileWrapper { // check if file actually exists
+							string     = wrap.preferredFilename
 						}
 
 						if  let append = string as? String {
@@ -1311,12 +1310,12 @@ extension NSMutableAttributedString {
 					var attribute: Any?
 
 					switch key {
-						case .link:            attribute =                                 string
-						case .font:            attribute = ZFont 				  (string: string)
-						case .attachment:      attribute =                                 string.textAttachment
+						case .link:            attribute =                                    string
+						case .font:            attribute = ZFont 		   		     (string: string)
+						case .attachment:      attribute = gCurrentEssay?.noteTrait?.textAttachment(for: string)
 						case .foregroundColor,
-							 .backgroundColor: attribute = ZColor				  (string: string)
-						case .paragraphStyle:  attribute = NSMutableParagraphStyle(string: string)
+							 .backgroundColor: attribute = ZColor				     (string: string)
+						case .paragraphStyle:  attribute = NSMutableParagraphStyle   (string: string)
 						default:    		   break
 					}
 
@@ -1328,6 +1327,27 @@ extension NSMutableAttributedString {
 				}
 			}
 		}
+	}
+
+	// ONLY called during save in essay view
+	// and prepareForNewDesign
+	// side-effect for a dropped image:
+	// it creates and includes a new asset
+
+	func assets(for trait: ZTrait) -> [CKAsset]? {
+		var array = [CKAsset]()
+		let     i = images // grab from text attachment cells
+
+		for (index, name) in imageFileNames.enumerated() {
+			if  index < i.count {
+				let image = i[index]
+				if  let a = trait.createAssetFromImage(image, for: name) {
+					array.append(a)
+				}
+			}
+		}
+
+		return array.count == 0 ? nil : array
 	}
 
 	func removeAllAttributes() {
@@ -1369,6 +1389,10 @@ extension NSTextAttachment {
 		}
 	}
 
+	func refreshImage() {
+		// how?
+	}
+
 }
 
 extension String {
@@ -1380,6 +1404,7 @@ extension String {
     var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
     var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
     var       isOpposite: Bool { return "]}>)".contains(self) }
+	var     isDashedLine: Bool { return contains(kHalfLineOfDashes) }
 
     var opposite: String {
 		switch self {
@@ -1504,6 +1529,7 @@ extension String {
         return self[i ..< i + 1]
     }
 
+	static func pluralized(_ iValue: Int, unit: String = "", plural: String = "s", followedBy: String = "") -> String { return iValue <= 0 ? "" : "\(iValue) \(unit)\(iValue == 1 ? "" : "\(plural)")\(followedBy)" }
     static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
     func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }
     func substring(toExclusive:   Int) -> String  { return String(self[..<index(at: toExclusive)]) }
@@ -1687,10 +1713,6 @@ extension String {
         }
     }
 
-    var isDashedLine: Bool {
-        return contains(kHalfLineOfDashes)
-    }
-
     var isLineWithTitle: Bool {
         let substrings = components(separatedBy: kHalfLineOfDashes)
         
@@ -1707,18 +1729,6 @@ extension String {
 
         return a == kHalfLineOfDashes && b == kHalfLineOfDashes
     }
-
-	var textAttachment: NSTextAttachment? {
-		if  let url = gFiles.assetFileURL(self) {
-			do {
-				return try NSTextAttachment(fileWrapper: FileWrapper(url: url, options: []))
-			} catch {
-				print(error)
-			}
-		}
-
-		return nil
-	}
 
     static func forZones(_ zones: [Zone]?) -> String {
         return zones?.apply()  { object -> (String?) in
@@ -1770,10 +1780,6 @@ extension String {
 
             return nil
             } ?? ""
-    }
-
-    static func pluralized(_ iValue: Int, unit: String = "", plural: String = "s", followedBy: String = "") -> String {
-        return iValue <= 0 ? "" : "\(iValue) \(unit)\(iValue == 1 ? "" : "\(plural)")\(followedBy)"
     }
 
     static func *(_ input: String, _ multiplier: Int) -> String {

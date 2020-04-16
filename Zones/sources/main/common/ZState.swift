@@ -38,6 +38,7 @@ var       gCurrentBrowseLevel:               Int?
 var        gCurrentKeyPressed:            String?
 var          gDragDropIndices: NSMutableIndexSet?
 var             gDragRelation:         ZRelation?
+var             gCurrentTrait:            ZTrait?
 var             gDragDropZone:              Zone?
 var              gDraggedZone:              Zone?
 var                gDragPoint:           CGPoint?

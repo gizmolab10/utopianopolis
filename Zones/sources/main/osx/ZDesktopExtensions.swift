@@ -769,12 +769,12 @@ extension ZTextEditor {
     func fullResign()  { assignAsFirstResponder (nil) }
 	
 	func showSpecialsPopup() {
-		NSMenu.specialsPopup(target: self, action: #selector(handlePopupMenu(_:))).popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
+		NSMenu.symbolsPopup(target: self, action: #selector(handlePopupMenu(_:))).popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
 	}
 
 	@objc func handlePopupMenu(_ iItem: ZMenuItem) {
 		#if os(OSX)
-		if  let  type = ZSpecialsMenuType(rawValue: iItem.keyEquivalent),
+		if  let  type = ZSymbolsMenuType(rawValue: iItem.keyEquivalent),
 			let range = selectedRanges[0] as? NSRange,
 			type     != .eCancel {
 			let  text = type.text
@@ -860,11 +860,11 @@ extension ZTextEditor {
 
 extension NSMenu {
 
-	static func specialsPopup(target: AnyObject, action: Selector) -> NSMenu {
+	static func symbolsPopup(target: AnyObject, action: Selector) -> NSMenu {
 		let menu = NSMenu(title: "add a special character")
 		menu.autoenablesItems = false
 
-		for type in ZSpecialsMenuType.activeTypes {
+		for type in ZSymbolsMenuType.activeTypes {
 			menu.addItem(item(type: type, target: target, action: action))
 		}
 
@@ -874,7 +874,7 @@ extension NSMenu {
 		return menu
 	}
 
-	static func item(type: ZSpecialsMenuType, target: AnyObject, action: Selector) -> NSMenuItem {
+	static func item(type: ZSymbolsMenuType, target: AnyObject, action: Selector) -> NSMenuItem {
 		let  	  item = NSMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
 		item.isEnabled = true
 		item.target    = target
@@ -946,20 +946,17 @@ extension NSSegmentedControl {
 
 }
 
-
 extension NSProgressIndicator {
-
 
     func startAnimating() { startAnimation(self) }
     func  stopAnimating() {  stopAnimation(self) }
 
 }
 
-
 public extension ZImage {
 
-	var  png: Data? { tiffRepresentation?.bitmap?.png }
-	var jpeg: Data? { tiffRepresentation?.bitmap?.jpeg }
+	var  png: Data? { return tiffRepresentation?.bitmap?.png }
+	var jpeg: Data? { return tiffRepresentation?.bitmap?.jpeg }
 
 	func resizedTo(_ newSize: CGSize) -> ZImage {
 		let newImage = ZImage(size: newSize)
@@ -1151,9 +1148,7 @@ extension ZFiles {
 
 }
 
-
 extension Zone {
-
 
     func hasZoneAbove(_ iAbove: Bool) -> Bool {
         if  let index = siblingIndex {
