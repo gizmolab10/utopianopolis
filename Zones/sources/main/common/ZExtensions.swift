@@ -1312,7 +1312,7 @@ extension NSMutableAttributedString {
 					switch key {
 						case .link:            attribute =                                    string
 						case .font:            attribute = ZFont 		   		     (string: string)
-						case .attachment:      attribute = gCurrentEssay?.noteTrait?.textAttachment(for: string)
+						case .attachment:      attribute = gCurrentTrait?.textAttachment(for: string)
 						case .foregroundColor,
 							 .backgroundColor: attribute = ZColor				     (string: string)
 						case .paragraphStyle:  attribute = NSMutableParagraphStyle   (string: string)

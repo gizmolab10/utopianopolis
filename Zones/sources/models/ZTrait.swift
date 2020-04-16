@@ -177,7 +177,7 @@ class ZTrait: ZRecord {
     }
 
     override func orphan() {
-        ownerZone?.setTextTrait(nil, for: traitType)
+        ownerZone?.setTraitText(nil, for: traitType)
 
         owner = nil
 
@@ -268,13 +268,8 @@ class ZTrait: ZRecord {
 			grabWrapper()
 		}
 
-		if  let         data = wrapper?.regularFileContents,
-			let        image = ZImage(data: data) {
-			let          uti = "public.jpeg"
-			attach           = NSTextAttachment(fileWrapper: wrapper)
-			attach?.bounds   = CGRect(origin: CGPoint.zero, size: image.size)
-			attach?.fileType = uti
-			attach?.setValue(image, forKeyPath: "_image")
+		if  wrapper != nil {
+			attach   = NSTextAttachment(fileWrapper: wrapper)
 		}
 
 		return attach
@@ -298,9 +293,9 @@ class ZTrait: ZRecord {
 			let     asset = CKAsset(fileURL: url)    // side-effect creates asset for dropped image
 
 			if  let dropped = gEssayView?.dropped,
-				dropped == fileName,
-				appendToAssetNames(dropped, with: asset) {
-				gEssayView?.dropped = nil
+				let index = dropped.firstIndex(of: fileName),
+				appendToAssetNames(fileName, with: asset) {
+				gEssayView?.dropped.remove(at: index)
 
 				needSave()
 			}

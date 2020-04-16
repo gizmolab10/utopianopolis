@@ -97,7 +97,7 @@ class ZBaseEditor: NSObject {
 				}
 			}
 
-			gBatches.sync { iSame in
+			gBatches.children { iSame in
 				self.redrawGraph()
 			}
 		}

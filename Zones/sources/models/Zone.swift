@@ -179,7 +179,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var email: String? {
 		get {
 			if  emailMaybe == nil {
-				emailMaybe  = getTextTrait(for: .tEmail)
+				emailMaybe  = getTraitText(for: .tEmail)
 			}
 
 			return emailMaybe
@@ -189,7 +189,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  emailMaybe != newValue {
 				emailMaybe  = newValue
 
-				setTextTrait(newValue, for: .tEmail)
+				setTraitText(newValue, for: .tEmail)
 			}
 		}
 	}
@@ -259,7 +259,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var hyperLink: String? {
 		get {
 			if  hyperLinkMaybe == nil {
-				hyperLinkMaybe  = getTextTrait(for: .tHyperlink)
+				hyperLinkMaybe  = getTraitText(for: .tHyperlink)
 			}
 
 			return hyperLinkMaybe
@@ -269,7 +269,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  hyperLinkMaybe != newValue {
 				hyperLinkMaybe  = newValue
 
-				setTextTrait(newValue, for: .tHyperlink)
+				setTraitText(newValue, for: .tHyperlink)
 			}
 		}
 	}
@@ -961,11 +961,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
     }
 
-    func getTextTrait(for iType: ZTraitType) -> String? {
+    func getTraitText(for iType: ZTraitType) -> String? {
         return traits[iType]?.text
     }
 
-    func setTextTrait(_ iText: String?, for iType: ZTraitType?) {
+    func setTraitText(_ iText: String?, for iType: ZTraitType?) {
         if  let       type = iType {
             if  let   text = iText {
                 let  trait = traitFor(type)

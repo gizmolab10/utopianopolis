@@ -24,7 +24,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var deleteButton    : ZButton?
 	var hideButton      : ZButton?
 	var saveButton      : ZButton?
-	var dropped         : String?
+	var dropped         = [String]()
 	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectionRange).string }
 	var selectionRange  = NSRange()          { didSet { if selectionRange.location != 0, let rect = rectForRange(selectionRange) { selectionRect = rect } } }
@@ -344,7 +344,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let text = gCurrentEssay?.essayText {
 			clear() 								// discard previously edited text
 			updateControlBarButtons(true)
-			setText(text)							// emplace text
+			gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }		// emplace text
 			select(restoreSelection: restoreSelection)
 
 			gNoteAndEssay.essayID  = gNoteAndEssay.essayZone?.record?.recordID
@@ -468,7 +468,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			save()
 
 			if  createEssay {
-				child.setTextTrait(kEssayDefault, for: .tNote)			// create a placeholder essay in the child
+				child.setTraitText(kEssayDefault, for: .tNote)			// create a placeholder essay in the child
 				gNoteAndEssay.essayZone?.createNote()
 
 				resetCurrentEssay(gNoteAndEssay.essayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
@@ -801,9 +801,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	override func draggingEntered(_ drag: NSDraggingInfo) -> NSDragOperation {
 		if  let    board = drag.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
 			let     path = board[0] as? String {
-			let     name = URL(fileURLWithPath: path).lastPathComponent
-			dropped = name
-			printDebug(.dImages, name)
+			let fileName = URL(fileURLWithPath: path).lastPathComponent
+			printDebug(.dImages, "DROPPED \(fileName)")
+			dropped.append(fileName)
 		}
 
 		return .copy
