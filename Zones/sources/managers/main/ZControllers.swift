@@ -106,7 +106,7 @@ class ZControllers: NSObject {
 				let image = ZImage(named: kHelpMenuImageName)
 
 				gAlerts.showAlert("Please forgive my interruption",
-								  "Thank you for downloading Thoughtful. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)? \n\nYou can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below.",
+								  "Thank you for downloading Seriously. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)? \n\nYou can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below.",
 								  "Reply in an email",
 								  "Dismiss",
 								  image) { iObject in

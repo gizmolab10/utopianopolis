@@ -1341,7 +1341,7 @@ class ZCloud: ZRecords {
                 let    predicate :                     NSPredicate = NSPredicate(value: true)
                 let subscription :                  CKSubscription = CKQuerySubscription(recordType: className, predicate: predicate, options: [.firesOnRecordCreation, .firesOnRecordUpdate, .firesOnRecordDeletion])
                 let  information : CKSubscription.NotificationInfo = CKSubscription.NotificationInfo()
-                information                  .alertLocalizationKey = "new Thoughtful data has arrived";
+                information                  .alertLocalizationKey = "new Seriously data has arrived";
 				information            .shouldSendContentAvailable = true
                 information                           .shouldBadge = true
                 subscription                     .notificationInfo = information

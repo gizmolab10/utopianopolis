@@ -334,7 +334,7 @@ extension URL {
 		return nil
 	}
 
-	func writeImage(_ image: ZImage, addOriginalImageName: String? = nil) -> Bool {
+	func writeImage(_ image: ZImage) -> Bool {
 		var  success = false
 
 		if  let data = image.jpeg {
@@ -1332,7 +1332,7 @@ extension NSMutableAttributedString {
 	// ONLY called during save in essay view
 	// and prepareForNewDesign
 	// side-effect for a dropped image:
-	// it creates and includes a new asset
+	// it creates and returns an additional asset
 
 	func assets(for trait: ZTrait) -> [CKAsset]? {
 		var array = [CKAsset]()
@@ -1492,6 +1492,20 @@ extension String {
 		}
 
 		return newString.lowercased()
+	}
+
+	var md5 : String {
+		let context = UnsafeMutablePointer<CC_MD5_CTX>.allocate(capacity: 1)
+		var digest = Array<UInt8>(repeating:0, count:Int(CC_MD5_DIGEST_LENGTH))
+		CC_MD5_Init(context)
+		CC_MD5_Update(context, self, CC_LONG(lengthOfBytes(using: String.Encoding.utf8)))
+		CC_MD5_Final(&digest, context)
+		context.deallocate()
+		var hexString = ""
+		for byte in digest {
+			hexString += String(format:"%02x", byte)
+		}
+		return hexString
 	}
 
 	func componentsSeparatedAt(level: Int) -> [String] {
@@ -1906,6 +1920,14 @@ extension Character {
     var asciiValue: UInt32? {
         return String(self).unicodeScalars.first?.value
     }
+}
+
+extension Data {
+
+	var checksum : Int {
+		return self.map { Int($0) }.reduce(0, +)
+	}
+
 }
 
 extension ZColor {

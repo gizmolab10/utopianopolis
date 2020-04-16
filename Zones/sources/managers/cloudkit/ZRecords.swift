@@ -140,7 +140,7 @@ class ZRecords: NSObject {
             }
         }
 
-        return name == nil ? nil : "Thoughtful." + name!
+        return name == nil ? nil : "Seriously." + name!
     }
     
     

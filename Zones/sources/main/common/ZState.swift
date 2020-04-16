@@ -187,6 +187,7 @@ var gEmailTypesSent: String {
     set {
         setPreferencesString(newValue, for: kEmailTypesSent)
         gUser?.sentEmailType = newValue
+		gUser?.needSave()
     }
 }
 

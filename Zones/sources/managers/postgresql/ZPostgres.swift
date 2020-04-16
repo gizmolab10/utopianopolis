@@ -16,7 +16,7 @@ class ZPostgresql: NSObject {
     let pool: Pool
 
     override init() {
-        self.config = Client.Config(host: "zones.cwbqytqwjs5w.us-west-1.rds.amazonaws.com", user: "jonathansand", password: "B00blebabble", database: "thoughtful")
+        self.config = Client.Config(host: "zones.cwbqytqwjs5w.us-west-1.rds.amazonaws.com", user: "jonathansand", password: "B00blebabble", database: "seriously")
         self.pool = Pool(config)
     }
 

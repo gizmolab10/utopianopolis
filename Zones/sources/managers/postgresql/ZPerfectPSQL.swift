@@ -13,7 +13,7 @@ class ZPerfectPSQL: NSObject {
 
     class func foo() {
         let p = PGConnection()
-        let status = p.connectdb("host=zones.cwbqytqwjs5w.us-west-1.rds.amazonaws.com dbname=thoughtful")
+        let status = p.connectdb("host=zones.cwbqytqwjs5w.us-west-1.rds.amazonaws.com dbname=seriously")
 
         let result = p.exec(
             statement: "select version()")

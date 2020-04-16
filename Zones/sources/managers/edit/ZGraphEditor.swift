@@ -140,10 +140,10 @@ class ZGraphEditor: ZBaseEditor {
 					case "k":      toggleColorized()
                     case "m":      orderByLength(OPTION)
                     case "n":      grabOrEdit(true, OPTION)
-                    case "o":      gFiles.importFromFile(OPTION ? .eOutline : .eThoughtful, insertInto: gSelecting.currentMoveable) { self.redrawAndSync() }
+                    case "o":      gFiles.importFromFile(OPTION ? .eOutline : .eSeriously, insertInto: gSelecting.currentMoveable) { self.redrawAndSync() }
                     case "p":      printCurrentFocus()
                     case "r":      if SPECIAL { sendEmailBugReport() } else { reverse() }
-					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eThoughtful, for: gHere)
+					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eSeriously, for: gHere)
 					case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 					case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 					case "v":      if COMMAND { paste() }

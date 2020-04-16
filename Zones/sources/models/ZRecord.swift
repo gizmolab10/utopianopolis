@@ -453,7 +453,7 @@ class ZRecord: NSObject {
 						if  let base64 = asset.data?.base64EncodedString() {
 							let fileName = asset.fileURL.lastPathComponent
 
-							printDebug(.dImages, "PREPARE " + fileName)
+							printDebug(.dImages, "LOCAL   " + fileName)
 
 							strings.append(fileName + gSeparatorAt(level: 1) + base64)
 						}

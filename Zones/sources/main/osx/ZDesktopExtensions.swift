@@ -1017,7 +1017,7 @@ extension ZFiles {
     
     func saveAs() {
         let panel = NSSavePanel()
-        panel.nameFieldStringValue = "mine.thoughtful"
+        panel.nameFieldStringValue = "mine.seriously"
         panel.begin { (response: NSApplication.ModalResponse) in
             if  let path = panel.url?.path {
                 self.needWrite(for: .mineID)
@@ -1054,7 +1054,7 @@ extension ZFiles {
     
     
     func importFromFile(_ type: ZExportType, insertInto: Zone, onCompletion: Closure?) {
-		if  type == .eThoughtful {
+		if  type == .eSeriously {
             ZFiles.presentOpenPanel() { (iAny) in
                 if  let url = iAny as? URL {
                     self.importFile(from: url.path, insertInto: insertInto, onCompletion: onCompletion)
@@ -1109,7 +1109,7 @@ extension ZFiles {
 						} catch {
 							printDebug(.dError, "\(error)")
 						}
-					case .eThoughtful:
+					case .eSeriously:
 						self.writtenRecordNames.removeAll()
 
 						do {

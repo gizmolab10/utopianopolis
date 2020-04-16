@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -11,11 +11,11 @@
                 <application id="hnw-xV-0zn" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
                         <items>
-                            <menuItem title="Thoughtful" id="1Xt-HY-uBw">
+                            <menuItem title="Seriously" id="1Xt-HY-uBw">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Thoughtful" systemMenu="apple" id="uQy-DD-JDr">
+                                <menu key="submenu" title="Seriously" systemMenu="apple" id="uQy-DD-JDr">
                                     <items>
-                                        <menuItem title="About Thoughtful" keyEquivalent="a" id="5kV-Vb-QxS" userLabel="About Zones">
+                                        <menuItem title="About Seriously" keyEquivalent="a" id="5kV-Vb-QxS" userLabel="About Zones">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <action selector="orderFrontStandardAboutPanel:" target="Ady-hI-5gd" id="Exp-CZ-Vem"/>
@@ -33,7 +33,7 @@
                                             <menu key="submenu" title="Services" systemMenu="services" id="hz9-B4-Xy5"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="4je-JR-u6R"/>
-                                        <menuItem title="Hide Thoughtful" keyEquivalent="h" id="Olw-nP-bQN">
+                                        <menuItem title="Hide Seriously" keyEquivalent="h" id="Olw-nP-bQN">
                                             <connections>
                                                 <action selector="hide:" target="Ady-hI-5gd" id="PnN-Uc-m68"/>
                                             </connections>
@@ -51,7 +51,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
-                                        <menuItem title="Quit Thoughtful" keyEquivalent="q" id="4sb-4s-VLi">
+                                        <menuItem title="Quit Seriously" keyEquivalent="q" id="4sb-4s-VLi">
                                             <connections>
                                                 <action selector="terminate:" target="Ady-hI-5gd" id="Te7-pn-YzF"/>
                                             </connections>
@@ -93,7 +93,7 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Save ..." id="LGH-w5-scL">
                                                 <items>
-                                                    <menuItem title="As Thoughtful ..." keyEquivalent="s" id="rRM-8z-pgs">
+                                                    <menuItem title="As Seriously ..." keyEquivalent="s" id="rRM-8z-pgs">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Ap8-05-pSP"/>
                                                         </connections>
@@ -111,7 +111,7 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Import into Selected Idea ..." id="nne-nT-Cug">
                                                 <items>
-                                                    <menuItem title="From Thoughtful File ..." keyEquivalent="o" id="oOd-mA-5D1">
+                                                    <menuItem title="From Seriously File ..." keyEquivalent="o" id="oOd-mA-5D1">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="OI6-tT-JiO"/>
                                                         </connections>
@@ -553,7 +553,7 @@ DQ
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="jw5-ox-sH4"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Thoughtful Site" keyEquivalent="/" id="FKE-Sm-Kum">
+                                        <menuItem title="Seriously Web Site" keyEquivalent="/" id="FKE-Sm-Kum">
                                             <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES"/>
                                             <connections>
                                                 <action selector="displayHelp:" target="Ady-hI-5gd" id="yRj-nt-Ohd"/>
@@ -586,7 +586,7 @@ DQ
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="Thoughtful" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="ZoneWindow" customModule="Thoughtful" customModuleProvider="target">
+                    <window key="window" title="Seriously" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="ZoneWindow" customModule="Thoughtful" customModuleProvider="target">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="309" width="354" height="201"/>
@@ -838,7 +838,6 @@ DQ
                                             <tableColumns>
                                                 <tableColumn width="254" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                        <font key="font" metaFont="menu" size="11"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>

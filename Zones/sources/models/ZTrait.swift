@@ -50,7 +50,6 @@ class ZTrait: ZRecord {
 	@objc dynamic var       type :  String?
 	@objc dynamic var       text :  String?   { didSet { updateSearchableStrings() } }
     override var   unwrappedName :  String    { return text ?? emptyName }
-	var          assetNamesArray = [String]()
  	var               _traitType :  ZTraitType?
 	var               _ownerZone :  Zone?
 
@@ -247,13 +246,12 @@ class ZTrait: ZRecord {
 	// then look up the the corresponding asset and use its fileurl
 
 	func textAttachment(for fileName: String) -> NSTextAttachment? {
-		var     url = gFiles.imageURL(for: fileName) // .appendingPathComponent("breakit")
+		var     url = gFiles.imageURLInAssetsFolder(for: fileName)
 		var  attach : NSTextAttachment?
 		var wrapper : FileWrapper?
 
 		let caught = {
 			printDebug(.dImages, "MISSING \(url)")
-
 			self.needSave() // file is missing, name is thus ignored and removed by caller
 		}
 
@@ -289,14 +287,10 @@ class ZTrait: ZRecord {
 	func createAssetFromImage(_ image: ZImage, for fileName: String) -> CKAsset? {
 		if  let     asset = assetFromAssetNamesForName(fileName) {
 			return  asset
-		} else if let url = writeImage(image, to: fileName) {
+		} else if let url = writeImageIntoAssetsFolder(image, using: fileName) {
 			let     asset = CKAsset(fileURL: url)    // side-effect creates asset for dropped image
 
-			if  let dropped = gEssayView?.dropped,
-				let index = dropped.firstIndex(of: fileName),
-				appendToAssetNames(fileName, with: asset) {
-				gEssayView?.dropped.remove(at: index)
-
+			if  appendUniquelyToAssetNames(fileName, with: asset) {
 				needSave()
 			}
 
@@ -306,16 +300,31 @@ class ZTrait: ZRecord {
 		return nil
 	}
 
-	func appendToAssetNames(_ imageName: String, with asset: CKAsset) -> Bool {
-		if  let uuidString = asset.uuidString {
-			let  separator = gSeparatorAt(level: 1)
-			let  assetName = imageName + separator + uuidString
+	func appendUniquelyToAssetNames(_ imageName: String, with asset: CKAsset) -> Bool {
+		if  var     names = assetNames?.componentsSeparatedAt(level: 0),
+			let  checksum = asset.data?.checksum {
+			let separator = gSeparatorAt(level: 1)
+			let assetName = imageName + separator + "\(checksum)"
 
-			assetNamesArray.append(assetName)				// add asset name for dropped image; TODO: check for duplicates
+			if !names.contains(assetName) {
+				for (index, name) in names.enumerated() {
+					let parts = name.componentsSeparatedAt(level: 1)
 
-			assetNames     = assetNamesArray.joined(separator: gSeparatorAt(level: 0))
+					if  parts.count > 1,
+						parts[0] == imageName {
+						names.remove(at: index)     // remove duplicate imageName and uuid
 
-			return true
+						break
+					}
+				}
+
+				names.append(assetName)				// add imageName and asset's uuid
+				printDebug(.dImages, "UNIQUE  \(imageName)")
+
+				assetNames = names.joined(separator: gSeparatorAt(level: 0))
+
+				return true
+			}
 		}
 
 		return false
@@ -329,11 +338,11 @@ class ZTrait: ZRecord {
 				let parts = item.componentsSeparatedAt(level: 1)
 
 				if  parts.count == 2,
-					name == parts[0] {
-					let uuidString = parts[1]
+					name == parts[0],
+					let checksum = parts[1].integerValue {
 
 					for asset in array {
-						if  asset.uuidString == uuidString {
+						if  asset.data?.checksum == checksum {
 							return asset
 						}
 					}
@@ -344,21 +353,16 @@ class ZTrait: ZRecord {
 		return nil
 	}
 
-	private func writeImage(_ image: ZImage, to originalName: String? = nil) -> URL? {
-		if  let url = imageURL(for: originalName),
-			url.writeImage(image, addOriginalImageName: originalName) {
-			return url
+	private func writeImageIntoAssetsFolder(_ image: ZImage, using originalName: String? = nil) -> URL? {
+		if  let name = originalName {
+			let url = gFiles.imageURLInAssetsFolder(for: name)
+
+			if  url.writeImage(image) {
+				return url
+			}
 		}
 
 		// check if file exists at url
-
-		return nil
-	}
-
-	private func imageURL(for fileName: String? = nil) -> URL? {
-		if  let name = fileName {
-			return gFiles.imageURL(for: name)
-		}
 
 		return nil
 	}
@@ -371,7 +375,7 @@ class ZTrait: ZRecord {
 			zoneName   = "\(o)"
 		}
 
-		if let names = assetNames, names.length > 0 {
+		if  let  names = assetNames, names.length > 0 {
 			let  parts = names.componentsSeparatedAt(level: 0)
 			assetNames = ""
 
@@ -398,7 +402,7 @@ class ZTrait: ZRecord {
 		// noteText:assets:for has a side-effect for a dropped image:
 		// it creates an asset
 
-		if  assets    != nil && assets!.count != 0 && (assetNames == nil || assetNames!.length == 0 || noteText?.assets(for: self) == nil) {
+		if  assets    != nil && assets!.count != 0 && noteText?.assets(for: self) == nil && (assetNames == nil || assetNames!.length == 0) {
 			assets     = []
 			assetNames = ""
 			update     = true

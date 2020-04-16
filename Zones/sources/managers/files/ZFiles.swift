@@ -16,13 +16,13 @@ import CoreFoundation
 #endif
 
 let gFiles    = ZFiles()
-//let gUseFiles = !kIsPhone
-let gUseFiles = false
+let gUseFiles = !kIsPhone
+//let gUseFiles = false
 
 enum ZExportType: String {
-	case eThoughtful = "thoughtful"
-	case eOutline    = "outline"
-	case eEssay		 = "rtfd"
+	case eSeriously = "seriously"
+	case eOutline   = "outline"
+	case eEssay	    = "rtfd"
 }
 
 class ZFiles: NSObject {
@@ -35,7 +35,7 @@ class ZFiles: NSObject {
     var  writeTimer : Timer?
     var _directoryURL : URL?
     let              manager = FileManager.default
-	func imageURL(for fileName: String) -> URL { return assetsDirectoryURL.appendingPathComponent(fileName) }
+	func imageURLInAssetsFolder(for fileName: String) -> URL { return assetsDirectoryURL.appendingPathComponent(fileName) }
 
     var isWritingNow: Bool {
         for writing in isWriting {
@@ -284,7 +284,7 @@ class ZFiles: NSObject {
             let         cloudName = fileName(for: index, isGeneric: false)!
             let        isEveryone = index == .everyoneIndex
             let        useGeneric = isEveryone || !gCanAccessMyCloudDatabase
-            let   normalExtension = ".thoughtful"
+            let   normalExtension = ".seriously"
             let   backupExtension = ".backup"
             let         backupURL = directoryURL.appendingPathComponent(name + backupExtension)
             let    genericFileURL = directoryURL.appendingPathComponent(name + normalExtension)
@@ -322,7 +322,7 @@ class ZFiles: NSObject {
                         try manager.copyItem(at: genericFileURL,     to: backupURL)
                     } else if backupExists {
                         try manager.copyItem(at: backupURL,     to: genericFileURL)     // should only happen when prior write fails due to power failure
-                    } else if isEveryone,    let bundleFileURL = Bundle.main.url(forResource: "everyone", withExtension: "thoughtful") {
+                    } else if isEveryone,    let bundleFileURL = Bundle.main.url(forResource: "everyone", withExtension: "seriously") {
                         try manager.copyItem(at: bundleFileURL, to: genericFileURL)
                     } else {
                         manager.createFile(atPath: genericFileURL.path, contents: nil)
@@ -370,7 +370,7 @@ class ZFiles: NSObject {
 
     func createDataDirectory() -> URL {
         let cacheURL = try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let directoryURL = cacheURL.appendingPathComponent("Thoughtful", isDirectory: true)
+        let directoryURL = cacheURL.appendingPathComponent("Seriously", isDirectory: true)
         
         do {
             try manager.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true, attributes: nil)

@@ -106,9 +106,6 @@
 		0C43EFE121010F62000976CE /* ZCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloud.swift */; };
 		0C43EFE221010F62000976CE /* ZCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C43EFCD21010F62000976CE /* ZCloud.swift */; };
 		0C48B0951F87197B00A247BC /* ZEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C48B0941F87197B00A247BC /* ZEvents.swift */; };
-		0C50FD2F2053491000E1D9A9 /* everyone.thoughtful in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */; };
-		0C50FD302053491000E1D9A9 /* everyone.thoughtful in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */; };
-		0C50FD312053491000E1D9A9 /* everyone.thoughtful in Resources */ = {isa = PBXBuildFile; fileRef = 0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */; };
 		0C63DA6D1FCF837D005EC548 /* ZFavorites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */; };
 		0C63DA6E1FCF837D005EC548 /* ZFavorites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */; };
 		0C63DA6F1FCF837D005EC548 /* ZFavorites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */; };
@@ -222,6 +219,9 @@
 		A7B48AB723E0E80C00654DBD /* ZoneWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */; };
 		A7B48AB823E0E80C00654DBD /* ZoneWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */; };
 		A7B48AB923E0E80C00654DBD /* ZoneWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */; };
+		A7B78D392448EF6400DB2C14 /* everyone.seriously in Resources */ = {isa = PBXBuildFile; fileRef = A7B78D382448EF6300DB2C14 /* everyone.seriously */; };
+		A7B78D3A2448EF6400DB2C14 /* everyone.seriously in Resources */ = {isa = PBXBuildFile; fileRef = A7B78D382448EF6300DB2C14 /* everyone.seriously */; };
+		A7B78D3B2448EF6400DB2C14 /* everyone.seriously in Resources */ = {isa = PBXBuildFile; fileRef = A7B78D382448EF6300DB2C14 /* everyone.seriously */; };
 		A7C7AF5923B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
 		A7C7AF5A23B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
 		A7C7AF5B23B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
@@ -380,7 +380,6 @@
 		0C43EFCC21010F62000976CE /* ZBatches.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZBatches.swift; sourceTree = "<group>"; };
 		0C43EFCD21010F62000976CE /* ZCloud.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZCloud.swift; sourceTree = "<group>"; };
 		0C48B0941F87197B00A247BC /* ZEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEvents.swift; sourceTree = "<group>"; };
-		0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = everyone.thoughtful; sourceTree = "<group>"; };
 		0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFavorites.swift; sourceTree = "<group>"; };
 		0C6CAE1E1F88308E001960F7 /* ZSearching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSearching.swift; sourceTree = "<group>"; };
 		0C7126CC1FB39C5200CD3E76 /* ZDesktopExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDesktopExtensions.swift; sourceTree = "<group>"; };
@@ -409,7 +408,7 @@
 		A7395BAD21B877B600F5759F /* ZTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTextEditor.swift; sourceTree = "<group>"; };
 		A7395BAE21B877B600F5759F /* ZGraphEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphEditor.swift; sourceTree = "<group>"; };
 		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Shortcuts.storyboard; sourceTree = "<group>"; };
-		A746D466219F637A00123A0A /* Thoughtful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thoughtful.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A746D466219F637A00123A0A /* Seriously.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Seriously.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A74D1BA522222FC900E69E44 /* eye.con-512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "eye.con-512.png"; path = "interfaces/Assets.xcassets/AppIcon.OSX.appiconset/eye.con-512.png"; sourceTree = "<group>"; };
 		A759F70024269D29008CEA59 /* ZTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTimers.swift; sourceTree = "<group>"; };
 		A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsController.swift; sourceTree = "<group>"; };
@@ -433,6 +432,7 @@
 		A7B48A8723E0E80C00654DBD /* ZoneDot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneDot.swift; sourceTree = "<group>"; };
 		A7B48A8823E0E80C00654DBD /* ZGridCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGridCell.swift; sourceTree = "<group>"; };
 		A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneWidget.swift; sourceTree = "<group>"; };
+		A7B78D382448EF6300DB2C14 /* everyone.seriously */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = everyone.seriously; sourceTree = "<group>"; };
 		A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssay.swift; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZWebLinkController.swift; sourceTree = "<group>"; };
@@ -779,7 +779,7 @@
 		0C50FD2D2053467600E1D9A9 /* data */ = {
 			isa = PBXGroup;
 			children = (
-				0C50FD2E2053491000E1D9A9 /* everyone.thoughtful */,
+				A7B78D382448EF6300DB2C14 /* everyone.seriously */,
 			);
 			path = data;
 			sourceTree = "<group>";
@@ -803,7 +803,7 @@
 			isa = PBXGroup;
 			children = (
 				0CA04B491D2ECF41001892E5 /* iPad.app */,
-				A746D466219F637A00123A0A /* Thoughtful.app */,
+				A746D466219F637A00123A0A /* Seriously.app */,
 				A7D3C25F21FAB6ED00B64B83 /* iFocus.app */,
 			);
 			name = products;
@@ -906,9 +906,9 @@
 			productReference = A7D3C25F21FAB6ED00B64B83 /* iFocus.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0CA04B131D2ECF1A001892E5 /* Thoughtful */ = {
+		0CA04B131D2ECF1A001892E5 /* Seriously */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Thoughtful" */;
+			buildConfigurationList = 0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Seriously" */;
 			buildPhases = (
 				0CA04B101D2ECF1A001892E5 /* Sources */,
 				0C1EC7C820A8D91F005E2DA2 /* ShellScript */,
@@ -921,9 +921,9 @@
 			dependencies = (
 				A7FC59BC2262798B005280D2 /* PBXTargetDependency */,
 			);
-			name = Thoughtful;
+			name = Seriously;
 			productName = Zones;
-			productReference = A746D466219F637A00123A0A /* Thoughtful.app */;
+			productReference = A746D466219F637A00123A0A /* Seriously.app */;
 			productType = "com.apple.product-type.application";
 		};
 		0CA04B481D2ECF41001892E5 /* iPad */ = {
@@ -1022,7 +1022,7 @@
 			targets = (
 				0C69C9861F09CD95004D026D /* iFocus */,
 				0CA04B481D2ECF41001892E5 /* iPad */,
-				0CA04B131D2ECF1A001892E5 /* Thoughtful */,
+				0CA04B131D2ECF1A001892E5 /* Seriously */,
 			);
 		};
 /* End PBXProject section */
@@ -1056,9 +1056,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7B78D392448EF6400DB2C14 /* everyone.seriously in Resources */,
 				A734EB7021E26EE500B9475F /* Credits.rtfd in Resources */,
 				0C39B3AE1F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
-				0C50FD2F2053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				A7B48A7223E0D1DB00654DBD /* Main.storyboard in Resources */,
 				0C39B3A81F1988380091F4D1 /* Assets.xcassets in Resources */,
 				0C39B3AB1F1988380091F4D1 /* Main.storyboard in Resources */,
@@ -1071,8 +1071,8 @@
 			files = (
 				A734EB7221E26EE500B9475F /* Credits.rtfd in Resources */,
 				A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */,
-				0C50FD312053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				A74D1BA622222FC900E69E44 /* eye.con-512.png in Resources */,
+				A7B78D3B2448EF6400DB2C14 /* everyone.seriously in Resources */,
 				0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */,
 				A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */,
 				A7245E0121729B18003D4BDA /* Details.storyboard in Resources */,
@@ -1083,9 +1083,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7B78D3A2448EF6400DB2C14 /* everyone.seriously in Resources */,
 				A734EB7121E26EE500B9475F /* Credits.rtfd in Resources */,
 				0C39B3A61F1988380091F4D1 /* Main.storyboard in Resources */,
-				0C50FD302053491000E1D9A9 /* everyone.thoughtful in Resources */,
 				A7B48A7323E0D1DC00654DBD /* Main.storyboard in Resources */,
 				0C1ABAAB1FB144E300D62947 /* Assets.xcassets in Resources */,
 				0C39B3A31F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
@@ -1106,7 +1106,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd ~/Library/Containers/com.zones.focus.mac/Data/Library/Application\\ Support/Thoughtful\nfile=\"everyone.thoughtful\"\nif [ -f $file]; then\n    cp $file ${SRCROOT}/data\nfi\n";
+			shellScript = "cd ~/Library/Containers/com.zones.focus.mac/Data/Library/Application\\ Support/Seriously\nfile=\"everyone.seriously\"\ncp $file ${SRCROOT}/data\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1411,7 +1411,7 @@
 				INFOPLIST_FILE = iFocus/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1444,7 +1444,7 @@
 				INFOPLIST_FILE = iFocus/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1580,7 +1580,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2012;
+				CURRENT_PROJECT_VERSION = 2014;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
@@ -1601,8 +1601,8 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.4.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.mac;
+				MARKETING_VERSION = 0.5.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1632,7 +1632,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 2012;
+				CURRENT_PROJECT_VERSION = 2014;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1653,8 +1653,8 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.4.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.mac;
+				MARKETING_VERSION = 0.5.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1690,7 +1690,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/iFocus/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1722,7 +1722,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/iFocus/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /Library/Frameworks @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zones.focus.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1756,7 +1756,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Thoughtful" */ = {
+		0CA04B3C1D2ECF1B001892E5 /* Build configuration list for PBXNativeTarget "Seriously" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0CA04B3D1D2ECF1B001892E5 /* Debug */,
