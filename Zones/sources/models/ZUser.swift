@@ -25,7 +25,6 @@ class ZUser : ZRecord {
     @objc dynamic var      authorID: String?   { didSet { save() } }
     @objc dynamic var   writeAccess: NSNumber? { didSet { save() } }
 	@objc dynamic var sentEmailType: String?   { didSet { save() } }
-	func                             save()    { gUserRecord = self.record }
 
     var access: ZUserAccess {
         get {
@@ -44,6 +43,14 @@ class ZUser : ZRecord {
             }
         }
     }
+
+	func save() {
+		updateCKRecordProperties()
+
+		gUserRecord = self.record
+
+		needSave()
+	}
 
     override func cloudProperties() -> [String] {
         return super.cloudProperties() + ZUser.cloudProperties()

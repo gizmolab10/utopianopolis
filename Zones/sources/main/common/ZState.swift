@@ -187,7 +187,6 @@ var gEmailTypesSent: String {
     set {
         setPreferencesString(newValue, for: kEmailTypesSent)
         gUser?.sentEmailType = newValue
-		gUser?.needSave()
     }
 }
 
@@ -560,7 +559,9 @@ func toggleDatabaseID() {
 }
 
 func emailSent(for type: ZSentEmailType) -> Bool {
-    return gEmailTypesSent.contains(type.rawValue)
+	let types = gEmailTypesSent
+	printDebug(.dOps, "email types \(types)")
+    return types.contains(type.rawValue)
 }
 
 func recordEmailSent(for type: ZSentEmailType) {

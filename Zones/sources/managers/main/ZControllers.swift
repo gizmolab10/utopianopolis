@@ -77,7 +77,6 @@ class ZControllers: NSObject {
 				gRefreshCurrentEssay()
 				gRefreshPersistentWorkMode()
 				self.signal([.sSwap, .sRing, .sCrumbs, .sRelayout, .sLaunchDone])
-				self.requestFeedback()
 
 				gBatches.finishUp { iSame in
 					FOREGROUND {
@@ -86,6 +85,7 @@ class ZControllers: NSObject {
 
 						gRemoteStorage.adoptAll()
 						self.signal([.sRelayout])
+						self.requestFeedback()
 
 						FOREGROUND(after: 10.0) {
 							gRemoteStorage.launchIsDone()
