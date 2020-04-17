@@ -1,6 +1,6 @@
 //
 //  ZCloud.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 9/18/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.

@@ -40,7 +40,6 @@ class ZBaseEditor: NSObject {
 
 			switch key {
 				case "a": if SPECIAL { gApplication.showHideAbout(); handled = true }
-				case "g":              refetch(COMMAND, OPTION);     handled = true
 				case "h": if COMMAND { gApplication.hide(nil);       handled = true }
 				case "o": if SPECIAL { gFiles.showInFinder();        handled = true }
 				case "q": if COMMAND { gApplication.terminate(self); handled = true }
@@ -76,31 +75,6 @@ class ZBaseEditor: NSObject {
 		}
 		
 		return iEvent
-	}
-
-	func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false) {
-
-		// plain is fetch children
-		// COMMAND alone is fetch all
-		// OPTION alone or both is all progeny
-
-		if  COMMAND && !OPTION {    // COMMAND alone
-			gBatches.refetch { iSame in
-				self.redrawGraph()
-			}
-		} else {
-			for grab in gSelecting.currentGrabs {
-				if !OPTION {    // plain
-					grab.reallyNeedChildren()
-				} else {        // OPTION alone or both
-					grab.reallyNeedProgeny()
-				}
-			}
-
-			gBatches.children { iSame in
-				self.redrawGraph()
-			}
-		}
 	}
 
 	func matchesPrevious(_ iEvent: ZEvent) -> Bool {

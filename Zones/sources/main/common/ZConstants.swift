@@ -1,6 +1,6 @@
 //
 //  ZConstants.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 10/27/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.

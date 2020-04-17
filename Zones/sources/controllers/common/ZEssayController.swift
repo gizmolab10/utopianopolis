@@ -1,6 +1,6 @@
 //
 //  ZEssayController.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 12/22/19.
 //  Copyright © 2019 Jonathan Sand. All rights reserved.

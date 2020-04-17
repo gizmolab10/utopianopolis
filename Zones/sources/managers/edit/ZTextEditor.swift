@@ -1,6 +1,6 @@
 //
 //  ZTextEditor.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 2/19/18.
 //  Copyright © 2018 Jonathan Sand. All rights reserved.

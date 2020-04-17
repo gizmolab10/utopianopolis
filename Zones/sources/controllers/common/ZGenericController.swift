@@ -1,6 +1,6 @@
 //
 //  ZGenericController.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 10/10/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  ZExtensions.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 10/8/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -1845,8 +1845,11 @@ extension String {
 		let t = substring(toExclusive: self.length - by)
 		return t.substring(fromInclusive: by)
 	}
-    
-	
+
+	func rangesMatching(_ iText: String?, ignoreRange: NSRange, seekForward: Bool = true, needSpaces: Bool = true) -> [NSRange]? {
+		return rangesMatching(iText, needSpaces: needSpaces)
+	}
+
 	func rangesMatching(_ iText: String?, needSpaces: Bool = true) -> [NSRange]? {
 		if  let     t = iText?.lowercased() {
 			let parts = lowercased().components(separatedBy: t)

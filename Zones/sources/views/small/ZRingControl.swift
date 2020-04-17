@@ -1,6 +1,6 @@
 //
 //  ZRingControl.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 1/27/20.
 //  Copyright © 2020 Jonathan Sand. All rights reserved.

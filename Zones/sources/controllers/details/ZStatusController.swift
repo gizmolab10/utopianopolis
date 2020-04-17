@@ -1,6 +1,6 @@
 //
 //  ZInformationController.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 4/13/17.
 //  Copyright © 2017 Jonathan Sand. All rights reserved.

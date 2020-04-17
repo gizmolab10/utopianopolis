@@ -1,6 +1,6 @@
 //
 //  ZTrait.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 8/28/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -239,49 +239,41 @@ class ZTrait: ZRecord {
 	// MARK:- image support
 	// MARK:-
 
-	// ONLY called on within noteText (set & get)
+	// ONLY called within noteText set
 	//
-	// logic: does file actually exist in assets folder?
-	// first use filename passed in
-	// then look up the the corresponding asset and use its fileurl
+	// check if file actually exist in assets folder
+	// by successfully creating a wrapper
+	// try using the filename passed in
+	// then look up the the corresponding ASSET and try using ITS fileurl
+	// if either exists, create a text attachment from the wrapper
 
 	func textAttachment(for fileName: String) -> NSTextAttachment? {
 		var     url = gFiles.imageURLInAssetsFolder(for: fileName)
 		var  attach : NSTextAttachment?
 		var wrapper : FileWrapper?
 
-		let caught = {
-			printDebug(.dImages, "MISSING \(url)")
-			self.needSave() // file is missing, name is thus ignored and removed by caller
+		let grabWrapper = {
+			do {
+				wrapper = try FileWrapper(url: url, options: [])
+			} catch {}
 		}
-
-		let grabWrapper = { do { wrapper = try FileWrapper(url: url, options: []) } catch { caught() } }
 
 		grabWrapper()
 
-		if  wrapper == nil,
+		if  wrapper  == nil,
 			let asset = assetFromAssetNamesForName(fileName) {
 			url       = asset.fileURL
 
 			grabWrapper()
 		}
 
-		if  wrapper != nil {
-			attach   = NSTextAttachment(fileWrapper: wrapper)
+		if  let  w = wrapper {
+			attach = NSTextAttachment(fileWrapper: w)
+		} else {
+			printDebug(.dImages, "DETACH  \(url)")
 		}
 
 		return attach
-	}
-
-	func appendedTextAttachment(for fileName: String) -> Any? {
-		if  let     attach = textAttachment(for: fileName) {
-			var attributes = [NSAttributedString.Key : Any]()
-			attributes[.attachment] = attach
-
-			return NSAttributedString(string: " ", attributes: attributes)
-		}
-
-		return nil
 	}
 
 	func createAssetFromImage(_ image: ZImage, for fileName: String) -> CKAsset? {
@@ -319,7 +311,7 @@ class ZTrait: ZRecord {
 				}
 
 				names.append(assetName)				// add imageName and asset's uuid
-				printDebug(.dImages, "UNIQUE  \(imageName)")
+				printDebug(.dImages, "APPEND  \(assetName)")
 
 				assetNames = names.joined(separator: gSeparatorAt(level: 0))
 
@@ -384,12 +376,12 @@ class ZTrait: ZRecord {
 
 				if  subparts.count != 3 {
 					assetNames?.append(part)
-				} else if let array = assets {
-					let  uuidString = subparts[2]
+				} else if let array = assets,
+					let    checksum = subparts[2].integerValue {
 					update          = true
 
 					for (index, asset) in array.enumerated() {
-						if  asset.uuidString == uuidString {
+						if  let c = asset.data?.checksum, c == checksum {
 							assets?.remove(at: index)
 
 							break
@@ -398,9 +390,6 @@ class ZTrait: ZRecord {
 				}
 			}
 		}
-
-		// noteText:assets:for has a side-effect for a dropped image:
-		// it creates an asset
 
 		if  assets    != nil && assets!.count != 0 && noteText?.assets(for: self) == nil && (assetNames == nil || assetNames!.length == 0) {
 			assets     = []

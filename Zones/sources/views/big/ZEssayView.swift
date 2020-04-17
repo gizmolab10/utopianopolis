@@ -1,6 +1,6 @@
 //
 //  ZEssayView.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 12/22/19.
 //  Copyright © 2019 Zones. All rights reserved.
@@ -54,8 +54,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch key {
 				case "a":      selectAll(nil)
 				case "d":      convertToChild(createEssay: ALL)
-				case "e":      gNoteAndEssay.export()
-				case "f":      gControllers.showSearch(OPTION)
+				case "e":      grabSelectedTextForSearch()
+				case "f":      gSearching.showSearch(OPTION)
+				case "g":      searchAgain(OPTION)
 				case "i":      showSpecialsPopup()
 				case "j":      gControllers.updateRingState(SPECIAL)
 				case "l":      alterCase(up: false)
@@ -356,6 +357,32 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	// MARK:- private
 	// MARK:-
+
+	func searchAgain(_ OPTION: Bool) {
+	    let    seek = gSearching.searchText
+		var  offset = selectionRange.upperBound + 1
+		let    text = gCurrentEssay?.essayText?.string
+		let   first = text?.substring(toExclusive: offset)
+		let  second = text?.substring(fromInclusive: offset)
+		var matches = second?.rangesMatching(seek)
+
+		if  matches == nil || matches!.count == 0 {
+			matches = first?.rangesMatching(seek) // wrap around
+			offset  = 0
+		}
+
+		if  matches != nil,
+			matches!.count > 0 {
+			selectionRange = matches![0].offsetBy(offset)
+
+			scrollToVisible(selectionRect)
+			setSelectedRange(selectionRange)
+		}
+	}
+
+	func grabSelectedTextForSearch() {
+		gSearching.searchText = selectionString
+	}
 
 	func linkHit(at rect: CGRect) -> Bool {
 		if  let array = textStorage?.linkRanges {

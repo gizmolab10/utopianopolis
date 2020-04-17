@@ -1,6 +1,6 @@
 //
 //  ZRingView.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 2/16/19.
 //  Copyright © 2019 Jonathan Sand. All rights reserved.

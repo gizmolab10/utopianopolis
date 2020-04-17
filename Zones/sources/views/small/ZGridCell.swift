@@ -1,6 +1,6 @@
 //
 //  ZGridCell.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 6/24/19.
 //  Copyright © 2019 Jonathan Sand. All rights reserved.

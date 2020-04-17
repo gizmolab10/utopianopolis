@@ -1,6 +1,6 @@
 //
 //  ZFavorites.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 11/24/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.

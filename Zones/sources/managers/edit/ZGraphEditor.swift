@@ -1,6 +1,6 @@
 //
 //  ZGraphEditor.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 10/29/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -99,7 +99,8 @@ class ZGraphEditor: ZBaseEditor {
 						switch key {
 							case "a":      gCurrentlyEditingWidget?.selectAllText()
 							case "d":      tearApartCombine(ALL, gCurrentlyEditingWidget?.widgetZone)
-							case "f":      gControllers.showSearch(OPTION)
+							case "f":      gSearching.showSearch(OPTION)
+							case "g":      refetch(COMMAND, OPTION)
 							case "n":      grabOrEdit(true, OPTION)
 							case "p":      printCurrentFocus()
 							case "/":      if IGNORED { return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
@@ -133,7 +134,8 @@ class ZGraphEditor: ZBaseEditor {
 					case "c":      if COMMAND { copyToPaste() } else { gGraphController?.recenter() }
                     case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
                     case "e":      editTrait(for: .tEmail)
-                    case "f":      gControllers.showSearch(OPTION)
+                    case "f":      gSearching.showSearch(OPTION)
+					case "g":      refetch(COMMAND, OPTION)
                     case "h":      editTrait(for: .tHyperlink)
                     case "l":      alterCase(up: false)
 					case "j":      gControllers.updateRingState(SPECIAL)
@@ -357,8 +359,32 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
     }
-    
-    
+
+	func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false) {
+
+		// plain is fetch children
+		// COMMAND alone is fetch all
+		// OPTION alone or both is all progeny
+
+		if  COMMAND && !OPTION {    // COMMAND alone
+			gBatches.refetch { iSame in
+				self.redrawGraph()
+			}
+		} else {
+			for grab in gSelecting.currentGrabs {
+				if !OPTION {    // plain
+					grab.reallyNeedChildren()
+				} else {        // OPTION alone or both
+					grab.reallyNeedProgeny()
+				}
+			}
+
+			gBatches.children { iSame in
+				self.redrawGraph()
+			}
+		}
+	}
+
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
         if     !COMMAND || (OPTION && PERIOD) {
             toggleRingControlModes(isDirection:  PERIOD)

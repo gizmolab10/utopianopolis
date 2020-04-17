@@ -1,6 +1,6 @@
 //
 //  ZSearching.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 10/6/17.
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
@@ -36,17 +36,36 @@ let gSearching = ZSearching()
 class ZSearching: NSObject {
 
 	var state = ZSearchState.sNot
-
-    func exitSearchMode() {
-		state = .sNot
-
-		gControllers.swapModes()
-        signal([.sFound])
-        signal([.sSearch])
-    }
+	var priorWorkMode: ZWorkMode?
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
 		return gSearchController?.handleEvent(event)
     }
+
+	var searchText: String? {
+		get { return gSearchController?.searchBox?.text }
+		set { gSearchController?.searchBox?.text = newValue }
+	}
+
+	func exitSearchMode() {
+		state = .sNot
+
+		swapModes()
+		signal([.sFound])
+		signal([.sSearch])
+	}
+
+	func swapModes() {
+		let      last = priorWorkMode ??        .graphMode
+		priorWorkMode = gIsSearchMode ? nil  :   gWorkMode
+		gWorkMode     = gIsSearchMode ? last : .searchMode
+	}
+
+	func showSearch(_ OPTION: Bool = false) {
+		if  gDatabaseID  != .favoritesID {
+			swapModes()
+			signal([OPTION ? .sFound : .sSearch])
+		}
+	}
 
 }

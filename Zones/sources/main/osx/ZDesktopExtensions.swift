@@ -1,6 +1,6 @@
 //
 //  ZDesktopExtensions.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 1/31/17.
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
@@ -550,7 +550,7 @@ extension NSWindow {
     @IBAction func cut               (_ iItem: ZMenuItem?) { gGraphEditor.delete() }
     @IBAction func delete            (_ iItem: ZMenuItem?) { gGraphEditor.delete() }
     @IBAction func paste             (_ iItem: ZMenuItem?) { gGraphEditor.paste() }
-    @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gControllers.showSearch() }
+    @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gSearching.showSearch() }
     @IBAction func undo              (_ iItem: ZMenuItem?) { gGraphEditor.undoManager.undo() }
     @IBAction func redo              (_ iItem: ZMenuItem?) { gGraphEditor.undoManager.redo() }
 }

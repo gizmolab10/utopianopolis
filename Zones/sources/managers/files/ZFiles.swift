@@ -1,6 +1,6 @@
 //
 //  ZFiles.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 10/8/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -16,8 +16,8 @@ import CoreFoundation
 #endif
 
 let gFiles    = ZFiles()
-let gUseFiles = !kIsPhone
-//let gUseFiles = false
+//let gUseFiles = !kIsPhone
+let gUseFiles = false
 
 enum ZExportType: String {
 	case eSeriously = "seriously"

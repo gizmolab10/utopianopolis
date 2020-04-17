@@ -1,6 +1,6 @@
  //
 //  Zone.swift
-//  Thoughtful
+//  Seriously
 //
 //  Created by Jonathan Sand on 8/28/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
@@ -819,6 +819,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		revealChildren()
 		gControllers.swapGraphAndEssay(force: .graphMode)
 		gTemporarilySetMouseZone(self)
+		signal([.sRelayout])
 
 		let e = edit()
 
