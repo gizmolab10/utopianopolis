@@ -829,7 +829,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let    board = drag.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
 			let     path = board[0] as? String {
 			let fileName = URL(fileURLWithPath: path).lastPathComponent
-			printDebug(.dImages, "DROPPED \(fileName)")
+			printDebug(.dImages, "DROP     \(fileName)")
 			dropped.append(fileName)
 		}
 

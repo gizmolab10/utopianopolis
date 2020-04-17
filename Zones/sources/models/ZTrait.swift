@@ -277,13 +277,13 @@ class ZTrait: ZRecord {
 					url = original
 
 					grabWrapper()
-					printDebug(.dImages, "RENAMED \(url)")
+					printDebug(.dImages, "RENAME   \(url)")
 				} catch {}
 			}
 		}
 
 		if  wrapper == nil {
-			printDebug(.dImages, "DETACH  \(url)")
+			printDebug(.dImages, "MISSING  \(url)")
 
 			return nil
 		}
@@ -326,7 +326,7 @@ class ZTrait: ZRecord {
 				}
 
 				names.append(assetName)				// add imageName and asset's uuid
-				printDebug(.dImages, "NAMES + \(assetName)")
+				printDebug(.dImages, "ADD NAME \(assetName)")
 
 				assetNames = names.joined(separator: gSeparatorAt(level: 0))
 
@@ -417,7 +417,7 @@ class ZTrait: ZRecord {
 
 		if  update {
 			needSave()
-			printDebug(.dImages, "UPDATE  \(zoneName)")
+			printDebug(.dImages, "PREPARE  \(zoneName)")
 		}
 	}
 
