@@ -16,8 +16,8 @@ import CoreFoundation
 #endif
 
 let gFiles    = ZFiles()
-//let gUseFiles = !kIsPhone
-let gUseFiles = false
+let gUseFiles = !kIsPhone
+//let gUseFiles = false
 
 enum ZExportType: String {
 	case eSeriously = "seriously"

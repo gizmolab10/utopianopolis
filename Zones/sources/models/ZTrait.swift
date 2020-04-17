@@ -249,31 +249,46 @@ class ZTrait: ZRecord {
 
 	func textAttachment(for fileName: String) -> NSTextAttachment? {
 		var     url = gFiles.imageURLInAssetsFolder(for: fileName)
-		var  attach : NSTextAttachment?
 		var wrapper : FileWrapper?
+		var  extend : String?
 
 		let grabWrapper = {
 			do {
 				wrapper = try FileWrapper(url: url, options: [])
+				extend  = url.pathExtension
 			} catch {}
 		}
 
 		grabWrapper()
 
-		if  wrapper  == nil,
-			let asset = assetFromAssetNamesForName(fileName) {
-			url       = asset.fileURL
+		if  wrapper     == nil,
+			let    asset = assetFromAssetNamesForName(fileName) {
+			let original = url
+			url          = asset.fileURL
 
 			grabWrapper()
+
+			if  let e = extend, e.length > 8 {
+				wrapper = nil
+
+				do {
+					try FileManager.default.moveItem(at: url, to: original)	   // rename asset url to original
+
+					url = original
+
+					grabWrapper()
+					printDebug(.dImages, "RENAMED \(url)")
+				} catch {}
+			}
 		}
 
-		if  let  w = wrapper {
-			attach = NSTextAttachment(fileWrapper: w)
-		} else {
+		if  wrapper == nil {
 			printDebug(.dImages, "DETACH  \(url)")
+
+			return nil
 		}
 
-		return attach
+		return NSTextAttachment(fileWrapper: wrapper)
 	}
 
 	func createAssetFromImage(_ image: ZImage, for fileName: String) -> CKAsset? {
@@ -311,7 +326,7 @@ class ZTrait: ZRecord {
 				}
 
 				names.append(assetName)				// add imageName and asset's uuid
-				printDebug(.dImages, "APPEND  \(assetName)")
+				printDebug(.dImages, "NAMES + \(assetName)")
 
 				assetNames = names.joined(separator: gSeparatorAt(level: 0))
 
@@ -334,8 +349,11 @@ class ZTrait: ZRecord {
 					let checksum = parts[1].integerValue {
 
 					for asset in array {
-						if  asset.data?.checksum == checksum {
-							return asset
+						if  let  data  = asset.data {
+							let delta  = abs(data.checksum - checksum)
+							if  delta == 0 {
+								return asset
+							}
 						}
 					}
 				}

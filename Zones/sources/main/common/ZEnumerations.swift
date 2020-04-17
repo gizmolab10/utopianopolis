@@ -342,7 +342,7 @@ enum ZEssayHyperlinkType: String {
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = [.dImages]
+var gDebugMode: [ZDebugMode] = [.dImages, .dOps]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
@@ -400,4 +400,5 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 			gDebugMode.append(mode)
 		}
 	}
+
 }
