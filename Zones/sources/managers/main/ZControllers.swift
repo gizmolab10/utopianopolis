@@ -195,13 +195,13 @@ class ZControllers: NSObject {
 				case .idDetails,
 					 .idGraph,
 					 .idRing:   return kClearColor
-				case .idPreferences,
-					 .idStatus: return gDarkishBackgroundColor
+//				case .idPreferences,
+//					 .idStatus: return gDarkishBackgroundColor
 				default:        return gBackgroundColor
 			}
 		}
 
-		return gBackgroundColor
+		return gAccentColor
 	}
 
 	// MARK:- signals

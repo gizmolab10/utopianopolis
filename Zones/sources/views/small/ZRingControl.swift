@@ -19,7 +19,7 @@ class ZRingControl: ZView, ZToolable {
 
 	var type: ZControlType = .eVisible
 	static let    controls = [insertion, visible, confined]
-	func toolColor() -> ZColor? { return gBackgroundColor.accountingForDarkMode.darker(by: 4.0) }
+	func toolColor() -> ZColor? { return gAccentColor.accountingForDarkMode.darker(by: 4.0) }
 	func toolName()  -> String? { return description }
 
 	override var description: String {

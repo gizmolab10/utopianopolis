@@ -67,10 +67,11 @@ var       gChildrenViewOffset:             Double { return gDotWidth + Double(gG
 var                 gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
 var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
-var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : ZColor.black }
-var         gNecklaceDotColor:             ZColor { return gIsDark ? gBackgroundColor.inverted.darker(by: 5.0) :  gBackgroundColor.darker(by: 2.0) }
-var   gDarkishBackgroundColor:             ZColor { return gBackgroundColor.darkish (by: 1.028) }
-var  gLightishBackgroundColor:             ZColor { return gBackgroundColor.lightish(by: 1.02)  }
+var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : kBlackColor }
+var         gNecklaceDotColor:             ZColor { return gIsDark ? gAccentColor.inverted.darker(by: 5.0) :  gAccentColor.darker(by: 2.0) }
+var          gBackgroundColor:             ZColor { return gIsDark ? kBlackColor : kWhiteColor }
+var   gDarkishBackgroundColor:             ZColor { return gAccentColor.darkish (by: 1.028) }
+var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
 var   gLighterRubberbandColor:             ZColor { return gRubberbandColor.lighter (by: 4.0)   }
 var   gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gLighterRubberbandColor }
 var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
@@ -200,7 +201,7 @@ var gFavoritesAreVisible: Bool {
 	set { setPreferencesBool(newValue, for: kFavoritesAreVisibleKey) }
 }
 
-var gBackgroundColor: ZColor {
+var gAccentColor: ZColor {
 	get { return   getPreferencesColor( for: kBackgroundColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) } //0.99 / 360.0, saturation: 0.13, brightness: kUnselectBrightness, alpha: 1)) }
 	set { setPreferencesColor(newValue, for: kBackgroundColorKey) }
 }

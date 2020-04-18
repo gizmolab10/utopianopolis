@@ -28,7 +28,7 @@ class ZShortcutsController: ZGenericTableController {
         super.viewDidLoad()
 		shortcuts.setup()
 
-        view.zlayer.backgroundColor = gBackgroundColor.cgColor
+		view.zlayer.backgroundColor = gBackgroundColor.cgColor
         
 		if  let c = clipView,
 			let g = gridView {

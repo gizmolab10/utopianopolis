@@ -40,6 +40,7 @@ let         kDefaultWindowRect = CGRect(x:0.0, y:0.0, width: 500.0, height: 500.
 let          kDefaultZoneColor = ZColor.blue
 let                kClearColor = ZColor.clear
 let                kWhiteColor = ZColor.white
+let                kBlackColor = ZColor.black
 let                 kGridColor = ZColor.darkGray
 let               gUndoManager = UndoManager()
 

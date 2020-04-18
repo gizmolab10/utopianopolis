@@ -50,7 +50,7 @@ class ZBreadcrumbs: NSObject {
 	}
 
 	var crumbsColor: ZColor {
-		var color = gBackgroundColor
+		var color = gAccentColor
 
 		if  crumbDBID == .mineID {
 			color = color + gRubberbandColor
