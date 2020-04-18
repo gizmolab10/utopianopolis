@@ -13,43 +13,67 @@ var gBreadcrumbsView: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbsV
 
 class ZBreadcrumbsView : ZView {
 
-	var               numberClipped = 0
-	var                 showClipper = false
-	@IBOutlet var        clipButton : NSButton?
-	@IBOutlet var dbIndicatorButton : NSButton?
+	var               numberClipped =  0
+	var                 showClipper =  false
+	var                crumbButtons = [ZButton]()
+	@IBOutlet var        clipButton :  ZButton?
+	@IBOutlet var dbIndicatorButton :  ZButton?
 	@IBOutlet var  heightConstraint : NSLayoutConstraint?
 	@IBOutlet var   widthConstraint : NSLayoutConstraint?
 
-	var crumbButtons : [ZButton] {
-		var buttons = [ZButton]()
-
-		removeAllSubviews()
-
-		for (index, crumb) in gBreadcrumbs.crumbs.enumerated() {
-			let  button = ZButton(title: crumb, target: self, action: #selector(crumbButtonAction(_:)))
-			button.font = gFavoritesFont
-			button.tag  = index
-
-			buttons.append(button)
-			addSubview(button)
+	func clearCrumbButtons() {
+		for button in crumbButtons {
+			button.removeFromSuperview()
 		}
 
-		return buttons
+		crumbButtons = [ZButton]()
 	}
 
-	@objc func crumbButtonAction(_ button: ZButton) {
-		go(to: button.tag, COMMAND: false)
+	func setupCrumbButtons() {
+		clearCrumbButtons()
+
+		for (index, zone) in gBreadcrumbs.crumbZones.enumerated() {
+			let  button = ZButton(title: zone.unwrappedName, target: self, action: #selector(crumbButtonAction(_:)))
+			let   title = NSMutableAttributedString(string: zone.unwrappedName)
+			let   range = NSRange(location:0, length: title.length)
+			button.font = gFavoritesFont
+			button.tag  = index
+			button.cell?.backgroundStyle = .raised
+
+			title.addAttributes([.font : gFavoritesFont], range: range)
+
+			if  let color = zone.color {
+				title.addAttributes([.foregroundColor : color], range: range)
+			}
+
+			button.attributedTitle = title
+
+			crumbButtons.append(button)
+		}
 	}
 
-	func updateCrumbButtons() {
-		layoutButtons()
+	var crumbButtonsWidth: CGFloat {
+		var width = CGFloat(0.0)
+
+		for button in crumbButtons {
+			width += button.bounds.width
+		}
+
+		return width
 	}
 
-	func layoutButtons() {
+	func sizeCrumbButtonsToFit() {
+		while crumbButtonsWidth > bounds.width {
+			crumbButtons.remove(at: 0)
+		}
+	}
+
+	func layoutCrumbButtons() {
 		var   prior : ZButton?
 		let buttons = crumbButtons
 
 		for button in buttons {
+			addSubview(button)
 			button.snp.makeConstraints { make in
 				if  let previous = prior {
 					make.left.equalTo(previous.snp.right).offset(1.0)
@@ -67,8 +91,16 @@ class ZBreadcrumbsView : ZView {
 		}
 	}
 
-	// MARK:- output
-	// MARK:-
+	func updateAndRedraw() {
+		dbIndicatorButton?.isHidden = !gIsGraphOrEditIdeaMode
+		dbIndicatorButton?.title    = gDatabaseID == .everyoneID ? "e" : "m"
+		clipButton?.image           = !showClipper ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
+		needsDisplay                = true
+
+		setupCrumbButtons()
+		sizeCrumbButtonsToFit()
+		layoutCrumbButtons()
+	}
 
 	override func draw(_ dirtyRect: NSRect) {
 		if  gIsReadyToShowUI {
@@ -76,29 +108,8 @@ class ZBreadcrumbsView : ZView {
 		}
 	}
 
-	func updateAndRedraw() {
-		dbIndicatorButton?.isHidden = !gIsGraphOrEditIdeaMode
-		dbIndicatorButton?.title    = gDatabaseID == .everyoneID ? "e" : "m"
-		clipButton?.image           = !showClipper ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
-		needsDisplay                = true
-
-		layoutButtons()
-	}
-
 	// MARK:- events
 	// MARK:-
-
-	@IBAction func handleClipper(_ sender: Any?) {
-		gClipBreadcrumbs = !gClipBreadcrumbs
-
-		updateAndRedraw()
-	}
-
-	@IBAction func handleDatabaseIndicatorAction(_ button: ZButton) {
-		gGraphController?.toggleGraphs()
-		gGraphEditor.redrawGraph()
-		updateAndRedraw()
-	}
 
 	func go(to index: Int, COMMAND: Bool) {
 		let edit = gCurrentlyEditingWidget?.widgetZone
@@ -122,7 +133,7 @@ class ZBreadcrumbsView : ZView {
 			}
 
 			if  gWorkMode == .noteMode {
-			    if  let note = next.noteMaybe {
+				if  let note = next.noteMaybe {
 					gEssayView?.resetCurrentEssay(note)
 				} else {
 					gSetGraphMode()
@@ -131,6 +142,22 @@ class ZBreadcrumbsView : ZView {
 
 			self.signal([.sSwap, .sRelayout])
 		}
+	}
+
+	@IBAction func handleClipper(_ sender: Any?) {
+		gClipBreadcrumbs = !gClipBreadcrumbs
+
+		updateAndRedraw()
+	}
+
+	@IBAction func handleDatabaseIndicatorAction(_ button: ZButton) {
+		gGraphController?.toggleGraphs()
+		gGraphEditor.redrawGraph()
+		updateAndRedraw()
+	}
+
+	@IBAction func crumbButtonAction(_ button: ZButton) {
+		go(to: button.tag, COMMAND: false)
 	}
 
 }

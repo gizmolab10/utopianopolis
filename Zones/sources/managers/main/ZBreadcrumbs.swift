@@ -25,27 +25,12 @@ class ZBreadcrumbs: NSObject {
 		return nil
 	}
 
-	var crumbs: [String] {
-		var result = [String]()
-
-		for zone in crumbZones {
-			result.append(zone.unwrappedName)
-
-			if !gShowAllBreadcrumbs,
-				zone == gHere {
-				break
-			}
-		}
-
-		return result
-	}
-
 	var crumbsRootZone: Zone? {
 		switch gWorkMode {
-			case .noteMode:  return gCurrentEssay?.zone
-			case .graphMode: return gSelecting.firstGrab?.crumbRoot
+			case .noteMode:      return gCurrentEssay?.zone
+			case .graphMode:     return (gShowAllBreadcrumbs ? gSelecting.firstGrab : gHereMaybe)?.crumbRoot
 			case .editIdeaMode:  return gCurrentlyEditingWidget?.widgetZone
-			default:         return nil
+			default:             return nil
 		}
 	}
 

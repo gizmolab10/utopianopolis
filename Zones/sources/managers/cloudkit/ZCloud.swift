@@ -89,10 +89,6 @@ class ZCloud: ZRecords {
             operation           .recordsToSave = saves
             operation       .recordIDsToDelete = destroy
             operation.perRecordCompletionBlock = { (iRecord: CKRecord?, iError: Error?) in
-				if  iRecord?.recordType == kUserType {
-					printDebug(.dOps, "user \(iRecord!)")
-				}
-
                 let                 notDestroy = iRecord == nil || !destroy.contains(iRecord!.recordID)
                 gAlerts.detectError(iError) { iHasError in
                     if  iHasError {
