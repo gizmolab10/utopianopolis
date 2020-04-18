@@ -508,11 +508,11 @@
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="C6V-CX-uWP" userLabel="drag targets">
-                                                    <rect key="frame" x="-2" y="25" width="103" height="17"/>
+                                                    <rect key="frame" x="28" y="25" width="73" height="17"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="9dI-E4-9GB"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="drag, rubberband" id="qjf-lf-hsF">
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="active, mine" id="qjf-lf-hsF">
                                                         <font key="font" metaFont="label" size="12"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -523,7 +523,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="RsG-gF-fWk"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="background" id="QHW-3R-d1w">
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="accent" id="QHW-3R-d1w">
                                                         <font key="font" metaFont="label" size="12"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -556,7 +556,7 @@
                                                 <constraint firstAttribute="trailing" secondItem="g4o-CN-FHf" secondAttribute="trailing" id="gTa-09-iaO"/>
                                                 <constraint firstAttribute="trailing" secondItem="fgs-5f-km9" secondAttribute="trailing" id="q79-8F-UwO"/>
                                                 <constraint firstItem="C6V-CX-uWP" firstAttribute="top" secondItem="0Qp-4d-Tu8" secondAttribute="bottom" constant="4" id="uUv-WS-Vsy"/>
-                                                <constraint firstItem="C6V-CX-uWP" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" id="w0p-E3-Fm3"/>
+                                                <constraint firstItem="C6V-CX-uWP" firstAttribute="leading" secondItem="G62-eE-NOU" secondAttribute="leading" constant="30" id="w0p-E3-Fm3"/>
                                             </constraints>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="FDB-6R-I3I" userLabel="color wells">
@@ -582,7 +582,7 @@
                                                         <action selector="colorBoxAction:" target="Naq-se-Exq" id="Mx5-XA-kHS"/>
                                                     </connections>
                                                 </colorWell>
-                                                <colorWell identifier="background" translatesAutoresizingMaskIntoConstraints="NO" id="wsy-Dq-H7s">
+                                                <colorWell identifier="accent" translatesAutoresizingMaskIntoConstraints="NO" id="wsy-Dq-H7s">
                                                     <rect key="frame" x="0.0" y="0.0" width="93" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="ukQ-KH-zeP"/>
@@ -633,10 +633,10 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activeMineColorBox" destination="j0f-8D-Ds5" id="FRZ-SF-WJ1"/>
                         <outlet property="backgroundColorBox" destination="wsy-Dq-H7s" id="lQ4-nS-6Bk"/>
                         <outlet property="clearColorButton" destination="0Qp-4d-Tu8" id="6Al-nd-9pG"/>
                         <outlet property="countsModeControl" destination="hRI-S8-ys7" id="7ig-ZZ-v8Z"/>
-                        <outlet property="dragTargetsColorBox" destination="j0f-8D-Ds5" id="FRZ-SF-WJ1"/>
                         <outlet property="ideasLabel" destination="g4o-CN-FHf" id="oGt-VV-tet"/>
                         <outlet property="stretch" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
                         <outlet property="thickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>

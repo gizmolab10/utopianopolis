@@ -1467,8 +1467,8 @@ class ZGraphEditor: ZBaseEditor {
                 onCompletion?()
             }
             
-            if zone.isRoot || zone.isRootOfTrash || parentZone == gFavoritesRoot {
-                complete() // avoid the ridiculous
+            if zone.isRoot || parentZone == gFavoritesRoot {
+                complete() // cannot move out from a root or move into favorites root
             } else if selectionOnly {
                 
                 // /////////////////

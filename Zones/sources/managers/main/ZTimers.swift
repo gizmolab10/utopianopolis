@@ -17,6 +17,7 @@ import UIKit
 let gTimers = ZTimers()
 
 enum ZTimerID : Int {
+	case tArrowsDoNotBrowse
 	case tRecordsEveryone
 	case tCloudAvailable
 	case tMouseLocation
@@ -109,7 +110,7 @@ class ZTimers: NSObject {
 					self?.timers[index]         = nil
 				}
 
-				let setTimer:  Closure = { [weak self] in
+				let startTimer:  Closure = { [weak self] in
 					clearTimer()
 
 					self?.timers[index] = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { iTimer in
@@ -131,7 +132,7 @@ class ZTimers: NSObject {
 						debug("•")
 						self?.signal([.sStatus]) // show change in timer status
 					} catch {
-						setTimer()
+						startTimer()
 						debug("-")
 					}
 				}
@@ -140,7 +141,7 @@ class ZTimers: NSObject {
 					clearTimer() // in case timer was already set up
 					tryCatch()
 				} else {
-					setTimer()
+					startTimer()
 				}
 			}
 		}

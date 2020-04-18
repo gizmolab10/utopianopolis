@@ -72,8 +72,8 @@ var         gNecklaceDotColor:             ZColor { return gIsDark ? gAccentColo
 var          gBackgroundColor:             ZColor { return gIsDark ? kBlackColor : kWhiteColor }
 var   gDarkishBackgroundColor:             ZColor { return gAccentColor.darkish (by: 1.028) }
 var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
-var   gLighterRubberbandColor:             ZColor { return gRubberbandColor.lighter (by: 4.0)   }
-var   gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gLighterRubberbandColor }
+var   gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
+var   gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gLighterActiveColor }
 var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
@@ -202,13 +202,13 @@ var gFavoritesAreVisible: Bool {
 }
 
 var gAccentColor: ZColor {
-	get { return   getPreferencesColor( for: kBackgroundColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) } //0.99 / 360.0, saturation: 0.13, brightness: kUnselectBrightness, alpha: 1)) }
-	set { setPreferencesColor(newValue, for: kBackgroundColorKey) }
+	get { return   getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) } //0.99 / 360.0, saturation: 0.13, brightness: kUnselectBrightness, alpha: 1)) }
+	set { setPreferencesColor(newValue, for: kAccentColorKey) }
 }
 
-var gRubberbandColor: ZColor {
-	get { return   getPreferencesColor( for: kRubberbandColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
-	set { setPreferencesColor(newValue, for: kRubberbandColorKey) }
+var gActiveColor: ZColor {
+	get { return   getPreferencesColor( for: kActiveColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
+	set { setPreferencesColor(newValue, for: kActiveColorKey) }
 }
 
 var gGenericOffset: CGSize {
@@ -502,7 +502,7 @@ func gTemporarilySetKey(_ key: String, for seconds: Double = 1.0) {
 	gCurrentKeyPressed = key
 
 	gTimers.setTimer(for: .tKey, withTimeInterval: seconds) { iTimer in
-		gCurrentKeyPressed = nil
+		gCurrentKeyPressed = ""
 	}
 }
 
@@ -519,6 +519,14 @@ func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double 
 
 	gTimers.setTimer(for: .tMouseLocation, withTimeInterval: seconds) { iTimer in
 		gCurrentMouseDownLocation = nil
+	}
+}
+
+func gTemporarilySetArrowsDoNotBrowse(_ notBrowse: Bool, for seconds: Double = 1.0) {
+	gArrowsDoNotBrowse = notBrowse
+
+	gTimers.setTimer(for: .tArrowsDoNotBrowse, withTimeInterval: seconds) { iTimer in
+		gArrowsDoNotBrowse = false
 	}
 }
 
@@ -561,7 +569,6 @@ func toggleDatabaseID() {
 
 func emailSent(for type: ZSentEmailType) -> Bool {
 	let types = gEmailTypesSent
-	printDebug(.dOps, "email types \(types)")
     return types.contains(type.rawValue)
 }
 

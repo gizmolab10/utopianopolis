@@ -88,7 +88,7 @@ class ZControllers: NSObject {
 						self.requestFeedback()
 
 						FOREGROUND(after: 10.0) {
-							gRemoteStorage.launchIsDone()
+							gRemoteStorage.adoptAll()
 							gFiles.writeAll()
 						}
 					}

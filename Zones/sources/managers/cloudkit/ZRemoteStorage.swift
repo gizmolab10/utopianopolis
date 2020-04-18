@@ -103,18 +103,6 @@ class ZRemoteStorage: NSObject {
 		}
 	}
 
-	func launchIsDone() {
-		adoptAll()
-
-		for cloud in allClouds {
-			for zRecord in cloud.recordRegistry.values {
-				if  let trait = zRecord as? ZTrait {
-					trait.prepareForNewDesign()
-				}
-			}
-		}
-	}
-
 	func maybeZoneForRecordName (_ iRecordName: String?) -> Zone? {
 		if  let name = iRecordName {
 			for cloud in allClouds {

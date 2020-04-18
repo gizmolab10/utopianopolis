@@ -239,8 +239,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		super.draw(dirtyRect)
 
 		if  imageAttachment != nil {
-			gRubberbandColor.setStroke()
-			gRubberbandColor.setFill()
+			gActiveColor.setStroke()
+			gActiveColor.setFill()
 		} else {
 			kClearColor     .setStroke()
 			kClearColor     .setFill()

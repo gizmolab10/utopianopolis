@@ -40,18 +40,16 @@ enum ZTraitType: String {
 
 }
 
-class ZTrait: ZRecord {
+class ZTrait: ZAssets {
 
-	@objc dynamic var      owner :  CKRecord.Reference?
-	@objc dynamic var     assets : [CKAsset]?
-	@objc dynamic var    strings : [String]?
-	@objc dynamic var assetNames :  String?
-	@objc dynamic var     format :  String?
-	@objc dynamic var       type :  String?
-	@objc dynamic var       text :  String?   { didSet { updateSearchableStrings() } }
-    override var   unwrappedName :  String    { return text ?? emptyName }
- 	var               _traitType :  ZTraitType?
-	var               _ownerZone :  Zone?
+	@objc dynamic var    owner :  CKRecord.Reference?
+	@objc dynamic var  strings : [String]?
+	@objc dynamic var   format :  String?
+	@objc dynamic var     type :  String?
+	@objc dynamic var     text :  String? { didSet { updateSearchables() } }
+    override var unwrappedName :  String  { return text ?? emptyName }
+	var             _ownerZone :  Zone?
+	var             _traitType :  ZTraitType?
 
 	// MARK:- text
 	// MARK:-
@@ -86,8 +84,7 @@ class ZTrait: ZRecord {
 					text 	   = string.string
 					format 	   = string.attributesAsString
 
-					// THE NEXT STATEMENT, and one in prepareForNewDesign
-					// ARE THE ONLY code which gathers assets for images,
+					// THE NEXT STATEMENT IS THE ONLY code which gathers assets for images,
 					// side-effect for a dropped image:
 					// it creates and adds an asset
 
@@ -166,9 +163,7 @@ class ZTrait: ZRecord {
                #keyPath(text),
 			   #keyPath(owner),
 			   #keyPath(format),
-			   #keyPath(assets),
-			   #keyPath(strings),
-			   #keyPath(assetNames)]
+			   #keyPath(strings)]
     }
 
     override func cloudProperties() -> [String] {
@@ -196,7 +191,7 @@ class ZTrait: ZRecord {
         }
     }
 
-	func updateSearchableStrings() {
+	func updateSearchables() {
 		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tHyperlink]
 
 		if  let  tt = traitType, searchables.contains(tt) {
@@ -234,191 +229,6 @@ class ZTrait: ZRecord {
 		}
 
 		return updated
-	}
-
-	// MARK:- image support
-	// MARK:-
-
-	// ONLY called within noteText set
-	//
-	// check if file actually exist in assets folder
-	// by successfully creating a wrapper
-	// try using the filename passed in
-	// then look up the the corresponding ASSET and try using ITS fileurl
-	// if either exists, create a text attachment from the wrapper
-
-	func textAttachment(for fileName: String) -> NSTextAttachment? {
-		var     url = gFiles.imageURLInAssetsFolder(for: fileName)
-		var wrapper : FileWrapper?
-		var  extend : String?
-
-		let grabWrapper = {
-			do {
-				wrapper = try FileWrapper(url: url, options: [])
-				extend  = url.pathExtension
-			} catch {}
-		}
-
-		grabWrapper()
-
-		if  wrapper     == nil,
-			let    asset = assetFromAssetNamesForName(fileName) {
-			let original = url
-			url          = asset.fileURL
-
-			grabWrapper()
-
-			if  let e = extend, e.length > 8 {
-				wrapper = nil
-
-				do {
-					try FileManager.default.moveItem(at: url, to: original)	   // rename asset url to original
-
-					url = original
-
-					grabWrapper()
-					printDebug(.dImages, "RENAME   \(url)")
-				} catch {}
-			}
-		}
-
-		if  wrapper == nil {
-			printDebug(.dImages, "MISSING  \(url)")
-
-			return nil
-		}
-
-		return NSTextAttachment(fileWrapper: wrapper)
-	}
-
-	func createAssetFromImage(_ image: ZImage, for fileName: String) -> CKAsset? {
-		if  let     asset = assetFromAssetNamesForName(fileName) {
-			return  asset
-		} else if let url = writeImageIntoAssetsFolder(image, using: fileName) {
-			let     asset = CKAsset(fileURL: url)    // side-effect creates asset for dropped image
-
-			if  appendUniquelyToAssetNames(fileName, with: asset) {
-				needSave()
-			}
-
-			return asset
-		}
-
-		return nil
-	}
-
-	func appendUniquelyToAssetNames(_ imageName: String, with asset: CKAsset) -> Bool {
-		if  var     names = assetNames?.componentsSeparatedAt(level: 0),
-			let  checksum = asset.data?.checksum {
-			let separator = gSeparatorAt(level: 1)
-			let assetName = imageName + separator + "\(checksum)"
-
-			if !names.contains(assetName) {
-				for (index, name) in names.enumerated() {
-					let parts = name.componentsSeparatedAt(level: 1)
-
-					if  parts.count > 1,
-						parts[0] == imageName {
-						names.remove(at: index)     // remove duplicate imageName and uuid
-
-						break
-					}
-				}
-
-				names.append(assetName)				// add imageName and asset's uuid
-				printDebug(.dImages, "ADD NAME \(assetName)")
-
-				assetNames = names.joined(separator: gSeparatorAt(level: 0))
-
-				return true
-			}
-		}
-
-		return false
-	}
-
-	func assetFromAssetNamesForName(_ name: String) -> CKAsset? {
-		if  let items = assetNames?.componentsSeparatedAt(level: 0),
-			let array = assets,
-			array.count > 0 {
-			for item in items {
-				let parts = item.componentsSeparatedAt(level: 1)
-
-				if  parts.count == 2,
-					name == parts[0],
-					let checksum = parts[1].integerValue {
-
-					for asset in array {
-						if  let  data  = asset.data {
-							let delta  = abs(data.checksum - checksum)
-							if  delta == 0 {
-								return asset
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return nil
-	}
-
-	private func writeImageIntoAssetsFolder(_ image: ZImage, using originalName: String? = nil) -> URL? {
-		if  let name = originalName {
-			let url = gFiles.imageURLInAssetsFolder(for: name)
-
-			if  url.writeImage(image) {
-				return url
-			}
-		}
-
-		// check if file exists at url
-
-		return nil
-	}
-
-	func prepareForNewDesign() {
-		var   zoneName = "unowned"
-		var     update = false
-
-		if  let      o = ownerZone {
-			zoneName   = "\(o)"
-		}
-
-		if  let  names = assetNames, names.length > 0 {
-			let  parts = names.componentsSeparatedAt(level: 0)
-			assetNames = ""
-
-			for part in parts {
-				let subparts = part.componentsSeparatedAt(level: 1)
-
-				if  subparts.count != 3 {
-					assetNames?.append(part)
-				} else if let array = assets,
-					let    checksum = subparts[2].integerValue {
-					update          = true
-
-					for (index, asset) in array.enumerated() {
-						if  let c = asset.data?.checksum, c == checksum {
-							assets?.remove(at: index)
-
-							break
-						}
-					}
-				}
-			}
-		}
-
-		if  assets    != nil && assets!.count != 0 && noteText?.assets(for: self) == nil && (assetNames == nil || assetNames!.length == 0) {
-			assets     = []
-			assetNames = ""
-			update     = true
-		}
-
-		if  update {
-			needSave()
-			printDebug(.dImages, "PREPARE  \(zoneName)")
-		}
 	}
 
 }

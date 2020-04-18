@@ -24,7 +24,7 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var insertionModeControl: ZSegmentedControl?
     @IBOutlet var         zoneColorBox: ZColorWell?
     @IBOutlet var   backgroundColorBox: ZColorWell?
-    @IBOutlet var  dragTargetsColorBox: ZColorWell?
+    @IBOutlet var   activeMineColorBox: ZColorWell?
     @IBOutlet var     clearColorButton: ZButton?
     @IBOutlet var      verticalSpacing: ZSlider?
     @IBOutlet var            thickness: ZSlider?
@@ -42,7 +42,7 @@ class ZPreferencesController: ZGenericController {
             thickness?               .doubleValue = gLineThickness
             verticalSpacing?         .doubleValue = Double(gGenericOffset.height)
             stretch?                 .doubleValue = Double(gGenericOffset.width)
-            dragTargetsColorBox?           .color = gRubberbandColor
+            activeMineColorBox?            .color = gActiveColor
             backgroundColorBox?            .color = gAccentColor
             zoneColorBox?                  .color =   grabbed?.color ?? kDefaultZoneColor
             clearColorButton?           .isHidden = !(grabbed?.hasColor ?? true)
@@ -77,8 +77,8 @@ class ZPreferencesController: ZGenericController {
 
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iColorBox.identifier) {
 			switch (identifier) {
-				case "drag targets":        gRubberbandColor = color
-				case   "background":        gAccentColor = color
+				case "drag targets":        gActiveColor = color
+				case       "accent":            gAccentColor = color
 				case        "zones": gSelecting.grabbedColor = color
 				default:             break
 			}

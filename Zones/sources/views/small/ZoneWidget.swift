@@ -462,14 +462,13 @@ class ZoneWidget: ZView {
         let     colorRatio = CGFloat(pale ? 0.5 : 1.0)
         let          color = widgetZone?.color
         let      fillColor = color?.withAlphaComponent(colorRatio * 0.02)
-        let    strokeColor = color?.withAlphaComponent(colorRatio * 0.30)
+        let    strokeColor = color?.withAlphaComponent(colorRatio * 0.60)
         let           path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
         path    .lineWidth = thickness
         path     .flatness = 0.0001
 
         if  pale {
-            let pattern: [CGFloat] = [4.0, 4.0]
-            path.setLineDash(pattern, count: 2, phase: 4.0)
+            path.addDashes()
         }
         
         strokeColor?.setStroke()

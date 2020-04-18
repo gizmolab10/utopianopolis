@@ -183,7 +183,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
             if  count > 0 {
                 let          frame = innerDot!.frame.offsetBy(dx: -0.1, dy: -0.1)
-                let color: ZColor? = isDragDrop ? gRubberbandColor : zone.color
+                let color: ZColor? = isDragDrop ? gActiveColor : zone.color
                 let         radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)
 
 				drawTinyDots(surrounding: frame, objects: zone.children, radius: radius, color: color)
@@ -253,7 +253,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 if  isInnerDot {
                     let childlessTraveller = zone.canTravel && zone.count == 0
                     let        dotIsFilled = isReveal ? (!zone.showingChildren || childlessTraveller || isDragDrop) : zone.isGrabbed
-                    let        strokeColor = isReveal && isDragDrop ?  gRubberbandColor : zone.color
+                    let        strokeColor = isReveal && isDragDrop ?  gActiveColor : zone.color
 					var          fillColor = dotIsFilled ? strokeColor?.lighter(by: 2.5) : gBackgroundColor
 
                     // //////

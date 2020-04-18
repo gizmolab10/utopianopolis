@@ -53,7 +53,7 @@ class ZBreadcrumbs: NSObject {
 		var color = gAccentColor
 
 		if  crumbDBID == .mineID {
-			color = color + gRubberbandColor
+			color = color + gActiveColor
 		}
 
 		return color.darker(by: 5.0)

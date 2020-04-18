@@ -24,16 +24,18 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
         ZBezierPath(rect: bounds).fill()
 
         if  let rect = drawingRubberbandRect {
-            gRubberbandColor.lighter(by: 2.0).setStroke()
-            ZBezierPath(rect: rect).stroke()
+            gActiveColor.lighter(by: 2.0).setStroke()
+			let path = ZBezierPath(rect: rect)
+			path.addDashes()
+			path.stroke()
         }
 
         if  let    widget = gDragDropZone?.widget {
             let   dotRect = widget.floatingDropDotRect
             let localRect = widget.convert(dotRect, to: self)
 
-            gRubberbandColor.setFill()
-            gRubberbandColor.setStroke()
+            gActiveColor.setFill()
+            gActiveColor.setStroke()
             ZBezierPath(ovalIn: localRect).fill()
             widget.drawDragLine(to: dotRect, in: self)
         }

@@ -800,6 +800,12 @@ extension CGRect {
 
 extension ZBezierPath {
 
+	func addDashes() {
+		let pattern: [CGFloat] = [3.0, 3.0]
+
+		setLineDash(pattern, count: 2, phase: 3.0)
+	}
+
 	static func trianglePath(orientedUp: Bool, in iRect: CGRect) -> ZBezierPath {
 		let path = ZBezierPath()
 
@@ -1181,7 +1187,7 @@ struct ZRangedAttachment {
 
 extension NSMutableAttributedString {
 
-	var allKeys: [NSAttributedString.Key] { return [.font, .link, .attachment, .paragraphStyle, .foregroundColor, .backgroundColor] }
+	var allKeys: [NSAttributedString.Key]     { return [.font, .link, .attachment, .paragraphStyle, .foregroundColor, .backgroundColor] }
 
 	var linkRanges: [NSRange] {
 		let range = NSRange(location: 0, length: length)
@@ -1235,7 +1241,7 @@ extension NSMutableAttributedString {
 		return array
 	}
 
-	var images: [ZImage] {
+	var attachedImages: [ZImage] {
 		let array: [ZImage?] = attachmentCells.map { cell -> ZImage? in
 			return cell.image
 		}
@@ -1330,13 +1336,12 @@ extension NSMutableAttributedString {
 	}
 
 	// ONLY called during save in essay view
-	// and prepareForNewDesign
 	// side-effect for a dropped image:
 	// it creates and returns an additional asset
 
 	func assets(for trait: ZTrait) -> [CKAsset]? {
 		var array = [CKAsset]()
-		let     i = images // grab from text attachment cells
+		let     i = attachedImages // grab from text attachment cells
 
 		for (index, name) in imageFileNames.enumerated() {
 			if  index < i.count {

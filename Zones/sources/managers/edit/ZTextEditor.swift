@@ -407,27 +407,28 @@ class ZTextEditor: ZTextView {
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gDesktopAppDelegate?.genericMenuHandler(iItem) }
 
     func moveOut(_ iMoveOut: Bool) {
-        gArrowsDoNotBrowse = true
-        let       revealed = currentlyEditingZone?.showingChildren ?? false
+        let revealed = currentlyEditingZone?.showingChildren ?? false
 
-        let done: FloatClosure = { iOffset in
+        let editAtOffset: FloatClosure = { iOffset in
             if  let grabbed = gSelecting.firstSortedGrab {
                 gSelecting.ungrabAll()
                 self.edit(grabbed, setOffset: iOffset, immediately: revealed)
             }
 
-			gArrowsDoNotBrowse = false
+			gArrowsDoNotBrowse = false           // done last
         }
-        
+
+		gTemporarilySetArrowsDoNotBrowse(true)   // done first, this timer is often not be needed, KLUDGE to fix a bug where arrow keys are ignored
+
         if  iMoveOut {
             quickStopCurrentEdit()
             gGraphEditor.moveOut {
-                done(100000000.0)
+                editAtOffset(100000000.0)
             }
         } else if currentlyEditingZone?.children.count ?? 0 > 0 {
             quickStopCurrentEdit()
             gGraphEditor.moveInto {
-                done(0.0)
+                editAtOffset(0.0)
             }
         }
     }
@@ -479,16 +480,15 @@ class ZTextEditor: ZTextView {
     }
 
 	func setCursor(at iOffset: CGFloat?) {
-        gArrowsDoNotBrowse  = false
-
-        if  var   offset = iOffset,
-            let     zone = currentlyEditingZone,
-            let       to = currentTextWidget {
-			var    point = CGPoint.zero
-            point        = to.convert(point, from: nil)
-			offset      += point.x - 3.0   // subtract half the average character width -> closer to user expectation
-            let     name = zone.unwrappedName
-            let location = name.location(of: offset, using: currentFont)
+        gArrowsDoNotBrowse = false
+        if  var     offset = iOffset,
+            let       zone = currentlyEditingZone,
+            let         to = currentTextWidget {
+			var      point = CGPoint.zero
+            point          = to.convert(point, from: nil)
+			offset        += point.x - 3.0   // subtract half the average character width -> closer to user expectation
+            let       name = zone.unwrappedName
+            let   location = name.location(of: offset, using: currentFont)
 
 			printDebug(.dEdit, "at \(location)")
             self.selectedRange = NSMakeRange(location, 0)
