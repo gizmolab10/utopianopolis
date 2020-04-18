@@ -1997,6 +1997,12 @@ extension ZGestureRecognizer {
 
 extension ZView {
 
+	func removeAllSubviews() {
+		for view in subviews {
+			view.removeFromSuperview()
+		}
+	}
+
     func clearGestures() {
         if recognizers != nil {
             for recognizer in recognizers! {

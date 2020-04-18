@@ -294,7 +294,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			let      SHIFT = gesture.isShiftDown
             let editWidget = gCurrentlyEditingWidget
             var  regarding = ZSignalKind.sDatum
-			let    inCrumb = gBreadcrumbsLabel != nil && gBreadcrumbsLabel!.hitCrumb(gesture.location(in: nil)) != nil
             var withinEdit = false
 
 			editWidget?.widgetZone?.needWrite()
@@ -310,7 +309,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 withinEdit             = textRect.contains(backgroundLocation)
             }
 
-            if  !withinEdit, !inCrumb {
+            if  !withinEdit {
 				gSetGraphMode()
 
 				if  let   widget = detectWidget(gesture) {

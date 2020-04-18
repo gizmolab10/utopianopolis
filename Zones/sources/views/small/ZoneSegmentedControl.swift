@@ -6,13 +6,10 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import UIKit
 
-
 class ZoneSegmentedControl : ZSegmentedControl {
-
 
     override func awakeFromNib() {
         super.awakeFromNib()

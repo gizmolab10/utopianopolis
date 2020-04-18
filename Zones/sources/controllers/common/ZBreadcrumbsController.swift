@@ -18,11 +18,11 @@ var gBreadcrumbsController: ZBreadcrumbsController? { return gControllers.contro
 
 class ZBreadcrumbsController: ZGenericController {
 
-	@IBOutlet var  crumbsLabel : ZBreadcrumbsView?
+	@IBOutlet var   crumbsView : ZBreadcrumbsView?
 	override  var controllerID : ZControllerID { return .idCrumbs     }
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-		crumbsLabel?.updateAndRedraw()
+		crumbsView?.updateAndRedraw()
 	}
 
 }
