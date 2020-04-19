@@ -2092,97 +2092,99 @@ extension ZView {
 	}
 
 	func drawTinyDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, offsetAngle: Double = 0.0, onEach: IntRectClosure? = nil) {
-		var       dotCount = objects.count
-		var      fatHollow = false
-		var     tinyHollow = false
-		var          scale = 1.0
+		if gIsReadyToShowUI {
+			var       dotCount = objects.count
+			var      fatHollow = false
+			var     tinyHollow = false
+			var          scale = 1.0
 
-		while     dotCount > (countMax * countMax) {
-			dotCount       = (dotCount + (countMax / 2)) / countMax
-			scale          = 1.25
+			while     dotCount > (countMax * countMax) {
+				dotCount       = (dotCount + (countMax / 2)) / countMax
+				scale          = 1.25
 
-			if  fatHollow {
-				tinyHollow = true
-			} else {
-				fatHollow  = true
-			}
-		}
-
-		if  dotCount > 0 {
-			let  tinyCount = dotCount % countMax
-			let   fatCount = dotCount / countMax
-			let fullCircle = Double.pi * 2.0
-
-			let drawNecklace: IntBooleanClosure = { (iCount, isFat) in
-				let             oneSet = (isFat ? tinyCount : fatCount) == 0
-				var           isHollow = (isFat && fatHollow) || (!isFat && tinyHollow)
-
-				if  iCount             > 0 {
-					let         isEven = iCount % 2 == 0
-					let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(-iCount)
-					let     startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + offsetAngle
-
-					for index in 0 ... iCount - 1 {
-						let  increment = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
-						let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
-						let (ideaFocus, asIdea, noteFocus, asNote, asEssay) = self.analyze(objects[index])
-
-						// notes are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)
-						// ideas are ALWAYS tiny and SOMETIMES fat (if over ten) and SOMETIMES hollow (if over hundered)
-						//
-						// so, three booleans: isFat, isHollow, forNote
-						//
-						// everything should always goes out more (regardless of no notes)
-
-						func drawDot(forNote: Bool, isFocus: Bool, forEssay: Bool = false) {
-							let      noteRatio = forNote ? 1.5 : 1.0
-							let    offsetRatio = isFat   ? 2.1 : 1.28
-							let       fatRatio = isFat   ? 2.0 : 1.6
-							let       dotRatio = isFat   ? 4.0 : 2.5
-
-							let   scaledRadius = radius * scale
-							let  necklaceDelta = scaledRadius * 2.0 * 1.5
-							let      dotRadius = scaledRadius * fatRatio * noteRatio
-							let     rectRadius = Double(rect.size.height) / 2.0
-							let necklaceRadius = CGFloat(rectRadius + necklaceDelta)
-							let    dotDiameter = CGFloat(dotRadius  * dotRatio)
-							let         offset = CGFloat(dotRadius  * offsetRatio)
-
-							let     rectCenter = rect.center
-							let         center = CGPoint(x: rectCenter.x - offset, y: rectCenter.y - offset)
-							let              x = center.x + (necklaceRadius * CGFloat(cos(angle)))
-							let              y = center.y + (necklaceRadius * CGFloat(sin(angle)))
-
-							let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
-							let           path = ZBezierPath(ovalIn: ovalRect)
-							path    .lineWidth = CGFloat(gLineThickness * (asEssay ? 7.0 : 3.0))
-							path     .flatness = 0.0001
-							let       dotColor = !isFocus ? color : gNecklaceSelectionColor
-
-							if  isHollow || forNote {
-								dotColor?.setStroke()
-								path.stroke()
-							} else {
-								dotColor?.setFill()
-								path.fill()
-							}
-
-							onEach?(index, ovalRect)
-						}
-
-						if  asNote {
-							drawDot(forNote:  true, isFocus: noteFocus)
-						}
-
-						if  asIdea {
-							drawDot(forNote: false, isFocus: ideaFocus)
-						}
-					}
+				if  fatHollow {
+					tinyHollow = true
+				} else {
+					fatHollow  = true
 				}
 			}
 
-			drawNecklace( fatCount, true)  // isFat = true
-			drawNecklace(tinyCount, false)
+			if  dotCount > 0 {
+				let  tinyCount = dotCount % countMax
+				let   fatCount = dotCount / countMax
+				let fullCircle = Double.pi * 2.0
+
+				let drawNecklace: IntBooleanClosure = { (iCount, isFat) in
+					let             oneSet = (isFat ? tinyCount : fatCount) == 0
+					var           isHollow = (isFat && fatHollow) || (!isFat && tinyHollow)
+
+					if  iCount             > 0 {
+						let         isEven = iCount % 2 == 0
+						let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(-iCount)
+						let     startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + offsetAngle
+
+						for index in 0 ... iCount - 1 {
+							let  increment = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
+							let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
+							let (ideaFocus, asIdea, noteFocus, asNote, asEssay) = self.analyze(objects[index])
+
+							// notes are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)
+							// ideas are ALWAYS tiny and SOMETIMES fat (if over ten) and SOMETIMES hollow (if over hundered)
+							//
+							// so, three booleans: isFat, isHollow, forNote
+							//
+							// everything should always goes out more (regardless of no notes)
+
+							func drawDot(forNote: Bool, isFocus: Bool, forEssay: Bool = false) {
+								let      noteRatio = forNote ? 1.5 : 1.0
+								let    offsetRatio = isFat   ? 2.1 : 1.28
+								let       fatRatio = isFat   ? 2.0 : 1.6
+								let       dotRatio = isFat   ? 4.0 : 2.5
+
+								let   scaledRadius = radius * scale
+								let  necklaceDelta = scaledRadius * 2.0 * 1.5
+								let      dotRadius = scaledRadius * fatRatio * noteRatio
+								let     rectRadius = Double(rect.size.height) / 2.0
+								let necklaceRadius = CGFloat(rectRadius + necklaceDelta)
+								let    dotDiameter = CGFloat(dotRadius  * dotRatio)
+								let         offset = CGFloat(dotRadius  * offsetRatio)
+
+								let     rectCenter = rect.center
+								let         center = CGPoint(x: rectCenter.x - offset, y: rectCenter.y - offset)
+								let              x = center.x + (necklaceRadius * CGFloat(cos(angle)))
+								let              y = center.y + (necklaceRadius * CGFloat(sin(angle)))
+
+								let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
+								let           path = ZBezierPath(ovalIn: ovalRect)
+								path    .lineWidth = CGFloat(gLineThickness * (asEssay ? 7.0 : 3.0))
+								path     .flatness = 0.0001
+								let       dotColor = !isFocus ? color : gNecklaceSelectionColor
+
+								if  isHollow || forNote {
+									dotColor?.setStroke()
+									path.stroke()
+								} else {
+									dotColor?.setFill()
+									path.fill()
+								}
+
+								onEach?(index, ovalRect)
+							}
+
+							if  asNote {
+								drawDot(forNote:  true, isFocus: noteFocus)
+							}
+
+							if  asIdea {
+								drawDot(forNote: false, isFocus: ideaFocus)
+							}
+						}
+					}
+				}
+
+				drawNecklace( fatCount, true)  // isFat = true
+				drawNecklace(tinyCount, false)
+			}
 		}
 	}
 

@@ -986,10 +986,14 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Tsd-bp-vCV" customClass="ZBreadcrumbsView" customModule="Seriously">
-                                <rect key="frame" x="36" y="0.0" width="341" height="44"/>
+                                <rect key="frame" x="36" y="0.0" width="331" height="44"/>
+                                <connections>
+                                    <outlet property="clipCrumbsButton" destination="Ch1-Y5-6sD" id="dTT-6R-3f5"/>
+                                    <outlet property="dbIndicatorButton" destination="NE4-u7-LbG" id="MRg-AD-bLH"/>
+                                </connections>
                             </customView>
                             <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NE4-u7-LbG" userLabel="Database Indicator Button">
-                                <rect key="frame" x="2" y="8" width="32" height="32"/>
+                                <rect key="frame" x="2" y="5" width="32" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="Pok-6B-yNW"/>
                                 </constraints>
@@ -998,22 +1002,32 @@ DQ
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <color key="contentTintColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="handleDatabaseIndicatorAction:" target="Tsd-bp-vCV" id="5Pe-QH-aPB"/>
+                                </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ch1-Y5-6sD">
-                                <rect key="frame" x="385" y="14" width="4" height="14"/>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ch1-Y5-6sD" userLabel="Crumbs Clipper Button">
+                                <rect key="frame" x="375" y="15" width="14" height="14"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="14" id="N1c-fL-mHS"/>
+                                    <constraint firstAttribute="width" constant="14" id="aN3-R1-aFX"/>
+                                </constraints>
                                 <buttonCell key="cell" type="bevel" bezelStyle="rounded" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="1MZ-57-Tfm">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="label" size="17"/>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="handleClipper:" target="Tsd-bp-vCV" id="rHm-Is-Zb1"/>
+                                </connections>
                             </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="NE4-u7-LbG" firstAttribute="centerY" secondItem="W43-uk-txK" secondAttribute="centerY" constant="-3" id="1aR-2m-2Nw"/>
-                            <constraint firstAttribute="bottom" secondItem="Tsd-bp-vCV" secondAttribute="bottom" id="6IT-dE-3nW"/>
+                            <constraint firstItem="NE4-u7-LbG" firstAttribute="centerY" secondItem="W43-uk-txK" secondAttribute="centerY" id="1aR-2m-2Nw"/>
                             <constraint firstItem="Tsd-bp-vCV" firstAttribute="top" secondItem="W43-uk-txK" secondAttribute="top" id="L4M-7I-D1m"/>
                             <constraint firstItem="Tsd-bp-vCV" firstAttribute="leading" secondItem="NE4-u7-LbG" secondAttribute="trailing" constant="8" id="LH2-wh-WKl"/>
-                            <constraint firstItem="Ch1-Y5-6sD" firstAttribute="top" secondItem="W43-uk-txK" secondAttribute="top" constant="16" id="W2c-xv-jro"/>
+                            <constraint firstItem="Ch1-Y5-6sD" firstAttribute="centerY" secondItem="W43-uk-txK" secondAttribute="centerY" id="O1e-Cs-Hel"/>
                             <constraint firstAttribute="trailing" secondItem="Ch1-Y5-6sD" secondAttribute="trailing" constant="8" id="cGO-ML-08P"/>
+                            <constraint firstItem="Tsd-bp-vCV" firstAttribute="centerY" secondItem="Ch1-Y5-6sD" secondAttribute="centerY" id="wK4-qA-1u4"/>
                             <constraint firstItem="Ch1-Y5-6sD" firstAttribute="leading" secondItem="Tsd-bp-vCV" secondAttribute="trailing" constant="8" id="wo6-JH-Nmp"/>
                             <constraint firstItem="NE4-u7-LbG" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" constant="8" id="zwc-24-JQy"/>
                         </constraints>
