@@ -20,10 +20,13 @@ class ZRingController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDe
 	@IBOutlet var     ringView : ZRingView?
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  [.sRing, .sResize, .sLaunchDone, .sRelayout].contains(iKind) {
+		if  [.sRing, .sResize, .sLaunchDone, .sRelayout].contains(iKind),
+			gPowerUserMode {
 			ringView?.updateGeometry()
 			ringView?.updateNecklace(doNotResignal: true)
 		}
+
+		ringView?.isHidden = !gPowerUserMode
 	}
 
 }

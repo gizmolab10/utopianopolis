@@ -14,14 +14,15 @@ class ZBreadcrumbButton: ZButton {
 
 	override func draw(_ dirtyRect: NSRect) {
 		if  gIsReadyToShowUI {
-			let ancestors = zone.ancestralPath
-			let visible = ancestors.contains(gHere)
-			let path = ZBezierPath(roundedRect: dirtyRect.insetBy(dx: 1.0, dy: 1.0), cornerRadius: 3.0)
+			let   ancestors = zone.ancestralPath
+			let     visible = ancestors.contains(gHere)
+			let        path = ZBezierPath(roundedRect: dirtyRect.insetBy(dx: 1.0, dy: 1.0), cornerRadius: 3.0)
 			let strokeColor = visible ? gActiveColor : gAccentColor
-			let fillColor = isHighlighted ? strokeColor : strokeColor.lighter(by: 4.0)
-			path.lineWidth = 2.0
-			fillColor.setFill()
+			let   fillColor = isHighlighted ? strokeColor : strokeColor.lighter(by: 4.0)
+			path .lineWidth = 2.0
+
 			strokeColor.setStroke()
+			fillColor.setFill()
 			path.stroke()
 			path.fill()
 

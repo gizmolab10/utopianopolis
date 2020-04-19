@@ -860,6 +860,8 @@ extension ZTextEditor {
 
 extension NSMenu {
 
+	static func handleMenu() {}
+
 	static func symbolsPopup(target: AnyObject, action: Selector) -> NSMenu {
 		let menu = NSMenu(title: "add a special character")
 		menu.autoenablesItems = false
@@ -884,10 +886,6 @@ extension NSMenu {
 		}
 
 		return item
-	}
-
-	static func handleMenu() {
-		
 	}
 
 }

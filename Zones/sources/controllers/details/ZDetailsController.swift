@@ -22,7 +22,9 @@ class ZDetailsController: ZGenericController {
 	override  var controllerID : ZControllerID { return .idDetails }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-        update()
+		if  gPowerUserMode {
+			update()
+		}
     }
 
     func register(id: ZDetailsViewID, for view: ZStackableView) {

@@ -42,6 +42,7 @@ class ZBaseEditor: NSObject {
 				case "a": if SPECIAL { gApplication.showHideAbout(); handled = true }
 				case "h": if COMMAND { gApplication.hide(nil);       handled = true }
 				case "o": if SPECIAL { gFiles.showInFinder();        handled = true }
+				case "p": if SPECIAL { togglePowerUserMode();        handled = true }
 				case "q": if COMMAND { gApplication.terminate(self); handled = true }
 				case "t": if ONEFLAG { fetchTraits();                handled = true }
 				case "x": if SPECIAL { wipeRing();                   handled = true }
@@ -101,6 +102,11 @@ class ZBaseEditor: NSObject {
 		gBatches.allTraits { flag in
 			self.signal([.sRelayout])
 		}
+	}
+
+	func togglePowerUserMode() {
+		gPowerUserMode = !gPowerUserMode
+		signal([.sRelayout])
 	}
 
 }

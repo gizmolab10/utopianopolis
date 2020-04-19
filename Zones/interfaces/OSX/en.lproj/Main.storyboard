@@ -513,17 +513,33 @@ DQ
                                             </menu>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="6ns-V4-A3k"/>
-                                        <menuItem title="Find…" tag="1" keyEquivalent="f" id="1C4-dC-CBL">
+                                        <menuItem title="More" id="avD-DF-0RL">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Ohm-Fs-KC7"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Recenter" keyEquivalent="c" id="9QX-od-dwr">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Buq-qb-79g"/>
-                                            </connections>
+                                            <menu key="submenu" title="More" id="TJV-bQ-1l3">
+                                                <items>
+                                                    <menuItem title="Find…" tag="1" keyEquivalent="f" id="hsn-Ct-JAe">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Jkn-xW-aHa"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Recenter" keyEquivalent="c" id="mFN-Zk-XHg">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="cUb-54-gft"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Show/Hide Colors" keyEquivalent="k" id="RfO-CH-kxa">
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                                    </menuItem>
+                                                    <menuItem title="Power User Mode" keyEquivalent="p" id="THb-cX-UAd">
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="oHR-g9-RM2"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
                                         </menuItem>
                                     </items>
                                 </menu>

@@ -133,6 +133,11 @@ var gClipBreadcrumbs : Bool {
 	set { setPreferencesBool(newValue, for: kClipBreadcrumbs) }
 }
 
+var gPowerUserMode : Bool {
+	get { return getPreferencesBool(   for: kPowerUserMode, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kPowerUserMode) }
+}
+
 var gShowAllBreadcrumbs : Bool {
 	get { return getPreferencesBool(   for: kShowAllBreadcrumbs, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kShowAllBreadcrumbs) }

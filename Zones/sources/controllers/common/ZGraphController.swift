@@ -25,7 +25,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	@IBOutlet var         spinner :  ZProgressIndicator?
 	@IBOutlet var        dragView :  ZDragView?
 	@IBOutlet var     spinnerView :  ZView?
-	let        thoughtsRootWidget =  ZoneWidget   ()
+	let             mapRootWidget =  ZoneWidget   ()
 	let       favoritesRootWidget =  ZoneWidget   ()
 	var        rubberbandPreGrabs =  ZoneArray    ()
 	var       priorScrollLocation =  CGPoint.zero
@@ -88,7 +88,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 		super.setup()
 		platformSetup()
-        dragView?.addSubview(thoughtsRootWidget)
+        dragView?.addSubview(mapRootWidget)
 
         if  !kIsPhone {
             dragView?.addSubview(favoritesRootWidget)
@@ -120,13 +120,13 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	// MARK:-
 
     func clear() {
-        thoughtsRootWidget   .widgetZone = nil
+        mapRootWidget   .widgetZone = nil
         favoritesRootWidget.widgetZone = nil
     }
 
     #if os(iOS) && false
     private func updateMinZoomScaleForSize(_ size: CGSize) {
-        let           w = thoughtsRootWidget
+        let           w = mapRootWidget
         let heightScale = size.height / w.bounds.height
         let  widthScale = size.width  / w.bounds.width
         let    minScale = min(widthScale, heightScale)
@@ -157,8 +157,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     func layoutForCurrentScrollOffset() {
         if  let d = dragView {
-            thoughtsRootWidget.snp.removeConstraints()
-            thoughtsRootWidget.snp.makeConstraints { make in
+            mapRootWidget.snp.removeConstraints()
+            mapRootWidget.snp.makeConstraints { make in
                 make.centerY.equalTo(d).offset(gScrollOffset.y)
                 make.centerX.equalTo(d).offset(gScrollOffset.x)
             }
@@ -188,23 +188,23 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
 
     func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inPublicGraph: Bool) {
-        if  kIsPhone && (inPublicGraph == gShowFavorites) { return }
+        if  (!gPowerUserMode && !inPublicGraph) || (kIsPhone && (inPublicGraph == gShowFavorites)) { return }
 
         let                        here = inPublicGraph ? gHereMaybe : gFavoritesRoot
-        var specificWidget: ZoneWidget? = inPublicGraph ? thoughtsRootWidget : favoritesRootWidget
+        var specificWidget: ZoneWidget? = inPublicGraph ? mapRootWidget : favoritesRootWidget
         var specificView:        ZView? = dragView
         var specificIndex:         Int?
         var                   recursing = true
-        gTextCapturing                  = false
         specificWidget?     .widgetZone = here
+		gTextCapturing                  = false
 
-        if  let            zone  = iZone as? Zone,
-            let          widget  = zone.widget,
+        if  let          zone  = iZone as? Zone,
+            let        widget  = zone.widget,
             widget.isInPublic == inPublicGraph {
-            specificWidget       = widget
-            specificIndex        = zone.siblingIndex
-            specificView         = specificWidget?.superview
-            recursing            = [.sData, .sRelayout].contains(iKind)
+            specificWidget     = widget
+            specificIndex      = zone.siblingIndex
+            specificView       = specificWidget?.superview
+            recursing          = [.sData, .sRelayout].contains(iKind)
         }
 
         specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isThought: inPublicGraph, visited: [])
@@ -229,7 +229,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 		
 		if  kIsPhone {
 			favoritesRootWidget.isHidden = !gShowFavorites
-			thoughtsRootWidget .isHidden =  gShowFavorites
+			mapRootWidget      .isHidden =  gShowFavorites
+		} else {
+			favoritesRootWidget.isHidden = !gPowerUserMode
 		}
 	}
 	
@@ -514,7 +516,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 
     func widgetNearest(_ iGesture: ZGestureRecognizer?, isThought: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
-        let           rootWidget = isThought ? thoughtsRootWidget : favoritesRootWidget
+        let           rootWidget = isThought ? mapRootWidget : favoritesRootWidget
         if  let thoughtsLocation = iGesture?.location(in: dragView),
             let thoughtsZone     = rootWidget.widgetNearestTo(thoughtsLocation, in: dragView, gHereMaybe) {
             if  isThought, !kIsPhone,
@@ -572,7 +574,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         gDragPoint       = nil
 
         favoritesRootWidget.setNeedsDisplay()
-        thoughtsRootWidget    .setNeedsDisplay()
+        mapRootWidget    .setNeedsDisplay()
         dragView?          .setNeedsDisplay() // erase drag: line and dot
         dot?               .setNeedsDisplay()
     }

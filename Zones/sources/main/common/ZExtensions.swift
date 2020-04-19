@@ -95,7 +95,7 @@ extension NSObject {
     }
 
     func blankScreenDebug() {
-        if  let w = gGraphController?.thoughtsRootWidget.bounds.size.width, w < 1.0 {
+        if  let w = gGraphController?.mapRootWidget.bounds.size.width, w < 1.0 {
             bam("blank graph !!!!!!")
         }
     }

@@ -31,11 +31,12 @@ class ZMainController: ZGenericController {
 	}
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		let   hideEssay = !gIsNoteMode
-        let  hideSearch = !gIsSearchMode
-        let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
+		let        hideEssay = !gIsNoteMode
+        let       hideSearch = !gIsSearchMode
+        let      hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
+		detailView?.isHidden = !gPowerUserMode
 
-        switch iKind {
+		switch iKind {
 			case .sFound:
 				searchBoxView?        .isHidden = hideSearch
 				searchResultsView?    .isHidden = hideResults
