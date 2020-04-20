@@ -1190,6 +1190,100 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	// MARK:- reveal dot
+	// MARK:-
+
+	func applyGenerationally(_ show: Bool, extreme: Bool = false) {
+		if  let zone = gSelecting.rootMostMoveable {
+			var level: Int?
+
+			if !show {
+				level = extreme ? zone.level - 1 : zone.highestExposed - 1
+			} else if  extreme {
+				level = Int.max
+			} else if let lowest = zone.lowestExposed {
+				level = lowest + 1
+			}
+
+			generationalUpdate(show: show, to: level) {
+				self.redrawGraph()
+			}
+		}
+	}
+
+	func expand(_ show: Bool) {
+		generationalUpdate(show: show) {
+			self.redrawGraph()
+		}
+	}
+
+	func generationalUpdate(show: Bool, to iLevel: Int? = nil, onCompletion: Closure?) {
+		recursiveUpdate(show, to: iLevel) {
+
+			// ////////////////////////////////////////////////////////
+			// delay executing this until the last time it is called //
+			// ////////////////////////////////////////////////////////
+
+			onCompletion?()
+		}
+	}
+
+	func recursiveUpdate(_ show: Bool, to iLevel: Int?, onCompletion: Closure?) {
+		if !show && isGrabbed && (count == 0 || !showingChildren) {
+
+			// ///////////////////////////////
+			// COLLAPSE OUTWARD INTO PARENT //
+			// ///////////////////////////////
+
+			concealAllProgeny()
+
+			revealParentAndSiblings()
+
+			if let  parent = parentZone, parent != self {
+				if  gHere == self {
+					gHere  = parent
+				}
+
+				parent.recursiveUpdate(show, to: iLevel) {
+					parent.grab()
+					onCompletion?()
+				}
+			} else {
+				onCompletion?()
+			}
+		} else {
+
+			// /////////////////
+			// ALTER CHILDREN //
+			// /////////////////
+
+			let  goal = iLevel ?? level + (show ? 1 : -1)
+			let apply = {
+				self.traverseAllProgeny { iChild in
+					if           !iChild.isBookmark {
+						if        iChild.level >= goal && !show {
+							iChild.concealChildren()
+						} else if iChild.level  < goal &&  show {
+							iChild.revealChildren()
+						}
+					}
+				}
+
+				if  self.isInFavorites && show {
+					gFavorites.updateAllFavorites()
+				}
+
+				onCompletion?()
+			}
+
+			if !show {
+				gSelecting.deselectGrabsWithin(self);
+			}
+
+			apply()
+		}
+	}
+
 	// MARK:- convenience
 	// MARK:-
 
@@ -1200,6 +1294,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func          showNote() { gFocusRing      .invokeEssay(self) }
 	func             focus() { gFocusRing          .focusOn(self) { self.redrawGraph() } }
 	@discardableResult func edit() -> ZTextEditor? { return gTextEditor.edit(self) }
+
+	func editTrait(for iType: ZTraitType) {
+		if  let  zone = gSelecting.firstSortedGrab {
+			let trait = zone.traitFor(iType)
+
+			gTextEditor.edit(trait)
+		}
+	}
 
 	func resolveAndSelect(_ searchText: String?) {
 		gHere = self

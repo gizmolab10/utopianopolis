@@ -11,6 +11,7 @@ import Foundation
 class ZContextualMenu: NSMenu {
 
 	var textWidget: ZoneTextWidget?
+	var zone: Zone? { return textWidget?.widgetZone }
 
 	@IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
 		if  let item = iItem,
@@ -23,14 +24,24 @@ class ZContextualMenu: NSMenu {
 	}
 
 	func handleKey(_ key: String) {
-		let zone = textWidget?.widgetZone
-
-		switch key {
-			case "b": zone?.addBookmark()
-//			case "d": zone?.duplicate()
-			case "n": zone?.showNote()
-			case "/": zone?.focus()
-			default:  break
+		if  let arrow = key.arrow {
+			switch arrow {
+				case .left:  zone?.applyGenerationally(false)
+				case .right: zone?.applyGenerationally(true)
+				default:     break
+			}
+		} else {
+			switch key {
+				case "b": zone?.addBookmark()
+//				case "d": zone?.duplicate()
+				case "e": zone?.editTrait(for: .tEmail)
+				case "h": zone?.editTrait(for: .tHyperlink)
+				case "l": textWidget?.alterCase(up: false)
+				case "n": zone?.showNote()
+				case "u": textWidget?.alterCase(up: true)
+				case "/": zone?.focus()
+				default:  break
+			}
 		}
 	}
 

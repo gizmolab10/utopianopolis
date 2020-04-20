@@ -96,7 +96,7 @@ class ZGridController: UICollectionViewController {
 
 			switch gridIID {
 			case .idCollapse,
-				 .idExpand:   gGraphEditor.expand(gridIID == .idExpand)
+				 .idExpand:   gSelecting.currentMoveable.expand(gridIID == .idExpand)
 			case .idUp:       gGraphEditor.move(up:  true,  selectionOnly: selectionOnly)
 			case .idDown:     gGraphEditor.move(up:  false, selectionOnly: selectionOnly)
 			case .idLeft:     gGraphEditor.move(out: true,  selectionOnly: selectionOnly)  { complete() }

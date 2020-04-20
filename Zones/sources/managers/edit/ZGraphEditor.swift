@@ -133,10 +133,10 @@ class ZGraphEditor: ZBaseEditor {
                     case "b":      addBookmark()
 					case "c":      if COMMAND { copyToPaste() } else { gGraphController?.recenter() }
 					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
-                    case "e":      editTrait(for: .tEmail)
+					case "e":      gSelecting.firstSortedGrab?.editTrait(for: .tEmail)
                     case "f":      gSearching.showSearch(OPTION)
 					case "g":      refetch(COMMAND, OPTION)
-                    case "h":      editTrait(for: .tHyperlink)
+                    case "h":      gSelecting.firstSortedGrab?.editTrait(for: .tHyperlink)
                     case "l":      alterCase(up: false)
 					case "j":      gControllers.updateRingState(SPECIAL)
 					case "k":      toggleColorized()
@@ -223,7 +223,7 @@ class ZGraphEditor: ZBaseEditor {
 				if  OPTION {
 					browseBreadcrumbs(arrow == .left)
 				} else {
-					applyGenerationally(show, extreme: COMMAND)
+					gSelecting.rootMostMoveable?.applyGenerationally(show, extreme: COMMAND)
 				}
             }
         }
@@ -537,14 +537,6 @@ class ZGraphEditor: ZBaseEditor {
         redrawAndSync()
     }
 
-    func editTrait(for iType: ZTraitType) {
-        if  let  zone = gSelecting.firstSortedGrab {
-            let trait = zone.traitFor(iType)
-            
-            gTextEditor.edit(trait)
-        }
-    }
-
 	func grabOrEdit(_ COMMAND: Bool, _  OPTION: Bool, _ ESCAPE: Bool = false) {
         if !COMMAND {											// switch to essay edit mode
 			let zone = gSelecting.currentMoveable
@@ -818,33 +810,6 @@ class ZGraphEditor: ZBaseEditor {
     // MARK:- reveal dot
     // MARK:-
 
-
-    func applyGenerationally(_ show: Bool, extreme: Bool = false) {
-		if  let zone = gSelecting.rootMostMoveable {
-			var level: Int?
-
-			if !show {
-				level = extreme ? zone.level - 1 : zone.highestExposed - 1
-			} else if  extreme {
-				level = Int.max
-			} else if let lowest = zone.lowestExposed {
-				level = lowest + 1
-			}
-
-			generationalUpdate(show: show, zone: zone, to: level) {
-				self.redrawGraph()
-			}
-		}
-	}
-
-	
-	func expand(_ show: Bool) {
-		generationalUpdate(show: show, zone: gSelecting.currentMoveable) {
-			self.redrawGraph()
-		}
-	}
-	
-
     func generationalUpdate(show: Bool, zone: Zone, to iLevel: Int? = nil, onCompletion: Closure?) {
         recursiveUpdate(show, zone, to: iLevel) {
 
@@ -940,7 +905,7 @@ class ZGraphEditor: ZBaseEditor {
 
                     self.redrawGraph()
 				} else {
-					self.generationalUpdate(show: show, zone: zone) {
+					zone.generationalUpdate(show: show) {
 						self.redrawGraph()
 					}
                 }
