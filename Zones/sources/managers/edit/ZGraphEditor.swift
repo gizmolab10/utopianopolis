@@ -98,15 +98,15 @@ class ZGraphEditor: ZBaseEditor {
 
 						switch key {
 							case "a":      gCurrentlyEditingWidget?.selectAllText()
-							case "d":      tearApartCombine(ALL, gCurrentlyEditingWidget?.widgetZone)
+							case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL)
 							case "f":      gSearching.showSearch(OPTION)
 							case "g":      refetch(COMMAND, OPTION)
 							case "n":      grabOrEdit(true, OPTION)
 							case "p":      printCurrentFocus()
 							case "/":      if IGNORED { return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eEdited, false) { self.redrawGraph() } }
 							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
-							case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); addNextAndRedraw(containing: true) }
-							case kSpace:   addIdea()
+							case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); gSelecting.currentMoveable.addNextAndRedraw(containing: true) }
+							case kSpace:   gSelecting.currentMoveable.addIdea()
 							case kReturn:  if COMMAND { grabOrEdit(COMMAND, OPTION) }
 							case kEscape:               grabOrEdit(   true, OPTION, true)
 							case kBackspace,
@@ -132,7 +132,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "a":      if COMMAND { selectAll(progeny: OPTION) } else { alphabetize(OPTION) }
                     case "b":      addBookmark()
 					case "c":      if COMMAND { copyToPaste() } else { gGraphController?.recenter() }
-                    case "d":      if FLAGGED { combineIntoParent(widget?.widgetZone) } else { duplicate() }
+					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
                     case "e":      editTrait(for: .tEmail)
                     case "f":      gSearching.showSearch(OPTION)
 					case "g":      refetch(COMMAND, OPTION)
@@ -163,8 +163,8 @@ class ZGraphEditor: ZBaseEditor {
 					case kEquals:  if COMMAND { updateSize(up: true) } else { gFocusRing.invokeTravel(gSelecting.firstSortedGrab) { self.redrawGraph() } }
                     case ";", "'": gFavorites.switchToNext(key == "'") { self.redrawGraph() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
-                    case kTab:     addNextAndRedraw(containing: OPTION)
-					case kSpace:   if OPTION || isWindow || CONTROL { addIdea() } else { gCurrentKeyPressed = nil; return false }
+                    case kTab:     gSelecting.currentMoveable.addNextAndRedraw(containing: OPTION)
+						case kSpace:   if OPTION || isWindow || CONTROL { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
                     case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) } else { gCurrentKeyPressed = nil; return false }
@@ -324,7 +324,6 @@ class ZGraphEditor: ZBaseEditor {
 	func popAndUpdate() {
 		gFocusRing.popAndRemoveEmpties()
 		redrawGraph()
-
 	}
 
 	func updateSize(up: Bool) {
@@ -350,6 +349,77 @@ class ZGraphEditor: ZBaseEditor {
 		}
 
 		return true
+	}
+
+	func addDashedLine(onCompletion: Closure? = nil) {
+
+		// three states:
+		// 1) plain line -> insert and edit stub title
+		// 2) titled line selected only -> convert back to plain line
+		// 3) titled line is first of multiple -> convert titled line to plain title, selected, as parent of others
+
+		let grabs        = gSelecting.currentGrabs
+		let isMultiple   = grabs.count > 1
+		if  let original = gSelecting.currentMoveableLine,
+			let name     = original.zoneName {
+			let promoteToParent: ClosureClosure = { innerClosure in
+				original.convertFromLineWithTitle()
+
+				self.moveZones(grabs, into: original) {
+					original.grab()
+
+					self.redrawAndSync() {
+						innerClosure()
+						onCompletion?()
+					}
+				}
+			}
+
+			if  name.contains(kLineOfDashes) {
+
+				// //////////
+				// state 1 //
+				// //////////
+
+				original.assignAndColorize(kLineWithStubTitle)   // convert into a stub title
+
+				if !isMultiple {
+					original.editAndSelect(range: NSMakeRange(12, 1))   // edit selecting stub
+				} else {
+					promoteToParent {
+						original.edit()
+					}
+				}
+
+				return
+			} else if name.isLineWithTitle {
+				if !isMultiple {
+
+					// //////////
+					// state 2 //
+					// //////////
+
+					original.assignAndColorize(kLineOfDashes)
+				} else {
+
+					// //////////
+					// state 3 //
+					// //////////
+
+					promoteToParent {}
+				}
+
+				return
+			}
+		}
+
+		gSelecting.rootMostMoveable?.addNext(with: kLineOfDashes) { iChild in
+			iChild.colorized = true
+
+			iChild.grab()
+
+			onCompletion?()
+		}
 	}
 
     func focusOnTrash() {
@@ -682,17 +752,6 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-
-    func revealParentAndSiblingsOf(_ iZone: Zone) {
-        if  let parent = iZone.parentZone {
-            parent.revealChildren()
-            parent.needChildren()
-        } else {
-            iZone.needParent()
-        }
-    }
-
-
     func recursivelyRevealSiblings(_ descendents: ZoneArray, untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {
         if  descendents.contains(iAncestor) {
             onCompletion?(iAncestor)
@@ -755,18 +814,6 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
     }
-    
-    
-    func deferRedraw(_ closure: Closure) {
-        gDeferRedraw     = true
-        
-        closure()
-        
-        FOREGROUND(after: 0.4) {
-            gDeferRedraw = false   // in case closure doesn't set it
-        }
-    }
-
 
     // MARK:- reveal dot
     // MARK:-
@@ -819,7 +866,7 @@ class ZGraphEditor: ZBaseEditor {
 
             zone.concealAllProgeny()
 
-            revealParentAndSiblingsOf(zone)
+			zone.revealParentAndSiblings()
 
 			if let  parent = zone.parentZone, parent != zone {
 				if  gHere == zone {
@@ -909,33 +956,7 @@ class ZGraphEditor: ZBaseEditor {
     func convertToTitledLineAndRearrangeChildren() {
         delete(preserveChildren: true, convertToTitledLine: true)
     }
-    
-    
-    func combineIntoParent(_ iChild: Zone?) {
-        if  let       child = iChild,
-            let      parent = child.parentZone,
-            let    original = parent.zoneName {
-            let   childName = child.zoneName ?? ""
-            let childLength = childName.length
-            let    combined = original.stringBySmartly(appending: childName)
-            let       range = NSMakeRange(combined.length - childLength, childLength)
-            parent.zoneName = combined
-            parent.extractTraits(from: child)
-            parent.extractChildren(from: child)
-            
-            self.deferRedraw {
-                moveZone(child, to: gTrash)
-                redrawAndSync(child) {
-                    gDeferRedraw = false
-                    
-                    gDragView?.setAllSubviewsNeedDisplay()
-                    parent.editAndSelect(range: range)
-                }
-            }
-        }
-    }
-    
-    
+	
 	func swapWithParent() {
 		let scratchZone = Zone()
 
@@ -949,9 +970,9 @@ class ZGraphEditor: ZBaseEditor {
 			let   grandP = parent.parentZone {
 			
 			self.moveZones(grabbed.children, into: scratchZone) {
-				self.moveZone(grabbed, into: grandP, at: parentI, orphan: true) {
+				grabbed.moveZone(into: grandP, at: parentI, orphan: true) {
 					self.moveZones(parent.children, into: grabbed) {
-						self.moveZone(parent, into: grabbed, at: grabbedI, orphan: true) {
+						parent.moveZone(into: grabbed, at: grabbedI, orphan: true) {
 							self.moveZones(scratchZone.children, into: parent) {
 								parent.needCount()
 								parent.grab()
@@ -999,236 +1020,8 @@ class ZGraphEditor: ZBaseEditor {
     // MARK:- add
     // MARK:-
 
-
-    func addIdea() {
-        let parent = gSelecting.currentMoveable
-        if !parent.isBookmark,
-            parent.userCanMutateProgeny {
-            addIdea(in: parent, at: gListsGrowDown ? nil : 0) { iChild in
-                gControllers.signalFor(parent, regarding: .sRelayout) {
-                    iChild?.edit()
-                }
-            }
-        }
-    }
-
-
-    func addNext(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
-        let       zone = gSelecting.rootMostMoveable
-
-        if  let parent = zone?.parentZone, parent.userCanMutateProgeny {
-            var  zones = gSelecting.currentGrabs
-
-            if containing {
-                zones.sort { (a, b) -> Bool in
-                    return a.order < b.order
-                }
-            }
-
-            if  zone  == gHere {
-                gHere  = parent
-
-                parent.revealChildren()
-            }
-
-            var index   = zone?.siblingIndex
-
-            if  index  != nil {
-                index! += gListsGrowDown ? 1 : 0
-            }
-
-            addIdea(in: parent, at: index, with: name) { iChild in
-                if let child = iChild {
-                    if !containing {
-                        self.redrawGraph() {
-                            onCompletion?(child)
-                        }
-                    } else {
-                        self.moveZones(zones, into: child) {
-							self.redrawGraph() {
-								onCompletion?(child)
-								gControllers.sync()
-							}
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+	func addBookmark() { gSelecting.firstSortedGrab?.addBookmark() }
     
-    func addNextAndRedraw(containing: Bool = false) {
-        deferRedraw {
-            addNext(containing: containing) { iChild in
-                gDeferRedraw = false
-
-                self.redrawGraph {
-                    iChild.edit()
-                }
-            }
-        }
-    }
-    
-
-    func addDashedLine(onCompletion: Closure? = nil) {
-        
-        // three states:
-        // 1) plain line -> insert and edit stub title
-        // 2) titled line selected only -> convert back to plain line
-        // 3) titled line is first of multiple -> convert titled line to plain title, selected, as parent of others
-
-        let grabs        = gSelecting.currentGrabs
-        let isMultiple   = grabs.count > 1
-        if  let original = gSelecting.currentMoveableLine,
-            let name     = original.zoneName {
-            let promoteToParent: ClosureClosure = { innerClosure in
-                original.convertFromLineWithTitle()
-                
-                self.moveZones(grabs, into: original) {
-                    original.grab()
-
-                    self.redrawAndSync() {
-                        innerClosure()
-                        onCompletion?()
-                    }
-                }
-            }
-            
-            if  name.contains(kLineOfDashes) {
-                
-                // //////////
-                // state 1 //
-                // //////////
-
-                original.assignAndColorize(kLineWithStubTitle)   // convert into a stub title
-
-                if !isMultiple {
-                    original.editAndSelect(range: NSMakeRange(12, 1))   // edit selecting stub
-                } else {
-                    promoteToParent {
-                        original.edit()
-                    }
-                }
-                
-                return
-            } else if name.isLineWithTitle {
-                if !isMultiple {
-                    
-                    // //////////
-                    // state 2 //
-                    // //////////
-
-                    original.assignAndColorize(kLineOfDashes)
-                } else {
-                    
-                    // //////////
-                    // state 3 //
-                    // //////////
-
-                    promoteToParent {}
-                }
-                
-                return
-            }
-        }
-        
-        addNext(with: kLineOfDashes) { iChild in
-            iChild.colorized = true
-            
-            iChild.grab()
-            
-            onCompletion?()
-        }
-    }
-    
-    
-    func tearApartCombine(_ intoParent: Bool, _ iZone: Zone?) {
-        if  intoParent {
-            addParentFromSelectedText(inside: iZone)
-        } else {
-            createChildIdeaFromSelectedText  (inside: iZone)
-        }
-    }
-    
-
-    func addParentFromSelectedText(inside iZone: Zone?) {
-        if  let     child = iZone,
-            let     index = child.siblingIndex,
-            let    parent = child.parentZone,
-            let childName = child.widget?.textWidget.extractTitleOrSelectedText() {
-
-            gTextEditor.stopCurrentEdit()
-
-            deferRedraw {
-                self.addIdea(in: parent, at: index, with: childName) { iChild in
-                    self.moveZone(child, to: iChild) {
-                        self.redrawAndSync()
-
-                        gDeferRedraw = false
-
-                        iChild?.edit()
-                    }
-                }
-            }
-        }
-    }
-    
-
-    func createChildIdeaFromSelectedText(inside iZone: Zone?) {
-        if  let      zone  = iZone,
-            let childName  = zone.widget?.textWidget.extractTitleOrSelectedText() {
-            
-            gTextEditor.stopCurrentEdit()
-
-            if  childName == zone.zoneName {
-                combineIntoParent(zone)
-            } else {
-                self.deferRedraw {
-                    self.addIdea(in: zone, at: gListsGrowDown ? nil : 0, with: childName) { iChild in
-                        gDeferRedraw = false
-                        
-						self.redrawAndSync {
-							let e = iChild?.edit()
-
-							FOREGROUND(after: 0.2) {
-								e?.selectAllText()
-							}
-						}
-                    }
-                }
-            }
-        }
-    }
-
-
-    func addBookmark() {
-        if  let zone = gSelecting.firstSortedGrab,
-            zone.databaseID != .favoritesID, !zone.isRoot {
-            let closure = {
-                var bookmark: Zone?
-
-                self.invokeUsingDatabaseID(.mineID) {
-                    bookmark = gFavorites.createBookmark(for: zone, style: .normal)
-                }
-
-                bookmark?.grab()
-                bookmark?.markNotFetched()
-                gControllers.redrawAndSync()
-            }
-
-            if gHere != zone {
-                closure()
-            } else {
-                self.revealParentAndSiblingsOf(zone)
-
-				gHere = zone.parentZone ?? gHere
-
-				closure()
-            }
-        }
-    }
-
-
     // MARK:- copy and paste
     // MARK:-
     
@@ -1331,7 +1124,7 @@ class ZGraphEditor: ZBaseEditor {
 					if  zone == iParent { // detect and avoid infinite recursion
 						deleteBookmarks()
 					} else {
-						self.deleteZone(zone, permanently: permanently) {
+						zone.deleteZone(permanently: permanently) {
 							deleteBookmarks()
 						}
 					}
@@ -1339,83 +1132,6 @@ class ZGraphEditor: ZBaseEditor {
 			}
 		}
     }
-
-
-    private func deleteZone(_ zone: Zone, permanently: Bool = false, onCompletion: Closure?) {
-        if  zone.isRoot {
-            onCompletion?()
-        } else {
-            let parent = zone.parentZone
-            if  zone == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
-                let recurse: Closure = {
-                    
-                    // //////////
-                    // RECURSE //
-                    // //////////
-                    
-                    self.deleteZone(zone, permanently: permanently, onCompletion: onCompletion)
-                }
-                
-                if  let p = parent, p != zone {
-                    gHere = p
-
-                    revealParentAndSiblingsOf(zone)
-					recurse()
-                } else {
-
-                    // ////////////////////////////////////////////////////////////////////////////////////////////
-                    // SPECIAL CASE: delete here but here has no parent ... so, go somewhere useful and familiar //
-                    // ////////////////////////////////////////////////////////////////////////////////////////////
-
-                    gFavorites.refocus {                 // travel through current favorite, then ...
-                        if  gHere != zone {
-                            recurse()
-                        }
-                    }
-                }
-            } else {
-                let deleteBookmarksClosure: Closure = {
-                    if  let            p = parent, p != zone {
-                        p.fetchableCount = p.count                  // delete alters the count
-                    }
-                    
-                    // //////////
-                    // RECURSE //
-                    // //////////
-                    
-                    self.deleteZones(zone.fetchedBookmarks, permanently: permanently) {
-                        onCompletion?()
-                    }
-                }
-                
-                zone.addToPaste()
-
-                if  !permanently && !zone.isInTrash {
-                    moveZone(zone, to: zone.trashZone) {
-                        deleteBookmarksClosure()
-                    }
-                } else {
-                    zone.traverseAllProgeny { iZone in
-                        iZone.needDestroy()                     // gets written in file
-                        iZone.concealAllProgeny()               // prevent gExpandedZones list from getting clogged with stale references
-                        iZone.orphan()
-                        gManifest?.smartAppend(iZone)
-						gFocusRing.removeFromStack(iZone)		// prevent focus stack from containing a zombie and thus getting stuck
-						gEssayRing.removeFromStack(iZone.noteMaybe)
-                    }
-
-                    if  zone.cloud?.cloudUnavailable ?? true {
-                        moveZone(zone, to: zone.destroyZone) {
-                            deleteBookmarksClosure()
-                        }
-                    } else {
-                        deleteBookmarksClosure()
-                    }
-                }
-            }
-        }
-    }
-
 
     func grabAppropriate(_ zones: ZoneArray) -> Zone? {
         if  let       grab = gListsGrowDown ? zones.first : zones.last,
@@ -1491,7 +1207,7 @@ class ZGraphEditor: ZBaseEditor {
                     }
                 } else if let p = parentZone {
                     if  zone == gHere {
-                        revealParentAndSiblingsOf(zone)
+                        zone.revealParentAndSiblings()
 						self.revealSiblingsOf(zone, untilReaching: p)
 						complete()
                     } else {
@@ -1550,8 +1266,8 @@ class ZGraphEditor: ZBaseEditor {
                                 complete()
                             }
                         }
-                    } else if   grandParentZone != nil {
-                        revealParentAndSiblingsOf(p)
+                    } else if grandParentZone != nil {
+						p.revealParentAndSiblings()
 
 						if  grandParentZone!.spawnedBy(gHere) {
 							self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
@@ -1620,7 +1336,6 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-
     func actuallyMoveInto(_ zones: ZoneArray, onCompletion: Closure?) {
         if  var    there = zones[0].parentZone {
             let siblings = Array(there.children)
@@ -1656,54 +1371,6 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-
-    func moveZone(_ zone: Zone, to iThere: Zone?, onCompletion: Closure? = nil) {
-        if  let there = iThere {
-            if !there.isBookmark {
-                moveZone(zone, into: there, at: gListsGrowDown ? nil : 0, orphan: true) {
-                    onCompletion?()
-                }
-            } else if !there.isABookmark(spawnedBy: zone) {
-
-                // ///////////////////////////////
-                // MOVE ZONE THROUGH A BOOKMARK //
-                // ///////////////////////////////
-
-                var     movedZone = zone
-                let    targetLink = there.crossLink
-                let     sameGraph = zone.databaseID == targetLink?.databaseID
-                let grabAndTravel = {
-                    gFocusRing.travelThrough(there) { object, kind in
-                        let there = object as! Zone
-
-                        self.moveZone(movedZone, into: there, at: gListsGrowDown ? nil : 0, orphan: false) {
-                            movedZone.recursivelyApplyDatabaseID(targetLink?.databaseID)
-                            movedZone.grab()
-                            onCompletion?()
-                        }
-                    }
-                }
-
-                movedZone.orphan()
-
-                if sameGraph {
-                    grabAndTravel()
-                } else {
-                    movedZone.needDestroy()
-
-                    movedZone = movedZone.deepCopy
-
-                    gControllers.redrawAndSync {
-                        grabAndTravel()
-                    }
-                }
-            }
-        } else {
-            onCompletion?()
-        }
-    }
-
-
     func moveZones(_ zones: ZoneArray, into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
         into.revealChildren()
         into.needChildren()
@@ -1721,54 +1388,8 @@ class ZGraphEditor: ZBaseEditor {
 		onCompletion?()
     }
 
-
     // MARK:- undoables
     // MARK:-
-    
-
-    func addIdea(in  iParent: Zone?, at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
-        if  let parent = iParent,
-            let   dbID = parent.databaseID,
-            dbID      != .favoritesID {
-
-            func createAndAdd() {
-                let child = Zone(databaseID: dbID)
-
-                if  name != nil {
-                    child.zoneName   = name
-                }
-
-                if !gIsMasterAuthor,
-                    dbID            == .everyoneID,
-                    let     identity = gAuthorID {
-                    child.zoneAuthor = identity
-                }
-
-                child.markNotFetched()
-
-                self.UNDO(self) { iUndoSelf in
-                    iUndoSelf.deleteZones([child]) {
-                        onCompletion?(nil)
-                    }
-                }
-
-                parent.ungrab()
-                parent.addAndReorderChild(child, at: iIndex)
-                onCompletion?(child)
-            }
-
-            parent.revealChildren()
-            gTextEditor.stopCurrentEdit()
-
-            if parent.count > 0 || parent.fetchableCount == 0 {
-                createAndAdd()
-            } else {
-                parent.needChildren()
-				createAndAdd()
-            }
-        }
-    }
-
 
     func duplicate() {
         let commonParent = gSelecting.firstSortedGrab?.parentZone ?? gSelecting.firstSortedGrab
@@ -1961,7 +1582,7 @@ class ZGraphEditor: ZBaseEditor {
 			for grab in grabs {
 				if !convertToTitledLine {       // delete, add to paste
 					grab.addToPaste()
-					self.moveZone(grab, to: grab.trashZone)
+					grab.moveZone(to: grab.trashZone)
 				} else {                        // convert to titled line and insert above
 					grab.convertToTitledLine()
 					children.append(grab)
@@ -2025,7 +1646,7 @@ class ZGraphEditor: ZBaseEditor {
                         let index = zone.siblingIndex
                         
                         self.UNDO(self) { iUndoSelf in
-                            iUndoSelf.moveZone(zone, into: from, at: index, orphan: true) { onCompletion?() }
+                            zone.moveZone(into: from, at: index, orphan: true) { onCompletion?() }
                         }
                     }
                     
@@ -2176,36 +1797,7 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-
-    func moveZone(_ zone: Zone, into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
-        if  let parent = zone.parentZone {
-            let  index = zone.siblingIndex
-
-            UNDO(self) { iUndoSelf in
-                iUndoSelf.moveZone(zone, into: parent, at: index, orphan: orphan) { onCompletion?() }
-            }
-        }
-
-        into.revealChildren()
-        into.needChildren()
-
-		if  orphan {
-			zone.orphan()
-		}
-
-		into.addAndReorderChild(zone, at: iIndex)
-		into.maybeNeedSave()
-		zone.maybeNeedSave()
-
-		if  !into.isInTrash { // so grab won't disappear
-			zone.grab()
-		}
-
-		onCompletion?()
-    }
-    
-    
-    fileprivate func findChildMatching(_ grabThis: inout Zone, _ iMoveUp: Bool, _ iOffset: CGFloat?) {
+	fileprivate func findChildMatching(_ grabThis: inout Zone, _ iMoveUp: Bool, _ iOffset: CGFloat?) {
 
         // ///////////////////////////////////////////////////////////
         // IF text is being edited by user, grab another zone whose //
@@ -2268,7 +1860,7 @@ class ZGraphEditor: ZBaseEditor {
                 let    snapshot = gSelecting.snapshot
                 let hasSiblings = rootMost.hasSiblings
                 
-                revealParentAndSiblingsOf(rootMost)
+				rootMost.revealParentAndSiblings()
 
 				let recurse = hasSiblings && snapshot.isSame && (rootMostParent != nil)
 

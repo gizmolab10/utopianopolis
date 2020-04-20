@@ -20,24 +20,20 @@ class ZPreferencesController: ZGenericController {
 
 
     @IBOutlet var    countsModeControl: ZSegmentedControl?
-    @IBOutlet var  browsingModeControl: ZSegmentedControl?
-    @IBOutlet var insertionModeControl: ZSegmentedControl?
-    @IBOutlet var         zoneColorBox: ZColorWell?
+	@IBOutlet var  colorPreferencesBox: NSView?
     @IBOutlet var   backgroundColorBox: ZColorWell?
     @IBOutlet var   activeMineColorBox: ZColorWell?
+	@IBOutlet var         zoneColorBox: ZColorWell?
     @IBOutlet var     clearColorButton: ZButton?
     @IBOutlet var      verticalSpacing: ZSlider?
     @IBOutlet var            thickness: ZSlider?
     @IBOutlet var              stretch: ZSlider?
-    @IBOutlet var           ideasLabel: ZTextField?
     override  var         controllerID: ZControllerID { return .idPreferences }
 
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if ![.sLaunchDone, .sStartup, .sSearch, .sFound, .sCrumbs, .sSwap, .sRing].contains(iKind), gPowerUserMode {
+		if ![.sLaunchDone, .sStartup, .sSearch, .sFound, .sCrumbs, .sSwap, .sRing].contains(iKind) {
             let                           grabbed = gSelecting.firstSortedGrab
-            insertionModeControl?.selectedSegment = gListGrowthMode.rawValue
-            browsingModeControl? .selectedSegment = gBrowsingMode.rawValue
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
             thickness?               .doubleValue = gLineThickness
             verticalSpacing?         .doubleValue = Double(gGenericOffset.height)
@@ -46,6 +42,7 @@ class ZPreferencesController: ZGenericController {
             backgroundColorBox?            .color = gAccentColor
             zoneColorBox?                  .color =   grabbed?.color ?? kDefaultZoneColor
             clearColorButton?           .isHidden = !(grabbed?.hasColor ?? true)
+			colorPreferencesBox?        .isHidden = !gColorfulMode
 
             view.setAllSubviewsNeedDisplay()
         }

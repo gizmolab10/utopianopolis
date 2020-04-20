@@ -76,11 +76,11 @@ class ZActionsController : ZGenericController {
 				 .eRefetch: refetch(for: function == .eRefetchAll)
 			case .ePrefs:   switchView(to: function)
 			case .eDelete:  gGraphEditor.deleteGrabbed()
-			case .eNew:     gGraphEditor.addIdea()
+			case .eNew:     gSelecting.currentMoveable.addIdea()
 			case .eHang:    gBatches.unHang()
 			case .eName:    gTextEditor.edit(zone)
 			case .eHelp:    openBrowserForFocusWebsite()
-			case .eNext:    gGraphEditor.addNext() { iChild in iChild.edit() }
+			case .eNext:    gSelecting.rootMostMoveable.addNext() { iChild in iChild.edit() }
 			case .eToTop:   showTop()
 			default:        break
 			}

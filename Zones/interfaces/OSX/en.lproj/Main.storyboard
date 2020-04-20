@@ -64,7 +64,7 @@
                                 <menu key="submenu" title="File" id="fri-jg-8iG">
                                     <items>
                                         <menuItem title="Show in Finder" keyEquivalent="o" id="tay-ah-w3c">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="yol-4a-D1G"/>
                                             </connections>
@@ -82,10 +82,21 @@
                                                     </menuItem>
                                                     <menuItem title="All Progeny" keyEquivalent="g" id="gsR-6T-rn2">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="A3V-K2-TsN"/>
+                                                        </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="wWZ-Nj-MtK"/>
-                                                    <menuItem title="All Ideas" keyEquivalent="g" id="aki-zt-Ii9"/>
-                                                    <menuItem title="All Traits" keyEquivalent="t" id="8l5-Eh-vTY"/>
+                                                    <menuItem title="All Ideas" keyEquivalent="g" id="aki-zt-Ii9">
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="1oG-Cc-NF8"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="All Traits" keyEquivalent="t" id="8l5-Eh-vTY">
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="ovN-uQ-4Wh"/>
+                                                        </connections>
+                                                    </menuItem>
                                                 </items>
                                             </menu>
                                         </menuItem>
@@ -593,7 +604,7 @@ DQ
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Thoughtful" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Seriously" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="66" y="596"/>
@@ -602,7 +613,7 @@ DQ
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="Seriously" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="ZoneWindow" customModule="Thoughtful" customModuleProvider="target">
+                    <window key="window" title="Seriously" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="ZoneWindow" customModule="Seriously" customModuleProvider="target">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="309" width="354" height="201"/>
@@ -622,7 +633,7 @@ DQ
         <!--Graph-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" userLabel="Graph" customClass="ZGraphController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" userLabel="Graph" customClass="ZGraphController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="View">
                         <rect key="frame" x="0.0" y="0.0" width="289" height="269"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -645,7 +656,7 @@ DQ
                                     <constraint firstAttribute="bottom" secondItem="uBD-4n-5KN" secondAttribute="bottom" id="wyj-sa-dEL"/>
                                 </constraints>
                             </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="itU-Gt-Inh" customClass="ZDragView" customModule="Thoughtful" customModuleProvider="target">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="itU-Gt-Inh" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="289" height="269"/>
                             </customView>
                         </subviews>
@@ -661,19 +672,124 @@ DQ
                     </view>
                     <connections>
                         <outlet property="dragView" destination="itU-Gt-Inh" id="E7f-iE-OVJ"/>
-                        <outlet property="ringView" destination="f9Z-GK-Klh" id="cJ2-Fj-vUS"/>
+                        <outlet property="ideaContextualMenu" destination="4NV-a6-tte" id="idV-YI-eqw"/>
+                        <outlet property="keyInput" destination="4NV-a6-tte" id="Q1S-Ke-KrH"/>
                         <outlet property="spinner" destination="uBD-4n-5KN" id="l76-tc-ycD"/>
                         <outlet property="spinnerView" destination="fSQ-gu-ejW" id="Qog-ht-L9n"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <menu title="Actions" id="4NV-a6-tte" userLabel="Contextual Menu" customClass="ZContextualMenu" customModule="Seriously" customModuleProvider="target">
+                    <items>
+                        <menuItem title="Focus" keyEquivalent="/" id="1Xd-2W-Q0x">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="4NV-a6-tte" id="1qI-4N-K2i"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Note" keyEquivalent="n" id="JjR-iw-wF8">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="4NV-a6-tte" id="V9q-lJ-siq"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Bookmark" keyEquivalent="b" id="OrW-va-hQm">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="4NV-a6-tte" id="6IY-e6-2rR"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Duplicate" keyEquivalent="d" id="k6N-t9-9jG">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="4NV-a6-tte" id="MBa-rG-heH"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="lgs-g2-FQ6">
+                            <connections>
+                                <action selector="genericMenuHandler:" target="4NV-a6-tte" id="EmC-2e-Abv"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Children" id="oAz-qz-QkV">
+                            <menu key="submenu" title="Children" id="8CT-yX-JzY">
+                                <items>
+                                    <menuItem title="Show" keyEquivalent="" id="3cx-Vy-fia">
+                                        <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="kTm-aH-am0"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Hide" keyEquivalent="" id="KUM-aI-FlV">
+                                        <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="VtK-9D-agL"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                        <menuItem title="Attach" id="Uh0-x2-DY6">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <menu key="submenu" title="Attach" id="KW7-X0-P3N">
+                                <items>
+                                    <menuItem title="Email" keyEquivalent="e" id="ux2-Mm-B9S">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="DSR-Ab-amg"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Hyperlink" keyEquivalent="h" id="y5M-bT-oes">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="K8L-YK-UOv"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                        <menuItem title="Case" id="VEf-lU-Oxx">
+                            <menu key="submenu" title="Case" id="tJE-Wi-ISE">
+                                <items>
+                                    <menuItem title="Lowercase" keyEquivalent="l" id="JIZ-bf-x7L">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="QVd-QX-1J9"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Uppercase" keyEquivalent="u" id="FgW-8Y-kTQ">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="knd-sC-Oq9"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                        <menuItem title="File" id="ycJ-W4-Aat">
+                            <menu key="submenu" title="File" id="dW0-3e-JXO">
+                                <items>
+                                    <menuItem title="Export" keyEquivalent="s" id="vZO-xB-VyO">
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="n1V-tc-viK"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Import" keyEquivalent="o" id="6b6-Cw-CAW">
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="Ib2-kH-HUe"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                    </items>
+                </menu>
             </objects>
             <point key="canvasLocation" x="332" y="1125"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
             <objects>
-                <viewController id="MXk-17-6Dz" customClass="ZMainController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="MXk-17-6Dz" customClass="ZMainController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="eh7-uz-OG5">
                         <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -772,7 +888,7 @@ DQ
         <!--Search Controller-->
         <scene sceneID="Gwm-hS-Ozn">
             <objects>
-                <viewController id="cYL-kx-LTL" customClass="ZSearchController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="cYL-kx-LTL" customClass="ZSearchController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Vov-Ty-huu">
                         <rect key="frame" x="0.0" y="0.0" width="397" height="46"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -806,12 +922,12 @@ DQ
         <!--Ring Controller-->
         <scene sceneID="2ar-AS-rBz">
             <objects>
-                <viewController id="HwM-RS-z3y" customClass="ZRingController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="HwM-RS-z3y" customClass="ZRingController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="EdY-JG-Pjl">
                         <rect key="frame" x="0.0" y="0.0" width="290" height="269"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="f9Z-GK-Klh" customClass="ZRingView" customModule="Thoughtful" customModuleProvider="target">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="f9Z-GK-Klh" customClass="ZRingView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="290" height="269"/>
                             </customView>
                         </subviews>
@@ -833,7 +949,7 @@ DQ
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
             <objects>
-                <viewController id="Hxl-Pi-4li" customClass="ZSearchResultsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Hxl-Pi-4li" customClass="ZSearchResultsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Yjc-TG-nmv">
                         <rect key="frame" x="0.0" y="0.0" width="299" height="269"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -894,7 +1010,7 @@ DQ
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="647" y="1125"/>
+            <point key="canvasLocation" x="944" y="1125"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -907,7 +1023,7 @@ DQ
         <!--Essay-->
         <scene sceneID="YUn-EI-h0m">
             <objects>
-                <viewController id="8gW-F6-R6g" userLabel="Essay" customClass="ZEssayController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="8gW-F6-R6g" userLabel="Essay" customClass="ZEssayController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <customView key="view" id="HOI-yt-EwI" userLabel="View">
                         <rect key="frame" x="0.0" y="0.0" width="278" height="269"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -918,7 +1034,7 @@ DQ
                                     <rect key="frame" x="0.0" y="0.0" width="263" height="269"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4" customClass="ZEssayView" customModule="Thoughtful" customModuleProvider="target">
+                                        <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4" customClass="ZEssayView" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="263" height="269"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -954,12 +1070,12 @@ DQ
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="955" y="1125"/>
+            <point key="canvasLocation" x="635" y="1125"/>
         </scene>
         <!--Web Link Controller-->
         <scene sceneID="yhj-YB-Xij">
             <objects>
-                <viewController id="S3C-PE-ZiN" customClass="ZWebLinkController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="S3C-PE-ZiN" customClass="ZWebLinkController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="NY2-fD-2jz">
                         <rect key="frame" x="0.0" y="0.0" width="163" height="92"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -996,7 +1112,7 @@ DQ
         <!--Breadcrumbs Controller-->
         <scene sceneID="wXo-la-8OL">
             <objects>
-                <viewController id="auf-AV-5qA" customClass="ZBreadcrumbsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="auf-AV-5qA" customClass="ZBreadcrumbsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="W43-uk-txK">
                         <rect key="frame" x="0.0" y="0.0" width="397" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>

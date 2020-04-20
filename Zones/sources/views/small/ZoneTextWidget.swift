@@ -15,23 +15,19 @@ import Foundation
     import UIKit
 #endif
 
-
 enum ZTextType: Int {
     case prefix
     case name
     case suffix
 }
 
-
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
-
 
     override var preferredFont : ZFont { return (widget?.isInPublic ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return widget?.widgetZone }
     weak var            widget : ZoneWidget?
     var                   type = ZTextType.name
 
-    
     var selectionRange: NSRange {
         var range = gTextEditor.selectedRange
 
@@ -46,13 +42,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         return range
     }
 
-
     func updateTextColor() {
         if  let  zone = widgetZone {
             textColor = (gColorfulMode && zone.colorized) ? zone.color?.darker(by: 3.0) : gDefaultTextColor
         }
     }
-
 
     override func setup() {
 		super.setup()
@@ -71,19 +65,27 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         #endif
     }
 
+	override func menu(for event: NSEvent) -> NSMenu? {
+		let         contextualMenu = gGraphController?.ideaContextualMenu
+		contextualMenu?.textWidget = self
+
+		return contextualMenu
+	}
+
+	open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
+		return true
+	}
 
     func layoutText(isEditing: Bool = false) {
         gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
         layoutTextField()
     }
 
-
     func updateGUI() {
         widget?.widgetZone?.needWrite()
         layoutTextField()
         widget?.setNeedsDisplay()
     }
-
 
     func layoutTextField() {
         if  let          view = superview {
@@ -102,7 +104,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             }
         }
     }
-
     
     func offset(for selectedRange: NSRange, _ atStart: Bool) -> CGFloat? {
         if  let   name = widgetZone?.unwrappedName {
@@ -144,7 +145,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         return false
 	}
 	
-	
 	override func selectCharacter(in range: NSRange) {
         #if os(OSX)
         if  let e = currentEditor() {
@@ -152,7 +152,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         }
         #endif
     }
-
 
     override func alterCase(up: Bool) {
         if  var t = text {
@@ -162,7 +161,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             updateGUI()
         }
     }
-    
 
     func extractTitleOrSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
         var      extract = extractedTitle
@@ -185,7 +183,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         return extract
     }
     
-    
     var extractedTitle: String? {
         var     extract  = text
         
@@ -198,7 +195,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         
         return extract
     }
-    
 
     override func draw(_ dirtyRect: CGRect) {
         updateTextColor()

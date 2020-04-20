@@ -561,7 +561,7 @@ class ZFavorites: ZRecords {
 
 
     func delete(_ favorite: Zone) {
-        gGraphEditor.moveZone(favorite, to: favorite.trashZone)
+        favorite.moveZone(to: favorite.trashZone)
         gBookmarks.unregisterBookmark(favorite)
         updateAllFavorites()
     }

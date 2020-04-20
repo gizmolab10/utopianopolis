@@ -109,6 +109,16 @@ extension NSObject {
         }
     }
 
+	func deferRedraw(_ closure: Closure) {
+		gDeferRedraw     = true
+
+		closure()
+
+		FOREGROUND(after: 0.4) {
+			gDeferRedraw = false   // in case closure doesn't set it
+		}
+	}
+
 	func signal(_ multiple: [ZSignalKind]) {
 		gControllers.signalFor(nil, multiple: multiple)
 	}
@@ -2057,9 +2067,11 @@ extension ZView {
 		var    asNote = false
 		var    asIdea = false
 
-		if let   idea = object as? Zone {
-			asIdea    = true
-			ideaFocus = idea.identifier() == gHere.identifier()
+		if      let  idea = object as? Zone {
+			if  let ident = idea.identifier() {
+				asIdea    = true
+				ideaFocus = ident == gHereMaybe?.identifier()
+			}
 		} else if let note = object as? ZNote {
 			asNote    = true
 

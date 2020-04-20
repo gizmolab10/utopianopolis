@@ -802,17 +802,404 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         }
     }
 
-    // MARK:- convenience
-    // MARK:-
+	// MARK:- edit map
+	// MARK:-
 
-    func        addToPaste() { gSelecting   .pasteableZones[self] = (parentZone, siblingIndex) }
-    func         addToGrab() { gSelecting.addMultipleGrabs([self]) }
-    func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
-    func            ungrab() { gSelecting           .ungrab(self) }
+	func addBookmark() {
+		if  databaseID != .favoritesID, !isRoot {
+			let closure = {
+				var bookmark: Zone?
 
-	@discardableResult func edit() -> ZTextEditor? {
-		return gTextEditor.edit(self)
+				self.invokeUsingDatabaseID(.mineID) {
+					bookmark = gFavorites.createBookmark(for: self, style: .normal)
+				}
+
+				bookmark?.grab()
+				bookmark?.markNotFetched()
+				gControllers.redrawAndSync()
+			}
+
+			if  gHere != self {
+				closure()
+			} else {
+				revealParentAndSiblings()
+
+				gHere = self.parentZone ?? gHere
+
+				closure()
+			}
+		}
 	}
+
+	func revealParentAndSiblings() {
+		if  let parent = parentZone {
+			parent.revealChildren()
+			parent.needChildren()
+		} else {
+			needParent()
+		}
+	}
+
+	func addIdea() {
+		if !isBookmark,
+			userCanMutateProgeny {
+			addIdea(at: gListsGrowDown ? nil : 0) { iChild in
+				gControllers.signalFor(self.parentZoneMaybe, regarding: .sRelayout) {
+					iChild?.edit()
+				}
+			}
+		}
+	}
+
+	func addNext(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
+		if  let parent = parentZone, parent.userCanMutateProgeny {
+			var  zones = gSelecting.currentGrabs
+
+			if  containing {
+				zones.sort { (a, b) -> Bool in
+					return a.order < b.order
+				}
+			}
+
+			if  self  == gHere {
+				gHere  = parent
+
+				parent.revealChildren()
+			}
+
+			var index   = siblingIndex
+
+			if  index  != nil {
+				index! += gListsGrowDown ? 1 : 0
+			}
+
+			parent.addIdea(at: index, with: name) { iChild in
+				if  let child = iChild {
+					if !containing {
+						self.redrawGraph() {
+							onCompletion?(child)
+						}
+					} else {
+						self.moveZones(zones) {
+							self.redrawGraph() {
+								onCompletion?(child)
+								gControllers.sync()
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	func moveZones(_ zones: ZoneArray, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
+		revealChildren()
+		needChildren()
+
+		for     zone in zones {
+			if  zone != self {
+				if  orphan {
+					zone.orphan()
+				}
+
+				addAndReorderChild(zone, at: iIndex)
+			}
+		}
+
+		onCompletion?()
+	}
+
+	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
+		if  let dbID = databaseID,
+			dbID    != .favoritesID {
+
+			func createAndAdd() {
+				let child = Zone(databaseID: dbID)
+
+				if  name != nil {
+					child.zoneName   = name
+				}
+
+				if !gIsMasterAuthor,
+					dbID            == .everyoneID,
+					let     identity = gAuthorID {
+					child.zoneAuthor = identity
+				}
+
+				child.markNotFetched()
+
+				self.UNDO(self) { iUndoSelf in
+					child.deleteZone() {
+						onCompletion?(nil)
+					}
+				}
+
+				ungrab()
+				addAndReorderChild(child, at: iIndex)
+				onCompletion?(child)
+			}
+
+			parentZoneMaybe?.revealChildren()
+			gTextEditor.stopCurrentEdit()
+
+			if  let p = parentZoneMaybe {
+				if  p.count > 0 || p.fetchableCount == 0 {
+					createAndAdd()
+				} else {
+					p.needChildren()
+					createAndAdd()
+				}
+			}
+		}
+	}
+
+	func deleteZone(permanently: Bool = false, onCompletion: Closure?) {
+		if  isRoot {
+			onCompletion?()
+		} else {
+			let parent = parentZone
+			if  self == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
+				let recurse: Closure = {
+
+					// //////////
+					// RECURSE //
+					// //////////
+
+					self.deleteZone(permanently: permanently, onCompletion: onCompletion)
+				}
+
+				if  let p = parent, p != self {
+					gHere = p
+
+					revealParentAndSiblings()
+					recurse()
+				} else {
+
+					// ////////////////////////////////////////////////////////////////////////////////////////////
+					// SPECIAL CASE: delete here but here has no parent ... so, go somewhere useful and familiar //
+					// ////////////////////////////////////////////////////////////////////////////////////////////
+
+					gFavorites.refocus {                 // travel through current favorite, then ...
+						if  gHere != self {
+							recurse()
+						}
+					}
+				}
+			} else {
+				let deleteBookmarksClosure: Closure = {
+					if  let            p = parent, p != self {
+						p.fetchableCount = p.count                  // delete alters the count
+					}
+
+					// //////////
+					// RECURSE //
+					// //////////
+
+					gGraphEditor.deleteZones(self.fetchedBookmarks, permanently: permanently) {
+						onCompletion?()
+					}
+				}
+
+				addToPaste()
+
+				if !permanently && !isInTrash {
+					moveZone(to: trashZone) {
+						deleteBookmarksClosure()
+					}
+				} else {
+					traverseAllProgeny { iZone in
+						iZone.needDestroy()                     // gets written in file
+						iZone.concealAllProgeny()               // prevent gExpandedZones list from getting clogged with stale references
+						iZone.orphan()
+						gManifest?.smartAppend(iZone)
+						gFocusRing.removeFromStack(iZone)		// prevent focus stack from containing a zombie and thus getting stuck
+						gEssayRing.removeFromStack(iZone.noteMaybe)
+					}
+
+					if  cloud?.cloudUnavailable ?? true {
+						moveZone(to: destroyZone) {
+							deleteBookmarksClosure()
+						}
+					} else {
+						deleteBookmarksClosure()
+					}
+				}
+			}
+		}
+	}
+
+	func addNextAndRedraw(containing: Bool = false) {
+		deferRedraw {
+			addNext(containing: containing) { iChild in
+				gDeferRedraw = false
+
+				self.redrawGraph {
+					iChild.edit()
+				}
+			}
+		}
+	}
+
+	func tearApartCombine(_ intoParent: Bool) {
+		if  intoParent {
+			addParentFromSelectedText()
+		} else {
+			createChildIdeaFromSelectedText()
+		}
+	}
+
+	func addParentFromSelectedText() {
+		if  let     index = siblingIndex,
+			let    parent = parentZone,
+			let childName = widget?.textWidget.extractTitleOrSelectedText() {
+
+			gTextEditor.stopCurrentEdit()
+
+			deferRedraw {
+				parent.addIdea(at: index, with: childName) { iChild in
+					self.moveZone(to: iChild) {
+						self.redrawAndSync()
+
+						gDeferRedraw = false
+
+						iChild?.edit()
+					}
+				}
+			}
+		}
+	}
+
+	func moveZone(into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
+		if  let parent = parentZone {
+			let  index = siblingIndex
+
+			UNDO(self) { iUndoSelf in
+				self.moveZone(into: parent, at: index, orphan: orphan) { onCompletion?() }
+			}
+		}
+
+		into.revealChildren()
+		into.needChildren()
+
+		if  orphan {
+			self.orphan()
+		}
+
+		into.addAndReorderChild(self, at: iIndex)
+		into.maybeNeedSave()
+		maybeNeedSave()
+
+		if !into.isInTrash { // so grab won't disappear
+			grab()
+		}
+
+		onCompletion?()
+	}
+
+	func moveZone(to iThere: Zone?, onCompletion: Closure? = nil) {
+		if  let there = iThere {
+			if !there.isBookmark {
+				moveZone(into: there, at: gListsGrowDown ? nil : 0, orphan: true) {
+					onCompletion?()
+				}
+			} else if !there.isABookmark(spawnedBy: self) {
+
+				// ///////////////////////////////
+				// MOVE ZONE THROUGH A BOOKMARK //
+				// ///////////////////////////////
+
+				var     movedZone = self
+				let    targetLink = there.crossLink
+				let     sameGraph = databaseID == targetLink?.databaseID
+				let grabAndTravel = {
+					gFocusRing.travelThrough(there) { object, kind in
+						let there = object as! Zone
+
+						movedZone.moveZone(into: there, at: gListsGrowDown ? nil : 0, orphan: false) {
+							movedZone.recursivelyApplyDatabaseID(targetLink?.databaseID)
+							movedZone.grab()
+							onCompletion?()
+						}
+					}
+				}
+
+				movedZone.orphan()
+
+				if sameGraph {
+					grabAndTravel()
+				} else {
+					movedZone.needDestroy()
+
+					movedZone = movedZone.deepCopy
+
+					gControllers.redrawAndSync {
+						grabAndTravel()
+					}
+				}
+			}
+		} else {
+			onCompletion?()
+		}
+	}
+
+	func createChildIdeaFromSelectedText() {
+		if  let childName  = widget?.textWidget.extractTitleOrSelectedText() {
+
+			gTextEditor.stopCurrentEdit()
+
+			if  childName == zoneName {
+				combineIntoParent()
+			} else {
+				self.deferRedraw {
+					addIdea(at: gListsGrowDown ? nil : 0, with: childName) { iChild in
+						gDeferRedraw = false
+
+						self.redrawAndSync {
+							let e = iChild?.edit()
+
+							FOREGROUND(after: 0.2) {
+								e?.selectAllText()
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	func combineIntoParent() {
+		if  let      parent = parentZone,
+			let    original = parent.zoneName {
+			let   childName = zoneName ?? ""
+			let childLength = childName.length
+			let    combined = original.stringBySmartly(appending: childName)
+			let       range = NSMakeRange(combined.length - childLength, childLength)
+			parent.zoneName = combined
+			parent.extractTraits  (from: self)
+			parent.extractChildren(from: self)
+
+			self.deferRedraw {
+				self.moveZone(to: gTrash)
+				redrawAndSync(self) {
+					gDeferRedraw = false
+
+					gDragView?.setAllSubviewsNeedDisplay()
+					parent.editAndSelect(range: range)
+				}
+			}
+		}
+	}
+
+	// MARK:- convenience
+	// MARK:-
+
+	func        addToPaste() { gSelecting   .pasteableZones[self] = (parentZone, siblingIndex) }
+	func         addToGrab() { gSelecting.addMultipleGrabs([self]) }
+	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
+	func            ungrab() { gSelecting           .ungrab(self) }
+	func          showNote() { gFocusRing      .invokeEssay(self) }
+	func             focus() { gFocusRing          .focusOn(self) { self.redrawGraph() } }
+	@discardableResult func edit() -> ZTextEditor? { return gTextEditor.edit(self) }
 
 	func resolveAndSelect(_ searchText: String?) {
 		gHere = self

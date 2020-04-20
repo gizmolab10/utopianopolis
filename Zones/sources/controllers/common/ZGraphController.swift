@@ -6,7 +6,6 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import SnapKit
 
 #if os(OSX)
@@ -15,22 +14,21 @@ import SnapKit
     import UIKit
 #endif
 
-
 var gGraphController: ZGraphController? { return gControllers.controllerForID(.idGraph) as? ZGraphController }
-
 
 class ZGraphController: ZGesturesController, ZScrollDelegate {
     
-	override  var    controllerID :  ZControllerID { return .idGraph }
-	@IBOutlet var         spinner :  ZProgressIndicator?
-	@IBOutlet var        dragView :  ZDragView?
-	@IBOutlet var     spinnerView :  ZView?
-	let             mapRootWidget =  ZoneWidget   ()
-	let       favoritesRootWidget =  ZoneWidget   ()
-	var        rubberbandPreGrabs =  ZoneArray    ()
-	var       priorScrollLocation =  CGPoint.zero
-	var           rubberbandStart =  CGPoint.zero
-	let 		     clickManager =  ZClickManager()
+	override  var       controllerID :  ZControllerID { return .idGraph }
+	@IBOutlet var            spinner :  ZProgressIndicator?
+	@IBOutlet var           dragView :  ZDragView?
+	@IBOutlet var        spinnerView :  ZView?
+	@IBOutlet var ideaContextualMenu :  ZContextualMenu?
+	let                mapRootWidget =  ZoneWidget   ()
+	let          favoritesRootWidget =  ZoneWidget   ()
+	var           rubberbandPreGrabs =  ZoneArray    ()
+	var          priorScrollLocation =  CGPoint.zero
+	var              rubberbandStart =  CGPoint.zero
+	let 	            clickManager =  ZClickManager()
 
 	class ZClickManager : NSObject {
 

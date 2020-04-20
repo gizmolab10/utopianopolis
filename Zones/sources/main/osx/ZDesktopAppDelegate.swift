@@ -107,7 +107,6 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
     open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
         return workingEditor?.isValid(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask) ?? true
     }
-
     
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
 		if  let item = iItem,
