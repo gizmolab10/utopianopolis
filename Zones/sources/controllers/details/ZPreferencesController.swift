@@ -34,7 +34,7 @@ class ZPreferencesController: ZGenericController {
 
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if ![.sLaunchDone, .sStartup, .sSearch, .sFound, .sCrumbs, .sSwap, .sRing].contains(iKind) {
+		if ![.sLaunchDone, .sStartup, .sSearch, .sFound, .sCrumbs, .sSwap, .sRing].contains(iKind), gPowerUserMode {
             let                           grabbed = gSelecting.firstSortedGrab
             insertionModeControl?.selectedSegment = gListGrowthMode.rawValue
             browsingModeControl? .selectedSegment = gBrowsingMode.rawValue

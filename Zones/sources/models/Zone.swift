@@ -49,7 +49,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var               bookmarkTarget :               Zone? { return crossLink as? Zone }
     var                  destroyZone :               Zone? { return cloud?.destroyZone }
     var                    trashZone :               Zone? { return cloud?.trashZone }
-	var             grabbedTextColor :             ZColor? { return color?.darker(by: 3.0) }
     var                     manifest :          ZManifest? { return cloud?.manifest }
     var                       widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
     var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
@@ -352,28 +351,30 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func toolColor() -> ZColor? { return color?.lighter(by: 3.0) }
 
 	var color: ZColor? {
-        get {
-            var computed = colorMaybe
-            
-            if colorMaybe == nil {
-                if  let b = bookmarkTarget {
-                    return b.color
-                } else if let c = zoneColor, c != "" {
-                    computed    = c.color
-                    colorMaybe      = computed
-                } else if let p = parentZone, p != self, hasCompleteAncestorPath(toColor: true) {
-                    return p.color
-                } else {
-                    computed    = kDefaultZoneColor
-                }
-            }
+		get {
+			if !gColorfulMode { return gDefaultTextColor }
 
-            if  gIsDark {
+			var computed = colorMaybe
+
+			if  colorMaybe == nil {
+				if  let b = bookmarkTarget {
+					return b.color
+				} else if let c = zoneColor, c != "" {
+					computed    = c.color
+					colorMaybe  = computed
+				} else if let p = parentZone, p != self, hasCompleteAncestorPath(toColor: true) {
+					return p.color
+				} else {
+					computed    = kDefaultZoneColor
+				}
+			}
+
+			if  gIsDark {
 				computed        = computed?.inverted.lighter(by: 5.0)
-            }
+			}
 
-            return computed!
-        }
+			return computed!
+		}
 
         set {
             var computed = newValue
@@ -384,8 +385,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
             if  isBookmark {
                 bookmarkTarget?.color  = newValue
-            } else if          colorMaybe != computed {
-                colorMaybe                 = computed
+            } else if      colorMaybe != computed {
+                colorMaybe             = computed
                 zoneColor              = computed?.string ?? ""
 
                 maybeNeedSave()

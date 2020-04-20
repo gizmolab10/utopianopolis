@@ -510,10 +510,11 @@ class ZoneWidget: ZView {
         super.draw(dirtyRect)
 
 		if  gIsGraphOrEditIdeaMode,
-			let             zone = widgetZone {
-            let        isGrabbed = zone.isGrabbed
-            let        isEditing = textWidget.isFirstResponder
-            textWidget.textColor = isGrabbed ? zone.grabbedTextColor : gDefaultTextColor
+			let      zone = widgetZone {
+            let isGrabbed = zone.isGrabbed
+            let isEditing = textWidget.isFirstResponder
+
+			textWidget.updateTextColor()
 
 			if  (isGrabbed || isEditing) && !gIsPrinting {
                 drawSelectionHighlight(isEditing)

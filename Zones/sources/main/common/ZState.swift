@@ -68,11 +68,11 @@ var                 gFontSize:            CGFloat { return gGenericOffset.height
 var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
 var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : kBlackColor }
-var         gNecklaceDotColor:             ZColor { return gIsDark ? gAccentColor.inverted.darker(by: 5.0) :  gAccentColor.darker(by: 2.0) }
+var         gNecklaceDotColor:             ZColor { return gIsDark ? gAccentColor.inverted.darker(by: 5.0) : gAccentColor }
 var          gBackgroundColor:             ZColor { return gIsDark ? kBlackColor : kWhiteColor }
+var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
 var   gDarkishBackgroundColor:             ZColor { return gAccentColor.darkish (by: 1.028) }
 var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
-var   gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
 var   gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gLighterActiveColor }
 var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
@@ -136,6 +136,11 @@ var gClipBreadcrumbs : Bool {
 var gPowerUserMode : Bool {
 	get { return getPreferencesBool(   for: kPowerUserMode, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kPowerUserMode) }
+}
+
+var gColorfulMode : Bool {
+	get { return getPreferencesBool(   for: kColorfulMode, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kColorfulMode) }
 }
 
 var gShowAllBreadcrumbs : Bool {
@@ -207,12 +212,12 @@ var gFavoritesAreVisible: Bool {
 }
 
 var gAccentColor: ZColor {
-	get { return   getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) } //0.99 / 360.0, saturation: 0.13, brightness: kUnselectBrightness, alpha: 1)) }
+	get { return !gColorfulMode ? kLightGrayColor : getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) }
 	set { setPreferencesColor(newValue, for: kAccentColorKey) }
 }
 
 var gActiveColor: ZColor {
-	get { return   getPreferencesColor( for: kActiveColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
+	get { return !gColorfulMode ? kDarkGrayColor : getPreferencesColor( for: kActiveColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
 	set { setPreferencesColor(newValue, for: kActiveColorKey) }
 }
 

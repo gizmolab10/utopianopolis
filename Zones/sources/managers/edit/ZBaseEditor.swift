@@ -41,6 +41,7 @@ class ZBaseEditor: NSObject {
 			switch key {
 				case "a": if SPECIAL { gApplication.showHideAbout(); handled = true }
 				case "h": if COMMAND { gApplication.hide(nil);       handled = true }
+				case "k": if SPECIAL { toggleColorfulMode();         handled = true }
 				case "o": if SPECIAL { gFiles.showInFinder();        handled = true }
 				case "p": if SPECIAL { togglePowerUserMode();        handled = true }
 				case "q": if COMMAND { gApplication.terminate(self); handled = true }
@@ -106,6 +107,13 @@ class ZBaseEditor: NSObject {
 
 	func togglePowerUserMode() {
 		gPowerUserMode = !gPowerUserMode
+
+		signal([.sRelayout])
+	}
+
+	func toggleColorfulMode() {
+		gColorfulMode = !gColorfulMode
+
 		signal([.sRelayout])
 	}
 
