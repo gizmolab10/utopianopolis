@@ -1055,6 +1055,29 @@ extension Array where Element == Zone {
         return candidate
     }
 
+	mutating func reverse() {
+		if  count > 1 {
+			sort { (a, b) -> Bool in
+				return a.order < b.order
+			}
+
+			let   max = count - 1
+			let range = 0 ... max / 2
+
+			for index in range {
+				let a = self[index]
+				let b = self[max - index]
+				let o = a.order
+				a.order = b.order
+				b.order = o
+
+				a.maybeNeedSave()
+			}
+
+			gSelecting.hasNewGrab = gSelecting.currentMoveable
+		}
+	}
+
 }
 
 extension NSRange {

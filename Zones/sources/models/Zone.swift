@@ -2016,6 +2016,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         return nil
     }
 
+	func reverseChildren() {
+		children.reverse()
+		respectOrder()
+		redrawAndSync()
+	}
+
     func respectOrder() {
         children.sort { (a, b) -> Bool in
             return a.order < b.order

@@ -1397,48 +1397,28 @@ class ZGraphEditor: ZBaseEditor {
 
 
     func reverse() {
+		UNDO(self) { iUndoSelf in
+			iUndoSelf.reverse()
+		}
+
         var commonParent = gSelecting.firstSortedGrab?.parentZone ?? gSelecting.firstSortedGrab
         var        zones = gSelecting.simplifiedGrabs
         for zone in zones {
-            if let parent = zone.parentZone, parent != commonParent {
+            if  let parent = zone.parentZone, parent != commonParent {
                 return
             }
         }
 
-        if zones.count == 1 {
+        if  zones.count == 1 {
             commonParent = gSelecting.firstSortedGrab
             zones        = commonParent?.children ?? []
         }
 
-        if zones.count > 1 {
-            UNDO(self) { iUndoSelf in
-                iUndoSelf.reverse()
-            }
+		zones.reverse()
 
-            zones.sort { (a, b) -> Bool in
-                return a.order < b.order
-            }
-
-            let   max = zones.count - 1
-            let range = 0 ... max / 2
-
-            for index in range {
-                let a = zones[index]
-                let b = zones[max - index]
-                let o = a.order
-                a.order = b.order
-                b.order = o
-
-                a.maybeNeedSave()
-            }
-
-            gSelecting.hasNewGrab = gSelecting.currentMoveable
-
-            commonParent?.respectOrder()
-            redrawAndSync()
-        }
-    }
-
+		commonParent?.respectOrder()
+		redrawAndSync()
+	}
 
     func undoDelete() {
         gSelecting.ungrabAll()

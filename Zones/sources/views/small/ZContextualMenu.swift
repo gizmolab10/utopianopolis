@@ -43,7 +43,7 @@ class ZContextualMenu: NSMenu {
 				case "m": break // sort by length
 				case "n": zone?.showNote()
 				case "o": break // import
-				case "r": break // reverse
+				case "r": zone?.reverseChildren()
 				case "s": break // export
 				case "u": textWidget?.alterCase(up: true)
 				case "/": zone?.focus()
