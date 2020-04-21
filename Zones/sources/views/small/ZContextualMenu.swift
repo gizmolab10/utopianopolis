@@ -24,6 +24,8 @@ class ZContextualMenu: NSMenu {
 	}
 
 	func handleKey(_ key: String) {
+		gTemporarilySetMouseZone(zone)
+
 		if  let arrow = key.arrow {
 			switch arrow {
 				case .left:  zone?.applyGenerationally(false)
@@ -32,12 +34,17 @@ class ZContextualMenu: NSMenu {
 			}
 		} else {
 			switch key {
+				case "a": break // alphabetize
 				case "b": zone?.addBookmark()
-//				case "d": zone?.duplicate()
+				case "d": break // duplicate
 				case "e": zone?.editTrait(for: .tEmail)
 				case "h": zone?.editTrait(for: .tHyperlink)
 				case "l": textWidget?.alterCase(up: false)
+				case "m": break // sort by length
 				case "n": zone?.showNote()
+				case "o": break // import
+				case "r": break // reverse
+				case "s": break // export
 				case "u": textWidget?.alterCase(up: true)
 				case "/": zone?.focus()
 				default:  break

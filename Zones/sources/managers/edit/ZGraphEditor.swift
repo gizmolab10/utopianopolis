@@ -164,7 +164,7 @@ class ZGraphEditor: ZBaseEditor {
                     case ";", "'": gFavorites.switchToNext(key == "'") { self.redrawGraph() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     gSelecting.currentMoveable.addNextAndRedraw(containing: OPTION)
-						case kSpace:   if OPTION || isWindow || CONTROL { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
+					case kSpace:   if OPTION || CONTROL || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
                     case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) } else { gCurrentKeyPressed = nil; return false }
@@ -913,10 +913,8 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-    
     // MARK:- lines
     // MARK:-
-
     
     func convertToTitledLineAndRearrangeChildren() {
         delete(preserveChildren: true, convertToTitledLine: true)

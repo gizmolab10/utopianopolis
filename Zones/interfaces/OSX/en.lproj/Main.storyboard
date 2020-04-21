@@ -687,12 +687,6 @@ DQ
                                 <action selector="genericMenuHandler:" target="4NV-a6-tte" id="1qI-4N-K2i"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Note" keyEquivalent="n" id="JjR-iw-wF8">
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <connections>
-                                <action selector="genericMenuHandler:" target="4NV-a6-tte" id="V9q-lJ-siq"/>
-                            </connections>
-                        </menuItem>
                         <menuItem title="Bookmark" keyEquivalent="b" id="OrW-va-hQm">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
@@ -703,6 +697,12 @@ DQ
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="genericMenuHandler:" target="4NV-a6-tte" id="MBa-rG-heH"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Note" keyEquivalent="n" id="JjR-iw-wF8">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="4NV-a6-tte" id="V9q-lJ-siq"/>
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="lgs-g2-FQ6">
@@ -719,18 +719,41 @@ DQ
                                             <action selector="genericMenuHandler:" target="4NV-a6-tte" id="kTm-aH-am0"/>
                                         </connections>
                                     </menuItem>
-                                    <menuItem title="Hide" keyEquivalent="" id="KUM-aI-FlV">
+                                    <menuItem title="Hide" keyEquivalent="" id="KUM-aI-FlV">
                                         <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
                                         <connections>
                                             <action selector="genericMenuHandler:" target="4NV-a6-tte" id="VtK-9D-agL"/>
                                         </connections>
                                     </menuItem>
+                                    <menuItem isSeparatorItem="YES" id="1v9-XR-jq7">
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="8Vm-u6-Q5R"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Alphabetize" keyEquivalent="a" id="m3w-6h-erJ">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="R88-SR-jw9"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Sort by Length" keyEquivalent="m" id="oO1-Ea-tYr">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="6Z3-TQ-X8l"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Reverse Order" keyEquivalent="r" id="hqI-Qm-R1L">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="ZOO-mJ-R8u"/>
+                                        </connections>
+                                    </menuItem>
                                 </items>
                             </menu>
                         </menuItem>
-                        <menuItem title="Attach" id="Uh0-x2-DY6">
+                        <menuItem title="Attachment" id="Uh0-x2-DY6">
                             <modifierMask key="keyEquivalentModifierMask"/>
-                            <menu key="submenu" title="Attach" id="KW7-X0-P3N">
+                            <menu key="submenu" title="Attachment" id="KW7-X0-P3N">
                                 <items>
                                     <menuItem title="Email" keyEquivalent="e" id="ux2-Mm-B9S">
                                         <modifierMask key="keyEquivalentModifierMask"/>
@@ -750,13 +773,13 @@ DQ
                         <menuItem title="Case" id="VEf-lU-Oxx">
                             <menu key="submenu" title="Case" id="tJE-Wi-ISE">
                                 <items>
-                                    <menuItem title="Lowercase" keyEquivalent="l" id="JIZ-bf-x7L">
+                                    <menuItem title="Lower" keyEquivalent="l" id="JIZ-bf-x7L">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                         <connections>
                                             <action selector="genericMenuHandler:" target="4NV-a6-tte" id="QVd-QX-1J9"/>
                                         </connections>
                                     </menuItem>
-                                    <menuItem title="Uppercase" keyEquivalent="u" id="FgW-8Y-kTQ">
+                                    <menuItem title="Upper" keyEquivalent="u" id="FgW-8Y-kTQ">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                         <connections>
                                             <action selector="genericMenuHandler:" target="4NV-a6-tte" id="knd-sC-Oq9"/>
@@ -768,14 +791,14 @@ DQ
                         <menuItem title="File" id="ycJ-W4-Aat">
                             <menu key="submenu" title="File" id="dW0-3e-JXO">
                                 <items>
-                                    <menuItem title="Export" keyEquivalent="s" id="vZO-xB-VyO">
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="n1V-tc-viK"/>
-                                        </connections>
-                                    </menuItem>
                                     <menuItem title="Import" keyEquivalent="o" id="6b6-Cw-CAW">
                                         <connections>
                                             <action selector="genericMenuHandler:" target="4NV-a6-tte" id="Ib2-kH-HUe"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Export" keyEquivalent="s" id="vZO-xB-VyO">
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="n1V-tc-viK"/>
                                         </connections>
                                     </menuItem>
                                 </items>
@@ -784,7 +807,7 @@ DQ
                     </items>
                 </menu>
             </objects>
-            <point key="canvasLocation" x="332" y="1125"/>
+            <point key="canvasLocation" x="17" y="1125"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -944,7 +967,7 @@ DQ
                 </viewController>
                 <customObject id="LOz-oN-o0B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="21" y="1125"/>
+            <point key="canvasLocation" x="328" y="1125"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -1107,7 +1130,7 @@ DQ
                 </viewController>
                 <customObject id="IZh-Iz-IVH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="962" y="1451"/>
+            <point key="canvasLocation" x="636" y="1493"/>
         </scene>
         <!--Breadcrumbs Controller-->
         <scene sceneID="wXo-la-8OL">

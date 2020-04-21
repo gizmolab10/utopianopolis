@@ -91,7 +91,7 @@ class ZTextPack: NSObject {
 
 	convenience init(_ iZRecord: ZRecord) {
         self.init()
-        self.edit(iZRecord)
+        self.setup(for: iZRecord)
     }
 
 
@@ -99,19 +99,16 @@ class ZTextPack: NSObject {
         textWidget?.text = isEditing ? unwrappedName : textWithSuffix
     }
 
-
-    func edit(_ iZRecord: ZRecord) {
+    func setup(for iZRecord: ZRecord) {
         packedTrait      = iZRecord as? ZTrait
         packedZone       = iZRecord as? Zone ?? packedTrait?.ownerZone
         originalText     = unwrappedName
         textWidget?.text = originalText
     }
 
-
     func isEditing(_ iZRecord: ZRecord) -> Bool {
         return packedZone == iZRecord || packedTrait == iZRecord
     }
-
 
     func updateWidgetsForEndEdit() {
         if  let t = textWidget {
@@ -127,7 +124,6 @@ class ZTextPack: NSObject {
             w.setNeedsDisplay()
         }
     }
-
 
     func capture(_ iText: String?) {
         let text           = iText == displayType ? nil : iText
@@ -167,7 +163,10 @@ class ZTextPack: NSObject {
 
 
     func captureTextAndSync(_ iText: String?) {
-        if  originalText             != iText {
+		if  originalText             == unwrappedName,
+			let                  type = packedTrait?.traitType {
+			packedZone?.removeTrait(for: type)
+		} else if originalText != iText {
             let               newText = removeSuffix(from: iText)
             gTextCapturing            = true
 
@@ -183,14 +182,14 @@ class ZTextPack: NSObject {
 
             captureTextAndUpdateWidgets(newText)
 
-            if  packedTrait == nil { // only if zone name is being edited
-                updateBookmarkAssociates()
-            }
+			if  packedTrait == nil { // only if zone name is being edited
+				updateBookmarkAssociates()
+			}
+		}
 
-            gTextCapturing = false
+		gTextCapturing = false
 
-            redrawAndSync()
-        }
+		redrawAndSync()
     }
 
     
@@ -270,13 +269,6 @@ class ZTextEditor: ZTextView {
         return pack
     }
 
-//	@discardableResult func edit(_ zRecord: ZRecord, andSelect text: String?) -> ZTextEditor {
-//		edit(zRecord)
-//		selectText(text)
-//
-//		return self
-//    }
-
     @discardableResult func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, immediately: Bool = false) -> ZTextEditor {
         if  (currentEdit   == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
             let        pack = ZTextPack(zRecord)
@@ -290,7 +282,7 @@ class ZTextEditor: ZTextView {
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
 				gSetEditIdeaMode()
 
-				if  let textWidget = self.currentTextWidget {
+				if  let textWidget = currentTextWidget {
 					textWidget.enableUndo()
 					textWidget.layoutTextField()
 					textWidget.becomeFirstResponder()

@@ -143,16 +143,18 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
                         remaining  -= 1
 
 						for record in results {
-							if  cloud.maybeZRecordForCKRecord(record) == nil {
-								if  record.recordType != kTraitType {
-									orphans.append(record) // remove unregistered zones from results
+							if  let trait = cloud.maybeZRecordForCKRecord(record) as? ZTrait {
+								if  trait.ownerZone == nil {
+									orphans.append(record) // remove unowned traits from results
+								}
+							} else if record.recordType != kTraitType {
+								orphans.append(record) // remove unregistered zones from results
+							} else {
+								let trait = ZTrait(record: record, databaseID: dbID)
+								if  trait.ownerZone != nil {
+									cloud.registerZRecord(trait) // some records are being fetched first time
 								} else {
-									let trait = ZTrait(record: record, databaseID: dbID)
-									if  trait.ownerZone != nil {
-										cloud.registerZRecord(trait) // some records are being fetched first time
-									} else {
-										orphans.append(record) // remove unowned traits from results
-									}
+									orphans.append(record) // remove unowned traits from results
 								}
 							}
 						}

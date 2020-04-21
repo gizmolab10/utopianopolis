@@ -1291,17 +1291,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func         addToGrab() { gSelecting.addMultipleGrabs([self]) }
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
-	func          showNote() { gFocusRing      .invokeEssay(self) }
 	func             focus() { gFocusRing          .focusOn(self) { self.redrawGraph() } }
 	@discardableResult func edit() -> ZTextEditor? { return gTextEditor.edit(self) }
-
-	func editTrait(for iType: ZTraitType) {
-		if  let  zone = gSelecting.firstSortedGrab {
-			let trait = zone.traitFor(iType)
-
-			gTextEditor.edit(trait)
-		}
-	}
+	func editTrait(for iType: ZTraitType) { gTextEditor.edit(traitFor(iType)) }
 
 	func resolveAndSelect(_ searchText: String?) {
 		gHere = self
@@ -1515,6 +1507,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		trait?.needDestroy()
 		needSave()
+	}
+
+	func showNote() {
+		gCreateCombinedEssay = false
+		gCurrentEssay        = note
+
+		gControllers.swapGraphAndEssay(force: .noteMode)
 	}
 
     // MARK:- traverse ancestors
