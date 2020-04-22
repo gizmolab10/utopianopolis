@@ -130,7 +130,7 @@ class ZGraphEditor: ZBaseEditor {
 
                     switch key {
 					case "a":      if COMMAND { selectAll(progeny: OPTION) } else { alphabetize(OPTION) }
-                    case "b":      addBookmark()
+                    case "b":      gSelecting.firstSortedGrab?.addBookmark()
 					case "c":      if COMMAND { copyToPaste() } else { gGraphController?.recenter() }
 					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 					case "e":      gSelecting.firstSortedGrab?.editTrait(for: .tEmail)
@@ -574,7 +574,6 @@ class ZGraphEditor: ZBaseEditor {
 		redrawAndSync()
     }
 
-
     func rotateWritable() {
         for zone in gSelecting.currentGrabs {
             zone.rotateWritable()
@@ -582,7 +581,6 @@ class ZGraphEditor: ZBaseEditor {
 
         redrawAndSync()
     }
-
 
     func alphabetize(_ iBackwards: Bool = false) {
         alterOrdering { iZones -> (ZoneArray) in
@@ -594,7 +592,6 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
     }
-
 
     func orderByLength(_ iBackwards: Bool = false) {
         let font = gWidgetFont
@@ -608,7 +605,6 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
     }
-
 
     func alterOrdering(_ iBackwards: Bool = false, with sortClosure: ZonesToZonesClosure) {
         var commonParent = gSelecting.firstSortedGrab?.parentZone ?? gSelecting.firstSortedGrab
@@ -640,7 +636,6 @@ class ZGraphEditor: ZBaseEditor {
 
         gSelecting.hasNewGrab = gSelecting.currentMoveable
     }
-
 
     func alterCase(up: Bool) {
         for grab in gSelecting.currentGrabs {
@@ -810,75 +805,6 @@ class ZGraphEditor: ZBaseEditor {
     // MARK:- reveal dot
     // MARK:-
 
-    func generationalUpdate(show: Bool, zone: Zone, to iLevel: Int? = nil, onCompletion: Closure?) {
-        recursiveUpdate(show, zone, to: iLevel) {
-
-            // ////////////////////////////////////////////////////////
-            // delay executing this until the last time it is called //
-            // ////////////////////////////////////////////////////////
-
-            onCompletion?()
-        }
-    }
-
-
-    func recursiveUpdate(_ show: Bool, _ zone: Zone, to iLevel: Int?, onCompletion: Closure?) {
-        if !show && zone.isGrabbed && (zone.count == 0 || !zone.showingChildren) {
-
-            // ///////////////////////////////
-            // COLLAPSE OUTWARD INTO PARENT //
-            // ///////////////////////////////
-
-            zone.concealAllProgeny()
-
-			zone.revealParentAndSiblings()
-
-			if let  parent = zone.parentZone, parent != zone {
-				if  gHere == zone {
-					gHere  = parent
-				}
-
-				self.recursiveUpdate(show, parent, to: iLevel) {
-					parent.grab()
-					onCompletion?()
-				}
-			} else {
-				onCompletion?()
-			}
-        } else {
-
-            // /////////////////
-            // ALTER CHILDREN //
-            // /////////////////
-
-            let level = iLevel ?? zone.level + (show ? 1 : -1)
-            let apply = {
-                zone.traverseAllProgeny { iChild in
-                    if           !iChild.isBookmark {
-                        if        iChild.level >= level && !show {
-                                  iChild.concealChildren()
-                        } else if iChild.level  < level && show {
-                                  iChild.revealChildren()
-                        }
-                    }
-                }
-
-                if zone.isInFavorites && show {
-                    gFavorites.updateAllFavorites()
-                }
-
-                onCompletion?()
-            }
-
-            if !show {
-                gSelecting.deselectGrabsWithin(zone);
-            }
-
-            apply()
-        }
-    }
-
-
 	func clickActionOnRevealDot(for iZone: Zone?, COMMAND: Bool, OPTION: Bool) {
         if  let zone = iZone {
             gTextEditor.stopCurrentEdit()
@@ -921,35 +847,8 @@ class ZGraphEditor: ZBaseEditor {
     }
 	
 	func swapWithParent() {
-		let scratchZone = Zone()
-
-        // swap places with parent
-
-		if  gSelecting.currentGrabs.count == 1,
-            let  grabbed = gSelecting.firstSortedGrab,
-            let grabbedI = grabbed.siblingIndex,
-            let   parent = grabbed.parentZone,
-            let  parentI = parent.siblingIndex,
-			let   grandP = parent.parentZone {
-			
-			self.moveZones(grabbed.children, into: scratchZone) {
-				grabbed.moveZone(into: grandP, at: parentI, orphan: true) {
-					self.moveZones(parent.children, into: grabbed) {
-						parent.moveZone(into: grabbed, at: grabbedI, orphan: true) {
-							self.moveZones(scratchZone.children, into: parent) {
-								parent.needCount()
-								parent.grab()
-
-								if  gHere == parent {
-									gHere  = grabbed
-								}
-
-								self.redrawAndSync(grabbed)
-							}
-						}
-					}
-				}
-			}
+		if  gSelecting.currentGrabs.count == 1 {
+			gSelecting.firstSortedGrab?.swapWithParent()
 		}
     }
     
@@ -978,19 +877,9 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
     }
-
-
-    // MARK:- add
-    // MARK:-
-
-	func addBookmark() { gSelecting.firstSortedGrab?.addBookmark() }
     
     // MARK:- copy and paste
     // MARK:-
-    
-
-    func paste() { pasteInto(gSelecting.firstSortedGrab) }
-
 
     func copyToPaste() {
         let grabs = gSelecting.simplifiedGrabs
@@ -1438,6 +1327,7 @@ class ZGraphEditor: ZBaseEditor {
         redrawAndSync()
     }
 
+	func paste() { pasteInto(gSelecting.firstSortedGrab) }
 
     func pasteInto(_ iZone: Zone? = nil, honorFormerParents: Bool = false) {
         let      pastables = gSelecting.pasteableZones

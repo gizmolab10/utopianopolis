@@ -45,6 +45,7 @@ class ZContextualMenu: NSMenu {
 				case "o": break // import
 				case "r": zone?.reverseChildren()
 				case "s": break // export
+				case "t": zone?.swapWithParent()
 				case "u": textWidget?.alterCase(up: true)
 				case "/": zone?.focus()
 				default:  break

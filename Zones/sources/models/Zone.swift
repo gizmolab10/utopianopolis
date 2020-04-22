@@ -880,7 +880,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 							onCompletion?(child)
 						}
 					} else {
-						self.moveZones(zones) {
+						self.acquireZones(zones) {
 							self.redrawGraph() {
 								onCompletion?(child)
 								gControllers.sync()
@@ -892,7 +892,38 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func moveZones(_ zones: ZoneArray, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
+	func swapWithParent() {
+		let scratchZone = Zone()
+
+		// swap places with parent
+
+		if  let grabbedI = siblingIndex,
+			let   parent = parentZone,
+			let  parentI = parent.siblingIndex,
+			let   grandP = parent.parentZone {
+
+			scratchZone.acquireZones(children) {
+				self.moveZone(into: grandP, at: parentI, orphan: true) {
+					self.acquireZones(parent.children) {
+						parent.moveZone(into: self, at: grabbedI, orphan: true) {
+							parent.acquireZones(scratchZone.children) {
+								parent.needCount()
+								parent.grab()
+
+								if  gHere == parent {
+									gHere  = self
+								}
+
+								self.redrawAndSync(self)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	func acquireZones(_ zones: ZoneArray, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
 		revealChildren()
 		needChildren()
 
@@ -1139,148 +1170,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else {
 			onCompletion?()
-		}
-	}
-
-	func createChildIdeaFromSelectedText() {
-		if  let childName  = widget?.textWidget.extractTitleOrSelectedText() {
-
-			gTextEditor.stopCurrentEdit()
-
-			if  childName == zoneName {
-				combineIntoParent()
-			} else {
-				self.deferRedraw {
-					addIdea(at: gListsGrowDown ? nil : 0, with: childName) { iChild in
-						gDeferRedraw = false
-
-						self.redrawAndSync {
-							let e = iChild?.edit()
-
-							FOREGROUND(after: 0.2) {
-								e?.selectAllText()
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	func combineIntoParent() {
-		if  let      parent = parentZone,
-			let    original = parent.zoneName {
-			let   childName = zoneName ?? ""
-			let childLength = childName.length
-			let    combined = original.stringBySmartly(appending: childName)
-			let       range = NSMakeRange(combined.length - childLength, childLength)
-			parent.zoneName = combined
-			parent.extractTraits  (from: self)
-			parent.extractChildren(from: self)
-
-			self.deferRedraw {
-				self.moveZone(to: gTrash)
-				redrawAndSync(self) {
-					gDeferRedraw = false
-
-					gDragView?.setAllSubviewsNeedDisplay()
-					parent.editAndSelect(range: range)
-				}
-			}
-		}
-	}
-
-	// MARK:- reveal dot
-	// MARK:-
-
-	func applyGenerationally(_ show: Bool, extreme: Bool = false) {
-		if  let zone = gSelecting.rootMostMoveable {
-			var level: Int?
-
-			if !show {
-				level = extreme ? zone.level - 1 : zone.highestExposed - 1
-			} else if  extreme {
-				level = Int.max
-			} else if let lowest = zone.lowestExposed {
-				level = lowest + 1
-			}
-
-			generationalUpdate(show: show, to: level) {
-				self.redrawGraph()
-			}
-		}
-	}
-
-	func expand(_ show: Bool) {
-		generationalUpdate(show: show) {
-			self.redrawGraph()
-		}
-	}
-
-	func generationalUpdate(show: Bool, to iLevel: Int? = nil, onCompletion: Closure?) {
-		recursiveUpdate(show, to: iLevel) {
-
-			// ////////////////////////////////////////////////////////
-			// delay executing this until the last time it is called //
-			// ////////////////////////////////////////////////////////
-
-			onCompletion?()
-		}
-	}
-
-	func recursiveUpdate(_ show: Bool, to iLevel: Int?, onCompletion: Closure?) {
-		if !show && isGrabbed && (count == 0 || !showingChildren) {
-
-			// ///////////////////////////////
-			// COLLAPSE OUTWARD INTO PARENT //
-			// ///////////////////////////////
-
-			concealAllProgeny()
-
-			revealParentAndSiblings()
-
-			if let  parent = parentZone, parent != self {
-				if  gHere == self {
-					gHere  = parent
-				}
-
-				parent.recursiveUpdate(show, to: iLevel) {
-					parent.grab()
-					onCompletion?()
-				}
-			} else {
-				onCompletion?()
-			}
-		} else {
-
-			// /////////////////
-			// ALTER CHILDREN //
-			// /////////////////
-
-			let  goal = iLevel ?? level + (show ? 1 : -1)
-			let apply = {
-				self.traverseAllProgeny { iChild in
-					if           !iChild.isBookmark {
-						if        iChild.level >= goal && !show {
-							iChild.concealChildren()
-						} else if iChild.level  < goal &&  show {
-							iChild.revealChildren()
-						}
-					}
-				}
-
-				if  self.isInFavorites && show {
-					gFavorites.updateAllFavorites()
-				}
-
-				onCompletion?()
-			}
-
-			if !show {
-				gSelecting.deselectGrabsWithin(self);
-			}
-
-			apply()
 		}
 	}
 
@@ -1958,6 +1847,145 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
         return false
     }
+
+	func createChildIdeaFromSelectedText() {
+		if  let childName  = widget?.textWidget.extractTitleOrSelectedText() {
+
+			gTextEditor.stopCurrentEdit()
+
+			if  childName == zoneName {
+				combineIntoParent()
+			} else {
+				self.deferRedraw {
+					addIdea(at: gListsGrowDown ? nil : 0, with: childName) { iChild in
+						gDeferRedraw = false
+
+						self.redrawAndSync {
+							let e = iChild?.edit()
+
+							FOREGROUND(after: 0.2) {
+								e?.selectAllText()
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	func combineIntoParent() {
+		if  let      parent = parentZone,
+			let    original = parent.zoneName {
+			let   childName = zoneName ?? ""
+			let childLength = childName.length
+			let    combined = original.stringBySmartly(appending: childName)
+			let       range = NSMakeRange(combined.length - childLength, childLength)
+			parent.zoneName = combined
+			parent.extractTraits  (from: self)
+			parent.extractChildren(from: self)
+
+			self.deferRedraw {
+				self.moveZone(to: gTrash)
+				redrawAndSync(self) {
+					gDeferRedraw = false
+
+					gDragView?.setAllSubviewsNeedDisplay()
+					parent.editAndSelect(range: range)
+				}
+			}
+		}
+	}
+
+	func applyGenerationally(_ show: Bool, extreme: Bool = false) {
+		if  let zone = gSelecting.rootMostMoveable {
+			var level: Int?
+
+			if !show {
+				level = extreme ? zone.level - 1 : zone.highestExposed - 1
+			} else if  extreme {
+				level = Int.max
+			} else if let lowest = zone.lowestExposed {
+				level = lowest + 1
+			}
+
+			generationalUpdate(show: show, to: level) {
+				self.redrawGraph()
+			}
+		}
+	}
+
+	func expand(_ show: Bool) {
+		generationalUpdate(show: show) {
+			self.redrawGraph()
+		}
+	}
+
+	func generationalUpdate(show: Bool, to iLevel: Int? = nil, onCompletion: Closure?) {
+		recursiveUpdate(show, to: iLevel) {
+
+			// ////////////////////////////////////////////////////////
+			// delay executing this until the last time it is called //
+			// ////////////////////////////////////////////////////////
+
+			onCompletion?()
+		}
+	}
+
+	func recursiveUpdate(_ show: Bool, to iLevel: Int?, onCompletion: Closure?) {
+		if !show && isGrabbed && (count == 0 || !showingChildren) {
+
+			// ///////////////////////////////
+			// COLLAPSE OUTWARD INTO PARENT //
+			// ///////////////////////////////
+
+			concealAllProgeny()
+
+			revealParentAndSiblings()
+
+			if let  parent = parentZone, parent != self {
+				if  gHere == self {
+					gHere  = parent
+				}
+
+				parent.recursiveUpdate(show, to: iLevel) {
+					parent.grab()
+					onCompletion?()
+				}
+			} else {
+				onCompletion?()
+			}
+		} else {
+
+			// /////////////////
+			// ALTER CHILDREN //
+			// /////////////////
+
+			let  goal = iLevel ?? level + (show ? 1 : -1)
+			let apply = {
+				self.traverseAllProgeny { iChild in
+					if           !iChild.isBookmark {
+						if        iChild.level >= goal && !show {
+							iChild.concealChildren()
+						} else if iChild.level  < goal &&  show {
+							iChild.revealChildren()
+						}
+					}
+				}
+
+				if  self.isInFavorites && show {
+					gFavorites.updateAllFavorites()
+				}
+
+				onCompletion?()
+			}
+
+			if !show {
+				gSelecting.deselectGrabsWithin(self);
+			}
+
+			apply()
+		}
+	}
 
     func extractChildren(from: Zone) {
         for child in from.children.reversed() {

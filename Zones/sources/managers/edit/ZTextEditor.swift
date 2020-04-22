@@ -163,10 +163,10 @@ class ZTextPack: NSObject {
 
 
     func captureTextAndSync(_ iText: String?) {
-		if  originalText             == unwrappedName,
+		if                     iText == unwrappedName,
 			let                  type = packedTrait?.traitType {
 			packedZone?.removeTrait(for: type)
-		} else if originalText != iText {
+		} else if              iText != originalText {
             let               newText = removeSuffix(from: iText)
             gTextCapturing            = true
 

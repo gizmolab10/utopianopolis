@@ -705,6 +705,12 @@ DQ
                                 <action selector="genericMenuHandler:" target="4NV-a6-tte" id="V9q-lJ-siq"/>
                             </connections>
                         </menuItem>
+                        <menuItem title="Swap with Parent" keyEquivalent="t" id="Ct9-qU-LLL">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="4NV-a6-tte" id="3Oe-vx-n6P"/>
+                            </connections>
+                        </menuItem>
                         <menuItem isSeparatorItem="YES" id="lgs-g2-FQ6">
                             <connections>
                                 <action selector="genericMenuHandler:" target="4NV-a6-tte" id="EmC-2e-Abv"/>
