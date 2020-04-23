@@ -344,7 +344,7 @@ class ZRecords: NSObject {
     }
 
     func adoptAll(moveOrphansToLost: Bool = false) {
-        let states = [ZRecordState.needsAdoption]
+        let states = [ZRecordState.needsAdoption] // just one state
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
             if  let zRecord = maybeZRecordForRecordName(iRecordName) {

@@ -187,11 +187,11 @@ class ZRemoteStorage: NSObject {
 				switch (notification.queryNotificationReason) {
 					case .recordCreated, .recordUpdated:
 						cloud.addCKRecord(ckRecord, for: [.needsFetch])
-						gControllers.redrawAndSync()
+						self.redrawAndSync()
 					case .recordDeleted:
 						if  let deleted = cloud.maybeZoneForCKRecord(ckRecord) {
 							gGraphEditor.deleteZones([deleted], permanently: true) {
-								gControllers.redrawAndSync()
+								self.redrawAndSync()
 							}
 					}
 				}

@@ -102,12 +102,6 @@ class ZBaseEditor: NSObject {
 		}
 	}
 
-	func togglePowerUserMode() {
-		gPowerUserMode = !gPowerUserMode
-
-		signal([.sRelayout])
-	}
-
 	func toggleColorfulMode() {
 		gColorfulMode = !gColorfulMode
 

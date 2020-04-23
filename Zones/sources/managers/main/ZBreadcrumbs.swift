@@ -13,7 +13,7 @@ let gBreadcrumbs = ZBreadcrumbs()
 class ZBreadcrumbs: NSObject {
 
 	var crumbDBID   : ZDatabaseID? { return crumbsRootZone?.databaseID }
-	var crumbZones  : [Zone]       { return crumbsRootZone?.ancestralPath ?? [] }
+	var crumbZones  : ZoneArray    { return crumbsRootZone?.ancestralPath ?? [] }
 
 	var indexOfHere : Int? {
 		for (index, zone) in crumbZones.enumerated() {

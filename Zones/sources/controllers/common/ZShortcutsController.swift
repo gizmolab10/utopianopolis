@@ -44,7 +44,7 @@ class ZShortcutsController: ZGenericTableController {
     }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		// look for changes in work mode
+		genericTableView?.reloadData()
 	}
     
     func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
@@ -56,7 +56,8 @@ class ZShortcutsController: ZGenericTableController {
 			switch key {
 				case "?", "/":         gControllers.showShortcuts()
 				case "a": if SPECIAL { gApplication.showHideAbout() }
-				case "p":              view.printView()
+				case "p": if SPECIAL { togglePowerUserMode() } else { view.printView() }
+				case "q": gApplication.terminate(self)
 				case "r": if COMMAND { sendEmailBugReport() }
 				case "w": if COMMAND { gControllers.showShortcuts(false) }
 				

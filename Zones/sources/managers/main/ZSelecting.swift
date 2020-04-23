@@ -390,14 +390,9 @@ class ZSelecting: NSObject {
     
     
     private func firstGrab(using: ZoneArray? = nil) -> Zone? {
-		let grabs = (using == nil || using!.count == 0) ? currentGrabs : using!
-        let count = grabs.count
-        var grabbed: Zone?
-        
-        if  count > 0 {
-            grabbed = grabs[0]
-        }
-        
+		let   grabs = (using == nil || using!.count == 0) ? currentGrabs : using!
+		var grabbed = grabs.first
+
         if  grabbed == nil || grabbed!.record == nil {
             grabbed = gHereMaybe ?? currentMovableMaybe
         }
@@ -408,12 +403,7 @@ class ZSelecting: NSObject {
     
     private func lastGrab(using: ZoneArray? = nil) -> Zone {
         let grabs = using == nil ? currentGrabs : using!
-        let count = grabs.count
-        var grabbed: Zone?
-        
-        if  count > 0 {
-            grabbed = grabs[count - 1]
-        }
+		var grabbed = grabs.last
         
         if  grabbed == nil || grabbed!.record == nil {
             grabbed = gHere

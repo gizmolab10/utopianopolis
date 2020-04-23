@@ -25,8 +25,6 @@ class ZRingController: ZGenericController, ZGestureRecognizerDelegate, ZScrollDe
 			ringView?.updateGeometry()
 			ringView?.updateNecklace(doNotResignal: true)
 		}
-
-		ringView?.isHidden = !gPowerUserMode
 	}
 
 }

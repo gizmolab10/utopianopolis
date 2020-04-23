@@ -69,7 +69,7 @@ var               gWidgetFont:              ZFont { return .systemFont(ofSize: g
 var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
 var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : kBlackColor }
 var         gNecklaceDotColor:             ZColor { return gIsDark ? gAccentColor.inverted.darker(by: 5.0) : gAccentColor }
-var          gBackgroundColor:             ZColor { return gIsDark ? kBlackColor : kWhiteColor }
+var          gBackgroundColor:             ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
 var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
 var   gDarkishBackgroundColor:             ZColor { return gAccentColor.darkish (by: 1.028) }
 var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }

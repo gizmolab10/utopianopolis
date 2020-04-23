@@ -129,7 +129,7 @@ class ZGraphEditor: ZBaseEditor {
 					gCurrentKeyPressed = key
 
                     switch key {
-					case "a":      if COMMAND { selectAll(progeny: OPTION) } else { alphabetize(OPTION) }
+					case "a":      if COMMAND { selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION) }
                     case "b":      gSelecting.firstSortedGrab?.addBookmark()
 					case "c":      if COMMAND { copyToPaste() } else { gGraphController?.recenter() }
 					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
@@ -140,7 +140,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "l":      alterCase(up: false)
 					case "j":      gControllers.updateRingState(SPECIAL)
 					case "k":      toggleColorized()
-                    case "m":      orderByLength(OPTION)
+                    case "m":      gSelecting.simplifiedGrabs.sortByLength(OPTION)
                     case "n":      grabOrEdit(true, OPTION)
                     case "o":      gFiles.importFromFile(OPTION ? .eOutline : .eSeriously, insertInto: gSelecting.currentMoveable) { self.redrawAndSync() }
                     case "p":      printCurrentFocus()
@@ -434,17 +434,20 @@ class ZGraphEditor: ZBaseEditor {
 
 		// plain is fetch children
 		// COMMAND alone is fetch all
-		// OPTION alone or both is all progeny
+		// OPTION is all progeny
+		// both is force adoption of selected
 
-		if  COMMAND && !OPTION {    // COMMAND alone
+		if         COMMAND &&  OPTION {
+			gSelecting.simplifiedGrabs.assureAdoption()   // finish what fetch has done
+		} else if  COMMAND && !OPTION {                   // COMMAND alone
 			gBatches.refetch { iSame in
 				self.redrawGraph()
 			}
 		} else {
 			for grab in gSelecting.currentGrabs {
-				if !OPTION {    // plain
+				if !OPTION {                              // plain
 					grab.reallyNeedChildren()
-				} else {        // OPTION alone or both
+				} else {                                  // OPTION alone or both
 					grab.reallyNeedProgeny()
 				}
 			}
@@ -580,61 +583,6 @@ class ZGraphEditor: ZBaseEditor {
         }
 
         redrawAndSync()
-    }
-
-    func alphabetize(_ iBackwards: Bool = false) {
-        alterOrdering { iZones -> (ZoneArray) in
-            return iZones.sorted { (a, b) -> Bool in
-                let aName = a.unwrappedName
-                let bName = b.unwrappedName
-
-                return iBackwards ? (aName > bName) : (aName < bName)
-            }
-        }
-    }
-
-    func orderByLength(_ iBackwards: Bool = false) {
-        let font = gWidgetFont
-
-        alterOrdering { iZones -> (ZoneArray) in
-            return iZones.sorted { (a, b) -> Bool in
-                let aLength = a.zoneName?.widthForFont(font) ?? 0
-                let bLength = b.zoneName?.widthForFont(font) ?? 0
-
-                return iBackwards ? (aLength > bLength) : (aLength < bLength)
-            }
-        }
-    }
-
-    func alterOrdering(_ iBackwards: Bool = false, with sortClosure: ZonesToZonesClosure) {
-        var commonParent = gSelecting.firstSortedGrab?.parentZone ?? gSelecting.firstSortedGrab
-        var        zones = gSelecting.simplifiedGrabs
-
-        for zone in zones {
-            if let parent = zone.parentZone, parent != commonParent {
-                // status bar -> not all of the grabbed zones share the same parent
-                return
-            }
-        }
-
-        if  zones.count == 1 {
-            commonParent = gSelecting.firstSortedGrab
-            zones        = commonParent?.children ?? []
-        }
-
-        commonParent?.children.updateOrder()
-
-        if  zones.count > 1 {
-            let (start, end) = zones.orderLimits()
-            zones            = sortClosure(zones)
-
-            zones.updateOrdering(start: start, end: end)
-            commonParent?.respectOrder()
-            commonParent?.children.updateOrder()
-            redrawAndSync()
-        }
-
-        gSelecting.hasNewGrab = gSelecting.currentMoveable
     }
 
     func alterCase(up: Bool) {
@@ -1492,7 +1440,6 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
     }
-
 
     func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, _ CONTROL: Bool, onCompletion: Closure?) {
 

@@ -49,7 +49,7 @@ class ZRingView: ZView {
 	override func draw(_ iDirtyRect: CGRect) {
 		super.draw(iDirtyRect)
 
-		if !gIsReadyToShowUI { return }
+		if !gIsReadyToShowUI || !gPowerUserMode { return }
 
 		let color = gNecklaceDotColor
 

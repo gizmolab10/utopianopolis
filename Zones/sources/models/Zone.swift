@@ -156,8 +156,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	var ancestralPath:   [Zone] {
-		var results = [Zone]()
+	var ancestralPath: ZoneArray {
+		var  results = ZoneArray()
 
 		traverseAllAncestors { ancestor in
 			results.append(ancestor)
@@ -193,8 +193,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	var zonesWithNotes: [Zone] {
-		var    result = [Zone]()
+	var zonesWithNotes: ZoneArray {
+		var    result = ZoneArray()
 
 		traverseAllProgeny { zone in
 			if  zone.hasTrait(for: .tNote) {
@@ -816,7 +816,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				bookmark?.grab()
 				bookmark?.markNotFetched()
-				gControllers.redrawAndSync()
+				self.redrawAndSync()
 			}
 
 			if  gHere != self {
@@ -843,6 +843,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addIdea() {
 		if !isBookmark,
 			userCanMutateProgeny {
+			revealChildren()
 			addIdea(at: gListsGrowDown ? nil : 0) { iChild in
 				gControllers.signalFor(self.parentZoneMaybe, regarding: .sRelayout) {
 					iChild?.edit()
@@ -1163,7 +1164,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 					movedZone = movedZone.deepCopy
 
-					gControllers.redrawAndSync {
+					redrawAndSync {
 						grabAndTravel()
 					}
 				}
@@ -1224,7 +1225,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             
             if !(CLICKTWICE && self == gHere) {
                 gFocusRing.focus(kind: .eSelected) {
-                    gGraphEditor.redrawAndSync()
+                    self.redrawAndSync()
                 }
             }
         } else if isGrabbed && gCurrentlyEditingWidget == nil {
@@ -1743,6 +1744,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	override var isAdoptable: Bool { return parent != nil || parentLink != nil }
 
+	// adopt recursively
+
     override func adopt(moveOrphansToLost: Bool = false) {
 		if  isRoot {
 			removeState(.needsAdoption)
@@ -1752,13 +1755,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				p.addChildAndRespectOrder(self)
 				removeState(.needsAdoption)
 
-//				if  databaseID == .mineID {
-//					printDebug(.dadopt, "z \(self)")
-//				}
-
 				if  p.parentZone == nil, !p.isRoot {
 					p.needAdoption()
-					p.adopt()
+					p.adopt() // recurse on ancestor
 				}
 			} else if moveOrphansToLost, let r = record, r.isOrphaned {
 				gLostAndFound?.addChild(self)

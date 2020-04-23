@@ -15,7 +15,6 @@ import CloudKit
     import UIKit
 #endif
 
-typealias               ZoneArray = [Zone]
 typealias            ZRecordArray = [ZRecord]
 typealias           ZObjectsArray = [NSObject]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
@@ -123,9 +122,9 @@ extension NSObject {
 		gControllers.signalFor(nil, multiple: multiple)
 	}
 
-    func redrawAndSync(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
-        gControllers.signalAndSync(zone, regarding: .sRelayout, onCompletion: onCompletion)
-    }
+	func redrawAndSync(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
+		gControllers.signalAndSync(zone, regarding: .sRelayout, onCompletion: onCompletion)
+	}
 
     @discardableResult func detectWithMode(_ dbID: ZDatabaseID, block: ToBooleanClosure) -> Bool {
         gRemoteStorage.pushDatabaseID(dbID)
@@ -136,6 +135,12 @@ extension NSObject {
         
         return result
     }
+
+	func togglePowerUserMode() {
+		gPowerUserMode = !gPowerUserMode
+
+		signal([.sRelayout])
+	}
 
     func invokeUsingDatabaseID(_ dbID: ZDatabaseID?, block: Closure) {
         if  dbID != nil && dbID != gDatabaseID {
@@ -946,140 +951,6 @@ extension Array {
 
 }
 
-extension Array where Element == Zone {
-
-    func updateOrder() { updateOrdering(start: 0.0, end: 1.0) }
-
-    func orderLimits() -> (start: Double, end: Double) {
-        var start = 1.0
-        var   end = 0.0
-        
-        for zone in self {
-            let  order = zone.order
-            let  after = order > end
-            let before = order < start
-            
-            if  before {
-                start  = order
-            }
-            
-            if  after {
-                end    = order
-            }
-        }
-        
-        return (start, end)
-    }
-
-    func sortedByReverseOrdering() -> Array {
-        return sorted { (a, b) -> Bool in
-            return a.order > b.order
-        }
-    }
-
-    func updateOrdering(start: Double, end: Double) {
-        let increment = (end - start) / Double(self.count + 2)
-        
-        for (index, child) in self.enumerated() {
-            let newOrder = start + (increment * Double(index + 1))
-            let    order = child.order
-            
-            if  order      != newOrder {
-                child.order = newOrder
-                
-                child.maybeNeedSave()
-            }
-        }
-        
-        gSelecting.updateCousinList()
-    }
-
-    func traverseAncestors(_ block: ZoneToStatusClosure) {
-        for zone in self {
-            zone.safeTraverseAncestors(visited: [], block)
-        }
-    }
-
-    func traverseAllAncestors(_ block: @escaping ZoneClosure) {
-        for zone in self {
-            zone.safeTraverseAncestors(visited: []) { iZone -> ZTraverseStatus in
-                block(iZone)
-                
-                return .eContinue
-            }
-        }
-    }
-
-    func rootMost(goingUp: Bool) -> Zone? {
-        guard count > 0 else { return nil }
-
-        var      candidate = first
-        
-        if count > 1 {
-            var candidates = [Zone] ()
-            var      level = candidate?.level ?? 100
-            var      order = goingUp ? 1.0 : 0.0
-
-            for zone in self {
-                if  level      == zone.level {
-                    candidates.append(zone)
-                } else {
-                    candidate   = zone
-                    level       = candidate!.level
-                    candidates  = [candidate!]
-                }
-            }
-            
-            for zone in candidates {
-                let    zOrder = zone.order
-
-                if  goingUp  ? (zOrder < order) : (zOrder > order) {
-                    order     = zOrder
-                    candidate = zone
-                }
-            }
-        }
-        
-        return candidate
-    }
-
-    var rootMost: Zone? {
-        var candidate: Zone?
-        
-        for zone in self {
-            if  candidate == nil || zone.level < candidate!.level {
-                candidate = zone
-            }
-        }
-        
-        return candidate
-    }
-
-	mutating func reverse() {
-		if  count > 1 {
-			sort { (a, b) -> Bool in
-				return a.order < b.order
-			}
-
-			let   max = count - 1
-			let range = 0 ... max / 2
-
-			for index in range {
-				let a = self[index]
-				let b = self[max - index]
-				let o = a.order
-				a.order = b.order
-				b.order = o
-
-				a.maybeNeedSave()
-			}
-
-			gSelecting.hasNewGrab = gSelecting.currentMoveable
-		}
-	}
-
-}
-
 extension NSRange {
 
 	var center: Int { return (lowerBound + upperBound) / 2 }
@@ -1782,7 +1653,7 @@ extension String {
         return a == kHalfLineOfDashes && b == kHalfLineOfDashes
     }
 
-    static func forZones(_ zones: [Zone]?) -> String {
+    static func forZones(_ zones: ZoneArray?) -> String {
         return zones?.apply()  { object -> (String?) in
             if  let zone  = object as? Zone {
                 let name  = zone.decoratedName

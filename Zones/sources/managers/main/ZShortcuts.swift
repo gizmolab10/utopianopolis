@@ -34,10 +34,40 @@ class ZShortcuts : NSObject {
 		}
 	}
 
-	func strings(for row: Int, column: Int) -> (String, String, String) {
+	func strippedString(for column: Int) -> [String] {
 		let columnStrings = [graphColumnOne, graphColumnTwo, graphColumnThree, graphColumnFour]
-		let       strings = columnStrings[column]
-		let 		index = row * 3
+		let    rawStrings = columnStrings[column]
+		var        result = [String]()
+		let         count = rawStrings.count / 3
+		var         index = 0
+
+		while index < count {
+			let offset = index * 3
+			index += 1
+			let first = rawStrings[offset]
+			let second = rawStrings[offset + 1]
+			let third = rawStrings[offset + 2]
+			let type = ZShortcutType(rawValue: first.substring(with: NSMakeRange(0, 1))) // grab first character
+
+			if  type != .power || gPowerUserMode {
+				if  type != .insert || gPowerUserMode {
+					result.append(first)
+					result.append(second)
+					result.append(third)
+				} else {
+					while result.count < 93 {
+						result.append("")
+					}
+				}
+			}
+		}
+
+		return result
+	}
+
+	func strings(for row: Int, column: Int) -> (String, String, String) {
+		let strings = strippedString(for: column)
+		let   index = row * 3
 
 		return index >= strings.count ? ("", "", "") : (strings[index], strings[index + 1], strings[index + 2])
 	}
@@ -52,27 +82,37 @@ class ZShortcuts : NSObject {
 
 
 	func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
-		var (m, e, url) = strings(for: row, column: column)
-		let        type = ZShortcutType(rawValue: m.substring(with: NSMakeRange(0, 1))) // grab first character
-		let        main = m.substring(fromInclusive: 1)             // grab remaining characters
+		var (first, second, url) = strings(for: row, column: column)
+		let     rawChar = first.substring(with: NSMakeRange(0, 1))
+		let       lower = rawChar.lowercased()
+		let       SHIFT = lower != rawChar
+		let        type = ZShortcutType(rawValue: lower) // grab first character
+		let   removable = SHIFT || type == .power
+		let        main = first.substring(fromInclusive: 1)             // grab remaining characters
 		var  attributes = ZAttributesDictionary ()
 		let      hasURL = !url.isEmpty
 		var      prefix = "   "
 
+		if !gPowerUserMode {
+			if  removable {
+				return NSMutableAttributedString(string: kTab + kTab + kTab)
+			}
+		}
+
 		switch type {
 			case .bold?:
-				attributes  = [.font : bold]
+				attributes[.font] = bold
 			case .append?, .underline?:
-				attributes  = [.underlineStyle : 1]
+				attributes[.underlineStyle] = 1
 
-				if type == .append {
+				if  type == .append {
 					prefix += "+ "
-				}
+			}
 
-			case .plain?:
+			case .plain?, .power?:
 				if  hasURL {
-					attributes = [.foregroundColor : ZColor.blue.darker(by: 5.0)]
-					e.append(kEllipsis)
+					attributes[.foregroundColor] = ZColor.blue.darker(by: 2.0)
+					second.append(kSpace + kEllipsis)
 				}
 
 				fallthrough
@@ -86,16 +126,21 @@ class ZShortcuts : NSObject {
 		if  type == .plain {
 			result.append(NSAttributedString(string: main))
 		} else {
+			if  gPowerUserMode,
+				type == .power {
+				attributes[.backgroundColor] = ZColor.blue.lighter(by: 15.0)
+			}
+
 			result.append(NSAttributedString(string: main, attributes: attributes))
 		}
 
-		if  e.length > 3 {
+		if  second.length > 3 {
 			result.append(NSAttributedString(string: kTab))
-			result.append(NSAttributedString(string: e, attributes: attributes))
+			result.append(NSAttributedString(string: second, attributes: attributes))
 		}
 
-		if  main.length + e.length < 11 && row != 1 && type != .plain {
-			result.append(NSAttributedString(string: kTab)) 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough subsequent tabs
+		if  main.length + second.length < 11 && row != 1 && type != .plain {
+			result.append(NSAttributedString(string: kTab)) 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough final tabs
 		}
 
 		result.append(NSAttributedString(string: kTab))
@@ -110,39 +155,39 @@ class ZShortcuts : NSObject {
 		"",				"", "",
 		"uKEY", 		"", "",
 		" RETURN", 		"begin or end editing idea", 					"edit-d05d18996df7",
-		" SPACE", 		"create subordinate idea", 						"edit-d05d18996df7",
+		" SPACE", 		"create child idea",    						"edit-d05d18996df7",
 		" TAB", 		"create next idea", 							"edit-d05d18996df7",
 		"",				"", "",
-		"+COMMAND",		"", "",
+		"aCOMMAND",		"", "",
 		" RETURN", 		"begin or end editing hidden note", 			"",
-		" COMMA", 		"show or hide preferences", 					"help-inspector-view-c360241147f2",
+		"pCOMMA", 		"show or hide preferences", 					"help-inspector-view-c360241147f2",
 		" A", 			"select all",	 								"",
-		" P", 			"print the graph (or this window)", 			"",
-		" Y",			"toggle extent of breadcrumb list",				"",
+		" P", 			"print the map (or this window)",   			"",
+		"pY",			"toggle extent of breadcrumb list",				"",
 		"",				"", "",
-		"+CONTROL",		"", "",
-		" COMMA", 		"toggle browsing: un/confined", 				"",
-		" DELETE", 		"show trash", 									"organize-fcdc44ac04e4",
-		" PERIOD", 		"toggle lists grow up/down",		 			"",
+		"aCONTROL",		"", "",
+		"pCOMMA", 		"toggle browsing: un/confined", 				"",
+		"pDELETE", 		"show trash", 									"organize-fcdc44ac04e4",
+		"pPERIOD", 		"toggle lists grow up/down",		 			"",
 		" SPACE", 		"create an idea", 								"edit-d05d18996df7",
-		" /", 			"remove current focus from the ring", 			"focusing-your-thinking-a53adb16bba",
+		"p/", 			"remove current focus from the ring", 			"focusing-your-thinking-a53adb16bba",
 		"",				"", "",
-		"+COMMAND + OPTION", "", "",
+		"aCOMMAND + OPTION", "", "",
 		" RETURN", 		"begin editing hidden note",					"",
 		" /", 			"show or hide this window", 					"",
 		" A", 			"show About Seriously", 						"",
 		" R", 			"report a problem", 							"",
-		" X",			"clear the ring",								"",
-		" Y",			"show or hide necklace tooltips",				"",
+		"pX",			"clear the ring",								"",
+		"pY",			"show or hide necklace tooltips",				"",
 		"",				"", "",
-		"",				"", "",
+		"i",			"", "",
 		"bSEARCH BAR:", "", "",
 		"",				"", "",
 		"uKEY",			"", "",
 		" RETURN", 		"perform search", 								"search-2a996591375a",
 		" ESCAPE", 		"dismisss search bar", 							"search-2a996591375a",
 		"",				"", "",
-		"+COMMAND",		"", "",
+		"aCOMMAND",		"", "",
 		" A", 			"select all search text", 						"search-2a996591375a",
 		" F", 			"dismisss search bar", 							"search-2a996591375a",
 		"",				"", "",
@@ -155,31 +200,31 @@ class ZShortcuts : NSObject {
 		"uKEY",			"", "",
 		" ESCAPE", 		"cancel edit, discarding changes", 				"edit-d05d18996df7",
 		"",				"", "",
-		"+COMMAND",		"", "",
+		"aCOMMAND",		"", "",
 		" PERIOD", 		"cancel edit, discarding changes", 				"edit-d05d18996df7",
 		" A", 			"select all text", 								"edit-d05d18996df7",
-		" I", 			"show special characters popup menu", 			"",
+		"pI", 			"show special characters popup menu", 			"",
 		"",				"", "",
-		"+COMMAND + OPTION", "", "",
-		" PERIOD", 		"toggle lists grow up/down,",					"",
-		"", 			"(and) move idea up/down", 						"organize-fcdc44ac04e4",
-		"",				"", "",
-		"+OPTION", "", "",
-		" SPACE", 		"create subordinate idea", 						"edit-d05d18996df7",
+		"ACOMMAND + OPTION", "", "",
+		"pPERIOD", 		"toggle lists grow up/down,",					"",
+		"p", 			"(and) move idea up/down", 						"organize-fcdc44ac04e4",
+		"p",			"", "",
+		"aOPTION", "", "",
+		" SPACE", 		"create child idea", 							"edit-d05d18996df7",
 		"",				"", "",
 		"",				"", "",
 		"",				"", "",
 		"bEDITING (TEXT IS SELECTED):",	"", "",
 		"",				"", "",
-		" surround:", 	"| [ { ( < \" ' SPACE",							"edit-d05d18996df7",
-		"",				"", "",
-		"+COMMAND",		"", "",
-		" D", 			"if all selected, append onto parent", 			"parent-child-tweaks-bf067abdf461",
-		"  ", 			"if not all selected, create as a child", 		"parent-child-tweaks-bf067abdf461",
+		"psurround:", 	"| [ { ( < \" ' SPACE",							"edit-d05d18996df7",
+		"p",			"", "",
+		"aCOMMAND",		"", "",
+		"pD", 			"if all selected, append onto parent", 			"parent-child-tweaks-bf067abdf461",
+		"p ", 			"if not all selected, create as a child", 		"parent-child-tweaks-bf067abdf461",
 		" L", 			"-> lowercase", 								"edit-d05d18996df7",
 		" U", 			"-> uppercase", 								"edit-d05d18996df7",
 		"",				"", "",
-		"",				"", "",
+		"i",			"", "",
 		"bSEARCH RESULTS:",	"", "",
 		"",				"", "",
 		"uKEY",			"", "",
@@ -196,69 +241,70 @@ class ZShortcuts : NSObject {
 		"",				"", "",
 		"bBROWSING (NOT EDITING AN IDEA):", "", "",
 		"",				"", "",
-		" mark:", 		"" + kMarkingCharacters, 						"extras-2a9b1a7db21f",
-		"",				"", "",
+		"pmark:", 		"" + kMarkingCharacters, 						"extras-2a9b1a7db21f",
+		"p",			"", "",
 		"uKEY",			"", "",
-		" ARROWS", 		"navigate graph", 								"",
-		" COMMA", 		"toggle browsing: un/confined", 				"",
+		" ARROWS", 		"navigate map", 								"",
+		"pCOMMA", 		"toggle browsing: un/confined", 				"",
 		" DELETE", 		"selected ideas and their progeny", 			"organize-fcdc44ac04e4",
-		" HYPHEN", 		"add 'line', or un/title it", 					"lines-37426469b7c6",
-		" PERIOD", 		"toggle lists grow up/down", 					"",
+		"pHYPHEN", 		"add 'line', or un/title it", 					"lines-37426469b7c6",
+		"pPERIOD", 		"toggle lists grow up/down", 					"",
 		" SPACE", 		"create an idea", 								"edit-d05d18996df7",
 		" /", 			"focus (also, manage favorite)", 				"focusing-your-thinking-a53adb16bba",
-		" \\", 			"switch to other graph", 						"",
-		" ;", 			"-> prior favorite", 							"focusing-your-thinking-a53adb16bba",
-		" '", 			"-> next favorite", 							"focusing-your-thinking-a53adb16bba",
-		" [", 			"-> prior in focus ring", 						"focusing-your-thinking-a53adb16bba",
-		" ]", 			"-> next in focus ring", 						"focusing-your-thinking-a53adb16bba",
-		" =", 			"invoke hyperlink or email", 					"extras-2a9b1a7db21f",
-		" B", 			"create a bookmark", 							"focusing-your-thinking-a53adb16bba",
-		" C", 			"recenter the graph", 							"",
+		" \\", 			"switch to other map", 				    		"",
+		"p;", 			"-> prior favorite", 							"focusing-your-thinking-a53adb16bba",
+		"p'", 			"-> next favorite", 							"focusing-your-thinking-a53adb16bba",
+		" [", 			"-> prior idea", 								"focusing-your-thinking-a53adb16bba",
+		" ]", 			"-> next idea",         						"focusing-your-thinking-a53adb16bba",
+		"p=", 			"invoke hyperlink or email", 					"extras-2a9b1a7db21f",
+		"pB", 			"create a bookmark", 							"focusing-your-thinking-a53adb16bba",
+		" C", 			"recenter the map", 							"",
 		" D", 			"duplicate", 									"",
-		" E", 			"create or edit hidden email address",			"extras-2a9b1a7db21f",
+		"pE", 			"create or edit hidden email address",			"extras-2a9b1a7db21f",
 		" F", 			"search", 										"search-2a996591375a",
-		" G", 			"refetch children of selection", 				"cloud-vs-file-f3543f7281ac",
-		" H", 			"create or edit hidden hyperlink", 				"extras-2a9b1a7db21f",
-		" J", 			"show or hide jump controls",					"",
-		" K", 			"un/color the text", 							"extras-2a9b1a7db21f",
+		"pG", 			"refetch children of selection", 				"cloud-vs-file-f3543f7281ac",
+		"pH", 			"create or edit hidden hyperlink", 				"extras-2a9b1a7db21f",
+		"pJ", 			"show or hide status ring controls",			"",
+		"pK", 			"un/color the text", 							"extras-2a9b1a7db21f",
 		" L", 			"-> lowercase", 								"edit-d05d18996df7",
 		" N",			"create or edit hidden note",					"",
-		" O", 			"import from a Seriously file", 				"cloud-vs-file-f3543f7281ac",
+		"pO", 			"import from a Seriously file", 				"cloud-vs-file-f3543f7281ac",
 		" R", 			"reverse order of children", 					"organize-fcdc44ac04e4",
-		" S", 			"save to a Seriously file", 					"cloud-vs-file-f3543f7281ac",
-		" T", 			"swap selected idea with parent", 				"parent-child-tweaks-bf067abdf461",
+		"pS", 			"save to a Seriously file", 					"cloud-vs-file-f3543f7281ac",
+		"pT", 			"swap selected idea with parent", 				"parent-child-tweaks-bf067abdf461",
 		" U", 			"-> uppercase", 								"edit-d05d18996df7",
 		"",				"", "",
-		"+MOUSE CLICK",	"", "",
-		" COMMAND", 	"move entire graph", 							"mouse-e21b7a63020e",
+		"aMOUSE CLICK",	"", "",
+		" COMMAND", 	"move entire map", 							    "mouse-e21b7a63020e",
 		" SHIFT", 		"un/extend selection", 							"selecting-ideas-cc2939720e53",
 		"",				"", "",
+		"p",            "Pale blue background indicates power-user feature", "",
 	]
 
 	let graphColumnFour: [String] = [
 		"",				"", "",
-		"+OPTION",		"", "",
+		"aOPTION",		"", "",
 		" ARROWS", 		"move selected idea", 							"organize-fcdc44ac04e4",
-		" DELETE", 		"retaining children", 							"organize-fcdc44ac04e4",
-		" RETURN", 		"edit with cursor at end", 						"edit-d05d18996df7",
-		" HYPHEN", 		"convert text to or from 'titled line'", 		"lines-37426469b7c6",
+		"pDELETE", 		"retaining children", 							"organize-fcdc44ac04e4",
+		"pRETURN", 		"edit with cursor at end", 						"edit-d05d18996df7",
+		"pHYPHEN", 		"convert text to or from 'titled line'", 		"lines-37426469b7c6",
 		" TAB", 		"new idea containing", 							"edit-d05d18996df7",
-		" G", 			"refetch entire subgraph of selection", 		"cloud-vs-file-f3543f7281ac",
-		" S", 			"export to a outline file", 					"cloud-vs-file-f3543f7281ac",
+		"pG", 			"refetch entire submap of selection", 	 		"cloud-vs-file-f3543f7281ac",
+		"pS", 			"export to a outline file", 					"cloud-vs-file-f3543f7281ac",
 		"",				"", "",
-		"+COMMAND",		"", "",
-		" ARROWS", 		"extend all the way", 							"selecting-ideas-cc2939720e53",
+		"aCOMMAND",		"", "",
+		"pARROWS", 		"extend all the way", 							"selecting-ideas-cc2939720e53",
 		" HYPHEN", 		"reduce font size", 							"",
 		" +", 		    "increase font size", 							"",
 		" /", 			"refocus current favorite", 					"focusing-your-thinking-a53adb16bba",
 		" A", 			"select all ideas", 							"selecting-ideas-cc2939720e53",
-		" D", 			"append onto parent", 							"parent-child-tweaks-bf067abdf461",
-		" G", 			"refetch entire graph", 						"cloud-vs-file-f3543f7281ac",
+		"pD", 			"append onto parent", 							"parent-child-tweaks-bf067abdf461",
+		"pG", 			"refetch entire map",   						"cloud-vs-file-f3543f7281ac",
 		"",				"", "",
-		"+COMMAND + OPTION", "", "",
+		"aCOMMAND + OPTION", "", "",
 		" DELETE", 		"permanently (not into trash)", 				"organize-fcdc44ac04e4",
-		" HYPHEN", 		"-> titled line to/from parent",			 	"lines-37426469b7c6",
-		" O", 			"show data files in Finder", 					"cloud-vs-file-f3543f7281ac",
+		"pHYPHEN", 		"-> titled line to/from parent",			 	"lines-37426469b7c6",
+		"pO", 			"show data files in Finder", 					"cloud-vs-file-f3543f7281ac",
 		"",				"", "",
 		"uARROW KEY + SHIFT (+ COMMAND -> all)", "", "",
 		" LEFT ", 		"hide children", 								"focusing-your-thinking-a53adb16bba",
@@ -267,14 +313,14 @@ class ZShortcuts : NSObject {
 		"",				"", "",
 		"",				"", "",
 		"",				"", "",
-		"bBROWSING (MULTIPLE IDEAS SELECTED):",	"", "",
-		"",				"", "",
-		"uKEY",			"", "",
-		" HYPHEN", 		"if first selected idea is titled, -> parent", 	"lines-37426469b7c6",
-		" #", 			"mark with ascending numbers", 					"extras-2a9b1a7db21f",
-		" A", 			"alphabetize (+ OPTION -> backwards)", 			"organize-fcdc44ac04e4",
-		" M", 			"sort by length (+ OPTION -> backwards)", 		"organize-fcdc44ac04e4",
-		" R", 			"reverse order", 								"organize-fcdc44ac04e4",
+		"BBROWSING (MULTIPLE IDEAS SELECTED):",	"", "",
+		"p",			"", "",
+		"UKEY",			"", "",
+		"pHYPHEN", 		"if first selected idea is titled, -> parent", 	"lines-37426469b7c6",
+		"p#", 			"mark with ascending numbers", 					"extras-2a9b1a7db21f",
+		"pA", 			"alphabetize (+ OPTION -> backwards)", 			"organize-fcdc44ac04e4",
+		"pM", 			"sort by length (+ OPTION -> backwards)", 		"organize-fcdc44ac04e4",
+		"pR", 			"reverse order", 								"organize-fcdc44ac04e4",
 		"",				"", "",
 	]
 }

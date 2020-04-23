@@ -34,13 +34,13 @@ class ZContextualMenu: NSMenu {
 			}
 		} else {
 			switch key {
-				case "a": break // alphabetize
+				case "a": zone?.children.alphabetize()
 				case "b": zone?.addBookmark()
 				case "d": break // duplicate
 				case "e": zone?.editTrait(for: .tEmail)
 				case "h": zone?.editTrait(for: .tHyperlink)
 				case "l": textWidget?.alterCase(up: false)
-				case "m": break // sort by length
+				case "m": zone?.children.sortByLength()
 				case "n": zone?.showNote()
 				case "o": break // import
 				case "r": zone?.reverseChildren()
