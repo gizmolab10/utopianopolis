@@ -888,7 +888,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 							onCompletion?(child)
 						}
 					} else {
-						self.acquireZones(zones) {
+						child.acquireZones(zones) {
 							self.redrawGraph() {
 								onCompletion?(child)
 								gControllers.sync()
@@ -941,10 +941,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					zone.orphan()
 				}
 
-				addAndReorderChild(zone, at: iIndex)
+				addChild(zone, at: iIndex)
 			}
 		}
 
+		children.updateOrder()
+		maybeNeedSave()
 		onCompletion?()
 	}
 

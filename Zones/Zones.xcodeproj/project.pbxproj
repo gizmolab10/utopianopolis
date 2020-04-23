@@ -160,6 +160,9 @@
 		A752FC2C24512D7700603A54 /* ZoneArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC2B24512D7700603A54 /* ZoneArray.swift */; };
 		A752FC2F24512E0B00603A54 /* ZoneArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC2B24512D7700603A54 /* ZoneArray.swift */; };
 		A752FC3024512E0C00603A54 /* ZoneArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC2B24512D7700603A54 /* ZoneArray.swift */; };
+		A752FC32245222D200603A54 /* ZoneContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC31245222D100603A54 /* ZoneContextualMenu.swift */; };
+		A752FC33245222D200603A54 /* ZoneContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC31245222D100603A54 /* ZoneContextualMenu.swift */; };
+		A752FC34245222D200603A54 /* ZoneContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC31245222D100603A54 /* ZoneContextualMenu.swift */; };
 		A759F70124269D29008CEA59 /* ZTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A759F70024269D29008CEA59 /* ZTimers.swift */; };
 		A759F70224269D29008CEA59 /* ZTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A759F70024269D29008CEA59 /* ZTimers.swift */; };
 		A759F70324269D29008CEA59 /* ZTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A759F70024269D29008CEA59 /* ZTimers.swift */; };
@@ -424,6 +427,7 @@
 		A74D1BA522222FC900E69E44 /* eye.con-512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "eye.con-512.png"; path = "interfaces/Assets.xcassets/AppIcon.OSX.appiconset/eye.con-512.png"; sourceTree = "<group>"; };
 		A74DBDEA244E004000DF751A /* ZContextualMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZContextualMenu.swift; sourceTree = "<group>"; };
 		A752FC2B24512D7700603A54 /* ZoneArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneArray.swift; sourceTree = "<group>"; };
+		A752FC31245222D100603A54 /* ZoneContextualMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneContextualMenu.swift; sourceTree = "<group>"; };
 		A759F70024269D29008CEA59 /* ZTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTimers.swift; sourceTree = "<group>"; };
 		A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsController.swift; sourceTree = "<group>"; };
 		A764067723F7E37600D9EA3A /* ZBreadcrumbsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsView.swift; sourceTree = "<group>"; };
@@ -886,6 +890,7 @@
 				A74DBDEA244E004000DF751A /* ZContextualMenu.swift */,
 				A7B48A8823E0E80C00654DBD /* ZGridCell.swift */,
 				A7B48A8223E0E80C00654DBD /* ZLineView.swift */,
+				A752FC31245222D100603A54 /* ZoneContextualMenu.swift */,
 				A7B48A8723E0E80C00654DBD /* ZoneDot.swift */,
 				A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */,
 				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
@@ -1194,6 +1199,7 @@
 				A72A0B6923B13CE6002A97E9 /* ZBaseEditor.swift in Sources */,
 				0C39B2E91F182EBB0091F4D1 /* ZSelecting.swift in Sources */,
 				0CAC18E12006A84800D641C4 /* ZBookmarks.swift in Sources */,
+				A752FC32245222D200603A54 /* ZoneContextualMenu.swift in Sources */,
 				A7B48A9F23E0E80C00654DBD /* ZDragView.swift in Sources */,
 				0C39B2BC1F182EBB0091F4D1 /* ZState.swift in Sources */,
 				0C39B2B61F182EBB0091F4D1 /* ZReachability.swift in Sources */,
@@ -1258,6 +1264,7 @@
 				0CAC18E32006A84800D641C4 /* ZBookmarks.swift in Sources */,
 				A764067E23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */,
 				A7B48A8C23E0E80C00654DBD /* ZEssayView.swift in Sources */,
+				A752FC34245222D200603A54 /* ZoneContextualMenu.swift in Sources */,
 				0C39B2DC1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0CB619A11FB3C4660087B066 /* ZGraphController.swift in Sources */,
 				A7245E0921729FFE003D4BDA /* ZShortcutsController.swift in Sources */,
@@ -1342,6 +1349,7 @@
 				0CB619A01FB3C4660087B066 /* ZGraphController.swift in Sources */,
 				0C4118DF1FA8110200A58004 /* ZAlerts.swift in Sources */,
 				0C63DA6E1FCF837D005EC548 /* ZFavorites.swift in Sources */,
+				A752FC33245222D200603A54 /* ZoneContextualMenu.swift in Sources */,
 				A7B48AB823E0E80C00654DBD /* ZoneWidget.swift in Sources */,
 				A7B48AA623E0E80C00654DBD /* ZoneTextWidget.swift in Sources */,
 				0C39B2B11F182EBB0091F4D1 /* ZExtensions.swift in Sources */,

@@ -39,7 +39,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
             ZBezierPath(ovalIn: localRect).fill()
             widget.drawDragLine(to: dotRect, in: self)
         }
-    }
+	}
 
     func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
         if  let e = gGraphController {

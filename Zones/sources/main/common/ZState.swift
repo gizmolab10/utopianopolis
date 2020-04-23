@@ -67,8 +67,8 @@ var       gChildrenViewOffset:             Double { return gDotWidth + Double(gG
 var                 gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
 var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
-var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kWhiteColor : kBlackColor }
-var         gNecklaceDotColor:             ZColor { return gIsDark ? gAccentColor.inverted.darker(by: 5.0) : gAccentColor }
+var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kLightestGrayColor : kBlackColor }
+var         gNecklaceDotColor:             ZColor { return gIsDark ? !gColorfulMode  ? kDarkGrayColor.darker(by: 4.0) : gAccentColor.inverted.darker(by: 5.0) : gAccentColor }
 var          gBackgroundColor:             ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
 var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
 var   gDarkishBackgroundColor:             ZColor { return gAccentColor.darkish (by: 1.028) }
@@ -231,6 +231,7 @@ var gGenericOffset: CGSize {
 		
 		return offset
 	}
+
 	set {
 		setPreferencesSize(newValue, for: kGenericOffsetKey)
 	}

@@ -38,6 +38,7 @@ let       kTimeOfSystemStartup = Date.timeIntervalSinceReferenceDate
 let        kFavoritesReduction = CGFloat(kIsPhone ? 1.0 : 0.8)
 let         kDefaultWindowRect = CGRect(x:0.0, y:0.0, width: 500.0, height: 500.0) // smallest size user to which can shrink window
 let          kDefaultZoneColor = ZColor.blue
+let         kLightestGrayColor = ZColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.8, alpha: 1.0)
 let          kDarkestGrayColor = ZColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.1, alpha: 1.0)
 let            kLightGrayColor = ZColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.7, alpha: 1.0)
 let             kDarkGrayColor = ZColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.6, alpha: 1.0)

@@ -22,7 +22,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	@IBOutlet var            spinner :  ZProgressIndicator?
 	@IBOutlet var           dragView :  ZDragView?
 	@IBOutlet var        spinnerView :  ZView?
-	@IBOutlet var ideaContextualMenu :  ZContextualMenu?
+	@IBOutlet var ideaContextualMenu :  ZoneContextualMenu?
 	let                mapRootWidget =  ZoneWidget   ()
 	let          favoritesRootWidget =  ZoneWidget   ()
 	var           rubberbandPreGrabs =  ZoneArray    ()

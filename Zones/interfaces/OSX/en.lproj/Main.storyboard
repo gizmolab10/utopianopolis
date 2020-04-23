@@ -607,7 +607,7 @@ DQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Seriously" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="66" y="596"/>
+            <point key="canvasLocation" x="127" y="457"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -679,7 +679,7 @@ DQ
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <menu title="Actions" id="4NV-a6-tte" userLabel="Contextual Menu" customClass="ZContextualMenu" customModule="Seriously" customModuleProvider="target">
+                <menu title="Actions" id="4NV-a6-tte" userLabel="Idea Contextual Menu" customClass="ZoneContextualMenu" customModule="Seriously" customModuleProvider="target">
                     <items>
                         <menuItem title="Focus" keyEquivalent="/" id="1Xd-2W-Q0x">
                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -827,8 +827,54 @@ CA
                         </menuItem>
                     </items>
                 </menu>
+                <menu title="Map Contextual Menu" identifier="Map Contextual Menu" id="HLb-eX-LkY" userLabel="Map Contextual Menu" customClass="ZContextualMenu" customModule="Seriously" customModuleProvider="target">
+                    <items>
+                        <menuItem title="Toggle Power User Mode" keyEquivalent="p" id="jsN-Te-okB">
+                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="Pu2-6U-ujq"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Toggle Colorful Mode" keyEquivalent="k" id="YmI-bt-j1e">
+                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="Zgl-Ld-yJ6"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Recenter Map" keyEquivalent="c" id="Apg-wy-AUv">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="2xn-ls-pjG"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="PMh-Qw-qqu">
+                            <connections>
+                                <action selector="genericMenuHandler:" target="4NV-a6-tte" id="Rrh-ZY-RNZ"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Size" id="O1o-ir-pfp">
+                            <menu key="submenu" title="Size" id="Qdw-UT-gam">
+                                <items>
+                                    <menuItem title="Increase" keyEquivalent="=" id="qal-ZK-rV0">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="SEW-nV-4My"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Decrease" keyEquivalent="-" id="9FZ-L5-sqc">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="Koy-1Q-tsR"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                    </items>
+                    <accessibility description="Map Contextual Menu" identifier="Map Contextual Menu"/>
+                </menu>
             </objects>
-            <point key="canvasLocation" x="17" y="1125"/>
+            <point key="canvasLocation" x="330" y="1125"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -961,7 +1007,7 @@ CA
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1055" y="525"/>
+            <point key="canvasLocation" x="1055" y="596"/>
         </scene>
         <!--Ring Controller-->
         <scene sceneID="2ar-AS-rBz">
@@ -988,7 +1034,7 @@ CA
                 </viewController>
                 <customObject id="LOz-oN-o0B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="328" y="1125"/>
+            <point key="canvasLocation" x="21" y="1125"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -1054,7 +1100,7 @@ CA
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="944" y="1125"/>
+            <point key="canvasLocation" x="645" y="1125"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -1114,7 +1160,7 @@ CA
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="635" y="1125"/>
+            <point key="canvasLocation" x="951" y="1125"/>
         </scene>
         <!--Web Link Controller-->
         <scene sceneID="yhj-YB-Xij">
@@ -1151,7 +1197,7 @@ CA
                 </viewController>
                 <customObject id="IZh-Iz-IVH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="636" y="1493"/>
+            <point key="canvasLocation" x="952" y="1436"/>
         </scene>
         <!--Breadcrumbs Controller-->
         <scene sceneID="wXo-la-8OL">
@@ -1214,7 +1260,7 @@ CA
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1055" y="417"/>
+            <point key="canvasLocation" x="1055" y="488"/>
         </scene>
     </scenes>
 </document>

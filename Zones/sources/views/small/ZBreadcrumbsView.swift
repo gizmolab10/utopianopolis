@@ -52,9 +52,9 @@ class ZBreadcrumbsView : ZView {
 			let  button = ZBreadcrumbButton(title: zone.unwrappedName, target: self, action: #selector(crumbButtonAction(_:)))
 			let   title = NSMutableAttributedString(string: zone.unwrappedName)
 			let   range = NSRange(location:0, length: title.length)
-			button.zone = zone
 			button.font = gFavoritesFont
 			button.tag  = index
+			button.zone = zone
 			button.isBordered = false
 
 			title.addAttributes([.font : gFavoritesFont], range: range)
