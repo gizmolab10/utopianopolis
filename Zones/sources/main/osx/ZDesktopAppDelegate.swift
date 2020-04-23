@@ -63,7 +63,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
         }
         
         for file in openFiles {
-            gFiles.importFile(from: file, insertInto: insertInto) { self.redrawAndSync() }
+            insertInto.importFile(from: file) { self.redrawAndSync() }
         }
     }
 	

@@ -805,6 +805,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- edit map
 	// MARK:-
 
+	func duplicate() {
+		var array = [self]
+
+		array.duplicate()
+	}
+
 	func addBookmark() {
 		if  databaseID != .favoritesID, !isRoot {
 			let closure = {
@@ -846,6 +852,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			revealChildren()
 			addIdea(at: gListsGrowDown ? nil : 0) { iChild in
 				gControllers.signalFor(self.parentZoneMaybe, regarding: .sRelayout) {
+					gTemporarilySetMouseZone(iChild)
 					iChild?.edit()
 				}
 			}
@@ -1171,6 +1178,37 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else {
 			onCompletion?()
+		}
+	}
+
+	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
+		if  type == .eSeriously {
+			ZFiles.presentOpenPanel() { (iAny) in
+				if  let url = iAny as? URL {
+					self.importFile(from: url.path, onCompletion: onCompletion)
+				} else if let panel = iAny as? NSPanel {
+					let  suffix = type.rawValue
+					panel.title = "Import as \(suffix)"
+					panel.setAllowedFileType(suffix)
+				}
+			}
+		}
+	}
+
+	func importFile(from path: String, onCompletion: Closure?) {
+		do {
+			if  let   data = FileManager.default.contents(atPath: path),
+				data.count > 0,
+				let   dbID = databaseID,
+				let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
+				let   dict = self.dictFromJSON(json)
+				let   zone = Zone(dict: dict, in: dbID)
+
+				addChild(zone, at: 0)
+				onCompletion?()
+			}
+		} catch {
+			printDebug(.dError, "\(error)")    // de-serialization
 		}
 	}
 
@@ -1896,20 +1934,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func applyGenerationally(_ show: Bool, extreme: Bool = false) {
-		if  let zone = gSelecting.rootMostMoveable {
-			var level: Int?
+		var goal: Int?
 
-			if !show {
-				level = extreme ? zone.level - 1 : zone.highestExposed - 1
-			} else if  extreme {
-				level = Int.max
-			} else if let lowest = zone.lowestExposed {
-				level = lowest + 1
-			}
+		if !show {
+			goal = extreme ? level - 1 : highestExposed - 1
+		} else if  extreme {
+			goal = Int.max
+		} else if let lowest = lowestExposed {
+			goal = lowest + 1
+		}
 
-			generationalUpdate(show: show, to: level) {
-				self.redrawGraph()
-			}
+		generationalUpdate(show: show, to: goal) {
+			self.redrawGraph()
 		}
 	}
 

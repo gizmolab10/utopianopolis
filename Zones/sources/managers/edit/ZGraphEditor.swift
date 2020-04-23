@@ -142,10 +142,10 @@ class ZGraphEditor: ZBaseEditor {
 					case "k":      toggleColorized()
                     case "m":      gSelecting.simplifiedGrabs.sortByLength(OPTION)
                     case "n":      grabOrEdit(true, OPTION)
-                    case "o":      gFiles.importFromFile(OPTION ? .eOutline : .eSeriously, insertInto: gSelecting.currentMoveable) { self.redrawAndSync() }
+                    case "o":      gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { self.redrawAndSync() }
                     case "p":      printCurrentFocus()
                     case "r":      if SPECIAL { sendEmailBugReport() } else { reverse() }
-					case "s":      gFiles.exportToFile(OPTION ? .eOutline : .eSeriously, for: gHere)
+					case "s":      gHere.exportToFile(OPTION ? .eOutline : .eSeriously)
 					case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 					case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 					case "v":      if COMMAND { paste() }
@@ -320,6 +320,12 @@ class ZGraphEditor: ZBaseEditor {
 
     // MARK:- features
     // MARK:-
+
+	func duplicate() {
+		var grabs = gSelecting.simplifiedGrabs
+
+		grabs.duplicate()
+	}
 
 	func popAndUpdate() {
 		gFocusRing.popAndRemoveEmpties()
@@ -1191,64 +1197,20 @@ class ZGraphEditor: ZBaseEditor {
     // MARK:- undoables
     // MARK:-
 
-    func duplicate() {
-        let commonParent = gSelecting.firstSortedGrab?.parentZone ?? gSelecting.firstSortedGrab
-        var        zones = gSelecting.simplifiedGrabs
-        var   duplicates = ZoneArray ()
-        var      indices = [Int] ()
-
-        for zone in zones {
-            if let parent = zone.parentZone, parent != commonParent {
-                return
-            }
-        }
-
-        zones.sort { (a, b) -> Bool in
-            return a.order < b.order
-        }
-
-        for zone in zones {
-            if  let index = zone.siblingIndex {
-                let duplicate = zone.deepCopy
-
-                duplicates.append(duplicate)
-                indices.append(index)
-            }
-        }
-
-        while   var index = indices.last, let duplicate = duplicates.last, let zone = zones.last {
-            if  let     p = zone.parentZone {
-                index    += (gListsGrowDown ? 1 : 0)
-
-                p.addAndReorderChild(duplicate, at: index)
-                duplicate.grab()
-            }
-
-            duplicates.removeLast()
-            indices   .removeLast()
-            zones     .removeLast()
-        }
-
-        gFavorites.updateFavoritesRedrawAndSync()
-    }
-
-
     func reverse() {
 		UNDO(self) { iUndoSelf in
 			iUndoSelf.reverse()
 		}
 
-        var commonParent = gSelecting.firstSortedGrab?.parentZone ?? gSelecting.firstSortedGrab
-        var        zones = gSelecting.simplifiedGrabs
-        for zone in zones {
-            if  let parent = zone.parentZone, parent != commonParent {
-                return
-            }
-        }
+		var        zones  = gSelecting.simplifiedGrabs
+		let commonParent  = zones.commonParent
 
-        if  zones.count == 1 {
-            commonParent = gSelecting.firstSortedGrab
-            zones        = commonParent?.children ?? []
+		if  commonParent == nil {
+			return
+		}
+
+        if  zones.count  == 1 {
+            zones         = commonParent?.children ?? []
         }
 
 		zones.reverse()

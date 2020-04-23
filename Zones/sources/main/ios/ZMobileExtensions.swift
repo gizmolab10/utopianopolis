@@ -545,6 +545,8 @@ extension ZApplication {
 
 extension Zone {
 
+	func exportToFile(_ type: ZExportType) {}
+
     func hasZoneAbove(_ iAbove: Bool) -> Bool {
         if  let     index  = siblingIndex {
             let compareTo  = !iAbove ? 0 : (parentZone!.count - 1)
@@ -621,7 +623,6 @@ extension ZFiles {
     
     func saveAs() {}
     func showInFinder() {}
-    func exportToFile(_ type: ZExportType, for iFocus: Zone) {}
     func importFromFile(_ type: ZExportType, insertInto: Zone, onCompletion: Closure?) {}
 
 }

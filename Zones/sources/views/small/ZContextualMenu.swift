@@ -34,21 +34,24 @@ class ZContextualMenu: NSMenu {
 			}
 		} else {
 			switch key {
-				case "a": zone?.children.alphabetize()
-				case "b": zone?.addBookmark()
-				case "d": break // duplicate
-				case "e": zone?.editTrait(for: .tEmail)
-				case "h": zone?.editTrait(for: .tHyperlink)
-				case "l": textWidget?.alterCase(up: false)
-				case "m": zone?.children.sortByLength()
-				case "n": zone?.showNote()
-				case "o": break // import
-				case "r": zone?.reverseChildren()
-				case "s": break // export
-				case "t": zone?.swapWithParent()
-				case "u": textWidget?.alterCase(up: true)
-				case "/": zone?.focus()
-				default:  break
+				case "a":    zone?.children.alphabetize()
+				case "b":    zone?.addBookmark()
+				case "d":    zone?.duplicate()
+				case "e":    zone?.editTrait(for: .tEmail)
+				case "h":    zone?.editTrait(for: .tHyperlink)
+				case "l":    textWidget?.alterCase(up: false)
+				case "m":    zone?.children.sortByLength()
+				case "n":    zone?.showNote()
+				case "o":    zone?.importFromFile(.eSeriously) { self.redrawGraph() }
+				case "r":    zone?.reverseChildren()
+				case "s":    zone?.exportToFile(.eSeriously)
+				case "t":    zone?.swapWithParent()
+				case "u":    textWidget?.alterCase(up: true)
+				case "/":    zone?.focus()
+				case kSpace: zone?.addIdea()
+				case "\u{08}", // control-delete?
+					kDelete: zone?.deleteZone { self.redrawGraph() }
+				default:      break
 			}
 		}
 	}

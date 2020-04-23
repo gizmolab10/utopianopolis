@@ -107,7 +107,6 @@ class ZSelecting: NSObject {
         return count
     }
 
-
     var simplifiedGrabs: ZoneArray {
         let current = currentGrabs
         var   grabs = ZoneArray ()
@@ -132,7 +131,6 @@ class ZSelecting: NSObject {
 
         return grabs
     }
-
     
     /// If currently only a single grab, auto-grab subsequent zones until the next non-line
     var possiblyAutoGrabbed: ZoneArray {

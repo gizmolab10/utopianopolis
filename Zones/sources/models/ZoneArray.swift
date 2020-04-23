@@ -1,5 +1,5 @@
 //
-//  Zones.swift
+//  ZoneArray.swift
 //  iFocus
 //
 //  Created by Jonathan Sand on 4/22/20.
@@ -119,6 +119,39 @@ extension ZoneArray {
 		return candidate
 	}
 
+	mutating func duplicate() {
+		var duplicates = ZoneArray ()
+		var    indices = [Int] ()
+
+		sort { (a, b) -> Bool in
+			return a.order < b.order
+		}
+
+		for zone in self {
+			if  let index = zone.siblingIndex {
+				let duplicate = zone.deepCopy
+
+				duplicates.append(duplicate)
+				indices.append(index)
+			}
+		}
+
+		while   var index = indices.last, let duplicate = duplicates.last, let zone = last {
+			if  let     p = zone.parentZone {
+				index    += (gListsGrowDown ? 1 : 0)
+
+				p.addAndReorderChild(duplicate, at: index)
+				duplicate.grab()
+			}
+
+			duplicates.removeLast()
+			indices   .removeLast()
+			removeLast()
+		}
+
+		gFavorites.updateFavoritesRedrawAndSync()
+	}
+
 	mutating func reverse() {
 		if  count > 1 {
 			sort { (a, b) -> Bool in
@@ -193,6 +226,10 @@ extension ZoneArray {
 
 	var commonParent: Zone? {
 		let candidate = first?.parentZone
+
+		if  count == 1 {
+			return first
+		}
 
 		for zone in self {
 			if  let parent = zone.parentZone, parent != candidate {   // not all of the grabbed zones share the same parent

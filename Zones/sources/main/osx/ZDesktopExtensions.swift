@@ -1049,78 +1049,55 @@ extension ZFiles {
             }
         }
     }
-    
-    
-    func importFromFile(_ type: ZExportType, insertInto: Zone, onCompletion: Closure?) {
-		if  type == .eSeriously {
-            ZFiles.presentOpenPanel() { (iAny) in
-                if  let url = iAny as? URL {
-                    self.importFile(from: url.path, insertInto: insertInto, onCompletion: onCompletion)
-                } else if let panel = iAny as? NSPanel {
-					let  suffix = type.rawValue
-                    panel.title = "Import as \(suffix)"
-                    panel.setAllowedFileType(suffix)
-                }
-            }
+
+}
+
+extension Zone {
+
+    func hasZoneAbove(_ iAbove: Bool) -> Bool {
+        if  let index = siblingIndex {
+            return index != (iAbove ? 0 : (parentZone!.count - 1))
         }
+
+        return false
     }
-    
-    
-    func importFile(from path: String, insertInto: Zone, onCompletion: Closure?) {
-        do {
-            if  let   data = FileManager.default.contents(atPath: path),
-                data.count > 0,
-                let   dbID = insertInto.databaseID,
-                let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
-                let   dict = self.dictFromJSON(json)
-                let   zone = Zone(dict: dict, in: dbID)
-                
-                insertInto.addChild(zone, at: 0)
-                onCompletion?()
-            }
-        } catch {
-            printDebug(.dError, "\(error)")    // de-serialization
-        }
-    }
-    
-    
-    func exportToFile(_ type: ZExportType, for iZone: Zone?) {
-		guard let zone = iZone else { return }
+
+	func exportToFile(_ type: ZExportType) {
 		let     suffix = type.rawValue
-        let      panel = NSSavePanel()
-        panel.message  = "Export as \(suffix)"
-        
-        if  let  name = zone.zoneName {
-            panel.nameFieldStringValue = "\(name).\(suffix)"
-        }
-        
-        panel.begin { result in
+		let      panel = NSSavePanel()
+		panel.message  = "Export as \(suffix)"
+
+		if  let  name = zoneName {
+			panel.nameFieldStringValue = "\(name).\(suffix)"
+		}
+
+		panel.begin { result in
 			if  result == .OK,
-                let fileURL = panel.url {
+				let fileURL = panel.url {
 
 				switch type {
 					case .eOutline:
-						let string = zone.outlineString()
+						let string = self.outlineString()
 
 						do {
 							try string.write(to: fileURL, atomically: true, encoding: .utf8)
 						} catch {
 							printDebug(.dError, "\(error)")
-						}
+					}
 					case .eSeriously:
-						self.writtenRecordNames.removeAll()
+						gFiles.writtenRecordNames.removeAll()
 
 						do {
-							let     dict = try zone.storageDictionary()
+							let     dict = try self.storageDictionary()
 							let jsonDict = self.jsonDictFrom(dict)
 							let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
 
 							try data.write(to: fileURL)
 						} catch {
 							printDebug(.dError, "\(error)")
-						}
+					}
 					case .eEssay:
-						if  let text = zone.note.essayText {
+						if  let text = self.note.essayText {
 
 //							NSFileWrapper *fileWrapper = [imageAttrString fileWrapperFromRange:NSMakeRange(0, [imageAttrString length]) documentAttributes:@{NSDocumentTypeDocumentAttribute: NSRTFDTextDocumentType} error:&error];
 //							[fileWrapper writeToURL:yourFileURL options:NSFileWrapperWritingAtomic originalContentsURL:nil error:&error]
@@ -1138,24 +1115,12 @@ extension ZFiles {
 							} catch {
 								printDebug(.dError, "\(error)")
 							}
-						}
+					}
 				}
-            }
-        }
-    }
+			}
+		}
+	}
 
-}
-
-extension Zone {
-
-    func hasZoneAbove(_ iAbove: Bool) -> Bool {
-        if  let index = siblingIndex {
-            return index != (iAbove ? 0 : (parentZone!.count - 1))
-        }
-
-        return false
-    }
-    
 }
 
 

@@ -687,10 +687,19 @@ DQ
                                 <action selector="genericMenuHandler:" target="4NV-a6-tte" id="1qI-4N-K2i"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Bookmark" keyEquivalent="b" id="OrW-va-hQm">
+                        <menuItem title="Delete" id="OrW-va-hQm">
+                            <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="genericMenuHandler:" target="4NV-a6-tte" id="6IY-e6-2rR"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Bookmark" keyEquivalent="b" id="zow-po-Nyo">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="4NV-a6-tte" id="RcX-pt-DQb"/>
                             </connections>
                         </menuItem>
                         <menuItem title="Duplicate" keyEquivalent="d" id="k6N-t9-9jG">
@@ -725,7 +734,7 @@ DQ
                                             <action selector="genericMenuHandler:" target="4NV-a6-tte" id="kTm-aH-am0"/>
                                         </connections>
                                     </menuItem>
-                                    <menuItem title="Hide" keyEquivalent="" id="KUM-aI-FlV">
+                                    <menuItem title="Hide" keyEquivalent="" id="KUM-aI-FlV">
                                         <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
                                         <connections>
                                             <action selector="genericMenuHandler:" target="4NV-a6-tte" id="VtK-9D-agL"/>
@@ -736,10 +745,16 @@ DQ
                                             <action selector="genericMenuHandler:" target="4NV-a6-tte" id="8Vm-u6-Q5R"/>
                                         </connections>
                                     </menuItem>
-                                    <menuItem title="Alphabetize" keyEquivalent="a" id="m3w-6h-erJ">
+                                    <menuItem title="Add Child Idea" keyEquivalent=" " id="m3w-6h-erJ">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                         <connections>
                                             <action selector="genericMenuHandler:" target="4NV-a6-tte" id="R88-SR-jw9"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Alphabetize" keyEquivalent="a" id="JSV-tF-3S8">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="4NV-a6-tte" id="CGo-qd-BEC"/>
                                         </connections>
                                     </menuItem>
                                     <menuItem title="Sort by Length" keyEquivalent="m" id="oO1-Ea-tYr">
@@ -1199,7 +1214,7 @@ DQ
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1054.5" y="634"/>
+            <point key="canvasLocation" x="1055" y="417"/>
         </scene>
     </scenes>
 </document>

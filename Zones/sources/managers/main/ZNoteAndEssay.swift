@@ -21,7 +21,7 @@ class ZNoteAndEssay: NSObject {
 
 	var   essayID : CKRecord.ID?
 	var essayZone : Zone? { return gCurrentEssay?.zone }
-	func export() { gFiles.exportToFile(.eEssay, for: essayZone) }
+	func export() { essayZone?.exportToFile(.eEssay) }
 
 	var shouldOverwrite: Bool {
 		if  let current = gCurrentEssay,
