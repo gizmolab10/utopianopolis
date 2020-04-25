@@ -323,6 +323,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
+	func resetForDarkMode() {
+//		layer?.backgroundColor = (gIsDark ? kDarkestGrayColor : kWhiteColor).cgColor
+	}
+
 	func resetCurrentEssay(_ current: ZNote?, selecting range: NSRange? = nil) {
 		if  let      note = current {
 			gCurrentEssay = note
@@ -341,6 +345,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func updateText(restoreSelection: Int?  = nil) {
+		resetForDarkMode()
+
 		if  (gNoteAndEssay.shouldOverwrite || restoreSelection != nil),
 			let text = gCurrentEssay?.essayText {
 			clear() 								// discard previously edited text

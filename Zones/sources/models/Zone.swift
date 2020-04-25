@@ -350,6 +350,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func toolColor() -> ZColor? { return color?.lighter(by: 3.0) }
 
+	var textColor: ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : gDefaultTextColor }
+
 	var color: ZColor? {
 		get {
 			if !gColorfulMode { return gDefaultTextColor }
@@ -370,7 +372,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  gIsDark {
-				computed        = computed?.inverted.lighter(by: 5.0)
+				computed        = computed?.inverted.lighter(by: 6.0)
 			}
 
 			return computed!
@@ -1083,13 +1085,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func tearApartCombine(_ intoParent: Bool) {
 		if  intoParent {
-			addParentFromSelectedText()
+			insertSelectedText()
 		} else {
 			createChildIdeaFromSelectedText()
 		}
 	}
 
-	func addParentFromSelectedText() {
+	func insertSelectedText() {
 		if  let     index = siblingIndex,
 			let    parent = parentZone,
 			let childName = widget?.textWidget.extractTitleOrSelectedText() {
@@ -1899,7 +1901,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					addIdea(at: gListsGrowDown ? nil : 0, with: childName) { iChild in
 						gDeferRedraw = false
 
+						self.revealChildren()
 						self.redrawAndSync {
+							gTemporarilySetMouseZone(iChild)
+
 							let e = iChild?.edit()
 
 							FOREGROUND(after: 0.2) {

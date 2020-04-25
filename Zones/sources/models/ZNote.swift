@@ -122,8 +122,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let offset = NSNumber(floatLiteral: Double(gEssayTitleFontSize) / 7.0)
 			result     = [.font : gEssayTitleFont, .paragraphStyle : paragraphStyle, .baselineOffset : offset]
 
-			if  z.colorized,
-				let  c = z.color {
+			if  let  c = z.textColor {
 				result?[.foregroundColor] = c
 			}
 		}
@@ -157,7 +156,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			result?.insert(gBlankLine, at: 0)
 			result?.insert(title,      at: 0)
 
-			colorize(result)
+			colorizeTitle(result)
 
 			result?.fixAllAttributes()
 		}
@@ -165,7 +164,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return result
 	}
 
-	func colorize(_ text: NSMutableAttributedString?) {
+	func colorizeTitle(_ text: NSMutableAttributedString?) {
 		if  let     z = zone, z.colorized,
 			let color = z.color?.lighter(by: 20.0).withAlphaComponent(0.5) {
 

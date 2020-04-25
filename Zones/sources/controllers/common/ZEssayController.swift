@@ -29,9 +29,7 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  gIsNoteMode && iKind != .sRelayout {
-			essayView?.updateText()
-		}
+		essayView?.updateText()
 	}
 
 	func modalForHyperlink(_ title: String?) -> String? {

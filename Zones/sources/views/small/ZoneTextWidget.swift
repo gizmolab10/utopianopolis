@@ -44,7 +44,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     func updateTextColor() {
         if  let  zone = widgetZone {
-            textColor = (gColorfulMode && zone.colorized) ? zone.color?.darker(by: 3.0) : gDefaultTextColor
+			textColor = zone.textColor
         }
     }
 

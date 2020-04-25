@@ -1193,8 +1193,8 @@ extension NSMutableAttributedString {
 						}
 
 						if  let attach = value as? NSTextAttachment,
-							let   wrap = attach.fileWrapper { // check if file actually exists
-							string     = wrap.preferredFilename
+							let   file = attach.fileWrapper { // check if file actually exists
+							string     = file.preferredFilename
 						}
 
 						if  let append = string as? String {

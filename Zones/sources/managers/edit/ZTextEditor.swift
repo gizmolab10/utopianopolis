@@ -292,6 +292,7 @@ class ZTextEditor: ZTextView {
 					setCursor(at: at)
 				}
 
+				self.signal([.sCrumbs])
 				deferEditingStateChange()
 			}
         }

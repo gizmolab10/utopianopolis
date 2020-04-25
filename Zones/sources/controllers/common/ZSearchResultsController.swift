@@ -92,7 +92,7 @@ class ZSearchResultsController: ZGenericTableController {
 					}
 				}
 
-				if  let    ranges = string.rangesMatching(kSearchSeparator),		      // find any search separator
+				if  let    ranges = string.rangesMatching(kSearchSeparator),		  // find any search separator
 					ranges.count > 0 {
 					let separator = ranges[0]
 					let     color = ZColor.systemYellow

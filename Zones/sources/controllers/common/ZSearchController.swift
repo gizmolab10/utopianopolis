@@ -147,9 +147,9 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 								if  trait.ownerZone == nil {
 									orphans.append(record) // remove unowned traits from results
 								}
-							} else if record.recordType != kTraitType {
-								orphans.append(record) // remove unregistered zones from results
-							} else {
+//							} else if record.recordType != kTraitType {
+//								orphans.append(record) // remove unregistered zones from results
+							} else if cloud.maybeZoneForCKRecord(record) == nil {
 								let trait = ZTrait(record: record, databaseID: dbID)
 								if  trait.ownerZone != nil {
 									cloud.registerZRecord(trait) // some records are being fetched first time
