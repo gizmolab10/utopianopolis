@@ -1131,7 +1131,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd ~/Library/Containers/com.zones.focus.mac/Data/Library/Application\\ Support/Seriously\nfile=\"everyone.seriously\"\ncp $file ${SRCROOT}/data\n";
+			shellScript = "file=everyone.seriously\nfrom=~/Library/Containers/com.zones.focus.mac/Data/Library/Application\\ Support/Seriously\nto=${SRCROOT}/data\nif ![-f $from]; then\n  mkdir $from\nfi\nif ![-f $to]; then\n  mkdir $to\nfi\ncd $from\nif  [-f $file]; then\n  cp -f $file $to\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

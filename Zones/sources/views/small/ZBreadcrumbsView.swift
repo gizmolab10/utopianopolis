@@ -96,12 +96,13 @@ class ZBreadcrumbsView : ZView {
 	}
 
 	func updateAndRedraw() {
-		dbIndicatorButton?.isHidden = !gIsGraphOrEditIdeaMode
-		dbIndicatorButton?.title    = gDatabaseID == .everyoneID ? "e" : "m"
-		clipCrumbsButton?.image     = !crumbsAreClipped ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
-
-		updateCrumbButtons()
+		updateCrumbButtons()  // side effect: updates crumbsAreClipped
 		layoutCrumbButtons()
+
+		clipCrumbsButton?.image     = !crumbsAreClipped ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
+		dbIndicatorButton?.title    = gDatabaseID == .everyoneID ? "e" : "m"
+		dbIndicatorButton?.isHidden = !gIsGraphOrEditIdeaMode
+
 		setNeedsDisplay()
 		setNeedsLayout()
 	}

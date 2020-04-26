@@ -55,7 +55,7 @@ class ZGraphEditor: ZBaseEditor {
         case eHelp
         case eSort
         case eFind
-        case eTint
+        case eColor
         case eChild
         case eAlter
         case eFiles
@@ -229,21 +229,6 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-	func browseBreadcrumbs(_ out: Bool) {
-		if  let here = out ? gHere.parentZone : gBreadcrumbs.nextCrumb(false) {
-			let last = gSelecting.currentGrabs
-			gHere    = here
-
-			here.traverseAllProgeny { child in
-				child.concealChildren()
-			}
-
-			gSelecting.grab(last)
-			gSelecting.firstGrab?.asssureIsVisible()
-			gControllers.signalFor(here, regarding: .sRelayout)
-		}
-	}
-	
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
         let alterers = "ehltuw\r" + kMarkingCharacters
 		let  ALTERER = alterers.contains(key)
@@ -255,7 +240,7 @@ class ZGraphEditor: ZBaseEditor {
         } else {
             switch key {
             case "f":                   return .eFind
-            case "k":                   return .eTint
+            case "k":                   return .eColor
             case "m":                   return .eCloud
             case "z":                   return .eUndo
 			case "o", "s":              return .eFiles
@@ -285,24 +270,24 @@ class ZGraphEditor: ZBaseEditor {
         var valid = !gIsEditIdeaMode
 
         if  valid,
-			type 	   != .eAlways {
-            let    undo = undoManager
-            let  select = gSelecting
-            let  wGrabs = select.writableGrabsCount
-            let   paste = select.pasteableZones.count
-            let   grabs = select.currentGrabs  .count
-            let   shown = select.currentGrabsHaveVisibleChildren
-            let   mover = select.currentMoveable
-            let canTint = mover.isReadOnlyRoot || mover.bookmarkTarget?.isReadOnlyRoot ?? false
-            let   write = mover.userCanWrite
-            let    sort = mover.userCanMutateProgeny
-            let  parent = mover.userCanMove
+			type  	    != .eAlways {
+            let     undo = undoManager
+            let   select = gSelecting
+            let   wGrabs = select.writableGrabsCount
+            let    paste = select.pasteableZones.count
+            let    grabs = select.currentGrabs  .count
+            let    shown = select.currentGrabsHaveVisibleChildren
+            let    mover = select.currentMoveable
+            let canColor = mover.isReadOnlyRoot || mover.bookmarkTarget?.isReadOnlyRoot ?? false
+            let    write = mover.userCanWrite
+            let     sort = mover.userCanMutateProgeny
+            let   parent = mover.userCanMove
 
             switch type {
             case .eParent:    valid =               parent
             case .eChild:     valid =               sort
             case .eAlter:     valid =               write
-            case .eTint:      valid =  canTint   || write
+            case .eColor:     valid =  canColor  || write
             case .ePaste:     valid =  paste > 0 && write
             case .eUseGrabs:  valid = wGrabs > 0 && write
             case .eMultiple:  valid =  grabs > 1
@@ -317,6 +302,21 @@ class ZGraphEditor: ZBaseEditor {
 
         return valid
     }
+
+	func browseBreadcrumbs(_ out: Bool) {
+		if  let here = out ? gHere.parentZone : gBreadcrumbs.nextCrumb(false) {
+			let last = gSelecting.currentGrabs
+			gHere    = here
+
+			here.traverseAllProgeny { child in
+				child.concealChildren()
+			}
+
+			gSelecting.grab(last)
+			gSelecting.firstGrab?.asssureIsVisible()
+			gControllers.signalFor(here, regarding: .sRelayout)
+		}
+	}
 
     // MARK:- features
     // MARK:-

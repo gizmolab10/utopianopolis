@@ -542,6 +542,9 @@ DQ
                                                     </menuItem>
                                                     <menuItem title="Show/Hide Colors" keyEquivalent="k" id="RfO-CH-kxa">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Y9J-Wf-DfD"/>
+                                                        </connections>
                                                     </menuItem>
                                                     <menuItem title="Power User Mode" keyEquivalent="p" id="THb-cX-UAd">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
