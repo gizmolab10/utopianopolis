@@ -11,6 +11,8 @@ import Foundation
 class ZShortcuts : NSObject {
 
 	var numberOfRows: Int { return max(graphColumnOne.count, max(graphColumnTwo.count, max(graphColumnThree.count, graphColumnFour.count))) / 3 }
+	var hyperlinkColor: ZColor { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }
+	var powerUserColor: ZColor { return gIsDark ? kBlueColor.darker (by: 5.0) : kBlueColor.lighter(by: 15.0) }
 	var tabStops = [NSTextTab]()
 	let bold = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
 	let columnWidth = 290
@@ -80,7 +82,6 @@ class ZShortcuts : NSObject {
 		return url.isEmpty ? nil : m + url
 	}
 
-
 	func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
 		var (first, second, url) = strings(for: row, column: column)
 		let     rawChar = first.substring(with: NSMakeRange(0, 1))
@@ -105,30 +106,30 @@ class ZShortcuts : NSObject {
 			case .append?, .underline?:
 				attributes[.underlineStyle] = 1
 
-				if  type == .append {
-					prefix += "+ "
-			}
+//				if  type == .append {
+//					prefix += "+ "
+//				}
 
 			case .plain?, .power?:
 				if  hasURL {
-					attributes[.foregroundColor] = ZColor.blue.darker(by: 2.0)
+					attributes[.foregroundColor] = hyperlinkColor
 					second.append(kSpace + kEllipsis)
 				}
 
 				fallthrough
 
 			default:
-				prefix  = kTab		// for empty lines, including after last row
+				prefix = kTab		// for empty lines, including after last row
 		}
 
-		let result  = NSMutableAttributedString(string: prefix)
+		let result = NSMutableAttributedString(string: prefix)
 
 		if  type == .plain {
 			result.append(NSAttributedString(string: main))
 		} else {
 			if  gPowerUserMode,
 				type == .power {
-				attributes[.backgroundColor] = ZColor.blue.lighter(by: 15.0)
+				attributes[.backgroundColor] = powerUserColor
 			}
 
 			result.append(NSAttributedString(string: main, attributes: attributes))
@@ -151,28 +152,28 @@ class ZShortcuts : NSObject {
 
 	let graphColumnOne: [String] = [
 		"",				"", "",
-		"bALWAYS:\t",	"", "",
+		"bEVERYWHERE:",	"", "",
 		"",				"", "",
 		"uKEY", 		"", "",
 		" RETURN", 		"begin or end editing idea", 					"edit-d05d18996df7",
 		" SPACE", 		"create child idea",    						"edit-d05d18996df7",
 		" TAB", 		"create next idea", 							"edit-d05d18996df7",
 		"",				"", "",
-		"aCOMMAND",		"", "",
+		"uKEY + COMMAND",		"", "",
 		" RETURN", 		"begin or end editing hidden note", 			"",
 		"pCOMMA", 		"show or hide preferences", 					"help-inspector-view-c360241147f2",
 		" A", 			"select all",	 								"",
 		" P", 			"print the map (or this window)",   			"",
 		"pY",			"toggle extent of breadcrumb list",				"",
 		"",				"", "",
-		"aCONTROL",		"", "",
+		"uKEY + CONTROL",		"", "",
 		"pCOMMA", 		"toggle browsing: un/confined", 				"",
 		"pDELETE", 		"show trash", 									"organize-fcdc44ac04e4",
 		"pPERIOD", 		"toggle lists grow up/down",		 			"",
 		" SPACE", 		"create an idea", 								"edit-d05d18996df7",
 		"p/", 			"remove current focus from the ring", 			"focusing-your-thinking-a53adb16bba",
 		"",				"", "",
-		"aCOMMAND + OPTION", "", "",
+		"uKEY + COMMAND + OPTION", "", "",
 		" RETURN", 		"begin editing hidden note",					"",
 		" /", 			"show or hide this window", 					"",
 		" A", 			"show About Seriously", 						"",
@@ -181,13 +182,13 @@ class ZShortcuts : NSObject {
 		"pY",			"show or hide necklace tooltips",				"",
 		"",				"", "",
 		"i",			"", "",
-		"bSEARCH BAR:", "", "",
+		"bWHILE IN THE SEARCH BAR:", "", "",
 		"",				"", "",
 		"uKEY",			"", "",
 		" RETURN", 		"perform search", 								"search-2a996591375a",
 		" ESCAPE", 		"dismisss search bar", 							"search-2a996591375a",
 		"",				"", "",
-		"aCOMMAND",		"", "",
+		"uKEY + COMMAND",		"", "",
 		" A", 			"select all search text", 						"search-2a996591375a",
 		" F", 			"dismisss search bar", 							"search-2a996591375a",
 		"",				"", "",
@@ -195,37 +196,37 @@ class ZShortcuts : NSObject {
 
 	let graphColumnTwo: [String] = [
 		"",				"", "",
-		"bEDITING AN IDEA:", "", "",
+		"bWHILE EDITING AN IDEA:", "", "",
 		"",				"", "",
 		"uKEY",			"", "",
 		" ESCAPE", 		"cancel edit, discarding changes", 				"edit-d05d18996df7",
 		"",				"", "",
-		"aCOMMAND",		"", "",
+		"uKEY + COMMAND",		"", "",
 		" PERIOD", 		"cancel edit, discarding changes", 				"edit-d05d18996df7",
 		" A", 			"select all text", 								"edit-d05d18996df7",
 		"pI", 			"show special characters popup menu", 			"",
 		"p",			"", "",
-		"ACOMMAND + OPTION", "", "",
+		"UKEY + COMMAND + OPTION", "", "",
 		"pPERIOD", 		"toggle lists grow up/down,",					"",
 		"p", 			"(and) move idea up/down", 						"organize-fcdc44ac04e4",
 		"p",			"", "",
-		"aOPTION",      "", "",
+		"uKEY + OPTION",      "", "",
 		" SPACE", 		"create child idea", 							"edit-d05d18996df7",
 		"",				"", "",
 		"",				"", "",
-		"",				"", "",
-		"bEDITING (TEXT IS SELECTED):",	"", "",
+		"bWHILE EDITING (TEXT IS SELECTED):",	"", "",
 		"",				"", "",
 		"psurround:", 	"| [ { ( < \" ' SPACE",							"edit-d05d18996df7",
 		"p",			"", "",
-		"aCOMMAND",		"", "",
+		"uKEY + COMMAND",		"", "",
 		"pD", 			"if all selected, append onto parent", 			"parent-child-tweaks-bf067abdf461",
 		"p ", 			"if not all selected, create as a child", 		"parent-child-tweaks-bf067abdf461",
 		" L", 			"-> lowercase", 								"edit-d05d18996df7",
 		" U", 			"-> uppercase", 								"edit-d05d18996df7",
 		"",				"", "",
+		"",				"", "",
 		"i",			"", "",
-		"bSEARCH RESULTS:",	"", "",
+		"bWHILE IN THE SEARCH RESULTS:",	"", "",
 		"",				"", "",
 		"uKEY",			"", "",
 		" RETURN", 		"focus on selected result", 					"search-2a996591375a",
@@ -239,7 +240,7 @@ class ZShortcuts : NSObject {
 
 	let graphColumnThree: [String] = [
 		"",				"", "",
-		"bBROWSING (NOT EDITING AN IDEA):", "", "",
+		"bWHILE BROWSING (NOT EDITING AN IDEA):", "", "",
 		"",				"", "",
 		"pmark:", 		"" + kMarkingCharacters, 						"extras-2a9b1a7db21f",
 		"p",			"", "",
@@ -274,16 +275,17 @@ class ZShortcuts : NSObject {
 		"pT", 			"swap selected idea with parent", 				"parent-child-tweaks-bf067abdf461",
 		" U", 			"-> uppercase", 								"edit-d05d18996df7",
 		"",				"", "",
-		"aMOUSE CLICK",	"", "",
+		"uKEY + MOUSE CLICK",	"", "",
 		" COMMAND", 	"move entire map", 							    "mouse-e21b7a63020e",
 		" SHIFT", 		"un/extend selection", 							"selecting-ideas-cc2939720e53",
 		"",				"", "",
-		"p",            "Pale blue background indicates power-user feature", "",
+		"p",            "PALE BLUE BACKGROUND INDICATES POWER-USER FEATURE", "",
 	]
 
 	let graphColumnFour: [String] = [
 		"",				"", "",
-		"aOPTION",		"", "",
+		"",				"", "",
+		"uKEY + OPTION",		"", "",
 		" ARROWS", 		"move selected idea", 							"organize-fcdc44ac04e4",
 		"pDELETE", 		"retaining children", 							"organize-fcdc44ac04e4",
 		"pRETURN", 		"edit with cursor at end", 						"edit-d05d18996df7",
@@ -292,7 +294,7 @@ class ZShortcuts : NSObject {
 		"pG", 			"refetch entire submap of selection", 	 		"cloud-vs-file-f3543f7281ac",
 		"pS", 			"export to a outline file", 					"cloud-vs-file-f3543f7281ac",
 		"",				"", "",
-		"aCOMMAND",		"", "",
+		"uKEY + COMMAND",		"", "",
 		"pARROWS", 		"extend all the way", 							"selecting-ideas-cc2939720e53",
 		" HYPHEN", 		"reduce font size", 							"",
 		" +", 		    "increase font size", 							"",
@@ -301,7 +303,7 @@ class ZShortcuts : NSObject {
 		"pD", 			"append onto parent", 							"parent-child-tweaks-bf067abdf461",
 		"pG", 			"refetch entire map",   						"cloud-vs-file-f3543f7281ac",
 		"",				"", "",
-		"aCOMMAND + OPTION", "", "",
+		"uKEY + COMMAND + OPTION", "", "",
 		" DELETE", 		"permanently (not into trash)", 				"organize-fcdc44ac04e4",
 		"pHYPHEN", 		"-> titled line to/from parent",			 	"lines-37426469b7c6",
 		"pO", 			"show data files in Finder", 					"cloud-vs-file-f3543f7281ac",
@@ -310,7 +312,6 @@ class ZShortcuts : NSObject {
 		" LEFT ", 		"hide children", 								"focusing-your-thinking-a53adb16bba",
 		" RIGHT", 		"reveal children", 								"focusing-your-thinking-a53adb16bba",
 		" vertical", 	"extend selection", 							"selecting-ideas-cc2939720e53",
-		"",				"", "",
 		"",				"", "",
 		"",				"", "",
 		"BBROWSING (MULTIPLE IDEAS SELECTED):",	"", "",

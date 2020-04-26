@@ -80,7 +80,7 @@ class ZTimers: NSObject {
 		return ""
 	}
 
-	func setTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping (Timer) -> Void) {
+	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping (Timer) -> Void) {
 		guard let index = timerID?.rawValue else { return }
 
 		timers[index]?.invalidate()

@@ -128,6 +128,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 	}
 
     @discardableResult override func becomeFirstResponder() -> Bool {
+		printDebug(.dEdit, " TRY     " + (widgetZone?.unwrappedName ?? ""))
+
 		if !isFirstResponder,
 			let zone = widgetZone,
 			zone.canEditNow,                 // detect if mouse down inside widget OR key pressed
@@ -137,6 +139,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 gSearching.exitSearchMode()
             }
 
+			printDebug(.dEdit, " FIRST   " + zone.unwrappedName)
 			gTextEditor.edit(zone, setOffset: gTextOffset)
 
 			return true

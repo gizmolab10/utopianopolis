@@ -119,9 +119,7 @@ var gHere: Zone {
 	}
 }
 
-var gRecords: ZRecords? {
-	get { return gShowFavorites ? gFavorites : gCloud }
-}
+var gRecords: ZRecords? { return gShowFavorites ? gFavorites : gCloud }
 
 var gHereMaybe: Zone? {
     get { return gRecords?.hereZoneMaybe }
@@ -506,21 +504,21 @@ var gCurrentEssay: ZNote? {
 	}
 }
 
-// MARK:- actions
+// MARK:- timers
 // MARK:-
 
 func gTemporarilySetKey(_ key: String, for seconds: Double = 1.0) {
 	gCurrentKeyPressed = key
 
-	gTimers.setTimer(for: .tKey, withTimeInterval: seconds) { iTimer in
+	gTimers.resetTimer(for: .tKey, withTimeInterval: seconds) { iTimer in
 		gCurrentKeyPressed = ""
 	}
 }
 
-func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 1.0) {
+func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 0.5) {
 	gCurrentMouseDownZone = zone
 
-	gTimers.setTimer(for: .tMouseZone, withTimeInterval: seconds) { iTimer in
+	gTimers.resetTimer(for: .tMouseZone, withTimeInterval: seconds) { iTimer in
 		gCurrentMouseDownZone = nil
 	}
 }
@@ -528,7 +526,7 @@ func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 1.0) {
 func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double = 1.0) {
 	gCurrentMouseDownLocation = location
 
-	gTimers.setTimer(for: .tMouseLocation, withTimeInterval: seconds) { iTimer in
+	gTimers.resetTimer(for: .tMouseLocation, withTimeInterval: seconds) { iTimer in
 		gCurrentMouseDownLocation = nil
 	}
 }
@@ -536,10 +534,13 @@ func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double 
 func gTemporarilySetArrowsDoNotBrowse(_ notBrowse: Bool, for seconds: Double = 1.0) {
 	gArrowsDoNotBrowse = notBrowse
 
-	gTimers.setTimer(for: .tArrowsDoNotBrowse, withTimeInterval: seconds) { iTimer in
+	gTimers.resetTimer(for: .tArrowsDoNotBrowse, withTimeInterval: seconds) { iTimer in
 		gArrowsDoNotBrowse = false
 	}
 }
+
+// MARK:- actions
+// MARK:-
 
 func gTestForUserInterrupt() throws {
 	if  let w = gWindow, w.isKeyWindow, (w.mouseMoved || w.keyPressed) {

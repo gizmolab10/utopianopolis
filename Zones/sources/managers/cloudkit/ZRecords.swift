@@ -77,13 +77,13 @@ class ZRecords: NSObject {
     
     
     var hereZoneMaybe: Zone? {
-        get { return maybeZoneForRecordName(hereRecordName) ?? (databaseID == .favoritesID ? gFavoritesRoot : rootZone) }
+        get { return maybeZoneForRecordName(hereRecordName) }
 		set { hereRecordName = newValue?.recordName ?? (databaseID == .favoritesID ? kFavoritesRootName : kRootName) }
     }
     
     
     var hereZone: Zone {
-        get { return hereZoneMaybe! }
+        get { return (hereZoneMaybe ?? (databaseID == .favoritesID ? gFavoritesRoot! : rootZone!)) }
         set { hereZoneMaybe = newValue }
     }
 

@@ -276,7 +276,7 @@ class ZTextEditor: ZTextView {
 				zone.userCanWrite {
 				currentEdit = pack
 
-				printDebug(.dEdit, zone.unwrappedName)
+//				printDebug(.dEdit, " EDIT    " + zone.unwrappedName)
 
 				pack.updateText(isEditing: true)
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
@@ -343,7 +343,6 @@ class ZTextEditor: ZTextView {
         }
     }
 
-
     func deferEditingStateChange() {
         gIsEditingStateChanging     = true
 
@@ -354,7 +353,7 @@ class ZTextEditor: ZTextView {
 
 	func capture(force: Bool = false) {
         if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
-			printDebug(.dEdit, "capture \(text)")
+//			printDebug(.dEdit, " CAPTURE \(text)")
             current.captureTextAndSync(text)
         }
     }
@@ -483,7 +482,7 @@ class ZTextEditor: ZTextView {
             let       name = zone.unwrappedName
             let   location = name.location(of: offset, using: currentFont)
 
-			printDebug(.dEdit, "at \(location)")
+//			printDebug(.dEdit, " AT \(location)    \(name)")
             self.selectedRange = NSMakeRange(location, 0)
         }
     }

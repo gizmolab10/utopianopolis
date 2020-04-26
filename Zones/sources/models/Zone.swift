@@ -367,7 +367,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				} else if let p = parentZone, p != self, hasCompleteAncestorPath(toColor: true) {
 					return p.color
 				} else {
-					computed    = kDefaultZoneColor
+					computed    = kBlueColor
 				}
 			}
 
@@ -664,11 +664,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var canEditNow: Bool {   // workaround recently introduced change in become first responder invocation logic [aka: fucked it up]
 		return !gRefusesFirstResponder
-			&& !gIsEditingStateChanging
+			&&  userWantsToEdit
 			&&  userCanWrite
-			&& ([kTab, kSpace, kReturn, "-", "d", "e", "h"].contains(gCurrentKeyPressed)
-				|| gCurrentKeyPressed?.arrow != nil
-				|| gCurrentMouseDownZone     == self)
+	}
+
+	var userWantsToEdit: Bool {
+		return [kTab, kSpace, kReturn, "-", "d", "e", "h"].contains(gCurrentKeyPressed)
+			|| gCurrentKeyPressed?.arrow != nil
+			|| gCurrentMouseDownZone     == self
 	}
 
     // MARK:- write access
@@ -854,7 +857,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			revealChildren()
 			addIdea(at: gListsGrowDown ? nil : 0) { iChild in
 				gControllers.signalFor(self.parentZoneMaybe, regarding: .sRelayout) {
-					gTemporarilySetMouseZone(iChild)
 					iChild?.edit()
 				}
 			}
@@ -1224,15 +1226,19 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
 	func             focus() { gFocusRing          .focusOn(self) { self.redrawGraph() } }
-	@discardableResult func edit() -> ZTextEditor? { return gTextEditor.edit(self) }
 	func editTrait(for iType: ZTraitType) { gTextEditor.edit(traitFor(iType)) }
+
+	@discardableResult func edit() -> ZTextEditor? {
+		gTemporarilySetMouseZone(self) // so become first responder will work
+
+		return gTextEditor.edit(self)
+	}
 
 	func resolveAndSelect(_ searchText: String?) {
 		gHere = self
 
 		revealChildren()
 		gControllers.swapGraphAndEssay(force: .graphMode)
-		gTemporarilySetMouseZone(self)
 		signal([.sRelayout])
 
 		let e = edit()
@@ -1244,6 +1250,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     
     func grab(updateBrowsingLevel: Bool = true) {
 		gTextEditor.stopCurrentEdit()
+//		printDebug(.dEdit, " GRAB    \(unwrappedName)")
         gSelecting.grab([self], updateBrowsingLevel: updateBrowsingLevel)
     }
 
@@ -1903,8 +1910,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 						self.revealChildren()
 						self.redrawAndSync {
-							gTemporarilySetMouseZone(iChild)
-
 							let e = iChild?.edit()
 
 							FOREGROUND(after: 0.2) {

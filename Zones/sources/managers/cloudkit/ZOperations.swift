@@ -148,7 +148,7 @@ class ZOperations: NSObject {
                 }
             }
 
-			gTimers.setTimer(for: .tCloudAvailable, withTimeInterval: 0.2, repeats: true, block: cloudFire!)
+			gTimers.resetTimer(for: .tCloudAvailable, withTimeInterval: 0.2, repeats: true, block: cloudFire!)
             cloudFire?(nil)
         }
     }

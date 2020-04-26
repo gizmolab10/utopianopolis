@@ -40,7 +40,7 @@ class ZPreferencesController: ZGenericController {
             stretch?                 .doubleValue = Double(gGenericOffset.width)
             activeMineColorBox?            .color = gActiveColor
             backgroundColorBox?            .color = gAccentColor
-            zoneColorBox?                  .color =   grabbed?.color ?? kDefaultZoneColor
+            zoneColorBox?                  .color =   grabbed?.color ?? kBlueColor
             clearColorButton?           .isHidden = !(grabbed?.hasColor ?? true)
 			colorPreferencesBox?        .isHidden = !gColorfulMode
 

@@ -13,17 +13,14 @@ class ZBreadcrumbButton: ZButton {
 	var zone: Zone = gHere
 
 	var strokeColor: ZColor {
-		let ancestors = zone.ancestralPath
-		let   visible = ancestors.contains(gHere)
+		let visible = zone.ancestralPath.contains(gHere)
 
-		if !gColorfulMode {
-			if gIsDark {
-				return visible ? kDarkGrayColor.darker(by: 6.0) : kDarkGrayColor.darker(by: 4.0)
-			} else {
-				return visible ? kDarkGrayColor.darker(by: 3.0) : kLightestGrayColor
-			}
+		if  gColorfulMode {
+			return visible ? gActiveColor .lighter(by: 4.0) : gAccentColor
+		} else if  gIsDark {
+			return visible ? kDarkGrayColor.darker(by: 6.0) : kDarkGrayColor.darker(by: 4.0)
 		} else {
-			return visible ? gActiveColor : gAccentColor
+			return visible ? kDarkGrayColor.darker(by: 3.0) : kLightestGrayColor
 		}
 	}
 
