@@ -162,7 +162,7 @@ class ZTextPack: NSObject {
     }
 
 
-    func captureTextAndSync(_ iText: String?) {
+    func captureTextRedrawAndSync(_ iText: String?) {
 		if                     iText == unwrappedName,
 			let                  type = packedTrait?.traitType {
 			packedZone?.removeTrait(for: type)
@@ -175,7 +175,7 @@ class ZTextPack: NSObject {
                 prepareUndoForTextChange(gUndoManager) {
                     self.originalText = w.text
 
-                    self.captureTextAndSync(original)
+                    self.captureTextRedrawAndSync(original)
                     w.updateGUI()
                 }
             }
@@ -276,7 +276,7 @@ class ZTextEditor: ZTextView {
 				zone.userCanWrite {
 				currentEdit = pack
 
-//				printDebug(.dEdit, " EDIT    " + zone.unwrappedName)
+				printDebug(.dEdit, " EDIT    " + zone.unwrappedName)
 
 				pack.updateText(isEditing: true)
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
@@ -353,14 +353,14 @@ class ZTextEditor: ZTextView {
 
 	func capture(force: Bool = false) {
         if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
-//			printDebug(.dEdit, " CAPTURE \(text)")
-            current.captureTextAndSync(text)
+			printDebug(.dEdit, " CAPTURE \(text)")
+            current.captureTextRedrawAndSync(text)
         }
     }
 
     func assign(_ iText: String?, to iZone: Zone?) {
         if  let zone = iZone {
-            ZTextPack(zone).captureTextAndSync(iText)
+            ZTextPack(zone).captureTextRedrawAndSync(iText)
         }
     }
 
@@ -482,7 +482,7 @@ class ZTextEditor: ZTextView {
             let       name = zone.unwrappedName
             let   location = name.location(of: offset, using: currentFont)
 
-//			printDebug(.dEdit, " AT \(location)    \(name)")
+			printDebug(.dEdit, " AT \(location)    \(name)")
             self.selectedRange = NSMakeRange(location, 0)
         }
     }

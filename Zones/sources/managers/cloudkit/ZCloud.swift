@@ -1324,10 +1324,8 @@ class ZCloud: ZRecords {
         }
     }
 
-
     // MARK:- remote persistence
     // MARK:-
-
 
     func subscribe(_ onCompletion: IntClosure?) {
         if  cloudUnavailable {
@@ -1362,7 +1360,6 @@ class ZCloud: ZRecords {
             }
         }
     }
-
 
     func setIntoObject(_ object: ZRecord, value: NSObject?, for property: String) {
         if  let   record = object.record, database != nil {

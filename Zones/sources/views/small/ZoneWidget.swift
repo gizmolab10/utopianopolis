@@ -466,14 +466,14 @@ class ZoneWidget: ZView {
         let           path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
         path    .lineWidth = thickness
         path     .flatness = 0.0001
-//		var          debug = "[PLAIN]  "
+		var          debug = "[PLAIN]  "
 
         if  pale {
             path.addDashes()
-//			debug = "[DASHES] "
+			debug = "[DASHES] "
         }
         
-//		printDebug(.dEdit, debug + (widgetZone?.unwrappedName ?? ""))
+		printDebug(.dEdit, debug + (widgetZone?.unwrappedName ?? ""))
         strokeColor?.setStroke()
         fillColor?  .setFill()
         path.stroke()

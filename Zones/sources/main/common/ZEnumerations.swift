@@ -146,6 +146,15 @@ enum ZDatabaseID: String {
 		}
     }
 
+	var indicator: String {
+		switch self {
+			case .favoritesID: return "f"
+			case  .everyoneID: return "e"
+			case      .mineID: return "m"
+			default:           return ""
+		}
+	}
+
     static func convert(from scope: CKDatabase.Scope) -> ZDatabaseID? {
 		switch scope {
 			case .public:  return .everyoneID
@@ -154,8 +163,9 @@ enum ZDatabaseID: String {
 		}
     }
 
-    static func convert(from id: String) -> ZDatabaseID? {
-		switch id {
+    static func convert(from indicator: String) -> ZDatabaseID? {
+		switch indicator {
+			case "f": return .favoritesID
 			case "e": return .everyoneID
 			case "m": return .mineID
 			default:  return nil
@@ -344,12 +354,12 @@ enum ZEssayHyperlinkType: String {
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = [.dImages]
+var gDebugMode: [ZDebugMode] = [.dImages, .dRemote]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
-	static var nextValue: Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let rawValue: Int
+	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
+	let           rawValue : Int
 
 	init() { rawValue = ZDebugMode.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
@@ -372,6 +382,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dSearch = ZDebugMode()
 	static let dImages = ZDebugMode()
 	static let dTimers = ZDebugMode()
+	static let dRemote = ZDebugMode()
 
 	var description: String {
 		return [(.dOps,    "     op"),
@@ -390,6 +401,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.dAccess, " access"),
 				(.dSearch, " search"),
 				(.dImages, " images"),
+				(.dRemote, " remote"),
 				(.dTimers, " timers")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: " ")

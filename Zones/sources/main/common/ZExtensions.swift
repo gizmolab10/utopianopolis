@@ -122,6 +122,12 @@ extension NSObject {
 		gControllers.signalFor(nil, multiple: multiple)
 	}
 
+	func redrawAndSyncAndRedraw() {
+		redrawAndSync {
+			self.redrawGraph()
+		}
+	}
+
 	func redrawAndSync(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
 		gControllers.signalAndSync(zone, regarding: .sRelayout, onCompletion: onCompletion)
 	}

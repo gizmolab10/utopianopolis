@@ -100,7 +100,7 @@ class ZBreadcrumbsView : ZView {
 		layoutCrumbButtons()
 
 		clipCrumbsButton?.image     = !crumbsAreClipped ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
-		dbIndicatorButton?.title    = gDatabaseID == .everyoneID ? "e" : "m"
+		dbIndicatorButton?.title    = gDatabaseID.indicator
 		dbIndicatorButton?.isHidden = !gIsGraphOrEditIdeaMode
 
 		setNeedsDisplay()

@@ -262,9 +262,9 @@ class ZBatches: ZOnboarding {
             if  iCompleted {
                 onCompletion(true)
             } else {
-                let              requiresActive = [.oSaveToCloud, .oTraits                ].contains(operationID)
-                let               alwaysForBoth = [.oHere, .oRoots, .oReadFile, .oManifest].contains(operationID)
-                let               forMineIDOnly = [.oBookmarks, .oSubscribe               ].contains(operationID)
+                let              requiresActive = [.oSaveToCloud, .oTraits                             ].contains(operationID)
+				let               alwaysForBoth = [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe].contains(operationID)
+                let               forMineIDOnly = [.oBookmarks                                         ].contains(operationID)
                 let                      isMine = restoreToID == .mineID
                 let               onlyCurrentID = (!gCanAccessMyCloudDatabase && !alwaysForBoth) || operationID == .oCompletion
                 let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
