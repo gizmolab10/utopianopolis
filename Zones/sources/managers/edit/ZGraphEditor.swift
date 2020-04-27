@@ -858,7 +858,7 @@ class ZGraphEditor: ZBaseEditor {
             } else {
                 prepareUndoForDelete()
                 
-                deleteZones(gSelecting.simplifiedGrabs, permanently: permanently) {
+				gSelecting.simplifiedGrabs.deleteZones(permanently: permanently) {
                     gFavorites.updateFavoritesRedrawAndSync {    // delete alters the list
                         gDeferRedraw = false
                         
@@ -869,115 +869,8 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-	func deleteZones(_ iZones: ZoneArray, permanently: Bool = false, in iParent: Zone? = nil, iShouldGrab: Bool = true, onCompletion: Closure?) {
-        if  iZones.count == 0 {
-            onCompletion?()
-            
-            return
-        }
-
-        let    zones = iZones.sortedByReverseOrdering()
-        let     grab = !iShouldGrab ? nil : self.grabAppropriate(zones)
-        var doneOnce = false
-
-        for zone in iZones {
-            zone.needProgeny()
-        }
-
-		if !doneOnce {
-			doneOnce  = true
-			var count = zones.count
-
-			let finish: Closure = {
-				grab?.grab()
-				onCompletion?()
-			}
-
-			if  count == 0 {
-				finish()
-			} else {
-				let deleteBookmarks: Closure = {
-					count -= 1
-
-					if  count == 0 {
-						gBatches.bookmarks { iSame in
-							var bookmarks = ZoneArray ()
-
-							for zone in zones {
-								bookmarks += zone.fetchedBookmarks
-							}
-
-							if  bookmarks.count == 0 {
-								finish()
-							} else {
-
-								// ///////////////////////////////////////////////////////////
-								// remove any bookmarks the target of which is one of zones //
-								// ///////////////////////////////////////////////////////////
-
-								self.deleteZones(bookmarks, permanently: permanently, iShouldGrab: false) { // recurse
-									finish()
-								}
-							}
-						}
-					}
-				}
-
-				for zone in zones {
-					if  zone == iParent { // detect and avoid infinite recursion
-						deleteBookmarks()
-					} else {
-						zone.deleteZone(permanently: permanently) {
-							deleteBookmarks()
-						}
-					}
-				}
-			}
-		}
-    }
-
-    func grabAppropriate(_ zones: ZoneArray) -> Zone? {
-        if  let       grab = gListsGrowDown ? zones.first : zones.last,
-            let     parent = grab.parentZone {
-            let   siblings = parent.children
-            var      count = siblings.count
-            let        max = count - 1
-
-            if siblings.count == zones.count {
-                for zone in zones {
-                    if siblings.contains(zone) {
-                        count -= 1
-                    }
-                }
-            }
-
-            if  var           index  = grab.siblingIndex, max > 0, count > 0 {
-                if !grab.isGrabbed {
-                    if        index == max &&   gListsGrowDown {
-                        index        = 0
-                    } else if index == 0   &&  !gListsGrowDown {
-                        index        = max
-                    }
-                } else if     index  < max &&  (gListsGrowDown || index == 0) {
-                    index           += 1
-                } else if     index  > 0    && (!gListsGrowDown || index == max) {
-                    index           -= 1
-                }
-
-                return siblings[index]
-            } else {
-                return parent
-            }
-        }
-
-        return nil
-    }
-
-
-
     // MARK:- move
     // MARK:-
-
 
     func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: Closure?) {
         if  let zone: Zone = gSelecting.firstSortedGrab {
@@ -1261,7 +1154,7 @@ class ZGraphEditor: ZBaseEditor {
 
                 self.UNDO(self) { iUndoSelf in
                     iUndoSelf.prepareUndoForDelete()
-                    iUndoSelf.deleteZones(forUndo, iShouldGrab: false, onCompletion: nil)
+                    forUndo.deleteZones(iShouldGrab: false, onCompletion: nil)
                     zone.grab()
                     iUndoSelf.redrawAndSync()
                 }
@@ -1344,7 +1237,7 @@ class ZGraphEditor: ZBaseEditor {
 
 			self.UNDO(self) { iUndoSelf in
 				iUndoSelf.prepareUndoForDelete()
-				iUndoSelf.deleteZones(children, iShouldGrab: false) {}
+				children .deleteZones(iShouldGrab: false) {}
 				iUndoSelf.pasteInto(parent, honorFormerParents: true)
 			}
 		}

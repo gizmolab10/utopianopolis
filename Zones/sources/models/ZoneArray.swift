@@ -269,4 +269,108 @@ extension ZoneArray {
 		gRemoteStorage.adoptAll()
 	}
 
+	func grabAppropriate() -> Zone? {
+		if  let     grab = gListsGrowDown ? first : last,
+			let   parent = grab.parentZone {
+			let siblings = parent.children
+			var    count = siblings.count
+			let      max = count - 1
+
+			if siblings.count == count {
+				for zone in self {
+					if siblings.contains(zone) {
+						count -= 1
+					}
+				}
+			}
+
+			if  var           index  = grab.siblingIndex, max > 0, count > 0 {
+				if !grab.isGrabbed {
+					if        index == max &&   gListsGrowDown {
+						index        = 0
+					} else if index == 0   &&  !gListsGrowDown {
+						index        = max
+					}
+				} else if     index  < max &&  (gListsGrowDown || index == 0) {
+					index           += 1
+				} else if     index  > 0    && (!gListsGrowDown || index == max) {
+					index           -= 1
+				}
+
+				return siblings[index]
+			} else {
+				return parent
+			}
+		}
+
+		return nil
+	}
+
+	func deleteZones(permanently: Bool = false, in iParent: Zone? = nil, iShouldGrab: Bool = true, onCompletion: Closure?) {
+		if  count == 0 {
+			onCompletion?()
+
+			return
+		}
+
+		let    zones = sortedByReverseOrdering()
+		let     grab = !iShouldGrab ? nil : self.grabAppropriate()
+		var doneOnce = false
+
+		for zone in self {
+			zone.needProgeny()
+		}
+
+		if !doneOnce {
+			doneOnce  = true
+			var count = zones.count
+
+			let finish: Closure = {
+				grab?.grab()
+				onCompletion?()
+			}
+
+			if  count == 0 {
+				finish()
+			} else {
+				let deleteBookmarks: Closure = {
+					count -= 1
+
+					if  count == 0 {
+						gBatches.bookmarks { iSame in
+							var bookmarks = ZoneArray ()
+
+							for zone in zones {
+								bookmarks += zone.fetchedBookmarks
+							}
+
+							if  bookmarks.count == 0 {
+								finish()
+							} else {
+
+								// ///////////////////////////////////////////////////////////
+								// remove any bookmarks the target of which is one of zones //
+								// ///////////////////////////////////////////////////////////
+
+								bookmarks.deleteZones(permanently: permanently, iShouldGrab: false) { // recurse
+									finish()
+								}
+							}
+						}
+					}
+				}
+
+				for zone in zones {
+					if  zone == iParent { // detect and avoid infinite recursion
+						deleteBookmarks()
+					} else {
+						zone.deleteZone(permanently: permanently) {
+							deleteBookmarks()
+						}
+					}
+				}
+			}
+		}
+	}
+
 }

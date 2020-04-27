@@ -1040,7 +1040,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// RECURSE //
 					// //////////
 
-					gGraphEditor.deleteZones(self.fetchedBookmarks, permanently: permanently) {
+					self.fetchedBookmarks.deleteZones(permanently: permanently) {
 						onCompletion?()
 					}
 				}
@@ -2368,7 +2368,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					let   tt = trait.type,
 					let type = ZTraitType(rawValue: tt),
 					type    == .tNote {
-					printDebug(.dNotes, "trait (in " + (zoneName ?? "unknown") + ") --> " + (trait.format ?? "empty"))
+					printDebug(.dNotes, "trait (in " + (zoneName ?? kUnknown) + ") --> " + (trait.format ?? "empty"))
 				}
 
                 cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait (intentionally) not being in traits

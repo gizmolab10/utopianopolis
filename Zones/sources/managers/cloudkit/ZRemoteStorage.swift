@@ -184,20 +184,26 @@ class ZRemoteStorage: NSObject {
 				let recordID = notification.recordID {
 				let      dbi = dbID.indicator
 				let ckRecord = cloud.maybeCKRecordForRecordName(recordID.recordName)
-				let     name = (ckRecord?["zoneName"] as String?) ?? "unknown"
+				let     name = (ckRecord?["zoneName"] as String?) ?? kUnknown
+				let     type = ckRecord?.recordType   as String?  ?? kUnknown
+
+				if type == kUnknown || name == kUnknown {
+					print("hah!")
+				}
 
 				switch (notification.queryNotificationReason) {
-					case .recordCreated, .recordUpdated:
+					case .recordCreated,
+						 .recordUpdated:
 						cloud.addCKRecord(ckRecord, for: [.needsFetch])
-						printDebug(.dRemote, "receiving \(dbi) \(name)")
+						printDebug(.dRemote, "receiving \(dbi) \"\(type)\" \(name)")
 						self.redrawAndSyncAndRedraw()
 					case .recordDeleted:
 						if  let deleted = cloud.maybeZoneForCKRecord(ckRecord) {
 							printDebug(.dRemote, "deleted \(dbi) \(name)")
-							gGraphEditor.deleteZones([deleted], permanently: true) {
+							[deleted].deleteZones(permanently: true) {
 								self.redrawAndSyncAndRedraw()
 							}
-					}
+						}
 				}
 			}
 		}

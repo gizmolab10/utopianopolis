@@ -89,6 +89,7 @@ let                   kNoValue = "empty"
 let                    kDelete = "\u{7F}"
 let                    kEscape = "\u{1B}"
 let                   kScaling = "scaling"
+let                   kUnknown = "unknown"
 let                   kCloudID = "iCloud.com.zones.Zones"
 let                  kUserType = CKRecord.SystemType.userRecord
 let                  kAuthorID = "author id"
