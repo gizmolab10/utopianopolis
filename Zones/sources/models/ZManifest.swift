@@ -124,8 +124,8 @@ class ZManifest: ZRecord {
     }
 
     
-    override class func cloudProperties() -> [String] { return [#keyPath(deleted)] }
-    override func cloudProperties() -> [String] { return super.cloudProperties() + ZManifest.cloudProperties() }
+    override class func cloudProperties() -> [String] { return super.cloudProperties() + [#keyPath(deleted)] }
+    override func cloudProperties() -> [String] { return ZManifest.cloudProperties() }
     override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deleted)] }
     convenience init(databaseID: ZDatabaseID?) { self.init(record: CKRecord(recordType: kManifestType), databaseID: databaseID) }
     

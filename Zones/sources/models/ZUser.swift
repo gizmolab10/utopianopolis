@@ -52,14 +52,13 @@ class ZUser : ZRecord {
 		needSave()
 	}
 
-    override func cloudProperties() -> [String] {
-        return super.cloudProperties() + ZUser.cloudProperties()
-    }
+    override func cloudProperties() -> [String] { return ZUser.cloudProperties() }
 
     override class func cloudProperties() -> [String] {
         return [#keyPath(authorID),
                 #keyPath(writeAccess),
-                #keyPath(sentEmailType)]
+                #keyPath(sentEmailType)] +
+				super.cloudProperties()
     }
 
 }

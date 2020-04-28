@@ -1092,8 +1092,8 @@ class ZCloud: ZRecords {
     }
 
 	func fetchTraits(with recordIDs: [CKRecord.ID], _ onCompletion: IntClosure?) {
-        var    retrieved = [CKRecord] ()
-        if let predicate = traitsPredicate(specificTo: recordIDs) {
+        var     retrieved = [CKRecord] ()
+        if  let predicate = traitsPredicate(specificTo: recordIDs) {
             queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties()) { (iRecord, iError) in
                 if let ckRecord = iRecord {
                     if !retrieved.contains(ckRecord) {
@@ -1106,7 +1106,9 @@ class ZCloud: ZRecords {
 
                             if  zRecord == nil {                                                    // if not already registered
                                 zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID)    // register
-                            }
+							} else {
+								zRecord?.useBest(record: ckRecord)
+							}
                         }
 
                         self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))

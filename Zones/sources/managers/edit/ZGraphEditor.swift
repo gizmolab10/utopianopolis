@@ -151,7 +151,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "v":      if COMMAND { paste() }
 					case "w":      rotateWritable()
 					case "x":      if COMMAND { delete(permanently: SPECIAL && isWindow) } else { gCurrentKeyPressed = nil; return false }
-                    case "z":      if !SHIFT { gUndoManager.undo() } else { gUndoManager.redo() }
+                    case "z":      if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { self.redrawGraph() } }

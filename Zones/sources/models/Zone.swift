@@ -112,6 +112,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     // MARK:- properties
     // MARK:-
 
+	override func cloudProperties() -> [String] { return Zone.cloudProperties() }
+
     override class func cloudProperties() -> [String] {
 		return [#keyPath(parent),
 				#keyPath(zoneName),
@@ -123,11 +125,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
                 #keyPath(zoneAccess),
                 #keyPath(parentLink),
                 #keyPath(zoneProgeny),
-				#keyPath(zoneAttributes)]
-    }
-
-    override func cloudProperties() -> [String] {
-        return super.cloudProperties() + Zone.cloudProperties()
+				#keyPath(zoneAttributes)] +
+				super.cloudProperties()
     }
 
 	var deepCopy: Zone {
