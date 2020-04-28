@@ -569,7 +569,7 @@ class ZRecord: NSObject {
 										let    base64 = parts[1]
 										if  let  data = Data(base64Encoded: base64),
 											let image = ZImage(data: data),
-											let asset = trait.createAssetFromImage(image, for: fileName) {
+											let asset = trait.assetFromImage(image, for: fileName) {
 											assets.append(asset)
 										}
 									}

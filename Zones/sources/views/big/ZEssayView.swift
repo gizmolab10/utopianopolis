@@ -65,7 +65,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "s":      save()
 				case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-				case "y":      gBreadcrumbs.toggleBreadcrumbExtent()
 				case "/":      if SPECIAL { gControllers.showShortcuts() } else { return false }
 				case "]":      gEssayRing.goForward()
 				case "[":      gEssayRing.goBack()

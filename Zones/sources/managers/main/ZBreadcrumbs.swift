@@ -28,7 +28,7 @@ class ZBreadcrumbs: NSObject {
 	var crumbsRootZone: Zone? {
 		switch gWorkMode {
 			case .noteMode:      return gCurrentEssay?.zone
-			case .graphMode:     return (gShowAllBreadcrumbs ? gSelecting.firstGrab : gHereMaybe)?.crumbRoot
+			case .graphMode:     return gSelecting.firstGrab?.crumbRoot
 			case .editIdeaMode:  return gCurrentlyEditingWidget?.widgetZone
 			default:             return nil
 		}
@@ -59,12 +59,6 @@ class ZBreadcrumbs: NSObject {
 		}
 
 		return nil
-	}
-
-	func toggleBreadcrumbExtent() {
-		gShowAllBreadcrumbs = !gShowAllBreadcrumbs
-
-		signal([.sCrumbs])
 	}
 
 }

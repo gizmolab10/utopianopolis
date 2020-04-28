@@ -187,8 +187,8 @@ class ZRemoteStorage: NSObject {
 				let     name = (ckRecord?["zoneName"] as String?) ?? kUnknown
 				let     type = ckRecord?.recordType   as String?  ?? kUnknown
 
-				if type == kUnknown || name == kUnknown {
-					print("hah!")
+				if  type == kUnknown {
+					print("------------------------------------")
 				}
 
 				switch (notification.queryNotificationReason) {

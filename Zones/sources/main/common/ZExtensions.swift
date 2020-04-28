@@ -1245,8 +1245,8 @@ extension NSMutableAttributedString {
 		}
 	}
 
-	// ONLY called during save in essay view
-	// side-effect for a dropped image:
+	// ONLY called during save note (in set note text)
+	// side-effect for a freshly dropped image:
 	// it creates and returns an additional asset
 
 	func assets(for trait: ZTrait) -> [CKAsset]? {
@@ -1256,7 +1256,7 @@ extension NSMutableAttributedString {
 		for (index, name) in imageFileNames.enumerated() {
 			if  index < i.count {
 				let image = i[index]
-				if  let a = trait.createAssetFromImage(image, for: name) {
+				if  let a = trait.assetFromImage(image, for: name) {
 					array.append(a)
 				}
 			}

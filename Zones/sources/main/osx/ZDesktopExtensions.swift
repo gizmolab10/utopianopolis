@@ -813,7 +813,6 @@ extension ZTextEditor {
 				switch key {
 					case "i": showSpecialsPopup()
 					case "j": gControllers.updateRingState(SPECIAL)
-					case "y": gBreadcrumbs.toggleBreadcrumbExtent()
 					case "?": gControllers.showShortcuts()
 					case "-": return editedZone?.convertToFromLine() ?? false // false means key not handled
 					default:  return false

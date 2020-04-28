@@ -1,5 +1,5 @@
 //
-//  ZImages.swift
+//  ZTraitAssets.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 4/18/20.
@@ -9,7 +9,7 @@
 import Foundation
 import CloudKit
 
-class ZAssets: ZRecord {
+class ZTraitAssets: ZRecord {
 
 	@objc dynamic var     assets : [CKAsset]?
 	@objc dynamic var assetNames :  String?
@@ -20,13 +20,14 @@ class ZAssets: ZRecord {
 	}
 
 	override func cloudProperties() -> [String] {
-		return super.cloudProperties() + ZAssets.cloudProperties()
+		return super.cloudProperties() + ZTraitAssets.cloudProperties()
 	}
 
-	// MARK:- images
+	// MARK:- attachment
 	// MARK:-
 
-	// ONLY called within noteText set
+	// ONLY called within set noteText, in call to
+	// set attributed strings from format stored in trait
 	//
 	// check if file actually exist in assets folder
 	// by successfully creating a wrapper
@@ -49,7 +50,7 @@ class ZAssets: ZRecord {
 		grabWrapper()
 
 		if  wrapper     == nil,
-			let    asset = assetFromAssetNamesForName(fileName) {
+			let    asset = assetFromAssetNames(for: fileName) {
 			let original = url
 			url          = asset.fileURL
 
@@ -78,14 +79,26 @@ class ZAssets: ZRecord {
 		return NSTextAttachment(fileWrapper: wrapper)
 	}
 
-	func createAssetFromImage(_ image: ZImage, for fileName: String) -> CKAsset? {
-		if  let     asset = assetFromAssetNamesForName(fileName) {
+	// MARK:- persistence
+	// MARK:-
+
+	// called during save note (in set note text)
+	// and in read file (extract from storage dictionary)
+
+	func assetFromImage(_ image: ZImage, for fileName: String) -> CKAsset? {
+		if  let     asset = assetFromAssetNames(for: fileName) {
 			return  asset
 		} else if let url = writeImageIntoAssetsFolder(image, using: fileName) {
 			let     asset = CKAsset(fileURL: url)    // side-effect creates asset for dropped image
 
 			if  appendUniquelyToAssetNames(fileName, from: asset) {
+				assets?.append(asset)
 				needSave()
+
+				FOREGROUND(after: 0.5) {
+					gBatches.sync { isSame in
+					}
+				}
 			}
 
 			return asset
@@ -94,12 +107,10 @@ class ZAssets: ZRecord {
 		return nil
 	}
 
-	// MARK:- persistence
-	// MARK:-
-
 	func appendUniquelyToAssetNames(_ imageName: String, from asset: CKAsset) -> Bool {
-		if  var     names = assetNames?.componentsSeparatedAt(level: 0),
-			let  checksum = asset.data?.checksum {
+		var         names = assetNames?.componentsSeparatedAt(level: 0) ?? []
+
+		if  let  checksum = asset.data?.checksum {
 			let separator = gSeparatorAt(level: 1)
 			let assetName = imageName + separator + "\(checksum)"
 
@@ -127,7 +138,7 @@ class ZAssets: ZRecord {
 		return false
 	}
 
-	func assetFromAssetNamesForName(_ name: String) -> CKAsset? {
+	func assetFromAssetNames(for name: String) -> CKAsset? {
 		if  let items = assetNames?.componentsSeparatedAt(level: 0),
 			let array = assets,
 			array.count > 0 {

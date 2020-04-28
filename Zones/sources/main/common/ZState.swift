@@ -141,11 +141,6 @@ var gColorfulMode : Bool {
 	set { setPreferencesBool(newValue, for: kColorfulMode) }
 }
 
-var gShowAllBreadcrumbs : Bool {
-	get { return getPreferencesBool(   for: kShowAllBreadcrumbs, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kShowAllBreadcrumbs) }
-}
-
 var gShowFavorites : Bool {
 	get { return getPreferencesBool(   for: kShowFavorites, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kShowFavorites) }
