@@ -84,7 +84,7 @@ class ZControllers: NSObject {
 						gHasFinishedStartup    = true
 
 						gRemoteStorage.adoptAll()
-						self.signal([.sRelayout])
+						self.redrawGraph()
 						self.requestFeedback()
 
 						FOREGROUND(after: 10.0) {

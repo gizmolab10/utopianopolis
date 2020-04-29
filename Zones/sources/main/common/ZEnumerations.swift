@@ -36,7 +36,7 @@ enum ZCloudAccountStatus: Int {
 
 enum ZSkillLevel: Int {
 	case newbie
-//	case basic
+	case basic
 	case advanced
 }
 

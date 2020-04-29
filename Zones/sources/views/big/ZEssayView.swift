@@ -288,7 +288,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		gControllers.swapGraphAndEssay()
-		signal([.sRelayout])
+		redrawGraph()
 	}
 
 	func save() {

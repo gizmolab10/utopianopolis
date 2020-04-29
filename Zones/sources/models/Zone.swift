@@ -1238,7 +1238,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		revealChildren()
 		gControllers.swapGraphAndEssay(force: .graphMode)
-		signal([.sRelayout])
+		redrawGraph()
 
 		let e = edit()
 

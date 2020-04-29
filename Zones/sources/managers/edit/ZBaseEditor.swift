@@ -98,14 +98,14 @@ class ZBaseEditor: NSObject {
 
 	func fetchTraits() {
 		gBatches.allTraits { flag in
-			self.signal([.sRelayout])
+			self.redrawGraph()
 		}
 	}
 
 	func toggleColorfulMode() {
 		gColorfulMode = !gColorfulMode
 
-		signal([.sRelayout])
+		redrawGraph()
 	}
 
 }

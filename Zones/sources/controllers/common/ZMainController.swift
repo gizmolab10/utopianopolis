@@ -36,6 +36,7 @@ class ZMainController: ZGenericController {
         let       hideSearch = !gIsSearchMode
         let      hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 		detailView?.isHidden = !gAdvancedSkillLevel
+		introductionWidth?.constant = (!gNewbieSkillLevel ? 0.0 : detailsWidth?.constant) ?? 0.0
 
 		switch iKind {
 			case .sFound:

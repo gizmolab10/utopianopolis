@@ -145,7 +145,7 @@ extension NSObject {
 	func cycleSkillLevel() {
 		gSkillLevel = ZSkillLevel(rawValue: gSkillLevel.rawValue + 1) ?? ZSkillLevel.newbie
 
-		signal([.sRelayout])
+		redrawGraph()
 	}
 
     func invokeUsingDatabaseID(_ dbID: ZDatabaseID?, block: Closure) {
