@@ -131,9 +131,13 @@ var gClipBreadcrumbs : Bool {
 	set { setPreferencesBool(newValue, for: kClipBreadcrumbs) }
 }
 
-var gPowerUserMode : Bool {
-	get { return getPreferencesBool(   for: kPowerUserMode, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kPowerUserMode) }
+var gAdvancedSkillLevel : Bool { return gSkillLevel == .advanced }
+var   gNewbieSkillLevel : Bool { return gSkillLevel == .newbie }
+let   kNewbieSkillLevel =               ZSkillLevel.newbie.rawValue
+
+var gSkillLevel : ZSkillLevel {
+	get { return  ZSkillLevel(rawValue: getPreferencesInt(for: kSkillLevel, defaultInt: kNewbieSkillLevel) ?? kNewbieSkillLevel) ?? ZSkillLevel.newbie }
+	set { setPreferencesInt(newValue.rawValue, for: kSkillLevel) }
 }
 
 var gColorfulMode : Bool {

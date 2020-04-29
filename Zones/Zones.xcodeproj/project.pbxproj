@@ -240,6 +240,9 @@
 		A7C7AF5923B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
 		A7C7AF5A23B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
 		A7C7AF5B23B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
+		A7CEA11224590EC800630240 /* ZIntroductionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CEA11124590EC800630240 /* ZIntroductionController.swift */; };
+		A7CEA11324590EC800630240 /* ZIntroductionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CEA11124590EC800630240 /* ZIntroductionController.swift */; };
+		A7CEA11424590EC800630240 /* ZIntroductionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CEA11124590EC800630240 /* ZIntroductionController.swift */; };
 		A7CFA81B21F51697008DA880 /* ZSearching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearching.swift */; };
 		A7CFA81C21F516E0008DA880 /* ZSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619941FB3C4660087B066 /* ZSearchController.swift */; };
 		A7D3C24721FAA4C600B64B83 /* ZSearching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C6CAE1E1F88308E001960F7 /* ZSearching.swift */; };
@@ -454,6 +457,7 @@
 		A7B78D3C244B768400DB2C14 /* ZTraitAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTraitAssets.swift; sourceTree = "<group>"; };
 		A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbButton.swift; sourceTree = "<group>"; };
 		A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssay.swift; sourceTree = "<group>"; };
+		A7CEA11124590EC800630240 /* ZIntroductionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZIntroductionController.swift; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZWebLinkController.swift; sourceTree = "<group>"; };
 		A7E5A5E923EFAE4F00A52F47 /* ZStackableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZStackableView.swift; sourceTree = "<group>"; };
@@ -558,6 +562,7 @@
 				0C39B2211F182EBB0091F4D1 /* ZGenericController.swift */,
 				A774ED1923E225A500080DC9 /* ZGesturesController.swift */,
 				0CB619951FB3C4660087B066 /* ZGraphController.swift */,
+				A7CEA11124590EC800630240 /* ZIntroductionController.swift */,
 				0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */,
 				A7B48A6E23E0C83B00654DBD /* ZRingController.swift */,
 				0CB619941FB3C4660087B066 /* ZSearchController.swift */,
@@ -1211,6 +1216,7 @@
 				A7FF042A22C1604D00714AD2 /* ZGridController.swift in Sources */,
 				A7E9A3B023C115470064C89A /* ZShortcuts.swift in Sources */,
 				0C2E22D01F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
+				A7CEA11224590EC800630240 /* ZIntroductionController.swift in Sources */,
 				0C39B2AA1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				0C39B2B31F182EBB0091F4D1 /* ZGCD.swift in Sources */,
 				A7D3C24821FAA4E400B64B83 /* ZSearchController.swift in Sources */,
@@ -1251,6 +1257,7 @@
 				0C6CAE211F88308E001960F7 /* ZSearching.swift in Sources */,
 				A759F70324269D29008CEA59 /* ZTimers.swift in Sources */,
 				0C39B2AF1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
+				A7CEA11424590EC800630240 /* ZIntroductionController.swift in Sources */,
 				0C3ECC251FA3023500F085EA /* ZUser.swift in Sources */,
 				A764067623F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */,
 				0C39B31B1F182EBB0091F4D1 /* Zone.swift in Sources */,
@@ -1336,6 +1343,7 @@
 				A7B48AB523E0E80C00654DBD /* ZGridCell.swift in Sources */,
 				A759F70224269D29008CEA59 /* ZTimers.swift in Sources */,
 				A774ED1E23E2268E00080DC9 /* ZGesturesController.swift in Sources */,
+				A7CEA11324590EC800630240 /* ZIntroductionController.swift in Sources */,
 				A764068123F9C2EB00D9EA3A /* ZNoteAndEssay.swift in Sources */,
 				A764067D23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */,
 				A7E096CB23EB98FA0017EC32 /* ZWebLinkController.swift in Sources */,
@@ -1620,7 +1628,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2019;
+				CURRENT_PROJECT_VERSION = 2020;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
@@ -1641,7 +1649,7 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.5.6;
+				MARKETING_VERSION = 0.5.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1672,7 +1680,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 2019;
+				CURRENT_PROJECT_VERSION = 2020;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1693,7 +1701,7 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.5.6;
+				MARKETING_VERSION = 0.5.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

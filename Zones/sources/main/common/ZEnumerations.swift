@@ -34,6 +34,12 @@ enum ZCloudAccountStatus: Int {
     case active
 }
 
+enum ZSkillLevel: Int {
+	case newbie
+//	case basic
+	case advanced
+}
+
 struct ZTinyDotType: OptionSet {
 	let rawValue: Int
 

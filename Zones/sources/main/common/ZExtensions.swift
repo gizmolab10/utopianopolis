@@ -142,8 +142,8 @@ extension NSObject {
         return result
     }
 
-	func togglePowerUserMode() {
-		gPowerUserMode = !gPowerUserMode
+	func cycleSkillLevel() {
+		gSkillLevel = ZSkillLevel(rawValue: gSkillLevel.rawValue + 1) ?? ZSkillLevel.newbie
 
 		signal([.sRelayout])
 	}

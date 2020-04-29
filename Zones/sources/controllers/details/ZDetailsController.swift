@@ -22,7 +22,7 @@ class ZDetailsController: ZGenericController {
 	override  var controllerID : ZControllerID { return .idDetails }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  gPowerUserMode {
+		if  gAdvancedSkillLevel {
 			update()
 		}
     }

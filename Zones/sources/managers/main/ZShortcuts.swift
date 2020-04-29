@@ -51,8 +51,8 @@ class ZShortcuts : NSObject {
 			let third = rawStrings[offset + 2]
 			let type = ZShortcutType(rawValue: first.substring(with: NSMakeRange(0, 1))) // grab first character
 
-			if  type != .power || gPowerUserMode {
-				if  type != .insert || gPowerUserMode {
+			if  type != .power || gAdvancedSkillLevel {
+				if  type != .insert || gAdvancedSkillLevel {
 					result.append(first)
 					result.append(second)
 					result.append(third)
@@ -94,7 +94,7 @@ class ZShortcuts : NSObject {
 		let      hasURL = !url.isEmpty
 		var      prefix = "   "
 
-		if !gPowerUserMode {
+		if !gAdvancedSkillLevel {
 			if  removable {
 				return NSMutableAttributedString(string: kTab + kTab + kTab)
 			}
@@ -127,7 +127,7 @@ class ZShortcuts : NSObject {
 		if  type == .plain {
 			result.append(NSAttributedString(string: main))
 		} else {
-			if  gPowerUserMode,
+			if  gAdvancedSkillLevel,
 				type == .power {
 				attributes[.backgroundColor] = powerUserColor
 			}

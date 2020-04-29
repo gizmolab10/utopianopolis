@@ -18,6 +18,7 @@ class ZMainController: ZGenericController {
 
     @IBOutlet var detailsWidth      : NSLayoutConstraint?
     @IBOutlet var searchBoxHeight   : NSLayoutConstraint?
+	@IBOutlet var introductionWidth : NSLayoutConstraint?
     @IBOutlet var searchResultsView : ZView?
     @IBOutlet var searchBoxView     : ZView?
     @IBOutlet var detailView        : ZView?
@@ -34,7 +35,7 @@ class ZMainController: ZGenericController {
 		let        hideEssay = !gIsNoteMode
         let       hideSearch = !gIsSearchMode
         let      hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
-		detailView?.isHidden = !gPowerUserMode
+		detailView?.isHidden = !gAdvancedSkillLevel
 
 		switch iKind {
 			case .sFound:

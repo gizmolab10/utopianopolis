@@ -877,7 +877,7 @@ CA
                     <accessibility description="Map Contextual Menu" identifier="Map Contextual Menu"/>
                 </menu>
             </objects>
-            <point key="canvasLocation" x="330" y="1125"/>
+            <point key="canvasLocation" x="-178" y="1132"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -900,7 +900,7 @@ CA
                                 </connections>
                             </containerView>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
-                                <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
+                                <rect key="frame" x="0.0" y="0.0" width="257" height="300"/>
                                 <connections>
                                     <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                 </connections>
@@ -929,17 +929,26 @@ CA
                                     <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
                                 </connections>
                             </containerView>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
-                                <rect key="frame" x="0.0" y="0.0" width="357" height="256"/>
+                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
+                                <rect key="frame" x="0.0" y="0.0" width="230" height="256"/>
                                 <connections>
                                     <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
                                 </connections>
                             </containerView>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="jsr-Au-V65" userLabel="Introduction View">
+                                <rect key="frame" x="257" y="0.0" width="100" height="256"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="42J-vu-Gwx"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="s6e-rq-RwD" kind="embed" id="oKh-qM-QEh"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="jsr-Au-V65" secondAttribute="trailing" id="0Kr-1b-qMm"/>
                             <constraint firstAttribute="trailing" secondItem="6sw-vi-DPR" secondAttribute="trailing" id="14S-eu-4mN"/>
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="4E2-mZ-iVD"/>
-                            <constraint firstAttribute="trailing" secondItem="cYx-gW-vNV" secondAttribute="trailing" id="737-qE-qR5"/>
                             <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="7YZ-rS-1rz"/>
                             <constraint firstItem="xfO-CE-WwN" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="8wF-Ft-HhQ"/>
                             <constraint firstAttribute="trailing" secondItem="oEz-R7-9m9" secondAttribute="trailing" id="CM0-As-pVg"/>
@@ -947,13 +956,15 @@ CA
                             <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="F3i-M3-bpQ"/>
                             <constraint firstItem="6sw-vi-DPR" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="GGA-eb-oiW"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GKq-sx-Y6r"/>
+                            <constraint firstItem="jsr-Au-V65" firstAttribute="top" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="JOL-c4-bjL"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
+                            <constraint firstAttribute="bottom" secondItem="jsr-Au-V65" secondAttribute="bottom" id="MSe-OB-zGS"/>
                             <constraint firstItem="oEz-R7-9m9" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="Mmj-ra-kdh"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="V3R-5b-vYA"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="xfO-CE-WwN" secondAttribute="trailing" id="Vw7-DK-RWF"/>
                             <constraint firstItem="xfO-CE-WwN" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="X36-IN-HdX"/>
                             <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="Xgc-lh-EwT"/>
-                            <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="ZFw-Tj-cbj"/>
+                            <constraint firstItem="jsr-Au-V65" firstAttribute="leading" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="aAX-Xq-Bmk"/>
                             <constraint firstItem="6sw-vi-DPR" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="aKG-xO-qGq"/>
                             <constraint firstItem="xfO-CE-WwN" firstAttribute="top" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="aPs-j1-UNe"/>
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="gQc-MX-nbf"/>
@@ -969,6 +980,7 @@ CA
                         <outlet property="detailsWidth" destination="us8-K9-IEo" id="zgQ-PT-G1q"/>
                         <outlet property="essayView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
                         <outlet property="graphView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
+                        <outlet property="introductionWidth" destination="42J-vu-Gwx" id="3PM-MX-mdK"/>
                         <outlet property="searchBoxHeight" destination="lGr-3g-ayh" id="9xd-lu-oT0"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
@@ -1037,7 +1049,7 @@ CA
                 </viewController>
                 <customObject id="LOz-oN-o0B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="21" y="1125"/>
+            <point key="canvasLocation" x="142" y="1132"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -1103,7 +1115,7 @@ CA
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="645" y="1125"/>
+            <point key="canvasLocation" x="762" y="1132"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -1111,7 +1123,7 @@ CA
                 <controllerPlaceholder storyboardName="Details" id="yWa-SA-l1V" sceneMemberID="viewController"/>
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="893" y="692"/>
+            <point key="canvasLocation" x="893" y="649"/>
         </scene>
         <!--Essay-->
         <scene sceneID="YUn-EI-h0m">
@@ -1163,7 +1175,7 @@ CA
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="951" y="1125"/>
+            <point key="canvasLocation" x="447" y="1132"/>
         </scene>
         <!--Web Link Controller-->
         <scene sceneID="yhj-YB-Xij">
@@ -1200,7 +1212,7 @@ CA
                 </viewController>
                 <customObject id="IZh-Iz-IVH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="952" y="1436"/>
+            <point key="canvasLocation" x="448" y="1466"/>
         </scene>
         <!--Breadcrumbs Controller-->
         <scene sceneID="wXo-la-8OL">
@@ -1264,6 +1276,19 @@ CA
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1055" y="488"/>
+        </scene>
+        <!--Introduction Controller-->
+        <scene sceneID="0DN-Wi-5Sq">
+            <objects>
+                <viewController id="s6e-rq-RwD" customClass="ZIntroductionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="DJo-gy-U7k">
+                        <rect key="frame" x="0.0" y="0.0" width="120" height="269"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="cyN-qr-bZF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="997" y="1132"/>
         </scene>
     </scenes>
 </document>

@@ -234,7 +234,7 @@ class ZRing: NSObject {
 			removeFromRing(at: i)
 			storeRingIDs()
 			gRingView?.updateNecklace()
-			goBack()
+			goForward()
         }
 	}
 

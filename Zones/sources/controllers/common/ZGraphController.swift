@@ -186,7 +186,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
 
     func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inPublicGraph: Bool) {
-        if  (!gPowerUserMode && !inPublicGraph) || (kIsPhone && (inPublicGraph == gShowFavorites)) { return }
+        if  (!gAdvancedSkillLevel && !inPublicGraph) || (kIsPhone && (inPublicGraph == gShowFavorites)) { return }
 
         let                        here = inPublicGraph ? gHereMaybe : gFavoritesRoot
         var specificWidget: ZoneWidget? = inPublicGraph ? mapRootWidget : favoritesRootWidget
@@ -229,7 +229,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			favoritesRootWidget.isHidden = !gShowFavorites
 			mapRootWidget      .isHidden =  gShowFavorites
 		} else {
-			favoritesRootWidget.isHidden = !gPowerUserMode
+			favoritesRootWidget.isHidden = !gAdvancedSkillLevel
 		}
 	}
 	

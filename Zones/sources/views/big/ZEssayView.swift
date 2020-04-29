@@ -77,7 +77,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch key {
 				case "d":      convertToChild(createEssay: true)
 				case "h":      showHyperlinkPopup()
-				case "/":      popAndUpdate()
+				case "/":      popNoteAndUpdate()
 				default:       return false
 			}
 
@@ -480,7 +480,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func popAndUpdate() {
+	func popNoteAndUpdate() {
 		if  gEssayRing.popAndRemoveEmpties() {
 			exit()
 		} else {

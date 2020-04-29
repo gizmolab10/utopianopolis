@@ -56,7 +56,7 @@ class ZShortcutsController: ZGenericTableController {
 			switch key {
 				case "?", "/":         gControllers.showShortcuts()
 				case "a": if SPECIAL { gApplication.showHideAbout() }
-				case "p": if SPECIAL { togglePowerUserMode() } else { view.printView() }
+				case "p": if SPECIAL { cycleSkillLevel() } else { view.printView() }
 				case "q": gApplication.terminate(self)
 				case "r": if COMMAND { sendEmailBugReport() }
 				case "w": if COMMAND { gControllers.showShortcuts(false) }
