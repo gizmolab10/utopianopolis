@@ -40,8 +40,8 @@ class ZIntroductionController: ZGenericController {
 	var              optionDown = false
 	var              showMeDown = false
 	var               shiftDown = false
-	var buttonsByID = [ZIntroductionID : ZButton]()
-	var   boxesByID = [ZIntroductionID : ZBox]()
+	var  buttonsByID  = [ZIntroductionID  :  ZButton]()
+	var    boxesByID  = [ZIntroductionID  :  ZBox]()
 	func buttonFor(_ id: ZIntroductionID) -> ZButton? { return buttonsByID[id] }
 	func    boxFor(_ id: ZIntroductionID) -> ZBox?    { return boxesByID  [id] }
 
@@ -55,9 +55,20 @@ class ZIntroductionController: ZGenericController {
 		return flags
 	}
 
-	override func awakeFromNib() {
-		super.awakeFromNib()
+	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+		update()
+	}
 
+	func update() {
+		let               showHide =  shiftDown && !optionDown
+		buttonFor(.left)?   .title =  showHide   ? "hide"       : "left"
+		buttonFor(.right)?  .title =  showHide   ? "show"       : "right"
+		buttonFor(.focus)?  .title = controlDown ? "unfocus"    : "focus"
+		buttonFor(.sibling)?.title =  optionDown ? "add parent" : "add sibling"
+		boxFor   (.move)?   .title = (optionDown ? "Relocate"   : shiftDown ? "Show/Hide" : "Browse") + (commandDown ? " to end" : "")
+	}
+
+	override func startup() {
 		view.applyToAllSubviews { subview in
 			if  let       button = subview as? ZButton,
 				let     buttonID = idForItem(button) {
@@ -117,19 +128,6 @@ class ZIntroductionController: ZGenericController {
 
 			update()
 		}
-	}
-
-	func update() {
-		let               showHide =  shiftDown && !optionDown
-		buttonFor(.left)?   .title =  showHide   ? "hide"       : "left"
-		buttonFor(.right)?  .title =  showHide   ? "show"       : "right"
-		buttonFor(.focus)?  .title = controlDown ? "unfocus"    : "focus"
-		buttonFor(.sibling)?.title =  optionDown ? "add parent" : "add sibling"
-		boxFor(.move)?      .title = (optionDown ? "Relocate"   : shiftDown ? "Show/Hide" : "Browse") + (commandDown ? " to end" : "")
-	}
-
-	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		update()
 	}
 
 }

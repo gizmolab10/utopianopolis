@@ -14,11 +14,10 @@
 
 class ZStackableView: ZView {
 
-    @IBOutlet var     bannerView : ZView?
-    @IBOutlet var   hideableView : ZView?
-    @IBOutlet var    titleButton : ZButton?
-    @IBOutlet var     toggleIcon : ZToggleButton?
-    @IBOutlet var stackableBelow : ZStackableView?
+	@IBOutlet var  titleButton : ZButton?
+    @IBOutlet var hideableView : ZView?
+	@IBOutlet var   bannerView : ZView?
+    @IBOutlet var   toggleIcon : ZToggleButton?
 
     // MARK:- identity
     // MARK:-
@@ -42,7 +41,7 @@ class ZStackableView: ZView {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        self.update()
+        update()
 
         repeatUntil({ () -> (Bool) in
             return gDetailsController != nil
@@ -61,9 +60,8 @@ class ZStackableView: ZView {
     }
     
     func update() {
-        turnOnTitleButton()
+		turnOnTitleButton()
 		toggleIcon?.setState(!hideHideable)
-//		updateBannerGradient()
 		updateHideableView()
     }
 
@@ -74,35 +72,25 @@ class ZStackableView: ZView {
 		return gIsDark ? [lighter, darker] : [darker, lighter]
 	}
 
-    func updateBannerGradient() {
-        if  let gradientView     = bannerView {
-            let gradientLayer    = CAGradientLayer()
-            gradientLayer.frame  = gradientView.bounds
-			gradientLayer.colors = colors
-
-			gradientView.zlayer.removeAllSublayers()
-			gradientView.zlayer.insertSublayer(gradientLayer, at: 0)
-        }
-    }
-
-
     func updateHideableView() {
         let    hide = hideHideable
         let visible = subviews.contains(hideableView!)
 
-        if  hide && visible {
-            hideableView?.removeFromSuperview()
-            bannerView?.snp.makeConstraints { make in
-                make.bottom.equalTo(self)
-            }
-        } else if !hide && !visible {
-            addSubview(hideableView!)
-            
-            bannerView?.snp.removeConstraints()
-            hideableView?.snp.makeConstraints { make in
-                make.top.equalTo((self.bannerView?.snp.bottom)!)
-                make.left.right.bottom.equalTo(self)
-            }
-        }
+		if  hide == visible { // need for update
+			if  hide {
+				hideableView?.removeFromSuperview()
+				bannerView?.snp.makeConstraints { make in
+					make.bottom.equalTo(self)
+				}
+			} else {
+				addSubview(hideableView!)
+
+				bannerView?.snp.removeConstraints()
+				hideableView?.snp.makeConstraints { make in
+					make.top.equalTo((self.bannerView?.snp.bottom)!)
+					make.left.right.bottom.equalTo(self)
+				}
+			}
+		}
     }
 }

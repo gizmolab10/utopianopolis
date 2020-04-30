@@ -18,10 +18,12 @@ class ZGenericController: ZController {
 
 	var  controllerID : ZControllerID { return .idUndefined }
     func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}
+	func startup() {}
 	func setup() {}
 
     override func viewDidLoad() {
         super.viewDidLoad()
+		startup()
 
         gControllers.setSignalHandler(for: self, iID: controllerID) { object, kind in
 			self.view.zlayer.backgroundColor = gControllers.backgroundColorFor(self.controllerID).cgColor
