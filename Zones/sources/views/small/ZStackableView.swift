@@ -65,13 +65,6 @@ class ZStackableView: ZView {
 		updateHideableView()
     }
 
-	var colors: [CGColor] {
-		let lighter = gAccentColor.lighter(by: 4.0).cgColor
-		let  darker = gAccentColor.darker (by: 4.0).cgColor
-
-		return gIsDark ? [lighter, darker] : [darker, lighter]
-	}
-
     func updateHideableView() {
         let    hide = hideHideable
         let visible = subviews.contains(hideableView!)

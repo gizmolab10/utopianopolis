@@ -129,27 +129,27 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-195" y="1646.5"/>
+            <point key="canvasLocation" x="-109" y="1656"/>
         </scene>
         <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZDetailsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="308" height="705"/>
+                        <rect key="frame" x="0.0" y="0.0" width="328" height="707"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView hidden="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="0.0" width="308" height="705"/>
+                                <rect key="frame" x="0.0" y="2" width="326" height="705"/>
                                 <subviews>
                                     <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Start Here View" customClass="ZStackableView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="342" width="308" height="363"/>
+                                        <rect key="frame" x="0.0" y="342" width="326" height="363"/>
                                         <subviews>
                                             <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="74" width="308" height="21"/>
+                                                <rect key="frame" x="0.0" y="74" width="326" height="21"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Start Here Title">
-                                                        <rect key="frame" x="0.0" y="-1" width="308" height="19"/>
+                                                        <rect key="frame" x="0.0" y="-1" width="326" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="oFz-pg-brp"/>
                                                         </constraints>
@@ -162,7 +162,7 @@
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fqv-v5-z0n" userLabel="Triangle Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="286" y="2" width="14" height="14"/>
+                                                        <rect key="frame" x="304" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="eDB-Kj-3d6"/>
                                                             <constraint firstAttribute="width" constant="14" id="pgi-yq-wFw"/>
@@ -187,7 +187,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Start Here Hideable">
-                                                <rect key="frame" x="0.0" y="-2" width="308" height="300"/>
+                                                <rect key="frame" x="0.0" y="-2" width="326" height="300"/>
                                                 <connections>
                                                     <segue destination="YdN-bY-sSj" kind="embed" id="bHo-7A-xgJ"/>
                                                 </connections>
@@ -209,13 +209,13 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="status" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Status View" customClass="ZStackableView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="221" width="308" height="120"/>
+                                        <rect key="frame" x="0.0" y="221" width="326" height="120"/>
                                         <subviews>
                                             <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="77" width="308" height="19"/>
+                                                <rect key="frame" x="0.0" y="77" width="326" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y" userLabel="Status Title">
-                                                        <rect key="frame" x="0.0" y="-1" width="308" height="19"/>
+                                                        <rect key="frame" x="0.0" y="-1" width="326" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="ALV-dt-Nu6"/>
                                                         </constraints>
@@ -228,7 +228,7 @@
                                                         </connections>
                                                     </button>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Triangle Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="286" y="2" width="14" height="14"/>
+                                                        <rect key="frame" x="304" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="Btc-fY-AcD"/>
                                                             <constraint firstAttribute="width" constant="14" id="j0n-Bq-iHU"/>
@@ -252,7 +252,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Status Hideable">
-                                                <rect key="frame" x="0.0" y="70" width="308" height="100"/>
+                                                <rect key="frame" x="0.0" y="70" width="326" height="100"/>
                                                 <connections>
                                                     <segue destination="fxO-Qj-JeN" kind="embed" id="w7B-Py-09b"/>
                                                 </connections>
@@ -275,13 +275,13 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZStackableView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="308" height="220"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="326" height="220"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Title and Toggle">
-                                                <rect key="frame" x="0.0" y="200" width="308" height="19"/>
+                                                <rect key="frame" x="0.0" y="200" width="326" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jzv-og-1RG" userLabel="Preferences Title">
-                                                        <rect key="frame" x="0.0" y="-1" width="308" height="19"/>
+                                                        <rect key="frame" x="0.0" y="-1" width="326" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="jjE-A0-nLk"/>
                                                         </constraints>
@@ -294,7 +294,7 @@
                                                         </connections>
                                                     </button>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aCk-9D-lHI" userLabel="Triangle Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="286" y="2" width="14" height="14"/>
+                                                        <rect key="frame" x="304" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="14" id="hAG-lD-Wcz"/>
                                                             <constraint firstAttribute="height" constant="14" id="pOY-vw-MiT"/>
@@ -318,7 +318,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="btT-FF-Ema" userLabel="Preferences Hideable">
-                                                <rect key="frame" x="0.0" y="-267" width="308" height="200"/>
+                                                <rect key="frame" x="0.0" y="-267" width="326" height="200"/>
                                                 <connections>
                                                     <segue destination="Naq-se-Exq" kind="embed" id="Pht-fq-dCw"/>
                                                 </connections>
@@ -346,9 +346,7 @@
                                     <constraint firstAttribute="trailing" secondItem="M2W-8y-R0e" secondAttribute="trailing" id="CkC-Ah-hqH"/>
                                     <constraint firstItem="dSG-o4-XPL" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="MHM-KA-Rpi"/>
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="NFa-oz-tCT"/>
-                                    <constraint firstItem="M2W-8y-R0e" firstAttribute="top" secondItem="dSG-o4-XPL" secondAttribute="bottom" constant="1" id="PSb-nM-aqG"/>
                                     <constraint firstAttribute="trailing" secondItem="dSG-o4-XPL" secondAttribute="trailing" id="iiK-ke-Ihc"/>
-                                    <constraint firstItem="9j5-fI-wCz" firstAttribute="top" secondItem="M2W-8y-R0e" secondAttribute="bottom" constant="1" id="jx7-R7-0wq"/>
                                     <constraint firstAttribute="trailing" secondItem="9j5-fI-wCz" secondAttribute="trailing" id="pCn-yA-AaQ"/>
                                 </constraints>
                                 <visibilityPriorities>
@@ -363,7 +361,7 @@
                                 </customSpacing>
                             </stackView>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="nfQ-R8-yKp">
-                                <rect key="frame" x="305" y="0.0" width="5" height="705"/>
+                                <rect key="frame" x="325" y="0.0" width="5" height="707"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="g1E-ta-kaB"/>
                                 </constraints>
@@ -372,10 +370,10 @@
                         <constraints>
                             <constraint firstItem="1wo-H2-e9s" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" id="1WF-pU-wVa"/>
                             <constraint firstItem="1wo-H2-e9s" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" id="BzS-D9-Aca"/>
-                            <constraint firstAttribute="trailing" secondItem="1wo-H2-e9s" secondAttribute="trailing" id="NxT-zU-3MZ"/>
+                            <constraint firstAttribute="trailing" secondItem="1wo-H2-e9s" secondAttribute="trailing" constant="2" id="NxT-zU-3MZ"/>
                             <constraint firstAttribute="bottom" secondItem="nfQ-R8-yKp" secondAttribute="bottom" id="QGH-yE-z7s"/>
                             <constraint firstItem="nfQ-R8-yKp" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" id="cdW-pg-kIg"/>
-                            <constraint firstAttribute="bottom" secondItem="1wo-H2-e9s" secondAttribute="bottom" id="gIv-Hg-KHJ"/>
+                            <constraint firstAttribute="bottom" secondItem="1wo-H2-e9s" secondAttribute="bottom" constant="2" id="gIv-Hg-KHJ"/>
                             <constraint firstAttribute="trailing" secondItem="nfQ-R8-yKp" secondAttribute="trailing" id="nJQ-4e-hzj"/>
                         </constraints>
                     </view>
@@ -702,30 +700,24 @@
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-196" y="1910"/>
+            <point key="canvasLocation" x="-110" y="1919"/>
         </scene>
         <!--Introduction Controller-->
         <scene sceneID="uRy-JP-y7m">
             <objects>
                 <viewController id="YdN-bY-sSj" customClass="ZIntroductionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="MMF-wn-1M6">
-                        <rect key="frame" x="0.0" y="0.0" width="283" height="296"/>
+                        <rect key="frame" x="0.0" y="0.0" width="283" height="284"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="p38-8I-gMn">
-                                <rect key="frame" x="-2" y="0.0" width="5" height="296"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="1" id="l6M-Wk-eMb"/>
-                                </constraints>
-                            </box>
                             <box identifier="add" title="New Idea" translatesAutoresizingMaskIntoConstraints="NO" id="yWs-Kk-dmA">
-                                <rect key="frame" x="6" y="247" width="272" height="41"/>
+                                <rect key="frame" x="5" y="235" width="273" height="41"/>
                                 <view key="contentView" id="6gW-4w-OHR">
-                                    <rect key="frame" x="3" y="3" width="266" height="23"/>
+                                    <rect key="frame" x="3" y="3" width="267" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="child" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child">
-                                            <rect key="frame" x="-5" y="-6" width="140" height="32"/>
+                                            <rect key="frame" x="-5" y="-6" width="141" height="32"/>
                                             <buttonCell key="cell" type="push" title="add child" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k8y-nU-3ox">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -735,7 +727,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="sibling" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling">
-                                            <rect key="frame" x="124" y="1" width="140" height="18"/>
+                                            <rect key="frame" x="125" y="1" width="140" height="18"/>
                                             <buttonCell key="cell" type="push" title="add sibling" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rMw-U8-ScO">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -756,15 +748,18 @@
                                         <constraint firstItem="EXp-p8-Pyy" firstAttribute="top" secondItem="6gW-4w-OHR" secondAttribute="top" constant="8" id="wsk-dk-94h"/>
                                     </constraints>
                                 </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="37" id="6af-zu-l6y"/>
+                                </constraints>
                             </box>
                             <box identifier="edit" title="Edit" translatesAutoresizingMaskIntoConstraints="NO" id="2K6-Dx-rco" userLabel="Edit">
-                                <rect key="frame" x="6" y="202" width="272" height="41"/>
+                                <rect key="frame" x="5" y="190" width="273" height="41"/>
                                 <view key="contentView" id="oj1-Uo-6FC">
-                                    <rect key="frame" x="3" y="3" width="266" height="23"/>
+                                    <rect key="frame" x="3" y="3" width="267" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea">
-                                            <rect key="frame" x="-5" y="-6" width="140" height="32"/>
+                                            <rect key="frame" x="-5" y="-6" width="141" height="32"/>
                                             <buttonCell key="cell" type="push" title="edit idea" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YHj-2q-hu8">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -774,7 +769,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="note" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note">
-                                            <rect key="frame" x="124" y="1" width="140" height="18"/>
+                                            <rect key="frame" x="125" y="1" width="140" height="18"/>
                                             <buttonCell key="cell" type="push" title="edit note" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bov-NG-9Nh">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -795,15 +790,18 @@
                                         <constraint firstAttribute="bottom" secondItem="GxP-Zs-LHC" secondAttribute="bottom" constant="1" id="vyA-cV-AYT"/>
                                     </constraints>
                                 </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="37" id="4ln-be-2xr"/>
+                                </constraints>
                             </box>
                             <box identifier="move" title="Move" translatesAutoresizingMaskIntoConstraints="NO" id="Eo8-dK-qAb">
-                                <rect key="frame" x="6" y="113" width="272" height="85"/>
+                                <rect key="frame" x="5" y="101" width="273" height="85"/>
                                 <view key="contentView" id="dg8-AR-KhC">
-                                    <rect key="frame" x="3" y="3" width="266" height="67"/>
+                                    <rect key="frame" x="3" y="3" width="267" height="67"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="up" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-vi-ud6" userLabel="up">
-                                            <rect key="frame" x="-5" y="38" width="276" height="32"/>
+                                            <rect key="frame" x="-5" y="38" width="277" height="32"/>
                                             <buttonCell key="cell" type="push" title="up" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-zy-Y7c">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -813,7 +811,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="focus" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SJq-nd-vaN" userLabel="focus">
-                                            <rect key="frame" x="83" y="16" width="100" height="32"/>
+                                            <rect key="frame" x="84" y="16" width="99" height="32"/>
                                             <buttonCell key="cell" type="push" title="focus" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qid-p3-qJU">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -823,7 +821,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="right" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right">
-                                            <rect key="frame" x="172" y="16" width="99" height="32"/>
+                                            <rect key="frame" x="172" y="16" width="100" height="32"/>
                                             <buttonCell key="cell" type="push" title="right" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UrN-Q5-bwD">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -833,7 +831,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="down" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-3u-WGy" userLabel="down">
-                                            <rect key="frame" x="-5" y="-6" width="276" height="32"/>
+                                            <rect key="frame" x="-5" y="-6" width="277" height="32"/>
                                             <buttonCell key="cell" type="push" title="down" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gmQ-hx-fbx">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -843,7 +841,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-wF-YeD" userLabel="left">
-                                            <rect key="frame" x="-5" y="16" width="99" height="32"/>
+                                            <rect key="frame" x="-5" y="16" width="100" height="32"/>
                                             <buttonCell key="cell" type="push" title="left" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xEN-g3-ZK6">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -874,15 +872,18 @@
                                         <constraint firstItem="SJq-nd-vaN" firstAttribute="width" secondItem="kdP-wF-YeD" secondAttribute="width" id="zFH-qN-Ynn"/>
                                     </constraints>
                                 </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="81" id="lli-RU-aKx"/>
+                                </constraints>
                             </box>
                             <box borderType="line" title="Modifier Keys" translatesAutoresizingMaskIntoConstraints="NO" id="BZ2-Au-okv">
-                                <rect key="frame" x="6" y="46" width="272" height="63"/>
+                                <rect key="frame" x="5" y="34" width="273" height="63"/>
                                 <view key="contentView" id="7JG-O0-yA8">
-                                    <rect key="frame" x="3" y="3" width="266" height="45"/>
+                                    <rect key="frame" x="3" y="3" width="267" height="45"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="shift" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Qe-VP-Kce">
-                                            <rect key="frame" x="-5" y="16" width="276" height="32"/>
+                                            <rect key="frame" x="-5" y="16" width="277" height="32"/>
                                             <buttonCell key="cell" type="push" title="SHIFT" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2fx-6f-Zh2">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -892,7 +893,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="command" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JnY-Vs-p4U">
-                                            <rect key="frame" x="-5" y="-6" width="99" height="32"/>
+                                            <rect key="frame" x="-5" y="-6" width="100" height="32"/>
                                             <buttonCell key="cell" type="push" title="⌘" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3qw-o2-Ih5">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -902,7 +903,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="option" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jMS-ki-sap">
-                                            <rect key="frame" x="83" y="-6" width="100" height="32"/>
+                                            <rect key="frame" x="84" y="-6" width="99" height="32"/>
                                             <buttonCell key="cell" type="push" title="⌥" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k68-pr-cxj">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -912,7 +913,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="control" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cxk-91-GuE">
-                                            <rect key="frame" x="172" y="-6" width="99" height="32"/>
+                                            <rect key="frame" x="172" y="-6" width="100" height="32"/>
                                             <buttonCell key="cell" type="push" title="^" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fu3-k6-L9o">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -941,9 +942,15 @@
                                         <constraint firstAttribute="bottom" secondItem="JnY-Vs-p4U" secondAttribute="bottom" constant="1" id="zSw-vm-Ome"/>
                                     </constraints>
                                 </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="59" id="cSZ-RN-IYA"/>
+                                </constraints>
                             </box>
                             <button identifier="showMe" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NsX-os-IKw" userLabel="show me">
-                                <rect key="frame" x="3" y="13" width="278" height="32"/>
+                                <rect key="frame" x="2" y="1" width="279" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="7JN-4I-ODg"/>
+                                </constraints>
                                 <buttonCell key="cell" type="push" title="Show me" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OIC-rC-BxK">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -954,30 +961,28 @@
                             </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="BZ2-Au-okv" firstAttribute="leading" secondItem="p38-8I-gMn" secondAttribute="trailing" constant="8" id="03p-rc-h1a"/>
+                            <constraint firstAttribute="bottom" secondItem="NsX-os-IKw" secondAttribute="bottom" constant="8" id="6gD-aU-wSD"/>
                             <constraint firstAttribute="trailing" secondItem="BZ2-Au-okv" secondAttribute="trailing" constant="8" id="7eV-6w-4L8"/>
-                            <constraint firstItem="NsX-os-IKw" firstAttribute="leading" secondItem="p38-8I-gMn" secondAttribute="trailing" constant="8" id="UAs-is-325"/>
-                            <constraint firstItem="p38-8I-gMn" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" id="UhJ-hI-o87"/>
+                            <constraint firstItem="NsX-os-IKw" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="Gj9-sq-i67"/>
+                            <constraint firstItem="Eo8-dK-qAb" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="OKG-eI-oG3"/>
+                            <constraint firstItem="yWs-Kk-dmA" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="QOn-Bn-5x8"/>
                             <constraint firstAttribute="trailing" secondItem="NsX-os-IKw" secondAttribute="trailing" constant="8" id="Umi-lB-f30"/>
-                            <constraint firstAttribute="bottom" secondItem="p38-8I-gMn" secondAttribute="bottom" id="aNg-TN-wPg"/>
+                            <constraint firstItem="BZ2-Au-okv" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="WVC-Jf-tQ4"/>
                             <constraint firstItem="yWs-Kk-dmA" firstAttribute="top" secondItem="MMF-wn-1M6" secondAttribute="top" constant="8" id="cbQ-jD-F1i"/>
                             <constraint firstAttribute="trailing" secondItem="yWs-Kk-dmA" secondAttribute="trailing" constant="8" id="ekq-Oa-RKx"/>
                             <constraint firstAttribute="trailing" secondItem="Eo8-dK-qAb" secondAttribute="trailing" constant="8" id="eqG-i6-UUk"/>
                             <constraint firstItem="BZ2-Au-okv" firstAttribute="top" secondItem="Eo8-dK-qAb" secondAttribute="bottom" constant="8" id="hkZ-Rv-Pjw"/>
                             <constraint firstItem="2K6-Dx-rco" firstAttribute="top" secondItem="yWs-Kk-dmA" secondAttribute="bottom" constant="8" id="ken-tc-TTg"/>
                             <constraint firstItem="Eo8-dK-qAb" firstAttribute="top" secondItem="2K6-Dx-rco" secondAttribute="bottom" constant="8" id="nRW-vR-mLU"/>
-                            <constraint firstItem="Eo8-dK-qAb" firstAttribute="leading" secondItem="p38-8I-gMn" secondAttribute="trailing" constant="8" id="oad-xE-ryc"/>
                             <constraint firstAttribute="trailing" secondItem="2K6-Dx-rco" secondAttribute="trailing" constant="8" id="pSu-4J-TY7"/>
-                            <constraint firstItem="p38-8I-gMn" firstAttribute="top" secondItem="MMF-wn-1M6" secondAttribute="top" id="pwo-bK-Fqb"/>
-                            <constraint firstItem="2K6-Dx-rco" firstAttribute="leading" secondItem="p38-8I-gMn" secondAttribute="trailing" constant="8" id="qoO-Eg-GiP"/>
+                            <constraint firstItem="2K6-Dx-rco" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="t0b-qp-9b2"/>
                             <constraint firstItem="NsX-os-IKw" firstAttribute="top" secondItem="BZ2-Au-okv" secondAttribute="bottom" constant="9" id="uIt-ce-qfn"/>
-                            <constraint firstItem="yWs-Kk-dmA" firstAttribute="leading" secondItem="p38-8I-gMn" secondAttribute="trailing" constant="8" id="uhr-mk-vsf"/>
                         </constraints>
                     </view>
                 </viewController>
                 <customObject id="XNg-DL-aaz" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-195" y="1352"/>
+            <point key="canvasLocation" x="-110" y="1361"/>
         </scene>
     </scenes>
     <resources>
