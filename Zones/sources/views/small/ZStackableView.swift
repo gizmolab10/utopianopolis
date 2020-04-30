@@ -63,7 +63,7 @@ class ZStackableView: ZView {
     func update() {
         turnOnTitleButton()
 		toggleIcon?.setState(!hideHideable)
-		updateBannerGradient()
+//		updateBannerGradient()
 		updateHideableView()
     }
 

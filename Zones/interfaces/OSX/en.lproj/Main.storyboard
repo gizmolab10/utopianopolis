@@ -1291,7 +1291,7 @@ CA
                                     <constraint firstAttribute="width" constant="1" id="Y7l-he-Mfx"/>
                                 </constraints>
                             </box>
-                            <box title="New Idea" translatesAutoresizingMaskIntoConstraints="NO" id="RzT-as-eEf">
+                            <box identifier="add" title="New Idea" translatesAutoresizingMaskIntoConstraints="NO" id="RzT-as-eEf">
                                 <rect key="frame" x="6" y="247" width="272" height="41"/>
                                 <view key="contentView" id="Tq8-cu-PSY">
                                     <rect key="frame" x="3" y="3" width="266" height="23"/>
@@ -1330,7 +1330,7 @@ CA
                                     </constraints>
                                 </view>
                             </box>
-                            <box title="Edit" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-Ix-XZM" userLabel="Edit">
+                            <box identifier="edit" title="Edit" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-Ix-XZM" userLabel="Edit">
                                 <rect key="frame" x="6" y="202" width="272" height="41"/>
                                 <view key="contentView" id="7Ac-mC-J8v">
                                     <rect key="frame" x="3" y="3" width="266" height="23"/>
@@ -1369,7 +1369,7 @@ CA
                                     </constraints>
                                 </view>
                             </box>
-                            <box title="Move" translatesAutoresizingMaskIntoConstraints="NO" id="YJm-pF-xp8">
+                            <box identifier="move" title="Move" translatesAutoresizingMaskIntoConstraints="NO" id="YJm-pF-xp8">
                                 <rect key="frame" x="6" y="113" width="272" height="85"/>
                                 <view key="contentView" id="dzv-oj-nVy">
                                     <rect key="frame" x="3" y="3" width="266" height="67"/>
@@ -1547,20 +1547,6 @@ CA
                             <constraint firstItem="Xip-mz-RUe" firstAttribute="leading" secondItem="Ha3-7D-21H" secondAttribute="trailing" constant="8" id="x6a-Ba-twn"/>
                         </constraints>
                     </view>
-                    <connections>
-                        <outlet property="addBox" destination="RzT-as-eEf" id="tXx-DO-ImU"/>
-                        <outlet property="commandButton" destination="D5j-FR-YzE" id="X7D-We-HMC"/>
-                        <outlet property="controlButton" destination="RAu-cz-pHK" id="BNW-3f-EI1"/>
-                        <outlet property="editBox" destination="bHj-Ix-XZM" id="exz-Nt-dbV"/>
-                        <outlet property="focusButton" destination="lwy-WP-LgN" id="cGM-kf-PIK"/>
-                        <outlet property="leftButton" destination="qGz-J6-FCv" id="Ama-fQ-Ngk"/>
-                        <outlet property="moveBox" destination="YJm-pF-xp8" id="9wx-0F-Z7x"/>
-                        <outlet property="optionButton" destination="QCA-pK-BFO" id="Ue3-Ru-KOW"/>
-                        <outlet property="rightButton" destination="nyX-yw-EE3" id="rVT-Rc-M2d"/>
-                        <outlet property="shiftButton" destination="4Dx-cG-5Ph" id="Y1X-dN-EMJ"/>
-                        <outlet property="showMeButton" destination="IAV-P5-U9x" id="j5Y-TV-B2M"/>
-                        <outlet property="siblingButton" destination="Ge3-qb-0dh" id="ZOe-Di-FZJ"/>
-                    </connections>
                 </viewController>
                 <customObject id="cyN-qr-bZF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
