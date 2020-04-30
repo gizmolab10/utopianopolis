@@ -866,6 +866,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let parent = parentZone, parent.userCanMutateProgeny {
 			var  zones = gSelecting.currentGrabs
 
+			let completion: ZoneClosure = { iZone in
+				onCompletion?(iZone)
+
+				if  onCompletion == nil {
+					iZone.edit()
+				}
+			}
+
 			if  containing {
 				zones.sort { (a, b) -> Bool in
 					return a.order < b.order
@@ -888,12 +896,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  let child = iChild {
 					if !containing {
 						self.redrawGraph() {
-							onCompletion?(child)
+							completion(child)
 						}
 					} else {
 						child.acquireZones(zones) {
 							self.redrawGraph() {
-								onCompletion?(child)
+								completion(child)
 								gControllers.sync()
 							}
 						}

@@ -1457,7 +1457,7 @@ CA
                                         <button identifier="shift" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4Dx-cG-5Ph">
                                             <rect key="frame" x="-5" y="16" width="276" height="32"/>
                                             <buttonCell key="cell" type="push" title="SHIFT" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MHe-R6-FQ6">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
@@ -1467,7 +1467,7 @@ CA
                                         <button identifier="command" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="D5j-FR-YzE">
                                             <rect key="frame" x="-5" y="-6" width="99" height="32"/>
                                             <buttonCell key="cell" type="push" title="⌘" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eYC-hj-dqb">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
@@ -1477,7 +1477,7 @@ CA
                                         <button identifier="option" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QCA-pK-BFO">
                                             <rect key="frame" x="83" y="-6" width="100" height="32"/>
                                             <buttonCell key="cell" type="push" title="⌥" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RPF-wT-GfY">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
@@ -1487,7 +1487,7 @@ CA
                                         <button identifier="control" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RAu-cz-pHK">
                                             <rect key="frame" x="172" y="-6" width="99" height="32"/>
                                             <buttonCell key="cell" type="push" title="^" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5Ab-Pe-MEe">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
@@ -1518,7 +1518,7 @@ CA
                             <button identifier="showMe" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IAV-P5-U9x" userLabel="show me">
                                 <rect key="frame" x="3" y="13" width="278" height="32"/>
                                 <buttonCell key="cell" type="push" title="Show me" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="czH-ji-puE">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
@@ -1548,11 +1548,18 @@ CA
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="addBox" destination="RzT-as-eEf" id="tXx-DO-ImU"/>
                         <outlet property="commandButton" destination="D5j-FR-YzE" id="X7D-We-HMC"/>
                         <outlet property="controlButton" destination="RAu-cz-pHK" id="BNW-3f-EI1"/>
+                        <outlet property="editBox" destination="bHj-Ix-XZM" id="exz-Nt-dbV"/>
+                        <outlet property="focusButton" destination="lwy-WP-LgN" id="cGM-kf-PIK"/>
+                        <outlet property="leftButton" destination="qGz-J6-FCv" id="Ama-fQ-Ngk"/>
+                        <outlet property="moveBox" destination="YJm-pF-xp8" id="9wx-0F-Z7x"/>
                         <outlet property="optionButton" destination="QCA-pK-BFO" id="Ue3-Ru-KOW"/>
+                        <outlet property="rightButton" destination="nyX-yw-EE3" id="rVT-Rc-M2d"/>
                         <outlet property="shiftButton" destination="4Dx-cG-5Ph" id="Y1X-dN-EMJ"/>
                         <outlet property="showMeButton" destination="IAV-P5-U9x" id="j5Y-TV-B2M"/>
+                        <outlet property="siblingButton" destination="Ge3-qb-0dh" id="ZOe-Di-FZJ"/>
                     </connections>
                 </viewController>
                 <customObject id="cyN-qr-bZF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

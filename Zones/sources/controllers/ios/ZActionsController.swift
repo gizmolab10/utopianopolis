@@ -80,7 +80,7 @@ class ZActionsController : ZGenericController {
 			case .eHang:    gBatches.unHang()
 			case .eName:    gTextEditor.edit(zone)
 			case .eHelp:    openBrowserForFocusWebsite()
-			case .eNext:    gSelecting.rootMostMoveable.addNext() { iChild in iChild.edit() }
+			case .eNext:    gSelecting.rootMostMoveable.addNext()
 			case .eToTop:   showTop()
 			default:        break
 			}

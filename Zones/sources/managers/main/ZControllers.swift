@@ -12,7 +12,8 @@ enum ZControllerID: Int {
     case idUndefined
     case idSearchResults
     case idAuthenticate
-    case idPreferences
+	case idIntroduction
+	case idPreferences
     case idFavorites
 	case idShortcuts
     case idDetails

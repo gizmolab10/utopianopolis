@@ -31,11 +31,24 @@ enum ZIntroductionButtonID: String {
 
 class ZIntroductionController: ZGenericController {
 
-	@IBOutlet var  showMeButton: ZButton?
-	@IBOutlet var   shiftButton: ZButton?
-	@IBOutlet var commandButton: ZButton?
-	@IBOutlet var  optionButton: ZButton?
-	@IBOutlet var controlButton: ZButton?
+	@IBOutlet var        addBox : ZBox?
+	@IBOutlet var       editBox : ZBox?
+	@IBOutlet var       moveBox : ZBox?
+	@IBOutlet var    leftButton : ZButton?
+	@IBOutlet var   rightButton : ZButton?
+	@IBOutlet var   focusButton : ZButton?
+	@IBOutlet var   shiftButton : ZButton?
+	@IBOutlet var  showMeButton : ZButton?
+	@IBOutlet var  optionButton : ZButton?
+	@IBOutlet var commandButton : ZButton?
+	@IBOutlet var controlButton : ZButton?
+	@IBOutlet var siblingButton : ZButton?
+	override  var  controllerID : ZControllerID { return .idIntroduction }
+	var             commandDown = false
+	var             controlDown = false
+	var              optionDown = false
+	var              showMeDown = false
+	var               shiftDown = false
 
 	@IBAction func buttonAction(_ button: NSUserInterfaceItemIdentification) {
 		if  let  identifier = button.identifier?.rawValue,
@@ -51,13 +64,29 @@ class ZIntroductionController: ZGenericController {
 				case .left:    break
 				case .right:   break
 				case .focus:   break
-				case .shift:   break
-				case .command: break
-				case .option:  break
-				case .control: break
-				case .showMe:  break
+				default:       break
 			}
+
+			shiftDown   = shiftButton?  .state == NSControl.StateValue.on
+			showMeDown  = showMeButton? .state == NSControl.StateValue.on
+			optionDown  = optionButton? .state == NSControl.StateValue.on
+			commandDown = commandButton?.state == NSControl.StateValue.on
+			controlDown = controlButton?.state == NSControl.StateValue.on
+
+			update()
 		}
+	}
+
+	func update() {
+		leftButton?   .title =  shiftDown   ? "conceal"    : "left"
+		rightButton?  .title =  shiftDown   ? "reveal"     : "right"
+		focusButton?  .title = controlDown  ? "unfocus"    : "focus"
+		siblingButton?.title =  optionDown  ? "add parent" : "add sibling"
+		moveBox?      .title = (optionDown  ? "Relocate"   : "Browse") + (commandDown ? " to end" : "")
+	}
+
+	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+		update()
 	}
 
 }

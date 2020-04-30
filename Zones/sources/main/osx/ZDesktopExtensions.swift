@@ -20,7 +20,7 @@ enum ZArrowKey: CChar {
     case right
 }
 
-
+public typealias ZBox                        = NSBox
 public typealias ZFont                       = NSFont
 public typealias ZView                       = NSView
 public typealias ZAlert                      = NSAlert
@@ -787,7 +787,7 @@ extension ZTextEditor {
     override func doCommand(by selector: Selector) {
         switch selector {
         case #selector(insertNewline):       stopCurrentEdit()
-        case #selector(insertTab):           if currentEdit?.adequatelyPaused ?? true { gSelecting.rootMostMoveable?.addNext() { iChild in iChild.edit() } } // stupid OSX issues tab twice (to create the new idea, then once MORE
+        case #selector(insertTab):           if currentEdit?.adequatelyPaused ?? true { gSelecting.rootMostMoveable?.addNext() } // stupid OSX issues tab twice (to create the new idea, then once MORE
 		case #selector(cancelOperation(_:)): if gSearching.state.isOneOf([.sList, .sEntry]) { gSearching.exitSearchMode() }
         default:                             super.doCommand(by: selector)
         }
