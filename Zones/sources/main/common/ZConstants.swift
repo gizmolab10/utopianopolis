@@ -27,11 +27,14 @@ let kUnselectBrightness: CGFloat = 0.98
 
 #endif
 
+let                 kRingWidth = 130.0
 let                 kBatchSize = 250
 let                kLogTabStop = 25
 let              kMaxBatchSize = 1000
+let              kDetailsWidth = 226.0
 let             kRemoteTimeout = 10.0
 let            kSmallBatchSize = 100
+let          kHalfDetailsWidth = kDetailsWidth / 2.0
 let  kDefaultEssayTextFontSize = CGFloat(18.0)
 let kDefaultEssayTitleFontSize = CGFloat(24.0)
 let       kTimeOfSystemStartup = Date.timeIntervalSinceReferenceDate

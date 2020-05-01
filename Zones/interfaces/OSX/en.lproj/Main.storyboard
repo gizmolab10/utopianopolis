@@ -901,9 +901,9 @@ CA
                                         <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="Vx4-SL-sxe">
                                             <font key="font" metaFont="system"/>
                                             <segments>
-                                                <segment label="Begin"/>
-                                                <segment label="Walk" selected="YES" tag="1"/>
-                                                <segment label="Sprint"/>
+                                                <segment label="Beginner"/>
+                                                <segment label="Uncluttered" selected="YES" tag="1"/>
+                                                <segment label="Full"/>
                                             </segments>
                                         </segmentedCell>
                                         <connections>

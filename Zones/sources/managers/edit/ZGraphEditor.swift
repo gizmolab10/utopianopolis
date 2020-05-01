@@ -131,7 +131,7 @@ class ZGraphEditor: ZBaseEditor {
                     switch key {
 					case "a":      if COMMAND { selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION) }
                     case "b":      gSelecting.firstSortedGrab?.addBookmark()
-					case "c":      if COMMAND { copyToPaste() } else { gGraphController?.recenter() }
+					case "c":      if COMMAND && !OPTION { copyToPaste() } else { gGraphController?.recenter(SPECIAL) }
 					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 					case "e":      gSelecting.firstSortedGrab?.editTrait(for: .tEmail)
                     case "f":      gSearching.showSearch(OPTION)

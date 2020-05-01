@@ -33,9 +33,9 @@ class ZRingView: ZView {
 	}
 
 	func updateGeometry() {
-		let     square = CGSize(width: 130.0, height: 130.0)
+		let     square = CGSize(width: kRingWidth, height: kRingWidth)
 		var       rect = CGRect(origin: CGPoint(), size: square)
-		rect.center    = CGPoint(x: 113.0, y: 113.0)
+		rect.center    = CGPoint(x: kHalfDetailsWidth, y: kHalfDetailsWidth)
 		geometry  .one = rect
 		geometry.thick = 3.0
 	}

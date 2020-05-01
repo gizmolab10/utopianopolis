@@ -146,9 +146,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 		gFavorites.updateAllFavorites()
 	}
 
-	func recenter() {
+	func recenter(_ SPECIAL: Bool = false) {
 		gScaling      = 1.0
-		gScrollOffset = CGPoint.zero
+		gScrollOffset = !SPECIAL ? CGPoint.zero : CGPoint(x: -kHalfDetailsWidth, y: 0.0)
 		
 		layoutForCurrentScrollOffset()
 	}
