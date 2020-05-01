@@ -257,9 +257,9 @@
 		A7E096CA23EB98FA0017EC32 /* ZWebLinkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */; };
 		A7E096CB23EB98FA0017EC32 /* ZWebLinkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */; };
 		A7E096CC23EB98FA0017EC32 /* ZWebLinkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */; };
-		A7E5A5EA23EFAE4F00A52F47 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E5A5E923EFAE4F00A52F47 /* ZStackableView.swift */; };
-		A7E5A5EB23EFAE4F00A52F47 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E5A5E923EFAE4F00A52F47 /* ZStackableView.swift */; };
-		A7E5A5EC23EFAE4F00A52F47 /* ZStackableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E5A5E923EFAE4F00A52F47 /* ZStackableView.swift */; };
+		A7E5A5EA23EFAE4F00A52F47 /* ZToogleBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E5A5E923EFAE4F00A52F47 /* ZToogleBannerView.swift */; };
+		A7E5A5EB23EFAE4F00A52F47 /* ZToogleBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E5A5E923EFAE4F00A52F47 /* ZToogleBannerView.swift */; };
+		A7E5A5EC23EFAE4F00A52F47 /* ZToogleBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E5A5E923EFAE4F00A52F47 /* ZToogleBannerView.swift */; };
 		A7E9A3B023C115470064C89A /* ZShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZShortcuts.swift */; };
 		A7E9A3B123C115470064C89A /* ZShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZShortcuts.swift */; };
 		A7E9A3B223C115470064C89A /* ZShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZShortcuts.swift */; };
@@ -460,7 +460,7 @@
 		A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssay.swift; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZWebLinkController.swift; sourceTree = "<group>"; };
-		A7E5A5E923EFAE4F00A52F47 /* ZStackableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZStackableView.swift; sourceTree = "<group>"; };
+		A7E5A5E923EFAE4F00A52F47 /* ZToogleBannerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToogleBannerView.swift; sourceTree = "<group>"; };
 		A7E9A3AF23C115470064C89A /* ZShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZShortcuts.swift; sourceTree = "<group>"; };
 		A7EE20F023D536A400B48CB8 /* ZFocus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFocus.swift; sourceTree = "<group>"; };
 		A7F5D691227E6AEE009FB225 /* data flow.graffle */ = {isa = PBXFileReference; lastKnownFileType = file; path = "data flow.graffle"; sourceTree = "<group>"; };
@@ -901,7 +901,7 @@
 				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
 				A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */,
 				A7B48A8523E0E80C00654DBD /* ZRingControl.swift */,
-				A7E5A5E923EFAE4F00A52F47 /* ZStackableView.swift */,
+				A7E5A5E923EFAE4F00A52F47 /* ZToogleBannerView.swift */,
 				A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */,
 			);
 			path = small;
@@ -1199,7 +1199,7 @@
 				0C43EFD421010F62000976CE /* ZRecords.swift in Sources */,
 				A7B48A6F23E0C83B00654DBD /* ZRingController.swift in Sources */,
 				0C39B2B01F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
-				A7E5A5EA23EFAE4F00A52F47 /* ZStackableView.swift in Sources */,
+				A7E5A5EA23EFAE4F00A52F47 /* ZToogleBannerView.swift in Sources */,
 				A7B48AB723E0E80C00654DBD /* ZoneWidget.swift in Sources */,
 				A72A0B6923B13CE6002A97E9 /* ZBaseEditor.swift in Sources */,
 				0C39B2E91F182EBB0091F4D1 /* ZSelecting.swift in Sources */,
@@ -1287,7 +1287,7 @@
 				0C48B0951F87197B00A247BC /* ZEvents.swift in Sources */,
 				0C39B2B81F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B2D31F182EBB0091F4D1 /* ZDesktopAppDelegate.swift in Sources */,
-				A7E5A5EC23EFAE4F00A52F47 /* ZStackableView.swift in Sources */,
+				A7E5A5EC23EFAE4F00A52F47 /* ZToogleBannerView.swift in Sources */,
 				A7B48AA723E0E80C00654DBD /* ZoneTextWidget.swift in Sources */,
 				0C43EFD921010F62000976CE /* ZRemoteStorage.swift in Sources */,
 				0C39B3151F182EBB0091F4D1 /* ZAction.swift in Sources */,
@@ -1389,7 +1389,7 @@
 				A7B78D3E244B768400DB2C14 /* ZTraitAssets.swift in Sources */,
 				0C39B2ED1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
 				0C2E22D11F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
-				A7E5A5EB23EFAE4F00A52F47 /* ZStackableView.swift in Sources */,
+				A7E5A5EB23EFAE4F00A52F47 /* ZToogleBannerView.swift in Sources */,
 				A7B48AB223E0E80C00654DBD /* ZoneDot.swift in Sources */,
 				A7B48AAC23E0E80C00654DBD /* ZRingControl.swift in Sources */,
 				0C43EFE121010F62000976CE /* ZCloud.swift in Sources */,

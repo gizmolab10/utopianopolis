@@ -496,7 +496,7 @@ extension NSView {
 }
 
 
-extension ZStackableView {
+extension ZTogglingView {
     
     var identity: ZDetailsViewID {
         if  let kind = convertFromOptionalUserInterfaceItemIdentifier(identifier) {

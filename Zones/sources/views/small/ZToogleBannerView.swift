@@ -1,5 +1,5 @@
 //
-//  ZStackableView.swift
+//  ZTogglingView.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 1/1/17.
@@ -12,12 +12,12 @@
     import UIKit
 #endif
 
-class ZStackableView: ZView {
+class ZTogglingView: NSStackView {
 
-	@IBOutlet var  titleButton : ZButton?
-    @IBOutlet var hideableView : ZView?
-	@IBOutlet var   bannerView : ZView?
-    @IBOutlet var   toggleIcon : ZToggleButton?
+	@IBOutlet var triangleButton : ZToggleButton?
+	@IBOutlet var    titleButton : ZButton?
+    @IBOutlet var   hideableView : ZView?
+	@IBOutlet var     bannerView : ZView?
 
     // MARK:- identity
     // MARK:-
@@ -60,8 +60,10 @@ class ZStackableView: ZView {
     }
     
     func update() {
+		titleButton?.layer?.backgroundColor = gAccentColor.cgColor
+
 		turnOnTitleButton()
-		toggleIcon?.setState(!hideHideable)
+		triangleButton?.setState(!hideHideable)
 		updateHideableView()
     }
 
@@ -70,6 +72,7 @@ class ZStackableView: ZView {
         let visible = subviews.contains(hideableView!)
 
 		if  hide == visible { // need for update
+			hideableView?.isHidden = hide
 			if  hide {
 				hideableView?.removeFromSuperview()
 				bannerView?.snp.makeConstraints { make in

@@ -17,7 +17,7 @@ private let  detailIds : [ZDetailsViewID] = [.Preferences, .Status, .Start]
 
 class ZDetailsController: ZGenericController {
 
-	var              viewsByID = [Int : ZStackableView]()
+	var              viewsByID = [Int : ZTogglingView]()
     @IBOutlet var    stackView : ZStackView?
 	override  var controllerID : ZControllerID { return .idDetails }
 
@@ -27,7 +27,7 @@ class ZDetailsController: ZGenericController {
 		}
     }
 
-    func register(id: ZDetailsViewID, for view: ZStackableView) {
+    func register(id: ZDetailsViewID, for view: ZTogglingView) {
         viewsByID[id.rawValue] = view
     }
 
@@ -41,7 +41,7 @@ class ZDetailsController: ZGenericController {
 		}
 	}
     
-    func view(for id: ZDetailsViewID) -> ZStackableView? {
+    func view(for id: ZDetailsViewID) -> ZTogglingView? {
         return viewsByID[id.rawValue]
     }
     
