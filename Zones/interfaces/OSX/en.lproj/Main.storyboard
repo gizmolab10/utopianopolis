@@ -887,12 +887,6 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="oEz-R7-9m9" userLabel="Ring View">
-                                <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
-                                <connections>
-                                    <segue destination="HwM-RS-z3y" kind="embed" id="7Jd-Pv-aHs"/>
-                                </connections>
-                            </containerView>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View">
                                 <rect key="frame" x="0.0" y="256" width="357" height="44"/>
                                 <connections>
@@ -941,13 +935,11 @@ CA
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="4E2-mZ-iVD"/>
                             <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="7YZ-rS-1rz"/>
                             <constraint firstItem="xfO-CE-WwN" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="8wF-Ft-HhQ"/>
-                            <constraint firstAttribute="trailing" secondItem="oEz-R7-9m9" secondAttribute="trailing" id="CM0-As-pVg"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="DdE-29-U0K"/>
                             <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="F3i-M3-bpQ"/>
                             <constraint firstItem="6sw-vi-DPR" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="GGA-eb-oiW"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GKq-sx-Y6r"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
-                            <constraint firstItem="oEz-R7-9m9" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="Mmj-ra-kdh"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="V3R-5b-vYA"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="xfO-CE-WwN" secondAttribute="trailing" id="Vw7-DK-RWF"/>
                             <constraint firstItem="xfO-CE-WwN" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="X36-IN-HdX"/>
@@ -957,9 +949,7 @@ CA
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="gQc-MX-nbf"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="lap-td-b4Q"/>
                             <constraint firstAttribute="bottom" secondItem="xfO-CE-WwN" secondAttribute="bottom" id="paZ-Ht-UuJ"/>
-                            <constraint firstItem="oEz-R7-9m9" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="t2r-Qu-8em"/>
                             <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="trU-TG-zpc"/>
-                            <constraint firstAttribute="bottom" secondItem="oEz-R7-9m9" secondAttribute="bottom" id="vs0-z7-co0"/>
                             <constraint firstAttribute="trailing" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="yjZ-dN-0tE"/>
                         </constraints>
                     </view>
@@ -1010,33 +1000,6 @@ CA
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1057" y="628"/>
-        </scene>
-        <!--Ring Controller-->
-        <scene sceneID="2ar-AS-rBz">
-            <objects>
-                <viewController id="HwM-RS-z3y" customClass="ZRingController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="EdY-JG-Pjl">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="289"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="f9Z-GK-Klh" customClass="ZRingView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="290" height="289"/>
-                            </customView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="f9Z-GK-Klh" secondAttribute="trailing" id="NoG-b0-nkt"/>
-                            <constraint firstAttribute="bottom" secondItem="f9Z-GK-Klh" secondAttribute="bottom" id="e7g-he-sez"/>
-                            <constraint firstItem="f9Z-GK-Klh" firstAttribute="top" secondItem="EdY-JG-Pjl" secondAttribute="top" id="ecL-C9-ARv"/>
-                            <constraint firstItem="f9Z-GK-Klh" firstAttribute="leading" secondItem="EdY-JG-Pjl" secondAttribute="leading" id="sa4-Ri-lgw"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="ringView" destination="f9Z-GK-Klh" id="23X-Zj-AKg"/>
-                    </connections>
-                </viewController>
-                <customObject id="LOz-oN-o0B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="16" y="1160"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
