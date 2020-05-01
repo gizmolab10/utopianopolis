@@ -277,18 +277,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func exit() {
 		if  let e = gCurrentEssay {
+			if  let idea = e.zone {
+				gHere = idea
+			}
+
+			gControllers.swapGraphAndEssay(force: .graphMode)
+			redrawGraph()
+
 			if  e.lastTextIsDefault,
 				e.autoDelete {
 				e.delete()
 			}
-
-			if  let idea = e.zone {
-				gHere = idea
-			}
 		}
-
-		gControllers.swapGraphAndEssay()
-		redrawGraph()
 	}
 
 	func save() {
@@ -626,7 +626,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
 				case .idForward: gEssayRing.goForward()
-				case .idDelete:  gCurrentEssay?.delete(); 			exit()
+				case .idDelete:  gCurrentEssay?.delete(); 	      exit()
 				case .idCancel:  gNoteAndEssay.essayZone?.grab(); exit()
 				case .idHide:    gNoteAndEssay.essayZone?.grab(); done()
 				case .idSave:    save()

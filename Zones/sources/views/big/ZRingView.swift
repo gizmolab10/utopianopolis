@@ -35,9 +35,9 @@ class ZRingView: ZView {
 	func updateGeometry() {
 		let     square = CGSize(width: 130.0, height: 130.0)
 		var       rect = CGRect(origin: CGPoint(), size: square)
-		rect.center    = bounds.center
+		rect.center    = CGPoint(x: 113.0, y: 113.0)
 		geometry  .one = rect
-		geometry.thick = square.height / 40.0
+		geometry.thick = 3.0
 	}
 
 	// MARK:- draw
@@ -50,7 +50,7 @@ class ZRingView: ZView {
 	override func draw(_ iDirtyRect: CGRect) {
 		super.draw(iDirtyRect)
 
-		if !gIsReadyToShowUI || !gAdvancedSkillLevel { return }
+		if !gIsReadyToShowUI { return }
 
 		let color = gNecklaceDotColor
 
