@@ -636,7 +636,7 @@ DQ
         <!--Graph-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" userLabel="Graph" customClass="ZGraphController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="map" id="XfG-lQ-9wD" userLabel="Graph" customClass="ZGraphController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="View">
                         <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -877,7 +877,7 @@ CA
                     <accessibility description="Map Contextual Menu" identifier="Map Contextual Menu"/>
                 </menu>
             </objects>
-            <point key="canvasLocation" x="331" y="1160"/>
+            <point key="canvasLocation" x="798" y="1173"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -1094,7 +1094,7 @@ CA
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="648" y="1163"/>
+            <point key="canvasLocation" x="178" y="1176"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -1154,7 +1154,7 @@ CA
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="960" y="1160"/>
+            <point key="canvasLocation" x="490" y="1173"/>
         </scene>
         <!--Web Link Controller-->
         <scene sceneID="yhj-YB-Xij">
@@ -1191,7 +1191,7 @@ CA
                 </viewController>
                 <customObject id="IZh-Iz-IVH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="961" y="1509"/>
+            <point key="canvasLocation" x="491" y="1522"/>
         </scene>
         <!--Breadcrumbs Controller-->
         <scene sceneID="wXo-la-8OL">

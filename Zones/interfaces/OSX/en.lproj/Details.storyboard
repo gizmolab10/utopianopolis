@@ -25,7 +25,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="iSu-QB-gpG"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="uyC-kt-DrI">
-                                                <font key="font" metaFont="label" size="11"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -36,7 +36,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="fsf-bJ-Uu6"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="s7Z-UN-BJu">
-                                                <font key="font" metaFont="label" size="11"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -47,7 +47,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="am7-ij-t8n"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="jkC-rh-JZ7">
-                                                <font key="font" metaFont="label" size="11"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -137,24 +137,51 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-109" y="1656"/>
+            <point key="canvasLocation" x="-114" y="1451"/>
+        </scene>
+        <!--favorites-->
+        <scene sceneID="6c8-8d-0Jq">
+            <objects>
+                <viewController title="favorites" identifier="favorites" id="bl3-7n-UyN" customClass="ZGraphController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="sgs-hY-cUq">
+                        <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="3xG-CQ-dra">
+                                <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="156" id="TMF-tr-aNc"/>
+                                </constraints>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="3xG-CQ-dra" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="RaT-cf-fH9"/>
+                            <constraint firstAttribute="bottom" secondItem="3xG-CQ-dra" secondAttribute="bottom" id="aPV-Kj-IMH"/>
+                            <constraint firstItem="3xG-CQ-dra" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="ngO-cZ-xH9"/>
+                            <constraint firstAttribute="trailing" secondItem="3xG-CQ-dra" secondAttribute="trailing" id="v9c-or-Kuo"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="834-xy-QTs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-113" y="1959"/>
         </scene>
         <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZDetailsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="328" height="1244"/>
+                        <rect key="frame" x="0.0" y="0.0" width="328" height="1525"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView hidden="YES" wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="2" width="328" height="1242"/>
+                                <rect key="frame" x="0.0" y="2" width="328" height="1523"/>
                                 <subviews>
                                     <customView identifier="start" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Start Here View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="879" width="328" height="363"/>
+                                        <rect key="frame" x="0.0" y="906" width="328" height="617"/>
                                         <subviews>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Start Here Hideable">
-                                                <rect key="frame" x="0.0" y="-2" width="328" height="300"/>
+                                                <rect key="frame" x="0.0" y="252" width="328" height="300"/>
                                                 <connections>
                                                     <segue destination="YdN-bY-sSj" kind="embed" id="bHo-7A-xgJ"/>
                                                 </connections>
@@ -214,11 +241,11 @@
                                             <outlet property="triangleButton" destination="fqv-v5-z0n" id="45u-05-ETW"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Status View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="758" width="328" height="120"/>
+                                    <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Information View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="855" width="328" height="50"/>
                                         <subviews>
-                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Status Hideable">
-                                                <rect key="frame" x="0.0" y="70" width="328" height="100"/>
+                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Information Hideable">
+                                                <rect key="frame" x="0.0" y="0.0" width="328" height="100"/>
                                                 <connections>
                                                     <segue destination="fxO-Qj-JeN" kind="embed" id="w7B-Py-09b"/>
                                                 </connections>
@@ -226,7 +253,7 @@
                                             <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="77" width="328" height="19"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y" userLabel="Status Title">
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y" userLabel="Information Title">
                                                         <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="ALV-dt-Nu6"/>
@@ -281,7 +308,7 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="537" width="328" height="220"/>
+                                        <rect key="frame" x="0.0" y="634" width="328" height="220"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Preferences Banner">
                                                 <rect key="frame" x="0.0" y="0.0" width="328" height="19"/>
@@ -345,10 +372,10 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="ring" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D5C-Y9-dcb" userLabel="Status Ring View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="328" height="536"/>
+                                        <rect key="frame" x="0.0" y="97" width="328" height="536"/>
                                         <subviews>
                                             <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2wg-Yp-qGE" userLabel="Status Ring Banner">
-                                                <rect key="frame" x="0.0" y="442" width="328" height="18"/>
+                                                <rect key="frame" x="0.0" y="518" width="328" height="18"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OKo-8P-Rqs" userLabel="Status Ring Title">
                                                         <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
@@ -408,24 +435,95 @@
                                             <outlet property="triangleButton" destination="1eh-GP-d56" id="brB-7J-Nwl"/>
                                         </connections>
                                     </customView>
+                                    <customView identifier="favorites" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Favorites View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="328" height="96"/>
+                                        <subviews>
+                                            <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Favorites Banner">
+                                                <rect key="frame" x="0.0" y="39" width="328" height="18"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3bx-6i-bTg" userLabel="Favorites Title">
+                                                        <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="18" id="jp1-9C-ukh"/>
+                                                        </constraints>
+                                                        <buttonCell key="cell" type="roundRect" title="Favorites" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XJD-P5-eSB">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="label" size="12"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="toggleAction:" target="Utx-K3-0a0" id="nzW-6y-ZRI"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1uw-i1-Cgo" userLabel="Triangle Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
+                                                        <rect key="frame" x="306" y="2" width="14" height="14"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="14" id="53T-LY-ZHR"/>
+                                                            <constraint firstAttribute="width" constant="14" id="b9j-Gu-XJt"/>
+                                                        </constraints>
+                                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="QJb-qX-vZc">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="label" size="12"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="toggleAction:" target="Utx-K3-0a0" id="qL7-XA-wJf"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstItem="3bx-6i-bTg" firstAttribute="leading" secondItem="s1s-Ki-o6t" secondAttribute="leading" id="1u1-0s-2Wx"/>
+                                                    <constraint firstAttribute="trailing" secondItem="3bx-6i-bTg" secondAttribute="trailing" id="A0s-1i-Mvj"/>
+                                                    <constraint firstAttribute="height" constant="18" id="J3l-tS-SXi"/>
+                                                    <constraint firstItem="3bx-6i-bTg" firstAttribute="centerY" secondItem="s1s-Ki-o6t" secondAttribute="centerY" id="RmK-7b-QQG"/>
+                                                    <constraint firstAttribute="trailing" secondItem="1uw-i1-Cgo" secondAttribute="trailing" constant="8" id="nw1-oo-l9x"/>
+                                                </constraints>
+                                            </customView>
+                                            <containerView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n0Y-Iw-0NV" userLabel="Favorites Hideable">
+                                                <rect key="frame" x="0.0" y="0.0" width="328" height="300"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="300" id="2OG-Uk-kDD"/>
+                                                </constraints>
+                                                <connections>
+                                                    <segue destination="bl3-7n-UyN" kind="embed" id="6BI-ay-Jbg"/>
+                                                </connections>
+                                            </containerView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="s1s-Ki-o6t" firstAttribute="top" secondItem="Utx-K3-0a0" secondAttribute="top" id="0a7-eL-n4b"/>
+                                            <constraint firstAttribute="bottom" secondItem="n0Y-Iw-0NV" secondAttribute="bottom" id="EyU-yB-0GN"/>
+                                            <constraint firstItem="s1s-Ki-o6t" firstAttribute="leading" secondItem="Utx-K3-0a0" secondAttribute="leading" id="JeN-wD-HKe"/>
+                                            <constraint firstAttribute="trailing" secondItem="s1s-Ki-o6t" secondAttribute="trailing" id="dzD-Z7-42S"/>
+                                            <constraint firstItem="n0Y-Iw-0NV" firstAttribute="leading" secondItem="Utx-K3-0a0" secondAttribute="leading" id="egM-f6-ekq"/>
+                                            <constraint firstAttribute="trailing" secondItem="n0Y-Iw-0NV" secondAttribute="trailing" id="otO-8p-spl"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="bannerView" destination="s1s-Ki-o6t" id="33f-CI-SSo"/>
+                                            <outlet property="hideableView" destination="n0Y-Iw-0NV" id="Q6s-o8-Vgy"/>
+                                            <outlet property="titleButton" destination="3bx-6i-bTg" id="exk-Jc-pw4"/>
+                                            <outlet property="triangleButton" destination="1uw-i1-Cgo" id="zNx-aL-c5d"/>
+                                        </connections>
+                                    </customView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="D5C-Y9-dcb" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="3ZZ-nT-JF8"/>
                                     <constraint firstItem="M2W-8y-R0e" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="5vd-TT-dHx"/>
+                                    <constraint firstAttribute="trailing" secondItem="Utx-K3-0a0" secondAttribute="trailing" id="AoP-Ng-hhK"/>
                                     <constraint firstAttribute="trailing" secondItem="M2W-8y-R0e" secondAttribute="trailing" id="CkC-Ah-hqH"/>
                                     <constraint firstAttribute="trailing" secondItem="D5C-Y9-dcb" secondAttribute="trailing" id="KzC-FI-pXh"/>
                                     <constraint firstItem="dSG-o4-XPL" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="MHM-KA-Rpi"/>
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="NFa-oz-tCT"/>
                                     <constraint firstAttribute="trailing" secondItem="dSG-o4-XPL" secondAttribute="trailing" id="iiK-ke-Ihc"/>
                                     <constraint firstAttribute="trailing" secondItem="9j5-fI-wCz" secondAttribute="trailing" id="pCn-yA-AaQ"/>
+                                    <constraint firstItem="Utx-K3-0a0" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="uBL-Bl-K7a"/>
                                 </constraints>
                                 <visibilityPriorities>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
@@ -446,7 +544,7 @@
                 </viewController>
                 <customObject id="h60-Vy-81A" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-616" y="1385"/>
+            <point key="canvasLocation" x="-670" y="1706"/>
         </scene>
         <!--Preferences Controller-->
         <scene sceneID="n3v-Vu-MZq">
@@ -773,14 +871,14 @@
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-110" y="1919"/>
+            <point key="canvasLocation" x="-112" y="1705"/>
         </scene>
         <!--Ring Controller-->
         <scene sceneID="0ds-mM-LHN">
             <objects>
                 <viewController id="rLF-Ws-apF" customClass="ZRingController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" id="0MH-yu-2Sh">
-                        <rect key="frame" x="0.0" y="0.0" width="282" height="282"/>
+                    <view key="view" wantsLayer="YES" misplaced="YES" id="0MH-yu-2Sh">
+                        <rect key="frame" x="0.0" y="0.0" width="285" height="282"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fmm-hH-rWv" customClass="ZRingView" customModule="Seriously" customModuleProvider="target">
@@ -813,7 +911,7 @@
                 </viewController>
                 <customObject id="SA2-Ul-llr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-109" y="1002"/>
+            <point key="canvasLocation" x="-112.5" y="2237"/>
         </scene>
         <!--Introduction Controller-->
         <scene sceneID="uRy-JP-y7m">
@@ -1113,7 +1211,7 @@
                 </viewController>
                 <customObject id="XNg-DL-aaz" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-109" y="1360"/>
+            <point key="canvasLocation" x="-114" y="1175"/>
         </scene>
     </scenes>
     <resources>

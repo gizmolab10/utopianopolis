@@ -503,6 +503,7 @@ extension ZTogglingView {
             switch kind {
             case "preferences": return .Preferences
 			case "information": return .Information
+			case "favorites":   return .Favorites
 			case "start":       return .StartHere
 			case "ring":        return .StatusRing
             default:            return .All

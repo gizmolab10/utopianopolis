@@ -14,11 +14,12 @@ import SnapKit
     import UIKit
 #endif
 
-var gGraphController: ZGraphController? { return gControllers.controllerForID(.idGraph) as? ZGraphController }
+var gGraphController:     ZGraphController? { return gControllers.controllerForID(.idGraph)     as? ZGraphController }
+var gFavoritesController: ZGraphController? { return gControllers.controllerForID(.idFavorites) as? ZGraphController }
 
 class ZGraphController: ZGesturesController, ZScrollDelegate {
     
-	override  var       controllerID :  ZControllerID { return .idGraph }
+	override  var       controllerID :  ZControllerID { return title == "map" ? .idGraph : .idFavorites }
 	@IBOutlet var            spinner :  ZProgressIndicator?
 	@IBOutlet var           dragView :  ZDragView?
 	@IBOutlet var        spinnerView :  ZView?
