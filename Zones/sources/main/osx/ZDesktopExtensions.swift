@@ -502,7 +502,9 @@ extension ZTogglingView {
         if  let kind = convertFromOptionalUserInterfaceItemIdentifier(identifier) {
             switch kind {
             case "preferences": return .Preferences
-            case "status":      return .Status
+			case "information": return .Information
+			case "start":       return .StartHere
+			case "ring":        return .StatusRing
             default:            return .All
             }
         }

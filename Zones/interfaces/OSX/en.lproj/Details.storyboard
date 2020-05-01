@@ -135,14 +135,14 @@
         <scene sceneID="Tae-az-4mZ">
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZDetailsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="3tA-Ue-bZS">
+                    <view key="view" wantsLayer="YES" id="3tA-Ue-bZS">
                         <rect key="frame" x="0.0" y="0.0" width="328" height="1242"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView hidden="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
+                            <stackView hidden="YES" wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
                                 <rect key="frame" x="0.0" y="2" width="328" height="1240"/>
                                 <subviews>
-                                    <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D5C-Y9-dcb" userLabel="Status Ring View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="ring" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D5C-Y9-dcb" userLabel="Status Ring View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="706" width="328" height="534"/>
                                         <subviews>
                                             <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2wg-Yp-qGE" userLabel="Status Ring Banner">
@@ -184,7 +184,7 @@
                                                     <constraint firstItem="OKo-8P-Rqs" firstAttribute="centerY" secondItem="2wg-Yp-qGE" secondAttribute="centerY" id="mES-qY-udc"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xdj-xL-EqT" userLabel="Status Ring Hideable">
+                                            <containerView wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xdj-xL-EqT" userLabel="Status Ring Hideable">
                                                 <rect key="frame" x="0.0" y="0.0" width="328" height="300"/>
                                                 <connections>
                                                     <segue destination="rLF-Ws-apF" kind="embed" id="xmr-tD-FOS"/>
@@ -206,7 +206,7 @@
                                             <outlet property="triangleButton" destination="1eh-GP-d56" id="brB-7J-Nwl"/>
                                         </connections>
                                     </customView>
-                                    <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Start Here View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="start" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Start Here View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="342" width="328" height="363"/>
                                         <subviews>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Start Here Hideable">
@@ -270,7 +270,7 @@
                                             <outlet property="triangleButton" destination="fqv-v5-z0n" id="45u-05-ETW"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="status" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Status View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Status View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="221" width="328" height="120"/>
                                         <subviews>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Status Hideable">
@@ -770,11 +770,11 @@
         <scene sceneID="0ds-mM-LHN">
             <objects>
                 <viewController id="rLF-Ws-apF" customClass="ZRingController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="0MH-yu-2Sh">
+                    <view key="view" wantsLayer="YES" id="0MH-yu-2Sh">
                         <rect key="frame" x="0.0" y="0.0" width="282" height="282"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fmm-hH-rWv" customClass="ZRingView" customModule="Seriously" customModuleProvider="target">
+                            <customView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fmm-hH-rWv" customClass="ZRingView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="282" height="282"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="Fmm-hH-rWv" secondAttribute="height" id="hoV-qm-R0O"/>

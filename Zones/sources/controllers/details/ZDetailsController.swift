@@ -13,7 +13,7 @@
 #endif
 
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
-private let  detailIds : [ZDetailsViewID] = [.Preferences, .Status, .Start]
+private let  detailIds : [ZDetailsViewID] = [.Preferences, .Information, .StartHere, .StatusRing]
 
 class ZDetailsController: ZGenericController {
 
@@ -34,6 +34,7 @@ class ZDetailsController: ZGenericController {
     func update() {
 		if  gIsReadyToShowUI {
 			stackView?.isHidden = false
+			stackView?.layer?.backgroundColor = kWhiteColor.cgColor
 
 			for id in detailIds {
 				view(for: id)?.update()

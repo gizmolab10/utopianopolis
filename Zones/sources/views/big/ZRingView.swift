@@ -24,7 +24,7 @@ class ZRingView: ZView {
 	var necklaceDotRects = [Int : CGRect]()
 	let necklaceMax 	 = 16
 
-	func itemInRect(_ rect: CGRect?) -> Bool { return item(containedIn: rect) != nil }
+	func anItemIsWithin(_ rect: CGRect?) -> Bool { return itemWithin(rect) != nil }
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
@@ -34,8 +34,9 @@ class ZRingView: ZView {
 
 	func updateGeometry() {
 		let     square = CGSize(width: 130.0, height: 130.0)
-		let     origin = CGPoint(x: bounds.maxX - square.width - 50.0, y: bounds.maxY - square.height - 90.0)
-		geometry  .one = CGRect(origin: origin, size: square)
+		var       rect = CGRect(origin: CGPoint(), size: square)
+		rect.center    = bounds.center
+		geometry  .one = rect
 		geometry.thick = square.height / 40.0
 	}
 
@@ -141,7 +142,7 @@ class ZRingView: ZView {
 	}
 
 	@discardableResult func handleClick(in rect: CGRect?, flags: ZEventFlags = ZEventFlags()) -> Bool {   // false means click was ignored
-		if  let item = self.item(containedIn: rect) {
+		if  let item = self.itemWithin(rect) {
 			let CONTROL = flags.isControl
 			let COMMAND = flags.isCommand
 
@@ -173,7 +174,7 @@ class ZRingView: ZView {
 	}
 
 	override func mouseDown(with event: ZEvent) {
-		let   rect = CGRect(origin: event.locationInWindow, size: CGSize())
+		let   rect = convert(CGRect(origin: event.locationInWindow, size: CGSize()), from: nil)
 		let inRing = handleClick(in: rect, flags: event.modifierFlags)
 
 		if !inRing {
@@ -337,7 +338,7 @@ class ZRingView: ZView {
 		return result
 	}
 
-	private func item(containedIn iRect: CGRect?) -> NSObject? {
+	private func itemWithin(_ iRect: CGRect?) -> NSObject? {
 		if  let     rect = iRect {
 			let  objects = necklaceObjects 				// expensive computation: do once
 			let    count = objects.count
