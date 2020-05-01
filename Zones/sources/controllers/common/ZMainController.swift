@@ -16,6 +16,7 @@ var gMainController: ZMainController? { return gControllers.controllerForID(.idM
 
 class ZMainController: ZGenericController {
 
+	@IBOutlet var skillControl      : NSSegmentedControl?
     @IBOutlet var detailsWidth      : NSLayoutConstraint?
     @IBOutlet var searchBoxHeight   : NSLayoutConstraint?
     @IBOutlet var searchResultsView : ZView?
@@ -30,11 +31,25 @@ class ZMainController: ZGenericController {
 		searchResultsView?.isHidden = true
 	}
 
+	@IBAction func skillAction(_ control: NSSegmentedControl) {
+		if  let   level = ZSkillLevel(rawValue: control.selectedSegmentIndex) {
+			gSkillLevel = level
+		}
+	}
+
+	func updateForSkillLevel() {
+		detailView?.isHidden = gBasicSkillLevel
+
+		gDetailsController?.updateForSkillLevel()
+	}
+
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		let        hideEssay = !gIsNoteMode
-        let       hideSearch = !gIsSearchMode
-        let      hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
-		detailView?.isHidden = !gAdvancedSkillLevel
+		let   hideEssay = !gIsNoteMode
+        let  hideSearch = !gIsSearchMode
+        let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
+
+		skillControl?.selectedSegmentIndex = gSkillLevel.rawValue
+		skillControl?.isHidden             = false
 
 		switch iKind {
 			case .sFound:

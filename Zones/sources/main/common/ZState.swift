@@ -132,12 +132,13 @@ var gClipBreadcrumbs : Bool {
 }
 
 var gAdvancedSkillLevel : Bool { return gSkillLevel == .advanced }
+var    gBasicSkillLevel : Bool { return gSkillLevel == .basic }
 var   gNewbieSkillLevel : Bool { return gSkillLevel == .newbie }
 let   kNewbieSkillLevel =               ZSkillLevel.newbie.rawValue
 
 var gSkillLevel : ZSkillLevel {
 	get { return  ZSkillLevel(rawValue: getPreferencesInt(for: kSkillLevel, defaultInt: kNewbieSkillLevel) ?? kNewbieSkillLevel) ?? ZSkillLevel.newbie }
-	set { setPreferencesInt(newValue.rawValue, for: kSkillLevel) }
+	set { setPreferencesInt(newValue.rawValue, for: kSkillLevel); gMainController?.updateForSkillLevel() }
 }
 
 var gColorfulMode : Bool {
@@ -417,12 +418,12 @@ var gHiddenDetailViewIDs: ZDetailsViewID {
 	get {
 		var state: ZDetailsViewID?
 		
-		if let object = UserDefaults.standard.object(forKey:kDetailsState) {
-			state     = ZDetailsViewID(rawValue: object as! Int)
+		if  let object = UserDefaults.standard.object(forKey:kDetailsState) {
+			state      = ZDetailsViewID(rawValue: object as! Int)
 		}
 		
-		if state == nil {
-			state     = .All
+		if  state     == nil {
+			state      = .StartHere
 			
 			UserDefaults.standard.set(state!.rawValue, forKey:kDetailsState)
 			UserDefaults.standard.synchronize()

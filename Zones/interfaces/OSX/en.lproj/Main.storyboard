@@ -540,13 +540,13 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="cUb-54-gft"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Show/Hide Colors" keyEquivalent="k" id="RfO-CH-kxa">
+                                                    <menuItem title="Colorful Mode" keyEquivalent="k" id="RfO-CH-kxa">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Y9J-Wf-DfD"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Power User Mode" keyEquivalent="p" id="THb-cX-UAd">
+                                                    <menuItem title="Skill Level" keyEquivalent="p" id="THb-cX-UAd">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="oHR-g9-RM2"/>
@@ -893,8 +893,33 @@ CA
                                     <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                 </connections>
                             </containerView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="ULe-6f-22e">
+                                <rect key="frame" x="131" y="235" width="226" height="21"/>
+                                <subviews>
+                                    <segmentedControl hidden="YES" canDrawConcurrently="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0jt-BT-C1l">
+                                        <rect key="frame" x="-2" y="-2" width="230" height="24"/>
+                                        <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="Vx4-SL-sxe">
+                                            <font key="font" metaFont="system"/>
+                                            <segments>
+                                                <segment label="Begin"/>
+                                                <segment label="Walk" selected="YES" tag="1"/>
+                                                <segment label="Sprint"/>
+                                            </segments>
+                                        </segmentedCell>
+                                        <connections>
+                                            <action selector="skillAction:" target="MXk-17-6Dz" id="O99-nE-baM"/>
+                                        </connections>
+                                    </segmentedControl>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="0jt-BT-C1l" firstAttribute="leading" secondItem="ULe-6f-22e" secondAttribute="leading" id="DKh-4A-hMZ"/>
+                                    <constraint firstAttribute="trailing" secondItem="0jt-BT-C1l" secondAttribute="trailing" id="NPQ-15-TFk"/>
+                                    <constraint firstItem="0jt-BT-C1l" firstAttribute="top" secondItem="ULe-6f-22e" secondAttribute="top" id="b4d-dn-Grh"/>
+                                    <constraint firstAttribute="bottom" secondItem="0jt-BT-C1l" secondAttribute="bottom" id="l7s-xR-Rd6"/>
+                                </constraints>
+                            </customView>
                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
-                                <rect key="frame" x="131" y="0.0" width="226" height="256"/>
+                                <rect key="frame" x="131" y="0.0" width="226" height="234"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
                                 </constraints>
@@ -933,6 +958,7 @@ CA
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="6sw-vi-DPR" secondAttribute="trailing" id="14S-eu-4mN"/>
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="4E2-mZ-iVD"/>
+                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="ULe-6f-22e" secondAttribute="bottom" constant="4" id="5KG-Rl-i4G"/>
                             <constraint firstItem="xfO-CE-WwN" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="8wF-Ft-HhQ"/>
                             <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="F3i-M3-bpQ"/>
                             <constraint firstItem="6sw-vi-DPR" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="GGA-eb-oiW"/>
@@ -944,11 +970,13 @@ CA
                             <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="Xgc-lh-EwT"/>
                             <constraint firstItem="6sw-vi-DPR" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="aKG-xO-qGq"/>
                             <constraint firstItem="xfO-CE-WwN" firstAttribute="top" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="aPs-j1-UNe"/>
+                            <constraint firstItem="ULe-6f-22e" firstAttribute="top" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="d6E-Eo-Qzc"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="g71-Jb-mg1"/>
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="gQc-MX-nbf"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="lap-td-b4Q"/>
+                            <constraint firstAttribute="trailing" secondItem="ULe-6f-22e" secondAttribute="trailing" id="mC6-OP-dHx"/>
+                            <constraint firstItem="ULe-6f-22e" firstAttribute="leading" secondItem="xfO-CE-WwN" secondAttribute="trailing" id="nyn-I5-T0n"/>
                             <constraint firstAttribute="bottom" secondItem="xfO-CE-WwN" secondAttribute="bottom" id="paZ-Ht-UuJ"/>
-                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="sKW-Jm-94C"/>
                             <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="trU-TG-zpc"/>
                             <constraint firstAttribute="trailing" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="yjZ-dN-0tE"/>
                         </constraints>
@@ -961,6 +989,7 @@ CA
                         <outlet property="searchBoxHeight" destination="lGr-3g-ayh" id="9xd-lu-oT0"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
+                        <outlet property="skillControl" destination="0jt-BT-C1l" id="tCJ-oe-uBa"/>
                     </connections>
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

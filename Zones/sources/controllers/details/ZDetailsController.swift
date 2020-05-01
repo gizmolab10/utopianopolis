@@ -22,9 +22,7 @@ class ZDetailsController: ZGenericController {
 	override  var controllerID : ZControllerID { return .idDetails }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  gAdvancedSkillLevel {
-			update()
-		}
+		update()
     }
 
     func register(id: ZDetailsViewID, for view: ZTogglingView) {
@@ -39,6 +37,15 @@ class ZDetailsController: ZGenericController {
 			for id in detailIds {
 				view(for: id)?.update()
 			}
+		}
+	}
+
+	func updateForSkillLevel() {
+		view(for: .StartHere )?.hideHideable = !gNewbieSkillLevel
+		view(for: .StatusRing)?.hideHideable = !gAdvancedSkillLevel
+
+		FOREGROUND() {
+			self.redrawGraph()
 		}
 	}
     

@@ -188,7 +188,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     func layoutRootWidget(for iZone: Any?, _ iKind: ZSignalKind, inPublicGraph: Bool) {
         if  (!gAdvancedSkillLevel && !inPublicGraph) || (kIsPhone && (inPublicGraph == gShowFavorites)) { return }
 
-        let                        here = inPublicGraph ? gHereMaybe : gFavoritesRoot
+        let                        here = inPublicGraph ? gHereMaybe    : gFavoritesRoot
         var specificWidget: ZoneWidget? = inPublicGraph ? mapRootWidget : favoritesRootWidget
         var specificView:        ZView? = dragView
         var specificIndex:         Int?

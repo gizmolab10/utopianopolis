@@ -105,11 +105,6 @@ class ZShortcuts : NSObject {
 				attributes[.font] = bold
 			case .append?, .underline?:
 				attributes[.underlineStyle] = 1
-
-//				if  type == .append {
-//					prefix += "+ "
-//				}
-
 			case .plain?, .power?:
 				if  hasURL {
 					attributes[.foregroundColor] = hyperlinkColor
