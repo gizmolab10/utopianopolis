@@ -887,16 +887,25 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
+                                <rect key="frame" x="0.0" y="0.0" width="357" height="256"/>
+                                <connections>
+                                    <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
+                                </connections>
+                            </containerView>
+                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
+                                <rect key="frame" x="131" y="0.0" width="226" height="256"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
+                                </connections>
+                            </containerView>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View">
                                 <rect key="frame" x="0.0" y="256" width="357" height="44"/>
                                 <connections>
                                     <segue destination="auf-AV-5qA" kind="embed" id="Frp-da-kE8"/>
-                                </connections>
-                            </containerView>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
-                                <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
-                                <connections>
-                                    <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                 </connections>
                             </containerView>
                             <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
@@ -914,15 +923,6 @@ CA
                                     <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
                                 </connections>
                             </containerView>
-                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
-                                <rect key="frame" x="131" y="0.0" width="226" height="256"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
-                                </constraints>
-                                <connections>
-                                    <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
-                                </connections>
-                            </containerView>
                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
                                 <rect key="frame" x="0.0" y="0.0" width="230" height="256"/>
                                 <connections>
@@ -933,9 +933,7 @@ CA
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="6sw-vi-DPR" secondAttribute="trailing" id="14S-eu-4mN"/>
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="4E2-mZ-iVD"/>
-                            <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="7YZ-rS-1rz"/>
                             <constraint firstItem="xfO-CE-WwN" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="8wF-Ft-HhQ"/>
-                            <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="DdE-29-U0K"/>
                             <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="F3i-M3-bpQ"/>
                             <constraint firstItem="6sw-vi-DPR" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="GGA-eb-oiW"/>
                             <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GKq-sx-Y6r"/>
@@ -946,9 +944,11 @@ CA
                             <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="Xgc-lh-EwT"/>
                             <constraint firstItem="6sw-vi-DPR" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="aKG-xO-qGq"/>
                             <constraint firstItem="xfO-CE-WwN" firstAttribute="top" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="aPs-j1-UNe"/>
+                            <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="g71-Jb-mg1"/>
                             <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="gQc-MX-nbf"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="lap-td-b4Q"/>
                             <constraint firstAttribute="bottom" secondItem="xfO-CE-WwN" secondAttribute="bottom" id="paZ-Ht-UuJ"/>
+                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="sKW-Jm-94C"/>
                             <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="trU-TG-zpc"/>
                             <constraint firstAttribute="trailing" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="yjZ-dN-0tE"/>
                         </constraints>

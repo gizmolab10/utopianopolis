@@ -118,7 +118,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	// MARK:-
 
     func clear() {
-        mapRootWidget   .widgetZone = nil
+        mapRootWidget      .widgetZone = nil
         favoritesRootWidget.widgetZone = nil
     }
 
@@ -171,7 +171,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					make.centerY.equalTo(d).offset(gScrollOffset.y)
 					make.centerX.equalTo(d).offset(gScrollOffset.x)
 				} else {
-					make  .top.equalTo(d).offset(45.0 - Double(gGenericOffset.height / 3.0))
+					make  .top.equalTo(d).offset(15.0 - Double(gGenericOffset.height / 3.0))
 					make .left.equalTo(d).offset(15.0 - Double(gGenericOffset.width       ))
 				}
 			}
@@ -572,7 +572,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         gDragPoint       = nil
 
         favoritesRootWidget.setNeedsDisplay()
-        mapRootWidget    .setNeedsDisplay()
+        mapRootWidget      .setNeedsDisplay()
         dragView?          .setNeedsDisplay() // erase drag: line and dot
         dot?               .setNeedsDisplay()
     }
