@@ -149,13 +149,22 @@
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="3xG-CQ-dra">
                                 <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="156" id="TMF-tr-aNc"/>
-                                </constraints>
                             </customView>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="YCv-YN-HVE">
+                                <rect key="frame" x="0.0" y="-2" width="285" height="5"/>
+                            </box>
+                            <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="pEz-hB-ZvT">
+                                <rect key="frame" x="-2" y="0.0" width="5" height="156"/>
+                            </box>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="pEz-hB-ZvT" secondAttribute="bottom" id="7Vv-Hc-ISd"/>
+                            <constraint firstItem="pEz-hB-ZvT" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="9YU-xa-4nm"/>
+                            <constraint firstItem="YCv-YN-HVE" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="Af1-M9-9OB"/>
+                            <constraint firstItem="pEz-hB-ZvT" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="MxT-VU-Okc"/>
                             <constraint firstItem="3xG-CQ-dra" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="RaT-cf-fH9"/>
+                            <constraint firstAttribute="trailing" secondItem="YCv-YN-HVE" secondAttribute="trailing" id="a2P-j8-F0d"/>
+                            <constraint firstAttribute="bottom" secondItem="YCv-YN-HVE" secondAttribute="bottom" id="aEx-6M-ttW"/>
                             <constraint firstAttribute="bottom" secondItem="3xG-CQ-dra" secondAttribute="bottom" id="aPV-Kj-IMH"/>
                             <constraint firstItem="3xG-CQ-dra" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="ngO-cZ-xH9"/>
                             <constraint firstAttribute="trailing" secondItem="3xG-CQ-dra" secondAttribute="trailing" id="v9c-or-Kuo"/>

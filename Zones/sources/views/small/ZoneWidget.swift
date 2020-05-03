@@ -31,7 +31,7 @@ class ZoneWidget: ZView {
     let              textWidget = ZoneTextWidget ()
     let            childrenView = ZView          ()
     private var childrenWidgets = [ZoneWidget]   ()
-    var                isInPublic = false
+    var              isInPublic = false
     weak var         widgetZone :       Zone?
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
     var                   ratio :     CGFloat { return isInPublic ? 1.0 : kFavoritesReduction }
