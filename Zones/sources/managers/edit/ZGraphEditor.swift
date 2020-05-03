@@ -166,8 +166,8 @@ class ZGraphEditor: ZBaseEditor {
 					case kSpace:   if OPTION || CONTROL || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
-                    case kReturn:  if hasWidget { grabOrEdit(COMMAND, OPTION) } else { gCurrentKeyPressed = nil; return false }
-					case kEscape:                 grabOrEdit(true,    OPTION, true)
+                    case kReturn:  grabOrEdit(COMMAND, OPTION)
+					case kEscape:  grabOrEdit(true,    OPTION, true)
                     default:       return false // indicate key was not handled
                     }
                 }

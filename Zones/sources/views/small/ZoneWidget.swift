@@ -466,11 +466,11 @@ class ZoneWidget: ZView {
         let           path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
         path    .lineWidth = thickness
         path     .flatness = 0.0001
-		var          debug = "[PLAIN]  "
+		var          debug = "[UNDASH] "
 
         if  pale {
             path.addDashes()
-			debug = "[DASHES] "
+			debug = "[DASH]   "
         }
         
 		printDebug(.dEdit, debug + (widgetZone?.unwrappedName ?? ""))

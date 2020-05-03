@@ -139,7 +139,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 gSearching.exitSearchMode()
             }
 
-			printDebug(.dEdit, " FIRST   " + zone.unwrappedName)
+			printDebug(.dEdit, " RESPOND " + zone.unwrappedName)
 			gTextEditor.edit(zone, setOffset: gTextOffset)
 
 			return true

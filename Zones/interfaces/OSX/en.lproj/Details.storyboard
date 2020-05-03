@@ -25,7 +25,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="iSu-QB-gpG"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="uyC-kt-DrI">
-                                                <font key="font" metaFont="message" size="11"/>
+                                                <font key="font" metaFont="controlContent" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -36,7 +36,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="fsf-bJ-Uu6"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="s7Z-UN-BJu">
-                                                <font key="font" metaFont="message" size="11"/>
+                                                <font key="font" metaFont="controlContent" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -47,7 +47,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="am7-ij-t8n"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="jkC-rh-JZ7">
-                                                <font key="font" metaFont="message" size="11"/>
+                                                <font key="font" metaFont="controlContent" size="11"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -147,7 +147,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="3xG-CQ-dra">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="3xG-CQ-dra" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
                             </customView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="YCv-YN-HVE">
@@ -170,10 +170,163 @@
                             <constraint firstAttribute="trailing" secondItem="3xG-CQ-dra" secondAttribute="trailing" id="v9c-or-Kuo"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="dragView" destination="3xG-CQ-dra" id="W34-Zp-c8z"/>
+                        <outlet property="ideaContextualMenu" destination="VWK-W7-ztK" id="Da8-5x-01f"/>
+                        <outlet property="keyInput" destination="VWK-W7-ztK" id="qAd-Am-Lje"/>
+                    </connections>
                 </viewController>
+                <menu title="Actions" id="VWK-W7-ztK" userLabel="Idea Contextual Menu" customClass="ZoneContextualMenu" customModule="Seriously" customModuleProvider="target">
+                    <items>
+                        <menuItem title="Focus" keyEquivalent="/" id="njY-EL-JRk">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="834-xy-QTs" id="R4g-3i-EQk"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Delete" id="i51-zM-ljf">
+                            <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="6cD-Yi-dxJ"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Bookmark" keyEquivalent="b" id="l3i-vQ-Lxd">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="eoy-Ka-Gvs"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Duplicate" keyEquivalent="d" id="cxP-Ev-xfj">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="Aee-cp-GVR"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Note" keyEquivalent="n" id="JRw-T4-FrU">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="WMD-3i-nAD"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Swap with Parent" keyEquivalent="t" id="aVn-5v-Uso">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="xrF-2m-Jl7"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="MY9-B0-bCO">
+                            <connections>
+                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="9uf-NN-BUR"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Children" id="Iou-jl-B90">
+                            <menu key="submenu" title="Children" id="gXS-DD-Itc">
+                                <items>
+                                    <menuItem title="Show" keyEquivalent="" id="pAC-6G-gxm">
+                                        <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="TKC-b6-Q6j"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Hide" keyEquivalent="" id="NEe-m8-mwv">
+                                        <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="I7O-c1-kAV"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem isSeparatorItem="YES" id="cVu-Nz-Vt9">
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="kQZ-Iw-bUz"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Add Child Idea" keyEquivalent=" " id="X9t-5U-OI6">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="pEZ-5M-zkX"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Alphabetize" keyEquivalent="a" id="JNh-bQ-YvU">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="jC0-gV-3SK"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Sort by Length" keyEquivalent="m" id="fPQ-iS-ux4">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="Ezu-zs-LP2"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Reverse Order" keyEquivalent="r" id="ols-Pa-5sD">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="8Ov-NO-qLO"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                        <menuItem title="Attachment" id="zvp-Vj-nFc">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <menu key="submenu" title="Attachment" id="eKj-w0-ZEf">
+                                <items>
+                                    <menuItem title="Email" keyEquivalent="e" id="qGT-Dx-ASX">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="f0g-RU-B7A"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Hyperlink" keyEquivalent="h" id="ytN-zB-GxU">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="3l3-i8-vCB"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                        <menuItem title="Case" id="y0z-ev-uZD">
+                            <menu key="submenu" title="Case" id="Jmn-XU-uRL">
+                                <items>
+                                    <menuItem title="Lower" keyEquivalent="l" id="EWC-Rv-wGe">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="hDx-6W-xRm"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Upper" keyEquivalent="u" id="Cot-Aa-7FL">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="CPE-z5-bax"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                        <menuItem title="File" id="gxn-Xc-G5C">
+                            <menu key="submenu" title="File" id="snl-s9-ASJ">
+                                <items>
+                                    <menuItem title="Import" keyEquivalent="o" id="re2-kz-asB">
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="9Fi-r3-HUW"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Export" keyEquivalent="s" id="vQ8-rW-J0s">
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="sGM-Wt-ZBc"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                    </items>
+                </menu>
                 <customObject id="834-xy-QTs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-113" y="1959"/>
+            <point key="canvasLocation" x="-114" y="2300"/>
         </scene>
         <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
@@ -920,7 +1073,7 @@
                 </viewController>
                 <customObject id="SA2-Ul-llr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-112.5" y="2237"/>
+            <point key="canvasLocation" x="-112" y="2022"/>
         </scene>
         <!--Introduction Controller-->
         <scene sceneID="uRy-JP-y7m">

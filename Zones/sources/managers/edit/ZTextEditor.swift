@@ -276,13 +276,13 @@ class ZTextEditor: ZTextView {
 				zone.userCanWrite {
 				currentEdit = pack
 
-				printDebug(.dEdit, " EDIT    " + zone.unwrappedName)
+				printDebug(.dEdit, " MAYBE   " + zone.unwrappedName)
 
 				pack.updateText(isEditing: true)
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
 				gSetEditIdeaMode()
 
-				if  let textWidget = currentTextWidget {
+				if  let textWidget = zone.widget?.textWidget {
 					textWidget.enableUndo()
 					textWidget.layoutTextField()
 					textWidget.becomeFirstResponder()

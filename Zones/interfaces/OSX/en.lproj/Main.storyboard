@@ -877,7 +877,7 @@ CA
                     <accessibility description="Map Contextual Menu" identifier="Map Contextual Menu"/>
                 </menu>
             </objects>
-            <point key="canvasLocation" x="798" y="1173"/>
+            <point key="canvasLocation" x="192" y="1173"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -1094,7 +1094,7 @@ CA
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="178" y="1176"/>
+            <point key="canvasLocation" x="793" y="1176"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">

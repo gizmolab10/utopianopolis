@@ -19,17 +19,18 @@ var gFavoritesController: ZGraphController? { return gControllers.controllerForI
 
 class ZGraphController: ZGesturesController, ZScrollDelegate {
     
-	override  var       controllerID :  ZControllerID { return title == "map" ? .idGraph : .idFavorites }
-	@IBOutlet var            spinner :  ZProgressIndicator?
-	@IBOutlet var           dragView :  ZDragView?
-	@IBOutlet var        spinnerView :  ZView?
-	@IBOutlet var ideaContextualMenu :  ZoneContextualMenu?
-	let                mapRootWidget =  ZoneWidget   ()
-	let          favoritesRootWidget =  ZoneWidget   ()
-	var           rubberbandPreGrabs =  ZoneArray    ()
-	var          priorScrollLocation =  CGPoint.zero
-	var              rubberbandStart =  CGPoint.zero
-	let 	            clickManager =  ZClickManager()
+	override  var       controllerID : ZControllerID { return isFavorites ? .idFavorites : .idGraph }
+	var                  isFavorites : Bool          { return title != "map" }
+	@IBOutlet var            spinner : ZProgressIndicator?
+	@IBOutlet var           dragView : ZDragView?
+	@IBOutlet var        spinnerView : ZView?
+	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
+	let                mapRootWidget = ZoneWidget   ()
+	let          favoritesRootWidget = ZoneWidget   ()
+	var           rubberbandPreGrabs = ZoneArray    ()
+	var          priorScrollLocation = CGPoint.zero
+	var              rubberbandStart = CGPoint.zero
+	let 	            clickManager = ZClickManager()
 
 	class ZClickManager : NSObject {
 
@@ -156,27 +157,29 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     func layoutForCurrentScrollOffset() {
         if  let d = dragView {
-            mapRootWidget.snp.removeConstraints()
-            mapRootWidget.snp.makeConstraints { make in
-                make.centerY.equalTo(d).offset(gScrollOffset.y)
-                make.centerX.equalTo(d).offset(gScrollOffset.x)
-            }
-
-            if  favoritesRootWidget.superview == nil {
-                d.addSubview(favoritesRootWidget)
-            }
-            
-            favoritesRootWidget.snp.removeConstraints()
-            favoritesRootWidget.snp.makeConstraints { make in
-				if kIsPhone {
+			if !isFavorites {
+				mapRootWidget.snp.removeConstraints()
+				mapRootWidget.snp.makeConstraints { make in
 					make.centerY.equalTo(d).offset(gScrollOffset.y)
 					make.centerX.equalTo(d).offset(gScrollOffset.x)
-				} else {
-					make  .top.equalTo(d).offset(15.0 - Double(gGenericOffset.height / 3.0))
-					make .left.equalTo(d).offset(15.0 - Double(gGenericOffset.width       ))
+				}
+			} else {
+				if  favoritesRootWidget.superview == nil {
+					d.addSubview(favoritesRootWidget)
+				}
+
+				favoritesRootWidget.snp.removeConstraints()
+				favoritesRootWidget.snp.makeConstraints { make in
+					if kIsPhone {
+						make.centerY.equalTo(d).offset(gScrollOffset.y)
+						make.centerX.equalTo(d).offset(gScrollOffset.x)
+					} else {
+						make  .top.equalTo(d).offset(15.0 - Double(gGenericOffset.height / 3.0))
+						make .left.equalTo(d).offset(15.0 - Double(gGenericOffset.width       ))
+					}
 				}
 			}
-            
+
             d.setNeedsDisplay()
         }
     }
@@ -213,8 +216,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         if  [.sDatum, .sData, .sRelayout].contains(iKind) { // ignore for preferences, search, information, startup
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
-			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: true)
-			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: false)
+			layoutRootWidget(for: iSignalObject, iKind, inPublicGraph: !isFavorites)
 			dragView?.setAllSubviewsNeedDisplay()
         }
 
