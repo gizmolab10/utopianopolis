@@ -43,6 +43,7 @@ class ZDetailsController: ZGenericController {
 	func updateForSkillLevel() {
 		view(for: .StartHere )?.hideHideable = !gNewbieSkillLevel
 		view(for: .StatusRing)?.hideHideable = !gAdvancedSkillLevel
+		view(for: .Favorites )?.hideHideable = !gAdvancedSkillLevel
 
 		FOREGROUND() {
 			self.redrawGraph()

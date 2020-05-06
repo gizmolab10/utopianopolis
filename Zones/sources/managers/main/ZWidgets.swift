@@ -10,18 +10,15 @@
 import Foundation
 import CloudKit
 
-
 let gWidgets = ZWidgets()
-
 
 class ZWidgets: NSObject {
 
-
-    var       widgets: [Int : ZoneWidget]  = [:]
-    var currentEditingWidget: ZoneWidget? { return widgetForZone(gTextEditor.currentlyEditingZone) }
-    var currentMovableWidget: ZoneWidget? { return widgetForZone(gSelecting.currentMoveable) }
-    var firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelecting.firstSortedGrab) }
-
+	var      mapWidgets: [Int : ZoneWidget]  = [:]
+	var favoriteWidgets: [Int : ZoneWidget]  = [:]
+    var   currentEditingWidget: ZoneWidget? { return widgetForZone(gTextEditor.currentlyEditingZone) }
+    var   currentMovableWidget: ZoneWidget? { return widgetForZone(gSelecting.currentMoveable) }
+    var   firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelecting.firstSortedGrab) }
 
     var visibleWidgets: [ZoneWidget] {
         let favorites = gFavoritesRoot?.visibleWidgets ?? []
@@ -29,22 +26,36 @@ class ZWidgets: NSObject {
         return gHere.visibleWidgets + favorites
     }
 
-
-    func clearRegistry() {
-        widgets = [:]
+    func clearRegistry(forFavorites: Bool) {
+		setWidgetsDict([:], forFavorites: forFavorites)
     }
 
+	func getWidgetsDict(forFavorites: Bool) -> [Int : ZoneWidget] {
+		return forFavorites ? favoriteWidgets : mapWidgets
+	}
+
+	func setWidgetsDict(_ dict: [Int : ZoneWidget], forFavorites: Bool) {
+		if  forFavorites {
+			favoriteWidgets = dict
+		} else {
+			mapWidgets      = dict
+		}
+	}
 
     /// capture a ZoneWidget for later lookup by it's zone
     /// (see widgetForZone)
     ///
     /// - Parameter widget: UI element containing text, drag and reveal dots and children widgets
     func registerWidget(_ widget: ZoneWidget) {
-        if  let           zone = widget.widgetZone {
-            widgets[zone.hash] = widget
+        if  let        zone = widget.widgetZone {
+			let inFavorites = zone.isInFavorites
+			var        dict = getWidgetsDict(forFavorites: inFavorites)
+
+			dict[zone.hash] = widget
+
+			setWidgetsDict(dict, forFavorites: inFavorites)
         }
     }
-
 
     /// Lookup previously registered ZoneWidget by its zone
     ///
@@ -52,8 +63,10 @@ class ZWidgets: NSObject {
     /// - Returns: ZoneWidget
     func widgetForZone(_ iZone: Zone?) -> ZoneWidget? {
         if  let zone = iZone {
-            return widgets[zone.hash]
-        }
+			let dict = getWidgetsDict(forFavorites: zone.isInFavorites)
+
+			return dict[zone.hash]
+		}
 
         return nil
     }

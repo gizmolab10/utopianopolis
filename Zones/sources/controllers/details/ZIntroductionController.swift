@@ -14,26 +14,6 @@ import UIKit
 
 // simple wrapper GUI for graph editor's handle key/arrow
 
-enum ZIntroductionID: String {
-	case up      = "up"
-	case add     = "add"
-	case edit    = "edit"
-	case move    = "move"
-	case idea    = "idea"
-	case note    = "note"
-	case down    = "down"
-	case left    = "left"
-	case child   = "child"
-	case right   = "right"
-	case focus   = "focus"
-	case shift   = "shift"
-	case showMe  = "showMe"
-	case option  = "option"
-	case command = "command"
-	case control = "control"
-	case sibling = "sibling"
-}
-
 class ZIntroductionController: ZGenericController {
 
 	override var controllerID : ZControllerID { return .idIntroduction }
@@ -47,22 +27,13 @@ class ZIntroductionController: ZGenericController {
 	override func startup() {
 		view.applyToAllSubviews { subview in
 			if  let       button = subview as? ZButton,
-				let     buttonID = extractIDFrom(button) {
+				let     buttonID = button.introductionID {
 				buttonsByID[buttonID] = button
 			} else if let    box = subview as? ZBox,
-				let        boxID = extractIDFrom(box) {
+				let        boxID = box.introductionID {
 				boxesByID[boxID] = box
 			}
 		}
-	}
-
-	func extractIDFrom(_ item: NSUserInterfaceItemIdentification) -> ZIntroductionID? {
-		if  let identifier = item.identifier?.rawValue,
-			let     itemID = ZIntroductionID(rawValue: identifier) {
-			return  itemID
-		}
-
-		return nil
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
@@ -87,7 +58,7 @@ class ZIntroductionController: ZGenericController {
 	}
 
 	@IBAction func buttonAction(_ button: ZButton) {
-		if  let  itemID = extractIDFrom(button) {
+		if  let  itemID = button.introductionID {
 			updateFlags()
 			update()
 

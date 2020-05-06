@@ -636,7 +636,7 @@ extension ZTextEditor {
 
     func fullResign()  {
         assignAsFirstResponder (nil) // ios broken?
-        gGraphController?.keyInput?.becomeFirstResponder()
+        gGraphController?.mobileKeyInput?.becomeFirstResponder()
 	}
 	
 }

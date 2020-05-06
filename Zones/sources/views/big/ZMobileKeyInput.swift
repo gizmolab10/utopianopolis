@@ -1,5 +1,5 @@
 //
-//  ZKeyInput.swift
+//  ZMobileKeyInput.swift
 //  iFocus
 //
 //  Created by Jonathan Sand on 4/28/19.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ZKeyInput : UIControl, UIKeyInput {
+class ZMobileKeyInput : UIControl, UIKeyInput {
     
     var hasText = false
     override var canBecomeFirstResponder: Bool {return true}

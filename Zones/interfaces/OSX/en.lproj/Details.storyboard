@@ -25,7 +25,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="iSu-QB-gpG"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="uyC-kt-DrI">
-                                                <font key="font" metaFont="controlContent" size="11"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -36,7 +36,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="fsf-bJ-Uu6"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="s7Z-UN-BJu">
-                                                <font key="font" metaFont="controlContent" size="11"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -47,7 +47,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="am7-ij-t8n"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="jkC-rh-JZ7">
-                                                <font key="font" metaFont="controlContent" size="11"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -108,20 +108,20 @@
                                 </view>
                             </box>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="4om-oY-tSH">
-                                <rect key="frame" x="-2" y="0.0" width="5" height="151"/>
+                                <rect key="frame" x="279" y="0.0" width="5" height="151"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="RY0-UO-Dkf"/>
                                 </constraints>
                             </box>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="4om-oY-tSH" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" id="Aeh-X6-EBT"/>
                             <constraint firstAttribute="trailing" secondItem="AUf-tY-f9E" secondAttribute="trailing" constant="8" id="LKl-z1-sFI"/>
                             <constraint firstAttribute="bottom" secondItem="kOk-k7-jTQ" secondAttribute="bottom" constant="8" id="T92-XS-nnJ"/>
                             <constraint firstAttribute="trailing" secondItem="kOk-k7-jTQ" secondAttribute="trailing" constant="8" id="VT7-EK-Kww"/>
                             <constraint firstItem="AUf-tY-f9E" firstAttribute="top" secondItem="mbO-Ma-L1E" secondAttribute="top" constant="4" id="Wmh-vK-WZj"/>
                             <constraint firstItem="4om-oY-tSH" firstAttribute="top" secondItem="mbO-Ma-L1E" secondAttribute="top" id="XYN-wO-cWL"/>
                             <constraint firstAttribute="bottom" secondItem="4om-oY-tSH" secondAttribute="bottom" id="YZ3-oZ-DPI"/>
+                            <constraint firstAttribute="trailing" secondItem="4om-oY-tSH" secondAttribute="trailing" id="cVg-R7-oYz"/>
                             <constraint firstItem="AUf-tY-f9E" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" constant="8" id="eLC-by-dkG"/>
                             <constraint firstItem="kOk-k7-jTQ" firstAttribute="top" secondItem="AUf-tY-f9E" secondAttribute="bottom" constant="8" id="spF-OQ-DhE"/>
                             <constraint firstItem="kOk-k7-jTQ" firstAttribute="leading" secondItem="mbO-Ma-L1E" secondAttribute="leading" constant="8" id="weq-tQ-Mcj"/>
@@ -139,10 +139,10 @@
             </objects>
             <point key="canvasLocation" x="-114" y="1451"/>
         </scene>
-        <!--favorites-->
+        <!--Favorites-->
         <scene sceneID="6c8-8d-0Jq">
             <objects>
-                <viewController title="favorites" identifier="favorites" id="bl3-7n-UyN" customClass="ZGraphController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="favorites" id="bl3-7n-UyN" userLabel="Favorites" customClass="ZFavoritesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="sgs-hY-cUq">
                         <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -154,26 +154,28 @@
                                 <rect key="frame" x="0.0" y="-2" width="285" height="5"/>
                             </box>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="pEz-hB-ZvT">
-                                <rect key="frame" x="-2" y="0.0" width="5" height="156"/>
+                                <rect key="frame" x="282" y="0.0" width="5" height="156"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="1" id="DvJ-uK-BbF"/>
+                                </constraints>
                             </box>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="pEz-hB-ZvT" secondAttribute="bottom" id="7Vv-Hc-ISd"/>
                             <constraint firstItem="pEz-hB-ZvT" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="9YU-xa-4nm"/>
                             <constraint firstItem="YCv-YN-HVE" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="Af1-M9-9OB"/>
-                            <constraint firstItem="pEz-hB-ZvT" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="MxT-VU-Okc"/>
-                            <constraint firstItem="3xG-CQ-dra" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="RaT-cf-fH9"/>
+                            <constraint firstAttribute="trailing" secondItem="pEz-hB-ZvT" secondAttribute="trailing" id="SKZ-ji-sE6"/>
                             <constraint firstAttribute="trailing" secondItem="YCv-YN-HVE" secondAttribute="trailing" id="a2P-j8-F0d"/>
                             <constraint firstAttribute="bottom" secondItem="YCv-YN-HVE" secondAttribute="bottom" id="aEx-6M-ttW"/>
-                            <constraint firstAttribute="bottom" secondItem="3xG-CQ-dra" secondAttribute="bottom" id="aPV-Kj-IMH"/>
-                            <constraint firstItem="3xG-CQ-dra" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="ngO-cZ-xH9"/>
-                            <constraint firstAttribute="trailing" secondItem="3xG-CQ-dra" secondAttribute="trailing" id="v9c-or-Kuo"/>
+                            <constraint firstItem="3xG-CQ-dra" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="fYG-fz-bMZ"/>
+                            <constraint firstAttribute="bottom" secondItem="3xG-CQ-dra" secondAttribute="bottom" id="hjb-iU-3cR"/>
+                            <constraint firstItem="3xG-CQ-dra" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="jaH-Xg-XGH"/>
+                            <constraint firstAttribute="trailing" secondItem="3xG-CQ-dra" secondAttribute="trailing" id="ofj-T5-wKY"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="dragView" destination="3xG-CQ-dra" id="W34-Zp-c8z"/>
                         <outlet property="ideaContextualMenu" destination="VWK-W7-ztK" id="Da8-5x-01f"/>
-                        <outlet property="keyInput" destination="VWK-W7-ztK" id="qAd-Am-Lje"/>
                     </connections>
                 </viewController>
                 <menu title="Actions" id="VWK-W7-ztK" userLabel="Idea Contextual Menu" customClass="ZoneContextualMenu" customModule="Seriously" customModuleProvider="target">
@@ -326,7 +328,7 @@ CA
                 </menu>
                 <customObject id="834-xy-QTs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-114" y="2300"/>
+            <point key="canvasLocation" x="-114.5" y="2300"/>
         </scene>
         <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
@@ -1040,19 +1042,18 @@ CA
             <objects>
                 <viewController id="rLF-Ws-apF" customClass="ZRingController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" misplaced="YES" id="0MH-yu-2Sh">
-                        <rect key="frame" x="0.0" y="0.0" width="285" height="282"/>
+                        <rect key="frame" x="0.0" y="0.0" width="282" height="282"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fmm-hH-rWv" customClass="ZRingView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="282" height="282"/>
+                            <customView wantsLayer="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fmm-hH-rWv" customClass="ZRingView" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="285" height="282"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="Fmm-hH-rWv" secondAttribute="height" id="hoV-qm-R0O"/>
                                 </constraints>
                             </customView>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Lfd-IK-7Mw">
-                                <rect key="frame" x="-2" y="0.0" width="5" height="282"/>
+                                <rect key="frame" x="279" y="0.0" width="5" height="282"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="1" id="9ME-3X-hVK"/>
                                     <constraint firstAttribute="width" constant="1" id="WZ1-UB-EWP"/>
                                 </constraints>
                             </box>
@@ -1062,7 +1063,7 @@ CA
                             <constraint firstItem="Lfd-IK-7Mw" firstAttribute="top" secondItem="0MH-yu-2Sh" secondAttribute="top" id="5BI-zk-HEN"/>
                             <constraint firstItem="Fmm-hH-rWv" firstAttribute="top" secondItem="0MH-yu-2Sh" secondAttribute="top" id="82g-LN-y6D"/>
                             <constraint firstAttribute="bottom" secondItem="Lfd-IK-7Mw" secondAttribute="bottom" id="NPe-B9-Dpb"/>
-                            <constraint firstItem="Lfd-IK-7Mw" firstAttribute="leading" secondItem="0MH-yu-2Sh" secondAttribute="leading" id="U6p-Hh-AL5"/>
+                            <constraint firstAttribute="trailing" secondItem="Lfd-IK-7Mw" secondAttribute="trailing" id="cjO-rd-J97"/>
                             <constraint firstItem="Fmm-hH-rWv" firstAttribute="leading" secondItem="0MH-yu-2Sh" secondAttribute="leading" id="ifa-FS-9M9"/>
                             <constraint firstAttribute="bottom" secondItem="Fmm-hH-rWv" secondAttribute="bottom" id="jxc-HT-gZs"/>
                         </constraints>
@@ -1073,7 +1074,7 @@ CA
                 </viewController>
                 <customObject id="SA2-Ul-llr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-112" y="2022"/>
+            <point key="canvasLocation" x="-112.5" y="2022"/>
         </scene>
         <!--Introduction Controller-->
         <scene sceneID="uRy-JP-y7m">
@@ -1089,24 +1090,26 @@ CA
                                     <rect key="frame" x="3" y="3" width="266" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="child" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child">
+                                        <button identifier="child" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-5" y="-6" width="140" height="32"/>
-                                            <buttonCell key="cell" type="push" title="add child" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k8y-nU-3ox">
+                                            <buttonCell key="cell" type="push" title="add child" alternateTitle="SPACE" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k8y-nU-3ox">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="F5R-UH-Fep"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="fdn-Hh-Epv"/>
                                             </connections>
                                         </button>
-                                        <button identifier="sibling" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling">
+                                        <button identifier="sibling" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="124" y="1" width="140" height="18"/>
-                                            <buttonCell key="cell" type="push" title="add sibling" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rMw-U8-ScO">
+                                            <buttonCell key="cell" type="push" title="add sibling" alternateTitle="TAB" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rMw-U8-ScO">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="KUX-Nf-Gnn"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="foR-ht-EWJ"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -1131,24 +1134,26 @@ CA
                                     <rect key="frame" x="3" y="3" width="266" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea">
+                                        <button identifier="idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-5" y="-6" width="140" height="32"/>
-                                            <buttonCell key="cell" type="push" title="edit idea" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YHj-2q-hu8">
+                                            <buttonCell key="cell" type="push" title="edit idea" alternateTitle="RETURN" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YHj-2q-hu8">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="52G-hw-YEA"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="geW-8m-OI0"/>
                                             </connections>
                                         </button>
-                                        <button identifier="note" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note">
+                                        <button identifier="note" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="124" y="1" width="140" height="18"/>
-                                            <buttonCell key="cell" type="push" title="edit note" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bov-NG-9Nh">
+                                            <buttonCell key="cell" type="push" title="edit note" alternateTitle="N" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bov-NG-9Nh">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="RV7-bk-RGl"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="9BL-X2-pxP"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -1173,54 +1178,59 @@ CA
                                     <rect key="frame" x="3" y="3" width="266" height="67"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="up" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-vi-ud6" userLabel="up">
+                                        <button identifier="up" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-vi-ud6" userLabel="up" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-5" y="38" width="276" height="32"/>
-                                            <buttonCell key="cell" type="push" title="up" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-zy-Y7c">
+                                            <buttonCell key="cell" type="push" title="up" alternateTitle="UP ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-zy-Y7c">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="mgh-ge-XVZ"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="k6c-cj-bqd"/>
                                             </connections>
                                         </button>
-                                        <button identifier="focus" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SJq-nd-vaN" userLabel="focus">
+                                        <button identifier="focus" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SJq-nd-vaN" userLabel="focus" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="83" y="16" width="100" height="32"/>
-                                            <buttonCell key="cell" type="push" title="focus" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qid-p3-qJU">
+                                            <buttonCell key="cell" type="push" title="focus" alternateTitle="/" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qid-p3-qJU">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="pnE-P4-Zp1"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="zRN-ag-ima"/>
                                             </connections>
                                         </button>
-                                        <button identifier="right" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right">
+                                        <button identifier="right" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="172" y="16" width="99" height="32"/>
-                                            <buttonCell key="cell" type="push" title="right" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UrN-Q5-bwD">
+                                            <buttonCell key="cell" type="push" title="right" alternateTitle="-&gt;" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UrN-Q5-bwD">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="yvx-ca-MZe"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="sfu-cT-M9K"/>
                                             </connections>
                                         </button>
-                                        <button identifier="down" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-3u-WGy" userLabel="down">
+                                        <button identifier="down" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-3u-WGy" userLabel="down" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-5" y="-6" width="276" height="32"/>
-                                            <buttonCell key="cell" type="push" title="down" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gmQ-hx-fbx">
+                                            <buttonCell key="cell" type="push" title="down" alternateTitle="DOWN ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gmQ-hx-fbx">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="nSf-FX-5fk"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="aoq-oN-nry"/>
                                             </connections>
                                         </button>
-                                        <button identifier="left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-wF-YeD" userLabel="left">
+                                        <button identifier="left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-wF-YeD" userLabel="left" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-5" y="16" width="99" height="32"/>
-                                            <buttonCell key="cell" type="push" title="left" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xEN-g3-ZK6">
+                                            <buttonCell key="cell" type="push" title="left" alternateTitle="&lt;-" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xEN-g3-ZK6">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="pCJ-g2-XKK"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="iYJ-B3-osh"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -1332,14 +1342,8 @@ CA
                                     <action selector="buttonAction:" target="YdN-bY-sSj" id="86m-8t-0mc"/>
                                 </connections>
                             </button>
-                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="44f-Aq-hyA">
-                                <rect key="frame" x="0.0" y="-2" width="282" height="5"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="1" id="ZJh-lb-h4R"/>
-                                </constraints>
-                            </box>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="OpA-9s-1GD">
-                                <rect key="frame" x="-2" y="0.0" width="5" height="284"/>
+                                <rect key="frame" x="279" y="0.0" width="5" height="284"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="93x-2a-1k9"/>
                                 </constraints>
@@ -1352,12 +1356,8 @@ CA
                             <constraint firstItem="OpA-9s-1GD" firstAttribute="top" secondItem="MMF-wn-1M6" secondAttribute="top" id="Nqg-aC-RuR"/>
                             <constraint firstItem="Eo8-dK-qAb" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="OKG-eI-oG3"/>
                             <constraint firstItem="yWs-Kk-dmA" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="QOn-Bn-5x8"/>
-                            <constraint firstItem="44f-Aq-hyA" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" id="Qrz-bb-uu8"/>
-                            <constraint firstAttribute="bottom" secondItem="44f-Aq-hyA" secondAttribute="bottom" id="SL5-Dj-lOr"/>
                             <constraint firstAttribute="trailing" secondItem="NsX-os-IKw" secondAttribute="trailing" constant="8" id="Umi-lB-f30"/>
                             <constraint firstItem="BZ2-Au-okv" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="WVC-Jf-tQ4"/>
-                            <constraint firstAttribute="trailing" secondItem="44f-Aq-hyA" secondAttribute="trailing" id="aoi-xd-4a4"/>
-                            <constraint firstItem="OpA-9s-1GD" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" id="bO1-Hj-PE6"/>
                             <constraint firstItem="yWs-Kk-dmA" firstAttribute="top" secondItem="MMF-wn-1M6" secondAttribute="top" constant="8" id="cbQ-jD-F1i"/>
                             <constraint firstAttribute="bottom" secondItem="OpA-9s-1GD" secondAttribute="bottom" id="d8x-9y-Ru2"/>
                             <constraint firstAttribute="trailing" secondItem="yWs-Kk-dmA" secondAttribute="trailing" constant="8" id="ekq-Oa-RKx"/>
@@ -1368,6 +1368,7 @@ CA
                             <constraint firstAttribute="trailing" secondItem="2K6-Dx-rco" secondAttribute="trailing" constant="8" id="pSu-4J-TY7"/>
                             <constraint firstItem="2K6-Dx-rco" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="t0b-qp-9b2"/>
                             <constraint firstItem="NsX-os-IKw" firstAttribute="top" secondItem="BZ2-Au-okv" secondAttribute="bottom" constant="9" id="uIt-ce-qfn"/>
+                            <constraint firstAttribute="trailing" secondItem="OpA-9s-1GD" secondAttribute="trailing" id="zYo-rd-SrW"/>
                         </constraints>
                     </view>
                 </viewController>

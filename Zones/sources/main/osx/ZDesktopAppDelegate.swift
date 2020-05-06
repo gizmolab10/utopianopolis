@@ -32,7 +32,7 @@ class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
             needsSetup          = false
             gDesktopAppDelegate = self
 
-            UserDefaults.standard.set(true, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraint‌​s")
+            UserDefaults.standard.set(false, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints")
             gApplication.registerForRemoteNotifications(matching: .badge)
             gControllers.startupCloudAndUI()
             gEvents.setup()

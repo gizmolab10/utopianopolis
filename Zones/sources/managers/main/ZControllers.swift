@@ -225,7 +225,7 @@ class ZControllers: NSObject {
 	func signalFor(_ object: Any?, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
         FOREGROUND(canBeDirect: true) {
             gRemoteStorage.updateNeededCounts() // clean up after adding or removing children
-            
+
 			for regarding in multiple {
 				for (identifier, signalObject) in self.signalObjectsByControllerID {
 					let isPreferences = identifier == .idPreferences

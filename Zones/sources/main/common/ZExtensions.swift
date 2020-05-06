@@ -94,7 +94,7 @@ extension NSObject {
     }
 
     func blankScreenDebug() {
-        if  let w = gGraphController?.mapRootWidget.bounds.size.width, w < 1.0 {
+        if  let w = gGraphController?.rootWidget.bounds.size.width, w < 1.0 {
             bam("blank graph !!!!!!")
         }
     }
@@ -1914,7 +1914,7 @@ extension ZView {
 	}
 
     func clearGestures() {
-        if recognizers != nil {
+        if  recognizers != nil {
             for recognizer in recognizers! {
                 removeGestureRecognizer(recognizer)
             }
@@ -2098,6 +2098,16 @@ extension ZView {
 				drawNecklace(tinyCount, false)
 			}
 		}
+	}
+
+	var introductionID : ZIntroductionID? {
+		let           item = self as NSUserInterfaceItemIdentification
+		if  let identifier = item.identifier?.rawValue,
+			let     itemID = ZIntroductionID(rawValue: identifier) {
+			return  itemID
+		}
+
+		return nil
 	}
 
 }

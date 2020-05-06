@@ -17,8 +17,6 @@ var gMainController: ZMainController? { return gControllers.controllerForID(.idM
 class ZMainController: ZGenericController {
 
 	@IBOutlet var skillControl      : NSSegmentedControl?
-    @IBOutlet var detailsWidth      : NSLayoutConstraint?
-    @IBOutlet var searchBoxHeight   : NSLayoutConstraint?
     @IBOutlet var searchResultsView : ZView?
     @IBOutlet var searchBoxView     : ZView?
     @IBOutlet var detailView        : ZView?

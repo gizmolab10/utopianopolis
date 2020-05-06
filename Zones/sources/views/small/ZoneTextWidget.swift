@@ -24,7 +24,7 @@ enum ZTextType: Int {
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     override var preferredFont : ZFont { return (widget?.isInPublic ?? true) ? gWidgetFont : gFavoritesFont }
-    var             widgetZone : Zone? { return widget?.widgetZone }
+    var             widgetZone : Zone? { return  widget?.widgetZone }
     weak var            widget : ZoneWidget?
     var                   type = ZTextType.name
 
@@ -76,10 +76,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 		return true
 	}
 
-    func layoutText(isEditing: Bool = false) {
-        gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
-        layoutTextField()
-    }
+	func layoutText(isEditing: Bool = false) {
+		gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
+		layoutTextField()
+	}
 
     func updateGUI() {
         widget?.widgetZone?.needWrite()
@@ -89,18 +89,17 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
     func layoutTextField() {
         if  let          view = superview {
-            snp.removeConstraints()
-            snp.makeConstraints { make in
-                let textWidth = text!.widthForFont(preferredFont)
-                let  hideText = widgetZone?.onlyShowRevealDot ?? true
-				let    height = ((gGenericOffset.height - 2.0) / 3.0) + 2.0
-                let     width = hideText ? 0.0 : textWidth + 1.0
+			identifier        = NSUserInterfaceItemIdentifier((widgetZone?.zoneName ?? "unknown") + "<t>") // gosh i wish this would help debugging constraint errors
+			let     textWidth = text!.widthForFont(preferredFont)
+			let      hideText = widgetZone?.onlyShowRevealDot ?? true
+			let         width = hideText ? 0.0 : textWidth + 1.0
 
-                make.centerY.equalTo(view)
-                make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)
-                make  .right.lessThanOrEqualTo(view).offset(-29.0)
-                make .height.lessThanOrEqualTo(view).offset(-height)
-                make  .width.equalTo(width)
+			snp.removeConstraints()
+            snp.makeConstraints { make in
+                make.centerY.equalTo(view)                                      // match vertical center with containing widget
+                make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)   // inset from leading edge of  ""
+                make .height.lessThanOrEqualTo(view)							// push siblings vertically apart
+                make  .width.equalTo(width)										// make room for text if not hidden
             }
         }
     }
@@ -213,7 +212,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             // draw line underneath text indicating it can travel //
             // /////////////////////////////////////////////////////
 
-            var         rect = dirtyRect.insetBy(dx: 3.0, dy: 0.0)
+			let       deltaX = min(3.0, dirtyRect.width / 2.0)
+            var         rect = dirtyRect.insetBy(dx: deltaX, dy: 0.0)
             rect.size.height = 0.0
             rect.origin.y    = dirtyRect.maxY - 1.0
             let path         = ZBezierPath(rect: rect)

@@ -50,26 +50,6 @@ class ZGraphEditor: ZBaseEditor {
         return gUndoManager
     }
 
-    enum ZMenuType: Int {
-        case eUndo
-        case eHelp
-        case eSort
-        case eFind
-        case eColor
-        case eChild
-        case eAlter
-        case eFiles
-        case eCloud
-        case eAlways
-        case eParent
-        case eTravel
-
-        case eRedo
-        case ePaste
-        case eUseGrabs
-        case eMultiple
-    }
-    
     @discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
 		if  var     key = iKey {
             let CONTROL = flags.isControl
@@ -116,8 +96,7 @@ class ZGraphEditor: ZBaseEditor {
 					}
 				}
             } else if isValid(key, flags) {
-                let    widget = gWidgets.currentMovableWidget
-                let hasWidget = widget != nil
+                let widget = gWidgets.currentMovableWidget
 
                 widget?.widgetZone?.needWrite()
                 
@@ -748,43 +727,6 @@ class ZGraphEditor: ZBaseEditor {
                 
                 gFavorites.updateCurrentFavorite()
                 self.redrawGraph()
-            }
-        }
-    }
-
-    // MARK:- reveal dot
-    // MARK:-
-
-	func clickActionOnRevealDot(for iZone: Zone?, COMMAND: Bool, OPTION: Bool) {
-        if  let zone = iZone {
-            gTextEditor.stopCurrentEdit()
-
-            for     grabbed in gSelecting.currentGrabs {
-                if  grabbed != zone && grabbed.spawnedBy(zone) {
-                    grabbed.ungrab()
-                }
-            }
-
-            if  zone.canTravel && (COMMAND || (zone.fetchableCount == 0 && zone.count == 0)) {
-                gFocusRing.invokeTravel(zone) { // email, hyperlink, bookmark, essay
-                    self.redrawGraph()
-                }
-            } else {
-                let show = !zone.showingChildren
-
-                if  zone.isRootOfFavorites {
-                    // ///////////////////////////////////////////////////////////////
-                    // avoid annoying user by treating favorites non-generationally //
-                    // ///////////////////////////////////////////////////////////////
-
-                    zone.toggleChildrenVisibility()
-
-                    self.redrawGraph()
-				} else {
-					zone.generationalUpdate(show: show) {
-						self.redrawGraph()
-					}
-                }
             }
         }
     }

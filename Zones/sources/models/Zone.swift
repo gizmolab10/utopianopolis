@@ -2187,6 +2187,41 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         return string
     }
 
+	// MARK:- reveal dot
+	// MARK:-
+
+	func revealDotClicked(COMMAND: Bool, OPTION: Bool) {
+		gTextEditor.stopCurrentEdit()
+
+		for     grabbed in gSelecting.currentGrabs {
+			if  grabbed != self && grabbed.spawnedBy(self) {
+				grabbed.ungrab()
+			}
+		}
+
+		if  canTravel && (COMMAND || (fetchableCount == 0 && count == 0)) {
+			gFocusRing.invokeTravel(self) { // email, hyperlink, bookmark, essay
+				self.redrawGraph()
+			}
+		} else {
+			let show = !showingChildren
+
+			if  isRootOfFavorites {
+				// ///////////////////////////////////////////////////////////////
+				// avoid annoying user by treating favorites non-generationally //
+				// ///////////////////////////////////////////////////////////////
+
+				toggleChildrenVisibility()
+
+				self.redrawGraph()
+			} else {
+				generationalUpdate(show: show) {
+					self.redrawGraph()
+				}
+			}
+		}
+	}
+
     // MARK:- lines and titles
     // MARK:-
 

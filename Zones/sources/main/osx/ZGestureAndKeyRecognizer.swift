@@ -57,8 +57,8 @@ class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
 
 
     override open func mouseDown (with event: ZEvent) {
+		modifiers = event.modifierFlags
         super.mouseDown (with: event)
-        modifiers = event.modifierFlags
     }
     
 }

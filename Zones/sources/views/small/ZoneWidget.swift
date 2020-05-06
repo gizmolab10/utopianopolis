@@ -32,15 +32,26 @@ class ZoneWidget: ZView {
     let            childrenView = ZView          ()
     private var childrenWidgets = [ZoneWidget]   ()
     var              isInPublic = false
-    weak var         widgetZone :       Zone?
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
     var                   ratio :     CGFloat { return isInPublic ? 1.0 : kFavoritesReduction }
 
+	weak var widgetZone : Zone? {
+		didSet {
+			if  let name = widgetZone?.zoneName {
+				identifier              = NSUserInterfaceItemIdentifier("\(name)<w>") // added for debugging constraints
+				childrenView.identifier = NSUserInterfaceItemIdentifier("\(name)<c>")
+				textWidget  .identifier = NSUserInterfaceItemIdentifier("\(name)<t>")
+				revealDot   .identifier = NSUserInterfaceItemIdentifier("\(name)<r>")
+				dragDot     .identifier = NSUserInterfaceItemIdentifier("\(name)<d>")
+			}
+		}
+	}
 
     deinit {
         childrenWidgets.removeAll()
+		removeAllSubviews()
 
-        widgetZone = nil
+//        widgetZone = nil
     }
 
 
@@ -297,22 +308,17 @@ class ZoneWidget: ZView {
     }
 
 
-    func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView?, _ iHere: Zone?, _ visited: ZoneArray = []) -> ZoneWidget? {
+    func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView?, _ iHere: Zone?, _ visited: [ZoneWidget] = []) -> ZoneWidget? {
         if  let    here = iHere,
-            let    zone = widgetZone,
-            !visited.contains(zone),
-            (zone == gDraggedZone || !zone.spawnedBy(gDraggedZone)),
+            !visited.contains(self),
             dragHitFrame(in: iView, here).contains(iPoint) {
 
-            if zone.showingChildren {
-                for child in zone.children {
-                    if  let            childWidget = child.widget,
-                        self        != childWidget,
-                        let    found = childWidget.widgetNearestTo(iPoint, in: iView, here, visited + [zone]) {
-                        return found
-                    }
-                }
-            }
+			for child in childrenWidgets {
+				if  self        != child,
+					let    found = child.widgetNearestTo(iPoint, in: iView, here, visited + [self]) {
+					return found
+				}
+			}
 
             return self
         }

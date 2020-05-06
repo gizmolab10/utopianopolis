@@ -40,6 +40,46 @@ enum ZSkillLevel: Int {
 	case advanced
 }
 
+enum ZIntroductionID: String {
+	case up      = "up"
+	case add     = "add"
+	case edit    = "edit"
+	case move    = "move"
+	case idea    = "idea"
+	case note    = "note"
+	case down    = "down"
+	case left    = "left"
+	case child   = "child"
+	case right   = "right"
+	case focus   = "focus"
+	case shift   = "shift"
+	case showMe  = "showMe"
+	case option  = "option"
+	case command = "command"
+	case control = "control"
+	case sibling = "sibling"
+}
+
+enum ZMenuType: Int {
+	case eUndo
+	case eHelp
+	case eSort
+	case eFind
+	case eColor
+	case eChild
+	case eAlter
+	case eFiles
+	case eCloud
+	case eAlways
+	case eParent
+	case eTravel
+
+	case eRedo
+	case ePaste
+	case eUseGrabs
+	case eMultiple
+}
+
 struct ZTinyDotType: OptionSet {
 	let rawValue: Int
 
@@ -363,7 +403,7 @@ enum ZEssayHyperlinkType: String {
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = [.dEdit]
+var gDebugMode: [ZDebugMode] = []
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
