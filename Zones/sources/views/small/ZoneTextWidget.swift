@@ -98,6 +98,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 			let textWidth = text!.widthForFont(preferredFont)
 			let     width = hideText ? 0.0 : textWidth + 1.0
 
+			snp.setLabel("<t> \(widgetZone?.zoneName ?? "unknown")")
 			snp.removeConstraints()
             snp.makeConstraints { make in
 				make  .right.lessThanOrEqualTo(container).offset(-29.0)

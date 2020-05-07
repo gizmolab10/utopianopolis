@@ -93,6 +93,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         widget   = iWidget
 		
         if isInnerDot {
+			snp.setLabel("<\(isReveal ? "r" : "d")> \(widgetZone?.zoneName ?? "unknown")")
             snp.removeConstraints()
             snp.makeConstraints { make in
                 let  size = CGSize(width: innerDotWidth, height: innerDotHeight)
@@ -110,6 +111,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
             }
 
             innerDot?.setupForWidget(iWidget, asReveal: isReveal)
+			snp.setLabel("<\(isReveal ? "r" : "d")> \(widgetZone?.zoneName ?? "unknown")")
             snp.removeConstraints()
             snp.makeConstraints { make in
                 var   width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth

@@ -97,6 +97,7 @@ class ZoneWidget: ZView {
                 childWidget.widgetZone =            zone[index]
 
                 childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, isThought: isInMap, visited: visited)
+				childWidget.snp.setLabel("<w> \(childWidget.widgetZone?.zoneName ?? "unknown")")
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in
                     if  previous == nil {
@@ -128,6 +129,7 @@ class ZoneWidget: ZView {
 			}
 			
 			dragDot.innerDot?.snp.removeConstraints()
+			dragDot.innerDot?.snp.setLabel("<d> \(widgetZone?.zoneName ?? "unknown")")
 			dragDot.setupForWidget(self, asReveal: false)
 			dragDot.innerDot?.snp.makeConstraints { make in
 				make.right.equalTo(textWidget.snp.left).offset(-4.0)
@@ -139,6 +141,7 @@ class ZoneWidget: ZView {
             insertSubview(revealDot, belowSubview: textWidget)
         }
 
+		revealDot.innerDot?.snp.setLabel("<r> \(widgetZone?.zoneName ?? "unknown")")
         revealDot.innerDot?.snp.removeConstraints()
         revealDot.setupForWidget(self, asReveal: true)
         revealDot.innerDot?.snp.makeConstraints { make in
@@ -168,6 +171,7 @@ class ZoneWidget: ZView {
             insertSubview(childrenView, belowSubview: textWidget)
         }
 
+		childrenView.snp.setLabel("<c> \(widgetZone?.zoneName ?? "unknown")")
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
             let ratio = isInMap ? 1.0 : kFavoritesReduction / 3.0

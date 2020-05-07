@@ -150,13 +150,14 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
     func layoutForCurrentScrollOffset() {
-        if  let d = dragView {
-			if !isFavorites {
-				rootWidget.snp.removeConstraints()
-				rootWidget.snp.makeConstraints { make in
-					make.centerY.equalTo(d).offset(gScrollOffset.y)
-					make.centerX.equalTo(d).offset(gScrollOffset.x)
-				}
+		let offset = isFavorites ? CGPoint() : gScrollOffset
+
+		if  let d = dragView {
+			rootWidget.snp.setLabel("<w> \(rootWidget.widgetZone?.zoneName ?? "unknown")")
+			rootWidget.snp.removeConstraints()
+			rootWidget.snp.makeConstraints { make in
+				make.centerY.equalTo(d).offset(offset.y)
+				make.centerX.equalTo(d).offset(offset.x)
 			}
 
             d.setNeedsDisplay()
@@ -182,12 +183,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             specificView       = specificWidget?.superview
             recursing          = [.sData, .sRelayout].contains(iKind)
         }
-
-		if  isFavorites,
-			specificWidget?.frame.height == 0.0,
-			let v = specificView {
-			specificWidget?.frame = v.bounds
-		}
 
         specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isThought: !isFavorites, visited: [])
     }

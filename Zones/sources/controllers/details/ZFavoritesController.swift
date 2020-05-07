@@ -17,4 +17,9 @@ class ZFavoritesController: ZGraphController {
 			super.handleSignal(iSignalObject, kind: iKind)
 		}
 	}
+
+	override func startup() {
+		setup()
+	}
+
 }
