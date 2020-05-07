@@ -2206,12 +2206,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else {
 			let show = !showingChildren
 
-			if  isRootOfFavorites {
-				// ///////////////////////////////////////////////////////////////
-				// avoid annoying user by treating favorites non-generationally //
-				// ///////////////////////////////////////////////////////////////
+			if  isInFavorites {
+
+				// //////////////////////////////////////////////////////////
+				// avoid annoying user: treat favorites non-generationally //
+				// //////////////////////////////////////////////////////////
 
 				toggleChildrenVisibility()
+				setFavoritesHere()
 
 				self.redrawGraph()
 			} else {
@@ -2220,6 +2222,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 			}
 		}
+	}
+
+	func setFavoritesHere() {
+		
 	}
 
     // MARK:- lines and titles
