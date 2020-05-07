@@ -23,7 +23,7 @@ enum ZTextType: Int {
 
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
-    override var preferredFont : ZFont { return (widget?.isInPublic ?? true) ? gWidgetFont : gFavoritesFont }
+    override var preferredFont : ZFont { return (widget?.isInMap ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return  widget?.widgetZone }
     weak var            widget : ZoneWidget?
     var                   type = ZTextType.name
@@ -78,29 +78,34 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 	func layoutText(isEditing: Bool = false) {
 		gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
-		layoutTextField()
+		layoutSelf()
 	}
 
     func updateGUI() {
         widget?.widgetZone?.needWrite()
-        layoutTextField()
+        layoutSelf()
         widget?.setNeedsDisplay()
     }
 
-    func layoutTextField() {
-        if  let          view = superview {
-			identifier        = NSUserInterfaceItemIdentifier((widgetZone?.zoneName ?? "unknown") + "<t>") // gosh i wish this would help debugging constraint errors
-			let     textWidth = text!.widthForFont(preferredFont)
-			let      hideText = widgetZone?.onlyShowRevealDot ?? true
-			let         width = hideText ? 0.0 : textWidth + 1.0
+    func layoutSelf() {
+        if  let container = superview {
+			let    height = ((gGenericOffset.height - 2.0) / 3.0) + 2.0
+			let  hideText = widgetZone?.onlyShowRevealDot ?? true
+			let textWidth = text!.widthForFont(preferredFont)
+			let     width = hideText ? 0.0 : textWidth + 1.0
 
 			snp.removeConstraints()
             snp.makeConstraints { make in
-                make.centerY.equalTo(view)                                      // match vertical center with containing widget
-                make   .left.equalTo(view).offset(gGenericOffset.width + 4.0)   // inset from leading edge of  ""
-                make .height.lessThanOrEqualTo(view)							// push siblings vertically apart
-                make  .width.equalTo(width)										// make room for text if not hidden
+				make  .right.lessThanOrEqualTo(container).offset(-29.0)
+				make .height.lessThanOrEqualTo(container).offset(-height)		 	 // vertically,   make room for highlight and push siblings apart
+                make.centerY.equalTo(container)                                      //     ",        center within container
+                make   .left.equalTo(container).offset(gGenericOffset.width + 4.0)   // horizontally, inset into        "
+                make  .width.equalTo(width)										     //     ",        make room for text
             }
+
+			if !(widget?.isInMap ?? true) {
+				printConstraints()
+			}
         }
     }
     

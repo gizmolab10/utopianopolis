@@ -284,7 +284,7 @@ class ZTextEditor: ZTextView {
 
 				if  let textWidget = zone.widget?.textWidget {
 					textWidget.enableUndo()
-					textWidget.layoutTextField()
+					textWidget.layoutSelf()
 					textWidget.becomeFirstResponder()
 				}
 

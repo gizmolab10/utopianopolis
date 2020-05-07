@@ -408,9 +408,9 @@ extension NSView {
         set {
             clearGestures()
 
-            if  let e = newValue {
-                e.movementGesture = createDragGestureRecognizer (e, action: #selector(e.handleDragGesture))
-                e.clickGesture    = createPointGestureRecognizer(e, action: #selector(e.handleClickGesture), clicksRequired: 1)
+            if  let controller = newValue {
+                controller.movementGesture = createDragGestureRecognizer (controller, action: #selector(controller.handleDragGesture))
+                controller.clickGesture    = createPointGestureRecognizer(controller, action: #selector(controller.handleClickGesture), clicksRequired: 1)
             }
         }
     }

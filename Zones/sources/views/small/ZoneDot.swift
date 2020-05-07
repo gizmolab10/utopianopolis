@@ -115,7 +115,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
                 var   width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
-                if !iWidget.isInPublic {
+                if !iWidget.isInMap {
                     width  *= kFavoritesReduction
                 }
 
@@ -193,7 +193,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
-        let     ratio = (widget?.isInPublic ?? true) ? 1.0 : kFavoritesReduction
+        let     ratio = (widget?.isInMap ?? true) ? 1.0 : kFavoritesReduction
         var thickness = CGFloat(gLineThickness + 0.1) * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
         var      rect = CGRect.zero
@@ -225,7 +225,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         let types = iZone.traits.keys
         for type in types {
             let   string = type.rawValue
-            let inPublic = widget?.isInPublic ?? true
+            let inPublic = widget?.isInMap ?? true
             let    ratio = CGFloat(inPublic ? 1.0 : Double(kFavoritesReduction))
             let    width = CGFloat(gDotHeight - 2.0) * ratio
             let     font = ZFont.boldSystemFont(ofSize: width)

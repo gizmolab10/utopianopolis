@@ -168,10 +168,10 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
 
-    func layoutWidgets(for iZone: Any?, _ iKind: ZSignalKind, inPublicGraph: Bool) {
-        if  (!gAdvancedSkillLevel && !inPublicGraph) || (kIsPhone && (inPublicGraph == gShowFavorites)) { return }
+    func layoutWidgets(for iZone: Any?, _ iKind: ZSignalKind) {
+        if kIsPhone && (isFavorites != gShowFavorites) { return }
 
-        let                        here = inPublicGraph ? gHereMaybe : gFavoritesRoot
+        let                        here = !isFavorites ? gHereMaybe : gFavoritesRoot
         var specificWidget: ZoneWidget? = rootWidget
         var specificView:        ZView? = dragView
         var specificIndex:         Int?
@@ -181,21 +181,21 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
         if  let          zone  = iZone as? Zone,
             let        widget  = zone.widget,
-            widget.isInPublic == inPublicGraph {
+            widget.isInMap == !isFavorites {
             specificWidget     = widget
             specificIndex      = zone.siblingIndex
             specificView       = specificWidget?.superview
             recursing          = [.sData, .sRelayout].contains(iKind)
         }
 
-        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isThought: inPublicGraph, visited: [])
+        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isThought: !isFavorites, visited: [])
     }
     
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
         if  [.sDatum, .sData, .sRelayout].contains(iKind) { // ignore for preferences, search, information, startup
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
-			layoutWidgets(for: iSignalObject, iKind, inPublicGraph: !isFavorites)
+			layoutWidgets(for: iSignalObject, iKind)
 			dragView?.setAllSubviewsNeedDisplay()
         }
 
@@ -230,8 +230,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         if  gIsGraphOrEditIdeaMode,
 			let gesture = iGesture as? ZKeyPanGestureRecognizer,
             let (_, dropNearest, location) = widgetNearest(gesture),
-            let   flags = gesture.modifiers {
-            let   state = gesture.state
+            let flags = gesture.modifiers {
+            let state = gesture.state
 
             dropNearest.widgetZone?.needWrite()
 

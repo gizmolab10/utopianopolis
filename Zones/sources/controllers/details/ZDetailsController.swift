@@ -53,6 +53,10 @@ class ZDetailsController: ZGenericController {
     func view(for id: ZDetailsViewID) -> ZTogglingView? {
         return viewsByID[id.rawValue]
     }
+
+	func hideableIsHidden(for id: ZDetailsViewID) -> Bool {
+		return view(for: id)?.hideHideable ?? true
+	}
     
     func toggleViewsFor(ids: [ZDetailsViewID]) {
         for id in ids {

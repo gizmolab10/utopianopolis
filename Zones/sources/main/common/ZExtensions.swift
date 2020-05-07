@@ -1907,6 +1907,16 @@ extension ZGestureRecognizer {
 
 extension ZView {
 
+	var introductionID : ZIntroductionID? {
+		let           item = self as NSUserInterfaceItemIdentification
+		if  let identifier = item.identifier?.rawValue,
+			let     itemID = ZIntroductionID(rawValue: identifier) {
+			return  itemID
+		}
+
+		return nil
+	}
+
 	func removeAllSubviews() {
 		for view in subviews {
 			view.removeFromSuperview()
@@ -1920,6 +1930,18 @@ extension ZView {
             }
         }
     }
+
+	func printConstraints() {
+		var result = [String]()
+
+		result.append("\(identifier?.rawValue ?? "dunno") ")
+
+		for constraint in constraints {
+			result.append("\(constraint)")
+		}
+
+		print(result.joined(separator: "\r"))
+	}
 
     func addBorder(thickness: CGFloat, inset: CGFloat = 0.0, radius: CGFloat, color: CGColor) {
         zlayer.cornerRadius = radius
@@ -2098,16 +2120,6 @@ extension ZView {
 				drawNecklace(tinyCount, false)
 			}
 		}
-	}
-
-	var introductionID : ZIntroductionID? {
-		let           item = self as NSUserInterfaceItemIdentification
-		if  let identifier = item.identifier?.rawValue,
-			let     itemID = ZIntroductionID(rawValue: identifier) {
-			return  itemID
-		}
-
-		return nil
 	}
 
 }

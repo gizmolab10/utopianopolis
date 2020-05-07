@@ -59,8 +59,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var                decoratedName :             String  { return decoration + unwrappedName }
     var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
     var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
-    var            onlyShowRevealDot :               Bool  { return showingChildren && ((isRootOfFavorites && !(widget?.isInPublic ?? true)) || (kIsPhone && self == gHereMaybe)) }
-    var              dragDotIsHidden :               Bool  { return                     (isRootOfFavorites && !(widget?.isInPublic ?? true)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
+    var            onlyShowRevealDot :               Bool  { return showingChildren && ((isRootOfFavorites && !(widget?.isInMap ?? true)) || (kIsPhone && self == gHereMaybe)) }
+    var              dragDotIsHidden :               Bool  { return                     (isRootOfFavorites && !(widget?.isInMap ?? true)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
     var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
     var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
     var                 hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }
