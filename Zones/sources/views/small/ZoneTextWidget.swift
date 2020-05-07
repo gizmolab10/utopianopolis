@@ -65,8 +65,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
         #endif
     }
 
+	var controller: ZGraphController? {
+		return widget?.controller
+	}
+
 	override func menu(for event: NSEvent) -> NSMenu? {
-		let         contextualMenu = gGraphController?.ideaContextualMenu
+		let         contextualMenu = controller?.ideaContextualMenu
 		contextualMenu?.textWidget = self
 
 		return contextualMenu
@@ -98,14 +102,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             snp.makeConstraints { make in
 				make  .right.lessThanOrEqualTo(container).offset(-29.0)
 				make .height.lessThanOrEqualTo(container).offset(-height)		 	 // vertically,   make room for highlight and push siblings apart
-                make.centerY.equalTo(container)                                      //     ",        center within container
+                make.centerY.equalTo(container)                                      //     ",        center within container (widget)
                 make   .left.equalTo(container).offset(gGenericOffset.width + 4.0)   // horizontally, inset into        "
                 make  .width.equalTo(width)										     //     ",        make room for text
             }
 
-			if !(widget?.isInMap ?? true) {
-				printConstraints()
-			}
+//			if !(widget?.isInMap ?? true) {
+//				printConstraints()
+//			}
         }
     }
     

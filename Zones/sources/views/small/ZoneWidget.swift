@@ -530,7 +530,7 @@ class ZoneWidget: ZView {
             }
 
             if  zone.showingChildren {
-                if !nowDrawLines && !gIsDragging && !(gDragView?.showRubberband ?? false) {
+				if !nowDrawLines && !gIsDragging && !(controller?.dragView?.showRubberband ?? false) {
                     nowDrawLines = true
                     
                     draw(dirtyRect)
@@ -544,4 +544,9 @@ class ZoneWidget: ZView {
             nowDrawLines = false
         }
     }
+
+	var controller: ZGraphController? {
+		return isInMap ? gGraphController : gFavoritesController
+	}
+
 }

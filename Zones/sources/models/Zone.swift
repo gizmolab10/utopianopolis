@@ -1945,7 +1945,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				redrawAndSync(self) {
 					gDeferRedraw = false
 
-					gDragView?.setAllSubviewsNeedDisplay()
+					self.widget?.controller?.dragView?.setAllSubviewsNeedDisplay()
 					parent.editAndSelect(range: range)
 				}
 			}

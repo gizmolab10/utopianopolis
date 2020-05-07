@@ -149,6 +149,9 @@
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="3xG-CQ-dra" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
+                                <connections>
+                                    <outlet property="controller" destination="bl3-7n-UyN" id="h1g-O6-twS"/>
+                                </connections>
                             </customView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="YCv-YN-HVE">
                                 <rect key="frame" x="0.0" y="-2" width="285" height="5"/>

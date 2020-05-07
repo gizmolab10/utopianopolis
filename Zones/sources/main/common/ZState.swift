@@ -60,7 +60,7 @@ var          gCanSaveWorkMode:               Bool { return gIsGraphMode || gIsNo
 var    gIsGraphOrEditIdeaMode:               Bool { return gIsGraphMode || gIsEditIdeaMode }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
 var   gDeciSecondsSinceLaunch:                Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
-var                 gDragView:         ZDragView? { return gGraphController?.dragView }
+//var                 gDragView:         ZDragView? { return gGraphController?.dragView }
 var                gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
 var                 gDotWidth:             Double { return gDotHeight * 0.75 }
 var       gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }

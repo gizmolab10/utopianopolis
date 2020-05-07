@@ -162,11 +162,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             d.setNeedsDisplay()
         }
     }
-    
-    // MARK:- events
-    // MARK:-
-
-	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
 
     func layoutWidgets(for iZone: Any?, _ iKind: ZSignalKind) {
         if kIsPhone && (isFavorites != gShowFavorites) { return }
@@ -188,9 +183,18 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             recursing          = [.sData, .sRelayout].contains(iKind)
         }
 
+		if  isFavorites,
+			specificWidget?.frame.height == 0.0,
+			let v = specificView {
+			specificWidget?.frame = v.bounds
+		}
+
         specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isThought: !isFavorites, visited: [])
     }
-    
+
+	// MARK:- events
+	// MARK:-
+
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
         if  [.sDatum, .sData, .sRelayout].contains(iKind) { // ignore for preferences, search, information, startup
 			prepare(for: iKind)
@@ -336,12 +340,10 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         }
 	}
 	
-	
     // //////////////////////////////////////////
     // next four are only called by controller //
     // //////////////////////////////////////////
-    
-    
+
     func dragStartEvent(_ dot: ZoneDot, _ iGesture: ZGestureRecognizer?) {
         if  var zone = dot.widgetZone { // should always be true
             if  iGesture?.isOptionDown ?? false {
@@ -360,8 +362,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             }
         }
     }
-    
-    
+
+	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
+
     func dragMaybeStopEvent(_ iGesture: ZGestureRecognizer?) {
         if  dragDropMaybe(iGesture) {
             cleanupAfterDrag()
@@ -372,7 +375,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             }
         }
     }
-
     
     func scrollEvent(move: Bool, to location: CGPoint) {
         if move {

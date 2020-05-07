@@ -14,6 +14,7 @@
 
 class ZDragView: ZView, ZGestureRecognizerDelegate {
 
+	@IBOutlet var controller: ZGraphController?
 	var drawingRubberbandRect: CGRect?
 	var showRubberband: Bool { return drawingRubberbandRect != nil && drawingRubberbandRect != .zero }
 
@@ -42,9 +43,9 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 	}
 
     func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
-        if  let e = gGraphController {
-            return (gestureRecognizer == e.clickGesture && otherGestureRecognizer == e.movementGesture) ||
-				gestureRecognizer == e.edgeGesture
+        if  let c = controller {
+            return (gestureRecognizer == c.clickGesture && otherGestureRecognizer == c.movementGesture) ||
+				gestureRecognizer == c.edgeGesture
         }
 
         return false

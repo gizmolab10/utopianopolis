@@ -661,6 +661,9 @@ DQ
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="itU-Gt-Inh" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
+                                <connections>
+                                    <outlet property="controller" destination="XfG-lQ-9wD" id="Jq8-wW-hbN"/>
+                                </connections>
                             </customView>
                         </subviews>
                         <constraints>
