@@ -126,6 +126,11 @@ var gHereMaybe: Zone? {
     set { gRecords?.hereZoneMaybe = newValue }
 }
 
+var gFavoritesHereMaybe: Zone? {
+	get { return gRemoteStorage.maybeZoneForRecordName(gRemoteStorage.cloud(for: .favoritesID)?.hereRecordName) }    // all favorites are stored in mine
+	set { gRemoteStorage.cloud(for: .favoritesID)?.hereZoneMaybe = newValue }
+}
+
 var gClipBreadcrumbs : Bool {
 	get { return getPreferencesBool(   for: kClipBreadcrumbs, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kClipBreadcrumbs) }

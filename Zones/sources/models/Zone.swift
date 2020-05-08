@@ -2213,7 +2213,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				// //////////////////////////////////////////////////////////
 
 				toggleChildrenVisibility()
-				setFavoritesHere()
+
+				gFavoritesHereMaybe = showingChildren ? self : parentZone
 
 				self.redrawGraph()
 			} else {
@@ -2225,7 +2226,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func setFavoritesHere() {
-		
+		gFavoritesHereMaybe = self
 	}
 
     // MARK:- lines and titles

@@ -25,7 +25,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="iSu-QB-gpG"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="uyC-kt-DrI">
-                                                <font key="font" metaFont="label" size="11"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -36,7 +36,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="fsf-bJ-Uu6"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="s7Z-UN-BJu">
-                                                <font key="font" metaFont="label" size="11"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -47,7 +47,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="am7-ij-t8n"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="jkC-rh-JZ7">
-                                                <font key="font" metaFont="label" size="11"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -538,18 +538,18 @@ CA
                                             <outlet property="triangleButton" destination="aCk-9D-lHI" id="Vqs-0u-WA3"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="ring" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D5C-Y9-dcb" userLabel="Status Ring View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="ring" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D5C-Y9-dcb" userLabel="Status View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="97" width="328" height="536"/>
                                         <subviews>
-                                            <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2wg-Yp-qGE" userLabel="Status Ring Banner">
+                                            <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2wg-Yp-qGE" userLabel="Status Banner">
                                                 <rect key="frame" x="0.0" y="518" width="328" height="18"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OKo-8P-Rqs" userLabel="Status Ring Title">
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OKo-8P-Rqs" userLabel="Status Title">
                                                         <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="gKS-qe-HYT"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="roundRect" title="Status Ring" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Xvc-53-jpY">
+                                                        <buttonCell key="cell" type="roundRect" title="Status" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Xvc-53-jpY">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="label" size="12"/>
                                                         </buttonCell>
@@ -580,7 +580,7 @@ CA
                                                     <constraint firstItem="OKo-8P-Rqs" firstAttribute="centerY" secondItem="2wg-Yp-qGE" secondAttribute="centerY" id="mES-qY-udc"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xdj-xL-EqT" userLabel="Status Ring Hideable">
+                                            <containerView wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xdj-xL-EqT" userLabel="Status Hideable">
                                                 <rect key="frame" x="0.0" y="2" width="328" height="300"/>
                                                 <connections>
                                                     <segue destination="rLF-Ws-apF" kind="embed" id="xmr-tD-FOS"/>

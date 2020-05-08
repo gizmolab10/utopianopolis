@@ -77,7 +77,7 @@ class ZRecords: NSObject {
     
     
     var hereZoneMaybe: Zone? {
-        get { return maybeZoneForRecordName(hereRecordName) }
+		get { return maybeZoneForRecordName(hereRecordName) }
 		set { hereRecordName = newValue?.recordName ?? (databaseID == .favoritesID ? kFavoritesRootName : kRootName) }
     }
     
