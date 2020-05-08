@@ -21,7 +21,7 @@ enum ZControllerID: Int {
 	case idStatus
     case idSearch
 	case idCrumbs
-    case idGraph
+    case idMap
 	case idNote
     case idHelp
 	case idMain
@@ -194,7 +194,7 @@ class ZControllers: NSObject {
 			switch id {
 				case .idNote:   return .white
 				case .idDetails,
-					 .idGraph,
+					 .idMap,
 					 .idRing:   return kClearColor
 //				case .idPreferences,
 //					 .idStatus: return gDarkishBackgroundColor
@@ -231,7 +231,7 @@ class ZControllers: NSObject {
 					let isPreferences = identifier == .idPreferences
 					let      isStatus = identifier == .idStatus
 					let      isCrumbs = identifier == .idCrumbs
-					let       isGraph = identifier == .idGraph
+					let       isGraph = identifier == .idMap
 					let        isRing = identifier == .idRing
 					let        isMain = identifier == .idMain
                 

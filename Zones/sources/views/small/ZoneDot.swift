@@ -227,12 +227,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
         let types = iZone.traits.keys
         for type in types {
             let   string = type.rawValue
-            let inPublic = widget?.isInMap ?? true
-            let    ratio = CGFloat(inPublic ? 1.0 : Double(kFavoritesReduction))
+            let isForMap = widget?.isInMap ?? true
+            let    ratio = CGFloat(isForMap ? 1.0 : Double(kFavoritesReduction))
             let    width = CGFloat(gDotHeight - 2.0) * ratio
             let     font = ZFont.boldSystemFont(ofSize: width)
 			let     size = string.sizeWithFont(font)
-			let   height = size.height * type.heightRatio + (inPublic ? 1.0 : -2.5)
+			let   height = size.height * type.heightRatio + (isForMap ? 1.0 : -2.5)
 			let   xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
 			let   yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
 			let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: (height / 12.0) - 1)

@@ -26,12 +26,12 @@ enum ZLineKind: Int {
 class ZoneWidget: ZView {
 
 
+	var                 isInMap = false
     let                 dragDot = ZoneDot        ()
     let               revealDot = ZoneDot        ()
     let              textWidget = ZoneTextWidget ()
     let            childrenView = ZView          ()
     private var childrenWidgets = [ZoneWidget]   ()
-    var              isInMap = false
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
     var                   ratio :     CGFloat { return isInMap ? 1.0 : kFavoritesReduction }
 
@@ -59,13 +59,13 @@ class ZoneWidget: ZView {
     // MARK:-
 
 
-    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, isThought: Bool, visited: ZoneArray) {
+    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, inMap: Bool, visited: ZoneArray) {
         if  let thisView = inView,
             !thisView.subviews.contains(self) {
             thisView.addSubview(self)
         }
 
-        isInMap = isThought
+        isInMap = inMap
 
         #if os(iOS)
             backgroundColor = kClearColor
@@ -96,7 +96,7 @@ class ZoneWidget: ZView {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone =            zone[index]
 
-                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, isThought: isInMap, visited: visited)
+                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, inMap: isInMap, visited: visited)
 				childWidget.snp.setLabel("<w> \(childWidget.widgetZone?.zoneName ?? "unknown")")
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in

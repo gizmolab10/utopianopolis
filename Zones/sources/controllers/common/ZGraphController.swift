@@ -14,12 +14,12 @@ import SnapKit
     import UIKit
 #endif
 
-var gGraphController:     ZGraphController? { return gControllers.controllerForID(.idGraph)     as? ZGraphController }
+var gGraphController:     ZGraphController? { return gControllers.controllerForID(.idMap)     as? ZGraphController }
 var gFavoritesController: ZGraphController? { return gControllers.controllerForID(.idFavorites) as? ZGraphController }
 
 class ZGraphController: ZGesturesController, ZScrollDelegate {
     
-	override  var       controllerID : ZControllerID { return isFavorites ? .idFavorites : .idGraph }
+	override  var       controllerID : ZControllerID { return isFavorites ? .idFavorites : .idMap }
 	var                  isFavorites : Bool { return false }
 	@IBOutlet var            spinner : ZProgressIndicator?
 	@IBOutlet var           dragView : ZDragView?
@@ -177,14 +177,14 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
         if  let          zone  = iZone as? Zone,
             let        widget  = zone.widget,
-            widget.isInMap == !isFavorites {
+            widget.isInMap    == !isFavorites {
             specificWidget     = widget
             specificIndex      = zone.siblingIndex
             specificView       = specificWidget?.superview
             recursing          = [.sData, .sRelayout].contains(iKind)
         }
 
-        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, isThought: !isFavorites, visited: [])
+        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, inMap: !isFavorites, visited: [])
     }
 
 	// MARK:- events

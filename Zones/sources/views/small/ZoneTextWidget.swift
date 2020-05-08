@@ -107,10 +107,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
                 make   .left.equalTo(container).offset(gGenericOffset.width + 4.0)   // horizontally, inset into        "
                 make  .width.equalTo(width)										     //     ",        make room for text
             }
-
-//			if !(widget?.isInMap ?? true) {
-//				printConstraints()
-//			}
         }
     }
     
