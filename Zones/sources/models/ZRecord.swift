@@ -16,7 +16,8 @@ class ZRecord: NSObject {
     var          databaseID: ZDatabaseID?
     var  isInPublicDatabase: Bool               { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
     var     showingChildren: Bool               { return isExpanded(recordName) }
-    var   isRootOfFavorites: Bool               { return record != nil && recordName == kFavoritesRootName }
+	var   isRootOfFavorites: Bool               { return record != nil && recordName == kFavoritesRootName }
+	var     isFavoritesHere: Bool               { return record != nil && recordName == gFavoritesHereMaybe?.recordName() }
     var          isBookmark: Bool               { return record?.isBookmark ?? false }
     var              isRoot: Bool               { return record != nil && kRootNames.contains(recordName!) }
     var           isFetched: Bool               { return !hasState(.notFetched) }

@@ -405,15 +405,14 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
     }
 
-
     func dragDropMaybe(_ iGesture: ZGestureRecognizer?) -> Bool {
         if  let draggedZone       = gDraggedZone {
             if  draggedZone.userCanMove,
-                let (isThought, dropNearest, location) = widgetNearest(iGesture) {
+                let (isMap, dropNearest, location) = widgetNearest(iGesture) {
                 var      dropZone = dropNearest.widgetZone
                 let dropIsGrabbed = gSelecting.currentGrabs.contains(dropZone!)
                 let     dropIndex = dropZone?.siblingIndex
-                let          here = isThought ? gHere : gFavoritesRoot
+                let          here = isMap ? gHere : gFavoritesHereMaybe
                 let      dropHere = dropZone == here
                 let      relation = relationOf(location, to: dropNearest.textWidget)
                 let useDropParent = relation != .upon && !dropHere
@@ -439,9 +438,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
                 prior?           .displayForDrag() // erase  child lines
                 dropZone?.widget?.displayForDrag() // relayout child lines
-                dragView?       .setNeedsDisplay() // relayout drag: line and dot
+				gDragDropZone?.widget?.controller?.dragView?.setNeedsDisplay() // relayout drag: line and dot
 
-                if !isNoop,     dropNow,
+                if !isNoop, dropNow,
 					let         drop = dropZone {
                     let   toBookmark = drop.isBookmark
                     var dropAt: Int? = index
@@ -490,26 +489,26 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     // MARK:-
 
 
-    func widgetNearest(_ iGesture: ZGestureRecognizer?, isThought: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
-        if  let thoughtsLocation = iGesture?.location(in: dragView),
-            let thoughtsWidget   = rootWidget.widgetNearestTo(thoughtsLocation, in: dragView, gHereMaybe) {
-            if  isThought, !kIsPhone,
+    func widgetNearest(_ iGesture: ZGestureRecognizer?, inMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
+        if  let mapLocation = iGesture?.location(in: dragView),
+            let mapWidget   = rootWidget.widgetNearestTo(mapLocation, in: dragView, gHereMaybe) {
+            if  inMap, !kIsPhone,
 
                 // /////////////////////////////////////
 				// recurse once: with isThought false //
                 // /////////////////////////////////////
 
-                let (_, favoritesWidget, favoritesLocation) = widgetNearest(iGesture, isThought: false) {
+				let (_, favoritesWidget, favoritesLocation) = gFavoritesController?.widgetNearest(iGesture, inMap: false) {
 
                 // ////////////////////////////////////////////
                 //     target zone found in both graphs      //
                 // deterimine which zone is closer to cursor //
                 // ////////////////////////////////////////////
 
-				let locationT =  thoughtsWidget.dragDot
+				let locationT =  mapWidget.dragDot
                 let locationF = favoritesWidget.dragDot
-                let twoSidesT = locationT.convert(locationT.bounds.center, to: view) - thoughtsLocation
-                let twoSidesF = locationF.convert(locationF.bounds.center, to: view) - thoughtsLocation
+                let twoSidesT = locationT.convert(locationT.bounds.center, to: view) - mapLocation
+                let twoSidesF = locationF.convert(locationF.bounds.center, to: view) - mapLocation
                 let   scalarT = twoSidesT.hypontenuse
                 let   scalarF = twoSidesF.hypontenuse
 
@@ -518,7 +517,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 }
             }
 
-            return (true, thoughtsWidget, thoughtsLocation)
+            return (true, mapWidget, mapLocation)
         }
 
         return nil

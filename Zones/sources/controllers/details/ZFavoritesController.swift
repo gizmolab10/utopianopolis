@@ -19,7 +19,7 @@ class ZFavoritesController: ZGraphController {
 	}
 
 	override func startup() {
-		setup()
+		setup() // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
 	}
 
 }

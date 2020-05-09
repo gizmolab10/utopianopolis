@@ -497,22 +497,7 @@ extension NSView {
 
 
 extension ZTogglingView {
-    
-    var identity: ZDetailsViewID {
-        if  let kind = convertFromOptionalUserInterfaceItemIdentifier(identifier) {
-            switch kind {
-            case "preferences": return .Preferences
-			case "information": return .Information
-			case "favorites":   return .Favorites
-			case "start":       return .StartHere
-			case "ring":        return .StatusRing
-            default:            return .All
-            }
-        }
-        
-        return .All
-    }
-    
+	
     func turnOnTitleButton() {
         titleButton?.state = .on
 		titleButton?.highlight(false)

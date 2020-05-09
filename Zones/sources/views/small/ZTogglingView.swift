@@ -22,6 +22,21 @@ class ZTogglingView: NSStackView {
     // MARK:- identity
     // MARK:-
 
+	var identity: ZDetailsViewID {
+		if  let kind = convertFromOptionalUserInterfaceItemIdentifier(identifier) {
+			switch kind {
+				case "preferences": return .Preferences
+				case "information": return .Information
+				case "favorites":   return .Favorites
+				case "start":       return .StartHere
+				case "ring":        return .StatusRing
+				default:            return .All
+			}
+		}
+
+		return .All
+	}
+
     var hideHideable: Bool {
         get {
             return !gIsReadyToShowUI || gHiddenDetailViewIDs.contains(identity)
@@ -61,6 +76,11 @@ class ZTogglingView: NSStackView {
     
     func update() {
 		titleButton?.layer?.backgroundColor = gAccentColor.cgColor
+
+		if  identity == .Favorites {
+			let name = gFavoritesHereMaybe?.zoneName?.capitalized
+			titleButton?.title = name ?? "Favorites"
+		}
 
 		turnOnTitleButton()
 		triangleButton?.setState(!hideHideable)

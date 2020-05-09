@@ -31,7 +31,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			path.stroke()
         }
 
-        if  let    widget = gDragDropZone?.widget {
+		if  let    widget = gDragDropZone?.widget, gDragDropZone!.isInFavorites == controller?.isFavorites {
             let   dotRect = widget.floatingDropDotRect
             let localRect = widget.convert(dotRect, to: self)
 

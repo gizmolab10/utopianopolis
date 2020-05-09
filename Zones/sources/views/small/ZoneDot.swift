@@ -28,9 +28,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
     var       dragStart: CGPoint?
     var        isReveal:  Bool = true
     var      isInnerDot:  Bool = false
-    var      isDragDrop:  Bool { return widgetZone == gDragDropZone }
+	var      isDragDrop:  Bool { return widgetZone == gDragDropZone }
+	var dragDotIsHidden:  Bool { return widgetZone?.dragDotIsHidden ?? true }
     var      widgetZone: Zone? { return widget?.widgetZone }
-    var dragDotIsHidden:  Bool { return widgetZone?.dragDotIsHidden ?? true }
 
 
     var innerOrigin: CGPoint? {
@@ -151,7 +151,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawFavoritesHighlight(in iDirtyRect: CGRect) {
-        if  let          zone  = widgetZone, innerDot != nil, !zone.isRootOfFavorites {
+        if  let          zone  = widgetZone, innerDot != nil, !zone.isFavoritesHere {
             let      dotRadius = Double(innerDotWidth / 2.0)
             let     tinyRadius =  dotRadius * 0.7
             let   tinyDiameter = tinyRadius * 2.0
