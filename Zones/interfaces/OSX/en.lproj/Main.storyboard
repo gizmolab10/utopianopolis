@@ -889,29 +889,35 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Banner View">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Banner View">
                                 <rect key="frame" x="226" y="256" width="131" height="44"/>
                                 <subviews>
-                                    <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Box View">
-                                        <rect key="frame" x="0.0" y="0.0" width="131" height="44"/>
-                                        <connections>
-                                            <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
-                                        </connections>
-                                    </containerView>
-                                    <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View">
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View">
                                         <rect key="frame" x="0.0" y="0.0" width="131" height="44"/>
                                         <connections>
                                             <segue destination="auf-AV-5qA" kind="embed" id="Frp-da-kE8"/>
                                         </connections>
                                     </containerView>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Box View">
+                                        <rect key="frame" x="0.0" y="0.0" width="131" height="44"/>
+                                        <connections>
+                                            <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
+                                        </connections>
+                                    </containerView>
+                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="3wl-F6-Mu5">
+                                        <rect key="frame" x="0.0" y="-2" width="131" height="5"/>
+                                    </box>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="58m-fY-Oaa" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="top" id="25O-4q-174"/>
                                     <constraint firstItem="6sw-vi-DPR" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="top" id="AEP-me-J3O"/>
                                     <constraint firstAttribute="height" constant="44" id="AWT-PZ-Vy8"/>
                                     <constraint firstItem="6sw-vi-DPR" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" id="OFl-Gj-h56"/>
+                                    <constraint firstAttribute="bottom" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="SDs-TZ-3Ms"/>
                                     <constraint firstAttribute="bottom" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="X7K-ny-ehu"/>
+                                    <constraint firstItem="3wl-F6-Mu5" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" id="XB7-ew-qrI"/>
                                     <constraint firstAttribute="trailing" secondItem="6sw-vi-DPR" secondAttribute="trailing" id="ZfM-al-BIZ"/>
+                                    <constraint firstAttribute="trailing" secondItem="3wl-F6-Mu5" secondAttribute="trailing" id="amd-Ac-NRP"/>
                                     <constraint firstAttribute="bottom" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="bQW-ej-LNK"/>
                                     <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="ikd-Gy-kaI"/>
                                     <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" id="jSf-TE-Zs9"/>
@@ -958,12 +964,12 @@ CA
                                         <subviews>
                                             <segmentedControl hidden="YES" canDrawConcurrently="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0jt-BT-C1l">
                                                 <rect key="frame" x="-2" y="10" width="230" height="24"/>
-                                                <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="Vx4-SL-sxe">
+                                                <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="rounded" trackingMode="selectOne" id="Vx4-SL-sxe">
                                                     <font key="font" metaFont="system"/>
                                                     <segments>
                                                         <segment label="Beginner"/>
                                                         <segment label="Uncluttered" selected="YES" tag="1"/>
-                                                        <segment label="Full"/>
+                                                        <segment label="Pro"/>
                                                     </segments>
                                                 </segmentedCell>
                                                 <connections>
@@ -1002,6 +1008,7 @@ CA
                         <constraints>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="trailing" id="DTg-De-FLc"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
+                            <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="trailing" id="L0w-Ew-6dH"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="QmT-ZT-tcN"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="V0U-dq-EtC"/>
                             <constraint firstItem="tJ2-cd-SJp" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="aIX-aN-oSw"/>
@@ -1037,6 +1044,9 @@ CA
                         <subviews>
                             <searchField wantsLayer="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bdk-eQ-YUz">
                                 <rect key="frame" x="20" y="12" width="357" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="22" id="qSd-0e-j4I"/>
+                                </constraints>
                                 <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="vRN-AU-kAR">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -1233,16 +1243,17 @@ CA
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Tsd-bp-vCV" customClass="ZBreadcrumbsView" customModule="Seriously">
-                                <rect key="frame" x="36" y="0.0" width="331" height="44"/>
+                                <rect key="frame" x="38" y="0.0" width="329" height="44"/>
                                 <connections>
                                     <outlet property="clipCrumbsButton" destination="Ch1-Y5-6sD" id="dTT-6R-3f5"/>
                                     <outlet property="dbIndicatorButton" destination="NE4-u7-LbG" id="MRg-AD-bLH"/>
                                 </connections>
                             </customView>
                             <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NE4-u7-LbG" userLabel="Database Indicator Button">
-                                <rect key="frame" x="2" y="5" width="32" height="32"/>
+                                <rect key="frame" x="2" y="4" width="34" height="33"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="21" id="Pok-6B-yNW"/>
+                                    <constraint firstAttribute="height" constant="22" id="Pok-6B-yNW"/>
+                                    <constraint firstAttribute="width" secondItem="NE4-u7-LbG" secondAttribute="height" id="Vdj-CJ-Ftt"/>
                                 </constraints>
                                 <buttonCell key="cell" type="round" bezelStyle="circular" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Xlt-c5-ToV">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1256,8 +1267,8 @@ CA
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ch1-Y5-6sD" userLabel="Crumbs Clipper Button">
                                 <rect key="frame" x="375" y="15" width="14" height="14"/>
                                 <constraints>
+                                    <constraint firstAttribute="width" secondItem="Ch1-Y5-6sD" secondAttribute="height" multiplier="1:1" id="LnI-A6-9C4"/>
                                     <constraint firstAttribute="height" constant="14" id="N1c-fL-mHS"/>
-                                    <constraint firstAttribute="width" constant="14" id="aN3-R1-aFX"/>
                                 </constraints>
                                 <buttonCell key="cell" type="bevel" bezelStyle="rounded" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="1MZ-57-Tfm">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1270,9 +1281,9 @@ CA
                         </subviews>
                         <constraints>
                             <constraint firstItem="NE4-u7-LbG" firstAttribute="centerY" secondItem="W43-uk-txK" secondAttribute="centerY" id="1aR-2m-2Nw"/>
+                            <constraint firstAttribute="bottom" secondItem="Tsd-bp-vCV" secondAttribute="bottom" id="AKv-Ds-L1t"/>
                             <constraint firstItem="Tsd-bp-vCV" firstAttribute="top" secondItem="W43-uk-txK" secondAttribute="top" id="L4M-7I-D1m"/>
                             <constraint firstItem="Tsd-bp-vCV" firstAttribute="leading" secondItem="NE4-u7-LbG" secondAttribute="trailing" constant="8" id="LH2-wh-WKl"/>
-                            <constraint firstItem="Ch1-Y5-6sD" firstAttribute="centerY" secondItem="W43-uk-txK" secondAttribute="centerY" id="O1e-Cs-Hel"/>
                             <constraint firstAttribute="trailing" secondItem="Ch1-Y5-6sD" secondAttribute="trailing" constant="8" id="cGO-ML-08P"/>
                             <constraint firstItem="Tsd-bp-vCV" firstAttribute="centerY" secondItem="Ch1-Y5-6sD" secondAttribute="centerY" id="wK4-qA-1u4"/>
                             <constraint firstItem="Ch1-Y5-6sD" firstAttribute="leading" secondItem="Tsd-bp-vCV" secondAttribute="trailing" constant="8" id="wo6-JH-Nmp"/>

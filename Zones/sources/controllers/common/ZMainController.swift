@@ -36,7 +36,7 @@ class ZMainController: ZGenericController {
 	}
 
 	func updateForSkillLevel() {
-		detailView?.isHidden = gBasicSkillLevel
+		detailView?.isHidden = gUnclutteredSkillLevel
 
 		gDetailsController?.updateForSkillLevel()
 	}
@@ -51,22 +51,20 @@ class ZMainController: ZGenericController {
 
 		switch iKind {
 			case .sFound:
-				searchBoxView?        .isHidden = hideSearch
-				searchResultsView?    .isHidden = hideResults
+				graphView?            .isHidden = !hideResults
+				searchBoxView?        .isHidden =  hideSearch
+				searchResultsView?    .isHidden =  hideResults
 			case .sSearch:
-				searchBoxView?        .isHidden = hideSearch
+				searchBoxView?        .isHidden =  hideSearch
 
 				if  hideSearch {
-					searchResultsView?.isHidden = hideSearch
+					searchResultsView?.isHidden =  hideSearch
 
 					assignAsFirstResponder(nil)
 				}
 			case .sSwap:
-				if  let 	   			 vEssay = essayView,
-					let                  vGraph = graphView {
-					vEssay  		  .isHidden =  hideEssay
-					vGraph  	  	  .isHidden = !hideEssay
-				}
+				essayView? 	  	      .isHidden =  hideEssay
+				graphView? 	  	      .isHidden = !hideEssay
 			default: break
         }
     }

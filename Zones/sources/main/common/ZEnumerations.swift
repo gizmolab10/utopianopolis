@@ -35,9 +35,9 @@ enum ZCloudAccountStatus: Int {
 }
 
 enum ZSkillLevel: Int {
-	case newbie
-	case basic
-	case advanced
+	case beginner
+	case uncluttered
+	case pro
 }
 
 enum ZIntroductionID: String {

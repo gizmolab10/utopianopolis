@@ -414,7 +414,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 let     dropIndex = dropZone?.siblingIndex
                 let          here = isMap ? gHere : gFavoritesHereMaybe
                 let      dropHere = dropZone == here
-                let      relation = relationOf(location, to: dropNearest.textWidget)
+				let      relation = dropZone?.widget?.controller?.relationOf(location, to: dropNearest.textWidget) ?? .upon
                 let useDropParent = relation != .upon && !dropHere
                 ;        dropZone = dropIsGrabbed ? nil : useDropParent ? dropZone?.parentZone : dropZone
                 let lastDropIndex = dropZone == nil ? 0 : dropZone!.count
@@ -438,7 +438,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
                 prior?           .displayForDrag() // erase  child lines
                 dropZone?.widget?.displayForDrag() // relayout child lines
-				gDragDropZone?.widget?.controller?.dragView?.setNeedsDisplay() // relayout drag: line and dot
+				gDragDropZone?.widget?.controller?.dragView?.setNeedsDisplay() // relayout drag: line and dot, in the appropriate drag view
 
                 if !isNoop, dropNow,
 					let         drop = dropZone {
@@ -554,10 +554,10 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     func relationOf(_ iPoint: CGPoint, to iView: ZView?) -> ZRelation {
         var relation: ZRelation = .upon
 
-        if  iView     != nil {
+        if  let   view = iView {
             let margin = CGFloat(5.0)
-            let  point = dragView!.convert(iPoint, to: iView)
-            let   rect = iView!.bounds
+            let  point = dragView!.convert(iPoint, to: view)
+            let   rect = view.bounds
             let      y = point.y
 
             if y < rect.minY + margin {

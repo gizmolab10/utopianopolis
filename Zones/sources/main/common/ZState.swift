@@ -136,13 +136,13 @@ var gClipBreadcrumbs : Bool {
 	set { setPreferencesBool(newValue, for: kClipBreadcrumbs) }
 }
 
-var gAdvancedSkillLevel : Bool { return gSkillLevel == .advanced }
-var    gBasicSkillLevel : Bool { return gSkillLevel == .basic }
-var   gNewbieSkillLevel : Bool { return gSkillLevel == .newbie }
-let   kNewbieSkillLevel =               ZSkillLevel.newbie.rawValue
+var         gProSkillLevel : Bool { return gSkillLevel == .pro }
+var gUnclutteredSkillLevel : Bool { return gSkillLevel == .uncluttered }
+var    gBeginnerSkillLevel : Bool { return gSkillLevel == .beginner }
+let    kBeginnerSkillLevel =               ZSkillLevel.beginner.rawValue
 
 var gSkillLevel : ZSkillLevel {
-	get { return  ZSkillLevel(rawValue: getPreferencesInt(for: kSkillLevel, defaultInt: kNewbieSkillLevel) ?? kNewbieSkillLevel) ?? ZSkillLevel.newbie }
+	get { return  ZSkillLevel(rawValue: getPreferencesInt(for: kSkillLevel, defaultInt: kBeginnerSkillLevel) ?? kBeginnerSkillLevel) ?? ZSkillLevel.beginner }
 	set { setPreferencesInt(newValue.rawValue, for: kSkillLevel); gMainController?.updateForSkillLevel() }
 }
 

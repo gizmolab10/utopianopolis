@@ -187,8 +187,8 @@ class ZRemoteStorage: NSObject {
 				let     name = (ckRecord?["zoneName"] as String?) ?? kUnknown
 				let     type = ckRecord?.recordType   as String?  ?? kUnknown
 
-				if  type == kUnknown {
-					print("received a record from cloud kit, with an unknown type")
+				if  type == kUnknown, ckRecord != nil {
+					print("received a record from cloud kit, with an unknown type: \(ckRecord!.recordType)")
 				}
 
 				switch (notification.queryNotificationReason) {

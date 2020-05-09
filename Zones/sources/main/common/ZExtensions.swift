@@ -143,7 +143,7 @@ extension NSObject {
     }
 
 	func cycleSkillLevel() {
-		gSkillLevel = ZSkillLevel(rawValue: gSkillLevel.rawValue + 1) ?? ZSkillLevel.newbie
+		gSkillLevel = ZSkillLevel(rawValue: gSkillLevel.rawValue + 1) ?? ZSkillLevel.beginner
 
 		redrawGraph()
 	}
