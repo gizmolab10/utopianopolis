@@ -254,7 +254,9 @@ class ZRecords: NSObject {
         if  let      name  = ckRecord?.recordID.recordName {
             clearRecordName(name, for: allStates)
 
-            recordRegistry[name] = nil
+			if  recordRegistry[name] != nil {
+				recordRegistry[name]  = nil
+			}
         }
     }
 

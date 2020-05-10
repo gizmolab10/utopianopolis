@@ -484,7 +484,7 @@ class ZFavorites: ZRecords {
 
 
     @discardableResult func createBookmark(for iZone: Zone, style: ZFavoriteStyle) -> Zone {
-        var parent: Zone = iZone.parentZone ?? gFavoritesRoot!
+        var parent: Zone = iZone.parentZone ?? gFavoritesHereMaybe ?? gFavoritesRoot!
         let   isBookmark = iZone.isBookmark
         let     isNormal = style == .normal
 
@@ -492,7 +492,7 @@ class ZFavorites: ZRecords {
             let basis: ZRecord = isBookmark ? iZone.crossLink! : iZone
 
             if  let recordName = basis.recordName {
-                parent         = gFavoritesRoot!
+                parent         = gFavoritesHereMaybe ?? gFavoritesRoot!
 
                 for workingFavorite in workingFavorites {
                     if  !workingFavorite.isInTrash,

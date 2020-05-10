@@ -428,7 +428,7 @@ var gHiddenDetailViewIDs: ZDetailsViewID {
 		}
 		
 		if  state     == nil {
-			state      = .StartHere
+			state      = .Introduction
 			
 			UserDefaults.standard.set(state!.rawValue, forKey:kDetailsState)
 			UserDefaults.standard.synchronize()
@@ -547,8 +547,14 @@ func gTemporarilySetArrowsDoNotBrowse(_ notBrowse: Bool, for seconds: Double = 1
 // MARK:- actions
 // MARK:-
 
+var count = 0
+
 func gTestForUserInterrupt() throws {
-	if  let w = gWindow, w.isKeyWindow, (w.mouseMoved || w.keyPressed) {
+	if  Thread.isMainThread, let w = gWindow, w.isKeyWindow, (w.mouseMoved || w.keyPressed) {
+
+ 		print("throwing user interrupt \(count)")
+		count += 1
+
 		throw(ZInterruptionError.userInterrupted)
 	}
 }

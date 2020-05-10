@@ -924,16 +924,16 @@ CA
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="5jB-w2-4Dg" userLabel="Main View">
-                                <rect key="frame" x="226" y="0.0" width="131" height="256"/>
+                                <rect key="frame" x="227" y="0.0" width="130" height="256"/>
                                 <subviews>
                                     <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
-                                        <rect key="frame" x="0.0" y="0.0" width="131" height="256"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="130" height="256"/>
                                         <connections>
                                             <segue destination="8gW-F6-R6g" kind="embed" id="X02-Jc-hfC"/>
                                         </connections>
                                     </containerView>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
-                                        <rect key="frame" x="0.0" y="0.0" width="131" height="256"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="130" height="256"/>
                                         <connections>
                                             <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
                                         </connections>
@@ -959,31 +959,6 @@ CA
                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tJ2-cd-SJp" userLabel="Details Side View">
                                 <rect key="frame" x="0.0" y="0.0" width="226" height="300"/>
                                 <subviews>
-                                    <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ULe-6f-22e" userLabel="Skill Level View">
-                                        <rect key="frame" x="0.0" y="256" width="226" height="44"/>
-                                        <subviews>
-                                            <segmentedControl hidden="YES" canDrawConcurrently="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0jt-BT-C1l">
-                                                <rect key="frame" x="-2" y="10" width="230" height="24"/>
-                                                <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="rounded" trackingMode="selectOne" id="Vx4-SL-sxe">
-                                                    <font key="font" metaFont="system"/>
-                                                    <segments>
-                                                        <segment label="Beginner"/>
-                                                        <segment label="Uncluttered" selected="YES" tag="1"/>
-                                                        <segment label="Pro"/>
-                                                    </segments>
-                                                </segmentedCell>
-                                                <connections>
-                                                    <action selector="skillAction:" target="MXk-17-6Dz" id="O99-nE-baM"/>
-                                                </connections>
-                                            </segmentedControl>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstItem="0jt-BT-C1l" firstAttribute="centerY" secondItem="ULe-6f-22e" secondAttribute="centerY" id="A5K-cs-fgR"/>
-                                            <constraint firstItem="0jt-BT-C1l" firstAttribute="leading" secondItem="ULe-6f-22e" secondAttribute="leading" id="DKh-4A-hMZ"/>
-                                            <constraint firstAttribute="trailing" secondItem="0jt-BT-C1l" secondAttribute="trailing" id="NPQ-15-TFk"/>
-                                            <constraint firstAttribute="height" constant="44" id="zaA-sL-VrY"/>
-                                        </constraints>
-                                    </customView>
                                     <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
                                         <rect key="frame" x="0.0" y="0.0" width="226" height="256"/>
                                         <constraints>
@@ -993,20 +968,55 @@ CA
                                             <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
                                         </connections>
                                     </containerView>
+                                    <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ULe-6f-22e" userLabel="Skill Level View">
+                                        <rect key="frame" x="0.0" y="256" width="226" height="44"/>
+                                        <subviews>
+                                            <segmentedControl hidden="YES" canDrawConcurrently="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0jt-BT-C1l">
+                                                <rect key="frame" x="6" y="10" width="213" height="24"/>
+                                                <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="Vx4-SL-sxe">
+                                                    <font key="font" metaFont="system"/>
+                                                    <segments>
+                                                        <segment label="Beginner"/>
+                                                        <segment label="Sparse" selected="YES" tag="1"/>
+                                                        <segment label="Pro"/>
+                                                    </segments>
+                                                </segmentedCell>
+                                                <connections>
+                                                    <action selector="skillAction:" target="MXk-17-6Dz" id="O99-nE-baM"/>
+                                                </connections>
+                                            </segmentedControl>
+                                            <box horizontalHuggingPriority="750" ambiguous="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="UaH-Gd-NsW">
+                                                <rect key="frame" x="223" y="0.0" width="5" height="44"/>
+                                            </box>
+                                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Wl1-dm-ADJ">
+                                                <rect key="frame" x="0.0" y="-2" width="226" height="5"/>
+                                            </box>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="UaH-Gd-NsW" secondAttribute="trailing" id="62p-Ax-1yw"/>
+                                            <constraint firstItem="0jt-BT-C1l" firstAttribute="centerY" secondItem="ULe-6f-22e" secondAttribute="centerY" id="A5K-cs-fgR"/>
+                                            <constraint firstItem="0jt-BT-C1l" firstAttribute="leading" secondItem="ULe-6f-22e" secondAttribute="leading" constant="8" id="DKh-4A-hMZ"/>
+                                            <constraint firstAttribute="bottom" secondItem="Wl1-dm-ADJ" secondAttribute="bottom" id="S0A-ao-IsU"/>
+                                            <constraint firstItem="UaH-Gd-NsW" firstAttribute="leading" secondItem="0jt-BT-C1l" secondAttribute="trailing" constant="8" id="ieI-mR-j97"/>
+                                            <constraint firstItem="Wl1-dm-ADJ" firstAttribute="leading" secondItem="ULe-6f-22e" secondAttribute="leading" id="qIw-4C-EbW"/>
+                                            <constraint firstAttribute="trailing" secondItem="Wl1-dm-ADJ" secondAttribute="trailing" id="ycS-VE-Xh6"/>
+                                            <constraint firstAttribute="height" constant="44" id="zaA-sL-VrY"/>
+                                        </constraints>
+                                    </customView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="5Mu-HL-NoB"/>
                                     <constraint firstItem="ULe-6f-22e" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="leading" id="OUx-cS-nXI"/>
                                     <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="ULe-6f-22e" secondAttribute="bottom" id="PcL-q0-JuL"/>
-                                    <constraint firstAttribute="trailing" secondItem="ULe-6f-22e" secondAttribute="trailing" id="Rl3-Xq-j1I"/>
                                     <constraint firstItem="ULe-6f-22e" firstAttribute="top" secondItem="tJ2-cd-SJp" secondAttribute="top" id="SZk-mA-ij1"/>
                                     <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="leading" id="crF-vI-aE3"/>
                                     <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="db8-Z8-0tj"/>
+                                    <constraint firstAttribute="trailing" secondItem="ULe-6f-22e" secondAttribute="trailing" id="eKh-XU-h3l"/>
                                 </constraints>
                             </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="trailing" id="DTg-De-FLc"/>
+                            <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="trailing" constant="1" id="DTg-De-FLc"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="trailing" id="L0w-Ew-6dH"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="QmT-ZT-tcN"/>

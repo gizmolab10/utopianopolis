@@ -248,12 +248,12 @@ struct ZDetailsViewID: OptionSet {
         self.rawValue = rawValue
     }
 
-	static let Preferences = ZDetailsViewID(rawValue: 0x0001)
-    static let Information = ZDetailsViewID(rawValue: 0x0002)
-	static let   StartHere = ZDetailsViewID(rawValue: 0x0004)
-	static let  StatusRing = ZDetailsViewID(rawValue: 0x0008)
-	static let   Favorites = ZDetailsViewID(rawValue: 0x0010)
-    static let         All = ZDetailsViewID(rawValue: 0x001F)
+	static let  Preferences = ZDetailsViewID(rawValue: 0x0001)
+    static let  Information = ZDetailsViewID(rawValue: 0x0002)
+	static let Introduction = ZDetailsViewID(rawValue: 0x0004)
+	static let       Status = ZDetailsViewID(rawValue: 0x0008)
+	static let    Favorites = ZDetailsViewID(rawValue: 0x0010)
+    static let          All = ZDetailsViewID(rawValue: 0x001F)
 }
 
 enum ZInterruptionError : Error {

@@ -344,19 +344,19 @@ CA
                             <stackView hidden="YES" wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
                                 <rect key="frame" x="0.0" y="2" width="328" height="1523"/>
                                 <subviews>
-                                    <customView identifier="start" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Start Here View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="introduction" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Introduction View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="906" width="328" height="617"/>
                                         <subviews>
-                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Start Here Hideable">
+                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Introduction Hideable">
                                                 <rect key="frame" x="0.0" y="252" width="328" height="300"/>
                                                 <connections>
                                                     <segue destination="YdN-bY-sSj" kind="embed" id="bHo-7A-xgJ"/>
                                                 </connections>
                                             </containerView>
-                                            <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Start Here Banner">
+                                            <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Introduction Banner">
                                                 <rect key="frame" x="0.0" y="74" width="328" height="21"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Start Here Title">
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Introduction Title">
                                                         <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="oFz-pg-brp"/>
@@ -369,7 +369,7 @@ CA
                                                             <action selector="toggleAction:" target="dSG-o4-XPL" id="Bzc-KJ-Wcp"/>
                                                         </connections>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fqv-v5-z0n" userLabel="Triangle Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
+                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fqv-v5-z0n" userLabel="Introduction Triangle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="306" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="7lq-lv-VG0"/>
@@ -538,7 +538,7 @@ CA
                                             <outlet property="triangleButton" destination="aCk-9D-lHI" id="Vqs-0u-WA3"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="ring" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D5C-Y9-dcb" userLabel="Status View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="status" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D5C-Y9-dcb" userLabel="Status View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="97" width="328" height="536"/>
                                         <subviews>
                                             <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2wg-Yp-qGE" userLabel="Status Banner">
@@ -1087,7 +1087,7 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="282" height="284"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box identifier="add" title="New Idea" translatesAutoresizingMaskIntoConstraints="NO" id="yWs-Kk-dmA">
+                            <box identifier="add" title="Add idea as" translatesAutoresizingMaskIntoConstraints="NO" id="yWs-Kk-dmA">
                                 <rect key="frame" x="5" y="235" width="272" height="41"/>
                                 <view key="contentView" id="6gW-4w-OHR">
                                     <rect key="frame" x="3" y="3" width="266" height="23"/>
@@ -1095,7 +1095,7 @@ CA
                                     <subviews>
                                         <button identifier="child" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-5" y="-6" width="140" height="32"/>
-                                            <buttonCell key="cell" type="push" title="add child" alternateTitle="SPACE" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k8y-nU-3ox">
+                                            <buttonCell key="cell" type="push" title="child" alternateTitle="SPACE" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k8y-nU-3ox">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
@@ -1106,7 +1106,7 @@ CA
                                         </button>
                                         <button identifier="sibling" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="124" y="1" width="140" height="18"/>
-                                            <buttonCell key="cell" type="push" title="add sibling" alternateTitle="TAB" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rMw-U8-ScO">
+                                            <buttonCell key="cell" type="push" title="sibling" alternateTitle="TAB" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rMw-U8-ScO">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
@@ -1139,7 +1139,7 @@ CA
                                     <subviews>
                                         <button identifier="idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-5" y="-6" width="140" height="32"/>
-                                            <buttonCell key="cell" type="push" title="edit idea" alternateTitle="RETURN" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YHj-2q-hu8">
+                                            <buttonCell key="cell" type="push" title="idea" alternateTitle="RETURN" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YHj-2q-hu8">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
@@ -1150,7 +1150,7 @@ CA
                                         </button>
                                         <button identifier="note" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="124" y="1" width="140" height="18"/>
-                                            <buttonCell key="cell" type="push" title="edit note" alternateTitle="N" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bov-NG-9Nh">
+                                            <buttonCell key="cell" type="push" title="note" alternateTitle="N" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bov-NG-9Nh">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>

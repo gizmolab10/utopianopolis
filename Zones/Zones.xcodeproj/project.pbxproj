@@ -299,13 +299,6 @@
 			remoteGlobalIDString = EEBCC9E219CC627E0083B827;
 			remoteInfo = "SnapKit Tests";
 		};
-		A71485842256AC6000F54C0C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A714857B2256AB4D00F54C0C;
-			remoteInfo = SnapKitFatty;
-		};
 		A7FC59BB2262798B005280D2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */;
@@ -851,7 +844,6 @@
 			isa = PBXGroup;
 			children = (
 				A71485732256AAAF00F54C0C /* SnapKit.framework */,
-				A71485852256AC6000F54C0C /* SnapKitFatty.framework */,
 				A71485752256AAAF00F54C0C /* SnapKit Tests.xctest */,
 			);
 			name = Products;
@@ -1082,13 +1074,6 @@
 			fileType = wrapper.cfbundle;
 			path = "SnapKit Tests.xctest";
 			remoteRef = A71485742256AAAF00F54C0C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A71485852256AC6000F54C0C /* SnapKitFatty.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SnapKitFatty.framework;
-			remoteRef = A71485842256AC6000F54C0C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1648,7 +1633,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2020;
+				CURRENT_PROJECT_VERSION = 2021;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
@@ -1669,7 +1654,7 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.5.7;
+				MARKETING_VERSION = 0.5.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1700,7 +1685,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 2020;
+				CURRENT_PROJECT_VERSION = 2021;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1721,7 +1706,7 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.5.7;
+				MARKETING_VERSION = 0.5.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

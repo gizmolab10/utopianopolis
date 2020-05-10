@@ -41,12 +41,20 @@ class ZIntroductionController: ZGenericController {
 	}
 
 	func update() {
-		let               showHide =  flags.isShift && !flags.isOption
-		buttonFor(.left)?   .title =  showHide        ? "hide"       : "left"
-		buttonFor(.right)?  .title =  showHide        ? "show"       : "right"
-		buttonFor(.focus)?  .title =  flags.isControl ? "unfocus"    : "focus"
-		buttonFor(.sibling)?.title =  flags.isOption  ? "add parent" : "add sibling"
-		boxFor   (.move)?   .title = (flags.isOption  ? "Relocate"   : flags.isShift ? "Show/Hide" : "Browse") + (flags.isCommand ? " to end" : "")
+		if  let                         c =  gDetailsController, !c.hideableIsHidden(for: .Introduction),    // don't update a hidden introductions controller
+		    let                      zone =  gSelecting.currentMovableMaybe {
+			let                    isHere =  zone == gHere
+			let                 canTravel =  zone.canTravel
+			let                 isEditing =  gIsEditIdeaMode || gIsNoteMode
+			let                  showHide =  flags.isShift && !flags.isOption
+			buttonFor(.showMe)?.isEnabled =  false
+			buttonFor(.sibling)?   .title =  flags.isOption  ? "add parent" : "add sibling"
+			buttonFor(.left)?      .title =  showHide        ? "hide"       : "left"
+			buttonFor(.right)?     .title =  showHide        ? "show"       : canTravel     ? "travel"    : "right"
+			buttonFor(.focus)?     .title =  flags.isControl ? "unfocus"    : canTravel     ? "travel"    :                       isHere ? "favorite" : "focus"
+			boxFor   (.move)?      .title = (flags.isOption  ? "Relocate"   : flags.isShift ? "Show/Hide" : "Browse") + (flags.isCommand ? " to end"  : "")
+			boxFor   (.edit)?      .title =  isEditing       ? "Stop Edit"  : "Edit"
+		}
 	}
 
 	func updateFlags() {

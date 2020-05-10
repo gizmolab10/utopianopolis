@@ -711,10 +711,12 @@ class ZCloud: ZRecords {
 						let ckRecord = self.recordsToProcess[key] {
 						var  zRecord = self.maybeZRecordForRecordName(ckRecord.recordID.recordName)
 
-						self.recordsToProcess[key] = nil // assures no duplication
+						if  self.recordsToProcess[key] != nil {
+							self.recordsToProcess[key]  = nil    // assures no duplication
+						}
 
 						if  zRecord != nil {
-							zRecord?.useBest(record: ckRecord) // fetched has same record id
+							zRecord?.useBest(record: ckRecord)   // fetched has same record id
 						} else {
 							switch type {
 								case kZoneType:  zRecord =   Zone(record: ckRecord, databaseID: dbID)

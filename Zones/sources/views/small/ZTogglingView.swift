@@ -25,12 +25,12 @@ class ZTogglingView: NSStackView {
 	var identity: ZDetailsViewID {
 		if  let kind = convertFromOptionalUserInterfaceItemIdentifier(identifier) {
 			switch kind {
-				case "preferences": return .Preferences
-				case "information": return .Information
-				case "favorites":   return .Favorites
-				case "start":       return .StartHere
-				case "ring":        return .StatusRing
-				default:            return .All
+				case "introduction": return .Introduction
+				case "preferences":  return .Preferences
+				case "information":  return .Information
+				case "favorites":    return .Favorites
+				case "status":       return .Status
+				default:             return .All
 			}
 		}
 

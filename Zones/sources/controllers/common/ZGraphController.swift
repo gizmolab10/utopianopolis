@@ -150,7 +150,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
     func layoutForCurrentScrollOffset() {
-		let offset = isFavorites ? CGPoint() : gScrollOffset
+		let offset = isFavorites ? CGPoint(x: -12.0, y: 0.0) : gScrollOffset
 
 		if  let d = dragView {
 			rootWidget.snp.setLabel("<w> \(rootWidget.widgetZone?.zoneName ?? "unknown")")
@@ -491,7 +491,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     func widgetNearest(_ iGesture: ZGestureRecognizer?, inMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
         if  let mapLocation = iGesture?.location(in: dragView),
-            let mapWidget   = rootWidget.widgetNearestTo(mapLocation, in: dragView, gHereMaybe) {
+			let mapWidget   = rootWidget.widgetNearestTo(mapLocation, in: dragView, isFavorites ? gFavoritesHereMaybe : gHereMaybe) {
             if  inMap, !kIsPhone,
 
                 // /////////////////////////////////////

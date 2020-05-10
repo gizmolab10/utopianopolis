@@ -13,7 +13,7 @@
 #endif
 
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
-private let  detailIds : [ZDetailsViewID] = [.Preferences, .Information, .StartHere, .StatusRing, .Favorites]
+private let  detailIds : [ZDetailsViewID] = [.Preferences, .Information, .Introduction, .Status, .Favorites]
 
 class ZDetailsController: ZGenericController {
 
@@ -41,8 +41,8 @@ class ZDetailsController: ZGenericController {
 	}
 
 	func updateForSkillLevel() {
-		view(for: .StartHere )?.hideHideable = !gBeginnerSkillLevel
-		view(for: .StatusRing)?.hideHideable = !gProSkillLevel
+		view(for: .Introduction )?.hideHideable = !gBeginnerSkillLevel
+		view(for: .Status)?.hideHideable = !gProSkillLevel
 		view(for: .Favorites )?.hideHideable = !gProSkillLevel
 
 		FOREGROUND() {
