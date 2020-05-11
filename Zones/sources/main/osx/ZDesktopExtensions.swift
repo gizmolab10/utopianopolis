@@ -13,11 +13,18 @@ import Cocoa
 import CloudKit
 
 
-enum ZArrowKey: CChar {
+enum ZArrowKey: Int8 {
     case up    = -128
     case down
     case left
     case right
+
+	var key: String {
+		var utf : [Int8] = [-17, -100, rawValue, 0]
+
+		return String(cString: &utf)
+
+	}
 }
 
 public typealias ZBox                        = NSBox
@@ -145,7 +152,7 @@ extension String {
     }
 
     var arrow: ZArrowKey? {
-        if containsNonAscii {
+        if  containsNonAscii {
             let character = utf8CString[2]
             
             for arrowKey in ZArrowKey.up.rawValue...ZArrowKey.right.rawValue {
@@ -729,7 +736,8 @@ extension ZoneTextWidget {
 			gIsEditIdeaMode,
 			let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
             let        value = number.intValue
-            let      isShift = NSEvent.modifierFlags.isShift
+			let        flags = NSEvent.modifierFlags
+			let      isShift = flags.isShift
             var key: String?
 
             gTextEditor.stopCurrentEdit(forceCapture: isShift)
@@ -742,7 +750,7 @@ extension ZoneTextWidget {
             }
 
             FOREGROUND { // execute on next cycle of runloop
-                gGraphEditor.handleKey(key, flags: ZEventFlags(), isWindow: true)
+                gWindow?.handleKey(key, flags: flags)
             }
         }
     }
@@ -780,7 +788,7 @@ extension ZTextEditor {
         }
     }
 	
-	func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
+	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		if  var        key = iKey {
 			let    CONTROL = flags.isControl
 			let    COMMAND = flags.isCommand

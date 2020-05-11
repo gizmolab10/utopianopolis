@@ -114,7 +114,6 @@ enum ZWorkMode: Int {
     case graphMode
 	case editIdeaMode
 	case noteMode
-    // case outlineMode
 }
 
 enum ZShortcutType: String {

@@ -231,7 +231,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var note: ZNote {
 		if  isBookmark {
 			return bookmarkTarget!.note
-		} else if noteMaybe == nil {
+		} else if noteMaybe == nil || !hasTrait(matching: [.tNote, .tEssay]) {
 			createNote()
 		}
 
@@ -895,12 +895,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			parent.addIdea(at: index, with: name) { iChild in
 				if  let child = iChild {
 					if !containing {
-						self.redrawGraph() {
+						self.redrawGraph(for: parent) {
 							completion(child)
 						}
 					} else {
 						child.acquireZones(zones) {
-							self.redrawGraph() {
+							self.redrawGraph(for: parent) {
 								completion(child)
 								gControllers.sync()
 							}
@@ -966,29 +966,28 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			dbID    != .favoritesID {
 
 			func createAndAdd() {
-				let child = Zone(databaseID: dbID)
+				let newIdea            = Zone(databaseID: dbID)
 
 				if  name != nil {
-					child.zoneName   = name
+					newIdea.zoneName   = name
 				}
 
 				if !gIsMasterAuthor,
-					dbID            == .everyoneID,
-					let     identity = gAuthorID {
-					child.zoneAuthor = identity
+					dbID              == .everyoneID,
+					let       identity = gAuthorID {
+					newIdea.zoneAuthor = identity
 				}
 
-				child.markNotFetched()
+				newIdea.markNotFetched()
 
-				self.UNDO(self) { iUndoSelf in
-					child.deleteZone() {
+				UNDO(self) { iUndoSelf in
+					newIdea.deleteSelf() {
 						onCompletion?(nil)
 					}
 				}
 
 				ungrab()
-				addAndReorderChild(child, at: iIndex)
-				onCompletion?(child)
+				addAndReorderChild(newIdea, at: iIndex, { onCompletion?(newIdea) } )
 			}
 
 			parentZoneMaybe?.revealChildren()
@@ -1005,7 +1004,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func deleteZone(permanently: Bool = false, onCompletion: Closure?) {
+	func deleteSelf(permanently: Bool = false, onCompletion: Closure?) {
 		if  isRoot {
 			onCompletion?()
 		} else {
@@ -1017,7 +1016,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// RECURSE //
 					// //////////
 
-					self.deleteZone(permanently: permanently, onCompletion: onCompletion)
+					self.deleteSelf(permanently: permanently, onCompletion: onCompletion)
 				}
 
 				if  let p = parent, p != self {
@@ -1080,23 +1079,24 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func addNextAndRedraw(containing: Bool = false) {
+	func addNextAndRedraw(containing: Bool = false, onCompletion: ZoneClosure? = nil) {
 		deferRedraw {
 			addNext(containing: containing) { iChild in
 				gDeferRedraw = false
 
-				self.redrawGraph {
+				self.redrawGraph(for: self) {
+					onCompletion?(iChild)
 					iChild.edit()
 				}
 			}
 		}
 	}
 
-	func tearApartCombine(_ intoParent: Bool) {
+	func tearApartCombine(_ intoParent: Bool, _ reversed: Bool) {
 		if  intoParent {
 			insertSelectedText()
 		} else {
-			createChildIdeaFromSelectedText()
+			createIdeaFromSelectedText(reversed)
 		}
 	}
 
@@ -1330,10 +1330,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         }
 	}
 
-	func editAndSelect(range: NSRange) {
+	func editAndSelect(range: NSRange? = nil) {
         edit()
         FOREGROUND(canBeDirect: true) {
-            self.widget?.textWidget.selectCharacter(in: range)
+			let newRange = range ?? NSRange(location: 0, length: self.zoneName?.length ?? 0)
+
+			self.widget?.textWidget.selectCharacter(in: newRange)
         }
     }
 
@@ -1380,6 +1382,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
             trait.updateCKRecordProperties()
         }
+	}
+
+	func hasTrait(matching iTypes: [ZTraitType]) -> Bool {
+		for type in iTypes {
+			if  hasTrait(for: type) {
+				return true
+			}
+		}
+
+		return false
     }
 
     func hasTrait(for iType: ZTraitType) -> Bool {
@@ -1837,10 +1849,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         return addChild(child, at: 0)
     }
 
-	func addAndReorderChild(_ iChild: Zone?, at iIndex: Int? = nil) {
+	func addAndReorderChild(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: Closure? = nil) {
         if  let child = iChild,
-            addChild(child, at: iIndex) != nil {
-
+            addChild(child, at: iIndex, afterAdd) != nil {
             children.updateOrder()
             maybeNeedSave()
         }
@@ -1856,7 +1867,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return index   // count is bottom, 0 is top
     }
 
-    @discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil) -> Int? {
+    @discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, _ afterAdd: Closure? = nil) -> Int? {
         if  let        child = iChild {
             let     insertAt = validIndex(from: iIndex)
             child.parentZone = self
@@ -1870,6 +1881,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
                         if  index != insertAt {
                             moveChildIndex(from: index, to: insertAt)
                         }
+						
+						afterAdd?()
 
                         return insertAt
                     }
@@ -1882,6 +1895,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
                 children.append(child)
             }
 
+			afterAdd?()
             maybeNeedSave()
             needCount()
 
@@ -1903,24 +1917,29 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         return false
     }
 
-	func createChildIdeaFromSelectedText() {
-		if  let childName  = widget?.textWidget.extractTitleOrSelectedText() {
+	func createIdeaFromSelectedText(_ asNewParent: Bool) {
+		if  let newName  = widget?.textWidget.extractTitleOrSelectedText() {
 
 			gTextEditor.stopCurrentEdit()
 
-			if  childName == zoneName {
+			if  newName == zoneName {
 				combineIntoParent()
 			} else {
 				self.deferRedraw {
-					addIdea(at: gListsGrowDown ? nil : 0, with: childName) { iChild in
-						gDeferRedraw = false
+					if  asNewParent {
+						parentZone?.addNextAndRedraw(containing: true) { iChild in
+							iChild.zoneName = newName
+						}
+					} else {
+						addIdea(at: gListsGrowDown ? nil : 0, with: newName) { iChild in
+							gDeferRedraw = false
 
-						self.revealChildren()
-						self.redrawAndSync {
-							let e = iChild?.edit()
-
-							FOREGROUND(after: 0.2) {
-								e?.selectAllText()
+							if  let child = iChild {
+								self.revealChildren()
+								self.redrawGraph(for: self) {
+									child.editAndSelect()
+									gBatches.sync { flag in }
+								}
 							}
 						}
 					}
@@ -1942,10 +1961,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			self.deferRedraw {
 				self.moveZone(to: gTrash)
-				redrawAndSync(self) {
-					gDeferRedraw = false
 
-					self.widget?.controller?.dragView?.setAllSubviewsNeedDisplay()
+				gDeferRedraw = false
+
+				self.redrawGraph(for: parent) {
 					parent.editAndSelect(range: range)
 				}
 			}
@@ -1964,13 +1983,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		generationalUpdate(show: show, to: goal) {
-			self.redrawGraph()
+			self.redrawGraph(for: self)
 		}
 	}
 
 	func expand(_ show: Bool) {
 		generationalUpdate(show: show) {
-			self.redrawGraph()
+			self.redrawGraph(for: self)
 		}
 	}
 
@@ -2187,6 +2206,32 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         return string
     }
 
+	func selectAll(progeny: Bool = false) {
+		if progeny {
+			gSelecting.ungrabAll()
+
+			traverseAllProgeny { iChild in
+				iChild.addToGrab()
+			}
+		} else {
+			if  count == 0 {
+				if  let parent = parentZone {
+					parent.selectAll(progeny: progeny)
+				}
+
+				return // selection has not changed
+			}
+
+			if  showingChildren {
+				gSelecting.ungrabAll(retaining: children)
+			} else {
+				return // selection does not show its children
+			}
+		}
+
+		redrawGraph(for: self)
+	}
+
 	// MARK:- reveal dot
 	// MARK:-
 
@@ -2219,7 +2264,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				self.redrawGraph()
 			} else {
 				generationalUpdate(show: show) {
-					self.redrawGraph()
+					self.redrawGraph(for: self)
 				}
 			}
 		}

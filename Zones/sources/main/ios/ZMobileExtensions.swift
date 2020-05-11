@@ -390,7 +390,7 @@ extension ZDragView {
 }
 
 
-extension UIWindow {
+extension ZWindow {
 
     var contentView: UIView? { return self }
     override open var canBecomeFirstResponder: Bool { return true }
@@ -403,7 +403,7 @@ extension UIWindow {
 
         if  windowKeys                             == nil {
             windowKeys                              = [UIKeyCommand] ()
-            let                             handler = #selector(UIWindow.handleKey)
+            let                             handler = #selector(ZWindow.handleKey)
             let                              noMods = UIKeyModifierFlags(rawValue: 0)
             let                       COMMAND_SHIFT = UIKeyModifierFlags(rawValue: UIKeyModifierFlags  .shift.rawValue + UIKeyModifierFlags  .command.rawValue)
             let                        OPTION_SHIFT = UIKeyModifierFlags(rawValue: UIKeyModifierFlags  .shift.rawValue + UIKeyModifierFlags.alternate.rawValue)

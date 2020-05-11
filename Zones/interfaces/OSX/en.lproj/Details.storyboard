@@ -1186,6 +1186,7 @@ CA
                                             <buttonCell key="cell" type="push" title="up" alternateTitle="UP ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-zy-Y7c">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
+                                                <string key="keyEquivalent"></string>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="mgh-ge-XVZ"/>
@@ -1197,6 +1198,7 @@ CA
                                             <buttonCell key="cell" type="push" title="focus" alternateTitle="/" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qid-p3-qJU">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
+                                                <string key="keyEquivalent">/</string>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="pnE-P4-Zp1"/>
@@ -1206,8 +1208,9 @@ CA
                                         <button identifier="right" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="172" y="16" width="99" height="32"/>
                                             <buttonCell key="cell" type="push" title="right" alternateTitle="-&gt;" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UrN-Q5-bwD">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES" accelerator="YES"/>
                                                 <font key="font" metaFont="system"/>
+                                                <string key="keyEquivalent"></string>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="yvx-ca-MZe"/>
@@ -1219,6 +1222,7 @@ CA
                                             <buttonCell key="cell" type="push" title="down" alternateTitle="DOWN ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gmQ-hx-fbx">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
+                                                <string key="keyEquivalent"></string>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="nSf-FX-5fk"/>
@@ -1230,6 +1234,7 @@ CA
                                             <buttonCell key="cell" type="push" title="left" alternateTitle="&lt;-" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xEN-g3-ZK6">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
+                                                <string key="keyEquivalent"></string>
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="pCJ-g2-XKK"/>
@@ -1332,7 +1337,7 @@ CA
                                     <constraint firstAttribute="height" constant="59" id="cSZ-RN-IYA"/>
                                 </constraints>
                             </box>
-                            <button identifier="showMe" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NsX-os-IKw" userLabel="show me">
+                            <button identifier="showMe" hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NsX-os-IKw" userLabel="show me">
                                 <rect key="frame" x="2" y="1" width="278" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="7JN-4I-ODg"/>

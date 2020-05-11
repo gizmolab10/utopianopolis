@@ -19,9 +19,29 @@ var gWindow: ZoneWindow? { return ZoneWindow.window }
 
 class ZoneWindow: ZWindow, ZWindowDelegate {
 
-    static var window: ZoneWindow?
-    var observer: NSKeyValueObservation?
-	var lastLocation = NSPoint.zero
+    static var window : ZoneWindow?
+    var      observer : NSKeyValueObservation?
+	var  lastLocation = NSPoint.zero
+
+	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
+		if  let            key = iKey {
+			gCurrentKeyPressed = key // enable become first responder
+
+			// //////////////////////////////////////// //
+			// dispatch key handling to various editors //
+			// //////////////////////////////////////// //
+
+			switch gWorkMode {
+				case .noteMode:     return gEssayEditor             .handleKey(key, flags: flags, isWindow: true)
+				case .graphMode:    return gGraphEditor             .handleKey(key, flags: flags, isWindow: true)
+				case .searchMode:   return gSearchResultsController?.handleKey(key, flags: flags) ?? false
+				case .editIdeaMode: return gTextEditor              .handleKey(key, flags: flags)
+				default:            break
+			}
+		}
+
+		return false
+	}
 
 	var keyPressed: Bool {
 		if  gIsReadyToShowUI {

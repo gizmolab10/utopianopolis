@@ -56,9 +56,10 @@ class ZGraphEditor: ZBaseEditor {
             let COMMAND = flags.isCommand
             let  OPTION = flags.isOption
             var   SHIFT = flags.isShift
-            let SPECIAL = COMMAND && OPTION
+			let SPECIAL = COMMAND && OPTION
 			let     ALL = COMMAND && OPTION && CONTROL
 			let IGNORED = 			 OPTION && CONTROL
+			let    HARD = COMMAND &&           CONTROL
 			let FLAGGED = COMMAND || OPTION || CONTROL
             let   arrow = key.arrow
             
@@ -78,7 +79,7 @@ class ZGraphEditor: ZBaseEditor {
 
 						switch key {
 							case "a":      gCurrentlyEditingWidget?.selectAllText()
-							case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL)
+							case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL, HARD)
 							case "f":      gSearching.showSearch(OPTION)
 							case "g":      refetch(COMMAND, OPTION)
 							case "n":      grabOrEdit(true, OPTION)
@@ -108,7 +109,7 @@ class ZGraphEditor: ZBaseEditor {
 					gCurrentKeyPressed = key
 
                     switch key {
-					case "a":      if COMMAND { selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION) }
+					case "a":      if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION) }
                     case "b":      gSelecting.firstSortedGrab?.addBookmark()
 					case "c":      if COMMAND && !OPTION { copyToPaste() } else { gGraphController?.recenter(SPECIAL) }
 					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
@@ -123,7 +124,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "n":      grabOrEdit(true, OPTION)
                     case "o":      gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { self.redrawAndSync() }
                     case "p":      printCurrentFocus()
-                    case "r":      if SPECIAL { sendEmailBugReport() } else { reverse() }
+                    case "r":      reverse()
 					case "s":      gHere.exportToFile(OPTION ? .eOutline : .eSeriously)
 					case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 					case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
@@ -574,34 +575,6 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-    func selectAll(progeny: Bool = false) {
-        var zone = gSelecting.currentMoveable
-
-        if progeny {
-            gSelecting.ungrabAll()
-
-            zone.traverseAllProgeny { iChild in
-                iChild.addToGrab()
-            }
-        } else {
-            if  zone.count == 0 {
-                if  let parent = zone.parentZone {
-                    zone       = parent
-                } else {
-                    return // selection has not changed
-                }
-            }
-
-            if  zone.showingChildren {
-                gSelecting.ungrabAll(retaining: zone.children)
-            } else {
-                return // selection does not show its children
-            }
-        }
-
-        redrawGraph()
-    }
-
     // MARK:- focus and travel
     // MARK:-
 
@@ -619,7 +592,7 @@ class ZGraphEditor: ZBaseEditor {
 			if  let parent = current.parentZone {
 				parent.asssureIsVisible()
 
-				self.redrawGraph()
+				self.redrawGraph(for: parent)
 			}
         }
     }

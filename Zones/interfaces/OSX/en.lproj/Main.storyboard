@@ -976,8 +976,8 @@ CA
                                                 <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="Vx4-SL-sxe">
                                                     <font key="font" metaFont="system"/>
                                                     <segments>
-                                                        <segment label="Beginner"/>
-                                                        <segment label="Sparse" selected="YES" tag="1"/>
+                                                        <segment label="Explorer"/>
+                                                        <segment label="Adept" selected="YES" tag="1"/>
                                                         <segment label="Pro"/>
                                                     </segments>
                                                 </segmentedCell>

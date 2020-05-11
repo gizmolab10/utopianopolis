@@ -44,7 +44,7 @@ class ZoneContextualMenu: ZContextualMenu {
 				case "l":    textWidget?.alterCase(up: false)
 				case "m":    zone?.children.sortByLength()
 				case "n":    zone?.showNote()
-				case "o":    zone?.importFromFile(.eSeriously) { self.redrawGraph() }
+				case "o":    zone?.importFromFile(.eSeriously) { self.redrawGraph(for: self) }
 				case "p":    break
 				case "r":    zone?.reverseChildren()
 				case "s":    zone?.exportToFile(.eSeriously)
@@ -55,7 +55,7 @@ class ZoneContextualMenu: ZContextualMenu {
 				case "/":    zone?.focus()
 				case kSpace: zone?.addIdea()
 				case "\u{08}", // control-delete?
-					kDelete: zone?.deleteZone { self.redrawGraph() }
+					kDelete: zone?.deleteSelf { self.redrawGraph() }
 				default:     break
 			}
 		}

@@ -64,7 +64,6 @@ extension NSObject {
     func                  note(_ iMessage: Any?)                { } // logk(iMessage) }
     func           performance(_ iMessage: Any?)                { log(iMessage) }
     func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
-    func           redrawGraph(_ onCompletion: Closure? = nil)  { gControllers.signalFor(nil, regarding: .sRelayout, onCompletion: onCompletion) }
 	func     printCurrentFocus()                                { gHere.widget?.printView() }
 	func     printCurrentEssay()                                { gEssayView?.printView() }
 
@@ -107,6 +106,10 @@ extension NSObject {
             }
         }
     }
+
+	func redrawGraph(for object: Any? = nil, _ onCompletion: Closure? = nil) {
+		gControllers.signalFor(object, regarding: .sRelayout, onCompletion: onCompletion)
+	}
 
 	func deferRedraw(_ closure: Closure) {
 		gDeferRedraw     = true

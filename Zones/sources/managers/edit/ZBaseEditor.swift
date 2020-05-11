@@ -42,6 +42,7 @@ class ZBaseEditor: NSObject {
 				case "o": if SPECIAL { gFiles.showInFinder();        handled = true }
 				case "p": if SPECIAL { cycleSkillLevel();            handled = true }
 				case "q": if COMMAND { gApplication.terminate(self); handled = true }
+				case "r": if SPECIAL { sendEmailBugReport();         handled = true }
 				case "t": if ONEFLAG { fetchTraits();                handled = true }
 				case "x": if SPECIAL { wipeRing();                   handled = true }
 				case "/": if SPECIAL { gControllers.showShortcuts(); handled = true }

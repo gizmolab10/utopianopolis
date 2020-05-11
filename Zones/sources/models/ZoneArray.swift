@@ -364,7 +364,7 @@ extension ZoneArray {
 					if  zone == iParent { // detect and avoid infinite recursion
 						deleteBookmarks()
 					} else {
-						zone.deleteZone(permanently: permanently) {
+						zone.deleteSelf(permanently: permanently) {
 							deleteBookmarks()
 						}
 					}

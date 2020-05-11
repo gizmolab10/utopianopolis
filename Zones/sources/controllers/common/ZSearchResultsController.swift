@@ -289,29 +289,42 @@ class ZSearchResultsController: ZGenericTableController {
 	}
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
-        if  let       string = event.input {
-            let        flags = event.modifierFlags
-            let      COMMAND = flags.isCommand
-            let          key = string[string.startIndex].description        // N.B. test key first since getInput has a possible side-effect of exiting search
-            
-            if  let    arrow = key.arrow {
-                switch arrow {
-					case       .up: moveSelection(up: true,  extreme: COMMAND)
-					case     .down: moveSelection(up: false, extreme: COMMAND)
-					case    .right: if !resolve() { return event }
-					case     .left: switchToSearchBox()
-                }
-            } else {
-                switch key {
-					case "f", kTab: switchToSearchBox()
-					case   kReturn: if !resolve() { return event }
-					case   kEscape: clear()
-					default: return event
-                }
-            }
+        if  let string = event.input {
+            let  flags = event.modifierFlags
+            let    key = string[string.startIndex].description        // N.B. test key first since getInput has a possible side-effect of exiting search
+
+			if !handleKey(key, flags: flags) { return event }
         }
         
         return nil
-    }
+	}
+
+	@discardableResult func handleKey(_ key: String, flags: ZEventFlags) -> Bool { // false means not handled
+		switch key {
+			case "f", kTab: switchToSearchBox()
+			case   kReturn: if !resolve() { return false }
+			case   kEscape: clear()
+			default:
+				if  let arrow = key.arrow,
+					!handleArrow(arrow, flags: flags) {
+					return false
+			}
+		}
+
+		return true
+	}
+
+	@discardableResult func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) -> Bool { // false means not handled
+		let COMMAND = flags.isCommand
+
+		switch arrow {
+			case       .up: moveSelection(up: true,  extreme: COMMAND)
+			case     .down: moveSelection(up: false, extreme: COMMAND)
+			case    .right: if !resolve() { return false }
+			case     .left: switchToSearchBox()
+		}
+
+		return true
+	}
 
 }
