@@ -1006,7 +1006,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func deleteSelf(permanently: Bool = false, onCompletion: Closure?) {
 		if  isRoot {
-			onCompletion?()
+			onCompletion?() // deleting root would be a disaster
 		} else {
 			let parent = parentZone
 			if  self == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
@@ -1055,6 +1055,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				if !permanently && !isInTrash {
 					moveZone(to: trashZone) {
+						onCompletion?()
 						deleteBookmarksClosure()
 					}
 				} else {
@@ -1069,6 +1070,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 					if  cloud?.cloudUnavailable ?? true {
 						moveZone(to: destroyZone) {
+							onCompletion?()
 							deleteBookmarksClosure()
 						}
 					} else {
@@ -1131,10 +1133,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		into.revealChildren()
-		into.needChildren()
 
 		if  orphan {
-			self.orphan()
+			self.orphan() // remove from current parent
 		}
 
 		into.addAndReorderChild(self, at: iIndex)
@@ -1149,48 +1150,50 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func moveZone(to iThere: Zone?, onCompletion: Closure? = nil) {
-		if  let there = iThere {
-			if !there.isBookmark {
-				moveZone(into: there, at: gListsGrowDown ? nil : 0, orphan: true) {
-					onCompletion?()
-				}
-			} else if !there.isABookmark(spawnedBy: self) {
+		guard let there = iThere else {
+			onCompletion?()
 
-				// ///////////////////////////////
-				// MOVE ZONE THROUGH A BOOKMARK //
-				// ///////////////////////////////
+			return
+		}
 
-				var     movedZone = self
-				let    targetLink = there.crossLink
-				let     sameGraph = databaseID == targetLink?.databaseID
-				let grabAndTravel = {
-					gFocusRing.travelThrough(there) { object, kind in
-						let there = object as! Zone
+		if !there.isBookmark {
+			moveZone(into: there, at: gListsGrowDown ? nil : 0, orphan: true) {
+				onCompletion?()
+			}
+		} else if !there.isABookmark(spawnedBy: self) {
 
-						movedZone.moveZone(into: there, at: gListsGrowDown ? nil : 0, orphan: false) {
-							movedZone.recursivelyApplyDatabaseID(targetLink?.databaseID)
-							movedZone.grab()
-							onCompletion?()
-						}
-					}
-				}
+			// ///////////////////////////////
+			// MOVE ZONE THROUGH A BOOKMARK //
+			// ///////////////////////////////
 
-				movedZone.orphan()
+			var     movedZone = self
+			let    targetLink = there.crossLink
+			let     sameGraph = databaseID == targetLink?.databaseID
+			let grabAndTravel = {
+				gFocusRing.travelThrough(there) { object, kind in
+					let there = object as! Zone
 
-				if sameGraph {
-					grabAndTravel()
-				} else {
-					movedZone.needDestroy()
-
-					movedZone = movedZone.deepCopy
-
-					redrawAndSync {
-						grabAndTravel()
+					movedZone.moveZone(into: there, at: gListsGrowDown ? nil : 0, orphan: false) {
+						movedZone.recursivelyApplyDatabaseID(targetLink?.databaseID)
+						movedZone.grab()
+						onCompletion?()
 					}
 				}
 			}
-		} else {
-			onCompletion?()
+
+			movedZone.orphan()
+
+			if sameGraph {
+				grabAndTravel()
+			} else {
+				movedZone.needDestroy()
+
+				movedZone = movedZone.deepCopy
+
+				redrawAndSync {
+					grabAndTravel()
+				}
+			}
 		}
 	}
 
@@ -1272,7 +1275,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 
     func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool, _ CLICKTWICE: Bool) {
-        if !gIsEditIdeaMode && isGrabbed && self == gHere { return } // nothing to do
+        if !gIsEditIdeaMode && isGrabbed { return }  // nothing to do
 
         let shouldFocus = COMMAND || (CLICKTWICE && isGrabbed)
 
@@ -1292,9 +1295,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             grab()
         }
 
-        widget?.setNeedsDisplay()
-        
-		signal([.sPreferences, .sStatus, .sCrumbs])
+		redrawGraph(for: self)
     }
 
     override func debug(_  iMessage: String) {

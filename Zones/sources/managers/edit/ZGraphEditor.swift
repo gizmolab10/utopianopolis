@@ -770,13 +770,16 @@ class ZGraphEditor: ZBaseEditor {
                     }
                 }
             } else {
-                prepareUndoForDelete()
+				let grab = gSelecting.rootMostMoveable?.parentZone
+
+				prepareUndoForDelete()
                 
 				gSelecting.simplifiedGrabs.deleteZones(permanently: permanently) {
+					gDeferRedraw = false
+
+					self.redrawGraph(for: grab)
                     gFavorites.updateFavoritesRedrawAndSync {    // delete alters the list
-                        gDeferRedraw = false
-                        
-                        self.redrawGraph()
+                        self.redrawGraph(for: grab)
                     }
                 }
             }

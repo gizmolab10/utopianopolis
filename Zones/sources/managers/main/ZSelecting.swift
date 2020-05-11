@@ -345,6 +345,7 @@ class ZSelecting: NSObject {
 
     private func addOneGrab(_ iZone: Zone?) {
         if  let zone = iZone,
+			zone != gFavoritesHereMaybe,
             (!currentGrabs.contains(zone)) {
             currentGrabs.append(zone)
 

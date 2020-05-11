@@ -25,7 +25,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="iSu-QB-gpG"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="uyC-kt-DrI">
-                                                <font key="font" metaFont="message" size="11"/>
+                                                <font key="font" metaFont="menu" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -36,7 +36,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="fsf-bJ-Uu6"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="s7Z-UN-BJu">
-                                                <font key="font" metaFont="message" size="11"/>
+                                                <font key="font" metaFont="menu" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -47,7 +47,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="am7-ij-t8n"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="jkC-rh-JZ7">
-                                                <font key="font" metaFont="message" size="11"/>
+                                                <font key="font" metaFont="menu" size="11"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -1208,12 +1208,12 @@ CA
                                         <button identifier="right" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="172" y="16" width="99" height="32"/>
                                             <buttonCell key="cell" type="push" title="right" alternateTitle="-&gt;" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UrN-Q5-bwD">
-                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES" accelerator="YES"/>
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                                 <string key="keyEquivalent"></string>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="buttonAction:" target="YdN-bY-sSj" id="yvx-ca-MZe"/>
+                                                <action selector="buttonAction:" target="YdN-bY-sSj" id="qTj-Mg-Cla"/>
                                                 <outlet property="controller" destination="YdN-bY-sSj" id="sfu-cT-M9K"/>
                                             </connections>
                                         </button>
@@ -1273,7 +1273,7 @@ CA
                                     <rect key="frame" x="3" y="3" width="266" height="45"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="shift" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Qe-VP-Kce">
+                                        <button identifier="shift" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Qe-VP-Kce" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-5" y="16" width="276" height="32"/>
                                             <buttonCell key="cell" type="push" title="SHIFT" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2fx-6f-Zh2">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -1283,7 +1283,7 @@ CA
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="vbC-Fx-38h"/>
                                             </connections>
                                         </button>
-                                        <button identifier="command" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JnY-Vs-p4U">
+                                        <button identifier="command" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JnY-Vs-p4U" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-5" y="-6" width="99" height="32"/>
                                             <buttonCell key="cell" type="push" title="⌘" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3qw-o2-Ih5">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -1293,7 +1293,7 @@ CA
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="hoh-rf-eP2"/>
                                             </connections>
                                         </button>
-                                        <button identifier="option" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jMS-ki-sap">
+                                        <button identifier="option" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jMS-ki-sap" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="83" y="-6" width="100" height="32"/>
                                             <buttonCell key="cell" type="push" title="⌥" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k68-pr-cxj">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -1303,7 +1303,7 @@ CA
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="Rgg-eO-V5C"/>
                                             </connections>
                                         </button>
-                                        <button identifier="control" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cxk-91-GuE">
+                                        <button identifier="control" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cxk-91-GuE" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="172" y="-6" width="99" height="32"/>
                                             <buttonCell key="cell" type="push" title="^" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fu3-k6-L9o">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>

@@ -34,10 +34,11 @@ class ZIntroductionController: ZGenericController {
 
 		if  let                          c =  gDetailsController, !c.hideableIsHidden(for: .Introduction),    // don't update a hidden introductions controller
 		    let                       zone =  gSelecting.currentMovableMaybe {
-			let                     isHere =  zone == gHere
-			let                  canTravel =  gIsGraphMode && zone.canTravel
+			let                     isHere =  zone            == gHere
+			let                  canTravel =  gIsGraphMode    && zone.canTravel
 			let                  isEditing =  gIsEditIdeaMode || gIsNoteMode
-			let                   showHide =  flags.isShift && !flags.isOption
+			let                 isRelocate =  flags.isOption  && !isEditing
+			let                   showHide =  flags.isShift   && !isEditing && !flags.isOption
 			buttonFor(.control)?.isEnabled = !gIsSearchMode
 			buttonFor(.option)? .isEnabled = !gIsSearchMode
 			buttonFor(.shift)?  .isEnabled = !gIsSearchMode
@@ -47,9 +48,9 @@ class ZIntroductionController: ZGenericController {
 			boxFor   (.add)?     .isHidden =  gIsSearchMode || gIsNoteMode
 			buttonFor(.sibling)?    .title =  flags.isOption  ? "parent"       : "sibling"
 			buttonFor(.left)?       .title =  showHide        ? "hide"         : "left"
-			buttonFor(.right)?      .title =  showHide        ? "show"         : canTravel     ? "travel"    : "right"
-			buttonFor(.focus)?      .title =  flags.isControl ? "unfocus"      : canTravel     ? "travel"    :                       isHere ? "favorite" : "focus"
-			boxFor   (.move)?       .title = (flags.isOption  ? "Relocate"     : flags.isShift ? "Show/Hide" : "Browse") + (flags.isCommand ? " to end"  : "")
+			buttonFor(.right)?      .title =  showHide        ? "show"         : canTravel ? "travel"    : "right"
+			buttonFor(.focus)?      .title =  flags.isControl ? "unfocus"      : canTravel ? "travel"    :                       isHere ? "favorite" : "focus"
+			boxFor   (.move)?       .title = (isRelocate      ? "Relocate"     : showHide  ? "Show/Hide" : "Browse") + (flags.isCommand ? " to end"  : "")
 			boxFor   (.edit)?       .title =  isEditing       ? "Stop Editing" : "Edit"
 		}
 	}
@@ -78,10 +79,19 @@ class ZIntroductionController: ZGenericController {
 			} else if let   button    = subview as? ZIntroductionButton,
 				let         buttonID  = button.introductionID {
 				buttonsByID[buttonID] = button
-				button  .isContinuous = true
 
-				button.setPeriodicDelay(0.5, interval: 0.1)
+				setAutoRepeat(for: button)
 			}
+		}
+	}
+
+	func setAutoRepeat(for button: ZIntroductionButton) {
+		let autorepeaters: [ZIntroductionID] = [.up, .down, .right, .left]
+		if  let                    buttonID  = button.introductionID,
+			autorepeaters.contains(buttonID) {
+			button.isContinuous              = true
+
+			button.setPeriodicDelay(0.5, interval: 0.1)
 		}
 	}
 

@@ -977,7 +977,7 @@ CA
                                                     <font key="font" metaFont="system"/>
                                                     <segments>
                                                         <segment label="Explorer"/>
-                                                        <segment label="Adept" selected="YES" tag="1"/>
+                                                        <segment label="Trailblazer" selected="YES" tag="1"/>
                                                         <segment label="Pro"/>
                                                     </segments>
                                                 </segmentedCell>

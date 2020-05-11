@@ -333,13 +333,15 @@ class ZTextEditor: ZTextView {
     }
 
 	func stopCurrentEdit(forceCapture: Bool = false) {
-        if  let e = currentEdit, !gIsEditingStateChanging {
+        if  let    e = currentEdit, !gIsEditingStateChanging {
+			let zone = e.packedZone
+
 			capture(force: forceCapture)
             clearEdit()
             fullResign()
             e.updateWidgetsForEndEdit()
-            e.packedZone?.grab()
-			gControllers.signalFor(nil, regarding: .sCrumbs)
+            zone?.grab()
+			redrawGraph(for: zone)
         }
     }
 

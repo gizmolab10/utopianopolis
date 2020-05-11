@@ -337,6 +337,8 @@ extension ZoneArray {
 					count -= 1
 
 					if  count == 0 {
+						finish()
+
 						gBatches.bookmarks { iSame in
 							var bookmarks = ZoneArray ()
 
@@ -344,9 +346,7 @@ extension ZoneArray {
 								bookmarks += zone.fetchedBookmarks
 							}
 
-							if  bookmarks.count == 0 {
-								finish()
-							} else {
+							if  bookmarks.count != 0 {
 
 								// ///////////////////////////////////////////////////////////
 								// remove any bookmarks the target of which is one of zones //
