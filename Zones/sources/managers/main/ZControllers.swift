@@ -256,16 +256,14 @@ class ZControllers: NSObject {
     }
 
 	func sync(onCompletion: Closure? = nil) {
-		gBatches.sync() { iSame in
+		gBatches.sync { iSame in
             onCompletion?()
         }
     }
 
 	func signalAndSync(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
         signalFor(zone, regarding: regarding)
-		sync {
-			onCompletion?()
-		}
+		sync(onCompletion: onCompletion)
     }
 
 }

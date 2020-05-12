@@ -334,19 +334,18 @@ class ZTextEditor: ZTextView {
         }
     }
 
-	func stopCurrentEdit(forceCapture: Bool = false) {
+	func stopCurrentEdit(forceCapture: Bool = false, andRedraw: Bool = true) {
         if  let    e = currentEdit, !gIsEditingStateChanging {
 			let zone = e.packedZone
 
 			capture(force: forceCapture)
 
-			debugTime(message: "stopCurrentEdit") {
-				clearEdit()
-				fullResign()
-			}
-			debugTime(message: "updateWidgetsForEndEdit") {
-				e.updateWidgetsForEndEdit()
-				zone?.grab()
+			clearEdit()
+			fullResign()
+			e.updateWidgetsForEndEdit()
+			zone?.grab()
+
+			if  andRedraw {
 				redrawGraph(for: zone)
 			}
         }

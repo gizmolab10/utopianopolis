@@ -94,8 +94,7 @@ class ZTraitAssets: ZRecord {
 				needSave()
 
 				FOREGROUND(after: 0.5) {
-					gBatches.sync { isSame in
-					}
+					gControllers.sync()
 				}
 			}
 

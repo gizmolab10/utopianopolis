@@ -425,7 +425,7 @@ CA
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="ALV-dt-Nu6"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="roundRect" title="Information" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nh5-Lk-WYv" userLabel="Status">
+                                                        <buttonCell key="cell" type="roundRect" title="Data" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nh5-Lk-WYv" userLabel="Status">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="label" size="12"/>
                                                         </buttonCell>
@@ -549,7 +549,7 @@ CA
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="gKS-qe-HYT"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="roundRect" title="Status" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Xvc-53-jpY">
+                                                        <buttonCell key="cell" type="roundRect" title="Recent" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Xvc-53-jpY">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="label" size="12"/>
                                                         </buttonCell>

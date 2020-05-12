@@ -191,7 +191,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	// MARK:-
 
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-        if  [.sDatum, .sData, .sRelayout].contains(iKind) { // ignore for preferences, search, information, startup
+		if  !gDeferRedraw,
+			[.sDatum, .sData, .sRelayout].contains(iKind) { // ignore for preferences, search, information, startup
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
 			layoutWidgets(for: iSignalObject, iKind)
@@ -305,9 +306,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 							} else {
 								regarding = .sStatus // update selection level and TODO: breadcrumbs
 
-								debugTime(message: "dragDotClicked") {
-									zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
-								}
+								zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
 							}
 						}
 					}

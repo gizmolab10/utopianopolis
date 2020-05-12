@@ -1259,7 +1259,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
     
     func grab(updateBrowsingLevel: Bool = true) {
-		gTextEditor.stopCurrentEdit()
+		gTextEditor.stopCurrentEdit(andRedraw: false)
 		printDebug(.dEdit, " GRAB    \(unwrappedName)")
         gSelecting.grab([self], updateBrowsingLevel: updateBrowsingLevel)
     }
@@ -1292,9 +1292,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         } else if SHIFT {
             addToGrab()
         } else {
-			debugTime(message: "grab") {
-				grab()
-			}
+			grab()
 		}
 
 		redrawGraph(for: self)
@@ -1941,7 +1939,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 								self.revealChildren()
 								self.redrawGraph(for: self) {
 									child.editAndSelect()
-									gBatches.sync { flag in }
+									gControllers.sync()
 								}
 							}
 						}

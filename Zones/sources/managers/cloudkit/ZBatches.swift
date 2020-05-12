@@ -85,7 +85,7 @@ class ZBatches: ZOnboarding {
 			case .bSync:        return [              .oNeededIdeas,         .oSaveToCloud, .oTraits]
             case .bBookmarks:   return [.oBookmarks,  .oNeededIdeas,         .oSaveToCloud, .oTraits]
             case .bUndelete:    return [.oUndelete,   .oNeededIdeas,         .oSaveToCloud, .oTraits]
-			case .bRoot:        return [.oRoots,         .oManifest,         .oSaveToCloud, .oTraits]
+			case .bRoot:        return [.oRoots,      .oManifest,            .oSaveToCloud, .oTraits]
 			case .bFocus:       return [.oRoots,      .oNeededIdeas,                        .oTraits]
 			case .bAllTraits:   return [                                                 .oAllTraits]
             case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
