@@ -82,6 +82,16 @@ extension NSObject {
         }
     }
 
+	func debugTime(message: String, _ closure: Closure) {
+		let start = Date()
+
+		closure()
+
+		let duration = Date().timeIntervalSince(start)
+
+		printDebug(.dTime, duration.readableString + " " + message)
+	}
+
     func time(of title: String, _ closure: Closure) {
         let start = Date()
 
@@ -620,6 +630,13 @@ extension Double {
     static func ** (base: Double, power: Double) -> Double{
         return pow(base, power)
     }
+
+	var readableString: String {
+		var value = Int((self + 0.005) * 100.0) // round to nearest
+		let fraction = value % 100
+		value /= 100
+		return "\(value).\(fraction)"
+	}
 }
 
 infix operator -- : AdditionPrecedence

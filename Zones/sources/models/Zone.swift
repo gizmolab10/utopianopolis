@@ -1292,8 +1292,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         } else if SHIFT {
             addToGrab()
         } else {
-            grab()
-        }
+			debugTime(message: "grab") {
+				grab()
+			}
+		}
 
 		redrawGraph(for: self)
     }

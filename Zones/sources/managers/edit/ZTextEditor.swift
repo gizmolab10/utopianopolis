@@ -162,7 +162,7 @@ class ZTextPack: NSObject {
     }
 
 
-    func captureTextRedrawAndSync(_ iText: String?) {
+	func captureText(_ iText: String?, redrawSync: Bool = false) {
 		if                     iText == unwrappedName,
 			let                  type = packedTrait?.traitType {
 			packedZone?.removeTrait(for: type)
@@ -175,7 +175,7 @@ class ZTextPack: NSObject {
                 prepareUndoForTextChange(gUndoManager) {
                     self.originalText = w.text
 
-                    self.captureTextRedrawAndSync(original)
+					self.captureText(original, redrawSync: true)
                     w.updateGUI()
                 }
             }
@@ -189,7 +189,9 @@ class ZTextPack: NSObject {
 
 		gTextCapturing = false
 
-		redrawAndSync()
+		if  redrawSync {
+			redrawAndSync()
+		}
     }
 
     
@@ -337,11 +339,16 @@ class ZTextEditor: ZTextView {
 			let zone = e.packedZone
 
 			capture(force: forceCapture)
-            clearEdit()
-            fullResign()
-            e.updateWidgetsForEndEdit()
-            zone?.grab()
-			redrawGraph(for: zone)
+
+			debugTime(message: "stopCurrentEdit") {
+				clearEdit()
+				fullResign()
+			}
+			debugTime(message: "updateWidgetsForEndEdit") {
+				e.updateWidgetsForEndEdit()
+				zone?.grab()
+				redrawGraph(for: zone)
+			}
         }
     }
 
@@ -356,13 +363,13 @@ class ZTextEditor: ZTextView {
 	func capture(force: Bool = false) {
         if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
 			printDebug(.dEdit, " CAPTURE \(text)")
-            current.captureTextRedrawAndSync(text)
+            current.captureText(text)
         }
     }
 
     func assign(_ iText: String?, to iZone: Zone?) {
         if  let zone = iZone {
-            ZTextPack(zone).captureTextRedrawAndSync(iText)
+            ZTextPack(zone).captureText(iText)
         }
     }
 

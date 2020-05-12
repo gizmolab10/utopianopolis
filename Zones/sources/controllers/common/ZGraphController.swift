@@ -305,7 +305,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 							} else {
 								regarding = .sStatus // update selection level and TODO: breadcrumbs
 
-								zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
+								debugTime(message: "dragDotClicked") {
+									zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
+								}
 							}
 						}
 					}
