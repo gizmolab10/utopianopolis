@@ -325,14 +325,12 @@ class ZRingView: ZView {
 		let center = rect.center
 		var result = [CGRect]()
 
-		for index in 0 ... 2 {
-			let increment = 2.0 * .pi / 3.2 	// 1/3.2 of circle (2 pi)
-			let     angle = (1.8 - Double(index)) * increment
-			let         x = center.x + (offset * CGFloat(cos(angle)))
-			let         y = center.y + (offset * CGFloat(sin(angle)))
-			let   control = NSRect(origin: CGPoint(x: x, y: y), size: CGSize()).insetBy(dx: -radius, dy: -radius)
+		for angle in [-Double.pi, 0.0] {
+			let  x = center.x + (offset * CGFloat(cos(angle)))
+			let  y = center.y + (offset * CGFloat(sin(angle)))
+			let  r = CGRect(origin: CGPoint(x: x, y: y), size: CGSize.zero).insetBy(dx: -radius, dy: -radius)
 
-			result.append(control)
+			result.append(r)
 		}
 
 		return result
@@ -389,9 +387,9 @@ class ZRingView: ZView {
 	}
 
 	func addToolTips() {
-		let       controls = ZRingControl.controls
-		let        objects = necklaceObjects 				// expensive computation: do once
-		let          count = objects.count
+		let controls = ZRingControl.controls
+		let  objects = necklaceObjects 				// expensive computation: do once
+		let    count = objects.count
 
 		removeAllToolTips()
 

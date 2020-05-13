@@ -12,22 +12,28 @@ class ZRingControl: ZView, ZToolable {
 
 	enum ZControlType {
 		case eInsertion
-		case eVisible
 		case eConfined
 		case eToolTips
 	}
 
-	var type: ZControlType = .eVisible
-	static let    controls = [insertion, visible, confined]
+	var type: ZControlType = .eToolTips
+	static let    controls = [insertion, confined]
 	func toolColor() -> ZColor? { return gIsDark ? kLightestGrayColor : gAccentColor.accountingForDarkMode.darker(by: 4.0) }
-	func toolName()  -> String? { return description }
+	func toolName()  -> String? { return labelText }
 
-	override var description: String {
+	var labelText: String {
 		switch type {
 			case .eInsertion: return gListsGrowDown           ? "down" : "up"
 			case .eConfined:  return gBrowsingIsConfined      ? "list" : "all"
-			case .eVisible:   return gFullRingIsVisible       ? "hide" : "show"
 			case .eToolTips:  return gToolTipsLength != .none ? "hide" : "show" + "tool tips"
+		}
+	}
+
+	override var description: String {
+		switch type {
+			case .eInsertion: return "toggle insertion direction"
+			case .eConfined:  return "toggle browsing confinement (between list and all)"
+			case .eToolTips:  return "toggle tool tips visibility"
 		}
 	}
 
@@ -43,17 +49,11 @@ class ZRingControl: ZView, ZToolable {
 				return point.intersectsTriangle  (orientedUp: gListsGrowDown, in: large)		// insertion direction
 			case .eConfined   :
 				if  gBrowsingIsConfined {
-					return point.intersectsCircle(                               in: large) ||	// inactive confinement dot
-					point.intersectsCircle(		                                 in:  tiny)		// tiny dot
+					return point.intersectsCircle(                            in: large) ||	// inactive confinement dot
+					point.intersectsCircle(		                              in:  tiny)		// tiny dot
 				} else        {
-					return point.intersectsCircle(orientedUp: false,             in:  tiny) ||
-					point.intersectsCircle(	 	 orientedUp: true,               in:  tiny)
-				}
-			case .eVisible    :
-				if !gFullRingIsVisible {
-					return point.intersectsCircle(                               in: large)		// tiny dot
-				} else {
-					return point.intersectsCircle(                               in:  tiny)		// active is-visible dot
+					return point.intersectsCircle(orientedUp: false,          in:  tiny) ||
+					point.intersectsCircle(	 	  orientedUp: true,           in:  tiny)
 				}
 			default: return false
 		}
@@ -78,16 +78,11 @@ class ZRingControl: ZView, ZToolable {
 				drawTriangle  (orientedUp: gListsGrowDown, in: large, thickness: thick)		// insertion direction
 			case .eConfined   :
 				if  gBrowsingIsConfined {
-					drawCircle(                               in: large, thickness: thick)		// inactive confinement dot
-					drawCircle(                               in:  tiny, thickness: thick)		// tiny dot
+					drawCircle(                            in: large, thickness: thick)		// inactive confinement dot
+					drawCircle(                            in:  tiny, thickness: thick)		// tiny dot
 				} else        {
-					drawCircle(orientedUp: false,             in:  tiny, thickness: thick)
-					drawCircle(orientedUp: true,              in:  tiny, thickness: thick)
-				}
-			case .eVisible    :
-				drawCircle    (                               in:  tiny, thickness: thick)		// active is-visible dot
-				if !gFullRingIsVisible {
-					drawCircle(                               in: large, thickness: thick)		// tiny dot
+					drawCircle(orientedUp: false,          in:  tiny, thickness: thick)
+					drawCircle(orientedUp: true,           in:  tiny, thickness: thick)
 				}
 			default: break
 		}
@@ -95,7 +90,6 @@ class ZRingControl: ZView, ZToolable {
 
 	func respond() -> Bool {
 		switch type {
-			case .eVisible:  gFullRingIsVisible  = !gFullRingIsVisible
 			case .eToolTips: gToolTipsLength = gToolTipsLength.rotated
 			default:         return !gFullRingIsVisible ? false : toggleRingControlModes(isDirection: type == .eInsertion)
 		}
@@ -107,7 +101,6 @@ class ZRingControl: ZView, ZToolable {
 	// MARK:-
 
 	static         let  tooltips = create(.eToolTips)
-	private static let   visible = create(.eVisible)
 	private static let  confined = create(.eConfined)
 	private static let insertion = create(.eInsertion)
 

@@ -22,41 +22,60 @@ import UIKit
 class ZIntroductionController: ZGenericController {
 
 	override var controllerID : ZControllerID { return .idIntroduction }
+	var                isHere : Bool { return gSelecting.currentMovableMaybe == gHere }
+	var             isEditing : Bool { return gIsEditIdeaMode || gIsNoteMode }
+	var            isRelocate : Bool { return flags.isOption  && !isEditing }
+	var              showHide : Bool { return flags.isShift   && !isEditing && !flags.isOption }
+	var            canUnfocus : Bool { return flags.isControl && gFocusRing.ring.count > 1 }
+	var             canTravel : Bool { return gIsGraphMode && (gSelecting.currentMovableMaybe?.isBookmark ?? false) }
 	var                 flags = ZEventFlags()
 	var        buttonsByID    = [ZIntroductionID  :  ZIntroductionButton]()
 	var          boxesByID    = [ZIntroductionID  :  ZBox]()
 	func       buttonFor(_ id :  ZIntroductionID) -> ZIntroductionButton? { return buttonsByID[id] }
 	func          boxFor(_ id :  ZIntroductionID) -> ZBox?                { return boxesByID  [id] }
 
-	func update() {
+	func updateBoxesAndButtons() {
 
 		// provide useful hits about how behavior changes with work mode and modifier keys
 
-		if  let                          c =  gDetailsController, !c.hideableIsHidden(for: .Introduction),    // don't update a hidden introductions controller
-		    let                       zone =  gSelecting.currentMovableMaybe {
-			let                     isHere =  zone            == gHere
-			let                  canTravel =  gIsGraphMode    && zone.canTravel
-			let                  isEditing =  gIsEditIdeaMode || gIsNoteMode
-			let                 isRelocate =  flags.isOption  && !isEditing
-			let                   showHide =  flags.isShift   && !isEditing && !flags.isOption
-			buttonFor(.control)?.isEnabled = !gIsSearchMode
-			buttonFor(.option)? .isEnabled = !gIsSearchMode
-			buttonFor(.shift)?  .isEnabled = !gIsSearchMode
-			buttonFor(.focus)?  .isEnabled =  gIsGraphMode
-			buttonFor(.note)?   .isEnabled = !gIsEditIdeaMode
-			boxFor   (.edit)?    .isHidden =  gIsSearchMode || gIsNoteMode
-			boxFor   (.add)?     .isHidden =  gIsSearchMode || gIsNoteMode
-			buttonFor(.sibling)?    .title =  flags.isOption  ? "parent"       : "sibling"
-			buttonFor(.left)?       .title =  showHide        ? "hide"         : "left"
-			buttonFor(.right)?      .title =  showHide        ? "show"         : canTravel ? "travel"    : "right"
-			buttonFor(.focus)?      .title =  flags.isControl ? "unfocus"      : canTravel ? "travel"    :                       isHere ? "favorite" : "focus"
-			boxFor   (.move)?       .title = (isRelocate      ? "Relocate"     : showHide  ? "Show/Hide" : "Browse") + (flags.isCommand ? " to end"  : "")
-			boxFor   (.edit)?       .title =  isEditing       ? "Stop Editing" : "Edit"
+		buttonFor(.control)?.isEnabled = !gIsSearchMode
+		buttonFor(.option)? .isEnabled = !gIsSearchMode
+		buttonFor(.shift)?  .isEnabled = !gIsSearchMode
+		buttonFor(.focus)?  .isEnabled =  gIsGraphMode
+		buttonFor(.note)?   .isEnabled = !gIsEditIdeaMode
+		boxFor   (.edit)?    .isHidden =  gIsSearchMode || gIsNoteMode
+		boxFor   (.add)?     .isHidden =  gIsSearchMode || gIsNoteMode
+		buttonFor(.sibling)?    .title =  flags.isOption ? "parent"       : "sibling"
+		buttonFor(.left)?       .title =  showHide       ? "hide"         : "left"
+		buttonFor(.right)?      .title =  showHide       ? "show"         : canTravel ? "travel"    : "right"
+		buttonFor(.focus)?      .title =  canUnfocus     ? "unfocus"      : canTravel ? "travel"    :                       isHere ? "favorite" : "focus"
+		boxFor   (.move)?       .title = (isRelocate     ? "Relocate"     : showHide  ? "Show/Hide" : "Browse") + (flags.isCommand ? " to end"  : "")
+		boxFor   (.edit)?       .title =  isEditing      ? "Stop Editing" : "Edit"
+	}
+
+	func updateTooltips() {
+		view.applyToAllSubviews { subview in
+			if  let    button   = subview as? ZIntroductionButton,
+				let    buttonID = button.introductionID {
+				let     addANew = "add a new idea as "
+				let     editing = !isEditing ? "edit" : "stop editing and save to"
+				let notMultiple = gSelecting.currentGrabs.count < 2
+				let   adjective = notMultiple ? "" : "\(gListsGrowDown ? "bottom" : "top")- or left-most "
+				let currentIdea = " the \(adjective)currently selected idea"
+
+				switch buttonID {
+					case .sibling: button.toolTip = addANew + "\(flags.isOption ? "parent" : "sibling") to"                              + currentIdea
+					case .child:   button.toolTip = addANew + "child to"                                                                 + currentIdea
+					case .idea:    button.toolTip = editing                                                                              + currentIdea
+					case .note:    button.toolTip = editing + " the note of"                                                             + currentIdea
+					case .focus:   button.toolTip = (isHere ? "create favorite from" : (canTravel ? "travel to target of" : "focus on")) + currentIdea
+					default:       break
+				}
+			}
 		}
 	}
 
 	@IBAction func buttonAction(_ button: ZIntroductionButton) {
-		updateFlags()
 		update()
 
 		if  let itemID = button.introductionID,
@@ -96,7 +115,15 @@ class ZIntroductionController: ZGenericController {
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		update()
+		if  let c = gDetailsController, !c.hideableIsHidden(for: .Introduction) { // ignore if hidden
+			update()
+		}
+	}
+
+	func update() {
+		updateFlags() // must call this first as others rely on flags
+		updateTooltips()
+		updateBoxesAndButtons()
 	}
 
 	func updateFlags() {

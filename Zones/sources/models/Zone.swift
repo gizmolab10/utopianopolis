@@ -855,7 +855,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			userCanMutateProgeny {
 			revealChildren()
 			addIdea(at: gListsGrowDown ? nil : 0) { iChild in
-				gControllers.signalFor(self.parentZoneMaybe, regarding: .sRelayout) {
+				gControllers.signalFor(self, regarding: .sRelayout) {
+					gTemporarilySetMouseZone(iChild)
 					iChild?.edit()
 				}
 			}

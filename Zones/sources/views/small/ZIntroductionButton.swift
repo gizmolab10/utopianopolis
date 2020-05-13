@@ -15,7 +15,7 @@ class ZIntroductionButton: ZButton {
 	var   upTitle = ""
 
 	override func awakeFromNib() {
-		downTitle = alternateTitle
+		downTitle = alternateTitle.isEmpty ? title : alternateTitle
 		upTitle   = title
 
 		let options = [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeInKeyWindow, NSTrackingArea.Options.activeAlways, NSTrackingArea.Options.inVisibleRect] as NSTrackingArea.Options

@@ -158,6 +158,11 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			rootWidget.snp.makeConstraints { make in
 				make.centerY.equalTo(d).offset(offset.y)
 				make.centerX.equalTo(d).offset(offset.x)
+
+				if  isFavorites {
+					make.top   .equalToSuperview().offset( 12.0)
+					make.bottom.equalToSuperview().offset(-12.0)
+				}
 			}
 
             d.setNeedsDisplay()

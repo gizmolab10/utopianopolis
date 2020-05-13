@@ -78,8 +78,22 @@ class ZTogglingView: NSStackView {
 		titleButton?.layer?.backgroundColor = gAccentColor.cgColor
 
 		if  identity == .Favorites {
-			let name = gFavoritesHereMaybe?.zoneName?.capitalized
-			titleButton?.title = name ?? "Favorites"
+			var    title = "Favorites"
+
+			if  var path : ZoneArray = gFavoritesHereMaybe?.ancestralPath {
+				if  path.count > 1 {
+					path = ZoneArray(path.suffix(from: 1))  // remove favorites when it's not alone
+				}
+
+
+				let names = path.map { zone -> String in
+					return zone.unwrappedName.capitalized // convert to strings
+				}
+
+				title = names.joined(separator: kColonSeparator)
+			}
+
+			titleButton?.title = title
 		}
 
 		turnOnTitleButton()

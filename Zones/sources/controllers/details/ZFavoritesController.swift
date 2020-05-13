@@ -11,6 +11,11 @@ import Foundation
 class ZFavoritesController: ZGraphController {
 
 	override var isFavorites: Bool { return true }
+	@IBOutlet var addButton: ZButton?
+
+	@IBAction func addButtonAction(_ button: ZButton) {
+		gFavoritesHereMaybe?.addIdea()
+	}
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
 		if  let c = gDetailsController, !c.hideableIsHidden(for: .Favorites) { // don't send signal to a hidden favorites controller
