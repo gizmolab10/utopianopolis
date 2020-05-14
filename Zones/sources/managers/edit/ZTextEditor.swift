@@ -294,7 +294,7 @@ class ZTextEditor: ZTextView {
 					setCursor(at: at)
 				}
 
-				self.signal([.sCrumbs])
+				gSignal([.sCrumbs])
 				deferEditingStateChange()
 			}
         }
@@ -346,7 +346,7 @@ class ZTextEditor: ZTextView {
 			zone?.grab()
 
 			if  andRedraw {
-				redrawGraph(for: zone)
+				gRedrawGraph(for: zone)
 			}
         }
     }

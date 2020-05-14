@@ -423,7 +423,7 @@ extension NSView {
     }
 
 
-    func setNeedsDisplay() { if !gDeferRedraw { needsDisplay = true } }
+    func setNeedsDisplay() { if !gDeferringRedraw { needsDisplay = true } }
     func setNeedsLayout () { needsLayout  = true }
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
 
@@ -564,7 +564,7 @@ extension ZoneWindow {
         setFrame(rect, display: true)
         
         observer = observe(\.effectiveAppearance) { _, _  in
-            self.signal([.sAppearance])
+            gSignal([.sAppearance])
         }
     }
     

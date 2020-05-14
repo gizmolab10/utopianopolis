@@ -88,11 +88,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	override func mouseDown(with event: ZEvent) {
-		let  rect = CGRect(origin: event.locationInWindow, size: CGSize.zero)
-		let flags = event.modifierFlags
-
-		if  !(gRingView?.handleClick(in: rect, flags: flags) ?? false) &&
-			!handleClick   (with: event) {
+		if  !handleClick   (with: event) {
 			super.mouseDown(with: event)
 		}
 	}
@@ -168,6 +164,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			setNeedsLayout()
 			setNeedsDisplay()
 			updateText(restoreSelection: range.location)
+			gControllers.sync()
 		}
 	}
 
@@ -282,12 +279,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			gControllers.swapGraphAndEssay(force: .graphMode)
-			redrawGraph()
+			gRedrawGraph()
 
 			if  e.lastTextIsDefault,
 				e.autoDelete {
 				e.delete()
 			}
+
+			gControllers.sync()
 		}
 	}
 
@@ -543,7 +542,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 		}
 
-		signal([.sCrumbs])
+		gSignal([.sCrumbs])
 	}
 
 	private func select(restoreSelection: Int? = nil) {
@@ -629,7 +628,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idDelete:  gCurrentEssay?.delete(); 	      exit()
 				case .idCancel:  gNoteAndEssay.essayZone?.grab(); exit()
 				case .idHide:    gNoteAndEssay.essayZone?.grab(); done()
-				case .idSave:    save()
+				case .idSave:    save();		 	 gControllers.sync()
 				case .idBack:    gEssayRing.goBack()
 			}
 		}
@@ -770,7 +769,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 							FOREGROUND {
 								gControllers.swapGraphAndEssay(force: .graphMode)
-								self.redrawGraph()
+								gRedrawGraph()
 							}
 
 							return true

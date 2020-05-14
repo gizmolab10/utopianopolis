@@ -33,7 +33,7 @@ class ZOnboarding : ZOperations {
         FOREGROUND(canBeDirect: true) {
             gBatches.batch(.bNewAppleID) { iResult in
                 gFavorites.updateAllFavorites()
-                self.redrawGraph()
+                gRedrawGraph()
             }
         }
     }

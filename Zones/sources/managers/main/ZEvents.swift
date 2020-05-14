@@ -47,7 +47,7 @@ class ZEvents: NSObject {
     
     
     @objc func handleDarkModeChange(iNote: Notification) {
-        redrawGraph()
+        gRedrawGraph()
 		gEssayView?.resetForDarkMode()
     }
     

@@ -131,7 +131,7 @@ class ZTimers: NSObject {
 						try block()
 						debug("•")
 						FOREGROUND {
-							self?.signal([.sStatus]) // show change in timer status
+							gSignal([.sStatus]) // show change in timer status
 						}
 					} catch {
 						startTimer()

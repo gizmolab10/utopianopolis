@@ -1399,7 +1399,7 @@ class ZCloud: ZRecords {
                         let                 record: CKRecord = (iResults?[0])!
                         object.record?[valueForPropertyName] = (record as! CKRecordValue)
 
-                        self.redrawGraph()
+                        gRedrawGraph()
                     }
                 }
             }

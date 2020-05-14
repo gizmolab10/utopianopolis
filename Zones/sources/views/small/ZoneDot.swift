@@ -169,14 +169,22 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
 
     func drawMainDot(in iDirtyRect: CGRect) {
-        let  thickness = CGFloat(gLineThickness)
-        let       path = ZBezierPath(ovalIn: iDirtyRect.insetBy(dx: thickness, dy: thickness))
-        path.lineWidth = thickness * 2.0
-        path .flatness = 0.0001
+        let   thickness = CGFloat(gLineThickness)
+		var        path = ZBezierPath()
 
-        path.stroke()
-        path.fill()
-    }
+		if  isReveal {
+			let toRight = widgetZone?.showingChildren ?? true
+			path        = ZBezierPath.bloatedTrianglePath(aimedRight: toRight, in: iDirtyRect)
+		} else {
+			path        = ZBezierPath(ovalIn: iDirtyRect.insetBy(dx: thickness, dy: thickness))
+		}
+
+		path.lineWidth  = thickness * 2.0
+		path.flatness   = 0.0001
+
+		path.stroke()
+		path.fill()
+	}
 
 
     func drawTinyCounterDots(_ iDirtyRect: CGRect) {

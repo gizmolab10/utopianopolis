@@ -423,7 +423,7 @@ class SnapKitTests: XCTestCase {
             make.top.leading.bottom.trailing.equalTo(self.container).inset(ConstraintDirectionalInsets(top: 25, leading: 25, bottom: 25, trailing: 25))
         }
 
-        XCTAssertEqual(self.container.snp_constraints.count, 4, "Should have 4 constraints")
+        XCTAssertEqual(self.container.snp_constraints.interruptCount, 4, "Should have 4 constraints")
 
 
         let constraints = (self.container.snp_constraints as! [NSLayoutConstraint]).sorted { $0.firstAttribute.rawValue < $1.firstAttribute.rawValue }
@@ -451,7 +451,7 @@ class SnapKitTests: XCTestCase {
             make.top.leading.bottom.trailing.equalTo(self.container).inset(ConstraintDirectionalInsets(top: 25, leading: 25, bottom: 25, trailing: 25))
         }
 
-        XCTAssertEqual(self.container.snp_constraints.count, 4, "Should have 4 constraints")
+        XCTAssertEqual(self.container.snp_constraints.interruptCount, 4, "Should have 4 constraints")
 
 
         let constraints = (self.container.snp_constraints as! [NSLayoutConstraint]).sorted { $0.firstAttribute.rawValue < $1.firstAttribute.rawValue }
@@ -479,7 +479,7 @@ class SnapKitTests: XCTestCase {
             make.edges.equalTo(self.container).inset(ConstraintDirectionalInsets(top: 25, leading: 25, bottom: 25, trailing: 25))
         }
 
-        XCTAssertEqual(self.container.snp_constraints.count, 4, "Should have 4 constraints")
+        XCTAssertEqual(self.container.snp_constraints.interruptCount, 4, "Should have 4 constraints")
 
 
         let constraints = (self.container.snp_constraints as! [NSLayoutConstraint]).sorted { $0.firstAttribute.rawValue < $1.firstAttribute.rawValue }
@@ -610,7 +610,7 @@ class SnapKitTests: XCTestCase {
             make.edges.equalTo(self.container.snp.margins)
         }
         
-        XCTAssertEqual(self.container.snp_constraints.count, 4, "Should have 4 constraints")
+        XCTAssertEqual(self.container.snp_constraints.interruptCount, 4, "Should have 4 constraints")
         
         for constraint in (container.snp_constraints as! [NSLayoutConstraint]) {
             fromAttributes.insert(constraint.firstAttribute)
@@ -627,7 +627,7 @@ class SnapKitTests: XCTestCase {
             make.margins.equalTo(self.container.snp.edges)
         }
         
-        XCTAssertEqual(self.container.snp_constraints.count, 4, "Should have 4 constraints")
+        XCTAssertEqual(self.container.snp_constraints.interruptCount, 4, "Should have 4 constraints")
         
         for constraint in (container.snp_constraints as! [NSLayoutConstraint]) {
             fromAttributes.insert(constraint.firstAttribute)
@@ -650,7 +650,7 @@ class SnapKitTests: XCTestCase {
             make.directionalEdges.equalTo(self.container.snp.directionalMargins)
         }
         
-        XCTAssertEqual(self.container.snp_constraints.count, 4, "Should have 4 constraints")
+        XCTAssertEqual(self.container.snp_constraints.interruptCount, 4, "Should have 4 constraints")
         
         for constraint in (container.snp_constraints as! [NSLayoutConstraint]) {
             fromAttributes.insert(constraint.firstAttribute)
@@ -667,7 +667,7 @@ class SnapKitTests: XCTestCase {
             make.directionalMargins.equalTo(self.container.snp.directionalEdges)
         }
         
-        XCTAssertEqual(self.container.snp_constraints.count, 4, "Should have 4 constraints")
+        XCTAssertEqual(self.container.snp_constraints.interruptCount, 4, "Should have 4 constraints")
         
         for constraint in (container.snp_constraints as! [NSLayoutConstraint]) {
             fromAttributes.insert(constraint.firstAttribute)
@@ -690,7 +690,7 @@ class SnapKitTests: XCTestCase {
             make.bottom.equalTo(vc.bottomLayoutGuide.snp.top)
         }
          
-        XCTAssertEqual(vc.view.snp_constraints.count, 2, "Should have 2 constraints installed")
+        XCTAssertEqual(vc.view.snp_constraints.interruptCount, 2, "Should have 2 constraints installed")
     }
     #endif
     

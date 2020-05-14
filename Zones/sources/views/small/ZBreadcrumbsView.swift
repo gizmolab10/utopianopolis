@@ -28,12 +28,16 @@ class ZBreadcrumbsView : ZView {
 		return width
 	}
 
-	func fitCrumbButtonsInView() {
-		crumbsAreClipped = false
+	func fitBreadcrumbsToWindow() {
+		crumbsAreClipped         = true
 
-		while crumbButtonsWidth > bounds.width {
-			crumbButtons.remove(at: 0)
-			crumbsAreClipped = true
+		if  gClipBreadcrumbs {
+			crumbsAreClipped     = false
+
+			while crumbButtonsWidth > bounds.width {
+				crumbButtons.remove(at: 0)
+				crumbsAreClipped = true
+			}
 		}
 	}
 
@@ -68,20 +72,25 @@ class ZBreadcrumbsView : ZView {
 			crumbButtons.append(button)
 		}
 
-		fitCrumbButtonsInView()
+		fitBreadcrumbsToWindow()
 	}
 
 	func layoutCrumbButtons() {
 		var   prior : ZButton?
 		let buttons = crumbButtons
+		let lastOne = buttons.count - 1
 
-		for button in buttons {
+		for (index, button) in buttons.enumerated() {
 			addSubview(button)
 			button.snp.makeConstraints { make in
 				if  let previous = prior {
 					make.left.equalTo(previous.snp.right).offset(3.0)
 				} else {
 					make.left.equalTo(self)
+				}
+
+				if  index == lastOne, !gClipBreadcrumbs {
+					make.right.lessThanOrEqualTo(self) // force window to grow wide enough to fit all breadcrumbs
 				}
 
 				let title = button.title
@@ -124,7 +133,7 @@ class ZBreadcrumbsView : ZView {
 
 	@IBAction func handleDatabaseIndicatorAction(_ button: ZButton) {
 		gGraphController?.toggleGraphs()
-		gGraphEditor.redrawGraph()
+		gRedrawGraph()
 		updateAndRedraw()
 	}
 
@@ -158,7 +167,7 @@ class ZBreadcrumbsView : ZView {
 				}
 			}
 
-			self.signal([.sSwap, .sRelayout])
+			gSignal([.sSwap, .sRelayout])
 		}
 	}
 

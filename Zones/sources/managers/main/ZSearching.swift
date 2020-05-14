@@ -51,8 +51,8 @@ class ZSearching: NSObject {
 		state = .sNot
 
 		swapModes()
-		signal([.sFound])
-		signal([.sSearch])
+		gSignal([.sFound])
+		gSignal([.sSearch])
 	}
 
 	func swapModes() {
@@ -64,7 +64,7 @@ class ZSearching: NSObject {
 	func showSearch(_ OPTION: Bool = false) {
 		if  gDatabaseID  != .favoritesID {
 			swapModes()
-			signal([OPTION ? .sFound : .sSearch])
+			gSignal([OPTION ? .sFound : .sSearch])
 		}
 	}
 

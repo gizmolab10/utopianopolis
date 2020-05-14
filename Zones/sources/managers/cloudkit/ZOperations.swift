@@ -127,7 +127,7 @@ class ZOperations: NSObject {
                     }
                     
                     if  self.cloudStatusChanged() {
-                        self.signal([.sStatus]) // show change in cloud status
+                        gSignal([.sStatus]) // show change in cloud status
 
                         // //////////////////////////////////////////////
                         // assure that we can perform cloud operations //
@@ -141,7 +141,7 @@ class ZOperations: NSObject {
                                     gFavorites.updateAllFavorites()
                                 }
 
-                                self.redrawGraph()
+                                gRedrawGraph()
                             }
                         }
                     }
@@ -193,7 +193,7 @@ class ZOperations: NSObject {
                         self.reportOnCompletionOfPerformBlock()
 
                         FOREGROUND {
-							self.signal([.sStatus]) // show change in cloud status
+							gSignal([.sStatus]) // show change in cloud status
 
 							if  self.currentOp == .oCompletion {
 
@@ -215,7 +215,7 @@ class ZOperations: NSObject {
             }
 
             add(blockOperation)
-			signal([.sStatus]) // show change in cloud status
+			gSignal([.sStatus]) // show change in cloud status
         }
 
         queue.isSuspended = false

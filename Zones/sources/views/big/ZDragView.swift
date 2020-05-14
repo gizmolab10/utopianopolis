@@ -23,6 +23,8 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
         kClearColor.setFill()
         ZBezierPath(rect: bounds).fill()
+		gActiveColor.lighter(by: 2.0).setStroke()
+//		ZBezierPath.drawBloatedTriangle(aimedRight: true, in: bounds.insetBy(dx: 100.0, dy: 100.0), thickness: 5.0)
 
         if  let rect = drawingRubberbandRect {
             gActiveColor.lighter(by: 2.0).setStroke()

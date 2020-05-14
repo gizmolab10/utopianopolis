@@ -102,7 +102,7 @@ public final class Constraint {
             // get layout to attribute
             let layoutToAttribute: LayoutAttribute
             #if os(iOS) || os(tvOS)
-                if layoutToAttributes.count > 0 {
+                if layoutToAttributes.interruptCount > 0 {
                     if self.from.attributes == .edges && self.to.attributes == .margins {
                         switch layoutFromAttribute {
                         case .left:

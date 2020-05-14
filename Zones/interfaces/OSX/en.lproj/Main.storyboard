@@ -1006,11 +1006,11 @@ CA
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="5Mu-HL-NoB"/>
+                                    <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="EBk-yG-821"/>
                                     <constraint firstItem="ULe-6f-22e" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="leading" id="OUx-cS-nXI"/>
                                     <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="ULe-6f-22e" secondAttribute="bottom" id="PcL-q0-JuL"/>
                                     <constraint firstItem="ULe-6f-22e" firstAttribute="top" secondItem="tJ2-cd-SJp" secondAttribute="top" id="SZk-mA-ij1"/>
                                     <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="leading" id="crF-vI-aE3"/>
-                                    <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="db8-Z8-0tj"/>
                                     <constraint firstAttribute="trailing" secondItem="ULe-6f-22e" secondAttribute="trailing" id="eKh-XU-h3l"/>
                                 </constraints>
                             </customView>

@@ -120,7 +120,7 @@ class ZEssay: ZNote {
 			}
 		}
 
-		redrawAndSync()
+		gRedrawGraph()
 	}
 
 	override func shouldAlterEssay(_ range:NSRange, length: Int) -> (ZAlterationType, Int) {

@@ -29,6 +29,7 @@ enum ZControllerID: Int {
 }
 
 enum ZSignalKind: Int {
+	case sNone
     case sData
     case sMain
 	case sRing
@@ -63,7 +64,7 @@ class ZControllers: NSObject {
 		gRefusesFirstResponder   = true			// WORKAROUND new feature of mac os x
 
 		gRemoteStorage.clear()
-		self.redrawGraph()
+		gRedrawGraph()
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
@@ -77,7 +78,7 @@ class ZControllers: NSObject {
 				gEssayRing.fetchRingIDs()
 				gRefreshCurrentEssay()
 				gRefreshPersistentWorkMode()
-				self.signal([.sSwap, .sRing, .sCrumbs, .sRelayout, .sLaunchDone])
+				gSignal([.sSwap, .sRing, .sCrumbs, .sRelayout, .sLaunchDone])
 
 				gBatches.finishUp { iSame in
 					FOREGROUND {
@@ -85,7 +86,7 @@ class ZControllers: NSObject {
 						gHasFinishedStartup    = true
 
 						gRemoteStorage.adoptAll()
-						self.redrawGraph()
+						gRedrawGraph()
 						self.requestFeedback()
 
 						FOREGROUND(after: 10.0) {
@@ -138,7 +139,7 @@ class ZControllers: NSObject {
 			gFullRingIsVisible = !gFullRingIsVisible
 		}
 
-		signal([.sRing])
+		gSignal([.sRing])
 	}
 
 	func showEssay(forGuide: Bool) {
@@ -148,22 +149,21 @@ class ZControllers: NSObject {
 			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {
 			e.resetCurrentEssay(zone.note)
 			swapGraphAndEssay(force: .noteMode)
-			signal([.sCrumbs, .sRing])
+			gSignal([.sCrumbs, .sRing])
 		}
 	}
 
 	func swapGraphAndEssay(force mode: ZWorkMode? = nil) {
-		let newMode    			        = mode ?? (gIsNoteMode ? .graphMode : .noteMode)
+		let newMode      = mode ?? (gIsNoteMode ? .graphMode : .noteMode)
 
-		if  newMode != gWorkMode {
-			gWorkMode 					= newMode
-			let showNote 			    = newMode == .noteMode
-			let multiple: [ZSignalKind] = [.sSwap, (showNote ? .sCrumbs : .sRelayout)]
+		if  newMode     != gWorkMode {
+			gWorkMode 	 = newMode
+			let showNote = newMode == .noteMode
 
 			FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking graph editor's handle key)
 				gTextEditor.stopCurrentEdit()
 				gEssayView?.updateControlBarButtons(showNote)
-				self.signalFor(nil, multiple: multiple)
+				self.signalFor(nil, multiple: [.sSwap, .sCrumbs, .sRelayout])
 			}
 		}
 	}

@@ -196,7 +196,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	// MARK:-
 
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-		if  !gDeferRedraw,
+		if  !gDeferringRedraw,
 			[.sDatum, .sData, .sRelayout].contains(iKind) { // ignore for preferences, search, information, startup
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
@@ -252,7 +252,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 rubberbandRect = nil
 
 				restartGestureRecognition()
-				signal([.sDatum]) // so color well and indicators get updated
+				gSignal([.sDatum]) // so color well and indicators get updated
             } else if let dot = detectDot(iGesture) {
                 if  !dot.isReveal {
                     dragStartEvent(dot, iGesture)
@@ -270,8 +270,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         if  gIsSearchMode {
             gSearching.exitSearchMode()
         }
-        
-        if  gIsGraphOrEditIdeaMode,
+
+		if !gExitNoteMode(),
+			gIsGraphOrEditIdeaMode,
 			let    gesture = iGesture {
             let    COMMAND = gesture.isCommandDown
 			let     OPTION = gesture.isOptionDown
@@ -334,7 +335,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					}
                 }
 
-                signal([regarding])
+                gSignal([regarding])
             }
 
             restartGestureRecognition()
@@ -371,7 +372,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             cleanupAfterDrag()
             
             if  isDoneGesture(iGesture) {
-				signal([.sPreferences, .sCrumbs]) // so color well gets updated
+				gSignal([.sPreferences, .sCrumbs]) // so color well gets updated
                 restartGestureRecognition()
             }
         }
@@ -442,9 +443,10 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                     gDragDropIndices?.add(index - 1)
                 }
 
-                prior?           .displayForDrag() // erase  child lines
-                dropZone?.widget?.displayForDrag() // relayout child lines
-				gDragDropZone?.widget?.controller?.dragView?.setNeedsDisplay() // relayout drag: line and dot, in the appropriate drag view
+                prior?                          .displayForDrag() // erase    child lines
+                dropZone?.widget?               .displayForDrag() // relayout child lines
+				gGraphController?    .dragView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
+				gFavoritesController?.dragView?.setNeedsDisplay()
 
                 if !isNoop, dropNow,
 					let         drop = dropZone {

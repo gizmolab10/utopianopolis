@@ -22,7 +22,7 @@ var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
 var               gLaunchedAt                     = Date()
-var              gDeferRedraw                     = false
+var              gDeferringRedraw                     = false
 var            gTextCapturing                     = false
 var          gIsReadyToShowUI                     = false
 var        gKeyboardIsVisible                     = false
@@ -546,13 +546,13 @@ func gTemporarilySetArrowsDoNotBrowse(_ notBrowse: Bool, for seconds: Double = 1
 // MARK:- actions
 // MARK:-
 
-var count = 0
+var interruptCount = 0
 
 func gTestForUserInterrupt() throws {
 	if  Thread.isMainThread, let w = gWindow, w.isKeyWindow, (w.mouseMoved || w.keyPressed) {
 
- 		print("throwing user interrupt \(count)")
-		count += 1
+		printDebug(.dLog, "throwing user interrupt \(interruptCount)")
+		interruptCount += 1
 
 		throw(ZInterruptionError.userInterrupted)
 	}

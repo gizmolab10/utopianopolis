@@ -41,6 +41,36 @@ func printDebug(_ mode: ZDebugMode, prefix: String = "  ", _ message: String, su
 
 func gSeparatorAt(level: Int) -> String { return " ( \(level) ) " }
 
+func gExitNoteMode() -> Bool {
+	if  gIsNoteMode {
+		gEssayView?.save()
+		gControllers.swapGraphAndEssay(force: .graphMode)
+		gControllers.sync()
+
+		return true
+	}
+
+	return false
+}
+
+func gRedrawGraph(for object: Any? = nil, _ onCompletion: Closure? = nil) {
+	gControllers.signalFor(object, regarding: .sRelayout, onCompletion: onCompletion)
+}
+
+func gDeferRedraw(_ closure: Closure) {
+	gDeferringRedraw     = true
+
+	closure()
+
+	FOREGROUND(after: 0.4) {
+		gDeferringRedraw = false   // in case closure doesn't set it
+	}
+}
+
+func gSignal(_ multiple: [ZSignalKind]) {
+	gControllers.signalFor(nil, multiple: multiple)
+}
+
 precedencegroup BooleanPrecedence { associativity: left }
 infix operator ^^ : BooleanPrecedence
 /**
@@ -117,27 +147,9 @@ extension NSObject {
         }
     }
 
-	func redrawGraph(for object: Any? = nil, _ onCompletion: Closure? = nil) {
-		gControllers.signalFor(object, regarding: .sRelayout, onCompletion: onCompletion)
-	}
-
-	func deferRedraw(_ closure: Closure) {
-		gDeferRedraw     = true
-
-		closure()
-
-		FOREGROUND(after: 0.4) {
-			gDeferRedraw = false   // in case closure doesn't set it
-		}
-	}
-
-	func signal(_ multiple: [ZSignalKind]) {
-		gControllers.signalFor(nil, multiple: multiple)
-	}
-
 	func redrawAndSyncAndRedraw() {
 		redrawAndSync {
-			self.redrawGraph()
+			gRedrawGraph()
 		}
 	}
 
@@ -158,7 +170,7 @@ extension NSObject {
 	func cycleSkillLevel() {
 		gSkillLevel = ZSkillLevel(rawValue: gSkillLevel.rawValue + 1) ?? ZSkillLevel.beginner
 
-		redrawGraph()
+		gRedrawGraph()
 	}
 
     func invokeUsingDatabaseID(_ dbID: ZDatabaseID?, block: Closure) {
@@ -632,9 +644,15 @@ extension Double {
 	var    stringToTwoDecimals                    : String { return String(format: "%.02f", self) }
 }
 
+extension CGFloat {
+	var    stringToTwoDecimals                    : String { return String(format: "%.02f", self) }
+}
+
 infix operator -- : AdditionPrecedence
 
 extension CGPoint {
+
+	var descriptionToTwoDecimals: String { return "(\(x.stringToTwoDecimals), \(y.stringToTwoDecimals))"}
 
     public init(_ size: CGSize) {
         self.init()
@@ -653,6 +671,10 @@ extension CGPoint {
 
         return CGFloat(sqrt(width * width + height * height))
     }
+
+	func offsetBy(_ delta: CGPoint) -> CGPoint {
+		return CGPoint(x: x + delta.x, y: y + delta.y)
+	}
 
 	func offsetBy(_ delta: CGSize) -> CGPoint {
 		return CGPoint(x: x + delta.width, y: y + delta.height)
@@ -674,6 +696,16 @@ extension CGPoint {
 		let (path, _) = ZBezierPath.circlesPath(orientedUp: orientedUp, in: iRect)
 
 		return path.contains(self)
+	}
+
+	var hypontenuse: CGFloat {
+		return sqrt(x * x + y * y)
+	}
+
+	func rotate(by angle: Double) -> CGPoint {
+		let r = hypontenuse
+
+		return CGPoint(x: r * CGFloat(cos(angle)), y: r * CGFloat(sin(angle)))
 	}
 
 }
@@ -840,49 +872,18 @@ extension ZBezierPath {
 		setLineDash(pattern, count: 2, phase: 3.0)
 	}
 
-	static func trianglePath(orientedUp: Bool, in iRect: CGRect) -> ZBezierPath {
-		let path = ZBezierPath()
-
-		path.appendTriangle(orientedUp: orientedUp, in: iRect)
-
-		return path
-	}
-
-	static func circlePath(in iRect: CGRect) -> ZBezierPath {
-		return ZBezierPath(ovalIn: iRect)
-	}
-
-	static func circlesPath(orientedUp: Bool, in iRect: CGRect) -> (ZBezierPath, CGRect) {
-		let path = ZBezierPath()
-		let rect = path.appendCircles(orientedUp: orientedUp, in: iRect)
-
-		return (path, rect)
-	}
-
 	static func drawTriangle(orientedUp: Bool, in iRect: CGRect, thickness: CGFloat) {
 		let path = trianglePath(orientedUp: orientedUp, in: iRect)
 
 		path.draw(thickness: thickness)
 	}
 
-	static func drawCircle(in iRect: CGRect, thickness: CGFloat) {
-		let path = circlePath(in: iRect)
+	static func trianglePath(orientedUp: Bool, in iRect: CGRect) -> ZBezierPath {
+		let path = ZBezierPath()
 
-		path.draw(thickness: thickness)
-	}
+		path.appendTriangle(orientedUp: orientedUp, in: iRect)
 
-	static func drawCircles(in iRect: CGRect, thickness: CGFloat, orientedUp: Bool) -> CGRect {
-		let (path, rect) = circlesPath(orientedUp: orientedUp, in: iRect)
-
-		path.draw(thickness: thickness)
-
-		return rect
-	}
-
-	func draw(thickness: CGFloat) {
-		lineWidth = thickness
-
-		stroke()
+		return path
 	}
 
 	func appendTriangle(orientedUp: Bool, in iRect: CGRect) {
@@ -898,6 +899,31 @@ extension ZBezierPath {
 		line(to: tip)
 	}
 
+	static func drawCircle(in iRect: CGRect, thickness: CGFloat) {
+		let path = circlePath(in: iRect)
+
+		path.draw(thickness: thickness)
+	}
+
+	static func circlePath(in iRect: CGRect) -> ZBezierPath {
+		return ZBezierPath(ovalIn: iRect)
+	}
+
+	static func drawCircles(in iRect: CGRect, thickness: CGFloat, orientedUp: Bool) -> CGRect {
+		let (path, rect) = circlesPath(orientedUp: orientedUp, in: iRect)
+
+		path.draw(thickness: thickness)
+
+		return rect
+	}
+
+	static func circlesPath(orientedUp: Bool, in iRect: CGRect) -> (ZBezierPath, CGRect) {
+		let path = ZBezierPath()
+		let rect = path.appendCircles(orientedUp: orientedUp, in: iRect)
+
+		return (path, rect)
+	}
+
 	func appendCircles(orientedUp: Bool, in iRect: CGRect) -> CGRect {
 		let   rect = iRect.offsetBy(fractionX: 0.0, fractionY: orientedUp ? 0.1 : -0.1)
 		var    top = rect.insetBy(fractionX: 0.0, fractionY: 0.375)  // shrink to one-fifth size
@@ -910,6 +936,67 @@ extension ZBezierPath {
 		appendOval(in: bottom)
 
 		return orientedUp ? top : bottom
+	}
+
+	func draw(thickness: CGFloat) {
+		lineWidth = thickness
+
+		stroke()
+	}
+
+	static func drawBloatedTriangle(aimedRight: Bool, in iRect: CGRect, thickness: CGFloat) {
+		let path = bloatedTrianglePath(aimedRight: aimedRight, in: iRect)
+
+		path.draw(thickness: thickness)
+	}
+
+	static func bloatedTrianglePath(aimedRight: Bool, in iRect: CGRect) -> ZBezierPath {
+		let path = ZBezierPath()
+
+		path.appendBloatedTriangle(aimedRight: aimedRight, in: iRect)
+
+		return path
+	}
+
+	func appendBloatedTriangle(aimedRight: Bool, in iRect: CGRect) {
+		let      center = iRect.center
+		let  insetRatio = 0.35
+		let      radius = Double(iRect.width) * insetRatio
+		let  startAngle = aimedRight ? 0.0 : Double.pi
+		let    bigAngle = Double.pi /  3.0 // one sixth of a circle
+		let  smallAngle = Double.pi / 15.0 // one thirtieth
+		let innerVector = CGPoint(x: radius,       y: 0.0)
+		let outerVector = CGPoint(x: radius * 1.5, y: 0.0)
+		var  controlOne = CGPoint.zero
+		var  controlTwo = CGPoint.zero
+		var       point = CGPoint.zero
+		var       index = 0.0
+
+		func rotatePoints() {
+			let   angle = index * bigAngle + startAngle
+			let   other = angle - bigAngle
+			let     one = other - smallAngle
+			let     two = other + smallAngle
+			point       = innerVector.rotate(by: angle).offsetBy(center)
+			controlOne  = outerVector.rotate(by:   one).offsetBy(center)
+			controlTwo  = outerVector.rotate(by:   two).offsetBy(center)
+			index      += 2.0
+		}
+
+		rotatePoints()
+		move(to: point)
+		rotatePoints()
+		curve(to: point, controlPoint1: controlOne, controlPoint2: controlTwo)
+		rotatePoints()
+		curve(to: point, controlPoint1: controlOne, controlPoint2: controlTwo)
+		rotatePoints()
+		curve(to: point, controlPoint1: controlOne, controlPoint2: controlTwo)
+	}
+
+	func appendCircle(at center: CGPoint, radius: CGFloat) {
+		let rect = CGRect(origin: center, size: CGSize.zero).insetBy(dx: -radius, dy: -radius)
+
+		appendOval(in: rect)
 	}
 
 }
@@ -1970,7 +2057,7 @@ extension ZView {
     }
 
     func setAllSubviewsNeedDisplay() {
-        if !gDeferRedraw {
+        if !gDeferringRedraw {
             applyToAllSubviews { iView in
                 iView.setNeedsDisplay()
             }

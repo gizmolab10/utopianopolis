@@ -896,12 +896,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			parent.addIdea(at: index, with: name) { iChild in
 				if  let child = iChild {
 					if !containing {
-						self.redrawGraph(for: parent) {
+						gRedrawGraph(for: parent) {
 							completion(child)
 						}
 					} else {
 						child.acquireZones(zones) {
-							self.redrawGraph(for: parent) {
+							gRedrawGraph(for: parent) {
 								completion(child)
 								gControllers.sync()
 							}
@@ -1083,11 +1083,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addNextAndRedraw(containing: Bool = false, onCompletion: ZoneClosure? = nil) {
-		deferRedraw {
+		gDeferRedraw {
 			addNext(containing: containing) { iChild in
-				gDeferRedraw = false
+				gDeferringRedraw = false
 
-				self.redrawGraph(for: self) {
+				gRedrawGraph(for: self) {
 					onCompletion?(iChild)
 					iChild.edit()
 				}
@@ -1110,12 +1110,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			gTextEditor.stopCurrentEdit()
 
-			deferRedraw {
+			gDeferRedraw {
 				parent.addIdea(at: index, with: childName) { iChild in
 					self.moveZone(to: iChild) {
 						self.redrawAndSync()
 
-						gDeferRedraw = false
+						gDeferringRedraw = false
 
 						iChild?.edit()
 					}
@@ -1236,7 +1236,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func         addToGrab() { gSelecting.addMultipleGrabs([self]) }
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
-	func             focus() { gFocusRing          .focusOn(self) { self.redrawGraph() } }
+	func             focus() { gFocusRing          .focusOn(self) { gRedrawGraph() } }
 	func editTrait(for iType: ZTraitType) { gTextEditor.edit(traitFor(iType)) }
 
 	@discardableResult func edit() -> ZTextEditor? {
@@ -1250,7 +1250,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		revealChildren()
 		gControllers.swapGraphAndEssay(force: .graphMode)
-		redrawGraph()
+		gRedrawGraph()
 
 		let e = edit()
 
@@ -1296,7 +1296,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			grab()
 		}
 
-		redrawGraph(for: self)
+		gRedrawGraph(for: self)
     }
 
     override func debug(_  iMessage: String) {
@@ -1927,18 +1927,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  newName == zoneName {
 				combineIntoParent()
 			} else {
-				self.deferRedraw {
+				gDeferRedraw {
 					if  asNewParent {
 						parentZone?.addNextAndRedraw(containing: true) { iChild in
 							iChild.zoneName = newName
 						}
 					} else {
 						addIdea(at: gListsGrowDown ? nil : 0, with: newName) { iChild in
-							gDeferRedraw = false
+							gDeferringRedraw = false
 
 							if  let child = iChild {
 								self.revealChildren()
-								self.redrawGraph(for: self) {
+								gRedrawGraph(for: self) {
 									child.editAndSelect()
 									gControllers.sync()
 								}
@@ -1961,12 +1961,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			parent.extractTraits  (from: self)
 			parent.extractChildren(from: self)
 
-			self.deferRedraw {
+			gDeferRedraw {
 				self.moveZone(to: gTrash)
 
-				gDeferRedraw = false
+				gDeferringRedraw = false
 
-				self.redrawGraph(for: parent) {
+				gRedrawGraph(for: parent) {
 					parent.editAndSelect(range: range)
 				}
 			}
@@ -1985,13 +1985,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		generationalUpdate(show: show, to: goal) {
-			self.redrawGraph(for: self)
+			gRedrawGraph(for: self)
 		}
 	}
 
 	func expand(_ show: Bool) {
 		generationalUpdate(show: show) {
-			self.redrawGraph(for: self)
+			gRedrawGraph(for: self)
 		}
 	}
 
@@ -2231,7 +2231,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		redrawGraph(for: self)
+		gRedrawGraph(for: self)
 	}
 
 	// MARK:- reveal dot
@@ -2248,7 +2248,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  canTravel && (COMMAND || (fetchableCount == 0 && count == 0)) {
 			gFocusRing.invokeTravel(self) { // email, hyperlink, bookmark, essay
-				self.redrawGraph()
+				gRedrawGraph()
 			}
 		} else {
 			let show = !showingChildren
@@ -2263,10 +2263,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				gFavoritesHereMaybe = showingChildren ? self : parentZone
 
-				self.redrawGraph()
+				gRedrawGraph()
 			} else {
 				generationalUpdate(show: show) {
-					self.redrawGraph(for: self)
+					gRedrawGraph(for: self)
 				}
 			}
 		}

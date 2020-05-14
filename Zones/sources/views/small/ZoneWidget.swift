@@ -513,7 +513,6 @@ class ZoneWidget: ZView {
         }
     }
 
-
     // lines need CHILD dots drawn first.
     // extra pass through hierarchy to do lines
 
@@ -522,7 +521,7 @@ class ZoneWidget: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-		if  gIsGraphOrEditIdeaMode,
+		if (gIsGraphOrEditIdeaMode || !isInMap),
 			let      zone = widgetZone {
             let isGrabbed = zone.isGrabbed
             let isEditing = textWidget.isFirstResponder

@@ -15,7 +15,7 @@
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
 private let  detailIds : [ZDetailsViewID] = [.Preferences, .Information, .Introduction, .Status, .Favorites]
 
-class ZDetailsController: ZGenericController {
+class ZDetailsController: ZGesturesController {
 
 	var              viewsByID = [Int : ZTogglingView]()
     @IBOutlet var    stackView : ZStackView?
@@ -28,6 +28,20 @@ class ZDetailsController: ZGenericController {
     func register(id: ZDetailsViewID, for view: ZTogglingView) {
         viewsByID[id.rawValue] = view
     }
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+
+		gestureView = view
+	}
+
+	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
+		if  gIsNoteMode {
+			gEssayView?.save()
+			gControllers.swapGraphAndEssay(force: .graphMode)
+			gControllers.sync()
+		}
+	}
 
     func update() {
 		if  gIsReadyToShowUI {
@@ -46,7 +60,7 @@ class ZDetailsController: ZGenericController {
 		view(for: .Favorites )?   .hideHideable = !gProSkillLevel
 
 		FOREGROUND() {
-			self.redrawGraph()
+			gRedrawGraph()
 		}
 	}
     

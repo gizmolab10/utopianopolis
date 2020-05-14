@@ -97,7 +97,7 @@ class ZFocus: ZRing {
 
 			gHere.grab()
 			gFavorites.updateAllFavorites()
-			redrawGraph()
+			gRedrawGraph()
 		}
 	}
 

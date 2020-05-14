@@ -64,7 +64,7 @@ class ZPreferencesController: ZGenericController {
 				default:           break
 			}
 
-            redrawGraph()
+            gRedrawGraph()
         }
     }
 
@@ -105,9 +105,9 @@ class ZPreferencesController: ZGenericController {
         let          selection = iControl.selectedSegment
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
 			switch (identifier) {
-				case "counts":    gCountsMode     = ZCountsMode    (rawValue: selection)!; redrawGraph()
-				case "browsing":  gBrowsingMode   = ZBrowsingMode  (rawValue: selection)!; signal([.sMain, .sGraph])
-				case "direction": gListGrowthMode = ZListGrowthMode(rawValue: selection)!; signal([.sMain, .sGraph])
+				case "counts":    gCountsMode     = ZCountsMode    (rawValue: selection)!; gRedrawGraph()
+				case "browsing":  gBrowsingMode   = ZBrowsingMode  (rawValue: selection)!; gSignal([.sMain, .sGraph])
+				case "direction": gListGrowthMode = ZListGrowthMode(rawValue: selection)!; gSignal([.sMain, .sGraph])
 				default: break
 			}
         }
