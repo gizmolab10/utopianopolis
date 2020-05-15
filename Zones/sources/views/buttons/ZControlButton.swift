@@ -1,5 +1,5 @@
 //
-//  ZRingControl.swift
+//  ZControlButton.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 1/27/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZRingControl: ZView, ZToolable {
+class ZControlButton: ZView, ZToolable {
 
 	enum ZControlType {
 		case eInsertion
@@ -23,9 +23,9 @@ class ZRingControl: ZView, ZToolable {
 
 	var labelText: String {
 		switch type {
-			case .eInsertion: return gListsGrowDown           ? "down" : "up"
-			case .eConfined:  return gBrowsingIsConfined      ? "list" : "all"
-			case .eToolTips:  return gToolTipsLength != .none ? "hide" : "show" + "tool tips"
+			case .eInsertion: return gListsGrowDown      ? "down" : "up"
+			case .eConfined:  return gBrowsingIsConfined ? "list" : "all"
+			case .eToolTips:  return gShowToolTips       ? "hide" : "show" + "tool tips"
 		}
 	}
 
@@ -104,8 +104,8 @@ class ZRingControl: ZView, ZToolable {
 	private static let  confined = create(.eConfined)
 	private static let insertion = create(.eInsertion)
 
-	private static func create(_ type: ZControlType) -> ZRingControl {
-		let  control = ZRingControl()
+	private static func create(_ type: ZControlType) -> ZControlButton {
+		let  control = ZControlButton()
 		control.type = type
 
 		return control

@@ -13,7 +13,7 @@ class ZFavoritesController: ZGraphController {
 	override var isFavorites: Bool { return true }
 	@IBOutlet var addButton: ZButton?
 
-	@IBAction func addButtonAction(_ button: ZButton) {
+	@IBAction func favoritesButtonAction(_ button: ZButton) {
 		gFavoritesHereMaybe?.addIdea()
 	}
 

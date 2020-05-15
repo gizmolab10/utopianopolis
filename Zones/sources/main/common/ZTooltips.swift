@@ -89,7 +89,7 @@ extension ZoneTextWidget {
 extension ZRingView {
 
 	@discardableResult override func addToolTip(_ rect: NSRect, owner: Any, userData data: UnsafeMutableRawPointer?) -> NSView.ToolTipTag {
-		if  gToolTipsLength != .none,
+		if  gShowToolTips,
 			let         tool = owner as? ZToolable,
 			let         name = tool.toolName() {
 			let         font = gFavoritesFont
@@ -110,7 +110,7 @@ extension ZRingView {
 	}
 
 	func updateTooltips() {
-		let controls = ZRingControl.controls
+		let controls = ZControlButton.controls
 		let  objects = necklaceObjects 				// expensive computation: do once
 		let    count = objects.count
 

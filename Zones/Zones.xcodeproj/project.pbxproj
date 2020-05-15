@@ -229,9 +229,9 @@
 		A7B48AA823E0E80C00654DBD /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */; };
 		A7B48AA923E0E80C00654DBD /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */; };
 		A7B48AAA23E0E80C00654DBD /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */; };
-		A7B48AAB23E0E80C00654DBD /* ZRingControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8523E0E80C00654DBD /* ZRingControl.swift */; };
-		A7B48AAC23E0E80C00654DBD /* ZRingControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8523E0E80C00654DBD /* ZRingControl.swift */; };
-		A7B48AAD23E0E80C00654DBD /* ZRingControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8523E0E80C00654DBD /* ZRingControl.swift */; };
+		A7B48AAB23E0E80C00654DBD /* ZControlButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8523E0E80C00654DBD /* ZControlButton.swift */; };
+		A7B48AAC23E0E80C00654DBD /* ZControlButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8523E0E80C00654DBD /* ZControlButton.swift */; };
+		A7B48AAD23E0E80C00654DBD /* ZControlButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8523E0E80C00654DBD /* ZControlButton.swift */; };
 		A7B48AAE23E0E80C00654DBD /* ZoneSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */; };
 		A7B48AAF23E0E80C00654DBD /* ZoneSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */; };
 		A7B48AB123E0E80C00654DBD /* ZoneDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8723E0E80C00654DBD /* ZoneDot.swift */; };
@@ -456,7 +456,7 @@
 		A7B48A8223E0E80C00654DBD /* ZLineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZLineView.swift; sourceTree = "<group>"; };
 		A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneTextWidget.swift; sourceTree = "<group>"; };
 		A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToggleButton.swift; sourceTree = "<group>"; };
-		A7B48A8523E0E80C00654DBD /* ZRingControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRingControl.swift; sourceTree = "<group>"; };
+		A7B48A8523E0E80C00654DBD /* ZControlButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZControlButton.swift; sourceTree = "<group>"; };
 		A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneSegmentedControl.swift; sourceTree = "<group>"; };
 		A7B48A8723E0E80C00654DBD /* ZoneDot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneDot.swift; sourceTree = "<group>"; };
 		A7B48A8823E0E80C00654DBD /* ZGridCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGridCell.swift; sourceTree = "<group>"; };
@@ -694,8 +694,9 @@
 		0C39B2851F182EBB0091F4D1 /* views */ = {
 			isa = PBXGroup;
 			children = (
-				A7B48A7823E0E80C00654DBD /* big */,
-				A7B48A8123E0E80C00654DBD /* small */,
+				A7064431246F327700F90B86 /* buttons */,
+				A7B48A8123E0E80C00654DBD /* other */,
+				A7B48A7823E0E80C00654DBD /* views */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -845,6 +846,17 @@
 			name = products;
 			sourceTree = "<group>";
 		};
+		A7064431246F327700F90B86 /* buttons */ = {
+			isa = PBXGroup;
+			children = (
+				A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */,
+				A7B48A8523E0E80C00654DBD /* ZControlButton.swift */,
+				A706441D2460DEF300F90B86 /* ZIntroductionButton.swift */,
+				A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */,
+			);
+			path = buttons;
+			sourceTree = "<group>";
+		};
 		A714856E2256AAAF00F54C0C /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -883,37 +895,33 @@
 			path = edit;
 			sourceTree = "<group>";
 		};
-		A7B48A7823E0E80C00654DBD /* big */ = {
+		A7B48A7823E0E80C00654DBD /* views */ = {
 			isa = PBXGroup;
 			children = (
+				A764067723F7E37600D9EA3A /* ZBreadcrumbsView.swift */,
 				A7B48A8023E0E80C00654DBD /* ZDragView.swift */,
 				A7B48A7923E0E80C00654DBD /* ZEssayView.swift */,
-				A7B48A7A23E0E80C00654DBD /* ZMobileKeyInput.swift */,
-				A7B48A7E23E0E80C00654DBD /* ZoneWindow.swift */,
+				A7B48A8223E0E80C00654DBD /* ZLineView.swift */,
 				A7B48A7F23E0E80C00654DBD /* ZRingView.swift */,
+				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
+				A7B48A7E23E0E80C00654DBD /* ZoneWindow.swift */,
 			);
-			path = big;
+			path = views;
 			sourceTree = "<group>";
 		};
-		A7B48A8123E0E80C00654DBD /* small */ = {
+		A7B48A8123E0E80C00654DBD /* other */ = {
 			isa = PBXGroup;
 			children = (
-				A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */,
-				A764067723F7E37600D9EA3A /* ZBreadcrumbsView.swift */,
 				A74DBDEA244E004000DF751A /* ZContextualMenu.swift */,
 				A7B48A8823E0E80C00654DBD /* ZGridCell.swift */,
-				A706441D2460DEF300F90B86 /* ZIntroductionButton.swift */,
-				A7B48A8223E0E80C00654DBD /* ZLineView.swift */,
+				A7B48A7A23E0E80C00654DBD /* ZMobileKeyInput.swift */,
 				A752FC31245222D100603A54 /* ZoneContextualMenu.swift */,
 				A7B48A8723E0E80C00654DBD /* ZoneDot.swift */,
 				A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */,
 				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
 				A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */,
-				A7B48A8523E0E80C00654DBD /* ZRingControl.swift */,
-				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
-				A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */,
 			);
-			path = small;
+			path = other;
 			sourceTree = "<group>";
 		};
 		A7F5D690227E6AEE009FB225 /* documentation */ = {
@@ -1180,7 +1188,7 @@
 				0C39B2BF1F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
 				0C43EFD721010F62000976CE /* ZRemoteStorage.swift in Sources */,
 				A7B48AA523E0E80C00654DBD /* ZoneTextWidget.swift in Sources */,
-				A7B48AAB23E0E80C00654DBD /* ZRingControl.swift in Sources */,
+				A7B48AAB23E0E80C00654DBD /* ZControlButton.swift in Sources */,
 				A70064DD22484808004E3A8D /* ZManifest.swift in Sources */,
 				0C43EFDD21010F62000976CE /* ZBatches.swift in Sources */,
 				0C39B28C1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
@@ -1289,7 +1297,7 @@
 				A717BF482251332D004F7993 /* NSPanel+ZPanel.m in Sources */,
 				0C43EFC021010F17000976CE /* ZFiles.swift in Sources */,
 				A7B48A7123E0C83B00654DBD /* ZRingController.swift in Sources */,
-				A7B48AAD23E0E80C00654DBD /* ZRingControl.swift in Sources */,
+				A7B48AAD23E0E80C00654DBD /* ZControlButton.swift in Sources */,
 				A7E096CC23EB98FA0017EC32 /* ZWebLinkController.swift in Sources */,
 				A7B78D44244C04F900DB2C14 /* ZBreadcrumbButton.swift in Sources */,
 				A72A0B6B23B13CE6002A97E9 /* ZBaseEditor.swift in Sources */,
@@ -1404,7 +1412,7 @@
 				0C2E22D11F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				A7E5A5EB23EFAE4F00A52F47 /* ZTogglingView.swift in Sources */,
 				A7B48AB223E0E80C00654DBD /* ZoneDot.swift in Sources */,
-				A7B48AAC23E0E80C00654DBD /* ZRingControl.swift in Sources */,
+				A7B48AAC23E0E80C00654DBD /* ZControlButton.swift in Sources */,
 				0C43EFE121010F62000976CE /* ZCloud.swift in Sources */,
 				A7B48A8B23E0E80C00654DBD /* ZEssayView.swift in Sources */,
 				0C43EFBF21010F17000976CE /* ZFiles.swift in Sources */,

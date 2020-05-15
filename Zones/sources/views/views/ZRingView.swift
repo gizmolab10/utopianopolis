@@ -44,7 +44,7 @@ class ZRingView: ZView, ZTooltips {
 	// MARK:-
 
 	func drawControl(for index: Int) {
-		ZRingControl.controls[index].draw(controlRects[index])
+		ZControlButton.controls[index].draw(controlRects[index])
 	}
 
 	override func draw(_ iDirtyRect: CGRect) {
@@ -84,7 +84,7 @@ class ZRingView: ZView, ZTooltips {
 	// MARK:-
 
 	func respondToRingControl(_ item: NSObject) -> Bool {
-		if  let    control = item as? ZRingControl {
+		if  let    control = item as? ZControlButton {
 			return control.respond()
 		}
 
@@ -335,7 +335,7 @@ class ZRingView: ZView, ZTooltips {
 		if  let     rect = iRect {
 			let  objects = necklaceObjects 				// expensive computation: do once
 			let    count = objects.count
-			let controls = ZRingControl.controls
+			let controls = ZControlButton.controls
 
 			for (index, controlRect) in controlRects.enumerated() {
 				if  rect.intersectsOval(within: controlRect) {
@@ -355,7 +355,7 @@ class ZRingView: ZView, ZTooltips {
 			}
 
 			if  rect.intersectsOval(within: geometry.one) {
-				return ZRingControl.tooltips
+				return ZControlButton.tooltips
 			}
 		}
 

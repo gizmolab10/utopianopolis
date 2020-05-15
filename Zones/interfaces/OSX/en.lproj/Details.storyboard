@@ -148,28 +148,59 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="3xG-CQ-dra" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
+                                <rect key="frame" x="0.0" y="0.0" width="285" height="122"/>
                                 <connections>
                                     <outlet property="controller" destination="bl3-7n-UyN" id="h1g-O6-twS"/>
                                 </connections>
                             </customView>
-                            <button toolTip="add a favorites category" focusRingType="exterior" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ovn-gU-Sk0">
-                                <rect key="frame" x="2" y="123" width="30" height="29"/>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="kS3-7c-58G">
+                                <rect key="frame" x="92" y="122" width="102" height="34"/>
+                                <subviews>
+                                    <button toolTip="click here to add a favorites category" focusRingType="exterior" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ovn-gU-Sk0">
+                                        <rect key="frame" x="2" y="1" width="30" height="29"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="18" id="DK8-za-t4s"/>
+                                            <constraint firstAttribute="width" secondItem="Ovn-gU-Sk0" secondAttribute="height" id="Zip-xZ-P6E"/>
+                                            <constraint firstAttribute="width" constant="18" id="mKf-Ww-b9D"/>
+                                        </constraints>
+                                        <buttonCell key="cell" type="round" title="+" bezelStyle="circular" alignment="center" borderStyle="border" focusRingType="exterior" inset="2" id="yQd-kI-Vgm">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system" size="17"/>
+                                            <string key="keyEquivalent">=</string>
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                        </buttonCell>
+                                        <color key="contentTintColor" name="selectedControlColor" catalog="System" colorSpace="catalog"/>
+                                        <connections>
+                                            <action selector="favoritesButtonAction:" target="bl3-7n-UyN" id="cgm-vH-E4S"/>
+                                        </connections>
+                                    </button>
+                                    <button toolTip="click here to show recents" focusRingType="exterior" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="seh-CA-mub">
+                                        <rect key="frame" x="28" y="1" width="30" height="29"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="18" id="CRG-nq-Yrg"/>
+                                            <constraint firstAttribute="width" secondItem="seh-CA-mub" secondAttribute="height" id="QSP-VM-XTn"/>
+                                            <constraint firstAttribute="width" constant="18" id="Vsv-rY-j9k"/>
+                                        </constraints>
+                                        <buttonCell key="cell" type="round" title="f" bezelStyle="circular" alignment="center" borderStyle="border" focusRingType="exterior" inset="2" id="1B3-1R-ybF">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system" size="17"/>
+                                            <string key="keyEquivalent">=</string>
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                        </buttonCell>
+                                        <color key="contentTintColor" name="selectedControlColor" catalog="System" colorSpace="catalog"/>
+                                        <connections>
+                                            <action selector="favoritesButtonAction:" target="bl3-7n-UyN" id="90M-iN-2BS"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="18" id="DK8-za-t4s"/>
-                                    <constraint firstAttribute="width" secondItem="Ovn-gU-Sk0" secondAttribute="height" id="Zip-xZ-P6E"/>
+                                    <constraint firstItem="Ovn-gU-Sk0" firstAttribute="centerY" secondItem="kS3-7c-58G" secondAttribute="centerY" id="27D-Dk-pfA"/>
+                                    <constraint firstItem="seh-CA-mub" firstAttribute="centerY" secondItem="kS3-7c-58G" secondAttribute="centerY" id="D3M-fv-Kda"/>
+                                    <constraint firstAttribute="trailing" secondItem="seh-CA-mub" secondAttribute="trailing" constant="50" id="JFJ-q1-wir"/>
+                                    <constraint firstItem="Ovn-gU-Sk0" firstAttribute="leading" secondItem="kS3-7c-58G" secondAttribute="leading" constant="8" id="PNF-oG-qW0"/>
+                                    <constraint firstItem="seh-CA-mub" firstAttribute="leading" secondItem="Ovn-gU-Sk0" secondAttribute="trailing" constant="8" id="b7a-wj-yjd"/>
                                 </constraints>
-                                <buttonCell key="cell" type="round" title="+" bezelStyle="circular" alignment="center" borderStyle="border" focusRingType="exterior" inset="2" id="yQd-kI-Vgm">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system" size="17"/>
-                                    <string key="keyEquivalent">=</string>
-                                    <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
-                                </buttonCell>
-                                <color key="contentTintColor" name="selectedControlColor" catalog="System" colorSpace="catalog"/>
-                                <connections>
-                                    <action selector="addButtonAction:" target="bl3-7n-UyN" id="cgm-vH-E4S"/>
-                                </connections>
-                            </button>
+                            </customView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="YCv-YN-HVE">
                                 <rect key="frame" x="0.0" y="-2" width="285" height="5"/>
                             </box>
@@ -184,15 +215,16 @@
                             <constraint firstAttribute="bottom" secondItem="pEz-hB-ZvT" secondAttribute="bottom" id="7Vv-Hc-ISd"/>
                             <constraint firstItem="pEz-hB-ZvT" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="9YU-xa-4nm"/>
                             <constraint firstItem="YCv-YN-HVE" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="Af1-M9-9OB"/>
+                            <constraint firstItem="3xG-CQ-dra" firstAttribute="top" secondItem="kS3-7c-58G" secondAttribute="bottom" id="S5m-Wv-MH5"/>
                             <constraint firstAttribute="trailing" secondItem="pEz-hB-ZvT" secondAttribute="trailing" id="SKZ-ji-sE6"/>
-                            <constraint firstItem="Ovn-gU-Sk0" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" constant="8" id="T3X-bW-KHg"/>
-                            <constraint firstItem="Ovn-gU-Sk0" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" constant="8" id="Za8-uA-Arw"/>
                             <constraint firstAttribute="trailing" secondItem="YCv-YN-HVE" secondAttribute="trailing" id="a2P-j8-F0d"/>
                             <constraint firstAttribute="bottom" secondItem="YCv-YN-HVE" secondAttribute="bottom" id="aEx-6M-ttW"/>
-                            <constraint firstItem="3xG-CQ-dra" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="fYG-fz-bMZ"/>
+                            <constraint firstItem="kS3-7c-58G" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="aou-dg-bcN"/>
+                            <constraint firstItem="3xG-CQ-dra" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" constant="34" id="fYG-fz-bMZ"/>
                             <constraint firstAttribute="bottom" secondItem="3xG-CQ-dra" secondAttribute="bottom" id="hjb-iU-3cR"/>
                             <constraint firstItem="3xG-CQ-dra" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="jaH-Xg-XGH"/>
                             <constraint firstAttribute="trailing" secondItem="3xG-CQ-dra" secondAttribute="trailing" id="ofj-T5-wKY"/>
+                            <constraint firstItem="kS3-7c-58G" firstAttribute="centerX" secondItem="sgs-hY-cUq" secondAttribute="centerX" id="peS-XQ-9Gr"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1061,7 +1093,7 @@ CA
         <scene sceneID="0ds-mM-LHN">
             <objects>
                 <viewController id="rLF-Ws-apF" customClass="ZRingController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" misplaced="YES" id="0MH-yu-2Sh">
+                    <view key="view" wantsLayer="YES" id="0MH-yu-2Sh">
                         <rect key="frame" x="0.0" y="0.0" width="282" height="282"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
