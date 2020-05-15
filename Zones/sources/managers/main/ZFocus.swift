@@ -360,7 +360,7 @@ class ZFocus: ZRing {
 	}
 
 	@discardableResult func invokeEssay(_ iZone: Zone) -> Bool { // false means not handled
-		if  iZone.hasEssay {
+		if  iZone.hasNote {
 			iZone.grab()
 
 			gCurrentEssay = iZone.note

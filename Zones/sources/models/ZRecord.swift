@@ -10,9 +10,10 @@ import CloudKit
 
 class ZRecord: NSObject {
 
-    var             _record: CKRecord?
+	var             _record: CKRecord?
     var   writtenModifyDate: Date?
     var          kvoContext: UInt8 = 1
+	var        tooltipOwner: Any = NSNull()
     var          databaseID: ZDatabaseID?
     var  isInPublicDatabase: Bool               { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
     var     showingChildren: Bool               { return isExpanded(recordName) }
@@ -43,7 +44,7 @@ class ZRecord: NSObject {
 	var unwrappedRecordName: String             { return recordName ?? "" }
     var       unwrappedName: String             { return recordName ?? emptyName }
     var           emptyName: String             { return "" }
-    
+
 	func storageDictionary() throws -> ZStorageDictionary {
 		if  let dbID = databaseID,
 			let dict = try createStorageDictionary(for: dbID, includeRecordName: false) {
@@ -87,8 +88,8 @@ class ZRecord: NSObject {
                     // debugging tests //
                     // //////////////////
 
-                    let zone = self as? Zone
-                    let name = zone?.zoneName ?? recordName ?? emptyName
+					tooltipOwner = ZTooltipOwner(zRecord: self)
+					let     name = (self as? Zone)?.zoneName ?? recordName ?? kEmptyIdea
 
                     if       !canSaveWithoutFetch &&  isFetched {
                         bam("new record, ALLOW SAVE WITHOUT FETCH " + name)

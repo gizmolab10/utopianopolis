@@ -1,6 +1,6 @@
 //
 //  ZRingController.swift
-//  Zones
+//  Seriously
 //
 //  Created by Jonathan Sand on 1/28/20.
 //  Copyright © 2020 Zones. All rights reserved.

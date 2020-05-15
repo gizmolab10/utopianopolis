@@ -738,7 +738,7 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="284" height="240"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box autoresizesSubviews="NO" borderType="none" title="counts of subordinate ideas show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="counts">
+                            <box autoresizesSubviews="NO" borderType="none" title="children counts show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="counts">
                                 <rect key="frame" x="5" y="197" width="274" height="35"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
                                     <rect key="frame" x="0.0" y="0.0" width="274" height="20"/>

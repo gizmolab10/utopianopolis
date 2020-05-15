@@ -124,7 +124,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			NSCursor.openHand.set()
 
 			for point in imageRect.selectionPoints.values {
-				let cornerRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: dotRadius, dy: dotRadius)
+				let cornerRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotRadius)
 
 				if  cornerRect.intersects(rect) {
 					NSCursor.crosshair.set()
@@ -259,7 +259,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func drawDots(in rect: CGRect) {
 		for point in rect.selectionPoints.values {
-			let   dotRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: dotRadius, dy: dotRadius)
+			let   dotRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotRadius)
 			let      path = ZBezierPath(ovalIn: dotRect)
 			path.flatness = 0.0001
 
@@ -415,7 +415,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func attachmentHit(at rect: CGRect) -> ZRangedAttachment? {
 		if  let array = textStorage?.rangedAttachments {
 			for item in array {
-				if  let imageRect = rectForRangedAttachment(item)?.insetBy(dx: dotRadius, dy: dotRadius),
+				if  let imageRect = rectForRangedAttachment(item)?.insetEquallyBy(dotRadius),
 					imageRect.intersects(rect) {
 
 					return item
@@ -433,7 +433,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			for dot in points.keys {
 				if  let point = points[dot] {
-					let selectionRect = CGRect(origin: point, size: CGSize.zero).insetBy(dx: dotRadius, dy: dotRadius)
+					let selectionRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotRadius)
 
 					if  selectionRect.intersects(rect) {
 						return dot
@@ -532,7 +532,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			resetCurrentEssay(last)
 		} else if out {
 			gNoteAndEssay.essayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
-				if  ancestor != gNoteAndEssay.essayZone, ancestor.hasEssay {
+				if  ancestor != gNoteAndEssay.essayZone, ancestor.hasNote {
 					self.resetCurrentEssay(ancestor.note)
 
 					return .eStop

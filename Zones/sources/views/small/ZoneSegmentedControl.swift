@@ -1,5 +1,5 @@
 //
-//  ZoneSegmentedControl.swift
+//  SeriouslyegmentedControl.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 9/25/17.

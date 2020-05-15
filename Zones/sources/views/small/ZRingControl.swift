@@ -41,8 +41,8 @@ class ZRingControl: ZView, ZToolable {
 		let width = rect.width
 		let inset = width /  5.0
 		let  more = width /  2.5
-		let  tiny = rect.insetBy(dx: more,  dy: more)
-		let large = rect.insetBy(dx: inset, dy: inset)
+		let  tiny = rect.insetEquallyBy(more)
+		let large = rect.insetEquallyBy(inset)
 
 		switch type           {
 			case .eInsertion  :
@@ -67,8 +67,8 @@ class ZRingControl: ZView, ZToolable {
 		let thick = width / 20.0
 		let inset = width /  5.0
 		let  more = width /  2.5
-		let  tiny = rect.insetBy(dx: more,  dy: more)
-		let large = rect.insetBy(dx: inset, dy: inset)
+		let  tiny = rect.insetEquallyBy(more)
+		let large = rect.insetEquallyBy(inset)
 		let color = gNecklaceDotColor
 
 		color.setStroke()

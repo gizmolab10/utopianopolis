@@ -1,6 +1,6 @@
 //
 //  ZBreadcrumbButton.swift
-//  Zones
+//  Seriously
 //
 //  Created by Jonathan Sand on 4/18/20.
 //  Copyright © 2020 Zones. All rights reserved.
@@ -26,7 +26,7 @@ class ZBreadcrumbButton: ZButton {
 
 	override func draw(_ dirtyRect: NSRect) {
 		if  gIsReadyToShowUI {
-			let       path = ZBezierPath(roundedRect: dirtyRect.insetBy(dx: 1.0, dy: 1.0), cornerRadius: 3.0)
+			let       path = ZBezierPath(roundedRect: dirtyRect.insetEquallyBy(1.0), cornerRadius: 3.0)
 			path.lineWidth = 2.0
 
 			strokeColor.setStroke()

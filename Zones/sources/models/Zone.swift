@@ -67,11 +67,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                  hasSiblings :               Bool  { return parentZone?.count ?? 0 > 1 }
     var                   isSelected :               Bool  { return gSelecting.isSelected(self) }
     var                    isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
-    var                    canTravel :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasEssay }
+    var                    canTravel :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
     var                     hasColor :               Bool  { return zoneColor != nil && zoneColor != "" }
 	var                     hasEmail :               Bool  { return hasTrait(for: .tEmail) && email != "" }
 	var                     hasAsset :               Bool  { return hasTrait(for: .tAssets) }
-	var                     hasEssay :               Bool  { return hasTrait(for: .tNote) }
+	var                      hasNote :               Bool  { return hasTrait(for: .tNote) }
     var                    isInTrash :               Bool  { return root?.isRootOfTrash        ?? false }
     var                isInFavorites :               Bool  { return root?.isRootOfFavorites    ?? false }
     var             isInLostAndFound :               Bool  { return root?.isRootOfLostAndFound ?? false }
@@ -106,7 +106,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func recordName() -> String? { return recordName }
 	func identifier() -> String? { return isRoot ? databaseID?.rawValue : recordName }
-	func toolName()   -> String? { return clippedName }
+	func   toolName() -> String? { return clippedName }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
     // MARK:- properties
@@ -171,7 +171,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			case .full: return unwrappedName
 			default:    return ""
 		}
+	}
 
+	var revealTipText: String {
+		if  count == 0, canTravel {
+			return hasNote   ? "edit note for"   :
+				hasEmail     ? "send an email"   :
+				isBookmark   ? "change focus to" :
+				hasHyperlink ? "invoke web link" : ""
+		}
+
+		return (showingChildren ? "hide" : "reveal") + " children of"
 	}
 
 	var email: String? {
@@ -187,7 +197,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  emailMaybe != newValue {
 				emailMaybe  = newValue
 
-				setTraitText(newValue, for: .tEmail)
+				setTraitText (newValue, for: .tEmail)
 			}
 		}
 	}

@@ -12,7 +12,7 @@ import Cocoa
 import UIKit
 #endif
 
-class ZRingView: ZView {
+class ZRingView: ZView, ZTooltips {
 
 	struct ZGeometry {
 		var one   = CGRect()
@@ -63,7 +63,7 @@ class ZRingView: ZView {
 		} else {
 			let            g = geometry
 			let         rect = g.one
-			let surroundRect = rect.insetBy(dx: -6.0, dy: -6.0)
+			let surroundRect = rect.insetEquallyBy(-6.0)
 			let       radius = Double(surroundRect.size.width) / 27.0
 
 			ZBezierPath.drawCircle (in: rect, thickness: g.thick)
@@ -76,7 +76,7 @@ class ZRingView: ZView {
 				drawControl(for: index)
 			}
 
-			addToolTips()
+			updateTooltips()
 		}
 	}
 
@@ -323,7 +323,7 @@ class ZRingView: ZView {
 		for angle in [-Double.pi, 0.0] {
 			let  x = center.x + (offset * CGFloat(cos(angle)))
 			let  y = center.y + (offset * CGFloat(sin(angle)))
-			let  r = CGRect(origin: CGPoint(x: x, y: y), size: CGSize.zero).insetBy(dx: -radius, dy: -radius)
+			let  r = CGRect(origin: CGPoint(x: x, y: y), size: CGSize.zero).insetEquallyBy(-radius)
 
 			result.append(r)
 		}
@@ -362,50 +362,4 @@ class ZRingView: ZView {
 		return nil
 	}
 
-	@discardableResult override func addToolTip(_ rect: NSRect, owner: Any, userData data: UnsafeMutableRawPointer?) -> NSView.ToolTipTag {
-		if  gToolTipsLength != .none,
-			let         tool = owner as? ZToolable,
-			let         name = tool.toolName() {
-			let         font = gFavoritesFont
-			var     nameRect = name.rectWithFont(font, options: .usesFontLeading).insetBy(dx: -10.0, dy: 0.0)
-			nameRect.center  = rect.offsetBy(dx: 10.0, dy: 1.0).center
-			var   attributes : [NSAttributedString.Key : Any] = [.font : font]
-
-			if  let    color = tool.toolColor() {
-				attributes[.foregroundColor] = color
-			}
-
-			name.draw(in: nameRect, withAttributes: attributes)
-		}
-
-		return super.addToolTip(rect, owner: owner, userData: data)
-	}
-
-	func addToolTips() {
-		let controls = ZRingControl.controls
-		let  objects = necklaceObjects 				// expensive computation: do once
-		let    count = objects.count
-
-		removeAllToolTips()
-
-		for (index, tinyRect) in necklaceDotRects {
-			if  index < count { 							// avoid crash
-				var      owner = objects[index]
-				let       rect = self.convert(tinyRect, to: self)
-
-				if  let owners = owner as? [NSObject] {
-					owner      = owners[0]
-				}
-
-				addToolTip(rect, owner: owner, userData: nil)
-			}
-		}
-
-		for (index, controlRect) in controlRects.enumerated() {
-			let  rect = self.convert(controlRect, to: self).offsetBy(dx: 0.0, dy: -5.0)
-			let owner = controls[index]
-
-			addToolTip(rect, owner: owner, userData: nil)
-		}
-	}
 }

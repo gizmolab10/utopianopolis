@@ -1,6 +1,6 @@
 //
 //  ZNoteAndEssay.swift
-//  Zones
+//  Seriously
 //
 //  Created by Jonathan Sand on 2/16/20.
 //  Copyright © 2020 Zones. All rights reserved.

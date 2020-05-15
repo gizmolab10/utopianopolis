@@ -1,6 +1,6 @@
 //
 //  ZIntroductionController.swift
-//  Zones
+//  Seriously
 //
 //  Created by Jonathan Sand on 4/28/20.
 //  Copyright © 2020 Zones. All rights reserved.
@@ -19,7 +19,7 @@ import UIKit
 //                                                        //
 // ////////////////////////////////////////////////////// //
 
-class ZIntroductionController: ZGenericController {
+class ZIntroductionController: ZGenericController, ZTooltips {
 
 	override var controllerID : ZControllerID { return .idIntroduction }
 	var                isHere : Bool { return gSelecting.currentMovableMaybe == gHere }
@@ -51,28 +51,6 @@ class ZIntroductionController: ZGenericController {
 		buttonFor(.focus)?      .title =  canUnfocus     ? "unfocus"      : canTravel ? "travel"    :                       isHere ? "favorite" : "focus"
 		boxFor   (.move)?       .title = (isRelocate     ? "Relocate"     : showHide  ? "Show/Hide" : "Browse") + (flags.isCommand ? " to end"  : "")
 		boxFor   (.edit)?       .title =  isEditing      ? "Stop Editing" : "Edit"
-	}
-
-	func updateTooltips() {
-		view.applyToAllSubviews { subview in
-			if  let    button   = subview as? ZIntroductionButton,
-				let    buttonID = button.introductionID {
-				let     addANew = "add a new idea as "
-				let     editing = !isEditing ? "edit" : "stop editing and save to"
-				let notMultiple = gSelecting.currentGrabs.count < 2
-				let   adjective = notMultiple ? "" : "\(gListsGrowDown ? "bottom" : "top")- or left-most "
-				let currentIdea = " the \(adjective)currently selected idea"
-
-				switch buttonID {
-					case .sibling: button.toolTip = addANew + "\(flags.isOption ? "parent" : "sibling") to"                              + currentIdea
-					case .child:   button.toolTip = addANew + "child to"                                                                 + currentIdea
-					case .idea:    button.toolTip = editing                                                                              + currentIdea
-					case .note:    button.toolTip = editing + " the note of"                                                             + currentIdea
-					case .focus:   button.toolTip = (isHere ? "create favorite from" : (canTravel ? "travel to target of" : "focus on")) + currentIdea
-					default:       break
-				}
-			}
-		}
 	}
 
 	@IBAction func buttonAction(_ button: ZIntroductionButton) {

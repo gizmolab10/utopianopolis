@@ -16,7 +16,7 @@
 import SnapKit
 
 
-class ZoneDot: ZView, ZGestureRecognizerDelegate {
+class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
 
     // MARK:- properties
@@ -132,8 +132,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
         updateConstraints()
         setNeedsDisplay()
+		updateTooltips()
     }
-
 
     // MARK:- draw
     // MARK:-
@@ -176,7 +176,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 			let toRight = widgetZone?.showingChildren ?? true
 			path        = ZBezierPath.bloatedTrianglePath(aimedRight: toRight, in: iDirtyRect)
 		} else {
-			path        = ZBezierPath(ovalIn: iDirtyRect.insetBy(dx: thickness, dy: thickness))
+			path        = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
 		}
 
 		path.lineWidth  = thickness * 2.0
@@ -185,7 +185,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 		path.stroke()
 		path.fill()
 	}
-
 
     func drawTinyCounterDots(_ iDirtyRect: CGRect) {
         if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showingChildren || zone.isBookmark) {
@@ -224,7 +223,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate {
 
     func drawTinyBookmarkDot(in iDirtyRect: CGRect) {
         let     inset = CGFloat(innerDotHeight / 3.0)
-        let      path = ZBezierPath(ovalIn: iDirtyRect.insetBy(dx: inset, dy: inset))
+        let      path = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(inset))
         path.flatness = 0.0001
 
         path.fill()

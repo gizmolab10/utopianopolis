@@ -21,7 +21,7 @@ enum ZTextType: Int {
     case suffix
 }
 
-class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
+class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips {
 
     override var preferredFont : ZFont { return (widget?.isInMap ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return  widget?.widgetZone }
@@ -82,12 +82,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
 
 	func layoutText(isEditing: Bool = false) {
 		gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
+		updateTooltips()
 		layoutSelf()
 	}
 
     func updateGUI() {
         widget?.widgetZone?.needWrite()
         layoutSelf()
+		updateTooltips()
         widget?.setNeedsDisplay()
     }
 
@@ -109,8 +111,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate {
             }
         }
     }
-    
-    func offset(for selectedRange: NSRange, _ atStart: Bool) -> CGFloat? {
+
+	func offset(for selectedRange: NSRange, _ atStart: Bool) -> CGFloat? {
         if  let   name = widgetZone?.unwrappedName {
             let   font = preferredFont
             let offset = name.offset(using: font, for: selectedRange, atStart: atStart)

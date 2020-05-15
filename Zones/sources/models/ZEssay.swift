@@ -1,6 +1,6 @@
 //
 //  ZEssay.swift
-//  Zones
+//  Seriously
 //
 //  Created by Jonathan Sand on 12/27/19.
 //  Copyright © 2019 Zones. All rights reserved.
