@@ -168,7 +168,7 @@ extension ZFavoritesController {
 					switch type {
 						case .eMode:        button.toolTip = kClickTo + "show recents"
 						case .eGrowth:      button.toolTip = kClickTo + "grow from or [right arrow] browse to the top"
-						case .eConfinement: button.toolTip = kClickTo + "confine browsing"
+						case .eConfining: button.toolTip = kClickTo + "confine browsing"
 						default:            break
 					}
 				}
@@ -243,10 +243,10 @@ extension ZFavoritesControlsView {
 				if  gShowToolTips,
 					let    type = button.favoritesControlType {
 					switch type {
-						case .eAdd:         button.toolTip = kClickTo + "add a new favorites category"
-						case .eMode:        button.toolTip = kClickTo + "show recents"
-						case .eGrowth:      button.toolTip = kClickTo + "grow from or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
-						case .eConfinement: button.toolTip = kClickTo + "\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within siblings")"
+						case .eAdd:       button.toolTip = kClickTo + "add a new favorites category"
+						case .eMode:      button.toolTip = kClickTo + "show recents"
+						case .eGrowth:    button.toolTip = kClickTo + "grow from or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
+						case .eConfining: button.toolTip = kClickTo + "\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within siblings")"
 					}
 				}
 			}

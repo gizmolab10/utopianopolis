@@ -9,10 +9,10 @@
 import Foundation
 
 enum ZFavoritesControlType: String {
-	case eConfinement = "confine"
-	case eGrowth      = "grow"
-	case eMode        = "mode"
-	case eAdd         = "add"
+	case eConfining = "browse"
+	case eGrowth    = "grow"
+	case eMode      = "mode"
+	case eAdd       = "add"
 }
 
 class ZFavoritesController: ZGraphController {

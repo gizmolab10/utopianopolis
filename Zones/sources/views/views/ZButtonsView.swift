@@ -23,7 +23,6 @@ class ZButtonsView : ZView {
 	func setupButtons() {}
 
 	func updateAndRedraw() {
-		clearButtons()
 		setupButtons() // customize this in subclass
 		layoutButtons()
 		setNeedsDisplay()
@@ -35,8 +34,11 @@ class ZButtonsView : ZView {
 		let   array = buttons
 		let lastOne = array.count - 1
 
+		clearButtons()
+
 		for (index, button) in array.enumerated() {
 			addSubview(button)
+			button.snp.removeConstraints()
 			button.snp.makeConstraints { make in
 				if  let previous = prior {
 					make.left.equalTo(previous.snp.right).offset(3.0)

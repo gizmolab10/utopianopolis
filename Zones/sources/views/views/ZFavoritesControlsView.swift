@@ -13,7 +13,7 @@ class ZFavoritesControlsView : ZButtonsView, ZTooltips {
 	override  var centered: Bool { return true }
 
 	override func setupButtons() {
-		let types: [ZFavoritesControlType] = [.eMode, .eAdd, .eGrowth, .eConfinement]
+		let types: [ZFavoritesControlType] = [.eMode, .eAdd, .eGrowth, .eConfining]
 		buttons                            = [ZButton]()
 
 		for type in types {
@@ -24,21 +24,37 @@ class ZFavoritesControlsView : ZButtonsView, ZTooltips {
 			buttons.append(button)
 		}
 
+		updateButtonTitles()
 		updateTooltips()
+	}
+
+	func updateButtonTitles() {
+		for button in buttons {
+			if let type = button.favoritesControlType {
+				switch type {
+					case .eAdd:       button.title = "+"
+					case .eMode:      button.title = "Mode"
+					case .eGrowth:    button.title = gListsGrowDown      ? "Bottom" : "Top"
+					case .eConfining: button.title = gBrowsingIsConfined ? "List"   : "All"
+				}
+			}
+		}
 	}
 
 	@objc private func handleButtonPress(_ button: ZButton) {
 		if  let    type = button.favoritesControlType {
 			switch type {
-				case .eAdd:         gFavoritesHereMaybe?.addIdea()
-				case .eMode:        rotateMode()
-				case .eGrowth:      gListGrowthMode = gListsGrowDown      ? .up          : .down
-				case .eConfinement: gBrowsingMode   = gBrowsingIsConfined ? .cousinJumps : .confined
+				case .eAdd:       gFavoritesHereMaybe?.addIdea()
+				case .eMode:      rotateMode()
+				case .eGrowth:    gListGrowthMode = gListsGrowDown      ? .up          : .down
+				case .eConfining: gBrowsingMode   = gBrowsingIsConfined ? .cousinJumps : .confined
 			}
 		}
 
+		updateButtonTitles()
+		layoutButtons()
 		updateTooltips()
-		gSignal([.sRing])
+		gSignal([.sRing]) // remove this when eliminating recently view
 	}
 
 	func rotateMode() {
