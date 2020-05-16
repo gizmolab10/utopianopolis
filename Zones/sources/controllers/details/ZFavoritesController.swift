@@ -8,13 +8,28 @@
 
 import Foundation
 
+enum ZFavoritesControlType: String {
+	case eConfinement = "confinement"
+	case eGrowth      = "growth"
+	case eMode        = "mode"
+	case eAdd         = "add"
+}
+
 class ZFavoritesController: ZGraphController {
 
 	override var isFavorites: Bool { return true }
 	@IBOutlet var addButton: ZButton?
 
 	@IBAction func favoritesButtonAction(_ button: ZButton) {
-		gFavoritesHereMaybe?.addIdea()
+		if  let    type = button.favoritesControlType {
+			switch type {
+				case .eAdd:  gFavoritesHereMaybe?.addIdea()
+				case .eMode: break
+				default:     break
+			}
+		}
+
+		updateTooltips()
 	}
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
@@ -25,6 +40,7 @@ class ZFavoritesController: ZGraphController {
 
 	override func startup() {
 		setup() // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
+		updateTooltips()
 	}
 
 }

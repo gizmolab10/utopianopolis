@@ -2013,8 +2013,18 @@ extension ZView {
 
 	var introductionID : ZIntroductionID? {
 		let           item = self as NSUserInterfaceItemIdentification
-		if  let identifier = item.identifier?.rawValue,
+		if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
 			let     itemID = ZIntroductionID(rawValue: identifier) {
+			return  itemID
+		}
+
+		return nil
+	}
+
+	var favoritesControlType : ZFavoritesControlType? {
+		let           item = self as NSUserInterfaceItemIdentification
+		if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+			let     itemID = ZFavoritesControlType(rawValue: identifier) {
 			return  itemID
 		}
 

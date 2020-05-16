@@ -8,20 +8,42 @@
 
 import Foundation
 
+enum ZControlType {
+	case eInsertion
+	case eConfined
+	case eToolTips
+}
+
 protocol ZTooltips {
 
 	func updateTooltips()
+	var tooltipOwner: Any { get }
 
 }
 
-class ZTooltipOwner : NSObject {
+protocol ZIdentifiable {
+
+	func recordName() -> String?
+	func identifier() -> String?
+	static func object(for id: String, isExpanded: Bool) -> NSObject?
+
+}
+
+protocol ZToolable {
+
+	func toolName()  -> String?
+	func toolColor() -> ZColor?
+
+}
+
+class ZRecordTooltip : NSObject {
 	var zRecord: ZRecord?
 
 	override var description: String {
-		let prefix = "[necklace dot]"
+		let prefix = "necklace dot"
 
 		if  let  r = zRecord {
-			return "\(prefix) click here to change focus to \"\(r.unwrappedName)\""
+			return "\(prefix)\n\nchanges the focus to \"\(r.unwrappedName)\""
 		}
 
 		return prefix
@@ -34,59 +56,21 @@ class ZTooltipOwner : NSObject {
 	}
 }
 
-extension ZIntroductionController {
+extension ZRecord {
 
-	func updateTooltips() {
-		view.applyToAllSubviews { subview in
-			if  let    button   = subview as? ZIntroductionButton,
-				let    buttonID = button.introductionID {
-				let     addANew = "add a new idea as "
-				let     editing = !isEditing ? "edit" : "stop editing and save to"
-				let notMultiple = gSelecting.currentGrabs.count < 2
-				let   adjective = notMultiple ? "" : "\(gListsGrowDown ? "bottom" : "top")- or left-most "
-				let currentIdea = " the \(adjective)currently selected idea"
-
-				switch buttonID {
-					case .focus:   button.toolTip = (isHere ? "create favorite from" : (canTravel ? "travel to target of" : "focus on")) + currentIdea
-					case .sibling: button.toolTip = addANew + "\(flags.isOption ? "parent" : "sibling") to"                              + currentIdea
-					case .child:   button.toolTip = addANew + "child to"                                                                 + currentIdea
-					case .note:    button.toolTip = editing + " the note of"                                                             + currentIdea
-					case .idea:    button.toolTip = editing                                                                              + currentIdea
-					default:       break
-				}
-			}
+	var tooltipOwner: Any {
+		if  _tooltipRecord == nil {
+			_tooltipRecord  = ZRecordTooltip(zRecord: self)
 		}
-	}
 
-}
-
-extension ZoneDot {
-
-	func updateTooltips() {
-		toolTip = nil
-
-		if  let zone = widgetZone,
-			let name = widgetZone?.zoneName,
-			(!zone.isGrabbed || isReveal) {
-			toolTip  = "[\(isReveal ? "reveal" : "drag") dot] click here to \(isReveal ? zone.revealTipText : "select or drag") \"\(name)\""
-		}
-	}
-
-}
-
-extension ZoneTextWidget {
-
-	func updateTooltips() {
-		toolTip = nil
-
-		if  let name = widgetZone?.zoneName {
-			toolTip  = "click here to edit \"\(name)\""
-		}
+		return _tooltipRecord!
 	}
 
 }
 
 extension ZRingView {
+
+	var tooltipOwner : Any { return NSNull() }
 
 	@discardableResult override func addToolTip(_ rect: NSRect, owner: Any, userData data: UnsafeMutableRawPointer?) -> NSView.ToolTipTag {
 		if  gShowToolTips,
@@ -134,6 +118,113 @@ extension ZRingView {
 			let owner = controls[index]
 
 			addToolTip(rect, owner: owner, userData: nil)
+		}
+	}
+
+}
+
+extension ZIntroductionController {
+
+	var tooltipOwner : Any { return NSNull() }
+
+	func updateTooltips() {
+		view.applyToAllSubviews {     subview in
+			if  let        button   = subview as? ZIntroductionButton {
+				button     .toolTip = nil
+				if  gShowToolTips,
+					let    buttonID = button.introductionID {
+					let     addANew = "adds a new idea as "
+					let     editing = (!isEditing ? "edits" : "stops editing and save to")
+					let notMultiple = gSelecting.currentGrabs.count < 2
+					let   adjective = notMultiple ? "" : "\(gListsGrowDown ? "bottom" : "top")- or left-most "
+					let currentIdea = " the \(adjective)currently selected idea"
+
+					switch buttonID {
+						case .focus:   button.toolTip = (isHere ? "creates favorite from" : (canTravel ? "travel to target of" : "focus on")) + currentIdea
+						case .sibling: button.toolTip = addANew  + "\(flags.isOption ? "parent" : "sibling") to"                                        + currentIdea
+						case .child:   button.toolTip = addANew  + "child to"                                                                           + currentIdea
+						case .note:    button.toolTip = editing  + " the note of"                                                                       + currentIdea
+						case .idea:    button.toolTip = editing                                                                                        + currentIdea
+						default:       break
+					}
+				}
+			}
+		}
+	}
+
+}
+
+extension ZFavoritesController {
+
+	var tooltipOwner : Any { return NSNull() }
+
+	func updateTooltips() {
+		view.applyToAllSubviews { subview in
+			if  let      button = subview as? ZButton {
+				button .toolTip = nil
+
+				if  gShowToolTips,
+					let    type = button.favoritesControlType {
+					switch type {
+						case .eMode:        button.toolTip = kClickTo + "show recents"
+						case .eGrowth:      button.toolTip = kClickTo + "grow from or [right arrow] browse to the top"
+						case .eConfinement: button.toolTip = kClickTo + "confine browsing"
+						default:            break
+					}
+				}
+			}
+		}
+	}
+
+}
+
+extension ZoneDot {
+
+	var tooltipOwner : Any { return NSNull() }
+
+	func updateTooltips() {
+		toolTip = nil
+
+		if  gShowToolTips,
+			let zone = widgetZone,
+			let name = widgetZone?.zoneName,
+			(!zone.isGrabbed || isReveal) {
+			toolTip  = "\(isReveal ? "reveal" : "drag") dot\n\n\(kClickTo)\(isReveal ? zone.revealTipText : "select or drag") \"\(name)\""
+		}
+	}
+
+}
+
+extension ZoneTextWidget {
+
+	var tooltipOwner : Any { return NSNull() }
+
+	func updateTooltips() {
+		toolTip = nil
+
+		if  gShowToolTips,
+			let name = widgetZone?.zoneName {
+			toolTip  = "idea text\n\n\(kClickTo)edit \"\(name)\""
+		}
+	}
+
+}
+
+extension ZControlButton {
+
+	var labelText: String {
+		switch type {
+			case .eInsertion: return gListsGrowDown      ? "down" : "up"
+			case .eConfined:  return gBrowsingIsConfined ? "list" : "all"
+			case .eToolTips:  return gShowToolTips       ? "hide" : "show" + "tool tips"
+		}
+	}
+
+	override var description: String {
+		switch type {
+			case .eInsertion: return kClickTo + "toggle insertion direction"
+			case .eConfined:  return kClickTo + "toggle browsing confinement (between list and all)"
+			case .eToolTips:  return kClickTo + "toggle tool tips visibility"
 		}
 	}
 

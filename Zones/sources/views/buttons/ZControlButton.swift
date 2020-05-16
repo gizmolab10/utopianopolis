@@ -10,32 +10,10 @@ import Foundation
 
 class ZControlButton: ZView, ZToolable {
 
-	enum ZControlType {
-		case eInsertion
-		case eConfined
-		case eToolTips
-	}
-
 	var type: ZControlType = .eToolTips
 	static let    controls = [insertion, confined]
 	func toolColor() -> ZColor? { return gIsDark ? kLightestGrayColor : gAccentColor.accountingForDarkMode.darker(by: 4.0) }
 	func toolName()  -> String? { return labelText }
-
-	var labelText: String {
-		switch type {
-			case .eInsertion: return gListsGrowDown      ? "down" : "up"
-			case .eConfined:  return gBrowsingIsConfined ? "list" : "all"
-			case .eToolTips:  return gShowToolTips       ? "hide" : "show" + "tool tips"
-		}
-	}
-
-	override var description: String {
-		switch type {
-			case .eInsertion: return "toggle insertion direction"
-			case .eConfined:  return "toggle browsing confinement (between list and all)"
-			case .eToolTips:  return "toggle tool tips visibility"
-		}
-	}
 
 	func shape(in rect: CGRect, contains point: CGPoint) -> Bool {
 		let width = rect.width

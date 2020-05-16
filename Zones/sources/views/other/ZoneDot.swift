@@ -26,10 +26,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     weak var     widget: ZoneWidget?
     var        innerDot: ZoneDot?
     var       dragStart: CGPoint?
-    var        isReveal:  Bool = true
-    var      isInnerDot:  Bool = false
-	var      isDragDrop:  Bool { return widgetZone == gDragDropZone }
-	var dragDotIsHidden:  Bool { return widgetZone?.dragDotIsHidden ?? true }
+    var        isReveal: Bool  = true
+    var      isInnerDot: Bool  = false
+	var      isDragDrop: Bool  { return widgetZone == gDragDropZone }
+	var dragDotIsHidden: Bool  { return widgetZone?.dragDotIsHidden ?? true }
     var      widgetZone: Zone? { return widget?.widgetZone }
 
 

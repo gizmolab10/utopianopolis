@@ -11,17 +11,16 @@ import SnapKit
 
 var gBreadcrumbsView: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbsView }
 
-class ZBreadcrumbsView : ZView {
+class ZBreadcrumbsView : ZButtonsView {
 
-	var            crumbsAreClipped =  false
-	var                crumbButtons = [ZBreadcrumbButton]()
+	override  var           clipped :  Bool { return gClipBreadcrumbs }
 	@IBOutlet var  clipCrumbsButton :  ZButton?
 	@IBOutlet var dbIndicatorButton :  ZButton?
 
 	var crumbButtonsWidth: CGFloat {
 		var width = CGFloat(0.0)
 
-		for button in crumbButtons {
+		for button in buttons {
 			width += button.bounds.width
 		}
 
@@ -29,91 +28,47 @@ class ZBreadcrumbsView : ZView {
 	}
 
 	func fitBreadcrumbsToWindow() {
-		crumbsAreClipped         = true
+		gClipBreadcrumbs     = false
 
-		if  gClipBreadcrumbs {
-			crumbsAreClipped     = false
+		while crumbButtonsWidth > bounds.width {
+			gClipBreadcrumbs = true
 
-			while crumbButtonsWidth > bounds.width {
-				crumbButtons.remove(at: 0)
-				crumbsAreClipped = true
-			}
+			buttons.remove(at: 0)
 		}
 	}
 
-	func clearCrumbButtons() {
-		for button in crumbButtons {
-			button.removeFromSuperview()
-		}
-
-		crumbButtons = [ZBreadcrumbButton]()
-	}
-
-	func updateCrumbButtons() {
-		clearCrumbButtons()
+	override func setupButtons() {
+		buttons = [ZBreadcrumbButton]()
 
 		for (index, zone) in gBreadcrumbs.crumbZones.enumerated() {
-			let  button = ZBreadcrumbButton(title: zone.unwrappedName, target: self, action: #selector(crumbButtonAction(_:)))
-			let   title = NSMutableAttributedString(string: zone.unwrappedName)
-			let   range = NSRange(location:0, length: title.length)
-			button.font = gFavoritesFont
-			button.tag  = index
-			button.zone = zone
+			let        button = ZBreadcrumbButton(title: zone.unwrappedName, target: self, action: #selector(crumbButtonAction(_:)))
+			button.font       = gFavoritesFont
+			button.tag        = index
+			button.zone       = zone
 			button.isBordered = false
+			let         title = NSMutableAttributedString(string: zone.unwrappedName)
+			let         range = NSRange(location:0, length: title.length)
 
 			title.addAttributes([.font : gFavoritesFont], range: range)
 
-			if  let color = zone.color {
+			if  let     color = zone.color {
 				title.addAttributes([.foregroundColor : color], range: range)
 			}
 
 			button.attributedTitle = title
 
-			crumbButtons.append(button)
+			buttons.append(button)
 		}
 
-		fitBreadcrumbsToWindow()
+		fitBreadcrumbsToWindow()   // side effect: updates clipped
 	}
 
-	func layoutCrumbButtons() {
-		var   prior : ZButton?
-		let buttons = crumbButtons
-		let lastOne = buttons.count - 1
+	override func updateAndRedraw() {
+		super.updateAndRedraw()   // side effect: updates clipped, used below
 
-		for (index, button) in buttons.enumerated() {
-			addSubview(button)
-			button.snp.makeConstraints { make in
-				if  let previous = prior {
-					make.left.equalTo(previous.snp.right).offset(3.0)
-				} else {
-					make.left.equalTo(self)
-				}
-
-				if  index == lastOne, !gClipBreadcrumbs {
-					make.right.lessThanOrEqualTo(self) // force window to grow wide enough to fit all breadcrumbs
-				}
-
-				let title = button.title
-				let width = title.rect(using: button.font!, for: NSRange(location: 0, length: title.length), atStart: true).width + 16.0
-
-				make.width.equalTo(width)
-				make.centerY.equalToSuperview()
-			}
-
-			prior = button
-		}
-	}
-
-	func updateAndRedraw() {
-		updateCrumbButtons()  // side effect: updates crumbsAreClipped
-		layoutCrumbButtons()
-
-		clipCrumbsButton?.image     = !crumbsAreClipped ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
-		dbIndicatorButton?.title    = gDatabaseID.indicator
+		clipCrumbsButton? .image    = !clipped ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
+		dbIndicatorButton?.title    =  gDatabaseID.indicator
 		dbIndicatorButton?.isHidden = !gIsGraphOrEditIdeaMode
-
-		setNeedsDisplay()
-		setNeedsLayout()
 	}
 
 	override func draw(_ dirtyRect: NSRect) {

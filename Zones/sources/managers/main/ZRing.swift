@@ -11,17 +11,6 @@ import CloudKit
 
 let gEssayRing = ZRing()
 
-protocol ZIdentifiable {
-	func recordName() -> String?
-	func identifier() -> String?
-	static func object(for id: String, isExpanded: Bool) -> NSObject?
-}
-
-protocol ZToolable {
-	func toolName() -> String?
-	func toolColor() -> ZColor?
-}
-
 class ZRing: NSObject {
 
     var             ring = ZObjectsArray ()

@@ -11,9 +11,9 @@ import CloudKit
 class ZRecord: NSObject {
 
 	var             _record: CKRecord?
+	var      _tooltipRecord: Any?
     var   writtenModifyDate: Date?
     var          kvoContext: UInt8 = 1
-	var        tooltipOwner: Any = NSNull()
     var          databaseID: ZDatabaseID?
     var  isInPublicDatabase: Bool               { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
     var     showingChildren: Bool               { return isExpanded(recordName) }
@@ -44,16 +44,6 @@ class ZRecord: NSObject {
 	var unwrappedRecordName: String             { return recordName ?? "" }
     var       unwrappedName: String             { return recordName ?? emptyName }
     var           emptyName: String             { return "" }
-
-	func storageDictionary() throws -> ZStorageDictionary {
-		if  let dbID = databaseID,
-			let dict = try createStorageDictionary(for: dbID, includeRecordName: false) {
-
-			return dict
-		}
-
-		return [:]
-	}
 
     var record: CKRecord? {
         get {
@@ -88,10 +78,9 @@ class ZRecord: NSObject {
                     // debugging tests //
                     // //////////////////
 
-					tooltipOwner = ZTooltipOwner(zRecord: self)
-					let     name = (self as? Zone)?.zoneName ?? recordName ?? kEmptyIdea
+					let name = (self as? Zone)?.zoneName ?? recordName ?? kEmptyIdea
 
-                    if       !canSaveWithoutFetch &&  isFetched {
+                    if !canSaveWithoutFetch &&  isFetched {
                         bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
                         allowSaveWithoutFetch()
                     } else if canSaveWithoutFetch && notFetched {
@@ -106,6 +95,16 @@ class ZRecord: NSObject {
             }
         }
     }
+
+	func storageDictionary() throws -> ZStorageDictionary {
+		if  let dbID = databaseID,
+			let dict = try createStorageDictionary(for: dbID, includeRecordName: false) {
+
+			return dict
+		}
+
+		return [:]
+	}
 
 	func isExpanded(_ iRecordName: String?) -> Bool {
         if  let                      name   = iRecordName,
