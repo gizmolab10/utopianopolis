@@ -10,8 +10,9 @@ import Foundation
 
 class ZButtonsView : ZView {
 
-	var buttons = [ZButton]()
-	var clipped: Bool { return false }
+	var  buttons = [ZButton]()
+	var  clipped : Bool { return false }
+	var centered : Bool { return false }
 
 	func clearButtons() {
 		for button in buttons {
@@ -43,8 +44,12 @@ class ZButtonsView : ZView {
 					make.left.equalTo(self)
 				}
 
-				if  index == lastOne, !clipped {
-					make.right.lessThanOrEqualTo(self) // force window to grow wide enough to fit all breadcrumbs
+				if  index == lastOne {
+					if  centered {
+						make.right.equalTo(self)
+					} else if !clipped {
+						make.right.lessThanOrEqualTo(self) // force window to grow wide enough to fit all breadcrumbs
+					}
 				}
 
 				let title = button.title

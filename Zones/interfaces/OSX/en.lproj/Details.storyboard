@@ -147,97 +147,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="kS3-7c-58G">
-                                <rect key="frame" x="87" y="122" width="112" height="34"/>
-                                <subviews>
-                                    <button identifier="add" toolTip="click here to add a favorites category" focusRingType="exterior" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ovn-gU-Sk0" userLabel="add">
-                                        <rect key="frame" x="2" y="1" width="30" height="29"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="18" id="DK8-za-t4s"/>
-                                            <constraint firstAttribute="width" secondItem="Ovn-gU-Sk0" secondAttribute="height" id="Zip-xZ-P6E"/>
-                                            <constraint firstAttribute="width" constant="18" id="mKf-Ww-b9D"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="round" title="+" bezelStyle="circular" alignment="center" borderStyle="border" focusRingType="exterior" inset="2" id="yQd-kI-Vgm">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system" size="17"/>
-                                            <string key="keyEquivalent">=</string>
-                                            <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
-                                        </buttonCell>
-                                        <color key="contentTintColor" name="selectedControlColor" catalog="System" colorSpace="catalog"/>
-                                        <connections>
-                                            <action selector="favoritesButtonAction:" target="bl3-7n-UyN" id="cgm-vH-E4S"/>
-                                        </connections>
-                                    </button>
-                                    <button identifier="mode" focusRingType="exterior" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="seh-CA-mub" userLabel="favorites mode">
-                                        <rect key="frame" x="28" y="1" width="30" height="29"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="seh-CA-mub" secondAttribute="height" id="QSP-VM-XTn"/>
-                                            <constraint firstAttribute="width" constant="18" id="Vsv-rY-j9k"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="round" title="f" bezelStyle="circular" alignment="center" borderStyle="border" focusRingType="exterior" inset="2" id="1B3-1R-ybF">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system" size="17"/>
-                                            <string key="keyEquivalent">'</string>
-                                        </buttonCell>
-                                        <color key="contentTintColor" name="selectedControlColor" catalog="System" colorSpace="catalog"/>
-                                        <connections>
-                                            <action selector="favoritesButtonAction:" target="bl3-7n-UyN" id="90M-iN-2BS"/>
-                                        </connections>
-                                    </button>
-                                    <button identifier="growth" focusRingType="exterior" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gIS-Tn-pu9" userLabel="growth mode">
-                                        <rect key="frame" x="54" y="1" width="30" height="29"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="18" id="NJP-dt-mwg"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="round" title="g" bezelStyle="circular" alignment="center" borderStyle="border" focusRingType="exterior" inset="2" id="kEI-YI-ULV">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system" size="17"/>
-                                            <string key="keyEquivalent">.</string>
-                                        </buttonCell>
-                                        <color key="contentTintColor" name="selectedControlColor" catalog="System" colorSpace="catalog"/>
-                                        <connections>
-                                            <action selector="favoritesButtonAction:" target="bl3-7n-UyN" id="QUR-xh-pPo"/>
-                                        </connections>
-                                    </button>
-                                    <button identifier="confinement" focusRingType="exterior" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SaP-2h-EsL" userLabel="confinement mode">
-                                        <rect key="frame" x="80" y="1" width="30" height="29"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="18" id="vy1-Uh-PMi"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="round" title="c" bezelStyle="circular" alignment="center" borderStyle="border" focusRingType="exterior" inset="2" id="3eJ-At-2Tq">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system" size="17"/>
-                                            <string key="keyEquivalent">,</string>
-                                        </buttonCell>
-                                        <color key="contentTintColor" name="selectedControlColor" catalog="System" colorSpace="catalog"/>
-                                        <connections>
-                                            <action selector="favoritesButtonAction:" target="bl3-7n-UyN" id="DBo-81-su9"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
+                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kS3-7c-58G" customClass="ZFavoritesControlsView" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="1" y="122" width="283" height="34"/>
                                 <constraints>
-                                    <constraint firstItem="gIS-Tn-pu9" firstAttribute="leading" secondItem="seh-CA-mub" secondAttribute="trailing" constant="8" id="09a-tj-sI0"/>
-                                    <constraint firstItem="Ovn-gU-Sk0" firstAttribute="centerY" secondItem="kS3-7c-58G" secondAttribute="centerY" id="27D-Dk-pfA"/>
-                                    <constraint firstAttribute="trailing" secondItem="SaP-2h-EsL" secondAttribute="trailing" constant="8" id="AYs-T9-2o2"/>
-                                    <constraint firstItem="seh-CA-mub" firstAttribute="centerY" secondItem="kS3-7c-58G" secondAttribute="centerY" id="D3M-fv-Kda"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="283" id="AuQ-AE-fcg"/>
                                     <constraint firstAttribute="height" constant="34" id="GCF-mB-PQM"/>
-                                    <constraint firstItem="gIS-Tn-pu9" firstAttribute="width" secondItem="gIS-Tn-pu9" secondAttribute="height" id="K3Z-hN-VzC"/>
-                                    <constraint firstItem="Ovn-gU-Sk0" firstAttribute="leading" secondItem="kS3-7c-58G" secondAttribute="leading" constant="8" id="PNF-oG-qW0"/>
-                                    <constraint firstItem="SaP-2h-EsL" firstAttribute="leading" secondItem="gIS-Tn-pu9" secondAttribute="trailing" constant="8" symbolic="YES" id="X1L-DH-r7N"/>
-                                    <constraint firstItem="seh-CA-mub" firstAttribute="leading" secondItem="Ovn-gU-Sk0" secondAttribute="trailing" constant="8" id="b7a-wj-yjd"/>
-                                    <constraint firstItem="SaP-2h-EsL" firstAttribute="centerY" secondItem="kS3-7c-58G" secondAttribute="centerY" id="lUb-2O-PH8"/>
-                                    <constraint firstItem="SaP-2h-EsL" firstAttribute="width" secondItem="SaP-2h-EsL" secondAttribute="height" id="qiP-0O-26y"/>
-                                    <constraint firstItem="gIS-Tn-pu9" firstAttribute="centerY" secondItem="kS3-7c-58G" secondAttribute="centerY" id="sIu-rJ-MEa"/>
                                 </constraints>
                             </customView>
-                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Ldp-ag-99A">
-                                <rect key="frame" x="0.0" y="119" width="285" height="5"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="1" id="oN2-sz-lNL"/>
-                                </constraints>
-                            </box>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="3xG-CQ-dra" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="285" height="121"/>
+                                <rect key="frame" x="0.0" y="0.0" width="285" height="122"/>
                                 <connections>
                                     <outlet property="controller" destination="bl3-7n-UyN" id="h1g-O6-twS"/>
                                 </connections>
@@ -253,25 +171,22 @@
                             </box>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="Ldp-ag-99A" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="05m-wg-OEI"/>
-                            <constraint firstItem="3xG-CQ-dra" firstAttribute="top" secondItem="Ldp-ag-99A" secondAttribute="bottom" id="2lQ-9g-1pw"/>
                             <constraint firstAttribute="bottom" secondItem="pEz-hB-ZvT" secondAttribute="bottom" id="7Vv-Hc-ISd"/>
                             <constraint firstItem="pEz-hB-ZvT" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="9YU-xa-4nm"/>
-                            <constraint firstAttribute="trailing" secondItem="Ldp-ag-99A" secondAttribute="trailing" id="AOq-jI-fo9"/>
                             <constraint firstItem="YCv-YN-HVE" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="Af1-M9-9OB"/>
+                            <constraint firstItem="kS3-7c-58G" firstAttribute="centerX" secondItem="sgs-hY-cUq" secondAttribute="centerX" id="L14-a3-3yY"/>
                             <constraint firstAttribute="trailing" secondItem="pEz-hB-ZvT" secondAttribute="trailing" id="SKZ-ji-sE6"/>
+                            <constraint firstItem="3xG-CQ-dra" firstAttribute="top" secondItem="kS3-7c-58G" secondAttribute="bottom" id="TRR-WA-d8Q"/>
                             <constraint firstAttribute="trailing" secondItem="YCv-YN-HVE" secondAttribute="trailing" id="a2P-j8-F0d"/>
                             <constraint firstAttribute="bottom" secondItem="YCv-YN-HVE" secondAttribute="bottom" id="aEx-6M-ttW"/>
                             <constraint firstItem="kS3-7c-58G" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="aou-dg-bcN"/>
-                            <constraint firstItem="Ldp-ag-99A" firstAttribute="top" secondItem="kS3-7c-58G" secondAttribute="bottom" id="bQd-j0-NBp"/>
                             <constraint firstAttribute="bottom" secondItem="3xG-CQ-dra" secondAttribute="bottom" id="hjb-iU-3cR"/>
                             <constraint firstItem="3xG-CQ-dra" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="jaH-Xg-XGH"/>
                             <constraint firstAttribute="trailing" secondItem="3xG-CQ-dra" secondAttribute="trailing" id="ofj-T5-wKY"/>
-                            <constraint firstItem="kS3-7c-58G" firstAttribute="centerX" secondItem="sgs-hY-cUq" secondAttribute="centerX" id="peS-XQ-9Gr"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="addButton" destination="Ovn-gU-Sk0" id="Dza-dQ-qSJ"/>
+                        <outlet property="controlsView" destination="kS3-7c-58G" id="miP-Fo-nXp"/>
                         <outlet property="dragView" destination="3xG-CQ-dra" id="FB9-1c-2ut"/>
                         <outlet property="ideaContextualMenu" destination="VWK-W7-ztK" id="Da8-5x-01f"/>
                     </connections>

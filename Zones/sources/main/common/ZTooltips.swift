@@ -229,3 +229,46 @@ extension ZControlButton {
 	}
 
 }
+
+extension ZFavoritesControlsView {
+
+	var tooltipOwner : Any { return NSNull() }
+
+	func updateTooltips() {
+		applyToAllSubviews { subview in
+			if  let      button = subview as? ZButton {
+				let    browsing = "vertical browsing"
+				button .toolTip = nil
+
+				if  gShowToolTips,
+					let    type = button.favoritesControlType {
+					switch type {
+						case .eAdd:         button.toolTip = kClickTo + "add a new favorites category"
+						case .eMode:        button.toolTip = kClickTo + "show recents"
+						case .eGrowth:      button.toolTip = kClickTo + "grow from or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
+						case .eConfinement: button.toolTip = kClickTo + "\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within siblings")"
+					}
+				}
+			}
+		}
+	}
+
+}
+
+extension ZBreadcrumbButton {
+
+	var tooltipOwner : Any { return NSNull() }
+
+	func updateTooltips() {
+		applyToAllSubviews { subview in
+			if  let      button = subview as? ZBreadcrumbButton {
+				button .toolTip = nil
+
+				if  gShowToolTips {
+					button.toolTip = button.zone.unwrappedName
+				}
+			}
+		}
+	}
+
+}

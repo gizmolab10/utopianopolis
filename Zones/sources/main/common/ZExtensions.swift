@@ -2022,13 +2022,21 @@ extension ZView {
 	}
 
 	var favoritesControlType : ZFavoritesControlType? {
-		let           item = self as NSUserInterfaceItemIdentification
-		if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
-			let     itemID = ZFavoritesControlType(rawValue: identifier) {
-			return  itemID
+		get {
+			let           item = self as NSUserInterfaceItemIdentification
+			if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+				let     itemID = ZFavoritesControlType(rawValue: identifier) {
+				return  itemID
+			}
+
+			return nil
 		}
 
-		return nil
+		set {
+			if  let  value = newValue?.rawValue {
+				identifier = convertToUserInterfaceItemIdentifier(value)
+			}
+		}
 	}
 
 	func removeAllSubviews() {

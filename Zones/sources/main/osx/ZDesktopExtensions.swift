@@ -109,6 +109,9 @@ func convertFromOptionalUserInterfaceItemIdentifier(_ input: NSUserInterfaceItem
     return input.rawValue
 }
 
+func convertToUserInterfaceItemIdentifier(_ string: String) -> NSUserInterfaceItemIdentifier {
+	return NSUserInterfaceItemIdentifier(rawValue: string)
+}
 
 extension NSObject {
     func assignAsFirstResponder(_ responder: NSResponder?) {

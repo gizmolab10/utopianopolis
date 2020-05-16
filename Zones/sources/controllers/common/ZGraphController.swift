@@ -150,7 +150,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
     func layoutForCurrentScrollOffset() {
-		let offset = isFavorites ? CGPoint(x: -12.0, y: 0.0) : gScrollOffset
+		let offset = isFavorites ? CGPoint(x: -12.0, y: -6.0) : gScrollOffset
 
 		if  let d = dragView {
 			rootWidget.snp.setLabel("<w> \(rootWidget.widgetZone?.zoneName ?? "unknown")")
@@ -160,7 +160,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 				make.centerX.equalTo(d).offset(offset.x)
 
 				if  isFavorites {
-					make.top   .equalToSuperview().offset( 12.0)
+					make.top   .equalToSuperview()
 					make.bottom.equalToSuperview().offset(-12.0)
 				}
 			}

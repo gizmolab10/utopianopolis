@@ -9,8 +9,8 @@
 import Foundation
 
 enum ZFavoritesControlType: String {
-	case eConfinement = "confinement"
-	case eGrowth      = "growth"
+	case eConfinement = "confine"
+	case eGrowth      = "grow"
 	case eMode        = "mode"
 	case eAdd         = "add"
 }
@@ -18,19 +18,7 @@ enum ZFavoritesControlType: String {
 class ZFavoritesController: ZGraphController {
 
 	override var isFavorites: Bool { return true }
-	@IBOutlet var addButton: ZButton?
-
-	@IBAction func favoritesButtonAction(_ button: ZButton) {
-		if  let    type = button.favoritesControlType {
-			switch type {
-				case .eAdd:  gFavoritesHereMaybe?.addIdea()
-				case .eMode: break
-				default:     break
-			}
-		}
-
-		updateTooltips()
-	}
+	@IBOutlet var controlsView: ZFavoritesControlsView?
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
 		if  let c = gDetailsController, !c.hideableIsHidden(for: .Favorites) { // don't send signal to a hidden favorites controller
@@ -40,6 +28,7 @@ class ZFavoritesController: ZGraphController {
 
 	override func startup() {
 		setup() // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
+		controlsView?.updateAndRedraw()
 		updateTooltips()
 	}
 

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZBreadcrumbButton: ZButton {
+class ZBreadcrumbButton: ZButton, ZTooltips {
 
 	var zone: Zone = gHere
 
