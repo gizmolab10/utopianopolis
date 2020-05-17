@@ -33,9 +33,9 @@ class ZFavoritesControlsView : ZButtonsView, ZTooltips {
 			if let type = button.favoritesControlType {
 				switch type {
 					case .eAdd:       button.title = "+"
-					case .eMode:      button.title = "Mode"
-					case .eGrowth:    button.title = gListsGrowDown      ? "Bottom" : "Top"
-					case .eConfining: button.title = gBrowsingIsConfined ? "List"   : "All"
+					case .eMode:      button.title = gFavoritesModeIsRecently ? "Recent" : "Favorites"
+					case .eGrowth:    button.title = gListsGrowDown           ? "Bottom" : "Top"
+					case .eConfining: button.title = gBrowsingIsConfined      ? "List"   : "All"
 				}
 			}
 		}
@@ -45,20 +45,17 @@ class ZFavoritesControlsView : ZButtonsView, ZTooltips {
 		if  let    type = button.favoritesControlType {
 			switch type {
 				case .eAdd:       gFavoritesHereMaybe?.addIdea()
-				case .eMode:      rotateMode()
-				case .eGrowth:    gListGrowthMode = gListsGrowDown      ? .up          : .down
-				case .eConfining: gBrowsingMode   = gBrowsingIsConfined ? .cousinJumps : .confined
+				case .eMode:      gFavoritesMode  = gFavoritesModeIsRecently ? .favorites   : .recently
+				case .eGrowth:    gListGrowthMode = gListsGrowDown           ? .up          : .down
+				case .eConfining: gBrowsingMode   = gBrowsingIsConfined      ? .cousinJumps : .confined
 			}
 		}
 
 		updateButtonTitles()
+		clearButtons()
 		layoutButtons()
 		updateTooltips()
 		gSignal([.sRing]) // remove this when eliminating recently view
-	}
-
-	func rotateMode() {
-
 	}
 
 }

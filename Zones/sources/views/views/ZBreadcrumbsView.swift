@@ -57,6 +57,7 @@ class ZBreadcrumbsView : ZButtonsView {
 
 			button.attributedTitle = title
 
+			button.updateTooltips()
 			buttons.append(button)
 		}
 

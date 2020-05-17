@@ -23,6 +23,7 @@ class ZButtonsView : ZView {
 	func setupButtons() {}
 
 	func updateAndRedraw() {
+		clearButtons()
 		setupButtons() // customize this in subclass
 		layoutButtons()
 		setNeedsDisplay()
@@ -33,8 +34,6 @@ class ZButtonsView : ZView {
 		var   prior : ZButton?
 		let   array = buttons
 		let lastOne = array.count - 1
-
-		clearButtons()
 
 		for (index, button) in array.enumerated() {
 			addSubview(button)

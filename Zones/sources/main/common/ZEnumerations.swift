@@ -96,6 +96,11 @@ enum ZListGrowthMode: Int {
     case down
 }
 
+enum ZFavoritesMode: Int {
+	case favorites
+	case recently
+}
+
 enum ZBrowsingMode: Int {
     case confined
     case cousinJumps

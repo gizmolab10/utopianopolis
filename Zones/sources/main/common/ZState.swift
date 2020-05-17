@@ -49,6 +49,7 @@ var                   gIsDark:               Bool { return gDarkMode == .Dark }
 var                   gIsLate:               Bool { return gBatches.isLate }
 var               gIsDragging:               Bool { return gDraggedZone != nil }
 var     gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
+var  gFavoritesModeIsRecently:               Bool { return gFavoritesMode == .recently }
 var       gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
 var            gListsGrowDown:               Bool { return gListGrowthMode == .down }
 var           gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
@@ -271,19 +272,40 @@ var gBrowsingMode: ZBrowsingMode {
 	get {
 		let value  = UserDefaults.standard.object(forKey: kBrowsingMode) as? Int
 		var mode   = ZBrowsingMode.confined
-		
+
 		if  value != nil {
 			mode   = ZBrowsingMode(rawValue: value!)!
 		} else {
 			UserDefaults.standard.set(mode.rawValue, forKey:kBrowsingMode)
 			UserDefaults.standard.synchronize()
 		}
-		
+
 		return mode
 	}
-	
+
 	set {
 		UserDefaults.standard.set(newValue.rawValue, forKey:kBrowsingMode)
+		UserDefaults.standard.synchronize()
+	}
+}
+
+var gFavoritesMode: ZFavoritesMode {
+	get {
+		let value  = UserDefaults.standard.object(forKey: kFavoritesMode) as? Int
+		var mode   = ZFavoritesMode.favorites
+
+		if  value != nil {
+			mode   = ZFavoritesMode(rawValue: value!)!
+		} else {
+			UserDefaults.standard.set(mode.rawValue, forKey:kFavoritesMode)
+			UserDefaults.standard.synchronize()
+		}
+
+		return mode
+	}
+
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kFavoritesMode)
 		UserDefaults.standard.synchronize()
 	}
 }

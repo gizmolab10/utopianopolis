@@ -154,30 +154,6 @@ extension ZIntroductionController {
 
 }
 
-extension ZFavoritesController {
-
-	var tooltipOwner : Any { return NSNull() }
-
-	func updateTooltips() {
-		view.applyToAllSubviews { subview in
-			if  let      button = subview as? ZButton {
-				button .toolTip = nil
-
-				if  gShowToolTips,
-					let    type = button.favoritesControlType {
-					switch type {
-						case .eMode:        button.toolTip = kClickTo + "show recents"
-						case .eGrowth:      button.toolTip = kClickTo + "grow from or [right arrow] browse to the top"
-						case .eConfining: button.toolTip = kClickTo + "confine browsing"
-						default:            break
-					}
-				}
-			}
-		}
-	}
-
-}
-
 extension ZoneDot {
 
 	var tooltipOwner : Any { return NSNull() }
@@ -235,19 +211,17 @@ extension ZFavoritesControlsView {
 	var tooltipOwner : Any { return NSNull() }
 
 	func updateTooltips() {
-		applyToAllSubviews { subview in
-			if  let      button = subview as? ZButton {
-				let    browsing = "vertical browsing"
-				button .toolTip = nil
+		for button in buttons {
+			let    browsing = "vertical browsing"
+			button .toolTip = nil
 
-				if  gShowToolTips,
-					let    type = button.favoritesControlType {
-					switch type {
-						case .eAdd:       button.toolTip = kClickTo + "add a new favorites category"
-						case .eMode:      button.toolTip = kClickTo + "show recents"
-						case .eGrowth:    button.toolTip = kClickTo + "grow from or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
-						case .eConfining: button.toolTip = kClickTo + "\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within siblings")"
-					}
+			if  gShowToolTips,
+				let    type = button.favoritesControlType {
+				switch type {
+					case .eAdd:       button.toolTip =                  "add\n\n\(kClickTo)add a new category"
+					case .eMode:      button.toolTip =       "favorites mode\n\n\(kClickTo)show \(gFavoritesModeIsRecently ? "favorites" : "recents")"
+					case .eGrowth:    button.toolTip =     "growth direction\n\n\(kClickTo)grow from or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
+					case .eConfining: button.toolTip = "browsing confinement\n\n\(kClickTo)\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within siblings")"
 				}
 			}
 		}
@@ -260,14 +234,10 @@ extension ZBreadcrumbButton {
 	var tooltipOwner : Any { return NSNull() }
 
 	func updateTooltips() {
-		applyToAllSubviews { subview in
-			if  let      button = subview as? ZBreadcrumbButton {
-				button .toolTip = nil
+		toolTip = nil
 
-				if  gShowToolTips {
-					button.toolTip = button.zone.unwrappedName
-				}
-			}
+		if  gShowToolTips {
+			toolTip = "breadcrumb\n\n\(kClickTo)change focus to \"\(zone.unwrappedName)\""
 		}
 	}
 
