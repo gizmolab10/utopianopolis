@@ -30,7 +30,7 @@ class ZFavoritesControlsView : ZButtonsView, ZTooltips {
 
 	func updateButtonTitles() {
 		for button in buttons {
-			if let type = button.favoritesControlType {
+			if  let    type = button.favoritesControlType {
 				switch type {
 					case .eAdd:       button.title = "+"
 					case .eMode:      button.title = gFavoritesModeIsRecently ? "Recent" : "Favorites"

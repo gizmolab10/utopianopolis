@@ -212,15 +212,17 @@ extension ZFavoritesControlsView {
 
 	func updateTooltips() {
 		for button in buttons {
-			let    browsing = "vertical browsing"
-			button .toolTip = nil
+			button.toolTip = nil
 
 			if  gShowToolTips,
-				let    type = button.favoritesControlType {
+				let     type = button.favoritesControlType {
+				let browsing = "vertical browsing"
+				let isRecent = gFavoritesModeIsRecently
+
 				switch type {
-					case .eAdd:       button.toolTip =                  "add\n\n\(kClickTo)add a new category"
-					case .eMode:      button.toolTip =       "favorites mode\n\n\(kClickTo)show \(gFavoritesModeIsRecently ? "favorites" : "recents")"
-					case .eGrowth:    button.toolTip =     "growth direction\n\n\(kClickTo)grow from or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
+					case .eAdd:       button.toolTip = "add\n\n\(kClickTo)add a new category"
+					case .eMode:      button.toolTip = "showing \(isRecent ? "recents" : "favorites")\n\n\(kClickTo)show \(isRecent ? "favorites" : "recents")"
+					case .eGrowth:    button.toolTip = "growth direction\n\n\(kClickTo)grow from or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
 					case .eConfining: button.toolTip = "browsing confinement\n\n\(kClickTo)\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within siblings")"
 				}
 			}
@@ -237,7 +239,17 @@ extension ZBreadcrumbButton {
 		toolTip = nil
 
 		if  gShowToolTips {
-			toolTip = "breadcrumb\n\n\(kClickTo)change focus to \"\(zone.unwrappedName)\""
+			let title = "breadcrumb\n\n"
+			let  name = zone.unwrappedName
+
+			if  zone == gHereMaybe {
+				toolTip = "\(title)current focus is \"\(name)\""
+			} else if zone.isGrabbed {
+				toolTip = "\(title)currently selected idea is \"\(name)\""
+			} else {
+				let shrink = zone.ancestralPath.contains(gHere)
+				toolTip = "\(title)\(kClickTo)\(shrink ? "shrink" : "expand") focus to \"\(name)\""
+			}
 		}
 	}
 
