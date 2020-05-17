@@ -154,6 +154,21 @@ extension ZIntroductionController {
 
 }
 
+extension Zone {
+
+	var revealTipText: String {
+		if  count == 0, canTravel {
+			return hasNote      ? "edit note for"   :
+				hasEmail        ? "send an email"   :
+				isBookmark      ? "change focus to" :
+				hasHyperlink    ? "invoke web link" : ""
+		}
+
+		return (showingChildren ? "hide" : "reveal") + " children of"
+	}
+
+}
+
 extension ZoneDot {
 
 	var tooltipOwner : Any { return NSNull() }
@@ -164,8 +179,9 @@ extension ZoneDot {
 		if  gShowToolTips,
 			let zone = widgetZone,
 			let name = widgetZone?.zoneName,
-			(!zone.isGrabbed || isReveal) {
-			toolTip  = "\(isReveal ? "reveal" : "drag") dot\n\n\(kClickTo)\(isReveal ? zone.revealTipText : "select or drag") \"\(name)\""
+			( isReveal ||  !zone.isGrabbed),
+			(!isReveal || !(zone.bookmarkTarget?.isGrabbed ?? false)) {
+			toolTip  = "\(isReveal ? "Reveal" : "Drag") dot\n\n\(kClickTo)\(isReveal ? zone.revealTipText : "select or drag") \"\(name)\"\(zone.isBookmark && !isReveal ? " bookmark" : "")"
 		}
 	}
 
@@ -180,7 +196,7 @@ extension ZoneTextWidget {
 
 		if  gShowToolTips,
 			let name = widgetZone?.zoneName {
-			toolTip  = "idea text\n\n\(kClickTo)edit \"\(name)\""
+			toolTip  = "Idea text\n\n\(kClickTo)edit \"\(name)\""
 		}
 	}
 
@@ -220,10 +236,10 @@ extension ZFavoritesControlsView {
 				let isRecent = gFavoritesModeIsRecently
 
 				switch type {
-					case .eAdd:       button.toolTip = "add\n\n\(kClickTo)add a new category"
-					case .eMode:      button.toolTip = "showing \(isRecent ? "recents" : "favorites")\n\n\(kClickTo)show \(isRecent ? "favorites" : "recents")"
-					case .eGrowth:    button.toolTip = "growth direction\n\n\(kClickTo)grow from or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
-					case .eConfining: button.toolTip = "browsing confinement\n\n\(kClickTo)\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within siblings")"
+					case .eAdd:       button.toolTip = "Add\n\n\(kClickTo)add a new category"
+					case .eMode:      button.toolTip = "Showing \(isRecent ? "recents" : "favorites")\n\n\(kClickTo)show \(isRecent ? "favorites" : "recents")"
+					case .eGrowth:    button.toolTip = "Growth direction\n\n\(kClickTo)grow from or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
+					case .eConfining: button.toolTip = "Browsing confinement\n\n\(kClickTo)\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within siblings")"
 				}
 			}
 		}
@@ -239,7 +255,7 @@ extension ZBreadcrumbButton {
 		toolTip = nil
 
 		if  gShowToolTips {
-			let title = "breadcrumb\n\n"
+			let title = "Breadcrumb\n\n"
 			let  name = zone.unwrappedName
 
 			if  zone == gHereMaybe {

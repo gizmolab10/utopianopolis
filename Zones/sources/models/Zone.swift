@@ -173,17 +173,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	var revealTipText: String {
-		if  count == 0, canTravel {
-			return hasNote   ? "edit note for"   :
-				hasEmail     ? "send an email"   :
-				isBookmark   ? "change focus to" :
-				hasHyperlink ? "invoke web link" : ""
-		}
-
-		return (showingChildren ? "hide" : "reveal") + " children of"
-	}
-
 	var email: String? {
 		get {
 			if  emailMaybe == nil {
