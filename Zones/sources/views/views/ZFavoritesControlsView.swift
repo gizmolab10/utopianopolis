@@ -3,7 +3,7 @@
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/15/20.
-//  Copyright © 2020 Zones. All rights reserved.
+//  Copyright © 2020 Jonathan Sand. All rights reserved.
 //
 
 import Foundation
@@ -33,9 +33,9 @@ class ZFavoritesControlsView : ZButtonsView, ZTooltips {
 			if  let    type = button.favoritesControlType {
 				switch type {
 					case .eAdd:       button.title = "+"
-					case .eMode:      button.title = gFavoritesModeIsRecently ? "Recent" : "Favorites"
-					case .eGrowth:    button.title = gListsGrowDown           ? "Bottom" : "Top"
-					case .eConfining: button.title = gBrowsingIsConfined      ? "List"   : "All"
+					case .eMode:      button.title = gFavoritesMode  .rawValue
+					case .eGrowth:    button.title = gListGrowthMode .rawValue
+					case .eConfining: button.title = gConfinementMode.rawValue
 				}
 			}
 		}
@@ -45,9 +45,9 @@ class ZFavoritesControlsView : ZButtonsView, ZTooltips {
 		if  let    type = button.favoritesControlType {
 			switch type {
 				case .eAdd:       gFavoritesHereMaybe?.addIdea()
-				case .eMode:      gFavoritesMode  = gFavoritesModeIsRecently ? .favorites   : .recently
-				case .eGrowth:    gListGrowthMode = gListsGrowDown           ? .up          : .down
-				case .eConfining: gBrowsingMode   = gBrowsingIsConfined      ? .cousinJumps : .confined
+				case .eMode:      gFavoritesMode   = gIsRecentlyMode     ? .favorites   : .recent
+				case .eGrowth:    gListGrowthMode  = gListsGrowDown      ? .up          : .down
+				case .eConfining: gConfinementMode = gBrowsingIsConfined ? .all : .list
 			}
 		}
 
@@ -55,7 +55,7 @@ class ZFavoritesControlsView : ZButtonsView, ZTooltips {
 		clearButtons()
 		layoutButtons()
 		updateTooltips()
-		gSignal([.sRing]) // remove this when eliminating recently view
+		gSignal([.sRing, .sDetails]) // remove sRing when eliminating recently view
 	}
 
 }

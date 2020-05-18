@@ -49,8 +49,8 @@ var                   gIsDark:               Bool { return gDarkMode == .Dark }
 var                   gIsLate:               Bool { return gBatches.isLate }
 var               gIsDragging:               Bool { return gDraggedZone != nil }
 var     gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
-var  gFavoritesModeIsRecently:               Bool { return gFavoritesMode == .recently }
-var       gBrowsingIsConfined:               Bool { return gBrowsingMode == .confined }
+var       gBrowsingIsConfined:               Bool { return gConfinementMode   == .list }
+var           gIsRecentlyMode:               Bool { return gFavoritesMode  == .recent }
 var            gListsGrowDown:               Bool { return gListGrowthMode == .down }
 var           gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var               gIsNoteMode:               Bool { return gWorkMode == .noteMode }
@@ -268,15 +268,15 @@ var gScrollOffset: CGPoint {
 	}
 }
 
-var gBrowsingMode: ZBrowsingMode {
+var gConfinementMode: ZConfinementMode {
 	get {
-		let value  = UserDefaults.standard.object(forKey: kBrowsingMode) as? Int
-		var mode   = ZBrowsingMode.confined
+		let value  = UserDefaults.standard.object(forKey: kConfinementMode) as? String
+		var mode   = ZConfinementMode.list
 
 		if  value != nil {
-			mode   = ZBrowsingMode(rawValue: value!)!
+			mode   = ZConfinementMode(rawValue: value!)!
 		} else {
-			UserDefaults.standard.set(mode.rawValue, forKey:kBrowsingMode)
+			UserDefaults.standard.set(mode.rawValue, forKey:kConfinementMode)
 			UserDefaults.standard.synchronize()
 		}
 
@@ -284,14 +284,14 @@ var gBrowsingMode: ZBrowsingMode {
 	}
 
 	set {
-		UserDefaults.standard.set(newValue.rawValue, forKey:kBrowsingMode)
+		UserDefaults.standard.set(newValue.rawValue, forKey:kConfinementMode)
 		UserDefaults.standard.synchronize()
 	}
 }
 
 var gFavoritesMode: ZFavoritesMode {
 	get {
-		let value  = UserDefaults.standard.object(forKey: kFavoritesMode) as? Int
+		let value  = UserDefaults.standard.object(forKey: kFavoritesMode) as? String
 		var mode   = ZFavoritesMode.favorites
 
 		if  value != nil {
@@ -397,14 +397,14 @@ var gListGrowthMode: ZListGrowthMode {
 	get {
 		var mode: ZListGrowthMode?
 		
-		if let object = UserDefaults.standard.object(forKey:kInsertionMode) {
-			mode      = ZListGrowthMode(rawValue: object as! Int)
+		if let object = UserDefaults.standard.object(forKey:kListGrowthMode) {
+			mode      = ZListGrowthMode(rawValue: object as! String)
 		}
 		
 		if  mode == nil {
 			mode      = .down
 			
-			UserDefaults.standard.set(mode!.rawValue, forKey:kInsertionMode)
+			UserDefaults.standard.set(mode!.rawValue, forKey:kListGrowthMode)
 			UserDefaults.standard.synchronize()
 		}
 		
@@ -412,7 +412,7 @@ var gListGrowthMode: ZListGrowthMode {
 	}
 	
 	set {
-		UserDefaults.standard.set(newValue.rawValue, forKey:kInsertionMode)
+		UserDefaults.standard.set(newValue.rawValue, forKey:kListGrowthMode)
 		UserDefaults.standard.synchronize()
 	}
 }
@@ -599,7 +599,7 @@ func gRefreshPersistentWorkMode() {
 	if isDirection {
 		gListGrowthMode = gListsGrowDown      ? .up          : .down
 	} else {
-		gBrowsingMode   = gBrowsingIsConfined ? .cousinJumps : .confined
+		gConfinementMode   = gBrowsingIsConfined ? .all : .list
 	}
 
 	return true

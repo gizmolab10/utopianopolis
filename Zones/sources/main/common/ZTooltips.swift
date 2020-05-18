@@ -3,7 +3,7 @@
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/14/20.
-//  Copyright © 2020 Zones. All rights reserved.
+//  Copyright © 2020 Jonathan Sand. All rights reserved.
 //
 
 import Foundation
@@ -17,7 +17,6 @@ enum ZControlType {
 protocol ZTooltips {
 
 	func updateTooltips()
-	var tooltipOwner: Any { get }
 
 }
 
@@ -69,8 +68,6 @@ extension ZRecord {
 }
 
 extension ZRingView {
-
-	var tooltipOwner : Any { return NSNull() }
 
 	@discardableResult override func addToolTip(_ rect: NSRect, owner: Any, userData data: UnsafeMutableRawPointer?) -> NSView.ToolTipTag {
 		if  gShowToolTips,
@@ -125,8 +122,6 @@ extension ZRingView {
 
 extension ZIntroductionController {
 
-	var tooltipOwner : Any { return NSNull() }
-
 	func updateTooltips() {
 		view.applyToAllSubviews {     subview in
 			if  let        button   = subview as? ZIntroductionButton {
@@ -171,8 +166,6 @@ extension Zone {
 
 extension ZoneDot {
 
-	var tooltipOwner : Any { return NSNull() }
-
 	func updateTooltips() {
 		toolTip = nil
 
@@ -188,8 +181,6 @@ extension ZoneDot {
 }
 
 extension ZoneTextWidget {
-
-	var tooltipOwner : Any { return NSNull() }
 
 	func updateTooltips() {
 		toolTip = nil
@@ -224,8 +215,6 @@ extension ZControlButton {
 
 extension ZFavoritesControlsView {
 
-	var tooltipOwner : Any { return NSNull() }
-
 	func updateTooltips() {
 		for button in buttons {
 			button.toolTip = nil
@@ -233,12 +222,12 @@ extension ZFavoritesControlsView {
 			if  gShowToolTips,
 				let     type = button.favoritesControlType {
 				let browsing = "vertical browsing"
-				let isRecent = gFavoritesModeIsRecently
+				let isRecent = gIsRecentlyMode
 
 				switch type {
 					case .eAdd:       button.toolTip = "Add\n\n\(kClickTo)add a new category"
 					case .eMode:      button.toolTip = "Showing \(isRecent ? "recents" : "favorites")\n\n\(kClickTo)show \(isRecent ? "favorites" : "recents")"
-					case .eGrowth:    button.toolTip = "Growth direction\n\n\(kClickTo)grow from or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
+					case .eGrowth:    button.toolTip = "Growth direction\n\n\(kClickTo)grow \(gListsGrowDown ? "up" : "down")ward or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
 					case .eConfining: button.toolTip = "Browsing confinement\n\n\(kClickTo)\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within siblings")"
 				}
 			}
@@ -248,8 +237,6 @@ extension ZFavoritesControlsView {
 }
 
 extension ZBreadcrumbButton {
-
-	var tooltipOwner : Any { return NSNull() }
 
 	func updateTooltips() {
 		toolTip = nil

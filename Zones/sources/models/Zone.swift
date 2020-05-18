@@ -449,7 +449,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
     var crossLink: ZRecord? {
         get {
-            if crossLinkMaybe == nil {
+            if  crossLinkMaybe == nil {
                 if  zoneLink == kTrashLink {
                     return gTrash
                 }
@@ -1397,7 +1397,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
     func hasTrait(for iType: ZTraitType) -> Bool {
 		if isBookmark {
-			return bookmarkTarget!.hasTrait(for: iType)
+			return bookmarkTarget?.hasTrait(for: iType) ?? false
 		} else {
 			return traits[iType] != nil
 		}

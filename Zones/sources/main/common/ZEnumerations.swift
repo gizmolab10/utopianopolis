@@ -23,6 +23,7 @@ enum ZRootID: String {
     case graphID     = "root"
     case trashID     = "trash"
     case destroyID   = "destroy"
+	case recentsID   = "recents"
     case favoritesID = "favorites"
     case lostID      = "lost and found"
 }
@@ -91,19 +92,19 @@ struct ZTinyDotType: OptionSet {
 	static let eEssay = ZTinyDotType(rawValue: 0x0002)
 }
 
-enum ZListGrowthMode: Int {
-    case up
-    case down
+enum ZListGrowthMode: String {
+	case down = "Down"
+    case up   = "Up"
 }
 
-enum ZFavoritesMode: Int {
-	case favorites
-	case recently
+enum ZFavoritesMode: String {
+	case favorites = "Favorites"
+	case recent    = "Recent"
 }
 
-enum ZBrowsingMode: Int {
-    case confined
-    case cousinJumps
+enum ZConfinementMode: String {
+	case list = "List"
+	case all  = "All"
 }
 
 enum ZFileMode: Int {
@@ -173,7 +174,8 @@ enum ZDatabaseID: String {
 	case preferencesID = "preferences"
     case   favoritesID = "favorites"
     case    everyoneID = "everyone"
-    case      sharedID = "shared"
+	case     recentsID = "recents"
+	case      sharedID = "shared"
     case        mineID = "mine"
 	
 	var identifier: String { return rawValue.substring(toExclusive: 1) }

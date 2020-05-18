@@ -20,7 +20,6 @@ enum ZFavoriteStyle: Int {
 
 let gFavorites = ZFavorites(ZDatabaseID.favoritesID)
 
-
 var gFavoritesRoot : Zone? {
 	get {
 		return gMineCloud?.favoritesZone
@@ -32,7 +31,6 @@ var gFavoritesRoot : Zone? {
 		}
 	}
 }
-
 
 class ZFavorites: ZRecords {
 
@@ -227,7 +225,7 @@ class ZFavorites: ZRecords {
         workingFavorites.removeAll()
 
         gFavoritesRoot?.traverseAllProgeny { iChild in
-            if iChild.isBookmark {
+            if  iChild.isBookmark {
                 self.workingFavorites.append(iChild)
             }
         }

@@ -1260,7 +1260,7 @@ class ZCloud: ZRecords {
     
     func establishRoots(_ onCompletion: IntClosure?) {
 		var establishRootAt: IntClosure?     // pre-declare so can recursively call from within it
-        let         rootIDs: [ZRootID]   = [.favoritesID, .destroyID, .trashID, .graphID, .lostID]
+        let         rootIDs: [ZRootID]   = [.favoritesID, .destroyID, .recentsID, .trashID, .graphID, .lostID]
         establishRootAt                  = { iIndex in
             if iIndex >= rootIDs.count {
                 onCompletion?(0)
@@ -1271,7 +1271,8 @@ class ZCloud: ZRecords {
                 let recurseNext = { establishRootAt?(iIndex + 1) }
 
                 switch rootID {
-                case .favoritesID: if gFavoritesRoot        != nil || self.databaseID != .mineID { recurseNext(); return } else { name = kFavoritesName }
+				case .favoritesID: if gFavoritesRoot        != nil || self.databaseID != .mineID { recurseNext(); return } else { name = kFavoritesName }
+				case .recentsID:   if gRecentsRoot          != nil || self.databaseID != .mineID { recurseNext(); return } else { name = kRecentsName }
                 case .graphID:     if self.rootZone         != nil                               { recurseNext(); return } else { name = kFirstIdeaTitle }
                 case .lostID:      if self.lostAndFoundZone != nil                               { recurseNext(); return }
                 case .trashID:     if self.trashZone        != nil                               { recurseNext(); return }
@@ -1284,7 +1285,8 @@ class ZCloud: ZRecords {
                     }
 
                     switch rootID {
-                    case .favoritesID: gFavoritesRoot        = iZone
+					case .favoritesID: gFavoritesRoot        = iZone
+                    case .recentsID:   gRecentsRoot          = iZone
                     case .destroyID:   self.destroyZone      = iZone
                     case .trashID:     self.trashZone        = iZone
                     case .graphID:     self.rootZone         = iZone

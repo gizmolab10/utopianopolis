@@ -3,7 +3,7 @@
 //  Seriously
 //
 //  Created by Jonathan Sand on 3/21/20.
-//  Copyright © 2020 Zones. All rights reserved.
+//  Copyright © 2020 Jonathan Sand. All rights reserved.
 //
 
 import Foundation

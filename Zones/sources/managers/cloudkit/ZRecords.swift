@@ -44,6 +44,7 @@ class ZRecords: NSObject {
     var           manifest : ZManifest?
     var   lostAndFoundZone : Zone?
 	var      favoritesZone : Zone?
+	var        recentsZone : Zone?
 	var        destroyZone : Zone?
     var          trashZone : Zone?
     var           rootZone : Zone?

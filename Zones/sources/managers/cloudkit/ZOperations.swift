@@ -28,7 +28,8 @@ enum ZOperationID: Int {
     case oManifest
     case oReadFile           // LOCAL
     case oFoundIdeas         // LOCAL
-    case oFavorites
+	case oFavorites
+	case oRecents
     case oRoots
     case oHere
 	case oStartupDone

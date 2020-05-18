@@ -78,9 +78,10 @@ class ZTogglingView: NSStackView {
 		titleButton?.layer?.backgroundColor = gAccentColor.cgColor
 
 		if  identity == .Favorites {
-			var    title = "Favorites"
+			var    title = "Recent"
 
-			if  var path : ZoneArray = gFavoritesHereMaybe?.ancestralPath {
+			if !gIsRecentlyMode,
+				var path : ZoneArray = gFavoritesHereMaybe?.ancestralPath {
 				if  path.count > 1 {
 					path = ZoneArray(path.suffix(from: 1))  // remove favorites when it's not alone
 				}

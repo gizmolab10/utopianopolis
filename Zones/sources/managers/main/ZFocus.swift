@@ -165,6 +165,7 @@ class ZFocus: ZRing {
     func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
         gHere = iHere
 
+		gRecents.push()
 		push()
 		focus {
 			gHere.grab()

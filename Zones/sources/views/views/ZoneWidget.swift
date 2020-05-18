@@ -15,29 +15,44 @@ import SnapKit
     import UIKit
 #endif
 
-
 enum ZLineKind: Int {
     case below    = -1
     case straight =  0
     case above    =  1
 }
 
+struct ZWidgetKind: OptionSet {
+	static var structValue = 0
+	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
+	let           rawValue : Int
+
+	init() { rawValue = ZWidgetKind.nextValue }
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let   dIdea = ZWidgetKind()
+	static let   dNote = ZWidgetKind()
+	static let  dEssay = ZWidgetKind()
+	static let dRecent = ZWidgetKind()
+}
 
 class ZoneWidget: ZView {
-
 
 	var                 isInMap = false
     let                 dragDot = ZoneDot        ()
     let               revealDot = ZoneDot        ()
     let              textWidget = ZoneTextWidget ()
     let            childrenView = ZView          ()
+	let            widgetObject = ZWidgetObject  ()
     private var childrenWidgets = [ZoneWidget]   ()
+	var      kind : ZWidgetKind = .dIdea
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
     var                   ratio :     CGFloat { return isInMap ? 1.0 : kFavoritesReduction }
 
-	weak var widgetZone : Zone? {
-		didSet {
-			if  let name = widgetZone?.zoneName {
+	var widgetZone : Zone? {
+		get { return widgetObject.zone }
+		set {
+			widgetObject          .zone = newValue
+			if  let                name = widgetZone?.zoneName {
 				identifier              = NSUserInterfaceItemIdentifier("<w> \(name)") // gosh. i wish these would help with interpreting snap kit constraint errors !!!!!!!!!!!
 				childrenView.identifier = NSUserInterfaceItemIdentifier("<c> \(name)")
 				textWidget  .identifier = NSUserInterfaceItemIdentifier("<t> \(name)")

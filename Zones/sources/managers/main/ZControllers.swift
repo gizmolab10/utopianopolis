@@ -42,6 +42,7 @@ enum ZSignalKind: Int {
 	case sResize
 	case sSearch
 	case sCrumbs
+	case sDetails
 	case sStartup
     case sRelayout
     case sFavorites

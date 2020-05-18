@@ -3,7 +3,7 @@
 //  Seriously
 //
 //  Created by Jonathan Sand on 3/31/19.
-//  Copyright © 2019 Zones. All rights reserved.
+//  Copyright © 2019 Jonathan Sand. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
