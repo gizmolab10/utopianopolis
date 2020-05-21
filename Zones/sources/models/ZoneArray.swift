@@ -373,4 +373,33 @@ extension ZoneArray {
 		}
 	}
 
+	func bookmarksTargeting(_ iTarget: Zone?, iSpawned: Bool = false) -> Zone? {
+		var found: Zone?
+
+		if  let                   target = iTarget,
+			let                     dbID = target.databaseID {
+			var                    level = Int.max
+			for workingFavorite in self {
+				if  let targetOfWorking  = workingFavorite.bookmarkTarget,
+					dbID                == targetOfWorking.databaseID {
+
+					if  targetOfWorking == target {
+						return workingFavorite
+					}
+
+					let newLevel        = targetOfWorking.level
+
+					if  newLevel        < level,
+						iSpawned,
+						target.spawnedBy(targetOfWorking) {
+						level           = newLevel
+						found           = workingFavorite
+					}
+				}
+			}
+		}
+
+		return found
+	}
+
 }

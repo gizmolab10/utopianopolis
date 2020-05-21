@@ -2021,12 +2021,12 @@ extension ZView {
 		return nil
 	}
 
-	var favoritesControlType : ZFavoritesControlType? {
+	var modeButtonType : ZModeButtonType? {
 		get {
-			let           item = self as NSUserInterfaceItemIdentification
-			if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
-				let     itemID = ZFavoritesControlType(rawValue: identifier) {
-				return  itemID
+			let        item = self as NSUserInterfaceItemIdentification
+			if  let  itemID = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+				let    type = ZModeButtonType(rawValue: itemID) {
+				return type
 			}
 
 			return nil

@@ -142,6 +142,8 @@ class ZRing: NSObject {
 	}
 
 	func push() {
+		gRecents.push()
+
 		if  possiblePrime != nil {
 			currentIndex   = currentIndex + 1
 

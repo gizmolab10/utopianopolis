@@ -25,20 +25,21 @@ var gRecentsRoot : Zone? {
 
 class ZRecents: ZRecords {
 
-	func setup(_ onCompletion: IntClosure?) {
-		let   mine = gMineCloud
-		let finish = {
-			if  let root = gRecentsRoot {
-				root.reallyNeedProgeny()
-			}
+	var currentRecent: Zone?
 
-			onCompletion?(0)
+	func updateCurrentRecent() {
+		if  let           bookmark = gRecentsRoot?.children.bookmarksTargeting(gHereMaybe) {
+			gRecents.currentRecent = bookmark
 		}
+	}
 
-		if  let root = mine?.maybeZoneForRecordName(kRecentsRootName) {
+	func setup(_ onCompletion: IntClosure?) {
+		let         mine = gMineCloud
+		if  let     root = mine?.maybeZoneForRecordName(kRecentsRootName) {
 			gRecentsRoot = root
 
-			finish()
+			gRecentsRoot?.reallyNeedProgeny()
+			onCompletion?(0)
 		} else {
 			mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kRecentsRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
 				let      ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kRecentsRootName))
@@ -47,13 +48,27 @@ class ZRecents: ZRecords {
 				root.zoneName     = kRecentsRootName
 				gRecentsRoot      = root
 
-				finish()
+				gRecentsRoot?.reallyNeedProgeny()
+				onCompletion?(0)
 			}
 		}
 	}
 
 	func push() {
-		gRecentsRoot?.children.append(gHere)
+		if  let root = gRecentsRoot {
+			for bookmark in root.children {
+				if  let target = bookmark.bookmarkTarget,
+					target.recordName() == gHere.recordName() {
+					return
+				}
+			}
+
+			if  let bookmark = gFavorites.createBookmark(for: gHereMaybe, style: .addFavorite) {
+				root.children.append(bookmark)
+			}
+
+			updateCurrentRecent()
+		}
 	}
 
 }

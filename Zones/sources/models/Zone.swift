@@ -59,8 +59,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var                decoratedName :             String  { return decoration + unwrappedName }
     var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
     var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
-    var            onlyShowRevealDot :               Bool  { return showingChildren && ((isFavoritesHere && !(widget?.isInMap ?? true)) || (kIsPhone && self == gHereMaybe)) }
-    var              dragDotIsHidden :               Bool  { return                     (isFavoritesHere && !(widget?.isInMap ?? true)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
+	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isHereForNonMap && !(widget?.type.isIdea ??  true)) || (kIsPhone && self == gHereMaybe)) }
+    var              dragDotIsHidden :               Bool  { return                     (isHereForNonMap && !(widget?.type.isIdea ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
     var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
     var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
     var                 hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }
@@ -72,6 +72,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     hasEmail :               Bool  { return hasTrait(for: .tEmail) && email != "" }
 	var                     hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                      hasNote :               Bool  { return hasTrait(for: .tNote) }
+	var                      isInMap :               Bool  { return root?.isMapRoot            ?? false }
     var                    isInTrash :               Bool  { return root?.isRootOfTrash        ?? false }
     var                isInFavorites :               Bool  { return root?.isRootOfFavorites    ?? false }
     var             isInLostAndFound :               Bool  { return root?.isRootOfLostAndFound ?? false }
@@ -80,6 +81,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var               isReadOnlyRoot :               Bool  { return isRootOfLostAndFound || isRootOfFavorites || isRootOfTrash }
     var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var                   spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
+
+	var widgetTypeForRoot : ZWidgetType {
+		var type = ZWidgetType.tIdea
+
+		if  let name = root?.recordName() {
+			switch name {
+				case kRecentsName:       type = .tRecent
+				case kFavoritesRootName: type = .tFavorites
+				default:                 break
+			}
+		}
+
+		return type
+	}
 
 	// MARK:- setup
 	// MARK:-
@@ -1264,7 +1279,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         gSelecting.grab([self], updateBrowsingLevel: updateBrowsingLevel)
     }
 
-
 	func asssureIsVisibleAndGrab(updateBrowsingLevel: Bool = true) {
 		asssureIsVisible() {
 			gShowFavorites = kIsPhone && self.isInFavorites
@@ -1272,7 +1286,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			self.grab(updateBrowsingLevel: updateBrowsingLevel)
 		}
 	}
-
 
     func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool, _ CLICKTWICE: Bool) {
         if !gIsEditIdeaMode && isGrabbed { return }  // nothing to do

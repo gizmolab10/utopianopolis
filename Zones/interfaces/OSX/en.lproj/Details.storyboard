@@ -147,7 +147,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kS3-7c-58G" customClass="ZFavoritesControlsView" customModule="Seriously" customModuleProvider="target">
+                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kS3-7c-58G" customClass="ZModeControlsView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="1" y="122" width="283" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="283" id="AuQ-AE-fcg"/>

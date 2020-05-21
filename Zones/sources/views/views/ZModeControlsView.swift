@@ -1,5 +1,5 @@
 //
-//  ZFavoritesControlsView.swift
+//  ZModeControlsView.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/15/20.

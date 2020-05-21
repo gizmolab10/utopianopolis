@@ -213,22 +213,22 @@ extension ZControlButton {
 
 }
 
-extension ZFavoritesControlsView {
+extension ZModeControlsView {
 
 	func updateTooltips() {
 		for button in buttons {
 			button.toolTip = nil
 
 			if  gShowToolTips,
-				let     type = button.favoritesControlType {
+				let     type = button.modeButtonType {
 				let browsing = "vertical browsing"
 				let isRecent = gIsRecentlyMode
 
 				switch type {
-					case .eAdd:       button.toolTip = "Add\n\n\(kClickTo)add a new category"
-					case .eMode:      button.toolTip = "Showing \(isRecent ? "recents" : "favorites")\n\n\(kClickTo)show \(isRecent ? "favorites" : "recents")"
-					case .eGrowth:    button.toolTip = "Growth direction\n\n\(kClickTo)grow \(gListsGrowDown ? "up" : "down")ward or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
-					case .eConfining: button.toolTip = "Browsing confinement\n\n\(kClickTo)\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within siblings")"
+					case .tAdd:     button.toolTip = "Add\n\n\(kClickTo)add a new category"
+					case .tMode:    button.toolTip = "Showing \(isRecent ? "recents" : "favorites")\n\n\(kClickTo)show \(isRecent ? "favorites" : "recents")"
+					case .tGrow:    button.toolTip = "Growth direction\n\n\(kClickTo)grow \(gListsGrowDown ? "up" : "down")ward or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
+					case .tConfine: button.toolTip = "Browsing confinement\n\n\(kClickTo)\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within siblings")"
 				}
 			}
 		}

@@ -23,7 +23,7 @@ enum ZTextType: Int {
 
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips {
 
-    override var preferredFont : ZFont { return (widget?.isInMap ?? true) ? gWidgetFont : gFavoritesFont }
+	override var preferredFont : ZFont { return (widgetZone?.widgetTypeForRoot.isIdea ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return  widget?.widgetZone }
     weak var            widget : ZoneWidget?
     var                   type = ZTextType.name
@@ -210,15 +210,15 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips {
         updateTextColor()
         super.draw(dirtyRect)
 
+		// /////////////////////////////////////////////////////
+		// draw line underneath text indicating it can travel //
+		// /////////////////////////////////////////////////////
+
         if  let zone = widgetZone,
              zone.canTravel,
             !zone.isGrabbed,
             !isFirstResponder,
 			gIsGraphOrEditIdeaMode {
-
-            // /////////////////////////////////////////////////////
-            // draw line underneath text indicating it can travel //
-            // /////////////////////////////////////////////////////
 
 			let       deltaX = min(3.0, dirtyRect.width / 2.0)
             var         rect = dirtyRect.insetBy(dx: deltaX, dy: 0.0)

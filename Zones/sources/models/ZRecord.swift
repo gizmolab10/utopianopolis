@@ -19,8 +19,11 @@ class ZRecord: NSObject {
     var     showingChildren: Bool               { return isExpanded(recordName) }
 	var   isRootOfFavorites: Bool               { return record != nil && recordName == kFavoritesRootName }
 	var     isFavoritesHere: Bool               { return record != nil && recordName == gFavoritesHereMaybe?.recordName() }
+	var        isRecentRoot: Bool               { return record != nil && recordName == kRecentsRootName }
+	var     isHereForNonMap: Bool               { return isFavoritesHere || isRecentRoot }
     var          isBookmark: Bool               { return record?.isBookmark ?? false }
-    var              isRoot: Bool               { return record != nil && kRootNames.contains(recordName!) }
+	var              isRoot: Bool               { return record != nil && kRootNames.contains(recordName!) }
+	var           isMapRoot: Bool               { return record != nil && recordName == kRootName }
     var           isFetched: Bool               { return !hasState(.notFetched) }
     var           needsSave: Bool               { return  hasState(.needsSave) }
     var           needsRoot: Bool               { return  hasState(.needsRoot) }

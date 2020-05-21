@@ -21,32 +21,52 @@ enum ZLineKind: Int {
     case above    =  1
 }
 
-struct ZWidgetKind: OptionSet {
+struct ZWidgetType: OptionSet {
 	static var structValue = 0
 	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
 	let           rawValue : Int
 
-	init() { rawValue = ZWidgetKind.nextValue }
+	init() { rawValue = ZWidgetType.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let   dIdea = ZWidgetKind()
-	static let   dNote = ZWidgetKind()
-	static let  dEssay = ZWidgetKind()
-	static let dRecent = ZWidgetKind()
+	static let      tIdea = ZWidgetType()
+	static let      tNote = ZWidgetType()
+	static let     tEssay = ZWidgetType()
+	static let    tRecent = ZWidgetType()
+	static let tFavorites = ZWidgetType()
+
+	var isIdea:     Bool { return contains(.tIdea) }
+	var isRecent:   Bool { return contains(.tRecent) }
+	var isFavorite: Bool { return contains(.tFavorites) }
+}
+
+class ZWidgetObject: NSObject {
+
+	var note: ZNote?
+	var zone: Zone?
+
 }
 
 class ZoneWidget: ZView {
 
-	var                 isInMap = false
     let                 dragDot = ZoneDot        ()
     let               revealDot = ZoneDot        ()
     let              textWidget = ZoneTextWidget ()
     let            childrenView = ZView          ()
 	let            widgetObject = ZWidgetObject  ()
     private var childrenWidgets = [ZoneWidget]   ()
-	var      kind : ZWidgetKind = .dIdea
+	var      type : ZWidgetType = .tIdea
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
-    var                   ratio :     CGFloat { return isInMap ? 1.0 : kFavoritesReduction }
+	var                   ratio :    CGFloat  { return type.isIdea ? 1.0 : kFavoritesReduction }
+	override var    description :     String  { return widgetZone?.description ?? kEmptyIdea }
+
+	var controller: ZGraphController? {
+		if type.isIdea     { return     gGraphController }
+		if type.isRecent   { return   gRecentsController }
+		if type.isFavorite { return gFavoritesController }
+
+		return nil
+	}
 
 	var widgetZone : Zone? {
 		get { return widgetObject.zone }
@@ -65,41 +85,36 @@ class ZoneWidget: ZView {
     deinit {
         childrenWidgets.removeAll()
 		removeAllSubviews()
-
-//        widgetZone = nil
     }
-
 
     // MARK:- layout
     // MARK:-
 
-
-    func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, inMap: Bool, visited: ZoneArray) {
+	func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, _ iType: ZWidgetType, visited: ZoneArray) {
         if  let thisView = inView,
             !thisView.subviews.contains(self) {
             thisView.addSubview(self)
         }
 
-        isInMap = inMap
-
         #if os(iOS)
             backgroundColor = kClearColor
         #endif
 
-        gWidgets.registerWidget(self)
+		type = iType
+
+		gWidgets.registerWidget(self, for: type)
         addTextView()
         textWidget.layoutText()
         layoutDots()
         addChildrenView()
 
         if  recursing && (widgetZone == nil || !visited.contains(widgetZone!)) {
-            let more = widgetZone == nil ? [] : [widgetZone!]
+            let    more = widgetZone == nil ? [] : [widgetZone!]
 
             prepareChildrenWidgets()
             layoutChildren(iKind, visited: visited + more)
         }
     }
-
 
     func layoutChildren(_ iKind: ZSignalKind, visited: ZoneArray) {
         if  let  zone = widgetZone, zone.showingChildren {
@@ -111,7 +126,7 @@ class ZoneWidget: ZView {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone =            zone[index]
 
-                childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, inMap: isInMap, visited: visited)
+				childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, type, visited: visited)
 				childWidget.snp.setLabel("<w> \(childWidget.widgetZone?.zoneName ?? "unknown")")
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in
@@ -189,7 +204,7 @@ class ZoneWidget: ZView {
 		childrenView.snp.setLabel("<c> \(widgetZone?.zoneName ?? "unknown")")
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let ratio = isInMap ? 1.0 : kFavoritesReduction / 3.0
+            let ratio = type.isIdea ? 1.0 : kFavoritesReduction / 3.0
 
             make.left.equalTo(textWidget.snp.right).offset(gChildrenViewOffset * Double(ratio))
             make.bottom.top.right.equalTo(self)
@@ -481,7 +496,7 @@ class ZoneWidget: ZView {
         let         shrink =  3.0 + (height / 6.0)
         let hiddenDotDelta = rightDot?.revealDotIsVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0   // expand around reveal dot, only if it is visible
         var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta, dy: -0.5 - delta).offsetBy(dx: -0.75, dy: 0.5)  // get size from text widget
-        rect.size .height += -0.5 + gHighlightHeightOffset + (isInMap ? 0.0 : 1.0)
+        rect.size .height += -0.5 + gHighlightHeightOffset + (type.isIdea ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let     colorRatio = CGFloat(pale ? 0.5 : 1.0)
@@ -536,7 +551,7 @@ class ZoneWidget: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-		if (gIsGraphOrEditIdeaMode || !isInMap),
+		if (gIsGraphOrEditIdeaMode || !type.isIdea),
 			let      zone = widgetZone {
             let isGrabbed = zone.isGrabbed
             let isEditing = textWidget.isFirstResponder
@@ -551,9 +566,9 @@ class ZoneWidget: ZView {
 				if !nowDrawLines && !gIsDragging && !(controller?.dragView?.showRubberband ?? false) {
                     nowDrawLines = true
                     
-                    draw(dirtyRect)
+                    draw(dirtyRect) // recurse
                 } else {
-                    for child in childrenWidgets {
+                    for child in childrenWidgets { // this is after child dots have been autolayed out
                         drawLine(to: child)
                     }
                 }
@@ -562,9 +577,5 @@ class ZoneWidget: ZView {
             nowDrawLines = false
         }
     }
-
-	var controller: ZGraphController? {
-		return isInMap ? gGraphController : gFavoritesController
-	}
 
 }

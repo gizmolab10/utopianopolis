@@ -18,14 +18,15 @@ enum ZControllerID: Int {
 	case idShortcuts
     case idDetails
     case idActions
+	case idRecents
 	case idStatus
     case idSearch
 	case idCrumbs
-    case idMap
 	case idNote
     case idHelp
 	case idMain
 	case idRing
+	case idMap
 }
 
 enum ZSignalKind: Int {

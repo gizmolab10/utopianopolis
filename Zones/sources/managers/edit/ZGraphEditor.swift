@@ -1302,9 +1302,11 @@ class ZGraphEditor: ZBaseEditor {
 					var beingMoved = grab
 
 					if  toFavorites && !beingMoved.isInFavorites && !beingMoved.isBookmark && !beingMoved.isInTrash && !CONTROL {
-						beingMoved = gFavorites.createBookmark(for: beingMoved, style: .favorite)	// type 3
+						if  let bookmark = gFavorites.createBookmark(for: beingMoved, style: .favorite) {	// type 3
+							beingMoved   = bookmark
 
-						beingMoved.maybeNeedSave()
+							beingMoved.maybeNeedSave()
+						}
 					} else {
 						beingMoved.orphan()
 

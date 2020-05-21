@@ -71,6 +71,7 @@ class ZFocus: ZRing {
                     focusClosure(object as! Zone)
                 }
             } else if zone == gHere {       // state 2
+				gRecents.updateCurrentRecent()
                 gFavorites.updateGrab()
                 atArrival()
             } else if zone.isInFavorites {  // state 3
@@ -165,7 +166,6 @@ class ZFocus: ZRing {
     func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
         gHere = iHere
 
-		gRecents.push()
 		push()
 		focus {
 			gHere.grab()

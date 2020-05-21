@@ -8,17 +8,16 @@
 
 import Foundation
 
-enum ZFavoritesControlType: String {
-	case eConfining = "browse"
-	case eGrowth    = "grow"
-	case eMode      = "mode"
-	case eAdd       = "add"
-}
+var   gRecentsController: ZGraphController? { return gControllers.controllerForID(.idRecents)   as? ZGraphController }
+var gFavoritesController: ZGraphController? { return gControllers.controllerForID(.idFavorites) as? ZGraphController }
 
 class ZFavoritesController: ZGraphController {
 
-	override var isFavorites: Bool { return true }
-	@IBOutlet var controlsView: ZFavoritesControlsView?
+	override  var        isMap : Bool          { return false }
+	override  var     hereZone : Zone?         { return gIsRecentlyMode ?   gRecentsRoot :   gFavoritesHereMaybe }
+	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ?  .tRecent      :  .tFavorites }
+	override  var controllerID : ZControllerID { return gIsRecentlyMode ? .idRecents     : .idFavorites }
+	@IBOutlet var controlsView : ZModeControlsView?
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
 		if  let c = gDetailsController, !c.hideableIsHidden(for: .Favorites) { // don't send signal to a hidden favorites controller

@@ -14,13 +14,14 @@ import SnapKit
     import UIKit
 #endif
 
-var gGraphController:     ZGraphController? { return gControllers.controllerForID(.idMap)     as? ZGraphController }
-var gFavoritesController: ZGraphController? { return gControllers.controllerForID(.idFavorites) as? ZGraphController }
+var gGraphController: ZGraphController? { return gControllers.controllerForID(.idMap) as? ZGraphController }
 
 class ZGraphController: ZGesturesController, ZScrollDelegate {
     
-	override  var       controllerID : ZControllerID { return isFavorites ? .idFavorites : .idMap }
-	var                  isFavorites : Bool { return false }
+	override  var       controllerID : ZControllerID { return .idMap }
+	var                   widgetType : ZWidgetType   { return .tIdea }
+	var                        isMap : Bool          { return true }
+	var                     hereZone : Zone?         { return gHereMaybe }
 	@IBOutlet var            spinner : ZProgressIndicator?
 	@IBOutlet var           dragView : ZDragView?
 	@IBOutlet var        spinnerView : ZView?
@@ -150,7 +151,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
     func layoutForCurrentScrollOffset() {
-		let offset = isFavorites ? CGPoint(x: -12.0, y: -6.0) : gScrollOffset
+		let offset = isMap ? gScrollOffset : CGPoint(x: -12.0, y: -6.0)
 
 		if  let d = dragView {
 			rootWidget.snp.setLabel("<w> \(rootWidget.widgetZone?.zoneName ?? "unknown")")
@@ -159,7 +160,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 				make.centerY.equalTo(d).offset(offset.y)
 				make.centerX.equalTo(d).offset(offset.x)
 
-				if  isFavorites {
+				if !isMap {
 					make.top   .equalToSuperview()
 					make.bottom.equalToSuperview().offset(-12.0)
 				}
@@ -170,9 +171,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     }
 
     func layoutWidgets(for iZone: Any?, _ iKind: ZSignalKind) {
-        if kIsPhone && (isFavorites != gShowFavorites) { return }
+        if kIsPhone && (isMap == gShowFavorites) { return }
 
-		let                        here = isFavorites ? gFavoritesHereMaybe : gHereMaybe
+		let                        here = hereZone
         var specificWidget: ZoneWidget? = rootWidget
         var specificView:        ZView? = dragView
         var specificIndex:         Int?
@@ -182,14 +183,14 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
         if  let          zone  = iZone as? Zone,
             let        widget  = zone.widget,
-            widget.isInMap    == !isFavorites {
+			widget.type       == zone.widgetTypeForRoot {
             specificWidget     = widget
             specificIndex      = zone.siblingIndex
             specificView       = specificWidget?.superview
             recursing          = [.sData, .sRelayout].contains(iKind)
         }
 
-        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, inMap: !isFavorites, visited: [])
+        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, widgetType, visited: [])
     }
 
 	// MARK:- events
@@ -209,18 +210,18 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	
 	func prepare(for iKind: ZSignalKind) {
 		if  iKind == .sRelayout {
-			gWidgets.clearRegistry(forFavorites: isFavorites)
+			gWidgets.clearRegistry(for: widgetType)
 		}
 
 		if  kIsPhone {
 			rootWidget.isHidden = gShowFavorites
 		}
 	}
-//	
-//	func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
-//		return (gestureRecognizer == clickGesture && otherGestureRecognizer == movementGesture) ||
-//			otherGestureRecognizer == edgeGesture
-//	}
+	
+	func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
+		return (gestureRecognizer == clickGesture && otherGestureRecognizer == movementGesture) ||
+			otherGestureRecognizer == edgeGesture
+	}
 
 	override func restartGestureRecognition() {
 		gestureView?.gestureHandler = self
@@ -446,6 +447,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 prior?                          .displayForDrag() // erase    child lines
                 dropZone?.widget?               .displayForDrag() // relayout child lines
 				gGraphController?    .dragView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
+				gRecentsController?  .dragView?.setNeedsDisplay()
 				gFavoritesController?.dragView?.setNeedsDisplay()
 
                 if !isNoop, dropNow,
@@ -499,7 +501,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     func widgetNearest(_ iGesture: ZGestureRecognizer?, inMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
         if  let mapLocation = iGesture?.location(in: dragView),
-			let mapWidget   = rootWidget.widgetNearestTo(mapLocation, in: dragView, isFavorites ? gFavoritesHereMaybe : gHereMaybe) {
+			let mapWidget   = rootWidget.widgetNearestTo(mapLocation, in: dragView, hereZone) {
             if  inMap, !kIsPhone,
 
                 // /////////////////////////////////////
@@ -586,7 +588,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 		var     smallest = CGSize.big
         if  let        d = dragView,
             let location = iGesture?.location(in: d), d.bounds.contains(location) {
-			let     dict = gWidgets.getWidgetsDict(forFavorites: isFavorites)
+			let     dict = gWidgets.getWidgetsDict(for: widgetType)
             let  widgets = dict.values.reversed()
 			for  widget in widgets {
                 let rect = widget.convert(widget.outerHitRect, to: d)
