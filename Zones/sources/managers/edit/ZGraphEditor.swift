@@ -136,8 +136,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "-":      return handleHyphen(COMMAND, OPTION)
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { gRedrawGraph() } }
 					case "\\":     gGraphController?.toggleGraphs(); gRedrawGraph()
-                    case "[":      gFocusRing.goBack(   extreme: FLAGGED)
-                    case "]":      gFocusRing.goForward(extreme: FLAGGED)
+                    case "[", "]": gRecents.go(forward: key == "]")
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 					case kEquals:  if COMMAND { updateSize(up: true) } else { gFocusRing.invokeTravel(gSelecting.firstSortedGrab) { gRedrawGraph() } }
                     case ";", "'": gFavorites.switchToNext(key == "'") { gRedrawGraph() }
@@ -612,7 +611,7 @@ class ZGraphEditor: ZBaseEditor {
 
 
     func revealZonesToRoot(from zone: Zone, _ onCompletion: Closure?) {
-        if zone.isRoot {
+        if zone.isARoot {
             onCompletion?()
         } else {
             var needOp = false
@@ -668,7 +667,7 @@ class ZGraphEditor: ZBaseEditor {
         }
 
 		descendents.traverseAncestors { iParent -> ZTraverseStatus in
-			let  gotThere = iParent == iAncestor || iParent.isRoot    // reached the ancestor or the root
+			let  gotThere = iParent == iAncestor || iParent.isARoot    // reached the ancestor or the root
 			let gotOrphan = iParent.parentZone == nil
 
 			if  gotThere || gotOrphan {
@@ -796,7 +795,7 @@ class ZGraphEditor: ZBaseEditor {
                 onCompletion?()
             }
             
-            if zone.isRoot || parentZone == gFavoritesRoot {
+            if zone.isARoot || parentZone == gFavoritesRoot {
                 complete() // cannot move out from a root or move into favorites root
             } else if selectionOnly {
                 
@@ -805,7 +804,7 @@ class ZGraphEditor: ZBaseEditor {
                 // /////////////////
                 
                 if extreme {
-                    if  gHere.isRoot {
+                    if  gHere.isARoot {
                         gHere = zone // reverse what the last move out extreme did
 
                         complete()
@@ -839,7 +838,7 @@ class ZGraphEditor: ZBaseEditor {
                     
                     complete()
                 }
-            } else if let p = parentZone, !p.isRoot {
+            } else if let p = parentZone, !p.isARoot {
                 
                 // ////////////
                 // MOVE ZONE //
@@ -871,7 +870,7 @@ class ZGraphEditor: ZBaseEditor {
                     }
                     
                     if extreme {
-                        if  gHere.isRoot {
+                        if  gHere.isARoot {
                             moveOut(to: gHere, onCompletion: onCompletion)
                         } else {
                             revealZonesToRoot(from: zone) {
@@ -1400,7 +1399,7 @@ class ZGraphEditor: ZBaseEditor {
         let rootMostParent = rootMost.parentZone
         
         if  isHere {
-            if  rootMost.isRoot {
+            if  rootMost.isARoot {
                 onCompletion?(.sData)
             } else {
 

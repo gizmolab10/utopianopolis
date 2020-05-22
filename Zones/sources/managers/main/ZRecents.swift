@@ -9,54 +9,53 @@
 import Foundation
 import CloudKit
 
-let gRecents = ZRecents(ZDatabaseID.recentsID)
+let   gRecents = ZRecents(ZDatabaseID.recentsID)
 
-var gRecentsRoot : Zone? {
-	get {
-		return gMineCloud?.recentsZone
-	}
-
-	set {
-		if  let n = newValue {
-			gMineCloud?.recentsZone = n
-		}
-	}
-}
-
-class ZRecents: ZRecords {
+class ZRecents : ZRecords {
 
 	var currentRecent: Zone?
 
-	func updateCurrentRecent() {
-		if  let           bookmark = gRecentsRoot?.children.bookmarksTargeting(gHereMaybe) {
-			gRecents.currentRecent = bookmark
+	var root : Zone? {
+		get {
+			return gMineCloud?.recentsZone
+		}
+
+		set {
+			if  let n = newValue {
+				gMineCloud?.recentsZone = n
+			}
 		}
 	}
 
 	func setup(_ onCompletion: IntClosure?) {
-		let         mine = gMineCloud
-		if  let     root = mine?.maybeZoneForRecordName(kRecentsRootName) {
-			gRecentsRoot = root
+		let        mine = gMineCloud
+		if  let newRoot = mine?.maybeZoneForRecordName(kRecentsRootName) {
+			root        = newRoot
 
-			gRecentsRoot?.reallyNeedProgeny()
+			root?.reallyNeedProgeny()
 			onCompletion?(0)
 		} else {
 			mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kRecentsRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-				let      ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kRecentsRootName))
-				let          root = Zone(record: ckRecord, databaseID: .mineID)
-				root.directAccess = .eProgenyWritable
-				root.zoneName     = kRecentsRootName
-				gRecentsRoot      = root
+				let            ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kRecentsRootName))
+				self.root               = Zone(record: ckRecord, databaseID: .mineID)
+				self.root?.directAccess = .eProgenyWritable
+				self.root?.zoneName     = kRecentsRootName
 
-				gRecentsRoot?.reallyNeedProgeny()
+				self.root?.reallyNeedProgeny()
 				onCompletion?(0)
 			}
 		}
 	}
 
+	func updateCurrentRecent() {
+		if  let  bookmark = root?.children.bookmarksTargeting(gHereMaybe) {
+			currentRecent = bookmark
+		}
+	}
+
 	func push() {
-		if  let root = gRecentsRoot {
-			for bookmark in root.children {
+		if  let r = root {
+			for bookmark in r.children {
 				if  let target = bookmark.bookmarkTarget,
 					target.recordName() == gHere.recordName() {
 					return
@@ -64,10 +63,194 @@ class ZRecents: ZRecords {
 			}
 
 			if  let bookmark = gFavorites.createBookmark(for: gHereMaybe, style: .addFavorite) {
-				root.children.append(bookmark)
+				r.children.append(bookmark)
 			}
 
 			updateCurrentRecent()
+		}
+	}
+
+	func go(forward: Bool) {
+		if  let zones = root?.children {
+			let   max = zones.count - 1
+			var found = 0
+
+			for (index, recent) in zones.enumerated() {
+				if  recent == currentRecent {
+					if  forward {
+						if  index < max {
+							found = index + 1
+						}
+					} else if  index == 0 {
+						found = max
+					} else if   index > 1 {
+						found = index - 1
+					}
+
+					break
+				}
+			}
+
+			setCurrent(zones[found])
+		}
+	}
+
+	func setCurrent(_ recent: Zone) {
+		currentRecent = recent
+		if  let here  = recent.bookmarkTarget {
+			gHere     = here
+
+			gHere.grab()
+			focus(kind: .eSelected) {
+				gSignal([.sRelayout])
+			}
+		}
+	}
+
+	func focus(kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, _ atArrival: @escaping Closure) {
+
+		// five states:
+		// 1. is a bookmark     -> target becomes here
+		// 2. is here           -> update in favorites, not push
+		// 3. is a favorite     -> grab here
+		// 4. not here, COMMAND -> become here
+		// 5. not COMMAND       -> select here
+
+		if  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab {
+			let focusClosure = { (zone: Zone) in
+				gHere = zone
+
+				gFavorites.updateCurrentFavorite()
+				zone.grab()
+				atArrival()
+			}
+
+			if  zone.isBookmark {     		// state 1
+				travelThrough(zone) { object, kind in
+					focusClosure(object as! Zone)
+				}
+			} else if zone == gHere {       // state 2
+				updateCurrentRecent()
+				gFavorites.updateGrab()
+				atArrival()
+			} else if zone.isInFavorites {  // state 3
+				focusClosure(gHere)
+			} else if COMMAND {             // state 4
+				gFavorites.refocus {
+					self.push()
+					atArrival()
+				}
+			} else {                        // state 5
+				focusClosure(zone)
+			}
+		}
+	}
+
+	func travelThrough(_ iBookmark: Zone, atArrival: @escaping SignalClosure) {
+		if  let  targetZRecord = iBookmark.crossLink,
+			let     targetDBID = targetZRecord.databaseID,
+			let   targetRecord = targetZRecord.record {
+			let targetRecordID = targetRecord.recordID
+			let        iTarget = iBookmark.bookmarkTarget
+
+			let complete : SignalClosure = { (iObject, iKind) in
+				self.showTopLevelFunctions()
+				atArrival(iObject, iKind)
+			}
+
+			var there: Zone?
+
+			if  iBookmark.isInFavorites {
+				gFavorites.currentFavorite = iBookmark
+			}
+
+			if  let target = iTarget, target.spawnedBy(gHereMaybe) {
+				if !target.isGrabbed {
+					target.asssureIsVisible()
+					target.grab()
+				} else {
+					gHere = target
+
+					push()
+				}
+
+				gShowFavorites = targetDBID == .favoritesID
+
+				complete(target, .sRelayout)
+			} else {
+				gShowFavorites = targetDBID == .favoritesID
+
+				if  gDatabaseID != targetDBID {
+					gDatabaseID  = targetDBID
+
+					/////////////////////////////////
+					// TRAVEL TO A DIFFERENT GRAPH //
+					/////////////////////////////////
+
+					if  let target = iTarget, target.isFetched { // e.g., default root favorite
+						focus {
+							gHere  = target
+
+							gHere.prepareForArrival()
+							complete(gHere, .sRelayout)
+						}
+					} else {
+						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
+							if  let hereRecord = iRecord,
+								let    newHere = gCloud?.zoneForRecord(hereRecord) {
+								gHere          = newHere
+
+								newHere.prepareForArrival()
+								self.focus {
+									complete(newHere, .sRelayout)
+								}
+							} else {
+								complete(gHere, .sRelayout)
+							}
+						}
+					}
+				} else {
+
+					///////////////////////
+					// STAY WITHIN GRAPH //
+					///////////////////////
+
+					there = gCloud?.maybeZoneForRecordID(targetRecordID)
+					let grabbed = gSelecting.firstSortedGrab
+					let    here = gHere
+
+					UNDO(self) { iUndoSelf in
+						self.UNDO(self) { iRedoSelf in
+							self.travelThrough(iBookmark, atArrival: complete)
+						}
+
+						gHere = here
+
+						grabbed?.grab()
+						complete(here, .sRelayout)
+					}
+
+					let grabHere = {
+						gHereMaybe?.prepareForArrival()
+						complete(gHereMaybe, .sRelayout)
+					}
+
+					if  there != nil {
+						gHere = there!
+
+						grabHere()
+					} else if gCloud?.databaseID != .favoritesID { // favorites does not have a cloud database
+						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
+							if  let hereRecord = iRecord,
+								let    newHere = gCloud?.zoneForRecord(hereRecord) {
+								gHere          = newHere
+
+								grabHere()
+							}
+						}
+					} // else ... favorites id with an unresolvable bookmark target
+				}
+			}
 		}
 	}
 

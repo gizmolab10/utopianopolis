@@ -82,18 +82,25 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips {
 
 	func layoutText(isEditing: Bool = false) {
 		gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
+		applyConstraints()
 		updateTooltips()
-		layoutSelf()
+		debug()
+	}
+
+	func debug() {
+		if  let type = widgetZone?.widgetTypeForRoot {
+			printDebug(.dText, prefix: type.description + ": ", text ?? "currently not named")
+		}
 	}
 
     func updateGUI() {
-        widget?.widgetZone?.needWrite()
-        layoutSelf()
 		updateTooltips()
+        applyConstraints()
         widget?.setNeedsDisplay()
+		widget?.widgetZone?.needWrite()
     }
 
-    func layoutSelf() {
+    func applyConstraints() {
         if  let container = superview {
 			let    height = ((gGenericOffset.height - 2.0) / 3.0) + 2.0
 			let  hideText = widgetZone?.onlyShowRevealDot ?? true

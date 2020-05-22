@@ -94,7 +94,6 @@ class ZTextPack: NSObject {
         self.setup(for: iZRecord)
     }
 
-
     func updateText(isEditing: Bool = false) {
         textWidget?.text = isEditing ? unwrappedName : textWithSuffix
     }
@@ -286,7 +285,7 @@ class ZTextEditor: ZTextView {
 
 				if  let textWidget = zone.widget?.textWidget {
 					textWidget.enableUndo()
-					textWidget.layoutSelf()
+					textWidget.applyConstraints()
 					textWidget.becomeFirstResponder()
 				}
 

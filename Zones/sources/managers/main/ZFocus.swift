@@ -166,7 +166,7 @@ class ZFocus: ZRing {
     func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
         gHere = iHere
 
-		push()
+		gRecents.push()
 		focus {
 			gHere.grab()
 			gFavorites.updateCurrentFavorite()

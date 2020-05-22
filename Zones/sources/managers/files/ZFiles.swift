@@ -152,6 +152,10 @@ class ZFiles: NSObject {
 					dict[.trash] = trash as NSObject
 				}
 
+				if  let   recent  = try manager.recentsZone?.createStorageDictionary(for: dbID) {
+					dict[.recent] = recent as NSObject
+				}
+
 				if  let   destroy  = try manager.destroyZone?.createStorageDictionary(for: dbID) {
 					dict[.destroy] = destroy as NSObject
 				}
@@ -212,7 +216,7 @@ class ZFiles: NSObject {
 			let       index  = databaseID.index {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
-			let  keys: types = [.date, .manifest, .lost, .graph, .trash, .destroy, .favorites, .bookmarks ]
+			let  keys: types = [.date, .lost, .graph, .trash, .destroy, .recent, .manifest, .favorites, .bookmarks ]
 			
             FOREGROUND {
                 do {
@@ -256,6 +260,7 @@ class ZFiles: NSObject {
 										case .lost:      cloud.lostAndFoundZone = zone
                                         case .graph:     cloud.rootZone         = zone
                                         case .trash:     cloud.trashZone        = zone
+//										case .recent:    cloud.recentsZone      = zone
                                         case .destroy:   cloud.destroyZone      = zone
                                         case .favorites: gFavoritesRoot         = zone
                                         default: break

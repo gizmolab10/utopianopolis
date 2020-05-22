@@ -496,7 +496,7 @@ class ZCloud: ZRecords {
                             if  iZone.isFetched,
                                 iZone.databaseID == self.databaseID,
                                 let identifier = iZone.recordName,
-                                !iZone.isRoot,
+                                !iZone.isARoot,
                                 !memorables.contains(identifier) {
                                 memorables.append(identifier)
                             }
@@ -919,7 +919,7 @@ class ZCloud: ZRecords {
                                     let       r = child.record {
                                     let  states = self.states(for: r)
 
-                                    if  child.isRoot || child == fetched {
+                                    if  child.isARoot || child == fetched {
                                         child.parentZone = nil
 
                                         child.maybeNeedSave()
@@ -1006,7 +1006,7 @@ class ZCloud: ZRecords {
                             } else {
                                 let child = self.zoneForRecord(childRecord)
 
-                                if  child.isRoot && child.parentZone != nil {
+                                if  child.isARoot && child.parentZone != nil {
                                     child.orphan()  // avoids HANG ... a root can NOT be a child, by definition
                                     child.allowSaveWithoutFetch()
                                     child.needSave()
@@ -1155,7 +1155,7 @@ class ZCloud: ZRecords {
                                     target.fetchBeforeSave()
 
                                     if  let parent = target.parentZone {
-                                        if  target.isRoot || target == parent { // no roots have a parent, by definition
+                                        if  target.isARoot || target == parent { // no roots have a parent, by definition
                                             target.orphan()                     // avoid HANG ... unwire parent cycle
                                             target.allowSaveWithoutFetch()
                                             target.needSave()
@@ -1215,14 +1215,14 @@ class ZCloud: ZRecords {
         let rootCompletion = {
             self.hereZoneMaybe = gRoot
 
-			gFocusRing.push()
+			gRecents.push()
             onCompletion?(0)
         }
 
 		let hereCompletion = { (iHere: Zone) in
 			self.hereZone = iHere
 
-			gFocusRing.push()
+			gRecents.push()
 			onCompletion?(0)
 		}
 
@@ -1267,16 +1267,17 @@ class ZCloud: ZRecords {
             } else {
                 let      rootID = rootIDs[iIndex]
                 let  recordName = rootID.rawValue
+				let      isMine = self.databaseID == .mineID
                 var        name = self.databaseID.userReadableString + " " + recordName
                 let recurseNext = { establishRootAt?(iIndex + 1) }
 
                 switch rootID {
-				case .favoritesID: if gFavoritesRoot        != nil || self.databaseID != .mineID { recurseNext(); return } else { name = kFavoritesName }
-				case .recentsID:   if gRecentsRoot          != nil || self.databaseID != .mineID { recurseNext(); return } else { name = kRecentsName }
-                case .graphID:     if self.rootZone         != nil                               { recurseNext(); return } else { name = kFirstIdeaTitle }
-                case .lostID:      if self.lostAndFoundZone != nil                               { recurseNext(); return }
-                case .trashID:     if self.trashZone        != nil                               { recurseNext(); return }
-                case .destroyID:   if self.destroyZone      != nil                               { recurseNext(); return }
+				case .favoritesID: if self.favoritesZone    != nil || !isMine { recurseNext(); return } else { name = kFavoritesName }
+				case .recentsID:   if self.recentsZone      != nil || !isMine { recurseNext(); return } else { name = kRecentsName }
+                case .graphID:     if self.rootZone         != nil            { recurseNext(); return } else { name = kFirstIdeaTitle }
+                case .lostID:      if self.lostAndFoundZone != nil            { recurseNext(); return }
+                case .trashID:     if self.trashZone        != nil            { recurseNext(); return }
+                case .destroyID:   if self.destroyZone      != nil            { recurseNext(); return }
                 }
 
                 self.establishRootFor(name: name, recordName: recordName) { iZone in
@@ -1286,7 +1287,7 @@ class ZCloud: ZRecords {
 
                     switch rootID {
 					case .favoritesID: gFavoritesRoot        = iZone
-                    case .recentsID:   gRecentsRoot          = iZone
+					case .recentsID:   self.recentsZone      = iZone
                     case .destroyID:   self.destroyZone      = iZone
                     case .trashID:     self.trashZone        = iZone
                     case .graphID:     self.rootZone         = iZone

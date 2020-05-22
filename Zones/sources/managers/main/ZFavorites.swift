@@ -274,7 +274,7 @@ class ZFavorites: ZRecords {
                     } else {
                         hasDuplicate = true
                     }
-                } else if let      t = favorite.bookmarkTarget, t.isRoot,
+                } else if let      t = favorite.bookmarkTarget, t.isARoot,
                     let         dbID = t.databaseID {
                     if !hasDatabaseIDs.contains(dbID) {
                         hasDatabaseIDs.append(dbID)
@@ -470,7 +470,7 @@ class ZFavorites: ZRecords {
 
 					for workingFavorite in workingFavorites {
 						if  !workingFavorite.isInTrash,
-							!workingFavorite.bookmarkTarget!.isRoot,
+							!workingFavorite.bookmarkTarget!.isARoot,
 							recordName == workingFavorite.linkRecordName {
 							currentFavorite = workingFavorite
 

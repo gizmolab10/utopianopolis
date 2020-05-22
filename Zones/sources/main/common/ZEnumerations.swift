@@ -285,6 +285,7 @@ enum ZStorageType: String {
 	case minimal         = "minimal"
 	case destroy         = "destroy"
     case userID          = "user ID"
+	case recent          = "recent"
     case model           = "model"
     case graph           = "graph"
     case trash           = "trash"
@@ -409,7 +410,7 @@ enum ZEssayHyperlinkType: String {
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = [.dTime]
+var gDebugMode: [ZDebugMode] = [.dText]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
@@ -427,6 +428,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let   dEdit = ZDebugMode()
 	static let   dFile = ZDebugMode()
 	static let   dRing = ZDebugMode()
+	static let   dText = ZDebugMode()
 	static let  dNames = ZDebugMode()
 	static let  dFocus = ZDebugMode()
 	static let  dSpeed = ZDebugMode()
@@ -448,6 +450,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.dEdit,   "   edit"),
 				(.dInfo,   "   info"),
 				(.dRing,   "   info"),
+				(.dText,   "   text"),
 				(.dNames,  "   name"),
 				(.dNotes,  "   note"),
 				(.dFocus,  "  focus"),

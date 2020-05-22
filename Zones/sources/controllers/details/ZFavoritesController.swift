@@ -14,9 +14,9 @@ var gFavoritesController: ZGraphController? { return gControllers.controllerForI
 class ZFavoritesController: ZGraphController {
 
 	override  var        isMap : Bool          { return false }
-	override  var     hereZone : Zone?         { return gIsRecentlyMode ?   gRecentsRoot :   gFavoritesHereMaybe }
-	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ?  .tRecent      :  .tFavorites }
-	override  var controllerID : ZControllerID { return gIsRecentlyMode ? .idRecents     : .idFavorites }
+	override  var     hereZone : Zone?         { return gIsRecentlyMode ?   gRecents.root :   gFavoritesHereMaybe }
+	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ?  .tRecent       :  .tFavorite }
+	override  var controllerID : ZControllerID { return gIsRecentlyMode ? .idRecents      : .idFavorites }
 	@IBOutlet var controlsView : ZModeControlsView?
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {

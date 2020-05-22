@@ -17,13 +17,13 @@ class ZRecord: NSObject {
     var          databaseID: ZDatabaseID?
     var  isInPublicDatabase: Bool               { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
     var     showingChildren: Bool               { return isExpanded(recordName) }
-	var   isRootOfFavorites: Bool               { return record != nil && recordName == kFavoritesRootName }
-	var     isFavoritesHere: Bool               { return record != nil && recordName == gFavoritesHereMaybe?.recordName() }
-	var        isRecentRoot: Bool               { return record != nil && recordName == kRecentsRootName }
-	var     isHereForNonMap: Bool               { return isFavoritesHere || isRecentRoot }
+	var   isRootOfFavorites: Bool               { return recordName == kFavoritesRootName }
+	var     isFavoritesHere: Bool               { return recordName == gFavoritesHereMaybe?.recordName() }
+	var     isRootOfRecents: Bool               { return recordName == kRecentsRootName }
+	var           isMapRoot: Bool               { return recordName == kRootName }
+	var             isARoot: Bool               { return record != nil && kRootNames.contains(recordName!) }
+	var     isHereForNonMap: Bool               { return isFavoritesHere || isRootOfRecents }
     var          isBookmark: Bool               { return record?.isBookmark ?? false }
-	var              isRoot: Bool               { return record != nil && kRootNames.contains(recordName!) }
-	var           isMapRoot: Bool               { return record != nil && recordName == kRootName }
     var           isFetched: Bool               { return !hasState(.notFetched) }
     var           needsSave: Bool               { return  hasState(.needsSave) }
     var           needsRoot: Bool               { return  hasState(.needsRoot) }
@@ -46,7 +46,7 @@ class ZRecord: NSObject {
     var          recordName: String?            { return record?.recordID.recordName }
 	var unwrappedRecordName: String             { return recordName ?? "" }
     var       unwrappedName: String             { return recordName ?? emptyName }
-    var           emptyName: String             { return "" }
+    var           emptyName: String             { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
 
     var record: CKRecord? {
         get {

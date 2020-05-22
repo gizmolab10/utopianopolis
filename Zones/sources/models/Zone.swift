@@ -25,39 +25,36 @@ enum ZoneAccess: Int, CaseIterable {
 class Zone : ZRecord, ZIdentifiable, ZToolable {
 
     @objc dynamic var         parent : CKRecord.Reference?
+	@objc dynamic var      zoneOrder :           NSNumber?
+	@objc dynamic var      zoneCount :           NSNumber?
+	@objc dynamic var     zoneAccess :           NSNumber?
+	@objc dynamic var    zoneProgeny :           NSNumber?
 	@objc dynamic var       zoneName :             String?
     @objc dynamic var       zoneLink :             String?
     @objc dynamic var      zoneColor :             String?
-	@objc dynamic var zoneAttributes :             String?
     @objc dynamic var     parentLink :             String?
     @objc dynamic var     zoneAuthor :             String?
-    @objc dynamic var      zoneOrder :           NSNumber?
-    @objc dynamic var      zoneCount :           NSNumber?
-    @objc dynamic var     zoneAccess :           NSNumber?
-    @objc dynamic var    zoneProgeny :           NSNumber?
-	var              parentZoneMaybe :               Zone?
+	@objc dynamic var zoneAttributes :             String?
     var               hyperLinkMaybe :             String?
-    var               crossLinkMaybe :            ZRecord?
+	var                   emailMaybe :             String?
 	var                   assetMaybe :            CKAsset?
-    var                   colorMaybe :             ZColor?
-    var                   emailMaybe :             String?
+	var                   colorMaybe :             ZColor?
 	var       		       noteMaybe :              ZNote?
-	var                     children =          ZoneArray()
-	var                       traits =   ZTraitDictionary()
-    var                        count :                Int  { return children.count }
-    var                lowestExposed :                Int? { return exposed(upTo: highestExposed) }
-    var               bookmarkTarget :               Zone? { return crossLink as? Zone }
-    var                  destroyZone :               Zone? { return cloud?.destroyZone }
-    var                    trashZone :               Zone? { return cloud?.trashZone }
+	var               crossLinkMaybe :            ZRecord?
+	var              parentZoneMaybe :               Zone?
+	var               bookmarkTarget :               Zone? { return crossLink as? Zone }
+	var                  destroyZone :               Zone? { return cloud?.destroyZone }
+	var                    trashZone :               Zone? { return cloud?.trashZone }
+	var               linkRecordName :             String? { return recordName(from: zoneLink) }
+	override var           emptyName :             String  { return kEmptyIdea }
+	override var         description :             String  { return unwrappedName }
+	override var       unwrappedName :             String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
+	var                decoratedName :             String  { return decoration + unwrappedName }
     var                     manifest :          ZManifest? { return cloud?.manifest }
     var                       widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
     var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
-    var               linkRecordName :             String? { return recordName(from: zoneLink) }
-    override var           emptyName :             String  { return kEmptyIdea }
-	override var         description :             String  { return unwrappedName }
-    override var       unwrappedName :             String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
-    var                decoratedName :             String  { return decoration + unwrappedName }
-    var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
+	var                lowestExposed :                Int? { return exposed(upTo: highestExposed) }
+	var                        count :                Int  { return children.count }
     var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
 	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isHereForNonMap && !(widget?.type.isIdea ??  true)) || (kIsPhone && self == gHereMaybe)) }
     var              dragDotIsHidden :               Bool  { return                     (isHereForNonMap && !(widget?.type.isIdea ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
@@ -74,6 +71,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                      hasNote :               Bool  { return hasTrait(for: .tNote) }
 	var                      isInMap :               Bool  { return root?.isMapRoot            ?? false }
     var                    isInTrash :               Bool  { return root?.isRootOfTrash        ?? false }
+	var                 isInRecently :               Bool  { return root?.isRootOfRecents      ?? false }
     var                isInFavorites :               Bool  { return root?.isRootOfFavorites    ?? false }
     var             isInLostAndFound :               Bool  { return root?.isRootOfLostAndFound ?? false }
 	var                isRootOfTrash :               Bool  { return recordName == kTrashName }
@@ -81,6 +79,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var               isReadOnlyRoot :               Bool  { return isRootOfLostAndFound || isRootOfFavorites || isRootOfTrash }
     var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var                   spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
+	var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
+	var                     children =          ZoneArray()
+	var                       traits =   ZTraitDictionary()
 
 	var widgetTypeForRoot : ZWidgetType {
 		var type = ZWidgetType.tIdea
@@ -88,7 +89,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let name = root?.recordName() {
 			switch name {
 				case kRecentsName:       type = .tRecent
-				case kFavoritesRootName: type = .tFavorites
+				case kFavoritesRootName: type = .tFavorite
 				default:                 break
 			}
 		}
@@ -120,7 +121,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
 	func recordName() -> String? { return recordName }
-	func identifier() -> String? { return isRoot ? databaseID?.rawValue : recordName }
+	func identifier() -> String? { return isARoot ? databaseID?.rawValue : recordName }
 	func   toolName() -> String? { return clippedName }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
@@ -298,7 +299,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var base: Zone?
 
 		traverseAllAncestors { iZone in
-			if  iZone.isRoot {
+			if  iZone.isARoot {
 				base = iZone
 			}
 		}
@@ -353,7 +354,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
     var level: Int {
         get {
-            if  !isRoot, !isRootOfFavorites, let p = parentZone, p != self, !p.spawnedBy(self) {
+            if  !isARoot, !isRootOfFavorites, let p = parentZone, p != self, !p.spawnedBy(self) {
                 return p.level + 1
             }
 
@@ -607,7 +608,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
     var parentZone: Zone? {
         get {
-            if  isRoot {
+            if  isARoot {
                 unlinkParentAndMaybeNeedSave()
             } else if parentZoneMaybe == nil {
                 if  let     parentRef  = parent {
@@ -621,7 +622,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         }
 
         set {
-            if  isRoot {
+            if  isARoot {
                 unlinkParentAndMaybeNeedSave()
             } else if parentZoneMaybe      != newValue {
                 parentZoneMaybe             = newValue
@@ -830,7 +831,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addBookmark() {
-		if  databaseID != .favoritesID, !isRoot {
+		if  databaseID != .favoritesID, !isARoot {
 			let closure = {
 				var bookmark: Zone?
 
@@ -1020,7 +1021,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func deleteSelf(permanently: Bool = false, onCompletion: Closure?) {
-		if  isRoot {
+		if  isARoot {
 			onCompletion?() // deleting root would be a disaster
 		} else {
 			let parent = parentZone
@@ -1054,7 +1055,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			} else {
 				let deleteBookmarksClosure: Closure = {
 					if  let            p = parent, p != self {
-						p.fetchableCount = p.count                  // delete alters the count
+						p.fetchableCount = p.count       // delete alters the count
 					}
 
 					// //////////
@@ -1070,7 +1071,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				if !permanently && !isInTrash {
 					moveZone(to: trashZone) {
-						onCompletion?()
 						deleteBookmarksClosure()
 					}
 				} else {
@@ -1498,7 +1498,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         traverseAllAncestors { iZone in
             let  isReciprocal = ancestor == nil  || iZone.children.contains(ancestor!)
 
-            if  (isReciprocal && iZone.isRoot) || (toColor && iZone.hasColor) || (toWritable && iZone.directAccess != .eInherit) {
+            if  (isReciprocal && iZone.isARoot) || (toColor && iZone.hasColor) || (toWritable && iZone.directAccess != .eInherit) {
                 isComplete = true
             }
 
@@ -1599,7 +1599,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
     func safeTraverseAncestors(visited: ZoneArray, _ block: ZoneToStatusClosure) {
         if  block(self) == .eContinue,  //        skip == stop
-            !isRoot,                    //      isRoot == stop
+            !isARoot,                    //      isRoot == stop
             !visited.contains(self),    // graph cycle == stop
             let p = parentZone {        //  nil parent == stop
             p.safeTraverseAncestors(visited: visited + [self], block)
@@ -1829,7 +1829,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// adopt recursively
 
     override func adopt(moveOrphansToLost: Bool = false) {
-		if  isRoot {
+		if  isARoot {
 			removeState(.needsAdoption)
 		} else if !needsDestroy, needsAdoption {
 			if let p = parentZone, p != self {
@@ -1837,7 +1837,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				p.addChildAndRespectOrder(self)
 				removeState(.needsAdoption)
 
-				if  p.parentZone == nil, !p.isRoot {
+				if  p.parentZone == nil, !p.isARoot {
 					p.needAdoption()
 					p.adopt() // recurse on ancestor
 				}

@@ -65,7 +65,8 @@ class ZWidgets: NSObject {
     /// - Returns: ZoneWidget
     func widgetForZone(_ iZone: Zone?) -> ZoneWidget? {
         if  let zone = iZone {
-			let dict = getWidgetsDict(for: zone.isInFavorites ? .tFavorites : .tIdea)
+			let type = zone.widgetTypeForRoot
+			let dict = getWidgetsDict(for: type)
 
 			return dict[zone.hash]
 		}

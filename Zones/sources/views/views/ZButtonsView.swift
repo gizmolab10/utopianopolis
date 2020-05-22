@@ -39,6 +39,12 @@ class ZButtonsView : ZView {
 			addSubview(button)
 			button.snp.removeConstraints()
 			button.snp.makeConstraints { make in
+				let title = button.title
+				let width = title.rect(using: button.font!, for: NSRange(location: 0, length: title.length), atStart: true).width + 17.0
+
+				make.width.equalTo(width)
+				make.centerY.equalToSuperview()
+
 				if  let previous = prior {
 					make.left.equalTo(previous.snp.right).offset(3.0)
 				} else {
@@ -52,12 +58,6 @@ class ZButtonsView : ZView {
 						make.right.lessThanOrEqualTo(self) // force window to grow wide enough to fit all breadcrumbs
 					}
 				}
-
-				let title = button.title
-				let width = title.rect(using: button.font!, for: NSRange(location: 0, length: title.length), atStart: true).width + 16.0
-
-				make.width.equalTo(width)
-				make.centerY.equalToSuperview()
 			}
 
 			prior = button

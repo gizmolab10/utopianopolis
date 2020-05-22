@@ -21,7 +21,7 @@ enum ZLineKind: Int {
     case above    =  1
 }
 
-struct ZWidgetType: OptionSet {
+struct ZWidgetType: OptionSet, CustomStringConvertible {
 	static var structValue = 0
 	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
 	let           rawValue : Int
@@ -29,15 +29,25 @@ struct ZWidgetType: OptionSet {
 	init() { rawValue = ZWidgetType.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let      tIdea = ZWidgetType()
-	static let      tNote = ZWidgetType()
-	static let     tEssay = ZWidgetType()
-	static let    tRecent = ZWidgetType()
-	static let tFavorites = ZWidgetType()
+	static let     tIdea = ZWidgetType()
+	static let     tNote = ZWidgetType()
+	static let    tEssay = ZWidgetType()
+	static let   tRecent = ZWidgetType()
+	static let tFavorite = ZWidgetType()
 
 	var isIdea:     Bool { return contains(.tIdea) }
 	var isRecent:   Bool { return contains(.tRecent) }
-	var isFavorite: Bool { return contains(.tFavorites) }
+	var isFavorite: Bool { return contains(.tFavorite) }
+
+	var description: String {
+		return [(.tIdea,     "    idea"),
+				(.tNote,     "    note"),
+				(.tEssay,    "   essay"),
+				(.tRecent,   "  recent"),
+				(.tFavorite, "favorite")]
+			.compactMap { (option, name) in contains(option) ? name : nil }
+			.joined(separator: ", ")
+	}
 }
 
 class ZWidgetObject: NSObject {
@@ -73,7 +83,7 @@ class ZoneWidget: ZView {
 		set {
 			widgetObject          .zone = newValue
 			if  let                name = widgetZone?.zoneName {
-				identifier              = NSUserInterfaceItemIdentifier("<w> \(name)") // gosh. i wish these would help with interpreting snap kit constraint errors !!!!!!!!!!!
+				identifier              = NSUserInterfaceItemIdentifier("<w> \(name)") // gosh. i wish these would help with snap kit errors !!!!!!!!!!!
 				childrenView.identifier = NSUserInterfaceItemIdentifier("<c> \(name)")
 				textWidget  .identifier = NSUserInterfaceItemIdentifier("<t> \(name)")
 				revealDot   .identifier = NSUserInterfaceItemIdentifier("<r> \(name)")

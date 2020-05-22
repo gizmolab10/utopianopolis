@@ -116,7 +116,7 @@ var gHere: Zone {
 
 		gRecords?.hereZone = newValue
 
-		gFocusRing.push()
+		gRecents.push()
 	}
 }
 

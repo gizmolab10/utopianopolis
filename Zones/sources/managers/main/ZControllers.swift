@@ -72,7 +72,7 @@ class ZControllers: NSObject {
 			FOREGROUND {
 				gIsReadyToShowUI = true
 
-				gFocusRing.push()
+				gRecents.push()
 				gHereMaybe?.grab()
 				gFavorites.updateAllFavorites()
 				gRemoteStorage.updateLastSyncDates()
