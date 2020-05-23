@@ -260,7 +260,7 @@ class ZFiles: NSObject {
 										case .lost:      cloud.lostAndFoundZone = zone
                                         case .graph:     cloud.rootZone         = zone
                                         case .trash:     cloud.trashZone        = zone
-//										case .recent:    cloud.recentsZone      = zone
+										case .recent:    cloud.recentsZone      = zone
                                         case .destroy:   cloud.destroyZone      = zone
                                         case .favorites: gFavoritesRoot         = zone
                                         default: break

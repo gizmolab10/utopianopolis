@@ -228,11 +228,17 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 		gDraggedZone				= nil
 	}
 
-	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) {
+	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
         if  gIsSearchMode {
             gSearching.exitSearchMode()
         }
-        
+
+		if  isMap,
+			let f = gFavoritesController,
+			f.handleDragGesture(iGesture) {
+			return true
+		}
+
         if  gIsGraphOrEditIdeaMode,
 			let gesture = iGesture as? ZKeyPanGestureRecognizer,
             let (_, dropNearest, location) = widgetNearest(gesture),
@@ -264,7 +270,11 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             } else {                            // began
                 rubberbandStartEvent(location, iGesture)
             }
+
+			return true
         }
+
+		return false
     }
 	
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
@@ -584,6 +594,11 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     // MARK:-
 
     func detectWidget(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
+		if  isMap,
+			let    widget = gFavoritesController?.detectWidget(iGesture) {
+			return widget
+		}
+
 		var          hit : ZoneWidget?
 		var     smallest = CGSize.big
         if  let        d = dragView,

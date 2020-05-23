@@ -44,10 +44,6 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 	}
 
 	var keyPressed: Bool {
-		if  gIsReadyToShowUI {
-			return false
-		}
-
 		let    e  = nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false)
 
 		return e != nil
