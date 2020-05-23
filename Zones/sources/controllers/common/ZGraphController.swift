@@ -235,7 +235,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 		if  isMap,
 			let f = gFavoritesController,
-			f.handleDragGesture(iGesture) {
+			f.handleDragGesture(iGesture) {    // see if mouse has wandered into favorites view
 			return true
 		}
 

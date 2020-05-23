@@ -151,7 +151,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
 
     func drawFavoritesHighlight(in iDirtyRect: CGRect) {
-        if  let          zone  = widgetZone, innerDot != nil, !zone.isFavoritesHere {
+		if  let          zone  = widgetZone, innerDot != nil, !zone.isFavoritesHere, !zone.isRootOfRecents {
             let      dotRadius = Double(innerDotWidth / 2.0)
             let     tinyRadius =  dotRadius * 0.7
             let   tinyDiameter = tinyRadius * 2.0
@@ -255,8 +255,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
 
-        if  let              zone = widgetZone, isVisible(iDirtyRect) {
-            let isCurrentFavorite = zone.isCurrentFavorite && !zone.isInTrash
+        if  let            zone = widgetZone, isVisible(iDirtyRect) {
+            let isCurrentNonMap = zone.isCurrentNonMap && !zone.isInTrash
 
             if  revealDotIsVisible {
                 if  isInnerDot {
@@ -315,7 +315,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
                         // /////////////////////
 
                         drawTinyCounterDots(iDirtyRect)
-                    } else if isCurrentFavorite {
+                    } else if isCurrentNonMap {
 
                         // ////////////////////////////////
                         // HIGHLIGHT OF CURRENT FAVORITE //

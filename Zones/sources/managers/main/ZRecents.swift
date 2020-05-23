@@ -56,13 +56,13 @@ class ZRecents : ZRecords {
 	func push() {
 		if  let r = root {
 			for bookmark in r.children {
-				if  let target = bookmark.bookmarkTarget,
-					target.recordName() == gHere.recordName() {
+				if  let name = bookmark.bookmarkTarget?.recordName(),
+					name == gHereMaybe?.recordName() {
 					return
 				}
 			}
 
-			if  let bookmark = gFavorites.createBookmark(for: gHereMaybe, style: .addFavorite) {
+			if  let bookmark = gFavorites.createBookmark(for: gHereMaybe, action: .aBookmark) {
 				r.children.append(bookmark)
 			}
 

@@ -55,7 +55,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
 	var                lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                        count :                Int  { return children.count }
-    var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
+	var              isCurrentNonMap :               Bool  { return isCurrentRecent || isCurrentFavorite }
+	var              isCurrentRecent :               Bool  { return self ==   gRecents.currentRecent }
+	var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
 	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isHereForNonMap && !(widget?.type.isIdea ??  true)) || (kIsPhone && self == gHereMaybe)) }
     var              dragDotIsHidden :               Bool  { return                     (isHereForNonMap && !(widget?.type.isIdea ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
     var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
@@ -836,7 +838,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				var bookmark: Zone?
 
 				self.invokeUsingDatabaseID(.mineID) {
-					bookmark = gFavorites.createBookmark(for: self, style: .normal)
+					bookmark = gFavorites.createBookmark(for: self, action: .aBookmark)
 				}
 
 				bookmark?.grab()

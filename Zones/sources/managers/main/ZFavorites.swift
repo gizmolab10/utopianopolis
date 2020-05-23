@@ -11,10 +11,10 @@ import Foundation
 import CloudKit
 
 
-enum ZFavoriteStyle: Int {
-    case normal
-    case favorite
-    case addFavorite
+enum ZBookmarkAction: Int {
+    case aBookmark
+    case aFavorite
+    case aCreateFavorite
 }
 
 
@@ -142,7 +142,7 @@ class ZFavorites: ZRecords {
         if  databaseRootFavorites.count == 0 {
             for (index, dbID) in kAllDatabaseIDs.enumerated() {
                 let          name = dbID.rawValue
-                let      favorite = create(withBookmark: nil, .addFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: name + kFavoritesSuffix)
+                let      favorite = create(withBookmark: nil, .aCreateFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: name + kFavoritesSuffix)
                 favorite.zoneLink =  "\(name)\(kColonSeparator)\(kColonSeparator)"
                 favorite   .order = Double(index) * 0.001
                 
@@ -416,7 +416,6 @@ class ZFavorites: ZRecords {
         bump?(index)
     }
 
-
     @discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
         if  let favorite = currentFavorite {
             return gFocusRing.focusThrough(favorite, atArrival)
@@ -425,10 +424,8 @@ class ZFavorites: ZRecords {
         return false
     }
 
-
     // MARK:- create
     // MARK:-
-
 
     @discardableResult func create(withBookmark: Zone?, _ iName: String?, identifier: String? = nil) -> Zone {
         var           bookmark = withBookmark
@@ -441,12 +438,11 @@ class ZFavorites: ZRecords {
         return bookmark!
     }
 
-
-    @discardableResult func create(withBookmark: Zone?, _ style: ZFavoriteStyle, parent: Zone, atIndex: Int, _ name: String?, identifier: String? = nil) -> Zone {
+    @discardableResult func create(withBookmark: Zone?, _ action: ZBookmarkAction, parent: Zone, atIndex: Int, _ name: String?, identifier: String? = nil) -> Zone {
         let bookmark: Zone = create(withBookmark: withBookmark, name, identifier: identifier)
         let insertAt: Int? = atIndex == parent.count ? nil : atIndex
 
-        if  style != .favorite {
+        if  action != .aFavorite {
             parent.addChild(bookmark, at: insertAt) // calls update progeny count
         }
         
@@ -456,11 +452,11 @@ class ZFavorites: ZRecords {
     }
 
 
-	@discardableResult func createBookmark(for iZone: Zone?, style: ZFavoriteStyle) -> Zone? {
+	@discardableResult func createBookmark(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
 		if  let         zone = iZone {
 			var parent: Zone = zone.parentZone ?? gFavoritesHereMaybe ?? gFavoritesRoot!
 			let   isBookmark = zone.isBookmark
-			let     isNormal = style == .normal
+			let     isNormal = action == .aBookmark
 
 			if  !isNormal {
 				let basis: ZRecord = isBookmark ? zone.crossLink! : zone
@@ -484,11 +480,11 @@ class ZFavorites: ZRecords {
 			var bookmark: Zone? = isBookmark ? zone.deepCopy : nil
 			var           index = parent.children.firstIndex(of: zone) ?? count
 
-			if  style == .addFavorite {
+			if  action         == .aCreateFavorite {
 				index           = nextFavoritesIndex(forward: gListsGrowDown)
 			}
 
-			bookmark            = create(withBookmark: bookmark, style, parent: parent, atIndex: index, zone.zoneName)
+			bookmark            = create(withBookmark: bookmark, action, parent: parent, atIndex: index, zone.zoneName)
 
 			bookmark?.maybeNeedSave()
 
@@ -526,7 +522,7 @@ class ZFavorites: ZRecords {
 
 		if  let       favorite = favoriteTargetting(here, iSpawned: false) {
 			favorite.asssureIsVisibleAndGrab()                                     // state 1
-		} else if let favorite = createBookmark(for: here, style: .addFavorite) {  // state 3
+		} else if let favorite = createBookmark(for: here, action: .aCreateFavorite) {  // state 3
 			currentFavorite    = favorite
 
 			favorite.asssureIsVisibleAndGrab()
