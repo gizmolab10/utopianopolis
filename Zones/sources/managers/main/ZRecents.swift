@@ -58,6 +58,8 @@ class ZRecents : ZRecords {
 			for bookmark in r.children {
 				if  let name = bookmark.bookmarkTarget?.recordName(),
 					name == gHereMaybe?.recordName() {
+					updateCurrentRecent()
+
 					return
 				}
 			}
@@ -109,12 +111,12 @@ class ZRecents : ZRecords {
 
 	func focus(kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, _ atArrival: @escaping Closure) {
 
-		// five states:
-		// 1. is a bookmark     -> target becomes here
-		// 2. is here           -> update in favorites, not push
-		// 3. is a favorite     -> grab here
-		// 4. not here, COMMAND -> become here
-		// 5. not COMMAND       -> select here
+		// for grabbed/edited zone, five states:
+		// 1. is a bookmark      -> target becomes here
+		// 2. is here            -> update in favorites, not push
+		// 3. in favorite/recent -> grab here
+		// 4. not here, COMMAND  -> become here
+		// 5. not COMMAND        -> select here
 
 		if  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab {
 			let focusClosure = { (zone: Zone) in
@@ -133,7 +135,7 @@ class ZRecents : ZRecords {
 				updateCurrentRecent()
 				gFavorites.updateGrab()
 				atArrival()
-			} else if zone.isInFavorites {  // state 3
+			} else if zone.isInFavorites || zone.isInRecently {  // state 3
 				focusClosure(gHere)
 			} else if COMMAND {             // state 4
 				gFavorites.refocus {
@@ -183,12 +185,12 @@ class ZRecents : ZRecords {
 				if  gDatabaseID != targetDBID {
 					gDatabaseID  = targetDBID
 
-					/////////////////////////////////
+					// /////////////////////////// //
 					// TRAVEL TO A DIFFERENT GRAPH //
-					/////////////////////////////////
+					// /////////////////////////// //
 
 					if  let target = iTarget, target.isFetched { // e.g., default root favorite
-						focus {
+						focus(kind: .eSelected) {
 							gHere  = target
 
 							gHere.prepareForArrival()
@@ -211,9 +213,9 @@ class ZRecents : ZRecords {
 					}
 				} else {
 
-					///////////////////////
+					// ///////////////// //
 					// STAY WITHIN GRAPH //
-					///////////////////////
+					// ///////////////// //
 
 					there = gCloud?.maybeZoneForRecordID(targetRecordID)
 					let grabbed = gSelecting.firstSortedGrab

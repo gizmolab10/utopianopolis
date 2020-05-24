@@ -1341,7 +1341,7 @@ class ZGraphEditor: ZBaseEditor {
         if !toBookmark || CONTROL {
             finish()
         } else {
-            gFocusRing.travelThrough(iInto) { (iAny, iSignalKind) in
+            gRecents.travelThrough(iInto) { (iAny, iSignalKind) in
                 finish()
             }
         }

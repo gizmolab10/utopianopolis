@@ -238,8 +238,6 @@ class ZFocus: ZRing {
 
 				complete(target, .sRelayout)
 			} else {
-				dump()
-
 				gShowFavorites = targetDBID == .favoritesID
 
 				if  gDatabaseID != targetDBID {
@@ -273,9 +271,9 @@ class ZFocus: ZRing {
 					}
 				} else {
 					
-					///////////////////////
+					// ///////////////// //
 					// STAY WITHIN GRAPH //
-					///////////////////////
+					// ///////////////// //
 					
 					there = gCloud?.maybeZoneForRecordID(targetRecordID)
 					let grabbed = gSelecting.firstSortedGrab

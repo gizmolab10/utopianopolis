@@ -442,30 +442,28 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     func widgetNearest(_ iGesture: ZGestureRecognizer?) -> (Bool, ZoneWidget, CGPoint)? {
         if  let location = iGesture?.location(in: dragView),
 			let   widget = rootWidget.widgetNearestTo(location, in: dragView, hereZone) {
-//            if  isMap, !kIsPhone,
-//
-//                // ////////////////////////// //
-//				// recurse once into subclass //
-//                // ////////////////////////// //
-//
-//				let (_, subclassWidget, subclassLocation) = gFavoritesController?.widgetNearest(iGesture) {
-//				let  dragDotM =         widget.dragDot
-//                let  dragDotS = subclassWidget.dragDot
-//                let   vectorM = dragDotM.convert(dragDotM.bounds.center, to: view) - location
-//                let   vectorS = dragDotS.convert(dragDotS.bounds.center, to: view) - location
-//                let distanceM = vectorM.hypontenuse
-//                let distanceS = vectorS.hypontenuse
-//
-//				// ////////////////////////////////////////////////////// //
-//				// determine which drag dot's center is closest to cursor //
-//				// ////////////////////////////////////////////////////// //
-//
-//                if  distanceM > distanceS {
-//                    return (false, subclassWidget, subclassLocation)
-//                }
-//            }
+            if  isMap, !kIsPhone,
 
-//			print("\(isMap ? "m" : "f") " + widget.description)
+                // ////////////////////////// //
+				// recurse once into subclass //
+                // ////////////////////////// //
+
+				let (_, subclassWidget, subclassLocation) = gFavoritesController?.widgetNearest(iGesture) {
+				let  dragDotM =         widget.dragDot
+                let  dragDotS = subclassWidget.dragDot
+                let   vectorM = dragDotM.convert(dragDotM.bounds.center, to: view) - location
+                let   vectorS = dragDotS.convert(dragDotS.bounds.center, to: view) - location
+                let distanceM = vectorM.hypontenuse
+                let distanceS = vectorS.hypontenuse
+
+				// ////////////////////////////////////////////////////// //
+				// determine which drag dot's center is closest to cursor //
+				// ////////////////////////////////////////////////////// //
+
+                if  distanceM > distanceS {
+                    return (false, subclassWidget, subclassLocation)
+                }
+            }
 
             return (true, widget, location)
         }
