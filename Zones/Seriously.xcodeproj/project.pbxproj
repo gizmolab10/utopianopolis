@@ -274,6 +274,9 @@
 		A7DF7DB82479ECC200F03060 /* ZRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZRing.swift */; };
 		A7DF7DB92479ECC300F03060 /* ZRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZRing.swift */; };
 		A7DF7DBA2479ECC400F03060 /* ZRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7152221FD8A1E400C7DA61 /* ZRing.swift */; };
+		A7DF7DBC247AFE2800F03060 /* ZRubbeerband.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DF7DBB247AFE2800F03060 /* ZRubbeerband.swift */; };
+		A7DF7DBD247AFE2800F03060 /* ZRubbeerband.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DF7DBB247AFE2800F03060 /* ZRubbeerband.swift */; };
+		A7DF7DBE247AFE2800F03060 /* ZRubbeerband.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DF7DBB247AFE2800F03060 /* ZRubbeerband.swift */; };
 		A7E096CA23EB98FA0017EC32 /* ZWebLinkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */; };
 		A7E096CB23EB98FA0017EC32 /* ZWebLinkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */; };
 		A7E096CC23EB98FA0017EC32 /* ZWebLinkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */; };
@@ -479,6 +482,7 @@
 		A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbButton.swift; sourceTree = "<group>"; };
 		A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssay.swift; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7DF7DBB247AFE2800F03060 /* ZRubbeerband.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZRubbeerband.swift; sourceTree = "<group>"; };
 		A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZWebLinkController.swift; sourceTree = "<group>"; };
 		A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTogglingView.swift; sourceTree = "<group>"; };
 		A7E9A3AF23C115470064C89A /* ZShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZShortcuts.swift; sourceTree = "<group>"; };
@@ -679,6 +683,7 @@
 				A764067F23F9C2EB00D9EA3A /* ZNoteAndEssay.swift */,
 				A706444E247316DA00F90B86 /* ZRecents.swift */,
 				0C7152221FD8A1E400C7DA61 /* ZRing.swift */,
+				A7DF7DBB247AFE2800F03060 /* ZRubbeerband.swift */,
 				0C6CAE1E1F88308E001960F7 /* ZSearching.swift */,
 				0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */,
 				A7E9A3AF23C115470064C89A /* ZShortcuts.swift */,
@@ -1185,6 +1190,7 @@
 				A7395BAF21B877B600F5759F /* ZTextEditor.swift in Sources */,
 				0CABC9EF2022768D0019D8B0 /* ZEnumerations.swift in Sources */,
 				A764068023F9C2EB00D9EA3A /* ZNoteAndEssay.swift in Sources */,
+				A7DF7DBC247AFE2800F03060 /* ZRubbeerband.swift in Sources */,
 				A764067823F7E37600D9EA3A /* ZBreadcrumbsView.swift in Sources */,
 				A7D947DD21EC11C800B7DBFC /* ZDetailsController.swift in Sources */,
 				A752FC2C24512D7700603A54 /* ZoneArray.swift in Sources */,
@@ -1337,6 +1343,7 @@
 				0C09A7D71FE5DEC600F3D736 /* ZGenericTableController.swift in Sources */,
 				0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */,
 				0C39B2EE1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
+				A7DF7DBE247AFE2800F03060 /* ZRubbeerband.swift in Sources */,
 				0C43EFE221010F62000976CE /* ZCloud.swift in Sources */,
 				A74DBDEC244E179600DF751A /* ZContextualMenu.swift in Sources */,
 				A7E9A3B223C115470064C89A /* ZShortcuts.swift in Sources */,
@@ -1429,6 +1436,7 @@
 				0CAC18E22006A84800D641C4 /* ZBookmarks.swift in Sources */,
 				0C39B2B71F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B3141F182EBB0091F4D1 /* ZAction.swift in Sources */,
+				A7DF7DBD247AFE2800F03060 /* ZRubbeerband.swift in Sources */,
 				A7B48AA923E0E80C00654DBD /* ZToggleButton.swift in Sources */,
 				A74DBDED244E179700DF751A /* ZContextualMenu.swift in Sources */,
 				0C43EFDE21010F62000976CE /* ZBatches.swift in Sources */,

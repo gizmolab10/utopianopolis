@@ -573,7 +573,7 @@ class ZoneWidget: ZView {
             }
 
             if  zone.showingChildren {
-				if !nowDrawLines && !gIsDragging && !(controller?.dragView?.showRubberband ?? false) {
+				if !nowDrawLines && !gIsDragging && !gRubberband.showRubberband {
                     nowDrawLines = true
                     
                     draw(dirtyRect) // recurse

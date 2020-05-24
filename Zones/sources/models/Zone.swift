@@ -1249,7 +1249,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:-
 
 	func        addToPaste() { gSelecting   .pasteableZones[self] = (parentZone, siblingIndex) }
-	func         addToGrab() { gSelecting.addMultipleGrabs([self]) }
+	func        addToGrabs() { gSelecting.addMultipleGrabs([self]) }
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
 	func             focus() { gFocusRing          .focusOn(self) { gRedrawGraph() } }
@@ -1305,7 +1305,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         } else if isGrabbed && gCurrentlyEditingWidget == nil {
             ungrabAssuringOne()
         } else if SHIFT {
-            addToGrab()
+            addToGrabs()
         } else {
 			grab()
 		}
@@ -2227,7 +2227,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			gSelecting.ungrabAll()
 
 			traverseAllProgeny { iChild in
-				iChild.addToGrab()
+				iChild.addToGrabs()
 			}
 		} else {
 			if  count == 0 {

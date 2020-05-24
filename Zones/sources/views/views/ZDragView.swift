@@ -15,61 +15,6 @@
 class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 	@IBOutlet var controller: ZGraphController?
-	var drawingRubberbandRect: CGRect?
-	var rubberbandStart = CGPoint.zero
-	var rubberbandPreGrabs = ZoneArray ()
-	var showRubberband: Bool { return drawingRubberbandRect != nil && drawingRubberbandRect != .zero }
-
-	var rubberbandRect: CGRect? { // wrapper with new value logic
-		get {
-			return drawingRubberbandRect
-		}
-
-		set {
-			drawingRubberbandRect = newValue
-
-				if  newValue == nil || newValue == .zero {
-					gSelecting.assureMinimalGrabs()
-					gSelecting.updateCurrentBrowserLevel()
-					gSelecting.updateCousinList()
-				} else {
-					gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
-					gHere.ungrab()
-
-					for widget in gWidgets.visibleWidgets {
-						if  let    hitRect = widget.hitRect {
-							let widgetRect = widget.convert(hitRect, to: self)
-
-							if  let   zone = widget.widgetZone, !zone.isRootOfFavorites,
-								widgetRect.intersects(newValue!) {
-								widget.widgetZone?.addToGrab()
-							}
-						}
-					}
-				}
-
-				setAllSubviewsNeedDisplay()
-
-		}
-	}
-
-	func rubberbandStartEvent(_ location: CGPoint, _ iGesture: ZGestureRecognizer?) {
-		rubberbandStart = location
-		gDraggedZone    = nil
-
-		// ///////////////////
-		// detect SHIFT key //
-		// ///////////////////
-
-		if let gesture = iGesture, gesture.isShiftDown {
-			rubberbandPreGrabs.append(contentsOf: gSelecting.currentGrabs)
-		} else {
-			rubberbandPreGrabs.removeAll()
-		}
-
-		gTextEditor.stopCurrentEdit()
-		gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
-	}
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
@@ -79,7 +24,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 		gActiveColor.lighter(by: 2.0).setStroke()
 //		ZBezierPath.drawBloatedTriangle(aimedRight: true, in: bounds.insetEquallyBy(100.0), thickness: 5.0)
 
-        if  let rect = drawingRubberbandRect {
+		if  let rect = gRubberband.rubberbandRect {
             gActiveColor.lighter(by: 2.0).setStroke()
 			let path = ZBezierPath(rect: rect)
 			path.addDashes()

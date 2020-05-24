@@ -48,7 +48,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
     override func setup() {
-		gestureView = dragView // do this before calling super setup
+		gestureView                      = dragView // do this before calling super setup
+		view     .layer?.backgroundColor = kClearColor.cgColor
+		dragView?.layer?.backgroundColor = kClearColor.cgColor
 
 		super.setup()
 		platformSetup()
@@ -178,6 +180,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 		if  kIsPhone {
 			rootWidget.isHidden = gShowFavorites
 		}
+
+		view     .layer?.backgroundColor = kClearColor.cgColor
+		dragView?.layer?.backgroundColor = kClearColor.cgColor
 	}
 	
 	func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
@@ -191,27 +196,16 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
+		if !isMap,
+			let    g = gGraphController {
+			return g.handleDragGesture(iGesture)
+		}
+
         if  gIsSearchMode {
             gSearching.exitSearchMode()
         }
 
-		if  handleDrag(iGesture) {
-			print(isMap ? "map" : "favorites")
-			return true
-		}
-
-		if  let alternate = isMap ? gFavoritesController : gGraphController,
-			alternate.handleDrag(iGesture) {  // recurse to see if mouse wandered into other drag view
-
-			print(alternate.isMap ? "map" : "favorites")
-			return true
-		}
-
-		return false
-	}
-
-	func handleDrag(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
-        if  gIsGraphOrEditIdeaMode,
+		if  gIsGraphOrEditIdeaMode,
 			let gesture = iGesture as? ZKeyPanGestureRecognizer,
             let (_, dropNearest, location) = widgetNearest(gesture),
             let flags = gesture.modifiers {
@@ -225,14 +219,16 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 scrollEvent(move: state == .changed, to: location)
             } else if gIsDragging {
                 dragMaybeStopEvent(iGesture)          // logic for drawing the drop dot
-			} else if state == .changed,
-				let start = dragView?.rubberbandStart,
-				start != CGPoint.zero {               // enlarge rubberband
-                dragView?.rubberbandRect = CGRect(start: start, end: location)
+			} else if state == .changed,              // enlarge rubberband
+				gRubberband.rubberbandStart != .zero {
+                gRubberband.rubberbandRect = CGRect(start: gRubberband.rubberbandStart, end: location)
+				gRubberband.updateGrabs(in: dragView)
+				dragView?.setAllSubviewsNeedDisplay()
             } else if state != .began {               // drag ended, failed or was cancelled
-                dragView?.rubberbandRect = nil        // erase rubberband
+                gRubberband.rubberbandRect = nil      // erase rubberband
 
 				restartGestureRecognition()
+				dragView?.setAllSubviewsNeedDisplay()
 				gSignal([.sDatum])                    // so color well and indicators get updated
             } else if let dot = detectDot(iGesture) {
                 if  !dot.isReveal {
@@ -242,7 +238,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					zone.revealDotClicked(COMMAND: flags.isCommand, OPTION: flags.isOption)
                 }
             } else {                                  // begin drag
-				dragView?.rubberbandStartEvent(location, iGesture)
+				gRubberband.rubberbandStartEvent(location, iGesture)
             }
 
 			return true
@@ -334,7 +330,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             }
 
             if  iGesture?.isShiftDown ?? false {
-                zone.addToGrab()
+                zone.addToGrabs()
             } else if !zone.isGrabbed {
                 zone.grab()
             }
@@ -488,7 +484,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     }
 
     func cleanupAfterDrag() {
-		dragView?.rubberbandStart  = CGPoint.zero
+		gRubberband.rubberbandStart = CGPoint.zero
 
         // cursor exited view, remove drag cruft
 

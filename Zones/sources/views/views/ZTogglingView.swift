@@ -58,6 +58,9 @@ class ZTogglingView: NSStackView {
         super.awakeFromNib()
         update()
 
+		layer?              .backgroundColor = kClearColor.cgColor
+		hideableView?.layer?.backgroundColor = kClearColor.cgColor
+
         repeatUntil({ () -> (Bool) in
             return gDetailsController != nil
         }) {

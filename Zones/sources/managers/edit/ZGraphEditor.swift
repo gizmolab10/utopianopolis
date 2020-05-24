@@ -1031,7 +1031,7 @@ class ZGraphEditor: ZBaseEditor {
         for (child, (parent, index)) in gSelecting.pasteableZones {
             child.orphan()
             parent?.addAndReorderChild(child, at: index)
-            child.addToGrab()
+            child.addToGrabs()
         }
 
         gSelecting.clearPaste()
@@ -1065,7 +1065,7 @@ class ZGraphEditor: ZBaseEditor {
                     into.addAndReorderChild(pasteMe, at: insertAt)
                     pasteMe.recursivelyApplyDatabaseID(into.databaseID)
                     forUndo.append(pasteMe)
-                    pasteMe.addToGrab()
+                    pasteMe.addToGrabs()
                 }
 
                 self.UNDO(self) { iUndoSelf in
@@ -1135,12 +1135,12 @@ class ZGraphEditor: ZBaseEditor {
 				} else {                        // convert to titled line and insert above
 					grab.convertToTitledLine()
 					children.append(grab)
-					grab.addToGrab()
+					grab.addToGrabs()
 				}
 
 				for child in grab.children {
 					children.append(child)
-					child.addToGrab()
+					child.addToGrabs()
 				}
 			}
 
@@ -1319,7 +1319,7 @@ class ZGraphEditor: ZBaseEditor {
 					}
 
 					if !CONTROL {
-						beingMoved.addToGrab()
+						beingMoved.addToGrabs()
 					}
 
 					into.addAndReorderChild(beingMoved, at: iIndex)
@@ -1572,7 +1572,7 @@ class ZGraphEditor: ZBaseEditor {
                     if !selectionOnly {
                         moveClosure(originalGrabs)
                     } else if growSelection {
-                        grab.addToGrab()
+                        grab.addToGrabs()
                     } else {
                         grab.grab(updateBrowsingLevel: false)
                     }

@@ -45,8 +45,8 @@ class ZDetailsController: ZGesturesController {
 
     func update() {
 		if  gIsReadyToShowUI {
-			stackView?.isHidden = false
-			stackView?.layer?.backgroundColor = kWhiteColor.cgColor
+			stackView?.isHidden               = false
+			stackView?.layer?.backgroundColor = kClearColor.cgColor
 
 			for id in detailIds {
 				view(for: id)?.update()
