@@ -183,7 +183,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	func delete() {
 		zone?.removeTrait(for: .tNote)
 		gEssayRing.removeFromStack(self) // display prior essay
-		gRingView?.setNeedsDisplay()
 	}
 
 	func reset() {

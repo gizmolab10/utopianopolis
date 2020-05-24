@@ -521,7 +521,7 @@ class ZFavorites: ZRecords {
         // 3. not in favorites           -> create and grab new favorite (its target is here)
 
 		if  let       favorite = favoriteTargetting(here, iSpawned: false) {
-			favorite.asssureIsVisibleAndGrab()                                     // state 1
+			favorite.asssureIsVisibleAndGrab()                                          // state 1
 		} else if let favorite = createBookmark(for: here, action: .aCreateFavorite) {  // state 3
 			currentFavorite    = favorite
 

@@ -28,12 +28,6 @@ class ZRing: NSObject {
 	func fetchRingIDs() { objectIDs = getRingContents(for: isEssay) }
 	func clear() { ring.removeAll(); storeRingIDs() }
 
-	override init() {
-		super.init()
-		fetchRingIDs()
-		gRingView?.addUnique(from: ring)
-	}
-
 	var isPrime : Bool {
 		guard let essay = ringPrime as? ZNote else { return false }
 
@@ -151,13 +145,9 @@ class ZRing: NSObject {
 				} else if currentIndex >= topIndex {
 					if  let    index = pushOrReplace() {
 						currentIndex = index
-
-						gRingView?.updateNecklace()
 					}
 				} else if let  index = pushOrReplace(onto: currentIndex) { // BUG: wrong index
 					currentIndex     = index
-
-					gRingView?.updateNecklace()
 				}
 			}
 		}
@@ -222,7 +212,6 @@ class ZRing: NSObject {
 			let i = primeIndex {
 			removeFromRing(at: i)
 			storeRingIDs()
-			gRingView?.updateNecklace()
 			goForward()
         }
 	}
@@ -264,7 +253,6 @@ class ZRing: NSObject {
 					removeFromRing(at: index)
 					removeEmpties()
 					storeRingIDs()
-					gRingView?.updateNecklace()
 
 					if  isEmpty {
 						gCurrentEssay = nil   // so won't reappear in necklace on relaunch

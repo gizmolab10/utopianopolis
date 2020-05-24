@@ -112,10 +112,6 @@ class ZFocus: ZRing {
 					removeFromRing(at: index)     // TODO: MAJOR: recursive
 					storeRingIDs()
 
-					if  okayToRecurse {
-						gRingView?.updateNecklace()
-					}
-
 					if  index == currentIndex || zone == gHere {
 						goBack()
 					}

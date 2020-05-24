@@ -84,12 +84,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips {
 		gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
 		applyConstraints()
 		updateTooltips()
-		debug()
+//		debug()
 	}
 
 	func debug() {
 		if  let type = widgetZone?.widgetTypeForRoot {
-			printDebug(.dText, prefix: type.description + ": ", text ?? "currently not named")
+			print(type.description + ": " + (text ?? "currently not named"))
 		}
 	}
 

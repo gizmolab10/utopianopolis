@@ -27,8 +27,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	@IBOutlet var        spinnerView : ZView?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 	var          priorScrollLocation = CGPoint.zero
-	var           rubberbandStart    = CGPoint.zero
-	var           rubberbandPreGrabs = ZoneArray    ()
 	let 	            clickManager = ZClickManager()
 	let                   rootWidget = ZoneWidget   ()
 
@@ -46,40 +44,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			columnarReport("repeat: \(isRepeat)", "fast: \(isFast)")
 
 			return isRepeat ? isFast : false
-		}
-	}
-
-	var rubberbandRect: CGRect? { // wrapper with new value logic
-		get {
-			return dragView?.drawingRubberbandRect
-		}
-		
-		set {
-			if  let d = dragView {
-				d.drawingRubberbandRect = newValue
-
-				if  newValue == nil || newValue == .zero {
-					gSelecting.assureMinimalGrabs()
-					gSelecting.updateCurrentBrowserLevel()
-					gSelecting.updateCousinList()
-				} else {
-					gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
-					gHere.ungrab()
-
-					for widget in gWidgets.visibleWidgets {
-						if  let    hitRect = widget.hitRect {
-							let widgetRect = widget.convert(hitRect, to: d)
-
-							if  let   zone = widget.widgetZone, !zone.isRootOfFavorites,
-								widgetRect.intersects(newValue!) {
-								widget.widgetZone?.addToGrab()
-							}
-						}
-					}
-				}
-				
-				d.setAllSubviewsNeedDisplay()
-			}
 		}
 	}
 
@@ -204,8 +168,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			layoutWidgets(for: iSignalObject, iKind)
 			dragView?.setAllSubviewsNeedDisplay()
         }
-
-		gRingView?.setNeedsDisplay()
     }
 	
 	func prepare(for iKind: ZSignalKind) {
@@ -233,12 +195,22 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             gSearching.exitSearchMode()
         }
 
-		if  isMap,
-			let f = gFavoritesController,
-			f.handleDragGesture(iGesture) {    // see if mouse has wandered into favorites view
+		if  handleDrag(iGesture) {
+			print(isMap ? "map" : "favorites")
 			return true
 		}
 
+		if  let alternate = isMap ? gFavoritesController : gGraphController,
+			alternate.handleDrag(iGesture) {  // recurse to see if mouse wandered into other drag view
+
+			print(alternate.isMap ? "map" : "favorites")
+			return true
+		}
+
+		return false
+	}
+
+	func handleDrag(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
         if  gIsGraphOrEditIdeaMode,
 			let gesture = iGesture as? ZKeyPanGestureRecognizer,
             let (_, dropNearest, location) = widgetNearest(gesture),
@@ -247,28 +219,30 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
             dropNearest.widgetZone?.needWrite()
 
-            if isEditingText(at: location) {
-                restartGestureRecognition()     // let text editor consume the gesture
-            } else if flags.isCommand {
+            if  isEditingText(at: location) {
+                restartGestureRecognition()           // let text editor consume the gesture
+            } else if flags.isCommand {               // shift background
                 scrollEvent(move: state == .changed, to: location)
             } else if gIsDragging {
-                dragMaybeStopEvent(iGesture)
-			} else if state == .changed, rubberbandStart != CGPoint.zero {       // changed
-                rubberbandRect = CGRect(start: rubberbandStart, end: location)
-            } else if state != .began {         // ended, cancelled or failed
-                rubberbandRect = nil
+                dragMaybeStopEvent(iGesture)          // logic for drawing the drop dot
+			} else if state == .changed,
+				let start = dragView?.rubberbandStart,
+				start != CGPoint.zero {               // enlarge rubberband
+                dragView?.rubberbandRect = CGRect(start: start, end: location)
+            } else if state != .began {               // drag ended, failed or was cancelled
+                dragView?.rubberbandRect = nil        // erase rubberband
 
 				restartGestureRecognition()
-				gSignal([.sDatum]) // so color well and indicators get updated
+				gSignal([.sDatum])                    // so color well and indicators get updated
             } else if let dot = detectDot(iGesture) {
                 if  !dot.isReveal {
-                    dragStartEvent(dot, iGesture)
+                    dragStartEvent(dot, iGesture)     // start dragging a drag dot
                 } else if let zone = dot.widgetZone {
-                    cleanupAfterDrag()
-					zone.revealDotClicked(COMMAND: flags.isCommand, OPTION: flags.isOption)   // no dragging
+                    cleanupAfterDrag()                // no dragging
+					zone.revealDotClicked(COMMAND: flags.isCommand, OPTION: flags.isOption)
                 }
-            } else {                            // began
-                rubberbandStartEvent(location, iGesture)
+            } else {                                  // begin drag
+				dragView?.rubberbandStartEvent(location, iGesture)
             }
 
 			return true
@@ -328,21 +302,17 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 						}
 					}
 				} else {
-					let   rect = CGRect(origin: gesture.location(in: dragView), size: CGSize())
-					let inRing = gRingView?.anItemIsWithin(rect) ?? false
 
 					// //////////////////////
 					// click in background //
 					// //////////////////////
 
-					if !inRing {
-						gTextEditor.stopCurrentEdit()
+					gTextEditor.stopCurrentEdit()
 
-						if  clickManager.isDoubleClick() {
-							recenter()
-						} else if !kIsPhone {	// default reaction to click on background: select here
-							gHereMaybe?.grab()  // safe version of here prevent crash early in launch
-						}
+					if  clickManager.isDoubleClick() {
+						recenter()
+					} else if !kIsPhone {	// default reaction to click on background: select here
+						gHereMaybe?.grab()  // safe version of here prevent crash early in launch
 					}
                 }
 
@@ -398,30 +368,10 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         
         priorScrollLocation = location
     }
-    
-    
+
     // //////////////////////////////////////////
     // next four are only called by controller //
     // //////////////////////////////////////////
-    
-    
-    func rubberbandStartEvent(_ location: CGPoint, _ iGesture: ZGestureRecognizer?) {
-        rubberbandStart = location
-        gDraggedZone    = nil
-        
-        // ///////////////////
-        // detect SHIFT key //
-        // ///////////////////
-        
-        if let gesture = iGesture, gesture.isShiftDown {
-            rubberbandPreGrabs.append(contentsOf: gSelecting.currentGrabs)
-        } else {
-            rubberbandPreGrabs.removeAll()
-        }
-        
-        gTextEditor.stopCurrentEdit()
-        gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
-    }
 
     func dragDropMaybe(_ iGesture: ZGestureRecognizer?) -> Bool {
         if  let draggedZone       = gDraggedZone {
@@ -473,8 +423,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
                     if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
                         let CONTROL = gesture.modifiers?.isControl {
-						// TODO: favorites editor
-                        gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, CONTROL) {
+
+						gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, CONTROL) {
                             gSelecting.updateBrowsingLevel()
                             gSelecting.updateCousinList()
                             self.restartGestureRecognition()
@@ -490,59 +440,42 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         return true
     }
 
-
-    // MARK:- large indicators
-    // MARK:-
-
-//    func showSpinner(_ show: Bool) {
-//		spinnerView?.isHidden = !show
-//
-//		if  show {
-//			spinner?.startAnimating()
-//		} else {
-//			spinner?.stopAnimating()
-//		}
-//    }
-
-    
     // MARK:- internals
     // MARK:-
 
+    func widgetNearest(_ iGesture: ZGestureRecognizer?) -> (Bool, ZoneWidget, CGPoint)? {
+        if  let location = iGesture?.location(in: dragView),
+			let   widget = rootWidget.widgetNearestTo(location, in: dragView, hereZone) {
+//            if  isMap, !kIsPhone,
+//
+//                // ////////////////////////// //
+//				// recurse once into subclass //
+//                // ////////////////////////// //
+//
+//				let (_, subclassWidget, subclassLocation) = gFavoritesController?.widgetNearest(iGesture) {
+//				let  dragDotM =         widget.dragDot
+//                let  dragDotS = subclassWidget.dragDot
+//                let   vectorM = dragDotM.convert(dragDotM.bounds.center, to: view) - location
+//                let   vectorS = dragDotS.convert(dragDotS.bounds.center, to: view) - location
+//                let distanceM = vectorM.hypontenuse
+//                let distanceS = vectorS.hypontenuse
+//
+//				// ////////////////////////////////////////////////////// //
+//				// determine which drag dot's center is closest to cursor //
+//				// ////////////////////////////////////////////////////// //
+//
+//                if  distanceM > distanceS {
+//                    return (false, subclassWidget, subclassLocation)
+//                }
+//            }
 
-    func widgetNearest(_ iGesture: ZGestureRecognizer?, inMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
-        if  let mapLocation = iGesture?.location(in: dragView),
-			let mapWidget   = rootWidget.widgetNearestTo(mapLocation, in: dragView, hereZone) {
-            if  inMap, !kIsPhone,
+//			print("\(isMap ? "m" : "f") " + widget.description)
 
-                // /////////////////////////////////////
-				// recurse once: with isThought false //
-                // /////////////////////////////////////
-
-				let (_, favoritesWidget, favoritesLocation) = gFavoritesController?.widgetNearest(iGesture, inMap: false) {
-
-                // ////////////////////////////////////////////
-                //     target zone found in both graphs      //
-                // deterimine which zone is closer to cursor //
-                // ////////////////////////////////////////////
-
-				let locationT =  mapWidget.dragDot
-                let locationF = favoritesWidget.dragDot
-                let twoSidesT = locationT.convert(locationT.bounds.center, to: view) - mapLocation
-                let twoSidesF = locationF.convert(locationF.bounds.center, to: view) - mapLocation
-                let   scalarT = twoSidesT.hypontenuse
-                let   scalarF = twoSidesF.hypontenuse
-
-                if  scalarT > scalarF {
-                    return (false, favoritesWidget, favoritesLocation)
-                }
-            }
-
-            return (true, mapWidget, mapLocation)
+            return (true, widget, location)
         }
 
         return nil
     }
-
     
     func isEditingText(at location: CGPoint) -> Bool {
         if  gIsEditIdeaMode, let textWidget = gCurrentlyEditingWidget {
@@ -554,9 +487,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         return false
     }
 
-
     func cleanupAfterDrag() {
-        rubberbandStart  = CGPoint.zero
+		dragView?.rubberbandStart  = CGPoint.zero
 
         // cursor exited view, remove drag cruft
 
