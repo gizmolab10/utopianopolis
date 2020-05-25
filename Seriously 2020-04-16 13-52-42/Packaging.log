@@ -1,0 +1,687 @@
+2020-04-16 20:51:16 +0000  Initial pipeline context: <IDEDistributionProcessingPipelineContext: 0x7fd6cf884180; archive(resolved)='<IDEArchive: 0x7fd63f8b6890>', distributionTask(resolved)='2', distributionDestination(resolved)='2', distributionMethod(resolved)='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team(resolved)='<IDEProvisioningDisambiguatableBasicTeam: 0x7fd68df0f1e0; teamID='F8M94NY2TV', teamName='Jonathan Sand', teamType='Individual', username='sand@gizmolab.com', isFreeProvisioningTeam='0'>'>
+	Chain (13, self inclusive):
+	<IDEDistributionProcessingPipelineContext: 0x7fd6cf884180; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='<IDEProvisioningDisambiguatableBasicTeam: 0x7fd68df0f1e0; teamID='F8M94NY2TV', teamName='Jonathan Sand', teamType='Individual', username='sand@gizmolab.com', isFreeProvisioningTeam='0'>'>
+	<IDEDistributionProcessingPipelineContext: 0x7fd6cf8e7620; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='<IDEProvisioningDisambiguatableBasicTeam: 0x7fd68df0f1e0; teamID='F8M94NY2TV', teamName='Jonathan Sand', teamType='Individual', username='sand@gizmolab.com', isFreeProvisioningTeam='0'>'>
+	<IDEDistributionContext: 0x7fd6cf867ef0; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='<IDEProvisioningDisambiguatableBasicTeam: 0x7fd68df0f1e0; teamID='F8M94NY2TV', teamName='Jonathan Sand', teamType='Individual', username='sand@gizmolab.com', isFreeProvisioningTeam='0'>'>
+	<IDEDistributionContext: 0x7fd6cf87a280; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='<IDEProvisioningDisambiguatableBasicTeam: 0x7fd68df0f1e0; teamID='F8M94NY2TV', teamName='Jonathan Sand', teamType='Individual', username='sand@gizmolab.com', isFreeProvisioningTeam='0'>'>
+	<IDEDistributionContext: 0x7fd6cf37a430; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='<IDEProvisioningDisambiguatableBasicTeam: 0x7fd68df0f1e0; teamID='F8M94NY2TV', teamName='Jonathan Sand', teamType='Individual', username='sand@gizmolab.com', isFreeProvisioningTeam='0'>'>
+	<IDEDistributionContext: 0x7fd6d885d0e0; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='<IDEProvisioningDisambiguatableBasicTeam: 0x7fd68df0f1e0; teamID='F8M94NY2TV', teamName='Jonathan Sand', teamType='Individual', username='sand@gizmolab.com', isFreeProvisioningTeam='0'>'>
+	<IDEDistributionContext: 0x7fd6cf3deb60; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='<IDEProvisioningDisambiguatableBasicTeam: 0x7fd68df0f1e0; teamID='F8M94NY2TV', teamName='Jonathan Sand', teamType='Individual', username='sand@gizmolab.com', isFreeProvisioningTeam='0'>'>
+	<IDEDistributionContext: 0x7fd6cfc41a80; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='<IDEProvisioningDisambiguatableBasicTeam: 0x7fd68df0f1e0; teamID='F8M94NY2TV', teamName='Jonathan Sand', teamType='Individual', username='sand@gizmolab.com', isFreeProvisioningTeam='0'>'>
+	<IDEDistributionContext: 0x7fd6cf323b90; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='<IDEProvisioningDisambiguatableBasicTeam: 0x7fd68df0f1e0; teamID='F8M94NY2TV', teamName='Jonathan Sand', teamType='Individual', username='sand@gizmolab.com', isFreeProvisioningTeam='0'>'>
+	<IDEDistributionContext: 0x7fd649f50b40; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='<IDEProvisioningDisambiguatableBasicTeam: 0x7fd68df0f1e0; teamID='F8M94NY2TV', teamName='Jonathan Sand', teamType='Individual', username='sand@gizmolab.com', isFreeProvisioningTeam='0'>'>
+	<IDEDistributionContext: 0x7fd6d86789c0; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='(null)'>
+	<IDEDistributionContext: 0x7fd64b933ce0; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='<IDEDistributionMethodMacAppStoreDistribution: 0x7fd6c8e4a020>', team='(null)'>
+	<IDEDistributionContext: 0x7fd6cf69b840; archive = '<IDEArchive: 0x7fd63f8b6890>', distributionMethod='(null)', team='(null)'>
+</IDEDistributionProcessingPipelineContext: 0x7fd6cf884180>
+2020-04-16 20:51:16 +0000  Processing step: IDEDistributionCreateDestRootStep
+2020-04-16 20:51:16 +0000  Processing step: IDEDistributionCopyItemStep
+2020-04-16 20:51:16 +0000  Running /usr/bin/ditto '-V' '/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app'
+2020-04-16 20:51:16 +0000  >>> Copying /Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app 
+2020-04-16 20:51:16 +0000  copying file ./Contents/_CodeSignature/CodeResources ... 
+2020-04-16 20:51:16 +0000  21529 bytes for ./Contents/_CodeSignature/CodeResources
+2020-04-16 20:51:16 +0000  copying file ./Contents/MacOS/Seriously ... 
+2020-04-16 20:51:16 +0000  3854288 bytes for ./Contents/MacOS/Seriously
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Details.storyboardc/NSViewController-Naq-se-Exq.nib ... 
+2020-04-16 20:51:16 +0000  1864 bytes for ./Contents/Resources/en.lproj/Details.storyboardc/NSViewController-Naq-se-Exq.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Details.storyboardc/Naq-se-Exq-view-Ngb-Ew-NGG.nib ... 
+2020-04-16 20:51:16 +0000  26417 bytes for ./Contents/Resources/en.lproj/Details.storyboardc/Naq-se-Exq-view-Ngb-Ew-NGG.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Details.storyboardc/NSViewController-fxO-Qj-JeN.nib ... 
+2020-04-16 20:51:16 +0000  1859 bytes for ./Contents/Resources/en.lproj/Details.storyboardc/NSViewController-fxO-Qj-JeN.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Details.storyboardc/fxO-Qj-JeN-view-mbO-Ma-L1E.nib ... 
+2020-04-16 20:51:16 +0000  14005 bytes for ./Contents/Resources/en.lproj/Details.storyboardc/fxO-Qj-JeN-view-mbO-Ma-L1E.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Details.storyboardc/NSViewController-YaQ-0g-PCb.nib ... 
+2020-04-16 20:51:16 +0000  3071 bytes for ./Contents/Resources/en.lproj/Details.storyboardc/NSViewController-YaQ-0g-PCb.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Details.storyboardc/YaQ-0g-PCb-view-3tA-Ue-bZS.nib ... 
+2020-04-16 20:51:16 +0000  19641 bytes for ./Contents/Resources/en.lproj/Details.storyboardc/YaQ-0g-PCb-view-3tA-Ue-bZS.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Details.storyboardc/Info.plist ... 
+2020-04-16 20:51:16 +0000  706 bytes for ./Contents/Resources/en.lproj/Details.storyboardc/Info.plist
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Shortcuts.storyboardc/NSWindowController-olH-Ix-aMb.nib ... 
+2020-04-16 20:51:16 +0000  3499 bytes for ./Contents/Resources/en.lproj/Shortcuts.storyboardc/NSWindowController-olH-Ix-aMb.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Shortcuts.storyboardc/cD6-C4-FJ5-view-OMb-DG-XS6.nib ... 
+2020-04-16 20:51:16 +0000  14859 bytes for ./Contents/Resources/en.lproj/Shortcuts.storyboardc/cD6-C4-FJ5-view-OMb-DG-XS6.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Shortcuts.storyboardc/Info.plist ... 
+2020-04-16 20:51:16 +0000  432 bytes for ./Contents/Resources/en.lproj/Shortcuts.storyboardc/Info.plist
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-auf-AV-5qA.nib ... 
+2020-04-16 20:51:16 +0000  1864 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-auf-AV-5qA.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/S3C-PE-ZiN-view-NY2-fD-2jz.nib ... 
+2020-04-16 20:51:16 +0000  8215 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/S3C-PE-ZiN-view-NY2-fD-2jz.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/MXk-17-6Dz-view-eh7-uz-OG5.nib ... 
+2020-04-16 20:51:16 +0000  7044 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/MXk-17-6Dz-view-eh7-uz-OG5.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-cYL-kx-LTL.nib ... 
+2020-04-16 20:51:16 +0000  1859 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-cYL-kx-LTL.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-8gW-F6-R6g.nib ... 
+2020-04-16 20:51:16 +0000  2339 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-8gW-F6-R6g.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-HwM-RS-z3y.nib ... 
+2020-04-16 20:51:16 +0000  1857 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-HwM-RS-z3y.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/Hxl-Pi-4li-view-Yjc-TG-nmv.nib ... 
+2020-04-16 20:51:16 +0000  11837 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/Hxl-Pi-4li-view-Yjc-TG-nmv.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-yWa-SA-l1V.nib ... 
+2020-04-16 20:51:16 +0000  1497 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-yWa-SA-l1V.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/MainMenu.nib ... 
+2020-04-16 20:51:16 +0000  23210 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/MainMenu.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/XfG-lQ-9wD-view-m2S-Jp-Qdl.nib ... 
+2020-04-16 20:51:16 +0000  4434 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/XfG-lQ-9wD-view-m2S-Jp-Qdl.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/NSWindowController-B8D-0N-5wS.nib ... 
+2020-04-16 20:51:16 +0000  5987 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/NSWindowController-B8D-0N-5wS.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/auf-AV-5qA-view-W43-uk-txK.nib ... 
+2020-04-16 20:51:16 +0000  14336 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/auf-AV-5qA-view-W43-uk-txK.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/HwM-RS-z3y-view-EdY-JG-Pjl.nib ... 
+2020-04-16 20:51:16 +0000  2345 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/HwM-RS-z3y-view-EdY-JG-Pjl.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-XfG-lQ-9wD.nib ... 
+2020-04-16 20:51:16 +0000  1858 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-XfG-lQ-9wD.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-S3C-PE-ZiN.nib ... 
+2020-04-16 20:51:16 +0000  1860 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-S3C-PE-ZiN.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/cYL-kx-LTL-view-Vov-Ty-huu.nib ... 
+2020-04-16 20:51:16 +0000  9438 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/cYL-kx-LTL-view-Vov-Ty-huu.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/Info.plist ... 
+2020-04-16 20:51:16 +0000  1645 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/Info.plist
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/8gW-F6-R6g-view-HOI-yt-EwI.nib ... 
+2020-04-16 20:51:16 +0000  14997 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/8gW-F6-R6g-view-HOI-yt-EwI.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-Hxl-Pi-4li.nib ... 
+2020-04-16 20:51:16 +0000  1866 bytes for ./Contents/Resources/en.lproj/Main.storyboardc/NSViewController-Hxl-Pi-4li.nib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/AppIcon.OSX.icns ... 
+2020-04-16 20:51:16 +0000  42042 bytes for ./Contents/Resources/AppIcon.OSX.icns
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/Assets.car ... 
+2020-04-16 20:51:16 +0000  331928 bytes for ./Contents/Resources/Assets.car
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/eye.con-512.png ... 
+2020-04-16 20:51:16 +0000  51351 bytes for ./Contents/Resources/eye.con-512.png
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/everyone.seriously ... 
+2020-04-16 20:51:16 +0000  399869 bytes for ./Contents/Resources/everyone.seriously
+2020-04-16 20:51:16 +0000  copying file ./Contents/Resources/Credits.rtfd/TXT.rtf ... 
+2020-04-16 20:51:16 +0000  392 bytes for ./Contents/Resources/Credits.rtfd/TXT.rtf
+2020-04-16 20:51:16 +0000  copying file ./Contents/embedded.provisionprofile ... 
+2020-04-16 20:51:16 +0000  12715 bytes for ./Contents/embedded.provisionprofile
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/libswiftObjectiveC.dylib ... 
+2020-04-16 20:51:16 +0000  62272 bytes for ./Contents/Frameworks/libswiftObjectiveC.dylib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/libswiftXPC.dylib ... 
+2020-04-16 20:51:16 +0000  45744 bytes for ./Contents/Frameworks/libswiftXPC.dylib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/libswiftCore.dylib ... 
+2020-04-16 20:51:16 +0000  6456320 bytes for ./Contents/Frameworks/libswiftCore.dylib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/libswiftCoreGraphics.dylib ... 
+190560 bytes for ./Contents/Frameworks/libswiftCoreGraphics.dylib
+copying file ./Contents/Frameworks/libswiftDispatch.dylib ... 
+328288 bytes for ./Contents/Frameworks/libswiftDispatch.dylib
+copying file ./Contents/Frameworks/libswiftos.dylib ... 
+2020-04-16 20:51:16 +0000  72368 bytes for ./Contents/Frameworks/libswiftos.dylib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/libswiftCoreFoundation.dylib ... 
+2020-04-16 20:51:16 +0000  42128 bytes for ./Contents/Frameworks/libswiftCoreFoundation.dylib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/libswiftCloudKit.dylib ... 
+2020-04-16 20:51:16 +0000  205744 bytes for ./Contents/Frameworks/libswiftCloudKit.dylib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/libswiftDarwin.dylib ... 
+2020-04-16 20:51:16 +0000  99088 bytes for ./Contents/Frameworks/libswiftDarwin.dylib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/libswiftContacts.dylib ... 
+2020-04-16 20:51:16 +0000  68576 bytes for ./Contents/Frameworks/libswiftContacts.dylib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/libswiftIOKit.dylib ... 
+2020-04-16 20:51:16 +0000  45664 bytes for ./Contents/Frameworks/libswiftIOKit.dylib
+2020-04-16 20:51:16 +0000  copying symlink ./Contents/Frameworks/SnapKit.framework/SnapKit ... 
+2020-04-16 20:51:16 +0000  linked ./Contents/Frameworks/SnapKit.framework/SnapKit
+2020-04-16 20:51:16 +0000  copying symlink ./Contents/Frameworks/SnapKit.framework/Resources ... 
+2020-04-16 20:51:16 +0000  linked ./Contents/Frameworks/SnapKit.framework/Resources
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/SnapKit.framework/Versions/A/_CodeSignature/CodeResources ... 
+2020-04-16 20:51:16 +0000  2514 bytes for ./Contents/Frameworks/SnapKit.framework/Versions/A/_CodeSignature/CodeResources
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/SnapKit.framework/Versions/A/SnapKit ... 
+2020-04-16 20:51:16 +0000  176688 bytes for ./Contents/Frameworks/SnapKit.framework/Versions/A/SnapKit
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/SnapKit.framework/Versions/A/Resources/Info.plist ... 
+2020-04-16 20:51:16 +0000  1421 bytes for ./Contents/Frameworks/SnapKit.framework/Versions/A/Resources/Info.plist
+2020-04-16 20:51:16 +0000  copying symlink ./Contents/Frameworks/SnapKit.framework/Versions/Current ... 
+2020-04-16 20:51:16 +0000  linked ./Contents/Frameworks/SnapKit.framework/Versions/Current
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/libswiftFoundation.dylib ... 
+2020-04-16 20:51:16 +0000  3163408 bytes for ./Contents/Frameworks/libswiftFoundation.dylib
+2020-04-16 20:51:16 +0000  copying file ./Contents/Frameworks/libswiftCoreLocation.dylib ... 
+54864 bytes for ./Contents/Frameworks/libswiftCoreLocation.dylib
+copying file ./Contents/Info.plist ... 
+4100 bytes for ./Contents/Info.plist
+copying file ./Contents/PkgInfo ... 
+2020-04-16 20:51:16 +0000  8 bytes for ./Contents/PkgInfo
+2020-04-16 20:51:16 +0000  /usr/bin/ditto exited with 0
+2020-04-16 20:51:16 +0000  Processing step: IDEDistributionEmbedProfileStep
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd64b6c9e50; bundleID='io.snapkit.SnapKit', path='<DVTFilePath:0x7fd64b555dd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b513440; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b82a030; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='io.snapkit.SnapKit', executablePath='<DVTFilePath:0x7fd6499e8d30:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A/SnapKit'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd64a43ef20; bundleID='com.apple.dt.runtime.swiftCloudKit', path='<DVTFilePath:0x7fd6d86d1700:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d8908670; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b82a030; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCloudKit', executablePath='<DVTFilePath:0x7fd6d86d1700:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd6d86dba80; bundleID='com.apple.dt.runtime.swiftContacts', path='<DVTFilePath:0x7fd6d8638cf0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6a824b6e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64bb2a6a0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftContacts', executablePath='<DVTFilePath:0x7fd6d8638cf0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd6d87e2dd0; bundleID='com.apple.dt.runtime.swiftCore', path='<DVTFilePath:0x7fd6cf821800:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b0ec090; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cec2d7a0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCore', executablePath='<DVTFilePath:0x7fd6cf821800:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd64b6e5490; bundleID='com.apple.dt.runtime.swiftCoreFoundation', path='<DVTFilePath:0x7fd6485bda50:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a6f46e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd649e592b0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreFoundation', executablePath='<DVTFilePath:0x7fd6485bda50:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd6485515e0; bundleID='com.apple.dt.runtime.swiftCoreGraphics', path='<DVTFilePath:0x7fd6cf83ff20:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd668cd78e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b46a6e0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreGraphics', executablePath='<DVTFilePath:0x7fd6cf83ff20:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd6cf794d40; bundleID='com.apple.dt.runtime.swiftCoreLocation', path='<DVTFilePath:0x7fd649974cd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6af6f5ff0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b46a6e0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreLocation', executablePath='<DVTFilePath:0x7fd649974cd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd6cf677e70; bundleID='com.apple.dt.runtime.swiftDarwin', path='<DVTFilePath:0x7fd6d863f5d0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a0d0240; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cec2d7a0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftDarwin', executablePath='<DVTFilePath:0x7fd6d863f5d0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd64b3a42b0; bundleID='com.apple.dt.runtime.swiftDispatch', path='<DVTFilePath:0x7fd6cf809930:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b5bb270; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b82a030; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftDispatch', executablePath='<DVTFilePath:0x7fd6cf809930:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd64a4ad4f0; bundleID='com.apple.dt.runtime.swiftFoundation', path='<DVTFilePath:0x7fd6cfb1aa80:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6bf12a640; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b82a030; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftFoundation', executablePath='<DVTFilePath:0x7fd6cfb1aa80:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd649f76190; bundleID='com.apple.dt.runtime.swiftIOKit', path='<DVTFilePath:0x7fd6d86eba00:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd649bd5c20; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b82a030; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftIOKit', executablePath='<DVTFilePath:0x7fd6d86eba00:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd6cf795d50; bundleID='com.apple.dt.runtime.swiftObjectiveC', path='<DVTFilePath:0x7fd6cf8bfed0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d86bed20; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b82a030; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftObjectiveC', executablePath='<DVTFilePath:0x7fd6cf8bfed0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd6cf6aa640; bundleID='com.apple.dt.runtime.swiftXPC', path='<DVTFilePath:0x7fd6cf8560e0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a076d70; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b82a030; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftXPC', executablePath='<DVTFilePath:0x7fd6cf8560e0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Skipping profile for item: <IDEDistributionItem: 0x7fd6cf254220; bundleID='com.apple.dt.runtime.swiftos', path='<DVTFilePath:0x7fd6cf8cb780:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d8720710; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b82a030; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftos', executablePath='<DVTFilePath:0x7fd6cf8cb780:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:16 +0000  Processing step: IDEDistributionInfoPlistStep
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionInfoPlistStep because it said so
+2020-04-16 20:51:16 +0000  Processing step: IDEDistributionItemRemovalStep
+2020-04-16 20:51:16 +0000  Processing step: IDEDistributionAppThinningPlistStep
+2020-04-16 20:51:16 +0000  Processing step: IDEDistributionCompileBitcodeStep
+2020-04-16 20:51:16 +0000  Skipping step: IDEDistributionCompileBitcodeStep because it said so
+2020-04-16 20:51:16 +0000  Processing step: IDEDistributionCodeSlimmingStep
+2020-04-16 20:51:16 +0000  Processing step: IDEDistributionCopyBCSymbolMapsStep
+2020-04-16 20:51:16 +0000  Processing step: IDEDistributionSymbolsStep
+2020-04-16 20:51:16 +0000  Processing symbols for A
+2020-04-16 20:51:16 +0000  Running /usr/bin/rsync '-8aPhhE' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A' '--link-dest' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg'
+2020-04-16 20:51:16 +0000  building file list ... 
+2020-04-16 20:51:16 +0000   0 files...2020-04-16 20:51:16 +0000  6 files to consider
+2020-04-16 20:51:16 +0000  A/
+2020-04-16 20:51:16 +0000  A/Resources/
+A/_CodeSignature/
+2020-04-16 20:51:16 +0000  
+2020-04-16 20:51:16 +0000  sent 221 bytes  received 38 bytes  518.00 bytes/sec
+total size is 176.39K  speedup is 697.39
+2020-04-16 20:51:16 +0000  /usr/bin/rsync exited with 0
+2020-04-16 20:51:16 +0000  Running /usr/bin/rsync '-8aPhhE' '/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/dSYMs/' '--link-dest' '/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/dSYMs/' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg'
+2020-04-16 20:51:16 +0000  building file list ... 
+2020-04-16 20:51:16 +0000   0 files...2020-04-16 20:51:16 +0000  13 files to consider
+2020-04-16 20:51:16 +0000  ./
+2020-04-16 20:51:16 +0000  Seriously.app.dSYM/
+Seriously.app.dSYM/Contents/
+2020-04-16 20:51:16 +0000  Seriously.app.dSYM/Contents/Resources/
+Seriously.app.dSYM/Contents/Resources/DWARF/
+SnapKit.framework.dSYM/
+SnapKit.framework.dSYM/Contents/
+SnapKit.framework.dSYM/Contents/Resources/
+SnapKit.framework.dSYM/Contents/Resources/DWARF/
+2020-04-16 20:51:16 +0000  
+2020-04-16 20:51:16 +0000  sent 456 bytes  received 74 bytes  1.04K bytes/sec
+total size is 13.88M  speedup is 27462.11
+2020-04-16 20:51:16 +0000  /usr/bin/rsync exited with 0
+2020-04-16 20:51:16 +0000  Running /Applications/Xcode.app/Contents/Developer/usr/bin/symbols '-noTextInSOD' '-noDaemon' '-arch' 'all' '-symbolsPackageDir' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Symbols' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/SnapKit.framework.dSYM/Contents/Resources/Dwarf/SnapKit'
+2020-04-16 20:51:16 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/SnapKit.framework.dSYM/Contents/Resources/Dwarf/SnapKit [x86_64, 0.028046 seconds]:
+2020-04-16 20:51:16 +0000  /Applications/Xcode.app/Contents/Developer/usr/bin/symbols exited with 0
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftCloudKit.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftContacts.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftCore.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftCoreFoundation.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftCoreGraphics.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftCoreLocation.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftDarwin.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftDispatch.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftFoundation.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftIOKit.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftObjectiveC.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftXPC.dylib
+2020-04-16 20:51:16 +0000  Excluding symbols for libswiftos.dylib
+2020-04-16 20:51:16 +0000  Processing symbols for Seriously.app
+2020-04-16 20:51:16 +0000  Running /usr/bin/rsync '-8aPhhE' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app' '--link-dest' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg'
+2020-04-16 20:51:16 +0000  building file list ... 
+2020-04-16 20:51:16 +0000   0 files...2020-04-16 20:51:16 +0000  75 files to consider
+2020-04-16 20:51:16 +0000  Seriously.app/
+2020-04-16 20:51:16 +0000  Seriously.app/Contents/
+Seriously.app/Contents/Frameworks/
+Seriously.app/Contents/Frameworks/SnapKit.framework/
+Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/
+Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A/
+Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A/Resources/
+Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A/_CodeSignature/
+2020-04-16 20:51:16 +0000  Seriously.app/Contents/MacOS/
+Seriously.app/Contents/Resources/
+2020-04-16 20:51:16 +0000  Seriously.app/Contents/Resources/._eye.con-512.png
+2020-04-16 20:51:16 +0000           248 100%    0.00kB/s    0:00:00         248 100%    0.00kB/s    0:00:00 (xfer#1, to-check=41/75)
+2020-04-16 20:51:16 +0000  Seriously.app/Contents/Resources/Credits.rtfd/
+Seriously.app/Contents/Resources/en.lproj/
+2020-04-16 20:51:16 +0000  Seriously.app/Contents/Resources/en.lproj/Details.storyboardc/
+Seriously.app/Contents/Resources/en.lproj/Main.storyboardc/
+Seriously.app/Contents/Resources/en.lproj/Shortcuts.storyboardc/
+Seriously.app/Contents/_CodeSignature/
+2020-04-16 20:51:16 +0000  
+sent 2.73K bytes  received 138 bytes  5.73K bytes/sec
+total size is 15.20M  speedup is 5429.19
+2020-04-16 20:51:16 +0000  /usr/bin/rsync exited with 0
+2020-04-16 20:51:16 +0000  Running /usr/bin/rsync '-8aPhhE' '/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/dSYMs/' '--link-dest' '/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/dSYMs/' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg'
+2020-04-16 20:51:16 +0000  building file list ... 
+2020-04-16 20:51:16 +0000   0 files...2020-04-16 20:51:16 +0000  13 files to consider
+2020-04-16 20:51:16 +0000  ./
+2020-04-16 20:51:16 +0000  Seriously.app.dSYM/
+Seriously.app.dSYM/Contents/
+Seriously.app.dSYM/Contents/Resources/
+Seriously.app.dSYM/Contents/Resources/DWARF/
+SnapKit.framework.dSYM/
+SnapKit.framework.dSYM/Contents/
+SnapKit.framework.dSYM/Contents/Resources/
+SnapKit.framework.dSYM/Contents/Resources/DWARF/
+2020-04-16 20:51:16 +0000  
+2020-04-16 20:51:16 +0000  sent 480 bytes  received 98 bytes  1.13K bytes/sec
+total size is 13.88M  speedup is 25181.52
+2020-04-16 20:51:16 +0000  /usr/bin/rsync exited with 0
+2020-04-16 20:51:16 +0000  Running /Applications/Xcode.app/Contents/Developer/usr/bin/symbols '-noTextInSOD' '-noDaemon' '-arch' 'all' '-symbolsPackageDir' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Symbols' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Seriously.app.dSYM/Contents/Resources/Dwarf/Seriously'
+2020-04-16 20:51:17 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Seriously.app.dSYM/Contents/Resources/Dwarf/Seriously [x86_64, 0.421472 seconds]:
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/usr/bin/symbols exited with 0
+2020-04-16 20:51:17 +0000  Processing step: IDEDistributionCopyAppleProvidedContentStep
+2020-04-16 20:51:17 +0000  Processing step: IDEDistributionAppThinningStep
+2020-04-16 20:51:17 +0000  Skipping step: IDEDistributionAppThinningStep because it said so
+2020-04-16 20:51:17 +0000  Processing step: IDEDistributionArchThinningStep
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A/SnapKit' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "SnapKit" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftCloudKit.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftContacts.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftCore.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftCoreFoundation.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftCoreGraphics.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftCoreLocation.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftDarwin.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftDispatch.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftFoundation.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftIOKit.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftObjectiveC.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftXPC.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "libswiftos.dylib" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/MacOS/Seriously' '-verify_arch' 'arm64e'
+2020-04-16 20:51:17 +0000  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2020-04-16 20:51:17 +0000  Skipping architecture thinning for item "Seriously" because arch "arm64e" wasn't found
+2020-04-16 20:51:17 +0000  Processing step: IDEDistributionODRStep
+2020-04-16 20:51:17 +0000  Processing step: IDEDistributionStripXattrsStep
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd64b6c9e50; bundleID='io.snapkit.SnapKit', path='<DVTFilePath:0x7fd64b555dd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b513440; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6d87540f0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='io.snapkit.SnapKit', executablePath='<DVTFilePath:0x7fd6499e8d30:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A/SnapKit'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd64a43ef20; bundleID='com.apple.dt.runtime.swiftCloudKit', path='<DVTFilePath:0x7fd6d86d1700:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d8908670; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cfd65b60; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCloudKit', executablePath='<DVTFilePath:0x7fd6d86d1700:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd6d86dba80; bundleID='com.apple.dt.runtime.swiftContacts', path='<DVTFilePath:0x7fd6d8638cf0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6a824b6e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cec86a50; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftContacts', executablePath='<DVTFilePath:0x7fd6d8638cf0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd6d87e2dd0; bundleID='com.apple.dt.runtime.swiftCore', path='<DVTFilePath:0x7fd6cf821800:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b0ec090; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64ba0f440; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCore', executablePath='<DVTFilePath:0x7fd6cf821800:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd64b6e5490; bundleID='com.apple.dt.runtime.swiftCoreFoundation', path='<DVTFilePath:0x7fd6485bda50:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a6f46e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64ba8ee90; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreFoundation', executablePath='<DVTFilePath:0x7fd6485bda50:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd6485515e0; bundleID='com.apple.dt.runtime.swiftCoreGraphics', path='<DVTFilePath:0x7fd6cf83ff20:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd668cd78e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cec86a50; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreGraphics', executablePath='<DVTFilePath:0x7fd6cf83ff20:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd6cf794d40; bundleID='com.apple.dt.runtime.swiftCoreLocation', path='<DVTFilePath:0x7fd649974cd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6af6f5ff0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6d87540f0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreLocation', executablePath='<DVTFilePath:0x7fd649974cd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd6cf677e70; bundleID='com.apple.dt.runtime.swiftDarwin', path='<DVTFilePath:0x7fd6d863f5d0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a0d0240; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cfd65b60; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftDarwin', executablePath='<DVTFilePath:0x7fd6d863f5d0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd64b3a42b0; bundleID='com.apple.dt.runtime.swiftDispatch', path='<DVTFilePath:0x7fd6cf809930:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b5bb270; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6d87540f0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftDispatch', executablePath='<DVTFilePath:0x7fd6cf809930:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd64a4ad4f0; bundleID='com.apple.dt.runtime.swiftFoundation', path='<DVTFilePath:0x7fd6cfb1aa80:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6bf12a640; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cfd65b60; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftFoundation', executablePath='<DVTFilePath:0x7fd6cfb1aa80:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd649f76190; bundleID='com.apple.dt.runtime.swiftIOKit', path='<DVTFilePath:0x7fd6d86eba00:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd649bd5c20; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6d87540f0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftIOKit', executablePath='<DVTFilePath:0x7fd6d86eba00:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd6cf795d50; bundleID='com.apple.dt.runtime.swiftObjectiveC', path='<DVTFilePath:0x7fd6cf8bfed0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d86bed20; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cfd65b60; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftObjectiveC', executablePath='<DVTFilePath:0x7fd6cf8bfed0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd6cf6aa640; bundleID='com.apple.dt.runtime.swiftXPC', path='<DVTFilePath:0x7fd6cf8560e0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a076d70; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cfd65b60; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftXPC', executablePath='<DVTFilePath:0x7fd6cf8560e0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Skipping stripping extended attributes of item: <IDEDistributionItem: 0x7fd6cf254220; bundleID='com.apple.dt.runtime.swiftos', path='<DVTFilePath:0x7fd6cf8cb780:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d8720710; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cfd65b60; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftos', executablePath='<DVTFilePath:0x7fd6cf8cb780:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib'>', hardenedRuntime='0'>'>
+2020-04-16 20:51:17 +0000  Running /usr/bin/xattr '-crs' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app'
+2020-04-16 20:51:18 +0000  /usr/bin/xattr exited with 0
+2020-04-16 20:51:18 +0000  Processing step: IDEDistributionCodesignStep
+2020-04-16 20:51:18 +0000  Entitlements for <IDEDistributionItem: 0x7fd64b6c9e50; bundleID='io.snapkit.SnapKit', path='<DVTFilePath:0x7fd64b555dd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b513440; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd649fad3a0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='io.snapkit.SnapKit', executablePath='<DVTFilePath:0x7fd6499e8d30:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A/SnapKit'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:18 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd64b6c9e50; bundleID='io.snapkit.SnapKit', path='<DVTFilePath:0x7fd64b555dd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b513440; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd649fa7560; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='io.snapkit.SnapKit', executablePath='<DVTFilePath:0x7fd6499e8d30:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A/SnapKit'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~oKc2Yf
+2020-04-16 20:51:18 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~oKc2Yf' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A'
+2020-04-16 20:51:18 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A: replacing existing signature
+2020-04-16 20:51:18 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/SnapKit.framework/Versions/A: signed bundle with Mach-O thin (x86_64) [io.snapkit.SnapKit]
+2020-04-16 20:51:18 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:18 +0000  Entitlements for <IDEDistributionItem: 0x7fd64a43ef20; bundleID='com.apple.dt.runtime.swiftCloudKit', path='<DVTFilePath:0x7fd6d86d1700:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d8908670; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cdc66990; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCloudKit', executablePath='<DVTFilePath:0x7fd6d86d1700:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:18 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd64a43ef20; bundleID='com.apple.dt.runtime.swiftCloudKit', path='<DVTFilePath:0x7fd6d86d1700:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d8908670; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b714400; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCloudKit', executablePath='<DVTFilePath:0x7fd6d86d1700:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~WwLx5m
+2020-04-16 20:51:18 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~WwLx5m' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib'
+2020-04-16 20:51:18 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib: replacing existing signature
+2020-04-16 20:51:18 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCloudKit.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftCloudKit]
+2020-04-16 20:51:18 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:18 +0000  Entitlements for <IDEDistributionItem: 0x7fd6d86dba80; bundleID='com.apple.dt.runtime.swiftContacts', path='<DVTFilePath:0x7fd6d8638cf0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6a824b6e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b51aa40; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftContacts', executablePath='<DVTFilePath:0x7fd6d8638cf0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:18 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd6d86dba80; bundleID='com.apple.dt.runtime.swiftContacts', path='<DVTFilePath:0x7fd6d8638cf0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6a824b6e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b7a8c30; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftContacts', executablePath='<DVTFilePath:0x7fd6d8638cf0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~wfez0u
+2020-04-16 20:51:18 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~wfez0u' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib'
+2020-04-16 20:51:18 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib: replacing existing signature
+2020-04-16 20:51:18 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftContacts.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftContacts]
+2020-04-16 20:51:18 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:18 +0000  Entitlements for <IDEDistributionItem: 0x7fd6d87e2dd0; bundleID='com.apple.dt.runtime.swiftCore', path='<DVTFilePath:0x7fd6cf821800:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b0ec090; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd649f55020; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCore', executablePath='<DVTFilePath:0x7fd6cf821800:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:18 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd6d87e2dd0; bundleID='com.apple.dt.runtime.swiftCore', path='<DVTFilePath:0x7fd6cf821800:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b0ec090; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cec86a50; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCore', executablePath='<DVTFilePath:0x7fd6cf821800:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~cf6uOr
+2020-04-16 20:51:18 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~cf6uOr' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib'
+2020-04-16 20:51:18 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib: replacing existing signature
+2020-04-16 20:51:18 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCore.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftCore]
+2020-04-16 20:51:18 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:18 +0000  Entitlements for <IDEDistributionItem: 0x7fd64b6e5490; bundleID='com.apple.dt.runtime.swiftCoreFoundation', path='<DVTFilePath:0x7fd6485bda50:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a6f46e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cbdf1e70; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreFoundation', executablePath='<DVTFilePath:0x7fd6485bda50:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:18 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd64b6e5490; bundleID='com.apple.dt.runtime.swiftCoreFoundation', path='<DVTFilePath:0x7fd6485bda50:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a6f46e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b714400; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreFoundation', executablePath='<DVTFilePath:0x7fd6485bda50:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~ro4nCJ
+2020-04-16 20:51:18 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~ro4nCJ' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib'
+2020-04-16 20:51:18 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib: replacing existing signature
+2020-04-16 20:51:18 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreFoundation.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftCoreFoundation]
+2020-04-16 20:51:18 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:18 +0000  Entitlements for <IDEDistributionItem: 0x7fd6485515e0; bundleID='com.apple.dt.runtime.swiftCoreGraphics', path='<DVTFilePath:0x7fd6cf83ff20:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd668cd78e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd649fe88c0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreGraphics', executablePath='<DVTFilePath:0x7fd6cf83ff20:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:18 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd6485515e0; bundleID='com.apple.dt.runtime.swiftCoreGraphics', path='<DVTFilePath:0x7fd6cf83ff20:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd668cd78e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b51aa40; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreGraphics', executablePath='<DVTFilePath:0x7fd6cf83ff20:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~oxVBdf
+2020-04-16 20:51:18 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~oxVBdf' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib'
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib: replacing existing signature
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreGraphics.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftCoreGraphics]
+2020-04-16 20:51:19 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:19 +0000  Entitlements for <IDEDistributionItem: 0x7fd6cf794d40; bundleID='com.apple.dt.runtime.swiftCoreLocation', path='<DVTFilePath:0x7fd649974cd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6af6f5ff0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6481c9480; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreLocation', executablePath='<DVTFilePath:0x7fd649974cd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:19 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd6cf794d40; bundleID='com.apple.dt.runtime.swiftCoreLocation', path='<DVTFilePath:0x7fd649974cd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6af6f5ff0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd63fb99130; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftCoreLocation', executablePath='<DVTFilePath:0x7fd649974cd0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~9rtVuo
+2020-04-16 20:51:19 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~9rtVuo' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib'
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib: replacing existing signature
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftCoreLocation.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftCoreLocation]
+2020-04-16 20:51:19 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:19 +0000  Entitlements for <IDEDistributionItem: 0x7fd6cf677e70; bundleID='com.apple.dt.runtime.swiftDarwin', path='<DVTFilePath:0x7fd6d863f5d0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a0d0240; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b51aa40; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftDarwin', executablePath='<DVTFilePath:0x7fd6d863f5d0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:19 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd6cf677e70; bundleID='com.apple.dt.runtime.swiftDarwin', path='<DVTFilePath:0x7fd6d863f5d0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a0d0240; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b7a8c30; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftDarwin', executablePath='<DVTFilePath:0x7fd6d863f5d0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~UF8ZOC
+2020-04-16 20:51:19 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~UF8ZOC' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib'
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib: replacing existing signature
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftDarwin.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftDarwin]
+2020-04-16 20:51:19 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:19 +0000  Entitlements for <IDEDistributionItem: 0x7fd64b3a42b0; bundleID='com.apple.dt.runtime.swiftDispatch', path='<DVTFilePath:0x7fd6cf809930:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b5bb270; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cf0fde50; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftDispatch', executablePath='<DVTFilePath:0x7fd6cf809930:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:19 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd64b3a42b0; bundleID='com.apple.dt.runtime.swiftDispatch', path='<DVTFilePath:0x7fd6cf809930:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64b5bb270; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cf0d80a0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftDispatch', executablePath='<DVTFilePath:0x7fd6cf809930:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~Op5QjX
+2020-04-16 20:51:19 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~Op5QjX' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib'
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib: replacing existing signature
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftDispatch.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftDispatch]
+2020-04-16 20:51:19 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:19 +0000  Entitlements for <IDEDistributionItem: 0x7fd64a4ad4f0; bundleID='com.apple.dt.runtime.swiftFoundation', path='<DVTFilePath:0x7fd6cfb1aa80:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6bf12a640; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cf0fde50; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftFoundation', executablePath='<DVTFilePath:0x7fd6cfb1aa80:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:19 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd64a4ad4f0; bundleID='com.apple.dt.runtime.swiftFoundation', path='<DVTFilePath:0x7fd6cfb1aa80:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6bf12a640; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b714400; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftFoundation', executablePath='<DVTFilePath:0x7fd6cfb1aa80:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~4AI0Iz
+2020-04-16 20:51:19 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~4AI0Iz' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib'
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib: replacing existing signature
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftFoundation.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftFoundation]
+2020-04-16 20:51:19 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:19 +0000  Entitlements for <IDEDistributionItem: 0x7fd649f76190; bundleID='com.apple.dt.runtime.swiftIOKit', path='<DVTFilePath:0x7fd6d86eba00:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd649bd5c20; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cbdf1e70; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftIOKit', executablePath='<DVTFilePath:0x7fd6d86eba00:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:19 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd649f76190; bundleID='com.apple.dt.runtime.swiftIOKit', path='<DVTFilePath:0x7fd6d86eba00:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd649bd5c20; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b714400; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftIOKit', executablePath='<DVTFilePath:0x7fd6d86eba00:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~9hZUwz
+2020-04-16 20:51:19 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~9hZUwz' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib'
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib: replacing existing signature
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftIOKit.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftIOKit]
+2020-04-16 20:51:19 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:19 +0000  Entitlements for <IDEDistributionItem: 0x7fd6cf795d50; bundleID='com.apple.dt.runtime.swiftObjectiveC', path='<DVTFilePath:0x7fd6cf8bfed0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d86bed20; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cf77f6e0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftObjectiveC', executablePath='<DVTFilePath:0x7fd6cf8bfed0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:19 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd6cf795d50; bundleID='com.apple.dt.runtime.swiftObjectiveC', path='<DVTFilePath:0x7fd6cf8bfed0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d86bed20; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cf2f4180; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftObjectiveC', executablePath='<DVTFilePath:0x7fd6cf8bfed0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~bJAxij
+2020-04-16 20:51:19 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~bJAxij' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib'
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib: replacing existing signature
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftObjectiveC.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftObjectiveC]
+2020-04-16 20:51:19 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:19 +0000  Entitlements for <IDEDistributionItem: 0x7fd6cf6aa640; bundleID='com.apple.dt.runtime.swiftXPC', path='<DVTFilePath:0x7fd6cf8560e0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a076d70; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6499feba0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftXPC', executablePath='<DVTFilePath:0x7fd6cf8560e0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:19 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd6cf6aa640; bundleID='com.apple.dt.runtime.swiftXPC', path='<DVTFilePath:0x7fd6cf8560e0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd64a076d70; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b47bf70; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftXPC', executablePath='<DVTFilePath:0x7fd6cf8560e0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~Wvw2Mo
+2020-04-16 20:51:19 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~Wvw2Mo' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib'
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib: replacing existing signature
+2020-04-16 20:51:19 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftXPC.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftXPC]
+2020-04-16 20:51:19 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:19 +0000  Entitlements for <IDEDistributionItem: 0x7fd6cf254220; bundleID='com.apple.dt.runtime.swiftos', path='<DVTFilePath:0x7fd6cf8cb780:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d8720710; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd649f697f0; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftos', executablePath='<DVTFilePath:0x7fd6cf8cb780:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib'>', hardenedRuntime='0'>'>: {
+}
+2020-04-16 20:51:19 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd6cf254220; bundleID='com.apple.dt.runtime.swiftos', path='<DVTFilePath:0x7fd6cf8cb780:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d8720710; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd64b47bf70; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='(null)', teamID='F8M94NY2TV', identifier='com.apple.dt.runtime.swiftos', executablePath='<DVTFilePath:0x7fd6cf8cb780:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~udh7dP
+2020-04-16 20:51:19 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~udh7dP' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib'
+2020-04-16 20:51:20 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib: replacing existing signature
+2020-04-16 20:51:20 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app/Contents/Frameworks/libswiftos.dylib: signed Mach-O thin (x86_64) [com.apple.dt.runtime.swiftos]
+2020-04-16 20:51:20 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:20 +0000  Entitlements for <IDEDistributionItem: 0x7fd63fbf7980; bundleID='com.seriously.mac', path='<DVTFilePath:0x7fd64b5c26a0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d82b7b40; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cbdf1e70; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='{
+    "com.apple.application-identifier" = "F8M94NY2TV.com.seriously.mac";
+    "com.apple.developer.aps-environment" = development;
+    "com.apple.developer.icloud-container-environment" = Production;
+    "com.apple.developer.icloud-container-identifiers" =     (
+        "iCloud.com.zones.Zones"
+    );
+    "com.apple.developer.icloud-services" =     (
+        CloudKit
+    );
+    "com.apple.developer.team-identifier" = F8M94NY2TV;
+    "com.apple.developer.ubiquity-kvstore-identifier" = "F8M94NY2TV.com.seriously.mac";
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.files.bookmarks.app-scope" = 1;
+    "com.apple.security.files.user-selected.read-write" = 1;
+    "com.apple.security.print" = 1;
+}', teamID='F8M94NY2TV', identifier='com.seriously.mac', executablePath='<DVTFilePath:0x7fd6d87f8870:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/MacOS/Seriously'>', hardenedRuntime='0'>'>: {
+    "com.apple.application-identifier" = "F8M94NY2TV.com.seriously.mac";
+    "com.apple.developer.aps-environment" = production;
+    "com.apple.developer.icloud-container-environment" = Production;
+    "com.apple.developer.icloud-container-identifiers" =     (
+        "iCloud.com.zones.Zones"
+    );
+    "com.apple.developer.icloud-services" =     (
+        CloudKit
+    );
+    "com.apple.developer.team-identifier" = F8M94NY2TV;
+    "com.apple.developer.ubiquity-kvstore-identifier" = "F8M94NY2TV.com.seriously.mac";
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.files.bookmarks.app-scope" = 1;
+    "com.apple.security.files.user-selected.read-write" = 1;
+    "com.apple.security.print" = 1;
+}
+2020-04-16 20:51:20 +0000  Writing entitlements for <IDEDistributionItem: 0x7fd63fbf7980; bundleID='com.seriously.mac', path='<DVTFilePath:0x7fd64b5c26a0:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x7fd6d82b7b40; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x7fd6cf57de20; name='Apple Development: Jonathan Sand (CGZR7G3EU6)', hash='665A2C1BCD8D74D5D2E247595CBB340EB230B162', serialNumber='6CE73326F258F8A0', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2020-02-28 03:21:13 +0000''>', entitlements='{
+    "com.apple.application-identifier" = "F8M94NY2TV.com.seriously.mac";
+    "com.apple.developer.aps-environment" = development;
+    "com.apple.developer.icloud-container-environment" = Production;
+    "com.apple.developer.icloud-container-identifiers" =     (
+        "iCloud.com.zones.Zones"
+    );
+    "com.apple.developer.icloud-services" =     (
+        CloudKit
+    );
+    "com.apple.developer.team-identifier" = F8M94NY2TV;
+    "com.apple.developer.ubiquity-kvstore-identifier" = "F8M94NY2TV.com.seriously.mac";
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.files.bookmarks.app-scope" = 1;
+    "com.apple.security.files.user-selected.read-write" = 1;
+    "com.apple.security.print" = 1;
+}', teamID='F8M94NY2TV', identifier='com.seriously.mac', executablePath='<DVTFilePath:0x7fd6d87f8870:'/Users/sand/Library/Developer/Xcode/Archives/2020-04-16/Seriously 4-16-20, 1.50 PM.xcarchive/Products/Applications/Seriously.app/Contents/MacOS/Seriously'>', hardenedRuntime='0'>'> to: /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~GRxhyH
+2020-04-16 20:51:20 +0000  Running /usr/bin/codesign '-vvv' '--force' '--sign' 'FE72F36A5FB9D379AEAB3E66E2C250FA5EF2FA94' '--entitlements' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/entitlements~~~GRxhyH' '--preserve-metadata=identifier,flags,runtime' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app'
+2020-04-16 20:51:20 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app: replacing existing signature
+2020-04-16 20:51:20 +0000  /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app: signed app bundle with Mach-O thin (x86_64) [com.seriously.mac]
+2020-04-16 20:51:20 +0000  /usr/bin/codesign exited with 0
+2020-04-16 20:51:20 +0000  Processing step: IDEDistributionZipODRItemStep
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Skipping step: IDEDistributionZipODRItemStep because it said so
+2020-04-16 20:51:20 +0000  Processing step: IDEDistributionCreatePKGStep
+2020-04-16 20:51:20 +0000  Running /usr/bin/productbuild '--sign' '3rd Party Mac Developer Installer: Jonathan Sand (F8M94NY2TV)' '--symbolication' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Symbols' '--component' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app' '/Applications' '/var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Packages/Seriously.pkg'
+2020-04-16 20:51:22 +0000  productbuild: Adding component at /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Root/Applications/Seriously.app
+productbuild: Signing product with identity "3rd Party Mac Developer Installer: Jonathan Sand (F8M94NY2TV)" from keychain /Users/sand/Library/Keychains/login.keychain-db
+productbuild: Adding certificate "Apple Worldwide Developer Relations Certification Authority"
+productbuild: Adding certificate "Apple Root CA"
+productbuild: Wrote product to /var/folders/w5/6mlhyn6j6b1c67v8k9sm7gs40000gr/T/XcodeDistPipeline.~~~c1h5Sg/Packages/Seriously.pkg
+productbuild: Supported OS versions: [10.13, )
+2020-04-16 20:51:22 +0000  /usr/bin/productbuild exited with 0
+2020-04-16 20:51:22 +0000  Processing step: IDEDistributionAppStoreInformationStep
+2020-04-16 20:51:22 +0000  Skipping step: IDEDistributionAppStoreInformationStep because it said so
+2020-04-16 20:51:22 +0000  Processing step: IDEDistributionGenerateProcessedDistributionItems
+2020-04-16 20:51:22 +0000  Processing step: IDEDistributionCreateManifestStep
+2020-04-16 20:51:22 +0000  Skipping step: IDEDistributionCreateManifestStep because it said so
