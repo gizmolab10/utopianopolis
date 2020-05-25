@@ -57,7 +57,7 @@ class ZRecents : ZRecords {
 		if  let r = root {
 			for bookmark in r.children {
 				if  let name = bookmark.bookmarkTarget?.recordName(),
-					name == gHereMaybe?.recordName() {
+					name    == gHereMaybe?.recordName() {
 					updateCurrentRecent()
 
 					return
@@ -65,7 +65,7 @@ class ZRecents : ZRecords {
 			}
 
 			if  let bookmark = gFavorites.createBookmark(for: gHereMaybe, action: .aBookmark) {
-				r.children.append(bookmark)
+				bookmark.moveZone(to: r)
 			}
 
 			updateCurrentRecent()

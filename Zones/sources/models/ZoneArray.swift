@@ -262,8 +262,8 @@ extension ZoneArray {
 	}
 
 	func assureAdoption() {
-		for zone in self {
-			zone.needAdoption()
+		traverseAllAncestors { ancestor in
+			ancestor.needAdoption()
 		}
 
 		gRemoteStorage.adoptAll()
@@ -376,24 +376,24 @@ extension ZoneArray {
 	func bookmarksTargeting(_ iTarget: Zone?, iSpawned: Bool = false) -> Zone? {
 		var found: Zone?
 
-		if  let                   target = iTarget,
-			let                     dbID = target.databaseID {
-			var                    level = Int.max
-			for workingFavorite in self {
-				if  let targetOfWorking  = workingFavorite.bookmarkTarget,
-					dbID                == targetOfWorking.databaseID {
+		if  let               target = iTarget,
+			let                 dbID = target.databaseID {
+			var                level = Int.max
+			for child in self {
+				if  let childTarget  = child.bookmarkTarget,
+					dbID            == childTarget.databaseID {
 
-					if  targetOfWorking == target {
-						return workingFavorite
+					if  childTarget == target {
+						return child
 					}
 
-					let newLevel        = targetOfWorking.level
+					let childLevel   = childTarget.level
 
-					if  newLevel        < level,
+					if  childLevel   < level,
 						iSpawned,
-						target.spawnedBy(targetOfWorking) {
-						level           = newLevel
-						found           = workingFavorite
+						target.spawnedBy(childTarget) {
+						level        = childLevel
+						found        = child
 					}
 				}
 			}

@@ -112,13 +112,13 @@ class ZFiles: NSObject {
 		}
 	}
 
-	func readFile(into databaseID: ZDatabaseID) {
+	func readFile(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
 		if  databaseID  != .favoritesID,
 			let    index = databaseID.index,
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {
 			let 	path = filePath(for: dbIndex)
 
-			readFile(from: path, into: databaseID)
+			readFile(from: path, into: databaseID, onCompletion: onCompletion)
 		}
 	}
 
@@ -127,9 +127,11 @@ class ZFiles: NSObject {
 
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
 		if  gUseFiles,
+			gHasFinishedStartup,
 			let           dbID = databaseID,
+			dbID              != .recentsID,
 			dbID              != .favoritesID,
-            let        manager = gRemoteStorage.cloud(for: dbID),
+            let          cloud = gRemoteStorage.cloud(for: dbID),
 			let        index   = dbID.index,
 			needsWrite[index] == true,
 			isWriting [index] == false {    // prevent write during write
@@ -144,32 +146,32 @@ class ZFiles: NSObject {
 				// take snapshots just before exit from method //
 				// //////////////////////////////////////////////
 
-				if  let   graph  = try manager.rootZone?.createStorageDictionary(for: dbID)  {
+				if  let   graph  = try cloud.rootZone?.createStorageDictionary(for: dbID)  {
 					dict[.graph] = graph as NSObject
 				}
 
-				if  let   trash  = try manager.trashZone?.createStorageDictionary(for: dbID) {
+				if  let   trash  = try cloud.trashZone?.createStorageDictionary(for: dbID) {
 					dict[.trash] = trash as NSObject
 				}
 
-				if  let   recent  = try manager.recentsZone?.createStorageDictionary(for: dbID) {
+				if  let   recent  = try cloud.recentsZone?.createStorageDictionary(for: dbID) {
 					dict[.recent] = recent as NSObject
 				}
 
-				if  let   destroy  = try manager.destroyZone?.createStorageDictionary(for: dbID) {
+				if  let   destroy  = try cloud.destroyZone?.createStorageDictionary(for: dbID) {
 					dict[.destroy] = destroy as NSObject
 				}
 
-				if  let   manifest  = try manager.manifest?.createStorageDictionary(for: dbID) {
+				if  let   manifest  = try cloud.manifest?.createStorageDictionary(for: dbID) {
 					dict[.manifest] = manifest as NSObject
 				}
 
-				if  let   lost  = try manager.lostAndFoundZone?.createStorageDictionary(for: dbID) {
+				if  let   lost  = try cloud.lostAndFoundZone?.createStorageDictionary(for: dbID) {
 					dict[.lost] = lost as NSObject
 				}
 
 				if                 dbID == .mineID {
-					if  let   favorites  = try gFavoritesRoot?.createStorageDictionary(for: dbID) {
+					if  let   favorites  = try cloud.favoritesZone?.createStorageDictionary(for: dbID) {
 						dict[.favorites] = favorites as NSObject
 					}
 
@@ -182,10 +184,10 @@ class ZFiles: NSObject {
 					}
 				}
 
-				manager.updateLastSyncDate()
+				cloud.updateLastSyncDate()
 
 				BACKGROUND {
-					dict [.date] = manager.lastSyncDate as NSObject
+					dict [.date] = cloud.lastSyncDate as NSObject
 					let jsonDict = self.jsonDictFrom(dict)
 
 					if  let data = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {
@@ -209,7 +211,7 @@ class ZFiles: NSObject {
 		}
 	}
 
-	func readFile(from path: String, into databaseID: ZDatabaseID) {
+	func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
 		if  gUseFiles,
             databaseID      != .favoritesID,
             let       cloud  = gRemoteStorage.cloud(for: databaseID),
@@ -262,7 +264,7 @@ class ZFiles: NSObject {
                                         case .trash:     cloud.trashZone        = zone
 										case .recent:    cloud.recentsZone      = zone
                                         case .destroy:   cloud.destroyZone      = zone
-                                        case .favorites: gFavoritesRoot         = zone
+										case .favorites: cloud.favoritesZone    = zone
                                         default: break
                                         }
                                     }
@@ -275,8 +277,11 @@ class ZFiles: NSObject {
                 }
 
                 gRemoteStorage.zRecords(for: databaseID)?.removeDuplicates()
+				cloud.recount()
 
                 self.isReading[index] = false
+
+				onCompletion?(0)
             }
 		}
 	}

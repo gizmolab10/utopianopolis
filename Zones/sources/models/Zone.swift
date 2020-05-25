@@ -1282,11 +1282,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
 	func asssureIsVisibleAndGrab(updateBrowsingLevel: Bool = true) {
-		asssureIsVisible() {
-			gShowFavorites = kIsPhone && self.isInFavorites
+		gShowFavorites = kIsPhone && isInFavorites
 
-			self.grab(updateBrowsingLevel: updateBrowsingLevel)
-		}
+		asssureIsVisible()
+		grab(updateBrowsingLevel: updateBrowsingLevel)
 	}
 
     func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool, _ CLICKTWICE: Bool) {
@@ -1551,23 +1550,30 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         return isVisible
     }
 
-	func asssureIsVisible(onCompletion: Closure? = nil) {
+	func asssureIsVisible() {
 		if  let dbID = databaseID,
-			let stop = gRemoteStorage.cloud(for: dbID)?.hereZone {
+			let goal = gRemoteStorage.cloud(for: dbID)?.hereZone {
+
 			traverseAncestors { iAncestor -> ZTraverseStatus in
 				if  iAncestor != self {
 					iAncestor.revealChildren()
 				}
 
-				if  iAncestor == stop {
+				if  iAncestor == goal {
 					return .eStop
 				}
 
 				return .eContinue
 			}
-
-			onCompletion?()
 		}
+	}
+
+	func assureAdoption() {
+		traverseAllAncestors { ancestor in
+			ancestor.needAdoption()
+		}
+
+		gRemoteStorage.adoptAll()
 	}
 
     func spawnedBy(_ iZone: Zone?) -> Bool { return iZone == nil ? false : spawnedByAny(of: [iZone!]) }
@@ -1601,7 +1607,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
     func safeTraverseAncestors(visited: ZoneArray, _ block: ZoneToStatusClosure) {
         if  block(self) == .eContinue,  //        skip == stop
-            !isARoot,                    //      isRoot == stop
+            !isARoot,                   //     isARoot == stop
             !visited.contains(self),    // graph cycle == stop
             let p = parentZone {        //  nil parent == stop
             p.safeTraverseAncestors(visited: visited + [self], block)
@@ -2365,7 +2371,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     // MARK:- progeny counts
     // MARK:-
 
-    func updateCounts(_ iVisited: ZoneArray = []) {
+    func updateAllProgenyCounts(_ iVisited: ZoneArray = []) {
         if !iVisited.contains(self) {
             let visited = iVisited + [self]
             var counter = 0
@@ -2374,7 +2380,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
                 if  child.isBookmark {
                     counter += 1
                 } else {
-                    child.updateCounts(visited)
+                    child.updateAllProgenyCounts(visited) // recurse (hitting every progeny)
 
                     counter += child.count + child.progenyCount
                 }

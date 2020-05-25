@@ -59,7 +59,7 @@ class ZFocus: ZRing {
 
         if  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab {
             let focusClosure = { (zone: Zone) in
-                gHere = zone
+                gHere = zone // side-effect: recents push
 
                 gFavorites.updateCurrentFavorite()
                 zone.grab()
@@ -160,7 +160,7 @@ class ZFocus: ZRing {
     }
 
     func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
-        gHere = iHere
+        gHere = iHere // side-effect does recents push
 
 		gRecents.push()
 		focus {

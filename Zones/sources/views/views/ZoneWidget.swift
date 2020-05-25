@@ -65,7 +65,7 @@ class ZoneWidget: ZView {
     let            childrenView = ZView          ()
 	let            widgetObject = ZWidgetObject  ()
     private var childrenWidgets = [ZoneWidget]   ()
-	var      type : ZWidgetType = .tIdea
+	var                    type : ZWidgetType { return widgetZone?.widgetTypeForRoot ?? .tIdea }
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
 	var                   ratio :    CGFloat  { return type.isIdea ? 1.0 : kFavoritesReduction }
 	override var    description :     String  { return widgetZone?.description ?? kEmptyIdea }
@@ -100,7 +100,7 @@ class ZoneWidget: ZView {
     // MARK:- layout
     // MARK:-
 
-	func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, _ iType: ZWidgetType, visited: ZoneArray) {
+	func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, visited: ZoneArray) {
         if  let thisView = inView,
             !thisView.subviews.contains(self) {
             thisView.addSubview(self)
@@ -109,8 +109,6 @@ class ZoneWidget: ZView {
         #if os(iOS)
             backgroundColor = kClearColor
         #endif
-
-		type = iType
 
 		gWidgets.registerWidget(self, for: type)
         addTextView()
@@ -136,7 +134,7 @@ class ZoneWidget: ZView {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone =            zone[index]
 
-				childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, type, visited: visited)
+				childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, visited: visited)
 				childWidget.snp.setLabel("<w> \(childWidget.widgetZone?.zoneName ?? "unknown")")
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in

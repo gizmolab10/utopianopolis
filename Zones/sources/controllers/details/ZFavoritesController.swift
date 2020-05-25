@@ -30,4 +30,12 @@ class ZFavoritesController: ZGraphController {
 		controlsView?.updateAndRedraw()
 	}
 
+	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
+		if  let    g = gGraphController {
+			return g.handleDragGesture(iGesture)
+		}
+
+		return false
+	}
+
 }

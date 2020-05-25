@@ -92,7 +92,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         isReveal = asReveal
         widget   = iWidget
 		
-        if isInnerDot {
+        if  isInnerDot {
 			snp.setLabel("<\(isReveal ? "r" : "d")> \(widgetZone?.zoneName ?? "unknown")")
             snp.removeConstraints()
             snp.makeConstraints { make in
@@ -186,7 +186,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		path.fill()
 	}
 
-    func drawTinyCounterDots(_ iDirtyRect: CGRect) {
+    func drawTinyCountDots(_ iDirtyRect: CGRect) {
         if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showingChildren || zone.isBookmark) {
             let count = (gCountsMode == .progeny) ? zone.progenyCount : zone.indirectCount
 
@@ -314,7 +314,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
                         // TINY COUNTER BEADS //
                         // /////////////////////
 
-                        drawTinyCounterDots(iDirtyRect)
+                        drawTinyCountDots(iDirtyRect)
                     } else if isCurrentNonMap {
 
                         // ////////////////////////////////

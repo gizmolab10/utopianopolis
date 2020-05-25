@@ -156,7 +156,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             recursing          = [.sData, .sRelayout].contains(iKind)
         }
 
-        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, widgetType, visited: [])
+        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, visited: [])
     }
 
 	// MARK:- events
@@ -196,11 +196,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
-		if !isMap,
-			let    g = gGraphController {
-			return g.handleDragGesture(iGesture)
-		}
-
         if  gIsSearchMode {
             gSearching.exitSearchMode()
         }
@@ -211,7 +206,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             let flags = gesture.modifiers {
             let state = gesture.state
 
-            dropNearest.widgetZone?.needWrite()
+            dropNearest.widgetZone?.needWrite() // WHY?
 
             if  isEditingText(at: location) {
                 restartGestureRecognition()           // let text editor consume the gesture
@@ -440,28 +435,27 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     // MARK:-
 
     func widgetNearest(_ iGesture: ZGestureRecognizer?) -> (Bool, ZoneWidget, CGPoint)? {
-        if  let location = iGesture?.location(in: dragView),
-			let   widget = rootWidget.widgetNearestTo(location, in: dragView, hereZone) {
-            if  isMap, !kIsPhone,
+        if  let  location = iGesture?.location(in: dragView),
+			let    widget = rootWidget.widgetNearestTo(location, in: dragView, hereZone) {
+			let alternate = isMap ? gFavoritesController : gGraphController
 
-                // ////////////////////////// //
-				// recurse once into subclass //
-                // ////////////////////////// //
-
-				let (_, subclassWidget, subclassLocation) = gFavoritesController?.widgetNearest(iGesture) {
-				let  dragDotM =         widget.dragDot
-                let  dragDotS = subclassWidget.dragDot
-                let   vectorM = dragDotM.convert(dragDotM.bounds.center, to: view) - location
-                let   vectorS = dragDotS.convert(dragDotS.bounds.center, to: view) - location
-                let distanceM = vectorM.hypontenuse
-                let distanceS = vectorS.hypontenuse
+			if  !kIsPhone,
+				let alternateDragView = alternate?.dragView,
+				let alternateLocation = iGesture?.location(in: alternateDragView),
+				let   alternateWidget = alternate?.rootWidget.widgetNearestTo(alternateLocation, in: alternateDragView, alternate?.hereZone) {
+				let          dragDotW =          widget.dragDot
+                let          dragDotA = alternateWidget.dragDot
+                let           vectorW = dragDotW.convert(dragDotW.bounds.center, to: view) - location
+                let           vectorA = dragDotA.convert(dragDotA.bounds.center, to: view) - location
+                let         distanceW = vectorW.hypontenuse
+                let         distanceA = vectorA.hypontenuse
 
 				// ////////////////////////////////////////////////////// //
 				// determine which drag dot's center is closest to cursor //
 				// ////////////////////////////////////////////////////// //
 
-                if  distanceM > distanceS {
-                    return (false, subclassWidget, subclassLocation)
+                if  distanceW > distanceA {
+                    return (false, alternateWidget, alternateLocation)
                 }
             }
 

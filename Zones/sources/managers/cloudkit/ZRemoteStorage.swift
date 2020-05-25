@@ -92,7 +92,7 @@ class ZRemoteStorage: NSObject {
             }
             
             if  alsoProgenyCounts {
-                cloud.rootZone?.updateCounts()
+                cloud.rootZone?.updateAllProgenyCounts()
             }
         }
 	}

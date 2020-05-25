@@ -311,7 +311,7 @@ class ZBatches: ZOnboarding {
         switch identifier {
         case .oFavorites:                                                                          gFavorites.setup(cloudCallback)
 		case .oRecents:                                                                              gRecents.setup(cloudCallback)
-        case .oReadFile: gFiles.readFile(into: currentDatabaseID!);                                                 cloudCallback?(0)
+        case .oReadFile: gFiles.readFile(into: currentDatabaseID!,                                    onCompletion: cloudCallback)
         default:     gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
         }
     }

@@ -116,6 +116,7 @@ var gHere: Zone {
 
 		gRecords?.hereZone = newValue
 
+		newValue.assureAdoption()
 		gRecents.push()
 	}
 }

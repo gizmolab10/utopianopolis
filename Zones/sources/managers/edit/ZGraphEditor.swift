@@ -692,7 +692,7 @@ class ZGraphEditor: ZBaseEditor {
         recursivelyRevealSiblings([descendent], untilReaching: iAncestor) { iZone in
             if     iZone != descendent {
                 if iZone == iAncestor {
-                    gHere = iAncestor
+                    gHere = iAncestor // side-effect does recents push
                     
                     gHere.grab()
                 }
@@ -989,7 +989,7 @@ class ZGraphEditor: ZBaseEditor {
 
 		for     zone in zones {
 			if  zone != into {
-				if orphan {
+				if  orphan {
 					zone.orphan()
 				}
 

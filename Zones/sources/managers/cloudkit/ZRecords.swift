@@ -120,10 +120,11 @@ class ZRecords: NSObject {
 
 
     func recount(_ onCompletion: IntClosure? = nil) {  // all progenyCounts for all progeny in all roots
-        trashZone?       .updateCounts()
-        hereZoneMaybe?   .updateCounts()
-        gFavoritesRoot?  .updateCounts()
-        lostAndFoundZone?.updateCounts()
+		rootZone?        .updateAllProgenyCounts()
+		trashZone?       .updateAllProgenyCounts()
+		destroyZone?     .updateAllProgenyCounts()
+        favoritesZone?   .updateAllProgenyCounts()
+        lostAndFoundZone?.updateAllProgenyCounts()
         onCompletion?(0)
     }
     
