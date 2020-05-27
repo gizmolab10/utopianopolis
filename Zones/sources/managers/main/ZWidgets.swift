@@ -14,7 +14,7 @@ let gWidgets = ZWidgets()
 
 class ZWidgets: NSObject {
 
-	var      mapWidgets: [Int : ZoneWidget]  = [:]
+	var      mainWidgets: [Int : ZoneWidget]  = [:]
 	var   recentWidgets: [Int : ZoneWidget]  = [:]
 	var favoriteWidgets: [Int : ZoneWidget]  = [:]
     var   currentEditingWidget: ZoneWidget? { return widgetForZone(gTextEditor.currentlyEditingZone) }
@@ -32,7 +32,7 @@ class ZWidgets: NSObject {
     }
 
 	func getWidgetsDict(for type: ZWidgetType) -> [Int : ZoneWidget] {
-		if type.isIdea     { return      mapWidgets }
+		if type.isMain     { return     mainWidgets }
 		if type.isRecent   { return   recentWidgets }
 		if type.isFavorite { return favoriteWidgets }
 
@@ -40,7 +40,7 @@ class ZWidgets: NSObject {
 	}
 
 	func setWidgetsDict(_ dict: [Int : ZoneWidget], for type: ZWidgetType) {
-		if      type.isIdea     {      mapWidgets = dict }
+		if      type.isMain     {     mainWidgets = dict }
 		else if type.isRecent   {   recentWidgets = dict }
 		else if type.isFavorite { favoriteWidgets = dict }
 	}
@@ -65,7 +65,7 @@ class ZWidgets: NSObject {
     /// - Returns: ZoneWidget
     func widgetForZone(_ iZone: Zone?) -> ZoneWidget? {
         if  let zone = iZone {
-			let type = zone.widgetTypeForRoot
+			let type = zone.type
 			let dict = getWidgetsDict(for: type)
 
 			return dict[zone.hash]

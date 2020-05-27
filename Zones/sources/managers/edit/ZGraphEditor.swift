@@ -24,7 +24,9 @@ let gGraphEditor = ZGraphEditor()
 
 
 class ZGraphEditor: ZBaseEditor {
-	override func canHandleKey() -> Bool { return gIsGraphOrEditIdeaMode }
+	override var canHandleKey: Bool { return gIsGraphOrEditIdeaMode }
+	var              canAlter: Bool { return !gIsRecentlyMode || !(gSelecting.firstGrab?.isInRecently ?? false) }
+	var             priorHere: Zone?
 
 	// MARK:- events
 	// MARK:-
@@ -86,7 +88,7 @@ class ZGraphEditor: ZBaseEditor {
 							case "p":      printCurrentFocus()
 							case "/":      if IGNORED { return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eEdited, false) { gRedrawGraph() } }
 							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
-							case kTab:     if OPTION { gTextEditor.stopCurrentEdit(); gSelecting.currentMoveable.addNextAndRedraw(containing: true) }
+							case kTab:     addSibling(OPTION)
 							case kSpace:   gSelecting.currentMoveable.addIdea()
 							case kReturn:  if COMMAND { grabOrEdit(COMMAND, OPTION) }
 							case kEscape:               grabOrEdit(   true, OPTION, true)
@@ -109,7 +111,7 @@ class ZGraphEditor: ZBaseEditor {
 					gCurrentKeyPressed = key
 
                     switch key {
-					case "a":      if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION) }
+						case "a":      if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawGraph() }
                     case "b":      gSelecting.firstSortedGrab?.addBookmark()
 					case "c":      if COMMAND && !OPTION { copyToPaste() } else { gGraphController?.recenter(SPECIAL) }
 					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
@@ -118,11 +120,10 @@ class ZGraphEditor: ZBaseEditor {
 					case "g":      refetch(COMMAND, OPTION)
                     case "h":      gSelecting.firstSortedGrab?.editTrait(for: .tHyperlink)
                     case "l":      alterCase(up: false)
-					case "j":      gControllers.updateRingState(SPECIAL)
 					case "k":      toggleColorized()
-                    case "m":      gSelecting.simplifiedGrabs.sortByLength(OPTION)
+					case "m":      gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawGraph()
                     case "n":      grabOrEdit(true, OPTION)
-                    case "o":      gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { self.redrawAndSync() }
+                    case "o":      gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawGraph() }
                     case "p":      printCurrentFocus()
                     case "r":      reverse()
 					case "s":      gHere.exportToFile(OPTION ? .eOutline : .eSeriously)
@@ -141,7 +142,7 @@ class ZGraphEditor: ZBaseEditor {
 					case kEquals:  if COMMAND { updateSize(up: true) } else { gFocusRing.invokeTravel(gSelecting.firstSortedGrab) { gRedrawGraph() } }
                     case ";", "'": gFavorites.switchToNext(key == "'") { gRedrawGraph() }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
-                    case kTab:     gSelecting.currentMoveable.addNextAndRedraw(containing: OPTION)
+                    case kTab:     addSibling(OPTION)
 					case kSpace:   if OPTION || CONTROL || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
                     case kBackspace,
                          kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
@@ -281,6 +282,16 @@ class ZGraphEditor: ZBaseEditor {
         return valid
     }
 
+	// MARK:- features
+	// MARK:-
+
+	func addSibling(_ OPTION: Bool) {
+		if  canAlter {
+			gTextEditor.stopCurrentEdit()
+			gSelecting.currentMoveable.addNextAndRedraw(containing: OPTION)
+		}
+	}
+
 	func browseBreadcrumbs(_ out: Bool) {
 		if  let here = out ? gHere.parentZone : gBreadcrumbs.nextCrumb(false) {
 			let last = gSelecting.currentGrabs
@@ -292,12 +303,9 @@ class ZGraphEditor: ZBaseEditor {
 
 			gSelecting.grab(last)
 			gSelecting.firstGrab?.asssureIsVisible()
-			gControllers.signalFor(here, regarding: .sRelayout)
+			gRedrawGraph(for: here)
 		}
 	}
-
-    // MARK:- features
-    // MARK:-
 
 	func duplicate() {
 		var grabs = gSelecting.simplifiedGrabs
@@ -352,7 +360,7 @@ class ZGraphEditor: ZBaseEditor {
 				self.moveZones(grabs, into: original) {
 					original.grab()
 
-					self.redrawAndSync() {
+					gRedrawGraph {
 						innerClosure()
 						onCompletion?()
 					}
@@ -464,7 +472,7 @@ class ZGraphEditor: ZBaseEditor {
             zone.toggleColorized()
         }
 
-        redrawAndSync()
+        gRedrawGraph()
     }
 
 
@@ -521,7 +529,7 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
 
-        redrawAndSync()
+        gRedrawGraph()
     }
 
 	func grabOrEdit(_ COMMAND: Bool, _  OPTION: Bool, _ ESCAPE: Bool = false) {
@@ -555,7 +563,7 @@ class ZGraphEditor: ZBaseEditor {
 			zone.divideEvenly()
 		}
 
-		redrawAndSync()
+		gRedrawGraph()
     }
 
     func rotateWritable() {
@@ -563,7 +571,7 @@ class ZGraphEditor: ZBaseEditor {
             zone.rotateWritable()
         }
 
-        redrawAndSync()
+        gRedrawGraph()
     }
 
     func alterCase(up: Bool) {
@@ -762,7 +770,7 @@ class ZGraphEditor: ZBaseEditor {
         gDeferRedraw {
             if  preserveChildren && !permanently {
                 self.preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
-                    gFavorites.updateFavoritesRedrawAndSync {
+                    gFavorites.updateFavoritesAndRedraw {
                         gDeferringRedraw = false
                         
                         gRedrawGraph()
@@ -777,7 +785,7 @@ class ZGraphEditor: ZBaseEditor {
 					gDeferringRedraw = false
 
 					gRedrawGraph(for: grab)
-                    gFavorites.updateFavoritesRedrawAndSync {    // delete alters the list
+                    gFavorites.updateFavoritesAndRedraw {    // delete alters the list
                         gRedrawGraph(for: grab)
                     }
                 }
@@ -791,12 +799,9 @@ class ZGraphEditor: ZBaseEditor {
     func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: Closure?) {
         if  let zone: Zone = gSelecting.firstSortedGrab {
             let parentZone = zone.parentZone
-            let complete: Closure = {
-                onCompletion?()
-            }
-            
-            if zone.isARoot || parentZone == gFavoritesRoot {
-                complete() // cannot move out from a root or move into favorites root
+
+            if  zone.isARoot || parentZone == gFavoritesRoot {
+                return // cannot move out from a root or move into favorites root
             } else if selectionOnly {
                 
                 // /////////////////
@@ -807,26 +812,26 @@ class ZGraphEditor: ZBaseEditor {
                     if  gHere.isARoot {
                         gHere = zone // reverse what the last move out extreme did
 
-                        complete()
+                        onCompletion?()
                     } else {
                         let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
                         
                         zone.grab()
                         revealZonesToRoot(from: zone) {
                             self.revealSiblingsOf(here, untilReaching: gRoot!)
-                            complete()
+                            onCompletion?()
                         }
                     }
                 } else if let p = parentZone {
                     if  zone == gHere {
                         zone.revealParentAndSiblings()
 						self.revealSiblingsOf(zone, untilReaching: p)
-						complete()
+						onCompletion?()
                     } else {
                         p.revealChildren()
                         p.needChildren()
                         p.grab()
-						complete()
+						gSignal([.sCrumbs])
                     }
                 } else {
                     // zone is an orphan
@@ -834,9 +839,9 @@ class ZGraphEditor: ZBaseEditor {
                     
                     if  let bookmark = zone.fetchedBookmark {
                         gHere        = bookmark
+
+						onCompletion?()
                     }
-                    
-                    complete()
                 }
             } else if let p = parentZone, !p.isARoot {
                 
@@ -875,7 +880,7 @@ class ZGraphEditor: ZBaseEditor {
                         } else {
                             revealZonesToRoot(from: zone) {
                                 moveOutToHere(gRoot)
-                                complete()
+                                onCompletion?()
                             }
                         }
                     } else if grandParentZone != nil {
@@ -885,28 +890,24 @@ class ZGraphEditor: ZBaseEditor {
 							self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
 						} else {
 							moveOutToHere(grandParentZone!)
-							complete()
+							onCompletion?()
 						}
-                    } else { // no available move
-                        complete()
                     }
                 }
             }
         }
     }
-
     
     func move(out: Bool, selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
-        if out {
+        if  out {
             moveOut (selectionOnly: selectionOnly, extreme: extreme, onCompletion: onCompletion)
         } else {
             moveInto(selectionOnly: selectionOnly, extreme: extreme, onCompletion: onCompletion)
         }
     }
-    
 
     func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
-        if  let zone  = gSelecting.firstSortedGrab {
+		if  let zone  = gSelecting.firstSortedGrab {
             let zones = gSelecting.sortedGrabs
             
             if !selectionOnly {
@@ -938,18 +939,17 @@ class ZGraphEditor: ZBaseEditor {
 				invoke()
 
 				if  needReveal {
-					gControllers.signalFor(zone, regarding: .sRelayout)
+					onCompletion?()
+				} else {
+					gSignal([.sCrumbs])
 				}
-
-				gFavorites.updateAllFavorites()
-
-				onCompletion?()
-            }
+			}
         }
     }
 
     func actuallyMoveInto(_ zones: ZoneArray, onCompletion: Closure?) {
-        if  var    there = zones[0].parentZone {
+		if  !gIsRecentlyMode || !zones.anyInRecently,
+			var    there = zones[0].parentZone {
             let siblings = Array(there.children)
             
             for zone in zones {
@@ -983,9 +983,9 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-    func moveZones(_ zones: ZoneArray, into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
-        into.revealChildren()
-        into.needChildren()
+	func moveZones(_ zones: ZoneArray, into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
+		into.revealChildren()
+		into.needChildren()
 
 		for     zone in zones {
 			if  zone != into {
@@ -998,7 +998,7 @@ class ZGraphEditor: ZBaseEditor {
 		}
 
 		onCompletion?()
-    }
+	}
 
     // MARK:- undoables
     // MARK:-
@@ -1022,7 +1022,7 @@ class ZGraphEditor: ZBaseEditor {
 		zones.reverse()
 
 		commonParent?.respectOrder()
-		redrawAndSync()
+		gRedrawGraph()
 	}
 
     func undoDelete() {
@@ -1040,7 +1040,7 @@ class ZGraphEditor: ZBaseEditor {
             iUndoSelf.delete()
         }
 
-        redrawAndSync()
+        gRedrawGraph()
     }
 
 	func paste() { pasteInto(gSelecting.firstSortedGrab) }
@@ -1072,14 +1072,14 @@ class ZGraphEditor: ZBaseEditor {
                     iUndoSelf.prepareUndoForDelete()
                     forUndo.deleteZones(iShouldGrab: false, onCompletion: nil)
                     zone.grab()
-                    iUndoSelf.redrawAndSync()
+                    gRedrawGraph()
                 }
 
                 if isBookmark {
                     self.undoManager.endUndoGrouping()
                 }
 
-                gFavorites.updateFavoritesRedrawAndSync()
+                gFavorites.updateFavoritesAndRedraw()
             }
 
             let prepare = {
@@ -1102,7 +1102,6 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
     }
-
 
     func preserveChildrenOfGrabbedZones(convertToTitledLine: Bool = false, onCompletion: Closure?) {
         let     grabs = gSelecting.simplifiedGrabs
@@ -1169,7 +1168,6 @@ class ZGraphEditor: ZBaseEditor {
             iUndoSelf.undoDelete()
         }
     }
-
 
     func moveOut(to: Zone, onCompletion: Closure?) {
         let        zones = gSelecting.sortedGrabs.reversed() as ZoneArray
@@ -1377,21 +1375,21 @@ class ZGraphEditor: ZBaseEditor {
     
     
     func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
+		priorHere = gHere
+
 		moveUp(iMoveUp, gSelecting.sortedGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
-            gControllers.signalAndSync(nil, regarding: iKind) {
-                gSignal([iKind])
-            }
+            gControllers.signalAndSync(nil, regarding: iKind)
         }
     }
-
     
     func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
-        let doCousinJump = !gBrowsingIsConfined
-		let    hereMaybe = gHereMaybe
-        let       isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
+        let   doCousinJump = !gBrowsingIsConfined
+		let      hereMaybe = gHereMaybe
+        let         isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
+		var completionKind = ZSignalKind.sDatum
         
         guard let rootMost = originalGrabs.rootMost(goingUp: iMoveUp) else {
-            onCompletion?(.sData)
+			onCompletion?(.sData)
             
             return
         }
@@ -1400,7 +1398,7 @@ class ZGraphEditor: ZBaseEditor {
         
         if  isHere {
             if  rootMost.isARoot {
-                onCompletion?(.sData)
+				onCompletion?(.sData)
             } else {
 
                 // ////////////////////////
@@ -1422,7 +1420,6 @@ class ZGraphEditor: ZBaseEditor {
 						self.moveUp(iMoveUp, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
 					} else {
 						gFavorites.updateAllFavorites()
-
 						onCompletion?(.sRelayout)
 					}
 				}
@@ -1466,7 +1463,7 @@ class ZGraphEditor: ZBaseEditor {
 
                     let        indexer = targetZones[toIndex]
                     
-                    if  let intoParent = indexer.parentZone {
+					if  let intoParent = indexer.parentZone {
                         let   newIndex = indexer.siblingIndex
                         let  moveThese = moveUp ? iZones.reversed() : iZones
                         
@@ -1526,8 +1523,13 @@ class ZGraphEditor: ZBaseEditor {
                     if !selectionOnly {
                         moveClosure(originalGrabs)
                     } else if !growSelection {
-                        findChildMatching(&grabThis, iMoveUp, iOffset) // should look at siblings, not children
-                        grabThis.grab(updateBrowsingLevel: false)
+						findChildMatching(&grabThis, iMoveUp, iOffset) // should look at siblings, not children
+
+						if !grabThis.isInRecently, !grabThis.spawnedBy(priorHere) {
+							completionKind = .sRelayout
+						}
+
+						grabThis.grab(updateBrowsingLevel: false)
                     } else if !grabThis.isGrabbed || extreme {
                         var grabThese = [grabThis]
                         
@@ -1577,8 +1579,8 @@ class ZGraphEditor: ZBaseEditor {
                         grab.grab(updateBrowsingLevel: false)
                     }
                 }
-                
-                onCompletion?(.sRelayout)
+
+				onCompletion?(completionKind)
             }
         }
     }

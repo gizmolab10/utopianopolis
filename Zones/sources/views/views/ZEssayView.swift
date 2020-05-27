@@ -58,7 +58,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "f":      gSearching.showSearch(OPTION)
 				case "g":      searchAgain(OPTION)
 				case "i":      showSpecialsPopup()
-				case "j":      gControllers.updateRingState(SPECIAL)
 				case "l":      alterCase(up: false)
 				case "n":      swapBetweenNoteAndEssay()
 				case "p":      printCurrentEssay()
@@ -355,7 +354,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gNoteAndEssay.essayID  = gNoteAndEssay.essayZone?.record?.recordID
 			delegate = self 						// set delegate after setText
 
-			gWindow?.makeFirstResponder(self)
+			if  gIsNoteMode {
+				gWindow?.makeFirstResponder(self)
+			}
 		}
 	}
 

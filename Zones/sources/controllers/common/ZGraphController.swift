@@ -19,7 +19,7 @@ var gGraphController: ZGraphController? { return gControllers.controllerForID(.i
 class ZGraphController: ZGesturesController, ZScrollDelegate {
     
 	override  var       controllerID : ZControllerID { return .idMap }
-	var                   widgetType : ZWidgetType   { return .tIdea }
+	var                   widgetType : ZWidgetType   { return .tMain }
 	var                        isMap : Bool          { return true }
 	var                     hereZone : Zone?         { return gHereMaybe }
 	@IBOutlet var            spinner : ZProgressIndicator?
@@ -149,7 +149,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
         if  let          zone  = iZone as? Zone,
             let        widget  = zone.widget,
-			widget.type       == zone.widgetTypeForRoot {
+			widget.type       == zone.type {
             specificWidget     = widget
             specificIndex      = zone.siblingIndex
             specificView       = specificWidget?.superview
@@ -164,7 +164,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
 		if  !gDeferringRedraw,
-			[.sDatum, .sData, .sRelayout].contains(iKind) { // ignore for preferences, search, information, startup
+			[.sRelayout, .sRelayout, .sDetails, .sFavorites].contains(iKind), // ignore for preferences, search, information, startup
+			(!isMap ||             ![.sDetails, .sFavorites].contains(iKind)) {
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
 			layoutWidgets(for: iSignalObject, iKind)
@@ -419,7 +420,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                             gSelecting.updateBrowsingLevel()
                             gSelecting.updateCousinList()
                             self.restartGestureRecognition()
-                            self.redrawAndSync()
+                            gRedrawGraph()
                         }
                     }
                 }

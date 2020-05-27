@@ -50,6 +50,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var         description :             String  { return unwrappedName }
 	override var       unwrappedName :             String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
 	var                decoratedName :             String  { return decoration + unwrappedName }
+	var                  clippedName :             String  { return !gShowToolTips ? "" : unwrappedName }
+	var                         type :        ZWidgetType  { return widgetTypeForRoot }
     var                     manifest :          ZManifest? { return cloud?.manifest }
     var                       widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
     var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
@@ -58,8 +60,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var              isCurrentNonMap :               Bool  { return isCurrentRecent || isCurrentFavorite }
 	var              isCurrentRecent :               Bool  { return self ==   gRecents.currentRecent }
 	var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
-	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isHereForNonMap && !(widget?.type.isIdea ??  true)) || (kIsPhone && self == gHereMaybe)) }
-    var              dragDotIsHidden :               Bool  { return                     (isHereForNonMap && !(widget?.type.isIdea ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
+	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isHereForNonMap && !(widget?.type.isMain ??  true)) || (kIsPhone && self == gHereMaybe)) }
+    var              dragDotIsHidden :               Bool  { return                     (isHereForNonMap && !(widget?.type.isMain ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
     var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
     var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
     var                 hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }
@@ -86,7 +88,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                       traits =   ZTraitDictionary()
 
 	var widgetTypeForRoot : ZWidgetType {
-		var type = ZWidgetType.tIdea
+		var type = ZWidgetType.tMain
 
 		if  let name = root?.recordName() {
 			switch name {
@@ -181,14 +183,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return results.reversed()
-	}
-
-	var clippedName: String {
-		switch gToolTipsLength {
-			case .clip: return unwrappedName.clipped(to: 7)
-			case .full: return unwrappedName
-			default:    return ""
-		}
 	}
 
 	var email: String? {
@@ -843,7 +837,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				bookmark?.grab()
 				bookmark?.markNotFetched()
-				self.redrawAndSync()
+				gRedrawGraph()
 			}
 
 			if  gHere != self {
@@ -951,7 +945,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 									gHere  = self
 								}
 
-								self.redrawAndSync(self)
+								gRedrawGraph(for: self)
 							}
 						}
 					}
@@ -1048,7 +1042,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// SPECIAL CASE: delete here but here has no parent ... so, go somewhere useful and familiar //
 					// ////////////////////////////////////////////////////////////////////////////////////////////
 
-					gFavorites.refocus {                 // travel through current favorite, then ...
+					gRecents.refocus {                 // travel through current favorite, then ...
 						if  gHere != self {
 							recurse()
 						}
@@ -1129,7 +1123,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			gDeferRedraw {
 				parent.addIdea(at: index, with: childName) { iChild in
 					self.moveZone(to: iChild) {
-						self.redrawAndSync()
+						gRedrawGraph()
 
 						gDeferringRedraw = false
 
@@ -1207,7 +1201,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				movedZone = movedZone.deepCopy
 
-				redrawAndSync {
+				gRedrawGraph {
 					grabAndTravel()
 				}
 			}
@@ -1298,7 +1292,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             
             if !(CLICKTWICE && self == gHere) {
                 gFocusRing.focus(kind: .eSelected) {
-                    self.redrawAndSync()
+                    gRedrawGraph()
                 }
             }
         } else if isGrabbed && gCurrentlyEditingWidget == nil {
@@ -2142,7 +2136,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func reverseChildren() {
 		children.reverse()
 		respectOrder()
-		redrawAndSync()
+		gRedrawGraph()
 	}
 
     func respectOrder() {

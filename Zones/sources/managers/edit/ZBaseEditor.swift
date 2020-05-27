@@ -16,9 +16,9 @@ import UIKit
 
 class ZBaseEditor: NSObject {
 	var previousEvent: ZEvent?
+	var canHandleKey: Bool { return false }   // filter whether menu and event handlers will call handle key
 
 	func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool { return false }
-	func canHandleKey() -> Bool { return false }   // filter whether menu and event handlers will call handle key
 	@IBAction func genericMenuHandler(_ iItem: NSMenuItem?) { gDesktopAppDelegate?.genericMenuHandler(iItem) }
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {
@@ -54,7 +54,7 @@ class ZBaseEditor: NSObject {
 	}
 
 	func handleMenuItem(_ iItem: ZMenuItem?) {
-		if  canHandleKey(),
+		if  canHandleKey,
 			let   item = iItem {
 			let  flags = item.keyEquivalentModifierMask
 			let    key = item.keyEquivalent
@@ -64,7 +64,7 @@ class ZBaseEditor: NSObject {
 	}
 
 	@discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> ZEvent? {
-		if  canHandleKey(),
+		if  canHandleKey,
 			!matchesPrevious(iEvent) {
 			let     flags = iEvent.modifierFlags
 			previousEvent = iEvent

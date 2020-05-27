@@ -45,7 +45,6 @@ func gExitNoteMode() -> Bool {
 	if  gIsNoteMode {
 		gEssayView?.save()
 		gControllers.swapGraphAndEssay(force: .graphMode)
-		gControllers.sync()
 
 		return true
 	}
@@ -53,8 +52,12 @@ func gExitNoteMode() -> Bool {
 	return false
 }
 
+func gSignal     (for object: Any? = nil, _ multiple: [ZSignalKind], _ onCompletion: Closure? = nil) {
+	gControllers.signalFor(object, multiple: multiple, onCompletion: onCompletion)
+}
+
 func gRedrawGraph(for object: Any? = nil, _ onCompletion: Closure? = nil) {
-	gControllers.signalFor(object, regarding: .sRelayout, onCompletion: onCompletion)
+	gSignal(for: object, [.sRelayout], onCompletion)
 }
 
 func gDeferRedraw(_ closure: Closure) {
@@ -65,10 +68,6 @@ func gDeferRedraw(_ closure: Closure) {
 	FOREGROUND(after: 0.4) {
 		gDeferringRedraw = false   // in case closure doesn't set it
 	}
-}
-
-func gSignal(_ multiple: [ZSignalKind]) {
-	gControllers.signalFor(nil, multiple: multiple)
 }
 
 precedencegroup BooleanPrecedence { associativity: left }
@@ -146,16 +145,6 @@ extension NSObject {
             }
         }
     }
-
-	func redrawAndSyncAndRedraw() {
-		redrawAndSync {
-			gRedrawGraph()
-		}
-	}
-
-	func redrawAndSync(_ zone: Zone? = nil, _ onCompletion: Closure? = nil) {
-		gControllers.signalAndSync(zone, regarding: .sRelayout, onCompletion: onCompletion)
-	}
 
     @discardableResult func detectWithMode(_ dbID: ZDatabaseID, block: ToBooleanClosure) -> Bool {
         gRemoteStorage.pushDatabaseID(dbID)

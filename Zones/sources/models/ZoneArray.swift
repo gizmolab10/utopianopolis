@@ -12,6 +12,16 @@ typealias ZoneArray = [Zone]
 
 extension ZoneArray {
 
+	var anyInRecently: Bool {
+		for     zone in self {
+			if  zone.isInRecently {
+				return true
+			}
+		}
+
+		return false
+	}
+
 	func updateOrder() { updateOrdering(start: 0.0, end: 1.0) }
 
 	func orderLimits() -> (start: Double, end: Double) {
@@ -149,7 +159,7 @@ extension ZoneArray {
 			removeLast()
 		}
 
-		gFavorites.updateFavoritesRedrawAndSync()
+		gFavorites.updateFavoritesAndRedraw()
 	}
 
 	mutating func reverse() {
@@ -217,7 +227,7 @@ extension ZoneArray {
 				zones.updateOrdering(start: start, end: end)
 				parent.respectOrder()
 				parent.children.updateOrder()
-				parent.redrawAndSync()
+				gRedrawGraph()
 			}
 
 			gSelecting.hasNewGrab = gSelecting.currentMoveable

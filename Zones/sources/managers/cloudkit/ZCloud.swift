@@ -262,7 +262,7 @@ class ZCloud: ZRecords {
                 let     zone = self.zoneForRecord(ckRecord)
                 if ckRecord == zone.record {    // record data is new (zone for just updated it)
                     zone.addToParent() { iZone in
-                        gControllers.signalFor(iZone, regarding: .sRelayout)
+						gSignal(for: iZone, [.sRelayout])
                     }
                 }
             }
@@ -1354,7 +1354,7 @@ class ZCloud: ZRecords {
                 database!.save(subscription, completionHandler: { (iSubscription: CKSubscription?, iSubscribeError: Error?) in
                     gAlerts.alertError(iSubscribeError) { iHasError in
                         if iHasError {
-                            gControllers.signalFor(iSubscribeError as NSObject?, regarding: .sError)
+							gSignal(for: iSubscribeError as NSObject?, [.sError])
                         }
                     }
 
@@ -1397,7 +1397,7 @@ class ZCloud: ZRecords {
             database?.perform(query, inZoneWith: nil) { (iResults: [CKRecord]?, performanceError: Error?) in
                 gAlerts.detectError(performanceError) { iHasError in
                     if iHasError {
-                        gControllers.signalFor(performanceError as NSObject?, regarding: .sError)
+						gSignal(for: performanceError as NSObject?, [.sError])
                     } else {
                         let                 record: CKRecord = (iResults?[0])!
                         object.record?[valueForPropertyName] = (record as! CKRecordValue)

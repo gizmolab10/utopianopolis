@@ -189,7 +189,7 @@ class ZTextPack: NSObject {
 		gTextCapturing = false
 
 		if  redrawSync {
-			redrawAndSync()
+			gRedrawGraph()
 		}
     }
 

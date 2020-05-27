@@ -77,7 +77,7 @@ class ZFocus: ZRing {
             } else if zone.isInFavorites {  // state 3
                 focusClosure(gHere)
             } else if COMMAND {             // state 4
-                gFavorites.refocus {
+                gRecents.refocus {
 					self.push()
                     atArrival()
                 }
@@ -170,7 +170,7 @@ class ZFocus: ZRing {
         }
     }
 
-    @discardableResult func focusThrough(_ iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
+    @discardableResult func xfocusThrough(_ iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
         if  let bookmark = iBookmark, bookmark.isBookmark {
             if  bookmark.isInFavorites {
                 let targetParent = bookmark.bookmarkTarget?.parentZone

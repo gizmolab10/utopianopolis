@@ -23,7 +23,7 @@ enum ZTextType: Int {
 
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips {
 
-	override var preferredFont : ZFont { return (widgetZone?.widgetTypeForRoot.isIdea ?? true) ? gWidgetFont : gFavoritesFont }
+	override var preferredFont : ZFont { return (widgetZone?.type.isMain ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return  widget?.widgetZone }
     weak var            widget : ZoneWidget?
     var                   type = ZTextType.name
@@ -84,13 +84,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips {
 		gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
 		applyConstraints()
 		updateTooltips()
-//		debug()
-	}
-
-	func debug() {
-		if  let type = widgetZone?.widgetTypeForRoot {
-			print(type.description + ": " + (text ?? "currently not named"))
-		}
 	}
 
     func updateGUI() {

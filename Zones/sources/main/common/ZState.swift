@@ -57,7 +57,6 @@ var               gIsNoteMode:               Bool { return gWorkMode == .noteMod
 var              gIsGraphMode:               Bool { return gWorkMode == .graphMode }
 var             gIsSearchMode:               Bool { return gWorkMode == .searchMode }
 var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIdeaMode }
-var             gShowToolTips:               Bool { return gToolTipsLength != .none }
 var          gCanSaveWorkMode:               Bool { return gIsGraphMode || gIsNoteMode }
 var    gIsGraphOrEditIdeaMode:               Bool { return gIsGraphMode || gIsEditIdeaMode }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
@@ -311,23 +310,22 @@ var gFavoritesMode: ZFavoritesMode {
 	}
 }
 
-var gToolTipsLength : ZToolTipsLength {
+var gShowToolTips : Bool {
 	get {
-		let value  = UserDefaults.standard.object(forKey: kToolTipsLength) as? Int
-		var length = ZToolTipsLength.clip
+		var value  = UserDefaults.standard.object(forKey: kShowToolTips) as? Bool
 
-		if  value != nil {
-			length = ZToolTipsLength(rawValue: value!)!
-		} else {
-			UserDefaults.standard.set(length.rawValue, forKey:kToolTipsLength)
+		if  value == nil {
+			value  = true
+
+			UserDefaults.standard.set(true, forKey:kShowToolTips)
 			UserDefaults.standard.synchronize()
 		}
 
-		return length
+		return value!
 	}
 
 	set {
-		UserDefaults.standard.set(newValue.rawValue, forKey:kToolTipsLength)
+		UserDefaults.standard.set(newValue, forKey:kShowToolTips)
 		UserDefaults.standard.synchronize()
 	}
 

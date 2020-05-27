@@ -68,7 +68,7 @@ class ZControlButton: ZView, ZToolable {
 
 	func respond() -> Bool {
 		switch type {
-			case .eToolTips: gToolTipsLength = gToolTipsLength.rotated
+			case .eToolTips: gShowToolTips = !gShowToolTips
 			default:         return !gFullRingIsVisible ? false : toggleRingControlModes(isDirection: type == .eInsertion)
 		}
 

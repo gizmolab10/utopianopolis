@@ -134,16 +134,6 @@ class ZControllers: NSObject {
 		}
 	}
 
-	func updateRingState(_ updateToolTips: Bool = false) {
-		if  updateToolTips {
-			gToolTipsLength    = gToolTipsLength.rotated
-		} else {
-			gFullRingIsVisible = !gFullRingIsVisible
-		}
-
-		gSignal([.sRing])
-	}
-
 	func showEssay(forGuide: Bool) {
 		let recordName = forGuide ? "75F7C2D3-4493-4E30-80D8-2F1F60DA7069" : "96689264-EB25-49CC-9324-913BA5CEBD56"
 
@@ -220,11 +210,11 @@ class ZControllers: NSObject {
 		}
 	}
 
-	func signalFor(_ object: Any?, regarding: ZSignalKind, onCompletion: Closure? = nil) {
+	func signalFor(_ object: Any? = nil, regarding: ZSignalKind, onCompletion: Closure? = nil) {
         signalFor(object, multiple: [regarding], onCompletion: onCompletion)
     }
 
-	func signalFor(_ object: Any?, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
+	func signalFor(_ object: Any? = nil, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
         FOREGROUND(canBeDirect: true) {
             gRemoteStorage.updateNeededCounts() // clean up after adding or removing children
 
@@ -263,9 +253,9 @@ class ZControllers: NSObject {
         }
     }
 
-	func signalAndSync(_ zone: Zone?, regarding: ZSignalKind,  onCompletion: Closure?) {
-        signalFor(zone, regarding: regarding)
-		sync(onCompletion: onCompletion)
+	func signalAndSync(_ object: Any? = nil, regarding: ZSignalKind,  onCompletion: Closure? = nil) {
+        signalFor(object, regarding: regarding, onCompletion: onCompletion)
+		sync()
     }
 
 }

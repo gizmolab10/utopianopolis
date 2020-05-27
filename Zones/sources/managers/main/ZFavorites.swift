@@ -231,9 +231,9 @@ class ZFavorites: ZRecords {
         }
     }
     
-    func updateFavoritesRedrawAndSync(avoidRedraw: Bool = false, _ onCompletion: Closure? = nil) {
+    func updateFavoritesAndRedraw(avoidRedraw: Bool = false, _ onCompletion: Closure? = nil) {
         if  updateAllFavorites() || !avoidRedraw {
-            redrawAndSync { onCompletion?() }
+            gRedrawGraph { onCompletion?() }
         } else {
             onCompletion?()
         }
@@ -403,7 +403,7 @@ class ZFavorites: ZRecords {
         bump         = { (iIndex: Int) in
             let zone = self.zoneAtIndex(iIndex)
 
-            if !gFocusRing.focusThrough(zone, atArrival) {
+            if !gRecents.focusThrough(zone, atArrival) {
 
                 // /////////////////
                 // error: RECURSE //
@@ -414,14 +414,6 @@ class ZFavorites: ZRecords {
         }
 
         bump?(index)
-    }
-
-    @discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
-        if  let favorite = currentFavorite {
-            return gFocusRing.focusThrough(favorite, atArrival)
-        }
-
-        return false
     }
 
     // MARK:- create

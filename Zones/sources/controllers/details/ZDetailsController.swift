@@ -39,7 +39,6 @@ class ZDetailsController: ZGesturesController {
 		if  gIsNoteMode {
 			gEssayView?.save()
 			gControllers.swapGraphAndEssay(force: .graphMode)
-			gControllers.sync()
 		}
 	}
 

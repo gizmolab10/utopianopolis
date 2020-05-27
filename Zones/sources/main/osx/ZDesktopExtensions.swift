@@ -796,7 +796,6 @@ extension ZTextEditor {
 			let    CONTROL = flags.isControl
 			let    COMMAND = flags.isCommand
 			let     OPTION = flags.isOption
-			let    SPECIAL = COMMAND && OPTION
 			let    FLAGGED = COMMAND || OPTION || CONTROL
 			let editedZone = currentTextWidget?.widgetZone
 			let      arrow = key.arrow
@@ -810,7 +809,6 @@ extension ZTextEditor {
 			} else if FLAGGED {
 				switch key {
 					case "i": showSpecialsPopup()
-					case "j": gControllers.updateRingState(SPECIAL)
 					case "?": gControllers.showShortcuts()
 					case "-": return editedZone?.convertToFromLine() ?? false // false means key not handled
 					default:  return false

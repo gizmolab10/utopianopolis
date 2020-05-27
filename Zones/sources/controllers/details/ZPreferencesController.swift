@@ -24,12 +24,12 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var   backgroundColorBox: ZColorWell?
     @IBOutlet var   activeMineColorBox: ZColorWell?
 	@IBOutlet var         zoneColorBox: ZColorWell?
+	@IBOutlet var   showTooltipsButton: ZButton?
     @IBOutlet var     clearColorButton: ZButton?
     @IBOutlet var      verticalSpacing: ZSlider?
     @IBOutlet var            thickness: ZSlider?
     @IBOutlet var              stretch: ZSlider?
     override  var         controllerID: ZControllerID { return .idPreferences }
-
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		if ![.sLaunchDone, .sStartup, .sSearch, .sFound, .sCrumbs, .sSwap, .sRing].contains(iKind) {
@@ -43,15 +43,22 @@ class ZPreferencesController: ZGenericController {
             zoneColorBox?                  .color =   grabbed?.color ?? kBlueColor
             clearColorButton?           .isHidden = !(grabbed?.hasColor ?? true)
 			colorPreferencesBox?        .isHidden = !gColorfulMode
+			showTooltipsButton?            .state = gShowToolTips ? .on : .off
 
             view.setAllSubviewsNeedDisplay()
         }
     }
 
-
     // MARK:- actions
     // MARK:-
 
+	@IBAction func toggleTooltipsAction(_ button: ZButton) {
+		gShowToolTips = (button.state == .on)
+
+		FOREGROUND {
+			gSignal([.sRelayout])
+		}
+	}
 
     @IBAction func sliderAction(_ iSlider: ZSlider) {
         let value = CGFloat(iSlider.doubleValue)
@@ -80,7 +87,7 @@ class ZPreferencesController: ZGenericController {
 				default:             break
 			}
 
-            gControllers.signalAndSync(nil, regarding: .sRelayout) {}
+            gRedrawGraph()
         }
     }
 
@@ -90,13 +97,13 @@ class ZPreferencesController: ZGenericController {
             if let color = grab.colorMaybe {
                 UNDO(self) { iUndoSelf in
                     grab.color = color
-                    
-                    gControllers.signalAndSync(grab, regarding: .sRelayout) {}
+
+					gRedrawGraph(for: grab)
                 }
             }
             
             grab.clearColor()
-            gControllers.signalAndSync(grab, regarding: .sRelayout) {}
+			gRedrawGraph(for: grab)
         }
     }
 

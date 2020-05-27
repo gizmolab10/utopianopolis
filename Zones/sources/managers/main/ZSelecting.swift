@@ -62,11 +62,12 @@ class ZSnapshot: NSObject {
 
 class ZSelecting: NSObject {
 
-    var         hasGrab :  Bool  { return currentGrabs.count > 0 }
+    var         hasGrab :  Bool  { return  currentGrabs.count > 0 }
+	var currentMoveable :  Zone  { return  currentMovableMaybe! }
     var        lastGrab :  Zone  { return  lastGrab() }
-    var       firstGrab :  Zone? { return firstGrab() }
     var  lastSortedGrab :  Zone  { return  lastGrab(using: sortedGrabs) }
     var firstSortedGrab :  Zone? { return firstGrab(using: sortedGrabs) }
+	var       firstGrab :  Zone? { return firstGrab() }
     var      cousinList : ZoneArray { get { maybeNewGrabUpdate(); return _cousinList  } set { _cousinList  = newValue }}
     var     sortedGrabs : ZoneArray { get { updateSortedGrabs();  return _sortedGrabs } set { _sortedGrabs = newValue }}
     var  pasteableZones = [Zone: (Zone?, Int?)] ()
@@ -93,7 +94,6 @@ class ZSelecting: NSObject {
 
         return snap
     }
-
 
     var writableGrabsCount: Int {
         var count = 0
@@ -159,7 +159,6 @@ class ZSelecting: NSObject {
         
         return s
     }
-    
 
     var currentGrabsHaveVisibleChildren: Bool {
         for     grab in currentGrabs {
@@ -172,7 +171,6 @@ class ZSelecting: NSObject {
         return false
     }
 
-
     var grabbedColor: ZColor? {
         get { return firstGrab?.color }
         set {
@@ -183,7 +181,6 @@ class ZSelecting: NSObject {
             }
         }
     }
-    
 
     var rootMostMoveable: Zone? {
         var candidate = currentMovableMaybe
@@ -198,7 +195,6 @@ class ZSelecting: NSObject {
 
         return candidate
     }
-    
     
     var currentMoveableLine: Zone? {
         for grab in currentGrabs + [gHere] {
@@ -226,8 +222,6 @@ class ZSelecting: NSObject {
         return movable
     }
 
-	var currentMoveable: Zone { return currentMovableMaybe! }
-
 	var pastableRecordName: String? {
 		let pastables = pasteableZones
 
@@ -243,19 +237,16 @@ class ZSelecting: NSObject {
     // MARK:- convenience
     // MARK:-
 
-
     func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextEditor.currentlyEditingZone == zone }
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
     func updateBrowsingLevel()            { gCurrentBrowseLevel = currentMoveable.level }
     func clearPaste()                     { pasteableZones = [:] }
-    
-    
+
     func updateAfterMove() {
         updateBrowsingLevel()
         updateCousinList()
-        gFavorites.updateFavoritesRedrawAndSync()
+        gFavorites.updateFavoritesAndRedraw()
     }
-    
     
     func assureMinimalGrabs() {
         if  currentGrabs.count == 0 {
@@ -263,7 +254,6 @@ class ZSelecting: NSObject {
         }
     }
 
-    
     // MARK:- selection
     // MARK:-
 

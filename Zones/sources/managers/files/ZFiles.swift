@@ -127,7 +127,7 @@ class ZFiles: NSObject {
 
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
 		if  gUseFiles,
-			gHasFinishedStartup,
+			gHasFinishedStartup, // guarantee that file read finishes before this code runs
 			let           dbID = databaseID,
 			dbID              != .recentsID,
 			dbID              != .favoritesID,

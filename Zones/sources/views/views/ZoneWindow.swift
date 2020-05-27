@@ -83,16 +83,6 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
         }
     }
     
-    override func flagsChanged(with event: NSEvent) {
-        let flags = event.modifierFlags
-
-		if  flags.isOption && flags.isCommand && flags.isControl && gIsGraphMode {
-            gControllers.updateRingState()
-        }
-
-        super.flagsChanged(with: event)
-    }
-    
     func windowWillReturnFieldEditor(_ sender: NSWindow, to client: Any?) -> Any? {
         return gTextEditor
     }

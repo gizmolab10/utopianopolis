@@ -32,7 +32,7 @@ class ZRecents : ZRecords {
 		if  let newRoot = mine?.maybeZoneForRecordName(kRecentsRootName) {
 			root        = newRoot
 
-			root?.reallyNeedProgeny()
+			newRoot.reallyNeedProgeny()
 			onCompletion?(0)
 		} else {
 			mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kRecentsRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
@@ -109,6 +109,9 @@ class ZRecents : ZRecords {
 		}
 	}
 
+	// MARK:- focus
+	// MARK:-
+
 	func focus(kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, _ atArrival: @escaping Closure) {
 
 		// for grabbed/edited zone, five states:
@@ -120,8 +123,6 @@ class ZRecents : ZRecords {
 
 		if  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab {
 			let focusClosure = { (zone: Zone) in
-				gHere = zone
-
 				gFavorites.updateCurrentFavorite()
 				zone.grab()
 				atArrival()
@@ -129,7 +130,9 @@ class ZRecents : ZRecords {
 
 			if  zone.isBookmark {     		// state 1
 				travelThrough(zone) { object, kind in
-					focusClosure(object as! Zone)
+					gHere = object as! Zone
+
+					focusClosure(gHere)
 				}
 			} else if zone == gHere {       // state 2
 				updateCurrentRecent()
@@ -138,7 +141,7 @@ class ZRecents : ZRecords {
 			} else if zone.isInFavorites || zone.isInRecently {  // state 3
 				focusClosure(gHere)
 			} else if COMMAND {             // state 4
-				gFavorites.refocus {
+				refocus {
 					self.push()
 					atArrival()
 				}
@@ -146,6 +149,47 @@ class ZRecents : ZRecords {
 				focusClosure(zone)
 			}
 		}
+	}
+
+	@discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
+		if  let current = currentRecent {
+			return focusThrough(current, atArrival)
+		}
+
+		return false
+	}
+
+	@discardableResult func focusThrough(_ iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
+		if  let bookmark = iBookmark, bookmark.isBookmark {
+			if  bookmark.isInRecently || bookmark.isInFavorites {
+				let targetParent = bookmark.bookmarkTarget?.parentZone
+
+				targetParent?.revealChildren()
+				targetParent?.needChildren()
+				travelThrough(bookmark) { (iObject: Any?, iKind: ZSignalKind) in
+					self.updateCurrentRecent()
+					gFavorites.updateAllFavorites(iObject as? Zone)
+					atArrival()
+				}
+
+				return true
+			} else if let dbID = bookmark.crossLink?.databaseID {
+				push()
+
+				gDatabaseID = dbID
+
+				focus {
+					gHere.grab()
+					atArrival()
+				}
+
+				return true
+			}
+
+			performance("oops!")
+		}
+
+		return false
 	}
 
 	func travelThrough(_ iBookmark: Zone, atArrival: @escaping SignalClosure) {

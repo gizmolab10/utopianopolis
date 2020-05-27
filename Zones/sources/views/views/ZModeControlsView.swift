@@ -39,10 +39,11 @@ class ZModeControlsView : ZButtonsView, ZTooltips {
 		for button in buttons {
 			if  let    type = button.modeButtonType {
 				switch type {
-					case .tAdd:     button.title = "+"
-					case .tMode:    button.title = gFavoritesMode  .rawValue
-					case .tGrow:    button.title = gListGrowthMode .rawValue
-					case .tConfine: button.title = gConfinementMode.rawValue
+					case .tConfine: button    .title = gConfinementMode.rawValue
+					case .tMode:    button    .title = "Show \(gIsRecentlyMode ? "Favorites" : "Recents")"
+					case .tGrow:    button    .title = gListGrowthMode .rawValue
+					case .tAdd:     button    .title = "+"
+									button.isEnabled = !gIsRecentlyMode
 				}
 			}
 		}
@@ -62,7 +63,7 @@ class ZModeControlsView : ZButtonsView, ZTooltips {
 		clearButtons()
 		layoutButtons()
 		updateTooltips()
-		gSignal([.sRing, .sDetails, .sRelayout]) // remove sRing when eliminating recently view
+		gSignal([.sFavorites])
 	}
 
 }

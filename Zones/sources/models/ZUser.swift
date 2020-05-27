@@ -24,7 +24,7 @@ class ZUser : ZRecord {
 
     @objc dynamic var      authorID: String?   { didSet { save() } }
     @objc dynamic var   writeAccess: NSNumber? { didSet { save() } }
-	@objc dynamic var sentEmailType: String?   { didSet { save() } }
+	@objc dynamic var sentEmailType: String?   { didSet { if oldValue != sentEmailType { save() } } }
 
     var access: ZUserAccess {
         get {

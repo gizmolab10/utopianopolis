@@ -25,6 +25,7 @@ enum ZTimerID : Int {
 	case tRecordsMine
 	case tWriteMine
 	case tMouseZone
+	case tSync
 	case tKey
 
 	static func recordsTimerID(for databaseID: ZDatabaseID?) -> ZTimerID? {
