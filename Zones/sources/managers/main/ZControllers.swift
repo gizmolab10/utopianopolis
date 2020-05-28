@@ -247,15 +247,4 @@ class ZControllers: NSObject {
         }
     }
 
-	func sync(onCompletion: Closure? = nil) {
-		gBatches.sync { iSame in
-            onCompletion?()
-        }
-    }
-
-	func signalAndSync(_ object: Any? = nil, regarding: ZSignalKind,  onCompletion: Closure? = nil) {
-        signalFor(object, regarding: regarding, onCompletion: onCompletion)
-		sync()
-    }
-
 }

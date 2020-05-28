@@ -92,10 +92,6 @@ class ZTraitAssets: ZRecord {
 			if  appendUniquelyToAssetNames(fileName, from: asset) {
 				assets?.append(asset)
 				needSave()
-
-				FOREGROUND(after: 0.5) {
-					gControllers.sync()
-				}
 			}
 
 			return asset

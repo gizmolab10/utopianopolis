@@ -127,7 +127,7 @@ class ZRingView: ZView, ZTooltips {
 			return true
 		} else if let note = item as? ZNote,
 			let idea = note.zone {
-			if !COMMAND, ((idea != gCurrentEssay?.zone) || !gIsNoteMode) {
+			if !COMMAND, ((idea != gCurrentEssayZone) || !gIsNoteMode) {
 				focusOnEssay(note)
 			} else if COMMAND {
 				focusOnIdea(idea)

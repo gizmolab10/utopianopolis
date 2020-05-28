@@ -523,6 +523,8 @@ var gWorkMode: ZWorkMode = .startupMode {
 	}
 }
 
+var gCurrentEssayZone: Zone? { return gCurrentEssay?.zone }
+
 var gCurrentEssay: ZNote? {
 	didSet {
 		gEssayRing.push()

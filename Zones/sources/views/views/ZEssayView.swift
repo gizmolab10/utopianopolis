@@ -18,23 +18,37 @@ import UIKit
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZTextView, ZTextViewDelegate {
+	let dotRadius       = CGFloat(-5.0)
+	var dropped         = [String]()
+	var selectionRange  = NSRange()          { didSet { if selectionRange.location != 0, let rect = rectForRange(selectionRange) { selectionRect = rect } } }
+	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { imageAttachment = nil } } }
+	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { selectionRange = NSRange() } else if oldValue != nil { eraseAttachment = oldValue } } }
+	var eraseAttachment : ZRangedAttachment?
+	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
+	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectionRange).string }
 	var backwardButton  : ZButton?
 	var forwardButton   : ZButton?
 	var cancelButton    : ZButton?
 	var deleteButton    : ZButton?
 	var hideButton      : ZButton?
 	var saveButton      : ZButton?
-	var dropped         = [String]()
-	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
-	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectionRange).string }
-	var selectionRange  = NSRange()          { didSet { if selectionRange.location != 0, let rect = rectForRange(selectionRange) { selectionRect = rect } } }
-	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { imageAttachment = nil } } }
-	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { selectionRange = NSRange() } else if oldValue != nil { eraseAttachment = oldValue } } }
-	var eraseAttachment : ZRangedAttachment?
 	var resizeDragStart : CGPoint?
 	var resizeDragRect  : CGRect?
 	var resizeDot       : ZDirection?
-	let dotRadius       = CGFloat(-5.0)
+	var essayID         : CKRecord.ID?
+
+	var shouldOverwrite: Bool {
+		if  let          current = gCurrentEssay,
+			current.noteTraitMaybe?.needsSave ?? false,
+			current.essayLength != 0,
+			let               i  = gCurrentEssayZone?.record?.recordID,
+			i                   == essayID {	// been here before
+
+			return false						// has not yet been saved. don't overwrite
+		}
+
+		return true
+	}
 
 	// MARK:- input
 	// MARK:-
@@ -67,7 +81,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "/":      if SPECIAL { gControllers.showShortcuts() } else { return false }
 				case "]":      gEssayRing.goForward()
 				case "[":      gEssayRing.goBack()
-				case kReturn:  gNoteAndEssay.essayZone?.grab(); done()
+				case kReturn:  gCurrentEssayZone?.grab(); done()
 				default:       return false
 			}
 
@@ -163,7 +177,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			setNeedsLayout()
 			setNeedsDisplay()
 			updateText(restoreSelection: range.location)
-			gControllers.sync()
 		}
 	}
 
@@ -273,19 +286,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func exit() {
 		if  let e = gCurrentEssay {
-			if  let idea = e.zone {
-				gHere = idea
-			}
-
 			gControllers.swapGraphAndEssay(force: .graphMode)
 			gRedrawGraph()
 
 			if  e.lastTextIsDefault,
 				e.autoDelete {
-				e.delete()
+				e.zone?.destroyNote()
 			}
 
-			gControllers.sync()
+			gSignal([.sDatum])
 		}
 	}
 
@@ -312,7 +321,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func clear() {
-		gNoteAndEssay.essayZone?.noteMaybe = nil
+		gCurrentEssayZone?.noteMaybe = nil
 		delegate = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
 
 		if  let length = textStorage?.length, length > 0 {
@@ -344,18 +353,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func updateText(restoreSelection: Int?  = nil) {
 		resetForDarkMode()
 
-		if  (gNoteAndEssay.shouldOverwrite || restoreSelection != nil),
+		if  (shouldOverwrite || restoreSelection != nil),
 			let text = gCurrentEssay?.essayText {
 			clear() 								// discard previously edited text
 			updateControlBarButtons(true)
 			gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }		// emplace text
 			select(restoreSelection: restoreSelection)
 
-			gNoteAndEssay.essayID  = gNoteAndEssay.essayZone?.record?.recordID
+			essayID  = gCurrentEssayZone?.record?.recordID
 			delegate = self 						// set delegate after setText
 
 			if  gIsNoteMode {
-				gWindow?.makeFirstResponder(self)
+				gWindow?.makeFirstResponder(self) // this should never happen unless alread in note mode
 			}
 		}
 	}
@@ -490,7 +499,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	private func convertToChild(createEssay: Bool = false) {
 		if  let   text = selectionString, text.length > 0,
-			let   dbID = gNoteAndEssay.essayZone?.databaseID,
+			let   dbID = gCurrentEssayZone?.databaseID,
 			let parent = selectionZone {
 			let  child = Zone(databaseID: dbID, named: text)    		// create new (to be child) zone from text
 
@@ -501,9 +510,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			if  createEssay {
 				child.setTraitText(kEssayDefault, for: .tNote)			// create a placeholder essay in the child
-				gNoteAndEssay.essayZone?.createNote()
+				gCurrentEssayZone?.createNote()
 
-				resetCurrentEssay(gNoteAndEssay.essayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
+				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
 			} else {
 				exit()
 				child.grab()
@@ -532,8 +541,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if !out, let last = selection.last {
 			resetCurrentEssay(last)
 		} else if out {
-			gNoteAndEssay.essayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
-				if  ancestor != gNoteAndEssay.essayZone, ancestor.hasNote {
+			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
+				if  ancestor != gCurrentEssayZone, ancestor.hasNote {
 					self.resetCurrentEssay(ancestor.note)
 
 					return .eStop
@@ -625,12 +634,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
-				case .idForward: gEssayRing.goForward()
-				case .idDelete:  gCurrentEssay?.delete(); 	      exit()
-				case .idCancel:  gNoteAndEssay.essayZone?.grab(); exit()
-				case .idHide:    gNoteAndEssay.essayZone?.grab(); done()
-				case .idSave:    save();		 	 gControllers.sync()
-				case .idBack:    gEssayRing.goBack()
+				case .idForward: gRecents.go(forward:  true, amongNotes: true)
+				case .idBack:    gRecents.go(forward: false, amongNotes: true)
+				case .idSave:    save()
+				case .idHide:    gCurrentEssayZone?.grab();        done()
+				case .idCancel:  gCurrentEssayZone?.grab();        exit()
+				case .idDelete:  gCurrentEssayZone?.destroyNote(); exit()
 			}
 		}
 	}
@@ -710,7 +719,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var selectedNotes: [ZNote] {
 		var array = [ZNote]()
 
-		if  let zones = gNoteAndEssay.essayZone?.zonesWithNotes {
+		if  let zones = gCurrentEssayZone?.zonesWithNotes {
 			for zone in zones {
 				if  let note = zone.noteMaybe, note.noteRange.inclusiveIntersection(selectionRange) != nil {
 					array.append(note)
@@ -718,7 +727,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 		}
 
-		if  let e = gNoteAndEssay.essayZone?.note,
+		if  let e = gCurrentEssayZone?.note,
 			array.count == 0 {
 			array.append(e)
 		}
@@ -762,7 +771,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					case .hIdea:
 						if  let  grab = zone {
 							gHere     = grab
-							let eZone = gNoteAndEssay.essayZone
+							let eZone = gCurrentEssayZone
 
 							grab  .grab()			                    // focus on zone with rID
 							grab  .asssureIsVisible()
@@ -777,7 +786,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 						}
 					case .hEssay, .hNote:
 						if  let target = zone {
-							let common = gNoteAndEssay.essayZone?.closestCommonParent(of: target)
+							let common = gCurrentEssayZone?.closestCommonParent(of: target)
 
 							if  let  c = common {
 								gHere  = c

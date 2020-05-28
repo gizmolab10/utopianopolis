@@ -54,7 +54,7 @@ class ZoneContextualMenu: ZContextualMenu {
 				case "_":    break
 				case "/":    zone?.focus()
 				case kSpace: zone?.addIdea()
-				case "\u{08}", // control-delete?
+				case "\u{08}",                                      // control-delete?
 					kDelete: zone?.deleteSelf { gRedrawGraph() }
 				default:     break
 			}

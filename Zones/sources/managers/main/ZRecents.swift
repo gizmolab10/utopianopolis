@@ -72,7 +72,7 @@ class ZRecents : ZRecords {
 		}
 	}
 
-	func go(forward: Bool) {
+	func go(forward: Bool, amongNotes: Bool = false) {
 		if  let zones = root?.children {
 			let   max = zones.count - 1
 			var found = 0

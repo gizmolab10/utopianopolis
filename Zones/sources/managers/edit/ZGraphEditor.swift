@@ -1378,7 +1378,7 @@ class ZGraphEditor: ZBaseEditor {
 		priorHere = gHere
 
 		moveUp(iMoveUp, gSelecting.sortedGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
-            gControllers.signalAndSync(nil, regarding: iKind)
+            gSignal([iKind])
         }
     }
     

@@ -180,11 +180,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK:- mutate
 	// MARK:-
 
-	func delete() {
-		zone?.removeTrait(for: .tNote)
-		gEssayRing.removeFromStack(self) // display prior essay
-	}
-
 	func reset() {
 		noteTraitMaybe?.clearSave()
 		setupChildren()
@@ -223,7 +218,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			if  range                  == noteRange.offsetBy(-noteOffset) {
 				result				    = .eDelete
 
-				delete()
+				zone?.destroyNote()
 			} else if !isLocked(for: range, length) {
 				if  let   textIntersect = range.inclusiveIntersection(textRange) {
 					delta               = length - textIntersect.length

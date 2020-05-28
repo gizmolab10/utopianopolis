@@ -228,16 +228,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		return nil
 	}
-//
-//	var freshEssay: ZNote {
-//		if  isBookmark {
-//			return bookmarkTarget!.freshEssay
-//		}
-//
-//		noteMaybe = nil
-//
-//		return note
-//	}
 
 	var note: ZNote {
 		if  isBookmark {
@@ -247,6 +237,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return noteMaybe!
+	}
+
+	func destroyNote() {
+		removeTrait(for: .tNote)
+
+		noteMaybe = nil
 	}
 
 	func createNote() {
@@ -914,7 +910,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						child.acquireZones(zones) {
 							gRedrawGraph(for: parent) {
 								completion(child)
-								gControllers.sync()
 							}
 						}
 					}
@@ -1954,7 +1949,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 								self.revealChildren()
 								gRedrawGraph(for: self) {
 									child.editAndSelect()
-									gControllers.sync()
 								}
 							}
 						}
