@@ -31,11 +31,7 @@ class ZFavoritesController: ZGraphController {
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
-		if  let    g = gGraphController {
-			return g.handleDragGesture(iGesture)
-		}
-
-		return false
+		return gGraphController?.handleDragGesture(iGesture) ?? false // use drag view coordinates from graph (not favorites) controller
 	}
 
 }

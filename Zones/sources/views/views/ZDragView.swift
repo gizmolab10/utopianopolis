@@ -20,11 +20,12 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
         super.draw(dirtyRect)
 
         kClearColor.setFill()
-        ZBezierPath(rect: bounds).fill()
+        ZBezierPath(rect: bounds).fill() // transparent background
 		gActiveColor.lighter(by: 2.0).setStroke()
 //		ZBezierPath.drawBloatedTriangle(aimedRight: true, in: bounds.insetEquallyBy(100.0), thickness: 5.0)
 
-		if  let rect = gRubberband.rubberbandRect {
+		if  controller?.isMap ?? false,
+			let rect = gRubberband.rubberbandRect {
             gActiveColor.lighter(by: 2.0).setStroke()
 			let path = ZBezierPath(rect: rect)
 			path.addDashes()

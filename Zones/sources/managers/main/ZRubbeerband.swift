@@ -25,6 +25,16 @@ class ZRubberband: NSObject {
 		}
 	}
 
+	func setRubberbandEnd(_ end: CGPoint) -> Bool { // true means rect was set
+		if  rubberbandStart != .zero {
+			rubberbandRect = CGRect(start: rubberbandStart, end: end)
+
+			return true
+		}
+
+		return false
+	}
+
 	func updateGrabs(in iView: ZView?) {
 		gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
 		gHere.ungrab()

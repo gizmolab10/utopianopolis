@@ -59,14 +59,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     #if os(OSX)
     
-    func platformSetup() {
-        guard let lighten = CIFilter(name: "CIColorControls") else { return }
-
-		lighten.setDefaults()
-        lighten.setValue(1, forKey: "inputBrightness")
-
-		spinner?.contentFilters = [lighten]
-    }
+	func platformSetup() {}
     
     #elseif os(iOS)
     
@@ -75,18 +68,10 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     func platformSetup() {
         mobileKeyInput?.becomeFirstResponder()
     }
-    
-    #endif
 
-	// MARK:- operations
-	// MARK:-
+    #if false
 
-    func clear() {
-//        mapRootWidget      .widgetZone = nil
-    }
-
-    #if os(iOS) && false
-    private func updateMinZoomScaleForSize(_ size: CGSize) {
+	private func updateMinZoomScaleForSize(_ size: CGSize) {
         let           w = rootWidget
         let heightScale = size.height / w.bounds.height
         let  widthScale = size.width  / w.bounds.width
@@ -94,12 +79,17 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         gScaling        = Double(minScale)
     }
 
-
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         updateMinZoomScaleForSize(view.bounds.size)
     }
-    #endif
+
+	#endif
+
+	#endif
+
+	// MARK:- operations
+	// MARK:-
 
 	func toggleGraphs() {
 		toggleDatabaseID()
@@ -216,8 +206,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             } else if gIsDragging {
                 dragMaybeStopEvent(iGesture)          // logic for drawing the drop dot
 			} else if state == .changed,              // enlarge rubberband
-				gRubberband.rubberbandStart != .zero {
-                gRubberband.rubberbandRect = CGRect(start: gRubberband.rubberbandStart, end: location)
+				gRubberband.setRubberbandEnd(location) {
 				gRubberband.updateGrabs(in: dragView)
 				dragView?.setAllSubviewsNeedDisplay()
             } else if state != .began {               // drag ended, failed or was cancelled
@@ -436,13 +425,15 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     // MARK:-
 
     func widgetNearest(_ iGesture: ZGestureRecognizer?) -> (Bool, ZoneWidget, CGPoint)? {
-        if  let  location = iGesture?.location(in: dragView),
+		if  let     gView = iGesture?.view,
+			let    gPoint = iGesture?.location(in: gView),
+			let  location = dragView?.convert(gPoint, from: gView),
 			let    widget = rootWidget.widgetNearestTo(location, in: dragView, hereZone) {
 			let alternate = isMap ? gFavoritesController : gGraphController
 
 			if  !kIsPhone,
 				let alternateDragView = alternate?.dragView,
-				let alternateLocation = iGesture?.location(in: alternateDragView),
+				let alternateLocation = dragView?.convert(location, to: alternateDragView),
 				let   alternateWidget = alternate?.rootWidget.widgetNearestTo(alternateLocation, in: alternateDragView, alternate?.hereZone) {
 				let          dragDotW =          widget.dragDot
                 let          dragDotA = alternateWidget.dragDot
@@ -456,7 +447,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 				// ////////////////////////////////////////////////////// //
 
                 if  distanceW > distanceA {
-                    return (false, alternateWidget, alternateLocation)
+                    return (false, alternateWidget, location)
                 }
             }
 
