@@ -204,7 +204,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             } else if flags.isCommand {               // shift background
                 scrollEvent(move: state == .changed, to: location)
             } else if gIsDragging {
-                dragMaybeStopEvent(iGesture)          // logic for drawing the drop dot
+                dragMaybeStopEvent(iGesture)          // logic for drawing the drop dot, and for dropping dragged idea
 			} else if state == .changed,              // enlarge rubberband
 				gRubberband.setRubberbandEnd(location) {
 				gRubberband.updateGrabs(in: dragView)
@@ -406,10 +406,10 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                         let CONTROL = gesture.modifiers?.isControl {
 
 						gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, CONTROL) {
+							gRedrawGraph()
                             gSelecting.updateBrowsingLevel()
                             gSelecting.updateCousinList()
                             self.restartGestureRecognition()
-                            gRedrawGraph()
                         }
                     }
                 }

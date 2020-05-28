@@ -72,6 +72,26 @@ class ZRecents : ZRecords {
 		}
 	}
 
+	func pop() {
+		if  let     r = root {
+			var found = kCFNotFound
+
+			for (index, bookmark) in r.children.enumerated() {
+				if  let name = bookmark.bookmarkTarget?.recordName(),
+					name    == gHereMaybe?.recordName() {
+					found    = index
+
+					break
+				}
+			}
+
+			if  found != kCFNotFound {
+				go(forward: true)
+				r.children.remove(at: found)
+			}
+		}
+	}
+
 	func go(forward: Bool, amongNotes: Bool = false) {
 		if  let zones = root?.children {
 			let   max = zones.count - 1

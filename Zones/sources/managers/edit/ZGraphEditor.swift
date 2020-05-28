@@ -314,7 +314,7 @@ class ZGraphEditor: ZBaseEditor {
 	}
 
 	func popAndUpdate() {
-		gFocusRing.popAndRemoveEmpties()
+		gRecents.pop()
 		gRedrawGraph()
 	}
 
