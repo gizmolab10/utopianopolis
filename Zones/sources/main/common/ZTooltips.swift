@@ -67,58 +67,58 @@ extension ZRecord {
 
 }
 
-extension ZRingView {
-
-	@discardableResult override func addToolTip(_ rect: NSRect, owner: Any, userData data: UnsafeMutableRawPointer?) -> NSView.ToolTipTag {
-		if  gShowToolTips,
-			let         tool = owner as? ZToolable,
-			let         name = tool.toolName() {
-			let         font = gFavoritesFont
-			var     nameRect = name.rectWithFont(font, options: .usesFontLeading).insetBy(dx: -10.0, dy: 0.0)
-			nameRect.center  = rect.offsetBy(dx: 10.0, dy: 1.0).center
-			var   attributes : [NSAttributedString.Key : Any] = [.font : font]
-
-			if  let    color = tool.toolColor() {
-				attributes[.foregroundColor] = color
-			}
-
-			name.draw(in: nameRect, withAttributes: attributes)
-		}
-
-		let o = (owner as? Zone)?.tooltipOwner ?? owner
-
-		return super.addToolTip(rect, owner: o, userData: data)
-	}
-
-	func updateTooltips() {
-		let controls = ZControlButton.controls
-		let  objects = necklaceObjects 				// expensive computation: do once
-		let    count = objects.count
-
-		removeAllToolTips()
-
-		for (index, tinyRect) in necklaceDotRects {
-			if  index < count { 							// avoid crash
-				var      owner = objects[index]
-				let       rect = self.convert(tinyRect, to: self)
-
-				if  let owners = owner as? [NSObject] {
-					owner      = owners[0]
-				}
-
-				addToolTip(rect, owner: owner, userData: nil)
-			}
-		}
-
-		for (index, controlRect) in controlRects.enumerated() {
-			let  rect = self.convert(controlRect, to: self).offsetBy(dx: 0.0, dy: -5.0)
-			let owner = controls[index]
-
-			addToolTip(rect, owner: owner, userData: nil)
-		}
-	}
-
-}
+//extension ZRingView {
+//
+//	@discardableResult override func addToolTip(_ rect: NSRect, owner: Any, userData data: UnsafeMutableRawPointer?) -> NSView.ToolTipTag {
+//		if  gShowToolTips,
+//			let         tool = owner as? ZToolable,
+//			let         name = tool.toolName() {
+//			let         font = gFavoritesFont
+//			var     nameRect = name.rectWithFont(font, options: .usesFontLeading).insetBy(dx: -10.0, dy: 0.0)
+//			nameRect.center  = rect.offsetBy(dx: 10.0, dy: 1.0).center
+//			var   attributes : [NSAttributedString.Key : Any] = [.font : font]
+//
+//			if  let    color = tool.toolColor() {
+//				attributes[.foregroundColor] = color
+//			}
+//
+//			name.draw(in: nameRect, withAttributes: attributes)
+//		}
+//
+//		let o = (owner as? Zone)?.tooltipOwner ?? owner
+//
+//		return super.addToolTip(rect, owner: o, userData: data)
+//	}
+//
+//	func updateTooltips() {
+//		let controls = ZControlButton.controls
+//		let  objects = necklaceObjects 				// expensive computation: do once
+//		let    count = objects.count
+//
+//		removeAllToolTips()
+//
+//		for (index, tinyRect) in necklaceDotRects {
+//			if  index < count { 							// avoid crash
+//				var      owner = objects[index]
+//				let       rect = self.convert(tinyRect, to: self)
+//
+//				if  let owners = owner as? [NSObject] {
+//					owner      = owners[0]
+//				}
+//
+//				addToolTip(rect, owner: owner, userData: nil)
+//			}
+//		}
+//
+//		for (index, controlRect) in controlRects.enumerated() {
+//			let  rect = self.convert(controlRect, to: self).offsetBy(dx: 0.0, dy: -5.0)
+//			let owner = controls[index]
+//
+//			addToolTip(rect, owner: owner, userData: nil)
+//		}
+//	}
+//
+//}
 
 extension ZIntroductionController {
 
@@ -159,7 +159,7 @@ extension Zone {
 				hasHyperlink    ? "invoke web link" : ""
 		}
 
-		return (showingChildren ? "hide" : "reveal") + " children of"
+		return (showingChildren ? "hide" : "reveal") + " list for"
 	}
 
 }

@@ -9,6 +9,11 @@
 import Foundation
 import CloudKit
 
+enum ZFocusKind: Int {
+	case eSelected
+	case eEdited
+}
+
 let   gRecents = ZRecents(ZDatabaseID.recentsID)
 
 class ZRecents : ZRecords {
@@ -53,7 +58,7 @@ class ZRecents : ZRecords {
 		}
 	}
 
-	func push() {
+	func push(intoNotes: Bool = false) {
 		if  let r = root {
 			for bookmark in r.children {
 				if  let name = bookmark.bookmarkTarget?.recordName(),
@@ -72,13 +77,18 @@ class ZRecents : ZRecords {
 		}
 	}
 
-	func pop() {
-		if  let     r = root {
+	@discardableResult func pop(fromNotes: Bool = false) -> Bool {
+		return remove(gHereMaybe, fromNotes: fromNotes)
+	}
+
+	@discardableResult func remove(_ iItem: NSObject?, fromNotes: Bool = false) -> Bool {
+		if  let  zone = iItem as? Zone,
+			let     r = root {
 			var found = kCFNotFound
 
 			for (index, bookmark) in r.children.enumerated() {
 				if  let name = bookmark.bookmarkTarget?.recordName(),
-					name    == gHereMaybe?.recordName() {
+					name    == zone.recordName() {
 					found    = index
 
 					break
@@ -88,8 +98,12 @@ class ZRecents : ZRecords {
 			if  found != kCFNotFound {
 				go(forward: true)
 				r.children.remove(at: found)
+
+				return true
 			}
 		}
+
+		return false
 	}
 
 	func go(forward: Bool, amongNotes: Bool = false) {
@@ -129,8 +143,33 @@ class ZRecents : ZRecords {
 		}
 	}
 
+	func object(for id: String) -> NSObject? {
+		let parts = id.components(separatedBy: kColonSeparator)
+
+		if  parts.count == 2 {
+			if  parts[0] == "note" {
+				return ZNote .object(for: parts[1], isExpanded: false)
+			} else {
+				return ZEssay.object(for: parts[1], isExpanded: true)
+			}
+		}
+
+		return nil
+	}
+
 	// MARK:- focus
 	// MARK:-
+
+	func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
+		gHere = iHere // side-effect does recents push
+
+		gRecents.push()
+		focus {
+			gHere.grab()
+			gFavorites.updateCurrentFavorite()
+			atArrival()
+		}
+	}
 
 	func focus(kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, _ atArrival: @escaping Closure) {
 
@@ -156,7 +195,7 @@ class ZRecents : ZRecords {
 				}
 			} else if zone == gHere {       // state 2
 				updateCurrentRecent()
-				gFavorites.updateGrab()
+//				gFavorites.updateGrab()
 				atArrival()
 			} else if zone.isInFavorites || zone.isInRecently {  // state 3
 				focusClosure(gHere)
@@ -211,6 +250,9 @@ class ZRecents : ZRecords {
 
 		return false
 	}
+
+	// MARK:- travel
+	// MARK:-
 
 	func travelThrough(_ iBookmark: Zone, atArrival: @escaping SignalClosure) {
 		if  let  targetZRecord = iBookmark.crossLink,
@@ -318,6 +360,71 @@ class ZRecents : ZRecords {
 				}
 			}
 		}
+	}
+
+	func invokeTravel(_ iZone: Zone?, onCompletion: Closure? = nil) {
+		guard let zone = iZone else {
+			onCompletion?()
+
+			return
+		}
+
+		if  !invokeBookmark(zone, onCompletion: onCompletion),
+			!invokeHyperlink(zone),
+			!invokeEssay(zone) {
+			invokeEmail(zone)
+		}
+	}
+
+	@discardableResult func invokeBookmark(_ bookmark: Zone, onCompletion: Closure?) -> Bool { // false means not traveled
+		let doTryBookmark = bookmark.isBookmark
+
+		if  doTryBookmark {
+			travelThrough(bookmark) { object, kind in
+				#if os(iOS)
+				gActionsController.alignView()
+				#endif
+				onCompletion?()
+			}
+		}
+
+		return doTryBookmark
+	}
+
+	@discardableResult func invokeHyperlink(_ iZone: Zone) -> Bool { // false means not traveled
+		if  let link = iZone.hyperLink,
+			link    != kNullLink {
+			link.openAsURL()
+
+			return true
+		}
+
+		return false
+	}
+
+	@discardableResult func invokeEssay(_ iZone: Zone) -> Bool { // false means not handled
+		if  iZone.hasNote {
+			iZone.grab()
+
+			gCurrentEssay = iZone.note
+
+			gControllers.swapGraphAndEssay()
+
+			return true
+		}
+
+		return false
+	}
+
+	@discardableResult func invokeEmail(_ iZone: Zone) -> Bool { // false means not traveled
+		if  let  link = iZone.email {
+			let email = "mailTo:" + link
+			email.openAsURL()
+
+			return true
+		}
+
+		return false
 	}
 
 }

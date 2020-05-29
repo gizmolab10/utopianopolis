@@ -93,7 +93,7 @@ class ZRingView: ZView, ZTooltips {
 
 	func focusOnIdea(_ idea: Zone) {
 		gControllers.swapGraphAndEssay(force: .graphMode)
-		gFocusRing.focusOn(idea) {
+		gRecents.focusOn(idea) {
 			gControllers.signalFor(idea, regarding: .sRelayout)
 		}
 	}

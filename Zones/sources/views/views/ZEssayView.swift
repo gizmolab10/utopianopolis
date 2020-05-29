@@ -79,8 +79,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 				case "/":      if SPECIAL { gControllers.showShortcuts() } else { return false }
-				case "]":      gEssayRing.goForward()
-				case "[":      gEssayRing.goBack()
+				case "]", "[": gEssayEditor.smartGo(forward: key == "]", notForceRecents: SPECIAL)
 				case kReturn:  gCurrentEssayZone?.grab(); done()
 				default:       return false
 			}
@@ -340,7 +339,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gCurrentEssay?.reset()
 			updateText()
 			gCurrentEssay?.updateOffsets()
-			gEssayRing.push()
+			gRecents.push(intoNotes: true)
 
 			if  let r = range {
 				FOREGROUND {
@@ -490,7 +489,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func popNoteAndUpdate() {
-		if  gEssayRing.popAndRemoveEmpties() {
+		if  gRecents.pop(fromNotes: true) {
 			exit()
 		} else {
 			updateText()
@@ -634,8 +633,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
-				case .idForward: gRecents.go(forward:  true, amongNotes: true)
-				case .idBack:    gRecents.go(forward: false, amongNotes: true)
+				case .idForward: gEssayEditor.smartGo(forward:  true, amongNotes: true)
+				case .idBack:    gEssayEditor.smartGo(forward: false, amongNotes: true)
 				case .idSave:    save()
 				case .idHide:    gCurrentEssayZone?.grab();        done()
 				case .idCancel:  gCurrentEssayZone?.grab();        exit()

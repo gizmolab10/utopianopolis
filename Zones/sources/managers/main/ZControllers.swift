@@ -77,7 +77,6 @@ class ZControllers: NSObject {
 				gFavorites.updateAllFavorites()
 				gRemoteStorage.updateLastSyncDates()
 				gRemoteStorage.recount()
-				gEssayRing.fetchRingIDs()
 				gRefreshCurrentEssay()
 				gRefreshPersistentWorkMode()
 				gSignal([.sSwap, .sRing, .sCrumbs, .sRelayout, .sLaunchDone])
@@ -184,13 +183,11 @@ class ZControllers: NSObject {
 	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
 		if  let id = iID {
 			switch id {
-				case .idNote:   return .white
-				case .idDetails,
-					 .idMap,
-					 .idRing:   return kClearColor
-//				case .idPreferences,
-//					 .idStatus: return gDarkishBackgroundColor
-				default:        return gBackgroundColor
+				case .idFavorites,
+					 .idDetails,
+					 .idMap:  return kClearColor      // so rubberband is visible on both map and favorites
+				case .idNote: return .white           // override dark mode, otherwise essay view looks like crap
+				default:      return gBackgroundColor // respects dark mode
 			}
 		}
 

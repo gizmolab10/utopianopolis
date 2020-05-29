@@ -1070,8 +1070,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						iZone.concealAllProgeny()               // prevent gExpandedZones list from getting clogged with stale references
 						iZone.orphan()
 						gManifest?.smartAppend(iZone)
-						gFocusRing.removeFromStack(iZone)		// prevent focus stack from containing a zombie and thus getting stuck
-						gEssayRing.removeFromStack(iZone.noteMaybe)
+						gRecents.remove(iZone)		            // prevent focus stack from containing a zombie and thus getting stuck
+						gRecents.remove(iZone.noteMaybe, fromNotes: true)
 					}
 
 					if  cloud?.cloudUnavailable ?? true {
@@ -1176,7 +1176,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let    targetLink = there.crossLink
 			let     sameGraph = databaseID == targetLink?.databaseID
 			let grabAndTravel = {
-				gFocusRing.travelThrough(there) { object, kind in
+				gRecents.travelThrough(there) { object, kind in
 					let there = object as! Zone
 
 					movedZone.moveZone(into: there, at: gListsGrowDown ? nil : 0, orphan: false) {
@@ -1241,7 +1241,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func        addToGrabs() { gSelecting.addMultipleGrabs([self]) }
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
-	func             focus() { gFocusRing          .focusOn(self) { gRedrawGraph() } }
+	func             focus() { gRecents            .focusOn(self) { gRedrawGraph() } }
 	func editTrait(for iType: ZTraitType) { gTextEditor.edit(traitFor(iType)) }
 
 	@discardableResult func edit() -> ZTextEditor? {
@@ -1286,7 +1286,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             grab() // narrow selection to just this one zone
             
             if !(CLICKTWICE && self == gHere) {
-                gFocusRing.focus(kind: .eSelected) {
+                gRecents.focus(kind: .eSelected) {
                     gRedrawGraph()
                 }
             }
@@ -2255,7 +2255,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		if  canTravel && (COMMAND || (fetchableCount == 0 && count == 0)) {
-			gFocusRing.invokeTravel(self) { // email, hyperlink, bookmark, essay
+			gRecents.invokeTravel(self) { // email, hyperlink, bookmark, essay
 				gRedrawGraph()
 			}
 		} else {

@@ -527,7 +527,7 @@ var gCurrentEssayZone: Zone? { return gCurrentEssay?.zone }
 
 var gCurrentEssay: ZNote? {
 	didSet {
-		gEssayRing.push()
+		gRecents.push(intoNotes: true)
 		setPreferencesString(gCurrentEssay?.identifier() ?? "", for: kCurrentEssay)
 	}
 }
@@ -584,7 +584,7 @@ func gTestForUserInterrupt() throws {
 
 func gRefreshCurrentEssay() {
 	if  let identifier = getPreferencesString(for: kCurrentEssay, defaultString: kTutorialRecordName),
-		let      essay = gEssayRing.object(for: identifier) as? ZNote {
+		let      essay = gRecents.object(for: identifier) as? ZNote {
 		gCurrentEssay  = essay
 	}
 }

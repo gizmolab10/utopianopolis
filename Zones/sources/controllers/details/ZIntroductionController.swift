@@ -26,7 +26,7 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 	var             isEditing : Bool { return gIsEditIdeaMode || gIsNoteMode }
 	var            isRelocate : Bool { return flags.isOption  && !isEditing }
 	var              showHide : Bool { return flags.isShift   && !isEditing && !flags.isOption }
-	var            canUnfocus : Bool { return flags.isControl && gFocusRing.ring.count > 1 }
+	var            canUnfocus : Bool { return flags.isControl && (gRecents.root?.children.count ?? 0) > 1 }
 	var             canTravel : Bool { return gIsGraphMode && (gSelecting.currentMovableMaybe?.isBookmark ?? false) }
 	var                 flags = ZEventFlags()
 	var        buttonsByID    = [ZIntroductionID  :  ZIntroductionButton]()

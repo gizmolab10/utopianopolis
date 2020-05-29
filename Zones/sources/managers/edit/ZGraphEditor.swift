@@ -86,7 +86,7 @@ class ZGraphEditor: ZBaseEditor {
 							case "g":      refetch(COMMAND, OPTION)
 							case "n":      grabOrEdit(true, OPTION)
 							case "p":      printCurrentFocus()
-							case "/":      if IGNORED { return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eEdited, false) { gRedrawGraph() } }
+							case "/":      if IGNORED { return false } else { popAndUpdate(CONTROL, kind: .eEdited) }
 							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
 							case kTab:     addSibling(OPTION)
 							case kSpace:   gSelecting.currentMoveable.addIdea()
@@ -135,12 +135,11 @@ class ZGraphEditor: ZBaseEditor {
                     case "z":      if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
-                    case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else if CONTROL { popAndUpdate() } else { gFocusRing.focus(kind: .eSelected, COMMAND) { gRedrawGraph() } }
+                    case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdate(CONTROL, COMMAND, kind: .eSelected) }
 					case "\\":     gGraphController?.toggleGraphs(); gRedrawGraph()
-                    case "[", "]": gRecents.go(forward: key == "]")
+                    case "[", "]": smartGo(forward: key == "]", notForceRecents: OPTION)
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-					case kEquals:  if COMMAND { updateSize(up: true) } else { gFocusRing.invokeTravel(gSelecting.firstSortedGrab) { gRedrawGraph() } }
-                    case ";", "'": gFavorites.switchToNext(key == "'") { gRedrawGraph() }
+					case kEquals:  if COMMAND { updateSize(up: true) } else { gRecents.invokeTravel(gSelecting.firstSortedGrab) { gRedrawGraph() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addSibling(OPTION)
 					case kSpace:   if OPTION || CONTROL || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
@@ -313,9 +312,15 @@ class ZGraphEditor: ZBaseEditor {
 		grabs.duplicate()
 	}
 
-	func popAndUpdate() {
-		gRecents.pop()
-		gRedrawGraph()
+	func popAndUpdate(_ CONTROL: Bool, _ COMMAND: Bool = false, kind: ZFocusKind) {
+		if  CONTROL {
+			gRecents.pop()
+			gRedrawGraph()
+		} else {
+			gRecents.focus(kind: kind, COMMAND) { // complex grab logic
+				gRedrawGraph()
+			}
+		}
 	}
 
 	func updateSize(up: Bool) {
@@ -416,7 +421,7 @@ class ZGraphEditor: ZBaseEditor {
 
     func focusOnTrash() {
         if  let trash = gTrash {
-            gFocusRing.focusOn(trash) {
+            gRecents.focusOn(trash) {
                 gRedrawGraph()
             }
         }
@@ -608,7 +613,7 @@ class ZGraphEditor: ZBaseEditor {
     func doFavorites(_ isShift: Bool, _ isOption: Bool) {
         let backward = isShift || isOption
 
-        gFavorites.switchToNext(!backward) {
+        gFavorites.go(!backward) {
             gRedrawGraph()
         }
     }
@@ -913,7 +918,7 @@ class ZGraphEditor: ZBaseEditor {
             if !selectionOnly {
                 actuallyMoveInto(zones, onCompletion: onCompletion)
             } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
-                gFocusRing.invokeTravel(zone, onCompletion: onCompletion)
+                gRecents.invokeTravel(zone, onCompletion: onCompletion)
             } else {
 				var needReveal = false
 				var      child = zone
@@ -1096,7 +1101,7 @@ class ZGraphEditor: ZBaseEditor {
                 prepare()
             } else {
                 undoManager.beginUndoGrouping()
-                gFocusRing.travelThrough(zone) { (iAny, iSignalKind) in
+                gRecents.travelThrough(zone) { (iAny, iSignalKind) in
                     prepare()
                 }
             }

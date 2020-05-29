@@ -9,11 +9,6 @@
 import Foundation
 import CloudKit
 
-enum ZFocusKind: Int {
-    case eSelected
-    case eEdited
-}
-
 let gFocusRing = ZFocus()
 
 class ZFocus: ZRing {
@@ -159,7 +154,7 @@ class ZFocus: ZRing {
         }
     }
 
-    func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
+    func xfocusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
         gHere = iHere // side-effect does recents push
 
 		gRecents.push()

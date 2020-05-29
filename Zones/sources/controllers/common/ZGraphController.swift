@@ -48,7 +48,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
     override func setup() {
-		gestureView                      = dragView // do this before calling super setup
+		gestureView                      = dragView // do this before calling super setup as it uses gesture view
 		view     .layer?.backgroundColor = kClearColor.cgColor
 		dragView?.layer?.backgroundColor = kClearColor.cgColor
 
@@ -171,9 +171,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 		if  kIsPhone {
 			rootWidget.isHidden = gShowFavorites
 		}
-
-		view     .layer?.backgroundColor = kClearColor.cgColor
-		dragView?.layer?.backgroundColor = kClearColor.cgColor
 	}
 	
 	func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {

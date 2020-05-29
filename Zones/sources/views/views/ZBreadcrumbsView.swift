@@ -100,7 +100,7 @@ class ZBreadcrumbsView : ZButtonsView {
 		let    span = gTextEditor.selectedRange()
 		let COMMAND = false
 
-		gFocusRing.focusOn(next) {
+		gRecents.focusOn(next) {
 			if  COMMAND {
 				next.traverseAllProgeny { child in
 					child.concealChildren()

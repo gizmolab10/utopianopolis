@@ -395,7 +395,7 @@ class ZFavorites: ZRecords {
     }
 
 
-    func switchToNext(_ forward: Bool, atArrival: @escaping Closure) {
+    func go(_ forward: Bool, atArrival: @escaping Closure) {
         updateWorkingFavorites()
 
         let    index = nextFavoritesIndex(forward: forward)

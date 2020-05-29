@@ -127,7 +127,7 @@ class ZTimers: NSObject {
 					self?.columnarReport(mode: .dTimers, "\(prefix) \(timerID)", "\(duration)")
 				}
 
-				tryCatch = { [weak self] in
+				tryCatch = {
 					do {
 						try block()
 						debug("•")

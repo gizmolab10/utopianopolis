@@ -85,11 +85,15 @@ class ZBaseEditor: NSObject {
 		#endif
 	}
 
-	func wipeRing() {
-		gEssayRing.clear()
-		gFocusRing.clear()
-		gFocusRing.push()
+	func smartGo(forward: Bool, notForceRecents: Bool = false, amongNotes: Bool = false) {
+		if  gIsRecentlyMode && !notForceRecents {
+			gRecents.go(forward: forward)
+		} else {
+			gFavorites.go(forward) { gRedrawGraph() }
+		}
+	}
 
+	func wipeRing() {
 		if  gIsNoteMode {
 			gControllers.swapGraphAndEssay()
 		}
