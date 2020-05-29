@@ -29,6 +29,7 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	init() { rawValue = ZWidgetType.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
+	static let     tIdea = ZWidgetType()
 	static let     tMain = ZWidgetType()
 	static let   tRecent = ZWidgetType()
 	static let tFavorite = ZWidgetType()
@@ -40,7 +41,8 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	var isFavorite: Bool { return contains(.tFavorite) }
 
 	var description: String {
-		return [(.tMain,     "    idea"),
+		return [(.tIdea,     "    idea"),
+				(.tMain,     "    main"),
 				(.tNote,     "    note"),
 				(.tEssay,    "   essay"),
 				(.tRecent,   "  recent"),
@@ -55,6 +57,9 @@ class ZWidgetObject: NSObject {
 	var note: ZNote?
 	var zone: Zone?
 
+	var type: ZWidgetType? {
+		return note == nil ? (zone == nil ? nil : .tIdea) : (zone == nil ? .tNote : [.tNote, .tIdea])
+	}
 }
 
 class ZoneWidget: ZView {
@@ -65,10 +70,23 @@ class ZoneWidget: ZView {
     let            childrenView = ZView          ()
 	let            widgetObject = ZWidgetObject  ()
     private var childrenWidgets = [ZoneWidget]   ()
-	var                    type : ZWidgetType { return widgetZone?.type ?? .tMain }
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
 	var                   ratio :    CGFloat  { return type.isMain ? 1.0 : kFavoritesReduction }
 	override var    description :     String  { return widgetZone?.description ?? kEmptyIdea }
+
+	var type : ZWidgetType {
+		var result    = widgetZone? .type
+
+		if  result   == nil {
+			result    = .tMain
+		}
+
+		if  let oType = widgetObject.type {
+			result?.insert(oType)
+		}
+
+		return result!
+	}
 
 	var controller: ZGraphController? {
 		if type.isMain     { return     gGraphController }
@@ -157,7 +175,6 @@ class ZoneWidget: ZView {
         }
     }
 
-
     func layoutDots() {
 		let hideDragDot = widgetZone?.onlyShowRevealDot ?? true
 
@@ -188,10 +205,8 @@ class ZoneWidget: ZView {
         }
     }
 
-
     // MARK:- view hierarchy
     // MARK:-
-
 
     func addTextView() {
         if !subviews.contains(textWidget) {
@@ -202,7 +217,6 @@ class ZoneWidget: ZView {
 
         textWidget.setup()
     }
-
 
     func addChildrenView() {
         if !subviews.contains(childrenView) {
@@ -218,7 +232,6 @@ class ZoneWidget: ZView {
             make.bottom.top.right.equalTo(self)
         }
     }
-
 
     func prepareChildrenWidgets() {
         if  let zone = widgetZone {
@@ -249,7 +262,6 @@ class ZoneWidget: ZView {
         }
     }
 
-
     // MARK:- drag
     // MARK:-
 
@@ -261,12 +273,10 @@ class ZoneWidget: ZView {
 
         return nil
     }
-    
 
     var outerHitRect: CGRect {
 		return CGRect(start: dragDot.convert(CGPoint.zero, to: self), end: revealDot.convert(revealDot.bounds.extent, to: self))
     }
-
 
     var floatingDropDotRect: CGRect {
         var rect = CGRect()
@@ -319,7 +329,6 @@ class ZoneWidget: ZView {
         return rect
     }
 
-
     func lineKind(for delta: Double) -> ZLineKind {
         let threshold = 2.0   * gVerticalWeight
         let  adjusted = delta * gVerticalWeight
@@ -332,7 +341,6 @@ class ZoneWidget: ZView {
         
         return .straight
     }
-
 
     func dot(at iIndex: Int) -> ZoneDot? {
         if  let zone = widgetZone {
@@ -348,7 +356,6 @@ class ZoneWidget: ZView {
             return nil
         }
     }
-
 
     func widgetNearestTo(_ iPoint: CGPoint, in iView: ZView?, _ iHere: Zone?, _ visited: [ZoneWidget] = []) -> ZoneWidget? {
         if  let    here = iHere,
@@ -368,7 +375,6 @@ class ZoneWidget: ZView {
         return nil
     }
 
-
     func displayForDrag() {
         revealDot.innerDot?        .setNeedsDisplay()
         parentWidget?              .setNeedsDisplay() // sibling lines
@@ -379,7 +385,6 @@ class ZoneWidget: ZView {
             child                  .setNeedsDisplay() // grandchildren lines
         }
     }
-
 
     func isDropIndex(_ iIndex: Int?) -> Bool {
         if  iIndex != nil {
@@ -394,10 +399,8 @@ class ZoneWidget: ZView {
         return false
     }
 
-
     // MARK:- child lines
     // MARK:-
-
 
     func lineKind(to dragRect: CGRect) -> ZLineKind? {
         var kind: ZLineKind?
@@ -409,7 +412,6 @@ class ZoneWidget: ZView {
 
         return kind
     }
-
 
     func lineKind(to widget: ZoneWidget?) -> ZLineKind {
         var kind:    ZLineKind = .straight
@@ -426,7 +428,6 @@ class ZoneWidget: ZView {
         return kind
     }
 
-
     func lineRect(to dragRect: CGRect, in iView: ZView) -> CGRect? {
         var rect: CGRect?
 
@@ -437,7 +438,6 @@ class ZoneWidget: ZView {
 
         return rect
     }
-
 
     func lineRect(to widget: ZoneWidget?) -> CGRect {
         let  hasIndent = widget?.widgetZone?.isCurrentFavorite ?? false
@@ -452,7 +452,6 @@ class ZoneWidget: ZView {
 
         return frame
     }
-
 
     func straightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
         if  !isDragLine,
@@ -469,7 +468,6 @@ class ZoneWidget: ZView {
         return path
     }
 
-
     func linePath(in iRect: CGRect, kind iKind: ZLineKind?, isDragLine: Bool) -> ZBezierPath {
         if iKind != nil {
             switch iKind! {
@@ -481,7 +479,6 @@ class ZoneWidget: ZView {
         return ZBezierPath()
     }
 
-
     func line(on path: ZBezierPath?) {
         if  path != nil {
             path!.lineWidth = CGFloat(gLineThickness)
@@ -490,10 +487,8 @@ class ZoneWidget: ZView {
         }
     }
 
-
     // MARK:- draw
     // MARK:-
-
 
     func drawSelectionHighlight(_ pale: Bool) {
         let      thickness = CGFloat(gDotWidth) / 3.5
@@ -528,7 +523,6 @@ class ZoneWidget: ZView {
         path.fill()
     }
 
-
     func drawDragLine(to dotRect: CGRect, in iView: ZView) {
         if  let rect = lineRect(to: dotRect, in:iView),
             let kind = lineKind(to: dotRect) {
@@ -537,7 +531,6 @@ class ZoneWidget: ZView {
             line(on: path)
         }
     }
-
 
     func drawLine(to child: ZoneWidget) {
         if  let  zone = child.widgetZone {

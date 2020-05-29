@@ -156,7 +156,7 @@ class ZFavorites: ZRecords {
         var found: Zone?
 
         if  iTarget?.databaseID != nil {
-			found                = workingFavorites.bookmarksTargeting(iTarget, iSpawned: iSpawned)
+			found                = workingFavorites.bookmarksTargeting([iTarget!], iSpawned: iSpawned)
         }
 
         if  iSpawned  &&  found == nil {
@@ -215,7 +215,8 @@ class ZFavorites: ZRecords {
     func updateCurrentFavorite(_ currentZone: Zone? = nil, reveal: Bool = false) {
         if  let     favorite = favoriteTargetting(currentZone ?? gHereMaybe),
             let       target = favorite.bookmarkTarget,
-            (gHere == target || !(currentFavorite?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
+            (gHere == target || !(currentFavorite?.bookmarkTarget?.spawnedBy(gHere) ?? false)),
+			!gIsRecentlyMode {
             currentFavorite = favorite
             
             if  reveal {
@@ -503,7 +504,9 @@ class ZFavorites: ZRecords {
 
 
     func updateGrab() {
-        let here = gHere
+		if  gIsRecentlyMode { return }
+
+		let here = gHere
         
         updateWorkingFavorites()
         

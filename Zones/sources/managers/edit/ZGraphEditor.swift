@@ -135,9 +135,10 @@ class ZGraphEditor: ZBaseEditor {
                     case "z":      if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
+					case "'":      gFavoritesMode = gIsRecentlyMode ? .favorites : .recent; gSignal([.sFavorites])
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdate(CONTROL, COMMAND, kind: .eSelected) }
 					case "\\":     gGraphController?.toggleGraphs(); gRedrawGraph()
-                    case "[", "]": smartGo(forward: key == "]", notForceRecents: OPTION)
+                    case "]", "[": smartGo(forward: key == "]")
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 					case kEquals:  if COMMAND { updateSize(up: true) } else { gRecents.invokeTravel(gSelecting.firstSortedGrab) { gRedrawGraph() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
@@ -317,7 +318,7 @@ class ZGraphEditor: ZBaseEditor {
 			gRecents.pop()
 			gRedrawGraph()
 		} else {
-			gRecents.focus(kind: kind, COMMAND) { // complex grab logic
+			gRecents.focus(kind: kind, COMMAND, shouldGrab: true) { // complex grab logic
 				gRedrawGraph()
 			}
 		}

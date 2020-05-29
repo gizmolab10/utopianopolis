@@ -383,27 +383,28 @@ extension ZoneArray {
 		}
 	}
 
-	func bookmarksTargeting(_ iTarget: Zone?, iSpawned: Bool = false) -> Zone? {
+	func bookmarksTargeting(_ iTargets: ZoneArray, iSpawned: Bool = false) -> Zone? {
 		var found: Zone?
 
-		if  let               target = iTarget,
-			let                 dbID = target.databaseID {
-			var                level = Int.max
-			for child in self {
-				if  let childTarget  = child.bookmarkTarget,
-					dbID            == childTarget.databaseID {
+		for target in iTargets {
+			if  let                 dbID = target.databaseID {
+				var                level = Int.max
+				for child in self {
+					if  let childTarget  = child.bookmarkTarget,
+						dbID            == childTarget.databaseID {
 
-					if  childTarget == target {
-						return child
-					}
+						if  childTarget == target {
+							return child
+						}
 
-					let childLevel   = childTarget.level
+						let childLevel   = childTarget.level
 
-					if  childLevel   < level,
-						iSpawned,
-						target.spawnedBy(childTarget) {
-						level        = childLevel
-						found        = child
+						if  childLevel   < level,
+							iSpawned,
+							target.spawnedBy(childTarget) {
+							level        = childLevel
+							found        = child
+						}
 					}
 				}
 			}

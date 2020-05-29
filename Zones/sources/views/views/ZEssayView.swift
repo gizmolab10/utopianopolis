@@ -79,7 +79,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 				case "/":      if SPECIAL { gControllers.showShortcuts() } else { return false }
-				case "]", "[": gEssayEditor.smartGo(forward: key == "]", notForceRecents: SPECIAL)
+				case "]", "[": gEssayEditor.smartGo(forward: key == "]")
 				case kReturn:  gCurrentEssayZone?.grab(); done()
 				default:       return false
 			}

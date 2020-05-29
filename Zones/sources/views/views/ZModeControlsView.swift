@@ -20,8 +20,12 @@ class ZModeControlsView : ZButtonsView, ZTooltips {
 	override  var centered: Bool { return true }
 
 	override func setupButtons() {
-		let types: [ZModeButtonType] = [.tMode, .tAdd, .tGrow, .tConfine]
+		var types: [ZModeButtonType] = [.tMode, .tGrow, .tConfine]
 		buttons                      = [ZButton]()
+
+		if !gIsRecentlyMode {
+			types.insert(.tAdd, at: 1)
+		}
 
 		for type in types {
 			let                 title = type.rawValue
@@ -43,7 +47,6 @@ class ZModeControlsView : ZButtonsView, ZTooltips {
 					case .tMode:    button    .title = "Show \(gIsRecentlyMode ? "Favorites" : "Recents")"
 					case .tGrow:    button    .title = gListGrowthMode .rawValue
 					case .tAdd:     button    .title = "+"
-									button.isEnabled = !gIsRecentlyMode
 				}
 			}
 		}
@@ -59,11 +62,12 @@ class ZModeControlsView : ZButtonsView, ZTooltips {
 			}
 		}
 
-		updateButtonTitles()
-		clearButtons()
-		layoutButtons()
-		updateTooltips()
 		gSignal([.sFavorites])
 	}
 
+	func update() {
+		updateButtonTitles()
+		updateAndRedraw()
+		updateTooltips()
+	}
 }

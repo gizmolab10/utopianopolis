@@ -51,9 +51,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var       unwrappedName :             String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
 	var                decoratedName :             String  { return decoration + unwrappedName }
 	var                  clippedName :             String  { return !gShowToolTips ? "" : unwrappedName }
-	var                         type :        ZWidgetType  { return widgetTypeForRoot }
     var                     manifest :          ZManifest? { return cloud?.manifest }
     var                       widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
+	var                 widgetObject :      ZWidgetObject? { return widget?.widgetObject }
     var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
 	var                lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                        count :                Int  { return children.count }
@@ -87,18 +87,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     children =          ZoneArray()
 	var                       traits =   ZTraitDictionary()
 
-	var widgetTypeForRoot : ZWidgetType {
-		var type = ZWidgetType.tMain
+	var type : ZWidgetType {
+		var result = ZWidgetType.tMain
 
 		if  let name = root?.recordName() {
 			switch name {
-				case kRecentsName:       type = .tRecent
-				case kFavoritesRootName: type = .tFavorite
+				case kRecentsName:       result = .tRecent
+				case kFavoritesRootName: result = .tFavorite
 				default:                 break
 			}
 		}
 
-		return type
+		return result
 	}
 
 	// MARK:- setup

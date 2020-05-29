@@ -21,8 +21,15 @@ class ZFavoritesController: ZGraphController {
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
 		if  let c = gDetailsController, !c.hideableIsHidden(for: .Favorites) { // don't send signal to a hidden favorites controller
+			update()
 			super.handleSignal(iSignalObject, kind: iKind)
 		}
+	}
+
+	func update() {
+		controlsView?.update()
+		gRecents.updateCurrentRecent()
+		gFavorites.updateCurrentFavorite()
 	}
 
 	override func startup() {

@@ -335,8 +335,8 @@ class ZSelecting: NSObject {
 
     private func addOneGrab(_ iZone: Zone?) {
         if  let zone = iZone,
-			zone != gFavoritesHereMaybe,
-            (!currentGrabs.contains(zone)) {
+			zone    != gFavoritesHereMaybe, // disallow grab on non-visible favorite, avoid ugly looking highlight
+            !currentGrabs.contains(zone) {
             currentGrabs.append(zone)
 
             currentGrabs = respectOrder(for: currentGrabs)

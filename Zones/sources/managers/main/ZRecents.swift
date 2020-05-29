@@ -52,10 +52,36 @@ class ZRecents : ZRecords {
 		}
 	}
 
-	func updateCurrentRecent() {
-		if  let  bookmark = root?.children.bookmarksTargeting(gHereMaybe) {
-			currentRecent = bookmark
+	func updateRecents(shouldGrab: Bool = false) {
+		if  currentRecent?.isGrabbed ?? false {
+			currentRecent?.bookmarkTarget?.grab()
+		} else if updateCurrentRecent(),
+			gIsRecentlyMode,
+			shouldGrab {
+			currentRecent?.grab()
 		}
+	}
+
+	@discardableResult func updateCurrentRecent() -> Bool {
+		if  let recents = root?.children {
+			var targets = ZoneArray()
+
+			if  let grab = gSelecting.firstGrab {
+				targets.append(grab)
+			}
+
+			if  let here = gHereMaybe {
+				targets.append(here)
+			}
+
+			if  let bookmark  = recents.bookmarksTargeting(targets) {
+				currentRecent = bookmark
+
+				return true
+			}
+		}
+
+		return false
 	}
 
 	func push(intoNotes: Bool = false) {
@@ -136,8 +162,8 @@ class ZRecents : ZRecords {
 		if  let here  = recent.bookmarkTarget {
 			gHere     = here
 
-			gHere.grab()
 			focus(kind: .eSelected) {
+				gHere.grab()
 				gSignal([.sRelayout])
 			}
 		}
@@ -171,9 +197,9 @@ class ZRecents : ZRecords {
 		}
 	}
 
-	func focus(kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, _ atArrival: @escaping Closure) {
+	func focus(kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
 
-		// for grabbed/edited zone, five states:
+		// regarding grabbed/edited zone, five states:
 		// 1. is a bookmark      -> target becomes here
 		// 2. is here            -> update in favorites, not push
 		// 3. in favorite/recent -> grab here
@@ -181,7 +207,7 @@ class ZRecents : ZRecords {
 		// 5. not COMMAND        -> select here
 
 		if  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab {
-			let focusClosure = { (zone: Zone) in
+			let finishAndGrab = { (zone: Zone) in
 				gFavorites.updateCurrentFavorite()
 				zone.grab()
 				atArrival()
@@ -191,21 +217,20 @@ class ZRecents : ZRecords {
 				travelThrough(zone) { object, kind in
 					gHere = object as! Zone
 
-					focusClosure(gHere)
+					finishAndGrab(gHere)
 				}
 			} else if zone == gHere {       // state 2
-				updateCurrentRecent()
-//				gFavorites.updateGrab()
+				updateRecents(shouldGrab: shouldGrab)
+				gFavorites.updateGrab()
 				atArrival()
 			} else if zone.isInFavorites || zone.isInRecently {  // state 3
-				focusClosure(gHere)
+				finishAndGrab(gHere)
 			} else if COMMAND {             // state 4
 				refocus {
-					self.push()
 					atArrival()
 				}
 			} else {                        // state 5
-				focusClosure(zone)
+				finishAndGrab(zone)
 			}
 		}
 	}
@@ -233,8 +258,6 @@ class ZRecents : ZRecords {
 
 				return true
 			} else if let dbID = bookmark.crossLink?.databaseID {
-				push()
-
 				gDatabaseID = dbID
 
 				focus {
