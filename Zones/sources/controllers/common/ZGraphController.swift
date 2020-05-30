@@ -354,7 +354,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     func dragDropMaybe(_ iGesture: ZGestureRecognizer?) -> Bool {
         if  let draggedZone       = gDraggedZone {
             if  draggedZone.userCanMove,
-                let (isMap, dropNearest, location) = widgetNearest(iGesture) {
+                let (isMap, dropNearest, location) = widgetNearest(iGesture, forMap: false) {
                 var      dropZone = dropNearest.widgetZone
                 let dropIsGrabbed = gSelecting.currentGrabs.contains(dropZone!)
                 let     dropIndex = dropZone?.siblingIndex
@@ -421,7 +421,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     // MARK:- internals
     // MARK:-
 
-    func widgetNearest(_ iGesture: ZGestureRecognizer?) -> (Bool, ZoneWidget, CGPoint)? {
+	func widgetNearest(_ iGesture: ZGestureRecognizer?, forMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
 		if  let     gView = iGesture?.view,
 			let    gPoint = iGesture?.location(in: gView),
 			let  location = dragView?.convert(gPoint, from: gView),
@@ -444,7 +444,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 				// ////////////////////////////////////////////////////// //
 
                 if  distanceW > distanceA {
-                    return (false, alternateWidget, location)
+					return (false, alternateWidget, forMap ? location : alternateLocation)
                 }
             }
 

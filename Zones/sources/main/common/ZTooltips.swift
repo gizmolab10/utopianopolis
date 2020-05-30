@@ -193,26 +193,6 @@ extension ZoneTextWidget {
 
 }
 
-extension ZControlButton {
-
-	var labelText: String {
-		switch type {
-			case .eInsertion: return gListsGrowDown      ? "down" : "up"
-			case .eConfined:  return gBrowsingIsConfined ? "list" : "all"
-			case .eToolTips:  return gShowToolTips       ? "hide" : "show" + "tool tips"
-		}
-	}
-
-	override var description: String {
-		switch type {
-			case .eInsertion: return kClickTo + "toggle insertion direction"
-			case .eConfined:  return kClickTo + "toggle browsing confinement (between list and all)"
-			case .eToolTips:  return kClickTo + "toggle tool tips visibility"
-		}
-	}
-
-}
-
 extension ZModeControlsView {
 
 	func updateTooltips() {

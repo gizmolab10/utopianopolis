@@ -23,8 +23,9 @@ class ZWidgets: NSObject {
 
     var visibleWidgets: [ZoneWidget] {
         let favorites = gFavoritesRoot?.visibleWidgets ?? []
+		let   recents =  gRecents.root?.visibleWidgets ?? []
 
-        return gHere.visibleWidgets + favorites
+        return gHere.visibleWidgets + favorites + recents
     }
 
     func clearRegistry(for type: ZWidgetType) {

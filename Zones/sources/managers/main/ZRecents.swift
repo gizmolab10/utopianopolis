@@ -189,9 +189,9 @@ class ZRecents : ZRecords {
 	func focusOn(_ iHere: Zone, _ atArrival: @escaping Closure) {
 		gHere = iHere // side-effect does recents push
 
-		gRecents.push()
-		focus {
-			gHere.grab()
+		focus(kind: .eSelected) {
+			iHere.grab()
+			self.updateCurrentRecent()
 			gFavorites.updateCurrentFavorite()
 			atArrival()
 		}
@@ -206,32 +206,40 @@ class ZRecents : ZRecords {
 		// 4. not here, COMMAND  -> become here
 		// 5. not COMMAND        -> select here
 
-		if  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab {
-			let finishAndGrab = { (zone: Zone) in
-				gFavorites.updateCurrentFavorite()
-				zone.grab()
-				atArrival()
-			}
+		guard  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab else {
+			atArrival()
 
-			if  zone.isBookmark {     		// state 1
-				travelThrough(zone) { object, kind in
-					gHere = object as! Zone
+			return
+		}
 
-					finishAndGrab(gHere)
-				}
-			} else if zone == gHere {       // state 2
-				updateRecents(shouldGrab: shouldGrab)
-				gFavorites.updateGrab()
-				atArrival()
-			} else if zone.isInFavorites || zone.isInRecently {  // state 3
+		let finishAndGrab = { (zone: Zone) in
+			gFavorites.updateCurrentFavorite()
+			zone.grab()
+			atArrival()
+		}
+
+		if  zone.isBookmark {     		// state 1
+			travelThrough(zone) { object, kind in
+				gHere = object as! Zone
+
 				finishAndGrab(gHere)
-			} else if COMMAND {             // state 4
-				refocus {
-					atArrival()
-				}
-			} else {                        // state 5
-				finishAndGrab(zone)
 			}
+		} else if zone == gHere {       // state 2
+			updateRecents(shouldGrab: shouldGrab)
+			gFavorites.updateGrab()
+			atArrival()
+		} else if zone.isInFavorites || zone.isInRecently {  // state 3
+			finishAndGrab(gHere)
+		} else if COMMAND {             // state 4
+			refocus {
+				atArrival()
+			}
+		} else {                        // state 5
+			if  shouldGrab {
+				gHere = zone
+			}
+
+			finishAndGrab(zone)
 		}
 	}
 

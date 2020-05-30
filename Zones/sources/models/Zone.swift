@@ -1271,7 +1271,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
 	func asssureIsVisibleAndGrab(updateBrowsingLevel: Bool = true) {
-		gShowFavorites = kIsPhone && isInFavorites
+		gShowFavorites = kIsPhone && (isInFavorites || isInRecently)
 
 		asssureIsVisible()
 		grab(updateBrowsingLevel: updateBrowsingLevel)

@@ -44,7 +44,7 @@ class ZModeControlsView : ZButtonsView, ZTooltips {
 			if  let    type = button.modeButtonType {
 				switch type {
 					case .tConfine: button    .title = gConfinementMode.rawValue
-					case .tMode:    button    .title = "Show \(gIsRecentlyMode ? "Favorites" : "Recents")"
+					case .tMode:    button    .title = "Show \(gIsRecentlyMode ? "Favorites" : "Recent")"
 					case .tGrow:    button    .title = gListGrowthMode .rawValue
 					case .tAdd:     button    .title = "+"
 				}

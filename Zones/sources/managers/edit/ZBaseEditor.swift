@@ -44,7 +44,7 @@ class ZBaseEditor: NSObject {
 				case "q": if COMMAND { gApplication.terminate(self); handled = true }
 				case "r": if SPECIAL { sendEmailBugReport();         handled = true }
 				case "t": if ONEFLAG { fetchTraits();                handled = true }
-				case "x": if SPECIAL { wipeRing();                   handled = true }
+				case "x": if SPECIAL { clearRecents();               handled = true }
 				case "/": if SPECIAL { gControllers.showShortcuts(); handled = true }
 				default:  break
 			}
@@ -93,7 +93,7 @@ class ZBaseEditor: NSObject {
 		}
 	}
 
-	func wipeRing() {
+	func clearRecents() {
 		if  gIsNoteMode {
 			gControllers.swapGraphAndEssay()
 		}

@@ -205,11 +205,6 @@ var gEmailTypesSent: String {
     }
 }
 
-var gFullRingIsVisible: Bool {
-	get { return getPreferencesBool(   for: kFullRingIsVisible, defaultBool: true) }
-	set { setPreferencesBool(newValue, for: kFullRingIsVisible) }
-}
-
 var gFavoritesAreVisible: Bool {
 	get { return getPreferencesBool(   for: kFavoritesAreVisibleKey, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kFavoritesAreVisibleKey) }
