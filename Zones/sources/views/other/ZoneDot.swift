@@ -26,12 +26,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     weak var     widget: ZoneWidget?
     var        innerDot: ZoneDot?
     var       dragStart: CGPoint?
-    var        isReveal: Bool  = true
-    var      isInnerDot: Bool  = false
-	var      isDragDrop: Bool  { return widgetZone == gDragDropZone }
-	var dragDotIsHidden: Bool  { return widgetZone?.dragDotIsHidden ?? true }
-    var      widgetZone: Zone? { return widget?.widgetZone }
-
+    var        isReveal: Bool    = true
+    var      isInnerDot: Bool    = false
+	var      isDragDrop: Bool    { return widgetZone == gDragDropZone }
+	var dragDotIsHidden: Bool    { return widgetZone?.dragDotIsHidden ?? true }
+    var      widgetZone: Zone?   { return widget?.widgetZone }
+	var           ratio: CGFloat { return widget?.ratio ?? 1.0 }
+	var   innerDotWidth: CGFloat { return ratio * CGFloat(isReveal ? gDotHeight : dragDotIsHidden ? 0.0 : gDotWidth) }
+	var  innerDotHeight: CGFloat { return ratio * CGFloat(gDotHeight) }
 
     var innerOrigin: CGPoint? {
         if  let inner = innerDot {
@@ -78,15 +80,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         return isVisible
     }
 
-
     // MARK:- initialization
     // MARK:-
-
-
-    var         ratio:  CGFloat { return widget?.ratio ?? 1.0 }
-    var innerDotWidth:  CGFloat { return ratio * CGFloat(isReveal ? gDotHeight : dragDotIsHidden ? 0.0 : gDotWidth) }
-    var innerDotHeight: CGFloat { return ratio * CGFloat(gDotHeight) }
-
 
     func setupForWidget(_ iWidget: ZoneWidget, asReveal: Bool) {
         isReveal = asReveal
@@ -117,7 +112,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
                 var   width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
-				if !iWidget.type.isMain {
+				if !iWidget.type.isMap {
                     width  *= kFavoritesReduction
                 }
 
@@ -202,7 +197,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
 
     func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
-		let     ratio = (widget?.type.isMain ?? true) ? 1.0 : kFavoritesReduction
         var thickness = CGFloat(gLineThickness + 0.1) * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
         var      rect = CGRect.zero
@@ -220,7 +214,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         path.fill()
     }
 
-
     func drawTinyBookmarkDot(in iDirtyRect: CGRect) {
         let     inset = CGFloat(innerDotHeight / 3.0)
         let      path = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(inset))
@@ -229,17 +222,15 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         path.fill()
     }
 
-
     func drawTraitIndicator(for iZone: Zone, isFilled: Bool, in iDirtyRect: CGRect) {
         let types = iZone.traits.keys
         for type in types {
             let   string = type.rawValue
-			let isForMap = widget?.type.isMain ?? true
-            let    ratio = CGFloat(isForMap ? 1.0 : Double(kFavoritesReduction))
+			let isForMap = widget?.type.isMap ?? true
             let    width = CGFloat(gDotHeight - 2.0) * ratio
             let     font = ZFont.boldSystemFont(ofSize: width)
 			let     size = string.sizeWithFont(font)
-			let   height = size.height * type.heightRatio + (isForMap ? 1.0 : -2.5)
+			let   height = size.height * type.heightRatio + (isForMap ? 1.0 : -8.0)
 			let   xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
 			let   yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
 			let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: (height / 12.0) - 1)
@@ -250,7 +241,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
             return
         }
     }
-
 
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)

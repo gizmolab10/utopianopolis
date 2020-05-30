@@ -303,9 +303,8 @@ class ZRecents : ZRecords {
 				gFavorites.currentFavorite = iBookmark
 			}
 
-			if  iBookmark.isInRecently,
-				gRecents.currentRecent    != iBookmark {
-				gRecents.setCurrent(iBookmark)
+			if  iBookmark.isInRecently {
+				gRecents.currentRecent     = iBookmark
 			}
 
 			if  let target = iTarget, target.spawnedBy(gHereMaybe) {

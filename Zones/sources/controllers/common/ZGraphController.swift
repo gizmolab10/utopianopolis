@@ -19,7 +19,7 @@ var gGraphController: ZGraphController? { return gControllers.controllerForID(.i
 class ZGraphController: ZGesturesController, ZScrollDelegate {
     
 	override  var       controllerID : ZControllerID { return .idMap }
-	var                   widgetType : ZWidgetType   { return .tMain }
+	var                   widgetType : ZWidgetType   { return .tMap }
 	var                        isMap : Bool          { return true }
 	var                     hereZone : Zone?         { return gHereMaybe }
 	@IBOutlet var            spinner : ZProgressIndicator?
@@ -209,6 +209,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             } else if state != .began {               // drag ended, failed or was cancelled
                 gRubberband.rubberbandRect = nil      // erase rubberband
 
+				print("end drag")
 				restartGestureRecognition()
 				dragView?.setAllSubviewsNeedDisplay()
 				gSignal([.sDatum])                    // so color well and indicators get updated

@@ -60,8 +60,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var              isCurrentNonMap :               Bool  { return isCurrentRecent || isCurrentFavorite }
 	var              isCurrentRecent :               Bool  { return self ==   gRecents.currentRecent }
 	var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
-	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isHereForNonMap && !(widget?.type.isMain ??  true)) || (kIsPhone && self == gHereMaybe)) }
-    var              dragDotIsHidden :               Bool  { return                     (isHereForNonMap && !(widget?.type.isMain ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
+	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isHereForNonMap && !(widget?.type.isMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
+    var              dragDotIsHidden :               Bool  { return                     (isHereForNonMap && !(widget?.type.isMap ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
     var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
     var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
     var                 hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }
@@ -89,7 +89,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                       traits =   ZTraitDictionary()
 
 	var type : ZWidgetType {
-		var result = ZWidgetType.tMain
+		var result = ZWidgetType.tMap
 
 		if  let name = root?.recordName() {
 			switch name {

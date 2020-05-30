@@ -33,7 +33,7 @@ class ZWidgets: NSObject {
     }
 
 	func getWidgetsDict(for type: ZWidgetType) -> [Int : ZoneWidget] {
-		if type.isMain     { return     mainWidgets }
+		if type.isMap     { return     mainWidgets }
 		if type.isRecent   { return   recentWidgets }
 		if type.isFavorite { return favoriteWidgets }
 
@@ -41,7 +41,7 @@ class ZWidgets: NSObject {
 	}
 
 	func setWidgetsDict(_ dict: [Int : ZoneWidget], for type: ZWidgetType) {
-		if      type.isMain     {     mainWidgets = dict }
+		if      type.isMap     {     mainWidgets = dict }
 		else if type.isRecent   {   recentWidgets = dict }
 		else if type.isFavorite { favoriteWidgets = dict }
 	}

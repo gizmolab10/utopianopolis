@@ -29,20 +29,20 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	init() { rawValue = ZWidgetType.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
+	static let      tMap = ZWidgetType()
 	static let     tIdea = ZWidgetType()
-	static let     tMain = ZWidgetType()
 	static let   tRecent = ZWidgetType()
 	static let tFavorite = ZWidgetType()
 	static let    tEssay = ZWidgetType()
 	static let     tNote = ZWidgetType()
 
-	var isMain:     Bool { return contains(.tMain) }
+	var isMap:      Bool { return contains(.tMap) }
 	var isRecent:   Bool { return contains(.tRecent) }
 	var isFavorite: Bool { return contains(.tFavorite) }
 
 	var description: String {
-		return [(.tIdea,     "    idea"),
-				(.tMain,     "    main"),
+		return [(.tMap,      "     map"),
+				(.tIdea,     "    idea"),
 				(.tNote,     "    note"),
 				(.tEssay,    "   essay"),
 				(.tRecent,   "  recent"),
@@ -71,14 +71,14 @@ class ZoneWidget: ZView {
 	let            widgetObject = ZWidgetObject  ()
     private var childrenWidgets = [ZoneWidget]   ()
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
-	var                   ratio :    CGFloat  { return type.isMain ? 1.0 : kFavoritesReduction }
+	var                   ratio :    CGFloat  { return type.isMap ? 1.0 : kFavoritesReduction }
 	override var    description :     String  { return widgetZone?.description ?? kEmptyIdea }
 
 	var type : ZWidgetType {
 		var result    = widgetZone? .type
 
 		if  result   == nil {
-			result    = .tMain
+			result    = .tMap
 		}
 
 		if  let oType = widgetObject.type {
@@ -89,7 +89,7 @@ class ZoneWidget: ZView {
 	}
 
 	var controller: ZGraphController? {
-		if type.isMain     { return     gGraphController }
+		if type.isMap     { return     gGraphController }
 		if type.isRecent   { return gFavoritesController }
 		if type.isFavorite { return gFavoritesController }
 
@@ -226,7 +226,7 @@ class ZoneWidget: ZView {
 		childrenView.snp.setLabel("<c> \(widgetZone?.zoneName ?? "unknown")")
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let ratio = type.isMain ? 1.0 : kFavoritesReduction / 3.0
+            let ratio = type.isMap ? 1.0 : kFavoritesReduction / 3.0
 
             make.left.equalTo(textWidget.snp.right).offset(gChildrenViewOffset * Double(ratio))
             make.bottom.top.right.equalTo(self)
@@ -499,7 +499,7 @@ class ZoneWidget: ZView {
         let         shrink =  3.0 + (height / 6.0)
         let hiddenDotDelta = rightDot?.revealDotIsVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0   // expand around reveal dot, only if it is visible
         var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta, dy: -0.5 - delta).offsetBy(dx: -0.75, dy: 0.5)  // get size from text widget
-        rect.size .height += -0.5 + gHighlightHeightOffset + (type.isMain ? 0.0 : 1.0)
+        rect.size .height += -0.5 + gHighlightHeightOffset + (type.isMap ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let     colorRatio = CGFloat(pale ? 0.5 : 1.0)
@@ -552,7 +552,7 @@ class ZoneWidget: ZView {
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
 
-		if (gIsGraphOrEditIdeaMode || !type.isMain),
+		if (gIsGraphOrEditIdeaMode || !type.isMap),
 			let      zone = widgetZone {
             let isGrabbed = zone.isGrabbed
             let isEditing = textWidget.isFirstResponder
