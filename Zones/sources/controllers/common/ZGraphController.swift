@@ -355,37 +355,37 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         if  let draggedZone       = gDraggedZone {
             if  draggedZone.userCanMove,
                 let (isMap, dropNearest, location) = widgetNearest(iGesture, forMap: false) {
-                var      dropZone = dropNearest.widgetZone
-                let dropIsGrabbed = gSelecting.currentGrabs.contains(dropZone!)
-                let     dropIndex = dropZone?.siblingIndex
-                let          here = isMap ? gHere : gFavoritesHereMaybe
-                let      dropHere = dropZone == here
-				let      relation = dropZone?.widget?.controller?.relationOf(location, to: dropNearest.textWidget) ?? .upon
-                let useDropParent = relation != .upon && !dropHere
-                ;        dropZone = dropIsGrabbed ? nil : useDropParent ? dropZone?.parentZone : dropZone
-                let lastDropIndex = dropZone == nil ? 0 : dropZone!.count
-                var         index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!gListsGrowDown || dropIsGrabbed) ? 0 : lastDropIndex)
-                ;           index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
-                let     dragIndex = draggedZone.siblingIndex
-                let     sameIndex = dragIndex == index || dragIndex == index - 1
-                let  dropIsParent = dropZone?.children.contains(draggedZone) ?? false
-                let    spawnCycle = dropZone?.spawnCycle ?? false
-                let        isNoop = dropIsGrabbed || spawnCycle || (sameIndex && dropIsParent) || index < 0
-                let         prior = gDragDropZone?.widget
-                let       dropNow = isDoneGesture(iGesture)
-                gDragDropIndices  = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
-                gDragDropZone     = isNoop || dropNow ? nil : dropZone
-                gDragRelation     = isNoop || dropNow ? nil : relation
-                gDragPoint        = isNoop || dropNow ? nil : location
+				let dropController = dropNearest.controller
+                var       dropZone = dropNearest.widgetZone
+                let  dropIsGrabbed = gSelecting.currentGrabs.contains(dropZone!)
+                let      dropIndex = dropZone?.siblingIndex
+                let           here = isMap ? gHere : gFavoritesHereMaybe
+                let       dropHere = dropZone == here
+				let       relation = dropController?.relationOf(location, to: dropNearest.textWidget) ?? .upon
+                let  useDropParent = relation != .upon && !dropHere
+                ;         dropZone = dropIsGrabbed ? nil : useDropParent ? dropZone?.parentZone : dropZone
+                let  lastDropIndex = dropZone == nil ? 0 : dropZone!.count
+                var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!gListsGrowDown || dropIsGrabbed) ? 0 :   lastDropIndex)
+                ;            index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
+                let      dragIndex = draggedZone.siblingIndex
+                let      sameIndex = dragIndex == index || dragIndex == index - 1
+                let   dropIsParent = dropZone?.children.contains(draggedZone) ?? false
+                let     spawnCycle = dropZone?.spawnCycle ?? false
+                let         isNoop = dropIsGrabbed || spawnCycle || (sameIndex && dropIsParent) || index < 0
+                let          prior = gDragDropZone?.widget
+                let        dropNow = isDoneGesture(iGesture)
+                gDragDropIndices   = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
+                gDragDropZone      = isNoop || dropNow ? nil : dropZone
+                gDragRelation      = isNoop || dropNow ? nil : relation
+                gDragPoint         = isNoop || dropNow ? nil : location
 
                 if !isNoop && !dropNow && !dropHere && index > 0 {
                     gDragDropIndices?.add(index - 1)
                 }
 
                 prior?                          .displayForDrag() // erase    child lines
-                dropZone?.widget?               .displayForDrag() // relayout child lines
+                dropNearest                     .displayForDrag() // relayout child lines
 				gGraphController?    .dragView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
-				gRecentsController?  .dragView?.setNeedsDisplay()
 				gFavoritesController?.dragView?.setNeedsDisplay()
 
                 if !isNoop, dropNow,
@@ -494,7 +494,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             } else if y > rect.maxY - margin {
                 relation = .below
             }
-        }
+		}
 
         return relation
     }

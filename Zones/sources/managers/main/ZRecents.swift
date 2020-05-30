@@ -228,7 +228,7 @@ class ZRecents : ZRecords {
 			updateRecents(shouldGrab: shouldGrab)
 			gFavorites.updateGrab()
 			atArrival()
-		} else if zone.isInFavorites || zone.isInRecently {  // state 3
+		} else if zone.isInDetails {    // state 3
 			finishAndGrab(gHere)
 		} else if COMMAND {             // state 4
 			refocus {
@@ -253,7 +253,7 @@ class ZRecents : ZRecords {
 
 	@discardableResult func focusThrough(_ iBookmark: Zone?, _ atArrival: @escaping Closure) -> Bool {
 		if  let bookmark = iBookmark, bookmark.isBookmark {
-			if  bookmark.isInRecently || bookmark.isInFavorites {
+			if  bookmark.isInDetails {
 				let targetParent = bookmark.bookmarkTarget?.parentZone
 
 				targetParent?.revealChildren()
@@ -301,6 +301,11 @@ class ZRecents : ZRecords {
 
 			if  iBookmark.isInFavorites {
 				gFavorites.currentFavorite = iBookmark
+			}
+
+			if  iBookmark.isInRecently,
+				gRecents.currentRecent    != iBookmark {
+				gRecents.setCurrent(iBookmark)
 			}
 
 			if  let target = iTarget, target.spawnedBy(gHereMaybe) {

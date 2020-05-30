@@ -8,7 +8,6 @@
 
 import Foundation
 
-var   gRecentsController: ZGraphController? { return gControllers.controllerForID(.idRecents)   as? ZGraphController }
 var gFavoritesController: ZGraphController? { return gControllers.controllerForID(.idFavorites) as? ZGraphController }
 
 class ZFavoritesController: ZGraphController {

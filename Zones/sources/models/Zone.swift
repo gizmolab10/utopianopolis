@@ -73,6 +73,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     hasEmail :               Bool  { return hasTrait(for: .tEmail) && email != "" }
 	var                     hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                      hasNote :               Bool  { return hasTrait(for: .tNote) }
+	var                  isInDetails :               Bool  { return isInRecently || isInFavorites }
 	var                      isInMap :               Bool  { return root?.isMapRoot            ?? false }
     var                    isInTrash :               Bool  { return root?.isRootOfTrash        ?? false }
 	var                 isInRecently :               Bool  { return root?.isRootOfRecents      ?? false }
@@ -322,9 +323,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             d.append("T")
         }
 
-        if isInFavorites {
-            d.append("F")
-        }
+		if isInFavorites {
+			d.append("F")
+		}
+
+		if isInRecently {
+			d.append("R")
+		}
 
         if isBookmark {
             d.append("B")
@@ -1271,7 +1276,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
 	func asssureIsVisibleAndGrab(updateBrowsingLevel: Bool = true) {
-		gShowFavorites = kIsPhone && (isInFavorites || isInRecently)
+		gShowFavorites = kIsPhone && isInDetails
 
 		asssureIsVisible()
 		grab(updateBrowsingLevel: updateBrowsingLevel)
@@ -2055,8 +2060,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 				}
 
-				if  self.isInFavorites && show {
-					gFavorites.updateAllFavorites()
+				if  show {
+					if  self.isInFavorites {
+						gFavorites.updateAllFavorites()
+					}
+
+					if  self.isInRecently {
+						gRecents.updateRecents()
+					}
 				}
 
 				onCompletion?()

@@ -90,7 +90,7 @@ class ZoneWidget: ZView {
 
 	var controller: ZGraphController? {
 		if type.isMain     { return     gGraphController }
-		if type.isRecent   { return   gRecentsController }
+		if type.isRecent   { return gFavoritesController }
 		if type.isFavorite { return gFavoritesController }
 
 		return nil

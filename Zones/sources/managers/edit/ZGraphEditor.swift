@@ -1222,9 +1222,9 @@ class ZGraphEditor: ZBaseEditor {
         // 4. move a favorite into a normal zone -- convert favorite to a bookmark, then move the bookmark          //
         // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        let   toBookmark = iInto.isBookmark                      // type 2
-        let  toFavorites = iInto.isInFavorites && !toBookmark    // type 3
-        let         into = iInto.bookmarkTarget ?? iInto         // grab bookmark AFTER travel
+        let   toBookmark = iInto.isBookmark                    // type 2
+        let    toDetails = iInto.isInDetails && !toBookmark    // type 3
+        let         into = iInto.bookmarkTarget ?? iInto       // grab bookmark AFTER travel
         var        grabs = gSelecting.currentGrabs
         var      restore = [Zone: (Zone, Int?)] ()
         var    cyclicals = IndexSet()
@@ -1245,13 +1245,13 @@ class ZGraphEditor: ZBaseEditor {
             grabs.remove(at: index)
         }
 
-        if  let dragged = gDraggedZone, dragged.isInFavorites, !toFavorites {
-            dragged.maybeNeedSave()                             // type 4
+        if  let dragged = gDraggedZone, dragged.isInDetails, !toDetails {
+            dragged.maybeNeedSave()                            // type 4
         }
 
         grabs.sort { (a, b) -> Bool in
-            if  a.isInFavorites {
-                a.maybeNeedSave()                               // type 4
+            if  a.isInDetails {
+                a.maybeNeedSave()                              // type 4
             }
 
             return a.order < b.order
@@ -1304,7 +1304,7 @@ class ZGraphEditor: ZBaseEditor {
 				for grab in grabs {
 					var beingMoved = grab
 
-					if  toFavorites && !beingMoved.isInFavorites && !beingMoved.isBookmark && !beingMoved.isInTrash && !CONTROL {
+					if  toDetails && !beingMoved.isInDetails && !beingMoved.isBookmark && !beingMoved.isInTrash && !CONTROL {
 						if  let bookmark = gFavorites.createBookmark(for: beingMoved, action: .aFavorite) {	// type 3
 							beingMoved   = bookmark
 
