@@ -32,7 +32,8 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			path.stroke()
         }
 
-		if  let    widget = gDragDropZone?.widget, gDragDropZone!.isInMap == controller?.isMap {
+		if  let    widget = gDragDropZone?.widget,
+			let         c = controller, c.isMap == gDragDropZone?.isInMap {
             let   dotRect = widget.floatingDropDotRect
             let localRect = widget.convert(dotRect, to: self)
 
@@ -45,11 +46,30 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
     func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
         if  let c = controller {
-            return (gestureRecognizer == c.clickGesture && otherGestureRecognizer == c.movementGesture) ||
-				gestureRecognizer == c.edgeGesture
+            return gestureRecognizer == c.clickGesture && otherGestureRecognizer == c.movementGesture
         }
 
         return false
     }
+
+	override func updateTrackingAreas() {
+		for area in trackingAreas {
+			removeTrackingArea(area)
+		}
+
+		addTrackingArea(NSTrackingArea(rect: bounds, options: [.activeAlways, .cursorUpdate, .mouseEnteredAndExited], owner: self, userInfo: nil))
+		super.updateTrackingAreas()
+	}
+
+	override func mouseExited(with event: NSEvent) {
+		super.mouseExited(with: event)
+
+		if  gRubberband.rubberbandRect != nil {
+			gRubberband.rubberbandRect  = nil
+
+			setNeedsDisplay()
+			print("exit")
+		}
+	}
 
 }

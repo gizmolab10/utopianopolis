@@ -1,5 +1,5 @@
 //
-//  ZRubbeerband.swift
+//  ZRubberband.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/24/20.
@@ -25,9 +25,9 @@ class ZRubberband: NSObject {
 		}
 	}
 
-	func setRubberbandEnd(_ end: CGPoint) -> Bool { // true means rect was set
+	@discardableResult func setRubberbandEnd(_ end: CGPoint) -> Bool { // true means rect was set
 		if  rubberbandStart != .zero {
-			rubberbandRect = CGRect(start: rubberbandStart, end: end)
+			rubberbandRect   = CGRect(start: rubberbandStart, end: end)
 
 			return true
 		}

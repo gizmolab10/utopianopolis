@@ -817,8 +817,6 @@ class ZGraphEditor: ZBaseEditor {
                 if extreme {
                     if  gHere.isARoot {
                         gHere = zone // reverse what the last move out extreme did
-
-                        onCompletion?()
                     } else {
                         let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
                         
@@ -832,7 +830,6 @@ class ZGraphEditor: ZBaseEditor {
                     if  zone == gHere {
                         zone.revealParentAndSiblings()
 						self.revealSiblingsOf(zone, untilReaching: p)
-						onCompletion?()
                     } else {
                         p.revealChildren()
                         p.needChildren()
@@ -845,8 +842,6 @@ class ZGraphEditor: ZBaseEditor {
                     
                     if  let bookmark = zone.fetchedBookmark {
                         gHere        = bookmark
-
-						onCompletion?()
                     }
                 }
             } else if let p = parentZone, !p.isARoot {
@@ -896,12 +891,13 @@ class ZGraphEditor: ZBaseEditor {
 							self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
 						} else {
 							moveOutToHere(grandParentZone!)
-							onCompletion?()
 						}
                     }
                 }
             }
         }
+
+		onCompletion?()
     }
     
     func move(out: Bool, selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
@@ -943,10 +939,9 @@ class ZGraphEditor: ZBaseEditor {
 				}
 
 				invoke()
+				onCompletion?()
 
-				if  needReveal {
-					onCompletion?()
-				} else {
+				if !needReveal {
 					gSignal([.sCrumbs])
 				}
 			}

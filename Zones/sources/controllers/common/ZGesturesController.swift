@@ -22,7 +22,6 @@ class ZGesturesController: ZGenericController, ZGestureRecognizerDelegate {
 	var  moveLeftGesture :  ZGestureRecognizer?
 	var    moveUpGesture :  ZGestureRecognizer?
 	var     clickGesture :  ZKeyClickGestureRecognizer?
-	var      edgeGesture :  ZGestureRecognizer?
 	let       doneStates : [ZGestureRecognizerState] = [.ended, .cancelled, .failed, .possible]
 
 	func restartGestureRecognition() {}

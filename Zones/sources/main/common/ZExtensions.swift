@@ -2089,6 +2089,10 @@ extension ZView {
         superview?.applyToAllSuperviews(closure)
 	}
 
+	func locationFromEvent(_ event: ZEvent) -> CGPoint {
+		return convert(event.locationInWindow, from: nil)
+	}
+
 	func rectFromEvent(_ event: ZEvent) -> CGRect {
 		return convert(CGRect(origin: event.locationInWindow, size: CGSize.zero), from: nil)
 	}

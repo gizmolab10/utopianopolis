@@ -249,8 +249,9 @@ class ZSelecting: NSObject {
     }
     
     func assureMinimalGrabs() {
-        if  currentGrabs.count == 0 {
-            grab([gHere])
+        if  currentGrabs.count == 0,
+			let here = gHereMaybe {
+            grab([here])
         }
     }
 

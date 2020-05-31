@@ -48,13 +48,17 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
     override func setup() {
-		gestureView                      = dragView // do this before calling super setup as it uses gesture view
+		gestureView                      = dragView // do this before calling super setup, which uses gesture view
 		view     .layer?.backgroundColor = kClearColor.cgColor
 		dragView?.layer?.backgroundColor = kClearColor.cgColor
 
 		super.setup()
 		platformSetup()
         dragView?.addSubview(rootWidget)
+
+		if  isMap {
+			dragView?.updateTrackingAreas()
+		}
     }
 
     #if os(OSX)
@@ -174,8 +178,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 	
 	func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
-		return (gestureRecognizer == clickGesture && otherGestureRecognizer == movementGesture) ||
-			otherGestureRecognizer == edgeGesture
+		return gestureRecognizer == clickGesture && otherGestureRecognizer == movementGesture
 	}
 
 	override func restartGestureRecognition() {
@@ -209,7 +212,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             } else if state != .began {               // drag ended, failed or was cancelled
                 gRubberband.rubberbandRect = nil      // erase rubberband
 
-				print("end drag")
 				restartGestureRecognition()
 				dragView?.setAllSubviewsNeedDisplay()
 				gSignal([.sDatum])                    // so color well and indicators get updated
