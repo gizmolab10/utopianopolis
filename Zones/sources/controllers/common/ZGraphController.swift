@@ -22,9 +22,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	var                   widgetType : ZWidgetType   { return .tMap }
 	var                        isMap : Bool          { return true }
 	var                     hereZone : Zone?         { return gHereMaybe }
-	@IBOutlet var            spinner : ZProgressIndicator?
 	@IBOutlet var           dragView : ZDragView?
-	@IBOutlet var        spinnerView : ZView?
+	@IBOutlet var          graphView : ZView?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 	var          priorScrollLocation = CGPoint.zero
 	let 	            clickManager = ZClickManager()
@@ -49,12 +48,13 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     override func setup() {
 		gestureView                      = dragView // do this before calling super setup, which uses gesture view
-		view     .layer?.backgroundColor = kClearColor.cgColor
-		dragView?.layer?.backgroundColor = kClearColor.cgColor
+		view      .layer?.backgroundColor = kClearColor.cgColor
+		dragView? .layer?.backgroundColor = kClearColor.cgColor
+		graphView?.layer?.backgroundColor = kClearColor.cgColor
 
 		super.setup()
 		platformSetup()
-        dragView?.addSubview(rootWidget)
+        graphView?.addSubview(rootWidget)
 
 		if  isMap {
 			dragView?.updateTrackingAreas()
@@ -113,7 +113,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     func layoutForCurrentScrollOffset() {
 		let offset = isMap ? gScrollOffset : CGPoint(x: -12.0, y: -6.0)
 
-		if  let d = dragView {
+		if  let d = graphView {
 			rootWidget.snp.setLabel("<w> \(rootWidget.widgetZone?.zoneName ?? "unknown")")
 			rootWidget.snp.removeConstraints()
 			rootWidget.snp.makeConstraints { make in
@@ -135,7 +135,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 		let                        here = hereZone
         var specificWidget: ZoneWidget? = rootWidget
-        var specificView:        ZView? = dragView
+        var specificView:        ZView? = graphView
         var specificIndex:         Int?
         var                   recursing = true
         specificWidget?     .widgetZone = here
@@ -163,7 +163,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
 			layoutWidgets(for: iSignalObject, iKind)
-			dragView?.setAllSubviewsNeedDisplay()
+			graphView?.setAllSubviewsNeedDisplay()
+			dragView? .setNeedsDisplay()
         }
     }
 	
@@ -207,13 +208,14 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 dragMaybeStopEvent(iGesture)          // logic for drawing the drop dot, and for dropping dragged idea
 			} else if state == .changed,              // enlarge rubberband
 				gRubberband.setRubberbandEnd(location) {
-				gRubberband.updateGrabs(in: dragView)
-				dragView?.setAllSubviewsNeedDisplay()
+				gRubberband.updateGrabs(in: graphView)
+				dragView?  .setNeedsDisplay()
             } else if state != .began {               // drag ended, failed or was cancelled
                 gRubberband.rubberbandRect = nil      // erase rubberband
 
 				restartGestureRecognition()
-				dragView?.setAllSubviewsNeedDisplay()
+				graphView?.setAllSubviewsNeedDisplay()
+				dragView? .setNeedsDisplay()
 				gSignal([.sDatum])                    // so color well and indicators get updated
             } else if let dot = detectDot(iGesture) {
                 if  !dot.isReveal {
@@ -255,8 +257,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 				// detect click inside text being edited //
 				// ////////////////////////////////////////
 
-                let backgroundLocation = gesture.location(in: dragView)
-                let           textRect = editWidget!.convert(editWidget!.bounds, to: dragView)
+                let backgroundLocation = gesture.location(in: graphView)
+                let           textRect = editWidget!.convert(editWidget!.bounds, to: graphView)
                 withinEdit             = textRect.contains(backgroundLocation)
             }
 
@@ -276,7 +278,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 							if  dot.isReveal {
 								zone.revealDotClicked(COMMAND: COMMAND, OPTION: OPTION)
 							} else {
-								regarding = .sStatus // update selection level and TODO: breadcrumbs
+								regarding = .sCrumbs // update selection level and TODO: breadcrumbs
 
 								zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
 							}
@@ -427,20 +429,20 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	func widgetNearest(_ iGesture: ZGestureRecognizer?, forMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
 		if  let     gView = iGesture?.view,
 			let    gPoint = iGesture?.location(in: gView),
-			let  location = dragView?.convert(gPoint, from: gView),
-			let    widget = rootWidget.widgetNearestTo(location, in: dragView, hereZone) {
+			let  location = graphView?.convert(gPoint, from: gView),
+			let    widget = rootWidget.widgetNearestTo(location, in: graphView, hereZone) {
 			let alternate = isMap ? gFavoritesController : gGraphController
 
 			if  !kIsPhone,
-				let alternateDragView = alternate?.dragView,
-				let alternateLocation = dragView?.convert(location, to: alternateDragView),
-				let   alternateWidget = alternate?.rootWidget.widgetNearestTo(alternateLocation, in: alternateDragView, alternate?.hereZone) {
-				let          dragDotW =          widget.dragDot
-                let          dragDotA = alternateWidget.dragDot
-                let           vectorW = dragDotW.convert(dragDotW.bounds.center, to: view) - location
-                let           vectorA = dragDotA.convert(dragDotA.bounds.center, to: view) - location
-                let         distanceW = vectorW.hypontenuse
-                let         distanceA = vectorA.hypontenuse
+				let alternateGraphView = alternate?.graphView,
+				let alternateLocation  = graphView?.convert(location, to: alternateGraphView),
+				let alternateWidget    = alternate?.rootWidget.widgetNearestTo(alternateLocation, in: alternateGraphView, alternate?.hereZone) {
+				let           dragDotW =          widget.dragDot
+                let           dragDotA = alternateWidget.dragDot
+                let            vectorW = dragDotW.convert(dragDotW.bounds.center, to: view) - location
+                let            vectorA = dragDotA.convert(dragDotA.bounds.center, to: view) - location
+                let          distanceW = vectorW.hypontenuse
+                let          distanceA = vectorA.hypontenuse
 
 				// ////////////////////////////////////////////////////// //
 				// determine which drag dot's center is closest to cursor //
@@ -459,7 +461,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     
     func isEditingText(at location: CGPoint) -> Bool {
         if  gIsEditIdeaMode, let textWidget = gCurrentlyEditingWidget {
-            let rect = textWidget.convert(textWidget.bounds, to: dragView)
+            let rect = textWidget.convert(textWidget.bounds, to: graphView)
 
             return rect.contains(location)
         }
@@ -479,7 +481,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         gDragPoint       = nil
 
         rootWidget.setNeedsDisplay()
-        dragView? .setNeedsDisplay() // erase drag: line and dot
+		graphView?.setNeedsDisplay()
+		dragView? .setNeedsDisplay() // erase drag: line and dot
 		dot?      .setNeedsDisplay()
     }
 
@@ -513,7 +516,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
 		var          hit : ZoneWidget?
 		var     smallest = CGSize.big
-        if  let        d = dragView,
+        if  let        d = graphView,
             let location = iGesture?.location(in: d), d.bounds.contains(location) {
 			let     dict = gWidgets.getWidgetsDict(for: widgetType)
             let  widgets = dict.values.reversed()
@@ -535,7 +538,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
         var hit: ZoneDot?
 
-        if  let                d = dragView,
+        if  let                d = graphView,
             let         location = iGesture?.location(in: d) {
             let test: DotClosure = { iDot in
                 let         rect = iDot.convert(iDot.bounds, to: d)

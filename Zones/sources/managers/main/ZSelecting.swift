@@ -260,19 +260,18 @@ class ZSelecting: NSObject {
 
 
     func ungrabAll(retaining: ZoneArray? = nil) {
-        let    isEmpty = retaining == nil || retaining!.count == 0
-        let       more = isEmpty ? [] : retaining!
-        let    grabbed = currentGrabs + more
+        let       more = retaining ?? []
+        let    grabbed = currentGrabs
         currentGrabs   = []
         sortedGrabs    = []
         cousinList     = []
 
-        if !isEmpty {
+		if  more.count > 0 {
             hasNewGrab = more[0]
         }
-        
+
+		updateWidgetsNeedDisplay(for: grabbed)
         currentGrabs.append(contentsOf: more)
-        updateWidgetsNeedDisplay(for: grabbed)
     }
     
     
@@ -322,7 +321,6 @@ class ZSelecting: NSObject {
         }
     }
 
-
     func addMultipleGrabs(_ iZones: ZoneArray) {
 		for zone in iZones {
             addOneGrab(zone)
@@ -331,10 +329,7 @@ class ZSelecting: NSObject {
         updateWidgetsNeedDisplay(for: currentGrabs)
     }
 
-
-    // private because it doesn't update widgets
-
-    private func addOneGrab(_ iZone: Zone?) {
+    func addOneGrab(_ iZone: Zone?) { // caller must update widgets need display
         if  let zone = iZone,
 			zone    != gFavoritesHereMaybe, // disallow grab on non-visible favorite, avoid ugly looking highlight
             !currentGrabs.contains(zone) {

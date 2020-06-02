@@ -267,8 +267,9 @@ class ZoneWidget: ZView {
 
 
     var hitRect: CGRect? {
-        if  let start = dragDot.innerOrigin, let end = revealDot.innerExtent {
-            return CGRect(start: dragDot.convert(start, to: self), end: revealDot.convert(end, to: self))
+        if  let start =   dragDot.innerOrigin,
+			let   end = revealDot.innerExtent {
+            return CGRect(start: convert(start, from: dragDot), end: convert(end, from: revealDot))
         }
 
         return nil
@@ -497,7 +498,7 @@ class ZoneWidget: ZView {
         let          delta = height / 8.0
         let          inset = (height / -2.0) - 16.0
         let         shrink =  3.0 + (height / 6.0)
-        let hiddenDotDelta = rightDot?.revealDotIsVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0   // expand around reveal dot, only if it is visible
+        let hiddenDotDelta = rightDot?.isVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0   // expand around reveal dot, only if it is visible
         var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta, dy: -0.5 - delta).offsetBy(dx: -0.75, dy: 0.5)  // get size from text widget
         rect.size .height += -0.5 + gHighlightHeightOffset + (type.isMap ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta

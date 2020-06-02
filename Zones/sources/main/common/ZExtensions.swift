@@ -181,7 +181,7 @@ extension NSObject {
     }
 
     func sendEmailBugReport() {
-        "mailto:sand@gizmolab.com".openAsURL()
+        "mailto:sand@gizmolab.com?subject=Regarding Seriously".openAsURL()
     }
 
     // MARK:- bookmarks

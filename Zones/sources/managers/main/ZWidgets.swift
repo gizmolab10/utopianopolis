@@ -14,12 +14,12 @@ let gWidgets = ZWidgets()
 
 class ZWidgets: NSObject {
 
-	var      mainWidgets: [Int : ZoneWidget]  = [:]
+	var     mainWidgets: [Int : ZoneWidget]  = [:]
 	var   recentWidgets: [Int : ZoneWidget]  = [:]
 	var favoriteWidgets: [Int : ZoneWidget]  = [:]
-    var   currentEditingWidget: ZoneWidget? { return widgetForZone(gTextEditor.currentlyEditingZone) }
-    var   currentMovableWidget: ZoneWidget? { return widgetForZone(gSelecting.currentMoveable) }
-    var   firstGrabbableWidget: ZoneWidget? { return widgetForZone(gSelecting.firstSortedGrab) }
+    var  currentEditingWidget : ZoneWidget? { return widgetForZone(gTextEditor.currentlyEditingZone) }
+    var  currentMovableWidget : ZoneWidget? { return widgetForZone(gSelecting.currentMoveable) }
+    var  firstGrabbableWidget : ZoneWidget? { return widgetForZone(gSelecting.firstSortedGrab) }
 
     var visibleWidgets: [ZoneWidget] {
         let favorites = gFavoritesRoot?.visibleWidgets ?? []

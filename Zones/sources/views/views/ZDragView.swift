@@ -20,9 +20,8 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
         super.draw(dirtyRect)
 
         kClearColor.setFill()
+		kClearColor.setStroke()
         ZBezierPath(rect: bounds).fill() // transparent background
-		gActiveColor.lighter(by: 2.0).setStroke()
-//		ZBezierPath.drawBloatedTriangle(aimedRight: true, in: bounds.insetEquallyBy(100.0), thickness: 5.0)
 
 		if  controller?.isMap ?? false,
 			let rect = gRubberband.rubberbandRect {
@@ -33,14 +32,17 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
         }
 
 		if  let    widget = gDragDropZone?.widget,
+			let       dot = widget.revealDot.innerDot,
 			let         c = controller, c.isMap == gDragDropZone?.isInMap {
-            let   dotRect = widget.floatingDropDotRect
-            let localRect = widget.convert(dotRect, to: self)
+            let floatRect = widget.floatingDropDotRect
+            let  dragRect = widget.convert(floatRect, to: self)
+			let   dotRect = convert(dot.bounds, from: dot)
 
-            gActiveColor.setFill()
+			gActiveColor.setFill()
             gActiveColor.setStroke()
-            ZBezierPath(ovalIn: localRect).fill()
-            widget.drawDragLine(to: dotRect, in: self)
+			dot.drawMainDot(in: dotRect)
+            ZBezierPath(ovalIn: dragRect).fill()
+            widget.drawDragLine(to: floatRect, in: self)
         }
 	}
 
@@ -57,7 +59,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			removeTrackingArea(area)
 		}
 
-		addTrackingArea(NSTrackingArea(rect: bounds, options: [.activeAlways, .cursorUpdate, .mouseEnteredAndExited], owner: self, userInfo: nil))
+		addTrackingArea(NSTrackingArea(rect: bounds, options: [.activeAlways, .cursorUpdate, .mouseEnteredAndExited, .enabledDuringMouseDrag], owner: self, userInfo: nil))
 		super.updateTrackingAreas()
 	}
 
@@ -68,7 +70,12 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			gRubberband.rubberbandRect  = nil
 
 			setNeedsDisplay()
-			print("exit")
+		}
+
+		if  gDragDropZone != nil {
+			gDragDropZone  = nil
+
+			setNeedsDisplay()
 		}
 	}
 

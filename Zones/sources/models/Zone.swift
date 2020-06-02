@@ -1283,11 +1283,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
     func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool, _ CLICKTWICE: Bool) {
-        if !gIsEditIdeaMode && isGrabbed { return }  // nothing to do
-
-        let shouldFocus = COMMAND || (CLICKTWICE && isGrabbed)
-
-        if  shouldFocus {
+        if  COMMAND || (CLICKTWICE && isGrabbed) {
             grab() // narrow selection to just this one zone
             
             if !(CLICKTWICE && self == gHere) {

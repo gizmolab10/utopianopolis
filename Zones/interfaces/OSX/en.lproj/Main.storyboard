@@ -635,23 +635,8 @@ DQ
                         <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView hidden="YES" appearanceType="aqua" translatesAutoresizingMaskIntoConstraints="NO" id="fSQ-gu-ejW">
-                                <rect key="frame" x="0.0" y="73" width="289" height="144"/>
-                                <subviews>
-                                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="uBD-4n-5KN">
-                                        <rect key="frame" x="73" y="0.0" width="144" height="144"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="uBD-4n-5KN" secondAttribute="height" id="uzZ-PZ-MaY"/>
-                                        </constraints>
-                                    </progressIndicator>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="uBD-4n-5KN" firstAttribute="centerX" secondItem="fSQ-gu-ejW" secondAttribute="centerX" id="Pch-gV-l5Q"/>
-                                    <constraint firstAttribute="height" constant="144" id="byP-Jq-hYz"/>
-                                    <constraint firstItem="uBD-4n-5KN" firstAttribute="centerY" secondItem="fSQ-gu-ejW" secondAttribute="centerY" id="c2Q-JT-R0o"/>
-                                    <constraint firstItem="uBD-4n-5KN" firstAttribute="top" secondItem="fSQ-gu-ejW" secondAttribute="top" id="ofp-Cu-1Ft"/>
-                                    <constraint firstAttribute="bottom" secondItem="uBD-4n-5KN" secondAttribute="bottom" id="wyj-sa-dEL"/>
-                                </constraints>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="myf-PZ-JAt">
+                                <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="itU-Gt-Inh" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
@@ -662,19 +647,19 @@ DQ
                         </subviews>
                         <constraints>
                             <constraint firstItem="itU-Gt-Inh" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="2on-Rh-qaW"/>
-                            <constraint firstItem="fSQ-gu-ejW" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="4Qs-Xg-x3G"/>
+                            <constraint firstItem="myf-PZ-JAt" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="IQP-o6-hsE"/>
+                            <constraint firstItem="myf-PZ-JAt" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="cQG-96-ohP"/>
+                            <constraint firstAttribute="trailing" secondItem="myf-PZ-JAt" secondAttribute="trailing" id="dLt-XS-TaK"/>
                             <constraint firstItem="itU-Gt-Inh" firstAttribute="bottom" secondItem="m2S-Jp-Qdl" secondAttribute="bottom" id="doe-l2-P4Y"/>
-                            <constraint firstItem="fSQ-gu-ejW" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="g9C-0O-XTH"/>
-                            <constraint firstAttribute="trailing" secondItem="fSQ-gu-ejW" secondAttribute="trailing" id="jcY-AV-gdV"/>
                             <constraint firstItem="itU-Gt-Inh" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="lzQ-yE-6cu"/>
                             <constraint firstItem="itU-Gt-Inh" firstAttribute="trailing" secondItem="m2S-Jp-Qdl" secondAttribute="trailing" id="pGy-4H-4Ky"/>
+                            <constraint firstAttribute="bottom" secondItem="myf-PZ-JAt" secondAttribute="bottom" id="z8m-0I-n0V"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="dragView" destination="itU-Gt-Inh" id="4nO-dp-new"/>
+                        <outlet property="graphView" destination="myf-PZ-JAt" id="GM0-He-36T"/>
                         <outlet property="ideaContextualMenu" destination="4NV-a6-tte" id="idV-YI-eqw"/>
-                        <outlet property="spinner" destination="uBD-4n-5KN" id="l76-tc-ycD"/>
-                        <outlet property="spinnerView" destination="fSQ-gu-ejW" id="Qog-ht-L9n"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -873,7 +858,7 @@ CA
                     <accessibility description="Map Contextual Menu" identifier="Map Contextual Menu"/>
                 </menu>
             </objects>
-            <point key="canvasLocation" x="188" y="1173"/>
+            <point key="canvasLocation" x="331" y="1154"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -1008,6 +993,12 @@ CA
                                     <constraint firstAttribute="trailing" secondItem="ULe-6f-22e" secondAttribute="trailing" id="eKh-XU-h3l"/>
                                 </constraints>
                             </customView>
+                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5oi-yK-PC4" userLabel="Permission View">
+                                <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
+                                <connections>
+                                    <segue destination="ZgY-dx-Pyh" kind="embed" id="JIB-tj-ujI"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <constraints>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="trailing" constant="1" id="DTg-De-FLc"/>
@@ -1019,6 +1010,7 @@ CA
                             <constraint firstAttribute="bottom" secondItem="5jB-w2-4Dg" secondAttribute="bottom" id="bsX-IT-HDI"/>
                             <constraint firstAttribute="trailing" secondItem="LQL-Kb-jgm" secondAttribute="trailing" id="fgm-OB-ttw"/>
                             <constraint firstItem="tJ2-cd-SJp" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="hBw-R5-rRG"/>
+                            <constraint firstAttribute="trailing" secondItem="5oi-yK-PC4" secondAttribute="trailing" id="haB-GJ-03K"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="lap-td-b4Q"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="qfT-hA-eas"/>
                             <constraint firstAttribute="trailing" secondItem="5jB-w2-4Dg" secondAttribute="trailing" id="rXH-it-XjL"/>
@@ -1080,17 +1072,17 @@ CA
             <objects>
                 <viewController id="Hxl-Pi-4li" customClass="ZSearchResultsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Yjc-TG-nmv">
-                        <rect key="frame" x="0.0" y="0.0" width="299" height="296"/>
+                        <rect key="frame" x="0.0" y="0.0" width="299" height="289"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZRy-EY-PDd">
-                                <rect key="frame" x="20" y="20" width="259" height="276"/>
+                                <rect key="frame" x="20" y="20" width="259" height="269"/>
                                 <clipView key="contentView" id="xkU-Kc-9TS">
-                                    <rect key="frame" x="1" y="1" width="257" height="274"/>
+                                    <rect key="frame" x="1" y="1" width="257" height="267"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" id="z27-6x-Roi">
-                                            <rect key="frame" x="0.0" y="0.0" width="257" height="274"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="257" height="267"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1139,7 +1131,7 @@ CA
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="789" y="1176"/>
+            <point key="canvasLocation" x="647.5" y="1153.5"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -1199,7 +1191,7 @@ CA
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="486" y="1173"/>
+            <point key="canvasLocation" x="958" y="1154"/>
         </scene>
         <!--Web Link Controller-->
         <scene sceneID="yhj-YB-Xij">
@@ -1236,7 +1228,7 @@ CA
                 </viewController>
                 <customObject id="IZh-Iz-IVH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="486" y="1534"/>
+            <point key="canvasLocation" x="959" y="1537"/>
         </scene>
         <!--Breadcrumbs Controller-->
         <scene sceneID="wXo-la-8OL">
@@ -1301,6 +1293,19 @@ CA
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1057" y="597"/>
+        </scene>
+        <!--Permission Controller-->
+        <scene sceneID="r3B-ju-S2a">
+            <objects>
+                <viewController id="ZgY-dx-Pyh" customClass="ZPermissionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="7Q5-tK-Og4">
+                        <rect key="frame" x="0.0" y="0.0" width="287" height="289"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="2Ip-rP-SYE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="18" y="1154"/>
         </scene>
     </scenes>
 </document>

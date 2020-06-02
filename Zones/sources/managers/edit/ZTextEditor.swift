@@ -323,7 +323,6 @@ class ZTextEditor: ZTextView {
         currentEdit = e
     }
 
-    
     func quickStopCurrentEdit() {
         if  let e = currentEdit {
             applyPreservingEdit {

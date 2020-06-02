@@ -70,15 +70,28 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         return false
     }
 
-
-    var revealDotIsVisible: Bool {
-        var isVisible = true
-        if  let  zone = widgetZone, isReveal {
-            isVisible = isDragDrop || zone.canTravel || zone.count > 0
+    var isVisible: Bool {
+        if  isReveal,
+			let zone = widgetZone {
+            return isDragDrop || zone.canTravel || zone.count > 0
         }
         
-        return isVisible
+        return true
     }
+
+	var isFilled: Bool {
+		if  let zone = widgetZone {
+			if  !isReveal {
+				return zone.isGrabbed
+			} else {
+				let childlessTraveller = zone.canTravel && zone.count == 0
+
+				return !zone.showingChildren || childlessTraveller
+			}
+		}
+
+		return false
+	}
 
     // MARK:- initialization
     // MARK:-
@@ -139,11 +152,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         case sideDot
     }
 
-
     func isVisible(_ rect: CGRect) -> Bool {
-        return window?.contentView?.bounds.intersects(rect) ?? false
+        return isVisible && window?.contentView?.bounds.intersects(rect) ?? false
     }
-
 
     func drawFavoritesHighlight(in iDirtyRect: CGRect) {
 		if  let          zone  = widgetZone, innerDot != nil, !zone.isFavoritesHere, !zone.isRootOfRecents {
@@ -162,8 +173,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         }
     }
 
-
-    func drawMainDot(in iDirtyRect: CGRect) {
+	func drawMainDot(in iDirtyRect: CGRect) {
         let   thickness = CGFloat(gLineThickness)
 		var        path = ZBezierPath()
 
@@ -245,78 +255,77 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
 
-        if  let            zone = widgetZone, isVisible(iDirtyRect) {
-            let isCurrentNonMap = zone.isCurrentNonMap && !zone.isInTrash
+		if  isVisible(iDirtyRect),
+			let            zone = widgetZone {
+			if  isInnerDot {
+				let      filled = isFilled
+				let strokeColor = zone.color
+				var   fillColor = filled ? strokeColor?.lighter(by: 2.5) : gBackgroundColor
 
-            if  revealDotIsVisible {
-                if  isInnerDot {
-                    let childlessTraveller = zone.canTravel && zone.count == 0
-                    let        dotIsFilled = isReveal ? (!zone.showingChildren || childlessTraveller || isDragDrop) : zone.isGrabbed
-                    let        strokeColor = isReveal && isDragDrop ?  gActiveColor : zone.color
-					var          fillColor = dotIsFilled ? strokeColor?.lighter(by: 2.5) : gBackgroundColor
+				// //////
+				// DOT //
+				// //////
 
-                    // //////
-                    // DOT //
-                    // //////
+				fillColor?.setFill()
+				strokeColor?.setStroke()
 
-                    fillColor?.setFill()
-                    strokeColor?.setStroke()
-                    drawMainDot(in: iDirtyRect)
+				if  zone != gDragDropZone { // so when cursor leaves window, the should-be-invisible reveal dot will indeed disappear
+					drawMainDot(in: iDirtyRect)
+				}
 
-                    if  isReveal {
-                        if  zone.isBookmark {
+				if  isReveal {
+					if  zone.isBookmark {
 
-                            // //////////////////
-                            // TINY CENTER DOT //
-                            // //////////////////
+						// //////////////////
+						// TINY CENTER DOT //
+						// //////////////////
 
-                            gBackgroundColor.setFill()
-                            drawTinyBookmarkDot(in: iDirtyRect)
-                        } else if zone.canTravel {
+						gBackgroundColor.setFill()
+						drawTinyBookmarkDot(in: iDirtyRect)
+					} else if zone.canTravel {
 
-                            // //////////////////
-                            // TRAIT INDICATOR //
-                            // //////////////////
+						// //////////////////
+						// TRAIT INDICATOR //
+						// //////////////////
 
-                            drawTraitIndicator(for: zone, isFilled: dotIsFilled, in: iDirtyRect)
-                        }
-                    } else if zone.hasAccessDecoration {
-                        let  type = zone.directAccess == .eProgenyWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
-                        fillColor = dotIsFilled ? gBackgroundColor : strokeColor
+						drawTraitIndicator(for: zone, isFilled: filled, in: iDirtyRect)
+					}
+				} else if zone.hasAccessDecoration {
+					let  type = zone.directAccess == .eProgenyWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
+					fillColor = filled ? gBackgroundColor : strokeColor
 
-                        // ///////////////////////////
-                        // WRITE-ACCESS DECORATIONS //
-                        // ///////////////////////////
+					// ///////////////////////////
+					// WRITE-ACCESS DECORATIONS //
+					// ///////////////////////////
 
-                        fillColor?.setFill()
-                        drawWriteAccessDecoration(of: type, in: iDirtyRect)
-                    }
+					fillColor?.setFill()
+					drawWriteAccessDecoration(of: type, in: iDirtyRect)
+				}
 
-                } else {
+			} else {
 
-                    // /////////////////////////////
-                    // MOSTLY INVISIBLE OUTER DOT //
-                    // /////////////////////////////
+				// /////////////////////////////
+				// MOSTLY INVISIBLE OUTER DOT //
+				// /////////////////////////////
 
-                    if isReveal {
+				if isReveal {
 
-                        // /////////////////////
-                        // TINY COUNTER BEADS //
-                        // /////////////////////
+					// /////////////////////
+					// TINY COUNTER BEADS //
+					// /////////////////////
 
-                        drawTinyCountDots(iDirtyRect)
-                    } else if isCurrentNonMap {
+					drawTinyCountDots(iDirtyRect)
+				} else if zone.isCurrentNonMap && !zone.isInTrash {
 
-                        // ////////////////////////////////
-                        // HIGHLIGHT OF CURRENT FAVORITE //
-                        // ////////////////////////////////
+					// ////////////////////////////////
+					// HIGHLIGHT OF CURRENT FAVORITE //
+					// ////////////////////////////////
 
-                        zone.color?.withAlphaComponent(0.7).setFill()
-                        drawFavoritesHighlight(in: iDirtyRect)
-                    }
-                }
-            }
-        }
+					zone.color?.withAlphaComponent(0.7).setFill()
+					drawFavoritesHighlight(in: iDirtyRect)
+				}
+			}
+		}
     }
 
 }

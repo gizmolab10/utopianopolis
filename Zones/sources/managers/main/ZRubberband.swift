@@ -3,7 +3,7 @@
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/24/20.
-//  Copyright © 2020 Zones. All rights reserved.
+//  Copyright © 2020 Jonathan Sand. All rights reserved.
 //
 
 import Foundation
@@ -39,14 +39,19 @@ class ZRubberband: NSObject {
 		gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
 		gHere.ungrab()
 
-		if  let view = iView {
+		if  let    view = iView,
+			let    rect = rubberbandRect {
 			for widget in gWidgets.visibleWidgets {
 				if  let    hitRect = widget.hitRect {
 					let widgetRect = widget.convert(hitRect, to: view)
 
-					if  let   zone = widget.widgetZone, !zone.isRootOfFavorites,
-						widgetRect.intersects(rubberbandRect!) {
-						widget.widgetZone?.addToGrabs()
+					if  let   zone = widget.widgetZone,
+						!zone.isRootOfFavorites,
+						!zone.isRootOfRecents,
+						widgetRect.intersects(rect) {
+						gSelecting.addOneGrab(zone)
+						widget                  .setNeedsDisplay()
+						widget.dragDot.innerDot?.setNeedsDisplay()
 					}
 				}
 			}

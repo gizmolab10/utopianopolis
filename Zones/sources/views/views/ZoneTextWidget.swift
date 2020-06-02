@@ -126,11 +126,13 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips {
     }
 
 	override func mouseDown(with event: NSEvent) {
-		gTemporarilySetMouseDownLocation(event.locationInWindow.x)
-		gTemporarilySetMouseZone(widgetZone)
+		if !gRefusesFirstResponder { // ignore mouse down during startup
+			gTemporarilySetMouseDownLocation(event.locationInWindow.x)
+			gTemporarilySetMouseZone(widgetZone)
 
-		if !becomeFirstResponder() {
-			super.mouseDown(with: event)
+			if !becomeFirstResponder() {
+				super.mouseDown(with: event)
+			}
 		}
 	}
 
