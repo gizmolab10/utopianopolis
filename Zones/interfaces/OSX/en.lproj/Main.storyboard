@@ -902,7 +902,7 @@ CA
                                     <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" id="jSf-TE-Zs9"/>
                                 </constraints>
                             </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="5jB-w2-4Dg" userLabel="Main View">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="5jB-w2-4Dg" userLabel="Alternate Side View">
                                 <rect key="frame" x="227" y="0.0" width="130" height="256"/>
                                 <subviews>
                                     <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
@@ -993,7 +993,7 @@ CA
                                     <constraint firstAttribute="trailing" secondItem="ULe-6f-22e" secondAttribute="trailing" id="eKh-XU-h3l"/>
                                 </constraints>
                             </customView>
-                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5oi-yK-PC4" userLabel="Permission View">
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="5oi-yK-PC4" userLabel="Permission View">
                                 <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
                                 <connections>
                                     <segue destination="ZgY-dx-Pyh" kind="embed" id="JIB-tj-ujI"/>
@@ -1001,7 +1001,10 @@ CA
                             </containerView>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="5oi-yK-PC4" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="9Q8-HC-P7X"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="trailing" constant="1" id="DTg-De-FLc"/>
+                            <constraint firstItem="5oi-yK-PC4" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="HVB-l5-rqc"/>
+                            <constraint firstAttribute="bottom" secondItem="5oi-yK-PC4" secondAttribute="bottom" id="Hxj-uH-co3"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="trailing" id="L0w-Ew-6dH"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="QmT-ZT-tcN"/>
@@ -1021,6 +1024,7 @@ CA
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="fDV-lr-VDw"/>
                         <outlet property="essayView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
                         <outlet property="graphView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
+                        <outlet property="permissionView" destination="5oi-yK-PC4" id="5TP-04-XLC"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
                         <outlet property="skillControl" destination="0jt-BT-C1l" id="tCJ-oe-uBa"/>
@@ -1065,7 +1069,7 @@ CA
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1057" y="494"/>
+            <point key="canvasLocation" x="1018" y="524"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -1139,7 +1143,7 @@ CA
                 <controllerPlaceholder storyboardName="Details" id="yWa-SA-l1V" sceneMemberID="viewController"/>
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="895" y="681"/>
+            <point key="canvasLocation" x="856" y="678"/>
         </scene>
         <!--Essay-->
         <scene sceneID="YUn-EI-h0m">
@@ -1268,7 +1272,7 @@ CA
                                 </constraints>
                                 <buttonCell key="cell" type="bevel" bezelStyle="rounded" alignment="center" transparent="YES" imageScaling="proportionallyDown" inset="2" id="1MZ-57-Tfm">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="label" size="17"/>
+                                    <font key="font" metaFont="system" size="17"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="handleClipper:" target="Tsd-bp-vCV" id="rHm-Is-Zb1"/>
@@ -1292,7 +1296,7 @@ CA
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1057" y="597"/>
+            <point key="canvasLocation" x="1018" y="627"/>
         </scene>
         <!--Permission Controller-->
         <scene sceneID="r3B-ju-S2a">
@@ -1301,11 +1305,145 @@ CA
                     <view key="view" id="7Q5-tK-Og4">
                         <rect key="frame" x="0.0" y="0.0" width="287" height="289"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="K0u-LY-9eo">
+                                <rect key="frame" x="0.0" y="0.0" width="287" height="289"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CFf-mN-uMu">
+                                        <rect key="frame" x="30" y="241" width="227" height="28"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Welcome to Seriously" id="t0K-HT-RDq">
+                                            <font key="font" metaFont="system" size="24"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="NGd-6W-C0X">
+                                        <rect key="frame" x="-81" y="156" width="450" height="77"/>
+                                        <subviews>
+                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="xlc-Yd-hnd" userLabel="apple id">
+                                                <rect key="frame" x="-2" y="29" width="454" height="48"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="450" id="zMN-fz-5dE"/>
+                                                </constraints>
+                                                <textFieldCell key="cell" selectable="YES" alignment="justified" id="bc1-Sd-0wy">
+                                                    <font key="font" metaFont="system"/>
+                                                    <string key="title">Can you please allow Seriously access to your Apple ID? Seriously will not allow anyone but you access to your Apple ID nor to the information you enter into Seriously in your private database.</string>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="qwy-Fq-9BT" userLabel="access apple id buttons">
+                                                <rect key="frame" x="94" y="0.0" width="262" height="21"/>
+                                                <subviews>
+                                                    <button identifier="id no" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gqY-tc-UwL">
+                                                        <rect key="frame" x="-6" y="-7" width="66" height="32"/>
+                                                        <buttonCell key="cell" type="push" title="Quit" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70t-AV-QkO">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                            <string key="keyEquivalent">n</string>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="handlePermissionAction:" target="ZgY-dx-Pyh" id="CjO-48-qe1"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button identifier="id yes" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bWe-Ul-jBd">
+                                                        <rect key="frame" x="56" y="-7" width="212" height="32"/>
+                                                        <buttonCell key="cell" type="push" title="Allow Access to my Apple ID" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EYY-QE-Hwt">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="handlePermissionAction:" target="ZgY-dx-Pyh" id="5nR-7K-CHe"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="bottom" secondItem="bWe-Ul-jBd" secondAttribute="bottom" id="1D2-ob-psE"/>
+                                                    <constraint firstItem="gqY-tc-UwL" firstAttribute="leading" secondItem="qwy-Fq-9BT" secondAttribute="leading" id="Bdq-hd-IP0"/>
+                                                    <constraint firstItem="bWe-Ul-jBd" firstAttribute="top" secondItem="qwy-Fq-9BT" secondAttribute="top" id="F0T-j1-wsg"/>
+                                                    <constraint firstItem="gqY-tc-UwL" firstAttribute="top" secondItem="qwy-Fq-9BT" secondAttribute="top" id="MPm-3Y-jaS"/>
+                                                    <constraint firstAttribute="bottom" secondItem="gqY-tc-UwL" secondAttribute="bottom" id="egS-UK-ATn"/>
+                                                    <constraint firstItem="bWe-Ul-jBd" firstAttribute="leading" secondItem="gqY-tc-UwL" secondAttribute="trailing" constant="8" id="h44-jT-WRl"/>
+                                                    <constraint firstAttribute="trailing" secondItem="bWe-Ul-jBd" secondAttribute="trailing" id="tSF-tC-exh"/>
+                                                </constraints>
+                                            </customView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="xlc-Yd-hnd" firstAttribute="leading" secondItem="NGd-6W-C0X" secondAttribute="leading" id="5vK-9K-Ilk"/>
+                                            <constraint firstItem="xlc-Yd-hnd" firstAttribute="centerX" secondItem="NGd-6W-C0X" secondAttribute="centerX" id="D56-on-Zt6"/>
+                                            <constraint firstItem="xlc-Yd-hnd" firstAttribute="top" secondItem="NGd-6W-C0X" secondAttribute="top" id="UTz-0E-1tO"/>
+                                            <constraint firstItem="qwy-Fq-9BT" firstAttribute="top" secondItem="xlc-Yd-hnd" secondAttribute="bottom" constant="8" id="cC0-Q6-cna"/>
+                                            <constraint firstItem="qwy-Fq-9BT" firstAttribute="centerX" secondItem="NGd-6W-C0X" secondAttribute="centerX" id="feG-oq-ER1"/>
+                                            <constraint firstAttribute="bottom" secondItem="qwy-Fq-9BT" secondAttribute="bottom" id="sU9-6w-BFH"/>
+                                        </constraints>
+                                    </customView>
+                                    <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pg2-h7-6ux" userLabel="Enable Cloud Drive">
+                                        <rect key="frame" x="-81" y="87" width="450" height="61"/>
+                                        <subviews>
+                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="O6S-Dv-mLT" userLabel="cloud drive">
+                                                <rect key="frame" x="-2" y="29" width="454" height="32"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="450" id="IKq-xe-yrh"/>
+                                                </constraints>
+                                                <textFieldCell key="cell" selectable="YES" alignment="justified" id="I6o-bK-Aqr">
+                                                    <font key="font" metaFont="system"/>
+                                                    <string key="title">In order to share your data with other devices running Seriously, your cloud drive must be enabled. Would you like Seriously to enable it?</string>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <button identifier="drive yes" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eJt-eS-JWW">
+                                                <rect key="frame" x="136" y="-7" width="177" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Enable my Cloud Drive" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KhS-Fu-AAZ">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                    <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="handlePermissionAction:" target="ZgY-dx-Pyh" id="w1B-lw-Jcf"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="O6S-Dv-mLT" firstAttribute="leading" secondItem="Pg2-h7-6ux" secondAttribute="leading" id="4lG-kP-ANT"/>
+                                            <constraint firstAttribute="width" constant="450" id="LJt-Po-qx2"/>
+                                            <constraint firstItem="eJt-eS-JWW" firstAttribute="centerX" secondItem="Pg2-h7-6ux" secondAttribute="centerX" id="fCj-C4-PLs"/>
+                                            <constraint firstAttribute="trailing" secondItem="O6S-Dv-mLT" secondAttribute="trailing" id="ll3-hz-6qF"/>
+                                            <constraint firstItem="eJt-eS-JWW" firstAttribute="top" secondItem="O6S-Dv-mLT" secondAttribute="bottom" constant="8" id="nfJ-TI-k6r"/>
+                                            <constraint firstItem="O6S-Dv-mLT" firstAttribute="top" secondItem="Pg2-h7-6ux" secondAttribute="top" id="pNL-MG-go8"/>
+                                            <constraint firstAttribute="bottom" secondItem="eJt-eS-JWW" secondAttribute="bottom" id="y6Q-3Q-OMr"/>
+                                        </constraints>
+                                    </customView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="CFf-mN-uMu" firstAttribute="top" secondItem="K0u-LY-9eo" secondAttribute="top" constant="20" id="A3o-1X-Joe"/>
+                                    <constraint firstItem="Pg2-h7-6ux" firstAttribute="top" secondItem="NGd-6W-C0X" secondAttribute="bottom" constant="8" id="Wan-Sp-vU0"/>
+                                    <constraint firstItem="Pg2-h7-6ux" firstAttribute="centerX" secondItem="K0u-LY-9eo" secondAttribute="centerX" id="Yyp-6K-cj5"/>
+                                    <constraint firstItem="NGd-6W-C0X" firstAttribute="centerX" secondItem="K0u-LY-9eo" secondAttribute="centerX" id="hZ8-hi-YVM"/>
+                                    <constraint firstItem="CFf-mN-uMu" firstAttribute="centerX" secondItem="K0u-LY-9eo" secondAttribute="centerX" id="iGB-Ve-qVh"/>
+                                    <constraint firstItem="NGd-6W-C0X" firstAttribute="top" secondItem="CFf-mN-uMu" secondAttribute="bottom" constant="8" id="mpW-zR-RgK"/>
+                                </constraints>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="K0u-LY-9eo" secondAttribute="trailing" id="OWU-ZO-1N6"/>
+                            <constraint firstItem="K0u-LY-9eo" firstAttribute="top" secondItem="7Q5-tK-Og4" secondAttribute="top" id="Q2K-ge-95e"/>
+                            <constraint firstItem="K0u-LY-9eo" firstAttribute="leading" secondItem="7Q5-tK-Og4" secondAttribute="leading" id="cFu-RX-yVa"/>
+                            <constraint firstAttribute="bottom" secondItem="K0u-LY-9eo" secondAttribute="bottom" id="oHr-NI-wuo"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="enableCloudDrive" destination="Pg2-h7-6ux" id="ZNv-i1-OG3"/>
+                    </connections>
                 </viewController>
                 <customObject id="2Ip-rP-SYE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="18" y="1154"/>
+            <point key="canvasLocation" x="17.5" y="1153.5"/>
         </scene>
     </scenes>
 </document>

@@ -18,7 +18,8 @@ class ZMainController: ZGenericController {
 
 	@IBOutlet var skillControl      : NSSegmentedControl?
     @IBOutlet var searchResultsView : ZView?
-    @IBOutlet var searchBoxView     : ZView?
+	@IBOutlet var permissionView    : ZView?
+	@IBOutlet var searchBoxView     : ZView?
     @IBOutlet var detailView        : ZView?
 	@IBOutlet var graphView         : ZView?
 	@IBOutlet var essayView     	: ZView?

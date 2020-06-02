@@ -13,5 +13,20 @@ var gPermissionController: ZPermissionController? { return gControllers.controll
 class ZPermissionController: ZGenericController {
 
 	override var controllerID : ZControllerID { return .idPermission }
+	@IBOutlet var enableCloudDrive : ZTextField?
 
+	@IBAction func handlePermissionAction(_ button: ZButton) {
+		let identifier = convertFromOptionalUserInterfaceItemIdentifier(button.identifier)
+
+		print(identifier)
+
+		switch identifier {
+			case "id yes":    enableCloudDrive?.isHidden = false
+			case "drive yes": gMainController?.permissionView?.isHidden = true
+
+			default:          gApplication.terminate(self)
+		}
+
+		view.setAllSubviewsNeedDisplay()
+	}
 }
