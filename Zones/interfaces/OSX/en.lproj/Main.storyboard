@@ -1318,16 +1318,16 @@ CA
                                         </textFieldCell>
                                     </textField>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="NGd-6W-C0X">
-                                        <rect key="frame" x="-81" y="156" width="450" height="77"/>
+                                        <rect key="frame" x="-81" y="140" width="450" height="93"/>
                                         <subviews>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="xlc-Yd-hnd" userLabel="apple id">
-                                                <rect key="frame" x="-2" y="29" width="454" height="48"/>
+                                                <rect key="frame" x="-2" y="29" width="454" height="64"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="450" id="zMN-fz-5dE"/>
                                                 </constraints>
                                                 <textFieldCell key="cell" selectable="YES" alignment="justified" id="bc1-Sd-0wy">
                                                     <font key="font" metaFont="system"/>
-                                                    <string key="title">Can you please allow Seriously access to your Apple ID? Seriously will not allow anyone but you access to your Apple ID nor to the information you enter into Seriously in your private database.</string>
+                                                    <string key="title">Seriously is an iCloud enabled app. To reach the cloud, it needs access to your Apple ID. Seriously will never allow anyone but you access to your Apple ID nor to the information you enter into Seriously in your private database. Do you want to give Seriously access to your Apple ID?</string>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
@@ -1381,16 +1381,16 @@ DQ
                                         </constraints>
                                     </customView>
                                     <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pg2-h7-6ux" userLabel="Enable Cloud Drive">
-                                        <rect key="frame" x="-81" y="87" width="450" height="61"/>
+                                        <rect key="frame" x="-81" y="55" width="450" height="77"/>
                                         <subviews>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="O6S-Dv-mLT" userLabel="cloud drive">
-                                                <rect key="frame" x="-2" y="29" width="454" height="32"/>
+                                                <rect key="frame" x="-2" y="29" width="454" height="48"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="450" id="IKq-xe-yrh"/>
                                                 </constraints>
                                                 <textFieldCell key="cell" selectable="YES" alignment="justified" id="I6o-bK-Aqr">
                                                     <font key="font" metaFont="system"/>
-                                                    <string key="title">In order to share your data with other devices running Seriously, your cloud drive must be enabled. Would you like Seriously to enable it?</string>
+                                                    <string key="title">In order to share your Seriously data with your other devices running Seriously, your cloud drive must be enabled. Would you like Seriously to enable it?</string>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
@@ -1419,11 +1419,24 @@ DQ
                                             <constraint firstAttribute="bottom" secondItem="eJt-eS-JWW" secondAttribute="bottom" id="y6Q-3Q-OMr"/>
                                         </constraints>
                                     </customView>
+                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="kKM-9B-fW0">
+                                        <rect key="frame" x="-83" y="15" width="454" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="450" id="xCI-TT-GKm"/>
+                                        </constraints>
+                                        <textFieldCell key="cell" selectable="YES" alignment="justified" title="Please bear with this pause while your data is loading; it may take up to half a minute." id="3XW-gG-Hxw">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="CFf-mN-uMu" firstAttribute="top" secondItem="K0u-LY-9eo" secondAttribute="top" constant="20" id="A3o-1X-Joe"/>
+                                    <constraint firstItem="kKM-9B-fW0" firstAttribute="top" secondItem="Pg2-h7-6ux" secondAttribute="bottom" constant="8" id="BE6-Rm-Rfl"/>
                                     <constraint firstItem="Pg2-h7-6ux" firstAttribute="top" secondItem="NGd-6W-C0X" secondAttribute="bottom" constant="8" id="Wan-Sp-vU0"/>
                                     <constraint firstItem="Pg2-h7-6ux" firstAttribute="centerX" secondItem="K0u-LY-9eo" secondAttribute="centerX" id="Yyp-6K-cj5"/>
+                                    <constraint firstItem="kKM-9B-fW0" firstAttribute="centerX" secondItem="K0u-LY-9eo" secondAttribute="centerX" id="e3M-DB-O5U"/>
                                     <constraint firstItem="NGd-6W-C0X" firstAttribute="centerX" secondItem="K0u-LY-9eo" secondAttribute="centerX" id="hZ8-hi-YVM"/>
                                     <constraint firstItem="CFf-mN-uMu" firstAttribute="centerX" secondItem="K0u-LY-9eo" secondAttribute="centerX" id="iGB-Ve-qVh"/>
                                     <constraint firstItem="NGd-6W-C0X" firstAttribute="top" secondItem="CFf-mN-uMu" secondAttribute="bottom" constant="8" id="mpW-zR-RgK"/>
@@ -1438,6 +1451,7 @@ DQ
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="acccessToAppleID" destination="NGd-6W-C0X" id="uM0-1J-iv0"/>
                         <outlet property="enableCloudDrive" destination="Pg2-h7-6ux" id="ZNv-i1-OG3"/>
                     </connections>
                 </viewController>

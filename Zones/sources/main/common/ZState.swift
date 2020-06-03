@@ -31,6 +31,7 @@ var       gHasFinishedStartup                     = false
 var      gCreateCombinedEssay 			   		  = false
 var    gRefusesFirstResponder                     = false
 var   gIsEditingStateChanging                     = false
+var        gInterruptionCount                     = 0
 var    gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var gCurrentMouseDownLocation:           CGFloat?
 var     gCurrentMouseDownZone:              Zone?
@@ -44,7 +45,6 @@ var              gDraggedZone:              Zone?
 var                gDragPoint:           CGPoint?
 var                 gExpanded:          [String]?
 
-var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var                   gIsDark:               Bool { return gDarkMode == .Dark }
 var                   gIsLate:               Bool { return gBatches.isLate }
 var               gIsDragging:               Bool { return gDraggedZone != nil }
@@ -56,17 +56,23 @@ var           gDuplicateEvent:               Bool { return gCurrentEvent != nil 
 var               gIsNoteMode:               Bool { return gWorkMode == .noteMode }
 var              gIsGraphMode:               Bool { return gWorkMode == .graphMode }
 var             gIsSearchMode:               Bool { return gWorkMode == .searchMode }
+var            gIsStartupMode:               Bool { return gWorkMode == .startupMode }
 var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIdeaMode }
-var          gCanSaveWorkMode:               Bool { return gIsGraphMode || gIsNoteMode }
+var          gCanSaveWorkMode:               Bool { return gIsGraphMode || gIsNoteMode || gIsStartupMode }
 var    gIsGraphOrEditIdeaMode:               Bool { return gIsGraphMode || gIsEditIdeaMode }
+var            gProSkillLevel:               Bool { return gSkillLevel == .pro }
+var    gUnclutteredSkillLevel:               Bool { return gSkillLevel == .uncluttered }
+var       gBeginnerSkillLevel:               Bool { return gSkillLevel == .beginner }
+var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
+var                  gRecords:          ZRecords? { return gShowFavorites ? gFavorites : gCloud }
+var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
+var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
-var   gDeciSecondsSinceLaunch:                Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
-var                gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
-var                 gDotWidth:             Double { return gDotHeight * 0.75 }
-var       gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
 var                 gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
-var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
-var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
+var                 gDotWidth:             Double { return gDotHeight * 0.75 }
+var                gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
+var       gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
+var   gDeciSecondsSinceLaunch:                Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
 var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kLightestGrayColor : kBlackColor }
 var         gNecklaceDotColor:             ZColor { return gIsDark ? !gColorfulMode  ? kDarkGrayColor.darker(by: 4.0) : gAccentColor.inverted.darker(by: 5.0) : gAccentColor }
 var          gBackgroundColor:             ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
@@ -76,7 +82,13 @@ var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish
 var   gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gLighterActiveColor }
 var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
-var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
+var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
+var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
+
+let       kBeginnerSkillLevel                     = ZSkillLevel.beginner.rawValue
+let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
+let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
+
 func         gSetEditIdeaMode()                   { gWorkMode = .editIdeaMode }
 func            gSetGraphMode()                   { gWorkMode = .graphMode }
 
@@ -120,8 +132,6 @@ var gHere: Zone {
 	}
 }
 
-var gRecords: ZRecords? { return gShowFavorites ? gFavorites : gCloud }
-
 var gHereMaybe: Zone? {
     get { return gRecords?.hereZoneMaybe }
     set { gRecords?.hereZoneMaybe = newValue }
@@ -137,14 +147,19 @@ var gClipBreadcrumbs : Bool {
 	set { setPreferencesBool(newValue, for: kClipBreadcrumbs) }
 }
 
-var         gProSkillLevel : Bool { return gSkillLevel == .pro }
-var gUnclutteredSkillLevel : Bool { return gSkillLevel == .uncluttered }
-var    gBeginnerSkillLevel : Bool { return gSkillLevel == .beginner }
-let    kBeginnerSkillLevel =               ZSkillLevel.beginner.rawValue
-
 var gSkillLevel : ZSkillLevel {
 	get { return  ZSkillLevel(rawValue: getPreferencesInt(for: kSkillLevel, defaultInt: kBeginnerSkillLevel) ?? kBeginnerSkillLevel) ?? ZSkillLevel.beginner }
 	set { setPreferencesInt(newValue.rawValue, for: kSkillLevel); gMainController?.updateForSkillLevel() }
+}
+
+var gHasAccessToAppleID : Bool {
+	get { return getPreferencesBool(   for: kHasAccessToAppleID, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kHasAccessToAppleID) }
+}
+
+var gCloudDriveIsEnabled : Bool {
+	get { return getPreferencesBool(   for: kCloudDriveIsEnabled, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kCloudDriveIsEnabled) }
 }
 
 var gColorfulMode : Bool {
@@ -241,8 +256,6 @@ var gWindowRect: CGRect {
 	set { setPreferencesRect(newValue, for: kWindowRectKey) }
 }
 
-let gEssayTextFontSize = kDefaultEssayTextFontSize
-let gEssayTitleFontSize = kDefaultEssayTitleFontSize
 var gEssayTitleFontSizex: CGFloat {
 	get { return getPreferencesAmount(for: kEssayTitleFontSize, defaultAmount: kDefaultEssayTitleFontSize) }
 	set { setPreferencesAmount(newValue, for: kEssayTitleFontSize) }
@@ -518,8 +531,6 @@ var gWorkMode: ZWorkMode = .startupMode {
 	}
 }
 
-var gCurrentEssayZone: Zone? { return gCurrentEssay?.zone }
-
 var gCurrentEssay: ZNote? {
 	didSet {
 		gRecents.push(intoNotes: true)
@@ -565,13 +576,11 @@ func gTemporarilySetArrowsDoNotBrowse(_ notBrowse: Bool, for seconds: Double = 1
 // MARK:- actions
 // MARK:-
 
-var interruptCount = 0
-
 func gTestForUserInterrupt() throws {
 	if  Thread.isMainThread, let w = gWindow, w.isKeyWindow, (w.mouseMoved || w.keyPressed) {
 
-		printDebug(.dLog, "throwing user interrupt \(interruptCount)")
-		interruptCount += 1
+		printDebug(.dLog, "throwing user interrupt \(gInterruptionCount)")
+		gInterruptionCount += 1
 
 		throw(ZInterruptionError.userInterrupted)
 	}
@@ -593,9 +602,9 @@ func gRefreshPersistentWorkMode() {
 
 @discardableResult func toggleRingControlModes(isDirection: Bool) -> Bool {
 	if isDirection {
-		gListGrowthMode = gListsGrowDown      ? .up          : .down
+		gListGrowthMode  = gListsGrowDown      ? .up  : .down
 	} else {
-		gConfinementMode   = gBrowsingIsConfined ? .all : .list
+		gConfinementMode = gBrowsingIsConfined ? .all : .list
 	}
 
 	return true
@@ -617,18 +626,6 @@ func recordEmailSent(for type: ZSentEmailType) {
     if  !emailSent  (for: type) {
         gEmailTypesSent.append(type.rawValue)
     }
-}
-
-func key(for flag: Bool) -> String {
-	return "\(flag ? "note" : "focus") \(kRingContents)"
-}
-
-func getRingContents(for flag: Bool) -> [String] {
-	return getPreferenceString(for: key(for: flag)) { return nil }?.componentsSeparatedAt(level: 0) ?? []
-}
-
-func setRingContents(for flag: Bool, strings: [String]) {
-	setPreferencesString(strings.joined(separator: gSeparatorAt(level: 0)), for: key(for: flag))
 }
 
 // MARK:- internals

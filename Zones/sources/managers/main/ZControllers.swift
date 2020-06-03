@@ -11,34 +11,29 @@ import Foundation
 enum ZControllerID: Int {
     case idUndefined
     case idSearchResults
-    case idAuthenticate
 	case idIntroduction
 	case idPreferences
-	case idPermission
     case idFavorites
 	case idShortcuts
+	case idStartup
     case idDetails
-    case idActions
+    case idActions   // iPhone
 	case idStatus
     case idSearch
 	case idCrumbs
 	case idNote
-    case idHelp
 	case idMain
-	case idRing
 	case idMap
 }
 
 enum ZSignalKind: Int {
-	case sNone
+	case sMap
     case sData
     case sMain
-	case sRing
 	case sSwap
     case sDatum
     case sError
     case sFound
-	case sGraph
 	case sStatus
 	case sResize
 	case sSearch
@@ -64,9 +59,10 @@ class ZControllers: NSObject {
 
 	func startupCloudAndUI() {
 		gRefusesFirstResponder   = true			// WORKAROUND new feature of mac os x
+		gWorkMode                = .startupMode
 
 		gRemoteStorage.clear()
-		gRedrawGraph()
+		gSignal([.sMain, .sStartup])
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
@@ -79,12 +75,16 @@ class ZControllers: NSObject {
 				gRemoteStorage.recount()
 				gRefreshCurrentEssay()
 				gRefreshPersistentWorkMode()
-				gSignal([.sSwap, .sRing, .sCrumbs, .sRelayout, .sLaunchDone])
+				gSignal([.sSwap, .sMain, .sStartup, .sCrumbs, .sRelayout, .sLaunchDone])
 
 				gBatches.finishUp { iSame in
 					FOREGROUND {
 						gRefusesFirstResponder = false
 						gHasFinishedStartup    = true
+
+						if  gIsStartupMode {
+							gSetGraphMode()
+						}
 
 						gRemoteStorage.adoptAll()
 						gRedrawGraph()
@@ -140,7 +140,7 @@ class ZControllers: NSObject {
 			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {
 			e.resetCurrentEssay(zone.note)
 			swapGraphAndEssay(force: .noteMode)
-			gSignal([.sCrumbs, .sRing])
+			gSignal([.sCrumbs, .sFavorites])
 		}
 	}
 
@@ -217,25 +217,19 @@ class ZControllers: NSObject {
 
 			for regarding in multiple {
 				for (identifier, signalObject) in self.signalObjectsByControllerID {
-					let isPreferences = identifier == .idPreferences
-					let      isStatus = identifier == .idStatus
-					let      isCrumbs = identifier == .idCrumbs
-					let       isGraph = identifier == .idMap
-					let        isRing = identifier == .idRing
-					let        isMain = identifier == .idMain
-                
                     let closure = {
                         signalObject.closure(object, regarding)
                     }
                     
-                    switch regarding {
-					case .sMain:        if isMain        { closure() }
-					case .sRing:        if isRing        { closure() }
-                    case .sGraph:       if isGraph       { closure() }
-					case .sStatus:      if isStatus      { closure() }
-					case .sCrumbs:      if isCrumbs      { closure() }
-                    case .sPreferences: if isPreferences { closure() }
-                    default:                               closure()
+                    switch regarding {  // these non-default cases send a signal only to the one corresponding controller
+					case .sMap:         if identifier == .idMap         { closure() }
+					case .sMain:        if identifier == .idMain        { closure() }
+					case .sStatus:      if identifier == .idStatus      { closure() }
+					case .sCrumbs:      if identifier == .idCrumbs      { closure() }
+					case .sStartup:     if identifier == .idStartup     { closure() }
+					case .sFavorites:   if identifier == .idFavorites   { closure() }
+                    case .sPreferences: if identifier == .idPreferences { closure() }
+                    default:                                              closure()
                     }
                 }
             }

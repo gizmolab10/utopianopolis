@@ -464,7 +464,7 @@ class ZGraphEditor: ZBaseEditor {
                 swapAndResumeEdit()
             }
 
-            gSignal([.sMain, .sGraph, .sPreferences])
+            gSignal([.sMain, .sMap, .sPreferences])
         } else if !PERIOD {
             gDetailsController?.toggleViewsFor(ids: [.Preferences])
         } else if gIsEditIdeaMode {

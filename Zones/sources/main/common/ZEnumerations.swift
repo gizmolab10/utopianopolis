@@ -114,11 +114,10 @@ enum ZFileMode: Int {
 }
 
 enum ZWorkMode: Int {
-    case noRedrawMode
-    case startupMode
+	case editIdeaMode
+	case startupMode
     case searchMode
     case graphMode
-	case editIdeaMode
 	case noteMode
 }
 

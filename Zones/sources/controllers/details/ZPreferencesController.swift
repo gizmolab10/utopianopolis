@@ -15,9 +15,7 @@ import Foundation
     import UIKit
 #endif
 
-
 class ZPreferencesController: ZGenericController {
-
 
     @IBOutlet var    countsModeControl: ZSegmentedControl?
 	@IBOutlet var  colorPreferencesBox: NSView?
@@ -32,7 +30,7 @@ class ZPreferencesController: ZGenericController {
     override  var         controllerID: ZControllerID { return .idPreferences }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if ![.sLaunchDone, .sStartup, .sSearch, .sFound, .sCrumbs, .sSwap, .sRing].contains(iKind) {
+		if ![.sLaunchDone, .sStartup, .sSearch, .sFound, .sCrumbs, .sSwap, .sFavorites].contains(iKind) {
             let                           grabbed = gSelecting.firstSortedGrab
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
             thickness?               .doubleValue = gLineThickness

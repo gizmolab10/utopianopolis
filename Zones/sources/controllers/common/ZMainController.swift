@@ -47,8 +47,9 @@ class ZMainController: ZGenericController {
         let  hideSearch = !gIsSearchMode
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
-		skillControl?.selectedSegmentIndex = gSkillLevel.rawValue
-		skillControl?.isHidden             = false
+		permissionView?.isHidden           = !gIsStartupMode
+		skillControl?  .isHidden           =  false
+		skillControl?.selectedSegmentIndex =  gSkillLevel.rawValue
 
 		switch iKind {
 			case .sFound:

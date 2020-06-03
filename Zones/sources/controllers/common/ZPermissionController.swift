@@ -8,25 +8,33 @@
 
 import Foundation
 
-var gPermissionController: ZPermissionController? { return gControllers.controllerForID(.idPermission) as? ZPermissionController }
+var gPermissionController: ZPermissionController? { return gControllers.controllerForID(.idStartup) as? ZPermissionController }
 
 class ZPermissionController: ZGenericController {
 
-	override var controllerID : ZControllerID { return .idPermission }
+	override  var controllerID     : ZControllerID { return .idStartup }
 	@IBOutlet var enableCloudDrive : ZTextField?
+	@IBOutlet var acccessToAppleID : ZView?
+	@IBOutlet var oneMomentLabel   : ZView?
+
+	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+		acccessToAppleID?.isHidden =  gHasAccessToAppleID
+		enableCloudDrive?.isHidden = !gHasAccessToAppleID || gCloudDriveIsEnabled
+		oneMomentLabel?  .isHidden = !gCloudDriveIsEnabled
+	}
 
 	@IBAction func handlePermissionAction(_ button: ZButton) {
-		let identifier = convertFromOptionalUserInterfaceItemIdentifier(button.identifier)
-
-		print(identifier)
+		let    identifier = convertFromOptionalUserInterfaceItemIdentifier(button.identifier)
 
 		switch identifier {
-			case "id yes":    enableCloudDrive?.isHidden = false
-			case "drive yes": gMainController?.permissionView?.isHidden = true
+			case "id yes":    gHasAccessToAppleID  = true
+			case "drive yes": gCloudDriveIsEnabled = true
 
 			default:          gApplication.terminate(self)
 		}
 
+		gSignal([.sStartup])
 		view.setAllSubviewsNeedDisplay()
 	}
+
 }

@@ -77,7 +77,7 @@ class ZStatusController: ZGenericController {
 	}    
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if ![.sSearch, .sFound, .sCrumbs, .sSwap, .sRing].contains(iKind) {
+		if ![.sSearch, .sFound, .sCrumbs, .sSwap, .sFavorites].contains(iKind) {
 			creationDateLabel?.text = zoneRecordNameText // creationDateText
             cloudStatusLabel? .text = statusText
             totalCountLabel?  .text = totalCountsText
