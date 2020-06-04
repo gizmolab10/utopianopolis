@@ -158,8 +158,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
 		if  !gDeferringRedraw,
-			[.sRelayout, .sRelayout, .sDetails, .sFavorites].contains(iKind), // ignore for preferences, search, information, startup
-			(!isMap ||             ![.sDetails, .sFavorites].contains(iKind)) {
+			[.sRelayout, .sDetails, .sFavorites].contains(iKind), // ignore for preferences, search, information, startup
+			!(isMap &&  [.sDetails, .sFavorites].contains(iKind)) {
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
 			layoutWidgets(for: iSignalObject, iKind)

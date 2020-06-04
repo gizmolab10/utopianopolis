@@ -1677,7 +1677,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 0.5.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1729,7 +1729,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 0.5.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";

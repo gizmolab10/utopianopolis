@@ -157,11 +157,6 @@ var gHasAccessToAppleID : Bool {
 	set { setPreferencesBool(newValue, for: kHasAccessToAppleID) }
 }
 
-var gCloudDriveIsEnabled : Bool {
-	get { return getPreferencesBool(   for: kCloudDriveIsEnabled, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kCloudDriveIsEnabled) }
-}
-
 var gColorfulMode : Bool {
 	get { return getPreferencesBool(   for: kColorfulMode, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kColorfulMode) }

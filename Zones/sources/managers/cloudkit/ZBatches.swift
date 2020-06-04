@@ -41,11 +41,17 @@ enum ZBatchID: Int {
 			 .bAllTraits,
              .bNewAppleID,
              .bResumeCloud: return false
-        case .bSaveToCloud: return gCanAccessMyCloudDatabase
+        case .bSaveToCloud: return gCloudStatusIsActive
         default:            return true
         }
     }
 
+	var needsCloudDrive: Bool {
+		switch self {
+			case .bStartUp: return false
+			default:        return true
+		}
+	}
 }
 
 class ZBatches: ZOnboarding {
@@ -195,7 +201,21 @@ class ZBatches: ZOnboarding {
     func batch(_ iID: ZBatchID, _ iCompletion: @escaping BooleanClosure) {
         if  iID.shouldIgnore {
             iCompletion(true) // true means no new data
-        } else {
+		} else if !gHasAccessToAppleID {
+			gTimers.resetTimer(for: .tNeedUserAccess, withTimeInterval:  0.2, repeats: true) { iTimer in
+				if  gHasAccessToAppleID {
+					iTimer.invalidate()
+					self.batch(iID, iCompletion)
+				}
+			}
+		} else if !gCloudStatusIsActive, iID.needsCloudDrive {
+			gTimers.resetTimer(for: .tNeedCloudDriveEnabled, withTimeInterval:  0.2, repeats: true) { iTimer in
+				if  gCloudStatusIsActive {
+					iTimer.invalidate()
+					self.batch(iID, iCompletion)
+				}
+			}
+		} else {
             let     current = getBatch(iID, from: currentBatches)
             let completions = [ZBatchCompletion(iCompletion)]
             let   startOver = currentBatches.count == 0
@@ -267,9 +287,9 @@ class ZBatches: ZOnboarding {
 				let               alwaysForBoth = [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe].contains(operationID)
                 let               forMineIDOnly = [.oBookmarks                                         ].contains(operationID)
                 let                      isMine = restoreToID == .mineID
-                let               onlyCurrentID = (!gCanAccessMyCloudDatabase && !alwaysForBoth) || operationID == .oCompletion
+                let               onlyCurrentID = (!gCloudStatusIsActive && !alwaysForBoth) || operationID == .oCompletion
                 let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
-                let                      isNoop = !gCanAccessMyCloudDatabase && (requiresActive || (onlyCurrentID && isMine && operationID != .oFavorites))
+                let                      isNoop = !gCloudStatusIsActive && (requiresActive || (onlyCurrentID && isMine && operationID != .oFavorites))
                 var invokeForIndex: IntClosure?                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 

@@ -274,7 +274,7 @@ class ZGraphEditor: ZBaseEditor {
             case .eUndo:      valid = undo.canUndo
             case .eRedo:      valid = undo.canRedo
             case .eTravel:    valid = mover.canTravel
-            case .eCloud:     valid = gHasInternet && gCanAccessMyCloudDatabase
+            case .eCloud:     valid = gHasInternet && gCloudStatusIsActive
             default:          break
             }
         }

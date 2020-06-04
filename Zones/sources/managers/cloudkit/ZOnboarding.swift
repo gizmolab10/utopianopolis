@@ -15,7 +15,7 @@ import CloudKit
     import UIKit
 #endif
 
-var gCanAccessMyCloudDatabase : Bool { return gCloudAccountStatus == .active }
+var gCloudStatusIsActive      : Bool { return gCloudAccountStatus == .active }
 var gCloudAccountStatus       = ZCloudAccountStatus.begin
 var recentCloudAccountStatus  = gCloudAccountStatus
 var gHasInternet              = true

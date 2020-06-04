@@ -18,8 +18,8 @@ class ZStartupProgressBar: NSProgressIndicator {
 	}
 
 	func fractionOfOperations(isFirst: Bool) -> Double {
-		let   first = Double(ZOperationID.oReadFile.rawValue)
-		let  second = Double(ZOperationID.oDone    .rawValue) - first
+		let   first = Double(ZOperationID.oReadFile   .rawValue)
+		let  second = Double(ZOperationID.oSaveToCloud.rawValue) - first
 		let current = Double(gCurrentOp.rawValue)
 
 		return isFirst ? current / first : (current - first) / second
@@ -44,6 +44,10 @@ class ZStartupProgressBar: NSProgressIndicator {
 			let multiplier = maxValue - minValue
 			let      value = multiplier * fraction / 3.0
 			doubleValue    = value + minValue
+
+			if  value > 100.0 {
+				print("hah")
+			}
 
 			print(value)
 		}

@@ -136,10 +136,10 @@ class ZOperations: NSObject {
                         // //////////////////////////////////////////////
 
                         if  gHasInternet && gIsReadyToShowUI {
-                            let identifier: ZBatchID = gCanAccessMyCloudDatabase ? .bResumeCloud : .bNewAppleID
+                            let identifier: ZBatchID = gCloudStatusIsActive ? .bResumeCloud : .bNewAppleID
 
                             gBatches.batch(identifier) { iResult in
-                                if  gCanAccessMyCloudDatabase {
+                                if  gCloudStatusIsActive {
                                     gFavorites.updateAllFavorites()
                                 }
 
@@ -186,7 +186,7 @@ class ZOperations: NSObject {
                 // ignore operations that are not local when have no internet //
                 // /////////////////////////////////////////////////////////////
 
-                if  operationID.isLocal || gCanAccessMyCloudDatabase {
+                if  operationID.isLocal || gCloudStatusIsActive {
 
                     // ///////////////////////////////////////////////////////////////
                     // susend queue until operation function calls its onCompletion //

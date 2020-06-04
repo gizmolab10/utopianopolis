@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import AuthenticationServices
 
 var gStartupController: ZStartupController? { return gControllers.controllerForID(.idStartup) as? ZStartupController }
 
-class ZStartupController: ZGenericController {
+class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate {
 
 	override  var controllerID     : ZControllerID { return .idStartup }
 	@IBOutlet var enableCloudDrive : ZTextField?
@@ -19,18 +20,17 @@ class ZStartupController: ZGenericController {
 	@IBOutlet var thermometerBar   : ZStartupProgressBar?
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if iKind == .sStartup {
+		if  iKind == .sStartup {
 			acccessToAppleID?.isHidden =  gHasAccessToAppleID
-			enableCloudDrive?.isHidden = !gHasAccessToAppleID || gCloudDriveIsEnabled
-			pleaseWait?      .isHidden = !gCloudDriveIsEnabled
+			enableCloudDrive?.isHidden = !gHasAccessToAppleID  || gCloudStatusIsActive
+			pleaseWait?      .isHidden = !gCloudStatusIsActive
 
 			updateThermometerBar()
 		}
 	}
 
 	func updateThermometerBar() {
-		if !gHasFinishedStartup,
-			gCloudDriveIsEnabled {
+		if !gHasFinishedStartup {
 			thermometerBar?.update()
 			view.setAllSubviewsNeedDisplay()
 		}
@@ -40,14 +40,33 @@ class ZStartupController: ZGenericController {
 		let      identifier = convertFromOptionalUserInterfaceItemIdentifier(button.identifier)
 
 		switch   identifier {
-			case    "id yes": gHasAccessToAppleID  = true
-			case "drive yes": gCloudDriveIsEnabled = true
+			case    "id yes": accessAppleID()
+			case "drive yes": break
 
 			default:          gApplication.terminate(self)
 		}
 
-		gSignal([.sStartup])
 		view.setAllSubviewsNeedDisplay()
+		gSignal([.sStartup])
+	}
+
+	func accessAppleID() {
+		if !gHasAccessToAppleID {
+			let                     provider = ASAuthorizationAppleIDProvider()
+			let                      request = provider.createRequest()
+			request         .requestedScopes = [.fullName, .email]
+			let      authorizationController = ASAuthorizationController(authorizationRequests: [request])
+			authorizationController.delegate = self
+
+			authorizationController.performRequests()
+		}
+	}
+
+	func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+		gHasAccessToAppleID  = true
+
+		view.setAllSubviewsNeedDisplay()
+		gSignal([.sStartup])
 	}
 
 }

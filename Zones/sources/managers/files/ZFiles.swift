@@ -35,9 +35,28 @@ class ZFiles: NSObject {
     var filePaths: [String?] = [nil, nil]
     var           writeTimer : Timer?
     var        _directoryURL : URL?
-	var  approximatedRecords : Int { return fileSize / 200 } // should be 3210
-	var             fileSize : Int { return 1000000 }
+	var  approximatedRecords : Int { return fileSize / 900 }
 	func imageURLInAssetsFolder(for fileName: String) -> URL { return assetsDirectoryURL.appendingPathComponent(fileName) }
+
+	var fileSize : Int {
+		var result = 0
+
+		do {
+			for dbID in kAllDatabaseIDs {
+				if  let      index = dbID.index,
+					let    dbIndex = ZDatabaseIndex(rawValue: index) {
+					let       path = filePath(for: dbIndex)
+					let       dict = try manager.attributesOfItem(atPath: path)
+					if  let length = dict[.size] as? Int {
+						result    += length
+					}
+				}
+			}
+		} catch {}
+
+		return result
+	}
+
 
     var isWritingNow: Bool {
         for writing in isWriting {
@@ -295,7 +314,7 @@ class ZFiles: NSObject {
             let             name  = fileName(for: index) {
             let         cloudName = fileName(for: index, isGeneric: false)!
             let        isEveryone = index == .everyoneIndex
-            let        useGeneric = isEveryone || !gCanAccessMyCloudDatabase
+            let        useGeneric = isEveryone || !gCloudStatusIsActive
             let   normalExtension = ".seriously"
             let   backupExtension = ".backup"
             let         backupURL = directoryURL.appendingPathComponent(name + backupExtension)

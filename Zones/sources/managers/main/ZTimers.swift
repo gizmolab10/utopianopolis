@@ -17,8 +17,10 @@ import UIKit
 let gTimers = ZTimers()
 
 enum ZTimerID : Int {
+	case tNeedCloudDriveEnabled
 	case tArrowsDoNotBrowse
 	case tRecordsEveryone
+	case tNeedUserAccess
 	case tCloudAvailable
 	case tMouseLocation
 	case tWriteEveryone

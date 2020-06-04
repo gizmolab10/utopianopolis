@@ -18,7 +18,7 @@ class ZCloud: ZRecords {
     var   cloudZonesByID = [CKRecordZone.ID : CKRecordZone] ()
     var         database :  CKDatabase? { return gRemoteStorage.databaseForID(databaseID) }
     var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
-    var cloudUnavailable :         Bool { return !gHasInternet || (databaseID == .mineID && !gCanAccessMyCloudDatabase) }
+    var cloudUnavailable :         Bool { return !gHasInternet || (databaseID == .mineID && !gCloudStatusIsActive) }
     var    isRemembering :         Bool = false
     var currentOperation : CKOperation?
     var currentPredicate : NSPredicate?
