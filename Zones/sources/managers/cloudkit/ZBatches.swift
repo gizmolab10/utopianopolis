@@ -9,8 +9,9 @@
 import Foundation
 
 let gBatches        = ZBatches()
-var gUser           :   ZUser? { return gBatches.user }
-var gIsMasterAuthor :     Bool { return gBatches.isMasterAuthor }
+var gUser           :       ZUser? { return gBatches.user }
+var gIsMasterAuthor :         Bool { return gBatches.isMasterAuthor }
+var gCurrentOp      : ZOperationID { return gBatches.currentOp }
 
 enum ZBatchID: Int {
     case bRoot

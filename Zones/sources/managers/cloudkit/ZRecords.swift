@@ -48,8 +48,8 @@ class ZRecords: NSObject {
 	var        destroyZone : Zone?
     var          trashZone : Zone?
     var           rootZone : Zone?
+	var        recordCount : Int  { return recordRegistry.count }
     var        hereIsValid : Bool { return maybeZoneForRecordName(hereRecordName) != nil }
-
 
     var hereRecordName: String? {
 		get {
@@ -212,10 +212,10 @@ class ZRecords: NSObject {
     func searchLocal(for name: String) -> [CKRecord] {
         var results = [CKRecord] ()
 
-        appendNameRegistry(from: name) { iRecords -> ([CKRecord]) in
-			results = results.intersection(iRecords)
+		appendNameRegistry(from: name) { (iRecords: [CKRecord]) -> ([CKRecord]) in
+			results.appendUnique(contentsOf: iRecords)
 
-            return iRecords // no filtering is done, return input as output (identity filter)
+            return iRecords // return input as output (identity filter)
         }
 
         return results

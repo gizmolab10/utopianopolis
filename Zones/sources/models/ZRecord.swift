@@ -596,6 +596,10 @@ class ZRecord: NSObject {
                 addNeedsFromString(needs)
             }
         }
+
+		if !gHasFinishedStartup {
+			gSignal([.sStartup])
+		}
     }
 
 	class func createStorageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {

@@ -667,7 +667,6 @@ class ZCloud: ZRecords {
         }
     }
 
-
     func fetch(for type: String, properties: [String], since start: Date?, before end: Date? = nil, _ onCompletion: RecordsClosure?) {
         let predicate = self.predicate(since: start, before: end)
         var retrieved = [CKRecord] ()
@@ -689,6 +688,10 @@ class ZCloud: ZRecords {
                 }
 			} else if let ckRecord = iRecord {
 				retrieved.appendUnique(contentsOf: [ckRecord])
+
+				if  retrieved.count % 10 == 0 {
+					gSignal([.sStartup])
+				}
 			} else { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?(retrieved)
             }

@@ -45,19 +45,19 @@ class ZOnboarding : ZOperations {
         onCloudResponse = { iAny in onCompletion(false) }
 
         switch operationID {
+		case .oMacAddress:        getMAC();           onCompletion(true)
+		case .oObserveUbiquity:   observeUbiquity();  onCompletion(true)
         case .oCheckAvailability: checkAvailability { onCompletion(true) }    // true means op is handled
-        case .oFetchUserRecord:   fetchUserRecord   { onCompletion(true) }
+		case .oInternet:          checkConnection();  onCompletion(true)
+		case .oUbiquity:          ubiquity          { onCompletion(true) }
         case .oFetchUserID:       fetchUserID       { onCompletion(true) }
-        case .oUbiquity:          ubiquity          { onCompletion(true) }
-        case .oObserveUbiquity:   observeUbiquity();  onCompletion(true)
-        case .oMacAddress:        getMAC();           onCompletion(true)
-        case .oInternet:          internet();         onCompletion(true)
+		case .oFetchUserRecord:   fetchUserRecord   { onCompletion(true) }
         default:                                      onCompletion(false)     // false means op is not handled, so super should proceed
         }
     }
 
 	func observeUbiquity() { gNotificationCenter.addObserver(self, selector: #selector(ZOnboarding.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil) }
-    func internet()        { gHasInternet = isConnectedToNetwork }
+    func checkConnection() { gHasInternet = isConnectedToInternet }
 
 	func checkAvailability(_ onCompletion: @escaping Closure) {
         gContainer.accountStatus { (iStatus, iError) in
@@ -91,23 +91,25 @@ class ZOnboarding : ZOperations {
             onCompletion()
         } else {
             gContainer.fetchUserRecordID() { iRecordID, iError in
-                gAlerts.alertError(iError, "failed to fetch user record id; reason unknown") { iHasError in
-                    if !iHasError {
+				FOREGROUND {
+					gAlerts.alertError(iError, "failed to fetch user record id") { iHasError in
+						if !iHasError {
 
-                        // /////////////////////////////////////////////
-                        // persist for file read on subsequent launch //
-                        //   also: for determining write permission   //
-                        // /////////////////////////////////////////////
+							// /////////////////////////////////////////////
+							// persist for file read on subsequent launch //
+							//   also: for determining write permission   //
+							// /////////////////////////////////////////////
 
-                        gUserRecordID = iRecordID?.recordName
+							gUserRecordID = iRecordID?.recordName
 
-                        // ///////////////////////
-                        // ONBOARDING CONTINUES //
-                        // ///////////////////////
-                    }
+							// ///////////////////////
+							// ONBOARDING CONTINUES //
+							// ///////////////////////
+						}
 
-                    onCompletion()
-                }
+						onCompletion()
+					}
+				}
             }
         }
     }
@@ -118,7 +120,7 @@ class ZOnboarding : ZOperations {
 			gCloudAccountStatus = .active
 
 			onCompletion()
-		} else if   gCloudAccountStatus == .available,
+		} else if gCloudAccountStatus == .available,
             let      recordName = gUserRecordID {
             let      ckRecordID = CKRecord.ID(recordName: recordName)
 

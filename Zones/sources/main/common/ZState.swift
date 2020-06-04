@@ -584,6 +584,10 @@ func gTestForUserInterrupt() throws {
 
 		throw(ZInterruptionError.userInterrupted)
 	}
+
+	if !gHasFinishedStartup {
+		gSignal([.sStartup])
+	}
 }
 
 func gRefreshCurrentEssay() {

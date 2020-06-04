@@ -39,12 +39,12 @@ class ZSearching: NSObject {
 	var priorWorkMode: ZWorkMode?
 
     func handleEvent(_ event: ZEvent) -> ZEvent? {
-		return gSearchController?.handleEvent(event)
+		return gSearchBarController?.handleEvent(event)
     }
 
 	var searchText: String? {
-		get { return gSearchController?.searchBox?.text }
-		set { gSearchController?.searchBox?.text = newValue }
+		get { return gSearchBarController?.searchBox?.text }
+		set { gSearchBarController?.searchBox?.text = newValue }
 	}
 
 	func exitSearchMode() {

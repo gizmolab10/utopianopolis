@@ -21,7 +21,7 @@ class ZSearchResultsController: ZGenericTableController {
 
     var     resultsAreVisible = false
     var          foundRecords = [ZDatabaseID: [CKRecord]] ()
-	var            searchText : String?       { return gSearchController?.searchBoxText }
+	var            searchText : String?       { return gSearchBarController?.searchBoxText }
 	override var controllerID : ZControllerID { return .idSearchResults }
 
     var hasResults: Bool {
@@ -126,7 +126,7 @@ class ZSearchResultsController: ZGenericTableController {
     // MARK:- user feel
     // MARK:-
 
-	func switchToSearchBox() { gSearchController?.searchBox?.becomeFirstResponder() }
+	func switchToSearchBox() { gSearchBarController?.searchBox?.becomeFirstResponder() }
 
     func identifierAndRecord(at iIndex: Int) -> (ZDatabaseID, CKRecord)? {
         var index = iIndex

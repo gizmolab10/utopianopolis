@@ -27,14 +27,16 @@ enum ZExportType: String {
 
 class ZFiles: NSObject {
 
+	let              manager = FileManager.default
 	var            isReading = [false, false]
     var            isWriting = [false, false] // not allow another save while file is being written
     var           needsWrite = [false, false]
     var   writtenRecordNames = [String] ()
     var filePaths: [String?] = [nil, nil]
-    var  writeTimer : Timer?
-    var _directoryURL : URL?
-    let              manager = FileManager.default
+    var           writeTimer : Timer?
+    var        _directoryURL : URL?
+	var  approximatedRecords : Int { return fileSize / 200 } // should be 3210
+	var             fileSize : Int { return 1000000 }
 	func imageURLInAssetsFolder(for fileName: String) -> URL { return assetsDirectoryURL.appendingPathComponent(fileName) }
 
     var isWritingNow: Bool {

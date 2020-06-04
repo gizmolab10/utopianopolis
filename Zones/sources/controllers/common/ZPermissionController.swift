@@ -8,9 +8,9 @@
 
 import Foundation
 
-var gPermissionController: ZPermissionController? { return gControllers.controllerForID(.idStartup) as? ZPermissionController }
+var gPermissionController: ZStartupController? { return gControllers.controllerForID(.idStartup) as? ZStartupController }
 
-class ZPermissionController: ZGenericController {
+class ZStartupController: ZGenericController {
 
 	override  var controllerID     : ZControllerID { return .idStartup }
 	@IBOutlet var enableCloudDrive : ZTextField?

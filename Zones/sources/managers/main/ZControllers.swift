@@ -79,15 +79,15 @@ class ZControllers: NSObject {
 
 				gBatches.finishUp { iSame in
 					FOREGROUND {
-						gRefusesFirstResponder = false
 						gHasFinishedStartup    = true
+						gRefusesFirstResponder = false
 
 						if  gIsStartupMode {
 							gSetGraphMode()
 						}
 
 						gRemoteStorage.adoptAll()
-						gRedrawGraph()
+						gSignal([.sMain, .sStartup, .sCrumbs, .sRelayout])
 						self.requestFeedback()
 
 						FOREGROUND(after: 10.0) {

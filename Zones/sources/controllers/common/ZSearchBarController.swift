@@ -17,10 +17,10 @@ import CloudKit
 #endif
 
 
-var gSearchController: ZSearchController? { return gControllers.controllerForID(.idSearch) as? ZSearchController }
+var gSearchBarController: ZSearchBarController? { return gControllers.controllerForID(.idSearch) as? ZSearchBarController }
 
 
-class ZSearchController: ZGenericController, ZSearchFieldDelegate {
+class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 
     @IBOutlet var searchBox: ZSearchField?
@@ -130,7 +130,7 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
             let locals = cloud.searchLocal(for: searchString)
 			let   dbID = cloud.databaseID
 
-            if  gUser == nil {
+            if  gUser == nil || !gHasInternet {
                 combined[dbID] = locals
                 remaining -= 1
 
@@ -145,16 +145,15 @@ class ZSearchController: ZGenericController, ZSearchFieldDelegate {
 						for record in results {
 							if  let trait = cloud.maybeZRecordForCKRecord(record) as? ZTrait {
 								if  trait.ownerZone == nil {
-									orphans.append(record) // remove unowned traits from results
+									orphans.append(record)       // remove unowned traits from results
 								}
-//							} else if record.recordType != kTraitType {
-//								orphans.append(record) // remove unregistered zones from results
 							} else if cloud.maybeZoneForCKRecord(record) == nil {
 								let trait = ZTrait(record: record, databaseID: dbID)
+
 								if  trait.ownerZone != nil {
 									cloud.registerZRecord(trait) // some records are being fetched first time
 								} else {
-									orphans.append(record) // remove unowned traits from results
+									orphans.append(record)       // remove unowned traits from results
 								}
 							}
 						}

@@ -23,7 +23,6 @@ var          gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemot
 
 class ZRemoteStorage: NSObject {
 
-
     var  databaseIDStack = [ZDatabaseID] ()
     var          records = [ZDatabaseID : ZRecords]()
     var   currentRecords : ZRecords    { return zRecords(for: gDatabaseID)! }
@@ -35,7 +34,16 @@ class ZRemoteStorage: NSObject {
     var        trashZone : Zone?       { return currentRecords.trashZone }
     var         rootZone : Zone? { get { return currentRecords.rootZone }  set { currentRecords.rootZone  = newValue } }
 
-    
+	var totalRecordsCount: Int {
+		var total = 0
+
+		for cloud in allClouds {
+			total += cloud.recordCount
+		}
+
+		return total
+	}
+
     var allClouds: [ZCloud] {
         var clouds = [ZCloud] ()
         
@@ -49,7 +57,7 @@ class ZRemoteStorage: NSObject {
     }
     
     
-    var allRecordsArrays: [ZRecords] {
+    var allRecordsArrays:  [ZRecords] {
         var recordsArray = [ZRecords] ()
         
         for dbID in kAllDatabaseIDs {

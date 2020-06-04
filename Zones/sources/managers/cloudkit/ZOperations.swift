@@ -11,6 +11,8 @@ import SystemConfiguration.SCNetworkConnection
 
 enum ZOperationID: Int {
 
+	case oNone               // default operation
+
     // onboard
 
     case oStartUp            // NB: order here is order of operations (except miscellaneous)
@@ -49,16 +51,15 @@ enum ZOperationID: Int {
 	case oFetchAndMerge
 	case oNeededIdeas        // after children so favorite targets resolve properly
     case oSaveToCloud        // zones, traits, destroy
+	case oParentIdeas        // after fetch so colors resolve properly
+	case oChildIdeas
     case oEmptyTrash
     case oCompletion
     case oBookmarks
     case oLostIdeas
     case oUndelete
-    case oChildIdeas
-    case oParentIdeas        // after fetch so colors resolve properly
     case oRefetch            // user defaults list of record ids
     case oTraits
-    case oNone               // default operation
 
     var isLocal     : Bool { return localOperations.contains(self) }
     var isDeprecated: Bool { return   deprecatedOps.contains(self) }
@@ -93,7 +94,7 @@ class ZOperations: NSObject {
         return c + s
     }
     
-    var isConnectedToNetwork: Bool {
+    var isConnectedToInternet: Bool {
         var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags(rawValue: 0)
 
         if let host = SCNetworkReachabilityCreateWithName(nil, "www.apple.com"),
@@ -110,13 +111,13 @@ class ZOperations: NSObject {
     func unHang() { onCloudResponse?(0) }
 
     @discardableResult func cloudStatusChanged() -> Bool {
-        let          hasInternet = isConnectedToNetwork
-        let       changedConnect =              hasInternet != gHasInternet
-        let       changedAccount = recentCloudAccountStatus != gCloudAccountStatus
+        let          hasInternet = isConnectedToInternet
+        let     changedConnected =              hasInternet != gHasInternet
+        let     changedStatus    = recentCloudAccountStatus != gCloudAccountStatus
         gHasInternet             = hasInternet
         recentCloudAccountStatus = gCloudAccountStatus
 
-        return changedConnect || changedAccount
+        return changedConnected || changedStatus
     }
 
     func setupCloudTimer() {
@@ -201,7 +202,7 @@ class ZOperations: NSObject {
                         self.reportOnCompletionOfPerformBlock()
 
                         FOREGROUND {
-							gSignal([.sStatus]) // show change in cloud status
+							gSignal([.sStatus, .sStartup]) // show change in cloud status and startup progress
 
 							if  self.currentOp == .oCompletion {
 
