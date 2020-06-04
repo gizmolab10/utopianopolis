@@ -40,12 +40,18 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		let      identifier = convertFromOptionalUserInterfaceItemIdentifier(button.identifier)
 
 		switch   identifier {
-			case    "id yes": accessAppleID()
-			case "drive yes": break
+			case   "id yes": accessAppleID()
+			case "continue":
+				gBatches.batch(.bResumeCloud) { result in
+					self.refresh()
+				}
 
-			default:          gApplication.terminate(self)
+			default:         gApplication.terminate(self)
 		}
 
+	}
+
+	func refresh() {
 		view.setAllSubviewsNeedDisplay()
 		gSignal([.sStartup])
 	}
