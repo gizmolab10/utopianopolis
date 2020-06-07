@@ -18,8 +18,8 @@ class ZStartupProgressBar: NSProgressIndicator {
 	}
 
 	func fractionOfOperations(isFirst: Bool) -> Double {
-		let   first = Double(ZOperationID.oReadFile   .rawValue)
-		let  second = Double(ZOperationID.oSaveToCloud.rawValue) - first
+		let   first = Double(ZOperationID.oReadFile.rawValue)
+		let  second = Double(ZOperationID.oDone    .rawValue) - first
 		let current = Double(gCurrentOp.rawValue)
 
 		return isFirst ? current / first : (current - first) / second

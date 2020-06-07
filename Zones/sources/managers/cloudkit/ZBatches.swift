@@ -201,9 +201,9 @@ class ZBatches: ZOnboarding {
     func batch(_ iID: ZBatchID, _ iCompletion: @escaping BooleanClosure) {
         if  iID.shouldIgnore {
             iCompletion(true) // true means no new data
-		} else if !gHasAccessToAppleID {
+		} else  if  gStartupLevel == .firstTime {
 			gTimers.resetTimer(for: .tNeedUserAccess, withTimeInterval:  0.2, repeats: true) { iTimer in
-				if  gHasAccessToAppleID {
+				if  gStartupLevel != .firstTime {
 					iTimer.invalidate()
 					self.batch(iID, iCompletion)
 				}

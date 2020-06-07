@@ -85,6 +85,7 @@ var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNew
 var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
 var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 
+let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
 let       kBeginnerSkillLevel                     = ZSkillLevel.beginner.rawValue
 let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
@@ -152,9 +153,9 @@ var gSkillLevel : ZSkillLevel {
 	set { setPreferencesInt(newValue.rawValue, for: kSkillLevel); gMainController?.updateForSkillLevel() }
 }
 
-var gHasAccessToAppleID : Bool {
-	get { return getPreferencesBool(   for: kHasAccessToAppleID, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kHasAccessToAppleID) }
+var gStartupLevel : ZStartupLevel {
+	get { return  ZStartupLevel(rawValue: getPreferencesInt(for: kStartupLevel, defaultInt: kFirstTimeStartupLevel) ?? kFirstTimeStartupLevel) ?? ZStartupLevel.firstTime }
+	set { setPreferencesInt(newValue.rawValue, for: kStartupLevel) }
 }
 
 var gColorfulMode : Bool {

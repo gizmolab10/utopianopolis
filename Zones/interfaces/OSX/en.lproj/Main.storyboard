@@ -1318,26 +1318,25 @@ CA
                                         </textFieldCell>
                                     </textField>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="NGd-6W-C0X">
-                                        <rect key="frame" x="-81" y="312" width="450" height="93"/>
+                                        <rect key="frame" x="-81" y="356" width="450" height="49"/>
                                         <subviews>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="xlc-Yd-hnd" userLabel="apple id">
-                                                <rect key="frame" x="-2" y="29" width="454" height="64"/>
+                                                <rect key="frame" x="-2" y="33" width="454" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="450" id="zMN-fz-5dE"/>
                                                 </constraints>
                                                 <textFieldCell key="cell" selectable="YES" alignment="justified" id="bc1-Sd-0wy">
                                                     <font key="font" metaFont="system"/>
-                                                    <string key="title">Seriously is an iCloud enabled app. To reach the cloud, it needs access to your Apple ID. Seriously will never allow anyone but you access to your Apple ID nor to the information you enter into Seriously in your private database. Do you want to give Seriously access to your Apple ID?</string>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="qwy-Fq-9BT" userLabel="access apple id buttons">
-                                                <rect key="frame" x="94" y="0.0" width="262" height="21"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="450" height="21"/>
                                                 <subviews>
                                                     <button identifier="id no" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gqY-tc-UwL">
-                                                        <rect key="frame" x="-6" y="-7" width="66" height="32"/>
-                                                        <buttonCell key="cell" type="push" title="Quit" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70t-AV-QkO">
+                                                        <rect key="frame" x="-6" y="-7" width="246" height="32"/>
+                                                        <buttonCell key="cell" type="push" title="I Do Not Need iCloud at This Time" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70t-AV-QkO">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                             <string key="keyEquivalent">n</string>
@@ -1347,8 +1346,8 @@ CA
                                                         </connections>
                                                     </button>
                                                     <button identifier="id yes" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bWe-Ul-jBd">
-                                                        <rect key="frame" x="56" y="-7" width="212" height="32"/>
-                                                        <buttonCell key="cell" type="push" title="Allow Access to my Apple ID" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EYY-QE-Hwt">
+                                                        <rect key="frame" x="236" y="-7" width="220" height="32"/>
+                                                        <buttonCell key="cell" type="push" title="I Grant Access to my Apple ID" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EYY-QE-Hwt">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                             <string key="keyEquivalent" base64-UTF8="YES">
@@ -1366,7 +1365,6 @@ DQ
                                                     <constraint firstItem="bWe-Ul-jBd" firstAttribute="top" secondItem="qwy-Fq-9BT" secondAttribute="top" id="F0T-j1-wsg"/>
                                                     <constraint firstItem="gqY-tc-UwL" firstAttribute="top" secondItem="qwy-Fq-9BT" secondAttribute="top" id="MPm-3Y-jaS"/>
                                                     <constraint firstAttribute="bottom" secondItem="gqY-tc-UwL" secondAttribute="bottom" id="egS-UK-ATn"/>
-                                                    <constraint firstItem="bWe-Ul-jBd" firstAttribute="leading" secondItem="gqY-tc-UwL" secondAttribute="trailing" constant="8" id="h44-jT-WRl"/>
                                                     <constraint firstAttribute="trailing" secondItem="bWe-Ul-jBd" secondAttribute="trailing" id="tSF-tC-exh"/>
                                                 </constraints>
                                             </customView>
@@ -1375,26 +1373,23 @@ DQ
                                             <constraint firstItem="xlc-Yd-hnd" firstAttribute="leading" secondItem="NGd-6W-C0X" secondAttribute="leading" id="5vK-9K-Ilk"/>
                                             <constraint firstItem="xlc-Yd-hnd" firstAttribute="centerX" secondItem="NGd-6W-C0X" secondAttribute="centerX" id="D56-on-Zt6"/>
                                             <constraint firstItem="xlc-Yd-hnd" firstAttribute="top" secondItem="NGd-6W-C0X" secondAttribute="top" id="UTz-0E-1tO"/>
-                                            <constraint firstItem="qwy-Fq-9BT" firstAttribute="top" secondItem="xlc-Yd-hnd" secondAttribute="bottom" constant="8" id="cC0-Q6-cna"/>
+                                            <constraint firstItem="qwy-Fq-9BT" firstAttribute="top" secondItem="xlc-Yd-hnd" secondAttribute="bottom" constant="12" id="cC0-Q6-cna"/>
                                             <constraint firstItem="qwy-Fq-9BT" firstAttribute="centerX" secondItem="NGd-6W-C0X" secondAttribute="centerX" id="feG-oq-ER1"/>
+                                            <constraint firstAttribute="trailing" secondItem="qwy-Fq-9BT" secondAttribute="trailing" id="juk-AE-QkV"/>
                                             <constraint firstAttribute="bottom" secondItem="qwy-Fq-9BT" secondAttribute="bottom" id="sU9-6w-BFH"/>
+                                            <constraint firstItem="qwy-Fq-9BT" firstAttribute="leading" secondItem="NGd-6W-C0X" secondAttribute="leading" id="sXk-UH-2vP"/>
                                         </constraints>
                                     </customView>
                                     <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pg2-h7-6ux" userLabel="Enable Cloud Drive">
-                                        <rect key="frame" x="-81" y="216" width="450" height="189"/>
+                                        <rect key="frame" x="-81" y="356" width="450" height="49"/>
                                         <subviews>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="O6S-Dv-mLT" userLabel="cloud drive">
-                                                <rect key="frame" x="-2" y="29" width="454" height="160"/>
+                                                <rect key="frame" x="-2" y="33" width="454" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="450" id="IKq-xe-yrh"/>
                                                 </constraints>
                                                 <textFieldCell key="cell" selectable="YES" alignment="justified" id="I6o-bK-Aqr">
                                                     <font key="font" metaFont="system"/>
-                                                    <string key="title">In order to share your Seriously data with your other devices running Seriously, your cloud drive must be enabled. Unfortunately, Apple security will not allow Seriously to enable it for you.
-
-To enable it, please go to System Preferences, Internet Accounts and select iCloud. Look for iCloud Drive (it should be the first item) and click on the button next to it labeled "Options..." Scroll down until you see Seriously. Check the box next to it.
-
-Then return here and click Continue, below.</string>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
@@ -1418,20 +1413,20 @@ DQ
                                             <constraint firstAttribute="width" constant="450" id="LJt-Po-qx2"/>
                                             <constraint firstItem="eJt-eS-JWW" firstAttribute="centerX" secondItem="Pg2-h7-6ux" secondAttribute="centerX" id="fCj-C4-PLs"/>
                                             <constraint firstAttribute="trailing" secondItem="O6S-Dv-mLT" secondAttribute="trailing" id="ll3-hz-6qF"/>
-                                            <constraint firstItem="eJt-eS-JWW" firstAttribute="top" secondItem="O6S-Dv-mLT" secondAttribute="bottom" constant="8" id="nfJ-TI-k6r"/>
+                                            <constraint firstItem="eJt-eS-JWW" firstAttribute="top" secondItem="O6S-Dv-mLT" secondAttribute="bottom" constant="12" id="nfJ-TI-k6r"/>
                                             <constraint firstItem="O6S-Dv-mLT" firstAttribute="top" secondItem="Pg2-h7-6ux" secondAttribute="top" id="oLq-3w-2MM"/>
                                             <constraint firstAttribute="bottom" secondItem="eJt-eS-JWW" secondAttribute="bottom" id="y6Q-3Q-OMr"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="rmD-x7-RtA" userLabel="Please Wait">
-                                        <rect key="frame" x="-81" y="347" width="450" height="58"/>
+                                        <rect key="frame" x="-81" y="363" width="450" height="42"/>
                                         <subviews>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="kKM-9B-fW0">
-                                                <rect key="frame" x="-2" y="26" width="454" height="32"/>
+                                                <rect key="frame" x="-2" y="26" width="454" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="450" id="xCI-TT-GKm"/>
                                                 </constraints>
-                                                <textFieldCell key="cell" selectable="YES" alignment="justified" title="Your data is loading (it may take up to half a minute, truly sorry for the wait)." id="3XW-gG-Hxw">
+                                                <textFieldCell key="cell" selectable="YES" alignment="justified" id="3XW-gG-Hxw">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1476,7 +1471,10 @@ DQ
                     </view>
                     <connections>
                         <outlet property="acccessToAppleID" destination="NGd-6W-C0X" id="uM0-1J-iv0"/>
-                        <outlet property="enableCloudDrive" destination="Pg2-h7-6ux" id="ZNv-i1-OG3"/>
+                        <outlet property="accessIDLabel" destination="xlc-Yd-hnd" id="6A8-OE-0yH"/>
+                        <outlet property="enableCloudDrive" destination="Pg2-h7-6ux" id="0m3-bv-2c5"/>
+                        <outlet property="enableCloudLabel" destination="O6S-Dv-mLT" id="Mgk-EK-qtL"/>
+                        <outlet property="loadingLabel" destination="kKM-9B-fW0" id="c49-Qv-BEM"/>
                         <outlet property="pleaseWait" destination="rmD-x7-RtA" id="Pgi-uv-g7c"/>
                         <outlet property="thermometerBar" destination="2xi-Mf-riK" id="GCP-V7-8ij"/>
                     </connections>
