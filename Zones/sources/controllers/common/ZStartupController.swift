@@ -50,6 +50,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		if !gHasFinishedStartup {
 			thermometerBar?.update()
 			view.setAllSubviewsNeedDisplay()
+			thermometerBar?.display()
 		}
 	}
 
@@ -114,6 +115,6 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 							   "Check the box next to it."].joined(separator: " "),
 							  "Then return here and click Continue, below."].joined(separator: "\n\n")
 
-	var loadingText: String = "Your data is loading (it may take up to half a minute, truly sorry for the wait)."
+	var loadingText: String = "Your data is loading (it may take up to half a minute; sorry for the wait)."
 
 }

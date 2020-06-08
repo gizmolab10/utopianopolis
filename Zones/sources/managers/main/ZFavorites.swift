@@ -376,9 +376,28 @@ class ZFavorites: ZRecords {
     // MARK:- switch
     // MARK:-
 
-    func nextFavoritesIndex(forward: Bool) -> Int {
-        return next(favoritesIndex, forward)
-    }
+	func nextFavoritesIndex(forward: Bool) -> Int {
+		if  gBrowsingIsConfined,
+			let c = currentFavorite,
+			let p = c.parentZone,
+			p.children.count > 1,
+			let i = c.siblingIndex {
+			let max = p.children.count - 1
+			var next = i + (forward ? 1 : -1)
+
+			if  next > max {
+				next = 0
+			} else if next < 0 {
+				next = max
+			}
+
+			currentFavorite = p.children[next]
+
+			return favoritesIndex
+		}
+
+		return next(favoritesIndex, forward)
+	}
 
 
     func next(_ index: Int, _ forward: Bool) -> Int {

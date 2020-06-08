@@ -135,7 +135,7 @@ class ZGraphEditor: ZBaseEditor {
                     case "z":      if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
-					case "'":      gFavoritesMode = gIsRecentlyMode ? .favorites : .recent; gSignal([.sFavorites])
+					case "'":      gFavoritesMode = gIsRecentlyMode ? .favorites : .recent; gSignal([.sFavorites, .sDetails])
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdate(CONTROL, COMMAND, kind: .eSelected) }
 					case "\\":     gGraphController?.toggleGraphs(); gRedrawGraph()
                     case "]", "[": smartGo(forward: key == "]")

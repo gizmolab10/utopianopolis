@@ -40,16 +40,10 @@ class ZStartupProgressBar: NSProgressIndicator {
 	}
 
 	func update() {
-		if  gCurrentOp     != .oCompletion {
-			let  multiplier = maxValue - minValue
-			let       value = multiplier * fraction / 3.0
-
-			if  value       < 100.0 {
-				doubleValue = value + minValue
-
-				setNeedsDisplay()
-				print(value)
-			}
+		if  gCurrentOp    != .oCompletion {
+			let multiplier = maxValue - minValue
+			let      value = multiplier * fraction / 3.0
+			doubleValue    = value + minValue
 		}
 	}
 

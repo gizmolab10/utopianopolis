@@ -62,7 +62,7 @@ class ZModeControlsView : ZButtonsView, ZTooltips {
 			}
 		}
 
-		gSignal([.sFavorites])
+		gSignal([.sFavorites, .sDetails])
 	}
 
 	func update() {
