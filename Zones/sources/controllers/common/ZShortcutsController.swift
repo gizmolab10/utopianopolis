@@ -19,19 +19,24 @@ let gShortcutsController = NSStoryboard(name: "Shortcuts", bundle: nil).instanti
 
 class ZShortcutsController: ZGenericTableController {
 
-	@IBOutlet var gridView     : ZView?
-	@IBOutlet var clipView     : ZView?
-	override  var controllerID : ZControllerID { return .idShortcuts }
-	let shortcuts = ZShortcuts()
+	@IBOutlet var      clipView : ZView?
+	@IBOutlet var graphGridView : ZView?
+	override  var  controllerID : ZControllerID { return .idShortcuts }
+	var                    mode : ZWorkMode? // dot, note, graph
+	let           noteShortcuts = ZNoteShortcuts()
+	let          graphShortcuts = ZGraphShortcuts()
+	let          dotDecorations = ZDotDecorations()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		shortcuts.setup()
+		graphShortcuts.setup()
+		dotDecorations.setup() // empty
+		noteShortcuts .setup() // empty
 
 		view.zlayer.backgroundColor = gBackgroundColor.cgColor
         
 		if  let c = clipView,
-			let g = gridView {
+			let g = graphGridView {
             g.removeFromSuperview()
             c.addSubview(g)
 
@@ -54,12 +59,13 @@ class ZShortcutsController: ZGenericTableController {
             let OPTION  = flags.isOption
             let SPECIAL = COMMAND && OPTION
 			switch key {
-				case "?", "/":         gControllers.showShortcuts()
+				case "?",
+					 "/": if COMMAND { gControllers.showShortcuts(flags: flags) }
 				case "a": if SPECIAL { gApplication.showHideAbout() }
 				case "p": if SPECIAL { cycleSkillLevel() } else { view.printView() }
-				case "q": gApplication.terminate(self)
+				case "q":              gApplication.terminate(self)
 				case "r": if COMMAND { sendEmailBugReport() }
-				case "w": if COMMAND { gControllers.showShortcuts(false) }
+				case "w": if COMMAND { gControllers.showShortcuts(false, flags: flags) }
 				
 				default: break
 			}
@@ -78,7 +84,7 @@ class ZShortcutsController: ZGenericTableController {
 			let screenLocation = NSEvent.mouseLocation
 			if  let windowLocation = table.window?.convertPoint(fromScreen: screenLocation) {
 				let l = table.convert(windowLocation, from: nil)
-				let column = Int(floor(l.x / CGFloat(shortcuts.columnWidth)))
+				let column = Int(floor(l.x / CGFloat(graphShortcuts.columnWidth)))
 				table.deselectRow(row)
 				
 				return (row, min(3, column))
@@ -90,16 +96,16 @@ class ZShortcutsController: ZGenericTableController {
 	}
 
 	override func numberOfRows(in tableView: ZTableView) -> Int {
-		return shortcuts.numberOfRows
+		return graphShortcuts.numberOfRows
     }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
 		let     cellString = NSMutableAttributedString()
         let      paragraph = NSMutableParagraphStyle()
-		paragraph.tabStops = shortcuts.tabStops
+		paragraph.tabStops = graphShortcuts.tabStops
 
         for column in 0...3 {
-            cellString.append(shortcuts.attributedString(for: row, column: column))
+            cellString.append(graphShortcuts.attributedString(for: row, column: column))
         }
 
         cellString.addAttribute(.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, cellString.length))
@@ -109,7 +115,7 @@ class ZShortcutsController: ZGenericTableController {
 
 	func tableViewSelectionIsChanging(_ notification: Notification) {
 		if  let (row, column) = clickCoordinates,
-			let hyperlink = shortcuts.url(for: row, column: column) {
+			let hyperlink = graphShortcuts.url(for: row, column: column) {
 			hyperlink.openAsURL()
 		}
 	}

@@ -809,7 +809,7 @@ extension ZTextEditor {
 			} else if FLAGGED {
 				switch key {
 					case "i": showSpecialsPopup()
-					case "?": gControllers.showShortcuts()
+					case "?": gControllers.showShortcuts(flags: flags)
 					case "-": return editedZone?.convertToFromLine() ?? false // false means key not handled
 					default:  return false
 				}

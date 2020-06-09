@@ -11,7 +11,7 @@ import SystemConfiguration.SCNetworkConnection
 
 enum ZOperationID: Int {
 
-	case oNone               // default operation
+	case oNone               // default operation does nothing
 
     // onboard
 
@@ -75,15 +75,18 @@ let localOperations : [ZOperationID] = [.oHere, .oRoots, .oFoundIdeas, .oReadFil
 
 class ZOperations: NSObject {
 
-	let            queue = OperationQueue()
-	var        currentOp :  ZOperationID  =  .oNone
-	var hiddenSpinnerOps : [ZOperationID] = [.oAllIdeas, .oTraits, .oSaveToCloud]
-	var     shouldCancel :          Bool  { return !currentOp.isDone && -(negativeTimeSinceOpStart ?? 0.0) > 5.0 }
-	var    debugTimeText :        String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
-    var  onCloudResponse :    AnyClosure?
-	var        cloudFire :  TimerClosure?
-    var      lastOpStart :        NSDate?
-	func printOp(_ message: String) { columnarReport(mode: .dOps, operationText, message) }
+	let             queue = OperationQueue()
+	var         currentOp :  ZOperationID  = .oNone
+	var      shouldCancel :          Bool  { return !currentOp.isDone && -(inverseOpDuration ?? 0.0) > 5.0 }
+	var     debugTimeText :        String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
+	var inverseOpDuration :  TimeInterval? { return lastOpStart?.timeIntervalSinceNow }
+	var         cloudFire :  TimerClosure?
+	var   onCloudResponse :    AnyClosure?
+    var       lastOpStart :        NSDate?
+	func printOp(_ message: String)        { columnarReport(mode: .dOps, operationText, message) }
+	func unHang()                          { onCloudResponse?(0) }
+	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?)                                         {}
+	func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
     var operationText: String {
         var s = String(describing: currentOp)
@@ -107,8 +110,6 @@ class ZOperations: NSObject {
 
         return isReachable && !needsConnection
     }
-
-    func unHang() { onCloudResponse?(0) }
 
     @discardableResult func cloudStatusChanged() -> Bool {
         let          hasInternet = isConnectedToInternet
@@ -161,9 +162,6 @@ class ZOperations: NSObject {
 			}
         }
     }
-
-    func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {}
-    func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
     func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
         setupCloudTimer()
@@ -236,13 +234,9 @@ class ZOperations: NSObject {
 		}
 	}
 
-    var negativeTimeSinceOpStart: TimeInterval? {
-        return lastOpStart?.timeIntervalSinceNow
-    }
-
     func reportOnCompletionOfPerformBlock() {
 		if  gHasFinishedStartup,
-			let negative = negativeTimeSinceOpStart {
+			let negative = inverseOpDuration {
             let duration = Float(Int(negative * -10)) / 10.0 // round to nearest tenth of second
 
             printOp("\(duration)")

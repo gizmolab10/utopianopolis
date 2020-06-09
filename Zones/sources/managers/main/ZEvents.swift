@@ -22,7 +22,7 @@ let gEventStore         = EKEventStore()
 let gEvents             = ZEvents()
 
 
-class ZEvents: NSObject {
+class ZEvents: ZGeneric {
 
 
     var monitor: Any?

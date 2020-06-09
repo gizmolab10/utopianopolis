@@ -1,5 +1,5 @@
 //
-//  ZShortcuts.swift
+//  ZGraphShortcuts.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 1/4/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZShortcuts : NSObject {
+class ZGraphShortcuts : ZGeneric {
 
 	var numberOfRows: Int { return max(graphColumnOne.count, max(graphColumnTwo.count, max(graphColumnThree.count, graphColumnFour.count))) / 3 }
 	var hyperlinkColor: ZColor { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }

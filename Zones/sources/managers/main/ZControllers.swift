@@ -123,13 +123,26 @@ class ZControllers: NSObject {
 	// MARK:- hide / reveal
 	// MARK:-
 
-	func showShortcuts(_ show: Bool? = nil) {
-		if  let shorts = gShortcutsController {
-			if  show ?? !(shorts.window?.isKeyWindow ?? false) {
-				shorts.showWindow(nil)
-			} else {
-				shorts.window?.close()
+	func showShortcuts(_ show: Bool? = nil, flags: ZEventFlags) {
+		let    COMMAND = flags.isCommand
+		let    CONTROL = flags.isControl
+		let     OPTION = flags.isOption
+		let  presenter = gShortcuts
+		let controller = gShortcutsController
+		let      close = !(show ?? !(controller?.window?.isKeyWindow ?? false))
+
+		if  close {
+			controller?.window?.close()
+		} else if     COMMAND {
+			if       !OPTION && CONTROL {
+				presenter?.mode =  .noteMode
+			} else if OPTION && CONTROL {
+				presenter?.mode =   .dotMode
+			} else if OPTION {
+				presenter?.mode = .graphMode
 			}
+
+			controller?.showWindow(nil)
 		}
 	}
 

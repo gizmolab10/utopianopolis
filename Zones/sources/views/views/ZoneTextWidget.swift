@@ -21,7 +21,7 @@ enum ZTextType: Int {
     case suffix
 }
 
-class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips {
+class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
 	override var preferredFont : ZFont { return (widget?.type.isMap ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return  widget?.widgetZone }
@@ -48,9 +48,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips {
         }
     }
 
-    override func setup() {
-		super.setup()
-
+	func setup() {
 		delegate                   = self
         isBordered                 = false
         textAlignment              = .left

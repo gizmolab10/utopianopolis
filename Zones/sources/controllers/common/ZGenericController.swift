@@ -14,7 +14,7 @@ import Foundation
     import UIKit
 #endif
 
-class ZGenericController: ZController {
+class ZGenericController: ZController, ZGeneric {
 
 	var  controllerID : ZControllerID { return .idUndefined }
     func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}

@@ -6,15 +6,13 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
 
-
 let gContainer = CKContainer(identifier: kCloudID)
 
-
 class ZCloud: ZRecords {
+	var recordsToProcess = [String          : CKRecord]     ()
     var   cloudZonesByID = [CKRecordZone.ID : CKRecordZone] ()
     var         database :  CKDatabase? { return gRemoteStorage.databaseForID(databaseID) }
     var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
@@ -22,7 +20,6 @@ class ZCloud: ZRecords {
     var    isRemembering :         Bool = false
     var currentOperation : CKOperation?
     var currentPredicate : NSPredicate?
-	var recordsToProcess = [String : CKRecord]()
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
         if  database != nil {
@@ -38,7 +35,6 @@ class ZCloud: ZRecords {
 
         return nil
     }
-
 
     func start(_ operation: CKDatabaseOperation) {
         currentOperation = operation
@@ -77,7 +73,6 @@ class ZCloud: ZRecords {
 
     // MARK:- push to cloud
     // MARK:-
-
 
     func save(_ onCompletion: IntClosure?) {
         let   saves = pullCKRecordsForZonesAndTraitsWithMatchingStates([.needsSave])
@@ -152,7 +147,6 @@ class ZCloud: ZRecords {
         }
     }
 
-
     func emptyTrash(_ onCompletion: IntClosure?) {
 //        let   predicate = NSPredicate(format: "zoneisInTrash = 1")
 //        var toBeDeleted = [CKRecordID] ()
@@ -176,7 +170,6 @@ class ZCloud: ZRecords {
 //            }
 //        }
     }
-
 
     func undeleteAll(_ onCompletion: IntClosure?) {
 //        let predicate = NSPredicate(format: "zoneisInTrash = 1")
@@ -204,15 +197,12 @@ class ZCloud: ZRecords {
 //        }
     }
 
-
     // MARK:- request from cloud
     // MARK:-
-
     
-    func assureRecordExists(withRecordID iCKRecordID: CKRecord.ID?, recordType: String?, onCompletion: @escaping RecordClosure) {
+    func  assureRecordExists(withRecordID iCKRecordID: CKRecord.ID?, recordType: String?, onCompletion: @escaping RecordClosure) {
         detectIfRecordExists(withRecordID: iCKRecordID, recordType: recordType, mustCreate: true, onCompletion: onCompletion)
     }
-    
 
     func detectIfRecordExists(withRecordID iCKRecordID: CKRecord.ID?, recordType: String?, mustCreate: Bool = false, onCompletion: @escaping RecordClosure) {
         let done:  RecordClosure = { (iCKRecord: CKRecord?) in
@@ -249,8 +239,7 @@ class ZCloud: ZRecords {
             }
         }
     }
-    
-    
+
     func fetchRecord(for recordID: CKRecord.ID) {
         
         // //////////////////////////////////////
@@ -268,7 +257,6 @@ class ZCloud: ZRecords {
             }
         }
     }
-
 
     func queryFor(_ recordType: String, with predicate: NSPredicate, properties: [String], batchSize: Int = kBatchSize, cursor iCursor: CKQueryOperation.Cursor? = nil, onCompletion: RecordErrorClosure?) {
         currentPredicate                 = predicate
@@ -370,7 +358,6 @@ class ZCloud: ZRecords {
         }
     }
 
-
     func bookmarkPredicate(specificTo iRecordIDs: [CKRecord.ID]) -> NSPredicate? {
         var  predicate    = ""
 
@@ -389,7 +376,6 @@ class ZCloud: ZRecords {
 
         return NSPredicate(format: predicate)
     }
-
 
     func search(for searchString: String, onCompletion: ObjectClosure?) {
 		var retrieved = [CKRecord] ()
@@ -419,7 +405,6 @@ class ZCloud: ZRecords {
             }
         }
     }
-
 
     func fetchAndMerge(_ onCompletion: IntClosure?) {
         var recordIDs = recordIDsWithMatchingStates([.needsMerge])
@@ -476,10 +461,8 @@ class ZCloud: ZRecords {
         }
     }
 
-
-    // MARK:- fetch
+	// MARK:- fetch
     // MARK:-
-
 
     func remember(_ onCompletion: IntClosure?) {
         if  isRemembering {
@@ -517,7 +500,6 @@ class ZCloud: ZRecords {
             }
         }
     }
-
 
     func refetchIdeas(_ onCompletion: IntClosure?) {
         if  let fetchables = getPreferencesString(for: refetchingName, defaultString: "")?.components(separatedBy: kColonSeparator) {
@@ -741,7 +723,6 @@ class ZCloud: ZRecords {
 		}
     }
 
-
     func fetchAllIdeas(_ onCompletion: IntClosure?) {
         if  !gIsReadyToShowUI && recordRegistry.values.count > 10 {
             onCompletion?(0)
@@ -750,11 +731,9 @@ class ZCloud: ZRecords {
         }
     }
 
-
     func fetchNewIdeas(_ onCompletion: IntClosure?) {
         fetchSince(lastSyncDate, onCompletion)
     }
-
 
     func fetchSince(_ date: Date?, _ onCompletion: IntClosure?) {
         // for zones, traits, destroy
@@ -776,7 +755,6 @@ class ZCloud: ZRecords {
         }
     }
 
-
     func fetchNeededIdeas(_ onCompletion: IntClosure?) {
         let needed = recordIDsWithMatchingStates([.needsFetch, .requiresFetchBeforeSave], pull: true)
 
@@ -793,7 +771,6 @@ class ZCloud: ZRecords {
             }
         }
     }
-
 
     func fetchZones(needed:   [CKRecord.ID], _ onCompletion: RecordsClosure?) {
         var   IDsToFetchNow = [CKRecord.ID] ()
@@ -835,7 +812,6 @@ class ZCloud: ZRecords {
 
         fetchClosure?()
     }
-
 
     func reliableFetch(needed: [CKRecord.ID], properties: [String] = Zone.cloudProperties(), _ onCompletion: RecordsClosure?) {
         let count = needed.count
@@ -879,7 +855,6 @@ class ZCloud: ZRecords {
             onCompletion?([])
         }
     }
-
 
     func fetchParentIdeas(_ onCompletion: IntClosure?) {
         let fetchingStates: [ZRecordState] = [.needsWritable, .needsParent, .needsColor, .needsRoot]
@@ -963,7 +938,6 @@ class ZCloud: ZRecords {
             onCompletion?(0)
         }
     }
-
 
     func fetchChildIdeas(_ onCompletion: IntClosure?) {
         let childrenNeeded = childrenRefsWithMatchingStates([.needsChildren, .needsProgeny], batchSize: kSmallBatchSize)
@@ -1127,7 +1101,6 @@ class ZCloud: ZRecords {
         }
     }
 
-
     func fetchBookmarks(_ onCompletion: IntClosure?) {
         let targetIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
         if let predicate = bookmarkPredicate(specificTo: targetIDs) {
@@ -1195,7 +1168,6 @@ class ZCloud: ZRecords {
         }
     }
 
-
     func fetchCloudZones(_ onCompletion: IntClosure?) {
         if let                              operation = configure(CKFetchRecordZonesOperation()) as? CKFetchRecordZonesOperation {
             operation.fetchRecordZonesCompletionBlock = { (recordZonesByZoneID, operationError) in
@@ -1212,7 +1184,6 @@ class ZCloud: ZRecords {
             onCompletion?(0)
         }
     }
-
 
     func establishHere(_ onCompletion: IntClosure?) {
         let rootCompletion = {
@@ -1305,7 +1276,6 @@ class ZCloud: ZRecords {
         establishRootAt?(0)
     }
 
-
     func establishRootFor(name: String, recordName: String, _ onCompletion: ZoneClosure?) {
         let recordID = CKRecord.ID(recordName: recordName)
 
@@ -1388,7 +1358,6 @@ class ZCloud: ZRecords {
             }
         }
     }
-
 
     func getFromObject(_ object: ZRecord, valueForPropertyName: String) {
         if  database          != nil &&

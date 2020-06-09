@@ -170,7 +170,6 @@ class ZFavorites: ZRecords {
     // MARK:- API
     // MARK:-
 
-
     func setup(_ onCompletion: IntClosure?) {
         let   mine = gMineCloud
         let finish = {

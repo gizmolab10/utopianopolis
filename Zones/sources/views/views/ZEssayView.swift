@@ -61,8 +61,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
 		let  OPTION = flags.isOption
-		let SPECIAL = COMMAND && OPTION
-		let     ALL = SPECIAL && CONTROL
+		let     ALL = OPTION && CONTROL
 
 		if  COMMAND {
 			switch key {
@@ -76,9 +75,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "n":      swapBetweenNoteAndEssay()
 				case "p":      printCurrentEssay()
 				case "s":      save()
-				case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { return false }
-				case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-				case "/":      if SPECIAL { gControllers.showShortcuts() } else { return false }
+				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
+				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
+				case "/":                  gControllers.showShortcuts(flags: flags)
 				case "]", "[": gEssayEditor.smartGo(forward: key == "]")
 				case kReturn:  gCurrentEssayZone?.grab(); done()
 				default:       return false

@@ -25,6 +25,10 @@ typealias   ZAttributesDictionary = [NSAttributedString.Key : Any]
 typealias ZStringObjectDictionary = [String : NSObject]
 let                  gApplication = ZApplication.shared
 
+protocol ZGeneric {
+	func setup()
+}
+
 func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
 	if  let t = test, !t() { return }
 	let fancy = (surround == nil) ? message : message.surround(with: surround!)
@@ -2246,5 +2250,4 @@ extension ZTextField {
 
     @objc func selectCharacter(in range: NSRange) {}
     @objc func alterCase(up: Bool) {}
-    @objc func setup() {}
 }

@@ -127,6 +127,7 @@ enum ZWorkMode: Int {
     case searchMode
     case graphMode
 	case noteMode
+	case dotMode // for showing dot decoration documentation
 }
 
 enum ZShortcutType: String {
