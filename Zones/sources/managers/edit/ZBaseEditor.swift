@@ -36,6 +36,7 @@ class ZBaseEditor: NSObject {
 			gTemporarilySetKey(key)
 
 			switch key {
+				case "/": if COMMAND { gShortcutsController?.show(flags: flags); handled = true }
 				case "a": if SPECIAL { gApplication.showHideAbout();             handled = true }
 				case "h": if COMMAND { gApplication.hide(nil);                   handled = true }
 				case "k": if SPECIAL { toggleColorfulMode();                     handled = true }
@@ -45,7 +46,6 @@ class ZBaseEditor: NSObject {
 				case "r": if SPECIAL { sendEmailBugReport();                     handled = true }
 				case "t": if ONEFLAG { fetchTraits();                            handled = true }
 				case "x": if SPECIAL { clearRecents();                           handled = true }
-				case "/": if COMMAND { gControllers.showShortcuts(flags: flags); handled = true }
 				default:  break
 			}
 		}

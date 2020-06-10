@@ -58,15 +58,17 @@ class ZControllers: NSObject {
 	// MARK:-
 
 	func startupCloudAndUI() {
-		gRefusesFirstResponder   = true			// WORKAROUND new feature of mac os x
-		gWorkMode                = .startupMode
+		gRefusesFirstResponder     = true			// WORKAROUND new feature of mac os x
+		gWorkMode                  = .startupMode
+		gShortcutsWindowController = NSStoryboard(name: "Shortcuts", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
+
 
 		gRemoteStorage.clear()
 		gSignal([.sMain, .sStartup])
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
-				gIsReadyToShowUI = true
+				gIsReadyToShowUI   = true
 
 				gRecents.push()
 				gHereMaybe?.grab()
@@ -122,29 +124,6 @@ class ZControllers: NSObject {
 
 	// MARK:- hide / reveal
 	// MARK:-
-
-	func showShortcuts(_ show: Bool? = nil, flags: ZEventFlags) {
-		let    COMMAND = flags.isCommand
-		let    CONTROL = flags.isControl
-		let     OPTION = flags.isOption
-		let  presenter = gShortcuts
-		let controller = gShortcutsController
-		let      close = !(show ?? !(controller?.window?.isKeyWindow ?? false))
-
-		if  close {
-			controller?.window?.close()
-		} else if     COMMAND {
-			if       !OPTION && CONTROL {
-				presenter?.mode =  .noteMode
-			} else if OPTION && CONTROL {
-				presenter?.mode =   .dotMode
-			} else if OPTION {
-				presenter?.mode = .graphMode
-			}
-
-			controller?.showWindow(nil)
-		}
-	}
 
 	func showEssay(forGuide: Bool) {
 		let recordName = forGuide ? "75F7C2D3-4493-4E30-80D8-2F1F60DA7069" : "96689264-EB25-49CC-9324-913BA5CEBD56"

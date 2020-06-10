@@ -1,5 +1,5 @@
 //
-//  ZDotDecorations.swift
+//  ZNoteShortcuts.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 6/8/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZDotDecorations: NSObject {
+class ZNoteShortcuts: ZDocumentation, ZGeneric {
 
 	func setup() {}
 

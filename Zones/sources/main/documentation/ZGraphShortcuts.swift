@@ -8,14 +8,14 @@
 
 import Foundation
 
-class ZGraphShortcuts : ZGeneric {
+class ZGraphShortcuts : ZDocumentation, ZGeneric {
 
-	var numberOfRows: Int { return max(graphColumnOne.count, max(graphColumnTwo.count, max(graphColumnThree.count, graphColumnFour.count))) / 3 }
-	var hyperlinkColor: ZColor { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }
-	var powerUserColor: ZColor { return gIsDark ? kBlueColor.darker (by: 5.0) : kBlueColor.lighter(by: 30.0) }
-	var tabStops = [NSTextTab]()
-	let bold = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
-	let columnWidth = 290
+	var          hyperlinkColor    : ZColor { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }
+	var          powerUserColor    : ZColor { return gIsDark ? kBlueColor.darker (by: 5.0) : kBlueColor.lighter(by: 30.0) }
+	override var numberOfRows      : Int    { return max(graphColumnOne.count, max(graphColumnTwo.count, max(graphColumnThree.count, graphColumnFour.count))) / 3 }
+	override var indexOfLastColumn : Int    { return 3 }
+	override var columnWidth       : Int    { return 290 }
+	let          bold              = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
 
 	func setup() {
 		var values: [Int] = []
@@ -36,20 +36,36 @@ class ZGraphShortcuts : ZGeneric {
 		}
 	}
 
-	func strippedString(for column: Int) -> [String] {
+	override func objectValueFor(_ row: Int) -> NSMutableAttributedString {
+		let         result = NSMutableAttributedString()
+		let      paragraph = NSMutableParagraphStyle()
+		paragraph.tabStops = tabStops
+
+		for column in 0...indexOfLastColumn {
+			let a = attributedString(for: row, column: column)
+
+			result.append(a)
+		}
+
+		result.addAttribute(.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, result.length))
+
+		return result
+	}
+
+	func strippedStrings(for column: Int) -> [String] {
 		let columnStrings = [graphColumnOne, graphColumnTwo, graphColumnThree, graphColumnFour]
 		let    rawStrings = columnStrings[column]
 		var        result = [String]()
 		let         count = rawStrings.count / 3
 		var         index = 0
 
-		while index < count {
+		while    index < count {
 			let offset = index * 3
-			index += 1
-			let first = rawStrings[offset]
+			let  first = rawStrings[offset]
 			let second = rawStrings[offset + 1]
-			let third = rawStrings[offset + 2]
-			let type = ZShortcutType(rawValue: first.substring(with: NSMakeRange(0, 1))) // grab first character
+			let  third = rawStrings[offset + 2]
+			let   type = ZShortcutType(rawValue: first.substring(with: NSMakeRange(0, 1))) // grab first character
+			index     += 1
 
 			if  type != .power || gProSkillLevel {
 				if  type != .insert || gProSkillLevel {
@@ -67,19 +83,11 @@ class ZGraphShortcuts : ZGeneric {
 		return result
 	}
 
-	func strings(for row: Int, column: Int) -> (String, String, String) {
-		let strings = strippedString(for: column)
+	override func strings(for row: Int, column: Int) -> (String, String, String) {
+		let strings = strippedStrings(for: column)
 		let   index = row * 3
 
 		return index >= strings.count ? ("", "", "") : (strings[index], strings[index + 1], strings[index + 2])
-	}
-
-
-	func url(for row: Int, column: Int) -> String? {
-		let m = "https://medium.com/@sand_74696/"
-		let (_, _, url) = strings(for: row, column: column)
-
-		return url.isEmpty ? nil : m + url
 	}
 
 	func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {

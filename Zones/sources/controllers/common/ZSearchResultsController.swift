@@ -275,7 +275,7 @@ class ZSearchResultsController: ZGenericTableController {
 					self.resolveRecord(dbID!, record!) // not bother user if only one record found
 				} else if total > 0 {
 					sortRecords()
-					genericTableView?.reloadData()
+					genericTableUpdate()
 					
 					#if os(OSX)
 					FOREGROUND {

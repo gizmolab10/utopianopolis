@@ -78,13 +78,13 @@ class ZEvents: ZGeneric {
 							return       gSearching.handleEvent(event)
 						case .noteMode:
 							if  gIsShortcutsFrontmost {
-								return  gShortcuts?.handleEvent(event) ?? nil
+								return  gShortcutsController?.handleEvent(event) ?? nil
 							} else {
 								return gEssayEditor.handleEvent(event, isWindow: true)
 							}
 						case .graphMode, .editIdeaMode:
 							if  gIsShortcutsFrontmost {
-								return  gShortcuts?.handleEvent(event) ?? nil
+								return  gShortcutsController?.handleEvent(event) ?? nil
 							} else {
 								return gGraphEditor.handleEvent(event, isWindow: true)
 							}

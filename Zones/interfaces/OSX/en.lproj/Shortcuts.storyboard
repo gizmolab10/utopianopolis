@@ -30,7 +30,7 @@
         <scene sceneID="OeN-bO-80W">
             <objects>
                 <customObject id="Upg-eY-ED5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <viewController id="cD6-C4-FJ5" customClass="ZShortcutsController" customModule="Thoughtful" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="cD6-C4-FJ5" customClass="ZShortcutsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="OMb-DG-XS6">
                         <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -39,9 +39,9 @@
                                 <rect key="frame" x="0.0" y="-40" width="1180" height="780"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Aa-9c-eI8">
                                     <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowSizeStyle="automatic" viewBased="YES" id="H0M-2O-9lo">
+                                        <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" id="H0M-2O-9lo">
                                             <rect key="frame" x="0.0" y="0.0" width="1183" height="780"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
@@ -54,7 +54,7 @@
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
                                                     <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" allowsUndo="NO" alignment="left" title="Text Cell" usesSingleLineMode="YES" id="fpF-1O-DdX">
-                                                        <font key="font" metaFont="label" size="11"/>
+                                                        <font key="font" metaFont="controlContent" size="11"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -87,21 +87,21 @@
                             <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR">
                                 <rect key="frame" x="0.0" y="-40" width="1180" height="780"/>
                                 <subviews>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line" customClass="ZLineView" customModule="Thoughtful" customModuleProvider="target">
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="290" y="215" width="1" height="565"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="5Gm-ni-LIH"/>
                                             <constraint firstAttribute="height" constant="565" id="QjB-vW-W62"/>
                                         </constraints>
                                     </customView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line" customClass="ZLineView" customModule="Thoughtful" customModuleProvider="target">
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="214" width="580" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="Mym-7j-1Mo"/>
                                             <constraint firstAttribute="width" constant="580" id="nfu-53-PXo"/>
                                         </constraints>
                                     </customView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Thoughtful" customModuleProvider="target">
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="580" y="0.0" width="1" height="780"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="OGt-RE-RO4"/>

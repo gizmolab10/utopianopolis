@@ -48,7 +48,7 @@ var                 gExpanded:          [String]?
 var                   gIsDark:               Bool { return gDarkMode == .Dark }
 var                   gIsLate:               Bool { return gBatches.isLate }
 var               gIsDragging:               Bool { return gDraggedZone != nil }
-var     gIsShortcutsFrontmost:               Bool { return gShortcuts?.view.window?.isKeyWindow ?? false }
+var     gIsShortcutsFrontmost:               Bool { return gShortcutsController?.view.window?.isKeyWindow ?? false }
 var       gBrowsingIsConfined:               Bool { return gConfinementMode   == .list }
 var           gIsRecentlyMode:               Bool { return gFavoritesMode  == .recent }
 var            gListsGrowDown:               Bool { return gListGrowthMode == .down }
