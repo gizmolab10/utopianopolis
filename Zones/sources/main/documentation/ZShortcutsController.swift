@@ -105,21 +105,21 @@ class ZShortcutsController: ZGenericTableController {
 			} else if OPTION {
 				nextMode = .graphMode
 			}
-		}
 
-		if  let       next = nextMode {
-			let controller = gShortcutsWindowController
-			let     isOpen = controller?.window?.isKeyWindow ?? false
-			let       same = mode == next
-			let      close = !(show ?? !(isOpen && same))
+			if  let       next = nextMode {
+				let controller = gShortcutsWindowController
+				let     isOpen = controller?.window?.isKeyWindow ?? false
+				let       same = mode == next
+				let      close = !(show ?? !(isOpen && same))
 
-			if  close  {
-				controller?.window?.close()
-			} else {
-				mode       = next
+				if  close  {
+					controller?.window?.close()
+				} else {
+					mode       = next
 
-				update()
-				controller?.showWindow(nil)
+					update()
+					controller?.showWindow(nil)
+				}
 			}
 		}
 	}
@@ -129,19 +129,18 @@ class ZShortcutsController: ZGenericTableController {
 	}
     
     func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
-        if  let     key = iEvent.key {
-			let   flags = iEvent.modifierFlags
-            let COMMAND = flags.isCommand
-            let OPTION  = flags.isOption
-            let SPECIAL = COMMAND && OPTION
-			switch key {
-				case "?",
-					 "/": if COMMAND { gShortcutsController?.show(flags: flags) }
+        if  let      key = iEvent.key {
+			let    flags = iEvent.modifierFlags
+			let   OPTION = flags.isOption
+            let  COMMAND = flags.isCommand
+            let  SPECIAL = COMMAND && OPTION
+			switch   key {
+				case "?", "/":         show(       flags: flags)
+				case "w":              show(false, flags: flags)
+				case "q":              gApplication.terminate(self)
 				case "a": if SPECIAL { gApplication.showHideAbout() }
 				case "p": if SPECIAL { cycleSkillLevel() } else { view.printView() }
-				case "q":              gApplication.terminate(self)
 				case "r": if COMMAND { sendEmailBugReport() }
-				case "w": if COMMAND { gShortcutsController?.show(false, flags: flags) }
 				
 				default: break
 			}
@@ -154,44 +153,38 @@ class ZShortcutsController: ZGenericTableController {
     // MARK:-
 
 	var clickCoordinates: (Int, Int)? {
+
 		#if os(OSX)
-		if  let table = genericTableView,
-			let row = table.selectedRowIndexes.first {
-			let screenLocation = NSEvent.mouseLocation
+
+		if  let              table = genericTableView,
+			let                row = table.selectedRowIndexes.first {
+			let     screenLocation = NSEvent.mouseLocation
 			if  let windowLocation = table.window?.convertPoint(fromScreen: screenLocation) {
-				let l = table.convert(windowLocation, from: nil)
-				let column = Int(floor(l.x / CGFloat(graphShortcuts.columnWidth)))
+				let              l = table.convert(windowLocation, from: nil)
+				let         column = Int(floor(l.x / CGFloat(shortcuts.columnWidth)))
+
 				table.deselectRow(row)
 				
 				return (row, min(3, column))
 			}
 		}
+
 		#endif
 		
 		return nil
 	}
 
 	override func numberOfRows(in tableView: ZTableView) -> Int {
-		return graphShortcuts.numberOfRows
+		return shortcuts.numberOfRows
     }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
-		let     cellString = NSMutableAttributedString()
-        let      paragraph = NSMutableParagraphStyle()
-		paragraph.tabStops = graphShortcuts.tabStops
-
-        for column in 0...3 {
-            cellString.append(graphShortcuts.attributedString(for: row, column: column))
-        }
-
-        cellString.addAttribute(.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, cellString.length))
-
-        return cellString
+		return shortcuts.objectValueFor(row)
 	}
 
 	func tableViewSelectionIsChanging(_ notification: Notification) {
 		if  let (row, column) = clickCoordinates,
-			let hyperlink = graphShortcuts.url(for: row, column: column) {
+			let hyperlink = shortcuts.url(for: row, column: column) {
 			hyperlink.openAsURL()
 		}
 	}
