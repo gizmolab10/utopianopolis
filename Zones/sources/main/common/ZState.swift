@@ -85,6 +85,7 @@ var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNew
 var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
 var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 
+let                 kBoldFont                     = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
 let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
 let       kBeginnerSkillLevel                     = ZSkillLevel.beginner.rawValue
 let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize

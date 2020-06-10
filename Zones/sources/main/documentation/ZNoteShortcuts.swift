@@ -10,6 +10,8 @@ import Foundation
 
 class ZNoteShortcuts: ZDocumentation, ZGeneric {
 
-	func setup() {}
+	override func objectValueFor(_ row: Int) -> NSMutableAttributedString {
+		return NSMutableAttributedString(string: "note this hah!")
+	}
 
 }

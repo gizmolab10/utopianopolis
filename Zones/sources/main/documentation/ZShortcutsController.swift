@@ -175,7 +175,7 @@ class ZShortcutsController: ZGenericTableController {
 	}
 
 	override func numberOfRows(in tableView: ZTableView) -> Int {
-		return shortcuts.numberOfRows
+		return shortcuts.countOfRows
     }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {

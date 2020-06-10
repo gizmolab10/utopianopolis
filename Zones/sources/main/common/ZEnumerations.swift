@@ -133,7 +133,7 @@ enum ZWorkMode: Int {
 enum ZShortcutType: String {
 	case bold      = "b"
 	case insert    = "i"
-	case power     = "p"
+	case pro     = "p"
 	case underline = "u"
 	case append    = "a"
 	case plain     = " "

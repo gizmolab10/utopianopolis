@@ -10,65 +10,26 @@ import Foundation
 
 class ZGraphShortcuts : ZDocumentation, ZGeneric {
 
-	var          hyperlinkColor    : ZColor { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }
-	var          powerUserColor    : ZColor { return gIsDark ? kBlueColor.darker (by: 5.0) : kBlueColor.lighter(by: 30.0) }
-	override var numberOfRows      : Int    { return max(graphColumnOne.count, max(graphColumnTwo.count, max(graphColumnThree.count, graphColumnFour.count))) / 3 }
-	override var indexOfLastColumn : Int    { return 3 }
-	override var columnWidth       : Int    { return 290 }
-	let          bold              = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
-
-	func setup() {
-		var values: [Int] = []
-		var offset = 0
-
-		for _ in 0...3 {
-			values.append(offset)
-			values.append(offset + 20)
-			values.append(offset + 85)
-
-			offset += columnWidth
-		}
-
-		for value in values {
-			if value != 0 {
-				tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
-			}
-		}
-	}
-
-	override func objectValueFor(_ row: Int) -> NSMutableAttributedString {
-		let         result = NSMutableAttributedString()
-		let      paragraph = NSMutableParagraphStyle()
-		paragraph.tabStops = tabStops
-
-		for column in 0...indexOfLastColumn {
-			let a = attributedString(for: row, column: column)
-
-			result.append(a)
-		}
-
-		result.addAttribute(.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, result.length))
-
-		return result
-	}
+	override var countOfRows       :  Int  { return max(graphColumnOne.count, max(graphColumnTwo.count, max(graphColumnThree.count, graphColumnFour.count))) / countPerRow }
+	override var columnWidth       :  Int  { return 290 }
 
 	func strippedStrings(for column: Int) -> [String] {
 		let columnStrings = [graphColumnOne, graphColumnTwo, graphColumnThree, graphColumnFour]
 		let    rawStrings = columnStrings[column]
 		var        result = [String]()
-		let         count = rawStrings.count / 3
+		let         count = rawStrings.count / countPerRow
 		var         index = 0
 
 		while    index < count {
-			let offset = index * 3
+			let offset = index * countPerRow
 			let  first = rawStrings[offset]
 			let second = rawStrings[offset + 1]
 			let  third = rawStrings[offset + 2]
 			let   type = ZShortcutType(rawValue: first.substring(with: NSMakeRange(0, 1))) // grab first character
 			index     += 1
 
-			if  type != .power || gProSkillLevel {
-				if  type != .insert || gProSkillLevel {
+			if      gProSkillLevel || type != .pro {
+				if  gProSkillLevel || type != .insert {
 					result.append(first)
 					result.append(second)
 					result.append(third)
@@ -85,18 +46,18 @@ class ZGraphShortcuts : ZDocumentation, ZGeneric {
 
 	override func strings(for row: Int, column: Int) -> (String, String, String) {
 		let strings = strippedStrings(for: column)
-		let   index = row * 3
+		let   index = row * countPerRow
 
 		return index >= strings.count ? ("", "", "") : (strings[index], strings[index + 1], strings[index + 2])
 	}
 
-	func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
+	override func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
 		var (first, second, url) = strings(for: row, column: column)
 		let     rawChar = first.substring(with: NSMakeRange(0, 1))
 		let       lower = rawChar.lowercased()
 		let       SHIFT = lower != rawChar
 		let        type = ZShortcutType(rawValue: lower) // grab first character
-		let   removable = SHIFT || type == .power
+		let   removable = SHIFT || type == .pro
 		let        main = first.substring(fromInclusive: 1)             // grab remaining characters
 		var  attributes = ZAttributesDictionary ()
 		let      hasURL = !url.isEmpty
@@ -110,10 +71,10 @@ class ZGraphShortcuts : ZDocumentation, ZGeneric {
 
 		switch type {
 			case .bold?:
-				attributes[.font] = bold
+				attributes[.font] = kBoldFont
 			case .append?, .underline?:
 				attributes[.underlineStyle] = 1
-			case .plain?, .power?:
+			case .plain?, .pro?:
 				if  hasURL {
 					attributes[.foregroundColor] = hyperlinkColor
 					second.append(kSpace + kEllipsis)
@@ -131,7 +92,7 @@ class ZGraphShortcuts : ZDocumentation, ZGeneric {
 			result.append(NSAttributedString(string: main))
 		} else {
 			if  gProSkillLevel,
-				type == .power {
+				type == .pro {
 				attributes[.backgroundColor] = powerUserColor
 			}
 
@@ -151,7 +112,6 @@ class ZGraphShortcuts : ZDocumentation, ZGeneric {
 
 		return result
 	}
-
 
 	let graphColumnOne: [String] = [
 		"",				"", "",
