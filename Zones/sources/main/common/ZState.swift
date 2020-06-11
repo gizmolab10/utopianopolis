@@ -523,7 +523,7 @@ var gCurrentGraph : ZFunction {
 var gWorkMode: ZWorkMode = .startupMode {
 	didSet {
 		if  gCanSaveWorkMode {
-			setPreferencesInt(gWorkMode.rawValue, for: kWorkMode)
+			setPreferencesString(gWorkMode.rawValue, for: kWorkMode)
 		}
 	}
 }
@@ -595,7 +595,7 @@ func gRefreshCurrentEssay() {
 }
 
 func gRefreshPersistentWorkMode() {
-	if  let     mode = getPreferencesInt(for: kWorkMode, defaultInt: ZWorkMode.noteMode.rawValue),
+	if  let     mode = getPreferencesString(for: kWorkMode, defaultString: ZWorkMode.noteMode.rawValue),
 		let workMode = ZWorkMode(rawValue: mode) {
 		gWorkMode    = workMode
 	}

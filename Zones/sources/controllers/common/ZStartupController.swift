@@ -17,16 +17,21 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	@IBOutlet var enableCloudLabel  : ZTextField?
 	@IBOutlet var accessIDLabel     : ZTextField?
 	@IBOutlet var loadingLabel      : ZTextField?
+	@IBOutlet var helpLabel         : ZTextField?
 	@IBOutlet var acccessToAppleID  : ZView?
 	@IBOutlet var enableCloudDrive  : ZView?
 	@IBOutlet var pleaseWait        : ZView?
 	@IBOutlet var thermometerBar    : ZStartupProgressBar?
+	@IBOutlet var helpButtons       : ZHelpButtonsView?
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
+		helpButtons?.updateAndRedraw()
+
 		enableCloudLabel?.text = enableText
 		accessIDLabel?   .text = accessText
 		loadingLabel?    .text = loadingText
+		helpLabel?       .text = helpText
 
 //		gStartupLevel = .firstTime
 
@@ -116,5 +121,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 							  "Then return here and click Continue, below."].joined(separator: "\n\n")
 
 	var loadingText: String = "Your data is loading (it may take up to half a minute; sorry for the wait)."
+
+	var helpText: String = "Would you like to look at something else than the progress bar?"
 
 }

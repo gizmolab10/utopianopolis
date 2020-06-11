@@ -70,4 +70,5 @@ class ZModeControlsView : ZButtonsView, ZTooltips {
 		updateAndRedraw()
 		updateTooltips()
 	}
+
 }

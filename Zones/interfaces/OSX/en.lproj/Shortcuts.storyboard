@@ -54,7 +54,7 @@
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
                                                     <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" allowsUndo="NO" alignment="left" title="Text Cell" usesSingleLineMode="YES" id="fpF-1O-DdX">
-                                                        <font key="font" metaFont="message" size="11"/>
+                                                        <font key="font" metaFont="menu" size="11"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -102,24 +102,24 @@
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="780" id="u9x-zg-U5G"/>
                                 </constraints>
                             </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR">
+                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR">
                                 <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                                 <subviews>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                    <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="290" y="215" width="1" height="565"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="5Gm-ni-LIH"/>
                                             <constraint firstAttribute="height" constant="565" id="QjB-vW-W62"/>
                                         </constraints>
                                     </customView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                    <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="214" width="580" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="Mym-7j-1Mo"/>
                                             <constraint firstAttribute="width" constant="580" id="nfu-53-PXo"/>
                                         </constraints>
                                     </customView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                    <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="580" y="0.0" width="1" height="780"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="OGt-RE-RO4"/>
@@ -141,16 +141,12 @@
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="xVv-mR-0mE" secondAttribute="bottom" id="7nk-p7-mV1"/>
-                            <constraint firstAttribute="trailing" secondItem="zAE-6p-uHR" secondAttribute="trailing" id="8OS-JK-Q3i"/>
                             <constraint firstItem="lJB-I7-wvM" firstAttribute="top" secondItem="OMb-DG-XS6" secondAttribute="top" id="IKq-tX-7lH"/>
-                            <constraint firstAttribute="bottom" secondItem="zAE-6p-uHR" secondAttribute="bottom" id="Q5f-LB-96u"/>
                             <constraint firstAttribute="bottom" secondItem="lJB-I7-wvM" secondAttribute="bottom" id="SPn-h3-VIa"/>
                             <constraint firstItem="xVv-mR-0mE" firstAttribute="leading" secondItem="OMb-DG-XS6" secondAttribute="leading" id="Wfh-oH-M0z"/>
-                            <constraint firstItem="zAE-6p-uHR" firstAttribute="leading" secondItem="OMb-DG-XS6" secondAttribute="leading" id="esZ-Pg-Lqu"/>
                             <constraint firstAttribute="trailing" secondItem="xVv-mR-0mE" secondAttribute="trailing" id="tJi-j3-xUQ"/>
                             <constraint firstItem="lJB-I7-wvM" firstAttribute="leading" secondItem="OMb-DG-XS6" secondAttribute="leading" id="vz5-yW-oTj"/>
                             <constraint firstAttribute="trailing" secondItem="lJB-I7-wvM" secondAttribute="trailing" id="xhn-eP-rEE"/>
-                            <constraint firstItem="zAE-6p-uHR" firstAttribute="top" secondItem="OMb-DG-XS6" secondAttribute="top" id="xnq-2b-DMM"/>
                             <constraint firstItem="xVv-mR-0mE" firstAttribute="top" secondItem="OMb-DG-XS6" secondAttribute="top" id="xou-cL-zPh"/>
                         </constraints>
                     </view>

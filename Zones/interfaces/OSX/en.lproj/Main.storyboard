@@ -1414,10 +1414,10 @@ DQ
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="rmD-x7-RtA" userLabel="Please Wait">
-                                                <rect key="frame" x="225" y="310" width="0.0" height="42"/>
+                                                <rect key="frame" x="0.0" y="236" width="450" height="116"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="kKM-9B-fW0">
-                                                        <rect key="frame" x="-2" y="26" width="4" height="16"/>
+                                                        <rect key="frame" x="-2" y="100" width="454" height="16"/>
                                                         <textFieldCell key="cell" selectable="YES" alignment="justified" id="3XW-gG-Hxw">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1425,17 +1425,35 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <progressIndicator wantsLayer="YES" maxValue="100" doubleValue="1" displayedWhenStopped="NO" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="2xi-Mf-riK" customClass="ZStartupProgressBar" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="-1" width="0.0" height="20"/>
+                                                        <rect key="frame" x="0.0" y="73" width="450" height="20"/>
                                                     </progressIndicator>
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Bpe-so-Utw">
+                                                        <rect key="frame" x="223" y="50" width="4" height="16"/>
+                                                        <textFieldCell key="cell" selectable="YES" id="UeP-8V-XHo">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GXv-wU-eO3" customClass="ZHelpButtonsView" customModule="Seriously" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="8" width="450" height="34"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="34" id="ery-1s-BIX"/>
+                                                        </constraints>
+                                                    </customView>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="kKM-9B-fW0" secondAttribute="trailing" id="64a-a0-lta"/>
+                                                    <constraint firstItem="Bpe-so-Utw" firstAttribute="centerX" secondItem="rmD-x7-RtA" secondAttribute="centerX" id="7Pa-L5-sLy"/>
                                                     <constraint firstItem="kKM-9B-fW0" firstAttribute="top" secondItem="rmD-x7-RtA" secondAttribute="top" id="AQM-Sx-kce"/>
                                                     <constraint firstItem="2xi-Mf-riK" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="UgY-DM-pFT"/>
-                                                    <constraint firstAttribute="bottom" secondItem="2xi-Mf-riK" secondAttribute="bottom" id="UkO-0f-0s3"/>
                                                     <constraint firstItem="2xi-Mf-riK" firstAttribute="top" secondItem="kKM-9B-fW0" secondAttribute="bottom" constant="8" id="ckq-Yb-bP4"/>
+                                                    <constraint firstAttribute="bottom" secondItem="GXv-wU-eO3" secondAttribute="bottom" constant="8" id="dI2-H3-BuL"/>
+                                                    <constraint firstItem="GXv-wU-eO3" firstAttribute="top" secondItem="Bpe-so-Utw" secondAttribute="bottom" constant="8" id="eLN-Jp-aZL"/>
                                                     <constraint firstAttribute="trailing" secondItem="2xi-Mf-riK" secondAttribute="trailing" id="fNg-Gi-UtW"/>
                                                     <constraint firstItem="kKM-9B-fW0" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="ggn-Vd-Fw6"/>
+                                                    <constraint firstItem="Bpe-so-Utw" firstAttribute="top" secondItem="2xi-Mf-riK" secondAttribute="bottom" constant="8" id="hyB-Ar-uKF"/>
+                                                    <constraint firstItem="GXv-wU-eO3" firstAttribute="centerX" secondItem="rmD-x7-RtA" secondAttribute="centerX" id="wDF-tk-EUz"/>
                                                 </constraints>
                                             </customView>
                                         </subviews>
@@ -1444,7 +1462,9 @@ DQ
                                             <constraint firstItem="Pg2-h7-6ux" firstAttribute="top" secondItem="wVW-5S-6K5" secondAttribute="top" id="Qae-L1-enX"/>
                                             <constraint firstItem="rmD-x7-RtA" firstAttribute="top" secondItem="wVW-5S-6K5" secondAttribute="top" id="b5x-zn-daU"/>
                                             <constraint firstItem="rmD-x7-RtA" firstAttribute="centerX" secondItem="wVW-5S-6K5" secondAttribute="centerX" id="bwm-WI-3yq"/>
+                                            <constraint firstAttribute="trailing" secondItem="rmD-x7-RtA" secondAttribute="trailing" id="cZw-Nk-DgZ"/>
                                             <constraint firstItem="Pg2-h7-6ux" firstAttribute="leading" secondItem="wVW-5S-6K5" secondAttribute="leading" id="dlR-0k-gqm"/>
+                                            <constraint firstItem="rmD-x7-RtA" firstAttribute="leading" secondItem="wVW-5S-6K5" secondAttribute="leading" id="heT-dA-0DQ"/>
                                             <constraint firstAttribute="trailing" secondItem="NGd-6W-C0X" secondAttribute="trailing" id="nZh-c3-eYA"/>
                                             <constraint firstItem="NGd-6W-C0X" firstAttribute="leading" secondItem="wVW-5S-6K5" secondAttribute="leading" id="rvW-6v-tHJ"/>
                                             <constraint firstItem="NGd-6W-C0X" firstAttribute="top" secondItem="Pg2-h7-6ux" secondAttribute="bottom" id="yBb-HD-FNK"/>
@@ -1473,6 +1493,8 @@ DQ
                         <outlet property="accessIDLabel" destination="xlc-Yd-hnd" id="6A8-OE-0yH"/>
                         <outlet property="enableCloudDrive" destination="Pg2-h7-6ux" id="0m3-bv-2c5"/>
                         <outlet property="enableCloudLabel" destination="O6S-Dv-mLT" id="Mgk-EK-qtL"/>
+                        <outlet property="helpButtons" destination="GXv-wU-eO3" id="QfY-aZ-8wh"/>
+                        <outlet property="helpLabel" destination="Bpe-so-Utw" id="7Al-CQ-DAy"/>
                         <outlet property="loadingLabel" destination="kKM-9B-fW0" id="c49-Qv-BEM"/>
                         <outlet property="pleaseWait" destination="rmD-x7-RtA" id="Pgi-uv-g7c"/>
                         <outlet property="thermometerBar" destination="2xi-Mf-riK" id="GCP-V7-8ij"/>
@@ -1480,7 +1502,7 @@ DQ
                 </viewController>
                 <customObject id="2Ip-rP-SYE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="17.5" y="1239.5"/>
+            <point key="canvasLocation" x="17" y="1239.5"/>
         </scene>
     </scenes>
 </document>

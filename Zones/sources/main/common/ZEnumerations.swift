@@ -121,22 +121,31 @@ enum ZFileMode: Int {
     case all
 }
 
-enum ZWorkMode: Int {
-	case editIdeaMode
-	case startupMode
-    case searchMode
-    case graphMode
-	case noteMode
-	case dotMode // for showing dot decoration documentation
+enum ZWorkMode: String {
+	case editIdeaMode = "i"
+	case startupMode  = "s"
+    case searchMode   = "?"
+    case graphMode    = "g"
+	case noteMode     = "n"
+	case dotMode      = "d" // for showing dot decoration documentation
+
+	var title: String {
+		switch self {
+			case .graphMode: return "graph keys"
+			case .noteMode:  return "essay keys"
+			case .dotMode:   return "dot meanings"
+			default:         return ""
+		}
+	}
 }
 
 enum ZShortcutType: String {
+	case pro       = "p"
 	case bold      = "b"
-	case insert    = "i"
-	case pro     = "p"
-	case underline = "u"
-	case append    = "a"
 	case plain     = " "
+	case insert    = "i"
+	case append    = "a"
+	case underline = "u"
 }
 
 enum ZCountsMode: Int { // do not change the order, they are persisted

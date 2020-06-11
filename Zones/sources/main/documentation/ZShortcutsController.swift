@@ -57,17 +57,18 @@ class ZShortcutsController: ZGenericTableController {
 
 			for m in allModes {
 				if  let g = gridView(for: m) {
-					if  g.superview == nil {
-						c.addSubview(g)
+					g.removeFromSuperview()
+					c.addSubview(g)
 
-						g.zlayer.backgroundColor = .clear
-
+					if  let t = genericTableView {
 						g.snp.makeConstraints { make in
-							make.top.bottom.left.right.equalTo(c) // text and grid scroll together
+							make.top.bottom.left.right.equalTo(t) // text and grid scroll together
 						}
 					}
 
-					g.isHidden = m != mode
+
+					g.zlayer.backgroundColor = .clear
+					g.isHidden               = m != mode
 				}
 			}
 		}
@@ -106,23 +107,26 @@ class ZShortcutsController: ZGenericTableController {
 				nextMode = .graphMode
 			}
 
-			if  let       next = nextMode {
-				let controller = gShortcutsWindowController
-				let     isOpen = controller?.window?.isKeyWindow ?? false
-				let       same = mode == next
-				let      close = !(show ?? !(isOpen && same))
-
-				if  close  {
-					controller?.window?.close()
-				} else {
-					mode       = next
-
-					update()
-					controller?.showWindow(nil)
-				}
-			}
+			self.show(show, nextMode: nextMode)
 		}
 	}
+
+	func show(_ show: Bool? = nil, nextMode: ZWorkMode?) {
+		if  let       next = nextMode {
+			let controller = gShortcutsWindowController
+			let     isOpen = controller?.window?.isKeyWindow ?? false
+			let       same = mode == next
+			let      close = !(show ?? !(isOpen && same))
+
+			if  close  {
+				controller?.window?.close()
+			} else {
+				mode       = next
+
+				update()
+				controller?.showWindow(nil)
+			}
+		}	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		genericTableView?.reloadData()
