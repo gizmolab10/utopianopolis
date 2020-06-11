@@ -8,6 +8,22 @@
 
 import Foundation
 
+enum ZDotCommand: String {
+	case drag      = "plain"
+	case selected  = "currently"
+	case focus     = "current"
+	case readOnly  = "read"
+	case oneChild  = "one"
+	case five      = "five"
+	case ten       = "ten"
+	case eleven    = "eleven"
+	case click     = "click"
+	case email     = "email"
+	case bookmark  = "bookmark"
+	case hyperlink = "hyperlink"
+	case note      = "note"
+}
+
 class ZDotDecorations: ZDocumentation {
 
 	override var noTabPrefix       :   String   { return "               " }
@@ -16,14 +32,28 @@ class ZDotDecorations: ZDocumentation {
 	override var columnWidth       :   Int      { return 580 }
 	override var indexOfLastColumn :   Int      { return 1 }
 
+	override func dotCommand(for row: Int, column: Int) -> ZDotCommand? {
+		let (first, second, _) = strings(for: row, column: column)
+		let     rawChar  = first.substring(with: NSMakeRange(0, 1))
+		let       lower  = rawChar.lowercased()
+		let        type  = ZShortcutType(rawValue: lower)
+		if         type == .dots {
+			let    part  = second.components(separatedBy: " ")[0]
+
+			return ZDotCommand(rawValue: part)
+		}
+
+		return nil
+	}
+
 	let dotsColumnOne: [String] = [
 		"",		"","",
 		"bLEFT SIDE DOTS","click to select or drag","",
 		"",		"","",
-		"n",	"plain","",
-		"n",	"currently selected","",
-		"n",	"current focus (only in favorites or recents)","",
-		"n",	"read only",""
+		"d",	"plain","",
+		"d",	"currently selected","",
+		"d",	"current focus (only in favorites or recents)","",
+		"d",	"read only",""
 	]
 
 	let dotsColumnTwo: [String] = [
@@ -32,21 +62,21 @@ class ZDotDecorations: ZDocumentation {
 		"","","",
 		"Uhas hidden ideas","undecorated","",
 		"","","",
-		"n",	"one idea","",
-		"n",	"five ideas","",
-		"n",	"ten ideas","",
-		"n",	"eleven ideas","",
+		"d",	"one idea","",
+		"d",	"five ideas","",
+		"d",	"ten ideas","",
+		"d",	"eleven ideas","",
 		"","","",
 		"uhas revealed ideas","undecorated","",
 		"","","",
-		"n",	"click to hide ideas","",
+		"d",	"click to hide ideas","",
 		"","","",
 		"udecorated","","",
 		"","","",
-		"n",	"bookmark","",
-		"n",	"email","",
-		"n",	"hyperlink","",
-		"n",	"note or essay",""
+		"db",	"bookmark","",
+		"de",	"email","",
+		"dh",	"hyperlink","",
+		"dn",	"note or essay",""
 	]
 
 }

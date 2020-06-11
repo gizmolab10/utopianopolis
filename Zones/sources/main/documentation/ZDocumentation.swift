@@ -20,6 +20,8 @@ class ZDocumentation: NSObject {
 	var hyperlinkColor    :  ZColor    { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }
 	var powerUserColor    :  ZColor    { return gIsDark ? kBlueColor.darker (by: 5.0) : kBlueColor.lighter(by: 30.0) }
 
+	func dotCommand(for row: Int, column: Int) -> ZDotCommand? { return nil }
+
 	var countOfRows : Int {
 		var result = 0
 
@@ -108,20 +110,17 @@ class ZDocumentation: NSObject {
 		let       lower = rawChar.lowercased()
 		let       SHIFT = lower != rawChar
 		let        type = ZShortcutType(rawValue: lower) // grab first character
-		let   removable = SHIFT || type == .pro
 		let     command = first.substring(fromInclusive: 1)             // grab remaining characters
 		var  attributes = ZAttributesDictionary ()
 		let      hasURL = !url.isEmpty
 		var      prefix = "   "
 
-		if !gProSkillLevel {
-			if  removable {
-				return NSMutableAttributedString(string: kTab + kTab + kTab)
-			}
+		if !gProSkillLevel && (SHIFT || type == .pro) {
+			return NSMutableAttributedString(string: kTab + kTab + kTab)
 		}
 
 		switch type {
-			case .noTab?:
+			case .dots?:
 				prefix = noTabPrefix
 			case .bold?:
 				attributes[.font] = kBoldFont
@@ -141,19 +140,22 @@ class ZDocumentation: NSObject {
 
 		let result = NSMutableAttributedString(string: prefix)
 
-		if  type == .plain {
-			result.append(NSAttributedString(string: command))
-		} else {
-			if  gProSkillLevel,
-				type == .pro {
-				attributes[.backgroundColor] = powerUserColor
-			}
+		switch type {
+			case .dots?:
+				break
+			case .plain?:
+				result.append(NSAttributedString(string: command))
+			default:
+				if  gProSkillLevel,
+					type == .pro {
+					attributes[.backgroundColor] = powerUserColor
+				}
 
-			result.append(NSAttributedString(string: command, attributes: attributes))
+				result.append(NSAttributedString(string: command, attributes: attributes))
 		}
 
 		if  second.length > 3 {
-			if  type != .noTab {
+			if  type != .dots {
 				result.append(NSAttributedString(string: kTab))
 			}
 

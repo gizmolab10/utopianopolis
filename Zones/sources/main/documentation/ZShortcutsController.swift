@@ -20,24 +20,17 @@ var gShortcutsWindowController: NSWindowController? // instantiated once
 class ZShortcutsController: ZGenericTableController {
 
 	@IBOutlet var      clipView : ZView?
-	@IBOutlet var  dotsGridView : ZView?
-	@IBOutlet var notesGridView : ZView?
-	@IBOutlet var graphGridView : ZView?
-	override  var  controllerID : ZControllerID { return .idShortcuts }
-	var                gridView : ZView?        { return gridView(for: mode) }
+	@IBOutlet var  dotsGridView : ZGridView?
+	@IBOutlet var notesGridView : ZGridView?
+	@IBOutlet var graphGridView : ZGridView?
+	override  var  controllerID : ZControllerID  { return .idShortcuts }
+	var               shortcuts : ZDocumentation { return shortcuts(for: mode) }
+	var                gridView : ZGridView?     { return gridView(for: mode) }
 	var                    mode : ZWorkMode = .graphMode
 	let  allModes : [ZWorkMode] = [.graphMode, .noteMode, .dotMode]
 	let          dotDecorations = ZDotDecorations()
 	let          graphShortcuts = ZGraphShortcuts()
 	let           noteShortcuts =  ZNoteShortcuts()
-
-	var shortcuts: ZDocumentation {
-		switch mode {
-			case  .noteMode: return noteShortcuts
-			case   .dotMode: return dotDecorations
-			default:         return graphShortcuts
-		}
-	}
 
 	override func viewWillAppear() {
 		super.viewWillAppear()
@@ -63,6 +56,7 @@ class ZShortcutsController: ZGenericTableController {
 				if  let g = gridView(for: m) {
 					g.removeFromSuperview()
 					c.addSubview(g)
+					g.shortcuts = shortcuts(for: m)
 
 					if  let t = genericTableView {
 						g.snp.makeConstraints { make in
@@ -85,15 +79,27 @@ class ZShortcutsController: ZGenericTableController {
 	}
 
 	func update() {
-		for m in allModes {
-			gridView(for: m)?.isHidden = m != mode
-		}
-
+		updateGridVisibility()
 		genericTableUpdate()
 		view.setAllSubviewsNeedDisplay()
 	}
 
-	func gridView(for iMode: ZWorkMode) -> ZView? {
+	func updateGridVisibility() {
+		for m in allModes {
+			let                   show = m == mode
+			gridView(for: m)?.isHidden = !show
+		}
+	}
+
+	func shortcuts(for iMode: ZWorkMode) -> ZDocumentation {
+		switch iMode {
+			case  .noteMode: return noteShortcuts
+			case   .dotMode: return dotDecorations
+			default:         return graphShortcuts
+		}
+	}
+
+	func gridView(for iMode: ZWorkMode) -> ZGridView? {
 		switch iMode {
 			case   .dotMode: return  dotsGridView
 			case  .noteMode: return notesGridView

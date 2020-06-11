@@ -142,8 +142,8 @@ enum ZWorkMode: String {
 enum ZShortcutType: String {
 	case pro       = "p"
 	case bold      = "b"
+	case dots      = "d"
 	case plain     = " "
-	case noTab     = "n"
 	case insert    = "i"
 	case append    = "a"
 	case underline = "u"
