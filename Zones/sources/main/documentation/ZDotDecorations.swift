@@ -10,28 +10,27 @@ import Foundation
 
 class ZDotDecorations: ZDocumentation {
 
-	override var tabOffsets        : [Int] { return [20, 490] }
-	override var columnWidth       :  Int  { return 580 } // drag dots on left, reveal dots on right
-	override var indexOfLastColumn :  Int  { return 1 }
+	override var columnStrings     : [[String]] { return [dotsColumnOne, dotsColumnTwo] }
+	override var tabOffsets        :  [Int]     { return [0, 50, 580] }
+	override var columnWidth       :   Int      { return 580 } // drag dots on left, reveal dots on right
+	override var indexOfLastColumn :   Int      { return 1 }
 
-	override func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
-		let (_, b, _) = strings(for: row, column: column)
-
-		return NSMutableAttributedString(string: kTab + b + kTab + kTab)
-	}
-
-	override func strings(for row: Int, column: Int) -> (String, String, String) {
-		let columnStrings = [dotsColumnOne, dotsColumnTwo]
-
-		return ("", columnStrings[column][row], "")
+	override func strippedStrings(for column: Int) -> [String] {
+		return columnStrings[column]
 	}
 
 	let dotsColumnOne: [String] = [
-		"plain drag dot"
+		"","","",
+		"bDRAG DOT","","",
+		"","","",
+		" plain, no decorations","",""
 	]
 
 	let dotsColumnTwo: [String] = [
-		"plain reveal dot indicating hidden children"
+		"","","",
+		"bREVEAL DOT","","",
+		"","","",
+		" plain, indicating hidden children","",""
 	]
 
 }

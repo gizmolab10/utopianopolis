@@ -35,8 +35,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <scrollView verticalCompressionResistancePriority="751" misplaced="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" allowsMagnification="YES" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
-                                <rect key="frame" x="0.0" y="-40" width="1180" height="780"/>
+                            <scrollView verticalCompressionResistancePriority="751" borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" allowsMagnification="YES" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
+                                <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Aa-9c-eI8">
                                     <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -54,7 +54,7 @@
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
                                                     <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" allowsUndo="NO" alignment="left" title="Text Cell" usesSingleLineMode="YES" id="fpF-1O-DdX">
-                                                        <font key="font" metaFont="controlContent" size="11"/>
+                                                        <font key="font" metaFont="message" size="11"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -84,8 +84,26 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR">
-                                <rect key="frame" x="0.0" y="-40" width="1180" height="780"/>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE">
+                                <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
+                                <subviews>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="xs7-TU-BUO" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="580" y="0.0" width="1" height="780"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="1" id="a4d-aU-yzZ"/>
+                                        </constraints>
+                                    </customView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" constant="580" id="8YD-QZ-Q9V"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="1180" id="O3A-cS-oHe"/>
+                                    <constraint firstAttribute="bottom" secondItem="xs7-TU-BUO" secondAttribute="bottom" id="X4I-ZI-Got"/>
+                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="top" secondItem="xVv-mR-0mE" secondAttribute="top" id="cg0-tG-8wM"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="780" id="u9x-zg-U5G"/>
+                                </constraints>
+                            </customView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR">
+                                <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="290" y="215" width="1" height="565"/>
@@ -122,18 +140,23 @@
                             </customView>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="xVv-mR-0mE" secondAttribute="bottom" id="7nk-p7-mV1"/>
                             <constraint firstAttribute="trailing" secondItem="zAE-6p-uHR" secondAttribute="trailing" id="8OS-JK-Q3i"/>
                             <constraint firstItem="lJB-I7-wvM" firstAttribute="top" secondItem="OMb-DG-XS6" secondAttribute="top" id="IKq-tX-7lH"/>
                             <constraint firstAttribute="bottom" secondItem="zAE-6p-uHR" secondAttribute="bottom" id="Q5f-LB-96u"/>
                             <constraint firstAttribute="bottom" secondItem="lJB-I7-wvM" secondAttribute="bottom" id="SPn-h3-VIa"/>
+                            <constraint firstItem="xVv-mR-0mE" firstAttribute="leading" secondItem="OMb-DG-XS6" secondAttribute="leading" id="Wfh-oH-M0z"/>
                             <constraint firstItem="zAE-6p-uHR" firstAttribute="leading" secondItem="OMb-DG-XS6" secondAttribute="leading" id="esZ-Pg-Lqu"/>
+                            <constraint firstAttribute="trailing" secondItem="xVv-mR-0mE" secondAttribute="trailing" id="tJi-j3-xUQ"/>
                             <constraint firstItem="lJB-I7-wvM" firstAttribute="leading" secondItem="OMb-DG-XS6" secondAttribute="leading" id="vz5-yW-oTj"/>
                             <constraint firstAttribute="trailing" secondItem="lJB-I7-wvM" secondAttribute="trailing" id="xhn-eP-rEE"/>
                             <constraint firstItem="zAE-6p-uHR" firstAttribute="top" secondItem="OMb-DG-XS6" secondAttribute="top" id="xnq-2b-DMM"/>
+                            <constraint firstItem="xVv-mR-0mE" firstAttribute="top" secondItem="OMb-DG-XS6" secondAttribute="top" id="xou-cL-zPh"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="clipView" destination="9Aa-9c-eI8" id="ALa-Ct-6eI"/>
+                        <outlet property="dotsGridView" destination="xVv-mR-0mE" id="IP4-4A-sp8"/>
                         <outlet property="genericTableView" destination="H0M-2O-9lo" id="ihQ-JW-Kgd"/>
                         <outlet property="graphGridView" destination="zAE-6p-uHR" id="5I0-ey-Ttn"/>
                     </connections>
