@@ -62,7 +62,7 @@ class ZControllers: NSObject {
 		gWorkMode                  = .startupMode
 		gShortcutsWindowController = NSStoryboard(name: "Shortcuts", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
-
+		gShortcutsController?.setup()
 		gRemoteStorage.clear()
 		gSignal([.sMain, .sStartup])
 

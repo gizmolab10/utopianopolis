@@ -11,6 +11,7 @@ import Foundation
 class ZDocumentation: NSObject {
 
 	var tabStops          = [NSTextTab]()
+	var noTabPrefix       :   String   { return "   " }
 	var columnStrings     : [[String]] { return [[]] }
 	var tabOffsets        :   [Int]    { return [0, 20, 85] } // default for graph shortcuts
 	var columnWidth       :    Int     { return 290 }         // "
@@ -108,7 +109,7 @@ class ZDocumentation: NSObject {
 		let       SHIFT = lower != rawChar
 		let        type = ZShortcutType(rawValue: lower) // grab first character
 		let   removable = SHIFT || type == .pro
-		let        main = first.substring(fromInclusive: 1)             // grab remaining characters
+		let     command = first.substring(fromInclusive: 1)             // grab remaining characters
 		var  attributes = ZAttributesDictionary ()
 		let      hasURL = !url.isEmpty
 		var      prefix = "   "
@@ -120,6 +121,8 @@ class ZDocumentation: NSObject {
 		}
 
 		switch type {
+			case .noTab?:
+				prefix = noTabPrefix
 			case .bold?:
 				attributes[.font] = kBoldFont
 			case .append?, .underline?:
@@ -139,22 +142,25 @@ class ZDocumentation: NSObject {
 		let result = NSMutableAttributedString(string: prefix)
 
 		if  type == .plain {
-			result.append(NSAttributedString(string: main))
+			result.append(NSAttributedString(string: command))
 		} else {
 			if  gProSkillLevel,
 				type == .pro {
 				attributes[.backgroundColor] = powerUserColor
 			}
 
-			result.append(NSAttributedString(string: main, attributes: attributes))
+			result.append(NSAttributedString(string: command, attributes: attributes))
 		}
 
 		if  second.length > 3 {
-			result.append(NSAttributedString(string: kTab))
+			if  type != .noTab {
+				result.append(NSAttributedString(string: kTab))
+			}
+
 			result.append(NSAttributedString(string: second, attributes: attributes))
 		}
 
-		if  main.length + second.length < 11 && row != 1 && type != .plain {
+		if  command.length + second.length < 11 && row != 1 && ![.plain].contains(type) {
 			result.append(NSAttributedString(string: kTab)) 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough final tabs
 		}
 

@@ -144,6 +144,22 @@ var gFavoritesHereMaybe: Zone? {
 	set { gRemoteStorage.cloud(for: .favoritesID)?.hereZoneMaybe = newValue }
 }
 
+var gLastChosenCheatSheet: ZWorkMode? {
+	get {
+		if  let v = getPreferenceString(for: kLastChosenCheatSheet) {
+			return ZWorkMode(rawValue: v)
+		}
+
+		return nil
+	}
+
+	set {
+		if  let v = newValue?.rawValue {
+			setPreferencesString(v, for: kLastChosenCheatSheet)
+		}
+	}
+}
+
 var gClipBreadcrumbs : Bool {
 	get { return getPreferencesBool(   for: kClipBreadcrumbs, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kClipBreadcrumbs) }
@@ -251,11 +267,6 @@ var gGenericOffset: CGSize {
 var gWindowRect: CGRect {
 	get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
 	set { setPreferencesRect(newValue, for: kWindowRectKey) }
-}
-
-var gEssayTitleFontSizex: CGFloat {
-	get { return getPreferencesAmount(for: kEssayTitleFontSize, defaultAmount: kDefaultEssayTitleFontSize) }
-	set { setPreferencesAmount(newValue, for: kEssayTitleFontSize) }
 }
 
 var gScrollOffset: CGPoint {

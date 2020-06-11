@@ -25,11 +25,11 @@ class ZShortcutsController: ZGenericTableController {
 	@IBOutlet var graphGridView : ZView?
 	override  var  controllerID : ZControllerID { return .idShortcuts }
 	var                gridView : ZView?        { return gridView(for: mode) }
-	var                    mode : ZWorkMode = .graphMode // dot, note, graph
+	var                    mode : ZWorkMode = .graphMode
+	let  allModes : [ZWorkMode] = [.graphMode, .noteMode, .dotMode]
 	let          dotDecorations = ZDotDecorations()
 	let          graphShortcuts = ZGraphShortcuts()
 	let           noteShortcuts =  ZNoteShortcuts()
-	let  allModes : [ZWorkMode] = [.graphMode, .noteMode, .dotMode]
 
 	var shortcuts: ZDocumentation {
 		switch mode {
@@ -50,6 +50,10 @@ class ZShortcutsController: ZGenericTableController {
 		dotDecorations.setup() // empty
 		noteShortcuts .setup() // empty
 
+		if  let m = gLastChosenCheatSheet {
+			mode  = m
+		}
+
 		view.zlayer.backgroundColor = .white
 
 		if  let c = clipView {
@@ -68,9 +72,15 @@ class ZShortcutsController: ZGenericTableController {
 
 
 					g.zlayer.backgroundColor = .clear
-					g.isHidden               = m != mode
+					g.isHidden               = true
 				}
 			}
+		}
+
+		if  let m = gLastChosenCheatSheet {
+			mode  = .startupMode
+
+			show(nextMode: m)
 		}
 	}
 
@@ -121,12 +131,14 @@ class ZShortcutsController: ZGenericTableController {
 			if  close  {
 				controller?.window?.close()
 			} else {
-				mode       = next
+				mode                  = next
+				gLastChosenCheatSheet = next
 
 				update()
 				controller?.showWindow(nil)
 			}
-		}	}
+		}
+	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		genericTableView?.reloadData()

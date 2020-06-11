@@ -162,6 +162,7 @@ let        kHasAccessToAppleID = "has access to apple id"
 let        kTutorialRecordName = "essay:96689264-EB25-49CC-9324-913BA5CEBD56"
 let       kCloudDriveIsEnabled = "cloud drive is enabled"
 let       kProductionEmailSent = "production email sent"
+let      kLastChosenCheatSheet = "last chosen cheat sheet"
 let    kFavoritesAreVisibleKey = "favorites are visible"
 let  kUnderstandsNeedForAccess = "understands need for access to apple id"
 

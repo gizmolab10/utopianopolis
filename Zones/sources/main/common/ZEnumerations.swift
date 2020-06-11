@@ -143,6 +143,7 @@ enum ZShortcutType: String {
 	case pro       = "p"
 	case bold      = "b"
 	case plain     = " "
+	case noTab     = "n"
 	case insert    = "i"
 	case append    = "a"
 	case underline = "u"
