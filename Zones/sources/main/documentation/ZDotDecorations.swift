@@ -9,74 +9,93 @@
 import Foundation
 
 enum ZDotCommand: String {
-	case drag      = "plain"
-	case selected  = "currently"
-	case focus     = "current"
-	case readOnly  = "read"
-	case oneChild  = "one"
-	case five      = "five"
-	case ten       = "ten"
-	case eleven    = "eleven"
-	case click     = "click"
-	case email     = "email"
-	case bookmark  = "bookmark"
-	case hyperlink = "hyperlink"
-	case note      = "note"
+	case ten        = "ten"
+	case one        = "one"
+	case five       = "five"
+	case note       = "note"
+	case drag       = "plain"
+	case click      = "click"
+	case email      = "email"
+	case focus      = "current"
+	case fifteen    = "fifteen"
+	case progeny    = "progeny"
+	case bookmark   = "bookmark"
+	case hyperlink  = "hyperlink"
+	case unwritable = "editing"
+
+	var count: Int {
+		switch self {
+			case .one:     return  1
+			case .five:    return  5
+			case .ten:     return 10
+			case .fifteen: return 15
+			default:       return  0
+		}
+	}
+
+}
+
+enum ZFillType: String {
+	case filled = "f"
+	case empty  = "e"
+	case both   = "b"
 }
 
 class ZDotDecorations: ZDocumentation {
 
-	override var noTabPrefix       :   String   { return "               " }
+	override var noTabPrefix       :   String   { return "                   " }
 	override var columnStrings     : [[String]] { return [dotsColumnOne, dotsColumnTwo] }
 	override var tabOffsets        :  [Int]     { return [0, 20, 150] }
-	override var columnWidth       :   Int      { return 576 }
-	override var indexOfLastColumn :   Int      { return 1 } // TODO: filled == third column
+	override var columnWidth       :   Int      { return 580 }
+	override var indexOfLastColumn :   Int      { return 1 }
 
-	override func dotCommand(for row: Int, column: Int) -> ZDotCommand? {
+	override func dotCommand(for row: Int, column: Int) -> (ZDotCommand?, ZFillType?) {
+		var           command  : ZDotCommand?
+		var            filled  : ZFillType?
 		let (first, second, _) = strings(for: row, column: column)
-		let     rawChar  = first.substring(with: NSMakeRange(0, 1))
-		let       lower  = rawChar.lowercased()
-		let        type  = ZShortcutType(rawValue: lower)
-		if         type == .dots {
-			let    part  = second.components(separatedBy: " ")[0]
-
-			return ZDotCommand(rawValue: part)
+		let     shortcutLower  = first.substring(with: NSMakeRange(0, 1)).lowercased()
+		let       filledLower  = first.substring(with: NSMakeRange(1, 2)).lowercased()
+		filled                 = ZFillType(rawValue: filledLower)
+		if  let  shortcutType  = ZShortcutType(rawValue: shortcutLower),
+		         shortcutType == .dots {
+			let       dotType  = second.components(separatedBy: " ")[0]
+			command            = ZDotCommand(rawValue: dotType)
 		}
 
-		return nil
+		return (command, filled)
 	}
 
 	let dotsColumnOne: [String] = [
-		"",		"","",
-		"bLEFT SIDE DOTS","click to select or drag","",
-		"",		"","",
-		"d",	"plain","",
-		"d",	"currently selected","",
-		"d",	"current focus (only in favorites or recents)","",
-		"d",	"read only",""
+		"",						"",												"",
+		"bLEFT SIDE DOTS",		"click to select, deselect or drag",			"",
+		"",						"",												"",
+		"db",					"plain",										"",
+		"db",					"current focus (only in favorites or recents)",	"",
+		"db",					"editing not permitted",						"",
+		"db",					"progeny are writable",							""
 	]
 
 	let dotsColumnTwo: [String] = [
-		"","","",
-		"bRIGHT SIDE DOTS","click to conceal, reveal or activate","",
-		"","","",
-		"Uhas hidden ideas","undecorated","",
-		"","","",
-		"d",	"one idea","",
-		"d",	"five ideas","",
-		"d",	"ten ideas","",
-		"d",	"eleven ideas","",
-		"","","",
-		"uhas revealed ideas","undecorated","",
-		"","","",
-		"d",	"click to hide ideas","",
-		"","","",
-		"udecorated","","",
-		"","","",
-		"db",	"bookmark","",
-		"de",	"email","",
-		"dh",	"hyperlink","",
-		"dn",	"note or essay",""
+		"",		"",																"",
+		"bRIGHT SIDE DOTS",		"click to conceal, reveal or activate",			"",
+		"",						"",												"",
+		"ulist is visible",		"",												"",
+		"",						"",												"",
+		"de",					"click to hide ideas",							"",
+		"",						"",												"",
+		"ulist is hidden (dots indicate count)",	"",							"",
+		"",						"",												"",
+		"df",					"one idea",										"",
+		"df",					"five ideas",									"",
+		"df",					"ten ideas",									"",
+		"df",					"fifteen ideas",								"",
+		"",						"",												"",
+		"udecorated",			"",												"",
+		"",						"",												"",
+		"db",					"bookmark",										"",
+		"db",					"email",										"",
+		"db",					"hyperlink",									"",
+		"db",					"note or essay",								""
 	]
 
 }

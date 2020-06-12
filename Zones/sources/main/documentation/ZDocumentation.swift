@@ -20,7 +20,7 @@ class ZDocumentation: NSObject {
 	var hyperlinkColor    :  ZColor    { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }
 	var powerUserColor    :  ZColor    { return gIsDark ? kBlueColor.darker (by: 5.0) : kBlueColor.lighter(by: 30.0) }
 
-	func dotCommand(for row: Int, column: Int) -> ZDotCommand? { return nil }
+	func dotCommand(for row: Int, column: Int) -> (ZDotCommand?, ZFillType?) { return (nil, nil) }
 
 	var countOfRows : Int {
 		var result = 0

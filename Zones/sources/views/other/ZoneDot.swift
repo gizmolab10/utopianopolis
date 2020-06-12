@@ -252,7 +252,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         }
     }
 
-	func drawInnerDot(_ iDirtyRect: CGRect, for command: ZDotCommand?) {
+	func drawInnerDot(_ iDirtyRect: CGRect, filled: Bool = false, tinyDotCount: Int = 0, for command: ZDotCommand?) {
 
 	}
 

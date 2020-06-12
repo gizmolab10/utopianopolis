@@ -84,14 +84,13 @@ class ZTogglingView: NSStackView {
 			var    title = "Recent"
 
 			if !gIsRecentlyMode,
-				var path : ZoneArray = gFavoritesHereMaybe?.ancestralPath {
-				if  path.count > 1 {
-					path = ZoneArray(path.suffix(from: 1))  // remove favorites when it's not alone
+				var ancestors : ZoneArray = gFavoritesHereMaybe?.ancestralPath {
+				if  ancestors.count > 1 {
+					ancestors = ZoneArray(ancestors.suffix(from: 1))  // remove favorites (root of ancestors) when it's not alone
 				}
 
-
-				let names = path.map { zone -> String in
-					return zone.unwrappedName.capitalized // convert to strings
+				let names = ancestors.map { zone -> String in
+					return zone.unwrappedName.capitalized // convert ancestors into strings
 				}
 
 				title = names.joined(separator: kColonSeparator)

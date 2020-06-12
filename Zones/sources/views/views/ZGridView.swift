@@ -19,17 +19,41 @@ class ZGridView: ZView {
 			let s = shortcuts {
 			for row in 0..<s.countOfRows {
 				for column in 0...s.indexOfLastColumn {
-					if  let command = s.dotCommand(for: row, column: column) {
+					let (dc, ft) = s.dotCommand(for: row, column: column)
+					if  let c = dc,
+						let t = ft {
+						var e = false
+						var f = true
 						let o = dirtyRect.origin
 						let y = Double(row)    *  17.0 + Double(o.y)
 						let x = Double(column) * 580.0 + Double(o.x) + 20.0
-						let p = CGPoint(x: x, y: y)
 						let s = CGSize(width: gDotWidth, height: gDotHeight)
-						let r = CGRect(origin: p, size: s)
 						let d = ZoneDot()
+						print("\(row) \(column) \(t) \(c)")
 
-//						d.drawInnerDot(r)
-						print("\(row) \(column) \(command)")
+						switch t {
+							case .both:  e = true
+							case .empty: f = false
+							default:     break
+						}
+
+						if  e {
+							// draw empty in first column
+
+							let p = CGPoint(x: x, y: y)
+							let r = CGRect(origin: p, size: s)
+
+							d.drawInnerDot(r, for: c)
+						}
+
+						if  f {
+							// draw filled in second column
+
+							let p = CGPoint(x: x + 30.0, y: y)
+							let r = CGRect(origin: p, size: s)
+
+							d.drawInnerDot(r, filled: true, tinyDotCount: c.count, for: c)
+						}
 					}
 				}
 			}

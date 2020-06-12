@@ -20,9 +20,14 @@ class ZButtonsView : ZView {
 		}
 	}
 
+	func clear() {
+		zlayer.backgroundColor = .clear
+	}
+
 	func setupButtons() {}
 
 	func updateAndRedraw() {
+//		clear()
 		clearButtons()
 		setupButtons() // customize this in subclass
 		layoutButtons()
