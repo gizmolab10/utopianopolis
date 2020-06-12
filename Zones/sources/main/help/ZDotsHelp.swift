@@ -23,6 +23,25 @@ enum ZDotCommand: String {
 	case hyperlink  = "hyperlink"
 	case unwritable = "editing"
 
+	var traitType: String {
+		switch self {
+			case .note:      return ZTraitType.tNote     .rawValue
+			case .email:     return ZTraitType.tEmail    .rawValue
+			case .hyperlink: return ZTraitType.tHyperlink.rawValue
+			default:         return ""
+		}
+	}
+
+	var isReveal: Bool {
+		switch self {
+			case .unwritable,
+				 .progeny,
+				 .focus,
+				 .drag: return false
+			default:    return true
+		}
+	}
+
 	var count: Int {
 		switch self {
 			case .one:     return  1

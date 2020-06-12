@@ -84,7 +84,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZGridView" customModule="Seriously" customModuleProvider="target">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZHelpGrid" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="1152" height="768"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="xs7-TU-BUO" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
@@ -100,7 +100,7 @@
                                     <constraint firstItem="xs7-TU-BUO" firstAttribute="top" secondItem="xVv-mR-0mE" secondAttribute="top" id="cg0-tG-8wM"/>
                                 </constraints>
                             </customView>
-                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR" customClass="ZGridView" customModule="Seriously" customModuleProvider="target">
+                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR" customClass="ZHelpGrid" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="-12" width="1180" height="780"/>
                                 <subviews>
                                     <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
@@ -148,9 +148,9 @@
                     </view>
                     <connections>
                         <outlet property="clipView" destination="9Aa-9c-eI8" id="ALa-Ct-6eI"/>
-                        <outlet property="dotsGridView" destination="xVv-mR-0mE" id="IP4-4A-sp8"/>
+                        <outlet property="dotsHelpGrid" destination="xVv-mR-0mE" id="IP4-4A-sp8"/>
                         <outlet property="genericTableView" destination="H0M-2O-9lo" id="ihQ-JW-Kgd"/>
-                        <outlet property="graphGridView" destination="zAE-6p-uHR" id="5I0-ey-Ttn"/>
+                        <outlet property="graphHelpGrid" destination="zAE-6p-uHR" id="5I0-ey-Ttn"/>
                     </connections>
                 </viewController>
             </objects>

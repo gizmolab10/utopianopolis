@@ -146,7 +146,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     // MARK:- draw
     // MARK:-
 
-
     enum ZDecorationType: Int {
         case vertical
         case sideDot
@@ -232,80 +231,96 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         path.fill()
     }
 
-    func drawTraitIndicator(for iZone: Zone, isFilled: Bool, in iDirtyRect: CGRect) {
-        let types = iZone.traits.keys
-        for type in types {
-            let   string = type.rawValue
-			let isForMap = widget?.type.isMap ?? true
-            let    width = CGFloat(gDotHeight - 2.0) * ratio
-            let     font = ZFont.boldSystemFont(ofSize: width)
-			let     size = string.sizeWithFont(font)
-			let   height = size.height * type.heightRatio + (isForMap ? 1.0 : -8.0)
-			let   xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
-			let   yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
-			let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: (height / 12.0) - 1)
-			let    color = isFilled ? gBackgroundColor : gColorfulMode ? (iZone.color ?? gDefaultTextColor) : gDefaultTextColor
+	func drawTraitIndicator(for string: String, isFilled: Bool, color: ZColor, isForMap: Bool = true, in iDirtyRect: CGRect) {
+		let    width = CGFloat(gDotHeight - 2.0) * ratio
+		let     font = ZFont.boldSystemFont(ofSize: width)
+		let     size = string.sizeWithFont(font)
+		let    ratio = ZTraitType(rawValue: string)?.heightRatio ?? 1.0
+		let   height = size.height * ratio + (isForMap ? 1.0 : -8.0)
+		let   xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
+		let   yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
+		let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: (height / 12.0) - 1)
 
-            string.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
+		string.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
+	}
 
-            return
-        }
-    }
+	struct  ZDotParameters {
+		var childCount : Int             = 0
+		var isDrop     : Bool            = false
+		var filled     : Bool            = false
+		var isReveal   : Bool            = false
+		var isBookmark : Bool            = false
+		var showAccess : Bool            = false
+		var traitType  : String          = ""
+		var fill       : ZColor          = kWhiteColor
+		var color      : ZColor          = kBlackColor
+		var accessType : ZDecorationType = .vertical
+	}
 
-	func drawInnerDot(_ iDirtyRect: CGRect, filled: Bool = false, tinyDotCount: Int = 0, for command: ZDotCommand?) {
+	func drawInnerDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		let fill = parameters.filled ? gBackgroundColor : parameters.color
+
+		parameters.color.setStroke()
+		parameters.fill .setFill()
+
+		// //////
+		// DOT //
+		// //////
+
+		if  !parameters.isDrop { // so when cursor leaves window, the should-be-invisible reveal dot will indeed disappear
+			drawMainDot(in: iDirtyRect)
+		}
+
+		if  parameters.isReveal {
+			if  parameters.isBookmark {
+
+				// //////////////////
+				// TINY CENTER DOT //
+				// //////////////////
+
+				gBackgroundColor.setFill()
+				drawTinyBookmarkDot(in: iDirtyRect)
+			} else if parameters.traitType != "" {
+
+				// //////////////////
+				// TRAIT INDICATOR //
+				// //////////////////
+
+				drawTraitIndicator(for: parameters.traitType, isFilled: parameters.filled, color: fill, in: iDirtyRect)
+			}
+		} else if parameters.showAccess {
+
+			// ///////////////////////////
+			// WRITE-ACCESS DECORATIONS //
+			// ///////////////////////////
+
+			fill.setFill()
+			drawWriteAccessDecoration(of: parameters.accessType, in: iDirtyRect)
+		}
 
 	}
 
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
+		var parameters = ZDotParameters()
 
 		if  isVisible(iDirtyRect),
-			let            zone = widgetZone {
+			let zone                  = widgetZone {
+			let traitKeys             = zone.traitKeys
+
 			if  isInnerDot {
-				let      filled = isFilled
-				let strokeColor = zone.color
-				var   fillColor = filled ? strokeColor?.lighter(by: 2.5) : gBackgroundColor
+				parameters.isDrop     = zone == gDragDropZone
+				parameters.isBookmark = zone.isBookmark
+				parameters.showAccess = zone.hasAccessDecoration
+				parameters.accessType = zone.directAccess == .eProgenyWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
+				parameters.color      = gColorfulMode ? zone.color ?? gDefaultTextColor : gDefaultTextColor
+				parameters.traitType  = (traitKeys.count < 1) ? "" : traitKeys[0]
+				parameters.filled     = isFilled
+				parameters.fill       = isFilled ? parameters.color.lighter(by: 2.5) : gBackgroundColor
+				parameters.isReveal   = isReveal
 
-				// //////
-				// DOT //
-				// //////
 
-				fillColor?.setFill()
-				strokeColor?.setStroke()
-
-				if  zone != gDragDropZone { // so when cursor leaves window, the should-be-invisible reveal dot will indeed disappear
-					drawMainDot(in: iDirtyRect)
-				}
-
-				if  isReveal {
-					if  zone.isBookmark {
-
-						// //////////////////
-						// TINY CENTER DOT //
-						// //////////////////
-
-						gBackgroundColor.setFill()
-						drawTinyBookmarkDot(in: iDirtyRect)
-					} else if zone.canTravel {
-
-						// //////////////////
-						// TRAIT INDICATOR //
-						// //////////////////
-
-						drawTraitIndicator(for: zone, isFilled: filled, in: iDirtyRect)
-					}
-				} else if zone.hasAccessDecoration {
-					let  type = zone.directAccess == .eProgenyWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
-					fillColor = filled ? gBackgroundColor : strokeColor
-
-					// ///////////////////////////
-					// WRITE-ACCESS DECORATIONS //
-					// ///////////////////////////
-
-					fillColor?.setFill()
-					drawWriteAccessDecoration(of: type, in: iDirtyRect)
-				}
-
+				drawInnerDot(iDirtyRect, parameters)
 			} else {
 
 				// /////////////////////////////

@@ -88,6 +88,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     children =          ZoneArray()
 	var                       traits =   ZTraitDictionary()
 
+	var traitKeys   : [String] {
+		var results = [String]()
+
+		for key in traits.keys {
+			results.append(key.rawValue)
+		}
+
+		return results
+	}
+
 	var type : ZWidgetType {
 		var result = ZWidgetType.tMap
 
