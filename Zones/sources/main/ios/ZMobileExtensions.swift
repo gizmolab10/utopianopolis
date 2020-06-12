@@ -650,7 +650,7 @@ extension ZGraphController {
 
 extension ZBaseEditor {
     
-    func showHideKeyboardShortcuts(hide: Bool? = nil) {}
+    func showHideKeyboardHelp(hide: Bool? = nil) {}
 
 }
 

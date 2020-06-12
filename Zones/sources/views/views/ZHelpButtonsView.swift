@@ -27,7 +27,7 @@ class ZHelpButtonsView : ZButtonsView {
 
 	@objc private func handleButtonPress(_ button: ZButton) {
 		if  let    mode = button.buttonMode {
-			gShortcutsController?.show(true, nextMode: mode)
+			gHelpController?.show(true, nextMode: mode)
 		}
 	}
 

@@ -1,5 +1,5 @@
 //
-//  ZDocumentation.swift
+//  ZHelp.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 6/9/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZDocumentation: NSObject {
+class ZHelp: NSObject {
 
 	var tabStops          = [NSTextTab]()
 	var noTabPrefix       :   String   { return "   " }

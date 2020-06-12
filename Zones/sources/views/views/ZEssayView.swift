@@ -77,7 +77,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "s":      save()
 				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-				case "/":                  gShortcutsController?.show(flags: flags)
+				case "/":                  gHelpController?.show(flags: flags)
 				case "]", "[": gEssayEditor.smartGo(forward: key == "]")
 				case kReturn:  gCurrentEssayZone?.grab(); done()
 				default:       return false

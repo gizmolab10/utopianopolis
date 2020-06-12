@@ -14,13 +14,13 @@ enum ZControllerID: Int {
 	case idIntroduction
 	case idPreferences
     case idFavorites
-	case idShortcuts
 	case idStartup
     case idDetails
     case idActions   // iPhone
 	case idStatus
     case idSearch
 	case idCrumbs
+	case idHelp
 	case idNote
 	case idMain
 	case idMap
@@ -58,11 +58,11 @@ class ZControllers: NSObject {
 	// MARK:-
 
 	func startupCloudAndUI() {
-		gRefusesFirstResponder     = true			// WORKAROUND new feature of mac os x
-		gWorkMode                  = .startupMode
-		gShortcutsWindowController = NSStoryboard(name: "Shortcuts", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
+		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
+		gWorkMode              = .startupMode
+		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
-		gShortcutsController?.setup()
+		gHelpController?.setup()
 		gRemoteStorage.clear()
 		gSignal([.sMain, .sStartup])
 

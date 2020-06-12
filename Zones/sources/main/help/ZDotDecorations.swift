@@ -41,7 +41,7 @@ enum ZFillType: String {
 	case both   = "b"
 }
 
-class ZDotDecorations: ZDocumentation {
+class ZDotDecorations: ZHelp {
 
 	override var noTabPrefix       :   String   { return "                   " }
 	override var columnStrings     : [[String]] { return [dotsColumnOne, dotsColumnTwo] }

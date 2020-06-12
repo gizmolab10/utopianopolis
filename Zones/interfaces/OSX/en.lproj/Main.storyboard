@@ -571,7 +571,7 @@ DQ
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Bvg-6z-Co5"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Keyboard Shortcuts" keyEquivalent="/" id="EGs-Dm-LkH">
+                                        <menuItem title="Keyboard Commands" keyEquivalent="/" id="EGs-Dm-LkH">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="jw5-ox-sH4"/>

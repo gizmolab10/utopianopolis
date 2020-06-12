@@ -1,5 +1,5 @@
 //
-//  ZShortcutsController.swift
+//  ZHelpController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 4/13/17.
@@ -14,23 +14,23 @@ import Foundation
     import UIKit
 #endif
 
-var gShortcutsController: ZShortcutsController? { return gControllers.controllerForID(.idShortcuts) as? ZShortcutsController }
-var gShortcutsWindowController: NSWindowController? // instantiated once
+var gHelpController: ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
+var gHelpWindowController: NSWindowController? // instantiated once
 
-class ZShortcutsController: ZGenericTableController {
+class ZHelpController: ZGenericTableController {
 
 	@IBOutlet var      clipView : ZView?
 	@IBOutlet var  dotsGridView : ZGridView?
 	@IBOutlet var notesGridView : ZGridView?
 	@IBOutlet var graphGridView : ZGridView?
-	override  var  controllerID : ZControllerID  { return .idShortcuts }
-	var               shortcuts : ZDocumentation { return shortcuts(for: mode) }
-	var                gridView : ZGridView?     { return gridView(for: mode) }
+	override  var  controllerID : ZControllerID { return .idHelp }
+	var                    help : ZHelp         { return help(for: mode) }
+	var                gridView : ZGridView?    { return gridView(for: mode) }
 	var                    mode : ZWorkMode = .graphMode
 	let  allModes : [ZWorkMode] = [.graphMode, .noteMode, .dotMode]
 	let          dotDecorations = ZDotDecorations()
-	let          graphShortcuts = ZGraphShortcuts()
-	let           noteShortcuts =  ZNoteShortcuts()
+	let          graphHelp = ZGraphHelp()
+	let           noteHelp =  ZNoteHelp()
 
 	override func viewWillAppear() {
 		super.viewWillAppear()
@@ -39,9 +39,9 @@ class ZShortcutsController: ZGenericTableController {
 
 	override func setup() {
 		super         .setup()
-		graphShortcuts.setup()
+		graphHelp.setup()
 		dotDecorations.setup() // empty
-		noteShortcuts .setup() // empty
+		noteHelp .setup() // empty
 
 		if  let m = gLastChosenCheatSheet {
 			mode  = m
@@ -56,7 +56,7 @@ class ZShortcutsController: ZGenericTableController {
 				if  let g = gridView(for: m) {
 					g.removeFromSuperview()
 					c.addSubview(g)
-					g.shortcuts = shortcuts(for: m)
+					g.help = help(for: m)
 
 					if  let t = genericTableView {
 						g.snp.makeConstraints { make in
@@ -90,11 +90,11 @@ class ZShortcutsController: ZGenericTableController {
 		}
 	}
 
-	func shortcuts(for iMode: ZWorkMode) -> ZDocumentation {
+	func help(for iMode: ZWorkMode) -> ZHelp {
 		switch iMode {
-			case  .noteMode: return noteShortcuts
+			case  .noteMode: return noteHelp
 			case   .dotMode: return dotDecorations
-			default:         return graphShortcuts
+			default:         return graphHelp
 		}
 	}
 
@@ -128,7 +128,7 @@ class ZShortcutsController: ZGenericTableController {
 
 	func show(_ show: Bool? = nil, nextMode: ZWorkMode?) {
 		if  let       next = nextMode {
-			let controller = gShortcutsWindowController
+			let controller = gHelpWindowController
 			let     isOpen = controller?.window?.isKeyWindow ?? false
 			let       same = mode == next
 			let      close = !(show ?? !(isOpen && same))
@@ -170,7 +170,7 @@ class ZShortcutsController: ZGenericTableController {
         return nil
     }
 
-	// MARK:- shortcuts table
+	// MARK:- help table
     // MARK:-
 
 	var clickCoordinates: (Int, Int)? {
@@ -182,7 +182,7 @@ class ZShortcutsController: ZGenericTableController {
 			let     screenLocation = NSEvent.mouseLocation
 			if  let windowLocation = table.window?.convertPoint(fromScreen: screenLocation) {
 				let              l = table.convert(windowLocation, from: nil)
-				let         column = Int(floor(l.x / CGFloat(shortcuts.columnWidth)))
+				let         column = Int(floor(l.x / CGFloat(help.columnWidth)))
 
 				table.deselectRow(row)
 				
@@ -196,16 +196,16 @@ class ZShortcutsController: ZGenericTableController {
 	}
 
 	override func numberOfRows(in tableView: ZTableView) -> Int {
-		return shortcuts.countOfRows
+		return help.countOfRows
     }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
-		return shortcuts.objectValueFor(row)
+		return help.objectValueFor(row)
 	}
 
 	func tableViewSelectionIsChanging(_ notification: Notification) {
 		if  let (row, column) = clickCoordinates,
-			let hyperlink = shortcuts.url(for: row, column: column) {
+			let hyperlink = help.url(for: row, column: column) {
 			hyperlink.openAsURL()
 		}
 	}

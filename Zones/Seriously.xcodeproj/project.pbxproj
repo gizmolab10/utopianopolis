@@ -178,7 +178,7 @@
 		A7395BB221B877B600F5759F /* ZGraphEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7395BAE21B877B600F5759F /* ZGraphEditor.swift */; };
 		A7395BB321B877B600F5759F /* ZGraphEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7395BAE21B877B600F5759F /* ZGraphEditor.swift */; };
 		A7395BB421B877B600F5759F /* ZGraphEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7395BAE21B877B600F5759F /* ZGraphEditor.swift */; };
-		A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Shortcuts.storyboard */; };
+		A746D465219F613D00123A0A /* Help.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Help.storyboard */; };
 		A74D1BA622222FC900E69E44 /* eye.con-512.png in Resources */ = {isa = PBXBuildFile; fileRef = A74D1BA522222FC900E69E44 /* eye.con-512.png */; };
 		A74DBDEB244E004000DF751A /* ZContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74DBDEA244E004000DF751A /* ZContextualMenu.swift */; };
 		A74DBDEC244E179600DF751A /* ZContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74DBDEA244E004000DF751A /* ZContextualMenu.swift */; };
@@ -265,9 +265,9 @@
 		A7D2D64B248F11B300F652B0 /* ZDotDecorations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D64A248F11B300F652B0 /* ZDotDecorations.swift */; };
 		A7D2D64C248F11B300F652B0 /* ZDotDecorations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D64A248F11B300F652B0 /* ZDotDecorations.swift */; };
 		A7D2D64D248F11B300F652B0 /* ZDotDecorations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D64A248F11B300F652B0 /* ZDotDecorations.swift */; };
-		A7D2D64F24902EDF00F652B0 /* ZDocumentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D64E24902EDF00F652B0 /* ZDocumentation.swift */; };
-		A7D2D65024902EDF00F652B0 /* ZDocumentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D64E24902EDF00F652B0 /* ZDocumentation.swift */; };
-		A7D2D65124902EDF00F652B0 /* ZDocumentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D64E24902EDF00F652B0 /* ZDocumentation.swift */; };
+		A7D2D64F24902EDF00F652B0 /* ZHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D64E24902EDF00F652B0 /* ZHelp.swift */; };
+		A7D2D65024902EDF00F652B0 /* ZHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D64E24902EDF00F652B0 /* ZHelp.swift */; };
+		A7D2D65124902EDF00F652B0 /* ZHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D64E24902EDF00F652B0 /* ZHelp.swift */; };
 		A7D2D6592492B55900F652B0 /* ZHelpButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D6582492B55900F652B0 /* ZHelpButtonsView.swift */; };
 		A7D2D65A2492B55900F652B0 /* ZHelpButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D6582492B55900F652B0 /* ZHelpButtonsView.swift */; };
 		A7D2D65B2492B55900F652B0 /* ZHelpButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D2D6582492B55900F652B0 /* ZHelpButtonsView.swift */; };
@@ -455,7 +455,7 @@
 		A734EB6F21E26EE500B9475F /* Credits.rtfd */ = {isa = PBXFileReference; lastKnownFileType = wrapper.rtfd; path = Credits.rtfd; sourceTree = "<group>"; };
 		A7395BAD21B877B600F5759F /* ZTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTextEditor.swift; sourceTree = "<group>"; };
 		A7395BAE21B877B600F5759F /* ZGraphEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGraphEditor.swift; sourceTree = "<group>"; };
-		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Shortcuts.storyboard; sourceTree = "<group>"; };
+		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Help.storyboard; sourceTree = "<group>"; };
 		A746D466219F637A00123A0A /* Seriously.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Seriously.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A74D1BA522222FC900E69E44 /* eye.con-512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "eye.con-512.png"; path = "interfaces/Assets.xcassets/AppIcon.OSX.appiconset/eye.con-512.png"; sourceTree = "<group>"; };
 		A74DBDEA244E004000DF751A /* ZContextualMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZContextualMenu.swift; sourceTree = "<group>"; };
@@ -486,7 +486,7 @@
 		A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssay.swift; sourceTree = "<group>"; };
 		A7D2D646248F119A00F652B0 /* ZNoteShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZNoteShortcuts.swift; sourceTree = "<group>"; };
 		A7D2D64A248F11B300F652B0 /* ZDotDecorations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDotDecorations.swift; sourceTree = "<group>"; };
-		A7D2D64E24902EDF00F652B0 /* ZDocumentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDocumentation.swift; sourceTree = "<group>"; };
+		A7D2D64E24902EDF00F652B0 /* ZHelp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelp.swift; sourceTree = "<group>"; };
 		A7D2D6582492B55900F652B0 /* ZHelpButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpButtonsView.swift; sourceTree = "<group>"; };
 		A7D2D65C2492E12900F652B0 /* ZGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGridView.swift; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -618,7 +618,7 @@
 			isa = PBXGroup;
 			children = (
 				0C39B22E1F182EBB0091F4D1 /* common */,
-				A7D2D65224902F8F00F652B0 /* documentation */,
+				A7D2D65224902F8F00F652B0 /* help */,
 				0C39B2361F182EBB0091F4D1 /* ios */,
 				0C39B23E1F182EBB0091F4D1 /* osx */,
 			);
@@ -759,7 +759,7 @@
 			children = (
 				A7245E0321729B18003D4BDA /* Details.storyboard */,
 				A7245E0021729B02003D4BDA /* Main.storyboard */,
-				A746D461219F613D00123A0A /* Shortcuts.storyboard */,
+				A746D461219F613D00123A0A /* Help.storyboard */,
 			);
 			name = desktop;
 			path = OSX;
@@ -950,16 +950,16 @@
 			path = other;
 			sourceTree = "<group>";
 		};
-		A7D2D65224902F8F00F652B0 /* documentation */ = {
+		A7D2D65224902F8F00F652B0 /* help */ = {
 			isa = PBXGroup;
 			children = (
-				A7D2D64E24902EDF00F652B0 /* ZDocumentation.swift */,
+				A7D2D64E24902EDF00F652B0 /* ZHelp.swift */,
 				A7D2D64A248F11B300F652B0 /* ZDotDecorations.swift */,
 				A7D2D646248F119A00F652B0 /* ZNoteShortcuts.swift */,
 				A7E9A3AF23C115470064C89A /* ZGraphShortcuts.swift */,
 				A7245E0821729FFE003D4BDA /* ZShortcutsController.swift */,
 			);
-			path = documentation;
+			path = help;
 			sourceTree = "<group>";
 		};
 		A7F5D690227E6AEE009FB225 /* documentation */ = {
@@ -1153,7 +1153,7 @@
 				A74D1BA622222FC900E69E44 /* eye.con-512.png in Resources */,
 				A7B78D3B2448EF6400DB2C14 /* everyone.seriously in Resources */,
 				0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */,
-				A746D465219F613D00123A0A /* Shortcuts.storyboard in Resources */,
+				A746D465219F613D00123A0A /* Help.storyboard in Resources */,
 				A7245E0121729B18003D4BDA /* Details.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1248,7 +1248,7 @@
 				0C43EFE021010F62000976CE /* ZCloud.swift in Sources */,
 				A7E096CA23EB98FA0017EC32 /* ZWebLinkController.swift in Sources */,
 				0C39B3191F182EBB0091F4D1 /* Zone.swift in Sources */,
-				A7D2D64F24902EDF00F652B0 /* ZDocumentation.swift in Sources */,
+				A7D2D64F24902EDF00F652B0 /* ZHelp.swift in Sources */,
 				0C39B2C81F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0C43EFD421010F62000976CE /* ZRecords.swift in Sources */,
 				A706444F247316DA00F90B86 /* ZRecents.swift in Sources */,
@@ -1344,7 +1344,7 @@
 				0C63DA6F1FCF837D005EC548 /* ZFavorites.swift in Sources */,
 				0C39B2A01F182EBB0091F4D1 /* ZStatusController.swift in Sources */,
 				A717BF482251332D004F7993 /* NSPanel+ZPanel.m in Sources */,
-				A7D2D65124902EDF00F652B0 /* ZDocumentation.swift in Sources */,
+				A7D2D65124902EDF00F652B0 /* ZHelp.swift in Sources */,
 				0C43EFC021010F17000976CE /* ZFiles.swift in Sources */,
 				A7E096CC23EB98FA0017EC32 /* ZWebLinkController.swift in Sources */,
 				A7B78D44244C04F900DB2C14 /* ZBreadcrumbButton.swift in Sources */,
@@ -1439,7 +1439,7 @@
 				A7B48AAF23E0E80C00654DBD /* ZoneSegmentedControl.swift in Sources */,
 				0C39B2EA1F182EBB0091F4D1 /* ZSelecting.swift in Sources */,
 				0C43EFDB21010F62000976CE /* ZOperations.swift in Sources */,
-				A7D2D65024902EDF00F652B0 /* ZDocumentation.swift in Sources */,
+				A7D2D65024902EDF00F652B0 /* ZHelp.swift in Sources */,
 				A7E9A3B123C115470064C89A /* ZGraphShortcuts.swift in Sources */,
 				A70064DE22484808004E3A8D /* ZManifest.swift in Sources */,
 				A7C7AF5A23B6D0A000AAD593 /* ZEssay.swift in Sources */,
@@ -1505,12 +1505,12 @@
 			name = Details.storyboard;
 			sourceTree = "<group>";
 		};
-		A746D461219F613D00123A0A /* Shortcuts.storyboard */ = {
+		A746D461219F613D00123A0A /* Help.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				A746D462219F613D00123A0A /* en */,
 			);
-			name = Shortcuts.storyboard;
+			name = Help.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

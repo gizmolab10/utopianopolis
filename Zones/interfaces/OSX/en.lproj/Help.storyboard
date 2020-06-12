@@ -9,7 +9,7 @@
         <scene sceneID="NqO-me-Ddx">
             <objects>
                 <windowController id="olH-Ix-aMb" sceneMemberID="viewController">
-                    <window key="window" title="Keyboard Cheat Sheet" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="D7M-HC-362">
+                    <window key="window" title="Cheat Sheet" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="D7M-HC-362">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="425" y="313" width="480" height="270"/>
@@ -26,11 +26,11 @@
             </objects>
             <point key="canvasLocation" x="819" y="-631"/>
         </scene>
-        <!--Shortcuts Controller-->
+        <!--Help-->
         <scene sceneID="OeN-bO-80W">
             <objects>
                 <customObject id="Upg-eY-ED5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <viewController id="cD6-C4-FJ5" customClass="ZShortcutsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Help" id="cD6-C4-FJ5" customClass="ZHelpController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="OMb-DG-XS6">
                         <rect key="frame" x="0.0" y="0.0" width="1152" height="768"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -54,7 +54,7 @@
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
                                                     <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" allowsUndo="NO" alignment="left" title="Text Cell" usesSingleLineMode="YES" id="fpF-1O-DdX">
-                                                        <font key="font" metaFont="message" size="11"/>
+                                                        <font key="font" metaFont="menu" size="11"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>

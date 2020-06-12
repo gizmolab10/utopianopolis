@@ -10,16 +10,16 @@ import Foundation
 
 class ZGridView: ZView {
 
-	var shortcuts: ZDocumentation?
+	var help: ZHelp?
 
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)
 
 		if  !isHidden,
-			let s = shortcuts {
-			for row in 0..<s.countOfRows {
-				for column in 0...s.indexOfLastColumn {
-					let (dc, ft) = s.dotCommand(for: row, column: column)
+			let h = help {
+			for row        in  0..<h.countOfRows {
+				for column in  0...h.indexOfLastColumn {
+					let (dc, ft) = h.dotCommand(for: row, column: column)
 					if  let c = dc,
 						let t = ft {
 						var e = false

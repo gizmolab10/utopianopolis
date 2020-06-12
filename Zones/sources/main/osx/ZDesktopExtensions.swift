@@ -809,7 +809,7 @@ extension ZTextEditor {
 			} else if FLAGGED {
 				switch key {
 					case "i": showSpecialsPopup()
-					case "?": gShortcutsController?.show(flags: flags)
+					case "?": gHelpController?.show(flags: flags)
 					case "-": return editedZone?.convertToFromLine() ?? false // false means key not handled
 					default:  return false
 				}
@@ -829,7 +829,7 @@ extension ZTextEditor {
 	}
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        if gIsShortcutsFrontmost { return }
+        if gIsHelpFrontmost { return }
 
         switch arrow {
         case .up,
