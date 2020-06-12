@@ -28,9 +28,9 @@ class ZHelpController: ZGenericTableController {
 	var                gridView : ZGridView?    { return gridView(for: mode) }
 	var                    mode : ZWorkMode = .graphMode
 	let  allModes : [ZWorkMode] = [.graphMode, .noteMode, .dotMode]
-	let          dotDecorations = ZDotDecorations()
-	let          graphHelp = ZGraphHelp()
-	let           noteHelp =  ZNoteHelp()
+	let                dotsHelp =  ZDotsHelp()
+	let               graphHelp = ZGraphHelp()
+	let               notesHelp = ZNotesHelp()
 
 	override func viewWillAppear() {
 		super.viewWillAppear()
@@ -40,8 +40,8 @@ class ZHelpController: ZGenericTableController {
 	override func setup() {
 		super         .setup()
 		graphHelp.setup()
-		dotDecorations.setup() // empty
-		noteHelp .setup() // empty
+		dotsHelp .setup() // empty
+		notesHelp.setup() // empty
 
 		if  let m = gLastChosenCheatSheet {
 			mode  = m
@@ -92,8 +92,8 @@ class ZHelpController: ZGenericTableController {
 
 	func help(for iMode: ZWorkMode) -> ZHelp {
 		switch iMode {
-			case  .noteMode: return noteHelp
-			case   .dotMode: return dotDecorations
+			case   .dotMode: return dotsHelp
+			case  .noteMode: return notesHelp
 			default:         return graphHelp
 		}
 	}
