@@ -29,8 +29,8 @@ class ZDotDecorations: ZDocumentation {
 	override var noTabPrefix       :   String   { return "               " }
 	override var columnStrings     : [[String]] { return [dotsColumnOne, dotsColumnTwo] }
 	override var tabOffsets        :  [Int]     { return [0, 20, 150] }
-	override var columnWidth       :   Int      { return 580 }
-	override var indexOfLastColumn :   Int      { return 1 }
+	override var columnWidth       :   Int      { return 576 }
+	override var indexOfLastColumn :   Int      { return 1 } // TODO: filled == third column
 
 	override func dotCommand(for row: Int, column: Int) -> ZDotCommand? {
 		let (first, second, _) = strings(for: row, column: column)

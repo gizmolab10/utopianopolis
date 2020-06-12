@@ -12,7 +12,7 @@ class ZGraphShortcuts : ZDocumentation, ZGeneric {
 
 	override var columnStrings : [[String]] { return [graphColumnOne, graphColumnTwo, graphColumnThree, graphColumnFour] }
 	override var tabOffsets    :  [Int]     { return [0, 20, 85] }
-	override var columnWidth   :   Int      { return 290 }
+	override var columnWidth   :   Int      { return 288 }
 
 	let graphColumnOne: [String] = [
 		"",				"", "",
@@ -177,14 +177,14 @@ class ZGraphShortcuts : ZDocumentation, ZGeneric {
 		" vertical", 	"extend selection", 							"selecting-ideas-cc2939720e53",
 		"",				"", "",
 		"",				"", "",
-		"BNAVIGATING (MULTIPLE IDEAS SELECTED):", "", "",
+		"BNAVIGATING (SEVERAL IDEAS SELECTED):", "", "",
 		"p",			"", "",
 		"UKEY",			"", "",
-		"pHYPHEN", 		"if first selected idea is titled, -> parent", 	"lines-37426469b7c6",
+		"pHYPHEN", 		"first idea is titled line -> group", 			"lines-37426469b7c6",
 		"p#", 			"mark with ascending numbers", 					"extras-2a9b1a7db21f",
-		"pA", 			"alphabetize (+ OPTION -> backwards)", 			"organize-fcdc44ac04e4",
-		"pM", 			"sort by length (+ OPTION -> backwards)", 		"organize-fcdc44ac04e4",
-		"pR", 			"reverse order", 								"organize-fcdc44ac04e4",
+		"pA", 			"alphabetic (+ OPTION -> reverse)", 			"organize-fcdc44ac04e4",
+		"pM", 			"by length (+ OPTION -> reverse)", 				"organize-fcdc44ac04e4",
+		"pR", 			"reverse",		 								"organize-fcdc44ac04e4",
 		"",				"", "",
 	]
 }

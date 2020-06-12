@@ -32,29 +32,29 @@
                 <customObject id="Upg-eY-ED5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <viewController id="cD6-C4-FJ5" customClass="ZShortcutsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="OMb-DG-XS6">
-                        <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1152" height="768"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView verticalCompressionResistancePriority="751" borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" allowsMagnification="YES" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
-                                <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="768"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Aa-9c-eI8">
-                                    <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="1152" height="768"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" id="H0M-2O-9lo">
-                                            <rect key="frame" x="0.0" y="0.0" width="1183" height="780"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1183" height="768"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" white="1" alpha="0.0" colorSpace="deviceWhite"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn editable="NO" width="1180" minWidth="40" maxWidth="1180" id="d2P-5m-o56">
+                                                <tableColumn editable="NO" width="1152" minWidth="40" maxWidth="1152" id="d2P-5m-o56">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
                                                     <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" allowsUndo="NO" alignment="left" title="Text Cell" usesSingleLineMode="YES" id="fpF-1O-DdX">
-                                                        <font key="font" metaFont="label" size="11"/>
+                                                        <font key="font" metaFont="controlContent" size="11"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -72,7 +72,7 @@
                                 </clipView>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="lessThanOrEqual" constant="780" id="JkF-QK-zNX"/>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="1180" id="Mj8-Ir-XUr"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="1152" id="Mj8-Ir-XUr"/>
                                 </constraints>
                                 <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="gZ2-AK-2KD">
@@ -85,42 +85,40 @@
                                 </scroller>
                             </scrollView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZGridView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="768"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="xs7-TU-BUO" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="580" y="0.0" width="1" height="780"/>
+                                        <rect key="frame" x="576" y="0.0" width="1" height="768"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="a4d-aU-yzZ"/>
                                         </constraints>
                                     </customView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" constant="580" id="8YD-QZ-Q9V"/>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="1180" id="O3A-cS-oHe"/>
+                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" constant="576" id="8YD-QZ-Q9V"/>
                                     <constraint firstAttribute="bottom" secondItem="xs7-TU-BUO" secondAttribute="bottom" id="X4I-ZI-Got"/>
                                     <constraint firstItem="xs7-TU-BUO" firstAttribute="top" secondItem="xVv-mR-0mE" secondAttribute="top" id="cg0-tG-8wM"/>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="780" id="u9x-zg-U5G"/>
                                 </constraints>
                             </customView>
                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR" customClass="ZGridView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="1180" height="780"/>
+                                <rect key="frame" x="0.0" y="-12" width="1180" height="780"/>
                                 <subviews>
                                     <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="290" y="215" width="1" height="565"/>
+                                        <rect key="frame" x="288" y="215" width="1" height="565"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="5Gm-ni-LIH"/>
                                             <constraint firstAttribute="height" constant="565" id="QjB-vW-W62"/>
                                         </constraints>
                                     </customView>
                                     <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="214" width="580" height="1"/>
+                                        <rect key="frame" x="0.0" y="214" width="576" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="Mym-7j-1Mo"/>
-                                            <constraint firstAttribute="width" constant="580" id="nfu-53-PXo"/>
+                                            <constraint firstAttribute="width" constant="576" id="nfu-53-PXo"/>
                                         </constraints>
                                     </customView>
                                     <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="580" y="0.0" width="1" height="780"/>
+                                        <rect key="frame" x="576" y="0.0" width="1" height="780"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="OGt-RE-RO4"/>
                                         </constraints>
@@ -129,13 +127,11 @@
                                 <constraints>
                                     <constraint firstItem="4RI-nR-wiK" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" id="0Jg-oh-2na"/>
                                     <constraint firstItem="Fa1-hb-kUk" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" id="2uF-5y-BaU"/>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="1180" id="3CX-3F-yev"/>
                                     <constraint firstItem="rdB-jZ-KsQ" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" id="BO6-bU-5Py"/>
-                                    <constraint firstItem="4RI-nR-wiK" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="580" id="IYu-Cm-Lck"/>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="780" id="POM-x7-zDd"/>
+                                    <constraint firstItem="4RI-nR-wiK" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="576" id="IYu-Cm-Lck"/>
                                     <constraint firstAttribute="bottom" secondItem="4RI-nR-wiK" secondAttribute="bottom" id="UwD-nR-va0"/>
                                     <constraint firstItem="Fa1-hb-kUk" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" constant="565" id="W1S-XQ-Abf"/>
-                                    <constraint firstItem="rdB-jZ-KsQ" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="290" id="qzD-K9-Jby"/>
+                                    <constraint firstItem="rdB-jZ-KsQ" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="288" id="qzD-K9-Jby"/>
                                 </constraints>
                             </customView>
                         </subviews>

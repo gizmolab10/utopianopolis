@@ -64,7 +64,6 @@ class ZShortcutsController: ZGenericTableController {
 						}
 					}
 
-
 					g.zlayer.backgroundColor = .clear
 					g.isHidden               = true
 				}
