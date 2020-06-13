@@ -2204,7 +2204,7 @@ extension ZView {
 						for index in 0 ... iCount - 1 {
 							let  increment = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
 							let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
-							let (ideaFocus, asIdea, noteFocus, asNote, asEssay) = (false, true, false, false, false)
+							let (ideaFocus, asIdea, asEssay) = (false, true, false)
 
 							// notes are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)
 							// ideas are ALWAYS tiny and SOMETIMES fat (if over ten) and SOMETIMES hollow (if over hundered)
@@ -2213,15 +2213,14 @@ extension ZView {
 							//
 							// everything should always goes out more (regardless of no notes)
 
-							func drawDot(forNote: Bool, isFocus: Bool, forEssay: Bool = false) {
-								let      noteRatio = forNote ? 1.5 : 1.0
+							func drawDot(isFocus: Bool) {
 								let    offsetRatio = isFat   ? 2.1 : 1.28
 								let       fatRatio = isFat   ? 2.0 : 1.6
 								let       dotRatio = isFat   ? 4.0 : 2.5
 
 								let   scaledRadius = radius * scale
 								let  necklaceDelta = scaledRadius * 2.0 * 1.5
-								let      dotRadius = scaledRadius * fatRatio * noteRatio
+								let      dotRadius = scaledRadius * fatRatio
 								let     rectRadius = Double(rect.size.height) / 2.0
 								let necklaceRadius = CGFloat(rectRadius + necklaceDelta)
 								let    dotDiameter = CGFloat(dotRadius  * dotRatio)
@@ -2238,7 +2237,7 @@ extension ZView {
 								path     .flatness = 0.0001
 								let       dotColor = !isFocus ? color : gNecklaceSelectionColor
 
-								if  isHollow || forNote {
+								if  isHollow {
 									dotColor?.setStroke()
 									path.stroke()
 								} else {
@@ -2254,7 +2253,7 @@ extension ZView {
 //							}
 
 							if  asIdea {
-								drawDot(forNote: false, isFocus: ideaFocus)
+								drawDot(isFocus: ideaFocus)
 							}
 						}
 					}

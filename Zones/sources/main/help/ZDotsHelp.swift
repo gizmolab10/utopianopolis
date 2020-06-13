@@ -18,10 +18,22 @@ enum ZDotCommand: String {
 	case email      = "email"
 	case focus      = "current"
 	case fifteen    = "fifteen"
+	case hundred    = "hundred"
 	case progeny    = "progeny"
 	case bookmark   = "bookmark"
 	case hyperlink  = "hyperlink"
 	case unwritable = "editing"
+
+	var accessType: ZoneDot.ZDecorationType { return self == .progeny ? .sideDot : .vertical }
+	var pointRight: Bool { return self == .click }
+
+	var showAccess: Bool {
+		switch self {
+			case .unwritable,
+				 .progeny: return true
+			default:       return false
+		}
+	}
 
 	var traitType: String {
 		switch self {
@@ -29,13 +41,6 @@ enum ZDotCommand: String {
 			case .email:     return ZTraitType.tEmail    .rawValue
 			case .hyperlink: return ZTraitType.tHyperlink.rawValue
 			default:         return ""
-		}
-	}
-
-	var pointRight: Bool {
-		switch self {
-			case .click: return true
-			default:     return false
 		}
 	}
 
@@ -51,11 +56,12 @@ enum ZDotCommand: String {
 
 	var count: Int {
 		switch self {
-			case .one:     return  1
-			case .five:    return  5
-			case .ten:     return 10
-			case .fifteen: return 15
-			default:       return  0
+			case .one:     return   1
+			case .five:    return   5
+			case .ten:     return  10
+			case .fifteen: return  15
+			case .hundred: return 100
+			default:       return   0
 		}
 	}
 
@@ -98,7 +104,7 @@ class ZDotsHelp: ZHelp {
 		"db",					"plain",										"",
 		"db",					"current focus (only in favorites or recents)",	"",
 		"db",					"editing not permitted",						"",
-		"db",					"progeny are writable",							""
+		"db",					"progeny are editable",							""
 	]
 
 	let dotsColumnTwo: [String] = [
@@ -115,8 +121,9 @@ class ZDotsHelp: ZHelp {
 		"df",					"five ideas",									"",
 		"df",					"ten ideas",									"",
 		"df",					"fifteen ideas",								"",
+		"df",					"hundred ideas",								"",
 		"",						"",												"",
-		"udecorated",			"",												"",
+		"udecorated (⌘-click to activate)",			"",							"",
 		"",						"",												"",
 		"df",					"bookmark",										"",
 		"db",					"email",										"",

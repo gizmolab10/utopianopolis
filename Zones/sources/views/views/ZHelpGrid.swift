@@ -18,6 +18,8 @@ class ZHelpGrid: ZView {
 		p.filled     = isFilled
 		p.isReveal   = c.isReveal
 		p.traitType  = c.traitType
+		p.showAccess = c.showAccess
+		p.accessType = c.accessType
 		p.pointRight = c.pointRight || !isFilled
 		p.isBookmark = c == .bookmark
 		p.childCount = c.count
@@ -39,7 +41,8 @@ class ZHelpGrid: ZView {
 						var f = true
 						let y = Double(row + 1) * -19.0 + Double(dirtyRect.extent.y) +  3.0
 						let x = Double(column)  * 580.0 + Double(dirtyRect.origin.x) + 20.0
-						let s = CGSize(width: gDotHeight, height: gDotHeight)
+						let w = c.isReveal ? gDotHeight : gDotWidth
+						let s = CGSize(width: w, height: gDotHeight)
 						let d = ZoneDot()
 						d.innerDot = ZoneDot()
 						print("\(row) \(column) \(t) \(c)")
@@ -65,10 +68,11 @@ class ZHelpGrid: ZView {
 
 							let p = CGPoint(x: x + 20.0, y: y)
 							let r = CGRect(origin: p, size: s)
+							let b = r.insetBy(dx: -20.0, dy: -20.0)
 							let m = createParameters(from: c, isFilled: true)
 
 							d.drawInnerDot(r, m)
-							d.drawOuterDot(r, m)
+							d.drawOuterDot(b, m)
 						}
 					}
 				}

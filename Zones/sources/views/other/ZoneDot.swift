@@ -155,7 +155,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         return isVisible && window?.contentView?.bounds.intersects(rect) ?? false
     }
 
-    func drawFavoritesHighlight(in iDirtyRect: CGRect) {
+    func drawFavoritesHighlight(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		if  let          zone  = widgetZone, innerDot != nil, !zone.isFavoritesHere, !zone.isRootOfRecents {
             let      dotRadius = Double(innerDotWidth / 2.0)
             let     tinyRadius =  dotRadius * 0.7
@@ -313,7 +313,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			// TINY COUNTER BEADS //
 			// /////////////////////
 
-			drawTinyCountDots(iDirtyRect, parameters: parameters)
+			if !parameters.isBookmark {
+				drawTinyCountDots(iDirtyRect, parameters: parameters)
+			}
 		} else if parameters.notInMap && !parameters.isInTrash {
 
 			// ////////////////////////////////
@@ -321,7 +323,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			// ////////////////////////////////
 
 			parameters.color.withAlphaComponent(0.7).setFill()
-			drawFavoritesHighlight(in: iDirtyRect)
+			drawFavoritesHighlight(in: iDirtyRect, parameters)
 		}
 	}
 
@@ -331,7 +333,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		var parameters        = ZDotParameters()
 
 		parameters.isDrop     = zone == gDragDropZone
-		parameters.accessType = zone?.directAccess == .eProgenyWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
+		parameters.accessType = zone?.directAccess == .eProgenyWritable ? .sideDot : .vertical
 		parameters.notInMap   = zone?.isNotInMap            ?? false
 		parameters.isInTrash  = zone?.isInTrash             ?? false
 		parameters.isBookmark = zone?.isBookmark            ?? false
