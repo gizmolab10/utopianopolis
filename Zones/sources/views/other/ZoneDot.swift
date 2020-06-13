@@ -190,19 +190,20 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		path.fill()
 	}
 
-    func drawTinyCountDots(_ iDirtyRect: CGRect) {
-        if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showingChildren || zone.isBookmark) {
-            let count = (gCountsMode == .progeny) ? zone.progenyCount : zone.indirectCount
+	func drawTinyCountDots(_ iDirtyRect: CGRect, parameters: ZDotParameters) {
+		let count = parameters.childCount
 
-            if  count > 0 {
-                let          frame = innerDot!.frame.offsetBy(dx: -0.1, dy: -0.1)
-                let color: ZColor? = isDragDrop ? gActiveColor : zone.color
-                let         radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)
+		if  count > 0,
+			let    dot = innerDot {
+			let  frame = dot.frame.offsetBy(dx: -0.1, dy: -0.1)
+			let  color = parameters.isDrop ? gActiveColor : parameters.color
+			let radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)
 
+			if  let zone = widgetZone {
 				drawTinyDots(surrounding: frame, objects: zone.children, radius: radius, color: color)
-            }
-        }
-    }
+			}
+		}
+	}
 
 
     func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
@@ -249,6 +250,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		var isDrop     : Bool            = false
 		var filled     : Bool            = false
 		var isReveal   : Bool            = false
+		var notInMap   : Bool            = false
+		var isInTrash  : Bool            = false
 		var isBookmark : Bool            = false
 		var showAccess : Bool            = false
 		var pointRight : Bool            = false
@@ -298,59 +301,68 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			fill.setFill()
 			drawWriteAccessDecoration(of: parameters.accessType, in: iDirtyRect)
 		}
+	}
 
+	func drawOuterDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+
+		// /////////////////////////////
+		// MOSTLY INVISIBLE OUTER DOT //
+		// /////////////////////////////
+
+		if  parameters.isReveal {
+
+			// /////////////////////
+			// TINY COUNTER BEADS //
+			// /////////////////////
+
+			drawTinyCountDots(iDirtyRect, parameters: parameters)
+		} else if parameters.notInMap && !parameters.isInTrash {
+
+			// ////////////////////////////////
+			// HIGHLIGHT OF CURRENT FAVORITE //
+			// ////////////////////////////////
+
+			parameters.color.withAlphaComponent(0.7).setFill()
+			drawFavoritesHighlight(in: iDirtyRect)
+		}
+	}
+
+	var drawingParameters: ZDotParameters {
+		let zone              = widgetZone
+		let traitKeys         = zone?.traitKeys ?? []
+		var parameters        = ZDotParameters()
+
+		parameters.isDrop     = zone == gDragDropZone
+		parameters.accessType = zone?.directAccess == .eProgenyWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
+		parameters.notInMap   = zone?.isNotInMap            ?? false
+		parameters.isInTrash  = zone?.isInTrash             ?? false
+		parameters.isBookmark = zone?.isBookmark            ?? false
+		parameters.showAccess = zone?.hasAccessDecoration   ?? false
+		parameters.pointRight = widgetZone?.showingChildren ?? true
+		parameters.color      = gColorfulMode ? zone?.color ?? gDefaultTextColor : gDefaultTextColor
+		parameters.childCount = ((gCountsMode == .progeny) ? zone?.progenyCount : zone?.indirectCount) ?? 0
+		parameters.traitType  = (traitKeys.count < 1) ? "" : traitKeys[0]
+		parameters.filled     = isFilled
+		parameters.fill       = isFilled ? parameters.color.lighter(by: 2.5) : gBackgroundColor
+		parameters.isReveal   = isReveal
+
+		return parameters
 	}
 
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
-		var parameters = ZDotParameters()
+		let parameters = drawingParameters
 
-		if  isVisible(iDirtyRect),
-			let zone                  = widgetZone {
-			let traitKeys             = zone.traitKeys
-
+		if  isVisible(iDirtyRect) {
 			if  isInnerDot {
-				parameters.isDrop     = zone == gDragDropZone
-				parameters.isBookmark = zone.isBookmark
-				parameters.showAccess = zone.hasAccessDecoration
-				parameters.accessType = zone.directAccess == .eProgenyWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
-				parameters.pointRight = widgetZone?.showingChildren ?? true
-				parameters.color      = gColorfulMode ? zone.color ?? gDefaultTextColor : gDefaultTextColor
-				parameters.traitType  = (traitKeys.count < 1) ? "" : traitKeys[0]
-				parameters.filled     = isFilled
-				parameters.fill       = isFilled ? parameters.color.lighter(by: 2.5) : gBackgroundColor
-				parameters.isReveal   = isReveal
-
-
 				drawInnerDot(iDirtyRect, parameters)
-			} else {
-
-				// /////////////////////////////
-				// MOSTLY INVISIBLE OUTER DOT //
-				// /////////////////////////////
-
-				if isReveal {
-
-					// /////////////////////
-					// TINY COUNTER BEADS //
-					// /////////////////////
-
-					drawTinyCountDots(iDirtyRect)
-				} else if zone.isCurrentNonMap && !zone.isInTrash {
-
-					// ////////////////////////////////
-					// HIGHLIGHT OF CURRENT FAVORITE //
-					// ////////////////////////////////
-
-					zone.color?.withAlphaComponent(0.7).setFill()
-					drawFavoritesHighlight(in: iDirtyRect)
-				}
+			} else if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showingChildren || zone.isBookmark) {
+				drawOuterDot(iDirtyRect, parameters)
 			}
 		}
     }
 
 }
-
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {

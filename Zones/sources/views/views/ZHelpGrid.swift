@@ -20,6 +20,7 @@ class ZHelpGrid: ZView {
 		p.traitType  = c.traitType
 		p.pointRight = c.pointRight || !isFilled
 		p.isBookmark = c == .bookmark
+		p.childCount = c.count
 
 		return p
 	}
@@ -66,6 +67,7 @@ class ZHelpGrid: ZView {
 							let m = createParameters(from: c, isFilled: true)
 
 							d.drawInnerDot(r, m)
+							d.drawOuterDot(r, m)
 						}
 					}
 				}

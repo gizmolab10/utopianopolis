@@ -57,7 +57,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
 	var                lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                        count :                Int  { return children.count }
-	var              isCurrentNonMap :               Bool  { return isCurrentRecent || isCurrentFavorite }
+	var                   isNotInMap :               Bool  { return isCurrentRecent || isCurrentFavorite }
 	var              isCurrentRecent :               Bool  { return self ==   gRecents.currentRecent }
 	var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
 	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isHereForNonMap && !(widget?.type.isMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
