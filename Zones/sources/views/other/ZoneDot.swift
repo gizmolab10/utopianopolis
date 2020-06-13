@@ -172,12 +172,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         }
     }
 
-	func drawMainDot(in iDirtyRect: CGRect) {
+	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
         let   thickness = CGFloat(gLineThickness)
 		var        path = ZBezierPath()
 
-		if  isReveal {
-			let toRight = widgetZone?.showingChildren ?? true
+		if  parameters.isReveal {
+			let toRight = parameters.pointRight
 			path        = ZBezierPath.bloatedTrianglePath(aimedRight: toRight, in: iDirtyRect)
 		} else {
 			path        = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
@@ -251,6 +251,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		var isReveal   : Bool            = false
 		var isBookmark : Bool            = false
 		var showAccess : Bool            = false
+		var pointRight : Bool            = false
 		var traitType  : String          = ""
 		var fill       : ZColor          = kWhiteColor
 		var color      : ZColor          = kBlackColor
@@ -268,7 +269,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		// //////
 
 		if  !parameters.isDrop { // so when cursor leaves window, the should-be-invisible reveal dot will indeed disappear
-			drawMainDot(in: iDirtyRect)
+			drawMainDot(in: iDirtyRect, using: parameters)
 		}
 
 		if  parameters.isReveal {
@@ -313,6 +314,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 				parameters.isBookmark = zone.isBookmark
 				parameters.showAccess = zone.hasAccessDecoration
 				parameters.accessType = zone.directAccess == .eProgenyWritable ? ZDecorationType.sideDot : ZDecorationType.vertical
+				parameters.pointRight = widgetZone?.showingChildren ?? true
 				parameters.color      = gColorfulMode ? zone.color ?? gDefaultTextColor : gDefaultTextColor
 				parameters.traitType  = (traitKeys.count < 1) ? "" : traitKeys[0]
 				parameters.filled     = isFilled

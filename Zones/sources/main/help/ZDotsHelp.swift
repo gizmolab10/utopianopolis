@@ -32,6 +32,13 @@ enum ZDotCommand: String {
 		}
 	}
 
+	var pointRight: Bool {
+		switch self {
+			case .click: return true
+			default:     return false
+		}
+	}
+
 	var isReveal: Bool {
 		switch self {
 			case .unwritable,

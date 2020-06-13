@@ -14,11 +14,12 @@ class ZHelpGrid: ZView {
 
 	func createParameters(from c: ZDotCommand, isFilled: Bool = false) -> ZoneDot.ZDotParameters {
 		var p        = ZoneDot.ZDotParameters()
-		p.filled     = isFilled
 		p.fill       = isFilled ? p.color.lighter(by: 2.5) : gBackgroundColor
+		p.filled     = isFilled
 		p.isReveal   = c.isReveal
-		p.isBookmark = c == .bookmark
 		p.traitType  = c.traitType
+		p.pointRight = c.pointRight || !isFilled
+		p.isBookmark = c == .bookmark
 
 		return p
 	}
