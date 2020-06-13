@@ -118,7 +118,7 @@ class ZDotsHelp: ZHelp {
 		"",						"",												"",
 		"udecorated",			"",												"",
 		"",						"",												"",
-		"db",					"bookmark",										"",
+		"df",					"bookmark",										"",
 		"db",					"email",										"",
 		"db",					"hyperlink",									"",
 		"db",					"note or essay",								""

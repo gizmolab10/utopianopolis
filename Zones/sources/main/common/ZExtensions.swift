@@ -2119,7 +2119,14 @@ extension ZView {
 		return convert(CGRect(origin: event.locationInWindow, size: CGSize.zero), from: nil)
 	}
 
-	func analyze(_ object: AnyObject) -> (Bool, Bool, Bool, Bool, Bool) {
+	func analyze(_ object: AnyObject?) -> (Bool, Bool, Bool, Bool, Bool) {
+		return (false, true, false, false, false)
+	}
+
+	// this is abandoned
+	// code for examining objects in the ring
+
+	func xanalyze(_ object: AnyObject) -> (Bool, Bool, Bool, Bool, Bool) {
 		var noteFocus = false
 		var ideaFocus = false
 		var   asEssay = false
@@ -2156,15 +2163,15 @@ extension ZView {
 		return (ideaFocus, asIdea, noteFocus, asNote, asEssay)
 	}
 
-	func drawNecklaceDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, countMax: Int = 10, onEach: IntRectClosure? = nil) {
-		let downAngle = .pi / -2.0
+//	func drawNecklaceDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, onEach: IntRectClosure? = nil) {
+//		let downAngle = .pi / -2.0
+//
+//		drawTinyDots(surrounding: rect, count: count, radius: radius, color: color, countMax: countMax, clockwise: true, offsetAngle: downAngle, onEach: onEach)
+//	}
 
-		drawTinyDots(surrounding: rect, objects: objects, radius: radius, color: color, countMax: countMax, clockwise: true, offsetAngle: downAngle, onEach: onEach)
-	}
-
-	func drawTinyDots(surrounding rect: CGRect, objects: ZObjectsArray, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, offsetAngle: Double = 0.0, onEach: IntRectClosure? = nil) {
-		if gIsReadyToShowUI {
-			var       dotCount = objects.count
+	func drawTinyDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, offsetAngle: Double = 0.0, onEach: IntRectClosure? = nil) {
+//		if gIsReadyToShowUI {
+		if  var       dotCount = count {
 			var      fatHollow = false
 			var     tinyHollow = false
 			var          scale = 1.0
@@ -2197,7 +2204,7 @@ extension ZView {
 						for index in 0 ... iCount - 1 {
 							let  increment = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
 							let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
-							let (ideaFocus, asIdea, noteFocus, asNote, asEssay) = self.analyze(objects[index])
+							let (ideaFocus, asIdea, noteFocus, asNote, asEssay) = (false, true, false, false, false)
 
 							// notes are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)
 							// ideas are ALWAYS tiny and SOMETIMES fat (if over ten) and SOMETIMES hollow (if over hundered)
@@ -2242,9 +2249,9 @@ extension ZView {
 								onEach?(index, ovalRect)
 							}
 
-							if  asNote {
-								drawDot(forNote:  true, isFocus: noteFocus)
-							}
+//							if  asNote {
+//								drawDot(forNote:  true, isFocus: noteFocus)
+//							}
 
 							if  asIdea {
 								drawDot(forNote: false, isFocus: ideaFocus)

@@ -199,9 +199,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			let  color = parameters.isDrop ? gActiveColor : parameters.color
 			let radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)
 
-			if  let zone = widgetZone {
-				drawTinyDots(surrounding: frame, objects: zone.children, radius: radius, color: color)
-			}
+			drawTinyDots(surrounding: frame, count: parameters.childCount, radius: radius, color: color)
 		}
 	}
 
