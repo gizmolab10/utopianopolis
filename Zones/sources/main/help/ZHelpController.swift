@@ -20,12 +20,12 @@ var gHelpWindowController: NSWindowController? // instantiated once
 class ZHelpController: ZGenericTableController {
 
 	@IBOutlet var      clipView : ZView?
-	@IBOutlet var  dotsHelpGrid : ZHelpGrid?
-	@IBOutlet var notesHelpGrid : ZHelpGrid?
-	@IBOutlet var graphHelpGrid : ZHelpGrid?
+	@IBOutlet var  dotsHelpGrid : ZDotsHelpView?
+	@IBOutlet var notesHelpGrid : ZDotsHelpView?
+	@IBOutlet var graphHelpGrid : ZDotsHelpView?
 	override  var  controllerID : ZControllerID { return .idHelp }
 	var                    help : ZHelp         { return help(for: mode) }
-	var                gridView : ZHelpGrid?    { return gridView(for: mode) }
+	var                gridView : ZDotsHelpView?    { return gridView(for: mode) }
 	var                    mode : ZWorkMode = .graphMode
 	let  allModes : [ZWorkMode] = [.graphMode, .noteMode, .dotMode]
 	let                dotsHelp =  ZDotsHelp()
@@ -98,7 +98,7 @@ class ZHelpController: ZGenericTableController {
 		}
 	}
 
-	func gridView(for iMode: ZWorkMode) -> ZHelpGrid? {
+	func gridView(for iMode: ZWorkMode) -> ZDotsHelpView? {
 		switch iMode {
 			case   .dotMode: return  dotsHelpGrid
 			case  .noteMode: return notesHelpGrid

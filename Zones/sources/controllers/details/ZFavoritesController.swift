@@ -16,7 +16,7 @@ class ZFavoritesController: ZGraphController {
 	override  var     hereZone : Zone?         { return gIsRecentlyMode ?  gRecents.root :  gFavoritesHereMaybe }
 	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ? .tRecent       : .tFavorite }
 	override  var controllerID : ZControllerID { return .idFavorites }
-	@IBOutlet var controlsView : ZModeControlsView?
+	@IBOutlet var controlsView : ZFavoriteControlsView?
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
 		if  let c = gDetailsController, !c.hideableIsHidden(for: .Favorites) { // don't send signal to a hidden favorites controller

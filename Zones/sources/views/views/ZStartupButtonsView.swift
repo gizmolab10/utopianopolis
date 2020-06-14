@@ -1,5 +1,5 @@
 //
-//  ZHelpButtonsView.swift
+//  ZStartupButtonsView.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 6/11/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZHelpButtonsView : ZButtonsView {
+class ZStartupButtonsView : ZButtonsView {
 
 	override  var centered: Bool { return true }
 

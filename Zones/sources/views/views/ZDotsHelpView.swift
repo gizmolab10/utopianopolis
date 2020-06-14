@@ -1,5 +1,5 @@
 //
-//  ZHelpGrid.swift
+//  ZDotsHelpView.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 6/11/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZDotsHelpGrid: ZView {
+class ZDotsHelpView: ZView {
 
 	var help: ZHelp?
 
