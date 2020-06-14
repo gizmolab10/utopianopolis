@@ -835,8 +835,12 @@ extension CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY
 
-        return insetBy(dx:dX, dy:dY)
+        return insetBy(dx: dX, dy: dY)
     }
+
+	func insetEquallyBy(fraction: CGFloat) -> CGRect {
+		return insetBy(fractionX: fraction, fractionY: fraction)
+	}
 
 	func insetEquallyBy(_ inset: CGFloat) -> CGRect {
 		return insetBy(dx: inset, dy: inset)
@@ -2074,6 +2078,11 @@ extension ZView {
 		}
 
 		print(result.joined(separator: "\r"))
+	}
+
+	func drawColored(rect: CGRect, _ color: ZColor) {
+		color.setStroke()
+		ZBezierPath(rect: rect).stroke()
 	}
 
     func addBorder(thickness: CGFloat, inset: CGFloat = 0.0, radius: CGFloat, color: CGColor) {

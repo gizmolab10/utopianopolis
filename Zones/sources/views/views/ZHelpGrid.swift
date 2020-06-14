@@ -12,21 +12,6 @@ class ZHelpGrid: ZView {
 
 	var help: ZHelp?
 
-	func createParameters(from c: ZDotCommand, isFilled: Bool = false) -> ZoneDot.ZDotParameters {
-		var p        = ZoneDot.ZDotParameters()
-		p.fill       = isFilled ? p.color.lighter(by: 2.5) : gBackgroundColor
-		p.filled     = isFilled
-		p.isReveal   = c.isReveal
-		p.traitType  = c.traitType
-		p.showAccess = c.showAccess
-		p.accessType = c.accessType
-		p.pointRight = c.pointRight || !isFilled
-		p.isBookmark = c == .bookmark
-		p.childCount = c.count
-
-		return p
-	}
-
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)
 
@@ -41,8 +26,6 @@ class ZHelpGrid: ZView {
 						var f = true
 						let y = Double(row + 1) * -19.0 + Double(dirtyRect.extent.y) +  3.0
 						let x = Double(column)  * 580.0 + Double(dirtyRect.origin.x) + 20.0
-						let w = c.isReveal ? gDotHeight : gDotWidth
-						let s = CGSize(width: w, height: gDotHeight)
 						let d = ZoneDot()
 						d.innerDot = ZoneDot()
 						print("\(row) \(column) \(t) \(c)")
@@ -57,22 +40,26 @@ class ZHelpGrid: ZView {
 							// draw empty in first column
 
 							let p = CGPoint(x: x, y: y)
-							let r = CGRect(origin: p, size: s)
-							let m = createParameters(from: c)
+							let r = c.rect(p)
+							let m = c.dotParameters()
 
 							d.drawInnerDot(r, m)
+
+							if  c == .favorite {
+								m.color.withAlphaComponent(0.7).setFill()
+								d.drawOuterDot(r, m)
+							}
 						}
 
 						if  f {
 							// draw filled in second column
 
 							let p = CGPoint(x: x + 20.0, y: y)
-							let r = CGRect(origin: p, size: s)
-							let b = r.insetBy(dx: -20.0, dy: -20.0)
-							let m = createParameters(from: c, isFilled: true)
+							let r = c.rect(p)
+							let m = c.dotParameters(isFilled: true)
 
 							d.drawInnerDot(r, m)
-							d.drawOuterDot(b, m)
+							d.drawOuterDot(r, m)
 						}
 					}
 				}

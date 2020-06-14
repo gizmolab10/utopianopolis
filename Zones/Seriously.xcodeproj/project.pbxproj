@@ -929,8 +929,6 @@
 				A7B48A8223E0E80C00654DBD /* ZLineView.swift */,
 				A706443A246F720700F90B86 /* ZModeControlsView.swift */,
 				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
-				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
-				A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */,
 				A7B48A7E23E0E80C00654DBD /* ZoneWindow.swift */,
 			);
 			path = views;
@@ -946,6 +944,8 @@
 				A7B48A8723E0E80C00654DBD /* ZoneDot.swift */,
 				A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */,
 				A72356A82489623500BA2030 /* ZStartupProgressBar.swift */,
+				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
+				A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */,
 			);
 			path = other;
 			sourceTree = "<group>";

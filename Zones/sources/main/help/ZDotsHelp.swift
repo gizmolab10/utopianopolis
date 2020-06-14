@@ -16,23 +16,33 @@ enum ZDotCommand: String {
 	case drag       = "plain"
 	case click      = "click"
 	case email      = "email"
-	case focus      = "current"
 	case fifteen    = "fifteen"
 	case hundred    = "hundred"
 	case progeny    = "progeny"
+	case favorite   = "current"
 	case bookmark   = "bookmark"
 	case hyperlink  = "hyperlink"
 	case unwritable = "editing"
 
+	var pointLeft:  Bool { return self == .click }
+	var showAccess: Bool { return  [.progeny, .unwritable                  ].contains(self) }
+	var isReveal:   Bool { return ![.progeny, .unwritable, .drag, .favorite].contains(self) }
 	var accessType: ZoneDot.ZDecorationType { return self == .progeny ? .sideDot : .vertical }
-	var pointRight: Bool { return self == .click }
 
-	var showAccess: Bool {
-		switch self {
-			case .unwritable,
-				 .progeny: return true
-			default:       return false
+	var size: CGSize {
+		let w = isReveal ? gDotHeight : gDotWidth
+
+		return CGSize(width: w, height: gDotHeight)
+	}
+
+	func rect(_ origin: CGPoint) -> CGRect {
+		var r = CGRect(origin: origin, size: size)
+
+		if  self == .favorite {
+			r = r.insetEquallyBy(fraction: (1.0 - kFavoritesReduction) / 2.0)
 		}
+
+		return r
 	}
 
 	var traitType: String {
@@ -41,16 +51,6 @@ enum ZDotCommand: String {
 			case .email:     return ZTraitType.tEmail    .rawValue
 			case .hyperlink: return ZTraitType.tHyperlink.rawValue
 			default:         return ""
-		}
-	}
-
-	var isReveal: Bool {
-		switch self {
-			case .unwritable,
-				 .progeny,
-				 .focus,
-				 .drag: return false
-			default:    return true
 		}
 	}
 
@@ -63,6 +63,22 @@ enum ZDotCommand: String {
 			case .hundred: return 100
 			default:       return   0
 		}
+	}
+
+	func dotParameters(isFilled: Bool = false) -> ZoneDot.ZDotParameters {
+		var p         = ZoneDot.ZDotParameters()
+		p.fill        = isFilled ? p.color.lighter(by: 2.5) : gBackgroundColor
+		p.filled      = isFilled
+		p.isReveal    = isReveal
+		p.traitType   = traitType
+		p.showAccess  = showAccess
+		p.accessType  = accessType
+		p.showList    = pointLeft || !isFilled
+		p.isBookmark  = self == .bookmark
+		p.showSideDot = self == .favorite
+		p.childCount  = count
+
+		return p
 	}
 
 }
@@ -98,37 +114,42 @@ class ZDotsHelp: ZHelp {
 	}
 
 	let dotsColumnOne: [String] = [
-		"",						"",												"",
-		"bLEFT SIDE DOTS",		"click to select, deselect or drag",			"",
-		"",						"",												"",
-		"db",					"plain",										"",
-		"db",					"current focus (only in favorites or recents)",	"",
-		"db",					"editing not permitted",						"",
-		"db",					"progeny are editable",							""
+		"",						"",													"",
+		"bLEFT SIDE DOTS",		"click to select, deselect or drag",				"",
+		"",						"",													"",
+		"ufilled dots (on right) indicate idea is selected",					"", "",
+		"",						"",													"",
+		"db",					"plain",											"",
+		"db",					"progeny are editable",								"",
+		"db",					"editing not permitted",							"",
+		"",						"",													"",
+		"uin favorites and recents (including those above)",					"",	"",
+		"",						"",													"",
+		"db",					"current focus       ",								""
 	]
 
 	let dotsColumnTwo: [String] = [
-		"",		"",																"",
-		"bRIGHT SIDE DOTS",		"click to conceal, reveal or activate",			"",
-		"",						"",												"",
-		"ulist is visible",		"",												"",
-		"",						"",												"",
-		"de",					"click to hide ideas",							"",
-		"",						"",												"",
-		"ulist is hidden (dots indicate count)",	"",							"",
-		"",						"",												"",
-		"df",					"one idea",										"",
-		"df",					"five ideas",									"",
-		"df",					"ten ideas",									"",
-		"df",					"fifteen ideas",								"",
-		"df",					"hundred ideas",								"",
-		"",						"",												"",
-		"udecorated (⌘-click to activate)",			"",							"",
-		"",						"",												"",
-		"df",					"bookmark",										"",
-		"db",					"email",										"",
-		"db",					"hyperlink",									"",
-		"db",					"note or essay",								""
+		"",		"",																	"",
+		"bRIGHT SIDE DOTS",		"click to conceal, reveal or activate",				"",
+		"",						"",													"",
+		"ulist is visible",														"", "",
+		"",						"",													"",
+		"de",					"click to hide list",								"",
+		"",						"",													"",
+		"ulist is hidden (click to reveal. dots indicate count)",				"", "",
+		"",						"",													"",
+		"df",					"one idea",											"",
+		"df",					"five ideas",										"",
+		"df",					"ten ideas",										"",
+		"df",					"fifteen ideas",									"",
+		"df",					"hundred ideas",									"",
+		"",						"",													"",
+		"udecorated (⌘-click to activate)",										"", "",
+		"",						"",													"",
+		"df",					"bookmark",											"",
+		"db",					"email",											"",
+		"db",					"hyperlink",										"",
+		"db",					"note or essay",									""
 	]
 
 }

@@ -550,29 +550,32 @@ class ZoneWidget: ZView {
 
     var nowDrawLines = false
 
-    override func draw(_ dirtyRect: CGRect) {
-        super.draw(dirtyRect)
+    override func draw(_ iDirtyRect: CGRect) {
+        super.draw(iDirtyRect)
 
 		if (gIsGraphOrEditIdeaMode || !type.isMap),
 			let      zone = widgetZone {
             let isGrabbed = zone.isGrabbed
             let isEditing = textWidget.isFirstResponder
+			let  showList = zone.showingChildren
 
-			textWidget.updateTextColor()
+			if !nowDrawLines {
+				nowDrawLines = true
 
-			if  (isGrabbed || isEditing) && !gIsPrinting {
-                drawSelectionHighlight(isEditing)
-            }
+				//drawColored(rect: iDirtyRect, .purple)
 
-            if  zone.showingChildren {
-				if !nowDrawLines && !gIsDragging && !gRubberband.showRubberband {
-                    nowDrawLines = true
-                    
-                    draw(dirtyRect) // recurse
-                } else {
-                    for child in childrenWidgets { // this is after child dots have been autolayed out
-                        drawLine(to: child)
-                    }
+				textWidget.updateTextColor()
+
+				if  (isGrabbed || isEditing) && !gIsPrinting {
+					drawSelectionHighlight(isEditing)
+				}
+
+				if    showList {
+					draw(iDirtyRect) // recurse
+				}
+			} else if showList {
+				for child in childrenWidgets { // this is after child dots have been autolayed out
+					drawLine(to: child)
                 }
             }
 

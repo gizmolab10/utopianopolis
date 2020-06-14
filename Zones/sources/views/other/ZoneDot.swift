@@ -18,10 +18,8 @@ import SnapKit
 
 class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
-
     // MARK:- properties
     // MARK:-
-    
 
     weak var     widget: ZoneWidget?
     var        innerDot: ZoneDot?
@@ -155,29 +153,27 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         return isVisible && window?.contentView?.bounds.intersects(rect) ?? false
     }
 
-    func drawFavoritesHighlight(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		if  let          zone  = widgetZone, innerDot != nil, !zone.isFavoritesHere, !zone.isRootOfRecents {
-            let      dotRadius = Double(innerDotWidth / 2.0)
-            let     tinyRadius =  dotRadius * 0.7
-            let   tinyDiameter = tinyRadius * 2.0
-            let         center = innerDot!.frame.center
-            let              x = center.x - CGFloat(tinyDiameter + dotRadius)
-            let              y = center.y - CGFloat(tinyRadius)
-            let           rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
-            let           path = ZBezierPath(ovalIn: rect)
-            path.lineWidth     = CGFloat(gLineThickness * 1.2)
-            path.flatness      = 0.0001
+	func drawFavoritesSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		let       radius = parameters.sideDotRadius
+		let   tinyRadius =     radius * 0.7
+		let tinyDiameter = tinyRadius * 2.0
+		let       center = iDirtyRect.center
+		let            x = center.x - CGFloat(tinyDiameter + radius)
+		let            y = center.y - CGFloat(tinyRadius)
+		let         rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
+		let         path = ZBezierPath(ovalIn: rect)
+		path.lineWidth   = CGFloat(gLineThickness * 1.2)
+		path.flatness    = 0.0001
 
-            path.fill()
-        }
-    }
+		path.fill()
+	}
 
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
         let   thickness = CGFloat(gLineThickness)
 		var        path = ZBezierPath()
 
 		if  parameters.isReveal {
-			let toRight = parameters.pointRight
+			let toRight = parameters.showList
 			path        = ZBezierPath.bloatedTrianglePath(aimedRight: toRight, in: iDirtyRect)
 		} else {
 			path        = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
@@ -244,23 +240,46 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	}
 
 	struct  ZDotParameters {
-		var childCount : Int             = 0
-		var isDrop     : Bool            = false
-		var filled     : Bool            = false
-		var isReveal   : Bool            = false
-		var notInMap   : Bool            = false
-		var isInTrash  : Bool            = false
-		var isBookmark : Bool            = false
-		var showAccess : Bool            = false
-		var pointRight : Bool            = false
-		var traitType  : String          = ""
-		var fill       : ZColor          = kWhiteColor
-		var color      : ZColor          = kBlackColor
-		var accessType : ZDecorationType = .vertical
+		var childCount    : Int             = 0
+		var isDrop        : Bool            = false
+		var filled        : Bool            = false
+		var isReveal      : Bool            = false
+		var showSideDot   : Bool            = false
+		var isBookmark    : Bool            = false
+		var showAccess    : Bool            = false
+		var showList      : Bool            = false
+		var traitType     : String          = ""
+		var sideDotRadius : Double          = 4.0
+
+		var fill          : ZColor          = kWhiteColor
+		var color         : ZColor          = kBlackColor
+		var accessType    : ZDecorationType = .vertical
+
+		static func create(for zone: Zone?, _ isFilled: Bool, _ isReveal: Bool) -> ZDotParameters {
+			let traits    = zone?.traitKeys ?? []
+			var p         = ZDotParameters()
+			p.isDrop      = zone == gDragDropZone
+			p.accessType  = zone?.directAccess == .eProgenyWritable ? .sideDot : .vertical
+			p.showSideDot = zone?.showSideDot           ?? false
+			p.isBookmark  = zone?.isBookmark            ?? false
+			p.showAccess  = zone?.hasAccessDecoration   ?? false
+			p.showList    = zone?.showingChildren       ?? true
+			p.color       = gColorfulMode ? zone?.color ?? gDefaultTextColor : gDefaultTextColor
+			p.childCount  = ((gCountsMode == .progeny) ? zone?.progenyCount : zone?.indirectCount) ?? 0
+			p.traitType   = (traits.count < 1) ? "" : traits[0]
+			p.filled      = isFilled
+			p.fill        = isFilled ? p.color.lighter(by: 2.5) : gBackgroundColor
+			p.isReveal    = isReveal
+
+			return p
+		}
+
 	}
 
 	func drawInnerDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let fill = parameters.filled ? gBackgroundColor : parameters.color
+
+//		drawColored(rect: iDirtyRect, .blue)
 
 		parameters.color.setStroke()
 		parameters.fill .setFill()
@@ -316,42 +335,20 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			if !parameters.isBookmark {
 				drawTinyCountDots(iDirtyRect, parameters: parameters)
 			}
-		} else if parameters.notInMap && !parameters.isInTrash {
+		} else if parameters.showSideDot {
 
 			// ////////////////////////////////
 			// HIGHLIGHT OF CURRENT FAVORITE //
 			// ////////////////////////////////
 
 			parameters.color.withAlphaComponent(0.7).setFill()
-			drawFavoritesHighlight(in: iDirtyRect, parameters)
+			drawFavoritesSideDot(in: iDirtyRect, parameters)
 		}
-	}
-
-	var drawingParameters: ZDotParameters {
-		let zone              = widgetZone
-		let traitKeys         = zone?.traitKeys ?? []
-		var parameters        = ZDotParameters()
-
-		parameters.isDrop     = zone == gDragDropZone
-		parameters.accessType = zone?.directAccess == .eProgenyWritable ? .sideDot : .vertical
-		parameters.notInMap   = zone?.isNotInMap            ?? false
-		parameters.isInTrash  = zone?.isInTrash             ?? false
-		parameters.isBookmark = zone?.isBookmark            ?? false
-		parameters.showAccess = zone?.hasAccessDecoration   ?? false
-		parameters.pointRight = widgetZone?.showingChildren ?? true
-		parameters.color      = gColorfulMode ? zone?.color ?? gDefaultTextColor : gDefaultTextColor
-		parameters.childCount = ((gCountsMode == .progeny) ? zone?.progenyCount : zone?.indirectCount) ?? 0
-		parameters.traitType  = (traitKeys.count < 1) ? "" : traitKeys[0]
-		parameters.filled     = isFilled
-		parameters.fill       = isFilled ? parameters.color.lighter(by: 2.5) : gBackgroundColor
-		parameters.isReveal   = isReveal
-
-		return parameters
 	}
 
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
-		let parameters = drawingParameters
+		let parameters = ZDotParameters.create(for: widgetZone, isFilled, isReveal)
 
 		if  isVisible(iDirtyRect) {
 			if  isInnerDot {
