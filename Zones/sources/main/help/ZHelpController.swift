@@ -20,12 +20,12 @@ var gHelpWindowController: NSWindowController? // instantiated once
 class ZHelpController: ZGenericTableController {
 
 	@IBOutlet var      clipView : ZView?
-	@IBOutlet var  dotsHelpGrid : ZDotsHelpView?
-	@IBOutlet var notesHelpGrid : ZDotsHelpView?
-	@IBOutlet var graphHelpGrid : ZDotsHelpView?
-	override  var  controllerID : ZControllerID { return .idHelp }
-	var                    help : ZHelp         { return help(for: mode) }
-	var                gridView : ZDotsHelpView?    { return gridView(for: mode) }
+	@IBOutlet var  dotsHelpGrid : ZHelpGridView?
+	@IBOutlet var notesHelpGrid : ZHelpGridView?
+	@IBOutlet var graphHelpGrid : ZHelpGridView?
+	override  var  controllerID : ZControllerID  { return .idHelp }
+	var                    help : ZHelp          { return help(for: mode) }
+	var                gridView : ZHelpGridView? { return gridView(for: mode) }
 	var                    mode : ZWorkMode = .graphMode
 	let  allModes : [ZWorkMode] = [.graphMode, .noteMode, .dotMode]
 	let                dotsHelp =  ZDotsHelp()
@@ -98,7 +98,7 @@ class ZHelpController: ZGenericTableController {
 		}
 	}
 
-	func gridView(for iMode: ZWorkMode) -> ZDotsHelpView? {
+	func gridView(for iMode: ZWorkMode) -> ZHelpGridView? {
 		switch iMode {
 			case   .dotMode: return  dotsHelpGrid
 			case  .noteMode: return notesHelpGrid
@@ -198,6 +198,10 @@ class ZHelpController: ZGenericTableController {
 	override func numberOfRows(in tableView: ZTableView) -> Int {
 		return help.countOfRows
     }
+
+	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+		return help.rowHeight
+	}
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
 		return help.objectValueFor(row)

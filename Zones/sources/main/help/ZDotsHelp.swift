@@ -24,10 +24,11 @@ enum ZDotCommand: String {
 	case hyperlink  = "hyperlink"
 	case unwritable = "editing"
 
-	var pointLeft:  Bool { return self == .click }
-	var showAccess: Bool { return  [.progeny, .unwritable                  ].contains(self) }
-	var isReveal:   Bool { return ![.progeny, .unwritable, .drag, .favorite].contains(self) }
-	var accessType: ZoneDot.ZDecorationType { return self == .progeny ? .sideDot : .vertical }
+	var rowHeight   : CGFloat { return 40.0 }
+	var pointLeft   :    Bool { return self == .click }
+	var showAccess  :    Bool { return  [.progeny, .unwritable                  ].contains(self) }
+	var isReveal    :    Bool { return ![.progeny, .unwritable, .drag, .favorite].contains(self) }
+	var accessType  : ZoneDot.ZDecorationType { return self == .progeny ? .sideDot : .vertical }
 
 	var size: CGSize {
 		let w = isReveal ? gDotHeight : gDotWidth
@@ -91,7 +92,7 @@ enum ZFillType: String {
 
 class ZDotsHelp: ZHelp {
 
-	override var noTabPrefix       :   String   { return "                   " }
+	override var noTabPrefix       :   String   { return "                    " }
 	override var columnStrings     : [[String]] { return [dotsColumnOne, dotsColumnTwo] }
 	override var tabOffsets        :  [Int]     { return [0, 20, 150] }
 	override var columnWidth       :   Int      { return 580 }

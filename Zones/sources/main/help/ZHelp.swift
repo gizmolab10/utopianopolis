@@ -32,6 +32,8 @@ class ZHelp: NSObject {
 		return result / stringsPerRow
 	}
 
+	var rowHeight : CGFloat { return 17.0 }
+
 	func setup() {
 		var values: [Int] = []
 		var offset = 0

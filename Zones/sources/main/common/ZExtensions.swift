@@ -2176,14 +2176,7 @@ extension ZView {
 		return (ideaFocus, asIdea, noteFocus, asNote, asEssay)
 	}
 
-//	func drawNecklaceDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, onEach: IntRectClosure? = nil) {
-//		let downAngle = .pi / -2.0
-//
-//		drawTinyDots(surrounding: rect, count: count, radius: radius, color: color, countMax: countMax, clockwise: true, offsetAngle: downAngle, onEach: onEach)
-//	}
-
-	func drawTinyDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, offsetAngle: Double = 0.0, onEach: IntRectClosure? = nil) {
-//		if gIsReadyToShowUI {
+	func drawTinyDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, onEach: IntRectClosure? = nil) {
 		if  var       dotCount = count {
 			var      fatHollow = false
 			var     tinyHollow = false
@@ -2212,7 +2205,7 @@ extension ZView {
 					if  iCount             > 0 {
 						let         isEven = iCount % 2 == 0
 						let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(-iCount)
-						let     startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + offsetAngle
+						let     startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + (oneSet ? 0.0 : Double.pi)
 
 						for index in 0 ... iCount - 1 {
 							let  increment = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)

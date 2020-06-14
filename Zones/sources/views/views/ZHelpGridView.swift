@@ -1,5 +1,5 @@
 //
-//  ZDotsHelpView.swift
+//  ZHelpGridView.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 6/11/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZDotsHelpView: ZView {
+class ZHelpGridView: ZView {
 
 	var help: ZHelp?
 
@@ -24,7 +24,8 @@ class ZDotsHelpView: ZView {
 						let t = ft {
 						var e = true
 						var f = true
-						let y = Double(row)    * -19.0 + Double(dirtyRect.extent.y) - 16.0
+						let v = Double(h.rowHeight) + 2.0
+						let y = Double(row)    *    -v + Double(dirtyRect.extent.y) - 16.0
 						let x = Double(column) * 580.0 + Double(dirtyRect.origin.x) + 20.0
 						let d = ZoneDot()
 //						print("\(row) \(column) \(t) \(c)")
