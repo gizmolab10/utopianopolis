@@ -846,6 +846,10 @@ extension CGRect {
 		return insetBy(dx: inset, dy: inset)
 	}
 
+	func offsetEquallyBy(_ offset: CGFloat) -> CGRect {
+		return offsetBy(dx: offset, dy: offset)
+	}
+
 	var squareCentered: CGRect {
 		let length = size.smallDimension
 		let origin = CGPoint(x: minX + (size.width - length) / 2.0, y: minY + (size.height - length) / 2.0)

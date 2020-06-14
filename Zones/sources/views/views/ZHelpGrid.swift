@@ -27,7 +27,6 @@ class ZHelpGrid: ZView {
 						let y = Double(row + 1) * -19.0 + Double(dirtyRect.extent.y) +  3.0
 						let x = Double(column)  * 580.0 + Double(dirtyRect.origin.x) + 20.0
 						let d = ZoneDot()
-						d.innerDot = ZoneDot()
 						print("\(row) \(column) \(t) \(c)")
 
 						switch t {

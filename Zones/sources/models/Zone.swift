@@ -74,7 +74,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                      hasNote :               Bool  { return hasTrait(for: .tNote) }
 	var                  isInDetails :               Bool  { return isInRecently || isInFavorites }
-	var                  showSideDot :               Bool  { return isInDetails && isBookmark && (bookmarkTarget?.isSelected ?? false) }
+	var                  showSideDot :               Bool  { return isInDetails && isBookmark && (bookmarkTarget == gHereMaybe) }
 	var                      isInMap :               Bool  { return root?.isMapRoot            ?? false }
     var                    isInTrash :               Bool  { return root?.isRootOfTrash        ?? false }
 	var                 isInRecently :               Bool  { return root?.isRootOfRecents      ?? false }

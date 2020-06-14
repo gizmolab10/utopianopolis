@@ -9,18 +9,18 @@
 import Foundation
 
 enum ZDotCommand: String {
+	case one        = "single"
 	case ten        = "ten"
-	case one        = "one"
-	case five       = "five"
 	case note       = "note"
 	case drag       = "ordinary"
+	case three      = "three"
 	case click      = "click"
 	case email      = "email"
-	case fifteen    = "fifteen"
-	case hundred    = "hundred"
+	case twelve     = "twelve"
 	case progeny    = "progeny"
 	case favorite   = "target"
 	case bookmark   = "bookmark"
+	case oneTwenty  = "one"
 	case hyperlink  = "hyperlink"
 	case unwritable = "editing"
 
@@ -56,12 +56,12 @@ enum ZDotCommand: String {
 
 	var count: Int {
 		switch self {
-			case .one:     return   1
-			case .five:    return   5
-			case .ten:     return  10
-			case .fifteen: return  15
-			case .hundred: return 100
-			default:       return   0
+			case .one:       return   1
+			case .three:     return   3
+			case .ten:       return  10
+			case .twelve:    return  12
+			case .oneTwenty: return 120
+			default:         return   0
 		}
 	}
 
@@ -138,11 +138,11 @@ class ZDotsHelp: ZHelp {
 		"",						"",													"",
 		"ulist is hidden (click to reveal. dots indicate count)",				"", "",
 		"",						"",													"",
-		"df",					"one idea",											"",
-		"df",					"five ideas",										"",
+		"df",					"single idea",										"",
+		"df",					"three ideas",										"",
 		"df",					"ten ideas",										"",
-		"df",					"fifteen ideas",									"",
-		"df",					"hundred ideas",									"",
+		"df",					"twelve ideas",										"",
+		"df",					"one hundred twenty ideas",							"",
 		"",						"",													"",
 		"udecorated (⌘-click to activate)",										"", "",
 		"",						"",													"",

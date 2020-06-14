@@ -189,13 +189,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	func drawTinyCountDots(_ iDirtyRect: CGRect, parameters: ZDotParameters) {
 		let count = parameters.childCount
 
-		if  count > 0,
-			let    dot = innerDot {
-			let  frame = dot.frame.offsetBy(dx: -0.1, dy: -0.1)
+		if  count > 0 {
+			let  frame = iDirtyRect.offsetEquallyBy(-0.1)
 			let  color = parameters.isDrop ? gActiveColor : parameters.color
 			let radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)
 
-			drawTinyDots(surrounding: frame, count: parameters.childCount, radius: radius, color: color)
+			drawTinyDots(surrounding: frame, count: count, radius: radius, color: color)
 		}
 	}
 
@@ -314,6 +313,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			// /////////////////////
 
 			if !parameters.isBookmark {
+
 				drawTinyCountDots(iDirtyRect, parameters: parameters)
 			}
 		} else if parameters.showSideDot {
@@ -334,8 +334,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			let parameters = widgetZone?.dotParameters(isFilled, isReveal) {
 			if  isInnerDot {
 				drawInnerDot(iDirtyRect, parameters)
-			} else if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showingChildren || zone.isBookmark) {
-				drawOuterDot(iDirtyRect, parameters)
+			} else if  innerDot != nil,
+				gCountsMode == .dots,
+				let rect = innerDot?.frame.offsetBy(dx: -0.1, dy: -0.1),
+				let zone = widgetZone,
+				(!zone.showingChildren || zone.isBookmark) {
+				drawOuterDot(rect, parameters)
 			}
 		}
     }
