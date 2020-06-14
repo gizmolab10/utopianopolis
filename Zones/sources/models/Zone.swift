@@ -2260,7 +2260,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gRedrawGraph(for: self)
 	}
 
-	// MARK:- reveal dot
+	// MARK:- dots
 	// MARK:-
 
 	func revealDotClicked(COMMAND: Bool, OPTION: Bool) {
@@ -2298,7 +2298,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-    // MARK:- lines and titles
+	func dotParameters(_ isFilled: Bool, _ isReveal: Bool) -> ZoneDot.ZDotParameters {
+		let traits    = traitKeys
+		var p         = ZoneDot.ZDotParameters()
+		p.isDrop      = self == gDragDropZone
+		p.accessType  = directAccess == .eProgenyWritable ? .sideDot : .vertical
+		p.showSideDot = showSideDot
+		p.isBookmark  = isBookmark
+		p.showAccess  = hasAccessDecoration
+		p.showList    = showingChildren
+		p.color       = gColorfulMode ? color ?? gDefaultTextColor : gDefaultTextColor
+		p.childCount  = (gCountsMode == .progeny) ? progenyCount : indirectCount
+		p.traitType   = (traits.count < 1) ? "" : traits[0]
+		p.filled      = isFilled
+		p.fill        = isFilled ? p.color.lighter(by: 2.5) : gBackgroundColor
+		p.isReveal    = isReveal
+
+		return p
+	}
+
+	// MARK:- lines and titles
     // MARK:-
 
     func convertToTitledLine() {

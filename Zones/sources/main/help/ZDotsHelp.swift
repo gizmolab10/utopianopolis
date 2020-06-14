@@ -13,13 +13,13 @@ enum ZDotCommand: String {
 	case one        = "one"
 	case five       = "five"
 	case note       = "note"
-	case drag       = "plain"
+	case drag       = "ordinary"
 	case click      = "click"
 	case email      = "email"
 	case fifteen    = "fifteen"
 	case hundred    = "hundred"
 	case progeny    = "progeny"
-	case favorite   = "current"
+	case favorite   = "target"
 	case bookmark   = "bookmark"
 	case hyperlink  = "hyperlink"
 	case unwritable = "editing"
@@ -117,15 +117,15 @@ class ZDotsHelp: ZHelp {
 		"",						"",													"",
 		"bLEFT SIDE DOTS",		"click to select, deselect or drag",				"",
 		"",						"",													"",
-		"ufilled dots (on right) indicate idea is selected",					"", "",
+		"ushown on right, filled dots indicate idea is selected",				"", "",
 		"",						"",													"",
-		"db",					"plain",											"",
+		"db",					"ordinary drag dot",								"",
 		"db",					"progeny are editable",								"",
 		"db",					"editing not permitted",							"",
 		"",						"",													"",
-		"uin favorites and recents (including those above)",					"",	"",
+		"uonly in the favorite or recent lists",								"",	"",
 		"",						"",													"",
-		"db",					"current focus       ",								""
+		"db",					"target of this bookmark is the current focus",		""
 	]
 
 	let dotsColumnTwo: [String] = [

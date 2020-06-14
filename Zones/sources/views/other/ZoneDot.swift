@@ -255,25 +255,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		var color         : ZColor          = kBlackColor
 		var accessType    : ZDecorationType = .vertical
 
-		static func create(for zone: Zone?, _ isFilled: Bool, _ isReveal: Bool) -> ZDotParameters {
-			let traits    = zone?.traitKeys ?? []
-			var p         = ZDotParameters()
-			p.isDrop      = zone == gDragDropZone
-			p.accessType  = zone?.directAccess == .eProgenyWritable ? .sideDot : .vertical
-			p.showSideDot = zone?.showSideDot           ?? false
-			p.isBookmark  = zone?.isBookmark            ?? false
-			p.showAccess  = zone?.hasAccessDecoration   ?? false
-			p.showList    = zone?.showingChildren       ?? true
-			p.color       = gColorfulMode ? zone?.color ?? gDefaultTextColor : gDefaultTextColor
-			p.childCount  = ((gCountsMode == .progeny) ? zone?.progenyCount : zone?.indirectCount) ?? 0
-			p.traitType   = (traits.count < 1) ? "" : traits[0]
-			p.filled      = isFilled
-			p.fill        = isFilled ? p.color.lighter(by: 2.5) : gBackgroundColor
-			p.isReveal    = isReveal
-
-			return p
-		}
-
 	}
 
 	func drawInnerDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
@@ -348,9 +329,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
-		let parameters = ZDotParameters.create(for: widgetZone, isFilled, isReveal)
 
-		if  isVisible(iDirtyRect) {
+		if  isVisible(iDirtyRect),
+			let parameters = widgetZone?.dotParameters(isFilled, isReveal) {
 			if  isInnerDot {
 				drawInnerDot(iDirtyRect, parameters)
 			} else if  let  zone = widgetZone, innerDot != nil, gCountsMode == .dots, (!zone.showingChildren || zone.isBookmark) {
