@@ -428,7 +428,7 @@ enum ZEssayHyperlinkType: String {
 // MARK: - debug
 // MARK: -
 
-var gDebugMode: [ZDebugMode] = []
+var gDebugMode: [ZDebugMode] = [.dUser]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
@@ -447,6 +447,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let   dFile = ZDebugMode()
 	static let   dRing = ZDebugMode()
 	static let   dText = ZDebugMode()
+	static let   dUser = ZDebugMode()
 	static let  dNames = ZDebugMode()
 	static let  dFocus = ZDebugMode()
 	static let  dSpeed = ZDebugMode()
@@ -469,6 +470,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.dInfo,   "   info"),
 				(.dRing,   "   info"),
 				(.dText,   "   text"),
+				(.dUser,   "   user"),
 				(.dNames,  "   name"),
 				(.dNotes,  "   note"),
 				(.dFocus,  "  focus"),

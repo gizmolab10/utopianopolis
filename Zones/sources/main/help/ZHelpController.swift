@@ -129,12 +129,12 @@ class ZHelpController: ZGenericTableController {
 	func show(_ show: Bool? = nil, nextMode: ZWorkMode?) {
 		if  let       next = nextMode {
 			let controller = gHelpWindowController
-			let     isOpen = controller?.window?.isKeyWindow ?? false
+			let     isOpen = gHelpWindow?.isKeyWindow ?? false
 			let       same = mode == next
 			let      close = !(show ?? !(isOpen && same))
 
 			if  close  {
-				controller?.window?.close()
+				gHelpWindow?.close()
 			} else {
 				mode                  = next
 				gLastChosenCheatSheet = next

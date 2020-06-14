@@ -59,7 +59,7 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 		if  let itemID = button.introductionID,
 			let    key = keyFrom(itemID) {
 
-			gWindow?.handleKey(key, flags: flags)    // this is so cool, ;-)
+			gMainWindow?.handleKey(key, flags: flags)    // this is so cool, ;-)
 		}
 	}
 

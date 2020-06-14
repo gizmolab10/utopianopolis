@@ -342,7 +342,6 @@ extension ZWindow {
     var contentView: UIView? { return self }
     override open var canBecomeFirstResponder: Bool { return true }
 
-
     override open var keyCommands: [UIKeyCommand]? {
         if  gIsIdeaMode {
             return nil

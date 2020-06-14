@@ -6,22 +6,19 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 #if os(OSX)
     import Cocoa
 #elseif os(iOS)
     import UIKit
 #endif
 
-
-var gWindow: ZoneWindow? { return ZoneWindow.window }
-
+var gMainWindow : ZoneWindow? { return ZoneWindow.mainWindow }
+var gHelpWindow : ZWindow?    { return gHelpWindowController?.window }
 
 class ZoneWindow: ZWindow, ZWindowDelegate {
 
-    static var window : ZoneWindow?
-    var      observer : NSKeyValueObservation?
-	var  lastLocation = NSPoint.zero
+    static var mainWindow : ZoneWindow?
+    var          observer : NSKeyValueObservation?
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		if  let            key = iKey {
@@ -41,23 +38,6 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 		}
 
 		return false
-	}
-
-	var keyPressed: Bool {
-		let    e  = nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false)
-
-		return e != nil
-	}
-
-	var mouseMoved: Bool {
-		let last = lastLocation
-		let  now = mouseLocationOutsideOfEventStream
-
-		if  contentView?.frame.contains(now) ?? false {
-			lastLocation = now
-		}
-
-		return last != lastLocation
 	}
 
 	func windowDidResize(_ notification: Notification) {

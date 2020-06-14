@@ -77,8 +77,13 @@ class ZHelp: NSObject {
 	}
 
 	func strippedStrings(for column: Int) -> [String] {
-		let    rawStrings = columnStrings[column]
 		var        result = [String]()
+
+		if  column < 0 {
+			return result
+		}
+
+		let    rawStrings = columnStrings[column]
 		let         count = rawStrings.count / stringsPerRow
 		var         index = 0
 

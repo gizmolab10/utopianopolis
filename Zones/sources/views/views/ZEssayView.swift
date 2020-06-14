@@ -362,7 +362,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			delegate = self 						// set delegate after setText
 
 			if  gIsNoteMode {
-				gWindow?.makeFirstResponder(self) // this should never happen unless alread in note mode
+				gMainWindow?.makeFirstResponder(self) // this should never happen unless alread in note mode
 			}
 		}
 	}
@@ -643,8 +643,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func addButtons() {
-		FOREGROUND {		// wait for application to fully load the inspector bar
-			if  let w = gWindow,
+		FOREGROUND { // wait for application to fully load the inspector bar
+			if  let            w = gMainWindow,
 				let inspectorBar = w.titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view {
 
 				func button(for tag: ZEssayButtonID) -> ZButton {

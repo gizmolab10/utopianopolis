@@ -11,20 +11,19 @@ import Foundation
 enum ZDotCommand: String {
 	case one        = "single"
 	case ten        = "ten"
-	case note       = "note"
+	case note       = "view"
 	case drag       = "ordinary"
 	case three      = "three"
 	case click      = "click"
-	case email      = "email"
+	case email      = "compose"
 	case twelve     = "twelve"
 	case progeny    = "progeny"
 	case favorite   = "target"
 	case bookmark   = "bookmark"
 	case oneTwenty  = "one"
-	case hyperlink  = "hyperlink"
+	case hyperlink  = "browse"
 	case unwritable = "editing"
 
-	var rowHeight   : CGFloat { return 40.0 }
 	var pointLeft   :    Bool { return self == .click }
 	var showAccess  :    Bool { return  [.progeny, .unwritable                  ].contains(self) }
 	var isReveal    :    Bool { return ![.progeny, .unwritable, .drag, .favorite].contains(self) }
@@ -97,6 +96,7 @@ class ZDotsHelp: ZHelp {
 	override var tabOffsets        :  [Int]     { return [0, 20, 150] }
 	override var columnWidth       :   Int      { return 580 }
 	override var indexOfLastColumn :   Int      { return 1 }
+	override var rowHeight         :   CGFloat  { return 22.0 }
 
 	override func dotCommand(for row: Int, column: Int) -> (ZDotCommand?, ZFillType?) {
 		var           command  : ZDotCommand?
@@ -115,42 +115,39 @@ class ZDotsHelp: ZHelp {
 	}
 
 	let dotsColumnOne: [String] = [
-		"",						"",													"",
-		"bLEFT SIDE DOTS",		"click to select, deselect or drag",				"",
-		"",						"",													"",
-		"ushown on right, filled dots indicate idea is selected",				"", "",
-		"",						"",													"",
-		"db",					"ordinary drag dot",								"",
-		"db",					"progeny are editable",								"",
-		"db",					"editing not permitted",							"",
-		"",						"",													"",
-		"uonly in the favorite or recent lists",								"",	"",
-		"",						"",													"",
-		"db",					"target of this bookmark is the current focus",		""
+		"",						"",														"",
+		"bDOT ON THE LEFT",	"click to select, deselect or drag",						"",
+		"",						"",														"",
+		"ushown below on right: filled dots indicate idea is selected",				"", "",
+		"db",					"ordinary drag dot",									"",
+		"db",					"progeny are editable",									"",
+		"db",					"editing not permitted",								"",
+		"",						"",														"",
+		"uappearing only in the favorite or recent lists",							"",	"",
+		"db",					"target of this bookmark is the current focus",			""
 	]
 
 	let dotsColumnTwo: [String] = [
-		"",		"",																	"",
-		"bRIGHT SIDE DOTS",		"click to conceal, reveal or activate",				"",
-		"",						"",													"",
-		"ulist is visible",														"", "",
-		"",						"",													"",
-		"de",					"click to hide list",								"",
-		"",						"",													"",
-		"ulist is hidden (click to reveal. dots indicate count)",				"", "",
-		"",						"",													"",
-		"df",					"single idea",										"",
-		"df",					"three ideas",										"",
-		"df",					"ten ideas",										"",
-		"df",					"twelve ideas",										"",
-		"df",					"one hundred twenty ideas",							"",
-		"",						"",													"",
-		"udecorated (⌘-click to activate)",										"", "",
-		"",						"",													"",
-		"df",					"bookmark",											"",
-		"db",					"email",											"",
-		"db",					"hyperlink",										"",
-		"db",					"note or essay",									""
+		"",		"",																		"",
+		"bDOT ON THE RIGHT",	"click to conceal, reveal or activate",					"",
+		"",						"",														"",
+		"uno dot indicates no list","",													"",
+		"",						"",														"",
+		"uwhen list is visible",													"", "",
+		"de",					"click to hide list",									"",
+		"",						"",														"",
+		"uwhen list is hidden (click to reveal. dots indicate count)",				"", "",
+		"df",					"single idea",											"",
+		"df",					"three ideas",											"",
+		"df",					"ten ideas",											"",
+		"df",					"twelve ideas",											"",
+		"df",					"one hundred twenty ideas (yeah, that's way too many)",	"",
+		"",						"",														"",
+		"udecorated dot (⌘-click to activate)",										"", "",
+		"df",					"bookmark (has no list)",								"",
+		"db",					"compose an email",										"",
+		"db",					"browse to a hyperlink",								"",
+		"db",					"view and edit a note or essay",						""
 	]
 
 }

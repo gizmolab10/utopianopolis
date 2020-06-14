@@ -48,7 +48,7 @@ var                 gExpanded:          [String]?
 var                   gIsDark:               Bool { return gDarkMode == .Dark }
 var                   gIsLate:               Bool { return gBatches.isLate }
 var               gIsDragging:               Bool { return gDraggedZone != nil }
-var          gIsHelpFrontmost:               Bool { return gHelpController?.view.window?.isKeyWindow ?? false }
+var          gIsHelpFrontmost:               Bool { return gHelpWindow?.isKeyWindow ?? false }
 var       gBrowsingIsConfined:               Bool { return gConfinementMode   == .list }
 var           gIsRecentlyMode:               Bool { return gFavoritesMode  == .recent }
 var            gListsGrowDown:               Bool { return gListGrowthMode == .down }
@@ -584,10 +584,28 @@ func gTemporarilySetArrowsDoNotBrowse(_ notBrowse: Bool, for seconds: Double = 1
 // MARK:- actions
 // MARK:-
 
-func gTestForUserInterrupt() throws {
-	if  Thread.isMainThread, let w = gWindow, w.isKeyWindow, (w.mouseMoved || w.keyPressed) {
+enum ZActiveWindowID : Int {
+	case main
+	case help
+}
 
-		printDebug(.dLog, "throwing user interrupt \(gInterruptionCount)")
+var gUserIsActive: ZActiveWindowID? {
+	if  let       w = gMainWindow, w.userIsActive {
+		return .main
+	} else if let w = gHelpWindow, w.userIsActive {
+		return .help
+	} else {
+		return nil
+	}
+}
+
+var gLastLocation = NSPoint.zero
+
+func gTestForUserInterrupt() throws {
+	if  Thread.isMainThread,
+		let w = gUserIsActive {
+
+		printDebug(.dUser, "throwing user interrupt in \(w) \(gInterruptionCount)")
 		gInterruptionCount += 1
 
 		throw(ZInterruptionError.userInterrupted)

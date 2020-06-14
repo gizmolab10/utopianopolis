@@ -115,7 +115,7 @@ func convertToUserInterfaceItemIdentifier(_ string: String) -> NSUserInterfaceIt
 
 extension NSObject {
     func assignAsFirstResponder(_ responder: NSResponder?) {
-        if  let window = gWindow,
+        if  let window = gMainWindow,
             ![window, responder].contains(window.firstResponder) {
             window.makeFirstResponder(responder)
         }
@@ -552,17 +552,15 @@ extension NSWindow {
     @IBAction func redo              (_ iItem: ZMenuItem?) { gGraphEditor.undoManager.redo() }
 }
 
-
 extension ZoneWindow {
-    
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        delegate          = self
-        ZoneWindow.window = self
-        contentMinSize    = kDefaultWindowRect.size // smallest size user to which can shrink window
-        let          rect = gWindowRect
+        delegate              = self
+        ZoneWindow.mainWindow = self
+        contentMinSize        = kDefaultWindowRect.size // smallest size user to which can shrink window
+        let              rect = gWindowRect
         
         setFrame(rect, display: true)
         
@@ -573,6 +571,30 @@ extension ZoneWindow {
     
 }
 
+extension ZWindow {
+
+	var keyPressed: Bool {
+		let    e  = nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false)
+
+		return e != nil
+	}
+
+	var mouseMoved: Bool {
+		let last = gLastLocation
+		let  now = mouseLocationOutsideOfEventStream
+
+		if  contentView?.frame.contains(now) ?? false {
+			gLastLocation = now
+		}
+
+		return last != gLastLocation
+	}
+
+	var userIsActive: Bool {
+		return isKeyWindow && (mouseMoved || keyPressed)
+	}
+
+}
 
 extension NSButtonCell {
     override open var objectValue: Any? {
@@ -753,7 +775,7 @@ extension ZoneTextWidget {
             }
 
             FOREGROUND { // execute on next cycle of runloop
-                gWindow?.handleKey(key, flags: flags)
+                gMainWindow?.handleKey(key, flags: flags)
             }
         }
     }
