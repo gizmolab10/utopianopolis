@@ -95,8 +95,8 @@ class ZHelp: NSObject {
 			let   type = ZHelpType(rawValue: first.substring(with: NSMakeRange(0, 1))) // grab first character
 			index     += 1
 
-			if      gProSkillLevel || type != .pro {
-				if  gProSkillLevel || type != .insert {
+			if      gProSkillLevel || type != .hPro {
+				if  gProSkillLevel || type != .hInsert {
 					result.append(first)
 					result.append(second)
 					result.append(third)
@@ -122,18 +122,18 @@ class ZHelp: NSObject {
 		let      hasURL = !url.isEmpty
 		var      prefix = "   "
 
-		if !gProSkillLevel && (SHIFT || type == .pro) {
+		if !gProSkillLevel && (SHIFT || type == .hPro) {
 			return NSMutableAttributedString(string: kTab + kTab + kTab)
 		}
 
 		switch type {
-			case .dots?:
+			case .hDots?:
 				prefix = noTabPrefix
-			case .bold?:
+			case .hBold?:
 				attributes[.font] = kBoldFont
-			case .append?, .underline?:
+			case .hAppend?, .hUnderline?:
 				attributes[.underlineStyle] = 1
-			case .plain?, .pro?:
+			case .hPlain?, .hPro?:
 				if  hasURL {
 					attributes[.foregroundColor] = hyperlinkColor
 					second.append(kSpace + kEllipsis)
@@ -148,28 +148,29 @@ class ZHelp: NSObject {
 		let result = NSMutableAttributedString(string: prefix)
 
 		switch type {
-			case .dots?:
+			case .hDots?:
 				break
-			case .plain?:
+			case .hPlain?:
 				result.append(NSAttributedString(string: command))
 			default:
 				if  gProSkillLevel,
-					type == .pro {
-					attributes[.backgroundColor] = powerUserColor
+					type == .hPro {
+//					attributes[.backgroundColor] = powerUserColor
+					second = "** " + second
 				}
 
 				result.append(NSAttributedString(string: command, attributes: attributes))
 		}
 
 		if  second.length > 3 {
-			if  type != .dots {
+			if  type != .hDots {
 				result.append(NSAttributedString(string: kTab))
 			}
 
 			result.append(NSAttributedString(string: second, attributes: attributes))
 		}
 
-		if  command.length + second.length < 11 && row != 1 && ![.plain].contains(type) {
+		if  command.length + second.length < 11 && row != 1 && ![.hPlain].contains(type) {
 			result.append(NSAttributedString(string: kTab)) 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough final tabs
 		}
 

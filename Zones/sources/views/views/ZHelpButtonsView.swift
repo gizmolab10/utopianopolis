@@ -1,5 +1,5 @@
 //
-//  ZStartupButtonsView.swift
+//  ZHelpButtonsView.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 6/11/20.
@@ -8,12 +8,12 @@
 
 import Foundation
 
-class ZStartupButtonsView : ZButtonsView {
+class ZHelpButtonsView : ZButtonsView {
 
 	override  var centered: Bool { return true }
 
 	override func setupButtons() {
-		let modes: [ZWorkMode] = [.graphMode, .dotMode]
+		let modes: [ZHelpMode] = [.basicMode, .proMode, .dotMode]
 		buttons                = [ZButton]()
 
 		for mode in modes {
@@ -26,7 +26,7 @@ class ZStartupButtonsView : ZButtonsView {
 	}
 
 	@objc private func handleButtonPress(_ button: ZButton) {
-		if  let    mode = button.buttonMode {
+		if  let mode = button.buttonMode {
 			gHelpController?.show(true, nextMode: mode)
 		}
 	}

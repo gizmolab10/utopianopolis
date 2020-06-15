@@ -106,7 +106,7 @@ class ZDotsHelp: ZHelp {
 		let       filledLower  = first.substring(with: NSMakeRange(1, 2)).lowercased()
 		filled                 = ZFillType(rawValue: filledLower)
 		if  let      helpType  = ZHelpType(rawValue: shortcutLower),
-		             helpType == .dots {
+		             helpType == .hDots {
 			let configuration  = second.components(separatedBy: " ")[0]
 			command            = ZDotConfigurationType(rawValue: configuration)
 		}

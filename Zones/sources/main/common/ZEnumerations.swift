@@ -127,26 +127,35 @@ enum ZWorkMode: String {
     case searchMode   = "?"
     case graphMode    = "g"
 	case noteMode     = "n"
-	case dotMode      = "d" // for showing dot decoration documentation
+}
+
+enum ZHelpMode: String {
+	case basicMode = "b"
+	case noteMode  = "n"
+	case proMode   = "p"
+	case dotMode   = "d"
+	case noMode    = " "
 
 	var title: String {
 		switch self {
-			case .graphMode: return "ideas keyboard cheat sheet"
+			case .basicMode: return "basic keyboard cheat sheet"
 			case .noteMode:  return "essay keyboard cheat sheet"
+			case .proMode:   return "pro keyboard cheat sheet"
 			case .dotMode:   return "descriptions of dots"
 			default:         return ""
 		}
 	}
+
 }
 
 enum ZHelpType: String {
-	case pro       = "p"
-	case bold      = "b"
-	case dots      = "d"
-	case plain     = " "
-	case insert    = "i"
-	case append    = "a"
-	case underline = "u"
+	case hPro       = "p"
+	case hBold      = "b"
+	case hDots      = "d"
+	case hPlain     = " "
+	case hInsert    = "i"
+	case hAppend    = "a"
+	case hUnderline = "u"
 }
 
 enum ZCountsMode: Int { // do not change the order, they are persisted

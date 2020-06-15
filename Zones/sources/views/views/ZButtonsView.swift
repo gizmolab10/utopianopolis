@@ -14,21 +14,16 @@ class ZButtonsView : ZView {
 	var  clipped : Bool { return false }
 	var centered : Bool { return false }
 
-	func clearButtons() {
+	func removeButtons() {
 		for button in buttons {
 			button.removeFromSuperview()
 		}
 	}
 
-	func clear() {
-		zlayer.backgroundColor = .clear
-	}
-
 	func setupButtons() {}
 
 	func updateAndRedraw() {
-//		clear()
-		clearButtons()
+		removeButtons()
 		setupButtons() // customize this in subclass
 		layoutButtons()
 		setNeedsDisplay()

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SnapKit
 
 #if os(OSX)
     import Cocoa
@@ -26,21 +27,32 @@ class ZHelpController: ZGenericTableController {
 	override  var  controllerID : ZControllerID  { return .idHelp }
 	var                    help : ZHelp          { return help(for: mode) }
 	var                gridView : ZHelpGridView? { return gridView(for: mode) }
-	var                    mode : ZWorkMode = .graphMode
-	let  allModes : [ZWorkMode] = [.graphMode, .noteMode, .dotMode]
+	var         titleBarButtons : ZHelpButtonsView?
+	var                    mode : ZHelpMode  = .noMode
+	let  allModes : [ZHelpMode] = [.basicMode, .dotMode]
 	let                dotsHelp =  ZDotsHelp()
 	let               graphHelp = ZGraphHelp()
 	let               notesHelp = ZNotesHelp()
+
+	// MARK:- events
+	// MARK:-
 
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		update()
 	}
 
+	func update() {
+		updateTitleBar()
+		updateGridVisibility()
+		genericTableUpdate()
+		view.setAllSubviewsNeedDisplay()
+	}
+
 	override func setup() {
-		super         .setup()
+		super    .setup()
 		graphHelp.setup()
-		dotsHelp .setup() // empty
+		dotsHelp .setup()
 		notesHelp.setup() // empty
 
 		if  let m = gLastChosenCheatSheet {
@@ -49,61 +61,13 @@ class ZHelpController: ZGenericTableController {
 
 		view.zlayer.backgroundColor = .white
 
-		if  let c = clipView {
-			c.zlayer.backgroundColor = .clear
-
-			for m in allModes {
-				if  let g = gridView(for: m) {
-					g.removeFromSuperview()
-					c.addSubview(g)
-					g.help = help(for: m)
-
-					if  let t = genericTableView {
-						g.snp.makeConstraints { make in
-							make.top.bottom.left.right.equalTo(t) // text and grid scroll together
-						}
-					}
-
-					g.zlayer.backgroundColor = .clear
-					g.isHidden               = true
-				}
-			}
-		}
+		setupGridViews()
+		setupTitleBar()
 
 		if  let m = gLastChosenCheatSheet {
-			mode  = .startupMode
+			mode  = .noMode
 
 			show(nextMode: m)
-		}
-	}
-
-	func update() {
-		updateGridVisibility()
-		genericTableUpdate()
-		view.setAllSubviewsNeedDisplay()
-	}
-
-	func updateGridVisibility() {
-		for m in allModes {
-			let                   show = m == mode
-			gridView(for: m)?.isHidden = !show
-		}
-	}
-
-	func help(for iMode: ZWorkMode) -> ZHelp {
-		switch iMode {
-			case   .dotMode: return dotsHelp
-			case  .noteMode: return notesHelp
-			default:         return graphHelp
-		}
-	}
-
-	func gridView(for iMode: ZWorkMode) -> ZHelpGridView? {
-		switch iMode {
-			case   .dotMode: return  dotsHelpGrid
-			case  .noteMode: return notesHelpGrid
-			case .graphMode: return graphHelpGrid
-			default:         return nil
 		}
 	}
 
@@ -111,7 +75,7 @@ class ZHelpController: ZGenericTableController {
 		let  COMMAND = flags.isCommand
 		let  CONTROL = flags.isControl
 		let   OPTION = flags.isOption
-		var nextMode : ZWorkMode?
+		var nextMode : ZHelpMode?
 
 		if            COMMAND {
 			if       !OPTION && CONTROL {
@@ -119,14 +83,14 @@ class ZHelpController: ZGenericTableController {
 			} else if OPTION && CONTROL {
 				nextMode =   .dotMode
 			} else if OPTION {
-				nextMode = .graphMode
+				nextMode = .basicMode
 			}
 
 			self.show(show, nextMode: nextMode)
 		}
 	}
 
-	func show(_ show: Bool? = nil, nextMode: ZWorkMode?) {
+	func show(_ show: Bool? = nil, nextMode: ZHelpMode?) {
 		if  let       next = nextMode {
 			let controller = gHelpWindowController
 			let     isOpen = gHelpWindow?.isKeyWindow ?? false
@@ -148,13 +112,13 @@ class ZHelpController: ZGenericTableController {
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		genericTableView?.reloadData()
 	}
-    
-    func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
-        if  let      key = iEvent.key {
+
+	func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
+		if  let      key = iEvent.key {
 			let    flags = iEvent.modifierFlags
 			let   OPTION = flags.isOption
-            let  COMMAND = flags.isCommand
-            let  SPECIAL = COMMAND && OPTION
+			let  COMMAND = flags.isCommand
+			let  SPECIAL = COMMAND && OPTION
 			switch   key {
 				case "?", "/":         show(       flags: flags)
 				case "w":              show(false, flags: flags)
@@ -162,13 +126,85 @@ class ZHelpController: ZGenericTableController {
 				case "a": if SPECIAL { gApplication.showHideAbout() }
 				case "p": if SPECIAL { cycleSkillLevel() } else { view.printView() }
 				case "r": if COMMAND { sendEmailBugReport() }
-				
+
 				default: break
 			}
-        }
-        
-        return nil
-    }
+		}
+
+		return nil
+	}
+
+	// MARK:- title bar
+	// MARK:-
+
+	func setupTitleBar() {
+		if  let       window = view.window {
+			titleBarButtons  = ZHelpButtonsView()
+			let titleBarView = window.standardWindowButton(.closeButton)!.superview!
+
+			titleBarView.addSubview(titleBarButtons!)
+			titleBarButtons?.updateAndRedraw()
+			titleBarButtons?.snp.makeConstraints { make in
+				make.centerX.top.bottom.equalToSuperview()
+			}
+			titleBarButtons?.setNeedsLayout()
+			titleBarButtons?.layout()
+		}
+	}
+
+	func updateTitleBar() {
+		titleBarButtons?.updateAndRedraw()
+	}
+
+	// MARK:- grid
+	// MARK:-
+
+	func setupGridViews() {
+		if  let c = clipView {
+			c.zlayer.backgroundColor = .clear
+
+			for m in allModes {
+				if  let g = gridView(for: m) {
+					g.removeFromSuperview()
+					c.addSubview(g)
+					g.help = help(for: m)
+
+					if  let t = genericTableView {
+						g.snp.makeConstraints { make in
+							make.top.bottom.left.right.equalTo(t) // text and grid scroll together
+						}
+					}
+
+					g.zlayer.backgroundColor = .clear
+					g.isHidden               = true
+				}
+			}
+		}
+	}
+
+	func updateGridVisibility() {
+		for m in allModes {
+			let                   show = m == mode
+			gridView(for: m)?.isHidden = !show
+		}
+	}
+
+	func help(for iMode: ZHelpMode) -> ZHelp {
+		switch iMode {
+			case   .dotMode: return  dotsHelp
+			case  .noteMode: return notesHelp
+			default:         return graphHelp
+		}
+	}
+
+	func gridView(for iMode: ZHelpMode) -> ZHelpGridView? {
+		switch iMode {
+			case   .dotMode: return  dotsHelpGrid
+			case  .noteMode: return notesHelpGrid
+			case .basicMode: return graphHelpGrid
+			default:         return nil
+		}
+	}
 
 	// MARK:- help table
     // MARK:-

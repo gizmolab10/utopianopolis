@@ -144,10 +144,10 @@ var gFavoritesHereMaybe: Zone? {
 	set { gRemoteStorage.cloud(for: .favoritesID)?.hereZoneMaybe = newValue }
 }
 
-var gLastChosenCheatSheet: ZWorkMode? {
+var gLastChosenCheatSheet: ZHelpMode? {
 	get {
 		if  let v = getPreferenceString(for: kLastChosenCheatSheet) {
-			return ZWorkMode(rawValue: v)
+			return ZHelpMode(rawValue: v)
 		}
 
 		return nil

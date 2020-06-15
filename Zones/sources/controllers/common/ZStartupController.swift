@@ -22,7 +22,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	@IBOutlet var enableCloudDrive  : ZView?
 	@IBOutlet var pleaseWait        : ZView?
 	@IBOutlet var thermometerBar    : ZStartupProgressBar?
-	@IBOutlet var helpButtons       : ZStartupButtonsView?
+	@IBOutlet var helpButtons       : ZHelpButtonsView?
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
