@@ -8,25 +8,25 @@
 
 import Foundation
 
-enum ZDotCommand: String {
+enum ZDotConfigurationType: String {
 	case one        = "single"
 	case ten        = "ten"
 	case note       = "view"
-	case drag       = "ordinary"
+	case drag       = "undecorated"
 	case three      = "three"
 	case click      = "click"
 	case email      = "compose"
 	case twelve     = "twelve"
-	case progeny    = "progeny"
+	case progeny    = "only"
 	case favorite   = "target"
 	case bookmark   = "bookmark"
 	case oneTwenty  = "one"
 	case hyperlink  = "browse"
-	case unwritable = "editing"
+	case unwritable = "not"
 
-	var pointLeft   :    Bool { return self == .click }
-	var showAccess  :    Bool { return  [.progeny, .unwritable                  ].contains(self) }
-	var isReveal    :    Bool { return ![.progeny, .unwritable, .drag, .favorite].contains(self) }
+	var pointLeft   : Bool { return self == .click }
+	var showAccess  : Bool { return  [.progeny, .unwritable                  ].contains(self) }
+	var isReveal    : Bool { return ![.progeny, .unwritable, .drag, .favorite].contains(self) }
 	var accessType  : ZoneDot.ZDecorationType { return self == .progeny ? .sideDot : .vertical }
 
 	var size: CGSize {
@@ -98,56 +98,56 @@ class ZDotsHelp: ZHelp {
 	override var indexOfLastColumn :   Int      { return 1 }
 	override var rowHeight         :   CGFloat  { return 22.0 }
 
-	override func dotCommand(for row: Int, column: Int) -> (ZDotCommand?, ZFillType?) {
-		var           command  : ZDotCommand?
+	override func dotTypes(for row: Int, column: Int) -> (ZDotConfigurationType?, ZFillType?) {
+		var           command  : ZDotConfigurationType?
 		var            filled  : ZFillType?
 		let (first, second, _) = strings(for: row, column: column)
 		let     shortcutLower  = first.substring(with: NSMakeRange(0, 1)).lowercased()
 		let       filledLower  = first.substring(with: NSMakeRange(1, 2)).lowercased()
 		filled                 = ZFillType(rawValue: filledLower)
-		if  let  shortcutType  = ZShortcutType(rawValue: shortcutLower),
-		         shortcutType == .dots {
-			let       dotType  = second.components(separatedBy: " ")[0]
-			command            = ZDotCommand(rawValue: dotType)
+		if  let      helpType  = ZHelpType(rawValue: shortcutLower),
+		             helpType == .dots {
+			let configuration  = second.components(separatedBy: " ")[0]
+			command            = ZDotConfigurationType(rawValue: configuration)
 		}
 
 		return (command, filled)
 	}
 
 	let dotsColumnOne: [String] = [
-		"",						"",														"",
-		"bDOT ON THE LEFT",	"click to select, deselect or drag",						"",
-		"",						"",														"",
-		"ushown below on right: filled dots indicate idea is selected",				"", "",
-		"db",					"ordinary drag dot",									"",
-		"db",					"progeny are editable",									"",
-		"db",					"editing not permitted",								"",
-		"",						"",														"",
-		"uappearing only in the favorite or recent lists",							"",	"",
-		"db",					"target of this bookmark is the current focus",			""
+		"",						"",																"",
+		"bDOT ON THE LEFT",		"click to select, deselect or drag",							"",
+		"",						"",																"",
+		"udrag dot",			"filled dots indicate idea is selected",						"",
+		"db",					"undecorated",													"",
+		"db",					"not editable\t",												"",
+		"db",					"only ideas in its list and sublists are editable",				"",
+		"",						"",																"",
+		"uappearing only in the favorite or recent lists",									"",	"",
+		"db",					"target of this bookmark is the current focus",					""
 	]
 
 	let dotsColumnTwo: [String] = [
-		"",		"",																		"",
-		"bDOT ON THE RIGHT",	"click to conceal, reveal or activate",					"",
-		"",						"",														"",
-		"uno dot indicates no list","",													"",
-		"",						"",														"",
-		"uwhen list is visible",													"", "",
-		"de",					"click to hide list",									"",
-		"",						"",														"",
-		"uwhen list is hidden (click to reveal. dots indicate count)",				"", "",
-		"df",					"single idea",											"",
-		"df",					"three ideas",											"",
-		"df",					"ten ideas",											"",
-		"df",					"twelve ideas",											"",
-		"df",					"one hundred twenty ideas (yeah, that's way too many)",	"",
-		"",						"",														"",
-		"udecorated dot (⌘-click to activate)",										"", "",
-		"df",					"bookmark (has no list)",								"",
-		"db",					"compose an email",										"",
-		"db",					"browse to a hyperlink",								"",
-		"db",					"view and edit a note or essay",						""
+		"",		"",																				"",
+		"bDOT ON THE RIGHT",	"click to conceal, reveal or activate",							"",
+		"",						"",																"",
+		"uno right-side dot indicates no list",												"", "",
+		"",						"",																"",
+		"uwhen list is visible","",																"",
+		"de",					"click to hide list",											"",
+		"",						"",																"",
+		"uwhen list is hidden",	"click to reveal. tiny dots of various sizes indicate count",	"",
+		"df",					"single idea",													"",
+		"df",					"three ideas",													"",
+		"df",					"ten ideas",													"",
+		"df",					"twelve ideas",													"",
+		"df",					"one hundred twenty ideas (yeah, that's way too many)",			"",
+		"",						"",																"",
+		"udecorated dot",		"⌘-click to activate",											"",
+		"df",					"bookmark (has no list)",										"",
+		"db",					"compose an email",												"",
+		"db",					"browse to a hyperlink",										"",
+		"db",					"view and edit a note or essay",								""
 	]
 
 }

@@ -571,12 +571,27 @@ DQ
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Bvg-6z-Co5"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Keyboard Commands" keyEquivalent="/" id="EGs-Dm-LkH">
-                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                            <connections>
-                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="jw5-ox-sH4"/>
-                                            </connections>
+                                        <menuItem isSeparatorItem="YES" id="eoc-SF-BeG"/>
+                                        <menuItem title="Cheat Sheets" id="Axz-qS-Tsx">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Cheat Sheets" id="TET-FJ-Mmt">
+                                                <items>
+                                                    <menuItem title="Explain Keyboard Commands" keyEquivalent="/" id="RQA-tZ-jdg">
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="GVM-4d-6re"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Explain Dots" keyEquivalent="/" id="W6c-6I-BEc">
+                                                        <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="vLz-Yr-nvb"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="i4z-ll-52j"/>
                                         <menuItem title="Seriously Web Site" keyEquivalent="/" id="FKE-Sm-Kum">
                                             <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES"/>
                                             <connections>
@@ -1083,7 +1098,7 @@ CA
                                 <rect key="frame" x="20" y="20" width="259" height="269"/>
                                 <clipView key="contentView" id="xkU-Kc-9TS">
                                     <rect key="frame" x="1" y="1" width="257" height="267"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" id="z27-6x-Roi">
                                             <rect key="frame" x="0.0" y="0.0" width="257" height="267"/>
@@ -1157,7 +1172,7 @@ CA
                                 <rect key="frame" x="0.0" y="0.0" width="278" height="289"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="DDT-jd-TI8">
                                     <rect key="frame" x="0.0" y="0.0" width="263" height="289"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4" customClass="ZEssayView" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="263" height="289"/>

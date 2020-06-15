@@ -19,7 +19,7 @@ class ZHelpGridView: ZView {
 			let h = help {
 			for row        in  0..<h.countOfRows {
 				for column in  0...h.indexOfLastColumn {
-					let (dc, ft) = h.dotCommand(for: row, column: column)
+					let (dc, ft) = h.dotTypes(for: row, column: column)
 					if  let c = dc,
 						let t = ft {
 						var e = true

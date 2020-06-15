@@ -224,7 +224,7 @@ class ZGraphEditor: ZBaseEditor {
             case "z":                   return .eUndo
 			case "o", "s":              return .eFiles
             case "r", "#":              return .eSort
-			case "t", "u", "?":         return .eHelp
+			case "t", "u", "?", "/":    return .eHelp
             case "x", kSpace:           return .eChild
             case "b", kTab, kBackspace: return .eParent
             case kDelete:               return  CONTROL ? .eAlways : .eParent

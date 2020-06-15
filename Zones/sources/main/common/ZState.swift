@@ -587,32 +587,45 @@ func gTemporarilySetArrowsDoNotBrowse(_ notBrowse: Bool, for seconds: Double = 1
 enum ZActiveWindowID : Int {
 	case main
 	case help
+
+	var description: String {
+		switch self {
+			case .main: return "m  "
+			default:    return "  h"
+		}
+	}
+
 }
 
 var gUserIsActive: ZActiveWindowID? {
-	if  let       w = gMainWindow, w.userIsActive {
+	if  gMainWindow?.userIsActive ?? false {
 		return .main
-	} else if let w = gHelpWindow, w.userIsActive {
-		return .help
-	} else {
-		return nil
 	}
+
+	if  gHelpWindow?.userIsActive ?? false {
+		return .help
+	}
+
+	return nil
 }
 
 var gLastLocation = NSPoint.zero
 
 func gTestForUserInterrupt() throws {
-	if  Thread.isMainThread,
-		let w = gUserIsActive {
-
-		printDebug(.dUser, "throwing user interrupt in \(w) \(gInterruptionCount)")
+	if !Thread.isMainThread {
+//		gFOREGROUND.async {
+//			try gTestForUserInterrupt()
+//		}
+	} else if  let w = gUserIsActive {
+		printDebug(.dUser, "throwing user interrupt in \(w.description) \(gInterruptionCount)")
 		gInterruptionCount += 1
 
-		throw(ZInterruptionError.userInterrupted)
-	}
 
-	if !gHasFinishedStartup {
-		gSignal([.sStartup])
+		if !gHasFinishedStartup {
+			gSignal([.sStartup])
+		}
+
+		throw(ZInterruptionError.userInterrupted)
 	}
 }
 

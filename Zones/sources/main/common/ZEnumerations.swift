@@ -131,15 +131,15 @@ enum ZWorkMode: String {
 
 	var title: String {
 		switch self {
-			case .graphMode: return "graph keys"
-			case .noteMode:  return "essay keys"
-			case .dotMode:   return "dot meanings"
+			case .graphMode: return "ideas keyboard cheat sheet"
+			case .noteMode:  return "essay keyboard cheat sheet"
+			case .dotMode:   return "descriptions of dots"
 			default:         return ""
 		}
 	}
 }
 
-enum ZShortcutType: String {
+enum ZHelpType: String {
 	case pro       = "p"
 	case bold      = "b"
 	case dots      = "d"

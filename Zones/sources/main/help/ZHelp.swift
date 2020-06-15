@@ -20,7 +20,7 @@ class ZHelp: NSObject {
 	var hyperlinkColor    :  ZColor    { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }
 	var powerUserColor    :  ZColor    { return gIsDark ? kBlueColor.darker (by: 5.0) : kBlueColor.lighter(by: 30.0) }
 
-	func dotCommand(for row: Int, column: Int) -> (ZDotCommand?, ZFillType?) { return (nil, nil) }
+	func dotTypes(for row: Int, column: Int) -> (ZDotConfigurationType?, ZFillType?) { return (nil, nil) }
 
 	var countOfRows : Int {
 		var result = 0
@@ -92,7 +92,7 @@ class ZHelp: NSObject {
 			let  first = rawStrings[offset]
 			let second = rawStrings[offset + 1]
 			let  third = rawStrings[offset + 2]
-			let   type = ZShortcutType(rawValue: first.substring(with: NSMakeRange(0, 1))) // grab first character
+			let   type = ZHelpType(rawValue: first.substring(with: NSMakeRange(0, 1))) // grab first character
 			index     += 1
 
 			if      gProSkillLevel || type != .pro {
@@ -116,7 +116,7 @@ class ZHelp: NSObject {
 		let     rawChar = first.substring(with: NSMakeRange(0, 1))
 		let       lower = rawChar.lowercased()
 		let       SHIFT = lower != rawChar
-		let        type = ZShortcutType(rawValue: lower) // grab first character
+		let        type = ZHelpType(rawValue: lower) // grab first character
 		let     command = first.substring(fromInclusive: 1)             // grab remaining characters
 		var  attributes = ZAttributesDictionary ()
 		let      hasURL = !url.isEmpty
