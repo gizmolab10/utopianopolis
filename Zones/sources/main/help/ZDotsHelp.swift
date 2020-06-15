@@ -10,18 +10,18 @@ import Foundation
 
 enum ZDotConfigurationType: String {
 	case one        = "single"
-	case ten        = "ten"
-	case note       = "view"
-	case drag       = "undecorated"
-	case three      = "three"
-	case click      = "click"
-	case email      = "compose"
-	case twelve     = "twelve"
+	case ten        = "10"
+	case note       = "note"
+	case drag       = "editable"
+	case three      = "3"
+	case click      = "points"
+	case email      = "email"
+	case twelve     = "12"
 	case progeny    = "only"
 	case favorite   = "target"
 	case bookmark   = "bookmark"
-	case oneTwenty  = "one"
-	case hyperlink  = "browse"
+	case oneTwenty  = "120"
+	case hyperlink  = "hyperlink"
 	case unwritable = "not"
 
 	var pointLeft   : Bool { return self == .click }
@@ -115,39 +115,39 @@ class ZDotsHelp: ZHelp {
 	}
 
 	let dotsColumnOne: [String] = [
-		"",						"",																"",
-		"bDOT ON THE LEFT",		"click to select, deselect or drag",							"",
-		"",						"",																"",
-		"udrag dot",			"filled dots indicate idea is selected",						"",
-		"db",					"undecorated",													"",
-		"db",					"not editable\t",												"",
-		"db",					"only ideas in its list and sublists are editable",				"",
-		"",						"",																"",
-		"uappearing only in the favorite or recent lists",									"",	"",
-		"db",					"target of this bookmark is the current focus",					""
+		"",						"",																				"",
+		"bDOT ON THE LEFT",		"click to select, deselect or drag",											"",
+		"",						"",																				"",
+		"udrag dot",			"filled dots indicate idea is selected",										"",
+		"db",					"editable",																		"",
+		"db",					"not editable\t",																"",
+		"db",					"only ideas in its list and sublists are editable",								"",
+		"",						"",																				"",
+		"uappears only in the favorite and recent lists",													"",	"",
+		"db",					"target of this bookmark is the current focus",									""
 	]
 
 	let dotsColumnTwo: [String] = [
-		"",		"",																				"",
-		"bDOT ON THE RIGHT",	"click to conceal, reveal or activate",							"",
-		"",						"",																"",
-		"uno right-side dot indicates no list",												"", "",
-		"",						"",																"",
-		"uwhen list is visible","",																"",
-		"de",					"click to hide list",											"",
-		"",						"",																"",
-		"uwhen list is hidden",	"click to reveal. tiny dots of various sizes indicate count",	"",
-		"df",					"single idea",													"",
-		"df",					"three ideas",													"",
-		"df",					"ten ideas",													"",
-		"df",					"twelve ideas",													"",
-		"df",					"one hundred twenty ideas (yeah, that's way too many)",			"",
-		"",						"",																"",
-		"udecorated dot",		"⌘-click to activate",											"",
-		"df",					"bookmark (has no list)",										"",
-		"db",					"compose an email",												"",
-		"db",					"browse to a hyperlink",										"",
-		"db",					"view and edit a note or essay",								""
+		"",						"",																				"",
+		"bDOT ON THE RIGHT",	"click to conceal, reveal or activate",											"",
+		"",						"",																				"",
+		"uno right-side dot indicates no list",																"", "",
+		"",						"",																				"",
+		"uwhen list is visible","click to hide list",															"",
+		"de",					"points to the left",															"",
+		"",						"",																				"",
+		"uwhen list is hidden",	"click to reveal list   necklace of tiny dots indicates size of list",			"",
+		"df",					"single idea      \t1 = single small dot on right",								"",
+		"df",					"3 ideas          \t3 = small dots all around",									"",
+		"df",					"10 ideas         \t10 = single medium dot on right",							"",
+		"df",					"12 ideas         \t10 = medium dot on left, 2 = small dots on right",			"",
+		"df",					"120 ideas        \t100 = large hollow dot on left, 20 = medium dots on right",	"",
+		"",						"",																				"",
+		"udecorated dot",		"to activate: ⌘-click or select and tap the = key",								"",
+		"df",					"bookmark         \tfocus on the bookmark's target",							"",
+		"db",					"email            \tcompose and send",											"",
+		"db",					"hyperlink        \topen a browser",											"",
+		"db",					"note or essay    \tview and edit",												""
 	]
 
 }
