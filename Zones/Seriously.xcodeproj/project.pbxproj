@@ -566,6 +566,8 @@
 			isa = PBXGroup;
 			children = (
 				0C39B21F1F182EBB0091F4D1 /* controllers */,
+				0C39B2271F182EBB0091F4D1 /* details */,
+				A7D2D65224902F8F00F652B0 /* help */,
 				0C39B22D1F182EBB0091F4D1 /* main */,
 				0C39B2451F182EBB0091F4D1 /* managers */,
 				0C39B2541F182EBB0091F4D1 /* models */,
@@ -580,7 +582,6 @@
 				0C39B2201F182EBB0091F4D1 /* common */,
 				0C09A7D51FE5DEC600F3D736 /* osx */,
 				0C2E22CD1F75BEEA00B50A71 /* ios */,
-				0C39B2271F182EBB0091F4D1 /* details */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -606,10 +607,15 @@
 			isa = PBXGroup;
 			children = (
 				0C39B22B1F182EBB0091F4D1 /* ZDetailsController.swift */,
+				0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */,
 				A70644212461EC3600F90B86 /* ZFavoritesController.swift */,
+				A706443A246F720700F90B86 /* ZFavoriteControlsView.swift */,
+				A706441D2460DEF300F90B86 /* ZIntroductionButton.swift */,
 				A7064415245B5FD400F90B86 /* ZIntroductionController.swift */,
 				0C39B22A1F182EBB0091F4D1 /* ZPreferencesController.swift */,
+				A706444E247316DA00F90B86 /* ZRecents.swift */,
 				0C39B2291F182EBB0091F4D1 /* ZStatusController.swift */,
+				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
 			);
 			path = details;
 			sourceTree = "<group>";
@@ -618,7 +624,6 @@
 			isa = PBXGroup;
 			children = (
 				0C39B22E1F182EBB0091F4D1 /* common */,
-				A7D2D65224902F8F00F652B0 /* help */,
 				0C39B2361F182EBB0091F4D1 /* ios */,
 				0C39B23E1F182EBB0091F4D1 /* osx */,
 			);
@@ -685,8 +690,6 @@
 				A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */,
 				0C39B2471F182EBB0091F4D1 /* ZControllers.swift */,
 				0C48B0941F87197B00A247BC /* ZEvents.swift */,
-				0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */,
-				A706444E247316DA00F90B86 /* ZRecents.swift */,
 				A7DF7DBB247AFE2800F03060 /* ZRubberband.swift */,
 				0C6CAE1E1F88308E001960F7 /* ZSearching.swift */,
 				0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */,
@@ -717,7 +720,7 @@
 		0C39B2851F182EBB0091F4D1 /* views */ = {
 			isa = PBXGroup;
 			children = (
-				A7064431246F327700F90B86 /* buttons */,
+				A7064431246F327700F90B86 /* controls */,
 				A7B48A8123E0E80C00654DBD /* other */,
 				A7B48A7823E0E80C00654DBD /* views */,
 			);
@@ -869,14 +872,17 @@
 			name = products;
 			sourceTree = "<group>";
 		};
-		A7064431246F327700F90B86 /* buttons */ = {
+		A7064431246F327700F90B86 /* controls */ = {
 			isa = PBXGroup;
 			children = (
 				A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */,
-				A706441D2460DEF300F90B86 /* ZIntroductionButton.swift */,
+				A74DBDEA244E004000DF751A /* ZContextualMenu.swift */,
+				A752FC31245222D100603A54 /* ZoneContextualMenu.swift */,
+				A7B48A8723E0E80C00654DBD /* ZoneDot.swift */,
+				A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */,
 				A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */,
 			);
-			path = buttons;
+			path = controls;
 			sourceTree = "<group>";
 		};
 		A714856E2256AAAF00F54C0C /* Products */ = {
@@ -922,13 +928,9 @@
 			children = (
 				A764067723F7E37600D9EA3A /* ZBreadcrumbsView.swift */,
 				A7064436246F6D2700F90B86 /* ZButtonsView.swift */,
-				A7D2D6582492B55900F652B0 /* ZHelpButtonsView.swift */,
-				A7D2D65C2492E12900F652B0 /* ZHelpGridView.swift */,
 				A7B48A8023E0E80C00654DBD /* ZDragView.swift */,
 				A7B48A7923E0E80C00654DBD /* ZEssayView.swift */,
-				A706443A246F720700F90B86 /* ZFavoriteControlsView.swift */,
 				A7B48A8223E0E80C00654DBD /* ZLineView.swift */,
-				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -936,12 +938,8 @@
 		A7B48A8123E0E80C00654DBD /* other */ = {
 			isa = PBXGroup;
 			children = (
-				A74DBDEA244E004000DF751A /* ZContextualMenu.swift */,
 				A7B48A8823E0E80C00654DBD /* ZGridCell.swift */,
 				A7B48A7A23E0E80C00654DBD /* ZMobileKeyInput.swift */,
-				A752FC31245222D100603A54 /* ZoneContextualMenu.swift */,
-				A7B48A8723E0E80C00654DBD /* ZoneDot.swift */,
-				A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */,
 				A72356A82489623500BA2030 /* ZStartupProgressBar.swift */,
 				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
 				A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */,
@@ -956,7 +954,9 @@
 				A7D2D64A248F11B300F652B0 /* ZDotsHelp.swift */,
 				A7E9A3AF23C115470064C89A /* ZGraphHelp.swift */,
 				A7D2D64E24902EDF00F652B0 /* ZHelp.swift */,
+				A7D2D6582492B55900F652B0 /* ZHelpButtonsView.swift */,
 				A7245E0821729FFE003D4BDA /* ZHelpController.swift */,
+				A7D2D65C2492E12900F652B0 /* ZHelpGridView.swift */,
 				A7D2D646248F119A00F652B0 /* ZNotesHelp.swift */,
 			);
 			path = help;
