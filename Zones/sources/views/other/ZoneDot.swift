@@ -250,16 +250,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		var traitType     : String          = ""
 		var sideDotRadius : Double          = 4.0
 
-		var fill          : ZColor          = kWhiteColor
-		var color         : ZColor          = kBlackColor
+		var fill          : ZColor          = gBackgroundColor
+		var color         : ZColor          = gDefaultTextColor
 		var accessType    : ZDecorationType = .vertical
 
 	}
 
 	func drawInnerDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let fill = parameters.filled ? gBackgroundColor : parameters.color
-
-//		drawColored(rect: iDirtyRect, .blue)
 
 		parameters.color.setStroke()
 		parameters.fill .setFill()

@@ -100,6 +100,19 @@ class ZDotsHelpData: ZHelpData {
 	override var indexOfLastColumn :   Int      { return 1 }
 	override var rowHeight         :   CGFloat  { return 22.0 }
 
+	override func setup(for mode: ZHelpMode) {
+		super.setup(for: mode)
+
+		if  let mimic = gEveryoneCloud?.rootZone {
+			let  real = Zone(record: mimic.record, databaseID: ZDatabaseID.everyoneID)
+			zone      = real
+
+			real.addChild(Zone())
+			real.addChild(Zone())
+			real.addChild(Zone())
+		}
+	}
+
 	override func dotTypes(for row: Int, column: Int) -> (ZDotConfigurationType?, ZFillType?) {
 		var           command  : ZDotConfigurationType?
 		var            filled  : ZFillType?

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZNotesHelpData: ZHelpData, ZGeneric {
+class ZNotesHelpData: ZHelpData {
 
 	override func objectValueFor(_ row: Int) -> NSMutableAttributedString {
 		return NSMutableAttributedString(string: "note this hah!")

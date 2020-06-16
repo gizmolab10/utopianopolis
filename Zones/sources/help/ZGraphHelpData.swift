@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZGraphHelpData : ZHelpData, ZGeneric {
+class ZGraphHelpData : ZHelpData {
 
 	override var columnStrings : [[String]] { return [graphColumnOne, graphColumnTwo, graphColumnThree, graphColumnFour] }
 	override var tabOffsets    :  [Int]     { return [0, 20, 85] }

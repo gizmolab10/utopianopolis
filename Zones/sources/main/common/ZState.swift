@@ -74,12 +74,10 @@ var                gDotHeight:             Double { return Double(gGenericOffset
 var       gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
 var   gDeciSecondsSinceLaunch:                Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
 var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kLightestGrayColor : kBlackColor }
-var         gNecklaceDotColor:             ZColor { return gIsDark ? !gColorfulMode  ? kDarkGrayColor.darker(by: 4.0) : gAccentColor.inverted.darker(by: 5.0) : gAccentColor }
 var          gBackgroundColor:             ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
 var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
 var   gDarkishBackgroundColor:             ZColor { return gAccentColor.darkish (by: 1.028) }
 var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
-var   gNecklaceSelectionColor:             ZColor { return gNecklaceDotColor + gLighterActiveColor }
 var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }

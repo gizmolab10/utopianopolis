@@ -21,16 +21,17 @@ let gAllHelpModes : [ZHelpMode] = [.basicMode, .allMode, .dotMode]
 
 class ZHelpController: ZGenericTableController {
 
-	@IBOutlet var      clipView : ZView?
-	@IBOutlet var  dotsHelpGrid : ZHelpGridView?
-	@IBOutlet var notesHelpGrid : ZHelpGridView?
-	@IBOutlet var graphHelpGrid : ZHelpGridView?
-	override  var  controllerID : ZControllerID  { return .idHelp }
-	var                helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
-	var                gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
-	var         titleBarButtons : ZHelpButtonsView?
-	let            dotsHelpData =  ZDotsHelpData()
-	let           graphHelpData = ZGraphHelpData()
+	@IBOutlet var       clipView : ZView?
+	@IBOutlet var   dotsHelpGrid : ZHelpGridView?
+	@IBOutlet var  notesHelpGrid : ZHelpGridView?
+	@IBOutlet var  graphHelpGrid : ZHelpGridView?
+	@IBOutlet var dotsController : ZDotsHelpController?
+	override  var   controllerID : ZControllerID  { return .idHelp }
+	var                 helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
+	var                 gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
+	var          titleBarButtons : ZHelpButtonsView?
+	let             dotsHelpData =  ZDotsHelpData()
+	let            graphHelpData = ZGraphHelpData()
 
 	func helpData(for iMode: ZHelpMode) -> ZHelpData {
 		switch iMode {
@@ -66,8 +67,8 @@ class ZHelpController: ZGenericTableController {
 		let                       m = gCurrentHelpMode
 
 		super        .setup()
-		dotsHelpData .setup()
-		graphHelpData.setup()
+		dotsHelpData .setup(for: m)
+		graphHelpData.setup(for: m)
 
 		setupGridViews()
 		setupTitleBar()
@@ -170,10 +171,12 @@ class ZHelpController: ZGenericTableController {
 			c.zlayer.backgroundColor = .clear
 
 			for m in gAllHelpModes {
-				if  let g = gridView(for: m) {
+				if  let         g = gridView(for: m) {
+					let      data = helpData(for: m)
+					g.helpData    = data
+
 					g.removeFromSuperview()
 					c.addSubview(g)
-					g.helpData = helpData(for: m)
 
 					if  let t = genericTableView {
 						g.snp.makeConstraints { make in

@@ -11,6 +11,7 @@ import Foundation
 class ZHelpData: NSObject {
 
 	var tabStops          = [NSTextTab]()
+	var helpMode          = ZHelpMode.noMode
 	var noTabPrefix       :   String   { return "   " }
 	var columnStrings     : [[String]] { return [[]] }
 	var tabOffsets        :   [Int]    { return [0, 20, 85] } // default for graph shortcuts
@@ -20,6 +21,7 @@ class ZHelpData: NSObject {
 	var isPro             :    Bool    { return gCurrentHelpMode == .allMode }
 	var hyperlinkColor    :  ZColor    { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }
 	var powerUserColor    :  ZColor    { return gIsDark ? kBlueColor.darker (by: 5.0) : kBlueColor.lighter(by: 30.0) }
+	var zone              :  Zone?
 
 	func dotTypes(for row: Int, column: Int) -> (ZDotConfigurationType?, ZFillType?) { return (nil, nil) }
 
@@ -35,9 +37,10 @@ class ZHelpData: NSObject {
 
 	var rowHeight : CGFloat { return 17.0 }
 
-	func setup() {
-		var values: [Int] = []
+	func setup(for iMode: ZHelpMode) {
+		helpMode   = iMode
 		var offset = 0
+		var values : [Int] = []
 
 		for _ in 0...indexOfLastColumn {
 			for index in 0..<stringsPerRow {

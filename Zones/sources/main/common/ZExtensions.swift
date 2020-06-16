@@ -2198,7 +2198,7 @@ extension ZView {
 				let   fatCount = dotCount / countMax
 				let fullCircle = Double.pi * 2.0
 
-				let drawNecklace: IntBooleanClosure = { (iCount, isFat) in
+				let drawDots: IntBooleanClosure = { (iCount, isFat) in
 					let             oneSet = (isFat ? tinyCount : fatCount) == 0
 					var           isHollow = (isFat && fatHollow) || (!isFat && tinyHollow)
 
@@ -2241,22 +2241,17 @@ extension ZView {
 								let           path = ZBezierPath(ovalIn: ovalRect)
 								path    .lineWidth = CGFloat(gLineThickness * (asEssay ? 7.0 : 3.0))
 								path     .flatness = 0.0001
-								let       dotColor = !isFocus ? color : gNecklaceSelectionColor
 
 								if  isHollow {
-									dotColor?.setStroke()
+									color?.setStroke()
 									path.stroke()
 								} else {
-									dotColor?.setFill()
+									color?.setFill()
 									path.fill()
 								}
 
 								onEach?(index, ovalRect)
 							}
-
-//							if  asNote {
-//								drawDot(forNote:  true, isFocus: noteFocus)
-//							}
 
 							if  asIdea {
 								drawDot(isFocus: ideaFocus)
@@ -2265,8 +2260,8 @@ extension ZView {
 					}
 				}
 
-				drawNecklace( fatCount, true)  // isFat = true
-				drawNecklace(tinyCount, false)
+				drawDots( fatCount, true)  // isFat = true
+				drawDots(tinyCount, false)
 			}
 		}
 	}

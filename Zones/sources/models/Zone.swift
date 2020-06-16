@@ -394,7 +394,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  gIsDark {
-				computed        = computed?.inverted.lighter(by: 6.0)
+				computed        = computed?.inverted.lighter(by: 3.0)
 			}
 
 			return computed!

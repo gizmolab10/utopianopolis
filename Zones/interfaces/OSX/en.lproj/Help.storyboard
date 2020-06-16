@@ -54,7 +54,7 @@
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
                                                     <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" allowsUndo="NO" alignment="left" title="Text Cell" usesSingleLineMode="YES" id="fpF-1O-DdX">
-                                                        <font key="font" metaFont="menu" size="11"/>
+                                                        <font key="font" metaFont="label" size="11"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -123,19 +123,7 @@
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="EQg-DM-j9T" userLabel="Top View">
                                         <rect key="frame" x="0.0" y="582" width="1152" height="198"/>
-                                        <subviews>
-                                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D6F-sP-xtB">
-                                                <rect key="frame" x="451" y="49" width="250" height="100"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="250" id="6hT-XP-6at"/>
-                                                    <constraint firstAttribute="height" constant="100" id="Y9D-9t-V3h"/>
-                                                </constraints>
-                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="dots help" id="md9-q9-hNt"/>
-                                            </imageView>
-                                        </subviews>
                                         <constraints>
-                                            <constraint firstItem="D6F-sP-xtB" firstAttribute="centerX" secondItem="EQg-DM-j9T" secondAttribute="centerX" id="HPT-Hj-HAV"/>
-                                            <constraint firstItem="D6F-sP-xtB" firstAttribute="centerX" secondItem="EQg-DM-j9T" secondAttribute="centerX" id="jIm-40-PZn"/>
                                             <constraint firstAttribute="height" constant="198" id="oYx-Qa-bhm"/>
                                         </constraints>
                                     </customView>
@@ -189,7 +177,4 @@
             <point key="canvasLocation" x="819" y="218"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="dots help" width="534" height="190"/>
-    </resources>
 </document>
