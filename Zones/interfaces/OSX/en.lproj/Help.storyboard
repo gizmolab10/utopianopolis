@@ -35,8 +35,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <scrollView verticalCompressionResistancePriority="751" misplaced="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" allowsMagnification="YES" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
-                                <rect key="frame" x="0.0" y="12" width="1152" height="780"/>
+                            <scrollView verticalCompressionResistancePriority="751" borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" allowsMagnification="YES" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Aa-9c-eI8">
                                     <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -54,7 +54,7 @@
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
                                                     <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" allowsUndo="NO" alignment="left" title="Text Cell" usesSingleLineMode="YES" id="fpF-1O-DdX">
-                                                        <font key="font" metaFont="message" size="11"/>
+                                                        <font key="font" metaFont="menu" size="11"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -84,23 +84,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="12" width="1152" height="780"/>
-                                <subviews>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="xs7-TU-BUO" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="576" y="0.0" width="1" height="780"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="1" id="a4d-aU-yzZ"/>
-                                        </constraints>
-                                    </customView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" constant="576" id="8YD-QZ-Q9V"/>
-                                    <constraint firstAttribute="bottom" secondItem="xs7-TU-BUO" secondAttribute="bottom" id="X4I-ZI-Got"/>
-                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="top" secondItem="xVv-mR-0mE" secondAttribute="top" id="cg0-tG-8wM"/>
-                                </constraints>
-                            </customView>
-                            <customView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
+                            <customView hidden="YES" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="12" width="1180" height="780"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
@@ -134,6 +118,52 @@
                                     <constraint firstItem="rdB-jZ-KsQ" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="288" id="qzD-K9-Jby"/>
                                 </constraints>
                             </customView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
+                                <subviews>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="EQg-DM-j9T" userLabel="Top View">
+                                        <rect key="frame" x="0.0" y="582" width="1152" height="198"/>
+                                        <subviews>
+                                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D6F-sP-xtB">
+                                                <rect key="frame" x="451" y="49" width="250" height="100"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="250" id="6hT-XP-6at"/>
+                                                    <constraint firstAttribute="height" constant="100" id="Y9D-9t-V3h"/>
+                                                </constraints>
+                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="dots help" id="md9-q9-hNt"/>
+                                            </imageView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="D6F-sP-xtB" firstAttribute="centerX" secondItem="EQg-DM-j9T" secondAttribute="centerX" id="HPT-Hj-HAV"/>
+                                            <constraint firstItem="D6F-sP-xtB" firstAttribute="centerX" secondItem="EQg-DM-j9T" secondAttribute="centerX" id="jIm-40-PZn"/>
+                                            <constraint firstAttribute="height" constant="198" id="oYx-Qa-bhm"/>
+                                        </constraints>
+                                    </customView>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="cQI-8A-JZJ" userLabel="Top Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="581" width="1152" height="1"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="1DU-JW-8fi"/>
+                                        </constraints>
+                                    </customView>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="xs7-TU-BUO" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="576" y="0.0" width="1" height="581"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="1" id="a4d-aU-yzZ"/>
+                                        </constraints>
+                                    </customView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="EQg-DM-j9T" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" id="5r5-iH-EpZ"/>
+                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" constant="576" id="8YD-QZ-Q9V"/>
+                                    <constraint firstItem="EQg-DM-j9T" firstAttribute="top" secondItem="xVv-mR-0mE" secondAttribute="top" id="Iy7-zb-Khl"/>
+                                    <constraint firstAttribute="trailing" secondItem="cQI-8A-JZJ" secondAttribute="trailing" id="JdW-Iu-bAZ"/>
+                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="top" secondItem="cQI-8A-JZJ" secondAttribute="bottom" id="OFL-O8-Sq1"/>
+                                    <constraint firstAttribute="bottom" secondItem="xs7-TU-BUO" secondAttribute="bottom" id="X4I-ZI-Got"/>
+                                    <constraint firstItem="cQI-8A-JZJ" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" id="fKp-jl-sA6"/>
+                                    <constraint firstItem="cQI-8A-JZJ" firstAttribute="top" secondItem="EQg-DM-j9T" secondAttribute="bottom" id="q5y-mt-sRo"/>
+                                    <constraint firstAttribute="trailing" secondItem="EQg-DM-j9T" secondAttribute="trailing" id="zex-BR-l3N"/>
+                                </constraints>
+                            </customView>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="xVv-mR-0mE" secondAttribute="bottom" id="7nk-p7-mV1"/>
@@ -159,4 +189,7 @@
             <point key="canvasLocation" x="819" y="218"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="dots help" width="534" height="190"/>
+    </resources>
 </document>

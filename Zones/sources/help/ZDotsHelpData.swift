@@ -89,6 +89,8 @@ enum ZFillType: String {
 	case both   = "b"
 }
 
+let prefixArray : [String] = Array(repeating: "", count: 24)
+
 class ZDotsHelpData: ZHelpData {
 
 	override var noTabPrefix       :   String   { return "                    " }
@@ -114,7 +116,7 @@ class ZDotsHelpData: ZHelpData {
 		return (command, filled)
 	}
 
-	let dotsColumnOne: [String] = [
+	let dotsColumnOne: [String] = prefixArray + [
 		"",						"",																				"",
 		"bDOT ON THE LEFT",		"click to select, deselect or drag",											"",
 		"",						"",																				"",
@@ -127,7 +129,7 @@ class ZDotsHelpData: ZHelpData {
 		"db",					"target of this bookmark is the current focus",									""
 	]
 
-	let dotsColumnTwo: [String] = [
+	let dotsColumnTwo: [String] = prefixArray + [
 		"",						"",																				"",
 		"bDOT ON THE RIGHT",	"click to conceal, reveal or activate",											"",
 		"",						"",																				"",
