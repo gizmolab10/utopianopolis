@@ -1,5 +1,5 @@
 //
-//  ZGraphHelp.swift
+//  ZGraphHelpData.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 1/4/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZGraphHelp : ZHelp, ZGeneric {
+class ZGraphHelpData : ZHelpData, ZGeneric {
 
 	override var columnStrings : [[String]] { return [graphColumnOne, graphColumnTwo, graphColumnThree, graphColumnFour] }
 	override var tabOffsets    :  [Int]     { return [0, 20, 85] }

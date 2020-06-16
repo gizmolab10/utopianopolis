@@ -1,5 +1,5 @@
 //
-//  ZNotesHelp.swift
+//  ZNotesHelpData.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 6/8/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZNotesHelp: ZHelp, ZGeneric {
+class ZNotesHelpData: ZHelpData, ZGeneric {
 
 	override func objectValueFor(_ row: Int) -> NSMutableAttributedString {
 		return NSMutableAttributedString(string: "note this hah!")

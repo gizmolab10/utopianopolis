@@ -132,7 +132,7 @@ enum ZWorkMode: String {
 enum ZHelpMode: String {
 	case basicMode = "b"
 	case noteMode  = "n"
-	case proMode   = "p"
+	case allMode   = "a"
 	case dotMode   = "d"
 	case noMode    = " "
 
@@ -140,7 +140,7 @@ enum ZHelpMode: String {
 		switch self {
 			case .basicMode: return "basic keys"
 			case .noteMode:  return "essay keys"
-			case .proMode:   return "all keys"
+			case .allMode:   return "all keys"
 			case .dotMode:   return "dots"
 			default:         return ""
 		}

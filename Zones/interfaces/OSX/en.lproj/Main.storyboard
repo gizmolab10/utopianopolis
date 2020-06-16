@@ -576,13 +576,13 @@ DQ
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Cheat Sheets" id="TET-FJ-Mmt">
                                                 <items>
-                                                    <menuItem title="Explain Keyboard Commands" keyEquivalent="/" id="RQA-tZ-jdg">
+                                                    <menuItem title="Basic Keys" keyEquivalent="/" id="RQA-tZ-jdg">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="GVM-4d-6re"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Explain Dots" keyEquivalent="/" id="W6c-6I-BEc">
+                                                    <menuItem title="Dots" keyEquivalent="/" id="W6c-6I-BEc">
                                                         <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="vLz-Yr-nvb"/>

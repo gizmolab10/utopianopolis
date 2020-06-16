@@ -1,5 +1,5 @@
 //
-//  ZDotsHelp.swift
+//  ZDotsHelpData.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 6/8/20.
@@ -89,7 +89,7 @@ enum ZFillType: String {
 	case both   = "b"
 }
 
-class ZDotsHelp: ZHelp {
+class ZDotsHelpData: ZHelpData {
 
 	override var noTabPrefix       :   String   { return "                    " }
 	override var columnStrings     : [[String]] { return [dotsColumnOne, dotsColumnTwo] }

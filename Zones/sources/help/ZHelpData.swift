@@ -1,5 +1,5 @@
 //
-//  ZHelp.swift
+//  ZHelpData.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 6/9/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZHelp: NSObject {
+class ZHelpData: NSObject {
 
 	var tabStops          = [NSTextTab]()
 	var noTabPrefix       :   String   { return "   " }
@@ -17,6 +17,7 @@ class ZHelp: NSObject {
 	var columnWidth       :    Int     { return 290 }         // "
 	var indexOfLastColumn :    Int     { return 3 }           // "
 	var stringsPerRow     :    Int     { return 3 }
+	var isPro             :    Bool    { return gCurrentHelpMode == .allMode }
 	var hyperlinkColor    :  ZColor    { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }
 	var powerUserColor    :  ZColor    { return gIsDark ? kBlueColor.darker (by: 5.0) : kBlueColor.lighter(by: 30.0) }
 
@@ -95,8 +96,8 @@ class ZHelp: NSObject {
 			let   type = ZHelpType(rawValue: first.substring(with: NSMakeRange(0, 1))) // grab first character
 			index     += 1
 
-			if      gProSkillLevel || type != .hPro {
-				if  gProSkillLevel || type != .hInsert {
+			if      isPro || type != .hPro {
+				if  isPro || type != .hInsert {
 					result.append(first)
 					result.append(second)
 					result.append(third)
@@ -122,7 +123,7 @@ class ZHelp: NSObject {
 		let      hasURL = !url.isEmpty
 		var      prefix = "   "
 
-		if !gProSkillLevel && (SHIFT || type == .hPro) {
+		if !isPro && (SHIFT || type == .hPro) {
 			return NSMutableAttributedString(string: kTab + kTab + kTab)
 		}
 
@@ -153,7 +154,7 @@ class ZHelp: NSObject {
 			case .hPlain?:
 				result.append(NSAttributedString(string: command))
 			default:
-				if  gProSkillLevel,
+				if  isPro,
 					type == .hPro {
 //					attributes[.backgroundColor] = powerUserColor
 					second = "** " + second

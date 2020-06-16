@@ -17,6 +17,7 @@ import SnapKit
 
 var gHelpController: ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
 var gHelpWindowController: NSWindowController? // instantiated once
+let gAllHelpModes : [ZHelpMode] = [.basicMode, .allMode, .dotMode]
 
 class ZHelpController: ZGenericTableController {
 
@@ -25,13 +26,25 @@ class ZHelpController: ZGenericTableController {
 	@IBOutlet var notesHelpGrid : ZHelpGridView?
 	@IBOutlet var graphHelpGrid : ZHelpGridView?
 	override  var  controllerID : ZControllerID  { return .idHelp }
-	var                    help : ZHelp          { return help(for: mode) }
-	var                gridView : ZHelpGridView? { return gridView(for: mode) }
+	var                helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
+	var                gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
 	var         titleBarButtons : ZHelpButtonsView?
-	var                    mode : ZHelpMode  = .noMode
-	let  allModes : [ZHelpMode] = [.basicMode, .dotMode]
-	let                dotsHelp =  ZDotsHelp()
-	let               graphHelp = ZGraphHelp()
+	let            dotsHelpData =  ZDotsHelpData()
+	let           graphHelpData = ZGraphHelpData()
+
+	func helpData(for iMode: ZHelpMode) -> ZHelpData {
+		switch iMode {
+			case   .dotMode: return  dotsHelpData
+			default:         return graphHelpData
+		}
+	}
+
+	func gridView(for iMode: ZHelpMode) -> ZHelpGridView? {
+		switch iMode {
+			case   .dotMode: return  dotsHelpGrid
+			default:         return graphHelpGrid
+		}
+	}
 
 	// MARK:- events
 	// MARK:-
@@ -49,24 +62,19 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	override func setup() {
-		super    .setup()
-		graphHelp.setup()
-		dotsHelp .setup()
-
-		if  let m = gLastChosenCheatSheet {
-			mode  = m
-		}
-
 		view.zlayer.backgroundColor = .white
+		let                       m = gCurrentHelpMode
+
+		super        .setup()
+		dotsHelpData .setup()
+		graphHelpData.setup()
 
 		setupGridViews()
 		setupTitleBar()
 
-		if  let m = gLastChosenCheatSheet {
-			mode  = .noMode
+		gCurrentHelpMode = .noMode // set temporarily so show does not dismiss window
 
-			show(nextMode: m)
-		}
+		show(nextMode: m)
 	}
 
 	func show(_ show: Bool? = nil, flags: ZEventFlags) {
@@ -92,14 +100,13 @@ class ZHelpController: ZGenericTableController {
 		if  let       next = nextMode {
 			let controller = gHelpWindowController
 			let     isOpen = gHelpWindow?.isKeyWindow ?? false
-			let       same = mode == next
+			let       same = gCurrentHelpMode == next
 			let      close = !(show ?? !(isOpen && same))
 
 			if  close  {
 				gHelpWindow?.close()
 			} else {
-				mode                  = next
-				gLastChosenCheatSheet = next
+				gCurrentHelpMode = next
 
 				update()
 				controller?.showWindow(nil)
@@ -162,11 +169,11 @@ class ZHelpController: ZGenericTableController {
 		if  let c = clipView {
 			c.zlayer.backgroundColor = .clear
 
-			for m in allModes {
+			for m in gAllHelpModes {
 				if  let g = gridView(for: m) {
 					g.removeFromSuperview()
 					c.addSubview(g)
-					g.help = help(for: m)
+					g.helpData = helpData(for: m)
 
 					if  let t = genericTableView {
 						g.snp.makeConstraints { make in
@@ -182,23 +189,22 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	func updateGridVisibility() {
-		for m in allModes {
-			let                   show = m == mode
-			gridView(for: m)?.isHidden = !show
-		}
-	}
+		func shouldHide(_ mode: ZHelpMode) -> Bool {
+			if mode == gCurrentHelpMode {
+				return false
+			} else {
+				let twoGraphModes: [ZHelpMode] = [.basicMode, .allMode]
 
-	func help(for iMode: ZHelpMode) -> ZHelp {
-		switch iMode {
-			case   .dotMode: return  dotsHelp
-			default:         return graphHelp
-		}
-	}
+				if twoGraphModes.contains(mode) && twoGraphModes.contains(gCurrentHelpMode) {
+					return false
+				}
+			}
 
-	func gridView(for iMode: ZHelpMode) -> ZHelpGridView? {
-		switch iMode {
-			case   .dotMode: return  dotsHelpGrid
-			default:         return graphHelpGrid
+			return true
+		}
+
+		for m in gAllHelpModes {
+			gridView(for: m)?.isHidden = shouldHide(m)
 		}
 	}
 
@@ -214,7 +220,7 @@ class ZHelpController: ZGenericTableController {
 			let     screenLocation = NSEvent.mouseLocation
 			if  let windowLocation = table.window?.convertPoint(fromScreen: screenLocation) {
 				let              l = table.convert(windowLocation, from: nil)
-				let         column = Int(floor(l.x / CGFloat(help.columnWidth)))
+				let         column = Int(floor(l.x / CGFloat(helpData.columnWidth)))
 
 				table.deselectRow(row)
 				
@@ -228,20 +234,20 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	override func numberOfRows(in tableView: ZTableView) -> Int {
-		return help.countOfRows
+		return helpData.countOfRows
     }
 
 	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-		return help.rowHeight
+		return helpData.rowHeight
 	}
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
-		return help.objectValueFor(row)
+		return helpData.objectValueFor(row)
 	}
 
 	func tableViewSelectionIsChanging(_ notification: Notification) {
 		if  let (row, column) = clickCoordinates,
-			let hyperlink = help.url(for: row, column: column) {
+			let hyperlink = helpData.url(for: row, column: column) {
 			hyperlink.openAsURL()
 		}
 	}

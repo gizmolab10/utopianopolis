@@ -10,13 +10,13 @@ import Foundation
 
 class ZHelpGridView: ZView {
 
-	var help: ZHelp?
+	var helpData: ZHelpData?
 
 	override func draw(_ dirtyRect: NSRect) {
 		super.draw(dirtyRect)
 
 		if  !isHidden,
-			let h = help {
+			let h = helpData {
 			for row        in  0..<h.countOfRows {
 				for column in  0...h.indexOfLastColumn {
 					let (dc, ft) = h.dotTypes(for: row, column: column)
