@@ -47,6 +47,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 			enableCloudDrive?.isHidden =  justWait || gStartupLevel != .enableDrive
 			pleaseWait?      .isHidden = !justWait && ![.pleaseWait, .ignoreDrive, .localOkay].contains(gStartupLevel)
 
+			helpButtons?.updateAndRedraw()
 			updateThermometerBar()
 		}
 	}

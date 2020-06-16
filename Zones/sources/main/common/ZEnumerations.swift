@@ -138,10 +138,10 @@ enum ZHelpMode: String {
 
 	var title: String {
 		switch self {
-			case .basicMode: return "basic keyboard cheat sheet"
-			case .noteMode:  return "essay keyboard cheat sheet"
-			case .proMode:   return "pro keyboard cheat sheet"
-			case .dotMode:   return "descriptions of dots"
+			case .basicMode: return "basic keys"
+			case .noteMode:  return "essay keys"
+			case .proMode:   return "all keys"
+			case .dotMode:   return "dots"
 			default:         return ""
 		}
 	}

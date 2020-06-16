@@ -32,7 +32,6 @@ class ZHelpController: ZGenericTableController {
 	let  allModes : [ZHelpMode] = [.basicMode, .dotMode]
 	let                dotsHelp =  ZDotsHelp()
 	let               graphHelp = ZGraphHelp()
-	let               notesHelp = ZNotesHelp()
 
 	// MARK:- events
 	// MARK:-
@@ -53,7 +52,6 @@ class ZHelpController: ZGenericTableController {
 		super    .setup()
 		graphHelp.setup()
 		dotsHelp .setup()
-		notesHelp.setup() // empty
 
 		if  let m = gLastChosenCheatSheet {
 			mode  = m
@@ -138,17 +136,18 @@ class ZHelpController: ZGenericTableController {
 	// MARK:-
 
 	func setupTitleBar() {
-		if  let       window = view.window {
-			titleBarButtons  = ZHelpButtonsView()
-			let titleBarView = window.standardWindowButton(.closeButton)!.superview!
+		if  let           window = view.window {
+			let buttons          = ZHelpButtonsView()
+			let titleBarView     = window.standardWindowButton(.closeButton)!.superview!
+			titleBarButtons      = buttons
+			buttons.isInTitleBar = true
 
 			titleBarView.addSubview(titleBarButtons!)
-			titleBarButtons?.updateAndRedraw()
-			titleBarButtons?.snp.makeConstraints { make in
+			buttons.snp.removeConstraints()
+			buttons.snp.makeConstraints { make in
 				make.centerX.top.bottom.equalToSuperview()
 			}
-			titleBarButtons?.setNeedsLayout()
-			titleBarButtons?.layout()
+			buttons.updateAndRedraw()
 		}
 	}
 
@@ -192,7 +191,6 @@ class ZHelpController: ZGenericTableController {
 	func help(for iMode: ZHelpMode) -> ZHelp {
 		switch iMode {
 			case   .dotMode: return  dotsHelp
-			case  .noteMode: return notesHelp
 			default:         return graphHelp
 		}
 	}
@@ -200,9 +198,7 @@ class ZHelpController: ZGenericTableController {
 	func gridView(for iMode: ZHelpMode) -> ZHelpGridView? {
 		switch iMode {
 			case   .dotMode: return  dotsHelpGrid
-			case  .noteMode: return notesHelpGrid
-			case .basicMode: return graphHelpGrid
-			default:         return nil
+			default:         return graphHelpGrid
 		}
 	}
 

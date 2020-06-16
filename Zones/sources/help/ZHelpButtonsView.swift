@@ -10,24 +10,35 @@ import Foundation
 
 class ZHelpButtonsView : ZButtonsView {
 
-	override  var centered: Bool { return true }
+	override  var centered : Bool { return true }
+	var       isInTitleBar = false
+	var         titleCount = 0
 
 	override func setupButtons() {
-		let modes: [ZHelpMode] = [.basicMode, .proMode, .dotMode]
-		buttons                = [ZButton]()
+		let modes : [ZHelpMode] = [.basicMode, .proMode, .dotMode]
+		buttons   = [ZButton]()
 
 		for mode in modes {
-			let          title = mode.title.capitalized
-			let         button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
-			button.buttonMode  = mode
+			let         title = mode.title.capitalized
+			let        button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
+			button.buttonMode = mode
 
 			buttons.append(button)
+
+			if gLastChosenCheatSheet == mode {
+				if !isInTitleBar {
+					button.isEnabled = false
+				} else {
+					button.cell?.isHighlighted = true
+				}
+			}
 		}
 	}
 
 	@objc private func handleButtonPress(_ button: ZButton) {
 		if  let mode = button.buttonMode {
 			gHelpController?.show(true, nextMode: mode)
+			gSignal([.sStartup])
 		}
 	}
 
