@@ -24,10 +24,11 @@ class ZHelpGridView: ZView {
 	}
 
 	func drawExampleZone(using data: ZHelpData) {
-		if  let zone = data.zone {
-			let widget = ZoneWidget()
-			widget.widgetZone = zone
-		}
+//		gDotsHelpController
+//		if  let zone = data.zone {
+//			let widget = ZoneWidget()
+//			widget.widgetZone = zone
+//		}
 	}
 
 	func drawDots(in dirtyRect: NSRect, using data: ZHelpData) {

@@ -1387,10 +1387,9 @@ class ZGraphEditor: ZBaseEditor {
         let   doCousinJump = !gBrowsingIsConfined
 		let      hereMaybe = gHereMaybe
         let         isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
-		var completionKind = ZSignalKind.sDatum
-        
+		let completionKind = ZSignalKind.sData
         guard let rootMost = originalGrabs.rootMost(goingUp: iMoveUp) else {
-			onCompletion?(.sData)
+			onCompletion?(completionKind)
             
             return
         }
@@ -1525,11 +1524,6 @@ class ZGraphEditor: ZBaseEditor {
                         moveClosure(originalGrabs)
                     } else if !growSelection {
 						findChildMatching(&grabThis, iMoveUp, iOffset) // should look at siblings, not children
-
-						if !grabThis.isInRecently, !grabThis.spawnedBy(priorHere) {
-							completionKind = .sRelayout
-						}
-
 						grabThis.grab(updateBrowsingLevel: false)
                     } else if !grabThis.isGrabbed || extreme {
                         var grabThese = [grabThis]

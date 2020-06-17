@@ -21,7 +21,6 @@ class ZHelpData: NSObject {
 	var isPro             :    Bool    { return gCurrentHelpMode == .allMode }
 	var hyperlinkColor    :  ZColor    { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }
 	var powerUserColor    :  ZColor    { return gIsDark ? kBlueColor.darker (by: 5.0) : kBlueColor.lighter(by: 30.0) }
-	var zone              :  Zone?
 
 	func dotTypes(for row: Int, column: Int) -> (ZDotConfigurationType?, ZFillType?) { return (nil, nil) }
 

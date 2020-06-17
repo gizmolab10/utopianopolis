@@ -32,7 +32,8 @@ enum ZOperationID: Int {
     case oFoundIdeas         // LOCAL
 	case oFavorites
 	case oRecents
-    case oRoots
+	case oRoots
+	case oDotsHelp
     case oHere
 	case oStartupDone
 

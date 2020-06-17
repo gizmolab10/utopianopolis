@@ -47,7 +47,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
     override func setup() {
-		gestureView                      = dragView // do this before calling super setup, which uses gesture view
+		gestureView                       = dragView // do this before calling super setup, which uses gesture view
 		view      .layer?.backgroundColor = kClearColor.cgColor
 		dragView? .layer?.backgroundColor = kClearColor.cgColor
 		graphView?.layer?.backgroundColor = kClearColor.cgColor
