@@ -14,9 +14,10 @@ let gWidgets = ZWidgets()
 
 class ZWidgets: NSObject {
 
-	var     mainWidgets: [Int : ZoneWidget]  = [:]
+	var     mapWidgets: [Int : ZoneWidget]  = [:]
 	var   recentWidgets: [Int : ZoneWidget]  = [:]
 	var favoriteWidgets: [Int : ZoneWidget]  = [:]
+	var exemplarWidgets: [Int : ZoneWidget]  = [:]
     var  currentEditingWidget : ZoneWidget? { return widgetForZone(gTextEditor.currentlyEditingZone) }
     var  currentMovableWidget : ZoneWidget? { return widgetForZone(gSelecting.currentMoveable) }
     var  firstGrabbableWidget : ZoneWidget? { return widgetForZone(gSelecting.firstSortedGrab) }
@@ -33,17 +34,19 @@ class ZWidgets: NSObject {
     }
 
 	func getWidgetsDict(for type: ZWidgetType) -> [Int : ZoneWidget] {
-		if type.isMap     { return     mainWidgets }
-		if type.isRecent   { return   recentWidgets }
+		if type.isExemplar { return exemplarWidgets }
 		if type.isFavorite { return favoriteWidgets }
+		if type.isRecent   { return   recentWidgets }
+		if type.isMap      { return      mapWidgets }
 
 		return [:]
 	}
 
 	func setWidgetsDict(_ dict: [Int : ZoneWidget], for type: ZWidgetType) {
-		if      type.isMap     {     mainWidgets = dict }
-		else if type.isRecent   {   recentWidgets = dict }
+		if      type.isExemplar { exemplarWidgets = dict }
 		else if type.isFavorite { favoriteWidgets = dict }
+		else if type.isRecent   {   recentWidgets = dict }
+		else if type.isMap      {      mapWidgets = dict }
 	}
 
     /// capture a ZoneWidget for later lookup by it's zone

@@ -267,7 +267,7 @@ var gWindowRect: CGRect {
 
 var gScrollOffset: CGPoint {
 	get {
-		let  point = CGPoint(x: 0.0, y: 0.0)
+		let  point = CGPoint.zero
 		let string = getPreferenceString(for: kScrollOffsetKey) { return NSStringFromPoint(point) }
 		
 		return string?.cgPoint ?? point

@@ -24,10 +24,10 @@ enum ZDotConfigurationType: String {
 	case hyperlink  = "hyperlink"
 	case unwritable = "not"
 
-	var pointLeft   : Bool { return self == .click }
-	var showAccess  : Bool { return  [.progeny, .unwritable                  ].contains(self) }
-	var isReveal    : Bool { return ![.progeny, .unwritable, .drag, .favorite].contains(self) }
-	var accessType  : ZoneDot.ZDecorationType { return self == .progeny ? .sideDot : .vertical }
+	var isReveal    : Bool            { return ![.progeny, .unwritable, .drag, .favorite].contains(self) }
+	var showAccess  : Bool            { return  [.progeny, .unwritable                  ].contains(self) }
+	var pointLeft   : Bool            { return self == .click }
+	var accessType  : ZDecorationType { return self == .progeny ? .sideDot : .vertical }
 
 	var size: CGSize {
 		let w = isReveal ? gDotHeight : gDotWidth
@@ -65,9 +65,10 @@ enum ZDotConfigurationType: String {
 		}
 	}
 
-	func dotParameters(isFilled: Bool = false) -> ZoneDot.ZDotParameters {
-		var p         = ZoneDot.ZDotParameters()
-		p.fill        = isFilled ? p.color.lighter(by: 2.5) : gBackgroundColor
+	func dotParameters(isFilled: Bool = false) -> ZDotParameters {
+		var p         = ZDotParameters()
+		p.color       = gIsDark  ? kWhiteColor : kBlackColor
+		p.fill        = isFilled ? p.color     : gBackgroundColor
 		p.filled      = isFilled
 		p.isReveal    = isReveal
 		p.traitType   = traitType

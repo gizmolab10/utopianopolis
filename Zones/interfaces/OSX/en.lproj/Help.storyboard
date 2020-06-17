@@ -32,13 +32,13 @@
                 <customObject id="Upg-eY-ED5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <viewController title="Help" id="cD6-C4-FJ5" userLabel="Help Controller" customClass="ZHelpController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="OMb-DG-XS6">
-                        <rect key="frame" x="0.0" y="0.0" width="715" height="780"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView verticalCompressionResistancePriority="751" borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" allowsMagnification="YES" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
-                                <rect key="frame" x="0.0" y="0.0" width="715" height="780"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Aa-9c-eI8">
-                                    <rect key="frame" x="0.0" y="0.0" width="715" height="780"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" id="H0M-2O-9lo">
@@ -54,7 +54,7 @@
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
                                                     <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" allowsUndo="NO" alignment="left" title="Text Cell" usesSingleLineMode="YES" id="fpF-1O-DdX">
-                                                        <font key="font" metaFont="label" size="11"/>
+                                                        <font key="font" metaFont="toolTip"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -119,10 +119,10 @@
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="715" height="780"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
                                 <subviews>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="kLX-vj-I30" userLabel="Dots Exmple">
-                                        <rect key="frame" x="0.0" y="582" width="715" height="198"/>
+                                        <rect key="frame" x="0.0" y="582" width="1152" height="198"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="198" id="SK8-vk-X7y"/>
                                         </constraints>
@@ -131,7 +131,7 @@
                                         </connections>
                                     </containerView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="cQI-8A-JZJ" userLabel="Top Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="581" width="715" height="1"/>
+                                        <rect key="frame" x="0.0" y="581" width="1152" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="1DU-JW-8fi"/>
                                         </constraints>
@@ -177,7 +177,7 @@
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="819.5" y="359"/>
+            <point key="canvasLocation" x="1038" y="359"/>
         </scene>
         <!--Help Dots Controller-->
         <scene sceneID="PNs-6U-K92">
@@ -204,7 +204,7 @@
                 </viewController>
                 <customObject id="pb3-EB-5uM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1439.5" y="359"/>
+            <point key="canvasLocation" x="1878" y="359"/>
         </scene>
     </scenes>
 </document>

@@ -40,7 +40,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 			gActiveColor.setFill()
             gActiveColor.setStroke()
-			dot.drawMainDot(in: dotRect, using: ZoneDot.ZDotParameters())
+			dot.drawMainDot(in: dotRect, using: ZDotParameters())
             ZBezierPath(ovalIn: dragRect).fill()
             widget.drawDragLine(to: floatRect, in: self)
         }

@@ -15,6 +15,28 @@
 
 import SnapKit
 
+enum ZDecorationType: Int {
+	case vertical
+	case sideDot
+}
+
+struct  ZDotParameters {
+
+	var childCount    : Int             = 0
+	var isDrop        : Bool            = false
+	var filled        : Bool            = false
+	var isReveal      : Bool            = false
+	var showSideDot   : Bool            = false
+	var isBookmark    : Bool            = false
+	var showAccess    : Bool            = false
+	var showList      : Bool            = false
+	var traitType     : String          = ""
+	var sideDotRadius : Double          = 4.0
+	var fill          : ZColor          = gBackgroundColor
+	var color         : ZColor          = gDefaultTextColor
+	var accessType    : ZDecorationType = .vertical
+
+}
 
 class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
@@ -144,11 +166,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     // MARK:- draw
     // MARK:-
 
-    enum ZDecorationType: Int {
-        case vertical
-        case sideDot
-    }
-
     func isVisible(_ rect: CGRect) -> Bool {
         return isVisible && window?.contentView?.bounds.intersects(rect) ?? false
     }
@@ -236,24 +253,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: (height / 12.0) - 1)
 
 		string.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
-	}
-
-	struct  ZDotParameters {
-		var childCount    : Int             = 0
-		var isDrop        : Bool            = false
-		var filled        : Bool            = false
-		var isReveal      : Bool            = false
-		var showSideDot   : Bool            = false
-		var isBookmark    : Bool            = false
-		var showAccess    : Bool            = false
-		var showList      : Bool            = false
-		var traitType     : String          = ""
-		var sideDotRadius : Double          = 4.0
-
-		var fill          : ZColor          = gBackgroundColor
-		var color         : ZColor          = gDefaultTextColor
-		var accessType    : ZDecorationType = .vertical
-
 	}
 
 	func drawInnerDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {

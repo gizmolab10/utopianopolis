@@ -55,6 +55,7 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	func update() {
+		view.zlayer.backgroundColor = gBackgroundColor.cgColor
 		updateTitleBar()
 		updateGridVisibility()
 		genericTableUpdate()

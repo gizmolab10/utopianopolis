@@ -205,6 +205,7 @@ class ZControllers: NSObject {
     }
 
 	func signalFor(_ object: Any? = nil, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
+		let startupIDs : [ZControllerID] = [.idStartup, .idHelpDots]
         FOREGROUND(canBeDirect: true) {
             gRemoteStorage.updateNeededCounts() // clean up after adding or removing children
 
@@ -215,14 +216,14 @@ class ZControllers: NSObject {
                     }
                     
                     switch regarding {  // these non-default cases send a signal only to the one corresponding controller
-					case .sMap:         if identifier == .idMap         { closure() }
-					case .sMain:        if identifier == .idMain        { closure() }
-					case .sStatus:      if identifier == .idStatus      { closure() }
-					case .sCrumbs:      if identifier == .idCrumbs      { closure() }
-					case .sStartup:     if identifier == .idStartup     { closure() }
-					case .sFavorites:   if identifier == .idFavorites   { closure() }
-                    case .sPreferences: if identifier == .idPreferences { closure() }
-                    default:                                              closure()
+					case .sMap:         if identifier == .idMap            { closure() }
+					case .sMain:        if identifier == .idMain           { closure() }
+					case .sStatus:      if identifier == .idStatus         { closure() }
+					case .sCrumbs:      if identifier == .idCrumbs         { closure() }
+					case .sStartup:     if startupIDs.contains(identifier) { closure() }
+					case .sFavorites:   if identifier == .idFavorites      { closure() }
+                    case .sPreferences: if identifier == .idPreferences    { closure() }
+                    default:                                                 closure()
                     }
                 }
             }

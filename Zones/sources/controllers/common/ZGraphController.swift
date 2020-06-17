@@ -20,6 +20,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     
 	override  var       controllerID : ZControllerID { return .idMap }
 	var                   widgetType : ZWidgetType   { return .tMap }
+	var                   isExemplar : Bool          { return false }
 	var                        isMap : Bool          { return true }
 	var                     hereZone : Zone?         { return gHereMaybe }
 	@IBOutlet var           dragView : ZDragView?
@@ -111,7 +112,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
     func layoutForCurrentScrollOffset() {
-		let offset = isMap ? gScrollOffset : CGPoint(x: -12.0, y: -6.0)
+		let offset = isExemplar ? .zero : isMap ? gScrollOffset : CGPoint(x: -12.0, y: -6.0)
 
 		if  let d = graphView {
 			rootWidget.snp.setLabel("<w> \(rootWidget.widgetZone?.zoneName ?? "unknown")")
@@ -157,9 +158,15 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	// MARK:-
 
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
+		let      mapKinds : [ZSignalKind] = [.sRelayout, .sData, .sDatum]
+		let  detailsKinds : [ZSignalKind] = [.sDetails, .sFavorites]
+		let exemplarKinds : [ZSignalKind] = [.sStartup]
+		let  allowedKinds : [ZSignalKind] = mapKinds + detailsKinds + exemplarKinds
+		let  shouldHandle = (!isMap && detailsKinds.contains(iKind)) || (isExemplar && exemplarKinds.contains(iKind)) || (isMap && mapKinds.contains(iKind))
+
 		if  !gDeferringRedraw,
-			[.sRelayout, .sDetails, .sFavorites].contains(iKind), // ignore for preferences, search, information, startup
-			!(isMap &&  [.sDetails, .sFavorites].contains(iKind)) {
+			allowedKinds.contains(iKind), // ignore for preferences, search, information
+			shouldHandle {
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
 			layoutWidgets(for: iSignalObject, iKind)

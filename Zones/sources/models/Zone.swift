@@ -100,17 +100,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var type : ZWidgetType {
-		var result = ZWidgetType.tMap
-
 		if  let name = root?.recordName() {
 			switch name {
-				case kRecentsName:       result = .tRecent
-				case kFavoritesRootName: result = .tFavorite
+				case kRecentsName:       return .tRecent
+				case kExemplarName:      return .tExemplar
+				case kFavoritesRootName: return .tFavorite
 				default:                 break
 			}
 		}
 
-		return result
+		return .tMap
 	}
 
 	// MARK:- setup
@@ -2298,16 +2297,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func dotParameters(_ isFilled: Bool, _ isReveal: Bool) -> ZoneDot.ZDotParameters {
+	func dotParameters(_ isFilled: Bool, _ isReveal: Bool) -> ZDotParameters {
 		let traits    = traitKeys
-		var p         = ZoneDot.ZDotParameters()
+		var p         = ZDotParameters()
 		p.isDrop      = self == gDragDropZone
 		p.accessType  = directAccess == .eProgenyWritable ? .sideDot : .vertical
 		p.showSideDot = showSideDot
 		p.isBookmark  = isBookmark
 		p.showAccess  = hasAccessDecoration
 		p.showList    = showingChildren
-		p.color       = gColorfulMode ? color ?? gDefaultTextColor : gDefaultTextColor
+		p.color       = type.isExemplar ? gDefaultTextColor : gColorfulMode ? color ?? gDefaultTextColor : gDefaultTextColor
 		p.childCount  = (gCountsMode == .progeny) ? progenyCount : indirectCount
 		p.traitType   = (traits.count < 1) ? "" : traits[0]
 		p.filled      = isFilled

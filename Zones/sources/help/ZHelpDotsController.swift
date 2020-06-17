@@ -14,18 +14,25 @@ var gHelpDotsController: ZHelpDotsController? { return gControllers.controllerFo
 class ZHelpDotsController : ZGraphController {
 
 	override var controllerID : ZControllerID  { return .idHelpDots }
-	override var     hereZone : Zone? { return zone }
+	override var   widgetType : ZWidgetType    { return .tExemplar }
+	override var   isExemplar : Bool           { return true }
+	override var     hereZone : Zone?          { return zone }
 	var zone                  : Zone?
+
+	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
+		super.handleSignal(iSignalObject, kind: iKind)
+	}
+	
 	override func startup() {
 		setup()
 		setupExemplar()
 	}
 
 	func setupExemplar() {
-		let    record = CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: "exemplar"))
-		let      real = Zone(record: record, databaseID: .everyoneID)
-		real.zoneName = "This is an Idea"
-		zone          = real
+		let     record = CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kExemplarName))
+		let       real = Zone(record: record, databaseID: .everyoneID)
+		real.zoneName  = "This is a typical Idea"
+		zone           = real
 
 		real.addChild(Zone())
 		real.addChild(Zone())

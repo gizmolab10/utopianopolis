@@ -32,6 +32,7 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	static let      tMap = ZWidgetType()
 	static let     tIdea = ZWidgetType()
 	static let   tRecent = ZWidgetType()
+	static let tExemplar = ZWidgetType()
 	static let tFavorite = ZWidgetType()
 	static let    tEssay = ZWidgetType()
 	static let     tNote = ZWidgetType()
@@ -39,14 +40,16 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	var isMap:      Bool { return contains(.tMap) }
 	var isRecent:   Bool { return contains(.tRecent) }
 	var isFavorite: Bool { return contains(.tFavorite) }
+	var isExemplar: Bool { return contains(.tExemplar) }
 
 	var description: String {
-		return [(.tMap,      "     map"),
-				(.tIdea,     "    idea"),
-				(.tNote,     "    note"),
-				(.tEssay,    "   essay"),
-				(.tRecent,   "  recent"),
-				(.tFavorite, "favorite")]
+		return [(.tMap,         "     map"),
+				(.tIdea,        "    idea"),
+				(.tNote,        "    note"),
+				(.tEssay,       "   essay"),
+				(.tRecent,      "  recent"),
+				(.tFavorite,    "favorite"),
+				(.tExemplar, kExemplarName)]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: ", ")
 	}
@@ -75,7 +78,7 @@ class ZoneWidget: ZView {
 	override var    description :     String  { return widgetZone?.description ?? kEmptyIdea }
 
 	var type : ZWidgetType {
-		var result    = widgetZone? .type
+		var result    = widgetZone?.type
 
 		if  result   == nil {
 			result    = .tMap
@@ -89,7 +92,7 @@ class ZoneWidget: ZView {
 	}
 
 	var controller: ZGraphController? {
-		if type.isMap     { return     gGraphController }
+		if type.isMap      { return     gGraphController }
 		if type.isRecent   { return gFavoritesController }
 		if type.isFavorite { return gFavoritesController }
 
