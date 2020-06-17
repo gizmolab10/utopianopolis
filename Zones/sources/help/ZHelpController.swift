@@ -29,8 +29,8 @@ class ZHelpController: ZGenericTableController {
 	var                helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
 	var                gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
 	var         titleBarButtons : ZHelpButtonsView?
-	let            dotsHelpData =  ZDotsHelpData()
-	let           graphHelpData = ZGraphHelpData()
+	let            dotsHelpData =  ZHelpDotsData()
+	let           graphHelpData = ZHelpGraphData()
 
 	func helpData(for iMode: ZHelpMode) -> ZHelpData {
 		switch iMode {

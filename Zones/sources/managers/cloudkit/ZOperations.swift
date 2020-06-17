@@ -33,7 +33,6 @@ enum ZOperationID: Int {
 	case oFavorites
 	case oRecents
 	case oRoots
-	case oDotsHelp
     case oHere
 	case oStartupDone
 
