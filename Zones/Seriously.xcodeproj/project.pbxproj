@@ -866,23 +866,17 @@
 			path = help;
 			sourceTree = "<group>";
 		};
-		A7DF4865249B1860008B35AC /* graph */ = {
+		A7DF4865249B1860008B35AC /* graphs */ = {
 			isa = PBXGroup;
 			children = (
 				A7B48A8023E0E80C00654DBD /* ZDragView.swift */,
 				0CB619951FB3C4660087B066 /* ZGraphController.swift */,
 				A7395BAE21B877B600F5759F /* ZGraphEditor.swift */,
-				A7B48A8223E0E80C00654DBD /* ZLineView.swift */,
 				A752FC31245222D100603A54 /* ZoneContextualMenu.swift */,
-				A7B48A8723E0E80C00654DBD /* ZoneDot.swift */,
-				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
-				A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */,
 				0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */,
-				A7395BAD21B877B600F5759F /* ZTextEditor.swift */,
 				A7DF7DBB247AFE2800F03060 /* ZRubberband.swift */,
-				0C39B24A1F182EBB0091F4D1 /* ZWidgets.swift */,
 			);
-			path = graph;
+			path = graphs;
 			sourceTree = "<group>";
 		};
 		A7DF4867249B19C6008B35AC /* startup */ = {
@@ -923,12 +917,26 @@
 				A769977E24983C2C00DF289D /* breadcrumbs */,
 				0C39B2271F182EBB0091F4D1 /* details */,
 				A769977F24983C9600DF289D /* essays */,
-				A7DF4865249B1860008B35AC /* graph */,
+				A7DF4865249B1860008B35AC /* graphs */,
 				A7D2D65224902F8F00F652B0 /* help */,
+				A7DF486D249C10F0008B35AC /* ideas */,
 				A7DF4868249B1A3E008B35AC /* search */,
 				A7DF4867249B19C6008B35AC /* startup */,
 			);
 			path = features;
+			sourceTree = "<group>";
+		};
+		A7DF486D249C10F0008B35AC /* ideas */ = {
+			isa = PBXGroup;
+			children = (
+				A7B48A8223E0E80C00654DBD /* ZLineView.swift */,
+				A7B48A8723E0E80C00654DBD /* ZoneDot.swift */,
+				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
+				A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */,
+				A7395BAD21B877B600F5759F /* ZTextEditor.swift */,
+				0C39B24A1F182EBB0091F4D1 /* ZWidgets.swift */,
+			);
+			path = ideas;
 			sourceTree = "<group>";
 		};
 		A7F5D690227E6AEE009FB225 /* documentation */ = {
