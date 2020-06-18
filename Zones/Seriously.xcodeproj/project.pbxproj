@@ -832,8 +832,8 @@
 		A769977E24983C2C00DF289D /* breadcrumbs */ = {
 			isa = PBXGroup;
 			children = (
-				A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */,
 				A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */,
+				A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */,
 				A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */,
 				A764067723F7E37600D9EA3A /* ZBreadcrumbsView.swift */,
 			);
