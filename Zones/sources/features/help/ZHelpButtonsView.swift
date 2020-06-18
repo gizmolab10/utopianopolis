@@ -36,8 +36,9 @@ class ZHelpButtonsView : ZButtonsView {
 
 	@objc private func handleButtonPress(_ button: ZButton) {
 		if  let mode = button.buttonMode {
-			gHelpController?.show(true, nextMode: mode)
-			gSignal([.sStartup])
+			gHelpController?.show(false, nextMode: .noMode)   // force .dotMode's grid view's draw method to be called when visible (workaround an apple bug?)
+			gHelpController?.show( true, nextMode:    mode)
+			gSignal([.sStartup]) // to update help buttons in startup view
 		}
 	}
 

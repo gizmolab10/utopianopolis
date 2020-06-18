@@ -56,10 +56,10 @@ class ZHelpController: ZGenericTableController {
 
 	func update() {
 		view.zlayer.backgroundColor = gBackgroundColor.cgColor
-		updateGridVisibility()
-		genericTableUpdate()
+
 		updateTitleBar()
-		view.setAllSubviewsNeedDisplay()
+		genericTableUpdate()
+		updateGridVisibility()
 	}
 
 	override func setup() {
@@ -69,7 +69,6 @@ class ZHelpController: ZGenericTableController {
 		super        .setup()
 		dotsHelpData .setup(for: m)
 		graphHelpData.setup(for: m)
-
 		setupGridViews()
 		setupTitleBar()
 
@@ -100,17 +99,17 @@ class ZHelpController: ZGenericTableController {
 	func show(_ iShow: Bool? = nil, nextMode: ZHelpMode?) {
 		if  let         next = nextMode {
 			let   controller = gHelpWindowController
-			let       isOpen = gHelpWindow?.isKeyWindow ?? false
+			let        isKey = gHelpWindow?.isKeyWindow ?? false
 			let         same = gCurrentHelpMode == next
-			let         show = iShow ?? !(isOpen && same)
+			let         show = iShow ?? !(isKey && same)
 
 			if !show  {
 				gHelpWindow?.close()
 			} else {
 				gCurrentHelpMode = next
 
-				update()
 				controller?.showWindow(nil)
+				update()
 			}
 		}
 	}
@@ -192,23 +191,17 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	func updateGridVisibility() {
+		let graphModes: [ZHelpMode] = [.basicMode, .allMode]
+
 		func shouldHide(_ mode: ZHelpMode) -> Bool {
-			if mode == gCurrentHelpMode {
-				return false
-			} else {
-				let twoGraphModes: [ZHelpMode] = [.basicMode, .allMode]
-
-				if twoGraphModes.contains(mode) && twoGraphModes.contains(gCurrentHelpMode) {
-					return false
-				}
-			}
-
-			return true
+			return mode != gCurrentHelpMode && (!graphModes.contains(mode) || !graphModes.contains(gCurrentHelpMode))
 		}
 
-		for m in gAllHelpModes {
-			gridView(for: m)?.isHidden = shouldHide(m)
+		for mode in gAllHelpModes {
+			gridView(for: mode)?.isHidden = shouldHide(mode)
 		}
+
+		gridView?.setNeedsDisplay()
 	}
 
 	// MARK:- help table
