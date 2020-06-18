@@ -31,6 +31,7 @@ class ZHelpController: ZGenericTableController {
 	var         titleBarButtons : ZHelpButtonsView?
 	let            dotsHelpData =  ZHelpDotsData()
 	let           graphHelpData = ZHelpGraphData()
+	var               isShowing = false
 
 	func helpData(for iMode: ZHelpMode) -> ZHelpData {
 		switch iMode {
@@ -72,9 +73,11 @@ class ZHelpController: ZGenericTableController {
 		setupGridViews()
 		setupTitleBar()
 
-		gCurrentHelpMode = .noMode // set temporarily so show does not dismiss window
+		if !isShowing {
+			gCurrentHelpMode = .noMode // set temporarily so show does not dismiss window
 
-		show(nextMode: m)
+			show(nextMode: m)
+		}
 	}
 
 	func show(_ iShow: Bool? = nil, flags: ZEventFlags) {
@@ -92,6 +95,7 @@ class ZHelpController: ZGenericTableController {
 				nextMode = .basicMode
 			}
 
+//			show(false, nextMode:  .noMode)  // force .dotMode's grid view's draw method to be called when visible (workaround an apple bug?)
 			show(iShow, nextMode: nextMode)
 		}
 	}
@@ -107,9 +111,12 @@ class ZHelpController: ZGenericTableController {
 				gHelpWindow?.close()
 			} else {
 				gCurrentHelpMode = next
+				isShowing        = true
 
+				gHelpWindow?.close()
 				controller?.showWindow(nil)
-				update()
+				self.update()
+				isShowing        = false
 			}
 		}
 	}

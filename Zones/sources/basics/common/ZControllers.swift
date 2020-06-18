@@ -63,7 +63,7 @@ class ZControllers: NSObject {
 		gWorkMode              = .startupMode
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
-		gHelpController?.setup()
+		gHelpController?.setup()                // show last chosen help view
 		gRemoteStorage.clear()
 		gSignal([.sMain, .sStartup])
 
