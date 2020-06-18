@@ -119,7 +119,7 @@ class ZHelpDotsData: ZHelpData {
 
 	let dotsColumnOne: [String] = prefixArray + [
 		"",						"",																				"",
-		"bDOT ON THE LEFT",		"click to select, deselect or drag",											"",
+		"bDRAG DOT",			"click to select, deselect or drag",											"",
 		"",						"",																				"",
 		"udrag dot",			"filled dots indicate idea is selected",										"",
 		"db",					"editable",																		"",
@@ -132,17 +132,17 @@ class ZHelpDotsData: ZHelpData {
 
 	let dotsColumnTwo: [String] = prefixArray + [
 		"",						"",																				"",
-		"bDOT ON THE RIGHT",	"click to conceal, reveal or activate",											"",
+		"bREVEAL DOT",			"click to conceal, reveal or activate",											"",
 		"",						"",																				"",
-		"uno right-side dot indicates no list",																"", "",
+		"uno dot indicates no list and nothing to activate",												"", "",
 		"",						"",																				"",
-		"uwhen list is visible","click to hide list",															"",
+		"uwhen list is visible","click to hide it",																"",
 		"de",					"points to the left",															"",
 		"",						"",																				"",
-		"uwhen list is hidden",	"click to reveal list   necklace of tiny dots indicates size of list",			"",
-		"df",					"single idea      \t1 = single small dot on right",								"",
+		"uwhen list is hidden",	"tiny dots indicate its size    click to reveal it",							"",
+		"df",					"single idea      \t1 = small dot on right",									"",
 		"df",					"3 ideas          \t3 = small dots all around",									"",
-		"df",					"10 ideas         \t10 = single medium dot on right",							"",
+		"df",					"10 ideas         \t10 = medium dot on right",									"",
 		"df",					"12 ideas         \t10 = medium dot on left, 2 = small dots on right",			"",
 		"df",					"120 ideas        \t100 = large hollow dot on left, 20 = medium dots on right",	"",
 		"",						"",																				"",

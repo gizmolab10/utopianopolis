@@ -82,7 +82,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var             isInLostAndFound :               Bool  { return root?.isRootOfLostAndFound ?? false }
 	var                isRootOfTrash :               Bool  { return recordName == kTrashName }
     var         isRootOfLostAndFound :               Bool  { return recordName == kLostAndFoundName }
-    var               isReadOnlyRoot :               Bool  { return isRootOfLostAndFound || isRootOfFavorites || isRootOfTrash }
+	var               isReadOnlyRoot :               Bool  { return isRootOfLostAndFound || isRootOfFavorites || isRootOfTrash || type.isExemplar }
     var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var                   spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
 	var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
