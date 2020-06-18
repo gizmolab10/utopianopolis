@@ -56,9 +56,9 @@ class ZHelpController: ZGenericTableController {
 
 	func update() {
 		view.zlayer.backgroundColor = gBackgroundColor.cgColor
-		updateTitleBar()
 		updateGridVisibility()
 		genericTableUpdate()
+		updateTitleBar()
 		view.setAllSubviewsNeedDisplay()
 	}
 
@@ -78,7 +78,7 @@ class ZHelpController: ZGenericTableController {
 		show(nextMode: m)
 	}
 
-	func show(_ show: Bool? = nil, flags: ZEventFlags) {
+	func show(_ iShow: Bool? = nil, flags: ZEventFlags) {
 		let  COMMAND = flags.isCommand
 		let  CONTROL = flags.isControl
 		let   OPTION = flags.isOption
@@ -93,18 +93,18 @@ class ZHelpController: ZGenericTableController {
 				nextMode = .basicMode
 			}
 
-			self.show(show, nextMode: nextMode)
+			show(iShow, nextMode: nextMode)
 		}
 	}
 
-	func show(_ show: Bool? = nil, nextMode: ZHelpMode?) {
-		if  let       next = nextMode {
-			let controller = gHelpWindowController
-			let     isOpen = gHelpWindow?.isKeyWindow ?? false
-			let       same = gCurrentHelpMode == next
-			let      close = !(show ?? !(isOpen && same))
+	func show(_ iShow: Bool? = nil, nextMode: ZHelpMode?) {
+		if  let         next = nextMode {
+			let   controller = gHelpWindowController
+			let       isOpen = gHelpWindow?.isKeyWindow ?? false
+			let         same = gCurrentHelpMode == next
+			let         show = iShow ?? !(isOpen && same)
 
-			if  close  {
+			if !show  {
 				gHelpWindow?.close()
 			} else {
 				gCurrentHelpMode = next

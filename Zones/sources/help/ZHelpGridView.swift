@@ -24,7 +24,7 @@ class ZHelpGridView: ZView {
 	}
 
 	func drawExampleZone(using data: ZHelpData) {
-//		gHelpDotsController
+//		gHelpDotsExplanationController
 //		if  let zone = data.zone {
 //			let widget = ZoneWidget()
 //			widget.widgetZone = zone

@@ -17,9 +17,15 @@ import Foundation
 class ZGenericController: ZController, ZGeneric {
 
 	var  controllerID : ZControllerID { return .idUndefined }
+	var  allowedKinds : [ZSignalKind] { return [] }
     func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}
 	func startup() {}
 	func setup() {}
+
+	func shouldHandle(_ kind: ZSignalKind) -> Bool {
+		return ((kind != .sError && gIsReadyToShowUI) || [.sMain, .sStartup].contains(kind)) &&
+			(allowedKinds.count == 0 || allowedKinds.contains(kind))
+	}
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,7 +34,7 @@ class ZGenericController: ZController, ZGeneric {
         gControllers.setSignalHandler(for: self, iID: controllerID) { object, kind in
 			self.view.zlayer.backgroundColor = gControllers.backgroundColorFor(self.controllerID).cgColor
 
-			if  (kind != .sError && gIsReadyToShowUI) || [.sMain, .sStartup].contains(kind) {
+			if  self.shouldHandle(kind) {
                 self.handleSignal(object, kind: kind)
             }
         }

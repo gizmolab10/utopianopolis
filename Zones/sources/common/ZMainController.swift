@@ -37,7 +37,7 @@ class ZMainController: ZGenericController {
 	}
 
 	func updateForSkillLevel() {
-		detailView?.isHidden = gUnclutteredSkillLevel
+		detailView?.isHidden = gTrailblazerSkillLevel
 
 		gDetailsController?.updateForSkillLevel()
 	}

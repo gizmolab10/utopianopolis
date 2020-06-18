@@ -8,7 +8,7 @@
 
 import Foundation
 
-var gFavoritesController: ZGraphController? { return gControllers.controllerForID(.idFavorites) as? ZGraphController }
+var gFavoritesController: ZFavoritesController? { return gControllers.controllerForID(.idFavorites) as? ZFavoritesController }
 
 class ZFavoritesController: ZGraphController {
 
@@ -16,6 +16,7 @@ class ZFavoritesController: ZGraphController {
 	override  var     hereZone : Zone?         { return gIsRecentlyMode ?  gRecents.root :  gFavoritesHereMaybe }
 	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ? .tRecent       : .tFavorite }
 	override  var controllerID : ZControllerID { return .idFavorites }
+	override  var allowedKinds : [ZSignalKind] { return [.sDetails, .sFavorites, .sRelayout] }
 	@IBOutlet var controlsView : ZFavoriteControlsView?
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {

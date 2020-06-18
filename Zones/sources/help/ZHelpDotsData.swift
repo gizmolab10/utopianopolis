@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum ZDotConfigurationType: String {
+enum ZHelpDotType: String {
 	case one        = "single"
 	case ten        = "10"
 	case note       = "note"
@@ -101,20 +101,19 @@ class ZHelpDotsData: ZHelpData {
 	override var indexOfLastColumn :   Int      { return 1 }
 	override var rowHeight         :   CGFloat  { return 22.0 }
 
-	override func dotTypes(for row: Int, column: Int) -> (ZDotConfigurationType?, ZFillType?) {
-		var           command  : ZDotConfigurationType?
-		var            filled  : ZFillType?
+	override func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) {
 		let (first, second, _) = strings(for: row, column: column)
 		let     shortcutLower  = first.substring(with: NSMakeRange(0, 1)).lowercased()
 		let       filledLower  = first.substring(with: NSMakeRange(1, 2)).lowercased()
-		filled                 = ZFillType(rawValue: filledLower)
+		let            filled  = ZFillType(rawValue: filledLower)
+		var           dotType  : ZHelpDotType?
 		if  let      helpType  = ZHelpType(rawValue: shortcutLower),
 		             helpType == .hDots {
-			let configuration  = second.components(separatedBy: " ")[0]
-			command            = ZDotConfigurationType(rawValue: configuration)
+			let         value  = second.components(separatedBy: " ")[0]
+			dotType            = ZHelpDotType(rawValue: value)
 		}
 
-		return (command, filled)
+		return (dotType, filled)
 	}
 
 	let dotsColumnOne: [String] = prefixArray + [

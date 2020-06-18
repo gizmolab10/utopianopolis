@@ -1387,9 +1387,8 @@ class ZGraphEditor: ZBaseEditor {
         let   doCousinJump = !gBrowsingIsConfined
 		let      hereMaybe = gHereMaybe
         let         isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
-		let completionKind = ZSignalKind.sData
         guard let rootMost = originalGrabs.rootMost(goingUp: iMoveUp) else {
-			onCompletion?(completionKind)
+			onCompletion?(.sData)
             
             return
         }
@@ -1575,7 +1574,7 @@ class ZGraphEditor: ZBaseEditor {
                     }
                 }
 
-				onCompletion?(completionKind)
+				onCompletion?(.sRelayout)
             }
         }
     }

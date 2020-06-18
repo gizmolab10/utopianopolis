@@ -36,8 +36,8 @@ enum ZCloudAccountStatus: Int {
 }
 
 enum ZSkillLevel: Int {
-	case beginner
-	case uncluttered
+	case explorer
+	case trailblazer
 	case pro
 }
 
@@ -283,7 +283,7 @@ struct ZDetailsViewID: OptionSet {
 
 	static let  Preferences = ZDetailsViewID(rawValue: 0x0001)
     static let  Information = ZDetailsViewID(rawValue: 0x0002)
-	static let Introduction = ZDetailsViewID(rawValue: 0x0004)
+	static let Explore = ZDetailsViewID(rawValue: 0x0004)
 	static let       Status = ZDetailsViewID(rawValue: 0x0008)
 	static let    Favorites = ZDetailsViewID(rawValue: 0x0010)
     static let          All = ZDetailsViewID(rawValue: 0x001F)

@@ -61,8 +61,8 @@ var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIde
 var          gCanSaveWorkMode:               Bool { return gIsGraphMode || gIsNoteMode || gIsStartupMode }
 var    gIsGraphOrEditIdeaMode:               Bool { return gIsGraphMode || gIsEditIdeaMode }
 var            gProSkillLevel:               Bool { return gSkillLevel == .pro }
-var    gUnclutteredSkillLevel:               Bool { return gSkillLevel == .uncluttered }
-var       gBeginnerSkillLevel:               Bool { return gSkillLevel == .beginner }
+var       gExplorerSkillLevel:               Bool { return gSkillLevel == .explorer }
+var    gTrailblazerSkillLevel:               Bool { return gSkillLevel == .trailblazer }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var                  gRecords:          ZRecords? { return gShowFavorites ? gFavorites : gCloud }
 var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
@@ -85,7 +85,7 @@ var               gWidgetFont:              ZFont { return .systemFont(ofSize: g
 
 let                 kBoldFont                     = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
 let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
-let       kBeginnerSkillLevel                     = ZSkillLevel.beginner.rawValue
+let       kBeginnerSkillLevel                     = ZSkillLevel.explorer.rawValue
 let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
 
@@ -162,7 +162,7 @@ var gClipBreadcrumbs : Bool {
 }
 
 var gSkillLevel : ZSkillLevel {
-	get { return  ZSkillLevel(rawValue: getPreferencesInt(for: kSkillLevel, defaultInt: kBeginnerSkillLevel) ?? kBeginnerSkillLevel) ?? ZSkillLevel.beginner }
+	get { return  ZSkillLevel(rawValue: getPreferencesInt(for: kSkillLevel, defaultInt: kBeginnerSkillLevel) ?? kBeginnerSkillLevel) ?? ZSkillLevel.explorer }
 	set { setPreferencesInt(newValue.rawValue, for: kSkillLevel); gMainController?.updateForSkillLevel() }
 }
 
@@ -461,7 +461,7 @@ var gHiddenDetailViewIDs: ZDetailsViewID {
 		}
 		
 		if  state     == nil {
-			state      = .Introduction
+			state      = .Explore
 			
 			UserDefaults.standard.set(state!.rawValue, forKey:kDetailsState)
 			UserDefaults.standard.synchronize()

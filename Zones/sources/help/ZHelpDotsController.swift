@@ -1,5 +1,5 @@
 //
-//  ZHelpDotsController.swift
+//  ZHelpDotsExplanationController.swift
 //  iFocus
 //
 //  Created by Jonathan Sand on 6/16/20.
@@ -9,14 +9,15 @@
 import Foundation
 import CloudKit
 
-var gHelpDotsController: ZHelpDotsController? { return gControllers.controllerForID(.idHelpDots) as? ZHelpDotsController }
+var gHelpDotsExplanationController: ZHelpDotsExplanationController? { return gControllers.controllerForID(.idHelpDots) as? ZHelpDotsExplanationController }
 
-class ZHelpDotsController : ZGraphController {
+class ZHelpDotsExplanationController : ZGraphController {
 
-	override  var controllerID : ZControllerID  { return .idHelpDots }
-	override  var   widgetType : ZWidgetType    { return .tExemplar }
-	override  var   isExemplar : Bool           { return true }
-	override  var     hereZone : Zone?          { return zone }
+	override  var controllerID : ZControllerID { return .idHelpDots }
+	override  var   widgetType : ZWidgetType   { return .tExemplar }
+	override  var   isExemplar : Bool          { return true }
+	override  var     hereZone : Zone?         { return zone }
+	override  var allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum, .sStartup] }
 	var                   zone : Zone?
 	@IBOutlet var     topLabel : ZTextField?
 	@IBOutlet var  bottomLabel : ZTextField?

@@ -23,6 +23,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	var                   isExemplar : Bool          { return false }
 	var                        isMap : Bool          { return true }
 	var                     hereZone : Zone?         { return gHereMaybe }
+	override  var       allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum] }
 	@IBOutlet var           dragView : ZDragView?
 	@IBOutlet var          graphView : ZView?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
@@ -158,15 +159,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	// MARK:-
 
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-		let      mapKinds : [ZSignalKind] = [.sRelayout, .sData, .sDatum]
-		let  detailsKinds : [ZSignalKind] = [.sDetails, .sFavorites]
-		let exemplarKinds : [ZSignalKind] = [.sStartup]
-		let  allowedKinds : [ZSignalKind] = mapKinds + detailsKinds + exemplarKinds
-		let  shouldHandle = (!isMap && detailsKinds.contains(iKind)) || (isExemplar && exemplarKinds.contains(iKind)) || (isMap && mapKinds.contains(iKind))
-
-		if  !gDeferringRedraw,
-			allowedKinds.contains(iKind), // ignore for preferences, search, information
-			shouldHandle {
+		if  !gDeferringRedraw {
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
 			layoutWidgets(for: iSignalObject, iKind)
@@ -253,7 +246,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			let     OPTION = gesture.isOptionDown
 			let      SHIFT = gesture.isShiftDown
             let editWidget = gCurrentlyEditingWidget
-            var  regarding = ZSignalKind.sDatum
+            var  regarding = ZSignalKind.sData
             var withinEdit = false
 
 			editWidget?.widgetZone?.needWrite()
