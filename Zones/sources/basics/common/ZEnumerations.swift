@@ -346,28 +346,30 @@ enum ZStorageType: String {
     case deleted         = "deleted"         // ZManifest
 }
 
-enum ZSymbolsMenuType: String {
-	case eCommand = "c"
-	case eOption  = "o"
-	case eShift   = "s"
-	case eControl = "n"
-	case eReturn  = "r"
-	case eArrow   = "i"
-	case eBack    = "k"
-	case eCancel  = "\r"
+enum ZSpecialCharactersMenuType: String {
+	case eCommand   = "c"
+	case eOption    = "o"
+	case eShift     = "s"
+	case eControl   = "n"
+	case eCopyright = "g"
+	case eReturn    = "r"
+	case eArrow     = "i"
+	case eBack      = "k"
+	case eCancel    = "\r"
 
-	static var activeTypes: [ZSymbolsMenuType] { return [.eCommand, .eOption, .eShift, .eControl, eReturn, .eArrow, .eBack] }
+	static var activeTypes: [ZSpecialCharactersMenuType] { return [.eCommand, .eOption, .eShift, .eControl, eReturn, .eCopyright, .eArrow, .eBack] }
 
 	var both: (String, String) {
 		switch self {
-			case .eShift:   return ("⇧",  "Shift")
-			case .eCancel:  return ("",   "Cancel")
-			case .eControl: return ("^",  "Control")
-			case .eCommand: return ("⌘",  "Command")
-			case .eOption:  return ("⌥",  "Option")
-			case .eReturn:  return ("􀅇", "Return")
-			case .eArrow:   return ("⇨",  "⇨")
-			case .eBack:    return ("⇦",  "⇦")
+			case .eCopyright: return ("©",  "Copyright")
+			case .eControl:   return ("^",  "Control")
+			case .eCommand:   return ("⌘",  "Command")
+			case .eOption:    return ("⌥",  "Option")
+			case .eReturn:    return ("􀅇", "Return")
+			case .eCancel:    return ("",   "Cancel")
+			case .eShift:     return ("⇧",  "Shift")
+			case .eArrow:     return ("⇨",  "⇨")
+			case .eBack:      return ("⇦",  "⇦")
 		}
 	}
 

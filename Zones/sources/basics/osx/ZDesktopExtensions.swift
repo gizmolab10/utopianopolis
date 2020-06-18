@@ -788,13 +788,13 @@ extension ZTextEditor {
     
     func fullResign()  { assignAsFirstResponder (nil) }
 	
-	func showSpecialsPopup() {
-		NSMenu.symbolsPopup(target: self, action: #selector(handlePopupMenu(_:))).popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
+	func showSpecialCharactersPopup() {
+		NSMenu.specialCharactersPopup(target: self, action: #selector(handlePopupMenu(_:))).popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
 	}
 
 	@objc func handlePopupMenu(_ iItem: ZMenuItem) {
 		#if os(OSX)
-		if  let  type = ZSymbolsMenuType(rawValue: iItem.keyEquivalent),
+		if  let  type = ZSpecialCharactersMenuType(rawValue: iItem.keyEquivalent),
 			let range = selectedRanges[0] as? NSRange,
 			type     != .eCancel {
 			let  text = type.text
@@ -830,7 +830,7 @@ extension ZTextEditor {
 				gTextEditor.handleArrow(a, flags: flags)
 			} else if FLAGGED {
 				switch key {
-					case "i": showSpecialsPopup()
+					case "i": showSpecialCharactersPopup()
 					case "?": gHelpController?.show(flags: flags)
 					case "-": return editedZone?.convertToFromLine() ?? false // false means key not handled
 					default:  return false
@@ -879,11 +879,11 @@ extension NSMenu {
 
 	static func handleMenu() {}
 
-	static func symbolsPopup(target: AnyObject, action: Selector) -> NSMenu {
+	static func specialCharactersPopup(target: AnyObject, action: Selector) -> NSMenu {
 		let menu = NSMenu(title: "add a special character")
 		menu.autoenablesItems = false
 
-		for type in ZSymbolsMenuType.activeTypes {
+		for type in ZSpecialCharactersMenuType.activeTypes {
 			menu.addItem(item(type: type, target: target, action: action))
 		}
 
@@ -893,7 +893,7 @@ extension NSMenu {
 		return menu
 	}
 
-	static func item(type: ZSymbolsMenuType, target: AnyObject, action: Selector) -> NSMenuItem {
+	static func item(type: ZSpecialCharactersMenuType, target: AnyObject, action: Selector) -> NSMenuItem {
 		let  	  item = NSMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
 		item.isEnabled = true
 		item.target    = target

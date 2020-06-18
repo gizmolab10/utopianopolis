@@ -70,7 +70,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "e":      grabSelectedTextForSearch()
 				case "f":      gSearching.showSearch(OPTION)
 				case "g":      searchAgain(OPTION)
-				case "i":      showSpecialsPopup()
+				case "i":      showSpecialCharactersPopup()
 				case "l":      alterCase(up: false)
 				case "n":      swapBetweenNoteAndEssay()
 				case "p":      printCurrentEssay()
@@ -591,12 +591,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- special characters
 	// MARK:-
 
-	private func showSpecialsPopup() {
-		NSMenu.symbolsPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: self)
+	private func showSpecialCharactersPopup() {
+		NSMenu.specialCharactersPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: self)
 	}
 
 	@objc private func handleSymbolsPopupMenu(_ iItem: ZMenuItem) {
-		if  let  type = ZSymbolsMenuType(rawValue: iItem.keyEquivalent),
+		if  let  type = ZSpecialCharactersMenuType(rawValue: iItem.keyEquivalent),
 			type     != .eCancel {
 			let  text = type.text
 

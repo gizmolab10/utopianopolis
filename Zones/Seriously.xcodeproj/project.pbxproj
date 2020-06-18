@@ -549,20 +549,8 @@
 		0C39B21E1F182EBB0091F4D1 /* sources */ = {
 			isa = PBXGroup;
 			children = (
-				A769977E24983C2C00DF289D /* breadcrumbs */,
-				0C39B22E1F182EBB0091F4D1 /* common */,
-				0C43EFC621010F62000976CE /* cloudkit */,
-				0C39B2271F182EBB0091F4D1 /* details */,
-				A769977F24983C9600DF289D /* essays */,
-				0C43EFBC21010F17000976CE /* files */,
-				A7DF4865249B1860008B35AC /* graph */,
-				A7D2D65224902F8F00F652B0 /* help */,
-				0C39B2361F182EBB0091F4D1 /* ios */,
-				0C39B2541F182EBB0091F4D1 /* models */,
-				0C39B23E1F182EBB0091F4D1 /* osx */,
-				A7DF4868249B1A3E008B35AC /* search */,
-				A7DF4867249B19C6008B35AC /* startup */,
-				0C39B2851F182EBB0091F4D1 /* views */,
+				A7DF486B249B1DEF008B35AC /* basics */,
+				A7DF486C249B1E08008B35AC /* features */,
 			);
 			path = sources;
 			sourceTree = "<group>";
@@ -913,6 +901,34 @@
 				0CB619921FB3C4660087B066 /* ZSearchResultsController.swift */,
 			);
 			path = search;
+			sourceTree = "<group>";
+		};
+		A7DF486B249B1DEF008B35AC /* basics */ = {
+			isa = PBXGroup;
+			children = (
+				0C39B22E1F182EBB0091F4D1 /* common */,
+				0C43EFC621010F62000976CE /* cloudkit */,
+				0C43EFBC21010F17000976CE /* files */,
+				0C39B2361F182EBB0091F4D1 /* ios */,
+				0C39B2541F182EBB0091F4D1 /* models */,
+				0C39B23E1F182EBB0091F4D1 /* osx */,
+				0C39B2851F182EBB0091F4D1 /* views */,
+			);
+			path = basics;
+			sourceTree = "<group>";
+		};
+		A7DF486C249B1E08008B35AC /* features */ = {
+			isa = PBXGroup;
+			children = (
+				A769977E24983C2C00DF289D /* breadcrumbs */,
+				0C39B2271F182EBB0091F4D1 /* details */,
+				A769977F24983C9600DF289D /* essays */,
+				A7DF4865249B1860008B35AC /* graph */,
+				A7D2D65224902F8F00F652B0 /* help */,
+				A7DF4868249B1A3E008B35AC /* search */,
+				A7DF4867249B19C6008B35AC /* startup */,
+			);
+			path = features;
 			sourceTree = "<group>";
 		};
 		A7F5D690227E6AEE009FB225 /* documentation */ = {

@@ -559,7 +559,7 @@ extension ZTextEditor {
 
     var string: String { return text }
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {}
-	func showSpecialsPopup() {}
+	func showSpecialCharactersPopup() {}
 
     func fullResign()  {
         assignAsFirstResponder (nil) // ios broken?
