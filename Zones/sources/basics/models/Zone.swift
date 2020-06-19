@@ -2306,7 +2306,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isBookmark  = isBookmark
 		p.showAccess  = hasAccessDecoration
 		p.showList    = showingChildren
-		p.color       = type.isExemplar ? gExamplarColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
+		p.color       = type.isExemplar ? gHelpEmphasisColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
 		p.childCount  = (gCountsMode == .progeny) ? progenyCount : indirectCount
 		p.traitType   = (traits.count < 1) ? "" : traits[0]
 		p.filled      = isFilled

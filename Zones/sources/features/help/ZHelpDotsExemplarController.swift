@@ -9,7 +9,7 @@
 import Foundation
 import CloudKit
 
-var gExamplarColor: ZColor { return gIsDark  ? kBlueColor.lighter(by: 3.0) : kBlueColor }
+var gHelpEmphasisColor: ZColor { return gIsDark ? kSystemBlue.lighter(by: 3.0) : kSystemBlue.darker(by: 4.0) }
 
 class ZHelpDotsExemplarController : ZGraphController {
 

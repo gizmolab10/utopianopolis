@@ -46,6 +46,7 @@ let            kLightGrayColor = ZColor(calibratedHue: 0.0, saturation: 0.0, bri
 let             kDarkGrayColor = ZColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.6, alpha: 1.0)
 let                kWhiteColor = ZColor(calibratedHue: 0.0, saturation: 0.0, brightness: 1.0, alpha: 1.0)
 let                kBlackColor = ZColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.0, alpha: 1.0)
+let                kSystemBlue = NSColor(cgColor: ZColor.systemBlue.cgColor)!
 let                kClearColor = ZColor.clear
 let                 kBlueColor = ZColor.blue
 let                 kGridColor = ZColor.darkGray

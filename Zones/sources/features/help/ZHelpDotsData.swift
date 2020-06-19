@@ -67,7 +67,7 @@ enum ZHelpDotType: String {
 
 	func dotParameters(isFilled: Bool = false) -> ZDotParameters {
 		var p         = ZDotParameters()
-		p.color       = gExamplarColor
+		p.color       = gHelpEmphasisColor
 		p.fill        = isFilled ? p.color : gBackgroundColor
 		p.filled      = isFilled
 		p.isReveal    = isReveal

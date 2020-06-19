@@ -19,8 +19,6 @@ class ZHelpData: NSObject {
 	var indexOfLastColumn :    Int     { return 3 }           // "
 	var stringsPerRow     :    Int     { return 3 }
 	var isPro             :    Bool    { return gCurrentHelpMode == .allMode }
-	var hyperlinkColor    :  ZColor    { return gIsDark ? kBlueColor.lighter(by: 3.0) : kBlueColor.darker (by:  2.0) }
-	var powerUserColor    :  ZColor    { return gIsDark ? kBlueColor.darker (by: 5.0) : kBlueColor.lighter(by: 30.0) }
 
 	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) { return (nil, nil) }
 
@@ -138,7 +136,7 @@ class ZHelpData: NSObject {
 				attributes[.underlineStyle] = 1
 			case .hPlain?, .hPro?:
 				if  hasURL {
-					attributes[.foregroundColor] = hyperlinkColor
+					attributes[.foregroundColor] = gHelpEmphasisColor
 					second.append(kSpace + kEllipsis)
 				}
 
@@ -158,7 +156,6 @@ class ZHelpData: NSObject {
 			default:
 				if  isPro,
 					type == .hPro {
-//					attributes[.backgroundColor] = powerUserColor
 					second = "** " + second
 				}
 
