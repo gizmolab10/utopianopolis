@@ -39,7 +39,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Aa-9c-eI8">
                                     <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" id="H0M-2O-9lo">
                                             <rect key="frame" x="0.0" y="0.0" width="1155" height="780"/>
@@ -179,10 +179,10 @@
             </objects>
             <point key="canvasLocation" x="1038" y="359"/>
         </scene>
-        <!--Help Dots Explanation Controller-->
+        <!--Help Dots Exemplar Controller-->
         <scene sceneID="PNs-6U-K92">
             <objects>
-                <viewController id="wJH-0h-8ky" customClass="ZHelpDotsExplanationController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="wJH-0h-8ky" customClass="ZHelpDotsExemplarController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="61U-DM-8bn">
                         <rect key="frame" x="0.0" y="0.0" width="273" height="152"/>
                         <autoresizingMask key="autoresizingMask"/>

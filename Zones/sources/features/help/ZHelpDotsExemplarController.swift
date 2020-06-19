@@ -9,9 +9,9 @@
 import Foundation
 import CloudKit
 
-var gHelpDotsExplanationController: ZHelpDotsExplanationController? { return gControllers.controllerForID(.idHelpDots) as? ZHelpDotsExplanationController }
+var gExamplarColor: ZColor { return gIsDark  ? kBlueColor.lighter(by: 3.0) : kBlueColor }
 
-class ZHelpDotsExplanationController : ZGraphController {
+class ZHelpDotsExemplarController : ZGraphController {
 
 	override  var controllerID : ZControllerID { return .idHelpDots }
 	override  var   widgetType : ZWidgetType   { return .tExemplar }
