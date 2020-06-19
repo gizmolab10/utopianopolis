@@ -28,7 +28,7 @@ class ZHelpController: ZGenericTableController {
 	override  var  controllerID : ZControllerID  { return .idHelp }
 	var                helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
 	var                gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
-	var         titleBarButtons : ZHelpButtonsView?
+	var         titleBarButtons = ZHelpButtonsView()
 	let            dotsHelpData =  ZHelpDotsData()
 	let           graphHelpData = ZHelpGraphData()
 	var               isShowing = false
@@ -95,7 +95,6 @@ class ZHelpController: ZGenericTableController {
 				nextMode = .basicMode
 			}
 
-//			show(false, nextMode:  .noMode)  // force .dotMode's grid view's draw method to be called when visible (workaround an apple bug?)
 			show(iShow, nextMode: nextMode)
 		}
 	}
@@ -111,9 +110,9 @@ class ZHelpController: ZGenericTableController {
 				gHelpWindow?.close()
 			} else {
 				gCurrentHelpMode = next
-				isShowing        = true
+				isShowing        = true   // prevent infinite recursion (where show window causes view did appear, which calls update, which calls show)
 
-				gHelpWindow?.close()
+				gHelpWindow?.close()      // workaround for dots draw method not being called (perhaps an apple bug?)
 				controller?.showWindow(nil)
 				self.update()
 				isShowing        = false
@@ -150,23 +149,24 @@ class ZHelpController: ZGenericTableController {
 	// MARK:-
 
 	func setupTitleBar() {
-		if  let           window = view.window {
-			let buttons          = ZHelpButtonsView()
-			let titleBarView     = window.standardWindowButton(.closeButton)!.superview!
-			titleBarButtons      = buttons
-			buttons.isInTitleBar = true
+		if  let                   window = view.window {
+			let             titleBarView = window.standardWindowButton(.closeButton)!.superview!
+			titleBarButtons.isInTitleBar = true
 
-			titleBarView.addSubview(titleBarButtons!)
-			buttons.snp.removeConstraints()
-			buttons.snp.makeConstraints { make in
-				make.centerX.top.bottom.equalToSuperview()
+			if !titleBarView.subviews.contains(titleBarButtons) {
+				titleBarView.addSubview(titleBarButtons)
+				titleBarButtons.snp.removeConstraints()
+				titleBarButtons.snp.makeConstraints { make in
+					make.centerX.top.bottom.equalToSuperview()
+				}
 			}
-			buttons.updateAndRedraw()
+
+			titleBarButtons.updateAndRedraw()
 		}
 	}
 
 	func updateTitleBar() {
-		titleBarButtons?.updateAndRedraw()
+		titleBarButtons.updateAndRedraw()
 	}
 
 	// MARK:- grid

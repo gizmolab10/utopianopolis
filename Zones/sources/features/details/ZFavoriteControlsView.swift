@@ -20,6 +20,8 @@ class ZFavoriteControlsView : ZButtonsView, ZTooltips {
 	override  var centered: Bool { return true }
 
 	override func setupButtons() {
+		removeButtons()
+
 		var types: [ZModeButtonType] = [.tMode, .tGrow, .tConfine]
 		buttons                      = [ZButton]()
 
@@ -28,13 +30,15 @@ class ZFavoriteControlsView : ZButtonsView, ZTooltips {
 		}
 
 		for type in types {
-			let                 title = type.rawValue
-			let                button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
-			button    .modeButtonType = type
+			let             title = type.rawValue
+			let            button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
+			button.modeButtonType = type
 
 			buttons.append(button)
 		}
+	}
 
+	override func updateButtons() {
 		updateButtonTitles()
 		updateTooltips()
 	}
@@ -67,7 +71,7 @@ class ZFavoriteControlsView : ZButtonsView, ZTooltips {
 
 	func update() {
 		updateButtonTitles()
-		updateAndRedraw()
+		setupAndRedraw()
 		updateTooltips()
 	}
 

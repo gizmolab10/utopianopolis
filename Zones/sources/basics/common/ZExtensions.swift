@@ -2040,7 +2040,7 @@ extension ZView {
 		}
 	}
 
-	var buttonMode : ZHelpMode? {
+	var helpMode : ZHelpMode? {
 		get {
 			let        item = self as NSUserInterfaceItemIdentification
 			if  let  itemID = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),

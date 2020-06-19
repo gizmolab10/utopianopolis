@@ -34,7 +34,7 @@ class ZFavoritesController: ZGraphController {
 
 	override func startup() {
 		setup() // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
-		controlsView?.updateAndRedraw()
+		controlsView?.setupAndRedraw()
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled

@@ -10,9 +10,11 @@ import Foundation
 
 class ZButtonsView : ZView {
 
-	var  buttons = [ZButton]()
-	var  clipped : Bool { return false }
 	var centered : Bool { return false }
+	var  clipped : Bool { return false }
+	var  buttons = [ZButton]()
+	func setupButtons()  {}
+	func updateButtons() {}
 
 	func removeButtons() {
 		for button in buttons {
@@ -20,11 +22,13 @@ class ZButtonsView : ZView {
 		}
 	}
 
-	func setupButtons() {}
+	func setupAndRedraw() {
+		setupButtons() // customize this in subclass
+		updateAndRedraw()
+	}
 
 	func updateAndRedraw() {
-		removeButtons()
-		setupButtons() // customize this in subclass
+		updateButtons()
 		layoutButtons()
 		setNeedsDisplay()
 		setNeedsLayout()

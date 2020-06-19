@@ -8,37 +8,65 @@
 
 import Foundation
 
+class ZHelpButton : ZButton {
+
+	override func draw(_ dirtyRect: NSRect) {
+		let isCurrent =  helpMode == gCurrentHelpMode
+		isHighlighted = isCurrent              // work around another pissy apple os bug!
+
+		super.draw(dirtyRect)
+	}
+
+}
+
 class ZHelpButtonsView : ZButtonsView {
 
 	override  var centered : Bool { return true }
 	var       isInTitleBar = false
 	var         titleCount = 0
 
+	func addButton(_ mode: ZHelpMode) -> ZHelpButton {
+		let       title = mode.title.capitalized
+		let      button = ZHelpButton(title: title, target: self, action: #selector(self.handleButtonPress))
+		button.helpMode = mode
+
+		buttons.append(button)
+
+		return button
+	}
+
+	@discardableResult func buttonForMode(_ mode: ZHelpMode) -> ZButton {
+		for button in buttons {
+			if  button.helpMode == mode {
+				return button
+			}
+		}
+
+		return addButton(mode)
+	}
+
 	override func setupButtons() {
-		buttons   = [ZButton]()
-
 		for mode in gAllHelpModes {
-			let         title = mode.title.capitalized
-			let        button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
-			button.buttonMode = mode
+			buttonForMode(mode)
+		}
+	}
 
-			buttons.append(button)
+	override func updateButtons() {
+		for mode in gAllHelpModes {
+			let    button = buttonForMode(      mode)
+			let isCurrent = gCurrentHelpMode == mode
 
-			if gCurrentHelpMode == mode {
-				if !isInTitleBar {
-					button.isEnabled = false
-				} else {
-					button.cell?.isHighlighted = true
-				}
+			if !isInTitleBar {
+				button.isEnabled           = !isCurrent
 			}
 		}
 	}
 
 	@objc private func handleButtonPress(_ button: ZButton) {
-		if  let mode = button.buttonMode {
-//			gHelpController?.show(false, nextMode: .noMode)   // force .dotMode's grid view's draw method to be called when visible (workaround an apple bug?)
-			gHelpController?.show( true, nextMode:    mode)
-			gSignal([.sStartup]) // to update help buttons in startup view
+		if  let mode = button.helpMode,
+			mode    != gCurrentHelpMode {                   // eliminate no-op cpu time
+			gHelpController?.show( true, nextMode: mode)    // side-effect: sets gCurrentHelpMode
+			gSignal([.sStartup])                            // to update help buttons in startup view
 		}
 	}
 

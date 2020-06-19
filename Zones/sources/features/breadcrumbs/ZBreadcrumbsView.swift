@@ -38,6 +38,8 @@ class ZBreadcrumbsView : ZButtonsView {
 	}
 
 	override func setupButtons() {
+		removeButtons()
+
 		buttons = [ZBreadcrumbButton]()
 
 		for (index, zone) in gBreadcrumbs.crumbZones.enumerated() {
@@ -64,8 +66,10 @@ class ZBreadcrumbsView : ZButtonsView {
 		fitBreadcrumbsToWindow()   // side effect: updates clipped
 	}
 
-	override func updateAndRedraw() {
-		super.updateAndRedraw()   // side effect: updates clipped, used below
+	
+
+	override func setupAndRedraw() {
+		super.setupAndRedraw()   // side effect: updates clipped, used below
 
 		clipCrumbsButton? .image    = !clipped ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
 		dbIndicatorButton?.title    =  gDatabaseID.indicator
@@ -84,13 +88,13 @@ class ZBreadcrumbsView : ZButtonsView {
 	@IBAction func handleClipper(_ sender: Any?) {
 		gClipBreadcrumbs = !gClipBreadcrumbs
 
-		updateAndRedraw()
+		setupAndRedraw()
 	}
 
 	@IBAction func handleDatabaseIndicatorAction(_ button: ZButton) {
 		gGraphController?.toggleGraphs()
 		gRedrawGraph()
-		updateAndRedraw()
+		setupAndRedraw()
 	}
 
 	@IBAction func crumbButtonAction(_ button: ZButton) {
