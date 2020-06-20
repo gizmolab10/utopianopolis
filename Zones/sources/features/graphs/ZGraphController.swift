@@ -26,6 +26,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	override  var       allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum] }
 	@IBOutlet var           dragView : ZDragView?
 	@IBOutlet var          graphView : ZView?
+	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 	var          priorScrollLocation = CGPoint.zero
 	let 	            clickManager = ZClickManager()
@@ -278,7 +279,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 							if  dot.isReveal {
 								zone.revealDotClicked(COMMAND: COMMAND, OPTION: OPTION)
 							} else {
-								regarding = .sCrumbs // update selection level and TODO: breadcrumbs
+								regarding = .sCrumbs // update selection level and breadcrumbs
 
 								zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
 							}

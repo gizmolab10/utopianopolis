@@ -77,19 +77,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     }
 
 
-    var isDropTarget: Bool {
-        if  let   index = widgetZone?.siblingIndex, !isReveal {
-            let isIndex = gDragDropIndices?.contains(index)
-            let  isDrop = widgetZone?.parentZone == gDragDropZone
-
-            if isDrop && isIndex! {
-                return true
-            }
-        }
-
-        return false
-    }
-
     var isVisible: Bool {
         if  isReveal,
 			let zone = widgetZone {
@@ -234,7 +221,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         path.fill()
     }
 
-    func drawTinyBookmarkDot(in iDirtyRect: CGRect) {
+    func drawCenterBookmarkDot(in iDirtyRect: CGRect) {
         let     inset = CGFloat(innerDotHeight / 3.0)
         let      path = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(inset))
         path.flatness = 0.0001
@@ -256,7 +243,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	}
 
 	func drawInnerDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		let fill = parameters.filled ? gBackgroundColor : parameters.color
+		let decorationFillColor = parameters.filled ? gBackgroundColor : parameters.color
 
 		parameters.color.setStroke()
 		parameters.fill .setFill()
@@ -265,11 +252,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		// DOT //
 		// //////
 
-		if  !parameters.isDrop { // so when cursor leaves window, the should-be-invisible reveal dot will indeed disappear
-			drawMainDot(in: iDirtyRect, using: parameters)
-		}
+		drawMainDot(in: iDirtyRect, using: parameters)
 
-		if  parameters.isReveal {
+		if      parameters.isReveal {
 			if  parameters.isBookmark {
 
 				// //////////////////
@@ -277,14 +262,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 				// //////////////////
 
 				gBackgroundColor.setFill()
-				drawTinyBookmarkDot(in: iDirtyRect)
+				drawCenterBookmarkDot(in: iDirtyRect)
 			} else if parameters.traitType != "" {
 
 				// //////////////////
 				// TRAIT INDICATOR //
 				// //////////////////
 
-				drawTraitIndicator(for: parameters.traitType, isFilled: parameters.filled, color: fill, in: iDirtyRect)
+				drawTraitIndicator(for: parameters.traitType, isFilled: parameters.filled, color: decorationFillColor, in: iDirtyRect)
 			}
 		} else if parameters.showAccess {
 
@@ -292,7 +277,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			// WRITE-ACCESS DECORATIONS //
 			// ///////////////////////////
 
-			fill.setFill()
+			decorationFillColor.setFill()
 			drawWriteAccessDecoration(of: parameters.accessType, in: iDirtyRect)
 		}
 	}

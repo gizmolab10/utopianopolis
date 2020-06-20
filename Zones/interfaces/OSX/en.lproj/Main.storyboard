@@ -675,6 +675,7 @@ DQ
                         <outlet property="dragView" destination="itU-Gt-Inh" id="4nO-dp-new"/>
                         <outlet property="graphView" destination="myf-PZ-JAt" id="GM0-He-36T"/>
                         <outlet property="ideaContextualMenu" destination="4NV-a6-tte" id="idV-YI-eqw"/>
+                        <outlet property="mapContextualMenu" destination="HLb-eX-LkY" id="8lR-R2-tPJ"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -828,10 +829,10 @@ CA
                 </menu>
                 <menu title="Map Contextual Menu" identifier="Map Contextual Menu" id="HLb-eX-LkY" userLabel="Map Contextual Menu" customClass="ZContextualMenu" customModule="Seriously" customModuleProvider="target">
                     <items>
-                        <menuItem title="Toggle Power User Mode" keyEquivalent="p" id="jsN-Te-okB">
-                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                        <menuItem title="Recenter Map" keyEquivalent="c" id="Apg-wy-AUv">
+                            <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
-                                <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="Pu2-6U-ujq"/>
+                                <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="2xn-ls-pjG"/>
                             </connections>
                         </menuItem>
                         <menuItem title="Toggle Colorful Mode" keyEquivalent="k" id="YmI-bt-j1e">
@@ -840,10 +841,16 @@ CA
                                 <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="Zgl-Ld-yJ6"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Recenter Map" keyEquivalent="c" id="Apg-wy-AUv">
-                            <modifierMask key="keyEquivalentModifierMask"/>
+                        <menuItem title="Next Skill Level" keyEquivalent="p" id="jsN-Te-okB">
+                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                             <connections>
-                                <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="2xn-ls-pjG"/>
+                                <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="Pu2-6U-ujq"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Show/Hide Tool Tips" keyEquivalent="y" id="35Z-89-09h">
+                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="OO7-WJ-n5J"/>
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="PMh-Qw-qqu">
@@ -1517,7 +1524,7 @@ DQ
                 </viewController>
                 <customObject id="2Ip-rP-SYE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="17" y="1239.5"/>
+            <point key="canvasLocation" x="-57" y="1240"/>
         </scene>
     </scenes>
 </document>

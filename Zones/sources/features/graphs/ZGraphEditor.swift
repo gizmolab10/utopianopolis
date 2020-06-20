@@ -111,7 +111,7 @@ class ZGraphEditor: ZBaseEditor {
 					gCurrentKeyPressed = key
 
                     switch key {
-						case "a":      if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawGraph() }
+					case "a":      if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawGraph() }
                     case "b":      gSelecting.firstSortedGrab?.addBookmark()
 					case "c":      if COMMAND && !OPTION { copyToPaste() } else { gGraphController?.recenter(SPECIAL) }
 					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }

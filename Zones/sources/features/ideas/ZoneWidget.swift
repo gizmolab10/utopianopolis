@@ -390,19 +390,6 @@ class ZoneWidget: ZView {
         }
     }
 
-    func isDropIndex(_ iIndex: Int?) -> Bool {
-        if  iIndex != nil {
-            let isIndex = gDragDropIndices?.contains(iIndex!)
-            let  isDrop = widgetZone == gDragDropZone
-
-            if isDrop && isIndex! {
-                return true
-            }
-        }
-
-        return false
-    }
-
     // MARK:- child lines
     // MARK:-
 
@@ -494,7 +481,7 @@ class ZoneWidget: ZView {
     // MARK:- draw
     // MARK:-
 
-    func drawSelectionHighlight(_ pale: Bool) {
+    func drawSelectionHighlight(_ dashes: Bool) {
         let      thickness = CGFloat(gDotWidth) / 3.5
         let       rightDot = revealDot.innerDot
         let         height = gGenericOffset.height
@@ -506,7 +493,7 @@ class ZoneWidget: ZView {
         rect.size .height += -0.5 + gHighlightHeightOffset + (type.isMap ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
-        let     colorRatio = CGFloat(pale ? 0.5 : 1.0)
+		let     colorRatio = CGFloat(dashes ? 0.5 : 0.5)
         let          color = widgetZone?.color
         let      fillColor = color?.withAlphaComponent(colorRatio * 0.02)
         let    strokeColor = color?.withAlphaComponent(colorRatio * 0.60)
@@ -515,7 +502,7 @@ class ZoneWidget: ZView {
         path     .flatness = 0.0001
 		var          debug = "[UNDASH] "
 
-        if  pale {
+        if  dashes {
             path.addDashes()
 			debug = "[DASH]   "
         }

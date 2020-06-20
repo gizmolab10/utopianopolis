@@ -352,22 +352,31 @@ class ZSelecting: NSObject {
 
 		return found
 	}
-    
-    func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
-        if  let newGrabs = iZones {
-            let oldGrabs = currentGrabs
-            currentGrabs = [] // can't use ungrabAll because we need to keep cousinList
-            sortedGrabs  = []
+
+	@discardableResult func primitiveGrab(_ iZones: ZoneArray?) -> ZoneArray? {
+		if  let newGrabs = iZones {
+			let oldGrabs = currentGrabs
+			currentGrabs = [] // can't use ungrabAll because we need to keep cousinList
+			sortedGrabs  = []
 
 			if  newGrabs.count != 0 {
 				hasNewGrab = newGrabs[0]
 			}
 
+			addMultipleGrabs(newGrabs)
+
+			return oldGrabs
+		}
+
+		return nil
+	}
+    
+    func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
+		if  let oldGrabs = primitiveGrab(iZones) {
             updateWidgetsNeedDisplay(for: oldGrabs)
-            addMultipleGrabs(newGrabs)
 
             if  updateBrowsingLevel,
-                let 		  level = newGrabs.rootMost?.level {
+                let 		  level = iZones?.rootMost?.level {
                 gCurrentBrowseLevel = level
             }
         }

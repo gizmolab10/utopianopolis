@@ -24,40 +24,10 @@ class ZoneContextualMenu: ZContextualMenu {
 	}
 
 	override func handleKey(_ key: String) {
-		gTemporarilySetMouseZone(zone)
-
-		if  let arrow = key.arrow {
-			switch arrow {
-				case .left:  zone?.applyGenerationally(false)
-				case .right: zone?.applyGenerationally(true)
-				default:     break
-			}
+		if  ["l", "u"].contains(key) {
+			textWidget?.alterCase(up: key == "u")
 		} else {
-			switch key {
-				case "a":    zone?.children.alphabetize()
-				case "b":    zone?.addBookmark()
-				case "c":    break
-				case "d":    zone?.duplicate()
-				case "e":    zone?.editTrait(for: .tEmail)
-				case "h":    zone?.editTrait(for: .tHyperlink)
-				case "k":    break
-				case "l":    textWidget?.alterCase(up: false)
-				case "m":    zone?.children.sortByLength()
-				case "n":    zone?.showNote()
-				case "o":    zone?.importFromFile(.eSeriously) { gRedrawGraph(for: self) }
-				case "p":    break
-				case "r":    zone?.reverseChildren()
-				case "s":    zone?.exportToFile(.eSeriously)
-				case "t":    zone?.swapWithParent()
-				case "u":    textWidget?.alterCase(up: true)
-				case "=":    break
-				case "_":    break
-				case "/":    zone?.focus()
-				case kSpace: zone?.addIdea()
-				case "\u{08}",                                      // control-delete?
-					kDelete: zone?.deleteSelf { gRedrawGraph() }
-				default:     break
-			}
+			zone?.handleContextualMenuKey(key)
 		}
 	}
 

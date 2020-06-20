@@ -984,45 +984,33 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
-		if  let dbID = databaseID,
-			dbID    != .favoritesID {
-
-			func createAndAdd() {
-				let newIdea            = Zone(databaseID: dbID)
-
-				if  name != nil {
-					newIdea.zoneName   = name
-				}
-
-				if !gIsMasterAuthor,
-					dbID              == .everyoneID,
-					let       identity = gAuthorID {
-					newIdea.zoneAuthor = identity
-				}
-
-				newIdea.markNotFetched()
-
-				UNDO(self) { iUndoSelf in
-					newIdea.deleteSelf() {
-						onCompletion?(nil)
-					}
-				}
-
-				ungrab()
-				addAndReorderChild(newIdea, at: iIndex, { onCompletion?(newIdea) } )
-			}
+		if  let    dbID = databaseID,
+			dbID       != .favoritesID {
+			let newIdea = Zone(databaseID: dbID)
 
 			parentZoneMaybe?.revealChildren()
 			gTextEditor.stopCurrentEdit()
 
-			if  let p = parentZoneMaybe {
-				if  p.count > 0 || p.fetchableCount == 0 {
-					createAndAdd()
-				} else {
-					p.needChildren()
-					createAndAdd()
+			if  name != nil {
+				newIdea.zoneName   = name
+			}
+
+			if !gIsMasterAuthor,
+				dbID              == .everyoneID,
+				let       identity = gAuthorID {
+				newIdea.zoneAuthor = identity
+			}
+
+			newIdea.markNotFetched()
+
+			UNDO(self) { iUndoSelf in
+				newIdea.deleteSelf() {
+					onCompletion?(nil)
 				}
 			}
+
+			ungrab()
+			addAndReorderChild(newIdea, at: iIndex, { onCompletion?(newIdea) } )
 		}
 	}
 
@@ -2316,6 +2304,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return p
 	}
 
+	func dropDotParameters() -> ZDotParameters {
+		var      p = dotParameters(true, true)
+		p.fill     = gActiveColor
+		p.isReveal = true
+
+		return p
+	}
+
 	// MARK:- lines and titles
     // MARK:-
 
@@ -2442,6 +2438,45 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			done()
         }
     }
+
+	// MARK:- contextual menu
+	// MARK:-
+
+	func handleContextualMenuKey(_ key: String){
+		gTemporarilySetMouseZone(self)
+
+		if  let arrow = key.arrow {
+			switch arrow {
+				case .left:  applyGenerationally(false)
+				case .right: applyGenerationally(true)
+				default:     break
+			}
+		} else {
+			switch key {
+				case "a":     children.alphabetize()
+				case "b":     addBookmark()
+				case "c":     break
+				case "d":     duplicate()
+				case "e":     editTrait(for: .tEmail)
+				case "h":     editTrait(for: .tHyperlink)
+				case "k":     break
+				case "m":     children.sortByLength()
+				case "n":     showNote()
+				case "o":     importFromFile(.eSeriously) { gRedrawGraph(for: self) }
+				case "p":     break
+				case "r":     reverseChildren()
+				case "s":     exportToFile(.eSeriously)
+				case "t":     swapWithParent()
+				case "/":     focus()
+				case "_":     break
+				case kEquals: break
+				case kSpace:  addIdea()
+				case "\u{08}",                                      // control-delete?
+				kDelete:      deleteSelf { gRedrawGraph() }
+				default:      break
+			}
+		}
+	}
 
     // MARK:- file persistence
     // MARK:-

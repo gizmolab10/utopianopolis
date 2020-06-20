@@ -606,7 +606,7 @@ extension ZoneWidget {
 					frame.origin   .y = leftFrame .minY + thinThickness + halfDotHeight
 					frame.size.height = abs(  rightMidY + thinThickness - frame.minY)
 				case .above:
-					frame.origin   .y = rightFrame.maxY - halfDotHeight
+					frame.origin   .y = rightFrame.maxY + halfDotHeight / 2.0
 					frame.size.height = abs(   leftMidY - thinThickness - frame.minY)
 				case .straight:
 					frame.origin   .y =       rightMidY - thinThickness / 8.0

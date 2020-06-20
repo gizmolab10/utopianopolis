@@ -15,6 +15,7 @@
 class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 	@IBOutlet var controller: ZGraphController?
+	override func menu(for event: NSEvent) -> NSMenu? { return controller?.mapContextualMenu }
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
@@ -22,6 +23,8 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
         kClearColor.setFill()
 		kClearColor.setStroke()
         ZBezierPath(rect: bounds).fill() // transparent background
+
+		// draw dashed rectangle in active color for rubberband
 
 		if  controller?.isMap ?? false,
 			let rect = gRubberband.rubberbandRect {
@@ -31,18 +34,21 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			path.stroke()
         }
 
-		if  let    widget = gDragDropZone?.widget,
-			let       dot = widget.revealDot.innerDot,
-			let         c = controller, c.isMap == gDragDropZone?.isInMap {
-            let floatRect = widget.floatingDropDotRect
-            let  dragRect = widget.convert(floatRect, to: self)
-			let   dotRect = convert(dot.bounds, from: dot)
+		// draw dragged dot and line in active color
+
+		if  let     widget = gDragDropZone?.widget,
+			let        dot = widget.revealDot.innerDot,
+			let          c = controller, c.isMap == gDragDropZone?.isInMap {
+			let parameters = widget.widgetZone?.dropDotParameters() ?? ZDotParameters()
+            let  floatRect = widget.floatingDropDotRect
+            let   dragRect = widget.convert(floatRect, to: self)
+			let    dotRect = convert(dot.bounds, from: dot)
 
 			gActiveColor.setFill()
             gActiveColor.setStroke()
-			dot.drawMainDot(in: dotRect, using: ZDotParameters())
-            ZBezierPath(ovalIn: dragRect).fill()
-            widget.drawDragLine(to: floatRect, in: self)
+			ZBezierPath(ovalIn: dragRect).fill()
+			dot.drawInnerDot(dotRect, parameters)
+			widget.drawDragLine(to: floatRect, in: self)
         }
 	}
 

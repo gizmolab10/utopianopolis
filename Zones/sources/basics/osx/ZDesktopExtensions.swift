@@ -1168,8 +1168,8 @@ extension ZoneWidget {
         if  let     sourceDot = revealDot.innerDot, kind != nil {
             let   sourceFrame = sourceDot.convert( sourceDot.bounds, to: self)
             let     thickness = CGFloat(gLineThickness)
-            let     dotHeight = CGFloat(gDotHeight)
-			let    adjustment = CGFloat(5.0)
+			let     dotHeight = CGFloat(gDotHeight)
+			let    adjustment = CGFloat(2.0)
             let halfDotHeight = dotHeight / 2.0
             let thinThickness = thickness / 2.0
             let    targetMidY = targetFrame.midY
@@ -1187,9 +1187,9 @@ extension ZoneWidget {
 				frame.size .width = abs( targetFrame.minX            - frame.minX)
             case .straight:
                 frame.origin   .y =       targetMidY - thinThickness / 2.0
-                frame.origin   .x = sourceFrame.maxX - adjustment
+                frame.origin   .x = sourceFrame.maxX
                 frame.size.height =                    thinThickness
-				frame.size .width = abs(targetFrame.minX - frame.minX) + adjustment
+				frame.size .width = abs(targetFrame.minX - frame.minX)
             }
 
         }

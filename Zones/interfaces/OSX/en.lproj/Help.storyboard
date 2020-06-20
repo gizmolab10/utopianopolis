@@ -39,7 +39,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Aa-9c-eI8">
                                     <rect key="frame" x="0.0" y="0.0" width="1152" height="780"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" id="H0M-2O-9lo">
                                             <rect key="frame" x="0.0" y="0.0" width="1155" height="780"/>
@@ -84,7 +84,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <customView hidden="YES" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
+                            <customView hidden="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="12" width="1180" height="780"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
@@ -157,12 +157,16 @@
                             </customView>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="zAE-6p-uHR" firstAttribute="top" secondItem="xVv-mR-0mE" secondAttribute="top" id="60s-7B-AUN"/>
                             <constraint firstAttribute="bottom" secondItem="xVv-mR-0mE" secondAttribute="bottom" id="7nk-p7-mV1"/>
+                            <constraint firstItem="zAE-6p-uHR" firstAttribute="bottom" secondItem="xVv-mR-0mE" secondAttribute="bottom" id="Dsk-wn-uM3"/>
                             <constraint firstItem="lJB-I7-wvM" firstAttribute="top" secondItem="OMb-DG-XS6" secondAttribute="top" id="IKq-tX-7lH"/>
                             <constraint firstAttribute="bottom" secondItem="lJB-I7-wvM" secondAttribute="bottom" id="SPn-h3-VIa"/>
                             <constraint firstItem="zAE-6p-uHR" firstAttribute="top" secondItem="OMb-DG-XS6" secondAttribute="top" id="VKN-Qg-pNW"/>
                             <constraint firstItem="xVv-mR-0mE" firstAttribute="leading" secondItem="OMb-DG-XS6" secondAttribute="leading" id="Wfh-oH-M0z"/>
                             <constraint firstAttribute="bottom" secondItem="zAE-6p-uHR" secondAttribute="bottom" id="eYN-wE-pg8"/>
+                            <constraint firstItem="zAE-6p-uHR" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" id="fCC-Wa-sDL"/>
+                            <constraint firstItem="zAE-6p-uHR" firstAttribute="trailing" secondItem="xVv-mR-0mE" secondAttribute="trailing" id="oJ4-Yq-df8"/>
                             <constraint firstAttribute="trailing" secondItem="xVv-mR-0mE" secondAttribute="trailing" id="tJi-j3-xUQ"/>
                             <constraint firstItem="lJB-I7-wvM" firstAttribute="leading" secondItem="OMb-DG-XS6" secondAttribute="leading" id="vz5-yW-oTj"/>
                             <constraint firstAttribute="trailing" secondItem="lJB-I7-wvM" secondAttribute="trailing" id="xhn-eP-rEE"/>

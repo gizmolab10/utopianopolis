@@ -146,6 +146,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
                 gSearching.exitSearchMode()
             }
 
+			if  var prior = gSelecting.primitiveGrab([zone]) {
+				prior.appendUnique(contentsOf: [zone])
+				gSelecting.updateWidgetsNeedDisplay(for: prior)
+			}
+
 			printDebug(.dEdit, " RESPOND " + zone.unwrappedName)
 			gTextEditor.edit(zone, setOffset: gTextOffset)
 

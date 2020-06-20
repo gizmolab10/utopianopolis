@@ -84,7 +84,7 @@ class ZHelpController: ZGenericTableController {
 		let  COMMAND = flags.isCommand
 		let  CONTROL = flags.isControl
 		let   OPTION = flags.isOption
-		var nextMode : ZHelpMode?
+		var nextMode = gCurrentHelpMode
 
 		if            COMMAND {
 			if       !OPTION && CONTROL {
