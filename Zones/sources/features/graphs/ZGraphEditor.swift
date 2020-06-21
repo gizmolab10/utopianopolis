@@ -53,7 +53,8 @@ class ZGraphEditor: ZBaseEditor {
     }
 
     @discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
-		if  var     key = iKey {
+		if !gIsEditingStateChanging,
+			var     key = iKey {
             let CONTROL = flags.isControl
             let COMMAND = flags.isCommand
             let  OPTION = flags.isOption

@@ -201,33 +201,39 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
             dropNearest.widgetZone?.needWrite() // WHY?
 
-            if  isEditingText(at: location) {
-                restartGestureRecognition()           // let text editor consume the gesture
-            } else if flags.isCommand {               // shift background
-                scrollEvent(move: state == .changed, to: location)
-            } else if gIsDragging {
-                dragMaybeStopEvent(iGesture)          // logic for drawing the drop dot, and for dropping dragged idea
-			} else if state == .changed,              // enlarge rubberband
-				gRubberband.setRubberbandEnd(location) {
-				gRubberband.updateGrabs(in: graphView)
-				dragView?  .setNeedsDisplay()
-            } else if state != .began {               // drag ended, failed or was cancelled
-                gRubberband.rubberbandRect = nil      // erase rubberband
+			if  isEditingText(at: location) {
+				restartGestureRecognition()           // let text editor consume the gesture
+			} else {
+				if  gCurrentlyEditingWidget != nil {
+					gTextEditor.stopCurrentEdit()
+				}
 
-				restartGestureRecognition()
-				graphView?.setAllSubviewsNeedDisplay()
-				dragView? .setNeedsDisplay()
-				gSignal([.sDatum])                    // so color well and indicators get updated
-            } else if let dot = detectDot(iGesture) {
-                if  !dot.isReveal {
-                    dragStartEvent(dot, iGesture)     // start dragging a drag dot
-                } else if let zone = dot.widgetZone {
-                    cleanupAfterDrag()                // no dragging
-					zone.revealDotClicked(COMMAND: flags.isCommand, OPTION: flags.isOption)
-                }
-            } else {                                  // begin drag
-				gRubberband.rubberbandStartEvent(location, iGesture)
-            }
+				if flags.isCommand {               // shift background
+					scrollEvent(move: state == .changed, to: location)
+				} else if gIsDragging {
+					dragMaybeStopEvent(iGesture)          // logic for drawing the drop dot, and for dropping dragged idea
+				} else if state == .changed,              // enlarge rubberband
+					gRubberband.setRubberbandEnd(location) {
+					gRubberband.updateGrabs(in: graphView)
+					dragView?  .setNeedsDisplay()
+				} else if state != .began {               // drag ended, failed or was cancelled
+					gRubberband.rubberbandRect = nil      // erase rubberband
+
+					restartGestureRecognition()
+					graphView?.setAllSubviewsNeedDisplay()
+					dragView? .setNeedsDisplay()
+					gSignal([.sDatum])                    // so color well and indicators get updated
+				} else if let dot = detectDot(iGesture) {
+					if  !dot.isReveal {
+						dragStartEvent(dot, iGesture)     // start dragging a drag dot
+					} else if let zone = dot.widgetZone {
+						cleanupAfterDrag()                // no dragging
+						zone.revealDotClicked(COMMAND: flags.isCommand, OPTION: flags.isOption)
+					}
+				} else {                                  // begin drag
+					gRubberband.rubberbandStartEvent(location, iGesture)
+				}
+			}
 
 			return true
         }
@@ -263,8 +269,9 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 withinEdit             = textRect.contains(backgroundLocation)
             }
 
-            if  !withinEdit {
+            if !withinEdit {
 				gSetGraphMode()
+				gTextEditor.stopCurrentEdit()
 
 				if  let   widget = detectWidget(gesture) {
 					if  let zone = widget.widgetZone {
@@ -290,8 +297,6 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					// //////////////////////
 					// click in background //
 					// //////////////////////
-
-					gTextEditor.stopCurrentEdit()
 
 					if  clickManager.isDoubleClick() {
 						recenter()

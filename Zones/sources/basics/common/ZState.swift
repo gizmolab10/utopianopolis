@@ -80,10 +80,13 @@ var   gDarkishBackgroundColor:             ZColor { return gAccentColor.darkish 
 var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
 var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
-var            gFavoritesFont:              ZFont { return .systemFont(ofSize: gFontSize * kFavoritesReduction) }
-var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
+var            gFavoritesFont:              ZFont { return .systemFont    (ofSize: gFontSize * kFavoritesReduction) }
+var               gWidgetFont:              ZFont { return .systemFont    (ofSize: gFontSize) }
 
-let                 kBoldFont                     = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
+let                 kHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize)
+var            kLargeHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize + 1.0)
+let                 kBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize)
+let            kLargeBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize + 1.0)
 let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
 let       kBeginnerSkillLevel                     = ZSkillLevel.explorer.rawValue
 let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
@@ -235,12 +238,12 @@ var gFavoritesAreVisible: Bool {
 }
 
 var gAccentColor: ZColor {
-	get { return !gColorfulMode ? kLightGrayColor : getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) }
+	get { return !gColorfulMode ? kDarkerGrayColor : getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) }
 	set { setPreferencesColor(newValue, for: kAccentColorKey) }
 }
 
 var gActiveColor: ZColor {
-	get { return !gColorfulMode ? kDarkGrayColor : getPreferencesColor( for: kActiveColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
+	get { return !gColorfulMode ? kGrayColor : getPreferencesColor( for: kActiveColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
 	set { setPreferencesColor(newValue, for: kActiveColorKey) }
 }
 
@@ -605,23 +608,34 @@ var gUserIsActive: ZActiveWindowID? {
 	return nil
 }
 
-var gLastLocation = NSPoint.zero
-
-func gTestForUserInterrupt() throws {
-	if !Thread.isMainThread {
-//		gFOREGROUND.async {
-//			try gTestForUserInterrupt()
-//		}
-	} else if  let w = gUserIsActive {
+var gTestForUserActivity: Bool {
+	if  let w = gUserIsActive {
 		printDebug(.dUser, "throwing user interrupt in \(w.description) \(gInterruptionCount)")
 		gInterruptionCount += 1
 
+		return true
+	}
 
-		if !gHasFinishedStartup {
-			gSignal([.sStartup])
+	return false
+}
+
+var gLastLocation = NSPoint.zero
+
+func gThrowOnUserActivity() throws {
+	if  Thread.isMainThread {
+		if  gTestForUserActivity {
+			if !gHasFinishedStartup {
+				gSignal([.sStartup])
+			}
+
+			throw(ZInterruptionError.userInterrupted)
 		}
-
-		throw(ZInterruptionError.userInterrupted)
+	} else {
+		gFOREGROUND.async {
+			if  gTestForUserActivity {
+				// cannot throw, so now what?
+			}
+		}
 	}
 }
 
@@ -697,21 +711,29 @@ func setPreferencesRect(_ iRect: CGRect = CGRect.zero, for key: String) {
 func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {
     var color = defaultColor
 
-    if  let data = UserDefaults.standard.object(forKey: key) as? Data,
-		let    c = NSKeyedUnarchiver.unarchiveObject(with: data) as? ZColor {
-        color    = c
-    } else {
-        setPreferencesColor(color, for: key)
-    }
+	do {
+		if  let data = UserDefaults.standard.object(forKey: key) as? Data,
+			let    c = try NSKeyedUnarchiver.unarchivedObject(ofClass: ZColor.self, from: data) {
+			color    = c
+		} else {
+			setPreferencesColor(color, for: key)
+		}
+	} catch {
+		setPreferencesColor(color, for: key)
+	}
 
     return color.accountingForDarkMode
 }
 
 func setPreferencesColor(_ color: ZColor, for key: String) {
-	let data: Data = NSKeyedArchiver.archivedData(withRootObject: color.accountingForDarkMode)
+	do {
+		let data: Data = try NSKeyedArchiver.archivedData(withRootObject: color.accountingForDarkMode, requiringSecureCoding: false)
 
-    UserDefaults.standard.set(data, forKey: key)
-    UserDefaults.standard.synchronize()
+		UserDefaults.standard.set(data, forKey: key)
+		UserDefaults.standard.synchronize()
+	} catch {
+
+	}
 }
 
 func getPreferenceString(for key: String, needDefault: ToStringClosure? = nil) -> String? {

@@ -52,7 +52,9 @@ class ZFiles: NSObject {
 					}
 				}
 			}
-		} catch {}
+		} catch {
+			printDebug(.dError, "\(error)")
+		}
 
 		return result
 	}
@@ -133,13 +135,13 @@ class ZFiles: NSObject {
 		}
 	}
 
-	func readFile(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
+	func readFile(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
 		if  databaseID  != .favoritesID,
 			let    index = databaseID.index,
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {
 			let 	path = filePath(for: dbIndex)
 
-			readFile(from: path, into: databaseID, onCompletion: onCompletion)
+			try readFile(from: path, into: databaseID, onCompletion: onCompletion)
 		}
 	}
 
@@ -232,78 +234,72 @@ class ZFiles: NSObject {
 		}
 	}
 
-	func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
+	func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
 		if  gUseFiles,
-            databaseID      != .favoritesID,
-            let       cloud  = gRemoteStorage.cloud(for: databaseID),
+			databaseID      != .favoritesID,
+			let       cloud  = gRemoteStorage.cloud(for: databaseID),
 			let       index  = databaseID.index {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
 			let  keys: types = [.date, .lost, .graph, .trash, .destroy, .recent, .manifest, .favorites, .bookmarks ]
-			
-            FOREGROUND {
-                do {
-                    if  let   data = FileManager.default.contents(atPath: path),
-                        data.count > 0,
-                        let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
-                        let   dict = self.dictFromJSON(json)
 
-                        for key in keys {
-                            if  let value = dict[key] {
+			if  let   data = FileManager.default.contents(atPath: path),
+				data.count > 0,
+				let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
+				let   dict = self.dictFromJSON(json)
 
-                                switch key {
-                                case .date:
-                                    if  let date = value as? Date {
-                                        cloud.lastSyncDate = date
-                                    }
-                                case .manifest:
-                                    if  cloud.manifest == nil,
-                                        let    subDict  = value as? ZStorageDictionary {
-                                        let   manifest  = ZManifest(dict: subDict, in: databaseID)
-                                        cloud.manifest  = manifest
-                                    }
-                                case .bookmarks:
-                                    if let array = value as? [ZStorageDictionary] {
-                                        for subDict in array {
-                                            if  !databaseID.isDeleted(dict: subDict) {
-                                                let zone = Zone(dict: subDict, in: databaseID)
-                                                
-                                                gBookmarks.registerBookmark(zone)
-                                            }
-                                        }
-                                    }
-                                default:
-                                    if  let subDict = value as? ZStorageDictionary,
-                                        !databaseID.isDeleted(dict: subDict) {
-                                        let zone = Zone(dict: subDict, in: databaseID)
-                                        
-                                        zone.updateRecordName(for: key)
-                                        
-                                        switch key {
+				for key in keys {
+					if  let value = dict[key] {
+
+						switch key {
+							case .date:
+								if  let date = value as? Date {
+									cloud.lastSyncDate = date
+							}
+							case .manifest:
+								if  cloud.manifest == nil,
+									let    subDict  = value as? ZStorageDictionary {
+									let   manifest  = try ZManifest(dict: subDict, in: databaseID)
+									cloud.manifest  = manifest
+							}
+							case .bookmarks:
+								if let array = value as? [ZStorageDictionary] {
+									for subDict in array {
+										if  !databaseID.isDeleted(dict: subDict) {
+											let zone = Zone(dict: subDict, in: databaseID)
+
+											gBookmarks.registerBookmark(zone)
+										}
+									}
+							}
+							default:
+								if  let subDict = value as? ZStorageDictionary,
+									!databaseID.isDeleted(dict: subDict) {
+									let zone = Zone(dict: subDict, in: databaseID)
+
+									zone.updateRecordName(for: key)
+
+									switch key {
 										case .lost:      cloud.lostAndFoundZone = zone
-                                        case .graph:     cloud.rootZone         = zone
-                                        case .trash:     cloud.trashZone        = zone
+										case .graph:     cloud.rootZone         = zone
+										case .trash:     cloud.trashZone        = zone
 										case .recent:    cloud.recentsZone      = zone
-                                        case .destroy:   cloud.destroyZone      = zone
+										case .destroy:   cloud.destroyZone      = zone
 										case .favorites: cloud.favoritesZone    = zone
-                                        default: break
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } catch {
-                    printDebug(.dError, "\(error)")    // de-serialization
-                }
+										default: break
+									}
+							}
+						}
+					}
+				}
+			}
 
-                gRemoteStorage.zRecords(for: databaseID)?.removeDuplicates()
-				cloud.recount()
+			gRemoteStorage.zRecords(for: databaseID)?.removeDuplicates()
+			cloud.recount()
 
-                self.isReading[index] = false
+			self.isReading[index] = false
 
-				onCompletion?(0)
-            }
+			onCompletion?(0)
 		}
 	}
 

@@ -85,7 +85,7 @@ class ZOperations: NSObject {
     var       lastOpStart :        NSDate?
 	func printOp(_ message: String)        { columnarReport(mode: .dOps, operationText, message) }
 	func unHang()                          { onCloudResponse?(0) }
-	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?)                                         {}
+	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws                                  {} 
 	func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
     var operationText: String {

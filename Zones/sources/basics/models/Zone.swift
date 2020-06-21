@@ -1227,7 +1227,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let   dbID = databaseID,
 				let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
 				let   dict = self.dictFromJSON(json)
-				let   zone = Zone(dict: dict, in: dbID)
+				let   zone = try Zone(dict: dict, in: dbID)
 
 				addChild(zone, at: 0)
 				onCompletion?()
@@ -2294,7 +2294,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isBookmark  = isBookmark
 		p.showAccess  = hasAccessDecoration
 		p.showList    = showingChildren
-		p.color       = type.isExemplar ? gHelpEmphasisColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
+		p.color       = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
 		p.childCount  = (gCountsMode == .progeny) ? progenyCount : indirectCount
 		p.traitType   = (traits.count < 1) ? "" : traits[0]
 		p.filled      = isFilled
@@ -2485,7 +2485,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         self.init(record: nil, databaseID: dbID)
 
         temporarilyIgnoreNeeds {
-            extractFromStorageDictionary(dict, of: kZoneType, into: dbID)
+			do {
+				try extractFromStorageDictionary(dict, of: kZoneType, into: dbID)
+			} catch {
+				printDebug(.dError, "\(error)")    // de-serialization
+			}
         }
     }
 
@@ -2514,10 +2518,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
         }
     }
 
-    override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
+    override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
         if  let name = dict[.name] as? String { zoneName = name }
 
-        super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
+        try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
 
         if let childrenDicts: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
             for childDict: ZStorageDictionary in childrenDicts {
@@ -2533,7 +2537,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
         if  let traitsStore: [ZStorageDictionary] = dict[.traits] as! [ZStorageDictionary]? {
             for  traitStore:  ZStorageDictionary in traitsStore {
-                let    trait = ZTrait(dict: traitStore, in: iDatabaseID)
+                let    trait = try ZTrait(dict: traitStore, in: iDatabaseID)
 
 				if  gDebugMode.contains(.dNotes),
 					let   tt = trait.type,

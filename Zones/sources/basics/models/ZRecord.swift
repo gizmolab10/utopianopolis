@@ -509,7 +509,7 @@ class ZRecord: NSObject {
     }
 
 	func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
-		try gTestForUserInterrupt()
+		try gThrowOnUserActivity()
 
 		guard let name = recordName, !gFiles.writtenRecordNames.contains(name) else { return nil }
 		let   keyPaths = cloudProperties() + (includeRecordName ? [kpRecordName] : []) + [kpModificationDate]
@@ -533,8 +533,10 @@ class ZRecord: NSObject {
     }
     
 
-    func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
-        var ckRecord = CKRecord(recordType: iRecordType)
+    func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
+		try gThrowOnUserActivity()
+
+		var ckRecord = CKRecord(recordType: iRecordType)
         let     name = dict[.recordName] as? String
         databaseID   = iDatabaseID
 

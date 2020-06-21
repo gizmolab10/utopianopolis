@@ -152,10 +152,10 @@ class ZTrait: ZTraitAssets {
         self.init(record: CKRecord(recordType: kTraitType), databaseID: databaseID)
     }
 
-    convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
+    convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
         self.init(record: nil, databaseID: dbID)
 
-        extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
+        try extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
     }
 
 	override func cloudProperties() -> [String] { return ZTrait.cloudProperties() }

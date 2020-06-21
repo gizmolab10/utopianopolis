@@ -10,8 +10,8 @@ import Foundation
 
 class ZHelpData: NSObject {
 
-	var tabStops          = [NSTextTab]()
 	var helpMode          = ZHelpMode.noMode
+	var tabStops          = [NSTextTab]()
 	var noTabPrefix       :   String   { return "   " }
 	var columnStrings     : [[String]] { return [[]] }
 	var tabOffsets        :   [Int]    { return [0, 20, 85] } // default for graph shortcuts
@@ -19,6 +19,7 @@ class ZHelpData: NSObject {
 	var indexOfLastColumn :    Int     { return 3 }           // "
 	var stringsPerRow     :    Int     { return 3 }
 	var isPro             :    Bool    { return gCurrentHelpMode == .allMode }
+	var boldFont          :    ZFont   { return kBoldFont }
 
 	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) { return (nil, nil) }
 
@@ -123,6 +124,11 @@ class ZHelpData: NSObject {
 		let      hasURL = !url.isEmpty
 		var      prefix = "   "
 
+		switch gCurrentHelpMode {
+			case .dotMode: attributes[.font] = kLargeHelpFont
+			default:       attributes[.font] = nil
+		}
+
 		if !isPro && (SHIFT || type == .hPro) {
 			return NSMutableAttributedString(string: kTab + kTab + kTab)
 		}
@@ -131,13 +137,16 @@ class ZHelpData: NSObject {
 			case .hDots?:
 				prefix = noTabPrefix
 			case .hBold?:
-				attributes[.font] = kBoldFont
+				attributes[.font] = boldFont
 			case .hAppend?, .hUnderline?:
 				attributes[.underlineStyle] = 1
 			case .hPlain?, .hPro?:
 				if  hasURL {
-					attributes[.foregroundColor] = gHelpEmphasisColor
-					second.append(kSpace + kEllipsis)
+					attributes[.foregroundColor] = gHelpHyperlinkColor
+
+					if !url.isHyphen {
+						second.append(kSpace + kEllipsis)
+					}
 				}
 
 				fallthrough
@@ -183,7 +192,11 @@ class ZHelpData: NSObject {
 		let m = "https://medium.com/@sand_74696/"
 		let (_, _, url) = strings(for: row, column: column)
 
-		return url.isEmpty ? nil : m + url
+		if  url.isHyphen || url.isEmpty {
+			return nil
+		}
+
+		return m + url
 	}
 
 }

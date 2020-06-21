@@ -42,7 +42,9 @@ class ZTraitAssets: ZRecord {
 			do {
 				wrapper = try FileWrapper(url: url, options: [])
 				extend  = url.pathExtension
-			} catch {}
+			} catch {
+				printDebug(.dError, "\(error)")
+			}
 		}
 
 		grabWrapper()
@@ -64,7 +66,9 @@ class ZTraitAssets: ZRecord {
 
 					grabWrapper()
 					printDebug(.dImages, "RENAME   \(url)")
-				} catch {}
+				} catch {
+					printDebug(.dError, "\(error)")
+				}
 			}
 		}
 

@@ -1187,7 +1187,7 @@ extension ZoneWidget {
 				frame.size .width = abs( targetFrame.minX            - frame.minX)
             case .straight:
                 frame.origin   .y =       targetMidY - thinThickness / 2.0
-                frame.origin   .x = sourceFrame.maxX
+                frame.origin   .x = sourceFrame.maxX - adjustment           // adjust to eliminate gap
                 frame.size.height =                    thinThickness
 				frame.size .width = abs(targetFrame.minX - frame.minX)
             }

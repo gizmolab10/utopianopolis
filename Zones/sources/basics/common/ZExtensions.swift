@@ -1419,6 +1419,7 @@ extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
     var   asciiValue:  UInt32  { return asciiArray[0] }
     var           length: Int  { return unicodeScalars.count }
+	var         isHyphen: Bool { return self == "-" }
     var          isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
     var   isAlphabetical: Bool { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
     var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }

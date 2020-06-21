@@ -278,7 +278,7 @@ class ZTextEditor: ZTextView {
 				currentEdit = pack
 
 				printDebug(.dEdit, " MAYBE   " + zone.unwrappedName)
-
+				deferEditingStateChange()
 				pack.updateText(isEditing: true)
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
 				gSetEditIdeaMode()
@@ -294,7 +294,6 @@ class ZTextEditor: ZTextView {
 				}
 
 				gSignal([.sCrumbs])
-				deferEditingStateChange()
 			}
         }
 

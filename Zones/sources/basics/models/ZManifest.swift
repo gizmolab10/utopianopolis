@@ -130,15 +130,15 @@ class ZManifest: ZRecord {
     convenience init(databaseID: ZDatabaseID?) { self.init(record: CKRecord(recordType: kManifestType), databaseID: databaseID) }
     
     
-    convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
+    convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
         self.init(record: nil, databaseID: dbID)
-        
-        extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
+
+		try extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
     }
     
 
-    override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) {
-        super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID)
+    override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
+        try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID)
         
         if  let deletedsArray = dict[.deleted] as? [ZStorageDictionary] {
             for d in deletedsArray {

@@ -711,7 +711,7 @@ class ZCloud: ZRecords {
 						}
 
 						zRecord?.adopt()
-						try gTestForUserInterrupt()
+						try gThrowOnUserActivity()
 					}
 				}
 

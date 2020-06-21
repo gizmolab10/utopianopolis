@@ -42,7 +42,7 @@ class ZHelpGraphData : ZHelpData {
 		" A", 			"show About Seriously", 						"",
 		" R", 			"report a problem", 							"",
 		"pX",			"clear recents",								"",
-		"pY",			"show/hide tooltips",				"",
+		"pY",			"show/hide tooltips",							"",
 		"",				"", 											"",
 		"i",			"", 											"",
 		"bWHILE IN THE SEARCH BAR:", 								"", "",
@@ -55,6 +55,8 @@ class ZHelpGraphData : ZHelpData {
 		" A", 			"select all search text", 						"search-2a996591375a",
 		" F", 			"dismisss search bar", 							"search-2a996591375a",
 		"",				"", 											"",
+		"",				"", 											"",
+		" Legend:",													"", "",
 	]
 
 	let graphColumnTwo: [String] = [
@@ -73,7 +75,7 @@ class ZHelpGraphData : ZHelpData {
 		"pPERIOD", 		"toggle lists grow up/down,",					"",
 		"p", 			"(and) move idea up/down", 						"organize-fcdc44ac04e4",
 		"p",			"", 											"",
-		"uCONTROL+ KEY", 											"", "",
+		"uCONTROL+ KEY","", 											"",
 		" SPACE", 		"create new idea in list", 						"edit-d05d18996df7",
 		"",				"", 											"",
 		"",				"", 											"",
@@ -98,13 +100,15 @@ class ZHelpGraphData : ZHelpData {
 		" RIGHT", 		"focus on selected result", 					"search-2a996591375a",
 		" vertical", 	"browse results (wraps around)", 				"search-2a996591375a",
 		"",				"", 											"",
+		"",				"", 											"",
+		" ",	    	"...  (IN BLUE)  CLICK TO READ MORE",			"-",
 	]
 
 	let graphColumnThree: [String] = [
 		"",				"", 											"",
 		"bWHILE NAVIGATING (SINGLE IDEA SELECTED, NOT BEING EDITED):", "", "",
 		"",				"", 											"",
-		"pmark:", 		"" + kMarkingCharacters, 						"extras-2a9b1a7db21f",
+		"pmark:", 		kMarkingCharacters, 							"extras-2a9b1a7db21f",
 		"p",			"", 											"",
 		"uKEY",			"", 											"",
 		" ARROWS", 		"navigate map", 								"",
@@ -141,13 +145,15 @@ class ZHelpGraphData : ZHelpData {
 		"pO", 			"show data files in Finder", 					"cloud-vs-file-f3543f7281ac",
 		" S", 			"save to cloud",			 					"cloud-vs-file-f3543f7281ac",
 		"",				"", 											"",
-		"p",            "INDICATES PRO FEATURE",						"",
+		"",				"", 											"",
+		"p",			"PRO FEATURE",									"",
 	]
 
 	let graphColumnFour: [String] = [
 		"",				"", 											"",
 		"",				"", 											"",
-		"uOPTION + KEY", 											"", "",
+		"",				"", 											"",
+		"uOPTION + KEY","", 											"",
 		" ARROWS", 		"move selected idea", 							"organize-fcdc44ac04e4",
 		"pDELETE", 		"retaining current list",						"organize-fcdc44ac04e4",
 		"pRETURN", 		"edit with cursor at end", 						"edit-d05d18996df7",
@@ -159,7 +165,7 @@ class ZHelpGraphData : ZHelpData {
 		"uCOMMAND + KEY", 											"", "",
 		"pARROWS", 		"extend all the way", 							"selecting-ideas-cc2939720e53",
 		" HYPHEN", 		"reduce font size", 							"",
-		" +", 		    "increase font size", 							"",
+		" EQUALS", 	    "increase font size", 							"",
 		" /", 			"refocus current favorite", 					"focusing-your-thinking-a53adb16bba",
 		" A", 			"select all ideas", 							"selecting-ideas-cc2939720e53",
 		"pD", 			"append onto parent", 							"parent-child-tweaks-bf067abdf461",
@@ -183,6 +189,5 @@ class ZHelpGraphData : ZHelpData {
 		"pA", 			"a to z (+ OPTION: z to a)", 					"organize-fcdc44ac04e4",
 		"pM", 			"by length (+ OPTION: reverse)", 				"organize-fcdc44ac04e4",
 		"pR", 			"reverse",		 								"organize-fcdc44ac04e4",
-		"",				"", 											"",
 	]
 }

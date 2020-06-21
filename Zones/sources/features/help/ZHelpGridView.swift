@@ -18,11 +18,11 @@ class ZHelpGridView: ZView {
 		if  !isHidden,
 			let      data  = helpData,
 			data.helpMode == .dotMode {
-			drawHelpDots(in: dirtyRect, using: data)
+			drawDotsHelp(in: dirtyRect, using: data)
 		}
 	}
 
-	func drawHelpDots(in dirtyRect: NSRect, using data: ZHelpData) {
+	func drawDotsHelp(in dirtyRect: NSRect, using data: ZHelpData) {
 		for row        in  0..<data.countOfRows {
 			for column in  0...data.indexOfLastColumn {
 				let (dc, ft) = data.dotTypes(for: row, column: column)

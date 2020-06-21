@@ -302,22 +302,26 @@ class ZBatches: ZOnboarding {
                     } else {
                         self.currentDatabaseID = databaseIDs[index]      // if hung, it happened in currentDatabaseID
 
-                        self.invokeOperation(for: operationID) { (iResult: Any?) in
+						do {
+							try self.invokeOperation(for: operationID) { (iResult: Any?) in
 
-                            FOREGROUND(canBeDirect: true) {
-                                let      error = iResult as? Error
-                                let     result = iResult as? Int
-                                let    isError = error != nil
+								let      error = iResult as? Error
+								let     result = iResult as? Int
+								let    isError = error != nil
 
-                                if     isError || result == 0 {
-                                    if isError {
+								if     isError || result == 0 {
+									if isError {
 										printDebug(.dOps, "\(error!)")
-                                    }
+									}
 
-                                    invokeForIndex?(index + 1)         // recurse
-                                }
-                            }
-                        }
+									invokeForIndex?(index + 1)         // recurse
+								}
+							}
+						} catch {
+							gTimers.assureCompletion(for: .tOperation, withTimeInterval: 0.1) {
+								invokeForIndex?(index)
+							}
+						}
                     }
                 }
 
@@ -326,14 +330,14 @@ class ZBatches: ZOnboarding {
         }
     }
 
-    override func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
+    override func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
         switch identifier {
-        case .oFavorites:                                                                          gFavorites.setup(cloudCallback)
-		case .oRecents:                                                                              gRecents.setup(cloudCallback)
-        case .oReadFile: gFiles.readFile(into: currentDatabaseID!,                                    onCompletion: cloudCallback)
-        default:     gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
+        case .oFavorites:                                                                      gFavorites.setup(cloudCallback)
+		case .oRecents:                                                                          gRecents.setup(cloudCallback)
+        case .oReadFile: try gFiles.readFile(into: currentDatabaseID!,                            onCompletion: cloudCallback)
+        default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
         }
     }
 

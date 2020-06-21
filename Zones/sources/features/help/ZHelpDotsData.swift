@@ -67,7 +67,7 @@ enum ZHelpDotType: String {
 
 	func dotParameters(isFilled: Bool = false) -> ZDotParameters {
 		var p         = ZDotParameters()
-		p.color       = gHelpEmphasisColor
+		p.color       = gHelpHyperlinkColor
 		p.fill        = isFilled ? p.color : gBackgroundColor
 		p.filled      = isFilled
 		p.isReveal    = isReveal
@@ -100,6 +100,7 @@ class ZHelpDotsData: ZHelpData {
 	override var columnWidth       :   Int      { return 580 }
 	override var indexOfLastColumn :   Int      { return 1 }
 	override var rowHeight         :   CGFloat  { return 22.0 }
+	override var boldFont          :   ZFont    { return kLargeBoldFont }
 
 	override func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) {
 		let (first, second, _) = strings(for: row, column: column)

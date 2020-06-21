@@ -27,6 +27,7 @@ enum ZTimerID : Int {
 	case tRecordsMine
 	case tWriteMine
 	case tMouseZone
+	case tOperation
 	case tSync
 	case tKey
 

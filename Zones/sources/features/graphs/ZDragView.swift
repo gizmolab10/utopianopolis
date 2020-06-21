@@ -28,8 +28,9 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 		if  controller?.isMap ?? false,
 			let rect = gRubberband.rubberbandRect {
-            gActiveColor.lighter(by: 2.0).setStroke()
+			gActiveColor.accountingForDarkMode.lighter(by: 2.0).setStroke()
 			let path = ZBezierPath(rect: rect)
+			path.lineWidth = gIsDark ? 3.0 : 2.0
 			path.addDashes()
 			path.stroke()
         }

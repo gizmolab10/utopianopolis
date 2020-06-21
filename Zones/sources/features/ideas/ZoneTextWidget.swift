@@ -93,7 +93,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
     func applyConstraints() {
         if  let container = superview {
-			let    height = ((gGenericOffset.height - 2.0) / 3.0) + 2.0
+			let    height = ((gGenericOffset.height - 2.0) / 3.0) + 5.0              // add 5 to include tiny dot below
 			let  hideText = widgetZone?.onlyShowRevealDot ?? true
 			let textWidth = text!.widthForFont(preferredFont)
 			let     width = hideText ? 0.0 : textWidth + 1.0
