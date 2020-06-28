@@ -203,6 +203,13 @@ class ZBatches: ZOnboarding {
             iCompletion(true) // true means no new data
 		} else  if  gStartupLevel == .firstTime {
 			gTimers.resetTimer(for: .tNeedUserAccess, withTimeInterval:  0.2, repeats: true) { iTimer in
+
+				// /////////////////////////////////////////////// //
+				// startup controller takes over via handle signal //
+				//                                                 //
+				// where only user input can change gStartupLevel  //
+				// /////////////////////////////////////////////// //
+
 				if  gStartupLevel != .firstTime {
 					iTimer.invalidate()
 					self.batch(iID, iCompletion)
@@ -210,6 +217,11 @@ class ZBatches: ZOnboarding {
 			}
 		} else if !gCloudStatusIsActive, iID.needsCloudDrive {
 			gTimers.resetTimer(for: .tNeedCloudDriveEnabled, withTimeInterval:  0.2, repeats: true) { iTimer in
+
+				// //////////////////////////////////////////////////// //
+				//  gCloudStatusIsActive becomes true during onboarding //
+				// //////////////////////////////////////////////////// //
+
 				if  gCloudStatusIsActive {
 					iTimer.invalidate()
 					self.batch(iID, iCompletion)
@@ -311,7 +323,7 @@ class ZBatches: ZOnboarding {
 
 								if     isError || result == 0 {
 									if isError {
-										printDebug(.dOps, "\(error!)")
+										self.printOp("\(error!)")
 									}
 
 									invokeForIndex?(index + 1)         // recurse

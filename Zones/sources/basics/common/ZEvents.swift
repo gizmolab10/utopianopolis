@@ -75,20 +75,21 @@ class ZEvents: ZGeneric {
                 if !isDuplicate(event: event) {
                     switch gWorkMode {
 						case .searchMode:
-							return           gSearching.handleEvent(event)
+							return     gSearching      .handleEvent(event)
 						case .noteMode:
 							if  gIsHelpFrontmost {
 								return gHelpController?.handleEvent(event) ?? nil
 							} else {
-								return     gEssayEditor.handleEvent(event, isWindow: true)
+								return gEssayEditor    .handleEvent(event, isWindow: true)
 							}
 						case .graphMode, .editIdeaMode:
-							if  gIsHelpFrontmost {
-								return gHelpController?.handleEvent(event) ?? nil
-							} else {
-								return     gGraphEditor.handleEvent(event, isWindow: true)
+							if !gIsHelpFrontmost {
+								return gGraphEditor    .handleEvent(event, isWindow: true)
 							}
-						default: break
+
+							fallthrough
+						default:
+							return     gHelpController?.handleEvent(event) ?? nil
 					}
 				}
 

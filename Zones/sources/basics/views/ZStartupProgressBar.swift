@@ -31,7 +31,7 @@ class ZStartupProgressBar: NSProgressIndicator {
 		let partial = fractionOfRecords
 
 		if  first < 1.0 {
-			return       first
+			return       first - 1.0
 		} else if gCurrentOp == .oReadFile {
 			return 1.0 + partial
 		} else {
@@ -39,10 +39,20 @@ class ZStartupProgressBar: NSProgressIndicator {
 		}
 	}
 
+	var adjustedFraction: Double { // not show changes for first third
+		let f = fraction
+
+		if  f < 1 {
+			return 0.0
+		}
+
+		return f - 1.0
+	}
+
 	func update() {
 		if  gCurrentOp    != .oCompletion {
 			let multiplier = maxValue - minValue
-			let      value = multiplier * fraction / 3.0
+			let      value = multiplier * adjustedFraction / 2.0
 			doubleValue    = value + minValue
 		}
 	}

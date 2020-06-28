@@ -165,6 +165,9 @@
 		A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0021729B02003D4BDA /* Main.storyboard */; };
 		A7245E0121729B18003D4BDA /* Details.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7245E0321729B18003D4BDA /* Details.storyboard */; };
 		A7245E0921729FFE003D4BDA /* ZHelpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7245E0821729FFE003D4BDA /* ZHelpController.swift */; };
+		A72808B224A8688C00238889 /* ZDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72808B124A8688C00238889 /* ZDebug.swift */; };
+		A72808B324A8688C00238889 /* ZDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72808B124A8688C00238889 /* ZDebug.swift */; };
+		A72808B424A8688C00238889 /* ZDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72808B124A8688C00238889 /* ZDebug.swift */; };
 		A7285AC622D6DD9E00880F0E /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7FDB3DC2276459500033337 /* CloudKit.framework */; };
 		A72A0B6923B13CE6002A97E9 /* ZBaseEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */; };
 		A72A0B6A23B13CE6002A97E9 /* ZBaseEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */; };
@@ -453,6 +456,7 @@
 		A7245DFF21729B02003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A7245E0221729B18003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Details.storyboard; sourceTree = "<group>"; };
 		A7245E0821729FFE003D4BDA /* ZHelpController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZHelpController.swift; sourceTree = "<group>"; };
+		A72808B124A8688C00238889 /* ZDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDebug.swift; sourceTree = "<group>"; };
 		A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBaseEditor.swift; sourceTree = "<group>"; };
 		A734EB6F21E26EE500B9475F /* Credits.rtfd */ = {isa = PBXFileReference; lastKnownFileType = wrapper.rtfd; path = Credits.rtfd; sourceTree = "<group>"; };
 		A7395BAD21B877B600F5759F /* ZTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTextEditor.swift; sourceTree = "<group>"; };
@@ -572,13 +576,6 @@
 			path = details;
 			sourceTree = "<group>";
 		};
-		0C39B22D1F182EBB0091F4D1 /* main */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = main;
-			sourceTree = "<group>";
-		};
 		0C39B22E1F182EBB0091F4D1 /* common */ = {
 			isa = PBXGroup;
 			children = (
@@ -588,6 +585,7 @@
 				0C39B22F1F182EBB0091F4D1 /* ZClosures.swift */,
 				0C39B2471F182EBB0091F4D1 /* ZControllers.swift */,
 				0C39B2301F182EBB0091F4D1 /* ZConstants.swift */,
+				A72808B124A8688C00238889 /* ZDebug.swift */,
 				0CABC9EE2022768D0019D8B0 /* ZEnumerations.swift */,
 				0C48B0941F87197B00A247BC /* ZEvents.swift */,
 				0C39B2311F182EBB0091F4D1 /* ZExtensions.swift */,
@@ -599,7 +597,6 @@
 				0C39B2351F182EBB0091F4D1 /* ZState.swift */,
 				A759F70024269D29008CEA59 /* ZTimers.swift */,
 				A706442D246E182400F90B86 /* ZTooltips.swift */,
-				0C39B22D1F182EBB0091F4D1 /* main */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -1252,6 +1249,7 @@
 				0C2E22D01F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				A77976F724996DBC00A6734B /* ZHelpDotsExemplarController.swift in Sources */,
 				A7064418245B5FD400F90B86 /* ZIntroductionController.swift in Sources */,
+				A72808B224A8688C00238889 /* ZDebug.swift in Sources */,
 				A706441E2460DEF300F90B86 /* ZIntroductionButton.swift in Sources */,
 				0C39B2AA1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				A72356A92489623500BA2030 /* ZStartupProgressBar.swift in Sources */,
@@ -1338,6 +1336,7 @@
 				0C39B3151F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C43EFD621010F62000976CE /* ZRecords.swift in Sources */,
 				A717BF4B2251581D004F7993 /* NSURL+ZURL.m in Sources */,
+				A72808B424A8688C00238889 /* ZDebug.swift in Sources */,
 				0C09A7D71FE5DEC600F3D736 /* ZGenericTableController.swift in Sources */,
 				0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */,
 				0C39B2EE1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
@@ -1446,6 +1445,7 @@
 				0C43EFDE21010F62000976CE /* ZBatches.swift in Sources */,
 				A7B78D3E244B768400DB2C14 /* ZTraitAssets.swift in Sources */,
 				0C39B2ED1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
+				A72808B324A8688C00238889 /* ZDebug.swift in Sources */,
 				0C2E22D11F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				A7E5A5EB23EFAE4F00A52F47 /* ZTogglingView.swift in Sources */,
 				A7064450247316DA00F90B86 /* ZRecents.swift in Sources */,
@@ -1687,7 +1687,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2025;
+				CURRENT_PROJECT_VERSION = 2027;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
@@ -1708,7 +1708,7 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.6.1;
+				MARKETING_VERSION = 0.6.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1739,7 +1739,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 2025;
+				CURRENT_PROJECT_VERSION = 2027;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1760,7 +1760,7 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.6.1;
+				MARKETING_VERSION = 0.6.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

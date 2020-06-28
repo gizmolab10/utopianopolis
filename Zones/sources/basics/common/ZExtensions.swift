@@ -37,8 +37,8 @@ func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClo
 	}
 }
 
-func printDebug(_ mode: ZDebugMode, prefix: String = "  ", _ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
-	if  gDebugMode.contains(mode) {
+func printDebug(_ mode: ZPrintMode, prefix: String = "  ", _ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
+	if  gPrintMode.contains(mode) {
 		printFancy("\(mode): " + prefix + message, surround: surround, test)
 	}
 }
@@ -100,9 +100,9 @@ extension NSObject {
 	func     printCurrentFocus()                                { gHere.widget?.printView() }
 	func     printCurrentEssay()                                { gEssayView?.printView() }
 
-	func columnarReport(mode: ZDebugMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
+	func columnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
 
-	func rawColumnarReport(mode: ZDebugMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {
+	func rawColumnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
             prefix.appendSpacesToLength(kLogTabStop)
             printDebug(mode, "\(prefix)\(iSecond ?? "")")
@@ -186,7 +186,12 @@ extension NSObject {
 
     func sendEmailBugReport() {
         "mailto:sand@gizmolab.com?subject=Regarding Seriously".openAsURL()
-    }
+
+//		let service = NSSharingService(named: NSSharingService.Name.composeEmail)
+//		service?.recipients = ["sand@gizmolab.com"]
+//		service?.subject = "Reporting an error"
+//		service?.perform(withItems: ["Something happened"])
+	}
 
     // MARK:- bookmarks
     // MARK:-

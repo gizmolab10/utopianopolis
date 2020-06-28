@@ -71,7 +71,7 @@ class ZTextPack: NSObject {
             // add suffix for "show counts as" //
             // //////////////////////////////////
 
-			if  gDebugMode.contains(.dNames) && zone.record != nil {
+			if  gPrintMode.contains(.dNames) && zone.record != nil {
                 suffix = zone.recordName
             } else if (need > 1) && (!zone.showingChildren || (gCountsMode == .progeny)) {
                 suffix = String(describing: need)

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="olH-Ix-aMb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17132.0.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="olH-Ix-aMb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132.0.2"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -24,7 +25,7 @@
                 </windowController>
                 <customObject id="Dg8-eT-TQQ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="819" y="-631"/>
+            <point key="canvasLocation" x="1312" y="-660"/>
         </scene>
         <!--Help Controller-->
         <scene sceneID="OeN-bO-80W">
@@ -190,7 +191,7 @@
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="1326" y="402"/>
+            <point key="canvasLocation" x="1312" y="402"/>
         </scene>
         <!--Help Dots Exemplar Controller-->
         <scene sceneID="PNs-6U-K92">

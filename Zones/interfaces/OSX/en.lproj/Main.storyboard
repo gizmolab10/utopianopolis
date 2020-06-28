@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17132.0.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132.0.2"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -972,7 +972,7 @@ CA
                                     <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ULe-6f-22e" userLabel="Skill Level View">
                                         <rect key="frame" x="0.0" y="256" width="226" height="44"/>
                                         <subviews>
-                                            <segmentedControl hidden="YES" canDrawConcurrently="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0jt-BT-C1l">
+                                            <segmentedControl hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0jt-BT-C1l">
                                                 <rect key="frame" x="6" y="10" width="213" height="24"/>
                                                 <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="Vx4-SL-sxe">
                                                     <font key="font" metaFont="system"/>
@@ -1343,7 +1343,7 @@ CA
                                         <rect key="frame" x="0.0" y="0.0" width="450" height="352"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="NGd-6W-C0X">
-                                                <rect key="frame" x="0.0" y="254" width="450" height="49"/>
+                                                <rect key="frame" x="0.0" y="303" width="450" height="49"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="xlc-Yd-hnd" userLabel="apple id">
                                                         <rect key="frame" x="-2" y="33" width="454" height="16"/>
@@ -1480,6 +1480,7 @@ DQ
                                             </customView>
                                         </subviews>
                                         <constraints>
+                                            <constraint firstItem="NGd-6W-C0X" firstAttribute="top" secondItem="wVW-5S-6K5" secondAttribute="top" id="0gK-NZ-bQU"/>
                                             <constraint firstAttribute="trailing" secondItem="Pg2-h7-6ux" secondAttribute="trailing" id="DAX-Ab-3a1"/>
                                             <constraint firstItem="Pg2-h7-6ux" firstAttribute="top" secondItem="wVW-5S-6K5" secondAttribute="top" id="Qae-L1-enX"/>
                                             <constraint firstItem="rmD-x7-RtA" firstAttribute="top" secondItem="wVW-5S-6K5" secondAttribute="top" id="b5x-zn-daU"/>
@@ -1489,7 +1490,6 @@ DQ
                                             <constraint firstItem="rmD-x7-RtA" firstAttribute="leading" secondItem="wVW-5S-6K5" secondAttribute="leading" id="heT-dA-0DQ"/>
                                             <constraint firstAttribute="trailing" secondItem="NGd-6W-C0X" secondAttribute="trailing" id="nZh-c3-eYA"/>
                                             <constraint firstItem="NGd-6W-C0X" firstAttribute="leading" secondItem="wVW-5S-6K5" secondAttribute="leading" id="rvW-6v-tHJ"/>
-                                            <constraint firstItem="NGd-6W-C0X" firstAttribute="top" secondItem="Pg2-h7-6ux" secondAttribute="bottom" id="yBb-HD-FNK"/>
                                         </constraints>
                                     </customView>
                                 </subviews>
@@ -1513,9 +1513,9 @@ DQ
                     <connections>
                         <outlet property="acccessToAppleID" destination="NGd-6W-C0X" id="uM0-1J-iv0"/>
                         <outlet property="accessIDLabel" destination="xlc-Yd-hnd" id="6A8-OE-0yH"/>
+                        <outlet property="buttonsView" destination="GXv-wU-eO3" id="QfY-aZ-8wh"/>
                         <outlet property="enableCloudDrive" destination="Pg2-h7-6ux" id="0m3-bv-2c5"/>
                         <outlet property="enableCloudLabel" destination="O6S-Dv-mLT" id="Mgk-EK-qtL"/>
-                        <outlet property="helpButtons" destination="GXv-wU-eO3" id="QfY-aZ-8wh"/>
                         <outlet property="helpLabel" destination="Bpe-so-Utw" id="7Al-CQ-DAy"/>
                         <outlet property="loadingLabel" destination="kKM-9B-fW0" id="c49-Qv-BEM"/>
                         <outlet property="pleaseWait" destination="rmD-x7-RtA" id="Pgi-uv-g7c"/>

@@ -229,15 +229,13 @@ class ZOperations: NSObject {
     }
 
     func reportBeforePerformBlock() {
-		if !gHasFinishedStartup {
-			printOp(debugTimeText)
-		}
+		printOp(debugTimeText)
 	}
 
     func reportOnCompletionOfPerformBlock() {
-		if  gHasFinishedStartup,
-			let negative = inverseOpDuration {
-            let duration = Float(Int(negative * -10)) / 10.0 // round to nearest tenth of second
+		if  let negative = inverseOpDuration {
+			let ten = 10.0
+			let duration = Double(Int(negative * -ten)) / ten // round to nearest tenth of second
 
             printOp("\(duration)")
         }

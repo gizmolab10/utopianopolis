@@ -709,7 +709,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             return t.userHasDirectOwnership
         }
         
-        return !isRootOfTrash && !isRootOfFavorites && !isRootOfLostAndFound && !gDebugMode.contains(.dAccess) && (databaseID == .mineID || zoneAuthor == gAuthorID || gIsMasterAuthor)
+        return !isRootOfTrash && !isRootOfFavorites && !isRootOfLostAndFound && !gPrintMode.contains(.dAccess) && (databaseID == .mineID || zoneAuthor == gAuthorID || gIsMasterAuthor)
     }
 
     var directAccess: ZoneAccess {
@@ -2539,7 +2539,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             for  traitStore:  ZStorageDictionary in traitsStore {
                 let    trait = try ZTrait(dict: traitStore, in: iDatabaseID)
 
-				if  gDebugMode.contains(.dNotes),
+				if  gPrintMode.contains(.dNotes),
 					let   tt = trait.type,
 					let type = ZTraitType(rawValue: tt),
 					type    == .tNote {

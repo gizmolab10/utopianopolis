@@ -18,22 +18,24 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	@IBOutlet var accessIDLabel     : ZTextField?
 	@IBOutlet var loadingLabel      : ZTextField?
 	@IBOutlet var helpLabel         : ZTextField?
+	@IBOutlet var pleaseWait        : ZView?
 	@IBOutlet var acccessToAppleID  : ZView?
 	@IBOutlet var enableCloudDrive  : ZView?
-	@IBOutlet var pleaseWait        : ZView?
+	@IBOutlet var buttonsView       : ZHelpButtonsView?
 	@IBOutlet var thermometerBar    : ZStartupProgressBar?
-	@IBOutlet var helpButtons       : ZHelpButtonsView?
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
-		helpButtons?.updateAndRedraw()
+		buttonsView?.setupAndRedraw()
 
 		enableCloudLabel?.text = enableText
 		accessIDLabel?   .text = accessText
 		loadingLabel?    .text = loadingText
 		helpLabel?       .text = helpText
 
-//		gStartupLevel = .firstTime
+		if  gDebugMode.contains(.dNewUser) {
+			gStartupLevel  = .firstTime
+		}
 
 		if  gStartupLevel == .localOkay {
 			gStartupLevel  = .firstTime
@@ -42,14 +44,18 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		if  iKind == .sStartup {
-			let               justWait = !gHasInternet
-			acccessToAppleID?.isHidden =  justWait || gStartupLevel != .firstTime
-			enableCloudDrive?.isHidden =  justWait || gStartupLevel != .enableDrive
-			pleaseWait?      .isHidden = !justWait && ![.pleaseWait, .ignoreDrive, .localOkay].contains(gStartupLevel)
-
-			helpButtons?.updateAndRedraw()
 			updateThermometerBar()
+			updateSubviewVisibility()
+			buttonsView?.updateAndRedraw()
 		}
+	}
+
+	func updateSubviewVisibility() {
+		let            hasInternet = gHasInternet
+		let              firstTime = ![.pleaseWait, .ignoreDrive, .localOkay].contains(gStartupLevel)
+		acccessToAppleID?.isHidden = !hasInternet || gStartupLevel != .firstTime   // .firstTime shows this
+		enableCloudDrive?.isHidden = !hasInternet || gStartupLevel != .enableDrive // .firstTime hides this
+		pleaseWait?      .isHidden =  hasInternet && firstTime                     // .firstTime hides this
 	}
 
 	func updateThermometerBar() {
