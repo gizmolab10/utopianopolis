@@ -16,16 +16,12 @@ var gDesktopAppDelegate: ZDesktopAppDelegate?
 
 @NSApplicationMain
 
-
-class ZDesktopAppDelegate: NSResponder, NSMenuDelegate, ZApplicationDelegate {
-
+class ZDesktopAppDelegate: ZAppDelegate, NSMenuDelegate {
 
     var needsSetup = true
 
-
     // MARK:- delegation
     // MARK:-
-
 
     func applicationDidBecomeActive(_ notification: Notification) {
         if  needsSetup {

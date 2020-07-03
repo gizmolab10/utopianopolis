@@ -1,19 +1,5 @@
 {
-  "graph" : {
-    "recordName" : "root",
-    "progeny" : 0
-  },
-  "trash" : {
-    "recordName" : "trash",
-    "progeny" : 0
-  },
-  "destroy" : {
-    "recordName" : "A58DBE3C-15DA-44F3-BF2D-ADA7A04B4367",
-    "progeny" : 0
-  },
-  "date" : "TimeInterval:615065912.358",
   "manifest" : {
-    "date" : 1593373112.358,
     "recordName" : "45118FF3-DFE7-4378-B190-29B4F0C4B764",
     "deleted" : [
       "D4F90BAF-AB97-44A8-9147-4707F9D49408:1592691155.221",
@@ -26,11 +12,26 @@
       "5DF76ACB-AB86-4D8B-91CD-B069C38066FC:1592761797.9366798",
       "4922A053-D145-4470-B6BA-F5BB3E6E15DE:1592493089.513",
       "6C452249-83B7-408A-B98E-F54C9F1AAC04:1592493089.513",
-      "F1A67E33-5207-4B09-A4C0-D0BFABC5E990:1592493089.513"
-    ]
+      "F1A67E33-5207-4B09-A4C0-D0BFABC5E990:1592493089.513",
+      "E700D17E-7D9D-418F-8FA8-A8A7C0D67AFD:1593381475.159",
+      "6695FB53-46F2-4C06-A49D-95530C55BFE1:1593223671.747"
+    ],
+    "date" : 1593390017.4579999
+  },
+  "date" : "TimeInterval:615143061.936",
+  "trash" : {
+    "recordName" : "trash",
+    "progeny" : 0
   },
   "lostAndFound" : {
     "recordName" : "lost and found",
+    "progeny" : 0
+  },
+  "destroy" : {
+
+  },
+  "graph" : {
+    "recordName" : "root",
     "progeny" : 0
   }
 }

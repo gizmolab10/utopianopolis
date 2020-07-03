@@ -22,9 +22,9 @@ var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
 var               gLaunchedAt                     = Date()
-var              gDeferringRedraw                     = false
 var            gTextCapturing                     = false
 var          gIsReadyToShowUI                     = false
+var          gDeferringRedraw                     = false
 var        gKeyboardIsVisible                     = false
 var        gArrowsDoNotBrowse                     = false
 var       gHasFinishedStartup                     = false
