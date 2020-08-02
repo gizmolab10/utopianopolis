@@ -66,7 +66,7 @@ class ZHelpButtonsView : ZButtonsView {
 		if  let mode = button.helpMode,
 			mode    != gCurrentHelpMode {                   // eliminate no-op cpu time
 			gHelpController?.show( true, nextMode: mode)    // side-effect: sets gCurrentHelpMode
-			gSignal([.sStartup])                            // to update help buttons in startup view
+			gSignal([.sStartupButtons])                     // to update help buttons in startup view
 		}
 	}
 

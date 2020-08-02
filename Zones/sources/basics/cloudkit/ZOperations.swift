@@ -13,13 +13,14 @@ enum ZOperationID: Int {
 
 	case oNone               // default operation does nothing
 
-    // onboard
+    // start up / onboard
 
     case oStartUp            // NB: order here is order of operations (except miscellaneous)
+	case oInternet
+	case oUserPermissions
     case oMacAddress
     case oObserveUbiquity
     case oCheckAvailability  // vs no account
-    case oInternet
     case oUbiquity
     case oFetchUserID
     case oFetchUserRecord
@@ -30,8 +31,8 @@ enum ZOperationID: Int {
     case oManifest
     case oReadFile           // LOCAL
     case oFoundIdeas         // LOCAL
-	case oFavorites
-	case oRecents
+	case oFavorites			 // MINE ONLY
+	case oRecents  			 // MINE ONLY
 	case oRoots
     case oHere
 	case oStartupDone
@@ -55,14 +56,17 @@ enum ZOperationID: Int {
 	case oChildIdeas
     case oEmptyTrash
     case oCompletion
-    case oBookmarks
+    case oBookmarks			 // MINE ONLY
     case oLostIdeas
     case oUndelete
     case oRefetch            // user defaults list of record ids
     case oTraits
 
     var isLocal     : Bool { return localOperations.contains(self) }
-    var isDeprecated: Bool { return   deprecatedOps.contains(self) }
+	var isDeprecated: Bool { return   deprecatedOps.contains(self) }
+	var needsActive : Bool { return   needActiveOps.contains(self) }
+	var forMineOnly : Bool { return     mineOnlyOps.contains(self) }
+	var alwaysBoth  : Bool { return       bothDBOps.contains(self) }
 	var isDone      : Bool { return         doneOps.contains(self) }
 
 	var description : String { return "\(self)".substring(fromInclusive: 1).unCamelcased }
@@ -70,8 +74,12 @@ enum ZOperationID: Int {
 
 let	        doneOps : [ZOperationID] = [.oNone, .oDone, .oCompletion]
 let   deprecatedOps : [ZOperationID] = [.oParentIdeas]
-let localOperations : [ZOperationID] = [.oHere, .oRoots, .oFoundIdeas, .oReadFile, .oInternet, .oUbiquity, .oFavorites, .oCompletion,
-										.oMacAddress, .oFetchUserID, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
+let   needActiveOps : [ZOperationID] = [.oSaveToCloud, .oTraits]
+let     mineOnlyOps : [ZOperationID] = [.oBookmarks, .oFavorites, .oRecents, .oDone]
+let       bothDBOps : [ZOperationID] = [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe]
+let localOperations : [ZOperationID] = [.oHere, .oRoots, .oFoundIdeas, .oReadFile, .oInternet, .oUbiquity,
+										.oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oUserPermissions,
+										.oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
 
 class ZOperations: NSObject {
 
@@ -84,17 +92,19 @@ class ZOperations: NSObject {
 	var   onCloudResponse :    AnyClosure?
     var       lastOpStart :        NSDate?
 	func printOp(_ message: String)        { columnarReport(mode: .dOps, operationText, message) }
-	func unHang()                          { onCloudResponse?(0) }
+	func unHang()                          { if gStartupLevel != .firstTime { onCloudResponse?(0) } }
 	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws                                  {} 
 	func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
     var operationText: String {
+		let i = gBatches.currentDatabaseID?.identifier
+		let d = i == nil ? "  " : i! + " "
         var s = String(describing: currentOp)
         s     = s.substring(fromInclusive: 1)
         let c = s.substring(  toExclusive: 1).lowercased()
         s     = s.substring(fromInclusive: 1)
 
-        return c + s
+        return d + c + s
     }
     
     var isConnectedToInternet: Bool {
@@ -194,13 +204,13 @@ class ZOperations: NSObject {
 					self.lastOpStart       = NSDate()
                     self.currentOp         = operationID        // if hung, it happened inside this op
 
-                    self.reportBeforePerformBlock()
+//                    self.reportBeforePerformBlock()
 
                     self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
                         self.reportOnCompletionOfPerformBlock()
 
                         FOREGROUND {
-							gSignal([.sStatus, .sStartup]) // show change in cloud status and startup progress
+							gSignal([.sStatus, .sStartupProgress]) // show change in cloud status and startup progress
 
 							if  self.currentOp == .oCompletion {
 

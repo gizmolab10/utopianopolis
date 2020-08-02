@@ -40,12 +40,13 @@ enum ZSignalKind: Int {
 	case sSearch
 	case sCrumbs
 	case sDetails
-	case sStartup
     case sRelayout
     case sFavorites
 	case sLaunchDone
     case sAppearance
     case sPreferences
+	case sStartupButtons
+	case sStartupProgress
 }
 
 let gControllers = ZControllers()
@@ -63,9 +64,9 @@ class ZControllers: NSObject {
 		gWorkMode              = .startupMode
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
-		gHelpController?.setup()                // show last chosen help view
+//		gHelpController?.setup()                // show last chosen help view
 		gRemoteStorage.clear()
-		gSignal([.sMain, .sStartup])
+		gSignal([.sMain, .sStartupProgress])
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
@@ -78,7 +79,7 @@ class ZControllers: NSObject {
 				gRemoteStorage.recount()
 				gRefreshCurrentEssay()
 				gRefreshPersistentWorkMode()
-				gSignal([.sSwap, .sMain, .sStartup, .sCrumbs, .sRelayout, .sLaunchDone])
+				gSignal([.sSwap, .sMain, .sCrumbs, .sRelayout, .sLaunchDone])
 
 				gBatches.finishUp { iSame in
 					FOREGROUND {
@@ -89,12 +90,12 @@ class ZControllers: NSObject {
 							gSetGraphMode()
 						}
 
-						gRemoteStorage.adoptAll()
-						gSignal([.sMain, .sStartup, .sCrumbs, .sRelayout])
+						gRemoteStorage.assureNoOrphanIdeas()
+						gSignal([.sMain, .sCrumbs, .sRelayout])
 						self.requestFeedback()
 
 						FOREGROUND(after: 10.0) {
-							gRemoteStorage.adoptAll()
+							gRemoteStorage.assureNoOrphanIdeas()
 							gFiles.writeAll()
 						}
 					}
@@ -220,7 +221,7 @@ class ZControllers: NSObject {
 					case .sMain:        if identifier == .idMain           { closure() }
 					case .sStatus:      if identifier == .idStatus         { closure() }
 					case .sCrumbs:      if identifier == .idCrumbs         { closure() }
-					case .sStartup:     if startupIDs.contains(identifier) { closure() }
+					case .sStartupProgress:     if startupIDs.contains(identifier) { closure() }
 					case .sFavorites:   if identifier == .idFavorites      { closure() }
                     case .sPreferences: if identifier == .idPreferences    { closure() }
                     default:                                                 closure()

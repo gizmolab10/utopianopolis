@@ -208,7 +208,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					gTextEditor.stopCurrentEdit()
 				}
 
-				if flags.isCommand {               // shift background
+				if flags.isCommand && !flags.isOption {   // shift background
 					scrollEvent(move: state == .changed, to: location)
 				} else if gIsDragging {
 					dragMaybeStopEvent(iGesture)          // logic for drawing the drop dot, and for dropping dragged idea
@@ -410,10 +410,10 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                         dropAt!     -= 1
                     }
 
-                    if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
-                        let CONTROL = gesture.modifiers?.isControl {
+					if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
+						let SPECIAL = gesture.modifiers?.isSpecial {
 
-						gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, CONTROL) {
+						gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, SPECIAL) {
 							gRedrawGraph()
                             gSelecting.updateBrowsingLevel()
                             gSelecting.updateCousinList()

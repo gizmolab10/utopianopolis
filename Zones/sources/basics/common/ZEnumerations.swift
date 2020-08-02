@@ -43,10 +43,9 @@ enum ZSkillLevel: Int {
 
 enum ZStartupLevel: Int {
 	case firstTime
-	case enableDrive
-	case ignoreDrive
-	case pleaseWait
 	case localOkay
+	case pleaseWait
+	case pleaseEnableDrive
 }
 
 enum ZIntroductionID: String {

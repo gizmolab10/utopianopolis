@@ -247,6 +247,7 @@ extension ZApplication {
 
 extension NSEvent.ModifierFlags {
     var isNumericPad: Bool { return contains(.numericPad) }
+	var isSpecial:    Bool { return isCommand && isOption }
     var isControl:    Bool { get { return contains(.control) } set { if newValue { insert(.control) } else { remove(.control) } } }
 	var isCommand:    Bool { get { return contains(.command) } set { if newValue { insert(.command) } else { remove(.command) } } }
     var isOption:     Bool { get { return contains(.option)  } set { if newValue { insert(.option)  } else { remove(.option) } } }

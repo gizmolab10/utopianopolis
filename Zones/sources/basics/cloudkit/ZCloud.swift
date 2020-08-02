@@ -277,7 +277,7 @@ class ZCloud: ZRecords {
                 if  let cursor = iCursor {
                     self.queryFor(recordType, with: predicate, properties: properties, cursor: cursor, onCompletion: onCompletion)  // recurse with cursor
                 } else {
-                    gAlerts.alertError(error, predicate.description) { iHasError in
+                    gAlerts.alertError(error, predicate.description) { iHasError in     // noop if error is nil
                         onCompletion?(nil, error)
                     }
                 }
@@ -672,7 +672,7 @@ class ZCloud: ZRecords {
 				retrieved.appendUnique(contentsOf: [ckRecord])
 
 				if  retrieved.count % 10 == 0 {
-					gSignal([.sStartup])
+					gSignal([.sStartupProgress])
 				}
 			} else { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?(retrieved)
@@ -715,7 +715,7 @@ class ZCloud: ZRecords {
 					}
 				}
 
-				self.adoptAll()
+				self.adoptAllOrphanIdeas()
 				onCompletion?()
 			}
 
@@ -928,7 +928,7 @@ class ZCloud: ZRecords {
                     
                     self.columnarReport("PARENT (\(forReport.count)) of", String.forZones(forReport))
                     self.clearRecordIDs(childrenIDs, for: fetchingStates)
-                    self.adoptAll()
+                    self.adoptAllOrphanIdeas()
                     self.fetchParentIdeas(onCompletion)   // process remaining
                 }
             }
@@ -1024,7 +1024,7 @@ class ZCloud: ZRecords {
                         }
 
                         self.columnarReport("CHILDREN (\(childrenNeeded.count))", String.forReferences(childrenNeeded, in: self.databaseID))
-                        self.adoptAll()
+                        self.adoptAllOrphanIdeas()
                         self.add(states: [.needsCount], to: childrenNeeded)
                         self.fetchChildIdeas(onCompletion) // process remaining
                     }
@@ -1091,7 +1091,7 @@ class ZCloud: ZRecords {
                         }
 
                         self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
-                        self.adoptAll()
+                        self.adoptAllOrphanIdeas()
                         onCompletion?(0)
                     }
                 }

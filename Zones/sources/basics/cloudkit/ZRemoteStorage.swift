@@ -105,9 +105,9 @@ class ZRemoteStorage: NSObject {
         }
 	}
 
-	func adoptAll(moveOrphansToLost: Bool = false) {
+	func assureNoOrphanIdeas(moveOrphansToLost: Bool = false) {
 		for cloud in allClouds {
-			cloud.adoptAll(moveOrphansToLost: moveOrphansToLost)
+			cloud.adoptAllOrphanIdeas(moveOrphansToLost: moveOrphansToLost)
 		}
 	}
 

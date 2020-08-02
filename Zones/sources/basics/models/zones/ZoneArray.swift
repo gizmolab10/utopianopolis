@@ -276,7 +276,7 @@ extension ZoneArray {
 			ancestor.needAdoption()
 		}
 
-		gRemoteStorage.adoptAll()
+		gRemoteStorage.assureNoOrphanIdeas()
 	}
 
 	func grabAppropriate() -> Zone? {

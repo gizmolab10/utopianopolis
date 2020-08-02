@@ -25,7 +25,6 @@ let gGraphEditor = ZGraphEditor()
 
 class ZGraphEditor: ZBaseEditor {
 	override var canHandleKey: Bool { return gIsGraphOrEditIdeaMode }
-	var              canAlter: Bool { return !gIsRecentlyMode || !(gSelecting.firstGrab?.isInRecently ?? false) }
 	var             priorHere: Zone?
 
 	// MARK:- events
@@ -59,7 +58,7 @@ class ZGraphEditor: ZBaseEditor {
             let COMMAND = flags.isCommand
             let  OPTION = flags.isOption
             var   SHIFT = flags.isShift
-			let SPECIAL = COMMAND && OPTION
+			let SPECIAL = flags.isSpecial
 			let     ALL = COMMAND && OPTION && CONTROL
 			let IGNORED = 			 OPTION && CONTROL
 			let    HARD = COMMAND &&           CONTROL
@@ -287,10 +286,8 @@ class ZGraphEditor: ZBaseEditor {
 	// MARK:-
 
 	func addSibling(_ OPTION: Bool) {
-		if  canAlter {
-			gTextEditor.stopCurrentEdit()
-			gSelecting.currentMoveable.addNextAndRedraw(containing: OPTION)
-		}
+		gTextEditor.stopCurrentEdit()
+		gSelecting.currentMoveable.addNextAndRedraw(containing: OPTION)
 	}
 
 	func browseBreadcrumbs(_ out: Bool) {
@@ -1209,7 +1206,7 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-    func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, _ CONTROL: Bool, onCompletion: Closure?) {
+    func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, _ SPECIAL: Bool, onCompletion: Closure?) {
 
         // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         // 1. move a normal zone into another normal zone                                                           //
@@ -1268,7 +1265,7 @@ class ZGraphEditor: ZBaseEditor {
             }
 
             iUndoSelf.UNDO(self) { iUndoUndoSelf in
-                iUndoUndoSelf.moveGrabbedZones(into: iInto, at: iIndex, CONTROL, onCompletion: onCompletion)
+                iUndoUndoSelf.moveGrabbedZones(into: iInto, at: iIndex, SPECIAL, onCompletion: onCompletion)
             }
 
             onCompletion?()
@@ -1281,7 +1278,7 @@ class ZGraphEditor: ZBaseEditor {
         let finish = {
             var done = false
 
-            if !CONTROL {
+            if !SPECIAL {
                 into.revealChildren()
             }
 
@@ -1300,7 +1297,7 @@ class ZGraphEditor: ZBaseEditor {
 				for grab in grabs {
 					var beingMoved = grab
 
-					if  toDetails && !beingMoved.isInDetails && !beingMoved.isBookmark && !beingMoved.isInTrash && !CONTROL {
+					if  toDetails && !beingMoved.isInDetails && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
 						if  let bookmark = gFavorites.createBookmark(for: beingMoved, action: .aFavorite) {	// type 3
 							beingMoved   = bookmark
 
@@ -1318,7 +1315,7 @@ class ZGraphEditor: ZBaseEditor {
 						}
 					}
 
-					if !CONTROL {
+					if !SPECIAL {
 						beingMoved.addToGrabs()
 					}
 
@@ -1338,7 +1335,7 @@ class ZGraphEditor: ZBaseEditor {
         // deal with target being a bookmark //
         // ////////////////////////////////////
 
-        if !toBookmark || CONTROL {
+        if !toBookmark || SPECIAL {
             finish()
         } else {
             gRecents.travelThrough(iInto) { (iAny, iSignalKind) in

@@ -642,7 +642,7 @@
 		0C39B2541F182EBB0091F4D1 /* models */ = {
 			isa = PBXGroup;
 			children = (
-				A700F95224AFC889009C87AA /* seriously */,
+				A700F95224AFC889009C87AA /* coreData */,
 				A700F95124AFC874009C87AA /* zones */,
 			);
 			path = models;
@@ -770,7 +770,6 @@
 			isa = PBXGroup;
 			children = (
 				A7B78D382448EF6300DB2C14 /* everyone.seriously */,
-				A700F94D24AFBFFB009C87AA /* seriously.xcdatamodel */,
 			);
 			path = data;
 			sourceTree = "<group>";
@@ -818,11 +817,12 @@
 			path = zones;
 			sourceTree = "<group>";
 		};
-		A700F95224AFC889009C87AA /* seriously */ = {
+		A700F95224AFC889009C87AA /* coreData */ = {
 			isa = PBXGroup;
 			children = (
+				A700F94D24AFBFFB009C87AA /* seriously.xcdatamodel */,
 			);
-			path = seriously;
+			path = coreData;
 			sourceTree = "<group>";
 		};
 		A714856E2256AAAF00F54C0C /* Products */ = {
@@ -1719,7 +1719,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2027;
+				CURRENT_PROJECT_VERSION = 2028;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
@@ -1740,7 +1740,7 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.6.3;
+				MARKETING_VERSION = 0.6.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1771,7 +1771,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 2027;
+				CURRENT_PROJECT_VERSION = 2028;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1792,7 +1792,7 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.6.3;
+				MARKETING_VERSION = 0.6.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

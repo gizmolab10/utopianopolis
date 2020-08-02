@@ -294,7 +294,7 @@ class ZFiles: NSObject {
 				}
 			}
 
-			gRemoteStorage.zRecords(for: databaseID)?.removeDuplicates()
+//			gRemoteStorage.zRecords(for: databaseID)?.removeDuplicates()
 			cloud.recount()
 
 			self.isReading[index] = false

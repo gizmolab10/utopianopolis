@@ -30,7 +30,7 @@ class ZPreferencesController: ZGenericController {
     override  var         controllerID: ZControllerID { return .idPreferences }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if ![.sLaunchDone, .sStartup, .sSearch, .sFound, .sCrumbs, .sSwap, .sFavorites].contains(iKind) {
+		if ![.sLaunchDone, .sStartupProgress, .sSearch, .sFound, .sCrumbs, .sSwap, .sFavorites].contains(iKind) {
             let                           grabbed = gSelecting.firstSortedGrab
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
             thickness?               .doubleValue = gLineThickness

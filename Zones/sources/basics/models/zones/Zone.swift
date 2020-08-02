@@ -1561,7 +1561,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			ancestor.needAdoption()
 		}
 
-		gRemoteStorage.adoptAll()
+		gRemoteStorage.assureNoOrphanIdeas()
 	}
 
     func spawnedBy(_ iZone: Zone?) -> Bool { return iZone == nil ? false : spawnedByAny(of: [iZone!]) }

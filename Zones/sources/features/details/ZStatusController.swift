@@ -84,7 +84,7 @@ class ZStatusController: ZGenericController {
             graphNameLabel?   .text = graphNameText
             versionLabel?     .text = versionText
 
-            if  iKind != .sStartup,
+            if  iKind != .sStartupProgress,
 				let zone = currentZone {
                 levelLabel?.text = "is at level \(zone.level + 1)"
             }

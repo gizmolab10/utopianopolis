@@ -42,19 +42,28 @@ class ZOnboarding : ZOperations {
     // MARK:-
 
 	override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
-        onCloudResponse = { iAny in onCompletion(false) }
+        onCloudResponse = { flag in onCompletion(false) }
 
-        switch operationID {
-		case .oMacAddress:        getMAC();           onCompletion(true)
-		case .oObserveUbiquity:   observeUbiquity();  onCompletion(true)
-        case .oCheckAvailability: checkAvailability { onCompletion(true) }    // true means op is handled
-		case .oInternet:          checkConnection();  onCompletion(true)
-		case .oUbiquity:          ubiquity          { onCompletion(true) }
-        case .oFetchUserID:       fetchUserID       { onCompletion(true) }
-		case .oFetchUserRecord:   fetchUserRecord   { onCompletion(true) }
-        default:                                      onCompletion(false)     // false means op is not handled, so super should proceed
-        }
+		switch operationID {
+			case .oInternet:          checkConnection();    onCompletion(true)    // true means op is handled
+			case .oMacAddress:        getMAC();             onCompletion(true)
+			case .oObserveUbiquity:   observeUbiquity();    onCompletion(true)
+			case .oUserPermissions:   getUserPermission() { onCompletion(true) }
+			case .oCheckAvailability: checkAvailability   { onCompletion(true) }
+			case .oUbiquity:          ubiquity            { onCompletion(true) }
+			case .oFetchUserID:       fetchUserID         { onCompletion(true) }
+			case .oFetchUserRecord:   fetchUserRecord     { onCompletion(true) }
+			default:                                        onCompletion(false)
+		}
     }
+
+	func getUserPermission(onCompletion: @escaping Closure) {
+		if  let c = gStartupController {
+			c.getUserPermission(onCompletion: onCompletion)
+		} else {
+			onCompletion()
+		}
+	}
 
 	func observeUbiquity() { gNotificationCenter.addObserver(self, selector: #selector(ZOnboarding.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil) }
     func checkConnection() { gHasInternet = isConnectedToInternet }

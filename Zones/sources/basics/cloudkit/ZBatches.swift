@@ -201,20 +201,20 @@ class ZBatches: ZOnboarding {
     func batch(_ iID: ZBatchID, _ iCompletion: @escaping BooleanClosure) {
         if  iID.shouldIgnore {
             iCompletion(true) // true means no new data
-		} else  if  gStartupLevel == .firstTime {
-			gTimers.resetTimer(for: .tNeedUserAccess, withTimeInterval:  0.2, repeats: true) { iTimer in
-
-				// /////////////////////////////////////////////// //
-				// startup controller takes over via handle signal //
-				//                                                 //
-				// where only user input can change gStartupLevel  //
-				// /////////////////////////////////////////////// //
-
-				if  gStartupLevel != .firstTime {
-					iTimer.invalidate()
-					self.batch(iID, iCompletion)
-				}
-			}
+//		} else  if  gStartupLevel == .firstTime {
+//			gTimers.resetTimer(for: .tNeedUserAccess, withTimeInterval:  0.2, repeats: true) { iTimer in
+//
+//				// /////////////////////////////////////////////// //
+//				// startup controller takes over via handle signal //
+//				//                                                 //
+//				// where only user input can change gStartupLevel  //
+//				// /////////////////////////////////////////////// //
+//
+//				if  gStartupLevel != .firstTime {
+//					iTimer.invalidate()
+//					self.batch(iID, iCompletion)
+//				}
+//			}
 		} else if !gCloudStatusIsActive, iID.needsCloudDrive {
 			gTimers.resetTimer(for: .tNeedCloudDriveEnabled, withTimeInterval:  0.2, repeats: true) { iTimer in
 
@@ -292,16 +292,13 @@ class ZBatches: ZOnboarding {
             // iCompleted will be false if it does not handle the operation //
             // ///////////////////////////////////////////////////////////////
 
-            if  iCompleted {
+            if  iCompleted || operationID == .oCompletion {
                 onCompletion(true)
             } else {
-                let              requiresActive = [.oSaveToCloud, .oTraits                             ].contains(operationID)
-				let               alwaysForBoth = [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe].contains(operationID)
-                let               forMineIDOnly = [.oBookmarks                                         ].contains(operationID)
                 let                      isMine = restoreToID == .mineID
-                let               onlyCurrentID = (!gCloudStatusIsActive && !alwaysForBoth) || operationID == .oCompletion
-                let  databaseIDs: [ZDatabaseID] = forMineIDOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
-                let                      isNoop = !gCloudStatusIsActive && (requiresActive || (onlyCurrentID && isMine && operationID != .oFavorites))
+				let               onlyCurrentID = (!gCloudStatusIsActive && !operationID.alwaysBoth)
+				let  databaseIDs: [ZDatabaseID] = operationID.forMineOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
+				let                      isNoop = !gCloudStatusIsActive && (operationID.needsActive || (onlyCurrentID && isMine && operationID != .oFavorites))
                 var invokeForIndex: IntClosure?                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 

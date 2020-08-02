@@ -625,7 +625,7 @@ func gThrowOnUserActivity() throws {
 	if  Thread.isMainThread {
 		if  gTestForUserActivity {
 			if !gHasFinishedStartup {
-				gSignal([.sStartup])
+				gSignal([.sStartupProgress])
 			}
 
 			throw(ZInterruptionError.userInterrupted)

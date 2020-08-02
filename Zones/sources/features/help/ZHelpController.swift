@@ -16,7 +16,7 @@ import SnapKit
 #endif
 
 var gHelpController: ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
-var gHelpWindowController: NSWindowController? // instantiated once
+var gHelpWindowController: NSWindowController? // instantiated once, in startupCloudAndUI
 let gAllHelpModes : [ZHelpMode] = [.basicMode, .allMode, .dotMode]
 
 class ZHelpController: ZGenericTableController {
@@ -127,9 +127,8 @@ class ZHelpController: ZGenericTableController {
 	func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
 		if  let      key = iEvent.key {
 			let    flags = iEvent.modifierFlags
-			let   OPTION = flags.isOption
 			let  COMMAND = flags.isCommand
-			let  SPECIAL = COMMAND && OPTION
+			let  SPECIAL = flags.isSpecial
 			switch   key {
 				case "?", "/":         show(       flags: flags)
 				case "w":              show(false, flags: flags)

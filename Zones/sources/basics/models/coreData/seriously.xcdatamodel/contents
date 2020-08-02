@@ -5,10 +5,10 @@
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SIdea" inverseName="parent" inverseEntity="SIdea"/>
     </entity>
     <entity name="SManifest" representedClassName="SManifest" syncable="YES" codeGenerationType="class"/>
-    <entity name="SPreferences" representedClassName="SPreferences" syncable="YES" codeGenerationType="class">
-        <attribute name="expandedZones" optional="YES" attributeType="String"/>
+    <entity name="SPreferences" representedClassName="SPreferences" syncable="YES" codeGenerationType="class"/>
+    <entity name="SState" representedClassName="SState" syncable="YES" codeGenerationType="class">
+        <attribute name="expandedIdeas" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="SState" representedClassName="SState" syncable="YES" codeGenerationType="class"/>
     <entity name="STrait" representedClassName="STrait" parentEntity="SIdea" syncable="YES" codeGenerationType="class"/>
     <configuration name="Cloud" usedWithCloudKit="YES">
         <memberEntity name="SIdea"/>
@@ -20,10 +20,10 @@
         <memberEntity name="SState"/>
     </configuration>
     <elements>
-        <element name="SPreferences" positionX="-63" positionY="-18" width="128" height="58"/>
+        <element name="SPreferences" positionX="-63" positionY="-18" width="128" height="43"/>
         <element name="SIdea" positionX="-54" positionY="0" width="128" height="73"/>
         <element name="STrait" positionX="-36" positionY="9" width="128" height="43"/>
         <element name="SManifest" positionX="-18" positionY="27" width="128" height="43"/>
-        <element name="SState" positionX="0" positionY="54" width="128" height="43"/>
+        <element name="SState" positionX="0" positionY="54" width="128" height="58"/>
     </elements>
 </model>

@@ -25,8 +25,8 @@ class ZBaseEditor: NSObject {
 		var     handled = false
 		if  var     key = iKey {
 			let COMMAND = flags.isCommand
+			let SPECIAL = flags.isSpecial
 			let  OPTION = flags.isOption
-			let SPECIAL =  COMMAND && OPTION
 			let ONEFLAG = (COMMAND || OPTION) && !SPECIAL
 
 			if  key    != key.lowercased() {
