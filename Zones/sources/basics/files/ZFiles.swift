@@ -169,7 +169,7 @@ class ZFiles: NSObject {
 				// take snapshots just before exit from method //
 				// //////////////////////////////////////////////
 
-				if  let   graph  = try cloud.rootZone?.createStorageDictionary(for: dbID)  {
+ 				if  let   graph  = try cloud.rootZone?.createStorageDictionary(for: dbID)  {
 					dict[.graph] = graph as NSObject
 				}
 
@@ -211,17 +211,15 @@ class ZFiles: NSObject {
 
 				BACKGROUND {
 					dict [.date] = cloud.lastSyncDate as NSObject
-					let jsonDict = self.jsonDictFrom(dict)
+					let jsonDict = dict.jsonDict
 
 					if  let data = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {
 						let  url = URL(fileURLWithPath: path)
 
 						try? data.write(to: url)
 					} else {
-						printDebug(.dError, "ahah")
+						printDebug(.dFile, "json error on local storage")
 					}
-
-					printDebug(.dFile, "done")
 
 					self.needsWrite[index] = false
 					self .isWriting[index] = false // end prevention of write during write
@@ -275,6 +273,7 @@ class ZFiles: NSObject {
 							default:
 								if  let subDict = value as? ZStorageDictionary,
 									!databaseID.isDeleted(dict: subDict) {
+
 									let zone = Zone(dict: subDict, in: databaseID)
 
 									zone.updateRecordName(for: key)

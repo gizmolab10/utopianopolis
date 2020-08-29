@@ -28,6 +28,7 @@ enum ZTimerID : Int {
 	case tWriteMine
 	case tMouseZone
 	case tOperation
+	case tStartup
 	case tSync
 	case tKey
 
@@ -84,11 +85,16 @@ class ZTimers: NSObject {
 		return ""
 	}
 
-	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping (Timer) -> Void) {
-		guard let index = timerID?.rawValue else { return }
+	@discardableResult func stopTimer(for timerID: ZTimerID?) -> Int? {
+		guard let index = timerID?.rawValue else { return nil }
 
 		timers[index]?.invalidate()
 
+		return index
+	}
+
+	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping (Timer) -> Void) {
+		guard let index = stopTimer(for: timerID) else { return }
 		timers[index]   = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: block)
 	}
 

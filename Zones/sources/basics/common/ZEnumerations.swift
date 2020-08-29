@@ -255,7 +255,7 @@ enum ZDatabaseID: String {
         
         return name == nil ? false : gRemoteStorage.cloud(for: self)?.manifest?.deleted?.contains(name!) ?? false
     }
-    
+
 }
 
 enum ZDatabaseIndex: Int {
@@ -322,9 +322,10 @@ enum ZStorageType: String {
     case attributes      = "attributes"
     case children        = "children"
     case progeny         = "progeny"
-    case traits          = "traits"
-    case access          = "access"
-    case author          = "author"
+	case strings         = "strings"
+	case traits          = "traits"
+	case access          = "access"
+	case author          = "author"
 	case essay           = "essay"
 	case order           = "order"
     case color           = "color"

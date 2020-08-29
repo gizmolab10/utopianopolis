@@ -54,13 +54,17 @@ class ZRecord: NSObject {
         }
 
         set {
+			guard newValue != nil else {
+				return
+			}
+
             if  _record != newValue {
 
-                // ////////////////////////////////////////
-                // old registrations are no longer valid //
-                // ////////////////////////////////////////
+                // ///////////////////////////////////////////////
+                // old registrations are likely no longer valid //
+                // ///////////////////////////////////////////////
 
-                clearAllStates() // is this needed pr wanted?
+                clearAllStates() // is this needed or wanted?
                 gBookmarks.unregisterBookmark(self as? Zone)
                 cloud?.unregisterCKRecord(_record)
 
@@ -68,36 +72,46 @@ class ZRecord: NSObject {
 
                 updateInstanceProperties()
 
-                if !register() {
-                    bam("zone is a duplicate")
-                } else {
-                    maybeMarkAsFetched()
-
-                    if  notFetched {
-                        setupLinks()
-                    }
-
-                    // //////////////////
-                    // debugging tests //
-                    // //////////////////
-
-					let name = (self as? Zone)?.zoneName ?? recordName ?? kEmptyIdea
-
-                    if !canSaveWithoutFetch &&  isFetched {
-                        bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
-                        allowSaveWithoutFetch()
-                    } else if canSaveWithoutFetch && notFetched {
-                        bam("require FETCH BEFORE SAVE " + name)
-                        fetchBeforeSave()
-
-                        if  name != emptyName || recordName == kRootName {
-                            bam("new named record, should ALLOW SAVING")
-                        }
-                    }
-                }
+				if !register() {
+					bam("zone is a duplicate")
+				} else {
+					updateState()
+				}
             }
+
+			if  _record == nil {
+				print("nil")
+			}
         }
     }
+
+	func updateState() {
+		maybeMarkAsFetched()
+
+		if  notFetched {
+			setupLinks()
+		}
+
+		// //////////////////
+		// debugging tests //
+		// //////////////////
+
+		let name = (self as? Zone)?.zoneName ?? recordName ?? kEmptyIdea
+
+		if !canSaveWithoutFetch &&  isFetched {
+			bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
+			allowSaveWithoutFetch()
+		} else if canSaveWithoutFetch && notFetched {
+			bam("require FETCH BEFORE SAVE " + name)
+			fetchBeforeSave()
+
+			if  name != emptyName || recordName == kRootName {
+				bam("new named record, should ALLOW SAVING")
+			}
+		}
+
+		needSave()
+	}
 
 	func storageDictionary() throws -> ZStorageDictionary {
 		if  let dbID = databaseID,
@@ -183,19 +197,21 @@ class ZRecord: NSObject {
     func adopt(moveOrphansToLost: Bool = false) {}
     func maybeNeedRoot() {}
     func debug(_  iMessage: String) {}
-    func cloudProperties() -> [String] { return [] }
+	var cloudProperties: [String] { return ZRecord.cloudProperties }
+	var optionalCloudProperties: [String] { return ZRecord.optionalCloudProperties }
     func ignoreKeyPathsForStorage() -> [String] { return [kpParent, kpOwner] }
     func   register() -> Bool { return cloud?.registerZRecord(self) ?? false }
     func unregister() { cloud?.unregisterZRecord(self) }
     func hasMissingChildren() -> Bool { return true }
     func hasMissingProgeny()  -> Bool { return true }
-    class func cloudProperties() -> [String] { return [] }
+    class var cloudProperties: [String] { return [] }
+	class var optionalCloudProperties: [String] { return [] }
 
 	class func cloudProperties(for className: String) -> [String] {
 		switch className {
-		case kZoneType:     return Zone     .cloudProperties()
-		case kTraitType:    return ZTrait   .cloudProperties()
-		case kManifestType: return ZManifest.cloudProperties()
+		case kZoneType:     return Zone     .cloudProperties
+		case kTraitType:    return ZTrait   .cloudProperties
+		case kManifestType: return ZManifest.cloudProperties
 		default:			return []
 		}
 	}
@@ -215,7 +231,7 @@ class ZRecord: NSObject {
 
     func updateInstanceProperties() {
         if  let r = record {
-            for keyPath in cloudProperties() {
+            for keyPath in cloudProperties {
                 if  let    cloudValue  = r[keyPath] as! NSObject? {
                     let propertyValue  = value(forKeyPath: keyPath) as! NSObject?
 
@@ -229,7 +245,7 @@ class ZRecord: NSObject {
 
     func updateCKRecordProperties() {
         if  let r = record {
-            for keyPath in cloudProperties() {
+            for keyPath in cloudProperties {
                 let    cloudValue  = r[keyPath] as! NSObject?
                 let propertyValue  = value(forKeyPath: keyPath) as! NSObject?
 
@@ -258,14 +274,14 @@ class ZRecord: NSObject {
     func copy(into iCopy: ZRecord) {
         iCopy.maybeNeedSave() // so KVO won't set needsMerge
         updateCKRecordProperties()
-        record?.copy(to: iCopy.record, properties: cloudProperties())
+        record?.copy(to: iCopy.record, properties: cloudProperties)
         iCopy.updateInstanceProperties()
     }
 
     func mergeIntoAndTake(_ iRecord: CKRecord) {
         updateCKRecordProperties()
 
-        if  let r = record, r.copy(to: iRecord, properties: cloudProperties()) {
+        if  let r = record, r.copy(to: iRecord, properties: cloudProperties) {
             record  = iRecord
 
             maybeNeedSave()
@@ -384,13 +400,13 @@ class ZRecord: NSObject {
     }
 
     func teardownKVO() {
-        for keyPath: String in cloudProperties() {
+        for keyPath in cloudProperties {
             removeObserver(self, forKeyPath: keyPath)
         }
     }
 
 	func setupKVO() {
-        for keyPath: String in cloudProperties() {
+        for keyPath in cloudProperties {
             addObserver(self, forKeyPath: keyPath, options: [.new, .old], context: &kvoContext)
         }
     }
@@ -448,6 +464,16 @@ class ZRecord: NSObject {
 			case .link, .parentLink:
 				if  let link = object as? String, !isValid(link) {
 					return nil
+				}
+			case .text:
+				if  var string = object as? String { // plain [ causes file read to treat it as an array-starts-here symbol
+					string = string.replacingStrings(["["], with: "(")
+					string = string.replacingStrings(["]"], with: ")")
+					string = string.replacingStrings(["\""], with: "'")
+					string = string.replacingStrings(["“"], with: "'")
+					string = string.replacingStrings(["”"], with: "'")
+
+					return string as NSObject
 				}
 			case .assets:
 				if  let  assets = object as? [CKAsset] {
@@ -511,17 +537,37 @@ class ZRecord: NSObject {
 	func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
 		try gThrowOnUserActivity()
 
-		guard let name = recordName, !gFiles.writtenRecordNames.contains(name) else { return nil }
-		let   keyPaths = cloudProperties() + (includeRecordName ? [kpRecordName] : []) + [kpModificationDate]
-		var       dict = ZStorageDictionary()
+		guard record != nil else {
+			printDebug(.dFile, "missing record")
+
+			return nil
+		}
+
+		guard let name = recordName else {
+			printDebug(.dFile, "fubar record name \(self)")
+
+			return nil
+		}
+
+		if  gFiles.writtenRecordNames.contains(name) {
+			printDebug(.dFile, "avoid duplicating record name \(self)")
+
+			return nil
+		}
 
 		gFiles.writtenRecordNames.append(name)
 
+		let   keyPaths = cloudProperties + (includeRecordName ? [kpRecordName] : []) + [kpModificationDate]
+		let  optionals = optionalCloudProperties + [kpModificationDate]
+		var       dict = ZStorageDictionary()
+
 		for keyPath in keyPaths {
-			if  let       type = type(from: keyPath),
-				let    extract = extract(valueOf: type, at: keyPath),
-				let   prepared = prepare(extract, of: type) {
-				dict[type]     = prepared
+			if  let    type = type(from: keyPath),
+				let extract = extract(valueOf: type, at: keyPath),
+				let  object = prepare(extract, of: type) {
+				dict[type]  = object
+			} else if !optionals.contains(keyPath){
+				printDebug(.dFile, "broken keypath for \"\(self)\" : \(keyPath)")
 			}
 		}
 
@@ -533,72 +579,80 @@ class ZRecord: NSObject {
     }
     
 
-    func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
+	func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
 		try gThrowOnUserActivity()
 
-		var ckRecord = CKRecord(recordType: iRecordType)
-        let     name = dict[.recordName] as? String
-        databaseID   = iDatabaseID
+		// case 1: name is nil
+		// case 2: ck record already exists
+		// case 3: name is not nil
 
-        if  name == nil || gRemoteStorage.zRecords(for: iDatabaseID)?.maybeCKRecordForRecordName(name) == nil {
-            if  let recordName = name {
-                ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecord.ID(recordName: recordName)) // YIKES this may be wildly out of date
-            }
-            
-            for keyPath in cloudProperties() + [kpModificationDate] {
-                if  let   type = type(from: keyPath),
-                    let object = dict[type],
-                    let  value = object as? CKRecordValue {
+		let    cloud = gRemoteStorage.zRecords(for: iDatabaseID)
+		var ckRecord = CKRecord(recordType: iRecordType)           // case 1
+		let     name = dict[.recordName] as? String
+		databaseID   = iDatabaseID
 
-					switch type {
-						case .type: // convert essay trait to note trait
-							if  var string = object as? String,
-								let trait = ZTraitType(rawValue: string),
-								trait == .tEssay {
-								string = ZTraitType.tNote.rawValue
-								ckRecord[keyPath] = string as CKRecordValue
-							} else {
-								ckRecord[keyPath] = value
-							}
-						case .date:
-							if  let      interval = object as? Double {
-								writtenModifyDate = Date(timeIntervalSince1970: interval)
-							}
-						case .assets:
-							if  let      assetStrings = (object as? String)?.componentsSeparatedAt(level: 2), assetStrings.count > 0,
-								let             trait = self as? ZTrait {
-								var            assets = [CKAsset]()
-								for assetString in assetStrings {
-									let         parts = assetString.componentsSeparatedAt(level: 1)
-									if  parts.count   > 1 {
-										let  fileName = parts[0]
-										let    base64 = parts[1]
-										if  let  data = Data(base64Encoded: base64),
-											let image = ZImage(data: data),
-											let asset = trait.assetFromImage(image, for: fileName) {
-											assets.append(asset)
-										}
-									}
-								}
+		if  let recordName = name {
+			if  let r = cloud?.maybeCKRecordForRecordName(name) {
+				ckRecord = r				        		       // case 2
+			} else {		        		        		       // case 3
+				ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecord.ID(recordName: recordName)) // YIKES this may be wildly out of date
+			}
+		}
 
-								if  assets.count > 0 {
-									ckRecord[keyPath] = assets
-								}
-							}
+		for keyPath in cloudProperties + [kpModificationDate] {
+			if  let   type = type(from: keyPath),
+				let object = dict[type],
+				let  value = object as? CKRecordValue {
 
-						default:
+				switch type {
+					case .type: // convert essay trait to note trait
+						if  var string = object as? String,
+							let trait = ZTraitType(rawValue: string),
+							trait == .tEssay {
+							string = ZTraitType.tNote.rawValue
+							ckRecord[keyPath] = string as CKRecordValue
+						} else {
 							ckRecord[keyPath] = value
 					}
-                }
-            }
+					case .date:
+						if  let      interval = object as? Double {
+							writtenModifyDate = Date(timeIntervalSince1970: interval)
+					}
+					case .assets:
+						if  let      assetStrings = (object as? String)?.componentsSeparatedAt(level: 2), assetStrings.count > 0,
+							let             trait = self as? ZTrait {
+							var            assets = [CKAsset]()
+							for assetString in assetStrings {
+								let         parts = assetString.componentsSeparatedAt(level: 1)
+								if  parts.count   > 1 {
+									let  fileName = parts[0]
+									let    base64 = parts[1]
+									if  let  data = Data(base64Encoded: base64),
+										let image = ZImage(data: data),
+										let asset = trait.assetFromImage(image, for: fileName) {
+										assets.append(asset)
+									}
+								}
+							}
 
-            record = ckRecord    // any subsequent changes into any of this object's cloudProperties will save this record to iCloud
+							if  assets.count > 0 {
+								ckRecord[keyPath] = assets
+							}
+					}
 
-            if  let needs = dict[.needs] as? String {
-                addNeedsFromString(needs)
-            }
-        }
-    }
+					default:
+						ckRecord[keyPath] = value
+				}
+			}
+		}
+
+		record = ckRecord    // any subsequent changes into any of this object's cloudProperties will save this record to iCloud
+
+		if  let needs = dict[.needs] as? String {
+			addNeedsFromString(needs)
+		}
+
+	}
 
 	class func createStorageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
         if  let   items = iItems,
@@ -606,16 +660,25 @@ class ZRecord: NSObject {
             var   array = [ZStorageDictionary] ()
 
             for item in items {
-                var dict: ZStorageDictionary?
+				if  let zRecord = item as? ZRecord {
+					if  zRecord.record == nil {
+						printDebug(.dFile, "no record: \(zRecord)")
+					} else if (allowEach == nil || allowEach!(zRecord)),
+						let dict = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 
-                if  let zRecord = item as? ZRecord,
-                    (allowEach == nil || allowEach!(zRecord)) {
-                    dict = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors)
-                }
+						if  dict.count != 0 {
+							array.append(dict)
+						} else {
+							printDebug(.dFile, "empty storage dictionary: \(zRecord)")
 
-                if  dict != nil {
-                    array.append(dict!)
-                }
+							if  let dict2 = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+								print("gotcha \(dict2.count)")
+							}
+						}
+					} else if !zRecord.isBookmark {
+						printDebug(.dFile, "no storage dictionary: \(zRecord)")
+					}
+				}
             }
 
             if  array.count > 0 {

@@ -105,12 +105,16 @@ class ZBookmarks: NSObject {
 
     func storageArray(for iDatabaseID: ZDatabaseID, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> [ZStorageDictionary]? {
         return try Zone.createStorageArray(for: allBookmarks, from: iDatabaseID, includeInvisibles: includeInvisibles) { zRecord -> Bool in
-            if  let    bookmark = zRecord as? Zone,
-                let        root = bookmark.root {
-                return root.databaseID != iDatabaseID && !root.isRootOfFavorites // only store cross-linked, non-favorite bookarks
+			var  okayToStore = false
+
+			if  let bookmark = zRecord as? Zone,
+                let     root = bookmark.root,
+				iDatabaseID != root.databaseID,
+				!root.isRootOfFavorites {       // only store cross-linked, non-favorite bookarks
+                okayToStore  = true
             }
 
-            return false
+            return okayToStore
         }
     }
 

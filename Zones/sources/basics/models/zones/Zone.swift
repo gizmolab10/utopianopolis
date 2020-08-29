@@ -143,22 +143,28 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     // MARK:- properties
     // MARK:-
 
-	override func cloudProperties() -> [String] { return Zone.cloudProperties() }
+	override var cloudProperties: [String] { return Zone.cloudProperties }
+	override var optionalCloudProperties: [String] { return Zone.optionalCloudProperties }
 
-    override class func cloudProperties() -> [String] {
+    override class var cloudProperties: [String] {
+		return optionalCloudProperties +
+			super.cloudProperties
+    }
+
+	override class var optionalCloudProperties: [String] {
 		return [#keyPath(parent),
 				#keyPath(zoneName),
-                #keyPath(zoneLink),
-                #keyPath(zoneColor),
-                #keyPath(zoneCount),
-                #keyPath(zoneOrder),
-                #keyPath(zoneAuthor),
-                #keyPath(zoneAccess),
-                #keyPath(parentLink),
-                #keyPath(zoneProgeny),
+				#keyPath(zoneLink),
+				#keyPath(zoneOrder),
+				#keyPath(zoneCount),
+				#keyPath(zoneColor),
+				#keyPath(zoneAuthor),
+				#keyPath(parentLink),
+				#keyPath(zoneAccess),
+				#keyPath(zoneProgeny),
 				#keyPath(zoneAttributes)] +
-				super.cloudProperties()
-    }
+			super.optionalCloudProperties
+	}
 
 	var deepCopy: Zone {
 		let theCopy = Zone(databaseID: databaseID)
@@ -2097,7 +2103,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
                     iZone .databaseID = appliedID                                           // must happen BEFORE record assignment
                     iZone     .record = newRecord                                           // side-effect: move registration to the new id's record manager
 
-                    oldRecord?.copy(to: iZone.record, properties: iZone.cloudProperties())  // preserve new record id
+                    oldRecord?.copy(to: iZone.record, properties: iZone.cloudProperties)  // preserve new record id
                     iZone.needSave()                                                        // in new id's record manager
 
                     // /////////////////////////////////////////////////////////////////
@@ -2523,7 +2529,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
         try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
 
-        if let childrenDicts: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
+        if  let childrenDicts: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
             for childDict: ZStorageDictionary in childrenDicts {
                 let child = Zone(dict: childDict, in: iDatabaseID)
 
@@ -2554,15 +2560,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
     override func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
-		var dict            = try super.createStorageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
+		guard record != nil else {
+			printDebug(.dFile, "\(self) has no record")
+
+			return nil
+		}
+
+		var dict             = try super.createStorageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
 
 		if  (includeInvisibles || showingChildren),
-			let   childDict = try Zone.createStorageArray(for: children, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
-            dict[.children] = childDict as NSObject?
+			let childrenDict = try Zone.createStorageArray(for: children, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+            dict [.children] = childrenDict as NSObject?
         }
 
-        if  let  traitsDict = try Zone.createStorageArray(for: traitValues, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
-            dict  [.traits] = traitsDict as NSObject?
+        if  let   traitsDict = try Zone.createStorageArray(for: traitValues, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+            dict   [.traits] = traitsDict as NSObject?
         }
 
         return dict

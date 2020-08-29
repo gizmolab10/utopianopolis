@@ -30,7 +30,7 @@ class ZDesktopAppDelegate: ZAppDelegate, NSMenuDelegate {
 
             UserDefaults.standard.set(false, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints")
             gApplication.registerForRemoteNotifications(matching: .badge)
-            gControllers.startupCloudAndUI()
+            gStartup.startupCloudAndUI()
             gEvents.setup()
         }
     }

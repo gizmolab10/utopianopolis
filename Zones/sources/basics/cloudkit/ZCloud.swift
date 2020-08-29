@@ -290,11 +290,11 @@ class ZCloud: ZRecords {
     }
 
 	func queryForZonesWith(_ predicate: NSPredicate, batchSize: Int = kBatchSize, onCompletion: RecordErrorClosure?) {
-		queryFor(kZoneType, with: predicate, properties: Zone.cloudProperties(), batchSize: batchSize, onCompletion: onCompletion)
+		queryFor(kZoneType, with: predicate, properties: Zone.cloudProperties, batchSize: batchSize, onCompletion: onCompletion)
 	}
 
 	func queryForTraitsWith(_ predicate: NSPredicate, batchSize: Int = kBatchSize, onCompletion: RecordErrorClosure?) {
-		queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties(), batchSize: batchSize, onCompletion: onCompletion)
+		queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties, batchSize: batchSize, onCompletion: onCompletion)
 	}
 
     func predicate(since iStart: Date?, before iEnd: Date?) -> NSPredicate {
@@ -739,9 +739,9 @@ class ZCloud: ZRecords {
         // for zones, traits, destroy
         // if date is nil, fetch all
 
-        fetch(for: kZoneType, properties: Zone.cloudProperties(), since: date) { iZoneCKRecords in
+        fetch(for: kZoneType, properties: Zone.cloudProperties, since: date) { iZoneCKRecords in
             FOREGROUND {
-                self.fetch(for: kTraitType, properties: ZTrait.cloudProperties(), since: date) { iTraitCKRecords in
+                self.fetch(for: kTraitType, properties: ZTrait.cloudProperties, since: date) { iTraitCKRecords in
                     FOREGROUND {
 						self.createZRecords(of: kTraitType, with: iTraitCKRecords, title: " TRAITS")
                         onCompletion?(0)
@@ -813,7 +813,7 @@ class ZCloud: ZRecords {
         fetchClosure?()
     }
 
-    func reliableFetch(needed: [CKRecord.ID], properties: [String] = Zone.cloudProperties(), _ onCompletion: RecordsClosure?) {
+    func reliableFetch(needed: [CKRecord.ID], properties: [String] = Zone.cloudProperties, _ onCompletion: RecordsClosure?) {
         let count = needed.count
 
         if  count > 0, let operation = configure(CKFetchRecordsOperation()) as? CKFetchRecordsOperation {
@@ -1038,7 +1038,7 @@ class ZCloud: ZRecords {
         var retrieved = [CKRecord] ()
         let predicate = NSPredicate(value: true)
 
-        queryFor(kManifestType, with: predicate, properties: ZManifest.cloudProperties()) { (iRecord, iError) in
+        queryFor(kManifestType, with: predicate, properties: ZManifest.cloudProperties) { (iRecord, iError) in
             if let ckRecord = iRecord {
                 if !retrieved.contains(ckRecord) {
                     retrieved.append(ckRecord)
@@ -1073,7 +1073,7 @@ class ZCloud: ZRecords {
 	func fetchTraits(with recordIDs: [CKRecord.ID], _ onCompletion: IntClosure?) {
         var     retrieved = [CKRecord] ()
         if  let predicate = traitsPredicate(specificTo: recordIDs) {
-            queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties()) { (iRecord, iError) in
+            queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties) { (iRecord, iError) in
                 if let ckRecord = iRecord {
                     if !retrieved.contains(ckRecord) {
                         retrieved.append(ckRecord)

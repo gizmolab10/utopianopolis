@@ -288,22 +288,25 @@ extension NSObject {
 
         return result
     }
+}
 
-    func jsonDictFrom(_ dict: ZStorageDictionary) -> ZStringObjectDictionary {
+extension ZStorageDictionary {
+
+	var jsonDict : ZStringObjectDictionary {
         var    last = ZStorageDictionary ()
         var  result = ZStringObjectDictionary ()
 
         let closure = { (key: ZStorageType, value: Any) in
             var goodValue        = value
             if  let      subDict = value as? ZStorageDictionary {
-                goodValue        = self.jsonDictFrom(subDict)
+				goodValue        = subDict.jsonDict
             } else if let   date = value as? Date {
                 goodValue        = kTimeInterval + ":\(date.timeIntervalSinceReferenceDate)"
             } else if let  array = value as? [ZStorageDictionary] {
                 var jsonArray    = [ZStringObjectDictionary] ()
 
                 for subDict in array {
-                    jsonArray.append(self.jsonDictFrom(subDict))
+                    jsonArray.append(subDict.jsonDict)
                 }
 
                 goodValue        = jsonArray
@@ -312,7 +315,7 @@ extension NSObject {
             result[key.rawValue] = (goodValue as! NSObject)
         }
 
-        for (iKey, value) in dict {
+        for (iKey, value) in self {
 			let key = (iKey != .essay) ? iKey : .note
 
             if [.children, .traits].contains(key) {
@@ -332,6 +335,19 @@ extension NSObject {
 }
 
 extension Dictionary {
+
+	var byteCount: Int { return data?.count ?? 0 }
+	var string: String? { return data?.string }
+
+	var data: Data? {
+		do {
+			let data = try JSONSerialization.data(withJSONObject:self, options: [])
+
+			return data
+		} catch {}
+
+		return nil
+	}
 
 	subscript (i: Int) -> Any? {
 		if  i < count {
@@ -1955,6 +1971,16 @@ extension Data {
 
 	var checksum : Int {
 		return self.map { Int($0) }.reduce(0, +)
+	}
+
+	var string: String? {
+		do {
+			if  let s = try JSONSerialization.jsonObject(with: self, options: .mutableLeaves) as? String {
+				return s
+			}
+		} catch {}
+
+		return nil
 	}
 
 }

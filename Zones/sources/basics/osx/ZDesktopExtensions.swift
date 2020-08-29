@@ -1107,7 +1107,7 @@ extension Zone {
 
 						do {
 							let     dict = try self.storageDictionary()
-							let jsonDict = self.jsonDictFrom(dict)
+							let jsonDict = dict.jsonDict
 							let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
 
 							try data.write(to: fileURL)

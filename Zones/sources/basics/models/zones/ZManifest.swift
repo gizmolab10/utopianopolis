@@ -6,32 +6,25 @@
 //  Copyright © 2019 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
 
-
 var gManifest: ZManifest? { return gCloud?.manifest }
-
 
 class ZManifest: ZRecord {
     
-    
     class ZDeleted: NSObject {
-        
         
         var name: String?
         var date: Date?
         var string: String? { if let n = name, let d = date { return ZDeleted.string(with: n, date: d) } else { return nil } }
         class func string(with iName: String, date iDate: Date) -> String? { return iName + kColonSeparator + "\(iDate.timeIntervalSince1970)" }
-        
-        
+
         init(with iName: String, date iDate: Date?) {
             name = iName
             date = iDate ?? Date()
         }
-        
-        
+
         init(with string: String) {
             let    parts = string.components(separatedBy: kColonSeparator)
             name         = parts[0]
@@ -44,14 +37,15 @@ class ZManifest: ZRecord {
         
     }
 
-    
+	var zDeleted = [ZDeleted]()
     @objc dynamic var deleted: [String]?
-    var zDeleted = [ZDeleted]()
-
+	override var cloudProperties: [String] { return ZManifest.cloudProperties }
+	override class var cloudProperties: [String] { return super.cloudProperties + [#keyPath(deleted)] }
+	override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deleted)] }
+	convenience init(databaseID: ZDatabaseID?) { self.init(record: CKRecord(recordType: kManifestType), databaseID: databaseID) }
 
     var updatedRefs: [String]? {
-        if  let d = deleted {
-            // merge deleted into zDeleted
+        if  let d = deleted {                 // FIRST: merge deleted into zDeleted
             for ref in d {
                 smartAppend(ref)
             }
@@ -60,12 +54,12 @@ class ZManifest: ZRecord {
         let zCount = zDeleted.count
         let dCount = deleted?.count ?? 0
 
-        if  zCount > 0, zCount != dCount {
+        if  zCount > 0, zCount != dCount {    // SECOND: update deleted if count does not match zDeleted
             deleted = []
             
             // create deleted from zDeleted
             for zd in zDeleted {
-                if  let   s = zd.string {
+                if  let s = zd.string {
                     deleted?.append(s)
                 }
             }
@@ -73,7 +67,6 @@ class ZManifest: ZRecord {
 
         return deleted
     }
-
 
     func apply() {
         for deleteMe in zDeleted {
@@ -88,7 +81,6 @@ class ZManifest: ZRecord {
             }
         }
     }
-    
     
     @discardableResult func smartAppend(_ iItem: Any) -> Bool {
         let refString  = iItem as? String
@@ -123,19 +115,11 @@ class ZManifest: ZRecord {
         return false
     }
 
-    
-    override class func cloudProperties() -> [String] { return super.cloudProperties() + [#keyPath(deleted)] }
-    override func cloudProperties() -> [String] { return ZManifest.cloudProperties() }
-    override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deleted)] }
-    convenience init(databaseID: ZDatabaseID?) { self.init(record: CKRecord(recordType: kManifestType), databaseID: databaseID) }
-    
-    
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
         self.init(record: nil, databaseID: dbID)
 
 		try extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
     }
-    
 
     override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
         try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID)
@@ -143,12 +127,11 @@ class ZManifest: ZRecord {
         if  let deletedsArray = dict[.deleted] as? [ZStorageDictionary] {
             for d in deletedsArray {
                 cloud?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent (intentionally) not being in childDict
-                    gManifest?.smartAppend(d)
+                    self.smartAppend(d)
                 }
             }
         }
     }
-    
     
     override func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
 		var dict           = try super.createStorageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()

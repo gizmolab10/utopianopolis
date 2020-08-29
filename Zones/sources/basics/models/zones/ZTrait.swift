@@ -158,16 +158,22 @@ class ZTrait: ZTraitAssets {
         try extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
     }
 
-	override func cloudProperties() -> [String] { return ZTrait.cloudProperties() }
+	override var cloudProperties: [String] { return ZTrait.cloudProperties }
+	override var optionalCloudProperties: [String] { return ZTrait.optionalCloudProperties }
 
-    override class func cloudProperties() -> [String] {
+    override class var cloudProperties: [String] {
         return [#keyPath(type),
                 #keyPath(text),
-			    #keyPath(owner),
-			    #keyPath(format),
 			    #keyPath(strings)] +
-				super.cloudProperties()
+			optionalCloudProperties +
+			super.cloudProperties
     }
+
+	override class var optionalCloudProperties: [String] {
+		return [#keyPath(owner),
+				#keyPath(format)] +
+			super.optionalCloudProperties
+	}
 
     override func orphan() {
         ownerZone?.setTraitText(nil, for: traitType)

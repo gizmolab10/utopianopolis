@@ -48,8 +48,18 @@ class ZRecords: NSObject {
 	var        destroyZone : Zone?
     var          trashZone : Zone?
     var           rootZone : Zone?
-	var        recordCount : Int  { return recordRegistry.count }
     var        hereIsValid : Bool { return maybeZoneForRecordName(hereRecordName) != nil }
+
+	var recordCount : Int  {
+
+		// when this is called at beginning of read shortly after launch,
+		// nothing has yet been registered, so return a default of 100
+		// doing so will give a better behavior to the launch progress bar
+
+		let count = recordRegistry.count
+
+		return count > 1 ? count : 100
+	}
 
     var hereRecordName: String? {
 		get {
@@ -150,7 +160,7 @@ class ZRecords: NSObject {
         if  let   name = className(for: recordType),
             let  klass = NSClassFromString(name),
             let zClass = klass as? ZRecord.Type {
-                return zClass.cloudProperties()
+                return zClass.cloudProperties
         }
 
 		return []

@@ -13,12 +13,17 @@ class ZTraitAssets: ZRecord {
 
 	@objc dynamic var     assets : [CKAsset]?
 	@objc dynamic var assetNames :  String?
-	override func cloudProperties() -> [String] { return ZTraitAssets.cloudProperties() }
+	override var cloudProperties: [String] { return ZTraitAssets.cloudProperties }
+	override var optionalCloudProperties: [String] { return ZTraitAssets.optionalCloudProperties }
 
-	override class func cloudProperties() -> [String] {
-		return [#keyPath(assetNames),
-			    #keyPath(assets)] +
-				super.cloudProperties()
+	override class var cloudProperties: [String] {
+		return optionalCloudProperties + super.cloudProperties
+	}
+
+	override class var optionalCloudProperties: [String] {
+		return [#keyPath(assets),
+				#keyPath(assetNames)] +
+			super.optionalCloudProperties
 	}
 
 	// MARK:- attachment

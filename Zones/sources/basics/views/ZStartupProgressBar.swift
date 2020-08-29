@@ -17,21 +17,21 @@ class ZStartupProgressBar: NSProgressIndicator {
 		return partial / total
 	}
 
-	func fractionOfOperations(isFirst: Bool) -> Double {
+	var fractionOfOperations: Double {
 		let   first = Double(ZOperationID.oReadFile.rawValue)
 		let  second = Double(ZOperationID.oDone    .rawValue) - first
 		let current = Double(gCurrentOp.rawValue)
 
-		return isFirst ? current / first : (current - first) / second
+		return (current - first) / second
 	}
 
 	var fraction: Double {
-		let   first = fractionOfOperations(isFirst: true)
-		let  second = fractionOfOperations(isFirst: false)
+		let   first = Double(gStartup.count) / 50.0
+		let  second = fractionOfOperations
 		let partial = fractionOfRecords
 
 		if  first < 1.0 {
-			return       first - 1.0
+			return       first
 		} else if gCurrentOp == .oReadFile {
 			return 1.0 + partial
 		} else {
@@ -39,20 +39,10 @@ class ZStartupProgressBar: NSProgressIndicator {
 		}
 	}
 
-	var adjustedFraction: Double { // not show changes for first third
-		let f = fraction
-
-		if  f < 1 {
-			return 0.0
-		}
-
-		return f - 1.0
-	}
-
 	func update() {
 		if  gCurrentOp    != .oCompletion {
 			let multiplier = maxValue - minValue
-			let      value = multiplier * adjustedFraction / 2.0
+			let      value = multiplier * fraction / 3.0
 			doubleValue    = value + minValue
 		}
 	}
