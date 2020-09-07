@@ -8,7 +8,7 @@
 
 import Foundation
 
-var gPrintMode: [ZPrintMode] = [.dFile]
+var gPrintMode: [ZPrintMode] = [.dTime]
 var gDebugMode: [ZDebugMode] = []
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {

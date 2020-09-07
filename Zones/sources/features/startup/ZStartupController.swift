@@ -53,9 +53,11 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		}
 	}
 
-	func getUserPermission(onCompletion: Closure? = nil) {
-		if  let       closure = onCompletion {
-			startupCompletion = closure
+	func getPermissionFromUser(onCompletion: Closure? = nil) {
+		if  gStartupLevel == .pleaseWait {
+			onCompletion?()
+		} else {
+			startupCompletion = onCompletion
 		}
 
 		FOREGROUND(canBeDirect: true) {

@@ -136,6 +136,7 @@ let              kManifestType = "ZManifest"
 let              kExemplarName = "exemplar"
 let             kFavoritesName = "favorites"
 let             kWindowRectKey = "window rect"
+let             kProgressTimes = "progressTimes"
 let             kExpandedZones = "expanded zones"
 let             kShowFavorites = "show favorites" // for iphone
 let             kHereRecordIDs = "here record ids"

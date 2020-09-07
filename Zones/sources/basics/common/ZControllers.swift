@@ -149,13 +149,13 @@ class ZControllers: NSObject {
                     }
                     
                     switch regarding {  // these non-default cases send a signal only to the one corresponding controller
-					case .sMap:         if identifier == .idMap            { closure() }
-					case .sMain:        if identifier == .idMain           { closure() }
-					case .sStatus:      if identifier == .idStatus         { closure() }
-					case .sCrumbs:      if identifier == .idCrumbs         { closure() }
-					case .sStartupProgress:     if startupIDs.contains(identifier) { closure() }
-					case .sFavorites:   if identifier == .idFavorites      { closure() }
-                    case .sPreferences: if identifier == .idPreferences    { closure() }
+					case .sMap:             if identifier == .idMap            { closure() }
+					case .sMain:            if identifier == .idMain           { closure() }
+					case .sStatus:          if identifier == .idStatus         { closure() }
+					case .sCrumbs:          if identifier == .idCrumbs         { closure() }
+					case .sStartupProgress: if startupIDs.contains(identifier) { closure() }
+					case .sFavorites:       if identifier == .idFavorites      { closure() }
+                    case .sPreferences:     if identifier == .idPreferences    { closure() }
                     default:                                                 closure()
                     }
                 }

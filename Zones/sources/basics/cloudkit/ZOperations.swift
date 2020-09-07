@@ -9,7 +9,7 @@
 import Foundation
 import SystemConfiguration.SCNetworkConnection
 
-enum ZOperationID: Int {
+enum ZOperationID: Int, CaseIterable {
 
 	case oNone               // default operation does nothing
 
@@ -62,14 +62,79 @@ enum ZOperationID: Int {
     case oRefetch            // user defaults list of record ids
     case oTraits
 
+	var progressTime : Int {
+		switch self {
+			case .oReadFile:        return 250
+			case .oAllIdeas:        return  31
+			case .oTraits:          return  16
+			case .oAllTraits:       return  11
+			case .oSubscribe:       return   7
+			case .oNewIdeas:        return   7
+			case .oNeededIdeas:     return   6
+			case .oManifest:        return   6
+			case .oFinishUp:        return   3
+			case .oRecount:         return   2
+			default:                return   1
+		}
+	}
+
+	var useTimer: Bool {
+		switch self {
+			case .oSubscribe,
+				 .oAllTraits,
+				 .oAllIdeas,
+				 .oNewIdeas,
+				 .oReadFile,
+				 .oTraits: return true
+			default:       return false
+		}
+	}
+
     var isLocal     : Bool { return localOperations.contains(self) }
 	var isDeprecated: Bool { return   deprecatedOps.contains(self) }
 	var needsActive : Bool { return   needActiveOps.contains(self) }
 	var forMineOnly : Bool { return     mineOnlyOps.contains(self) }
 	var alwaysBoth  : Bool { return       bothDBOps.contains(self) }
-	var isDone      : Bool { return         doneOps.contains(self) }
+	var isDoneOp    : Bool { return         doneOps.contains(self) }
 
 	var description : String { return "\(self)".substring(fromInclusive: 1).unCamelcased }
+}
+
+func gSetProgressTime(_ time: Int, for op: ZOperationID) {
+	if !gHasFinishedStartup, time > 1, op != .oUserPermissions {
+		gAssureProgressTimesAreLoaded()
+
+		gProgressTimes[op] = time
+
+		gStoreProgressTimes()
+	}
+}
+
+func gGetIndividualProgressTime(for op: ZOperationID) -> Int {
+	gAssureProgressTimesAreLoaded()
+
+	return gProgressTimes[op] ?? 1
+}
+
+func gGetAccumulatedProgressTime(untilNotIncluding op: ZOperationID) -> Int {
+	gAssureProgressTimesAreLoaded()
+
+	let opValue = op.rawValue
+	var     sum = 0
+
+	for opID in ZOperationID.allCases {
+		if  opValue > opID.rawValue {          // all ops prior to op parameter
+			sum += gGetIndividualProgressTime(for: opID)
+		}
+	}
+
+	return sum
+}
+
+var gTotalTime : Int {
+	gAssureProgressTimesAreLoaded()
+
+	return gProgressTimes.values.reduce(0, +)
 }
 
 let	        doneOps : [ZOperationID] = [.oNone, .oDone, .oCompletion]
@@ -85,12 +150,12 @@ class ZOperations: NSObject {
 
 	let             queue = OperationQueue()
 	var         currentOp :  ZOperationID  = .oNone
-	var      shouldCancel :          Bool  { return !currentOp.isDone && -(inverseOpDuration ?? 0.0) > 5.0 }
+	var      shouldCancel :          Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && -(inverseOpDuration ?? 0.0) > 5.0 }
 	var     debugTimeText :        String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
 	var inverseOpDuration :  TimeInterval? { return lastOpStart?.timeIntervalSinceNow }
 	var         cloudFire :  TimerClosure?
 	var   onCloudResponse :    AnyClosure?
-    var       lastOpStart :        NSDate?
+    var       lastOpStart :          Date?
 	func printOp(_ message: String)        { columnarReport(mode: .dOps, operationText, message) }
 	func unHang()                          { if gStartupLevel != .firstTime { onCloudResponse?(0) } }
 	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws                                  {} 
@@ -195,23 +260,18 @@ class ZOperations: NSObject {
                 // /////////////////////////////////////////////////////////////
 
                 if  operationID.isLocal || gCloudStatusIsActive {
+					gStartup.restartStartupTimer(for: operationID)
 
                     // ///////////////////////////////////////////////////////////////
                     // susend queue until operation function calls its onCompletion //
                     // ///////////////////////////////////////////////////////////////
 
                     self.queue.isSuspended = true
-					self.lastOpStart       = NSDate()
+					self.lastOpStart       = Date()
                     self.currentOp         = operationID        // if hung, it happened inside this op
 
-//                    self.reportBeforePerformBlock()
-
                     self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
-                        self.reportOnCompletionOfPerformBlock()
-
                         FOREGROUND {
-							gSignal([.sStatus, .sStartupProgress]) // show change in cloud status and startup progress
-
 							if  self.currentOp == .oCompletion {
 
                                 // /////////////////////////////////////
@@ -219,7 +279,11 @@ class ZOperations: NSObject {
 								// /////////////////////////////////////
 
                                 onCompletion()
-                            }
+							} else {
+								self.setProgressTime(for: operationID)
+							}
+
+							gSignal([.sStatus, .sStartupProgress]) // show change in cloud status and startup progress
 
 							// /////////////////////
                             // release suspension //
@@ -238,18 +302,12 @@ class ZOperations: NSObject {
         queue.isSuspended = false
     }
 
-    func reportBeforePerformBlock() {
-		printOp(debugTimeText)
+	func setProgressTime(for operationID: ZOperationID) {
+		let duration = Date().timeIntervalSince(lastOpStart!) + 0.05
+		let    delta = Int(duration * 10.0)
+
+		gSetProgressTime(delta, for: operationID)
 	}
-
-    func reportOnCompletionOfPerformBlock() {
-		if  let negative = inverseOpDuration {
-			let ten = 10.0
-			let duration = Double(Int(negative * -ten)) / ten // round to nearest tenth of second
-
-            printOp("\(duration)")
-        }
-    }
 
     func add(_ operation: BlockOperation) {
         if let prior = queue.operations.last {

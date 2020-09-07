@@ -22,9 +22,11 @@ var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
 var               gLaunchedAt                     = Date()
+var            gProgressTimes                     = [ZOperationID : Int]()
 var            gTextCapturing                     = false
 var          gIsReadyToShowUI                     = false
 var          gDeferringRedraw                     = false
+var         gGotProgressTimes                     = false
 var        gKeyboardIsVisible                     = false
 var        gArrowsDoNotBrowse                     = false
 var       gHasFinishedStartup                     = false
@@ -94,6 +96,52 @@ let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
 
 func         gSetEditIdeaMode()                   { gWorkMode = .editIdeaMode }
 func            gSetGraphMode()                   { gWorkMode = .graphMode }
+
+func gStoreProgressTimes() {
+	var separator = ""
+	var  storable = ""
+
+	for (op, value) in gProgressTimes {
+		storable.append("\(separator)\(op)\(kColonSeparator)\(value)")
+
+		separator = kCommaSeparator
+	}
+
+	setPreferencesString(storable, for: kProgressTimes)
+}
+
+func gAssureProgressTimesAreLoaded() {
+	if !gGotProgressTimes {
+		func setit(opInt: Int, value: Int?) {
+			if  let op = ZOperationID(rawValue: opInt) {
+				let time = value ?? op.progressTime
+
+				if  time > 1 {
+					gProgressTimes[op] = time
+				}
+			}
+		}
+
+		for op in ZOperationID.oStartUp.rawValue ... ZOperationID.oDone.rawValue {
+			setit(opInt: op, value: nil)
+		}
+
+		if  let string = getPreferenceString(for: kProgressTimes) {
+			let  pairs = string.components(separatedBy: kCommaSeparator)
+
+			for pair in pairs {
+				let       items = pair.components(separatedBy: kColonSeparator)
+				if  items.count > 1,
+					let      op = items[0].integerValue,
+					let    time = items[1].integerValue {
+					setit(opInt: op, value: time)
+				}
+			}
+		}
+
+		gGotProgressTimes = true
+	}
+}
 
 var gCurrentEvent: ZEvent? {
 	didSet {

@@ -48,7 +48,7 @@ class ZOnboarding : ZOperations {
 			case .oInternet:          checkConnection();    onCompletion(true)    // true means op is handled
 			case .oMacAddress:        getMAC();             onCompletion(true)
 			case .oObserveUbiquity:   observeUbiquity();    onCompletion(true)
-			case .oUserPermissions:   getUserPermission() { onCompletion(true) }
+			case .oUserPermissions:   getPermissionFromUser() { onCompletion(true) }
 			case .oCheckAvailability: checkAvailability   { onCompletion(true) }
 			case .oUbiquity:          ubiquity            { onCompletion(true) }
 			case .oFetchUserID:       fetchUserID         { onCompletion(true) }
@@ -57,9 +57,9 @@ class ZOnboarding : ZOperations {
 		}
     }
 
-	func getUserPermission(onCompletion: @escaping Closure) {
+	func getPermissionFromUser(onCompletion: @escaping Closure) {
 		if  let c = gStartupController {
-			c.getUserPermission(onCompletion: onCompletion)
+			c.getPermissionFromUser(onCompletion: onCompletion)
 		} else {
 			onCompletion()
 		}

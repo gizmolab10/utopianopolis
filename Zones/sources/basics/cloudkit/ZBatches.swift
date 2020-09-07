@@ -154,7 +154,7 @@ class ZBatches: ZOnboarding {
     var   currentDatabaseID : ZDatabaseID?
     var          totalCount :    Int { return currentBatches.count + deferredBatches.count }
 	var              isLate :   Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
-	var          statusText : String { return currentOp.isDone ? "" : currentOp.description + remainingOpsText }
+	var          statusText : String { return currentOp.isDoneOp ? "" : currentOp.description + remainingOpsText }
 	var    remainingOpsText : String { let count = queue.operationCount; return count == 0 ? "" : " + \(count)" }
 
     // MARK:- API
@@ -285,13 +285,14 @@ class ZBatches: ZOnboarding {
     }
 
     override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
-        super.invokeMultiple(for: operationID, restoreToID: restoreToID) { iCompleted in
 
-            // ///////////////////////////////////////////////////////////////
-            //     first, allow onboarding superclass to perform block      //
-            // iCompleted will be false if it does not handle the operation //
-            // ///////////////////////////////////////////////////////////////
+		// ///////////////////////////////////////////////////////////////
+		//     first, allow onboarding superclass to perform block      //
+		// iCompleted will be false if it does not handle the operation //
+		//     i.e., app is no longer doing onboarding operationss      //
+		// ///////////////////////////////////////////////////////////////
 
+		super.invokeMultiple(for: operationID, restoreToID: restoreToID) { iCompleted in
             if  iCompleted || operationID == .oCompletion {
                 onCompletion(true)
             } else {

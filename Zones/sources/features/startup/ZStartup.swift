@@ -11,13 +11,18 @@ import Foundation
 let gStartup = ZStartup()
 
 class ZStartup: NSObject {
-	var count = 0
+	var count = 0.0
 
-	func startStartupTimer() {
-		gTimers.resetTimer(for: .tStartup, withTimeInterval: 0.2, repeats: true) { iTimer in
-			self.count += 1
+	func restartStartupTimer(for op: ZOperationID) {
+		if  op.useTimer {
+			count        = 0.0
+			let interval = 0.5
 
-			gSignal([.sStartupProgress])
+			gTimers.resetTimer(for: .tStartup, withTimeInterval: interval, repeats: true) { iTimer in
+				self.count += 1.0 * interval
+
+				gSignal([.sStartupProgress])
+			}
 		}
 	}
 
@@ -29,7 +34,6 @@ class ZStartup: NSObject {
 //		gHelpController?.setup()                // show last chosen help view
 		gRemoteStorage.clear()
 		gSignal([.sMain, .sStartupProgress])
-		startStartupTimer()
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
@@ -42,7 +46,6 @@ class ZStartup: NSObject {
 				gRemoteStorage.recount()
 				gRefreshCurrentEssay()
 				gRefreshPersistentWorkMode()
-				gTimers.stopTimer(for: .tStartup)
 				gSignal([.sSwap, .sMain, .sCrumbs, .sRelayout, .sLaunchDone])
 
 				gBatches.finishUp { iSame in

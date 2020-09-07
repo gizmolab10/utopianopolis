@@ -661,7 +661,6 @@
 				A7B48A7A23E0E80C00654DBD /* ZMobileKeyInput.swift */,
 				A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */,
 				A7B48A7E23E0E80C00654DBD /* ZoneWindow.swift */,
-				A72356A82489623500BA2030 /* ZStartupProgressBar.swift */,
 				A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */,
 			);
 			path = views;
@@ -911,6 +910,7 @@
 			children = (
 				A7A4B52524E08E710092D6E0 /* ZStartup.swift */,
 				A7948CA82486CBD700CDA302 /* ZStartupController.swift */,
+				A72356A82489623500BA2030 /* ZStartupProgressBar.swift */,
 			);
 			path = startup;
 			sourceTree = "<group>";

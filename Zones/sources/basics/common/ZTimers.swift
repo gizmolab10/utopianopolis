@@ -56,6 +56,8 @@ enum ZTimerID : Int {
 		return nil
 	}
 
+	var string: String { return "\(self)" }
+
 	var description: String {
 		switch self {
 			case .tWriteEveryone:   return "writing public local data"
@@ -70,14 +72,13 @@ enum ZTimerID : Int {
 
 class ZTimers: NSObject {
 
-	var timers = [Int: Timer]()
+	var timers = [ZTimerID : Timer]()
 
 	var statusText: String {
 		let hasStatus: [ZTimerID] = [.tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
 
-		for key in timers.keys {
-			if  let id = ZTimerID(rawValue: key),
-				hasStatus.contains(id) {
+		for id in timers.keys {
+			if  hasStatus.contains(id) {
 				return id.description
 			}
 		}
@@ -85,45 +86,39 @@ class ZTimers: NSObject {
 		return ""
 	}
 
-	@discardableResult func stopTimer(for timerID: ZTimerID?) -> Int? {
-		guard let index = timerID?.rawValue else { return nil }
-
-		timers[index]?.invalidate()
-
-		return index
-	}
-
 	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping (Timer) -> Void) {
-		guard let index = stopTimer(for: timerID) else { return }
-		timers[index]   = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: block)
+		if  let id = timerID {
+			FOREGROUND {
+				self.timers[id]?.invalidate()
+				self.timers[id] = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: block)
+			}
+		}
 	}
 
 	func isInvalidTimer(for timerID: ZTimerID) -> Bool {
-		var   invalid = true
-		let     index = timerID.rawValue
-		if  let timer = timers[index] {
-			invalid   = !timer.isValid
+		var   isValid = false
+		if  let timer = timers[timerID] {
+			isValid   = timer.isValid
 		}
 
-		return invalid
+		return !isValid
 	}
 
 	func assureCompletion(for timerID: ZTimerID, now: Bool = false, withTimeInterval interval: TimeInterval, restartTimer: Bool = false, block: @escaping ThrowsClosure) {
 		FOREGROUND { // timers must have a runloop
 			if  restartTimer || self.isInvalidTimer(for: timerID) {
-				let    index = timerID.rawValue
 				var tryCatch : Closure = {}
 				let    start = Date()
 
 				let clearTimer: Closure = { [weak self] in
-					self?.timers[index]?.invalidate()
-					self?.timers[index]         = nil
+					self?.timers[timerID]?.invalidate()
+					self?.timers[timerID] = nil
 				}
 
 				let startTimer:  Closure = { [weak self] in
 					clearTimer()
 
-					self?.timers[index] = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { iTimer in
+					self?.timers[timerID] = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { iTimer in
 						clearTimer()
 						tryCatch()
 					}
