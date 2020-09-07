@@ -13,17 +13,19 @@ let gStartup = ZStartup()
 class ZStartup: NSObject {
 	var count = 0.0
 
-	func restartStartupTimer(for op: ZOperationID) {
-		if  op.useTimer {
-			count        = 0.0
-			let interval = 0.5
+	func startStartupTimer() {
+		count        = 0.0
+		let interval = 1.0
 
-			gTimers.resetTimer(for: .tStartup, withTimeInterval: interval, repeats: true) { iTimer in
-				self.count += 1.0 * interval
+		gTimers.resetTimer(for: .tStartup, withTimeInterval: interval, repeats: true) { iTimer in
+			self.count += interval
 
-				gSignal([.sStartupProgress])
-			}
+			gSignal([.sStartupProgress])
 		}
+	}
+
+	func stopStartupTimer() {
+		gTimers.stopTimer(for: .tStartup)
 	}
 
 	func startupCloudAndUI() {
@@ -34,6 +36,7 @@ class ZStartup: NSObject {
 //		gHelpController?.setup()                // show last chosen help view
 		gRemoteStorage.clear()
 		gSignal([.sMain, .sStartupProgress])
+		startStartupTimer()
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
@@ -59,6 +62,7 @@ class ZStartup: NSObject {
 
 						gRemoteStorage.assureNoOrphanIdeas()
 						gSignal([.sMain, .sCrumbs, .sRelayout])
+						self.stopStartupTimer()
 						self.requestFeedback()
 
 						FOREGROUND(after: 10.0) {

@@ -22,7 +22,7 @@ var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
 var               gLaunchedAt                     = Date()
-var            gProgressTimes                     = [ZOperationID : Int]()
+var            gProgressTimes                     = [ZOperationID : Double]()
 var            gTextCapturing                     = false
 var          gIsReadyToShowUI                     = false
 var          gDeferringRedraw                     = false
@@ -102,9 +102,11 @@ func gStoreProgressTimes() {
 	var  storable = ""
 
 	for (op, value) in gProgressTimes {
-		storable.append("\(separator)\(op)\(kColonSeparator)\(value)")
+		if  value >= 1.5 {
+			storable.append("\(separator)\(op)\(kColonSeparator)\(value)")
 
-		separator = kCommaSeparator
+			separator = kCommaSeparator
+		}
 	}
 
 	setPreferencesString(storable, for: kProgressTimes)
@@ -112,7 +114,7 @@ func gStoreProgressTimes() {
 
 func gAssureProgressTimesAreLoaded() {
 	if !gGotProgressTimes {
-		func setit(opInt: Int, value: Int?) {
+		func setit(opInt: Int, value: Double?) {
 			if  let op = ZOperationID(rawValue: opInt) {
 				let time = value ?? op.progressTime
 
@@ -133,7 +135,7 @@ func gAssureProgressTimesAreLoaded() {
 				let       items = pair.components(separatedBy: kColonSeparator)
 				if  items.count > 1,
 					let      op = items[0].integerValue,
-					let    time = items[1].integerValue {
+					let    time = items[1].doubleValue {
 					setit(opInt: op, value: time)
 				}
 			}

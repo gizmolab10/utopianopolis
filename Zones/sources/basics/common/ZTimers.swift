@@ -86,6 +86,14 @@ class ZTimers: NSObject {
 		return ""
 	}
 
+	func stopTimer(for timerID: ZTimerID?) {
+		if  let id = timerID {
+			FOREGROUND {
+				self.timers[id]?.invalidate()
+			}
+		}
+	}
+
 	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping (Timer) -> Void) {
 		if  let id = timerID {
 			FOREGROUND {

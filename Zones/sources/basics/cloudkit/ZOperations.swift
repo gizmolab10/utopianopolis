@@ -62,19 +62,19 @@ enum ZOperationID: Int, CaseIterable {
     case oRefetch            // user defaults list of record ids
     case oTraits
 
-	var progressTime : Int {
+	var progressTime : Double {
 		switch self {
-			case .oReadFile:        return 250
-			case .oAllIdeas:        return  31
-			case .oTraits:          return  16
-			case .oAllTraits:       return  11
-			case .oSubscribe:       return   7
-			case .oNewIdeas:        return   7
-			case .oNeededIdeas:     return   6
-			case .oManifest:        return   6
-			case .oFinishUp:        return   3
-			case .oRecount:         return   2
-			default:                return   1
+			case .oReadFile:        return 30.0
+			case .oTraits:          return 16.0
+			case .oAllTraits:       return 11.0
+			case .oAllIdeas:        return  8.0
+			case .oSubscribe:       return  7.0
+			case .oNewIdeas:        return  7.0
+			case .oNeededIdeas:     return  6.0
+			case .oManifest:        return  6.0
+			case .oFinishUp:        return  3.0
+			case .oRecount:         return  2.0
+			default:                return  1.0
 		}
 	}
 
@@ -100,38 +100,37 @@ enum ZOperationID: Int, CaseIterable {
 	var description : String { return "\(self)".substring(fromInclusive: 1).unCamelcased }
 }
 
-func gSetProgressTime(_ time: Int, for op: ZOperationID) {
-	if !gHasFinishedStartup, time > 1, op != .oUserPermissions {
+func gSetProgressTime(for op: ZOperationID) {
+	if !gHasFinishedStartup, op != .oUserPermissions {
 		gAssureProgressTimesAreLoaded()
 
-		gProgressTimes[op] = time
+		let priorTime = gGetAccumulatedProgressTime(untilExcluding: op)
+		let delta     = gStartup.count - priorTime
+
+		if  delta    >= 1.5 {
+			gProgressTimes[op] = delta
+		}
 
 		gStoreProgressTimes()
 	}
 }
 
-func gGetIndividualProgressTime(for op: ZOperationID) -> Int {
-	gAssureProgressTimesAreLoaded()
-
-	return gProgressTimes[op] ?? 1
-}
-
-func gGetAccumulatedProgressTime(untilNotIncluding op: ZOperationID) -> Int {
+func gGetAccumulatedProgressTime(untilExcluding op: ZOperationID) -> Double {
 	gAssureProgressTimesAreLoaded()
 
 	let opValue = op.rawValue
-	var     sum = 0
+	var     sum = 0.0
 
 	for opID in ZOperationID.allCases {
 		if  opValue > opID.rawValue {          // all ops prior to op parameter
-			sum += gGetIndividualProgressTime(for: opID)
+			sum += gProgressTimes[opID] ?? 1.0
 		}
 	}
 
 	return sum
 }
 
-var gTotalTime : Int {
+var gTotalTime : Double {
 	gAssureProgressTimesAreLoaded()
 
 	return gProgressTimes.values.reduce(0, +)
@@ -260,12 +259,12 @@ class ZOperations: NSObject {
                 // /////////////////////////////////////////////////////////////
 
                 if  operationID.isLocal || gCloudStatusIsActive {
-					gStartup.restartStartupTimer(for: operationID)
 
                     // ///////////////////////////////////////////////////////////////
                     // susend queue until operation function calls its onCompletion //
                     // ///////////////////////////////////////////////////////////////
 
+					gStartup.count        += 1					// every op should advance progress bar
                     self.queue.isSuspended = true
 					self.lastOpStart       = Date()
                     self.currentOp         = operationID        // if hung, it happened inside this op
@@ -280,7 +279,7 @@ class ZOperations: NSObject {
 
                                 onCompletion()
 							} else {
-								self.setProgressTime(for: operationID)
+								gSetProgressTime(for: operationID)
 							}
 
 							gSignal([.sStatus, .sStartupProgress]) // show change in cloud status and startup progress
@@ -301,13 +300,6 @@ class ZOperations: NSObject {
 
         queue.isSuspended = false
     }
-
-	func setProgressTime(for operationID: ZOperationID) {
-		let duration = Date().timeIntervalSince(lastOpStart!) + 0.05
-		let    delta = Int(duration * 10.0)
-
-		gSetProgressTime(delta, for: operationID)
-	}
 
     func add(_ operation: BlockOperation) {
         if let prior = queue.operations.last {

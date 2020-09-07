@@ -1628,9 +1628,13 @@ extension String {
 		return nil
 	}
 
+	var doubleValue: Double? {
+		return Double(self)
+	}
+
     var floatValue: CGFloat? {
-		if  let doubleValue = Double(self) {
-			return CGFloat(doubleValue)
+		if  let d = doubleValue {
+			return CGFloat(d)
 		}
 
 		return nil

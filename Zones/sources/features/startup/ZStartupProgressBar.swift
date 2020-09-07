@@ -10,23 +10,10 @@ import Foundation
 
 class ZStartupProgressBar: NSProgressIndicator {
 
-	var fraction: Double {
-		let   total = Double(gTotalTime)
-		var partial = Double(gGetAccumulatedProgressTime(untilNotIncluding: gCurrentOp)) / total
-
-		if  gCurrentOp.useTimer {
-			let opTime = Double(gGetIndividualProgressTime(for: gCurrentOp))
-			let  delta = gStartup.count / opTime
-			partial   += delta
-		}
-
-		return partial
-	}
-
 	func update() {
 		if  gCurrentOp    != .oCompletion {
 			let multiplier = maxValue - minValue
-			let      value = multiplier * fraction
+			let      value = multiplier * gStartup.count / gTotalTime
 			doubleValue    = value + minValue
 
 			printDebug(.dTime, "\(value)      \(gCurrentOp)")
