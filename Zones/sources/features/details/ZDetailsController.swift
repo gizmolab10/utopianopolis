@@ -54,9 +54,9 @@ class ZDetailsController: ZGesturesController {
 	}
 
 	func updateForSkillLevel() {
-		view(for: .Explore )?  .hideHideable = !gExplorerSkillLevel
-		view(for: .Favorites )?.hideHideable = !gProSkillLevel
-		view(for: .Status)?    .hideHideable = !gProSkillLevel
+		view(for: .Explore  )?.hideHideable = !gExplorerSkillLevel
+		view(for: .Favorites)?.hideHideable = !gProSkillLevel
+		view(for: .Status   )?.hideHideable = !gProSkillLevel
 
 		FOREGROUND() {
 			gRedrawGraph()
@@ -73,8 +73,12 @@ class ZDetailsController: ZGesturesController {
     
     func toggleViewsFor(ids: [ZDetailsViewID]) {
         for id in ids {
+			if  id == .Preferences, gTrailblazerSkillLevel {
+				gSkillLevel = .explorer
+			}
+
             if  let v = view(for: id) {
-                v.toggleHideableVisibility()
+				v.toggleHideableVisibility()
             }
         }
         

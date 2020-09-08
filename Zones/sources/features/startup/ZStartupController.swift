@@ -148,7 +148,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 										 "Check the box next to it."].joined(separator: " "),
 										"Then return here and click Continue, below."].joined(separator: "\n\n")
 
-	var loadingText: String = "Your data is loading (it may take up to half a minute)."
+	var loadingText: String = "Your data is loading (it may take up to half a minute). Please wait until the ideas drawing appears to add new ideas to it."
 
 	var helpText: String = "Would you like to look at something more than just a progress bar?"
 
