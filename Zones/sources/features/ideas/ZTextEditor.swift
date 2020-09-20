@@ -56,7 +56,7 @@ class ZTextPack: NSObject {
         var   result = displayType
 
         if  let zone = packedZone {
-            result   = zone.unwrappedName
+            result   = zone.unwrappedNameWithEllipses
             var need = 0
 
             switch gCountsMode {

@@ -89,6 +89,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     children =          ZoneArray()
 	var                       traits =   ZTraitDictionary()
 
+	var unwrappedNameWithEllipses : String {
+		var name = unwrappedName
+		let length = name.length
+
+		if  isInFavorites,
+			length > 15 {
+			let first = name.substring(toExclusive: 7)
+			let last = name.substring(fromInclusive: length - 7)
+			name = first + "..." + last
+		}
+
+		return name
+	}
+
 	var traitKeys   : [String] {
 		var results = [String]()
 

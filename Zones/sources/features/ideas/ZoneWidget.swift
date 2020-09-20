@@ -470,6 +470,9 @@ class ZoneWidget: ZView {
         return ZBezierPath()
     }
 
+	// MARK:- draw
+	// MARK:-
+
     func line(on path: ZBezierPath?) {
         if  path != nil {
             path!.lineWidth = CGFloat(gLineThickness)
@@ -477,9 +480,6 @@ class ZoneWidget: ZView {
             path!.stroke()
         }
     }
-
-    // MARK:- draw
-    // MARK:-
 
     func drawSelectionHighlight(_ dashes: Bool) {
         let      thickness = CGFloat(gDotWidth) / 3.5
