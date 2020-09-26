@@ -15,6 +15,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	override  var controllerID      : ZControllerID { return .idStartup }
 	@IBOutlet var enableCloudLabel  : ZTextField?
+	@IBOutlet var operationLabel    : ZTextField?
 	@IBOutlet var accessIDLabel     : ZTextField?
 	@IBOutlet var loadingLabel      : ZTextField?
 	@IBOutlet var helpLabel         : ZTextField?
@@ -84,6 +85,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 			thermometerBar?.update()
 			view.setAllSubviewsNeedDisplay()
 			thermometerBar?.display()
+			operationLabel?.text = gCurrentOp.description
 		}
 	}
 
@@ -148,7 +150,9 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 										 "Check the box next to it."].joined(separator: " "),
 										"Then return here and click Continue, below."].joined(separator: "\n\n")
 
-	var loadingText: String = "Your data is loading (it may take up to half a minute). Please wait until the ideas drawing appears to add new ideas to it."
+	var loadingText: String = ["Your data is loading (it may take up to half a minute).",
+							   "Please wait until the ideas drawing appears to add new ideas to it.",
+							   "Also, you may have to relaunch if the app gets stuck (it sometimes does, the cause is not yet known)."].joined(separator: " ")
 
 	var helpText: String = "Would you like to look at something more than just a progress bar?"
 

@@ -90,14 +90,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                       traits =   ZTraitDictionary()
 
 	var unwrappedNameWithEllipses : String {
-		var name = unwrappedName
+		var   name = unwrappedName
 		let length = name.length
 
-		if  isInFavorites,
+		if (isInFavorites || isInRecently),
 			length > 15 {
 			let first = name.substring(toExclusive: 7)
-			let last = name.substring(fromInclusive: length - 7)
-			name = first + "..." + last
+			let  last = name.substring(fromInclusive: length - 7)
+			name      = first + kEllipsis + last
 		}
 
 		return name

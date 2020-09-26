@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17156"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -1436,10 +1436,10 @@ DQ
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="rmD-x7-RtA" userLabel="Please Wait">
-                                                <rect key="frame" x="0.0" y="236" width="450" height="116"/>
+                                                <rect key="frame" x="0.0" y="216" width="450" height="136"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="kKM-9B-fW0">
-                                                        <rect key="frame" x="-2" y="100" width="454" height="16"/>
+                                                        <rect key="frame" x="-2" y="120" width="454" height="16"/>
                                                         <textFieldCell key="cell" selectable="YES" alignment="justified" id="3XW-gG-Hxw">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1447,10 +1447,18 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <progressIndicator wantsLayer="YES" maxValue="100" doubleValue="1" displayedWhenStopped="NO" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="2xi-Mf-riK" customClass="ZStartupProgressBar" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="73" width="450" height="20"/>
+                                                        <rect key="frame" x="0.0" y="93" width="450" height="20"/>
                                                     </progressIndicator>
+                                                    <textField verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ab6-2E-Tk7">
+                                                        <rect key="frame" x="-2" y="78" width="454" height="16"/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="4iQ-Bz-ATj">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" white="1" alpha="0.00016505281689999999" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        </textFieldCell>
+                                                    </textField>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Bpe-so-Utw">
-                                                        <rect key="frame" x="223" y="50" width="4" height="16"/>
+                                                        <rect key="frame" x="-2" y="50" width="454" height="16"/>
                                                         <textFieldCell key="cell" selectable="YES" id="UeP-8V-XHo">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1467,14 +1475,19 @@ DQ
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="kKM-9B-fW0" secondAttribute="trailing" id="64a-a0-lta"/>
                                                     <constraint firstItem="Bpe-so-Utw" firstAttribute="centerX" secondItem="rmD-x7-RtA" secondAttribute="centerX" id="7Pa-L5-sLy"/>
+                                                    <constraint firstAttribute="trailing" secondItem="ab6-2E-Tk7" secondAttribute="trailing" id="9aB-1d-uJ7"/>
                                                     <constraint firstItem="kKM-9B-fW0" firstAttribute="top" secondItem="rmD-x7-RtA" secondAttribute="top" id="AQM-Sx-kce"/>
+                                                    <constraint firstItem="ab6-2E-Tk7" firstAttribute="top" secondItem="2xi-Mf-riK" secondAttribute="bottom" id="DyG-bD-3nL"/>
+                                                    <constraint firstItem="Bpe-so-Utw" firstAttribute="top" secondItem="ab6-2E-Tk7" secondAttribute="bottom" constant="12" id="ELO-1f-CGL"/>
+                                                    <constraint firstItem="Bpe-so-Utw" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="Fjz-mY-LvT"/>
                                                     <constraint firstItem="2xi-Mf-riK" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="UgY-DM-pFT"/>
                                                     <constraint firstItem="2xi-Mf-riK" firstAttribute="top" secondItem="kKM-9B-fW0" secondAttribute="bottom" constant="8" id="ckq-Yb-bP4"/>
                                                     <constraint firstAttribute="bottom" secondItem="GXv-wU-eO3" secondAttribute="bottom" constant="8" id="dI2-H3-BuL"/>
                                                     <constraint firstItem="GXv-wU-eO3" firstAttribute="top" secondItem="Bpe-so-Utw" secondAttribute="bottom" constant="8" id="eLN-Jp-aZL"/>
                                                     <constraint firstAttribute="trailing" secondItem="2xi-Mf-riK" secondAttribute="trailing" id="fNg-Gi-UtW"/>
                                                     <constraint firstItem="kKM-9B-fW0" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="ggn-Vd-Fw6"/>
-                                                    <constraint firstItem="Bpe-so-Utw" firstAttribute="top" secondItem="2xi-Mf-riK" secondAttribute="bottom" constant="8" id="hyB-Ar-uKF"/>
+                                                    <constraint firstItem="ab6-2E-Tk7" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="t9F-Pw-VJN"/>
+                                                    <constraint firstAttribute="trailing" secondItem="Bpe-so-Utw" secondAttribute="trailing" id="v9Q-bx-OJi"/>
                                                     <constraint firstItem="GXv-wU-eO3" firstAttribute="centerX" secondItem="rmD-x7-RtA" secondAttribute="centerX" id="wDF-tk-EUz"/>
                                                 </constraints>
                                             </customView>
@@ -1518,13 +1531,14 @@ DQ
                         <outlet property="enableCloudLabel" destination="O6S-Dv-mLT" id="Mgk-EK-qtL"/>
                         <outlet property="helpLabel" destination="Bpe-so-Utw" id="7Al-CQ-DAy"/>
                         <outlet property="loadingLabel" destination="kKM-9B-fW0" id="c49-Qv-BEM"/>
+                        <outlet property="operationLabel" destination="ab6-2E-Tk7" id="UWg-bo-ff3"/>
                         <outlet property="pleaseWait" destination="rmD-x7-RtA" id="Pgi-uv-g7c"/>
                         <outlet property="thermometerBar" destination="2xi-Mf-riK" id="GCP-V7-8ij"/>
                     </connections>
                 </viewController>
                 <customObject id="2Ip-rP-SYE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-57" y="1240"/>
+            <point key="canvasLocation" x="-57" y="1239.5"/>
         </scene>
     </scenes>
 </document>
