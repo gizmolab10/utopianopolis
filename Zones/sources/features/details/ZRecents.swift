@@ -14,7 +14,8 @@ enum ZFocusKind: Int {
 	case eEdited
 }
 
-let   gRecents = ZRecents(ZDatabaseID.recentsID)
+let gRecents = ZRecents(ZDatabaseID.recentsID)
+var gRecentsRoot : Zone? { return gRecents.root }
 
 class ZRecents : ZRecords {
 
@@ -56,14 +57,14 @@ class ZRecents : ZRecords {
 		if  currentRecent?.isGrabbed ?? false {
 			currentRecent?.bookmarkTarget?.grab()
 		} else if updateCurrentRecent(),
-			gIsRecentlyMode,
-			shouldGrab {
+				  shouldGrab,
+				  gIsRecentlyMode {
 			currentRecent?.grab()
 		}
 	}
 
 	@discardableResult func updateCurrentRecent() -> Bool {
-		if  let recents = root?.children {
+		if  let recents = root?.allBookmarkProgeny {
 			var targets = ZoneArray()
 
 			if  let grab = gSelecting.firstGrab {
@@ -71,7 +72,7 @@ class ZRecents : ZRecords {
 			}
 
 			if  let here = gHereMaybe {
-				targets.append(here)
+				targets.appendUnique(contentsOf: [here])
 			}
 
 			if  let bookmark  = recents.bookmarksTargeting(targets) {
@@ -86,16 +87,19 @@ class ZRecents : ZRecords {
 
 	func push(intoNotes: Bool = false) {
 		if  let r = root {
-			for bookmark in r.children {
-				if  let name = bookmark.bookmarkTarget?.recordName(),
-					name    == gHereMaybe?.recordName() {
-					updateCurrentRecent()
+			var done = false
 
-					return
+			r.traverseAllProgeny { bookmark in
+				if  done    == false,
+					let name = bookmark.bookmarkTarget?.recordName(),
+					name    == gHereMaybe?.recordName() {
+
+					done = true
 				}
 			}
 
-			if  let bookmark = gFavorites.createBookmark(for: gHereMaybe, action: .aBookmark) {
+			if  done == false,
+			    let bookmark = gFavorites.createBookmark(for: gHereMaybe, action: .aBookmark) {
 				bookmark.moveZone(to: r)
 			}
 
@@ -133,27 +137,28 @@ class ZRecents : ZRecords {
 	}
 
 	func go(forward: Bool, amongNotes: Bool = false) {
-		if  let zones = root?.children {
-			let   max = zones.count - 1
-			var found = 0
+		if  let progeny = root?.allBookmarkProgeny {
+			let     max = progeny.count - 1
 
-			for (index, recent) in zones.enumerated() {
-				if  recent == currentRecent {
+			for (index, recent) in progeny.enumerated() {
+				if  recent   == currentRecent {
+					var found = 0
+
 					if  forward {
 						if  index < max {
 							found = index + 1
 						}
 					} else if  index == 0 {
 						found = max
-					} else if   index > 1 {
+					} else {
 						found = index - 1
 					}
+
+					setCurrent(progeny[found])
 
 					break
 				}
 			}
-
-			setCurrent(zones[found])
 		}
 	}
 

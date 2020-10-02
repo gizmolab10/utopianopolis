@@ -13,8 +13,8 @@ var gFavoritesController: ZFavoritesController? { return gControllers.controller
 class ZFavoritesController: ZGraphController {
 
 	override  var        isMap : Bool          { return false }
-	override  var     hereZone : Zone?         { return gIsRecentlyMode ?  gRecents.root :  gFavoritesHereMaybe }
-	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ? .tRecent       : .tFavorite }
+	override  var     hereZone : Zone?         { return gIsRecentlyMode ?  gRecentsHereMaybe :  gFavoritesHereMaybe }
+	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ? .tRecent           : .tFavorite }
 	override  var controllerID : ZControllerID { return .idFavorites }
 	override  var allowedKinds : [ZSignalKind] { return [.sDetails, .sFavorites, .sRelayout] }
 	@IBOutlet var controlsView : ZFavoriteControlsView?

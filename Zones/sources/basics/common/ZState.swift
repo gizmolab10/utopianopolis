@@ -195,6 +195,11 @@ var gFavoritesHereMaybe: Zone? {
 	set { gRemoteStorage.cloud(for: .favoritesID)?.hereZoneMaybe = newValue }
 }
 
+var gRecentsHereMaybe: Zone? {
+	get { return gRemoteStorage.maybeZoneForRecordName(gRemoteStorage.cloud(for: .recentsID)?.hereRecordName) }    // all favorites are stored in mine
+	set { gRemoteStorage.cloud(for: .recentsID)?.hereZoneMaybe = newValue }
+}
+
 var gCurrentHelpMode: ZHelpMode {
 	get {
 		if  let v = getPreferenceString(for: kLastChosenCheatSheet) {

@@ -89,6 +89,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     children =          ZoneArray()
 	var                       traits =   ZTraitDictionary()
 
+	var allBookmarkProgeny : ZoneArray {
+		var result = ZoneArray()
+
+		traverseAllProgeny { iProgeny in
+			if iProgeny.isBookmark {
+				result.append(iProgeny)
+			}
+		}
+
+		return result
+	}
+
 	var unwrappedNameWithEllipses : String {
 		var   name = unwrappedName
 		let length = name.length
@@ -2286,7 +2298,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else {
 			let show = !showingChildren
 
-			if  isInFavorites {
+			if !isInFavorites,
+			   !isInRecently {
+
+				// //////////////////////////
+				// generational visibility //
+				// //////////////////////////
+
+				generationalUpdate(show: show) {
+					gRedrawGraph(for: self)
+				}
+			} else {
 
 				// //////////////////////////////////////////////////////////
 				// avoid annoying user: treat favorites non-generationally //
@@ -2294,13 +2316,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				toggleChildrenVisibility()
 
-				gFavoritesHereMaybe = showingChildren ? self : parentZone
+				let newHere = showingChildren ? self : parentZone
+
+				if  isInFavorites {
+					gFavoritesHereMaybe = newHere
+				} else {
+					gRecentsHereMaybe   = newHere
+				}
 
 				gRedrawGraph()
-			} else {
-				generationalUpdate(show: show) {
-					gRedrawGraph(for: self)
-				}
 			}
 		}
 	}

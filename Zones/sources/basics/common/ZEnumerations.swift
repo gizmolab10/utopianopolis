@@ -219,6 +219,7 @@ enum ZDatabaseID: String {
 		switch self {
 			case .favoritesID: return .favoritesIndex
 			case  .everyoneID: return .everyoneIndex
+			case   .recentsID: return .recentsIndex
 			case      .mineID: return .mineIndex
 			default:           return nil
 		}
@@ -258,16 +259,18 @@ enum ZDatabaseID: String {
 
 }
 
-enum ZDatabaseIndex: Int {
+enum ZDatabaseIndex: Int { // N.B. do not change the order, these integer values are persisted
 	case everyoneIndex
     case mineIndex
 	case favoritesIndex
+	case recentsIndex
 
     
     var databaseID: ZDatabaseID? {
 		switch self {
 			case .favoritesIndex: return .favoritesID
 			case .everyoneIndex:  return .everyoneID
+			case .recentsIndex:   return .recentsID
 			case .mineIndex:      return .mineID
 		}
     }

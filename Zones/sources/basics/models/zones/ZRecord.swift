@@ -19,6 +19,7 @@ class ZRecord: NSObject {
     var     showingChildren: Bool               { return isExpanded(recordName) }
 	var   isRootOfFavorites: Bool               { return recordName == kFavoritesRootName }
 	var     isFavoritesHere: Bool               { return recordName == gFavoritesHereMaybe?.recordName() }
+	var       isRecentsHere: Bool               { return recordName == gRecentsHereMaybe?.recordName() }
 	var     isRootOfRecents: Bool               { return recordName == kRecentsRootName }
 	var           isMapRoot: Bool               { return recordName == kRootName }
 	var             isARoot: Bool               { return record != nil && kRootNames.contains(recordName!) }

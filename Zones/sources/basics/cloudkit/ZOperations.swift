@@ -40,7 +40,6 @@ enum ZOperationID: Int, CaseIterable {
     // finish
 
     case oFinishUp
-	case oNewIdeas
 	case oSubscribe
 	case oAllIdeas
 	case oAllTraits
@@ -58,6 +57,7 @@ enum ZOperationID: Int, CaseIterable {
     case oCompletion
     case oBookmarks			 // MINE ONLY
     case oLostIdeas
+	case oNewIdeas
     case oUndelete
     case oRefetch            // user defaults list of record ids
     case oTraits

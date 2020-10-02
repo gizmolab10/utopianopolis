@@ -62,39 +62,57 @@ class ZRecords: NSObject {
 	}
 
     var hereRecordName: String? {
+		set {
+			if  let         index = databaseID.index {
+				var    references = hereReferences
+				references[index] = newValue ?? kRootName
+				gHereRecordNames  = references.joined(separator: kColonSeparator)
+			}
+		}
+
 		get {
-			let references = gHereRecordNames.components(separatedBy: kColonSeparator)
-			
+			let references = hereReferences
 			if  let  index = databaseID.index {
 				return references[index]
 			}
 			
 			return nil
 		}
-
-		set {
-			if  let         index = databaseID.index {
-				var    references = gHereRecordNames.components(separatedBy: kColonSeparator)
-				
-				while references.count < 3 {
-					references.append("")
-				}
-				
-				references[index] = newValue ?? kRootName
-				gHereRecordNames  = references.joined(separator: kColonSeparator)
-			}
-		}
     }
-    
+
+	var hereReferences: [String] {
+		var   references = gHereRecordNames.components(separatedBy: kColonSeparator)
+
+		while references.count < 4 {
+			references.append("")
+		}
+
+		return references
+	}
     
     var hereZoneMaybe: Zone? {
 		get { return maybeZoneForRecordName(hereRecordName) }
-		set { hereRecordName = newValue?.recordName ?? (databaseID == .favoritesID ? kFavoritesRootName : kRootName) }
+		set { hereRecordName = newValue?.recordName ?? rootName }
     }
-    
+
+	var rootName: String {
+		switch(databaseID) {
+			case .favoritesID: return kFavoritesRootName
+			case .recentsID:   return kRecentsRootName
+			default:           return kRootName
+		}
+	}
+
+	var defaultRoot: Zone? {
+		switch (databaseID) {
+			case .favoritesID: return gFavoritesRoot
+			case .recentsID:   return gRecentsRoot
+			default:           return rootZone
+		}
+	}
     
     var hereZone: Zone {
-        get { return (hereZoneMaybe ?? (databaseID == .favoritesID ? gFavoritesRoot! : rootZone!)) }
+        get { return (hereZoneMaybe ?? defaultRoot!) }
         set { hereZoneMaybe = newValue }
     }
 
