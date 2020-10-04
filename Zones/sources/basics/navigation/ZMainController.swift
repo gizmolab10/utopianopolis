@@ -17,6 +17,8 @@ var gMainController: ZMainController? { return gControllers.controllerForID(.idM
 class ZMainController: ZGenericController {
 
 	@IBOutlet var skillControl      : NSSegmentedControl?
+	@IBOutlet var detailsWidth      : NSLayoutConstraint?
+	@IBOutlet var swapButtonOffset  : NSLayoutConstraint?
     @IBOutlet var searchResultsView : ZView?
 	@IBOutlet var permissionView    : ZView?
 	@IBOutlet var searchBoxView     : ZView?
@@ -30,16 +32,26 @@ class ZMainController: ZGenericController {
 		searchResultsView?.isHidden = true
 	}
 
-	@IBAction func skillAction(_ control: NSSegmentedControl) {
+	@IBAction func settingsButtonAction(_ button: NSButton) {
+		gShowDetailsView = detailView?.isHidden ?? true
+
+		update()
+	}
+
+	@IBAction func chooseSkillAction(_ control: NSSegmentedControl) {
 		if  let   level = ZSkillLevel(rawValue: control.selectedSegmentIndex) {
 			gSkillLevel = level
 		}
 	}
 
-	func updateForSkillLevel() {
-		detailView?.isHidden = gTrailblazerSkillLevel
+	func update() {
+		swapButtonOffset?.constant =  gShowDetailsView ?   0.0 : 35.0
+		detailsWidth?    .constant =  gShowDetailsView ? 226.0 :  0.0
+		detailView?      .isHidden = !gShowDetailsView
 
-		gDetailsController?.updateForSkillLevel()
+		if  gShowDetailsView {
+			gDetailsController?.updateForSkillLevel()
+		}
 	}
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {

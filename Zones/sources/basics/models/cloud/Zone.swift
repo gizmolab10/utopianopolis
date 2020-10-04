@@ -48,7 +48,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var               linkRecordName :             String? { return recordName(from: zoneLink) }
 	override var           emptyName :             String  { return kEmptyIdea }
 	override var         description :             String  { return unwrappedName }
-	override var       unwrappedName :             String  { return zoneName ?? (isRootOfFavorites ? kFavoritesName : emptyName) }
+	override var       unwrappedName :             String  { return zoneName ?? (isFavoritesRoot ? kFavoritesName : emptyName) }
 	var                decoratedName :             String  { return decoration + unwrappedName }
 	var                  clippedName :             String  { return !gShowToolTips ? "" : unwrappedName }
     var                     manifest :          ZManifest? { return cloud?.manifest }
@@ -60,8 +60,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                   isNotInMap :               Bool  { return isCurrentRecent || isCurrentFavorite }
 	var              isCurrentRecent :               Bool  { return self ==   gRecents.currentRecent }
 	var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
-	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isHereForNonMap && !(widget?.type.isMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
-    var              dragDotIsHidden :               Bool  { return                     (isHereForNonMap && !(widget?.type.isMap ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
+	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isNonMapHere && !(widget?.type.isMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
+    var              dragDotIsHidden :               Bool  { return                     (isNonMapHere && !(widget?.type.isMap ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
     var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
     var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
     var                 hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }
@@ -73,16 +73,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     hasEmail :               Bool  { return hasTrait(for: .tEmail) && email != "" }
 	var                     hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                      hasNote :               Bool  { return hasTrait(for: .tNote) }
-	var                  isInDetails :               Bool  { return isInRecently || isInFavorites }
-	var                  showSideDot :               Bool  { return isInDetails && isBookmark && (bookmarkTarget == gHereMaybe) }
-	var                      isInMap :               Bool  { return root?.isMapRoot            ?? false }
-    var                    isInTrash :               Bool  { return root?.isRootOfTrash        ?? false }
-	var                 isInRecently :               Bool  { return root?.isRootOfRecents      ?? false }
-    var                isInFavorites :               Bool  { return root?.isRootOfFavorites    ?? false }
-    var             isInLostAndFound :               Bool  { return root?.isRootOfLostAndFound ?? false }
-	var                isRootOfTrash :               Bool  { return recordName == kTrashName }
-    var         isRootOfLostAndFound :               Bool  { return recordName == kLostAndFoundName }
-	var               isReadOnlyRoot :               Bool  { return isRootOfLostAndFound || isRootOfFavorites || isRootOfTrash || type.isExemplar }
+	var                  showSideDot :               Bool  { return !isInMap && isBookmark && (bookmarkTarget == gHereMaybe) }
+	var                      isInMap :               Bool  { return root?.isMapRoot          ?? false }
+    var                    isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
+	var                 isInRecently :               Bool  { return root?.isRecentsRoot      ?? false }
+    var                isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
+    var             isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
+	var                  isTrashRoot :               Bool  { return recordName == kTrashName }
+    var           isLostAndFoundRoot :               Bool  { return recordName == kLostAndFoundName }
+	var               isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || type.isExemplar }
     var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var                   spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
 	var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
@@ -393,7 +392,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
     var level: Int {
         get {
-            if  !isARoot, !isRootOfFavorites, let p = parentZone, p != self, !p.spawnedBy(self) {
+            if  !isARoot, !isFavoritesRoot, let p = parentZone, p != self, !p.spawnedBy(self) {
                 return p.level + 1
             }
 
@@ -741,7 +740,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             return t.userHasDirectOwnership
         }
         
-        return !isRootOfTrash && !isRootOfFavorites && !isRootOfLostAndFound && !gPrintMode.contains(.dAccess) && (databaseID == .mineID || zoneAuthor == gAuthorID || gIsMasterAuthor)
+        return !isTrashRoot && !isFavoritesRoot && !isLostAndFoundRoot && !gPrintMode.contains(.dAccess) && (databaseID == .mineID || zoneAuthor == gAuthorID || gIsMasterAuthor)
     }
 
     var directAccess: ZoneAccess {
@@ -1211,7 +1210,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let    targetLink = there.crossLink
 			let     sameGraph = databaseID == targetLink?.databaseID
 			let grabAndTravel = {
-				gRecents.travelThrough(there) { object, kind in
+				there.travelThrough() { object, kind in
 					let there = object as! Zone
 
 					movedZone.moveZone(into: there, at: gListsGrowDown ? nil : 0, orphan: false) {
@@ -1259,7 +1258,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let   dbID = databaseID,
 				let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
 				let   dict = self.dictFromJSON(json)
-				let   zone = try Zone(dict: dict, in: dbID)
+				let   zone = Zone(dict: dict, in: dbID)
 
 				addChild(zone, at: 0)
 				onCompletion?()
@@ -1276,7 +1275,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func        addToGrabs() { gSelecting.addMultipleGrabs([self]) }
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
-	func             focus() { gRecents            .focusOn(self) { gRedrawGraph() } }
+	func       focusRecent() { focusOn() { gRedrawGraph() } }
 	func editTrait(for iType: ZTraitType) { gTextEditor.edit(traitFor(iType)) }
 
 	@discardableResult func edit() -> ZTextEditor? {
@@ -1306,7 +1305,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
 	func asssureIsVisibleAndGrab(updateBrowsingLevel: Bool = true) {
-		gShowFavorites = kIsPhone && isInDetails
+		gShowFavorites = kIsPhone && !isInMap
 
 		asssureIsVisible()
 		grab(updateBrowsingLevel: updateBrowsingLevel)
@@ -1317,7 +1316,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             grab() // narrow selection to just this one zone
             
             if !(CLICKTWICE && self == gHere) {
-                gRecents.focus(kind: .eSelected) {
+				gRecents.focusKind(.eSelected) {
                     gRedrawGraph()
                 }
             }
@@ -1509,6 +1508,220 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gControllers.swapGraphAndEssay(force: .noteMode)
 	}
 
+	// MARK:- travel / focus
+	// MARK:-
+
+	@discardableResult func focusThrough(_ atArrival: @escaping Closure) -> Bool {
+		if  isBookmark {
+			if !isInMap {
+				let targetParent = bookmarkTarget?.parentZone
+
+				targetParent?.revealChildren()
+				targetParent?.needChildren()
+				travelThrough() { (iObject: Any?, iKind: ZSignalKind) in
+					gRecents.updateCurrentRecent()
+					gFavorites.updateAllFavorites(iObject as? Zone)
+					atArrival()
+				}
+
+				return true
+			} else if let dbID = crossLink?.databaseID {
+				gDatabaseID = dbID
+
+				gRecents.focusKind {
+					gHere.grab()
+					atArrival()
+				}
+
+				return true
+			}
+
+			performance("oops!")
+		}
+
+		return false
+	}
+
+	func travelThrough(atArrival: @escaping SignalClosure) {
+		if  let  targetZRecord = crossLink,
+			let     targetDBID = targetZRecord.databaseID,
+			let   targetRecord = targetZRecord.record {
+			let targetRecordID = targetRecord.recordID
+			let        iTarget = bookmarkTarget
+
+			let complete : SignalClosure = { (iObject, iKind) in
+				self.showTopLevelFunctions()
+				atArrival(iObject, iKind)
+			}
+
+			var there: Zone?
+
+			if  isInFavorites {
+				gFavorites.currentFavorite = self
+			} else if isInRecently {
+				gRecents.currentRecent     = self
+			}
+
+			if  let target = iTarget, target.spawnedBy(gHereMaybe) {
+				if !target.isGrabbed {
+					target.asssureIsVisible()
+					target.grab()
+				} else {
+					gHere = target
+
+					gRecents.push()
+				}
+
+				gShowFavorites = targetDBID == .favoritesID
+
+				complete(target, .sRelayout)
+			} else {
+				gShowFavorites = targetDBID == .favoritesID
+
+				if  gDatabaseID != targetDBID {
+					gDatabaseID  = targetDBID
+
+					// /////////////////////////// //
+					// TRAVEL TO A DIFFERENT GRAPH //
+					// /////////////////////////// //
+
+					if  let target = iTarget, target.isFetched { // e.g., default root favorite
+						gRecents.focusKind(.eSelected) {
+							gHere  = target
+
+							gHere.prepareForArrival()
+							complete(gHere, .sRelayout)
+						}
+					} else {
+						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
+							if  let hereRecord = iRecord,
+								let    newHere = gCloud?.zoneForRecord(hereRecord) {
+								gHere          = newHere
+
+								newHere.prepareForArrival()
+								gRecents.focusKind {
+									complete(newHere, .sRelayout)
+								}
+							} else {
+								complete(gHere, .sRelayout)
+							}
+						}
+					}
+				} else {
+
+					// ///////////////// //
+					// STAY WITHIN GRAPH //
+					// ///////////////// //
+
+					there = gCloud?.maybeZoneForRecordID(targetRecordID)
+					let grabbed = gSelecting.firstSortedGrab
+					let    here = gHere
+
+					UNDO(self) { iUndoSelf in
+						self.UNDO(self) { iRedoSelf in
+							self.travelThrough(atArrival: complete)
+						}
+
+						gHere = here
+
+						grabbed?.grab()
+						complete(here, .sRelayout)
+					}
+
+					let grabHere = {
+						gHereMaybe?.prepareForArrival()
+						complete(gHereMaybe, .sRelayout)
+					}
+
+					if  there != nil {
+						gHere = there!
+
+						grabHere()
+					} else if gCloud?.databaseID != .favoritesID { // favorites does not have a cloud database
+						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
+							if  let hereRecord = iRecord,
+								let    newHere = gCloud?.zoneForRecord(hereRecord) {
+								gHere          = newHere
+
+								grabHere()
+							}
+						}
+					} // else ... favorites id with an unresolvable bookmark target
+				}
+			}
+		}
+	}
+
+	func focusOn(_ atArrival: @escaping Closure) {
+		gHere = self // side-effect does recents push
+
+		gRecents.focusKind(.eSelected) {
+			self.grab()
+			gRecents.updateCurrentRecent()
+			gFavorites.updateCurrentFavorite()
+			atArrival()
+		}
+	}
+
+	func invokeTravel(onCompletion: Closure? = nil) {
+		if !invokeBookmark(onCompletion: onCompletion),
+		   !invokeHyperlink(),
+		   !invokeEssay() {
+			invokeEmail()
+		}
+	}
+
+	@discardableResult func invokeBookmark(onCompletion: Closure?) -> Bool { // false means not traveled
+		if  isBookmark {
+			travelThrough() { object, kind in
+				#if os(iOS)
+				gActionsController.alignView()
+				#endif
+				onCompletion?()
+			}
+
+			return true
+		}
+
+		return false
+	}
+
+	@discardableResult func invokeHyperlink() -> Bool { // false means not traveled
+		if  let link = hyperLink,
+			link    != kNullLink {
+			link.openAsURL()
+
+			return true
+		}
+
+		return false
+	}
+
+	@discardableResult func invokeEssay() -> Bool { // false means not handled
+		if  hasNote {
+			grab()
+
+			gCurrentEssay = note
+
+			gControllers.swapGraphAndEssay()
+
+			return true
+		}
+
+		return false
+	}
+
+	@discardableResult func invokeEmail() -> Bool { // false means not traveled
+		if  let  link = email {
+			let email = "mailTo:" + link
+			email.openAsURL()
+
+			return true
+		}
+
+		return false
+	}
+
     // MARK:- traverse ancestors
     // MARK:-
 
@@ -1572,7 +1785,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func asssureIsVisible() {
 		if  let dbID = databaseID,
-			let goal = gRemoteStorage.cloud(for: dbID)?.hereZone {
+			let goal = gRemoteStorage.cloud(for: dbID)?.recentHere {
 
 			traverseAncestors { iAncestor -> ZTraverseStatus in
 				if  iAncestor != self {
@@ -2292,7 +2505,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		if  canTravel && (COMMAND || (fetchableCount == 0 && count == 0)) {
-			gRecents.invokeTravel(self) { // email, hyperlink, bookmark, essay
+			invokeTravel() { // email, hyperlink, bookmark, essay
 				gRedrawGraph()
 			}
 		} else {
@@ -2308,7 +2521,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				generationalUpdate(show: show) {
 					gRedrawGraph(for: self)
 				}
-			} else {
+			} else if !isNonMapRoot {
 
 				// //////////////////////////////////////////////////////////
 				// avoid annoying user: treat favorites non-generationally //
@@ -2511,7 +2724,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "r":     reverseChildren()
 				case "s":     exportToFile(.eSeriously)
 				case "t":     swapWithParent()
-				case "/":     focus()
+				case "/":     focusRecent()
 				case "_":     break
 				case kEquals: break
 				case kSpace:  addIdea()

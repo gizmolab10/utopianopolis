@@ -93,7 +93,7 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  let c = gDetailsController, !c.hideableIsHidden(for: .Explore) { // ignore if hidden
+		if  let c = gDetailsController, !c.hideableIsHidden(for: .Introduction) { // ignore if hidden
 			update()
 		}
 	}

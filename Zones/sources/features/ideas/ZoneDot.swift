@@ -76,28 +76,30 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         return nil
     }
 
-
     var isVisible: Bool {
-        if  isReveal,
-			let zone = widgetZone {
-            return isDragDrop || zone.canTravel || zone.count > 0
-        }
-        
-        return true
+		guard let zone = widgetZone else {
+			return false
+		}
+
+		if  isReveal {
+			return isDragDrop || zone.canTravel || zone.count > 0
+		}   else {
+			return !zone.isNonMapHere
+		}
     }
 
 	var isFilled: Bool {
-		if  let zone = widgetZone {
-			if  !isReveal {
-				return zone.isGrabbed
-			} else {
-				let childlessTraveller = zone.canTravel && zone.count == 0
-
-				return !zone.showingChildren || childlessTraveller
-			}
+		guard let zone = widgetZone else {
+			return false
 		}
 
-		return false
+		if !isReveal {
+			return zone.isGrabbed
+		} else {
+			let childlessTraveller = zone.canTravel && zone.count == 0
+
+			return !zone.showingChildren || childlessTraveller
+		}
 	}
 
     // MARK:- initialization

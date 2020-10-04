@@ -140,7 +140,7 @@ class ZGraphEditor: ZBaseEditor {
 					case "\\":     gGraphController?.toggleGraphs(); gRedrawGraph()
                     case "]", "[": smartGo(forward: key == "]")
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-					case kEquals:  if COMMAND { updateSize(up: true) } else { gRecents.invokeTravel(gSelecting.firstSortedGrab) { gRedrawGraph() } }
+					case kEquals:  if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawGraph() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
                     case kTab:     addSibling(OPTION)
 					case kSpace:   if OPTION || CONTROL || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
@@ -316,7 +316,7 @@ class ZGraphEditor: ZBaseEditor {
 			gRecents.pop()
 			gRedrawGraph()
 		} else {
-			gRecents.focus(kind: kind, COMMAND, shouldGrab: true) { // complex grab logic
+			gRecents.focusKind(kind, COMMAND, shouldGrab: true) { // complex grab logic
 				gRedrawGraph()
 			}
 		}
@@ -419,11 +419,9 @@ class ZGraphEditor: ZBaseEditor {
 	}
 
     func focusOnTrash() {
-        if  let trash = gTrash {
-            gRecents.focusOn(trash) {
-                gRedrawGraph()
-            }
-        }
+		gTrash?.focusOn() {
+			gRedrawGraph()
+		}
     }
 
 	func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false) {
@@ -464,7 +462,10 @@ class ZGraphEditor: ZBaseEditor {
 
             gSignal([.sMain, .sMap, .sPreferences])
         } else if !PERIOD {
-            gDetailsController?.toggleViewsFor(ids: [.Preferences])
+			gShowDetailsView = true
+
+			gMainController?.update()
+			gDetailsController?.toggleViewsFor(ids: [.Preferences])
         } else if gIsEditIdeaMode {
             gTextEditor.cancel()
         }
@@ -913,7 +914,7 @@ class ZGraphEditor: ZBaseEditor {
             if !selectionOnly {
                 actuallyMoveInto(zones, onCompletion: onCompletion)
             } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
-                gRecents.invokeTravel(zone, onCompletion: onCompletion)
+				zone.invokeTravel(onCompletion: onCompletion)
             } else {
 				var needReveal = false
 				var      child = zone
@@ -1095,7 +1096,7 @@ class ZGraphEditor: ZBaseEditor {
                 prepare()
             } else {
                 undoManager.beginUndoGrouping()
-                gRecents.travelThrough(zone) { (iAny, iSignalKind) in
+				zone.travelThrough() { (iAny, iSignalKind) in
                     prepare()
                 }
             }
@@ -1215,9 +1216,9 @@ class ZGraphEditor: ZBaseEditor {
         // 4. move a favorite into a normal zone -- convert favorite to a bookmark, then move the bookmark          //
         // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        let   toBookmark = iInto.isBookmark                    // type 2
-        let    toDetails = iInto.isInDetails && !toBookmark    // type 3
-        let         into = iInto.bookmarkTarget ?? iInto       // grab bookmark AFTER travel
+        let   toBookmark =  iInto.isBookmark                    // type 2
+        let    toDetails = !iInto.isInMap && !toBookmark        // type 3
+        let         into =  iInto.bookmarkTarget ?? iInto       // grab bookmark AFTER travel
         var        grabs = gSelecting.currentGrabs
         var      restore = [Zone: (Zone, Int?)] ()
         var    cyclicals = IndexSet()
@@ -1238,12 +1239,12 @@ class ZGraphEditor: ZBaseEditor {
             grabs.remove(at: index)
         }
 
-        if  let dragged = gDraggedZone, dragged.isInDetails, !toDetails {
+        if  let dragged = gDraggedZone, !dragged.isInMap, !toDetails {
             dragged.maybeNeedSave()                            // type 4
         }
 
         grabs.sort { (a, b) -> Bool in
-            if  a.isInDetails {
+            if !a.isInMap {
                 a.maybeNeedSave()                              // type 4
             }
 
@@ -1297,7 +1298,7 @@ class ZGraphEditor: ZBaseEditor {
 				for grab in grabs {
 					var beingMoved = grab
 
-					if  toDetails && !beingMoved.isInDetails && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
+					if  toDetails && beingMoved.isInMap && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
 						if  let bookmark = gFavorites.createBookmark(for: beingMoved, action: .aFavorite) {	// type 3
 							beingMoved   = bookmark
 
@@ -1338,7 +1339,7 @@ class ZGraphEditor: ZBaseEditor {
         if !toBookmark || SPECIAL {
             finish()
         } else {
-            gRecents.travelThrough(iInto) { (iAny, iSignalKind) in
+			iInto.travelThrough() { (iAny, iSignalKind) in
                 finish()
             }
         }

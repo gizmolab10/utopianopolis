@@ -25,7 +25,7 @@ class ZTogglingView: NSStackView {
 	var identity: ZDetailsViewID {
 		if  let kind = convertFromOptionalUserInterfaceItemIdentifier(identifier) {
 			switch kind {
-				case "introduction": return .Explore
+				case "introduction": return .Introduction
 				case "preferences":  return .Preferences
 				case "information":  return .Information
 				case "favorites":    return .Favorites
@@ -81,11 +81,11 @@ class ZTogglingView: NSStackView {
 		titleButton?.layer?.backgroundColor = gAccentColor.cgColor
 
 		if  identity == .Favorites {
-			var    title = "Recent"
+			var title = "Recent"
+			let  here = gIsRecentlyMode ? gRecentsHereMaybe : gFavoritesHereMaybe
 
-			if !gIsRecentlyMode,
-				var ancestors : ZoneArray = gFavoritesHereMaybe?.ancestralPath {
-				if  ancestors.count > 1 {
+			if  var ancestors : ZoneArray = here?.ancestralPath {
+				if  ancestors.count > 1, !gIsRecentlyMode {
 					ancestors = ZoneArray(ancestors.suffix(from: 1))  // remove favorites (root of ancestors) when it's not alone
 				}
 

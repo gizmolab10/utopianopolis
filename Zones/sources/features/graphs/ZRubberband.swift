@@ -46,8 +46,8 @@ class ZRubberband: NSObject {
 					let widgetRect = widget.convert(hitRect, to: view)
 
 					if  let   zone = widget.widgetZone,
-						!zone.isRootOfFavorites,
-						!zone.isRootOfRecents,
+						!zone.isFavoritesRoot,
+						!zone.isRecentsRoot,
 						widgetRect.intersects(rect) {
 						gSelecting.addOneGrab(zone)
 						widget                  .setNeedsDisplay()

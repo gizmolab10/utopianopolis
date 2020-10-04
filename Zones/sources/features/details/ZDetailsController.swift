@@ -13,7 +13,7 @@
 #endif
 
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
-private let  detailIds : [ZDetailsViewID] = [.Preferences, .Information, .Explore, .Status, .Favorites]
+private let  detailIds : [ZDetailsViewID] = [.Preferences, .Information, .Introduction, .Status, .Favorites]
 
 class ZDetailsController: ZGesturesController {
 
@@ -54,7 +54,7 @@ class ZDetailsController: ZGesturesController {
 	}
 
 	func updateForSkillLevel() {
-		view(for: .Explore  )?.hideHideable = !gExplorerSkillLevel
+		view(for: .Introduction  )?.hideHideable = !gStartOutSkillLevel
 		view(for: .Favorites)?.hideHideable = !gProSkillLevel
 		view(for: .Status   )?.hideHideable = !gProSkillLevel
 
@@ -73,10 +73,6 @@ class ZDetailsController: ZGesturesController {
     
     func toggleViewsFor(ids: [ZDetailsViewID]) {
         for id in ids {
-			if  id == .Preferences, gTrailblazerSkillLevel {
-				gSkillLevel = .explorer
-			}
-
             if  let v = view(for: id) {
 				v.toggleHideableVisibility()
             }

@@ -111,7 +111,7 @@ class ZRecords: NSObject {
 		}
 	}
     
-    var hereZone: Zone {
+    var recentHere: Zone {
         get { return (hereZoneMaybe ?? defaultRoot!) }
         set { hereZoneMaybe = newValue }
     }
@@ -326,7 +326,7 @@ class ZRecords: NSObject {
             if  let zone = zRecord as? Zone { // ONLY count zones
                 if !zone.canSaveWithoutFetch {
                     nCount += 1
-                } else if let root = zone.root, !root.isRootOfTrash, !root.isRootOfFavorites, !root.isRootOfLostAndFound {
+                } else if let root = zone.root, !root.isTrashRoot, !root.isFavoritesRoot, !root.isLostAndFoundRoot {
                     continue
                 }
             }
@@ -862,7 +862,10 @@ class ZRecords: NSObject {
 
 	func  maybeZRecordForRecordName (_ iRecordName:     String?)    -> ZRecord? {
 		if  let name = iRecordName {
-			if  databaseID.rawValue == name {
+
+			if  databaseID == .recentsID {
+				return gRemoteStorage.cloud(for: .mineID)?.maybeZRecordForRecordName(iRecordName)     // there is no recents db
+			} else if  databaseID.rawValue == name {
 				return rootZone
 			}
 

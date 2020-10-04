@@ -958,10 +958,10 @@ CA
                                 </connections>
                             </containerView>
                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tJ2-cd-SJp" userLabel="Details Side View">
-                                <rect key="frame" x="0.0" y="0.0" width="226" height="300"/>
+                                <rect key="frame" x="0.0" y="168" width="226" height="132"/>
                                 <subviews>
                                     <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
-                                        <rect key="frame" x="0.0" y="0.0" width="226" height="256"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="226" height="88"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
                                         </constraints>
@@ -970,20 +970,19 @@ CA
                                         </connections>
                                     </containerView>
                                     <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ULe-6f-22e" userLabel="Skill Level View">
-                                        <rect key="frame" x="0.0" y="256" width="226" height="44"/>
+                                        <rect key="frame" x="0.0" y="88" width="226" height="44"/>
                                         <subviews>
                                             <segmentedControl hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0jt-BT-C1l">
-                                                <rect key="frame" x="6" y="10" width="213" height="24"/>
+                                                <rect key="frame" x="38" y="10" width="181" height="24"/>
                                                 <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="Vx4-SL-sxe">
                                                     <font key="font" metaFont="system"/>
                                                     <segments>
-                                                        <segment label="Explorer"/>
-                                                        <segment label="Trailblazer" selected="YES" tag="1"/>
-                                                        <segment label="Pro"/>
+                                                        <segment label="Start"/>
+                                                        <segment label="Pro" selected="YES" tag="1"/>
                                                     </segments>
                                                 </segmentedCell>
                                                 <connections>
-                                                    <action selector="skillAction:" target="MXk-17-6Dz" id="O99-nE-baM"/>
+                                                    <action selector="chooseSkillAction:" target="MXk-17-6Dz" id="O99-nE-baM"/>
                                                 </connections>
                                             </segmentedControl>
                                             <box horizontalHuggingPriority="750" ambiguous="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="UaH-Gd-NsW">
@@ -995,8 +994,8 @@ CA
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="UaH-Gd-NsW" secondAttribute="trailing" id="62p-Ax-1yw"/>
+                                            <constraint firstItem="0jt-BT-C1l" firstAttribute="leading" secondItem="ULe-6f-22e" secondAttribute="leading" constant="40" id="8gp-GY-Vco"/>
                                             <constraint firstItem="0jt-BT-C1l" firstAttribute="centerY" secondItem="ULe-6f-22e" secondAttribute="centerY" id="A5K-cs-fgR"/>
-                                            <constraint firstItem="0jt-BT-C1l" firstAttribute="leading" secondItem="ULe-6f-22e" secondAttribute="leading" constant="8" id="DKh-4A-hMZ"/>
                                             <constraint firstAttribute="bottom" secondItem="Wl1-dm-ADJ" secondAttribute="bottom" id="S0A-ao-IsU"/>
                                             <constraint firstItem="UaH-Gd-NsW" firstAttribute="leading" secondItem="0jt-BT-C1l" secondAttribute="trailing" constant="8" id="ieI-mR-j97"/>
                                             <constraint firstItem="Wl1-dm-ADJ" firstAttribute="leading" secondItem="ULe-6f-22e" secondAttribute="leading" id="qIw-4C-EbW"/>
@@ -1015,6 +1014,21 @@ CA
                                     <constraint firstAttribute="trailing" secondItem="ULe-6f-22e" secondAttribute="trailing" id="eKh-XU-h3l"/>
                                 </constraints>
                             </customView>
+                            <button translatesAutoresizingMaskIntoConstraints="NO" id="yl6-st-bhl">
+                                <rect key="frame" x="12" y="267" width="22" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="22" id="7Ef-bc-vy9"/>
+                                    <constraint firstAttribute="width" constant="22" id="SHM-7Z-xvH"/>
+                                </constraints>
+                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="settings" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="HO4-mt-WHB">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <color key="contentTintColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="settingsButtonAction:" target="MXk-17-6Dz" id="Jmy-Uu-Ilu"/>
+                                </connections>
+                            </button>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="5oi-yK-PC4" userLabel="Permission View">
                                 <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
                                 <connections>
@@ -1029,6 +1043,7 @@ CA
                             <constraint firstAttribute="bottom" secondItem="5oi-yK-PC4" secondAttribute="bottom" id="Hxj-uH-co3"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="trailing" id="L0w-Ew-6dH"/>
+                            <constraint firstItem="yl6-st-bhl" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="12" id="Lys-IS-2eI"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="QmT-ZT-tcN"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="V0U-dq-EtC"/>
                             <constraint firstItem="tJ2-cd-SJp" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="aIX-aN-oSw"/>
@@ -1037,6 +1052,7 @@ CA
                             <constraint firstItem="tJ2-cd-SJp" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="hBw-R5-rRG"/>
                             <constraint firstAttribute="trailing" secondItem="5oi-yK-PC4" secondAttribute="trailing" id="haB-GJ-03K"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="lap-td-b4Q"/>
+                            <constraint firstItem="yl6-st-bhl" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" constant="11" id="m1y-JF-jje"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="qfT-hA-eas"/>
                             <constraint firstAttribute="trailing" secondItem="5jB-w2-4Dg" secondAttribute="trailing" id="rXH-it-XjL"/>
                             <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="trU-TG-zpc"/>
@@ -1044,12 +1060,14 @@ CA
                     </view>
                     <connections>
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="fDV-lr-VDw"/>
+                        <outlet property="detailsWidth" destination="us8-K9-IEo" id="J2y-Un-wue"/>
                         <outlet property="essayView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
                         <outlet property="graphView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
                         <outlet property="permissionView" destination="5oi-yK-PC4" id="5TP-04-XLC"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
                         <outlet property="skillControl" destination="0jt-BT-C1l" id="tCJ-oe-uBa"/>
+                        <outlet property="swapButtonOffset" destination="OFl-Gj-h56" id="YFH-oM-ROV"/>
                     </connections>
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -1541,4 +1559,7 @@ DQ
             <point key="canvasLocation" x="-57" y="1239.5"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="settings" width="800" height="800"/>
+    </resources>
 </document>

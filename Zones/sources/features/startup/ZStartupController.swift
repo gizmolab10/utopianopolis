@@ -154,6 +154,6 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 							   "Please wait until the ideas drawing appears to add new ideas to it.",
 							   "Also, you may have to relaunch if the app gets stuck (it sometimes does, the cause is not yet known)."].joined(separator: " ")
 
-	var helpText: String = "Would you like to look at something more than just a progress bar?"
+	var helpText: String = "Would you like to look at something more interesting than this progress bar?"
 
 }

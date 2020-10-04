@@ -63,8 +63,7 @@ var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIde
 var          gCanSaveWorkMode:               Bool { return gIsGraphMode || gIsNoteMode || gIsStartupMode }
 var    gIsGraphOrEditIdeaMode:               Bool { return gIsGraphMode || gIsEditIdeaMode }
 var            gProSkillLevel:               Bool { return gSkillLevel == .pro }
-var       gExplorerSkillLevel:               Bool { return gSkillLevel == .explorer }
-var    gTrailblazerSkillLevel:               Bool { return gSkillLevel == .trailblazer }
+var       gStartOutSkillLevel:               Bool { return gSkillLevel == .startOut }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var                  gRecords:          ZRecords? { return gShowFavorites ? gFavorites : gCloud }
 var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
@@ -90,7 +89,7 @@ var            kLargeHelpFont                     = ZFont  .systemFont    (ofSiz
 let                 kBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize)
 let            kLargeBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize + 1.0)
 let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
-let       kBeginnerSkillLevel                     = ZSkillLevel.explorer.rawValue
+let       kBeginnerSkillLevel                     = ZSkillLevel.startOut.rawValue
 let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
 
@@ -170,7 +169,7 @@ var gExpandedZones : [String] {
 
 var gHere: Zone {
 	get {
-		return gRecords!.hereZone
+		return gRecords!.recentHere
 	}
 
 	set {
@@ -178,7 +177,7 @@ var gHere: Zone {
 			gDatabaseID = dbID
 		}
 
-		gRecords?.hereZone = newValue
+		gRecords?.recentHere = newValue
 
 		newValue.assureAdoption()
 		gRecents.push()
@@ -214,14 +213,19 @@ var gCurrentHelpMode: ZHelpMode {
 	}
 }
 
+var gShowDetailsView : Bool {
+	get { return getPreferencesBool(   for: kShowDetails, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kShowDetails) }
+}
+
 var gClipBreadcrumbs : Bool {
 	get { return getPreferencesBool(   for: kClipBreadcrumbs, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kClipBreadcrumbs) }
 }
 
 var gSkillLevel : ZSkillLevel {
-	get { return  ZSkillLevel(rawValue: getPreferencesInt(for: kSkillLevel, defaultInt: kBeginnerSkillLevel) ?? kBeginnerSkillLevel) ?? ZSkillLevel.explorer }
-	set { setPreferencesInt(newValue.rawValue, for: kSkillLevel); gMainController?.updateForSkillLevel() }
+	get { return  ZSkillLevel(rawValue: getPreferencesInt(for: kSkillLevel, defaultInt: kBeginnerSkillLevel) ?? kBeginnerSkillLevel) ?? ZSkillLevel.startOut }
+	set { setPreferencesInt(newValue.rawValue, for: kSkillLevel); gMainController?.update() }
 }
 
 var gStartupLevel : ZStartupLevel {
@@ -512,20 +516,20 @@ var gDatabaseID: ZDatabaseID {
 
 var gHiddenDetailViewIDs: ZDetailsViewID {
 	get {
-		var state: ZDetailsViewID?
+		var viewID: ZDetailsViewID?
 		
 		if  let object = UserDefaults.standard.object(forKey:kDetailsState) {
-			state      = ZDetailsViewID(rawValue: object as! Int)
+			viewID     = ZDetailsViewID(rawValue: object as! Int)
 		}
 		
-		if  state     == nil {
-			state      = .Explore
+		if  viewID    == nil {
+			viewID     = .Introduction
 			
-			UserDefaults.standard.set(state!.rawValue, forKey:kDetailsState)
+			UserDefaults.standard.set(viewID!.rawValue, forKey:kDetailsState)
 			UserDefaults.standard.synchronize()
 		}
 		
-		return state!
+		return viewID!
 	}
 	
 	set {

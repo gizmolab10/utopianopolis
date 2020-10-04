@@ -488,7 +488,7 @@ class ZCloud: ZRecords {
                 }
 
                 scan(self.rootZone)
-                scan(self.hereZone)
+                scan(self.recentHere)
                 scan(gFavoritesRoot)
 
                 self.columnarReport("REMEMBER (\(memorables.count))", "\(self.databaseID.rawValue)")
@@ -986,7 +986,7 @@ class ZCloud: ZRecords {
                                 }
 
                                 let     parent = child.parentZone
-                                let extraTrash = child.zoneLink == kTrashLink && parent?.isRootOfFavorites ?? false && gFavorites.hasTrash
+                                let extraTrash = child.zoneLink == kTrashLink && parent?.isFavoritesRoot ?? false && gFavorites.hasTrash
 
                                 if  child == parent || extraTrash {
                                     child.needDestroy()
@@ -1190,7 +1190,7 @@ class ZCloud: ZRecords {
         }
 
 		let hereCompletion = { (iHere: Zone) in
-			self.hereZone = iHere
+			self.recentHere = iHere
 
 			gRecents.push()
 			onCompletion?(0)

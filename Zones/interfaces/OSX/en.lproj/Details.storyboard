@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17156"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -371,7 +371,7 @@ CA
                                                     <segue destination="YdN-bY-sSj" kind="embed" id="bHo-7A-xgJ"/>
                                                 </connections>
                                             </containerView>
-                                            <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Introduction Banner">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Introduction Banner">
                                                 <rect key="frame" x="0.0" y="611" width="328" height="21"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Introduction Title">
@@ -381,7 +381,7 @@ CA
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Basics" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xRi-eo-teP">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="controlContent"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="dSG-o4-XPL" id="Bzc-KJ-Wcp"/>
@@ -395,7 +395,7 @@ CA
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="y7l-ur-34o">
                                                             <behavior key="behavior" lightByContents="YES"/>
-                                                            <font key="font" metaFont="controlContent"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="dSG-o4-XPL" id="roU-1v-HgK"/>
@@ -435,7 +435,7 @@ CA
                                                     <segue destination="fxO-Qj-JeN" kind="embed" id="w7B-Py-09b"/>
                                                 </connections>
                                             </containerView>
-                                            <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
                                                 <rect key="frame" x="0.0" y="77" width="328" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y" userLabel="Information Title">
@@ -445,7 +445,7 @@ CA
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Data" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nh5-Lk-WYv" userLabel="Status">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="controlContent"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="M2W-8y-R0e" id="t9H-CJ-EpI"/>
@@ -459,7 +459,7 @@ CA
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="7oD-gH-cVi">
                                                             <behavior key="behavior" lightByContents="YES"/>
-                                                            <font key="font" metaFont="controlContent"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="M2W-8y-R0e" id="JcK-VM-VH9"/>
@@ -505,7 +505,7 @@ CA
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Preferences" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TVl-I9-b5f">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="controlContent"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="9j5-fI-wCz" id="Jfv-dJ-JP1"/>
@@ -519,7 +519,7 @@ CA
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="Ztr-89-MNY">
                                                             <behavior key="behavior" lightByContents="YES"/>
-                                                            <font key="font" metaFont="controlContent"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="9j5-fI-wCz" id="VR5-UC-UOw"/>
@@ -559,7 +559,7 @@ CA
                                     <customView identifier="favorites" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Favorites View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="328" height="96"/>
                                         <subviews>
-                                            <customView canDrawConcurrently="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Favorites Banner">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Favorites Banner">
                                                 <rect key="frame" x="0.0" y="39" width="328" height="18"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3bx-6i-bTg" userLabel="Favorites Title">
@@ -569,7 +569,7 @@ CA
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Favorites" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XJD-P5-eSB">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="controlContent"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="Utx-K3-0a0" id="nzW-6y-ZRI"/>
@@ -583,7 +583,7 @@ CA
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="QJb-qX-vZc">
                                                             <behavior key="behavior" lightByContents="YES"/>
-                                                            <font key="font" metaFont="controlContent"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="Utx-K3-0a0" id="qL7-XA-wJf"/>
@@ -715,7 +715,7 @@ CA
                                                         <constraint firstAttribute="height" constant="22" id="E1u-F7-yma"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="thickness" id="Ukl-QF-qxm">
-                                                        <font key="font" metaFont="controlContent"/>
+                                                        <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -726,7 +726,7 @@ CA
                                                         <constraint firstAttribute="height" constant="22" id="ads-0v-NG0"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="size" id="xJc-At-88z">
-                                                        <font key="font" metaFont="controlContent"/>
+                                                        <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -737,7 +737,7 @@ CA
                                                         <constraint firstAttribute="height" constant="22" id="BNZ-fl-QS2"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="stretch" id="mLK-OR-6f6">
-                                                        <font key="font" metaFont="controlContent"/>
+                                                        <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -831,7 +831,7 @@ CA
                                                         <constraint firstAttribute="height" constant="17" id="vRd-P4-pC3"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="ideas" id="pmv-x4-CVc">
-                                                        <font key="font" metaFont="controlContent"/>
+                                                        <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -842,7 +842,7 @@ CA
                                                         <constraint firstAttribute="height" constant="17" id="9dI-E4-9GB"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="active, mine" id="qjf-lf-hsF">
-                                                        <font key="font" metaFont="controlContent"/>
+                                                        <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -853,7 +853,7 @@ CA
                                                         <constraint firstAttribute="height" constant="17" id="RsG-gF-fWk"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="accent" id="QHW-3R-d1w">
-                                                        <font key="font" metaFont="controlContent"/>
+                                                        <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>

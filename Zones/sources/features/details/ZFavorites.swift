@@ -47,7 +47,7 @@ class ZFavorites: ZRecords {
 
     var hasTrash: Bool {
         for favorite in workingFavorites {
-            if  let target = favorite.bookmarkTarget, target.isRootOfTrash {
+            if  let target = favorite.bookmarkTarget, target.isTrashRoot {
                 return true
             }
         }
@@ -420,9 +420,8 @@ class ZFavorites: ZRecords {
         let    index = nextFavoritesIndex(forward: forward)
         var     bump : IntClosure?
         bump         = { (iIndex: Int) in
-            let zone = self.zoneAtIndex(iIndex)
-
-            if !gRecents.focusThrough(zone, atArrival) {
+            if  let zone = self.zoneAtIndex(iIndex),
+				!zone.focusThrough(atArrival) {
 
                 // /////////////////
                 // error: RECURSE //

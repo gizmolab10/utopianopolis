@@ -6,15 +6,19 @@
 //  Copyright © 2020 Jonathan Sand. All rights reserved.
 //
 
-import Foundation
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 var gFavoritesController: ZFavoritesController? { return gControllers.controllerForID(.idFavorites) as? ZFavoritesController }
 
 class ZFavoritesController: ZGraphController {
 
 	override  var        isMap : Bool          { return false }
-	override  var     hereZone : Zone?         { return gIsRecentlyMode ?  gRecentsHereMaybe :  gFavoritesHereMaybe }
-	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ? .tRecent           : .tFavorite }
+	override  var     hereZone : Zone?         { return gIsRecentlyMode ?  gRecentsHere :  gFavoritesHereMaybe }
+	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ? .tRecent      : .tFavorite }
 	override  var controllerID : ZControllerID { return .idFavorites }
 	override  var allowedKinds : [ZSignalKind] { return [.sDetails, .sFavorites, .sRelayout] }
 	@IBOutlet var controlsView : ZFavoriteControlsView?

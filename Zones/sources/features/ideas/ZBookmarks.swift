@@ -110,7 +110,7 @@ class ZBookmarks: NSObject {
 			if  let bookmark = zRecord as? Zone,
                 let     root = bookmark.root,
 				iDatabaseID != root.databaseID,
-				!root.isRootOfFavorites {       // only store cross-linked, non-favorite bookarks
+				root.isMapRoot {       // only store cross-linked, map bookarks
                 okayToStore  = true
             }
 
