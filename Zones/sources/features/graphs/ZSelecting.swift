@@ -80,7 +80,7 @@ class ZSelecting: NSObject {
 		var start: Zone?
 
 		if  let zone = firstGrab {
-			start = zone.isInFavorites ? gFavoritesRoot : zone.isInRecently ? gRecents.root : zone.isInLostAndFound ? gLostAndFound : gHereMaybe
+			start = zone.isInFavorites ? gFavoritesRoot : zone.isInRecently ? gRecentsRoot : zone.isInLostAndFound ? gLostAndFound : gHereMaybe
 		}
 
 		return start

@@ -489,7 +489,7 @@ class ZCloud: ZRecords {
 
                 scan(self.rootZone)
                 scan(self.recentHere)
-                scan(gFavoritesRoot)
+				scan(gFavorites.rootZone)
 
                 self.columnarReport("REMEMBER (\(memorables.count))", "\(self.databaseID.rawValue)")
                 setPreferencesString(memorables.joined(separator: kColonSeparator), for: self.refetchingName)
@@ -1256,7 +1256,7 @@ class ZCloud: ZRecords {
                     }
 
                     switch rootID {
-					case .favoritesID: gFavoritesRoot        = iZone
+					case .favoritesID: self.favoritesZone    = iZone
 					case .recentsID:   self.recentsZone      = iZone
                     case .destroyID:   self.destroyZone      = iZone
                     case .trashID:     self.trashZone        = iZone

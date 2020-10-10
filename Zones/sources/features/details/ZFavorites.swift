@@ -13,37 +13,36 @@ import CloudKit
 
 enum ZBookmarkAction: Int {
     case aBookmark
-    case aFavorite
+    case aNotABookmark
     case aCreateFavorite
 }
 
 
 let gFavorites = ZFavorites(ZDatabaseID.favoritesID)
-
-var gFavoritesRoot : Zone? {
-	get {
-		return gMineCloud?.favoritesZone
-	}
-	
-	set {
-		if  let n = newValue {
-			gMineCloud?.favoritesZone = n
-		}
-	}
-}
+var gFavoritesRoot : Zone? { return gFavorites.rootZone }
 
 class ZFavorites: ZRecords {
-
 
     // MARK:- initialization
     // MARK:-
 
-
     let databaseRootFavorites = Zone(record: nil, databaseID: nil)
-    var      workingFavorites = ZoneArray ()
-    var        favoritesIndex : Int { return indexOf(currentFavoriteID) ?? 0 }
-    var                 count : Int { return gFavoritesRoot?.count ?? 0 }
 
+	override var rootZone : Zone? {
+		get {
+			return gMineCloud?.favoritesZone
+		}
+
+		set {
+			if  let n = newValue {
+				gMineCloud?.favoritesZone = n
+			}
+		}
+	}
+
+	var workingFavorites : [Zone] {
+		return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? []
+	}
 
     var hasTrash: Bool {
         for favorite in workingFavorites {
@@ -55,89 +54,16 @@ class ZFavorites: ZRecords {
         return false
     }
 
+	var favoritesIndex : Int? {
+		for (index, zone) in workingFavorites.enumerated() {
+			if  zone == currentBookmark {
+				return index
+			}
+		}
 
-    var currentFavoriteID: String? {
-        get {
-            if  let    identifier = UserDefaults.standard.object(forKey: kCurrentFavorite) as? String {
-                return identifier
-            }
+		return nil
+	}
 
-            if  let initialID = zoneAtIndex(0)?.recordName {
-
-                // ///////////////////////////////////////////////////////////////////////////////////
-                // initial default value is first item in favorites list, whatever it happens to be //
-                // ///////////////////////////////////////////////////////////////////////////////////
-
-                UserDefaults.standard.set(initialID, forKey: kCurrentFavorite)
-
-                return initialID
-            }
-
-            return nil
-        }
-
-        set {
-            UserDefaults.standard.set(newValue, forKey: kCurrentFavorite)
-        }
-    }
-
-
-    var currentFavorite: Zone? {
-        get {
-            return zoneAtIndex(favoritesIndex)
-        }
-
-        set {
-            currentFavoriteID = newValue?.recordName
-        }
-    }
-
-
-    // create an enumeration where favorites graphically below current
-    // are ordered before those that are graphically above and equal
-
-    var rotatedEnumeration: EnumeratedSequence<Array<Zone>> {
-        let enumeration = workingFavorites.enumerated()
-        var     rotated = ZoneArray ()
-
-        for (index, favorite) in enumeration {
-            if  index >= favoritesIndex {
-                rotated.append(favorite)
-            }
-        }
-
-        for (index, favorite) in enumeration {
-            if  index < favoritesIndex {
-                rotated.append(favorite)
-            }
-        }
-
-        return rotated.enumerated()
-    }
-
-
-    private func zoneAtIndex(_ index: Int) -> Zone? {
-        if index < 0 || index >= workingFavorites.count {
-            return nil
-        }
-
-        return workingFavorites[index]
-    }
-
-
-    func indexOf(_ iFavoriteID: String?) -> Int? {
-        if  let identifier = iFavoriteID {
-            for (index, zone) in workingFavorites.enumerated() {
-                if  zone.recordName == identifier {
-                    return index
-                }
-            }
-        }
-
-        return nil
-    }
-    
-    
     func createRootFavorites() {
         if  databaseRootFavorites.count == 0 {
             for (index, dbID) in kAllDatabaseIDs.enumerated() {
@@ -151,12 +77,11 @@ class ZFavorites: ZRecords {
         }
     }
 
-    
     func favoriteTargetting(_ iTarget: Zone?, iSpawned: Bool = true) -> Zone? {
         var found: Zone?
 
         if  iTarget?.databaseID != nil {
-			found                = workingFavorites.bookmarksTargeting([iTarget!], iSpawned: iSpawned)
+			found                = rootZone?.allBookmarkProgeny.bookmarksTargeting([iTarget!], iSpawned: iSpawned)
         }
 
         if  iSpawned  &&  found == nil {
@@ -183,40 +108,28 @@ class ZFavorites: ZRecords {
         }
 
         if  let root = mine?.maybeZoneForRecordName(kFavoritesRootName) {
-            gFavoritesRoot = root
+			gFavorites.rootZone = root
 
             finish()
         } else {
             mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-                let      ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kFavoritesRootName))
-                let          root = Zone(record: ckRecord, databaseID: .mineID)
-                root.directAccess = .eProgenyWritable
-                root.zoneName     = kFavoritesName
-                gFavoritesRoot    = root
+                let        ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kFavoritesRootName))
+                let            root = Zone(record: ckRecord, databaseID: .mineID)
+                root.directAccess   = .eProgenyWritable
+                root.zoneName       = kFavoritesName
+				gFavorites.rootZone = root
 
                 finish()
             }
         }
     }
 
-
-    func updateWorkingFavorites() {
-        workingFavorites.removeAll()
-
-        gFavoritesRoot?.traverseAllProgeny { iChild in
-            if  iChild.isBookmark {
-                self.workingFavorites.append(iChild)
-            }
-        }
-    }
-
-    
     func updateCurrentFavorite(_ currentZone: Zone? = nil, reveal: Bool = false) {
         if  let     favorite = favoriteTargetting(currentZone ?? gHereMaybe),
             let       target = favorite.bookmarkTarget,
-            (gHere == target || !(currentFavorite?.bookmarkTarget?.spawnedBy(gHere) ?? false)),
+            (gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)),
 			!gIsRecentlyMode {
-            currentFavorite = favorite
+            currentBookmark = favorite
             
             if  reveal {
                 
@@ -240,201 +153,179 @@ class ZFavorites: ZRecords {
     }
 
     @discardableResult func updateAllFavorites(_ currentZone: Zone? = nil) -> Bool {
+		var result = true
 
-        // /////////////////////////////////////////////
-        // assure at least one root favorite per db   //
-        // call every time favorites MIGHT be altered //
-        // /////////////////////////////////////////////
+		// /////////////////////////////////////////////
+		// assure at least one root favorite per db   //
+		// call every time favorites MIGHT be altered //
+		// /////////////////////////////////////////////
 
-        var   hasDatabaseIDs = [ZDatabaseID] ()
-        var         discards = IndexPath()
-        var      testedSoFar = ZoneArray ()
-        var      missingLost = true
-        var     missingTrash = true
-        var     hasDuplicate = false
+		if  let        bookmarks = rootZone?.allBookmarkProgeny {
+			var   hasDatabaseIDs = [ZDatabaseID] ()
+			var         discards = IndexPath()
+			var      testedSoFar = ZoneArray ()
+			var      missingLost = true
+			var     missingTrash = true
+			var     hasDuplicate = false
 
-        updateWorkingFavorites()
+			// //////////////////////////////////
+			// detect ids which have bookmarks //
+			//   remove unfetched duplicates   //
+			// //////////////////////////////////
 
-        // //////////////////////////////////
-        // detect ids which have bookmarks //
-        //   remove unfetched duplicates   //
-        // //////////////////////////////////
+			for bookmark in bookmarks {
+				if  let            link  = bookmark.zoneLink { // always true: all working favorites have a zone link
+					if             link == kTrashLink {
+						if  missingTrash {
+							missingTrash = false
+						} else {
+							hasDuplicate = true
+						}
+					} else if  link == kLostAndFoundLink {
+						if  missingLost {
+							missingLost  = false
+						} else {
+							hasDuplicate = true
+						}
+					} else if let      t = bookmark.bookmarkTarget, t.isARoot,
+							  let         dbID = t.databaseID {
+						if !hasDatabaseIDs.contains(dbID) {
+							hasDatabaseIDs.append(dbID)
+						} else {
+							hasDuplicate = true
+						}
+					} else {    // target is not a root -> don't bother adding to testedSoFar
+						continue
+					}
 
-        for favorite in workingFavorites {
-            if  let            link  = favorite.zoneLink { // always true: all working favorites have a zone link
-                if             link == kTrashLink {
-                    if  missingTrash {
-                        missingTrash = false
-                    } else {
-                        hasDuplicate = true
-                    }
-                } else if  link == kLostAndFoundLink {
-                    if  missingLost {
-                        missingLost  = false
-                    } else {
-                        hasDuplicate = true
-                    }
-                } else if let      t = favorite.bookmarkTarget, t.isARoot,
-                    let         dbID = t.databaseID {
-                    if !hasDatabaseIDs.contains(dbID) {
-                        hasDatabaseIDs.append(dbID)
-                    } else {
-                        hasDuplicate = true
-                    }
-                } else {    // target is not a root -> don't bother adding to testedSoFar
-                    continue
-                }
+					// ///////////////////////////////////////
+					// mark to discard unfetched duplicates //
+					// ///////////////////////////////////////
 
-                // ///////////////////////////////////////
-                // mark to discard unfetched duplicates //
-                // ///////////////////////////////////////
+					if  hasDuplicate {
+						let isUnfetched: ZoneClosure = { iZone in
+							if iZone.notFetched, let index = self.workingFavorites.firstIndex(of: iZone) {
+								discards.append(index)
+							}
+						}
 
-                if  hasDuplicate {
-                    let isUnfetched: ZoneClosure = { iZone in
-                        if iZone.notFetched, let index = self.workingFavorites.firstIndex(of: iZone) {
-                            discards.append(index)
-                        }
-                    }
+						for     duplicate in testedSoFar {
+							if  duplicate.bookmarkTarget == bookmark.bookmarkTarget {
+								isUnfetched(bookmark)
+								isUnfetched(duplicate)
 
-                    for     duplicate in testedSoFar {
-                        if  duplicate.bookmarkTarget == favorite.bookmarkTarget {
-                            isUnfetched(favorite)
-                            isUnfetched(duplicate)
+								break
+							}
+						}
+					}
 
-                            break
-                        }
-                    }
-                }
+					testedSoFar.append(bookmark)
+				}
+			}
 
-                testedSoFar.append(favorite)
-            }
-        }
+			// ////////////////////////////
+			// discard marked duplicates //
+			// ////////////////////////////
 
-        // ////////////////////////////
-        // discard marked duplicates //
-        // ////////////////////////////
+			while   let   index = discards.popLast() {
+				if  index < workingFavorites.count {
+					let discard = workingFavorites[index]
+					discard.needDestroy()
+					discard.orphan()
+				}
+			}
 
-        while   let   index = discards.popLast() {
-            if  let discard = zoneAtIndex(index) {
-                discard.needDestroy()
-                discard.orphan()
-            }
-        }
+			// //////////////////////////////////////////////
+			// add missing trash + lost and found favorite //
+			// //////////////////////////////////////////////
 
-        // //////////////////////////////////////////////
-        // add missing trash + lost and found favorite //
-        // //////////////////////////////////////////////
+			if  missingTrash {
+				let          trash = Zone(databaseID: .mineID, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
+				trash    .zoneLink = kTrashLink // convert into a bookmark
+				trash.directAccess = .eProgenyWritable
 
-        if  missingTrash {
-            let          trash = Zone(databaseID: .mineID, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
-            trash    .zoneLink = kTrashLink // convert into a bookmark
-            trash.directAccess = .eProgenyWritable
+				gFavoritesRoot?.addAndReorderChild(trash)
+				trash.clearAllStates()
+				trash.markNotFetched()
+			}
 
-            gFavoritesRoot?.addAndReorderChild(trash)
-            trash.clearAllStates()
-            trash.markNotFetched()
-        }
+			if  missingLost {
+				let identifier = kLostAndFoundName + kFavoritesSuffix
+				var       lost = gMineCloud?.maybeZoneForRecordName(identifier)
 
-        if  missingLost {
-            let identifier = kLostAndFoundName + kFavoritesSuffix
-            var       lost = gMineCloud?.maybeZoneForRecordName(identifier)
+				if  lost      == nil {
+					lost       = Zone(databaseID: .mineID, named: kLostAndFoundName, identifier: identifier)
+				}
 
-            if  lost      == nil {
-                lost       = Zone(databaseID: .mineID, named: kLostAndFoundName, identifier: identifier)
-            }
+				lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark
+				lost?.directAccess = .eProgenyWritable
 
-            lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark
-            lost?.directAccess = .eProgenyWritable
+				gFavoritesRoot?.addAndReorderChild(lost!)
+				lost?.clearAllStates()
+				lost?.markNotFetched()
+			}
 
-            gFavoritesRoot?.addAndReorderChild(lost!)
-            lost?.clearAllStates()
-            lost?.markNotFetched()
-        }
+			// /////////////////////////////
+			// add missing root favorites //
+			// /////////////////////////////
 
-        // /////////////////////////////
-        // add missing root favorites //
-        // /////////////////////////////
+			for template in databaseRootFavorites.children {
+				if  let          dbID = template.linkDatabaseID, !hasDatabaseIDs.contains(dbID) {
+					let      bookmark = template.deepCopy
+					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName
 
-        for template in databaseRootFavorites.children {
-            if  let          dbID = template.linkDatabaseID, !hasDatabaseIDs.contains(dbID) {
-                let      favorite = template.deepCopy
-                favorite.zoneName = favorite.bookmarkTarget?.zoneName
+					gFavoritesRoot?.addChildAndRespectOrder(bookmark)
+					bookmark.clearAllStates() // erase side-effect of add
+					bookmark.markNotFetched()
+				}
+			}
 
-                gFavoritesRoot?.addChildAndRespectOrder(favorite)
-                favorite.clearAllStates() // erase side-effect of add
-                favorite.markNotFetched()
-            }
-        }
+			result = missingLost || missingTrash || hasDuplicate
+		}
 
-        updateWorkingFavorites()
         updateCurrentFavorite(currentZone)
-        
-        return missingLost || missingTrash || hasDuplicate
+
+		return result
     }
 
     // MARK:- switch
     // MARK:-
 
-	func nextFavoritesIndex(forward: Bool) -> Int {
-		if  gBrowsingIsConfined,
-			let c = currentFavorite,
-			let p = c.parentZone,
-			p.children.count > 1,
-			let i = c.siblingIndex {
-			let max = p.children.count - 1
-			var next = i + (forward ? 1 : -1)
-
-			if  next > max {
-				next = 0
-			} else if next < 0 {
-				next = max
-			}
-
-			currentFavorite = p.children[next]
-
-			return favoritesIndex
-		}
-
-		return next(favoritesIndex, forward)
-	}
-
-
     func next(_ index: Int, _ forward: Bool) -> Int {
-        let increment = (forward ? 1 : -1)
-        var      next = index + increment
-        let     count = workingFavorites.count
-
-        if next >= count {
-            next =       0
+        let  increment = (forward ? 1 : -1)
+        var       next = index + increment
+        let      count = workingFavorites.count
+        if next       >= count {
+            next       = 0
         } else if next < 0 {
-            next = count - 1
+            next       = count - 1
         }
 
         return next
     }
 
+    func got(_ forward: Bool, atArrival: @escaping Closure) {
+		if  let   fIndex = favoritesIndex {
+			let    index = next(fIndex, forward)
+			var     bump : IntClosure?
+			bump         = { (iIndex: Int) in
+				let zone = self.workingFavorites[iIndex]
 
-    func go(_ forward: Bool, atArrival: @escaping Closure) {
-        updateWorkingFavorites()
+				if	!zone.focusThrough(atArrival) {
 
-        let    index = nextFavoritesIndex(forward: forward)
-        var     bump : IntClosure?
-        bump         = { (iIndex: Int) in
-            if  let zone = self.zoneAtIndex(iIndex),
-				!zone.focusThrough(atArrival) {
+					// /////////////////
+					// error: RECURSE //
+					// /////////////////
 
-                // /////////////////
-                // error: RECURSE //
-                // /////////////////
+					bump?(self.next(iIndex, forward))
+				}
+			}
 
-                bump?(self.next(iIndex, forward))
-            }
-        }
+			bump?(index)
+		}
+	}
 
-        bump?(index)
-    }
-
-    // MARK:- create
+	// MARK:- create
     // MARK:-
 
     @discardableResult func create(withBookmark: Zone?, _ iName: String?, identifier: String? = nil) -> Zone {
@@ -452,7 +343,7 @@ class ZFavorites: ZRecords {
         let bookmark: Zone = create(withBookmark: withBookmark, name, identifier: identifier)
         let insertAt: Int? = atIndex == parent.count ? nil : atIndex
 
-        if  action != .aFavorite {
+        if  action != .aNotABookmark {
             parent.addChild(bookmark, at: insertAt) // calls update progeny count
         }
         
@@ -461,24 +352,31 @@ class ZFavorites: ZRecords {
         return bookmark
     }
 
+	@discardableResult func createFavorite(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
 
-	@discardableResult func createBookmark(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
-		if  let         zone = iZone {
+		// /////////////////////////////////////////////
+		// 1. zone is a bookmark, pass a deep copy it //
+		// 2. not a bookmark, pass it                 //
+		// /////////////////////////////////////////////
+
+		if  let         zone = iZone,
+			let         root = rootZone {
 			var parent: Zone = zone.parentZone ?? gFavoritesHereMaybe ?? gFavoritesRoot!
 			let   isBookmark = zone.isBookmark
-			let     isNormal = action == .aBookmark
+			let    actNormal = action == .aBookmark
 
-			if  !isNormal {
+			if  !actNormal {
 				let basis: ZRecord = isBookmark ? zone.crossLink! : zone
 
 				if  let recordName = basis.recordName {
 					parent         = gFavoritesHereMaybe ?? gFavoritesRoot!
 
-					for workingFavorite in workingFavorites {
+					for workingFavorite in root.allBookmarkProgeny {
 						if  !workingFavorite.isInTrash,
-							!workingFavorite.bookmarkTarget!.isARoot,
-							recordName == workingFavorite.linkRecordName {
-							currentFavorite = workingFavorite
+							recordName == workingFavorite.linkRecordName,
+							let  target = workingFavorite.bookmarkTarget,
+							!target.isARoot {
+							currentBookmark = workingFavorite
 
 							return workingFavorite
 						}
@@ -487,18 +385,19 @@ class ZFavorites: ZRecords {
 			}
 
 			let           count = parent.count
-			var bookmark: Zone? = isBookmark ? zone.deepCopy : nil
+			var bookmark: Zone? = isBookmark ? zone.deepCopy : nil               // 1. and 2.
 			var           index = parent.children.firstIndex(of: zone) ?? count
 
-			if  action         == .aCreateFavorite {
-				index           = nextFavoritesIndex(forward: gListsGrowDown)
+			if  action         == .aCreateFavorite,
+				let      fIndex = favoritesIndex {
+				index           = next(fIndex, gListsGrowDown)
 			}
 
 			bookmark            = create(withBookmark: bookmark, action, parent: parent, atIndex: index, zone.zoneName)
 
 			bookmark?.maybeNeedSave()
 
-			if  isNormal {
+			if  actNormal {
 				parent.updateCKRecordProperties()
 				parent.maybeNeedMerge()
 			}
@@ -506,7 +405,7 @@ class ZFavorites: ZRecords {
 			if !isBookmark {
 				bookmark?.crossLink = zone
 
-				gBookmarks.registerBookmark(bookmark!)
+				gBookmarks.persistForLookupByTarget(bookmark!)
 			}
 
 			return bookmark!
@@ -519,23 +418,26 @@ class ZFavorites: ZRecords {
     // MARK:- toggle
     // MARK:-
 
-
     func updateGrab() {
 		if  gIsRecentlyMode { return }
 
 		let here = gHere
-        
-        updateWorkingFavorites()
-        
-        // three states, for which the bookmark that targets here is...
-        // 1. in favorites, not grabbed  -> grab favorite
-        // 2. in favorites, grabbed      -> doesn't invoke this method
-        // 3. not in favorites           -> create and grab new favorite (its target is here)
+
+		// /////////////////////////////////////////////////////////////////////////////////////
+        // three states, for which the bookmark that targets here is...                       //
+        // 1. in favorites, not grabbed  -> grab favorite                                     //
+        // 2. in favorites, grabbed      -> doesn't invoke this method                        //
+        // 3. not in favorites           -> create and grab new favorite (its target is here) //
+		// /////////////////////////////////////////////////////////////////////////////////////
 
 		if  let       favorite = favoriteTargetting(here, iSpawned: false) {
+			hereZoneMaybe?.concealChildren()
 			favorite.asssureIsVisibleAndGrab()                                          // state 1
-		} else if let favorite = createBookmark(for: here, action: .aCreateFavorite) {  // state 3
-			currentFavorite    = favorite
+
+			hereZoneMaybe      = gSelecting.firstGrab?.parentZone
+			currentBookmark    = favorite
+		} else if let favorite = createFavorite(for: here, action: .aCreateFavorite) {  // state 3
+			currentBookmark    = favorite
 
 			favorite.asssureIsVisibleAndGrab()
 		}
@@ -543,10 +445,9 @@ class ZFavorites: ZRecords {
 		updateAllFavorites()
 	}
 
-
     func delete(_ favorite: Zone) {
         favorite.moveZone(to: favorite.trashZone)
-        gBookmarks.unregisterBookmark(favorite)
+        gBookmarks.forget(favorite)
         updateAllFavorites()
     }
 

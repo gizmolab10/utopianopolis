@@ -24,7 +24,7 @@ class ZWidgets: NSObject {
 
     var visibleWidgets: [ZoneWidget] {
         let favorites = gFavoritesRoot?.visibleWidgets ?? []
-		let   recents =  gRecents.root?.visibleWidgets ?? []
+		let   recents =   gRecentsRoot?.visibleWidgets ?? []
 
         return gHere.visibleWidgets + favorites + recents
     }

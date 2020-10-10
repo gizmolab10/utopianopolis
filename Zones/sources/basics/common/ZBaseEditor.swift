@@ -88,9 +88,9 @@ class ZBaseEditor: NSObject {
 
 	func smartGo(forward: Bool, amongNotes: Bool = false) {
 		if  gIsRecentlyMode {
-			gRecents.go(forward: forward)
+			gRecents  .go(forward: forward) { gRedrawGraph() }
 		} else {
-			gFavorites.go(forward) { gRedrawGraph() }
+			gFavorites.go(forward: forward) { gRedrawGraph() }
 		}
 	}
 

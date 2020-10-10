@@ -58,8 +58,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                        count :                Int  { return children.count }
 	var                   isNotInMap :               Bool  { return isCurrentRecent || isCurrentFavorite }
-	var              isCurrentRecent :               Bool  { return self ==   gRecents.currentRecent }
-	var            isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
+	var              isCurrentRecent :               Bool  { return self ==   gRecents.currentBookmark }
+	var            isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
 	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isNonMapHere && !(widget?.type.isMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
     var              dragDotIsHidden :               Bool  { return                     (isNonMapHere && !(widget?.type.isMap ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
     var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
@@ -87,6 +87,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
 	var                     children =          ZoneArray()
 	var                       traits =   ZTraitDictionary()
+
+	var bookmarks : ZoneArray {
+		return children.filter { (iZone) -> Bool in
+			return iZone.isBookmark
+		}
+	}
 
 	var allBookmarkProgeny : ZoneArray {
 		var result = ZoneArray()
@@ -874,7 +880,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				var bookmark: Zone?
 
 				self.invokeUsingDatabaseID(.mineID) {
-					bookmark = gFavorites.createBookmark(for: self, action: .aBookmark)
+					bookmark = gFavorites.createFavorite(for: self, action: .aBookmark)
 				}
 
 				bookmark?.grab()
@@ -1508,7 +1514,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gControllers.swapGraphAndEssay(force: .noteMode)
 	}
 
-	// MARK:- travel / focus
+	// MARK:- travel / focus / move
 	// MARK:-
 
 	@discardableResult func focusThrough(_ atArrival: @escaping Closure) -> Bool {
@@ -1518,7 +1524,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				targetParent?.revealChildren()
 				targetParent?.needChildren()
-				travelThrough() { (iObject: Any?, iKind: ZSignalKind) in
+				travelThrough { (iObject: Any?, iKind: ZSignalKind) in
 					gRecents.updateCurrentRecent()
 					gFavorites.updateAllFavorites(iObject as? Zone)
 					atArrival()
@@ -1557,9 +1563,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			var there: Zone?
 
 			if  isInFavorites {
-				gFavorites.currentFavorite = self
+				gFavorites.currentBookmark = self
 			} else if isInRecently {
-				gRecents.currentRecent     = self
+				gRecents.currentBookmark     = self
 			}
 
 			if  let target = iTarget, target.spawnedBy(gHereMaybe) {
@@ -1720,6 +1726,135 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return false
+	}
+
+	func setAsNonMapHereZone() {
+		if  let r = root {
+			if  r.isFavoritesRoot {
+				gFavorites.hereZoneMaybe = self
+			} else {
+				gRecents  .hereZoneMaybe = self
+			}
+		}
+	}
+
+	func revealSiblings(untilReaching iAncestor: Zone) {
+		[self].recursivelyRevealSiblings(untilReaching: iAncestor) { iZone in
+			if     iZone != self {
+				if iZone == iAncestor {
+					gHere = iAncestor // side-effect does recents push
+
+					gHere.grab()
+				}
+
+				gFavorites.updateCurrentFavorite()
+				gRedrawGraph()
+			}
+		}
+	}
+
+	func moveSelectionOut(extreme: Bool = false, onCompletion: Closure?) {
+
+		if extreme {
+			if  gHere.isARoot {
+				gHere = self // reverse what the last move out extreme did
+			} else {
+				let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
+
+				grab()
+				revealZonesToRoot() {
+					here.revealSiblings(untilReaching: gRoot!)
+					onCompletion?()
+				}
+			}
+		} else if let p = parentZone {
+			if  self == gHere {
+				revealParentAndSiblings()
+				revealSiblings(untilReaching: p)
+			} else {
+				if  isInMap {
+					p.revealChildren()
+					p.needChildren()
+				} else if let g = p.parentZone { // narrow: hide children and set here zone to parent
+					p.concealChildren()
+					g.revealChildren()
+					g.setAsNonMapHereZone()
+					// FUBAR: parent sometimes disappears!!!!!!!!!
+				}
+
+				p.grab()
+				gSignal([.sCrumbs])
+			}
+		} else {
+			// self is an orphan
+			// change focus to bookmark of self
+
+			if  let bookmark = self.fetchedBookmark {
+				gHere        = bookmark
+			}
+		}
+	}
+
+	func revealZonesToRoot(_ onCompletion: Closure?) {
+		if  isARoot {
+			onCompletion?()
+		} else {
+			var needOp = false
+
+			traverseAncestors { iZone -> ZTraverseStatus in
+				if  let parentZone = iZone.parentZone, !parentZone.isFetched {
+					iZone.needRoot()
+
+					needOp = true
+
+					return .eStop
+				}
+
+				return .eContinue
+			}
+
+			if let root = gRoot, !needOp {
+				gHere = root
+
+				onCompletion?()
+			} else {
+				gBatches.root { iSame in
+					onCompletion?()
+				}
+			}
+		}
+	}
+
+	func moveSelectionInto(extreme: Bool = false, onCompletion: Closure?) {
+		var needReveal = false
+		var      child = self
+		var     invoke = {}
+
+		invoke = {
+			needReveal = needReveal || !child.showingChildren
+
+			child.revealChildren()
+
+			if  child.count > 0,
+				let grandchild = gListsGrowDown ? child.children.last : child.children.first {
+				grandchild.grab()
+
+				if !child.isInMap { // narrow, so hide parent
+					child.setAsNonMapHereZone()
+				} else if extreme {
+					child = grandchild
+
+					invoke()
+				}
+			}
+		}
+
+		invoke()
+		onCompletion?()
+
+		if !needReveal {
+			gSignal([.sCrumbs])
+		}
 	}
 
     // MARK:- traverse ancestors
@@ -2269,7 +2404,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			revealParentAndSiblings()
 
-			if let  parent = parentZone, parent != self {
+			if  let parent = parentZone, parent != self {
 				if  gHere == self {
 					gHere  = parent
 				}

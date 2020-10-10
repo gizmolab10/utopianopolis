@@ -34,7 +34,6 @@ enum ZRecordState: String {
 
 class ZRecords: NSObject {
 
-
     var         duplicates =                  [ZRecord]  ()
     var       nameRegistry = [String       : [CKRecord]] ()
     var     recordRegistry = [String       :   ZRecord]  ()
@@ -43,6 +42,7 @@ class ZRecords: NSObject {
     var         databaseID : ZDatabaseID
     var           manifest : ZManifest?
     var   lostAndFoundZone : Zone?
+	var    currentBookmark : Zone?
 	var      favoritesZone : Zone?
 	var        recentsZone : Zone?
 	var        destroyZone : Zone?
@@ -263,7 +263,7 @@ class ZRecords: NSObject {
                 }
             } else {
                 if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
-                    gBookmarks.registerBookmark(bookmark)
+                    gBookmarks.persistForLookupByTarget(bookmark)
                 }
 
                 recordRegistry[id] = zRecord
@@ -294,7 +294,7 @@ class ZRecords: NSObject {
     func unregisterZRecord(_ zRecord: ZRecord?) {
         unregisterCKRecord(zRecord?.record)
         unregisterName(of: zRecord as? Zone)
-        gBookmarks.unregisterBookmark(zRecord as? Zone)
+        gBookmarks.forget(zRecord as? Zone)
     }
 
     func notRegistered(_ recordID: CKRecord.ID?) -> Bool {
@@ -816,6 +816,102 @@ class ZRecords: NSObject {
         }
     }
 
+	// MARK:- update
+	// MARK:-
+
+	func go(forward: Bool, amongNotes: Bool = false, atArrival: @escaping Closure) {
+		if  let progeny = gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny {
+			let     max = progeny.count - 1
+
+			for (index, recent) in progeny.enumerated() {
+				if  recent   == currentBookmark {
+					var found = 0
+
+					if  forward {
+						if  index < max {
+							found = index + 1
+						}
+					} else if  index == 0 {
+						found = max
+					} else {
+						found = index - 1
+					}
+
+					setCurrent(progeny[found])
+					atArrival()
+
+					return
+				}
+			}
+		}
+	}
+
+	func setCurrent(_ recent: Zone) {
+		currentBookmark = recent
+		if  let   pHere = recent.parentZone,
+			recentHere != pHere {
+			recentHere.concealChildren()
+
+			recentHere  = pHere
+
+			recentHere.revealChildren()
+		}
+
+		if  let tHere = recent.bookmarkTarget {
+			gHere     = tHere
+
+			focusKind(.eSelected) {
+				gHere.grab()
+				gSignal([.sRelayout])
+			}
+		}
+	}
+
+	func focusKind(_ kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
+
+		// regarding grabbed/edited zone, five states:
+		// 1. is a bookmark      -> target becomes here
+		// 2. is here            -> update in favorites, not push
+		// 3. in favorite/recent -> grab here
+		// 4. not here, COMMAND  -> become here
+		// 5. not COMMAND        -> select here
+
+		guard  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab else {
+			atArrival()
+
+			return
+		}
+
+		let finishAndGrab = { (iZone: Zone) in
+			gFavorites.updateCurrentFavorite()
+			iZone.grab()
+			atArrival()
+		}
+
+		if  zone.isBookmark {     		// state 1
+			zone.travelThrough() { object, kind in
+				gHere = object as! Zone
+
+				finishAndGrab(gHere)
+			}
+		} else if zone == gHere {       // state 2
+			gRecents.updateRecents(shouldGrab: shouldGrab)
+			gFavorites.updateGrab()
+			atArrival()
+		} else if !zone.isInMap {       // state 3
+			finishAndGrab(gHere)
+		} else if COMMAND {             // state 4
+			gRecents.refocus {
+				atArrival()
+			}
+		} else {                        // state 5
+			if  shouldGrab {
+				gHere = zone
+			}
+
+			finishAndGrab(zone)
+		}
+	}
 
     // MARK:- debug
     // MARK:-
@@ -863,7 +959,7 @@ class ZRecords: NSObject {
 	func  maybeZRecordForRecordName (_ iRecordName:     String?)    -> ZRecord? {
 		if  let name = iRecordName {
 
-			if  databaseID == .recentsID {
+			if  [.recentsID, .favoritesID].contains(databaseID) {
 				return gRemoteStorage.cloud(for: .mineID)?.maybeZRecordForRecordName(iRecordName)     // there is no recents db
 			} else if  databaseID.rawValue == name {
 				return rootZone

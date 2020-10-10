@@ -9,15 +9,17 @@
 
 import Foundation
 
+// ////////////////////////////////
+// gather bookmarks for:         //
+// • storing on filesystem       //
+// • lookup by their zone target //
+// ////////////////////////////////
 
 let gBookmarks = ZBookmarks()
 
-
 class ZBookmarks: NSObject {
 
-
     var registry = [ZDatabaseID : [String : ZoneArray]] ()
-
 
     var allBookmarks: ZoneArray {
         var bookmarks = ZoneArray ()
@@ -31,8 +33,7 @@ class ZBookmarks: NSObject {
         return bookmarks
     }
 
-
-    func registerBookmark(_  iBookmark : Zone?) {
+    func persistForLookupByTarget(_  iBookmark : Zone?) {
         if  let       bookmark = iBookmark,
             let linkRecordName = bookmark.linkRecordName,
             let linkDatabaseID = bookmark.linkDatabaseID {
@@ -76,8 +77,7 @@ class ZBookmarks: NSObject {
         }
     }
 
-
-    func unregisterBookmark(_ iBookmark: Zone?) {
+    func forget(_ iBookmark: Zone?) {
         if  let       bookmark = iBookmark,
             let linkDatabaseID = bookmark.linkDatabaseID,
             let linkRecordName = bookmark.linkRecordName,
@@ -91,12 +91,11 @@ class ZBookmarks: NSObject {
         }
     }
 
-
     func bookmarks(for iZone: Zone) -> ZoneArray? {
         if  let dbID = iZone.databaseID,
             let name = iZone.recordName,
             let dict = registry[dbID] {
-            return dict[name]
+            return dict[name]    // returned value is an array
         }
 
         return nil

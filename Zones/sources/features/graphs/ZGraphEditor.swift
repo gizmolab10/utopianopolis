@@ -177,34 +177,36 @@ class ZGraphEditor: ZBaseEditor {
         switch arrow {
         case .up, .down:     move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
         default:
-            if !SHIFT {
-                switch arrow {
-                case .left,
-                     .right: move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
-                        gSelecting.updateAfterMove()  // relayout graph when travelling through a bookmark
-                    }
-                default: break
-                }
-            } else {
-
-                // ///////////////
-                // GENERATIONAL //
-                // ///////////////
-
-                var show = true
-
-                switch arrow {
-                case .right: break
-                case .left:  show = false
-                default:     return
-                }
-
-				if  OPTION {
-					browseBreadcrumbs(arrow == .left)
+			if  let moveable = gSelecting.rootMostMoveable {
+				if !SHIFT || moveable.isNotInMap {
+					switch arrow {
+						case .left,
+							 .right: move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
+								gSelecting.updateAfterMove()  // relayout graph when travelling through a bookmark
+							}
+						default: break
+					}
 				} else {
-					gSelecting.rootMostMoveable?.applyGenerationally(show, extreme: COMMAND)
+
+					// ///////////////
+					// GENERATIONAL //
+					// ///////////////
+
+					var show = true
+
+					switch arrow {
+						case .right: break
+						case .left:  show = false
+						default:     return
+					}
+
+					if  OPTION {
+						browseBreadcrumbs(arrow == .left)
+					} else {
+						moveable.applyGenerationally(show, extreme: COMMAND)
+					}
 				}
-            }
+			}
         }
     }
 
@@ -316,7 +318,7 @@ class ZGraphEditor: ZBaseEditor {
 			gRecents.pop()
 			gRedrawGraph()
 		} else {
-			gRecents.focusKind(kind, COMMAND, shouldGrab: true) { // complex grab logic
+			gRecords?.focusKind(kind, COMMAND, shouldGrab: true) { // complex grab logic
 				gRedrawGraph()
 			}
 		}
@@ -592,7 +594,7 @@ class ZGraphEditor: ZBaseEditor {
 
 
     func selectCurrentFavorite() {
-        if  let current = gFavorites.currentFavorite {
+        if  let current = gFavorites.currentBookmark {
             current.needRoot()
 
 			if !current.isGrabbed {
@@ -613,7 +615,7 @@ class ZGraphEditor: ZBaseEditor {
     func doFavorites(_ isShift: Bool, _ isOption: Bool) {
         let backward = isShift || isOption
 
-        gFavorites.go(!backward) {
+		gFavorites.go(forward: !backward) {
             gRedrawGraph()
         }
     }
@@ -621,100 +623,6 @@ class ZGraphEditor: ZBaseEditor {
 
     // MARK:- async
     // MARK:-
-
-
-    func revealZonesToRoot(from zone: Zone, _ onCompletion: Closure?) {
-        if zone.isARoot {
-            onCompletion?()
-        } else {
-            var needOp = false
-
-            zone.traverseAncestors { iZone -> ZTraverseStatus in
-                if  let parentZone = iZone.parentZone, !parentZone.isFetched {
-                    iZone.needRoot()
-
-                    needOp = true
-
-                    return .eStop
-                }
-
-                return .eContinue
-            }
-
-            if let root = gRoot, !needOp {
-                gHere = root
-
-                onCompletion?()
-            } else {
-                gBatches.root { iSame in
-                    onCompletion?()
-                }
-            }
-        }
-    }
-
-    func recursivelyRevealSiblings(_ descendents: ZoneArray, untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {
-        if  descendents.contains(iAncestor) {
-            onCompletion?(iAncestor)
-            
-            return
-        }
-
-        var needRoot = true
-
-        descendents.traverseAllAncestors { iParent in
-            if  !descendents.contains(iParent) {
-                iParent.revealChildren()
-                iParent.needChildren()
-            }
-
-            if  iParent == iAncestor {
-                needRoot = false
-            }
-        }
-
-        if  needRoot { // true means graph in memory does not include root, so fetch it from iCloud
-            for descendent in descendents {
-                descendent.needRoot()
-            }
-        }
-
-		descendents.traverseAncestors { iParent -> ZTraverseStatus in
-			let  gotThere = iParent == iAncestor || iParent.isARoot    // reached the ancestor or the root
-			let gotOrphan = iParent.parentZone == nil
-
-			if  gotThere || gotOrphan {
-				if !gotThere && !iParent.isFetched && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
-					self.recursivelyRevealSiblings([iParent], untilReaching: iAncestor, onCompletion: onCompletion)
-				} else {
-					iAncestor.revealChildren()
-					FOREGROUND(after: 0.1) {
-						onCompletion?(iAncestor)
-					}
-				}
-
-				return .eStop
-			}
-
-			return .eContinue
-		}
-    }
-
-
-    func revealSiblingsOf(_ descendent: Zone, untilReaching iAncestor: Zone) {
-        recursivelyRevealSiblings([descendent], untilReaching: iAncestor) { iZone in
-            if     iZone != descendent {
-                if iZone == iAncestor {
-                    gHere = iAncestor // side-effect does recents push
-                    
-                    gHere.grab()
-                }
-                
-                gFavorites.updateCurrentFavorite()
-                gRedrawGraph()
-            }
-        }
-    }
 
     // MARK:- lines
     // MARK:-
@@ -807,43 +715,14 @@ class ZGraphEditor: ZBaseEditor {
 
             if  zone.isARoot || parentZone == gFavoritesRoot {
                 return // cannot move out from a root or move into favorites root
-            } else if selectionOnly {
-                
-                // /////////////////
-                // MOVE SELECTION //
-                // /////////////////
-                
-                if extreme {
-                    if  gHere.isARoot {
-                        gHere = zone // reverse what the last move out extreme did
-                    } else {
-                        let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
-                        
-                        zone.grab()
-                        revealZonesToRoot(from: zone) {
-                            self.revealSiblingsOf(here, untilReaching: gRoot!)
-                            onCompletion?()
-                        }
-                    }
-                } else if let p = parentZone {
-                    if  zone == gHere {
-                        zone.revealParentAndSiblings()
-						self.revealSiblingsOf(zone, untilReaching: p)
-                    } else {
-                        p.revealChildren()
-                        p.needChildren()
-                        p.grab()
-						gSignal([.sCrumbs])
-                    }
-                } else {
-                    // zone is an orphan
-                    // change focus to bookmark of zone
-                    
-                    if  let bookmark = zone.fetchedBookmark {
-                        gHere        = bookmark
-                    }
-                }
-            } else if let p = parentZone, !p.isARoot {
+			} else if selectionOnly {
+
+				// /////////////////
+				// MOVE SELECTION //
+				// /////////////////
+
+				zone.moveSelectionOut(extreme: extreme, onCompletion: onCompletion)
+			} else if let p = parentZone, !p.isARoot {
                 
                 // ////////////
                 // MOVE ZONE //
@@ -878,7 +757,7 @@ class ZGraphEditor: ZBaseEditor {
                         if  gHere.isARoot {
                             moveOut(to: gHere, onCompletion: onCompletion)
                         } else {
-                            revealZonesToRoot(from: zone) {
+							zone.revealZonesToRoot() {
                                 moveOutToHere(gRoot)
                                 onCompletion?()
                             }
@@ -909,40 +788,12 @@ class ZGraphEditor: ZBaseEditor {
 
     func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
 		if  let zone  = gSelecting.firstSortedGrab {
-            let zones = gSelecting.sortedGrabs
-            
             if !selectionOnly {
-                actuallyMoveInto(zones, onCompletion: onCompletion)
+                actuallyMoveInto(gSelecting.sortedGrabs, onCompletion: onCompletion)
             } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
 				zone.invokeTravel(onCompletion: onCompletion)
             } else {
-				var needReveal = false
-				var      child = zone
-				var     invoke = {}
-
-				invoke = {
-					needReveal = needReveal || !child.showingChildren
-
-					child.revealChildren()
-
-					if  child.count > 0,
-						let grandchild = gListsGrowDown ? child.children.last : child.children.first {
-						grandchild.grab()
-
-						if  extreme {
-							child = grandchild
-
-							invoke()
-						}
-					}
-				}
-
-				invoke()
-				onCompletion?()
-
-				if !needReveal {
-					gSignal([.sCrumbs])
-				}
+				zone.moveSelectionInto(extreme: extreme, onCompletion: onCompletion)
 			}
         }
     }
@@ -1173,7 +1024,7 @@ class ZGraphEditor: ZBaseEditor {
         let        zones = gSelecting.sortedGrabs.reversed() as ZoneArray
         var completedYet = false
 
-        recursivelyRevealSiblings(zones, untilReaching: to) { iRevealedZone in
+		zones.recursivelyRevealSiblings(untilReaching: to) { iRevealedZone in
             if !completedYet && iRevealedZone == to {
                 completedYet     = true
                 
@@ -1299,7 +1150,7 @@ class ZGraphEditor: ZBaseEditor {
 					var beingMoved = grab
 
 					if  toDetails && beingMoved.isInMap && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
-						if  let bookmark = gFavorites.createBookmark(for: beingMoved, action: .aFavorite) {	// type 3
+						if  let bookmark = gFavorites.createFavorite(for: beingMoved, action: .aNotABookmark) {	// type 3
 							beingMoved   = bookmark
 
 							beingMoved.maybeNeedSave()

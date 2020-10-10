@@ -413,4 +413,51 @@ extension ZoneArray {
 		return found
 	}
 
+	func recursivelyRevealSiblings(untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {
+		if  self.contains(iAncestor) {
+			onCompletion?(iAncestor)
+
+			return
+		}
+
+		var needRoot = true
+
+		traverseAllAncestors { iParent in
+			if  !self.contains(iParent) {
+				iParent.revealChildren()
+				iParent.needChildren()
+			}
+
+			if  iParent == iAncestor {
+				needRoot = false
+			}
+		}
+
+		if  needRoot { // true means graph in memory does not include root, so fetch it from iCloud
+			for descendent in self {
+				descendent.needRoot()
+			}
+		}
+
+		traverseAncestors { iParent -> ZTraverseStatus in
+			let  gotThere = iParent == iAncestor || iParent.isARoot    // reached the ancestor or the root
+			let gotOrphan = iParent.parentZone == nil
+
+			if  gotThere || gotOrphan {
+				if !gotThere && !iParent.isFetched && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
+					[iParent].recursivelyRevealSiblings(untilReaching: iAncestor, onCompletion: onCompletion)
+				} else {
+					iAncestor.revealChildren()
+					FOREGROUND(after: 0.1) {
+						onCompletion?(iAncestor)
+					}
+				}
+
+				return .eStop
+			}
+
+			return .eContinue
+		}
+	}
+
 }

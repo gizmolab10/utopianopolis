@@ -67,7 +67,7 @@ class ZRecord: NSObject {
                 // ///////////////////////////////////////////////
 
                 clearAllStates() // is this needed or wanted?
-                gBookmarks.unregisterBookmark(self as? Zone)
+                gBookmarks.forget(self as? Zone)
                 cloud?.unregisterCKRecord(_record)
 
                 _record = newValue

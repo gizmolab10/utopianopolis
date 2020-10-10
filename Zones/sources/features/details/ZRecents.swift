@@ -15,14 +15,12 @@ enum ZFocusKind: Int {
 }
 
 let gRecents = ZRecents(ZDatabaseID.recentsID)
-var gRecentsRoot : Zone? { return gRecents.root }
+var gRecentsRoot : Zone? { return gRecents.rootZone }
 var gRecentsHere : Zone? { return gRecentsHereMaybe ?? gRecentsRoot }
 
 class ZRecents : ZRecords {
 
-	var currentRecent: Zone?
-
-	var root : Zone? {
+	override var rootZone : Zone? {
 		get {
 			return gMineCloud?.recentsZone
 		}
@@ -37,35 +35,35 @@ class ZRecents : ZRecords {
 	func setup(_ onCompletion: IntClosure?) {
 		let        mine = gMineCloud
 		if  let newRoot = mine?.maybeZoneForRecordName(kRecentsRootName) {
-			root        = newRoot
+			rootZone    = newRoot
 
 			newRoot.reallyNeedProgeny()
 			onCompletion?(0)
 		} else {
 			mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kRecentsRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-				let            ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kRecentsRootName))
-				self.root               = Zone(record: ckRecord, databaseID: .mineID)
-				self.root?.directAccess = .eProgenyWritable
-				self.root?.zoneName     = kRecentsRootName
+				let                ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kRecentsRootName))
+				self.rootZone               = Zone(record: ckRecord, databaseID: .mineID)
+				self.rootZone?.directAccess = .eProgenyWritable
+				self.rootZone?.zoneName     = kRecentsRootName
 
-				self.root?.reallyNeedProgeny()
+				self.rootZone?.reallyNeedProgeny()
 				onCompletion?(0)
 			}
 		}
 	}
 
 	func updateRecents(shouldGrab: Bool = false) {
-		if  currentRecent?.isGrabbed ?? false {
-			currentRecent?.bookmarkTarget?.grab()
+		if  currentBookmark?.isGrabbed ?? false {
+			currentBookmark?.bookmarkTarget?.grab()
 		} else if updateCurrentRecent(),
 				  shouldGrab,
 				  gIsRecentlyMode {
-			currentRecent?.grab()
+			currentBookmark?.grab()
 		}
 	}
 
 	@discardableResult func updateCurrentRecent() -> Bool {
-		if  let recents = root?.allBookmarkProgeny {
+		if  let recents = rootZone?.allBookmarkProgeny {
 			var targets = ZoneArray()
 
 			if  let grab = gSelecting.firstGrab {
@@ -76,8 +74,8 @@ class ZRecents : ZRecords {
 				targets.appendUnique(contentsOf: [here])
 			}
 
-			if  let bookmark  = recents.bookmarksTargeting(targets) {
-				currentRecent = bookmark
+			if  let bookmark    = recents.bookmarksTargeting(targets) {
+				currentBookmark = bookmark
 
 				return true
 			}
@@ -87,7 +85,7 @@ class ZRecents : ZRecords {
 	}
 
 	func push(intoNotes: Bool = false) {
-		if  let r = root {
+		if  let r = rootZone {
 			var done = false
 
 			r.traverseAllProgeny { bookmark in
@@ -100,7 +98,7 @@ class ZRecents : ZRecords {
 			}
 
 			if  done == false,
-			    let bookmark = gFavorites.createBookmark(for: gHereMaybe, action: .aBookmark) {
+			    let bookmark = gFavorites.createFavorite(for: gHereMaybe, action: .aBookmark) {
 				bookmark.moveZone(to: r)
 			}
 
@@ -114,74 +112,23 @@ class ZRecents : ZRecords {
 
 	@discardableResult func remove(_ iItem: NSObject?, fromNotes: Bool = false) -> Bool {
 		if  let  zone = iItem as? Zone,
-			let     r = root {
-			var found = kCFNotFound
+			let     r = rootZone {
 
 			for (index, bookmark) in r.children.enumerated() {
 				if  let name = bookmark.bookmarkTarget?.recordName(),
 					name    == zone.recordName() {
-					found    = index
 
-					break
+					go(forward: true) {
+						r.children.remove(at: index)
+					}
+
+					return true
+
 				}
-			}
-
-			if  found != kCFNotFound {
-				go(forward: true)
-				r.children.remove(at: found)
-
-				return true
 			}
 		}
 
 		return false
-	}
-
-	func go(forward: Bool, amongNotes: Bool = false) {
-		if  let progeny = root?.allBookmarkProgeny {
-			let     max = progeny.count - 1
-
-			for (index, recent) in progeny.enumerated() {
-				if  recent   == currentRecent {
-					var found = 0
-
-					if  forward {
-						if  index < max {
-							found = index + 1
-						}
-					} else if  index == 0 {
-						found = max
-					} else {
-						found = index - 1
-					}
-
-					setCurrent(progeny[found])
-
-					break
-				}
-			}
-		}
-	}
-
-	func setCurrent(_ recent: Zone) {
-		currentRecent   = recent
-		if  let   pHere = recent.parentZone,
-			recentHere != pHere {
-			recentHere.concealChildren()
-
-			recentHere  = pHere
-
-			recentHere.revealChildren()
-		}
-
-		if  let tHere = recent.bookmarkTarget {
-			gHere     = tHere
-
-			focusKind(.eSelected) {
-				gHere.grab()
-				gSignal([.sRelayout])
-			}
-		}
 	}
 
 	func object(for id: String) -> NSObject? {
@@ -202,57 +149,11 @@ class ZRecents : ZRecords {
 	// MARK:-
 
 	@discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
-		if  let    current = currentRecent {
+		if  let    current = currentBookmark {
 			return current.focusThrough(atArrival)
 		}
 
 		return false
-	}
-
-	func focusKind(_ kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
-
-		// regarding grabbed/edited zone, five states:
-		// 1. is a bookmark      -> target becomes here
-		// 2. is here            -> update in favorites, not push
-		// 3. in favorite/recent -> grab here
-		// 4. not here, COMMAND  -> become here
-		// 5. not COMMAND        -> select here
-
-		guard  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab else {
-			atArrival()
-
-			return
-		}
-
-		let finishAndGrab = { (iZone: Zone) in
-			gFavorites.updateCurrentFavorite()
-			iZone.grab()
-			atArrival()
-		}
-
-		if  zone.isBookmark {     		// state 1
-			zone.travelThrough() { object, kind in
-				gHere = object as! Zone
-
-				finishAndGrab(gHere)
-			}
-		} else if zone == gHere {       // state 2
-			gRecents.updateRecents(shouldGrab: shouldGrab)
-			gFavorites.updateGrab()
-			atArrival()
-		} else if !zone.isInMap {       // state 3
-			finishAndGrab(gHere)
-		} else if COMMAND {             // state 4
-			gRecents.refocus {
-				atArrival()
-			}
-		} else {                        // state 5
-			if  shouldGrab {
-				gHere = zone
-			}
-
-			finishAndGrab(zone)
-		}
 	}
 
 }

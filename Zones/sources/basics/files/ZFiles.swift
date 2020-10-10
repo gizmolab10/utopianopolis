@@ -266,7 +266,7 @@ class ZFiles: NSObject {
 										if  !databaseID.isDeleted(dict: subDict) {
 											let zone = Zone(dict: subDict, in: databaseID)
 
-											gBookmarks.registerBookmark(zone)
+											gBookmarks.persistForLookupByTarget(zone)
 										}
 									}
 							}
