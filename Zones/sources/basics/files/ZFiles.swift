@@ -177,10 +177,6 @@ class ZFiles: NSObject {
 					dict[.trash] = trash as NSObject
 				}
 
-				if  let   recent  = try cloud.recentsZone?.createStorageDictionary(for: dbID) {
-					dict[.recent] = recent as NSObject
-				}
-
 				if  let   destroy  = try cloud.destroyZone?.createStorageDictionary(for: dbID) {
 					dict[.destroy] = destroy as NSObject
 				}
@@ -194,16 +190,20 @@ class ZFiles: NSObject {
 				}
 
 				if                 dbID == .mineID {
-					if  let   favorites  = try cloud.favoritesZone?.createStorageDictionary(for: dbID) {
+					if  let   favorites  = try gFavoritesRoot?.createStorageDictionary(for: dbID) {
 						dict[.favorites] = favorites as NSObject
+					}
+
+					if  let     recents  = try gRecentsRoot?.createStorageDictionary(for: dbID) {
+						dict[.recent]    = recents as NSObject
 					}
 
 					if  let   bookmarks  = try gBookmarks.storageArray(for: dbID) {
 						dict[.bookmarks] = bookmarks as NSObject
 					}
 
-					if  let       userID  = gUserRecordID {
-						dict    [.userID] = userID as NSObject
+					if  let      userID  = gUserRecordID {
+						dict   [.userID] = userID as NSObject
 					}
 				}
 

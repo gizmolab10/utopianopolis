@@ -871,7 +871,7 @@ class ZRecords: NSObject {
 
 		// regarding grabbed/edited zone, five states:
 		// 1. is a bookmark      -> target becomes here
-		// 2. is here            -> update in favorites, not push
+		// 2. is here            -> update in details map
 		// 3. in favorite/recent -> grab here
 		// 4. not here, COMMAND  -> become here
 		// 5. not COMMAND        -> select here
@@ -895,10 +895,14 @@ class ZRecords: NSObject {
 				finishAndGrab(gHere)
 			}
 		} else if zone == gHere {       // state 2
-			gRecents.updateRecents(shouldGrab: shouldGrab)
-			gFavorites.updateGrab()
+			if gIsRecentlyMode {
+				gRecents.updateRecents(shouldGrab: shouldGrab)
+			} else {
+				gFavorites.updateGrab()
+			}
+
 			atArrival()
-		} else if !zone.isInMap {       // state 3
+		} else if !zone.isInMainMap {       // state 3
 			finishAndGrab(gHere)
 		} else if COMMAND {             // state 4
 			gRecents.refocus {

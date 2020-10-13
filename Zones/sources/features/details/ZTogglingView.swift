@@ -28,8 +28,8 @@ class ZTogglingView: NSStackView {
 				case "introduction": return .Introduction
 				case "preferences":  return .Preferences
 				case "information":  return .Information
-				case "favorites":    return .Favorites
 				case "status":       return .Status
+				case "map":          return .Map
 				default:             return .All
 			}
 		}
@@ -80,21 +80,14 @@ class ZTogglingView: NSStackView {
     func update() {
 		titleButton?.layer?.backgroundColor = gAccentColor.cgColor
 
-		if  identity == .Favorites {
-			var title = "Recent"
-			let  here = gIsRecentlyMode ? gRecentsHereMaybe : gFavoritesHereMaybe
-
-			if  var ancestors : ZoneArray = here?.ancestralPath {
-				if  ancestors.count > 1, !gIsRecentlyMode {
-					ancestors = ZoneArray(ancestors.suffix(from: 1))  // remove favorites (root of ancestors) when it's not alone
-				}
-
-				let names = ancestors.map { zone -> String in
-					return zone.unwrappedName.capitalized // convert ancestors into strings
-				}
-
-				title = names.joined(separator: kColonSeparator)
+		var     title = "Recent"
+		if  identity == .Map,
+			let  here = gIsRecentlyMode ? gRecentsHereMaybe : gFavoritesHereMaybe {
+			let names = here.ancestralPath.map { zone -> String in
+				return zone.unwrappedName.capitalized               // convert ancestors into capitalized strings
 			}
+
+			title = names.joined(separator: kColonSeparator)
 
 			titleButton?.title = title
 		}

@@ -93,8 +93,8 @@ class ZoneWidget: ZView {
 
 	var controller: ZGraphController? {
 		if type.isMap      { return     gGraphController }
-		if type.isRecent   { return gFavoritesController }
-		if type.isFavorite { return gFavoritesController }
+		if type.isRecent   { return gDetailsMapController }
+		if type.isFavorite { return gDetailsMapController }
 
 		return nil
 	}

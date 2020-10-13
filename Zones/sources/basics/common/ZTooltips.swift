@@ -140,7 +140,7 @@ extension ZoneTextWidget {
 
 }
 
-extension ZFavoriteControlsView {
+extension ZDetailsMapControlsView {
 
 	func updateTooltips() {
 		for button in buttons {

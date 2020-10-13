@@ -15,6 +15,7 @@ import CloudKit
     import UIKit
 #endif
 
+typealias               ZoneArray = [Zone]
 typealias            ZRecordArray = [ZRecord]
 typealias           ZObjectsArray = [NSObject]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
@@ -1080,6 +1081,48 @@ extension Array {
     func intersection<S>(_ other: Array<Array<Element>.Element>) -> S where Element: Hashable {
         return Array(Set(self).intersection(Set(other))) as! S
     }
+
+}
+
+extension ZRecordArray {
+
+	func createStorageArray(from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
+		if  count > 0 {
+			var result = [ZStorageDictionary] ()
+
+			for zRecord in self {
+//				if  let      zone  = zRecord as? Zone,
+//					zone.zoneName == kLostAndFoundName,
+//					zone.isInFavorites {
+//					print("hah! found it")
+//				}
+
+				if  zRecord.record == nil {
+					printDebug(.dFile, "no record: \(zRecord)")
+				} else if (allowEach == nil || allowEach!(zRecord)),
+						  let dict = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+
+					if  dict.count != 0 {
+						result.append(dict)
+					} else {
+						printDebug(.dFile, "empty storage dictionary: \(zRecord)")
+
+						if  let dict2 = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+							print("gotcha \(dict2.count)")
+						}
+					}
+				} else if !zRecord.isBookmark {
+					printDebug(.dFile, "no storage dictionary: \(zRecord)")
+				}
+			}
+
+			if  result.count > 0 {
+				return result
+			}
+		}
+
+		return nil
+	}
 
 }
 

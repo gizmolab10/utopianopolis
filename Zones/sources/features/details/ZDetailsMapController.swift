@@ -1,5 +1,5 @@
 //
-//  ZFavoritesController.swift
+//  ZDetailsMapController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/5/20.
@@ -12,19 +12,19 @@ import Cocoa
 import UIKit
 #endif
 
-var gFavoritesController: ZFavoritesController? { return gControllers.controllerForID(.idFavorites) as? ZFavoritesController }
+var gDetailsMapController: ZDetailsMapController? { return gControllers.controllerForID(.idFavorites) as? ZDetailsMapController }
 
-class ZFavoritesController: ZGraphController {
+class ZDetailsMapController: ZGraphController {
 
 	override  var        isMap : Bool          { return false }
 	override  var     hereZone : Zone?         { return gIsRecentlyMode ?  gRecentsHere :  gFavoritesHereMaybe }
 	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ? .tRecent      : .tFavorite }
 	override  var controllerID : ZControllerID { return .idFavorites }
 	override  var allowedKinds : [ZSignalKind] { return [.sDetails, .sFavorites, .sRelayout] }
-	@IBOutlet var controlsView : ZFavoriteControlsView?
+	@IBOutlet var controlsView : ZDetailsMapControlsView?
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-		if  let c = gDetailsController, !c.hideableIsHidden(for: .Favorites) { // don't send signal to a hidden favorites controller
+		if  let c = gDetailsController, !c.hideableIsHidden(for: .Map) { // don't send signal to a hidden favorites controller
 			update()
 			super.handleSignal(iSignalObject, kind: iKind)
 		}

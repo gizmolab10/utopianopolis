@@ -1,5 +1,5 @@
 //
-//  ZFavoriteControlsView.swift
+//  ZDetailsMapControlsView.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/15/20.
@@ -15,7 +15,7 @@ enum ZModeButtonType: String {
 	case tAdd     = "add"
 }
 
-class ZFavoriteControlsView : ZButtonsView, ZTooltips {
+class ZDetailsMapControlsView : ZButtonsView, ZTooltips {
 
 	override  var centered: Bool { return true }
 

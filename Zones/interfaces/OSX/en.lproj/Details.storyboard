@@ -142,12 +142,12 @@
         <!--Favorites-->
         <scene sceneID="6c8-8d-0Jq">
             <objects>
-                <viewController title="favorites" id="bl3-7n-UyN" userLabel="Favorites" customClass="ZFavoritesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="favorites" id="bl3-7n-UyN" userLabel="Favorites" customClass="ZDetailsMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="sgs-hY-cUq">
                         <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kS3-7c-58G" customClass="ZFavoriteControlsView" customModule="Seriously" customModuleProvider="target">
+                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kS3-7c-58G" customClass="ZDetailsMapControlsView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="1" y="122" width="283" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="283" id="AuQ-AE-fcg"/>
@@ -556,7 +556,7 @@ CA
                                             <outlet property="triangleButton" destination="aCk-9D-lHI" id="Vqs-0u-WA3"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="favorites" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Favorites View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="map" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Favorites View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="328" height="96"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Favorites Banner">

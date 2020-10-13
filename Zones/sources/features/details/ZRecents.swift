@@ -56,15 +56,15 @@ class ZRecents : ZRecords {
 		if  currentBookmark?.isGrabbed ?? false {
 			currentBookmark?.bookmarkTarget?.grab()
 		} else if updateCurrentRecent(),
-				  shouldGrab,
-				  gIsRecentlyMode {
+				  gIsRecentlyMode,
+				  shouldGrab {
 			currentBookmark?.grab()
 		}
 	}
 
 	@discardableResult func updateCurrentRecent() -> Bool {
-		if  let recents = rootZone?.allBookmarkProgeny {
-			var targets = ZoneArray()
+		if  let recents  = rootZone?.allBookmarkProgeny, recents.count > 0 {
+			var targets  = ZoneArray()
 
 			if  let grab = gSelecting.firstGrab {
 				targets.append(grab)
@@ -74,7 +74,8 @@ class ZRecents : ZRecords {
 				targets.appendUnique(contentsOf: [here])
 			}
 
-			if  let bookmark    = recents.bookmarksTargeting(targets) {
+			if  targets.count   > 0,
+				let bookmark    = recents.bookmarkTargeting(targets) {
 				currentBookmark = bookmark
 
 				return true

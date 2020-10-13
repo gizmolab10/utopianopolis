@@ -8,13 +8,11 @@
 
 import Foundation
 
-typealias ZoneArray = [Zone]
-
 extension ZoneArray {
 
 	var anyInRecently: Bool {
 		for     zone in self {
-			if  zone.isInRecently {
+			if  zone.isInRecents {
 				return true
 			}
 		}
@@ -383,7 +381,7 @@ extension ZoneArray {
 		}
 	}
 
-	func bookmarksTargeting(_ iTargets: ZoneArray, iSpawned: Bool = false) -> Zone? {
+	func bookmarkTargeting(_ iTargets: ZoneArray, iSpawned: Bool = false) -> Zone? {
 		var found: Zone?
 
 		for target in iTargets {

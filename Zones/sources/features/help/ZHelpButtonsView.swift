@@ -10,8 +10,11 @@ import Foundation
 
 class ZHelpButton : ZButton {
 
+	var helpButtonsView : ZHelpButtonsView?
+
 	override func draw(_ dirtyRect: NSRect) {
-		let isCurrent =  helpMode == gCurrentHelpMode
+		let isInTitle = helpButtonsView?.isInTitleBar ?? false
+		let isCurrent = isInTitle && helpMode == gCurrentHelpMode
 		isHighlighted = isCurrent              // work around another pissy apple os bug!
 
 		super.draw(dirtyRect)
@@ -26,9 +29,10 @@ class ZHelpButtonsView : ZButtonsView {
 	var         titleCount = 0
 
 	func addButton(_ mode: ZHelpMode) -> ZHelpButton {
-		let       title = mode.title.capitalized
-		let      button = ZHelpButton(title: title, target: self, action: #selector(self.handleButtonPress))
-		button.helpMode = mode
+		let              title = mode.title.capitalized
+		let             button = ZHelpButton(title: title, target: self, action: #selector(self.handleButtonPress))
+		button.helpMode        = mode
+		button.helpButtonsView = self
 
 		buttons.append(button)
 
@@ -53,18 +57,12 @@ class ZHelpButtonsView : ZButtonsView {
 
 	override func updateButtons() {
 		for mode in gAllHelpModes {
-			let    button = buttonForMode(      mode)
-			let isCurrent = gCurrentHelpMode == mode
-
-			if !isInTitleBar {
-				button.isEnabled           = !isCurrent
-			}
+			buttonForMode(mode).isEnabled = true
 		}
 	}
 
 	@objc private func handleButtonPress(_ button: ZButton) {
-		if  let mode = button.helpMode,
-			mode    != gCurrentHelpMode {                   // eliminate no-op cpu time
+		if  let mode = button.helpMode {                   // eliminate no-op cpu time
 			gHelpController?.show( true, nextMode: mode)    // side-effect: sets gCurrentHelpMode
 			gSignal([.sStartupButtons])                     // to update help buttons in startup view
 		}

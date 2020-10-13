@@ -17,11 +17,13 @@ class ZRecord: NSObject {
     var          databaseID: ZDatabaseID?
     var  isInPublicDatabase: Bool               { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
     var     showingChildren: Bool               { return isExpanded(recordName) }
+	var           isMainMapRoot: Bool               { return recordName == kRootName }
+	var         isTrashRoot: Bool               { return recordName == kTrashName }
+	var       isRecentsRoot: Bool               { return recordName == kRecentsRootName }
+	var  isLostAndFoundRoot: Bool               { return recordName == kLostAndFoundName }
 	var     isFavoritesRoot: Bool               { return recordName == kFavoritesRootName }
 	var     isFavoritesHere: Bool               { return recordName == gFavoritesHereMaybe?.recordName() }
 	var       isRecentsHere: Bool               { return recordName == gRecentsHereMaybe?.recordName() }
-	var       isRecentsRoot: Bool               { return recordName == kRecentsRootName }
-	var           isMapRoot: Bool               { return recordName == kRootName }
 	var             isARoot: Bool               { return record != nil && kRootNames.contains(recordName!) }
 	var        isNonMapHere: Bool               { return isFavoritesHere || isRecentsHere }
 	var        isNonMapRoot: Bool               { return isFavoritesRoot || isRecentsRoot }
@@ -655,40 +657,5 @@ class ZRecord: NSObject {
 		}
 
 	}
-
-	class func createStorageArray(for iItems: [AnyObject]?, from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
-        if  let   items = iItems,
-            items.count > 0 {
-            var   array = [ZStorageDictionary] ()
-
-            for item in items {
-				if  let zRecord = item as? ZRecord {
-					if  zRecord.record == nil {
-						printDebug(.dFile, "no record: \(zRecord)")
-					} else if (allowEach == nil || allowEach!(zRecord)),
-						let dict = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
-
-						if  dict.count != 0 {
-							array.append(dict)
-						} else {
-							printDebug(.dFile, "empty storage dictionary: \(zRecord)")
-
-							if  let dict2 = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
-								print("gotcha \(dict2.count)")
-							}
-						}
-					} else if !zRecord.isBookmark {
-						printDebug(.dFile, "no storage dictionary: \(zRecord)")
-					}
-				}
-            }
-
-            if  array.count > 0 {
-                return array
-            }
-        }
-
-        return nil
-    }
 
 }

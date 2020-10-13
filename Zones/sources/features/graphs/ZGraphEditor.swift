@@ -178,7 +178,7 @@ class ZGraphEditor: ZBaseEditor {
         case .up, .down:     move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
         default:
 			if  let moveable = gSelecting.rootMostMoveable {
-				if !SHIFT || moveable.isNotInMap {
+				if !SHIFT || moveable.isInDetailsMap {
 					switch arrow {
 						case .left,
 							 .right: move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
@@ -620,10 +620,6 @@ class ZGraphEditor: ZBaseEditor {
         }
     }
 
-
-    // MARK:- async
-    // MARK:-
-
     // MARK:- lines
     // MARK:-
     
@@ -636,8 +632,7 @@ class ZGraphEditor: ZBaseEditor {
 			gSelecting.firstSortedGrab?.swapWithParent()
 		}
     }
-    
-    
+
     func swapAndResumeEdit() {
         let t = gTextEditor
         
@@ -690,7 +685,8 @@ class ZGraphEditor: ZBaseEditor {
                     }
                 }
             } else {
-				let grab = gSelecting.rootMostMoveable?.parentZone
+				let deleteThis = gSelecting.rootMostMoveable
+				let       grab = deleteThis?.parentZone
 
 				prepareUndoForDelete()
                 
@@ -748,9 +744,9 @@ class ZGraphEditor: ZBaseEditor {
                     let moveOutToHere = { (iHere: Zone?) in
                         if  let here = iHere {
                             gHere = here
+
+							self.moveOut(to: gHere, onCompletion: onCompletion)
                         }
-                        
-                        self.moveOut(to: gHere, onCompletion: onCompletion)
                     }
                     
                     if extreme {
@@ -1068,7 +1064,7 @@ class ZGraphEditor: ZBaseEditor {
         // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         let   toBookmark =  iInto.isBookmark                    // type 2
-        let    toDetails = !iInto.isInMap && !toBookmark        // type 3
+        let    toDetails = !iInto.isInMainMap && !toBookmark        // type 3
         let         into =  iInto.bookmarkTarget ?? iInto       // grab bookmark AFTER travel
         var        grabs = gSelecting.currentGrabs
         var      restore = [Zone: (Zone, Int?)] ()
@@ -1090,12 +1086,12 @@ class ZGraphEditor: ZBaseEditor {
             grabs.remove(at: index)
         }
 
-        if  let dragged = gDraggedZone, !dragged.isInMap, !toDetails {
+        if  let dragged = gDraggedZone, !dragged.isInMainMap, !toDetails {
             dragged.maybeNeedSave()                            // type 4
         }
 
         grabs.sort { (a, b) -> Bool in
-            if !a.isInMap {
+            if !a.isInMainMap {
                 a.maybeNeedSave()                              // type 4
             }
 
@@ -1149,7 +1145,7 @@ class ZGraphEditor: ZBaseEditor {
 				for grab in grabs {
 					var beingMoved = grab
 
-					if  toDetails && beingMoved.isInMap && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
+					if  toDetails && beingMoved.isInMainMap && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
 						if  let bookmark = gFavorites.createFavorite(for: beingMoved, action: .aNotABookmark) {	// type 3
 							beingMoved   = bookmark
 

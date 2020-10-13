@@ -57,7 +57,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
 	var                lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                        count :                Int  { return children.count }
-	var                   isNotInMap :               Bool  { return isCurrentRecent || isCurrentFavorite }
+	var     isACurrentDetailBookmark :               Bool  { return isCurrentFavorite || isCurrentRecent }
 	var              isCurrentRecent :               Bool  { return self ==   gRecents.currentBookmark }
 	var            isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
 	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isNonMapHere && !(widget?.type.isMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
@@ -73,17 +73,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     hasEmail :               Bool  { return hasTrait(for: .tEmail) && email != "" }
 	var                     hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                      hasNote :               Bool  { return hasTrait(for: .tNote) }
-	var                  showSideDot :               Bool  { return !isInMap && isBookmark && (bookmarkTarget == gHereMaybe) }
-	var                      isInMap :               Bool  { return root?.isMapRoot          ?? false }
     var                    isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
-	var                 isInRecently :               Bool  { return root?.isRecentsRoot      ?? false }
+	var                  isInMainMap :               Bool  { return root?.isMainMapRoot      ?? false }
+	var                  isInRecents :               Bool  { return root?.isRecentsRoot      ?? false }
     var                isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
     var             isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
-	var                  isTrashRoot :               Bool  { return recordName == kTrashName }
-    var           isLostAndFoundRoot :               Bool  { return recordName == kLostAndFoundName }
+	var               isInDetailsMap :               Bool  { return !isInMainMap }
 	var               isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || type.isExemplar }
     var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
-    var                   spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
+    var                   spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
 	var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
 	var                     children =          ZoneArray()
 	var                       traits =   ZTraitDictionary()
@@ -110,7 +108,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var   name = unwrappedName
 		let length = name.length
 
-		if (isInFavorites || isInRecently),
+		if (isInFavorites || isInRecents),
 			length > 15 {
 			let first = name.substring(toExclusive: 7)
 			let  last = name.substring(fromInclusive: length - 7)
@@ -374,7 +372,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			d.append("F")
 		}
 
-		if isInRecently {
+		if isInRecents {
 			d.append("R")
 		}
 
@@ -1311,7 +1309,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
 	func asssureIsVisibleAndGrab(updateBrowsingLevel: Bool = true) {
-		gShowFavorites = kIsPhone && !isInMap
+		gShowFavorites = kIsPhone && isInDetailsMap
 
 		asssureIsVisible()
 		grab(updateBrowsingLevel: updateBrowsingLevel)
@@ -1519,7 +1517,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	@discardableResult func focusThrough(_ atArrival: @escaping Closure) -> Bool {
 		if  isBookmark {
-			if !isInMap {
+			if  isInDetailsMap {
 				let targetParent = bookmarkTarget?.parentZone
 
 				targetParent?.revealChildren()
@@ -1564,8 +1562,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if  isInFavorites {
 				gFavorites.currentBookmark = self
-			} else if isInRecently {
-				gRecents.currentBookmark     = self
+			} else if isInRecents {
+				gRecents.currentBookmark   = self
 			}
 
 			if  let target = iTarget, target.spawnedBy(gHereMaybe) {
@@ -1772,7 +1770,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				revealParentAndSiblings()
 				revealSiblings(untilReaching: p)
 			} else {
-				if  isInMap {
+				if  isInMainMap {
 					p.revealChildren()
 					p.needChildren()
 				} else if let g = p.parentZone { // narrow: hide children and set here zone to parent
@@ -1839,7 +1837,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let grandchild = gListsGrowDown ? child.children.last : child.children.first {
 				grandchild.grab()
 
-				if !child.isInMap { // narrow, so hide parent
+				if !child.isInMainMap { // narrow, so hide parent
 					child.setAsNonMapHereZone()
 				} else if extreme {
 					child = grandchild
@@ -2439,7 +2437,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						gFavorites.updateAllFavorites()
 					}
 
-					if  self.isInRecently {
+					if  self.isInRecents {
 						gRecents.updateRecents()
 					}
 				}
@@ -2647,7 +2645,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let show = !showingChildren
 
 			if !isInFavorites,
-			   !isInRecently {
+			   !isInRecents {
 
 				// //////////////////////////
 				// generational visibility //
@@ -2682,7 +2680,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var p         = ZDotParameters()
 		p.isDrop      = self == gDragDropZone
 		p.accessType  = directAccess == .eProgenyWritable ? .sideDot : .vertical
-		p.showSideDot = showSideDot
+		p.showSideDot = isACurrentDetailBookmark
 		p.isBookmark  = isBookmark
 		p.showAccess  = hasAccessDecoration
 		p.showList    = showingChildren
@@ -2955,11 +2953,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var dict             = try super.createStorageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
 
 		if  (includeInvisibles || showingChildren),
-			let childrenDict = try Zone.createStorageArray(for: children, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+			let childrenDict = try (children as [ZRecord]).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
             dict [.children] = childrenDict as NSObject?
         }
 
-        if  let   traitsDict = try Zone.createStorageArray(for: traitValues, from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+        if  let   traitsDict = try (traitValues as [ZRecord]).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
             dict   [.traits] = traitsDict as NSObject?
         }
 

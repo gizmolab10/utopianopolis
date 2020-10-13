@@ -81,7 +81,7 @@ class ZFavorites: ZRecords {
         var found: Zone?
 
         if  iTarget?.databaseID != nil {
-			found                = rootZone?.allBookmarkProgeny.bookmarksTargeting([iTarget!], iSpawned: iSpawned)
+			found                = rootZone?.allBookmarkProgeny.bookmarkTargeting([iTarget!], iSpawned: iSpawned)
         }
 
         if  iSpawned  &&  found == nil {
