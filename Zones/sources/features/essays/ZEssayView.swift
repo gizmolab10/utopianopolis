@@ -78,7 +78,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 				case "/":                  gHelpController?.show(flags: flags)
-				case "]", "[": gEssayEditor.smartGo(forward: key == "]")
+				case "]", "[": gEssayEditor.smartGo(up: key == "]")
 				case kReturn:  gCurrentEssayZone?.grab(); done()
 				default:       return false
 			}
@@ -632,8 +632,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
-				case .idForward: gEssayEditor.smartGo(forward:  true, amongNotes: true)
-				case .idBack:    gEssayEditor.smartGo(forward: false, amongNotes: true)
+				case .idForward: gEssayEditor.smartGo(up:  true, amongNotes: true)
+				case .idBack:    gEssayEditor.smartGo(up: false, amongNotes: true)
 				case .idSave:    save()
 				case .idHide:    gCurrentEssayZone?.grab();        done()
 				case .idCancel:  gCurrentEssayZone?.grab();        exit()

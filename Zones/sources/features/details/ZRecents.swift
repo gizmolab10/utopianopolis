@@ -75,7 +75,7 @@ class ZRecents : ZRecords {
 			}
 
 			if  targets.count   > 0,
-				let bookmark    = recents.bookmarkTargeting(targets) {
+				let bookmark    = recents.bookmarkTargetting(targets) {
 				currentBookmark = bookmark
 
 				return true
@@ -107,6 +107,14 @@ class ZRecents : ZRecords {
 		}
 	}
 
+	func popAndUpdateRecents(){
+		if  !pop(),
+		    let marks = workingBookmarks,
+		    marks.count > 0 {
+			currentBookmark = marks[0]
+		}
+	}
+
 	@discardableResult func pop(fromNotes: Bool = false) -> Bool {
 		return remove(gHereMaybe, fromNotes: fromNotes)
 	}
@@ -119,7 +127,7 @@ class ZRecents : ZRecords {
 				if  let name = bookmark.bookmarkTarget?.recordName(),
 					name    == zone.recordName() {
 
-					go(forward: true) {
+					go(up: true) {
 						r.children.remove(at: index)
 					}
 

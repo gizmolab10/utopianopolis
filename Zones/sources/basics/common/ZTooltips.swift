@@ -140,7 +140,7 @@ extension ZoneTextWidget {
 
 }
 
-extension ZDetailsMapControlsView {
+extension ZSmallMapControlsView {
 
 	func updateTooltips() {
 		for button in buttons {

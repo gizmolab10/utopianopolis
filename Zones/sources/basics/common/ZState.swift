@@ -52,7 +52,7 @@ var                   gIsLate:               Bool { return gBatches.isLate }
 var               gIsDragging:               Bool { return gDraggedZone != nil }
 var          gIsHelpFrontmost:               Bool { return gHelpWindow?.isKeyWindow ?? false }
 var       gBrowsingIsConfined:               Bool { return gConfinementMode   == .list }
-var           gIsRecentlyMode:               Bool { return gFavoritesMode  == .recent }
+var           gIsRecentlyMode:               Bool { return gSmallMapMode  == .recent }
 var            gListsGrowDown:               Bool { return gListGrowthMode == .down }
 var           gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var               gIsNoteMode:               Bool { return gWorkMode == .noteMode }
@@ -363,13 +363,13 @@ var gConfinementMode: ZConfinementMode {
 	}
 }
 
-var gFavoritesMode: ZFavoritesMode {
+var gSmallMapMode: ZSmallMapMode {
 	get {
 		let value  = UserDefaults.standard.object(forKey: kFavoritesMode) as? String
-		var mode   = ZFavoritesMode.favorites
+		var mode   = ZSmallMapMode.favorites
 
 		if  value != nil {
-			mode   = ZFavoritesMode(rawValue: value!)!
+			mode   = ZSmallMapMode(rawValue: value!)!
 		} else {
 			UserDefaults.standard.set(mode.rawValue, forKey:kFavoritesMode)
 			UserDefaults.standard.synchronize()
@@ -712,8 +712,8 @@ func gRefreshPersistentWorkMode() {
 	}
 }
 
-@discardableResult func toggleRingControlModes(isDirection: Bool) -> Bool {
-	if isDirection {
+@discardableResult func toggleGrowthAndConfinementModes(changesDirection: Bool) -> Bool {
+	if  changesDirection {
 		gListGrowthMode  = gListsGrowDown      ? .up  : .down
 	} else {
 		gConfinementMode = gBrowsingIsConfined ? .all : .list

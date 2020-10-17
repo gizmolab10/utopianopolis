@@ -397,7 +397,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
                 prior?                          .displayForDrag() // erase    child lines
                 dropNearest                     .displayForDrag() // relayout child lines
 				gGraphController?    .dragView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
-				gDetailsMapController?.dragView?.setNeedsDisplay()
+				gSmallMapController?.dragView?.setNeedsDisplay()
 
                 if !isNoop, dropNow,
 					let         drop = dropZone {
@@ -437,7 +437,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			let    gPoint = iGesture?.location(in: gView),
 			let  location = graphView?.convert(gPoint, from: gView),
 			let    widget = rootWidget.widgetNearestTo(location, in: graphView, hereZone) {
-			let alternate = isMap ? gDetailsMapController : gGraphController
+			let alternate = isMap ? gSmallMapController : gGraphController
 
 			if  !kIsPhone,
 				let alternateGraphView = alternate?.graphView,
@@ -516,7 +516,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
     func detectWidget(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
 		if  isMap,
-			let    widget = gDetailsMapController?.detectWidget(iGesture) {
+			let    widget = gSmallMapController?.detectWidget(iGesture) {
 			return widget
 		}
 

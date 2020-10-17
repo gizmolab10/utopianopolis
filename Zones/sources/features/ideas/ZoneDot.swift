@@ -84,7 +84,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		if  isReveal {
 			return isDragDrop || zone.canTravel || zone.count > 0
 		}   else {
-			return !zone.isNonMapHere
+			return !zone.isSmallMapHere
 		}
     }
 

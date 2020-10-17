@@ -1,5 +1,5 @@
 //
-//  ZDetailsMapControlsView.swift
+//  ZSmallMapControlsView.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/15/20.
@@ -15,7 +15,7 @@ enum ZModeButtonType: String {
 	case tAdd     = "add"
 }
 
-class ZDetailsMapControlsView : ZButtonsView, ZTooltips {
+class ZSmallMapControlsView : ZButtonsView, ZTooltips {
 
 	override  var centered: Bool { return true }
 
@@ -60,13 +60,13 @@ class ZDetailsMapControlsView : ZButtonsView, ZTooltips {
 		if  let    type = button.modeButtonType {
 			switch type {
 				case .tAdd:     gFavoritesHereMaybe?.addIdea()
-				case .tMode:    gFavoritesMode   = gIsRecentlyMode     ? .favorites   : .recent
+				case .tMode:    gSmallMapMode    = gIsRecentlyMode     ? .favorites   : .recent
 				case .tGrow:    gListGrowthMode  = gListsGrowDown      ? .up          : .down
 				case .tConfine: gConfinementMode = gBrowsingIsConfined ? .all : .list
 			}
 		}
 
-		gSignal([.sFavorites, .sDetails])
+		gSignal([.sDetails])
 	}
 
 	func update() {

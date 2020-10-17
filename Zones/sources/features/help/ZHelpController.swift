@@ -29,14 +29,14 @@ class ZHelpController: ZGenericTableController {
 	var                helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
 	var                gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
 	var         titleBarButtons = ZHelpButtonsView()
-	let         mainMapHelpData = ZHelpMainMapData()
+	let         bigMapHelpData = ZHelpBigMapData()
 	let            dotsHelpData =    ZHelpDotsData()
 	var               isShowing = false
 
 	func helpData(for iMode: ZHelpMode) -> ZHelpData {
 		switch iMode {
 			case   .dotMode: return  dotsHelpData
-			default:         return mainMapHelpData
+			default:         return bigMapHelpData
 		}
 	}
 
@@ -69,7 +69,7 @@ class ZHelpController: ZGenericTableController {
 
 		super        .setup()
 		dotsHelpData .setup(for: m)
-		mainMapHelpData.setup(for: m)
+		bigMapHelpData.setup(for: m)
 		setupGridViews()
 		setupTitleBar()
 

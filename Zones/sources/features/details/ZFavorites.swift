@@ -77,21 +77,6 @@ class ZFavorites: ZRecords {
         }
     }
 
-    func favoriteTargetting(_ iTarget: Zone?, iSpawned: Bool = true) -> Zone? {
-        var found: Zone?
-
-        if  iTarget?.databaseID != nil {
-			found                = rootZone?.allBookmarkProgeny.bookmarkTargeting([iTarget!], iSpawned: iSpawned)
-        }
-
-        if  iSpawned  &&  found == nil {
-            return favoriteTargetting(iTarget, iSpawned: false)
-        }
-
-        return found
-    }
-
-
     // MARK:- API
     // MARK:-
 
@@ -124,23 +109,12 @@ class ZFavorites: ZRecords {
         }
     }
 
-    func updateCurrentFavorite(_ currentZone: Zone? = nil, reveal: Bool = false) {
-        if  let     favorite = favoriteTargetting(currentZone ?? gHereMaybe),
-            let       target = favorite.bookmarkTarget,
+    func updateCurrentFavorite(_ currentZone: Zone? = nil) {
+        if  let     bookmark = bookmarkTargetting(currentZone ?? gHereMaybe),
+            let       target = bookmark.bookmarkTarget,
             (gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)),
 			!gIsRecentlyMode {
-            currentBookmark = favorite
-            
-            if  reveal {
-                
-                // ///////////////////////////////////////////////////////////////
-                // not reveal current favorite if user has hidden all favorites //
-                // ///////////////////////////////////////////////////////////////
-                
-                favorite.traverseAllAncestors { iAncestor in
-                    iAncestor.revealChildren()
-                }
-            }
+            currentBookmark = bookmark
         }
     }
     
@@ -291,8 +265,8 @@ class ZFavorites: ZRecords {
     // MARK:- switch
     // MARK:-
 
-    func next(_ index: Int, _ forward: Bool) -> Int {
-        let  increment = (forward ? 1 : -1)
+    func nextWorkingIndex(after index: Int, going down: Bool) -> Int {
+        let  increment = (down ? 1 : -1)
         var       next = index + increment
         let      count = workingFavorites.count
         if next       >= count {
@@ -304,20 +278,17 @@ class ZFavorites: ZRecords {
         return next
     }
 
-    func got(_ forward: Bool, atArrival: @escaping Closure) {
+    func go(_ down: Bool, atArrival: @escaping Closure) {
 		if  let   fIndex = favoritesIndex {
-			let    index = next(fIndex, forward)
+			let    index = nextWorkingIndex(after: fIndex, going: down)
 			var     bump : IntClosure?
 			bump         = { (iIndex: Int) in
 				let zone = self.workingFavorites[iIndex]
 
-				if	!zone.focusThrough(atArrival) {
-
-					// /////////////////
-					// error: RECURSE //
-					// /////////////////
-
-					bump?(self.next(iIndex, forward))
+				if  zone.isBookmark {
+					zone.focusThrough(atArrival)
+				} else {
+					bump?(self.nextWorkingIndex(after: iIndex, going: down))
 				}
 			}
 
@@ -390,7 +361,7 @@ class ZFavorites: ZRecords {
 
 			if  action         == .aCreateFavorite,
 				let      fIndex = favoritesIndex {
-				index           = next(fIndex, gListsGrowDown)
+				index           = nextWorkingIndex(after: fIndex, going: gListsGrowDown)
 			}
 
 			bookmark            = create(withBookmark: bookmark, action, parent: parent, atIndex: index, zone.zoneName)
@@ -430,16 +401,16 @@ class ZFavorites: ZRecords {
         // 3. not in favorites           -> create and grab new favorite (its target is here) //
 		// /////////////////////////////////////////////////////////////////////////////////////
 
-		if  let       favorite = favoriteTargetting(here, iSpawned: false) {
+		if  let       bookmark = bookmarkTargetting(here, includeAncestors: false) {
 			hereZoneMaybe?.concealChildren()
-			favorite.asssureIsVisibleAndGrab()                                          // state 1
+			bookmark.asssureIsVisibleAndGrab()                                          // state 1
 
 			hereZoneMaybe      = gSelecting.firstGrab?.parentZone
-			currentBookmark    = favorite
-		} else if let favorite = createFavorite(for: here, action: .aCreateFavorite) {  // state 3
-			currentBookmark    = favorite
+			currentBookmark    = bookmark
+		} else if let bookmark = createFavorite(for: here, action: .aCreateFavorite) {  // state 3
+			currentBookmark    = bookmark
 
-			favorite.asssureIsVisibleAndGrab()
+			bookmark.asssureIsVisibleAndGrab()
 		}
 
 		updateAllFavorites()

@@ -17,16 +17,16 @@ class ZRecord: NSObject {
     var          databaseID: ZDatabaseID?
     var  isInPublicDatabase: Bool               { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
     var     showingChildren: Bool               { return isExpanded(recordName) }
-	var           isMainMapRoot: Bool               { return recordName == kRootName }
+	var        isBigMapRoot: Bool               { return recordName == kRootName }
 	var         isTrashRoot: Bool               { return recordName == kTrashName }
 	var       isRecentsRoot: Bool               { return recordName == kRecentsRootName }
 	var  isLostAndFoundRoot: Bool               { return recordName == kLostAndFoundName }
 	var     isFavoritesRoot: Bool               { return recordName == kFavoritesRootName }
 	var     isFavoritesHere: Bool               { return recordName == gFavoritesHereMaybe?.recordName() }
 	var       isRecentsHere: Bool               { return recordName == gRecentsHereMaybe?.recordName() }
+	var      isSmallMapHere: Bool               { return isFavoritesHere || isRecentsHere }
+	var      isSmallMapRoot: Bool               { return isFavoritesRoot || isRecentsRoot }
 	var             isARoot: Bool               { return record != nil && kRootNames.contains(recordName!) }
-	var        isNonMapHere: Bool               { return isFavoritesHere || isRecentsHere }
-	var        isNonMapRoot: Bool               { return isFavoritesRoot || isRecentsRoot }
     var          isBookmark: Bool               { return record?.isBookmark ?? false }
     var           isFetched: Bool               { return !hasState(.notFetched) }
     var           needsSave: Bool               { return  hasState(.needsSave) }

@@ -98,19 +98,19 @@ struct ZTinyDotType: OptionSet {
 	static let eEssay = ZTinyDotType(rawValue: 0x0002)
 }
 
+enum ZConfinementMode: String {
+	case list = "List"
+	case all  = "All"
+}
+
 enum ZListGrowthMode: String {
 	case down = "Down"
     case up   = "Up"
 }
 
-enum ZFavoritesMode: String {
+enum ZSmallMapMode: String {
 	case favorites = "Favorites"
 	case recent    = "Recent"
-}
-
-enum ZConfinementMode: String {
-	case list = "List"
-	case all  = "All"
 }
 
 enum ZFileMode: Int {

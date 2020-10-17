@@ -17,20 +17,21 @@ import Foundation
 
 class ZPreferencesController: ZGenericController {
 
-    @IBOutlet var    countsModeControl: ZSegmentedControl?
-	@IBOutlet var  colorPreferencesBox: NSView?
-    @IBOutlet var   backgroundColorBox: ZColorWell?
-    @IBOutlet var   activeMineColorBox: ZColorWell?
-	@IBOutlet var         zoneColorBox: ZColorWell?
-	@IBOutlet var   showTooltipsButton: ZButton?
-    @IBOutlet var     clearColorButton: ZButton?
-    @IBOutlet var      verticalSpacing: ZSlider?
-    @IBOutlet var            thickness: ZSlider?
-    @IBOutlet var              stretch: ZSlider?
-    override  var         controllerID: ZControllerID { return .idPreferences }
+    @IBOutlet var    countsModeControl : ZSegmentedControl?
+	@IBOutlet var  colorPreferencesBox : NSView?
+    @IBOutlet var   backgroundColorBox : ZColorWell?
+    @IBOutlet var   activeMineColorBox : ZColorWell?
+	@IBOutlet var         zoneColorBox : ZColorWell?
+	@IBOutlet var   showTooltipsButton : ZButton?
+    @IBOutlet var     clearColorButton : ZButton?
+    @IBOutlet var      verticalSpacing : ZSlider?
+    @IBOutlet var            thickness : ZSlider?
+    @IBOutlet var              stretch : ZSlider?
+    override  var         controllerID : ZControllerID { return .idPreferences }
+	override  var         allowedKinds : [ZSignalKind] { return [.sMap, .sMain, .sData, .sDatum, .sError, .sStatus, .sDetails, .sSmallMap, .sPreferences] }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if ![.sLaunchDone, .sStartupProgress, .sSearch, .sFound, .sCrumbs, .sSwap, .sFavorites].contains(iKind) {
+		if  allowedKinds.contains(iKind) {
             let                           grabbed = gSelecting.firstSortedGrab
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
             thickness?               .doubleValue = gLineThickness

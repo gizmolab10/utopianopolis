@@ -1,5 +1,5 @@
 //
-//  ZHelpMainMapData.swift
+//  ZHelpBigMapData.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 1/4/20.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZHelpMainMapData : ZHelpData {
+class ZHelpBigMapData : ZHelpData {
 
 	override var columnStrings : [[String]] { return [graphColumnOne, graphColumnTwo, graphColumnThree, graphColumnFour] }
 	override var tabOffsets    :  [Int]     { return [0, 20, 85] }
@@ -31,9 +31,9 @@ class ZHelpMainMapData : ZHelpData {
 		"pY",			"toggle extent of breadcrumb list",				"",
 		"",				"", 											"",
 		"uCONTROL + KEY", 											"", "",
-		"pCOMMA", 		"toggle navigation: un/confined", 				"",
+		"pCOMMA", 		"toggle lists grow up/down", 					"",
 		"pDELETE", 		"show trash", 									"organize-fcdc44ac04e4",
-		"pPERIOD", 		"toggle lists grow up/down",		 			"",
+		"pPERIOD", 		"toggle navigation: un/confined",		 		"",
 		"p/", 			"remove current focus",				 			"focusing-your-thinking-a53adb16bba",
 		"",				"", 											"",
 		"uCOMMAND + OPTION + KEY", 									"", "",
@@ -72,7 +72,7 @@ class ZHelpMainMapData : ZHelpData {
 		"pI", 			"show extra characters popup menu", 			"",
 		"p",			"", 											"",
 		"UCOMMAND + OPTION + KEY", 									"", "",
-		"pPERIOD", 		"toggle lists grow up/down,",					"",
+		"pCOMMA", 		"toggle lists grow up/down", 					"",
 		"p", 			"(and) move idea up/down", 						"organize-fcdc44ac04e4",
 		"p",			"", 											"",
 		"uCONTROL+ KEY","", 											"",
@@ -112,10 +112,10 @@ class ZHelpMainMapData : ZHelpData {
 		"p",			"", 											"",
 		"uKEY",			"", 											"",
 		" ARROWS", 		"navigate map", 								"",
-		"pCOMMA", 		"switch confined with unconfined", 				"",
+		"pCOMMA", 		"toggle lists grow up/down", 					"",
 		" DELETE", 		"selected ideas and their lists",	 			"organize-fcdc44ac04e4",
 		"pHYPHEN", 		"add 'line', or un/title it", 					"lines-37426469b7c6",
-		"pPERIOD", 		"toggle lists grow up/down", 					"",
+		"pPERIOD", 		"toggle navigation: un/confined",		 		"",
 		" SPACE", 		"create an idea", 								"edit-d05d18996df7",
 		" /", 			"focus (also, manage favorite)", 				"focusing-your-thinking-a53adb16bba",
 		" \\", 			"switch to other map", 				    		"",

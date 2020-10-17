@@ -13,7 +13,7 @@ enum ZControllerID: Int {
     case idSearchResults
 	case idIntroduction
 	case idPreferences
-    case idFavorites
+    case idSmallMap
 	case idHelpDots
 	case idStartup
     case idDetails
@@ -41,7 +41,7 @@ enum ZSignalKind: Int {
 	case sCrumbs
 	case sDetails
     case sRelayout
-    case sFavorites
+    case sSmallMap
 	case sLaunchDone
     case sAppearance
     case sPreferences
@@ -66,7 +66,7 @@ class ZControllers: NSObject {
 			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {
 			e.resetCurrentEssay(zone.note)
 			swapGraphAndEssay(force: .noteMode)
-			gSignal([.sCrumbs, .sFavorites])
+			gSignal([.sCrumbs, .sDetails])
 		}
 	}
 
@@ -109,7 +109,7 @@ class ZControllers: NSObject {
 	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
 		if  let id = iID {
 			switch id {
-				case .idFavorites,
+				case .idSmallMap,
 					 .idDetails,
 					 .idMap:  return kClearColor      // so rubberband is visible on both map and favorites
 				case .idNote: return .white           // override dark mode, otherwise essay view looks like crap
@@ -153,10 +153,10 @@ class ZControllers: NSObject {
 					case .sMain:            if identifier == .idMain           { closure() }
 					case .sStatus:          if identifier == .idStatus         { closure() }
 					case .sCrumbs:          if identifier == .idCrumbs         { closure() }
+					case .sSmallMap:        if identifier == .idSmallMap       { closure() }
+					case .sPreferences:     if identifier == .idPreferences    { closure() }
 					case .sStartupProgress: if startupIDs.contains(identifier) { closure() }
-					case .sFavorites:       if identifier == .idFavorites      { closure() }
-                    case .sPreferences:     if identifier == .idPreferences    { closure() }
-                    default:                                                 closure()
+					default:                                                     closure()
                     }
                 }
             }

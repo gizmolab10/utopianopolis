@@ -142,12 +142,12 @@
         <!--Favorites-->
         <scene sceneID="6c8-8d-0Jq">
             <objects>
-                <viewController title="favorites" id="bl3-7n-UyN" userLabel="Favorites" customClass="ZDetailsMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="favorites" id="bl3-7n-UyN" userLabel="Favorites" customClass="ZSmallMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="sgs-hY-cUq">
                         <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kS3-7c-58G" customClass="ZDetailsMapControlsView" customModule="Seriously" customModuleProvider="target">
+                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kS3-7c-58G" customClass="ZSmallMapControlsView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="1" y="122" width="283" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="283" id="AuQ-AE-fcg"/>

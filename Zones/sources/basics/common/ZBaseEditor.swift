@@ -86,11 +86,11 @@ class ZBaseEditor: NSObject {
 		#endif
 	}
 
-	func smartGo(forward: Bool, amongNotes: Bool = false) {
+	func smartGo(up: Bool, amongNotes: Bool = false) {
 		if  gIsRecentlyMode {
-			gRecents  .go(forward: forward) { gRedrawGraph() }
+			gRecents  .go(up: up) { gRedrawGraph() }
 		} else {
-			gFavorites.go(forward: forward) { gRedrawGraph() }
+			gFavorites.go(up: up) { gRedrawGraph() }
 		}
 	}
 

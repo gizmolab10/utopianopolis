@@ -190,15 +190,15 @@ class ZFiles: NSObject {
 				}
 
 				if                 dbID == .mineID {
-					if  let   favorites  = try gFavoritesRoot?.createStorageDictionary(for: dbID) {
+					if  let   favorites  = try gFavoritesRoot?.createStorageDictionary(for: .mineID) {
 						dict[.favorites] = favorites as NSObject
 					}
 
-					if  let     recents  = try gRecentsRoot?.createStorageDictionary(for: dbID) {
+					if  let     recents  = try gRecentsRoot?.createStorageDictionary(for: .mineID) {
 						dict[.recent]    = recents as NSObject
 					}
 
-					if  let   bookmarks  = try gBookmarks.storageArray(for: dbID) {
+					if  let   bookmarks  = try gBookmarks.storageArray(for: .mineID) {
 						dict[.bookmarks] = bookmarks as NSObject
 					}
 

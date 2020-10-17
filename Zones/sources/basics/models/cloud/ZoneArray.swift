@@ -381,7 +381,7 @@ extension ZoneArray {
 		}
 	}
 
-	func bookmarkTargeting(_ iTargets: ZoneArray, iSpawned: Bool = false) -> Zone? {
+	func bookmarkTargetting(_ iTargets: ZoneArray, includeAncestors: Bool = false) -> Zone? {
 		var found: Zone?
 
 		for target in iTargets {
@@ -398,7 +398,7 @@ extension ZoneArray {
 						let childLevel   = childTarget.level
 
 						if  childLevel   < level,
-							iSpawned,
+							includeAncestors,
 							target.spawnedBy(childTarget) {
 							level        = childLevel
 							found        = child

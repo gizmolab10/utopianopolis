@@ -816,28 +816,34 @@ class ZRecords: NSObject {
         }
     }
 
-	// MARK:- update
+	// MARK:- focus
 	// MARK:-
 
-	func go(forward: Bool, amongNotes: Bool = false, atArrival: @escaping Closure) {
-		if  let progeny = gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny {
-			let     max = progeny.count - 1
+	var workingBookmarks: ZoneArray? {
+		return gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny
+	}
 
-			for (index, recent) in progeny.enumerated() {
-				if  recent   == currentBookmark {
-					var found = 0
+	func go(up: Bool, atArrival: @escaping Closure) {
+		if  let bookmarks = workingBookmarks {
+			let       max = bookmarks.count - 1
 
-					if  forward {
+			for (index, bookmark) in bookmarks.enumerated() {
+				if  bookmark == currentBookmark {
+					var found     = 0         // wrap going up
+
+					if  up {
 						if  index < max {
-							found = index + 1
+							found = index + 1 // go up
 						}
-					} else if  index == 0 {
-						found = max
 					} else {
-						found = index - 1
+						found     = max       // wrap going down
+
+						if  index > 0 {
+							found = index - 1 // go down
+						}
 					}
 
-					setCurrent(progeny[found])
+					setCurrentBookmark(bookmarks[found])
 					atArrival()
 
 					return
@@ -846,9 +852,9 @@ class ZRecords: NSObject {
 		}
 	}
 
-	func setCurrent(_ recent: Zone) {
-		currentBookmark = recent
-		if  let   pHere = recent.parentZone,
+	func setCurrentBookmark(_ iBookmark: Zone) {
+		currentBookmark = iBookmark
+		if  let   pHere = iBookmark.parentZone,
 			recentHere != pHere {
 			recentHere.concealChildren()
 
@@ -857,24 +863,60 @@ class ZRecords: NSObject {
 			recentHere.revealChildren()
 		}
 
-		if  let tHere = recent.bookmarkTarget {
+		if  let tHere = iBookmark.bookmarkTarget {
 			gHere     = tHere
 
-			focusKind(.eSelected) {
+			maybeRefocus(.eSelected) {
 				gHere.grab()
 				gSignal([.sRelayout])
 			}
 		}
 	}
 
-	func focusKind(_ kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
+	func bookmarkTargetting(_ iTarget: Zone?, includeAncestors: Bool = true) -> Zone? {
+		var found: Zone?
+
+		if  iTarget?.databaseID != nil {
+			found                = rootZone?.allBookmarkProgeny.bookmarkTargetting([iTarget!], includeAncestors: includeAncestors)
+		}
+
+		if  includeAncestors  &&  found == nil {
+			return bookmarkTargetting(iTarget, includeAncestors: false)
+		}
+
+		return found
+	}
+
+	func updateCurrentBookmark(_ currentZone: Zone? = nil) {
+		if  let     bookmark = bookmarkTargetting(currentZone ?? gHereMaybe),
+			let       target = bookmark.bookmarkTarget,
+			(gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)),
+			!gIsRecentlyMode {
+			currentBookmark = bookmark
+		}
+	}
+
+	func updateCurrentInBoth() {
+		gRecents.updateCurrentRecent()
+		gFavorites.updateCurrentBookmark()
+	}
+
+	func grabCurrent(_ shouldGrab: Bool) {
+		if  gIsRecentlyMode {
+			gRecents.updateRecents(shouldGrab: shouldGrab)
+		} else {
+			gFavorites.updateGrab()
+		}
+	}
+
+	func maybeRefocus(_ kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
 
 		// regarding grabbed/edited zone, five states:
-		// 1. is a bookmark      -> target becomes here
-		// 2. is here            -> update in details map
-		// 3. in favorite/recent -> grab here
-		// 4. not here, COMMAND  -> become here
-		// 5. not COMMAND        -> select here
+		// 1. is a bookmark     -> target becomes here
+		// 2. is here           -> update in small map
+		// 3. in small map      -> grab here
+		// 4. not here, COMMAND -> become here
+		// 5. not COMMAND       -> select here
 
 		guard  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab else {
 			atArrival()
@@ -882,9 +924,9 @@ class ZRecords: NSObject {
 			return
 		}
 
-		let finishAndGrab = { (iZone: Zone) in
-			gFavorites.updateCurrentFavorite()
-			iZone.grab()
+		let finishAndGrab = { (grabMe: Zone) in
+			gFavorites.updateCurrentInBoth()
+			grabMe.grab()
 			atArrival()
 		}
 
@@ -895,14 +937,10 @@ class ZRecords: NSObject {
 				finishAndGrab(gHere)
 			}
 		} else if zone == gHere {       // state 2
-			if gIsRecentlyMode {
-				gRecents.updateRecents(shouldGrab: shouldGrab)
-			} else {
-				gFavorites.updateGrab()
-			}
+			grabCurrent(shouldGrab)
 
 			atArrival()
-		} else if !zone.isInMainMap {       // state 3
+		} else if zone.isInSmallMap {   // state 3
 			finishAndGrab(gHere)
 		} else if COMMAND {             // state 4
 			gRecents.refocus {

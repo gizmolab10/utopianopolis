@@ -87,7 +87,7 @@ class ZGraphEditor: ZBaseEditor {
 							case "n":      grabOrEdit(true, OPTION)
 							case "p":      printCurrentFocus()
 							case "/":      if IGNORED { return false } else { popAndUpdate(CONTROL, kind: .eEdited) }
-							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
+							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
 							case kTab:     addSibling(OPTION)
 							case kSpace:   gSelecting.currentMoveable.addIdea()
 							case kReturn:  if COMMAND { grabOrEdit(COMMAND, OPTION) }
@@ -135,13 +135,13 @@ class ZGraphEditor: ZBaseEditor {
                     case "z":      if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
-					case "'":      gFavoritesMode = gIsRecentlyMode ? .favorites : .recent; gSignal([.sFavorites, .sDetails])
+					case "'":      gSmallMapMode = gIsRecentlyMode ? .favorites : .recent; gSignal([.sDetails])
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdate(CONTROL, COMMAND, kind: .eSelected) }
 					case "\\":     gGraphController?.toggleGraphs(); gRedrawGraph()
-                    case "]", "[": smartGo(forward: key == "]")
+                    case "]", "[": smartGo(up: key == "]")
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 					case kEquals:  if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawGraph() } }
-                    case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ".")
+                    case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
                     case kTab:     addSibling(OPTION)
 					case kSpace:   if OPTION || CONTROL || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
                     case kBackspace,
@@ -178,7 +178,7 @@ class ZGraphEditor: ZBaseEditor {
         case .up, .down:     move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
         default:
 			if  let moveable = gSelecting.rootMostMoveable {
-				if !SHIFT || moveable.isInDetailsMap {
+				if !SHIFT || moveable.isInSmallMap {
 					switch arrow {
 						case .left,
 							 .right: move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
@@ -314,13 +314,18 @@ class ZGraphEditor: ZBaseEditor {
 	}
 
 	func popAndUpdate(_ CONTROL: Bool, _ COMMAND: Bool = false, kind: ZFocusKind) {
-		if  CONTROL {
-			gRecents.pop()
-			gRedrawGraph()
-		} else {
-			gRecords?.focusKind(kind, COMMAND, shouldGrab: true) { // complex grab logic
+		if  !CONTROL {
+			gRecords?.maybeRefocus(kind, COMMAND, shouldGrab: true) { // complex grab logic
 				gRedrawGraph()
 			}
+		} else {
+			gRecents.popAndUpdateRecents()
+
+			if  let here = gRecents.currentBookmark?.bookmarkTarget {
+				gHere    = here
+			}
+
+			gRedrawGraph()
 		}
 	}
 
@@ -454,16 +459,16 @@ class ZGraphEditor: ZBaseEditor {
 		}
 	}
 
-    func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with PERIOD: Bool) {
-        if     !COMMAND || (OPTION && PERIOD) {
-            toggleRingControlModes(isDirection:  PERIOD)
+    func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with COMMA: Bool) {
+        if     !COMMAND || (OPTION && COMMA) {
+            toggleGrowthAndConfinementModes(changesDirection:  COMMA)
             
-            if  gIsEditIdeaMode     && PERIOD {
+            if  gIsEditIdeaMode     && COMMA {
                 swapAndResumeEdit()
             }
 
-            gSignal([.sMain, .sMap, .sPreferences])
-        } else if !PERIOD {
+			gSignal([.sMap, .sMain, .sDetails, .sPreferences])
+        } else if !COMMA {
 			gShowDetailsView = true
 
 			gMainController?.update()
@@ -586,37 +591,6 @@ class ZGraphEditor: ZBaseEditor {
             if  let tWidget = grab.widget?.textWidget {
                 tWidget.alterCase(up: up)
             }
-        }
-    }
-
-    // MARK:- focus and travel
-    // MARK:-
-
-
-    func selectCurrentFavorite() {
-        if  let current = gFavorites.currentBookmark {
-            current.needRoot()
-
-			if !current.isGrabbed {
-				current.grab()
-			} else {
-				gHere.grab()
-			}
-
-			if  let parent = current.parentZone {
-				parent.asssureIsVisible()
-
-				gRedrawGraph(for: parent)
-			}
-        }
-    }
-
-
-    func doFavorites(_ isShift: Bool, _ isOption: Bool) {
-        let backward = isShift || isOption
-
-		gFavorites.go(forward: !backward) {
-            gRedrawGraph()
         }
     }
 
@@ -1056,16 +1030,16 @@ class ZGraphEditor: ZBaseEditor {
 
     func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, _ SPECIAL: Bool, onCompletion: Closure?) {
 
-        // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // 1. move a normal zone into another normal zone                                                           //
-        // 2. move a normal zone through a bookmark                                                                 //
-        // 3. move a normal zone into favorites -- create a favorite pointing at normal zone, then add the favorite //
-        // 4. move a favorite into a normal zone -- convert favorite to a bookmark, then move the bookmark          //
-        // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // 1. move a normal zone into another normal zone                                                            //
+        // 2. move a normal zone through a bookmark                                                                  //
+        // 3. move a normal zone into small map -- create a bookmark pointing at normal zone, then add it to the map //
+        // 4. move from small map into a normal zone -- convert to a bookmark, then move the bookmark                //
+        // ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        let   toBookmark =  iInto.isBookmark                    // type 2
-        let    toDetails = !iInto.isInMainMap && !toBookmark        // type 3
-        let         into =  iInto.bookmarkTarget ?? iInto       // grab bookmark AFTER travel
+        let   toBookmark = iInto.isBookmark                    // type 2
+        let   toSmallMap = iInto.isInSmallMap && !toBookmark   // type 3
+        let         into = iInto.bookmarkTarget ?? iInto       // grab bookmark AFTER travel
         var        grabs = gSelecting.currentGrabs
         var      restore = [Zone: (Zone, Int?)] ()
         var    cyclicals = IndexSet()
@@ -1086,12 +1060,12 @@ class ZGraphEditor: ZBaseEditor {
             grabs.remove(at: index)
         }
 
-        if  let dragged = gDraggedZone, !dragged.isInMainMap, !toDetails {
+        if  let dragged = gDraggedZone, dragged.isInSmallMap, !toSmallMap {
             dragged.maybeNeedSave()                            // type 4
         }
 
         grabs.sort { (a, b) -> Bool in
-            if !a.isInMainMap {
+            if  a.isInSmallMap {
                 a.maybeNeedSave()                              // type 4
             }
 
@@ -1145,7 +1119,7 @@ class ZGraphEditor: ZBaseEditor {
 				for grab in grabs {
 					var beingMoved = grab
 
-					if  toDetails && beingMoved.isInMainMap && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
+					if  toSmallMap && beingMoved.isInBigMap && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
 						if  let bookmark = gFavorites.createFavorite(for: beingMoved, action: .aNotABookmark) {	// type 3
 							beingMoved   = bookmark
 

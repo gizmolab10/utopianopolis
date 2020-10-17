@@ -45,23 +45,23 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var               bookmarkTarget :               Zone? { return crossLink as? Zone }
 	var                  destroyZone :               Zone? { return cloud?.destroyZone }
 	var                    trashZone :               Zone? { return cloud?.trashZone }
+	var                     manifest :          ZManifest? { return cloud?.manifest }
+	var                       widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
+	var                 widgetObject :      ZWidgetObject? { return widget?.widgetObject }
+	var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
+	var                lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var               linkRecordName :             String? { return recordName(from: zoneLink) }
 	override var           emptyName :             String  { return kEmptyIdea }
 	override var         description :             String  { return unwrappedName }
 	override var       unwrappedName :             String  { return zoneName ?? (isFavoritesRoot ? kFavoritesName : emptyName) }
 	var                decoratedName :             String  { return decoration + unwrappedName }
 	var                  clippedName :             String  { return !gShowToolTips ? "" : unwrappedName }
-    var                     manifest :          ZManifest? { return cloud?.manifest }
-    var                       widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
-	var                 widgetObject :      ZWidgetObject? { return widget?.widgetObject }
-    var               linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
-	var                lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                        count :                Int  { return children.count }
 	var     isACurrentDetailBookmark :               Bool  { return isCurrentFavorite || isCurrentRecent }
 	var              isCurrentRecent :               Bool  { return self ==   gRecents.currentBookmark }
 	var            isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
-	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isNonMapHere && !(widget?.type.isMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
-    var              dragDotIsHidden :               Bool  { return                     (isNonMapHere && !(widget?.type.isMap ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
+	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isSmallMapHere && !(widget?.type.isMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
+    var              dragDotIsHidden :               Bool  { return                     (isSmallMapHere && !(widget?.type.isMap ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
     var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
     var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
     var                 hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }
@@ -74,17 +74,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                      hasNote :               Bool  { return hasTrait(for: .tNote) }
     var                    isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
-	var                  isInMainMap :               Bool  { return root?.isMainMapRoot      ?? false }
+	var                   isInBigMap :               Bool  { return root?.isBigMapRoot      ?? false }
 	var                  isInRecents :               Bool  { return root?.isRecentsRoot      ?? false }
     var                isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
     var             isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
-	var               isInDetailsMap :               Bool  { return !isInMainMap }
+	var                 isInSmallMap :               Bool  { return !isInBigMap }
 	var               isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || type.isExemplar }
     var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
     var                   spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
 	var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
-	var                     children =          ZoneArray()
-	var                       traits =   ZTraitDictionary()
+	var                     children =          ZoneArray  ()
+	var                       traits =   ZTraitDictionary  ()
 
 	var bookmarks : ZoneArray {
 		return children.filter { (iZone) -> Bool in
@@ -1309,7 +1309,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
 	func asssureIsVisibleAndGrab(updateBrowsingLevel: Bool = true) {
-		gShowFavorites = kIsPhone && isInDetailsMap
+		gShowFavorites = kIsPhone && isInSmallMap
 
 		asssureIsVisible()
 		grab(updateBrowsingLevel: updateBrowsingLevel)
@@ -1320,7 +1320,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             grab() // narrow selection to just this one zone
             
             if !(CLICKTWICE && self == gHere) {
-				gRecents.focusKind(.eSelected) {
+				gRecents.maybeRefocus(.eSelected) {
                     gRedrawGraph()
                 }
             }
@@ -1517,7 +1517,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	@discardableResult func focusThrough(_ atArrival: @escaping Closure) -> Bool {
 		if  isBookmark {
-			if  isInDetailsMap {
+			if  isInSmallMap {
 				let targetParent = bookmarkTarget?.parentZone
 
 				targetParent?.revealChildren()
@@ -1532,7 +1532,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			} else if let dbID = crossLink?.databaseID {
 				gDatabaseID = dbID
 
-				gRecents.focusKind {
+				gRecents.maybeRefocus {
 					gHere.grab()
 					atArrival()
 				}
@@ -1540,7 +1540,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				return true
 			}
 
-			performance("oops!")
+			performance("bookmark with bad db crosslink")
 		}
 
 		return false
@@ -1590,7 +1590,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// /////////////////////////// //
 
 					if  let target = iTarget, target.isFetched { // e.g., default root favorite
-						gRecents.focusKind(.eSelected) {
+						gRecents.maybeRefocus(.eSelected) {
 							gHere  = target
 
 							gHere.prepareForArrival()
@@ -1603,7 +1603,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 								gHere          = newHere
 
 								newHere.prepareForArrival()
-								gRecents.focusKind {
+								gRecents.maybeRefocus {
 									complete(newHere, .sRelayout)
 								}
 							} else {
@@ -1659,10 +1659,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func focusOn(_ atArrival: @escaping Closure) {
 		gHere = self // side-effect does recents push
 
-		gRecents.focusKind(.eSelected) {
+		gRecents.maybeRefocus(.eSelected) {
 			self.grab()
-			gRecents.updateCurrentRecent()
-			gFavorites.updateCurrentFavorite()
+			gFavorites.updateCurrentInBoth()
 			atArrival()
 		}
 	}
@@ -1726,7 +1725,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	func setAsNonMapHereZone() {
+	func setAsSmallMapHereZone() {
 		if  let r = root {
 			if  r.isFavoritesRoot {
 				gFavorites.hereZoneMaybe = self
@@ -1745,7 +1744,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gHere.grab()
 				}
 
-				gFavorites.updateCurrentFavorite()
+				gFavorites.updateCurrentInBoth()
 				gRedrawGraph()
 			}
 		}
@@ -1770,13 +1769,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				revealParentAndSiblings()
 				revealSiblings(untilReaching: p)
 			} else {
-				if  isInMainMap {
+				if  isInBigMap {
 					p.revealChildren()
 					p.needChildren()
 				} else if let g = p.parentZone { // narrow: hide children and set here zone to parent
 					p.concealChildren()
 					g.revealChildren()
-					g.setAsNonMapHereZone()
+					g.setAsSmallMapHereZone()
 					// FUBAR: parent sometimes disappears!!!!!!!!!
 				}
 
@@ -1837,8 +1836,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let grandchild = gListsGrowDown ? child.children.last : child.children.first {
 				grandchild.grab()
 
-				if !child.isInMainMap { // narrow, so hide parent
-					child.setAsNonMapHereZone()
+				if  child.isInSmallMap { // narrow, so hide parent
+					child.setAsSmallMapHereZone()
 				} else if extreme {
 					child = grandchild
 
@@ -2631,6 +2630,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func revealDotClicked(COMMAND: Bool, OPTION: Bool) {
 		gTextEditor.stopCurrentEdit()
 
+		// ungrab progeny
 		for     grabbed in gSelecting.currentGrabs {
 			if  grabbed != self && grabbed.spawnedBy(self) {
 				grabbed.ungrab()
@@ -2644,8 +2644,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else {
 			let show = !showingChildren
 
-			if !isInFavorites,
-			   !isInRecents {
+			if  isInBigMap {
 
 				// //////////////////////////
 				// generational visibility //
@@ -2654,15 +2653,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				generationalUpdate(show: show) {
 					gRedrawGraph(for: self)
 				}
-			} else if !isNonMapRoot {
+			} else if !isSmallMapRoot {
 
 				// //////////////////////////////////////////////////////////
-				// avoid annoying user: treat favorites non-generationally //
+				// avoid annoying user: treat small map non-generationally //
 				// //////////////////////////////////////////////////////////
 
 				toggleChildrenVisibility()
 
 				let newHere = showingChildren ? self : parentZone
+
+				newHere?.revealChildren()
 
 				if  isInFavorites {
 					gFavoritesHereMaybe = newHere
