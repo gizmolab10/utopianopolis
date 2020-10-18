@@ -63,7 +63,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         #endif
     }
 
-	var controller: ZGraphController? {
+	var controller: ZMapController? {
 		return widget?.controller
 	}
 
@@ -142,7 +142,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 			zone.canEditNow,                 // detect if mouse down inside widget OR key pressed
 			super.becomeFirstResponder() {   // becomeFirstResponder is called first so delegate methods will be called
 
-			if !gIsGraphOrEditIdeaMode {
+			if !gIsMapOrEditIdeaMode {
                 gSearching.exitSearchMode()
             }
 
@@ -223,7 +223,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
              zone.canTravel,
             !zone.isGrabbed,
             !isFirstResponder,
-			gIsGraphOrEditIdeaMode {
+			gIsMapOrEditIdeaMode {
 
 			let       deltaX = min(3.0, dirtyRect.width / 2.0)
             var         rect = dirtyRect.insetBy(dx: deltaX, dy: 0.0)

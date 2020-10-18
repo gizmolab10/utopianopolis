@@ -189,7 +189,7 @@ class ZTextPack: NSObject {
 		gTextCapturing = false
 
 		if  redrawSync {
-			gRedrawGraph()
+			gRedrawMap()
 		}
     }
 
@@ -247,7 +247,7 @@ class ZTextEditor: ZTextView {
 
 		clearOffset()
 		fullResign()
-		gSetGraphMode()
+		gSetMapMode()
 	}
 
     func cancel() {
@@ -343,7 +343,7 @@ class ZTextEditor: ZTextView {
 			zone?.grab()
 
 			if  andRedraw {
-				gRedrawGraph(for: zone)
+				gRedrawMap(for: zone)
 			}
         }
     }
@@ -419,12 +419,12 @@ class ZTextEditor: ZTextView {
 
         if  iMoveOut {
             quickStopCurrentEdit()
-            gGraphEditor.moveOut {
+            gMapEditor.moveOut {
                 editAtOffset(100000000.0)
             }
         } else if currentlyEditingZone?.children.count ?? 0 > 0 {
             quickStopCurrentEdit()
-            gGraphEditor.moveInto {
+            gMapEditor.moveInto {
                 editAtOffset(0.0)
             }
         }
@@ -448,7 +448,7 @@ class ZTextEditor: ZTextView {
         }
         
         if  var original = currentZone {
-            gGraphEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { iKind in
+            gMapEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { iKind in
                 gControllers.signalFor(nil, regarding: iKind) {
                     if  isHere {
                         self.currentOffset = currentZone?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here

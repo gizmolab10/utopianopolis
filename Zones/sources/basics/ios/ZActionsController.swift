@@ -75,7 +75,7 @@ class ZActionsController : ZGenericController {
 			case .eRefetchAll,
 				 .eRefetch: refetch(for: function == .eRefetchAll)
 			case .ePrefs:   switchView(to: function)
-			case .eDelete:  gGraphEditor.deleteGrabbed()
+			case .eDelete:  gMapEditor.deleteGrabbed()
 			case .eNew:     gSelecting.currentMoveable.addIdea()
 			case .eHang:    gBatches.unHang()
 			case .eName:    gTextEditor.edit(zone)
@@ -140,26 +140,26 @@ class ZActionsController : ZGenericController {
 	
 	func alignView() {
 		switch gDatabaseID {
-		case .everyoneID: gCurrentGraph = .ePublic
-		default:          gCurrentGraph = .eMe
+		case .everyoneID: gCurrentMapFunction = .ePublic
+		default:          gCurrentMapFunction = .eMe
 		}
 	}
 	
 	
 	func switchView(to iFunction: ZFunction) {
-		let priorShown = gShowFavorites
+		let priorShown = gShowSmallMap
 		let    priorID = gDatabaseID
 
 		switch iFunction {
-		case .eMe:        gShowFavorites = false; gDatabaseID = .mineID
-		case .ePublic:    gShowFavorites = false; gDatabaseID = .everyoneID
-		case .eFavorites: gShowFavorites = true
+		case .eMe:        gShowSmallMap = false; gDatabaseID = .mineID
+		case .ePublic:    gShowSmallMap = false; gDatabaseID = .everyoneID
+		case .eFavorites: gShowSmallMap = true
 		default: break
 		}
 		
-		if  gDatabaseID != priorID || gShowFavorites != priorShown {
+		if  gDatabaseID != priorID || gShowSmallMap != priorShown {
 			gSelecting.updateAfterMove()
-			redrawGraph()
+			redrawMap()
 		}
 	}
 	
@@ -174,7 +174,7 @@ class ZActionsController : ZGenericController {
 	func refetch(for iAll: Bool) {
 		gBatches		 .unHang()
 		gWidgets         .clearRegistry()
-		gGraphController?.clear()
+		gMapController?.clear()
 		gControllers     .startupCloudAndUI()
 	}
 	

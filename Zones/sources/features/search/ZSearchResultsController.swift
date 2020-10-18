@@ -203,7 +203,7 @@ class ZSearchResultsController: ZGenericTableController {
 		let ranges = note.noteText?.string.rangesMatching(searchText)
 		let range  = ranges == nil ? nil : ranges![0]
 
-		gControllers.swapGraphAndEssay(force: .noteMode)
+		gControllers.swapMapAndEssay(force: .noteMode)
 		gEssayView?.resetCurrentEssay(note, selecting: range)
 	}
 

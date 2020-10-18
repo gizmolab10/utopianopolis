@@ -1,11 +1,10 @@
 //
-//  ZGraphEditor.swift
+//  ZMapEditor.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 10/29/16.
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
-
 
 import Foundation
 import CloudKit
@@ -16,15 +15,12 @@ import CloudKit
     import UIKit
 #endif
 
-
-let gGraphEditor = ZGraphEditor()
-
+let gMapEditor = ZMapEditor()
 
 // mix of zone mutations and web services requestss
 
-
-class ZGraphEditor: ZBaseEditor {
-	override var canHandleKey: Bool { return gIsGraphOrEditIdeaMode }
+class ZMapEditor: ZBaseEditor {
+	override var canHandleKey: Bool { return gIsMapOrEditIdeaMode }
 	var             priorHere: Zone?
 
 	// MARK:- events
@@ -111,9 +107,9 @@ class ZGraphEditor: ZBaseEditor {
 					gCurrentKeyPressed = key
 
                     switch key {
-					case "a":      if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawGraph() }
+					case "a":      if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMap() }
                     case "b":      gSelecting.firstSortedGrab?.addBookmark()
-					case "c":      if COMMAND && !OPTION { copyToPaste() } else { gGraphController?.recenter(SPECIAL) }
+					case "c":      if COMMAND && !OPTION { copyToPaste() } else { gMapController?.recenter(SPECIAL) }
 					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 					case "e":      gSelecting.firstSortedGrab?.editTrait(for: .tEmail)
                     case "f":      gSearching.showSearch(OPTION)
@@ -121,9 +117,9 @@ class ZGraphEditor: ZBaseEditor {
                     case "h":      gSelecting.firstSortedGrab?.editTrait(for: .tHyperlink)
                     case "l":      alterCase(up: false)
 					case "k":      toggleColorized()
-					case "m":      gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawGraph()
+					case "m":      gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawMap()
                     case "n":      grabOrEdit(true, OPTION)
-                    case "o":      gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawGraph() }
+                    case "o":      gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMap() }
                     case "p":      printCurrentFocus()
                     case "r":      reverse()
 					case "s":      gHere.exportToFile(OPTION ? .eOutline : .eSeriously)
@@ -135,12 +131,12 @@ class ZGraphEditor: ZBaseEditor {
                     case "z":      if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
-					case "'":      gSmallMapMode = gIsRecentlyMode ? .favorites : .recent; gSignal([.sDetails])
+					case "'":      swapSmallMap(OPTION)
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdate(CONTROL, COMMAND, kind: .eSelected) }
-					case "\\":     gGraphController?.toggleGraphs(); gRedrawGraph()
+					case "\\":     gMapController?.toggleMaps(); gRedrawMap()
                     case "]", "[": smartGo(up: key == "]")
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-					case kEquals:  if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawGraph() } }
+					case kEquals:  if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawMap() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
                     case kTab:     addSibling(OPTION)
 					case kSpace:   if OPTION || CONTROL || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
@@ -182,7 +178,7 @@ class ZGraphEditor: ZBaseEditor {
 					switch arrow {
 						case .left,
 							 .right: move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
-								gSelecting.updateAfterMove()  // relayout graph when travelling through a bookmark
+								gSelecting.updateAfterMove()  // relayout map when travelling through a bookmark
 							}
 						default: break
 					}
@@ -239,7 +235,7 @@ class ZGraphEditor: ZBaseEditor {
 
 
     override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
-        if !gIsGraphOrEditIdeaMode {
+        if !gIsMapOrEditIdeaMode {
             return false
         }
 		
@@ -287,6 +283,19 @@ class ZGraphEditor: ZBaseEditor {
 	// MARK:- features
 	// MARK:-
 
+	func swapSmallMap(_ OPTION: Bool) {
+		let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
+		let newID     : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
+
+		gSmallMapMode = gIsRecentlyMode ? .favorites   : .recent
+
+		if  OPTION {			// if any grabs are in current small map, move them to other map
+			gSelecting.swapGrabsFrom(currentID, toID: newID)
+		}
+
+		gSignal([.sDetails])
+	}
+
 	func addSibling(_ OPTION: Bool) {
 		gTextEditor.stopCurrentEdit()
 		gSelecting.currentMoveable.addNextAndRedraw(containing: OPTION)
@@ -303,7 +312,7 @@ class ZGraphEditor: ZBaseEditor {
 
 			gSelecting.grab(last)
 			gSelecting.firstGrab?.asssureIsVisible()
-			gRedrawGraph(for: here)
+			gRedrawMap(for: here)
 		}
 	}
 
@@ -316,7 +325,7 @@ class ZGraphEditor: ZBaseEditor {
 	func popAndUpdate(_ CONTROL: Bool, _ COMMAND: Bool = false, kind: ZFocusKind) {
 		if  !CONTROL {
 			gRecords?.maybeRefocus(kind, COMMAND, shouldGrab: true) { // complex grab logic
-				gRedrawGraph()
+				gRedrawMap()
 			}
 		} else {
 			gRecents.popAndUpdateRecents()
@@ -325,7 +334,7 @@ class ZGraphEditor: ZBaseEditor {
 				gHere    = here
 			}
 
-			gRedrawGraph()
+			gRedrawMap()
 		}
 	}
 
@@ -335,7 +344,7 @@ class ZGraphEditor: ZBaseEditor {
 		size           = size.force(horizotal: false, into: NSRange(location: 2, length: 7))
 		gGenericOffset = size
 
-		gRedrawGraph()
+		gRedrawMap()
 	}
 
 	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {
@@ -371,7 +380,7 @@ class ZGraphEditor: ZBaseEditor {
 				self.moveZones(grabs, into: original) {
 					original.grab()
 
-					gRedrawGraph {
+					gRedrawMap {
 						innerClosure()
 						onCompletion?()
 					}
@@ -427,7 +436,7 @@ class ZGraphEditor: ZBaseEditor {
 
     func focusOnTrash() {
 		gTrash?.focusOn() {
-			gRedrawGraph()
+			gRedrawMap()
 		}
     }
 
@@ -442,7 +451,7 @@ class ZGraphEditor: ZBaseEditor {
 			gSelecting.simplifiedGrabs.assureAdoption()   // finish what fetch has done
 		} else if  COMMAND && !OPTION {                   // COMMAND alone
 			gBatches.refetch { iSame in
-				gRedrawGraph()
+				gRedrawMap()
 			}
 		} else {
 			for grab in gSelecting.currentGrabs {
@@ -454,7 +463,7 @@ class ZGraphEditor: ZBaseEditor {
 			}
 
 			gBatches.children { iSame in
-				gRedrawGraph()
+				gRedrawMap()
 			}
 		}
 	}
@@ -484,7 +493,7 @@ class ZGraphEditor: ZBaseEditor {
             zone.toggleColorized()
         }
 
-        gRedrawGraph()
+        gRedrawMap()
     }
 
 
@@ -541,7 +550,7 @@ class ZGraphEditor: ZBaseEditor {
             }
         }
 
-        gRedrawGraph()
+        gRedrawMap()
     }
 
 	func grabOrEdit(_ COMMAND: Bool, _  OPTION: Bool, _ ESCAPE: Bool = false) {
@@ -560,7 +569,7 @@ class ZGraphEditor: ZBaseEditor {
 				}
 			}
 
-			gControllers.swapGraphAndEssay()
+			gControllers.swapMapAndEssay()
 		}
     }
 
@@ -575,7 +584,7 @@ class ZGraphEditor: ZBaseEditor {
 			zone.divideEvenly()
 		}
 
-		gRedrawGraph()
+		gRedrawMap()
     }
 
     func rotateWritable() {
@@ -583,7 +592,7 @@ class ZGraphEditor: ZBaseEditor {
             zone.rotateWritable()
         }
 
-        gRedrawGraph()
+        gRedrawMap()
     }
 
     func alterCase(up: Bool) {
@@ -624,7 +633,7 @@ class ZGraphEditor: ZBaseEditor {
             gCurrentBrowseLevel = zone.level // so cousin list will not be empty
             
             moveUp(atStart, [zone], selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { iKind in
-                gRedrawGraph() {
+                gRedrawMap() {
                     t.edit(zone)
                     t.setCursor(at: offset)
                 }
@@ -655,7 +664,7 @@ class ZGraphEditor: ZBaseEditor {
                     gFavorites.updateFavoritesAndRedraw {
                         gDeferringRedraw = false
                         
-                        gRedrawGraph()
+                        gRedrawMap()
                     }
                 }
             } else {
@@ -667,9 +676,9 @@ class ZGraphEditor: ZBaseEditor {
 				gSelecting.simplifiedGrabs.deleteZones(permanently: permanently) {
 					gDeferringRedraw = false
 
-					gRedrawGraph(for: grab)
+					gRedrawMap(for: grab)
                     gFavorites.updateFavoritesAndRedraw {    // delete alters the list
-                        gRedrawGraph(for: grab)
+                        gRedrawMap(for: grab)
                     }
                 }
             }
@@ -843,7 +852,7 @@ class ZGraphEditor: ZBaseEditor {
 		zones.reverse()
 
 		commonParent?.respectOrder()
-		gRedrawGraph()
+		gRedrawMap()
 	}
 
     func undoDelete() {
@@ -861,7 +870,7 @@ class ZGraphEditor: ZBaseEditor {
             iUndoSelf.delete()
         }
 
-        gRedrawGraph()
+        gRedrawMap()
     }
 
 	func paste() { pasteInto(gSelecting.firstSortedGrab) }
@@ -893,7 +902,7 @@ class ZGraphEditor: ZBaseEditor {
                     iUndoSelf.prepareUndoForDelete()
                     forUndo.deleteZones(iShouldGrab: false, onCompletion: nil)
                     zone.grab()
-                    gRedrawGraph()
+                    gRedrawMap()
                 }
 
                 if isBookmark {

@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="TpV-Kz-bkb">
-    <device id="retina6_1" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="TpV-Kz-bkb">
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -18,13 +14,13 @@
                         <viewControllerLayoutGuide type="bottom" id="DKm-Wo-lL1"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="ECE-O8-JGv">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XAe-Nl-uaC" userLabel="Title and Button View">
-                                <rect key="frame" x="0.0" y="44" width="414" height="46"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="46"/>
                                 <subviews>
-                                    <button hidden="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VfC-nQ-Lcv" userLabel="Undo Button">
+                                    <button hidden="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VfC-nQ-Lcv" userLabel="Undo Button">
                                         <rect key="frame" x="8" y="1" width="44" height="44"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="44" id="7b9-pM-G13"/>
@@ -36,16 +32,15 @@
                                         </connections>
                                     </button>
                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" textAlignment="center" adjustsFontSizeToFit="NO" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="W8u-BE-rDz" customClass="ZoneTextWidget">
-                                        <rect key="frame" x="54" y="6.5" width="294" height="33"/>
+                                        <rect key="frame" x="54" y="6.5" width="480" height="33"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="33" id="70v-rR-YPv"/>
                                         </constraints>
-                                        <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <textInputTraits key="textInputTraits" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                                     </textField>
-                                    <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T5I-9c-3Sn" userLabel="Graphs Button">
-                                        <rect key="frame" x="350" y="1" width="56" height="44"/>
+                                    <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T5I-9c-3Sn" userLabel="Graphs Button">
+                                        <rect key="frame" x="536" y="1" width="56" height="44"/>
                                         <accessibility key="accessibilityConfiguration">
                                             <accessibilityTraits key="traits" button="YES" staticText="YES" updatesFrequently="YES" adjustable="YES"/>
                                         </accessibility>
@@ -55,7 +50,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <state key="normal" title="Graphs"/>
                                         <connections>
-                                            <action selector="graphsButtonActionWithIButton:" destination="TpV-Kz-bkb" eventType="touchDown" id="3m7-ft-6i4"/>
+                                            <action selector="mapsButtonActionWithIButton:" destination="TpV-Kz-bkb" eventType="touchDown" id="3m7-ft-6i4"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -74,17 +69,17 @@
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TAE-mz-TEf" userLabel="Horizontal Line">
-                                <rect key="frame" x="0.0" y="90" width="414" height="1"/>
+                                <rect key="frame" x="0.0" y="46" width="600" height="1"/>
                                 <color key="backgroundColor" red="0.17934990740000001" green="0.47574201109999997" blue="0.79180951290000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="9BU-lA-MAP"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qjg-kt-bl7" userLabel="Favorites and Editor View">
-                                <rect key="frame" x="0.0" y="91" width="414" height="627"/>
+                                <rect key="frame" x="0.0" y="47" width="600" height="409"/>
                                 <subviews>
                                     <containerView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yzZ-hG-rzt" userLabel="Editor">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="627"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="409"/>
                                         <connections>
                                             <segue destination="wVv-ZA-i1M" kind="embed" id="ulf-dC-mKi"/>
                                         </connections>
@@ -99,7 +94,7 @@
                                 </constraints>
                             </view>
                             <containerView clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JFA-xX-jjU">
-                                <rect key="frame" x="0.0" y="718" width="148" height="144"/>
+                                <rect key="frame" x="0.0" y="456" width="148" height="144"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="144" id="fcs-6G-NLq"/>
@@ -110,7 +105,7 @@
                                 </connections>
                             </containerView>
                             <containerView hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iNc-uN-Bhm" userLabel="Actions">
-                                <rect key="frame" x="98" y="814" width="314" height="46"/>
+                                <rect key="frame" x="98" y="552" width="500" height="46"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="46" id="b2L-wv-7LI"/>
                                 </constraints>
@@ -152,10 +147,10 @@
             </objects>
             <point key="canvasLocation" x="327.536231884058" y="152.67857142857142"/>
         </scene>
-        <!--Graph Controller-->
+        <!--Map Controller-->
         <scene sceneID="9WU-We-u6g">
             <objects>
-                <viewController storyboardIdentifier="graph" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wVv-ZA-i1M" customClass="ZGraphController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="graph" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wVv-ZA-i1M" customClass="ZMapController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ceC-hh-Sah"/>
                         <viewControllerLayoutGuide type="bottom" id="jqU-Hy-33R"/>
@@ -165,7 +160,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lbQ-ID-4Qi" customClass="ZDragView" customModule="iFocus" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="44" width="414" height="549"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="627"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rjc-4k-2DZ">
@@ -226,7 +221,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="406" height="46"/>
                                 <subviews>
                                     <segmentedControl opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" momentary="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CxM-46-LlZ">
-                                        <rect key="frame" x="96.5" y="1" width="121" height="45"/>
+                                        <rect key="frame" x="91.5" y="1" width="131" height="45"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="44" id="L8m-kW-g8t"/>
                                         </constraints>
@@ -277,7 +272,7 @@
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" misplaced="YES" id="0TU-XG-oqF" customClass="ZGridCell" customModule="iFocus" customModuleProvider="target">
+                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" id="0TU-XG-oqF" customClass="ZGridCell" customModule="iFocus" customModuleProvider="target">
                                 <rect key="frame" x="8" y="8" width="44" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -285,6 +280,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ivv-cl-X9t">
+                                            <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
                                             <state key="normal">
                                                 <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </state>
@@ -302,7 +298,7 @@
                                     <outlet property="button" destination="ivv-cl-X9t" id="nvF-ME-2RD"/>
                                 </connections>
                             </collectionViewCell>
-                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" misplaced="YES" id="qiK-0X-FBL">
+                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" id="qiK-0X-FBL">
                                 <rect key="frame" x="52" y="8" width="44" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -311,7 +307,7 @@
                                 </view>
                                 <color key="backgroundColor" red="0.0" green="0.80046018839999999" blue="0.098621552449999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </collectionViewCell>
-                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" misplaced="YES" id="WWO-Ku-T9n">
+                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" id="WWO-Ku-T9n">
                                 <rect key="frame" x="96" y="8" width="44" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -320,7 +316,7 @@
                                 </view>
                                 <color key="backgroundColor" red="0.0" green="0.80046018839999999" blue="0.098621552449999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </collectionViewCell>
-                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" misplaced="YES" id="Sej-3p-QzG">
+                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" id="Sej-3p-QzG">
                                 <rect key="frame" x="8" y="52" width="44" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -329,7 +325,7 @@
                                 </view>
                                 <color key="backgroundColor" red="0.0" green="0.80046018839999999" blue="0.098621552449999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </collectionViewCell>
-                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" misplaced="YES" id="gRI-1b-2hh">
+                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" id="gRI-1b-2hh">
                                 <rect key="frame" x="52" y="52" width="44" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -338,7 +334,7 @@
                                 </view>
                                 <color key="backgroundColor" red="0.0" green="0.80046018839999999" blue="0.098621552449999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </collectionViewCell>
-                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" misplaced="YES" id="iPw-51-6iI">
+                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" id="iPw-51-6iI">
                                 <rect key="frame" x="96" y="52" width="44" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -347,7 +343,7 @@
                                 </view>
                                 <color key="backgroundColor" red="0.0" green="0.80046018839999999" blue="0.098621552449999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </collectionViewCell>
-                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" misplaced="YES" id="U9H-5p-jm4">
+                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" id="U9H-5p-jm4">
                                 <rect key="frame" x="8" y="96" width="44" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -356,7 +352,7 @@
                                 </view>
                                 <color key="backgroundColor" red="0.0" green="0.80046018839999999" blue="0.098621552449999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </collectionViewCell>
-                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" misplaced="YES" id="7hr-Ei-54G">
+                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" id="7hr-Ei-54G">
                                 <rect key="frame" x="52" y="96" width="44" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -365,7 +361,7 @@
                                 </view>
                                 <color key="backgroundColor" red="0.0" green="0.80046018839999999" blue="0.098621552449999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </collectionViewCell>
-                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" misplaced="YES" id="sbh-M3-kXw">
+                            <collectionViewCell clipsSubviews="YES" contentMode="scaleAspectFit" id="sbh-M3-kXw">
                                 <rect key="frame" x="96" y="96" width="44" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">

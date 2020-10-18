@@ -57,7 +57,7 @@ class ZStartup: NSObject {
 						gRefusesFirstResponder = false
 
 						if  gIsStartupMode {
-							gSetGraphMode()
+							gSetMapMode()
 						}
 
 						gRemoteStorage.assureNoOrphanIdeas()

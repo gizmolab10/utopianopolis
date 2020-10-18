@@ -20,12 +20,12 @@ class ZContextualMenu: NSMenu {
 
 	func handleKey(_ key: String) {
 		switch key {
-			case "c": gGraphController?.recenter()
+			case "c": gMapController?.recenter()
 			case "k": gColorfulMode = !gColorfulMode; gSignal([.sDatum])
 			case "p": cycleSkillLevel()
 			case "y": gShowToolTips = !gShowToolTips; gSignal([.sRelayout])
 			case kEquals,
-				 "-": gGraphEditor.updateSize(up: key == kEquals)
+				 "-": gMapEditor.updateSize(up: key == kEquals)
 			default:  break
 		}
 	}

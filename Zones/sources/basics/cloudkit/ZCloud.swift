@@ -1230,7 +1230,7 @@ class ZCloud: ZRecords {
     
     func establishRoots(_ onCompletion: IntClosure?) {
 		var establishRootAt: IntClosure?     // pre-declare so can recursively call from within it
-        let         rootIDs: [ZRootID]   = [.favoritesID, .destroyID, .recentsID, .trashID, .graphID, .lostID]
+        let         rootIDs: [ZRootID]   = [.favoritesID, .destroyID, .recentsID, .trashID, .mapID, .lostID]
         establishRootAt                  = { iIndex in
             if iIndex >= rootIDs.count {
                 onCompletion?(0)
@@ -1244,25 +1244,25 @@ class ZCloud: ZRecords {
                 switch rootID {
 				case .favoritesID: if self.favoritesZone    != nil || !isMine { recurseNext(); return } else { name = kFavoritesName }
 				case .recentsID:   if self.recentsZone      != nil || !isMine { recurseNext(); return } else { name = kRecentsName }
-                case .graphID:     if self.rootZone         != nil            { recurseNext(); return } else { name = kFirstIdeaTitle }
+                case .mapID:       if self.rootZone         != nil            { recurseNext(); return } else { name = kFirstIdeaTitle }
                 case .lostID:      if self.lostAndFoundZone != nil            { recurseNext(); return }
                 case .trashID:     if self.trashZone        != nil            { recurseNext(); return }
                 case .destroyID:   if self.destroyZone      != nil            { recurseNext(); return }
                 }
 
                 self.establishRootFor(name: name, recordName: recordName) { iZone in
-                    if  rootID != .graphID {
+                    if  rootID != .mapID {
                         iZone.directAccess = .eProgenyWritable
                     }
 
-                    switch rootID {
-					case .favoritesID: self.favoritesZone    = iZone
-					case .recentsID:   self.recentsZone      = iZone
-                    case .destroyID:   self.destroyZone      = iZone
-                    case .trashID:     self.trashZone        = iZone
-                    case .graphID:     self.rootZone         = iZone
-                    case .lostID:      self.lostAndFoundZone = iZone
-                    }
+					switch rootID {
+						case .favoritesID: self.favoritesZone    = iZone
+						case .recentsID:   self.recentsZone      = iZone
+						case .destroyID:   self.destroyZone      = iZone
+						case .trashID:     self.trashZone        = iZone
+						case .lostID:      self.lostAndFoundZone = iZone
+						case .mapID:       self.rootZone         = iZone
+					}
 
                     recurseNext()
                 }
@@ -1370,7 +1370,7 @@ class ZCloud: ZRecords {
                         let                 record: CKRecord = (iResults?[0])!
                         object.record?[valueForPropertyName] = (record as! CKRecordValue)
 
-                        gRedrawGraph()
+                        gRedrawMap()
                     }
                 }
             }

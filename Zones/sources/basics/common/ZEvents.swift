@@ -47,7 +47,7 @@ class ZEvents: ZGeneric {
     
     
     @objc func handleDarkModeChange(iNote: Notification) {
-        gRedrawGraph()
+        gRedrawMap()
 		gEssayView?.resetForDarkMode()
     }
     
@@ -82,9 +82,9 @@ class ZEvents: ZGeneric {
 							} else {
 								return gEssayEditor    .handleEvent(event, isWindow: true)
 							}
-						case .graphMode, .editIdeaMode:
+						case .mapMode, .editIdeaMode:
 							if !gIsHelpFrontmost {
-								return gGraphEditor    .handleEvent(event, isWindow: true)
+								return gMapEditor      .handleEvent(event, isWindow: true)
 							}
 
 							fallthrough

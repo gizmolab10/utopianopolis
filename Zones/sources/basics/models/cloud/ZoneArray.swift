@@ -225,7 +225,7 @@ extension ZoneArray {
 				zones.updateOrdering(start: start, end: end)
 				parent.respectOrder()
 				parent.children.updateOrder()
-				gRedrawGraph()
+				gRedrawMap()
 			}
 
 			gSelecting.hasNewGrab = gSelecting.currentMoveable
@@ -431,7 +431,7 @@ extension ZoneArray {
 			}
 		}
 
-		if  needRoot { // true means graph in memory does not include root, so fetch it from iCloud
+		if  needRoot { // true means map in memory does not include root, so fetch it from iCloud
 			for descendent in self {
 				descendent.needRoot()
 			}

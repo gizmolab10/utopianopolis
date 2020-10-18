@@ -55,7 +55,7 @@ class ZDesktopAppDelegate: ZAppDelegate, NSMenuDelegate {
         }
         
         for file in openFiles {
-            insertInto.importFile(from: file) { gRedrawGraph() }
+            insertInto.importFile(from: file) { gRedrawMap() }
         }
     }
 	
@@ -90,7 +90,7 @@ class ZDesktopAppDelegate: ZAppDelegate, NSMenuDelegate {
 	var workingEditor: ZBaseEditor? {
 		switch gWorkMode {
 			case .editIdeaMode,
-				 .graphMode: return gGraphEditor
+				 .mapMode: return gMapEditor
 //			case .noteMode:  return gEssayEditor
 			default: 	     return nil
 		}

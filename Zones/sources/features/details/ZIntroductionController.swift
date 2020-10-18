@@ -27,7 +27,7 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 	var            isRelocate : Bool { return flags.isOption  && !isEditing }
 	var              showHide : Bool { return flags.isShift   && !isEditing && !flags.isOption }
 	var            canUnfocus : Bool { return flags.isControl && (gRecentsRoot?.children.count ?? 0) > 1 }
-	var             canTravel : Bool { return gIsGraphMode && (gSelecting.currentMovableMaybe?.isBookmark ?? false) }
+	var             canTravel : Bool { return gIsMapMode && (gSelecting.currentMovableMaybe?.isBookmark ?? false) }
 	var                 flags = ZEventFlags()
 	var        buttonsByID    = [ZIntroductionID  :  ZIntroductionButton]()
 	var          boxesByID    = [ZIntroductionID  :  ZBox]()
@@ -41,7 +41,7 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 		buttonFor(.control)?.isEnabled = !gIsSearchMode
 		buttonFor(.option)? .isEnabled = !gIsSearchMode
 		buttonFor(.shift)?  .isEnabled = !gIsSearchMode
-		buttonFor(.focus)?  .isEnabled =  gIsGraphMode
+		buttonFor(.focus)?  .isEnabled =  gIsMapMode
 		buttonFor(.note)?   .isEnabled = !gIsEditIdeaMode
 		boxFor   (.edit)?    .isHidden =  gIsSearchMode || gIsNoteMode
 		boxFor   (.add)?     .isHidden =  gIsSearchMode || gIsNoteMode

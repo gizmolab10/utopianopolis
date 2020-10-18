@@ -195,8 +195,8 @@
                     <connections>
                         <outlet property="controlsView" destination="kS3-7c-58G" id="miP-Fo-nXp"/>
                         <outlet property="dragView" destination="3xG-CQ-dra" id="FB9-1c-2ut"/>
-                        <outlet property="graphView" destination="FRa-h5-v7h" id="Et8-Od-MJs"/>
                         <outlet property="ideaContextualMenu" destination="VWK-W7-ztK" id="Da8-5x-01f"/>
+                        <outlet property="mapView" destination="FRa-h5-v7h" id="Et8-Od-MJs"/>
                     </connections>
                 </viewController>
                 <menu title="Actions" id="VWK-W7-ztK" userLabel="Idea Contextual Menu" customClass="ZoneContextualMenu" customModule="Seriously" customModuleProvider="target">

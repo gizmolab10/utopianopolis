@@ -1,5 +1,5 @@
 //
-//  ZGraphController.swift
+//  ZMapController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 7/2/16.
@@ -14,18 +14,18 @@ import SnapKit
     import UIKit
 #endif
 
-var gGraphController: ZGraphController? { return gControllers.controllerForID(.idMap) as? ZGraphController }
+var gMapController: ZMapController? { return gControllers.controllerForID(.idMap) as? ZMapController }
 
-class ZGraphController: ZGesturesController, ZScrollDelegate {
+class ZMapController: ZGesturesController, ZScrollDelegate {
     
 	override  var       controllerID : ZControllerID { return .idMap }
 	var                   widgetType : ZWidgetType   { return .tMap }
 	var                   isExemplar : Bool          { return false }
-	var                        isMap : Bool          { return true }
+	var                     isBigMap : Bool          { return true }
 	var                     hereZone : Zone?         { return gHereMaybe }
 	override  var       allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum] }
 	@IBOutlet var           dragView : ZDragView?
-	@IBOutlet var          graphView : ZView?
+	@IBOutlet var          mapView : ZView?
 	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 	var          priorScrollLocation = CGPoint.zero
@@ -53,13 +53,13 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 		gestureView                       = dragView // do this before calling super setup, which uses gesture view
 		view      .layer?.backgroundColor = kClearColor.cgColor
 		dragView? .layer?.backgroundColor = kClearColor.cgColor
-		graphView?.layer?.backgroundColor = kClearColor.cgColor
+		mapView?.layer?.backgroundColor = kClearColor.cgColor
 
 		super.setup()
 		platformSetup()
-        graphView?.addSubview(rootWidget)
+        mapView?.addSubview(rootWidget)
 
-		if  isMap {
+		if  isBigMap {
 			dragView?.updateTrackingAreas()
 		}
     }
@@ -98,7 +98,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	// MARK:- operations
 	// MARK:-
 
-	func toggleGraphs() {
+	func toggleMaps() {
 		toggleDatabaseID()
 		gRecents.push()
 		gHere.grab()
@@ -114,16 +114,16 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	}
 
     func layoutForCurrentScrollOffset() {
-		let offset = isExemplar ? .zero : isMap ? gScrollOffset : CGPoint(x: -12.0, y: -6.0)
+		let offset = isExemplar ? .zero : isBigMap ? gScrollOffset : CGPoint(x: -12.0, y: -6.0)
 
-		if  let d = graphView {
+		if  let d = mapView {
 			rootWidget.snp.setLabel("<w> \(rootWidget.widgetZone?.zoneName ?? "unknown")")
 			rootWidget.snp.removeConstraints()
 			rootWidget.snp.makeConstraints { make in
 				make.centerY.equalTo(d).offset(offset.y)
 				make.centerX.equalTo(d).offset(offset.x)
 
-				if !isMap {
+				if !isBigMap {
 					make.top   .equalToSuperview()
 					make.bottom.equalToSuperview().offset(-12.0)
 				}
@@ -134,11 +134,11 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     }
 
     func layoutWidgets(for iZone: Any?, _ iKind: ZSignalKind) {
-        if kIsPhone && (isMap == gShowFavorites) { return }
+        if kIsPhone && (isBigMap == gShowSmallMap) { return }
 
 		let                        here = hereZone
         var specificWidget: ZoneWidget? = rootWidget
-        var specificView:        ZView? = graphView
+        var specificView:        ZView? = mapView
         var specificIndex:         Int?
         var                   recursing = true
         specificWidget?     .widgetZone = here
@@ -164,7 +164,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
 			layoutWidgets(for: iSignalObject, iKind)
-			graphView?.setAllSubviewsNeedDisplay()
+			mapView?.setAllSubviewsNeedDisplay()
 			dragView? .setNeedsDisplay()
         }
     }
@@ -175,7 +175,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 		}
 
 		if  kIsPhone {
-			rootWidget.isHidden = gShowFavorites
+			rootWidget.isHidden = gShowSmallMap
 		}
 	}
 	
@@ -193,7 +193,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
             gSearching.exitSearchMode()
         }
 
-		if  gIsGraphOrEditIdeaMode,
+		if  gIsMapOrEditIdeaMode,
 			let gesture = iGesture as? ZKeyPanGestureRecognizer,
             let (_, dropNearest, location) = widgetNearest(gesture),
             let flags = gesture.modifiers {
@@ -214,13 +214,13 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					dragMaybeStopEvent(iGesture)          // logic for drawing the drop dot, and for dropping dragged idea
 				} else if state == .changed,              // enlarge rubberband
 					gRubberband.setRubberbandEnd(location) {
-					gRubberband.updateGrabs(in: graphView)
+					gRubberband.updateGrabs(in: mapView)
 					dragView?  .setNeedsDisplay()
 				} else if state != .began {               // drag ended, failed or was cancelled
 					gRubberband.rubberbandRect = nil      // erase rubberband
 
 					restartGestureRecognition()
-					graphView?.setAllSubviewsNeedDisplay()
+					mapView?.setAllSubviewsNeedDisplay()
 					dragView? .setNeedsDisplay()
 					gSignal([.sDatum])                    // so color well and indicators get updated
 				} else if let dot = detectDot(iGesture) {
@@ -247,7 +247,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         }
 
 		if !gExitNoteMode(),
-			gIsGraphOrEditIdeaMode,
+			gIsMapOrEditIdeaMode,
 			let    gesture = iGesture {
             let    COMMAND = gesture.isCommandDown
 			let     OPTION = gesture.isOptionDown
@@ -264,13 +264,13 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 				// detect click inside text being edited //
 				// ////////////////////////////////////////
 
-                let backgroundLocation = gesture.location(in: graphView)
-                let           textRect = editWidget!.convert(editWidget!.bounds, to: graphView)
+                let backgroundLocation = gesture.location(in: mapView)
+                let           textRect = editWidget!.convert(editWidget!.bounds, to: mapView)
                 withinEdit             = textRect.contains(backgroundLocation)
             }
 
             if !withinEdit {
-				gSetGraphMode()
+				gSetMapMode()
 				gTextEditor.stopCurrentEdit()
 
 				if  let   widget = detectWidget(gesture) {
@@ -396,7 +396,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 
                 prior?                          .displayForDrag() // erase    child lines
                 dropNearest                     .displayForDrag() // relayout child lines
-				gGraphController?    .dragView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
+				gMapController?    .dragView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
 				gSmallMapController?.dragView?.setNeedsDisplay()
 
                 if !isNoop, dropNow,
@@ -413,8 +413,8 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 					if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
 						let SPECIAL = gesture.modifiers?.isSpecial {
 
-						gGraphEditor.moveGrabbedZones(into: drop, at: dropAt, SPECIAL) {
-							gRedrawGraph()
+						gMapEditor.moveGrabbedZones(into: drop, at: dropAt, SPECIAL) {
+							gRedrawMap()
                             gSelecting.updateBrowsingLevel()
                             gSelecting.updateCousinList()
                             self.restartGestureRecognition()
@@ -435,14 +435,14 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
 	func widgetNearest(_ iGesture: ZGestureRecognizer?, forMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
 		if  let     gView = iGesture?.view,
 			let    gPoint = iGesture?.location(in: gView),
-			let  location = graphView?.convert(gPoint, from: gView),
-			let    widget = rootWidget.widgetNearestTo(location, in: graphView, hereZone) {
-			let alternate = isMap ? gSmallMapController : gGraphController
+			let  location = mapView?.convert(gPoint, from: gView),
+			let    widget = rootWidget.widgetNearestTo(location, in: mapView, hereZone) {
+			let alternate = isBigMap ? gSmallMapController : gMapController
 
 			if  !kIsPhone,
-				let alternateGraphView = alternate?.graphView,
-				let alternateLocation  = graphView?.convert(location, to: alternateGraphView),
-				let alternateWidget    = alternate?.rootWidget.widgetNearestTo(alternateLocation, in: alternateGraphView, alternate?.hereZone) {
+				let alternatemapView = alternate?.mapView,
+				let alternateLocation  = mapView?.convert(location, to: alternatemapView),
+				let alternateWidget    = alternate?.rootWidget.widgetNearestTo(alternateLocation, in: alternatemapView, alternate?.hereZone) {
 				let           dragDotW =          widget.dragDot
                 let           dragDotA = alternateWidget.dragDot
                 let            vectorW = dragDotW.convert(dragDotW.bounds.center, to: view) - location
@@ -467,7 +467,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     
     func isEditingText(at location: CGPoint) -> Bool {
         if  gIsEditIdeaMode, let textWidget = gCurrentlyEditingWidget {
-            let rect = textWidget.convert(textWidget.bounds, to: graphView)
+            let rect = textWidget.convert(textWidget.bounds, to: mapView)
 
             return rect.contains(location)
         }
@@ -487,7 +487,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
         gDragPoint       = nil
 
         rootWidget.setNeedsDisplay()
-		graphView?.setNeedsDisplay()
+		mapView?.setNeedsDisplay()
 		dragView? .setNeedsDisplay() // erase drag: line and dot
 		dot?      .setNeedsDisplay()
     }
@@ -515,14 +515,14 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     // MARK:-
 
     func detectWidget(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
-		if  isMap,
+		if  isBigMap,
 			let    widget = gSmallMapController?.detectWidget(iGesture) {
 			return widget
 		}
 
 		var          hit : ZoneWidget?
 		var     smallest = CGSize.big
-        if  let        d = graphView,
+        if  let        d = mapView,
             let location = iGesture?.location(in: d), d.bounds.contains(location) {
 			let     dict = gWidgets.getWidgetsDict(for: widgetType)
             let  widgets = dict.values.reversed()
@@ -544,7 +544,7 @@ class ZGraphController: ZGesturesController, ZScrollDelegate {
     func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
         var hit: ZoneDot?
 
-        if  let                d = graphView,
+        if  let                d = mapView,
             let         location = iGesture?.location(in: d) {
             let test: DotClosure = { iDot in
                 let         rect = iDot.convert(iDot.bounds, to: d)

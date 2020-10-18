@@ -65,19 +65,19 @@ class ZControllers: NSObject {
 		if  let    e = gEssayView,
 			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {
 			e.resetCurrentEssay(zone.note)
-			swapGraphAndEssay(force: .noteMode)
+			swapMapAndEssay(force: .noteMode)
 			gSignal([.sCrumbs, .sDetails])
 		}
 	}
 
-	func swapGraphAndEssay(force mode: ZWorkMode? = nil) {
-		let newMode      = mode ?? (gIsNoteMode ? .graphMode : .noteMode)
+	func swapMapAndEssay(force mode: ZWorkMode? = nil) {
+		let newMode      = mode ?? (gIsNoteMode ? .mapMode : .noteMode)
 
 		if  newMode     != gWorkMode {
 			gWorkMode 	 = newMode
 			let showNote = newMode == .noteMode
 
-			FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking graph editor's handle key)
+			FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking map editor's handle key)
 				gTextEditor.stopCurrentEdit()
 				gEssayView?.updateControlBarButtons(showNote)
 				self.signalFor(nil, multiple: [.sSwap, .sCrumbs, .sRelayout])

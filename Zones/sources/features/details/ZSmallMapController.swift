@@ -14,9 +14,9 @@ import UIKit
 
 var gSmallMapController: ZSmallMapController? { return gControllers.controllerForID(.idSmallMap) as? ZSmallMapController }
 
-class ZSmallMapController: ZGraphController {
+class ZSmallMapController: ZMapController {
 
-	override  var        isMap : Bool          { return false }
+	override  var     isBigMap : Bool          { return false }
 	override  var     hereZone : Zone?         { return gIsRecentlyMode ?  gRecentsHere :  gFavoritesHereMaybe }
 	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ? .tRecent      : .tFavorite }
 	override  var controllerID : ZControllerID { return .idSmallMap }
@@ -41,7 +41,7 @@ class ZSmallMapController: ZGraphController {
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
-		return gGraphController?.handleDragGesture(iGesture) ?? false // use drag view coordinates from graph (not favorites) controller
+		return gMapController?.handleDragGesture(iGesture) ?? false // use drag view coordinates from big (not small) map controller
 	}
 
 }

@@ -645,7 +645,7 @@ DQ
         <!--Graph-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" userLabel="Graph" customClass="ZGraphController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" userLabel="Graph" customClass="ZMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="View">
                         <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -673,9 +673,9 @@ DQ
                     </view>
                     <connections>
                         <outlet property="dragView" destination="itU-Gt-Inh" id="4nO-dp-new"/>
-                        <outlet property="graphView" destination="myf-PZ-JAt" id="GM0-He-36T"/>
                         <outlet property="ideaContextualMenu" destination="4NV-a6-tte" id="idV-YI-eqw"/>
                         <outlet property="mapContextualMenu" destination="HLb-eX-LkY" id="8lR-R2-tPJ"/>
+                        <outlet property="mapView" destination="myf-PZ-JAt" id="GM0-He-36T"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -1062,7 +1062,7 @@ CA
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="fDV-lr-VDw"/>
                         <outlet property="detailsWidth" destination="us8-K9-IEo" id="J2y-Un-wue"/>
                         <outlet property="essayView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
-                        <outlet property="graphView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
+                        <outlet property="mapView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
                         <outlet property="permissionView" destination="5oi-yK-PC4" id="5TP-04-XLC"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
@@ -1123,7 +1123,7 @@ CA
                                 <rect key="frame" x="20" y="20" width="259" height="269"/>
                                 <clipView key="contentView" id="xkU-Kc-9TS">
                                     <rect key="frame" x="1" y="1" width="257" height="267"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" id="z27-6x-Roi">
                                             <rect key="frame" x="0.0" y="0.0" width="257" height="267"/>
@@ -1197,7 +1197,7 @@ CA
                                 <rect key="frame" x="0.0" y="0.0" width="278" height="289"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="DDT-jd-TI8">
                                     <rect key="frame" x="0.0" y="0.0" width="263" height="289"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4" customClass="ZEssayView" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="263" height="289"/>

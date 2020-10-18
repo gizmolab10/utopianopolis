@@ -19,7 +19,7 @@ class ZStatusController: ZGenericController {
 	@IBOutlet var creationDateLabel: ZTextField?
 	@IBOutlet var  cloudStatusLabel: ZTextField?
     @IBOutlet var   totalCountLabel: ZTextField?
-    @IBOutlet var    graphNameLabel: ZTextField?
+    @IBOutlet var      mapNameLabel: ZTextField?
     @IBOutlet var      versionLabel: ZTextField?
     @IBOutlet var        levelLabel: ZTextField?
     var                 currentZone: Zone?         { return gSelecting.rootMostMoveable }
@@ -41,7 +41,7 @@ class ZStatusController: ZGenericController {
         return "\(count) idea\(suffix)"
     }
 
-    var graphNameText: String {
+    var mapNameText: String {
         if  let dbID = currentZone?.databaseID {
             return "in \(dbID.userReadableString) database"
         }
@@ -81,7 +81,7 @@ class ZStatusController: ZGenericController {
 			creationDateLabel?.text = zoneRecordNameText // creationDateText
             cloudStatusLabel? .text = statusText
             totalCountLabel?  .text = totalCountsText
-            graphNameLabel?   .text = graphNameText
+			mapNameLabel?     .text = mapNameText
             versionLabel?     .text = versionText
 
             if  iKind != .sStartupProgress,

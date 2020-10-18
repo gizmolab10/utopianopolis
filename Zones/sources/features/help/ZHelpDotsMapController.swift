@@ -11,7 +11,7 @@ import CloudKit
 
 var gHelpHyperlinkColor: ZColor { return gIsDark ? kSystemBlue.lighter(by: 3.0) : kSystemBlue.darker(by: 4.0) }
 
-class ZHelpDotsMapController : ZGraphController {
+class ZHelpDotsMapController : ZMapController {
 
 	override  var controllerID : ZControllerID { return .idHelpDots }
 	override  var   widgetType : ZWidgetType   { return .tExemplar }

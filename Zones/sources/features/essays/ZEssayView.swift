@@ -284,8 +284,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func exit() {
 		if  let e = gCurrentEssay {
-			gControllers.swapGraphAndEssay(force: .graphMode)
-			gRedrawGraph()
+			gControllers.swapMapAndEssay(force: .mapMode)
+			gRedrawMap()
 
 			if  e.lastTextIsDefault,
 				e.autoDelete {
@@ -776,8 +776,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 							eZone?.asssureIsVisible()
 
 							FOREGROUND {
-								gControllers.swapGraphAndEssay(force: .graphMode)
-								gRedrawGraph()
+								gControllers.swapMapAndEssay(force: .mapMode)
+								gRedrawMap()
 							}
 
 							return true
@@ -858,7 +858,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch result {
 				case .eAlter: return true
 				case .eLock:  return false
-				case .eExit:  gControllers.swapGraphAndEssay()
+				case .eExit:  gControllers.swapMapAndEssay()
 				case .eDelete:
 					FOREGROUND {										// defer until after this method returns ... avoids corrupting resulting text
 						gCurrentEssay?.reset()

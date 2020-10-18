@@ -20,7 +20,7 @@ enum InterfaceStyle : String {
 }
 
 enum ZRootID: String {
-    case graphID     = "root"
+    case mapID       = "root"
     case trashID     = "trash"
     case destroyID   = "destroy"
 	case recentsID   = "recents"
@@ -123,7 +123,7 @@ enum ZWorkMode: String {
 	case editIdeaMode = "i"
 	case startupMode  = "s"
     case searchMode   = "?"
-    case graphMode    = "g"
+    case mapMode      = "g"
 	case noteMode     = "n"
 }
 
@@ -202,9 +202,20 @@ enum ZDatabaseID: String {
 	case     recentsID = "recents"
 	case      sharedID = "shared"
     case        mineID = "mine"
-	
+
+	var isSmallMapDB: Bool { return [.favoritesID, .recentsID].contains(self) }
 	var identifier: String { return rawValue.substring(toExclusive: 1) }
 	var index:        Int? { return self.databaseIndex?.rawValue }
+
+	var zRecords: ZRecords? {
+		switch self {
+			case .favoritesID: return gFavorites
+			case  .everyoneID: return gEveryoneCloud
+			case   .recentsID: return gRecents
+			case      .mineID: return gMineCloud
+			default:           return nil
+		}
+	}
 
     var userReadableString: String {
 		switch self {

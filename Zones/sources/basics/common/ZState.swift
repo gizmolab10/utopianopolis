@@ -56,16 +56,16 @@ var           gIsRecentlyMode:               Bool { return gSmallMapMode  == .re
 var            gListsGrowDown:               Bool { return gListGrowthMode == .down }
 var           gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var               gIsNoteMode:               Bool { return gWorkMode == .noteMode }
-var              gIsGraphMode:               Bool { return gWorkMode == .graphMode }
+var                gIsMapMode:               Bool { return gWorkMode == .mapMode }
 var             gIsSearchMode:               Bool { return gWorkMode == .searchMode }
 var            gIsStartupMode:               Bool { return gWorkMode == .startupMode }
 var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIdeaMode }
-var          gCanSaveWorkMode:               Bool { return gIsGraphMode || gIsNoteMode || gIsStartupMode }
-var    gIsGraphOrEditIdeaMode:               Bool { return gIsGraphMode || gIsEditIdeaMode }
+var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsNoteMode || gIsStartupMode }
+var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEditIdeaMode }
 var            gProSkillLevel:               Bool { return gSkillLevel == .pro }
 var       gStartOutSkillLevel:               Bool { return gSkillLevel == .startOut }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
-var                  gRecords:          ZRecords? { return gShowFavorites ? gFavorites : gCloud }
+var                  gRecords:          ZRecords? { return gShowSmallMap ? gFavorites : gCloud }
 var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
@@ -74,19 +74,19 @@ var                 gDotWidth:             Double { return gDotHeight * 0.75 }
 var                gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
 var       gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
 var   gDeciSecondsSinceLaunch:                Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
+var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
+var   gDarkishBackgroundColor:             ZColor { return gAccentColor.darkish (by: 1.028) }
+var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
 var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kLightestGrayColor : kBlackColor }
 var          gBackgroundColor:             ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
-var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
-var   gDarkishBackgroundColor:             ZColor { return gAccentColor.darkish (by: 1.028) }
-var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
 var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
 var            gFavoritesFont:              ZFont { return .systemFont    (ofSize: gFontSize * kFavoritesReduction) }
 var               gWidgetFont:              ZFont { return .systemFont    (ofSize: gFontSize) }
 
 let                 kHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize)
-var            kLargeHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize + 1.0)
 let                 kBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize)
+let            kLargeHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize + 1.0)
 let            kLargeBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize + 1.0)
 let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
 let       kBeginnerSkillLevel                     = ZSkillLevel.startOut.rawValue
@@ -94,7 +94,7 @@ let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
 
 func         gSetEditIdeaMode()                   { gWorkMode = .editIdeaMode }
-func            gSetGraphMode()                   { gWorkMode = .graphMode }
+func              gSetMapMode()                   { gWorkMode = .mapMode }
 
 func gStoreProgressTimes() {
 	var separator = ""
@@ -238,9 +238,9 @@ var gColorfulMode : Bool {
 	set { setPreferencesBool(newValue, for: kColorfulMode) }
 }
 
-var gShowFavorites : Bool {
-	get { return getPreferencesBool(   for: kShowFavorites, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kShowFavorites) }
+var gShowSmallMap : Bool {
+	get { return getPreferencesBool(   for: kShowSmallMap, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kShowSmallMap) }
 }
 
 var gHereRecordNames: String {
@@ -563,26 +563,26 @@ var gCurrentFunction : ZFunction {
 	}
 }
 
-var gCurrentGraph : ZFunction {
+var gCurrentMapFunction : ZFunction {
 	get {
-		var graph: ZFunction?
+		var function: ZFunction?
 		
-		if  let object = UserDefaults.standard.object(forKey:kCurrentGraph) {
-			graph      = ZFunction(rawValue: object as! String)
+		if  let object = UserDefaults.standard.object(forKey:kCurrentMap) {
+			function   = ZFunction(rawValue: object as! String)
 		}
 		
-		if  graph     == nil {
-			graph      = .eMe
+		if  function  == nil {
+			function   = .eMe
 			
-			UserDefaults.standard.set(graph!.rawValue, forKey:kActionFunction)
+			UserDefaults.standard.set(function!.rawValue, forKey:kActionFunction)
 			UserDefaults.standard.synchronize()
 		}
 		
-		return graph!
+		return function!
 	}
 
 	set {
-		UserDefaults.standard.set(newValue.rawValue, forKey:kCurrentGraph)
+		UserDefaults.standard.set(newValue.rawValue, forKey:kCurrentMap)
 		UserDefaults.standard.synchronize()
 	}
 }

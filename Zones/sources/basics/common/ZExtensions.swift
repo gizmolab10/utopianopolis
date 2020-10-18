@@ -49,7 +49,7 @@ func gSeparatorAt(level: Int) -> String { return " ( \(level) ) " }
 func gExitNoteMode() -> Bool {
 	if  gIsNoteMode {
 		gEssayView?.save()
-		gControllers.swapGraphAndEssay(force: .graphMode)
+		gControllers.swapMapAndEssay(force: .mapMode)
 
 		return true
 	}
@@ -61,7 +61,7 @@ func gSignal     (for object: Any? = nil, _ multiple: [ZSignalKind], _ onComplet
 	gControllers.signalFor(object, multiple: multiple, onCompletion: onCompletion)
 }
 
-func gRedrawGraph(for object: Any? = nil, _ onCompletion: Closure? = nil) {
+func gRedrawMap(for object: Any? = nil, _ onCompletion: Closure? = nil) {
 	gSignal(for: object, [.sRelayout], onCompletion)
 }
 
@@ -137,8 +137,8 @@ extension NSObject {
     }
 
     func blankScreenDebug() {
-        if  let w = gGraphController?.rootWidget.bounds.size.width, w < 1.0 {
-            bam("blank graph !!!!!!")
+        if  let w = gMapController?.rootWidget.bounds.size.width, w < 1.0 {
+            bam("blank map !!!!!!")
         }
     }
 
@@ -164,7 +164,7 @@ extension NSObject {
 	func cycleSkillLevel() {
 		gSkillLevel = ZSkillLevel(rawValue: gSkillLevel.rawValue + 1) ?? ZSkillLevel.startOut
 
-		gRedrawGraph()
+		gRedrawMap()
 	}
 
     func invokeUsingDatabaseID(_ dbID: ZDatabaseID?, block: Closure) {

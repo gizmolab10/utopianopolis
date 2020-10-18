@@ -10,11 +10,11 @@ import Foundation
 
 class ZHelpBigMapData : ZHelpData {
 
-	override var columnStrings : [[String]] { return [graphColumnOne, graphColumnTwo, graphColumnThree, graphColumnFour] }
+	override var columnStrings : [[String]] { return [mapColumnOne, mapColumnTwo, mapColumnThree, mapColumnFour] }
 	override var tabOffsets    :  [Int]     { return [0, 20, 85] }
 	override var columnWidth   :   Int      { return 288 }
 
-	let graphColumnOne: [String] = [
+	let mapColumnOne: [String] = [
 		"",				"", 											"",
 		"bEVERYWHERE:",	"", 											"",
 		"",				"", 											"",
@@ -59,7 +59,7 @@ class ZHelpBigMapData : ZHelpData {
 		" Legend:",													"", "",
 	]
 
-	let graphColumnTwo: [String] = [
+	let mapColumnTwo: [String] = [
 		"",				"", 											"",
 		"bWHILE EDITING AN IDEA:", 									"", "",
 		"",				"", 											"",
@@ -104,7 +104,7 @@ class ZHelpBigMapData : ZHelpData {
 		" ",	    	"...  (IN BLUE)  CLICK TO READ MORE",			"-",
 	]
 
-	let graphColumnThree: [String] = [
+	let mapColumnThree: [String] = [
 		"",				"", 											"",
 		"bWHILE NAVIGATING (SINGLE IDEA SELECTED, NOT BEING EDITED):", "", "",
 		"",				"", 											"",
@@ -149,7 +149,7 @@ class ZHelpBigMapData : ZHelpData {
 		"p",			"PRO FEATURE",									"",
 	]
 
-	let graphColumnFour: [String] = [
+	let mapColumnFour: [String] = [
 		"",				"", 											"",
 		"",				"", 											"",
 		"",				"", 											"",
@@ -159,6 +159,7 @@ class ZHelpBigMapData : ZHelpData {
 		"pRETURN", 		"edit with cursor at end", 						"edit-d05d18996df7",
 		"pHYPHEN", 		"convert text to/from 'titled line'", 			"lines-37426469b7c6",
 		" TAB", 		"new idea containing", 							"edit-d05d18996df7",
+		"p'", 			"move ideas between small maps",				"",
 		"pG", 			"refetch all lists within selection", 	 		"cloud-vs-file-f3543f7281ac",
 		"pS", 			"export to a outline file", 					"cloud-vs-file-f3543f7281ac",
 		"",				"", 											"",
@@ -179,7 +180,6 @@ class ZHelpBigMapData : ZHelpData {
 		" LEFT ", 		"hide list", 									"focusing-your-thinking-a53adb16bba",
 		" RIGHT", 		"reveal list",	 								"focusing-your-thinking-a53adb16bba",
 		" vertical", 	"extend selection", 							"selecting-ideas-cc2939720e53",
-		"",				"", 											"",
 		"",				"", 											"",
 		"BMULTIPLE IDEAS SELECTED:", 											"", "",
 		"p",			"", 											"",

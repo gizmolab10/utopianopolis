@@ -73,7 +73,7 @@ class ZBreadcrumbsView : ZButtonsView {
 
 		clipCrumbsButton? .image    = !clipped ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
 		dbIndicatorButton?.title    =  gDatabaseID.indicator
-		dbIndicatorButton?.isHidden = !gIsGraphOrEditIdeaMode
+		dbIndicatorButton?.isHidden = !gIsMapOrEditIdeaMode
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
@@ -92,8 +92,8 @@ class ZBreadcrumbsView : ZButtonsView {
 	}
 
 	@IBAction func handleDatabaseIndicatorAction(_ button: ZButton) {
-		gGraphController?.toggleGraphs()
-		gRedrawGraph()
+		gMapController?.toggleMaps()
+		gRedrawMap()
 		setupAndRedraw()
 	}
 
@@ -123,7 +123,7 @@ class ZBreadcrumbsView : ZButtonsView {
 				if  let note = next.noteMaybe {
 					gEssayView?.resetCurrentEssay(note)
 				} else {
-					gSetGraphMode()
+					gSetMapMode()
 				}
 			}
 

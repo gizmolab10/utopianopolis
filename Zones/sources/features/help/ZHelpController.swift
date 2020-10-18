@@ -22,9 +22,9 @@ let gAllHelpModes : [ZHelpMode] = [.basicMode, .allMode, .dotMode]
 class ZHelpController: ZGenericTableController {
 
 	@IBOutlet var      clipView : ZView?
+	@IBOutlet var   mapHelpGrid : ZHelpGridView?
 	@IBOutlet var  dotsHelpGrid : ZHelpGridView?
 	@IBOutlet var notesHelpGrid : ZHelpGridView?
-	@IBOutlet var graphHelpGrid : ZHelpGridView?
 	override  var  controllerID : ZControllerID  { return .idHelp }
 	var                helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
 	var                gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
@@ -43,7 +43,7 @@ class ZHelpController: ZGenericTableController {
 	func gridView(for iMode: ZHelpMode) -> ZHelpGridView? {
 		switch iMode {
 			case   .dotMode: return  dotsHelpGrid
-			default:         return graphHelpGrid
+			default:         return  mapHelpGrid
 		}
 	}
 

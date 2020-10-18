@@ -38,7 +38,7 @@ class ZDetailsController: ZGesturesController {
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
 		if  gIsNoteMode {
 			gEssayView?.save()
-			gControllers.swapGraphAndEssay(force: .graphMode)
+			gControllers.swapMapAndEssay(force: .mapMode)
 		}
 	}
 
@@ -59,7 +59,7 @@ class ZDetailsController: ZGesturesController {
 		view(for: .Status   )?.hideHideable = !gProSkillLevel
 
 		FOREGROUND() {
-			gRedrawGraph()
+			gRedrawMap()
 		}
 	}
     

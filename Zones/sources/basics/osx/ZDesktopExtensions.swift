@@ -534,7 +534,7 @@ extension ZDragView {
             gScrollOffset.y += event.deltaY * multiply
         }
         
-        gGraphController?.layoutForCurrentScrollOffset()
+        gMapController?.layoutForCurrentScrollOffset()
     }
 
 }
@@ -544,13 +544,13 @@ extension NSWindow {
 
     @IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .Preferences)?.toggleAction(self) }
     @IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
-    @IBAction func copy              (_ iItem: ZMenuItem?) { gGraphEditor.copyToPaste() }
-    @IBAction func cut               (_ iItem: ZMenuItem?) { gGraphEditor.delete() }
-    @IBAction func delete            (_ iItem: ZMenuItem?) { gGraphEditor.delete() }
-    @IBAction func paste             (_ iItem: ZMenuItem?) { gGraphEditor.paste() }
+    @IBAction func copy              (_ iItem: ZMenuItem?) { gMapEditor.copyToPaste() }
+    @IBAction func cut               (_ iItem: ZMenuItem?) { gMapEditor.delete() }
+    @IBAction func delete            (_ iItem: ZMenuItem?) { gMapEditor.delete() }
+    @IBAction func paste             (_ iItem: ZMenuItem?) { gMapEditor.paste() }
     @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gSearching.showSearch() }
-    @IBAction func undo              (_ iItem: ZMenuItem?) { gGraphEditor.undoManager.undo() }
-    @IBAction func redo              (_ iItem: ZMenuItem?) { gGraphEditor.undoManager.redo() }
+    @IBAction func undo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.undo() }
+    @IBAction func redo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.redo() }
 }
 
 extension ZoneWindow {

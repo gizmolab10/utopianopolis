@@ -74,7 +74,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                      hasNote :               Bool  { return hasTrait(for: .tNote) }
     var                    isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
-	var                   isInBigMap :               Bool  { return root?.isBigMapRoot      ?? false }
+	var                   isInBigMap :               Bool  { return root?.isBigMapRoot       ?? false }
 	var                  isInRecents :               Bool  { return root?.isRecentsRoot      ?? false }
     var                isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
     var             isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
@@ -883,7 +883,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				bookmark?.grab()
 				bookmark?.markNotFetched()
-				gRedrawGraph()
+				gRedrawMap()
 			}
 
 			if  gHere != self {
@@ -953,12 +953,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			parent.addIdea(at: index, with: name) { iChild in
 				if  let child = iChild {
 					if !containing {
-						gRedrawGraph(for: parent) {
+						gRedrawMap(for: parent) {
 							completion(child)
 						}
 					} else {
 						child.acquireZones(zones) {
-							gRedrawGraph(for: parent) {
+							gRedrawMap(for: parent) {
 								completion(child)
 							}
 						}
@@ -990,7 +990,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 									gHere  = self
 								}
 
-								gRedrawGraph(for: self)
+								gRedrawMap(for: self)
 							}
 						}
 					}
@@ -1130,7 +1130,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			addNext(containing: containing) { iChild in
 				gDeferringRedraw = false
 
-				gRedrawGraph(for: self) {
+				gRedrawMap(for: self) {
 					onCompletion?(iChild)
 					iChild.edit()
 				}
@@ -1156,7 +1156,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			gDeferRedraw {
 				parent.addIdea(at: index, with: childName) { iChild in
 					self.moveZone(to: iChild) {
-						gRedrawGraph()
+						gRedrawMap()
 
 						gDeferringRedraw = false
 
@@ -1212,7 +1212,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			var     movedZone = self
 			let    targetLink = there.crossLink
-			let     sameGraph = databaseID == targetLink?.databaseID
+			let       sameMap = databaseID == targetLink?.databaseID
 			let grabAndTravel = {
 				there.travelThrough() { object, kind in
 					let there = object as! Zone
@@ -1227,14 +1227,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			movedZone.orphan()
 
-			if sameGraph {
+			if  sameMap {
 				grabAndTravel()
 			} else {
 				movedZone.needDestroy()
 
 				movedZone = movedZone.deepCopy
 
-				gRedrawGraph {
+				gRedrawMap {
 					grabAndTravel()
 				}
 			}
@@ -1279,7 +1279,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func        addToGrabs() { gSelecting.addMultipleGrabs([self]) }
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
-	func       focusRecent() { focusOn() { gRedrawGraph() } }
+	func       focusRecent() { focusOn() { gRedrawMap() } }
 	func editTrait(for iType: ZTraitType) { gTextEditor.edit(traitFor(iType)) }
 
 	@discardableResult func edit() -> ZTextEditor? {
@@ -1292,8 +1292,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gHere = self
 
 		revealChildren()
-		gControllers.swapGraphAndEssay(force: .graphMode)
-		gRedrawGraph()
+		gControllers.swapMapAndEssay(force: .mapMode)
+		gRedrawMap()
 
 		let e = edit()
 
@@ -1309,7 +1309,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
 	func asssureIsVisibleAndGrab(updateBrowsingLevel: Bool = true) {
-		gShowFavorites = kIsPhone && isInSmallMap
+		gShowSmallMap = kIsPhone && isInSmallMap
 
 		asssureIsVisible()
 		grab(updateBrowsingLevel: updateBrowsingLevel)
@@ -1321,7 +1321,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
             
             if !(CLICKTWICE && self == gHere) {
 				gRecents.maybeRefocus(.eSelected) {
-                    gRedrawGraph()
+                    gRedrawMap()
                 }
             }
         } else if isGrabbed && gCurrentlyEditingWidget == nil {
@@ -1332,7 +1332,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			grab()
 		}
 
-		gRedrawGraph(for: self)
+		gRedrawMap(for: self)
     }
 
     override func debug(_  iMessage: String) {
@@ -1509,7 +1509,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gCreateCombinedEssay = false
 		gCurrentEssay        = note
 
-		gControllers.swapGraphAndEssay(force: .noteMode)
+		gControllers.swapMapAndEssay(force: .noteMode)
 	}
 
 	// MARK:- travel / focus / move
@@ -1576,18 +1576,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gRecents.push()
 				}
 
-				gShowFavorites = targetDBID == .favoritesID
+				gShowSmallMap = targetDBID.isSmallMapDB
 
 				complete(target, .sRelayout)
 			} else {
-				gShowFavorites = targetDBID == .favoritesID
+				gShowSmallMap = targetDBID.isSmallMapDB
 
 				if  gDatabaseID != targetDBID {
 					gDatabaseID  = targetDBID
 
-					// /////////////////////////// //
-					// TRAVEL TO A DIFFERENT GRAPH //
-					// /////////////////////////// //
+					// ///////////////////////// //
+					// TRAVEL TO A DIFFERENT MAP //
+					// ///////////////////////// //
 
 					if  let target = iTarget, target.isFetched { // e.g., default root favorite
 						gRecents.maybeRefocus(.eSelected) {
@@ -1613,9 +1613,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 				} else {
 
-					// ///////////////// //
-					// STAY WITHIN GRAPH //
-					// ///////////////// //
+					// /////////////// //
+					// STAY WITHIN MAP //
+					// /////////////// //
 
 					there = gCloud?.maybeZoneForRecordID(targetRecordID)
 					let grabbed = gSelecting.firstSortedGrab
@@ -1706,7 +1706,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			gCurrentEssay = note
 
-			gControllers.swapGraphAndEssay()
+			gControllers.swapMapAndEssay()
 
 			return true
 		}
@@ -1745,7 +1745,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				gFavorites.updateCurrentInBoth()
-				gRedrawGraph()
+				gRedrawMap()
 			}
 		}
 	}
@@ -1971,10 +1971,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     }
 
     func safeTraverseAncestors(visited: ZoneArray, _ block: ZoneToStatusClosure) {
-        if  block(self) == .eContinue,  //        skip == stop
-            !isARoot,                   //     isARoot == stop
-            !visited.contains(self),    // graph cycle == stop
-            let p = parentZone {        //  nil parent == stop
+        if  block(self) == .eContinue,  //       skip == stop
+            !isARoot,                   //    isARoot == stop
+            !visited.contains(self),    //  map cycle == stop
+            let p = parentZone {        // nil parent == stop
             p.safeTraverseAncestors(visited: visited + [self], block)
         }
     }
@@ -2323,7 +2323,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 							if  let child = iChild {
 								self.revealChildren()
-								gRedrawGraph(for: self) {
+								gRedrawMap(for: self) {
 									child.editAndSelect()
 								}
 							}
@@ -2350,7 +2350,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				gDeferringRedraw = false
 
-				gRedrawGraph(for: parent) {
+				gRedrawMap(for: parent) {
 					parent.editAndSelect(range: range)
 				}
 			}
@@ -2369,13 +2369,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		generationalUpdate(show: show, to: goal) {
-			gRedrawGraph(for: self)
+			gRedrawMap(for: self)
 		}
 	}
 
 	func expand(_ show: Bool) {
 		generationalUpdate(show: show) {
-			gRedrawGraph(for: self)
+			gRedrawMap(for: self)
 		}
 	}
 
@@ -2512,7 +2512,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func reverseChildren() {
 		children.reverse()
 		respectOrder()
-		gRedrawGraph()
+		gRedrawMap()
 	}
 
     func respectOrder() {
@@ -2621,7 +2621,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		gRedrawGraph(for: self)
+		gRedrawMap(for: self)
 	}
 
 	// MARK:- dots
@@ -2639,7 +2639,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  canTravel && (COMMAND || (fetchableCount == 0 && count == 0)) {
 			invokeTravel() { // email, hyperlink, bookmark, essay
-				gRedrawGraph()
+				gRedrawMap()
 			}
 		} else {
 			let show = !showingChildren
@@ -2651,7 +2651,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				// //////////////////////////
 
 				generationalUpdate(show: show) {
-					gRedrawGraph(for: self)
+					gRedrawMap(for: self)
 				}
 			} else if !isSmallMapRoot {
 
@@ -2671,7 +2671,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gRecentsHereMaybe   = newHere
 				}
 
-				gRedrawGraph()
+				gRedrawMap()
 			}
 		}
 	}
@@ -2808,7 +2808,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
     // MARK:- receive from cloud
     // MARK:-
 	
-	// add tp graph
+	// add to map
 
     func addToParent(_ onCompletion: ZoneMaybeClosure? = nil) {
         FOREGROUND(canBeDirect: true) {
@@ -2853,7 +2853,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "k":     break
 				case "m":     children.sortByLength()
 				case "n":     showNote()
-				case "o":     importFromFile(.eSeriously) { gRedrawGraph(for: self) }
+				case "o":     importFromFile(.eSeriously) { gRedrawMap(for: self) }
 				case "p":     break
 				case "r":     reverseChildren()
 				case "s":     exportToFile(.eSeriously)
@@ -2863,7 +2863,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case kEquals: break
 				case kSpace:  addIdea()
 				case "\u{08}",                                      // control-delete?
-				kDelete:      deleteSelf { gRedrawGraph() }
+				kDelete:      deleteSelf { gRedrawMap() }
 				default:      break
 			}
 		}

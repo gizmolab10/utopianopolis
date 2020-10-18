@@ -88,15 +88,15 @@ class ZBaseEditor: NSObject {
 
 	func smartGo(up: Bool, amongNotes: Bool = false) {
 		if  gIsRecentlyMode {
-			gRecents  .go(up: up) { gRedrawGraph() }
+			gRecents  .go(up: up) { gRedrawMap() }
 		} else {
-			gFavorites.go(up: up) { gRedrawGraph() }
+			gFavorites.go(up: up) { gRedrawMap() }
 		}
 	}
 
 	func clearRecents() {
 		if  gIsNoteMode {
-			gControllers.swapGraphAndEssay()
+			gControllers.swapMapAndEssay()
 		}
 
 		gCurrentEssay = nil
@@ -104,14 +104,14 @@ class ZBaseEditor: NSObject {
 
 	func fetchTraits() {
 		gBatches.allTraits { flag in
-			gRedrawGraph()
+			gRedrawMap()
 		}
 	}
 
 	func toggleColorfulMode() {
 		gColorfulMode = !gColorfulMode
 
-		gRedrawGraph()
+		gRedrawMap()
 	}
 
 }

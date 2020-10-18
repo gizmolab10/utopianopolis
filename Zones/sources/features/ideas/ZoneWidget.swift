@@ -91,8 +91,8 @@ class ZoneWidget: ZView {
 		return result!
 	}
 
-	var controller: ZGraphController? {
-		if type.isMap      { return     gGraphController }
+	var controller: ZMapController? {
+		if type.isMap      { return     gMapController }
 		if type.isRecent   { return gSmallMapController }
 		if type.isFavorite { return gSmallMapController }
 
@@ -543,7 +543,7 @@ class ZoneWidget: ZView {
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
 
-		if (gIsGraphOrEditIdeaMode || !type.isMap),
+		if (gIsMapOrEditIdeaMode || !type.isMap),
 			let      zone = widgetZone {
             let isGrabbed = zone.isGrabbed
             let isEditing = textWidget.isFirstResponder

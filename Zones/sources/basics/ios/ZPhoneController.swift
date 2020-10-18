@@ -17,7 +17,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     @IBOutlet var editorBottomConstraint : NSLayoutConstraint?
     @IBOutlet var    editorTopConstraint : NSLayoutConstraint?
     @IBOutlet var         hereTextWidget : ZoneTextWidget?
-	@IBOutlet var           graphsButton : UIButton?
+	@IBOutlet var             mapsButton : UIButton?
 	@IBOutlet var             undoButton : UIButton?
     @IBOutlet var            actionsView : UIView?
     @IBOutlet var               lineView : UIView?
@@ -26,8 +26,8 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     var                   keyboardHeight : CGFloat   =  0.0
 
 	
-	var nextGraph: ZFunction {
-		switch gCurrentGraph {
+	var nextMapFunction: ZFunction {
+		switch gCurrentMapFunction {
 		case .eMe:     return .ePublic
 		case .ePublic: return .eFavorites
 		default:       return .eMe
@@ -48,16 +48,16 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     }
 
 
-	@IBAction func graphsButtonAction(iButton: UIButton) {
-		gCurrentGraph = nextGraph
+	@IBAction func mapsButtonAction(iButton: UIButton) {
+		gCurrentMapFunction = nextMapFunction
 
-		gActionsController.switchView(to: gCurrentGraph)
+		gActionsController.switchView(to: gCurrentMapFunction)
 		update()
 	}
 	
 
 	@IBAction func undoButtonAction(iButton: UIButton) {
-		gGraphEditor.undoManager.undo()
+		gMapEditor.undoManager.undo()
 	}
 	
 
@@ -67,8 +67,8 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         editorBottomConstraint?.constant = gKeyboardIsVisible   ? keyboardHeight : selectorHeight
         editorTopConstraint?   .constant = gFavoritesAreVisible ? selectorHeight : 2.0
         hereTextWidget?            .text = hereTitle
-		graphsButton? 			  .title = gCurrentGraph.rawValue
-		graphsButton?          .isHidden = false
+		mapsButton? 			  .title = gCurrentMapFunction.rawValue
+		mapsButton?            .isHidden = false
 		actionsView?           .isHidden = false
 		undoButton?            .isHidden = false
 
@@ -137,7 +137,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         }
 
         if changed {
-            gGraphController?.layoutForCurrentScrollOffset()
+            gMapController?.layoutForCurrentScrollOffset()
         }
     }
 

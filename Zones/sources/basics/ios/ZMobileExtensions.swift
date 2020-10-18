@@ -246,13 +246,13 @@ extension UIView {
     var      zlayer:               CALayer { return layer }
     var recognizers: [ZGestureRecognizer]? { return gestureRecognizers }
 
-    var gestureHandler: ZGraphController? {
+    var gestureHandler: ZMapController? {
         get { return nil }
         set {
             clearGestures()
 
             if  let e = newValue {
-                e.clickGesture = createPointGestureRecognizer(e, action: #selector(ZGraphController      .handleClickGesture),                     clicksRequired: 1)
+                e.clickGesture = createPointGestureRecognizer(e, action: #selector(ZMapController      .handleClickGesture),                     clicksRequired: 1)
                 gDraggedZone   = nil
             }
         }
@@ -296,7 +296,7 @@ extension UIView {
 
     override open func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if  event?.subtype == UIEvent.EventSubtype.motionShake && !gKeyboardIsVisible {
-            gGraphController?.recenter()
+            gMapController?.recenter()
         }
     }
 
@@ -391,7 +391,7 @@ extension ZWindow {
             event     = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(UIWindow.handleKey), discoverabilityTitle: command.discoverabilityTitle!)
         }
 
-        gGraphEditor.handleEvent(event, isWindow: true)
+        gMapEditor.handleEvent(event, isWindow: true)
     }
 
 }
@@ -563,7 +563,7 @@ extension ZTextEditor {
 
     func fullResign()  {
         assignAsFirstResponder (nil) // ios broken?
-        gGraphController?.mobileKeyInput?.becomeFirstResponder()
+        gMapController?.mobileKeyInput?.becomeFirstResponder()
 	}
 	
 }
@@ -638,12 +638,12 @@ extension ZoneWidget {
 
 }
 
-extension ZGraphController {
+extension ZMapController {
     
-    @objc func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(up: true) }
-    @objc func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(up: false) }
-    @objc func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(out: true)  { gSelecting.updateAfterMove() } }
-    @objc func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gGraphEditor.move(out: false) { gSelecting.updateAfterMove() } }
+    @objc func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(up: true) }
+    @objc func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(up: false) }
+    @objc func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(out: true)  { gSelecting.updateAfterMove() } }
+    @objc func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(out: false) { gSelecting.updateAfterMove() } }
         
 }
 

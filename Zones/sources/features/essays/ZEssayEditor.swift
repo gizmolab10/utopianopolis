@@ -48,7 +48,7 @@ class ZEssayEditor: ZBaseEditor {
 				}
 			} else {
 				switch key {
-					case kEscape: if OPTION { gEssayView?.accountForSelection() }; gControllers.swapGraphAndEssay(); return true
+					case kEscape: if OPTION { gEssayView?.accountForSelection() }; gControllers.swapMapAndEssay(); return true
 					default:      return gEssayView?.handleKey(iKey, flags: flags) ?? false
 				}
 			}

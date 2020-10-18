@@ -14,7 +14,7 @@
 
 class ZDragView: ZView, ZGestureRecognizerDelegate {
 
-	@IBOutlet var controller: ZGraphController?
+	@IBOutlet var controller: ZMapController?
 	override func menu(for event: NSEvent) -> NSMenu? { return controller?.mapContextualMenu }
 
     override func draw(_ dirtyRect: CGRect) {
@@ -26,7 +26,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 		// draw dashed rectangle in active color for rubberband
 
-		if  controller?.isMap ?? false,
+		if  controller?.isBigMap ?? false,
 			let rect = gRubberband.rubberbandRect {
 			gActiveColor.accountingForDarkMode.lighter(by: 2.0).setStroke()
 			let path = ZBezierPath(rect: rect)
@@ -39,7 +39,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 		if  let     widget = gDragDropZone?.widget,
 			let        dot = widget.revealDot.innerDot,
-			let          c = controller, c.isMap == gDragDropZone?.isInBigMap {
+			let          c = controller, c.isBigMap == gDragDropZone?.isInBigMap {
 			let parameters = widget.widgetZone?.dropDotParameters() ?? ZDotParameters()
             let  floatRect = widget.floatingDropDotRect
             let   dragRect = widget.convert(floatRect, to: self)

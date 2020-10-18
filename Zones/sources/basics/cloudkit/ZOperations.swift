@@ -218,7 +218,7 @@ class ZOperations: NSObject {
                                     gFavorites.updateAllFavorites()
                                 }
 
-                                gRedrawGraph()
+                                gRedrawMap()
                             }
                         }
                     }

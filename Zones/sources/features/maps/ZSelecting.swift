@@ -22,18 +22,14 @@ enum ZRelation: Int {
     case upon
 }
 
-
 let gSelecting = ZSelecting()
-
 
 class ZSnapshot: NSObject {
 
-    
     var currentGrabs = ZoneArray ()
     var   databaseID : ZDatabaseID?
     var         here : Zone?
     var       isSame : Bool { return gSelecting.snapshot == self }
-
 
     static func == ( left: ZSnapshot, right: ZSnapshot) -> Bool {
         let   goodIDs = left.databaseID != nil && right.databaseID != nil
@@ -415,6 +411,23 @@ class ZSelecting: NSObject {
         }
     }
 
+	func swapGrabsFrom(_ fromID: ZDatabaseID, toID: ZDatabaseID) {
+		if  let moveInto  =   toID.zRecords?.hereZoneMaybe,
+			let fromRoot  = fromID.zRecords?.rootZone {
+			var moveThese = [Zone]()
+
+			for grab in currentGrabs {
+				if  let grabRoot = grab.root,
+					grabRoot == fromRoot {
+					moveThese.appendUnique(contentsOf: [grab])
+				}
+			}
+
+			for mover in moveThese {
+				mover.moveZone(to: moveInto)   // move mover into to
+			}
+		}
+	}
 
     // MARK:- internals
     // MARK:-

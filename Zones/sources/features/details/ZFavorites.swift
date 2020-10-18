@@ -120,7 +120,7 @@ class ZFavorites: ZRecords {
     
     func updateFavoritesAndRedraw(avoidRedraw: Bool = false, _ onCompletion: Closure? = nil) {
         if  updateAllFavorites() || !avoidRedraw {
-            gRedrawGraph { onCompletion?() }
+            gRedrawMap { onCompletion?() }
         } else {
             onCompletion?()
         }

@@ -16,7 +16,7 @@ class ZMobileKeyInput : UIControl, UIKeyInput {
     func deleteBackward() {}
 
     public func insertText(_ text: String) {
-        gGraphEditor.handleKey(text, flags: ZEventFlags(), isWindow: true)
+        gMapEditor.handleKey(text, flags: ZEventFlags(), isWindow: true)
     }
 
 }

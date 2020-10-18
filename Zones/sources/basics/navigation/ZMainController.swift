@@ -23,8 +23,8 @@ class ZMainController: ZGenericController {
 	@IBOutlet var permissionView    : ZView?
 	@IBOutlet var searchBoxView     : ZView?
     @IBOutlet var detailView        : ZView?
-	@IBOutlet var graphView         : ZView?
 	@IBOutlet var essayView     	: ZView?
+	@IBOutlet var mapView           : ZView?
     override  var controllerID      : ZControllerID { return .idMain }
 
 	override func setup() {
@@ -65,7 +65,7 @@ class ZMainController: ZGenericController {
 
 		switch iKind {
 			case .sFound:
-				graphView?            .isHidden = !hideResults
+				mapView?            .isHidden = !hideResults
 				searchBoxView?        .isHidden =  hideSearch
 				searchResultsView?    .isHidden =  hideResults
 			case .sSearch:
@@ -78,7 +78,7 @@ class ZMainController: ZGenericController {
 				}
 			case .sSwap:
 				essayView? 	  	      .isHidden =  hideEssay
-				graphView? 	  	      .isHidden = !hideEssay
+				mapView? 	  	      .isHidden = !hideEssay
 			default: break
         }
     }

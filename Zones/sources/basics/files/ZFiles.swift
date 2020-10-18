@@ -169,8 +169,8 @@ class ZFiles: NSObject {
 				// take snapshots just before exit from method //
 				// //////////////////////////////////////////////
 
- 				if  let   graph  = try cloud.rootZone?.createStorageDictionary(for: dbID)  {
-					dict[.graph] = graph as NSObject
+ 				if  let     map  = try cloud.rootZone?.createStorageDictionary(for: dbID)  {
+					dict[.graph] = map as NSObject
 				}
 
 				if  let   trash  = try cloud.trashZone?.createStorageDictionary(for: dbID) {
