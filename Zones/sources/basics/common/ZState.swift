@@ -65,7 +65,8 @@ var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEdit
 var            gProSkillLevel:               Bool { return gSkillLevel == .pro }
 var       gStartOutSkillLevel:               Bool { return gSkillLevel == .startOut }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
-var                  gRecords:          ZRecords? { return gShowSmallMap ? gFavorites : gCloud }
+var          gSmallMapRecords:          ZRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
+var                  gRecords:          ZRecords? { return gShowSmallMap ? gSmallMapRecords : gCloud }
 var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
@@ -169,7 +170,7 @@ var gExpandedZones : [String] {
 
 var gHere: Zone {
 	get {
-		return gRecords!.recentHere
+		return gRecords!.currentHere
 	}
 
 	set {
@@ -177,7 +178,7 @@ var gHere: Zone {
 			gDatabaseID = dbID
 		}
 
-		gRecords?.recentHere = newValue
+		gRecords?.currentHere = newValue
 
 		newValue.assureAdoption()
 		gRecents.push()

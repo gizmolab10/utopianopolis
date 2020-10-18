@@ -488,7 +488,7 @@ class ZCloud: ZRecords {
                 }
 
                 scan(self.rootZone)
-                scan(self.recentHere)
+                scan(self.currentHere)
 				scan(gFavorites.rootZone)
 
                 self.columnarReport("REMEMBER (\(memorables.count))", "\(self.databaseID.rawValue)")
@@ -1190,7 +1190,7 @@ class ZCloud: ZRecords {
         }
 
 		let hereCompletion = { (iHere: Zone) in
-			self.recentHere = iHere
+			self.currentHere = iHere
 
 			gRecents.push()
 			onCompletion?(0)

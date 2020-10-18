@@ -1661,7 +1661,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		gRecents.maybeRefocus(.eSelected) {
 			self.grab()
-			gFavorites.updateCurrentInBoth()
+			gSmallMapController?.update()
 			atArrival()
 		}
 	}
@@ -1744,7 +1744,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gHere.grab()
 				}
 
-				gFavorites.updateCurrentInBoth()
+				gSmallMapController?.update()
 				gRedrawMap()
 			}
 		}
@@ -1917,7 +1917,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func asssureIsVisible() {
 		if  let dbID = databaseID,
-			let goal = gRemoteStorage.cloud(for: dbID)?.recentHere {
+			let goal = gRemoteStorage.cloud(for: dbID)?.currentHere {
 
 			traverseAncestors { iAncestor -> ZTraverseStatus in
 				if  iAncestor != self {

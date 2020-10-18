@@ -32,7 +32,7 @@ class ZSmallMapController: ZMapController {
 
 	func update() {
 		controlsView?.update()
-		gFavorites.updateCurrentInBoth()
+		gSmallMapRecords?.updateCurrentInBoth()
 	}
 
 	override func startup() {

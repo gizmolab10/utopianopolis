@@ -676,10 +676,8 @@ class ZMapEditor: ZBaseEditor {
 				gSelecting.simplifiedGrabs.deleteZones(permanently: permanently) {
 					gDeferringRedraw = false
 
+					gRecords?.updateAfterDelete(grab)
 					gRedrawMap(for: grab)
-                    gFavorites.updateFavoritesAndRedraw {    // delete alters the list
-                        gRedrawMap(for: grab)
-                    }
                 }
             }
         }
