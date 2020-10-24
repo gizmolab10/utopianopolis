@@ -52,17 +52,7 @@ class ZRecents : ZRecords {
 		}
 	}
 
-	func updateRecents(shouldGrab: Bool = false) {
-		if  currentBookmark?.isGrabbed ?? false {
-			currentBookmark?.bookmarkTarget?.grab()
-		} else if updateCurrentRecent(),
-				  gIsRecentlyMode,
-				  shouldGrab {
-			currentBookmark?.grab()
-		}
-	}
-
-	@discardableResult func updateCurrentRecent() -> Bool {
+	@discardableResult func updateCurrentRecent() -> Zone? {
 		if  let recents  = rootZone?.allBookmarkProgeny, recents.count > 0 {
 			var targets  = ZoneArray()
 
@@ -75,14 +65,14 @@ class ZRecents : ZRecords {
 			}
 
 			if  targets.count   > 0,
-				let bookmark    = recents.bookmarkTargetting(targets) {
+				let bookmark    = recents.whoseTargetIntersects(with: targets) {
 				currentBookmark = bookmark
 
-				return true
+				return bookmark
 			}
 		}
 
-		return false
+		return nil
 	}
 
 	func push(intoNotes: Bool = false) {

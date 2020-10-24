@@ -80,13 +80,13 @@ class ZPreferencesController: ZGenericController {
 
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iColorBox.identifier) {
 			switch (identifier) {
-				case "drag targets":        gActiveColor = color
+				case "drag targets":            gActiveColor = color
 				case       "accent":            gAccentColor = color
 				case        "zones": gSelecting.grabbedColor = color
 				default:             break
 			}
 
-            gRedrawMap()
+			gRedrawMap()
         }
     }
 

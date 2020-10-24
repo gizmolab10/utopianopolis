@@ -472,12 +472,12 @@ class ZMapEditor: ZBaseEditor {
         if     !COMMAND || (OPTION && COMMA) {
             toggleGrowthAndConfinementModes(changesDirection:  COMMA)
             
-            if  gIsEditIdeaMode     && COMMA {
+            if  gIsEditIdeaMode    && COMMA {
                 swapAndResumeEdit()
             }
 
 			gSignal([.sMap, .sMain, .sDetails, .sPreferences])
-        } else if !COMMA {
+        } else if COMMA {
 			gShowDetailsView = true
 
 			gMainController?.update()
@@ -723,11 +723,11 @@ class ZMapEditor: ZBaseEditor {
                 } else {
                     
                     let moveOutToHere = { (iHere: Zone?) in
-                        if  let here = iHere {
-                            gHere = here
+						if  let here = iHere {
+							gHere = here
 
 							self.moveOut(to: gHere, onCompletion: onCompletion)
-                        }
+						}
                     }
                     
                     if extreme {
@@ -739,13 +739,21 @@ class ZMapEditor: ZBaseEditor {
                                 onCompletion?()
                             }
                         }
-                    } else if grandParentZone != nil {
+                    } else if let gp = grandParentZone {
+						let inSmallMap = p.isInSmallMap
+
+						if  inSmallMap {
+							p.concealChildren()
+						}
+
 						p.revealParentAndSiblings()
 
-						if  grandParentZone!.spawnedBy(gHere) {
-							self.moveOut(to: grandParentZone!, onCompletion: onCompletion)
+						if  gp.spawnedBy(gHere) {
+							self.moveOut(to: gp, onCompletion: onCompletion)
+						} else if inSmallMap {
+							gSmallMapRecords?.selectCurrent(p)
 						} else {
-							moveOutToHere(grandParentZone!)
+							moveOutToHere(gp)
 						}
                     }
                 }

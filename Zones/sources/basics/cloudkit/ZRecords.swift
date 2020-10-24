@@ -874,27 +874,23 @@ class ZRecords: NSObject {
 		}
 	}
 
-	func bookmarkTargetting(_ iTarget: Zone?, includeAncestors: Bool = true) -> Zone? {
-		var found: Zone?
-
-		if  iTarget?.databaseID != nil {
-			found                = rootZone?.allBookmarkProgeny.bookmarkTargetting([iTarget!], includeAncestors: includeAncestors)
+	func whichBookmarkTargets(_ iTarget: Zone?, orSpawnsIt: Bool = true) -> Zone? {
+		if  let target = iTarget, target.databaseID != nil {
+			return rootZone?.allBookmarkProgeny.whoseTargetIntersects(with: [target], orSpawnsIt: orSpawnsIt)
 		}
 
-		if  includeAncestors  &&  found == nil {
-			return bookmarkTargetting(iTarget, includeAncestors: false)
-		}
-
-		return found
+		return nil
 	}
 
-	func updateCurrentBookmark(_ currentZone: Zone? = nil) {
-		if  let     bookmark = bookmarkTargetting(currentZone ?? gHereMaybe),
+	@discardableResult func updateCurrentBookmark(_ currentZone: Zone? = nil) -> Zone? {
+		if  let     bookmark = whichBookmarkTargets(currentZone ?? gHereMaybe),
 			let       target = bookmark.bookmarkTarget,
 			(gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)),
 			!gIsRecentlyMode {
 			currentBookmark = bookmark
 		}
+
+		return currentBookmark
 	}
 
 	func updateCurrentInBoth() {
@@ -902,9 +898,29 @@ class ZRecords: NSObject {
 		gFavorites.updateCurrentBookmark()
 	}
 
-	func grabCurrent(_ shouldGrab: Bool) {
+	func swapBetweenBookmarkAndTarget(shouldGrab: Bool = false) {
+		if  let cb = currentBookmark,
+			cb.isGrabbed {
+			cb.bookmarkTarget?.grab() // grab target in big map
+		} else if shouldGrab,
+				  let bookmark = updateCurrentBookmark() {
+
+			bookmark.grab()
+
+			if  let h = hereZoneMaybe,
+				let p = bookmark.parentZone,
+				p != h {
+				h.concealChildren()
+				p.revealChildren()
+
+				hereZoneMaybe = p
+			}
+		}
+	}
+
+	func grabSmallMapCurrent(_ shouldGrab: Bool) {
 		if  gIsRecentlyMode {
-			gRecents.updateRecents(shouldGrab: shouldGrab)
+			swapBetweenBookmarkAndTarget(shouldGrab: shouldGrab)
 		} else {
 			gFavorites.updateGrab()
 		}
@@ -946,7 +962,7 @@ class ZRecords: NSObject {
 				finishAndGrab(gHere)
 			}
 		} else if zone == gHere {       // state 2
-			grabCurrent(shouldGrab)
+			grabSmallMapCurrent(shouldGrab)
 
 			atArrival()
 		} else if zone.isInSmallMap {   // state 3

@@ -874,27 +874,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func addBookmark() {
 		if  databaseID != .favoritesID, !isARoot {
-			let closure = {
-				var bookmark: Zone?
+			var bookmark: Zone?
 
-				self.invokeUsingDatabaseID(.mineID) {
-					bookmark = gFavorites.createFavorite(for: self, action: .aBookmark)
-				}
-
-				bookmark?.grab()
-				bookmark?.markNotFetched()
-				gRedrawMap()
-			}
-
-			if  gHere != self {
-				closure()
-			} else {
+			if  gHere == self {
 				revealParentAndSiblings()
 
 				gHere = self.parentZone ?? gHere
-
-				closure()
 			}
+
+			self.invokeUsingDatabaseID(.mineID) {
+				bookmark = gFavorites.createFavorite(for: self, action: .aBookmark)
+			}
+
+			bookmark?.grab()
+			bookmark?.markNotFetched()
+			gRedrawMap()
 		}
 	}
 
@@ -2437,7 +2431,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 
 					if  self.isInRecents {
-						gRecents.updateRecents()
+						gRecents.swapBetweenBookmarkAndTarget()
 					}
 				}
 

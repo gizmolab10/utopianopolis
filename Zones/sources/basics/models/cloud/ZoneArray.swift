@@ -381,27 +381,26 @@ extension ZoneArray {
 		}
 	}
 
-	func bookmarkTargetting(_ iTargets: ZoneArray, includeAncestors: Bool = false) -> Zone? {
+	func whoseTargetIntersects(with iTargets: ZoneArray, orSpawnsIt: Bool = false) -> Zone? {
 		var found: Zone?
 
 		for target in iTargets {
-			if  let                 dbID = target.databaseID {
-				var                level = Int.max
-				for child in self {
-					if  let childTarget  = child.bookmarkTarget,
-						dbID            == childTarget.databaseID {
+			if  let                dbID = target.databaseID {
+				var               level = Int.max
+				for zone in self {
+					if  let zoneTarget  = zone.bookmarkTarget,
+						dbID           == zoneTarget.databaseID {
+						let zoneLevel   = zoneTarget.level
 
-						if  childTarget == target {
-							return child
+						if  zoneTarget == target {
+							return zone
 						}
 
-						let childLevel   = childTarget.level
-
-						if  childLevel   < level,
-							includeAncestors,
-							target.spawnedBy(childTarget) {
-							level        = childLevel
-							found        = child
+						if  orSpawnsIt,
+							zoneLevel   < level,
+							target.spawnedBy(zoneTarget) {
+							level       = zoneLevel
+							found       = zone
 						}
 					}
 				}

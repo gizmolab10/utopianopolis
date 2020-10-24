@@ -370,6 +370,7 @@ class ZSelecting: NSObject {
     func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
 		if  let oldGrabs = primitiveGrab(iZones) {
             updateWidgetsNeedDisplay(for: oldGrabs)
+			gSignal([.sPreferences]) // so color wells are updated
 
             if  updateBrowsingLevel,
                 let 		  level = iZones?.rootMost?.level {

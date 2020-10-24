@@ -66,7 +66,7 @@ func gRedrawMap(for object: Any? = nil, _ onCompletion: Closure? = nil) {
 }
 
 func gDeferRedraw(_ closure: Closure) {
-	gDeferringRedraw     = true
+	gDeferringRedraw = true
 
 	closure()
 

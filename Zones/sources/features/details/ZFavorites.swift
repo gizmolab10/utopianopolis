@@ -110,7 +110,7 @@ class ZFavorites: ZRecords {
     }
 
     func updateCurrentFavorite(_ currentZone: Zone? = nil) {
-        if  let     bookmark = bookmarkTargetting(currentZone ?? gHereMaybe),
+        if  let     bookmark = whichBookmarkTargets(currentZone ?? gHereMaybe),
             let       target = bookmark.bookmarkTarget,
             (gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)),
 			!gIsRecentlyMode {
@@ -330,14 +330,14 @@ class ZFavorites: ZRecords {
 		// 2. not a bookmark, pass it                 //
 		// /////////////////////////////////////////////
 
-		if  let         zone = iZone,
-			let         root = rootZone {
-			var parent: Zone = zone.parentZone ?? gFavoritesHereMaybe ?? gFavoritesRoot!
-			let   isBookmark = zone.isBookmark
-			let    actNormal = action == .aBookmark
+		if  let       zone = iZone,
+			let       root = rootZone {
+			var     parent = zone.parentZone ?? gFavoritesHereMaybe ?? gFavoritesRoot!
+			let isBookmark = zone.isBookmark
+			let  actNormal = action == .aBookmark
 
 			if  !actNormal {
-				let basis: ZRecord = isBookmark ? zone.crossLink! : zone
+				let          basis = isBookmark ? zone.crossLink! : zone
 
 				if  let recordName = basis.recordName {
 					parent         = gFavoritesHereMaybe ?? gFavoritesRoot!
@@ -401,7 +401,7 @@ class ZFavorites: ZRecords {
         // 3. not in favorites           -> create and grab new favorite (its target is here) //
 		// /////////////////////////////////////////////////////////////////////////////////////
 
-		if  let       bookmark = bookmarkTargetting(here, includeAncestors: false) {
+		if  let       bookmark = whichBookmarkTargets(here, orSpawnsIt: false) {
 			hereZoneMaybe?.concealChildren()
 			bookmark.asssureIsVisibleAndGrab()                                          // state 1
 
