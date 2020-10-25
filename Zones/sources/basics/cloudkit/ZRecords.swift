@@ -920,7 +920,7 @@ class ZRecords: NSObject {
 
 	func grabSmallMapCurrent(_ shouldGrab: Bool) {
 		if  gIsRecentlyMode {
-			swapBetweenBookmarkAndTarget(shouldGrab: shouldGrab)
+			gRecents.swapBetweenBookmarkAndTarget(shouldGrab: shouldGrab)
 		} else {
 			gFavorites.updateGrab()
 		}
@@ -937,11 +937,11 @@ class ZRecords: NSObject {
 	func maybeRefocus(_ kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
 
 		// regarding grabbed/edited zone, five states:
-		// 1. is a bookmark     -> target becomes here
+		// 1. is a bookmark     -> target becomes here, if in big map then do as for state 2
 		// 2. is here           -> update in small map
-		// 3. in small map      -> grab here
+		// 3. in small map      -> grab here, if grabbed then do as for state 4
 		// 4. not here, COMMAND -> become here
-		// 5. not COMMAND       -> select here
+		// 5. not COMMAND       -> select here, create a bookmark
 
 		guard  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab else {
 			atArrival()

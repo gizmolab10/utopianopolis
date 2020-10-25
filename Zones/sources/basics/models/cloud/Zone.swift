@@ -1161,7 +1161,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func moveZone(into: Zone, at iIndex: Int?, orphan: Bool, onCompletion: Closure?) {
+	func moveZone(into: Zone, at iIndex: Int?, orphan: Bool = false, onCompletion: Closure? = nil) {
 		if  let parent = parentZone {
 			let  index = siblingIndex
 
@@ -1211,7 +1211,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				there.travelThrough() { object, kind in
 					let there = object as! Zone
 
-					movedZone.moveZone(into: there, at: gListsGrowDown ? nil : 0, orphan: false) {
+					movedZone.moveZone(into: there, at: gListsGrowDown ? nil : 0) {
 						movedZone.recursivelyApplyDatabaseID(targetLink?.databaseID)
 						movedZone.grab()
 						onCompletion?()

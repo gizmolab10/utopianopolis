@@ -89,8 +89,11 @@ class ZRecents : ZRecords {
 			}
 
 			if  done == false,
-			    let bookmark = gFavorites.createFavorite(for: gHereMaybe, action: .aBookmark) {
-				bookmark.moveZone(to: r)
+			    let bookmark = gFavorites.createFavorite(for: gHereMaybe, action: .aBookmark),
+				let    index = currentBookmark?.siblingIndex,
+				let   parent = currentBookmark?.parentZone {
+
+				bookmark.moveZone(into: parent, at: index + (gListsGrowDown ? 1 : -1))
 			}
 
 			updateCurrentRecent()
