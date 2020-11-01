@@ -414,7 +414,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 						let SPECIAL = gesture.modifiers?.isSpecial {
 
 						gMapEditor.moveGrabbedZones(into: drop, at: dropAt, SPECIAL) {
-							gRedrawMap()
+							gRedrawMaps()
                             gSelecting.updateBrowsingLevel()
                             gSelecting.updateCousinList()
                             self.restartGestureRecognition()

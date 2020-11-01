@@ -55,7 +55,7 @@ class ZDesktopAppDelegate: ZAppDelegate, NSMenuDelegate {
         }
         
         for file in openFiles {
-            insertInto.importFile(from: file) { gRedrawMap() }
+            insertInto.importFile(from: file) { gRedrawMaps() }
         }
     }
 	

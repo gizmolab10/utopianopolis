@@ -93,7 +93,7 @@ class ZBreadcrumbsView : ZButtonsView {
 
 	@IBAction func handleDatabaseIndicatorAction(_ button: ZButton) {
 		gMapController?.toggleMaps()
-		gRedrawMap()
+		gRedrawMaps()
 		setupAndRedraw()
 	}
 

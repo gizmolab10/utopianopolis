@@ -107,7 +107,7 @@ class ZMapEditor: ZBaseEditor {
 					gCurrentKeyPressed = key
 
                     switch key {
-					case "a":      if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMap() }
+					case "a":      if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMaps() }
                     case "b":      gSelecting.firstSortedGrab?.addBookmark()
 					case "c":      if COMMAND && !OPTION { copyToPaste() } else { gMapController?.recenter(SPECIAL) }
 					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
@@ -117,9 +117,9 @@ class ZMapEditor: ZBaseEditor {
                     case "h":      gSelecting.firstSortedGrab?.editTrait(for: .tHyperlink)
                     case "l":      alterCase(up: false)
 					case "k":      toggleColorized()
-					case "m":      gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawMap()
+					case "m":      gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawMaps()
                     case "n":      grabOrEdit(true, OPTION)
-                    case "o":      gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMap() }
+                    case "o":      gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
                     case "p":      printCurrentFocus()
                     case "r":      reverse()
 					case "s":      gHere.exportToFile(OPTION ? .eOutline : .eSeriously)
@@ -131,12 +131,12 @@ class ZMapEditor: ZBaseEditor {
                     case "z":      if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
-					case "'":      swapSmallMap(OPTION)
+					case "'":      swapSmallMapMode(OPTION)
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdate(CONTROL, COMMAND, kind: .eSelected) }
-					case "\\":     gMapController?.toggleMaps(); gRedrawMap()
-                    case "]", "[": smartGo(up: key == "]")
+					case "\\":     gMapController?.toggleMaps(); gRedrawMaps()
+					case "]", "[": gCurrentSmallMapRecords?.go(down: key == "]") { gRedrawMaps() }
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-					case kEquals:  if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawMap() } }
+					case kEquals:  if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawMaps() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
                     case kTab:     addSibling(OPTION)
 					case kSpace:   if OPTION || CONTROL || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
@@ -283,15 +283,17 @@ class ZMapEditor: ZBaseEditor {
 	// MARK:- features
 	// MARK:-
 
-	func swapSmallMap(_ OPTION: Bool) {
+	func swapSmallMapMode(_ OPTION: Bool) {
 		let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
 		let newID     : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
 
-		gSmallMapMode = gIsRecentlyMode ? .favorites   : .recent
+		gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
 
 		if  OPTION {			// if any grabs are in current small map, move them to other map
 			gSelecting.swapGrabsFrom(currentID, toID: newID)
 		}
+
+		gCurrentSmallMapRecords?.revealBookmark(of: gHere)
 
 		gSignal([.sDetails])
 	}
@@ -312,7 +314,7 @@ class ZMapEditor: ZBaseEditor {
 
 			gSelecting.grab(last)
 			gSelecting.firstGrab?.asssureIsVisible()
-			gRedrawMap(for: here)
+			gRedrawMaps(for: here)
 		}
 	}
 
@@ -325,7 +327,7 @@ class ZMapEditor: ZBaseEditor {
 	func popAndUpdate(_ CONTROL: Bool, _ COMMAND: Bool = false, kind: ZFocusKind) {
 		if  !CONTROL {
 			gRecords?.maybeRefocus(kind, COMMAND, shouldGrab: true) { // complex grab logic
-				gRedrawMap()
+				gRedrawMaps()
 			}
 		} else {
 			gRecents.popAndUpdateRecents()
@@ -334,7 +336,7 @@ class ZMapEditor: ZBaseEditor {
 				gHere    = here
 			}
 
-			gRedrawMap()
+			gRedrawMaps()
 		}
 	}
 
@@ -344,7 +346,7 @@ class ZMapEditor: ZBaseEditor {
 		size           = size.force(horizotal: false, into: NSRange(location: 2, length: 7))
 		gGenericOffset = size
 
-		gRedrawMap()
+		gRedrawMaps()
 	}
 
 	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {
@@ -380,7 +382,7 @@ class ZMapEditor: ZBaseEditor {
 				self.moveZones(grabs, into: original) {
 					original.grab()
 
-					gRedrawMap {
+					gRedrawMaps {
 						innerClosure()
 						onCompletion?()
 					}
@@ -436,7 +438,7 @@ class ZMapEditor: ZBaseEditor {
 
     func focusOnTrash() {
 		gTrash?.focusOn() {
-			gRedrawMap()
+			gRedrawMaps()
 		}
     }
 
@@ -451,7 +453,7 @@ class ZMapEditor: ZBaseEditor {
 			gSelecting.simplifiedGrabs.assureAdoption()   // finish what fetch has done
 		} else if  COMMAND && !OPTION {                   // COMMAND alone
 			gBatches.refetch { iSame in
-				gRedrawMap()
+				gRedrawMaps()
 			}
 		} else {
 			for grab in gSelecting.currentGrabs {
@@ -463,7 +465,7 @@ class ZMapEditor: ZBaseEditor {
 			}
 
 			gBatches.children { iSame in
-				gRedrawMap()
+				gRedrawMaps()
 			}
 		}
 	}
@@ -493,7 +495,7 @@ class ZMapEditor: ZBaseEditor {
             zone.toggleColorized()
         }
 
-        gRedrawMap()
+        gRedrawMaps()
     }
 
 
@@ -550,7 +552,7 @@ class ZMapEditor: ZBaseEditor {
             }
         }
 
-        gRedrawMap()
+        gRedrawMaps()
     }
 
 	func grabOrEdit(_ COMMAND: Bool, _  OPTION: Bool, _ ESCAPE: Bool = false) {
@@ -584,7 +586,7 @@ class ZMapEditor: ZBaseEditor {
 			zone.divideEvenly()
 		}
 
-		gRedrawMap()
+		gRedrawMaps()
     }
 
     func rotateWritable() {
@@ -592,7 +594,7 @@ class ZMapEditor: ZBaseEditor {
             zone.rotateWritable()
         }
 
-        gRedrawMap()
+        gRedrawMaps()
     }
 
     func alterCase(up: Bool) {
@@ -633,7 +635,7 @@ class ZMapEditor: ZBaseEditor {
             gCurrentBrowseLevel = zone.level // so cousin list will not be empty
             
             moveUp(atStart, [zone], selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { iKind in
-                gRedrawMap() {
+                gRedrawMaps() {
                     t.edit(zone)
                     t.setCursor(at: offset)
                 }
@@ -664,20 +666,25 @@ class ZMapEditor: ZBaseEditor {
                     gFavorites.updateFavoritesAndRedraw {
                         gDeferringRedraw = false
                         
-                        gRedrawMap()
+                        gRedrawMaps()
                     }
                 }
             } else {
-				let deleteThis = gSelecting.rootMostMoveable
-				let       grab = deleteThis?.parentZone
+				let grab = gSelecting.rootMostMoveable
 
 				prepareUndoForDelete()
                 
 				gSelecting.simplifiedGrabs.deleteZones(permanently: permanently) {
 					gDeferringRedraw = false
 
-					gRecords?.updateAfterDelete(grab)
-					gRedrawMap(for: grab)
+					if  let g = grab {
+						if  g.isInSmallMap,      // if already grabbed and in small map
+							g.count == 0 {       // mark g as current
+							gCurrentSmallMapRecords?.selectCurrent(g, alterHere: true)
+						}
+
+						gRedrawMaps(for: g)
+					}
                 }
             }
         }
@@ -751,7 +758,7 @@ class ZMapEditor: ZBaseEditor {
 						if  gp.spawnedBy(gHere) {
 							self.moveOut(to: gp, onCompletion: onCompletion)
 						} else if inSmallMap {
-							gSmallMapRecords?.selectCurrent(p)
+							gCurrentSmallMapRecords?.selectCurrent(p)
 						} else {
 							moveOutToHere(gp)
 						}
@@ -785,6 +792,7 @@ class ZMapEditor: ZBaseEditor {
 
     func actuallyMoveInto(_ zones: ZoneArray, onCompletion: Closure?) {
 		if  !gIsRecentlyMode || !zones.anyInRecently,
+			zones.count > 0,
 			var    there = zones[0].parentZone {
             let siblings = Array(there.children)
             
@@ -858,7 +866,7 @@ class ZMapEditor: ZBaseEditor {
 		zones.reverse()
 
 		commonParent?.respectOrder()
-		gRedrawMap()
+		gRedrawMaps()
 	}
 
     func undoDelete() {
@@ -876,7 +884,7 @@ class ZMapEditor: ZBaseEditor {
             iUndoSelf.delete()
         }
 
-        gRedrawMap()
+        gRedrawMaps()
     }
 
 	func paste() { pasteInto(gSelecting.firstSortedGrab) }
@@ -908,7 +916,7 @@ class ZMapEditor: ZBaseEditor {
                     iUndoSelf.prepareUndoForDelete()
                     forUndo.deleteZones(iShouldGrab: false, onCompletion: nil)
                     zone.grab()
-                    gRedrawMap()
+                    gRedrawMaps()
                 }
 
                 if isBookmark {

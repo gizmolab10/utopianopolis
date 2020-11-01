@@ -70,7 +70,7 @@ class ZPreferencesController: ZGenericController {
 				default:           break
 			}
 
-            gRedrawMap()
+            gRedrawMaps()
         }
     }
 
@@ -86,7 +86,7 @@ class ZPreferencesController: ZGenericController {
 				default:             break
 			}
 
-			gRedrawMap()
+			gRedrawMaps()
         }
     }
 
@@ -97,12 +97,12 @@ class ZPreferencesController: ZGenericController {
                 UNDO(self) { iUndoSelf in
                     grab.color = color
 
-					gRedrawMap(for: grab)
+					gRedrawMaps(for: grab)
                 }
             }
             
             grab.clearColor()
-			gRedrawMap(for: grab)
+			gRedrawMaps(for: grab)
         }
     }
 
@@ -111,7 +111,7 @@ class ZPreferencesController: ZGenericController {
         let          selection = iControl.selectedSegment
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
 			switch (identifier) {
-				case "counts": gCountsMode = ZCountsMode    (rawValue: selection)!; gRedrawMap()
+				case "counts": gCountsMode = ZCountsMode    (rawValue: selection)!; gRedrawMaps()
 				default: break
 			}
         }

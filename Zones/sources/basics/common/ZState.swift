@@ -65,8 +65,8 @@ var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEdit
 var            gProSkillLevel:               Bool { return gSkillLevel == .pro }
 var       gStartOutSkillLevel:               Bool { return gSkillLevel == .startOut }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
-var          gSmallMapRecords:          ZRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
-var                  gRecords:          ZRecords? { return gShowSmallMap ? gSmallMapRecords : gCloud }
+var   gCurrentSmallMapRecords:          ZRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
+var                  gRecords:          ZRecords? { return gShowSmallMap ? gCurrentSmallMapRecords : gCloud }
 var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }

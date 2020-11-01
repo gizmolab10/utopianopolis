@@ -52,76 +52,12 @@ class ZRecents : ZRecords {
 		}
 	}
 
-	@discardableResult func updateCurrentRecent() -> Zone? {
-		if  let recents  = rootZone?.allBookmarkProgeny, recents.count > 0 {
-			var targets  = ZoneArray()
-
-			if  let grab = gSelecting.firstGrab {
-				targets.append(grab)
-			}
-
-			if  let here = gHereMaybe {
-				targets.appendUnique(contentsOf: [here])
-			}
-
-			if  targets.count   > 0,
-				let bookmark    = recents.whoseTargetIntersects(with: targets) {
-				currentBookmark = bookmark
-
-				return bookmark
-			}
-		}
-
-		return nil
-	}
-
-	func push(intoNotes: Bool = false) {
-		if  let r = rootZone {
-			var done = false
-
-			r.traverseAllProgeny { bookmark in
-				if  done    == false,
-					let name = bookmark.bookmarkTarget?.recordName(),
-					name    == gHereMaybe?.recordName() {
-
-					done = true
-				}
-			}
-
-			if  done == false,
-			    let bookmark = gFavorites.createFavorite(for: gHereMaybe, action: .aBookmark),
-				let    index = currentBookmark?.siblingIndex,
-				let   parent = currentBookmark?.parentZone {
-
-				bookmark.moveZone(into: parent, at: index + (gListsGrowDown ? 1 : -1))
-			}
-
-			updateCurrentRecent()
-		}
-	}
-
-	func popAndUpdateRecents(){
-		if  !pop(),
-		    let marks = workingBookmarks,
-		    marks.count > 0 {
-			currentBookmark = marks[0]
-		}
-	}
-
-	@discardableResult func pop(fromNotes: Bool = false) -> Bool {
-		return remove(gHereMaybe, fromNotes: fromNotes)
-	}
-
-	@discardableResult func remove(_ iItem: NSObject?, fromNotes: Bool = false) -> Bool {
-		if  let  zone = iItem as? Zone,
-			let     r = rootZone {
-
-			for (index, bookmark) in r.children.enumerated() {
-				if  let name = bookmark.bookmarkTarget?.recordName(),
-					name    == zone.recordName() {
-
-					go(up: true) {
-						r.children.remove(at: index)
+	@discardableResult func pop(_ iZone: Zone? = gHereMaybe) -> Bool {
+		if  let name = iZone?.recordName() {
+			for bookmark in workingBookmarks {
+				if  name == bookmark.bookmarkTarget?.recordName() {
+					go(down: gListsGrowDown) {
+						bookmark.deleteSelf(permanently: true) {}
 					}
 
 					return true
@@ -131,6 +67,54 @@ class ZRecents : ZRecords {
 		}
 
 		return false
+	}
+
+	func setHereAsParentOfBookmarkTargeting(_ target: Zone?) -> Bool {
+		var found = false
+
+		rootZone?.traverseProgeny { (bookmark) -> (ZTraverseStatus) in
+			if  !found, // keep looking
+				let targetName = bookmark.bookmarkTarget?.recordName(),
+				targetName    == target?.recordName(),
+				let     parent = bookmark.parentZone {
+
+				hereZoneMaybe  = parent
+				found          = true
+
+				return .eStop
+			}
+
+			return .eContinue
+		}
+
+		return !found
+	}
+
+	func push(intoNotes: Bool = false) {
+		if  rootZone != nil {
+			if  setHereAsParentOfBookmarkTargeting(gHereMaybe),
+				let bookmark = gFavorites.createFavorite(for: gHereMaybe, action: .aBookmark) {
+				var    index = gListsGrowDown ? nil : 0                // assume current bookmark's parent is NOT current here
+
+				if  let          b = currentBookmark,
+					let          p = b.parentZone,
+					hereZoneMaybe == p,                                // current bookmark's parent same as here
+					let sIndex     = b.siblingIndex {
+					index          = sIndex + (gListsGrowDown ? 1 : 0) // place new bookmark relative to current one
+				}
+
+				bookmark.moveZone(into: currentHere, at: index)
+			}
+
+			updateCurrentRecent()
+		}
+	}
+
+	func popAndUpdateRecents(){
+		if  !pop(),
+		    workingBookmarks.count > 0 {
+			currentBookmark = workingBookmarks[0]
+		}
 	}
 
 	func object(for id: String) -> NSObject? {

@@ -61,7 +61,7 @@ func gSignal     (for object: Any? = nil, _ multiple: [ZSignalKind], _ onComplet
 	gControllers.signalFor(object, multiple: multiple, onCompletion: onCompletion)
 }
 
-func gRedrawMap(for object: Any? = nil, _ onCompletion: Closure? = nil) {
+func gRedrawMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
 	gSignal(for: object, [.sRelayout], onCompletion)
 }
 
@@ -164,7 +164,7 @@ extension NSObject {
 	func cycleSkillLevel() {
 		gSkillLevel = ZSkillLevel(rawValue: gSkillLevel.rawValue + 1) ?? ZSkillLevel.startOut
 
-		gRedrawMap()
+		gRedrawMaps()
 	}
 
     func invokeUsingDatabaseID(_ dbID: ZDatabaseID?, block: Closure) {

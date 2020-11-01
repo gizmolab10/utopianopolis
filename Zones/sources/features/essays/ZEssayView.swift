@@ -78,7 +78,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 				case "/":                  gHelpController?.show(flags: flags)
-				case "]", "[": gEssayEditor.smartGo(up: key == "]")
+				case "]", "[": gCurrentSmallMapRecords?.go(down: key == "]") { gRedrawMaps() }
 				case kReturn:  gCurrentEssayZone?.grab(); done()
 				default:       return false
 			}
@@ -285,7 +285,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func exit() {
 		if  let e = gCurrentEssay {
 			gControllers.swapMapAndEssay(force: .mapMode)
-			gRedrawMap()
+			gRedrawMaps()
 
 			if  e.lastTextIsDefault,
 				e.autoDelete {
@@ -488,7 +488,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func popNoteAndUpdate() {
-		if  gRecents.pop(fromNotes: true) {
+		if  gRecents.pop() {
 			exit()
 		} else {
 			updateText()
@@ -632,8 +632,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
-				case .idForward: gEssayEditor.smartGo(up:  true, amongNotes: true)
-				case .idBack:    gEssayEditor.smartGo(up: false, amongNotes: true)
+				case .idForward: gCurrentSmallMapRecords?.go(down:  true) { gRedrawMaps() }
+				case .idBack:    gCurrentSmallMapRecords?.go(down: false) { gRedrawMaps() }
 				case .idSave:    save()
 				case .idHide:    gCurrentEssayZone?.grab();        done()
 				case .idCancel:  gCurrentEssayZone?.grab();        exit()
@@ -777,7 +777,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 							FOREGROUND {
 								gControllers.swapMapAndEssay(force: .mapMode)
-								gRedrawMap()
+								gRedrawMaps()
 							}
 
 							return true

@@ -189,7 +189,7 @@ class ZTextPack: NSObject {
 		gTextCapturing = false
 
 		if  redrawSync {
-			gRedrawMap()
+			gRedrawMaps()
 		}
     }
 
@@ -343,7 +343,7 @@ class ZTextEditor: ZTextView {
 			zone?.grab()
 
 			if  andRedraw {
-				gRedrawMap(for: zone)
+				gRedrawMaps(for: zone)
 			}
         }
     }

@@ -204,12 +204,12 @@ class ZRemoteStorage: NSObject {
 						 .recordUpdated:
 						cloud.addCKRecord(ckRecord, for: [.needsFetch])
 						printDebug(.dRemote, "receiving \(dbi) \"\(type)\" \(name)")
-						gRedrawMap()
+						gRedrawMaps()
 					case .recordDeleted:
 						if  let deleted = cloud.maybeZoneForCKRecord(ckRecord) {
 							printDebug(.dRemote, "deleted \(dbi) \(name)")
 							[deleted].deleteZones(permanently: true) {
-								gRedrawMap()
+								gRedrawMaps()
 							}
 						}
 				}

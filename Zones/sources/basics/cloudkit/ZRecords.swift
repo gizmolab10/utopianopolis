@@ -819,47 +819,65 @@ class ZRecords: NSObject {
 	// MARK:- focus
 	// MARK:-
 
-	var workingBookmarks: ZoneArray? {
-		return gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny
+	var workingBookmarks: ZoneArray {
+		return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? []
 	}
 
-	func go(up: Bool, atArrival: @escaping Closure) {
-		if  let bookmarks = workingBookmarks {
-			let       max = bookmarks.count - 1
+	func go(down: Bool, atArrival: Closure? = nil) {
+		let max = workingBookmarks.count - 1
 
-			for (index, bookmark) in bookmarks.enumerated() {
-				if  bookmark == currentBookmark {
-					var found     = 0         // wrap going up
+		for (iIndex, bookmark) in workingBookmarks.enumerated() {
+			if  bookmark == currentBookmark {
+				var fIndex     = 0         // wrap going down
 
-					if  up {
-						if  index < max {
-							found = index + 1 // go up
-						}
-					} else {
-						found     = max       // wrap going down
-
-						if  index > 0 {
-							found = index - 1 // go down
-						}
+				if  down {
+					if  iIndex < max {
+						fIndex = iIndex + 1 // go down
 					}
+				} else {
+					fIndex     = max       // wrap going up
 
-					selectCurrent(bookmarks[found])
-					atArrival()
-
-					return
+					if  iIndex > 0 {
+						fIndex = iIndex - 1 // go up
+					}
 				}
+
+				selectCurrent(workingBookmarks[fIndex], alterHere: true)
+				atArrival?()
+
+				return
 			}
 		}
 	}
 
-	func selectCurrent(_  iZone: Zone?) {
-		if  let    pHere = iZone?.parentZone,
-			currentHere != pHere {
+	func revealBookmark(of target: Zone) {
+
+		// locate and make bookmark of target visible and mark it
+
+		if  let b = whichBookmarkTargets(target) {
+			makeVisibleAndMarkInSmallMap(b)
+		}
+	}
+
+	@discardableResult func makeVisibleAndMarkInSmallMap(_  iZone: Zone? = nil) -> Bool {
+		if  let   pHere  = iZone?.parentZone,
+			currentHere != pHere,
+			pHere.isInSmallMap {
 			currentHere.concealChildren()
 
 			currentHere  = pHere
 
 			currentHere.revealChildren()
+
+			return true
+		}
+
+		return false
+	}
+
+	func selectCurrent(_  iZone: Zone?, alterHere: Bool = false) {
+		if  alterHere,
+			makeVisibleAndMarkInSmallMap(iZone) {
 			iZone?.grab()
 		}
 
@@ -882,15 +900,37 @@ class ZRecords: NSObject {
 		return nil
 	}
 
-	@discardableResult func updateCurrentBookmark(_ currentZone: Zone? = nil) -> Zone? {
-		if  let     bookmark = whichBookmarkTargets(currentZone ?? gHereMaybe),
+	@discardableResult func updateCurrentBookmark() -> Zone? {
+		if  let     bookmark = whichBookmarkTargets(gHereMaybe),
 			let       target = bookmark.bookmarkTarget,
-			(gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)),
-			!gIsRecentlyMode {
+			(gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
 			currentBookmark = bookmark
 		}
 
 		return currentBookmark
+	}
+
+	@discardableResult func updateCurrentRecent() -> Zone? {
+		if  let recents  = rootZone?.allBookmarkProgeny, recents.count > 0 {
+			var targets  = ZoneArray()
+
+			if  let grab = gSelecting.firstGrab {
+				targets.append(grab)
+			}
+
+			if  let here = gHereMaybe {
+				targets.appendUnique(contentsOf: [here])
+			}
+
+			if  targets.count   > 0,
+				let bookmark    = recents.whoseTargetIntersects(with: targets) {
+				currentBookmark = bookmark
+
+				return bookmark
+			}
+		}
+
+		return nil
 	}
 
 	func updateCurrentInBoth() {
@@ -923,14 +963,6 @@ class ZRecords: NSObject {
 			gRecents.swapBetweenBookmarkAndTarget(shouldGrab: shouldGrab)
 		} else {
 			gFavorites.updateGrab()
-		}
-	}
-
-	func updateAfterDelete(_ iGrab: Zone?) {
-		if  let grab = iGrab,
-			grab.root?.isInSmallMap ?? false,
-			grab.count == 0 {
-			gSmallMapRecords?.selectCurrent(grab)
 		}
 	}
 

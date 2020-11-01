@@ -59,7 +59,7 @@ class ZDetailsController: ZGesturesController {
 		view(for: .Status   )?.hideHideable = !gProSkillLevel
 
 		FOREGROUND() {
-			gRedrawMap()
+			gRedrawMaps()
 		}
 	}
     

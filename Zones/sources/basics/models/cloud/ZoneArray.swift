@@ -225,7 +225,7 @@ extension ZoneArray {
 				zones.updateOrdering(start: start, end: end)
 				parent.respectOrder()
 				parent.children.updateOrder()
-				gRedrawMap()
+				gRedrawMaps()
 			}
 
 			gSelecting.hasNewGrab = gSelecting.currentMoveable
@@ -322,7 +322,7 @@ extension ZoneArray {
 		}
 
 		let    zones = sortedByReverseOrdering()
-		let     grab = !iShouldGrab ? nil : self.grabAppropriate()
+		let     grab = !iShouldGrab ? nil : grabAppropriate()
 		var doneOnce = false
 
 		for zone in self {

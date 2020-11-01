@@ -10,13 +10,11 @@
 import Foundation
 import CloudKit
 
-
 enum ZBookmarkAction: Int {
     case aBookmark
     case aNotABookmark
     case aCreateFavorite
 }
-
 
 let gFavorites = ZFavorites(ZDatabaseID.favoritesID)
 var gFavoritesRoot : Zone? { return gFavorites.rootZone }
@@ -40,12 +38,8 @@ class ZFavorites: ZRecords {
 		}
 	}
 
-	var workingFavorites : [Zone] {
-		return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? []
-	}
-
     var hasTrash: Bool {
-        for favorite in workingFavorites {
+        for favorite in workingBookmarks {
             if  let target = favorite.bookmarkTarget, target.isTrashRoot {
                 return true
             }
@@ -55,7 +49,7 @@ class ZFavorites: ZRecords {
     }
 
 	var favoritesIndex : Int? {
-		for (index, zone) in workingFavorites.enumerated() {
+		for (index, zone) in workingBookmarks.enumerated() {
 			if  zone == currentBookmark {
 				return index
 			}
@@ -120,7 +114,7 @@ class ZFavorites: ZRecords {
     
     func updateFavoritesAndRedraw(avoidRedraw: Bool = false, _ onCompletion: Closure? = nil) {
         if  updateAllFavorites() || !avoidRedraw {
-            gRedrawMap { onCompletion?() }
+            gRedrawMaps { onCompletion?() }
         } else {
             onCompletion?()
         }
@@ -178,7 +172,7 @@ class ZFavorites: ZRecords {
 
 					if  hasDuplicate {
 						let isUnfetched: ZoneClosure = { iZone in
-							if iZone.notFetched, let index = self.workingFavorites.firstIndex(of: iZone) {
+							if iZone.notFetched, let index = self.workingBookmarks.firstIndex(of: iZone) {
 								discards.append(index)
 							}
 						}
@@ -202,8 +196,8 @@ class ZFavorites: ZRecords {
 			// ////////////////////////////
 
 			while   let   index = discards.popLast() {
-				if  index < workingFavorites.count {
-					let discard = workingFavorites[index]
+				if  index < workingBookmarks.count {
+					let discard = workingBookmarks[index]
 					discard.needDestroy()
 					discard.orphan()
 				}
@@ -268,7 +262,7 @@ class ZFavorites: ZRecords {
     func nextWorkingIndex(after index: Int, going down: Bool) -> Int {
         let  increment = (down ? 1 : -1)
         var       next = index + increment
-        let      count = workingFavorites.count
+        let      count = workingBookmarks.count
         if next       >= count {
             next       = 0
         } else if next < 0 {
@@ -278,12 +272,12 @@ class ZFavorites: ZRecords {
         return next
     }
 
-    func go(_ down: Bool, atArrival: @escaping Closure) {
+    func go(die down: Bool, atArrival: @escaping Closure) {
 		if  let   fIndex = favoritesIndex {
 			let    index = nextWorkingIndex(after: fIndex, going: down)
 			var     bump : IntClosure?
 			bump         = { (iIndex: Int) in
-				let zone = self.workingFavorites[iIndex]
+				let zone = self.workingBookmarks[iIndex]
 
 				if  zone.isBookmark {
 					zone.focusThrough(atArrival)
