@@ -38,9 +38,7 @@ class ZUser : ZRecord {
         }
 
         set {
-            if  newValue   != access {
-                writeAccess = NSNumber(value: newValue.rawValue)
-            }
+			writeAccess = NSNumber(value: newValue.rawValue)
         }
     }
 
