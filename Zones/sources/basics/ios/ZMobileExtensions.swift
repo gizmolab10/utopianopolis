@@ -166,12 +166,13 @@ extension ZColor {
     }
     
     var hsba: (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
-        var h: CGFloat = 0
-        var s: CGFloat = 0
-        var b: CGFloat = 0
-        var a: CGFloat = 0
-        
-        self.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+		var h: CGFloat = 0.0
+		var s: CGFloat = 0.0
+		var b: CGFloat = 0.0
+		var a: CGFloat = 0.0
+		let      color = CGColor.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent) // avoid crash due to grey color space
+
+		color.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
         
         return (h, s, b, a)
     }

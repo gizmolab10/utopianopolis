@@ -48,7 +48,8 @@ enum ZBatchID: Int {
 
 	var needsCloudDrive: Bool {
 		switch self {
-			case .bStartUp: return false
+			case .bFinishUp,
+				 .bStartUp: return false
 			default:        return true
 		}
 	}
