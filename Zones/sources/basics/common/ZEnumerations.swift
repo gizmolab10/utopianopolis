@@ -35,11 +35,6 @@ enum ZCloudAccountStatus: Int {
     case active
 }
 
-enum ZSkillLevel: Int {
-	case startOut
-	case pro
-}
-
 enum ZStartupLevel: Int {
 	case firstTime
 	case localOkay

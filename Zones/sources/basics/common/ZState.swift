@@ -62,8 +62,6 @@ var            gIsStartupMode:               Bool { return gWorkMode == .startup
 var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIdeaMode }
 var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsNoteMode || gIsStartupMode }
 var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEditIdeaMode }
-var            gProSkillLevel:               Bool { return gSkillLevel == .pro }
-var       gStartOutSkillLevel:               Bool { return gSkillLevel == .startOut }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var   gCurrentSmallMapRecords:          ZRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
 var                  gRecords:          ZRecords? { return gShowSmallMap ? gCurrentSmallMapRecords : gCloud }
@@ -90,7 +88,6 @@ let                 kBoldFont                     = ZFont  .boldSystemFont(ofSiz
 let            kLargeHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize + 1.0)
 let            kLargeBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize + 1.0)
 let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
-let       kBeginnerSkillLevel                     = ZSkillLevel.startOut.rawValue
 let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
 
@@ -222,11 +219,6 @@ var gShowDetailsView : Bool {
 var gClipBreadcrumbs : Bool {
 	get { return getPreferencesBool(   for: kClipBreadcrumbs, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kClipBreadcrumbs) }
-}
-
-var gSkillLevel : ZSkillLevel {
-	get { return  ZSkillLevel(rawValue: getPreferencesInt(for: kSkillLevel, defaultInt: kBeginnerSkillLevel) ?? kBeginnerSkillLevel) ?? ZSkillLevel.startOut }
-	set { setPreferencesInt(newValue.rawValue, for: kSkillLevel); gMainController?.update() }
 }
 
 var gStartupLevel : ZStartupLevel {

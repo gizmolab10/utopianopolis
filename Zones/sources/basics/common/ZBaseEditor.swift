@@ -42,7 +42,6 @@ class ZBaseEditor: NSObject {
 				case "h": if COMMAND { gApplication.hide(nil);                     handled = true }
 				case "k": if SPECIAL { toggleColorfulMode();                       handled = true }
 				case "o": if SPECIAL { gFiles.showInFinder();                      handled = true }
-				case "p": if SPECIAL { cycleSkillLevel();                          handled = true }
 				case "q": if COMMAND { gApplication.terminate(self);               handled = true }
 				case "r": if SPECIAL { sendEmailBugReport();                       handled = true }
 				case "t": if ONEFLAG { fetchTraits();                              handled = true }

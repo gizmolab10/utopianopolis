@@ -540,12 +540,6 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Y9J-Wf-DfD"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Skill Level" keyEquivalent="p" id="THb-cX-UAd">
-                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="oHR-g9-RM2"/>
-                                                        </connections>
-                                                    </menuItem>
                                                 </items>
                                             </menu>
                                         </menuItem>
@@ -890,51 +884,17 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="357" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Banner View">
-                                <rect key="frame" x="226" y="256" width="131" height="44"/>
-                                <subviews>
-                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View">
-                                        <rect key="frame" x="0.0" y="0.0" width="131" height="44"/>
-                                        <connections>
-                                            <segue destination="auf-AV-5qA" kind="embed" id="Frp-da-kE8"/>
-                                        </connections>
-                                    </containerView>
-                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Box View">
-                                        <rect key="frame" x="0.0" y="0.0" width="131" height="44"/>
-                                        <connections>
-                                            <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
-                                        </connections>
-                                    </containerView>
-                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="3wl-F6-Mu5">
-                                        <rect key="frame" x="0.0" y="-2" width="131" height="5"/>
-                                    </box>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="58m-fY-Oaa" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="top" id="25O-4q-174"/>
-                                    <constraint firstItem="6sw-vi-DPR" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="top" id="AEP-me-J3O"/>
-                                    <constraint firstAttribute="height" constant="44" id="AWT-PZ-Vy8"/>
-                                    <constraint firstItem="6sw-vi-DPR" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" id="OFl-Gj-h56"/>
-                                    <constraint firstAttribute="bottom" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="SDs-TZ-3Ms"/>
-                                    <constraint firstAttribute="bottom" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="X7K-ny-ehu"/>
-                                    <constraint firstItem="3wl-F6-Mu5" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" id="XB7-ew-qrI"/>
-                                    <constraint firstAttribute="trailing" secondItem="6sw-vi-DPR" secondAttribute="trailing" id="ZfM-al-BIZ"/>
-                                    <constraint firstAttribute="trailing" secondItem="3wl-F6-Mu5" secondAttribute="trailing" id="amd-Ac-NRP"/>
-                                    <constraint firstAttribute="bottom" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="bQW-ej-LNK"/>
-                                    <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="ikd-Gy-kaI"/>
-                                    <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" id="jSf-TE-Zs9"/>
-                                </constraints>
-                            </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="5jB-w2-4Dg" userLabel="Alternate Side View">
-                                <rect key="frame" x="227" y="0.0" width="130" height="256"/>
+                                <rect key="frame" x="226" y="0.0" width="131" height="256"/>
                                 <subviews>
                                     <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
-                                        <rect key="frame" x="0.0" y="0.0" width="130" height="256"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="131" height="256"/>
                                         <connections>
                                             <segue destination="8gW-F6-R6g" kind="embed" id="X02-Jc-hfC"/>
                                         </connections>
                                     </containerView>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
-                                        <rect key="frame" x="0.0" y="0.0" width="130" height="256"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="131" height="256"/>
                                         <connections>
                                             <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
                                         </connections>
@@ -957,64 +917,50 @@ CA
                                     <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
                                 </connections>
                             </containerView>
-                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tJ2-cd-SJp" userLabel="Details Side View">
-                                <rect key="frame" x="0.0" y="168" width="226" height="132"/>
+                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
+                                <rect key="frame" x="0.0" y="168" width="226" height="88"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
+                                </connections>
+                            </containerView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Banner View">
+                                <rect key="frame" x="34" y="256" width="323" height="44"/>
                                 <subviews>
-                                    <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
-                                        <rect key="frame" x="0.0" y="0.0" width="226" height="88"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
-                                        </constraints>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View">
+                                        <rect key="frame" x="0.0" y="0.0" width="323" height="44"/>
                                         <connections>
-                                            <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
+                                            <segue destination="auf-AV-5qA" kind="embed" id="Frp-da-kE8"/>
                                         </connections>
                                     </containerView>
-                                    <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ULe-6f-22e" userLabel="Skill Level View">
-                                        <rect key="frame" x="0.0" y="88" width="226" height="44"/>
-                                        <subviews>
-                                            <segmentedControl hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0jt-BT-C1l">
-                                                <rect key="frame" x="38" y="10" width="181" height="24"/>
-                                                <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="Vx4-SL-sxe">
-                                                    <font key="font" metaFont="system"/>
-                                                    <segments>
-                                                        <segment label="Start"/>
-                                                        <segment label="Pro" selected="YES" tag="1"/>
-                                                    </segments>
-                                                </segmentedCell>
-                                                <connections>
-                                                    <action selector="chooseSkillAction:" target="MXk-17-6Dz" id="O99-nE-baM"/>
-                                                </connections>
-                                            </segmentedControl>
-                                            <box horizontalHuggingPriority="750" ambiguous="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="UaH-Gd-NsW">
-                                                <rect key="frame" x="223" y="0.0" width="5" height="44"/>
-                                            </box>
-                                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Wl1-dm-ADJ">
-                                                <rect key="frame" x="0.0" y="-2" width="226" height="5"/>
-                                            </box>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="UaH-Gd-NsW" secondAttribute="trailing" id="62p-Ax-1yw"/>
-                                            <constraint firstItem="0jt-BT-C1l" firstAttribute="leading" secondItem="ULe-6f-22e" secondAttribute="leading" constant="40" id="8gp-GY-Vco"/>
-                                            <constraint firstItem="0jt-BT-C1l" firstAttribute="centerY" secondItem="ULe-6f-22e" secondAttribute="centerY" id="A5K-cs-fgR"/>
-                                            <constraint firstAttribute="bottom" secondItem="Wl1-dm-ADJ" secondAttribute="bottom" id="S0A-ao-IsU"/>
-                                            <constraint firstItem="UaH-Gd-NsW" firstAttribute="leading" secondItem="0jt-BT-C1l" secondAttribute="trailing" constant="8" id="ieI-mR-j97"/>
-                                            <constraint firstItem="Wl1-dm-ADJ" firstAttribute="leading" secondItem="ULe-6f-22e" secondAttribute="leading" id="qIw-4C-EbW"/>
-                                            <constraint firstAttribute="trailing" secondItem="Wl1-dm-ADJ" secondAttribute="trailing" id="ycS-VE-Xh6"/>
-                                            <constraint firstAttribute="height" constant="44" id="zaA-sL-VrY"/>
-                                        </constraints>
-                                    </customView>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Box View">
+                                        <rect key="frame" x="0.0" y="0.0" width="323" height="44"/>
+                                        <connections>
+                                            <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
+                                        </connections>
+                                    </containerView>
+                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="3wl-F6-Mu5">
+                                        <rect key="frame" x="0.0" y="-2" width="323" height="5"/>
+                                    </box>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="5Mu-HL-NoB"/>
-                                    <constraint firstAttribute="bottom" secondItem="E8R-Lg-1Ha" secondAttribute="bottom" id="EBk-yG-821"/>
-                                    <constraint firstItem="ULe-6f-22e" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="leading" id="OUx-cS-nXI"/>
-                                    <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="ULe-6f-22e" secondAttribute="bottom" id="PcL-q0-JuL"/>
-                                    <constraint firstItem="ULe-6f-22e" firstAttribute="top" secondItem="tJ2-cd-SJp" secondAttribute="top" id="SZk-mA-ij1"/>
-                                    <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="leading" id="crF-vI-aE3"/>
-                                    <constraint firstAttribute="trailing" secondItem="ULe-6f-22e" secondAttribute="trailing" id="eKh-XU-h3l"/>
+                                    <constraint firstItem="58m-fY-Oaa" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="top" id="25O-4q-174"/>
+                                    <constraint firstItem="6sw-vi-DPR" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="top" id="AEP-me-J3O"/>
+                                    <constraint firstAttribute="height" constant="44" id="AWT-PZ-Vy8"/>
+                                    <constraint firstItem="6sw-vi-DPR" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" id="OFl-Gj-h56"/>
+                                    <constraint firstAttribute="bottom" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="SDs-TZ-3Ms"/>
+                                    <constraint firstAttribute="bottom" secondItem="58m-fY-Oaa" secondAttribute="bottom" id="X7K-ny-ehu"/>
+                                    <constraint firstItem="3wl-F6-Mu5" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" id="XB7-ew-qrI"/>
+                                    <constraint firstAttribute="trailing" secondItem="6sw-vi-DPR" secondAttribute="trailing" id="ZfM-al-BIZ"/>
+                                    <constraint firstAttribute="trailing" secondItem="3wl-F6-Mu5" secondAttribute="trailing" id="amd-Ac-NRP"/>
+                                    <constraint firstAttribute="bottom" secondItem="6sw-vi-DPR" secondAttribute="bottom" id="bQW-ej-LNK"/>
+                                    <constraint firstAttribute="trailing" secondItem="58m-fY-Oaa" secondAttribute="trailing" id="ikd-Gy-kaI"/>
+                                    <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" id="jSf-TE-Zs9"/>
                                 </constraints>
                             </customView>
-                            <button translatesAutoresizingMaskIntoConstraints="NO" id="yl6-st-bhl">
+                            <button translatesAutoresizingMaskIntoConstraints="NO" id="yl6-st-bhl" userLabel="hamburger button">
                                 <rect key="frame" x="12" y="267" width="22" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="7Ef-bc-vy9"/>
@@ -1037,24 +983,24 @@ CA
                             </containerView>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="yl6-st-bhl" secondAttribute="trailing" id="0hK-O4-Y9p"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="9Q8-HC-P7X"/>
-                            <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="trailing" constant="1" id="DTg-De-FLc"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="HVB-l5-rqc"/>
                             <constraint firstAttribute="bottom" secondItem="5oi-yK-PC4" secondAttribute="bottom" id="Hxj-uH-co3"/>
+                            <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="IVq-92-EbT"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
-                            <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="tJ2-cd-SJp" secondAttribute="trailing" id="L0w-Ew-6dH"/>
                             <constraint firstItem="yl6-st-bhl" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="12" id="Lys-IS-2eI"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="QmT-ZT-tcN"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="V0U-dq-EtC"/>
-                            <constraint firstItem="tJ2-cd-SJp" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="aIX-aN-oSw"/>
                             <constraint firstAttribute="bottom" secondItem="5jB-w2-4Dg" secondAttribute="bottom" id="bsX-IT-HDI"/>
+                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="ewO-M2-RZg"/>
                             <constraint firstAttribute="trailing" secondItem="LQL-Kb-jgm" secondAttribute="trailing" id="fgm-OB-ttw"/>
-                            <constraint firstItem="tJ2-cd-SJp" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="hBw-R5-rRG"/>
                             <constraint firstAttribute="trailing" secondItem="5oi-yK-PC4" secondAttribute="trailing" id="haB-GJ-03K"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="lap-td-b4Q"/>
                             <constraint firstItem="yl6-st-bhl" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" constant="11" id="m1y-JF-jje"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="qfT-hA-eas"/>
                             <constraint firstAttribute="trailing" secondItem="5jB-w2-4Dg" secondAttribute="trailing" id="rXH-it-XjL"/>
+                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="snd-Vz-bP3"/>
                             <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="trU-TG-zpc"/>
                         </constraints>
                     </view>
@@ -1066,8 +1012,6 @@ CA
                         <outlet property="permissionView" destination="5oi-yK-PC4" id="5TP-04-XLC"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
-                        <outlet property="skillControl" destination="0jt-BT-C1l" id="tCJ-oe-uBa"/>
-                        <outlet property="swapButtonOffset" destination="OFl-Gj-h56" id="YFH-oM-ROV"/>
                     </connections>
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

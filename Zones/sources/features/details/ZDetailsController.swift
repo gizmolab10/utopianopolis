@@ -52,16 +52,6 @@ class ZDetailsController: ZGesturesController {
 			}
 		}
 	}
-
-	func updateForSkillLevel() {
-		view(for: .Introduction  )?.hideHideable = !gStartOutSkillLevel
-		view(for: .Map)?.hideHideable = !gProSkillLevel
-		view(for: .Status   )?.hideHideable = !gProSkillLevel
-
-		FOREGROUND() {
-			gRedrawMaps()
-		}
-	}
     
     func view(for id: ZDetailsViewID) -> ZTogglingView? {
         return viewsByID[id.rawValue]

@@ -132,9 +132,9 @@ class ZHelpController: ZGenericTableController {
 			switch   key {
 				case "?", "/":         show(       flags: flags)
 				case "w":              show(false, flags: flags)
+				case "p":              view.printView()
 				case "q":              gApplication.terminate(self)
 				case "a": if SPECIAL { gApplication.showHideAbout() }
-				case "p": if SPECIAL { cycleSkillLevel() } else { view.printView() }
 				case "r": if COMMAND { sendEmailBugReport() }
 
 				default: break

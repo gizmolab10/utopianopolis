@@ -161,12 +161,6 @@ extension NSObject {
         return result
     }
 
-	func cycleSkillLevel() {
-		gSkillLevel = ZSkillLevel(rawValue: gSkillLevel.rawValue + 1) ?? ZSkillLevel.startOut
-
-		gRedrawMaps()
-	}
-
     func invokeUsingDatabaseID(_ dbID: ZDatabaseID?, block: Closure) {
         if  dbID != nil && dbID != gDatabaseID {
             detectWithMode(dbID!) { block(); return false }

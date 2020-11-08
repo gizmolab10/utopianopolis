@@ -16,9 +16,7 @@ var gMainController: ZMainController? { return gControllers.controllerForID(.idM
 
 class ZMainController: ZGenericController {
 
-	@IBOutlet var skillControl      : NSSegmentedControl?
 	@IBOutlet var detailsWidth      : NSLayoutConstraint?
-	@IBOutlet var swapButtonOffset  : NSLayoutConstraint?
     @IBOutlet var searchResultsView : ZView?
 	@IBOutlet var permissionView    : ZView?
 	@IBOutlet var searchBoxView     : ZView?
@@ -38,20 +36,9 @@ class ZMainController: ZGenericController {
 		update()
 	}
 
-	@IBAction func chooseSkillAction(_ control: NSSegmentedControl) {
-		if  let   level = ZSkillLevel(rawValue: control.selectedSegmentIndex) {
-			gSkillLevel = level
-		}
-	}
-
 	func update() {
-		swapButtonOffset?.constant =  gShowDetailsView ?   0.0 : 35.0
-		detailsWidth?    .constant =  gShowDetailsView ? 226.0 :  0.0
-		detailView?      .isHidden = !gShowDetailsView
-
-		if  gShowDetailsView {
-			gDetailsController?.updateForSkillLevel()
-		}
+		detailsWidth?.constant =  gShowDetailsView ? 226.0 :  0.0
+		detailView?  .isHidden = !gShowDetailsView
 	}
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
@@ -59,13 +46,11 @@ class ZMainController: ZGenericController {
         let  hideSearch = !gIsSearchMode
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
-		permissionView?.isHidden           = !gIsStartupMode
-		skillControl?  .isHidden           =  false
-		skillControl?.selectedSegmentIndex =  gSkillLevel.rawValue
+		permissionView?               .isHidden = !gIsStartupMode
 
 		switch iKind {
 			case .sFound:
-				mapView?            .isHidden = !hideResults
+				mapView?              .isHidden = !hideResults
 				searchBoxView?        .isHidden =  hideSearch
 				searchResultsView?    .isHidden =  hideResults
 			case .sSearch:
