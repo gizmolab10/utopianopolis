@@ -689,12 +689,8 @@ class ZCloud: ZRecords {
 				printDebug(.dFetch, "\(self.recordsToProcess.count)")
 				while self.recordsToProcess.count > 0 {
 					if  let      key = self.recordsToProcess.keys.first,
-						let ckRecord = self.recordsToProcess[key] {
+						let ckRecord = self.recordsToProcess.removeValue(forKey: key) {
 						var  zRecord = self.maybeZRecordForRecordName(ckRecord.recordID.recordName)
-
-						if  self.recordsToProcess[key] != nil {
-							self.recordsToProcess[key]  = nil    // assures no duplication
-						}
 
 						if  zRecord != nil {
 							zRecord?.useBest(record: ckRecord)   // fetched has same record id
