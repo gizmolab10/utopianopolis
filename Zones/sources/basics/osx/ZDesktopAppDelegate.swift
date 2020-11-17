@@ -6,13 +6,10 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Cocoa
 import CloudKit
 
-
 var gDesktopAppDelegate: ZDesktopAppDelegate?
-
 
 @NSApplicationMain
 
@@ -90,7 +87,7 @@ class ZDesktopAppDelegate: ZAppDelegate, NSMenuDelegate {
 	var workingEditor: ZBaseEditor? {
 		switch gWorkMode {
 			case .editIdeaMode,
-				 .mapMode: return gMapEditor
+				 .mapsMode: return gMapEditor
 //			case .noteMode:  return gEssayEditor
 			default: 	     return nil
 		}

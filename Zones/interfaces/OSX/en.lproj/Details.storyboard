@@ -130,8 +130,8 @@
                     <connections>
                         <outlet property="cloudStatusLabel" destination="fy3-JT-P1F" id="bJt-yR-hPf"/>
                         <outlet property="creationDateLabel" destination="Nr1-TP-dq5" id="zKj-1M-AOm"/>
-                        <outlet property="graphNameLabel" destination="f4m-8C-5H1" id="Wu5-yB-FmB"/>
                         <outlet property="levelLabel" destination="BcI-eM-ytK" id="l2l-bk-3KS"/>
+                        <outlet property="mapNameLabel" destination="f4m-8C-5H1" id="3Ma-Ba-KXj"/>
                         <outlet property="totalCountLabel" destination="3v8-d2-yo8" id="8GP-Ce-9m4"/>
                     </connections>
                 </viewController>
@@ -139,10 +139,10 @@
             </objects>
             <point key="canvasLocation" x="-115" y="1446"/>
         </scene>
-        <!--Favorites-->
+        <!--Small Map-->
         <scene sceneID="6c8-8d-0Jq">
             <objects>
-                <viewController title="favorites" id="bl3-7n-UyN" userLabel="Favorites" customClass="ZSmallMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="favorites" id="bl3-7n-UyN" userLabel="Small Map" customClass="ZSmallMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="sgs-hY-cUq">
                         <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
                         <autoresizingMask key="autoresizingMask"/>

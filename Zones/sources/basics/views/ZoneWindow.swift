@@ -30,7 +30,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 
 			switch gWorkMode {
 				case .noteMode:     return gEssayEditor             .handleKey(key, flags: flags, isWindow: true)
-				case .mapMode:    return gMapEditor             .handleKey(key, flags: flags, isWindow: true)
+				case .mapsMode:    return gMapEditor             .handleKey(key, flags: flags, isWindow: true)
 				case .searchMode:   return gSearchResultsController?.handleKey(key, flags: flags) ?? false
 				case .editIdeaMode: return gTextEditor              .handleKey(key, flags: flags)
 				default:            break

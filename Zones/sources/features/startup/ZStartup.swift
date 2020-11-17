@@ -57,10 +57,12 @@ class ZStartup: NSObject {
 						gRefusesFirstResponder = false
 
 						if  gIsStartupMode {
-							gSetMapMode()
+							gSetMapsMode()
 						}
 
+						gRemoteStorage.updateAllInstanceProperties()
 						gRemoteStorage.assureNoOrphanIdeas()
+						gRemoteStorage.updateAllInstanceProperties()
 						gSignal([.sMain, .sCrumbs, .sRelayout])
 						self.stopStartupTimer()
 						self.requestFeedback()

@@ -290,7 +290,7 @@ extension ZColor {
 	}
 
 	var string: String? {
-		if  let c = usingColorSpaceName(NSColorSpaceName.deviceRGB) {
+		if  let c = usingColorSpace(NSColorSpace.deviceRGB) {
 			return "red:\(c.redComponent),blue:\(c.blueComponent),green:\(c.greenComponent),alpha:\(c.alphaComponent)"
 		}
 

@@ -24,7 +24,7 @@ class ZFavorites: ZRecords {
     // MARK:- initialization
     // MARK:-
 
-    let databaseRootFavorites = Zone(record: nil, databaseID: nil)
+    let cloudRootTemplates = Zone(record: nil, databaseID: nil)
 
 	override var rootZone : Zone? {
 		get {
@@ -58,11 +58,11 @@ class ZFavorites: ZRecords {
 		return nil
 	}
 
-    func createRootFavorites() {
-        if  databaseRootFavorites.count == 0 {
+    func createRootTemplates() {
+        if  cloudRootTemplates.count == 0 {
             for (index, dbID) in kAllDatabaseIDs.enumerated() {
                 let          name = dbID.rawValue
-                let      favorite = create(withBookmark: nil, .aCreateFavorite, parent: databaseRootFavorites, atIndex: index, name, identifier: name + kFavoritesSuffix)
+                let      favorite = create(withBookmark: nil, .aCreateFavorite, parent: cloudRootTemplates, atIndex: index, name, identifier: name + kFavoritesSuffix)
                 favorite.zoneLink =  "\(name)\(kColonSeparator)\(kColonSeparator)"
                 favorite   .order = Double(index) * 0.001
                 
@@ -77,7 +77,7 @@ class ZFavorites: ZRecords {
     func setup(_ onCompletion: IntClosure?) {
         let   mine = gMineCloud
         let finish = {
-            self.createRootFavorites()
+            self.createRootTemplates()
 
             if  let root = gFavoritesRoot {
                 root.reallyNeedProgeny()
@@ -91,6 +91,7 @@ class ZFavorites: ZRecords {
 
             finish()
         } else {
+			// create favorites root
             mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
                 let        ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kFavoritesRootName))
                 let            root = Zone(record: ckRecord, databaseID: .mineID)
@@ -237,7 +238,7 @@ class ZFavorites: ZRecords {
 			// add missing root favorites //
 			// /////////////////////////////
 
-			for template in databaseRootFavorites.children {
+			for template in cloudRootTemplates.children {
 				if  let          dbID = template.linkDatabaseID, !hasDatabaseIDs.contains(dbID) {
 					let      bookmark = template.deepCopy
 					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName
@@ -293,19 +294,19 @@ class ZFavorites: ZRecords {
 	// MARK:- create
     // MARK:-
 
-    @discardableResult func create(withBookmark: Zone?, _ iName: String?, identifier: String? = nil) -> Zone {
+    @discardableResult func createZone(withBookmark: Zone?, _ iName: String?, identifier: String? = nil) -> Zone {
         var           bookmark = withBookmark
         if  bookmark          == nil {
             bookmark           = Zone(databaseID: .mineID, named: iName, identifier: identifier)
         } else if let     name = iName {
-            bookmark!.zoneName = name
+            bookmark?.zoneName = name
         }
 
         return bookmark!
     }
 
     @discardableResult func create(withBookmark: Zone?, _ action: ZBookmarkAction, parent: Zone, atIndex: Int, _ name: String?, identifier: String? = nil) -> Zone {
-        let bookmark: Zone = create(withBookmark: withBookmark, name, identifier: identifier)
+        let bookmark: Zone = createZone(withBookmark: withBookmark, name, identifier: identifier)
         let insertAt: Int? = atIndex == parent.count ? nil : atIndex
 
         if  action != .aNotABookmark {
@@ -325,8 +326,8 @@ class ZFavorites: ZRecords {
 		// /////////////////////////////////////////////
 
 		if  let       zone = iZone,
-			let       root = rootZone {
-			var     parent = zone.parentZone ?? gFavoritesHereMaybe ?? gFavoritesRoot!
+			let       root = rootZone,
+			var     parent = zone.parentZone ?? gFavoritesHereMaybe ?? gFavoritesRoot {
 			let isBookmark = zone.isBookmark
 			let  actNormal = action == .aBookmark
 

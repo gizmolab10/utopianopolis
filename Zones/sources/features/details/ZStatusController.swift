@@ -80,7 +80,7 @@ class ZStatusController: ZGenericController {
 		if ![.sSearch, .sFound, .sCrumbs, .sSwap, .sSmallMap].contains(iKind) {
 			creationDateLabel?.text = zoneRecordNameText // creationDateText
             cloudStatusLabel? .text = statusText
-            totalCountLabel?  .text = totalCountsText
+//            totalCountLabel?  .text = totalCountsText
 			mapNameLabel?     .text = mapNameText
             versionLabel?     .text = versionText
 

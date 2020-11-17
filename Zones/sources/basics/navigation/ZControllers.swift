@@ -71,7 +71,7 @@ class ZControllers: NSObject {
 	}
 
 	func swapMapAndEssay(force mode: ZWorkMode? = nil) {
-		let newMode      = mode ?? (gIsNoteMode ? .mapMode : .noteMode)
+		let newMode      = mode ?? (gIsNoteMode ? .mapsMode : .noteMode)
 
 		if  newMode     != gWorkMode {
 			gWorkMode 	 = newMode
@@ -140,7 +140,7 @@ class ZControllers: NSObject {
 	func signalFor(_ object: Any? = nil, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
 		let startupIDs : [ZControllerID] = [.idStartup, .idHelpDots]
         FOREGROUND(canBeDirect: true) {
-            gRemoteStorage.updateNeededCounts() // clean up after adding or removing children
+//            gRemoteStorage.updateNeededCounts() // clean up after adding or removing children
 
 			for regarding in multiple {
 				for (identifier, signalObject) in self.signalObjectsByControllerID {

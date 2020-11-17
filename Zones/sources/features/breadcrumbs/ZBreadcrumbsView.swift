@@ -123,7 +123,7 @@ class ZBreadcrumbsView : ZButtonsView {
 				if  let note = next.noteMaybe {
 					gEssayView?.resetCurrentEssay(note)
 				} else {
-					gSetMapMode()
+					gSetMapsMode()
 				}
 			}
 

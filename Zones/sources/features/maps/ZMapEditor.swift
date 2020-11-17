@@ -680,7 +680,7 @@ class ZMapEditor: ZBaseEditor {
 					if  let g = grab {
 						if  g.isInSmallMap,      // if already grabbed and in small map
 							g.count == 0 {       // mark g as current
-							gCurrentSmallMapRecords?.selectCurrent(g, alterHere: true)
+							gCurrentSmallMapRecords?.setAsCurrent(g, alterHere: true)
 						}
 
 						gRedrawMaps(for: g)
@@ -758,7 +758,7 @@ class ZMapEditor: ZBaseEditor {
 						if  gp.spawnedBy(gHere) {
 							self.moveOut(to: gp, onCompletion: onCompletion)
 						} else if inSmallMap {
-							gCurrentSmallMapRecords?.selectCurrent(p)
+							gCurrentSmallMapRecords?.setAsCurrent(p)
 						} else {
 							moveOutToHere(gp)
 						}
@@ -1162,6 +1162,10 @@ class ZMapEditor: ZBaseEditor {
 
 					if !SPECIAL {
 						beingMoved.addToGrabs()
+					}
+
+					if  toSmallMap {
+						into.expandInSmallMap(true)
 					}
 
 					into.addAndReorderChild(beingMoved, at: iIndex)

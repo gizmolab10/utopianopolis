@@ -47,10 +47,10 @@ class ZSmallMapControlsView : ZButtonsView, ZTooltips {
 		for button in buttons {
 			if  let    type = button.modeButtonType {
 				switch type {
-					case .tConfine: button    .title = gConfinementMode.rawValue
-					case .tMode:    button    .title = "Show \(gIsRecentlyMode ? "Favorites" : "Recent")"
-					case .tGrow:    button    .title = gListGrowthMode .rawValue
-					case .tAdd:     button    .title = "+"
+					case .tConfine: button.title = gConfinementMode.rawValue
+					case .tMode:    button.title = "Show \(gIsRecentlyMode ? "Favorites" : "Recents")"
+					case .tGrow:    button.title = gListGrowthMode .rawValue
+					case .tAdd:     button.title = "+"
 				}
 			}
 		}
@@ -60,9 +60,9 @@ class ZSmallMapControlsView : ZButtonsView, ZTooltips {
 		if  let    type = button.modeButtonType {
 			switch type {
 				case .tAdd:     gFavoritesHereMaybe?.addIdea()
-				case .tMode:    gSmallMapMode    = gIsRecentlyMode     ? .favorites   : .recent
-				case .tGrow:    gListGrowthMode  = gListsGrowDown      ? .up          : .down
-				case .tConfine: gConfinementMode = gBrowsingIsConfined ? .all : .list
+				case .tMode:    gSmallMapMode    = gIsRecentlyMode     ? .favorites : .recent
+				case .tGrow:    gListGrowthMode  = gListsGrowDown      ? .up        : .down
+				case .tConfine: gConfinementMode = gBrowsingIsConfined ? .all       : .list
 			}
 		}
 

@@ -56,7 +56,7 @@ class ZSearching: NSObject {
 	}
 
 	func swapModes() {
-		let      last = priorWorkMode ??        .mapMode
+		let      last = priorWorkMode ??         .mapsMode
 		priorWorkMode = gIsSearchMode ? nil  :   gWorkMode
 		gWorkMode     = gIsSearchMode ? last : .searchMode
 	}

@@ -82,7 +82,7 @@ class ZEvents: ZGeneric {
 							} else {
 								return gEssayEditor    .handleEvent(event, isWindow: true)
 							}
-						case .mapMode, .editIdeaMode:
+						case .mapsMode, .editIdeaMode:
 							if !gIsHelpFrontmost {
 								return gMapEditor      .handleEvent(event, isWindow: true)
 							}

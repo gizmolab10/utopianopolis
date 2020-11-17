@@ -1047,7 +1047,7 @@ class ZCloud: ZRecords {
                         self.manifest?.apply()
                     }
                     
-                    self.columnarReport("    \(self.manifest?.deleted?.count ?? 0)", "\(self.databaseID.rawValue)")
+                    self.columnarReport("    \(self.manifest?.deletedRecordNames?.count ?? 0)", "\(self.databaseID.rawValue)")
                     onCompletion?(0)
                 }
             }
@@ -1178,46 +1178,43 @@ class ZCloud: ZRecords {
     }
 
     func establishHere(_ onCompletion: IntClosure?) {
-        let rootCompletion = {
-            self.hereZoneMaybe = gRoot
-
-			gRecents.push()
-            onCompletion?(0)
-        }
-
-		let hereCompletion = { (iHere: Zone) in
-			self.currentHere = iHere
-
-			gRecents.push()
-			onCompletion?(0)
-		}
-
         let name  = hereRecordName ?? kRootName
-
         if  name == kRootName {
 
             // //////////////////////
             // first time for user //
             // //////////////////////
 
-            rootCompletion()
+			self.hereZoneMaybe = gRoot
+
+			gRecents.push()
+			onCompletion?(0)
 
         } else if let here = maybeZoneForRecordName(name) {
-            hereCompletion(here)
+			self.currentHere = here
+
+			here.updateInstanceProperties()
+			gRecents.push()
+			onCompletion?(0)
         } else {
             let recordID = CKRecord.ID(recordName: name)
 
             self.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iHereRecord: CKRecord?) in
                 if  iHereRecord == nil || iHereRecord?[kpZoneName] == nil {
-                    rootCompletion()
-                } else {
-                    let    here = self.zoneForRecord(iHereRecord!)
-                    here.record = iHereRecord
+					self.hereZoneMaybe = gRoot
 
+					gRecents.push()
+					onCompletion?(0)
+                } else {
+                    let         here = self.zoneForRecord(iHereRecord!)
+					self.currentHere = here
+
+					here.updateInstanceProperties()
                     here.maybeNeedChildren()
                     here.maybeNeedRoot()
                     here.fetchBeforeSave()
-                    hereCompletion(here)
+					gRecents.push()
+					onCompletion?(0)
                 }
             }
         }
@@ -1225,17 +1222,17 @@ class ZCloud: ZRecords {
     
     
     func establishRoots(_ onCompletion: IntClosure?) {
-		var establishRootAt: IntClosure?     // pre-declare so can recursively call from within it
-        let         rootIDs: [ZRootID]   = [.favoritesID, .destroyID, .recentsID, .trashID, .mapID, .lostID]
-        establishRootAt                  = { iIndex in
+		var createFor: IntClosure?     // pre-declare so can recursively call from within it
+        let   rootIDs: [ZRootID] = [.favoritesID, .destroyID, .recentsID, .trashID, .lostID, .mapID]
+		createFor                = { iIndex in
             if iIndex >= rootIDs.count {
                 onCompletion?(0)
             } else {
-                let      rootID = rootIDs[iIndex]
-                let  recordName = rootID.rawValue
-				let      isMine = self.databaseID == .mineID
-                var        name = self.databaseID.userReadableString + " " + recordName
-                let recurseNext = { establishRootAt?(iIndex + 1) }
+                let       rootID = rootIDs[iIndex]
+                let   recordName = rootID.rawValue
+				let       isMine = self.databaseID == .mineID
+                var         name = self.databaseID.userReadableString + " " + recordName
+                let  recurseNext = { createFor?(iIndex + 1) }
 
                 switch rootID {
 				case .favoritesID: if self.favoritesZone    != nil || !isMine { recurseNext(); return } else { name = kFavoritesName }
@@ -1265,7 +1262,7 @@ class ZCloud: ZRecords {
             }
         }
 
-        establishRootAt?(0)
+		createFor?(0)
     }
 
     func establishRootFor(name: String, recordName: String, _ onCompletion: ZoneClosure?) {

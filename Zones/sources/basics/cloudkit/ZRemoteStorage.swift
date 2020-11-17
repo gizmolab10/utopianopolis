@@ -105,6 +105,12 @@ class ZRemoteStorage: NSObject {
         }
 	}
 
+	func updateAllInstanceProperties() {
+		for cloud in allClouds {
+			cloud.updateAllInstanceProperties()
+		}
+	}
+
 	func assureNoOrphanIdeas(moveOrphansToLost: Bool = false) {
 		for cloud in allClouds {
 			cloud.adoptAllOrphanIdeas(moveOrphansToLost: moveOrphansToLost)

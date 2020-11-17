@@ -96,11 +96,11 @@ class ZGridController: UICollectionViewController {
 
 			switch gridIID {
 			case .idCollapse,
-				 .idExpand:   gSelecting.currentMoveable.expand(gridIID == .idExpand)
+				 .idExpand:   gSelecting.currentMoveable.generationalUpdate(gridIID == .idExpand) { complete() }
 			case .idUp:       gMapEditor.move(up:  true,  selectionOnly: selectionOnly)
 			case .idDown:     gMapEditor.move(up:  false, selectionOnly: selectionOnly)
-			case .idLeft:     gMapEditor.move(out: true,  selectionOnly: selectionOnly)  { complete() }
-			case .idRight:    gMapEditor.move(out: false, selectionOnly: selectionOnly)  { complete() }
+			case .idLeft:     gMapEditor.move(out: true,  selectionOnly: selectionOnly)           { complete() }
+			case .idRight:    gMapEditor.move(out: false, selectionOnly: selectionOnly)           { complete() }
 			case .idFocus:    gRecents.focus(kind: .eSelected) { gRedrawMap() }; return
 			case .idMove:     selectionOnly = !selectionOnly // only a toggle, does nothing else
 			case .idExtend:   break // extends = !extends // disabled for now

@@ -118,7 +118,7 @@ enum ZWorkMode: String {
 	case editIdeaMode = "i"
 	case startupMode  = "s"
     case searchMode   = "?"
-    case mapMode      = "g"
+	case mapsMode     = "g"
 	case noteMode     = "n"
 }
 
@@ -234,6 +234,7 @@ enum ZDatabaseID: String {
 		switch self {
 			case .favoritesID: return "f"
 			case  .everyoneID: return "e"
+			case   .recentsID: return "r"
 			case      .mineID: return "m"
 			default:           return ""
 		}
@@ -251,6 +252,7 @@ enum ZDatabaseID: String {
 		switch indicator {
 			case "f": return .favoritesID
 			case "e": return .everyoneID
+			case "r": return .recentsID
 			case "m": return .mineID
 			default:  return nil
 		}
@@ -259,7 +261,7 @@ enum ZDatabaseID: String {
     func isDeleted(dict: ZStorageDictionary) -> Bool {
         let    name = dict[.recordName] as? String
         
-        return name == nil ? false : gRemoteStorage.cloud(for: self)?.manifest?.deleted?.contains(name!) ?? false
+        return name == nil ? false : gRemoteStorage.cloud(for: self)?.manifest?.deletedRecordNames?.contains(name!) ?? false
     }
 
 }

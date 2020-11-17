@@ -16,8 +16,8 @@ import CoreFoundation
 #endif
 
 let gFiles    = ZFiles()
-let gUseFiles = !kIsPhone
-//let gUseFiles = false
+//let gUseFiles = !kIsPhone
+let gUseFiles = false
 
 enum ZExportType: String {
 	case eSeriously = "seriously"
@@ -58,7 +58,6 @@ class ZFiles: NSObject {
 
 		return result
 	}
-
 
     var isWritingNow: Bool {
         for writing in isWriting {
@@ -136,12 +135,15 @@ class ZFiles: NSObject {
 	}
 
 	func readFile(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  databaseID  != .favoritesID,
+		if  gUseFiles,
+			databaseID  != .favoritesID,
 			let    index = databaseID.index,
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {
 			let 	path = filePath(for: dbIndex)
 
 			try readFile(from: path, into: databaseID, onCompletion: onCompletion)
+		} else {
+			onCompletion?(0)
 		}
 	}
 

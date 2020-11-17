@@ -69,31 +69,11 @@ class ZRecents : ZRecords {
 		return false
 	}
 
-	func setHereAsParentOfBookmarkTargeting(_ target: Zone?) -> Bool {
-		var found = false
-
-		rootZone?.traverseProgeny { (bookmark) -> (ZTraverseStatus) in
-			if  !found, // keep looking
-				let targetName = bookmark.bookmarkTarget?.recordName(),
-				targetName    == target?.recordName(),
-				let     parent = bookmark.parentZone {
-
-				hereZoneMaybe  = parent
-				found          = true
-
-				return .eStop
-			}
-
-			return .eContinue
-		}
-
-		return !found
-	}
-
 	func push(intoNotes: Bool = false) {
 		if  rootZone != nil {
-			if  setHereAsParentOfBookmarkTargeting(gHereMaybe),
-				let bookmark = gFavorites.createFavorite(for: gHereMaybe, action: .aBookmark) {
+			if  let    here  = gHereMaybe,
+				!findAndSetHereAsParentOfBookmarkTargeting(here),
+				let bookmark = gFavorites.createFavorite(for: here, action: .aBookmark) {
 				var    index = gListsGrowDown ? nil : 0                // assume current bookmark's parent is NOT current here
 
 				if  let          b = currentBookmark,
@@ -108,6 +88,28 @@ class ZRecents : ZRecords {
 
 			updateCurrentRecent()
 		}
+	}
+
+	func findAndSetHereAsParentOfBookmarkTargeting(_ target: Zone) -> Bool {
+		let rName = target.recordName()
+		var found = false
+
+		rootZone?.traverseProgeny { (bookmark) -> (ZTraverseStatus) in
+			if  let  tName = bookmark.bookmarkTarget?.recordName(),
+				let parent = bookmark.parentZone,
+				tName     == rName,
+				parent.isInRecents {
+
+				found         = true
+				hereZoneMaybe = parent
+
+				return .eStop
+			}
+
+			return .eContinue
+		}
+
+		return found
 	}
 
 	func popAndUpdateRecents(){

@@ -284,7 +284,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func exit() {
 		if  let e = gCurrentEssay {
-			gControllers.swapMapAndEssay(force: .mapMode)
+			gControllers.swapMapAndEssay(force: .mapsMode)
 			gRedrawMaps()
 
 			if  e.lastTextIsDefault,
@@ -776,7 +776,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 							eZone?.asssureIsVisible()
 
 							FOREGROUND {
-								gControllers.swapMapAndEssay(force: .mapMode)
+								gControllers.swapMapAndEssay(force: .mapsMode)
 								gRedrawMaps()
 							}
 

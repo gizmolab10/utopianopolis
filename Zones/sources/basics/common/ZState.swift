@@ -52,11 +52,11 @@ var                   gIsLate:               Bool { return gBatches.isLate }
 var               gIsDragging:               Bool { return gDraggedZone != nil }
 var          gIsHelpFrontmost:               Bool { return gHelpWindow?.isKeyWindow ?? false }
 var       gBrowsingIsConfined:               Bool { return gConfinementMode   == .list }
-var           gIsRecentlyMode:               Bool { return gSmallMapMode  == .recent }
+var           gIsRecentlyMode:               Bool { return gSmallMapMode   == .recent }
 var            gListsGrowDown:               Bool { return gListGrowthMode == .down }
 var           gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var               gIsNoteMode:               Bool { return gWorkMode == .noteMode }
-var                gIsMapMode:               Bool { return gWorkMode == .mapMode }
+var                gIsMapMode:               Bool { return gWorkMode == .mapsMode }
 var             gIsSearchMode:               Bool { return gWorkMode == .searchMode }
 var            gIsStartupMode:               Bool { return gWorkMode == .startupMode }
 var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIdeaMode }
@@ -92,7 +92,7 @@ let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
 
 func         gSetEditIdeaMode()                   { gWorkMode = .editIdeaMode }
-func              gSetMapMode()                   { gWorkMode = .mapMode }
+func              gSetMapsMode()                   { gWorkMode = .mapsMode }
 
 func gStoreProgressTimes() {
 	var separator = ""

@@ -49,7 +49,7 @@ func gSeparatorAt(level: Int) -> String { return " ( \(level) ) " }
 func gExitNoteMode() -> Bool {
 	if  gIsNoteMode {
 		gEssayView?.save()
-		gControllers.swapMapAndEssay(force: .mapMode)
+		gControllers.swapMapAndEssay(force: .mapsMode)
 
 		return true
 	}
@@ -444,6 +444,12 @@ extension CKAsset {
 extension CKRecord {
 
     var reference: CKRecord.Reference { return CKRecord.Reference(recordID: recordID, action: .none) }
+	var entityName: String {
+		switch recordType {
+			case "Users": return "ZUser"
+			default:      return recordType
+		}
+	}
 
 	var isOrphaned: Bool {
 		var parentRecordName : String?
@@ -570,7 +576,7 @@ extension CKRecord {
     }
 
     func isDeleted(dbID: ZDatabaseID) -> Bool {
-        return gRemoteStorage.cloud(for: dbID)?.manifest?.deleted?.contains(recordID.recordName) ?? false
+        return gRemoteStorage.cloud(for: dbID)?.manifest?.deletedRecordNames?.contains(recordID.recordName) ?? false
     }
 
     @discardableResult func copy(to iCopy: CKRecord?, properties: [String]) -> Bool {
@@ -1573,20 +1579,6 @@ extension String {
 		return newString.lowercased()
 	}
 
-	var md5 : String {
-		let context = UnsafeMutablePointer<CC_MD5_CTX>.allocate(capacity: 1)
-		var digest = Array<UInt8>(repeating:0, count:Int(CC_MD5_DIGEST_LENGTH))
-		CC_MD5_Init(context)
-		CC_MD5_Update(context, self, CC_LONG(lengthOfBytes(using: String.Encoding.utf8)))
-		CC_MD5_Final(&digest, context)
-		context.deallocate()
-		var hexString = ""
-		for byte in digest {
-			hexString += String(format:"%02x", byte)
-		}
-		return hexString
-	}
-
 	func componentsSeparatedAt(level: Int) -> [String] {
 		return components(separatedBy: gSeparatorAt(level: level))
 	}
@@ -2273,7 +2265,7 @@ extension ZView {
 
 				let drawDots: IntBooleanClosure = { (iCount, isFat) in
 					let             oneSet = (isFat ? tinyCount : fatCount) == 0
-					var           isHollow = (isFat && fatHollow) || (!isFat && tinyHollow)
+					let           isHollow = (isFat && fatHollow) || (!isFat && tinyHollow)
 
 					if  iCount             > 0 {
 						let         isEven = iCount % 2 == 0

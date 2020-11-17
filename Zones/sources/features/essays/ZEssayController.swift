@@ -35,7 +35,7 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func modalForHyperlink(_ title: String?) -> String? {
-		if  let name = title {
+		if  title != nil {
 			performSegue(withIdentifier: "webLink", sender: nil)
 //			let a = ZAlert()
 //

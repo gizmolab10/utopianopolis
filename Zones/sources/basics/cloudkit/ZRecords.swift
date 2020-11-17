@@ -63,16 +63,17 @@ class ZRecords: NSObject {
 
     var hereRecordName: String? {
 		set {
-			if  let         index = databaseID.index {
-				var    references = hereReferences
-				references[index] = newValue ?? kRootName
+			if  let         value = newValue,
+				let         index = databaseID.index {
+				var    references = allHereReferences
+				references[index] = value
 				gHereRecordNames  = references.joined(separator: kColonSeparator)
 			}
 		}
 
 		get {
-			let references = hereReferences
-			if  let  index = databaseID.index {
+			if  let         index = databaseID.index {
+				let    references = allHereReferences
 				return references[index]
 			}
 			
@@ -80,11 +81,16 @@ class ZRecords: NSObject {
 		}
     }
 
-	var hereReferences: [String] {
+	var allHereReferences: [String] {
 		var   references = gHereRecordNames.components(separatedBy: kColonSeparator)
 
 		while references.count < 4 {
-			references.append("")
+			let     index = references.count
+			if  let  dbid = ZDatabaseIndex(rawValue: index)?.databaseID,
+				let  name = gRemoteStorage.zRecords(for: dbid)?.rootZone?.recordName() {
+				references.append(name)
+				gHereRecordNames = references.joined(separator: kColonSeparator)
+			}
 		}
 
 		return references
@@ -249,7 +255,7 @@ class ZRecords: NSObject {
         return results
     }
 
-    @discardableResult func registerZRecord(_  iRecord : ZRecord?) -> Bool {
+    @discardableResult func registerZRecord(_  iRecord: ZRecord?) -> Bool {
         if  let      zRecord  = iRecord,
             let           id  = zRecord.recordName {
             if let oldRecord  = recordRegistry[id] {
@@ -374,6 +380,21 @@ class ZRecords: NSObject {
 
         return states
     }
+
+	func applyToAllZRecords(closure: ZRecordClosure) {
+		for zRecord in recordRegistry.values {
+			closure(zRecord)
+		}
+	}
+
+	func updateAllInstanceProperties() {
+		applyToAllZRecords { zRecord in
+			if  let zone = zRecord as? Zone,
+				zone.zoneName == nil {
+				zone.updateInstanceProperties()
+			}
+		}
+	}
 
     func adoptAllOrphanIdeas(moveOrphansToLost: Bool = false) {
         let states = [ZRecordState.needsAdoption] // just one state
@@ -826,26 +847,28 @@ class ZRecords: NSObject {
 	func go(down: Bool, atArrival: Closure? = nil) {
 		let max = workingBookmarks.count - 1
 
-		for (iIndex, bookmark) in workingBookmarks.enumerated() {
-			if  bookmark == currentBookmark {
-				var fIndex     = 0         // wrap going down
+		if  let target = currentBookmark?.bookmarkTarget {
+			for (iIndex, bookmark) in workingBookmarks.enumerated() {
+				if  bookmark.bookmarkTarget == target {
+					var fIndex     = 0         // wrap going down
 
-				if  down {
-					if  iIndex < max {
-						fIndex = iIndex + 1 // go down
-					}
-				} else {
-					fIndex     = max       // wrap going up
+					if  down {
+						if  iIndex < max {
+							fIndex = iIndex + 1 // go down
+						}
+					} else {
+						fIndex     = max       // wrap going up
 
-					if  iIndex > 0 {
-						fIndex = iIndex - 1 // go up
+						if  iIndex > 0 {
+							fIndex = iIndex - 1 // go up
+						}
 					}
+
+					setAsCurrent(workingBookmarks[fIndex], alterHere: true)
+					atArrival?()
+
+					return
 				}
-
-				selectCurrent(workingBookmarks[fIndex], alterHere: true)
-				atArrival?()
-
-				return
 			}
 		}
 	}
@@ -875,7 +898,7 @@ class ZRecords: NSObject {
 		return false
 	}
 
-	func selectCurrent(_  iZone: Zone?, alterHere: Bool = false) {
+	func setAsCurrent(_  iZone: Zone?, alterHere: Bool = false) {
 		if  alterHere,
 			makeVisibleAndMarkInSmallMap(iZone) {
 			iZone?.grab()
@@ -903,6 +926,7 @@ class ZRecords: NSObject {
 	@discardableResult func updateCurrentBookmark() -> Zone? {
 		if  let     bookmark = whichBookmarkTargets(gHereMaybe),
 			let       target = bookmark.bookmarkTarget,
+			bookmark.isInSmallMap,
 			(gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
 			currentBookmark = bookmark
 		}
@@ -949,6 +973,7 @@ class ZRecords: NSObject {
 
 			if  let h = hereZoneMaybe,
 				let p = bookmark.parentZone,
+				p.isInRecents,
 				p != h {
 				h.concealChildren()
 				p.revealChildren()
@@ -1086,7 +1111,7 @@ class ZRecords: NSObject {
     func zoneForRecord(_ ckRecord: CKRecord, requireFetch: Bool = true, preferFetch: Bool = false) -> Zone {
         var zone = maybeZoneForCKRecord(ckRecord)
 
-        if let z = zone {
+        if  let z = zone {
             z.useBest(record: ckRecord)
         } else {
             zone = Zone(record: ckRecord, databaseID: databaseID)

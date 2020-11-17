@@ -270,7 +270,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             }
 
             if !withinEdit {
-				gSetMapMode()
+				gSetMapsMode()
 				gTextEditor.stopCurrentEdit()
 
 				if  let   widget = detectWidget(gesture) {
@@ -522,9 +522,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		var          hit : ZoneWidget?
 		var     smallest = CGSize.big
-        if  let        d = mapView,
+		let         dict = gWidgets.getWidgetsDict(for: widgetType)
+		if  let        d = mapView, !dict.isEmpty,
             let location = iGesture?.location(in: d), d.bounds.contains(location) {
-			let     dict = gWidgets.getWidgetsDict(for: widgetType)
             let  widgets = dict.values.reversed()
 			for  widget in widgets {
                 let rect = widget.convert(widget.outerHitRect, to: d)
