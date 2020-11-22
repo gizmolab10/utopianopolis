@@ -93,11 +93,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	var allProgeny: ZoneArray {
+		var result = ZoneArray()
+
+		traverseAllProgeny { iProgeny in
+			result.append(iProgeny)
+		}
+
+		return result
+	}
+
 	var allBookmarkProgeny : ZoneArray {
 		var result = ZoneArray()
 
 		traverseAllProgeny { iProgeny in
-			if iProgeny.isBookmark {
+			if  iProgeny.isBookmark {
 				result.append(iProgeny)
 			}
 		}
@@ -1034,7 +1044,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			newIdea.markNotFetched()
 
 			UNDO(self) { iUndoSelf in
-				newIdea.deleteSelf() {
+				newIdea.deleteSelf {
 					onCompletion?(nil)
 				}
 			}
@@ -1048,8 +1058,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  isARoot {
 			onCompletion?() // deleting root would be a disaster
 		} else {
+			maybeRestoreParent()
+
 			let parent = parentZone
-			if  self == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
+			if  self  == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
 				let recurse: Closure = {
 
 					// //////////
@@ -1092,7 +1104,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				addToPaste()
-				maybeRestoreParent()
 
 				if  isInTrash {
 					moveZone(to: destroyZone) {
@@ -2522,8 +2533,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	@discardableResult func moveChildIndex(from: Int, to: Int) -> Bool {
 		if  to < count, from < count, let child = self[from] {
-			children.remove(       at: from)
-			children.insert(child, at: to)
+			if  from > to {
+				children.remove(       at: from)
+				children.insert(child, at: to)
+			} else if to > from {
+				children.insert(child, at: to)
+ 				children.remove(       at: from)
+			}
 
 			return true
 		}
@@ -2895,7 +2911,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case kEquals: break
 				case kSpace:  addIdea()
 				case "\u{08}",                                      // control-delete?
-					 kDelete:      deleteSelf { gRedrawMaps() }
+					 kDelete: deleteSelf { gRedrawMaps() }
 				default:      break
 			}
 		}

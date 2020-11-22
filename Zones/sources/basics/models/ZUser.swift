@@ -31,6 +31,10 @@ class ZUser : ZRecord {
         get {
             updateInstanceProperties()
 
+			if  authorID    == "38AC7308-C627-4F83-B4E0-CAC3FFEAA142" {
+				writeAccess  = NSNumber(value: ZUserAccess.eMaster.rawValue)
+			}
+
             if  writeAccess == nil {
                 writeAccess  = NSNumber(value: ZUserAccess.eNormal.rawValue)
             }

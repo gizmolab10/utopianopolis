@@ -33,49 +33,45 @@ class ZBookmarks: NSObject {
         return bookmarks
     }
 
-    func persistForLookupByTarget(_  iBookmark : Zone?) {
-        if  let       bookmark = iBookmark,
-            let linkRecordName = bookmark.linkRecordName,
-            let linkDatabaseID = bookmark.linkDatabaseID {
-            var   byRecordName = registry[linkDatabaseID] // returns nil for first registration
-            var     registered = byRecordName?[linkRecordName]
+	func bookmarks(for iZone: Zone) -> ZoneArray? {
+		if  let dbID = iZone.databaseID,
+			let name = iZone.recordName,
+			let dict = registry[dbID] {
+			return dict[name]    // returned value is an array
+		}
 
-            if  byRecordName  == nil {
-                byRecordName   = [:]
-                registered     = [bookmark]
-            } else {
-                let markBookmarkAsLost = {
-                    bookmark.temporarilyMarkNeeds {
-                        bookmark.needFound()
-                    }
-                }
+		return nil
+	}
 
-                if  registered == nil {
-                    registered  = []
-                } else if let       parentOfBookmark  = bookmark.parentZone {
-                    let recordNameOfParentOfBookmark  = parentOfBookmark.recordName
-                    if  recordNameOfParentOfBookmark != kLostAndFoundName {
-                        for     existing in registered! {
-                            if  existing.parentZone?.recordName == recordNameOfParentOfBookmark {
-                                markBookmarkAsLost()    // bookmark is sibling to its target
+	// MARK:- create
+	// MARK:-
 
-                                return
-                            }
-                        }
-                    }
-                } else if !gFiles.isReading(for: bookmark.databaseID) {
-                    markBookmarkAsLost()                // bookmark has no parent
+	@discardableResult func createZone(withBookmark: Zone?, _ iName: String?, identifier: String? = nil) -> Zone {
+		var bookmark           = withBookmark
+		if  bookmark          == nil {
+			bookmark           = Zone(databaseID: .mineID, named: iName, identifier: identifier)
+		} else if let     name = iName {
+			bookmark?.zoneName = name
+		}
 
-                    return
-                }
+		return bookmark!
+	}
 
-                registered?.append(bookmark)
-            }
+	@discardableResult func create(withBookmark: Zone?, _ action: ZBookmarkAction, parent: Zone, atIndex: Int, _ name: String?, identifier: String? = nil) -> Zone {
+		let bookmark: Zone = createZone(withBookmark: withBookmark, name, identifier: identifier)
+		let insertAt: Int? = atIndex == parent.count ? nil : atIndex
 
-            byRecordName?[linkRecordName] = registered
-            registry     [linkDatabaseID] = byRecordName
-        }
-    }
+		if  action != .aNotABookmark {
+			parent.addChild(bookmark, at: insertAt) // calls update progeny count
+		}
+
+		bookmark.updateCKRecordProperties() // is this needed?
+
+		return bookmark
+	}
+
+	// MARK:- forget
+	// MARK:-
 
     func forget(_ iBookmark: Zone?) {
         if  let       bookmark = iBookmark,
@@ -91,15 +87,52 @@ class ZBookmarks: NSObject {
         }
     }
 
-    func bookmarks(for iZone: Zone) -> ZoneArray? {
-        if  let dbID = iZone.databaseID,
-            let name = iZone.recordName,
-            let dict = registry[dbID] {
-            return dict[name]    // returned value is an array
-        }
+	// MARK:- persist
+	// MARK:-
 
-        return nil
-    }
+	func persistForLookupByTarget(_  iBookmark : Zone?) {
+		if  let       bookmark = iBookmark,
+			let linkRecordName = bookmark.linkRecordName,
+			let linkDatabaseID = bookmark.linkDatabaseID {
+			var   byRecordName = registry[linkDatabaseID] // returns nil for first registration
+			var     registered = byRecordName?[linkRecordName]
+
+			if  byRecordName  == nil {
+				byRecordName   = [:]
+				registered     = [bookmark]
+			} else {
+				let markBookmarkAsLost = {
+					bookmark.temporarilyMarkNeeds {
+						bookmark.needFound()
+					}
+				}
+
+				if  registered == nil {
+					registered  = []
+				} else if let       parentOfBookmark  = bookmark.parentZone {
+					let recordNameOfParentOfBookmark  = parentOfBookmark.recordName
+					if  recordNameOfParentOfBookmark != kLostAndFoundName {
+						for     existing in registered! {
+							if  existing.parentZone?.recordName == recordNameOfParentOfBookmark {
+								markBookmarkAsLost()    // bookmark is sibling to its target
+
+								return
+							}
+						}
+					}
+				} else if !gFiles.isReading(for: bookmark.databaseID) {
+					markBookmarkAsLost()                // bookmark has no parent
+
+					return
+				}
+
+				registered?.append(bookmark)
+			}
+
+			byRecordName?[linkRecordName] = registered
+			registry     [linkDatabaseID] = byRecordName
+		}
+	}
 
     func storageArray(for iDatabaseID: ZDatabaseID, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> [ZStorageDictionary]? {
         return try (allBookmarks as [ZRecord]).createStorageArray(from: iDatabaseID, includeInvisibles: includeInvisibles) { zRecord -> Bool in

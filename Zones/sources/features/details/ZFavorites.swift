@@ -26,6 +26,26 @@ class ZFavorites: ZRecords {
 
     let cloudRootTemplates = Zone(record: nil, databaseID: nil)
 
+	var hasTrash: Bool {
+		for favorite in workingBookmarks {
+			if  let target = favorite.bookmarkTarget, target.isTrashRoot {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	var favoritesIndex : Int? {
+		for (index, zone) in workingBookmarks.enumerated() {
+			if  zone == currentBookmark {
+				return index
+			}
+		}
+
+		return nil
+	}
+
 	override var rootZone : Zone? {
 		get {
 			return gMineCloud?.favoritesZone
@@ -38,31 +58,41 @@ class ZFavorites: ZRecords {
 		}
 	}
 
-    var hasTrash: Bool {
-        for favorite in workingBookmarks {
-            if  let target = favorite.bookmarkTarget, target.isTrashRoot {
-                return true
-            }
-        }
+	func setup(_ onCompletion: IntClosure?) {
+		let   mine = gMineCloud
+		let finish = {
+			self.createRootTemplates()
 
-        return false
-    }
-
-	var favoritesIndex : Int? {
-		for (index, zone) in workingBookmarks.enumerated() {
-			if  zone == currentBookmark {
-				return index
+			if  let root = gFavoritesRoot {
+				root.reallyNeedProgeny()
 			}
+
+			onCompletion?(0)
 		}
 
-		return nil
+		if  let root = mine?.maybeZoneForRecordName(kFavoritesRootName) {
+			gFavorites.rootZone = root
+
+			finish()
+		} else {
+			// create favorites root
+			mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
+				let        ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kFavoritesRootName))
+				let            root = Zone(record: ckRecord, databaseID: .mineID)
+				root.directAccess   = .eProgenyWritable
+				root.zoneName       = kFavoritesName
+				gFavorites.rootZone = root
+
+				finish()
+			}
+		}
 	}
 
     func createRootTemplates() {
         if  cloudRootTemplates.count == 0 {
             for (index, dbID) in kAllDatabaseIDs.enumerated() {
                 let          name = dbID.rawValue
-                let      favorite = create(withBookmark: nil, .aCreateFavorite, parent: cloudRootTemplates, atIndex: index, name, identifier: name + kFavoritesSuffix)
+				let      favorite = gBookmarks.create(withBookmark: nil, .aCreateFavorite, parent: cloudRootTemplates, atIndex: index, name, identifier: name + kFavoritesSuffix)
                 favorite.zoneLink =  "\(name)\(kColonSeparator)\(kColonSeparator)"
                 favorite   .order = Double(index) * 0.001
                 
@@ -71,38 +101,71 @@ class ZFavorites: ZRecords {
         }
     }
 
-    // MARK:- API
+	@discardableResult func createFavorite(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
+
+		// ////////////////////////////////////////////
+		// 1. zone not a bookmark, pass the original //
+		// 2. zone is a bookmark, pass a deep copy   //
+		// ////////////////////////////////////////////
+
+		if  let       zone = iZone,
+			let       root = rootZone,
+			var     parent = zone.parentZone,
+			let  newParent = gFavoritesHereMaybe ?? gFavoritesRoot {
+			let isBookmark = zone.isBookmark
+			let  actNormal = action == .aBookmark
+
+			if  !actNormal {
+				let          basis = isBookmark ? zone.crossLink! : zone
+
+				if  let recordName = basis.recordName {
+					parent         = gFavoritesHereMaybe ?? gFavoritesRoot!
+
+					for workingFavorite in root.allBookmarkProgeny {
+						if  !workingFavorite.isInTrash,
+							recordName == workingFavorite.linkRecordName,
+							let  target = workingFavorite.bookmarkTarget,
+							!target.isARoot {
+							currentBookmark = workingFavorite
+
+							return workingFavorite
+						}
+					}
+				}
+			}
+
+			let           count = parent.count
+			var bookmark: Zone? = isBookmark ? zone.deepCopy : nil               // 1. and 2.
+			var           index = parent.children.firstIndex(of: zone) ?? count
+
+			if  action         == .aCreateFavorite,
+				let      fIndex = favoritesIndex {
+				index           = nextWorkingIndex(after: fIndex, going: gListsGrowDown)
+			}
+
+			bookmark            = gBookmarks.create(withBookmark: bookmark, action, parent: newParent, atIndex: index, zone.zoneName)
+
+			bookmark?.maybeNeedSave()
+
+			if  actNormal {
+				parent.updateCKRecordProperties()
+				parent.maybeNeedMerge()
+			}
+
+			if !isBookmark {
+				bookmark?.crossLink = zone
+
+				gBookmarks.persistForLookupByTarget(bookmark!)
+			}
+
+			return bookmark!
+		}
+
+		return nil
+	}
+
+    // MARK:- update
     // MARK:-
-
-    func setup(_ onCompletion: IntClosure?) {
-        let   mine = gMineCloud
-        let finish = {
-            self.createRootTemplates()
-
-            if  let root = gFavoritesRoot {
-                root.reallyNeedProgeny()
-            }
-
-            onCompletion?(0)
-        }
-
-        if  let root = mine?.maybeZoneForRecordName(kFavoritesRootName) {
-			gFavorites.rootZone = root
-
-            finish()
-        } else {
-			// create favorites root
-            mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-                let        ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kFavoritesRootName))
-                let            root = Zone(record: ckRecord, databaseID: .mineID)
-                root.directAccess   = .eProgenyWritable
-                root.zoneName       = kFavoritesName
-				gFavorites.rootZone = root
-
-                finish()
-            }
-        }
-    }
 
     func updateCurrentFavorite(_ currentZone: Zone? = nil) {
         if  let     bookmark = whichBookmarkTargets(currentZone ?? gHereMaybe),
@@ -150,7 +213,7 @@ class ZFavorites: ZRecords {
 						} else {
 							hasDuplicate = true
 						}
-					} else if  link == kLostAndFoundLink {
+					} else if      link == kLostAndFoundLink {
 						if  missingLost {
 							missingLost  = false
 						} else {
@@ -290,96 +353,6 @@ class ZFavorites: ZRecords {
 			bump?(index)
 		}
 	}
-
-	// MARK:- create
-    // MARK:-
-
-    @discardableResult func createZone(withBookmark: Zone?, _ iName: String?, identifier: String? = nil) -> Zone {
-        var           bookmark = withBookmark
-        if  bookmark          == nil {
-            bookmark           = Zone(databaseID: .mineID, named: iName, identifier: identifier)
-        } else if let     name = iName {
-            bookmark?.zoneName = name
-        }
-
-        return bookmark!
-    }
-
-    @discardableResult func create(withBookmark: Zone?, _ action: ZBookmarkAction, parent: Zone, atIndex: Int, _ name: String?, identifier: String? = nil) -> Zone {
-        let bookmark: Zone = createZone(withBookmark: withBookmark, name, identifier: identifier)
-        let insertAt: Int? = atIndex == parent.count ? nil : atIndex
-
-        if  action != .aNotABookmark {
-            parent.addChild(bookmark, at: insertAt) // calls update progeny count
-        }
-        
-        bookmark.updateCKRecordProperties() // is this needed?
-
-        return bookmark
-    }
-
-	@discardableResult func createFavorite(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
-
-		// /////////////////////////////////////////////
-		// 1. zone is a bookmark, pass a deep copy it //
-		// 2. not a bookmark, pass it                 //
-		// /////////////////////////////////////////////
-
-		if  let       zone = iZone,
-			let       root = rootZone,
-			var     parent = zone.parentZone ?? gFavoritesHereMaybe ?? gFavoritesRoot {
-			let isBookmark = zone.isBookmark
-			let  actNormal = action == .aBookmark
-
-			if  !actNormal {
-				let          basis = isBookmark ? zone.crossLink! : zone
-
-				if  let recordName = basis.recordName {
-					parent         = gFavoritesHereMaybe ?? gFavoritesRoot!
-
-					for workingFavorite in root.allBookmarkProgeny {
-						if  !workingFavorite.isInTrash,
-							recordName == workingFavorite.linkRecordName,
-							let  target = workingFavorite.bookmarkTarget,
-							!target.isARoot {
-							currentBookmark = workingFavorite
-
-							return workingFavorite
-						}
-					}
-				}
-			}
-
-			let           count = parent.count
-			var bookmark: Zone? = isBookmark ? zone.deepCopy : nil               // 1. and 2.
-			var           index = parent.children.firstIndex(of: zone) ?? count
-
-			if  action         == .aCreateFavorite,
-				let      fIndex = favoritesIndex {
-				index           = nextWorkingIndex(after: fIndex, going: gListsGrowDown)
-			}
-
-			bookmark            = create(withBookmark: bookmark, action, parent: parent, atIndex: index, zone.zoneName)
-
-			bookmark?.maybeNeedSave()
-
-			if  actNormal {
-				parent.updateCKRecordProperties()
-				parent.maybeNeedMerge()
-			}
-
-			if !isBookmark {
-				bookmark?.crossLink = zone
-
-				gBookmarks.persistForLookupByTarget(bookmark!)
-			}
-
-			return bookmark!
-		}
-
-		return nil
-	}
-
 
     // MARK:- toggle
     // MARK:-

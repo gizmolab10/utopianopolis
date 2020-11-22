@@ -387,13 +387,19 @@ class ZRecords: NSObject {
 		}
 	}
 
-	func updateAllInstanceProperties() {
+	func updateAllInstanceProperties() -> Int {
+		var count = 0
+
 		applyToAllZRecords { zRecord in
 			if  let zone = zRecord as? Zone,
 				zone.zoneName == nil {
 				zone.updateInstanceProperties()
+
+				count += 1
 			}
 		}
+
+		return count
 	}
 
     func adoptAllOrphanIdeas(moveOrphansToLost: Bool = false) {
@@ -844,6 +850,10 @@ class ZRecords: NSObject {
 		return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? []
 	}
 
+	var workingProgeny: ZoneArray {
+		return (gBrowsingIsConfined ? hereZoneMaybe?.allProgeny : rootZone?.allProgeny) ?? []
+	}
+
 	func go(down: Bool, atArrival: Closure? = nil) {
 		let max = workingBookmarks.count - 1
 
@@ -924,10 +934,9 @@ class ZRecords: NSObject {
 	}
 
 	@discardableResult func updateCurrentBookmark() -> Zone? {
-		if  let     bookmark = whichBookmarkTargets(gHereMaybe),
-			let       target = bookmark.bookmarkTarget,
+		if  let    bookmark = whichBookmarkTargets(gHereMaybe),
 			bookmark.isInSmallMap,
-			(gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
+			!(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false) {
 			currentBookmark = bookmark
 		}
 

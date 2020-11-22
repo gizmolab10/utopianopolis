@@ -24,7 +24,7 @@ class ZOnboarding : ZOperations {
 
     var           user : ZUser?
 	var     macAddress : String?
-	var isMasterAuthor : Bool { return true } // (user?.access ?? .eNormal) == .eMaster }
+	var isMasterAuthor : Bool { return (user?.access ?? .eNormal) == .eMaster }
 
     // MARK:- internals
     // MARK:-
