@@ -8,15 +8,8 @@
 import Foundation
 import CloudKit
 
-enum ZInitState: Int {
-	case fresh
-	case record
-	case instance
-}
-
 class ZRecord: NSObject {
 
-	var           initState: ZInitState = .fresh
 	var          kvoContext: UInt8 = 1
 	var              record: CKRecord?
 	var      _tooltipRecord: Any?
@@ -74,8 +67,9 @@ class ZRecord: NSObject {
 			gBookmarks.forget(self as? Zone)
 			cloud?.unregisterCKRecord(record)
 
-			initState = .record
-			record    = newValue
+			record = newValue
+
+			updateInstanceProperties()
 
 			if !register() {
 				bam("zone is a duplicate")
@@ -84,7 +78,6 @@ class ZRecord: NSObject {
 			}
 		}
 
-		updateInstanceProperties()
 
 		if  record == nil {
 			print("nil")
@@ -101,7 +94,7 @@ class ZRecord: NSObject {
 			self.setRecord(r)
 
 			if  isAdoptable {
-				self.needAdoption()
+				needAdoption()
 				adopt()
 			}
 		}
@@ -198,14 +191,14 @@ class ZRecord: NSObject {
 	var isAdoptable: Bool { return false }
 
     func orphan() {}
-    func adopt(moveOrphansToLost: Bool = false) {}
+    func adopt(forceAdoption: Bool = true, moveOrphansToLost: Bool = false) {}
     func maybeNeedRoot() {}
     func debug(_  iMessage: String) {}
 	var cloudProperties: [String] { return ZRecord.cloudProperties }
 	var optionalCloudProperties: [String] { return ZRecord.optionalCloudProperties }
     func ignoreKeyPathsForStorage() -> [String] { return [kpParent, kpOwner] }
-    func   register() -> Bool { return cloud?.registerZRecord(self) ?? false }
-    func unregister() { cloud?.unregisterZRecord(self) }
+	func unregister() { cloud?.unregisterZRecord(self) }
+    func   register()         -> Bool { return cloud?.registerZRecord(self) ?? false }
     func hasMissingChildren() -> Bool { return true }
     func hasMissingProgeny()  -> Bool { return true }
     class var cloudProperties: [String] { return [] }
@@ -244,8 +237,6 @@ class ZRecord: NSObject {
                     }
                 }
             }
-
-			initState = .instance
         }
     }
 
@@ -263,17 +254,18 @@ class ZRecord: NSObject {
     }
 
     func useBest(record iRecord: CKRecord) {
-        let myDate      = record?.modificationDate ?? writtenModifyDate
+        let      myDate = record?.modificationDate ?? writtenModifyDate
+		let      noDate = myDate == nil
         if  record     != iRecord,
             let newDate = iRecord.modificationDate,
-            (myDate    == nil || newDate.timeIntervalSince(myDate!) > 10.0) {
+            (noDate || newDate.timeIntervalSince(myDate!) > 10.0) {
             
             if  let   r = record,
                 r.recordID.recordName != iRecord.recordID.recordName {
                 records?.addCKRecord(record, for: [.needsDestroy])
             }
 
-            record      = iRecord
+			setRecord(iRecord)
         }
     }
 
@@ -288,8 +280,7 @@ class ZRecord: NSObject {
         updateCKRecordProperties()
 
         if  let r = record, r.copy(to: iRecord, properties: cloudProperties) {
-            record  = iRecord
-
+            setRecord(iRecord)
             maybeNeedSave()
         }
     }

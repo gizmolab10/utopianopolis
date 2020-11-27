@@ -336,24 +336,6 @@ class ZFavorites: ZRecords {
         return next
     }
 
-    func go(die down: Bool, atArrival: @escaping Closure) {
-		if  let   fIndex = favoritesIndex {
-			let    index = nextWorkingIndex(after: fIndex, going: down)
-			var     bump : IntClosure?
-			bump         = { (iIndex: Int) in
-				let zone = self.workingBookmarks[iIndex]
-
-				if  zone.isBookmark {
-					zone.focusThrough(atArrival)
-				} else {
-					bump?(self.nextWorkingIndex(after: iIndex, going: down))
-				}
-			}
-
-			bump?(index)
-		}
-	}
-
     // MARK:- toggle
     // MARK:-
 

@@ -82,9 +82,9 @@ class ZRecords: NSObject {
     }
 
 	var allHereReferences: [String] {
-		var   references = gHereRecordNames.components(separatedBy: kColonSeparator)
+		var    references = gHereRecordNames.components(separatedBy: kColonSeparator)
 
-		while references.count < 4 {
+		while  references.count < 4 {
 			let     index = references.count
 			if  let  dbid = ZDatabaseIndex(rawValue: index)?.databaseID,
 				let  name = gRemoteStorage.zRecords(for: dbid)?.rootZone?.recordName() {
@@ -190,11 +190,14 @@ class ZRecords: NSObject {
 		return []
     }
 
-    
     // MARK:- registries
     // MARK:-
 
-    func appendNameRegistry(from iName: String, onEach: RecordsToRecordsClosure) {
+	// name registry:
+	// initialized with one entry for each word in each zone's name
+	// grows with each unique search
+
+	func appendNameRegistry(from iName: String, onEach: RecordsToRecordsClosure) {
         for part in iName.components(separatedBy: " ") {
             if  part != "" {
                 var records  = nameRegistry[part]
@@ -202,18 +205,21 @@ class ZRecords: NSObject {
                     records  = []
                 }
 
-                records            = onEach(records!)
-                nameRegistry[part] = records
-            }
+                records      = onEach(records!)
+
+				if  let r = records, r.count > 0 {
+					nameRegistry[part] = r
+				}
+			}
         }
 	}
 	
-	func register(name: String, for iZone: Zone?) {
+	func addToLocalSearchIndex(name: String, for iZone: Zone?) {
 		if  let record = iZone?.record {
 			appendNameRegistry(from: name) { iRecords -> ([CKRecord]) in
 				var records = iRecords
 				
-				records.append(record)
+				records.appendUnique(contentsOf: [record])
 				
 				return records
 			}
@@ -221,14 +227,14 @@ class ZRecords: NSObject {
 	}
 	
 	
-	func registerName(of iZone: Zone?) {
-        if  let   name = iZone?.zoneName {
-			register(name: name, for: iZone)
+	func addToLocalSearchIndex(nameOf iZone: Zone?) {
+        if  let name = iZone?.zoneName {
+			addToLocalSearchIndex(name: name, for: iZone)
         }
     }
 
 
-    func unregisterName(of iZone: Zone?) {
+    func removeFromLocalSearchIndex(nameOf iZone: Zone?) {
         if  let record = iZone?.record,
             let   name = iZone?.zoneName {
             appendNameRegistry(from: name) { iRecords -> ([CKRecord]) in
@@ -244,12 +250,21 @@ class ZRecords: NSObject {
     }
 
     func searchLocal(for name: String) -> [CKRecord] {
-        var results = [CKRecord] ()
+        var results = [CKRecord]()
 
 		appendNameRegistry(from: name) { (iRecords: [CKRecord]) -> ([CKRecord]) in
-			results.appendUnique(contentsOf: iRecords)
+			var filtered = [CKRecord]()
 
-            return iRecords // return input as output (identity filter)
+			for record in iRecords {
+				if  record.matchesFilterOptions {
+					filtered.appendUnique(contentsOf: [record])
+				}
+			}
+
+
+			results.appendUnique(contentsOf: filtered)
+
+            return filtered // add these to name key
         }
 
         return results
@@ -275,7 +290,7 @@ class ZRecords: NSObject {
                 recordRegistry[id] = zRecord
 
 				if  let        zone = zRecord as? Zone {
-					registerName(of: zone)
+					addToLocalSearchIndex(nameOf: zone)
 				}
 
                 return true
@@ -299,7 +314,7 @@ class ZRecords: NSObject {
 
     func unregisterZRecord(_ zRecord: ZRecord?) {
         unregisterCKRecord(zRecord?.record)
-        unregisterName(of: zRecord as? Zone)
+		removeFromLocalSearchIndex(nameOf: zRecord as? Zone)
         gBookmarks.forget(zRecord as? Zone)
     }
 
@@ -387,22 +402,60 @@ class ZRecords: NSObject {
 		}
 	}
 
-	func updateAllInstanceProperties() -> Int {
-		var count = 0
+	func resolve(_ onCompletion: IntClosure? = nil) {
+		FOREGROUND {
+			let (fixed, found) = self.updateAllInstanceProperties(0, 0)
+			printDebug(.dFix, "fixed: \(fixed) found: \(found)")
+			onCompletion?(0)
+		}
+	}
+
+	@discardableResult func updateAllInstanceProperties(_ iFixed: Int, _ iLost: Int) -> (Int, Int) {
+		var fixed = 0
+		var  lost = 0
 
 		applyToAllZRecords { zRecord in
-			if  let zone = zRecord as? Zone,
-				zone.zoneName == nil {
-				zone.updateInstanceProperties()
+			if  let zone = zRecord as? Zone {
+				let root = zone.ancestralPath.first
 
-				count += 1
+				if  zone.zoneName == nil {
+					zone.updateInstanceProperties()
+
+					if  let n = root?.recordName(),
+						![kLostAndFoundName, kDestroyName, kTrashName, kRootName].contains(n) {
+						printDebug(.dFix, "fixed: \(n)")
+					}
+
+					fixed += 1
+				}
+
+				if  let r = root,
+				   !r.isARoot,
+					r.parent == nil,
+					r.parentLink == nil {
+//					lostAndFoundZone?.addAndReorderChild(r)
+					printDebug(.dFix, "found: \(r)")
+
+					lost += 1
+				}
 			}
 		}
 
-		return count
+		return (iFixed + fixed, iLost + lost)
 	}
 
-    func adoptAllOrphanIdeas(moveOrphansToLost: Bool = false) {
+	func assureAdoption(_ onCompletion: IntClosure? = nil) {
+		FOREGROUND {
+			for zRecord in self.recordRegistry.values {
+				zRecord.needAdoption()
+				zRecord.adopt(moveOrphansToLost: true)
+			}
+
+			onCompletion?(0)
+		}
+	}
+
+    func adoptAllNeedingAdoption(moveOrphansToLost: Bool = false) {
         let states = [ZRecordState.needsAdoption] // just one state
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
@@ -855,32 +908,33 @@ class ZRecords: NSObject {
 	}
 
 	func go(down: Bool, atArrival: Closure? = nil) {
-		let max = workingBookmarks.count - 1
+		if  currentBookmark == nil {
+			gRecents.push()
+		}
 
-		if  let target = currentBookmark?.bookmarkTarget {
+		let    max = workingBookmarks.count - 1
+		var fIndex = down ? 0 : max
+
+		if  fIndex >= 0,
+			let target = currentBookmark?.bookmarkTarget {
 			for (iIndex, bookmark) in workingBookmarks.enumerated() {
 				if  bookmark.bookmarkTarget == target {
-					var fIndex     = 0         // wrap going down
-
-					if  down {
-						if  iIndex < max {
-							fIndex = iIndex + 1 // go down
-						}
-					} else {
-						fIndex     = max       // wrap going up
-
-						if  iIndex > 0 {
-							fIndex = iIndex - 1 // go up
-						}
+					if         down, iIndex < max {
+						fIndex = iIndex + 1         // go down
+					} else if !down, iIndex > 0 {
+						fIndex = iIndex - 1         // go up
 					}
 
-					setAsCurrent(workingBookmarks[fIndex], alterHere: true)
-					atArrival?()
-
-					return
+					break
 				}
 			}
+
+			if  workingBookmarks.count > fIndex {
+				setAsCurrent(workingBookmarks[fIndex], alterHere: true)
+			}
 		}
+
+		atArrival?()
 	}
 
 	func revealBookmark(of target: Zone) {
@@ -894,6 +948,7 @@ class ZRecords: NSObject {
 
 	@discardableResult func makeVisibleAndMarkInSmallMap(_  iZone: Zone? = nil) -> Bool {
 		if  let   pHere  = iZone?.parentZone,
+			rootZone    == iZone?.root, // in the same map?
 			currentHere != pHere,
 			pHere.isInSmallMap {
 			currentHere.concealChildren()
@@ -933,6 +988,10 @@ class ZRecords: NSObject {
 		return nil
 	}
 
+	@discardableResult func updateCurrentForMode() -> Zone? {
+		return gIsRecentlyMode ? updateCurrentRecent() : updateCurrentBookmark()
+	}
+
 	@discardableResult func updateCurrentBookmark() -> Zone? {
 		if  let    bookmark = whichBookmarkTargets(gHereMaybe),
 			bookmark.isInSmallMap,
@@ -966,37 +1025,24 @@ class ZRecords: NSObject {
 		return nil
 	}
 
-	func updateCurrentInBoth() {
-		gRecents.updateCurrentRecent()
-		gFavorites.updateCurrentBookmark()
-	}
-
 	func swapBetweenBookmarkAndTarget(shouldGrab: Bool = false) {
 		if  let cb = currentBookmark,
 			cb.isGrabbed {
 			cb.bookmarkTarget?.grab() // grab target in big map
 		} else if shouldGrab,
-				  let bookmark = updateCurrentBookmark() {
+				  let bookmark = updateCurrentForMode() {
 
 			bookmark.grab()
 
 			if  let h = hereZoneMaybe,
 				let p = bookmark.parentZone,
-				p.isInRecents,
+				p.isInSmallMap,
 				p != h {
 				h.concealChildren()
 				p.revealChildren()
 
 				hereZoneMaybe = p
 			}
-		}
-	}
-
-	func grabSmallMapCurrent(_ shouldGrab: Bool) {
-		if  gIsRecentlyMode {
-			gRecents.swapBetweenBookmarkAndTarget(shouldGrab: shouldGrab)
-		} else {
-			gFavorites.updateGrab()
 		}
 	}
 
@@ -1028,7 +1074,7 @@ class ZRecords: NSObject {
 				finishAndGrab(gHere)
 			}
 		} else if zone == gHere {       // state 2
-			grabSmallMapCurrent(shouldGrab)
+			gCurrentSmallMapRecords?.swapBetweenBookmarkAndTarget(shouldGrab: shouldGrab)
 
 			atArrival()
 		} else if zone.isInSmallMap {   // state 3
@@ -1098,7 +1144,7 @@ class ZRecords: NSObject {
 				return rootZone
 			}
 
-			return recordRegistry[name]
+			return recordRegistry[name] // look it up
 		}
 
 		return nil

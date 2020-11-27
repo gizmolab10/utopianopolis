@@ -6,7 +6,6 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
 
@@ -16,27 +15,56 @@ import CloudKit
     import UIKit
 #endif
 
-
 var gSearchBarController: ZSearchBarController? { return gControllers.controllerForID(.idSearch) as? ZSearchBarController }
-
 
 class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
-
-    @IBOutlet var searchBox: ZSearchField?
+	@IBOutlet var searchBox: ZSearchField?
+	@IBOutlet var searchOptionsControl: ZSegmentedControl?
 	override  var controllerID: ZControllerID { return .idSearch }
-
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         if  iKind == .sSearch && gIsSearchMode {
 			gSearching.state = .sEntry
 
-            FOREGROUND(after: 0.2) {
+			updateSearchOptions()
+
+			FOREGROUND(after: 0.2) {
                 self.searchBox?.becomeFirstResponder()
             }
         }
 	}
-	
+
+	func updateSearchOptions() {
+		let o = gFilterOption
+
+		searchOptionsControl?.setSelected(o.contains(.oBookmarks), forSegment: 0)
+		searchOptionsControl?.setSelected(o.contains(.oNotes),     forSegment: 1)
+		searchOptionsControl?.setSelected(o.contains(.oIdeas),     forSegment: 2)
+		searchOptionsControl?.action = #selector(searchOptionAction)
+		searchOptionsControl?.target = self
+	}
+
+	@IBAction func searchOptionAction(sender: ZSegmentedControl) {
+		var options = ZFilterOption.oNone
+
+		for index in 0..<sender.segmentCount {
+			if  sender.isSelected(forSegment: index) {
+				let option = ZFilterOption(rawValue: Int(2.0 ** Double(index)))
+				options.insert(option)
+			}
+		}
+
+		if  options == .oNone {
+			options  = .oIdeas
+		}
+
+		gFilterOption = options
+
+		if  let text = searchBoxText {
+			performSearch(for: text)
+		}
+	}
 
 	var searchBoxIsFirstResponder : Bool {
 		#if os(OSX)
@@ -47,14 +75,12 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		
 		return false
 	}
-	
 
 	func handleArrow(_ arrow: ZArrowKey, with flags: ZEventFlags) {
 		#if os(OSX)
 		searchBox?.currentEditor()?.handleArrow(arrow, with: flags)
 		#endif
 	}
-
 	
 	func handleEvent(_ event: ZEvent) -> ZEvent? {
         let   string = event.input ?? ""
@@ -93,12 +119,10 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
         return nil
     }
 
-
     func endSearch() {
         searchBox?.resignFirstResponder()
         gSearching.exitSearchMode()
     }
-
 
     var searchBoxText: String? {
         let searchString = (searchBox?.text)!
@@ -111,7 +135,6 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 		return searchString.searchable
     }
-
     
     func performSearch(for searchString: String) {
         var combined = [ZDatabaseID: [Any]] ()
@@ -138,14 +161,15 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
             } else {
                 cloud.search(for: searchString) { iObject in
                     FOREGROUND {
-                        var results = iObject as! [CKRecord]
-						var orphans = [CKRecord]()
+                        var  records = iObject as! [CKRecord]
+						var  orphans = [CKRecord]()
+						var filtered = [CKRecord]()
                         remaining  -= 1
 
-						for record in results {
+						for record in records {
 							if  let trait = cloud.maybeZRecordForCKRecord(record) as? ZTrait {
 								if  trait.ownerZone == nil {
-									orphans.append(record)       // remove unowned traits from results
+									orphans.append(record)       // remove unowned traits from records
 								}
 							} else if cloud.maybeZoneForCKRecord(record) == nil {
 								let trait = ZTrait(record: record, databaseID: dbID)
@@ -153,18 +177,24 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 								if  trait.ownerZone != nil {
 									cloud.registerZRecord(trait) // some records are being fetched first time
 								} else {
-									orphans.append(record)       // remove unowned traits from results
+									orphans.append(record)       // remove unowned traits from records
 								}
 							}
 						}
 
 						for orphan in orphans {
-							if let index = results.firstIndex(of: orphan) {
-								results.remove(at: index)
+							if  let index = records.firstIndex(of: orphan) {
+								records.remove(at: index)
 							}
 						}
 
-                        results.appendUnique(contentsOf: locals) { (a, b) in
+						for record in records {
+							if  record.matchesFilterOptions {
+								filtered.appendUnique(contentsOf: [record])
+							}
+						}
+
+						filtered.appendUnique(contentsOf: locals) { (a, b) in
                             if  let alpha = a as? CKRecord,
                                 let  beta = b as? CKRecord {
                                 return alpha.recordID.recordName == beta.recordID.recordName
@@ -173,7 +203,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
                             return false
                         }
                         
-                        combined[dbID] = results
+                        combined[dbID] = filtered
                         
                         done()
                     }
@@ -181,7 +211,6 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
             }
         }
     }
-    
     
     func control(_ control: ZControl, textView: ZTextView, doCommandBy commandSelector: Selector) -> Bool {
         let handledIt = commandSelector == Selector(("noop:"))

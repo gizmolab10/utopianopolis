@@ -128,6 +128,7 @@ let              kDetailsState = "current details state"
 let              kShowSmallMap = "show small map" // for iphone
 let              kShowToolTips = "show tool tips"
 let              kUserRecordID = "user record id"
+let              kFilterOption = "filter option"
 let              kStartupLevel = "startup level"
 let              kColorfulMode = "colorful mode"
 let              kCurrentEssay = "current essay"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17156"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -1026,8 +1026,25 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="397" height="46"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="uAJ-8h-8LU">
+                                <rect key="frame" x="18" y="12" width="162" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="158" id="I1c-oe-2cv"/>
+                                </constraints>
+                                <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="lUZ-Yn-zZH">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <segments>
+                                        <segment label="bookmarks"/>
+                                        <segment label="notes" selected="YES" tag="1"/>
+                                        <segment label="ideas"/>
+                                    </segments>
+                                    <connections>
+                                        <action selector="searchOptionActionWithIControl:" target="cYL-kx-LTL" id="TXX-AW-AnR"/>
+                                    </connections>
+                                </segmentedCell>
+                            </segmentedControl>
                             <searchField wantsLayer="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bdk-eQ-YUz">
-                                <rect key="frame" x="20" y="12" width="357" height="22"/>
+                                <rect key="frame" x="186" y="12" width="191" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="qSd-0e-j4I"/>
                                 </constraints>
@@ -1043,17 +1060,20 @@ CA
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="bdk-eQ-YUz" secondAttribute="trailing" constant="20" id="DrT-Cn-BVA"/>
+                            <constraint firstItem="uAJ-8h-8LU" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="R1X-g2-w5H"/>
+                            <constraint firstItem="bdk-eQ-YUz" firstAttribute="leading" secondItem="uAJ-8h-8LU" secondAttribute="trailing" constant="8" symbolic="YES" id="RlA-BZ-cjp"/>
+                            <constraint firstItem="uAJ-8h-8LU" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="20" id="XLH-m0-Hw8"/>
                             <constraint firstItem="bdk-eQ-YUz" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="dBy-Lm-ulD"/>
-                            <constraint firstItem="bdk-eQ-YUz" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="20" id="iG7-8U-xYU"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="searchBox" destination="bdk-eQ-YUz" id="fCv-MP-Ean"/>
+                        <outlet property="searchOptionsControl" destination="uAJ-8h-8LU" id="14g-mI-pf9"/>
                     </connections>
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1018" y="524"/>
+            <point key="canvasLocation" x="1017.5" y="524"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">

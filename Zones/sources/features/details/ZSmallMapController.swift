@@ -21,6 +21,7 @@ class ZSmallMapController: ZMapController {
 	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ? .tRecent      : .tFavorite }
 	override  var controllerID : ZControllerID { return .idSmallMap }
 	override  var allowedKinds : [ZSignalKind] { return [.sDetails, .sSmallMap, .sRelayout] }
+	var            isRecentMap : Bool          { return rootWidget.widgetZone?.isInRecents ?? gIsRecentlyMode }
 	@IBOutlet var controlsView : ZSmallMapControlsView?
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
@@ -32,7 +33,7 @@ class ZSmallMapController: ZMapController {
 
 	func update() {
 		controlsView?.update()
-		gCurrentSmallMapRecords?.updateCurrentInBoth()
+		gCurrentSmallMapRecords?.updateCurrentForMode()
 	}
 
 	override func startup() {

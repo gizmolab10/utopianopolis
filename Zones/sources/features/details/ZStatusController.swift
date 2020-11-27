@@ -20,7 +20,6 @@ class ZStatusController: ZGenericController {
 	@IBOutlet var  cloudStatusLabel: ZTextField?
     @IBOutlet var   totalCountLabel: ZTextField?
     @IBOutlet var      mapNameLabel: ZTextField?
-    @IBOutlet var      versionLabel: ZTextField?
     @IBOutlet var        levelLabel: ZTextField?
     var                 currentZone: Zone?         { return gSelecting.rootMostMoveable }
     override  var      controllerID: ZControllerID { return .idStatus }
@@ -80,9 +79,8 @@ class ZStatusController: ZGenericController {
 		if ![.sSearch, .sFound, .sCrumbs, .sSwap, .sSmallMap].contains(iKind) {
 			creationDateLabel?.text = zoneRecordNameText // creationDateText
             cloudStatusLabel? .text = statusText
-//            totalCountLabel?  .text = totalCountsText
+            totalCountLabel?  .text = totalCountsText
 			mapNameLabel?     .text = mapNameText
-            versionLabel?     .text = versionText
 
             if  iKind != .sStartupProgress,
 				let zone = currentZone {

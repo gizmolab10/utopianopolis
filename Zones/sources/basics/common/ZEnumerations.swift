@@ -82,17 +82,6 @@ enum ZMenuType: Int {
 	case eMultiple
 }
 
-struct ZTinyDotType: OptionSet {
-	let rawValue: Int
-
-	init(rawValue: Int) {
-		self.rawValue = rawValue
-	}
-
-	static let eIdea  = ZTinyDotType(rawValue: 0x0001)
-	static let eEssay = ZTinyDotType(rawValue: 0x0002)
-}
-
 enum ZConfinementMode: String {
 	case list = "List"
 	case all  = "All"
@@ -283,21 +272,6 @@ enum ZDatabaseIndex: Int { // N.B. do not change the order, these integer values
     }
 }
 
-struct ZDetailsViewID: OptionSet {
-    let rawValue: Int
-
-    init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
-
-	static let  Preferences = ZDetailsViewID(rawValue: 0x0001)
-    static let  Information = ZDetailsViewID(rawValue: 0x0002)
-	static let Introduction = ZDetailsViewID(rawValue: 0x0004)
-	static let       Status = ZDetailsViewID(rawValue: 0x0008)
-	static let          Map = ZDetailsViewID(rawValue: 0x0010)
-    static let          All = ZDetailsViewID(rawValue: 0x001F)
-}
-
 enum ZInterruptionError : Error {
 	case userInterrupted
 }
@@ -444,4 +418,48 @@ enum ZEssayHyperlinkType: String {
 
 	static var all: [ZEssayHyperlinkType] { return [.hWeb, .hIdea, .hNote, .hEssay, .hClear] }
 
+}
+
+// MARK:- option sets
+// MARK:-
+
+struct ZTinyDotType: OptionSet {
+	let rawValue: Int
+
+	init(rawValue: Int) {
+		self.rawValue = rawValue
+	}
+
+	static let eIdea  = ZTinyDotType(rawValue: 0x0001)
+	static let eEssay = ZTinyDotType(rawValue: 0x0002)
+}
+
+struct ZFilterOption: OptionSet {
+	static var structValue = 0
+	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
+	let           rawValue : Int
+
+	init() { rawValue = ZFilterOption.nextValue }
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let oBookmarks = ZFilterOption()
+	static let     oNotes = ZFilterOption()
+	static let     oIdeas = ZFilterOption()
+	static let      oNone = ZFilterOption([])
+	static let       oAll = ZFilterOption(rawValue: 7)
+}
+
+struct ZDetailsViewID: OptionSet {
+	let rawValue: Int
+
+	init(rawValue: Int) {
+		self.rawValue = rawValue
+	}
+
+	static let  Preferences = ZDetailsViewID(rawValue: 0x0001)
+	static let  Information = ZDetailsViewID(rawValue: 0x0002)
+	static let Introduction = ZDetailsViewID(rawValue: 0x0004)
+	static let       Status = ZDetailsViewID(rawValue: 0x0008)
+	static let          Map = ZDetailsViewID(rawValue: 0x0010)
+	static let          All = ZDetailsViewID(rawValue: 0x001F)
 }

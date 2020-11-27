@@ -134,7 +134,8 @@ class ZMapEditor: ZBaseEditor {
 					case "'":      swapSmallMapMode(OPTION)
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdate(CONTROL, COMMAND, kind: .eSelected) }
 					case "\\":     gMapController?.toggleMaps(); gRedrawMaps()
-					case "]", "[": gCurrentSmallMapRecords?.go(down: key == "]") { gRedrawMaps() }
+					case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}") { gRedrawMaps() }
+					case "]", "[": gRecents                .go(down: key == "]") { gRedrawMaps() }
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 					case kEquals:  if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawMaps() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
@@ -785,7 +786,7 @@ class ZMapEditor: ZBaseEditor {
             } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
 				zone.invokeTravel(onCompletion: onCompletion)
             } else {
-				zone.moveSelectionInto(extreme: extreme, onCompletion: onCompletion)
+				zone.addSelection(extreme: extreme, onCompletion: onCompletion)
 			}
         }
     }
@@ -828,6 +829,10 @@ class ZMapEditor: ZBaseEditor {
     }
 
 	func moveZones(_ zones: ZoneArray, into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
+		if  into.isInSmallMap {
+			into.parentZone?.concealChildren()
+		}
+
 		into.revealChildren()
 		into.needChildren()
 
@@ -1047,148 +1052,6 @@ class ZMapEditor: ZBaseEditor {
                 }
 
                 onCompletion?()
-            }
-        }
-    }
-
-    func moveGrabbedZones(into iInto: Zone, at iIndex: Int?, _ SPECIAL: Bool, onCompletion: Closure?) {
-
-        // ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // 1. move a normal zone into another normal zone                                                            //
-        // 2. move a normal zone through a bookmark                                                                  //
-        // 3. move a normal zone into small map -- create a bookmark pointing at normal zone, then add it to the map //
-        // 4. move from small map into a normal zone -- convert to a bookmark, then move the bookmark                //
-        // ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        let   toBookmark = iInto.isBookmark                    // type 2
-        let   toSmallMap = iInto.isInSmallMap && !toBookmark   // type 3
-        let         into = iInto.bookmarkTarget ?? iInto       // grab bookmark AFTER travel
-        var        grabs = gSelecting.currentGrabs
-        var      restore = [Zone: (Zone, Int?)] ()
-        var    cyclicals = IndexSet()
-
-        for (index, zone) in grabs.enumerated() {
-            if iInto.spawnedBy(zone) {
-                cyclicals.insert(index)
-            } else if let parent = zone.parentZone {
-                let siblingIndex = zone.siblingIndex
-                restore[zone]    = (parent, siblingIndex)
-
-                zone.needProgeny()
-            }
-        }
-
-        while let index = cyclicals.last {
-            cyclicals.remove(index)
-            grabs.remove(at: index)
-        }
-
-        if  let dragged = gDraggedZone, dragged.isInSmallMap, !toSmallMap {
-            dragged.maybeNeedSave()                            // type 4
-        }
-
-        grabs.sort { (a, b) -> Bool in
-            if  a.isInSmallMap {
-                a.maybeNeedSave()                              // type 4
-            }
-
-            return a.order < b.order
-        }
-
-        // ///////////////////
-        // prepare for UNDO //
-        // ///////////////////
-
-        if  toBookmark {
-            undoManager.beginUndoGrouping()
-        }
-
-        UNDO(self) { iUndoSelf in
-            for (child, (parent, index)) in restore {
-                child.orphan()
-                parent.addAndReorderChild(child, at: index)
-            }
-
-            iUndoSelf.UNDO(self) { iUndoUndoSelf in
-                iUndoUndoSelf.moveGrabbedZones(into: iInto, at: iIndex, SPECIAL, onCompletion: onCompletion)
-            }
-
-            onCompletion?()
-        }
-
-        // /////////////
-        // move logic //
-        // /////////////
-
-        let finish = {
-            var done = false
-
-            if !SPECIAL {
-                into.revealChildren()
-            }
-
-            into.maybeNeedChildren()
-
-			if !done {
-				done = true
-				if  let firstGrab = grabs.first,
-					let fromIndex = firstGrab.siblingIndex,
-					(firstGrab.parentZone != into || fromIndex > (iIndex ?? 1000)) {
-					grabs = grabs.reversed()
-				}
-
-				gSelecting.ungrabAll()
-
-				for grab in grabs {
-					var beingMoved = grab
-
-					if  toSmallMap && beingMoved.isInBigMap && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
-						if  let bookmark = gFavorites.createFavorite(for: beingMoved, action: .aNotABookmark) {	// type 3
-							beingMoved   = bookmark
-
-							beingMoved.maybeNeedSave()
-						}
-					} else {
-						beingMoved.orphan()
-
-						if  beingMoved.databaseID != into.databaseID {
-							beingMoved.traverseAllProgeny { iChild in
-								iChild.needDestroy()
-							}
-
-							beingMoved = beingMoved.deepCopy
-						}
-					}
-
-					if !SPECIAL {
-						beingMoved.addToGrabs()
-					}
-
-					if  toSmallMap {
-						into.expandInSmallMap(true)
-					}
-
-					into.addAndReorderChild(beingMoved, at: iIndex)
-					beingMoved.recursivelyApplyDatabaseID(into.databaseID)
-				}
-
-				if  toBookmark && self.undoManager.groupingLevel > 0 {
-					self.undoManager.endUndoGrouping()
-				}
-
-				onCompletion?()
-			}
-        }
-
-        // ////////////////////////////////////
-        // deal with target being a bookmark //
-        // ////////////////////////////////////
-
-        if !toBookmark || SPECIAL {
-            finish()
-        } else {
-			iInto.travelThrough() { (iAny, iSignalKind) in
-                finish()
             }
         }
     }

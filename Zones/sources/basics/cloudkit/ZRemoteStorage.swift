@@ -106,16 +106,19 @@ class ZRemoteStorage: NSObject {
 	}
 
 	func updateAllInstanceProperties() {
-		var count = 0
+		var fixed = 0
+		var  lost = 0
+
 		for cloud in allClouds {
-			count += cloud.updateAllInstanceProperties()
+			(fixed, lost) = cloud.updateAllInstanceProperties(fixed, lost)
 		}
-		print("fixed: \(count)")
+
+		print("fixed: \(fixed) lost: \(lost)")
 	}
 
-	func assureNoOrphanIdeas(moveOrphansToLost: Bool = false) {
+	func adoptAllNeedingAdoption(moveOrphansToLost: Bool = false) {
 		for cloud in allClouds {
-			cloud.adoptAllOrphanIdeas(moveOrphansToLost: moveOrphansToLost)
+			cloud.adoptAllNeedingAdoption(moveOrphansToLost: moveOrphansToLost)
 		}
 	}
 

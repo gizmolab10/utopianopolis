@@ -8,7 +8,7 @@
 
 import Foundation
 
-var gPrintMode: [ZPrintMode] = [.dTime]
+var gPrintMode: [ZPrintMode] = [.dFix, .dFetch]
 var gDebugMode: [ZDebugMode] = []
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
@@ -39,6 +39,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 
 	static let   dNone = ZPrintMode()
 	static let    dOps = ZPrintMode()
+	static let    dFix = ZPrintMode()
 	static let    dLog = ZPrintMode()
 	static let   dTime = ZPrintMode()
 	static let   dInfo = ZPrintMode()
@@ -62,6 +63,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 
 	var description: String {
 		return [(.dOps,    "     op"),
+				(.dFix,    "    fix"),
 				(.dLog,    "    log"),
 				(.dFile,   "   file"),
 				(.dTime,   "   time"),

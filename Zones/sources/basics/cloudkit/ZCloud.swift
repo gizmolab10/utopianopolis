@@ -46,28 +46,30 @@ class ZCloud: ZRecords {
 
     func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
 		switch identifier { // inner switch
-			case .oBookmarks:     fetchBookmarks    (cloudCallback)
-			case .oCloud:         fetchCloudZones   (cloudCallback)
-			case .oEmptyTrash:    emptyTrash        (cloudCallback)
-			case .oNeededIdeas:   fetchNeededIdeas  (cloudCallback)
-			case .oParentIdeas:   fetchParentIdeas  (cloudCallback)
-			case .oChildIdeas:    fetchChildIdeas   (cloudCallback)
-			case .oFoundIdeas:    foundIdeas        (cloudCallback)
-			case .oLostIdeas:     fetchLostIdeas    (cloudCallback)
-			case .oNewIdeas:      fetchNewIdeas     (cloudCallback)
-			case .oAllIdeas:      fetchAllIdeas     (cloudCallback)
-			case .oRefetch:       refetchIdeas      (cloudCallback)
-			case .oHere:          establishHere     (cloudCallback)
-			case .oFetchAndMerge: fetchAndMerge     (cloudCallback)
-			case .oRoots:         establishRoots    (cloudCallback)
-			case .oManifest:      establishManifest (cloudCallback)
-			case .oSaveToCloud:   save              (cloudCallback)
-			case .oSubscribe:     subscribe         (cloudCallback)
-			case .oAllTraits:     fetchAllTraits    (cloudCallback)
-			case .oTraits:        fetchTraits       (cloudCallback)
-			case .oUndelete:      undeleteAll       (cloudCallback)
-			case .oRecount:       recount           (cloudCallback)
-			default:                                 cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
+			case .oBookmarks:     fetchBookmarks     (cloudCallback)
+			case .oCloud:         fetchCloudZones    (cloudCallback)
+			case .oEmptyTrash:    emptyTrash         (cloudCallback)
+			case .oNeededIdeas:   fetchNeededIdeas   (cloudCallback)
+			case .oParentIdeas:   fetchParentIdeas   (cloudCallback)
+			case .oChildIdeas:    fetchChildIdeas    (cloudCallback)
+			case .oFoundIdeas:    foundIdeas         (cloudCallback)
+			case .oLostIdeas:     fetchLostIdeas     (cloudCallback)
+			case .oNewIdeas:      fetchNewIdeas      (cloudCallback)
+			case .oAllIdeas:      fetchAllIdeas      (cloudCallback)
+			case .oRefetch:       refetchIdeas       (cloudCallback)
+			case .oHere:          establishHere      (cloudCallback)
+			case .oFetchAndMerge: fetchAndMerge      (cloudCallback)
+			case .oRoots:         establishRoots     (cloudCallback)
+			case .oManifest:      establishManifest  (cloudCallback)
+			case .oSaveToCloud:   save               (cloudCallback)
+			case .oSubscribe:     subscribe          (cloudCallback)
+			case .oAllTraits:     fetchAllTraits     (cloudCallback)
+			case .oTraits:        fetchTraits        (cloudCallback)
+			case .oUndelete:      undeleteAll        (cloudCallback)
+			case .oRecount:       recount            (cloudCallback)
+			case .oResolve:       resolve            (cloudCallback)
+			case .oAdopt:         assureAdoption     (cloudCallback)
+			default:                                  cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
 		}
     }
 
@@ -392,7 +394,7 @@ class ZCloud: ZRecords {
                 if !retrieved.contains(ckRecord) {
                     retrieved.append(ckRecord)
                 }
-            } else {
+			} else if gFilterOption.contains(.oNotes) {
 				self.queryForTraitsWith(notesPredicate) { (iRecord, iError) in
 					if  let ckRecord = iRecord {
 						if !retrieved.contains(ckRecord) {
@@ -402,7 +404,9 @@ class ZCloud: ZRecords {
 						onCompletion?(retrieved as NSObject)
 					}
 				}
-            }
+			} else {
+				onCompletion?(retrieved as NSObject)
+			}
         }
     }
 
@@ -520,8 +524,6 @@ class ZCloud: ZRecords {
             if  let zone = maybeZoneForRecordName(iRecordName) {
                 clearRecordName(iRecordName, for: states)
                 lostAndFoundZone?.addAndReorderChild(zone)
-                lostAndFoundZone?.needSave()
-                zone.needSave()
             }
         }
 
@@ -654,14 +656,14 @@ class ZCloud: ZRecords {
         var retrieved = [CKRecord] ()
 
         queryFor(type, with: predicate, properties: properties, batchSize: kBatchSize) { (iRecord, iError) in
-            if  iError   != nil {
-                if start == nil {
+            if  iError    != nil {
+                if  start == nil {
                     onCompletion?(retrieved) // NEED BETTER ERROR HANDLING
-				} else if let middle = start?.mid(to: end) {                  // if error, fetch split by two
-                    self.fetch(for: type, properties: properties, since: start, before: middle) { iCKRecords in
+				} else if let middle = start?.mid(to: end) {
+                    self.fetch(for: type, properties: properties, since: start, before: middle) { iCKRecords in         // error, fetch first half
                         retrieved.appendUnique(contentsOf: iCKRecords)
 
-                        self.fetch(for: type, properties: properties, since: middle, before: end) { iCKRecords in
+                        self.fetch(for: type, properties: properties, since: middle, before: end) { iCKRecords in       // fetch second half
                             retrieved.appendUnique(contentsOf: iCKRecords)
 
                             onCompletion?(retrieved)
@@ -686,7 +688,7 @@ class ZCloud: ZRecords {
 		if  recordsToProcess.count != 0,
 			let timerID = ZTimerID.recordsTimerID(for: dbID) {
 			gTimers.assureCompletion(for: timerID, now: true, withTimeInterval: 0.2) {
-				printDebug(.dFetch, "\(self.recordsToProcess.count)")
+				printDebug(.dFetch, "(\(self.databaseID.identifier)) \(self.recordsToProcess.count)")
 				while self.recordsToProcess.count > 0 {
 					if  let      key = self.recordsToProcess.keys.first,
 						let ckRecord = self.recordsToProcess.removeValue(forKey: key) {
@@ -707,7 +709,7 @@ class ZCloud: ZRecords {
 					}
 				}
 
-				self.adoptAllOrphanIdeas()
+				self.adoptAllNeedingAdoption()
 				onCompletion?()
 			}
 
@@ -731,9 +733,9 @@ class ZCloud: ZRecords {
         // for zones, traits, destroy
         // if date is nil, fetch all
 
-        fetch(for: kZoneType, properties: Zone.cloudProperties, since: date) { iZoneCKRecords in
+        fetch(for: kZoneType, properties: Zone.cloudProperties, since: date) { iZoneCKRecords in                    // start the fetch: first zones
             FOREGROUND {
-                self.fetch(for: kTraitType, properties: ZTrait.cloudProperties, since: date) { iTraitCKRecords in
+                self.fetch(for: kTraitType, properties: ZTrait.cloudProperties, since: date) { iTraitCKRecords in   // on async response: then traits
                     FOREGROUND {
 						self.createZRecords(of: kTraitType, with: iTraitCKRecords, title: " TRAITS")
                         onCompletion?(0)
@@ -920,7 +922,7 @@ class ZCloud: ZRecords {
                     
                     self.columnarReport("PARENT (\(forReport.count)) of", String.forZones(forReport))
                     self.clearRecordIDs(childrenIDs, for: fetchingStates)
-                    self.adoptAllOrphanIdeas()
+                    self.adoptAllNeedingAdoption()
                     self.fetchParentIdeas(onCompletion)   // process remaining
                 }
             }
@@ -1016,7 +1018,7 @@ class ZCloud: ZRecords {
                         }
 
                         self.columnarReport("CHILDREN (\(childrenNeeded.count))", String.forReferences(childrenNeeded, in: self.databaseID))
-                        self.adoptAllOrphanIdeas()
+                        self.adoptAllNeedingAdoption()
                         self.add(states: [.needsCount], to: childrenNeeded)
                         self.fetchChildIdeas(onCompletion) // process remaining
                     }
@@ -1083,7 +1085,7 @@ class ZCloud: ZRecords {
                         }
 
                         self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
-                        self.adoptAllOrphanIdeas()
+                        self.adoptAllNeedingAdoption()
                         onCompletion?(0)
                     }
                 }

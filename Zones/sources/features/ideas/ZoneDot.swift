@@ -159,7 +159,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         return isVisible && window?.contentView?.bounds.intersects(rect) ?? false
     }
 
-	func drawFavoritesSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+	func drawSmallMapSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let       radius = parameters.sideDotRadius
 		let   tinyRadius =     radius * 0.7
 		let tinyDiameter = tinyRadius * 2.0
@@ -292,11 +292,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
 		if  parameters.isReveal {
 
-			// /////////////////////
-			// TINY COUNTER BEADS //
-			// /////////////////////
+			// //////////////////
+			// TINY COUNT DOTS //
+			// //////////////////
 
-			if !parameters.isBookmark {
+			if !parameters.isBookmark,
+			    gCountsMode == .dots {
 
 				drawTinyCountDots(iDirtyRect, parameters: parameters)
 			}
@@ -307,7 +308,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			// ////////////////////////////////
 
 			parameters.color.withAlphaComponent(0.7).setFill()
-			drawFavoritesSideDot(in: iDirtyRect, parameters)
+			drawSmallMapSideDot(in: iDirtyRect, parameters)
 		}
 	}
 
@@ -319,7 +320,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			if  isInnerDot {
 				drawInnerDot(iDirtyRect, parameters)
 			} else if  innerDot != nil,
-				gCountsMode == .dots,
 				let rect = innerDot?.frame.offsetBy(dx: -0.1, dy: -0.1),
 				let zone = widgetZone,
 				(!zone.showingChildren || zone.isBookmark) {

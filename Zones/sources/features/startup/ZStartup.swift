@@ -60,15 +60,15 @@ class ZStartup: NSObject {
 							gSetMapsMode()
 						}
 
-						gRemoteStorage.updateAllInstanceProperties()
-						gRemoteStorage.assureNoOrphanIdeas()
-						gRemoteStorage.updateAllInstanceProperties()
+//						gRemoteStorage.updateAllInstanceProperties()
+//						gRemoteStorage.assureAdoption()
+//						gRemoteStorage.updateAllInstanceProperties()
 						gSignal([.sMain, .sCrumbs, .sRelayout])
 						self.stopStartupTimer()
 						self.requestFeedback()
 
 						FOREGROUND(after: 10.0) {
-							gRemoteStorage.assureNoOrphanIdeas()
+//							gRemoteStorage.assureAdoption()
 							gFiles.writeAll()
 						}
 					}

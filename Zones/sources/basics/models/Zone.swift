@@ -1198,8 +1198,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		into.addAndReorderChild(self, at: iIndex)
-		into.maybeNeedSave()
-		maybeNeedSave()
 
 		if !into.isInTrash { // so grab won't disappear
 			grab()
@@ -1558,8 +1556,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				targetParent?.revealChildren()
 				targetParent?.needChildren()
 				travelThrough { (iObject: Any?, iKind: ZSignalKind) in
-					gRecents.updateCurrentRecent()
-					gFavorites.updateAllFavorites(iObject as? Zone)
+					gRecents.updateCurrentForMode()
 					atArrival()
 				}
 
@@ -1857,7 +1854,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func moveSelectionInto(extreme: Bool = false, onCompletion: Closure?) {
+	func addSelection(extreme: Bool = false, onCompletion: Closure?) {
 		var needReveal = false
 		var      child = self
 		var     invoke = {}
@@ -1886,6 +1883,156 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if !needReveal {
 			gSignal([.sCrumbs])
+		}
+	}
+
+	func addGrabbedZones(at iIndex: Int?, undoManager iUndoManager: UndoManager?, _ SPECIAL: Bool, onCompletion: Closure?) {
+
+		// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// 1. move a normal zone into another normal zone                                                            //
+		// 2. move a normal zone through a bookmark                                                                  //
+		// 3. move a normal zone into small map -- create a bookmark pointing at normal zone, then add it to the map //
+		// 4. move from small map into a normal zone -- convert to a bookmark, then move the bookmark                //
+		// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		guard let undoManager = iUndoManager else {
+			onCompletion?()
+
+			return
+		}
+
+		let   toBookmark = isBookmark                    // type 2
+		let   toSmallMap = isInSmallMap && !toBookmark   // type 3
+		let         into = bookmarkTarget ?? self        // grab bookmark AFTER travel
+		var        grabs = gSelecting.currentGrabs
+		var      restore = [Zone: (Zone, Int?)] ()
+		var    cyclicals = IndexSet()
+
+		for (index, zone) in grabs.enumerated() {
+			if  spawnedBy(zone) {
+				cyclicals.insert(index)
+			} else if let parent = zone.parentZone {
+				let siblingIndex = zone.siblingIndex
+				restore[zone]    = (parent, siblingIndex)
+
+				zone.needProgeny()
+			}
+		}
+
+		while let index = cyclicals.last {
+			cyclicals.remove(index)
+			grabs.remove(at: index)
+		}
+
+		if  let dragged = gDraggedZone, dragged.isInSmallMap, !toSmallMap {
+			dragged.maybeNeedSave()                            // type 4
+		}
+
+		grabs.sort { (a, b) -> Bool in
+			if  a.isInSmallMap {
+				a.maybeNeedSave()                              // type 4
+			}
+
+			return a.order < b.order
+		}
+
+		// ///////////////////
+		// prepare for UNDO //
+		// ///////////////////
+
+		if  toBookmark {
+			undoManager.beginUndoGrouping()
+		}
+
+		// todo: relocate this in caller, hope?
+		UNDO(self) { iUndoSelf in
+			for (child, (parent, index)) in restore {
+				child.orphan()
+				parent.addAndReorderChild(child, at: index)
+			}
+
+			iUndoSelf.UNDO(self) { iUndoUndoSelf in
+				let zoneSelf = iUndoUndoSelf as Zone
+				zoneSelf.addGrabbedZones(at: iIndex, undoManager: undoManager, SPECIAL, onCompletion: onCompletion)
+			}
+
+			onCompletion?()
+		}
+
+		// /////////////
+		// move logic //
+		// /////////////
+
+		let finish = {
+			var done = false
+
+			if !SPECIAL {
+				into.revealChildren()
+			}
+
+			into.maybeNeedChildren()
+
+			if !done {
+				done = true
+				if  let firstGrab = grabs.first,
+					let fromIndex = firstGrab.siblingIndex,
+					(firstGrab.parentZone != into || fromIndex > (iIndex ?? 1000)) {
+					grabs = grabs.reversed()
+				}
+
+				gSelecting.ungrabAll()
+
+				for grab in grabs {
+					var beingMoved = grab
+
+					if  toSmallMap && beingMoved.isInBigMap && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
+						if  let bookmark = gFavorites.createFavorite(for: beingMoved, action: .aNotABookmark) {	// type 3
+							beingMoved   = bookmark
+
+							beingMoved.maybeNeedSave()
+						}
+					} else {
+						beingMoved.orphan()
+
+						if  beingMoved.databaseID != into.databaseID {
+							beingMoved.traverseAllProgeny { iChild in
+								iChild.needDestroy()
+							}
+
+							beingMoved = beingMoved.deepCopy
+						}
+					}
+
+					if !SPECIAL {
+						beingMoved.addToGrabs()
+					}
+
+					if  toSmallMap {
+						into.expandInSmallMap(true)
+					}
+
+					into.addAndReorderChild(beingMoved, at: iIndex)
+					beingMoved.recursivelyApplyDatabaseID(into.databaseID)
+				}
+
+				if  toBookmark && undoManager.groupingLevel > 0 {
+					undoManager.endUndoGrouping()
+				}
+
+				onCompletion?()
+			}
+		}
+
+		// ////////////////////////////////////
+		// deal with target being a bookmark //
+		// ////////////////////////////////////
+
+		if !toBookmark || SPECIAL {
+			finish()
+		} else {
+			travelThrough() { (iAny, iSignalKind) in
+				finish()
+			}
 		}
 	}
 
@@ -1973,7 +2120,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			ancestor.needAdoption()
 		}
 
-		gRemoteStorage.assureNoOrphanIdeas()
+		gRemoteStorage.adoptAllNeedingAdoption()
 	}
 
 	func spawnedBy(_ iZone: Zone?) -> Bool { return iZone == nil ? false : spawnedByAny(of: [iZone!]) }
@@ -2236,11 +2383,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// adopt recursively
 
-	override func adopt(moveOrphansToLost: Bool = false) {
+	override func adopt(forceAdoption: Bool = true, moveOrphansToLost: Bool = false) {
 		if  isARoot {
 			removeState(.needsAdoption)
-		} else if !needsDestroy, needsAdoption {
-			if let p = parentZone, p != self {
+		} else if !needsDestroy, (forceAdoption || needsAdoption) {
+			if  let p = parentZone, p != self {
 				p.maybeMarkNotFetched()
 				p.addChildAndRespectOrder(self)
 				removeState(.needsAdoption)
@@ -2274,7 +2421,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addAndReorderChild(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: Closure? = nil) {
 		if  let child = iChild,
 			addChild(child, at: iIndex, afterAdd) != nil {
-			children.updateOrder()
+			children.updateOrder() // also marks children need save
 			maybeNeedSave()
 		}
 	}
@@ -2305,9 +2452,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				onCompletion?()
 			}
 
-			if  let identifier = child.bookmarkTarget?.recordName {
+			if  let childTarget = child.bookmarkTarget {
 				for (index, sibling) in children.enumerated() {
-					if  identifier == sibling.bookmarkTarget?.recordName {
+					if  childTarget == sibling.bookmarkTarget {
 						avoidDuplicate(at: index)
 
 						return insertAt
@@ -2315,13 +2462,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 			}
 
-			if  let identifier = child.recordName {
-				for (index, sibling) in children.enumerated() {
-					if  identifier == sibling.recordName {
-						avoidDuplicate(at: index)
+			for (index, sibling) in children.enumerated() {
+				if  child == sibling {
+					avoidDuplicate(at: index)
 
-						return insertAt
-					}
+					return insertAt
 				}
 			}
 
@@ -2475,13 +2620,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				if  show {
-					if  self.isInFavorites {
-						gFavorites.updateAllFavorites()
-					}
-
-					if  self.isInRecents {
-						gRecents.swapBetweenBookmarkAndTarget()
-					}
+					gCurrentSmallMapRecords?.swapBetweenBookmarkAndTarget()
 				}
 
 				onCompletion?()

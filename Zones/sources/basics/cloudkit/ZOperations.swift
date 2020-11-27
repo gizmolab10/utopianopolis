@@ -48,6 +48,8 @@ enum ZOperationID: Int, CaseIterable {
 
     // miscellaneous
 
+	case oResolve
+	case oAdopt
 	case oFetchAndMerge
 	case oNeededIdeas        // after children so favorite targets resolve properly
     case oSaveToCloud        // zones, traits, destroy
@@ -72,8 +74,10 @@ enum ZOperationID: Int, CaseIterable {
 			case .oNewIdeas:        return  7.0
 			case .oNeededIdeas:     return  6.0
 			case .oManifest:        return  6.0
+			case .oResolve:         return  4.0
 			case .oFinishUp:        return  3.0
 			case .oRecount:         return  2.0
+			case .oAdopt:           return  2.0
 			default:                return  1.0
 		}
 	}

@@ -14,7 +14,7 @@ let gWidgets = ZWidgets()
 
 class ZWidgets: NSObject {
 
-	var     mapWidgets: [Int : ZoneWidget]  = [:]
+	var      mapWidgets: [Int : ZoneWidget]  = [:]
 	var   recentWidgets: [Int : ZoneWidget]  = [:]
 	var favoriteWidgets: [Int : ZoneWidget]  = [:]
 	var exemplarWidgets: [Int : ZoneWidget]  = [:]

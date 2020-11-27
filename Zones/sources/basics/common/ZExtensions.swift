@@ -515,6 +515,20 @@ extension CKRecord {
         return true
     }
 
+	var matchesFilterOptions: Bool {
+		switch recordType {
+			case kZoneType:
+				let    isBookmark = self[kpZoneLink] != nil
+
+				return isBookmark && gFilterOption.contains(.oBookmarks) || !isBookmark && gFilterOption.contains(.oIdeas)
+			case kTraitType:
+				return gFilterOption.contains(.oNotes)
+			default: break
+		}
+
+		return true
+	}
+
     var isBookmark: Bool {
         if  let    link = self[kpZoneLink] as? String {
             return link.contains(kColonSeparator)

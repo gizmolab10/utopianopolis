@@ -222,7 +222,7 @@ var gClipBreadcrumbs : Bool {
 }
 
 var gStartupLevel : ZStartupLevel {
-	get { return  ZStartupLevel(rawValue: getPreferencesInt(for: kStartupLevel, defaultInt: kFirstTimeStartupLevel) ?? kFirstTimeStartupLevel) ?? ZStartupLevel.firstTime }
+	get { return  ZStartupLevel(rawValue: getPreferencesInt(for: kStartupLevel, defaultInt: kFirstTimeStartupLevel)) ?? ZStartupLevel.firstTime }
 	set { setPreferencesInt(newValue.rawValue, for: kStartupLevel) }
 }
 
@@ -249,6 +249,31 @@ var gAuthorID: String? {    // persist for file read on launch
 var gUserRecordID: String? {    // persist for file read on launch
     get { return getPreferenceString(    for: kUserRecordID) }
     set { setPreferencesString(newValue, for: kUserRecordID) }
+}
+
+var gFavoritesAreVisible: Bool {
+	get { return getPreferencesBool(   for: kFavoritesAreVisibleKey, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kFavoritesAreVisibleKey) }
+}
+
+var gAccentColor: ZColor {
+	get { return !gColorfulMode ? kDarkerGrayColor : getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) }
+	set { setPreferencesColor(newValue, for: kAccentColorKey) }
+}
+
+var gActiveColor: ZColor {
+	get { return !gColorfulMode ? kGrayColor : getPreferencesColor( for: kActiveColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
+	set { setPreferencesColor(newValue, for: kActiveColorKey) }
+}
+
+var gFilterOption: ZFilterOption {
+	get { return ZFilterOption(rawValue: getPreferencesInt(for: kFilterOption, defaultInt: ZFilterOption.oAll.rawValue)) }
+	set { setPreferencesInt(newValue.rawValue, for: kFilterOption) }
+}
+
+var gWindowRect: CGRect {
+	get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
+	set { setPreferencesRect(newValue, for: kWindowRectKey) }
 }
 
 var gUserRecord: CKRecord? {    // persist for file read on launch
@@ -284,21 +309,6 @@ var gEmailTypesSent: String {
     }
 }
 
-var gFavoritesAreVisible: Bool {
-	get { return getPreferencesBool(   for: kFavoritesAreVisibleKey, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kFavoritesAreVisibleKey) }
-}
-
-var gAccentColor: ZColor {
-	get { return !gColorfulMode ? kDarkerGrayColor : getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) }
-	set { setPreferencesColor(newValue, for: kAccentColorKey) }
-}
-
-var gActiveColor: ZColor {
-	get { return !gColorfulMode ? kGrayColor : getPreferencesColor( for: kActiveColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
-	set { setPreferencesColor(newValue, for: kActiveColorKey) }
-}
-
 var gGenericOffset: CGSize {
 	get {
 		var offset = getPreferencesSize(for: kGenericOffsetKey, defaultSize: CGSize(width: 30.0, height: 2.0))
@@ -313,11 +323,6 @@ var gGenericOffset: CGSize {
 	set {
 		setPreferencesSize(newValue, for: kGenericOffsetKey)
 	}
-}
-
-var gWindowRect: CGRect {
-	get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
-	set { setPreferencesRect(newValue, for: kWindowRectKey) }
 }
 
 var gScrollOffset: CGPoint {
@@ -736,12 +741,12 @@ func recordEmailSent(for type: ZSentEmailType) {
 // MARK:- internals
 // MARK:-
 
-func getPreferencesAmount(for key: String, defaultAmount: CGFloat = 0.0) -> CGFloat {
-	return getPreferenceString(for: key) { return "\(defaultAmount)" }?.floatValue ?? defaultAmount
+func getPreferencesFloat(for key: String, defaultFloat: CGFloat = 0.0) -> CGFloat {
+	return getPreferenceString(for: key) { return "\(defaultFloat)" }?.floatValue ?? defaultFloat
 }
 
-func setPreferencesAmount(_ iAmount: CGFloat = 0.0, for key: String) {
-	setPreferencesString("\(iAmount)", for: key)
+func setPreferencesFloat(_ iFloat: CGFloat = 0.0, for key: String) {
+	setPreferencesString("\(iFloat)", for: key)
 }
 
 func getPreferencesSize(for key: String, defaultSize: CGSize = CGSize.zero) -> CGSize {
@@ -812,20 +817,15 @@ func setPreferencesString(_ iString: String?, for key: String) {
     }
 }
 
-func getPreferencesInt(for key: String, defaultInt: Int?) -> Int? {
-	if  let         i = defaultInt,
-		let    string = getPreferencesString(for: key, defaultString: "\(i)") {
-		return string.integerValue
-	}
-
-	return defaultInt
+func getPreferencesInt(for key: String, defaultInt: Int = 0) -> Int {
+	return getPreferenceString(for: key) { return "\(defaultInt)" }?.integerValue ?? defaultInt
 }
 
 func setPreferencesInt(_ iInt: Int?, for key: String) {
-	if  let i = iInt {
-		UserDefaults.standard.set("\(i)", forKey: key)
-		UserDefaults.standard.synchronize()
-	}
+	let value: String? = iInt == nil ? nil : "\(iInt!)"
+
+	UserDefaults.standard.set(value, forKey: key)
+	UserDefaults.standard.synchronize()
 }
 
 func getPreferencesBool(for key: String, defaultBool: Bool) -> Bool {
