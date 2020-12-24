@@ -28,7 +28,7 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var            thickness : ZSlider?
     @IBOutlet var              stretch : ZSlider?
     override  var         controllerID : ZControllerID { return .idPreferences }
-	override  var         allowedKinds : [ZSignalKind] { return [.sMap, .sMain, .sData, .sDatum, .sError, .sStatus, .sDetails, .sSmallMap, .sPreferences] }
+	override  var         allowedKinds : [ZSignalKind] { return [.sBigMap, .sMain, .sData, .sDatum, .sError, .sStatus, .sDetails, .sSmallMap, .sPreferences] }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		if  allowedKinds.contains(iKind) {

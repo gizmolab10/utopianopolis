@@ -271,10 +271,8 @@ extension ZoneArray {
 
 	func assureAdoption() {
 		traverseAllAncestors { ancestor in
-			ancestor.needAdoption()
+			ancestor.adopt()
 		}
-
-		gRemoteStorage.adoptAllNeedingAdoption()
 	}
 
 	func grabAppropriate() -> Zone? {

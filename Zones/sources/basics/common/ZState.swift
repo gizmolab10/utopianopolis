@@ -64,7 +64,7 @@ var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsNote
 var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEditIdeaMode }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var   gCurrentSmallMapRecords:          ZRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
-var                  gRecords:          ZRecords? { return gShowSmallMap ? gCurrentSmallMapRecords : gCloud }
+var                  gRecords:          ZRecords? { return (kIsPhone && gShowSmallMapForIOS) ? gCurrentSmallMapRecords : gCloud }
 var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
@@ -231,7 +231,7 @@ var gColorfulMode : Bool {
 	set { setPreferencesBool(newValue, for: kColorfulMode) }
 }
 
-var gShowSmallMap : Bool {
+var gShowSmallMapForIOS : Bool {
 	get { return getPreferencesBool(   for: kShowSmallMap, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kShowSmallMap) }
 }

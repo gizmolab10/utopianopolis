@@ -29,27 +29,29 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	init() { rawValue = ZWidgetType.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let      tMap = ZWidgetType()
-	static let     tIdea = ZWidgetType()
-	static let   tRecent = ZWidgetType()
 	static let tExemplar = ZWidgetType()
 	static let tFavorite = ZWidgetType()
+	static let   tBigMap = ZWidgetType()
+	static let   tRecent = ZWidgetType()
 	static let    tEssay = ZWidgetType()
+	static let     tIdea = ZWidgetType()
 	static let     tNote = ZWidgetType()
+	static let     tNone = ZWidgetType()
 
-	var isMap:      Bool { return contains(.tMap) }
+	var isBigMap:   Bool { return contains(.tBigMap) }
 	var isRecent:   Bool { return contains(.tRecent) }
 	var isFavorite: Bool { return contains(.tFavorite) }
 	var isExemplar: Bool { return contains(.tExemplar) }
 
 	var description: String {
-		return [(.tMap,         "     map"),
+		return [(.tNone,        "    none"),
 				(.tIdea,        "    idea"),
 				(.tNote,        "    note"),
 				(.tEssay,       "   essay"),
 				(.tRecent,      "  recent"),
+				(.tBigMap,      " big map"),
 				(.tFavorite,    "favorite"),
-				(.tExemplar, kExemplarName)]
+				(.tExemplar,    "exemplar")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: ", ")
 	}
@@ -74,14 +76,14 @@ class ZoneWidget: ZView {
 	let            widgetObject = ZWidgetObject  ()
     private var childrenWidgets = [ZoneWidget]   ()
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
-	var                   ratio :    CGFloat  { return type.isMap ? 1.0 : kFavoritesReduction }
+	var                   ratio :    CGFloat  { return type.isBigMap ? 1.0 : kFavoritesReduction }
 	override var    description :     String  { return widgetZone?.description ?? kEmptyIdea }
 
 	var type : ZWidgetType {
 		var result    = widgetZone?.type
 
 		if  result   == nil {
-			result    = .tMap
+			result    = .tBigMap
 		}
 
 		if  let oType = widgetObject.type {
@@ -92,7 +94,7 @@ class ZoneWidget: ZView {
 	}
 
 	var controller: ZMapController? {
-		if type.isMap      { return     gMapController }
+		if type.isBigMap      { return     gMapController }
 		if type.isRecent   { return gSmallMapController }
 		if type.isFavorite { return gSmallMapController }
 
@@ -121,8 +123,10 @@ class ZoneWidget: ZView {
     // MARK:- layout
     // MARK:-
 
-	func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, visited: ZoneArray) {
-        if  let thisView = inView,
+	func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, visited: ZoneArray) -> Int {
+		var count = 1
+
+		if  let thisView = inView,
             !thisView.subviews.contains(self) {
             thisView.addSubview(self)
         }
@@ -131,7 +135,7 @@ class ZoneWidget: ZView {
             backgroundColor = kClearColor
         #endif
 
-		gWidgets.registerWidget(self, for: type)
+		gWidgets.setWidgetForZone(self, for: type)
         addTextView()
         textWidget.layoutText()
         layoutDots()
@@ -141,11 +145,15 @@ class ZoneWidget: ZView {
             let    more = widgetZone == nil ? [] : [widgetZone!]
 
             prepareChildrenWidgets()
-            layoutChildren(iKind, visited: visited + more)
+            count += layoutChildren(iKind, visited: visited + more)
         }
+
+		return count
     }
 
-    func layoutChildren(_ iKind: ZSignalKind, visited: ZoneArray) {
+    func layoutChildren(_ iKind: ZSignalKind, visited: ZoneArray) -> Int {
+		var count = 0
+
         if  let  zone = widgetZone, zone.showingChildren {
             var index = childrenWidgets.count
             var previous: ZoneWidget?
@@ -155,7 +163,7 @@ class ZoneWidget: ZView {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone =            zone[index]
 
-				childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, visited: visited)
+				count += childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, visited: visited)
 				childWidget.snp.setLabel("<w> \(childWidget.widgetZone?.zoneName ?? "unknown")")
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in
@@ -176,6 +184,8 @@ class ZoneWidget: ZView {
                 previous = childWidget
             }
         }
+
+		return count
     }
 
     func layoutDots() {
@@ -203,7 +213,7 @@ class ZoneWidget: ZView {
         revealDot.innerDot?.snp.removeConstraints()
         revealDot.setupForWidget(self, asReveal: true)
         revealDot.innerDot?.snp.makeConstraints { make in
-            make.left.equalTo(textWidget.snp.right).offset(3.0)
+            make.left.equalTo(textWidget.snp.right).offset(6.0)
             make.centerY.equalTo(textWidget).offset(1.5)
         }
     }
@@ -229,7 +239,7 @@ class ZoneWidget: ZView {
 		childrenView.snp.setLabel("<c> \(widgetZone?.zoneName ?? "unknown")")
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let ratio = type.isMap ? 1.0 : kFavoritesReduction / 3.0
+            let ratio = type.isBigMap ? 1.0 : kFavoritesReduction / 3.0
 
             make.left.equalTo(textWidget.snp.right).offset(gChildrenViewOffset * Double(ratio))
             make.bottom.top.right.equalTo(self)
@@ -489,8 +499,8 @@ class ZoneWidget: ZView {
         let          inset = (height / -2.0) - 16.0
         let         shrink =  3.0 + (height / 6.0)
         let hiddenDotDelta = rightDot?.isVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0   // expand around reveal dot, only if it is visible
-        var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta, dy: -0.5 - delta).offsetBy(dx: -0.75, dy: 0.5)  // get size from text widget
-        rect.size .height += -0.5 + gHighlightHeightOffset + (type.isMap ? 0.0 : 1.0)
+		var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta - 1.0, dy: -0.5 - delta)  // get size from text widget
+        rect.size .height += -0.5 + gHighlightHeightOffset + (type.isBigMap ? 0.0 : 1.0)
         rect.size  .width += shrink - hiddenDotDelta
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
 		let     colorRatio = CGFloat(dashes ? 0.5 : 0.5)
@@ -543,7 +553,7 @@ class ZoneWidget: ZView {
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
 
-		if (gIsMapOrEditIdeaMode || !type.isMap),
+		if (gIsMapOrEditIdeaMode || !type.isBigMap),
 			let      zone = widgetZone {
             let isGrabbed = zone.isGrabbed
             let isEditing = textWidget.isFirstResponder

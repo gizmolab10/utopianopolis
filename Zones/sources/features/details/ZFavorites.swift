@@ -80,7 +80,7 @@ class ZFavorites: ZRecords {
 				let        ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kFavoritesRootName))
 				let            root = Zone(record: ckRecord, databaseID: .mineID)
 				root.directAccess   = .eProgenyWritable
-				root.zoneName       = kFavoritesName
+				root.zoneName       = kFavoritesRootName
 				gFavorites.rootZone = root
 
 				finish()

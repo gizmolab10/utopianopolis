@@ -117,21 +117,21 @@ class ZRecord: NSObject {
 		// debugging tests //
 		// //////////////////
 
-		let name = (self as? Zone)?.zoneName ?? recordName ?? kEmptyIdea
+//		let name = (self as? Zone)?.zoneName ?? recordName ?? kEmptyIdea
 
-		if !canSaveWithoutFetch &&  isFetched {
-			bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
-			allowSaveWithoutFetch()
-		} else if canSaveWithoutFetch && notFetched {
-			bam("require FETCH BEFORE SAVE " + name)
-			fetchBeforeSave()
+//		if !canSaveWithoutFetch &&  isFetched {
+//			bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
+//			allowSaveWithoutFetch()
+//		} else if canSaveWithoutFetch && notFetched {
+//			bam("require FETCH BEFORE SAVE " + name)
+//			fetchBeforeSave()
+//
+//			if  name != emptyName || recordName == kRootName {
+//				bam("new named record, should ALLOW SAVING")
+//			}
+//		}
 
-			if  name != emptyName || recordName == kRootName {
-				bam("new named record, should ALLOW SAVING")
-			}
-		}
-
-		needSave()
+//		needSave()
 	}
 
 	func storageDictionary() throws -> ZStorageDictionary {
@@ -191,7 +191,7 @@ class ZRecord: NSObject {
 	var isAdoptable: Bool { return false }
 
     func orphan() {}
-    func adopt(forceAdoption: Bool = true, moveOrphansToLost: Bool = false) {}
+    func adopt(forceAdoption: Bool = true) {}
     func maybeNeedRoot() {}
     func debug(_  iMessage: String) {}
 	var cloudProperties: [String] { return ZRecord.cloudProperties }

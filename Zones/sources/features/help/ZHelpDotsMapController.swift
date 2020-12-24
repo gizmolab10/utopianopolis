@@ -34,7 +34,7 @@ class ZHelpDotsMapController : ZMapController {
 	}
 
 	func setupExemplar() {
-		let     record = CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kExemplarName))
+		let     record = CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kExemplarRootName))
 		let       real = Zone(record: record, databaseID: .everyoneID)
 		real.zoneName  = "this is a typical idea, with 3 ideas in its (hidden) list"
 		zone           = real

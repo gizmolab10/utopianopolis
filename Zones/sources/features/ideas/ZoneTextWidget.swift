@@ -23,7 +23,7 @@ enum ZTextType: Int {
 
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
-	override var preferredFont : ZFont { return (widget?.type.isMap ?? true) ? gWidgetFont : gFavoritesFont }
+	override var preferredFont : ZFont { return (widget?.type.isBigMap ?? true) ? gWidgetFont : gFavoritesFont }
     var             widgetZone : Zone? { return  widget?.widgetZone }
     weak var            widget : ZoneWidget?
     var                   type = ZTextType.name
@@ -199,7 +199,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     }
     
     var extractedTitle: String? {
-        var     extract  = text
+		var     extract  = text
         
         if  let original = text {
             let substrings = original.components(separatedBy: kHalfLineOfDashes)

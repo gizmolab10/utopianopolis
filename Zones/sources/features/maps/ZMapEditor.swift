@@ -80,9 +80,10 @@ class ZMapEditor: ZBaseEditor {
 							case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL, HARD)
 							case "f":      gSearching.showSearch(OPTION)
 							case "g":      refetch(COMMAND, OPTION)
+							case "k":      toggleColorized()
 							case "n":      grabOrEdit(true, OPTION)
 							case "p":      printCurrentFocus()
-							case "/":      if IGNORED { return false } else { popAndUpdate(CONTROL, kind: .eEdited) }
+							case "/":      if IGNORED { return false } else { popAndUpdateRecents(CONTROL, kind: .eEdited) }
 							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
 							case kTab:     addSibling(OPTION)
 							case kSpace:   gSelecting.currentMoveable.addIdea()
@@ -115,8 +116,8 @@ class ZMapEditor: ZBaseEditor {
                     case "f":      gSearching.showSearch(OPTION)
 					case "g":      refetch(COMMAND, OPTION)
                     case "h":      gSelecting.firstSortedGrab?.editTrait(for: .tHyperlink)
-                    case "l":      alterCase(up: false)
 					case "k":      toggleColorized()
+					case "l":      alterCase(up: false)
 					case "m":      gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawMaps()
                     case "n":      grabOrEdit(true, OPTION)
                     case "o":      gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
@@ -132,10 +133,10 @@ class ZMapEditor: ZBaseEditor {
 					case "+":      divideChildren()
 					case "-":      return handleHyphen(COMMAND, OPTION)
 					case "'":      swapSmallMapMode(OPTION)
-                    case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdate(CONTROL, COMMAND, kind: .eSelected) }
+                    case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
 					case "\\":     gMapController?.toggleMaps(); gRedrawMaps()
-					case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}") { gRedrawMaps() }
-					case "]", "[": gRecents                .go(down: key == "]") { gRedrawMaps() }
+					case "[", "{", "}",
+						 "]":      go(down: ["]", "}"].contains(key), COMMAND: COMMAND) { gRedrawMaps() }
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 					case kEquals:  if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawMaps() } }
                     case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
@@ -325,15 +326,13 @@ class ZMapEditor: ZBaseEditor {
 		grabs.duplicate()
 	}
 
-	func popAndUpdate(_ CONTROL: Bool, _ COMMAND: Bool = false, kind: ZFocusKind) {
+	func popAndUpdateRecents(_ CONTROL: Bool, _ COMMAND: Bool = false, kind: ZFocusKind) {
 		if  !CONTROL {
 			gRecords?.maybeRefocus(kind, COMMAND, shouldGrab: true) { // complex grab logic
 				gRedrawMaps()
 			}
 		} else {
-			gRecents.popAndUpdateRecents()
-
-			if  let here = gRecents.currentBookmark?.bookmarkTarget {
+			if  let here = gRecents.popAndUpdateRecents()?.bookmarkTarget {
 				gHere    = here
 			}
 
@@ -441,7 +440,7 @@ class ZMapEditor: ZBaseEditor {
 		gTrash?.focusOn() {
 			gRedrawMaps()
 		}
-    }
+	}
 
 	func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false) {
 
@@ -451,7 +450,8 @@ class ZMapEditor: ZBaseEditor {
 		// both is force adoption of selected
 
 		if         COMMAND &&  OPTION {
-			gSelecting.simplifiedGrabs.assureAdoption()   // finish what fetch has done
+			gRemoteStorage.assureAdoption()               // finish what fetch has done
+			gRedrawMaps()
 		} else if  COMMAND && !OPTION {                   // COMMAND alone
 			gBatches.refetch { iSame in
 				gRedrawMaps()
@@ -479,7 +479,7 @@ class ZMapEditor: ZBaseEditor {
                 swapAndResumeEdit()
             }
 
-			gSignal([.sMap, .sMain, .sDetails, .sPreferences])
+			gSignal([.sBigMap, .sMain, .sDetails, .sPreferences])
         } else if COMMA {
 			gShowDetailsView = true
 
@@ -605,6 +605,12 @@ class ZMapEditor: ZBaseEditor {
             }
         }
     }
+
+	func go(down: Bool, COMMAND: Bool, atArrival: Closure? = nil) {
+		let cloud = COMMAND ? gCurrentSmallMapRecords : gRecents
+
+		cloud?.go(down: down, atArrival: atArrival)
+	}
 
     // MARK:- lines
     // MARK:-

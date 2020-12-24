@@ -75,10 +75,10 @@ class ZTimers: NSObject {
 	var timers = [ZTimerID : Timer]()
 
 	var statusText: String {
-		let hasStatus: [ZTimerID] = [.tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
+		let allTimerIDs: [ZTimerID] = [.tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
 
 		for id in timers.keys {
-			if  hasStatus.contains(id) {
+			if  allTimerIDs.contains(id) {
 				return id.description
 			}
 		}

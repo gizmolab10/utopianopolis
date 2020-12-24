@@ -19,8 +19,9 @@ class ZStatusController: ZGenericController {
 	@IBOutlet var creationDateLabel: ZTextField?
 	@IBOutlet var  cloudStatusLabel: ZTextField?
     @IBOutlet var   totalCountLabel: ZTextField?
+	@IBOutlet var   recordNameLabel: ZTextField?
+	@IBOutlet var     synopsisLabel: ZTextField?
     @IBOutlet var      mapNameLabel: ZTextField?
-    @IBOutlet var        levelLabel: ZTextField?
     var                 currentZone: Zone?         { return gSelecting.rootMostMoveable }
     override  var      controllerID: ZControllerID { return .idStatus }
 
@@ -34,10 +35,11 @@ class ZStatusController: ZGenericController {
     }
 
     var totalCountsText: String {
-        let  count = (gCloud?.rootZone?.progenyCount ?? 0) + 1 // add one for root
-        let suffix = count == 1 ? "" : "s"
+        let count = (gCloud?.rootZone?.progenyCount ?? 0) + 1 // add one for root
+		let total =  gCloud?.recordRegistry.count ?? 0 // countBy(type: kZoneType) ?? 0
+		let suffix = count != 1 ? "s" : ""
 
-        return "\(count) idea\(suffix)"
+        return "\(count) idea\(suffix) in map -- of \(total) from cloud"
     }
 
     var mapNameText: String {
@@ -75,16 +77,45 @@ class ZStatusController: ZGenericController {
 		return ""
 	}    
 
+	var synopsisText: String {
+		guard let zone = currentZone,
+			  gIsReadyToShowUI else {
+			return ""
+		}
+
+		zone.updateAllProgenyCounts()
+
+		var  text = "level  \(zone.level + 1)"
+		let zones = gSelecting.currentGrabs
+
+		if  zones.count > 1 {
+			text.append("   selected  \(zones.count)")
+		} else {
+			let    p = zone.progenyCount
+			let    c = zone.count
+
+			if  c > 0 {
+				text.append("   children  \(c)")
+
+				if  p > c {
+					text.append("   total  \(p)")
+				}
+			}
+		}
+
+		return text
+	}
+
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		if ![.sSearch, .sFound, .sCrumbs, .sSwap, .sSmallMap].contains(iKind) {
-			creationDateLabel?.text = zoneRecordNameText // creationDateText
-            cloudStatusLabel? .text = statusText
+			creationDateLabel?.text = creationDateText
+			cloudStatusLabel? .text = statusText
+			recordNameLabel?  .text = zoneRecordNameText
             totalCountLabel?  .text = totalCountsText
 			mapNameLabel?     .text = mapNameText
 
-            if  iKind != .sStartupProgress,
-				let zone = currentZone {
-                levelLabel?.text = "is at level \(zone.level + 1)"
+            if  iKind != .sStartupProgress {
+                synopsisLabel?.text = synopsisText
             }
         }
     }

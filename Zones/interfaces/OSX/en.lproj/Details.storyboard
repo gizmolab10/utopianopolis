@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17156"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -10,11 +10,11 @@
             <objects>
                 <viewController id="fxO-Qj-JeN" customClass="ZStatusController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mbO-Ma-L1E">
-                        <rect key="frame" x="0.0" y="0.0" width="282" height="151"/>
+                        <rect key="frame" x="0.0" y="0.0" width="282" height="170"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box borderType="line" title="storage" translatesAutoresizingMaskIntoConstraints="NO" id="AUf-tY-f9E">
-                                <rect key="frame" x="5" y="68" width="272" height="79"/>
+                                <rect key="frame" x="5" y="87" width="272" height="79"/>
                                 <view key="contentView" id="uro-ap-Iux">
                                     <rect key="frame" x="3" y="3" width="266" height="61"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -68,18 +68,29 @@
                                 </view>
                             </box>
                             <box borderType="line" title="selection" translatesAutoresizingMaskIntoConstraints="NO" id="kOk-k7-jTQ">
-                                <rect key="frame" x="5" y="4" width="272" height="60"/>
+                                <rect key="frame" x="5" y="4" width="272" height="79"/>
                                 <view key="contentView" id="izc-li-pFu">
-                                    <rect key="frame" x="3" y="3" width="266" height="42"/>
+                                    <rect key="frame" x="3" y="3" width="266" height="61"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BcI-eM-ytK">
-                                            <rect key="frame" x="6" y="23" width="254" height="15"/>
+                                            <rect key="frame" x="6" y="42" width="254" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="G6i-MA-0f5"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="hFx-OY-BpQ">
-                                                <font key="font" metaFont="message" size="11"/>
+                                                <font key="font" size="9" name="HelveticaNeue"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JFS-Ma-Zx8">
+                                            <rect key="frame" x="6" y="23" width="254" height="15"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="15" id="X5g-AM-OTQ"/>
+                                            </constraints>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" id="DyG-Bp-Syl">
+                                                <font key="font" size="9" name="HelveticaNeue"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -98,17 +109,20 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="bottom" secondItem="Nr1-TP-dq5" secondAttribute="bottom" constant="4" id="3gQ-cb-hLi"/>
+                                        <constraint firstAttribute="trailing" secondItem="JFS-Ma-Zx8" secondAttribute="trailing" constant="8" id="8Xh-2O-yYD"/>
                                         <constraint firstItem="BcI-eM-ytK" firstAttribute="top" secondItem="izc-li-pFu" secondAttribute="top" constant="4" id="8tb-zm-8Fe"/>
                                         <constraint firstItem="BcI-eM-ytK" firstAttribute="leading" secondItem="izc-li-pFu" secondAttribute="leading" constant="8" id="9f7-Ri-yRe"/>
+                                        <constraint firstItem="Nr1-TP-dq5" firstAttribute="top" secondItem="JFS-Ma-Zx8" secondAttribute="bottom" constant="4" id="DaS-sy-Hkk"/>
                                         <constraint firstAttribute="trailing" secondItem="BcI-eM-ytK" secondAttribute="trailing" constant="8" id="IAQ-Zw-V9z"/>
+                                        <constraint firstItem="JFS-Ma-Zx8" firstAttribute="leading" secondItem="izc-li-pFu" secondAttribute="leading" constant="8" id="f2j-hi-C0K"/>
+                                        <constraint firstItem="JFS-Ma-Zx8" firstAttribute="top" secondItem="BcI-eM-ytK" secondAttribute="bottom" constant="4" id="gN0-am-5Lf"/>
                                         <constraint firstAttribute="trailing" secondItem="Nr1-TP-dq5" secondAttribute="trailing" constant="8" id="jlk-LN-UgZ"/>
                                         <constraint firstItem="Nr1-TP-dq5" firstAttribute="leading" secondItem="izc-li-pFu" secondAttribute="leading" constant="8" id="sM8-KX-d6Q"/>
-                                        <constraint firstItem="Nr1-TP-dq5" firstAttribute="top" secondItem="BcI-eM-ytK" secondAttribute="bottom" constant="4" id="u6t-WR-4Qg"/>
                                     </constraints>
                                 </view>
                             </box>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="4om-oY-tSH">
-                                <rect key="frame" x="279" y="0.0" width="5" height="151"/>
+                                <rect key="frame" x="279" y="0.0" width="5" height="170"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="RY0-UO-Dkf"/>
                                 </constraints>
@@ -129,15 +143,16 @@
                     </view>
                     <connections>
                         <outlet property="cloudStatusLabel" destination="fy3-JT-P1F" id="bJt-yR-hPf"/>
-                        <outlet property="creationDateLabel" destination="Nr1-TP-dq5" id="zKj-1M-AOm"/>
-                        <outlet property="levelLabel" destination="BcI-eM-ytK" id="l2l-bk-3KS"/>
+                        <outlet property="creationDateLabel" destination="JFS-Ma-Zx8" id="Fil-Mc-hrR"/>
                         <outlet property="mapNameLabel" destination="f4m-8C-5H1" id="3Ma-Ba-KXj"/>
+                        <outlet property="recordNameLabel" destination="Nr1-TP-dq5" id="6mE-FK-zJX"/>
+                        <outlet property="synopsisLabel" destination="BcI-eM-ytK" id="l2l-bk-3KS"/>
                         <outlet property="totalCountLabel" destination="3v8-d2-yo8" id="8GP-Ce-9m4"/>
                     </connections>
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-115" y="1446"/>
+            <point key="canvasLocation" x="295" y="1377"/>
         </scene>
         <!--Small Map-->
         <scene sceneID="6c8-8d-0Jq">
@@ -349,7 +364,7 @@ CA
                 </menu>
                 <customObject id="834-xy-QTs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-113.5" y="1963"/>
+            <point key="canvasLocation" x="-114" y="1800"/>
         </scene>
         <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
@@ -1006,7 +1021,7 @@ CA
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-112" y="1705"/>
+            <point key="canvasLocation" x="296" y="1649"/>
         </scene>
         <!--Introduction Controller-->
         <scene sceneID="uRy-JP-y7m">
@@ -1311,7 +1326,7 @@ CA
                 </viewController>
                 <customObject id="XNg-DL-aaz" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-114" y="1175"/>
+            <point key="canvasLocation" x="-115" y="1211"/>
         </scene>
     </scenes>
     <resources>

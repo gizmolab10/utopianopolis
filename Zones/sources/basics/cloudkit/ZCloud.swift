@@ -63,12 +63,12 @@ class ZCloud: ZRecords {
 			case .oManifest:      establishManifest  (cloudCallback)
 			case .oSaveToCloud:   save               (cloudCallback)
 			case .oSubscribe:     subscribe          (cloudCallback)
-			case .oAllTraits:     fetchAllTraits     (cloudCallback)
-			case .oTraits:        fetchTraits        (cloudCallback)
+//			case .oAllTraits:     fetchAllTraits     (cloudCallback)
 			case .oUndelete:      undeleteAll        (cloudCallback)
 			case .oRecount:       recount            (cloudCallback)
 			case .oResolve:       resolve            (cloudCallback)
 			case .oAdopt:         assureAdoption     (cloudCallback)
+//			case .oTraits:        fetchTraits        (cloudCallback)
 			default:                                  cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
 		}
     }
@@ -688,7 +688,6 @@ class ZCloud: ZRecords {
 		if  recordsToProcess.count != 0,
 			let timerID = ZTimerID.recordsTimerID(for: dbID) {
 			gTimers.assureCompletion(for: timerID, now: true, withTimeInterval: 0.2) {
-				printDebug(.dFetch, "(\(self.databaseID.identifier)) \(self.recordsToProcess.count)")
 				while self.recordsToProcess.count > 0 {
 					if  let      key = self.recordsToProcess.keys.first,
 						let ckRecord = self.recordsToProcess.removeValue(forKey: key) {
@@ -939,18 +938,19 @@ class ZCloud: ZRecords {
 
         onCompletion?(count)
 
-        if count > 0 {
+        if  count > 0 {
             let      predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
             let   destroyedIDs = recordIDsWithMatchingStates([.needsDestroy])
             var  progenyNeeded = [CKRecord.Reference] ()
             var      retrieved = [CKRecord] ()
 
-            if hasAnyRecordsMarked(with: [.needsProgeny]) {
+            if  hasAnyRecordsMarked(with: [.needsProgeny]) {
                 for reference in childrenNeeded {
                     let identifier = reference.recordID
 
-                    if  registeredCKRecordForID(identifier, forAnyOf: [.needsProgeny]) != nil && !progenyNeeded.contains(reference) {
-                        progenyNeeded.append(reference)
+                    if registeredCKRecordForID(identifier, forAnyOf: [.needsProgeny]) != nil,
+					   !progenyNeeded.contains(reference) {
+                        progenyNeeded  .append(reference)
                     }
                 }
             }
@@ -970,13 +970,12 @@ class ZCloud: ZRecords {
                         // /////////////////////////
 
                         for childRecord in retrieved {
-                            let     identifier = childRecord.recordID
+                            let identifier = childRecord.recordID
+							let      child = self.zoneForRecord(childRecord)
 
-                            if destroyedIDs.contains(identifier) {
-                                // self.columnarReport(" DESTROYED", child.decoratedName)
+                            if  destroyedIDs.contains(identifier) {
+								printDebug(.dFetch, "DESTROYED: \(child.decoratedName)")
                             } else {
-                                let child = self.zoneForRecord(childRecord)
-
                                 if  child.isARoot && child.parentZone != nil {
                                     child.orphan()  // avoids HANG ... a root can NOT be a child, by definition
                                     child.allowSaveWithoutFetch()
@@ -984,7 +983,7 @@ class ZCloud: ZRecords {
                                 }
 
                                 let     parent = child.parentZone
-                                let extraTrash = child.zoneLink == kTrashLink && parent?.isFavoritesRoot ?? false && gFavorites.hasTrash
+								let extraTrash = child.zoneLink == kTrashLink && parent?.root?.isFavoritesRoot ?? false && gFavorites.hasTrash
 
                                 if  child == parent || extraTrash {
                                     child.needDestroy()
@@ -1056,44 +1055,44 @@ class ZCloud: ZRecords {
         }
 	}
 
-	func fetchAllTraits(_ onCompletion: IntClosure?) {
-		fetchTraits(with: [], onCompletion)
-	}
-
-	func fetchTraits(_ onCompletion: IntClosure?) {
-		fetchTraits(with: recordIDsWithMatchingStates([.needsTraits], pull: true), onCompletion)
-    }
-
-	func fetchTraits(with recordIDs: [CKRecord.ID], _ onCompletion: IntClosure?) {
-        var     retrieved = [CKRecord] ()
-        if  let predicate = traitsPredicate(specificTo: recordIDs) {
-            queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties) { (iRecord, iError) in
-                if let ckRecord = iRecord {
-                    if !retrieved.contains(ckRecord) {
-                        retrieved.append(ckRecord)
-                    }
-                } else { // nil means done
-                    FOREGROUND {
-                        for ckRecord in retrieved {
-                            var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
-
-                            if  zRecord == nil {                                                    // if not already registered
-                                zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID)    // register
-							} else {
-								zRecord?.useBest(record: ckRecord)
-							}
-                        }
-
-                        self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
-                        self.adoptAllNeedingAdoption()
-                        onCompletion?(0)
-                    }
-                }
-            }
-        } else {
-            onCompletion?(0)
-        }
-    }
+//	func fetchAllTraits(_ onCompletion: IntClosure?) {
+//		fetchTraits(with: [], onCompletion)
+//	}
+//
+//	func fetchTraits(_ onCompletion: IntClosure?) {
+//		fetchTraits(with: recordIDsWithMatchingStates([.needsTraits], pull: true), onCompletion)
+//    }
+//
+//	func fetchTraits(with recordIDs: [CKRecord.ID], _ onCompletion: IntClosure?) {
+//        var     retrieved = [CKRecord] ()
+//        if  let predicate = traitsPredicate(specificTo: recordIDs) {
+//            queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties) { (iRecord, iError) in
+//                if let ckRecord = iRecord {
+//                    if !retrieved.contains(ckRecord) {
+//                        retrieved.append(ckRecord)
+//                    }
+//                } else { // nil means done
+//                    FOREGROUND {
+//                        for ckRecord in retrieved {
+//                            var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
+//
+//                            if  zRecord == nil {                                                    // if not already registered
+//                                zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID)    // register
+//							} else {
+//								zRecord?.useBest(record: ckRecord)
+//							}
+//                        }
+//
+//                        self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
+//                        self.adoptAllNeedingAdoption()
+//                        onCompletion?(0)
+//                    }
+//                }
+//            }
+//        } else {
+//            onCompletion?(0)
+//        }
+//    }
 
     func fetchBookmarks(_ onCompletion: IntClosure?) {
         let targetIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)
@@ -1237,8 +1236,8 @@ class ZCloud: ZRecords {
                 let  recurseNext = { createFor?(iIndex + 1) }
 
                 switch rootID {
-				case .favoritesID: if self.favoritesZone    != nil || !isMine { recurseNext(); return } else { name = kFavoritesName }
-				case .recentsID:   if self.recentsZone      != nil || !isMine { recurseNext(); return } else { name = kRecentsName }
+				case .favoritesID: if self.favoritesZone    != nil || !isMine { recurseNext(); return } else { name = kFavoritesRootName }
+				case .recentsID:   if self.recentsZone      != nil || !isMine { recurseNext(); return } else { name = kRecentsRootName }
                 case .mapID:       if self.rootZone         != nil            { recurseNext(); return } else { name = kFirstIdeaTitle }
                 case .lostID:      if self.lostAndFoundZone != nil            { recurseNext(); return }
                 case .trashID:     if self.trashZone        != nil            { recurseNext(); return }
@@ -1341,8 +1340,8 @@ class ZCloud: ZRecords {
 
                 if  let string = value as? String, string == kNullLink {
                     // icloud does not store this value, sigh
-                } else if object.canSaveWithoutFetch {
-                    object.needSave()
+//                } else if object.canSaveWithoutFetch {
+//                    object.needSave()
                 } else {
                     object.maybeNeedMerge()
                 }

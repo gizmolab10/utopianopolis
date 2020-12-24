@@ -27,7 +27,6 @@ class ZBaseEditor: NSObject {
 			let COMMAND = flags.isCommand
 			let SPECIAL = flags.isSpecial
 			let  OPTION = flags.isOption
-			let ONEFLAG = (COMMAND || OPTION) && !SPECIAL
 
 			if  key    != key.lowercased() {
 				key     = key.lowercased()
@@ -44,7 +43,7 @@ class ZBaseEditor: NSObject {
 				case "o": if SPECIAL { gFiles.showInFinder();                      handled = true }
 				case "q": if COMMAND { gApplication.terminate(self);               handled = true }
 				case "r": if SPECIAL { sendEmailBugReport();                       handled = true }
-				case "t": if ONEFLAG { fetchTraits();                              handled = true }
+				case "t": if OPTION  { fetchTraits();                              handled = true }
 				case "x": if SPECIAL { clearRecents();                             handled = true }
 				default:  break
 			}

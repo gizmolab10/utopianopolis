@@ -39,7 +39,7 @@ func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClo
 }
 
 func printDebug(_ mode: ZPrintMode, prefix: String = "  ", _ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
-	if  gPrintMode.contains(mode) {
+	if  gPrintModes.contains(mode) {
 		printFancy("\(mode): " + prefix + message, surround: surround, test)
 	}
 }

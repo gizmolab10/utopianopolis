@@ -16,6 +16,7 @@ import Foundation
 
 class ZGenericController: ZController, ZGeneric {
 
+	var     isVisible = false
 	var  controllerID : ZControllerID { return .idUndefined }
 	var  allowedKinds : [ZSignalKind] { return [] }
     func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}
@@ -24,7 +25,7 @@ class ZGenericController: ZController, ZGeneric {
 
 	func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return (allowedKinds.count == 0 || allowedKinds.contains(kind)) &&
-			   (( gHasFinishedStartup && ![.sError, .sStartupProgress].contains(kind)) ||
+			((    gHasFinishedStartup && ![.sError, .sStartupProgress].contains(kind)) ||
 				(!gHasFinishedStartup &&  [.sMain,  .sStartupProgress].contains(kind)))
 	}
 
@@ -45,15 +46,28 @@ class ZGenericController: ZController, ZGeneric {
 
     override func viewDidAppear() {
         super.viewDidAppear()
+		isVisible = true
         setup()
     }
+
+	override func viewDidDisappear() {
+		super.viewDidDisappear()
+		isVisible = false
+	}
 
 #elseif os(iOS)
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+		isVisible = true
         setup()
     }
+
+	override func viewDidDisappear(_ animated: Bool) {
+		super.viewDidDisappear(animated)
+		isVisible = false
+	}
+
 
 #endif
 

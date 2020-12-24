@@ -12,7 +12,7 @@ import CloudKit
 
 enum ZUserAccess: Int {
     case eNormal
-    case eMaster
+    case eFull
 }
 
 enum ZSentEmailType: String {
@@ -23,16 +23,16 @@ enum ZSentEmailType: String {
 @objc(ZUser)
 class ZUser : ZRecord {
 
-    @objc dynamic var      authorID: String?   { didSet { save() } }
-    @objc dynamic var   writeAccess: NSNumber? { didSet { save() } }
-	@objc dynamic var sentEmailType: String?   { didSet { if oldValue != sentEmailType { save() } } }
+	@objc dynamic var      authorID: String?   { didSet { if let o = oldValue, o != authorID      { save() } } }
+	@objc dynamic var   writeAccess: NSNumber? { didSet { if let o = oldValue, o != writeAccess   { save() } } }
+	@objc dynamic var sentEmailType: String?   { didSet { if let o = oldValue, o != sentEmailType { save() } } }
 
 	var access: ZUserAccess {
         get {
             updateInstanceProperties()
 
 			if  authorID    == "38AC7308-C627-4F83-B4E0-CAC3FFEAA142" {
-				writeAccess  = NSNumber(value: ZUserAccess.eMaster.rawValue)
+				writeAccess  = NSNumber(value: ZUserAccess.eFull.rawValue)
 			}
 
             if  writeAccess == nil {

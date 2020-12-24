@@ -15,9 +15,7 @@ import CoreFoundation
     import UIKit
 #endif
 
-let gFiles    = ZFiles()
-//let gUseFiles = !kIsPhone
-let gUseFiles = false
+let gFiles = ZFiles()
 
 enum ZExportType: String {
 	case eSeriously = "seriously"
@@ -91,26 +89,20 @@ class ZFiles: NSObject {
 		needWrite(for: .everyoneID)
 	}
 
-	func deferWrite(for  databaseID: ZDatabaseID?, restartTimer: Bool = false) {
-		if  let timerID = ZTimerID.convert(from: databaseID) {
-			gTimers.assureCompletion(for: timerID, withTimeInterval: 5.0, restartTimer: restartTimer) {
-				if  gIsEditIdeaMode {
-					throw(ZInterruptionError.userInterrupted)
-				} else {
-					try self.writeToFile(from: databaseID)
-				}
-			}
-		}
-	}
-
     func needWrite(for  databaseID: ZDatabaseID?) {
         if  let  dbID = databaseID,
             let index = dbID.index {
 
             if !needsWrite[index] {
                 needsWrite[index] = true
-            } else {
-                deferWrite(for: databaseID, restartTimer: true)
+            } else if gDebugModes.useFiles, let timerID = ZTimerID.convert(from: databaseID) {
+				gTimers.assureCompletion(for:   timerID, withTimeInterval: 5.0, restartTimer: true) {
+					if  gIsEditIdeaMode {
+						throw(ZInterruptionError.userInterrupted)
+					} else {
+						try self.writeToFile(from: databaseID)
+					}
+				}
             }
         }
     }
@@ -135,7 +127,7 @@ class ZFiles: NSObject {
 	}
 
 	func readFile(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  gUseFiles,
+		if  gDebugModes.useFiles,
 			databaseID  != .favoritesID,
 			let    index = databaseID.index,
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {
@@ -151,7 +143,7 @@ class ZFiles: NSObject {
     // MARK:-
 
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
-		if  gUseFiles,
+		if  gDebugModes.useFiles,
 			gHasFinishedStartup, // guarantee that file read finishes before this code runs
 			let           dbID = databaseID,
 			dbID              != .recentsID,
@@ -235,7 +227,7 @@ class ZFiles: NSObject {
 	}
 
 	func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  gUseFiles,
+		if  gDebugModes.useFiles,
 			databaseID      != .favoritesID,
 			let       cloud  = gRemoteStorage.cloud(for: databaseID),
 			let       index  = databaseID.index {

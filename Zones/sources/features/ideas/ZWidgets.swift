@@ -14,7 +14,7 @@ let gWidgets = ZWidgets()
 
 class ZWidgets: NSObject {
 
-	var      mapWidgets: [Int : ZoneWidget]  = [:]
+	var   bigMapWidgets: [Int : ZoneWidget]  = [:]
 	var   recentWidgets: [Int : ZoneWidget]  = [:]
 	var favoriteWidgets: [Int : ZoneWidget]  = [:]
 	var exemplarWidgets: [Int : ZoneWidget]  = [:]
@@ -23,44 +23,45 @@ class ZWidgets: NSObject {
     var  firstGrabbableWidget : ZoneWidget? { return widgetForZone(gSelecting.firstSortedGrab) }
 
     var visibleWidgets: [ZoneWidget] {
-        let favorites = gFavoritesRoot?.visibleWidgets ?? []
-		let   recents =   gRecentsRoot?.visibleWidgets ?? []
+		let other = gIsRecentlyMode ? gRecentsRoot : gFavoritesRoot
 
-        return gHere.visibleWidgets + favorites + recents
+        return gHere.visibleWidgets + (other?.visibleWidgets ?? [])
     }
 
     func clearRegistry(for type: ZWidgetType) {
-		setWidgetsDict([:], for: type)
+		setZoneWidgetRegistry([:], for: type)
     }
 
-	func getWidgetsDict(for type: ZWidgetType) -> [Int : ZoneWidget] {
-		if type.isExemplar { return exemplarWidgets }
-		if type.isFavorite { return favoriteWidgets }
+	func getZoneWidgetRegistry(for type: ZWidgetType) -> [Int : ZoneWidget] {
+		if type.isBigMap   { return   bigMapWidgets }
 		if type.isRecent   { return   recentWidgets }
-		if type.isMap      { return      mapWidgets }
+		if type.isFavorite { return favoriteWidgets }
+		if type.isExemplar { return exemplarWidgets }
 
 		return [:]
 	}
 
-	func setWidgetsDict(_ dict: [Int : ZoneWidget], for type: ZWidgetType) {
-		if      type.isExemplar { exemplarWidgets = dict }
-		else if type.isFavorite { favoriteWidgets = dict }
+	func setZoneWidgetRegistry(_ dict: [Int : ZoneWidget], for type: ZWidgetType) {
+		if      type.isBigMap   {   bigMapWidgets = dict }
 		else if type.isRecent   {   recentWidgets = dict }
-		else if type.isMap      {      mapWidgets = dict }
+		else if type.isFavorite { favoriteWidgets = dict }
+		else if type.isExemplar { exemplarWidgets = dict }
 	}
 
     /// capture a ZoneWidget for later lookup by it's zone
     /// (see widgetForZone)
     ///
     /// - Parameter widget: UI element containing text, drag and reveal dots and children widgets
-	func registerWidget(_ widget: ZoneWidget, for type: ZWidgetType) {
-        if  let zone = widget.widgetZone {
-			var dict = getWidgetsDict(for: type)
+	/// - type: indicates which dictionary to put the zone:widget pair in
 
-			dict[zone.hash] = widget
+	func setWidgetForZone( _ widget: ZoneWidget, for type: ZWidgetType) {
+        if  let   zone = widget.widgetZone {
+			var   dict = getZoneWidgetRegistry(for: type)
+			let   hash = zone.hash
+			dict[hash] = widget
 
-			setWidgetsDict(dict, for: type)
-        }
+			setZoneWidgetRegistry(dict, for: type)
+		}
     }
 
     /// Lookup previously registered ZoneWidget by its zone
@@ -70,7 +71,7 @@ class ZWidgets: NSObject {
     func widgetForZone(_ iZone: Zone?) -> ZoneWidget? {
         if  let zone = iZone {
 			let type = zone.type
-			let dict = getWidgetsDict(for: type)
+			let dict = getZoneWidgetRegistry(for: type)
 
 			return dict[zone.hash]
 		}

@@ -186,14 +186,14 @@ class ZTrait: ZTraitAssets {
 
 	override var isAdoptable: Bool { return owner != nil }
 
-	override func adopt(forceAdoption: Bool = true, moveOrphansToLost: Bool = false) {
-        if  let o = ownerZone, let traits = ownerZone?.traits, let t = traitType, traits[t] == nil {
+	override func adopt(forceAdoption: Bool = true) {
+        if  let      o = ownerZone,
+			let traits = ownerZone?.traits,
+			let      t = traitType, traits[t] == nil {
             o.maybeMarkNotFetched()
 			removeState(.needsAdoption)
 
             o.traits[t] = self
-		} else if moveOrphansToLost, let r = record, !r.isOrphaned {
-			removeState(.needsAdoption)
         }
     }
 

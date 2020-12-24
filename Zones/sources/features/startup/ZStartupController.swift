@@ -35,7 +35,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		loadingLabel?    .text = loadingText
 		helpLabel?       .text = helpText
 
-		if  gDebugMode.contains(.dNewUser) ||
+		if  gDebugModes.newUser ||
 			gStartupLevel == .localOkay {
 			gStartupLevel  = .firstTime
 		}

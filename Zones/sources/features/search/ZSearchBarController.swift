@@ -61,7 +61,8 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 		gFilterOption = options
 
-		if  let text = searchBoxText {
+		if  let text = searchBoxText,
+			text.length > 0 {
 			performSearch(for: text)
 		}
 	}
@@ -98,7 +99,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 		if isList && !isInBox {
 			return gSearchResultsController?.handleEvent(event)
-		} else if isReturn, isInBox, let text = searchBoxText {
+		} else if isReturn, isInBox, let text = activeSearchBoxText {
             performSearch(for: text)
         } else if  key == "a" && COMMAND {
             searchBox?.selectAllText()
@@ -124,23 +125,27 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
         gSearching.exitSearchMode()
     }
 
-    var searchBoxText: String? {
-        let searchString = (searchBox?.text)!
+	var searchBoxText: String? {
+		return searchBox?.text?.searchable
+	}
 
-        if ["", " ", "  "].contains(searchString) {
+    var activeSearchBoxText: String? {
+        let searchString = searchBoxText
+
+        if  ["", " ", "  "].contains(searchString) {
             endSearch()
 
             return nil
         }
 
-		return searchString.searchable
+		return searchString
     }
     
     func performSearch(for searchString: String) {
-        var combined = [ZDatabaseID: [Any]] ()
-        var remaining = kAllDatabaseIDs.count
+		var remaining = kAllDatabaseIDs.count // same count as allClouds
+        var  combined = [ZDatabaseID: [Any]] ()
         
-        let done : Closure = {
+        let doneMaybe : Closure = {
             if  remaining == 0 {
                 gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: [CKRecord]] ?? [:]
 				gSearching.state = (gSearchResultsController?.hasResults ?? false) ? .sList : .sFind
@@ -157,7 +162,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
                 combined[dbID] = locals
                 remaining -= 1
 
-                done()
+                doneMaybe()
             } else {
                 cloud.search(for: searchString) { iObject in
                     FOREGROUND {
@@ -167,6 +172,12 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
                         remaining  -= 1
 
 						for record in records {
+							if  record.matchesFilterOptions {
+								filtered.appendUnique(contentsOf: [record])
+							}
+						}
+
+						for record in filtered {
 							if  let trait = cloud.maybeZRecordForCKRecord(record) as? ZTrait {
 								if  trait.ownerZone == nil {
 									orphans.append(record)       // remove unowned traits from records
@@ -188,12 +199,6 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 							}
 						}
 
-						for record in records {
-							if  record.matchesFilterOptions {
-								filtered.appendUnique(contentsOf: [record])
-							}
-						}
-
 						filtered.appendUnique(contentsOf: locals) { (a, b) in
                             if  let alpha = a as? CKRecord,
                                 let  beta = b as? CKRecord {
@@ -205,7 +210,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
                         
                         combined[dbID] = filtered
                         
-                        done()
+                        doneMaybe()
                     }
                 }
             }

@@ -71,10 +71,10 @@ class ZRecents : ZRecords {
 
 	func push(intoNotes: Bool = false) {
 		if  rootZone != nil {
-			if  let    here  = gHereMaybe,
+			if  let          here  = gHereMaybe,
 				!findAndSetHereAsParentOfBookmarkTargeting(here),
-				let bookmark = gFavorites.createFavorite(for: here, action: .aBookmark) {
-				var    index = gListsGrowDown ? nil : 0                // assume current bookmark's parent is NOT current here
+				let       bookmark = gFavorites.createFavorite(for: here, action: .aBookmark) {
+				var    index: Int? = nil                               // assume current bookmark's parent is NOT current here, always grow down
 
 				if  let          b = currentBookmark,
 					let          p = b.parentZone,
@@ -112,11 +112,13 @@ class ZRecents : ZRecords {
 		return found
 	}
 
-	func popAndUpdateRecents(){
+	@discardableResult func popAndUpdateRecents() -> Zone? {
 		if  !pop(),
 		    workingBookmarks.count > 0 {
 			currentBookmark = workingBookmarks[0]
 		}
+
+		return currentBookmark
 	}
 
 	func object(for id: String) -> NSObject? {

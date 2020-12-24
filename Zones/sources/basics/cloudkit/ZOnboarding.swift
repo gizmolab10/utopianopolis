@@ -22,9 +22,9 @@ var gHasInternet              = true
 
 class ZOnboarding : ZOperations {
 
-    var           user : ZUser?
-	var     macAddress : String?
-	var isMasterAuthor : Bool { return (user?.access ?? .eNormal) == .eMaster }
+    var          user : ZUser?
+	var    macAddress : String?
+	var hasFullAccess : Bool { return !gDebugModes.debugAccess && (user?.access ?? .eNormal) == .eFull }
 
     // MARK:- internals
     // MARK:-

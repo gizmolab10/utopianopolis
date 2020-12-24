@@ -116,9 +116,15 @@ class ZRemoteStorage: NSObject {
 		print("fixed: \(fixed) lost: \(lost)")
 	}
 
-	func adoptAllNeedingAdoption(moveOrphansToLost: Bool = false) {
+	func assureAdoption() {
 		for cloud in allClouds {
-			cloud.adoptAllNeedingAdoption(moveOrphansToLost: moveOrphansToLost)
+			cloud.assureAdoption()
+		}
+	}
+
+	func adoptAllNeedingAdoption() {
+		for cloud in allClouds {
+			cloud.adoptAllNeedingAdoption()
 		}
 	}
 

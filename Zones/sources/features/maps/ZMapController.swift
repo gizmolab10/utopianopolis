@@ -14,12 +14,12 @@ import SnapKit
     import UIKit
 #endif
 
-var gMapController: ZMapController? { return gControllers.controllerForID(.idMap) as? ZMapController }
+var gMapController: ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
     
-	override  var       controllerID : ZControllerID { return .idMap }
-	var                   widgetType : ZWidgetType   { return .tMap }
+	override  var       controllerID : ZControllerID { return .idBigMap }
+	var                   widgetType : ZWidgetType   { return .tBigMap }
 	var                   isExemplar : Bool          { return false }
 	var                     isBigMap : Bool          { return true }
 	var                     hereZone : Zone?         { return gHereMaybe }
@@ -134,7 +134,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     }
 
     func layoutWidgets(for iZone: Any?, _ iKind: ZSignalKind) {
-        if kIsPhone && (isBigMap == gShowSmallMap) { return }
+        if kIsPhone && (isBigMap == gShowSmallMapForIOS) { return }
 
 		let                        here = hereZone
         var specificWidget: ZoneWidget? = rootWidget
@@ -153,7 +153,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             recursing          = [.sData, .sRelayout].contains(iKind)
         }
 
-        specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, visited: [])
+        let total = specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, visited: []) ?? 0
+
+		printDebug(.dWidget, "layout \(widgetType.description): \(total)")
     }
 
 	// MARK:- events
@@ -175,7 +177,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
 
 		if  kIsPhone {
-			rootWidget.isHidden = gShowSmallMap
+			rootWidget.isHidden = gShowSmallMapForIOS
 		}
 	}
 	
@@ -254,7 +256,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let      SHIFT = gesture.isShiftDown
             let editWidget = gCurrentlyEditingWidget
             var  regarding = ZSignalKind.sData
-            var withinEdit = false
+            var  notInEdit = true
 
 			editWidget?.widgetZone?.needWrite()
 
@@ -266,10 +268,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
                 let backgroundLocation = gesture.location(in: mapView)
                 let           textRect = editWidget!.convert(editWidget!.bounds, to: mapView)
-                withinEdit             = textRect.contains(backgroundLocation)
+                notInEdit              = !textRect.contains(backgroundLocation)
             }
 
-            if !withinEdit {
+            if  notInEdit {
 				gSetMapsMode()
 				gTextEditor.stopCurrentEdit()
 
@@ -521,17 +523,16 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
 
 		var          hit : ZoneWidget?
-		var     smallest = CGSize.big
-		let         dict = gWidgets.getWidgetsDict(for: widgetType)
-		if  let        d = mapView, !dict.isEmpty,
+		if  let        d = mapView,
             let location = iGesture?.location(in: d), d.bounds.contains(location) {
-            let  widgets = dict.values.reversed()
+			var smallest = CGSize.big
+			let  widgets = gWidgets.getZoneWidgetRegistry(for: widgetType).values.reversed()
 			for  widget in widgets {
                 let rect = widget.convert(widget.outerHitRect, to: d)
 				let size = rect.size
 
                 if  rect.contains(location),
-					smallest.isLargerThan(size) {
+					smallest.isLargerThan(size) { // prefer widget with shortest text size; why?
 					smallest = size
 					hit      = widget
                 }

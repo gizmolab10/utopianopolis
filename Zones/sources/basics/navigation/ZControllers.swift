@@ -18,17 +18,17 @@ enum ZControllerID: Int {
 	case idStartup
     case idDetails
     case idActions   // iPhone
+	case idBigMap
 	case idStatus
     case idSearch
 	case idCrumbs
 	case idHelp
 	case idNote
 	case idMain
-	case idMap
 }
 
 enum ZSignalKind: Int {
-	case sMap
+	case sBigMap
     case sData
     case sMain
 	case sSwap
@@ -111,9 +111,9 @@ class ZControllers: NSObject {
 			switch id {
 				case .idSmallMap,
 					 .idDetails,
-					 .idMap:  return kClearColor      // so rubberband is visible on both map and favorites
-				case .idNote: return .white           // override dark mode, otherwise essay view looks like crap
-				default:      return gBackgroundColor // respects dark mode
+					 .idBigMap: return kClearColor      // so rubberband is visible on both map and favorites
+				case .idNote:   return .white           // override dark mode, otherwise essay view looks like crap
+				default:        return gBackgroundColor // respects dark mode
 			}
 		}
 
@@ -148,16 +148,16 @@ class ZControllers: NSObject {
                         signalObject.closure(object, regarding)
                     }
                     
-                    switch regarding {  // these non-default cases send a signal only to the one corresponding controller
-					case .sMap:             if identifier == .idMap            { closure() }
-					case .sMain:            if identifier == .idMain           { closure() }
-					case .sStatus:          if identifier == .idStatus         { closure() }
-					case .sCrumbs:          if identifier == .idCrumbs         { closure() }
-					case .sSmallMap:        if identifier == .idSmallMap       { closure() }
-					case .sPreferences:     if identifier == .idPreferences    { closure() }
-					case .sStartupProgress: if startupIDs.contains(identifier) { closure() }
-					default:                                                     closure()
-                    }
+					switch regarding {  // these non-default cases send a signal only to the one corresponding controller
+						case .sMain:            if identifier == .idMain           { closure() }
+						case .sStatus:          if identifier == .idStatus         { closure() }
+						case .sCrumbs:          if identifier == .idCrumbs         { closure() }
+						case .sBigMap:          if identifier == .idBigMap         { closure() }
+						case .sSmallMap:        if identifier == .idSmallMap       { closure() }
+						case .sPreferences:     if identifier == .idPreferences    { closure() }
+						case .sStartupProgress: if startupIDs.contains(identifier) { closure() }
+						default:                                                     closure()
+					}
                 }
             }
 

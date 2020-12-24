@@ -1026,48 +1026,60 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="397" height="46"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="uAJ-8h-8LU">
-                                <rect key="frame" x="18" y="12" width="162" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="158" id="I1c-oe-2cv"/>
-                                </constraints>
-                                <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="lUZ-Yn-zZH">
-                                    <font key="font" metaFont="smallSystem"/>
-                                    <segments>
-                                        <segment label="bookmarks"/>
-                                        <segment label="notes" selected="YES" tag="1"/>
-                                        <segment label="ideas"/>
-                                    </segments>
-                                    <connections>
-                                        <action selector="searchOptionActionWithIControl:" target="cYL-kx-LTL" id="TXX-AW-AnR"/>
-                                    </connections>
-                                </segmentedCell>
-                            </segmentedControl>
-                            <searchField wantsLayer="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bdk-eQ-YUz">
-                                <rect key="frame" x="186" y="12" width="191" height="22"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="22" id="qSd-0e-j4I"/>
-                                </constraints>
-                                <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="vRN-AU-kAR">
+                            <searchField wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bct-LL-Igg">
+                                <rect key="frame" x="168" y="12" width="209" height="22"/>
+                                <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="8N3-HP-82v">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </searchFieldCell>
-                                <connections>
-                                    <outlet property="delegate" destination="cYL-kx-LTL" id="0Ap-by-EXa"/>
-                                </connections>
                             </searchField>
+                            <box ambiguous="YES" borderType="none" title="Search filter" titlePosition="aboveTop" translatesAutoresizingMaskIntoConstraints="NO" id="shP-sa-p5R">
+                                <rect key="frame" x="5" y="-1" width="158" height="46"/>
+                                <view key="contentView" id="cfk-HT-nGc">
+                                    <rect key="frame" x="0.0" y="0.0" width="158" height="34"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="uAJ-8h-8LU">
+                                            <rect key="frame" x="-2" y="14" width="162" height="21"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="158" id="I1c-oe-2cv"/>
+                                                <constraint firstAttribute="height" constant="18" id="aEN-CF-kHQ"/>
+                                            </constraints>
+                                            <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="lUZ-Yn-zZH">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <segments>
+                                                    <segment label="bookmarks"/>
+                                                    <segment label="notes" selected="YES" tag="1"/>
+                                                    <segment label="ideas"/>
+                                                </segments>
+                                                <connections>
+                                                    <action selector="searchOptionActionWithIControl:" target="cYL-kx-LTL" id="TXX-AW-AnR"/>
+                                                </connections>
+                                            </segmentedCell>
+                                        </segmentedControl>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="uAJ-8h-8LU" firstAttribute="leading" secondItem="cfk-HT-nGc" secondAttribute="leading" id="09s-P6-DEj"/>
+                                        <constraint firstItem="uAJ-8h-8LU" firstAttribute="top" secondItem="cfk-HT-nGc" secondAttribute="top" id="Ree-Tq-dcs"/>
+                                        <constraint firstAttribute="trailing" secondItem="uAJ-8h-8LU" secondAttribute="trailing" id="yAB-C4-Ts1"/>
+                                    </constraints>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="O0Q-5W-NfB"/>
+                                </constraints>
+                                <font key="titleFont" metaFont="system" size="9"/>
+                            </box>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="bdk-eQ-YUz" secondAttribute="trailing" constant="20" id="DrT-Cn-BVA"/>
-                            <constraint firstItem="uAJ-8h-8LU" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="R1X-g2-w5H"/>
-                            <constraint firstItem="bdk-eQ-YUz" firstAttribute="leading" secondItem="uAJ-8h-8LU" secondAttribute="trailing" constant="8" symbolic="YES" id="RlA-BZ-cjp"/>
-                            <constraint firstItem="uAJ-8h-8LU" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="20" id="XLH-m0-Hw8"/>
-                            <constraint firstItem="bdk-eQ-YUz" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="dBy-Lm-ulD"/>
+                            <constraint firstAttribute="trailing" secondItem="bct-LL-Igg" secondAttribute="trailing" constant="20" id="8Dj-DB-JIO"/>
+                            <constraint firstItem="shP-sa-p5R" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="8" id="Kfv-jq-wiU"/>
+                            <constraint firstItem="bct-LL-Igg" firstAttribute="leading" secondItem="shP-sa-p5R" secondAttribute="trailing" constant="8" id="aeT-8o-OXa"/>
+                            <constraint firstItem="bct-LL-Igg" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="neh-h0-Oac"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="searchBox" destination="bdk-eQ-YUz" id="fCv-MP-Ean"/>
+                        <outlet property="searchBox" destination="bct-LL-Igg" id="SjG-U2-qS7"/>
                         <outlet property="searchOptionsControl" destination="uAJ-8h-8LU" id="14g-mI-pf9"/>
                     </connections>
                 </viewController>

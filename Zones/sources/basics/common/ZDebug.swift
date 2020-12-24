@@ -8,8 +8,10 @@
 
 import Foundation
 
-var gPrintMode: [ZPrintMode] = [.dFix, .dFetch]
-var gDebugMode: [ZDebugMode] = []
+typealias ZDebugModes = [ZDebugMode]
+
+var gDebugModes:  ZDebugModes = []
+var gPrintModes: [ZPrintMode] = [.dType]
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
@@ -19,14 +21,23 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	init() { rawValue = ZDebugMode.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let   dNewUser = ZDebugMode() // exercise new-user, first-time arrival code
+	static let dNewUser     = ZDebugMode() // exercise new-user, first-time arrival code
+	static let dUseFiles    = ZDebugMode() // read and write files
+	static let dDebugAccess = ZDebugMode() // test write access by me not having full
 
 	var description: String {
-		return [(.dNewUser, " new user")]
+		return [(.dDebugAccess, "access"),
+				(.dNewUser,     "arrival"),
+				(.dUseFiles,    "use files")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: " ")
 	}
+}
 
+extension ZDebugModes {
+	var     newUser: Bool { return contains(.dNewUser) }
+	var    useFiles: Bool { return contains(.dUseFiles) }
+	var debugAccess: Bool { return contains(.dDebugAccess) }
 }
 
 struct ZPrintMode: OptionSet, CustomStringConvertible {
@@ -41,11 +52,10 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let    dOps = ZPrintMode()
 	static let    dFix = ZPrintMode()
 	static let    dLog = ZPrintMode()
+	static let   dType = ZPrintMode()
 	static let   dTime = ZPrintMode()
-	static let   dInfo = ZPrintMode()
 	static let   dEdit = ZPrintMode()
 	static let   dFile = ZPrintMode()
-	static let   dRing = ZPrintMode()
 	static let   dText = ZPrintMode()
 	static let   dUser = ZPrintMode()
 	static let  dNames = ZPrintMode()
@@ -55,21 +65,22 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let  dError = ZPrintMode()
 	static let  dAdopt = ZPrintMode()
 	static let  dFetch = ZPrintMode()
+	static let  dCount = ZPrintMode()
 	static let dAccess = ZPrintMode()
 	static let dSearch = ZPrintMode()
 	static let dImages = ZPrintMode()
 	static let dTimers = ZPrintMode()
 	static let dRemote = ZPrintMode()
+	static let dWidget = ZPrintMode()
 
 	var description: String {
 		return [(.dOps,    "     op"),
 				(.dFix,    "    fix"),
 				(.dLog,    "    log"),
 				(.dFile,   "   file"),
+				(.dType,   "   type"),
 				(.dTime,   "   time"),
 				(.dEdit,   "   edit"),
-				(.dInfo,   "   info"),
-				(.dRing,   "   info"),
 				(.dText,   "   text"),
 				(.dUser,   "   user"),
 				(.dNames,  "   name"),
@@ -79,20 +90,22 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dError,  "  error"),
 				(.dAdopt,  "  adopt"),
 				(.dFetch,  "  fetch"),
+				(.dCount,  "  count"),
 				(.dAccess, " access"),
 				(.dSearch, " search"),
 				(.dImages, " images"),
 				(.dRemote, " remote"),
-				(.dTimers, " timers")]
+				(.dTimers, " timers"),
+				(.dWidget, " widget")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: " ")
 	}
 
 	static func toggle(_ mode: ZPrintMode) {
-		if  let index = gPrintMode.index(of: mode) {
-			gPrintMode.remove(at: index)
+		if  let index = gPrintModes.index(of: mode) {
+			gPrintModes.remove(at: index)
 		} else {
-			gPrintMode.append(mode)
+			gPrintModes.append(mode)
 		}
 	}
 

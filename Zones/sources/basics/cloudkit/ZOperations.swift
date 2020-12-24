@@ -42,14 +42,13 @@ enum ZOperationID: Int, CaseIterable {
     case oFinishUp
 	case oSubscribe
 	case oAllIdeas
-	case oAllTraits
+	case oAdopt
 	case oRecount
     case oDone
 
     // miscellaneous
 
 	case oResolve
-	case oAdopt
 	case oFetchAndMerge
 	case oNeededIdeas        // after children so favorite targets resolve properly
     case oSaveToCloud        // zones, traits, destroy
@@ -58,6 +57,7 @@ enum ZOperationID: Int, CaseIterable {
     case oEmptyTrash
     case oCompletion
     case oBookmarks			 // MINE ONLY
+	case oAllTraits
     case oLostIdeas
 	case oNewIdeas
     case oUndelete
@@ -68,7 +68,7 @@ enum ZOperationID: Int, CaseIterable {
 		switch self {
 			case .oReadFile:        return 30.0
 			case .oTraits:          return 16.0
-			case .oAllTraits:       return 11.0
+//			case .oAllTraits:       return 11.0
 			case .oAllIdeas:        return  8.0
 			case .oSubscribe:       return  7.0
 			case .oNewIdeas:        return  7.0
@@ -88,9 +88,9 @@ enum ZOperationID: Int, CaseIterable {
 				 .oAllTraits,
 				 .oAllIdeas,
 				 .oNewIdeas,
-				 .oReadFile,
-				 .oTraits: return true
-			default:       return false
+				 .oTraits:   return true
+			case .oReadFile: return gDebugModes.useFiles
+			default:         return false
 		}
 	}
 

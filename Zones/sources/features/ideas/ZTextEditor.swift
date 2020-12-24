@@ -71,7 +71,7 @@ class ZTextPack: NSObject {
             // add suffix for "show counts as" //
             // //////////////////////////////////
 
-			if  gPrintMode.contains(.dNames) && zone.record != nil {
+			if  gPrintModes.contains(.dNames) && zone.record != nil {
                 suffix = zone.recordName
             } else if (need > 1) && (!zone.showingChildren || (gCountsMode == .progeny)) {
                 suffix = String(describing: need)
@@ -95,8 +95,15 @@ class ZTextPack: NSObject {
     }
 
     func updateText(isEditing: Bool = false) {
-        textWidget?.text = isEditing ? unwrappedName : textWithSuffix
-    }
+		var name  = isEditing ? unwrappedName : textWithSuffix
+		if  name == kEmptyIdea {
+			packedZone?.updateInstanceProperties()
+
+			name  = isEditing ? unwrappedName : textWithSuffix
+		}
+
+		textWidget?.text = name
+	}
 
     func setup(for iZRecord: ZRecord) {
         packedTrait      = iZRecord as? ZTrait

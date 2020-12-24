@@ -134,7 +134,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
                 var   width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
-				if !iWidget.type.isMap {
+				if !iWidget.type.isBigMap {
                     width  *= kFavoritesReduction
                 }
 
