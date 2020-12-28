@@ -456,12 +456,12 @@ class ZMapEditor: ZBaseEditor {
 			gBatches.refetch { iSame in
 				gRedrawMaps()
 			}
-		} else {
+		} else { // OPTION or no flags
 			for grab in gSelecting.currentGrabs {
-				if !OPTION {                              // plain
+				if  OPTION {                              // OPTION
+					grab.needProgeny()
+				} else {                                  // no flags
 					grab.reallyNeedChildren()
-				} else {                                  // OPTION alone or both
-					grab.reallyNeedProgeny()
 				}
 			}
 

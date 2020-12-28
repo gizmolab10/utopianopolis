@@ -30,19 +30,15 @@ enum ZOperationID: Int, CaseIterable {
     case oCloud
     case oManifest
     case oReadFile           // LOCAL
-    case oFoundIdeas         // LOCAL
-	case oFavorites			 // MINE ONLY
-	case oRecents  			 // MINE ONLY
 	case oRoots
     case oHere
+	case oAllProgeny
 	case oStartupDone
 
     // finish
 
     case oFinishUp
 	case oSubscribe
-	case oAllIdeas
-	case oAdopt
 	case oRecount
     case oDone
 
@@ -56,19 +52,24 @@ enum ZOperationID: Int, CaseIterable {
 	case oChildIdeas
     case oEmptyTrash
     case oCompletion
+	case oFoundIdeas         // LOCAL
+	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
 	case oAllTraits
     case oLostIdeas
 	case oNewIdeas
+	case oAllIdeas
     case oUndelete
+	case oRecents  			 // MINE ONLY
     case oRefetch            // user defaults list of record ids
     case oTraits
+	case oAdopt
 
 	var progressTime : Double {
 		switch self {
 			case .oReadFile:        return 30.0
 			case .oTraits:          return 16.0
-//			case .oAllTraits:       return 11.0
+			case .oAllTraits:       return 11.0
 			case .oAllIdeas:        return  8.0
 			case .oSubscribe:       return  7.0
 			case .oNewIdeas:        return  7.0
@@ -88,7 +89,8 @@ enum ZOperationID: Int, CaseIterable {
 				 .oAllTraits,
 				 .oAllIdeas,
 				 .oNewIdeas,
-				 .oTraits:   return true
+				 .oTraits,
+				 .oRoots:    return true
 			case .oReadFile: return gDebugModes.useFiles
 			default:         return false
 		}

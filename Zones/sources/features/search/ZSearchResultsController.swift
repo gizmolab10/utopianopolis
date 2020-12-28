@@ -20,7 +20,7 @@ var gSearchResultsController: ZSearchResultsController? { return gControllers.co
 class ZSearchResultsController: ZGenericTableController {
 
     var     resultsAreVisible = false
-    var          foundRecords = [ZDatabaseID: [CKRecord]] ()
+    var          foundRecords = [ZDatabaseID: CKRecordArray] ()
 	var            searchText : String?       { return gSearchBarController?.activeSearchBoxText }
 	override var controllerID : ZControllerID { return .idSearchResults }
 

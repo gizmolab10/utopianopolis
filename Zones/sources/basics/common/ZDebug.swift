@@ -11,7 +11,7 @@ import Foundation
 typealias ZDebugModes = [ZDebugMode]
 
 var gDebugModes:  ZDebugModes = []
-var gPrintModes: [ZPrintMode] = [.dType]
+var gPrintModes: [ZPrintMode] = []
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
@@ -52,7 +52,6 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let    dOps = ZPrintMode()
 	static let    dFix = ZPrintMode()
 	static let    dLog = ZPrintMode()
-	static let   dType = ZPrintMode()
 	static let   dTime = ZPrintMode()
 	static let   dEdit = ZPrintMode()
 	static let   dFile = ZPrintMode()
@@ -68,17 +67,17 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let  dCount = ZPrintMode()
 	static let dAccess = ZPrintMode()
 	static let dSearch = ZPrintMode()
-	static let dImages = ZPrintMode()
-	static let dTimers = ZPrintMode()
 	static let dRemote = ZPrintMode()
 	static let dWidget = ZPrintMode()
+	static let dImages = ZPrintMode()
+	static let dTimers = ZPrintMode()
+	static let dLevels = ZPrintMode()
 
 	var description: String {
 		return [(.dOps,    "     op"),
 				(.dFix,    "    fix"),
 				(.dLog,    "    log"),
 				(.dFile,   "   file"),
-				(.dType,   "   type"),
 				(.dTime,   "   time"),
 				(.dEdit,   "   edit"),
 				(.dText,   "   text"),
@@ -93,10 +92,11 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dCount,  "  count"),
 				(.dAccess, " access"),
 				(.dSearch, " search"),
-				(.dImages, " images"),
+				(.dWidget, " widget"),
 				(.dRemote, " remote"),
+				(.dImages, " images"),
 				(.dTimers, " timers"),
-				(.dWidget, " widget")]
+				(.dLevels, " levels")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: " ")
 	}

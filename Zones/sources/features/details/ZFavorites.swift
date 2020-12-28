@@ -64,7 +64,7 @@ class ZFavorites: ZRecords {
 			self.createRootTemplates()
 
 			if  let root = gFavoritesRoot {
-				root.reallyNeedProgeny()
+				root.needProgeny()
 			}
 
 			onCompletion?(0)

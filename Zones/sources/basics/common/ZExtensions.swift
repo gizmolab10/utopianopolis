@@ -17,7 +17,10 @@ import CloudKit
 
 typealias               ZoneArray = [Zone]
 typealias            ZRecordArray = [ZRecord]
+typealias           CKRecordArray = [CKRecord]
 typealias           ZObjectsArray = [NSObject]
+typealias         CKRecordIDArray = [CKRecord.ID]
+typealias        CKRefrencesArray = [CKRecord.Reference]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
 typealias       ZAssetsDictionary = [UUID : CKAsset]
 typealias       ZTinyDotTypeArray = [[ZTinyDotType]]
@@ -613,7 +616,7 @@ extension CKRecord {
         return allKeys().contains(key)
     }
 
-    func index(within iReferences: [CKRecord.ID]) -> Int? {
+    func index(within iReferences: CKRecordIDArray) -> Int? {
         for (index, identifier) in iReferences.enumerated() {
             if  identifier == recordID {
                 return index
@@ -1082,10 +1085,10 @@ extension Array {
     }
 
     mutating func appendUnique(contentsOf items: Array, compare: CompareClosure? = nil) {
-        let array = self as NSArray
+        let existing = self as NSArray
         
         for item in items {
-            if  !array.contains(item),
+            if  !existing.contains(item),
                 !containsCompare(with: item as AnyObject, using: compare) {
                 append(item)
             }
@@ -1096,6 +1099,14 @@ extension Array {
         return Array(Set(self).intersection(Set(other))) as! S
     }
 
+}
+
+extension CKRefrencesArray {
+	func containsReference(_ reference: CKRecord.Reference) -> Bool {
+		return containsCompare(with: reference) { (item, another) in
+			return item.recordID.recordName == another.recordID.recordName
+		}
+	}
 }
 
 extension ZRecordArray {
@@ -1846,7 +1857,7 @@ extension String {
             } ?? ""
     }
 
-    static func forCKRecords(_ records: [CKRecord]?) -> String {
+    static func forCKRecords(_ records: CKRecordArray?) -> String {
         return records?.apply() { object -> (String?) in
             if  let  record  = object as? CKRecord {
                 let    name  = record.decoratedName
@@ -1859,7 +1870,7 @@ extension String {
             } ?? ""
     }
 
-    static func forReferences(_ references: [CKRecord.Reference]?, in databaseID: ZDatabaseID) -> String {
+    static func forReferences(_ references: CKRefrencesArray?, in databaseID: ZDatabaseID) -> String {
         return references?.apply()  { object -> (String?) in
             if let reference = object as? CKRecord.Reference, let zone = gRemoteStorage.zRecords(for: databaseID)?.maybeZoneForReference(reference) {
                 let    name  = zone.decoratedName

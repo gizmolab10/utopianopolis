@@ -6,10 +6,8 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
-
 
 enum ZRecursionType: Int {
     case all        // always recurse
@@ -18,20 +16,15 @@ enum ZRecursionType: Int {
     case restore    // controlled by show children
 }
 
-
 let gRecursionLogic = ZRecursionLogic()
-
 
 // for each zone, determine whether or not to recurse, AND if so,
 // whether or not to extensively recurse [add to references, in next fetch operation)
 
-
 class ZRecursionLogic: NSObject {
-
 
     var        type: ZRecursionType?
     var targetLevel: Int = Int.max
-
 
     init(_ iType: ZRecursionType = .all, _ iLevel: Int = Int.max) {
         super.init()
@@ -40,8 +33,7 @@ class ZRecursionLogic: NSObject {
         self       .type = iType
     }
 
-
-    func propagateDeeply(to iChild: Zone) {
+	func propagateDeeply(to iChild: Zone) {
         iChild.traverseAllProgeny { iZone in
             if  iZone.hasMissingChildren() {
                 iZone.needProgeny()
@@ -49,8 +41,7 @@ class ZRecursionLogic: NSObject {
         }
     }
 
-
-    func propagateNeeds(to iChild: Zone, _ iProgenyNeeded: [CKRecord.Reference]?) {
+    func propagateNeeds(to iChild: Zone, _ iProgenyNeeded: CKRefrencesArray?) {
         if  let recursing = type, recursing != .all {
             let    reveal = iChild.showingChildren && iChild.hasMissingChildren()
             let    expand = reveal && (targetLevel < 0 || targetLevel > iChild.level)
@@ -62,9 +53,8 @@ class ZRecursionLogic: NSObject {
 			}
         } else if let progenyNeeded = iProgenyNeeded,
             let     parentReference = iChild.parent,
-            progenyNeeded.count    != 0,
-            progenyNeeded.contains(parentReference) {
-            iChild.reallyNeedProgeny()
+            progenyNeeded.containsReference(parentReference) {
+            iChild.needProgeny()
         }
     }
 

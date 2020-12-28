@@ -3156,11 +3156,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var dict             = try super.createStorageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
 
 		if  (includeInvisibles || showingChildren),
-			let childrenDict = try (children as [ZRecord]).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+			let childrenDict = try (children as ZRecordArray).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 			dict [.children] = childrenDict as NSObject?
 		}
 
-		if  let   traitsDict = try (traitValues as [ZRecord]).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+		if  let   traitsDict = try (traitValues as ZRecordArray).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 			dict   [.traits] = traitsDict as NSObject?
 		}
 

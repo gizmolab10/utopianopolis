@@ -36,10 +36,13 @@ class ZStatusController: ZGenericController {
 
     var totalCountsText: String {
         let count = (gCloud?.rootZone?.progenyCount ?? 0) + 1 // add one for root
-		let total =  gCloud?.recordRegistry.count ?? 0 // countBy(type: kZoneType) ?? 0
+		let zones =  gCloud?.countBy(type: kZoneType) ?? 0
+		let wrong =  gCloud?.recordsMistyped   .count ?? 0
+		let total =  gCloud?.recordRegistry    .count ?? 0
+		let dupes =  gCloud?.duplicates        .count ?? 0
 		let suffix = count != 1 ? "s" : ""
 
-        return "\(count) idea\(suffix) in map -- of \(total) from cloud"
+        return "\(count) idea\(suffix) [\(dupes)d \(wrong)m \(zones)i \(total)t]"
     }
 
     var mapNameText: String {

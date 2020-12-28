@@ -297,15 +297,20 @@ class ZRecord: NSObject {
     func needFound()             {    addState(.needsFound) }
     func needFetch()             {    addState(.needsFetch) }
     func needCount()             {    addState(.needsCount) }
-    func needAdoption()          {    addState(.needsAdoption) }
     func markNotFetched()        {    addState(.notFetched) }
+	func needColor()             {    addState(.needsColor) }
+	func needTraits()            {    addState(.needsTraits) }
+	func needParent()            {    addState(.needsParent) }
+	func needWritable()          {    addState(.needsWritable) }
+	func needAdoption()          {    addState(.needsAdoption) }
     func fetchBeforeSave()       {    addState(.requiresFetchBeforeSave) }
     func allowSaveWithoutFetch() { removeState(.requiresFetchBeforeSave)}
 	func clearSave() 			 { removeState(.needsSave) }
-    func needColor()             {} //    if !gAssumeAllFetched { addState(.needsColor) } }
-    func needTraits()            {} //    if !gAssumeAllFetched { addState(.needsTraits) } }
-    func needParent()            {} //    if !gAssumeAllFetched { addState(.needsParent) } }
-    func needWritable()          {} //    if !gAssumeAllFetched { addState(.needsWritable) } }
+
+	func needProgeny() {
+		addState(.needsProgeny)
+		removeState(.needsChildren)
+	}
 
     func needSave() {
         allowSaveWithoutFetch()
@@ -320,26 +325,10 @@ class ZRecord: NSObject {
         }
     }
 
-	func needProgeny() {
-
-		// use reallyNeedProgeny. depricated for performance
-
-//		addState(.needsProgeny)
-//		removeState(.needsChildren)
-	}
-
-    func reallyNeedProgeny() {
-		
-		// N.B., make sure your need is worth the performance hit
-
-		addState(.needsProgeny)
-        removeState(.needsChildren)
-    }
-
     func needChildren() {
         if !isBookmark && // all bookmarks are childless, by design
             showingChildren &&
-            false, // !gAssumeAllFetched,     N.B., depricated for performance ... use reallyNeedChildren
+            false, // N.B., deprecated for performance ... use reallyNeedChildren
             !needsProgeny {
             addState(.needsChildren)
         }
