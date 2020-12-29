@@ -141,7 +141,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var type : ZWidgetType {
 		if  let    name = root?.recordName() {
 			switch name {
-				case          kRootName: return .tBigMap
 				case   kRecentsRootName: return .tRecent
 				case  kExemplarRootName: return .tExemplar
 				case kFavoritesRootName: return .tFavorite
@@ -149,7 +148,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		return .tNone
+		return .tBigMap
 	}
 
 	// MARK:- setup

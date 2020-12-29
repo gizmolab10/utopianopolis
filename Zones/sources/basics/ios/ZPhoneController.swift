@@ -124,7 +124,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
             cachedOffset         = gScrollOffset
 
             if  let       center = gDragView?.bounds.center,
-                let       widget = gWidgets.currentEditingWidget?.textWidget {
+                let       widget = gWidgets.currentlyEditedWidget?.textWidget {
                 let widgetOffset = widget.convert(widget.bounds.center, to: gDragView)
                 gScrollOffset    = CGPoint(center - widgetOffset)
                 isCached         = true

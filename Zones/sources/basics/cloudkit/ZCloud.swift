@@ -61,8 +61,8 @@ class ZCloud: ZRecords {
 			case .oRefetch:       refetchIdeas       (cloudCallback)
 			case .oHere:          establishHere      (cloudCallback)
 			case .oFetchAndMerge: fetchAndMerge      (cloudCallback)
-			case .oRoots:         establishRoots     (cloudCallback)
-			case .oManifest:      establishManifest  (cloudCallback)
+			case .oRoots:         establishRoots     (identifier, cloudCallback)
+			case .oManifest:      establishManifest  (identifier, cloudCallback)
 			case .oSaveToCloud:   save               (cloudCallback)
 			case .oAllProgeny:    fetchAllProgeny    (cloudCallback)
 			case .oSubscribe:     subscribe          (cloudCallback)
@@ -1059,7 +1059,7 @@ class ZCloud: ZRecords {
 
 		for level in 0...self.maxLevel {
 			if  let records = self.added[level] {
-				string.append("\(separator)\(level) : \(records.count)")
+				string.append("\(separator)\(level):\(records.count)")
 				separator   = ", "
 			}
 		}
@@ -1069,7 +1069,7 @@ class ZCloud: ZRecords {
 		}
 	}
     
-    func establishManifest(_ onCompletion: IntClosure?) {
+	func establishManifest(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
         var retrieved = CKRecordArray ()
         let predicate = NSPredicate(value: true)
 
@@ -1091,7 +1091,7 @@ class ZCloud: ZRecords {
                     }
                     
                     self.columnarReport("    \(self.manifest?.deletedRecordNames?.count ?? 0)", "\(self.databaseID.rawValue)")
-                    onCompletion?(0)
+                    onCompletion?(op)
                 }
             }
         }
@@ -1264,12 +1264,12 @@ class ZCloud: ZRecords {
     }
     
     
-    func establishRoots(_ onCompletion: IntClosure?) {
+    func establishRoots(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
 		var createFor: IntClosure?     // pre-declare so can recursively call from within it
 		let   rootIDs: [ZRootID] = [.mapID, .favoritesID, .recentsID, .trashID, .lostID, .destroyID]
 		createFor                = { iIndex in
-            if iIndex >= rootIDs.count {
-                onCompletion?(0)
+            if  iIndex >= rootIDs.count {
+                onCompletion?(op)
             } else {
                 let       rootID = rootIDs[iIndex]
                 let   recordName = rootID.rawValue

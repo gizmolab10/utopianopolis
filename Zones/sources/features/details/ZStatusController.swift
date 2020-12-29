@@ -35,15 +35,21 @@ class ZStatusController: ZGenericController {
     }
 
     var totalCountsText: String {
-        let count = (gCloud?.rootZone?.progenyCount ?? 0) + 1 // add one for root
-		let zones =  gCloud?.countBy(type: kZoneType) ?? 0
-		let wrong =  gCloud?.recordsMistyped   .count ?? 0
-		let total =  gCloud?.recordRegistry    .count ?? 0
-		let dupes =  gCloud?.duplicates        .count ?? 0
-		let suffix = count != 1 ? "s" : ""
+        let  count = (gCloud?.rootZone?.progenyCount ?? 0) + 1 // add one for root
+		let  zones =  gCloud?.countBy(type: kZoneType) ?? 0
+		let  wrong =  gCloud?.recordsMistyped   .count ?? 0
+		let  total =  gCloud?.recordRegistry    .count ?? 0
+		let  dupes =  gCloud?.duplicates        .count ?? 0
+		let suffix =    count != 1 ? "s" : ""
+		let result = "\(count) idea\(suffix)"
+		var addend = " in map"
 
-        return "\(count) idea\(suffix) [\(dupes)d \(wrong)m \(zones)i \(total)t]"
-    }
+		if  gDebugModes.debugInfo {
+			addend = " \(result) [\(dupes)d \(wrong)m \(zones)i \(total)t]"
+		}
+
+		return result + addend
+	}
 
     var mapNameText: String {
         if  let dbID = currentZone?.databaseID {
@@ -61,7 +67,20 @@ class ZStatusController: ZGenericController {
     }
 
 	var zoneRecordNameText: String {
-		return currentZone?.recordName ?? ""
+		var text = ""
+
+		if  let zone = currentZone,
+			let name = zone.recordName {
+			let type = zone.type.identifier.uppercased()
+			text     = name
+
+			if  gDebugModes.debugInfo, type.count > 0 {
+				text     = "\(type) \(text)"
+			}
+
+		}
+
+		return text
 	}
 
 	var creationDateText: String {

@@ -237,9 +237,9 @@ class ZTextEditor: ZTextView {
     var  cursorOffset: CGFloat?
     var currentOffset: CGFloat?
 	var currentEdit: ZTextPack?
-    var currentlyEditingZone: Zone? { return currentEdit?.packedZone }
-    var currentTextWidget: ZoneTextWidget? { return currentlyEditingZone?.widget?.textWidget }
-    var currentZoneName: String { return currentlyEditingZone?.zoneName ?? "" }
+    var currentlyEditedZone: Zone? { return currentEdit?.packedZone }
+    var currentTextWidget: ZoneTextWidget? { return currentlyEditedZone?.widget?.textWidget }
+    var currentZoneName: String { return currentlyEditedZone?.zoneName ?? "" }
     var currentFont: ZFont { return currentTextWidget?.font ?? gWidgetFont }
     var atEnd:   Bool { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
     var atStart: Bool { return selectedRange.upperBound == 0 }
@@ -259,7 +259,7 @@ class ZTextEditor: ZTextView {
 
     func cancel() {
         if  let    e = currentEdit,
-            let zone = currentlyEditingZone {
+            let zone = currentlyEditedZone {
             clearEdit()
             zone.grab()
             e.updateWidgetsForEndEdit()
@@ -411,7 +411,7 @@ class ZTextEditor: ZTextView {
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gDesktopAppDelegate?.genericMenuHandler(iItem) }
 
     func moveOut(_ iMoveOut: Bool) {
-        let revealed = currentlyEditingZone?.showingChildren ?? false
+        let revealed = currentlyEditedZone?.showingChildren ?? false
 
         let editAtOffset: FloatClosure = { iOffset in
             if  let grabbed = gSelecting.firstSortedGrab {
@@ -429,7 +429,7 @@ class ZTextEditor: ZTextView {
             gMapEditor.moveOut {
                 editAtOffset(100000000.0)
             }
-        } else if currentlyEditingZone?.children.count ?? 0 > 0 {
+        } else if currentlyEditedZone?.children.count ?? 0 > 0 {
             quickStopCurrentEdit()
             gMapEditor.moveInto {
                 editAtOffset(0.0)
@@ -443,7 +443,7 @@ class ZTextEditor: ZTextView {
 
 	func moveUp(_ iMoveUp: Bool, stopEdit: Bool) {
         currentOffset   = currentOffset ?? editingOffset(iMoveUp)
-        let currentZone = currentlyEditingZone
+        let currentZone = currentlyEditedZone
         let      isHere = currentZone == gHere
         let           e = currentEdit // for the case where stopEdit is true
 
@@ -486,7 +486,7 @@ class ZTextEditor: ZTextView {
 	func setCursor(at iOffset: CGFloat?) {
         gArrowsDoNotBrowse = false
         if  var     offset = iOffset,
-            let       zone = currentlyEditingZone,
+            let       zone = currentlyEditedZone,
             let         to = currentTextWidget {
 			var      point = CGPoint.zero
             point          = to.convert(point, from: nil)

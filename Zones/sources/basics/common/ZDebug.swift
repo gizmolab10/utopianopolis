@@ -23,6 +23,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 
 	static let dNewUser     = ZDebugMode() // exercise new-user, first-time arrival code
 	static let dUseFiles    = ZDebugMode() // read and write files
+	static let dDebugInfo   = ZDebugMode() // inject debugging information into UI
 	static let dDebugAccess = ZDebugMode() // test write access by me not having full
 
 	var description: String {
@@ -37,6 +38,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 extension ZDebugModes {
 	var     newUser: Bool { return contains(.dNewUser) }
 	var    useFiles: Bool { return contains(.dUseFiles) }
+	var   debugInfo: Bool { return contains(.dDebugInfo) }
 	var debugAccess: Bool { return contains(.dDebugAccess) }
 }
 

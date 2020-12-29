@@ -316,12 +316,14 @@ class ZBatches: ZOnboarding {
 						do {
 							try self.invokeOperation(for: operationID) { (iResult: Any?) in
 
+								let expectedOp = iResult as? ZOperationID
 								let      error = iResult as? Error
 								let     result = iResult as? Int
-								let    isError = error != nil
+								let    isError = error      != nil
+								let       isOp = expectedOp != nil
 
-								if     isError || result == 0 {
-									if isError {
+								if     isError || isOp || result == 0 {
+									if isError || (isOp && (expectedOp != operationID)) {
 										self.printOp("\(error!)")
 									}
 

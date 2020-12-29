@@ -33,9 +33,11 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	static let tFavorite = ZWidgetType()
 	static let   tBigMap = ZWidgetType()
 	static let   tRecent = ZWidgetType()
+	static let    tTrash = ZWidgetType()
 	static let    tEssay = ZWidgetType()
-	static let     tIdea = ZWidgetType()
 	static let     tNote = ZWidgetType()
+	static let     tIdea = ZWidgetType()
+	static let     tLost = ZWidgetType()
 	static let     tNone = ZWidgetType()
 
 	var isBigMap:   Bool { return contains(.tBigMap) }
@@ -45,15 +47,37 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 
 	var description: String {
 		return [(.tNone,        "    none"),
+				(.tLost,        "    lost"),
 				(.tIdea,        "    idea"),
 				(.tNote,        "    note"),
 				(.tEssay,       "   essay"),
+				(.tTrash,       "   trash"),
 				(.tRecent,      "  recent"),
 				(.tBigMap,      " big map"),
 				(.tFavorite,    "favorite"),
 				(.tExemplar,    "exemplar")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: ", ")
+	}
+
+	var identifier: String {
+		let parts = description.components(separatedBy: ", ")
+		var result = ""
+
+		for part in parts {
+			let strip = part.stripped
+			var short = strip[0]
+
+			switch strip {
+				case "none":     short = "?"
+				case "exemplar": short = "x"
+				default:         break
+			}
+
+			result.append(short)
+		}
+
+		return result
 	}
 }
 
@@ -123,7 +147,7 @@ class ZoneWidget: ZView {
     // MARK:- layout
     // MARK:-
 
-	func layoutInView(_ inView: ZView?, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, visited: ZoneArray) -> Int {
+	func layoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, visited: ZoneArray) -> Int {
 		var count = 1
 
 		if  let thisView = inView,
@@ -135,7 +159,7 @@ class ZoneWidget: ZView {
             backgroundColor = kClearColor
         #endif
 
-		gWidgets.setWidgetForZone(self, for: type)
+		gWidgets.setWidgetForZone(self, for: mapType)
         addTextView()
         textWidget.layoutText()
         layoutDots()
@@ -145,13 +169,13 @@ class ZoneWidget: ZView {
             let    more = widgetZone == nil ? [] : [widgetZone!]
 
             prepareChildrenWidgets()
-            count += layoutChildren(iKind, visited: visited + more)
+			count += layoutChildren(iKind, mapType: mapType, visited: visited + more)
         }
 
 		return count
     }
 
-    func layoutChildren(_ iKind: ZSignalKind, visited: ZoneArray) -> Int {
+    func layoutChildren(_ iKind: ZSignalKind, mapType: ZWidgetType, visited: ZoneArray) -> Int {
 		var count = 0
 
         if  let  zone = widgetZone, zone.showingChildren {
@@ -163,7 +187,7 @@ class ZoneWidget: ZView {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone =            zone[index]
 
-				count += childWidget.layoutInView(childrenView, atIndex: index, recursing: true, iKind, visited: visited)
+				count += childWidget.layoutInView(childrenView, for: mapType, atIndex: index, recursing: true, iKind, visited: visited)
 				childWidget.snp.setLabel("<w> \(childWidget.widgetZone?.zoneName ?? "unknown")")
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in

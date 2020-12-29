@@ -632,7 +632,7 @@ class ZMapEditor: ZBaseEditor {
         // swap currently editing zone with sibling, resuming edit //
         // //////////////////////////////////////////////////////////
         
-        if  let    zone = t.currentlyEditingZone, zone.hasSiblings {
+        if  let    zone = t.currentlyEditedZone, zone.hasSiblings {
             let atStart = gListGrowthMode == .up
             let  offset = t.editingOffset(atStart)
             

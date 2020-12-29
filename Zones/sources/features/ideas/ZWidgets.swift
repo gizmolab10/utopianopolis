@@ -18,7 +18,7 @@ class ZWidgets: NSObject {
 	var   recentWidgets: [Int : ZoneWidget]  = [:]
 	var favoriteWidgets: [Int : ZoneWidget]  = [:]
 	var exemplarWidgets: [Int : ZoneWidget]  = [:]
-    var  currentEditingWidget : ZoneWidget? { return widgetForZone(gTextEditor.currentlyEditingZone) }
+    var currentlyEditedWidget : ZoneWidget? { return widgetForZone(gTextEditor.currentlyEditedZone) }
     var  currentMovableWidget : ZoneWidget? { return widgetForZone(gSelecting.currentMoveable) }
     var  firstGrabbableWidget : ZoneWidget? { return widgetForZone(gSelecting.firstSortedGrab) }
 

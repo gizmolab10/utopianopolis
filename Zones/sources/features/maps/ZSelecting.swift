@@ -207,7 +207,7 @@ class ZSelecting: NSObject {
 
         if  currentGrabs.count > 0 {
             movable = firstGrab
-        } else if let zone = gTextEditor.currentlyEditingZone {
+        } else if let zone = gTextEditor.currentlyEditedZone {
             movable = zone
         }
 
@@ -233,7 +233,7 @@ class ZSelecting: NSObject {
     // MARK:- convenience
     // MARK:-
 
-    func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextEditor.currentlyEditingZone == zone }
+    func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextEditor.currentlyEditedZone == zone }
     func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
     func updateBrowsingLevel()            { gCurrentBrowseLevel = currentMoveable.level }
     func clearPaste()                     { pasteableZones = [:] }

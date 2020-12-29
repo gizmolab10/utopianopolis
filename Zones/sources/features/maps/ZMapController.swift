@@ -153,7 +153,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             recursing          = [.sData, .sRelayout].contains(iKind)
         }
 
-        let total = specificWidget?.layoutInView(specificView, atIndex: specificIndex, recursing: recursing, iKind, visited: []) ?? 0
+		let total = specificWidget?.layoutInView(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, iKind, visited: []) ?? 0
 
 		printDebug(.dWidget, "layout \(widgetType.description): \(total)")
     }
