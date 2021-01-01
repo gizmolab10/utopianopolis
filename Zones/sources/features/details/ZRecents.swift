@@ -40,8 +40,8 @@ class ZRecents : ZRecords {
 			newRoot.needProgeny()
 			onCompletion?(0)
 		} else {
-			mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kRecentsRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-				let                ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kRecentsRootName))
+			mine?.assureRecordExists(withRecordID: CKRecordID(recordName: kRecentsRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
+				let                ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kRecentsRootName))
 				self.rootZone               = Zone(record: ckRecord, databaseID: .mineID)
 				self.rootZone?.directAccess = .eProgenyWritable
 				self.rootZone?.zoneName     = kRecentsRootName

@@ -44,7 +44,7 @@ class ZStatusController: ZGenericController {
 		let result = "\(count) idea\(suffix)"
 		var addend = " in map"
 
-		if  gDebugModes.debugInfo {
+		if  gDebugInfo {
 			addend = " \(result) [\(dupes)d \(wrong)m \(zones)i \(total)t]"
 		}
 
@@ -74,7 +74,7 @@ class ZStatusController: ZGenericController {
 			let type = zone.type.identifier.uppercased()
 			text     = name
 
-			if  gDebugModes.debugInfo, type.count > 0 {
+			if  gDebugInfo, type.count > 0 {
 				text     = "\(type) \(text)"
 			}
 

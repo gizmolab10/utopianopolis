@@ -34,14 +34,15 @@ class ZHelpDotsMapController : ZMapController {
 	}
 
 	func setupExemplar() {
-		let     record = CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kExemplarRootName))
-		let       real = Zone(record: record, databaseID: .everyoneID)
-		real.zoneName  = "this is a typical idea, with 3 ideas in its (hidden) list"
-		zone           = real
+		let       name = kExemplarRootName
+		zone           = Zone(as: name)
+		zone?.zoneName = "this is a typical idea, with 3 ideas in its (hidden) list"
 
-		real.addChild(Zone())
-		real.addChild(Zone())
-		real.addChild(Zone())
+		for index in 1...3 {
+			let child = Zone(within: name, for: index)
+
+			zone?.addChild(child)
+		}
 	}
 
 }

@@ -8,7 +8,7 @@
 import Foundation
 import CloudKit
 
-class ZRecord: NSObject {
+class ZRecord: ZManagedRecord { // NSObject {
 
 	var          kvoContext: UInt8 = 1
 	var              record: CKRecord?
@@ -85,8 +85,11 @@ class ZRecord: NSObject {
 	}
 
 	convenience init(record: CKRecord?, databaseID: ZDatabaseID?) {
-//		self.init(record: record) // initialize managed object from ck record
-		self.init()
+		if  gUseCoreData {
+			self.init(entityName: record?.entityName) // initialize managed object from ck record
+		} else {
+			self.init()
+		}
 
 		self.databaseID = databaseID
 
@@ -350,6 +353,7 @@ class ZRecord: NSObject {
         }
 
         needWrite()
+		gSaveContext()
     }
 
     func needWrite() {
@@ -401,9 +405,12 @@ class ZRecord: NSObject {
         if context == &kvoContext {
             let observer = iObject as! NSObject
 
-            if let value: NSObject = observer.value(forKey: keyPath!) as! NSObject? {
+            if  let value: NSObject = observer.value(forKey: keyPath!) as! NSObject? {
+				gSaveContext() // for testing, remove soonish
+
 				if keyPath == "assets", let values = value as? NSArray, values.count == 0 { return }
-                setValue(value, for: keyPath!)
+
+				setValue(value, for: keyPath!)
             }
         }
     }
@@ -581,7 +588,7 @@ class ZRecord: NSObject {
 			if  let r = cloud?.maybeCKRecordForRecordName(name) {
 				ckRecord = r				        		       // case 2
 			} else {		        		        		       // case 3
-				ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecord.ID(recordName: recordName)) // YIKES this may be wildly out of date
+				ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: recordName)) // YIKES this may be wildly out of date
 			}
 		}
 

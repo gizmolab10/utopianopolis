@@ -43,7 +43,7 @@ enum ZTraitType: String {
 @objc(ZTrait)
 class ZTrait: ZTraitAssets {
 
-	@objc dynamic var    owner :  CKRecord.Reference?
+	@objc dynamic var    owner :  CKRefrence?
 	@objc dynamic var  strings : [String]?
 	@objc dynamic var   format :  String?
 	@objc dynamic var     type :  String?

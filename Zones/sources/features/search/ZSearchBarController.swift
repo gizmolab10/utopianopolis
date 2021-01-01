@@ -147,7 +147,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
         
         let doneMaybe : Closure = {
             if  remaining == 0 {
-                gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: CKRecordArray] ?? [:]
+                gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: CKRecordsArray] ?? [:]
 				gSearching.state = (gSearchResultsController?.hasResults ?? false) ? .sList : .sFind
                 
                 gSignal([.sFound])
@@ -166,9 +166,9 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
             } else {
                 cloud.search(for: searchString) { iObject in
                     FOREGROUND {
-                        var  records = iObject as! CKRecordArray
-						var  orphans = CKRecordArray()
-						var filtered = CKRecordArray()
+                        var  records = iObject as! CKRecordsArray
+						var  orphans = CKRecordsArray()
+						var filtered = CKRecordsArray()
                         remaining  -= 1
 
 						for record in records {

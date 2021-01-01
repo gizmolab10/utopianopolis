@@ -280,7 +280,7 @@ var gUserRecord: CKRecord? {    // persist for file read on launch
 	get {
 		if  let  recordName = gUserRecordID,
 			let    storable = getPreferenceString(for: kUserRecord) {
-			let      record = CKRecord(recordType: kUserType, recordID: CKRecord.ID(recordName: recordName))
+			let      record = CKRecord(recordType: kUserType, recordID: CKRecordID(recordName: recordName))
 			record.storable = storable
 
 			return record

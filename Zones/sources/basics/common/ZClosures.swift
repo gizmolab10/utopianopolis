@@ -11,13 +11,11 @@ import CoreGraphics;
 import Foundation;
 import CloudKit
 
-
 enum ZTraverseStatus: Int {
     case eContinue
     case eSkip
     case eStop
 }
-
 
 typealias Closure                 = ()                       -> (Void)
 typealias IntClosure              = (Int)                    -> (Void)
@@ -37,7 +35,7 @@ typealias StringClosure           = (String)                 -> (Void)
 typealias ObjectClosure           = (NSObject?)              -> (Void)
 typealias SignalClosure           = (Any?,      ZSignalKind) -> (Void)
 typealias RecordClosure           = (CKRecord?)              -> (Void)
-typealias RecordsClosure          = (CKRecordArray)             -> (Void)
+typealias RecordsClosure          = (CKRecordsArray)         -> (Void)
 typealias ZRecordClosure          = (ZRecord)                -> (Void)
 typealias BooleanClosure          = (Bool)                   -> (Void)
 typealias CompareClosure          = (AnyObject,   AnyObject) -> (Bool)
@@ -48,25 +46,25 @@ typealias ToStringClosure         = ()                       -> (String?)
 typealias ToObjectClosure         = ()                       -> (NSObject)
 typealias ToBooleanClosure        = ()                       -> (Bool)
 typealias ZoneMaybeClosure        = (Zone?)                  -> (Void)
-typealias RecordIDsClosure        = (CKRecordIDArray)          -> (Void)
+typealias RecordIDsClosure        = (CKRecordIDsArray)       -> (Void)
 typealias StringIntClosure        = (String,            Int) -> (Void)
 typealias IntBooleanClosure       = (Int,              Bool) -> (Void)
-typealias ReferencesClosure       = (CKRefrencesArray)        -> (Void)
+typealias ReferencesClosure       = (CKRefrencesArray)       -> (Void)
 typealias SignalKindClosure       = (ZSignalKind)            -> (Void)
 typealias StateRecordClosure      = (ZRecordState,  ZRecord) -> (Void)
 typealias ThrowingIntClosure      = (Int)            throws  -> (Void)
 typealias AnyToStringClosure      = (Any)                    -> (String?)
 typealias RecordErrorClosure      = (CKRecord?,      Error?) -> (Void)
-typealias RecordsErrorClosure     = (CKRecordArray,     Error?) -> (Void)
+typealias StateStringClosure      = (ZRecordState,   String) -> (Void)
+typealias RecordsErrorClosure     = (CKRecordsArray, Error?) -> (Void)
 typealias ZoneToStatusClosure     = (Zone)                   -> (ZTraverseStatus)
 typealias ZonesToZonesClosure     = (ZoneArray)              -> (ZoneArray)
 typealias URLToBooleanClosure     = (URL)                    -> (Bool)
 typealias StateCKRecordClosure    = (ZRecordState, CKRecord) -> (Void)
 typealias ObjectToObjectClosure   = (NSObject)               -> (NSObject)
 typealias ObjectToStringClosure   = (NSObject)               -> (String)
-typealias StateRecordNameClosure  = (ZRecordState,   String) -> (Void)
 typealias StringToBooleanClosure  = (String?)                -> (Bool)
 typealias ZRecordToBooleanClosure = (ZRecord?)               -> (Bool)
 typealias BooleanToBooleanClosure = (ObjCBool)               -> (ObjCBool)
-typealias RecordsToRecordsClosure = (CKRecordArray)             -> (CKRecordArray)
+typealias RecordsToRecordsClosure = (CKRecordsArray)         -> (CKRecordsArray)
 

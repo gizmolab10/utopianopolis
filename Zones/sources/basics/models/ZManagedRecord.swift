@@ -10,13 +10,14 @@ import Foundation
 import CloudKit
 import CoreData
 
+
 class ZManagedRecord: NSManagedObject {
 
-	convenience init(record: CKRecord?) {
-		if  let n = record?.entityName,
-			let c = gDesktopAppDelegate?.managedContext,
-			let e = NSEntityDescription.entity(forEntityName: n, in: c) {
-			self.init(entity: e, insertInto: c)
+	convenience init(entityName: String?) {
+		if  let    name = entityName,
+			let context = gManagedContext,
+			let  entity = NSEntityDescription.entity(forEntityName: name, in: context) {
+			self.init(entity: entity, insertInto: context)
 		} else {
 			self.init()
 		}

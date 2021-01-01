@@ -25,7 +25,7 @@ enum ZoneAccess: Int, CaseIterable {
 @objc(Zone)
 class Zone : ZRecord, ZIdentifiable, ZToolable {
 
-	@objc dynamic var         parent : CKRecord.Reference?
+	@objc dynamic var         parent : CKRefrence?
 	@objc dynamic var      zoneOrder :           NSNumber?
 	@objc dynamic var      zoneCount :           NSNumber?
 	@objc dynamic var     zoneAccess :           NSNumber?
@@ -158,7 +158,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var newRecord : CKRecord?
 
 		if  let rName = identifier {
-			newRecord = CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: rName))
+			newRecord = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: rName))
 		} else {
 			newRecord = CKRecord(recordType: kZoneType)
 		}
@@ -685,7 +685,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					if       newParentDBID == databaseID {
 						if  parent?.recordID.recordName != parentRecord.recordID.recordName {
 							parentLink      = kNullLink
-							parent          = CKRecord.Reference(record: parentRecord, action: .none)
+							parent          = CKRefrence(record: parentRecord, action: .none)
 
 							maybeNeedSave()
 						}
@@ -973,7 +973,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func swapWithParent() {
-		let scratchZone = Zone()
+		let scratchZone = Zone(as: kScratchRootName)
 
 		// swap places with parent
 
@@ -1447,7 +1447,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let       r      = record,
 			let    type      = trait.traitType {
 			traits[type]     = trait
-			trait .owner     = CKRecord.Reference(record: r, action: .none)
+			trait .owner     = CKRefrence(record: r, action: .none)
 			trait._ownerZone = nil
 
 			trait.updateCKRecordProperties()
@@ -1521,7 +1521,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let            r = record,
 			trait           == nil {
 			trait            = ZTrait(databaseID: databaseID)
-			trait?.owner     = CKRecord.Reference(record: r, action: .none)
+			trait?.owner     = CKRefrence(record: r, action: .none)
 			trait?.traitType = iType
 			traits[iType]    = trait
 		}
@@ -1630,7 +1630,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					} else {
 						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
 							if  let hereRecord = iRecord,
-								let    newHere = gCloud?.zoneForRecord(hereRecord) {
+								let    newHere = gCloud?.sureZoneForCKRecord(hereRecord) {
 								gHere          = newHere
 
 								newHere.prepareForArrival()
@@ -1675,7 +1675,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					} else if gCloud?.databaseID != .favoritesID { // favorites does not have a cloud database
 						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
 							if  let hereRecord = iRecord,
-								let    newHere = gCloud?.zoneForRecord(hereRecord) {
+								let    newHere = gCloud?.sureZoneForCKRecord(hereRecord) {
 								gHere          = newHere
 
 								grabHere()
@@ -2724,7 +2724,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	@discardableResult func addChild(for iCKRecord: CKRecord?) -> Zone? {
 		var child: Zone?    = nil
 		if  let childRecord = iCKRecord, !containsCKRecord(childRecord) {
-			child           = gCloud?.zoneForRecord(childRecord)
+			child           = gCloud?.sureZoneForCKRecord(childRecord)
 
 			if  child != nil {
 				addChild(child)
@@ -3059,10 +3059,35 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- file persistence
+	// MARK:- local persistence
 	// MARK:-
 
+	convenience init(as name: String) {
+		self.init(within: name, for: 0)
+	}
+
+	convenience init(within rootName: String, for index: Int) {
+
+		// /////////////////////////////
+		// exemplar and scratch ideas //
+		// /////////////////////////////
+
+		var name = rootName
+
+		if  index > 0 { // index of 0 means use just the root name parameter
+			name.append(index.description)
+		}
+
+		let record = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: name))
+		self.init(record: record, databaseID: .everyoneID)
+	}
+
 	convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
+
+		// //////////////////////////////////////
+		// all ideas created from reading file //
+		// //////////////////////////////////////
+
 		self.init(record: nil, databaseID: dbID)
 
 		var d = dict
@@ -3070,7 +3095,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		for (index, (key, _)) in dict.enumerated() {
 			if  key == .graph,
 				var g = dict[index] as? ZStorageDictionary {
-				g[.recordName] = CKRecord.ID()
+				g[.recordName] = CKRecordID()
 				d = g // this is in an auto-saved file: only use graph data
 				print(index)
 			}
@@ -3089,6 +3114,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		switch type {
 			case .favorites: return kFavoritesRootName
 			case .lost:      return kLostAndFoundName
+			case .recent:    return kRecentsRootName
 			case .trash:     return kTrashName
 			case .graph:     return kRootName
 			default:         return nil
@@ -3098,7 +3124,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func updateRecordName(for type: ZStorageType) {
 		if  let name = rootName(for: type),
 			recordName != name {
-			record = CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: name)) // change record name by relacing record
+			record = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: name)) // change record name by relacing record
 
 			needSave()
 
@@ -3155,11 +3181,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var dict             = try super.createStorageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
 
 		if  (includeInvisibles || showingChildren),
-			let childrenDict = try (children as ZRecordArray).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+			let childrenDict = try (children as ZRecordsArray).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 			dict [.children] = childrenDict as NSObject?
 		}
 
-		if  let   traitsDict = try (traitValues as ZRecordArray).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+		if  let   traitsDict = try (traitValues as ZRecordsArray).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 			dict   [.traits] = traitsDict as NSObject?
 		}
 

@@ -8,42 +8,65 @@
 
 import Foundation
 
+func gSaveContext() { if gUseCoreData { gDesktopAppDelegate?.saveContext() } }
+var gManagedContext: NSManagedObjectContext? = { return gDesktopAppDelegate?.managedContext }()
+
 class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
-	lazy var managedContext: NSManagedObjectContext = {
-		let result: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+	var localStore       : NSPersistentStore?
+	var cloudStore       : NSPersistentStore?
+	let localPath = "\(kPathToLocalStore)local.store"
+	let cloudPath = "\(kPathToLocalStore)cloud.store"
 
-		if  let m = NSManagedObjectModel.mergedModel(from: nil) {
-			result.persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: m)
+	lazy var managedContext: NSManagedObjectContext = {
+		let context: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+		context.persistentStoreCoordinator = coordinator
+
+		return context
+	}()
+
+	lazy var coordinator : NSPersistentStoreCoordinator? = {
+		var storeCoordinator: NSPersistentStoreCoordinator?
+
+		if  let model = NSManagedObjectModel.mergedModel(from: nil) {
+			storeCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 		}
 
-		return result
+		return storeCoordinator
+	}()
+
+	lazy var localDescription: NSPersistentStoreDescription = {
+		// Create a store description for a local store
+		let           desc = NSPersistentStoreDescription(url: URL(fileURLWithPath: localPath))
+		desc.configuration = "Local"
+
+		return desc
+	}()
+
+	lazy var privateDescription: NSPersistentStoreDescription = {
+		// Create a store description for a CloudKit-backed local store
+		let                        id = "iCloud.com.zones.Zones"
+		let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: id)
+		let                      desc = NSPersistentStoreDescription(url: URL(fileURLWithPath: cloudPath))
+		desc.configuration            = "Cloud"
+		desc.cloudKitContainerOptions = options
+
+		return desc
+	}()
+
+	lazy var publicDescription: NSPersistentStoreDescription = {
+		let desc = privateDescription.copy() as! NSPersistentStoreDescription
+//		desc.cloudKitContainerOptions?.databaseScope = .public // default is private
+		return desc
 	}()
 
 	lazy var persistentContainer: NSPersistentCloudKitContainer = {
-		let container = NSPersistentCloudKitContainer(name: "Seriously")
-
-		// Create a store description for a local store
-		let localStoreLocation = URL(fileURLWithPath: kPathToLocalStore + "local.store")
-		let localStoreDescription =
-			NSPersistentStoreDescription(url: localStoreLocation)
-		localStoreDescription.configuration = "Local"
-
-		// Create a store description for a CloudKit-backed local store
-		let cloudStoreLocation = URL(fileURLWithPath: kPathToLocalStore + "cloud.store")
-		let cloudStoreDescription =
-			NSPersistentStoreDescription(url: cloudStoreLocation)
-		cloudStoreDescription.configuration = "Cloud"
-
-		// Set the container options on the cloud store
-		cloudStoreDescription.cloudKitContainerOptions =
-			NSPersistentCloudKitContainerOptions(
-				containerIdentifier: "iCloud.com.zones.Zones")
+		let container = NSPersistentCloudKitContainer(name: "seriously")
 
 		// Update the container's list of store descriptions
 		container.persistentStoreDescriptions = [
-			cloudStoreDescription,
-			localStoreDescription
+			publicDescription,
+			localDescription
 		]
 		
 		container.loadPersistentStores() { (storeDescription, error) in
@@ -54,5 +77,18 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
 		return container
 	}()
+
+	func saveContext() {
+		if  let context = gManagedContext, context.hasChanges, false {
+			do {
+				try context.save()
+			} catch {
+				// Replace this implementation with code to handle the error appropriately.
+				// fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+				let nserror = error as NSError
+				fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+			}
+		}
+	}
 
 }

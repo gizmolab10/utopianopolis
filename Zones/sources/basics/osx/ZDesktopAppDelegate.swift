@@ -88,8 +88,8 @@ class ZDesktopAppDelegate: ZAppDelegate, NSMenuDelegate {
 		switch gWorkMode {
 			case .editIdeaMode,
 				 .mapsMode: return gMapEditor
-//			case .noteMode:  return gEssayEditor
-			default: 	     return nil
+//			case .noteMode: return gEssayEditor
+			default: 	    return nil
 		}
 	}
 

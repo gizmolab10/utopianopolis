@@ -24,7 +24,7 @@ class ZFavorites: ZRecords {
     // MARK:- initialization
     // MARK:-
 
-    let cloudRootTemplates = Zone(record: nil, databaseID: nil)
+	let cloudRootTemplates = Zone(as: kTemplatesRootName)
 
 	var hasTrash: Bool {
 		for favorite in workingBookmarks {
@@ -76,8 +76,8 @@ class ZFavorites: ZRecords {
 			finish()
 		} else {
 			// create favorites root
-			mine?.assureRecordExists(withRecordID: CKRecord.ID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-				let        ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecord.ID(recordName: kFavoritesRootName))
+			mine?.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
+				let        ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kFavoritesRootName))
 				let            root = Zone(record: ckRecord, databaseID: .mineID)
 				root.directAccess   = .eProgenyWritable
 				root.zoneName       = kFavoritesRootName

@@ -16,11 +16,13 @@ import CloudKit
 #endif
 
 typealias               ZoneArray = [Zone]
-typealias            ZRecordArray = [ZRecord]
-typealias           CKRecordArray = [CKRecord]
+typealias              CKRecordID = CKRecord.ID
+typealias              CKRefrence = CKRecord.Reference
+typealias           ZRecordsArray = [ZRecord]
 typealias           ZObjectsArray = [NSObject]
-typealias         CKRecordIDArray = [CKRecord.ID]
-typealias        CKRefrencesArray = [CKRecord.Reference]
+typealias          CKRecordsArray = [CKRecord]
+typealias        CKRecordIDsArray = [CKRecordID]
+typealias        CKRefrencesArray = [CKRefrence]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
 typealias       ZAssetsDictionary = [UUID : CKAsset]
 typealias       ZTinyDotTypeArray = [[ZTinyDotType]]
@@ -232,12 +234,12 @@ extension NSObject {
             iLink                   != "",
             let                 name = recordName(from: iLink) {
             let components: [String] = iLink!.components(separatedBy: kColonSeparator)
-            let recordID: CKRecord.ID = CKRecord.ID(recordName: name)
+            let recordID: CKRecordID = CKRecordID(recordName: name)
             let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)
             let        rawIdentifier = components[0]
             let   dbID: ZDatabaseID? = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
             let             zRecords = gRemoteStorage.zRecords(for: dbID)
-            let                 zone = zRecords?.zoneForRecord(ckRecord) ?? Zone(record: ckRecord, databaseID: dbID) // BAD DUMMY ?
+            let                 zone = zRecords?.sureZoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, databaseID: dbID) // BAD DUMMY ?
 
             return zone
         }
@@ -446,7 +448,7 @@ extension CKAsset {
 
 extension CKRecord {
 
-    var reference: CKRecord.Reference { return CKRecord.Reference(recordID: recordID, action: .none) }
+    var reference: CKRefrence { return CKRefrence(recordID: recordID, action: .none) }
 	var entityName: String {
 		switch recordType {
 			case "Users": return "ZUser"
@@ -456,13 +458,13 @@ extension CKRecord {
 
 	var isOrphaned: Bool {
 		var parentRecordName : String?
-		var parentRef        = self[kpParent] as? CKRecord.Reference
+		var parentRef        = self[kpParent] as? CKRefrence
 
 		if  parentRef == nil {
 			if  let     link = self[kpZoneParentLink] as? String {
 				parentRecordName = recordName(from: link) // parent is in other db
 			} else {
-				parentRef    = self[kpOwner] as? CKRecord.Reference
+				parentRef    = self[kpOwner] as? CKRefrence
 			}
 		}
 
@@ -589,7 +591,7 @@ extension CKRecord {
     }
 
     convenience init(for name: String) {
-        self.init(recordType: kZoneType, recordID: CKRecord.ID(recordName: name))
+        self.init(recordType: kZoneType, recordID: CKRecordID(recordName: name))
     }
 
     func isDeleted(dbID: ZDatabaseID) -> Bool {
@@ -616,7 +618,7 @@ extension CKRecord {
         return allKeys().contains(key)
     }
 
-    func index(within iReferences: CKRecordIDArray) -> Int? {
+    func index(within iReferences: CKRecordIDsArray) -> Int? {
         for (index, identifier) in iReferences.enumerated() {
             if  identifier == recordID {
                 return index
@@ -1102,14 +1104,14 @@ extension Array {
 }
 
 extension CKRefrencesArray {
-	func containsReference(_ reference: CKRecord.Reference) -> Bool {
+	func containsReference(_ reference: CKRefrence) -> Bool {
 		return containsCompare(with: reference) { (item, another) in
 			return item.recordID.recordName == another.recordID.recordName
 		}
 	}
 }
 
-extension ZRecordArray {
+extension ZRecordsArray {
 
 	func createStorageArray(from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
 		if  count > 0 {
@@ -1857,7 +1859,7 @@ extension String {
             } ?? ""
     }
 
-    static func forCKRecords(_ records: CKRecordArray?) -> String {
+    static func forCKRecords(_ records: CKRecordsArray?) -> String {
         return records?.apply() { object -> (String?) in
             if  let  record  = object as? CKRecord {
                 let    name  = record.decoratedName
@@ -1872,7 +1874,7 @@ extension String {
 
     static func forReferences(_ references: CKRefrencesArray?, in databaseID: ZDatabaseID) -> String {
         return references?.apply()  { object -> (String?) in
-            if let reference = object as? CKRecord.Reference, let zone = gRemoteStorage.zRecords(for: databaseID)?.maybeZoneForReference(reference) {
+            if let reference = object as? CKRefrence, let zone = gRemoteStorage.zRecords(for: databaseID)?.maybeZoneForReference(reference) {
                 let    name  = zone.decoratedName
                 if     name != "" {
                     return name

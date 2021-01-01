@@ -10,8 +10,14 @@ import Foundation
 
 typealias ZDebugModes = [ZDebugMode]
 
-var gDebugModes:  ZDebugModes = []
-var gPrintModes: [ZPrintMode] = []
+var  gDebugModes:  ZDebugModes = [.dUseCoreData]
+var  gPrintModes: [ZPrintMode] = []
+var gUseCoreData: Bool { return gDebugModes.contains(.dUseCoreData) }
+var gDebugAccess: Bool { return gDebugModes.contains(.dDebugAccess) }
+var  gWriteFiles: Bool { return gDebugModes.contains(.dWriteFiles) }
+var   gDebugInfo: Bool { return gDebugModes.contains(.dDebugInfo) }
+var    gUseFiles: Bool { return gDebugModes.contains(.dUseFiles) }
+var     gNewUser: Bool { return gDebugModes.contains(.dNewUser) }
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
@@ -24,22 +30,20 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dNewUser     = ZDebugMode() // exercise new-user, first-time arrival code
 	static let dUseFiles    = ZDebugMode() // read and write files
 	static let dDebugInfo   = ZDebugMode() // inject debugging information into UI
+	static let dWriteFiles  = ZDebugMode() // write files
 	static let dDebugAccess = ZDebugMode() // test write access by me not having full
+	static let dUseCoreData = ZDebugMode() // store data locally in core data
 
 	var description: String {
 		return [(.dDebugAccess, "access"),
 				(.dNewUser,     "arrival"),
-				(.dUseFiles,    "use files")]
+				(.dUseFiles,    "use files"),
+				(.dWriteFiles,  "write files"),
+				(.dUseCoreData, "use core data"),
+				(.dDebugAccess, "debug write access")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: " ")
 	}
-}
-
-extension ZDebugModes {
-	var     newUser: Bool { return contains(.dNewUser) }
-	var    useFiles: Bool { return contains(.dUseFiles) }
-	var   debugInfo: Bool { return contains(.dDebugInfo) }
-	var debugAccess: Bool { return contains(.dDebugAccess) }
 }
 
 struct ZPrintMode: OptionSet, CustomStringConvertible {

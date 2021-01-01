@@ -160,23 +160,20 @@ extension ZoneArray {
 		gFavorites.updateFavoritesAndRedraw()
 	}
 
-	mutating func reverse() {
+	mutating func reverseOrder() {
 		if  count > 1 {
-			sort { (a, b) -> Bool in
-				return a.order < b.order
-			}
-
-			let   max = count - 1
-			let range = 0 ... max / 2
+			let  last = count - 1
+			let range = 0 ... (last - 1) / 2
 
 			for index in range {
-				let a = self[index]
-				let b = self[max - index]
-				let o = a.order
+				let   a = self[index]
+				let   b = self[last - index]
+				let   o = a.order
 				a.order = b.order
 				b.order = o
 
 				a.maybeNeedSave()
+				b.maybeNeedSave()
 			}
 
 			gSelecting.hasNewGrab = gSelecting.currentMoveable

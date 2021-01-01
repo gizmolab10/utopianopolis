@@ -32,13 +32,14 @@ enum ZOperationID: Int, CaseIterable {
     case oReadFile           // LOCAL
 	case oRoots
     case oHere
-	case oAllProgeny
 	case oStartupDone
 
     // finish
 
     case oFinishUp
 	case oSubscribe
+	case oAllProgeny
+	case oAllTraits
 	case oRecount
     case oDone
 
@@ -55,7 +56,6 @@ enum ZOperationID: Int, CaseIterable {
 	case oFoundIdeas         // LOCAL
 	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
-	case oAllTraits
     case oLostIdeas
 	case oNewIdeas
 	case oAllIdeas
@@ -91,7 +91,7 @@ enum ZOperationID: Int, CaseIterable {
 				 .oNewIdeas,
 				 .oTraits,
 				 .oRoots:    return true
-			case .oReadFile: return gDebugModes.useFiles
+			case .oReadFile: return gUseFiles
 			default:         return false
 		}
 	}

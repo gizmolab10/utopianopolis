@@ -24,7 +24,7 @@ class ZOnboarding : ZOperations {
 
     var          user : ZUser?
 	var    macAddress : String?
-	var hasFullAccess : Bool { return !gDebugModes.debugAccess && (user?.access ?? .eNormal) == .eFull }
+	var hasFullAccess : Bool { return !gDebugAccess && (user?.access ?? .eNormal) == .eFull }
 
     // MARK:- internals
     // MARK:-
@@ -131,7 +131,7 @@ class ZOnboarding : ZOperations {
 			onCompletion()
 		} else if gCloudAccountStatus == .available,
             let      recordName = gUserRecordID {
-            let      ckRecordID = CKRecord.ID(recordName: recordName)
+            let      ckRecordID = CKRecordID(recordName: recordName)
 
             gEveryoneCloud?.assureRecordExists(withRecordID: ckRecordID, recordType: kUserType) { (iUserRecord: CKRecord?) in
                 if  let          record = iUserRecord {

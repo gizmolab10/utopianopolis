@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17511" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="SPreferences" representedClassName="SPreferences" syncable="YES" codeGenerationType="class"/>
     <entity name="SState" representedClassName="SState" syncable="YES" codeGenerationType="class">
         <attribute name="expandedIdeas" optional="YES" attributeType="String"/>
@@ -37,21 +37,23 @@
         <attribute name="writeAccess" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <configuration name="Cloud" usedWithCloudKit="YES">
-        <memberEntity name="Zone"/>
-        <memberEntity name="ZTraitAssets"/>
-        <memberEntity name="SPreferences"/>
         <memberEntity name="ZManifest"/>
+        <memberEntity name="Zone"/>
+        <memberEntity name="ZTrait"/>
+        <memberEntity name="ZTraitAssets"/>
+        <memberEntity name="ZUser"/>
     </configuration>
     <configuration name="Local">
         <memberEntity name="SState"/>
+        <memberEntity name="SPreferences"/>
     </configuration>
     <elements>
         <element name="SPreferences" positionX="-63" positionY="-18" width="128" height="43"/>
         <element name="SState" positionX="0" positionY="54" width="128" height="58"/>
         <element name="ZManifest" positionX="-18" positionY="27" width="128" height="58"/>
         <element name="Zone" positionX="-54" positionY="0" width="128" height="223"/>
+        <element name="ZTrait" positionX="-9" positionY="108" width="128" height="103"/>
         <element name="ZTraitAssets" positionX="-36" positionY="9" width="128" height="73"/>
         <element name="ZUser" positionX="-27" positionY="27" width="128" height="88"/>
-        <element name="ZTrait" positionX="-9" positionY="108" width="128" height="103"/>
     </elements>
 </model>

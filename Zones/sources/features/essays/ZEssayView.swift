@@ -35,7 +35,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var resizeDragStart : CGPoint?
 	var resizeDragRect  : CGRect?
 	var resizeDot       : ZDirection?
-	var essayID         : CKRecord.ID?
+	var essayID         : CKRecordID?
 
 	var shouldOverwrite: Bool {
 		if  let          current = gCurrentEssay,

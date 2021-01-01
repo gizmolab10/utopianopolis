@@ -79,7 +79,7 @@ class ZMapEditor: ZBaseEditor {
 							case "a":      gCurrentlyEditingWidget?.selectAllText()
 							case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL, HARD)
 							case "f":      gSearching.showSearch(OPTION)
-							case "g":      refetch(COMMAND, OPTION)
+							case "g":      refetch(COMMAND, OPTION, CONTROL)
 							case "k":      toggleColorized()
 							case "n":      grabOrEdit(true, OPTION)
 							case "p":      printCurrentFocus()
@@ -96,9 +96,10 @@ class ZMapEditor: ZBaseEditor {
 					}
 				}
             } else if isValid(key, flags) {
-                let widget = gWidgets.currentMovableWidget
+				let   zone = gSelecting.currentMoveable
+                let widget = gWidgets.widgetForZone(zone)
 
-                widget?.widgetZone?.needWrite()
+				zone.needWrite()
                 
                 if  let a = arrow, isWindow {
                     handleArrow(a, flags: flags)
@@ -114,7 +115,7 @@ class ZMapEditor: ZBaseEditor {
 					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 					case "e":      gSelecting.firstSortedGrab?.editTrait(for: .tEmail)
                     case "f":      gSearching.showSearch(OPTION)
-					case "g":      refetch(COMMAND, OPTION)
+					case "g":      refetch(COMMAND, OPTION, CONTROL)
                     case "h":      gSelecting.firstSortedGrab?.editTrait(for: .tHyperlink)
 					case "k":      toggleColorized()
 					case "l":      alterCase(up: false)
@@ -442,21 +443,27 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-	func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false) {
+	func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false, _ CONTROL: Bool = false) {
 
 		// plain is fetch children
 		// COMMAND alone is fetch all
 		// OPTION is all progeny
 		// both is force adoption of selected
 
-		if         COMMAND &&  OPTION {
-			gRemoteStorage.assureAdoption()               // finish what fetch has done
-			gRedrawMaps()
-		} else if  COMMAND && !OPTION {                   // COMMAND alone
-			gBatches.refetch { iSame in
+		if          CONTROL {
+			gCloud?.fetchAllProgeny { iSame in
 				gRedrawMaps()
 			}
-		} else { // OPTION or no flags
+		} else if   COMMAND {
+			if      OPTION {
+				gRemoteStorage.assureAdoption()               // finish what fetch has done
+				gRedrawMaps()
+			} else {                   // COMMAND alone
+				gBatches.refetch { iSame in
+					gRedrawMaps()
+				}
+			}
+		} else {
 			for grab in gSelecting.currentGrabs {
 				if  OPTION {                              // OPTION
 					grab.needProgeny()
@@ -874,8 +881,9 @@ class ZMapEditor: ZBaseEditor {
             zones         = commonParent?.children ?? []
         }
 
-		zones.reverse()
-
+		commonParent?.respectOrder()
+		commonParent?.children.updateOrder()
+		zones.reverseOrder()
 		commonParent?.respectOrder()
 		gRedrawMaps()
 	}
