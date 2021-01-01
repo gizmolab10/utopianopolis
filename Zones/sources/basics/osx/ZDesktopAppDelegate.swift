@@ -9,7 +9,7 @@
 import Cocoa
 import CloudKit
 
-var gDesktopAppDelegate: ZDesktopAppDelegate?
+var gAppDelegate: ZDesktopAppDelegate?
 
 @NSApplicationMain
 
@@ -22,8 +22,8 @@ class ZDesktopAppDelegate: ZAppDelegate, NSMenuDelegate {
 
     func applicationDidBecomeActive(_ notification: Notification) {
         if  needsSetup {
-            needsSetup          = false
-            gDesktopAppDelegate = self
+            needsSetup   = false
+			gAppDelegate = self
 
             UserDefaults.standard.set(false, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints")
             gApplication.registerForRemoteNotifications(matching: .badge)

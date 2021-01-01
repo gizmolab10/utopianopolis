@@ -11,12 +11,11 @@ import UIKit
 import CloudKit
 import UserNotifications
 
-
 @UIApplicationMain
 
+var gAppDelegate: ZMobileAppDelegate?
 
 class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
-
 
     var window: UIWindow?
 
@@ -27,6 +26,7 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         application.applicationSupportsShakeToEdit = true
+		gAppDelegate = self
 
         // application.registerUserNotificationSettings(.badgeSetting)
         application.registerForRemoteNotifications()

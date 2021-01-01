@@ -19,7 +19,7 @@ class ZBaseEditor: NSObject {
 	var canHandleKey: Bool { return false }   // filter whether menu and event handlers will call handle key
 
 	func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool { return false }
-	@IBAction func genericMenuHandler(_ iItem: NSMenuItem?) { gDesktopAppDelegate?.genericMenuHandler(iItem) }
+	@IBAction func genericMenuHandler(_ iItem: NSMenuItem?) { gAppDelegate?.genericMenuHandler(iItem) }
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {
 		var     handled = false

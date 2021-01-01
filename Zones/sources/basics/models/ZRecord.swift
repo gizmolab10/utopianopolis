@@ -390,8 +390,9 @@ class ZRecord: ZManagedRecord { // NSObject {
     }
 
     func teardownKVO() {
-        for keyPath in cloudProperties {
-            removeObserver(self, forKeyPath: keyPath)
+        for keyPath in cloudProperties { // freaking stupid KVO does not let me check if observer actually exists and if it doesn't then not call remove, gack!
+			addObserver   (self, forKeyPath: keyPath, options: [.new, .old], context: &kvoContext) // make sure observer exists
+			removeObserver(self, forKeyPath: keyPath, context: &kvoContext)
         }
     }
 

@@ -408,7 +408,7 @@ class ZTextEditor: ZTextView {
 	// MARK:- events
 	// MARK:-
 
-	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gDesktopAppDelegate?.genericMenuHandler(iItem) }
+	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gAppDelegate?.genericMenuHandler(iItem) }
 
     func moveOut(_ iMoveOut: Bool) {
         let revealed = currentlyEditedZone?.showingChildren ?? false
