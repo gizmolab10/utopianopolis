@@ -39,7 +39,7 @@ class ZManifest : ZRecord {
     }
 
 	var zDeleted = [ZDeleted]()
-    @objc dynamic var deletedRecordNames: [String]?
+    @NSManaged var deletedRecordNames: [String]?
 	override var cloudProperties: [String] { return ZManifest.cloudProperties }
 	override class var cloudProperties: [String] { return super.cloudProperties + [#keyPath(deletedRecordNames)] }
 	override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deletedRecordNames)] }

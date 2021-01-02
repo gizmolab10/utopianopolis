@@ -7,9 +7,6 @@
 //
 
 import Foundation
-import CloudKit
-import CoreData
-
 
 class ZManagedRecord: NSManagedObject {
 

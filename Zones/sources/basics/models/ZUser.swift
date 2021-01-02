@@ -23,14 +23,12 @@ enum ZSentEmailType: String {
 @objc(ZUser)
 class ZUser : ZRecord {
 
-	@objc dynamic var      authorID: String?   { didSet { if let o = oldValue, o != authorID      { save() } } }
-	@objc dynamic var   writeAccess: NSNumber? { didSet { if let o = oldValue, o != writeAccess   { save() } } }
-	@objc dynamic var sentEmailType: String?   { didSet { if let o = oldValue, o != sentEmailType { save() } } }
+	@NSManaged    var      authorID: String?
+	@NSManaged    var   writeAccess: NSNumber?
+	@NSManaged    var sentEmailType: String?
 
 	var access: ZUserAccess {
         get {
-            updateInstanceProperties()
-
 			if  authorID    == "38AC7308-C627-4F83-B4E0-CAC3FFEAA142" {
 				writeAccess  = NSNumber(value: ZUserAccess.eFull.rawValue)
 			}

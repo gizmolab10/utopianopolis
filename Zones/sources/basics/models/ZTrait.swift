@@ -43,11 +43,11 @@ enum ZTraitType: String {
 @objc(ZTrait)
 class ZTrait: ZTraitAssets {
 
-	@objc dynamic var    owner :  CKRefrence?
-	@objc dynamic var  strings : [String]?
-	@objc dynamic var   format :  String?
-	@objc dynamic var     type :  String?
-	@objc dynamic var     text :  String? { didSet { updateSearchables() } }
+	@NSManaged    var    owner :  CKRefrence?
+	@NSManaged    var  strings : [String]?
+	@NSManaged    var   format :  String?
+	@NSManaged    var     type :  String?
+	@NSManaged    var     text :  String?
     override var unwrappedName :  String  { return text ?? emptyName }
 	var             _ownerZone :  Zone?
 	var             _traitType :  ZTraitType?
@@ -63,6 +63,8 @@ class ZTrait: ZTraitAssets {
 			setCurrentTrait {
 				if  isEmpty {
 					text      = kEssayDefault
+
+					updateSearchables()
 				}
 
 				if  let     s = text {
@@ -91,6 +93,7 @@ class ZTrait: ZTraitAssets {
 
 					assets     = string.assets(for: self)
 
+					updateSearchables()
 					updateCKRecordProperties()
 				}
 			}

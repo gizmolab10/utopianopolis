@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17511" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="SPreferences" representedClassName="SPreferences" syncable="YES" codeGenerationType="class"/>
-    <entity name="SState" representedClassName="SState" syncable="YES" codeGenerationType="class">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="SPreferences" representedClassName="SPreferences" syncable="YES"/>
+    <entity name="SState" representedClassName="SState" syncable="YES">
         <attribute name="expandedIdeas" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ZManifest" representedClassName="ZManifest" syncable="YES">
         <attribute name="deletedRecordNames" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Zone" representedClassName="Zone" syncable="YES">
+        <attribute name="parent" optional="YES" attributeType="Transformable" valueTransformerName="ZReferenceTransformer" customClassName="CKReference"/>
         <attribute name="parentLink" optional="YES" attributeType="String"/>
         <attribute name="zoneAccess" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="zoneAttributes" optional="YES" attributeType="String"/>
@@ -16,7 +17,7 @@
         <attribute name="zoneCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="zoneLink" optional="YES" attributeType="String"/>
         <attribute name="zoneName" optional="YES" attributeType="String"/>
-        <attribute name="zoneOrder" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="zoneOrder" attributeType="Double" minValueString="0" maxValueString="1" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="zoneProgeny" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="childrenRelationship" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Zone" inverseName="parentRelationship" inverseEntity="Zone"/>
         <relationship name="parentRelationship" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone" inverseName="childrenRelationship" inverseEntity="Zone"/>
@@ -50,10 +51,10 @@
     <elements>
         <element name="SPreferences" positionX="-63" positionY="-18" width="128" height="43"/>
         <element name="SState" positionX="0" positionY="54" width="128" height="58"/>
-        <element name="ZManifest" positionX="-18" positionY="27" width="128" height="58"/>
-        <element name="Zone" positionX="-54" positionY="0" width="128" height="223"/>
-        <element name="ZTrait" positionX="-9" positionY="108" width="128" height="103"/>
-        <element name="ZTraitAssets" positionX="-36" positionY="9" width="128" height="73"/>
-        <element name="ZUser" positionX="-27" positionY="27" width="128" height="88"/>
+        <element name="ZManifest" positionX="-109.09375" positionY="337.03515625" width="128" height="58"/>
+        <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="238"/>
+        <element name="ZTrait" positionX="-117.15234375" positionY="186.37109375" width="128" height="103"/>
+        <element name="ZTraitAssets" positionX="64.625" positionY="202.92578125" width="128" height="73"/>
+        <element name="ZUser" positionX="-382.8359375" positionY="80.328125" width="128" height="88"/>
     </elements>
 </model>

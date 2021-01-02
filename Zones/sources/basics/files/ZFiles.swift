@@ -389,11 +389,8 @@ class ZFiles: NSObject {
     // MARK:-
 
     func createDataDirectory() -> URL {
-        let cacheURL = try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let directoryURL = cacheURL.appendingPathComponent("Seriously", isDirectory: true)
-        
         do {
-            try manager.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true, attributes: nil)
+            try manager.createDirectory(atPath: gDataURL.path, withIntermediateDirectories: true, attributes: nil)
         } catch {
             printDebug(.dError, "\(error)")
         }

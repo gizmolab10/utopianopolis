@@ -456,19 +456,19 @@ class ZMapEditor: ZBaseEditor {
 			}
 		} else if   COMMAND {
 			if      OPTION {
-				gRemoteStorage.assureAdoption()               // finish what fetch has done
+				gRemoteStorage.assureAdoption()     // finish what fetch has done
 				gRedrawMaps()
-			} else {                   // COMMAND alone
+			} else {                                // COMMAND alone
 				gBatches.refetch { iSame in
 					gRedrawMaps()
 				}
 			}
 		} else {
 			for grab in gSelecting.currentGrabs {
-				if  OPTION {                              // OPTION
-					grab.needProgeny()
-				} else {                                  // no flags
-					grab.reallyNeedChildren()
+				if  OPTION {
+					grab.reallyNeedChildren()       // OPTION
+				} else {
+					grab.needProgeny()              // no flags
 				}
 			}
 

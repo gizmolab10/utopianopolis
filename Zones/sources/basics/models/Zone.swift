@@ -25,17 +25,17 @@ enum ZoneAccess: Int, CaseIterable {
 @objc(Zone)
 class Zone : ZRecord, ZIdentifiable, ZToolable {
 
-	@objc dynamic var         parent : CKRefrence?
-	@objc dynamic var      zoneOrder :           NSNumber?
-	@objc dynamic var      zoneCount :           NSNumber?
-	@objc dynamic var     zoneAccess :           NSNumber?
-	@objc dynamic var    zoneProgeny :           NSNumber?
-	@objc dynamic var       zoneName :             String?
-	@objc dynamic var       zoneLink :             String?
-	@objc dynamic var      zoneColor :             String?
-	@objc dynamic var     parentLink :             String?
-	@objc dynamic var     zoneAuthor :             String?
-	@objc dynamic var zoneAttributes :             String?
+	@NSManaged    var         parent :         CKRefrence?
+	@NSManaged    var      zoneOrder :           NSNumber?
+	@NSManaged    var      zoneCount :           NSNumber?
+	@NSManaged    var     zoneAccess :           NSNumber?
+	@NSManaged    var    zoneProgeny :           NSNumber?
+	@NSManaged    var       zoneName :             String?
+	@NSManaged    var       zoneLink :             String?
+	@NSManaged    var      zoneColor :             String?
+	@NSManaged    var     parentLink :             String?
+	@NSManaged    var     zoneAuthor :             String?
+	@NSManaged    var zoneAttributes :             String?
 	var               hyperLinkMaybe :             String?
 	var                   emailMaybe :             String?
 	var                   assetMaybe :            CKAsset?
@@ -559,11 +559,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 			}
 
-			return Double(zoneOrder!.doubleValue)
+			return zoneOrder!.doubleValue
 		}
 
 		set {
-			if newValue != order {
+			if  newValue != order {
 				zoneOrder = NSNumber(value: newValue)
 			}
 		}
@@ -1482,6 +1482,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let  trait = traitFor(type)
 				trait.text = text
 
+				trait.updateSearchables()
 				trait.maybeNeedSave()
 			} else {
 				traits[type]?.needDestroy()

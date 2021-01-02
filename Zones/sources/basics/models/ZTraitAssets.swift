@@ -12,8 +12,8 @@ import CloudKit
 @objc(ZTraitAssets)
 class ZTraitAssets : ZRecord {
 
-	@objc dynamic var     assets : [CKAsset]?
-	@objc dynamic var assetNames :  String?
+	@NSManaged    var     assets : [CKAsset]?
+	@NSManaged    var assetNames :  String?
 	override var cloudProperties : [String] { return ZTraitAssets.cloudProperties }
 	override var optionalCloudProperties: [String] { return ZTraitAssets.optionalCloudProperties }
 

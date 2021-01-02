@@ -9,12 +9,14 @@
 import Foundation
 
 func gSaveContext() { if gUseCoreData { gAppDelegate?.saveContext() } }
-var gManagedContext: NSManagedObjectContext? = { return gAppDelegate?.managedContext }()
+var gManagedContext : NSManagedObjectContext? = { return gAppDelegate?.managedContext }()
+var gCoreDataURL    :                     URL = { return gDataURL.appendingPathComponent("data") }()
+var gDataURL        :                     URL = { return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("Seriously", isDirectory: true) }()
 
 class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
-	let localPath           = "\(kPathToLocalStore)local.store"
-	let cloudPath           = "\(kPathToLocalStore)cloud.store"
+	let localURL            = gCoreDataURL.appendingPathComponent("local.store")
+	let cloudURL            = gCoreDataURL.appendingPathComponent("cloud.store")
 	var storesNeeded        = true
 	lazy var model          : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }()
 	lazy var coordinator    : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
@@ -22,8 +24,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
 
 	lazy var localDescription: NSPersistentStoreDescription = {
 		// Create a store description for a local store
-		let                       url = URL(fileURLWithPath: localPath, isDirectory: false)
-		let                      desc = NSPersistentStoreDescription(url: url)
+		let           desc = NSPersistentStoreDescription(url: localURL)
 		desc.configuration = "Local"
 
 		return desc
@@ -33,8 +34,7 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
 		// Create a store description for a CloudKit-backed local store
 		let                        id = "iCloud.com.zones.Zones"
 		let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: id)
-		let                       url = URL(fileURLWithPath: cloudPath, isDirectory: false)
-		let                      desc = NSPersistentStoreDescription(url: url)
+		let                      desc = NSPersistentStoreDescription(url: cloudURL)
 		desc.configuration            = "Cloud"
 		desc.cloudKitContainerOptions = options
 
@@ -50,21 +50,24 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
 	lazy var persistentContainer: NSPersistentCloudKitContainer = {
 		let container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
 
+		ValueTransformer.setValueTransformer(ZReferenceTransformer(), forName: gReferenceTransformerName)
+
 		// Update the container's list of store descriptions
 		container.persistentStoreDescriptions = [
 			publicDescription,
 			localDescription
 		]
 
-		container.loadPersistentStores() { (storeDescription, error) in
-			if  let error = error as NSError? {
+		container.loadPersistentStores() { (storeDescription, iError) in
+			if  let         error = iError as NSError? {
 				fatalError("Unresolved error \(error), \(error.userInfo)")
 			} else {
 				self.storesNeeded = false
 			}
 		}
 
-		container.viewContext.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+		container.viewContext.mergePolicy                          = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+		container.viewContext.automaticallyMergesChangesFromParent = true
 
 		return container
 	}()
