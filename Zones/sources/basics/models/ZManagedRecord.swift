@@ -8,6 +8,10 @@
 
 import Foundation
 
+let   gReferenceTransformerName = NSValueTransformerName(rawValue: "ZReferenceTransformer")
+let  gAssetArrayTransformerName = NSValueTransformerName(rawValue: "ZAssetArrayTransformer")
+let gStringArrayTransformerName = NSValueTransformerName(rawValue: "ZStringArrayTransformer")
+
 class ZManagedRecord: NSManagedObject {
 
 	convenience init(entityName: String?) {
@@ -19,5 +23,77 @@ class ZManagedRecord: NSManagedObject {
 			self.init()
 		}
 	}
+
+}
+
+@objc(ZReferenceTransformer)
+class ZReferenceTransformer: ZDataTransformer {
+
+	override func transformedValue(_ value: Any?) -> Any? {
+		return (value as? CKRefrence)?.recordID.recordName.data(using: .ascii)
+	}
+
+	override func reverseTransformedValue(_ value: Any?) -> Any? {
+		if  let       data = value as? Data,
+			let recordName = String(data: data, encoding: .ascii) {
+			return CKRefrence(recordID: CKRecordID(recordName: recordName), action: .none)
+		}
+
+		return nil
+	}
+
+}
+
+@objc(ZStringArrayTransformer)
+class ZStringArrayTransformer: ZDataTransformer {
+
+	override func transformedValue(_ value: Any?) -> Any? {
+		let array = value as! Array<String>
+		let  join = array.joined(separator: kArrayTransformSeparator)
+
+		return join.data(using: .ascii)
+	}
+
+	override func reverseTransformedValue(_ value: Any?) -> Any? {
+		if  let      data = value as? Data,
+			let    joined = String(data: data, encoding: .ascii) {
+			return joined.components(separatedBy: kArrayTransformSeparator)
+		}
+
+		return nil
+	}
+
+}
+
+@objc(ZAssetArrayTransformer)
+class ZAssetArrayTransformer: ZDataTransformer {
+
+	override func transformedValue(_ value: Any?) -> Any? {
+		let array = (value as! Array<CKAsset>).map { (asset) -> String in
+			return asset.fileURL.path
+		}
+
+		return array.joined(separator: kArrayTransformSeparator).data(using: .ascii)
+	}
+
+	override func reverseTransformedValue(_ value: Any?) -> Any? {
+		if  let       data = value as? Data,
+			let     string = String(data: data, encoding: .ascii) {
+			let    strings = string.components(separatedBy: kArrayTransformSeparator)
+			return strings.map { (path) -> CKAsset in
+				return CKAsset(fileURL: URL(fileURLWithPath: path))
+			}
+		}
+
+		return nil
+	}
+
+}
+
+@objc(ZDataTransformer)
+class ZDataTransformer: ValueTransformer {
+
+	override class func       transformedValueClass() -> AnyClass { return NSData.self }
+	override class func allowsReverseTransformation() -> Bool     { return true }
 
 }

@@ -232,11 +232,18 @@ class ZRecord: ZManagedRecord { // NSObject {
     func updateInstanceProperties() {
         if  let r = record {
             for keyPath in cloudProperties {
-                if  let    cloudValue  = r[keyPath] as! NSObject? {
+                if  var    cloudValue  = r[keyPath] as! NSObject? {
 					let propertyValue  = value(forKeyPath: keyPath) as? NSObject
 
                     if  propertyValue != cloudValue {
-                        setValue(cloudValue, forKeyPath: keyPath)
+						switch keyPath {
+//							case "strings":     cloudValue = (cloudValue as! Array<String>)  as  NSObject
+//							case "assets":      cloudValue = Array(arrayLiteral: cloudValue) as  NSObject
+							case "writeAccess": cloudValue = NSNumber(value: Int(cloudValue  as! String) ?? 0)
+							default:            break
+						}
+
+						setValue(cloudValue, forKeyPath: keyPath)
                     }
                 }
             }
@@ -407,7 +414,7 @@ class ZRecord: ZManagedRecord { // NSObject {
             let observer = iObject as! NSObject
 
             if  let value: NSObject = observer.value(forKey: keyPath!) as! NSObject? {
-				gSaveContext() // for testing, remove soonish
+//				gSaveContext() // for testing, remove soonish
 
 				if keyPath == "assets", let values = value as? NSArray, values.count == 0 { return }
 

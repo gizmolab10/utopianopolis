@@ -135,7 +135,7 @@ class ZMapEditor: ZBaseEditor {
 					case "-":      return handleHyphen(COMMAND, OPTION)
 					case "'":      swapSmallMapMode(OPTION)
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
-					case "\\":     gMapController?.toggleMaps(); gRedrawMaps()
+					case "\\":     if OPTION  { goToRoot() } else { gMapController?.toggleMaps() }; gRedrawMaps()
 					case "[", "{", "}",
 						 "]":      go(down: ["]", "}"].contains(key), COMMAND: COMMAND) { gRedrawMaps() }
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
@@ -285,6 +285,12 @@ class ZMapEditor: ZBaseEditor {
 
 	// MARK:- features
 	// MARK:-
+
+	func goToRoot() {
+		if  let root = gCloud?.rootZone {
+			gHere    = root
+		}
+	}
 
 	func swapSmallMapMode(_ OPTION: Bool) {
 		let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID

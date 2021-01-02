@@ -50,7 +50,9 @@ class ZAppDelegate: NSResponder, ZApplicationDelegate {
 	lazy var persistentContainer: NSPersistentCloudKitContainer = {
 		let container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
 
-		ValueTransformer.setValueTransformer(ZReferenceTransformer(), forName: gReferenceTransformerName)
+		ValueTransformer.setValueTransformer(  ZReferenceTransformer(), forName:   gReferenceTransformerName)
+		ValueTransformer.setValueTransformer( ZAssetArrayTransformer(), forName:  gAssetArrayTransformerName)
+		ValueTransformer.setValueTransformer(ZStringArrayTransformer(), forName: gStringArrayTransformerName)
 
 		// Update the container's list of store descriptions
 		container.persistentStoreDescriptions = [

@@ -24,18 +24,19 @@
     </entity>
     <entity name="ZTrait" representedClassName="ZTrait" parentEntity="ZTraitAssets" syncable="YES">
         <attribute name="format" optional="YES" attributeType="String"/>
-        <attribute name="stringsArray" optional="YES" attributeType="String"/>
+        <attribute name="owner" optional="YES" attributeType="Transformable" valueTransformerName="ZReferenceTransformer" customClassName="CKReference"/>
+        <attribute name="strings" optional="YES" attributeType="Transformable" valueTransformerName="ZStringArrayTransformer"/>
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ZTraitAssets" representedClassName="ZTraitAssets" syncable="YES">
         <attribute name="assetNames" optional="YES" attributeType="String"/>
-        <attribute name="assets" optional="YES" attributeType="Binary"/>
+        <attribute name="assets" optional="YES" attributeType="Transformable" valueTransformerName="ZAssetArrayTransformer" customClassName="Array"/>
     </entity>
     <entity name="ZUser" representedClassName="ZUser" syncable="YES">
         <attribute name="authorID" optional="YES" attributeType="String"/>
         <attribute name="sentEmailType" optional="YES" attributeType="String"/>
-        <attribute name="writeAccess" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="writeAccess" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <configuration name="Cloud" usedWithCloudKit="YES">
         <memberEntity name="ZManifest"/>
@@ -53,7 +54,7 @@
         <element name="SState" positionX="0" positionY="54" width="128" height="58"/>
         <element name="ZManifest" positionX="-109.09375" positionY="337.03515625" width="128" height="58"/>
         <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="238"/>
-        <element name="ZTrait" positionX="-117.15234375" positionY="186.37109375" width="128" height="103"/>
+        <element name="ZTrait" positionX="-117.15234375" positionY="186.37109375" width="128" height="118"/>
         <element name="ZTraitAssets" positionX="64.625" positionY="202.92578125" width="128" height="73"/>
         <element name="ZUser" positionX="-382.8359375" positionY="80.328125" width="128" height="88"/>
     </elements>

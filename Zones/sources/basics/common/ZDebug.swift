@@ -55,29 +55,27 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let   dNone = ZPrintMode()
-	static let    dOps = ZPrintMode()
-	static let    dFix = ZPrintMode()
-	static let    dLog = ZPrintMode()
-	static let   dTime = ZPrintMode()
-	static let   dEdit = ZPrintMode()
-	static let   dFile = ZPrintMode()
-	static let   dText = ZPrintMode()
-	static let   dUser = ZPrintMode()
-	static let  dNames = ZPrintMode()
-	static let  dFocus = ZPrintMode()
-	static let  dSpeed = ZPrintMode()
-	static let  dNotes = ZPrintMode()
-	static let  dError = ZPrintMode()
-	static let  dAdopt = ZPrintMode()
-	static let  dFetch = ZPrintMode()
-	static let  dCount = ZPrintMode()
-	static let dAccess = ZPrintMode()
-	static let dSearch = ZPrintMode()
-	static let dRemote = ZPrintMode()
-	static let dWidget = ZPrintMode()
-	static let dImages = ZPrintMode()
-	static let dTimers = ZPrintMode()
-	static let dLevels = ZPrintMode()
+	static let    dOps = ZPrintMode() // operations
+	static let    dFix = ZPrintMode() // disappearing ideas
+	static let    dLog = ZPrintMode() // miscellaneous
+	static let   dEdit = ZPrintMode() // become first responder funny business
+	static let   dFile = ZPrintMode() // parsing, error handling
+	static let   dUser = ZPrintMode() // user interruption of busy loops
+	static let   dTime = ZPrintMode() // stopwatch
+	static let  dSpeed = ZPrintMode() // "
+	static let  dNames = ZPrintMode() // decorate idea text with record names
+	static let  dFocus = ZPrintMode() // push, /, bookmarks
+	static let  dError = ZPrintMode() // error handling
+	static let  dAdopt = ZPrintMode() // orphans
+	static let  dFetch = ZPrintMode() // cloud read
+	static let  dCount = ZPrintMode() // children
+	static let  dNotes = ZPrintMode() // essays
+	static let dImages = ZPrintMode() // "
+	static let dAccess = ZPrintMode() // write lock
+	static let dRemote = ZPrintMode() // arrival from cloud
+	static let dWidget = ZPrintMode() // lookup, hit tests
+	static let dTimers = ZPrintMode() // assure completion
+	static let dLevels = ZPrintMode() // fetching depth
 
 	var description: String {
 		return [(.dOps,    "     op"),
@@ -86,7 +84,6 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dFile,   "   file"),
 				(.dTime,   "   time"),
 				(.dEdit,   "   edit"),
-				(.dText,   "   text"),
 				(.dUser,   "   user"),
 				(.dNames,  "   name"),
 				(.dNotes,  "   note"),
@@ -97,7 +94,6 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dFetch,  "  fetch"),
 				(.dCount,  "  count"),
 				(.dAccess, " access"),
-				(.dSearch, " search"),
 				(.dWidget, " widget"),
 				(.dRemote, " remote"),
 				(.dImages, " images"),

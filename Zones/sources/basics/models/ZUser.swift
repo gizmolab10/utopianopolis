@@ -23,9 +23,9 @@ enum ZSentEmailType: String {
 @objc(ZUser)
 class ZUser : ZRecord {
 
-	@NSManaged    var      authorID: String?
-	@NSManaged    var   writeAccess: NSNumber?
-	@NSManaged    var sentEmailType: String?
+	@NSManaged var      authorID: String?
+	@NSManaged var   writeAccess: NSNumber?
+	@NSManaged var sentEmailType: String?
 
 	var access: ZUserAccess {
         get {
