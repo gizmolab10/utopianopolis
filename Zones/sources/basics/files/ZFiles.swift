@@ -395,7 +395,7 @@ class ZFiles: NSObject {
             printDebug(.dError, "\(error)")
         }
         
-        return directoryURL
+        return gDataURL
     }
 
 	var assetsDirectoryURL : URL {

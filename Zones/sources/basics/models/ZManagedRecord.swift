@@ -15,8 +15,9 @@ let gStringArrayTransformerName = NSValueTransformerName(rawValue: "ZStringArray
 class ZManagedRecord: NSManagedObject {
 
 	convenience init(entityName: String?) {
+		let     context = gCoreDataStack.managedContext
+
 		if  let    name = entityName,
-			let context = gManagedContext,
 			let  entity = NSEntityDescription.entity(forEntityName: name, in: context) {
 			self.init(entity: entity, insertInto: context)
 		} else {
@@ -29,14 +30,16 @@ class ZManagedRecord: NSManagedObject {
 @objc(ZReferenceTransformer)
 class ZReferenceTransformer: ZDataTransformer {
 
+	override class func transformedValueClass() -> AnyClass { return NSData.self }
+
 	override func transformedValue(_ value: Any?) -> Any? {
-		return (value as? CKRefrence)?.recordID.recordName.data(using: .ascii)
+		return (value as? CKReference)?.recordID.recordName.data(using: .ascii)
 	}
 
 	override func reverseTransformedValue(_ value: Any?) -> Any? {
 		if  let       data = value as? Data,
 			let recordName = String(data: data, encoding: .ascii) {
-			return CKRefrence(recordID: CKRecordID(recordName: recordName), action: .none)
+			return CKReference(recordID: CKRecordID(recordName: recordName), action: .none)
 		}
 
 		return nil

@@ -5,11 +5,15 @@
         <attribute name="expandedIdeas" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ZManifest" representedClassName="ZManifest" syncable="YES">
+        <attribute name="ckrid" optional="YES" attributeType="String"/>
+        <attribute name="dbid" optional="YES" attributeType="String"/>
         <attribute name="deletedRecordNames" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Zone" representedClassName="Zone" syncable="YES">
-        <attribute name="parent" optional="YES" attributeType="Transformable" valueTransformerName="ZReferenceTransformer" customClassName="CKReference"/>
+        <attribute name="ckrid" optional="YES" attributeType="String"/>
+        <attribute name="dbid" optional="YES" attributeType="String"/>
         <attribute name="parentLink" optional="YES" attributeType="String"/>
+        <attribute name="parentRID" optional="YES" attributeType="String"/>
         <attribute name="zoneAccess" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="zoneAttributes" optional="YES" attributeType="String"/>
         <attribute name="zoneAuthor" optional="YES" attributeType="String"/>
@@ -32,9 +36,12 @@
     <entity name="ZTraitAssets" representedClassName="ZTraitAssets" syncable="YES">
         <attribute name="assetNames" optional="YES" attributeType="String"/>
         <attribute name="assets" optional="YES" attributeType="Transformable" valueTransformerName="ZAssetArrayTransformer" customClassName="Array"/>
+        <attribute name="ckrid" optional="YES" attributeType="String"/>
+        <attribute name="dbid" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ZUser" representedClassName="ZUser" syncable="YES">
         <attribute name="authorID" optional="YES" attributeType="String"/>
+        <attribute name="ckrid" optional="YES" attributeType="String"/>
         <attribute name="sentEmailType" optional="YES" attributeType="String"/>
         <attribute name="writeAccess" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
@@ -52,10 +59,10 @@
     <elements>
         <element name="SPreferences" positionX="-63" positionY="-18" width="128" height="43"/>
         <element name="SState" positionX="0" positionY="54" width="128" height="58"/>
-        <element name="ZManifest" positionX="-109.09375" positionY="337.03515625" width="128" height="58"/>
-        <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="238"/>
+        <element name="ZManifest" positionX="-109.09375" positionY="337.03515625" width="128" height="88"/>
+        <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="268"/>
         <element name="ZTrait" positionX="-117.15234375" positionY="186.37109375" width="128" height="118"/>
-        <element name="ZTraitAssets" positionX="64.625" positionY="202.92578125" width="128" height="73"/>
-        <element name="ZUser" positionX="-382.8359375" positionY="80.328125" width="128" height="88"/>
+        <element name="ZTraitAssets" positionX="64.625" positionY="202.92578125" width="128" height="103"/>
+        <element name="ZUser" positionX="-382.8359375" positionY="80.328125" width="128" height="103"/>
     </elements>
 </model>

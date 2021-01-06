@@ -41,7 +41,7 @@ class ZRecursionLogic: NSObject {
         }
     }
 
-    func propagateNeeds(to iChild: Zone, _ iProgenyNeeded: CKRefrencesArray?) {
+    func propagateNeeds(to iChild: Zone, _ iProgenyNeeded: CKReferencesArray?) {
         if  let recursing = type, recursing != .all {
             let    reveal = iChild.showingChildren && iChild.hasMissingChildren()
             let    expand = reveal && (targetLevel < 0 || targetLevel > iChild.level)

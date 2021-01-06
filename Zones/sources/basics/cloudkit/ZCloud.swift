@@ -551,7 +551,7 @@ class ZCloud: ZRecords {
                     var             toLose = CKRecordsArray ()
                     var childrenRecordsFor = [CKRecordID : CKRecordsArray] ()
                     let         isOrphaned = { (iCKRecord: CKRecord) -> Bool in
-                        if  let  parentRef = iCKRecord[kpParent] as? CKRefrence {
+                        if  let  parentRef = iCKRecord[kpParent] as? CKReference {
                             let  parentID  = parentRef.recordID
 
                             if  self.notRegistered(parentID) {
@@ -959,7 +959,7 @@ class ZCloud: ZRecords {
 		} else {
             let      predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
             let   destroyedIDs = recordIDsWithMatchingStates([.needsDestroy])
-            var  progenyNeeded = CKRefrencesArray ()
+            var  progenyNeeded = CKReferencesArray ()
             var      retrieved = CKRecordsArray ()
 
             if  hasAnyRecordsMarked(with: [.needsProgeny]) {

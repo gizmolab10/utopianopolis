@@ -13,7 +13,7 @@ var gAppDelegate: ZDesktopAppDelegate?
 
 @NSApplicationMain
 
-class ZDesktopAppDelegate: ZAppDelegate, NSMenuDelegate {
+class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
     var needsSetup = true
 

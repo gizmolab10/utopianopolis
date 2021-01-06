@@ -10,11 +10,13 @@ import CloudKit
 
 class ZRecord: ZManagedRecord { // NSObject {
 
+	@NSManaged var     dbid: String?
+	@NSManaged var    ckrid: String?
+	var          databaseID: ZDatabaseID?
 	var          kvoContext: UInt8 = 1
 	var              record: CKRecord?
 	var      _tooltipRecord: Any?
     var   writtenModifyDate: Date?
-    var          databaseID: ZDatabaseID?
 	var             records: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
 	var               cloud: ZCloud?   { return records as? ZCloud }
 	var          recordName: String?   { return record?.recordID.recordName }
@@ -52,6 +54,16 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var       needsAdoption: Bool      { return  hasState(.needsAdoption) }
 	var      needsBookmarks: Bool      { return  hasState(.needsBookmarks) }
 
+	func convertFromCoreData(into type: String) {
+		if  let identifier = ckrid {
+			let   recordID = CKRecordID(recordName: identifier)
+			record         = CKRecord(recordType: type, recordID: recordID)
+
+			updateCKRecordProperties()
+			register()
+		}
+	}
+
 	@objc func setRecord(_ newValue: CKRecord?) {
 		guard newValue != nil else {
 			return
@@ -67,9 +79,12 @@ class ZRecord: ZManagedRecord { // NSObject {
 			gBookmarks.forget(self as? Zone)
 			cloud?.unregisterCKRecord(record)
 
-			record = newValue
+			if  let  r = newValue {
+				record = r
+				ckrid  = r.recordID.recordName
 
-			updateInstanceProperties()
+				updateInstanceProperties()
+			}
 
 			if !register() {
 				bam("zone is a duplicate")
@@ -92,6 +107,12 @@ class ZRecord: ZManagedRecord { // NSObject {
 		}
 
 		self.databaseID = databaseID
+
+		if  gUseCoreData,
+			let t = record?.recordType, t != "Users",
+			let d = databaseID?.identifier {
+			dbid  = d
+		}
 
 		if  let r = record {
 			self.setRecord(r)
@@ -201,11 +222,11 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var optionalCloudProperties: [String] { return ZRecord.optionalCloudProperties }
     func ignoreKeyPathsForStorage() -> [String] { return [kpParent, kpOwner] }
 	func unregister() { cloud?.unregisterZRecord(self) }
-    func   register()         -> Bool { return cloud?.registerZRecord(self) ?? false }
     func hasMissingChildren() -> Bool { return true }
     func hasMissingProgeny()  -> Bool { return true }
     class var cloudProperties: [String] { return [] }
 	class var optionalCloudProperties: [String] { return [] }
+	@discardableResult func register() -> Bool { return cloud?.registerZRecord(self) ?? false }
 
 	class func cloudProperties(for className: String) -> [String] {
 		switch className {
@@ -246,7 +267,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 						setValue(cloudValue, forKeyPath: keyPath)
                     }
                 }
-            }
+			}
         }
     }
 

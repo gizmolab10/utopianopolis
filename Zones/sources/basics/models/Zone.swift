@@ -25,11 +25,12 @@ enum ZoneAccess: Int, CaseIterable {
 @objc(Zone)
 class Zone : ZRecord, ZIdentifiable, ZToolable {
 
-	@NSManaged    var         parent :         CKRefrence?
+	@objc dynamic var         parent :         CKReference?
 	@NSManaged    var      zoneOrder :           NSNumber?
 	@NSManaged    var      zoneCount :           NSNumber?
 	@NSManaged    var     zoneAccess :           NSNumber?
 	@NSManaged    var    zoneProgeny :           NSNumber?
+	@NSManaged    var      parentRID :             String?
 	@NSManaged    var       zoneName :             String?
 	@NSManaged    var       zoneLink :             String?
 	@NSManaged    var      zoneColor :             String?
@@ -168,6 +169,30 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		zoneName      = named
 
 		updateCKRecordProperties()
+	}
+
+	override func updateInstanceProperties() {
+		super.updateInstanceProperties()
+
+		if  gUseCoreData,
+			let     p = parent {
+			let    id = p.recordID.recordName
+			parentRID = id
+		}
+	}
+
+	override func updateCKRecordProperties() {
+		super.updateCKRecordProperties()
+
+		if  gUseCoreData {
+			if  let pID = parentRID {
+				parent  = CKReference(recordID: CKRecordID(recordName: pID), action: .none)
+			}
+
+			if  let    dID = dbid {
+				databaseID = ZDatabaseID.convert(from: dID)
+			}
+		}
 	}
 
 	class func randomZone(in dbID: ZDatabaseID) -> Zone {
@@ -681,11 +706,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  parentZoneMaybe        == nil {
 					unlinkParentAndMaybeNeedSave()
 				} else if let parentRecord  = parentZoneMaybe?.record,
-						  let      newParentDBID  = parentZoneMaybe?.databaseID {
+						  let newParentDBID = parentZoneMaybe?.databaseID {
 					if       newParentDBID == databaseID {
 						if  parent?.recordID.recordName != parentRecord.recordID.recordName {
 							parentLink      = kNullLink
-							parent          = CKRefrence(record: parentRecord, action: .none)
+							parent          = CKReference(record: parentRecord, action: .none)
 
 							maybeNeedSave()
 						}
@@ -1447,7 +1472,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let       r      = record,
 			let    type      = trait.traitType {
 			traits[type]     = trait
-			trait .owner     = CKRefrence(record: r, action: .none)
+			trait .owner     = CKReference(record: r, action: .none)
 			trait._ownerZone = nil
 
 			trait.updateCKRecordProperties()
@@ -1522,7 +1547,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let            r = record,
 			trait           == nil {
 			trait            = ZTrait(databaseID: databaseID)
-			trait?.owner     = CKRefrence(record: r, action: .none)
+			trait?.owner     = CKReference(record: r, action: .none)
 			trait?.traitType = iType
 			traits[iType]    = trait
 		}

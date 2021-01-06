@@ -30,6 +30,7 @@ enum ZOperationID: Int, CaseIterable {
     case oCloud
     case oManifest
     case oReadFile           // LOCAL
+	case oCoreData           // LOCAL
 	case oRoots
     case oHere
 	case oStartupDone
@@ -38,14 +39,14 @@ enum ZOperationID: Int, CaseIterable {
 
     case oFinishUp
 	case oSubscribe
-	case oAllProgeny
-	case oAllTraits
+	case oAdopt
 	case oRecount
     case oDone
 
     // miscellaneous
 
-	case oResolve
+	case oAllProgeny
+	case oAllTraits
 	case oFetchAndMerge
 	case oNeededIdeas        // after children so favorite targets resolve properly
     case oSaveToCloud        // zones, traits, destroy
@@ -62,8 +63,8 @@ enum ZOperationID: Int, CaseIterable {
     case oUndelete
 	case oRecents  			 // MINE ONLY
     case oRefetch            // user defaults list of record ids
+	case oResolve
     case oTraits
-	case oAdopt
 
 	var progressTime : Double {
 		switch self {
@@ -87,6 +88,7 @@ enum ZOperationID: Int, CaseIterable {
 		switch self {
 			case .oSubscribe,
 				 .oAllTraits,
+				 .oCoreData,
 				 .oAllIdeas,
 				 .oNewIdeas,
 				 .oTraits,
@@ -96,12 +98,21 @@ enum ZOperationID: Int, CaseIterable {
 		}
 	}
 
-    var isLocal     : Bool { return localOperations.contains(self) }
-	var isDeprecated: Bool { return   deprecatedOps.contains(self) }
-	var needsActive : Bool { return   needActiveOps.contains(self) }
-	var forMineOnly : Bool { return     mineOnlyOps.contains(self) }
-	var alwaysBoth  : Bool { return       bothDBOps.contains(self) }
-	var isDoneOp    : Bool { return         doneOps.contains(self) }
+	var      deprecatedOps : ZOperationIDsArray { return [.oParentIdeas] }
+	var needActiveCloudOps : ZOperationIDsArray { return [.oSaveToCloud, .oTraits] }
+	var	           doneOps : ZOperationIDsArray { return [.oNone, .oDone, .oCompletion] }
+	var        mineOnlyOps : ZOperationIDsArray { return [.oBookmarks, .oFavorites, .oRecents, .oDone] }
+	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe] }
+	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oCoreData, .oInternet, .oUbiquity, .oFoundIdeas,
+														  .oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oUserPermissions,
+														  .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability] }
+
+	var needsActiveCloud : Bool { return needActiveCloudOps.contains(self) }
+	var isDeprecated     : Bool { return      deprecatedOps.contains(self) }
+	var forMineOnly      : Bool { return        mineOnlyOps.contains(self) }
+	var alwaysBoth       : Bool { return          bothDBOps.contains(self) }
+	var isLocal          : Bool { return           localOps.contains(self) }
+	var isDoneOp         : Bool { return            doneOps.contains(self) }
 
 	var description : String { return "\(self)".substring(fromInclusive: 1).unCamelcased }
 }
@@ -141,15 +152,6 @@ var gTotalTime : Double {
 
 	return gProgressTimes.values.reduce(0, +)
 }
-
-let	        doneOps : [ZOperationID] = [.oNone, .oDone, .oCompletion]
-let   deprecatedOps : [ZOperationID] = [.oParentIdeas]
-let   needActiveOps : [ZOperationID] = [.oSaveToCloud, .oTraits]
-let     mineOnlyOps : [ZOperationID] = [.oBookmarks, .oFavorites, .oRecents, .oDone]
-let       bothDBOps : [ZOperationID] = [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe]
-let localOperations : [ZOperationID] = [.oHere, .oRoots, .oFoundIdeas, .oReadFile, .oInternet, .oUbiquity,
-										.oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oUserPermissions,
-										.oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability]
 
 class ZOperations: NSObject {
 
@@ -243,7 +245,7 @@ class ZOperations: NSObject {
         }
     }
 
-    func setupAndRun(_ operationIDs: [ZOperationID], onCompletion: @escaping Closure) {
+    func setupAndRun(_ operationIDs: ZOperationIDsArray, onCompletion: @escaping Closure) {
         setupCloudTimer()
 
         if  queue.operationCount > 10 {

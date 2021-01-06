@@ -80,9 +80,9 @@ class ZBatches: ZOnboarding {
     class ZBatch: NSObject {
         var       completions : [ZBatchCompletion]
         var        identifier :  ZBatchID
-        var allowedOperations : [ZOperationID] { return gHasInternet ? operations : localBatchOperations }
+        var allowedOperations : ZOperationIDsArray { return gHasInternet ? operations : localBatchOperations }
 
-        var operations: [ZOperationID] {
+        var operations: ZOperationIDsArray {
             switch identifier {
 			case .bEmptyTrash:  return [.oEmptyTrash                                                ]
 			case .bFetchLost:   return [.oLostIdeas,                         .oSaveToCloud,         ]
@@ -103,8 +103,8 @@ class ZBatches: ZOnboarding {
             }
         }
 
-        var localBatchOperations : [ZOperationID] {
-            var ids = [ZOperationID] ()
+        var localBatchOperations : ZOperationIDsArray {
+            var ids = ZOperationIDsArray ()
 
             for operation in operations {
                 if  operation.isLocal {
@@ -126,8 +126,8 @@ class ZBatches: ZOnboarding {
             }
         }
 
-        func operationIDs(from: ZOperationID, to: ZOperationID, skipping: [ZOperationID] = []) -> [ZOperationID] {
-            var operationIDs = [ZOperationID] ()
+        func operationIDs(from: ZOperationID, to: ZOperationID, skipping: ZOperationIDsArray = []) -> ZOperationIDsArray {
+            var operationIDs = ZOperationIDsArray ()
 
             for value in from.rawValue...to.rawValue {
                 var add = true
@@ -300,7 +300,7 @@ class ZBatches: ZOnboarding {
                 let                      isMine = restoreToID == .mineID
 				let               onlyCurrentID = (!gCloudStatusIsActive && !operationID.alwaysBoth)
 				let  databaseIDs: [ZDatabaseID] = operationID.forMineOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
-				let                      isNoop = !gCloudStatusIsActive && (operationID.needsActive || (onlyCurrentID && isMine && operationID != .oFavorites))
+				let                      isNoop = !gCloudStatusIsActive && (operationID.needsActiveCloud || (onlyCurrentID && isMine && operationID != .oFavorites))
                 var invokeForIndex: IntClosure?                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 
@@ -349,6 +349,7 @@ class ZBatches: ZOnboarding {
         switch identifier {
         case .oFavorites:                                                                      gFavorites.setup(cloudCallback)
 		case .oRecents:                                                                          gRecents.setup(cloudCallback)
+		case .oCoreData: gLoadContext();                                                                        cloudCallback?(0)
         case .oReadFile: try gFiles.readFile(into: currentDatabaseID!,                            onCompletion: cloudCallback)
         default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
         }

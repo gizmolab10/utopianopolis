@@ -463,7 +463,9 @@ class ZRecords: NSObject {
 	func assureAdoption(_ onCompletion: IntClosure? = nil) {
 		FOREGROUND {
 			for zRecord in self.recordRegistry.values {
-				zRecord.adopt()
+				if  let zone = zRecord as? Zone {
+					zone.adopt()
+				}
 			}
 
 			onCompletion?(0)
@@ -574,7 +576,7 @@ class ZRecords: NSObject {
         return added
     }
 
-    func add(states: [ZRecordState], to iReferences: CKRefrencesArray) {
+    func add(states: [ZRecordState], to iReferences: CKReferencesArray) {
         for reference in iReferences {
             if let zRecord = maybeZRecordForRecordID(reference.recordID) {
                 addZRecord(zRecord, for: states)
@@ -585,7 +587,7 @@ class ZRecords: NSObject {
 	// MARK:- clear state
 	// MARK:-
 
-	func remove(states: [ZRecordState], from iReferences: CKRefrencesArray) {
+	func remove(states: [ZRecordState], from iReferences: CKReferencesArray) {
 		for reference in iReferences {
 			clearRecordName(reference.recordID.recordName, for:states)
 		}
@@ -761,7 +763,7 @@ class ZRecords: NSObject {
         return results
     }
 
-	func pullReferencesWithMatchingStates(_ states: [ZRecordState]) -> CKRefrencesArray {
+	func pullReferencesWithMatchingStates(_ states: [ZRecordState]) -> CKReferencesArray {
         let references = referencesWithMatchingStates(states)
 
         remove(states: states, from: references)
@@ -769,12 +771,12 @@ class ZRecords: NSObject {
         return references
     }
 
-	func referencesWithMatchingStates(_ states: [ZRecordState]) -> CKRefrencesArray {
-        var references = CKRefrencesArray()
+	func referencesWithMatchingStates(_ states: [ZRecordState]) -> CKReferencesArray {
+        var references = CKReferencesArray()
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iName in
             if  references.count < kBatchSize {
-                let reference = CKRefrence(recordID: CKRecordID(recordName: iName), action: .none)
+                let reference = CKReference(recordID: CKRecordID(recordName: iName), action: .none)
 
                 references.append(reference)
             }
@@ -783,7 +785,7 @@ class ZRecords: NSObject {
         return references
     }
 
-	func pullChildrenRefsWithMatchingStates(_ states: [ZRecordState], batchSize: Int) -> CKRefrencesArray {
+	func pullChildrenRefsWithMatchingStates(_ states: [ZRecordState], batchSize: Int) -> CKReferencesArray {
         let references = childrenRefsWithMatchingStates(states, batchSize: batchSize)
 
 		remove(states: states, from: references)
@@ -801,8 +803,8 @@ class ZRecords: NSObject {
         return found
     }
 
-	func childrenRefsWithMatchingStates(_ iStates: [ZRecordState], batchSize: Int) -> CKRefrencesArray {
-        var references = CKRefrencesArray()
+	func childrenRefsWithMatchingStates(_ iStates: [ZRecordState], batchSize: Int) -> CKReferencesArray {
+        var references = CKReferencesArray()
         var  expecting = 0
 
 		applyToAllRecordNamesWithAnyMatchingStates(iStates) { iState, iName in
@@ -816,7 +818,7 @@ class ZRecords: NSObject {
 				recordID      = ckRecord.recordID
 			}
 
-			references.append(CKRefrence(recordID: recordID, action: .none))
+			references.append(CKReference(recordID: recordID, action: .none))
 		}
 
         return references
@@ -1105,7 +1107,7 @@ class ZRecords: NSObject {
 	// MARK:- lookups
     // MARK:-
 
-	func      maybeZoneForReference (_ iReference: CKRefrence) -> Zone? { return maybeZoneForRecordID      (iReference.recordID) }
+	func      maybeZoneForReference (_ iReference: CKReference) -> Zone? { return maybeZoneForRecordID      (iReference.recordID) }
     func       maybeZoneForCKRecord (_ iRecord:    CKRecord?)          -> Zone? { return maybeZoneForRecordID      (iRecord?  .recordID) }
     func    maybeZRecordForCKRecord (_ iRecord:    CKRecord?)       -> ZRecord? { return maybeZRecordForRecordName (iRecord?  .recordID.recordName) }
     func    maybeZRecordForRecordID (_ iRecordID:  CKRecordID?)    -> ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName) }

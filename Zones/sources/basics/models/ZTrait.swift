@@ -43,7 +43,7 @@ enum ZTraitType: String {
 @objc(ZTrait)
 class ZTrait: ZTraitAssets {
 
-	@NSManaged    var    owner :  CKRefrence?
+	@NSManaged    var    owner :  CKReference?
 	@NSManaged    var  strings : [String]?
 	@NSManaged    var   format :  String?
 	@NSManaged    var     type :  String?
