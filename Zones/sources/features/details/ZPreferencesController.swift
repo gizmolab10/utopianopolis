@@ -31,7 +31,8 @@ class ZPreferencesController: ZGenericController {
 	override  var         allowedKinds : [ZSignalKind] { return [.sBigMap, .sMain, .sData, .sDatum, .sError, .sStatus, .sDetails, .sSmallMap, .sPreferences] }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  allowedKinds.contains(iKind) {
+		if !gHiddenDetailViewIDs.contains(.Preferences),
+			allowedKinds.contains(iKind) {
             let                           grabbed = gSelecting.firstSortedGrab
             countsModeControl?   .selectedSegment = gCountsMode.rawValue
             thickness?               .doubleValue = gLineThickness

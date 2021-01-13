@@ -54,6 +54,8 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var       needsAdoption: Bool      { return  hasState(.needsAdoption) }
 	var      needsBookmarks: Bool      { return  hasState(.needsBookmarks) }
 
+	func updateFromCoreDataRelationships() {}
+
 	func convertFromCoreData(into type: String) {
 		if  let identifier = ckrid {
 			let   recordID = CKRecordID(recordName: identifier)
@@ -61,6 +63,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 			updateCKRecordProperties()
 			register()
+			updateFromCoreDataRelationships()
 		}
 	}
 
@@ -435,8 +438,6 @@ class ZRecord: ZManagedRecord { // NSObject {
             let observer = iObject as! NSObject
 
             if  let value: NSObject = observer.value(forKey: keyPath!) as! NSObject? {
-//				gSaveContext() // for testing, remove soonish
-
 				if keyPath == "assets", let values = value as? NSArray, values.count == 0 { return }
 
 				setValue(value, for: keyPath!)

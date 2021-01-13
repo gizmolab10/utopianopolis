@@ -462,9 +462,13 @@ class ZRecords: NSObject {
 
 	func assureAdoption(_ onCompletion: IntClosure? = nil) {
 		FOREGROUND {
-			for zRecord in self.recordRegistry.values {
+			for (index, zRecord) in self.recordRegistry.values.enumerated() {
 				if  let zone = zRecord as? Zone {
 					zone.adopt()
+
+					if  zone.root == nil {
+						printDebug(.dAdopt, "\(index) \(zone)")
+					}
 				}
 			}
 

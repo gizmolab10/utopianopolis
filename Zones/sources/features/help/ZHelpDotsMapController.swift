@@ -39,7 +39,8 @@ class ZHelpDotsMapController : ZMapController {
 		zone?.zoneName = "this is a typical idea, with 3 ideas in its (hidden) list"
 
 		for index in 1...3 {
-			let child = Zone(within: name, for: index)
+			let  child = Zone(within: name, for: index)
+			child.zoneName = "exemplar \(index)"
 
 			zone?.addChild(child)
 		}

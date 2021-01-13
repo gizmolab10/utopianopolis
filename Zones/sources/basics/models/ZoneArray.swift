@@ -10,6 +10,14 @@ import Foundation
 
 extension ZoneArray {
 
+	init(set: Set<Zone>) {
+		self.init()
+
+		for zone in set {
+			append(zone)
+		}
+	}
+
 	var anyInRecently: Bool {
 		for     zone in self {
 			if  zone.isInRecents {

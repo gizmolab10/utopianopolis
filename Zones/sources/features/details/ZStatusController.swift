@@ -107,21 +107,23 @@ class ZStatusController: ZGenericController {
 
 		zone.updateAllProgenyCounts()
 
-		var  text = "level  \(zone.level + 1)"
+		var  text = "level \(zone.level + 1)"
 		let zones = gSelecting.currentGrabs
 
 		if  zones.count > 1 {
-			text.append("   selected  \(zones.count)")
+			text.append("   (\(zones.count) selected)")
 		} else {
 			let    p = zone.progenyCount
 			let    c = zone.count
 
 			if  c > 0 {
-				text.append("   children  \(c)")
+				text.append("   (\(c) in list")
 
 				if  p > c {
-					text.append("   total  \(p)")
+					text.append(", \(p) total")
 				}
+
+				text.append(")")
 			}
 		}
 

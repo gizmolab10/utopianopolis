@@ -26,6 +26,7 @@ class ZBreadcrumbButton: ZButton, ZTooltips {
 
 	override func draw(_ dirtyRect: NSRect) {
 		if  gIsReadyToShowUI {
+			let       name = zone.unwrappedName as NSString
 			let       path = ZBezierPath(roundedRect: dirtyRect.insetEquallyBy(1.0), cornerRadius: 3.0)
 			path.lineWidth = 2.0
 
@@ -34,7 +35,7 @@ class ZBreadcrumbButton: ZButton, ZTooltips {
 			path.stroke()
 			path.fill()
 
-			(zone.unwrappedName as NSString).draw(in: dirtyRect.offsetBy(dx: 8.0, dy: -1.0), withAttributes: attributedTitle.attributes(at: 0, effectiveRange: nil))
+			name.draw(in: dirtyRect.offsetBy(dx: 8.0, dy: -1.0), withAttributes: attributedTitle.attributes(at: 0, effectiveRange: nil))
 		}
 	}
 

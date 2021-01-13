@@ -19,8 +19,10 @@ func gSaveContext() { gCoreDataStack.saveContext() }
 
 class ZCoreDataStack: NSObject {
 
+	let cloudID             = "iCloud.com.zones.Zones"
 	let localURL            = gCoreDataURL.appendingPathComponent("local.store")
-	let cloudURL            = gCoreDataURL.appendingPathComponent("cloud.store")
+	let publicURL           = gCoreDataURL.appendingPathComponent("cloud.public.store")
+	let privateURL          = gCoreDataURL.appendingPathComponent("cloud.private.store")
 	lazy var model          : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }()
 	lazy var coordinator    : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
 	lazy var managedContext : NSManagedObjectContext        = { return persistentContainer.viewContext }()
@@ -33,15 +35,22 @@ class ZCoreDataStack: NSObject {
 	}()
 
 	lazy var publicDescription: NSPersistentStoreDescription = {
-		let desc = privateDescription.copy() as! NSPersistentStoreDescription
-//		desc.cloudKitContainerOptions?.databaseScope = .public // default is private
+		let        options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudID)
+		let           desc = NSPersistentStoreDescription(url: publicURL)
+		desc.configuration = "Cloud"
+
+		if  options.responds(to: Selector(("setDatabaseScope:"))) {
+			options.perform(Selector(("setDatabaseScope:")), with: CKDatabase.Scope.public) // default is private
+		}
+
+		desc.cloudKitContainerOptions = options
+
 		return desc
 	}()
 
 	lazy var privateDescription: NSPersistentStoreDescription = {
-		let                        id = "iCloud.com.zones.Zones"
-		let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: id)
-		let                      desc = NSPersistentStoreDescription(url: cloudURL)
+		let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudID)
+		let                      desc = NSPersistentStoreDescription(url: privateURL)
 		desc.configuration            = "Cloud"
 		desc.cloudKitContainerOptions = options
 
@@ -49,7 +58,8 @@ class ZCoreDataStack: NSObject {
 	}()
 
 	lazy var persistentContainer: NSPersistentCloudKitContainer = {
-		let container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
+		let  container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
+		let publicDesc = publicDescription
 
 		ValueTransformer.setValueTransformer(  ZReferenceTransformer(), forName:   gReferenceTransformerName)
 		ValueTransformer.setValueTransformer( ZAssetArrayTransformer(), forName:  gAssetArrayTransformerName)
@@ -60,6 +70,10 @@ class ZCoreDataStack: NSObject {
 			privateDescription,
 			localDescription
 		]
+
+		if  let options = publicDesc.cloudKitContainerOptions, options.responds(to: Selector(("setDatabaseScope:"))) {
+			container.persistentStoreDescriptions.append(publicDesc)
+		}
 
 		container.loadPersistentStores() { (storeDescription, iError) in
 			if  let error = iError as NSError? {
@@ -89,44 +103,42 @@ class ZCoreDataStack: NSObject {
 
 	func loadContext() {
 		if  gUseCoreData {
-			loadAllZones()
+			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
+			request.predicate = NSPredicate(format: "ckrid == \"root\"")
 
-			for type in [kManifestType, kTraitType] {
-				load(type: type, using: NSFetchRequest<NSFetchRequestResult>(entityName: type))
+			FOREGROUND {
+				let records = self.load(type: kZoneType, using: request)
+
+				for record in records {
+					if  let zone = record as? Zone,
+						zone.isARoot {
+						zone.traverseAllProgeny { iChild in
+							iChild.respectOrder()
+						}
+					}
+				}
+
+				for type in [kManifestType, kTraitType] {
+					self.load(type: type, using: NSFetchRequest<NSFetchRequestResult>(entityName: type))
+				}
 			}
 		}
 	}
 
-	func loadAllZones() {
-		loadZones(with: NSPredicate(format: "parentRID == \"root\""))
-	}
-
-	func loadZones(with predicate: NSPredicate) {
-		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-		request.predicate = predicate
-
-		if  let ids = load(type: kZoneType, using: request), ids.count > 0 {
-			loadZones(with: NSPredicate(format: "parentRID IN %@", ids))
-		}
-	}
-
-	@discardableResult func load(type: String, using request: NSFetchRequest<NSFetchRequestResult>) -> [String?]? {
+	@discardableResult func load(type: String, using request: NSFetchRequest<NSFetchRequestResult>) -> ZRecordsArray {
+		var records = ZRecordsArray()
 		do {
-			let      items = try managedContext.fetch(request)
-			let        ids = items.map { (item) -> String in
+			let items = try managedContext.fetch(request)
+			for item in items {
 				let record = item as! ZRecord
-
+				records.append(record)
 				record.convertFromCoreData(into: type)
-
-				return record.record!.recordID.recordName
 			}
-
-			return ids
 		} catch {
 			print(error)
 		}
 
-		return nil
+		return records
 	}
 
 }

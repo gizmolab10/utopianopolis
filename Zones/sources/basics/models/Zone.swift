@@ -25,7 +25,7 @@ enum ZoneAccess: Int, CaseIterable {
 @objc(Zone)
 class Zone : ZRecord, ZIdentifiable, ZToolable {
 
-	@objc dynamic var         parent :         CKReference?
+	@objc dynamic var         parent :        CKReference?
 	@NSManaged    var      zoneOrder :           NSNumber?
 	@NSManaged    var      zoneCount :           NSNumber?
 	@NSManaged    var     zoneAccess :           NSNumber?
@@ -86,6 +86,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
 	var                     children =          ZoneArray  ()
 	var                       traits =   ZTraitDictionary  ()
+
+	func copyWithZone() -> NSObject {
+		return self
+	}
 
 	var bookmarks : ZoneArray {
 		return children.filter { (iZone) -> Bool in
@@ -765,6 +769,30 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			|| gCurrentMouseDownZone     == self
 	}
 
+	// MARK:- core data
+	// MARK:-
+
+	override func updateFromCoreDataRelationships() {
+		if  let        set = mutableSetValue(forKeyPath: "childArray") as? Set<Zone>, set.count > 0 {
+			let childArray = ZoneArray(set: set)
+			for child in childArray {
+				child.convertFromCoreData(into: kZoneType)
+				addChild(child, updateCoreData: false)
+			}
+		}
+	}
+
+	func updateCoreDataRelationships() {
+		var childArray = Set<Zone>()
+
+		for child in children {
+			child.setValue(self, forKeyPath: "parentRef")
+			childArray.insert(child)
+		}
+
+		setValue(childArray as NSObject, forKeyPath: "childArray")
+	}
+
 	// MARK:- write access
 	// MARK:-
 
@@ -1246,7 +1274,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let clouds: [ZRecords?] = [gFavorites, gRecents, records]
 
 		for cloud in clouds {
-			restoreParentFrom(cloud?.rootZone)   // look through all records for match to set parent
+			restoreParentFrom(cloud?.rootZone)   // look through all records for a match with which to set parent
 		}
 	}
 
@@ -2409,6 +2437,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override func adopt(forceAdoption: Bool = true) {
 		if  !isARoot, !needsDestroy, (forceAdoption || needsAdoption) {
 			if  let p = parentZone, p != self,      // first compute parentZone
+				!p.children.contains(self),
 				p.record != nil {
 				p.maybeMarkNotFetched()
 				p.addChildAndRespectOrder(self, doNotSave: true)
@@ -2424,8 +2453,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	override func orphan() {
 		parentZone?.removeChild(self)
-
-		parentZone = nil
 	}
 
 	func addChildAndRespectOrder(_ child: Zone?, doNotSave: Bool = false) {
@@ -2433,8 +2460,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		respectOrder()
 	}
 
-	@discardableResult func addChild(_ child: Zone?, doNotSave: Bool = false) -> Int? {
-		return addChild(child, at: 0, doNotSave: doNotSave)
+	@discardableResult func addChild(_ child: Zone?, updateCoreData: Bool = true, doNotSave: Bool = false) -> Int? {
+		return addChild(child, at: 0, updateCoreData: updateCoreData, doNotSave: doNotSave)
 	}
 
 	func addAndReorderChild(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: Closure? = nil) {
@@ -2455,7 +2482,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return index   // count is bottom, 0 is top
 	}
 
-	@discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, doNotSave: Bool = false, _ onCompletion: Closure? = nil) -> Int? {
+	@discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, doNotSave: Bool = false, _ onCompletion: Closure? = nil) -> Int? {
 		if  let        child = iChild {
 			let     insertAt = validIndex(from: iIndex)
 			child.parentZone = self
@@ -2495,13 +2522,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				children.append(child)
 			}
 
-			onCompletion?()
+			if  updateCoreData {
+				updateCoreDataRelationships()
+			}
 
 			if !doNotSave {
 				maybeNeedSave()
 			}
 
 			needCount()
+			onCompletion?()
 
 			return insertAt
 		}
@@ -2513,6 +2543,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let child = iChild, let index = children.firstIndex(of: child) {
 			children.remove(at: index)
 
+			child.parentZone = nil
+
+			child.setValue(nil, forKeyPath: "parentRef")
+			updateCoreDataRelationships()
 			needCount()
 
 			return true

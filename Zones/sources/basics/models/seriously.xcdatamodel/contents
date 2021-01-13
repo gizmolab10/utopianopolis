@@ -23,8 +23,8 @@
         <attribute name="zoneName" optional="YES" attributeType="String"/>
         <attribute name="zoneOrder" attributeType="Double" minValueString="0" maxValueString="1" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="zoneProgeny" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="childrenRelationship" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Zone" inverseName="parentRelationship" inverseEntity="Zone"/>
-        <relationship name="parentRelationship" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone" inverseName="childrenRelationship" inverseEntity="Zone"/>
+        <relationship name="childArray" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Zone" inverseName="parentRef" inverseEntity="Zone"/>
+        <relationship name="parentRef" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone" inverseName="childArray" inverseEntity="Zone"/>
     </entity>
     <entity name="ZTrait" representedClassName="ZTrait" parentEntity="ZTraitAssets" syncable="YES">
         <attribute name="format" optional="YES" attributeType="String"/>
@@ -60,7 +60,7 @@
         <element name="SPreferences" positionX="-63" positionY="-18" width="128" height="43"/>
         <element name="SState" positionX="0" positionY="54" width="128" height="58"/>
         <element name="ZManifest" positionX="-109.09375" positionY="337.03515625" width="128" height="88"/>
-        <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="268"/>
+        <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="28"/>
         <element name="ZTrait" positionX="-117.15234375" positionY="186.37109375" width="128" height="118"/>
         <element name="ZTraitAssets" positionX="64.625" positionY="202.92578125" width="128" height="103"/>
         <element name="ZUser" positionX="-382.8359375" positionY="80.328125" width="128" height="103"/>
