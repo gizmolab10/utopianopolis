@@ -44,32 +44,36 @@ class ZStartup: NSObject {
 
 				gRecents.push()
 				gHereMaybe?.grab()
-				gFavorites.updateAllFavorites()
-				gRemoteStorage.updateLastSyncDates()
-				gRemoteStorage.recount()
-				gRefreshCurrentEssay()
-				gRefreshPersistentWorkMode()
-				gSignal([.sSwap, .sMain, .sCrumbs, .sRelayout, .sLaunchDone])
-
-				gBatches.finishUp { iSame in
+				gFavorites.setup { result in
 					FOREGROUND {
-						gHasFinishedStartup    = true
-						gRefusesFirstResponder = false
+						gFavorites.updateAllFavorites()
+						gRemoteStorage.updateLastSyncDates()
+						gRemoteStorage.recount()
+						gRefreshCurrentEssay()
+						gRefreshPersistentWorkMode()
+						gSignal([.sSwap, .sMain, .sCrumbs, .sRelayout, .sLaunchDone])
 
-						if  gIsStartupMode {
-							gSetMapsMode()
-						}
+						gBatches.finishUp { iSame in
+							FOREGROUND {
+								gHasFinishedStartup    = true
+								gRefusesFirstResponder = false
 
-//						gRemoteStorage.updateAllInstanceProperties()
-//						gRemoteStorage.assureAdoption()
-//						gRemoteStorage.updateAllInstanceProperties()
-						gSignal([.sMain, .sCrumbs, .sRelayout])
-						self.stopStartupTimer()
-						self.requestFeedback()
+								if  gIsStartupMode {
+									gSetMapsMode()
+								}
 
-						FOREGROUND(after: 10.0) {
-//							gRemoteStorage.assureAdoption()
-							gFiles.writeAll()
+								//						gRemoteStorage.updateAllInstanceProperties()
+								//						gRemoteStorage.assureAdoption()
+								//						gRemoteStorage.updateAllInstanceProperties()
+								gSignal([.sMain, .sCrumbs, .sRelayout])
+								self.stopStartupTimer()
+								self.requestFeedback()
+
+								FOREGROUND(after: 10.0) {
+									//							gRemoteStorage.assureAdoption()
+									gFiles.writeAll()
+								}
+							}
 						}
 					}
 				}

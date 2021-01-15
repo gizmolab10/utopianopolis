@@ -334,16 +334,16 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func popAndUpdateRecents(_ CONTROL: Bool, _ COMMAND: Bool = false, kind: ZFocusKind) {
-		if  !CONTROL {
-			gRecords?.maybeRefocus(kind, COMMAND, shouldGrab: true) { // complex grab logic
-				gRedrawMaps()
-			}
-		} else {
+		if  CONTROL {
 			if  let here = gRecents.popAndUpdateRecents()?.bookmarkTarget {
 				gHere    = here
 			}
 
 			gRedrawMaps()
+		} else {
+			gRecords?.maybeRefocus(kind, COMMAND, shouldGrab: true) { // complex grab logic
+				gRedrawMaps()
+			}
 		}
 	}
 

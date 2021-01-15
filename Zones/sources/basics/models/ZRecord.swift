@@ -57,13 +57,18 @@ class ZRecord: ZManagedRecord { // NSObject {
 	func updateFromCoreDataRelationships() {}
 
 	func convertFromCoreData(into type: String) {
-		if  let identifier = ckrid {
-			let   recordID = CKRecordID(recordName: identifier)
-			record         = CKRecord(recordType: type, recordID: recordID)
+		if  let  name = ckrid {
+			let   ckr = CKRecord(recordType: type, recordID: CKRecordID(recordName: name))
 
-			updateCKRecordProperties()
-			register()
-			updateFromCoreDataRelationships()
+			if  let z = records?.maybeZRecordForRecordName(name), z != self {
+				z.useBest(record: ckr)
+			} else {
+				record = ckr
+
+				updateCKRecordProperties()
+				register()
+				updateFromCoreDataRelationships()
+			}
 		}
 	}
 
@@ -285,22 +290,31 @@ class ZRecord: ZManagedRecord { // NSObject {
                 }
             }
         }
+	}
+
+	func useBest(record iRecord: CKRecord) {
+		if  let best = chooseBest(record: iRecord) {
+			setRecord(best)
+		}
     }
 
-    func useBest(record iRecord: CKRecord) {
-        let      myDate = record?.modificationDate ?? writtenModifyDate
+    func chooseBest(record iRecord: CKRecord) -> CKRecord? {
+		var        best = record
+        let      myDate = best?.modificationDate ?? writtenModifyDate
 		let      noDate = myDate == nil
-        if  record     != iRecord,
+        if  best       != iRecord,
             let newDate = iRecord.modificationDate,
             (noDate || newDate.timeIntervalSince(myDate!) > 10.0) {
             
-            if  let   r = record,
+            if  let   r = best,
                 r.recordID.recordName != iRecord.recordID.recordName {
                 records?.addCKRecord(record, for: [.needsDestroy])
             }
 
-			setRecord(iRecord)
+			best = iRecord
         }
+
+		return best
     }
 
     func copy(into iCopy: ZRecord) {

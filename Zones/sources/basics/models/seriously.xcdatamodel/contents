@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="SPreferences" representedClassName="SPreferences" syncable="YES"/>
     <entity name="SState" representedClassName="SState" syncable="YES">
         <attribute name="expandedIdeas" optional="YES" attributeType="String"/>
@@ -59,10 +59,10 @@
     <elements>
         <element name="SPreferences" positionX="-63" positionY="-18" width="128" height="43"/>
         <element name="SState" positionX="0" positionY="54" width="128" height="58"/>
-        <element name="ZManifest" positionX="-109.09375" positionY="337.03515625" width="128" height="88"/>
-        <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="28"/>
+        <element name="ZManifest" positionX="-109.09375" positionY="337.03515625" width="128" height="74"/>
+        <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="254"/>
         <element name="ZTrait" positionX="-117.15234375" positionY="186.37109375" width="128" height="118"/>
-        <element name="ZTraitAssets" positionX="64.625" positionY="202.92578125" width="128" height="103"/>
-        <element name="ZUser" positionX="-382.8359375" positionY="80.328125" width="128" height="103"/>
+        <element name="ZTraitAssets" positionX="64.625" positionY="202.92578125" width="128" height="89"/>
+        <element name="ZUser" positionX="-382.8359375" positionY="80.328125" width="128" height="89"/>
     </elements>
 </model>

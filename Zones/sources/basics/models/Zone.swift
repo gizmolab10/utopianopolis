@@ -159,10 +159,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- setup
 	// MARK:-
 
-	convenience init(databaseID: ZDatabaseID?, named: String? = nil, identifier: String? = nil) {
+	convenience init(databaseID: ZDatabaseID?, named: String? = nil, recordName: String? = nil) {
 		var newRecord : CKRecord?
 
-		if  let rName = identifier {
+		if  let rName = recordName {
 			newRecord = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: rName))
 		} else {
 			newRecord = CKRecord(recordType: kZoneType)

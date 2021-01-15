@@ -39,7 +39,7 @@ enum ZHelpDotType: String {
 		var r = CGRect(origin: origin, size: size)
 
 		if  self == .favorite {
-			r = r.insetEquallyBy(fraction: (1.0 - kFavoritesReduction) / 2.0)
+			r = r.insetEquallyBy(fraction: (1.0 - kSmallMapReduction) / 2.0)
 		}
 
 		return r

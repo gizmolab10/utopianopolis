@@ -16,6 +16,7 @@ var gUseCoreData: Bool { return gDebugModes.contains(.dUseCoreData) }
 var gDebugAccess: Bool { return gDebugModes.contains(.dDebugAccess) }
 var  gWriteFiles: Bool { return gDebugModes.contains(.dWriteFiles) }
 var   gDebugInfo: Bool { return gDebugModes.contains(.dDebugInfo) }
+var   gDebugDraw: Bool { return gDebugModes.contains(.dDebugDraw) }
 var    gUseFiles: Bool { return gDebugModes.contains(.dUseFiles) }
 var     gNewUser: Bool { return gDebugModes.contains(.dNewUser) }
 
@@ -30,6 +31,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dNewUser     = ZDebugMode() // exercise new-user, first-time arrival code
 	static let dUseFiles    = ZDebugMode() // read and write files
 	static let dDebugInfo   = ZDebugMode() // inject debugging information into UI
+	static let dDebugDraw   = ZDebugMode() // colorize rects
 	static let dWriteFiles  = ZDebugMode() // write files
 	static let dDebugAccess = ZDebugMode() // test write access by me not having full
 	static let dUseCoreData = ZDebugMode() // store data locally in core data
@@ -38,6 +40,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 		return [(.dDebugAccess, "access"),
 				(.dNewUser,     "arrival"),
 				(.dUseFiles,    "use files"),
+				(.dDebugDraw,   "debug draw"),
 				(.dWriteFiles,  "write files"),
 				(.dUseCoreData, "use core data"),
 				(.dDebugAccess, "debug write access")]

@@ -135,7 +135,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
 				if !iWidget.type.isBigMap {
-                    width  *= kFavoritesReduction
+                    width  *= kSmallMapReduction
                 }
 
                 make.size.equalTo(CGSize(width: width, height: height))

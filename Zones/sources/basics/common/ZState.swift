@@ -80,7 +80,7 @@ var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrint
 var          gBackgroundColor:             ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
 var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
-var            gFavoritesFont:              ZFont { return .systemFont    (ofSize: gFontSize * kFavoritesReduction) }
+var            gFavoritesFont:              ZFont { return .systemFont    (ofSize: gFontSize * kSmallMapReduction) }
 var               gWidgetFont:              ZFont { return .systemFont    (ofSize: gFontSize) }
 
 let                 kHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize)
@@ -251,9 +251,9 @@ var gUserRecordID: String? {    // persist for file read on launch
     set { setPreferencesString(newValue, for: kUserRecordID) }
 }
 
-var gFavoritesAreVisible: Bool {
-	get { return getPreferencesBool(   for: kFavoritesAreVisibleKey, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kFavoritesAreVisibleKey) }
+var gSmallMapIsVisible: Bool {
+	get { return getPreferencesBool(   for: kSmallMapIsVisibleKey, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kSmallMapIsVisibleKey) }
 }
 
 var gAccentColor: ZColor {
@@ -363,13 +363,14 @@ var gConfinementMode: ZConfinementMode {
 
 var gSmallMapMode: ZSmallMapMode {
 	get {
-		let value  = UserDefaults.standard.object(forKey: kFavoritesMode) as? String
-		var mode   = ZSmallMapMode.favorites
+		var mode   = ZSmallMapMode.favorites // default is favorites
+		let value  = UserDefaults.standard.object(forKey: kSmallMapMode) as? String
 
-		if  value != nil {
-			mode   = ZSmallMapMode(rawValue: value!)!
+		if  let  v = value,
+			let  m = ZSmallMapMode(rawValue: v) {
+			mode   = m
 		} else {
-			UserDefaults.standard.set(mode.rawValue, forKey:kFavoritesMode)
+			UserDefaults.standard.set(mode.rawValue, forKey:kSmallMapMode)
 			UserDefaults.standard.synchronize()
 		}
 
@@ -377,7 +378,7 @@ var gSmallMapMode: ZSmallMapMode {
 	}
 
 	set {
-		UserDefaults.standard.set(newValue.rawValue, forKey:kFavoritesMode)
+		UserDefaults.standard.set(newValue.rawValue, forKey:kSmallMapMode)
 		UserDefaults.standard.synchronize()
 	}
 }

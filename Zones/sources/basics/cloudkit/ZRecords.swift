@@ -467,7 +467,7 @@ class ZRecords: NSObject {
 					zone.adopt()
 
 					if  zone.root == nil {
-						printDebug(.dAdopt, "\(index) \(zone)")
+						printDebug(.dAdopt, "nil parent (at \(index)) for: \(zone)")
 					}
 				}
 			}
@@ -972,13 +972,15 @@ class ZRecords: NSObject {
 	}
 
 	@discardableResult func updateCurrentBookmark() -> Zone? {
-		if  let    bookmark = whichBookmarkTargets(gHereMaybe),
+		if  let    bookmark = whichBookmarkTargets(gHereMaybe, orSpawnsIt: false),
 			bookmark.isInSmallMap,
 			!(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false) {
 			currentBookmark = bookmark
+
+			return currentBookmark
 		}
 
-		return currentBookmark
+		return nil
 	}
 
 	@discardableResult func updateCurrentRecent() -> Zone? {
@@ -1061,7 +1063,11 @@ class ZRecords: NSObject {
 		} else if zone == gHere {       // state 2
 			if  let small = gCurrentSmallMapRecords,
 			    !small.swapBetweenBookmarkAndTarget(shouldGrab: shouldGrab) {
-				// create new bookmark in small map
+				if  gSmallMapMode == .favorites {
+					gFavorites.createFavorite(for: zone, action: .aCreateFavorite)
+//				} else {
+//					gRecents.book
+				}
 			}
 
 			atArrival()

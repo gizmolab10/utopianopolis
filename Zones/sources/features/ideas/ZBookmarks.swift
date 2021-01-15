@@ -46,10 +46,10 @@ class ZBookmarks: NSObject {
 	// MARK:- create
 	// MARK:-
 
-	@discardableResult func createZone(withBookmark: Zone?, _ iName: String?, identifier: String? = nil) -> Zone {
+	@discardableResult func createZone(withBookmark: Zone?, _ iName: String?, recordName: String? = nil) -> Zone {
 		var bookmark           = withBookmark
 		if  bookmark          == nil {
-			bookmark           = Zone(databaseID: .mineID, named: iName, identifier: identifier)
+			bookmark           = Zone(databaseID: .mineID, named: iName, recordName: recordName)
 		} else if let     name = iName {
 			bookmark?.zoneName = name
 		}
@@ -57,8 +57,8 @@ class ZBookmarks: NSObject {
 		return bookmark!
 	}
 
-	@discardableResult func create(withBookmark: Zone?, _ action: ZBookmarkAction, parent: Zone, atIndex: Int, _ name: String?, identifier: String? = nil) -> Zone {
-		let bookmark: Zone = createZone(withBookmark: withBookmark, name, identifier: identifier)
+	@discardableResult func create(withBookmark: Zone?, _ action: ZBookmarkAction, parent: Zone, atIndex: Int, _ name: String?, recordName: String? = nil) -> Zone {
+		let bookmark: Zone = createZone(withBookmark: withBookmark, name, recordName: recordName)
 		let insertAt: Int? = atIndex == parent.count ? nil : atIndex
 
 		if  action != .aNotABookmark {

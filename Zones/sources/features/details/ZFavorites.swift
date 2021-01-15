@@ -92,7 +92,7 @@ class ZFavorites: ZRecords {
         if  cloudRootTemplates.count == 0 {
             for (index, dbID) in kAllDatabaseIDs.enumerated() {
                 let          name = dbID.rawValue
-				let      favorite = gBookmarks.create(withBookmark: nil, .aCreateFavorite, parent: cloudRootTemplates, atIndex: index, name, identifier: name + kFavoritesSuffix)
+				let      favorite = gBookmarks.create(withBookmark: nil, .aCreateFavorite, parent: cloudRootTemplates, atIndex: index, name, recordName: name + kFavoritesSuffix)
                 favorite.zoneLink =  "\(name)\(kColonSeparator)\(kColonSeparator)"
                 favorite   .order = Double(index) * 0.001
                 
@@ -272,7 +272,7 @@ class ZFavorites: ZRecords {
 			// //////////////////////////////////////////////
 
 			if  missingTrash {
-				let          trash = Zone(databaseID: .mineID, named: kTrashName, identifier: kTrashName + kFavoritesSuffix)
+				let          trash = Zone(databaseID: .mineID, named: kTrashName, recordName: kTrashName + kFavoritesSuffix)
 				trash    .zoneLink = kTrashLink // convert into a bookmark
 				trash.directAccess = .eProgenyWritable
 
@@ -282,11 +282,11 @@ class ZFavorites: ZRecords {
 			}
 
 			if  missingLost {
-				let identifier = kLostAndFoundName + kFavoritesSuffix
-				var       lost = gMineCloud?.maybeZoneForRecordName(identifier)
+				let recordName = kLostAndFoundName + kFavoritesSuffix
+				var       lost = gMineCloud?.maybeZoneForRecordName(recordName)
 
 				if  lost      == nil {
-					lost       = Zone(databaseID: .mineID, named: kLostAndFoundName, identifier: identifier)
+					lost       = Zone(databaseID: .mineID, named: kLostAndFoundName, recordName: recordName)
 				}
 
 				lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark

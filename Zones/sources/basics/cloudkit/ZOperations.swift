@@ -28,8 +28,8 @@ enum ZOperationID: Int, CaseIterable {
     // continue
 
     case oCloud
-    case oManifest
 	case oCoreData           // LOCAL
+	case oManifest
 	case oReadFile           // LOCAL
 	case oRoots
     case oHere

@@ -100,7 +100,7 @@ class ZoneWidget: ZView {
 	let            widgetObject = ZWidgetObject  ()
     private var childrenWidgets = [ZoneWidget]   ()
     var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
-	var                   ratio :    CGFloat  { return type.isBigMap ? 1.0 : kFavoritesReduction }
+	var                   ratio :    CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
 	override var    description :     String  { return widgetZone?.description ?? kEmptyIdea }
 
 	var type : ZWidgetType {
@@ -263,7 +263,7 @@ class ZoneWidget: ZView {
 		childrenView.snp.setLabel("<c> \(widgetZone?.zoneName ?? "unknown")")
         childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let ratio = type.isBigMap ? 1.0 : kFavoritesReduction / 3.0
+            let ratio = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
 
             make.left.equalTo(textWidget.snp.right).offset(gChildrenViewOffset * Double(ratio))
             make.bottom.top.right.equalTo(self)
@@ -586,7 +586,9 @@ class ZoneWidget: ZView {
 			if !nowDrawLines {
 				nowDrawLines = true
 
-				//drawColored(rect: iDirtyRect, .purple)
+				if  gDebugDraw {
+					drawColored(rect: iDirtyRect, .purple)
+				}
 
 				textWidget.updateTextColor()
 

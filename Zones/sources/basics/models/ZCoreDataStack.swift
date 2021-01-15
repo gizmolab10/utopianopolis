@@ -14,8 +14,8 @@ var gDataURL       : URL = {
 	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 		.appendingPathComponent("Seriously", isDirectory: true)
 }()
-func gLoadContext() { gCoreDataStack.loadContext() }
-func gSaveContext() { gCoreDataStack.saveContext() }
+func gLoadContext(into dbID: ZDatabaseID?) { gCoreDataStack.loadContext(into: dbID) }
+func gSaveContext()                        { gCoreDataStack.saveContext() }
 
 class ZCoreDataStack: NSObject {
 
@@ -101,38 +101,69 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func loadContext() {
+	func loadContext(into dbID: ZDatabaseID?) {
 		if  gUseCoreData {
-			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-			request.predicate = NSPredicate(format: "ckrid == \"root\"")
-
 			FOREGROUND {
-				let records = self.load(type: kZoneType, using: request)
+				var names = [kRootName, kDestroyName, kTrashName, kLostAndFoundName]
 
-				for record in records {
-					if  let zone = record as? Zone,
-						zone.isARoot {
-						zone.traverseAllProgeny { iChild in
-							iChild.respectOrder()
-						}
-					}
+				if  dbID == .mineID {
+					names.append(contentsOf: [kRecentsRootName, kFavoritesRootName])
+				}
+
+				for name in names {
+					self.loadZone(with: name, into: dbID)
 				}
 
 				for type in [kManifestType, kTraitType] {
-					self.load(type: type, using: NSFetchRequest<NSFetchRequestResult>(entityName: type))
+					self.load(type: type, into: dbID, using: NSFetchRequest<NSFetchRequestResult>(entityName: type))
 				}
 			}
 		}
 	}
 
-	@discardableResult func load(type: String, using request: NSFetchRequest<NSFetchRequestResult>) -> ZRecordsArray {
+	func loadZone(with recordName: String, into dbID: ZDatabaseID?) {
+		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
+		request.predicate = NSPredicate(format: "ckrid == \"\(recordName)\"")
+		let       records = self.load(type: kZoneType, into: dbID, using: request)
+
+		if  records.count > 0 {
+			for record in records {
+				if  let zone = record as? Zone,
+					zone.isARoot {
+					zone.traverseAllProgeny { iChild in
+						iChild.respectOrder()
+					}
+				}
+			}
+
+			if  let zRecords = gRemoteStorage.zRecords(for: dbID),
+				let     zone = records[0] as? Zone {
+				switch recordName {
+					case          kRootName: zRecords.rootZone         = zone
+					case         kTrashName: zRecords.trashZone        = zone
+					case       kDestroyName: zRecords.destroyZone      = zone
+					case   kRecentsRootName: zRecords.recentsZone      = zone
+					case kFavoritesRootName: zRecords.favoritesZone    = zone
+					case  kLostAndFoundName: zRecords.lostAndFoundZone = zone
+					default:                 break
+				}
+			}
+		}
+	}
+
+	@discardableResult func load(type: String, into dbID: ZDatabaseID?, using request: NSFetchRequest<NSFetchRequestResult>) -> ZRecordsArray {
 		var records = ZRecordsArray()
 		do {
 			let items = try managedContext.fetch(request)
 			for item in items {
 				let record = item as! ZRecord
-				records.append(record)
+
 				record.convertFromCoreData(into: type)
+
+				if  let             i  = dbID,
+				    record.databaseID == i {
+					records.append(record)
+				}
 			}
 		} catch {
 			print(error)
