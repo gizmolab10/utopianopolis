@@ -158,7 +158,6 @@ class ZRemoteStorage: NSObject {
     func databaseForID(_ iID: ZDatabaseID) -> CKDatabase? {
         switch iID {
         case .everyoneID: return gContainer.publicCloudDatabase
-        case   .sharedID: return gContainer.sharedCloudDatabase
         case     .mineID: return gContainer.privateCloudDatabase
         default:          return nil
         }

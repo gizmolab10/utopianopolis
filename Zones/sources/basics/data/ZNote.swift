@@ -53,7 +53,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
 
 		if  unequal && left.zone?.record != nil && right.zone?.record != nil {
-			return left.zone?.recordName == right.zone?.recordName
+			return left.zone?.ckRecordName == right.zone?.ckRecordName
 		}
 
 		return !unequal

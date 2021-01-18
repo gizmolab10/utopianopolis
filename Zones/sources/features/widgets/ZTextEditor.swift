@@ -72,7 +72,7 @@ class ZTextPack: NSObject {
             // //////////////////////////////////
 
 			if  gPrintModes.contains(.dNames) && zone.record != nil {
-                suffix = zone.recordName
+                suffix = zone.ckRecordName
             } else if (need > 1) && (!zone.showingChildren || (gCountsMode == .progeny)) {
                 suffix = String(describing: need)
             }

@@ -27,6 +27,24 @@ class ZCoreDataStack: NSObject {
 	lazy var coordinator    : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
 	lazy var managedContext : NSManagedObjectContext        = { return persistentContainer.viewContext }()
 	var       lastConverted = [String]()
+	var        privateStore : NSPersistentStore? { return persistentStore(for: privateURL) }
+	var         publicStore : NSPersistentStore? { return persistentStore(for: publicURL) }
+	var          localStore : NSPersistentStore? { return persistentStore(for: localURL) }
+
+	func persistentStore(for url: URL) -> NSPersistentStore? {
+		return persistentContainer.persistentStoreCoordinator.persistentStore(for: url)
+	}
+
+	func persistentStore(for databaseID: ZDatabaseID?) -> NSPersistentStore? {
+		if  let dbid = databaseID {
+			switch dbid {
+				case .everyoneID: return  publicStore
+				default:          return privateStore
+			}
+		}
+
+		return nil
+	}
 
 	lazy var localDescription: NSPersistentStoreDescription = {
 		let           desc = NSPersistentStoreDescription(url: localURL)
@@ -125,7 +143,7 @@ class ZCoreDataStack: NSObject {
 	func loadZone(with recordName: String, into dbID: ZDatabaseID?) {
 		if  let          dbid = dbID?.identifier {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-			let   idPredicate = NSPredicate(format: "ckrid = \"\(recordName)\"")
+			let   idPredicate = NSPredicate(format: "recordName = \"\(recordName)\"")
 			let   dbPredicate = NSPredicate(format: "dbid = \"\(dbid)\"")
 			request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [idPredicate, dbPredicate])
 			let      zRecords = self.load(type: kZoneType, into: dbID, using: request)

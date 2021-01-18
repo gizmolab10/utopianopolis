@@ -180,12 +180,10 @@ enum ZOutlineLevelType: String {
 }
 
 enum ZDatabaseID: String {
-	case preferencesID = "preferences"
-    case   favoritesID = "favorites"
-    case    everyoneID = "everyone"
-	case     recentsID = "recents"
-	case      sharedID = "shared"
-    case        mineID = "mine"
+	case favoritesID = "favorites"
+	case  everyoneID = "everyone"
+	case   recentsID = "recents"
+	case      mineID = "mine"
 
 	var isSmallMapDB: Bool { return [.favoritesID, .recentsID].contains(self) }
 	var identifier: String { return rawValue.substring(toExclusive: 1) }
@@ -197,7 +195,6 @@ enum ZDatabaseID: String {
 			case  .everyoneID: return gEveryoneCloud
 			case   .recentsID: return gRecents
 			case      .mineID: return gMineCloud
-			default:           return nil
 		}
 	}
 
@@ -215,7 +212,6 @@ enum ZDatabaseID: String {
 			case  .everyoneID: return .everyoneIndex
 			case   .recentsID: return .recentsIndex
 			case      .mineID: return .mineIndex
-			default:           return nil
 		}
     }
 
@@ -225,7 +221,6 @@ enum ZDatabaseID: String {
 			case  .everyoneID: return "e"
 			case   .recentsID: return "r"
 			case      .mineID: return "m"
-			default:           return ""
 		}
 	}
 

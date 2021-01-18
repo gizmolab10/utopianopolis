@@ -11,7 +11,7 @@ import CloudKit
 class ZRecord: ZManagedRecord { // NSObject {
 
 	@NSManaged var     dbid: String?
-	@NSManaged var    ckrid: String?
+	@NSManaged var recordName: String?
 	var          databaseID: ZDatabaseID?
 	var          kvoContext: UInt8 = 1
 	var              record: CKRecord?
@@ -19,21 +19,21 @@ class ZRecord: ZManagedRecord { // NSObject {
     var   writtenModifyDate: Date?
 	var             records: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
 	var               cloud: ZCloud?   { return records as? ZCloud }
-	var          recordName: String?   { return record?.recordID.recordName }
-	var unwrappedRecordName: String    { return recordName ?? "" }
-	var       unwrappedName: String    { return recordName ?? emptyName }
+	var        ckRecordName: String?   { return record?.recordID.recordName }
+	var unwrappedRecordName: String    { return ckRecordName ?? "" }
+	var       unwrappedName: String    { return ckRecordName ?? emptyName }
 	var           emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
-	var             isARoot: Bool      { return record != nil && kRootNames.contains(recordName!) }
+	var             isARoot: Bool      { return record != nil && kRootNames.contains(ckRecordName!) }
 	var          isBookmark: Bool      { return record?.isBookmark ?? false }
 	var  isInPublicDatabase: Bool      { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
-	var     showingChildren: Bool      { return isExpanded(recordName) }
-	var        isBigMapRoot: Bool      { return recordName == kRootName }
-	var         isTrashRoot: Bool      { return recordName == kTrashName }
-	var       isRecentsRoot: Bool      { return recordName == kRecentsRootName }
-	var  isLostAndFoundRoot: Bool      { return recordName == kLostAndFoundName }
-	var     isFavoritesRoot: Bool      { return recordName == kFavoritesRootName }
-	var     isFavoritesHere: Bool      { return recordName == gFavoritesHereMaybe?.recordName() }
-	var       isRecentsHere: Bool      { return recordName == gRecentsHereMaybe?.recordName() }
+	var     showingChildren: Bool      { return isExpanded(ckRecordName) }
+	var        isBigMapRoot: Bool      { return ckRecordName == kRootName }
+	var         isTrashRoot: Bool      { return ckRecordName == kTrashName }
+	var       isRecentsRoot: Bool      { return ckRecordName == kRecentsRootName }
+	var  isLostAndFoundRoot: Bool      { return ckRecordName == kLostAndFoundName }
+	var     isFavoritesRoot: Bool      { return ckRecordName == kFavoritesRootName }
+	var     isFavoritesHere: Bool      { return ckRecordName == gFavoritesHereMaybe?.ckRecordName }
+	var       isRecentsHere: Bool      { return ckRecordName == gRecentsHereMaybe?.ckRecordName }
 	var      isSmallMapHere: Bool      { return isFavoritesHere || isRecentsHere }
 	var      isSmallMapRoot: Bool      { return isFavoritesRoot || isRecentsRoot }
 	var canSaveWithoutFetch: Bool      { return !hasState(.requiresFetchBeforeSave) }
@@ -59,7 +59,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	@discardableResult func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
 		var converted = [String]()
 
-		if  let  name = ckrid {
+		if  let  name = ckRecordName {
 			var     v = visited
 
 			if (v == nil || !v!.contains(name)),
@@ -93,7 +93,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 			if  let  r = newValue {
 				record = r
-				ckrid  = r.recordID.recordName
+				recordName  = r.recordID.recordName
 
 				updateInstanceProperties()
 			}
@@ -113,7 +113,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 	convenience init(record: CKRecord?, databaseID: ZDatabaseID?) {
 		if  gUseCoreData {
-			self.init(entityName: record?.entityName) // initialize managed object from ck record
+			self.init(entityName: record?.entityName, databaseID: databaseID) // initialize managed object from ck record
 		} else {
 			self.init()
 		}
@@ -153,7 +153,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 		// debugging tests //
 		// //////////////////
 
-//		let name = (self as? Zone)?.zoneName ?? recordName ?? kEmptyIdea
+//		let name = (self as? Zone)?.zoneName ?? ckRecordName ?? kEmptyIdea
 
 //		if !canSaveWithoutFetch &&  isFetched {
 //			bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
@@ -162,7 +162,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 //			bam("require FETCH BEFORE SAVE " + name)
 //			fetchBeforeSave()
 //
-//			if  name != emptyName || recordName == kRootName {
+//			if  name != emptyName || ckRecordName == kRootName {
 //				bam("new named record, should ALLOW SAVING")
 //			}
 //		}
@@ -192,7 +192,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	func revealChildren() {
         var expansionSet = gExpandedZones
 
-        if  let name = recordName, !isBookmark, !expansionSet.contains(name) {
+        if  let name = ckRecordName, !isBookmark, !expansionSet.contains(name) {
             expansionSet.append(name)
 
             gExpandedZones = expansionSet
@@ -202,7 +202,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	func concealChildren() {
         var expansionSet = gExpandedZones
 
-        if let  name = recordName {
+        if  let name = ckRecordName {
             while let index = expansionSet.firstIndex(of: name) {
                 expansionSet.remove(at: index)
             }
@@ -255,11 +255,11 @@ class ZRecord: ZManagedRecord { // NSObject {
     func setupLinks() {}
 
     func temporarilyMarkNeeds(_ closure: Closure) {
-        cloud?.temporarilyForRecordNamed(recordName, ignoreNeeds: false, closure)
+        cloud?.temporarilyForRecordNamed(ckRecordName, ignoreNeeds: false, closure)
     }
 
     func temporarilyIgnoreNeeds(_ closure: Closure) {
-        cloud?.temporarilyForRecordNamed(recordName, ignoreNeeds: true, closure)
+        cloud?.temporarilyForRecordNamed(ckRecordName, ignoreNeeds: true, closure)
     }
 
     func updateInstanceProperties() {
@@ -346,8 +346,8 @@ class ZRecord: ZManagedRecord { // NSObject {
 
     func    hasState(_ state: ZRecordState) -> Bool { return records?.hasZRecord(self, forAnyOf:[state]) ?? false }
     func    addState(_ state: ZRecordState)         {        records?.addZRecord(self,     for: [state]) }
-    func removeState(_ state: ZRecordState)         {        records?.clearRecordName(recordName, for:[state]) }
-    func clearAllStates()                           {        records?.clearRecordName(recordName, for: records?.allStates ?? []) }
+    func removeState(_ state: ZRecordState)         {        records?.clearRecordName(ckRecordName, for:[state]) }
+    func clearAllStates()                           {        records?.clearRecordName(ckRecordName, for: records?.allStates ?? []) }
 
     func needRoot()              {    addState(.needsRoot) }
     func needFound()             {    addState(.needsFound) }
@@ -496,7 +496,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
     func extract(valueOf iType: ZStorageType, at iKeyPath: String) -> NSObject? {     // all properties are extracted from record, using iKeyPath as key
         switch iKeyPath {
-        case kpRecordName:       return recordName as NSObject?      // except for the record name
+        case kpRecordName:       return ckRecordName as NSObject?      // except for the record name
         case kpModificationDate: return record?.modificationDate?.timeIntervalSince1970 as Double? as NSObject?
         default:                 return record?[iKeyPath] as? NSObject
         }
@@ -588,7 +588,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 			return nil
 		}
 
-		guard let name = recordName else {
+		guard let name = ckRecordName else {
 			printDebug(.dFile, "fubar record name \(self)")
 
 			return nil

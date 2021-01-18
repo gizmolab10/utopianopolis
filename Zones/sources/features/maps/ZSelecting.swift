@@ -224,7 +224,7 @@ class ZSelecting: NSObject {
 		if  pastables.count > 0 {
 			let (pastable, (_, _)) = pastables.first!
 
-			return pastable.recordName
+			return pastable.ckRecordName
 		}
 
 		return nil

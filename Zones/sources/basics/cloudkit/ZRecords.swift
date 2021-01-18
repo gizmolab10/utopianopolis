@@ -86,7 +86,7 @@ class ZRecords: NSObject {
 		while  references.count < 4 {
 			let     index = references.count
 			if  let  dbid = ZDatabaseIndex(rawValue: index)?.databaseID,
-				let  name = gRemoteStorage.zRecords(for: dbid)?.rootZone?.recordName() {
+				let  name = gRemoteStorage.zRecords(for: dbid)?.rootZone?.ckRecordName {
 				references.append(name)
 			}
 		}
@@ -105,7 +105,7 @@ class ZRecords: NSObject {
     
     var hereZoneMaybe: Zone? {
 		get { return maybeZoneForRecordName(hereRecordName) }
-		set { hereRecordName = newValue?.recordName ?? rootName }
+		set { hereRecordName = newValue?.ckRecordName ?? rootName }
     }
 
 	var rootName: String {
@@ -272,7 +272,7 @@ class ZRecords: NSObject {
 
     @discardableResult func registerZRecord(_  iRecord: ZRecord?) -> Bool {
         if  let      zRecord  = iRecord,
-            let           id  = zRecord.recordName {
+            let           id  = zRecord.ckRecordName {
 			if let oldRecord  = recordRegistry[id], oldRecord.record?.recordType == zRecord.record?.recordType {
                 if oldRecord != zRecord {
 
@@ -441,7 +441,7 @@ class ZRecords: NSObject {
 				if  zone.zoneName == nil {
 					zone.updateInstanceProperties()
 
-					if  let n = root?.recordName(),
+					if  let n = root?.ckRecordName,
 						![kLostAndFoundName, kDestroyName, kTrashName, kRootName].contains(n) {
 						printDebug(.dFix, "fixed: \(n)")
 					}
@@ -641,7 +641,7 @@ class ZRecords: NSObject {
 
     func clearZRecords(_ records: ZRecordsArray, for states: [ZRecordState]) {
         for record in records {
-            if let name = record.recordName {
+            if  let name = record.recordName {
                 clearRecordName(name, for: states)
             }
         }

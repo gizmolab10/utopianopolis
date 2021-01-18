@@ -14,12 +14,16 @@ let gStringArrayTransformerName = NSValueTransformerName(rawValue: "ZStringArray
 
 class ZManagedRecord: NSManagedObject {
 
-	convenience init(entityName: String?) {
+	convenience init(entityName: String?, databaseID: ZDatabaseID?) {
 		let     context = gCoreDataStack.managedContext
 
 		if  let    name = entityName,
 			let  entity = NSEntityDescription.entity(forEntityName: name, in: context) {
 			self.init(entity: entity, insertInto: context)
+
+			if  let store = gCoreDataStack.persistentStore(for: databaseID) {
+				context.assign(self, to: store)
+			}
 		} else {
 			self.init()
 		}

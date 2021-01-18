@@ -70,7 +70,7 @@ class ZStatusController: ZGenericController {
 		var text = ""
 
 		if  let zone = currentZone,
-			let name = zone.recordName {
+			let name = zone.ckRecordName {
 			let type = zone.type.identifier.uppercased()
 			text     = name
 

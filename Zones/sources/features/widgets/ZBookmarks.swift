@@ -35,7 +35,7 @@ class ZBookmarks: NSObject {
 
 	func bookmarks(for iZone: Zone) -> ZoneArray? {
 		if  let dbID = iZone.databaseID,
-			let name = iZone.recordName,
+			let name = iZone.ckRecordName,
 			let dict = registry[dbID] {
 			return dict[name]    // returned value is an array
 		}
@@ -110,10 +110,10 @@ class ZBookmarks: NSObject {
 				if  registered == nil {
 					registered  = []
 				} else if let       parentOfBookmark  = bookmark.parentZone {
-					let recordNameOfParentOfBookmark  = parentOfBookmark.recordName
+					let recordNameOfParentOfBookmark  = parentOfBookmark.ckRecordName
 					if  recordNameOfParentOfBookmark != kLostAndFoundName {
 						for     existing in registered! {
-							if  existing.parentZone?.recordName == recordNameOfParentOfBookmark {
+							if  existing.parentZone?.ckRecordName == recordNameOfParentOfBookmark {
 								markBookmarkAsLost()    // bookmark is sibling to its target
 
 								return

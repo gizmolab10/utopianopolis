@@ -144,7 +144,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var type : ZWidgetType {
-		if  let    name = root?.recordName() {
+		if  let    name = root?.ckRecordName {
 			switch name {
 				case   kRecentsRootName: return .tRecent
 				case  kExemplarRootName: return .tExemplar
@@ -203,8 +203,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return Zone(databaseID: dbID, named: String(arc4random()))
 	}
 
-	func recordName() -> String? { return recordName }
-	func identifier() -> String? { return isARoot ? databaseID?.rawValue : recordName }
+	func recordName() -> String? { return ckRecordName }
+	func identifier() -> String? { return isARoot ? databaseID?.rawValue : ckRecordName }
 	func   toolName() -> String? { return clippedName }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
@@ -579,7 +579,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				zoneLink = kNullLink
 			} else {
 				let    hasRef = newValue!.record != nil
-				let reference = !hasRef ? "" : newValue!.recordName!
+				let reference = !hasRef ? "" : newValue!.ckRecordName
 				zoneLink      = "\(newValue!.databaseID!.rawValue)::\(reference)"
 			}
 
@@ -811,8 +811,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var childArray = Set<Zone>()
 
 		for child in children {
-			child.setValue(self, forKeyPath: "parentRef")
-			childArray.insert(child)
+			if  child.databaseID == databaseID {
+				child.setValue(self, forKeyPath: "parentRef")
+				childArray.insert(child)
+			}
 		}
 
 		setValue(childArray as NSObject, forKeyPath: "childArray")
@@ -1498,7 +1500,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
 
 		if  unequal && left.record != nil && right.record != nil {
-			return left.recordName == right.recordName
+			return left.ckRecordName == right.ckRecordName
 		}
 
 		return !unequal
@@ -2143,7 +2145,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			while let probe = probeID?.recordName, !visited.contains(probe) {
 				visited.append(probe)
 
-				if probe == identifier {
+				if  probe == identifier {
 					return true
 				}
 
@@ -2797,7 +2799,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func containsCKRecord(_ iCKRecord: CKRecord?) -> Bool {
 		if let identifier = iCKRecord?.recordID.recordName {
 			for child in children {
-				if  let childID = child.recordName, childID == identifier {
+				if  let childID = child.ckRecordName, childID == identifier {
 					return true
 				}
 			}
@@ -3211,7 +3213,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func updateRecordName(for type: ZStorageType) {
 		if  let name = rootName(for: type),
-			recordName != name {
+			ckRecordName != name {
 			record = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: name)) // change record name by relacing record
 
 			needSave()

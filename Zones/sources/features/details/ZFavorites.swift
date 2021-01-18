@@ -118,7 +118,7 @@ class ZFavorites: ZRecords {
 			if  !actNormal {
 				let          basis = isBookmark ? zone.crossLink! : zone
 
-				if  let recordName = basis.recordName {
+				if  let recordName = basis.ckRecordName {
 					parent         = gFavoritesHereMaybe ?? gFavoritesRoot!
 
 					for workingFavorite in root.allBookmarkProgeny {

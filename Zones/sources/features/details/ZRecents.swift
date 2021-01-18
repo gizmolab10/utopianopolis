@@ -53,9 +53,9 @@ class ZRecents : ZRecords {
 	}
 
 	@discardableResult func pop(_ iZone: Zone? = gHereMaybe) -> Bool {
-		if  let name = iZone?.recordName() {
+		if  let name = iZone?.ckRecordName {
 			for bookmark in workingBookmarks {
-				if  name == bookmark.bookmarkTarget?.recordName() {
+				if  name == bookmark.bookmarkTarget?.ckRecordName {
 					go(down: gListsGrowDown) {
 						bookmark.deleteSelf(permanently: true) {}
 					}
@@ -91,11 +91,11 @@ class ZRecents : ZRecords {
 	}
 
 	func findAndSetHereAsParentOfBookmarkTargeting(_ target: Zone) -> Bool {
-		let rName = target.recordName()
+		let rName = target.ckRecordName
 		var found = false
 
 		rootZone?.traverseProgeny { (bookmark) -> (ZTraverseStatus) in
-			if  let  tName = bookmark.bookmarkTarget?.recordName(),
+			if  let  tName = bookmark.bookmarkTarget?.ckRecordName,
 				let parent = bookmark.parentZone,
 				tName     == rName,
 				parent.isInRecents {

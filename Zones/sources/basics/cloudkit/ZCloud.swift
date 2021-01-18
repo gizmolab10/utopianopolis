@@ -485,7 +485,7 @@ class ZCloud: ZRecords {
                         zone.traverseAllProgeny { iZone in
                             if  iZone.isFetched,
                                 iZone.databaseID == self.databaseID,
-                                let identifier = iZone.recordName,
+                                let identifier = iZone.ckRecordName,
                                 !iZone.isARoot,
                                 !memorables.contains(identifier) {
                                 memorables.append(identifier)
@@ -903,13 +903,13 @@ class ZCloud: ZRecords {
                         }
 
                         if  let    fetched = maybe,     // always not nil
-                            let recordName = fetched.recordName {
+                            let recordName = fetched.ckRecordName {
 
                             fetched.maybeNeedChildren()
 
                             for childID in childrenIDs {
                                 if  let   child = self.maybeZoneForRecordID(childID), !fetched.spawnedBy(child),
-                                    recordName == child.parentZone?.recordName,
+                                    recordName == child.parentZone?.ckRecordName,
                                     let       r = child.record {
                                     let  states = self.states(for: r)
 
