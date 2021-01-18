@@ -54,22 +54,26 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var       needsAdoption: Bool      { return  hasState(.needsAdoption) }
 	var      needsBookmarks: Bool      { return  hasState(.needsBookmarks) }
 
-	func updateFromCoreDataRelationships() {}
+	@discardableResult func updateFromCoreDataRelationships(visited: [String]?) -> [String] { return [String]() }
 
-	func convertFromCoreData(into type: String) {
+	@discardableResult func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
+		var converted = [String]()
+
 		if  let  name = ckrid {
-			let   ckr = CKRecord(recordType: type, recordID: CKRecordID(recordName: name))
+			var     v = visited
 
-			if  let z = records?.maybeZRecordForRecordName(name), z != self {
-				z.useBest(record: ckr)
-			} else {
-				record = ckr
-
-				updateCKRecordProperties()
-				register()
-				updateFromCoreDataRelationships()
+			if (v == nil || !v!.contains(name)),
+				records?.maybeZRecordForRecordName(name) == nil {
+				record = CKRecord(recordType: type, recordID: CKRecordID(recordName: name))     // empty
+				updateCKRecordProperties()                                                      // filled
+				converted.appendUnique(contentsOf: [name])                                           // filled
+				v?       .appendUnique(contentsOf: [name])
 			}
+
+			converted.append(contentsOf: updateFromCoreDataRelationships(visited: v))
 		}
+
+		return converted
 	}
 
 	@objc func setRecord(_ newValue: CKRecord?) {
@@ -279,19 +283,6 @@ class ZRecord: ZManagedRecord { // NSObject {
         }
     }
 
-    func updateCKRecordProperties() {
-        if  let r = record {
-            for keyPath in cloudProperties {
-                let    cloudValue  = r[keyPath] as! NSObject?
-                let propertyValue  = value(forKeyPath: keyPath) as! NSObject?
-
-                if  propertyValue != nil && propertyValue != cloudValue {
-                    r[keyPath] = propertyValue as? CKRecordValue
-                }
-            }
-        }
-	}
-
 	func useBest(record iRecord: CKRecord) {
 		if  let best = chooseBest(record: iRecord) {
 			setRecord(best)
@@ -306,10 +297,10 @@ class ZRecord: ZManagedRecord { // NSObject {
             let newDate = iRecord.modificationDate,
             (noDate || newDate.timeIntervalSince(myDate!) > 10.0) {
             
-            if  let   r = best,
-                r.recordID.recordName != iRecord.recordID.recordName {
-                records?.addCKRecord(record, for: [.needsDestroy])
-            }
+//            if  let   r = best,
+//                r.recordID.recordName != iRecord.recordID.recordName {
+//                records?.addCKRecord(record, for: [.needsDestroy])
+//            }
 
 			best = iRecord
         }
@@ -332,6 +323,23 @@ class ZRecord: ZManagedRecord { // NSObject {
             maybeNeedSave()
         }
     }
+
+	// MARK:- core data
+	// MARK:-
+
+	func updateCKRecordProperties() {
+		if  gUseCoreData,
+			let          r = record {
+			for keyPath in cloudProperties {
+				let    cloudValue  = r[keyPath] as! NSObject?
+				let propertyValue  = value(forKeyPath: keyPath) as! NSObject?
+
+				if  propertyValue != nil && propertyValue != cloudValue {
+					r[keyPath] = propertyValue as? CKRecordValue
+				}
+			}
+		}
+	}
 
     // MARK:- states
     // MARK:-

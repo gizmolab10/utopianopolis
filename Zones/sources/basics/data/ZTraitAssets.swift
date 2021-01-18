@@ -90,6 +90,16 @@ class ZTraitAssets : ZRecord {
 	// MARK:- persistence
 	// MARK:-
 
+	override func updateCKRecordProperties() {
+		super.updateCKRecordProperties()
+
+		if  gUseCoreData {
+			if  let    dID = dbid {
+				databaseID = ZDatabaseID.convert(from: dID)
+			}
+		}
+	}
+
 	// called during save note (in set note text)
 	// and in read file (extract from storage dictionary)
 

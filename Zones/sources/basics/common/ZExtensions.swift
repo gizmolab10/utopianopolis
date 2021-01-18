@@ -17,7 +17,7 @@ import CloudKit
 
 typealias               ZoneArray = [Zone]
 typealias              CKRecordID = CKRecord.ID
-typealias              CKReference = CKRecord.Reference
+typealias             CKReference = CKRecord.Reference
 typealias           ZRecordsArray = [ZRecord]
 typealias           ZObjectsArray = [NSObject]
 typealias          CKRecordsArray = [CKRecord]
@@ -240,7 +240,7 @@ extension NSObject {
             let        rawIdentifier = components[0]
             let   dbID: ZDatabaseID? = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
             let             zRecords = gRemoteStorage.zRecords(for: dbID)
-            let                 zone = zRecords?.sureZoneForCKRecord(ckRecord) ?? Zone(record: ckRecord, databaseID: dbID) // BAD DUMMY ?
+            let                 zone = zRecords?.maybeZoneForCKRecord(ckRecord)
 
             return zone
         }
@@ -459,17 +459,17 @@ extension CKRecord {
 
 	var isOrphaned: Bool {
 		var parentRecordName : String?
-		var parentRef        = self[kpParent] as? CKReference
+		var parentReference  = self[kpParent] as? CKReference
 
-		if  parentRef == nil {
+		if  parentReference == nil {
 			if  let     link = self[kpZoneParentLink] as? String {
 				parentRecordName = recordName(from: link) // parent is in other db
 			} else {
-				parentRef    = self[kpOwner] as? CKReference
+				parentReference  = self[kpOwner] as? CKReference
 			}
 		}
 
-		if  let ref = parentRef {
+		if  let ref = parentReference {
 			parentRecordName = ref.recordID.recordName
 		}
 

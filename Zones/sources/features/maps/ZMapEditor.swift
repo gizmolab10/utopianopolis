@@ -96,10 +96,10 @@ class ZMapEditor: ZBaseEditor {
 					}
 				}
             } else if isValid(key, flags) {
-				let   zone = gSelecting.currentMoveable
+				let   zone = gSelecting.currentMovableMaybe
                 let widget = gWidgets.widgetForZone(zone)
 
-				zone.needWrite()
+				zone?.needWrite()
                 
                 if  let a = arrow, isWindow {
                     handleArrow(a, flags: flags)
@@ -135,7 +135,7 @@ class ZMapEditor: ZBaseEditor {
 					case "-":      return handleHyphen(COMMAND, OPTION)
 					case "'":      swapSmallMapMode(OPTION)
                     case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
-					case "\\":     if OPTION  { goToRoot() } else { gMapController?.toggleMaps() }; gRedrawMaps()
+					case "\\":     mapControl(OPTION)
 					case "[", "{", "}",
 						 "]":      go(down: ["]", "}"].contains(key), COMMAND: COMMAND) { gRedrawMaps() }
                     case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
@@ -286,10 +286,16 @@ class ZMapEditor: ZBaseEditor {
 	// MARK:- features
 	// MARK:-
 
-	func goToRoot() {
-		if  let root = gCloud?.rootZone {
-			gHere    = root
+	func mapControl(_ OPTION: Bool) {
+		if !OPTION {
+			gMapController?.toggleMaps()
+		} else if let root = gCloud?.rootZone {
+			gHere = root
+
+			gHere.grab()
 		}
+
+		gRedrawMaps()
 	}
 
 	func swapSmallMapMode(_ OPTION: Bool) {
@@ -451,14 +457,21 @@ class ZMapEditor: ZBaseEditor {
 
 	func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false, _ CONTROL: Bool = false) {
 
-		// plain is fetch children
+		// plain is fetch all progeny
 		// COMMAND alone is fetch all
-		// OPTION is all progeny
+		// OPTION is children
 		// both is force adoption of selected
 
 		if          CONTROL {
-			gCloud?.fetchAllProgeny { iSame in
-				gRedrawMaps()
+			if      OPTION {
+				if  let      root = gCloud?.rootZone {
+					let converted = gCoreDataStack.convertZoneFromCoreData(root)
+					printDebug(.dData, "converted \(converted.count) core data objects")
+				}
+			} else {
+				gCloud?.fetchAllProgeny { iSame in
+					gRedrawMaps()
+				}
 			}
 		} else if   COMMAND {
 			if      OPTION {

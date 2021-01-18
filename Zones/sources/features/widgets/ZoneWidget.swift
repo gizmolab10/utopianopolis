@@ -159,6 +159,10 @@ class ZoneWidget: ZView {
             backgroundColor = kClearColor
         #endif
 
+		if  let zone = widgetZone, !zone.isBookmark, zone.zoneName == "urgent" {
+			print("\(zone.count), \(zone.level)")
+		}
+
 		gWidgets.setWidgetForZone(self, for: mapType)
         addTextView()
         textWidget.layoutText()

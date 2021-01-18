@@ -80,16 +80,10 @@ class ZTogglingView: NSStackView {
     func update() {
 		titleButton?.layer?.backgroundColor = gAccentColor.cgColor
 
-		var     title = "Recent"
 		if  identity == .Map,
 			let  here = gIsRecentlyMode ? gRecentsHereMaybe : gFavoritesHereMaybe {
-			let names = here.ancestralPath.map { zone -> String in
-				return zone.unwrappedName.capitalized               // convert ancestors into capitalized strings
-			}
 
-			title = names.joined(separator: kColonSeparator)
-
-			titleButton?.title = title
+			titleButton?.title = here.ancestralString
 		}
 
 		turnOnTitleButton()

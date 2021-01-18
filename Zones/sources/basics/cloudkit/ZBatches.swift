@@ -153,6 +153,7 @@ class ZBatches: ZOnboarding {
     var      currentBatches = [ZBatch] ()
     var     deferredBatches = [ZBatch] ()
     var   currentDatabaseID : ZDatabaseID?
+	var        currentBatch : ZBatch?
     var          totalCount :    Int { return currentBatches.count + deferredBatches.count }
 	var              isLate :   Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
 	var          statusText : String { return currentOp.isDoneOp ? "" : currentOp.description + remainingOpsText }
@@ -184,8 +185,9 @@ class ZBatches: ZOnboarding {
         // 4. no more batches, nothing to process
 
         FOREGROUND(canBeDirect: true) {
-            if  let      batch = self.currentBatches.first {
-                let operations = batch.allowedOperations
+            if  let         batch = self.currentBatches.first {
+                let    operations = batch.allowedOperations
+				self.currentBatch = batch
 
                 self.setupAndRun(operations) {                  // 1.
                     batch.fireCompletions()                     // 2.

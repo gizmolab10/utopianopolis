@@ -206,7 +206,7 @@ class ZSelecting: NSObject {
         var movable: Zone?
 
         if  currentGrabs.count > 0 {
-            movable = firstGrab
+			movable = currentGrabs.first
         } else if let zone = gTextEditor.currentlyEditedZone {
             movable = zone
         }

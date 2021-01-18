@@ -768,18 +768,24 @@ class ZCloud: ZRecords {
     func fetchNeededIdeas(_ onCompletion: IntClosure?) {
         let needed = recordIDsWithMatchingStates([.needsFetch, .requiresFetchBeforeSave], pull: true)
 
-        fetchIdeas(needed: needed) { iCKRecords in
-            FOREGROUND {
-                if  iCKRecords.count == 0 {
-                    self.recount()
-                    onCompletion?(0)
-                } else {
-					self.createZRecords(from: iCKRecords) {
-						self.fetchNeededIdeas(onCompletion)                            // process remaining
+		if  needed.count == 0 {
+			FOREGROUND {
+				onCompletion?(0)
+			}
+		} else {
+			fetchIdeas(needed: needed) { iCKRecords in
+				FOREGROUND {
+					if  iCKRecords.count == 0 {
+						self.recount()
+						onCompletion?(0)
+					} else {
+						self.createZRecords(from: iCKRecords) {
+							self.fetchNeededIdeas(onCompletion)                            // process remaining
+						}
 					}
-                }
-            }
-        }
+				}
+			}
+		}
     }
 
     func fetchIdeas(needed:   CKRecordIDsArray, _ onCompletion: RecordsClosure?) {

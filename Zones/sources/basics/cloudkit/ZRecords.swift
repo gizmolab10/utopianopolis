@@ -288,6 +288,10 @@ class ZRecords: NSObject {
                     gBookmarks.persistForLookupByTarget(bookmark)
                 }
 
+				if  id == kRootName {
+					printDebug(.dData, "hah!")
+				}
+
                 recordRegistry[id] = zRecord
 
 				registerByType(zRecord)
@@ -467,7 +471,7 @@ class ZRecords: NSObject {
 					zone.adopt()
 
 					if  zone.root == nil {
-						printDebug(.dAdopt, "nil parent (at \(index)) for: \(zone)")
+						printDebug(.dAdopt, "nil root (at \(index)) for: \(zone.ancestralString)")
 					}
 				}
 			}
@@ -1117,16 +1121,16 @@ class ZRecords: NSObject {
 	// MARK:- lookups
     // MARK:-
 
-	func      maybeZoneForReference (_ iReference: CKReference) -> Zone? { return maybeZoneForRecordID      (iReference.recordID) }
-    func       maybeZoneForCKRecord (_ iRecord:    CKRecord?)          -> Zone? { return maybeZoneForRecordID      (iRecord?  .recordID) }
-    func    maybeZRecordForCKRecord (_ iRecord:    CKRecord?)       -> ZRecord? { return maybeZRecordForRecordName (iRecord?  .recordID.recordName) }
-    func    maybeZRecordForRecordID (_ iRecordID:  CKRecordID?)    -> ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName) }
-	func      maybeTraitForRecordID (_ iRecordID:  CKRecordID?)     -> ZTrait? { return maybeZRecordForRecordID   (iRecordID)   as? ZTrait }
-	func       maybeZoneForRecordID (_ iRecordID:  CKRecordID?)       -> Zone? { return maybeZRecordForRecordID   (iRecordID)   as? Zone }
-	func     maybeZoneForRecordName (_ iRecordName:     String?)       -> Zone? { return maybeZRecordForRecordName (iRecordName) as? Zone }
-	func maybeCKRecordForRecordName (_ iRecordName:     String?)   -> CKRecord? { return maybeZRecordForRecordName (iRecordName)?.record }
+	func      maybeZoneForReference (_ iReference: CKReference) ->     Zone? { return maybeZoneForRecordID      (iReference.recordID) }
+    func       maybeZoneForCKRecord (_ iRecord:    CKRecord?)   ->     Zone? { return maybeZoneForRecordID      (iRecord?  .recordID) }
+    func    maybeZRecordForCKRecord (_ iRecord:    CKRecord?)   ->  ZRecord? { return maybeZRecordForRecordName (iRecord?  .recordID.recordName) }
+    func    maybeZRecordForRecordID (_ iRecordID:  CKRecordID?) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName) }
+	func      maybeTraitForRecordID (_ iRecordID:  CKRecordID?) ->   ZTrait? { return maybeZRecordForRecordID   (iRecordID)   as? ZTrait }
+	func       maybeZoneForRecordID (_ iRecordID:  CKRecordID?) ->     Zone? { return maybeZRecordForRecordID   (iRecordID)   as? Zone }
+	func     maybeZoneForRecordName (_ iRecordName:    String?) ->     Zone? { return maybeZRecordForRecordName (iRecordName) as? Zone }
+	func maybeCKRecordForRecordName (_ iRecordName:    String?) -> CKRecord? { return maybeZRecordForRecordName (iRecordName)?.record }
 
-	func  maybeZRecordForRecordName (_ iRecordName:     String?)    -> ZRecord? {
+	func  maybeZRecordForRecordName (_ iRecordName:    String?) ->  ZRecord? {
 		if  let name = iRecordName {
 
 			if  [.recentsID, .favoritesID].contains(databaseID) {
@@ -1159,13 +1163,13 @@ class ZRecords: NSObject {
         } else {
             zone = Zone(record: ckRecord, databaseID: databaseID)
 
-			if  requireFetch {
-                zone?.fetchBeforeSave() // POTENTIALLY BAD DUMMY
-            }
+//			if  requireFetch {
+//				zone?.fetchBeforeSave() // POTENTIALLY BAD DUMMY
+//			}
 
-			if  preferFetch || requireFetch {
-				zone?.needFetch()
-			}
+//			if  preferFetch || requireFetch {
+//				zone?.needFetch()
+//			}
         }
 
         return zone!

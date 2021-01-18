@@ -11,7 +11,7 @@ import Foundation
 typealias ZDebugModes = [ZDebugMode]
 
 var  gDebugModes:  ZDebugModes = [.dUseCoreData, .dDebugInfo]
-var  gPrintModes: [ZPrintMode] = [.dAdopt]
+var  gPrintModes: [ZPrintMode] = [.dData]
 var gUseCoreData: Bool { return gDebugModes.contains(.dUseCoreData) }
 var gDebugAccess: Bool { return gDebugModes.contains(.dDebugAccess) }
 var  gWriteFiles: Bool { return gDebugModes.contains(.dWriteFiles) }
@@ -65,6 +65,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let   dFile = ZPrintMode() // parsing, error handling
 	static let   dUser = ZPrintMode() // user interruption of busy loops
 	static let   dTime = ZPrintMode() // stopwatch
+	static let   dData = ZPrintMode() // core data
 	static let  dSpeed = ZPrintMode() // "
 	static let  dNames = ZPrintMode() // decorate idea text with record names
 	static let  dFocus = ZPrintMode() // push, /, bookmarks
@@ -88,6 +89,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dTime,   "   time"),
 				(.dEdit,   "   edit"),
 				(.dUser,   "   user"),
+				(.dData,   "   data"),
 				(.dNames,  "   name"),
 				(.dNotes,  "   note"),
 				(.dFocus,  "  focus"),

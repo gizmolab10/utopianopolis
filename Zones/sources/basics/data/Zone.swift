@@ -270,6 +270,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return results.reversed()
 	}
 
+	var ancestralString: String {
+		let names = ancestralPath.map { zone -> String in
+			return zone.unwrappedName.capitalized               // convert ancestors into capitalized strings
+		}
+
+		return names.joined(separator: kColonSeparator)
+	}
+
+
 	var email: String? {
 		get {
 			if  emailMaybe == nil {
@@ -691,11 +700,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		get {
 			if  isARoot {
 				unlinkParentAndMaybeNeedSave()
-			} else if parentZoneMaybe == nil {
-				if  let     parentRef  = parent {
-					parentZoneMaybe    = cloud?.maybeZoneForReference(parentRef)
-				} else if let    zone  = zoneFrom(parentLink) {
-					parentZoneMaybe    = zone
+			} else  if  parentZoneMaybe == nil {
+				if  let parentReference  = parent {
+					parentZoneMaybe      = cloud?.maybeZoneForReference(parentReference)
+				} else if let      zone  = zoneFrom(parentLink) {
+					parentZoneMaybe      = zone
 				}
 			}
 
@@ -772,14 +781,30 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- core data
 	// MARK:-
 
-	override func updateFromCoreDataRelationships() {
+	override func updateFromCoreDataRelationships(visited: [String]?) -> [String] {
+		var      converted = [String]()
+
 		if  let        set = mutableSetValue(forKeyPath: "childArray") as? Set<Zone>, set.count > 0 {
 			let childArray = ZoneArray(set: set)
+//			printDebug(.dData, "\(set.count) in \(unwrappedName)")
+			var v = visited
+
+			if  let name = record?.recordID.recordName {
+				v?.appendUnique(contentsOf: [name])
+			}
+
 			for child in childArray {
-				child.convertFromCoreData(into: kZoneType)
-				addChild(child, updateCoreData: false)
+				let c = child.convertFromCoreData(into: kZoneType, visited: v)
+
+				if  let name = child.record?.recordID.recordName,
+					(visited == nil || !visited!.contains(name)) {
+					converted.append(contentsOf: c)
+					addChild(child, updateCoreData: false)
+				}
 			}
 		}
+
+		return converted
 	}
 
 	func updateCoreDataRelationships() {
@@ -3130,6 +3155,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		// /////////////////////////////
 		// exemplar and scratch ideas //
+		//  N.B. not to be persisted  //
 		// /////////////////////////////
 
 		var name = rootName
@@ -3140,6 +3166,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		let record = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: name))
 		self.init(record: record, databaseID: .everyoneID)
+
+		parentLink = kNullLink
 	}
 
 	convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {

@@ -100,7 +100,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	func toggleMaps() {
 		toggleDatabaseID()
-		gRecents.push()
 		gHere.grab()
 		gHere.revealChildren()
 		gFavorites.updateAllFavorites()
@@ -144,13 +143,13 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         specificWidget?     .widgetZone = here
 		gTextCapturing                  = false
 
-        if  let          zone  = iZone as? Zone,
-            let        widget  = zone.widget,
-			widget.type       == zone.type {
-            specificWidget     = widget
-            specificIndex      = zone.siblingIndex
-            specificView       = specificWidget?.superview
-            recursing          = [.sData, .sRelayout].contains(iKind)
+        if  let       zone = iZone as? Zone,
+            let     widget = zone.widget,
+			widget.type   == zone.type {
+            specificWidget = widget
+            specificIndex  = zone.siblingIndex
+            specificView   = specificWidget?.superview
+            recursing      = [.sData, .sRelayout].contains(iKind)
         }
 
 		let total = specificWidget?.layoutInView(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, iKind, visited: []) ?? 0

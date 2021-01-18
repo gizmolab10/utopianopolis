@@ -638,7 +638,7 @@
 			path = osx;
 			sourceTree = "<group>";
 		};
-		0C39B2541F182EBB0091F4D1 /* models */ = {
+		0C39B2541F182EBB0091F4D1 /* data */ = {
 			isa = PBXGroup;
 			children = (
 				A700F94D24AFBFFB009C87AA /* seriously.xcdatamodel */,
@@ -656,7 +656,7 @@
 				A7B78D3C244B768400DB2C14 /* ZTraitAssets.swift */,
 				0C3ECC221FA3023500F085EA /* ZUser.swift */,
 			);
-			path = models;
+			path = data;
 			sourceTree = "<group>";
 		};
 		0C39B2851F182EBB0091F4D1 /* views */ = {
@@ -913,7 +913,7 @@
 				0C39B22E1F182EBB0091F4D1 /* common */,
 				0C43EFBC21010F17000976CE /* files */,
 				0C39B2361F182EBB0091F4D1 /* ios */,
-				0C39B2541F182EBB0091F4D1 /* models */,
+				0C39B2541F182EBB0091F4D1 /* data */,
 				A7EE245425292985003BF3C0 /* navigation */,
 				0C39B23E1F182EBB0091F4D1 /* osx */,
 				0C39B2851F182EBB0091F4D1 /* views */,
@@ -929,14 +929,14 @@
 				A769977F24983C9600DF289D /* essays */,
 				A7DF4865249B1860008B35AC /* maps */,
 				A7D2D65224902F8F00F652B0 /* help */,
-				A7DF486D249C10F0008B35AC /* ideas */,
+				A7DF486D249C10F0008B35AC /* widgets */,
 				A7DF4868249B1A3E008B35AC /* search */,
 				A7DF4867249B19C6008B35AC /* startup */,
 			);
 			path = features;
 			sourceTree = "<group>";
 		};
-		A7DF486D249C10F0008B35AC /* ideas */ = {
+		A7DF486D249C10F0008B35AC /* widgets */ = {
 			isa = PBXGroup;
 			children = (
 				0CAC18E02006A84800D641C4 /* ZBookmarks.swift */,
@@ -947,7 +947,7 @@
 				A7395BAD21B877B600F5759F /* ZTextEditor.swift */,
 				0C39B24A1F182EBB0091F4D1 /* ZWidgets.swift */,
 			);
-			path = ideas;
+			path = widgets;
 			sourceTree = "<group>";
 		};
 		A7EE245425292985003BF3C0 /* navigation */ = {

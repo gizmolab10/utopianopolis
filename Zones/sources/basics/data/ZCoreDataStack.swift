@@ -26,6 +26,7 @@ class ZCoreDataStack: NSObject {
 	lazy var model          : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }()
 	lazy var coordinator    : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
 	lazy var managedContext : NSManagedObjectContext        = { return persistentContainer.viewContext }()
+	var       lastConverted = [String]()
 
 	lazy var localDescription: NSPersistentStoreDescription = {
 		let           desc = NSPersistentStoreDescription(url: localURL)
@@ -122,29 +123,33 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func loadZone(with recordName: String, into dbID: ZDatabaseID?) {
-		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-		request.predicate = NSPredicate(format: "ckrid == \"\(recordName)\"")
-		let       records = self.load(type: kZoneType, into: dbID, using: request)
+		if  let          dbid = dbID?.identifier {
+			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
+			let   idPredicate = NSPredicate(format: "ckrid = \"\(recordName)\"")
+			let   dbPredicate = NSPredicate(format: "dbid = \"\(dbid)\"")
+			request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [idPredicate, dbPredicate])
+			let      zRecords = self.load(type: kZoneType, into: dbID, using: request)
 
-		if  records.count > 0 {
-			for record in records {
-				if  let zone = record as? Zone,
-					zone.isARoot {
-					zone.traverseAllProgeny { iChild in
-						iChild.respectOrder()
-					}
+			// //////////////////////////////////////////////////////////////////////////////// //
+			// NOTE: all but the first of multiple values found are duplicates and thus ignored //
+			// //////////////////////////////////////////////////////////////////////////////// //
+
+			if  zRecords.count > 0,
+				let  zone = zRecords[0] as? Zone,
+				let cloud = gRemoteStorage.zRecords(for: dbID) {
+				zone.register()
+
+				zone.traverseAllProgeny { iChild in
+					iChild.respectOrder()
 				}
-			}
 
-			if  let zRecords = gRemoteStorage.zRecords(for: dbID),
-				let     zone = records[0] as? Zone {
 				switch recordName {
-					case          kRootName: zRecords.rootZone         = zone
-					case         kTrashName: zRecords.trashZone        = zone
-					case       kDestroyName: zRecords.destroyZone      = zone
-					case   kRecentsRootName: zRecords.recentsZone      = zone
-					case kFavoritesRootName: zRecords.favoritesZone    = zone
-					case  kLostAndFoundName: zRecords.lostAndFoundZone = zone
+					case          kRootName: cloud.rootZone         = zone
+					case         kTrashName: cloud.trashZone        = zone
+					case       kDestroyName: cloud.destroyZone      = zone
+					case   kRecentsRootName: cloud.recentsZone      = zone
+					case kFavoritesRootName: cloud.favoritesZone    = zone
+					case  kLostAndFoundName: cloud.lostAndFoundZone = zone
 					default:                 break
 				}
 			}
@@ -154,15 +159,20 @@ class ZCoreDataStack: NSObject {
 	@discardableResult func load(type: String, into dbID: ZDatabaseID?, using request: NSFetchRequest<NSFetchRequestResult>) -> ZRecordsArray {
 		var records = ZRecordsArray()
 		do {
+			var gotit = false
 			let items = try managedContext.fetch(request)
 			for item in items {
 				let record = item as! ZRecord
 
-				record.convertFromCoreData(into: type)
-
-				if  let             i  = dbID,
-				    record.databaseID == i {
+				if  let dbid     = dbID?.indicator,
+					record.dbid == dbid, !gotit {
+					gotit        = true
+					let converted = record.convertFromCoreData(into: type, visited: lastConverted)
 					records.append(record)
+
+					if  type == kZoneType {
+						lastConverted.appendUnique(contentsOf: converted)
+					}
 				}
 			}
 		} catch {
@@ -170,6 +180,15 @@ class ZCoreDataStack: NSObject {
 		}
 
 		return records
+	}
+
+	@discardableResult
+	func convertZoneFromCoreData(_ record: ZRecord) -> [String] {
+		let converted = record.convertFromCoreData(into: kZoneType, visited: lastConverted)
+
+		lastConverted.appendUnique(contentsOf: converted)
+
+		return converted
 	}
 
 }
