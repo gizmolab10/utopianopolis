@@ -182,7 +182,7 @@ class ZoneWidget: ZView {
     func layoutChildren(_ iKind: ZSignalKind, mapType: ZWidgetType, visited: ZoneArray) -> Int {
 		var count = 0
 
-        if  let  zone = widgetZone, zone.showingChildren {
+        if  let  zone = widgetZone, zone.expanded {
             var index = childrenWidgets.count
             var previous: ZoneWidget?
 
@@ -277,7 +277,7 @@ class ZoneWidget: ZView {
     func prepareChildrenWidgets() {
         if  let zone = widgetZone {
 
-            if !zone.showingChildren {
+            if !zone.expanded {
                 childrenWidgets.removeAll()
 
                 for view in childrenView.subviews {
@@ -324,7 +324,7 @@ class ZoneWidget: ZView {
         var rect = CGRect()
 
         if  let zone = widgetZone {
-            if !zone.showingChildren || zone.count == 0 {
+            if !zone.expanded || zone.count == 0 {
 
                 // //////////////////////
                 // DOT IS STRAIGHT OUT //
@@ -585,7 +585,7 @@ class ZoneWidget: ZView {
 			let      zone = widgetZone {
             let isGrabbed = zone.isGrabbed
             let isEditing = textWidget.isFirstResponder
-			let  showList = zone.showingChildren
+			let  showList = zone.expanded
 
 			if !nowDrawLines {
 				nowDrawLines = true

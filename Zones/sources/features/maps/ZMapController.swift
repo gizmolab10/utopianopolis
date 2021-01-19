@@ -101,7 +101,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func toggleMaps() {
 		toggleDatabaseID()
 		gHere.grab()
-		gHere.revealChildren()
+		gHere.expand()
 		gFavorites.updateAllFavorites()
 	}
 

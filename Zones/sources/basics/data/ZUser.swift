@@ -48,7 +48,7 @@ class ZUser : ZRecord {
 	func save() {
 		updateCKRecordProperties()
 
-		gUserRecord = self.record
+		gUserRecord = self.ckRecord
 
 		needSave()
 	}

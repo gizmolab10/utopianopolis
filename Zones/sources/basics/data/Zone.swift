@@ -62,8 +62,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var     isACurrentDetailBookmark :               Bool  { return isCurrentFavorite || isCurrentRecent }
 	var              isCurrentRecent :               Bool  { return self ==   gRecents.currentBookmark }
 	var            isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
-	var            onlyShowRevealDot :               Bool  { return showingChildren && ((isSmallMapHere && !(widget?.type.isBigMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
-	var              dragDotIsHidden :               Bool  { return                     (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && showingChildren) } // hide favorites root drag dot
+	var            onlyShowRevealDot :               Bool  { return expanded && ((isSmallMapHere && !(widget?.type.isBigMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
+	var              dragDotIsHidden :               Bool  { return                     (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && expanded) } // hide favorites root drag dot
 	var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
 	var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
 	var                 hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }
@@ -578,7 +578,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if newValue == nil {
 				zoneLink = kNullLink
 			} else {
-				let    hasRef = newValue!.record != nil
+				let    hasRef = newValue!.ckRecord != nil
 				let reference = !hasRef ? "" : newValue!.ckRecordName
 				zoneLink      = "\(newValue!.databaseID!.rawValue)::\(reference)"
 			}
@@ -667,7 +667,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				highest = traverseLevel
 			}
 
-			return iZone.showingChildren ? .eContinue : .eSkip
+			return iZone.expanded ? .eContinue : .eSkip
 		}
 
 		return highest
@@ -718,7 +718,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				parentZoneMaybe             = newValue
 				if  parentZoneMaybe        == nil {
 					unlinkParentAndMaybeNeedSave()
-				} else if let parentRecord  = parentZoneMaybe?.record,
+				} else if let parentRecord  = parentZoneMaybe?.ckRecord,
 						  let newParentDBID = parentZoneMaybe?.databaseID {
 					if       newParentDBID == databaseID {
 						if  parent?.recordID.recordName != parentRecord.recordID.recordName {
@@ -789,14 +789,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 //			printDebug(.dData, "\(set.count) in \(unwrappedName)")
 			var v = visited
 
-			if  let name = record?.recordID.recordName {
+			if  let name = ckRecord?.recordID.recordName {
 				v?.appendUnique(contentsOf: [name])
 			}
 
 			for child in childArray {
 				let c = child.convertFromCoreData(into: kZoneType, visited: v)
 
-				if  let name = child.record?.recordID.recordName,
+				if  let name = child.ckRecord?.recordID.recordName,
 					(visited == nil || !visited!.contains(name)) {
 					converted.append(contentsOf: c)
 					addChild(child, updateCoreData: false)
@@ -984,7 +984,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func revealParentAndSiblings() {
 		if  let parent = parentZone {
-			parent.revealChildren()
+			parent.expand()
 			parent.needChildren()
 		} else {
 			needParent()
@@ -994,7 +994,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addIdea() {
 		if  !isBookmark,
 		    userCanMutateProgeny {
-			revealChildren()
+			expand()
 			addIdea(at: gListsGrowDown ? nil : 0) { iChild in
 				gControllers.signalFor(self, regarding: .sRelayout) {
 					gTemporarilySetMouseZone(iChild)
@@ -1025,7 +1025,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  self  == gHere {
 				gHere  = parent
 
-				parent.revealChildren()
+				parent.expand()
 			}
 
 			var index   = siblingIndex
@@ -1084,7 +1084,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func acquireZones(_ zones: ZoneArray, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
-		revealChildren()
+		expand()
 		needChildren()
 
 		for     zone in zones {
@@ -1107,7 +1107,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			dbID       != .favoritesID {
 			let newIdea = Zone(databaseID: dbID)
 
-			parentZoneMaybe?.revealChildren()
+			parentZoneMaybe?.expand()
 			gTextEditor.stopCurrentEdit()
 
 			if  name != nil {
@@ -1268,7 +1268,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		into.revealChildren()
+		into.expand()
 
 		if  orphan {
 			self.orphan() // remove from current parent
@@ -1403,7 +1403,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func resolveAndSelect(_ searchText: String?) {
 		gHere = self
 
-		revealChildren()
+		expand()
 		gControllers.swapMapAndEssay(force: .mapsMode)
 		gRedrawMaps()
 
@@ -1452,7 +1452,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	override func setupLinks() {
-		if  record != nil {
+		if  ckRecord != nil {
 
 			let isBad: StringToBooleanClosure = { iString -> Bool in
 				let badLinks = ["", "-", "not"]
@@ -1499,7 +1499,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	static func == ( left: Zone, right: Zone) -> Bool {
 		let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
 
-		if  unequal && left.record != nil && right.record != nil {
+		if  unequal && left.ckRecord != nil && right.ckRecord != nil {
 			return left.ckRecordName == right.ckRecordName
 		}
 
@@ -1524,7 +1524,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addTrait(_ trait: ZTrait) {
-		if  let       r      = record,
+		if  let       r      = ckRecord,
 			let    type      = trait.traitType {
 			traits[type]     = trait
 			trait .owner     = CKReference(record: r, action: .none)
@@ -1599,7 +1599,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func traitFor(_ iType: ZTraitType) -> ZTrait {
 		var trait            = traits[iType]
-		if  let            r = record,
+		if  let            r = ckRecord,
 			trait           == nil {
 			trait            = ZTrait(databaseID: databaseID)
 			trait?.owner     = CKReference(record: r, action: .none)
@@ -1633,7 +1633,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  isInSmallMap {
 				let targetParent = bookmarkTarget?.parentZone
 
-				targetParent?.revealChildren()
+				targetParent?.expand()
 				targetParent?.needChildren()
 				travelThrough { (iObject: Any?, iKind: ZSignalKind) in
 					gRecents.updateCurrentForMode()
@@ -1661,7 +1661,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func travelThrough(atArrival: @escaping SignalClosure) {
 		if  let  targetZRecord = crossLink,
 			let     targetDBID = targetZRecord.databaseID,
-			let   targetRecord = targetZRecord.record {
+			let   targetRecord = targetZRecord.ckRecord {
 			let targetRecordID = targetRecord.recordID
 			let        iTarget = bookmarkTarget
 
@@ -1882,11 +1882,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				revealSiblings(untilReaching: p)
 			} else {
 				if !isInSmallMap {
-					p.revealChildren()
+					p.expand()
 					p.needChildren()
 				} else if let g = p.parentZone { // narrow: hide children and set here zone to parent
-					p.concealChildren()
-					g.revealChildren()
+					p.collapse()
+					g.expand()
 					g.setAsSmallMapHereZone()
 					// FUBAR: parent sometimes disappears!!!!!!!!!
 				}
@@ -1940,9 +1940,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var     invoke = {}
 
 		invoke = {
-			needReveal = needReveal || !child.showingChildren
+			needReveal = needReveal || !child.expanded
 
-			child.revealChildren()
+			child.expand()
 
 			if  child.count > 0,
 				let grandchild = gListsGrowDown ? child.children.last : child.children.first {
@@ -2047,7 +2047,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			var done = false
 
 			if !SPECIAL {
-				into.revealChildren()
+				into.expand()
 			}
 
 			into.maybeNeedChildren()
@@ -2138,7 +2138,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func isABookmark(spawnedBy zone: Zone) -> Bool {
 		if  let        link = crossLink, let dbID = link.databaseID {
-			var     probeID = link.record?.recordID
+			var     probeID = link.ckRecord?.recordID
 			let  identifier = zone.recordName
 			var     visited = [String] ()
 
@@ -2161,7 +2161,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var isVisible = true
 
 		traverseAncestors { iAncestor -> ZTraverseStatus in
-			let showing = iAncestor.showingChildren
+			let showing = iAncestor.expanded
 
 			if      iAncestor != self {
 				if  iAncestor == gHere || !showing {
@@ -2183,7 +2183,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			traverseAncestors { iAncestor -> ZTraverseStatus in
 				if  iAncestor != self {
-					iAncestor.revealChildren()
+					iAncestor.expand()
 				}
 
 				if  iAncestor == goal {
@@ -2250,7 +2250,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				visible.append(w)
 			}
 
-			return iZone.showingChildren ? .eContinue : .eSkip
+			return iZone.expanded ? .eContinue : .eSkip
 		}
 
 		return visible
@@ -2258,7 +2258,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func concealAllProgeny() {
 		traverseAllProgeny { iChild in
-			iChild.concealChildren()
+			iChild.collapse()
 		}
 	}
 
@@ -2278,7 +2278,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		safeTraverseProgeny(visited: []) { iZone -> ZTraverseStatus in
 			block(iZone)
 
-			return iZone.showingChildren ? .eContinue : .eSkip
+			return iZone.expanded ? .eContinue : .eSkip
 		}
 	}
 
@@ -2318,7 +2318,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if begun {
 				if iZone.level > iLevel || iZone == self {
 					return .eSkip
-				} else if iZone.level == iLevel && iZone != self && (iZone.parentZone == nil || iZone.parentZone!.showingChildren) {
+				} else if iZone.level == iLevel && iZone != self && (iZone.parentZone == nil || iZone.parentZone!.expanded) {
 					progeny.append(iZone)
 				}
 			}
@@ -2348,7 +2348,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			exposedLevel += 1
 
 			for child: Zone in progeny {
-				if  !child.showingChildren && child.fetchableCount != 0 {
+				if  !child.expanded && child.fetchableCount != 0 {
 					return exposedLevel
 				}
 			}
@@ -2428,13 +2428,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func maybeNeedChildren() {
-		if  showingChildren && !needsProgeny {
+		if  expanded && !needsProgeny {
 			needChildren()
 		}
 	}
 
 	func prepareForArrival() {
-		revealChildren()
+		expand()
 		maybeNeedWritable()
 		maybeNeedColor()
 		maybeNeedRoot()
@@ -2465,7 +2465,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  !isARoot, !needsDestroy, (forceAdoption || needsAdoption) {
 			if  let p = parentZone, p != self,      // first compute parentZone
 				!p.children.contains(self),
-				p.record != nil {
+				p.ckRecord != nil {
 				p.maybeMarkNotFetched()
 				p.addChildAndRespectOrder(self, doNotSave: true)
 
@@ -2600,7 +2600,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 							gDeferringRedraw = false
 
 							if  let child = iChild {
-								self.revealChildren()
+								self.expand()
 								gRedrawMaps(for: self) {
 									child.editAndSelect()
 								}
@@ -2663,7 +2663,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func recursiveUpdate(_ show: Bool, to iLevel: Int?, onCompletion: Closure?) {
-		if !show && isGrabbed && (count == 0 || !showingChildren) {
+		if !show && isGrabbed && (count == 0 || !expanded) {
 
 			// ///////////////////////////////
 			// COLLAPSE OUTWARD INTO PARENT //
@@ -2696,9 +2696,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				self.traverseAllProgeny { iChild in
 					if           !iChild.isBookmark {
 						if        iChild.level >= goal && !show {
-							iChild.concealChildren()
+							iChild.collapse()
 						} else if iChild.level  < goal &&  show {
-							iChild.revealChildren()
+							iChild.expand()
 						}
 					}
 				}
@@ -2735,12 +2735,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					iZone.unregister()
 
 					let newParentZone = iZone.parentZone                                    // (1) grab new parent zone asssigned during a previous traverse (2, below)
-					let     oldRecord = iZone.record
+					let     oldRecord = iZone.ckRecord
 					let     newRecord = CKRecord(recordType: kZoneType)                     // new record id
 					iZone .databaseID = appliedID                                           // must happen BEFORE record assignment
-					iZone     .record = newRecord                                           // side-effect: move registration to the new id's record manager
+					iZone   .ckRecord = newRecord                                           // side-effect: move registration to the new id's record manager
 
-					oldRecord?.copy(to: iZone.record, properties: iZone.cloudProperties)  // preserve new record id
+					oldRecord?.copy(to: iZone.ckRecord, properties: iZone.cloudProperties)  // preserve new record id
 					iZone.needSave()                                                        // in new id's record manager
 
 					// /////////////////////////////////////////////////////////////////
@@ -2885,7 +2885,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				return // selection has not changed
 			}
 
-			if  showingChildren {
+			if  expanded {
 				gSelecting.ungrabAll(retaining: children)
 			} else {
 				return // selection does not show its children
@@ -2913,7 +2913,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				gRedrawMaps()
 			}
 		} else {
-			let show = !showingChildren
+			let show = !expanded
 
 			if  isInSmallMap {
 				expandInSmallMap(show)
@@ -2936,7 +2936,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			toggleChildrenVisibility()
 
 			if  let here = show ? self : parentZone {
-				here.revealChildren()
+				here.expand()
 
 				if  isInFavorites {
 					gFavoritesHereMaybe = here
@@ -2955,7 +2955,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.showSideDot = isACurrentDetailBookmark
 		p.isBookmark  = isBookmark
 		p.showAccess  = hasAccessDecoration
-		p.showList    = showingChildren
+		p.showList    = expanded
 		p.color       = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
 		p.childCount  = (gCountsMode == .progeny) ? progenyCount : indirectCount
 		p.traitType   = (traits.count < 1) ? "" : traits[0]
@@ -3214,7 +3214,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func updateRecordName(for type: ZStorageType) {
 		if  let name = rootName(for: type),
 			ckRecordName != name {
-			record = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: name)) // change record name by relacing record
+			ckRecord = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: name)) // change record name by relacing record
 
 			needSave()
 
@@ -3227,7 +3227,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
-		if  let name = dict[.name] as? String { zoneName = name }
+		if  let name = dict[.name] as? String {
+			zoneName = name
+		}
 
 		try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
 
@@ -3262,7 +3264,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	override func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
-		guard record != nil else {
+		guard ckRecord != nil else {
 			printDebug(.dFile, "\(self) has no record")
 
 			return nil
@@ -3270,7 +3272,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		var dict             = try super.createStorageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
 
-		if  (includeInvisibles || showingChildren),
+		if  (includeInvisibles || expanded),
 			let childrenDict = try (children as ZRecordsArray).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 			dict [.children] = childrenDict as NSObject?
 		}

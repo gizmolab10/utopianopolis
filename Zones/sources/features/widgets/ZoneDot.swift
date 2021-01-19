@@ -98,7 +98,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		} else {
 			let childlessTraveller = zone.canTravel && zone.count == 0
 
-			return !zone.showingChildren || childlessTraveller
+			return !zone.expanded || childlessTraveller
 		}
 	}
 
@@ -322,7 +322,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			} else if  innerDot != nil,
 				let rect = innerDot?.frame.offsetBy(dx: -0.1, dy: -0.1),
 				let zone = widgetZone,
-				(!zone.showingChildren || zone.isBookmark) {
+				(!zone.expanded || zone.isBookmark) {
 				drawOuterDot(rect, parameters)
 			}
 		}

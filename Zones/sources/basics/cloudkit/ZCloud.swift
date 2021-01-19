@@ -254,7 +254,7 @@ class ZCloud: ZRecords {
         detectIfRecordExists(withRecordID: recordID, recordType: kZoneType) { iUpdatedRecord in
             if  let ckRecord = iUpdatedRecord, !ckRecord.isEmpty {
                 let     zone = self.sureZoneForCKRecord(ckRecord)
-                if ckRecord == zone.record {    // record data is new (zone for just updated it)
+                if ckRecord == zone.ckRecord {    // record data is new (zone for just updated it)
                     zone.addToParent() { iZone in
 						gSignal(for: iZone, [.sRelayout])
                     }
@@ -734,7 +734,7 @@ class ZCloud: ZRecords {
 	}
 
     func fetchAllIdeas(_ onCompletion: IntClosure?) {
-        if  !gIsReadyToShowUI && recordRegistry.values.count > 10 {
+        if  !gIsReadyToShowUI && ckRecordsLookup.values.count > 10 {
             onCompletion?(0)
         } else {
             fetchSince(nil, onCompletion)
@@ -910,7 +910,7 @@ class ZCloud: ZRecords {
                             for childID in childrenIDs {
                                 if  let   child = self.maybeZoneForRecordID(childID), !fetched.spawnedBy(child),
                                     recordName == child.parentZone?.ckRecordName,
-                                    let       r = child.record {
+                                    let       r = child.ckRecord {
                                     let  states = self.states(for: r)
 
                                     if  child.isARoot || child == fetched {
@@ -1376,7 +1376,7 @@ class ZCloud: ZRecords {
     }
 
     func setIntoObject(_ object: ZRecord, value: NSObject?, for property: String) {
-        if  let   record = object.record, database != nil {
+        if  let   record = object.ckRecord, database != nil {
             let oldValue = record[property] as? NSObject
 
             if  oldValue        != value {
@@ -1395,7 +1395,7 @@ class ZCloud: ZRecords {
 
     func getFromObject(_ object: ZRecord, valueForPropertyName: String) {
         if  database          != nil &&
-            object    .record != nil {
+            object  .ckRecord != nil {
             let      predicate = NSPredicate(value: true)
             let  type: String  = NSStringFromClass(Swift.type(of: object)) as String
             let query: CKQuery = CKQuery(recordType: type, predicate: predicate)
@@ -1406,7 +1406,7 @@ class ZCloud: ZRecords {
 						gSignal(for: performanceError as NSObject?, [.sError])
                     } else {
                         let                 record: CKRecord = (iResults?[0])!
-                        object.record?[valueForPropertyName] = (record as! CKRecordValue)
+                        object.ckRecord?[valueForPropertyName] = (record as! CKRecordValue)
 
                         gRedrawMaps()
                     }

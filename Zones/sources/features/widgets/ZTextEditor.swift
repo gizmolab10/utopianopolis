@@ -71,9 +71,9 @@ class ZTextPack: NSObject {
             // add suffix for "show counts as" //
             // //////////////////////////////////
 
-			if  gPrintModes.contains(.dNames) && zone.record != nil {
+			if  gPrintModes.contains(.dNames) && zone.ckRecord != nil {
                 suffix = zone.ckRecordName
-            } else if (need > 1) && (!zone.showingChildren || (gCountsMode == .progeny)) {
+            } else if (need > 1) && (!zone.expanded || (gCountsMode == .progeny)) {
                 suffix = String(describing: need)
             }
 
@@ -411,7 +411,7 @@ class ZTextEditor: ZTextView {
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gAppDelegate?.genericMenuHandler(iItem) }
 
     func moveOut(_ iMoveOut: Bool) {
-        let revealed = currentlyEditedZone?.showingChildren ?? false
+        let revealed = currentlyEditedZone?.expanded ?? false
 
         let editAtOffset: FloatClosure = { iOffset in
             if  let grabbed = gSelecting.firstSortedGrab {

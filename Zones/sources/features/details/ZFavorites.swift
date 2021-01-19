@@ -352,7 +352,7 @@ class ZFavorites: ZRecords {
 		// /////////////////////////////////////////////////////////////////////////////////////
 
 		if  let       bookmark = whichBookmarkTargets(here, orSpawnsIt: false) {
-			hereZoneMaybe?.concealChildren()
+			hereZoneMaybe?.collapse()
 			bookmark.asssureIsVisibleAndGrab()                                          // state 1
 
 			hereZoneMaybe      = gSelecting.firstGrab?.parentZone

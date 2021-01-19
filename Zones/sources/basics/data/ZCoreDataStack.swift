@@ -19,14 +19,14 @@ func gSaveContext()                        { gCoreDataStack.saveContext() }
 
 class ZCoreDataStack: NSObject {
 
-	let cloudID             = "iCloud.com.zones.Zones"
-	let localURL            = gCoreDataURL.appendingPathComponent("local.store")
-	let publicURL           = gCoreDataURL.appendingPathComponent("cloud.public.store")
-	let privateURL          = gCoreDataURL.appendingPathComponent("cloud.private.store")
-	lazy var model          : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }()
-	lazy var coordinator    : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
+	let             cloudID = "iCloud.com.zones.Zones"
+	let            localURL = gCoreDataURL.appendingPathComponent("local.store")
+	let           publicURL = gCoreDataURL.appendingPathComponent("cloud.public.store")
+	let          privateURL = gCoreDataURL.appendingPathComponent("cloud.private.store")
+	lazy var          model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }()
+	lazy var    coordinator : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
 	lazy var managedContext : NSManagedObjectContext        = { return persistentContainer.viewContext }()
-	var       lastConverted = [String]()
+	var       lastConverted = [String : [String]]()
 	var        privateStore : NSPersistentStore? { return persistentStore(for: privateURL) }
 	var         publicStore : NSPersistentStore? { return persistentStore(for: publicURL) }
 	var          localStore : NSPersistentStore? { return persistentStore(for: localURL) }
@@ -155,9 +155,9 @@ class ZCoreDataStack: NSObject {
 			if  zRecords.count > 0,
 				let  zone = zRecords[0] as? Zone,
 				let cloud = gRemoteStorage.zRecords(for: dbID) {
-				zone.register()
 
 				zone.traverseAllProgeny { iChild in
+					iChild.register()
 					iChild.respectOrder()
 				}
 
@@ -180,16 +180,19 @@ class ZCoreDataStack: NSObject {
 			var gotit = false
 			let items = try managedContext.fetch(request)
 			for item in items {
-				let record = item as! ZRecord
+				let       zRecord = item as! ZRecord
 
-				if  let dbid     = dbID?.indicator,
-					record.dbid == dbid, !gotit {
-					gotit        = true
-					let converted = record.convertFromCoreData(into: type, visited: lastConverted)
-					records.append(record)
+				if  let dbid      = dbID?.indicator,
+					zRecord.dbid == dbid, !gotit {
+					gotit         = true
+					var converted = zRecord.convertFromCoreData(into: type, visited: lastConverted[dbid])
+
+					records.append(zRecord)
 
 					if  type == kZoneType {
-						lastConverted.appendUnique(contentsOf: converted)
+						converted.appendUnique(contentsOf: lastConverted[dbid] ?? [])
+
+						lastConverted[dbid] = converted
 					}
 				}
 			}
@@ -201,10 +204,16 @@ class ZCoreDataStack: NSObject {
 	}
 
 	@discardableResult
-	func convertZoneFromCoreData(_ record: ZRecord) -> [String] {
-		let converted = record.convertFromCoreData(into: kZoneType, visited: lastConverted)
+	func convertZoneFromCoreData(_ record: ZRecord, into dbID: ZDatabaseID?) -> [String] {
+		var converted = [String]()
 
-		lastConverted.appendUnique(contentsOf: converted)
+		if  let  dbid = dbID?.indicator {
+			converted = record.convertFromCoreData(into: kZoneType, visited: lastConverted[dbid])
+
+			converted.appendUnique(contentsOf: lastConverted[dbid] ?? [])
+
+			lastConverted[dbid] = converted
+		}
 
 		return converted
 	}

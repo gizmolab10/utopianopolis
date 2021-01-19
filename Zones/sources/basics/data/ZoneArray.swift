@@ -424,7 +424,7 @@ extension ZoneArray {
 
 		traverseAllAncestors { iParent in
 			if  !self.contains(iParent) {
-				iParent.revealChildren()
+				iParent.expand()
 				iParent.needChildren()
 			}
 
@@ -447,7 +447,7 @@ extension ZoneArray {
 				if !gotThere && !iParent.isFetched && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
 					[iParent].recursivelyRevealSiblings(untilReaching: iAncestor, onCompletion: onCompletion)
 				} else {
-					iAncestor.revealChildren()
+					iAncestor.expand()
 					FOREGROUND(after: 0.1) {
 						onCompletion?(iAncestor)
 					}

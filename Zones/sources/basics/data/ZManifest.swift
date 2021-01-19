@@ -88,7 +88,7 @@ class ZManifest : ZRecord {
         let zRecord    = iItem as? ZRecord
         var zd         = iItem as? ZDeleted
         var name       = zd?.name ?? zRecord?.ckRecordName
-        var date       = zd?.date ?? zRecord?.record?.creationDate
+        var date       = zd?.date ?? zRecord?.ckRecord?.creationDate
 
         if  let     s  = refString {
             zd         = ZDeleted(with: s)

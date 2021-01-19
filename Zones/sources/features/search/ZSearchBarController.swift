@@ -180,15 +180,15 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 						for record in filtered {
 							if  let trait = cloud.maybeZRecordForCKRecord(record) as? ZTrait {
 								if  trait.ownerZone == nil {
-									orphans.append(record)       // remove unowned traits from records
+									orphans.append(record)   // remove unowned traits from records
 								}
 							} else if cloud.maybeZoneForCKRecord(record) == nil {
 								let trait = ZTrait(record: record, databaseID: dbID)
 
 								if  trait.ownerZone != nil {
-									cloud.registerZRecord(trait) // some records are being fetched first time
+									trait.register()         // some records are being fetched first time
 								} else {
-									orphans.append(record)       // remove unowned traits from records
+									orphans.append(record)   // remove unowned traits from records
 								}
 							}
 						}

@@ -1125,7 +1125,7 @@ extension ZRecordsArray {
 //					print("hah! found it")
 //				}
 
-				if  zRecord.record == nil {
+				if  zRecord.ckRecord == nil {
 					printDebug(.dFile, "no record: \(zRecord)")
 				} else if (allowEach == nil || allowEach!(zRecord)),
 						  let dict = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {

@@ -41,7 +41,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let          current = gCurrentEssay,
 			current.noteTraitMaybe?.needsSave ?? false,
 			current.essayLength != 0,
-			let               i  = gCurrentEssayZone?.record?.recordID,
+			let               i  = gCurrentEssayZone?.ckRecord?.recordID,
 			i                   == essayID {	// been here before
 
 			return false						// has not yet been saved. don't overwrite
@@ -359,7 +359,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }		// emplace text
 			select(restoreSelection: restoreSelection)
 
-			essayID  = gCurrentEssayZone?.record?.recordID
+			essayID  = gCurrentEssayZone?.ckRecord?.recordID
 			delegate = self 						// set delegate after setText
 
 			if  gIsNoteMode {

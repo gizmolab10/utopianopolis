@@ -107,7 +107,7 @@ class ZBreadcrumbsView : ZButtonsView {
 		next.focusOn() {
 			if  COMMAND {
 				next.traverseAllProgeny { child in
-					child.concealChildren()
+					child.collapse()
 				}
 			}
 

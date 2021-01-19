@@ -37,7 +37,7 @@ class ZStatusController: ZGenericController {
     var totalCountsText: String {
 //		let  wrong =  gCloud?.recordsMistyped   .count ?? 0
 //		let  dupes =  gCloud?.duplicates        .count ?? 0
-		let  total =  gCloud?.recordRegistry    .count ?? 0
+		let  total =  gCloud?.zRecordsLookup    .count ?? 0
 		let  zones =  gCloud?.countBy(type: kZoneType) ?? 0
 		let  count = (gCloud?.rootZone?  .progenyCount ?? 0) + 1 // add one for root
 		let suffix =    count != 1 ? "s" : ""
@@ -88,7 +88,7 @@ class ZStatusController: ZGenericController {
 		var prefix = "last edited"
 
 		if  date == nil {
-			date = currentZone?.record?.creationDate
+			date = currentZone?.ckRecord?.creationDate
 			prefix = "created"
 		}
 

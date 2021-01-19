@@ -324,7 +324,7 @@ class ZMapEditor: ZBaseEditor {
 			gHere    = here
 
 			here.traverseAllProgeny { child in
-				child.concealChildren()
+				child.collapse()
 			}
 
 			gSelecting.grab(last)
@@ -465,7 +465,7 @@ class ZMapEditor: ZBaseEditor {
 		if          CONTROL {
 			if      OPTION {
 				if  let      root = gCloud?.rootZone {
-					let converted = gCoreDataStack.convertZoneFromCoreData(root)
+					let converted = gCoreDataStack.convertZoneFromCoreData(root, into: gCloud?.databaseID)
 					printDebug(.dData, "converted \(converted.count) core data objects")
 				}
 			} else {
@@ -783,7 +783,7 @@ class ZMapEditor: ZBaseEditor {
 						let inSmallMap = p.isInSmallMap
 
 						if  inSmallMap {
-							p.concealChildren()
+							p.collapse()
 						}
 
 						p.revealParentAndSiblings()
@@ -862,10 +862,10 @@ class ZMapEditor: ZBaseEditor {
 
 	func moveZones(_ zones: ZoneArray, into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
 		if  into.isInSmallMap {
-			into.parentZone?.concealChildren()
+			into.parentZone?.collapse()
 		}
 
-		into.revealChildren()
+		into.expand()
 		into.needChildren()
 
 		for     zone in zones {
@@ -943,7 +943,7 @@ class ZMapEditor: ZBaseEditor {
                     let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
 
                     pasteMe.orphan()
-                    into.revealChildren()
+                    into.expand()
                     into.addAndReorderChild(pasteMe, at: insertAt)
                     pasteMe.recursivelyApplyDatabaseID(into.databaseID)
                     forUndo.append(pasteMe)
@@ -999,7 +999,7 @@ class ZMapEditor: ZBaseEditor {
 
         for grab in grabs {
             grab.needChildren()
-            grab.revealChildren()
+            grab.expand()
         }
 
 		if  let       parent = candidate?.parentZone {
@@ -1098,7 +1098,7 @@ class ZMapEditor: ZBaseEditor {
         //           level equals gCurrentBrowsingLevel             //
         // ///////////////////////////////////////////////////////////
         
-        while grabThis.showingChildren, grabThis.count > 0,
+        while grabThis.expanded, grabThis.count > 0,
             let length = grabThis.zoneName?.length {
                 let range = NSRange(location: length, length: 0)
                 let index = iMoveUp ? grabThis.count - 1 : 0

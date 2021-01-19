@@ -581,8 +581,6 @@
 				A7064415245B5FD400F90B86 /* ZIntroductionController.swift */,
 				0C39B22A1F182EBB0091F4D1 /* ZPreferencesController.swift */,
 				A706444E247316DA00F90B86 /* ZRecents.swift */,
-				A70644212461EC3600F90B86 /* ZSmallMapController.swift */,
-				A706443A246F720700F90B86 /* ZSmallMapControlsView.swift */,
 				0C39B2291F182EBB0091F4D1 /* ZStatusController.swift */,
 				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
 			);
@@ -881,6 +879,8 @@
 				0CB619951FB3C4660087B066 /* ZMapController.swift */,
 				A7395BAE21B877B600F5759F /* ZMapEditor.swift */,
 				0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */,
+				A70644212461EC3600F90B86 /* ZSmallMapController.swift */,
+				A706443A246F720700F90B86 /* ZSmallMapControlsView.swift */,
 				A7DF7DBB247AFE2800F03060 /* ZRubberband.swift */,
 			);
 			path = maps;

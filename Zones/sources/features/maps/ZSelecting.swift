@@ -159,7 +159,7 @@ class ZSelecting: NSObject {
     var currentGrabsHaveVisibleChildren: Bool {
         for     grab in currentGrabs {
             if  grab.count > 0 &&
-                grab.showingChildren {
+                grab.expanded {
                 return true
             }
         }
@@ -384,7 +384,7 @@ class ZSelecting: NSObject {
 		let   grabs = (using == nil || using!.count == 0) ? currentGrabs : using!
 		var grabbed = grabs.first
 
-        if  grabbed == nil || grabbed!.record == nil {
+        if  grabbed == nil || grabbed!.ckRecord == nil {
             grabbed = gHereMaybe ?? currentMovableMaybe
         }
         
@@ -396,7 +396,7 @@ class ZSelecting: NSObject {
         let grabs = using == nil ? currentGrabs : using!
 		var grabbed = grabs.last
         
-        if  grabbed == nil || grabbed!.record == nil {
+        if  grabbed == nil || grabbed!.ckRecord == nil {
             grabbed = gHere
         }
         
@@ -460,7 +460,7 @@ class ZSelecting: NSObject {
                 let  cLevel  = iChild.level
 
                 if   cLevel == level ||
-                    (cLevel  < level && (iChild.count == 0 || !iChild.showingChildren)) {
+                    (cLevel  < level && (iChild.count == 0 || !iChild.expanded)) {
                     _cousinList.append(iChild)
                 }
                 

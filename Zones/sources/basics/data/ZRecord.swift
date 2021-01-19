@@ -14,19 +14,18 @@ class ZRecord: ZManagedRecord { // NSObject {
 	@NSManaged var recordName: String?
 	var          databaseID: ZDatabaseID?
 	var          kvoContext: UInt8 = 1
-	var              record: CKRecord?
+	var            ckRecord: CKRecord?
 	var      _tooltipRecord: Any?
     var   writtenModifyDate: Date?
 	var             records: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
 	var               cloud: ZCloud?   { return records as? ZCloud }
-	var        ckRecordName: String?   { return record?.recordID.recordName }
+	var        ckRecordName: String?   { return ckRecord?.recordID.recordName }
 	var unwrappedRecordName: String    { return ckRecordName ?? "" }
 	var       unwrappedName: String    { return ckRecordName ?? emptyName }
 	var           emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
-	var             isARoot: Bool      { return record != nil && kRootNames.contains(ckRecordName!) }
-	var          isBookmark: Bool      { return record?.isBookmark ?? false }
+	var             isARoot: Bool      { return ckRecord != nil && kRootNames.contains(ckRecordName!) }
+	var          isBookmark: Bool      { return ckRecord?.isBookmark ?? false }
 	var  isInPublicDatabase: Bool      { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
-	var     showingChildren: Bool      { return isExpanded(ckRecordName) }
 	var        isBigMapRoot: Bool      { return ckRecordName == kRootName }
 	var         isTrashRoot: Bool      { return ckRecordName == kTrashName }
 	var       isRecentsRoot: Bool      { return ckRecordName == kRecentsRootName }
@@ -59,14 +58,14 @@ class ZRecord: ZManagedRecord { // NSObject {
 	@discardableResult func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
 		var converted = [String]()
 
-		if  let  name = ckRecordName {
+		if  let  name = recordName {
 			var     v = visited
 
 			if (v == nil || !v!.contains(name)),
 				records?.maybeZRecordForRecordName(name) == nil {
-				record = CKRecord(recordType: type, recordID: CKRecordID(recordName: name))     // empty
+				ckRecord = CKRecord(recordType: type, recordID: CKRecordID(recordName: name))     // empty
 				updateCKRecordProperties()                                                      // filled
-				converted.appendUnique(contentsOf: [name])                                           // filled
+				converted.appendUnique(contentsOf: [name])
 				v?       .appendUnique(contentsOf: [name])
 			}
 
@@ -81,7 +80,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 			return
 		}
 
-		if  record != newValue {
+		if  ckRecord != newValue {
 
 			// ///////////////////////////////////////////////
 			// old registrations are likely no longer valid //
@@ -89,10 +88,10 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 			clearAllStates() // is this needed or wanted?
 			gBookmarks.forget(self as? Zone)
-			cloud?.unregisterCKRecord(record)
+			cloud?.unregisterCKRecord(ckRecord)
 
 			if  let  r = newValue {
-				record = r
+				ckRecord = r
 				recordName  = r.recordID.recordName
 
 				updateInstanceProperties()
@@ -106,7 +105,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 		}
 
 
-		if  record == nil {
+		if  ckRecord == nil {
 			print("nil")
 		}
 	}
@@ -148,26 +147,6 @@ class ZRecord: ZManagedRecord { // NSObject {
 		if  notFetched {
 			setupLinks()
 		}
-
-		// //////////////////
-		// debugging tests //
-		// //////////////////
-
-//		let name = (self as? Zone)?.zoneName ?? ckRecordName ?? kEmptyIdea
-
-//		if !canSaveWithoutFetch &&  isFetched {
-//			bam("new record, ALLOW SAVE WITHOUT FETCH " + name)
-//			allowSaveWithoutFetch()
-//		} else if canSaveWithoutFetch && notFetched {
-//			bam("require FETCH BEFORE SAVE " + name)
-//			fetchBeforeSave()
-//
-//			if  name != emptyName || ckRecordName == kRootName {
-//				bam("new named record, should ALLOW SAVING")
-//			}
-//		}
-
-//		needSave()
 	}
 
 	func storageDictionary() throws -> ZStorageDictionary {
@@ -180,8 +159,8 @@ class ZRecord: ZManagedRecord { // NSObject {
 		return [:]
 	}
 
-	func isExpanded(_ iRecordName: String?) -> Bool {
-        if  let                      name   = iRecordName,
+	var expanded: Bool {
+        if  let name = ckRecordName,
             gExpandedZones.firstIndex(of: name) != nil {
             return true
         }
@@ -189,7 +168,7 @@ class ZRecord: ZManagedRecord { // NSObject {
         return false
     }
 
-	func revealChildren() {
+	func expand() {
         var expansionSet = gExpandedZones
 
         if  let name = ckRecordName, !isBookmark, !expansionSet.contains(name) {
@@ -199,7 +178,7 @@ class ZRecord: ZManagedRecord { // NSObject {
         }
     }
 
-	func concealChildren() {
+	func collapse() {
         var expansionSet = gExpandedZones
 
         if  let name = ckRecordName {
@@ -214,10 +193,10 @@ class ZRecord: ZManagedRecord { // NSObject {
     }
 
     func toggleChildrenVisibility() {
-        if  showingChildren {
-            concealChildren()
+        if  expanded {
+            collapse()
         } else {
-            revealChildren()
+            expand()
         }
     }
 
@@ -263,7 +242,7 @@ class ZRecord: ZManagedRecord { // NSObject {
     }
 
     func updateInstanceProperties() {
-        if  let r = record {
+        if  let r = ckRecord {
             for keyPath in cloudProperties {
                 if  var    cloudValue  = r[keyPath] as! NSObject? {
 					let propertyValue  = value(forKeyPath: keyPath) as? NSObject
@@ -290,7 +269,7 @@ class ZRecord: ZManagedRecord { // NSObject {
     }
 
     func chooseBest(record iRecord: CKRecord) -> CKRecord? {
-		var        best = record
+		var        best = ckRecord
         let      myDate = best?.modificationDate ?? writtenModifyDate
 		let      noDate = myDate == nil
         if  best       != iRecord,
@@ -311,14 +290,14 @@ class ZRecord: ZManagedRecord { // NSObject {
     func copy(into iCopy: ZRecord) {
         iCopy.maybeNeedSave() // so KVO won't set needsMerge
         updateCKRecordProperties()
-        record?.copy(to: iCopy.record, properties: cloudProperties)
+		ckRecord?.copy(to: iCopy.ckRecord, properties: cloudProperties)
         iCopy.updateInstanceProperties()
     }
 
     func mergeIntoAndTake(_ iRecord: CKRecord) {
         updateCKRecordProperties()
 
-        if  let r = record, r.copy(to: iRecord, properties: cloudProperties) {
+        if  let r = ckRecord, r.copy(to: iRecord, properties: cloudProperties) {
             setRecord(iRecord)
             maybeNeedSave()
         }
@@ -329,7 +308,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 	func updateCKRecordProperties() {
 		if  gUseCoreData,
-			let          r = record {
+			let          r = ckRecord {
 			for keyPath in cloudProperties {
 				let    cloudValue  = r[keyPath] as! NSObject?
 				let propertyValue  = value(forKeyPath: keyPath) as! NSObject?
@@ -383,7 +362,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
     func needChildren() {
         if !isBookmark && // all bookmarks are childless, by design
-            showingChildren &&
+            expanded &&
             false, // N.B., deprecated for performance ... use reallyNeedChildren
             !needsProgeny {
             addState(.needsChildren)
@@ -392,7 +371,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
     func reallyNeedChildren() {
         if !isBookmark && // all bookmarks are childless, by design
-            showingChildren &&
+            expanded &&
             !needsProgeny {
             addState(.needsChildren)
         }
@@ -414,7 +393,7 @@ class ZRecord: ZManagedRecord { // NSObject {
     }
 
     func maybeMarkNotFetched() {
-        if  record?.creationDate == nil {
+        if  ckRecord?.creationDate == nil {
             markNotFetched()
         }
     }
@@ -426,7 +405,7 @@ class ZRecord: ZManagedRecord { // NSObject {
     }
 
     func maybeMarkAsFetched() {
-        if  let r = record {
+        if  let r = ckRecord {
             r.maybeMarkAsFetched(databaseID)
         }
     }
@@ -497,8 +476,8 @@ class ZRecord: ZManagedRecord { // NSObject {
     func extract(valueOf iType: ZStorageType, at iKeyPath: String) -> NSObject? {     // all properties are extracted from record, using iKeyPath as key
         switch iKeyPath {
         case kpRecordName:       return ckRecordName as NSObject?      // except for the record name
-        case kpModificationDate: return record?.modificationDate?.timeIntervalSince1970 as Double? as NSObject?
-        default:                 return record?[iKeyPath] as? NSObject
+        case kpModificationDate: return ckRecord?.modificationDate?.timeIntervalSince1970 as Double? as NSObject?
+        default:                 return ckRecord?[iKeyPath] as? NSObject
         }
     }
 
@@ -550,7 +529,7 @@ class ZRecord: ZManagedRecord { // NSObject {
     }
 
     func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {
-        if  let       r = record,
+        if  let       r = ckRecord,
             let manager = gRemoteStorage.cloud(for: iDatabaseID) {
             let  states = manager.states(for: r)
             var   marks = [String] ()
@@ -582,7 +561,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
 		try gThrowOnUserActivity()
 
-		guard record != nil else {
+		guard ckRecord != nil else {
 			printDebug(.dFile, "missing record")
 
 			return nil
@@ -632,15 +611,15 @@ class ZRecord: ZManagedRecord { // NSObject {
 		// case 3: name is not nil
 
 		let    cloud = gRemoteStorage.zRecords(for: iDatabaseID)
-		var ckRecord = CKRecord(recordType: iRecordType)           // case 1
+		var newRecord = CKRecord(recordType: iRecordType)           // case 1
 		let     name = dict[.recordName] as? String
 		databaseID   = iDatabaseID
 
 		if  let recordName = name {
 			if  let r = cloud?.maybeCKRecordForRecordName(name) {
-				ckRecord = r				        		       // case 2
+				newRecord = r				        		       // case 2
 			} else {		        		        		       // case 3
-				ckRecord = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: recordName)) // YIKES this may be wildly out of date
+				newRecord = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: recordName)) // YIKES this may be wildly out of date
 			}
 		}
 
@@ -655,9 +634,9 @@ class ZRecord: ZManagedRecord { // NSObject {
 							let trait = ZTraitType(rawValue: string),
 							trait == .tEssay {
 							string = ZTraitType.tNote.rawValue
-							ckRecord[keyPath] = string as CKRecordValue
+							newRecord[keyPath] = string as CKRecordValue
 						} else {
-							ckRecord[keyPath] = value
+							newRecord[keyPath] = value
 					}
 					case .date:
 						if  let      interval = object as? Double {
@@ -681,17 +660,17 @@ class ZRecord: ZManagedRecord { // NSObject {
 							}
 
 							if  assets.count > 0 {
-								ckRecord[keyPath] = assets
+								newRecord[keyPath] = assets
 							}
 					}
 
 					default:
-						ckRecord[keyPath] = value
+						newRecord[keyPath] = value
 				}
 			}
 		}
 
-		record = ckRecord    // any subsequent changes into any of this object's cloudProperties will save this record to iCloud
+		ckRecord = newRecord    // any subsequent changes into any of this object's cloudProperties will save this record to iCloud
 
 		if  let needs = dict[.needs] as? String {
 			addNeedsFromString(needs)

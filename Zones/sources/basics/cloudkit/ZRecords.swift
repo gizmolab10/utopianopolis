@@ -31,12 +31,12 @@ enum ZRecordState: String {
 
 class ZRecords: NSObject {
 
-	var         duplicates = [                 ZRecord]  ()
-    var       nameRegistry = [String       : CKRecordsArray] ()
-    var     recordRegistry = [String       :   ZRecord]  ()
-	var    recordsMistyped = [String         : ZRecord]  ()
-	var  recordNamesByType = [String       :   [String]] ()
-	var recordNamesByState = [ZRecordState :   [String]] ()
+	var         duplicates = [                 ZRecord]       ()
+    var     zRecordsLookup = [String       :   ZRecord]       ()
+	var    ckRecordsLookup = [String       :  CKRecordsArray] ()
+	var    recordsMistyped = [String       :   ZRecord]       ()
+	var  recordNamesByType = [String       :   [String]]      ()
+	var recordNamesByState = [ZRecordState :   [String]]      ()
     var       lastSyncDate = Date(timeIntervalSince1970: 0)
     var         databaseID : ZDatabaseID
     var           manifest : ZManifest?
@@ -55,7 +55,7 @@ class ZRecords: NSObject {
 		// nothing has yet been registered, so return a default of 100
 		// doing so will give a better behavior to the launch progress bar
 
-		let count = recordRegistry.count
+		let count = zRecordsLookup.count
 
 		return count > 1 ? count : 100
 	}
@@ -144,8 +144,8 @@ class ZRecords: NSObject {
 	func updateLastSyncDate() {
         var date = lastSyncDate
 
-        for zRecord in recordRegistry.values {
-            if  let           record = zRecord.record,
+        for zRecord in zRecordsLookup.values {
+            if  let           record = zRecord.ckRecord,
                 let modificationDate = record.modificationDate,
                 modificationDate.timeIntervalSince(date) > 0 {
 
@@ -163,7 +163,7 @@ class ZRecords: NSObject {
 		inMaps    += favoritesZone?   .updateAllProgenyCounts() ?? 0
 		inMaps    += lostAndFoundZone?.updateAllProgenyCounts() ?? 0
 
-		printDebug(.dCount, "(\(self.databaseID.identifier)) \(inMaps) / \(self.recordRegistry.count)")
+		printDebug(.dCount, "(\(self.databaseID.identifier)) \(inMaps) / \(self.zRecordsLookup.count)")
         onCompletion?(0)
     }
 
@@ -200,10 +200,10 @@ class ZRecords: NSObject {
 	// initialized with one entry for each word in each zone's name
 	// grows with each unique search
 
-	func appendNameRegistry(from iName: String, onEach: RecordsToRecordsClosure) {
+	func appendCKRecordsLookup(with iName: String, onEach: RecordsToRecordsClosure) {
         for part in iName.components(separatedBy: " ") {
             if  part != "" {
-                var records  = nameRegistry[part]
+                var records  = ckRecordsLookup[part]
                 if  records == nil {
                     records  = []
                 }
@@ -211,15 +211,15 @@ class ZRecords: NSObject {
                 records      = onEach(records!)
 
 				if  let r = records, r.count > 0 {
-					nameRegistry[part] = r
+					ckRecordsLookup[part] = r
 				}
 			}
         }
 	}
 	
 	func addToLocalSearchIndex(name: String, for iZone: Zone?) {
-		if  let record = iZone?.record {
-			appendNameRegistry(from: name) { iRecords -> (CKRecordsArray) in
+		if  let record = iZone?.ckRecord {
+			appendCKRecordsLookup(with: name) { iRecords -> (CKRecordsArray) in
 				var records = iRecords
 				
 				records.appendUnique(contentsOf: [record])
@@ -236,9 +236,9 @@ class ZRecords: NSObject {
     }
 
     func removeFromLocalSearchIndex(nameOf iZone: Zone?) {
-        if  let record = iZone?.record,
+        if  let record = iZone?.ckRecord,
             let   name = iZone?.zoneName {
-            appendNameRegistry(from: name) { iRecords -> (CKRecordsArray) in
+            appendCKRecordsLookup(with: name) { iRecords -> (CKRecordsArray) in
                 var records = iRecords
 
                 if let index = records.firstIndex(of: record) {
@@ -253,7 +253,7 @@ class ZRecords: NSObject {
     func searchLocal(for name: String) -> CKRecordsArray {
         var results = CKRecordsArray()
 
-		appendNameRegistry(from: name) { (iRecords: CKRecordsArray) -> (CKRecordsArray) in
+		appendCKRecordsLookup(with: name) { (iRecords: CKRecordsArray) -> (CKRecordsArray) in
 			var filtered = CKRecordsArray()
 
 			for record in iRecords {
@@ -271,10 +271,10 @@ class ZRecords: NSObject {
     }
 
     @discardableResult func registerZRecord(_  iRecord: ZRecord?) -> Bool {
-        if  let      zRecord  = iRecord,
-            let           id  = zRecord.ckRecordName {
-			if let oldRecord  = recordRegistry[id], oldRecord.record?.recordType == zRecord.record?.recordType {
-                if oldRecord != zRecord {
+        if  let           zRecord  = iRecord,
+            let                id  = zRecord.ckRecordName {
+			if let existingRecord  = zRecordsLookup[id] {
+                if existingRecord != zRecord, existingRecord.ckRecord?.recordType == zRecord.ckRecord?.recordType {
 
                     // /////////////////////////////////////
                     // if already registered, must ignore //
@@ -288,11 +288,7 @@ class ZRecords: NSObject {
                     gBookmarks.persistForLookupByTarget(bookmark)
                 }
 
-				if  id == kRootName {
-					printDebug(.dData, "hah!")
-				}
-
-                recordRegistry[id] = zRecord
+                zRecordsLookup[id] = zRecord
 
 				registerByType(zRecord)
 
@@ -312,7 +308,7 @@ class ZRecords: NSObject {
 	}
 
 	func registerByType(_ iRecord: ZRecord?) {
-		if  let      record  = iRecord?.record {
+		if  let      record  = iRecord?.ckRecord {
 			let        type  = record.recordType
 			let        name  = record.recordID.recordName
 			var recordNames  = recordNamesByType[type]
@@ -330,14 +326,14 @@ class ZRecords: NSObject {
         if  let      name  = ckRecord?.recordID.recordName {
             clearRecordName(name, for: allStates)
 
-			if  recordRegistry[name] != nil {
-				recordRegistry[name]  = nil
+			if  ckRecordsLookup[name] != nil {
+				ckRecordsLookup[name]  = nil
 			}
         }
     }
 
     func unregisterZRecord(_ zRecord: ZRecord?) {
-        unregisterCKRecord(zRecord?.record)
+        unregisterCKRecord(zRecord?.ckRecord)
 		removeFromLocalSearchIndex(nameOf: zRecord as? Zone)
         gBookmarks.forget(zRecord as? Zone)
     }
@@ -362,7 +358,7 @@ class ZRecords: NSObject {
     // MARK:-
 
     var undeletedCounts: (Int, Int) {
-        let zRecords = recordRegistry.values
+        let zRecords = zRecordsLookup.values
         var   uCount = zRecords.count
         var   nCount = 0
 
@@ -417,7 +413,7 @@ class ZRecords: NSObject {
     }
 
 	func applyToAllZRecords(closure: ZRecordClosure) {
-		for zRecord in recordRegistry.values {
+		for zRecord in zRecordsLookup.values {
 			closure(zRecord)
 		}
 	}
@@ -466,7 +462,7 @@ class ZRecords: NSObject {
 
 	func assureAdoption(_ onCompletion: IntClosure? = nil) {
 		FOREGROUND {
-			for (index, zRecord) in self.recordRegistry.values.enumerated() {
+			for (index, zRecord) in self.zRecordsLookup.values.enumerated() {
 				if  let zone = zRecord as? Zone {
 					zone.adopt()
 
@@ -503,7 +499,7 @@ class ZRecords: NSObject {
     }
 
 	func hasZRecord(_ iRecord: ZRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
-        if  let ckRecord = iRecord.record {
+        if  let ckRecord = iRecord.ckRecord {
             return hasCKRecord(ckRecord, forAnyOf: iStates)
         }
 
@@ -555,7 +551,7 @@ class ZRecords: NSObject {
     }
 
     func addZRecord(_ iRecord: ZRecord, for states: [ZRecordState]) {
-        if  let ckrecord = iRecord.record {
+        if  let ckrecord = iRecord.ckRecord {
             addCKRecord(ckrecord, for: states)
         }
     }
@@ -603,8 +599,8 @@ class ZRecords: NSObject {
 
 	func clear() {
 		clearAllStatesForAllRecords()
-		recordRegistry = [:]
-		nameRegistry = [:]
+		ckRecordsLookup = [:]
+		zRecordsLookup  = [:]
 	}
 
     func clearAllStatesForAllRecords() {
@@ -758,7 +754,7 @@ class ZRecords: NSObject {
 				// also grab traits
 				if  let zone = maybeZoneForCKRecord(iCKRecord) {
 					for trait in zone.traitValues {
-						if  let ckTraitRecord = trait.record, !results.contains(ckTraitRecord) {
+						if  let ckTraitRecord = trait.ckRecord, !results.contains(ckTraitRecord) {
 							results.append(ckTraitRecord)
 						}
 					}
@@ -934,11 +930,11 @@ class ZRecords: NSObject {
 			rootZone    == iZone?.root, // in the same map?
 			currentHere != pHere,
 			pHere.isInSmallMap {
-			currentHere.concealChildren()
+			currentHere.collapse()
 
 			currentHere  = pHere
 
-			currentHere.revealChildren()
+			currentHere.expand()
 
 			return true
 		}
@@ -1025,8 +1021,8 @@ class ZRecords: NSObject {
 				let p = bookmark.parentZone,
 				p.isInSmallMap,
 				p != h {
-				h.concealChildren()
-				p.revealChildren()
+				h.collapse()
+				p.expand()
 
 				hereZoneMaybe = p
 			}
@@ -1107,7 +1103,7 @@ class ZRecords: NSObject {
     
     func stringForRecordID(_ iID: CKRecordID) -> String? {
         if  let  zRecord = maybeZRecordForRecordID(iID),
-            let        r = zRecord.record {
+            let        r = zRecord.ckRecord {
             let    name  = r.decoratedName
             if     name != "" {
                 return name
@@ -1128,7 +1124,7 @@ class ZRecords: NSObject {
 	func      maybeTraitForRecordID (_ iRecordID:  CKRecordID?) ->   ZTrait? { return maybeZRecordForRecordID   (iRecordID)   as? ZTrait }
 	func       maybeZoneForRecordID (_ iRecordID:  CKRecordID?) ->     Zone? { return maybeZRecordForRecordID   (iRecordID)   as? Zone }
 	func     maybeZoneForRecordName (_ iRecordName:    String?) ->     Zone? { return maybeZRecordForRecordName (iRecordName) as? Zone }
-	func maybeCKRecordForRecordName (_ iRecordName:    String?) -> CKRecord? { return maybeZRecordForRecordName (iRecordName)?.record }
+	func maybeCKRecordForRecordName (_ iRecordName:    String?) -> CKRecord? { return maybeZRecordForRecordName (iRecordName)?.ckRecord }
 
 	func  maybeZRecordForRecordName (_ iRecordName:    String?) ->  ZRecord? {
 		if  let name = iRecordName {
@@ -1139,9 +1135,9 @@ class ZRecords: NSObject {
 				return rootZone
 			}
 
-			let zRecord = recordRegistry[name]                             // look it up by record name
+			let zRecord = zRecordsLookup[name]                             // look it up by record name
 
-			if  let recordType = zRecord?.record?.recordType,              // look for mistakes in object creation
+			if  let recordType = zRecord?.ckRecord?.recordType,              // look for mistakes in object creation
 				(zRecord as? ZTrait != nil && recordType == kZoneType) ||
 				(zRecord as?   Zone != nil && recordType == kTraitType) {
 				recordsMistyped[name] = zRecord

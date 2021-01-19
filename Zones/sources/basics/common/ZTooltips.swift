@@ -106,7 +106,7 @@ extension Zone {
 				hasHyperlink    ? "invoke web link" : ""
 		}
 
-		return (showingChildren ? "hide" : "reveal") + " list for"
+		return (expanded ? "hide" : "reveal") + " list for"
 	}
 
 }
