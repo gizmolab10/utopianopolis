@@ -16,7 +16,6 @@ enum ZOperationID: Int, CaseIterable {
     // start up / onboard
 
     case oStartUp            // NB: order here is order of operations (except miscellaneous)
-	case oInternet
 	case oUserPermissions
     case oMacAddress
     case oObserveUbiquity
@@ -103,7 +102,7 @@ enum ZOperationID: Int, CaseIterable {
 	var	           doneOps : ZOperationIDsArray { return [.oNone, .oDone, .oCompletion] }
 	var        mineOnlyOps : ZOperationIDsArray { return [.oBookmarks, .oFavorites, .oRecents, .oDone] }
 	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe] }
-	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oCoreData, .oInternet, .oUbiquity, .oFoundIdeas,
+	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oCoreData, .oUbiquity, .oFoundIdeas,
 														  .oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oUserPermissions,
 														  .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability] }
 
@@ -180,9 +179,9 @@ class ZOperations: NSObject {
     }
     
     var isConnectedToInternet: Bool {
-        var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags(rawValue: 0)
+        var flags = SCNetworkReachabilityFlags(rawValue: 0)
 
-        if let host = SCNetworkReachabilityCreateWithName(nil, "www.apple.com"),
+        if  let host = SCNetworkReachabilityCreateWithName(nil, "www.apple.com"),
             !SCNetworkReachabilityGetFlags(host, &flags) {
             return false
         }
@@ -190,7 +189,7 @@ class ZOperations: NSObject {
         let     isReachable = flags.contains(.reachable)
         let needsConnection = flags.contains(.connectionRequired)
 
-        return isReachable && !needsConnection
+        return isReachable && !needsConnection && false
     }
 
     @discardableResult func cloudStatusChanged() -> Bool {

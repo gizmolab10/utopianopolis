@@ -43,7 +43,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	override func viewWillAppear() {
 		super .viewWillAppear()
-		fullUpdate()
+		fullStartupUpdate()
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
@@ -55,18 +55,18 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	func getPermissionFromUser(onCompletion: Closure? = nil) {
-		if  gStartupLevel == .pleaseWait {
+		if  gStartupLevel == .pleaseWait || !gHasInternet {
 			onCompletion?()
 		} else {
 			startupCompletion = onCompletion
 		}
 
 		FOREGROUND(canBeDirect: true) {
-			self.fullUpdate()
+			self.fullStartupUpdate()
 		}
 	}
 
-	func fullUpdate() {
+	func fullStartupUpdate() {
 		updateThermometerBar()
 		updateSubviewVisibility()
 		buttonsView?.updateAndRedraw()
@@ -107,7 +107,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	func refresh() {
 		view.setAllSubviewsNeedDisplay()
-		fullUpdate()
+		fullStartupUpdate()
 	}
 
 	func accessAppleID() {

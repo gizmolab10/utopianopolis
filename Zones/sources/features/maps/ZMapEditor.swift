@@ -343,6 +343,8 @@ class ZMapEditor: ZBaseEditor {
 		if  CONTROL {
 			if  let here = gRecents.popAndUpdateRecents()?.bookmarkTarget {
 				gHere    = here
+
+				gHere.grab()
 			}
 
 			gRedrawMaps()

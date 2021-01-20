@@ -41,18 +41,24 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
 	
     func application(_ application: NSApplication, openFiles: [String]) {
-        var insertInto = gSelecting.currentMoveable
+        var parent = gSelecting.currentMoveable
         
-        if  insertInto.databaseID != .mineID {
-            if  let mineRoot = gMineCloud?.rootZone {
-                insertInto   = mineRoot
+        if !parent.userCanWrite {
+			if  let candidate = gMineCloud?.hereZoneMaybe ?? gMineCloud?.rootZone {
+				parent        = candidate
             } else {
                 return
             }
         }
-        
+
+		if  parent.databaseID != gDatabaseID {
+			toggleDatabaseID()
+		}
+
         for file in openFiles {
-            insertInto.importFile(from: file) { gRedrawMaps() }
+			parent.importFile(from: file) {
+				gRedrawMaps()
+			}
         }
     }
 	

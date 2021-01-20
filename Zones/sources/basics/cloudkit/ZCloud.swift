@@ -24,7 +24,7 @@ class ZCloud: ZRecords {
     var currentPredicate : NSPredicate?
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
-        if  database != nil {
+        if  database != nil, gHasInternet {
 			let                        configuration = operation.configuration ?? CKOperation.Configuration()
 			configuration.timeoutIntervalForResource = kRemoteTimeout
             configuration.timeoutIntervalForRequest  = kRemoteTimeout
@@ -46,7 +46,7 @@ class ZCloud: ZRecords {
         }
     }
 
-    func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
+	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
 		switch identifier { // inner switch
 			case .oBookmarks:     fetchBookmarks     (cloudCallback)
 			case .oCloud:         fetchCloudZones    (cloudCallback)
@@ -74,7 +74,7 @@ class ZCloud: ZRecords {
 			case .oTraits:        fetchTraits        (cloudCallback)
 			default:                                  cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
 		}
-    }
+	}
 
     // MARK:- push to cloud
     // MARK:-

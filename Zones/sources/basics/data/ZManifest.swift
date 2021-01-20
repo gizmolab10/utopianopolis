@@ -117,7 +117,7 @@ class ZManifest : ZRecord {
     }
 
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
-        self.init(record: nil, databaseID: dbID)
+		self.init(entityName: kManifestType, databaseID: dbID)
 
 		try extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
     }

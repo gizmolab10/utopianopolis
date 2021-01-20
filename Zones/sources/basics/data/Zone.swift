@@ -159,7 +159,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- setup
 	// MARK:-
 
-	convenience init(databaseID: ZDatabaseID?, named: String? = nil, recordName: String? = nil) {
+	convenience init(databaseID: ZDatabaseID?, named: String?, recordName: String? = nil) {
 		var newRecord : CKRecord?
 
 		if  let rName = recordName {
@@ -235,7 +235,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var deepCopy: Zone {
-		let theCopy = Zone(databaseID: databaseID)
+		let theCopy = Zone(databaseID: databaseID, named: nil)
 
 		copy(into: theCopy)
 
@@ -1105,14 +1105,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
 		if  let    dbID = databaseID,
 			dbID       != .favoritesID {
-			let newIdea = Zone(databaseID: dbID)
+			let newIdea = Zone(databaseID: dbID, named: name)
 
 			parentZoneMaybe?.expand()
 			gTextEditor.stopCurrentEdit()
-
-			if  name != nil {
-				newIdea.zoneName   = name
-			}
 
 			if !gHasFullAccess,
 			    dbID              == .everyoneID,
@@ -1206,7 +1202,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 					if  cloud?.cloudUnavailable ?? true {
 						moveZone(to: destroyZone) {
-							onCompletion?()
 							deleteBookmarksClosure()
 						}
 					} else {
@@ -3178,7 +3173,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		// all ideas created from reading file //
 		// //////////////////////////////////////
 
-		self.init(record: nil, databaseID: dbID)
+		self.init(entityName: kZoneType, databaseID: dbID)
 
 		var d = dict
 
@@ -3227,7 +3222,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
-		if  let name = dict[.name] as? String {
+		if  let name = dict[.name] as? String,
+			responds(to: #selector(setter: self.zoneName)) {
 			zoneName = name
 		}
 

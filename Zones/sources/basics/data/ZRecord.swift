@@ -110,9 +110,9 @@ class ZRecord: ZManagedRecord { // NSObject {
 		}
 	}
 
-	convenience init(record: CKRecord?, databaseID: ZDatabaseID?) {
-		if  gUseCoreData {
-			self.init(entityName: record?.entityName, databaseID: databaseID) // initialize managed object from ck record
+	convenience init(record: CKRecord? = nil, entityName: String? = nil, databaseID: ZDatabaseID?) {
+		if  gUseCoreData, let name = record?.entityName ?? entityName {
+			self.init(entityName: name, databaseID: databaseID) // initialize managed object from ck record or explicit entity name
 		} else {
 			self.init()
 		}

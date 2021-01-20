@@ -157,7 +157,7 @@ class ZTrait: ZTraitAssets {
     }
 
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
-        self.init(record: nil, databaseID: dbID)
+        self.init(entityName: kTraitType, databaseID: dbID)
 
         try extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
     }
