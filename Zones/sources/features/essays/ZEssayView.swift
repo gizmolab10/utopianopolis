@@ -648,9 +648,31 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  let            w = gMainWindow,
 				let inspectorBar = w.titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view {
 
+				func rect(at target: Int) -> CGRect {
+
+					// //////////////////////////////////////////// //
+					// Apple bug: subviews are not properly located //
+					// //////////////////////////////////////////// //
+
+					var final = inspectorBar.subviews[0].frame
+					var prior = final
+
+					for index in 1...target {
+						let frame = inspectorBar.subviews[index].frame
+
+						final.origin.x += prior.size.width
+						final.size      = frame.size
+						prior           = frame
+					}
+
+					final.origin.x -= 230.0
+
+					return final
+				}
+
 				func button(for tag: ZEssayButtonID) -> ZButton {
 					let        index = inspectorBar.subviews.count - 1
-					var        frame = inspectorBar.subviews[index].frame
+					var        frame = rect(at: index)
 					let            x = frame.maxX - ((tag == .idBack) ? 0.0 : 6.0)
 					let        title = tag.title
 					let       button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
