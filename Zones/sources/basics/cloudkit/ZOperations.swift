@@ -85,6 +85,7 @@ enum ZOperationID: Int, CaseIterable {
 
 	var useTimer: Bool {
 		switch self {
+			case .oReadFile: return gReadFiles
 			case .oSubscribe,
 				 .oAllTraits,
 				 .oCoreData,
@@ -92,7 +93,6 @@ enum ZOperationID: Int, CaseIterable {
 				 .oNewIdeas,
 				 .oTraits,
 				 .oRoots:    return true
-			case .oReadFile: return gUseFiles
 			default:         return false
 		}
 	}
@@ -189,11 +189,11 @@ class ZOperations: NSObject {
         let     isReachable = flags.contains(.reachable)
         let needsConnection = flags.contains(.connectionRequired)
 
-        return isReachable && !needsConnection && false
+        return isReachable && !needsConnection
     }
 
     @discardableResult func cloudStatusChanged() -> Bool {
-        let          hasInternet = isConnectedToInternet
+		let          hasInternet = ZReachability.isConnectedToNetwork() && false
         let     changedConnected =              hasInternet != gHasInternet
         let     changedStatus    = recentCloudAccountStatus != gCloudAccountStatus
         gHasInternet             = hasInternet

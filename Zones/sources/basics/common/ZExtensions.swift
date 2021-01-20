@@ -235,12 +235,10 @@ extension NSObject {
             iLink                   != "",
             let                 name = recordName(from: iLink) {
             let components: [String] = iLink!.components(separatedBy: kColonSeparator)
-            let recordID: CKRecordID = CKRecordID(recordName: name)
-            let ckRecord: CKRecord   = CKRecord(recordType: kZoneType, recordID: recordID)
             let        rawIdentifier = components[0]
             let   dbID: ZDatabaseID? = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
             let             zRecords = gRemoteStorage.zRecords(for: dbID)
-            let                 zone = zRecords?.maybeZoneForCKRecord(ckRecord)
+            let                 zone = zRecords?.maybeZoneForRecordName(name)
 
             return zone
         }

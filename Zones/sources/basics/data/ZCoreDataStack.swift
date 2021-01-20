@@ -133,8 +133,23 @@ class ZCoreDataStack: NSObject {
 					self.loadZone(with: name, into: dbID)
 				}
 
-				for type in [kManifestType, kTraitType] {
-					self.load(type: type, into: dbID, using: NSFetchRequest<NSFetchRequestResult>(entityName: type))
+				self.loadTraitAssets(into: dbID)
+				self.load(type: kManifestType, into: dbID, using: NSFetchRequest<NSFetchRequestResult>(entityName: kManifestType))
+			}
+		}
+	}
+
+	func loadTraitAssets(into dbID: ZDatabaseID?) {
+		if  let          dbid = dbID?.identifier {
+			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kTraitAssetsType)
+			request.predicate = NSPredicate(format: "dbid = \"\(dbid)\"")
+			let      zRecords = load(type: kTraitAssetsType, into: dbID, using: request)
+
+			for zRecord in zRecords {
+				zRecord.register()
+
+				if  let trait = zRecord as? ZTrait {
+					trait.ownerZone?.addTrait(trait)
 				}
 			}
 		}
@@ -146,7 +161,7 @@ class ZCoreDataStack: NSObject {
 			let   idPredicate = NSPredicate(format: "recordName = \"\(recordName)\"")
 			let   dbPredicate = NSPredicate(format: "dbid = \"\(dbid)\"")
 			request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [idPredicate, dbPredicate])
-			let      zRecords = self.load(type: kZoneType, into: dbID, using: request)
+			let      zRecords = load(type: kZoneType, into: dbID, using: request)
 
 			// //////////////////////////////////////////////////////////////////////////////// //
 			// NOTE: all but the first of multiple values found are duplicates and thus ignored //
@@ -157,7 +172,6 @@ class ZCoreDataStack: NSObject {
 				let cloud = gRemoteStorage.zRecords(for: dbID) {
 
 				zone.traverseAllProgeny { iChild in
-					iChild.register()
 					iChild.respectOrder()
 				}
 
@@ -177,14 +191,15 @@ class ZCoreDataStack: NSObject {
 	@discardableResult func load(type: String, into dbID: ZDatabaseID?, using request: NSFetchRequest<NSFetchRequestResult>) -> ZRecordsArray {
 		var records = ZRecordsArray()
 		do {
-			var gotit = false
 			let items = try managedContext.fetch(request)
+			var count = type == kZoneType ? 1 : items.count // only one Zone is needed
 			for item in items {
 				let       zRecord = item as! ZRecord
 
 				if  let dbid      = dbID?.indicator,
-					zRecord.dbid == dbid, !gotit {
-					gotit         = true
+					zRecord.dbid == dbid,
+					count         > 0 {
+					count        -= 1
 					var converted = zRecord.convertFromCoreData(into: type, visited: lastConverted[dbid])
 
 					records.append(zRecord)

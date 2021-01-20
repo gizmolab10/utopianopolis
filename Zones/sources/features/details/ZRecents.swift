@@ -69,7 +69,7 @@ class ZRecents : ZRecords {
 		return false
 	}
 
-	func push(intoNotes: Bool = false) {
+	override func push(intoNotes: Bool = false) {
 		if  rootZone != nil {
 			if  let          here  = gHereMaybe,
 				!findAndSetHereAsParentOfBookmarkTargeting(here),

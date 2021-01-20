@@ -1008,13 +1008,13 @@ class ZRecords: NSObject {
 		return nil
 	}
 
-	@discardableResult func swapBetweenBookmarkAndTarget(shouldGrab: Bool = false) -> Bool {
+	@discardableResult func swapBetweenBookmarkAndTarget(doNotGrab: Bool = true) -> Bool {
 		if  let cb = currentBookmark,
 			cb.isGrabbed {
 			cb.bookmarkTarget?.grab() // grab target in big map
-		} else if shouldGrab,
-				  let bookmark = updateCurrentForMode() {
-
+		} else if doNotGrab {
+			return false
+		} else if let bookmark = updateCurrentForMode() {
 			bookmark.grab()
 
 			if  let h = hereZoneMaybe,
@@ -1027,11 +1027,13 @@ class ZRecords: NSObject {
 				hereZoneMaybe = p
 			}
 		} else {
-			return false
+			push()
 		}
 
 		return true
 	}
+
+	func push(intoNotes: Bool = false) {}
 
 	func maybeRefocus(_ kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
 
@@ -1062,7 +1064,7 @@ class ZRecords: NSObject {
 			}
 		} else if zone == gHere {       // state 2
 			if  let small = gCurrentSmallMapRecords,
-			    !small.swapBetweenBookmarkAndTarget(shouldGrab: shouldGrab) {
+			    !small.swapBetweenBookmarkAndTarget(doNotGrab: !shouldGrab) {
 				if  gSmallMapMode == .favorites {
 					gFavorites.createFavorite(for: zone, action: .aCreateFavorite)
 //				} else {

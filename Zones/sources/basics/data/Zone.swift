@@ -1519,11 +1519,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addTrait(_ trait: ZTrait) {
-		if  let       r      = ckRecord,
-			let    type      = trait.traitType {
-			traits[type]     = trait
-			trait .owner     = CKReference(record: r, action: .none)
-			trait._ownerZone = nil
+		if  let       r          = ckRecord,
+			let    type          = trait.traitType {
+			traits[type]         = trait
+			let  ownerName       = trait.owner?.recordID.recordName
+			let recordName       = r.recordID.recordName
+			if  recordName      != ownerName {
+				trait .owner     = CKReference(record: r, action: .none)
+				trait._ownerZone = nil
+			}
 
 			trait.updateCKRecordProperties()
 		}

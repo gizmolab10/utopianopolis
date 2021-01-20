@@ -10,8 +10,9 @@ import CloudKit
 
 class ZRecord: ZManagedRecord { // NSObject {
 
-	@NSManaged var     dbid: String?
-	@NSManaged var recordName: String?
+	@NSManaged var             dbid: String?
+	@NSManaged var       recordName: String?
+	@NSManaged var modificationDate: Date?
 	var          databaseID: ZDatabaseID?
 	var          kvoContext: UInt8 = 1
 	var            ckRecord: CKRecord?
@@ -63,8 +64,9 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 			if (v == nil || !v!.contains(name)),
 				records?.maybeZRecordForRecordName(name) == nil {
-				ckRecord = CKRecord(recordType: type, recordID: CKRecordID(recordName: name))     // empty
+				ckRecord = CKRecord(recordType: type, recordID: CKRecordID(recordName: name))   // empty
 				updateCKRecordProperties()                                                      // filled
+				register()
 				converted.appendUnique(contentsOf: [name])
 				v?       .appendUnique(contentsOf: [name])
 			}

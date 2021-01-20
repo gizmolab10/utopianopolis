@@ -92,14 +92,18 @@ class ZFavorites: ZRecords {
         if  cloudRootTemplates.count == 0 {
             for (index, dbID) in kAllDatabaseIDs.enumerated() {
                 let          name = dbID.rawValue
-				let      favorite = gBookmarks.create(withBookmark: nil, .aCreateFavorite, parent: cloudRootTemplates, atIndex: index, name, recordName: name + kFavoritesSuffix)
-                favorite.zoneLink =  "\(name)\(kColonSeparator)\(kColonSeparator)"
-                favorite   .order = Double(index) * 0.001
+				let      bookmark = gBookmarks.create(withBookmark: nil, .aCreateFavorite, parent: cloudRootTemplates, atIndex: index, name, recordName: name + kFavoritesSuffix)
+				bookmark.zoneLink =  "\(name)\(kColonSeparator)\(kColonSeparator)"
+				bookmark   .order = Double(index) * 0.001
                 
-                favorite.clearAllStates()
+				bookmark.clearAllStates()
             }
         }
-    }
+	}
+
+	override func push(intoNotes: Bool = false) {
+		createFavorite(for: gHere, action: .aCreateFavorite)?.grab()
+	}
 
 	@discardableResult func createFavorite(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
 
@@ -304,7 +308,7 @@ class ZFavorites: ZRecords {
 			for template in cloudRootTemplates.children {
 				if  let          dbID = template.linkDatabaseID, !hasDatabaseIDs.contains(dbID) {
 					let      bookmark = template.deepCopy
-					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName
+					bookmark.zoneName = template.bookmarkTarget?.zoneName
 
 					gFavoritesRoot?.addChildAndRespectOrder(bookmark)
 					bookmark.clearAllStates() // erase side-effect of add

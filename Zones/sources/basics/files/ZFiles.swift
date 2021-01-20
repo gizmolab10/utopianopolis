@@ -95,7 +95,7 @@ class ZFiles: NSObject {
 
             if !needsWrite[index] {
                 needsWrite[index] = true
-            } else if (gUseFiles || gWriteFiles), let timerID = ZTimerID.convert(from: databaseID) {
+            } else if gWriteFiles, let timerID = ZTimerID.convert(from: databaseID) {
 				gTimers.assureCompletion(for:   timerID, withTimeInterval: 5.0, restartTimer: true) {
 					if  gIsEditIdeaMode {
 						throw(ZInterruptionError.userInterrupted)
@@ -127,7 +127,7 @@ class ZFiles: NSObject {
 	}
 
 	func readFile(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  gUseFiles,
+		if  gReadFiles,
 			databaseID  != .favoritesID,
 			let    index = databaseID.index,
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {
@@ -143,7 +143,7 @@ class ZFiles: NSObject {
     // MARK:-
 
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
-		if (gUseFiles || gWriteFiles),
+		if  gWriteFiles,
 			gHasFinishedStartup, // guarantee that file read finishes before this code runs
 			let           dbID = databaseID,
 			dbID              != .recentsID,
@@ -227,7 +227,7 @@ class ZFiles: NSObject {
 	}
 
 	func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  gUseFiles,
+		if  gReadFiles,
 			databaseID      != .favoritesID,
 			let       cloud  = gRemoteStorage.cloud(for: databaseID),
 			let       index  = databaseID.index {

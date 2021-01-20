@@ -7,10 +7,12 @@
     <entity name="ZManifest" representedClassName="ZManifest" syncable="YES">
         <attribute name="dbid" optional="YES" attributeType="String"/>
         <attribute name="deletedRecordNames" optional="YES" attributeType="String"/>
+        <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="recordName" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Zone" representedClassName="Zone" syncable="YES">
         <attribute name="dbid" optional="YES" attributeType="String"/>
+        <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="parentLink" optional="YES" attributeType="String"/>
         <attribute name="parentRID" optional="YES" attributeType="String"/>
         <attribute name="recordName" optional="YES" attributeType="String"/>
@@ -37,10 +39,12 @@
         <attribute name="assetNames" optional="YES" attributeType="String"/>
         <attribute name="assets" optional="YES" attributeType="Transformable" valueTransformerName="ZAssetArrayTransformer" customClassName="Array"/>
         <attribute name="dbid" optional="YES" attributeType="String"/>
+        <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="recordName" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ZUser" representedClassName="ZUser" syncable="YES">
         <attribute name="authorID" optional="YES" attributeType="String"/>
+        <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="recordName" optional="YES" attributeType="String"/>
         <attribute name="sentEmailType" optional="YES" attributeType="String"/>
         <attribute name="writeAccess" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -59,10 +63,10 @@
     <elements>
         <element name="SPreferences" positionX="-63" positionY="-18" width="128" height="43"/>
         <element name="SState" positionX="0" positionY="54" width="128" height="58"/>
-        <element name="ZManifest" positionX="-216.587158203125" positionY="50.24057006835938" width="128" height="74"/>
-        <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="268"/>
+        <element name="ZManifest" positionX="-216.587158203125" positionY="50.24057006835938" width="128" height="103"/>
+        <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="283"/>
         <element name="ZTrait" positionX="-117.15234375" positionY="186.37109375" width="128" height="118"/>
-        <element name="ZTraitAssets" positionX="64.625" positionY="202.92578125" width="128" height="89"/>
-        <element name="ZUser" positionX="-382.8359375" positionY="80.328125" width="128" height="89"/>
+        <element name="ZTraitAssets" positionX="64.625" positionY="202.92578125" width="128" height="118"/>
+        <element name="ZUser" positionX="-382.8359375" positionY="80.328125" width="128" height="118"/>
     </elements>
 </model>
