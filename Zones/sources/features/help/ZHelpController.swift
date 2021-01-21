@@ -17,7 +17,7 @@ import SnapKit
 
 var gHelpController: ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
 var gHelpWindowController: NSWindowController? // instantiated once, in startupCloudAndUI
-let gAllHelpModes : [ZHelpMode] = [.basicMode, .allMode, .dotMode]
+let gAllHelpModes : [ZHelpMode] = [.basicMode, .mediumMode, .allMode, .dotMode]
 
 class ZHelpController: ZGenericTableController {
 
@@ -42,8 +42,8 @@ class ZHelpController: ZGenericTableController {
 
 	func gridView(for iMode: ZHelpMode) -> ZHelpGridView? {
 		switch iMode {
-			case   .dotMode: return  dotsHelpGrid
-			default:         return  mapHelpGrid
+			case .dotMode: return dotsHelpGrid
+			default:       return mapHelpGrid
 		}
 	}
 
@@ -67,8 +67,8 @@ class ZHelpController: ZGenericTableController {
 		view.zlayer.backgroundColor = .white
 		let                       m = gCurrentHelpMode
 
-		super        .setup()
-		dotsHelpData .setup(for: m)
+		super         .setup()
+		dotsHelpData  .setup(for: m)
 		bigMapHelpData.setup(for: m)
 		setupGridViews()
 		setupTitleBar()
@@ -197,7 +197,7 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	func updateGridVisibility() {
-		let graphModes: [ZHelpMode] = [.basicMode, .allMode]
+		let graphModes: [ZHelpMode] = [.basicMode, .mediumMode, .allMode]
 
 		func shouldHide(_ mode: ZHelpMode) -> Bool {
 			return mode != gCurrentHelpMode && (!graphModes.contains(mode) || !graphModes.contains(gCurrentHelpMode))

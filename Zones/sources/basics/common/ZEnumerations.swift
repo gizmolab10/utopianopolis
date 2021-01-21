@@ -112,32 +112,36 @@ enum ZWorkMode: String {
 }
 
 enum ZHelpMode: String {
-	case basicMode = "b"
-	case noteMode  = "n"
-	case allMode   = "a"
-	case dotMode   = "d"
-	case noMode    = " "
+	case mediumMode = "m"
+	case basicMode  = "b"
+	case noteMode   = "n"
+	case allMode    = "a"
+	case dotMode    = "d"
+	case noMode     = " "
 
 	var title: String {
 		switch self {
-			case .basicMode: return "basic keys"
-			case .noteMode:  return "essay keys"
-			case .allMode:   return "all keys"
-			case .dotMode:   return "dots"
-			default:         return ""
+			case .mediumMode: return "intermediate keys"
+			case .basicMode:  return "basic keys"
+			case .noteMode:   return "essay keys"
+			case .allMode:    return "all keys"
+			case .dotMode:    return "dots"
+			default:          return ""
 		}
 	}
 
 }
 
 enum ZHelpType: String {
-	case hPro       = "p"
-	case hBold      = "b"
-	case hDots      = "d"
-	case hPlain     = " "
-	case hInsert    = "i"
-	case hAppend    = "a"
-	case hUnderline = "u"
+	case hPro       = "2"
+	case hBold      = "!"
+	case hDots      = "."
+	case hSkip      = "="
+	case hEmpty     = "-"
+	case hPlain     = "0"
+	case hInsert    = "+"
+	case hMedium    = "1"
+	case hUnderline = "_"
 }
 
 enum ZCountsMode: Int { // do not change the order, they are persisted

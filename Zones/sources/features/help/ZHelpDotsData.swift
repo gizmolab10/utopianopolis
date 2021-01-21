@@ -96,7 +96,7 @@ class ZHelpDotsData: ZHelpData {
 
 	override var noTabPrefix       :   String   { return "                    " }
 	override var columnStrings     : [[String]] { return [dotsColumnOne, dotsColumnTwo] }
-	override var tabOffsets        :  [Int]     { return [0, 20, 150] }
+	override var tabOffsets        :  [Int]     { return [0, 20, 170] }
 	override var columnWidth       :   Int      { return 580 }
 	override var indexOfLastColumn :   Int      { return 1 }
 	override var rowHeight         :   CGFloat  { return 22.0 }
@@ -119,38 +119,38 @@ class ZHelpDotsData: ZHelpData {
 
 	let dotsColumnOne: [String] = prefixArray + [
 		"",						"",																				"",
-		"bDRAG DOT",			"click to select, deselect or drag",											"",
+		"!DRAG DOT",			"click to select, deselect or drag",											"",
 		"",						"",																				"",
-		"udrag dot",			"filled dots indicate idea is selected",										"",
-		"db",					"editable",																		"",
-		"db",					"not editable\t",																"",
-		"db",					"only ideas in its list and sublists are editable",								"",
+		"_drag dot",			"filled dots indicate idea is selected",										"",
+		".b",					"editable",																		"",
+		".b",					"not editable\t",																"",
+		".b",					"only ideas in its list and sublists are editable",								"",
 		"",						"",																				"",
-		"uappears only in the favorite and recent lists",													"",	"",
-		"db",					"target of this bookmark is the current focus",									""
+		"_appears only in the favorite and recent lists",													"",	"",
+		".b",					"target of this bookmark is the current focus",									""
 	]
 
 	let dotsColumnTwo: [String] = prefixArray + [
 		"",						"",																				"",
-		"bREVEAL DOT",			"click to conceal, reveal or activate",											"",
+		"!REVEAL DOT",			"click to conceal, reveal or activate",											"",
 		"",						"",																				"",
-		"uno dot indicates no list and nothing to activate",												"", "",
+		"_no dot indicates no list and nothing to activate",												"", "",
 		"",						"",																				"",
-		"uwhen list is visible","click to hide it",																"",
-		"de",					"points to the left",															"",
+		"_when list is visible","click to hide it",																"",
+		".e",					"points to the left",															"",
 		"",						"",																				"",
-		"uwhen list is hidden",	"tiny dots indicate its size    click to reveal it",							"",
-		"df",					"single idea      \t1 = small dot on right",									"",
-		"df",					"3 ideas          \t3 = small dots all around",									"",
-		"df",					"10 ideas         \t10 = medium dot on right",									"",
-		"df",					"12 ideas         \t10 = medium dot on left, 2 = small dots on right",			"",
-		"df",					"120 ideas        \t100 = large hollow dot on left, 20 = medium dots on right",	"",
+		"_when list is hidden",	"tiny dots indicate its size    click to reveal it",							"",
+		".f",					"single idea      \t1 = small dot on right",									"",
+		".f",					"3 ideas          \t3 = small dots all around",									"",
+		".f",					"10 ideas         \t10 = medium dot on right",									"",
+		".f",					"12 ideas         \t10 = medium dot on left, 2 = small dots on right",			"",
+		".f",					"120 ideas        \t100 = large hollow dot on left, 20 = medium dots on right",	"",
 		"",						"",																				"",
-		"udecorated dot",		"to activate: ⌘-click or select and tap the = key",								"",
-		"df",					"bookmark         \tfocus on the bookmark's target",							"",
-		"db",					"email            \tcompose and send",											"",
-		"db",					"hyperlink        \topen a browser",											"",
-		"db",					"note or essay    \tview and edit",												""
+		"_decorated dot",		"to activate: ⌘-click or select and tap the = key",								"",
+		".f",					"bookmark         \tfocus on the bookmark's target",							"",
+		".b",					"email            \tcompose and send",											"",
+		".b",					"hyperlink        \topen a browser",											"",
+		".b",					"note or essay    \tview and edit",												""
 	]
 
 }

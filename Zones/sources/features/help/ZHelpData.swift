@@ -19,6 +19,9 @@ class ZHelpData: NSObject {
 	var indexOfLastColumn :    Int     { return 3 }           // "
 	var stringsPerRow     :    Int     { return 3 }
 	var isPro             :    Bool    { return gCurrentHelpMode == .allMode }
+	var isDots            :    Bool    { return gCurrentHelpMode == .dotMode }
+	var isBasic           :    Bool    { return gCurrentHelpMode == .basicMode }
+	var isMedium          :    Bool    { return gCurrentHelpMode == .mediumMode }
 	var boldFont          :    ZFont   { return kBoldFont }
 
 	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) { return (nil, nil) }
@@ -79,32 +82,33 @@ class ZHelpData: NSObject {
 	}
 
 	func strippedStrings(for column: Int) -> [String] {
-		var        result = [String]()
+		var             result = [String]()
+		if              column > -1 {
+			let     rawStrings = columnStrings[column]
+			let          count = rawStrings.count / stringsPerRow
+			var            row = 0
+			while          row < count {
+				let     offset = row * stringsPerRow
+				let      first = rawStrings[offset]
+				let     second = rawStrings[offset + 1]
+				let      third = rawStrings[offset + 2]
+				let (_, types) = extractTypes(from: first)
+				row           += 1
 
-		if  column < 0 {
-			return result
-		}
-
-		let    rawStrings = columnStrings[column]
-		let         count = rawStrings.count / stringsPerRow
-		var         index = 0
-
-		while    index < count {
-			let offset = index * stringsPerRow
-			let  first = rawStrings[offset]
-			let second = rawStrings[offset + 1]
-			let  third = rawStrings[offset + 2]
-			let   type = ZHelpType(rawValue: first.substring(with: NSMakeRange(0, 1))) // grab first character
-			index     += 1
-
-			if      isPro || type != .hPro {
-				if  isPro || type != .hInsert {
-					result.append(first)
-					result.append(second)
-					result.append(third)
-				} else {
-					while result.count < 90 {
-						result.append("")
+				if      isPro || !types.contains(.hPro) {
+					if !isPro &&  types.contains(.hInsert) {
+						while result.count < 90 {
+							result.append("")
+						}
+					} else if isPro || isDots
+								||  types.contains(.hBold)
+								||  types.contains(.hEmpty)
+								||  types.contains(.hPlain)
+								||  types.contains(.hUnderline)
+								|| (types.contains(.hMedium) && isMedium) {
+						result.append(first)
+						result.append(second)
+						result.append(third)
 					}
 				}
 			}
@@ -113,77 +117,130 @@ class ZHelpData: NSObject {
 		return result
 	}
 
+	func extractTypes(from string: String) -> (Int, [ZHelpType]) {
+		var types = [ZHelpType]()
+
+		func extract(at index: Int) {
+			let character = string.substring(with: NSMakeRange(index, 1))
+			if  let  type = ZHelpType(rawValue: character.lowercased()) {
+				types.append(type)
+			}
+		}
+
+		extract(at: 0)
+		extract(at: 1)
+
+		if  types.count == 0 {
+			types.append(.hEmpty)
+		}
+
+		return (types.count, types)
+	}
+
 	func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
 		var (first, second, url) = strings(for: row, column: column)
-		let     rawChar = first.substring(with: NSMakeRange(0, 1))
-		let       lower = rawChar.lowercased()
-		let       SHIFT = lower != rawChar
-		let        type = ZHelpType(rawValue: lower) // grab first character
-		let     command = first.substring(fromInclusive: 1)             // grab remaining characters
-		var  attributes = ZAttributesDictionary ()
-		let      hasURL = !url.isEmpty
-		var      prefix = "   "
+		let      (offset, types) = extractTypes(from: first)
+		let                 text = first.substring(fromInclusive: offset)    // grab remaining characters
+		var           attributes = ZAttributesDictionary ()
+		let               hasURL = !url.isEmpty
+		var               prefix = ""
 
 		switch gCurrentHelpMode {
 			case .dotMode: attributes[.font] = kLargeHelpFont
 			default:       attributes[.font] = nil
 		}
 
-		if !isPro && (SHIFT || type == .hPro) {
+		if !isPro && !isDots && (types.contains(.hPro) || (!isMedium && types.contains(.hMedium))) {
 			return NSMutableAttributedString(string: kTab + kTab + kTab)
 		}
 
-		switch type {
-			case .hDots?:
-				prefix = noTabPrefix
-			case .hBold?:
-				attributes[.font] = boldFont
-			case .hAppend?, .hUnderline?:
-				attributes[.underlineStyle] = 1
-			case .hPlain?, .hPro?:
-				if  hasURL {
-					attributes[.foregroundColor] = gHelpHyperlinkColor
+		for type in types {
+			switch type {
+				case .hDots:
+					prefix = noTabPrefix
+				case .hBold:
+					attributes[.font] = boldFont
+				case .hUnderline:
+					attributes[.underlineStyle] = 1
+				case .hPlain, .hMedium, .hPro:
+					if  hasURL {
+						attributes[.foregroundColor] = gHelpHyperlinkColor
 
-					if !url.isHyphen {
-						second.append(kSpace + kEllipsis)
+						if !url.isHyphen {
+							second.append(kSpace + kEllipsis)
+						}
 					}
-				}
 
-				fallthrough
+					fallthrough
 
-			default:
-				prefix = kTab		// for empty lines, including after last row
+				default:
+					if  offset == 1 {       // only if single type specified
+						prefix = kTab		// for empty lines, including after last row
+					}
+			}
 		}
 
 		let result = NSMutableAttributedString(string: prefix)
 
-		switch type {
-			case .hDots?:
-				break
-			case .hPlain?:
-				result.append(NSAttributedString(string: command))
-			default:
-				if  isPro,
-					type == .hPro {
-					second = "** " + second
-				}
+		func appendTab()    { result.append(NSAttributedString(string: kTab)) }
+		func appendText()   { result.append(NSAttributedString(string: text,   attributes: attributes)) }
+		func appendSecond() { result.append(NSAttributedString(string: second, attributes: attributes)) }
 
-				result.append(NSAttributedString(string: command, attributes: attributes))
+		for (index, type) in types.enumerated() {
+			let isFirst = index == 0
+
+			switch type {
+				case .hDots:
+					break
+				case .hPlain:
+					appendText()
+				case .hMedium:
+					if  isMedium || isPro {
+						appendText()
+					}
+				default:
+					if  isFirst {
+						appendText()
+					}
+			}
 		}
 
 		if  second.length > 3 {
-			if  type != .hDots {
-				result.append(NSAttributedString(string: kTab))
+			if  types.contains(.hDots) {
+				appendSecond()
+			} else{
+				appendTab()
+
+				for type in types {
+					switch type {
+						case .hPlain:
+							appendSecond()
+						case .hMedium:
+							if  isMedium || isPro {
+								appendSecond()
+							}
+						case .hPro:
+							if  isPro {
+								appendSecond()
+							} else {
+								appendTab()
+							}
+						default:
+							break
+					}
+				}
 			}
-
-			result.append(NSAttributedString(string: second, attributes: attributes))
 		}
 
-		if  command.length + second.length < 11 && row != 1 && ![.hPlain].contains(type) {
-			result.append(NSAttributedString(string: kTab)) 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough final tabs
+		if  text.length + second.length < 10 && row != 1 && !types.contains(.hPlain) {
+			appendTab() 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough final tabs
 		}
 
-		result.append(NSAttributedString(string: kTab))
+		appendTab()
+
+		if  result == NSAttributedString(string: kTab + kTab + kTab + kTab), column < 3 {
+			print("row: \(row), column: \(column)")
+		}
 
 		return result
 	}
