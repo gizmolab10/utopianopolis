@@ -73,7 +73,7 @@ class ZRecents : ZRecords {
 		if  rootZone != nil {
 			if  let          here  = gHereMaybe,
 				!findAndSetHereAsParentOfBookmarkTargeting(here),
-				let       bookmark = gFavorites.createFavorite(for: here, action: .aBookmark) {
+				let       bookmark = createBookmark(for: here, action: .aCreateBookmark) {
 				var    index: Int? = nil                               // assume current bookmark's parent is NOT current here, always grow down
 
 				if  let          b = currentBookmark,

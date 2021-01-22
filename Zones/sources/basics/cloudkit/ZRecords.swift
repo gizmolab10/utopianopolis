@@ -1066,7 +1066,7 @@ class ZRecords: NSObject {
 			if  let small = gCurrentSmallMapRecords,
 			    !small.swapBetweenBookmarkAndTarget(doNotGrab: !shouldGrab) {
 				if  gSmallMapMode == .favorites {
-					gFavorites.createFavorite(for: zone, action: .aCreateFavorite)
+					createBookmark(for: zone, action: .aCreateBookmark)
 				}
 			}
 
@@ -1084,6 +1084,96 @@ class ZRecords: NSObject {
 
 			finishAndGrab(zone)
 		}
+	}
+
+	@discardableResult func createBookmark(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
+
+		// ////////////////////////////////////////////
+		// 1. zone not a bookmark, pass the original //
+		// 2. zone is a bookmark, pass a deep copy   //
+		// ////////////////////////////////////////////
+
+		if  let       zone = iZone,
+			let       root = rootZone {
+			let  newParent = currentHere
+			let databaseID = zone.databaseID
+			var     parent = zone.parentZone
+			let isBookmark = zone.isBookmark
+			let  actNormal = action == .aBookmark
+
+			if  !actNormal {
+				let          basis = isBookmark ? zone.crossLink! : zone
+
+				if  let recordName = basis.ckRecordName {
+					parent         = currentHere
+
+					for workingFavorite in root.allBookmarkProgeny {
+						if  !workingFavorite.isInTrash,
+							databaseID     == workingFavorite.bookmarkTarget?.databaseID,
+							recordName     == workingFavorite.linkRecordName {
+							currentBookmark = workingFavorite
+
+							return workingFavorite
+						}
+					}
+				}
+			}
+
+			if  let           count = parent?.count {
+				var bookmark: Zone? = isBookmark ? zone.deepCopy : nil               // 1. and 2.
+				var           index = parent?.children.firstIndex(of: zone) ?? count
+
+				if  action         == .aCreateBookmark,
+					let      fIndex = currentBookmarkIndex {
+					index           = nextWorkingIndex(after: fIndex, going: gListsGrowDown)
+				}
+
+				bookmark            = gBookmarks.create(withBookmark: bookmark, action, parent: newParent, atIndex: index, zone.zoneName)
+
+				bookmark?.maybeNeedSave()
+
+				if  actNormal {
+					parent?.updateCKRecordProperties()
+					parent?.maybeNeedMerge()
+				}
+
+				if !isBookmark {
+					bookmark?.crossLink = zone
+
+					gBookmarks.persistForLookupByTarget(bookmark!)
+				}
+
+				return bookmark!
+			}
+		}
+
+		return nil
+	}
+
+	// MARK:- switch
+	// MARK:-
+
+	func nextWorkingIndex(after index: Int, going down: Bool) -> Int {
+		let  increment = (down ? 1 : -1)
+		var       next = index + increment
+		let      count = workingBookmarks.count
+		if next       >= count {
+			next       = 0
+		} else if next < 0 {
+			next       = count - 1
+		}
+
+		return next
+	}
+
+	var currentBookmarkIndex : Int? {
+		for (index, zone) in workingBookmarks.enumerated() {
+			if  zone == currentBookmark {
+				return index
+			}
+		}
+
+		return nil
 	}
 
     // MARK:- debug

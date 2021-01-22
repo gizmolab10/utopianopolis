@@ -585,7 +585,7 @@ class ZoneWidget: ZView {
 			let      zone = widgetZone {
             let isGrabbed = zone.isGrabbed
             let isEditing = textWidget.isFirstResponder
-			let  showList = zone.expanded
+			let  expanded = zone.expanded
 
 			if !nowDrawLines {
 				nowDrawLines = true
@@ -600,11 +600,11 @@ class ZoneWidget: ZView {
 					drawSelectionHighlight(isEditing)
 				}
 
-				if    showList {
-					draw(iDirtyRect) // recurse
+				if    expanded {
+					draw(iDirtyRect)             // recurse
 				}
-			} else if showList {
-				for child in childrenWidgets { // this is after child dots have been autolayed out
+			} else if expanded {
+				for child in childrenWidgets {   // this is after child dots have been autolayed out
 					drawLine(to: child)
                 }
             }

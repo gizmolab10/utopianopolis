@@ -54,7 +54,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var       needsAdoption: Bool      { return  hasState(.needsAdoption) }
 	var      needsBookmarks: Bool      { return  hasState(.needsBookmarks) }
 
-	@discardableResult func updateFromCoreDataRelationships(visited: [String]?) -> [String] { return [String]() }
+	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] { return [String]() }
 
 	@discardableResult func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
 		var converted = [String]()
@@ -71,7 +71,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 				v?       .appendUnique(contentsOf: [name])
 			}
 
-			converted.append(contentsOf: updateFromCoreDataRelationships(visited: v))
+			converted.append(contentsOf: updateFromCoreDataHierarchyRelationships(visited: v))
 		}
 
 		return converted
@@ -309,8 +309,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	// MARK:-
 
 	func updateCKRecordProperties() {
-		if  gUseCoreData,
-			let          r = ckRecord {
+		if  let          r = ckRecord {
 			for keyPath in cloudProperties {
 				let    cloudValue  = r[keyPath] as! NSObject?
 				let propertyValue  = value(forKeyPath: keyPath) as! NSObject?

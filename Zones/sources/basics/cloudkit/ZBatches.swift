@@ -32,18 +32,18 @@ enum ZBatchID: Int {
 	case bSaveToCloud
 
     var shouldIgnore: Bool {
-        switch self {
-        case .bSync,
-             .bStartUp,
-             .bRefetch,
-             .bFinishUp,
-			 .bChildren,    // refetch progeny
-			 .bAllTraits,
-             .bNewAppleID,
-             .bResumeCloud: return false
-        case .bSaveToCloud: return gCloudStatusIsActive
-        default:            return true
-        }
+		switch self {
+			case .bSync,
+				 .bStartUp,
+				 .bRefetch,
+				 .bFinishUp,
+				 .bChildren,    // refetch progeny
+				 .bAllTraits,
+				 .bNewAppleID,
+				 .bResumeCloud: return false
+			case .bSaveToCloud: return gCloudStatusIsActive
+			default:            return true
+		}
     }
 
 	var needsCloudDrive: Bool {
@@ -80,7 +80,7 @@ class ZBatches: ZOnboarding {
     class ZBatch: NSObject {
         var       completions : [ZBatchCompletion]
         var        identifier :  ZBatchID
-        var allowedOperations : ZOperationIDsArray { return gHasInternet ? operations : localBatchOperations }
+        var allowedOperations :  ZOperationIDsArray { return gHasInternet ? operations : localBatchOperations }
 
         var operations: ZOperationIDsArray {
             switch identifier {
@@ -96,8 +96,8 @@ class ZBatches: ZOnboarding {
 			case .bRoot:        return [.oRoots,      .oManifest,            .oSaveToCloud, .oTraits]
 			case .bFocus:       return [.oRoots,      .oNeededIdeas,                        .oTraits]
 			case .bAllTraits:   return [                                                 .oAllTraits]
-            case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
-            case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oStartupDone)
+			case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oStartupDone)
+			case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
             case .bFinishUp:    return operationIDs(from: .oFinishUp,          to: .oDone)
             case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
             }

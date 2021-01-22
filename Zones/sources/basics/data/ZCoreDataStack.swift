@@ -133,24 +133,7 @@ class ZCoreDataStack: NSObject {
 					self.loadZone(with: name, into: dbID)
 				}
 
-				self.loadTraitAssets(into: dbID)
 				self.load(type: kManifestType, into: dbID, using: NSFetchRequest<NSFetchRequestResult>(entityName: kManifestType))
-			}
-		}
-	}
-
-	func loadTraitAssets(into dbID: ZDatabaseID?) {
-		if  let          dbid = dbID?.identifier {
-			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kTraitAssetsType)
-			request.predicate = NSPredicate(format: "dbid = \"\(dbid)\"")
-			let      zRecords = load(type: kTraitAssetsType, into: dbID, using: request)
-
-			for zRecord in zRecords {
-				zRecord.register()
-
-				if  let trait = zRecord as? ZTrait {
-					trait.ownerZone?.addTrait(trait)
-				}
 			}
 		}
 	}
@@ -172,6 +155,7 @@ class ZCoreDataStack: NSObject {
 				let cloud = gRemoteStorage.zRecords(for: dbID) {
 
 				zone.traverseAllProgeny { iChild in
+					iChild.updateFromCoreDataTraitRelationships(visited: [])
 					iChild.respectOrder()
 				}
 

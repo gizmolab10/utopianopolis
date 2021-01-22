@@ -10,15 +10,15 @@ import Foundation
 
 typealias ZDebugModes = [ZDebugMode]
 
-var  gDebugModes:  ZDebugModes = [.dUseCoreData, .dDebugInfo]
-var  gPrintModes: [ZPrintMode] = [.dData]
-var gUseCoreData: Bool { return gDebugModes.contains(.dUseCoreData) }
-var gDebugAccess: Bool { return gDebugModes.contains(.dDebugAccess) }
-var  gWriteFiles: Bool { return gDebugModes.contains(.dWriteFiles) }
-var   gDebugInfo: Bool { return gDebugModes.contains(.dDebugInfo) }
-var   gDebugDraw: Bool { return gDebugModes.contains(.dDebugDraw) }
-var   gReadFiles: Bool { return gDebugModes.contains(.dReadFiles) }
-var     gNewUser: Bool { return gDebugModes.contains(.dNewUser) }
+var  gDebugModes :  ZDebugModes = [.dUseCoreData, .dDebugInfo]
+var  gPrintModes : [ZPrintMode] = [.dData]
+var gUseCoreData : Bool { return gDebugModes.contains(.dUseCoreData) }
+var gDebugAccess : Bool { return gDebugModes.contains(.dDebugAccess) }
+var  gWriteFiles : Bool { return gDebugModes.contains(.dWriteFiles) }
+var   gDebugInfo : Bool { return gDebugModes.contains(.dDebugInfo) }
+var   gDebugDraw : Bool { return gDebugModes.contains(.dDebugDraw) }
+var   gReadFiles : Bool { return gDebugModes.contains(.dReadFiles) }
+var     gNewUser : Bool { return gDebugModes.contains(.dNewUser) }
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0

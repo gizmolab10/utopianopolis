@@ -724,17 +724,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- core data
 	// MARK:-
 
-	override func updateFromCoreDataRelationships(visited: [String]?) -> [String] {
+	override func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] {
 		var      converted = [String]()
+		var              v = visited
+
+		if  let       name = ckRecord?.recordID.recordName {
+			v?.appendUnique(contentsOf: [name])
+		}
 
 		if  let        set = mutableSetValue(forKeyPath: "childArray") as? Set<Zone>, set.count > 0 {
 			let childArray = ZoneArray(set: set)
-//			printDebug(.dData, "\(set.count) in \(unwrappedName)")
-			var v = visited
-
-			if  let name = ckRecord?.recordID.recordName {
-				v?.appendUnique(contentsOf: [name])
-			}
 
 			for child in childArray {
 				let c = child.convertFromCoreData(into: kZoneType, visited: v)
@@ -742,7 +741,28 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  let name = child.ckRecord?.recordID.recordName,
 					(visited == nil || !visited!.contains(name)) {
 					converted.append(contentsOf: c)
-					addChild(child, updateCoreData: false)
+					addChild(child, updateCoreData: false) // we got here because core data already exists
+				}
+			}
+		}
+
+		return converted
+	}
+
+	@discardableResult func updateFromCoreDataTraitRelationships(visited: [String]?) -> [String] {
+		var      converted = [String]()
+		let              v = visited
+
+		if  let        set = mutableSetValue(forKeyPath: "traitArray") as? Set<ZTrait>, set.count > 0 {
+			let traitArray = ZTraitArray(set: set)
+
+			for trait in traitArray {
+				let c = trait.convertFromCoreData(into: kTraitType, visited: v)
+
+				if  let name = trait.ckRecord?.recordID.recordName,
+					(visited == nil || !visited!.contains(name)) {
+					converted.append(contentsOf: c)
+					addTrait(trait, updateCoreData: false) // we got here because core data already exists
 				}
 			}
 		}
@@ -751,16 +771,27 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func updateCoreDataRelationships() {
-		var childArray = Set<Zone>()
+		if  gUseCoreData {
+			var childArray = Set<Zone>()
+			var traitArray = Set<ZTrait>()
 
-		for child in children {
-			if  child.databaseID == databaseID {
-				child.setValue(self, forKeyPath: "parentRef")
-				childArray.insert(child)
+			for child in children {
+				if  child.databaseID == databaseID {
+					child.setValue(self, forKeyPath: "parentRef")
+					childArray.insert(child)
+				}
 			}
-		}
 
-		setValue(childArray as NSObject, forKeyPath: "childArray")
+			for trait in traits.values {
+				if  trait.databaseID == databaseID {
+					trait.setValue(self, forKeyPath: "ownerRef")
+					traitArray.insert(trait)
+				}
+			}
+
+			setValue(childArray as NSObject, forKeyPath: "childArray")
+			setValue(traitArray as NSObject, forKeyPath: "traitArray")
+		}
 	}
 
 	// MARK:- write access
@@ -1463,7 +1494,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func addTrait(_ trait: ZTrait) {
+	func addTrait(_ trait: ZTrait, updateCoreData: Bool = true) {
 		if  let       r          = ckRecord,
 			let    type          = trait.traitType {
 			traits[type]         = trait
@@ -1475,6 +1506,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			trait.updateCKRecordProperties()
+
+			if  updateCoreData {
+				updateCoreDataRelationships()
+			}
 		}
 	}
 
@@ -1558,6 +1593,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let     trait = traits[iType]
 		traits[iType] = nil
 
+		updateCoreDataRelationships()
 		trait?.needDestroy()
 		needSave()
 	}
@@ -2071,7 +2107,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					var beingMoved = grab
 
 					if  toSmallMap && !beingMoved.isInSmallMap && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
-						if  let bookmark = gFavorites.createFavorite(for: beingMoved, action: .aNotABookmark) {	// type 3
+						if  let bookmark = gFavorites.createBookmark(for: beingMoved, action: .aNotABookmark) {	// type 3
 							beingMoved   = bookmark
 
 							beingMoved.maybeNeedSave()
