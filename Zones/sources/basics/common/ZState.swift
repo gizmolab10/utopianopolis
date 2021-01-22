@@ -63,7 +63,7 @@ var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIde
 var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsNoteMode || gIsStartupMode }
 var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEditIdeaMode }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
-var   gCurrentSmallMapRecords:          ZRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
+var   gCurrentSmallMapRecords:  ZSmallMapRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
 var                  gRecords:          ZRecords? { return (kIsPhone && gShowSmallMapForIOS) ? gCurrentSmallMapRecords : gCloud }
 var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var            gModifierFlags:        ZEventFlags { return ZEvent.modifierFlags } // use when don't have an event handy

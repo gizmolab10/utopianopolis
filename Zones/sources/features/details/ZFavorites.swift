@@ -19,7 +19,7 @@ enum ZBookmarkAction: Int {
 let gFavorites     = ZFavorites(ZDatabaseID.favoritesID)
 var gFavoritesRoot : Zone? { return gFavorites.rootZone }
 
-class ZFavorites: ZRecords {
+class ZFavorites: ZSmallMapRecords {
 
     // MARK:- initialization
     // MARK:-

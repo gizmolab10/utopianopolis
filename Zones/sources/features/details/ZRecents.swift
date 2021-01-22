@@ -14,11 +14,11 @@ enum ZFocusKind: Int {
 	case eEdited
 }
 
-let gRecents = ZRecents(ZDatabaseID.recentsID)
+let gRecents     = ZRecents(ZDatabaseID.recentsID)
 var gRecentsRoot : Zone? { return gRecents.rootZone }
 var gRecentsHere : Zone? { return gRecentsHereMaybe ?? gRecentsRoot }
 
-class ZRecents : ZRecords {
+class ZRecents : ZSmallMapRecords {
 
 	override var rootZone : Zone? {
 		get {
