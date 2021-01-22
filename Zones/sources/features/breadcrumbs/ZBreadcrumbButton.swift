@@ -11,6 +11,7 @@ import Foundation
 class ZBreadcrumbButton: ZButton, ZTooltips {
 
 	var zone: Zone = gHere
+	var currentEvent: ZEvent?
 
 	var strokeColor: ZColor {
 		let visible = zone.ancestralPath.contains(gHere)
@@ -39,8 +40,9 @@ class ZBreadcrumbButton: ZButton, ZTooltips {
 		}
 	}
 
-	override func mouseMoved(with event: ZEvent) {
-		print("hah!")
+	override func mouseDown(with event: ZEvent) {
+		currentEvent = event
+		super.mouseDown(with: event)
 	}
 	
 }

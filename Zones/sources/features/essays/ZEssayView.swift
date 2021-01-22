@@ -355,7 +355,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  (shouldOverwrite || restoreSelection != nil),
 			let text = gCurrentEssay?.essayText {
 			clear() 								// discard previously edited text
-			updateControlBarButtons(true)
+			setControlBarButtons(enabled: true)
 			gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }		// emplace text
 			select(restoreSelection: restoreSelection)
 
@@ -608,13 +608,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- buttons
 	// MARK:-
 
-	func updateControlBarButtons(_ flag: Bool) {
-		backwardButton?.isEnabled = flag
-		forwardButton? .isEnabled = flag
-		deleteButton?  .isEnabled = flag
-		cancelButton?  .isEnabled = flag
-		hideButton?    .isEnabled = flag
-		saveButton?    .isEnabled = flag
+	func setControlBarButtons(      enabled: Bool) {
+		backwardButton?.isEnabled = enabled
+		forwardButton? .isEnabled = enabled
+		deleteButton?  .isEnabled = enabled
+		cancelButton?  .isEnabled = enabled
+		hideButton?    .isEnabled = enabled
+		saveButton?    .isEnabled = enabled
 	}
 
 	private func setButton(_ button: ZButton) {

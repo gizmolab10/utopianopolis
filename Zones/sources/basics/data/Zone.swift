@@ -298,64 +298,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	var zonesWithNotes: ZoneArray {
-		var    result = ZoneArray()
-
-		traverseAllProgeny { zone in
-			if  zone.hasTrait(for: .tNote) {
-				result.append(zone)
-			}
-		}
-
-		return result
-	}
-
-	var countOfNotes: Int {
-		return zonesWithNotes.count
-	}
-
-	var currentNote: ZNote? {
-		let zones = zonesWithNotes
-
-		if  zones.count > 0 {
-			return ZNote(zones[0])
-		}
-
-		return nil
-	}
-
-	var note: ZNote {
-		if  isBookmark {
-			return bookmarkTarget!.note
-		} else if noteMaybe == nil || !hasTrait(matching: [.tNote, .tEssay]) {
-			createNote()
-		}
-
-		return noteMaybe!
-	}
-
-	func destroyNote() {
-		removeTrait(for: .tNote)
-
-		noteMaybe = nil
-	}
-
-	func createNote() {
-		let zones = zonesWithNotes
-		let count = zones.count
-
-		if  count > 1 && gCreateCombinedEssay {
-			let  essay = ZEssay(self)
-			noteMaybe = essay
-
-			essay.setupChildren()
-		} else if count == 0 || !gCreateCombinedEssay {
-			noteMaybe = ZNote(self)
-		} else {
-			noteMaybe = ZNote(zones[0])
-		}
-	}
-
 	var hyperLink: String? {
 		get {
 			if  hyperLinkMaybe == nil {
@@ -1618,6 +1560,67 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		trait?.needDestroy()
 		needSave()
+	}
+
+	// MARK:- notes / essays
+	// MARK:-
+
+	var zonesWithNotes: ZoneArray {
+		var zones = ZoneArray()
+
+		traverseAllProgeny { zone in
+			if  zone .hasNote {
+				zones.append(zone)
+			}
+		}
+
+		return zones
+	}
+
+	var countOfNotes: Int {
+		return zonesWithNotes.count
+	}
+
+	var currentNote: ZNote? {
+		let zones = zonesWithNotes
+
+		if  zones.count > 0 {
+			return ZNote(zones[0])
+		}
+
+		return nil
+	}
+
+	var note: ZNote {
+		if  isBookmark {
+			return bookmarkTarget!.note
+		} else if noteMaybe == nil || !hasTrait(matching: [.tNote, .tEssay]) {
+			createNote()
+		}
+
+		return noteMaybe!
+	}
+
+	func destroyNote() {
+		removeTrait(for: .tNote)
+
+		noteMaybe = nil
+	}
+
+	func createNote() {
+		let zones = zonesWithNotes
+		let count = zones.count
+
+		if  count > 1 && gCreateCombinedEssay {
+			let  essay = ZEssay(self)
+			noteMaybe = essay
+
+			essay.setupChildren()
+		} else if count == 0 || !gCreateCombinedEssay {
+			noteMaybe = ZNote(self)
+		} else {
+			noteMaybe = ZNote(zones[0])
+		}
 	}
 
 	func showNote() {

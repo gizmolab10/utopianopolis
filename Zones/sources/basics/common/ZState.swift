@@ -66,6 +66,7 @@ var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var   gCurrentSmallMapRecords:          ZRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
 var                  gRecords:          ZRecords? { return (kIsPhone && gShowSmallMapForIOS) ? gCurrentSmallMapRecords : gCloud }
 var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
+var            gModifierFlags:        ZEventFlags { return ZEvent.modifierFlags } // use when don't have an event handy
 var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
 var                 gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
@@ -83,6 +84,9 @@ var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNew
 var            gFavoritesFont:              ZFont { return .systemFont    (ofSize: gFontSize * kSmallMapReduction) }
 var               gWidgetFont:              ZFont { return .systemFont    (ofSize: gFontSize) }
 
+func         gSetEditIdeaMode()                   { gWorkMode = .editIdeaMode }
+func             gSetMapsMode()                   { gWorkMode = .mapsMode }
+
 let                 kHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize)
 let                 kBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize)
 let            kLargeHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize + 1.0)
@@ -90,9 +94,6 @@ let            kLargeBoldFont                     = ZFont  .boldSystemFont(ofSiz
 let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
 let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
-
-func         gSetEditIdeaMode()                   { gWorkMode = .editIdeaMode }
-func              gSetMapsMode()                   { gWorkMode = .mapsMode }
 
 func gStoreProgressTimes() {
 	var separator = ""

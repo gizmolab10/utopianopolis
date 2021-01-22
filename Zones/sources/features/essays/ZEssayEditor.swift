@@ -31,27 +31,30 @@ class ZEssayEditor: ZBaseEditor {
 	@discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
 		if !super.handleKey(iKey, flags: flags, isWindow: isWindow),
 			var     key = iKey {
+			var   SHIFT = flags.isShift
 			let  OPTION = flags.isOption
 			let COMMAND = flags.isCommand
 
 			if  key    != key.lowercased() {
 				key     = key.lowercased()
+				SHIFT   = true
 			}
 
 			if  let arrow = key.arrow {
 				handleArrow(arrow, flags: flags)
 
 				return true
-			} else if  COMMAND {
-				switch key {
-					default:      return gEssayView?.handleKey(iKey, flags: flags) ?? false
+			} else if !COMMAND, key == kEscape {
+				if  OPTION {
+					gEssayView?.accountForSelection()
 				}
-			} else {
-				switch key {
-					case kEscape: if OPTION { gEssayView?.accountForSelection() }; gControllers.swapMapAndEssay(); return true
-					default:      return gEssayView?.handleKey(iKey, flags: flags) ?? false
-				}
+
+				gControllers.swapMapAndEssay()
+
+				return true
 			}
+
+			return gEssayView?.handleKey(iKey, flags: flags) ?? false
 		}
 		
 		return false

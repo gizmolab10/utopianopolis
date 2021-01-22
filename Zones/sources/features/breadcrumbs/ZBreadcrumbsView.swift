@@ -97,34 +97,52 @@ class ZBreadcrumbsView : ZButtonsView {
 		setupAndRedraw()
 	}
 
-	@IBAction func crumbButtonAction(_ button: ZButton) {
-		let    edit = gCurrentlyEditingWidget?.widgetZone
+	@IBAction func crumbButtonAction(_ button: ZBreadcrumbButton) {
 		let    next = gBreadcrumbs.crumbZones[button.tag]
 		let    last = gBreadcrumbs.crumbsRootZone
-		let    span = gTextEditor.selectedRange()
-		let COMMAND = false
+		let   flags = button.currentEvent?.modifierFlags
+		let  OPTION = flags?.isOption  ?? false
+		let COMMAND = flags?.isCommand ?? false
 
 		next.focusOn() {
-			if  COMMAND {
-				next.traverseAllProgeny { child in
-					child.collapse()
-				}
-			}
+			switch (gWorkMode) {
+				case .editIdeaMode:
+					if  let edit = gCurrentlyEditingWidget?.widgetZone {
+						let span = gTextEditor.selectedRange()
+						edit.editAndSelect(range: span)
+					} else {
+						last?.grab()
+					}
+				case .mapsMode:
+					if  COMMAND {
+						next.grab()
+						next.traverseAllProgeny { child in
+							child.collapse()
+						}
+					}
 
-			last?.asssureIsVisible()
+					last?.asssureIsVisible()
+				case .noteMode:
+					if  let essayView = gEssayView {
+						let sameNext  = (next == gCurrentEssayZone)
+						if  sameNext || !(next.hasNote || OPTION) {
+							// no note in next so exit essay editor
+							essayView.setControlBarButtons(enabled: false)
+							gSetMapsMode()
+						} else {
+							let            saved = gCreateCombinedEssay
+							gCreateCombinedEssay = (OPTION && !sameNext)
 
-			if  let e = edit {
-				e.editAndSelect(range: span)
-			} else {
-				last?.grab()
-			}
+							if  gCreateCombinedEssay {
+								next.noteMaybe   = nil              // forget note so essay will be constructed
+							}
 
-			if  gWorkMode == .noteMode {
-				if  let note = next.noteMaybe {
-					gEssayView?.resetCurrentEssay(note)
-				} else {
-					gSetMapsMode()
-				}
+							essayView.resetCurrentEssay(next.note)  // note creates an essay when gCreateCombinedEssay is true
+
+							gCreateCombinedEssay = saved
+						}
+					}
+				default: break
 			}
 
 			gSignal([.sSwap, .sRelayout])

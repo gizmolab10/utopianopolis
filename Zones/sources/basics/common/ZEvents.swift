@@ -16,30 +16,23 @@ import EventKit
     import UIKit
 #endif
 
-
 let gNotificationCenter = NotificationCenter.default
-let gEventStore         = EKEventStore()
+let gEventStore         = EKEventStore() // calendar API
 let gEvents             = ZEvents()
-
 
 class ZEvents: ZGeneric {
 
-
     var monitor: Any?
-
 
     func clear() { removeMonitorAsync() }
 
-//
 //    func createCalendarEvent(named iName: String) -> EKEvent {
 //        var event = EKCalendarItem(eventStore: gEventStore)
 //       // event.eventIdentifier = iName
 //
 //        return event
 //    }
-//
 
-    
     func setup() {
         setupGlobalEventsMonitor()
         gNotificationCenter.addObserver(self, selector: #selector(ZEvents.handleDarkModeChange), name: Notification.Name("AppleInterfaceThemeChangedNotification"), object: nil)

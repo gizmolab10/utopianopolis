@@ -245,7 +245,7 @@ extension ZApplication {
 }
 
 
-extension NSEvent.ModifierFlags {
+extension ZEventFlags {
     var isNumericPad: Bool { return contains(.numericPad) }
 	var isSpecial:    Bool { return isCommand && isOption }
     var isControl:    Bool { get { return contains(.control) } set { if newValue { insert(.control) } else { remove(.control) } } }
@@ -255,7 +255,7 @@ extension NSEvent.ModifierFlags {
 }
 
 
-extension NSEvent {
+extension ZEvent {
     var arrow: ZArrowKey? { return key?.arrow }
     var   key:    String? { return input?.character(at: 0) }
     var input:    String? { return charactersIgnoringModifiers }
@@ -762,7 +762,7 @@ extension ZoneTextWidget {
 			gIsEditIdeaMode,
 			let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
             let        value = number.intValue
-			let        flags = NSEvent.modifierFlags
+			let        flags = gModifierFlags
 			let      isShift = flags.isShift
             var key: String?
 

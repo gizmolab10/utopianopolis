@@ -79,7 +79,7 @@ class ZControllers: NSObject {
 
 			FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking map editor's handle key)
 				gTextEditor.stopCurrentEdit()
-				gEssayView?.updateControlBarButtons(showNote)
+				gEssayView?.setControlBarButtons(enabled: showNote)
 				self.signalFor(nil, multiple: [.sSwap, .sCrumbs, .sRelayout])
 			}
 		}

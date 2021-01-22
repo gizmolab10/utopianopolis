@@ -1052,7 +1052,7 @@ class ZRecords: NSObject {
 
 		let finishAndGrab = { (grabMe: Zone) in
 			gSmallMapController?.update()
-			grabMe.grab()
+			grabMe.grab() // changes work mode !!!!!!!
 			atArrival()
 		}
 
@@ -1067,8 +1067,6 @@ class ZRecords: NSObject {
 			    !small.swapBetweenBookmarkAndTarget(doNotGrab: !shouldGrab) {
 				if  gSmallMapMode == .favorites {
 					gFavorites.createFavorite(for: zone, action: .aCreateFavorite)
-//				} else {
-//					gRecents.book
 				}
 			}
 
