@@ -57,6 +57,20 @@ class ZBookmarks: NSObject {
 		return bookmark!
 	}
 
+	func createBookmark(targetting target: Zone) -> Zone {
+		let bookmark: Zone = createZone(withBookmark: nil, target.zoneName)
+		bookmark.crossLink =  target
+		if  let     parent =  target.parentZone {
+			let   insertAt = (target.siblingIndex ?? 0) + (gListsGrowDown ? 1 : 0)
+
+			parent.addChild(bookmark, at: insertAt) // calls update progeny count
+		}
+
+		bookmark.updateCKRecordProperties()
+
+		return bookmark
+	}
+
 	@discardableResult func create(withBookmark: Zone?, _ action: ZBookmarkAction, parent: Zone, atIndex: Int, _ name: String?, recordName: String? = nil) -> Zone {
 		let bookmark: Zone = createZone(withBookmark: withBookmark, name, recordName: recordName)
 		let insertAt: Int? = atIndex == parent.count ? nil : atIndex

@@ -223,8 +223,7 @@ class ZFavorites: ZRecords {
 						} else {
 							hasDuplicate = true
 						}
-					} else if let      t = bookmark.bookmarkTarget, t.isARoot,
-							  let         dbID = t.databaseID {
+					} else if let   dbID = bookmark.linkDatabaseID, bookmark.linkIsRoot {
 						if !hasDatabaseIDs.contains(dbID) {
 							hasDatabaseIDs.append(dbID)
 						} else {

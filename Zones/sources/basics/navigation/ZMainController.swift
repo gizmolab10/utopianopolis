@@ -62,8 +62,10 @@ class ZMainController: ZGenericController {
 					assignAsFirstResponder(nil)
 				}
 			case .sSwap:
+				gRefusesFirstResponder          = true  // prevent exit from essay from beginning an edit
 				essayView? 	  	      .isHidden =  hideEssay
 				mapView? 	  	      .isHidden = !hideEssay
+				gRefusesFirstResponder          = false
 			default: break
         }
     }

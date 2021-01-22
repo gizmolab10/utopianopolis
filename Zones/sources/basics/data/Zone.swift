@@ -68,6 +68,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
 	var                 hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }
 	var                  hasSiblings :               Bool  { return parentZone?.count ?? 0 > 1 }
+	var                   linkIsRoot :               Bool  { return linkRecordName == kRootName }
 	var                   isSelected :               Bool  { return gSelecting.isSelected(self) }
 	var                    isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
 	var                    canTravel :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
@@ -575,8 +576,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		set {
-			if newValue == nil {
-				zoneLink = kNullLink
+			if  newValue == nil {
+				zoneLink  = kNullLink
 			} else {
 				let    hasRef = newValue!.ckRecord != nil
 				let reference = !hasRef ? "" : newValue!.ckRecordName
@@ -973,11 +974,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			self.invokeUsingDatabaseID(.mineID) {
-				bookmark = gFavorites.createFavorite(for: self, action: .aBookmark)
+				bookmark = gBookmarks.createBookmark(targetting: self)
+
+				bookmark?.grab()
+				bookmark?.needSave()
+				bookmark?.markNotFetched()
 			}
 
-			bookmark?.grab()
-			bookmark?.markNotFetched()
 			gRedrawMaps()
 		}
 	}

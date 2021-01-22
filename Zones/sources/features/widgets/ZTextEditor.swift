@@ -278,7 +278,7 @@ class ZTextEditor: ZTextView {
     }
 
     @discardableResult func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, immediately: Bool = false) -> ZTextEditor {
-        if  (currentEdit   == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
+        if  (currentEdit == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
             let        pack = ZTextPack(zRecord)
 			if  let    zone = pack.packedZone,
 				zone.userCanWrite {

@@ -272,8 +272,8 @@ class ZRecords: NSObject {
 
     @discardableResult func registerZRecord(_  iRecord: ZRecord?) -> Bool {
         if  let           zRecord  = iRecord,
-            let                id  = zRecord.ckRecordName {
-			if let existingRecord  = zRecordsLookup[id] {
+            let              name  = zRecord.ckRecordName {
+			if let existingRecord  = zRecordsLookup[name] {
                 if existingRecord != zRecord, existingRecord.ckRecord?.recordType == zRecord.ckRecord?.recordType {
 
                     // /////////////////////////////////////
@@ -288,7 +288,7 @@ class ZRecords: NSObject {
                     gBookmarks.persistForLookupByTarget(bookmark)
                 }
 
-                zRecordsLookup[id] = zRecord
+                zRecordsLookup[name] = zRecord
 
 				registerByType(zRecord)
 
