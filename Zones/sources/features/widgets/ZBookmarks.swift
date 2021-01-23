@@ -66,6 +66,7 @@ class ZBookmarks: NSObject {
 			parent.addChild(bookmark, at: insertAt) // calls update progeny count
 		}
 
+		persistForLookupByTarget(bookmark)
 		bookmark.updateCKRecordProperties()
 
 		return bookmark

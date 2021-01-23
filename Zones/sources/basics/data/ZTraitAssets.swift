@@ -90,9 +90,7 @@ class ZTraitAssets : ZRecord {
 	// MARK:- persistence
 	// MARK:-
 
-	override func updateCKRecordProperties() {
-		super.updateCKRecordProperties()
-
+	override func updateCKRecordFromCoreData() {
 		if  gUseCoreData {
 			if  let    dID = dbid {
 				databaseID = ZDatabaseID.convert(from: dID)

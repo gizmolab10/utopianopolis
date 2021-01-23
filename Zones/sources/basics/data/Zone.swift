@@ -179,16 +179,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override func updateInstanceProperties() {
 		super.updateInstanceProperties()
 
-		if  gUseCoreData,
-			let     p = parent {
-			let    id = p.recordID.recordName
-			parentRID = id
+		if  gUseCoreData {
+			if  let      p = parent {
+				let     id = p.recordID.recordName
+				parentRID  = id
+			}
 		}
 	}
 
-	override func updateCKRecordProperties() {
-		super.updateCKRecordProperties()
-
+	override func updateCKRecordFromCoreData() {
 		if  gUseCoreData {
 			if  let pID = parentRID {
 				parent  = CKReference(recordID: CKRecordID(recordName: pID), action: .none)
@@ -518,15 +517,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		set {
-			if  newValue == nil {
-				zoneLink  = kNullLink
-			} else {
-				let    hasRef = newValue!.ckRecord != nil
-				let reference = !hasRef ? "" : newValue!.ckRecordName
-				zoneLink      = "\(newValue!.databaseID!.rawValue)::\(reference)"
-			}
-
 			crossLinkMaybe = nil
+			zoneLink       = kNullLink
+			if  let  value = newValue,
+				let   dbid = value.databaseID?.rawValue,
+				let   name = value.ckRecordName {
+				zoneLink   = "\(dbid)::\(name)"
+			}
 		}
 	}
 
@@ -741,8 +738,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  let name = child.ckRecord?.recordID.recordName,
 					(visited == nil || !visited!.contains(name)) {
 					converted.append(contentsOf: c)
-					addChild(child, updateCoreData: false) // we got here because core data already exists
+					addChild(child, updateCoreData: false) // not update core data, it already exists
 				}
+
+				child.register() // need to wait until after child has a parent so bookmarks will be registered properly
+
 			}
 		}
 
@@ -764,6 +764,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					converted.append(contentsOf: c)
 					addTrait(trait, updateCoreData: false) // we got here because core data already exists
 				}
+
+				trait.register()
 			}
 		}
 

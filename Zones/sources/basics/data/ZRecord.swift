@@ -54,6 +54,9 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var       needsAdoption: Bool      { return  hasState(.needsAdoption) }
 	var      needsBookmarks: Bool      { return  hasState(.needsBookmarks) }
 
+	// MARK:- core data
+	// MARK:-
+
 	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] { return [String]() }
 
 	@discardableResult func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
@@ -66,7 +69,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 				records?.maybeZRecordForRecordName(name) == nil {
 				ckRecord = CKRecord(recordType: type, recordID: CKRecordID(recordName: name))   // empty
 				updateCKRecordProperties()                                                      // filled
-				register()
+				updateCKRecordFromCoreData()
 				converted.appendUnique(contentsOf: [name])
 				v?       .appendUnique(contentsOf: [name])
 			}
@@ -76,6 +79,9 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 		return converted
 	}
+
+	// MARK:- initialization
+	// MARK:-
 
 	@objc func setRecord(_ newValue: CKRecord?) {
 		guard newValue != nil else {
@@ -305,9 +311,6 @@ class ZRecord: ZManagedRecord { // NSObject {
         }
     }
 
-	// MARK:- core data
-	// MARK:-
-
 	func updateCKRecordProperties() {
 		if  let          r = ckRecord {
 			for keyPath in cloudProperties {
@@ -321,6 +324,8 @@ class ZRecord: ZManagedRecord { // NSObject {
 		}
 	}
 
+	func updateCKRecordFromCoreData() {}
+	
     // MARK:- states
     // MARK:-
 
@@ -383,6 +388,10 @@ class ZRecord: ZManagedRecord { // NSObject {
             removeState(.needsMerge)
 			addState   (.needsSave)
 			updateCKRecordProperties()
+
+			if  gUseCoreData {
+				modificationDate = Date()
+			}
         }
 
         needWrite()

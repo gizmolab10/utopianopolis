@@ -186,6 +186,7 @@ class ZCoreDataStack: NSObject {
 					count        -= 1
 					var converted = zRecord.convertFromCoreData(into: type, visited: lastConverted[dbid])
 
+					zRecord.register()
 					records.append(zRecord)
 
 					if  type == kZoneType {

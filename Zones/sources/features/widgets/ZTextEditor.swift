@@ -117,18 +117,17 @@ class ZTextPack: NSObject {
     }
 
     func updateWidgetsForEndEdit() {
-        if  let t = textWidget {
-            t.abortEditing() // NOTE: this does NOT remove selection highlight !!!!!!!
-            t.deselectAllText()
-            t.updateTextColor()
-            t.layoutText()
-        }
-
-        if  let w = widget {
-            w.layoutDots()
-            w.revealDot.setNeedsDisplay()
-            w.setNeedsDisplay()
-        }
+		if  let z = packedZone,
+			let w = gWidgets.widgetForZone(z) {
+			let t = w.textWidget
+			w.layoutDots()
+			w.revealDot.setNeedsDisplay()
+			w.setNeedsDisplay()
+			t.abortEditing()      // NOTE: this does NOT remove selection highlight
+			t.deselectAllText()
+			t.updateTextColor()
+			t.layoutText()
+		}
     }
 
     func capture(_ iText: String?) {
