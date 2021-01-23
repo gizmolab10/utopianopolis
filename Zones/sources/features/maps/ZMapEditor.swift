@@ -705,7 +705,9 @@ class ZMapEditor: ZBaseEditor {
                     }
                 }
             } else {
-				let grab = gSelecting.rootMostMoveable
+				let    grab = gSelecting.rootMostMoveable
+				let inSmall = grab?.isInSmallMap ?? false                // in case this is last child of small map
+				let    root = grab?.root
 
 				prepareUndoForDelete()
                 
@@ -713,9 +715,18 @@ class ZMapEditor: ZBaseEditor {
 					gDeferringRedraw = false
 
 					if  let g = grab {
-						if  g.isInSmallMap,      // if already grabbed and in small map
-							g.count == 0 {       // mark g as current
+						if  g.isInSmallMap,                              // if already grabbed and in small map
+							g.count == 0 {                               // mark g as current
 							gCurrentSmallMapRecords?.setAsCurrent(g, alterHere: true)
+						} else if inSmall, let r = root, r.count == 0 {  // indeed, it was last child of small map
+							if  r == gFavoritesRoot {
+								gFavorites.updateAllFavorites()
+							} else {
+								let bookmark = gBookmarks.createBookmark(targetting: gHere)
+
+								gRecents.currentHere.addChild(bookmark)
+								bookmark.grab()
+							}
 						}
 
 						gRedrawMaps(for: g)
@@ -732,8 +743,8 @@ class ZMapEditor: ZBaseEditor {
         if  let zone: Zone = gSelecting.firstSortedGrab {
             let parentZone = zone.parentZone
 
-            if  zone.isARoot || parentZone == gFavoritesRoot {
-                return // cannot move out from a root or move into favorites root
+            if  zone.isARoot {
+                return // cannot move out from a root
 			} else if selectionOnly {
 
 				// /////////////////

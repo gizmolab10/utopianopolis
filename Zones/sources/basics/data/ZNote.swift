@@ -145,7 +145,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let    text = noteTrait?.noteText {
 			let  spacer = "  "
 			let sOffset = spacer.length
-			let tOffset = sOffset + name.length + gBlankLine.length + 1
+			let hasGoof = name.contains("􀅇")
+			let tOffset = sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
 			let   title = NSMutableAttributedString(string: spacer + name + kTab, attributes: titleAttributes)
 			result      = NSMutableAttributedString()
 			titleRange  = NSRange(location: sOffset, length: name.length)

@@ -85,13 +85,12 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	@discardableResult func makeVisibleAndMarkInSmallMap(_  iZone: Zone? = nil) -> Bool {
-		if  let   pHere  = iZone?.parentZone,
-			rootZone    == iZone?.root, // in the same map?
-			currentHere != pHere,
-			pHere.isInSmallMap {
+		if  let zone     = iZone,
+			let parent   = zone.parentZone,
+			currentHere != parent {
 			currentHere.collapse()
 
-			currentHere  = pHere
+			currentHere = parent
 
 			currentHere.expand()
 

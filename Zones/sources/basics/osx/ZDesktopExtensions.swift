@@ -12,7 +12,6 @@ import AppKit
 import Cocoa
 import CloudKit
 
-
 enum ZArrowKey: Int8 {
     case up    = -128
     case down
@@ -23,7 +22,6 @@ enum ZArrowKey: Int8 {
 		var utf : [Int8] = [-17, -100, rawValue, 0]
 
 		return String(cString: &utf)
-
 	}
 }
 
@@ -72,7 +70,6 @@ public typealias ZClickGestureRecognizer     = NSClickGestureRecognizer
 public typealias ZGestureRecognizerState     = NSGestureRecognizer.State
 public typealias ZGestureRecognizerDelegate  = NSGestureRecognizerDelegate
 public typealias ZEdgeSwipeGestureRecognizer = NSNull
-
 
 let        gVerticalWeight = 1.0
 let gHighlightHeightOffset = CGFloat(-3.0)

@@ -391,11 +391,12 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 			if  gUseCoreData {
 				modificationDate = Date()
-			}
-        }
 
-        needWrite()
-		gSaveContext()
+				gSaveContext()
+			}
+
+			needWrite()
+        }
     }
 
     func needWrite() {
