@@ -896,7 +896,7 @@ class ZRecords: NSObject {
 		}
 
 		if  zone.isBookmark {     		// state 1
-			zone.travelThrough() { object, kind in
+			zone.focusOnBookmarkTarget() { object, kind in
 				gHere = object as! Zone
 
 				finishAndGrab(gHere)

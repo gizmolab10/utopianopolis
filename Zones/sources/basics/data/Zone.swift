@@ -1299,7 +1299,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let    targetLink = there.crossLink
 			let       sameMap = databaseID == targetLink?.databaseID
 			let grabAndTravel = {
-				there.travelThrough() { object, kind in
+				there.focusOnBookmarkTarget() { object, kind in
 					let there = object as! Zone
 
 					movedZone.moveZone(into: there, at: gListsGrowDown ? nil : 0) {
@@ -1678,7 +1678,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				targetParent?.expand()
 				targetParent?.needChildren()
-				travelThrough { (iObject: Any?, iKind: ZSignalKind) in
+				focusOnBookmarkTarget { (iObject: Any?, iKind: ZSignalKind) in
 					gRecents.updateCurrentForMode()
 					atArrival()
 				}
@@ -1701,12 +1701,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	func travelThrough(atArrival: @escaping SignalClosure) {
+	func focusOnBookmarkTarget(atArrival: @escaping SignalClosure) {
 		if  let  targetZRecord = crossLink,
 			let     targetDBID = targetZRecord.databaseID,
 			let   targetRecord = targetZRecord.ckRecord {
 			let targetRecordID = targetRecord.recordID
-			let        iTarget = bookmarkTarget
+			let         target = bookmarkTarget
 
 			let complete : SignalClosure = { (iObject, iKind) in
 				self.showTopLevelFunctions()
@@ -1721,12 +1721,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				gRecents.currentBookmark   = self
 			}
 
-			if  let target = iTarget, target.spawnedBy(gHereMaybe) {
-				if !target.isGrabbed {
-					target.asssureIsVisible()
-					target.grab()
+			if  let t = target, t.spawnedBy(gHereMaybe) {
+				if !t.isGrabbed {
+					t.asssureIsVisible()
+					t.grab()
 				} else {
-					gHere  = target
+					gHere = t
 
 					gRecents.push()
 				}
@@ -1744,9 +1744,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// TRAVEL TO A DIFFERENT MAP //
 					// ///////////////////////// //
 
-					if  let target = iTarget, target.isFetched { // e.g., default root favorite
+					if  let t     = target, t.isFetched { // e.g., default root favorite
 						gRecents.maybeRefocus(.eSelected) {
-							gHere  = target
+							gHere = t
 
 							gHere.prepareForArrival()
 							complete(gHere, .sRelayout)
@@ -1778,7 +1778,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 					UNDO(self) { iUndoSelf in
 						self.UNDO(self) { iRedoSelf in
-							self.travelThrough(atArrival: complete)
+							self.focusOnBookmarkTarget(atArrival: complete)
 						}
 
 						gHere = here
@@ -1821,21 +1821,25 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func invokeTravel(onCompletion: Closure? = nil) {
-		if !invokeBookmark(onCompletion: onCompletion),
+	func invokeTravel(_ COMMAND: Bool = false, onCompletion: Closure? = nil) {
+		if !invokeBookmark(COMMAND, onCompletion: onCompletion),
 		   !invokeHyperlink(),
 		   !invokeEssay() {
 			invokeEmail()
 		}
 	}
 
-	@discardableResult func invokeBookmark(onCompletion: Closure?) -> Bool { // false means not traveled
-		if  isBookmark {
-			travelThrough() { object, kind in
-				#if os(iOS)
-				gActionsController.alignView()
-				#endif
+	@discardableResult func invokeBookmark(_ COMMAND: Bool = false, onCompletion: Closure?) -> Bool { // false means not traveled
+		if  let target = bookmarkTarget {
+			if  COMMAND, target.invokeEssay() { // first, check if target has an essay
 				onCompletion?()
+			} else {
+				focusOnBookmarkTarget() { object, kind in
+					#if os(iOS)
+					gActionsController.alignView()
+					#endif
+					onCompletion?()
+				}
 			}
 
 			return true
@@ -2153,7 +2157,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if !toBookmark || SPECIAL {
 			finish()
 		} else {
-			travelThrough() { (iAny, iSignalKind) in
+			focusOnBookmarkTarget() { (iAny, iSignalKind) in
 				finish()
 			}
 		}
@@ -2952,7 +2956,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		if  canTravel && (COMMAND || (fetchableCount == 0 && count == 0)) {
-			invokeTravel() { // email, hyperlink, bookmark, essay
+			invokeTravel(COMMAND) { // email, hyperlink, bookmark, essay
 				gRedrawMaps()
 			}
 		} else {

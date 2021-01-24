@@ -704,32 +704,39 @@ class ZMapEditor: ZBaseEditor {
                         gRedrawMaps()
                     }
                 }
-            } else {
-				let    grab = gSelecting.rootMostMoveable
-				let inSmall = grab?.isInSmallMap ?? false                // in case this is last child of small map
-				let    root = grab?.root
+            } else if let grab = gSelecting.rootMostMoveable {
+
+				let inSmall = grab.isInSmallMap  // these three values
+				let  parent = grab.parentZone    // are out of date
+				let   index = grab.siblingIndex  // after delete zones, below
 
 				prepareUndoForDelete()
                 
 				gSelecting.simplifiedGrabs.deleteZones(permanently: permanently) {
 					gDeferringRedraw = false
 
-					if  let g = grab {
-						if  g.isInSmallMap,                              // if already grabbed and in small map
-							g.count == 0 {                               // mark g as current
-							gCurrentSmallMapRecords?.setAsCurrent(g, alterHere: true)
-						} else if inSmall, let r = root, r.count == 0 {  // indeed, it was last child of small map
-							if  r == gFavoritesRoot {
+					if  inSmall,
+						let i  = index,
+						let p  = parent {
+						let c  = p.count
+						if  c == 0 || c <= i {   // no more siblings
+							if  p.isInFavorites {
 								gFavorites.updateAllFavorites()
-							} else {
+							} else if c == 0 {
 								let bookmark = gBookmarks.createBookmark(targetting: gHere)
 
-								gRecents.currentHere.addChild(bookmark)
-								bookmark.grab()
+								gRecents.currentHere.addChild(bookmark)  // assure at least one bookmark in recents (targetting here)
 							}
+
+							gHere.grab()                                 // as though user clicked on background
+						} else {
+							let z = p.children[i]
+
+							z.grab()
+//							gCurrentSmallMapRecords?.setAsCurrent(z, alterHere: true)
 						}
 
-						gRedrawMaps(for: g)
+						gRedrawMaps(for: grab)
 					}
                 }
             }
@@ -991,7 +998,7 @@ class ZMapEditor: ZBaseEditor {
                 prepare()
             } else {
                 undoManager.beginUndoGrouping()
-				zone.travelThrough() { (iAny, iSignalKind) in
+				zone.focusOnBookmarkTarget() { (iAny, iSignalKind) in
                     prepare()
                 }
             }

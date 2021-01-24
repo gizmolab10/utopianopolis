@@ -247,8 +247,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             gSearching.exitSearchMode()
         }
 
-		if !gExitNoteMode(),
-			gIsMapOrEditIdeaMode,
+		if  gIsNoteMode {
+			gEssayView?.save()
+			gControllers.swapMapAndEssay(force: .mapsMode)
+		}
+
+		if  gIsMapOrEditIdeaMode,
 			let    gesture = iGesture {
             let    COMMAND = gesture.isCommandDown
 			let     OPTION = gesture.isOptionDown
