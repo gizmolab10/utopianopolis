@@ -169,7 +169,7 @@ extension String {
     func openAsURL() {
         let fileScheme = "file"
         let filePrefix = fileScheme + "://"
-        let  urlString = (replacingOccurrences(of: "\\", with: "").replacingOccurrences(of: " ", with: "%20") as NSString).expandingTildeInPath
+        let  urlString = (replacingOccurrences(of: kBackSlash, with: "").replacingOccurrences(of: " ", with: "%20") as NSString).expandingTildeInPath
         
         if  var url = NSURL(string: urlString) {
             if  urlString.character(at: 0) == "/" {

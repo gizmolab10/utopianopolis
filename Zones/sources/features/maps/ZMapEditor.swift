@@ -108,47 +108,47 @@ class ZMapEditor: ZBaseEditor {
                 } else if !super.handleKey(iKey, flags: flags, isWindow: isWindow) {
 					gCurrentKeyPressed = key
 
-                    switch key {
-					case "a":      if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMaps() }
-                    case "b":      gSelecting.firstSortedGrab?.addBookmark()
-					case "c":      if COMMAND && !OPTION { copyToPaste() } else { gMapController?.recenter(SPECIAL) }
-					case "d":      if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
-					case "e":      gSelecting.firstSortedGrab?.editTrait(for: .tEmail)
-                    case "f":      gSearching.showSearch(OPTION)
-					case "g":      refetch(COMMAND, OPTION, CONTROL)
-                    case "h":      gSelecting.firstSortedGrab?.editTrait(for: .tHyperlink)
-					case "k":      toggleColorized()
-					case "l":      alterCase(up: false)
-					case "m":      gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawMaps()
-                    case "n":      grabOrEdit(true, OPTION)
-                    case "o":      gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
-                    case "p":      printCurrentFocus()
-                    case "r":      reverse()
-					case "s":      gHere.exportToFile(OPTION ? .eOutline : .eSeriously)
-					case "t":      if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
-					case "u":      if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-					case "v":      if COMMAND { paste() }
-					case "w":      rotateWritable()
-					case "x":      if COMMAND { delete(permanently: SPECIAL && isWindow) } else { gCurrentKeyPressed = nil; return false }
-                    case "z":      if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
-					case "+":      divideChildren()
-					case "-":      return handleHyphen(COMMAND, OPTION)
-					case "'":      swapSmallMapMode(OPTION)
-                    case "/":      if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
-					case "\\":     mapControl(OPTION)
-					case "[", "{", "}",
-						 "]":      go(down: ["]", "}"].contains(key), COMMAND: COMMAND) { gRedrawMaps() }
-                    case "?":      if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-					case kEquals:  if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawMaps() } }
-                    case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
-                    case kTab:     addSibling(OPTION)
-					case kSpace:   if OPTION || CONTROL || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
-                    case kBackspace,
-                         kDelete:  if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
-                    case kReturn:  grabOrEdit(COMMAND, OPTION)
-					case kEscape:  grabOrEdit(true,    OPTION, true)
-                    default:       return false // indicate key was not handled
-                    }
+					switch key {
+						case "a":        if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMaps() }
+						case "b":        gSelecting.firstSortedGrab?.addBookmark()
+						case "c":        if COMMAND && !OPTION { copyToPaste() } else { gMapController?.recenter(SPECIAL) }
+						case "d":        if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
+						case "e":        gSelecting.firstSortedGrab?.editTrait(for: .tEmail)
+						case "f":        gSearching.showSearch(OPTION)
+						case "g":        refetch(COMMAND, OPTION, CONTROL)
+						case "h":        gSelecting.firstSortedGrab?.editTrait(for: .tHyperlink)
+						case "k":        toggleColorized()
+						case "l":        alterCase(up: false)
+						case "m":        gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawMaps()
+						case "n":        grabOrEdit(true, OPTION)
+						case "o":        gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
+						case "p":        printCurrentFocus()
+						case "r":        reverse()
+						case "s":        gHere.exportToFile(OPTION ? .eOutline : .eSeriously)
+						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
+						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
+						case "v":        if COMMAND { paste() }
+						case "w":        rotateWritable()
+						case "x":        if COMMAND { delete(permanently: SPECIAL && isWindow) } else { gCurrentKeyPressed = nil; return false }
+						case "z":        if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
+						case "+":        divideChildren()
+						case "-":        return handleHyphen(COMMAND, OPTION)
+						case "'":        swapSmallMapMode(OPTION)
+						case "/":        if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
+						case "[", "{", "}",
+							 "]":        go(down: ["]", "}"].contains(key), COMMAND: COMMAND) { gRedrawMaps() }
+						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
+						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")
+						case kTab:       addSibling(OPTION)
+						case kSpace:     if OPTION || CONTROL || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
+						case kEquals:    if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawMaps() } }
+						case kBackSlash: mapControl(OPTION)
+						case kBackspace,
+							 kDelete:    if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
+						case kReturn:    grabOrEdit(COMMAND, OPTION)
+						case kEscape:    grabOrEdit(true,    OPTION, true)
+						default:         return false // indicate key was not handled
+					}
                 }
             }
         }

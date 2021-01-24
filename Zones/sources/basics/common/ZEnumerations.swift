@@ -55,7 +55,7 @@ enum ZStartHereID: String {
 	case right   = "right"
 	case focus   = "focus"
 	case shift   = "shift"
-	case showMe  = "showMe"
+	case swapDB  = "swapDB"
 	case option  = "option"
 	case command = "command"
 	case control = "control"

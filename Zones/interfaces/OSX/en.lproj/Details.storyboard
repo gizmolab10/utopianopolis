@@ -679,12 +679,12 @@ CA
         <scene sceneID="n3v-Vu-MZq">
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="-2" width="284" height="264"/>
+                    <view key="view" id="Ngb-Ew-NGG">
+                        <rect key="frame" x="0.0" y="0.0" width="284" height="264"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box autoresizesSubviews="NO" borderType="none" title="children counts show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="counts">
-                                <rect key="frame" x="5" y="199" width="274" height="35"/>
+                                <rect key="frame" x="5" y="197" width="274" height="35"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
                                     <rect key="frame" x="0.0" y="0.0" width="274" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -716,7 +716,7 @@ CA
                                 </constraints>
                             </box>
                             <box borderType="line" title="map" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="6" width="274" height="92"/>
+                                <rect key="frame" x="5" y="4" width="274" height="92"/>
                                 <view key="contentView" id="npe-oq-zV9">
                                     <rect key="frame" x="3" y="3" width="268" height="74"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -832,7 +832,7 @@ CA
                                 </view>
                             </box>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150" userLabel="colors">
-                                <rect key="frame" x="5" y="102" width="274" height="93"/>
+                                <rect key="frame" x="5" y="100" width="274" height="93"/>
                                 <view key="contentView" id="rb6-oU-fw8">
                                     <rect key="frame" x="3" y="3" width="268" height="75"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -963,7 +963,7 @@ CA
                                 </view>
                             </box>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="8MW-fS-I8L">
-                                <rect key="frame" x="-2" y="2" width="5" height="264"/>
+                                <rect key="frame" x="-2" y="0.0" width="5" height="264"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="0t7-dM-MKj"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="1" id="5wP-7U-8E4"/>
@@ -978,7 +978,7 @@ CA
                                 </buttonCell>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uiy-f6-PQd">
-                                <rect key="frame" x="15" y="241" width="118" height="18"/>
+                                <rect key="frame" x="15" y="239" width="118" height="18"/>
                                 <buttonCell key="cell" type="check" title="Show Tool Tips" bezelStyle="regularSquare" imagePosition="right" state="on" inset="2" id="zCb-SF-zQ4">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -1027,12 +1027,12 @@ CA
         <scene sceneID="uRy-JP-y7m">
             <objects>
                 <viewController id="YdN-bY-sSj" customClass="ZStartHereController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="MMF-wn-1M6">
-                        <rect key="frame" x="0.0" y="0.0" width="282" height="284"/>
+                    <view key="view" misplaced="YES" id="MMF-wn-1M6">
+                        <rect key="frame" x="0.0" y="0.0" width="282" height="283"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box identifier="add" title="Add idea as" translatesAutoresizingMaskIntoConstraints="NO" id="yWs-Kk-dmA">
-                                <rect key="frame" x="5" y="235" width="272" height="41"/>
+                                <rect key="frame" x="5" y="238" width="272" height="41"/>
                                 <view key="contentView" id="6gW-4w-OHR">
                                     <rect key="frame" x="3" y="3" width="266" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1076,7 +1076,7 @@ CA
                                 </constraints>
                             </box>
                             <box identifier="edit" title="Edit" translatesAutoresizingMaskIntoConstraints="NO" id="2K6-Dx-rco" userLabel="Edit">
-                                <rect key="frame" x="5" y="190" width="272" height="41"/>
+                                <rect key="frame" x="5" y="193" width="272" height="41"/>
                                 <view key="contentView" id="oj1-Uo-6FC">
                                     <rect key="frame" x="3" y="3" width="266" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1120,7 +1120,7 @@ CA
                                 </constraints>
                             </box>
                             <box identifier="move" title="Move" translatesAutoresizingMaskIntoConstraints="NO" id="Eo8-dK-qAb">
-                                <rect key="frame" x="5" y="101" width="272" height="85"/>
+                                <rect key="frame" x="5" y="104" width="272" height="85"/>
                                 <view key="contentView" id="dg8-AR-KhC">
                                     <rect key="frame" x="3" y="3" width="266" height="67"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1212,7 +1212,7 @@ CA
                                 </constraints>
                             </box>
                             <box borderType="line" title="Modifier Keys" translatesAutoresizingMaskIntoConstraints="NO" id="BZ2-Au-okv">
-                                <rect key="frame" x="5" y="34" width="272" height="63"/>
+                                <rect key="frame" x="5" y="37" width="272" height="63"/>
                                 <view key="contentView" id="7JG-O0-yA8">
                                     <rect key="frame" x="3" y="3" width="266" height="45"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1281,21 +1281,22 @@ CA
                                     <constraint firstAttribute="height" constant="59" id="cSZ-RN-IYA"/>
                                 </constraints>
                             </box>
-                            <button identifier="showMe" hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NsX-os-IKw" userLabel="show me">
+                            <button identifier="swapDB" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NsX-os-IKw" userLabel="swap DB" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="1" y="1" width="280" height="33"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="7JN-4I-ODg"/>
                                 </constraints>
-                                <buttonCell key="cell" type="push" title="Show me" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OIC-rC-BxK">
-                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                <buttonCell key="cell" type="push" title="switching..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OIC-rC-BxK">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="buttonAction:" target="YdN-bY-sSj" id="86m-8t-0mc"/>
+                                    <outlet property="controller" destination="YdN-bY-sSj" id="f7y-Of-kfV"/>
                                 </connections>
                             </button>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="OpA-9s-1GD">
-                                <rect key="frame" x="279" y="0.0" width="5" height="284"/>
+                                <rect key="frame" x="279" y="0.0" width="5" height="287"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="93x-2a-1k9"/>
                                 </constraints>
@@ -1319,7 +1320,7 @@ CA
                             <constraint firstItem="Eo8-dK-qAb" firstAttribute="top" secondItem="2K6-Dx-rco" secondAttribute="bottom" constant="8" id="nRW-vR-mLU"/>
                             <constraint firstAttribute="trailing" secondItem="2K6-Dx-rco" secondAttribute="trailing" constant="8" id="pSu-4J-TY7"/>
                             <constraint firstItem="2K6-Dx-rco" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="t0b-qp-9b2"/>
-                            <constraint firstItem="NsX-os-IKw" firstAttribute="top" secondItem="BZ2-Au-okv" secondAttribute="bottom" constant="9" id="uIt-ce-qfn"/>
+                            <constraint firstItem="NsX-os-IKw" firstAttribute="top" secondItem="BZ2-Au-okv" secondAttribute="bottom" constant="12" id="uIt-ce-qfn"/>
                             <constraint firstAttribute="trailing" secondItem="OpA-9s-1GD" secondAttribute="trailing" id="zYo-rd-SrW"/>
                         </constraints>
                     </view>

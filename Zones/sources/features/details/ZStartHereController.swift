@@ -22,12 +22,14 @@ import UIKit
 class ZStartHereController: ZGenericController, ZTooltips {
 
 	override var controllerID : ZControllerID { return .idStartHere }
-	var                isHere : Bool { return gSelecting.currentMovableMaybe == gHere }
-	var             isEditing : Bool { return gIsEditIdeaMode || gIsNoteMode }
-	var            isRelocate : Bool { return flags.isOption  && !isEditing }
-	var              showHide : Bool { return flags.isShift   && !isEditing && !flags.isOption }
-	var            canUnfocus : Bool { return flags.isControl && (gRecentsRoot?.children.count ?? 0) > 1 }
-	var             canTravel : Bool { return gIsMapMode && (gSelecting.currentMovableMaybe?.isBookmark ?? false) }
+	var                isHere :   Bool { return gSelecting.currentMovableMaybe == gHere }
+	var                isMine :   Bool { return gDatabaseID == .mineID }
+	var             isEditing :   Bool { return gIsEditIdeaMode || gIsNoteMode }
+	var            isRelocate :   Bool { return flags.isOption  && !isEditing }
+	var              showHide :   Bool { return flags.isShift   && !isEditing && !flags.isOption }
+	var            canUnfocus :   Bool { return flags.isControl && (gRecentsRoot?.children.count ?? 0) > 1 }
+	var             canTravel :   Bool { return gIsMapMode && (gSelecting.currentMovableMaybe?.isBookmark ?? false) }
+	var            swapDBText : String { return "switch to \(isMine ? "everyone's" : "my") ideas" }
 	var                 flags = ZEventFlags()
 	var        buttonsByID    = [ZStartHereID  :  ZStartHereButton]()
 	var          boxesByID    = [ZStartHereID  :  ZBox]()
@@ -45,6 +47,7 @@ class ZStartHereController: ZGenericController, ZTooltips {
 		buttonFor(.note)?   .isEnabled = !gIsEditIdeaMode
 		boxFor   (.edit)?    .isHidden =  gIsSearchMode || gIsNoteMode
 		boxFor   (.add)?     .isHidden =  gIsSearchMode || gIsNoteMode
+		buttonFor(.swapDB)?     .title =  swapDBText
 		buttonFor(.sibling)?    .title =  flags.isOption ? "parent"       : "sibling"
 		buttonFor(.left)?       .title =  showHide       ? "hide"         : "left"
 		buttonFor(.right)?      .title =  showHide       ? "show"         : canTravel ? "travel"    : "right"
@@ -123,11 +126,12 @@ class ZStartHereController: ZGenericController, ZTooltips {
 
 	func keyFrom(_ from: ZStartHereID) -> String? {
 		switch from {
-			case .child:   return kSpace
-			case .sibling: return kTab
-			case .idea:    return kReturn
 			case .note:    return "n"
 			case .focus:   return "/"
+			case .sibling: return kTab
+			case .swapDB:  return kBackSlash
+			case .child:   return kSpace
+			case .idea:    return kReturn
 			default:       return arrowFrom(from)?.key
 		}
 	}

@@ -1526,7 +1526,7 @@ extension String {
         for character in "\\\"\'`" {
             let separator = "\(character)"
             let components = result.components(separatedBy: separator)
-            result = components.joined(separator: "\\" + separator)
+            result = components.joined(separator: kBackSlash + separator)
         }
 
         return result
