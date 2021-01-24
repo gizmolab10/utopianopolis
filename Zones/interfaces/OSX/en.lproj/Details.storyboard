@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -377,7 +377,7 @@ CA
                             <stackView hidden="YES" wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
                                 <rect key="frame" x="0.0" y="2" width="328" height="1523"/>
                                 <subviews>
-                                    <customView identifier="introduction" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Start Here View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="StartHere" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Start Here View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="369" width="328" height="1154"/>
                                         <subviews>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Start Here Hideable">
@@ -679,12 +679,12 @@ CA
         <scene sceneID="n3v-Vu-MZq">
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="284" height="262"/>
+                    <view key="view" misplaced="YES" id="Ngb-Ew-NGG">
+                        <rect key="frame" x="0.0" y="-2" width="284" height="264"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box autoresizesSubviews="NO" borderType="none" title="children counts show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="counts">
-                                <rect key="frame" x="5" y="197" width="274" height="35"/>
+                                <rect key="frame" x="5" y="199" width="274" height="35"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
                                     <rect key="frame" x="0.0" y="0.0" width="274" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -716,7 +716,7 @@ CA
                                 </constraints>
                             </box>
                             <box borderType="line" title="map" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="4" width="274" height="92"/>
+                                <rect key="frame" x="5" y="6" width="274" height="92"/>
                                 <view key="contentView" id="npe-oq-zV9">
                                     <rect key="frame" x="3" y="3" width="268" height="74"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -776,7 +776,7 @@ CA
                                             <rect key="frame" x="116" y="0.0" width="142" height="74"/>
                                             <subviews>
                                                 <slider identifier="thickness" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gh7-LP-7IV">
-                                                    <rect key="frame" x="-2" y="46" width="146" height="26"/>
+                                                    <rect key="frame" x="-2" y="42" width="146" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="mm0-xX-hLQ"/>
                                                     </constraints>
@@ -786,7 +786,7 @@ CA
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="stretch" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR">
-                                                    <rect key="frame" x="-2" y="2" width="146" height="26"/>
+                                                    <rect key="frame" x="-2" y="-2" width="146" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xc9-eh-z97"/>
                                                     </constraints>
@@ -796,7 +796,7 @@ CA
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="size" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X28-Kf-ltl">
-                                                    <rect key="frame" x="-2" y="24" width="146" height="26"/>
+                                                    <rect key="frame" x="-2" y="20" width="146" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
                                                     </constraints>
@@ -832,7 +832,7 @@ CA
                                 </view>
                             </box>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150" userLabel="colors">
-                                <rect key="frame" x="5" y="100" width="274" height="93"/>
+                                <rect key="frame" x="5" y="102" width="274" height="93"/>
                                 <view key="contentView" id="rb6-oU-fw8">
                                     <rect key="frame" x="3" y="3" width="268" height="75"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -874,7 +874,7 @@ CA
                                                     </textFieldCell>
                                                 </textField>
                                                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Qp-4d-Tu8" userLabel="clearColor">
-                                                    <rect key="frame" x="4" y="40" width="60" height="26"/>
+                                                    <rect key="frame" x="3" y="39" width="62" height="28"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="Qdx-4o-Snx"/>
                                                         <constraint firstAttribute="width" constant="50" id="nGj-dM-TOd"/>
@@ -963,14 +963,14 @@ CA
                                 </view>
                             </box>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="8MW-fS-I8L">
-                                <rect key="frame" x="-2" y="0.0" width="5" height="262"/>
+                                <rect key="frame" x="-2" y="2" width="5" height="264"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="0t7-dM-MKj"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="1" id="5wP-7U-8E4"/>
                                 </constraints>
                             </box>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DLH-oP-g02">
-                                <rect key="frame" x="18" y="-152" width="61" height="18"/>
+                                <rect key="frame" x="18" y="-150" width="61" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="EGg-v1-scw">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -978,7 +978,7 @@ CA
                                 </buttonCell>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uiy-f6-PQd">
-                                <rect key="frame" x="13" y="238" width="114" height="18"/>
+                                <rect key="frame" x="15" y="241" width="118" height="18"/>
                                 <buttonCell key="cell" type="check" title="Show Tool Tips" bezelStyle="regularSquare" imagePosition="right" state="on" inset="2" id="zCb-SF-zQ4">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -1023,10 +1023,10 @@ CA
             </objects>
             <point key="canvasLocation" x="296" y="1649"/>
         </scene>
-        <!--Introduction Controller-->
+        <!--Start Here Controller-->
         <scene sceneID="uRy-JP-y7m">
             <objects>
-                <viewController id="YdN-bY-sSj" customClass="ZIntroductionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="YdN-bY-sSj" customClass="ZStartHereController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="MMF-wn-1M6">
                         <rect key="frame" x="0.0" y="0.0" width="282" height="284"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1037,8 +1037,8 @@ CA
                                     <rect key="frame" x="3" y="3" width="266" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="child" toolTip="add a new idea as child to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="-6" width="140" height="32"/>
+                                        <button identifier="child" toolTip="add a new idea as child to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="-6" width="142" height="33"/>
                                             <buttonCell key="cell" type="push" title="child" alternateTitle="SPACE" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k8y-nU-3ox">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1048,8 +1048,8 @@ CA
                                                 <outlet property="controller" destination="YdN-bY-sSj" id="fdn-Hh-Epv"/>
                                             </connections>
                                         </button>
-                                        <button identifier="sibling" toolTip="add a new idea as sibling to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="124" y="1" width="140" height="18"/>
+                                        <button identifier="sibling" toolTip="add a new idea as sibling to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="123" y="1" width="142" height="19"/>
                                             <buttonCell key="cell" type="push" title="sibling" alternateTitle="TAB" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rMw-U8-ScO">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1081,8 +1081,8 @@ CA
                                     <rect key="frame" x="3" y="3" width="266" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="idea" toolTip="edit the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="-6" width="140" height="32"/>
+                                        <button identifier="idea" toolTip="edit the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="-6" width="142" height="33"/>
                                             <buttonCell key="cell" type="push" title="idea" alternateTitle="RETURN" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YHj-2q-hu8">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1092,8 +1092,8 @@ CA
                                                 <outlet property="controller" destination="YdN-bY-sSj" id="geW-8m-OI0"/>
                                             </connections>
                                         </button>
-                                        <button identifier="note" toolTip="edit the note of the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="124" y="1" width="140" height="18"/>
+                                        <button identifier="note" toolTip="edit the note of the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="123" y="1" width="142" height="19"/>
                                             <buttonCell key="cell" type="push" title="note" alternateTitle="N" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bov-NG-9Nh">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1125,8 +1125,8 @@ CA
                                     <rect key="frame" x="3" y="3" width="266" height="67"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="up" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-vi-ud6" userLabel="up" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="38" width="276" height="32"/>
+                                        <button identifier="up" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-vi-ud6" userLabel="up" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="38" width="278" height="32"/>
                                             <buttonCell key="cell" type="push" title="up" alternateTitle="UP ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-zy-Y7c">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1137,8 +1137,8 @@ CA
                                                 <outlet property="controller" destination="YdN-bY-sSj" id="k6c-cj-bqd"/>
                                             </connections>
                                         </button>
-                                        <button identifier="focus" toolTip="focus on the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SJq-nd-vaN" userLabel="focus" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="83" y="16" width="100" height="32"/>
+                                        <button identifier="focus" toolTip="focus on the currently selected idea" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SJq-nd-vaN" userLabel="focus" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="82" y="16" width="102" height="32"/>
                                             <buttonCell key="cell" type="push" title="focus" alternateTitle="/" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qid-p3-qJU">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1149,8 +1149,8 @@ CA
                                                 <outlet property="controller" destination="YdN-bY-sSj" id="zRN-ag-ima"/>
                                             </connections>
                                         </button>
-                                        <button identifier="right" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="172" y="16" width="99" height="32"/>
+                                        <button identifier="right" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="171" y="16" width="101" height="32"/>
                                             <buttonCell key="cell" type="push" title="right" alternateTitle="-&gt;" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UrN-Q5-bwD">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1161,8 +1161,8 @@ CA
                                                 <outlet property="controller" destination="YdN-bY-sSj" id="sfu-cT-M9K"/>
                                             </connections>
                                         </button>
-                                        <button identifier="down" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-3u-WGy" userLabel="down" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="-6" width="276" height="32"/>
+                                        <button identifier="down" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-3u-WGy" userLabel="down" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="-6" width="278" height="32"/>
                                             <buttonCell key="cell" type="push" title="down" alternateTitle="DOWN ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gmQ-hx-fbx">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1173,8 +1173,8 @@ CA
                                                 <outlet property="controller" destination="YdN-bY-sSj" id="aoq-oN-nry"/>
                                             </connections>
                                         </button>
-                                        <button identifier="left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-wF-YeD" userLabel="left" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="16" width="99" height="32"/>
+                                        <button identifier="left" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-wF-YeD" userLabel="left" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="16" width="101" height="32"/>
                                             <buttonCell key="cell" type="push" title="left" alternateTitle="&lt;-" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xEN-g3-ZK6">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1217,8 +1217,8 @@ CA
                                     <rect key="frame" x="3" y="3" width="266" height="45"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="shift" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Qe-VP-Kce" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="16" width="276" height="32"/>
+                                        <button identifier="shift" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Qe-VP-Kce" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="15" width="278" height="34"/>
                                             <buttonCell key="cell" type="push" title="SHIFT" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2fx-6f-Zh2">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1227,8 +1227,8 @@ CA
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="vbC-Fx-38h"/>
                                             </connections>
                                         </button>
-                                        <button identifier="command" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JnY-Vs-p4U" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="-6" width="99" height="32"/>
+                                        <button identifier="command" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JnY-Vs-p4U" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="-6" width="101" height="32"/>
                                             <buttonCell key="cell" type="push" title="⌘" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3qw-o2-Ih5">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1237,8 +1237,8 @@ CA
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="hoh-rf-eP2"/>
                                             </connections>
                                         </button>
-                                        <button identifier="option" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jMS-ki-sap" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="83" y="-6" width="100" height="32"/>
+                                        <button identifier="option" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jMS-ki-sap" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="82" y="-6" width="102" height="32"/>
                                             <buttonCell key="cell" type="push" title="⌥" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k68-pr-cxj">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1247,8 +1247,8 @@ CA
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="Rgg-eO-V5C"/>
                                             </connections>
                                         </button>
-                                        <button identifier="control" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cxk-91-GuE" customClass="ZIntroductionButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="172" y="-6" width="99" height="32"/>
+                                        <button identifier="control" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cxk-91-GuE" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="171" y="-6" width="101" height="32"/>
                                             <buttonCell key="cell" type="push" title="^" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fu3-k6-L9o">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1282,7 +1282,7 @@ CA
                                 </constraints>
                             </box>
                             <button identifier="showMe" hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NsX-os-IKw" userLabel="show me">
-                                <rect key="frame" x="2" y="1" width="278" height="32"/>
+                                <rect key="frame" x="1" y="1" width="280" height="33"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="7JN-4I-ODg"/>
                                 </constraints>

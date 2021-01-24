@@ -67,14 +67,14 @@ extension ZRecord {
 
 }
 
-extension ZIntroductionController {
+extension ZStartHereController {
 
 	func updateTooltips() {
 		view.applyToAllSubviews {     subview in
-			if  let        button   = subview as? ZIntroductionButton {
+			if  let        button   = subview as? ZStartHereButton {
 				button     .toolTip = nil
 				if  gShowToolTips,
-					let    buttonID = button.introductionID {
+					let    buttonID = button.startHereID {
 					let     addANew = "adds a new idea as "
 					let     editing = (!isEditing ? "edits" : "stops editing and save to")
 					let notMultiple = gSelecting.currentGrabs.count < 2

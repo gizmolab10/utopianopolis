@@ -2093,10 +2093,10 @@ extension ZGestureRecognizer {
 
 extension ZView {
 
-	var introductionID : ZIntroductionID? {
+	var startHereID : ZStartHereID? {
 		let           item = self as NSUserInterfaceItemIdentification
 		if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
-			let     itemID = ZIntroductionID(rawValue: identifier) {
+			let     itemID = ZStartHereID(rawValue: identifier) {
 			return  itemID
 		}
 

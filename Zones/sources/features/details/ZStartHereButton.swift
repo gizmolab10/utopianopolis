@@ -1,5 +1,5 @@
 //
-//  ZIntroductionButton.swift
+//  ZStartHereButton.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/4/20.
@@ -8,9 +8,9 @@
 
 import Foundation
 
-class ZIntroductionButton: ZButton {
+class ZStartHereButton: ZButton {
 
-	@IBOutlet var controller: ZIntroductionController?
+	@IBOutlet var controller: ZStartHereController?
 	var downTitle = ""
 	var   upTitle = ""
 

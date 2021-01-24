@@ -1,5 +1,5 @@
 //
-//  ZIntroductionController.swift
+//  ZStartHereController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 4/28/20.
@@ -19,9 +19,9 @@ import UIKit
 //                                                        //
 // ////////////////////////////////////////////////////// //
 
-class ZIntroductionController: ZGenericController, ZTooltips {
+class ZStartHereController: ZGenericController, ZTooltips {
 
-	override var controllerID : ZControllerID { return .idIntroduction }
+	override var controllerID : ZControllerID { return .idStartHere }
 	var                isHere : Bool { return gSelecting.currentMovableMaybe == gHere }
 	var             isEditing : Bool { return gIsEditIdeaMode || gIsNoteMode }
 	var            isRelocate : Bool { return flags.isOption  && !isEditing }
@@ -29,10 +29,10 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 	var            canUnfocus : Bool { return flags.isControl && (gRecentsRoot?.children.count ?? 0) > 1 }
 	var             canTravel : Bool { return gIsMapMode && (gSelecting.currentMovableMaybe?.isBookmark ?? false) }
 	var                 flags = ZEventFlags()
-	var        buttonsByID    = [ZIntroductionID  :  ZIntroductionButton]()
-	var          boxesByID    = [ZIntroductionID  :  ZBox]()
-	func       buttonFor(_ id :  ZIntroductionID) -> ZIntroductionButton? { return buttonsByID[id] }
-	func          boxFor(_ id :  ZIntroductionID) -> ZBox?                { return boxesByID  [id] }
+	var        buttonsByID    = [ZStartHereID  :  ZStartHereButton]()
+	var          boxesByID    = [ZStartHereID  :  ZBox]()
+	func       buttonFor(_ id :  ZStartHereID) -> ZStartHereButton? { return buttonsByID[id] }
+	func          boxFor(_ id :  ZStartHereID) -> ZBox?                { return boxesByID  [id] }
 
 	func updateBoxesAndButtons() {
 
@@ -53,10 +53,10 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 		boxFor   (.edit)?       .title =  isEditing      ? "Stop Editing" : "Edit"
 	}
 
-	@IBAction func buttonAction(_ button: ZIntroductionButton) {
+	@IBAction func buttonAction(_ button: ZStartHereButton) {
 		update()
 
-		if  let itemID = button.introductionID,
+		if  let itemID = button.startHereID,
 			let    key = keyFrom(itemID) {
 
 			gMainWindow?.handleKey(key, flags: flags)    // this is so cool, ;-)
@@ -71,10 +71,10 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 
 		view.applyToAllSubviews { subview in
 			if  let            box    = subview as? ZBox,
-				let            boxID  = box.introductionID {
+				let            boxID  = box.startHereID {
 				boxesByID     [boxID] = box
-			} else if let   button    = subview as? ZIntroductionButton,
-				let         buttonID  = button.introductionID {
+			} else if let   button    = subview as? ZStartHereButton,
+				let         buttonID  = button.startHereID {
 				buttonsByID[buttonID] = button
 
 				setAutoRepeat(for: button)
@@ -82,9 +82,9 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 		}
 	}
 
-	func setAutoRepeat(for button: ZIntroductionButton) {
-		let autorepeaters: [ZIntroductionID] = [.up, .down, .right, .left]
-		if  let                    buttonID  = button.introductionID,
+	func setAutoRepeat(for button: ZStartHereButton) {
+		let autorepeaters: [ZStartHereID] = [.up, .down, .right, .left]
+		if  let                    buttonID  = button.startHereID,
 			autorepeaters.contains(buttonID) {
 			button.isContinuous              = true
 
@@ -93,7 +93,7 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  let c = gDetailsController, !c.hideableIsHidden(for: .Introduction) { // ignore if hidden
+		if  let c = gDetailsController, !c.hideableIsHidden(for: .StartHere) { // ignore if hidden
 			update()
 		}
 	}
@@ -111,7 +111,7 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 		flags.isControl = buttonFor(.control)?.state == NSControl.StateValue.on
 	}
 
-	func arrowFrom(_ from: ZIntroductionID) -> ZArrowKey? {
+	func arrowFrom(_ from: ZStartHereID) -> ZArrowKey? {
 		switch from {
 			case .up:      return .up
 			case .down:    return .down
@@ -121,7 +121,7 @@ class ZIntroductionController: ZGenericController, ZTooltips {
 		}
 	}
 
-	func keyFrom(_ from: ZIntroductionID) -> String? {
+	func keyFrom(_ from: ZStartHereID) -> String? {
 		switch from {
 			case .child:   return kSpace
 			case .sibling: return kTab

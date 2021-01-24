@@ -735,9 +735,9 @@ class ZMapEditor: ZBaseEditor {
 							z.grab()
 //							gCurrentSmallMapRecords?.setAsCurrent(z, alterHere: true)
 						}
-
-						gRedrawMaps(for: grab)
 					}
+
+					gRedrawMaps(for: grab)
                 }
             }
         }
