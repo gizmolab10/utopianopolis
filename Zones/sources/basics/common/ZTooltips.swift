@@ -118,10 +118,22 @@ extension ZoneDot {
 
 		if  gShowToolTips,
 			let zone = widgetZone,
-			let name = widgetZone?.zoneName,
-			( isReveal ||  !zone.isGrabbed),
-			(!isReveal || !(zone.bookmarkTarget?.isGrabbed ?? false)) {
-			toolTip  = "\(isReveal ? "Reveal" : "Drag") dot\n\n\(kClickTo)\(isReveal ? zone.revealTipText : "select or drag") \"\(name)\"\(zone.isBookmark && !isReveal ? " bookmark" : "")"
+			let name = zone.zoneName,
+			(!isReveal || zone.isBookmark || zone.count > 0) {
+			toolTip  = "\(isReveal ? "Reveal" : "Drag") dot\n\n\(kClickTo)\(isReveal ? zone.revealTipText : zone.isGrabbed ? "drag" : "select or drag") \"\(name)\"\(zone.isBookmark && !isReveal ? " bookmark" : "")"
+		}
+	}
+
+}
+
+extension ZBannerButton {
+
+	func updateTooltips() {
+		toolTip = nil
+
+		if  gShowToolTips,
+			let view = togglingView {
+			toolTip  = "\(kClickTo)\(view.hideHideable ? "view" : "hide") \(view.toolTipText)"
 		}
 	}
 

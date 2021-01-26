@@ -377,19 +377,13 @@ CA
                             <stackView hidden="YES" wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
                                 <rect key="frame" x="0.0" y="2" width="328" height="1523"/>
                                 <subviews>
-                                    <customView identifier="StartHere" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Start Here View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="startHere" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Start Here View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="369" width="328" height="1154"/>
                                         <subviews>
-                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Start Here Hideable">
-                                                <rect key="frame" x="0.0" y="789" width="328" height="300"/>
-                                                <connections>
-                                                    <segue destination="YdN-bY-sSj" kind="embed" id="bHo-7A-xgJ"/>
-                                                </connections>
-                                            </containerView>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Start Here Banner">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Start Here Banner" customClass="ZView">
                                                 <rect key="frame" x="0.0" y="611" width="328" height="21"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Start Here Title">
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Start Here Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="oFz-pg-brp"/>
@@ -400,6 +394,7 @@ CA
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="dSG-o4-XPL" id="Bzc-KJ-Wcp"/>
+                                                            <outlet property="togglingView" destination="dSG-o4-XPL" id="qoT-1L-Vlt"/>
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fqv-v5-z0n" userLabel="Start Here Triangle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
@@ -425,6 +420,12 @@ CA
                                                     <constraint firstItem="uxs-aX-Fhe" firstAttribute="centerY" secondItem="h9A-Dp-8sZ" secondAttribute="centerY" id="trl-qE-Uyg"/>
                                                 </constraints>
                                             </customView>
+                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Start Here Hideable">
+                                                <rect key="frame" x="0.0" y="789" width="328" height="300"/>
+                                                <connections>
+                                                    <segue destination="YdN-bY-sSj" kind="embed" id="bHo-7A-xgJ"/>
+                                                </connections>
+                                            </containerView>
                                         </subviews>
                                         <constraints>
                                             <constraint firstItem="h9A-Dp-8sZ" firstAttribute="leading" secondItem="dSG-o4-XPL" secondAttribute="leading" id="73A-RF-9Pr"/>
@@ -441,19 +442,13 @@ CA
                                             <outlet property="triangleButton" destination="fqv-v5-z0n" id="45u-05-ETW"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="information" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Data View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="data" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Data View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="318" width="328" height="50"/>
                                         <subviews>
-                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Data Hideable">
-                                                <rect key="frame" x="0.0" y="0.0" width="328" height="100"/>
-                                                <connections>
-                                                    <segue destination="fxO-Qj-JeN" kind="embed" id="w7B-Py-09b"/>
-                                                </connections>
-                                            </containerView>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Title and Toggle">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Data Banner" customClass="ZView">
                                                 <rect key="frame" x="0.0" y="77" width="328" height="19"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y" userLabel="Data Title">
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y" userLabel="Data Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="ALV-dt-Nu6"/>
@@ -464,6 +459,7 @@ CA
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="M2W-8y-R0e" id="t9H-CJ-EpI"/>
+                                                            <outlet property="togglingView" destination="M2W-8y-R0e" id="XRu-AH-2H9"/>
                                                         </connections>
                                                     </button>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Data Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
@@ -490,6 +486,12 @@ CA
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" id="kaj-xz-Sm0"/>
                                                 </constraints>
                                             </customView>
+                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Data Hideable">
+                                                <rect key="frame" x="0.0" y="0.0" width="328" height="100"/>
+                                                <connections>
+                                                    <segue destination="fxO-Qj-JeN" kind="embed" id="w7B-Py-09b"/>
+                                                </connections>
+                                            </containerView>
                                         </subviews>
                                         <constraints>
                                             <constraint firstItem="xwW-xc-XIh" firstAttribute="leading" secondItem="M2W-8y-R0e" secondAttribute="leading" id="QlS-NL-vhb"/>
@@ -510,10 +512,10 @@ CA
                                     <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="97" width="328" height="220"/>
                                         <subviews>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Preferences Banner">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Preferences Banner" customClass="ZView">
                                                 <rect key="frame" x="0.0" y="0.0" width="328" height="19"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jzv-og-1RG" userLabel="Preferences Title">
+                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jzv-og-1RG" userLabel="Preferences Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="jjE-A0-nLk"/>
@@ -524,6 +526,7 @@ CA
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="9j5-fI-wCz" id="Jfv-dJ-JP1"/>
+                                                            <outlet property="togglingView" destination="9j5-fI-wCz" id="HGX-Yo-z8h"/>
                                                         </connections>
                                                     </button>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aCk-9D-lHI" userLabel="Triangle Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
@@ -571,13 +574,13 @@ CA
                                             <outlet property="triangleButton" destination="aCk-9D-lHI" id="Vqs-0u-WA3"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="map" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Small Map View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="smallMap" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Small Map View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="328" height="96"/>
                                         <subviews>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Small Map Banner">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Small Map Banner" customClass="ZBannerView" customModule="Seriously" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="39" width="328" height="18"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3bx-6i-bTg" userLabel="Small Map Title">
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3bx-6i-bTg" userLabel="Small Map Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="jp1-9C-ukh"/>
@@ -588,6 +591,7 @@ CA
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="Utx-K3-0a0" id="nzW-6y-ZRI"/>
+                                                            <outlet property="togglingView" destination="Utx-K3-0a0" id="Wks-zD-N6G"/>
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1uw-i1-Cgo" userLabel="Triangle Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
@@ -613,7 +617,7 @@ CA
                                                     <constraint firstAttribute="trailing" secondItem="1uw-i1-Cgo" secondAttribute="trailing" constant="8" id="nw1-oo-l9x"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n0Y-Iw-0NV" userLabel="Favorites Hideable">
+                                            <containerView wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n0Y-Iw-0NV" userLabel="Small Map Hideable">
                                                 <rect key="frame" x="0.0" y="0.0" width="328" height="300"/>
                                                 <connections>
                                                     <segue destination="bl3-7n-UyN" kind="embed" id="6BI-ay-Jbg"/>

@@ -25,7 +25,7 @@ class ZSmallMapController: ZMapController {
 	@IBOutlet var controlsView : ZSmallMapControlsView?
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-		if  let c = gDetailsController, !c.hideableIsHidden(for: .Map) { // don't send signal to a hidden favorites controller
+		if  let c = gDetailsController, !c.hideableIsHidden(for: .SmallMap) { // don't send signal to a hidden favorites controller
 			update()
 			super.handleSignal(iSignalObject, kind: iKind)
 		}

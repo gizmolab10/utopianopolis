@@ -309,14 +309,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		usesRuler              = true
 		isRulerVisible         = true
-		usesInspectorBar       = true
+		importsGraphics        = true
 		allowsImageEditing     = true
+		displaysLinkToolTips   = true
 		textContainerInset     = NSSize(width: 20, height: 0)
 		zlayer.backgroundColor = kClearColor.cgColor
 		backgroundColor        = kClearColor
 
-		addButtons()
-		updateText()
+		FOREGROUND { // wait for application to fully load the inspector bar
+			gMainWindow?.updateTextViewInspectorBar()
+			self.addButtons()
+			self.updateText()
+		}
 	}
 
 	private func clear() {
@@ -631,7 +635,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	@objc private func handleButtonPress(_ iButton: ZButton) {
-		if let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
+		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
 				case .idForward: gCurrentSmallMapRecords?.go(down:  true) { gRedrawMaps() }
 				case .idBack:    gCurrentSmallMapRecords?.go(down: false) { gRedrawMaps() }
@@ -644,55 +648,59 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func addButtons() {
-		FOREGROUND { // wait for application to fully load the inspector bar
-			if  let            w = gMainWindow,
-				let inspectorBar = w.titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view {
+		if  let inspectorBarView = gMainWindow?.inspectorBar {
 
-				func rect(at target: Int) -> CGRect {
+			func rect(at target: Int) -> CGRect {
 
-					// //////////////////////////////////////////// //
-					// Apple bug: subviews are not properly located //
-					// //////////////////////////////////////////// //
+				// ////////////////////////////////////////////////// //
+				// Apple bug: subviews are not located where expected //
+				// ////////////////////////////////////////////////// //
 
-					var final = inspectorBar.subviews[0].frame
-					var prior = final
+				var final = inspectorBarView.subviews[0].frame
+				var prior = final
 
-					for index in 1...target {
-						let frame = inspectorBar.subviews[index].frame
-
-						final.origin.x += prior.size.width
-						final.size      = frame.size
-						prior           = frame
-					}
-
-					final.origin.x -= 230.0
-
-					return final
+				for index in 1...target {
+					let subview      = inspectorBarView.subviews[index]
+					let frame        = subview.frame
+					subview.isHidden = false
+					final.origin.x  += prior.size.width
+					final.size       = frame.size
+					prior            = frame
 				}
 
-				func button(for tag: ZEssayButtonID) -> ZButton {
-					let        index = inspectorBar.subviews.count - 1
-					var        frame = rect(at: index)
-					let            x = frame.maxX - ((tag == .idBack) ? 0.0 : 6.0)
-					let        title = tag.title
-					let       button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
-					frame      .size = button.bounds.insetBy(dx: 0.0, dy: 4.0).size
-					frame    .origin = CGPoint(x: x, y: 0.0)
-					button    .frame = frame
-					button      .tag = tag.rawValue
-					button.isEnabled = false
+				final.origin.x      += 70.0
 
-					return button
-				}
+				return final
+			}
 
-				for tag in ZEssayButtonID.all {
-					let b = button(for: tag)
+			func button(for tag: ZEssayButtonID) -> ZButton {
+				let         index = inspectorBarView.subviews.count - 1
+				var         frame = rect(at: index)
+				let             x = frame.maxX + 2.0
+				let             y = frame.minY - 3.0
+				let         title = tag.title
+				let        button = ZButton(title: title, target: self, action: #selector(handleButtonPress))
+				frame       .size = button.bounds.insetBy(dx: 4.0, dy: 4.0).size
+				frame     .origin = CGPoint(x: x, y: y)
+				button      .font = gTinyFont
+				button     .frame = frame
+				button       .tag = tag.rawValue
+				button    .bounds = CGRect(origin: CGPoint.zero, size: frame.insetBy(dx: 4.0, dy: 2.0).size)
+				button .isEnabled = false
+				button.isBordered = true
+				button.bezelStyle = .texturedRounded
 
-					inspectorBar.addSubview(b)
-					self.setButton(b)
-				}
+				return button
+			}
+
+			for tag in ZEssayButtonID.all {
+				let b = button(for: tag)
+
+				inspectorBarView.addSubview(b)
+				setButton(b)
 			}
 		}
+
 	}
 
 	// MARK:- hyperlinks

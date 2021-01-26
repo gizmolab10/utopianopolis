@@ -42,6 +42,11 @@ class ZGenericController: ZController, ZGeneric {
         }
     }
 
+	override func viewDidLayout() {
+		super.viewDidLayout()
+		gMainWindow?.updateTextViewInspectorBar()
+	}
+
 #if os(OSX)
 
     override func viewDidAppear() {

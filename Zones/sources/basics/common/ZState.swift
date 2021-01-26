@@ -81,8 +81,9 @@ var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrint
 var          gBackgroundColor:             ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
 var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
-var            gFavoritesFont:              ZFont { return .systemFont    (ofSize: gFontSize * kSmallMapReduction) }
+var             gSmallMapFont:              ZFont { return .systemFont    (ofSize: gFontSize * kSmallMapReduction) }
 var               gWidgetFont:              ZFont { return .systemFont    (ofSize: gFontSize) }
+var                 gTinyFont:              ZFont { return .systemFont    (ofSize: gFontSize * kSmallMapReduction * kSmallMapReduction) }
 
 func         gSetEditIdeaMode()                   { gWorkMode = .editIdeaMode }
 func             gSetMapsMode()                   { gWorkMode = .mapsMode }

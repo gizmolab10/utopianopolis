@@ -44,14 +44,14 @@ class ZBreadcrumbsView : ZButtonsView {
 
 		for (index, zone) in gBreadcrumbs.crumbZones.enumerated() {
 			let        button = ZBreadcrumbButton(title: zone.unwrappedName, target: self, action: #selector(crumbButtonAction(_:)))
-			button.font       = gFavoritesFont
+			button.font       = gSmallMapFont
 			button.tag        = index
 			button.zone       = zone
 			button.isBordered = false
 			let         title = NSMutableAttributedString(string: zone.unwrappedName)
 			let         range = NSRange(location:0, length: title.length)
 
-			title.addAttributes([.font : gFavoritesFont], range: range)
+			title.addAttributes([.font : gSmallMapFont], range: range)
 
 			if  let     color = zone.color {
 				title.addAttributes([.foregroundColor : color], range: range)
@@ -121,7 +121,7 @@ class ZBreadcrumbsView : ZButtonsView {
 						}
 					}
 
-					last?.asssureIsVisible()
+					gHere.asssureIsVisible()
 				case .noteMode:
 					if  let essayView = gEssayView {
 						let sameNext  = (next == gCurrentEssayZone)

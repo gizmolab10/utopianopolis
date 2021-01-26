@@ -63,7 +63,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var              isCurrentRecent :               Bool  { return self ==   gRecents.currentBookmark }
 	var            isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
 	var            onlyShowRevealDot :               Bool  { return expanded && ((isSmallMapHere && !(widget?.type.isBigMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
-	var              dragDotIsHidden :               Bool  { return                     (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && expanded) } // hide favorites root drag dot
+	var              dragDotIsHidden :               Bool  { return (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && expanded) } // hide favorites root drag dot
 	var                hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
 	var                hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
 	var                 hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }

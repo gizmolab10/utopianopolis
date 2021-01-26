@@ -12,25 +12,42 @@
     import UIKit
 #endif
 
+class ZBannerButton : ZButton {
+	@IBOutlet var   togglingView : ZTogglingView?
+}
+
 class ZTogglingView: NSStackView {
 
 	@IBOutlet var triangleButton : ZToggleButton?
-	@IBOutlet var    titleButton : ZButton?
-    @IBOutlet var   hideableView : ZView?
+	@IBOutlet var    titleButton : ZBannerButton?
 	@IBOutlet var     bannerView : ZView?
+    @IBOutlet var   hideableView : ZView?
 
     // MARK:- identity
     // MARK:-
 
+	var kind: String? {
+		return convertFromOptionalUserInterfaceItemIdentifier(identifier)
+	}
+
+	var toolTipText: String {
+		switch identity {
+			case .Preferences : return "preference controls"
+			case .StartHere   : return "basic buttons to get you started"
+			case .SmallMap    : return "\(gIsRecentlyMode ? "recents" : "favorites") map"
+			case .Data        : return "useful data about Seriously"
+			default           : return ""
+		}
+	}
+
 	var identity: ZDetailsViewID {
-		if  let kind = convertFromOptionalUserInterfaceItemIdentifier(identifier) {
-			switch kind {
-				case "StartHere": return .StartHere
-				case "preferences":  return .Preferences
-				case "information":  return .Information
-				case "status":       return .Status
-				case "map":          return .Map
-				default:             return .All
+		if  let    k = kind {
+			switch k {
+				case "preferences": return .Preferences
+				case "startHere":   return .StartHere
+				case "smallMap":    return .SmallMap
+				case "data":        return .Data
+				default:            return .All
 			}
 		}
 
@@ -80,7 +97,7 @@ class ZTogglingView: NSStackView {
     func update() {
 		titleButton?.layer?.backgroundColor = gAccentColor.cgColor
 
-		if  identity == .Map,
+		if  identity == .SmallMap,
 			let  here = gIsRecentlyMode ? gRecentsHereMaybe : gFavoritesHereMaybe {
 
 			titleButton?.title = here.ancestralString
@@ -94,6 +111,8 @@ class ZTogglingView: NSStackView {
     func updateHideableView() {
         let    hide = hideHideable
         let visible = subviews.contains(hideableView!)
+
+		titleButton?.updateTooltips()
 
 		if  hide == visible { // need for update
 			hideableView?.isHidden = hide

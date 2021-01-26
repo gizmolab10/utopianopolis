@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -1041,7 +1041,7 @@ CA
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="uAJ-8h-8LU">
-                                            <rect key="frame" x="-2" y="14" width="162" height="21"/>
+                                            <rect key="frame" x="-3" y="13" width="164" height="23"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="158" id="I1c-oe-2cv"/>
                                                 <constraint firstAttribute="height" constant="18" id="aEN-CF-kHQ"/>
@@ -1068,7 +1068,7 @@ CA
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="O0Q-5W-NfB"/>
                                 </constraints>
-                                <font key="titleFont" metaFont="system" size="9"/>
+                                <font key="titleFont" metaFont="miniSystem"/>
                             </box>
                         </subviews>
                         <constraints>
@@ -1108,7 +1108,7 @@ CA
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn width="254" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
+                                                <tableColumn width="245" minWidth="40" maxWidth="1000" id="yWJ-aQ-Drj">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -1175,7 +1175,7 @@ CA
                                     <rect key="frame" x="0.0" y="0.0" width="263" height="289"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4" customClass="ZEssayView" customModule="Seriously" customModuleProvider="target">
+                                        <textView verticallyResizable="YES" fieldEditor="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" incrementalSearchingEnabled="YES" allowsUndo="YES" allowsImageEditing="YES" usesRuler="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4" customClass="ZEssayView" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="263" height="289"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1266,7 +1266,7 @@ CA
                                 </connections>
                             </customView>
                             <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NE4-u7-LbG" userLabel="Database Indicator Button">
-                                <rect key="frame" x="2" y="4" width="34" height="33"/>
+                                <rect key="frame" x="5" y="8" width="28" height="28"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="Pok-6B-yNW"/>
                                     <constraint firstAttribute="width" secondItem="NE4-u7-LbG" secondAttribute="height" id="Vdj-CJ-Ftt"/>
@@ -1337,10 +1337,10 @@ CA
                                         <rect key="frame" x="0.0" y="0.0" width="450" height="352"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="NGd-6W-C0X">
-                                                <rect key="frame" x="0.0" y="303" width="450" height="49"/>
+                                                <rect key="frame" x="0.0" y="304" width="450" height="48"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="xlc-Yd-hnd" userLabel="apple id">
-                                                        <rect key="frame" x="-2" y="33" width="454" height="16"/>
+                                                        <rect key="frame" x="-2" y="32" width="454" height="16"/>
                                                         <textFieldCell key="cell" selectable="YES" alignment="justified" id="bc1-Sd-0wy">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1348,10 +1348,10 @@ CA
                                                         </textFieldCell>
                                                     </textField>
                                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="qwy-Fq-9BT" userLabel="access apple id buttons">
-                                                        <rect key="frame" x="0.0" y="0.0" width="450" height="21"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="450" height="20"/>
                                                         <subviews>
                                                             <button identifier="id no" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gqY-tc-UwL">
-                                                                <rect key="frame" x="-6" y="-7" width="246" height="32"/>
+                                                                <rect key="frame" x="-7" y="-7" width="240" height="32"/>
                                                                 <buttonCell key="cell" type="push" title="I Do Not Need iCloud at This Time" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70t-AV-QkO">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -1362,7 +1362,7 @@ CA
                                                                 </connections>
                                                             </button>
                                                             <button identifier="id yes" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bWe-Ul-jBd">
-                                                                <rect key="frame" x="236" y="-7" width="220" height="32"/>
+                                                                <rect key="frame" x="243" y="-7" width="214" height="32"/>
                                                                 <buttonCell key="cell" type="push" title="I Grant Access to my Apple ID" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EYY-QE-Hwt">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -1396,10 +1396,10 @@ DQ
                                                 </constraints>
                                             </customView>
                                             <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pg2-h7-6ux" userLabel="Enable Cloud Drive">
-                                                <rect key="frame" x="0.0" y="303" width="450" height="49"/>
+                                                <rect key="frame" x="0.0" y="304" width="450" height="48"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="O6S-Dv-mLT" userLabel="cloud drive">
-                                                        <rect key="frame" x="-2" y="33" width="454" height="16"/>
+                                                        <rect key="frame" x="-2" y="32" width="454" height="16"/>
                                                         <textFieldCell key="cell" selectable="YES" alignment="justified" id="I6o-bK-Aqr">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1407,7 +1407,7 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <button identifier="continue" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eJt-eS-JWW">
-                                                        <rect key="frame" x="178" y="-7" width="95" height="32"/>
+                                                        <rect key="frame" x="181" y="-7" width="89" height="32"/>
                                                         <buttonCell key="cell" type="push" title="Continue" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KhS-Fu-AAZ">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>

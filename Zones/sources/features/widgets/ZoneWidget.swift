@@ -330,9 +330,9 @@ class ZoneWidget: ZView {
                 // DOT IS STRAIGHT OUT //
                 // //////////////////////
 
-                if  let        dot = revealDot.innerDot {
-                    let     insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
-                    rect           = dot.convert(dot.bounds, to: self).insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
+                if  let            dot = revealDot.innerDot {
+                    let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
+                    rect               = dot.convert(dot.bounds, to: self).insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
                 }
             } else if let      indices = gDragDropIndices, indices.count > 0 {
                 let         firstindex = indices.firstIndex
