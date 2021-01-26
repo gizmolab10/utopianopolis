@@ -19,7 +19,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 
     static var mainWindow : ZoneWindow?
     var          observer : NSKeyValueObservation?
-	var inspectorBar      : ZView? { return titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view }
+	var      inspectorBar : ZView? { return titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view }
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		if  let            key = iKey {
@@ -68,7 +68,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
         return gTextEditor
     }
 
-	func updateTextViewInspectorBar() {
+	func updateTextViewInspectorBar(show: Bool = false) {
 		if  let tools = inspectorBar?.subviews {
 			for index in 0..<tools.count {
 				let tool = tools[index]
@@ -79,6 +79,9 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 				}
 			}
 		}
+
+		showsToolbarButton     =  show
+		inspectorBar?.isHidden = !show
 	}
 
     #endif

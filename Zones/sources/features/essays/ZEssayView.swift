@@ -18,30 +18,30 @@ import UIKit
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZTextView, ZTextViewDelegate {
-	let dotRadius       = CGFloat(-5.0)
-	var dropped         = [String]()
-	var selectionRange  = NSRange()          { didSet { if selectionRange.location != 0, let rect = rectForRange(selectionRange) { selectionRect = rect } } }
-	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { imageAttachment = nil } } }
-	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { selectionRange = NSRange() } else if oldValue != nil { eraseAttachment = oldValue } } }
-	var eraseAttachment : ZRangedAttachment?
-	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
-	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectionRange).string }
-	var backwardButton  : ZButton?
-	var forwardButton   : ZButton?
-	var cancelButton    : ZButton?
-	var deleteButton    : ZButton?
-	var hideButton      : ZButton?
-	var saveButton      : ZButton?
-	var resizeDragStart : CGPoint?
-	var resizeDragRect  : CGRect?
-	var resizeDot       : ZDirection?
-	var essayID         : CKRecordID?
+	let dotRadius        = CGFloat(-5.0)
+	var dropped          = [String]()
+	var selectionRange   = NSRange()          { didSet { if selectionRange.location != 0, let rect = rectForRange(selectionRange) { selectionRect = rect } } }
+	var selectionRect    = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { imageAttachment = nil } } }
+	var imageAttachment  : ZRangedAttachment? { didSet { if imageAttachment != nil { selectionRange = NSRange() } else if oldValue != nil { eraseAttachment = oldValue } } }
+	var eraseAttachment  : ZRangedAttachment?
+	var selectionZone    : Zone?              { return selectedNotes.first?.zone }
+	var selectionString  : String?            { return textStorage?.attributedSubstring(from: selectionRange).string }
+	var backwardButton   : ZButton?
+	var forwardButton    : ZButton?
+	var cancelButton     : ZButton?
+	var deleteButton     : ZButton?
+	var hideButton       : ZButton?
+	var saveButton       : ZButton?
+	var resizeDragStart  : CGPoint?
+	var resizeDragRect   : CGRect?
+	var resizeDot        : ZDirection?
+	var essayID          : CKRecordID?
 
 	var shouldOverwrite: Bool {
 		if  let          current = gCurrentEssay,
 			current.noteTraitMaybe?.needsSave ?? false,
 			current.essayLength != 0,
-			let               i  = gCurrentEssayZone?.ckRecord?.recordID,
+			let i                = gCurrentEssayZone?.ckRecord?.recordID,
 			i                   == essayID {	// been here before
 
 			return false						// has not yet been saved. don't overwrite
@@ -249,8 +249,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gActiveColor.setStroke()
 			gActiveColor.setFill()
 		} else {
-			kClearColor     .setStroke()
-			kClearColor     .setFill()
+			kClearColor .setStroke()
+			kClearColor .setFill()
 		}
 
 		if  let       rect = resizeDragRect {
@@ -317,7 +317,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		backgroundColor        = kClearColor
 
 		FOREGROUND { // wait for application to fully load the inspector bar
-			gMainWindow?.updateTextViewInspectorBar()
+			gMainWindow?.updateTextViewInspectorBar(show: true)
 			self.addButtons()
 			self.updateText()
 		}
@@ -612,13 +612,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- buttons
 	// MARK:-
 
-	func setControlBarButtons(      enabled: Bool) {
-		backwardButton?.isEnabled = enabled
-		forwardButton? .isEnabled = enabled
-		deleteButton?  .isEnabled = enabled
-		cancelButton?  .isEnabled = enabled
-		hideButton?    .isEnabled = enabled
-		saveButton?    .isEnabled = enabled
+	func setControlBarButtons(        enabled: Bool) {
+		gMainWindow?.inspectorBar?.isHidden = !enabled
+		backwardButton?  .isEnabled = enabled
+		forwardButton?   .isEnabled = enabled
+		deleteButton?    .isEnabled = enabled
+		cancelButton?    .isEnabled = enabled
+		hideButton?      .isEnabled = enabled
+		saveButton?      .isEnabled = enabled
 	}
 
 	private func setButton(_ button: ZButton) {
@@ -648,7 +649,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func addButtons() {
-		if  let inspectorBarView = gMainWindow?.inspectorBar {
+		if  let inspectorBar = gMainWindow?.inspectorBar {
 
 			func rect(at target: Int) -> CGRect {
 
@@ -656,11 +657,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				// Apple bug: subviews are not located where expected //
 				// ////////////////////////////////////////////////// //
 
-				var final = inspectorBarView.subviews[0].frame
+				var final = inspectorBar.subviews[0].frame
 				var prior = final
 
 				for index in 1...target {
-					let subview      = inspectorBarView.subviews[index]
+					let subview      = inspectorBar.subviews[index]
 					let frame        = subview.frame
 					subview.isHidden = false
 					final.origin.x  += prior.size.width
@@ -674,7 +675,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			func button(for tag: ZEssayButtonID) -> ZButton {
-				let         index = inspectorBarView.subviews.count - 1
+				let         index = inspectorBar.subviews.count - 1
 				var         frame = rect(at: index)
 				let             x = frame.maxX + 2.0
 				let             y = frame.minY - 3.0
@@ -696,7 +697,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			for tag in ZEssayButtonID.all {
 				let b = button(for: tag)
 
-				inspectorBarView.addSubview(b)
+				inspectorBar.addSubview(b)
 				setButton(b)
 			}
 		}
