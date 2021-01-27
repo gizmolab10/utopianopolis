@@ -193,7 +193,7 @@ class ZOperations: NSObject {
     }
 
     @discardableResult func cloudStatusChanged() -> Bool {
-		let          hasInternet = ZReachability.isConnectedToNetwork() && false
+		let          hasInternet = ZReachability.isConnectedToNetwork()
         let     changedConnected =              hasInternet != gHasInternet
         let     changedStatus    = recentCloudAccountStatus != gCloudAccountStatus
         gHasInternet             = hasInternet

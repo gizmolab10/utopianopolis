@@ -71,7 +71,13 @@ class ZRemoteStorage: NSObject {
     
     func cloud(for dbID: ZDatabaseID) -> ZCloud? { return zRecords(for: dbID) as? ZCloud }
     func clear()                                 { records =    [ZDatabaseID  :   ZCloud] () }
-    func cancel()                                { currentCloud?.currentOperation?.cancel() }
+	func cancel()                                { currentCloud?.currentOperation?.cancel() }
+
+	func markAllNeedSave() {
+		for records in allRecordsArrays {
+			records.markAllNeedSave()
+		}
+	}
 
     func recount() {  // all progenyCounts for all progeny in all databases in all roots
         for records in allRecordsArrays {

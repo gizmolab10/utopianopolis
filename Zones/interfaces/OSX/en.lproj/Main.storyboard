@@ -70,9 +70,15 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="s1V-go-bLG"/>
-                                        <menuItem title="Refetch From Cloud ..." id="f0s-F2-LF2">
+                                        <menuItem title="Resave Everything to Cloud" keyEquivalent="s" id="PXH-br-BPh">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="pbw-Iz-nSd"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Refetch from Cloud ..." id="f0s-F2-LF2">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Refetch From Cloud ..." autoenablesItems="NO" id="8DN-3Y-Czr">
+                                            <menu key="submenu" title="Refetch from Cloud ..." autoenablesItems="NO" id="8DN-3Y-Czr">
                                                 <items>
                                                     <menuItem title="Immediate Children" keyEquivalent="g" id="zJA-h5-V9Q">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
@@ -100,9 +106,10 @@
                                                 </items>
                                             </menu>
                                         </menuItem>
-                                        <menuItem title="Save ..." id="MEe-fC-PR1">
+                                        <menuItem isSeparatorItem="YES" id="ZUb-S7-rM8"/>
+                                        <menuItem title="Export to File ..." id="MEe-fC-PR1">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Save ..." id="LGH-w5-scL">
+                                            <menu key="submenu" title="Export to File ..." id="LGH-w5-scL">
                                                 <items>
                                                     <menuItem title="As Seriously ..." keyEquivalent="s" id="rRM-8z-pgs">
                                                         <connections>
@@ -118,9 +125,9 @@
                                                 </items>
                                             </menu>
                                         </menuItem>
-                                        <menuItem title="Import into Selected Idea ..." id="mCl-1N-DnK">
+                                        <menuItem title="Import from File ..." id="mCl-1N-DnK">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Import into Selected Idea ..." id="nne-nT-Cug">
+                                            <menu key="submenu" title="Import from File ..." id="nne-nT-Cug">
                                                 <items>
                                                     <menuItem title="From Seriously File ..." keyEquivalent="o" id="oOd-mA-5D1">
                                                         <connections>

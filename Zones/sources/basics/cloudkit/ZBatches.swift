@@ -41,7 +41,7 @@ enum ZBatchID: Int {
 				 .bAllTraits,
 				 .bNewAppleID,
 				 .bResumeCloud: return false
-			case .bSaveToCloud: return gCloudStatusIsActive
+			case .bSaveToCloud: return !gCloudStatusIsActive
 			default:            return true
 		}
     }

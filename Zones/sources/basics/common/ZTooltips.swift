@@ -119,7 +119,7 @@ extension ZoneDot {
 		if  gShowToolTips,
 			let zone = widgetZone,
 			let name = zone.zoneName,
-			(!isReveal || zone.isBookmark || zone.count > 0) {
+			(!isReveal || zone.isBookmark || zone.count > 0 || zone.hasNote) {
 			toolTip  = "\(isReveal ? "Reveal" : "Drag") dot\n\n\(kClickTo)\(isReveal ? zone.revealTipText : zone.isGrabbed ? "drag" : "select or drag") \"\(name)\"\(zone.isBookmark && !isReveal ? " bookmark" : "")"
 		}
 	}

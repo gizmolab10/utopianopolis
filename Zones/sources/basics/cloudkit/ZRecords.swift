@@ -130,7 +130,13 @@ class ZRecords: NSObject {
 
 	init(_ idatabaseID: ZDatabaseID) {
         databaseID = idatabaseID
-    }
+	}
+
+	func markAllNeedSave() {
+		applyToAllZRecords { zRecord in
+			zRecord.needSave()
+		}
+	}
 
 	func createRandomLost() -> Zone {
         let lost = Zone.randomZone(in: databaseID)
