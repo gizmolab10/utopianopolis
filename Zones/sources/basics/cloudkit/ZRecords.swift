@@ -201,25 +201,29 @@ class ZRecords: NSObject {
     // MARK:- registries
     // MARK:-
 
-	// name registry:
+	// ckrecords lookup:
 	// initialized with one entry for each word in each zone's name
 	// grows with each unique search
 
 	func appendCKRecordsLookup(with iName: String, onEach: RecordsToRecordsClosure) {
         for part in iName.components(separatedBy: " ") {
-            if  part != "" {
-                var records  = ckRecordsLookup[part]
-                if  records == nil {
-                    records  = []
-                }
-
-                records      = onEach(records!)
-
-				if  let r = records, r.count > 0 {
-					ckRecordsLookup[part] = r
-				}
+            if  part != "",
+				var records = search(for: part) {
+                records     = onEach(records)
 			}
         }
+	}
+
+	func search(for match: String) -> CKRecordsArray? {
+		var   result = gCoreDataStack.search(for: match, within: databaseID)
+
+		if  let more = ckRecordsLookup[match] {
+			result.appendUnique(contentsOf: more)
+		}
+
+		ckRecordsLookup[match] = result // accumulate from core data
+
+		return result
 	}
 	
 	func addToLocalSearchIndex(name: String, for iZone: Zone?) {

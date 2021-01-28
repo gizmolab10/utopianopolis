@@ -106,6 +106,9 @@ class ZCoreDataStack: NSObject {
 		return container
 	}()
 
+	// MARK:- save
+	// MARK:-
+
 	func saveContext() {
 		if  gUseCoreData,
 			managedContext.hasChanges {
@@ -119,6 +122,9 @@ class ZCoreDataStack: NSObject {
 			}
 		}
 	}
+
+	// MARK:- restore
+	// MARK:-
 
 	func loadContext(into dbID: ZDatabaseID?) {
 		if  gUseCoreData {
@@ -138,6 +144,9 @@ class ZCoreDataStack: NSObject {
 			}
 		}
 	}
+
+	// MARK:- search
+	// MARK:-
 
 	func loadZone(with recordName: String, into dbID: ZDatabaseID?) {
 		if  let          dbid = dbID?.identifier {
@@ -171,6 +180,41 @@ class ZCoreDataStack: NSObject {
 				}
 			}
 		}
+	}
+
+	func search(for match: String, within dbID: ZDatabaseID?) -> CKRecordsArray {
+		var result = CKRecordsArray()
+
+		func predicate(for match: String, type: String) -> NSPredicate {
+			let stripped = match.replacingStrings(["\""], with: "")
+
+			return NSPredicate(format: "zoneName = \"\(stripped)\"")
+		}
+
+		if  let              dbid = dbID?.identifier {
+			for type in [kZoneType] { //, kTraitType] {
+				let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
+				let   idPredicate = predicate(for: match, type: type)
+				let   dbPredicate = NSPredicate(format: "dbid = \"\(dbid)\"")
+				request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [idPredicate, dbPredicate])
+
+				do {
+					let items = try managedContext.fetch(request)
+
+					for item in items {
+						let zRecord = item as! ZRecord
+
+						if  let ckRecord = zRecord.ckRecord {
+							result.append(ckRecord)
+						}
+					}
+				} catch {
+
+				}
+			}
+		}
+
+		return result
 	}
 
 	@discardableResult func load(type: String, into dbID: ZDatabaseID?, using request: NSFetchRequest<NSFetchRequestResult>) -> ZRecordsArray {
