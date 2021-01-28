@@ -70,7 +70,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 
 	func updateTextViewInspectorBar(show: Bool = false) {
 		if  let tools = inspectorBar?.subviews {
-			for index in 0..<tools.count {
+			for index in 1..<tools.count {
 				let tool = tools[index]
 				tool.isHidden = false
 

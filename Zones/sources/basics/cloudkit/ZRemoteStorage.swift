@@ -210,7 +210,7 @@ class ZRemoteStorage: NSObject {
 			if  let     dbID = ZDatabaseID.convert(from: notification.databaseScope),
 				let    cloud = self.cloud(for: dbID),
 				let recordID = notification.recordID {
-				let      dbi = dbID.indicator
+				let      dbi = dbID.identifier
 				let ckRecord = cloud.maybeCKRecordForRecordName(recordID.recordName)
 				let     name = (ckRecord?["zoneName"] as String?) ?? kUnknown
 				let     type = ckRecord?.recordType   as String?  ?? kUnknown

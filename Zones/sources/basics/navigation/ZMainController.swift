@@ -17,6 +17,7 @@ var gMainController: ZMainController? { return gControllers.controllerForID(.idM
 class ZMainController: ZGenericController {
 
 	@IBOutlet var detailsWidth      : NSLayoutConstraint?
+	@IBOutlet var hamburgerButton   : ZButton?
     @IBOutlet var searchResultsView : ZView?
 	@IBOutlet var permissionView    : ZView?
 	@IBOutlet var searchBoxView     : ZView?
@@ -26,19 +27,22 @@ class ZMainController: ZGenericController {
     override  var controllerID      : ZControllerID { return .idMain }
 
 	override func setup() {
-		searchBoxView?    .isHidden = true
 		searchResultsView?.isHidden = true
+		searchBoxView?    .isHidden = true
+
+		update()
 	}
 
-	@IBAction func settingsButtonAction(_ button: NSButton) {
+	@IBAction func hamburgerButtonAction(_ button: NSButton) {
 		gShowDetailsView = detailView?.isHidden ?? true
 
 		update()
 	}
 
 	func update() {
-		detailsWidth?.constant =  gShowDetailsView ? 226.0 :  0.0
-		detailView?  .isHidden = !gShowDetailsView
+		hamburgerButton?.toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
+		detailsWidth?  .constant =  gShowDetailsView ? 226.0 :  0.0
+		detailView?    .isHidden = !gShowDetailsView
 	}
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {

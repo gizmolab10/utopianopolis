@@ -276,10 +276,10 @@ class ZRecords: NSObject {
     }
 
     @discardableResult func registerZRecord(_  iRecord: ZRecord?) -> Bool {
-        if  let           zRecord  = iRecord,
-            let              name  = zRecord.ckRecordName {
-			if let existingRecord  = zRecordsLookup[name] {
-                if existingRecord != zRecord, existingRecord.ckRecord?.recordType == zRecord.ckRecord?.recordType {
+        if  let            zRecord  = iRecord,
+            let               name  = zRecord.ckRecordName {
+			if  let existingRecord  = zRecordsLookup[name] {
+                if  existingRecord != zRecord, existingRecord.ckRecord?.recordType == zRecord.ckRecord?.recordType {
 
                     // /////////////////////////////////////
                     // if already registered, must ignore //
@@ -980,7 +980,7 @@ class ZRecords: NSObject {
 				return rootZone
 			}
 
-			let zRecord = zRecordsLookup[name]                             // look it up by record name
+			let zRecord = zRecordsLookup[name]                               // look it up by record name
 
 			if  let recordType = zRecord?.ckRecord?.recordType,              // look for mistakes in object creation
 				(zRecord as? ZTrait != nil && recordType == kZoneType) ||

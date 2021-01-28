@@ -26,10 +26,10 @@ class ZCoreDataStack: NSObject {
 	lazy var          model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }()
 	lazy var    coordinator : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
 	lazy var managedContext : NSManagedObjectContext        = { return persistentContainer.viewContext }()
-	var       lastConverted = [String : [String]]()
 	var        privateStore : NSPersistentStore? { return persistentStore(for: privateURL) }
 	var         publicStore : NSPersistentStore? { return persistentStore(for: publicURL) }
 	var          localStore : NSPersistentStore? { return persistentStore(for: localURL) }
+	var       lastConverted = [String : [String]]()
 
 	func persistentStore(for url: URL) -> NSPersistentStore? {
 		return persistentContainer.persistentStoreCoordinator.persistentStore(for: url)
@@ -122,6 +122,7 @@ class ZCoreDataStack: NSObject {
 
 	func loadContext(into dbID: ZDatabaseID?) {
 		if  gUseCoreData {
+
 			FOREGROUND {
 				var names = [kRootName, kDestroyName, kTrashName, kLostAndFoundName]
 
@@ -151,8 +152,8 @@ class ZCoreDataStack: NSObject {
 			// //////////////////////////////////////////////////////////////////////////////// //
 
 			if  zRecords.count > 0,
-				let  zone = zRecords[0] as? Zone,
-				let cloud = gRemoteStorage.zRecords(for: dbID) {
+				let       zone = zRecords[0] as? Zone,
+				let      cloud = gRemoteStorage.zRecords(for: dbID) {
 
 				zone.traverseAllProgeny { iChild in
 					iChild.updateFromCoreDataTraitRelationships(visited: [])
@@ -166,7 +167,7 @@ class ZCoreDataStack: NSObject {
 					case   kRecentsRootName: cloud.recentsZone      = zone
 					case kFavoritesRootName: cloud.favoritesZone    = zone
 					case  kLostAndFoundName: cloud.lostAndFoundZone = zone
-					default:                 break
+					default: break
 				}
 			}
 		}
@@ -180,7 +181,7 @@ class ZCoreDataStack: NSObject {
 			for item in items {
 				let       zRecord = item as! ZRecord
 
-				if  let dbid      = dbID?.indicator,
+				if  let dbid      = dbID?.identifier,
 					zRecord.dbid == dbid,
 					count         > 0 {
 					count        -= 1
@@ -207,7 +208,7 @@ class ZCoreDataStack: NSObject {
 	func convertZoneFromCoreData(_ record: ZRecord, into dbID: ZDatabaseID?) -> [String] {
 		var converted = [String]()
 
-		if  let  dbid = dbID?.indicator {
+		if  let  dbid = dbID?.identifier {
 			converted = record.convertFromCoreData(into: kZoneType, visited: lastConverted[dbid])
 
 			converted.appendUnique(contentsOf: lastConverted[dbid] ?? [])

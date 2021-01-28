@@ -52,7 +52,7 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
         }
 
 		if  parent.databaseID != gDatabaseID {
-			toggleDatabaseID()
+			gToggleDatabaseID()
 		}
 
         for file in openFiles {

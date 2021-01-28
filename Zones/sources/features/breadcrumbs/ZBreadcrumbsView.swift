@@ -13,9 +13,9 @@ var gBreadcrumbsView: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbsV
 
 class ZBreadcrumbsView : ZButtonsView {
 
-	override  var           clipped :  Bool { return gClipBreadcrumbs }
-	@IBOutlet var  clipCrumbsButton :  ZButton?
-	@IBOutlet var dbIndicatorButton :  ZButton?
+	override  var           clipped : Bool     { return gClipBreadcrumbs }
+	@IBOutlet var  clipCrumbsButton : ZButton?
+	@IBOutlet var dbIndicatorButton : ZButton?
 
 	var crumbButtonsWidth: CGFloat {
 		var width = CGFloat(0.0)
@@ -66,13 +66,12 @@ class ZBreadcrumbsView : ZButtonsView {
 		fitBreadcrumbsToWindow()   // side effect: updates clipped
 	}
 
-	
-
 	override func setupAndRedraw() {
 		super.setupAndRedraw()   // side effect: updates clipped, used below
 
-		clipCrumbsButton? .image    = !clipped ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
-		dbIndicatorButton?.title    =  gDatabaseID.indicator
+		clipCrumbsButton?    .image = !clipped ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
+		dbIndicatorButton?   .title =  gDatabaseID.identifier
+		dbIndicatorButton? .toolTip =  kClickTo + "switch to \(gOtherDatabaseID.userReadableString) data"
 		dbIndicatorButton?.isHidden = !gIsMapOrEditIdeaMode
 	}
 

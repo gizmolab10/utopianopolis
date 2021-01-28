@@ -69,6 +69,7 @@ var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var            gModifierFlags:        ZEventFlags { return ZEvent.modifierFlags } // use when don't have an event handy
 var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
+var          gOtherDatabaseID:        ZDatabaseID { return gDatabaseID == .mineID ? .everyoneID : .mineID }
 var                 gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
 var                 gDotWidth:             Double { return gDotHeight * 0.75 }
 var                gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
@@ -85,6 +86,7 @@ var             gSmallMapFont:              ZFont { return .systemFont    (ofSiz
 var               gWidgetFont:              ZFont { return .systemFont    (ofSize: gFontSize) }
 var                 gTinyFont:              ZFont { return .systemFont    (ofSize: gFontSize * kSmallMapReduction * kSmallMapReduction) }
 
+func        gToggleDatabaseID()                   { gDatabaseID = gOtherDatabaseID }
 func         gSetEditIdeaMode()                   { gWorkMode = .editIdeaMode }
 func             gSetMapsMode()                   { gWorkMode = .mapsMode }
 
@@ -721,13 +723,6 @@ func gRefreshPersistentWorkMode() {
 	}
 
 	return true
-}
-
-func toggleDatabaseID() {
-	switch        gDatabaseID {
-	case .mineID: gDatabaseID = .everyoneID
-	default:      gDatabaseID = .mineID
-	}
 }
 
 func emailSent(for type: ZSentEmailType) -> Bool {

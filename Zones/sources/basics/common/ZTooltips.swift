@@ -96,6 +96,10 @@ extension ZStartHereController {
 
 }
 
+func gConcealmentString(for hide: Bool) -> String {
+	return (hide ? "hide" : "reveal")
+}
+
 extension Zone {
 
 	var revealTipText: String {
@@ -106,7 +110,7 @@ extension Zone {
 				hasHyperlink    ? "invoke web link" : ""
 		}
 
-		return (expanded ? "hide" : "reveal") + " list for"
+		return gConcealmentString(for: expanded) + " list for"
 	}
 
 }

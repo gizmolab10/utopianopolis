@@ -219,15 +219,6 @@ enum ZDatabaseID: String {
 		}
     }
 
-	var indicator: String {
-		switch self {
-			case .favoritesID: return "f"
-			case  .everyoneID: return "e"
-			case   .recentsID: return "r"
-			case      .mineID: return "m"
-		}
-	}
-
     static func convert(from scope: CKDatabase.Scope) -> ZDatabaseID? {
 		switch scope {
 			case .public:  return .everyoneID

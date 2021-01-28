@@ -525,7 +525,6 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-
     func toggleColorized() {
         for zone in gSelecting.currentGrabs {
             zone.toggleColorized()
@@ -533,7 +532,6 @@ class ZMapEditor: ZBaseEditor {
 
         gRedrawMaps()
     }
-
 
     func prefix(with iMark: String) {
         let before = "("

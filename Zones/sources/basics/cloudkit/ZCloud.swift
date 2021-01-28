@@ -1073,7 +1073,7 @@ class ZCloud: ZRecords {
 		}
 
 		if  string.count > 0 {
-			printDebug(.dLevels, "(\(self.databaseID.indicator)) \(string)")
+			printDebug(.dLevels, "(\(self.databaseID.identifier)) \(string)")
 		}
 	}
     
