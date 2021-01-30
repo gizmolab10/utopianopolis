@@ -13,7 +13,7 @@ class ZBreadcrumbButton: ZButton, ZTooltips {
 	var zone: Zone = gHere
 	var currentEvent: ZEvent?
 
-	var strokeColor: ZColor {
+	var strokeColor: ZColor { // formerly indicated button visibility and corrected for colorful and dar modes
 		let visible = zone.ancestralPath.contains(gHere)
 
 		if  gColorfulMode {
@@ -22,21 +22,6 @@ class ZBreadcrumbButton: ZButton, ZTooltips {
 			return visible ? kDarkGrayColor.darker(by: 6.0) : kDarkGrayColor.darker(by: 4.0)
 		} else {
 			return visible ? kDarkGrayColor.darker(by: 3.0) : kLightestGrayColor
-		}
-	}
-
-	override func draw(_ dirtyRect: NSRect) {
-		if  gIsReadyToShowUI {
-			let       name = zone.unwrappedName as NSString
-			let       path = ZBezierPath(roundedRect: dirtyRect.insetEquallyBy(1.0), cornerRadius: 3.0)
-			path.lineWidth = 2.0
-
-			strokeColor.setStroke()
-			strokeColor.setFill()
-			path.stroke()
-			path.fill()
-
-			name.draw(in: dirtyRect.offsetBy(dx: 8.0, dy: -1.0), withAttributes: attributedTitle.attributes(at: 0, effectiveRange: nil))
 		}
 	}
 

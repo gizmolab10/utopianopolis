@@ -1140,6 +1140,33 @@ extension ZRecordsArray {
 		return nil
 	}
 
+	mutating func appendUnique(_ item: ZRecord) {
+		appendUnique(contentsOf: [item]) { (a, b) -> (Bool) in
+			if  let aRecord = a as? ZRecord,
+				let bRecord = b as? ZRecord {
+				return aRecord.ckRecordName == bRecord.ckRecordName
+			}
+
+			return false
+		}
+	}
+
+}
+
+extension CKRecordsArray {
+
+	mutating func appendUnique(_ item: CKRecord) {
+		appendUnique(contentsOf: [item]) { (a, b) -> (Bool) in
+			if  let aRecordName = (a as? CKRecord)?.recordID.recordName,
+				let bRecordName = (b as? CKRecord)?.recordID.recordName {
+				return aRecordName == bRecordName
+			}
+
+			return false
+		}
+	}
+
+	
 }
 
 extension NSRange {

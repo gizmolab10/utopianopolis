@@ -456,7 +456,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 
 					if  let attributes = iChild.zoneAttributes,
-						attributes.contains(kInvertColorize) {
+						attributes.contains(ZoneAttributeType.invertColorize.rawValue) {
 						result = !result
 					}
 
@@ -471,28 +471,35 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  let          b = bookmarkTarget {   // changing a bookmark changes its target
 				b.colorized    = newValue           // when drawn, a bookmark gets its color from its target
 			} else {
-				var attributes = zoneAttributes ?? ""
-				let oldValue   = attributes.contains(kInvertColorize)
+				let attributes = zoneAttributes ?? ""
+				let       type = ZoneAttributeType.invertColorize
+				let oldValue   = attributes.contains(type.rawValue)
 
 				if  newValue  != oldValue {
-					if !newValue {
-						attributes = attributes.replacingOccurrences(of: kInvertColorize, with: "")
-					} else if !attributes.contains(kInvertColorize) {
-						attributes.append(kInvertColorize)
-					}
-
-					if  zoneAttributes != attributes {
-						zoneAttributes  = attributes
-
-						needSave()
-					}
+					appendAttribute(type, clear: !newValue)
 				}
 			}
 		}
 	}
 
+	func appendAttribute(_ type: ZoneAttributeType, clear: Bool = false) {
+		var attributes = zoneAttributes ?? ""
+
+		if  clear {
+			attributes = attributes.replacingOccurrences(of: type.rawValue, with: "")
+		} else if !attributes.contains(type.rawValue) {
+			attributes.append(type.rawValue)
+		}
+
+		if  zoneAttributes != attributes {
+			zoneAttributes  = attributes
+
+			needSave()
+		}
+	}
+
 	func toggleColorized() {
-		colorized = !(zoneAttributes?.contains(kInvertColorize) ?? false)
+		colorized = !(zoneAttributes?.contains(ZoneAttributeType.invertColorize.rawValue) ?? false)
 	}
 
 	var crossLink: ZRecord? {
@@ -747,6 +754,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return converted
+	}
+
+	@discardableResult override func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
+		appendAttribute(ZoneAttributeType.validCoreData)
+		return super.convertFromCoreData(into: type, visited: visited)
 	}
 
 	@discardableResult func updateFromCoreDataTraitRelationships(visited: [String]?) -> [String] {

@@ -47,13 +47,15 @@ class ZBreadcrumbsView : ZButtonsView {
 			button.font       = gSmallMapFont
 			button.tag        = index
 			button.zone       = zone
-			button.isBordered = false
+			button.isBordered = true
 			let         title = NSMutableAttributedString(string: zone.unwrappedName)
 			let         range = NSRange(location:0, length: title.length)
 
 			title.addAttributes([.font : gSmallMapFont], range: range)
+			button.showsBorderOnlyWhileMouseInside = true
+			button.setButtonType(.momentaryPushIn)
 
-			if  let     color = zone.color {
+			if  let color = zone.color {
 				title.addAttributes([.foregroundColor : color], range: range)
 			}
 

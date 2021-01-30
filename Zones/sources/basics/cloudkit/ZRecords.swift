@@ -132,6 +132,18 @@ class ZRecords: NSObject {
         databaseID = idatabaseID
 	}
 
+	func removeAllDuplicates() {
+		applyToAllZRecords { zRecord in
+			gCoreDataStack.removeAllDuplicates(of: zRecord)
+		}
+
+		let empties = gCoreDataStack.emptyZones(within: databaseID)
+
+		for empty in empties {
+			empty.needDestroy()
+		}
+	}
+
 	func markAllNeedSave() {
 		applyToAllZRecords { zRecord in
 			zRecord.needSave()
@@ -215,11 +227,22 @@ class ZRecords: NSObject {
 	}
 
 	func search(for match: String) -> CKRecordsArray? {
-		var   result = gCoreDataStack.search(for: match, within: databaseID)
+		var    found = gCoreDataStack.search(for: match, within: databaseID)
+		var   result = CKRecordsArray()
 
 		if  let more = ckRecordsLookup[match] {
-			result.appendUnique(contentsOf: more)
+			result = more
 		}
+
+		found = found.filter { (zRecord) -> Bool in
+			return zRecord.ckRecord != nil
+		}
+
+		let records = found.map { (zRecord) -> CKRecord in
+			return zRecord.ckRecord!
+		}
+
+		result.appendUnique(contentsOf: records)
 
 		ckRecordsLookup[match] = result // accumulate from core data
 

@@ -382,6 +382,11 @@ enum ZEssayButtonID : Int {
 	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idHide, .idSave, .idCancel, .idDelete] }
 }
 
+enum ZoneAttributeType: String {
+	case invertColorize = "c"
+	case validCoreData  = "v"
+}
+
 enum ZEssayHyperlinkType: String {
 	case hWeb   = "h"
 	case hIdea  = "i"

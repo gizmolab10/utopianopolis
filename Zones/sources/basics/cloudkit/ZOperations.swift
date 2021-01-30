@@ -27,7 +27,7 @@ enum ZOperationID: Int, CaseIterable {
     // continue
 
     case oCloud
-	case oCoreData           // LOCAL
+	case oLoadCoreData       // LOCAL
 	case oManifest
 	case oReadFile           // LOCAL
 	case oRoots
@@ -44,9 +44,8 @@ enum ZOperationID: Int, CaseIterable {
 
     // miscellaneous
 
-	case oAllProgeny
-	case oAllTraits
 	case oFetchAndMerge
+	case oSaveCoreData       // LOCAL
 	case oNeededIdeas        // after children so favorite targets resolve properly
     case oSaveToCloud        // zones, traits, destroy
 	case oParentIdeas        // after fetch so colors resolve properly
@@ -54,6 +53,8 @@ enum ZOperationID: Int, CaseIterable {
     case oEmptyTrash
     case oCompletion
 	case oFoundIdeas         // LOCAL
+	case oAllProgeny
+	case oAllTraits
 	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
     case oLostIdeas
@@ -88,7 +89,7 @@ enum ZOperationID: Int, CaseIterable {
 			case .oReadFile: return gReadFiles
 			case .oSubscribe,
 				 .oAllTraits,
-				 .oCoreData,
+				 .oLoadCoreData,
 				 .oAllIdeas,
 				 .oNewIdeas,
 				 .oTraits,
@@ -100,11 +101,11 @@ enum ZOperationID: Int, CaseIterable {
 	var      deprecatedOps : ZOperationIDsArray { return [.oParentIdeas] }
 	var needActiveCloudOps : ZOperationIDsArray { return [.oSaveToCloud, .oTraits] }
 	var	           doneOps : ZOperationIDsArray { return [.oNone, .oDone, .oCompletion] }
-	var        mineOnlyOps : ZOperationIDsArray { return [.oBookmarks, .oFavorites, .oRecents, .oDone] }
+	var        mineOnlyOps : ZOperationIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites, .oSaveCoreData] }
 	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe] }
-	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oCoreData, .oUbiquity, .oFoundIdeas,
-														  .oFavorites, .oCompletion, .oMacAddress, .oFetchUserID, .oUserPermissions,
-														  .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability] }
+	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oUbiquity, .oFavorites, .oFoundIdeas,
+														  .oCompletion, .oMacAddress, .oFetchUserID, .oLoadCoreData, .oSaveCoreData,
+														  .oUserPermissions, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability] }
 
 	var needsActiveCloud : Bool { return needActiveCloudOps.contains(self) }
 	var isDeprecated     : Bool { return      deprecatedOps.contains(self) }

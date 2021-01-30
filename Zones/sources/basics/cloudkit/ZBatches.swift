@@ -83,24 +83,24 @@ class ZBatches: ZOnboarding {
         var allowedOperations :  ZOperationIDsArray { return gHasInternet ? operations : localBatchOperations }
 
         var operations: ZOperationIDsArray {
-            switch identifier {
-			case .bEmptyTrash:  return [.oEmptyTrash                                                ]
-			case .bFetchLost:   return [.oLostIdeas,                         .oSaveToCloud,         ]
-            case .bSaveToCloud: return [                                     .oSaveToCloud          ]
-			case .bRefetch:     return [              .oAllIdeas, .oRecount, .oSaveToCloud, .oTraits]
-            case .bResumeCloud: return [              .oAllIdeas,            .oSaveToCloud, .oTraits]
-			case .bChildren:    return [.oChildIdeas, .oNeededIdeas,         .oSaveToCloud, .oTraits]
-			case .bSync:        return [              .oNeededIdeas,         .oSaveToCloud, .oTraits]
-            case .bBookmarks:   return [.oBookmarks,  .oNeededIdeas,         .oSaveToCloud, .oTraits]
-            case .bUndelete:    return [.oUndelete,   .oNeededIdeas,         .oSaveToCloud, .oTraits]
-			case .bRoot:        return [.oRoots,      .oManifest,            .oSaveToCloud, .oTraits]
-			case .bFocus:       return [.oRoots,      .oNeededIdeas,                        .oTraits]
-			case .bAllTraits:   return [                                                 .oAllTraits]
-			case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oStartupDone)
-			case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
-            case .bFinishUp:    return operationIDs(from: .oFinishUp,          to: .oDone)
-            case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
-            }
+			switch identifier {
+				case .bEmptyTrash:  return [.oEmptyTrash                                                ]
+				case .bFetchLost:   return [.oLostIdeas,                         .oSaveToCloud,         ]
+				case .bSaveToCloud: return [              .oSaveCoreData,        .oSaveToCloud          ]
+				case .bRefetch:     return [              .oAllIdeas, .oRecount, .oSaveToCloud, .oTraits]
+				case .bResumeCloud: return [              .oAllIdeas,            .oSaveToCloud, .oTraits]
+				case .bChildren:    return [.oChildIdeas, .oNeededIdeas,         .oSaveToCloud, .oTraits]
+				case .bSync:        return [              .oNeededIdeas,         .oSaveToCloud, .oTraits]
+				case .bBookmarks:   return [.oBookmarks,  .oNeededIdeas,         .oSaveToCloud, .oTraits]
+				case .bUndelete:    return [.oUndelete,   .oNeededIdeas,         .oSaveToCloud, .oTraits]
+				case .bRoot:        return [.oRoots,      .oManifest,            .oSaveToCloud, .oTraits]
+				case .bFocus:       return [.oRoots,      .oNeededIdeas,                        .oTraits]
+				case .bAllTraits:   return [                                                 .oAllTraits]
+				case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oStartupDone)
+				case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
+				case .bFinishUp:    return operationIDs(from: .oFinishUp,          to: .oDone)
+				case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
+			}
         }
 
         var localBatchOperations : ZOperationIDsArray {
@@ -348,13 +348,14 @@ class ZBatches: ZOnboarding {
     override func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
-        switch identifier {
-        case .oFavorites:                                                                      gFavorites.setup(cloudCallback)
-		case .oRecents:                                                                          gRecents.setup(cloudCallback)
-		case .oCoreData: gLoadContext       (into: currentDatabaseID);                                          cloudCallback?(0)
-        case .oReadFile: try gFiles.readFile(into: currentDatabaseID!,                            onCompletion: cloudCallback)
-        default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
-        }
+		switch identifier {
+			case .oFavorites:                                                                      gFavorites.setup(cloudCallback)
+			case .oRecents:                                                                          gRecents.setup(cloudCallback)
+			case .oSaveCoreData: gSaveContext   ();                                                                 cloudCallback?(0)
+			case .oLoadCoreData: gLoadContext   (into: currentDatabaseID);                                          cloudCallback?(0)
+			case .oReadFile: try gFiles.readFile(into: currentDatabaseID!,                            onCompletion: cloudCallback)
+			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
+		}
     }
 
 }

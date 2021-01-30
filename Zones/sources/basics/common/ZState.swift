@@ -261,7 +261,7 @@ var gSmallMapIsVisible: Bool {
 }
 
 var gAccentColor: ZColor {
-	get { return !gColorfulMode ? kDarkerGrayColor : getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) }
+	get { return !gColorfulMode ? gIsDark ? kDarkerGrayColor : kLightestGrayColor : getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) }
 	set { setPreferencesColor(newValue, for: kAccentColorKey) }
 }
 

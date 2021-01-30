@@ -73,6 +73,12 @@ class ZRemoteStorage: NSObject {
     func clear()                                 { records =    [ZDatabaseID  :   ZCloud] () }
 	func cancel()                                { currentCloud?.currentOperation?.cancel() }
 
+	func removeAllDuplicates() {
+		for records in allRecordsArrays {
+			records.removeAllDuplicates()
+		}
+	}
+
 	func markAllNeedSave() {
 		for records in allRecordsArrays {
 			records.markAllNeedSave()

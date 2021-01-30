@@ -112,7 +112,7 @@ class ZMapEditor: ZBaseEditor {
 						case "a":        if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMaps() }
 						case "b":        gSelecting.firstSortedGrab?.addBookmark()
 						case "c":        if COMMAND && !OPTION { copyToPaste() } else { gMapController?.recenter(SPECIAL) }
-						case "d":        if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
+						case "d":        if ALL { gRemoteStorage.removeAllDuplicates() } else if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 						case "e":        gSelecting.firstSortedGrab?.editTrait(for: .tEmail)
 						case "f":        gSearching.showSearch(OPTION)
 						case "g":        refetch(COMMAND, OPTION, CONTROL)

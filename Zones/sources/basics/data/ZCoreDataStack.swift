@@ -116,9 +116,8 @@ class ZCoreDataStack: NSObject {
 				try managedContext.save()
 			} catch {
 				// Replace this implementation with code to handle the error appropriately.
-				// fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
 				let nserror = error as NSError
-				fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+				print(nserror)
 			}
 		}
 	}
@@ -129,7 +128,7 @@ class ZCoreDataStack: NSObject {
 	func loadContext(into dbID: ZDatabaseID?) {
 		if  gUseCoreData {
 
-			FOREGROUND {
+			FOREGROUND() {
 				var names = [kRootName, kDestroyName, kTrashName, kLostAndFoundName]
 
 				if  dbID == .mineID {
@@ -144,9 +143,6 @@ class ZCoreDataStack: NSObject {
 			}
 		}
 	}
-
-	// MARK:- search
-	// MARK:-
 
 	func loadZone(with recordName: String, into dbID: ZDatabaseID?) {
 		if  let          dbid = dbID?.identifier {
@@ -180,41 +176,6 @@ class ZCoreDataStack: NSObject {
 				}
 			}
 		}
-	}
-
-	func search(for match: String, within dbID: ZDatabaseID?) -> CKRecordsArray {
-		var result = CKRecordsArray()
-
-		func predicate(for match: String, type: String) -> NSPredicate {
-			let stripped = match.replacingStrings(["\""], with: "")
-
-			return NSPredicate(format: "zoneName = \"\(stripped)\"")
-		}
-
-		if  let              dbid = dbID?.identifier {
-			for type in [kZoneType] { //, kTraitType] {
-				let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-				let   idPredicate = predicate(for: match, type: type)
-				let   dbPredicate = NSPredicate(format: "dbid = \"\(dbid)\"")
-				request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [idPredicate, dbPredicate])
-
-				do {
-					let items = try managedContext.fetch(request)
-
-					for item in items {
-						let zRecord = item as! ZRecord
-
-						if  let ckRecord = zRecord.ckRecord {
-							result.append(ckRecord)
-						}
-					}
-				} catch {
-
-				}
-			}
-		}
-
-		return result
 	}
 
 	@discardableResult func load(type: String, into dbID: ZDatabaseID?, using request: NSFetchRequest<NSFetchRequestResult>) -> ZRecordsArray {
@@ -261,6 +222,79 @@ class ZCoreDataStack: NSObject {
 		}
 
 		return converted
+	}
+
+	// MARK:- search
+	// MARK:-
+
+	func emptyZones(within dbID: ZDatabaseID?) -> ZRecordsArray {
+		var       results = ZRecordsArray()
+		if  let      dbid = dbID?.identifier {
+			let predicate = NSPredicate(format: "zoneName = NULL")
+			results       = search(within: dbid, type: kZoneType, using: predicate)
+		}
+		return results
+	}
+
+	func removeAllDuplicates(of zRecord: ZRecord) {
+		if  let      dbid = zRecord.databaseID?.identifier,
+			let  ckRecord = zRecord.ckRecord {
+			let      name = ckRecord.recordID.recordName
+			let predicate = NSPredicate(format: "recordName = \"\(name)\"")
+			var     items = search(within: dbid, type: kZoneType, using: predicate)
+			let     count = items.count
+			items         = items.filter() { $0 != ckRecord }
+
+			if  count > items.count {
+				print("\(count)")
+			}
+		}
+	}
+
+	func search(for match: String, within dbID: ZDatabaseID?) -> ZRecordsArray {
+		var result = ZRecordsArray()
+
+		func predicate(for match: String, type: String) -> NSPredicate {
+			let stripped = match.replacingStrings(["\""], with: "")
+
+			return NSPredicate(format: "zoneName = \"\(stripped)\"")
+		}
+
+		if  let              dbid = dbID?.identifier {
+			for type in [kZoneType] { //, kTraitType] {
+				let idPredicate = predicate(for: match, type: type)
+				let     matches = search(within: dbid, type: type, using: idPredicate)
+
+				result.append(contentsOf: matches)
+			}
+		}
+
+		return result
+	}
+
+	func search(within dbid: String, type: String, using predicate: NSPredicate, uniqueOnly: Bool = true) -> ZRecordsArray {
+		var        result = ZRecordsArray()
+		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
+		let   dbPredicate = NSPredicate(format: "dbid = \"\(dbid)\"")
+		request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, dbPredicate])
+
+		do {
+			let items = try managedContext.fetch(request)
+
+			for item in items {
+				if  let zRecord = item as? ZRecord {
+					if  uniqueOnly {
+						result.appendUnique(zRecord)
+					} else {
+						result.append(zRecord)
+					}
+				}
+			}
+		} catch {
+			print("oops!")
+		}
+
+		return result
 	}
 
 }
