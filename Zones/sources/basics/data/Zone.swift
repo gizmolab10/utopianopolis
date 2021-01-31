@@ -1172,7 +1172,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				if  isInTrash {
 					moveZone(to: destroyZone) {
-						onCompletion?()
 						deleteBookmarksClosure()
 					}
 				} else if !permanently {

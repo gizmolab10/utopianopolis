@@ -16,6 +16,7 @@ enum ZOperationID: Int, CaseIterable {
     // start up / onboard
 
     case oStartUp            // NB: order here is order of operations (except miscellaneous)
+	case oLoadCoreData       // LOCAL
 	case oUserPermissions
     case oMacAddress
     case oObserveUbiquity
@@ -27,7 +28,6 @@ enum ZOperationID: Int, CaseIterable {
     // continue
 
     case oCloud
-	case oLoadCoreData       // LOCAL
 	case oManifest
 	case oReadFile           // LOCAL
 	case oRoots
@@ -101,8 +101,8 @@ enum ZOperationID: Int, CaseIterable {
 	var      deprecatedOps : ZOperationIDsArray { return [.oParentIdeas] }
 	var needActiveCloudOps : ZOperationIDsArray { return [.oSaveToCloud, .oTraits] }
 	var	           doneOps : ZOperationIDsArray { return [.oNone, .oDone, .oCompletion] }
-	var        mineOnlyOps : ZOperationIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites, .oSaveCoreData] }
-	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe] }
+	var        mineOnlyOps : ZOperationIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
+	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe, .oLoadCoreData, .oSaveCoreData] }
 	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oUbiquity, .oFavorites, .oFoundIdeas,
 														  .oCompletion, .oMacAddress, .oFetchUserID, .oLoadCoreData, .oSaveCoreData,
 														  .oUserPermissions, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability] }
@@ -156,7 +156,7 @@ var gTotalTime : Double {
 class ZOperations: NSObject {
 
 	let             queue = OperationQueue()
-	var         currentOp :  ZOperationID  = .oNone
+	var         currentOp :  ZOperationID  = .oStartUp
 	var      shouldCancel :          Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && -(inverseOpDuration ?? 0.0) > 5.0 }
 	var     debugTimeText :        String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
 	var inverseOpDuration :  TimeInterval? { return lastOpStart?.timeIntervalSinceNow }

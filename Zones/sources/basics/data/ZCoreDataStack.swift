@@ -14,8 +14,8 @@ var gDataURL       : URL = {
 	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 		.appendingPathComponent("Seriously", isDirectory: true)
 }()
-func gLoadContext(into dbID: ZDatabaseID?) { gCoreDataStack.loadContext(into: dbID) }
-func gSaveContext()                        { gCoreDataStack.saveContext() }
+func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure?) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
+func gSaveContext()                                                   { gCoreDataStack.saveContext() }
 
 class ZCoreDataStack: NSObject {
 
@@ -125,10 +125,9 @@ class ZCoreDataStack: NSObject {
 	// MARK:- restore
 	// MARK:-
 
-	func loadContext(into dbID: ZDatabaseID?) {
-		if  gUseCoreData {
-
-			FOREGROUND() {
+	func loadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure?) {
+		FOREGROUND() {
+			if  gUseCoreData {
 				var names = [kRootName, kDestroyName, kTrashName, kLostAndFoundName]
 
 				if  dbID == .mineID {
@@ -141,6 +140,8 @@ class ZCoreDataStack: NSObject {
 
 				self.load(type: kManifestType, into: dbID, using: NSFetchRequest<NSFetchRequestResult>(entityName: kManifestType))
 			}
+
+			onCompletion?(0)
 		}
 	}
 
@@ -227,37 +228,13 @@ class ZCoreDataStack: NSObject {
 	// MARK:- search
 	// MARK:-
 
-	func emptyZones(within dbID: ZDatabaseID?) -> ZRecordsArray {
-		var       results = ZRecordsArray()
-		if  let      dbid = dbID?.identifier {
-			let predicate = NSPredicate(format: "zoneName = NULL")
-			results       = search(within: dbid, type: kZoneType, using: predicate)
-		}
-		return results
-	}
-
-	func removeAllDuplicates(of zRecord: ZRecord) {
-		if  let      dbid = zRecord.databaseID?.identifier,
-			let  ckRecord = zRecord.ckRecord {
-			let      name = ckRecord.recordID.recordName
-			let predicate = NSPredicate(format: "recordName = \"\(name)\"")
-			var     items = search(within: dbid, type: kZoneType, using: predicate)
-			let     count = items.count
-			items         = items.filter() { $0 != ckRecord }
-
-			if  count > items.count {
-				print("\(count)")
-			}
-		}
-	}
-
 	func search(for match: String, within dbID: ZDatabaseID?) -> ZRecordsArray {
 		var result = ZRecordsArray()
 
 		func predicate(for match: String, type: String) -> NSPredicate {
 			let stripped = match.replacingStrings(["\""], with: "")
 
-			return NSPredicate(format: "zoneName = \"\(stripped)\"")
+			return NSPredicate(format: "zoneName like \"\(stripped)\"")
 		}
 
 		if  let              dbid = dbID?.identifier {
@@ -265,7 +242,7 @@ class ZCoreDataStack: NSObject {
 				let idPredicate = predicate(for: match, type: type)
 				let     matches = search(within: dbid, type: type, using: idPredicate)
 
-				result.append(contentsOf: matches)
+				result.appendUnique(contentsOf: matches)
 			}
 		}
 
@@ -295,6 +272,34 @@ class ZCoreDataStack: NSObject {
 		}
 
 		return result
+	}
+
+	// MARK:- vaccuum
+	// MARK:-
+
+	func emptyZones(within dbID: ZDatabaseID?) -> ZRecordsArray {
+		var       results = ZRecordsArray()
+		if  let      dbid = dbID?.identifier {
+			let predicate = NSPredicate(format: "zoneName = NULL")
+			results       = search(within: dbid, type: kZoneType, using: predicate)
+		}
+
+		return results
+	}
+
+	func removeAllDuplicates(of zRecord: ZRecord) {
+		if  let      dbid = zRecord.databaseID?.identifier,
+			let  ckRecord = zRecord.ckRecord {
+			let      name = ckRecord.recordID.recordName
+			let predicate = NSPredicate(format: "recordName = \"\(name)\"")
+			var     items = search(within: dbid, type: kZoneType, using: predicate)
+			let     count = items.count
+			items         = items.filter() { $0 != ckRecord }
+
+			if  count > items.count {
+				print("\(count)")
+			}
+		}
 	}
 
 }

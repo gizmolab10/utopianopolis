@@ -742,6 +742,7 @@ class ZMapEditor: ZBaseEditor {
 						}
 					}
 
+					gDeferringRedraw = false
 					gRedrawMaps(for: grab)
                 }
             }

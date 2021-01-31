@@ -437,11 +437,11 @@ struct ZFilterOption: OptionSet {
 	init() { rawValue = ZFilterOption.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let oBookmarks = ZFilterOption()
-	static let     oNotes = ZFilterOption()
-	static let     oIdeas = ZFilterOption()
-	static let      oNone = ZFilterOption([])
-	static let       oAll = ZFilterOption(rawValue: 7)
+	static let fBookmarks = ZFilterOption()
+	static let     fNotes = ZFilterOption()
+	static let     fIdeas = ZFilterOption()
+	static let      fNone = ZFilterOption([])
+	static let       fAll = ZFilterOption(rawValue: 7)
 }
 
 struct ZDetailsViewID: OptionSet {

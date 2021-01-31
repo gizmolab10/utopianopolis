@@ -38,15 +38,15 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	func updateSearchOptions() {
 		let o = gFilterOption
 
-		searchOptionsControl?.setSelected(o.contains(.oBookmarks), forSegment: 0)
-		searchOptionsControl?.setSelected(o.contains(.oNotes),     forSegment: 1)
-		searchOptionsControl?.setSelected(o.contains(.oIdeas),     forSegment: 2)
+		searchOptionsControl?.setSelected(o.contains(.fBookmarks), forSegment: 0)
+		searchOptionsControl?.setSelected(o.contains(.fNotes),     forSegment: 1)
+		searchOptionsControl?.setSelected(o.contains(.fIdeas),     forSegment: 2)
 		searchOptionsControl?.action = #selector(searchOptionAction)
 		searchOptionsControl?.target = self
 	}
 
 	@IBAction func searchOptionAction(sender: ZSegmentedControl) {
-		var options = ZFilterOption.oNone
+		var options = ZFilterOption.fNone
 
 		for index in 0..<sender.segmentCount {
 			if  sender.isSelected(forSegment: index) {
@@ -55,8 +55,8 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 			}
 		}
 
-		if  options == .oNone {
-			options  = .oIdeas
+		if  options == .fNone {
+			options  = .fIdeas
 		}
 
 		gFilterOption = options

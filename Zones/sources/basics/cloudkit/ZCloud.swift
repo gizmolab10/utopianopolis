@@ -397,7 +397,7 @@ class ZCloud: ZRecords {
                 if !retrieved.contains(ckRecord) {
                     retrieved.append(ckRecord)
                 }
-			} else if gFilterOption.contains(.oNotes) {
+			} else if gFilterOption.contains(.fNotes) {
 				self.queryForTraitsWith(notesPredicate) { (iRecord, iError) in
 					if  let ckRecord = iRecord {
 						if !retrieved.contains(ckRecord) {

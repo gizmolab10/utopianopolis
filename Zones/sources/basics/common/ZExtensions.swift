@@ -514,9 +514,9 @@ extension CKRecord {
 			case kZoneType:
 				let    isBookmark = self[kpZoneLink] != nil
 
-				return isBookmark && gFilterOption.contains(.oBookmarks) || !isBookmark && gFilterOption.contains(.oIdeas)
+				return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas)
 			case kTraitType:
-				return gFilterOption.contains(.oNotes)
+				return gFilterOption.contains(.fNotes)
 			default: break
 		}
 

@@ -271,7 +271,7 @@ var gActiveColor: ZColor {
 }
 
 var gFilterOption: ZFilterOption {
-	get { return ZFilterOption(rawValue: getPreferencesInt(for: kFilterOption, defaultInt: ZFilterOption.oAll.rawValue)) }
+	get { return ZFilterOption(rawValue: getPreferencesInt(for: kFilterOption, defaultInt: ZFilterOption.fAll.rawValue)) }
 	set { setPreferencesInt(newValue.rawValue, for: kFilterOption) }
 }
 
