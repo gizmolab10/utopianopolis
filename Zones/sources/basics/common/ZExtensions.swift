@@ -57,6 +57,14 @@ func gSignal     (for object: Any? = nil, _ multiple: [ZSignalKind], _ onComplet
 	gControllers.signalFor(object, multiple: multiple, onCompletion: onCompletion)
 }
 
+func gUpdateStartupProgress() {
+	if !gHasFinishedStartup {
+		FOREGROUND {
+			gSignal([.sStartupProgress])
+		}
+	}
+}
+
 func gRedrawMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
 	gSignal(for: object, [.sRelayout], onCompletion)
 }
@@ -1662,16 +1670,6 @@ extension String {
     func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }
     func substring(toExclusive:   Int) -> String  { return String(self[..<index(at: toExclusive)]) }
     func widthForFont  (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
-
-	func clipped(to: Int) -> String {
-		let clip = substring(toExclusive: to)
-
-		if  clip.length != length {
-			return clip + "..."
-		}
-
-		return self
-	}
 
     func rect(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGRect {
 		let within = substring(with: iRange)

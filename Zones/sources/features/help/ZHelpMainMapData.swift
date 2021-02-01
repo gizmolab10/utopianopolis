@@ -101,7 +101,7 @@ class ZHelpBigMapData : ZHelpData {
 		"0vertical", 	"browse results (wraps around)", 					"search-2a996591375a",
 		"",				"", 												"",
 		"",				"", 												"",
-		"0",	    	"...  (IN BLUE)  CLICK TO READ MORE",				"-",
+		"0",	    	"IN BLUE: CLICK TO READ MORE",						"-",
 	]
 
 	let mapColumnThree: [String] = [

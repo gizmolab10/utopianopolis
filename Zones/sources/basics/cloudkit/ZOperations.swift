@@ -87,9 +87,9 @@ enum ZOperationID: Int, CaseIterable {
 	var useTimer: Bool {
 		switch self {
 			case .oReadFile: return gReadFiles
-			case .oSubscribe,
+			case .oLoadCoreData,
+				 .oSubscribe,
 				 .oAllTraits,
-				 .oLoadCoreData,
 				 .oAllIdeas,
 				 .oNewIdeas,
 				 .oTraits,
@@ -156,15 +156,15 @@ var gTotalTime : Double {
 class ZOperations: NSObject {
 
 	let             queue = OperationQueue()
-	var         currentOp :  ZOperationID  = .oStartUp
-	var      shouldCancel :          Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && -(inverseOpDuration ?? 0.0) > 5.0 }
-	var     debugTimeText :        String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
-	var inverseOpDuration :  TimeInterval? { return lastOpStart?.timeIntervalSinceNow }
-	var         cloudFire :  TimerClosure?
-	var   onCloudResponse :    AnyClosure?
-    var       lastOpStart :          Date?
-	func printOp(_ message: String)        { columnarReport(mode: .dOps, operationText, message) }
-	func unHang()                          { if gStartupLevel != .firstTime { onCloudResponse?(0) } }
+	var   onCloudResponse :     AnyClosure?
+    var       lastOpStart :           Date?
+	var         cloudFire :   TimerClosure?
+	var         currentOp :   ZOperationID  = .oStartUp
+	var        opDuration :   TimeInterval  { return -(lastOpStart?.timeIntervalSinceNow ?? 0.0) }
+	var      shouldCancel :           Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && (opDuration > 5.0) }
+	var     debugTimeText :         String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
+	func printOp(_ message: String)         { columnarReport(mode: .dOps, operationText, message) }
+	func unHang()                           { if gStartupLevel != .firstTime { onCloudResponse?(0) } }
 	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws                                  {} 
 	func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
@@ -235,13 +235,8 @@ class ZOperations: NSObject {
 
 			cloudFire?(nil)
 			gTimers.resetTimer(for: .tCloudAvailable, withTimeInterval:  0.2, repeats: true, block: cloudFire!)
-			gTimers.resetTimer(for: .tSync,           withTimeInterval: 15.0, repeats: true) { iTimer in
-				if  gIsReadyToShowUI {
-					gBatches.sync { iSame in
-
-					}
-				}
-			}
+			gTimers.resetTimer(for: .tSaveCoreData,   withTimeInterval:  1.0, repeats: true) { iTimer in if gIsReadyToShowUI { gSaveContext() } }
+			gTimers.resetTimer(for: .tSync,           withTimeInterval: 15.0, repeats: true) { iTimer in if gIsReadyToShowUI { gBatches.sync { iSame in } } }
         }
     }
 

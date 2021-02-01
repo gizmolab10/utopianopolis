@@ -14,8 +14,8 @@ var gDataURL       : URL = {
 	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 		.appendingPathComponent("Seriously", isDirectory: true)
 }()
-func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure?) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
-func gSaveContext()                                                   { gCoreDataStack.saveContext() }
+func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
+func gSaveContext()                                                         { gCoreDataStack.saveContext() }
 
 class ZCoreDataStack: NSObject {
 
@@ -126,19 +126,23 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func loadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure?) {
-		FOREGROUND() {
-			if  gUseCoreData {
-				var names = [kRootName, kDestroyName, kTrashName, kLostAndFoundName]
+		if  gUseCoreData {
+			var names = [kRootName, kDestroyName, kTrashName, kLostAndFoundName]
 
-				if  dbID == .mineID {
-					names.append(contentsOf: [kRecentsRootName, kFavoritesRootName])
-				}
+			if  dbID == .mineID {
+				names.append(contentsOf: [kRecentsRootName, kFavoritesRootName])
+			}
 
+			gTimers.resetTimer(for: .tLoadCoreData, withTimeInterval: 1.0, repeats: true) { iTimer in gUpdateStartupProgress() }
+
+			BACKGROUND {
 				for name in names {
 					self.loadZone(with: name, into: dbID)
 				}
 
 				self.load(type: kManifestType, into: dbID, using: NSFetchRequest<NSFetchRequestResult>(entityName: kManifestType))
+
+				gTimers.stopTimer(for: .tLoadCoreData)
 			}
 
 			onCompletion?(0)
@@ -151,63 +155,69 @@ class ZCoreDataStack: NSObject {
 			let   idPredicate = NSPredicate(format: "recordName = \"\(recordName)\"")
 			let   dbPredicate = NSPredicate(format: "dbid = \"\(dbid)\"")
 			request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [idPredicate, dbPredicate])
-			let      zRecords = load(type: kZoneType, into: dbID, using: request)
+			load(type: kZoneType, into: dbID, using: request) { (zRecords) -> (Void) in
+				// //////////////////////////////////////////////////////////////////////////////// //
+				// NOTE: all but the first of multiple values found are duplicates and thus ignored //
+				// //////////////////////////////////////////////////////////////////////////////// //
 
-			// //////////////////////////////////////////////////////////////////////////////// //
-			// NOTE: all but the first of multiple values found are duplicates and thus ignored //
-			// //////////////////////////////////////////////////////////////////////////////// //
+				if  zRecords.count > 0,
+					let       zone = zRecords[0] as? Zone,
+					let      cloud = gRemoteStorage.zRecords(for: dbID) {
 
-			if  zRecords.count > 0,
-				let       zone = zRecords[0] as? Zone,
-				let      cloud = gRemoteStorage.zRecords(for: dbID) {
+					FOREGROUND {
+						zone.traverseAllProgeny { iChild in
+							iChild.updateFromCoreDataTraitRelationships(visited: [])
+							iChild.respectOrder()
+						}
 
-				zone.traverseAllProgeny { iChild in
-					iChild.updateFromCoreDataTraitRelationships(visited: [])
-					iChild.respectOrder()
-				}
-
-				switch recordName {
-					case          kRootName: cloud.rootZone         = zone
-					case         kTrashName: cloud.trashZone        = zone
-					case       kDestroyName: cloud.destroyZone      = zone
-					case   kRecentsRootName: cloud.recentsZone      = zone
-					case kFavoritesRootName: cloud.favoritesZone    = zone
-					case  kLostAndFoundName: cloud.lostAndFoundZone = zone
-					default: break
+						switch recordName {
+							case          kRootName: cloud.rootZone         = zone
+							case         kTrashName: cloud.trashZone        = zone
+							case       kDestroyName: cloud.destroyZone      = zone
+							case   kRecentsRootName: cloud.recentsZone      = zone
+							case kFavoritesRootName: cloud.favoritesZone    = zone
+							case  kLostAndFoundName: cloud.lostAndFoundZone = zone
+							default: break
+						}
+					}
 				}
 			}
 		}
 	}
 
-	@discardableResult func load(type: String, into dbID: ZDatabaseID?, using request: NSFetchRequest<NSFetchRequestResult>) -> ZRecordsArray {
+	func load(type: String, into dbID: ZDatabaseID?, using request: NSFetchRequest<NSFetchRequestResult>, onCompletion: ZRecordsClosure? = nil) {
 		var records = ZRecordsArray()
 		do {
 			let items = try managedContext.fetch(request)
 			var count = type == kZoneType ? 1 : items.count // only one Zone is needed
 			for item in items {
 				let       zRecord = item as! ZRecord
-
 				if  let dbid      = dbID?.identifier,
 					zRecord.dbid == dbid,
 					count         > 0 {
 					count        -= 1
-					var converted = zRecord.convertFromCoreData(into: type, visited: lastConverted[dbid])
-
-					zRecord.register()
+					var converted = zRecord.convertFromCoreData(into: type, visited: self.lastConverted[dbid])
 					records.append(zRecord)
 
-					if  type == kZoneType {
-						converted.appendUnique(contentsOf: lastConverted[dbid] ?? [])
+					FOREGROUND {
+						zRecord.register()
 
-						lastConverted[dbid] = converted
+						if  type == kZoneType {
+							converted.appendUnique(contentsOf: self.lastConverted[dbid] ?? [])
+
+							self.lastConverted[dbid] = converted
+						}
+
+						if  count == 0 {
+							onCompletion?(records)
+						}
 					}
 				}
 			}
 		} catch {
 			print(error)
+			onCompletion?(records)
 		}
-
-		return records
 	}
 
 	@discardableResult
@@ -231,18 +241,20 @@ class ZCoreDataStack: NSObject {
 	func search(for match: String, within dbID: ZDatabaseID?) -> ZRecordsArray {
 		var result = ZRecordsArray()
 
-		func predicate(for match: String, type: String) -> NSPredicate {
-			let stripped = match.replacingStrings(["\""], with: "")
+		if  gIsReadyToShowUI {
+			func predicate(for match: String, type: String) -> NSPredicate {
+				let stripped = match.replacingStrings(["\""], with: "")
 
-			return NSPredicate(format: "zoneName like \"\(stripped)\"")
-		}
+				return NSPredicate(format: "zoneName like \"\(stripped)\"")
+			}
 
-		if  let              dbid = dbID?.identifier {
-			for type in [kZoneType] { //, kTraitType] {
-				let idPredicate = predicate(for: match, type: type)
-				let     matches = search(within: dbid, type: type, using: idPredicate)
+			if  let              dbid = dbID?.identifier {
+				for type in [kZoneType] { //, kTraitType] {
+					let idPredicate = predicate(for: match, type: type)
+					let     matches = search(within: dbid, type: type, using: idPredicate)
 
-				result.appendUnique(contentsOf: matches)
+					result.appendUnique(contentsOf: matches)
+				}
 			}
 		}
 

@@ -728,6 +728,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- core data
 	// MARK:-
 
+	@discardableResult override func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
+		appendAttribute(ZoneAttributeType.validCoreData)
+		return super.convertFromCoreData(into: type, visited: visited)
+	}
+
 	override func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] {
 		var      converted = [String]()
 		var              v = visited
@@ -745,20 +750,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  let name = child.ckRecord?.recordID.recordName,
 					(visited == nil || !visited!.contains(name)) {
 					converted.append(contentsOf: c)
-					addChild(child, updateCoreData: false) // not update core data, it already exists
+					FOREGROUND(canBeDirect: true) {
+						self.addChild(child, updateCoreData: false) // not update core data, it already exists
+					}
 				}
 
-				child.register() // need to wait until after child has a parent so bookmarks will be registered properly
-
+				FOREGROUND(canBeDirect: true) {
+					child.register() // need to wait until after child has a parent so bookmarks will be registered properly
+				}
 			}
 		}
 
 		return converted
-	}
-
-	@discardableResult override func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
-		appendAttribute(ZoneAttributeType.validCoreData)
-		return super.convertFromCoreData(into: type, visited: visited)
 	}
 
 	@discardableResult func updateFromCoreDataTraitRelationships(visited: [String]?) -> [String] {

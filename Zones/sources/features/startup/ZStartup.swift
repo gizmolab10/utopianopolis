@@ -20,7 +20,7 @@ class ZStartup: NSObject {
 		gTimers.resetTimer(for: .tStartup, withTimeInterval: interval, repeats: true) { iTimer in
 			self.count += interval
 
-			gSignal([.sStartupProgress])
+			gUpdateStartupProgress()
 		}
 	}
 

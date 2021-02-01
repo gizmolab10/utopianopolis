@@ -24,6 +24,8 @@ enum ZTimerID : Int {
 	case tCloudAvailable
 	case tMouseLocation
 	case tWriteEveryone
+	case tLoadCoreData
+	case tSaveCoreData
 	case tRecordsMine
 	case tWriteMine
 	case tMouseZone
@@ -96,7 +98,7 @@ class ZTimers: NSObject {
 
 	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping (Timer) -> Void) {
 		if  let id = timerID {
-			FOREGROUND {
+			FOREGROUND { // timers must have a runloop
 				self.timers[id]?.invalidate()
 				self.timers[id] = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: block)
 			}

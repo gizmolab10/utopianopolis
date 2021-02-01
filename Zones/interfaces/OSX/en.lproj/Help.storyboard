@@ -13,7 +13,7 @@
                     <window key="window" title="Cheat Sheet" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="D7M-HC-362">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="425" y="313" width="480" height="780"/>
+                        <rect key="contentRect" x="425" y="313" width="480" height="825"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1057"/>
                         <connections>
                             <outlet property="delegate" destination="olH-Ix-aMb" id="bAQ-et-oL3"/>
@@ -33,17 +33,17 @@
                 <customObject id="Upg-eY-ED5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <viewController title="Help" id="cD6-C4-FJ5" userLabel="Help Controller" customClass="ZHelpController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="OMb-DG-XS6">
-                        <rect key="frame" x="0.0" y="0.0" width="1152" height="810"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView verticalCompressionResistancePriority="751" borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" allowsMagnification="YES" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lJB-I7-wvM">
-                                <rect key="frame" x="0.0" y="0.0" width="1152" height="810"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Aa-9c-eI8">
-                                    <rect key="frame" x="0.0" y="0.0" width="1152" height="810"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" id="H0M-2O-9lo">
-                                            <rect key="frame" x="0.0" y="0.0" width="1184" height="810"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1184" height="825"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" white="1" alpha="0.0" colorSpace="deviceWhite"/>
@@ -72,7 +72,7 @@
                                     <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
                                 </clipView>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="810" id="JkF-QK-zNX"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="825" id="JkF-QK-zNX"/>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="1152" id="Mj8-Ir-XUr"/>
                                 </constraints>
                                 <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
@@ -86,30 +86,30 @@
                                 </scroller>
                             </scrollView>
                             <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zAE-6p-uHR" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="1152" height="810"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="288" y="250" width="1" height="560"/>
+                                        <rect key="frame" x="288" y="265" width="1" height="560"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="5Gm-ni-LIH"/>
                                             <constraint firstAttribute="height" constant="560" id="QjB-vW-W62"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="249" width="576" height="1"/>
+                                        <rect key="frame" x="0.0" y="264" width="576" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="Mym-7j-1Mo"/>
                                             <constraint firstAttribute="width" constant="576" id="nfu-53-PXo"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="576" y="48" width="1" height="762"/>
+                                        <rect key="frame" x="576" y="56" width="1" height="769"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="OGt-RE-RO4"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="siD-my-zaI" userLabel="Legend Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="47" width="1152" height="1"/>
+                                        <rect key="frame" x="0.0" y="55" width="1152" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="bt8-la-b3w"/>
                                         </constraints>
@@ -119,20 +119,20 @@
                                     <constraint firstItem="4RI-nR-wiK" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" id="0Jg-oh-2na"/>
                                     <constraint firstItem="Fa1-hb-kUk" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" id="2uF-5y-BaU"/>
                                     <constraint firstItem="siD-my-zaI" firstAttribute="top" secondItem="4RI-nR-wiK" secondAttribute="bottom" id="A0z-v5-Kv8"/>
-                                    <constraint firstAttribute="bottom" secondItem="siD-my-zaI" secondAttribute="bottom" constant="47" id="Av9-fm-Y2C"/>
                                     <constraint firstItem="Fa1-hb-kUk" firstAttribute="top" secondItem="rdB-jZ-KsQ" secondAttribute="bottom" id="BBb-9x-iWP"/>
                                     <constraint firstItem="rdB-jZ-KsQ" firstAttribute="top" secondItem="zAE-6p-uHR" secondAttribute="top" id="BO6-bU-5Py"/>
                                     <constraint firstItem="4RI-nR-wiK" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="576" id="IYu-Cm-Lck"/>
                                     <constraint firstItem="siD-my-zaI" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" id="kCi-SH-2XI"/>
                                     <constraint firstAttribute="trailing" secondItem="siD-my-zaI" secondAttribute="trailing" id="mK1-Nl-0Uq"/>
+                                    <constraint firstItem="siD-my-zaI" firstAttribute="top" secondItem="Fa1-hb-kUk" secondAttribute="bottom" constant="208" id="nQC-oL-dix"/>
                                     <constraint firstItem="rdB-jZ-KsQ" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="288" id="qzD-K9-Jby"/>
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="1152" height="810"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
                                 <subviews>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="kLX-vj-I30" userLabel="Dots Exemplar">
-                                        <rect key="frame" x="0.0" y="612" width="1152" height="198"/>
+                                        <rect key="frame" x="0.0" y="627" width="1152" height="198"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="198" id="SK8-vk-X7y"/>
                                         </constraints>
@@ -141,13 +141,13 @@
                                         </connections>
                                     </containerView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="cQI-8A-JZJ" userLabel="Top Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="611" width="1152" height="1"/>
+                                        <rect key="frame" x="0.0" y="626" width="1152" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="1DU-JW-8fi"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="xs7-TU-BUO" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="576" y="0.0" width="1" height="611"/>
+                                        <rect key="frame" x="576" y="0.0" width="1" height="626"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="a4d-aU-yzZ"/>
                                         </constraints>

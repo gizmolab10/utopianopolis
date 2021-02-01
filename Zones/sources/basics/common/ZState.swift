@@ -686,9 +686,7 @@ var gLastLocation = NSPoint.zero
 func gThrowOnUserActivity() throws {
 	if  Thread.isMainThread {
 		if  gTestForUserActivity {
-			if !gHasFinishedStartup {
-				gSignal([.sStartupProgress])
-			}
+			gUpdateStartupProgress()
 
 			throw(ZInterruptionError.userInterrupted)
 		}

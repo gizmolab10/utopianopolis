@@ -1274,7 +1274,12 @@ class ZCloud: ZRecords {
     
     func establishRoots(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
 		var createFor: IntClosure?     // pre-declare so can recursively call from within it
-		let   rootIDs: [ZRootID] = [.mapID, .favoritesID, .recentsID, .trashID, .lostID, .destroyID]
+		var   rootIDs: [ZRootID] = [.mapID, .trashID, .lostID, .destroyID]
+
+		if  databaseID == .mineID {
+			rootIDs.append(contentsOf: [.favoritesID, .recentsID])
+		}
+
 		createFor                = { iIndex in
             if  iIndex >= rootIDs.count {
                 onCompletion?(op)

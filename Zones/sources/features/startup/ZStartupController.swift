@@ -83,9 +83,10 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	func updateThermometerBar() {
 		if !gHasFinishedStartup {
 			thermometerBar?.update()
+			operationLabel?.text = gCurrentOp.description
 			view.setAllSubviewsNeedDisplay()
 			thermometerBar?.display()
-			operationLabel?.text = gCurrentOp.description
+			operationLabel?.display()
 		}
 	}
 

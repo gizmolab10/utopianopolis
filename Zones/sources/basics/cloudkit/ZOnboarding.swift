@@ -29,14 +29,12 @@ class ZOnboarding : ZOperations {
     // MARK:- internals
     // MARK:-
 
-    @objc func completeOnboarding(_ notification: Notification) {
-        FOREGROUND(canBeDirect: true) {
-            gBatches.batch(.bNewAppleID) { iResult in
-                gFavorites.updateAllFavorites()
-                gRedrawMaps()
-            }
-        }
-    }
+	@objc func completeOnboarding(_ notification: Notification) {
+		gBatches.batch(.bNewAppleID) { iResult in
+			gFavorites.updateAllFavorites()
+			gRedrawMaps()
+		}
+	}
 
     // MARK:- operations
     // MARK:-

@@ -49,7 +49,6 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var         needsParent: Bool      { return  hasState(.needsParent) }
 	var        needsDestroy: Bool      { return  hasState(.needsDestroy) }
 	var        needsProgeny: Bool      { return  hasState(.needsProgeny) }
-	var       needsWritable: Bool      { return  hasState(.needsWritable) }
 	var       needsChildren: Bool      { return  hasState(.needsChildren) }
 	var       needsAdoption: Bool      { return  hasState(.needsAdoption) }
 	var      needsBookmarks: Bool      { return  hasState(.needsBookmarks) }

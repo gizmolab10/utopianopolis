@@ -165,10 +165,6 @@ class ZHelpData: NSObject {
 				case .hPlain, .hMedium, .hPro:
 					if  hasURL {
 						attributes[.foregroundColor] = gHelpHyperlinkColor
-
-						if !url.isHyphen {
-							second.append(kSpace + kEllipsis)
-						}
 					}
 
 					fallthrough
