@@ -142,13 +142,9 @@ class ZHelpData: NSObject {
 		let      (offset, types) = extractTypes(from: first)
 		let                 text = first.substring(fromInclusive: offset)    // grab remaining characters
 		var           attributes = ZAttributesDictionary ()
+		attributes[.font]        = isDots ? kLargeHelpFont : nil
 		let               hasURL = !url.isEmpty
 		var               prefix = ""
-
-		switch gCurrentHelpMode {
-			case .dotMode: attributes[.font] = kLargeHelpFont
-			default:       attributes[.font] = nil
-		}
 
 		if !isPro && !isDots && (types.contains(.hPro) || (!isMedium && types.contains(.hMedium))) {
 			return NSMutableAttributedString(string: kTab + kTab + kTab)
@@ -202,11 +198,11 @@ class ZHelpData: NSObject {
 		}
 
 		if  second.length > 3 {
-			if  types.contains(.hDots) {
-				appendSecond()
-			} else{
-				appendTab()
+			appendTab()
 
+			if  isDots {
+				appendSecond()
+			} else {
 				for type in types {
 					switch type {
 						case .hPlain:

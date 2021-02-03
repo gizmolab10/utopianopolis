@@ -225,7 +225,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     }
 
 	func drawCenterBookmarkDot(in iDirtyRect: CGRect, notemarkColor: ZColor? = nil) {
-		var      rect = iDirtyRect.insetEquallyBy(fraction: 0.25)
+		var      rect = iDirtyRect.insetEquallyBy(fraction: 0.3)
 		var      path = ZBezierPath(ovalIn: rect)
 		path.flatness = 0.0001
 
