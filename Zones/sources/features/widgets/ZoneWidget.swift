@@ -214,6 +214,7 @@ class ZoneWidget: ZView {
 
     func layoutDots() {
 		let hideDragDot = widgetZone?.onlyShowRevealDot ?? true
+		let verticalDotOffset = 0.5
 
 		if !hideDragDot {
 			if !subviews.contains(dragDot) {
@@ -225,7 +226,7 @@ class ZoneWidget: ZView {
 			dragDot.setupForWidget(self, asReveal: false)
 			dragDot.innerDot?.snp.makeConstraints { make in
 				make.right.equalTo(textWidget.snp.left).offset(-4.0)
-				make.centerY.equalTo(textWidget).offset(1.5)
+				make.centerY.equalTo(textWidget).offset(verticalDotOffset)
 			}
 		}
 
@@ -238,7 +239,7 @@ class ZoneWidget: ZView {
         revealDot.setupForWidget(self, asReveal: true)
         revealDot.innerDot?.snp.makeConstraints { make in
             make.left.equalTo(textWidget.snp.right).offset(6.0)
-            make.centerY.equalTo(textWidget).offset(1.5)
+            make.centerY.equalTo(textWidget).offset(verticalDotOffset)
         }
     }
 
@@ -516,23 +517,21 @@ class ZoneWidget: ZView {
     }
 
     func drawSelectionHighlight(_ dashes: Bool) {
-        let      thickness = CGFloat(gDotWidth) / 3.5
-        let       rightDot = revealDot.innerDot
-        let         height = gGenericOffset.height
-        let          delta = height / 8.0
-        let          inset = (height / -2.0) - 16.0
-        let         shrink =  3.0 + (height / 6.0)
-        let hiddenDotDelta = rightDot?.isVisible ?? false ? CGFloat(0.0) : rightDot!.bounds.size.width + 3.0   // expand around reveal dot, only if it is visible
-		var           rect = textWidget.frame.insetBy(dx: (inset * ratio) - delta - 1.0, dy: -0.5 - delta)  // get size from text widget
-        rect.size .height += -0.5 + gHighlightHeightOffset + (type.isBigMap ? 0.0 : 1.0)
-        rect.size  .width += shrink - hiddenDotDelta
+        let            gap = gGenericOffset.height
+        let       gapInset =  gap         /  8.0
+		let     widthInset = (gap + 32.0) / -2.0
+        let    widthExpand = (gap + 24.0) /  6.0
+		let innerRevealDot = revealDot.innerDot
+        let revealDotDelta = innerRevealDot?.isVisible ?? false ? CGFloat(0.0) : innerRevealDot!.bounds.size.width + 3.0      // expand around reveal dot, only if it is visible
+		var           rect = textWidget.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)     // get size from text widget
+		rect.size .height += (gHighlightHeightOffset + 2.0) / ratio
+        rect.size  .width += (widthExpand - revealDotDelta) / ratio
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
-		let     colorRatio = CGFloat(dashes ? 0.5 : 0.5)
         let          color = widgetZone?.color
-        let      fillColor = color?.withAlphaComponent(colorRatio * 0.02)
-        let    strokeColor = color?.withAlphaComponent(colorRatio * 0.60)
+        let      fillColor = color?.withAlphaComponent(0.01)
+        let    strokeColor = color?.withAlphaComponent(0.30)
         let           path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
-        path    .lineWidth = thickness
+        path    .lineWidth = CGFloat(gDotWidth) / 3.5
         path     .flatness = 0.0001
 		var          debug = "[UNDASH] "
 

@@ -93,7 +93,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
     func applyConstraints() {
         if  let container = superview {
-			let    height = ((gGenericOffset.height - 2.0) / 3.0) + 5.0              // add 5 to include tiny dot below
+			let    offset = ((gGenericOffset.height - 2.0) / 3.0) + 5.0              // add 5 to include tiny dot below
 			let  hideText = widgetZone?.onlyShowRevealDot ?? true
 			let textWidth = text!.widthForFont(preferredFont)
 			let     width = hideText ? 0.0 : textWidth + 1.0
@@ -102,7 +102,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 			snp.removeConstraints()
             snp.makeConstraints { make in
 				make  .right.lessThanOrEqualTo(container).offset(-29.0)
-				make .height.lessThanOrEqualTo(container).offset(-height)		 	 // vertically,   make room for highlight and push siblings apart
+				make .height.lessThanOrEqualTo(container).offset(-offset)		 	 // vertically,   make room for highlight and push siblings apart
                 make.centerY.equalTo(container)                                      //     ",        center within container (widget)
                 make   .left.equalTo(container).offset(gGenericOffset.width + 4.0)   // horizontally, inset into        "
                 make  .width.equalTo(width)										     //     ",        make room for text
