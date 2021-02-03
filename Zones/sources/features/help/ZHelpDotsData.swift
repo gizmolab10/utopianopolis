@@ -20,6 +20,7 @@ enum ZHelpDotType: String {
 	case progeny    = "only"
 	case favorite   = "target"
 	case bookmark   = "bookmark"
+	case notemark   = "has"
 	case oneTwenty  = "120"
 	case hyperlink  = "hyperlink"
 	case unwritable = "not"
@@ -76,6 +77,7 @@ enum ZHelpDotType: String {
 		p.accessType  = accessType
 		p.showList    = pointLeft || !isFilled
 		p.isBookmark  = self == .bookmark
+		p.isNotemark  = self == .notemark
 		p.showSideDot = self == .favorite
 		p.childCount  = count
 
@@ -139,18 +141,19 @@ class ZHelpDotsData: ZHelpData {
 		"_when list is visible","click to hide it",																"",
 		".e",					"points to the left",															"",
 		"",						"",																				"",
-		"_when list is hidden",	"tiny dots indicate its size    click to reveal it",							"",
-		".f",					"single idea      \t1 = small dot on right",									"",
-		".f",					"3 ideas          \t3 = small dots all around",									"",
-		".f",					"10 ideas         \t10 = medium dot on right",									"",
-		".f",					"12 ideas         \t10 = medium dot on left, 2 = small dots on right",			"",
-		".f",					"120 ideas        \t100 = large hollow dot on left, 20 = medium dots on right",	"",
+		"_when list is hidden",	"click to reveal it, tiny dots indicate its size",								"",
+		".f",					"single idea      1 = small dot on right",										"",
+		".f",					"3 ideas            3 = small dots all around",									"",
+		".f",					"10 ideas          10 = medium dot on right",									"",
+		".f",					"12 ideas          10 = medium dot on left, 2 = small dots on right",			"",
+		".f",					"120 ideas        100 = large hollow dot on left, 20 = medium dots on right",	"",
 		"",						"",																				"",
-		"_decorated dot",		"to activate: ⌘-click or select and tap the = key",								"",
-		".f",					"bookmark         \tfocus on the bookmark's target",							"",
-		".b",					"email            \tcompose and send",											"",
-		".b",					"hyperlink        \topen a browser",											"",
-		".b",					"note or essay    \tview and edit",												""
+		"_decorated dots",		"click or select and tap the = key",											"",
+		".f",					"bookmark        focus on the bookmark's target",								"",
+		".f",					"has note          ⌘-click to view bookmark's target's note",					"",
+		".b",					"email                compose and send",										"",
+		".b",					"hyperlink         open a browser",												"",
+		".b",					"note or essay  view and edit",													""
 	]
 
 }

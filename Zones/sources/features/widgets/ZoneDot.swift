@@ -28,6 +28,7 @@ struct  ZDotParameters {
 	var isReveal      : Bool            = false
 	var showSideDot   : Bool            = false
 	var isBookmark    : Bool            = false
+	var isNotemark    : Bool            = false
 	var showAccess    : Bool            = false
 	var showList      : Bool            = false
 	var traitType     : String          = ""
@@ -223,13 +224,21 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         path.fill()
     }
 
-    func drawCenterBookmarkDot(in iDirtyRect: CGRect) {
-        let     inset = CGFloat(innerDotHeight / 3.0)
-        let      path = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(inset))
-        path.flatness = 0.0001
+	func drawCenterBookmarkDot(in iDirtyRect: CGRect, notemarkColor: ZColor? = nil) {
+		var      rect = iDirtyRect.insetEquallyBy(fraction: 0.25)
+		var      path = ZBezierPath(ovalIn: rect)
+		path.flatness = 0.0001
 
-        path.fill()
-    }
+		path.fill()
+
+		if  let color = notemarkColor {
+			rect      = rect.insetBy(fractionY: 0.4)
+			path      = ZBezierPath(rect: rect)
+
+			color.setFill()
+			path.fill()
+		}
+	}
 
 	func drawTraitIndicator(for string: String, isFilled: Bool, color: ZColor, isForMap: Bool = true, in iDirtyRect: CGRect) {
 		let    width = CGFloat(gDotHeight - 2.0) * ratio
@@ -257,14 +266,14 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		drawMainDot(in: iDirtyRect, using: parameters)
 
 		if      parameters.isReveal {
-			if  parameters.isBookmark {
+			if  parameters.isBookmark || parameters.isNotemark {
 
 				// //////////////////
 				// TINY CENTER DOT //
 				// //////////////////
 
 				gBackgroundColor.setFill()
-				drawCenterBookmarkDot(in: iDirtyRect)
+				drawCenterBookmarkDot(in: iDirtyRect, notemarkColor: parameters.isNotemark ? parameters.color : nil)
 			} else if parameters.traitType != "" {
 
 				// //////////////////

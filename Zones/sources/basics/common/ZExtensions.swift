@@ -23,8 +23,8 @@ typealias           ZRecordsArray = [ZRecord]
 typealias           ZObjectsArray = [NSObject]
 typealias          CKRecordsArray = [CKRecord]
 typealias        CKRecordIDsArray = [CKRecordID]
-typealias        CKReferencesArray = [CKReference]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
+typealias       CKReferencesArray = [CKReference]
 typealias       ZAssetsDictionary = [UUID : CKAsset]
 typealias       ZTinyDotTypeArray = [[ZTinyDotType]]
 typealias      ZOperationIDsArray = [ZOperationID]
@@ -862,14 +862,14 @@ extension CGRect {
         return set
     }
 
-    func offsetBy(fractionX: CGFloat, fractionY: CGFloat) -> CGRect {
+    func offsetBy(fractionX: CGFloat = 0.0, fractionY: CGFloat = 0.0) -> CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY
         
         return offsetBy(dx:dX, dy:dY)
     }
 
-    func insetBy(fractionX: CGFloat, fractionY: CGFloat) -> CGRect {
+	func insetBy(fractionX: CGFloat = 0.0, fractionY: CGFloat = 0.0) -> CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY
 

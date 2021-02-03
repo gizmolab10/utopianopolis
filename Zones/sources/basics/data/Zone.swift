@@ -3015,6 +3015,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.accessType  = directAccess == .eProgenyWritable ? .sideDot : .vertical
 		p.showSideDot = isACurrentDetailBookmark
 		p.isBookmark  = isBookmark
+		p.isNotemark  = bookmarkTarget?.hasNote ?? false
 		p.showAccess  = hasAccessDecoration
 		p.showList    = expanded
 		p.color       = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
