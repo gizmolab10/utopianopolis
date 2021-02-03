@@ -18,9 +18,9 @@ enum ZHelpDotType: String {
 	case email      = "email"
 	case twelve     = "12"
 	case progeny    = "only"
-	case favorite   = "target"
+	case favorite   = "this"
 	case bookmark   = "bookmark"
-	case notemark   = "has"
+	case notemark   = "target"
 	case oneTwenty  = "120"
 	case hyperlink  = "hyperlink"
 	case unwritable = "not"
@@ -98,7 +98,7 @@ class ZHelpDotsData: ZHelpData {
 
 	override var noTabPrefix       :   String   { return "                    " }
 	override var columnStrings     : [[String]] { return [dotsColumnOne, dotsColumnTwo] }
-	override var tabOffsets        :  [Int]     { return [0, 20, 170] }
+	override var tabOffsets        :  [Int]     { return [0, 20, 150] }
 	override var columnWidth       :   Int      { return 580 }
 	override var indexOfLastColumn :   Int      { return 1 }
 	override var rowHeight         :   CGFloat  { return 22.0 }
@@ -125,11 +125,11 @@ class ZHelpDotsData: ZHelpData {
 		"",						"",																				"",
 		"_drag dot",			"filled dots indicate idea is selected",										"",
 		".b",					"editable",																		"",
-		".b",					"not editable\t",																"",
+		".b",					"not editable",																	"",
 		".b",					"only ideas in its list and sublists are editable",								"",
 		"",						"",																				"",
 		"_appears only in the favorite and recent lists",													"",	"",
-		".b",					"target of this bookmark is the current focus",									""
+		".b",					"this bookmark's target is current focus",										""
 	]
 
 	let dotsColumnTwo: [String] = prefixArray + [
@@ -142,18 +142,18 @@ class ZHelpDotsData: ZHelpData {
 		".e",					"points to the left",															"",
 		"",						"",																				"",
 		"_when list is hidden",	"click to reveal it, tiny dots indicate its size",								"",
-		".f",					"single idea      1 = small dot on right",										"",
-		".f",					"3 ideas            3 = small dots all around",									"",
-		".f",					"10 ideas          10 = medium dot on right",									"",
-		".f",					"12 ideas          10 = medium dot on left, 2 = small dots on right",			"",
-		".f",					"120 ideas        100 = large hollow dot on left, 20 = medium dots on right",	"",
+		".f",					"single idea          small dot right",											"",
+		".f",					"3 ideas                3 small dots all around",								"",
+		".f",					"10 ideas              medium dot right",										"",
+		".f",					"12 ideas              medium dot left, 2 small dots right",					"",
+		".f",					"120 ideas            large hollow dot left, 2 medium dots right",				"",
 		"",						"",																				"",
-		"_decorated dots",		"click or select and tap the = key",											"",
-		".f",					"bookmark        focus on the bookmark's target",								"",
-		".f",					"has note          ⌘-click to view bookmark's target's note",					"",
-		".b",					"email                compose and send",										"",
-		".b",					"hyperlink         open a browser",												"",
-		".b",					"note or essay  view and edit",													""
+		"_decorated dots",		"click or select drag dot and tap the = key",									"",
+		".f",					"bookmark           focus on bookmark's target",								"",
+		".f",					"target has note  ⌘-click to view bookmark's target's note",					"",
+		".b",					"email                   compose and send",										"",
+		".b",					"hyperlink            open a browser",											"",
+		".b",					"note or essay     view and edit",												""
 	]
 
 }

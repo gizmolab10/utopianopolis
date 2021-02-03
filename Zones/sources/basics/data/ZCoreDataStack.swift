@@ -150,35 +150,32 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func loadZone(with recordName: String, into dbID: ZDatabaseID?) {
-		if  let          dbid = dbID?.identifier {
-			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-			let   idPredicate = NSPredicate(format: "recordName = \"\(recordName)\"")
-			let   dbPredicate = NSPredicate(format: "dbid = \"\(dbid)\"")
-			request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [idPredicate, dbPredicate])
-			load(type: kZoneType, into: dbID, using: request) { (zRecords) -> (Void) in
-				// //////////////////////////////////////////////////////////////////////////////// //
-				// NOTE: all but the first of multiple values found are duplicates and thus ignored //
-				// //////////////////////////////////////////////////////////////////////////////// //
+		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
+		request.predicate = NSPredicate(format: "recordName = \"\(recordName)\"")
+		load(type: kZoneType, into: dbID, using: request) { (zRecords) -> (Void) in
 
-				if  zRecords.count > 0,
-					let       zone = zRecords[0] as? Zone,
-					let      cloud = gRemoteStorage.zRecords(for: dbID) {
+			// //////////////////////////////////////////////////////////////////////////////// //
+			// NOTE: all but the first of multiple values found are duplicates and thus ignored //
+			// //////////////////////////////////////////////////////////////////////////////// //
 
-					FOREGROUND {
-						zone.traverseAllProgeny { iChild in
-							iChild.updateFromCoreDataTraitRelationships(visited: [])
-							iChild.respectOrder()
-						}
+			if  zRecords.count > 0,
+				let       zone = zRecords[0] as? Zone,
+				let      cloud = gRemoteStorage.zRecords(for: dbID) {
 
-						switch recordName {
-							case          kRootName: cloud.rootZone         = zone
-							case         kTrashName: cloud.trashZone        = zone
-							case       kDestroyName: cloud.destroyZone      = zone
-							case   kRecentsRootName: cloud.recentsZone      = zone
-							case kFavoritesRootName: cloud.favoritesZone    = zone
-							case  kLostAndFoundName: cloud.lostAndFoundZone = zone
-							default: break
-						}
+				FOREGROUND {
+					zone.traverseAllProgeny { iChild in
+						iChild.updateFromCoreDataTraitRelationships(visited: [])
+						iChild.respectOrder()
+					}
+
+					switch recordName {
+						case          kRootName: cloud.rootZone         = zone
+						case         kTrashName: cloud.trashZone        = zone
+						case       kDestroyName: cloud.destroyZone      = zone
+						case   kRecentsRootName: cloud.recentsZone      = zone
+						case kFavoritesRootName: cloud.favoritesZone    = zone
+						case  kLostAndFoundName: cloud.lostAndFoundZone = zone
+						default: break
 					}
 				}
 			}
