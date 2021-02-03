@@ -45,11 +45,13 @@ class ZEssay: ZNote {
 			}
 		} else {
 			for child in children.reversed() {
-				index        -= 1
-				let 	 bump = gBlankLine.length
+				index       -= 1
+				let     bump = gBlankLine.length
 
-				if  let  text = child.noteText {
-					result    = result ?? NSMutableAttributedString()
+				child.updateTitleInsets(relativeTo: zone)
+
+				if  let text = child.noteText {
+					result   = result ?? NSMutableAttributedString()
 					result?.insert(gBlankLine, at: 0)
 					result?.insert(text,       at: 0)
 

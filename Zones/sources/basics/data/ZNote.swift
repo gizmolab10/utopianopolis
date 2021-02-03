@@ -21,6 +21,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var    autoDelete        = false		// true means delete this note on exit from essay mode
 	var    essayLength       = 0
 	var    noteOffset        = 0
+	var    titleInsets       = 1
 	var    noteTraitMaybe    : ZTrait?   { return zone?.traits[  .tNote] }
 	var    noteTrait         : ZTrait?   { return zone?.traitFor(.tNote) }
 	var    prefix            : String    { return "note" }
@@ -143,7 +144,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 		if  let    name = zone?.zoneName,
 			let    text = noteTrait?.noteText {
-			let  spacer = "  "
+			let  spacer = kNoteIndentSpacer * titleInsets
 			let sOffset = spacer.length
 			let hasGoof = name.contains("􀅇")
 			let tOffset = sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
@@ -163,6 +164,14 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		}
 
 		return result
+	}
+
+	func updateTitleInsets(relativeTo ancestor: Zone?) {
+		if  let start = ancestor,
+			let level = zone?.level {
+			let difference = level - start.level
+			titleInsets = difference + 1
+		}
 	}
 
 	func colorizeTitle(_ text: NSMutableAttributedString?) {
