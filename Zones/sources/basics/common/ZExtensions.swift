@@ -2286,20 +2286,26 @@ extension ZView {
 		if  var       dotCount = count {
 			var      fatHollow = false
 			var     tinyHollow = false
+			var      tinyIsFat = false
 			var          scale = 1.0
 
-			while     dotCount > (countMax * countMax) {
-				dotCount       = (dotCount + (countMax / 2)) / countMax
+			if  dotCount == 120 {
+				print("hah!")
+			}
+
+			while     dotCount > (countMax *  countMax) {
+				dotCount       = (dotCount + (countMax / 2)) / countMax    // round to closest
 				scale          = 1.25
 
 				if  fatHollow {
 					tinyHollow = true
 				} else {
+					tinyIsFat  = true
 					fatHollow  = true
 				}
 			}
 
-			if  dotCount > 0 {
+			if  dotCount       > 0 {
 				let  tinyCount = dotCount % countMax
 				let   fatCount = dotCount / countMax
 				let fullCircle = Double.pi * 2.0
@@ -2326,9 +2332,10 @@ extension ZView {
 							// everything should always goes out more (regardless of no notes)
 
 							func drawDot(isFocus: Bool) {
-								let    offsetRatio = isFat   ? 2.1 : 1.28
-								let       fatRatio = isFat   ? 2.0 : 1.6
-								let       dotRatio = isFat   ? 4.0 : 2.5
+								let          asFat = isFat || tinyIsFat
+								let    offsetRatio = asFat ? 2.1 : 1.28
+								let       fatRatio = isFat ? 2.0 : 1.6
+								let       dotRatio = asFat ? 4.0 : 2.5
 
 								let   scaledRadius = radius * scale
 								let  necklaceDelta = scaledRadius * 2.0 * 1.5

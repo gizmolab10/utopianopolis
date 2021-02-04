@@ -194,9 +194,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	}
 
 	func drawTinyCountDots(_ iDirtyRect: CGRect, parameters: ZDotParameters) {
-		let count = parameters.childCount
-
-		if  count > 0 {
+		let count      = parameters.childCount
+		if  count      > 0 {
 			let  frame = iDirtyRect.offsetEquallyBy(-0.1)
 			let  color = parameters.isDrop ? gActiveColor : parameters.color
 			let radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)

@@ -23,6 +23,7 @@ enum ZHelpDotType: String {
 	case notemark   = "target"
 	case oneTwenty  = "120"
 	case hyperlink  = "hyperlink"
+	case twelveHund = "1200"
 	case unwritable = "not"
 
 	var isReveal    : Bool            { return ![.progeny, .unwritable, .drag, .favorite].contains(self) }
@@ -57,12 +58,13 @@ enum ZHelpDotType: String {
 
 	var count: Int {
 		switch self {
-			case .one:       return   1
-			case .three:     return   3
-			case .ten:       return  10
-			case .twelve:    return  12
-			case .oneTwenty: return 120
-			default:         return   0
+			case .twelveHund: return 1200
+			case .oneTwenty:  return  120
+			case .twelve:     return   12
+			case .ten:        return   10
+			case .three:      return    3
+			case .one:        return    1
+			default:          return    0
 		}
 	}
 
@@ -138,15 +140,16 @@ class ZHelpDotsData: ZHelpData {
 		"",						"",																				"",
 		"_no dot indicates no list and nothing to activate",												"", "",
 		"",						"",																				"",
-		"_when list is visible","click to hide it",																"",
+		"_when list is visible","click to hide list",															"",
 		".e",					"points to the left",															"",
 		"",						"",																				"",
-		"_when list is hidden",	"click to reveal it, tiny dots indicate its size",								"",
+		"_when list is hidden",	"click to reveal list, surrounding dots indicate count, as in:",				"",
 		".f",					"single idea          small dot right",											"",
 		".f",					"3 ideas                3 small dots all around",								"",
 		".f",					"10 ideas              medium dot right",										"",
 		".f",					"12 ideas              medium dot left, 2 small dots right",					"",
-		".f",					"120 ideas            large hollow dot left, 2 medium dots right",				"",
+		".f",					"120 ideas            large hollow left, 2 medium right",						"",
+		".f",					"1200 ideas          large hollow left, 2 medium hollow right",					"",
 		"",						"",																				"",
 		"_decorated dots",		"click or select drag dot and tap the = key",									"",
 		".f",					"bookmark           focus on bookmark's target",								"",
