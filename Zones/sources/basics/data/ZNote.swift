@@ -131,6 +131,17 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return result
 	}
 
+	var spacerAttributes: ZAttributesDictionary? {
+		var result = titleAttributes
+		let light  = CGFloat((titleInsets > 1) ? 4.0 : 20.0)
+		if  let  z = zone,
+			let  c = z.textColor?.lighter(by: light) {
+			result?[.foregroundColor] = c
+		}
+
+		return result
+	}
+
 	var essayText : NSMutableAttributedString? {
 		let  result = noteText
 		essayLength = result?.length ?? 0
@@ -148,7 +159,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let sOffset = spacer.length
 			let hasGoof = name.contains("􀅇")
 			let tOffset = sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
-			let   title = NSMutableAttributedString(string: spacer + name + kTab, attributes: titleAttributes)
+			let  indent = NSMutableAttributedString(string: spacer,      attributes: spacerAttributes)
+			let   title = NSMutableAttributedString(string: name + kTab, attributes: titleAttributes)
 			result      = NSMutableAttributedString()
 			titleRange  = NSRange(location: sOffset, length: name.length)
 			textRange   = NSRange(location: tOffset, length: text.length)
@@ -157,6 +169,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			result?.insert(text,       at: 0)
 			result?.insert(gBlankLine, at: 0)
 			result?.insert(title,      at: 0)
+			result?.insert(indent,     at: 0)
 
 			colorizeTitle(result)
 

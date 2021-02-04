@@ -6,7 +6,6 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import AppKit
 import Cocoa
@@ -74,14 +73,11 @@ public typealias ZEdgeSwipeGestureRecognizer = NSNull
 let        gVerticalWeight = 1.0
 let gHighlightHeightOffset = CGFloat(-3.0)
 
-
 var gIsPrinting: Bool {
     return NSPrintOperation.current != nil
 }
 
-
 protocol ZScrollDelegate : NSObjectProtocol {}
-
 
 func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
     if  let e  = event {
@@ -98,7 +94,6 @@ func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
     
     return false
 }
-
 
 // Helper function inserted by Swift 4.2 migrator.
 func convertFromOptionalUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
@@ -121,9 +116,7 @@ extension NSObject {
 	func showTopLevelFunctions() {}
 }
 
-
 extension String {
-
 
 	func heightForFont(_ font: ZFont, options: NSString.DrawingOptions = .usesDeviceMetrics) -> CGFloat { return sizeWithFont(font, options: options).height }
     func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
@@ -188,7 +181,6 @@ extension String {
     
 }
 
-
 extension NSURL {
     
     var directoryURL: URL? {
@@ -219,7 +211,6 @@ extension NSURL {
 
 }
 
-
 extension ZApplication {
 
     func clearBadge() {
@@ -241,7 +232,6 @@ extension ZApplication {
     
 }
 
-
 extension ZEventFlags {
     var isNumericPad: Bool { return contains(.numericPad) }
 	var isSpecial:    Bool { return isCommand && isOption }
@@ -251,13 +241,11 @@ extension ZEventFlags {
     var isShift:      Bool { get { return contains(.shift)   } set { if newValue { insert(.shift)   } else { remove(.shift) } } }
 }
 
-
 extension ZEvent {
     var arrow: ZArrowKey? { return key?.arrow }
     var   key:    String? { return input?.character(at: 0) }
     var input:    String? { return charactersIgnoringModifiers }
 }
-
 
 extension ZColor {
 
@@ -323,7 +311,6 @@ extension ZColor {
     
 }
 
-
 extension NSBezierPath {
     public var cgPath: CGPath {
         let   path = CGMutablePath()
@@ -345,12 +332,10 @@ extension NSBezierPath {
         return path
     }
 
-
     public convenience init(roundedRect rect: CGRect, cornerRadius: CGFloat) {
         self.init(roundedRect: rect, xRadius: cornerRadius, yRadius: cornerRadius)
     }
 }
-
 
 extension ZTextView {
 
@@ -410,7 +395,6 @@ extension NSView {
     var      zlayer:                CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
     var recognizers: [NSGestureRecognizer]? { return gestureRecognizers }
 
-
     var gestureHandler: ZGesturesController? {
         get { return nil }
         set {
@@ -422,7 +406,6 @@ extension NSView {
             }
         }
     }
-
 
     func setNeedsDisplay() { if !gDeferringRedraw { needsDisplay = true } }
     func setNeedsLayout () { needsLayout  = true }
@@ -448,7 +431,6 @@ extension NSView {
 
         return gesture
     }
-
 
     @discardableResult func createPointGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?, clicksRequired: Int) -> ZKeyClickGestureRecognizer {
         let                            gesture = ZKeyClickGestureRecognizer(target: target, action: action)
@@ -503,7 +485,6 @@ extension NSView {
         
 }
 
-
 extension ZTogglingView {
 	
     func turnOnTitleButton() {
@@ -512,7 +493,6 @@ extension ZTogglingView {
     }
 
 }
-
 
 extension ZDragView {
     
@@ -536,20 +516,6 @@ extension ZDragView {
 
 }
 
-
-extension NSWindow {
-
-    @IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .Preferences)?.toggleAction(self) }
-    @IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
-    @IBAction func copy              (_ iItem: ZMenuItem?) { gMapEditor.copyToPaste() }
-    @IBAction func cut               (_ iItem: ZMenuItem?) { gMapEditor.delete() }
-    @IBAction func delete            (_ iItem: ZMenuItem?) { gMapEditor.delete() }
-    @IBAction func paste             (_ iItem: ZMenuItem?) { gMapEditor.paste() }
-    @IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gSearching.showSearch() }
-    @IBAction func undo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.undo() }
-    @IBAction func redo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.redo() }
-}
-
 extension ZoneWindow {
     
     override func awakeFromNib() {
@@ -570,6 +536,16 @@ extension ZoneWindow {
 }
 
 extension ZWindow {
+
+	@IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .Preferences)?.toggleAction(self) }
+	@IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
+	@IBAction func copy              (_ iItem: ZMenuItem?) { gMapEditor.copyToPaste() }
+	@IBAction func cut               (_ iItem: ZMenuItem?) { gMapEditor.delete() }
+	@IBAction func delete            (_ iItem: ZMenuItem?) { gMapEditor.delete() }
+	@IBAction func paste             (_ iItem: ZMenuItem?) { gMapEditor.paste() }
+	@IBAction func toggleSearch      (_ iItem: ZMenuItem?) { gSearching.showSearch() }
+	@IBAction func undo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.undo() }
+	@IBAction func redo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.redo() }
 
 	var keyPressed: Bool {
 		let    e  = nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false)
@@ -594,15 +570,14 @@ extension ZWindow {
 
 }
 
-extension NSButtonCell {
+extension ZButtonCell {
     override open var objectValue: Any? {
         get { return title }
         set { title = newValue as? String ?? "" }
     }
 }
 
-
-extension NSButton {
+extension ZButton {
     var isCircular: Bool {
         get { return true }
         set { bezelStyle = newValue ? .circular : .rounded }
@@ -612,7 +587,6 @@ extension NSButton {
         get { return action }
         set { action = newValue; target = self } }
 }
-
 
 extension ZAlert {
 
@@ -625,7 +599,6 @@ extension ZAlert {
     }
 
 }
-
 
 extension ZAlerts {
     
@@ -681,11 +654,9 @@ extension ZAlerts {
     
 }
 
-
-extension NSTextField {
+extension ZTextField {
     var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
     var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
-
 
     func enableUndo() {
         cell?.allowsUndo = true
@@ -695,7 +666,6 @@ extension NSTextField {
     func select(range: NSRange) {
         select(from: range.lowerBound, to: range.upperBound)
     }
-
 
     func select(from: Int, to: Int) {
         if  let editor = currentEditor() {
@@ -723,11 +693,9 @@ extension NSTextField {
     
 }
 
-
 extension ZoneTextWidget {
     // override open var acceptsFirstResponder: Bool { return gBatch.isReady }    // fix a bug where root zone is editing on launch
     override var acceptsFirstResponder : Bool  { return widgetZone?.userCanWrite ?? false }
-
 
     var isFirstResponder : Bool {
         if  let    first = window?.firstResponder {
@@ -736,7 +704,6 @@ extension ZoneTextWidget {
 
         return false
     }
-
 
     override func textDidChange(_ iNote: Notification) {
         gTextEditor.prepareUndoForTextChange(undoManager) {
@@ -753,8 +720,7 @@ extension ZoneTextWidget {
         }
     }
 
-
-    override func textDidEndEditing(_ notification: Notification) {
+	override func textDidEndEditing(_ notification: Notification) {
 		if !gIsEditingStateChanging,
 			gIsEditIdeaMode,
 			let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
@@ -780,9 +746,7 @@ extension ZoneTextWidget {
 
 }
 
-
 extension ZTextEditor {
-    
     
     func fullResign()  { assignAsFirstResponder (nil) }
 	
@@ -948,9 +912,7 @@ extension NSText {
 	}
 }
 
-
 extension NSSegmentedControl {
-
 
     var selectedSegmentIndex: Int {
         get { return selectedSegment }
@@ -1138,9 +1100,7 @@ extension Zone {
 
 }
 
-
 extension ZoneWidget {
-
 
     func dragHitFrame(in iView: ZView?, _ iHere: Zone) -> CGRect {
 		if  let   view = iView {
@@ -1158,7 +1118,6 @@ extension ZoneWidget {
 
         return CGRect.zero
     }
-
 
     func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
         var             frame = CGRect ()
@@ -1194,7 +1153,6 @@ extension ZoneWidget {
         
         return frame
     }
-
 
     func curvedPath(in iRect: CGRect, kind iKind: ZLineKind) -> ZBezierPath {
         ZBezierPath(rect: iRect).setClip()
