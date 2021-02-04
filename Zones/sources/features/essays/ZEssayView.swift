@@ -78,8 +78,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 				case "/":                  gHelpController?.show(flags: flags)
-				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}") { gRedrawMaps() }
-				case "]", "[": gRecents                .go(down: key == "]") { gRedrawMaps() }
+				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
+				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
 				case kReturn:  gCurrentEssayZone?.grab(); done()
 				default:       return false
 			}

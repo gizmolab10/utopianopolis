@@ -8,11 +8,13 @@
 
 import Foundation
 
+// working zones depends on if we are in essay editing mode
+
 class ZSmallMapRecords: ZRecords {
 
 	var      currentBookmark : Zone?
 	var currentBookmarkIndex : Int? {
-		for (index, zone) in workingBookmarks.enumerated() {
+		for (index, zone) in working.enumerated() {
 			if  zone == currentBookmark {
 				return index
 			}
@@ -21,13 +23,9 @@ class ZSmallMapRecords: ZRecords {
 		return nil
 	}
 
-	var workingBookmarks: ZoneArray {
-		return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? []
-	}
-
-	var workingProgeny: ZoneArray {
-		return (gBrowsingIsConfined ? hereZoneMaybe?.allProgeny : rootZone?.allProgeny) ?? []
-	}
+	var working          : ZoneArray { return  gIsNoteMode ? workingNotemarks : workingBookmarks }
+	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? [] }
+	var workingNotemarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.notemarks : rootZone?.allNotemarkProgeny) ?? [] }
 
 	// MARK:- switch
 	// MARK:-
@@ -35,7 +33,7 @@ class ZSmallMapRecords: ZRecords {
 	func nextWorkingIndex(after index: Int, going down: Bool) -> Int {
 		let  increment = (down ? 1 : -1)
 		var       next = index + increment
-		let      count = workingBookmarks.count
+		let      count = working.count
 		if next       >= count {
 			next       = 0
 		} else if next < 0 {
@@ -45,17 +43,17 @@ class ZSmallMapRecords: ZRecords {
 		return next
 	}
 
-	func go(down: Bool, atArrival: Closure? = nil) {
+	func go(down: Bool, amongNotes: Bool = false, atArrival: Closure? = nil) {
 		if  currentBookmark == nil {
 			gRecents.push()
 		}
 
-		let    max = workingBookmarks.count - 1
+		let    max = working.count - 1
 		var fIndex = down ? 0 : max
 
 		if  fIndex >= 0,
 			let target = currentBookmark?.bookmarkTarget {
-			for (iIndex, bookmark) in workingBookmarks.enumerated() {
+			for (iIndex, bookmark) in working.enumerated() {
 				if  bookmark.bookmarkTarget == target {
 					if         down, iIndex < max {
 						fIndex = iIndex + 1         // go down
@@ -67,8 +65,8 @@ class ZSmallMapRecords: ZRecords {
 				}
 			}
 
-			if  workingBookmarks.count > fIndex {
-				setAsCurrent(workingBookmarks[fIndex], alterHere: true)
+			if  working.count > fIndex {
+				setAsCurrent(working[fIndex], alterHere: true)
 			}
 		}
 
@@ -113,8 +111,9 @@ class ZSmallMapRecords: ZRecords {
 			gHere           = tHere
 			currentBookmark = iZone
 
+			gHere.grab()
+
 			maybeRefocus(.eSelected) {
-				gHere.grab()
 				gSignal([.sRelayout])
 			}
 		}

@@ -452,8 +452,8 @@ struct ZDetailsViewID: OptionSet {
 	}
 
 	static let Preferences = ZDetailsViewID(rawValue: 0x0001)
-	static let Data = ZDetailsViewID(rawValue: 0x0002)
+	static let        Data = ZDetailsViewID(rawValue: 0x0002)
 	static let   StartHere = ZDetailsViewID(rawValue: 0x0004)
-	static let         SmallMap = ZDetailsViewID(rawValue: 0x0008)
+	static let    SmallMap = ZDetailsViewID(rawValue: 0x0008)
 	static let         All = ZDetailsViewID(rawValue: 0x000F)
 }

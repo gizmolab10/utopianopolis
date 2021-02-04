@@ -92,42 +92,55 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return self
 	}
 
-	var bookmarks : ZoneArray {
-		return children.filter { (iZone) -> Bool in
-			return iZone.isBookmark
-		}
-	}
+	struct ZWorkType: OptionSet {
+		let rawValue: Int
 
-	var allProgeny: ZoneArray {
-		var result = ZoneArray()
-
-		traverseAllProgeny { iProgeny in
-			result.append(iProgeny)
+		init(rawValue: Int) {
+			self.rawValue = rawValue
 		}
 
-		return result
+		static let wBookmarks = ZWorkType(rawValue: 0x0001)
+		static let wNotemarks = ZWorkType(rawValue: 0x0002)
+		static let   wProgeny = ZWorkType(rawValue: 0x0004)  //
+		static let       wAll = ZWorkType(rawValue: 0x0008)  // everything
 	}
 
-	var allBookmarkProgeny : ZoneArray {
-		var result = ZoneArray()
+	func zones(of type: ZWorkType) -> ZoneArray {
+		@discardableResult func matchesType(_ iZone: Zone) -> Bool {
+			return (type.contains(.wNotemarks) && iZone.bookmarkTarget?.hasNote ?? false)
+				|| (type.contains(.wBookmarks) && iZone.isBookmark)
+				||  type.contains(.wAll)
+		}
 
-		traverseAllProgeny { iProgeny in
-			if  iProgeny.isBookmark {
-				result.append(iProgeny)
+		if  type.contains(.wAll) {
+			var result = ZoneArray()
+			traverseAllProgeny { iZone in
+				if  matchesType(iZone) {
+					result.append(iZone)
+				}
+			}
+			return result
+		} else {
+			return children.filter { (iZone) -> Bool in
+				return matchesType(iZone)
 			}
 		}
-
-		return result
 	}
+
+	var    bookmarks       : ZoneArray { return zones(of:  .wBookmarks) }
+	var    notemarks       : ZoneArray { return zones(of:  .wNotemarks) }
+	var allBookmarkProgeny : ZoneArray { return zones(of: [.wBookmarks, .wProgeny]) }
+	var allNotemarkProgeny : ZoneArray { return zones(of: [.wNotemarks, .wProgeny]) }
+	var all                : ZoneArray { return zones(of:  .wAll) }
 
 	var unwrappedNameWithEllipses : String {
 		var   name = unwrappedName
 		let length = name.length
 
 		if (isInFavorites || isInRecents),
-		   length > 15 {
-			let first = name.substring(toExclusive: 7)
-			let  last = name.substring(fromInclusive: length - 7)
+		    length > 25 {
+			let first = name.substring(toExclusive: 12)
+			let  last = name.substring(fromInclusive: length - 12)
 			name      = first + kEllipsis + last
 		}
 

@@ -2289,10 +2289,6 @@ extension ZView {
 			var      tinyIsFat = false
 			var          scale = 1.0
 
-			if  dotCount == 120 {
-				print("hah!")
-			}
-
 			while     dotCount > (countMax *  countMax) {
 				dotCount       = (dotCount + (countMax / 2)) / countMax    // round to closest
 				scale          = 1.25

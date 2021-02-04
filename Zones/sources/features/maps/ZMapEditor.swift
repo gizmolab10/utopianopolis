@@ -639,10 +639,10 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-	func go(down: Bool, COMMAND: Bool, atArrival: Closure? = nil) {
+	func go(down: Bool, COMMAND: Bool, amongNotes: Bool = false, atArrival: Closure? = nil) {
 		let cloud = COMMAND ? gCurrentSmallMapRecords : gRecents
 
-		cloud?.go(down: down, atArrival: atArrival)
+		cloud?.go(down: down, amongNotes: amongNotes, atArrival: atArrival)
 	}
 
     // MARK:- lines

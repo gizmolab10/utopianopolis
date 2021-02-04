@@ -62,10 +62,22 @@ class ZHelpButtonsView : ZButtonsView {
 	}
 
 	@objc private func handleButtonPress(_ button: ZButton) {
-		if  let mode = button.helpMode {                   // eliminate no-op cpu time
-			gHelpController?.show( true, nextMode: mode)    // side-effect: sets gCurrentHelpMode
-			gSignal([.sStartupButtons])                     // to update help buttons in startup view
+		if  let mode = button.helpMode { // eliminate no-op cpu time
+			gHelpController?.showHelp(for: mode)
 		}
+	}
+
+	func actuateNextButton(forward: Bool) {
+		var    mode = gCurrentHelpMode
+		switch mode {
+			case .basicMode:  mode = forward ? .mediumMode : .dotMode
+			case .mediumMode: mode = forward ? .allMode    : .basicMode
+			case .allMode:    mode = forward ? .dotMode    : .mediumMode
+			case .dotMode:    mode = forward ? .basicMode  : .allMode
+			default:          break
+		}
+
+		gHelpController?.showHelp(for: mode)
 	}
 
 	func update() {

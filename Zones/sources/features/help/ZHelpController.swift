@@ -29,8 +29,8 @@ class ZHelpController: ZGenericTableController {
 	var                helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
 	var                gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
 	var         titleBarButtons = ZHelpButtonsView()
-	let         bigMapHelpData = ZHelpBigMapData()
-	let            dotsHelpData =    ZHelpDotsData()
+	let          bigMapHelpData = ZHelpBigMapData()
+	let            dotsHelpData = ZHelpDotsData()
 	var               isShowing = false
 
 	func helpData(for iMode: ZHelpMode) -> ZHelpData {
@@ -58,7 +58,7 @@ class ZHelpController: ZGenericTableController {
 	func update() {
 		view.zlayer.backgroundColor = gBackgroundColor.cgColor
 
-		updateTitleBar()
+		titleBarButtons.updateAndRedraw()
 		genericTableUpdate()
 		updateGridVisibility()
 	}
@@ -76,7 +76,7 @@ class ZHelpController: ZGenericTableController {
 		if !isShowing {
 			gCurrentHelpMode = .noMode // set temporarily so show does not dismiss window
 
-			show(nextMode: m)
+			show(mode: m)
 		}
 	}
 
@@ -88,19 +88,24 @@ class ZHelpController: ZGenericTableController {
 
 		if            COMMAND {
 			if       !OPTION && CONTROL {
-				nextMode =  .noteMode
+				nextMode = .mediumMode
 			} else if OPTION && CONTROL {
-				nextMode =   .dotMode
+				nextMode =    .dotMode
 			} else if OPTION {
-				nextMode = .basicMode
+				nextMode =  .basicMode
 			}
 
-			show(iShow, nextMode: nextMode)
+			show(iShow, mode: nextMode)
 		}
 	}
 
-	func show(_ iShow: Bool? = nil, nextMode: ZHelpMode?) {
-		if  let         next = nextMode {
+	func showHelp(for mode: ZHelpMode) {
+		show(true, mode: mode)         // side-effect: sets gCurrentHelpMode
+		gSignal([.sStartupButtons])    // change highlight of help buttons in startup view
+	}
+
+	func show(_ iShow: Bool? = nil, mode: ZHelpMode?) {
+		if  let         next = mode {
 			let   controller = gHelpWindowController
 			let        isKey = gHelpWindow?.isKeyWindow ?? false
 			let         same = gCurrentHelpMode == next
@@ -139,6 +144,13 @@ class ZHelpController: ZGenericTableController {
 
 				default: break
 			}
+
+			if  let arrow = key.arrow {
+				switch arrow {
+					case .left, .right: titleBarButtons.actuateNextButton(forward: arrow == .right)
+					default: break
+				}
+			}
 		}
 
 		return nil
@@ -162,10 +174,6 @@ class ZHelpController: ZGenericTableController {
 
 			titleBarButtons.updateAndRedraw()
 		}
-	}
-
-	func updateTitleBar() {
-		titleBarButtons.updateAndRedraw()
 	}
 
 	// MARK:- grid

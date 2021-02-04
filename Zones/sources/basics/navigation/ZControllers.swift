@@ -28,7 +28,6 @@ enum ZControllerID: Int {
 }
 
 enum ZSignalKind: Int {
-	case sBigMap
     case sData
     case sMain
 	case sSwap
@@ -39,6 +38,7 @@ enum ZSignalKind: Int {
 	case sResize
 	case sSearch
 	case sCrumbs
+	case sBigMap
 	case sDetails
     case sRelayout
     case sSmallMap

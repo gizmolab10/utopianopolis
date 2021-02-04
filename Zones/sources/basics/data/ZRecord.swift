@@ -62,7 +62,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 		var converted = [String]()
 
 		if  let  name = recordName {
-			var     v = visited
+			var     v = visited == nil ? nil : Array<String>.init(visited!)
 
 			if (v == nil || !v!.contains(name)),
 				records?.maybeZRecordForRecordName(name) == nil {

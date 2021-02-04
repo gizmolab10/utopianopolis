@@ -223,20 +223,19 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         path.fill()
     }
 
-	func drawCenterBookmarkDot(in iDirtyRect: CGRect, notemarkColor: ZColor? = nil) {
-		var      rect = iDirtyRect.insetEquallyBy(fraction: 0.3)
-		var      path = ZBezierPath(ovalIn: rect)
+	func drawCenterBookmarkDot(in iDirtyRect: CGRect, hasNote: Bool = false) {
+		var rect = iDirtyRect.insetEquallyBy(fraction: 0.3)
+		var path = ZBezierPath(ovalIn: rect)
+
+		if  hasNote {
+			rect = rect.insetEquallyBy(fraction: 0.2)
+			path =      ZBezierPath(ovalIn: rect.offsetBy(fractionY: -0.7))
+			path.append(ZBezierPath(ovalIn: rect.offsetBy(fractionY:  0.7)))
+		}
+
 		path.flatness = 0.0001
 
 		path.fill()
-
-		if  let color = notemarkColor {
-			rect      = rect.insetBy(fractionY: 0.4)
-			path      = ZBezierPath(rect: rect)
-
-			color.setFill()
-			path.fill()
-		}
 	}
 
 	func drawTraitIndicator(for string: String, isFilled: Bool, color: ZColor, isForMap: Bool = true, in iDirtyRect: CGRect) {
@@ -272,7 +271,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 				// //////////////////
 
 				gBackgroundColor.setFill()
-				drawCenterBookmarkDot(in: iDirtyRect, notemarkColor: parameters.isNotemark ? parameters.color : nil)
+				drawCenterBookmarkDot(in: iDirtyRect, hasNote: parameters.isNotemark)
 			} else if parameters.traitType != "" {
 
 				// //////////////////
