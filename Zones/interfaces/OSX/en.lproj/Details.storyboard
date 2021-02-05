@@ -584,6 +584,17 @@ CA
                                                             <outlet property="togglingView" destination="Utx-K3-0a0" id="Wks-zD-N6G"/>
                                                         </connections>
                                                     </button>
+                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zUL-Q6-aba">
+                                                        <rect key="frame" x="4" y="1" width="48" height="16"/>
+                                                        <buttonCell key="cell" type="push" title="Switch" bezelStyle="rounded" alignment="center" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xW1-68-JpA">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="miniSystem"/>
+                                                        </buttonCell>
+                                                        <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <connections>
+                                                            <action selector="extraButtonAction:" target="Utx-K3-0a0" id="4pt-PI-PDy"/>
+                                                        </connections>
+                                                    </button>
                                                     <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1uw-i1-Cgo" userLabel="Triangle Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="306" y="2" width="14" height="14"/>
                                                         <constraints>
@@ -601,9 +612,11 @@ CA
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="3bx-6i-bTg" firstAttribute="leading" secondItem="s1s-Ki-o6t" secondAttribute="leading" id="1u1-0s-2Wx"/>
+                                                    <constraint firstItem="zUL-Q6-aba" firstAttribute="leading" secondItem="s1s-Ki-o6t" secondAttribute="leading" constant="6" id="4nT-vi-bzW"/>
                                                     <constraint firstAttribute="trailing" secondItem="3bx-6i-bTg" secondAttribute="trailing" id="A0s-1i-Mvj"/>
                                                     <constraint firstAttribute="height" constant="18" id="J3l-tS-SXi"/>
                                                     <constraint firstItem="3bx-6i-bTg" firstAttribute="centerY" secondItem="s1s-Ki-o6t" secondAttribute="centerY" id="RmK-7b-QQG"/>
+                                                    <constraint firstItem="zUL-Q6-aba" firstAttribute="centerY" secondItem="s1s-Ki-o6t" secondAttribute="centerY" id="bvL-DI-zVB"/>
                                                     <constraint firstAttribute="trailing" secondItem="1uw-i1-Cgo" secondAttribute="trailing" constant="8" id="nw1-oo-l9x"/>
                                                 </constraints>
                                             </customView>
@@ -624,6 +637,7 @@ CA
                                         </constraints>
                                         <connections>
                                             <outlet property="bannerView" destination="s1s-Ki-o6t" id="33f-CI-SSo"/>
+                                            <outlet property="extraButton" destination="zUL-Q6-aba" id="bYv-op-sMa"/>
                                             <outlet property="hideableView" destination="n0Y-Iw-0NV" id="Q6s-o8-Vgy"/>
                                             <outlet property="titleButton" destination="3bx-6i-bTg" id="exk-Jc-pw4"/>
                                             <outlet property="triangleButton" destination="1uw-i1-Cgo" id="zNx-aL-c5d"/>

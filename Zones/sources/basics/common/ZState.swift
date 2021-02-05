@@ -51,9 +51,9 @@ var                   gIsDark:               Bool { return gDarkMode == .Dark }
 var                   gIsLate:               Bool { return gBatches.isLate }
 var               gIsDragging:               Bool { return gDraggedZone != nil }
 var          gIsHelpFrontmost:               Bool { return gHelpWindow?.isKeyWindow ?? false }
-var       gBrowsingIsConfined:               Bool { return gConfinementMode   == .list }
-var           gIsRecentlyMode:               Bool { return gSmallMapMode   == .recent }
-var            gListsGrowDown:               Bool { return gListGrowthMode == .down }
+var       gBrowsingIsConfined:               Bool { return gConfinementMode == .list }
+var           gIsRecentlyMode:               Bool { return gSmallMapMode    == .recent }
+var            gListsGrowDown:               Bool { return gListGrowthMode  == .down }
 var           gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var               gIsNoteMode:               Bool { return gWorkMode == .noteMode }
 var                gIsMapMode:               Bool { return gWorkMode == .mapsMode }
@@ -97,6 +97,21 @@ let            kLargeBoldFont                     = ZFont  .boldSystemFont(ofSiz
 let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
 let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
+
+func gSwapSmallMapMode(_ OPTION: Bool = false) {
+	let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
+	let newID     : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
+
+	gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
+
+	if  OPTION {			// if any grabs are in current small map, move them to other map
+		gSelecting.swapGrabsFrom(currentID, toID: newID)
+	}
+
+	gCurrentSmallMapRecords?.revealBookmark(of: gHere)
+
+	gSignal([.sDetails, .sSmallMap])
+}
 
 func gStoreProgressTimes() {
 	var separator = ""

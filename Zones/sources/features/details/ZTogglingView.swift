@@ -20,6 +20,7 @@ class ZTogglingView: NSStackView {
 
 	@IBOutlet var triangleButton : ZToggleButton?
 	@IBOutlet var    titleButton : ZBannerButton?
+	@IBOutlet var    extraButton : ZBannerButton?
 	@IBOutlet var     bannerView : ZView?
     @IBOutlet var   hideableView : ZView?
 
@@ -85,9 +86,14 @@ class ZTogglingView: NSStackView {
         }
     }
 
+	@IBAction func extraButtonAction(_ sender: Any) {
+		gSwapSmallMapMode()
+	}
+
 	@IBAction func toggleAction(_ sender: Any) {
 		toggleHideableVisibility()
 		update()
+		gSignal([.sDetails])
 	}
 
     func toggleHideableVisibility() {

@@ -133,7 +133,7 @@ class ZMapEditor: ZBaseEditor {
 						case "z":        if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
 						case "+":        divideChildren()
 						case "-":        return handleHyphen(COMMAND, OPTION)
-						case "'":        swapSmallMapMode(OPTION)
+						case "'":        gSwapSmallMapMode(OPTION)
 						case "/":        if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
 						case "[", "{", "}",
 							 "]":        go(down: ["]", "}"].contains(key), COMMAND: COMMAND) { gRedrawMaps() }
@@ -303,21 +303,6 @@ class ZMapEditor: ZBaseEditor {
 		}
 
 		gRedrawMaps()
-	}
-
-	func swapSmallMapMode(_ OPTION: Bool) {
-		let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
-		let newID     : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
-
-		gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
-
-		if  OPTION {			// if any grabs are in current small map, move them to other map
-			gSelecting.swapGrabsFrom(currentID, toID: newID)
-		}
-
-		gCurrentSmallMapRecords?.revealBookmark(of: gHere)
-
-		gSignal([.sDetails, .sSmallMap])
 	}
 
 	func addSibling(_ OPTION: Bool) {

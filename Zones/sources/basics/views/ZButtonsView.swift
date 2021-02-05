@@ -10,9 +10,11 @@ import Foundation
 
 class ZButtonsView : ZView {
 
-	var centered : Bool { return false }
-	var  clipped : Bool { return false }
-	var  buttons = [ZButton]()
+	var           clipped : Bool { return false }
+	var          centered : Bool { return false }
+	var distributeEqually : Bool { return false }
+	var           buttons = [ZButton]()
+
 	func setupButtons()  {}
 	func updateButtons() {}
 

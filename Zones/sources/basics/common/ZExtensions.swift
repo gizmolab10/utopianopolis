@@ -53,7 +53,7 @@ func printDebug(_ mode: ZPrintMode, prefix: String = "  ", _ message: String, su
 
 func gSeparatorAt(level: Int) -> String { return " ( \(level) ) " }
 
-func gSignal     (for object: Any? = nil, _ multiple: [ZSignalKind], _ onCompletion: Closure? = nil) {
+func gSignal(for object: Any? = nil, _ multiple: [ZSignalKind], _ onCompletion: Closure? = nil) {
 	gControllers.signalFor(object, multiple: multiple, onCompletion: onCompletion)
 }
 
