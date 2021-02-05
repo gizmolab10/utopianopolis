@@ -19,6 +19,7 @@ var gBreadcrumbsController: ZBreadcrumbsController? { return gControllers.contro
 class ZBreadcrumbsController: ZGenericController {
 
 	@IBOutlet var   crumbsView : ZBreadcrumbsView?
+	@IBOutlet var  mapControls : ZMapControlsView?
 	override  var controllerID : ZControllerID { return .idCrumbs     }
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {

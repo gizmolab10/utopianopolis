@@ -1,5 +1,5 @@
 //
-//  ZSmallMapControlsView.swift
+//  ZMapControlsView.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/15/20.
@@ -11,10 +11,10 @@ import Foundation
 enum ZModeButtonType: String {
 	case tConfine = "browse"
 	case tGrow    = "grow"
-	case tMode    = "mode"
+	case tDB      = "db"
 }
 
-class ZSmallMapControlsView : ZButtonsView, ZTooltips {
+class ZMapControlsView : ZButtonsView, ZTooltips {
 
 	override  var centered: Bool { return true }
 
@@ -22,7 +22,7 @@ class ZSmallMapControlsView : ZButtonsView, ZTooltips {
 		removeButtons()
 
 		buttons                   = [ZButton]()
-		let t : [ZModeButtonType] = [.tMode, .tGrow, .tConfine]
+		let t : [ZModeButtonType] = [.tGrow, .tConfine, .tDB]
 		for type in t {
 			let             title = type.rawValue
 			let            button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
@@ -43,7 +43,7 @@ class ZSmallMapControlsView : ZButtonsView, ZTooltips {
 				switch type {
 					case .tConfine: button.title = gConfinementMode.rawValue
 					case .tGrow:    button.title = gListGrowthMode .rawValue
-					case .tMode:    button.title = "Switch"
+					case .tDB:      button.title = gDatabaseID.identifier
 				}
 			}
 		}
@@ -52,13 +52,19 @@ class ZSmallMapControlsView : ZButtonsView, ZTooltips {
 	@objc private func handleButtonPress(_ button: ZButton) {
 		if  let    type = button.modeButtonType {
 			switch type {
-				case .tMode:    gSmallMapMode    = gIsRecentlyMode     ? .favorites : .recent
-				case .tGrow:    gListGrowthMode  = gListsGrowDown      ? .up        : .down
 				case .tConfine: gConfinementMode = gBrowsingIsConfined ? .all       : .list
+				case .tGrow:    gListGrowthMode  = gListsGrowDown      ? .up        : .down
+				case .tDB:      swapDB()
 			}
 		}
 
 		gSignal([.sDetails])
+	}
+
+	func swapDB() {
+		gMapController?.toggleMaps()
+		gRedrawMaps()
+		gBreadcrumbsView?.setupAndRedraw()
 	}
 
 	func update() {

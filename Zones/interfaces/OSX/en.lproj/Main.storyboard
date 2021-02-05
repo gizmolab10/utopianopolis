@@ -1093,7 +1093,7 @@ CA
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1018" y="596"/>
+            <point key="canvasLocation" x="1018" y="489"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -1263,33 +1263,21 @@ CA
             <objects>
                 <viewController id="auf-AV-5qA" customClass="ZBreadcrumbsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="W43-uk-txK">
-                        <rect key="frame" x="0.0" y="0.0" width="397" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="397" height="34"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Tsd-bp-vCV" customClass="ZBreadcrumbsView" customModule="Seriously">
-                                <rect key="frame" x="38" y="0.0" width="329" height="44"/>
+                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rct-nF-Qx4" customClass="ZMapControlsView" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="12" y="0.0" width="120" height="34"/>
+                            </customView>
+                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tsd-bp-vCV" customClass="ZBreadcrumbsView" customModule="Seriously">
+                                <rect key="frame" x="140" y="0.0" width="227" height="34"/>
                                 <connections>
                                     <outlet property="clipCrumbsButton" destination="Ch1-Y5-6sD" id="dTT-6R-3f5"/>
-                                    <outlet property="dbIndicatorButton" destination="NE4-u7-LbG" id="MRg-AD-bLH"/>
+                                    <outlet property="mapControls" destination="Rct-nF-Qx4" id="q3z-Vs-1n7"/>
                                 </connections>
                             </customView>
-                            <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NE4-u7-LbG" userLabel="Database Indicator Button" customClass="ZButton">
-                                <rect key="frame" x="5" y="8" width="28" height="28"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="22" id="Pok-6B-yNW"/>
-                                    <constraint firstAttribute="width" secondItem="NE4-u7-LbG" secondAttribute="height" id="Vdj-CJ-Ftt"/>
-                                </constraints>
-                                <buttonCell key="cell" type="round" bezelStyle="circular" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Xlt-c5-ToV">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <color key="contentTintColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
-                                <connections>
-                                    <action selector="handleDatabaseIndicatorAction:" target="Tsd-bp-vCV" id="5Pe-QH-aPB"/>
-                                </connections>
-                            </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ch1-Y5-6sD" userLabel="Crumbs Clipper Button">
-                                <rect key="frame" x="375" y="15" width="14" height="14"/>
+                                <rect key="frame" x="375" y="10" width="14" height="14"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="Ch1-Y5-6sD" secondAttribute="height" multiplier="1:1" id="LnI-A6-9C4"/>
                                     <constraint firstAttribute="height" constant="14" id="N1c-fL-mHS"/>
@@ -1304,23 +1292,25 @@ CA
                             </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="NE4-u7-LbG" firstAttribute="centerY" secondItem="W43-uk-txK" secondAttribute="centerY" id="1aR-2m-2Nw"/>
                             <constraint firstAttribute="bottom" secondItem="Tsd-bp-vCV" secondAttribute="bottom" id="AKv-Ds-L1t"/>
+                            <constraint firstItem="Tsd-bp-vCV" firstAttribute="leading" secondItem="Rct-nF-Qx4" secondAttribute="trailing" constant="8" symbolic="YES" id="HiY-iR-4xY"/>
+                            <constraint firstAttribute="bottom" secondItem="Rct-nF-Qx4" secondAttribute="bottom" id="J2Z-Qh-c5W"/>
                             <constraint firstItem="Tsd-bp-vCV" firstAttribute="top" secondItem="W43-uk-txK" secondAttribute="top" id="L4M-7I-D1m"/>
-                            <constraint firstItem="Tsd-bp-vCV" firstAttribute="leading" secondItem="NE4-u7-LbG" secondAttribute="trailing" constant="8" id="LH2-wh-WKl"/>
                             <constraint firstAttribute="trailing" secondItem="Ch1-Y5-6sD" secondAttribute="trailing" constant="8" id="cGO-ML-08P"/>
+                            <constraint firstItem="Rct-nF-Qx4" firstAttribute="top" secondItem="W43-uk-txK" secondAttribute="top" id="fM7-oW-R7E"/>
+                            <constraint firstItem="Rct-nF-Qx4" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" constant="12" id="pEC-Vf-EOD"/>
                             <constraint firstItem="Tsd-bp-vCV" firstAttribute="centerY" secondItem="Ch1-Y5-6sD" secondAttribute="centerY" id="wK4-qA-1u4"/>
                             <constraint firstItem="Ch1-Y5-6sD" firstAttribute="leading" secondItem="Tsd-bp-vCV" secondAttribute="trailing" constant="8" id="wo6-JH-Nmp"/>
-                            <constraint firstItem="NE4-u7-LbG" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" constant="8" id="zwc-24-JQy"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="crumbsView" destination="Tsd-bp-vCV" id="fft-Kp-cJu"/>
+                        <outlet property="mapControls" destination="Rct-nF-Qx4" id="nMh-Ci-8YU"/>
                     </connections>
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1018" y="480"/>
+            <point key="canvasLocation" x="1018" y="596"/>
         </scene>
         <!--Startup Controller-->
         <scene sceneID="r3B-ju-S2a">

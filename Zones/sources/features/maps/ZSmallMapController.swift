@@ -22,7 +22,6 @@ class ZSmallMapController: ZMapController {
 	override  var controllerID : ZControllerID { return .idSmallMap }
 	override  var allowedKinds : [ZSignalKind] { return [.sDetails, .sSmallMap, .sRelayout] }
 	var            isRecentMap : Bool          { return rootWidget.widgetZone?.isInRecents ?? gIsRecentlyMode }
-	@IBOutlet var controlsView : ZSmallMapControlsView?
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
 		if  let c = gDetailsController, !c.hideableIsHidden(for: .SmallMap) { // don't send signal to a hidden favorites controller
@@ -32,13 +31,13 @@ class ZSmallMapController: ZMapController {
 	}
 
 	func update() {
-		controlsView?.update()
+		gBreadcrumbsController?.mapControls?.update()
 		gCurrentSmallMapRecords?.updateCurrentForMode()
 	}
 
 	override func startup() {
 		setup() // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
-		controlsView?.setupAndRedraw()
+		gBreadcrumbsController?.mapControls?.setupAndRedraw()
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled

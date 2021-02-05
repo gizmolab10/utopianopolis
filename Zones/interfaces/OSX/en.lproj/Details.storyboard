@@ -162,15 +162,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kS3-7c-58G" customClass="ZSmallMapControlsView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="1" y="122" width="283" height="34"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="283" id="AuQ-AE-fcg"/>
-                                    <constraint firstAttribute="height" constant="34" id="GCF-mB-PQM"/>
-                                </constraints>
-                            </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="FRa-h5-v7h">
-                                <rect key="frame" x="0.0" y="0.0" width="285" height="122"/>
+                                <rect key="frame" x="0.0" y="0.0" width="285" height="148"/>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="3xG-CQ-dra" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="285" height="156"/>
@@ -193,22 +186,19 @@
                             <constraint firstAttribute="bottom" secondItem="pEz-hB-ZvT" secondAttribute="bottom" id="7Vv-Hc-ISd"/>
                             <constraint firstItem="pEz-hB-ZvT" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="9YU-xa-4nm"/>
                             <constraint firstItem="YCv-YN-HVE" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="Af1-M9-9OB"/>
-                            <constraint firstItem="kS3-7c-58G" firstAttribute="centerX" secondItem="sgs-hY-cUq" secondAttribute="centerX" id="L14-a3-3yY"/>
                             <constraint firstAttribute="trailing" secondItem="pEz-hB-ZvT" secondAttribute="trailing" id="SKZ-ji-sE6"/>
                             <constraint firstAttribute="trailing" secondItem="YCv-YN-HVE" secondAttribute="trailing" id="a2P-j8-F0d"/>
                             <constraint firstAttribute="bottom" secondItem="YCv-YN-HVE" secondAttribute="bottom" id="aEx-6M-ttW"/>
                             <constraint firstAttribute="trailing" secondItem="FRa-h5-v7h" secondAttribute="trailing" id="anl-8G-OBK"/>
-                            <constraint firstItem="kS3-7c-58G" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="aou-dg-bcN"/>
                             <constraint firstItem="3xG-CQ-dra" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="gDx-V3-9PN"/>
                             <constraint firstAttribute="bottom" secondItem="3xG-CQ-dra" secondAttribute="bottom" id="hjb-iU-3cR"/>
                             <constraint firstItem="3xG-CQ-dra" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="jaH-Xg-XGH"/>
                             <constraint firstAttribute="trailing" secondItem="3xG-CQ-dra" secondAttribute="trailing" id="ofj-T5-wKY"/>
-                            <constraint firstItem="FRa-h5-v7h" firstAttribute="top" secondItem="kS3-7c-58G" secondAttribute="bottom" id="pFY-uT-HrG"/>
                             <constraint firstItem="FRa-h5-v7h" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="s1F-Gw-z12"/>
+                            <constraint firstItem="FRa-h5-v7h" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" constant="8" id="td8-bl-RRq"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="controlsView" destination="kS3-7c-58G" id="miP-Fo-nXp"/>
                         <outlet property="dragView" destination="3xG-CQ-dra" id="FB9-1c-2ut"/>
                         <outlet property="ideaContextualMenu" destination="VWK-W7-ztK" id="Da8-5x-01f"/>
                         <outlet property="mapView" destination="FRa-h5-v7h" id="Et8-Od-MJs"/>
@@ -364,7 +354,7 @@ CA
                 </menu>
                 <customObject id="834-xy-QTs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-114" y="1800"/>
+            <point key="canvasLocation" x="-114.5" y="1800"/>
         </scene>
         <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
