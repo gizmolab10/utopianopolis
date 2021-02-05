@@ -12,7 +12,6 @@ enum ZModeButtonType: String {
 	case tConfine = "browse"
 	case tGrow    = "grow"
 	case tMode    = "mode"
-	case tAdd     = "add"
 }
 
 class ZSmallMapControlsView : ZButtonsView, ZTooltips {
@@ -22,14 +21,9 @@ class ZSmallMapControlsView : ZButtonsView, ZTooltips {
 	override func setupButtons() {
 		removeButtons()
 
-		var types: [ZModeButtonType] = [.tMode, .tGrow, .tConfine]
-		buttons                      = [ZButton]()
-
-		if !gIsRecentlyMode {
-			types.insert(.tAdd, at: 1)
-		}
-
-		for type in types {
+		buttons                   = [ZButton]()
+		let t : [ZModeButtonType] = [.tMode, .tGrow, .tConfine]
+		for type in t {
 			let             title = type.rawValue
 			let            button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
 			button.modeButtonType = type
@@ -48,9 +42,8 @@ class ZSmallMapControlsView : ZButtonsView, ZTooltips {
 			if  let    type = button.modeButtonType {
 				switch type {
 					case .tConfine: button.title = gConfinementMode.rawValue
-					case .tMode:    button.title = "Show \(gIsRecentlyMode ? "Favorites" : "Recents")"
 					case .tGrow:    button.title = gListGrowthMode .rawValue
-					case .tAdd:     button.title = "+"
+					case .tMode:    button.title = "Switch"
 				}
 			}
 		}
@@ -59,7 +52,6 @@ class ZSmallMapControlsView : ZButtonsView, ZTooltips {
 	@objc private func handleButtonPress(_ button: ZButton) {
 		if  let    type = button.modeButtonType {
 			switch type {
-				case .tAdd:     gFavoritesHereMaybe?.addIdea()
 				case .tMode:    gSmallMapMode    = gIsRecentlyMode     ? .favorites : .recent
 				case .tGrow:    gListGrowthMode  = gListsGrowDown      ? .up        : .down
 				case .tConfine: gConfinementMode = gBrowsingIsConfined ? .all       : .list

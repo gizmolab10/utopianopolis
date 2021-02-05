@@ -411,7 +411,6 @@ extension NSView {
     func setNeedsLayout () { needsLayout  = true }
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
 
-    
     func setShortestDimension(to: CGFloat) {
         if  frame.size.width  < frame.size.height {
             frame.size.width  = to
@@ -419,7 +418,6 @@ extension NSView {
             frame.size.height = to
         }
     }
-    
 
     @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
         let                            gesture = ZKeyPanGestureRecognizer(target: target, action: action)
@@ -443,7 +441,6 @@ extension NSView {
         return gesture
     }
     
-    
     func scale(for isHorizontal: Bool) -> Double {
         let       length = Double(isHorizontal ? bounds.size.width : bounds.size.height)
         let     dividend = 7200.0 * (isHorizontal ? 8.5 : 6.0) // (inches) * 72 (dpi) * 100 (percent)
@@ -451,7 +448,6 @@ extension NSView {
 
         return scale
     }
-
     
     var scale: Double {
         let wScale = scale(for: true)

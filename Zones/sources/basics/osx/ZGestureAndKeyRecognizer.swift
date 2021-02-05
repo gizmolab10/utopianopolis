@@ -18,7 +18,6 @@ import Foundation
 
 class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
 
-
     var modifiers: ZEventFlags?
     override var isShiftDown:   Bool { return modifiers?.contains(.shift)   ?? false }
     override var isOptionDown:  Bool { return modifiers?.contains(.option)  ?? false }
@@ -30,7 +29,6 @@ class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
 
         super.reset()
     }
-
 
     override open func mouseDown (with event: ZEvent) {
         super.mouseDown (with: event)
@@ -39,22 +37,18 @@ class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
 
 }
 
-
 class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
-
 
     var modifiers: ZEventFlags?
     override var isShiftDown:   Bool { return modifiers?.contains(.shift)   ?? false }
     override var isOptionDown:  Bool { return modifiers?.contains(.option)  ?? false }
     override var isCommandDown: Bool { return modifiers?.contains(.command) ?? false }
 
-
     override open func reset() {
         modifiers = nil
 
         super.reset()
     }
-
 
     override open func mouseDown (with event: ZEvent) {
 		modifiers = event.modifierFlags

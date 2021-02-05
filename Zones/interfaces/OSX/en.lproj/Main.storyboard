@@ -933,7 +933,7 @@ CA
                                     <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
                                 </connections>
                             </containerView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Banner View">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Top Bar View">
                                 <rect key="frame" x="34" y="256" width="323" height="44"/>
                                 <subviews>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View">

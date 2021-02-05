@@ -14,11 +14,11 @@
 
 var gMainController: ZMainController? { return gControllers.controllerForID(.idMain) as? ZMainController }
 
-class ZMainController: ZGenericController {
+class ZMainController: ZGesturesController {
 
 	@IBOutlet var detailsWidth      : NSLayoutConstraint?
 	@IBOutlet var hamburgerButton   : ZButton?
-    @IBOutlet var searchResultsView : ZView?
+	@IBOutlet var searchResultsView : ZView?
 	@IBOutlet var permissionView    : ZView?
 	@IBOutlet var searchBoxView     : ZView?
     @IBOutlet var detailView        : ZView?
@@ -29,6 +29,7 @@ class ZMainController: ZGenericController {
 	override func setup() {
 		searchResultsView?.isHidden = true
 		searchBoxView?    .isHidden = true
+		view.gestureHandler         = self
 
 		update()
 	}
@@ -43,6 +44,13 @@ class ZMainController: ZGenericController {
 		hamburgerButton?.toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
 		detailsWidth?  .constant =  gShowDetailsView ? 226.0 :  0.0
 		detailView?    .isHidden = !gShowDetailsView
+	}
+
+	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
+		if  gIsNoteMode {
+			gEssayView?.save()
+			gControllers.swapMapAndEssay(force: .mapsMode)
+		}
 	}
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {

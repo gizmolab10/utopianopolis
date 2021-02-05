@@ -317,7 +317,7 @@ class ZMapEditor: ZBaseEditor {
 
 		gCurrentSmallMapRecords?.revealBookmark(of: gHere)
 
-		gSignal([.sDetails])
+		gSignal([.sDetails, .sSmallMap])
 	}
 
 	func addSibling(_ OPTION: Bool) {

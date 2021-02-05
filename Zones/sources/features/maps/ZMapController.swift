@@ -50,10 +50,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
     override func setup() {
-		gestureView                       = dragView // do this before calling super setup, which uses gesture view
-		view      .layer?.backgroundColor = kClearColor.cgColor
-		dragView? .layer?.backgroundColor = kClearColor.cgColor
-		mapView?.layer?.backgroundColor = kClearColor.cgColor
+		gestureView                      = dragView // do this before calling super setup, which uses gesture view
+		view     .layer?.backgroundColor = kClearColor.cgColor
+		dragView?.layer?.backgroundColor = kClearColor.cgColor
+		mapView? .layer?.backgroundColor = kClearColor.cgColor
 
 		super.setup()
 		platformSetup()

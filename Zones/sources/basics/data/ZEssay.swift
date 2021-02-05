@@ -72,18 +72,6 @@ class ZEssay: ZNote {
 		return result
 	}
 
-	static func swobject(for id: String) -> NSObject? {
-		if  let       zone = gRemoteStorage.maybeZoneForRecordName(id),
-			zone.hasTrait(for: .tNote) {
-			let       note = ZNote(zone)
-			zone.noteMaybe = note
-
-			return note
-		}
-
-		return nil
-	}
-
 	override func setupChildren() {
 		if  gCreateCombinedEssay {
 			children.removeAll()

@@ -486,7 +486,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					resetCurrentEssay(zone.note)
 				}
 			} else if count > 0,
-				let note = zone.currentNote {
+				let note = selectionZone?.currentNote {
 				resetCurrentEssay(note)
 			}
 		}

@@ -105,26 +105,29 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		static let       wAll = ZWorkType(rawValue: 0x0008)  // everything
 	}
 
-	func zones(of type: ZWorkType) -> ZoneArray {
-		@discardableResult func matchesType(_ iZone: Zone) -> Bool {
-			return (type.contains(.wNotemarks) && iZone.bookmarkTarget?.hasNote ?? false)
-				|| (type.contains(.wBookmarks) && iZone.isBookmark)
-				||  type.contains(.wAll)
-		}
+	@discardableResult func matches(_ type: ZWorkType) -> Bool {
+		return (type.contains(.wNotemarks) && bookmarkTarget?.hasNote ?? false)
+			|| (type.contains(.wBookmarks) && isBookmark)
+	}
 
+	func zones(of type: ZWorkType) -> ZoneArray {
+		var result = ZoneArray()
 		if  type.contains(.wAll) {
-			var result = ZoneArray()
 			traverseAllProgeny { iZone in
-				if  matchesType(iZone) {
+				result.append(iZone)
+			}
+		} else if type.contains(.wProgeny) {
+			traverseAllProgeny { iZone in
+				if  iZone.matches(type) {
 					result.append(iZone)
 				}
 			}
-			return result
 		} else {
-			return children.filter { (iZone) -> Bool in
-				return matchesType(iZone)
+			result = children.filter { (iZone) -> Bool in
+				iZone.matches(type)
 			}
 		}
+		return result
 	}
 
 	var    bookmarks       : ZoneArray { return zones(of:  .wBookmarks) }
