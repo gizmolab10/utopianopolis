@@ -67,13 +67,13 @@ extension ZRecord {
 
 }
 
-extension ZStartHereButton {
+extension ZSimpleToolButton {
 
 	var tooltipString : String? {
 		if  gShowToolTips,
 			let    buttonID = startHereID {
 			let   canTravel = gIsMapMode && gGrabbedCanTravel
-			let       flags = gStartHereController?.flags
+			let       flags = gSimpleToolsController?.flags
 			let       SHIFT = flags?.isShift   ?? false
 			let    	 OPTION = flags?.isOption  ?? false
 			let    	CONTROL = flags?.isControl ?? false
@@ -111,7 +111,7 @@ extension ZBox {
 	var tooltipString : String? {
 		if  gShowToolTips,
 			let  boxID = startHereID {
-			let  flags = gStartHereController?.flags
+			let  flags = gSimpleToolsController?.flags
 			let  SHIFT = flags?.isShift  ?? false
 			let OPTION = flags?.isOption ?? false
 
@@ -126,11 +126,11 @@ extension ZBox {
 
 }
 
-extension ZStartHereController {
+extension ZSimpleToolsController {
 
 	func updateTooltips() {
 		view.applyToAllSubviews { subview in
-			if  let     button  = subview as? ZStartHereButton {
+			if  let     button  = subview as? ZSimpleToolButton {
 				let     string  = button.tooltipString
 				button.toolTip  = string
 			} else if  let box  = subview as? ZBox {

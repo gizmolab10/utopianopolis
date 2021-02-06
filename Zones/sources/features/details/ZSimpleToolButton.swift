@@ -8,9 +8,9 @@
 
 import Foundation
 
-class ZStartHereButton: ZButton {
+class ZSimpleToolButton: ZButton {
 
-	@IBOutlet var controller: ZStartHereController?
+	@IBOutlet var controller: ZSimpleToolsController?
 	var downTitle = ""
 	var   upTitle = ""
 

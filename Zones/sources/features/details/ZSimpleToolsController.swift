@@ -20,9 +20,9 @@ import UIKit
 //                                                        //
 // ////////////////////////////////////////////////////// //
 
-var gStartHereController: ZStartHereController? { return gControllers.controllerForID(.idStartHere) as? ZStartHereController }
+var gSimpleToolsController: ZSimpleToolsController? { return gControllers.controllerForID(.idStartHere) as? ZSimpleToolsController }
 
-class ZStartHereController: ZGenericController, ZTooltips {
+class ZSimpleToolsController: ZGenericController, ZTooltips {
 
 	override var controllerID : ZControllerID { return .idStartHere }
 	var            isRelocate :   Bool { return flags.isOption  && !gIsEditing }
@@ -32,9 +32,9 @@ class ZStartHereController: ZGenericController, ZTooltips {
 	var            swapDBText : String { return "switch to \(gIsMine ? "everyone's" : "my") ideas" }
 	var           expandMaybe : String { return isMixed ? "expand selection " : "" }
 	var                 flags = ZEventFlags()
-	var        buttonsByID    = [ZStartHereID  :  ZStartHereButton]()
+	var        buttonsByID    = [ZStartHereID  :  ZSimpleToolButton]()
 	var          boxesByID    = [ZStartHereID  :  ZBox]()
-	func       buttonFor(_ id :  ZStartHereID) -> ZStartHereButton? { return buttonsByID[id] }
+	func       buttonFor(_ id :  ZStartHereID) -> ZSimpleToolButton? { return buttonsByID[id] }
 	func          boxFor(_ id :  ZStartHereID) -> ZBox?             { return boxesByID  [id] }
 
 	func updateBoxesAndButtons() {
@@ -60,7 +60,7 @@ class ZStartHereController: ZGenericController, ZTooltips {
 		boxFor   (.edit)?       .title =  gIsEditing       ? "Stop Editing" : "Edit"
 	}
 
-	@IBAction func buttonAction(_ button: ZStartHereButton) {
+	@IBAction func buttonAction(_ button: ZSimpleToolButton) {
 		update()
 
 		if  let itemID = button.startHereID,
@@ -80,7 +80,7 @@ class ZStartHereController: ZGenericController, ZTooltips {
 			if  let         box       = subview as? ZBox,
 				let         boxID     = box.startHereID {
 				boxesByID  [boxID]    = box
-			} else if let   button    = subview as? ZStartHereButton,
+			} else if let   button    = subview as? ZSimpleToolButton,
 				let         buttonID  = button.startHereID {
 				buttonsByID[buttonID] = button
 
@@ -89,7 +89,7 @@ class ZStartHereController: ZGenericController, ZTooltips {
 		}
 	}
 
-	func setAutoRepeat(for button: ZStartHereButton) {
+	func setAutoRepeat(for button: ZSimpleToolButton) {
 		let autorepeaters: [ZStartHereID] = [.up, .down, .right, .left]
 		if  let                    buttonID  = button.startHereID,
 			autorepeaters.contains(buttonID) {
