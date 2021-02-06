@@ -20,17 +20,17 @@ import UIKit
 //                                                        //
 // ////////////////////////////////////////////////////// //
 
+var gStartHereController: ZStartHereController? { return gControllers.controllerForID(.idStartHere) as? ZStartHereController }
+
 class ZStartHereController: ZGenericController, ZTooltips {
 
 	override var controllerID : ZControllerID { return .idStartHere }
-	var                isHere :   Bool { return gSelecting.currentMovableMaybe == gHere }
-	var                isMine :   Bool { return gDatabaseID == .mineID }
-	var             isEditing :   Bool { return gIsEditIdeaMode || gIsNoteMode }
-	var            isRelocate :   Bool { return flags.isOption  && !isEditing }
-	var              showHide :   Bool { return flags.isShift   && !isEditing && !flags.isOption }
+	var            isRelocate :   Bool { return flags.isOption  && !gIsEditing }
+	var               isMixed :   Bool { return flags.isShift   && !gIsEditing && !flags.isOption }
 	var            canUnfocus :   Bool { return flags.isControl && (gRecentsRoot?.children.count ?? 0) > 1 }
-	var             canTravel :   Bool { return gIsMapMode && (gSelecting.currentMovableMaybe?.isBookmark ?? false) }
-	var            swapDBText : String { return "switch to \(isMine ? "everyone's" : "my") ideas" }
+	var             canTravel :   Bool { return gIsMapMode && gGrabbedCanTravel }
+	var            swapDBText : String { return "switch to \(gIsMine ? "everyone's" : "my") ideas" }
+	var           expandMaybe : String { return isMixed ? "expand selection " : "" }
 	var                 flags = ZEventFlags()
 	var        buttonsByID    = [ZStartHereID  :  ZStartHereButton]()
 	var          boxesByID    = [ZStartHereID  :  ZBox]()
@@ -49,13 +49,15 @@ class ZStartHereController: ZGenericController, ZTooltips {
 		boxFor   (.edit)?    .isHidden =  gIsSearchMode || gIsNoteMode
 		boxFor   (.add)?     .isHidden =  gIsSearchMode || gIsNoteMode
 		buttonFor(.swapDB)?     .title =  swapDBText
-		buttonFor(.sibling)?    .title =  flags.isOption ? "parent"       : "sibling"
-		buttonFor(.left)?       .title =  showHide       ? "hide"         : "left"
-		buttonFor(.right)?      .title =  showHide       ? "show"         : canTravel ? "travel"    : "right"
-		buttonFor(.focus)?      .title =  canUnfocus     ? "unfocus"      : canTravel ? "travel"    :                       isHere ? "favorite" : "focus"
-		buttonFor(.tooltip)?    .title = (gShowToolTips  ? "hide"         : "show") +  " tooltips"
-		boxFor   (.move)?       .title = (isRelocate     ? "Relocate"     : showHide  ? "Show/Hide" : "Browse") + (flags.isCommand ? " to end"  : "")
-		boxFor   (.edit)?       .title =  isEditing      ? "Stop Editing" : "Edit"
+		buttonFor(.sibling)?    .title =  flags.isOption   ? "parent"       : "sibling"
+		buttonFor(.up)?         .title =  expandMaybe      + "up"
+		buttonFor(.down)?       .title =  expandMaybe      + "down"
+		buttonFor(.left)?       .title =  isMixed          ? "conceal"      : "left"
+		buttonFor(.right)?      .title =  isMixed          ? "reveal"       : canTravel ? "travel" : "right"
+		buttonFor(.focus)?      .title =  canUnfocus       ? "unfocus"      : canTravel ? "travel" : gIsHere ? gCurrentSmallMapName : "focus"
+		buttonFor(.tooltip)?    .title = (gShowToolTips    ? "dis"          : "en")     + "able tooltips"
+		boxFor   (.move)?       .title = (isRelocate       ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.isCommand ? " to end"  : "")
+		boxFor   (.edit)?       .title =  gIsEditing       ? "Stop Editing" : "Edit"
 	}
 
 	@IBAction func buttonAction(_ button: ZStartHereButton) {
@@ -68,14 +70,6 @@ class ZStartHereController: ZGenericController, ZTooltips {
 		}
 	}
 
-	@IBAction func toggleTooltipsAction(_ button: ZButton) {
-		gShowToolTips = (button.state == .on)
-
-		FOREGROUND {
-			gSignal([.sRelayout])
-		}
-	}
-
 	override func startup() {
 
 		// //////////////////////////////////// //
@@ -83,9 +77,9 @@ class ZStartHereController: ZGenericController, ZTooltips {
 		// //////////////////////////////////// //
 
 		view.applyToAllSubviews { subview in
-			if  let            box    = subview as? ZBox,
-				let            boxID  = box.startHereID {
-				boxesByID     [boxID] = box
+			if  let         box       = subview as? ZBox,
+				let         boxID     = box.startHereID {
+				boxesByID  [boxID]    = box
 			} else if let   button    = subview as? ZStartHereButton,
 				let         buttonID  = button.startHereID {
 				buttonsByID[buttonID] = button

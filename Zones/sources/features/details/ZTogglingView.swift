@@ -35,7 +35,7 @@ class ZTogglingView: NSStackView {
 		switch identity {
 			case .Preferences : return "preference controls"
 			case .StartHere   : return "basic buttons to get you started"
-			case .SmallMap    : return "\(gIsRecentlyMode ? "recents" : "favorites") map"
+			case .SmallMap    : return "\(gCurrentSmallMapName)s map"
 			case .Data        : return "useful data about Seriously"
 			default           : return ""
 		}

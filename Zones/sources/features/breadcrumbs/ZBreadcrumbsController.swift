@@ -26,7 +26,8 @@ class ZBreadcrumbsController: ZGenericController {
 	override  var controllerID : ZControllerID { return .idCrumbs     }
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-		crumbsView?.setupAndRedraw()
+		crumbsView? .setupAndRedraw()
+		mapControls?.setupAndRedraw()
 	}
 
 	@IBAction func search(_ sender: ZButton) {

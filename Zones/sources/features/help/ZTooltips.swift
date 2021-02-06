@@ -67,29 +67,75 @@ extension ZRecord {
 
 }
 
+extension ZStartHereButton {
+
+	var tooltipString : String? {
+		if  gShowToolTips,
+			let    buttonID = startHereID {
+			let   canTravel = gIsMapMode && gGrabbedCanTravel
+			let       flags = gStartHereController?.flags
+			let       SHIFT = flags?.isShift   ?? false
+			let    	 OPTION = flags?.isOption  ?? false
+			let    	CONTROL = flags?.isControl ?? false
+			let     addANew = "adds a new idea as "
+			let     editing = (!gIsEditing ? "edits" : "stops editing and save to")
+			let notMultiple = gSelecting.currentGrabs.count < 2
+			let   adjective = notMultiple ? "" : "\(gListsGrowDown ? "bottom" : "top")- or left-most "
+			let currentIdea = " the \(adjective)currently selected idea"
+			let     unfocus = "from \(gCurrentSmallMapName)s, remove bookmark targeting"
+			let       focus = (gIsHere ? "creates a \(gCurrentSmallMapName) from" : (canTravel ? "travel to target of" : "focus on"))
+			let    forFocus = CONTROL ? unfocus  : focus
+			let  forSibling = OPTION  ? "parent" : "sibling"
+
+			switch buttonID {
+				case .sibling: return addANew  + forSibling + " to" + currentIdea
+				case .child:   return addANew  + "child to"         + currentIdea
+				case .note:    return editing  + " the note of"     + currentIdea
+				case .idea:    return editing                       + currentIdea
+				case .focus:   return forFocus                      + currentIdea
+				case .up,
+					 .down:    break
+				case .left,
+					 .right:   break
+				default:       break
+			}
+		}
+
+		return nil
+	}
+
+}
+
+extension ZBox {
+
+	var tooltipString : String? {
+		if  gShowToolTips,
+			let  boxID = startHereID {
+			let  flags = gStartHereController?.flags
+			let  SHIFT = flags?.isShift  ?? false
+			let OPTION = flags?.isOption ?? false
+
+			switch boxID {
+				case .move: return SHIFT && !OPTION ? "horizontal arrows conceal and reveal, vertical arrows expand selection" : (OPTION ? "relocate" : "browse to next") + " selected idea"
+				default:    break
+			}
+		}
+
+		return nil
+	}
+
+}
+
 extension ZStartHereController {
 
 	func updateTooltips() {
-		view.applyToAllSubviews {     subview in
-			if  let        button   = subview as? ZStartHereButton {
-				button     .toolTip = nil
-				if  gShowToolTips,
-					let    buttonID = button.startHereID {
-					let     addANew = "adds a new idea as "
-					let     editing = (!isEditing ? "edits" : "stops editing and save to")
-					let notMultiple = gSelecting.currentGrabs.count < 2
-					let   adjective = notMultiple ? "" : "\(gListsGrowDown ? "bottom" : "top")- or left-most "
-					let currentIdea = " the \(adjective)currently selected idea"
-
-					switch buttonID {
-						case .focus:   button.toolTip = (isHere ? "creates favorite from" : (canTravel ? "travel to target of" : "focus on")) + currentIdea
-						case .sibling: button.toolTip = addANew  + "\(flags.isOption ? "parent" : "sibling") to"                                        + currentIdea
-						case .child:   button.toolTip = addANew  + "child to"                                                                           + currentIdea
-						case .note:    button.toolTip = editing  + " the note of"                                                                       + currentIdea
-						case .idea:    button.toolTip = editing                                                                                        + currentIdea
-						default:       break
-					}
-				}
+		view.applyToAllSubviews { subview in
+			if  let     button  = subview as? ZStartHereButton {
+				let     string  = button.tooltipString
+				button.toolTip  = string
+			} else if  let box  = subview as? ZBox {
+				let     string  = box.tooltipString
+				box.toolTip     = string
 			}
 		}
 	}

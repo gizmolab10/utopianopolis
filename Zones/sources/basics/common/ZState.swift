@@ -49,8 +49,12 @@ var                 gExpanded:          [String]?
 
 var                   gIsDark:               Bool { return gDarkMode == .Dark }
 var                   gIsLate:               Bool { return gBatches.isLate }
+var                   gIsHere:               Bool { return gSelecting.currentMovableMaybe == gHere }
+var                   gIsMine:               Bool { return gDatabaseID == .mineID }
+var                gIsEditing:               Bool { return gIsEditIdeaMode || gIsNoteMode }
 var               gIsDragging:               Bool { return gDraggedZone != nil }
 var          gIsHelpFrontmost:               Bool { return gHelpWindow?.isKeyWindow ?? false }
+var         gGrabbedCanTravel:               Bool { return gSelecting.currentMovableMaybe?.isBookmark ?? false }
 var       gBrowsingIsConfined:               Bool { return gConfinementMode == .list }
 var           gIsRecentlyMode:               Bool { return gSmallMapMode    == .recent }
 var            gListsGrowDown:               Bool { return gListGrowthMode  == .down }
@@ -63,6 +67,7 @@ var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIde
 var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsNoteMode || gIsStartupMode }
 var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEditIdeaMode }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
+var      gCurrentSmallMapName:             String { return gIsRecentlyMode ? "recent" : "favorite" }
 var   gCurrentSmallMapRecords:  ZSmallMapRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
 var                  gRecords:          ZRecords? { return (kIsPhone && gShowSmallMapForIOS) ? gCurrentSmallMapRecords : gCloud }
 var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
