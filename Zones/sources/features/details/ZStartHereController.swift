@@ -35,7 +35,7 @@ class ZStartHereController: ZGenericController, ZTooltips {
 	var        buttonsByID    = [ZStartHereID  :  ZStartHereButton]()
 	var          boxesByID    = [ZStartHereID  :  ZBox]()
 	func       buttonFor(_ id :  ZStartHereID) -> ZStartHereButton? { return buttonsByID[id] }
-	func          boxFor(_ id :  ZStartHereID) -> ZBox?                { return boxesByID  [id] }
+	func          boxFor(_ id :  ZStartHereID) -> ZBox?             { return boxesByID  [id] }
 
 	func updateBoxesAndButtons() {
 
@@ -53,6 +53,7 @@ class ZStartHereController: ZGenericController, ZTooltips {
 		buttonFor(.left)?       .title =  showHide       ? "hide"         : "left"
 		buttonFor(.right)?      .title =  showHide       ? "show"         : canTravel ? "travel"    : "right"
 		buttonFor(.focus)?      .title =  canUnfocus     ? "unfocus"      : canTravel ? "travel"    :                       isHere ? "favorite" : "focus"
+		buttonFor(.tooltip)?    .title = (gShowToolTips  ? "hide"         : "show") +  " tooltips"
 		boxFor   (.move)?       .title = (isRelocate     ? "Relocate"     : showHide  ? "Show/Hide" : "Browse") + (flags.isCommand ? " to end"  : "")
 		boxFor   (.edit)?       .title =  isEditing      ? "Stop Editing" : "Edit"
 	}
@@ -64,6 +65,14 @@ class ZStartHereController: ZGenericController, ZTooltips {
 			let    key = keyFrom(itemID) {
 
 			gMainWindow?.handleKey(key, flags: flags)    // this is so cool, ;-)
+		}
+	}
+
+	@IBAction func toggleTooltipsAction(_ button: ZButton) {
+		gShowToolTips = (button.state == .on)
+
+		FOREGROUND {
+			gSignal([.sRelayout])
 		}
 	}
 
@@ -129,6 +138,7 @@ class ZStartHereController: ZGenericController, ZTooltips {
 		switch from {
 			case .note:    return "n"
 			case .focus:   return "/"
+			case .tooltip: return "y"
 			case .sibling: return kTab
 			case .swapDB:  return kBackSlash
 			case .child:   return kSpace

@@ -22,7 +22,7 @@ class ZContextualMenu: NSMenu {
 		switch key {
 			case "c": gMapController?.recenter()
 			case "k": gColorfulMode = !gColorfulMode; gSignal([.sDatum])
-			case "y": gShowToolTips = !gShowToolTips; gSignal([.sRelayout])
+			case "y": gToggleShowTooltips()
 			case kEquals,
 				 "-": gMapEditor.updateSize(up: key == kEquals)
 			default:  break

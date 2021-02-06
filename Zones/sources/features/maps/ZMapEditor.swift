@@ -130,6 +130,7 @@ class ZMapEditor: ZBaseEditor {
 						case "v":        if COMMAND { paste() }
 						case "w":        rotateWritable()
 						case "x":        if COMMAND { delete(permanently: SPECIAL && isWindow) } else { gCurrentKeyPressed = nil; return false }
+						case "y":        gToggleShowTooltips()
 						case "z":        if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
 						case "+":        divideChildren()
 						case "-":        return handleHyphen(COMMAND, OPTION)

@@ -86,6 +86,7 @@ var             gSmallMapFont:              ZFont { return .systemFont    (ofSiz
 var               gWidgetFont:              ZFont { return .systemFont    (ofSize: gFontSize) }
 var                 gTinyFont:              ZFont { return .systemFont    (ofSize: gFontSize * kSmallMapReduction * kSmallMapReduction) }
 
+func      gToggleShowTooltips()                   { gShowToolTips = !gShowToolTips; gSignal([.sRelayout]) }
 func        gToggleDatabaseID()                   { gDatabaseID = gOtherDatabaseID }
 func         gSetEditIdeaMode()                   { gWorkMode = .editIdeaMode }
 func             gSetMapsMode()                   { gWorkMode = .mapsMode }

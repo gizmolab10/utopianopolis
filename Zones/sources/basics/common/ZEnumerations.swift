@@ -60,6 +60,7 @@ enum ZStartHereID: String {
 	case command = "command"
 	case control = "control"
 	case sibling = "sibling"
+	case tooltip = "tooltip"
 }
 
 enum ZMenuType: Int {

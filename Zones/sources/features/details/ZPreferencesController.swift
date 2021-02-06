@@ -22,7 +22,6 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var   backgroundColorBox : ZColorWell?
     @IBOutlet var   activeMineColorBox : ZColorWell?
 	@IBOutlet var         zoneColorBox : ZColorWell?
-	@IBOutlet var   showTooltipsButton : ZButton?
     @IBOutlet var     clearColorButton : ZButton?
     @IBOutlet var      verticalSpacing : ZSlider?
     @IBOutlet var            thickness : ZSlider?
@@ -43,7 +42,6 @@ class ZPreferencesController: ZGenericController {
             zoneColorBox?                  .color =   grabbed?.color ?? kBlueColor
             clearColorButton?           .isHidden = !(grabbed?.hasColor ?? true)
 			colorPreferencesBox?        .isHidden = !gColorfulMode
-			showTooltipsButton?            .state = gShowToolTips ? .on : .off
 
             view.setAllSubviewsNeedDisplay()
         }
@@ -52,15 +50,7 @@ class ZPreferencesController: ZGenericController {
     // MARK:- actions
     // MARK:-
 
-	@IBAction func toggleTooltipsAction(_ button: ZButton) {
-		gShowToolTips = (button.state == .on)
-
-		FOREGROUND {
-			gSignal([.sRelayout])
-		}
-	}
-
-    @IBAction func sliderAction(_ iSlider: ZSlider) {
+	@IBAction func sliderAction(_ iSlider: ZSlider) {
         let value = CGFloat(iSlider.doubleValue)
 
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iSlider.identifier) {
