@@ -1055,7 +1055,7 @@ CA
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="uAJ-8h-8LU">
-                                            <rect key="frame" x="20" y="14" width="150" height="23"/>
+                                            <rect key="frame" x="4" y="14" width="150" height="23"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="144" id="I1c-oe-2cv"/>
                                                 <constraint firstAttribute="height" constant="18" id="aEN-CF-kHQ"/>
@@ -1072,10 +1072,22 @@ CA
                                                 </connections>
                                             </segmentedCell>
                                         </segmentedControl>
+                                        <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QET-3e-wqQ">
+                                            <rect key="frame" x="164" y="20" width="15" height="15"/>
+                                            <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="NSStopProgressFreestandingTemplate" imagePosition="overlaps" alignment="center" controlSize="large" imageScaling="proportionallyDown" inset="2" id="3mR-Od-vo6">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="dismissAction:" target="cYL-kx-LTL" id="sIx-4m-zJH"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="QET-3e-wqQ" secondAttribute="trailing" constant="11" id="J04-kU-NzQ"/>
+                                        <constraint firstItem="QET-3e-wqQ" firstAttribute="centerY" secondItem="cfk-HT-nGc" secondAttribute="centerY" constant="-9" id="Lkf-f2-ZIC"/>
                                         <constraint firstItem="uAJ-8h-8LU" firstAttribute="top" secondItem="cfk-HT-nGc" secondAttribute="top" constant="2" id="Ree-Tq-dcs"/>
-                                        <constraint firstItem="uAJ-8h-8LU" firstAttribute="centerX" secondItem="cfk-HT-nGc" secondAttribute="centerX" id="i2B-XO-00C"/>
+                                        <constraint firstItem="uAJ-8h-8LU" firstAttribute="centerX" secondItem="cfk-HT-nGc" secondAttribute="centerX" constant="-16" id="i2B-XO-00C"/>
                                     </constraints>
                                 </view>
                                 <constraints>
@@ -1093,6 +1105,7 @@ CA
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="dismissButton" destination="QET-3e-wqQ" id="zyN-3Z-UbK"/>
                         <outlet property="searchBox" destination="bct-LL-Igg" id="SjG-U2-qS7"/>
                         <outlet property="searchOptionsControl" destination="uAJ-8h-8LU" id="14g-mI-pf9"/>
                     </connections>
@@ -1273,10 +1286,7 @@ CA
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Rct-nF-Qx4" customClass="ZMapControlsView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="30" y="0.0" width="150" height="34"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="150" id="jjM-H1-Y9z"/>
-                                </constraints>
+                                <rect key="frame" x="4" y="0.0" width="158" height="34"/>
                             </customView>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ch1-Y5-6sD" userLabel="Crumbs Clipper Button">
                                 <rect key="frame" x="375" y="10" width="14" height="14"/>
@@ -1293,21 +1303,34 @@ CA
                                 </connections>
                             </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Tsd-bp-vCV" customClass="ZBreadcrumbsView" customModule="Seriously">
-                                <rect key="frame" x="200" y="0.0" width="167" height="34"/>
+                                <rect key="frame" x="198" y="0.0" width="169" height="34"/>
                                 <connections>
                                     <outlet property="clipCrumbsButton" destination="Ch1-Y5-6sD" id="dTT-6R-3f5"/>
                                     <outlet property="mapControls" destination="Rct-nF-Qx4" id="q3z-Vs-1n7"/>
                                 </connections>
                             </customView>
+                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bhB-1W-OBB" userLabel="Search Button">
+                                <rect key="frame" x="169" y="10" width="15" height="15"/>
+                                <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="NSRevealFreestandingTemplate" imagePosition="overlaps" alignment="center" controlSize="large" imageScaling="proportionallyDown" inset="2" id="h4C-KL-hiT">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="search:" target="auf-AV-5qA" id="qof-7a-TFN"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="Tsd-bp-vCV" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" constant="200" id="5MW-QS-sfa"/>
+                            <constraint firstItem="Tsd-bp-vCV" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" constant="198" id="5MW-QS-sfa"/>
                             <constraint firstAttribute="bottom" secondItem="Tsd-bp-vCV" secondAttribute="bottom" id="AKv-Ds-L1t"/>
                             <constraint firstAttribute="bottom" secondItem="Rct-nF-Qx4" secondAttribute="bottom" id="J2Z-Qh-c5W"/>
+                            <constraint firstItem="bhB-1W-OBB" firstAttribute="centerY" secondItem="W43-uk-txK" secondAttribute="centerY" id="L0I-rd-tno"/>
                             <constraint firstItem="Tsd-bp-vCV" firstAttribute="top" secondItem="W43-uk-txK" secondAttribute="top" id="L4M-7I-D1m"/>
-                            <constraint firstItem="Tsd-bp-vCV" firstAttribute="leading" secondItem="Rct-nF-Qx4" secondAttribute="trailing" constant="20" id="RDr-wu-SJh"/>
+                            <constraint firstItem="Tsd-bp-vCV" firstAttribute="leading" secondItem="Rct-nF-Qx4" secondAttribute="trailing" constant="36" id="RDr-wu-SJh"/>
+                            <constraint firstItem="Rct-nF-Qx4" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" constant="4" id="Ves-pQ-v6x"/>
                             <constraint firstAttribute="trailing" secondItem="Ch1-Y5-6sD" secondAttribute="trailing" constant="8" id="cGO-ML-08P"/>
                             <constraint firstItem="Rct-nF-Qx4" firstAttribute="top" secondItem="W43-uk-txK" secondAttribute="top" id="fM7-oW-R7E"/>
+                            <constraint firstItem="bhB-1W-OBB" firstAttribute="leading" secondItem="Rct-nF-Qx4" secondAttribute="trailing" constant="7" id="vIe-lP-5ts"/>
                             <constraint firstItem="Tsd-bp-vCV" firstAttribute="centerY" secondItem="Ch1-Y5-6sD" secondAttribute="centerY" id="wK4-qA-1u4"/>
                             <constraint firstItem="Ch1-Y5-6sD" firstAttribute="leading" secondItem="Tsd-bp-vCV" secondAttribute="trailing" constant="8" id="wo6-JH-Nmp"/>
                         </constraints>
@@ -1543,6 +1566,8 @@ DQ
         </scene>
     </scenes>
     <resources>
+        <image name="NSRevealFreestandingTemplate" width="15" height="15"/>
+        <image name="NSStopProgressFreestandingTemplate" width="15" height="15"/>
         <image name="settings" width="800" height="800"/>
     </resources>
 </document>

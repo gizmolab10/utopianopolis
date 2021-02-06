@@ -19,9 +19,10 @@ var gSearchBarController: ZSearchBarController? { return gControllers.controller
 
 class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
-	@IBOutlet var searchBox: ZSearchField?
-	@IBOutlet var searchOptionsControl: ZSegmentedControl?
-	override  var controllerID: ZControllerID { return .idSearch }
+	@IBOutlet var searchBox            : ZSearchField?
+	@IBOutlet var dismissButton        : ZButton?
+	@IBOutlet var searchOptionsControl : ZSegmentedControl?
+	override  var controllerID         : ZControllerID { return .idSearch }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
         if  iKind == .sSearch && gIsSearchMode {
@@ -65,6 +66,10 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 			text.length > 0 {
 			performSearch(for: text)
 		}
+	}
+
+	@IBAction func dismissAction(_ sender: ZButton) {
+		endSearch()
 	}
 
 	var searchBoxIsFirstResponder : Bool {

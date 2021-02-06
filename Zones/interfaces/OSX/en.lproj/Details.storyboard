@@ -367,18 +367,18 @@ CA
                             <stackView hidden="YES" wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
                                 <rect key="frame" x="0.0" y="2" width="328" height="1523"/>
                                 <subviews>
-                                    <customView identifier="startHere" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Start Here View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="startHere" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Simple Tools View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="369" width="328" height="1154"/>
                                         <subviews>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Start Here Banner" customClass="ZView">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Simple Tools Banner" customClass="ZView">
                                                 <rect key="frame" x="0.0" y="611" width="328" height="21"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Start Here Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Simple Tools Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="oFz-pg-brp"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="roundRect" title="Start Here" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xRi-eo-teP">
+                                                        <buttonCell key="cell" type="roundRect" title="Simple Tools" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xRi-eo-teP">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
@@ -387,7 +387,7 @@ CA
                                                             <outlet property="togglingView" destination="dSG-o4-XPL" id="qoT-1L-Vlt"/>
                                                         </connections>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fqv-v5-z0n" userLabel="Start Here Triangle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
+                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fqv-v5-z0n" userLabel="Simple Tools Triangle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="306" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="7lq-lv-VG0"/>

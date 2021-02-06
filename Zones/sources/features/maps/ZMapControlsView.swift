@@ -10,23 +10,24 @@ import Foundation
 
 enum ZModeButtonType: String {
 	case tConfine = "browse"
-	case tGrow    = "grow"
+	case tGrowth  = "grow"
 	case tDB      = "db"
 }
 
 class ZMapControlsView : ZButtonsView, ZTooltips {
 
-	override  var centered: Bool { return true }
+	override  var centered          : Bool { return true }
+	override  var distributeEqually : Bool { return true }
 
 	override func setupButtons() {
 		removeButtons()
 
-		buttons                   = [ZButton]()
-		let t : [ZModeButtonType] = [.tGrow, .tConfine, .tDB]
+		buttons                      = [ZButton]()
+		let    t : [ZModeButtonType] = [.tGrowth, .tConfine, .tDB]
 		for type in t {
-			let             title = type.rawValue
-			let            button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
-			button.modeButtonType = type
+			let                title = type.rawValue
+			let               button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
+			button   .modeButtonType = type
 
 			buttons.append(button)
 		}
@@ -42,8 +43,8 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 			if  let    type = button.modeButtonType {
 				switch type {
 					case .tConfine: button.title = gConfinementMode.rawValue
-					case .tGrow:    button.title = gListGrowthMode .rawValue
-					case .tDB:      button.title = gDatabaseID.identifier
+					case .tGrowth:  button.title = gListGrowthMode .rawValue
+					case .tDB:      button.title = gDatabaseID.mapControlString
 				}
 			}
 		}
@@ -53,7 +54,7 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 		if  let    type = button.modeButtonType {
 			switch type {
 				case .tConfine: gConfinementMode = gBrowsingIsConfined ? .all       : .list
-				case .tGrow:    gListGrowthMode  = gListsGrowDown      ? .up        : .down
+				case .tGrowth:  gListGrowthMode  = gListsGrowDown      ? .up        : .down
 				case .tDB:      swapDB()
 			}
 		}

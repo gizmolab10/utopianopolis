@@ -18,12 +18,19 @@ var gBreadcrumbsController: ZBreadcrumbsController? { return gControllers.contro
 
 class ZBreadcrumbsController: ZGenericController {
 
+	// rename as big map toolbar
+
 	@IBOutlet var   crumbsView : ZBreadcrumbsView?
 	@IBOutlet var  mapControls : ZMapControlsView?
+	@IBOutlet var searchButton : ZButton?
 	override  var controllerID : ZControllerID { return .idCrumbs     }
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
 		crumbsView?.setupAndRedraw()
+	}
+
+	@IBAction func search(_ sender: ZButton) {
+		gSearching.showSearch(false)
 	}
 
 }

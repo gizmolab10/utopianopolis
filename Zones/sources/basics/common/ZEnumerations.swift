@@ -202,6 +202,14 @@ enum ZDatabaseID: String {
 		}
 	}
 
+	var mapControlString: String {
+		switch self {
+			case .everyoneID: return "Public"
+			case     .mineID: return "Mine"
+			default:          return ""
+		}
+	}
+
     var userReadableString: String {
 		switch self {
 			case .everyoneID: return "public"

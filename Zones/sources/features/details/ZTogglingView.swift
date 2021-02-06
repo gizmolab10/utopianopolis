@@ -92,7 +92,6 @@ class ZTogglingView: NSStackView {
 
 	@IBAction func toggleAction(_ sender: Any) {
 		toggleHideableVisibility()
-		update()
 		gSignal([.sDetails])
 	}
 
