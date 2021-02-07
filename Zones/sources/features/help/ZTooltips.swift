@@ -71,10 +71,9 @@ extension ZSimpleToolButton {
 
 	var tooltipString : String? {
 		if  gShowToolTips,
-			let    buttonID = startHereID {
+			let    buttonID = simpleToolID {
 			let   canTravel = gIsMapMode && gGrabbedCanTravel
 			let       flags = gSimpleToolsController?.flags
-			let       SHIFT = flags?.isShift   ?? false
 			let    	 OPTION = flags?.isOption  ?? false
 			let    	CONTROL = flags?.isControl ?? false
 			let     addANew = "adds a new idea as "
@@ -110,7 +109,7 @@ extension ZBox {
 
 	var tooltipString : String? {
 		if  gShowToolTips,
-			let  boxID = startHereID {
+			let  boxID = simpleToolID {
 			let  flags = gSimpleToolsController?.flags
 			let  SHIFT = flags?.isShift  ?? false
 			let OPTION = flags?.isOption ?? false

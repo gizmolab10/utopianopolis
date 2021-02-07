@@ -31,13 +31,11 @@ class ZEssayEditor: ZBaseEditor {
 	@discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
 		if !super.handleKey(iKey, flags: flags, isWindow: isWindow),
 			var     key = iKey {
-			var   SHIFT = flags.isShift
 			let  OPTION = flags.isOption
 			let COMMAND = flags.isCommand
 
 			if  key    != key.lowercased() {
 				key     = key.lowercased()
-				SHIFT   = true
 			}
 
 			if  let arrow = key.arrow {

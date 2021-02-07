@@ -138,7 +138,7 @@ class ZHelpData: NSObject {
 	}
 
 	func attributedString(for row: Int, column: Int) -> NSMutableAttributedString {
-		var (first, second, url) = strings(for: row, column: column)
+		let (first, second, url) = strings(for: row, column: column)
 		let      (offset, types) = extractTypes(from: first)
 		let                 text = first.substring(fromInclusive: offset)    // grab remaining characters
 		var           attributes = ZAttributesDictionary ()

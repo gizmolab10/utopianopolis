@@ -42,7 +42,7 @@ enum ZStartupLevel: Int {
 	case pleaseEnableDrive
 }
 
-enum ZStartHereID: String {
+enum ZSimpleToolID: String {
 	case up      = "up"
 	case add     = "add"
 	case edit    = "edit"
@@ -460,9 +460,9 @@ struct ZDetailsViewID: OptionSet {
 		self.rawValue = rawValue
 	}
 
-	static let Preferences = ZDetailsViewID(rawValue: 0x0001)
-	static let        Data = ZDetailsViewID(rawValue: 0x0002)
-	static let   StartHere = ZDetailsViewID(rawValue: 0x0004)
-	static let    SmallMap = ZDetailsViewID(rawValue: 0x0008)
-	static let         All = ZDetailsViewID(rawValue: 0x000F)
+	static let vPreferences = ZDetailsViewID(rawValue: 0x0001)
+	static let        vData = ZDetailsViewID(rawValue: 0x0002)
+	static let vSimpleTools = ZDetailsViewID(rawValue: 0x0004)
+	static let    vSmallMap = ZDetailsViewID(rawValue: 0x0008)
+	static let         vAll = ZDetailsViewID(rawValue: 0x000F)
 }

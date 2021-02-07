@@ -505,7 +505,7 @@ class ZMapEditor: ZBaseEditor {
 			gShowDetailsView = true
 
 			gMainController?.update()
-			gDetailsController?.toggleViewsFor(ids: [.Preferences])
+			gDetailsController?.toggleViewsFor(ids: [.vPreferences])
         } else if gIsEditIdeaMode {
             gTextEditor.cancel()
         }

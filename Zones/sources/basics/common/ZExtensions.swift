@@ -2118,10 +2118,10 @@ extension ZGestureRecognizer {
 
 extension ZView {
 
-	var startHereID : ZStartHereID? {
+	var simpleToolID : ZSimpleToolID? {
 		let           item = self as NSUserInterfaceItemIdentification
 		if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
-			let     itemID = ZStartHereID(rawValue: identifier) {
+			let     itemID = ZSimpleToolID(rawValue: identifier) {
 			return  itemID
 		}
 

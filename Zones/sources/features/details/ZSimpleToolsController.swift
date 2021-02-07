@@ -1,5 +1,5 @@
 //
-//  ZStartHereController.swift
+//  ZSimpleToolsController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 4/28/20.
@@ -32,10 +32,10 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 	var            swapDBText : String { return "switch to \(gIsMine ? "everyone's" : "my") ideas" }
 	var           expandMaybe : String { return isMixed ? "expand selection " : "" }
 	var                 flags = ZEventFlags()
-	var        buttonsByID    = [ZStartHereID  :  ZSimpleToolButton]()
-	var          boxesByID    = [ZStartHereID  :  ZBox]()
-	func       buttonFor(_ id :  ZStartHereID) -> ZSimpleToolButton? { return buttonsByID[id] }
-	func          boxFor(_ id :  ZStartHereID) -> ZBox?             { return boxesByID  [id] }
+	var        buttonsByID    = [ZSimpleToolID  :  ZSimpleToolButton]()
+	var          boxesByID    = [ZSimpleToolID  :  ZBox]()
+	func       buttonFor(_ id :  ZSimpleToolID) -> ZSimpleToolButton? { return buttonsByID[id] }
+	func          boxFor(_ id :  ZSimpleToolID) -> ZBox?              { return boxesByID  [id] }
 
 	func updateBoxesAndButtons() {
 
@@ -63,7 +63,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 	@IBAction func buttonAction(_ button: ZSimpleToolButton) {
 		update()
 
-		if  let itemID = button.startHereID,
+		if  let itemID = button.simpleToolID,
 			let    key = keyFrom(itemID) {
 
 			gMainWindow?.handleKey(key, flags: flags)    // this is so cool, ;-)
@@ -78,10 +78,10 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 
 		view.applyToAllSubviews { subview in
 			if  let         box       = subview as? ZBox,
-				let         boxID     = box.startHereID {
+				let         boxID     = box.simpleToolID {
 				boxesByID  [boxID]    = box
 			} else if let   button    = subview as? ZSimpleToolButton,
-				let         buttonID  = button.startHereID {
+				let         buttonID  = button.simpleToolID {
 				buttonsByID[buttonID] = button
 
 				setAutoRepeat(for: button)
@@ -90,8 +90,8 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 	}
 
 	func setAutoRepeat(for button: ZSimpleToolButton) {
-		let autorepeaters: [ZStartHereID] = [.up, .down, .right, .left]
-		if  let                    buttonID  = button.startHereID,
+		let autorepeaters: [ZSimpleToolID] = [.up, .down, .right, .left]
+		if  let                    buttonID  = button.simpleToolID,
 			autorepeaters.contains(buttonID) {
 			button.isContinuous              = true
 
@@ -100,7 +100,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  let c = gDetailsController, !c.hideableIsHidden(for: .StartHere) { // ignore if hidden
+		if  let c = gDetailsController, !c.hideableIsHidden(for: .vSimpleTools) { // ignore if hidden
 			update()
 		}
 	}
@@ -118,7 +118,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 		flags.isControl = buttonFor(.control)?.state == NSControl.StateValue.on
 	}
 
-	func arrowFrom(_ from: ZStartHereID) -> ZArrowKey? {
+	func arrowFrom(_ from: ZSimpleToolID) -> ZArrowKey? {
 		switch from {
 			case .up:      return .up
 			case .down:    return .down
@@ -128,7 +128,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 		}
 	}
 
-	func keyFrom(_ from: ZStartHereID) -> String? {
+	func keyFrom(_ from: ZSimpleToolID) -> String? {
 		switch from {
 			case .note:    return "n"
 			case .focus:   return "/"

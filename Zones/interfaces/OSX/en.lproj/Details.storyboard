@@ -1018,15 +1018,15 @@ CA
             </objects>
             <point key="canvasLocation" x="296" y="1649"/>
         </scene>
-        <!--Start Here Controller-->
+        <!--Simple Tools Controller-->
         <scene sceneID="uRy-JP-y7m">
             <objects>
-                <viewController id="YdN-bY-sSj" customClass="ZStartHereController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="YdN-bY-sSj" customClass="ZSimpleToolsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="MMF-wn-1M6">
                         <rect key="frame" x="0.0" y="0.0" width="290" height="316"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button identifier="tooltip" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8oF-qb-aFC" userLabel="tooltiips" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                            <button identifier="tooltip" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8oF-qb-aFC" userLabel="tooltiips" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="1" y="280" width="287" height="33"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="WPU-QJ-waV"/>
@@ -1046,7 +1046,7 @@ CA
                                     <rect key="frame" x="3" y="3" width="274" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="child" toolTip="add a new idea as child to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="child" toolTip="add a new idea as child to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-6" y="-6" width="150" height="33"/>
                                             <buttonCell key="cell" type="push" title="child" alternateTitle="SPACE" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k8y-nU-3ox">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1057,7 +1057,7 @@ CA
                                                 <outlet property="controller" destination="YdN-bY-sSj" id="fdn-Hh-Epv"/>
                                             </connections>
                                         </button>
-                                        <button identifier="sibling" toolTip="add a new idea as sibling to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="sibling" toolTip="add a new idea as sibling to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="131" y="1" width="150" height="19"/>
                                             <buttonCell key="cell" type="push" title="sibling" alternateTitle="TAB" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rMw-U8-ScO">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1090,7 +1090,7 @@ CA
                                     <rect key="frame" x="3" y="3" width="274" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="idea" toolTip="edit the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="idea" toolTip="edit the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-6" y="-6" width="150" height="33"/>
                                             <buttonCell key="cell" type="push" title="idea" alternateTitle="RETURN" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YHj-2q-hu8">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1101,7 +1101,7 @@ CA
                                                 <outlet property="controller" destination="YdN-bY-sSj" id="geW-8m-OI0"/>
                                             </connections>
                                         </button>
-                                        <button identifier="note" toolTip="edit the note of the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="note" toolTip="edit the note of the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="131" y="1" width="150" height="19"/>
                                             <buttonCell key="cell" type="push" title="note" alternateTitle="N" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bov-NG-9Nh">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1134,7 +1134,7 @@ CA
                                     <rect key="frame" x="3" y="3" width="274" height="67"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="up" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-vi-ud6" userLabel="up" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="up" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-vi-ud6" userLabel="up" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-6" y="38" width="286" height="32"/>
                                             <buttonCell key="cell" type="push" title="up" alternateTitle="UP ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-zy-Y7c">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1143,10 +1143,9 @@ CA
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="mgh-ge-XVZ"/>
-                                                <outlet property="controller" destination="YdN-bY-sSj" id="k6c-cj-bqd"/>
                                             </connections>
                                         </button>
-                                        <button identifier="focus" toolTip="focus on the currently selected idea" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SJq-nd-vaN" userLabel="focus" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="focus" toolTip="focus on the currently selected idea" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SJq-nd-vaN" userLabel="focus" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="85" y="16" width="104" height="32"/>
                                             <buttonCell key="cell" type="push" title="focus" alternateTitle="/" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qid-p3-qJU">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1155,10 +1154,9 @@ CA
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="pnE-P4-Zp1"/>
-                                                <outlet property="controller" destination="YdN-bY-sSj" id="zRN-ag-ima"/>
                                             </connections>
                                         </button>
-                                        <button identifier="right" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="right" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="176" y="16" width="104" height="32"/>
                                             <buttonCell key="cell" type="push" title="right" alternateTitle="-&gt;" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UrN-Q5-bwD">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1167,10 +1165,9 @@ CA
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="qTj-Mg-Cla"/>
-                                                <outlet property="controller" destination="YdN-bY-sSj" id="sfu-cT-M9K"/>
                                             </connections>
                                         </button>
-                                        <button identifier="down" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-3u-WGy" userLabel="down" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="down" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-3u-WGy" userLabel="down" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-6" y="-6" width="286" height="32"/>
                                             <buttonCell key="cell" type="push" title="down" alternateTitle="DOWN ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gmQ-hx-fbx">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1179,10 +1176,9 @@ CA
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="nSf-FX-5fk"/>
-                                                <outlet property="controller" destination="YdN-bY-sSj" id="aoq-oN-nry"/>
                                             </connections>
                                         </button>
-                                        <button identifier="left" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-wF-YeD" userLabel="left" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="left" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-wF-YeD" userLabel="left" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-6" y="16" width="104" height="32"/>
                                             <buttonCell key="cell" type="push" title="left" alternateTitle="&lt;-" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xEN-g3-ZK6">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1191,7 +1187,6 @@ CA
                                             </buttonCell>
                                             <connections>
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="pCJ-g2-XKK"/>
-                                                <outlet property="controller" destination="YdN-bY-sSj" id="iYJ-B3-osh"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -1226,7 +1221,7 @@ CA
                                     <rect key="frame" x="3" y="3" width="274" height="45"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="shift" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Qe-VP-Kce" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="shift" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Qe-VP-Kce" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-5" y="15" width="149" height="34"/>
                                             <buttonCell key="cell" type="push" title="SHIFT" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2fx-6f-Zh2">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -1236,7 +1231,7 @@ CA
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="vbC-Fx-38h"/>
                                             </connections>
                                         </button>
-                                        <button identifier="command" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jMS-ki-sap" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="command" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jMS-ki-sap" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-5" y="-6" width="149" height="32"/>
                                             <buttonCell key="cell" type="push" title="COMMAND" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k68-pr-cxj">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -1246,7 +1241,7 @@ CA
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="Rgg-eO-V5C"/>
                                             </connections>
                                         </button>
-                                        <button identifier="option" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JnY-Vs-p4U" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="option" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JnY-Vs-p4U" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="132" y="15" width="148" height="34"/>
                                             <buttonCell key="cell" type="push" title="OPTION" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3qw-o2-Ih5">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -1256,7 +1251,7 @@ CA
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="hoh-rf-eP2"/>
                                             </connections>
                                         </button>
-                                        <button identifier="control" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cxk-91-GuE" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="control" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cxk-91-GuE" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="132" y="-6" width="148" height="32"/>
                                             <buttonCell key="cell" type="push" title="CONTROL" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fu3-k6-L9o">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -1293,7 +1288,7 @@ CA
                                     <constraint firstAttribute="height" constant="59" id="cSZ-RN-IYA"/>
                                 </constraints>
                             </box>
-                            <button identifier="swapDB" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NsX-os-IKw" userLabel="swap DB" customClass="ZStartHereButton" customModule="Seriously" customModuleProvider="target">
+                            <button identifier="swapDB" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NsX-os-IKw" userLabel="swap DB" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="1" y="1" width="288" height="33"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="7JN-4I-ODg"/>

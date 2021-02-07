@@ -236,7 +236,7 @@ class ZOperations: NSObject {
 
 			cloudFire?(nil)
 			gTimers.resetTimer(for: .tCloudAvailable, withTimeInterval:  0.2, repeats: true, block: cloudFire!)
-			gTimers.resetTimer(for: .tSaveCoreData,   withTimeInterval:  1.0, repeats: true) { iTimer in if gIsReadyToShowUI { gSaveContext() } }
+//			gTimers.resetTimer(for: .tSaveCoreData,   withTimeInterval:  1.0, repeats: true) { iTimer in if gIsReadyToShowUI { gSaveContext() } }
 			gTimers.resetTimer(for: .tSync,           withTimeInterval: 15.0, repeats: true) { iTimer in if gIsReadyToShowUI { gBatches.sync { iSame in } } }
         }
     }

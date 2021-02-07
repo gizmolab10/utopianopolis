@@ -33,26 +33,26 @@ class ZTogglingView: NSStackView {
 
 	var toolTipText: String {
 		switch identity {
-			case .Preferences : return "preference controls"
-			case .StartHere   : return "basic buttons to get you started"
-			case .SmallMap    : return "\(gCurrentSmallMapName)s map"
-			case .Data        : return "useful data about Seriously"
-			default           : return ""
+			case .vPreferences : return "preference controls"
+			case .vSimpleTools : return "basic buttons to get you started"
+			case .vSmallMap    : return "\(gCurrentSmallMapName)s map"
+			case .vData        : return "useful data about Seriously"
+			default            : return ""
 		}
 	}
 
 	var identity: ZDetailsViewID {
 		if  let    k = kind {
 			switch k {
-				case "preferences": return .Preferences
-				case "startHere":   return .StartHere
-				case "smallMap":    return .SmallMap
-				case "data":        return .Data
-				default:            return .All
+				case "preferences": return .vPreferences
+				case "startHere":   return .vSimpleTools
+				case "smallMap":    return .vSmallMap
+				case "data":        return .vData
+				default:            return .vAll
 			}
 		}
 
-		return .All
+		return .vAll
 	}
 
     var hideHideable: Bool {
@@ -102,7 +102,7 @@ class ZTogglingView: NSStackView {
     func update() {
 		titleButton?.layer?.backgroundColor = gAccentColor.cgColor
 
-		if  identity == .SmallMap,
+		if  identity == .vSmallMap,
 			let  here = gIsRecentlyMode ? gRecentsHereMaybe : gFavoritesHereMaybe {
 
 			titleButton?.title = here.ancestralString

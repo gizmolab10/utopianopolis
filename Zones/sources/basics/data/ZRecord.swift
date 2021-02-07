@@ -390,6 +390,8 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 			if  gUseCoreData {
 				modificationDate = Date()
+
+				gSaveContext()
 			}
 
 			needWrite()

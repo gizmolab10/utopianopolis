@@ -13,7 +13,7 @@
 #endif
 
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
-private let  detailIds : [ZDetailsViewID] = [.Preferences, .Data, .StartHere, .SmallMap]
+private let  detailIds : [ZDetailsViewID] = [.vSimpleTools, .vData, .vPreferences, .vSmallMap]
 
 class ZDetailsController: ZGesturesController {
 

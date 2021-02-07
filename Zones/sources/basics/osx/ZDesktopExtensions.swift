@@ -533,7 +533,7 @@ extension ZoneWindow {
 
 extension ZWindow {
 
-	@IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .Preferences)?.toggleAction(self) }
+	@IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .vPreferences)?.toggleAction(self) }
 	@IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
 	@IBAction func copy              (_ iItem: ZMenuItem?) { gMapEditor.copyToPaste() }
 	@IBAction func cut               (_ iItem: ZMenuItem?) { gMapEditor.delete() }

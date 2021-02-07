@@ -1,5 +1,5 @@
 //
-//  ZStartHereButton.swift
+//  ZSimpleToolButton.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/4/20.
