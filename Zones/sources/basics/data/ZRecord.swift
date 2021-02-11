@@ -501,11 +501,9 @@ class ZRecord: ZManagedRecord { // NSObject {
 				}
 			case .text:
 				if  var string = object as? String { // plain [ causes file read to treat it as an array-starts-here symbol
-					string = string.replacingStrings(["["], with: "(")
-					string = string.replacingStrings(["]"], with: ")")
-					string = string.replacingStrings(["\""], with: "'")
-					string = string.replacingStrings(["“"], with: "'")
-					string = string.replacingStrings(["”"], with: "'")
+					string = string.replacingOccurrences(of:  "[",        with: "(")
+					string = string.replacingOccurrences(of:  "]",        with: ")")
+					string = string.replacingEachString (in: ["\"", "“"], with: "'")
 
 					return string as NSObject
 				}

@@ -370,7 +370,7 @@ CA
                                     <customView identifier="startHere" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Simple Tools View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="369" width="328" height="1154"/>
                                         <subviews>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Simple Tools Banner" customClass="ZView">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Simple Tools Banner">
                                                 <rect key="frame" x="0.0" y="611" width="328" height="21"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Simple Tools Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
@@ -435,7 +435,7 @@ CA
                                     <customView identifier="data" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Data View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="318" width="328" height="50"/>
                                         <subviews>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Data Banner" customClass="ZView">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Data Banner">
                                                 <rect key="frame" x="0.0" y="77" width="328" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y" userLabel="Data Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
@@ -502,7 +502,7 @@ CA
                                     <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="97" width="328" height="220"/>
                                         <subviews>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Preferences Banner" customClass="ZView">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Preferences Banner">
                                                 <rect key="frame" x="0.0" y="0.0" width="328" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jzv-og-1RG" userLabel="Preferences Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
@@ -567,7 +567,7 @@ CA
                                     <customView identifier="smallMap" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Small Map View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="328" height="96"/>
                                         <subviews>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Small Map Banner" customClass="ZBannerView" customModule="Seriously" customModuleProvider="target">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Small Map Banner">
                                                 <rect key="frame" x="0.0" y="39" width="328" height="18"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3bx-6i-bTg" userLabel="Small Map Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">

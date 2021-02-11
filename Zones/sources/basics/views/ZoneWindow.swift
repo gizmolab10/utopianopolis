@@ -69,13 +69,14 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     }
 
 	func updateTextViewInspectorBar(show: Bool = false) {
-		if  let tools = inspectorBar?.subviews {
+		if  let         tools = inspectorBar?.subviews {
 			for index in 1..<tools.count {
-				let tool = tools[index]
+				let      tool = tools[index]
+				let     prior = tools[index - 1].frame.maxX
 				tool.isHidden = false
 
-				if  tool.frame.minX < 0 {
-					tool.frame.origin.x = tools[index - 1].frame.maxX
+				if  tool.frame.minX < prior {
+					tool.frame.origin.x = prior
 				}
 			}
 		}

@@ -137,7 +137,7 @@ class ZMapEditor: ZBaseEditor {
 						case "'":        gSwapSmallMapMode(OPTION)
 						case "/":        if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
 						case "[", "{", "}",
-							 "]":        go(down: ["]", "}"].contains(key), COMMAND: COMMAND) { gRedrawMaps() }
+							 "]":        go(down: ["]", "}"].contains(key), OPTION: OPTION) { gRedrawMaps() }
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")
 						case kTab:       addSibling(OPTION)
@@ -625,8 +625,8 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-	func go(down: Bool, COMMAND: Bool, amongNotes: Bool = false, atArrival: Closure? = nil) {
-		let cloud = COMMAND ? gCurrentSmallMapRecords : gRecents
+	func go(down: Bool, OPTION: Bool, amongNotes: Bool = false, atArrival: Closure? = nil) {
+		let cloud = OPTION ? gCurrentSmallMapRecords : gRecents
 
 		cloud?.go(down: down, amongNotes: amongNotes, atArrival: atArrival)
 	}
@@ -739,7 +739,8 @@ class ZMapEditor: ZBaseEditor {
     // MARK:-
 
     func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: Closure?) {
-        if  let zone: Zone = gSelecting.firstSortedGrab {
+
+		if  let zone: Zone = gSelecting.firstSortedGrab {
             let parentZone = zone.parentZone
 
             if  zone.isARoot {

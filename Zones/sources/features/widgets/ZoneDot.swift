@@ -172,7 +172,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		path.lineWidth   = CGFloat(gLineThickness * 1.2)
 		path.flatness    = 0.0001
 
-		path.fill()
+		if  let zone = widgetZone, zone.isInFavorites == gIsRecentlyMode {
+			path.stroke()
+		} else {
+			path.fill()
+		}
 	}
 
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
@@ -314,7 +318,10 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			// HIGHLIGHT OF CURRENT FAVORITE //
 			// ////////////////////////////////
 
-			parameters.color.withAlphaComponent(0.7).setFill()
+			let color = parameters.color.withAlphaComponent(0.7)
+
+			color.setFill()
+			color.setStroke()
 			drawSmallMapSideDot(in: iDirtyRect, parameters)
 		}
 	}

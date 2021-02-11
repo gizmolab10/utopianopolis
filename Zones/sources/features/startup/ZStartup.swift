@@ -33,7 +33,6 @@ class ZStartup: NSObject {
 		gWorkMode              = .startupMode
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
-//		gHelpController?.setup()                // show last chosen help view
 		gRemoteStorage.clear()
 		gSignal([.sMain, .sStartupProgress])
 		startStartupTimer()
@@ -62,10 +61,10 @@ class ZStartup: NSObject {
 									gSetMapsMode()
 								}
 
-								//						gRemoteStorage.updateAllInstanceProperties()
-								//						gRemoteStorage.assureAdoption()
-								//						gRemoteStorage.updateAllInstanceProperties()
-								gSignal([.sMain, .sCrumbs, .sRelayout])
+//								gRemoteStorage.updateAllInstanceProperties()
+//								gRemoteStorage.assureAdoption()
+//								gRemoteStorage.updateAllInstanceProperties()
+								gSignal([.sMain, .sCrumbs, .sRelayout, .sPreferences])
 								self.stopStartupTimer()
 								self.requestFeedback()
 

@@ -1605,9 +1605,9 @@ extension String {
 
 	var searchable: String {
 		return lowercased()
-			.replacingCharacters(",;@!(){}\\\"",          with: "")
-			.replacingCharacters(".:_-='?/\r\n",          with: " ")
-			.replacingStrings(["%2f", "%3a", "  ", "  "], with: " ")
+			.replacingEachCharacter(in: ",;@!(){}\\\"",              with: "")
+			.replacingEachCharacter(in: ".:_-='?/\r\n",              with: " ")
+			.replacingEachString   (in: ["%2f", "%3a", "   ", "  "], with: " ")
 	}
 
 	var unCamelcased: String {
@@ -1634,7 +1634,7 @@ extension String {
 		return components(separatedBy: gSeparatorAt(level: level))
 	}
 
-	func replacingCharacters(_ matchAgainst: String, with: String) -> String {
+	func replacingEachCharacter(in matchAgainst: String, with: String) -> String {
 		var        result = self
 		for character in matchAgainst {
 			let separator = String(character)
@@ -1644,7 +1644,7 @@ extension String {
 		return result
 	}
 
-	func replacingStrings(_ matchAgainst: [String], with: String) -> String {
+	func replacingEachString(in matchAgainst: [String], with: String) -> String {
 		var result = self
 		for string in matchAgainst {
 			result = result.replacingOccurrences(of: string, with: with)

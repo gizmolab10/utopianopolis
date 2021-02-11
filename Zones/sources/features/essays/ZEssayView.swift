@@ -50,6 +50,146 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return true
 	}
 
+	// MARK:- setup
+	// MARK:-
+
+	func done() { save(); exit() }
+
+	func exit() {
+		if  let e = gCurrentEssay {
+			gControllers.swapMapAndEssay(force: .mapsMode)
+			gRedrawMaps()
+
+			if  e.lastTextIsDefault,
+				e.autoDelete {
+				e.zone?.destroyNote()
+			}
+
+			gSignal([.sDatum])
+		}
+	}
+
+	func save() {
+		if  let e = gCurrentEssay {
+			e.saveEssay(textStorage)
+			accountForSelection()
+		}
+	}
+
+	override func awakeFromNib() {
+		super.awakeFromNib()
+
+		usesRuler              = true
+		isRulerVisible         = true
+		importsGraphics        = true
+		allowsImageEditing     = true
+		displaysLinkToolTips   = true
+		textContainerInset     = NSSize(width: 20, height: 0)
+		zlayer.backgroundColor = kClearColor.cgColor
+		backgroundColor        = kClearColor
+
+		FOREGROUND { // wait for application to fully load the inspector bar
+			gMainWindow?.updateTextViewInspectorBar(show: true)
+			self.addButtons()
+			self.updateText()
+		}
+	}
+
+	private func clear() {
+		gCurrentEssayZone?.noteMaybe = nil
+		delegate = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
+
+		if  let length = textStorage?.length, length > 0 {
+			textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
+		}
+	}
+
+	func resetForDarkMode() {
+		//		layer?.backgroundColor = (gIsDark ? kDarkestGrayColor : kWhiteColor).cgColor
+	}
+
+	func resetCurrentEssay(_ current: ZNote?, selecting range: NSRange? = nil) {
+		if  let      note = current {
+			gCurrentEssay = note
+
+			gCurrentEssay?.reset()
+			updateText()
+			gCurrentEssay?.updateOffsets()
+			gRecents.push(intoNotes: true)
+
+			if  let r = range {
+				FOREGROUND {
+					self.setSelectedRange(r)
+				}
+			}
+		}
+	}
+
+	func updateText(restoreSelection: Int?  = nil) {
+		resetForDarkMode()
+
+		if  (shouldOverwrite || restoreSelection != nil),
+			let text = gCurrentEssay?.essayText {
+			clear() 								// discard previously edited text
+			setControlBarButtons(enabled: true)
+			gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }		// emplace text
+			select(restoreSelection: restoreSelection)
+
+			essayID  = gCurrentEssayZone?.ckRecord?.recordID
+			delegate = self 						// set delegate after setText
+
+			if  gIsNoteMode {
+				gMainWindow?.makeFirstResponder(self) // this should never happen unless alread in note mode
+			}
+		}
+	}
+
+	// MARK:- output
+	// MARK:-
+
+	override func draw(_ dirtyRect: NSRect) {
+		if  resizeDragRect == nil {
+			let path = ZBezierPath(rect: bounds)
+
+			kClearColor.setFill()
+			path.fill() // erase rubberband
+		}
+
+		super.draw(dirtyRect)
+
+		if  imageAttachment != nil {
+			gActiveColor.setStroke()
+			gActiveColor.setFill()
+		} else {
+			kClearColor .setStroke()
+			kClearColor .setFill()
+		}
+
+		if  let       rect = resizeDragRect {
+			let       path = ZBezierPath(rect: rect)
+			let    pattern : [CGFloat] = [4.0, 4.0]
+			path.lineWidth = CGFloat(gLineThickness * 3.0)
+			path.flatness  = 0.0001
+
+			path.setLineDash(pattern, count: 2, phase: 4.0)
+			path.stroke()
+			drawDots(in: rect)
+		} else if let attach = imageAttachment ?? eraseAttachment,
+				  let         rect = rectForRangedAttachment(attach) {
+			drawDots(in: rect)
+		}
+	}
+
+	func drawDots(in rect: CGRect) {
+		for point in rect.selectionPoints.values {
+			let   dotRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotRadius)
+			let      path = ZBezierPath(ovalIn: dotRect)
+			path.flatness = 0.0001
+
+			path.fill()
+		}
+	}
+
 	// MARK:- input
 	// MARK:-
 
@@ -229,146 +369,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			resizeDragRect = CGRect(origin: origin, size: size)
-		}
-	}
-
-	// MARK:- output
-	// MARK:-
-
-	override func draw(_ dirtyRect: NSRect) {
-		if  resizeDragRect == nil {
-			let path = ZBezierPath(rect: bounds)
-
-			kClearColor.setFill()
-			path.fill() // erase rubberband
-		}
-
-		super.draw(dirtyRect)
-
-		if  imageAttachment != nil {
-			gActiveColor.setStroke()
-			gActiveColor.setFill()
-		} else {
-			kClearColor .setStroke()
-			kClearColor .setFill()
-		}
-
-		if  let       rect = resizeDragRect {
-			let       path = ZBezierPath(rect: rect)
-			let    pattern : [CGFloat] = [4.0, 4.0]
-			path.lineWidth = CGFloat(gLineThickness * 3.0)
-			path.flatness  = 0.0001
-
-			path.setLineDash(pattern, count: 2, phase: 4.0)
-			path.stroke()
-			drawDots(in: rect)
-		} else if let attach = imageAttachment ?? eraseAttachment,
-			let         rect = rectForRangedAttachment(attach) {
-			drawDots(in: rect)
-		}
-	}
-
-	func drawDots(in rect: CGRect) {
-		for point in rect.selectionPoints.values {
-			let   dotRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotRadius)
-			let      path = ZBezierPath(ovalIn: dotRect)
-			path.flatness = 0.0001
-
-			path.fill()
-		}
-	}
-
-	// MARK:- setup
-	// MARK:-
-
-	func done() { save(); exit() }
-
-	func exit() {
-		if  let e = gCurrentEssay {
-			gControllers.swapMapAndEssay(force: .mapsMode)
-			gRedrawMaps()
-
-			if  e.lastTextIsDefault,
-				e.autoDelete {
-				e.zone?.destroyNote()
-			}
-
-			gSignal([.sDatum])
-		}
-	}
-
-	func save() {
-		if  let e = gCurrentEssay {
-			e.saveEssay(textStorage)
-			accountForSelection()
-		}
-	}
-
-	override func awakeFromNib() {
-		super.awakeFromNib()
-
-		usesRuler              = true
-		isRulerVisible         = true
-		importsGraphics        = true
-		allowsImageEditing     = true
-		displaysLinkToolTips   = true
-		textContainerInset     = NSSize(width: 20, height: 0)
-		zlayer.backgroundColor = kClearColor.cgColor
-		backgroundColor        = kClearColor
-
-		FOREGROUND { // wait for application to fully load the inspector bar
-			gMainWindow?.updateTextViewInspectorBar(show: true)
-			self.addButtons()
-			self.updateText()
-		}
-	}
-
-	private func clear() {
-		gCurrentEssayZone?.noteMaybe = nil
-		delegate = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
-
-		if  let length = textStorage?.length, length > 0 {
-			textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
-		}
-	}
-
-	func resetForDarkMode() {
-//		layer?.backgroundColor = (gIsDark ? kDarkestGrayColor : kWhiteColor).cgColor
-	}
-
-	func resetCurrentEssay(_ current: ZNote?, selecting range: NSRange? = nil) {
-		if  let      note = current {
-			gCurrentEssay = note
-
-			gCurrentEssay?.reset()
-			updateText()
-			gCurrentEssay?.updateOffsets()
-			gRecents.push(intoNotes: true)
-
-			if  let r = range {
-				FOREGROUND {
-					self.setSelectedRange(r)
-				}
-			}
-		}
-	}
-
-	func updateText(restoreSelection: Int?  = nil) {
-		resetForDarkMode()
-
-		if  (shouldOverwrite || restoreSelection != nil),
-			let text = gCurrentEssay?.essayText {
-			clear() 								// discard previously edited text
-			setControlBarButtons(enabled: true)
-			gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }		// emplace text
-			select(restoreSelection: restoreSelection)
-
-			essayID  = gCurrentEssayZone?.ckRecord?.recordID
-			delegate = self 						// set delegate after setText
-
-			if  gIsNoteMode {
-				gMainWindow?.makeFirstResponder(self) // this should never happen unless alread in note mode
-			}
 		}
 	}
 

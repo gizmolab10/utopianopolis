@@ -649,11 +649,9 @@
 				A700F94D24AFBFFB009C87AA /* seriously.xcdatamodel */,
 				0C39B25B1F182EBB0091F4D1 /* ZAction.swift */,
 				A700F94824AFBE8F009C87AA /* ZCoreDataStack.swift */,
-				A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */,
 				A7E44A2A2558CD6A00DA4B13 /* ZManagedRecord.swift */,
 				A70064DC22484808004E3A8D /* ZManifest.swift */,
 				A706444A247222A500F90B86 /* ZNode.swift */,
-				A7229FAC23B84B4300FA2841 /* ZNote.swift */,
 				0C39B25D1F182EBB0091F4D1 /* Zone.swift */,
 				A752FC2B24512D7700603A54 /* ZoneArray.swift */,
 				0C39B25E1F182EBB0091F4D1 /* ZRecord.swift */,
@@ -857,9 +855,11 @@
 		A769977F24983C9600DF289D /* essays */ = {
 			isa = PBXGroup;
 			children = (
+				A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */,
 				A78A6DFF23B02163000F581F /* ZEssayController.swift */,
 				A78A6E0923B021EA000F581F /* ZEssayEditor.swift */,
 				A7B48A7923E0E80C00654DBD /* ZEssayView.swift */,
+				A7229FAC23B84B4300FA2841 /* ZNote.swift */,
 				A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */,
 			);
 			path = essays;
@@ -1663,7 +1663,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -1716,7 +1716,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -1757,7 +1757,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 0.6.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1809,7 +1809,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 0.6.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";

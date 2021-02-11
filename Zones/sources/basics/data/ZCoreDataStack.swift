@@ -19,7 +19,7 @@ func gSaveContext()                                                         { gC
 
 class ZCoreDataStack: NSObject {
 
-	let             cloudID = "iCloud.com.zones.Zones"
+	let             cloudID = "iCloud.com.seriously.CoreData"
 	let            localURL = gCoreDataURL.appendingPathComponent("local.store")
 	let           publicURL = gCoreDataURL.appendingPathComponent("cloud.public.store")
 	let          privateURL = gCoreDataURL.appendingPathComponent("cloud.private.store")
@@ -53,20 +53,6 @@ class ZCoreDataStack: NSObject {
 		return desc
 	}()
 
-	lazy var publicDescription: NSPersistentStoreDescription = {
-		let        options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudID)
-		let           desc = NSPersistentStoreDescription(url: publicURL)
-		desc.configuration = "Cloud"
-
-		if  options.responds(to: Selector(("setDatabaseScope:"))) {
-			options.perform(Selector(("setDatabaseScope:")), with: CKDatabase.Scope.public) // default is private
-		}
-
-		desc.cloudKitContainerOptions = options
-
-		return desc
-	}()
-
 	lazy var privateDescription: NSPersistentStoreDescription = {
 		let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudID)
 		let                      desc = NSPersistentStoreDescription(url: privateURL)
@@ -76,9 +62,18 @@ class ZCoreDataStack: NSObject {
 		return desc
 	}()
 
+	lazy var publicDescription: NSPersistentStoreDescription = {
+		let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudID)
+		let                      desc = NSPersistentStoreDescription(url: publicURL)
+		desc.configuration            = "Cloud"
+		options.databaseScope         = CKDatabase.Scope.public // default is private
+		desc.cloudKitContainerOptions = options
+
+		return desc
+	}()
+
 	lazy var persistentContainer: NSPersistentCloudKitContainer = {
-		let  container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
-		let publicDesc = publicDescription
+		let container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
 
 		ValueTransformer.setValueTransformer(  ZReferenceTransformer(), forName:   gReferenceTransformerName)
 		ValueTransformer.setValueTransformer( ZAssetArrayTransformer(), forName:  gAssetArrayTransformerName)
@@ -87,12 +82,9 @@ class ZCoreDataStack: NSObject {
 		// Update the container's list of store descriptions
 		container.persistentStoreDescriptions = [
 			privateDescription,
+			publicDescription,
 			localDescription
 		]
-
-		if  let options = publicDesc.cloudKitContainerOptions, options.responds(to: Selector(("setDatabaseScope:"))) {
-			container.persistentStoreDescriptions.append(publicDesc)
-		}
 
 		container.loadPersistentStores() { (storeDescription, iError) in
 			if  let error = iError as NSError? {
@@ -115,9 +107,7 @@ class ZCoreDataStack: NSObject {
 			do {
 				try managedContext.save()
 			} catch {
-				// Replace this implementation with code to handle the error appropriately.
-				let nserror = error as NSError
-				print(nserror)
+				print(error)
 			}
 		}
 	}
@@ -238,20 +228,14 @@ class ZCoreDataStack: NSObject {
 	func search(for match: String, within dbID: ZDatabaseID?) -> ZRecordsArray {
 		var result = ZRecordsArray()
 
-		if  gIsReadyToShowUI {
-			func predicate(for match: String, type: String) -> NSPredicate {
-				let stripped = match.replacingStrings(["\""], with: "")
+		if  gIsReadyToShowUI,
+			let        dbid = dbID?.identifier {
+			let  searchable = match.searchable
+			let idPredicate = NSPredicate(format: "zoneName like \"\(searchable)\"")
+			for type in [kZoneType] { //, kTraitType] {
+				let matches = search(within: dbid, type: type, using: idPredicate)
 
-				return NSPredicate(format: "zoneName like \"\(stripped)\"")
-			}
-
-			if  let              dbid = dbID?.identifier {
-				for type in [kZoneType] { //, kTraitType] {
-					let idPredicate = predicate(for: match, type: type)
-					let     matches = search(within: dbid, type: type, using: idPredicate)
-
-					result.appendUnique(contentsOf: matches)
-				}
+				result.appendUnique(contentsOf: matches)
 			}
 		}
 

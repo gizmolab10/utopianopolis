@@ -1966,6 +1966,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					g.expand()
 					g.setAsSmallMapHereZone()
 					// FUBAR: parent sometimes disappears!!!!!!!!!
+				} else if p.isARoot {
+					return // do nothing if p is root of either small map
 				}
 
 				p.grab()
