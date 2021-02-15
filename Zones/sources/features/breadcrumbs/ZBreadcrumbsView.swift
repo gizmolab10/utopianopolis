@@ -97,14 +97,14 @@ class ZBreadcrumbsView : ZButtonsView {
 
 		next.focusOn() {
 			switch (gWorkMode) {
-				case .editIdeaMode:
+				case .wEditIdeaMode:
 					if  let edit = gCurrentlyEditingWidget?.widgetZone {
 						let span = gTextEditor.selectedRange()
 						edit.editAndSelect(range: span)
 					} else {
 						last?.grab()
 					}
-				case .mapsMode:
+				case .wBigMapMode:
 					if  COMMAND {
 						next.grab()
 						next.traverseAllProgeny { child in
@@ -113,13 +113,13 @@ class ZBreadcrumbsView : ZButtonsView {
 					}
 
 					gHere.asssureIsVisible()
-				case .noteMode:
+				case .wEssayMode:
 					if  let essayView = gEssayView {
 						let sameNext  = (next == gCurrentEssayZone)
 						if  sameNext || !(next.hasNote || OPTION) {
 							// no note in next so exit essay editor
 							essayView.setControlBarButtons(enabled: false)
-							gSetMapsMode()
+							gSetBigMapMode()
 						} else {
 							let            saved = gCreateCombinedEssay
 							gCreateCombinedEssay = (OPTION && !sameNext)

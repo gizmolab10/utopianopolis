@@ -1407,7 +1407,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gHere = self
 
 		expand()
-		gControllers.swapMapAndEssay(force: .mapsMode)
+		gControllers.swapMapAndEssay(force: .wBigMapMode)
 		gRedrawMaps()
 
 		let e = edit()
@@ -1448,10 +1448,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		gRedrawMaps(for: self)
-	}
-
-	override func debug(_  iMessage: String) {
-		note("\(iMessage) children \(count) parent \(parent != nil) is \(isInTrash ? "" : "not ") deleted identifier \(databaseID!) \(unwrappedName)")
 	}
 
 	override func setupLinks() {
@@ -1527,13 +1523,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addTrait(_ trait: ZTrait, updateCoreData: Bool = true) {
-		if  let       r          = ckRecord,
-			let    type          = trait.traitType {
-			traits[type]         = trait
-			let  ownerName       = trait.owner?.recordID.recordName
-			let recordName       = r.recordID.recordName
-			if  recordName      != ownerName {
-				trait .owner     = CKReference(record: r, action: .none)
+		if  let selfRecord       = ckRecord,
+			let     type         = trait.traitType {
+			traits [type]        = trait
+			let ownerName        = trait.owner?.recordID.recordName
+			let  selfName        = selfRecord  .recordID.recordName
+			if   selfName       != ownerName {
+				trait .owner     = CKReference(record: selfRecord, action: .none)
 				trait._ownerZone = nil
 			}
 
@@ -1695,7 +1691,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gCreateCombinedEssay = false
 		gCurrentEssay        = note
 
-		gControllers.swapMapAndEssay(force: .noteMode)
+		gControllers.swapMapAndEssay(force: .wEssayMode)
 	}
 
 	// MARK:- travel / focus / move
@@ -2288,7 +2284,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  iZones.count > 0 {
 			traverseAncestors { iAncestor -> ZTraverseStatus in
-				if iZones.contains(iAncestor) {
+				if  iAncestor != self,
+					iZones.contains(iAncestor) {
 					wasSpawned = true
 
 					return .eStop

@@ -584,13 +584,13 @@ CA
                                                             <outlet property="togglingView" destination="Utx-K3-0a0" id="Wks-zD-N6G"/>
                                                         </connections>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zUL-Q6-aba">
-                                                        <rect key="frame" x="4" y="1" width="48" height="16"/>
-                                                        <buttonCell key="cell" type="push" title="Switch" bezelStyle="rounded" alignment="center" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xW1-68-JpA">
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zUL-Q6-aba" userLabel="Switch">
+                                                        <rect key="frame" x="6" y="1" width="44" height="15"/>
+                                                        <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xW1-68-JpA">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="miniSystem"/>
+                                                            <string key="keyEquivalent">'</string>
                                                         </buttonCell>
-                                                        <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <connections>
                                                             <action selector="extraButtonAction:" target="Utx-K3-0a0" id="4pt-PI-PDy"/>
                                                         </connections>

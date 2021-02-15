@@ -18,6 +18,18 @@ extension ZoneArray {
 		}
 	}
 
+	var recordNames: [String] {
+		var names = [String]()
+
+		for zone in self {
+			if  let name = zone.ckRecordName {
+				names.append(name)
+			}
+		}
+
+		return names
+	}
+
 	var anyInRecently: Bool {
 		for     zone in self {
 			if  zone.isInRecents {
@@ -26,6 +38,17 @@ extension ZoneArray {
 		}
 
 		return false
+	}
+
+	func containsMatch(to other: AnyObject) -> Bool {
+		return containsCompare(with: other) { (a, b) in
+			if  let    aName  = (a as? Zone)?.ckRecordName,
+				let    bName  = (b as? Zone)?.ckRecordName {
+				return aName ==  bName
+			}
+
+			return false
+		}
 	}
 
 	func updateOrder() { updateOrdering(start: 0.0, end: 1.0) }

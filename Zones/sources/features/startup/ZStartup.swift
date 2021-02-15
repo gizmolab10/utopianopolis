@@ -30,7 +30,7 @@ class ZStartup: NSObject {
 
 	func startupCloudAndUI() {
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
-		gWorkMode              = .startupMode
+		gWorkMode              = .wStartupMode
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
 		gRemoteStorage.clear()
@@ -58,7 +58,7 @@ class ZStartup: NSObject {
 								gRefusesFirstResponder = false
 
 								if  gIsStartupMode {
-									gSetMapsMode()
+									gSetBigMapMode()
 								}
 
 //								gRemoteStorage.updateAllInstanceProperties()

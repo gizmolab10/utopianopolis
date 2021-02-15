@@ -52,23 +52,6 @@ class ZRecents : ZSmallMapRecords {
 		}
 	}
 
-	@discardableResult func pop(_ iZone: Zone? = gHereMaybe) -> Bool {
-		if  let name = iZone?.ckRecordName {
-			for bookmark in workingBookmarks {
-				if  name == bookmark.bookmarkTarget?.ckRecordName {
-					go(down: gListsGrowDown) {
-						bookmark.deleteSelf(permanently: true) {}
-					}
-
-					return true
-
-				}
-			}
-		}
-
-		return false
-	}
-
 	override func push(intoNotes: Bool = false) {
 		if  rootZone != nil {
 			if  let          here  = gHereMaybe,
@@ -110,15 +93,6 @@ class ZRecents : ZSmallMapRecords {
 		}
 
 		return found
-	}
-
-	@discardableResult func popAndUpdateRecents() -> Zone? {
-		if  !pop(),
-		    workingBookmarks.count > 0 {
-			currentBookmark = workingBookmarks[0]
-		}
-
-		return currentBookmark
 	}
 
 	func object(for id: String) -> NSObject? {

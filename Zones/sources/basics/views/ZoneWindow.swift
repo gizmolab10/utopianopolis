@@ -30,11 +30,11 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 			// //////////////////////////////////////// //
 
 			switch gWorkMode {
-				case .noteMode:     return gEssayEditor             .handleKey(key, flags: flags, isWindow: true)
-				case .mapsMode:     return gMapEditor               .handleKey(key, flags: flags, isWindow: true)
-				case .searchMode:   return gSearchResultsController?.handleKey(key, flags: flags) ?? false
-				case .editIdeaMode: return gTextEditor              .handleKey(key, flags: flags)
-				default:            break
+				case .wEssayMode:    return gEssayEditor             .handleKey(key, flags: flags, isWindow: true)
+				case .wBigMapMode:   return gMapEditor               .handleKey(key, flags: flags, isWindow: true)
+				case .wSearchMode:   return gSearchResultsController?.handleKey(key, flags: flags) ?? false
+				case .wEditIdeaMode: return gTextEditor              .handleKey(key, flags: flags)
+				default:             break
 			}
 		}
 
@@ -68,7 +68,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
         return gTextEditor
     }
 
-	func updateTextViewInspectorBar(show: Bool = false) {
+	func updateEssayEditorInspectorBar(show: Bool = false) {
 		if  let         tools = inspectorBar?.subviews {
 			for index in 1..<tools.count {
 				let      tool = tools[index]

@@ -290,10 +290,6 @@ extension ZColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * (by * 2.0), brightness: brightnessComponent / (by / 3.0), alpha: alphaComponent)
     }
 
-    func darkish(by: CGFloat) -> NSColor {
-        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent,              brightness: brightnessComponent / by,         alpha: alphaComponent)
-    }
-
     func lighter(by: CGFloat) -> NSColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent / (by / 2.0), brightness: brightnessComponent * (by / 3.0), alpha: alphaComponent)
     }
@@ -1071,10 +1067,6 @@ extension Zone {
 					}
 					case .eEssay:
 						if  let text = self.note.essayText {
-
-//							NSFileWrapper *fileWrapper = [imageAttrString fileWrapperFromRange:NSMakeRange(0, [imageAttrString length]) documentAttributes:@{NSDocumentTypeDocumentAttribute: NSRTFDTextDocumentType} error:&error];
-//							[fileWrapper writeToURL:yourFileURL options:NSFileWrapperWritingAtomic originalContentsURL:nil error:&error]
-
 							do {
 								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
 								let  wrapper = FileWrapper(regularFileWithContents: fileData)

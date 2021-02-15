@@ -59,11 +59,11 @@ var       gBrowsingIsConfined:               Bool { return gConfinementMode == .
 var           gIsRecentlyMode:               Bool { return gSmallMapMode    == .recent }
 var            gListsGrowDown:               Bool { return gListGrowthMode  == .down }
 var           gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
-var               gIsNoteMode:               Bool { return gWorkMode == .noteMode }
-var                gIsMapMode:               Bool { return gWorkMode == .mapsMode }
-var             gIsSearchMode:               Bool { return gWorkMode == .searchMode }
-var            gIsStartupMode:               Bool { return gWorkMode == .startupMode }
-var           gIsEditIdeaMode:               Bool { return gWorkMode == .editIdeaMode }
+var               gIsNoteMode:               Bool { return gWorkMode == .wEssayMode }
+var                gIsMapMode:               Bool { return gWorkMode == .wBigMapMode }
+var             gIsSearchMode:               Bool { return gWorkMode == .wSearchMode }
+var            gIsStartupMode:               Bool { return gWorkMode == .wStartupMode }
+var           gIsEditIdeaMode:               Bool { return gWorkMode == .wEditIdeaMode }
 var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsNoteMode || gIsStartupMode }
 var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEditIdeaMode }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
@@ -81,7 +81,7 @@ var                gDotHeight:             Double { return Double(gGenericOffset
 var       gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
 var   gDeciSecondsSinceLaunch:                Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
 var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
-var   gDarkishBackgroundColor:             ZColor { return gAccentColor.darkish (by: 1.028) }
+var          gDarkAccentColor:             ZColor { return gAccentColor.darker  (by: 1.3) }
 var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
 var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kLightestGrayColor : kBlackColor }
 var          gBackgroundColor:             ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
@@ -92,9 +92,9 @@ var               gWidgetFont:              ZFont { return .systemFont    (ofSiz
 var                 gTinyFont:              ZFont { return .systemFont    (ofSize: gFontSize * kSmallMapReduction * kSmallMapReduction) }
 
 func      gToggleShowTooltips()                   { gShowToolTips = !gShowToolTips; gSignal([.sRelayout]) }
-func        gToggleDatabaseID()                   { gDatabaseID = gOtherDatabaseID }
-func         gSetEditIdeaMode()                   { gWorkMode = .editIdeaMode }
-func             gSetMapsMode()                   { gWorkMode = .mapsMode }
+func        gToggleDatabaseID()                   { gDatabaseID   = gOtherDatabaseID }
+func         gSetEditIdeaMode()                   { gWorkMode     = .wEditIdeaMode }
+func           gSetBigMapMode()                   { gWorkMode     = .wBigMapMode }
 
 let                 kHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize)
 let                 kBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize)
@@ -613,7 +613,7 @@ var gCurrentMapFunction : ZFunction {
 
 #endif
 
-var gWorkMode: ZWorkMode = .startupMode {
+var gWorkMode: ZWorkMode = .wStartupMode {
 	didSet {
 		if  gCanSaveWorkMode {
 			setPreferencesString(gWorkMode.rawValue, for: kWorkMode)
@@ -728,7 +728,7 @@ func gRefreshCurrentEssay() {
 }
 
 func gRefreshPersistentWorkMode() {
-	if  let     mode = getPreferencesString(for: kWorkMode, defaultString: ZWorkMode.noteMode.rawValue),
+	if  let     mode = getPreferencesString(for: kWorkMode, defaultString: ZWorkMode.wEssayMode.rawValue),
 		let workMode = ZWorkMode(rawValue: mode) {
 		gWorkMode    = workMode
 	}

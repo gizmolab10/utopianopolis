@@ -191,12 +191,6 @@ extension ZColor {
         return ZColor(hue: components.hue, saturation: components.saturation * 1.1, brightness: components.brightness / by, alpha: components.alpha)
     }
 
-    func darkish(by: CGFloat) -> ZColor {
-        let components = hsba
-
-        return ZColor(hue: components.hue, saturation: components.saturation, brightness: components.brightness / by, alpha: components.alpha)
-    }
-
     func lighter(by: CGFloat) -> ZColor {
         let components = hsba
 

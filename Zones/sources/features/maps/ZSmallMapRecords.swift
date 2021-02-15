@@ -43,6 +43,32 @@ class ZSmallMapRecords: ZRecords {
 		return next
 	}
 
+	@discardableResult func pop(_ iZone: Zone? = gHereMaybe) -> Bool {
+		if  let name = iZone?.ckRecordName {
+			for bookmark in workingBookmarks {
+				if  name == bookmark.bookmarkTarget?.ckRecordName {
+					go(down: gListsGrowDown) {
+						bookmark.deleteSelf(permanently: true) {}
+					}
+
+					return true
+
+				}
+			}
+		}
+
+		return false
+	}
+
+	@discardableResult func popAndUpdate() -> Zone? {
+		if  !pop(),
+			workingBookmarks.count > 0 {
+			currentBookmark = workingBookmarks[0]
+		}
+
+		return currentBookmark
+	}
+
 	func go(down: Bool, amongNotes: Bool = false, atArrival: Closure? = nil) {
 		if  currentBookmark == nil {
 			gRecents.push()

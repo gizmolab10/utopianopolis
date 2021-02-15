@@ -105,11 +105,11 @@ enum ZFileMode: Int {
 }
 
 enum ZWorkMode: String {
-	case editIdeaMode = "i"
-	case startupMode  = "s"
-    case searchMode   = "?"
-	case mapsMode     = "g"
-	case noteMode     = "n"
+	case wEditIdeaMode = "i"
+	case wStartupMode  = "s"
+    case wSearchMode   = "?"
+	case wBigMapMode   = "g"
+	case wEssayMode    = "n"
 }
 
 enum ZHelpMode: String {

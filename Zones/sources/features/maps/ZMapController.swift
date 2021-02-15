@@ -249,7 +249,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		if  gIsNoteMode {
 			gEssayView?.save()
-			gControllers.swapMapAndEssay(force: .mapsMode)
+			gControllers.swapMapAndEssay(force: .wBigMapMode)
 		}
 
 		if  gIsMapOrEditIdeaMode,
@@ -275,7 +275,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             }
 
             if  notInEdit {
-				gSetMapsMode()
+				gSetBigMapMode()
 				gTextEditor.stopCurrentEdit()
 
 				if  let   widget = detectWidget(gesture) {

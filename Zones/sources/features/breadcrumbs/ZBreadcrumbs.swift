@@ -12,8 +12,8 @@ let gBreadcrumbs = ZBreadcrumbs()
 
 class ZBreadcrumbs: NSObject {
 
-	var crumbDBID   : ZDatabaseID? { return crumbsRootZone?.databaseID }
-	var crumbZones  : ZoneArray    { return crumbsRootZone?.ancestralPath ?? [] }
+	var crumbDBID  : ZDatabaseID? { return crumbsRootZone?.databaseID }
+	var crumbZones : ZoneArray    { return crumbsRootZone?.ancestralPath ?? [] }
 
 	var indexOfHere : Int? {
 		for (index, zone) in crumbZones.enumerated() {
@@ -27,9 +27,9 @@ class ZBreadcrumbs: NSObject {
 
 	var crumbsRootZone: Zone? {
 		switch gWorkMode {
-			case .noteMode:      return gCurrentEssayZone
-			case .mapsMode:     return gSelecting.firstGrab?.crumbRoot
-			case .editIdeaMode:  return gCurrentlyEditingWidget?.widgetZone
+			case .wEssayMode:    return gCurrentEssayZone
+			case .wBigMapMode:   return gSelecting.firstGrab?.crumbRoot
+			case .wEditIdeaMode: return gCurrentlyEditingWidget?.widgetZone
 			default:             return nil
 		}
 	}

@@ -81,14 +81,14 @@ class ZMapEditor: ZBaseEditor {
 							case "f":      gSearching.showSearch(OPTION)
 							case "g":      refetch(COMMAND, OPTION, CONTROL)
 							case "k":      toggleColorized()
-							case "n":      grabOrEdit(true, OPTION)
+							case "n":      editNote(OPTION)
 							case "p":      printCurrentFocus()
 							case "/":      if IGNORED { return false } else { popAndUpdateRecents(CONTROL, kind: .eEdited) }
 							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
 							case kTab:     addSibling(OPTION)
 							case kSpace:   gSelecting.currentMoveable.addIdea()
-							case kReturn:  if COMMAND { grabOrEdit(COMMAND, OPTION) }
-							case kEscape:               grabOrEdit(   true, OPTION, true)
+							case kReturn:  if COMMAND { editNote(OPTION) }
+							case kEscape:               editNote(OPTION, false)
 							case kBackspace,
 								 kDelete:  if CONTROL { focusOnTrash() }
 							default:       return false // false means key not handled
@@ -120,7 +120,7 @@ class ZMapEditor: ZBaseEditor {
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
 						case "m":        gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawMaps()
-						case "n":        grabOrEdit(true, OPTION)
+						case "n":        editNote(OPTION)
 						case "o":        gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
 						case "p":        printCurrentFocus()
 						case "r":        reverse()
@@ -136,8 +136,8 @@ class ZMapEditor: ZBaseEditor {
 						case "-":        return handleHyphen(COMMAND, OPTION)
 						case "'":        gSwapSmallMapMode(OPTION)
 						case "/":        if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
-						case "[", "{", "}",
-							 "]":        go(down: ["]", "}"].contains(key), OPTION: OPTION) { gRedrawMaps() }
+						case "{", "[":   go(down: false, OPTION: OPTION) { gRedrawMaps() }
+						case "}", "]":   go(down:  true, OPTION: OPTION) { gRedrawMaps() }
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")
 						case kTab:       addSibling(OPTION)
@@ -145,9 +145,9 @@ class ZMapEditor: ZBaseEditor {
 						case kEquals:    if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawMaps() } }
 						case kBackSlash: mapControl(OPTION)
 						case kBackspace,
-							 kDelete:    if CONTROL { focusOnTrash() } else if OPTION || isWindow || COMMAND { delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL) } else { gCurrentKeyPressed = nil; return false }
-						case kReturn:    grabOrEdit(COMMAND, OPTION)
-						case kEscape:    grabOrEdit(true,    OPTION, true)
+							 kDelete:    complexDelete(COMMAND, OPTION, CONTROL, SPECIAL, FLAGGED, isWindow)
+						case kReturn:    if COMMAND { editNote(OPTION) } else { editIdea(OPTION) }
+						case kEscape:    editNote(OPTION, true) // fresh = true
 						default:         return false // indicate key was not handled
 					}
                 }
@@ -158,13 +158,6 @@ class ZMapEditor: ZBaseEditor {
 
 		return true // indicate key was handled
     }
-
-	func pushAllToCloud() {
-		gRemoteStorage.markAllNeedSave()
-		gBatches.save { same in
-			
-		}
-	}
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
         if  gIsEditIdeaMode || gArrowsDoNotBrowse {
@@ -217,6 +210,22 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
+	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {
+		let SPECIAL = COMMAND && OPTION
+
+		if  SPECIAL {
+			convertToTitledLineAndRearrangeChildren()
+		} else if OPTION {
+			return gSelecting.currentMoveable.convertToFromLine()
+		} else if COMMAND {
+			updateSize(up: false)
+		} else {
+			addDashedLine()
+		}
+
+		return true
+	}
+
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
         let alterers = "ehltuw\r" + kMarkingCharacters
 		let  ALTERER = alterers.contains(key)
@@ -243,7 +252,6 @@ class ZMapEditor: ZBaseEditor {
             }
         }
     }
-
 
     override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
         if !gIsMapOrEditIdeaMode {
@@ -294,6 +302,14 @@ class ZMapEditor: ZBaseEditor {
 	// MARK:- features
 	// MARK:-
 
+	func complexDelete(_ COMMAND: Bool, _ OPTION: Bool, _ CONTROL: Bool, _ SPECIAL: Bool, _ FLAGGED: Bool, _ isWindow: Bool) {
+		if  CONTROL {
+			focusOnTrash()
+		} else if OPTION || isWindow || COMMAND {
+			delete(permanently: SPECIAL && isWindow, preserveChildren: FLAGGED && isWindow, convertToTitledLine: SPECIAL)
+		}
+	}
+
 	func mapControl(_ OPTION: Bool) {
 		if !OPTION {
 			gMapController?.toggleMaps()
@@ -334,7 +350,7 @@ class ZMapEditor: ZBaseEditor {
 
 	func popAndUpdateRecents(_ CONTROL: Bool, _ COMMAND: Bool = false, kind: ZFocusKind) {
 		if  CONTROL {
-			if  let here = gRecents.popAndUpdateRecents()?.bookmarkTarget {
+			if  let here = gCurrentSmallMapRecords?.popAndUpdate()?.bookmarkTarget {
 				gHere    = here
 
 				gHere.grab()
@@ -355,22 +371,6 @@ class ZMapEditor: ZBaseEditor {
 		gGenericOffset = size
 
 		gRedrawMaps()
-	}
-
-	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {
-		let SPECIAL = COMMAND && OPTION
-
-		if  SPECIAL {
-			convertToTitledLineAndRearrangeChildren()
-		} else if OPTION {
-			return gSelecting.currentMoveable.convertToFromLine()
-		} else if COMMAND {
-			updateSize(up: false)
-		} else {
-			addDashedLine()
-		}
-
-		return true
 	}
 
 	func addDashedLine(onCompletion: Closure? = nil) {
@@ -450,6 +450,12 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
+	func pushAllToCloud() {
+		gRemoteStorage.markAllNeedSave()
+		gBatches.save { same in
+		}
+	}
+
 	func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false, _ CONTROL: Bool = false) {
 
 		// plain is fetch all progeny
@@ -464,8 +470,10 @@ class ZMapEditor: ZBaseEditor {
 					printDebug(.dData, "converted \(converted.count) core data objects")
 				}
 			} else {
-				gCloud?.fetchAllProgeny { iSame in
-					gRedrawMaps()
+				gCoreDataStack.loadAllProgeny(for: gCloud?.databaseID) {
+					gCloud?.fetchAllProgeny { iSame in
+						gRedrawMaps()
+					}
 				}
 			}
 		} else if   COMMAND {
@@ -482,6 +490,10 @@ class ZMapEditor: ZBaseEditor {
 				if  OPTION {
 					grab.reallyNeedChildren()       // OPTION
 				} else {
+					gCoreDataStack.loadAllProgeny(for: gCloud?.databaseID) {
+						gRedrawMaps()
+					}
+
 					grab.needProgeny()              // no flags
 				}
 			}
@@ -575,25 +587,25 @@ class ZMapEditor: ZBaseEditor {
         gRedrawMaps()
     }
 
-	func grabOrEdit(_ COMMAND: Bool, _  OPTION: Bool, _ ESCAPE: Bool = false) {
-        if !COMMAND {											// switch to essay edit mode
-			gSelecting.currentMoveable.edit()
+	func editIdea(_  OPTION: Bool) {
+		gSelecting.currentMoveable.edit()
 
-            if  OPTION {
-                gTextEditor.placeCursorAtEnd()
-            }
-		} else {												// switch to idea edit mode
-			if !gIsNoteMode {
-				gCreateCombinedEssay     = !OPTION				// default is multiple, option drives it to single
-
-				if  gCurrentEssay == nil || OPTION || !ESCAPE {	// restore prior essay or create one fresh (OPTION forces the latter)
-					gCurrentEssay        =  gSelecting.firstGrab?.note
-				}
-			}
-
-			gControllers.swapMapAndEssay()
+		if  OPTION {
+			gTextEditor.placeCursorAtEnd()
 		}
-    }
+	}
+
+	func editNote(_  OPTION: Bool, _ fresh: Bool = false) {
+		if !gIsNoteMode {
+			gCreateCombinedEssay = !OPTION				        // default is multiple, OPTION drives it to single
+
+			if  gCurrentEssay   == nil || OPTION || fresh {     // restore prior essay or create one fresh (OPTION forces the latter)
+				gCurrentEssay    =  gSelecting.firstGrab?.note
+			}
+		}
+
+		gControllers.swapMapAndEssay()
+	}
 
     func divideChildren() {
         let grabs = gSelecting.currentGrabs

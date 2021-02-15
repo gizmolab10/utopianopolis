@@ -57,7 +57,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func exit() {
 		if  let e = gCurrentEssay {
-			gControllers.swapMapAndEssay(force: .mapsMode)
+			gControllers.swapMapAndEssay(force: .wBigMapMode)
 			gRedrawMaps()
 
 			if  e.lastTextIsDefault,
@@ -89,7 +89,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		backgroundColor        = kClearColor
 
 		FOREGROUND { // wait for application to fully load the inspector bar
-			gMainWindow?.updateTextViewInspectorBar(show: true)
+			gMainWindow?.updateEssayEditorInspectorBar(show: true)
 			self.addButtons()
 			self.updateText()
 		}
@@ -808,7 +808,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 							eZone?.asssureIsVisible()
 
 							FOREGROUND {
-								gControllers.swapMapAndEssay(force: .mapsMode)
+								gControllers.swapMapAndEssay(force: .wBigMapMode)
 								gRedrawMaps()
 							}
 

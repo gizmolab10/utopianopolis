@@ -44,7 +44,7 @@ class ZGenericController: ZController, ZGeneric {
 
 	override func viewDidLayout() {
 		super.viewDidLayout()
-		gMainWindow?.updateTextViewInspectorBar()
+		gMainWindow?.updateEssayEditorInspectorBar()
 	}
 
 #if os(OSX)

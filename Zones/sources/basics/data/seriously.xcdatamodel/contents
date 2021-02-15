@@ -32,6 +32,7 @@
     <entity name="ZTrait" representedClassName="ZTrait" parentEntity="ZTraitAssets" syncable="YES">
         <attribute name="format" optional="YES" attributeType="String"/>
         <attribute name="owner" optional="YES" attributeType="Transformable" valueTransformerName="ZReferenceTransformer" customClassName="CKReference"/>
+        <attribute name="ownerRID" optional="YES" attributeType="String"/>
         <attribute name="strings" optional="YES" attributeType="Transformable" valueTransformerName="ZStringArrayTransformer"/>
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
@@ -66,8 +67,8 @@
         <element name="SPreferences" positionX="-63" positionY="-18" width="128" height="43"/>
         <element name="SState" positionX="0" positionY="54" width="128" height="58"/>
         <element name="ZManifest" positionX="-216.587158203125" positionY="50.24057006835938" width="128" height="103"/>
-        <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="298"/>
-        <element name="ZTrait" positionX="-117.15234375" positionY="186.37109375" width="128" height="133"/>
+        <element name="Zone" positionX="236.84375" positionY="-16.359375" width="128" height="284"/>
+        <element name="ZTrait" positionX="-117.15234375" positionY="186.37109375" width="128" height="134"/>
         <element name="ZTraitAssets" positionX="64.625" positionY="202.92578125" width="128" height="118"/>
         <element name="ZUser" positionX="-382.8359375" positionY="80.328125" width="128" height="118"/>
     </elements>

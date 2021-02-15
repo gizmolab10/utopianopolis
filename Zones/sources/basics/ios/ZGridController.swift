@@ -49,7 +49,7 @@ class ZGridController: UICollectionViewController {
 
 	override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "gridCell", for: indexPath as IndexPath) as! ZGridCell
-		cell.addBorder(thickness: 0.5, radius: 5.0, color: ZColor.lightGray.cgColor)
+		cell.addBorder(thickness: 0.5, radius: 5.0, color: kLightGrayColor.cgColor)
 		cell.backgroundColor = .clear
 		cell.title.textColor = .blue
 		cell.title.text = ""
@@ -70,8 +70,8 @@ class ZGridController: UICollectionViewController {
 			}
 
 			switch gridIID {
-			case .idExtend: 						if 		  extends { cell.backgroundColor = ZColor.lightGray }
-			case .idUp, .idDown, .idLeft, .idRight: if !selectionOnly { cell.backgroundColor = ZColor.lightGray }
+			case .idExtend: 						if 		  extends { cell.backgroundColor = kLightGrayColor }
+			case .idUp, .idDown, .idLeft, .idRight: if !selectionOnly { cell.backgroundColor = kLightGrayColor }
 			default: break
 			}
 		}

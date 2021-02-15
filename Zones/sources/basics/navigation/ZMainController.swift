@@ -49,7 +49,7 @@ class ZMainController: ZGesturesController {
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
 		if  gIsNoteMode {
 			gEssayView?.save()
-			gControllers.swapMapAndEssay(force: .mapsMode)
+			gControllers.swapMapAndEssay(force: .wBigMapMode)
 		}
 	}
 

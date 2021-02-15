@@ -76,8 +76,8 @@ class ZTogglingView: NSStackView {
         super.awakeFromNib()
         update()
 
-		layer?              .backgroundColor = kClearColor.cgColor
-		hideableView?.layer?.backgroundColor = kClearColor.cgColor
+		zlayer              .backgroundColor =  kClearColor.cgColor
+		hideableView?.zlayer.backgroundColor =  kClearColor.cgColor
 
         repeatUntil({ () -> (Bool) in
             return gDetailsController != nil
@@ -100,7 +100,8 @@ class ZTogglingView: NSStackView {
     }
     
     func update() {
-		titleButton?.layer?.backgroundColor = gAccentColor.cgColor
+		titleButton?.zlayer.backgroundColor =     gAccentColor.cgColor
+		extraButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
 
 		if  identity == .vSmallMap,
 			let  here = gIsRecentlyMode ? gRecentsHereMaybe : gFavoritesHereMaybe {

@@ -22,23 +22,25 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 	override func setupButtons() {
 		removeButtons()
 
-		buttons                      = [ZButton]()
-		let    t : [ZModeButtonType] = [.tGrowth, .tConfine, .tDB]
+		buttons                   = [ZButton]()
+		let t : [ZModeButtonType] = [.tGrowth, .tConfine, .tDB]
 		for type in t {
-			let                title = type.rawValue
-			let               button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
-			button   .modeButtonType = type
+			let             title = type.rawValue
+			let            button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
+			button.modeButtonType = type
+			button.isBordered     = true
 
+			button.setButtonType(.momentaryLight)
 			buttons.append(button)
 		}
 	}
 
 	override func updateButtons() {
-		updateButtonTitles()
+		updateButtonTitlesAndColors()
 		updateTooltips()
 	}
 
-	func updateButtonTitles() {
+	func updateButtonTitlesAndColors() {
 		for button in buttons {
 			if  let    type = button.modeButtonType {
 				switch type {
@@ -47,6 +49,8 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 					case .tDB:      button.title = gDatabaseID.mapControlString
 				}
 			}
+
+			(button.cell as? NSButtonCell)?.backgroundColor = gAccentColor
 		}
 	}
 
@@ -69,7 +73,7 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 	}
 
 	func update() {
-		updateButtonTitles()
+		updateButtonTitlesAndColors()
 		setupAndRedraw()
 		updateTooltips()
 	}

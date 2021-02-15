@@ -79,6 +79,15 @@ func gDeferRedraw(_ closure: Closure) {
 	}
 }
 
+func gCompareZones(_ a: AnyObject, _ b: AnyObject) -> Bool {
+	if  let alpha = (a as? Zone)?.ckRecordName,
+		let  beta = (b as? Zone)?.ckRecordName {
+		return alpha == beta
+	}
+
+	return false
+}
+
 precedencegroup BooleanPrecedence { associativity: left }
 infix operator ^^ : BooleanPrecedence
 /**
@@ -99,7 +108,6 @@ func ^^(lhs: Bool, rhs: Bool) -> Bool {
 
 extension NSObject {
 
-    func                  note(_ iMessage: Any?)                { } // logk(iMessage) }
     func           performance(_ iMessage: Any?)                { log(iMessage) }
     func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
 	func     printCurrentFocus()                                { gHere.widget?.printView() }
@@ -1083,16 +1091,35 @@ extension Array {
         return false    // false means unique
     }
 
-    mutating func appendUnique(contentsOf items: Array, compare: CompareClosure? = nil) {
-        let existing = self as NSArray
-        
-        for item in items {
-            if  !existing.contains(item),
-                !containsCompare(with: item as AnyObject, using: compare) {
-                append(item)
-            }
-        }
-    }
+	mutating func appendUnique(contentsOf items: Array, compare: CompareClosure? = nil) {
+		let existing = self as NSArray
+
+		for item in items {
+			if  !existing.contains(item),
+				!containsCompare(with: item as AnyObject, using: compare) {
+				append(item)
+			}
+		}
+	}
+
+	mutating func appendUniqueAndRemoveDuplicates(contentsOf items: Array, compare: CompareClosure? = nil) {
+		let   existing = self as NSArray
+		var duplicates = Array<Int>()
+
+		for (index, item) in items.enumerated() {
+			if  existing.contains(item) || containsCompare(with: item as AnyObject, using: compare) {
+				duplicates.insert(index, at: 0)
+			} else {
+				append(item)
+			}
+		}
+
+		for index in duplicates {
+			if  count > index {
+				remove(at: index)
+			}
+		}
+	}
 
     func intersection<S>(_ other: Array<Array<Element>.Element>) -> S where Element: Hashable {
         return Array(Set(self).intersection(Set(other))) as! S
@@ -1150,9 +1177,20 @@ extension ZRecordsArray {
 
 	mutating func appendUnique(_ item: ZRecord) {
 		appendUnique(contentsOf: [item]) { (a, b) -> (Bool) in
-			if  let aRecord = a as? ZRecord,
-				let bRecord = b as? ZRecord {
-				return aRecord.ckRecordName == bRecord.ckRecordName
+			if  let    aName  = (a as? ZRecord)?.ckRecordName,
+				let    bName  = (b as? ZRecord)?.ckRecordName {
+				return aName ==  bName
+			}
+
+			return false
+		}
+	}
+
+	func containsMatch(to other: AnyObject) -> Bool {
+		return containsCompare(with: other) { (a, b) in
+			if  let    aName  = (a as? ZRecord)?.ckRecordName,
+				let    bName  = (b as? ZRecord)?.ckRecordName {
+				return aName ==  bName
 			}
 
 			return false

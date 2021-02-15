@@ -67,15 +67,15 @@ class ZEvents: ZGeneric {
             self.monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
                 if !isDuplicate(event: event) {
                     switch gWorkMode {
-						case .searchMode:
+						case .wSearchMode:
 							return     gSearching      .handleEvent(event)
-						case .noteMode:
+						case .wEssayMode:
 							if  gIsHelpFrontmost {
 								return gHelpController?.handleEvent(event) ?? nil
 							} else {
 								return gEssayEditor    .handleEvent(event, isWindow: true)
 							}
-						case .mapsMode, .editIdeaMode:
+						case .wBigMapMode, .wEditIdeaMode:
 							if !gIsHelpFrontmost {
 								return gMapEditor      .handleEvent(event, isWindow: true)
 							}

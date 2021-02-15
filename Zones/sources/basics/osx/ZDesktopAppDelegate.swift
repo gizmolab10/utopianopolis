@@ -92,10 +92,10 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
 	var workingEditor: ZBaseEditor? {
 		switch gWorkMode {
-			case .editIdeaMode,
-				 .mapsMode: return gMapEditor
-//			case .noteMode: return gEssayEditor
-			default: 	    return nil
+			case .wEditIdeaMode,
+				 .wBigMapMode: return gMapEditor
+//			case .wEssayMode:  return gEssayEditor
+			default: 	       return nil
 		}
 	}
 
