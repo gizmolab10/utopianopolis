@@ -62,15 +62,15 @@ class ZRecord: ZManagedRecord { // NSObject {
 		var converted = [String]()
 
 		if  let  name = recordName {
-			var     v = visited == nil ? nil : Array<String>.init(visited!)
+			var     v = visited ?? [String]()
 
-			if (v == nil || !v!.contains(name)),
+			if (visited == nil || !visited!.contains(name)),
 				records?.maybeZRecordForRecordName(name) == nil {
 				ckRecord = CKRecord(recordType: type, recordID: CKRecordID(recordName: name))   // empty
 				updateCKRecordProperties()                                                      // filled
 				updateCKRecordFromCoreData()
 				converted.appendUnique(contentsOf: [name])
-				v?       .appendUnique(contentsOf: [name])
+				v        .appendUnique(contentsOf: [name])
 			}
 
 			converted.append(contentsOf: updateFromCoreDataHierarchyRelationships(visited: v))
@@ -224,7 +224,7 @@ class ZRecord: ZManagedRecord { // NSObject {
     func hasMissingProgeny()  -> Bool { return true }
     class var cloudProperties: [String] { return [] }
 	class var optionalCloudProperties: [String] { return [] }
-	@discardableResult func register() -> Bool { return cloud?.registerZRecord(self) ?? false }
+	@discardableResult func register() -> Bool { return records?.registerZRecord(self) ?? false }
 
 	class func cloudProperties(for className: String) -> [String] {
 		switch className {
@@ -256,8 +256,6 @@ class ZRecord: ZManagedRecord { // NSObject {
 
                     if  propertyValue != cloudValue {
 						switch keyPath {
-//							case "strings":     cloudValue = (cloudValue as! Array<String>)  as  NSObject
-//							case "assets":      cloudValue = Array(arrayLiteral: cloudValue) as  NSObject
 							case "writeAccess": cloudValue = NSNumber(value: Int(cloudValue  as! String) ?? 0)
 							default:            break
 						}

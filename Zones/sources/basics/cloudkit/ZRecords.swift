@@ -134,19 +134,21 @@ class ZRecords: NSObject {
 
 	func removeAllDuplicates() {
 		applyToAllZRecords { zRecord in
-			gCoreDataStack.removeAllDuplicates(of: zRecord)
+			if  let z = zRecord {
+				gCoreDataStack.removeAllDuplicates(of: z)
+			}
 		}
 
-		let empties = gCoreDataStack.emptyZones(within: databaseID)
-
-		for empty in empties {
-			empty.needDestroy()
+		gCoreDataStack.emptyZones(within: databaseID) { empties in
+			for empty in empties {
+				empty.needDestroy()
+			}
 		}
 	}
 
 	func markAllNeedSave() {
 		applyToAllZRecords { zRecord in
-			zRecord.needSave()
+			zRecord?.needSave()
 		}
 	}
 
@@ -217,36 +219,36 @@ class ZRecords: NSObject {
 	// initialized with one entry for each word in each zone's name
 	// grows with each unique search
 
-	func appendCKRecordsLookup(with iName: String, onEach: RecordsToRecordsClosure) {
-        for part in iName.components(separatedBy: " ") {
-            if  part != "",
-				var records = search(for: part) {
-                records     = onEach(records)
+	func appendCKRecordsLookup(with iName: String, onEach: @escaping RecordsToRecordsClosure) {
+		for part in iName.components(separatedBy: " ") {
+			if  part != "" {
+				searchCoreData(for: part) { ckRecords in
+					self.ckRecordsLookup[part] = onEach(ckRecords)
+				}
 			}
-        }
+		}
 	}
 
-	func search(for match: String) -> CKRecordsArray? {
-		var    found = gCoreDataStack.search(for: match, within: databaseID)
-		var   result = CKRecordsArray()
+	func searchCoreData(for match: String, onCompletion: RecordsClosure? = nil) {
+		gCoreDataStack.search(for: match, within: databaseID) { found in
+			var   result = CKRecordsArray()
 
-		if  let more = ckRecordsLookup[match] {
-			result = more
+			if  let more = self.ckRecordsLookup[match] {
+				result = more
+			}
+
+			let unique = found.filter { (zRecord) -> Bool in
+				return zRecord.ckRecord != nil
+			}
+
+			let records = unique.map { (zRecord) -> CKRecord in
+				return zRecord.ckRecord!
+			}
+
+			result.appendUnique(contentsOf: records)
+
+			self.ckRecordsLookup[match] = result // accumulate from core data
 		}
-
-		found = found.filter { (zRecord) -> Bool in
-			return zRecord.ckRecord != nil
-		}
-
-		let records = found.map { (zRecord) -> CKRecord in
-			return zRecord.ckRecord!
-		}
-
-		result.appendUnique(contentsOf: records)
-
-		ckRecordsLookup[match] = result // accumulate from core data
-
-		return result
 	}
 	
 	func addToLocalSearchIndex(name: String, for iZone: Zone?) {
@@ -340,15 +342,12 @@ class ZRecords: NSObject {
 	}
 
 	func registerByType(_ iRecord: ZRecord?) {
-		if  let      record  = iRecord?.ckRecord {
-			let        type  = record.recordType
-			let        name  = record.recordID.recordName
-			var recordNames  = recordNamesByType[type]
-			if  recordNames == nil {
-				recordNames  = []
-			}
+		if  let      record = iRecord?.ckRecord {
+			let        type = record.recordType
+			let        name = record.recordID.recordName
+			var recordNames = recordNamesByType[type] ?? []
 
-			recordNames?.append(name)
+			recordNames.append(name)
 
 			recordNamesByType[type] = recordNames
 		}

@@ -69,7 +69,7 @@ var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEdit
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var      gCurrentSmallMapName:             String { return gIsRecentlyMode ? "recent" : "favorite" }
 var   gCurrentSmallMapRecords:  ZSmallMapRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
-var                  gRecords:          ZRecords? { return (kIsPhone && gShowSmallMapForIOS) ? gCurrentSmallMapRecords : gCloud }
+var                  gRecords:          ZRecords? { return (kIsPhone && gShowSmallMapForIOS) ? gCurrentSmallMapRecords : gRemoteStorage.currentRecords }
 var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var            gModifierFlags:        ZEventFlags { return ZEvent.modifierFlags } // use when don't have an event handy
 var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }

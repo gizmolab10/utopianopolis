@@ -751,10 +751,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	override func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] {
 		var      converted = [String]()
-		var              v = visited
+		var              v = visited ?? [String]()
 
-		if  let       name = ckRecord?.recordID.recordName {
-			v?.appendUnique(contentsOf: [name])
+		if  let       name = recordName {
+			v.appendUnique(contentsOf: [name])
 		}
 
 		if  let        set = mutableSetValue(forKeyPath: "childArray") as? Set<Zone>, set.count > 0 {
@@ -763,7 +763,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			for child in childArray {
 				let c = child.convertFromCoreData(into: kZoneType, visited: v)
 
-				if  let name = child.ckRecord?.recordID.recordName,
+				if  let name = child.recordName,
 					(visited == nil || !visited!.contains(name)) {
 					converted.append(contentsOf: c)
 					FOREGROUND(canBeDirect: true) {
@@ -1780,7 +1780,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					} else {
 						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
 							if  let hereRecord = iRecord,
-								let    newHere = gCloud?.sureZoneForCKRecord(hereRecord) {
+								let    newHere = gRecords?.sureZoneForCKRecord(hereRecord) {
 								gHere          = newHere
 
 								newHere.prepareForArrival()
@@ -1798,7 +1798,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// STAY WITHIN MAP //
 					// /////////////// //
 
-					there = gCloud?.maybeZoneForRecordID(targetRecordID)
+					there = gRecords?.maybeZoneForRecordID(targetRecordID)
 					let grabbed = gSelecting.firstSortedGrab
 					let    here = gHere
 
@@ -1822,10 +1822,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						gHere = there!
 
 						grabHere()
-					} else if gCloud?.databaseID != .favoritesID { // favorites does not have a cloud database
+					} else if gRecords?.databaseID != .favoritesID { // favorites does not have a cloud database
 						gCloud?.assureRecordExists(withRecordID: targetRecordID, recordType: kZoneType) { (iRecord: CKRecord?) in
 							if  let hereRecord = iRecord,
-								let    newHere = gCloud?.sureZoneForCKRecord(hereRecord) {
+								let    newHere = gRecords?.sureZoneForCKRecord(hereRecord) {
 								gHere          = newHere
 
 								grabHere()

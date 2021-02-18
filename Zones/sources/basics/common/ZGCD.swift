@@ -9,8 +9,8 @@
 
 import Foundation
 
-var gFOREGROUND = DispatchQueue.main
-var gBACKGROUND = DispatchQueue.global(qos: .background)
+let gFOREGROUND = DispatchQueue.main
+let gBACKGROUND = DispatchQueue.global(qos: .background)
 
 func FOREGROUND(canBeDirect: Bool = false, _ closure: @escaping Closure) {
     if  canBeDirect && Thread.isMainThread {
@@ -20,8 +20,12 @@ func FOREGROUND(canBeDirect: Bool = false, _ closure: @escaping Closure) {
     }
 }
 
-func BACKGROUND(_ closure: @escaping Closure) {
-    gBACKGROUND.async { closure() }
+func BACKGROUND(canBeDirect: Bool = false, _ closure: @escaping Closure) {
+	if  canBeDirect && !Thread.isMainThread {
+		closure()
+	} else {
+		gBACKGROUND.async { closure() }
+	}
 }
 
 func FOREGROUND(after seconds: Double, closure: @escaping Closure) {

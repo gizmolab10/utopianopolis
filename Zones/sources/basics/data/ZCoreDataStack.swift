@@ -8,14 +8,21 @@
 
 import Foundation
 
+func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
+func gSaveContext()                                                         { gCoreDataStack.saveContext() }
 let gCoreDataStack = ZCoreDataStack()
 var gCoreDataURL   : URL = { return gDataURL.appendingPathComponent("data") }()
 var gDataURL       : URL = {
 	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 		.appendingPathComponent("Seriously", isDirectory: true)
 }()
-func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
-func gSaveContext()                                                         { gCoreDataStack.saveContext() }
+
+enum ZCDOperationID: Int {
+	case oLoad
+	case oSave
+	case oSearch
+	case oProgeny
+}
 
 class ZCoreDataStack: NSObject {
 
@@ -29,7 +36,10 @@ class ZCoreDataStack: NSObject {
 	var        privateStore : NSPersistentStore? { return persistentStore(for: privateURL) }
 	var         publicStore : NSPersistentStore? { return persistentStore(for: publicURL) }
 	var          localStore : NSPersistentStore? { return persistentStore(for: localURL) }
-	var       lastConverted = [String : [String]]()
+	var  currentOperationID : ZCDOperationID?
+
+	// MARK:- internals
+	// MARK:-
 
 	func persistentStore(for url: URL) -> NSPersistentStore? {
 		return persistentContainer.persistentStoreCoordinator.persistentStore(for: url)
@@ -101,13 +111,33 @@ class ZCoreDataStack: NSObject {
 	// MARK:- save
 	// MARK:-
 
+	func deferUntilAvailable(for opID: ZCDOperationID, _ closure: @escaping Closure) {
+		gTimers.resetTimer(for: .tCoreDataAvailable, withTimeInterval: 1.0, repeats: true) { iTimer in
+			if  self.currentOperationID == nil {
+				self.currentOperationID  = opID
+
+				iTimer.invalidate()
+				closure()
+			}
+		}
+	}
+
 	func saveContext() {
-		if  gUseCoreData,
-			managedContext.hasChanges {
-			do {
-				try managedContext.save()
-			} catch {
-				print(error)
+		if  gUseCoreData {
+			let context = managedContext
+
+			deferUntilAvailable(for: .oSave) {
+				BACKGROUND(canBeDirect: true) {
+					if  context.hasChanges {
+						do {
+							try context.save()
+						} catch {
+							print(error)
+						}
+					}
+
+					self.currentOperationID = nil
+				}
 			}
 		}
 	}
@@ -116,64 +146,169 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func loadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure?) {
-		if  gUseCoreData {
-			var names = [kRootName, kDestroyName, kTrashName, kLostAndFoundName]
+		if !gUseCoreData {
+			onCompletion?(0)
+		} else {
+			deferUntilAvailable(for: .oLoad) {
+				var names = [kDestroyName, kLostAndFoundName, kTrashName, kRootName]
+				var index = names.count - 1
 
-			if  dbID == .mineID {
-				names.append(contentsOf: [kRecentsRootName, kFavoritesRootName])
-			}
-
-			gTimers.resetTimer(for: .tLoadCoreData, withTimeInterval: 1.0, repeats: true) { iTimer in gUpdateStartupProgress() }
-
-			BACKGROUND {
-				for name in names {
-					self.loadZone(with: name, into: dbID)
+				if  dbID == .mineID {
+					names.insert(contentsOf: [kRecentsRootName, kFavoritesRootName], at: 0)
+					index = names.count - 1
 				}
 
-				self.load(type: kManifestType, into: dbID, using: NSFetchRequest<NSFetchRequestResult>(entityName: kManifestType))
+				if !gIsReadyToShowUI {
+					gTimers.resetTimer(for: .tLoadCoreData, withTimeInterval: 1.0, repeats: true) { iTimer in gUpdateStartupProgress() }
+				}
 
-				gTimers.stopTimer(for: .tLoadCoreData)
-			}
+				func loadFullContext() {
+					let name = names[index]
 
-			onCompletion?(0)
-		}
-	}
+					self.loadZone(with: name, into: dbID) {
+						index -= 1
 
-	func loadAllProgeny(for dbID: ZDatabaseID?, onCompletion: Closure? = nil) {
-		if  let  records = gRemoteStorage.zRecords(for: dbID!) {
-			let zRecords = ZRecordsArray(records.zRecordsLookup.values).filter { $0 is Zone }
+						if  index >= 0 {
+							loadFullContext()
+						} else {
+							self.load(type: kManifestType, into: dbID, onlyNeed: 1, using: NSFetchRequest<NSFetchRequestResult>(entityName: kManifestType)) { zRecord in
+								if  zRecord == nil {
+									self.currentOperationID = nil
 
-			func load(_ zones: ZoneArray) {
-				loadChildren(of: zones, into: dbID) { children in
-					if  children.count > 0 {
-						load(children) // recurse
-					} else {
-						FOREGROUND {
-							records.rootZone?.traverseAllProgeny { iChild in
-								iChild.updateFromCoreDataTraitRelationships(visited: [])
-								iChild.respectOrder()
-							}
-
-							let allRecords = ZRecordsArray(records.zRecordsLookup.values).filter { $0 is Zone }
-							let   allZones = allRecords.map { zRecord -> Zone in
-								return zRecord as! Zone
-							}
-
-							BACKGROUND {
-								self.loadTraits(ownedBy: allZones, into: dbID, onCompletion: onCompletion)
+									gTimers.stopTimer(for: .tLoadCoreData)
+									onCompletion?(0)
+								}
 							}
 						}
 					}
 				}
-			}
 
-			if  zRecords.count > 0 {
-				BACKGROUND {
+				BACKGROUND(canBeDirect: true) {
+					loadFullContext()
+				}
+			}
+		}
+	}
+
+	func loadZone(with recordName: String, into dbID: ZDatabaseID?, onCompletion: Closure? = nil) {
+		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
+		request.predicate = NSPredicate(format: "recordName = %@", recordName)
+		let      zRecords = gRemoteStorage.zRecords(for: dbID)
+
+		load(type: kZoneType, into: dbID, onlyNeed: 1, using: request) { (zRecord) -> (Void) in
+
+			// //////////////////////////////////////////////////////////////////////////////// //
+			// NOTE: all but the first of multiple values found are duplicates and thus ignored //
+			// //////////////////////////////////////////////////////////////////////////////// //
+
+			if  let zone = zRecord as? Zone {
+				FOREGROUND {
+					zone.updateFromCoreDataTraitRelationships(visited: [])
+					zone.respectOrder()
+
+					switch recordName {
+						case          kRootName: zRecords?.rootZone         = zone
+						case         kTrashName: zRecords?.trashZone        = zone
+						case       kDestroyName: zRecords?.destroyZone      = zone
+						case   kRecentsRootName: zRecords?.recentsZone      = zone
+						case kFavoritesRootName: zRecords?.favoritesZone    = zone
+						case  kLostAndFoundName: zRecords?.lostAndFoundZone = zone
+						default:                 break
+					}
+					
+					onCompletion?()
+				}
+			} else {
+				onCompletion?()
+			}
+		}
+	}
+
+	func load(type: String, into dbID: ZDatabaseID?, onlyNeed: Int? = nil, using request: NSFetchRequest<NSFetchRequestResult>, onCompletion: ZRecordClosure? = nil) {
+		do {
+			let items        = try managedContext.fetch(request)
+			if  items.count == 0 {
+				onCompletion?(nil)
+			} else {
+				var            count   = onlyNeed ?? items.count
+				for item in items {
+					let      zRecord   = item as! ZRecord
+					if  let     dbid   = dbID?.identifier,
+						zRecord.dbid  == dbid {
+						count         -= 1
+
+						FOREGROUND(canBeDirect: true) {
+							zRecord.convertFromCoreData(into: type, visited: [])
+							zRecord.register()
+							onCompletion?(zRecord)
+						}
+
+						if  count == 0 {
+							break
+						}
+					}
+				}
+
+				FOREGROUND() { // wait until next run loop cycle
+					onCompletion?(nil)
+				}
+			}
+		} catch {
+			print(error)
+			onCompletion?(nil)
+		}
+	}
+
+	// MARK:- missing
+	// MARK:-
+
+	func loadAllProgeny(for dbID: ZDatabaseID?, onCompletion: Closure? = nil) {
+		if  let  records = gRemoteStorage.zRecords(for: dbID!) {
+			deferUntilAvailable(for: .oProgeny) {
+				let zRecords = ZRecordsArray(records.zRecordsLookup.values).filter { $0 is Zone }
+				var acquired = [String]()
+
+				func loadAllTraits() {
+					BACKGROUND(canBeDirect: true) {
+						let allZones = ZRecordsArray(records.zRecordsLookup.values).filter { $0 is Zone }.map { zRecord -> Zone in
+							return zRecord as! Zone
+						}
+
+						self.loadTraits(ownedBy: allZones, into: dbID) {
+							self.currentOperationID = nil
+							onCompletion?()
+						}
+					}
+				}
+
+				func load(childrenOf parents: ZoneArray) {
+					acquired.appendUnique(contentsOf: parents.recordNames)
+					BACKGROUND(canBeDirect: true) {
+						self.loadChildren(of: parents, into: dbID, acquired) { children in
+							if  children.count > 0 {
+								load(childrenOf: children) // recurse
+							} else {
+								FOREGROUND(canBeDirect: true) {
+									records.rootZone?.traverseAllProgeny { iChild in
+										iChild.updateFromCoreDataTraitRelationships(visited: [])
+										iChild.respectOrder()
+									}
+
+									loadAllTraits()
+								}
+							}
+						}
+					}
+				}
+
+				if  zRecords.count == 0 {
+					loadAllTraits()
+				} else {
 					let zones = zRecords.map { zRecord -> Zone in
 						return zRecord as! Zone
 					}
 
-					load(zones)
+					load(childrenOf: zones)
 				}
 			}
 		}
@@ -184,190 +319,126 @@ class ZCoreDataStack: NSObject {
 		let   recordNames = zones.recordNames
 		request.predicate = NSPredicate(format: "ownerRID IN %@", recordNames)
 
-		load(type: kTraitType, into: dbID, using: request) { zRecords in
-			for zRecord in zRecords {
-				if  let trait = zRecord as? ZTrait {
-					trait.adopt()
-				}
+		load(type: kTraitType, into: dbID, using: request) { zRecord in
+			if  let trait = zRecord as? ZTrait {
+				trait.adopt()
+			} else if zRecord == nil {
+				onCompletion?()
 			}
-
-			onCompletion?()
 		}
 	}
 
-	func loadChildren(of zones: ZoneArray, into dbID: ZDatabaseID?, onCompletion: ZonesClosure? = nil) {
+	func loadChildren(of zones: ZoneArray, into dbID: ZDatabaseID?, _ acquired: [String], onCompletion: ZonesClosure? = nil) {
 		var     retrieved = ZoneArray()
+		var  totalAquired = acquired
 		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-		let   recordNames = zones.recordNames
-		request.predicate = NSPredicate(format: "parentRID IN %@", recordNames)
+		request.predicate = NSPredicate(format: "parentRID IN %@", zones.recordNames)
 
-		load(type: kZoneType, into: dbID, using: request) { zRecords in
-			for zRecord in zRecords {
-				if  let zone = zRecord as? Zone, !zones.containsMatch(to: zone) {
-					retrieved.append(zone)
-					zone.adopt()
-				}
-			}
+		printDebug(.dData, "loading children for \(zones.count)")
 
-			onCompletion?(retrieved)
-		}
-	}
-
-	func loadZone(with recordName: String, into dbID: ZDatabaseID?) {
-		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-		request.predicate = NSPredicate(format: "recordName = \"\(recordName)\"")
-
-		load(type: kZoneType, into: dbID, using: request, onlyNeed: 1) { (zRecords) -> (Void) in
-
-			// //////////////////////////////////////////////////////////////////////////////// //
-			// NOTE: all but the first of multiple values found are duplicates and thus ignored //
-			// //////////////////////////////////////////////////////////////////////////////// //
-
-			if  zRecords.count > 0,
-				let       zone = zRecords[0] as? Zone,
-				let      cloud = gRemoteStorage.zRecords(for: dbID) {
-
-				FOREGROUND {
-					zone.traverseAllProgeny { iChild in
-						iChild.updateFromCoreDataTraitRelationships(visited: [])
-						iChild.respectOrder()
-					}
-
-					switch recordName {
-						case          kRootName: cloud.rootZone         = zone
-						case         kTrashName: cloud.trashZone        = zone
-						case       kDestroyName: cloud.destroyZone      = zone
-						case   kRecentsRootName: cloud.recentsZone      = zone
-						case kFavoritesRootName: cloud.favoritesZone    = zone
-						case  kLostAndFoundName: cloud.lostAndFoundZone = zone
-						default: break
-					}
-				}
+		load(type: kZoneType, into: dbID, using: request) { zRecord in
+			if  let zone = zRecord as? Zone,
+				let name = zone.recordName,
+				totalAquired.contains(name) == false {
+				totalAquired.append  (name)
+				retrieved.append(zone)
+				zone.adopt()
+			} else if zRecord == nil {
+				printDebug(.dData, "retrieved \(retrieved.count)")
+				onCompletion?(retrieved)
 			}
 		}
-	}
-
-	func load(type: String, into dbID: ZDatabaseID?, using request: NSFetchRequest<NSFetchRequestResult>, onlyNeed: Int? = nil, onCompletion: ZRecordsClosure? = nil) {
-		var          records = ZRecordsArray()
-		do {
-			let items        = try managedContext.fetch(request)
-			if  items.count == 0 {
-				onCompletion?(records)
-			} else {
-				var              count  = onlyNeed ?? items.count
-				for item in items {
-					count              -= 1
-					let        zRecord  = item as! ZRecord
-					if  count           < 0 {
-						onCompletion?(records)
-					} else if let dbid  = dbID?.identifier,
-						zRecord.dbid   == dbid {
-						records.append(zRecord)
-
-						FOREGROUND {
-							var converted = zRecord.convertFromCoreData(into: type, visited: self.lastConverted[dbid])
-
-							zRecord.register()
-
-							if  type == kZoneType {
-								converted.appendUnique(contentsOf: self.lastConverted[dbid] ?? [])
-
-								self.lastConverted[dbid] = converted
-							}
-						}
-					}
-				}
-			}
-		} catch {
-			print(error)
-			onCompletion?(records)
-		}
-	}
-
-	@discardableResult
-	func convertZoneFromCoreData(_ record: ZRecord, into dbID: ZDatabaseID?) -> [String] {
-		var converted = [String]()
-
-		if  let  dbid = dbID?.identifier {
-			converted = record.convertFromCoreData(into: kZoneType, visited: lastConverted[dbid])
-
-			converted.appendUnique(contentsOf: lastConverted[dbid] ?? [])
-
-			lastConverted[dbid] = converted
-		}
-
-		return converted
 	}
 
 	// MARK:- search
 	// MARK:-
 
-	func search(for match: String, within dbID: ZDatabaseID?) -> ZRecordsArray {
-		var result = ZRecordsArray()
-
+	func search(for match: String, within dbID: ZDatabaseID?, onCompletion: ZRecordsClosure? = nil) {
 		if  gIsReadyToShowUI,
 			let        dbid = dbID?.identifier {
 			let  searchable = match.searchable
-			let idPredicate = NSPredicate(format: "zoneName like \"\(searchable)\"")
+			let idPredicate = NSPredicate(format: "zoneName like %@", searchable)
 			for type in [kZoneType] { //, kTraitType] {
-				let matches = search(within: dbid, type: type, using: idPredicate)
-
-				result.appendUnique(contentsOf: matches)
-			}
-		}
-
-		return result
-	}
-
-	func search(within dbid: String, type: String, using predicate: NSPredicate, uniqueOnly: Bool = true) -> ZRecordsArray {
-		var        result = ZRecordsArray()
-		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
-		let   dbPredicate = NSPredicate(format: "dbid = \"\(dbid)\"")
-		request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, dbPredicate])
-
-		do {
-			let items = try managedContext.fetch(request)
-
-			for item in items {
-				if  let zRecord = item as? ZRecord {
-					if  uniqueOnly {
-						result.appendUnique(zRecord)
-					} else {
-						result.append(zRecord)
-					}
+				self.search(within: dbid, type: type, using: idPredicate) { matches in
+					onCompletion?(matches)
 				}
 			}
-		} catch {
-			print("oops!")
 		}
+	}
 
-		return result
+	func search(within dbid: String, type: String, using predicate: NSPredicate, uniqueOnly: Bool = true, onCompletion: ZRecordsClosure? = nil) {
+		var result = ZRecordsArray()
+
+		if !gUseCoreData {
+			onCompletion?(result)
+		} else {
+			let   dbPredicate = NSPredicate(format: "dbid = %@", dbid)
+			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
+			request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, dbPredicate])
+
+			self.deferUntilAvailable(for: .oSearch) {
+				BACKGROUND(canBeDirect: true) {
+					do {
+						let items = try self.managedContext.fetch(request)
+						for item in items {
+							if  let zRecord = item as? ZRecord {
+								if  uniqueOnly {
+									result.appendUnique(zRecord)
+								} else {
+									result.append(zRecord)
+								}
+							}
+						}
+					} catch {
+						print("search fetch failed")
+					}
+
+					self.currentOperationID = nil // before calling closure
+
+					onCompletion?(result)
+				}
+			}
+		}
 	}
 
 	// MARK:- vaccuum
 	// MARK:-
 
-	func emptyZones(within dbID: ZDatabaseID?) -> ZRecordsArray {
-		var       results = ZRecordsArray()
+	func emptyZones(within dbID: ZDatabaseID?, onCompletion: ZRecordsClosure? = nil) {
 		if  let      dbid = dbID?.identifier {
 			let predicate = NSPredicate(format: "zoneName = NULL")
-			results       = search(within: dbid, type: kZoneType, using: predicate)
+			search(within: dbid, type: kZoneType, using: predicate) { matches in
+				onCompletion?(matches)
+			}
 		}
+	}
 
-		return results
+	func removeAllDuplicateZones(in dbID: ZDatabaseID?) {
+		if  let          dbid = dbID?.identifier {
+			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
+			request.predicate = NSPredicate(format: "dbid = %@", dbid)
+
+			load(type: kZoneType, into: dbID, using: request) { zRecord in }
+		}
 	}
 
 	func removeAllDuplicates(of zRecord: ZRecord) {
 		if  let      dbid = zRecord.databaseID?.identifier,
 			let  ckRecord = zRecord.ckRecord {
 			let      name = ckRecord.recordID.recordName
-			let predicate = NSPredicate(format: "recordName = \"\(name)\"")
-			var     items = search(within: dbid, type: kZoneType, using: predicate)
-			let     count = items.count
-			items         = items.filter() { $0 != ckRecord }
+			let predicate = NSPredicate(format: "recordName = %@", name)
 
-			if  count > items.count {
-				print("\(count)")
+			search(within: dbid, type: kZoneType, using: predicate) { zRecords in
+				let  count = zRecords.count
+				let extras = zRecords.filter() { $0 != ckRecord }
+
+				if  count > extras.count {
+					FOREGROUND {
+						for extra in extras {
+							self.managedContext.delete(extra)
+						}
+					}
+				}
 			}
 		}
 	}

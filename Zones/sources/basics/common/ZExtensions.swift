@@ -1127,6 +1127,21 @@ extension Array {
 
 }
 
+extension ZRecordsArray {
+
+	var recordNames: [String] {
+		var  names = [String]()
+
+		for zRecord in self {
+			if  let name = zRecord.ckRecordName {
+				names.append(name)
+			}
+		}
+
+		return names
+	}
+}
+
 extension CKReferencesArray {
 	func containsReference(_ reference: CKReference) -> Bool {
 		return containsCompare(with: reference) { (item, another) in

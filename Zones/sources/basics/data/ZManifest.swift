@@ -9,7 +9,7 @@
 import Foundation
 import CloudKit
 
-var gManifest: ZManifest? { return gCloud?.manifest }
+var gManifest: ZManifest? { return gRecords?.manifest }
 
 @objc(ZManifest)
 class ZManifest : ZRecord {

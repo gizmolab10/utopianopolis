@@ -313,7 +313,7 @@ class ZMapEditor: ZBaseEditor {
 	func mapControl(_ OPTION: Bool) {
 		if !OPTION {
 			gMapController?.toggleMaps()
-		} else if let root = gCloud?.rootZone {
+		} else if let root = gRecords?.rootZone {
 			gHere = root
 
 			gHere.grab()
@@ -465,12 +465,11 @@ class ZMapEditor: ZBaseEditor {
 
 		if          CONTROL {
 			if      OPTION {
-				if  let      root = gCloud?.rootZone {
-					let converted = gCoreDataStack.convertZoneFromCoreData(root, into: gCloud?.databaseID)
-					printDebug(.dData, "converted \(converted.count) core data objects")
+				if  let      root = gRecords?.rootZone {
+					root.convertFromCoreData(into: kZoneType, visited: [])
 				}
 			} else {
-				gCoreDataStack.loadAllProgeny(for: gCloud?.databaseID) {
+				gCoreDataStack.loadAllProgeny(for: gRecords?.databaseID) {
 					gCloud?.fetchAllProgeny { iSame in
 						gRedrawMaps()
 					}
@@ -490,7 +489,7 @@ class ZMapEditor: ZBaseEditor {
 				if  OPTION {
 					grab.reallyNeedChildren()       // OPTION
 				} else {
-					gCoreDataStack.loadAllProgeny(for: gCloud?.databaseID) {
+					gCoreDataStack.loadAllProgeny(for: gRecords?.databaseID) {
 						gRedrawMaps()
 					}
 

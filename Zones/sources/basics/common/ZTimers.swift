@@ -19,6 +19,7 @@ let gTimers = ZTimers()
 enum ZTimerID : Int {
 	case tNeedCloudDriveEnabled
 	case tArrowsDoNotBrowse
+	case tCoreDataAvailable
 	case tRecordsEveryone
 	case tNeedUserAccess
 	case tCloudAvailable
@@ -101,6 +102,7 @@ class ZTimers: NSObject {
 			FOREGROUND { // timers must have a runloop
 				self.timers[id]?.invalidate()
 				self.timers[id] = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: block)
+				self.timers[id]?.fire()
 			}
 		}
 	}

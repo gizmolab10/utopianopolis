@@ -35,17 +35,15 @@ class ZStatusController: ZGenericController {
     }
 
     var totalCountsText: String {
-//		let  wrong =  gCloud?.recordsMistyped   .count ?? 0
-//		let  dupes =  gCloud?.duplicates        .count ?? 0
-		let  total =  gCloud?.zRecordsLookup    .count ?? 0
-		let  zones =  gCloud?.countBy(type: kZoneType) ?? 0
-		let  count = (gCloud?.rootZone?  .progenyCount ?? 0) + 1 // add one for root
+		let  total =  gRecords?.zRecordsLookup    .count ?? 0
+		let  zones =  gRecords?.countBy(type: kZoneType) ?? 0
+		let  count = (gRecords?.rootZone?  .progenyCount ?? 0) + 1 // add one for root
 		let suffix =    count != 1 ? "s" : ""
 		let result = "\(count) idea\(suffix)"
 		var addend = " in map"
 
 		if  gDebugInfo {
-			addend = " [zones: \(zones) of reg: \(total)]"
+			addend = " [zones: \(zones) total: \(total)]"
 		}
 
 		return result + addend
