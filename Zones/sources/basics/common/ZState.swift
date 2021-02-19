@@ -114,8 +114,6 @@ func gSwapSmallMapMode(_ OPTION: Bool = false) {
 		gSelecting.swapGrabsFrom(currentID, toID: newID)
 	}
 
-//	gCurrentSmallMapRecords?.revealBookmark(of: gHere)
-
 	gSignal([.sDetails, .sSmallMap])
 }
 

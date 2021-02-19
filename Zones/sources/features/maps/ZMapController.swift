@@ -22,7 +22,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                   widgetType : ZWidgetType   { return .tBigMap }
 	var                   isExemplar : Bool          { return false }
 	var                     isBigMap : Bool          { return true }
-	var                     hereZone : Zone?         { return gHereMaybe }
+	var                     hereZone : Zone?         { return gHereMaybe ?? gHere }
 	override  var       allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum] }
 	@IBOutlet var           dragView : ZDragView?
 	@IBOutlet var          mapView : ZView?
@@ -102,7 +102,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gToggleDatabaseID()
 		gHere.grab()
 		gHere.expand()
-		gFavorites.updateAllFavorites()
+		gFavorites.updateCurrentFavorite()
 	}
 
 	func recenter(_ SPECIAL: Bool = false) {

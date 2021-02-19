@@ -587,13 +587,14 @@
 		0C39B2271F182EBB0091F4D1 /* details */ = {
 			isa = PBXGroup;
 			children = (
+				0C39B2291F182EBB0091F4D1 /* ZDataController.swift */,
 				0C39B22B1F182EBB0091F4D1 /* ZDetailsController.swift */,
 				0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */,
 				0C39B22A1F182EBB0091F4D1 /* ZPreferencesController.swift */,
 				A706444E247316DA00F90B86 /* ZRecents.swift */,
 				A793722E25BE2EE0008C98AE /* ZSimpleToolButton.swift */,
 				A793722D25BE2EE0008C98AE /* ZSimpleToolsController.swift */,
-				0C39B2291F182EBB0091F4D1 /* ZDataController.swift */,
+				A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */,
 				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
 			);
 			path = details;
@@ -677,7 +678,6 @@
 				A752FC31245222D100603A54 /* ZoneContextualMenu.swift */,
 				A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */,
 				A7B48A7E23E0E80C00654DBD /* ZoneWindow.swift */,
-				A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";

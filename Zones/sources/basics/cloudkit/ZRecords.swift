@@ -56,14 +56,31 @@ class ZRecords: NSObject {
 	func hasCKRecordName      (_ iName: String, forAnyOf iStates: [ZRecordState]) -> Bool     { return registeredCKRecordForName(iName, forAnyOf: iStates) != nil }
 	func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool     { return registeredCKRecordForID(iRecordID, forAnyOf: iStates) != nil }
 
+	var allZones : ZoneArray {
+		var array = ZoneArray()
+
+		applyToAllZones { zone in
+			array.append(zone)
+		}
+
+		return array
+	}
+
+	var allProgeny : ZoneArray {
+		var array = ZoneArray()
+
+		applyToAllProgeny { child in
+			array.append(child)
+		}
+
+		return array
+	}
+
 	var orphanCount : Int {
 		orphans = ZoneArray()
 
-		for record in zRecordsLookup.values {
-			if  let  zone  = record as? Zone,
-				zone.root == nil   {
-				orphans.append(zone)
-			}
+		applyToAllOrphans { zone in
+			orphans.append(zone)
 		}
 
 		return orphans.count
@@ -184,8 +201,8 @@ class ZRecords: NSObject {
 	func updateLastSyncDate() {
         var date = lastSyncDate
 
-        for zRecord in zRecordsLookup.values {
-            if  let           record = zRecord.ckRecord,
+		applyToAllZRecords { zRecord in
+            if  let           record = zRecord?.ckRecord,
                 let modificationDate = record.modificationDate,
                 modificationDate.timeIntervalSince(date) > 0 {
 
@@ -445,6 +462,28 @@ class ZRecords: NSObject {
         return states
     }
 
+	func applyToAllProgeny(closure: ZoneClosure) {
+		rootZone?.traverseAllProgeny { zone in
+			closure(zone)
+		}
+	}
+
+	func applyToAllOrphans(closure: ZoneClosure) {
+		applyToAllZones { zone in
+			if  zone.root == nil {
+				closure(zone)
+			}
+		}
+	}
+
+	func applyToAllZones(closure: ZoneClosure) {
+		applyToAllZRecords { zRecord in
+			if  let zone = zRecord as? Zone {
+				closure(zone)
+			}
+		}
+	}
+
 	func applyToAllZRecords(closure: ZRecordClosure) {
 		for zRecord in zRecordsLookup.values {
 			closure(zRecord)
@@ -494,13 +533,11 @@ class ZRecords: NSObject {
 
 	func assureAdoption(_ onCompletion: IntClosure? = nil) {
 		FOREGROUND {
-			for (index, zRecord) in self.zRecordsLookup.values.enumerated() {
-				if  let zone = zRecord as? Zone {
-					zone.adopt()
+			self.applyToAllZones { zone in
+				zone.adopt()
 
-					if  zone.root == nil {
-						printDebug(.dAdopt, "nil root (at \(index)) for: \(zone.ancestralString)")
-					}
+				if  zone.root == nil {
+					printDebug(.dAdopt, "nil root at: \(zone.ancestralString)")
 				}
 			}
 

@@ -60,7 +60,7 @@ class ZMainController: ZGesturesController {
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
 		permissionView?               .isHidden = !gIsStartupMode
-		debugView?                    .isHidden =  gIsNoteMode
+		debugView?                    .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
 
 		switch iKind {
 			case .sFound:

@@ -14,7 +14,6 @@ enum ZDebugID: Int {
 	case dRegistry
 	case dZones
 	case dTraits
-	case dOrphans
 	case dMistype
 	case dDuplicates
 	case dEnd
@@ -48,7 +47,6 @@ class ZDebugController: ZGenericTableController {
 			case .dDuplicates: return gRecords?.duplicates         .count ?? 0
 			case .dRegistry:   return gRecords?.zRecordsLookup     .count ?? 0
 			case .dMistype:    return gRecords?.recordsMistyped    .count ?? 0
-			case .dOrphans:    return gRecords?              .orphanCount ?? 0
 			case .dTraits:     return gRecords?.countBy(type: kTraitType) ?? 0
 			case .dZones:      return gRecords?.countBy(type:  kZoneType) ?? 0
 			default:           break

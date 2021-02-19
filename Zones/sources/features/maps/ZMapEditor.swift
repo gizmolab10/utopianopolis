@@ -56,7 +56,7 @@ class ZMapEditor: ZBaseEditor {
             var   SHIFT = flags.isShift
 			let SPECIAL = flags.isSpecial
 			let     ALL = COMMAND && OPTION && CONTROL
-			let IGNORED = 			 OPTION && CONTROL
+			let IGNORED = 	 		 OPTION && CONTROL
 			let    HARD = COMMAND &&           CONTROL
 			let FLAGGED = COMMAND || OPTION || CONTROL
             let   arrow = key.arrow
@@ -132,6 +132,7 @@ class ZMapEditor: ZBaseEditor {
 						case "x":        if COMMAND { delete(permanently: SPECIAL && isWindow) } else { gCurrentKeyPressed = nil; return false }
 						case "y":        gToggleShowTooltips()
 						case "z":        if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
+						case "#":        if gSelecting.hasMultipleGrab { prefix(with: key) } else { debugAnalyze() }
 						case "+":        divideChildren()
 						case "-":        return handleHyphen(COMMAND, OPTION)
 						case "'":        gSwapSmallMapMode(OPTION)
@@ -233,23 +234,24 @@ class ZMapEditor: ZBaseEditor {
         let  CONTROL = flags.isControl
 		let  FLAGGED = COMMAND || CONTROL
 
-        if  !FLAGGED && ALTERER {       return .eAlter
+        if  !FLAGGED && ALTERER {           return .eAlter
         } else {
-            switch key {
-            case "f":                   return .eFind
-            case "k":                   return .eColor
-            case "m":                   return .eCloud
-            case "z":                   return .eUndo
-			case "o", "s":              return .eFiles
-            case "r", "#":              return .eSort
-			case "t", "u", "?", "/":    return .eHelp
-            case "x", kSpace:           return .eChild
-            case "b", kTab, kBackspace: return .eParent
-            case kDelete:               return  CONTROL ? .eAlways : .eParent
-			case kEquals:               return  COMMAND ? .eAlways : .eTravel
-            case "d":                   return  COMMAND ? .eAlter  : .eParent
-            default:                    return .eAlways
-            }
+			switch key {
+				case "f":                   return .eFind
+				case "k":                   return .eColor
+				case "m":                   return .eCloud
+				case "r":                   return .eSort
+				case "z":                   return .eUndo
+				case "#":                   return .eAlter
+				case "o", "s":              return .eFiles
+				case "t", "u", "?", "/":    return .eHelp
+				case "x", kSpace:           return .eChild
+				case "b", kTab, kBackspace: return .eParent
+				case kDelete:               return  CONTROL ? .eAlways : .eParent
+				case kEquals:               return  COMMAND ? .eAlways : .eTravel
+				case "d":                   return  COMMAND ? .eAlter  : .eParent
+				default:                    return .eAlways
+			}
         }
     }
 
@@ -640,6 +642,19 @@ class ZMapEditor: ZBaseEditor {
 		let cloud = OPTION ? gCurrentSmallMapRecords : gRecents
 
 		cloud?.go(down: down, amongNotes: amongNotes, atArrival: atArrival)
+	}
+
+	func debugAnalyze() {
+		var count = 0
+
+		for cloud in gRemoteStorage.allClouds {
+			cloud.applyToAllOrphans { zone in
+				print("orphan: \(zone)")
+				count += 1
+			}
+		}
+
+		print(" total: \(count)")
 	}
 
     // MARK:- lines

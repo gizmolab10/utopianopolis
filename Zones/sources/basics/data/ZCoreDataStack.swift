@@ -43,11 +43,11 @@ class ZCoreDataStack: NSObject {
 	lazy var          model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }()
 	lazy var    coordinator : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
 	lazy var managedContext : NSManagedObjectContext        = { return persistentContainer.viewContext }()
-	var        privateStore : NSPersistentStore? { return persistentStore(for: privateURL) }
-	var         publicStore : NSPersistentStore? { return persistentStore(for: publicURL) }
-	var          localStore : NSPersistentStore? { return persistentStore(for: localURL) }
-	var          statusText : String             { return currentOperationID?.description ?? "" }
-	var              isDone : Bool               { return currentOperationID == nil }
+	lazy var   privateStore : NSPersistentStore?            = { return persistentStore(for: privateURL) }()
+	lazy var    publicStore : NSPersistentStore?            = { return persistentStore(for: publicURL) }()
+	lazy var     localStore : NSPersistentStore?            = { return persistentStore(for: localURL) }()
+	var          statusText : String                          { return currentOperationID?.description ?? "" }
+	var              isDone : Bool                            { return currentOperationID == nil }
 	var  currentOperationID : ZCDOperationID?
 
 	// MARK:- internals
@@ -186,6 +186,7 @@ class ZCoreDataStack: NSObject {
 							self.load(type: kManifestType, into: dbID, onlyNeed: 1, using: NSFetchRequest<NSFetchRequestResult>(entityName: kManifestType)) { zRecord in
 								if  zRecord == nil {
 									self.currentOperationID = nil
+									gRemoteStorage.recount()
 
 									gTimers.stopTimer(for: .tLoadCoreData)
 									onCompletion?(0)
@@ -277,17 +278,15 @@ class ZCoreDataStack: NSObject {
 	func loadAllProgeny(for dbID: ZDatabaseID?, onCompletion: Closure? = nil) {
 		if  let  records = gRemoteStorage.zRecords(for: dbID!) {
 			deferUntilAvailable(for: .oProgeny) {
-				let zRecords = ZRecordsArray(records.zRecordsLookup.values).filter { $0 is Zone }
+				let    zones = records.allZones
 				var acquired = [String]()
 
 				func loadAllTraits() {
 					BACKGROUND(canBeDirect: true) {
-						let allZones = ZRecordsArray(records.zRecordsLookup.values).filter { $0 is Zone }.map { zRecord -> Zone in
-							return zRecord as! Zone
-						}
-
-						self.loadTraits(ownedBy: allZones, into: dbID) {
+						self.loadTraits(ownedBy: gRemoteStorage.allProgeny, into: dbID) {
 							self.currentOperationID = nil
+
+							gRemoteStorage.recount()
 							onCompletion?()
 						}
 					}
@@ -301,7 +300,7 @@ class ZCoreDataStack: NSObject {
 								load(childrenOf: children) // recurse
 							} else {
 								FOREGROUND(canBeDirect: true) {
-									records.rootZone?.traverseAllProgeny { iChild in
+									records.applyToAllProgeny { iChild in
 										iChild.updateFromCoreDataTraitRelationships(visited: [])
 										iChild.respectOrder()
 									}
@@ -313,13 +312,9 @@ class ZCoreDataStack: NSObject {
 					}
 				}
 
-				if  zRecords.count == 0 {
+				if  zones.count == 0 {
 					loadAllTraits()
 				} else {
-					let zones = zRecords.map { zRecord -> Zone in
-						return zRecord as! Zone
-					}
-
 					load(childrenOf: zones)
 				}
 			}

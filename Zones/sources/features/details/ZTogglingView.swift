@@ -117,13 +117,15 @@ class ZTogglingView: NSStackView {
     }
 
 	func updateSpinner() {
-		let          hide = gCurrentOp.isDoneOp && gCoreDataStack.isDone
-		spinner?.isHidden = hide
+		if  let      s = spinner {
+			let   hide = gCurrentOp.isDoneOp && gCoreDataStack.isDone
+			s.isHidden = hide
 
-		if  hide {
-			spinner?.stopAnimation(spinner)
-		} else {
-			spinner?.startAnimation(spinner)
+			if  hide {
+				s.stopAnimation(spinner)
+			} else {
+				s.startAnimation(spinner)
+			}
 		}
 	}
 

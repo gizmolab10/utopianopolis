@@ -92,25 +92,24 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return self
 	}
 
-	struct ZWorkType: OptionSet {
+	struct ZWorkingType: OptionSet {
 		let rawValue: Int
 
 		init(rawValue: Int) {
 			self.rawValue = rawValue
 		}
 
-		static let wBookmarks = ZWorkType(rawValue: 0x0001)
-		static let wNotemarks = ZWorkType(rawValue: 0x0002)
-		static let   wProgeny = ZWorkType(rawValue: 0x0004)  //
-		static let       wAll = ZWorkType(rawValue: 0x0008)  // everything
+		static let wBookmarks = ZWorkingType(rawValue: 0x0001)
+		static let wNotemarks = ZWorkingType(rawValue: 0x0002)
+		static let   wProgeny = ZWorkingType(rawValue: 0x0004)  //
+		static let       wAll = ZWorkingType(rawValue: 0x0008)  // everything
 	}
 
-	@discardableResult func matches(_ type: ZWorkType) -> Bool {
-		return (type.contains(.wNotemarks) && bookmarkTarget?.hasNote ?? false)
-			|| (type.contains(.wBookmarks) && isBookmark)
+	@discardableResult func isMark(of type: ZWorkingType) -> Bool {
+		return isBookmark && (type.contains(.wBookmarks) || (type.contains(.wNotemarks) && bookmarkTarget!.hasNote))
 	}
 
-	func zones(of type: ZWorkType) -> ZoneArray {
+	func zones(of type: ZWorkingType) -> ZoneArray {
 		var result = ZoneArray()
 		if  type.contains(.wAll) {
 			traverseAllProgeny { iZone in
@@ -118,13 +117,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else if type.contains(.wProgeny) {
 			traverseAllProgeny { iZone in
-				if  iZone.matches(type) {
+				if  iZone.isMark(of: type) {
 					result.append(iZone)
 				}
 			}
 		} else {
 			result = children.filter { (iZone) -> Bool in
-				iZone.matches(type)
+				iZone.isMark(of: type)
 			}
 		}
 		return result
@@ -342,9 +341,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var root: Zone? {
 		var base: Zone?
 
-		traverseAllAncestors { iZone in
-			if  iZone.isARoot {
-				base = iZone
+		traverseAllAncestors { zone in
+			if  zone.isARoot {
+				base = zone
 			}
 		}
 

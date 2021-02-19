@@ -126,18 +126,16 @@ class ZDataController: ZGenericController {
 		return text
 	}
 
-    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if ![.sSearch, .sFound, .sCrumbs, .sSwap, .sSmallMap].contains(iKind) {
-			creationDateLabel?.text = creationDateText
-			cloudStatusLabel? .text = statusText
-			recordNameLabel?  .text = zoneRecordNameText
-            totalCountLabel?  .text = totalCountsText
-			mapNameLabel?     .text = mapNameText
+	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+		creationDateLabel?.text = creationDateText
+		cloudStatusLabel? .text = statusText
+		recordNameLabel?  .text = zoneRecordNameText
+		totalCountLabel?  .text = totalCountsText
+		mapNameLabel?     .text = mapNameText
 
-            if  iKind != .sStartupProgress {
-                synopsisLabel?.text = synopsisText
-            }
-        }
-    }
+		if  iKind != .sStartupProgress {
+			synopsisLabel?.text = synopsisText
+		}
+	}
 
 }

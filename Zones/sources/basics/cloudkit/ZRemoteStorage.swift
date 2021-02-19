@@ -34,6 +34,16 @@ class ZRemoteStorage: NSObject {
     var        trashZone : Zone?       { return currentRecords.trashZone }
     var         rootZone : Zone? { get { return currentRecords.rootZone }  set { currentRecords.rootZone  = newValue } }
 
+	var allProgeny : ZoneArray {
+		var total = ZoneArray()
+
+		for cloud in allClouds {
+			total.append(contentsOf: cloud.allProgeny)
+		}
+
+		return total
+	}
+
 	var totalRecordsCount: Int {
 		var total = 0
 

@@ -57,19 +57,13 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 	@objc private func handleButtonPress(_ button: ZButton) {
 		if  let    type = button.modeButtonType {
 			switch type {
-				case .tConfine: gConfinementMode = gBrowsingIsConfined ? .all       : .list
-				case .tGrowth:  gListGrowthMode  = gListsGrowDown      ? .up        : .down
-				case .tDB:      swapDB()
+				case .tConfine: gConfinementMode = gBrowsingIsConfined ? .all : .list
+				case .tGrowth:  gListGrowthMode  = gListsGrowDown      ? .up  : .down
+				case .tDB:      gMapController?.toggleMaps()
 			}
 		}
 
-		gSignal([.sDetails])
-	}
-
-	func swapDB() {
-		gMapController?.toggleMaps()
-		gRedrawMaps()
-		gBreadcrumbsView?.setupAndRedraw()
+		gSignal([.sDetails, .sCrumbs, .sRelayout])
 	}
 
 	func update() {
