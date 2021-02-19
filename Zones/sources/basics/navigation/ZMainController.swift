@@ -21,7 +21,8 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var searchResultsView : ZView?
 	@IBOutlet var permissionView    : ZView?
 	@IBOutlet var searchBoxView     : ZView?
-    @IBOutlet var detailView        : ZView?
+	@IBOutlet var detailView        : ZView?
+	@IBOutlet var debugView         : ZView?
 	@IBOutlet var essayView     	: ZView?
 	@IBOutlet var mapView           : ZView?
     override  var controllerID      : ZControllerID { return .idMain }
@@ -59,6 +60,7 @@ class ZMainController: ZGesturesController {
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
 		permissionView?               .isHidden = !gIsStartupMode
+		debugView?                    .isHidden =  gIsNoteMode
 
 		switch iKind {
 			case .sFound:

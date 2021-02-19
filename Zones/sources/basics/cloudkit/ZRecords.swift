@@ -38,6 +38,7 @@ class ZRecords: NSObject {
 	var  recordNamesByType = [String       :   [String]]      ()
 	var recordNamesByState = [ZRecordState :   [String]]      ()
     var       lastSyncDate = Date(timeIntervalSince1970: 0)
+	var            orphans = ZoneArray()
     var         databaseID : ZDatabaseID
     var           manifest : ZManifest?
     var   lostAndFoundZone : Zone?
@@ -48,7 +49,27 @@ class ZRecords: NSObject {
     var           rootZone : Zone?
     var        hereIsValid : Bool { return maybeZoneForRecordName(hereRecordName) != nil }
 
-	var recordCount : Int  {
+	func countBy                                                  (type: String)  -> Int?     { return recordNamesByType[type]?.count }
+	func recordNamesForState                             (_ state: ZRecordState)  -> [String] { return recordNamesByState[state] ?? [] }
+	func notRegistered                                 (_ recordID: CKRecordID?)  -> Bool     { return maybeZoneForRecordID(recordID) == nil }
+	func hasCKRecord     (_ ckRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool     { return registeredCKRecord(ckRecord, forAnyOf: iStates) != nil }
+	func hasCKRecordName      (_ iName: String, forAnyOf iStates: [ZRecordState]) -> Bool     { return registeredCKRecordForName(iName, forAnyOf: iStates) != nil }
+	func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool     { return registeredCKRecordForID(iRecordID, forAnyOf: iStates) != nil }
+
+	var orphanCount : Int {
+		orphans = ZoneArray()
+
+		for record in zRecordsLookup.values {
+			if  let  zone  = record as? Zone,
+				zone.root == nil   {
+				orphans.append(zone)
+			}
+		}
+
+		return orphans.count
+	}
+
+	var recordCount : Int {
 
 		// when this is called at beginning of read shortly after launch,
 		// nothing has yet been registered, so return a default of 100
@@ -337,10 +358,6 @@ class ZRecords: NSObject {
         return false
     }
 
-	func countBy(type: String) -> Int? {
-		return recordNamesByType[type]?.count
-	}
-
 	func registerByType(_ iRecord: ZRecord?) {
 		if  let      record = iRecord?.ckRecord {
 			let        type = record.recordType
@@ -367,10 +384,6 @@ class ZRecords: NSObject {
         unregisterCKRecord(zRecord?.ckRecord)
 		removeFromLocalSearchIndex(nameOf: zRecord as? Zone)
         gBookmarks.forget(zRecord as? Zone)
-    }
-
-    func notRegistered(_ recordID: CKRecordID?) -> Bool {
-        return maybeZoneForRecordID(recordID) == nil
     }
 
     func removeDuplicates() {
@@ -417,17 +430,6 @@ class ZRecords: NSObject {
         }
 
         return all
-    }
-
-    func recordNamesForState(_ state: ZRecordState) -> [String] {
-        var recordNames               = recordNamesByState[state]
-
-        if  recordNames              == nil {
-            recordNames               = []
-            recordNamesByState[state] = recordNames
-        }
-
-        return recordNames!
     }
 
     func states(for iRecord: CKRecord) -> [ZRecordState] {
@@ -480,7 +482,6 @@ class ZRecords: NSObject {
 				   !r.isARoot,
 					r.parent == nil,
 					r.parentLink == nil {
-//					lostAndFoundZone?.addAndReorderChild(r)
 					printDebug(.dFix, "found: \(r)")
 
 					lost += 1
@@ -515,18 +516,6 @@ class ZRecords: NSObject {
 				zRecord.adopt()
             }
         }
-    }
-
-    func hasCKRecordName(_ iName: String, forAnyOf iStates: [ZRecordState]) -> Bool {
-        return registeredCKRecordForName(iName, forAnyOf: iStates) != nil
-    }
-
-    func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool {
-        return registeredCKRecordForID(iRecordID, forAnyOf: iStates) != nil
-    }
-
-    func hasCKRecord(_ ckRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
-        return registeredCKRecord(ckRecord, forAnyOf: iStates) != nil
     }
 
 	func hasZRecord(_ iRecord: ZRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
