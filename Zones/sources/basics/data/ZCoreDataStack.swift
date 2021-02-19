@@ -10,9 +10,9 @@ import Foundation
 
 func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
 func gSaveContext()                                                         { gCoreDataStack.saveContext() }
-let gCoreDataStack = ZCoreDataStack()
-var gCoreDataURL   : URL = { return gDataURL.appendingPathComponent("data") }()
-var gDataURL       : URL = {
+let  gCoreDataStack = ZCoreDataStack()
+var  gCoreDataURL   : URL = { return gDataURL.appendingPathComponent("data") }()
+var  gDataURL       : URL = {
 	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 		.appendingPathComponent("Seriously", isDirectory: true)
 }()
@@ -22,6 +22,16 @@ enum ZCDOperationID: Int {
 	case oSave
 	case oSearch
 	case oProgeny
+
+	var description : String {
+		let string = "\(self)".lowercased().substring(fromInclusive: 1)
+
+		if  self == .oProgeny {
+			return "loading " + string
+		} else {
+			return string + "ing local data"
+		}
+	}
 }
 
 class ZCoreDataStack: NSObject {
@@ -36,6 +46,8 @@ class ZCoreDataStack: NSObject {
 	var        privateStore : NSPersistentStore? { return persistentStore(for: privateURL) }
 	var         publicStore : NSPersistentStore? { return persistentStore(for: publicURL) }
 	var          localStore : NSPersistentStore? { return persistentStore(for: localURL) }
+	var          statusText : String             { return currentOperationID?.description ?? "" }
+	var              isDone : Bool               { return currentOperationID == nil }
 	var  currentOperationID : ZCDOperationID?
 
 	// MARK:- internals
@@ -113,8 +125,8 @@ class ZCoreDataStack: NSObject {
 
 	func deferUntilAvailable(for opID: ZCDOperationID, _ closure: @escaping Closure) {
 		gTimers.resetTimer(for: .tCoreDataAvailable, withTimeInterval: 1.0, repeats: true) { iTimer in
-			if  self.currentOperationID == nil {
-				self.currentOperationID  = opID
+			if  self.isDone {
+				self.currentOperationID = opID
 
 				iTimer.invalidate()
 				closure()

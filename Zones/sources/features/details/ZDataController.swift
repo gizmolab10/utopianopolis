@@ -14,7 +14,7 @@ import Foundation
     import UIKit
 #endif
 
-class ZStatusController: ZGenericController {
+class ZDataController: ZGenericController {
 
 	@IBOutlet var creationDateLabel: ZTextField?
 	@IBOutlet var  cloudStatusLabel: ZTextField?
@@ -23,7 +23,7 @@ class ZStatusController: ZGenericController {
 	@IBOutlet var     synopsisLabel: ZTextField?
     @IBOutlet var      mapNameLabel: ZTextField?
     var                 currentZone: Zone?         { return gSelecting.rootMostMoveable }
-    override  var      controllerID: ZControllerID { return .idStatus }
+    override  var      controllerID: ZControllerID { return .idData }
 
     var versionText: String {
         if  let     version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
@@ -35,9 +35,7 @@ class ZStatusController: ZGenericController {
     }
 
     var totalCountsText: String {
-//		let  wrong =  gRecords?.recordsMistyped   .count ?? 0
-//		let  dupes =  gRecords?.duplicates        .count ?? 0
-		let  count = (gRecords?.rootZone?  .progenyCount ?? 0) + 1 // add one for root
+		let  count = (gRecords?.rootZone?.progenyCount ?? 0) + 1 // add one for root
 		let suffix =    count != 1 ? "s" : ""
 		let result = "\(count) idea\(suffix)"
 		let addend = " in map"
@@ -54,10 +52,14 @@ class ZStatusController: ZGenericController {
     }
 
     var statusText: String {
-        let    opStatus = gBatches.statusText
-		let timerStatus =  gTimers.statusText
+        let       opStatus =       gBatches.statusText
+		let    timerStatus =        gTimers.statusText
+		let coreDataStatus = gCoreDataStack.statusText
 
-		return opStatus != "" ? opStatus : timerStatus != "" ? timerStatus : gCloudStatusIsActive ? "all data synchronized" : "all data saved locally"
+		return opStatus    != "" ? opStatus :
+			timerStatus    != "" ? timerStatus :
+			coreDataStatus != "" ? coreDataStatus :
+			gCloudStatusIsActive ? "all data synchronized" : "all data saved locally"
     }
 
 	var zoneRecordNameText: String {

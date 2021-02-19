@@ -5,10 +5,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Status Controller-->
+        <!--Data Controller-->
         <scene sceneID="SRV-hs-cwo">
             <objects>
-                <viewController id="fxO-Qj-JeN" customClass="ZStatusController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="fxO-Qj-JeN" customClass="ZDataController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mbO-Ma-L1E">
                         <rect key="frame" x="0.0" y="0.0" width="282" height="170"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -452,6 +452,9 @@ CA
                                                             <outlet property="togglingView" destination="M2W-8y-R0e" id="XRu-AH-2H9"/>
                                                         </connections>
                                                     </button>
+                                                    <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Zkz-eb-lqR">
+                                                        <rect key="frame" x="126" y="1" width="16" height="16"/>
+                                                    </progressIndicator>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Data Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="306" y="2" width="14" height="14"/>
                                                         <constraints>
@@ -470,10 +473,12 @@ CA
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="fsz-8k-F3y" secondAttribute="trailing" id="1U6-qO-4W4"/>
                                                     <constraint firstAttribute="trailing" secondItem="hIy-eV-7gW" secondAttribute="trailing" constant="8" id="9pe-MS-jhP"/>
+                                                    <constraint firstItem="Zkz-eb-lqR" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="Fjh-dH-wlz"/>
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="JkT-Tw-HTb"/>
                                                     <constraint firstAttribute="height" constant="18" id="OPH-Ni-UYm"/>
                                                     <constraint firstItem="hIy-eV-7gW" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="i6w-cL-2uR"/>
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" id="kaj-xz-Sm0"/>
+                                                    <constraint firstItem="Zkz-eb-lqR" firstAttribute="centerX" secondItem="xwW-xc-XIh" secondAttribute="centerX" constant="-30" id="rtr-Tg-bWt"/>
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Data Hideable">
@@ -495,6 +500,7 @@ CA
                                         <connections>
                                             <outlet property="bannerView" destination="xwW-xc-XIh" id="To1-48-Suc"/>
                                             <outlet property="hideableView" destination="Chx-83-qGo" id="Qre-NM-FhC"/>
+                                            <outlet property="spinner" destination="Zkz-eb-lqR" id="dxW-NG-J09"/>
                                             <outlet property="titleButton" destination="fsz-8k-F3y" id="p3H-LW-5wA"/>
                                             <outlet property="triangleButton" destination="hIy-eV-7gW" id="HEN-4D-dOQ"/>
                                         </connections>
@@ -595,7 +601,7 @@ CA
                                                             <action selector="extraButtonAction:" target="Utx-K3-0a0" id="4pt-PI-PDy"/>
                                                         </connections>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1uw-i1-Cgo" userLabel="Triangle Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
+                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1uw-i1-Cgo" userLabel="Small Map Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="306" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="53T-LY-ZHR"/>

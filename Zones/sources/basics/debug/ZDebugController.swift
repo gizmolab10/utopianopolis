@@ -16,6 +16,7 @@ enum ZDebugID: Int {
 	case dTraits
 	case dOrphans
 	case dMistype
+	case dDuplicates
 	case dEnd
 
 	var title: String { return "\(self)".lowercased().substring(fromInclusive: 1) }
@@ -44,12 +45,13 @@ class ZDebugController: ZGenericTableController {
 
 	func value(for debugID: ZDebugID) -> Int {
 		switch debugID {
-			case .dRegistry: return gRecords?.zRecordsLookup     .count ?? 0
-			case .dMistype:  return gRecords?.recordsMistyped    .count ?? 0
-			case .dOrphans:  return gRecords?              .orphanCount ?? 0
-			case .dTraits:   return gRecords?.countBy(type: kTraitType) ?? 0
-			case .dZones:    return gRecords?.countBy(type:  kZoneType) ?? 0
-			default:         break
+			case .dDuplicates: return gRecords?.duplicates         .count ?? 0
+			case .dRegistry:   return gRecords?.zRecordsLookup     .count ?? 0
+			case .dMistype:    return gRecords?.recordsMistyped    .count ?? 0
+			case .dOrphans:    return gRecords?              .orphanCount ?? 0
+			case .dTraits:     return gRecords?.countBy(type: kTraitType) ?? 0
+			case .dZones:      return gRecords?.countBy(type:  kZoneType) ?? 0
+			default:           break
 		}
 
 		return 0

@@ -19,10 +19,10 @@ enum ZControllerID: Int {
     case idDetails
     case idActions   // iPhone
 	case idBigMap
-	case idStatus
     case idSearch
 	case idCrumbs
 	case idDebug
+	case idData
 	case idHelp
 	case idNote
 	case idMain
@@ -150,7 +150,7 @@ class ZControllers: NSObject {
                     
 					switch regarding {  // these non-default cases send a signal only to the one corresponding controller
 						case .sMain:            if identifier == .idMain           { closure() }
-						case .sStatus:          if identifier == .idStatus         { closure() }
+						case .sStatus:          if identifier == .idData           { closure() }
 						case .sCrumbs:          if identifier == .idCrumbs         { closure() }
 						case .sBigMap:          if identifier == .idBigMap         { closure() }
 						case .sSmallMap:        if identifier == .idSmallMap       { closure() }

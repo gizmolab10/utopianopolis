@@ -21,6 +21,7 @@ class ZTogglingView: NSStackView {
 	@IBOutlet var triangleButton : ZToggleButton?
 	@IBOutlet var    titleButton : ZBannerButton?
 	@IBOutlet var    extraButton : ZBannerButton?
+	@IBOutlet var        spinner : ZProgressIndicator?
 	@IBOutlet var     bannerView : ZView?
     @IBOutlet var   hideableView : ZView?
 
@@ -112,7 +113,19 @@ class ZTogglingView: NSStackView {
 		turnOnTitleButton()
 		triangleButton?.setState(!hideHideable)
 		updateHideableView()
+		updateSpinner()
     }
+
+	func updateSpinner() {
+		let          hide = gCurrentOp.isDoneOp && gCoreDataStack.isDone
+		spinner?.isHidden = hide
+
+		if  hide {
+			spinner?.stopAnimation(spinner)
+		} else {
+			spinner?.startAnimation(spinner)
+		}
+	}
 
     func updateHideableView() {
         let    hide = hideHideable
