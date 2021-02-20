@@ -47,30 +47,21 @@ class ZRecords: NSObject {
 	var        destroyZone : Zone?
     var          trashZone : Zone?
     var           rootZone : Zone?
-    var        hereIsValid : Bool { return maybeZoneForRecordName(hereRecordName) != nil }
+    var        hereIsValid : Bool      { return maybeZoneForRecordName(hereRecordName) != nil }
+	var         allProgeny : ZoneArray { return rootZone?.all ?? [] }
 
-	func countBy                                                  (type: String)  -> Int?     { return recordNamesByType[type]?.count }
-	func recordNamesForState                             (_ state: ZRecordState)  -> [String] { return recordNamesByState[state] ?? [] }
-	func notRegistered                                 (_ recordID: CKRecordID?)  -> Bool     { return maybeZoneForRecordID(recordID) == nil }
-	func hasCKRecord     (_ ckRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool     { return registeredCKRecord(ckRecord, forAnyOf: iStates) != nil }
-	func hasCKRecordName      (_ iName: String, forAnyOf iStates: [ZRecordState]) -> Bool     { return registeredCKRecordForName(iName, forAnyOf: iStates) != nil }
-	func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool     { return registeredCKRecordForID(iRecordID, forAnyOf: iStates) != nil }
+	func countBy                                                  (type: String)  -> Int?       { return recordNamesByType[type]?.count }
+	func recordNamesForState                             (_ state: ZRecordState)  -> [String]   { return recordNamesByState[state] ?? [] }
+	func notRegistered                                 (_ recordID: CKRecordID?)  -> Bool       { return maybeZoneForRecordID(recordID) == nil }
+	func hasCKRecord     (_ ckRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecord(ckRecord, forAnyOf: iStates) != nil }
+	func hasCKRecordName      (_ iName: String, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecordForName(iName, forAnyOf: iStates) != nil }
+	func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecordForID(iRecordID, forAnyOf: iStates) != nil }
 
 	var allZones : ZoneArray {
 		var array = ZoneArray()
 
 		applyToAllZones { zone in
 			array.append(zone)
-		}
-
-		return array
-	}
-
-	var allProgeny : ZoneArray {
-		var array = ZoneArray()
-
-		applyToAllProgeny { child in
-			array.append(child)
 		}
 
 		return array
@@ -165,6 +156,72 @@ class ZRecords: NSObject {
         get { return (hereZoneMaybe ?? defaultRoot!) }
         set { hereZoneMaybe = newValue }
     }
+
+	var debugTotal: ZRecordsArray {
+		let totalIDS: [ZDebugID] = [.dValid, .dTraits]
+		var total = ZRecordsArray()
+
+		for id  in  totalIDS {
+			if  let zRecords = debugZRecords(for: id) {
+				total.append(contentsOf: zRecords)
+			}
+		}
+
+		return total
+	}
+
+	var debugValid: ZRecordsArray {
+		let totalIDS: [ZDebugID] = [.dFavorites, .dRecents, .dProgeny, .dDestroy, .dTrash, .dLost]
+		var total = ZRecordsArray()
+
+		for id  in  totalIDS {
+			if  let zRecords = debugZRecords(for: id) {
+				total.append(contentsOf: zRecords)
+			}
+		}
+
+		return total
+	}
+
+	func zRecords(of type: String) -> ZRecordsArray? {
+		var result = ZRecordsArray()
+
+		if  let names = recordNamesByType[type] {
+			for name in names {
+				if  let zRecord = maybeZRecordForRecordName(name) {
+					result.append(zRecord)
+				}
+			}
+		}
+
+		return result
+	}
+
+	func debugZRecords(for debugID: ZDebugID) -> ZRecordsArray? {
+		switch debugID {
+			case .dTraits:     return zRecords(of: kTraitType)
+			case .dZones:      return zRecords(of:  kZoneType)
+			case .dLost:       return lostAndFoundZone?  .all
+			case .dFavorites:  return favoritesZone?     .all
+			case .dRecents:    return recentsZone?       .all
+			case .dDestroy:    return destroyZone?       .all
+			case .dTrash:      return trashZone?         .all
+//			case .dMistype:    return recordsMistyped
+			case .dProgeny:    return allProgeny
+			case .dValid:      return debugValid
+			case .dTotal:      return debugTotal
+			default:           return nil
+		}
+	}
+
+	func debugValue(for debugID: ZDebugID) -> Int? {
+		switch debugID {
+			case .dDuplicates: return duplicates                  .count
+			case .dRegistry:   return zRecordsLookup              .count
+			default:           return debugZRecords(for: debugID)?.count
+		}
+	}
+
 
 	init(_ idatabaseID: ZDatabaseID) {
         databaseID = idatabaseID

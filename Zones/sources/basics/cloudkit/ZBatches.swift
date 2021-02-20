@@ -157,7 +157,7 @@ class ZBatches: ZOnboarding {
     var          totalCount :    Int { return currentBatches.count + deferredBatches.count }
 	var              isLate :   Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
 	var          statusText : String { return currentOp.isDoneOp ? "" : currentOp.description + remainingOpsText }
-	var    remainingOpsText : String { let count = queue.operationCount; return count == 0 ? "" : " + \(count)" }
+	var    remainingOpsText : String { let count = queue.operationCount; return count == 0 ? "" : " (\(count) remaining)" }
 
     // MARK:- API
     // MARK:-
@@ -182,7 +182,7 @@ class ZBatches: ZOnboarding {
         // 1. execute next current batch
         // 2. called by superclass, for each completion operation. fire completions and recurse
         // 3. no more current batches,                            transfer deferred and recurse
-        // 4. no more batches, nothing to process
+        // 4. no more batches, nothing to process                              turn off spinner
 
         FOREGROUND(canBeDirect: true) {
             if  let         batch = self.currentBatches.first {
@@ -197,7 +197,9 @@ class ZBatches: ZOnboarding {
             } else if self.deferredBatches.count > 0 {
                 self.transferDeferred()                         // 3.
                 self.processNextBatch()
-            }                                                   // 4.
+			} else {
+				gSignal([.sData])                               // 4.
+			}
         }
     }
 

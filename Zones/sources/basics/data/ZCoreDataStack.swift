@@ -46,8 +46,10 @@ class ZCoreDataStack: NSObject {
 	lazy var   privateStore : NSPersistentStore?            = { return persistentStore(for: privateURL) }()
 	lazy var    publicStore : NSPersistentStore?            = { return persistentStore(for: publicURL) }()
 	lazy var     localStore : NSPersistentStore?            = { return persistentStore(for: localURL) }()
-	var          statusText : String                          { return currentOperationID?.description ?? "" }
+	var          statusText : String                          { return statusOperationID?.description ?? "" }
 	var              isDone : Bool                            { return currentOperationID == nil }
+	var   statusOperationID : ZCDOperationID?                 { return currentOperationID ?? waitingOperationID}
+	var  waitingOperationID : ZCDOperationID?
 	var  currentOperationID : ZCDOperationID?
 
 	// MARK:- internals
@@ -124,11 +126,15 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func deferUntilAvailable(for opID: ZCDOperationID, _ closure: @escaping Closure) {
+		waitingOperationID = opID // so status text can show it
+
 		gTimers.resetTimer(for: .tCoreDataAvailable, withTimeInterval: 1.0, repeats: true) { iTimer in
 			if  self.isDone {
+				self.waitingOperationID = nil
 				self.currentOperationID = opID
 
 				iTimer.invalidate()
+				gSignal([.sData])
 				closure()
 			}
 		}

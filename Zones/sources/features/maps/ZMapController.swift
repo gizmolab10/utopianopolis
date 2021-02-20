@@ -132,8 +132,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
     }
 
+	var doNotLayout: Bool {
+		return (kIsPhone && (isBigMap == gShowSmallMapForIOS)) || gIsEditIdeaMode
+	}
+
     func layoutWidgets(for iZone: Any?, _ iKind: ZSignalKind) {
-        if kIsPhone && (isBigMap == gShowSmallMapForIOS) { return }
+        if doNotLayout { return }
 
 		let                        here = hereZone
         var specificWidget: ZoneWidget? = rootWidget

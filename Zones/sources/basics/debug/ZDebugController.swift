@@ -12,9 +12,17 @@ var gDebugController: ZDebugController? { return gControllers.controllerForID(.i
 
 enum ZDebugID: Int {
 	case dRegistry
+	case dTotal
 	case dZones
+	case dValid
+	case dProgeny
+	case dTrash
+	case dFavorites
+	case dRecents
+	case dLost
 	case dTraits
-	case dMistype
+//	case dMistype
+	case dDestroy
 	case dDuplicates
 	case dEnd
 
@@ -35,24 +43,11 @@ class ZDebugController: ZGenericTableController {
 
 			switch columnTitle {
 				case "0": return debugID.title
-				default:  return "\(value(for: debugID))"
+				default:  return "\(gRecords?.debugValue(for: debugID) ?? 0)"
 			}
 		}
 
 		return nil
-	}
-
-	func value(for debugID: ZDebugID) -> Int {
-		switch debugID {
-			case .dDuplicates: return gRecords?.duplicates         .count ?? 0
-			case .dRegistry:   return gRecords?.zRecordsLookup     .count ?? 0
-			case .dMistype:    return gRecords?.recordsMistyped    .count ?? 0
-			case .dTraits:     return gRecords?.countBy(type: kTraitType) ?? 0
-			case .dZones:      return gRecords?.countBy(type:  kZoneType) ?? 0
-			default:           break
-		}
-
-		return 0
 	}
 
 	#endif

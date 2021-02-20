@@ -52,13 +52,13 @@ class ZDataController: ZGenericController {
     }
 
     var statusText: String {
-        let       opStatus =       gBatches.statusText
-		let    timerStatus =        gTimers.statusText
-		let coreDataStatus = gCoreDataStack.statusText
+		let    cdStatus = gCoreDataStack.statusText
+        let    opStatus =       gBatches.statusText
+		let timerStatus =        gTimers.statusText
 
-		return opStatus    != "" ? opStatus :
-			timerStatus    != "" ? timerStatus :
-			coreDataStatus != "" ? coreDataStatus :
+		return cdStatus != "" ? cdStatus :
+			opStatus    != "" ? opStatus :
+			timerStatus != "" ? timerStatus :
 			gCloudStatusIsActive ? "all data synchronized" : "all data saved locally"
     }
 
