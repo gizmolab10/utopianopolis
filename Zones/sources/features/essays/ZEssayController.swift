@@ -29,7 +29,7 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  gIsNoteMode {
+		if  gIsNoteMode, iKind != .sData { // ignore the signal from the end of process next batch
 			essayView?.updateText()
 		}
 	}

@@ -64,7 +64,7 @@ enum ZOperationID: Int, CaseIterable {
 	case oRecents  			 // MINE ONLY
     case oRefetch            // user defaults list of record ids
 	case oResolve
-    case oTraits
+	case oTraits
 
 	var progressTime : Double {
 		switch self {

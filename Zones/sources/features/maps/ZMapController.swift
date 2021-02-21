@@ -165,7 +165,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	// MARK:-
 
     override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-		if  !gDeferringRedraw {
+		if  !gDeferringRedraw, iKind != .sData { // ignore the signal from the end of process next batch
 			prepare(for: iKind)
 			layoutForCurrentScrollOffset()
 			layoutWidgets(for: iSignalObject, iKind)

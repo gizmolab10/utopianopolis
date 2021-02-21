@@ -196,7 +196,7 @@ class ZTrait: ZTraitAssets {
             o.maybeMarkNotFetched()
 			removeState(.needsAdoption)
 
-            o.traits[t] = self
+			o.addTrait(self)
         }
     }
 

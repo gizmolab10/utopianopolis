@@ -24,7 +24,9 @@ class ZSmallMapController: ZMapController {
 	var            isRecentMap : Bool          { return rootWidget.widgetZone?.isInRecents ?? gIsRecentlyMode }
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-		if  let c = gDetailsController, !c.hideableIsHidden(for: .vSmallMap) { // don't send signal to a hidden favorites controller
+		if  let c = gDetailsController,
+			!c.hideableIsHidden(for: .vSmallMap), // don't send signal to a hidden favorites controller
+			iKind != .sData {                     // ignore the signal from the end of process next batch
 			update()
 			super.handleSignal(iSignalObject, kind: iKind)
 		}

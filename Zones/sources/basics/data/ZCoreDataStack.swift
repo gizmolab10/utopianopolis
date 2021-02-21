@@ -24,13 +24,15 @@ enum ZCDOperationID: Int {
 	case oProgeny
 
 	var description : String {
-		let string = "\(self)".lowercased().substring(fromInclusive: 1)
+		var string = "\(self)".lowercased().substring(fromInclusive: 1)
 
-		if  self == .oProgeny {
-			return "loading " + string
-		} else {
-			return string + "ing local data"
+		switch self {
+			case .oProgeny: return "loading " + string
+			case .oSave:    string = "sav"
+			default:        break
 		}
+
+		return string + "ing local data"
 	}
 }
 
@@ -222,7 +224,6 @@ class ZCoreDataStack: NSObject {
 
 			if  let zone = zRecord as? Zone {
 				FOREGROUND {
-					zone.updateFromCoreDataTraitRelationships(visited: [])
 					zone.respectOrder()
 
 					switch recordName {
@@ -307,7 +308,7 @@ class ZCoreDataStack: NSObject {
 							} else {
 								FOREGROUND(canBeDirect: true) {
 									records.applyToAllProgeny { iChild in
-										iChild.updateFromCoreDataTraitRelationships(visited: [])
+										iChild.updateFromCoreDataTraitRelationships()
 										iChild.respectOrder()
 									}
 

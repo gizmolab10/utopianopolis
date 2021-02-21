@@ -745,6 +745,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	@discardableResult override func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
 		appendAttribute(ZoneAttributeType.validCoreData)
+		updateFromCoreDataTraitRelationships()
 		return super.convertFromCoreData(into: type, visited: visited)
 	}
 
@@ -783,27 +784,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return converted
 	}
 
-	@discardableResult func updateFromCoreDataTraitRelationships(visited: [String]?) -> [String] {
-		var      converted = [String]()
-		let              v = visited
-
+	func updateFromCoreDataTraitRelationships() {
 		if  let        set = mutableSetValue(forKeyPath: "traitArray") as? Set<ZTrait>, set.count > 0 {
 			let traitArray = ZTraitArray(set: set)
 
 			for trait in traitArray {
-				let c = trait.convertFromCoreData(into: kTraitType, visited: v)
+				trait.convertFromCoreData(into: kTraitType, visited: [])
 
-				if  let name = trait.ckRecord?.recordID.recordName,
-					(visited == nil || !visited!.contains(name)) {
-					converted.append(contentsOf: c)
+				if  let type = trait.traitType,
+					!hasTrait(for: type) {
 					addTrait(trait, updateCoreData: false) // we got here because core data already exists
 				}
 
 				trait.register()
 			}
 		}
-
-		return converted
 	}
 
 	func updateCoreDataRelationships() {
@@ -825,8 +820,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 			}
 
-			setValue(childArray as NSObject, forKeyPath: "childArray")
-			setValue(traitArray as NSObject, forKeyPath: "traitArray")
+			if  childArray.count > 0 {
+				setValue(childArray as NSObject, forKeyPath: "childArray")
+			}
+
+			if  traitArray.count > 0 {
+				setValue(traitArray as NSObject, forKeyPath: "traitArray")
+			}
 		}
 	}
 
@@ -1526,13 +1526,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addTrait(_ trait: ZTrait, updateCoreData: Bool = true) {
-		if  let selfRecord       = ckRecord,
+		if  let selfName         = ckRecordName ?? recordName,
 			let     type         = trait.traitType {
 			traits [type]        = trait
 			let ownerName        = trait.owner?.recordID.recordName
-			let  selfName        = selfRecord  .recordID.recordName
 			if   selfName       != ownerName {
-				trait .owner     = CKReference(record: selfRecord, action: .none)
+				trait .owner     = CKReference(recordID: CKRecordID(recordName: selfName), action: .none)
 				trait._ownerZone = nil
 			}
 
