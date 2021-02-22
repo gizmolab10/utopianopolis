@@ -53,9 +53,9 @@ class ZRecords: NSObject {
 	func countBy                                                  (type: String)  -> Int?       { return recordNamesByType[type]?.count }
 	func recordNamesForState                             (_ state: ZRecordState)  -> [String]   { return recordNamesByState[state] ?? [] }
 	func notRegistered                                 (_ recordID: CKRecordID?)  -> Bool       { return maybeZoneForRecordID(recordID) == nil }
-	func hasCKRecord     (_ ckRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecord(ckRecord, forAnyOf: iStates) != nil }
+	func hasCKRecord     (_ ckRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecordForName(ckRecord.recordID.recordName, forAnyOf: iStates) != nil }
 	func hasCKRecordName      (_ iName: String, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecordForName(iName, forAnyOf: iStates) != nil }
-	func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecordForID(iRecordID, forAnyOf: iStates) != nil }
+	func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecordForName(iRecordID.recordName, forAnyOf: iStates) != nil }
 
 	var allZones : ZoneArray {
 		var array = ZoneArray()
@@ -630,14 +630,6 @@ class ZRecords: NSObject {
         return found
     }
 
-    func registeredCKRecordForID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> CKRecord? {
-        return registeredCKRecordForName(iRecordID.recordName, forAnyOf: iStates)
-    }
-
-    func registeredCKRecord(_ iRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> CKRecord? {
-        return registeredCKRecordForID(iRecord.recordID, forAnyOf: iStates)
-    }
-
     // MARK:- set state
     // MARK:-
 
@@ -676,7 +668,7 @@ class ZRecords: NSObject {
         if  let ckRecord = iRecord,
             !temporarilyIgnoring(ckRecord.recordID.recordName) {
             for state in states {
-                if  registeredCKRecord(ckRecord, forAnyOf: [state]) == nil {
+                if  registeredCKRecordForName(ckRecord.recordID.recordName, forAnyOf: [state]) == nil {
                     var names = recordNamesForState(state)
                     let  name = ckRecord.recordID.recordName
 

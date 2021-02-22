@@ -88,7 +88,7 @@ class ZMapEditor: ZBaseEditor {
 							case kTab:     addSibling(OPTION)
 							case kSpace:   gSelecting.currentMoveable.addIdea()
 							case kReturn:  if COMMAND { editNote(OPTION) }
-							case kEscape:               editNote(OPTION, false)
+							case kEscape:               editNote(OPTION, forGrabbed: false)
 							case kBackspace,
 								 kDelete:  if CONTROL { focusOnTrash() }
 							default:       return false // false means key not handled
@@ -148,7 +148,7 @@ class ZMapEditor: ZBaseEditor {
 						case kBackspace,
 							 kDelete:    complexDelete(COMMAND, OPTION, CONTROL, SPECIAL, FLAGGED, isWindow)
 						case kReturn:    if COMMAND { editNote(OPTION) } else { editIdea(OPTION) }
-						case kEscape:    editNote(OPTION, true) // fresh = true
+						case kEscape:    editNote(OPTION, forGrabbed: false)
 						default:         return false // indicate key was not handled
 					}
                 }
@@ -228,7 +228,7 @@ class ZMapEditor: ZBaseEditor {
 	}
 
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
-        let alterers = "ehltuw\r" + kMarkingCharacters
+        let alterers = "ehlw\r" + kMarkingCharacters
 		let  ALTERER = alterers.contains(key)
         let  COMMAND = flags.isCommand
         let  CONTROL = flags.isControl
@@ -294,7 +294,7 @@ class ZMapEditor: ZBaseEditor {
             case .eRedo:      valid = undo.canRedo
             case .eTravel:    valid = mover.canTravel
             case .eCloud:     valid = gHasInternet && gCloudStatusIsActive
-            default:          break
+            default:          break // .eAlways goes here
             }
         }
 
@@ -596,12 +596,12 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-	func editNote(_  OPTION: Bool, _ fresh: Bool = false) {
+	func editNote(_  OPTION: Bool, forGrabbed: Bool = true) {
 		if !gIsNoteMode {
 			gCreateCombinedEssay = !OPTION				        // default is multiple, OPTION drives it to single
 
-			if  gCurrentEssay   == nil || OPTION || fresh {     // restore prior essay or create one fresh (OPTION forces the latter)
-				gCurrentEssay    =  gSelecting.firstGrab?.note
+			if  gCurrentEssay   == nil || OPTION || forGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
+				gCurrentEssay    = gSelecting.firstGrab?.note
 			}
 		}
 

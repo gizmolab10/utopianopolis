@@ -956,92 +956,85 @@ class ZCloud: ZRecords {
     }
 
     func fetchChildIdeas(_ onCompletion: IntClosure?) {
-        let childrenNeeded = childrenRefsWithMatchingStates([.needsChildren, .needsProgeny], batchSize: kSmallBatchSize)
-        let          count = childrenNeeded.count
+        let fetchNeeded = childrenRefsWithMatchingStates([.needsChildren, .needsProgeny], batchSize: kSmallBatchSize)
+        let       count = fetchNeeded.count
 
-		if  count == 0 {
+		if  count == 0 { // last recursion
 			self.adoptAllNeedingAdoption()
 			onCompletion?(0)
 		} else {
-            let      predicate = NSPredicate(format: "parent IN %@", childrenNeeded)
-            let   destroyedIDs = recordIDsWithMatchingStates([.needsDestroy])
-            var  progenyNeeded = CKReferencesArray ()
-            var      retrieved = CKRecordsArray ()
+            let        predicate = NSPredicate(format: "parent IN %@", fetchNeeded)
+            let     destroyedIDs = recordIDsWithMatchingStates([.needsDestroy])
+            var    progenyNeeded = CKReferencesArray ()
+            var retrievedRecords = CKRecordsArray ()
 
             if  hasAnyRecordsMarked(with: [.needsProgeny]) {
-                for reference in childrenNeeded {
-                    let identifier = reference.recordID
+                for reference in fetchNeeded {
+					let name = reference.recordID.recordName
 
-                    if registeredCKRecordForID(identifier, forAnyOf: [.needsProgeny]) != nil,
+                    if registeredCKRecordForName(name, forAnyOf: [.needsProgeny]) != nil,
 					   !progenyNeeded.contains(reference) {
                         progenyNeeded  .append(reference)
                     }
                 }
             }
 
-			remove(states: [.needsChildren], from: childrenNeeded)
+			remove(states: [.needsChildren], from: fetchNeeded)
 
             queryForZonesWith(predicate, batchSize: kMaxBatchSize) { (iRecord, iError) in
                 if  let ckRecord = iRecord {
-					retrieved.appendUnique(contentsOf: [ckRecord])
-                } else { // nil means: we already received full response from cloud for this particular fetch
+					retrievedRecords.appendUnique(contentsOf: [ckRecord])
+                } else { // nil means: have full response from cloud for this particular fetch
                     FOREGROUND {
 
 						// /////////////////////////////
 						// now we can mutate the heap //
 						// /////////////////////////////
 
+						print("retrieved children \(retrievedRecords.count)")
+
 						let debugLevels = gPrintModes.contains(.dLevels)
 
-                        for childRecord in retrieved {
-                            let recordID = childRecord.recordID
-							let    child = self.sureZoneForCKRecord(childRecord, requireFetch: false)
+                        for retrievedRecord in retrievedRecords {
+                            let     retrievedID = retrievedRecord.recordID
+							let     retrieved   = self.sureZoneForCKRecord(retrievedRecord, requireFetch: false)
 
-                            if  destroyedIDs.contains(recordID) {
-								printDebug(.dFetch, "DESTROYED: \(child.decoratedName)")
+                            if  destroyedIDs.contains(retrievedID) {
+								printDebug(.dFetch, "DESTROYED: \(retrieved.decoratedName)")
                             } else {
-                                if  child.isARoot && child.parentZone != nil {
-                                    child.orphan()  // avoids HANG ... a root can NOT be a child, by definition
-                                    child.allowSaveWithoutFetch()
-                                    child.needSave()
-                                }
+								if  let parent     = retrieved.parentZone {
+									if  retrieved == parent {
+										retrieved.needDestroy()         // self-parenting causes infinite recursion (HANG)
+									} else if retrieved.isARoot {
+										retrieved.orphan()              // avoid infinite recursion (HANG) ... a root can NOT have a parent, by definition
+										retrieved.allowSaveWithoutFetch()
+										retrieved.needSave()
+									} else {
+										if  parent.needsProgeny {
+											retrieved.needProgeny()     // prepare to recurse
+											retrieved.bookmarkTarget?.needProgeny()
+										}
 
-                                let     parent = child.parentZone
-								let extraTrash = child.zoneLink == kTrashLink && parent?.root?.isFavoritesRoot ?? false && gFavorites.hasTrash
+										if  let retrievedTarget = retrieved.bookmarkTarget {
 
-                                if  child == parent || extraTrash {
-                                    child.needDestroy()
-                                    // self-parenting causes infinite recursion AND extra trash favorites are annoying
-                                    // destroy either on fetch
-                                } else if let p = parent {
-									if  p.needsProgeny {
-										child.needProgeny()
-										child.bookmarkTarget?.needProgeny()
-									}
+											// //////////////////////////////////////////////////
+											// bookmark targets need writable, color and fetch //
+											// //////////////////////////////////////////////////
 
-									// ////////////////////////////////////
-									// no child has matching record name //
-									// ////////////////////////////////////
+											retrievedTarget.needFetch()
+											retrievedTarget.maybeNeedColor()
+											retrievedTarget.maybeNeedWritable()
+										}
 
-									if  let target = child.bookmarkTarget {
+										parent.addChildAndRespectOrder(retrieved)
 
-										// //////////////////////////////////////////////////
-										// bookmark targets need writable, color and fetch //
-										// //////////////////////////////////////////////////
-
-										target.needFetch()
-										target.maybeNeedColor()
-										target.maybeNeedWritable()
-									}
-
-									p.addChildAndRespectOrder(child)
-
-									if  debugLevels {
-										let        level  = child.level
-										var     wereAdded = self.addedToLevels[level] ?? ZRecordsArray()
-										wereAdded.appendUnique(contentsOf: [child])
-										self.addedToLevels[level] = wereAdded
-										self.maxLevel     = max(level, self.maxLevel)
+										if  debugLevels {
+											let                level  = retrieved.level
+											var             wereAdded = self.addedToLevels[level] ?? ZRecordsArray()
+											wereAdded.appendUnique(contentsOf: [retrieved])
+											self.addedToLevels[level] = wereAdded
+											self.maxLevel             = max(level, self.maxLevel)
+										}
 									}
 								}
 							}
@@ -1051,9 +1044,8 @@ class ZCloud: ZRecords {
 							self.printAdded()
 						}
 
-						self.add   (states: [.needsCount],     to: childrenNeeded)
-						self.remove(states: [.needsProgeny], from: childrenNeeded)
-                        self.columnarReport("CHILDREN (\(childrenNeeded.count))", String.forReferences(childrenNeeded, in: self.databaseID))
+						self.add   (states: [.needsCount],                     to: fetchNeeded)
+						self.remove(states: [.needsProgeny, .needsChildren], from: fetchNeeded)
                         self.fetchChildIdeas(onCompletion) // process remaining
                     }
                 }

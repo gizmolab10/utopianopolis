@@ -16,7 +16,7 @@ enum ZOperationID: Int, CaseIterable {
     // start up / onboard
 
     case oStartUp            // NB: order here is order of operations (except miscellaneous)
-	case oLoadCoreData       // LOCAL
+	case oRestoreIdeas       // LOCAL
 	case oUserPermissions
     case oMacAddress
     case oObserveUbiquity
@@ -32,6 +32,7 @@ enum ZOperationID: Int, CaseIterable {
 	case oReadFile           // LOCAL
 	case oRoots
     case oHere
+	case oAllProgeny
 	case oStartupDone
 
     // finish
@@ -53,7 +54,6 @@ enum ZOperationID: Int, CaseIterable {
     case oEmptyTrash
     case oCompletion
 	case oFoundIdeas         // LOCAL
-	case oAllProgeny
 	case oAllTraits
 	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
@@ -68,7 +68,8 @@ enum ZOperationID: Int, CaseIterable {
 
 	var progressTime : Double {
 		switch self {
-			case .oReadFile:        return gReadFiles ? 30.0 : 0.0
+			case .oReadFile:        return gReadFiles   ? 30.0 : 0.0
+			case .oRestoreIdeas:    return gUseCoreData ?  4.0 : 0.0
 			case .oTraits:          return 16.0
 			case .oAllTraits:       return 11.0
 			case .oAllIdeas:        return  8.0
@@ -79,7 +80,6 @@ enum ZOperationID: Int, CaseIterable {
 			case .oResolve:         return  4.0
 			case .oFinishUp:        return  3.0
 			case .oSubscribe:       return  3.0
-			case .oLoadCoreData:    return  2.0
 			case .oRecount:         return  2.0
 			default:                return  1.0
 		}
@@ -88,7 +88,7 @@ enum ZOperationID: Int, CaseIterable {
 	var useTimer: Bool {
 		switch self {
 			case .oReadFile: return gReadFiles
-			case .oLoadCoreData,
+			case .oRestoreIdeas,
 				 .oSubscribe,
 				 .oAllTraits,
 				 .oAllIdeas,
@@ -103,9 +103,9 @@ enum ZOperationID: Int, CaseIterable {
 	var needActiveCloudOps : ZOperationIDsArray { return [.oSaveToCloud, .oTraits] }
 	var	           doneOps : ZOperationIDsArray { return [.oNone, .oDone, .oCompletion] }
 	var        mineOnlyOps : ZOperationIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
-	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe, .oLoadCoreData, .oSaveCoreData] }
+	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe, .oRestoreIdeas, .oSaveCoreData] }
 	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oUbiquity, .oFavorites, .oFoundIdeas,
-														  .oCompletion, .oMacAddress, .oFetchUserID, .oLoadCoreData, .oSaveCoreData,
+														  .oCompletion, .oMacAddress, .oFetchUserID, .oRestoreIdeas, .oSaveCoreData,
 														  .oUserPermissions, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability] }
 
 	var needsActiveCloud : Bool { return needActiveCloudOps.contains(self) }

@@ -25,7 +25,7 @@ enum ZTimerID : Int {
 	case tCloudAvailable
 	case tMouseLocation
 	case tWriteEveryone
-	case tLoadCoreData
+	case tRestoreIdeas
 	case tSaveCoreData
 	case tRecordsMine
 	case tWriteMine
@@ -78,7 +78,7 @@ class ZTimers: NSObject {
 	var timers = [ZTimerID : Timer]()
 
 	var statusText: String {
-		let statusIDs: [ZTimerID] = [.tLoadCoreData, .tSaveCoreData, .tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
+		let statusIDs: [ZTimerID] = [.tRestoreIdeas, .tSaveCoreData, .tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
 
 		for id in timers.keys {
 			if  statusIDs.contains(id) {

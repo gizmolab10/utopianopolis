@@ -111,16 +111,22 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Export to File ..." id="LGH-w5-scL">
                                                 <items>
-                                                    <menuItem title="As Seriously ..." keyEquivalent="s" id="rRM-8z-pgs">
+                                                    <menuItem title="Map as Seriously ..." keyEquivalent="s" id="rRM-8z-pgs">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Ap8-05-pSP"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="As Outline ..." keyEquivalent="s" id="0dE-tl-v2P">
+                                                    <menuItem title="Map as Outline ..." keyEquivalent="s" id="0dE-tl-v2P">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="3HO-Fu-Pct"/>
                                                         </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Essay with Titles as PDF ..." keyEquivalent="y" id="xQa-xC-QoI">
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                                    </menuItem>
+                                                    <menuItem title="Essay without Titles as PDF" keyEquivalent="y" id="VIz-cs-Bfk">
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                                     </menuItem>
                                                 </items>
                                             </menu>
@@ -620,7 +626,7 @@ DQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Seriously" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="127" y="457"/>
+            <point key="canvasLocation" x="33" y="457"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -1591,7 +1597,7 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" enabled="NO" rowHeight="16" id="8lm-kp-gkp">
-                                            <rect key="frame" x="0.0" y="0.0" width="240" height="300"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="210" height="300"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                             <color key="gridColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1602,7 +1608,7 @@ DQ
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
                                                     <textFieldCell key="dataCell" controlSize="mini" lineBreakMode="truncatingTail" enabled="NO" allowsUndo="NO" alignment="left" title="Text Cell" id="YBm-Mp-IBa">
-                                                        <font key="font" metaFont="system" size="9"/>
+                                                        <font key="font" metaFont="miniSystem"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </textFieldCell>

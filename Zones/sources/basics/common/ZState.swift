@@ -64,7 +64,7 @@ var                gIsMapMode:               Bool { return gWorkMode == .wBigMap
 var             gIsSearchMode:               Bool { return gWorkMode == .wSearchMode }
 var            gIsStartupMode:               Bool { return gWorkMode == .wStartupMode }
 var           gIsEditIdeaMode:               Bool { return gWorkMode == .wEditIdeaMode }
-var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsNoteMode || gIsStartupMode }
+var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsNoteMode }
 var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEditIdeaMode }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var      gCurrentSmallMapName:             String { return gIsRecentlyMode ? "recent" : "favorite" }

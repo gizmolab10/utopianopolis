@@ -50,7 +50,7 @@ class ZStartup: NSObject {
 						gRemoteStorage.recount()
 						gRefreshCurrentEssay()
 						gRefreshPersistentWorkMode()
-						gSignal([.sSwap, .sMain, .sCrumbs, .sRelayout, .sLaunchDone])
+						gSignal([.sCrumbs, .sLaunchDone])
 
 						gBatches.finishUp { iSame in
 							FOREGROUND {
@@ -61,15 +61,11 @@ class ZStartup: NSObject {
 									gSetBigMapMode()
 								}
 
-//								gRemoteStorage.updateAllInstanceProperties()
-//								gRemoteStorage.assureAdoption()
-//								gRemoteStorage.updateAllInstanceProperties()
-								gSignal([.sMain, .sCrumbs, .sRelayout, .sPreferences])
+								gSignal([.sSwap, .sMain, .sCrumbs, .sRelayout, .sPreferences])
 								self.stopStartupTimer()
 								self.requestFeedback()
 
 								FOREGROUND(after: 10.0) {
-									//							gRemoteStorage.assureAdoption()
 									gFiles.writeAll()
 								}
 							}

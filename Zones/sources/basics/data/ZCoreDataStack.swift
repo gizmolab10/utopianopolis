@@ -179,7 +179,7 @@ class ZCoreDataStack: NSObject {
 				}
 
 				if !gIsReadyToShowUI {
-					gTimers.resetTimer(for: .tLoadCoreData, withTimeInterval: 1.0, repeats: true) { iTimer in gUpdateStartupProgress() }
+					gTimers.resetTimer(for: .tRestoreIdeas, withTimeInterval: 1.0, repeats: true) { iTimer in gUpdateStartupProgress() }
 				}
 
 				func loadFullContext() {
@@ -196,7 +196,7 @@ class ZCoreDataStack: NSObject {
 									self.currentOperationID = nil
 									gRemoteStorage.recount()
 
-									gTimers.stopTimer(for: .tLoadCoreData)
+									gTimers.stopTimer(for: .tRestoreIdeas)
 									onCompletion?(0)
 								}
 							}
@@ -348,7 +348,7 @@ class ZCoreDataStack: NSObject {
 		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
 		request.predicate = NSPredicate(format: "parentRID IN %@", zones.recordNames)
 
-		printDebug(.dData, "loading children for \(zones.count)")
+		printDebug(.dData, "loading children from CD for \(zones.count)")
 
 		load(type: kZoneType, into: dbID, using: request) { zRecord in
 			if  let zone = zRecord as? Zone,
