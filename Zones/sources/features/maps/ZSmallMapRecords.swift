@@ -34,7 +34,7 @@ class ZSmallMapRecords: ZRecords {
 		let  increment = (down ? 1 : -1)
 		var       next = index + increment
 		let      count = working.count
-		if next       >= count {
+		if  next      >= count {
 			next       = 0
 		} else if next < 0 {
 			next       = count - 1
@@ -160,7 +160,7 @@ class ZSmallMapRecords: ZRecords {
 	@discardableResult func updateCurrentBookmark() -> Zone? {
 		if  let    bookmark = whichBookmarkTargets(gHereMaybe, orSpawnsIt: false),
 			bookmark.isInSmallMap,
-			!(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false) {
+			!(bookmark.bookmarkTarget?.spawnedBy(gHere) ?? false) {
 			currentBookmark = bookmark
 
 			return currentBookmark

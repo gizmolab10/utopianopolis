@@ -58,8 +58,8 @@ enum ZOperationID: Int, CaseIterable {
 	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
     case oLostIdeas
-	case oNewIdeas
 	case oAllIdeas
+	case oNewIdeas
     case oUndelete
 	case oRecents  			 // MINE ONLY
     case oRefetch            // user defaults list of record ids
@@ -72,6 +72,7 @@ enum ZOperationID: Int, CaseIterable {
 			case .oRestoreIdeas:    return gUseCoreData ?  4.0 : 0.0
 			case .oTraits:          return 16.0
 			case .oAllTraits:       return 11.0
+			case .oAllProgeny:      return 10.0
 			case .oAllIdeas:        return  8.0
 			case .oNewIdeas:        return  7.0
 			case .oNeededIdeas:     return  6.0
@@ -305,8 +306,8 @@ class ZOperations: NSObject {
         queue.isSuspended = false
     }
 
-    func add(_ operation: BlockOperation) {
-        if let prior = queue.operations.last {
+    func add(_ operation: Operation) {
+		if  let prior: Operation = queue.operations.last {
             operation.addDependency(prior)
         } else {
             queue.qualityOfService            = .background

@@ -11,11 +11,25 @@ import Foundation
 func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
 func gSaveContext()                                                         { gCoreDataStack.saveContext() }
 let  gCoreDataStack = ZCoreDataStack()
+var  gCoreDataMode  : ZCoreDataMode = .dEnabled
+var  gUseCoreData   : Bool  { return gCoreDataMode.contains(.dEnabled) }
 var  gCoreDataURL   : URL = { return gDataURL.appendingPathComponent("data") }()
 var  gDataURL       : URL = {
 	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 		.appendingPathComponent("Seriously", isDirectory: true)
 }()
+
+struct ZCoreDataMode: OptionSet {
+	static var structValue = 0
+	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
+	let           rawValue : Int
+
+	init() { rawValue = ZCoreDataMode.nextValue }
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let dEnabled     = ZCoreDataMode() // use core data
+	static let dCloudKit    = ZCoreDataMode() // store in cloud kit
+}
 
 enum ZCDOperationID: Int {
 	case oLoad
@@ -80,20 +94,25 @@ class ZCoreDataStack: NSObject {
 	}()
 
 	lazy var privateDescription: NSPersistentStoreDescription = {
-		let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudID)
-		let                      desc = NSPersistentStoreDescription(url: privateURL)
-		desc.configuration            = "Cloud"
-		desc.cloudKitContainerOptions = options
+		let                          desc = NSPersistentStoreDescription(url: privateURL)
+		desc.configuration                = "Cloud"
+		if  gCoreDataMode.contains(.dCloudKit) {
+			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudID)
+			desc.cloudKitContainerOptions = options
+		}
 
 		return desc
 	}()
 
 	lazy var publicDescription: NSPersistentStoreDescription = {
-		let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudID)
-		let                      desc = NSPersistentStoreDescription(url: publicURL)
-		desc.configuration            = "Cloud"
-		options.databaseScope         = CKDatabase.Scope.public // default is private
-		desc.cloudKitContainerOptions = options
+		let                          desc = NSPersistentStoreDescription(url: publicURL)
+		desc.configuration                = "Cloud"
+
+		if  gCoreDataMode.contains(.dCloudKit) {
+			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudID)
+			options.databaseScope         = CKDatabase.Scope.public // default is private
+			desc.cloudKitContainerOptions = options
+		}
 
 		return desc
 	}()
@@ -148,13 +167,13 @@ class ZCoreDataStack: NSObject {
 
 			deferUntilAvailable(for: .oSave) {
 				BACKGROUND(canBeDirect: true) {
-					if  context.hasChanges {
-						do {
-							try context.save()
-						} catch {
-							print(error)
-						}
-					}
+//					if  context.hasChanges {
+//						do {
+//							try context.save()
+//						} catch {
+//							print(error)
+//						}
+//					}
 
 					self.currentOperationID = nil
 				}
@@ -382,6 +401,9 @@ class ZCoreDataStack: NSObject {
 
 	func search(within dbid: String, type: String, using predicate: NSPredicate, uniqueOnly: Bool = true, onCompletion: ZRecordsClosure? = nil) {
 		var result = ZRecordsArray()
+
+		onCompletion?(result)
+		return
 
 		if !gUseCoreData {
 			onCompletion?(result)

@@ -84,18 +84,18 @@ class ZBatches: ZOnboarding {
 
         var operations: ZOperationIDsArray {
 			switch identifier {
-				case .bEmptyTrash:  return [.oEmptyTrash                                                ]
-				case .bFetchLost:   return [.oLostIdeas,                         .oSaveToCloud,         ]
-				case .bSaveToCloud: return [              .oSaveCoreData,        .oSaveToCloud          ]
-				case .bRefetch:     return [              .oAllIdeas, .oRecount, .oSaveToCloud, .oTraits]
-				case .bResumeCloud: return [              .oAllIdeas,            .oSaveToCloud, .oTraits]
-				case .bChildren:    return [.oChildIdeas, .oNeededIdeas,         .oSaveToCloud, .oTraits]
-				case .bSync:        return [              .oNeededIdeas,         .oSaveToCloud, .oTraits]
-				case .bBookmarks:   return [.oBookmarks,  .oNeededIdeas,         .oSaveToCloud, .oTraits]
-				case .bUndelete:    return [.oUndelete,   .oNeededIdeas,         .oSaveToCloud, .oTraits]
-				case .bRoot:        return [.oRoots,      .oManifest,            .oSaveToCloud, .oTraits]
-				case .bFocus:       return [.oRoots,      .oNeededIdeas,                        .oTraits]
-				case .bAllTraits:   return [                                                 .oAllTraits]
+				case .bEmptyTrash:  return [.oEmptyTrash                                                  ]
+				case .bFetchLost:   return [.oLostIdeas,                           .oSaveToCloud,         ]
+				case .bSaveToCloud: return [              .oSaveCoreData,          .oSaveToCloud          ]
+				case .bRefetch:     return [              .oAllProgeny, .oRecount, .oSaveToCloud, .oTraits]
+				case .bResumeCloud: return [              .oAllProgeny,            .oSaveToCloud, .oTraits]
+				case .bChildren:    return [.oChildIdeas, .oNeededIdeas,           .oSaveToCloud, .oTraits]
+				case .bSync:        return [              .oNeededIdeas,           .oSaveToCloud, .oTraits]
+				case .bBookmarks:   return [.oBookmarks,  .oNeededIdeas,           .oSaveToCloud, .oTraits]
+				case .bUndelete:    return [.oUndelete,   .oNeededIdeas,           .oSaveToCloud, .oTraits]
+				case .bRoot:        return [.oRoots,      .oManifest,              .oSaveToCloud, .oTraits]
+				case .bFocus:       return [.oRoots,      .oNeededIdeas,                          .oTraits]
+				case .bAllTraits:   return [                                                   .oAllTraits]
 				case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oStartupDone)
 				case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
 				case .bFinishUp:    return operationIDs(from: .oFinishUp,          to: .oDone)

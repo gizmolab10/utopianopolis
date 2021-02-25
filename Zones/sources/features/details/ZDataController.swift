@@ -35,12 +35,13 @@ class ZDataController: ZGenericController {
     }
 
     var totalCountsText: String {
-		let  count = (gRecords?.rootZone?.progenyCount ?? 0) + 1 // add one for root
+		let   root = gRecords?.rootZone
+		let  depth =  root?.maxDepth ?? 0
+		let  count = (root?.progenyCount ?? 0) + 1 // add one for root
 		let suffix =    count != 1 ? "s" : ""
-		let result = "\(count) idea\(suffix)"
-		let addend = " in map"
+		let result = "\(count) idea\(suffix), \(depth) depth"
 
-		return result + addend
+		return result
 	}
 
     var mapNameText: String {
@@ -109,8 +110,9 @@ class ZDataController: ZGenericController {
 		if  zones.count > 1 {
 			text.append("   (\(zones.count) selected)")
 		} else {
-			let    p = zone.progenyCount
-			let    c = zone.count
+			let p = zone.progenyCount
+			let c = zone.count
+			let n = zone.zonesWithNotes.count
 
 			if  c > 0 {
 				text.append("   (\(c) in list")
@@ -120,6 +122,10 @@ class ZDataController: ZGenericController {
 				}
 
 				text.append(")")
+			}
+
+			if  n > 0 {
+				text.append(" and \(n) notes")
 			}
 		}
 

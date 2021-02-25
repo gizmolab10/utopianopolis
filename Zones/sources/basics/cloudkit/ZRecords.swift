@@ -514,6 +514,8 @@ class ZRecords: NSObject {
             if !states.contains(iState) && iName == name {
                 states.append(iState)
             }
+
+			return false
         }
 
         return states
@@ -609,6 +611,8 @@ class ZRecords: NSObject {
             if  let zRecord = maybeZRecordForRecordName(iRecordName) {
 				zRecord.adopt()
             }
+
+			return false
         }
     }
 
@@ -806,13 +810,12 @@ class ZRecords: NSObject {
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iName in
             let identifier = CKRecordID(recordName: iName)
-            let       name = iName
 
             if  identifiers.count < batchSize {
                 var appended = false
 
                 for id in identifiers {
-                    if id.recordName == name {
+                    if id.recordName == iName {
                         appended = true
 
                         break
@@ -822,10 +825,14 @@ class ZRecords: NSObject {
                 if !appended {
                     identifiers.append(identifier)
                 }
+
+				return false
             }
+
+			return true
         }
 
-        if pull {
+        if  pull {
             clearRecordIDs(identifiers, for: states)
         }
 
@@ -844,7 +851,11 @@ class ZRecords: NSObject {
                 if !parents.contains(parentID) {
                     parents.append(parentID)
                 }
+
+				return false
             }
+
+			return true
         }
 
         return parents
@@ -889,16 +900,12 @@ class ZRecords: NSObject {
                 let reference = CKReference(recordID: CKRecordID(recordName: iName), action: .none)
 
                 references.append(reference)
-            }
+
+				return false
+			}
+
+			return true
         }
-
-        return references
-    }
-
-	func pullChildrenRefsWithMatchingStates(_ states: [ZRecordState], batchSize: Int) -> CKReferencesArray {
-        let references = childrenRefsWithMatchingStates(states, batchSize: batchSize)
-
-		remove(states: states, from: references)
 
         return references
     }
@@ -908,27 +915,24 @@ class ZRecords: NSObject {
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iName in
             found = true
+
+			return true
         }
 
         return found
     }
 
-	func childrenRefsWithMatchingStates(_ iStates: [ZRecordState], batchSize: Int) -> CKReferencesArray {
+	func referencesWithMatchingStates(_ iStates: [ZRecordState], batchSize: Int) -> CKReferencesArray {
         var references = CKReferencesArray()
-        var  expecting = 0
 
 		applyToAllRecordNamesWithAnyMatchingStates(iStates) { iState, iName in
-			var recordID = CKRecordID(recordName: iName)
+			if  references.count < batchSize {
+				references.append(CKReference(recordID: CKRecordID(recordName: iName), action: .none))
 
-			if  let  ckRecord = maybeCKRecordForRecordName(iName),
-				let fetchable = (ckRecord[kpZoneCount] as? NSNumber)?.intValue,
-				(fetchable + expecting) < batchSize,
-				!ckRecord.isBookmark {
-				expecting    += fetchable
-				recordID      = ckRecord.recordID
+				return false
 			}
 
-			references.append(CKReference(recordID: recordID, action: .none))
+			return true
 		}
 
         return references
@@ -946,6 +950,8 @@ class ZRecords: NSObject {
             }
 
             names.append(iName)
+
+			return false
         }
 
         clearRecordNames(names, for: states)
@@ -968,6 +974,8 @@ class ZRecords: NSObject {
 			if  let ckRecord = maybeCKRecordForRecordName(iName) {
 				onEach(iState, ckRecord)
 			}
+
+			return false
 		}
 	}
 
@@ -976,7 +984,9 @@ class ZRecords: NSObject {
             let names = recordNamesForState(state)
 
             for name in names {
-                onEach(state, name)
+				if  onEach(state, name) {
+					break
+				}
             }
         }
     }

@@ -57,12 +57,13 @@ class ZStartup: NSObject {
 								gHasFinishedStartup    = true
 								gRefusesFirstResponder = false
 
+								self.stopStartupTimer()
+
 								if  gIsStartupMode {
 									gSetBigMapMode()
 								}
 
 								gSignal([.sSwap, .sMain, .sCrumbs, .sRelayout, .sPreferences])
-								self.stopStartupTimer()
 								self.requestFeedback()
 
 								FOREGROUND(after: 10.0) {

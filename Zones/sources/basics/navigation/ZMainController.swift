@@ -41,10 +41,21 @@ class ZMainController: ZGesturesController {
 		update()
 	}
 
+	@IBAction func debugInfoButtonAction(_ button: NSButton) {
+		if  let index = gDebugModes.index(of: .dDebugInfo) {
+			gDebugModes.remove(at: index)
+		} else {
+			gDebugModes.append(.dDebugInfo)
+		}
+
+		update()
+	}
+
 	func update() {
 		hamburgerButton?.toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
 		detailsWidth?  .constant =  gShowDetailsView ? 226.0 :  0.0
 		detailView?    .isHidden = !gShowDetailsView
+		debugView?     .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
 	}
 
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
@@ -60,7 +71,6 @@ class ZMainController: ZGesturesController {
         let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
 
 		permissionView?               .isHidden = !gIsStartupMode
-		debugView?                    .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
 
 		switch iKind {
 			case .sFound:

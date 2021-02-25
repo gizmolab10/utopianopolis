@@ -619,6 +619,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	var maxDepth: Int {
+		var highest = level
+
+		traverseAllProgeny { iZone in
+			let traverseLevel = iZone.level
+
+			if  highest < traverseLevel {
+				highest = traverseLevel
+			}
+		}
+
+		return highest
+	}
+
 	var highestExposed: Int {
 		var highest = level
 
@@ -757,7 +771,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			v.appendUnique(contentsOf: [name])
 		}
 
-		if  let        set = mutableSetValue(forKeyPath: "childArray") as? Set<Zone>, set.count > 0 {
+		if  let        set = mutableSetValue(forKeyPath: kChildArray) as? Set<Zone>, set.count > 0 {
 			let childArray = ZoneArray(set: set)
 
 			for child in childArray {
@@ -785,7 +799,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func updateFromCoreDataTraitRelationships() {
-		if  let        set = mutableSetValue(forKeyPath: "traitArray") as? Set<ZTrait>, set.count > 0 {
+		if  let        set = mutableSetValue(forKeyPath: kTraitArray) as? Set<ZTrait>, set.count > 0 {
 			let traitArray = ZTraitArray(set: set)
 
 			for trait in traitArray {
@@ -808,24 +822,22 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			for child in children {
 				if  child.databaseID == databaseID {
-					child.setValue(self, forKeyPath: "parentRef")
 					childArray.insert(child)
 				}
 			}
 
 			for trait in traits.values {
 				if  trait.databaseID == databaseID {
-					trait.setValue(self, forKeyPath: "ownerRef")
 					traitArray.insert(trait)
 				}
 			}
 
 			if  childArray.count > 0 {
-				setValue(childArray as NSObject, forKeyPath: "childArray")
+				setValue(childArray as NSObject, forKeyPath: kChildArray)
 			}
 
 			if  traitArray.count > 0 {
-				setValue(traitArray as NSObject, forKeyPath: "traitArray")
+				setValue(traitArray as NSObject, forKeyPath: kTraitArray)
 			}
 		}
 	}
@@ -2650,7 +2662,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			child.parentZone = nil
 
-			child.setValue(nil, forKeyPath: "parentRef")
+			child.setValue(nil, forKeyPath: kParentRef)
 			updateCoreDataRelationships()
 			needCount()
 

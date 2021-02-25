@@ -1226,7 +1226,6 @@ extension CKRecordsArray {
 			return false
 		}
 	}
-
 	
 }
 

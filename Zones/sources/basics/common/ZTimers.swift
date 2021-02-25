@@ -144,15 +144,15 @@ class ZTimers: NSObject {
 				}
 
 				tryCatch = {
-					do {
-						try block()
-						debug("•")
-						FOREGROUND {
+					FOREGROUND {
+						do {
+							try block()
+							debug("•")
 							gSignal([.sStatus]) // show change in timer status
+						} catch {
+							startTimer()
+							debug("-")
 						}
-					} catch {
-						startTimer()
-						debug("-")
 					}
 				}
 

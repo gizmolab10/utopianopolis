@@ -10,9 +10,8 @@ import Foundation
 
 typealias ZDebugModes = [ZDebugMode]
 
-var  gDebugModes :  ZDebugModes = [.dUseCoreData]
-var  gPrintModes : [ZPrintMode] = [.dData, .dNotes]
-var gUseCoreData : Bool { return gDebugModes.contains(.dUseCoreData) }
+var  gDebugModes :  ZDebugModes = [.dDebugInfo]
+var  gPrintModes : [ZPrintMode] = [.dData, .dLevels]
 var gDebugAccess : Bool { return gDebugModes.contains(.dDebugAccess) }
 var  gWriteFiles : Bool { return gDebugModes.contains(.dWriteFiles) }
 var   gDebugInfo : Bool { return gDebugModes.contains(.dDebugInfo) }
@@ -34,15 +33,14 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dDebugDraw   = ZDebugMode() // colorize rects
 	static let dWriteFiles  = ZDebugMode() // write files
 	static let dDebugAccess = ZDebugMode() // test write access by me not having full
-	static let dUseCoreData = ZDebugMode() // store data locally in core data
 
 	var description: String {
 		return [(.dDebugAccess, "access"),
 				(.dNewUser,     "arrival"),
 				(.dReadFiles,   "read files"),
+				(.dDebugInfo,   "show debug info"),
 				(.dDebugDraw,   "debug draw"),
 				(.dWriteFiles,  "write files"),
-				(.dUseCoreData, "use core data"),
 				(.dDebugAccess, "debug write access")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: " ")

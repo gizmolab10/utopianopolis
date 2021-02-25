@@ -22,7 +22,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                   widgetType : ZWidgetType   { return .tBigMap }
 	var                   isExemplar : Bool          { return false }
 	var                     isBigMap : Bool          { return true }
-	var                     hereZone : Zone?         { return gHereMaybe ?? gHere }
+	var                     hereZone : Zone?         { return gHereMaybe }
 	override  var       allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum] }
 	@IBOutlet var           dragView : ZDragView?
 	@IBOutlet var          mapView : ZView?
