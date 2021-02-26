@@ -39,7 +39,7 @@ class ZDataController: ZGenericController {
 		let  depth =  root?.maxDepth ?? 0
 		let  count = (root?.progenyCount ?? 0) + 1 // add one for root
 		let suffix =    count != 1 ? "s" : ""
-		let result = "\(count) idea\(suffix), \(depth) depth"
+		let result = "\(count) idea\(suffix), \(depth) deep"
 
 		return result
 	}

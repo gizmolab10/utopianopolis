@@ -57,6 +57,18 @@ class ZRecords: NSObject {
 	func hasCKRecordName      (_ iName: String, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecordForName(iName, forAnyOf: iStates) != nil }
 	func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecordForName(iRecordID.recordName, forAnyOf: iStates) != nil }
 
+	var allProgenyReferences: CKReferencesArray {
+		var references = CKReferencesArray()
+
+		applyToAllProgeny { iZone in
+			if  let recordID = iZone.ckRecord?.recordID {
+				references.append(CKReference(recordID: recordID, action: .none))
+			}
+		}
+
+		return references
+	}
+
 	var allZones : ZoneArray {
 		var array = ZoneArray()
 

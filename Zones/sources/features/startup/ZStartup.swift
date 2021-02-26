@@ -58,6 +58,7 @@ class ZStartup: NSObject {
 								gRefusesFirstResponder = false
 
 								self.stopStartupTimer()
+//								setupCloudTimer()
 
 								if  gIsStartupMode {
 									gSetBigMapMode()

@@ -67,6 +67,7 @@ class ZCloud: ZRecords {
 			case .oAllProgeny:    fetchAllProgeny    (cloudCallback)
 			case .oAllIdeas:      fetchAllIdeas      (cloudCallback)
 			case .oSubscribe:     subscribe          (cloudCallback)
+			case .oOwnedTraits:   fetchOwnedTraits   (cloudCallback)
 			case .oAllTraits:     fetchAllTraits     (cloudCallback)
 			case .oUndelete:      undeleteAll        (cloudCallback)
 			case .oRecount:       recount            (cloudCallback)
@@ -348,21 +349,17 @@ class ZCloud: ZRecords {
 		return string == "" ? nil : NSPredicate(format: string)
 	}
 
-    func traitsPredicate(specificTo iRecordIDs: CKRecordIDsArray) -> NSPredicate? {
-        if  iRecordIDs.count == 0 {
-            return !gIsReadyToShowUI ? nil : NSPredicate(value: true)
-        } else {
-            var predicate = ""
-            var separator = ""
+	var neededTraitsPredicate: NSPredicate {
+		var predicate = ""
+		var separator = ""
 
-            for recordID in iRecordIDs {
-                predicate = String(format: "%@%@SELF CONTAINS \"%@\"", predicate, separator, recordID.recordName)
-                separator = " AND "
-            }
+		for recordID in recordIDsWithMatchingStates([.needsTraits], pull: true) {
+			predicate = String(format: "%@%@SELF CONTAINS \"%@\"", predicate, separator, recordID.recordName)
+			separator = " AND "
+		}
 
-            return NSPredicate(format: predicate)
-        }
-    }
+		return NSPredicate(format: predicate)
+	}
 
     func bookmarkPredicate(specificTo iRecordIDs: CKRecordIDsArray) -> NSPredicate? {
         var  predicate    = ""
@@ -975,12 +972,17 @@ class ZCloud: ZRecords {
                 } else { // retrievedRecords is all we get for this query
                     FOREGROUND {
 
-						// /////////////////////////////
-						// now we can mutate the heap //
-						// /////////////////////////////
+						// //////////////////////////////////////////////////// //
+						// we are now in the foreground and can mutate the heap //
+						// //////////////////////////////////////////////////// //
 
                         for retrievedRecord in retrievedRecords {
                             let retrievedID = retrievedRecord.recordID
+
+							// ///////////////////////////////////////// //
+							// create the zone from the retrieved record //
+							// ///////////////////////////////////////// //
+
 							let retrieved   = self.sureZoneForCKRecord(retrievedRecord, requireFetch: false)
 
                             if  destroyedIDs.contains(retrievedID) {
@@ -1029,12 +1031,12 @@ class ZCloud: ZRecords {
 							}
 						}
 
-						self.remove(states: [.needsProgeny], from: fetchNeeded)
-						self.fetchChildIdeas(onCompletion) // process remaining, if any
-
 						if  trackingLevels, retrievedRecords.count > 0 {
 							self.printAdded()
 						}
+
+						self.remove(states: [.needsProgeny], from: fetchNeeded)
+						self.fetchChildIdeas(onCompletion) // recurse to process remaining, if any
                     }
                 }
             }
@@ -1085,44 +1087,36 @@ class ZCloud: ZRecords {
         }
 	}
 
-	func fetchAllTraits(_ onCompletion: IntClosure?) {
-		fetchTraits(with: [], onCompletion)
+	func fetchTraits     (_ onCompletion: IntClosure?) { fetchTraits(using: neededTraitsPredicate,                                    onCompletion) }
+	func fetchAllTraits  (_ onCompletion: IntClosure?) { fetchTraits(using: NSPredicate(value: true),                                 onCompletion) }
+	func fetchOwnedTraits(_ onCompletion: IntClosure?) { fetchTraits(using: NSPredicate(format: "owner IN %@", allProgenyReferences), onCompletion) }
+
+	func fetchTraits(using predicate: NSPredicate, _ onCompletion: IntClosure?) {
+		var       retrieved = CKRecordsArray ()
+		queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties) { (iRecord, iError) in
+			if  let ckRecord = iRecord {
+				if !retrieved.contains(ckRecord) {
+					retrieved.append(ckRecord)
+				}
+			} else { // nil means done
+				FOREGROUND {
+					for ckRecord in retrieved {
+						var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
+
+						if  zRecord == nil {                                                    // if not already registered
+							zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID)    // register
+						} else {
+							zRecord?.useBest(record: ckRecord)
+						}
+					}
+
+					self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
+					self.adoptAllNeedingAdoption()
+					onCompletion?(0)
+				}
+			}
+		}
 	}
-
-	func fetchTraits(_ onCompletion: IntClosure?) {
-		fetchTraits(with: recordIDsWithMatchingStates([.needsTraits], pull: true), onCompletion)
-    }
-
-	func fetchTraits(with recordIDs: CKRecordIDsArray, _ onCompletion: IntClosure?) {
-        var     retrieved = CKRecordsArray ()
-        if  let predicate = traitsPredicate(specificTo: recordIDs) {
-            queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties) { (iRecord, iError) in
-                if let ckRecord = iRecord {
-                    if !retrieved.contains(ckRecord) {
-                        retrieved.append(ckRecord)
-                    }
-                } else { // nil means done
-                    FOREGROUND {
-                        for ckRecord in retrieved {
-                            var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
-
-                            if  zRecord == nil {                                                    // if not already registered
-                                zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID)    // register
-							} else {
-								zRecord?.useBest(record: ckRecord)
-							}
-                        }
-
-                        self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
-                        self.adoptAllNeedingAdoption()
-                        onCompletion?(0)
-                    }
-                }
-            }
-        } else {
-            onCompletion?(0)
-        }
-    }
 
     func fetchBookmarks(_ onCompletion: IntClosure?) {
         let targetIDs = recordIDsWithMatchingStates([.needsBookmarks], pull: true)

@@ -33,6 +33,7 @@ enum ZOperationID: Int, CaseIterable {
 	case oRoots
     case oHere
 	case oAllProgeny
+	case oAllTraits
 	case oStartupDone
 
     // finish
@@ -50,11 +51,11 @@ enum ZOperationID: Int, CaseIterable {
 	case oNeededIdeas        // after children so favorite targets resolve properly
     case oSaveToCloud        // zones, traits, destroy
 	case oParentIdeas        // after fetch so colors resolve properly
+	case oOwnedTraits
 	case oChildIdeas
     case oEmptyTrash
     case oCompletion
 	case oFoundIdeas         // LOCAL
-	case oAllTraits
 	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
     case oLostIdeas
@@ -70,9 +71,10 @@ enum ZOperationID: Int, CaseIterable {
 		switch self {
 			case .oReadFile:        return gReadFiles   ? 30.0 : 0.0
 			case .oRestoreIdeas:    return gUseCoreData ?  4.0 : 0.0
+			case .oAllProgeny:      return 20.0
 			case .oTraits:          return 16.0
 			case .oAllTraits:       return 11.0
-			case .oAllProgeny:      return 10.0
+			case .oOwnedTraits:     return 11.0
 			case .oAllIdeas:        return  8.0
 			case .oNewIdeas:        return  7.0
 			case .oNeededIdeas:     return  6.0
@@ -238,13 +240,11 @@ class ZOperations: NSObject {
 			cloudFire?(nil)
 			gTimers.resetTimer(for: .tCloudAvailable, withTimeInterval:  0.2, repeats: true, block: cloudFire!)
 //			gTimers.resetTimer(for: .tSaveCoreData,   withTimeInterval:  1.0, repeats: true) { iTimer in if gIsReadyToShowUI { gSaveContext() } }
-			gTimers.resetTimer(for: .tSync,           withTimeInterval: 15.0, repeats: true) { iTimer in if gIsReadyToShowUI { gBatches.sync { iSame in } } }
+			gTimers.resetTimer(for: .tSync,           withTimeInterval: 15.0, repeats: true) { iTimer in if gIsReadyToShowUI { gBatches.save { iSame in } } }
         }
     }
 
     func setupAndRun(_ operationIDs: ZOperationIDsArray, onCompletion: @escaping Closure) {
-        setupCloudTimer()
-
         if  queue.operationCount > 10 {
             gAlerts.showAlert("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
                // onCompletion()
