@@ -85,8 +85,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
 	var                   spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
 	var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
+	var               zonesWithNotes =          ZoneArray  ()
 	var                     children =          ZoneArray  ()
 	var                       traits =   ZTraitDictionary  ()
+	var                        level =                  0
 
 	func copyWithZone() -> NSObject {
 		return self
@@ -399,16 +401,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return d
 	}
 
-	var level: Int {
-		get {
-			if  !isARoot, !isFavoritesRoot, let p = parentZone, p != self, !p.spawnedBy(self) {
-				return p.level + 1
-			}
-
-			return 0
-		}
-	}
-
 	func toolColor() -> ZColor? { return color?.lighter(by: 3.0) }
 
 	var textColor: ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : gDefaultTextColor }
@@ -619,18 +611,34 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	var maxDepth: Int {
-		var highest = level
+	@discardableResult func recount() -> Int {
+		var depth = 0
+
+		updateAllProgenyCounts()
 
 		traverseAllProgeny { iZone in
+			if  let p = iZone.parentZone,
+				p    != iZone,
+				!p.spawnedBy(iZone) {
+				iZone.level = p.level + 1
+			}
+
 			let traverseLevel = iZone.level
 
-			if  highest < traverseLevel {
-				highest = traverseLevel
+			if  depth < traverseLevel {
+				depth = traverseLevel
+			}
+
+			iZone.zonesWithNotes = []
+
+			if  iZone.hasNote {
+				traverseAllAncestors { ancestor in
+					ancestor.zonesWithNotes.append(iZone)
+				}
 			}
 		}
 
-		return highest
+		return depth
 	}
 
 	var highestExposed: Int {
@@ -1642,18 +1650,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// MARK:- notes / essays
 	// MARK:-
-
-	var zonesWithNotes: ZoneArray {
-		var zones = ZoneArray()
-
-		traverseAllProgeny { zone in
-			if  zone .hasNote {
-				zones.append(zone)
-			}
-		}
-
-		return zones
-	}
 
 	var countOfNotes: Int {
 		return zonesWithNotes.count

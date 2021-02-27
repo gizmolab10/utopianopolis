@@ -92,6 +92,8 @@ class ZMainController: ZGesturesController {
 				gRefusesFirstResponder          = false
 			default: break
         }
+		
+		update()
     }
 
 }

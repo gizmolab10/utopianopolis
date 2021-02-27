@@ -1143,11 +1143,25 @@ extension ZRecordsArray {
 }
 
 extension CKReferencesArray {
+
 	func containsReference(_ reference: CKReference) -> Bool {
 		return containsCompare(with: reference) { (item, another) in
 			return item.recordID.recordName == another.recordID.recordName
 		}
 	}
+
+	func asZones(in dbID: ZDatabaseID) -> ZoneArray {
+		return map { ckReference -> Zone in
+			return gRemoteStorage.cloud(for: dbID)!.sureZoneForCKRecord(CKRecord(recordType: kZoneType, recordID: ckReference.recordID))
+		}
+	}
+
+	var asRecordNames: [String] {
+		return map { ckReference -> String in
+			return ckReference.recordID.recordName
+		}
+	}
+
 }
 
 extension ZRecordsArray {
@@ -1226,7 +1240,21 @@ extension CKRecordsArray {
 			return false
 		}
 	}
-	
+
+	func asZones(in dbID: ZDatabaseID) -> ZoneArray {
+		return self.filter { ckRecord -> Bool in
+			return ckRecord.recordType == kZoneType
+		}.map { ckRecord -> Zone in
+			return gRemoteStorage.cloud(for: dbID)!.sureZoneForCKRecord(ckRecord)
+		}
+	}
+
+	var asRecordNames: [String] {
+		return map { ckRecord -> String in
+			return ckRecord.recordID.recordName
+		}
+	}
+
 }
 
 extension NSRange {
@@ -2096,7 +2124,7 @@ extension Character {
 extension Data {
 
 	var checksum : Int {
-		return self.map { Int($0) }.reduce(0, +)
+		return map { Int($0) }.reduce(0, +)
 	}
 
 	var string: String? {

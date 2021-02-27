@@ -24,7 +24,6 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var unwrappedRecordName: String    { return ckRecordName ?? "" }
 	var       unwrappedName: String    { return ckRecordName ?? emptyName }
 	var           emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
-	var             isARoot: Bool      { return kRootNames.contains(recordName!) || (ckRecord != nil && kRootNames.contains(ckRecordName!)) }
 	var          isBookmark: Bool      { return ckRecord?.isBookmark ?? false }
 	var  isInPublicDatabase: Bool      { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
 	var        isBigMapRoot: Bool      { return ckRecordName == kRootName }
@@ -52,6 +51,14 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var       needsChildren: Bool      { return  hasState(.needsChildren) }
 	var       needsAdoption: Bool      { return  hasState(.needsAdoption) }
 	var      needsBookmarks: Bool      { return  hasState(.needsBookmarks) }
+
+	var isARoot: Bool {
+		if  recordName == nil || ckRecordName == nil {
+			return false
+		}
+
+		return kRootNames.contains(recordName!) || (ckRecord != nil && kRootNames.contains(ckRecordName!))
+	}
 
 	// MARK:- core data
 	// MARK:-

@@ -8,8 +8,6 @@
 
 import Foundation
 
-var gDebugController: ZDebugController? { return gControllers.controllerForID(.idDebug) as? ZDebugController }
-
 enum ZDebugID: Int {
 	case dRegistry
 	case dTotal
@@ -21,7 +19,6 @@ enum ZDebugID: Int {
 	case dRecents
 	case dLost
 	case dTraits
-//	case dMistype
 	case dDestroy
 	case dDuplicates
 	case dEnd
@@ -32,6 +29,10 @@ enum ZDebugID: Int {
 class ZDebugController: ZGenericTableController {
 	override var controllerID : ZControllerID { return .idDebug }
 	var                  rows : Int { return ZDebugID.dEnd.rawValue }
+
+	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
+		return super.shouldHandle(kind) && gDebugInfo
+	}
 
 	#if os(OSX)
 

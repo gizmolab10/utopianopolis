@@ -218,7 +218,6 @@ class ZRecords: NSObject {
 			case .dRecents:    return recentsZone?       .all
 			case .dDestroy:    return destroyZone?       .all
 			case .dTrash:      return trashZone?         .all
-//			case .dMistype:    return recordsMistyped
 			case .dProgeny:    return allProgeny
 			case .dValid:      return debugValid
 			case .dTotal:      return debugTotal
@@ -282,15 +281,14 @@ class ZRecords: NSObject {
         lastSyncDate = date
     }
 
-    func recount(_ onCompletion: IntClosure? = nil) {  // all progenyCounts for all progeny in all roots
-		var inMaps = rootZone?        .updateAllProgenyCounts() ?? 0
-		inMaps    += trashZone?       .updateAllProgenyCounts() ?? 0
-		inMaps    += destroyZone?     .updateAllProgenyCounts() ?? 0
-		inMaps    += favoritesZone?   .updateAllProgenyCounts() ?? 0
-		inMaps    += lostAndFoundZone?.updateAllProgenyCounts() ?? 0
+    @discardableResult func recount() -> Int {  // all progenyCounts for all progeny in all roots
+		let c = rootZone?.recount() ?? 0
+		trashZone?       .recount()
+		destroyZone?     .recount()
+		favoritesZone?   .recount()
+		lostAndFoundZone?.recount()
 
-		printDebug(.dCount, "(\(self.databaseID.identifier)) \(inMaps) / \(self.zRecordsLookup.count)")
-        onCompletion?(0)
+		return c
     }
 
     func className(for recordType: String?) -> String? {

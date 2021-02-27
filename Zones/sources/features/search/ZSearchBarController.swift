@@ -171,35 +171,27 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
             } else {
                 cloud.search(for: searchString) { iObject in
                     FOREGROUND {
-                        var  records = iObject as! CKRecordsArray
-						var  orphans = CKRecordsArray()
-						var filtered = CKRecordsArray()
-                        remaining  -= 1
-
-						for record in records {
-							if  record.matchesFilterOptions {
-								filtered.appendUnique(contentsOf: [record])
-							}
+						remaining   -= 1
+						var orphanedTraits = CKRecordsArray()
+						var records        = iObject as! CKRecordsArray
+						var filtered       = records.filter { record -> Bool in
+							return record.matchesFilterOptions
 						}
 
 						for record in filtered {
-							if  let trait = cloud.maybeZRecordForCKRecord(record) as? ZTrait {
-								if  trait.ownerZone == nil {
-									orphans.append(record)   // remove unowned traits from records
-								}
-							} else if cloud.maybeZoneForCKRecord(record) == nil {
-								let trait = ZTrait(record: record, databaseID: dbID)
+							if  record.recordType == kTraitType {
+								let trait = cloud.maybeZRecordForCKRecord(record) as? ZTrait ?? ZTrait(record: record, databaseID: dbID)
 
-								if  trait.ownerZone != nil {
-									trait.register()         // some records are being fetched first time
+								if  trait.ownerZone == nil {
+									orphanedTraits.append(record)   // remove unowned traits from records
 								} else {
-									orphans.append(record)   // remove unowned traits from records
+									trait.register()         // some records are being fetched first time
 								}
 							}
 						}
 
-						for orphan in orphans {
-							if  let index = records.firstIndex(of: orphan) {
+						for orphan in orphanedTraits {
+							if  let index = filtered.firstIndex(of: orphan) {
 								records.remove(at: index)
 							}
 						}

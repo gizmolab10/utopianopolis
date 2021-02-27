@@ -37,7 +37,13 @@ class ZCloud: ZRecords {
         }
 
         return nil
-    }
+	}
+
+	@discardableResult override func recount() -> Int {
+		maxLevel = super.recount()
+
+		return maxLevel
+	}
 
     func start(_ operation: CKDatabaseOperation) {
         currentOperation = operation
@@ -70,10 +76,10 @@ class ZCloud: ZRecords {
 			case .oOwnedTraits:   fetchOwnedTraits   (cloudCallback)
 			case .oAllTraits:     fetchAllTraits     (cloudCallback)
 			case .oUndelete:      undeleteAll        (cloudCallback)
-			case .oRecount:       recount            (cloudCallback)
 			case .oResolve:       resolve            (cloudCallback)
 			case .oAdopt:         assureAdoption     (cloudCallback)
 			case .oTraits:        fetchTraits        (cloudCallback)
+			case .oRecount:       recount();          fallthrough
 			default:                                  cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
 		}
 	}
@@ -349,11 +355,17 @@ class ZCloud: ZRecords {
 		return string == "" ? nil : NSPredicate(format: string)
 	}
 
-	var neededTraitsPredicate: NSPredicate {
+	var neededTraitsPredicate: NSPredicate? {
+		let recordIDs = recordIDsWithMatchingStates([.needsTraits], pull: true)
+
+		if  recordIDs.count == 0 {
+			return nil
+		}
+
 		var predicate = ""
 		var separator = ""
 
-		for recordID in recordIDsWithMatchingStates([.needsTraits], pull: true) {
+		for recordID in recordIDs {
 			predicate = String(format: "%@%@SELF CONTAINS \"%@\"", predicate, separator, recordID.recordName)
 			separator = " AND "
 		}
@@ -1015,6 +1027,8 @@ class ZCloud: ZRecords {
 
 										parent.addChildAndRespectOrder(retrieved)
 
+										retrieved.level = parent.level + 1
+
 										if  trackingLevels {
 											let                    level  = retrieved.level
 											var                 wereAdded = self.addedToLevels[level] ?? ZRecordsArray()
@@ -1091,28 +1105,33 @@ class ZCloud: ZRecords {
 	func fetchAllTraits  (_ onCompletion: IntClosure?) { fetchTraits(using: NSPredicate(value: true),                                 onCompletion) }
 	func fetchOwnedTraits(_ onCompletion: IntClosure?) { fetchTraits(using: NSPredicate(format: "owner IN %@", allProgenyReferences), onCompletion) }
 
-	func fetchTraits(using predicate: NSPredicate, _ onCompletion: IntClosure?) {
+	func fetchTraits(using predicate: NSPredicate?, _ onCompletion: IntClosure?) {
 		var       retrieved = CKRecordsArray ()
-		queryFor(kTraitType, with: predicate, properties: ZTrait.cloudProperties) { (iRecord, iError) in
-			if  let ckRecord = iRecord {
-				if !retrieved.contains(ckRecord) {
-					retrieved.append(ckRecord)
-				}
-			} else { // nil means done
-				FOREGROUND {
-					for ckRecord in retrieved {
-						var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
 
-						if  zRecord == nil {                                                    // if not already registered
-							zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID)    // register
-						} else {
-							zRecord?.useBest(record: ckRecord)
-						}
+		if  predicate == nil {
+			onCompletion?(0)
+		} else {
+			queryFor(kTraitType, with: predicate!, properties: ZTrait.cloudProperties) { (iRecord, iError) in
+				if  let ckRecord = iRecord {
+					if !retrieved.contains(ckRecord) {
+						retrieved.append(ckRecord)
 					}
+				} else { // nil means done
+					FOREGROUND {
+						for ckRecord in retrieved {
+							var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
 
-					self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
-					self.adoptAllNeedingAdoption()
-					onCompletion?(0)
+							if  zRecord == nil {                                                    // if not already registered
+								zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID)    // register
+							} else {
+								zRecord?.useBest(record: ckRecord)
+							}
+						}
+
+						self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
+						self.adoptAllNeedingAdoption()
+						onCompletion?(0)
+					}
 				}
 			}
 		}

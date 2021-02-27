@@ -36,7 +36,7 @@ class ZDataController: ZGenericController {
 
     var totalCountsText: String {
 		let   root = gRecords?.rootZone
-		let  depth =  root?.maxDepth ?? 0
+		let  depth = gCloud?.maxLevel ?? 0
 		let  count = (root?.progenyCount ?? 0) + 1 // add one for root
 		let suffix =    count != 1 ? "s" : ""
 		let result = "\(count) idea\(suffix), \(depth) deep"
@@ -125,7 +125,11 @@ class ZDataController: ZGenericController {
 			}
 
 			if  n > 0 {
-				text.append(" and \(n) notes")
+				text.append(" and \(n) note")
+
+				if  n > 1 {
+					text.append("s")
+				}
 			}
 		}
 

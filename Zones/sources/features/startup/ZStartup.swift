@@ -47,7 +47,6 @@ class ZStartup: NSObject {
 					FOREGROUND {
 						gFavorites.updateAllFavorites()
 						gRemoteStorage.updateLastSyncDates()
-						gRemoteStorage.recount()
 						gRefreshCurrentEssay()
 						gRefreshPersistentWorkMode()
 						gSignal([.sCrumbs, .sLaunchDone])
@@ -66,6 +65,9 @@ class ZStartup: NSObject {
 
 								gSignal([.sSwap, .sMain, .sCrumbs, .sRelayout, .sPreferences])
 								self.requestFeedback()
+								gTimers.resetTimer(for: .tRecount, withTimeInterval: 60.0, repeats: true) { iTimer in
+									gRemoteStorage.recount()
+								}
 
 								FOREGROUND(after: 10.0) {
 									gFiles.writeAll()

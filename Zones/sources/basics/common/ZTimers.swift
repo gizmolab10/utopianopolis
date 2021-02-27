@@ -31,6 +31,7 @@ enum ZTimerID : Int {
 	case tWriteMine
 	case tMouseZone
 	case tOperation
+	case tRecount
 	case tStartup
 	case tSync
 	case tKey
