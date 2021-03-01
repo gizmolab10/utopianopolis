@@ -94,6 +94,7 @@ class ZTimers: NSObject {
 		if  let id = timerID {
 			FOREGROUND {
 				self.timers[id]?.invalidate()
+				self.timers[id] = nil
 			}
 		}
 	}

@@ -698,16 +698,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		set {
 			if  isARoot {
 				unlinkParentAndMaybeNeedSave()
-			} else if parentZoneMaybe      != newValue {
-				parentZoneMaybe             = newValue
-				if  parentZoneMaybe        == nil {
+			} else if parentZoneMaybe       != newValue {
+				parentZoneMaybe              = newValue
+				if  parentZoneMaybe         == nil {
 					unlinkParentAndMaybeNeedSave()
-				} else if let parentRecord  = parentZoneMaybe?.ckRecord,
-						  let newParentDBID = parentZoneMaybe?.databaseID {
-					if       newParentDBID == databaseID {
+				} else if let parentRecord   = parentZoneMaybe?.ckRecord,
+						  let newParentDBID  = parentZoneMaybe?.databaseID {
+					if        newParentDBID == databaseID {
 						if  parent?.recordID.recordName != parentRecord.recordID.recordName {
-							parentLink      = kNullLink
-							parent          = CKReference(record: parentRecord, action: .none)
+							parentLink       = kNullLink
+							parent           = CKReference(record: parentRecord, action: .none)
 
 							maybeNeedSave()
 						}
@@ -1400,9 +1400,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let   dbID = databaseID,
 				let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
 				let   dict = self.dictFromJSON(json)
-				let   zone = Zone(dict: dict, in: dbID)
+				temporarilyOverrideIgnore { // allow needs save
+					let zone = Zone(dict: dict, in: dbID)
+					addChild(zone, at: 0)
+				}
 
-				addChild(zone, at: 0)
 				onCompletion?()
 			}
 		} catch {
@@ -2553,7 +2555,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				!p.children.contains(self),
 				p.ckRecord != nil {
 				p.maybeMarkNotFetched()
-				p.addChildAndRespectOrder(self, doNotSave: true)
+				p.addChildAndRespectOrder(self)
 
 				if  p.parentZone == nil, !p.isARoot {
 					p.adopt() // recurse on ancestor
@@ -2568,13 +2570,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		parentZone?.removeChild(self)
 	}
 
-	func addChildAndRespectOrder(_ child: Zone?, doNotSave: Bool = false) {
-		addChild(child, doNotSave: doNotSave)
+	func addChildAndRespectOrder(_ child: Zone?) {
+		addChild(child)
 		respectOrder()
 	}
 
-	@discardableResult func addChild(_ child: Zone?, updateCoreData: Bool = true, doNotSave: Bool = false) -> Int? {
-		return addChild(child, at: 0, updateCoreData: updateCoreData, doNotSave: doNotSave)
+	@discardableResult func addChild(_ child: Zone?, updateCoreData: Bool = true) -> Int? {
+		return addChild(child, at: 0, updateCoreData: updateCoreData)
 	}
 
 	func addAndReorderChild(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: Closure? = nil) {
@@ -2595,7 +2597,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return index   // count is bottom, 0 is top
 	}
 
-	@discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, doNotSave: Bool = false, _ onCompletion: Closure? = nil) -> Int? {
+	@discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: Closure? = nil) -> Int? {
 		if  let        child = iChild {
 			let     insertAt = validIndex(from: iIndex)
 			child.parentZone = self
@@ -2639,11 +2641,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				updateCoreDataRelationships()
 			}
 
-			if !doNotSave {
-				maybeNeedSave()
-			}
-
 			needCount()
+			maybeNeedSave()
 			onCompletion?()
 
 			return insertAt
@@ -3325,7 +3324,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			for childDict: ZStorageDictionary in childrenDicts {
 				let child = Zone(dict: childDict, in: iDatabaseID)
 
-				cloud?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent (intentionally) not being in childDict
+				cloud?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent intentionally not being in childDict
 					addChild(child, at: nil)
 				}
 			}
@@ -3344,7 +3343,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					printDebug(.dNotes, "trait (in " + (zoneName ?? kUnknown) + ") --> " + (trait.format ?? "empty"))
 				}
 
-				cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait (intentionally) not being in traits
+				cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait intentionally not being in traits
 					addTrait(trait)
 				}
 			}

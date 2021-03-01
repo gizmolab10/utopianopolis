@@ -104,9 +104,9 @@ class ZRecord: ZManagedRecord { // NSObject {
 			gBookmarks.forget(self as? Zone)
 			cloud?.unregisterCKRecord(ckRecord)
 
-			if  let  r = newValue {
-				ckRecord = r
-				recordName  = r.recordID.recordName
+			if  let      r = newValue {
+				ckRecord   = r
+				recordName = r.recordID.recordName
 
 				updateInstanceProperties()
 			}
@@ -247,11 +247,28 @@ class ZRecord: ZManagedRecord { // NSObject {
 
     func setupLinks() {}
 
+	func temporarilyOverrideIgnore(_ closure: Closure) {
+
+		// ////////////////////////////////////////////////////////////////// //
+		// temporarily overrides subsequent calls to temporarily ignore needs //
+		// ////////////////////////////////////////////////////////////////// //
+
+		let         saved = cloud?.ignoreNone ?? false
+		cloud?.ignoreNone = true
+		closure()
+		cloud?.ignoreNone = saved
+	}
+
     func temporarilyMarkNeeds(_ closure: Closure) {
         cloud?.temporarilyForRecordNamed(ckRecordName, ignoreNeeds: false, closure)
     }
 
     func temporarilyIgnoreNeeds(_ closure: Closure) {
+
+		// ////////////////////////////////////////////// //
+		// temporarily causes set needs to have no effect //
+		// ////////////////////////////////////////////// //
+
         cloud?.temporarilyForRecordNamed(ckRecordName, ignoreNeeds: true, closure)
     }
 
@@ -388,10 +405,11 @@ class ZRecord: ZManagedRecord { // NSObject {
     }
 
     func maybeNeedSave() {
+		updateCKRecordProperties()    // make sure relevant data is in place to be saved
+
         if !needsDestroy, !needsSave, gHasFinishedStartup, (canSaveWithoutFetch || !needsFetch) {
             removeState(.needsMerge)
 			addState   (.needsSave)
-			updateCKRecordProperties()
 
 			if  gUseCoreData {
 				modificationDate = Date()
@@ -623,10 +641,10 @@ class ZRecord: ZManagedRecord { // NSObject {
 		// case 2: ck record already exists
 		// case 3: name is not nil
 
-		let    cloud = gRemoteStorage.zRecords(for: iDatabaseID)
+		let     cloud = gRemoteStorage.zRecords(for: iDatabaseID)
 		var newRecord = CKRecord(recordType: iRecordType)           // case 1
-		let     name = dict[.recordName] as? String
-		databaseID   = iDatabaseID
+		let      name = dict[.recordName] as? String
+		databaseID    = iDatabaseID
 
 		if  let recordName = name {
 			if  let r = cloud?.maybeCKRecordForRecordName(name) {
@@ -683,7 +701,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 			}
 		}
 
-		ckRecord = newRecord    // any subsequent changes into any of this object's cloudProperties will save this record to iCloud
+		setRecord(newRecord)    // any subsequent changes into any of this object's cloudProperties will save this record to iCloud
 
 		if  let needs = dict[.needs] as? String {
 			addNeedsFromString(needs)

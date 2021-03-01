@@ -1030,11 +1030,11 @@ class ZCloud: ZRecords {
 										retrieved.level = parent.level + 1
 
 										if  trackingLevels {
-											let                    level  = retrieved.level
+											let                     level = retrieved.level
 											var                 wereAdded = self.addedToLevels[level] ?? ZRecordsArray()
 
 											if !wereAdded.contains(retrieved) {
-												wereAdded.append(retrieved)
+												wereAdded  .append(retrieved)
 
 												self.addedToLevels[level] = wereAdded
 												self.maxLevel             = max(level, self.maxLevel)
@@ -1046,33 +1046,29 @@ class ZCloud: ZRecords {
 						}
 
 						if  trackingLevels, retrievedRecords.count > 0 {
-							self.printAdded()
+							var separator = ""
+							var    string = ""
+
+							for level in 0...self.maxLevel {
+								if  let records = self.addedToLevels[level] {
+									string.append("\(separator)\(level):\(records.count)")
+									separator   = ", "
+								}
+							}
+
+							if  string.count > 0 {
+								printDebug(.dLevels, "(\(self.databaseID.identifier)) \(string)")
+							}
 						}
 
 						self.remove(states: [.needsProgeny], from: fetchNeeded)
-						self.fetchChildIdeas(onCompletion) // recurse to process remaining, if any
+						self.fetchChildIdeas(onCompletion)    // recurse to process any remaining
                     }
                 }
             }
         }
     }
 
-	func printAdded() {
-		var string = ""
-		var separator = ""
-
-		for level in 0...self.maxLevel {
-			if  let records = self.addedToLevels[level] {
-				string.append("\(separator)\(level):\(records.count)")
-				separator   = ", "
-			}
-		}
-
-		if  string.count > 0 {
-			printDebug(.dLevels, "(\(self.databaseID.identifier)) \(string)")
-		}
-	}
-    
 	func establishManifest(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
         var retrieved = CKRecordsArray ()
         let predicate = NSPredicate(value: true)

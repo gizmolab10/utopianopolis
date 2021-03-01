@@ -647,6 +647,7 @@ class ZRecords: NSObject {
     // MARK:- set state
     // MARK:-
 
+	var ignoreNone = false
     var ignoredRecordName: String?
     let kIgnoreAllRecordNames = "all record names"
 
@@ -655,14 +656,15 @@ class ZRecords: NSObject {
     }
 
     func temporarilyForRecordNamed(_ iRecordName: String?, ignoreNeeds: Bool, _ closure: Closure) {
-        let         saved = ignoredRecordName
-        ignoredRecordName = ignoreNeeds ? iRecordName ?? kIgnoreAllRecordNames : nil
+        let         saved =  ignoredRecordName
+		ignoredRecordName = !ignoreNeeds ? nil : iRecordName ?? kIgnoreAllRecordNames
         closure()
         ignoredRecordName = saved
     }
 
     func temporarilyIgnoring(_ iName: String?) -> Bool {
-        if  let   ignore = ignoredRecordName {
+        if !ignoreNone,
+			let   ignore = ignoredRecordName {
             let    names = [kIgnoreAllRecordNames] + (iName == nil ? [] : [iName!])
             return names.contains(ignore)
         }

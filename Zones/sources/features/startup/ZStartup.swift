@@ -24,10 +24,6 @@ class ZStartup: NSObject {
 		}
 	}
 
-	func stopStartupTimer() {
-		gTimers.stopTimer(for: .tStartup)
-	}
-
 	func startupCloudAndUI() {
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
 		gWorkMode              = .wStartupMode
@@ -56,8 +52,10 @@ class ZStartup: NSObject {
 								gHasFinishedStartup    = true
 								gRefusesFirstResponder = false
 
-								self.stopStartupTimer()
-//								setupCloudTimer()
+								gTimers.stopTimer(for: .tStartup)
+								gBatches.setupCloudTimer()
+//								gTimers.resetTimer(for: .tSaveCoreData, withTimeInterval:  1.0, repeats: true) { iTimer in if gIsReadyToShowUI { gSaveContext() } }
+								gTimers.resetTimer(for: .tSync,         withTimeInterval: 15.0, repeats: true) { iTimer in if gIsReadyToShowUI { gBatches.save { iSame in } } }
 
 								if  gIsStartupMode {
 									gSetBigMapMode()
