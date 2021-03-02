@@ -123,7 +123,7 @@ class ZMapEditor: ZBaseEditor {
 						case "n":        editNote(OPTION)
 						case "o":        gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
 						case "p":        printCurrentFocus()
-						case "r":        reverse()
+						case "r":        if FLAGGED { gRemoteStorage.recount() } else { reverse() }
 						case "s":        if CONTROL { pushAllToCloud() } else { gHere.exportToFile(OPTION ? .eOutline : .eSeriously) }
 						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
@@ -472,7 +472,7 @@ class ZMapEditor: ZBaseEditor {
 				}
 			} else {
 				gCoreDataStack.loadAllProgeny(for: gRecords?.databaseID) {
-					gCloud?.fetchAllProgeny { iSame in
+					gCloud?.fetchMap { iSame in
 						gRedrawMaps()
 					}
 				}

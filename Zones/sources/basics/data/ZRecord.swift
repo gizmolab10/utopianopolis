@@ -417,6 +417,8 @@ class ZRecord: ZManagedRecord { // NSObject {
 				gSaveContext()
 			}
 
+			gNeedsRecount = true // trigger recount on next timer fire
+
 			needWrite()
         }
     }

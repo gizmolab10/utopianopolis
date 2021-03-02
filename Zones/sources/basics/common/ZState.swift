@@ -23,6 +23,7 @@ var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 
 var               gLaunchedAt                     = Date()
 var            gProgressTimes                     = [ZOperationID : Double]()
+var             gNeedsRecount                     = false
 var            gTextCapturing                     = false
 var          gIsReadyToShowUI                     = false
 var          gDeferringRedraw                     = false
@@ -623,41 +624,6 @@ var gCurrentEssay: ZNote? {
 	didSet {
 		gRecents.push(intoNotes: true)
 		setPreferencesString(gCurrentEssay?.identifier() ?? "", for: kCurrentEssay)
-	}
-}
-
-// MARK:- timers
-// MARK:-
-
-func gTemporarilySetKey(_ key: String, for seconds: Double = 1.0) {
-	gCurrentKeyPressed = key
-
-	gTimers.resetTimer(for: .tKey, withTimeInterval: seconds) { iTimer in
-		gCurrentKeyPressed = ""
-	}
-}
-
-func gTemporarilySetMouseZone(_ zone: Zone?, for seconds: Double = 0.5) {
-	gCurrentMouseDownZone = zone
-
-	gTimers.resetTimer(for: .tMouseZone, withTimeInterval: seconds) { iTimer in
-		gCurrentMouseDownZone = nil
-	}
-}
-
-func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double = 1.0) {
-	gCurrentMouseDownLocation = location
-
-	gTimers.resetTimer(for: .tMouseLocation, withTimeInterval: seconds) { iTimer in
-		gCurrentMouseDownLocation = nil
-	}
-}
-
-func gTemporarilySetArrowsDoNotBrowse(_ notBrowse: Bool, for seconds: Double = 1.0) {
-	gArrowsDoNotBrowse = notBrowse
-
-	gTimers.resetTimer(for: .tArrowsDoNotBrowse, withTimeInterval: seconds) { iTimer in
-		gArrowsDoNotBrowse = false
 	}
 }
 

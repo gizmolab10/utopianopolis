@@ -12,17 +12,18 @@ import CloudKit
 let gContainer = CKContainer(identifier: kCloudID)
 
 class ZCloud: ZRecords {
-	var          maxLevel = 0
-	var     addedToLevels = [Int             : ZRecordsArray] ()
-	var  recordsToProcess = [String          : CKRecord]      () // accumulator for timer-based processing
-	var neededForChildren = [String]                          () // accumulator for fetching child ideas
-    var    cloudZonesByID = [CKRecordZone.ID : CKRecordZone]  ()
-    var          database :  CKDatabase? { return gRemoteStorage.databaseForID(databaseID) }
-    var    refetchingName :       String { return "remember.\(databaseID.rawValue)" }
-    var  cloudUnavailable :         Bool { return !gHasInternet || (databaseID == .mineID && !gCloudStatusIsActive) }
-    var     isRemembering :         Bool = false
-    var  currentOperation : CKOperation?
-    var  currentPredicate : NSPredicate?
+
+	var         maxLevel = 0
+	var    addedToLevels = [Int             : ZRecordsArray] ()
+	var recordsToProcess = [String          : CKRecord]      () // accumulator for timer-based processing
+	var childlessParents = [String]                          () // accumulator for fetching child ideas
+	var   cloudZonesByID = [CKRecordZone.ID : CKRecordZone]  ()
+	var         database :  CKDatabase? { return gRemoteStorage.databaseForID(databaseID) }
+	var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
+	var cloudUnavailable :         Bool { return !gHasInternet || (databaseID == .mineID && !gCloudStatusIsActive) }
+	var    isRemembering :         Bool = false
+	var currentOperation : CKOperation?
+	var currentPredicate : NSPredicate?
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
         if  database != nil, gHasInternet {
@@ -70,7 +71,7 @@ class ZCloud: ZRecords {
 			case .oRoots:         establishRoots     (identifier, cloudCallback)
 			case .oManifest:      establishManifest  (identifier, cloudCallback)
 			case .oSaveToCloud:   save               (cloudCallback)
-			case .oAllProgeny:    fetchAllProgeny    (cloudCallback)
+			case .oMap:           fetchMap           (cloudCallback)
 			case .oAllIdeas:      fetchAllIdeas      (cloudCallback)
 			case .oSubscribe:     subscribe          (cloudCallback)
 			case .oOwnedTraits:   fetchOwnedTraits   (cloudCallback)
@@ -732,7 +733,7 @@ class ZCloud: ZRecords {
     }
 
 	// N.B. this is really gawdawful slow
-	func fetchAllProgeny(_ onCompletion: IntClosure?) {
+	func fetchMap(_ onCompletion: IntClosure?) {
 		rootZone?.needProgeny()
 		trashZone?.needProgeny()
 		lostAndFoundZone?.needProgeny()
@@ -972,13 +973,13 @@ class ZCloud: ZRecords {
 				return ref.recordID.recordName
 			}
 
-			neededForChildren.appendUnique(contentsOf: neededNames)
-			remove(states: [.needsChildren], from: fetchNeeded)
-			add   (states: [.needsCount],      to: fetchNeeded)
+			childlessParents.appendUnique(contentsOf: neededNames)
+			remove(states: [.needsChildren, .needsProgeny], from: fetchNeeded)
+			add   (states: [.needsCount],                     to: fetchNeeded)
 
             queryForZonesWith(predicate, batchSize: kMaxBatchSize) { (iRecord, iError) in
                 if  let ckRecord = iRecord {
-					if !self.neededForChildren.contains(ckRecord.recordID.recordName) { // avoid repeats
+					if !self.childlessParents.contains(ckRecord.recordID.recordName) { // avoid repeats
 						retrievedRecords.appendUnique(contentsOf: [ckRecord])
 					}
                 } else { // retrievedRecords is all we get for this query
@@ -1009,7 +1010,7 @@ class ZCloud: ZRecords {
 										retrieved.needSave()
 									} else {
 										if  let parentName = parent.ckRecordName,
-											self.neededForChildren.contains(parentName) {
+											neededNames.contains(parentName) {
 											retrieved.needProgeny()       // for recursing
 											retrieved.bookmarkTarget?.needProgeny()
 										}
@@ -1036,6 +1037,10 @@ class ZCloud: ZRecords {
 											if !wereAdded.contains(retrieved) {
 												wereAdded  .append(retrieved)
 
+												if  level > 5, self.databaseID == .mineID {
+													print("\(level) \(retrieved.unwrappedName)")
+												}
+
 												self.addedToLevels[level] = wereAdded
 												self.maxLevel             = max(level, self.maxLevel)
 											}
@@ -1061,7 +1066,6 @@ class ZCloud: ZRecords {
 							}
 						}
 
-						self.remove(states: [.needsProgeny], from: fetchNeeded)
 						self.fetchChildIdeas(onCompletion)    // recurse to process any remaining
                     }
                 }

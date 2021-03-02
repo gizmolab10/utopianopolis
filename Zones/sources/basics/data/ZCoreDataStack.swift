@@ -154,7 +154,7 @@ class ZCoreDataStack: NSObject {
 				self.waitingOperationID = nil
 				self.currentOperationID = opID
 
-				iTimer.invalidate()
+				iTimer?.invalidate()
 				gSignal([.sData])
 				closure()
 			}
@@ -198,7 +198,7 @@ class ZCoreDataStack: NSObject {
 				}
 
 				if !gIsReadyToShowUI {
-					gTimers.resetTimer(for: .tRestoreIdeas, withTimeInterval: 1.0, repeats: true) { iTimer in gUpdateStartupProgress() }
+					gStartTimer(for: .tRestoreIdeas)
 				}
 
 				func loadFullContext() {

@@ -32,7 +32,7 @@ enum ZOperationID: Int, CaseIterable {
 	case oReadFile           // LOCAL
 	case oRoots
     case oHere
-	case oAllProgeny
+	case oMap
 	case oAllTraits
 	case oStartupDone
 
@@ -71,7 +71,7 @@ enum ZOperationID: Int, CaseIterable {
 		switch self {
 			case .oReadFile:        return gReadFiles   ? 30.0 : 0.0
 			case .oRestoreIdeas:    return gUseCoreData ?  4.0 : 0.0
-			case .oAllProgeny:      return 20.0
+			case .oMap:             return 20.0
 			case .oTraits:          return 16.0
 			case .oAllTraits:       return 11.0
 			case .oOwnedTraits:     return 11.0
@@ -162,7 +162,6 @@ class ZOperations: NSObject {
 	let             queue = OperationQueue()
 	var   onCloudResponse :     AnyClosure?
     var       lastOpStart :           Date?
-	var         cloudFire :   TimerClosure?
 	var         currentOp :   ZOperationID  = .oStartUp
 	var        opDuration :   TimeInterval  { return -(lastOpStart?.timeIntervalSinceNow ?? 0.0) }
 	var      shouldCancel :           Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && (opDuration > 5.0) }
@@ -207,39 +206,31 @@ class ZOperations: NSObject {
         return changedConnected || changedStatus
     }
 
-    func setupCloudTimer() {
-        if  cloudFire == nil {
-            cloudFire  = { iTimer in
-                FOREGROUND(canBeDirect: true) {
-                    if  self.shouldCancel {
-                        gBatches.unHang()
-                    }
-                    
-                    if  self.cloudStatusChanged() {
-                        gSignal([.sStatus]) // show change in cloud status
+	func cloudFire() {
+		if  shouldCancel {
+			gBatches.unHang()
+		}
 
-                        // //////////////////////////////////////////////
-                        // assure that we can perform cloud operations //
-                        // //////////////////////////////////////////////
+		if  cloudStatusChanged() {
+			gSignal([.sStatus]) // show change in cloud status
 
-                        if  gHasInternet && gIsReadyToShowUI {
-                            let identifier: ZBatchID = gCloudStatusIsActive ? .bResumeCloud : .bNewAppleID
+			// //////////////////////////////////////////////
+			// assure that we can perform cloud operations //
+			// //////////////////////////////////////////////
 
-                            gBatches.batch(identifier) { iResult in
-                                if  gCloudStatusIsActive {
-                                    gFavorites.updateAllFavorites()
-                                }
+			if  gHasInternet && gIsReadyToShowUI {
+				let identifier: ZBatchID = gCloudStatusIsActive ? .bResumeCloud : .bNewAppleID
 
-                                gRedrawMaps()
-                            }
-                        }
-                    }
-                }
-            }
+				gBatches.batch(identifier) { iResult in
+					if  gCloudStatusIsActive {
+						gFavorites.updateAllFavorites()
+					}
 
-			gTimers.resetTimer(for: .tCloudAvailable, withTimeInterval:  0.2, repeats: true, block: cloudFire!)
-        }
-    }
+					gRedrawMaps()
+				}
+			}
+		}
+	}
 
     func setupAndRun(_ operationIDs: ZOperationIDsArray, onCompletion: @escaping Closure) {
         if  queue.operationCount > 10 {

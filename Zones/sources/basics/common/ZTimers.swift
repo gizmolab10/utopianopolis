@@ -74,6 +74,72 @@ enum ZTimerID : Int {
 
 }
 
+func gStartTimer(for timerID: ZTimerID?) {
+	if  let      tid = timerID {
+		var  closure : TimerClosure?
+		var interval = 1.0
+		var  repeats = false
+
+		switch tid {
+			case .tSync,
+				 .tRecount,
+				 .tRestoreIdeas,
+				 .tSaveCoreData,
+				 .tCloudAvailable: repeats = true
+			default:               break
+		}
+
+		switch tid {
+			case .tSync:           interval = 15.0
+			case .tRecount:        interval = 60.0
+			case .tMouseZone:      interval =  0.5
+			case .tCloudAvailable: interval =  0.2
+			default:               break
+		}
+
+		switch tid {
+			case .tKey:               closure = { iTimer in gCurrentKeyPressed        = "" }
+			case .tMouseZone:         closure = { iTimer in gCurrentMouseDownZone     = nil }
+			case .tMouseLocation:     closure = { iTimer in gCurrentMouseDownLocation = nil }
+			case .tArrowsDoNotBrowse: closure = { iTimer in gArrowsDoNotBrowse        = false }
+			case .tRestoreIdeas:      closure = { iTimer in                             gUpdateStartupProgress() }
+			case .tStartup:           closure = { iTimer in gStartup.count += interval; gUpdateStartupProgress() }
+			case .tSaveCoreData:      closure = { iTimer in if gIsReadyToShowUI { gSaveContext() } }
+			case .tSync:              closure = { iTimer in if gIsReadyToShowUI { gBatches.save { iSame in } } }
+			case .tRecount:           closure = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount() } }
+			case .tCloudAvailable:    closure = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
+			default:                  break
+		}
+
+		gTimers.resetTimer(for: timerID, withTimeInterval: interval, repeats: repeats, block: closure ?? { iTimer in })
+	}
+}
+
+func gTemporarilySetKey(_ key: String) {
+	gCurrentKeyPressed = key
+
+	gStartTimer(for: .tKey)
+}
+
+func gTemporarilySetMouseZone(_ zone: Zone?) {
+	gCurrentMouseDownZone = zone
+
+	gStartTimer(for: .tMouseZone)
+}
+
+func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double = 1.0) {
+	gCurrentMouseDownLocation = location
+
+	gStartTimer(for: .tMouseLocation)
+}
+
+func gTemporarilySetArrowsDoNotBrowse(_ notBrowse: Bool, for seconds: Double = 1.0) {
+	gArrowsDoNotBrowse = notBrowse
+
+	gStartTimer(for: .tArrowsDoNotBrowse)
+
+}
+
 class ZTimers: NSObject {
 
 	var timers = [ZTimerID : Timer]()
@@ -99,7 +165,7 @@ class ZTimers: NSObject {
 		}
 	}
 
-	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping (Timer) -> Void) {
+	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping TimerClosure) {
 		if  let id = timerID {
 			FOREGROUND { // timers must have a runloop
 				self.timers[id]?.invalidate()

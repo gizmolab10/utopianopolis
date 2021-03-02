@@ -13,17 +13,6 @@ let gStartup = ZStartup()
 class ZStartup: NSObject {
 	var count = 0.0
 
-	func startStartupTimer() {
-		count        = 0.0
-		let interval = 1.0
-
-		gTimers.resetTimer(for: .tStartup, withTimeInterval: interval, repeats: true) { iTimer in
-			self.count += interval
-
-			gUpdateStartupProgress()
-		}
-	}
-
 	func startupCloudAndUI() {
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
 		gWorkMode              = .wStartupMode
@@ -31,7 +20,7 @@ class ZStartup: NSObject {
 
 		gRemoteStorage.clear()
 		gSignal([.sMain, .sStartupProgress])
-		startStartupTimer()
+		gStartTimer(for: .tStartup)
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
@@ -53,9 +42,9 @@ class ZStartup: NSObject {
 								gRefusesFirstResponder = false
 
 								gTimers.stopTimer(for: .tStartup)
-								gBatches.setupCloudTimer()
-//								gTimers.resetTimer(for: .tSaveCoreData, withTimeInterval:  1.0, repeats: true) { iTimer in if gIsReadyToShowUI { gSaveContext() } }
-								gTimers.resetTimer(for: .tSync,         withTimeInterval: 15.0, repeats: true) { iTimer in if gIsReadyToShowUI { gBatches.save { iSame in } } }
+								gStartTimer(for: .tCloudAvailable)
+//								gStartTimer(for: .tSaveCoreData)
+								gStartTimer(for: .tSync)
 
 								if  gIsStartupMode {
 									gSetBigMapMode()
@@ -63,9 +52,7 @@ class ZStartup: NSObject {
 
 								gSignal([.sSwap, .sMain, .sCrumbs, .sRelayout, .sPreferences])
 								self.requestFeedback()
-								gTimers.resetTimer(for: .tRecount, withTimeInterval: 60.0, repeats: true) { iTimer in
-									gRemoteStorage.recount()
-								}
+								gStartTimer(for: .tRecount)
 
 								FOREGROUND(after: 10.0) {
 									gFiles.writeAll()

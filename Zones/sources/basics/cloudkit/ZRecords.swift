@@ -22,7 +22,7 @@ enum ZRecordState: String {
 	case needsFound              = "found"
     case needsMerge              = "merge"
     case needsParent             = "parent"
-    case needsProgeny            = "progeny"
+	case needsProgeny            = "progeny"
     case needsRoot               = "root"
     case needsSave               = "save"
     case needsTraits             = "traits"

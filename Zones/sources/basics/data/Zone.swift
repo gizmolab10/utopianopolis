@@ -632,7 +632,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			iZone.zonesWithNotes = []
 
 			if  iZone.hasNote {
-				traverseAllAncestors { ancestor in
+				iZone.traverseAllAncestors { ancestor in
+					if  ancestor.zoneName == "amanda" {
+						print("ha!")
+					}
 					ancestor.zonesWithNotes.append(iZone)
 				}
 			}
@@ -2370,7 +2373,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// first call block on self
+	// first call block on self, then recurse on each child
 
 	@discardableResult func safeTraverseProgeny(visited: ZoneArray, _ block: ZoneToStatusClosure) -> ZTraverseStatus {
 		var status  = block(self)
@@ -2378,7 +2381,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  status == .eContinue {
 			for child in children {
 				if  visited.contains(child) {
-					break						// do not traverse further inward
+					break						// do not revisit or traverse further inward
 				}
 
 				status = child.safeTraverseProgeny(visited: visited + [self], block)

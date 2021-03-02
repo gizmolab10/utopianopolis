@@ -10,7 +10,7 @@ import Foundation
 
 typealias ZDebugModes = [ZDebugMode]
 
-var  gDebugModes :  ZDebugModes = [.dDebugInfo]
+var  gDebugModes :  ZDebugModes = []
 var  gPrintModes : [ZPrintMode] = [.dData, .dLevels]
 var gDebugAccess : Bool { return gDebugModes.contains(.dDebugAccess) }
 var  gWriteFiles : Bool { return gDebugModes.contains(.dWriteFiles) }
