@@ -57,12 +57,22 @@ func gSignal(for object: Any? = nil, _ multiple: [ZSignalKind], _ onCompletion: 
 	gControllers.signalFor(object, multiple: multiple, onCompletion: onCompletion)
 }
 
+private var progressIsQueued = false
+
 func gUpdateStartupProgress() {
-	if !gHasFinishedStartup {
-		FOREGROUND {
+	if !progressIsQueued && !gHasFinishedStartup {
+		progressIsQueued     = true
+		FOREGROUND(forced: true) {
+			progressIsQueued = false
 			gSignal([.sStartupProgress])
 		}
 	}
+}
+
+func gIncrementStartupProgress(_ increment: Double = 1.0) {
+	gStartup.count += increment
+
+	gUpdateStartupProgress()
 }
 
 func gRedrawMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {

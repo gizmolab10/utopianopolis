@@ -471,10 +471,8 @@ class ZMapEditor: ZBaseEditor {
 					root.convertFromCoreData(into: kZoneType, visited: [])
 				}
 			} else {
-				gCoreDataStack.loadAllProgeny(for: gRecords?.databaseID) {
-					gCloud?.fetchMap { iSame in
-						gRedrawMaps()
-					}
+				gBatches.refetch { iSame in
+					gRedrawMaps()
 				}
 			}
 		} else if   COMMAND {
@@ -482,25 +480,27 @@ class ZMapEditor: ZBaseEditor {
 				gRemoteStorage.assureAdoption()     // finish what fetch has done
 				gRedrawMaps()
 			} else {                                // COMMAND alone
-				gBatches.refetch { iSame in
+				for grab in gSelecting.currentGrabs {
+					if  OPTION {
+						grab.reallyNeedChildren()       // OPTION
+					} else {
+						gCoreDataStack.loadAllProgeny(for: gRecords?.databaseID) {
+							gRedrawMaps()
+						}
+
+						grab.needProgeny()              // no flags
+					}
+				}
+
+				gBatches.children { iSame in
 					gRedrawMaps()
 				}
 			}
 		} else {
-			for grab in gSelecting.currentGrabs {
-				if  OPTION {
-					grab.reallyNeedChildren()       // OPTION
-				} else {
-					gCoreDataStack.loadAllProgeny(for: gRecords?.databaseID) {
-						gRedrawMaps()
-					}
-
-					grab.needProgeny()              // no flags
+			gCoreDataStack.loadAllProgeny(for: gRecords?.databaseID) {
+				gCloud?.fetchMap { iSame in
+					gRedrawMaps()
 				}
-			}
-
-			gBatches.children { iSame in
-				gRedrawMaps()
 			}
 		}
 	}

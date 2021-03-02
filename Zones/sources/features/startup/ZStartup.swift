@@ -41,10 +41,8 @@ class ZStartup: NSObject {
 								gHasFinishedStartup    = true
 								gRefusesFirstResponder = false
 
-								gTimers.stopTimer(for: .tStartup)
-								gStartTimer(for: .tCloudAvailable)
-//								gStartTimer(for: .tSaveCoreData)
-								gStartTimer(for: .tSync)
+								gStopTimer  (for:  .tStartup)
+								gStartTimers(for: [.tCloudAvailable, .tSaveCoreData, .tRecount, .tSync])
 
 								if  gIsStartupMode {
 									gSetBigMapMode()
@@ -52,7 +50,6 @@ class ZStartup: NSObject {
 
 								gSignal([.sSwap, .sMain, .sCrumbs, .sRelayout, .sPreferences])
 								self.requestFeedback()
-								gStartTimer(for: .tRecount)
 
 								FOREGROUND(after: 10.0) {
 									gFiles.writeAll()

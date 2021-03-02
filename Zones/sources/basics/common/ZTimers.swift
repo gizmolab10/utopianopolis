@@ -25,7 +25,6 @@ enum ZTimerID : Int {
 	case tCloudAvailable
 	case tMouseLocation
 	case tWriteEveryone
-	case tRestoreIdeas
 	case tSaveCoreData
 	case tRecordsMine
 	case tWriteMine
@@ -74,6 +73,12 @@ enum ZTimerID : Int {
 
 }
 
+func gStartTimers(for timers: [ZTimerID]) {
+	for timer in timers {
+		gStartTimer(for: timer)
+	}
+}
+
 func gStartTimer(for timerID: ZTimerID?) {
 	if  let      tid = timerID {
 		var  closure : TimerClosure?
@@ -83,7 +88,6 @@ func gStartTimer(for timerID: ZTimerID?) {
 		switch tid {
 			case .tSync,
 				 .tRecount,
-				 .tRestoreIdeas,
 				 .tSaveCoreData,
 				 .tCloudAvailable: repeats = true
 			default:               break
@@ -102,8 +106,7 @@ func gStartTimer(for timerID: ZTimerID?) {
 			case .tMouseZone:         closure = { iTimer in gCurrentMouseDownZone     = nil }
 			case .tMouseLocation:     closure = { iTimer in gCurrentMouseDownLocation = nil }
 			case .tArrowsDoNotBrowse: closure = { iTimer in gArrowsDoNotBrowse        = false }
-			case .tRestoreIdeas:      closure = { iTimer in                             gUpdateStartupProgress() }
-			case .tStartup:           closure = { iTimer in gStartup.count += interval; gUpdateStartupProgress() }
+			case .tStartup:           closure = { iTimer in gIncrementStartupProgress() }
 			case .tSaveCoreData:      closure = { iTimer in if gIsReadyToShowUI { gSaveContext() } }
 			case .tSync:              closure = { iTimer in if gIsReadyToShowUI { gBatches.save { iSame in } } }
 			case .tRecount:           closure = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount() } }
@@ -112,6 +115,15 @@ func gStartTimer(for timerID: ZTimerID?) {
 		}
 
 		gTimers.resetTimer(for: timerID, withTimeInterval: interval, repeats: repeats, block: closure ?? { iTimer in })
+	}
+}
+
+func gStopTimer(for timerID: ZTimerID?) {
+	if  let id = timerID {
+		FOREGROUND {
+			gTimers.timers[id]?.invalidate()
+			gTimers.timers[id] = nil
+		}
 	}
 }
 
@@ -145,7 +157,7 @@ class ZTimers: NSObject {
 	var timers = [ZTimerID : Timer]()
 
 	var statusText: String {
-		let statusIDs: [ZTimerID] = [.tRestoreIdeas, .tSaveCoreData, .tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
+		let statusIDs: [ZTimerID] = [.tSaveCoreData, .tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
 
 		for id in timers.keys {
 			if  statusIDs.contains(id) {
@@ -154,15 +166,6 @@ class ZTimers: NSObject {
 		}
 
 		return ""
-	}
-
-	func stopTimer(for timerID: ZTimerID?) {
-		if  let id = timerID {
-			FOREGROUND {
-				self.timers[id]?.invalidate()
-				self.timers[id] = nil
-			}
-		}
 	}
 
 	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping TimerClosure) {

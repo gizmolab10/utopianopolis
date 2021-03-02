@@ -71,7 +71,7 @@ class ZCloud: ZRecords {
 			case .oRoots:         establishRoots     (identifier, cloudCallback)
 			case .oManifest:      establishManifest  (identifier, cloudCallback)
 			case .oSaveToCloud:   save               (cloudCallback)
-			case .oMap:           fetchMap           (cloudCallback)
+			case .oLoadMap:       fetchMap           (cloudCallback)
 			case .oAllIdeas:      fetchAllIdeas      (cloudCallback)
 			case .oSubscribe:     subscribe          (cloudCallback)
 			case .oOwnedTraits:   fetchOwnedTraits   (cloudCallback)
@@ -734,8 +734,11 @@ class ZCloud: ZRecords {
 
 	// N.B. this is really gawdawful slow
 	func fetchMap(_ onCompletion: IntClosure?) {
+		childlessParents = [] // start fresh each time
+
 		rootZone?.needProgeny()
 		trashZone?.needProgeny()
+		destroyZone?.needProgeny()
 		lostAndFoundZone?.needProgeny()
 
 		if  databaseID == .mineID {
@@ -978,6 +981,8 @@ class ZCloud: ZRecords {
 			add   (states: [.needsCount],                     to: fetchNeeded)
 
             queryForZonesWith(predicate, batchSize: kMaxBatchSize) { (iRecord, iError) in
+				gIncrementStartupProgress(0.03)
+
                 if  let ckRecord = iRecord {
 					if !self.childlessParents.contains(ckRecord.recordID.recordName) { // avoid repeats
 						retrievedRecords.appendUnique(contentsOf: [ckRecord])
@@ -996,26 +1001,26 @@ class ZCloud: ZRecords {
 							// create the zone from the retrieved record //
 							// ///////////////////////////////////////// //
 
-							let retrieved   = self.sureZoneForCKRecord(retrievedRecord, requireFetch: false)
+							let retrievedZone = self.sureZoneForCKRecord(retrievedRecord, requireFetch: false)
 
                             if  destroyedIDs.contains(retrievedID) {
-								printDebug(.dFetch, "DESTROYED: \(retrieved.decoratedName)")
+								printDebug(.dFetch, "DESTROYED: \(retrievedZone.decoratedName)")
                             } else {
-								if  let parent     = retrieved.parentZone {
-									if  retrieved == parent {
-										retrieved.needDestroy()           // self-parenting causes infinite recursion (HANG)
-									} else if retrieved.isARoot {
-										retrieved.orphan()                // avoid infinite recursion (HANG) ... a root can NOT have a parent, by definition
-										retrieved.allowSaveWithoutFetch()
-										retrieved.needSave()
+								if  let parent = retrievedZone.parentZone {
+									if  retrievedZone == parent {
+										retrievedZone.needDestroy()           // self-parenting causes infinite recursion (HANG)
+									} else if retrievedZone.isARoot {
+										retrievedZone.orphan()                // avoid infinite recursion (HANG) ... a root can NOT have a parent, by definition
+										retrievedZone.allowSaveWithoutFetch()
+										retrievedZone.needSave()
 									} else {
 										if  let parentName = parent.ckRecordName,
 											neededNames.contains(parentName) {
-											retrieved.needProgeny()       // for recursing
-											retrieved.bookmarkTarget?.needProgeny()
+											retrievedZone.needProgeny()       // for recursing
+											retrievedZone.bookmarkTarget?.needProgeny()
 										}
 
-										if  let targetOfRetrieved = retrieved.bookmarkTarget {
+										if  let targetOfRetrieved = retrievedZone.bookmarkTarget {
 
 											// //////////////////////////////////////////////////
 											// bookmark targets need writable, color and fetch //
@@ -1026,20 +1031,16 @@ class ZCloud: ZRecords {
 											targetOfRetrieved.maybeNeedWritable()
 										}
 
-										parent.addChildAndRespectOrder(retrieved)
+										parent.addChildAndRespectOrder(retrievedZone)
 
-										retrieved.level = parent.level + 1
+										retrievedZone.level = parent.level + 1
 
 										if  trackingLevels {
-											let                     level = retrieved.level
+											let                     level = retrievedZone.level
 											var                 wereAdded = self.addedToLevels[level] ?? ZRecordsArray()
 
-											if !wereAdded.contains(retrieved) {
-												wereAdded  .append(retrieved)
-
-												if  level > 5, self.databaseID == .mineID {
-													print("\(level) \(retrieved.unwrappedName)")
-												}
+											if !wereAdded.contains(retrievedZone) {
+												wereAdded  .append(retrievedZone)
 
 												self.addedToLevels[level] = wereAdded
 												self.maxLevel             = max(level, self.maxLevel)

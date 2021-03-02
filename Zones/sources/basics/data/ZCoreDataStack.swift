@@ -10,11 +10,12 @@ import Foundation
 
 func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
 func gSaveContext()                                                         { gCoreDataStack.saveContext() }
-let  gCoreDataStack = ZCoreDataStack()
-var  gCoreDataMode  : ZCoreDataMode = .dEnabled
-var  gUseCoreData   : Bool  { return gCoreDataMode.contains(.dEnabled) }
-var  gCoreDataURL   : URL = { return gDataURL.appendingPathComponent("data") }()
-var  gDataURL       : URL = {
+let  gCoreDataStack  = ZCoreDataStack()
+var  gCoreDataMode   : ZCoreDataMode = [.dEnabled]
+var  gUseCoreData    : Bool  { return gCoreDataMode.contains(.dEnabled) }
+var  gCoreDataActive : Bool  { return gCoreDataMode.contains(.dActive) && gUseCoreData }
+var  gCoreDataURL    : URL = { return gDataURL.appendingPathComponent("data") }()
+var  gDataURL        : URL = {
 	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 		.appendingPathComponent("Seriously", isDirectory: true)
 }()
@@ -27,8 +28,9 @@ struct ZCoreDataMode: OptionSet {
 	init() { rawValue = ZCoreDataMode.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let dEnabled     = ZCoreDataMode() // use core data
-	static let dCloudKit    = ZCoreDataMode() // store in cloud kit
+	static let dEnabled  = ZCoreDataMode() // use core data
+	static let dCloudKit = ZCoreDataMode() // store in cloud kit
+	static let dActive   = ZCoreDataMode() // save and load are operational
 }
 
 enum ZCDOperationID: Int {
@@ -162,18 +164,18 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func saveContext() {
-		if  gUseCoreData {
+		if  gCoreDataActive {
 			let context = managedContext
 
 			deferUntilAvailable(for: .oSave) {
 				BACKGROUND(canBeDirect: true) {
-//					if  context.hasChanges {
-//						do {
-//							try context.save()
-//						} catch {
-//							print(error)
-//						}
-//					}
+					if  context.hasChanges {
+						do {
+							try context.save()
+						} catch {
+							print(error)
+						}
+					}
 
 					self.currentOperationID = nil
 				}
@@ -185,7 +187,7 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func loadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure?) {
-		if !gUseCoreData {
+		if !gCoreDataActive {
 			onCompletion?(0)
 		} else {
 			deferUntilAvailable(for: .oLoad) {
@@ -195,10 +197,6 @@ class ZCoreDataStack: NSObject {
 				if  dbID == .mineID {
 					names.insert(contentsOf: [kRecentsRootName, kFavoritesRootName], at: 0)
 					index = names.count - 1
-				}
-
-				if !gIsReadyToShowUI {
-					gStartTimer(for: .tRestoreIdeas)
 				}
 
 				func loadFullContext() {
@@ -215,7 +213,6 @@ class ZCoreDataStack: NSObject {
 									self.currentOperationID = nil
 									gRemoteStorage.recount()
 
-									gTimers.stopTimer(for: .tRestoreIdeas)
 									onCompletion?(0)
 								}
 							}
@@ -302,7 +299,8 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func loadAllProgeny(for dbID: ZDatabaseID?, onCompletion: Closure? = nil) {
-		if  let  records = gRemoteStorage.zRecords(for: dbID!) {
+		if  gCoreDataActive,
+			let  records = gRemoteStorage.zRecords(for: dbID!) {
 			deferUntilAvailable(for: .oProgeny) {
 				let    zones = records.allZones
 				var acquired = [String]()
@@ -344,6 +342,8 @@ class ZCoreDataStack: NSObject {
 					load(childrenOf: zones)
 				}
 			}
+		} else {
+			onCompletion?()
 		}
 	}
 
@@ -402,10 +402,7 @@ class ZCoreDataStack: NSObject {
 	func search(within dbid: String, type: String, using predicate: NSPredicate, uniqueOnly: Bool = true, onCompletion: ZRecordsClosure? = nil) {
 		var result = ZRecordsArray()
 
-		onCompletion?(result)
-		return
-
-		if !gUseCoreData {
+		if !gCoreDataActive {
 			onCompletion?(result)
 		} else {
 			let   dbPredicate = NSPredicate(format: "dbid = %@", dbid)

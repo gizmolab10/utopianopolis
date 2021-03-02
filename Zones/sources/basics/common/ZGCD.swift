@@ -12,9 +12,11 @@ import Foundation
 let gFOREGROUND = DispatchQueue.main
 let gBACKGROUND = DispatchQueue.global(qos: .background)
 
-func FOREGROUND(canBeDirect: Bool = false, _ closure: @escaping Closure) {
-    if  canBeDirect && Thread.isMainThread {
+func FOREGROUND(canBeDirect: Bool = false, forced: Bool = false, _ closure: @escaping Closure) {
+    if  Thread.isMainThread && (canBeDirect || forced) {
         closure()
+	} else if forced {
+		gFOREGROUND .sync { closure() }
     } else {
         gFOREGROUND.async { closure() }
     }

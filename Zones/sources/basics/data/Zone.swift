@@ -633,9 +633,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if  iZone.hasNote {
 				iZone.traverseAllAncestors { ancestor in
-					if  ancestor.zoneName == "amanda" {
-						print("ha!")
-					}
 					ancestor.zonesWithNotes.append(iZone)
 				}
 			}
