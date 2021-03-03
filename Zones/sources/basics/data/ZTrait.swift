@@ -152,6 +152,14 @@ class ZTrait: ZTraitAssets {
 		gCurrentTrait = prior
 	}
 
+	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> ZTrait {
+		if  let    has = createMaybe(record: record, entityName: kTraitType, databaseID: databaseID) as? ZTrait {        // first check if already exists
+			return has
+		}
+
+		return ZTrait.init(record: record, databaseID: databaseID)
+	}
+
     convenience init(databaseID: ZDatabaseID?) {
         self.init(record: CKRecord(recordType: kTraitType), databaseID: databaseID)
     }

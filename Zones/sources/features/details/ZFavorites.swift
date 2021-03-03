@@ -68,7 +68,7 @@ class ZFavorites: ZSmallMapRecords {
 			// create favorites root
 			mine?.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
 				let        ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kFavoritesRootName))
-				let            root = Zone(record: ckRecord, databaseID: .mineID)
+				let            root = Zone.create(record: ckRecord, databaseID: .mineID)
 				root.directAccess   = .eProgenyWritable
 				root.zoneName       = kFavoritesRootName
 				gFavorites.rootZone = root

@@ -42,7 +42,7 @@ class ZRecents : ZSmallMapRecords {
 		} else {
 			mine?.assureRecordExists(withRecordID: CKRecordID(recordName: kRecentsRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
 				let                ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kRecentsRootName))
-				self.rootZone               = Zone(record: ckRecord, databaseID: .mineID)
+				self.rootZone               = Zone.create(record: ckRecord, databaseID: .mineID)
 				self.rootZone?.directAccess = .eProgenyWritable
 				self.rootZone?.zoneName     = kRecentsRootName
 

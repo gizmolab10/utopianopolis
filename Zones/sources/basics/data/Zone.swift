@@ -2009,8 +2009,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				return .eContinue
 			}
 
-			if let root = gRoot, !needOp {
-				gHere = root
+			if  !needOp,
+				let i = databaseID,
+				let r = gRemoteStorage.cloud(for: i)?.rootZone {
+				gHere = r
 
 				onCompletion?()
 			} else {
@@ -3258,13 +3260,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		parentLink = kNullLink
 	}
 
+	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> Zone {
+		if  let    has = createMaybe(record: record, entityName: kZoneType, databaseID: databaseID) as? Zone {        // first check if already exists
+			return has
+		}
+
+		return Zone.init(record: record, databaseID: databaseID)
+	}
+
 	convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
 
 		// //////////////////////////////////////
 		// all ideas created from reading file //
 		// //////////////////////////////////////
 
-		self.init(entityName: kZoneType, databaseID: dbID)
+		self.init(entityName: kZoneType, ckRecordName: nil, databaseID: dbID)
 
 		var d = dict
 

@@ -466,8 +466,8 @@ extension CKRecord {
     var reference: CKReference { return CKReference(recordID: recordID, action: .none) }
 	var entityName: String {
 		switch recordType {
-			case "Users": return "ZUser"
-			default:      return recordType
+			case kUserRecordType: return kUserEntityName
+			default:              return recordType
 		}
 	}
 

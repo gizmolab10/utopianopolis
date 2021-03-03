@@ -45,6 +45,14 @@ class ZManifest : ZRecord {
 	override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deletedRecordNames)] }
 	convenience init(databaseID: ZDatabaseID?) { self.init(record: CKRecord(recordType: kManifestType), databaseID: databaseID) }
 
+	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> ZManifest {
+		if  let    has = createMaybe(record: record, entityName: kManifestType, databaseID: databaseID) as? ZManifest {        // first check if already exists
+			return has
+		}
+
+		return ZManifest.init(record: record, databaseID: databaseID)
+	}
+
     var updatedRefs: [String]? {
         if  let d = deletedRecordNames {                 // FIRST: merge deleted into zDeleted
             for ref in d {
@@ -117,7 +125,7 @@ class ZManifest : ZRecord {
     }
 
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
-		self.init(entityName: kManifestType, databaseID: dbID)
+		self.init(entityName: kManifestType, ckRecordName: nil, databaseID: dbID)
 
 		try extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
     }

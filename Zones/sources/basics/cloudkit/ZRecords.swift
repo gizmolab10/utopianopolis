@@ -296,7 +296,7 @@ class ZRecords: NSObject {
 
         if  let    t = recordType {
             switch t {
-            case     kUserType: name = "ZUser"
+            case     kUserType: name = kUserEntityName
             case     kZoneType: name = kZoneType
             case    kTraitType: name = kTraitType
             case kManifestType: name = kManifestType
@@ -1125,7 +1125,7 @@ class ZRecords: NSObject {
         if  let z = zone {
             z.useBest(record: ckRecord)
         } else {
-            zone = Zone(record: ckRecord, databaseID: databaseID)
+            zone = Zone.create(record: ckRecord, databaseID: databaseID)
 
 //			if  requireFetch {
 //				zone?.fetchBeforeSave() // POTENTIALLY BAD DUMMY

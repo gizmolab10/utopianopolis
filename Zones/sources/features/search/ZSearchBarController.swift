@@ -180,7 +180,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 						for record in filtered {
 							if  record.recordType == kTraitType {
-								let trait = cloud.maybeZRecordForCKRecord(record) as? ZTrait ?? ZTrait(record: record, databaseID: dbID)
+								let trait = cloud.maybeZRecordForCKRecord(record) as? ZTrait ?? ZTrait.create(record: record, databaseID: dbID)
 
 								if  trait.ownerZone == nil {
 									orphanedTraits.append(record)   // remove unowned traits from records

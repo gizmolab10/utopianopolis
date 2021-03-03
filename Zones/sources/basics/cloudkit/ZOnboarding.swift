@@ -127,7 +127,7 @@ class ZOnboarding : ZOperations {
 
 	func fetchUserRecord(_ onCompletion: @escaping Closure) {
 		if  let          record = gUserRecord {
-			user                = ZUser(record: record, databaseID: gDatabaseID)
+			user                = ZUser.create(record: record, databaseID: gDatabaseID)
 			gCloudAccountStatus = .active
 
 			onCompletion()
@@ -137,7 +137,7 @@ class ZOnboarding : ZOperations {
 
             gEveryoneCloud?.assureRecordExists(withRecordID: ckRecordID, recordType: kUserType) { (iUserRecord: CKRecord?) in
                 if  let          record = iUserRecord {
-                    let            user = ZUser(record: record, databaseID: gDatabaseID)
+                    let            user = ZUser.create(record: record, databaseID: gDatabaseID)
                     self          .user = user
 					gUserRecord         = record
 					gCloudAccountStatus = .active

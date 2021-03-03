@@ -71,7 +71,7 @@ class ZCloud: ZRecords {
 			case .oRoots:         establishRoots     (identifier, cloudCallback)
 			case .oManifest:      establishManifest  (identifier, cloudCallback)
 			case .oSaveToCloud:   save               (cloudCallback)
-			case .oLoadMap:       fetchMap           (cloudCallback)
+			case .oMigrateFromCloud:  fetchMap           (cloudCallback)
 			case .oAllIdeas:      fetchAllIdeas      (cloudCallback)
 			case .oSubscribe:     subscribe          (cloudCallback)
 			case .oOwnedTraits:   fetchOwnedTraits   (cloudCallback)
@@ -195,7 +195,7 @@ class ZCloud: ZRecords {
 //                onCompletion?(0)
 //            } else {
 //                let            root = gRemoteStorage(for: self.databaseID)
-//                let         deleted = self.maybeZRecordForCKRecord(iRecord) as? Zone ?? Zone(record: iRecord, databaseID: self.databaseID)
+//                let         deleted = self.maybeZRecordForCKRecord(iRecord) as? Zone ?? Zone.create(record: iRecord, databaseID: self.databaseID)
 //
 //                if  deleted.parent != nil {
 //                    deleted.needParent()
@@ -713,8 +713,8 @@ class ZCloud: ZRecords {
 							zRecord?.useBest(record: ckRecord)   // fetched has same record id
 						} else {
 							switch ckRecord.recordType {
-								case kZoneType:  zRecord =   Zone(record: ckRecord, databaseID: dbID)
-								case kTraitType: zRecord = ZTrait(record: ckRecord, databaseID: dbID)
+								case kZoneType:  zRecord =   Zone.create(record: ckRecord, databaseID: dbID)
+								case kTraitType: zRecord = ZTrait.create(record: ckRecord, databaseID: dbID)
 								default: break
 							}
 						}
@@ -1087,7 +1087,7 @@ class ZCloud: ZRecords {
                 FOREGROUND {
                     for ckRecord in retrieved {
                         if  self.manifest == nil {
-                            self.manifest  = ZManifest(record: ckRecord, databaseID: self.databaseID)
+                            self.manifest  = ZManifest.create(record: ckRecord, databaseID: self.databaseID)
                         } else {
                             self.manifest?.useBest(record: ckRecord)
                         }
@@ -1123,7 +1123,7 @@ class ZCloud: ZRecords {
 							var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
 
 							if  zRecord == nil {                                                    // if not already registered
-								zRecord  = ZTrait(record: ckRecord, databaseID: self.databaseID)    // register
+								zRecord  = ZTrait.create(record: ckRecord, databaseID: self.databaseID)    // register
 							} else {
 								zRecord?.useBest(record: ckRecord)
 							}

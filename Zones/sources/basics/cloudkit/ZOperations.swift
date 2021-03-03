@@ -32,7 +32,7 @@ enum ZOperationID: Int, CaseIterable {
 	case oReadFile           // LOCAL
 	case oRoots
     case oHere
-	case oLoadMap
+	case oMigrateFromCloud
 	case oAllTraits
 	case oStartupDone
 
@@ -69,18 +69,18 @@ enum ZOperationID: Int, CaseIterable {
 
 	var progressTime : Double {
 		switch self {
-			case .oReadFile:        return gReadFiles      ? 30.0 : 0.0
-			case .oRestoreIdeas:    return gCoreDataActive ?  4.0 : 0.0
-			case .oLoadMap:             return 40.0
-			case .oTraits:          return 16.0
+			case .oReadFile:        return gReadFiles ? 30.0 : 0.0
+			case .oRestoreIdeas:    return gCanLoad   ?  4.0 : 0.0
+			case .oMigrateFromCloud:    return 50.0
 			case .oAllTraits:       return 11.0
 			case .oOwnedTraits:     return 11.0
 			case .oAllIdeas:        return  8.0
 			case .oNewIdeas:        return  7.0
 			case .oNeededIdeas:     return  6.0
-			case .oManifest:        return  6.0
 			case .oAdopt:           return  5.0
+			case .oTraits:          return  4.0
 			case .oResolve:         return  4.0
+			case .oManifest:        return  3.0
 			case .oFinishUp:        return  3.0
 			case .oSubscribe:       return  3.0
 			case .oRecount:         return  2.0

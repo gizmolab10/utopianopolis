@@ -86,11 +86,12 @@ func gStartTimer(for timerID: ZTimerID?) {
 		var  repeats = false
 
 		switch tid {
-			case .tSync,
-				 .tRecount,
+			case .tCoreDataAvailable,
+				 .tCloudAvailable,
 				 .tSaveCoreData,
-				 .tCloudAvailable: repeats = true
-			default:               break
+				 .tRecount,
+				 .tSync: repeats = true
+			default:     break
 		}
 
 		switch tid {
@@ -111,6 +112,7 @@ func gStartTimer(for timerID: ZTimerID?) {
 			case .tSync:              closure = { iTimer in if gIsReadyToShowUI { gBatches.save { iSame in } } }
 			case .tRecount:           closure = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount() } }
 			case .tCloudAvailable:    closure = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
+			case .tCoreDataAvailable: closure = { iTimer in gCoreDataStack.availabilityFire(iTimer) }
 			default:                  break
 		}
 

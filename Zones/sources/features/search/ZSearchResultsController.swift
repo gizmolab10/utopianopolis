@@ -173,7 +173,7 @@ class ZSearchResultsController: ZGenericTableController {
 		var zone  = gRemoteStorage.cloud(for: dbID)?.maybeZoneForRecordID(record.recordID)
 
 		if  zone == nil, record.recordType == kZoneType {
-			zone  = Zone(record: record, databaseID: dbID)
+			zone  = Zone.create(record: record, databaseID: dbID)
 		}
 
 		zone?.resolveAndSelect(searchText)

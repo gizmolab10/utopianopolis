@@ -53,6 +53,14 @@ class ZUser : ZRecord {
 		needSave()
 	}
 
+	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> ZUser {
+		if  let    has = createMaybe(record: record, entityName: kUserEntityName, databaseID: databaseID) as? ZUser {        // first check if already exists
+			return has
+		}
+
+		return ZUser.init(record: record, databaseID: databaseID)
+	}
+
     override var cloudProperties: [String] { return ZUser.cloudProperties }
 
     override class var cloudProperties: [String] {

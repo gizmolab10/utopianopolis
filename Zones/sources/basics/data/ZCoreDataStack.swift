@@ -11,9 +11,10 @@ import Foundation
 func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
 func gSaveContext()                                                         { gCoreDataStack.saveContext() }
 let  gCoreDataStack  = ZCoreDataStack()
-var  gCoreDataMode   : ZCoreDataMode = [.dEnabled]
+var  gCoreDataMode   : ZCoreDataMode = [.dEnabled, .dCanSave]
 var  gUseCoreData    : Bool  { return gCoreDataMode.contains(.dEnabled) }
-var  gCoreDataActive : Bool  { return gCoreDataMode.contains(.dActive) && gUseCoreData }
+var  gCanSave        : Bool  { return gCoreDataMode.contains(.dCanSave) && gUseCoreData }
+var  gCanLoad        : Bool  { return gCoreDataMode.contains(.dCanLoad) && gUseCoreData }
 var  gCoreDataURL    : URL = { return gDataURL.appendingPathComponent("data") }()
 var  gDataURL        : URL = {
 	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -30,7 +31,8 @@ struct ZCoreDataMode: OptionSet {
 
 	static let dEnabled  = ZCoreDataMode() // use core data
 	static let dCloudKit = ZCoreDataMode() // store in cloud kit
-	static let dActive   = ZCoreDataMode() // save and load are operational
+	static let dCanSave  = ZCoreDataMode() // save is operational
+	static let dCanLoad  = ZCoreDataMode() // load is operational
 }
 
 enum ZCDOperationID: Int {
@@ -64,11 +66,12 @@ class ZCoreDataStack: NSObject {
 	lazy var   privateStore : NSPersistentStore?            = { return persistentStore(for: privateURL) }()
 	lazy var    publicStore : NSPersistentStore?            = { return persistentStore(for: publicURL) }()
 	lazy var     localStore : NSPersistentStore?            = { return persistentStore(for: localURL) }()
-	var          statusText : String                          { return statusOperationID?.description ?? "" }
-	var              isDone : Bool                            { return currentOperationID == nil }
-	var   statusOperationID : ZCDOperationID?                 { return currentOperationID ?? waitingOperationID}
-	var  waitingOperationID : ZCDOperationID?
-	var  currentOperationID : ZCDOperationID?
+	var            isDoneOp : Bool                            { return currentOpID == nil }
+	var          statusText : String                          { return statusOpID?.description ?? "" }
+	var          statusOpID : ZCDOperationID?                 { return currentOpID ?? waitingOpID}
+	var         waitingOpID : ZCDOperationID?
+	var         currentOpID : ZCDOperationID?
+	var availabilityClosure : Closure?
 
 	// MARK:- internals
 	// MARK:-
@@ -145,30 +148,67 @@ class ZCoreDataStack: NSObject {
 		return container
 	}()
 
-	// MARK:- save
-	// MARK:-
+	func availabilityFire(_ iTimer: Timer?) {
+		if  currentOpID == nil {
+			currentOpID  = waitingOpID
+			waitingOpID  = nil
 
-	func deferUntilAvailable(for opID: ZCDOperationID, _ closure: @escaping Closure) {
-		waitingOperationID = opID // so status text can show it
-
-		gTimers.resetTimer(for: .tCoreDataAvailable, withTimeInterval: 1.0, repeats: true) { iTimer in
-			if  self.isDone {
-				self.waitingOperationID = nil
-				self.currentOperationID = opID
-
-				iTimer?.invalidate()
-				gSignal([.sData])
-				closure()
-			}
+			iTimer?.invalidate()
+			gSignal([.sData])
+			availabilityClosure?()
 		}
 	}
 
-	func saveContext() {
-		if  gCoreDataActive {
-			let context = managedContext
+	func deferUntilAvailable(for opID: ZCDOperationID, _ closure: @escaping Closure) {
+		waitingOpID         = opID     // so status text can show it
+		availabilityClosure = closure  // for availabilityFire to invoke
 
+		gStartTimer(for: .tCoreDataAvailable)
+	}
+
+	func predicate(entityName: String, recordName: String?, databaseID: ZDatabaseID?) -> NSPredicate? {
+		if  let          name = recordName,
+			let    identifier = databaseID?.identifier {
+			let namePredicate = NSPredicate(format: "recordName = %@", name)
+			let dbidPredicate = NSPredicate(format: "dbid = %@", identifier)
+
+			if  entityName == kUserEntityName {
+				return namePredicate
+			}
+
+			return NSCompoundPredicate(andPredicateWithSubpredicates: [namePredicate, dbidPredicate])
+		}
+
+		return nil
+	}
+
+	func hasExisting(entityName: String, recordName: String?, databaseID: ZDatabaseID?) -> Any? {
+		if  let     predicate = predicate(entityName: entityName, recordName: recordName, databaseID: databaseID) {
+			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+			request.predicate = predicate
+			do {
+				let items = try managedContext.fetch(request)
+
+				if  items.count > 0 {
+					return items[0]
+				}
+			} catch {
+
+			}
+		}
+
+		return nil
+	}
+
+	// MARK:- save
+	// MARK:-
+
+	func saveContext() {
+		if  gCanSave {
 			deferUntilAvailable(for: .oSave) {
-				BACKGROUND(canBeDirect: true) {
+				FOREGROUND(canBeDirect: true) {
+					let context = self.managedContext
+
 					if  context.hasChanges {
 						do {
 							try context.save()
@@ -177,7 +217,7 @@ class ZCoreDataStack: NSObject {
 						}
 					}
 
-					self.currentOperationID = nil
+					self.currentOpID = nil
 				}
 			}
 		}
@@ -187,7 +227,7 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func loadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure?) {
-		if !gCoreDataActive {
+		if !gCanLoad {
 			onCompletion?(0)
 		} else {
 			deferUntilAvailable(for: .oLoad) {
@@ -210,7 +250,7 @@ class ZCoreDataStack: NSObject {
 						} else {
 							self.load(type: kManifestType, into: dbID, onlyNeed: 1, using: NSFetchRequest<NSFetchRequestResult>(entityName: kManifestType)) { zRecord in
 								if  zRecord == nil {
-									self.currentOperationID = nil
+									self.currentOpID = nil
 									gRemoteStorage.recount()
 
 									onCompletion?(0)
@@ -299,7 +339,7 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func loadAllProgeny(for dbID: ZDatabaseID?, onCompletion: Closure? = nil) {
-		if  gCoreDataActive,
+		if  gCanLoad,
 			let  records = gRemoteStorage.zRecords(for: dbID!) {
 			deferUntilAvailable(for: .oProgeny) {
 				let    zones = records.allZones
@@ -308,7 +348,7 @@ class ZCoreDataStack: NSObject {
 				func loadAllTraits() {
 					BACKGROUND(canBeDirect: true) {
 						self.loadTraits(ownedBy: gRemoteStorage.allProgeny, into: dbID) {
-							self.currentOperationID = nil
+							self.currentOpID = nil
 
 							gRemoteStorage.recount()
 							onCompletion?()
@@ -402,7 +442,7 @@ class ZCoreDataStack: NSObject {
 	func search(within dbid: String, type: String, using predicate: NSPredicate, uniqueOnly: Bool = true, onCompletion: ZRecordsClosure? = nil) {
 		var result = ZRecordsArray()
 
-		if !gCoreDataActive {
+		if !gCanLoad {
 			onCompletion?(result)
 		} else {
 			let   dbPredicate = NSPredicate(format: "dbid = %@", dbid)
@@ -426,7 +466,7 @@ class ZCoreDataStack: NSObject {
 						print("search fetch failed")
 					}
 
-					self.currentOperationID = nil // before calling closure
+					self.currentOpID = nil // before calling closure
 
 					onCompletion?(result)
 				}

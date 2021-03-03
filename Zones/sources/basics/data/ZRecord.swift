@@ -124,9 +124,20 @@ class ZRecord: ZManagedRecord { // NSObject {
 		}
 	}
 
+	static func createMaybe(record: CKRecord? = nil, entityName: String? = nil, databaseID: ZDatabaseID?) -> ZRecord? {
+		if  let name = entityName,
+			let  has = gCoreDataStack.hasExisting(entityName: name, recordName: record?.recordID.recordName, databaseID: databaseID) as? ZRecord {        // first check if already exists
+			has.useBest(record: record)
+
+			return has
+		}
+
+		return nil
+	}
+
 	convenience init(record: CKRecord? = nil, entityName: String? = nil, databaseID: ZDatabaseID?) {
 		if  gUseCoreData, let name = record?.entityName ?? entityName {
-			self.init(entityName: name, databaseID: databaseID) // initialize managed object from ck record or explicit entity name
+			self.init(entityName: name, ckRecordName: record?.recordID.recordName, databaseID: databaseID) // initialize managed object from ck record or explicit entity name
 		} else {
 			self.init()
 		}
@@ -134,7 +145,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 		self.databaseID = databaseID
 
 		if  gUseCoreData,
-			let t = record?.recordType, t != "Users",
+			let t = record?.recordType, t != kUserRecordType,
 			let d = databaseID?.identifier {
 			dbid  = d
 		}
@@ -291,8 +302,9 @@ class ZRecord: ZManagedRecord { // NSObject {
         }
     }
 
-	func useBest(record iRecord: CKRecord) {
-		if  let best = chooseBest(record: iRecord) {
+	func useBest(record iRecord: CKRecord?) {
+		if  let record = iRecord,
+			let   best = chooseBest(record: record) {
 			setRecord(best)
 		}
     }
@@ -303,18 +315,18 @@ class ZRecord: ZManagedRecord { // NSObject {
 		let      noDate = myDate == nil
         if  best       != iRecord,
             let newDate = iRecord.modificationDate,
-            (noDate || newDate.timeIntervalSince(myDate!) > 10.0) {
-            
-//            if  let   r = best,
-//                r.recordID.recordName != iRecord.recordID.recordName {
-//                records?.addCKRecord(record, for: [.needsDestroy])
-//            }
-
-			best = iRecord
+            (noDate  ||   newDate.timeIntervalSince(myDate!) > 10.0) {
+			best        = iRecord
         }
 
 		return best
     }
+
+//	override func copy(from: Any) {
+//		if  let source = from as? ZRecord {
+//			source.copy(into: self)
+//		}
+//	}
 
     func copy(into iCopy: ZRecord) {
         iCopy.maybeNeedSave() // so KVO won't set needsMerge
