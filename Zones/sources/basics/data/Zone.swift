@@ -1075,7 +1075,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func swapWithParent() {
-		let scratchZone = Zone.create(as: kScratchRootName)
+		let scratchZone = Zone.create(as: kScratchRootName, databaseID: databaseID ?? gDatabaseID)
 
 		// swap places with parent
 
@@ -3242,13 +3242,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: name))
 	}
 
-	static func create(as name: String) -> Zone {
-		return create(within: name, for: 0)
+	static func create(as name: String, databaseID: ZDatabaseID) -> Zone {
+		return create(within: name, for: 0, databaseID: databaseID)
 	}
 
-	static func create(within rootName: String, for index: Int) -> Zone {
+	static func create(within rootName: String, for index: Int, databaseID: ZDatabaseID) -> Zone {
 		let         record = ckRecordFor(rootName, at: index)
-		let        created = create(record: record, databaseID: .everyoneID)
+		let        created = create(record: record, databaseID: databaseID)
 		created.parentLink = kNullLink
 
 		return created
