@@ -38,9 +38,6 @@
 		0C39B2B61F182EBB0091F4D1 /* ZReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2331F182EBB0091F4D1 /* ZReachability.swift */; };
 		0C39B2B71F182EBB0091F4D1 /* ZReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2331F182EBB0091F4D1 /* ZReachability.swift */; };
 		0C39B2B81F182EBB0091F4D1 /* ZReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2331F182EBB0091F4D1 /* ZReachability.swift */; };
-		0C39B2B91F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2341F182EBB0091F4D1 /* ZRecursionLogic.swift */; };
-		0C39B2BA1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2341F182EBB0091F4D1 /* ZRecursionLogic.swift */; };
-		0C39B2BB1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2341F182EBB0091F4D1 /* ZRecursionLogic.swift */; };
 		0C39B2BC1F182EBB0091F4D1 /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2351F182EBB0091F4D1 /* ZState.swift */; };
 		0C39B2BD1F182EBB0091F4D1 /* ZState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2351F182EBB0091F4D1 /* ZState.swift */; };
 		0C39B2BF1F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C39B2371F182EBB0091F4D1 /* ZMobileAppDelegate.swift */; };
@@ -408,7 +405,6 @@
 		0C39B2311F182EBB0091F4D1 /* ZExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZExtensions.swift; sourceTree = "<group>"; };
 		0C39B2321F182EBB0091F4D1 /* ZGCD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGCD.swift; sourceTree = "<group>"; };
 		0C39B2331F182EBB0091F4D1 /* ZReachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZReachability.swift; sourceTree = "<group>"; };
-		0C39B2341F182EBB0091F4D1 /* ZRecursionLogic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZRecursionLogic.swift; sourceTree = "<group>"; };
 		0C39B2351F182EBB0091F4D1 /* ZState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZState.swift; sourceTree = "<group>"; };
 		0C39B2371F182EBB0091F4D1 /* ZMobileAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMobileAppDelegate.swift; sourceTree = "<group>"; };
 		0C39B23A1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGestureAndKeyRecognizer.swift; sourceTree = "<group>"; };
@@ -612,7 +608,6 @@
 				0C48B0941F87197B00A247BC /* ZEvents.swift */,
 				0C39B2311F182EBB0091F4D1 /* ZExtensions.swift */,
 				0C39B2321F182EBB0091F4D1 /* ZGCD.swift */,
-				0C39B2341F182EBB0091F4D1 /* ZRecursionLogic.swift */,
 				0C39B2351F182EBB0091F4D1 /* ZState.swift */,
 				A759F70024269D29008CEA59 /* ZTimers.swift */,
 			);
@@ -1258,7 +1253,6 @@
 				A70064DD22484808004E3A8D /* ZManifest.swift in Sources */,
 				0C43EFDD21010F62000976CE /* ZBatches.swift in Sources */,
 				0C39B28C1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
-				0C39B2B91F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
 				A7B48AAE23E0E80C00654DBD /* ZoneSegmentedControl.swift in Sources */,
 				A764067C23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */,
 				A7B48AA223E0E80C00654DBD /* ZLineView.swift in Sources */,
@@ -1346,7 +1340,6 @@
 				A793723425BE2EE0008C98AE /* ZSimpleToolButton.swift in Sources */,
 				A786C6F325DF5F9F00B23FBF /* ZDebugController.swift in Sources */,
 				A7D2D649248F119A00F652B0 /* ZHelpNotesData.swift in Sources */,
-				0C39B2BB1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
 				0C43EFDC21010F62000976CE /* ZOperations.swift in Sources */,
 				A774ED1D23E2268D00080DC9 /* ZGesturesController.swift in Sources */,
 				0C6CAE211F88308E001960F7 /* ZSearching.swift in Sources */,
@@ -1450,7 +1443,6 @@
 				A7D2D648248F119A00F652B0 /* ZHelpNotesData.swift in Sources */,
 				A764067923F7E37600D9EA3A /* ZBreadcrumbsView.swift in Sources */,
 				A700F94F24AFBFFB009C87AA /* seriously.xcdatamodel in Sources */,
-				0C39B2BA1F182EBB0091F4D1 /* ZRecursionLogic.swift in Sources */,
 				0C39B2AE1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C2E22D31F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
 				A7B48AB523E0E80C00654DBD /* ZGridCell.swift in Sources */,

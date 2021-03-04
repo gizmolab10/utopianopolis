@@ -203,6 +203,18 @@ class ZCoreDataStack: NSObject {
 	// MARK:- save
 	// MARK:-
 
+	func checkCrossStore() {
+		for updated in self.managedContext.updatedObjects {
+			if  let  zone  = updated as? Zone,
+				let zdbid  = zone.dbid,
+				let pdbid  = zone.parentZone?.dbid {
+				if  zdbid != pdbid {
+					print(zone)
+				}
+			}
+		}
+	}
+
 	func saveContext() {
 		if  gCanSave {
 			deferUntilAvailable(for: .oSave) {
@@ -210,6 +222,7 @@ class ZCoreDataStack: NSObject {
 					let context = self.managedContext
 
 					if  context.hasChanges {
+						self.checkCrossStore()
 						do {
 							try context.save()
 						} catch {

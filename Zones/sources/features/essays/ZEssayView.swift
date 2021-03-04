@@ -504,7 +504,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let   text = selectionString, text.length > 0,
 			let   dbID = gCurrentEssayZone?.databaseID,
 			let parent = selectionZone {
-			let  child = Zone(databaseID: dbID, named: text)    		// create new (to be child) zone from text
+			let  child = Zone.create(databaseID: dbID, named: text)   	// create new (to be child) zone from text
 
 			insertText("", replacementRange: selectionRange)			// remove text
 			parent.addChild(child)

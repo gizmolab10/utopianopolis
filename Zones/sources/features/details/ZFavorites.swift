@@ -24,7 +24,7 @@ class ZFavorites: ZSmallMapRecords {
     // MARK:- initialization
     // MARK:-
 
-	let cloudRootTemplates = Zone(as: kTemplatesRootName)
+	let cloudRootTemplates = Zone.create(as: kTemplatesRootName)
 
 	var hasTrash: Bool {
 		for favorite in workingBookmarks {
@@ -202,7 +202,7 @@ class ZFavorites: ZSmallMapRecords {
 			// //////////////////////////////////////////////
 
 			if  missingTrash {
-				let          trash = Zone(databaseID: .mineID, named: kTrashName, recordName: kTrashName + kFavoritesSuffix)
+				let          trash = Zone.create(databaseID: .mineID, named: kTrashName, recordName: kTrashName + kFavoritesSuffix)
 				trash    .zoneLink = kTrashLink // convert into a bookmark
 				trash.directAccess = .eProgenyWritable
 
@@ -216,7 +216,7 @@ class ZFavorites: ZSmallMapRecords {
 				var       lost = gMineCloud?.maybeZoneForRecordName(recordName)
 
 				if  lost      == nil {
-					lost       = Zone(databaseID: .mineID, named: kLostAndFoundName, recordName: recordName)
+					lost       = Zone.create(databaseID: .mineID, named: kLostAndFoundName, recordName: recordName)
 				}
 
 				lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark

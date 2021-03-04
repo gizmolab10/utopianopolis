@@ -49,7 +49,7 @@ class ZBookmarks: NSObject {
 	@discardableResult func createZone(withBookmark: Zone?, _ iName: String?, recordName: String? = nil) -> Zone {
 		var bookmark           = withBookmark
 		if  bookmark          == nil {
-			bookmark           = Zone(databaseID: .mineID, named: iName, recordName: recordName)
+			bookmark           = Zone.create(databaseID: .mineID, named: iName, recordName: recordName)
 		} else if let     name = iName {
 			bookmark?.zoneName = name
 		}

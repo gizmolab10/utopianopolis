@@ -177,22 +177,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- setup
 	// MARK:-
 
-	convenience init(databaseID: ZDatabaseID?, named: String?, recordName: String? = nil) {
-		var newRecord : CKRecord?
-
-		if  let rName = recordName {
-			newRecord = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: rName))
-		} else {
-			newRecord = CKRecord(recordType: kZoneType)
-		}
-
-		self.init(record: newRecord!, databaseID: databaseID)
-
-		zoneName      = named
-
-		updateCKRecordProperties()
-	}
-
 	override func updateInstanceProperties() {
 		super.updateInstanceProperties()
 
@@ -217,7 +201,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	class func randomZone(in dbID: ZDatabaseID) -> Zone {
-		return Zone(databaseID: dbID, named: String(arc4random()))
+		return Zone.create(databaseID: dbID, named: String(arc4random()))
 	}
 
 	func recordName() -> String? { return ckRecordName }
@@ -252,7 +236,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var deepCopy: Zone {
-		let theCopy = Zone(databaseID: databaseID, named: nil)
+		let theCopy = Zone.create(databaseID: databaseID, named: nil)
 
 		copy(into: theCopy)
 
@@ -796,6 +780,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				FOREGROUND(canBeDirect: true) {
 					child.register() // need to wait until after child has a parent so bookmarks will be registered properly
 				}
+
+				gIncrementStartupProgress(0.01)
 			}
 
 			FOREGROUND(canBeDirect: true) {
@@ -829,13 +815,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			var traitArray = Set<ZTrait>()
 
 			for child in children {
-				if  child.databaseID == databaseID {
+				if  let zdbid = databaseID,
+					let cdbid = child.databaseID,
+					zdbid == cdbid {                // avoid cross-store relationships
 					childArray.insert(child)
 				}
 			}
 
 			for trait in traits.values {
-				if  trait.databaseID == databaseID {
+				if  let zdbid = databaseID,
+					let tdbid = trait.databaseID,
+					zdbid == tdbid {                // avoid cross-store relationships
 					traitArray.insert(trait)
 				}
 			}
@@ -1085,7 +1075,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func swapWithParent() {
-		let scratchZone = Zone(as: kScratchRootName)
+		let scratchZone = Zone.create(as: kScratchRootName)
 
 		// swap places with parent
 
@@ -1137,7 +1127,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
 		if  let    dbID = databaseID,
 			dbID       != .favoritesID {
-			let newIdea = Zone(databaseID: dbID, named: name)
+			let newIdea = Zone.create(databaseID: dbID, named: name)
 
 			parentZoneMaybe?.expand()
 			gTextEditor.stopCurrentEdit()
@@ -3177,10 +3167,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func addToParent(_ onCompletion: ZoneMaybeClosure? = nil) {
 		FOREGROUND(canBeDirect: true) {
-			self.colorMaybe = nil               // recompute color
-			let parent  = self.resolveParent
+			self.colorMaybe   = nil               // recompute color
+			let parent        = self.resolveParent
 			let done: Closure = {
-				parent?.respectOrder()      // assume newly fetched zone knows its order
+				parent?.respectOrder()          // assume newly fetched zone knows its order
 
 				self.columnarReport("   ->", self.unwrappedName)
 				onCompletion?(parent)
@@ -3237,27 +3227,31 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- local persistence
 	// MARK:-
 
-	convenience init(as name: String) {
-		self.init(within: name, for: 0)
-	}
+	// /////////////////////////////
+	// exemplar and scratch ideas //
+	//  N.B. not to be persisted  //
+	// /////////////////////////////
 
-	convenience init(within rootName: String, for index: Int) {
-
-		// /////////////////////////////
-		// exemplar and scratch ideas //
-		//  N.B. not to be persisted  //
-		// /////////////////////////////
-
+	static func ckRecordFor(_ rootName: String, at index: Int) -> CKRecord {
 		var name = rootName
 
 		if  index > 0 { // index of 0 means use just the root name parameter
 			name.append(index.description)
 		}
 
-		let record = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: name))
-		self.init(record: record, databaseID: .everyoneID)
+		return CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: name))
+	}
 
-		parentLink = kNullLink
+	static func create(as name: String) -> Zone {
+		return create(within: name, for: 0)
+	}
+
+	static func create(within rootName: String, for index: Int) -> Zone {
+		let         record = ckRecordFor(rootName, at: index)
+		let        created = create(record: record, databaseID: .everyoneID)
+		created.parentLink = kNullLink
+
+		return created
 	}
 
 	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> Zone {
@@ -3266,6 +3260,24 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return Zone.init(record: record, databaseID: databaseID)
+	}
+
+	static func create(databaseID: ZDatabaseID?, named: String?, recordName: String? = nil) -> Zone {
+		var newRecord : CKRecord?
+
+		if  let      rName = recordName {
+			newRecord      = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: rName))
+		} else {
+			newRecord      = CKRecord(recordType: kZoneType)
+		}
+
+		let      created = create(record: newRecord!, databaseID: databaseID)
+
+		created.zoneName = named
+
+		created.updateCKRecordProperties()
+
+		return created
 	}
 
 	convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {

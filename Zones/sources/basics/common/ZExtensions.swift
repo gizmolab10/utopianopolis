@@ -62,7 +62,7 @@ private var progressIsQueued = false
 func gUpdateStartupProgress() {
 	if !progressIsQueued && !gHasFinishedStartup {
 		progressIsQueued     = true
-		FOREGROUND(forced: true) {
+		FOREGROUND(forced:     true) {
 			progressIsQueued = false
 			gSignal([.sStartupProgress])
 		}
