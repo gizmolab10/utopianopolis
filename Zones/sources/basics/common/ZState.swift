@@ -235,6 +235,11 @@ var gCurrentHelpMode: ZHelpMode {
 	}
 }
 
+var gShowEssayTitles : Bool {
+	get { return getPreferencesBool(   for: kShowEssayTitles, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kShowEssayTitles) }
+}
+
 var gShowDetailsView : Bool {
 	get { return getPreferencesBool(   for: kShowDetails, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kShowDetails) }

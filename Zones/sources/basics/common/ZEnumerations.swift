@@ -373,22 +373,25 @@ enum ZEssayButtonID : Int {
 	case idForward
 	case idCancel
 	case idDelete
+	case idTitles
 	case idBack
 	case idSave
 	case idHide
 
 	var title: String {
+		let kind = (gCurrentEssay?.isNote ?? true) ? "Note" : "Essay"
 		switch self {
 			case .idForward: return "⇨"
-			case .idCancel:  return "Cancel"
+			case .idCancel:  return "Cancel Edit"
 			case .idDelete:  return "Delete"
-			case .idHide:    return "Hide"
-			case .idSave:    return "Save"
+			case .idTitles:  return "\(gShowEssayTitles ? "Show" : "Hide") Titles"
+			case .idHide:    return "Hide \(kind)"
+			case .idSave:    return "Save \(kind)"
 			case .idBack:    return "⇦"
 		}
 	}
 
-	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idHide, .idSave, .idCancel, .idDelete] }
+	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idHide, .idSave, .idCancel, .idDelete, .idTitles] }
 }
 
 enum ZoneAttributeType: String {

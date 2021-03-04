@@ -44,7 +44,7 @@ class ZGenericController: ZController, ZGeneric {
 
 	override func viewDidLayout() {
 		super.viewDidLayout()
-		gMainWindow?.updateEssayEditorInspectorBar()
+		gMainWindow?.updateEssayEditorInspectorBar(show: gIsNoteMode)
 	}
 
 #if os(OSX)

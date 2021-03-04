@@ -30,6 +30,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var forwardButton    : ZButton?
 	var cancelButton     : ZButton?
 	var deleteButton     : ZButton?
+	var titlesButton     : ZButton?
 	var hideButton       : ZButton?
 	var saveButton       : ZButton?
 	var resizeDragStart  : CGPoint?
@@ -127,6 +128,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func updateText(restoreSelection: Int?  = nil) {
 		resetForDarkMode()
+		updateButtonTitles()
 
 		if  (shouldOverwrite || restoreSelection != nil),
 			let text = gCurrentEssay?.essayText {
@@ -612,14 +614,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- buttons
 	// MARK:-
 
-	func setControlBarButtons(        enabled: Bool) {
+	func setControlBarButtons(      enabled: Bool) {
 		gMainWindow?.inspectorBar?.isHidden = !enabled
-		backwardButton?  .isEnabled = enabled
-		forwardButton?   .isEnabled = enabled
-		deleteButton?    .isEnabled = enabled
-		cancelButton?    .isEnabled = enabled
-		hideButton?      .isEnabled = enabled
-		saveButton?      .isEnabled = enabled
+		backwardButton?          .isEnabled =  enabled
+		forwardButton?           .isEnabled =  enabled
+		deleteButton?            .isEnabled =  enabled
+		cancelButton?            .isEnabled =  enabled
+		titlesButton?            .isEnabled =  enabled
+		hideButton?              .isEnabled =  enabled
+		saveButton?              .isEnabled =  enabled
 	}
 
 	private func setButton(_ button: ZButton) {
@@ -629,6 +632,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idForward: forwardButton = button
 				case .idCancel:   cancelButton = button
 				case .idDelete:   deleteButton = button
+				case .idTitles:   titlesButton = button
 				case .idHide:       hideButton = button
 				case .idSave:       saveButton = button
 			}
@@ -644,8 +648,33 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idHide:    gCurrentEssayZone?.grab();        done()
 				case .idCancel:  gCurrentEssayZone?.grab();        exit()
 				case .idDelete:  gCurrentEssayZone?.destroyNote(); exit()
+				case .idTitles:  toggleEssayTitles()
 			}
 		}
+	}
+
+	func updateButtonTitles() {
+		for tag in ZEssayButtonID.all {
+			var button :ZButton?
+			switch tag {
+				case .idBack:    button = backwardButton
+				case .idForward: button =  forwardButton
+				case .idCancel:  button =   cancelButton
+				case .idDelete:  button =   deleteButton
+				case .idTitles:  button =   titlesButton
+				case .idHide:    button =     hideButton
+				case .idSave:    button =     saveButton
+			}
+
+			button?.title = tag.title
+		}
+	}
+
+	func toggleEssayTitles() {
+		gShowEssayTitles = !gShowEssayTitles
+
+		updateButtonTitles()
+		// and redraw essay
 	}
 
 	private func addButtons() {
