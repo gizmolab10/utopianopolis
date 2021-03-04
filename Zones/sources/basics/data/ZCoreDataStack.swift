@@ -11,7 +11,7 @@ import Foundation
 func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
 func gSaveContext()                                                         { gCoreDataStack.saveContext() }
 let  gCoreDataStack  = ZCoreDataStack()
-var  gCoreDataMode   : ZCoreDataMode = [.dEnabled, .dCanSave]
+var  gCoreDataMode   : ZCoreDataMode = [.dEnabled, .dCanSave, .dCanLoad]
 var  gUseCoreData    : Bool  { return gCoreDataMode.contains(.dEnabled) }
 var  gCanSave        : Bool  { return gCoreDataMode.contains(.dCanSave) && gUseCoreData }
 var  gCanLoad        : Bool  { return gCoreDataMode.contains(.dCanLoad) && gUseCoreData }

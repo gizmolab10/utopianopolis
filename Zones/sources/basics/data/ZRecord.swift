@@ -309,17 +309,16 @@ class ZRecord: ZManagedRecord { // NSObject {
 		}
     }
 
-    func chooseBest(record iRecord: CKRecord) -> CKRecord? {
-		var        best = ckRecord
-        let      myDate = best?.modificationDate ?? writtenModifyDate
-		let      noDate = myDate == nil
-        if  best       != iRecord,
-            let newDate = iRecord.modificationDate,
-            (noDate  ||   newDate.timeIntervalSince(myDate!) > 10.0) {
-			best        = iRecord
-        }
+    func chooseBest(record newRecord: CKRecord) -> CKRecord? {
+		var     current = ckRecord
+		let     newDate = newRecord.modificationDate
+        let currentDate = current?.modificationDate ?? writtenModifyDate
+		let      noDate = currentDate == nil
+        if  noDate || (newRecord != current && newDate != nil && newDate!.timeIntervalSince(currentDate!) > 10.0) {
+			current     = newRecord
+		}
 
-		return best
+		return current
     }
 
 //	override func copy(from: Any) {
