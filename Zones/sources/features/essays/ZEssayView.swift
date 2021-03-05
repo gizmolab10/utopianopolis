@@ -673,8 +673,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func toggleEssayTitles() {
 		gShowEssayTitles = !gShowEssayTitles
 
-		updateButtonTitles()
-		// and redraw essay
+		updateText()
 	}
 
 	private func addButtons() {

@@ -384,7 +384,7 @@ enum ZEssayButtonID : Int {
 			case .idForward: return "⇨"
 			case .idCancel:  return "Cancel Edit"
 			case .idDelete:  return "Delete"
-			case .idTitles:  return "\(gShowEssayTitles ? "Show" : "Hide") Titles"
+			case .idTitles:  return "\(gShowEssayTitles ? "Hide" : "Show") Titles"
 			case .idHide:    return "Hide \(kind)"
 			case .idSave:    return "Save \(kind)"
 			case .idBack:    return "⇦"

@@ -42,10 +42,10 @@ class ZMainController: ZGesturesController {
 	}
 
 	@IBAction func debugInfoButtonAction(_ button: NSButton) {
-		if  let index = gDebugModes.index(of: .dDebugInfo) {
-			gDebugModes.remove(at: index)
+		if  gDebugModes.contains(.dDebugInfo) {
+			gDebugModes  .remove(.dDebugInfo)
 		} else {
-			gDebugModes.append(.dDebugInfo)
+			gDebugModes  .insert(.dDebugInfo)
 		}
 
 		update()

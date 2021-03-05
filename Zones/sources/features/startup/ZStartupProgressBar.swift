@@ -16,7 +16,7 @@ class ZStartupProgressBar: NSProgressIndicator {
 			let      value = multiplier * gStartup.count / gTotalTime
 			doubleValue    = value + minValue
 
-			printDebug(.dTime, "\(value)      \(gCurrentOp)")
+			printDebug(.dTime, "\(value.stringToTwoDecimals)      \(gCurrentOp)")
 		}
 	}
 

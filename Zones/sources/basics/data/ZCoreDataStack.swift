@@ -11,48 +11,11 @@ import Foundation
 func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
 func gSaveContext()                                                         { gCoreDataStack.saveContext() }
 let  gCoreDataStack  = ZCoreDataStack()
-var  gCoreDataMode   : ZCoreDataMode = [.dEnabled, .dCanSave, .dCanLoad]
-var  gUseCoreData    : Bool  { return gCoreDataMode.contains(.dEnabled) }
-var  gCanSave        : Bool  { return gCoreDataMode.contains(.dCanSave) && gUseCoreData }
-var  gCanLoad        : Bool  { return gCoreDataMode.contains(.dCanLoad) && gUseCoreData }
 var  gCoreDataURL    : URL = { return gDataURL.appendingPathComponent("data") }()
 var  gDataURL        : URL = {
 	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 		.appendingPathComponent("Seriously", isDirectory: true)
 }()
-
-struct ZCoreDataMode: OptionSet {
-	static var structValue = 0
-	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let           rawValue : Int
-
-	init() { rawValue = ZCoreDataMode.nextValue }
-	init(rawValue: Int) { self.rawValue = rawValue }
-
-	static let dEnabled  = ZCoreDataMode() // use core data
-	static let dCloudKit = ZCoreDataMode() // store in cloud kit
-	static let dCanSave  = ZCoreDataMode() // save is operational
-	static let dCanLoad  = ZCoreDataMode() // load is operational
-}
-
-enum ZCDOperationID: Int {
-	case oLoad
-	case oSave
-	case oSearch
-	case oProgeny
-
-	var description : String {
-		var string = "\(self)".lowercased().substring(fromInclusive: 1)
-
-		switch self {
-			case .oProgeny: return "loading " + string
-			case .oSave:    string = "sav"
-			default:        break
-		}
-
-		return string + "ing local data"
-	}
-}
 
 class ZCoreDataStack: NSObject {
 
@@ -204,12 +167,14 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func checkCrossStore() {
-		for updated in self.managedContext.updatedObjects {
-			if  let  zone  = updated as? Zone,
-				let zdbid  = zone.dbid,
-				let pdbid  = zone.parentZone?.dbid {
-				if  zdbid != pdbid {
-					print(zone)
+		if  gPrintModes.contains(.dCross) {
+			for updated in self.managedContext.updatedObjects {
+				if  let  zone  = updated as? Zone,
+					let zdbid  = zone.dbid,
+					let pdbid  = zone.parentZone?.dbid {
+					if  zdbid != pdbid {
+						print(zone)
+					}
 				}
 			}
 		}

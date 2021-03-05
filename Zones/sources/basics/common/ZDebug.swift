@@ -8,16 +8,51 @@
 
 import Foundation
 
-typealias ZDebugModes = [ZDebugMode]
+var   gDebugModes : ZDebugMode    = []
+var   gPrintModes : ZPrintMode    = [.dData, .dTime, .dCross]
+var gCoreDataMode : ZCoreDataMode = [.dEnabled, .dCanSave, .dCanLoad]
+var  gUseCoreData : Bool { return gCoreDataMode.contains(.dEnabled) }
+var      gCanSave : Bool { return gCoreDataMode.contains(.dCanSave) && gUseCoreData }
+var      gCanLoad : Bool { return gCoreDataMode.contains(.dCanLoad) && gUseCoreData }
+var  gDebugAccess : Bool { return gDebugModes.contains(.dDebugAccess) }
+var   gWriteFiles : Bool { return gDebugModes.contains(.dWriteFiles) }
+var    gDebugInfo : Bool { return gDebugModes.contains(.dDebugInfo) }
+var    gDebugDraw : Bool { return gDebugModes.contains(.dDebugDraw) }
+var    gReadFiles : Bool { return gDebugModes.contains(.dReadFiles) }
+var      gNewUser : Bool { return gDebugModes.contains(.dNewUser) }
 
-var  gDebugModes :  ZDebugModes = []
-var  gPrintModes : [ZPrintMode] = [.dData, .dTime]
-var gDebugAccess : Bool { return gDebugModes.contains(.dDebugAccess) }
-var  gWriteFiles : Bool { return gDebugModes.contains(.dWriteFiles) }
-var   gDebugInfo : Bool { return gDebugModes.contains(.dDebugInfo) }
-var   gDebugDraw : Bool { return gDebugModes.contains(.dDebugDraw) }
-var   gReadFiles : Bool { return gDebugModes.contains(.dReadFiles) }
-var     gNewUser : Bool { return gDebugModes.contains(.dNewUser) }
+struct ZCoreDataMode: OptionSet {
+	static var structValue = 0
+	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
+	let           rawValue : Int
+
+	init() { rawValue = ZCoreDataMode.nextValue }
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let dEnabled  = ZCoreDataMode() // use core data
+	static let dCloudKit = ZCoreDataMode() // store in cloud kit
+	static let dCanSave  = ZCoreDataMode() // save is operational
+	static let dCanLoad  = ZCoreDataMode() // load is operational
+}
+
+enum ZCDOperationID: Int {
+	case oLoad
+	case oSave
+	case oSearch
+	case oProgeny
+
+	var description : String {
+		var string = "\(self)".lowercased().substring(fromInclusive: 1)
+
+		switch self {
+			case .oProgeny: return "loading " + string
+			case .oSave:    string = "sav"
+			default:        break
+		}
+
+		return string + "ing local data"
+	}
+}
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var structValue = 0
@@ -71,6 +106,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let  dAdopt = ZPrintMode() // orphans
 	static let  dFetch = ZPrintMode() // cloud read
 	static let  dCount = ZPrintMode() // children
+	static let  dCross = ZPrintMode() // core data cross store relationships
 	static let  dNotes = ZPrintMode() // essays
 	static let dImages = ZPrintMode() // "
 	static let dAccess = ZPrintMode() // write lock
@@ -96,6 +132,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dAdopt,  "  adopt"),
 				(.dFetch,  "  fetch"),
 				(.dCount,  "  count"),
+				(.dCross,  "  cross"),
 				(.dAccess, " access"),
 				(.dWidget, " widget"),
 				(.dRemote, " remote"),
@@ -107,10 +144,10 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	}
 
 	static func toggle(_ mode: ZPrintMode) {
-		if  let index = gPrintModes.index(of: mode) {
-			gPrintModes.remove(at: index)
+		if  gPrintModes.contains(mode) {
+			gPrintModes  .remove(mode)
 		} else {
-			gPrintModes.append(mode)
+			gPrintModes  .insert(mode)
 		}
 	}
 

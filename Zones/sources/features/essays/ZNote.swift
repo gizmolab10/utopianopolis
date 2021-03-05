@@ -70,8 +70,11 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let       text = attributed.attributedSubstring(from: textRange)
 			let      title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
 			note .noteText = text.mutableCopy() as? NSMutableAttributedString // invokes note.needSave()
-			zone?.zoneName = title
 			autoDelete     = false
+
+			if  gShowEssayTitles {
+				zone?.zoneName = title
+			}
 
 			noteTrait?.needSave()
 			zone?.needSave()
@@ -151,14 +154,15 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	var noteText: NSMutableAttributedString? {
-		var result:    NSMutableAttributedString?
+		var result : NSMutableAttributedString?
+		let hideTitles  = !gShowEssayTitles
 
-		if  let    name = zone?.zoneName,
+		if  let    name = hideTitles ? "" : zone?.zoneName,
 			let    text = noteTrait?.noteText {
 			let  spacer = kNoteIndentSpacer * titleInsets
-			let sOffset = spacer.length
+			let sOffset = hideTitles ? 0 : spacer.length
 			let hasGoof = name.contains("􀅇")
-			let tOffset = sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
+			let tOffset = hideTitles ? 0 : sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
 			let  indent = NSMutableAttributedString(string: spacer,      attributes: spacerAttributes)
 			let   title = NSMutableAttributedString(string: name + kTab, attributes: titleAttributes)
 			result      = NSMutableAttributedString()
@@ -166,12 +170,15 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			textRange   = NSRange(location: tOffset, length: text.length)
 			noteOffset  = 0
 
-			result?.insert(text,       at: 0)
-			result?.insert(gBlankLine, at: 0)
-			result?.insert(title,      at: 0)
-			result?.insert(indent,     at: 0)
+			result?    .insert(text,       at: 0)
 
-			colorizeTitle(result)
+			if  gShowEssayTitles {
+				result?.insert(gBlankLine, at: 0)
+				result?.insert(title,      at: 0)
+				result?.insert(indent,     at: 0)
+
+				colorizeTitle(result)
+			}
 
 			result?.fixAllAttributes()
 		}
