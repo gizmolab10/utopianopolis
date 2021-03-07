@@ -100,8 +100,8 @@ class ZTrait: ZTraitAssets {
 		}
 	}
 
-    var deepCopy: ZTrait {
-        let theCopy = ZTrait(databaseID: databaseID)
+	func deepCopy(dbID: ZDatabaseID?) -> ZTrait {
+		let theCopy = ZTrait.create(databaseID: dbID)
 
         copy(into: theCopy)
 

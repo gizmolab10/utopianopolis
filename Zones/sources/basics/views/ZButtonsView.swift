@@ -40,7 +40,7 @@ class ZButtonsView : ZView {
 		var   prior : ZButton?
 		let   array = buttons
 		let lastOne = array.count - 1
-		var   width = (bounds.size.width / CGFloat(buttons.count)) - 3.0
+		var   width = (bounds.size.width / CGFloat(buttons.count)) - 3.0 // use this value when distribute equally = true
 
 		for (index, button) in array.enumerated() {
 			addSubview(button)
@@ -48,7 +48,7 @@ class ZButtonsView : ZView {
 			button.snp.makeConstraints { make in
 				if !distributeEqually {
 					let title = button.title
-					width     = title.rect(using: button.font!, for: NSRange(location: 0, length: title.length), atStart: true).width + 17.0
+					width     = title.rect(using: button.font!, for: NSRange(location: 0, length: title.length), atStart: true).width + 13.0
 				}
 
 				make.width.equalTo(width)
@@ -57,15 +57,11 @@ class ZButtonsView : ZView {
 				if  let previous = prior {
 					make.left.equalTo(previous.snp.right).offset(3.0)
 				} else {
-					make.left.equalTo(self).offset(distributeEqually ? 2.0 : 0.0)
+					make.left.equalTo(self).offset(2.0)
 				}
 
-				if  index == lastOne {
-					if !clipped {
-						make.right.lessThanOrEqualTo(self).offset(distributeEqually ? 2.0 : 0.0) // force window to grow wide enough to fit all breadcrumbs
-					} else {
-						make.right.equalTo(self).offset(distributeEqually ? 2.0 : 0.0)
-					}
+				if  index == lastOne { // now supply the trailing constraint
+					make.right.lessThanOrEqualTo(self).offset(distributeEqually ? 2.0 : 0.0) // force window to grow wide enough to fit all breadcrumbs
 				}
 			}
 

@@ -88,7 +88,7 @@ class ZMapEditor: ZBaseEditor {
 							case kTab:     addSibling(OPTION)
 							case kSpace:   gSelecting.currentMoveable.addIdea()
 							case kReturn:  if COMMAND { editNote(OPTION) }
-							case kEscape:               editNote(OPTION, forGrabbed: false)
+							case kEscape:               editNote(OPTION, useGrabbed: false)
 							case kBackspace,
 								 kDelete:  if CONTROL { focusOnTrash() }
 							default:       return false // false means key not handled
@@ -148,7 +148,7 @@ class ZMapEditor: ZBaseEditor {
 						case kBackspace,
 							 kDelete:    complexDelete(COMMAND, OPTION, CONTROL, SPECIAL, FLAGGED, isWindow)
 						case kReturn:    if COMMAND { editNote(OPTION) } else { editIdea(OPTION) }
-						case kEscape:    editNote(OPTION, forGrabbed: false)
+						case kEscape:    editNote(OPTION, useGrabbed: false)
 						default:         return false // indicate key was not handled
 					}
                 }
@@ -596,11 +596,11 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-	func editNote(_  OPTION: Bool, forGrabbed: Bool = true) {
+	func editNote(_  OPTION: Bool, useGrabbed: Bool = true) {
 		if !gIsNoteMode {
 			gCreateCombinedEssay = !OPTION				        // default is multiple, OPTION drives it to single
 
-			if  gCurrentEssay   == nil || OPTION || forGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
+			if  gCurrentEssay   == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
 				gCurrentEssay    = gSelecting.firstGrab?.note
 			}
 		}
@@ -977,7 +977,7 @@ class ZMapEditor: ZBaseEditor {
                 gSelecting.ungrabAll()
 
                 for (pastable, (parent, index)) in pastables {
-                    let  pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy // for zones not in trash, paste a deep copy
+                    let  pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy(dbID: nil) // for zones not in trash, paste a deep copy
                     let insertAt = index  != nil ? index : gListsGrowDown ? nil : 0
                     let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
 

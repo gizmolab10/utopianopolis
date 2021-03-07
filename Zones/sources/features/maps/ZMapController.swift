@@ -328,7 +328,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func dragStartEvent(_ dot: ZoneDot, _ iGesture: ZGestureRecognizer?) {
         if  var zone = dot.widgetZone { // should always be true
             if  iGesture?.isOptionDown ?? false {
-                zone = zone.deepCopy // option means drag a copy
+                zone = zone.deepCopy(dbID: nil) // option means drag a copy
             }
 
             if  iGesture?.isShiftDown ?? false {

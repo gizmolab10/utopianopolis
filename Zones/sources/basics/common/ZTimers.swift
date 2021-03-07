@@ -25,7 +25,6 @@ enum ZTimerID : Int {
 	case tCloudAvailable
 	case tMouseLocation
 	case tWriteEveryone
-	case tSaveCoreData
 	case tRecordsMine
 	case tWriteMine
 	case tMouseZone
@@ -63,6 +62,7 @@ enum ZTimerID : Int {
 
 	var description: String {
 		switch self {
+			case .tSync:            return "saving data"
 			case .tWriteEveryone:   return "writing public local data"
 			case .tWriteMine:       return "writing private local data"
 			case .tRecordsEveryone: return "acquiring public cloud data"
@@ -80,26 +80,18 @@ func gStartTimers(for timers: [ZTimerID]) {
 }
 
 func gStartTimer(for timerID: ZTimerID?) {
-	if  let      tid = timerID {
-		var  closure : TimerClosure?
-		var interval = 1.0
-		var  repeats = false
+	if  let       tid = timerID {
+		var   closure : TimerClosure?
+		let repeaters : [ZTimerID] = [.tCoreDataAvailable, .tCloudAvailable, .tRecount, .tSync]
+		let   repeats = repeaters.contains(tid)
+		var  interval = 1.0
 
 		switch tid {
-			case .tCoreDataAvailable,
-				 .tCloudAvailable,
-				 .tSaveCoreData,
-				 .tRecount,
-				 .tSync: repeats = true
-			default:     break
-		}
-
-		switch tid {
-			case .tSync:           interval = 15.0
-			case .tRecount:        interval = 60.0
-			case .tMouseZone:      interval =  0.5
-			case .tCloudAvailable: interval =  0.2
-			default:               break
+			case .tSync:              interval = 15.0
+			case .tRecount:           interval = 60.0
+			case .tMouseZone:         interval =  0.5
+			case .tCloudAvailable:    interval =  0.2
+			default:                  break
 		}
 
 		switch tid {
@@ -108,8 +100,7 @@ func gStartTimer(for timerID: ZTimerID?) {
 			case .tMouseLocation:     closure = { iTimer in gCurrentMouseDownLocation = nil }
 			case .tArrowsDoNotBrowse: closure = { iTimer in gArrowsDoNotBrowse        = false }
 			case .tStartup:           closure = { iTimer in gIncrementStartupProgress() }
-			case .tSaveCoreData:      closure = { iTimer in if gIsReadyToShowUI { gSaveContext() } }
-			case .tSync:              closure = { iTimer in if gIsReadyToShowUI { gBatches.save { iSame in } } }
+			case .tSync:              closure = { iTimer in if gIsReadyToShowUI { gSaveContext(); gBatches.save { iSame in } } }
 			case .tRecount:           closure = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount() } }
 			case .tCloudAvailable:    closure = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
 			case .tCoreDataAvailable: closure = { iTimer in gCoreDataStack.availabilityFire(iTimer) }
@@ -159,7 +150,7 @@ class ZTimers: NSObject {
 	var timers = [ZTimerID : Timer]()
 
 	var statusText: String {
-		let statusIDs: [ZTimerID] = [.tSaveCoreData, .tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
+		let statusIDs: [ZTimerID] = [.tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
 
 		for id in timers.keys {
 			if  statusIDs.contains(id) {

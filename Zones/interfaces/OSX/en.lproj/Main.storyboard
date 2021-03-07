@@ -1146,7 +1146,7 @@ CA
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1067" y="496"/>
+            <point key="canvasLocation" x="1067" y="598"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -1376,7 +1376,7 @@ CA
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1067" y="595"/>
+            <point key="canvasLocation" x="1067" y="488"/>
         </scene>
         <!--Startup Controller-->
         <scene sceneID="r3B-ju-S2a">

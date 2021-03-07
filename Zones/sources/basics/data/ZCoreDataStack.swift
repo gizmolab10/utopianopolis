@@ -11,8 +11,9 @@ import Foundation
 func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
 func gSaveContext()                                                         { gCoreDataStack.saveContext() }
 let  gCoreDataStack  = ZCoreDataStack()
-var  gCoreDataURL    : URL = { return gDataURL.appendingPathComponent("data") }()
-var  gDataURL        : URL = {
+var  gCoreDataIsBusy : Bool  { return gCoreDataStack.currentOpID != nil }
+let  gCoreDataURL    : URL = { return gDataURL.appendingPathComponent("data") }()
+let  gDataURL        : URL = {
 	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 		.appendingPathComponent("Seriously", isDirectory: true)
 }()
@@ -111,6 +112,9 @@ class ZCoreDataStack: NSObject {
 		return container
 	}()
 
+	// MARK:- internal
+	// MARK:-
+
 	func availabilityFire(_ iTimer: Timer?) {
 		if  currentOpID == nil {
 			currentOpID  = waitingOpID
@@ -163,9 +167,6 @@ class ZCoreDataStack: NSObject {
 		return nil
 	}
 
-	// MARK:- save
-	// MARK:-
-
 	func checkCrossStore() {
 		if  gPrintModes.contains(.dCross) {
 			for updated in self.managedContext.updatedObjects {
@@ -179,6 +180,9 @@ class ZCoreDataStack: NSObject {
 			}
 		}
 	}
+
+	// MARK:- save
+	// MARK:-
 
 	func saveContext() {
 		if  gCanSave {
@@ -221,6 +225,8 @@ class ZCoreDataStack: NSObject {
 					let name = names[index]
 
 					self.loadZone(with: name, into: dbID) {
+						onCompletion?(0)
+
 						index -= 1
 
 						if  index >= 0 {
@@ -229,7 +235,7 @@ class ZCoreDataStack: NSObject {
 							self.load(type: kManifestType, into: dbID, onlyNeed: 1, using: NSFetchRequest<NSFetchRequestResult>(entityName: kManifestType)) { zRecord in
 								if  zRecord == nil {
 									self.currentOpID = nil
-									gRemoteStorage.recount()
+//									gRemoteStorage.recount()
 
 									onCompletion?(0)
 								}

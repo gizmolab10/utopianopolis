@@ -23,6 +23,10 @@ class ZHelpDotsMapController : ZMapController {
 	@IBOutlet var     topLabel : ZTextField?
 	@IBOutlet var  bottomLabel : ZTextField?
 
+	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
+		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
+	}
+
 	override func startup() {
 		setup()
 		setupExemplar()

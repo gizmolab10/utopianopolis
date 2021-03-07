@@ -235,19 +235,19 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			super.optionalCloudProperties
 	}
 
-	var deepCopy: Zone {
-		let theCopy = Zone.create(databaseID: databaseID, named: nil)
+	func deepCopy(dbID: ZDatabaseID?) -> Zone {
+		let theCopy = Zone.create(databaseID: dbID, named: nil)
 
 		copy(into: theCopy)
 
 		theCopy.parentZone = nil
 
 		for child in children {
-			theCopy.addChild(child.deepCopy)
+			theCopy.addChild(child.deepCopy(dbID: dbID))
 		}
 
 		for (_, trait) in traits {
-			theCopy.addTrait(trait.deepCopy)
+			theCopy.addTrait(trait.deepCopy(dbID: dbID))
 		}
 
 		return theCopy
@@ -781,7 +781,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					child.register() // need to wait until after child has a parent so bookmarks will be registered properly
 				}
 
-				gIncrementStartupProgress(0.01)
+//				gIncrementStartupProgress(0.01)
 			}
 
 			FOREGROUND(canBeDirect: true) {
@@ -1360,7 +1360,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			} else {
 				movedZone.needDestroy()
 
-				movedZone = movedZone.deepCopy
+				movedZone = movedZone.deepCopy(dbID: targetLink?.databaseID)
 
 				gRedrawMaps {
 					grabAndTravel()
@@ -2158,7 +2158,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 								iChild.needDestroy()
 							}
 
-							beingMoved = beingMoved.deepCopy
+							beingMoved = beingMoved.deepCopy(dbID: into.databaseID)
 						}
 					}
 

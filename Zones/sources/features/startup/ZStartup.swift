@@ -42,7 +42,7 @@ class ZStartup: NSObject {
 								gRefusesFirstResponder = false
 
 								gStopTimer  (for:  .tStartup)
-								gStartTimers(for: [.tCloudAvailable, .tSaveCoreData, .tRecount, .tSync])
+								gStartTimers(for: [.tCloudAvailable, .tRecount, .tSync])
 
 								if  gIsStartupMode {
 									gSetBigMapMode()

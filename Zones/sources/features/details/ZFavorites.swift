@@ -233,7 +233,7 @@ class ZFavorites: ZSmallMapRecords {
 
 			for template in cloudRootTemplates.children {
 				if  let          dbID = template.linkDatabaseID, !hasDatabaseIDs.contains(dbID) {
-					let      bookmark = template.deepCopy
+					let      bookmark = template.deepCopy(dbID: .mineID)
 					bookmark.zoneName = template.bookmarkTarget?.zoneName
 
 					gFavoritesRoot?.addChildAndRespectOrder(bookmark)

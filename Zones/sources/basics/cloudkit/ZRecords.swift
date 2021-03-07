@@ -131,6 +131,14 @@ class ZRecords: NSObject {
 			}
 		}
 
+		if  gRemoteStorage.maybeZoneForRecordName(references[2]) == nil {
+			references[2] = kFavoritesRootName
+		}
+
+		if  gRemoteStorage.maybeZoneForRecordName(references[3]) == nil {
+			references[3] = kRecentsRootName
+		}
+
 		// enforce difference between favorites and recents
 
 		if  references[2] == references[3] {

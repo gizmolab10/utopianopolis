@@ -168,7 +168,7 @@ extension ZoneArray {
 
 		for zone in self {
 			if  let index = zone.siblingIndex {
-				let duplicate = zone.deepCopy
+				let duplicate = zone.deepCopy(dbID: zone.databaseID)
 
 				duplicates.append(duplicate)
 				indices.append(index)

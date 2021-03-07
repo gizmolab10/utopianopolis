@@ -125,6 +125,10 @@ class ZHelpController: ZGenericTableController {
 		}
 	}
 
+	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
+		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
+	}
+
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		genericTableView?.reloadData()
 	}
