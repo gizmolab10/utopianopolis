@@ -64,7 +64,7 @@ func gUpdateStartupProgress() {
 		progressIsQueued     = true
 		FOREGROUND(forced:     true) {
 			progressIsQueued = false
-			gSignal([.sStartupProgress])
+			gStartupController?.fullStartupUpdate()
 		}
 	}
 }
@@ -72,7 +72,9 @@ func gUpdateStartupProgress() {
 func gIncrementStartupProgress(_ increment: Double = 1.0) {
 	gStartup.count += increment
 
-	gUpdateStartupProgress()
+	if  increment < 1.0, Int(gStartup.count * 10000.0) % 10000 < Int(increment * 100.0) {
+		gUpdateStartupProgress()
+	}
 }
 
 func gRedrawMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
