@@ -1598,6 +1598,18 @@ extension NSTextAttachmentCell {
 	}
 }
 
+extension ZImage {
+
+	func resize(_ newSize: CGSize) -> NSImage {
+		let newImage = NSImage(size: newSize)
+		newImage.lockFocus()
+		draw(in: CGRect(origin: .zero, size: newSize), from: CGRect(origin: .zero, size: size), operation: .sourceOver, fraction: CGFloat(1))
+		newImage.unlockFocus()
+		return newImage
+	}
+
+}
+
 extension NSTextAttachment {
 
 	var image: ZImage? {

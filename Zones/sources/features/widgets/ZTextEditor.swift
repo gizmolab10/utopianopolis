@@ -166,11 +166,10 @@ class ZTextPack: NSObject {
         updateWidgetsForEndEdit()
     }
 
-
 	func captureText(_ iText: String?, redrawSync: Bool = false) {
 		if                     iText == unwrappedName,
 			let                  type = packedTrait?.traitType {
-			packedZone?.removeTrait(for: type)
+			packedZone?.removeTrait(for: type)                     // trait text was deleted (email, hyperlink)
 		} else if              iText != originalText {
             let               newText = removeSuffix(from: iText)
             gTextCapturing            = true

@@ -18,7 +18,7 @@ import UIKit
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 class ZEssayView: ZTextView, ZTextViewDelegate {
-	let dotRadius        = CGFloat(-5.0)
+	let dotInset         = CGFloat(-5.0)
 	var dropped          = [String]()
 	var selectionRange   = NSRange()          { didSet { if selectionRange.location != 0, let rect = rectForRange(selectionRange) { selectionRect = rect } } }
 	var selectionRect    = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { imageAttachment = nil } } }
@@ -91,12 +91,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		FOREGROUND { // wait for application to fully load the inspector bar
 			gMainWindow?.updateEssayEditorInspectorBar(show: true)
-			self.addButtons()
+
+			for tag in ZEssayButtonID.all {
+				self.addButtonFor(tag)
+			}
+
 			self.updateText()
 		}
 	}
 
-	private func clear() {
+	private func discardPriorText() {
 		gCurrentEssayZone?.noteMaybe = nil
 		delegate = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
 
@@ -132,16 +136,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  (shouldOverwrite || restoreSelection != nil),
 			let text = gCurrentEssay?.essayText {
-			clear() 								// discard previously edited text
+			discardPriorText() 								     // discard previously edited text
 			setControlBarButtons(enabled: true)
-			gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }		// emplace text
+			gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }	     // emplace text
 			select(restoreSelection: restoreSelection)
 
 			essayID  = gCurrentEssayZone?.ckRecord?.recordID
-			delegate = self 						// set delegate after setText
+			delegate = self 					    	 // set delegate after setText
 
 			if  gIsNoteMode {
-				gMainWindow?.makeFirstResponder(self) // this should never happen unless alread in note mode
+				gMainWindow?.makeFirstResponder(self)    // this should never happen unless alread in note mode
 			}
 		}
 	}
@@ -184,7 +188,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func drawDots(in rect: CGRect) {
 		for point in rect.selectionPoints.values {
-			let   dotRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotRadius)
+			let   dotRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotInset)
 			let      path = ZBezierPath(ovalIn: dotRect)
 			path.flatness = 0.0001
 
@@ -278,7 +282,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			NSCursor.openHand.set()
 
 			for point in imageRect.selectionPoints.values {
-				let cornerRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotRadius)
+				let cornerRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotInset)
 
 				if  cornerRect.intersects(rect) {
 					NSCursor.crosshair.set()
@@ -430,7 +434,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func attachmentHit(at rect: CGRect) -> ZRangedAttachment? {
 		if  let array = textStorage?.rangedAttachments {
 			for item in array {
-				if  let imageRect = rectForRangedAttachment(item)?.insetEquallyBy(dotRadius),
+				if  let imageRect = rectForRangedAttachment(item)?.insetEquallyBy(dotInset),
 					imageRect.intersects(rect) {
 
 					return item
@@ -448,7 +452,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			for dot in points.keys {
 				if  let point = points[dot] {
-					let selectionRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotRadius)
+					let selectionRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotInset)
 
 					if  selectionRect.intersects(rect) {
 						return dot
@@ -666,7 +670,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idSave:    button =     saveButton
 			}
 
-			button?.title = tag.title
+			if  button?.image == nil {
+				button?.title = tag.title
+			}
 		}
 	}
 
@@ -676,7 +682,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		updateText()
 	}
 
-	private func addButtons() {
+	private func addButtonFor(_ tag: ZEssayButtonID) {
 		if  let inspectorBar = gMainWindow?.inspectorBar {
 
 			func rect(at target: Int) -> CGRect {
@@ -702,32 +708,38 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				return final
 			}
 
-			func button(for tag: ZEssayButtonID) -> ZButton {
+			func buttonWith(_ title: String) -> ZButton {
+				let    action = #selector(handleButtonPress)
+
+				if  let image = ZImage(named: title)?.resize(CGSize(width: 13.0, height: 13.0)) {
+					return      ZButton(image: image, target: self, action: action)
+				}
+
+				let    button = ZButton(title: title, target: self, action: action)
+				button  .font = gTinyFont
+
+				return button
+			}
+
+			func buttonFor(_ tag: ZEssayButtonID) -> ZButton {
 				let         index = inspectorBar.subviews.count - 1
-				var         frame = rect(at: index)
-				let             x = frame.maxX + 2.0
-				let             y = frame.minY - 3.0
+				var         frame = rect(at: index).offsetBy(dx: 2.0, dy: -5.0)
 				let         title = tag.title
-				let        button = ZButton(title: title, target: self, action: #selector(handleButtonPress))
-				frame       .size = button.bounds.insetBy(dx: 4.0, dy: 4.0).size
-				frame     .origin = CGPoint(x: x, y: y)
-				button      .font = gTinyFont
+				let        button = buttonWith(title)
+				frame       .size = button.bounds.insetBy(dx: 12.0, dy: 0.0).size
 				button     .frame = frame
 				button       .tag = tag.rawValue
-				button    .bounds = CGRect(origin: CGPoint.zero, size: frame.insetBy(dx: 4.0, dy: 2.0).size)
 				button .isEnabled = false
-				button.isBordered = true
+				button.isBordered = false
 				button.bezelStyle = .texturedRounded
 
 				return button
 			}
 
-			for tag in ZEssayButtonID.all {
-				let b = button(for: tag)
+			let b = buttonFor(tag)
 
-				inspectorBar.addSubview(b)
-				setButton(b)
-			}
+			inspectorBar.addSubview(b)
+			setButton(b)
 		}
 
 	}

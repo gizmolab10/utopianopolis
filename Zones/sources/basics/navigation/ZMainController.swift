@@ -16,16 +16,16 @@ var gMainController: ZMainController? { return gControllers.controllerForID(.idM
 
 class ZMainController: ZGesturesController {
 
-	@IBOutlet var detailsWidth      : NSLayoutConstraint?
-	@IBOutlet var hamburgerButton   : ZButton?
-	@IBOutlet var searchResultsView : ZView?
-	@IBOutlet var permissionView    : ZView?
-	@IBOutlet var searchBoxView     : ZView?
-	@IBOutlet var detailView        : ZView?
-	@IBOutlet var debugView         : ZView?
-	@IBOutlet var essayView     	: ZView?
-	@IBOutlet var mapView           : ZView?
-    override  var controllerID      : ZControllerID { return .idMain }
+	@IBOutlet var detailsWidth       : NSLayoutConstraint?
+	@IBOutlet var hamburgerButton    : ZButton?
+	@IBOutlet var essayContainerView : ZView?
+	@IBOutlet var searchResultsView  : ZView?
+	@IBOutlet var mapContainerView   : ZView?
+	@IBOutlet var permissionView     : ZView?
+	@IBOutlet var searchBoxView      : ZView?
+	@IBOutlet var detailView         : ZView?
+	@IBOutlet var debugView          : ZView?
+    override  var controllerID       : ZControllerID { return .idMain }
 
 	override func setup() {
 		searchResultsView?.isHidden = true
@@ -68,13 +68,13 @@ class ZMainController: ZGesturesController {
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		let   hideEssay = !gIsNoteMode
         let  hideSearch = !gIsSearchMode
-        let hideResults = hideSearch || !(gSearchResultsController?.hasResults ?? false)
+        let hideResults = !(gSearchResultsController?.hasResults ?? false) || hideSearch
 
 		permissionView?               .isHidden = !gIsStartupMode
 
 		switch iKind {
 			case .sFound:
-				mapView?              .isHidden = !hideResults
+				mapContainerView?     .isHidden = !hideResults
 				searchBoxView?        .isHidden =  hideSearch
 				searchResultsView?    .isHidden =  hideResults
 			case .sSearch:
@@ -87,8 +87,8 @@ class ZMainController: ZGesturesController {
 				}
 			case .sSwap:
 				gRefusesFirstResponder          = true  // prevent exit from essay from beginning an edit
-				essayView? 	  	      .isHidden =  hideEssay
-				mapView? 	  	      .isHidden = !hideEssay
+				essayContainerView?   .isHidden =  hideEssay
+				mapContainerView? 	  .isHidden = !hideEssay
 				gRefusesFirstResponder          = false
 			default: break
         }

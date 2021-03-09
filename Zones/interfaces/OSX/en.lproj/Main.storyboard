@@ -1054,9 +1054,9 @@ CA
                         <outlet property="debugView" destination="9jn-kU-BvC" id="5ub-Jm-aCW"/>
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="fDV-lr-VDw"/>
                         <outlet property="detailsWidth" destination="us8-K9-IEo" id="J2y-Un-wue"/>
-                        <outlet property="essayView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
+                        <outlet property="essayContainerView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
                         <outlet property="hamburgerButton" destination="yl6-st-bhl" id="Q5Q-eo-IdC"/>
-                        <outlet property="mapView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
+                        <outlet property="mapContainerView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
                         <outlet property="permissionView" destination="5oi-yK-PC4" id="5TP-04-XLC"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
@@ -1212,7 +1212,7 @@ CA
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1116" y="1172"/>
+            <point key="canvasLocation" x="801" y="1172"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -1272,7 +1272,7 @@ CA
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="800" y="1172"/>
+            <point key="canvasLocation" x="1114" y="1172"/>
         </scene>
         <!--Web Link Controller-->
         <scene sceneID="yhj-YB-Xij">
@@ -1309,7 +1309,7 @@ CA
                 </viewController>
                 <customObject id="IZh-Iz-IVH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="801" y="1552"/>
+            <point key="canvasLocation" x="1115" y="1572"/>
         </scene>
         <!--Breadcrumbs Controller-->
         <scene sceneID="wXo-la-8OL">

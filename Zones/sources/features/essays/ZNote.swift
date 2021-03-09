@@ -43,6 +43,10 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
 
+	init(zones: ZoneArray) {
+
+	}
+
 	init(_ zone: Zone?) {
 		super.init()
 

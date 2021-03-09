@@ -1638,6 +1638,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		updateCoreDataRelationships()
 		trait?.needDestroy()
 		needSave()
+
+		if  let t = trait {
+			gCoreDataStack.managedContext.delete(t)
+		}
 	}
 
 	// MARK:- notes / essays
@@ -1648,6 +1652,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var currentNote: ZNote? {
+		if  isBookmark {
+			return bookmarkTarget!.currentNote
+		}
+
 		let zones = zonesWithNotes
 
 		if  zones.count > 0 {
@@ -1667,17 +1675,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return noteMaybe!
 	}
 
-	func destroyNote() {
-		removeTrait(for: .tNote)
-
-		noteMaybe = nil
-	}
-
 	func createNote() {
 		let zones = zonesWithNotes
 		let count = zones.count
 
-		if  count > 1 && gCreateCombinedEssay {
+		if  count > 1, gCreateCombinedEssay, zones.contains(self) {
 			let  essay = ZEssay(self)
 			noteMaybe = essay
 
@@ -1685,7 +1687,19 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else if count == 0 || !gCreateCombinedEssay {
 			noteMaybe = ZNote(self)
 		} else {
-			noteMaybe = ZNote(zones[0])
+			let zone = zones[0]
+			zone.noteMaybe = ZNote(zone)
+		}
+	}
+
+	func destroyNote() {
+		removeTrait(for: .tNote)
+
+		noteMaybe = nil
+
+		FOREGROUND {
+			self.recount()
+			gSignal([.sStatus]) // update displayed count of notes
 		}
 	}
 
