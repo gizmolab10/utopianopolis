@@ -379,17 +379,30 @@ enum ZEssayButtonID : Int {
 	case idHide
 
 	var title: String {
-		let kind = (gCurrentEssay?.isNote ?? true) ? "Note" : "Essay"
 		switch self {
 			case .idForward: return "⇨"
 			case .idCancel:  return "cancel"
 			case .idDelete:  return "trash"
 			case .idTitles:  return "\(gShowEssayTitles ? "Hide" : "Show") Titles"
-			case .idHide:    return "Hide \(kind)"
+			case .idHide:    return "exit"
 			case .idSave:    return "save"
 			case .idBack:    return "⇦"
 		}
 	}
+
+	var tooltip : String {
+		let kind = (gCurrentEssay?.isNote ?? true) ? "Note" : "Essay"
+		switch self {
+			case .idForward: return "show next"
+			case .idCancel:  return "cancel \(kind)"
+			case .idDelete:  return "delete"
+			case .idTitles:  return "\(gShowEssayTitles ? "hide" : "show") all titles"
+			case .idHide:    return "exit \(kind)"
+			case .idSave:    return "save"
+			case .idBack:    return "show previous"
+		}
+	}
+
 
 	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idDelete, .idCancel, .idSave, .idHide, .idTitles] }
 }

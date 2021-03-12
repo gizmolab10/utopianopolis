@@ -57,17 +57,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func done() { save(); exit() }
 
 	func exit() {
-		if  let e = gCurrentEssay {
-			gControllers.swapMapAndEssay(force: .wBigMapMode)
-			gRedrawMaps()
-
-			if  e.lastTextIsDefault,
-				e.autoDelete {
-				e.zone?.destroyNote()
-			}
-
-			gSignal([.sDatum])
+		if  let e = gCurrentEssay,
+			e.lastTextIsDefault,
+			e.autoDelete {
+			e.zone?.destroyNote()
 		}
+
+		gControllers.swapMapAndEssay(force: .wBigMapMode)
 	}
 
 	func save() {
@@ -110,7 +106,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func resetForDarkMode() {
-		//		layer?.backgroundColor = (gIsDark ? kDarkestGrayColor : kWhiteColor).cgColor
+//		layer?.backgroundColor = (gIsDark ? kDarkestGrayColor : kWhiteColor).cgColor
 	}
 
 	func resetCurrentEssay(_ current: ZNote?, selecting range: NSRange? = nil) {
@@ -136,7 +132,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  (shouldOverwrite || restoreSelection != nil),
 			let text = gCurrentEssay?.essayText {
-			discardPriorText() 								     // discard previously edited text
+			discardPriorText()
 			setControlBarButtons(enabled: true)
 			gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }	     // emplace text
 			select(restoreSelection: restoreSelection)
@@ -147,6 +143,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  gIsNoteMode {
 				gMainWindow?.makeFirstResponder(self)    // this should never happen unless alread in note mode
 			}
+		} else {
+			gWorkMode = .wBigMapMode // not show blank essay
 		}
 	}
 
@@ -484,12 +482,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func swapBetweenNoteAndEssay() {
 		if  let          current = gCurrentEssay,
 			let             zone = current.zone {
-			gCreateCombinedEssay = current.isNote
 			let            count = zone.countOfNotes
+			gCreateCombinedEssay = current.isNote
 
 			if  gCreateCombinedEssay {
 				if  count > 1 {
-					resetCurrentEssay(zone.note)
+					resetCurrentEssay(current)
 				}
 			} else if count > 0,
 				let note = selectionZone?.currentNote {
@@ -629,20 +627,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		saveButton?              .isEnabled =  enabled
 	}
 
-	private func setButton(_ button: ZButton) {
-		if let tag = ZEssayButtonID(rawValue: button.tag) {
-			switch tag {
-				case .idBack:   backwardButton = button
-				case .idForward: forwardButton = button
-				case .idCancel:   cancelButton = button
-				case .idDelete:   deleteButton = button
-				case .idTitles:   titlesButton = button
-				case .idHide:       hideButton = button
-				case .idSave:       saveButton = button
-			}
-		}
-	}
-
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
@@ -711,7 +695,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			func buttonWith(_ title: String) -> ZButton {
 				let    action = #selector(handleButtonPress)
 
-				if  let image = ZImage(named: title)?.resize(CGSize(width: 13.0, height: 13.0)) {
+				if  let image = ZImage(named: title)?.resize(CGSize(width: 14.0, height: 14.0)) {
 					return      ZButton(image: image, target: self, action: action)
 				}
 
@@ -726,6 +710,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				var         frame = rect(at: index).offsetBy(dx: 2.0, dy: -5.0)
 				let         title = tag.title
 				let        button = buttonWith(title)
+				let       options : NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .cursorUpdate]
+				let          area = NSTrackingArea(rect: frame, options: options, owner:nil, userInfo: nil)
+				button   .toolTip = "\(kClickTo)\(tag.tooltip)"
 				frame       .size = button.bounds.insetBy(dx: 12.0, dy: 0.0).size
 				button     .frame = frame
 				button       .tag = tag.rawValue
@@ -733,7 +720,23 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				button.isBordered = false
 				button.bezelStyle = .texturedRounded
 
+				button.addTrackingArea(area)
+
 				return button
+			}
+
+			func setButton(_ button: ZButton) {
+				if  let    tag = ZEssayButtonID(rawValue: button.tag) {
+					switch tag {
+						case .idBack:   backwardButton = button
+						case .idForward: forwardButton = button
+						case .idCancel:   cancelButton = button
+						case .idDelete:   deleteButton = button
+						case .idTitles:   titlesButton = button
+						case .idHide:       hideButton = button
+						case .idSave:       saveButton = button
+					}
+				}
 			}
 
 			let b = buttonFor(tag)

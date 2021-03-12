@@ -1665,31 +1665,36 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	var note: ZNote {
+	var note: ZNote? {
 		if  isBookmark {
 			return bookmarkTarget!.note
-		} else if noteMaybe == nil || !hasTrait(matching: [.tNote, .tEssay]) {
-			createNote()
+		} else if noteMaybe == nil || !hasTrait(matching: [.tNote, .tEssay]), let note = createNote() {
+			return note
 		}
 
-		return noteMaybe!
+		return noteMaybe
 	}
 
-	func createNote() {
+	func createNote() -> ZNote? {
 		let zones = zonesWithNotes
 		let count = zones.count
+		var note : ZNote?
 
 		if  count > 1, gCreateCombinedEssay, zones.contains(self) {
-			let  essay = ZEssay(self)
-			noteMaybe = essay
+			note      = ZEssay(self)
+			noteMaybe = note
 
-			essay.setupChildren()
+			note?.setupChildren()
 		} else if count == 0 || !gCreateCombinedEssay {
-			noteMaybe = ZNote(self)
+			note      = ZNote(self)
+			noteMaybe = note
 		} else {
-			let zone = zones[0]
-			zone.noteMaybe = ZNote(zone)
+			let  zone = zones[0]
+			note      = ZNote(zone)
+			zone.noteMaybe = note
 		}
+
+		return note
 	}
 
 	func destroyNote() {

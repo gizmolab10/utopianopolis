@@ -65,7 +65,7 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 		var result = ""
 
 		for part in parts {
-			let strip = part.stripped
+			let strip = part.spacesStripped
 			var short = strip[0]
 
 			switch strip {
@@ -118,7 +118,7 @@ class ZoneWidget: ZView {
 	}
 
 	var controller: ZMapController? {
-		if type.isBigMap      { return     gMapController }
+		if type.isBigMap   { return      gMapController }
 		if type.isRecent   { return gSmallMapController }
 		if type.isFavorite { return gSmallMapController }
 
@@ -302,7 +302,6 @@ class ZoneWidget: ZView {
 
     // MARK:- drag
     // MARK:-
-
 
     var hitRect: CGRect? {
         if  let start =   dragDot.innerOrigin,
@@ -586,7 +585,7 @@ class ZoneWidget: ZView {
 				nowDrawLines = true
 
 				if  gDebugDraw {
-					drawColored(rect: iDirtyRect, .purple)
+					drawColoredRect(iDirtyRect, .purple)
 				}
 
 				textWidget.updateTextColor()

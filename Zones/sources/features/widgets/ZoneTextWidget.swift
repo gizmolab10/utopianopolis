@@ -204,7 +204,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         if  let original = text {
             let substrings = original.components(separatedBy: kHalfLineOfDashes)
             if  substrings.count > 1 {
-                extract = substrings[1].stripped
+                extract = substrings[1].spacesStripped
             }
         }
         

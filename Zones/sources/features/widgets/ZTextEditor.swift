@@ -95,20 +95,28 @@ class ZTextPack: NSObject {
     }
 
     func updateText(isEditing: Bool = false) {
-		var name  = isEditing ? unwrappedName : textWithSuffix
-		if  name == kEmptyIdea {
-			packedZone?.updateInstanceProperties()
+		var        text = isEditing ? unwrappedName : textWithSuffix
 
-			name  = isEditing ? unwrappedName : textWithSuffix
+		if !isEditing,
+			text.length > 18,
+			let    type = widget?.type,
+			!type.contains(.tBigMap) {                                  // is in small map
+			let  isLine = text[0] == "-"
+			text        = text.substring(toExclusive: isLine ? 20 : 15) // shorten to fit (in small map area)
+
+			if !isLine {
+				text.append("...")
+			}
 		}
 
-		textWidget?.text = name
+		textWidget?.text = text
 	}
 
     func setup(for iZRecord: ZRecord) {
-        packedTrait      = iZRecord as? ZTrait
-        packedZone       = iZRecord as? Zone ?? packedTrait?.ownerZone
-        originalText     = unwrappedName
+        packedTrait  = iZRecord as? ZTrait
+        packedZone   = iZRecord as? Zone ?? packedTrait?.ownerZone
+        originalText = unwrappedName
+
         textWidget?.text = originalText
     }
 

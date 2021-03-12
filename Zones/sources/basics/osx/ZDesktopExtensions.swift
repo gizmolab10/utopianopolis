@@ -1066,7 +1066,7 @@ extension Zone {
 							printDebug(.dError, "\(error)")
 					}
 					case .eEssay:
-						if  let text = self.note.essayText {
+						if  let text = self.note?.essayText {
 							do {
 								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
 								let  wrapper = FileWrapper(regularFileWithContents: fileData)

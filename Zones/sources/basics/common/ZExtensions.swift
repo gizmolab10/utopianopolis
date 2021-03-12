@@ -1671,7 +1671,7 @@ extension String {
         return result
     }
 
-    var stripped: String {
+    var spacesStripped: String {
         var before = self
         
         while before.starts(withAnyCharacterIn: kSpace) {
@@ -1695,7 +1695,7 @@ extension String {
 //            altered = altered.substring(toExclusive: lastIndex)
 //        }
 
-        altered = altered.stripped
+        altered = altered.spacesStripped
 
         return altered
     }
@@ -2294,7 +2294,7 @@ extension ZView {
 		print(result.joined(separator: "\r"))
 	}
 
-	func drawColored(rect: CGRect, _ color: ZColor) {
+	func drawColoredRect(_ rect: CGRect, _ color: ZColor) {
 		color.setStroke()
 		ZBezierPath(rect: rect).stroke()
 	}

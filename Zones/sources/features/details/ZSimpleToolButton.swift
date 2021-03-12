@@ -18,7 +18,7 @@ class ZSimpleToolButton: ZButton {
 		downTitle = alternateTitle.isEmpty ? title : alternateTitle
 		upTitle   = title
 
-		let options = [NSTrackingArea.Options.mouseEnteredAndExited, NSTrackingArea.Options.activeInKeyWindow, NSTrackingArea.Options.activeAlways, NSTrackingArea.Options.inVisibleRect] as NSTrackingArea.Options
+		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect, .cursorUpdate] as NSTrackingArea.Options
 		let tracker = NSTrackingArea(rect:frame, options: options, owner:self, userInfo: nil)
 		addTrackingArea(tracker)
 	}

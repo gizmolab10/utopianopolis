@@ -598,7 +598,7 @@ class ZMapEditor: ZBaseEditor {
 
 	func editNote(_  OPTION: Bool, useGrabbed: Bool = true) {
 		if !gIsNoteMode {
-			gCreateCombinedEssay = !OPTION				        // default is multiple, OPTION drives it to single
+			gCreateCombinedEssay = !OPTION				             // default is multiple, OPTION drives it to single
 
 			if  gCurrentEssay   == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
 				gCurrentEssay    = gSelecting.firstGrab?.note
@@ -677,16 +677,16 @@ class ZMapEditor: ZBaseEditor {
         // swap currently editing zone with sibling, resuming edit //
         // //////////////////////////////////////////////////////////
         
-        if  let    zone = t.currentlyEditedZone, zone.hasSiblings {
-            let atStart = gListGrowthMode == .up
-            let  offset = t.editingOffset(atStart)
+        if  let   zone = t.currentlyEditedZone, zone.hasSiblings {
+            let upward = gListGrowthMode == .up
+            let offset = t.editingOffset(upward)
             
             t.stopCurrentEdit(forceCapture: true)
             zone.ungrab()
             
             gCurrentBrowseLevel = zone.level // so cousin list will not be empty
             
-            moveUp(atStart, [zone], selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { iKind in
+            moveUp(upward, [zone], selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { iKind in
                 gRedrawMaps() {
                     t.edit(zone)
                     t.setCursor(at: offset)
@@ -1166,6 +1166,7 @@ class ZMapEditor: ZBaseEditor {
     }
     
     func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
+		var       response = ZSignalKind.sRelayout
         let   doCousinJump = !gBrowsingIsConfined
 		let      hereMaybe = gHereMaybe
         let         isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
@@ -1306,6 +1307,8 @@ class ZMapEditor: ZBaseEditor {
                     } else if !growSelection {
 						findChildMatching(&grabThis, iMoveUp, iOffset) // should look at siblings, not children
 						grabThis.grab(updateBrowsingLevel: false)
+
+						response = .sStatus
                     } else if !grabThis.isGrabbed || extreme {
                         var grabThese = [grabThis]
                         
@@ -1327,6 +1330,8 @@ class ZMapEditor: ZBaseEditor {
                         }
                         
                         gSelecting.addMultipleGrabs(grabThese)
+
+						response = .sStatus
                     }
                 } else if doCousinJump,
                     var index  = targetZones.firstIndex(of: rootMost) {
@@ -1356,7 +1361,7 @@ class ZMapEditor: ZBaseEditor {
                     }
                 }
 
-				onCompletion?(.sRelayout)
+				onCompletion?(response)
             }
         }
     }
