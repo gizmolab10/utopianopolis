@@ -17,8 +17,8 @@ import UIKit
 let gTimers = ZTimers()
 
 enum ZTimerID : Int {
+	case tTextEditorHandlesArrows
 	case tNeedCloudDriveEnabled
-	case tArrowsDoNotBrowse
 	case tCoreDataAvailable
 	case tRecordsEveryone
 	case tNeedUserAccess
@@ -98,7 +98,7 @@ func gStartTimer(for timerID: ZTimerID?) {
 			case .tKey:               closure = { iTimer in gCurrentKeyPressed        = "" }
 			case .tMouseZone:         closure = { iTimer in gCurrentMouseDownZone     = nil }
 			case .tMouseLocation:     closure = { iTimer in gCurrentMouseDownLocation = nil }
-			case .tArrowsDoNotBrowse: closure = { iTimer in gArrowsDoNotBrowse        = false }
+			case .tTextEditorHandlesArrows: closure = { iTimer in gTextEditorHandlesArrows        = false }
 			case .tStartup:           closure = { iTimer in gIncrementStartupProgress() }
 			case .tSync:              closure = { iTimer in if gIsReadyToShowUI { gSaveContext(); gBatches.save { iSame in } } }
 			case .tRecount:           closure = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount() } }
@@ -138,10 +138,10 @@ func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double 
 	gStartTimer(for: .tMouseLocation)
 }
 
-func gTemporarilySetArrowsDoNotBrowse(_ notBrowse: Bool, for seconds: Double = 1.0) {
-	gArrowsDoNotBrowse = notBrowse
+func gTemporarilySetTextEditorHandlesArrows(for seconds: Double = 1.0) {
+	gTextEditorHandlesArrows = true
 
-	gStartTimer(for: .tArrowsDoNotBrowse)
+	gStartTimer(for: .tTextEditorHandlesArrows)
 
 }
 

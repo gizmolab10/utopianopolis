@@ -104,7 +104,7 @@ class ZBreadcrumbsView : ZButtonsView {
 					} else {
 						last?.grab()
 					}
-				case .wBigMapMode:
+				case .wMapMode:
 					if  COMMAND {
 						next.grab()
 						next.traverseAllProgeny { child in

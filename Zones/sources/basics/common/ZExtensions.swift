@@ -2321,11 +2321,11 @@ extension ZView {
     }
 
     func applyToAllSubviews(_ closure: ViewClosure) {
-        closure(self)
-
         for view in subviews {
             view.applyToAllSubviews(closure)
         }
+
+		closure(self)
     }
 
     func applyToAllSuperviews(_ closure: ViewClosure) {

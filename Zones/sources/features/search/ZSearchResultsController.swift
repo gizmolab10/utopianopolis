@@ -319,10 +319,10 @@ class ZSearchResultsController: ZGenericTableController {
 		let COMMAND = flags.isCommand
 
 		switch arrow {
-			case       .up: moveSelection(up: true,  extreme: COMMAND)
-			case     .down: moveSelection(up: false, extreme: COMMAND)
-			case    .right: if !resolve() { return false }
-			case     .left: switchToSearchBox()
+			case    .up: moveSelection(up: true,  extreme: COMMAND)
+			case  .down: moveSelection(up: false, extreme: COMMAND)
+			case .right: if !resolve() { return false }
+			case  .left: switchToSearchBox()
 		}
 
 		return true

@@ -983,9 +983,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addBookmark() {
-		if  databaseID != .favoritesID, !isARoot {
-			var bookmark: Zone?
-
+		if  !isARoot {
 			if  gHere == self {
 				revealParentAndSiblings()
 
@@ -993,11 +991,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			self.invokeUsingDatabaseID(.mineID) {
-				bookmark = gBookmarks.createBookmark(targetting: self)
+				let bookmark = gBookmarks.createBookmark(targetting: self)
 
-				bookmark?.grab()
-				bookmark?.needSave()
-				bookmark?.markNotFetched()
+				bookmark.grab()
+				bookmark.needSave()
+				bookmark.markNotFetched()
 			}
 
 			gRedrawMaps()
@@ -1018,7 +1016,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		    userCanMutateProgeny {
 			expand()
 			addIdea(at: gListsGrowDown ? nil : 0) { iChild in
-				gControllers.signalFor(self, regarding: .sRelayout) {
+				gControllers.signalFor(self, multiple: [.sRelayout]) {
 					gTemporarilySetMouseZone(iChild)
 					iChild?.edit()
 				}
@@ -1422,7 +1420,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gHere = self
 
 		expand()
-		gControllers.swapMapAndEssay(force: .wBigMapMode)
+		gControllers.swapMapAndEssay(force: .wMapMode)
 		gRedrawMaps()
 
 		let e = edit()
@@ -3230,7 +3228,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "o":     importFromFile(.eSeriously) { gRedrawMaps(for: self) }
 				case "p":     break
 				case "r":     reverseChildren()
-				case "s":     exportToFile(.eSeriously)
+				case "s":     gFiles.export(self, toFileAs: .eSeriously)
 				case "t":     swapWithParent()
 				case "/":     focusRecent()
 				case "_":     break

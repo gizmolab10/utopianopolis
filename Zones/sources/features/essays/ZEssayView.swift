@@ -63,7 +63,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			e.zone?.destroyNote()
 		}
 
-		gControllers.swapMapAndEssay(force: .wBigMapMode)
+		gControllers.swapMapAndEssay(force: .wMapMode)
 	}
 
 	func save() {
@@ -144,7 +144,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				gMainWindow?.makeFirstResponder(self)    // this should never happen unless alread in note mode
 			}
 		} else {
-			gWorkMode = .wBigMapMode // not show blank essay
+			gWorkMode = .wMapMode // not show blank essay
 		}
 	}
 
@@ -617,14 +617,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	func setControlBarButtons(      enabled: Bool) {
-		gMainWindow?.inspectorBar?.isHidden = !enabled
-		backwardButton?          .isEnabled =  enabled
-		forwardButton?           .isEnabled =  enabled
-		deleteButton?            .isEnabled =  enabled
-		cancelButton?            .isEnabled =  enabled
-		titlesButton?            .isEnabled =  enabled
-		hideButton?              .isEnabled =  enabled
-		saveButton?              .isEnabled =  enabled
+		let                   bar = gMainWindow?.inspectorBar
+		bar?            .isHidden = !enabled
+		backwardButton?.isEnabled =  enabled
+		forwardButton? .isEnabled =  enabled
+		deleteButton?  .isEnabled =  enabled
+		cancelButton?  .isEnabled =  enabled
+		titlesButton?  .isEnabled =  enabled
+		hideButton?    .isEnabled =  enabled
+		saveButton?    .isEnabled =  enabled
+
+		if  let b = bar {
+			b.draw(b.bounds)
+		}
 	}
 
 	@objc private func handleButtonPress(_ iButton: ZButton) {
@@ -692,35 +697,37 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				return final
 			}
 
-			func buttonWith(_ title: String) -> ZButton {
+			func buttonWith(_ title: String) -> ZSimpleToolButton {
 				let    action = #selector(handleButtonPress)
 
 				if  let image = ZImage(named: title)?.resize(CGSize(width: 14.0, height: 14.0)) {
-					return      ZButton(image: image, target: self, action: action)
+					return      ZSimpleToolButton(image: image, target: self, action: action)
 				}
 
-				let    button = ZButton(title: title, target: self, action: action)
+				let    button = ZSimpleToolButton(title: title, target: self, action: action)
 				button  .font = gTinyFont
 
 				return button
 			}
 
-			func buttonFor(_ tag: ZEssayButtonID) -> ZButton {
+			func buttonFor(_ tag: ZEssayButtonID) -> ZSimpleToolButton {
 				let         index = inspectorBar.subviews.count - 1
 				var         frame = rect(at: index).offsetBy(dx: 2.0, dy: -5.0)
 				let         title = tag.title
 				let        button = buttonWith(title)
+				let          size = button.bounds.insetBy(dx: 12.0, dy: 0.0).size
+				let        bounds = CGRect(origin: .zero, size: size)
 				let       options : NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .cursorUpdate]
-				let          area = NSTrackingArea(rect: frame, options: options, owner:nil, userInfo: nil)
-				button   .toolTip = "\(kClickTo)\(tag.tooltip)"
-				frame       .size = button.bounds.insetBy(dx: 12.0, dy: 0.0).size
-				button     .frame = frame
+				let          area = NSTrackingArea(rect: bounds, options: options, owner:self, userInfo: nil)
+				frame       .size = size
+				button   .toolTip = "\(kClickTo)\(tag.tooltipString)"
 				button       .tag = tag.rawValue
+				button     .frame = frame
 				button .isEnabled = false
 				button.isBordered = false
 				button.bezelStyle = .texturedRounded
 
-				button.addTrackingArea(area)
+				button.addTrackingArea(area) // for tool tip
 
 				return button
 			}
@@ -851,7 +858,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 							eZone?.asssureIsVisible()
 
 							FOREGROUND {
-								gControllers.swapMapAndEssay(force: .wBigMapMode)
+								gControllers.swapMapAndEssay(force: .wMapMode)
 								gRedrawMaps()
 							}
 

@@ -93,21 +93,17 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 	var workingEditor: ZBaseEditor? {
 		switch gWorkMode {
 			case .wEditIdeaMode,
-				 .wBigMapMode: return gMapEditor
+				 .wMapMode:    return gMapEditor
 //			case .wEssayMode:  return gEssayEditor
 			default: 	       return nil
 		}
 	}
-
-    open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
-        return workingEditor?.isValid(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask) ?? true
-    }
     
     @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
 		if  let item = iItem,
-			let e = workingEditor,
-			validateMenuItem(item) {
-			e.handleMenuItem(item)
+			let    e = workingEditor,
+			e.validateMenuItem(item) {
+			e  .handleMenuItem(item)
 		}
     }
 

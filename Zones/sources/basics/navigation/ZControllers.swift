@@ -72,11 +72,11 @@ class ZControllers: NSObject {
 	}
 
 	func swapMapAndEssay(force mode: ZWorkMode? = nil) {
-		gWorkMode = mode ?? (gIsNoteMode ? .wBigMapMode : .wEssayMode)
+		gWorkMode = mode ?? (gIsNoteMode ? .wMapMode : .wEssayMode)
 
 		FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking map editor's handle key)
-			gTextEditor.stopCurrentEdit()
 			gEssayView?.setControlBarButtons(enabled: gWorkMode == .wEssayMode)
+			gTextEditor.stopCurrentEdit()
 			self.signalFor(nil, multiple: [.sSwap, .sCrumbs, .sRelayout])
 		}
 	}
@@ -128,10 +128,6 @@ class ZControllers: NSObject {
 			closure    = iClosure
 		}
 	}
-
-	func signalFor(_ object: Any? = nil, regarding: ZSignalKind, onCompletion: Closure? = nil) {
-        signalFor(object, multiple: [regarding], onCompletion: onCompletion)
-    }
 
 	func signalFor(_ object: Any? = nil, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
 		let startupIDs : [ZControllerID] = [.idStartup, .idHelpDots]

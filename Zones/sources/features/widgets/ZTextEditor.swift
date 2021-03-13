@@ -419,16 +419,16 @@ class ZTextEditor: ZTextView {
     func moveOut(_ iMoveOut: Bool) {
         let revealed = currentlyEditedZone?.expanded ?? false
 
+		gTemporarilySetTextEditorHandlesArrows()   // done first, this timer is often not be needed, KLUDGE to fix a bug where arrow keys are ignored
+
         let editAtOffset: FloatClosure = { iOffset in
             if  let grabbed = gSelecting.firstSortedGrab {
                 gSelecting.ungrabAll()
                 self.edit(grabbed, setOffset: iOffset, immediately: revealed)
             }
 
-			gArrowsDoNotBrowse = false           // done last
+			gTextEditorHandlesArrows = false       // done last
         }
-
-		gTemporarilySetArrowsDoNotBrowse(true)   // done first, this timer is often not be needed, KLUDGE to fix a bug where arrow keys are ignored
 
         if  iMoveOut {
             quickStopCurrentEdit()
@@ -461,8 +461,8 @@ class ZTextEditor: ZTextView {
         }
         
         if  var original = currentZone {
-            gMapEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { iKind in
-                gControllers.signalFor(nil, regarding: iKind) {
+            gMapEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { iKinds in
+                gControllers.signalFor(nil, multiple: iKinds) {
                     if  isHere {
                         self.currentOffset = currentZone?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
                     }
@@ -490,7 +490,7 @@ class ZTextEditor: ZTextView {
     }
 
 	func setCursor(at iOffset: CGFloat?) {
-        gArrowsDoNotBrowse = false
+        gTextEditorHandlesArrows = false
         if  var     offset = iOffset,
             let       zone = currentlyEditedZone,
             let         to = currentTextWidget {

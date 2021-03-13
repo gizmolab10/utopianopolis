@@ -139,6 +139,63 @@ class ZFiles: NSObject {
 		}
 	}
 
+	func export(_ zone: Zone, toFileAs type: ZExportType) {
+		let           panel = NSSavePanel()
+		let          suffix = type.rawValue
+		panel      .message = "Export as \(suffix)"
+		gIsExportingToAFile = true
+
+		if  let  name = zone.zoneName {
+			panel.nameFieldStringValue = "\(name).\(suffix)"
+		}
+
+		panel.begin { result in
+			if  result == .OK,
+				let fileURL = panel.url {
+
+				switch type {
+					case .eOutline:
+						let string = zone.outlineString()
+
+						do {
+							try string.write(to: fileURL, atomically: true, encoding: .utf8)
+						} catch {
+							printDebug(.dError, "\(error)")
+						}
+					case .eSeriously:
+						gFiles.writtenRecordNames.removeAll()
+
+						do {
+							let     dict = try zone.storageDictionary()
+							let jsonDict = dict.jsonDict
+							let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
+
+							try data.write(to: fileURL)
+						} catch {
+							printDebug(.dError, "\(error)")
+						}
+					case .eEssay:
+						if  let text = zone.note?.essayText {
+							do {
+								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
+								let  wrapper = FileWrapper(regularFileWithContents: fileData)
+
+								try  wrapper.write(to: fileURL, options: .atomic, originalContentsURL: nil)
+
+//								let fileText = String(data: fileData, encoding: .utf8)
+//								try fileText?.write(to: fileURL, atomically: false, encoding: .utf8)
+
+							} catch {
+								printDebug(.dError, "\(error)")
+							}
+						}
+				}
+			}
+
+			gIsExportingToAFile = false
+		}
+	}
+
     // MARK:- heavy lifting
     // MARK:-
 

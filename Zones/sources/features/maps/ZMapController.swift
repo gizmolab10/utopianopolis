@@ -253,7 +253,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		if  gIsNoteMode {
 			gEssayView?.save()
-			gControllers.swapMapAndEssay(force: .wBigMapMode)
+			gControllers.swapMapAndEssay(force: .wMapMode)
 		}
 
 		if  gIsMapOrEditIdeaMode,
@@ -262,7 +262,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let     OPTION = gesture.isOptionDown
 			let      SHIFT = gesture.isShiftDown
             let editWidget = gCurrentlyEditingWidget
-            var  regarding = ZSignalKind.sData
+            var   multiple = [ZSignalKind.sData]
             var  notInEdit = true
 
 			editWidget?.widgetZone?.needWrite()
@@ -295,7 +295,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 							if  dot.isReveal {
 								zone.revealDotClicked(COMMAND: COMMAND, OPTION: OPTION)
 							} else {
-								regarding = .sCrumbs // update selection level and breadcrumbs
+								multiple = [.sCrumbs] // update selection level and breadcrumbs
 
 								zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
 							}
@@ -314,7 +314,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					}
                 }
 
-                gSignal([regarding])
+                gSignal(multiple)
             }
 
             restartGestureRecognition()

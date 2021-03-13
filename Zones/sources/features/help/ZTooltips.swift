@@ -129,12 +129,10 @@ extension ZSimpleToolsController {
 
 	func updateTooltips() {
 		view.applyToAllSubviews { subview in
-			if  let     button  = subview as? ZSimpleToolButton {
-				let     string  = button.tooltipString
-				button.toolTip  = string
-			} else if  let box  = subview as? ZBox {
-				let     string  = box.tooltipString
-				box.toolTip     = string
+			if  let     button = subview as? ZSimpleToolButton {
+				button.toolTip = button.tooltipString
+			} else if  let box = subview as? ZBox {
+				box   .toolTip = box   .tooltipString
 			}
 		}
 	}

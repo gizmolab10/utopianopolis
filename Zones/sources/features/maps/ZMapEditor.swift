@@ -49,18 +49,18 @@ class ZMapEditor: ZBaseEditor {
 
     @discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
 		if !gIsEditingStateChanging,
-			var     key = iKey {
-            let CONTROL = flags.isControl
-            let COMMAND = flags.isCommand
-            let  OPTION = flags.isOption
-            var   SHIFT = flags.isShift
+		    var     key = iKey {
+			let   arrow = key.arrow
+			let CONTROL = flags.isControl
+			let COMMAND = flags.isCommand
+			let  OPTION = flags.isOption
+			var   SHIFT = flags.isShift
 			let SPECIAL = flags.isSpecial
 			let     ALL = COMMAND && OPTION && CONTROL
 			let IGNORED = 	 		 OPTION && CONTROL
 			let    HARD = COMMAND &&           CONTROL
 			let FLAGGED = COMMAND || OPTION || CONTROL
-            let   arrow = key.arrow
-            
+
             if  key    != key.lowercased() {
                 key     = key.lowercased()
                 SHIFT   = true
@@ -124,7 +124,7 @@ class ZMapEditor: ZBaseEditor {
 						case "o":        gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
 						case "p":        printCurrentFocus()
 						case "r":        if FLAGGED { gRemoteStorage.recount() } else { reverse() }
-						case "s":        if CONTROL { pushAllToCloud() } else { gHere.exportToFile(OPTION ? .eOutline : .eSeriously) }
+						case "s":        if CONTROL { pushAllToCloud() } else { gFiles.export(gSelecting.currentMoveable, toFileAs: OPTION ? .eOutline : .eSeriously) }
 						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() }
@@ -161,7 +161,8 @@ class ZMapEditor: ZBaseEditor {
     }
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        if  gIsEditIdeaMode || gArrowsDoNotBrowse {
+		if  gIsExportingToAFile { return }
+        if  gTextEditorHandlesArrows || gIsEditIdeaMode {
             gTextEditor.handleArrow(arrow, flags: flags)
             
             return
@@ -1160,18 +1161,18 @@ class ZMapEditor: ZBaseEditor {
     func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
 		priorHere = gHere
 
-		moveUp(iMoveUp, gSelecting.sortedGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKind in
-            gSignal([iKind])
+		moveUp(iMoveUp, gSelecting.sortedGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKinds in
+            gSignal(iKinds)
         }
     }
     
-    func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, onCompletion: SignalKindClosure? = nil) {
-		var       response = ZSignalKind.sRelayout
+	func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, forcedResponse: [ZSignalKind]? = nil, onCompletion: SignalArrayClosure? = nil) {
+		var       response = forcedResponse ?? [ZSignalKind.sRelayout]
         let   doCousinJump = !gBrowsingIsConfined
 		let      hereMaybe = gHereMaybe
         let         isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
         guard let rootMost = originalGrabs.rootMost(goingUp: iMoveUp) else {
-			onCompletion?(.sData)
+			onCompletion?([.sData])
             
             return
         }
@@ -1180,7 +1181,7 @@ class ZMapEditor: ZBaseEditor {
         
         if  isHere {
             if  rootMost.isARoot {
-				onCompletion?(.sData)
+				onCompletion?([.sData])
             } else {
 
                 // ////////////////////////
@@ -1198,11 +1199,15 @@ class ZMapEditor: ZBaseEditor {
 					gHere = parent
 
 					if  recurse {
+						if !isHere {
+							response = [.sStatus, .sCrumbs]
+						}
+
 						gSelecting.updateCousinList()
-						self.moveUp(iMoveUp, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, onCompletion: onCompletion)
+						self.moveUp(iMoveUp, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, forcedResponse: response, onCompletion: onCompletion)
 					} else {
 						gFavorites.updateAllFavorites()
-						onCompletion?(.sRelayout)
+						onCompletion?([.sRelayout])
 					}
 				}
 			}
@@ -1252,7 +1257,7 @@ class ZMapEditor: ZBaseEditor {
                         self.moveZones(moveThese, into: intoParent, at: newIndex, orphan: true) {
                             gSelecting.grab(moveThese)
                             intoParent.children.updateOrder()
-                            onCompletion?(.sRelayout)
+                            onCompletion?([.sRelayout])
                         }
                     }
                 }
@@ -1308,7 +1313,9 @@ class ZMapEditor: ZBaseEditor {
 						findChildMatching(&grabThis, iMoveUp, iOffset) // should look at siblings, not children
 						grabThis.grab(updateBrowsingLevel: false)
 
-						response = .sStatus
+						if !isHere && forcedResponse == nil {
+							response = [.sStatus, .sCrumbs]
+						}
                     } else if !grabThis.isGrabbed || extreme {
                         var grabThese = [grabThis]
                         
@@ -1331,7 +1338,9 @@ class ZMapEditor: ZBaseEditor {
                         
                         gSelecting.addMultipleGrabs(grabThese)
 
-						response = .sStatus
+						if !isHere && forcedResponse == nil {
+							response = [.sStatus, .sCrumbs]
+						}
                     }
                 } else if doCousinJump,
                     var index  = targetZones.firstIndex(of: rootMost) {

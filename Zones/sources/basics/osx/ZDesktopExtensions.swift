@@ -805,7 +805,7 @@ extension ZTextEditor {
 	}
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-        if gIsHelpFrontmost { return }
+		if gIsHelpFrontmost { return }
 
         switch arrow {
         case .up,
@@ -1030,61 +1030,6 @@ extension Zone {
 
         return false
     }
-
-	func exportToFile(_ type: ZExportType) {
-		let     suffix = type.rawValue
-		let      panel = NSSavePanel()
-		panel.message  = "Export as \(suffix)"
-
-		if  let  name = zoneName {
-			panel.nameFieldStringValue = "\(name).\(suffix)"
-		}
-
-		panel.begin { result in
-			if  result == .OK,
-				let fileURL = panel.url {
-
-				switch type {
-					case .eOutline:
-						let string = self.outlineString()
-
-						do {
-							try string.write(to: fileURL, atomically: true, encoding: .utf8)
-						} catch {
-							printDebug(.dError, "\(error)")
-					}
-					case .eSeriously:
-						gFiles.writtenRecordNames.removeAll()
-
-						do {
-							let     dict = try self.storageDictionary()
-							let jsonDict = dict.jsonDict
-							let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
-
-							try data.write(to: fileURL)
-						} catch {
-							printDebug(.dError, "\(error)")
-					}
-					case .eEssay:
-						if  let text = self.note?.essayText {
-							do {
-								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
-								let  wrapper = FileWrapper(regularFileWithContents: fileData)
-
-								try  wrapper.write(to: fileURL, options: .atomic, originalContentsURL: nil)
-
-//								let fileText = String(data: fileData, encoding: .utf8)
-
-//								try fileText?.write(to: fileURL, atomically: false, encoding: .utf8)
-
-							} catch {
-								printDebug(.dError, "\(error)")
-							}
-					}
-				}
-			}
-		}
-	}
 
 }
 

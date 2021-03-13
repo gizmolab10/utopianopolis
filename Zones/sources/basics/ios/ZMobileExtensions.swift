@@ -479,8 +479,6 @@ extension ZApplication {
 
 extension Zone {
 
-	func exportToFile(_ type: ZExportType) {}
-
     func hasZoneAbove(_ iAbove: Bool) -> Bool {
         if  let     index  = siblingIndex {
             let compareTo  = !iAbove ? 0 : (parentZone!.count - 1)

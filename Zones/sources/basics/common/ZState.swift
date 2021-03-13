@@ -29,11 +29,12 @@ var          gIsReadyToShowUI                     = false
 var          gDeferringRedraw                     = false
 var         gGotProgressTimes                     = false
 var        gKeyboardIsVisible                     = false
-var        gArrowsDoNotBrowse                     = false
 var       gHasFinishedStartup                     = false
+var       gIsExportingToAFile                     = false
 var      gCreateCombinedEssay 			   		  = false
 var    gRefusesFirstResponder                     = false
 var   gIsEditingStateChanging                     = false
+var  gTextEditorHandlesArrows                     = false
 var        gInterruptionCount                     = 0
 var    gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var gCurrentMouseDownLocation:           CGFloat?
@@ -61,7 +62,7 @@ var           gIsRecentlyMode:               Bool { return gSmallMapMode    == .
 var            gListsGrowDown:               Bool { return gListGrowthMode  == .down }
 var           gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var               gIsNoteMode:               Bool { return gWorkMode == .wEssayMode }
-var                gIsMapMode:               Bool { return gWorkMode == .wBigMapMode }
+var                gIsMapMode:               Bool { return gWorkMode == .wMapMode }
 var             gIsSearchMode:               Bool { return gWorkMode == .wSearchMode }
 var            gIsStartupMode:               Bool { return gWorkMode == .wStartupMode }
 var           gIsEditIdeaMode:               Bool { return gWorkMode == .wEditIdeaMode }
@@ -95,7 +96,7 @@ var                 gTinyFont:              ZFont { return .systemFont    (ofSiz
 func      gToggleShowTooltips()                   { gShowToolTips = !gShowToolTips; gSignal([.sRelayout]) }
 func        gToggleDatabaseID()                   { gDatabaseID   = gOtherDatabaseID }
 func         gSetEditIdeaMode()                   { gWorkMode     = .wEditIdeaMode }
-func           gSetBigMapMode()                   { gWorkMode     = .wBigMapMode }
+func           gSetBigMapMode()                   { gWorkMode     = .wMapMode }
 
 let                 kHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize)
 let                 kBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize)

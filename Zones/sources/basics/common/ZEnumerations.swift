@@ -108,7 +108,7 @@ enum ZWorkMode: String {
 	case wEditIdeaMode = "i"
 	case wStartupMode  = "s"
     case wSearchMode   = "?"
-	case wBigMapMode   = "g"
+	case wMapMode      = "g"
 	case wEssayMode    = "n"
 }
 
@@ -390,7 +390,7 @@ enum ZEssayButtonID : Int {
 		}
 	}
 
-	var tooltip : String {
+	var tooltipString : String {
 		let kind = (gCurrentEssay?.isNote ?? true) ? "Note" : "Essay"
 		switch self {
 			case .idForward: return "show next"
