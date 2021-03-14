@@ -21,7 +21,7 @@ class ZBreadcrumbButton: ZButton, ZTooltips {
 		} else if  gIsDark {
 			return visible ? kDarkGrayColor.darker(by: 6.0) : kDarkGrayColor.darker(by: 4.0)
 		} else {
-			return visible ? kDarkGrayColor.darker(by: 3.0) : kLightestGrayColor
+			return visible ? kDarkGrayColor.darker(by: 3.0) : kLighterGrayColor
 		}
 	}
 

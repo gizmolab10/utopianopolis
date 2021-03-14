@@ -9,7 +9,7 @@
 import Foundation
 
 var   gDebugModes : ZDebugMode    = []
-var   gPrintModes : ZPrintMode    = [.dData, .dTime, .dCross]
+var   gPrintModes : ZPrintMode    = [.dData] // , .dTime, .dCross]
 var gCoreDataMode : ZCoreDataMode = [.dEnabled, .dCanSave, .dCanLoad]
 var  gUseCoreData : Bool { return gCoreDataMode.contains(.dEnabled) }
 var      gCanSave : Bool { return gCoreDataMode.contains(.dCanSave) && gUseCoreData }

@@ -35,7 +35,7 @@ class ZTogglingView: NSStackView {
 	var toolTipText: String {
 		switch identity {
 			case .vPreferences : return "preference controls"
-			case .vSimpleTools : return "basic buttons to get you started"
+			case .vSimpleTools : return "some simple tools which can get you oriented"
 			case .vSmallMap    : return "\(gCurrentSmallMapName)s map"
 			case .vData        : return "useful data about Seriously"
 			default            : return ""

@@ -231,7 +231,6 @@ class ZSmallMapRecords: ZRecords {
 		if  let       zone = iZone,
 			let       root = rootZone {
 			let  newParent = currentHere
-			let databaseID = zone.databaseID
 			var     parent = zone.parentZone
 			let isBookmark = zone.isBookmark
 			let  actNormal = action == .aBookmark

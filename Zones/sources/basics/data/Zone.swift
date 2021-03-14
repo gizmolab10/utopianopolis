@@ -194,9 +194,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				parent  = CKReference(recordID: CKRecordID(recordName: pID), action: .none)
 			}
 
-			if  let    dID = dbid {
-				databaseID = ZDatabaseID.convert(from: dID)
-			}
+			databaseID = ZDatabaseID.convert(from: dbid)
 		}
 	}
 
@@ -518,8 +516,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			crossLinkMaybe = nil
 			zoneLink       = kNullLink
 			if  let  value = newValue,
-				let   dbid = value.databaseID?.rawValue,
 				let   name = value.ckRecordName {
+				let   dbid = (value.databaseID ?? gDatabaseID).rawValue
 				zoneLink   = "\(dbid)::\(name)"
 			}
 		}
@@ -823,9 +821,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			for trait in traits.values {
-				if  let zdbid = databaseID,
-					let tdbid = trait.databaseID,
-					zdbid == tdbid {                // avoid cross-store relationships
+				if  let zdbID = databaseID,
+					let tdbID = trait.databaseID,
+					zdbID == tdbID {                // avoid cross-store relationships
 					traitArray.insert(trait)
 				}
 			}

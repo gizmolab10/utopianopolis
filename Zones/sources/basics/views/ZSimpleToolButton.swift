@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZSimpleToolButton: ZButton {
+class ZSimpleToolButton: ZTooltipButton {
 
 	@IBOutlet var controller: ZSimpleToolsController?
 	var downTitle = ""
@@ -18,9 +18,7 @@ class ZSimpleToolButton: ZButton {
 		downTitle = alternateTitle.isEmpty ? title : alternateTitle
 		upTitle   = title
 
-		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect, .cursorUpdate] as NSTrackingArea.Options
-		let tracker = NSTrackingArea(rect:frame, options: options, owner:self, userInfo: nil)
-		addTrackingArea(tracker)
+		updateTracking()
 	}
 
 	func updateTitleForDown(_ down: Bool) {

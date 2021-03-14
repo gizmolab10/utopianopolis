@@ -45,6 +45,7 @@ class ZBaseEditor: NSObject {
 				case "r": if SPECIAL { sendEmailBugReport();                       handled = true }
 				case "t": if OPTION  { fetchTraits();                              handled = true }
 				case "x": if SPECIAL { clearRecents();                             handled = true }
+				case "y": if COMMAND { gToggleShowTooltips();                      handled = true }
 				default:  break
 			}
 		}
@@ -105,7 +106,7 @@ class ZBaseEditor: NSObject {
 	func toggleColorfulMode() {
 		gColorfulMode = !gColorfulMode
 
-		gRedrawMaps()
+		gSignal([.sRelayout, .sPreferences])
 	}
 
 }

@@ -85,7 +85,7 @@ var   gDeciSecondsSinceLaunch:                Int { return Int(Date().timeInterv
 var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
 var          gDarkAccentColor:             ZColor { return gAccentColor.darker  (by: 1.3) }
 var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
-var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kLightestGrayColor : kBlackColor }
+var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kLighterGrayColor : kBlackColor }
 var          gBackgroundColor:             ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
 var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
 var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
@@ -287,7 +287,7 @@ var gSmallMapIsVisible: Bool {
 }
 
 var gAccentColor: ZColor {
-	get { return !gColorfulMode ? gIsDark ? kDarkerGrayColor : kLightestGrayColor : getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) }
+	get { return !gColorfulMode ? gIsDark ? kDarkerGrayColor : kLighterGrayColor : getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) }
 	set { setPreferencesColor(newValue, for: kAccentColorKey) }
 }
 

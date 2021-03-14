@@ -236,7 +236,11 @@ enum ZDatabaseID: String {
 		}
     }
 
-    static func convert(from indicator: String) -> ZDatabaseID? {
+    static func convert(from indicator: String?) -> ZDatabaseID? {
+		guard indicator != nil else {
+			return gDatabaseID
+		}
+
 		switch indicator {
 			case "f": return .favoritesID
 			case "e": return .everyoneID
@@ -391,13 +395,13 @@ enum ZEssayButtonID : Int {
 	}
 
 	var tooltipString : String {
-		let kind = (gCurrentEssay?.isNote ?? true) ? "Note" : "Essay"
+		let kind = (gCurrentEssay?.isNote ?? true) ? "note" : "essay"
 		switch self {
 			case .idForward: return "show next"
-			case .idCancel:  return "cancel \(kind)"
+			case .idCancel:  return "cancel editing of \(kind)"
 			case .idDelete:  return "delete"
 			case .idTitles:  return "\(gShowEssayTitles ? "hide" : "show") all titles"
-			case .idHide:    return "exit \(kind)"
+			case .idHide:    return "hide \(kind)"
 			case .idSave:    return "save"
 			case .idBack:    return "show previous"
 		}

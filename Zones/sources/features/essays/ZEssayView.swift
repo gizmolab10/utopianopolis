@@ -130,8 +130,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		resetForDarkMode()
 		updateButtonTitles()
 
-		if  (shouldOverwrite || restoreSelection != nil),
-			let text = gCurrentEssay?.essayText {
+		if  gCurrentEssay == nil {
+			gWorkMode = .wMapMode // not show blank essay
+		} else if  (shouldOverwrite || restoreSelection != nil),
+			let text = gCurrentEssay!.essayText {
 			discardPriorText()
 			setControlBarButtons(enabled: true)
 			gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }	     // emplace text
@@ -143,8 +145,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  gIsNoteMode {
 				gMainWindow?.makeFirstResponder(self)    // this should never happen unless alread in note mode
 			}
-		} else {
-			gWorkMode = .wMapMode // not show blank essay
 		}
 	}
 
@@ -616,8 +616,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- buttons
 	// MARK:-
 
-	func setControlBarButtons(      enabled: Bool) {
-		let                   bar = gMainWindow?.inspectorBar
+	func setControlBarButtons(       enabled: Bool) {
+		let                   bar =  gMainWindow?.inspectorBar
 		bar?            .isHidden = !enabled
 		backwardButton?.isEnabled =  enabled
 		forwardButton? .isEnabled =  enabled
@@ -697,29 +697,26 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				return final
 			}
 
-			func buttonWith(_ title: String) -> ZSimpleToolButton {
+			func buttonWith(_ title: String) -> ZTooltipButton {
 				let    action = #selector(handleButtonPress)
 
 				if  let image = ZImage(named: title)?.resize(CGSize(width: 14.0, height: 14.0)) {
-					return      ZSimpleToolButton(image: image, target: self, action: action)
+					return      ZTooltipButton(image: image, target: self, action: action)
 				}
 
-				let    button = ZSimpleToolButton(title: title, target: self, action: action)
+				let    button = ZTooltipButton(title: title, target: self, action: action)
 				button  .font = gTinyFont
 
 				return button
 			}
 
-			func buttonFor(_ tag: ZEssayButtonID) -> ZSimpleToolButton {
+			func buttonFor(_ tag: ZEssayButtonID) -> ZTooltipButton {
 				let         index = inspectorBar.subviews.count - 1
 				var         frame = rect(at: index).offsetBy(dx: 2.0, dy: -5.0)
 				let         title = tag.title
 				let        button = buttonWith(title)
-				let          size = button.bounds.insetBy(dx: 12.0, dy: 0.0).size
-				let        bounds = CGRect(origin: .zero, size: size)
-				let       options : NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .cursorUpdate]
-				let          area = NSTrackingArea(rect: bounds, options: options, owner:self, userInfo: nil)
-				frame       .size = size
+				frame       .size = button.bounds.size
+				frame             = frame.insetBy(dx: 12.0, dy: 6.0)
 				button   .toolTip = "\(kClickTo)\(tag.tooltipString)"
 				button       .tag = tag.rawValue
 				button     .frame = frame
@@ -727,7 +724,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				button.isBordered = false
 				button.bezelStyle = .texturedRounded
 
-				button.addTrackingArea(area) // for tool tip
+				button.setButtonType(.momentaryChange)
+				button.updateTracking() // for tool tip
 
 				return button
 			}

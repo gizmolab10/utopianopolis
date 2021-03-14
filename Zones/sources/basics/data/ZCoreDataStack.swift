@@ -298,9 +298,11 @@ class ZCoreDataStack: NSObject {
 						count         -= 1
 
 						FOREGROUND(canBeDirect: true) {
-							zRecord.convertFromCoreData(into: type, visited: [])
-							zRecord.register()
-							onCompletion?(zRecord)
+							self.invokeUsingDatabaseID(dbID) {
+								zRecord.convertFromCoreData(into: type, visited: [])
+								zRecord.register()
+								onCompletion?(zRecord)
+							}
 						}
 
 						if  count == 0 {

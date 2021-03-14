@@ -65,8 +65,13 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 
 		if  let itemID = button.simpleToolID,
 			let    key = keyFrom(itemID) {
+			var      f = flags
 
-			gMainWindow?.handleKey(key, flags: flags)    // this is so cool, ;-)
+			if  key == "y" {
+				f.isCommand = true // tweak needed because plain y otherwise cannot be typed into essays
+			}
+
+			gMainWindow?.handleKey(key, flags: f)    // this is so cool, ;-)
 		}
 	}
 
