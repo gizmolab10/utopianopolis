@@ -90,7 +90,7 @@ class ZBaseEditor: NSObject {
 	}
 
 	func clearRecents() {
-		if  gIsNoteMode {
+		if  gIsEssayMode {
 			gControllers.swapMapAndEssay()
 		}
 

@@ -91,8 +91,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			for tag in ZEssayButtonID.all {
 				self.addButtonFor(tag)
 			}
-
-			self.updateText()
 		}
 	}
 
@@ -142,7 +140,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			essayID  = gCurrentEssayZone?.ckRecord?.recordID
 			delegate = self 					    	 // set delegate after setText
 
-			if  gIsNoteMode {
+			if  gIsEssayMode {
 				gMainWindow?.makeFirstResponder(self)    // this should never happen unless alread in note mode
 			}
 		}
@@ -635,8 +633,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
-				case .idForward: gCurrentSmallMapRecords?.go(down:  true) { gRedrawMaps() }
-				case .idBack:    gCurrentSmallMapRecords?.go(down: false) { gRedrawMaps() }
+				case .idForward: gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
+				case .idBack:    gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
 				case .idSave:    save()
 				case .idHide:    gCurrentEssayZone?.grab();        done()
 				case .idCancel:  gCurrentEssayZone?.grab();        exit()

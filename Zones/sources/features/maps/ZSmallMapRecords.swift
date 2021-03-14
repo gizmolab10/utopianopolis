@@ -23,7 +23,7 @@ class ZSmallMapRecords: ZRecords {
 		return nil
 	}
 
-	var working          : ZoneArray { return  gIsNoteMode ? workingNotemarks : workingBookmarks }
+	var working          : ZoneArray { return  gIsEssayMode ? workingNotemarks : workingBookmarks }
 	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? [] }
 	var workingNotemarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.notemarks : rootZone?.allNotemarkProgeny) ?? [] }
 
@@ -74,14 +74,14 @@ class ZSmallMapRecords: ZRecords {
 			gRecents.push()
 		}
 
-		let    max = working.count - 1
-		var fIndex = down ? 0 : max
+		let maxIndex = working.count - 1
+		var fIndex   = down ? 0 : maxIndex
 
-		if  fIndex >= 0,
+		if  fIndex  >= 0,
 			let target = currentBookmark?.bookmarkTarget {
 			for (iIndex, bookmark) in working.enumerated() {
 				if  bookmark.bookmarkTarget == target {
-					if         down, iIndex < max {
+					if         down, iIndex < maxIndex {
 						fIndex = iIndex + 1         // go down
 					} else if !down, iIndex > 0 {
 						fIndex = iIndex - 1         // go up
@@ -91,7 +91,7 @@ class ZSmallMapRecords: ZRecords {
 				}
 			}
 
-			if  working.count > fIndex {
+			if  maxIndex >= fIndex {
 				setAsCurrent(working[fIndex], alterHere: true)
 			}
 		}
@@ -134,13 +134,20 @@ class ZSmallMapRecords: ZRecords {
 		}
 
 		if  let       tHere = iZone?.bookmarkTarget {
-			gHere           = tHere
 			currentBookmark = iZone
 
-			gHere.grab()
+			if  alterHere {
+				gHere       = tHere
 
-			maybeRefocus(.eSelected) {
-				gSignal([.sRelayout])
+				gHere.grab()
+			}
+
+			if  gIsMapMode {
+				maybeRefocus(.eSelected) {
+					gSignal([.sRelayout])
+				}
+			} else if gCurrentEssayZone != tHere {
+				gEssayView?.resetCurrentEssay(tHere.note)
 			}
 		}
 	}
@@ -181,8 +188,7 @@ class ZSmallMapRecords: ZRecords {
 				targets.appendUnique(contentsOf: [here])
 			}
 
-			if  targets.count   > 0,
-				let bookmark    = recents.whoseTargetIntersects(with: targets) {
+			if  let bookmark    = recents.whoseTargetIntersects(with: targets) {
 				currentBookmark = bookmark
 
 				return bookmark

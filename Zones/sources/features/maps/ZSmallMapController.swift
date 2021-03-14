@@ -16,11 +16,11 @@ var gSmallMapController: ZSmallMapController? { return gControllers.controllerFo
 
 class ZSmallMapController: ZMapController {
 
-	override  var     isBigMap : Bool          { return false }
 	override  var     hereZone : Zone?         { return gIsRecentlyMode ?  gRecentsHere :  gFavoritesHereMaybe }
 	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ? .tRecent      : .tFavorite }
 	override  var controllerID : ZControllerID { return .idSmallMap }
 	override  var allowedKinds : [ZSignalKind] { return [.sDetails, .sSmallMap, .sRelayout] }
+	override  var     isBigMap : Bool          { return false }
 	var            isRecentMap : Bool          { return rootWidget.widgetZone?.isInRecents ?? gIsRecentlyMode }
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {

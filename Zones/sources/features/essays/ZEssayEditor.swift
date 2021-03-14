@@ -18,10 +18,10 @@ let gEssayEditor = ZEssayEditor()
 
 class ZEssayEditor: ZBaseEditor {
 
-	override var canHandleKey: Bool { return gIsNoteMode }
+	override var canHandleKey: Bool { return gIsEssayMode }
 
 	override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
-		if !gIsNoteMode || !inWindow {
+		if !gIsEssayMode || !inWindow {
 			return false
 		}
 

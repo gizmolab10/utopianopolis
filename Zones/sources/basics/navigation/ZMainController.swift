@@ -59,14 +59,14 @@ class ZMainController: ZGesturesController {
 	}
 
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
-		if  gIsNoteMode {
+		if  gIsEssayMode {
 			gEssayView?.save()
 			gControllers.swapMapAndEssay(force: .wMapMode)
 		}
 	}
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		let   hideEssay = !gIsNoteMode
+		let   hideEssay = !gIsEssayMode
         let  hideSearch = !gIsSearchMode
         let hideResults = !(gSearchResultsController?.hasResults ?? false) || hideSearch
 

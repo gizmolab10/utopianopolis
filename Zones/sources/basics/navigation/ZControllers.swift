@@ -72,7 +72,7 @@ class ZControllers: NSObject {
 	}
 
 	func swapMapAndEssay(force mode: ZWorkMode? = nil) {
-		gWorkMode = mode ?? (gIsNoteMode ? .wMapMode : .wEssayMode)
+		gWorkMode = mode ?? (gIsEssayMode ? .wMapMode : .wEssayMode)
 
 		FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking map editor's handle key)
 			gEssayView?.setControlBarButtons(enabled: gWorkMode == .wEssayMode)

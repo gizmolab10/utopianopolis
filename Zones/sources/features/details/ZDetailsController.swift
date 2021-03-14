@@ -36,7 +36,7 @@ class ZDetailsController: ZGesturesController {
 	}
 
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
-		if  gIsNoteMode {
+		if  gIsEssayMode {
 			gEssayView?.save()
 			gControllers.swapMapAndEssay(force: .wMapMode)
 		}

@@ -46,8 +46,8 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 		buttonFor(.shift)?  .isEnabled = !gIsSearchMode
 		buttonFor(.focus)?  .isEnabled =  gIsMapMode
 		buttonFor(.note)?   .isEnabled = !gIsEditIdeaMode
-		boxFor   (.edit)?    .isHidden =  gIsSearchMode || gIsNoteMode
-		boxFor   (.add)?     .isHidden =  gIsSearchMode || gIsNoteMode
+		boxFor   (.edit)?    .isHidden =  gIsSearchMode || gIsEssayMode
+		boxFor   (.add)?     .isHidden =  gIsSearchMode || gIsEssayMode
 		buttonFor(.swapDB)?     .title =  swapDBText
 		buttonFor(.sibling)?    .title =  flags.isOption   ? "parent"       : "sibling"
 		buttonFor(.up)?         .title =  expandMaybe      + "up"

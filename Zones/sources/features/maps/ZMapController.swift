@@ -251,7 +251,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             gSearching.exitSearchMode()
         }
 
-		if  gIsNoteMode {
+		if  gIsEssayMode {
 			gEssayView?.save()
 			gControllers.swapMapAndEssay(force: .wMapMode)
 		}

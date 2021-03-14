@@ -317,9 +317,9 @@
 		A7E5A5EA23EFAE4F00A52F47 /* ZTogglingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */; };
 		A7E5A5EB23EFAE4F00A52F47 /* ZTogglingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */; };
 		A7E5A5EC23EFAE4F00A52F47 /* ZTogglingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */; };
-		A7E9A3B023C115470064C89A /* ZHelpMainMapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZHelpMainMapData.swift */; };
-		A7E9A3B123C115470064C89A /* ZHelpMainMapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZHelpMainMapData.swift */; };
-		A7E9A3B223C115470064C89A /* ZHelpMainMapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZHelpMainMapData.swift */; };
+		A7E9A3B023C115470064C89A /* ZHelpBigMapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZHelpBigMapData.swift */; };
+		A7E9A3B123C115470064C89A /* ZHelpBigMapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZHelpBigMapData.swift */; };
+		A7E9A3B223C115470064C89A /* ZHelpBigMapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZHelpBigMapData.swift */; };
 		A7EE245725292B03003BF3C0 /* ZSmallMapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70644212461EC3600F90B86 /* ZSmallMapController.swift */; };
 		A7F7C42E226D343400D52637 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F7C42D226D343400D52637 /* CloudKit.framework */; };
 		A7FC59B92262798A005280D2 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485732256AAAF00F54C0C /* SnapKit.framework */; };
@@ -525,7 +525,7 @@
 		A7E096C923EB98FA0017EC32 /* ZWebLinkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZWebLinkController.swift; sourceTree = "<group>"; };
 		A7E44A2A2558CD6A00DA4B13 /* ZManagedRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZManagedRecord.swift; sourceTree = "<group>"; };
 		A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZTogglingView.swift; sourceTree = "<group>"; };
-		A7E9A3AF23C115470064C89A /* ZHelpMainMapData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpMainMapData.swift; sourceTree = "<group>"; };
+		A7E9A3AF23C115470064C89A /* ZHelpBigMapData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpBigMapData.swift; sourceTree = "<group>"; };
 		A7F5D691227E6AEE009FB225 /* data flow.graffle */ = {isa = PBXFileReference; lastKnownFileType = file; path = "data flow.graffle"; sourceTree = "<group>"; };
 		A7F7C42D226D343400D52637 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		A7FDB3DC2276459500033337 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -880,13 +880,13 @@
 		A7D2D65224902F8F00F652B0 /* help */ = {
 			isa = PBXGroup;
 			children = (
+				A7E9A3AF23C115470064C89A /* ZHelpBigMapData.swift */,
 				A7D2D6582492B55900F652B0 /* ZHelpButtonsView.swift */,
 				A7245E0821729FFE003D4BDA /* ZHelpController.swift */,
 				A7D2D64E24902EDF00F652B0 /* ZHelpData.swift */,
 				A7D2D64A248F11B300F652B0 /* ZHelpDotsData.swift */,
 				A77976F624996DBC00A6734B /* ZHelpDotsMapController.swift */,
 				A7D2D65C2492E12900F652B0 /* ZHelpGridView.swift */,
-				A7E9A3AF23C115470064C89A /* ZHelpMainMapData.swift */,
 				A7D2D646248F119A00F652B0 /* ZHelpNotesData.swift */,
 				A706442D246E182400F90B86 /* ZTooltips.swift */,
 			);
@@ -1301,7 +1301,7 @@
 				0C43EFD121010F62000976CE /* ZOnboarding.swift in Sources */,
 				0C63DA6D1FCF837D005EC548 /* ZFavorites.swift in Sources */,
 				A7FF042A22C1604D00714AD2 /* ZGridController.swift in Sources */,
-				A7E9A3B023C115470064C89A /* ZHelpMainMapData.swift in Sources */,
+				A7E9A3B023C115470064C89A /* ZHelpBigMapData.swift in Sources */,
 				0C2E22D01F75BEEA00B50A71 /* ZGenericTableController.swift in Sources */,
 				A77976F724996DBC00A6734B /* ZHelpDotsMapController.swift in Sources */,
 				A72808B224A8688C00238889 /* ZDebug.swift in Sources */,
@@ -1399,7 +1399,7 @@
 				A7DF7DBE247AFE2800F03060 /* ZRubberband.swift in Sources */,
 				0C43EFE221010F62000976CE /* ZCloud.swift in Sources */,
 				A74DBDEC244E179600DF751A /* ZContextualMenu.swift in Sources */,
-				A7E9A3B223C115470064C89A /* ZHelpMainMapData.swift in Sources */,
+				A7E9A3B223C115470064C89A /* ZHelpBigMapData.swift in Sources */,
 				A7D3A3E7259BEABD00B10788 /* ZManagedRecord.swift in Sources */,
 				A7B78D3F244B768400DB2C14 /* ZTraitAssets.swift in Sources */,
 				0CB6199E1FB3C4660087B066 /* ZSearchBarController.swift in Sources */,
@@ -1482,7 +1482,7 @@
 				0C43EFDB21010F62000976CE /* ZOperations.swift in Sources */,
 				A7D2D65024902EDF00F652B0 /* ZHelpData.swift in Sources */,
 				A7C344E125FD4AA900ACB6A3 /* ZTooltipButton.swift in Sources */,
-				A7E9A3B123C115470064C89A /* ZHelpMainMapData.swift in Sources */,
+				A7E9A3B123C115470064C89A /* ZHelpBigMapData.swift in Sources */,
 				A70064DE22484808004E3A8D /* ZManifest.swift in Sources */,
 				A7C7AF5A23B6D0A000AAD593 /* ZEssay.swift in Sources */,
 				A7B48AA323E0E80C00654DBD /* ZLineView.swift in Sources */,

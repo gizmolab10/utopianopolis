@@ -374,6 +374,25 @@ extension ZTextView {
 		return result
 	}
 
+	@objc override func printView() {
+		var view: NSView = self
+		let    printInfo = NSPrintInfo.shared
+		let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
+		if  let    tView = view as? NSTextView {
+			let    frame = CGRect(origin: .zero, size: CGSize(width: 7.0 * 72.0, height: 9.5 * 72.0))
+			let    nView = NSTextView(frame: frame)
+			view         = nView
+
+			nView.insertText(tView.textStorage as Any, replacementRange: NSRange())
+		}
+
+		PMSetScale(pmPageFormat, 100.0)
+		PMSetOrientation(pmPageFormat, PMOrientation(kPMPortrait), false)
+		printInfo.updateFromPMPrintSettings()
+		printInfo.updateFromPMPageFormat()
+		NSPrintOperation(view: view, printInfo: printInfo).run()
+	}
+
 }
 
 extension CALayer {
@@ -437,22 +456,22 @@ extension NSView {
         return gesture
     }
     
-    func scale(for isHorizontal: Bool) -> Double {
-        let       length = Double(isHorizontal ? bounds.size.width : bounds.size.height)
-        let     dividend = 7200.0 * (isHorizontal ? 8.5 : 6.0) // (inches) * 72 (dpi) * 100 (percent)
+    func scale(forHorizontal: Bool) -> Double {
+		let     dividend = 7200.0 * (forHorizontal ? 8.5 : 11.0) // (inches) * 72 (dpi) * 100 (percent)
+        let       length = Double(forHorizontal ? bounds.size.width : bounds.size.height)
         let        scale = dividend / length
 
         return scale
     }
     
     var scale: Double {
-        let wScale = scale(for: true)
-        let hScale = scale(for: false)
+        let wScale = scale(forHorizontal: true)
+        let hScale = scale(forHorizontal: false)
 
         return min(wScale, hScale)
     }
 
-	func printView() {
+	@objc func printView() {
 		var view: NSView = self
 		var       vScale = scale
 		let      isWider = view.bounds.size.width > view.bounds.size.height

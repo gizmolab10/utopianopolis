@@ -181,9 +181,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		super.updateInstanceProperties()
 
 		if  gUseCoreData {
-			if  let      p = parent {
-				let     id = p.recordID.recordName
-				parentRID  = id
+			if  let     p = parent {
+				let    id = p.recordID.recordName
+				parentRID = id
+			}
+
+			if  let  dbID = databaseID {
+				dbid      = dbID.identifier
 			}
 		}
 	}
@@ -1696,7 +1700,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func destroyNote() {
 		removeTrait(for: .tNote)
 
-		noteMaybe = nil
+		gCurrentEssay = nil
+		noteMaybe     = nil
 
 		FOREGROUND {
 			self.recount()

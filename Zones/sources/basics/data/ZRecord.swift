@@ -720,6 +720,8 @@ class ZRecord: ZManagedRecord { // NSObject {
 			addNeedsFromString(needs)
 		}
 
+		updateCKRecordFromCoreData()
+
 	}
 
 }
