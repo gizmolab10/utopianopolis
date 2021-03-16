@@ -470,6 +470,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			default:     break
 		}
 
+		switch arrow {
+			case .left,
+				 .right: setSelectedRange(selectedRange)     // work around stupid Apple bug
+			default:     break
+		}
+
+
 		if  permitAnotherRecurse, canRecurse, lockedSelection {
 			handlePlainArrow(arrow, permitAnotherRecurse: horizontal)
 		}
