@@ -111,8 +111,8 @@ class ZEssay: ZNote {
 		gRedrawMaps()
 	}
 
-	override func shouldAlterEssay(_ range:NSRange, length: Int) -> (ZAlterationType, Int) {
-		let equal  = range.inclusiveIntersection(essayRange) == essayRange
+	override func shouldAlterEssay(_ range:NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
+		let equal  = range.contains(essayRange)
 		var result = ZAlterationType.eLock
 		var adjust = 0
 		var offset : Int?
@@ -123,7 +123,7 @@ class ZEssay: ZNote {
 
 				child.zone?.deleteNote()
 			} else {
-				let (alter,  delta) = child.shouldAlterNote(range, length: length, adjustment: adjust)
+				let (alter,  delta) = child.shouldAlterNote(range, replacementLength: replacementLength, adjustment: adjust)
 				adjust    += delta
 
 				if  alter != .eLock {

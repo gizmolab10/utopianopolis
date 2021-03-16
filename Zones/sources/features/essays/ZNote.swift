@@ -29,8 +29,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var    isNote            : Bool      { return isMember(of: ZNote.self) }
 	var    lastTextIsDefault : Bool      { return noteTraitMaybe?.text == kEssayDefault }
 	var    fullTitleOffset   : Int       { return noteOffset + titleRange.location - 2 }
-	var    fullTitleRange    : NSRange   { return NSRange(location:   fullTitleOffset, length: titleRange.length + 3) }
-	var         noteRange    : NSRange   { return NSRange(location:   noteOffset, length:  textRange.upperBound) }
+	var    fullTitleRange    : NSRange   { return NSRange(location: fullTitleOffset, length: titleRange.length + 3) }
+	var         noteRange    : NSRange   { return NSRange(location:      noteOffset, length:  textRange.upperBound) }
 	var   offsetTextRange    : NSRange   { return textRange .offsetBy(noteOffset) }
 	var     lastTextRange    : NSRange?  { return textRange }
 	var        titleRange    = NSRange()
@@ -219,31 +219,26 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		setupChildren()
 	}
 
-	func isLocked(for range: NSRange, _ length: Int) -> Bool {
-		let     start = range     .lowerBound
-		let textStart = textRange .lowerBound
-		let       end = range     .upperBound
-		let   textEnd = textRange .upperBound
-		let  titleEnd = titleRange.upperBound
+	func isLocked(within range: NSRange) -> Bool {
+		let titleEnd = titleRange.upperBound
+		let   tStart = textRange .lowerBound
+		let     rEnd = range     .upperBound
+		let   rStart = range     .lowerBound
+		let  atLimit = rStart == titleEnd || rEnd == titleEnd	
+		let    first = NSMakeRange(0,        titleRange.lowerBound)
+		let   second = NSMakeRange(titleEnd, tStart - titleEnd)
+		let  inFirst = first .intersects(range)
+		let inSecond = second.intersects(range)
+		let straddle = range .intersects(second)
+		let   locked = (inFirst || inSecond || straddle) && !atLimit
 
-		return
-			(start  > titleEnd && start <  textStart) ||
-			(  end  > titleEnd &&   end <  textStart) ||
-			(start  < titleEnd &&   end >= textStart) ||
-			(length == 0       && start >= textEnd)
+		return locked
 	}
 
-	func shouldAlterEssay(_ range: NSRange, length: Int) -> (ZAlterationType, Int) {
-		var (result, delta) = shouldAlterNote(range, length: length)
 
-		if  result == .eDelete {
-			result  = .eExit
-		}
+	// N.B. mutates title range
 
-		return (result, delta)
-	}
-
-	func shouldAlterNote(_ iRange: NSRange, length: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
+	func shouldAlterNote(_ iRange: NSRange, replacementLength: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
 		var 	result  	  	        = ZAlterationType.eLock
 		var      delta                  = 0
 
@@ -253,15 +248,15 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 				result				    = .eDelete
 
 				zone?.deleteNote()
-			} else if !isLocked(for: range, length) {
+			} else if !isLocked(within: range) {
 				if  let   textIntersect = range.inclusiveIntersection(textRange) {
-					delta               = length - textIntersect.length
+					delta               = replacementLength - textIntersect.length
 					textRange  .length += delta
 					result              = .eAlter
 				}
 
 				if  let  titleIntersect = range.inclusiveIntersection(titleRange) {
-					delta               = length - titleIntersect.length
+					delta               = replacementLength - titleIntersect.length
 					titleRange .length += delta
 					textRange.location += delta
 					result              = .eAlter
@@ -274,4 +269,13 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return 	(result, delta)
 	}
 
+	func shouldAlterEssay(_ range: NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
+		var (result, delta) = shouldAlterNote(range, replacementLength: replacementLength)
+
+		if  result == .eDelete {
+			result  = .eExit
+		}
+
+		return (result, delta)
+	}
 }

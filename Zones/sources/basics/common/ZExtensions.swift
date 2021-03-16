@@ -1281,20 +1281,27 @@ extension NSRange {
 
 	var center: Int { return (lowerBound + upperBound) / 2 }
 
-	func offsetBy(_ offset: Int) -> NSRange { return NSRange(location: offset + location, length: length) }
+	func offsetBy  (_ offset: Int)    -> NSRange { return NSRange(location: offset + location, length: length) }
+	func contains  (_ other: NSRange) ->    Bool { return inclusiveIntersection(other) == other }
+	func intersects(_ other: NSRange) ->    Bool { return intersection(other) != nil }
 
 	func inclusiveIntersection(_ other: NSRange, includeUpper: Bool = true) -> NSRange? {
+		let otherEnd = other.upperBound
+
 		if  let    i = intersection(other) {
 			return i
 		}
 
-		if  location == other.location || (includeUpper && (other.upperBound == location || other.upperBound == upperBound)) {
-			return NSRange(location: location, length: other.upperBound - location)
+		func matchesLimits(at: Int) -> Bool {
+			return at == location || at == upperBound
+		}
+
+		if  matchesLimits(at: other.location) || (includeUpper && matchesLimits(at: otherEnd)) {
+			return NSRange(location: location, length: otherEnd - location)
 		}
 
 		return nil
 	}
-
 }
 
 extension NSTextTab {
