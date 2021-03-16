@@ -340,7 +340,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
-		guard let key = iKey else {
+		guard var key = iKey else {
 			return false
 		}
 
@@ -349,7 +349,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let  OPTION = flags.isOption
 		let     ALL = OPTION && CONTROL
 
-		if  COMMAND {
+		if  key    != key.lowercased() {
+			key     = key.lowercased()
+		}
+
+		if  let arrow = key.arrow {
+			handleArrow(arrow, flags: flags)
+
+			return true
+		} else if  COMMAND {
 			switch key {
 				case "a":      selectAll(nil)
 				case "d":      convertToChild(createEssay: ALL)
@@ -371,6 +379,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			return true
+		} else if key == kEscape {
+			if  OPTION {
+				accountForSelection()
+			}
+
+			gControllers.swapMapAndEssay()
+
+			return true
 		} else if CONTROL {
 			switch key {
 				case "d":      convertToChild(createEssay: true)
@@ -382,7 +398,68 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return true
 		}
 
+
 		return false
+	}
+
+	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
+		let   SHIFT = flags.isShift
+		let  OPTION = flags.isOption
+		let COMMAND = flags.isCommand
+
+		if         COMMAND && OPTION {
+			switch arrow {
+				case .left,
+					 .right: move(out: arrow == .left)
+				default:     break
+			}
+		} else if  COMMAND && SHIFT {
+			switch arrow {
+				case .up:    moveToBeginningOfDocumentAndModifySelection(nil)
+				case .down:  moveToEndOfDocumentAndModifySelection(nil)
+				case .left:  moveToLeftEndOfLineAndModifySelection(nil)
+				case .right: moveToRightEndOfLineAndModifySelection(nil)
+			}
+		} else if  COMMAND {
+			switch arrow {
+				case .up:    moveToBeginningOfParagraph(nil)
+				case .down:  moveToEndOfParagraph(nil)
+				case .left:  moveToBeginningOfLine(nil)
+				case .right: moveToEndOfLine(nil)
+			}
+		} else if  OPTION && SHIFT {
+			switch arrow {
+				case .up:    moveToBeginningOfParagraphAndModifySelection(nil)
+				case .down:  moveToEndOfParagraphAndModifySelection(nil)
+				case .left:  moveWordLeftAndModifySelection(nil)
+				case .right: moveWordRightAndModifySelection(nil)
+			}
+		} else if  SHIFT {
+			switch arrow {
+				case .up:    moveUpAndModifySelection(nil)
+				case .down:  moveDownAndModifySelection(nil)
+				case .left:  moveLeftAndModifySelection(nil)
+				case .right: moveRightAndModifySelection(nil)
+			}
+		} else if  OPTION {
+			switch arrow {
+				case .up:    moveToLeftEndOfLine(nil)
+				case .down:  moveToRightEndOfLine(nil)
+				case .left:  moveWordBackward(nil)
+				case .right: moveWordForward(nil)
+			}
+		} else {
+			handlePlainArrow(arrow)
+		}
+	}
+
+	func handlePlainArrow(_ arrow: ZArrowKey) {
+		switch arrow {
+			case .up:    moveUp(nil)
+			case .down:  moveDown(nil)
+			case .left:  moveLeft(nil)
+			case .right: moveRight(nil)
+		}
 	}
 
 	override func mouseDown(with event: ZEvent) {
