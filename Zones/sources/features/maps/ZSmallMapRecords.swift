@@ -69,34 +69,49 @@ class ZSmallMapRecords: ZRecords {
 		return currentBookmark
 	}
 
-	func go(down: Bool, amongNotes: Bool = false, atArrival: Closure? = nil) {
+	func go(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
 		if  currentBookmark == nil {
 			gRecents.push()
 		}
 
-		let maxIndex = working.count - 1
-		var fIndex   = down ? 0 : maxIndex
+		let  maxIndex = working.count - 1
+		var   toIndex = down ? 0 : maxIndex
 
-		if  fIndex  >= 0,
+		if  toIndex  >= 0,
 			let target = currentBookmark?.bookmarkTarget {
 			for (iIndex, bookmark) in working.enumerated() {
 				if  bookmark.bookmarkTarget == target {
 					if         down, iIndex < maxIndex {
-						fIndex = iIndex + 1         // go down
+						toIndex = iIndex + 1         // go down
 					} else if !down, iIndex > 0 {
-						fIndex = iIndex - 1         // go up
+						toIndex = iIndex - 1         // go up
 					}
 
 					break
 				}
 			}
 
-			if  maxIndex >= fIndex {
-				setAsCurrent(working[fIndex], alterHere: true)
+			if  toIndex.within(0 ... maxIndex) {
+				let newCurrent = working[toIndex]
+
+				if  moveCurrent {
+					moveCurrentTo(newCurrent)
+				} else {
+					setAsCurrent(newCurrent, alterHere: true)
+				}
 			}
 		}
 
 		atArrival?()
+	}
+
+	func moveCurrentTo(_ iZone: Zone) {
+		if  let parent = iZone.parentZone,
+			parent    == currentBookmark?.parentZone,
+			let   from = currentBookmark?.siblingIndex,
+			let     to = iZone.siblingIndex {
+			parent.moveChildIndex(from: from, to: to)
+		}
 	}
 
 	func revealBookmark(of target: Zone) {

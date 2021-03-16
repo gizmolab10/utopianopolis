@@ -136,8 +136,8 @@ class ZMapEditor: ZBaseEditor {
 						case "-":        return handleHyphen(COMMAND, OPTION)
 						case "'":        gSwapSmallMapMode(OPTION)
 						case "/":        if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
-						case "{", "[":   go(down: false, OPTION: OPTION) { gRedrawMaps() }
-						case "}", "]":   go(down:  true, OPTION: OPTION) { gRedrawMaps() }
+						case "{", "[":   go(down: false, OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() }
+						case "}", "]":   go(down:  true, OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() }
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")
 						case kTab:       addSibling(OPTION)
@@ -638,10 +638,10 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-	func go(down: Bool, OPTION: Bool, amongNotes: Bool = false, atArrival: Closure? = nil) {
+	func go(down: Bool, OPTION: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, atArrival: Closure? = nil) {
 		let cloud = OPTION ? gCurrentSmallMapRecords : gRecents
 
-		cloud?.go(down: down, amongNotes: amongNotes, atArrival: atArrival)
+		cloud?.go(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent, atArrival: atArrival)
 	}
 
 	func debugAnalyze() {

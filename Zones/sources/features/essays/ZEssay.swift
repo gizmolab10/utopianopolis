@@ -121,7 +121,7 @@ class ZEssay: ZNote {
 			if  equal {
 				adjust    -= child.noteRange.length
 
-				child.zone?.destroyNote()
+				child.zone?.deleteNote()
 			} else {
 				let (alter,  delta) = child.shouldAlterNote(range, length: length, adjustment: adjust)
 				adjust    += delta

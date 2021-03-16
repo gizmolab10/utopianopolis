@@ -60,7 +60,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let e = gCurrentEssay,
 			e.lastTextIsDefault,
 			e.autoDelete {
-			e.zone?.destroyNote()
+			e.zone?.deleteNote()
 		}
 
 		gControllers.swapMapAndEssay(force: .wMapMode)
@@ -126,24 +126,168 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func updateText(restoreSelection: Int?  = nil) {
 		resetForDarkMode()
-		updateButtonTitles()
 
 		if  gCurrentEssay == nil {
 			gWorkMode = .wMapMode // not show blank essay
-		} else if  (shouldOverwrite || restoreSelection != nil),
-			let text = gCurrentEssay!.essayText {
-			discardPriorText()
-			setControlBarButtons(enabled: true)
-			gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }	     // emplace text
-			select(restoreSelection: restoreSelection)
+		} else {
+			essayID   = gCurrentEssayZone?.ckRecord?.recordID
 
-			essayID  = gCurrentEssayZone?.ckRecord?.recordID
+			setControlBarButtons(enabled: true)
+
+			if  (shouldOverwrite || restoreSelection != nil),
+				let text = gCurrentEssay!.essayText {
+				discardPriorText()
+				gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }	     // emplace text
+				select(restoreSelection: restoreSelection)
+			}
+
 			delegate = self 					    	 // set delegate after setText
 
 			if  gIsEssayMode {
-				gMainWindow?.makeFirstResponder(self)    // this should never happen unless alread in note mode
+				gMainWindow?.makeFirstResponder(self)    // this should never happen unless already in essay mode
 			}
 		}
+	}
+
+	// MARK:- buttons
+	// MARK:-
+
+	func setControlBarButtons(       enabled: Bool) {
+		let      hasMultipleNotes =  gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
+		let               isEssay = (gCurrentEssay?.isNote ?? true) == false
+		let                   bar =  gMainWindow?.inspectorBar
+		backwardButton?.isEnabled =  enabled && hasMultipleNotes
+		forwardButton? .isEnabled =  enabled && hasMultipleNotes
+		titlesButton?  .isEnabled =  enabled && isEssay
+		deleteButton?  .isEnabled =  enabled
+		cancelButton?  .isEnabled =  enabled
+		hideButton?    .isEnabled =  enabled
+		saveButton?    .isEnabled =  enabled
+		bar?            .isHidden = !enabled
+
+		if  let b = bar {
+			b.draw(b.bounds)
+		}
+	}
+
+	@objc private func handleButtonPress(_ iButton: ZButton) {
+		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
+			switch buttonID {
+				case .idForward: gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
+				case .idBack:    gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
+				case .idSave:    save()
+				case .idHide:    gCurrentEssayZone?.grab();        done()
+				case .idCancel:  gCurrentEssayZone?.grab();        exit()
+				case .idDelete:  gCurrentEssayZone?.deleteNote(); exit()
+				case .idTitles:  toggleEssayTitles()
+			}
+		}
+	}
+
+	func updateButtonTitles() {
+		for tag in ZEssayButtonID.all {
+			var button :ZButton?
+			switch tag {
+				case .idBack:    button = backwardButton
+				case .idForward: button =  forwardButton
+				case .idCancel:  button =   cancelButton
+				case .idDelete:  button =   deleteButton
+				case .idTitles:  button =   titlesButton
+				case .idHide:    button =     hideButton
+				case .idSave:    button =     saveButton
+			}
+
+			if  button?.image == nil {
+				button?.title = tag.title
+			}
+		}
+	}
+
+	func toggleEssayTitles() {
+		gShowEssayTitles = !gShowEssayTitles
+
+		updateText()
+	}
+
+	private func addButtonFor(_ tag: ZEssayButtonID) {
+		if  let inspectorBar = gMainWindow?.inspectorBar {
+
+			func rect(at target: Int) -> CGRect {
+
+				// ////////////////////////////////////////////////// //
+				// Apple bug: subviews are not located where expected //
+				// ////////////////////////////////////////////////// //
+
+				var final = inspectorBar.subviews[0].frame
+				var prior = final
+
+				for index in 1...target {
+					let subview      = inspectorBar.subviews[index]
+					let frame        = subview.frame
+					subview.isHidden = false
+					final.origin.x  += prior.size.width
+					final.size       = frame.size
+					prior            = frame
+				}
+
+				final.origin.x      += 70.0
+
+				return final
+			}
+
+			func buttonWith(_ title: String) -> ZTooltipButton {
+				let    action = #selector(handleButtonPress)
+
+				if  let image = ZImage(named: title)?.resize(CGSize(width: 14.0, height: 14.0)) {
+					return      ZTooltipButton(image: image, target: self, action: action)
+				}
+
+				let    button = ZTooltipButton(title: title, target: self, action: action)
+				button  .font = gTinyFont
+
+				return button
+			}
+
+			func buttonFor(_ tag: ZEssayButtonID) -> ZTooltipButton {
+				let         index = inspectorBar.subviews.count - 1
+				var         frame = rect(at: index).offsetBy(dx: 2.0, dy: -5.0)
+				let         title = tag.title
+				let        button = buttonWith(title)
+				frame       .size = button.bounds.size
+				frame             = frame.insetBy(dx: 12.0, dy: 6.0)
+				button   .toolTip = "\(kClickTo)\(tag.tooltipString)"
+				button       .tag = tag.rawValue
+				button     .frame = frame
+				button .isEnabled = false
+				button.isBordered = false
+				button.bezelStyle = .texturedRounded
+
+				button.setButtonType(.momentaryChange)
+				button.updateTracking() // for tool tip
+
+				return button
+			}
+
+			func setButton(_ button: ZButton) {
+				if  let    tag = ZEssayButtonID(rawValue: button.tag) {
+					switch tag {
+						case .idBack:   backwardButton = button
+						case .idForward: forwardButton = button
+						case .idCancel:   cancelButton = button
+						case .idDelete:   deleteButton = button
+						case .idTitles:   titlesButton = button
+						case .idHide:       hideButton = button
+						case .idSave:       saveButton = button
+					}
+				}
+			}
+
+			let b = buttonFor(tag)
+
+			inspectorBar.addSubview(b)
+			setButton(b)
+		}
+
 	}
 
 	// MARK:- output
@@ -611,145 +755,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- buttons
-	// MARK:-
-
-	func setControlBarButtons(       enabled: Bool) {
-		let                   bar =  gMainWindow?.inspectorBar
-		bar?            .isHidden = !enabled
-		backwardButton?.isEnabled =  enabled
-		forwardButton? .isEnabled =  enabled
-		deleteButton?  .isEnabled =  enabled
-		cancelButton?  .isEnabled =  enabled
-		titlesButton?  .isEnabled =  enabled
-		hideButton?    .isEnabled =  enabled
-		saveButton?    .isEnabled =  enabled
-
-		if  let b = bar {
-			b.draw(b.bounds)
-		}
-	}
-
-	@objc private func handleButtonPress(_ iButton: ZButton) {
-		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
-			switch buttonID {
-				case .idForward: gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
-				case .idBack:    gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
-				case .idSave:    save()
-				case .idHide:    gCurrentEssayZone?.grab();        done()
-				case .idCancel:  gCurrentEssayZone?.grab();        exit()
-				case .idDelete:  gCurrentEssayZone?.destroyNote(); exit()
-				case .idTitles:  toggleEssayTitles()
-			}
-		}
-	}
-
-	func updateButtonTitles() {
-		for tag in ZEssayButtonID.all {
-			var button :ZButton?
-			switch tag {
-				case .idBack:    button = backwardButton
-				case .idForward: button =  forwardButton
-				case .idCancel:  button =   cancelButton
-				case .idDelete:  button =   deleteButton
-				case .idTitles:  button =   titlesButton
-				case .idHide:    button =     hideButton
-				case .idSave:    button =     saveButton
-			}
-
-			if  button?.image == nil {
-				button?.title = tag.title
-			}
-		}
-	}
-
-	func toggleEssayTitles() {
-		gShowEssayTitles = !gShowEssayTitles
-
-		updateText()
-	}
-
-	private func addButtonFor(_ tag: ZEssayButtonID) {
-		if  let inspectorBar = gMainWindow?.inspectorBar {
-
-			func rect(at target: Int) -> CGRect {
-
-				// ////////////////////////////////////////////////// //
-				// Apple bug: subviews are not located where expected //
-				// ////////////////////////////////////////////////// //
-
-				var final = inspectorBar.subviews[0].frame
-				var prior = final
-
-				for index in 1...target {
-					let subview      = inspectorBar.subviews[index]
-					let frame        = subview.frame
-					subview.isHidden = false
-					final.origin.x  += prior.size.width
-					final.size       = frame.size
-					prior            = frame
-				}
-
-				final.origin.x      += 70.0
-
-				return final
-			}
-
-			func buttonWith(_ title: String) -> ZTooltipButton {
-				let    action = #selector(handleButtonPress)
-
-				if  let image = ZImage(named: title)?.resize(CGSize(width: 14.0, height: 14.0)) {
-					return      ZTooltipButton(image: image, target: self, action: action)
-				}
-
-				let    button = ZTooltipButton(title: title, target: self, action: action)
-				button  .font = gTinyFont
-
-				return button
-			}
-
-			func buttonFor(_ tag: ZEssayButtonID) -> ZTooltipButton {
-				let         index = inspectorBar.subviews.count - 1
-				var         frame = rect(at: index).offsetBy(dx: 2.0, dy: -5.0)
-				let         title = tag.title
-				let        button = buttonWith(title)
-				frame       .size = button.bounds.size
-				frame             = frame.insetBy(dx: 12.0, dy: 6.0)
-				button   .toolTip = "\(kClickTo)\(tag.tooltipString)"
-				button       .tag = tag.rawValue
-				button     .frame = frame
-				button .isEnabled = false
-				button.isBordered = false
-				button.bezelStyle = .texturedRounded
-
-				button.setButtonType(.momentaryChange)
-				button.updateTracking() // for tool tip
-
-				return button
-			}
-
-			func setButton(_ button: ZButton) {
-				if  let    tag = ZEssayButtonID(rawValue: button.tag) {
-					switch tag {
-						case .idBack:   backwardButton = button
-						case .idForward: forwardButton = button
-						case .idCancel:   cancelButton = button
-						case .idDelete:   deleteButton = button
-						case .idTitles:   titlesButton = button
-						case .idHide:       hideButton = button
-						case .idSave:       saveButton = button
-					}
-				}
-			}
-
-			let b = buttonFor(tag)
-
-			inspectorBar.addSubview(b)
-			setButton(b)
-		}
-
-	}
-
 	// MARK:- hyperlinks
 	// MARK:-
 
@@ -909,7 +914,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldRange: NSRange, toCharacterRange newRange: NSRange) -> NSRange {
 		selectionRange = newRange
 
-		return newRange
+		return selectionRange
 	}
 
 	// MARK:- drop images

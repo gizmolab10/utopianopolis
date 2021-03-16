@@ -20,7 +20,7 @@ let  gDataURL        : URL = {
 
 class ZCoreDataStack: NSObject {
 
-	let             cloudID = "iCloud.com.seriously.CoreData"
+	let          cloudKitID = "iCloud.com.seriously.CoreData"
 	let            localURL = gCoreDataURL.appendingPathComponent("local.store")
 	let           publicURL = gCoreDataURL.appendingPathComponent("cloud.public.store")
 	let          privateURL = gCoreDataURL.appendingPathComponent("cloud.private.store")
@@ -65,8 +65,8 @@ class ZCoreDataStack: NSObject {
 	lazy var privateDescription: NSPersistentStoreDescription = {
 		let                          desc = NSPersistentStoreDescription(url: privateURL)
 		desc.configuration                = "Cloud"
-		if  gCoreDataMode.contains(.dCloudKit) {
-			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudID)
+		if  gUseCloudKit {
+			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudKitID)
 			desc.cloudKitContainerOptions = options
 		}
 
@@ -76,9 +76,8 @@ class ZCoreDataStack: NSObject {
 	lazy var publicDescription: NSPersistentStoreDescription = {
 		let                          desc = NSPersistentStoreDescription(url: publicURL)
 		desc.configuration                = "Cloud"
-
-		if  gCoreDataMode.contains(.dCloudKit) {
-			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudID)
+		if  gUseCloudKit {
+			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudKitID)
 			options.databaseScope         = CKDatabase.Scope.public // default is private
 			desc.cloudKitContainerOptions = options
 		}
@@ -428,7 +427,7 @@ class ZCoreDataStack: NSObject {
 	func search(within dbid: String, type: String, using predicate: NSPredicate, uniqueOnly: Bool = true, onCompletion: ZRecordsClosure? = nil) {
 		var result = ZRecordsArray()
 
-		if !gCanLoad {
+		if !gCanLoad || !gIsReadyToShowUI {
 			onCompletion?(result)
 		} else {
 			let   dbPredicate = NSPredicate(format: "dbid = %@", dbid)

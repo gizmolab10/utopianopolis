@@ -24,7 +24,8 @@ class ZTooltipButton: ZButton {
 	}
 
 	override func mouseEntered(with event: NSEvent) {
-		if  let                   c = cell as? NSButtonCell {
+		if  isEnabled,
+			let                   c = cell as? NSButtonCell {
 			originalBackgroundColor = c.backgroundColor
 			c.backgroundColor       = kLightestGrayColor
 		}
@@ -38,5 +39,13 @@ class ZTooltipButton: ZButton {
 		}
 
 		super.mouseExited(with: event)
+	}
+
+	override func mouseUp(with event: NSEvent) {
+		if  let             c = cell as? NSButtonCell {
+			c.backgroundColor = originalBackgroundColor
+		}
+
+		super.mouseUp(with: event)
 	}
 }

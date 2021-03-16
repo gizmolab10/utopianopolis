@@ -9,17 +9,18 @@
 import Foundation
 
 var   gDebugModes : ZDebugMode    = []
-var   gPrintModes : ZPrintMode    = [.dData] // , .dTime, .dCross]
-var gCoreDataMode : ZCoreDataMode = [.dEnabled, .dCanSave, .dCanLoad]
-var  gUseCoreData : Bool { return gCoreDataMode.contains(.dEnabled) }
-var      gCanSave : Bool { return gCoreDataMode.contains(.dCanSave) && gUseCoreData }
-var      gCanLoad : Bool { return gCoreDataMode.contains(.dCanLoad) && gUseCoreData }
-var  gDebugAccess : Bool { return gDebugModes.contains(.dDebugAccess) }
-var   gWriteFiles : Bool { return gDebugModes.contains(.dWriteFiles) }
-var    gDebugInfo : Bool { return gDebugModes.contains(.dDebugInfo) }
-var    gDebugDraw : Bool { return gDebugModes.contains(.dDebugDraw) }
-var    gReadFiles : Bool { return gDebugModes.contains(.dReadFiles) }
-var      gNewUser : Bool { return gDebugModes.contains(.dNewUser) }
+var   gPrintModes : ZPrintMode    = [.dData]
+var gCoreDataMode : ZCoreDataMode = []
+var  gUseCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
+var      gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gUseCoreData }
+var      gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gUseCoreData }
+var  gUseCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && gUseCoreData }
+var  gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
+var   gWriteFiles : Bool { return  gDebugModes.contains(.dWriteFiles) }
+var    gDebugInfo : Bool { return  gDebugModes.contains(.dDebugInfo) }
+var    gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }
+var    gReadFiles : Bool { return  gDebugModes.contains(.dReadFiles) }
+var      gNewUser : Bool { return  gDebugModes.contains(.dNewUser) }
 
 struct ZCoreDataMode: OptionSet {
 	static var structValue = 0
@@ -29,10 +30,10 @@ struct ZCoreDataMode: OptionSet {
 	init() { rawValue = ZCoreDataMode.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let dEnabled  = ZCoreDataMode() // use core data
+	static let dDisabled = ZCoreDataMode() // cannot use core data
 	static let dCloudKit = ZCoreDataMode() // store in cloud kit
-	static let dCanSave  = ZCoreDataMode() // save is operational
-	static let dCanLoad  = ZCoreDataMode() // load is operational
+	static let dNotSave  = ZCoreDataMode() // save is not operational
+	static let dNotLoad  = ZCoreDataMode() // load is not operational
 }
 
 enum ZCDOperationID: Int {

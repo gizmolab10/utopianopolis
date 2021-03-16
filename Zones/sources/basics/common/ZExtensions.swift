@@ -351,6 +351,14 @@ extension ZStorageDictionary {
 
 }
 
+extension Int {
+
+	func within(_ range: ClosedRange<Int>) -> Bool {
+		return range.contains(self)
+	}
+
+}
+
 extension Dictionary {
 
 	var byteCount: Int { return data?.count ?? 0 }

@@ -94,24 +94,24 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return self
 	}
 
-	struct ZWorkingType: OptionSet {
+	struct ZWorkingListType: OptionSet {
 		let rawValue: Int
 
 		init(rawValue: Int) {
 			self.rawValue = rawValue
 		}
 
-		static let wBookmarks = ZWorkingType(rawValue: 0x0001)
-		static let wNotemarks = ZWorkingType(rawValue: 0x0002)
-		static let   wProgeny = ZWorkingType(rawValue: 0x0004)  //
-		static let       wAll = ZWorkingType(rawValue: 0x0008)  // everything
+		static let wBookmarks = ZWorkingListType(rawValue: 0x0001)
+		static let wNotemarks = ZWorkingListType(rawValue: 0x0002)
+		static let   wProgeny = ZWorkingListType(rawValue: 0x0004)  //
+		static let       wAll = ZWorkingListType(rawValue: 0x0008)  // everything
 	}
 
-	@discardableResult func isMark(of type: ZWorkingType) -> Bool {
-		return isBookmark && (type.contains(.wBookmarks) || (type.contains(.wNotemarks) && bookmarkTarget!.hasNote))
+	@discardableResult func isBookmark(of type: ZWorkingListType) -> Bool {
+		return bookmarkTarget != nil && (type.contains(.wBookmarks) || (type.contains(.wNotemarks) && bookmarkTarget!.hasNote))
 	}
 
-	func zones(of type: ZWorkingType) -> ZoneArray {
+	func zones(of type: ZWorkingListType) -> ZoneArray {
 		var result = ZoneArray()
 		if  type.contains(.wAll) {
 			traverseAllProgeny { iZone in
@@ -119,13 +119,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else if type.contains(.wProgeny) {
 			traverseAllProgeny { iZone in
-				if  iZone.isMark(of: type) {
+				if  iZone.isBookmark(of: type) {
 					result.append(iZone)
 				}
 			}
 		} else {
 			result = children.filter { (iZone) -> Bool in
-				iZone.isMark(of: type)
+				iZone.isBookmark(of: type)
 			}
 		}
 		return result
@@ -1697,8 +1697,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return note
 	}
 
-	func destroyNote() {
+	func deleteNote() {
 		removeTrait(for: .tNote)
+		gRecents.pop(self)
 
 		gCurrentEssay = nil
 		noteMaybe     = nil
@@ -2856,7 +2857,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  from > to {
 				children.remove(       at: from)
 				children.insert(child, at: to)
-			} else if to > from {
+			} else if from < to {
 				children.insert(child, at: to)
  				children.remove(       at: from)
 			}

@@ -72,14 +72,14 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let       note = noteTraitMaybe {
 			let     string = attributed.string
 			let       text = attributed.attributedSubstring(from: textRange)
-			let      title = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
-			note .noteText = text.mutableCopy() as? NSMutableAttributedString // invokes note.needSave()
+			note .noteText = NSMutableAttributedString(attributedString: text)    // invokes note.needSave()
 			autoDelete     = false
 
 			if  gShowEssayTitles {
-				zone?.zoneName = title
+				zone?.zoneName = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
 			}
 
+			zone?.updateCoreDataRelationships()
 			noteTrait?.needSave()
 			zone?.needSave()
 		}
@@ -252,7 +252,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			if  range                  == noteRange.offsetBy(-noteOffset) {
 				result				    = .eDelete
 
-				zone?.destroyNote()
+				zone?.deleteNote()
 			} else if !isLocked(for: range, length) {
 				if  let   textIntersect = range.inclusiveIntersection(textRange) {
 					delta               = length - textIntersect.length

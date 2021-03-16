@@ -54,8 +54,14 @@ class ZRecents : ZSmallMapRecords {
 
 	override func push(intoNotes: Bool = false) {
 		if  rootZone != nil {
-			if  let          here  = gHereMaybe,
-				!findAndSetHereAsParentOfBookmarkTargeting(here),
+			var here  = gHereMaybe
+
+			if  intoNotes {
+				here  = gCurrentEssayZone
+			}
+
+			if  here != nil,
+				!findAndSetHereAsParentOfBookmarkTargeting(here!),
 				let       bookmark = createBookmark(for: here, action: .aCreateBookmark) {
 				var    index: Int? = nil                               // assume current bookmark's parent is NOT current here, always grow down
 

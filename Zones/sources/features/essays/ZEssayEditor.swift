@@ -116,15 +116,5 @@ class ZEssayEditor: ZBaseEditor {
 		}
 	}
 
-//	func updateFontSize(_ increment: Bool) {
-//		if  let essayView = gEssayView,
-//			let   current = gCurrentEssay, current.updateFontSize(increment) {
-//			let    offset = essayView.selectionRange.location
-//			gEssayTitleFontSize += CGFloat((increment ? 1.0 : -1.0) * 6.0)
-//
-//			essayView.updateText(restoreSelection: offset)
-//		}
-//	}
-
 }
 

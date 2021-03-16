@@ -343,8 +343,10 @@ class ZRecords: NSObject {
 	}
 
 	func searchCoreData(for match: String, onCompletion: RecordsClosure? = nil) {
+		var   result = CKRecordsArray()
+		onCompletion?(result)
+		return
 		gCoreDataStack.search(for: match, within: databaseID) { found in
-			var   result = CKRecordsArray()
 
 			if  let more = self.ckRecordsLookup[match] {
 				result = more
