@@ -240,7 +240,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return locked
 	}
 
-
 	// N.B. mutates title range
 
 	func shouldAlterNote(_ iRange: NSRange, replacementLength: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {

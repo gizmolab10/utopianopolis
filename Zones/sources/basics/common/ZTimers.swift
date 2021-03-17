@@ -95,16 +95,16 @@ func gStartTimer(for timerID: ZTimerID?) {
 		}
 
 		switch tid {
-			case .tKey:               closure = { iTimer in gCurrentKeyPressed        = "" }
-			case .tMouseZone:         closure = { iTimer in gCurrentMouseDownZone     = nil }
-			case .tMouseLocation:     closure = { iTimer in gCurrentMouseDownLocation = nil }
-			case .tTextEditorHandlesArrows: closure = { iTimer in gTextEditorHandlesArrows        = false }
-			case .tStartup:           closure = { iTimer in gIncrementStartupProgress() }
-			case .tSync:              closure = { iTimer in if gIsReadyToShowUI { gSaveContext(); gBatches.save { iSame in } } }
-			case .tRecount:           closure = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount() } }
-			case .tCloudAvailable:    closure = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
-			case .tCoreDataAvailable: closure = { iTimer in gCoreDataStack.availabilityFire(iTimer) }
-			default:                  break
+			case .tKey:                     closure = { iTimer in gCurrentKeyPressed        = nil }
+			case .tMouseZone:               closure = { iTimer in gCurrentMouseDownZone     = nil }
+			case .tMouseLocation:           closure = { iTimer in gCurrentMouseDownLocation = nil }
+			case .tTextEditorHandlesArrows: closure = { iTimer in gTextEditorHandlesArrows  = false }
+			case .tStartup:                 closure = { iTimer in gIncrementStartupProgress() }
+			case .tSync:                    closure = { iTimer in if gIsReadyToShowUI { gSaveContext(); gBatches.save { iSame in } } }
+			case .tRecount:                 closure = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount() } }
+			case .tCloudAvailable:          closure = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
+			case .tCoreDataAvailable:       closure = { iTimer in gCoreDataStack.availabilityFire(iTimer) }
+			default:                        break
 		}
 
 		gTimers.resetTimer(for: timerID, withTimeInterval: interval, repeats: repeats, block: closure ?? { iTimer in })

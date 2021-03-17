@@ -563,10 +563,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- prevent editing added [locked] whitespace
 	// MARK:-
 
-	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString replacement: String?) -> Bool {
-		if  let replacementLength = replacement?.length,
-			let (result,   delta) = gCurrentEssay?.shouldAlterEssay(range, replacementLength: replacementLength) {
+	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange, toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
+		let     noKeys = gCurrentKeyPressed == nil
+		let     locked = gCurrentEssay?.isLocked(within: newSelectedCharRange) ?? false
+		return (locked && noKeys) ? oldSelectedCharRange : newSelectedCharRange
+	}
 
+	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString replacement: String?) -> Bool {
+		if  let   replacementLength = replacement?.length,
+			let   (result,   delta) = gCurrentEssay?.shouldAlterEssay(range, replacementLength: replacementLength) {
 			switch result {
 				case .eAlter: return true
 				case .eLock:  return false
