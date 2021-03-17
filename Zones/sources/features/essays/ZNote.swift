@@ -16,36 +16,35 @@ enum ZAlterationType: Int {
 }
 
 class ZNote: NSObject, ZIdentifiable, ZToolable {
-	var    zone  	         : Zone?
-	var    children          = [ZNote]()
-	var    autoDelete        = false		// true means delete this note on exit from essay mode
-	var    essayLength       = 0
-	var    noteOffset        = 0
-	var    titleInsets       = 1
-	var    noteTraitMaybe    : ZTrait?   { return zone?.traits[  .tNote] }
-	var    noteTrait         : ZTrait?   { return zone?.traitFor(.tNote) }
-	var    prefix            : String    { return "note" }
+	var          essayLength = 0
+	var           noteOffset = 0
+	var          titleInsets = 1
+	var           autoDelete = false		// true means delete this note on exit from essay mode
+	var             children = [ZNote]()
+	var           titleRange = NSRange()
+	var            textRange = NSRange()
+	var            noteRange : NSRange   { return NSRange(location:      noteOffset, length:  textRange.upperBound) }
+	var       fullTitleRange : NSRange   { return NSRange(location: fullTitleOffset, length: titleRange.length + 3) }
+	var      offsetTextRange : NSRange   { return textRange .offsetBy(noteOffset) }
+	var        lastTextRange : NSRange?  { return textRange }
+	var       maybeNoteTrait : ZTrait?   { return zone?.traits[  .tNote] }
+	var            noteTrait : ZTrait?   { return zone?.traitFor(.tNote) }
+	var               prefix : String    { return "note" }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
-	var    isNote            : Bool      { return isMember(of: ZNote.self) }
-	var    lastTextIsDefault : Bool      { return noteTraitMaybe?.text == kEssayDefault }
-	var    fullTitleOffset   : Int       { return noteOffset + titleRange.location - 2 }
-	var    fullTitleRange    : NSRange   { return NSRange(location: fullTitleOffset, length: titleRange.length + 3) }
-	var         noteRange    : NSRange   { return NSRange(location:      noteOffset, length:  textRange.upperBound) }
-	var   offsetTextRange    : NSRange   { return textRange .offsetBy(noteOffset) }
-	var     lastTextRange    : NSRange?  { return textRange }
-	var        titleRange    = NSRange()
-	var         textRange    = NSRange()
+	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - 2 }
+	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kEssayDefault }
+	var               isNote : Bool      { return isMember(of: ZNote.self) }
+	var    	            zone : Zone?
 
 	func setupChildren() {}
 	func updateOffsets() {}
+	func noteIn(_ range: NSRange) -> ZNote { return self }
 	func recordName() -> String? { return zone?.recordName() }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveNote(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
 
-	init(zones: ZoneArray) {
-
-	}
+	init(zones: ZoneArray) {}
 
 	init(_ zone: Zone?) {
 		super.init()
@@ -69,7 +68,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	func saveNote(_ attributedString: NSAttributedString?) {
 		if  let attributed = attributedString,
-			let       note = noteTraitMaybe {
+			let       note = maybeNoteTrait {
 			let     string = attributed.string
 			let       text = attributed.attributedSubstring(from: textRange)
 			note .noteText = NSMutableAttributedString(attributedString: text)    // invokes note.needSave()
@@ -211,22 +210,28 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		textRange  = textRange .offsetBy(offset)
 	}
 
+	func upperBoundForNoteIn(_ range: NSRange) -> Int {
+		let    note = noteIn(range)
+
+		return note.noteRange.upperBound + note.noteOffset
+	}
+
 	// MARK:- mutate
 	// MARK:-
 
 	func reset() {
-		noteTraitMaybe?.clearSave()
+		maybeNoteTrait?.clearSave()
 		setupChildren()
 	}
 
 	func isLocked(within range: NSRange) -> Bool {
-		let titleEnd = titleRange.upperBound
-		let   tStart = textRange .lowerBound
+		let titleEnd = titleRange.upperBound + noteOffset
+		let   tStart = textRange .lowerBound + noteOffset
 		let     rEnd = range     .upperBound
 		let   rStart = range     .lowerBound
 		let  atLimit = rStart == titleEnd || rEnd == titleEnd	
-		let    first = NSMakeRange(0,        titleRange.lowerBound)
-		let   second = NSMakeRange(titleEnd, tStart - titleEnd)
+		let    first = NSMakeRange(noteOffset, titleRange.lowerBound)
+		let   second = NSMakeRange(titleEnd,   tStart - titleEnd)
 		let  inFirst = first .intersects(range)
 		let inSecond = second.intersects(range)
 		let straddle = range .intersects(second)

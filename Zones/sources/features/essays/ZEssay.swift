@@ -95,6 +95,21 @@ class ZEssay: ZNote {
 		}
 	}
 
+	override func noteIn(_ range: NSRange) -> ZNote {
+		for child in children {
+			if  range.intersects(child.noteRange) {
+				return child
+			}
+		}
+
+		return self
+	}
+
+	override func isLocked(within range: NSRange) -> Bool {
+		let     child = noteIn(range)
+		return (child == self) ? super.isLocked(within: range) : child.isLocked(within: range)
+	}
+
 	override func saveEssay(_ attributedString: NSAttributedString?) {
 		if  let attributed  = attributedString {
 			for child in children {

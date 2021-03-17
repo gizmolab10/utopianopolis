@@ -40,7 +40,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	var shouldOverwrite: Bool {
 		if  let          current = gCurrentEssay,
-			current.noteTraitMaybe?.needsSave ?? false,
+			current.maybeNoteTrait?.needsSave ?? false,
 			current.essayLength != 0,
 			let i                = gCurrentEssayZone?.ckRecord?.recordID,
 			i                   == essayID {	// been here before
@@ -466,7 +466,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		switch arrow {
 			case .left:  canRecurse = selectedRange.lowerBound > 0
-			case .right: canRecurse = selectedRange.upperBound < gCurrentEssay?.noteRange.upperBound ?? 0
+			case .right: canRecurse = selectedRange.upperBound < gCurrentEssay?.upperBoundForNoteIn(selectedRange) ?? 0
 			default:     break
 		}
 
