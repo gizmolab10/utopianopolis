@@ -156,26 +156,37 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	}
 
-	var noteText: NSMutableAttributedString? {
-		var result : NSMutableAttributedString?
+	@discardableResult func updatedRanges() -> (NSMutableAttributedString, String)? {
 		let hideTitles  = !gShowEssayTitles
-
 		if  let    name = hideTitles ? "" : zone?.zoneName,
 			let    text = noteTrait?.noteText {
 			let  spacer = kNoteIndentSpacer * titleInsets
 			let sOffset = hideTitles ? 0 : spacer.length
 			let hasGoof = name.contains("􀅇")
-			let tOffset = hideTitles ? 0 : sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
-			let  indent = NSMutableAttributedString(string: spacer,      attributes: spacerAttributes)
-			let   title = NSMutableAttributedString(string: name + kTab, attributes: titleAttributes)
-			result      = NSMutableAttributedString()
+			let tOffset = hideTitles ? 0 :  sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
 			titleRange  = NSRange(location: sOffset, length: name.length)
 			textRange   = NSRange(location: tOffset, length: text.length)
 			noteOffset  = 0
 
+			return (text, name)
+		}
+
+		return nil
+	}
+
+	var noteText: NSMutableAttributedString? {
+		var      result : NSMutableAttributedString?
+		let hideTitles  = !gShowEssayTitles
+
+		if  let (text, name) = updatedRanges() {
+			result      = NSMutableAttributedString()
+			let  spacer = kNoteIndentSpacer * titleInsets
+			let  indent = NSMutableAttributedString(string: spacer,      attributes: spacerAttributes)
+			let   title = NSMutableAttributedString(string: name + kTab, attributes: titleAttributes)
+
 			result?    .insert(text,       at: 0)
 
-			if  gShowEssayTitles {
+			if !hideTitles {
 				result?.insert(gBlankLine, at: 0)
 				result?.insert(title,      at: 0)
 				result?.insert(indent,     at: 0)
@@ -205,7 +216,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func bumpOffsets(by offset: Int) {
+	func bumpRanges(by offset: Int) {
 		titleRange = titleRange.offsetBy(offset)
 		textRange  = textRange .offsetBy(offset)
 	}

@@ -343,13 +343,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let     l = layoutManager,
 			let     c = textContainer {
 			for (index, zone) in zones.enumerated() {
-				if  let   note = zone.note {
+				if  var note   = zone.note {
+					if  index == 0 {
+						note   = ZNote(zone)
+						note.updatedRanges()
+					}
+
 					let  color = zone.color ?? kDefaultIdeaColor
 					let offset = index == 0 ? 0 : (index == zones.count - 1) ? 2 : 1
 					let  range = note.noteRange.offsetBy(offset)
 					let filled = range.intersects(selectedRange)
-					var   rect = l.boundingRect(forGlyphRange: range, in: c).offsetBy(dx: 16.5, dy: 5.5)
-					rect .size = CGSize(width: 15.0, height: 20.0)
+					var   rect = l.boundingRect(forGlyphRange: range, in: c).offsetBy(dx: 15.5, dy: 8.0)
+					rect .size = CGSize(width: 10.0, height: 15.0)
 					drawColoredOval(rect, color, filled: filled)
 				}
 			}
@@ -471,6 +476,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else {
 			handlePlainArrow(arrow)
 		}
+
+		setNeedsDisplay() // to update which drag dot is filled
 	}
 
 	func handlePlainArrow(_ arrow: ZArrowKey, permitAnotherRecurse: Bool = true) {

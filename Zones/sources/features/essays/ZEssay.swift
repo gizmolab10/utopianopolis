@@ -57,7 +57,7 @@ class ZEssay: ZNote {
 
 					if  index > 0 {
 						result?.insert(gBlankLine, at: 0)
-						child.bumpOffsets(by: bump)
+						child.bumpRanges(by: bump)
 					}
 				}
 			}
@@ -78,9 +78,9 @@ class ZEssay: ZNote {
 
 			zone?.traverseAllProgeny { iChild in
 				if  iChild.hasTrait(for: .tNote),
-					let essay = iChild.note,
-					!self.children.contains(essay) {
-					self.children.append(essay)	// do not use essayMaybe as it may not yet be initialized
+					let note = iChild.note,
+					!self.children.contains(note) {
+					self.children.append(note)	// do not use essayMaybe as it may not yet be initialized
 				}
 			}
 		}
