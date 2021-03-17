@@ -406,7 +406,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				} else if let p = parentZone, p != self, hasCompleteAncestorPath(toColor: true) {
 					return p.color
 				} else {
-					computed    = kBlueColor
+					computed    = kDefaultIdeaColor
 				}
 			}
 

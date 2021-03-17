@@ -2314,6 +2314,18 @@ extension ZView {
 		ZBezierPath(rect: rect).stroke()
 	}
 
+	func drawColoredOval(_ rect: CGRect, _ color: ZColor, filled: Bool = false) {
+		let oval = ZBezierPath(ovalIn: rect)
+
+		color.setStroke()
+		oval.stroke()
+
+		if  filled {
+			color.setFill()
+			oval.fill()
+		}
+	}
+
     func addBorder(thickness: CGFloat, inset: CGFloat = 0.0, radius: CGFloat, color: CGColor) {
         zlayer.cornerRadius = radius
         zlayer.borderWidth  = thickness

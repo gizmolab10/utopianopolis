@@ -302,6 +302,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		super.draw(dirtyRect)
+		drawDragDots()
 
 		if  imageAttachment != nil {
 			gActiveColor.setStroke()
@@ -333,6 +334,25 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			path.flatness = 0.0001
 
 			path.fill()
+		}
+	}
+
+	func drawDragDots() {
+		if  let essay = gCurrentEssay, !essay.isNote,
+			let zones = essay.zone?.zonesWithNotes,
+			let     l = layoutManager,
+			let     c = textContainer {
+			for (index, zone) in zones.enumerated() {
+				if  let   note = zone.note {
+					let  color = zone.color ?? kDefaultIdeaColor
+					let offset = index == 0 ? 0 : (index == zones.count - 1) ? 2 : 1
+					let  range = note.noteRange.offsetBy(offset)
+					let filled = range.intersects(selectedRange)
+					var   rect = l.boundingRect(forGlyphRange: range, in: c).offsetBy(dx: 16.5, dy: 5.5)
+					rect .size = CGSize(width: 15.0, height: 20.0)
+					drawColoredOval(rect, color, filled: filled)
+				}
+			}
 		}
 	}
 
