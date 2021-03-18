@@ -2310,8 +2310,10 @@ extension ZView {
 	}
 
 	func drawColoredRect(_ rect: CGRect, _ color: ZColor) {
+		let radius = CGFloat(10.0)
+
 		color.setStroke()
-		ZBezierPath(rect: rect).stroke()
+		ZBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius).stroke()
 	}
 
 	func drawColoredOval(_ rect: CGRect, _ color: ZColor, filled: Bool = false) {
