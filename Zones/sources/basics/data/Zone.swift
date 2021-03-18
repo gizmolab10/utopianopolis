@@ -1675,7 +1675,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return noteMaybe
 	}
 
-	func createNote() -> ZNote? {
+	@discardableResult func createNote() -> ZNote? {
 		let zones = zonesWithNotes
 		let count = zones.count
 		var note : ZNote?

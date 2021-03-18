@@ -157,147 +157,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- buttons
-	// MARK:-
-
-	func setControlBarButtons(       enabled: Bool) {
-		let      hasMultipleNotes =  gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
-		let               isEssay = (gCurrentEssay?.isNote ?? true) == false
-		let                   bar =  gMainWindow?.inspectorBar
-		backwardButton?.isEnabled =  enabled && hasMultipleNotes
-		forwardButton? .isEnabled =  enabled && hasMultipleNotes
-		titlesButton?  .isEnabled =  enabled && isEssay
-		deleteButton?  .isEnabled =  enabled
-		cancelButton?  .isEnabled =  enabled
-		hideButton?    .isEnabled =  enabled
-		saveButton?    .isEnabled =  enabled
-		bar?            .isHidden = !enabled
-
-		if  let b = bar {
-			b.draw(b.bounds)
-		}
-	}
-
-	@objc private func handleButtonPress(_ iButton: ZButton) {
-		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
-			switch buttonID {
-				case .idForward: gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
-				case .idBack:    gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
-				case .idSave:    save()
-				case .idHide:    gCurrentEssayZone?.grab();        done()
-				case .idCancel:  gCurrentEssayZone?.grab();        exit()
-				case .idDelete:  gCurrentEssayZone?.deleteNote(); exit()
-				case .idTitles:  toggleEssayTitles()
-			}
-		}
-	}
-
-	func updateButtonTitles() {
-		for tag in ZEssayButtonID.all {
-			var button :ZButton?
-			switch tag {
-				case .idBack:    button = backwardButton
-				case .idForward: button =  forwardButton
-				case .idCancel:  button =   cancelButton
-				case .idDelete:  button =   deleteButton
-				case .idTitles:  button =   titlesButton
-				case .idHide:    button =     hideButton
-				case .idSave:    button =     saveButton
-			}
-
-			if  button?.image == nil {
-				button?.title = tag.title
-			}
-		}
-	}
-
-	func toggleEssayTitles() {
-		gShowEssayTitles = !gShowEssayTitles
-
-		updateText()
-	}
-
-	private func addButtonFor(_ tag: ZEssayButtonID) {
-		if  let inspectorBar = gMainWindow?.inspectorBar {
-
-			func rect(at target: Int) -> CGRect {
-
-				// ////////////////////////////////////////////////// //
-				// Apple bug: subviews are not located where expected //
-				// ////////////////////////////////////////////////// //
-
-				var final = inspectorBar.subviews[0].frame
-				var prior = final
-
-				for index in 1...target {
-					let subview      = inspectorBar.subviews[index]
-					let frame        = subview.frame
-					subview.isHidden = false
-					final.origin.x  += prior.size.width
-					final.size       = frame.size
-					prior            = frame
-				}
-
-				final.origin.x      += 70.0
-
-				return final
-			}
-
-			func buttonWith(_ title: String) -> ZTooltipButton {
-				let    action = #selector(handleButtonPress)
-
-				if  let image = ZImage(named: title)?.resize(CGSize(width: 14.0, height: 14.0)) {
-					return      ZTooltipButton(image: image, target: self, action: action)
-				}
-
-				let    button = ZTooltipButton(title: title, target: self, action: action)
-				button  .font = gTinyFont
-
-				return button
-			}
-
-			func buttonFor(_ tag: ZEssayButtonID) -> ZTooltipButton {
-				let         index = inspectorBar.subviews.count - 1
-				var         frame = rect(at: index).offsetBy(dx: 2.0, dy: -5.0)
-				let         title = tag.title
-				let        button = buttonWith(title)
-				frame       .size = button.bounds.size
-				frame             = frame.insetBy(dx: 12.0, dy: 6.0)
-				button   .toolTip = "\(kClickTo)\(tag.tooltipString)"
-				button       .tag = tag.rawValue
-				button     .frame = frame
-				button .isEnabled = false
-				button.isBordered = false
-				button.bezelStyle = .texturedRounded
-
-				button.setButtonType(.momentaryChange)
-				button.updateTracking() // for tool tip
-
-				return button
-			}
-
-			func setButton(_ button: ZButton) {
-				if  let    tag = ZEssayButtonID(rawValue: button.tag) {
-					switch tag {
-						case .idBack:   backwardButton = button
-						case .idForward: forwardButton = button
-						case .idCancel:   cancelButton = button
-						case .idDelete:   deleteButton = button
-						case .idTitles:   titlesButton = button
-						case .idHide:       hideButton = button
-						case .idSave:       saveButton = button
-					}
-				}
-			}
-
-			let b = buttonFor(tag)
-
-			inspectorBar.addSubview(b)
-			setButton(b)
-		}
-
-	}
-
 	// MARK:- output
 	// MARK:-
 
@@ -332,28 +191,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if let attach = imageAttachment ?? eraseAttachment,
 				  let   rect = rectForRangedAttachment(attach) {
 			drawImageResizeDots(onBorderOf: rect)
-		}
-	}
-
-	func drawImageResizeDots(onBorderOf rect: CGRect) {
-		for point in rect.selectionPoints.values {
-			let   dotRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotInset)
-			let      path = ZBezierPath(ovalIn: dotRect)
-			path.flatness = 0.0001
-
-			path.fill()
-		}
-	}
-
-	func drawDragDots() {
-		for dot in dragDots {
-			if  let    note = dot.note {
-				let grabbed = grabbedNotes.contains(note)
-				let   color = grabbed ? kBlackColor : dot.color
-				let  filled = dot.range?.intersects(selectedRange) ?? false
-
-				drawColoredOval(dot.rect, color, filled: filled)
-			}
 		}
 	}
 
@@ -506,25 +343,25 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func handleClick(with event: ZEvent) -> Bool {
-		let            rect = rectFromEvent(event)
-		if  let      attach = attachmentHit(at: rect) {
-			resizeDot       = resizeDotHit(in: attach, at: rect)
-			resizeDragStart = rect.origin
-			imageAttachment = attach
+		let              rect = rectFromEvent(event)
+		if  let        attach = attachmentHit(at: rect) {
+			resizeDot         = resizeDotHit(in: attach, at: rect)
+			resizeDragStart   = rect.origin
+			imageAttachment   = attach
 
 			return resizeDot != nil // true means do not further process this event
-		} else if let   dot = dragDotHit(at: rect),
-				  let  note = dot.note {
+		} else if let     dot = dragDotHit(at: rect),
+				  let    note = dot.note {
 			grabbedNotes.append(note)
-			print("\(note.zone!)")
 
 			return true
+		} else {
+			grabbedNotes.removeAll()
+			clearResizing()
+			setNeedsDisplay()
+
+			return false
 		}
-
-		clearResizing()
-		setNeedsDisplay()
-
-		return false
 	}
 
 	func move(out: Bool) {
@@ -589,7 +426,42 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- prevent editing added [locked] whitespace
+	private func select(restoreSelection: Int? = nil) {
+		var point = CGPoint()                     // scroll to top
+
+		if  let e = gCurrentEssay,
+			(e.lastTextIsDefault || restoreSelection != nil),
+			var range      = e.lastTextRange {    // select entire text of final essay
+			if  let offset = restoreSelection {
+				range      = NSRange(location: offset, length: 0)
+			}
+
+			if  let   r = rectForRange(range) {
+				point   = r.origin
+				point.y = max(0.0, point.y - 100.0)
+			}
+
+			setSelectedRange(range)
+		}
+
+		scroll(point)
+	}
+
+	func accountForSelection() {
+		var needsUngrab = true
+
+		for note in selectedNotes {
+			if  let grab = note.zone {
+				if  needsUngrab {
+					needsUngrab = false
+				}
+
+				grab.asssureIsVisible()
+			}
+		}
+	}
+
+	// MARK:- locked ranges
 	// MARK:-
 
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange, toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
@@ -620,53 +492,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return replacement == nil
 	}
 
-	// MARK:- resize image
+	// MARK:- text drag
 	// MARK:-
 
-	func clearResizing() {
-		imageAttachment = nil
-		resizeDragStart = nil
-		resizeDragRect  = nil
-		resizeDot       = nil
-	}
+	func drawDragDots() {
+		for dot in dragDots {
+			if  let    note = dot.note {
+				let grabbed = grabbedNotes.contains(note)
+				let   color = grabbed ? kBlackColor : dot.color
+				let  filled = dot.range?.intersects(selectedRange) ?? false
 
-	override func mouseDragged(with event: ZEvent) {
-		if  resizeDot != nil,
-			let  start = resizeDragStart {
-			let  delta = rectFromEvent(event).origin - start
-
-			updateDragRect(for: delta)
-			setNeedsDisplay()
-		}
-	}
-
-	override func mouseUp(with event: ZEvent) {
-		if  resizeDot != nil,
-			updateImage(),
-			let attach = imageAttachment {
-			let  range = attach.range
-
-			save()
-			clearResizing()
-			setNeedsLayout()
-			setNeedsDisplay()
-			updateText(restoreSelection: range.location)
-		}
-	}
-
-	func updateImage() -> Bool {
-		if  let    size  = resizeDragRect?.size,
-			let       a  = imageAttachment?.attachment,
-			let   image  = a.image {
-			let oldSize  = image.size
-			if  oldSize != size {
-				a.image  = image.resizedTo(size)
-
-				return true
+				drawColoredOval(dot.rect, color, filled: filled)
 			}
 		}
-
-		return false
 	}
 
 	var dragDots:  [ZEssayDragDot] {
@@ -695,6 +533,26 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		return dots
+	}
+
+	func dragDotHit(at rect: CGRect) -> ZEssayDragDot? {
+		for dot in dragDots {
+			if  dot.rect.intersects(rect) {
+				return dot
+			}
+		}
+
+		return nil
+	}
+
+	override func mouseDragged(with event: ZEvent) {
+		if  resizeDot != nil,
+			let  start = resizeDragStart {
+			let  delta = rectFromEvent(event).origin - start
+
+			updateDragRect(for: delta)
+			setNeedsDisplay()
+		}
 	}
 
 	func updateDragRect(for delta: CGSize) {
@@ -735,79 +593,205 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- private
+	// MARK:- buttons
 	// MARK:-
 
-	func searchAgain(_ OPTION: Bool) {
-	    let    seek = gSearching.searchText
-		var  offset = selectedRange.upperBound + 1
-		let    text = gCurrentEssay?.essayText?.string
-		let   first = text?.substring(toExclusive: offset)
-		let  second = text?.substring(fromInclusive: offset)
-		var matches = second?.rangesMatching(seek)
+	func setControlBarButtons(       enabled: Bool) {
+		let      hasMultipleNotes =  gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
+		let               isEssay = (gCurrentEssay?.isNote ?? true) == false
+		let                   bar =  gMainWindow?.inspectorBar
+		backwardButton?.isEnabled =  enabled && hasMultipleNotes
+		forwardButton? .isEnabled =  enabled && hasMultipleNotes
+		titlesButton?  .isEnabled =  enabled && isEssay
+		deleteButton?  .isEnabled =  enabled
+		cancelButton?  .isEnabled =  enabled
+		hideButton?    .isEnabled =  enabled
+		saveButton?    .isEnabled =  enabled
+		bar?            .isHidden = !enabled
 
-		if  matches == nil || matches!.count == 0 {
-			matches = first?.rangesMatching(seek) // wrap around
-			offset  = 0
-		}
-
-		if  matches != nil,
-			matches!.count > 0 {
-			scrollToVisible(selectionRect)
-			setSelectedRange(matches![0].offsetBy(offset))
+		if  let b = bar {
+			b.draw(b.bounds)
 		}
 	}
 
-	func grabSelectedTextForSearch() {
-		gSearching.searchText = selectionString
+	@objc private func handleButtonPress(_ iButton: ZButton) {
+		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
+			switch buttonID {
+				case .idForward: gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
+				case .idBack:    gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
+				case .idSave:    save()
+				case .idHide:    gCurrentEssayZone?.grab();        done()
+				case .idCancel:  gCurrentEssayZone?.grab();        exit()
+				case .idDelete:  gCurrentEssayZone?.deleteNote(); exit()
+				case .idTitles:  toggleEssayTitles()
+			}
+		}
 	}
 
-	func linkHit(at rect: CGRect) -> Bool {
-		if  let array = textStorage?.linkRanges {
-			for range in array {
-				let linkRects = rectsForRange(range)
-				let count = linkRects.count
+	func updateButtonTitles() {
+		for tag in ZEssayButtonID.all {
+			var button :ZButton?
+			switch tag {
+				case .idBack:    button = backwardButton
+				case .idForward: button =  forwardButton
+				case .idCancel:  button =   cancelButton
+				case .idDelete:  button =   deleteButton
+				case .idTitles:  button =   titlesButton
+				case .idHide:    button =     hideButton
+				case .idSave:    button =     saveButton
+			}
 
-				if  count > 0 {
-					for index in 0 ..< count {
-						let lineRect = linkRects[index]
+			if  button?.image == nil {
+				button?.title = tag.title
+			}
+		}
+	}
 
-						if  range.length    < 150,
-							lineRect.width  < 250.0,
-							lineRect.height <  25.0,
-							lineRect.intersects(rect) {
-							return true
-						}
+	func toggleEssayTitles() {
+		gShowEssayTitles = !gShowEssayTitles
+
+		updateText()
+	}
+
+	private func addButtonFor(_ tag: ZEssayButtonID) {
+		if  let inspectorBar = gMainWindow?.inspectorBar {
+
+			func rect(at target: Int) -> CGRect {
+
+				// ////////////////////////////////////////////////// //
+				// Apple bug: subviews are not located where expected //
+				// ////////////////////////////////////////////////// //
+
+				var final = inspectorBar.subviews[0].frame
+				var prior = final
+
+				for index in 1...target {
+					let subview      = inspectorBar.subviews[index]
+					let frame        = subview.frame
+					subview.isHidden = false
+					final.origin.x  += prior.size.width
+					final.size       = frame.size
+					prior            = frame
+				}
+
+				final.origin.x      += 70.0
+
+				return final
+			}
+
+			func buttonWith(_ title: String) -> ZTooltipButton {
+				let    action = #selector(handleButtonPress)
+
+				if  let image = ZImage(named: title)?.resize(CGSize(width: 14.0, height: 14.0)) {
+					return      ZTooltipButton(image: image, target: self, action: action)
+				}
+
+				let    button = ZTooltipButton(title: title, target: self, action: action)
+				button  .font = gTinyFont
+
+				return button
+			}
+
+			func buttonFor(_ tag: ZEssayButtonID) -> ZTooltipButton {
+				let         index = inspectorBar.subviews.count - 1
+				var         frame = rect(at: index).offsetBy(dx: 2.0, dy: -5.0)
+				let         title = tag.title
+				let        button = buttonWith(title)
+				frame       .size = button.bounds.size
+				frame             = frame.insetBy(dx: 12.0, dy: 6.0)
+				button   .toolTip = "\(kClickTo)\(tag.tooltipString)"
+				button       .tag = tag.rawValue
+				button     .frame = frame
+				button .isEnabled = false
+				button.isBordered = false
+				button.bezelStyle = .texturedRounded
+
+				button.setButtonType(.momentaryChange)
+				button.updateTracking() // for tool tip
+
+				return button
+			}
+
+			func setButton(_ button: ZButton) {
+				if  let    tag = ZEssayButtonID(rawValue: button.tag) {
+					switch tag {
+						case .idBack:   backwardButton = button
+						case .idForward: forwardButton = button
+						case .idCancel:   cancelButton = button
+						case .idDelete:   deleteButton = button
+						case .idTitles:   titlesButton = button
+						case .idHide:       hideButton = button
+						case .idSave:       saveButton = button
 					}
 				}
+			}
+
+			let b = buttonFor(tag)
+
+			inspectorBar.addSubview(b)
+			setButton(b)
+		}
+
+	}
+
+	// MARK:- images
+	// MARK:-
+
+	func drawImageResizeDots(onBorderOf rect: CGRect) {
+		for point in rect.selectionPoints.values {
+			let   dotRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotInset)
+			let      path = ZBezierPath(ovalIn: dotRect)
+			path.flatness = 0.0001
+
+			path.fill()
+		}
+	}
+
+	override func draggingEntered(_ drag: NSDraggingInfo) -> NSDragOperation {
+		if  let    board = drag.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
+			let     path = board[0] as? String {
+			let fileName = URL(fileURLWithPath: path).lastPathComponent
+			printDebug(.dImages, "DROP     \(fileName)")
+			dropped.append(fileName)
+		}
+
+		return .copy
+	}
+
+	func clearResizing() {
+		imageAttachment = nil
+		resizeDragStart = nil
+		resizeDragRect  = nil
+		resizeDot       = nil
+	}
+
+	override func mouseUp(with event: ZEvent) {
+		if  resizeDot != nil,
+			updateImage(),
+			let attach = imageAttachment {
+			let  range = attach.range
+
+			save()
+			clearResizing()
+			setNeedsLayout()
+			setNeedsDisplay()
+			updateText(restoreSelection: range.location)
+		}
+	}
+
+	func updateImage() -> Bool {
+		if  let    size  = resizeDragRect?.size,
+			let       a  = imageAttachment?.attachment,
+			let   image  = a.image {
+			let oldSize  = image.size
+			if  oldSize != size {
+				a.image  = image.resizedTo(size)
+
+				return true
 			}
 		}
 
 		return false
-	}
-
-	func dragDotHit(at rect: CGRect) -> ZEssayDragDot? {
-		for dot in dragDots {
-			if  dot.rect.intersects(rect) {
-				return dot
-			}
-		}
-
-		return nil
-	}
-
-	func attachmentHit(at rect: CGRect) -> ZRangedAttachment? {
-		if  let array = textStorage?.rangedAttachments {
-			for item in array {
-				if  let imageRect = rectForRangedAttachment(item)?.insetEquallyBy(dotInset),
-					imageRect.intersects(rect) {
-
-					return item
-				}
-			}
-		}
-
-		return nil
 	}
 
 	func resizeDotHit(in attach: ZRangedAttachment?, at rect: CGRect) -> ZDirection? {
@@ -845,6 +829,50 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		return nil
 	}
+
+	func attachmentHit(at rect: CGRect) -> ZRangedAttachment? {
+		if  let array = textStorage?.rangedAttachments {
+			for item in array {
+				if  let imageRect = rectForRangedAttachment(item)?.insetEquallyBy(dotInset),
+					imageRect.intersects(rect) {
+
+					return item
+				}
+			}
+		}
+
+		return nil
+	}
+
+	// MARK:- search
+	// MARK:-
+
+	func searchAgain(_ OPTION: Bool) {
+	    let    seek = gSearching.searchText
+		var  offset = selectedRange.upperBound + 1
+		let    text = gCurrentEssay?.essayText?.string
+		let   first = text?.substring(toExclusive: offset)
+		let  second = text?.substring(fromInclusive: offset)
+		var matches = second?.rangesMatching(seek)
+
+		if  matches == nil || matches!.count == 0 {
+			matches = first?.rangesMatching(seek) // wrap around
+			offset  = 0
+		}
+
+		if  matches != nil,
+			matches!.count > 0 {
+			scrollToVisible(selectionRect)
+			setSelectedRange(matches![0].offsetBy(offset))
+		}
+	}
+
+	func grabSelectedTextForSearch() {
+		gSearching.searchText = selectionString
+	}
+
+	// MARK:- more
+	// MARK:-
 
 	func swapBetweenNoteAndEssay() {
 		if  let          current = gCurrentEssay,
@@ -906,41 +934,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	private func select(restoreSelection: Int? = nil) {
-		var point = CGPoint()                     // scroll to top
-
-		if  let e = gCurrentEssay,
-			(e.lastTextIsDefault || restoreSelection != nil),
-			var range      = e.lastTextRange {    // select entire text of final essay
-			if  let offset = restoreSelection {
-				range      = NSRange(location: offset, length: 0)
-			}
-
-			if  let   r = rectForRange(range) {
-				point   = r.origin
-				point.y = max(0.0, point.y - 100.0)
-			}
-
-			setSelectedRange(range)
-		}
-
-		scroll(point)
-	}
-
-	func accountForSelection() {
-		var needsUngrab = true
-
-		for note in selectedNotes {
-			if  let grab = note.zone {
-				if  needsUngrab {
-					needsUngrab = false
-				}
-
-				grab.asssureIsVisible()
-			}
-		}
-	}
-
 	// MARK:- special characters
 	// MARK:-
 
@@ -959,6 +952,30 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	// MARK:- hyperlinks
 	// MARK:-
+
+	func linkHit(at rect: CGRect) -> Bool {
+		if  let array = textStorage?.linkRanges {
+			for range in array {
+				let linkRects = rectsForRange(range)
+				let count = linkRects.count
+
+				if  count > 0 {
+					for index in 0 ..< count {
+						let lineRect = linkRects[index]
+
+						if  range.length    < 150,
+							lineRect.width  < 250.0,
+							lineRect.height <  25.0,
+							lineRect.intersects(rect) {
+							return true
+						}
+					}
+				}
+			}
+		}
+
+		return false
+	}
 
 	private func showHyperlinkPopup() {
 		let menu = NSMenu(title: "create a hyperlink")
@@ -1111,20 +1128,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {
 		return followCurrentLink(within: NSRange(location: charIndex, length: 0))
-	}
-
-	// MARK:- drop images
-	// MARK:-
-
-	override func draggingEntered(_ drag: NSDraggingInfo) -> NSDragOperation {
-		if  let    board = drag.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
-			let     path = board[0] as? String {
-			let fileName = URL(fileURLWithPath: path).lastPathComponent
-			printDebug(.dImages, "DROP     \(fileName)")
-			dropped.append(fileName)
-		}
-
-		return .copy
 	}
 
 }
