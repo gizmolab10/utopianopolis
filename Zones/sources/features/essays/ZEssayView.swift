@@ -32,9 +32,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { imageAttachment = nil } } }
 	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { setSelectedRange(NSRange()) } else if oldValue != nil { eraseAttachment = oldValue } } }
 	var eraseAttachment : ZRangedAttachment?
+	var grabbedZones    : [Zone]             { return grabbedNotes.map { $0.zone! } }
+	var hasGrabbedNote  : Bool               { return grabbedNotes.count != 0 }
+	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
 	var lockedSelection : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
-	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
 	var backwardButton  : ZButton?
 	var forwardButton   : ZButton?
 	var cancelButton    : ZButton?
@@ -217,6 +219,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			handleArrow(arrow, flags: flags)
 
 			return true
+		} else if  hasGrabbedNote {
+			return true // special state: ignore key input
 		} else if  COMMAND {
 			switch key {
 				case "a":      selectAll(nil)
@@ -267,7 +271,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let  OPTION = flags.isOption
 		let COMMAND = flags.isCommand
 
-		if         COMMAND && OPTION {
+		if  hasGrabbedNote {
+			handleGrab(arrow)
+		} else if  COMMAND && OPTION {
 			switch arrow {
 				case .left,
 					 .right: move(out: arrow == .left)
@@ -342,6 +348,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  permitAnotherRecurse, canRecurse, lockedSelection {
 			handlePlainArrow(arrow, permitAnotherRecurse: horizontal)
 		}
+	}
+
+	func handleGrab(_ arrow: ZArrowKey) {
+		var      flags = ZEventFlags()
+		flags.isOption = true
+
+		gMapEditor.handleArrow(arrow, flags: flags)
+		setNeedsDisplay()
 	}
 
 	func handleClick(with event: ZEvent) -> Bool {
@@ -508,7 +522,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  let     note = dot.note {
 				let  grabbed = grabbedNotes.contains(note)
 				let selected = dot.range?.intersects(selectedRange) ?? false
-				let   filled = selected && grabbedNotes.count == 0
+				let   filled = selected && !hasGrabbedNote
 				let    color = dot.color
 
 				drawColoredOval(dot.dotRect, color, filled: filled || grabbed)

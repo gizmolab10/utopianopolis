@@ -1156,13 +1156,14 @@ class ZMapEditor: ZBaseEditor {
         }
     }
     
-    
     func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
-		priorHere = gHere
+		priorHere     = gHere
 
-		moveUp(iMoveUp, gSelecting.sortedGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKinds in
-            gSignal(iKinds)
-        }
+		if  let grabs = gIsEssayMode ? gEssayView?.grabbedZones : gSelecting.sortedGrabs {
+			moveUp(iMoveUp, grabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKinds in
+				gSignal(iKinds)
+			}
+		}
     }
     
 	func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, forcedResponse: [ZSignalKind]? = nil, onCompletion: SignalArrayClosure? = nil) {
