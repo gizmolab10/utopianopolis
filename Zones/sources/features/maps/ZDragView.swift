@@ -16,6 +16,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 	@IBOutlet var controller: ZMapController?
 	override func menu(for event: NSEvent) -> NSMenu? { return controller?.mapContextualMenu }
+	override func updateTrackingAreas() { addTracking(for: bounds) }
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)
@@ -60,15 +61,6 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
         return false
     }
-
-	override func updateTrackingAreas() {
-		for area in trackingAreas {
-			removeTrackingArea(area)
-		}
-
-		addTrackingArea(NSTrackingArea(rect: bounds, options: [.activeAlways, .cursorUpdate, .mouseEnteredAndExited, .enabledDuringMouseDrag], owner: self, userInfo: nil))
-		super.updateTrackingAreas()
-	}
 
 	override func mouseExited(with event: NSEvent) {
 		super.mouseExited(with: event)

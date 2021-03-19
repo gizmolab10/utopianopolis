@@ -150,6 +150,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				discardPriorText()
 				gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }	     // emplace text
 				select(restoreSelection: restoreSelection)
+//				updateTracking()
 			}
 
 			delegate = self 					    	 // set delegate after setText
@@ -219,22 +220,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			handleArrow(arrow, flags: flags)
 
 			return true
-		} else if key == kEscape {
-			if  hasGrabbedNote {
-				grabbedNotes.removeAll()
-
-				setNeedsDisplay()
-			} else {
-				if  OPTION {
-					accountForSelection()
-				}
-
-				gControllers.swapMapAndEssay()
+		} else if  hasGrabbedNote {
+			switch key {
+				case "/", kEscape: ungrabAll()
+				default:           break
 			}
 
 			return true
-		} else if  hasGrabbedNote {
-			return true // special state: ignore key input
+		} else if key == kEscape {
+			if  OPTION {
+				accountForSelection()
+			}
+
+			gControllers.swapMapAndEssay()
+
+			return true
 		} else if  COMMAND {
 			switch key {
 				case "a":      selectAll(nil)
@@ -249,7 +249,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "s":      save()
 				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-				case "/":                  gHelpController?.show(flags: flags)
+				case "/":      if OPTION { gHelpController?.show(flags: flags) } else { grab() }
 				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
 				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
 				case kReturn:  gCurrentEssayZone?.grab(); done()
@@ -360,6 +360,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  [.down, .up].contains(arrow) {
 			if  flags.isOption {
 				gMapEditor.handleArrow(arrow, flags: flags)
+				gCurrentEssayZone?.recount()
 			} else {
 				grabNextNote(up: arrow == .up)
 			}
@@ -369,18 +370,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func handleClick(with event: ZEvent) -> Bool {
-		let              rect = rectFromEvent(event)
-		if  let        attach = attachmentHit(at: rect) {
-			resizeDot         = resizeDotHit(in: attach, at: rect)
-			resizeDragStart   = rect.origin
-			imageAttachment   = attach
+		let                 rect = rectFromEvent(event)
+		if  let           attach = attachmentHit(at: rect) {
+			resizeDot            = resizeDotHit(in: attach, at: rect)
+			resizeDragStart      = rect.origin
+			imageAttachment      = attach
 
-			return resizeDot != nil // true means do not further process this event
-		} else if let     dot = dragDotHit(at: rect),
-				  let    note = dot.note {
-			if !grabbedNotes.contains(note) {
+			return resizeDot    != nil // true means do not further process this event
+		} else if let        dot = dragDotHit(at: rect),
+				  let       note = dot.note {
+			if  note.zone?.note == note,           // avoid first note, for which grabbing makes no sense
+				!grabbedNotes.contains(note) {
 				if !event.modifierFlags.isShift {
-					grabbedNotes.removeAll()
+					ungrabAll()
 				}
 
 				grabbedNotes.append(note)
@@ -389,35 +391,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			return true
 		} else {
-			grabbedNotes.removeAll()
+			ungrabAll()
 			clearResizing()
-			setNeedsDisplay()
 
 			return false
 		}
-	}
-
-	func move(out: Bool) {
-		gCreateCombinedEssay = true
-		let        selection = selectedNotes
-
-		save()
-
-		if !out, let last = selection.last {
-			resetCurrentEssay(last)
-		} else if out {
-			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
-				if  ancestor != gCurrentEssayZone, ancestor.hasNote {
-					self.resetCurrentEssay(ancestor.note)
-
-					return .eStop
-				}
-
-				return .eContinue
-			}
-		}
-
-		gSignal([.sCrumbs])
 	}
 
 	override func mouseDown(with event: ZEvent) {
@@ -426,14 +404,20 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// change cursor to indicate action possible on what's under cursor
+	// change cursor to
+	// indicate action possible on what's under cursor
+	// and possibly display a tool tip
 
 	override func mouseMoved(with event: ZEvent) {
-		let  rect = rectFromEvent(event)
-
-		NSCursor.iBeam.set()
+		let rect = rectFromEvent(event)
 
 		if  linkHit(at: rect) {
+			NSCursor.arrow.set()
+		} else if let dot = dragDotHit(at: rect) {
+			if  let  note = dot.note {
+				toolTip   = note.tooltipString(grabbed: grabbedNotes.contains(note))
+			}
+
 			NSCursor.arrow.set()
 		} else if let item = attachmentHit(at: rect),
 			let  imageRect = rectForRangedAttachment(item) {
@@ -447,6 +431,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					NSCursor.crosshair.set()
 				}
 			}
+		} else {
+			toolTip = nil
+
+			NSCursor.iBeam.set()
 		}
 	}
 
@@ -560,11 +548,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					}
 
 					let    color = zone.color ?? kDefaultIdeaColor
-					let   offset = index == 0 ? 0 : (index == zones.count - 1) ? 2 : 1
+					let   offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2
 					let    range = note.noteRange.offsetBy(offset)
 					let  dotSize = CGSize(width: 11.75, height: 15.0)
 					let textRect = l.boundingRect(forGlyphRange: range, in: c).offsetBy(dx: 17.5, dy: 6.0).insetEquallyBy(-2.0)
-					let  dotRect = CGRect(origin: textRect.origin, size: dotSize).offsetBy(dx: 2.0, dy: 3.0)
+					let  dotRect = CGRect(origin: textRect.origin, size: dotSize).offsetBy(dx: 3.0, dy: 3.0)
 
 					dots.append(ZEssayDragDot(note: note, range: range, color: color, dotRect: dotRect, textRect: textRect))
 				}
@@ -632,6 +620,20 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
+	func ungrabAll() {
+		grabbedNotes.removeAll()
+		setNeedsDisplay()
+	}
+
+	func grab() {
+		let note = selectedNotes[0]
+
+		if  note.isNote {
+			ungrabAll()
+			grabbedNotes.append(note)
+		}
+	}
+
 	var grabbedIndex: Int? {
 		for (index, dot) in dragDots.enumerated() {
 			if  let note = dot.note,
@@ -653,9 +655,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			if  let note = dots[nIndex].note {
-				grabbedNotes.removeAll()
+				ungrabAll()
 				grabbedNotes.append(note)
 			}
+		}
+	}
+
+	func updateTracking() {
+		var clearFirst = true
+
+		for dot in dragDots {
+			let rect = dot.dotRect
+
+			addTracking(for: rect, clearFirst: clearFirst)
+
+			clearFirst = false
 		}
 	}
 
@@ -686,8 +700,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idForward: gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
 				case .idBack:    gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
 				case .idSave:    save()
-				case .idHide:    gCurrentEssayZone?.grab();        done()
-				case .idCancel:  gCurrentEssayZone?.grab();        exit()
+				case .idHide:    gCurrentEssayZone?.grab();       done()
+				case .idCancel:  gCurrentEssayZone?.grab();       exit()
 				case .idDelete:  gCurrentEssayZone?.deleteNote(); exit()
 				case .idTitles:  toggleEssayTitles()
 			}
@@ -963,6 +977,29 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else {
 			updateText()
 		}
+	}
+
+	func move(out: Bool) {
+		gCreateCombinedEssay = true
+		let        selection = selectedNotes
+
+		save()
+
+		if !out, let last = selection.last {
+			resetCurrentEssay(last)
+		} else if out {
+			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
+				if  ancestor != gCurrentEssayZone, ancestor.hasNote {
+					self.resetCurrentEssay(ancestor.note)
+
+					return .eStop
+				}
+
+				return .eContinue
+			}
+		}
+
+		gSignal([.sCrumbs])
 	}
 
 	private func convertToChild(createEssay: Bool = false) {

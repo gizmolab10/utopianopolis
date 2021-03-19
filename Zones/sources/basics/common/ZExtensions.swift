@@ -2316,7 +2316,7 @@ extension ZView {
 	}
 
 	func drawColoredRect(_ rect: CGRect, _ color: ZColor) {
-		let radius = CGFloat(10.0)
+		let radius = CGFloat(8.0)
 
 		color.setStroke()
 		ZBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius).stroke()
@@ -2381,44 +2381,17 @@ extension ZView {
 		return (false, true, false, false, false)
 	}
 
-	// this is abandoned
-	// code for examining objects in the ring
-
-	func xanalyze(_ object: AnyObject) -> (Bool, Bool, Bool, Bool, Bool) {
-		var noteFocus = false
-		var ideaFocus = false
-		var   asEssay = false
-		var    asNote = false
-		var    asIdea = false
-
-		if      let  idea = object as? Zone {
-			if  let ident = idea.identifier() {
-				asIdea    = true
-				ideaFocus = ident == gHereMaybe?.identifier()
-			}
-		} else if let note = object as? ZNote {
-			asNote    = true
-
-			if  let current = gCurrentEssay,
-				note == current {
-				noteFocus = true
-			}
-
-			if  note.isKind(of: ZEssay.self) {
-				asEssay = true
-			}
-		} else if let others = object as? ZObjectsArray {
-			for other in others {
-				let (newIdeaFocus, newIdea, newNoteFocus, newNote, newEssay) = analyze(other)
-				noteFocus = noteFocus || newNoteFocus
-				ideaFocus = ideaFocus || newIdeaFocus
-				asEssay   = asEssay   || newEssay
-				asNote    = asNote    || newNote
-				asIdea    = asIdea    || newIdea
+	func addTracking(for rect: CGRect, clearFirst: Bool = true) {
+		if  clearFirst {
+			for area in trackingAreas {
+				removeTrackingArea(area)
 			}
 		}
 
-		return (ideaFocus, asIdea, noteFocus, asNote, asEssay)
+		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect, .cursorUpdate] as NSTrackingArea.Options
+		let tracker = NSTrackingArea(rect:rect, options: options, owner:self, userInfo: nil)
+
+		addTrackingArea(tracker)
 	}
 
 	func drawTinyDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, onEach: IntRectClosure? = nil) {

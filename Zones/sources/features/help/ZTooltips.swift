@@ -67,6 +67,20 @@ extension ZRecord {
 
 }
 
+extension ZNote {
+
+	func tooltipString(grabbed: Bool) -> String? {
+		if  gShowToolTips {
+			let prefix = grabbed ? "This note is selected" : "\(kClickTo)select this note"
+
+			return "\(prefix)\r\rTo move it, hold down the OPTION key and tap a vertical arrow key"
+		}
+
+		return nil
+	}
+
+}
+
 extension ZSimpleToolButton {
 
 	var tooltipString : String? {

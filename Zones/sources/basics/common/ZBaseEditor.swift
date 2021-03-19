@@ -36,7 +36,7 @@ class ZBaseEditor: NSObject {
 
 			switch key {
 				case "w": if COMMAND { gHelpController?.show(false, flags: flags); handled = true }
-				case "/": if COMMAND { gHelpController?.show(       flags: flags); handled = true }
+//				case "/": if COMMAND { gHelpController?.show(       flags: flags); handled = true }
 				case "a": if SPECIAL { gApplication.showHideAbout();               handled = true }
 				case "h": if COMMAND { gApplication.hide(nil);                     handled = true }
 				case "k": if SPECIAL { toggleColorfulMode();                       handled = true }

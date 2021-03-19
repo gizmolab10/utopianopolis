@@ -12,16 +12,7 @@ class ZTooltipButton: ZButton {
 
 	var originalBackgroundColor: ZColor?
 
-	func updateTracking() {
-		for area in trackingAreas {
-			removeTrackingArea(area)
-		}
-
-		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect, .cursorUpdate] as NSTrackingArea.Options
-		let tracker = NSTrackingArea(rect:frame, options: options, owner:self, userInfo: nil)
-
-		addTrackingArea(tracker)
-	}
+	func updateTracking() { addTracking(for: frame) }
 
 	override func mouseEntered(with event: NSEvent) {
 		if  isEnabled,
