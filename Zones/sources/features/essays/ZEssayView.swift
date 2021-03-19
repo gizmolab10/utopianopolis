@@ -219,6 +219,20 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			handleArrow(arrow, flags: flags)
 
 			return true
+		} else if key == kEscape {
+			if  hasGrabbedNote {
+				grabbedNotes.removeAll()
+
+				setNeedsDisplay()
+			} else {
+				if  OPTION {
+					accountForSelection()
+				}
+
+				gControllers.swapMapAndEssay()
+			}
+
+			return true
 		} else if  hasGrabbedNote {
 			return true // special state: ignore key input
 		} else if  COMMAND {
@@ -243,14 +257,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			return true
-		} else if key == kEscape {
-			if  OPTION {
-				accountForSelection()
-			}
-
-			gControllers.swapMapAndEssay()
-
-			return true
 		} else if CONTROL {
 			switch key {
 				case "d":      convertToChild(createEssay: true)
@@ -272,7 +278,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let COMMAND = flags.isCommand
 
 		if  hasGrabbedNote {
-			handleGrab(arrow)
+			handleGrabbed(arrow, flags: flags)
 		} else if  COMMAND && OPTION {
 			switch arrow {
 				case .left,
@@ -350,12 +356,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func handleGrab(_ arrow: ZArrowKey) {
-		var      flags = ZEventFlags()
-		flags.isOption = true
+	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
+		if  [.down, .up].contains(arrow) {
+			if  flags.isOption {
+				gMapEditor.handleArrow(arrow, flags: flags)
+			} else {
+				grabNextNote(up: arrow == .up)
+			}
 
-		gMapEditor.handleArrow(arrow, flags: flags)
-		setNeedsDisplay()
+			setNeedsDisplay()
+		}
 	}
 
 	func handleClick(with event: ZEvent) -> Bool {
@@ -367,14 +377,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			return resizeDot != nil // true means do not further process this event
 		} else if let     dot = dragDotHit(at: rect),
-				  let    note = dot.note,
-				  !grabbedNotes.contains(note) {
-			if !event.modifierFlags.isShift {
-				grabbedNotes.removeAll()
-			}
+				  let    note = dot.note {
+			if !grabbedNotes.contains(note) {
+				if !event.modifierFlags.isShift {
+					grabbedNotes.removeAll()
+				}
 
-			grabbedNotes.append(note)
-			setNeedsDisplay()
+				grabbedNotes.append(note)
+				setNeedsDisplay()
+			}
 
 			return true
 		} else {
@@ -514,7 +525,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return replacement == nil
 	}
 
-	// MARK:- text drag
+	// MARK:- grab / drag
 	// MARK:-
 
 	func drawDragDecorations() {
@@ -618,6 +629,33 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			resizeDragRect = CGRect(origin: origin, size: size)
+		}
+	}
+
+	var grabbedIndex: Int? {
+		for (index, dot) in dragDots.enumerated() {
+			if  let note = dot.note,
+				grabbedNotes.contains(note) {
+				return index
+			}
+		}
+
+		return nil
+	}
+
+	func grabNextNote(up: Bool) {
+		let       dots  = dragDots
+		let     gIndex  = grabbedIndex
+		let   maxIndex  = dots.count - 1
+		if  var nIndex  = gIndex?.next(up: up, max: maxIndex) {
+			if  nIndex == 0 { // grabbing first note does not make sense
+				nIndex  = nIndex .next(up: up, max: maxIndex)!
+			}
+
+			if  let note = dots[nIndex].note {
+				grabbedNotes.removeAll()
+				grabbedNotes.append(note)
+			}
 		}
 	}
 

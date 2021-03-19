@@ -357,6 +357,12 @@ extension Int {
 		return range.contains(self)
 	}
 
+	func next(up: Bool, max: Int) -> Int? {
+		if self == 0 &&    up { return max }
+		if self == max && !up { return 0 }
+		if self > max || self < 0 { return nil }
+		return self + (up ? -1 : 1)
+	}
 }
 
 extension Dictionary {
