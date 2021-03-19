@@ -404,6 +404,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
+	override func mouseDragged(with event: ZEvent) {
+		if  resizeDot != nil,
+			let  start = resizeDragStart {
+			let  delta = rectFromEvent(event).origin - start
+
+			updateDragRect(for: delta)
+			setNeedsDisplay()
+		}
+	}
+
 	// change cursor to
 	// indicate action possible on what's under cursor
 	// and possibly display a tool tip
@@ -413,9 +423,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  linkHit(at: rect) {
 			NSCursor.arrow.set()
-		} else if let dot = dragDotHit(at: rect) {
-			if  let  note = dot.note {
-				toolTip   = note.tooltipString(grabbed: grabbedNotes.contains(note))
+		} else if let   dot = dragDotHit(at: rect) {
+			if  let    note = dot.note {
+				let grabbed = grabbedNotes.contains(note)
+				toolTip     = note.tooltipString(grabbed: grabbed)
 			}
 
 			NSCursor.arrow.set()
@@ -436,6 +447,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			NSCursor.iBeam.set()
 		}
+
+		setNeedsDisplay()
 	}
 
 	override func setSelectedRange(_ range: NSRange) {
@@ -520,7 +533,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		for dot in dragDots {
 			if  let     note = dot.note {
 				let  grabbed = grabbedNotes.contains(note)
-				let selected = dot.range?.intersects(selectedRange) ?? false
+				let selected = dot.range?.extendedBy(-1).intersects(selectedRange) ?? false
 				let   filled = selected && !hasGrabbedNote
 				let    color = dot.color
 
@@ -570,16 +583,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		return nil
-	}
-
-	override func mouseDragged(with event: ZEvent) {
-		if  resizeDot != nil,
-			let  start = resizeDragStart {
-			let  delta = rectFromEvent(event).origin - start
-
-			updateDragRect(for: delta)
-			setNeedsDisplay()
-		}
 	}
 
 	func updateDragRect(for delta: CGSize) {
@@ -1124,7 +1127,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  let zones = gCurrentEssayZone?.zonesWithNotes {
 			for zone in zones {
-				if  let note = zone.noteMaybe, note.noteRange.inclusiveIntersection(selectedRange) != nil {
+				if  let note = zone.noteMaybe,
+					selectedRange.inclusiveIntersection(note.noteRange.extendedBy(1)) != nil {
 					array.append(note)
 				}
 			}

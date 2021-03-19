@@ -1291,6 +1291,14 @@ extension NSRange {
 	func contains  (_ other: NSRange) ->    Bool { return inclusiveIntersection(other) == other }
 	func intersects(_ other: NSRange) ->    Bool { return intersection(other) != nil }
 
+	func extendedBy(_ increment: Int) -> NSRange {
+		if  increment > 0 {
+			return NSRange(location: location, length: increment + length)
+		} else {
+			return NSRange(location: increment + location, length: length - increment)
+		}
+	}
+
 	func inclusiveIntersection(_ other: NSRange, includeUpper: Bool = true) -> NSRange? {
 		let otherEnd = other.upperBound
 
