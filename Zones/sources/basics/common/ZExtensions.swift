@@ -1080,7 +1080,13 @@ extension ZBezierPath {
 
 extension Array {
 
-    func apply(closure: AnyToStringClosure) -> String {
+	func apply(closure: AnyClosure) {
+		for object in self.enumerated() {
+			closure(object)
+		}
+	}
+
+    func applyIntoString(closure: AnyToStringClosure) -> String {
         var separator = ""
         var    string = ""
 
@@ -1994,7 +2000,7 @@ extension String {
     }
 
     static func forZones(_ zones: ZoneArray?) -> String {
-        return zones?.apply()  { object -> (String?) in
+        return zones?.applyIntoString()  { object -> (String?) in
             if  let zone  = object as? Zone {
                 let name  = zone.decoratedName
                 if  name != "" {
@@ -2007,7 +2013,7 @@ extension String {
     }
 
     static func forCKRecords(_ records: CKRecordsArray?) -> String {
-        return records?.apply() { object -> (String?) in
+        return records?.applyIntoString() { object -> (String?) in
             if  let  record  = object as? CKRecord {
                 let    name  = record.decoratedName
                 if     name != "" {
@@ -2020,7 +2026,7 @@ extension String {
     }
 
     static func forReferences(_ references: CKReferencesArray?, in databaseID: ZDatabaseID) -> String {
-        return references?.apply()  { object -> (String?) in
+        return references?.applyIntoString()  { object -> (String?) in
             if let reference = object as? CKReference, let zone = gRemoteStorage.zRecords(for: databaseID)?.maybeZoneForReference(reference) {
                 let    name  = zone.decoratedName
                 if     name != "" {
@@ -2033,7 +2039,7 @@ extension String {
     }
 
     static func forOperationIDs (_ iIDs: ZOperationIDsArray?) -> String {
-        return iIDs?.apply()  { object -> (String?) in
+        return iIDs?.applyIntoString()  { object -> (String?) in
             if  let operation  = object as? ZOperationID {
                 let name  = "\(operation)"
                 if  name != "" {

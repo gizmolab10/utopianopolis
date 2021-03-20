@@ -37,7 +37,7 @@ class ZEssay: ZNote {
 		var result: NSMutableAttributedString?
 		var index  = children.count
 
-		if  index == 0 {    // the first time
+		if  index == 0 {    // empty essay
 			let     note = ZNote(zone)
 
 			if  let text = note.noteText {
@@ -62,7 +62,7 @@ class ZEssay: ZNote {
 				}
 			}
 
-			updateOffsets()
+			updateNoteOffsets()
 		}
 
 		essayLength = result?.length ?? 0
@@ -86,7 +86,7 @@ class ZEssay: ZNote {
 		}
 	}
 
-	override func updateOffsets() {
+	override func updateNoteOffsets() {
 		var offset = 0
 
 		for child in children {				// update note offsets

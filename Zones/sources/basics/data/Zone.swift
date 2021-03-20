@@ -1566,7 +1566,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func hasTrait(for iType: ZTraitType) -> Bool {
-		if isBookmark {
+		if  isBookmark {
 			return bookmarkTarget?.hasTrait(for: iType) ?? false
 		} else {
 			return traits[iType] != nil
@@ -1695,6 +1695,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return note
+	}
+
+	func resetEssay() {     // discard current essay text and all child note's text
+		for zone in zonesWithNotes {
+			zone.noteMaybe = nil
+		}
+
 	}
 
 	func deleteNote() {

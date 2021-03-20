@@ -1068,7 +1068,7 @@ class ZRecords: NSObject {
     // MARK:-
 
 	func stringForRecordIDs(_ recordIDs: CKRecordIDsArray?) -> String {
-        return recordIDs?.apply()  { object -> (String?) in
+        return recordIDs?.applyIntoString()  { object -> (String?) in
             if  let recordID = object as? CKRecordID,
                 let    name  = stringForRecordID(recordID) {
                 return name

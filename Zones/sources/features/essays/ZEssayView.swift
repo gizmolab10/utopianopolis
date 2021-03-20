@@ -34,9 +34,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var eraseAttachment : ZRangedAttachment?
 	var grabbedZones    : [Zone]             { return grabbedNotes.map { $0.zone! } }
 	var hasGrabbedNote  : Bool               { return grabbedNotes.count != 0 }
-	var selectionZone   : Zone?              { return selectedNotes.first?.zone }
+	var selectedZone    : Zone?              { return selectedNotes.first?.zone }
 	var lockedSelection : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
+	var selectedNotes   : [ZNote]            { return dragDots.filter { $0.range != nil && selectedRange.intersects($0.range!.extendedBy(1)) } .map { $0.note! } }
 	var backwardButton  : ZButton?
 	var forwardButton   : ZButton?
 	var cancelButton    : ZButton?
@@ -118,13 +119,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 //		layer?.backgroundColor = (gIsDark ? kDarkestGrayColor : kWhiteColor).cgColor
 	}
 
-	func resetCurrentEssay(_ current: ZNote?, selecting range: NSRange? = nil) {
+	func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) {
 		if  let      note = current {
 			gCurrentEssay = note
 
 			gCurrentEssay?.reset()
 			updateText()
-			gCurrentEssay?.updateOffsets()
+			gCurrentEssay?.updateNoteOffsets()
 			gRecents.push(intoNotes: true)
 
 			if  let r = range {
@@ -150,7 +151,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				discardPriorText()
 				gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }	     // emplace text
 				select(restoreSelection: restoreSelection)
-//				updateTracking()
 			}
 
 			delegate = self 					    	 // set delegate after setText
@@ -249,7 +249,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "s":      save()
 				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-				case "/":      if OPTION { gHelpController?.show(flags: flags) } else { grab() }
+				case "/":      if OPTION { gHelpController?.show(flags: flags) } else { grabSelected() }
 				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
 				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
 				case kReturn:  gCurrentEssayZone?.grab(); done()
@@ -353,19 +353,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  permitAnotherRecurse, canRecurse, lockedSelection {
 			handlePlainArrow(arrow, permitAnotherRecurse: horizontal)
-		}
-	}
-
-	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
-		if  [.down, .up].contains(arrow) {
-			if  flags.isOption {
-				gMapEditor.handleArrow(arrow, flags: flags)
-				gCurrentEssayZone?.recount()
-			} else {
-				grabNextNote(up: arrow == .up)
-			}
-
-			setNeedsDisplay()
 		}
 	}
 
@@ -529,6 +516,28 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- grab / drag
 	// MARK:-
 
+	var levelDelta: Int {
+		if  let    f = gCurrentEssayZone,
+			let    g = grabbedZones.first {
+			return g.level - f.level
+		}
+
+		return 0
+	}
+
+	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
+		if  !flags.isOption {
+			if  [.up, .down].contains(arrow) {
+				grabNextNote(up: arrow == .up)
+				setNeedsDisplay()
+			}
+		} else if [.up, .down, .right].contains(arrow) || (arrow == .left && levelDelta > 1) {
+			gMapEditor.handleArrow(arrow, flags: flags)
+			resetTextAndGrabs()
+			setNeedsDisplay()
+		}
+	}
+
 	func drawDragDecorations() {
 		for dot in dragDots {
 			if  let     note = dot.note {
@@ -564,8 +573,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					let   offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2
 					let    range = note.noteRange.offsetBy(offset)
 					let  dotSize = CGSize(width: 11.75, height: 15.0)
-					let textRect = l.boundingRect(forGlyphRange: range, in: c).offsetBy(dx: 17.5, dy: 6.0).insetEquallyBy(-2.0)
-					let  dotRect = CGRect(origin: textRect.origin, size: dotSize).offsetBy(dx: 3.0, dy: 3.0)
+					let textRect = l.boundingRect(forGlyphRange: range, in: c).offsetBy(dx: 17.5, dy: 2.0).insetEquallyBy(-2.0)
+					let  dotRect = CGRect(origin: textRect.origin, size: dotSize).offsetBy(dx: 3.0, dy: 7.0)
 
 					dots.append(ZEssayDragDot(note: note, range: range, color: color, dotRect: dotRect, textRect: textRect))
 				}
@@ -628,12 +637,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		setNeedsDisplay()
 	}
 
-	func grab() {
-		let note = selectedNotes[0]
+	func grabSelected() {
+		ungrabAll()
 
-		if  note.isNote {
-			ungrabAll()
-			grabbedNotes.append(note)
+		for note in selectedNotes {
+			if  note.isNote {
+				grabbedNotes.append(note)
+			}
 		}
 	}
 
@@ -664,15 +674,26 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func updateTracking() {
-		var clearFirst = true
+	func resetTextAndGrabs() {
+		var grabbed = ZoneArray()
 
-		for dot in dragDots {
-			let rect = dot.dotRect
+		gCurrentEssayZone?.recount()     // update levels
 
-			addTracking(for: rect, clearFirst: clearFirst)
+		for note in grabbedNotes {       // copy current grab's zones aside
+			if  let zone = note.zone {
+				grabbed.append(zone)
+			}
+		}
 
-			clearFirst = false
+		ungrabAll()
+
+		gCurrentEssayZone?.resetEssay()         // discard current essay text and all child note's text
+		updateText()
+
+		for zone in grabbed {            // re-grab notes for set aside zones
+			if  let note = zone.note {
+				grabbedNotes.append(note)
+			}
 		}
 	}
 
@@ -790,7 +811,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				button.bezelStyle = .texturedRounded
 
 				button.setButtonType(.momentaryChange)
-				button.updateTracking() // for tool tip
 
 				return button
 			}
@@ -968,7 +988,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					resetCurrentEssay(current)
 				}
 			} else if count > 0,
-				let note = selectionZone?.currentNote {
+				let note = selectedZone?.currentNote {
 				resetCurrentEssay(note)
 			}
 		}
@@ -1008,7 +1028,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	private func convertToChild(createEssay: Bool = false) {
 		if  let   text = selectionString, text.length > 0,
 			let   dbID = gCurrentEssayZone?.databaseID,
-			let parent = selectionZone {
+			let parent = selectedZone {
 			let  child = Zone.create(databaseID: dbID, named: text)   	// create new (to be child) zone from text
 
 			insertText("", replacementRange: selectedRange)			// remove text
@@ -1120,26 +1140,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				textStorage?   .addAttribute(.link, value: link!, range: selectedRange)
 			}
 		}
-	}
-
-	var selectedNotes: [ZNote] {
-		var array = [ZNote]()
-
-		if  let zones = gCurrentEssayZone?.zonesWithNotes {
-			for zone in zones {
-				if  let note = zone.noteMaybe,
-					selectedRange.inclusiveIntersection(note.noteRange.extendedBy(1)) != nil {
-					array.append(note)
-				}
-			}
-		}
-
-		if  let e = gCurrentEssayZone?.note,
-			array.count == 0 {
-			array.append(e)
-		}
-
-		return array
 	}
 
 	var currentLink: Any? {

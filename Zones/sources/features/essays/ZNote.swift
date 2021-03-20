@@ -37,7 +37,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var    	            zone : Zone?
 
 	func setupChildren() {}
-	func updateOffsets() {}
+	func updateNoteOffsets() {}
 	func noteIn(_ range: NSRange) -> ZNote { return self }
 	func recordName() -> String? { return zone?.recordName() }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveNote(attributedString) }

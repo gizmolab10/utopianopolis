@@ -65,13 +65,14 @@ class ZSelecting: NSObject {
     var  lastSortedGrab :  Zone  { return  lastGrab(using: sortedGrabs) }
     var firstSortedGrab :  Zone? { return firstGrab(using: sortedGrabs) }
 	var       firstGrab :  Zone? { return firstGrab() }
-    var      cousinList : ZoneArray { get { maybeNewGrabUpdate(); return _cousinList  } set { _cousinList  = newValue }}
-    var     sortedGrabs : ZoneArray { get { updateSortedGrabs();  return _sortedGrabs } set { _sortedGrabs = newValue }}
-    var  pasteableZones = [Zone: (Zone?, Int?)] ()
-    var    currentGrabs = ZoneArray ()
+	var      hasNewGrab :  Zone?
+    var      cousinList : ZoneArray { get { maybeNewGrabUpdate(); return _cousinList }                             set { _cousinList   = newValue }}
+	var     sortedGrabs : ZoneArray { get { updateSortedGrabs();  return _sortedGrabs }                            set { _sortedGrabs  = newValue }}
+	var    currentGrabs : ZoneArray { get { return gIsEssayMode ? gEssayView?.grabbedZones ?? [] : _currentGrabs } set { _currentGrabs = newValue }}
+    var   _currentGrabs = ZoneArray ()
     var    _sortedGrabs = ZoneArray ()
     var     _cousinList = ZoneArray ()
-    var      hasNewGrab :  Zone?
+	var  pasteableZones = [Zone: (Zone?, Int?)] ()
 
 	var traversalStart : Zone? {
 		var start: Zone?
@@ -240,6 +241,7 @@ class ZSelecting: NSObject {
     func clearPaste()                     { pasteableZones = [:] }
 
     func updateAfterMove() {
+		currentMoveable.recount()
         updateBrowsingLevel()
         updateCousinList()
         gFavorites.updateFavoritesAndRedraw()
@@ -268,7 +270,7 @@ class ZSelecting: NSObject {
         }
 
 		updateWidgetsNeedDisplay(for: grabbed)
-        currentGrabs.append(contentsOf: more)
+		_currentGrabs.append(contentsOf: more)
     }
     
     
@@ -297,7 +299,7 @@ class ZSelecting: NSObject {
     func ungrabAssuringOne(_ iZone: Zone?) {
         ungrab(iZone)
         
-        if currentGrabs.count == 0 {
+        if  currentGrabs.count == 0 {
             grab([gHere])
         }
     }
@@ -305,7 +307,7 @@ class ZSelecting: NSObject {
 
     func ungrab(_ iZone: Zone?) {
         if let zone = iZone, let index = currentGrabs.firstIndex(of: zone) {
-            currentGrabs.remove(at: index)
+			_currentGrabs.remove(at: index)
             updateWidgetNeedDisplay(for: zone)
             maybeClearBrowsingLevel()
         }
@@ -330,9 +332,9 @@ class ZSelecting: NSObject {
         if  let zone = iZone,
 			zone    != gFavoritesHereMaybe, // disallow grab on non-visible favorite, avoid ugly looking highlight
             !currentGrabs.contains(zone) {
-            currentGrabs.append(zone)
+			_currentGrabs.append(zone)
 
-            currentGrabs = respectOrder(for: currentGrabs)
+			currentGrabs = respectOrder(for: currentGrabs)
         }
     }
     
@@ -408,7 +410,7 @@ class ZSelecting: NSObject {
     func deselectGrabsWithin(_ zone: Zone) {
         zone.traverseAllProgeny { iZone in
             if iZone != zone && currentGrabs.contains(iZone), let index = currentGrabs.firstIndex(of: iZone) {
-                currentGrabs.remove(at: index)
+				_currentGrabs.remove(at: index)
             }
         }
     }
