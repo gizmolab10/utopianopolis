@@ -160,10 +160,11 @@ class ZMapEditor: ZBaseEditor {
 		return true // indicate key was handled
     }
 
-    func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
+    func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags, onCompletion: Closure? = nil) {
 		if  gIsExportingToAFile { return }
         if  gTextEditorHandlesArrows || gIsEditIdeaMode {
             gTextEditor.handleArrow(arrow, flags: flags)
+			onCompletion?()
             
             return
         }
@@ -173,6 +174,7 @@ class ZMapEditor: ZBaseEditor {
         let   SHIFT = flags.isShift
 
         if ((OPTION && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) && !gIsEssayMode {
+			onCompletion?()
             return
         }
 
@@ -185,6 +187,7 @@ class ZMapEditor: ZBaseEditor {
 						case .left,
 							 .right: move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
 								gSelecting.updateAfterMove()  // relayout map when travelling through a bookmark
+								onCompletion?()
 							}
 						default: break
 					}
@@ -207,7 +210,8 @@ class ZMapEditor: ZBaseEditor {
 					} else {
 						moveable.applyGenerationally(show, extreme: COMMAND)
 					}
-				}
+
+					onCompletion?()				}
 			}
         }
     }

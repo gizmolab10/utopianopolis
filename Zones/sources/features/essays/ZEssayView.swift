@@ -532,9 +532,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				setNeedsDisplay()
 			}
 		} else if [.up, .down, .right].contains(arrow) || (arrow == .left && levelDelta > 1) {
-			gMapEditor.handleArrow(arrow, flags: flags)
-			resetTextAndGrabs()
-			setNeedsDisplay()
+			gMapEditor.handleArrow(arrow, flags: flags) {
+				self.resetTextAndGrabs()
+				self.setNeedsDisplay()
+			}
 		}
 	}
 
