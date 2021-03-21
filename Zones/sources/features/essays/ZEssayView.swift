@@ -63,6 +63,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return true
 	}
 
+	var levelDelta: Int {
+		if  let    f = gCurrentEssayZone,
+			let    g = grabbedZones.first {
+			return g.level - f.level
+		}
+
+		return 0
+	}
+
 	// MARK:- setup
 	// MARK:-
 
@@ -81,7 +90,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func save() {
 		if  let e = gCurrentEssay {
 			e.saveEssay(textStorage)
-			accountForSelection()
+			asssureSelectionIsVisible()
 		}
 	}
 
@@ -222,14 +231,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return true
 		} else if  hasGrabbedNote {
 			switch key {
-				case "/", kEscape: ungrabAll()
+				case "/", kEscape: ungrabAll(); setNeedsDisplay()
 				default:           break
 			}
 
 			return true
 		} else if key == kEscape {
 			if  OPTION {
-				accountForSelection()
+				asssureSelectionIsVisible()
 			}
 
 			gControllers.swapMapAndEssay()
@@ -380,6 +389,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else {
 			ungrabAll()
 			clearResizing()
+			setNeedsDisplay()
 
 			return false
 		}
@@ -468,16 +478,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		scroll(point)
 	}
 
-	func accountForSelection() {
-		var needsUngrab = true
-
+	func asssureSelectionIsVisible() {
 		for note in selectedNotes {
-			if  let grab = note.zone {
-				if  needsUngrab {
-					needsUngrab = false
-				}
-
-				grab.asssureIsVisible()
+			if  let zone = note.zone {
+				zone.asssureIsVisible()
 			}
 		}
 	}
@@ -516,14 +520,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- grab / drag
 	// MARK:-
 
-	var levelDelta: Int {
-		if  let    f = gCurrentEssayZone,
-			let    g = grabbedZones.first {
-			return g.level - f.level
-		}
-
-		return 0
-	}
+	func ungrabAll() { grabbedNotes.removeAll() }
 
 	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
 		if  !flags.isOption {
@@ -543,7 +540,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		for dot in dragDots {
 			if  let     note = dot.note {
 				let  grabbed = grabbedNotes.contains(note)
-				let selected = dot.range?.extendedBy(-1).intersects(selectedRange) ?? false
+				let selected = dot.range?.extendedBy(-1).inclusiveIntersection(selectedRange) != nil
 				let   filled = selected && !hasGrabbedNote
 				let    color = dot.color
 
@@ -633,17 +630,22 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func ungrabAll() {
-		grabbedNotes.removeAll()
-		setNeedsDisplay()
-	}
-
 	func grabSelected() {
-		ungrabAll()
+		if  gCurrentEssay?.children.count ?? 0 > 1 {     // ignore if does not have multiple children
+			var ungrab = true
 
-		for note in selectedNotes {
-			if  note.isNote {
-				grabbedNotes.append(note)
+			for note in selectedNotes {
+				if  note.zone != gCurrentEssay?.zone {   // do not grab essay
+					if  ungrab {
+						ungrab = false
+						ungrabAll()
+					}
+
+					if  note.isNote {
+						grabbedNotes.append(note)
+						setNeedsDisplay()
+					}
+				}
 			}
 		}
 	}
@@ -671,6 +673,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  let note = dots[nIndex].note {
 				ungrabAll()
 				grabbedNotes.append(note)
+				setNeedsDisplay()
 			}
 		}
 	}
@@ -690,6 +693,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		gCurrentEssayZone?.resetEssay()         // discard current essay text and all child note's text
 		updateText()
+		setNeedsDisplay()
 
 		for zone in grabbed {            // re-grab notes for set aside zones
 			if  let note = zone.note {

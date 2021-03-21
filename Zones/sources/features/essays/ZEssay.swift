@@ -36,6 +36,7 @@ class ZEssay: ZNote {
 
 		var result: NSMutableAttributedString?
 		var index  = children.count
+		let    max = index - 1
 
 		if  index == 0 {    // empty essay
 			let     note = ZNote(zone)
@@ -45,15 +46,19 @@ class ZEssay: ZNote {
 			}
 		} else {
 			for child in children.reversed() {
-				index       -= 1
-				let     bump = gBlankLine.length
+				index        -= 1
+				let      bump = gBlankLine.length
 
 				child.updateTitleInsets(relativeTo: zone)
 
-				if  let text = child.noteText {
-					result   = result ?? NSMutableAttributedString()
-					result?.insert(gBlankLine, at: 0)
-					result?.insert(text,       at: 0)
+				if  let  text = child.noteText {
+					result    = result ?? NSMutableAttributedString()
+
+					if  index < max {
+						result?.insert(gBlankLine, at: 0)
+					}
+
+					result?    .insert(text,       at: 0)
 
 					if  index > 0 {
 						result?.insert(gBlankLine, at: 0)
