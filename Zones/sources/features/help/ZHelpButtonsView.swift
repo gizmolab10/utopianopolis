@@ -72,8 +72,9 @@ class ZHelpButtonsView : ZButtonsView {
 		switch mode {
 			case .basicMode:  mode = forward ? .mediumMode : .dotMode
 			case .mediumMode: mode = forward ? .allMode    : .basicMode
-			case .allMode:    mode = forward ? .dotMode    : .mediumMode
-			case .dotMode:    mode = forward ? .basicMode  : .allMode
+			case .allMode:    mode = forward ? .essayMode  : .mediumMode
+			case .essayMode:  mode = forward ? .dotMode    : .allMode
+			case .dotMode:    mode = forward ? .basicMode  : .essayMode
 			default:          break
 		}
 

@@ -17,19 +17,19 @@ import SnapKit
 
 var gHelpController: ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
 var gHelpWindowController: NSWindowController? // instantiated once, in startupCloudAndUI
-let gAllHelpModes : [ZHelpMode] = [.basicMode, .mediumMode, .allMode, .dotMode]
+let gAllHelpModes : [ZHelpMode] = [.basicMode, .mediumMode, .allMode, .essayMode, .dotMode]
 
 class ZHelpController: ZGenericTableController {
 
 	@IBOutlet var      clipView : ZView?
 	@IBOutlet var   mapHelpGrid : ZHelpGridView?
 	@IBOutlet var  dotsHelpGrid : ZHelpGridView?
-	@IBOutlet var notesHelpGrid : ZHelpGridView?
+	@IBOutlet var essayHelpGrid : ZHelpGridView?
 	override  var  controllerID : ZControllerID  { return .idHelp }
 	var                helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
 	var                gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
 	var         titleBarButtons = ZHelpButtonsView()
-	let          bigMapHelpData = ZHelpBigMapData()
+	let          bigMapHelpData = ZHelpMapData()
 	let            dotsHelpData = ZHelpDotsData()
 	var               isShowing = false
 
@@ -42,8 +42,9 @@ class ZHelpController: ZGenericTableController {
 
 	func gridView(for iMode: ZHelpMode) -> ZHelpGridView? {
 		switch iMode {
-			case .dotMode: return dotsHelpGrid
-			default:       return mapHelpGrid
+			case .essayMode: return essayHelpGrid
+			case .dotMode:   return dotsHelpGrid
+			default:         return mapHelpGrid
 		}
 	}
 
@@ -119,7 +120,7 @@ class ZHelpController: ZGenericTableController {
 
 				gHelpWindow?.close()      // workaround for dots draw method not being called (perhaps an apple bug?)
 				controller?.showWindow(nil)
-				self.update()
+				update()
 				isShowing        = false
 			}
 		}
@@ -211,12 +212,17 @@ class ZHelpController: ZGenericTableController {
 	func updateGridVisibility() {
 		let graphModes: [ZHelpMode] = [.basicMode, .mediumMode, .allMode]
 
-		func shouldHide(_ mode: ZHelpMode) -> Bool {
-			return mode != gCurrentHelpMode && (!graphModes.contains(mode) || !graphModes.contains(gCurrentHelpMode))
+		func shouldShow(_ mode: ZHelpMode) -> Bool {
+			let sameMode  = mode == gCurrentHelpMode
+			let matchable = sameMode ? [mode] : [mode, gCurrentHelpMode]
+			let showGraph = matchable.intersection(graphModes) == matchable
+
+			return sameMode || showGraph
 		}
 
 		for mode in gAllHelpModes {
-			gridView(for: mode)?.isHidden = shouldHide(mode)
+			let hide = !shouldShow(mode)
+			gridView(for: mode)?.isHidden = hide
 		}
 
 		gridView?.setNeedsDisplay()

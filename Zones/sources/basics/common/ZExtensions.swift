@@ -1080,9 +1080,9 @@ extension ZBezierPath {
 
 extension Array {
 
-	func apply(closure: AnyClosure) {
-		for object in self.enumerated() {
-			closure(object)
+	func apply(closure: AnyObjectClosure) {
+		for element in self {
+			closure(element as AnyObject)
 		}
 	}
 
@@ -1104,6 +1104,24 @@ extension Array {
 
         return string
     }
+
+	func intersects(_ other: Array) -> Bool {
+		return intersection(other).count > 0
+	}
+
+	func intersection(_ other: Array) -> Array {
+		var result = Array()
+
+		apply { another in
+			other.apply { yetAnother in
+				if  yetAnother.isEqual(to: another) {
+					result.append(another as! Element)
+				}
+			}
+		}
+
+		return result
+	}
 
 	func contains(_ other: AnyObject) -> Bool {
 		return containsCompare(with: other) { (item, another) in
@@ -1152,10 +1170,6 @@ extension Array {
 			}
 		}
 	}
-
-    func intersection<S>(_ other: Array<Array<Element>.Element>) -> S where Element: Hashable {
-        return Array(Set(self).intersection(Set(other))) as! S
-    }
 
 }
 

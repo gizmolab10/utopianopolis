@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="olH-Ix-aMb">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -128,6 +127,41 @@
                                     <constraint firstItem="rdB-jZ-KsQ" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="288" id="qzD-K9-Jby"/>
                                 </constraints>
                             </customView>
+                            <customView id="hxs-Fa-Xk4" userLabel="Essay Help Grid" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <subviews>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="xnX-b2-ZbK" userLabel="Dots Exemplar">
+                                        <rect key="frame" x="0.0" y="627" width="1152" height="198"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="198" id="ETB-M9-wQK"/>
+                                        </constraints>
+                                    </containerView>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Irq-gp-pkb" userLabel="Top Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="626" width="1152" height="1"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="5jy-EA-JHq"/>
+                                        </constraints>
+                                    </customView>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="PcV-Nl-m8i" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="576" y="0.0" width="1" height="626"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="1" id="aEd-8r-MKM"/>
+                                        </constraints>
+                                    </customView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="xnX-b2-ZbK" firstAttribute="top" secondItem="hxs-Fa-Xk4" secondAttribute="top" id="4t1-Ke-QDm"/>
+                                    <constraint firstItem="PcV-Nl-m8i" firstAttribute="top" secondItem="Irq-gp-pkb" secondAttribute="bottom" id="DBa-74-pVz"/>
+                                    <constraint firstAttribute="bottom" secondItem="PcV-Nl-m8i" secondAttribute="bottom" id="HSt-Aq-19U"/>
+                                    <constraint firstAttribute="trailing" secondItem="Irq-gp-pkb" secondAttribute="trailing" id="Iqg-Aw-Hz7"/>
+                                    <constraint firstItem="xnX-b2-ZbK" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" id="JBu-Nk-YRe"/>
+                                    <constraint firstAttribute="trailing" secondItem="xnX-b2-ZbK" secondAttribute="trailing" id="Keh-1y-vQv"/>
+                                    <constraint firstItem="Irq-gp-pkb" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" id="Ost-8C-doH"/>
+                                    <constraint firstItem="Irq-gp-pkb" firstAttribute="top" secondItem="xnX-b2-ZbK" secondAttribute="bottom" id="RI1-gj-fjl"/>
+                                    <constraint firstItem="PcV-Nl-m8i" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" constant="576" id="z6C-2h-9Bc"/>
+                                </constraints>
+                            </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
                                 <subviews>
@@ -186,6 +220,7 @@
                     <connections>
                         <outlet property="clipView" destination="9Aa-9c-eI8" id="ALa-Ct-6eI"/>
                         <outlet property="dotsHelpGrid" destination="xVv-mR-0mE" id="IP4-4A-sp8"/>
+                        <outlet property="essayHelpGrid" destination="hxs-Fa-Xk4" id="Kg2-tm-bnw"/>
                         <outlet property="genericTableView" destination="H0M-2O-9lo" id="ihQ-JW-Kgd"/>
                         <outlet property="mapHelpGrid" destination="zAE-6p-uHR" id="9lC-8I-f0W"/>
                     </connections>

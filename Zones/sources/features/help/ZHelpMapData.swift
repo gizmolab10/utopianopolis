@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZHelpBigMapData : ZHelpData {
+class ZHelpMapData : ZHelpData {
 
 	override var columnStrings : [[String]] { return [mapColumnOne, mapColumnTwo, mapColumnThree, mapColumnFour] }
 	override var tabOffsets    :  [Int]     { return [0, 20, 85] }

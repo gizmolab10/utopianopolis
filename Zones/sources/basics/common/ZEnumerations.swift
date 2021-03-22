@@ -115,7 +115,7 @@ enum ZWorkMode: String {
 enum ZHelpMode: String {
 	case mediumMode = "m"
 	case basicMode  = "b"
-	case noteMode   = "n"
+	case essayMode  = "e"
 	case allMode    = "a"
 	case dotMode    = "d"
 	case noMode     = " "
@@ -124,11 +124,15 @@ enum ZHelpMode: String {
 		switch self {
 			case .mediumMode: return "intermediate keys"
 			case .basicMode:  return "basic keys"
-			case .noteMode:   return "essay keys"
+			case .essayMode:  return "essay keys"
 			case .allMode:    return "all keys"
 			case .dotMode:    return "dots"
 			default:          return ""
 		}
+	}
+
+	func isEqual(to mode: ZHelpMode) -> Bool {
+		return rawValue == mode.rawValue
 	}
 
 }
