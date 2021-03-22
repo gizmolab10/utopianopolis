@@ -261,7 +261,7 @@ class ZMapEditor: ZBaseEditor {
     }
 
     override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
-        if !gIsMapOrEditIdeaMode {
+        if !gIsMapOrEditIdeaMode && !gIsEssayMode {
             return false
         }
 		
@@ -670,8 +670,9 @@ class ZMapEditor: ZBaseEditor {
     }
 	
 	func swapWithParent() {
-		if  gSelecting.currentGrabs.count == 1 {
-			gSelecting.firstSortedGrab?.swapWithParent()
+		if  gSelecting.currentGrabs.count == 1,
+			let zone = gSelecting.firstSortedGrab {
+			zone.swapWithParent { gRedrawMaps(for: zone) }
 		}
     }
 

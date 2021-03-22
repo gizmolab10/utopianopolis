@@ -85,10 +85,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
 	var                   spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
 	var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
-	var               zonesWithNotes =          ZoneArray  ()
 	var                     children =          ZoneArray  ()
 	var                       traits =   ZTraitDictionary  ()
 	var                        level =                  0
+
+	var zonesWithNotes : ZoneArray {
+		var zones = ZoneArray()
+
+		traverseAllProgeny { zone in
+			if  zone.hasNote {
+				zones.append(zone)
+			}
+		}
+
+		return zones
+	}
 
 	func copyWithZone() -> NSObject {
 		return self
@@ -602,25 +613,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		updateAllProgenyCounts()
 
-		traverseAllProgeny { iZone in
-			if  let p = iZone.parentZone,
-				p    != iZone,
-				!p.spawnedBy(iZone) {
-				iZone.level = p.level + 1
+		traverseAllProgeny { zone in
+			if  let      p = zone.parentZone,
+				p         != zone,
+				!p.spawnedBy(zone) {
+				zone.level = p.level + 1
 			}
 
-			let traverseLevel = iZone.level
+			let traverseLevel = zone.level
 
 			if  depth < traverseLevel {
 				depth = traverseLevel
-			}
-
-			iZone.zonesWithNotes = []
-
-			if  iZone.hasNote {
-				iZone.traverseAllAncestors { ancestor in
-					ancestor.zonesWithNotes.append(iZone)
-				}
 			}
 		}
 
@@ -1074,7 +1077,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func swapWithParent() {
+	func swapWithParent(onCompletion: Closure? = nil) {
 		let scratchZone = Zone.create(as: kScratchRootName, databaseID: databaseID ?? gDatabaseID)
 
 		// swap places with parent
@@ -1096,7 +1099,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 									gHere  = self
 								}
 
-								gRedrawMaps(for: self)
+								onCompletion?()
 							}
 						}
 					}
@@ -1697,7 +1700,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return note
 	}
 
-	func resetEssay() {     // discard current essay text and all child note's text
+	func clearAllNotes() {     // discard current essay text and all child note's text
 		for zone in zonesWithNotes {
 			zone.noteMaybe = nil
 		}
@@ -1708,8 +1711,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		removeTrait(for: .tNote)
 		gRecents.pop(self)
 
-		gCurrentEssay = nil
-		noteMaybe     = nil
+		noteMaybe = nil
 
 		FOREGROUND {
 			self.recount()
@@ -3240,7 +3242,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "p":     break
 				case "r":     reverseChildren()
 				case "s":     gFiles.export(self, toFileAs: .eSeriously)
-				case "t":     swapWithParent()
+				case "t":     swapWithParent { gRedrawMaps(for: self) }
 				case "/":     focusRecent()
 				case "_":     break
 				case kEquals: break

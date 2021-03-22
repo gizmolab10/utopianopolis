@@ -156,7 +156,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			setControlBarButtons(enabled: true)
 
 			if  (shouldOverwrite || restoreSelection != nil),
-				let text = gCurrentEssay!.essayText {
+				let text = gCurrentEssay?.essayText {
 				discardPriorText()
 				gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }	     // emplace text
 				select(restoreSelection: restoreSelection)
@@ -219,6 +219,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
 		let  OPTION = flags.isOption
+		let SPECIAL = OPTION && COMMAND
 		let     ALL = OPTION && CONTROL
 
 		if  key    != key.lowercased() {
@@ -231,8 +232,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return true
 		} else if  hasGrabbedNote {
 			switch key {
-				case "/", kEscape: ungrabAll(); setNeedsDisplay()
-				default:           break
+				case kDelete: deleteGrabbed()
+				case kEscape,
+					 "/": if SPECIAL { gHelpController?.show(flags: flags) } else { ungrabAll(); setNeedsDisplay() }
+				case "t": grabbedZones[0].swapWithParent { self.resetTextAndGrabs(swap: true) }
+
+				default:  break
 			}
 
 			return true
@@ -381,7 +386,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					ungrabAll()
 				}
 
-				grabbedNotes.append(note)
+				grabbedNotes.appendUnique(contentsOf: [note])
 				setNeedsDisplay()
 			}
 
@@ -531,7 +536,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if [.up, .down, .right].contains(arrow) || (arrow == .left && levelDelta > 1) {
 			gMapEditor.handleArrow(arrow, flags: flags) {
 				self.resetTextAndGrabs()
-				self.setNeedsDisplay()
 			}
 		}
 	}
@@ -641,10 +645,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 						ungrabAll()
 					}
 
-					if  note.isNote {
-						grabbedNotes.append(note)
-						setNeedsDisplay()
-					}
+					grabbedNotes.appendUnique(contentsOf: [note])
+					setNeedsDisplay()
 				}
 			}
 		}
@@ -678,28 +680,46 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func resetTextAndGrabs() {
+	@discardableResult func deleteGrabbed() -> Bool {
+		if  hasGrabbedNote {
+			for zone in grabbedZones {
+				zone.deleteNote()
+			}
+
+			ungrabAll()
+			resetTextAndGrabs()
+
+			return true
+		}
+
+		return false
+	}
+
+	func resetTextAndGrabs(swap: Bool = false) {
 		var grabbed = ZoneArray()
 
-		gCurrentEssayZone?.recount()     // update levels
-
-		for note in grabbedNotes {       // copy current grab's zones aside
-			if  let zone = note.zone {
-				grabbed.append(zone)
+		if !swap {
+			grabbed.append(contentsOf: grabbedZones)  // copy current grab's zones aside
+		} else {
+			if  let former = gCurrentEssay?.zone {
+				grabbed    = [former]
 			}
+
+			gCurrentEssay  = ZEssay(grabbedNotes[0].zone)
 		}
 
 		ungrabAll()
-
-		gCurrentEssayZone?.resetEssay()         // discard current essay text and all child note's text
+		gCurrentEssayZone?.recount()                  // update levels
+		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
 		updateText()
-		setNeedsDisplay()
 
-		for zone in grabbed {            // re-grab notes for set aside zones
-			if  let note = zone.note {
-				grabbedNotes.append(note)
+		for zone in grabbed {                         // re-grab notes for set aside zones
+			if  let note = zone.note {                // note may not be same
+				grabbedNotes.appendUnique(contentsOf: [note])
 			}
 		}
+
+		setNeedsDisplay()
 	}
 
 	// MARK:- buttons
@@ -729,9 +749,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idForward: gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
 				case .idBack:    gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
 				case .idSave:    save()
-				case .idHide:    gCurrentEssayZone?.grab();       done()
-				case .idCancel:  gCurrentEssayZone?.grab();       exit()
-				case .idDelete:  gCurrentEssayZone?.deleteNote(); exit()
+				case .idHide:                          gCurrentEssayZone?.grab();       done()
+				case .idCancel:                        gCurrentEssayZone?.grab();       exit()
+				case .idDelete:  if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); exit() }
 				case .idTitles:  toggleEssayTitles()
 			}
 		}
