@@ -33,9 +33,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { setSelectedRange(NSRange()) } else if oldValue != nil { eraseAttachment = oldValue } } }
 	var eraseAttachment : ZRangedAttachment?
 	var grabbedZones    : [Zone]             { return grabbedNotes.map { $0.zone! } }
-	var hasGrabbedNote  : Bool               { return grabbedNotes.count != 0 }
 	var selectedZone    : Zone?              { return selectedNotes.first?.zone }
+	var firstGrabbedZone: Zone?              { return hasGrabbedNote ? grabbedZones[0] : nil }
+	var hasGrabbedNote  : Bool               { return grabbedNotes.count != 0 }
 	var lockedSelection : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
+	var firstIsGrabbed  : Bool               { return hasGrabbedNote && firstGrabbedZone == dragDots[0].note?.zone }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
 	var selectedNotes   : [ZNote]            { return dragDots.filter { $0.noteRange != nil && selectedRange.intersects($0.noteRange!.extendedBy(1)) } .map { $0.note! } }
 	var backwardButton  : ZButton?
@@ -63,10 +65,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return true
 	}
 
-	var levelDelta: Int {
-		if  let    f = gCurrentEssayZone,
-			let    g = grabbedZones.first {
-			return g.level - f.level
+	var relativeLevelOfFirstGrabbed: Int {
+		if  let    e = gCurrentEssayZone,
+			let    f = grabbedZones.first {
+			return f.level - e.level
 		}
 
 		return 0
@@ -234,8 +236,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch key {
 				case kDelete: deleteGrabbed()
 				case kEscape,
-					 "/": if SPECIAL { gHelpController?.show(flags: flags) } else { ungrabAll(); setNeedsDisplay() }
-				case "t": grabbedZones[0].swapWithParent { self.resetTextAndGrabs(swap: true) }
+					 "/":     if SPECIAL { gHelpController?.show(flags: flags) } else { ungrabAll(); setNeedsDisplay(); gSignal([.sDetails]) }
+				case "t":     swapWithParent()
 
 				default:  break
 			}
@@ -387,6 +389,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 				grabbedNotes.appendUnique(contentsOf: [note])
 				setNeedsDisplay()
+				gSignal([.sDetails])
 			}
 
 			return true
@@ -533,8 +536,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  [.up, .down].contains(arrow) {
 				grabNextNote(up: arrow == .up)
 				setNeedsDisplay()
+				gSignal([.sDetails])
 			}
-		} else if (arrow == .left && levelDelta > 1) || ([.up, .down, .right].contains(arrow) && levelDelta > 0){
+		} else if (arrow == .left && relativeLevelOfFirstGrabbed > 1) || ([.up, .down, .right].contains(arrow) && relativeLevelOfFirstGrabbed > 0){
 			gMapEditor.handleArrow(arrow, flags: flags) {
 				self.resetTextAndGrabs()
 			}
@@ -653,6 +657,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 					grabbedNotes.appendUnique(contentsOf: [note])
 					setNeedsDisplay()
+					gSignal([.sDetails])
 				}
 			}
 		}
@@ -681,6 +686,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
+	func swapWithParent() {
+		if !firstIsGrabbed {
+			let parent = firstGrabbedZone!.parentZone  // get parent before swap
+
+			firstGrabbedZone!.swapWithParent {
+				self.resetTextAndGrabs(grab: parent)
+			}
+		}
+	}
+
 	@discardableResult func deleteGrabbed() -> Bool {
 		if  hasGrabbedNote {
 			for zone in grabbedZones {
@@ -696,17 +711,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return false
 	}
 
-	func resetTextAndGrabs(swap: Bool = false) {
+	func resetTextAndGrabs(grab: Zone? = nil) {
 		var grabbed = ZoneArray()
 
-		if !swap {
-			grabbed.append(contentsOf: grabbedZones)  // copy current grab's zones aside
-		} else {
-			if  let former = gCurrentEssay?.zone {
-				grabbed    = [former]
-			}
+		grabbed.append(contentsOf: grabbedZones)      // copy current grab's zones aside
 
-			gCurrentEssay  = ZEssay(grabbedNotes[0].zone)
+		if  let  zone = grab {
+			grabbed   = [zone]
+
+			if  zone == gCurrentEssay?.zone {
+				gCurrentEssay = ZEssay(firstGrabbedZone!)
+			}
 		}
 
 		ungrabAll()
@@ -721,6 +736,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		setNeedsDisplay()
+		gSignal([.sCrumbs, .sDetails])
 	}
 
 	// MARK:- buttons
