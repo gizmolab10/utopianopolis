@@ -343,27 +343,28 @@ class ZRecords: NSObject {
 	}
 
 	func searchCoreData(for match: String, onCompletion: RecordsClosure? = nil) {
-		var   result = CKRecordsArray()
-		onCompletion?(result)
-		return
-		gCoreDataStack.search(for: match, within: databaseID) { found in
+		onCompletion?(CKRecordsArray())
 
-			if  let more = self.ckRecordsLookup[match] {
-				result = more
-			}
-
-			let unique = found.filter { (zRecord) -> Bool in
-				return zRecord.ckRecord != nil
-			}
-
-			let records = unique.map { (zRecord) -> CKRecord in
-				return zRecord.ckRecord!
-			}
-
-			result.appendUnique(contentsOf: records)
-
-			self.ckRecordsLookup[match] = result // accumulate from core data
-		}
+//		var   result = CKRecordsArray()
+//
+//		gCoreDataStack.search(for: match, within: databaseID) { found in
+//
+//			if  let more = self.ckRecordsLookup[match] {
+//				result = more
+//			}
+//
+//			let unique = found.filter { (zRecord) -> Bool in
+//				return zRecord.ckRecord != nil
+//			}
+//
+//			let records = unique.map { (zRecord) -> CKRecord in
+//				return zRecord.ckRecord!
+//			}
+//
+//			result.appendUnique(contentsOf: records)
+//
+//			self.ckRecordsLookup[match] = result // accumulate from core data
+//		}
 	}
 	
 	func addToLocalSearchIndex(name: String, for iZone: Zone?) {

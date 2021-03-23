@@ -34,6 +34,7 @@ enum ZSignalKind: Int {
 	case sSwap
     case sDatum
     case sError
+	case sEssay
     case sFound
 	case sStatus
 	case sResize
@@ -74,10 +75,11 @@ class ZControllers: NSObject {
 	func swapMapAndEssay(force mode: ZWorkMode? = nil) {
 		gWorkMode = mode ?? (gIsEssayMode ? .wMapMode : .wEssayMode)
 
-		FOREGROUND { 	// avoid infinite recursion (generic menu handler invoking map editor's handle key)
+		FOREGROUND { 	                // avoid infinite recursion (generic menu handler invoking map editor's handle key)
 			gEssayView?.setControlBarButtons(enabled: gWorkMode == .wEssayMode)
+			gEssayView?.ungrabAll()     // avoid confusing user: this re-enables "normal" handle key
 			gTextEditor.stopCurrentEdit()
-			self.signalFor(nil, multiple: [.sSwap, .sCrumbs, .sRelayout])
+			self.signalFor(nil, multiple: [.sSwap, .sCrumbs, .sRelayout, .sSmallMap])
 		}
 	}
 
