@@ -1,6 +1,6 @@
 //
-//  ZHelpDotsExplanationController.swift
-//  iFocus
+//  ZHelpDotsMapController.swift
+//  Seriously
 //
 //  Created by Jonathan Sand on 6/16/20.
 //  Copyright © 2020 Zones. All rights reserved.
@@ -32,9 +32,9 @@ class ZHelpDotsMapController : ZMapController {
 		setupExemplar()
 
 		topLabel?   .font = kLargeHelpFont
-		topLabel?   .text = "As this drawing illustrates, each idea in Seriously has as many as two dots, one on each side."
+		topLabel?   .text = "All ideas in Seriously have a drag dot on the left and many have a reveal dot on the right (as illustrated immediately below)"
 		bottomLabel?.font = kLargeHelpFont
-		bottomLabel?.text = "\t• The drag dot (at left) is used to select, deselect and drag the idea.\n\t• The reveal dot (at right) is used to reveal or conceal its list, or activate the idea.\n\nThese dots are sometimes decorated, concisely prividing further information about the idea. This information is explained in the table below."
+		bottomLabel?.text = "\t• The drag dot (at left) is used to select, deselect and drag the idea\n\t• The reveal dot (at right) is used to show or hide its list, or activate the idea\n\nThese dots are sometimes decorated, concisely prividing further information about the idea. All of this is explained in detail in the table below"
 	}
 
 	func setupExemplar() {

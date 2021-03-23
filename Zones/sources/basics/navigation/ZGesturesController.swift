@@ -1,6 +1,6 @@
 //
 //  ZGesturesController.swift
-//  iFocus
+//  Seriously
 //
 //  Created by Jonathan Sand on 1/29/20.
 //  Copyright © 2020 Jonathan Sand. All rights reserved.

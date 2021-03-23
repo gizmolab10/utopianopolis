@@ -18,11 +18,11 @@ import UIKit
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 struct ZEssayDragDot {
-	var     note : ZNote?
-	var    range : NSRange?
-	var    color = kWhiteColor
-	var  dotRect = CGRect.zero
-	var textRect = CGRect.zero
+	var      note : ZNote?
+	var     color = kWhiteColor
+	var  dragRect = CGRect.zero
+	var  textRect = CGRect.zero
+	var noteRange : NSRange?
 }
 
 class ZEssayView: ZTextView, ZTextViewDelegate {
@@ -37,7 +37,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var selectedZone    : Zone?              { return selectedNotes.first?.zone }
 	var lockedSelection : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
-	var selectedNotes   : [ZNote]            { return dragDots.filter { $0.range != nil && selectedRange.intersects($0.range!.extendedBy(1)) } .map { $0.note! } }
+	var selectedNotes   : [ZNote]            { return dragDots.filter { $0.noteRange != nil && selectedRange.intersects($0.noteRange!.extendedBy(1)) } .map { $0.note! } }
 	var backwardButton  : ZButton?
 	var forwardButton   : ZButton?
 	var cancelButton    : ZButton?
@@ -371,17 +371,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func handleClick(with event: ZEvent) -> Bool {
-		let                 rect = rectFromEvent(event)
-		if  let           attach = attachmentHit(at: rect) {
-			resizeDot            = resizeDotHit(in: attach, at: rect)
-			resizeDragStart      = rect.origin
-			imageAttachment      = attach
+		let              rect = rectFromEvent(event)
+		if  let        attach = attachmentHit(at: rect) {
+			resizeDot         = resizeDotHit(in: attach, at: rect)
+			resizeDragStart   = rect.origin
+			imageAttachment   = attach
 
-			return resizeDot    != nil // true means do not further process this event
-		} else if let        dot = dragDotHit(at: rect),
-				  let       note = dot.note {
-			if  note.zone?.note == note,           // avoid first note, for which grabbing makes no sense
-				!grabbedNotes.contains(note) {
+			return resizeDot != nil // true means do not further process this event
+		} else if let     dot = dragDotHit(at: rect),
+				  let    note = dot.note {
+			if  !grabbedNotes.contains(note) {
 				if !event.modifierFlags.isShift {
 					ungrabAll()
 				}
@@ -411,7 +410,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let  start = resizeDragStart {
 			let  delta = rectFromEvent(event).origin - start
 
-			updateDragRect(for: delta)
+			updateRubberband(for: delta)
 			setNeedsDisplay()
 		}
 	}
@@ -527,13 +526,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func ungrabAll() { grabbedNotes.removeAll() }
 
+	// SHIFT single note expand to essay and vice-versa
+
 	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
 		if  !flags.isOption {
 			if  [.up, .down].contains(arrow) {
 				grabNextNote(up: arrow == .up)
 				setNeedsDisplay()
 			}
-		} else if [.up, .down, .right].contains(arrow) || (arrow == .left && levelDelta > 1) {
+		} else if (arrow == .left && levelDelta > 1) || ([.up, .down, .right].contains(arrow) && levelDelta > 0){
 			gMapEditor.handleArrow(arrow, flags: flags) {
 				self.resetTextAndGrabs()
 			}
@@ -542,13 +543,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func drawDragDecorations() {
 		for dot in dragDots {
-			if  let     note = dot.note {
-				let  grabbed = grabbedNotes.contains(note)
-				let selected = dot.range?.extendedBy(-1).inclusiveIntersection(selectedRange) != nil
+			if  let     zone = dot.note?.zone {
+				let  grabbed = grabbedZones.contains(zone)
+				let selected = dot.noteRange?.extendedBy(-1).inclusiveIntersection(selectedRange) != nil
 				let   filled = selected && !hasGrabbedNote
 				let    color = dot.color
 
-				drawColoredOval(dot.dotRect, color, filled: filled || grabbed)
+				drawColoredOval(dot.dragRect, color, filled: filled || grabbed)
 
 				if  grabbed {
 					drawColoredRect(dot.textRect, color)
@@ -562,6 +563,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  let essay = gCurrentEssay, !essay.isNote,
 			let zones = essay.zone?.zonesWithNotes,
+			let level = essay.zone?.level,
 			let     l = layoutManager,
 			let     c = textContainer {
 			for (index, zone) in zones.enumerated() {
@@ -571,14 +573,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 						note.updatedRanges()
 					}
 
-					let    color = zone.color ?? kDefaultIdeaColor
-					let   offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2
-					let    range = note.noteRange.offsetBy(offset)
-					let  dotSize = CGSize(width: 11.75, height: 15.0)
-					let textRect = l.boundingRect(forGlyphRange: range, in: c).offsetBy(dx: 17.5, dy: 2.0).insetEquallyBy(-2.0)
-					let  dotRect = CGRect(origin: textRect.origin, size: dotSize).offsetBy(dx: 3.0, dy: 7.0)
+					let  dragWidth = 11.75
+					let     color = zone.color ?? kDefaultIdeaColor
+					let    offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2
+					let noteRange = note.noteRange.offsetBy(offset)
+					let  noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 17.5, dy: 2.0).insetEquallyBy(-2.0)
+					let dragOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0 + dragWidth * Double(zone.level - level), y: 7.0))
+					let   dragSize = CGSize(width: dragWidth, height: 15.0)
+					let   dragRect = CGRect(origin: dragOrigin, size: dragSize)
 
-					dots.append(ZEssayDragDot(note: note, range: range, color: color, dotRect: dotRect, textRect: textRect))
+					dots.append(ZEssayDragDot(note: note, color: color, dragRect: dragRect, textRect: noteRect, noteRange: noteRange))
 				}
 			}
 		}
@@ -588,7 +592,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func dragDotHit(at rect: CGRect) -> ZEssayDragDot? {
 		for dot in dragDots {
-			if  dot.dotRect.intersects(rect) {
+			if  dot.dragRect.intersects(rect) {
 				return dot
 			}
 		}
@@ -596,7 +600,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return nil
 	}
 
-	func updateDragRect(for delta: CGSize) {
+	func updateRubberband(for delta: CGSize) {
 
 		// compute imageDragRect from delta.width, image rect and corner
 		// preserving aspect ratio
@@ -634,6 +638,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
+	// / make current grab the current essay
+
 	func grabSelected() {
 		if  gCurrentEssay?.children.count ?? 0 > 1 {     // ignore if does not have multiple children
 			var ungrab = true
@@ -654,8 +660,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	var grabbedIndex: Int? {
 		for (index, dot) in dragDots.enumerated() {
-			if  let note = dot.note,
-				grabbedNotes.contains(note) {
+			if  let zone = dot.note?.zone,
+				grabbedZones.contains(zone) {
 				return index
 			}
 		}
@@ -664,19 +670,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func grabNextNote(up: Bool) {
-		let       dots  = dragDots
-		let     gIndex  = grabbedIndex
-		let   maxIndex  = dots.count - 1
-		if  var nIndex  = gIndex?.next(up: up, max: maxIndex) {
-			if  nIndex == 0 { // grabbing first note does not make sense
-				nIndex  = nIndex .next(up: up, max: maxIndex)!
-			}
-
-			if  let note = dots[nIndex].note {
-				ungrabAll()
-				grabbedNotes.append(note)
-				setNeedsDisplay()
-			}
+		let       dots = dragDots
+		let     gIndex = grabbedIndex
+		let   maxIndex = dots.count - 1
+		if  let nIndex = gIndex?.next(up: up, max: maxIndex),
+			let   note = dots[nIndex].note {
+			ungrabAll()
+			grabbedNotes.append(note)
+			setNeedsDisplay()
 		}
 	}
 

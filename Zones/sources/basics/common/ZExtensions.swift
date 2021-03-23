@@ -1307,6 +1307,7 @@ extension NSRange {
 
 	var center: Int { return (lowerBound + upperBound) / 2 }
 
+	func insetBy   (_ inset:  Int)    -> NSRange { return NSRange(location:  inset + location, length: length - inset) }
 	func offsetBy  (_ offset: Int)    -> NSRange { return NSRange(location: offset + location, length: length) }
 	func contains  (_ other: NSRange) ->    Bool { return inclusiveIntersection(other) == other }
 	func intersects(_ other: NSRange) ->    Bool { return intersection(other) != nil }

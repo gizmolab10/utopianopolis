@@ -1,6 +1,6 @@
 //
 //  ZLineView.swift
-//  iFocus
+//  Seriously
 //
 //  Created by Jonathan Sand on 4/7/19.
 //  Copyright © 2019 Jonathan Sand. All rights reserved.

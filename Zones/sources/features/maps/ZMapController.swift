@@ -170,7 +170,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			layoutForCurrentScrollOffset()
 			layoutWidgets(for: iSignalObject, iKind)
 			mapView?.setAllSubviewsNeedDisplay()
-			dragView? .setNeedsDisplay()
+			dragView?.setNeedsDisplay()
         }
     }
 	

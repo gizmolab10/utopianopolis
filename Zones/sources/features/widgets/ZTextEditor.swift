@@ -100,6 +100,7 @@ class ZTextPack: NSObject {
 		if !isEditing,
 			text.length > 18,
 			let    type = widget?.type,
+			!type.contains(.tExemplar),
 			!type.contains(.tBigMap) {                                  // is in small map
 			let  isLine = text[0] == "-"
 			text        = text.substring(toExclusive: isLine ? 20 : 15) // shorten to fit (in small map area)
