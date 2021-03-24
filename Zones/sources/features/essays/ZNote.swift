@@ -17,21 +17,22 @@ enum ZAlterationType: Int {
 
 class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var          essayLength = 0
+	var          titleInsets = 0
 	var           noteOffset = 0
-	var          titleInsets = 1
 	var           autoDelete = false		// true means delete this note on exit from essay mode
 	var             children = [ZNote]()
 	var           titleRange = NSRange()
 	var            textRange = NSRange()
 	var            noteRange : NSRange   { return NSRange(location:      noteOffset, length:  textRange.upperBound) }
-	var       fullTitleRange : NSRange   { return NSRange(location: fullTitleOffset, length: titleRange.length + 3) }
+	var       fullTitleRange : NSRange   { return NSRange(location: fullTitleOffset, length: titleRange.length + titleOffset + 1) }
 	var      offsetTextRange : NSRange   { return textRange .offsetBy(noteOffset) }
 	var        lastTextRange : NSRange?  { return textRange }
 	var       maybeNoteTrait : ZTrait?   { return zone?.traits[  .tNote] }
 	var            noteTrait : ZTrait?   { return zone?.traitFor(.tNote) }
 	var               prefix : String    { return "note" }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
-	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - 2 }
+	var          titleOffset : Int       { return titleInsets * kNoteIndentSpacer.length }
+	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - titleOffset }
 	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kEssayDefault }
 	var               isNote : Bool      { return isMember(of: ZNote.self) }
 	var    	            zone : Zone?
@@ -149,11 +150,41 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	var essayText : NSMutableAttributedString? {
+		titleInsets = 0
 		let  result = noteText
 		essayLength = result?.length ?? 0
 
 		return result
 
+	}
+
+	var noteText: NSMutableAttributedString? {
+		var      result : NSMutableAttributedString?
+		let hideTitles  = !gShowEssayTitles
+
+		if  let (text, name) = updatedRanges() {
+			result      = NSMutableAttributedString()
+			let  spacer = kNoteIndentSpacer * titleInsets
+			let  indent = NSMutableAttributedString(string: spacer,      attributes: spacerAttributes)
+			let   title = NSMutableAttributedString(string: name + kTab, attributes: titleAttributes)
+
+			result?    .insert(text,       at: 0)
+
+			if !hideTitles {
+				result?.insert(gBlankLine, at: 0)
+				result?.insert(title,      at: 0)
+
+				if  indent.length > 0 {
+					result?.insert(indent, at: 0)
+				}
+
+				colorizeTitle(result)
+			}
+
+			result?.fixAllAttributes()
+		}
+
+		return result
 	}
 
 	@discardableResult func updatedRanges() -> (NSMutableAttributedString, String)? {
@@ -172,32 +203,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		}
 
 		return nil
-	}
-
-	var noteText: NSMutableAttributedString? {
-		var      result : NSMutableAttributedString?
-		let hideTitles  = !gShowEssayTitles
-
-		if  let (text, name) = updatedRanges() {
-			result      = NSMutableAttributedString()
-			let  spacer = kNoteIndentSpacer * titleInsets
-			let  indent = NSMutableAttributedString(string: spacer,      attributes: spacerAttributes)
-			let   title = NSMutableAttributedString(string: name + kTab, attributes: titleAttributes)
-
-			result?    .insert(text,       at: 0)
-
-			if !hideTitles {
-				result?.insert(gBlankLine, at: 0)
-				result?.insert(title,      at: 0)
-				result?.insert(indent,     at: 0)
-
-				colorizeTitle(result)
-			}
-
-			result?.fixAllAttributes()
-		}
-
-		return result
 	}
 
 	func updateTitleInsets(relativeTo ancestor: Zone?) {

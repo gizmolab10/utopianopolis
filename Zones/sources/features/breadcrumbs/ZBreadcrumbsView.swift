@@ -49,8 +49,14 @@ class ZBreadcrumbsView : ZButtonsView {
 			button.isBordered = true
 			let         title = NSMutableAttributedString(string: zone.unwrappedName)
 			let         range = NSRange(location:0, length: title.length)
+			var    attributes = ZAttributesDictionary()
+			attributes[.font] = gSmallMapFont
 
-			title.addAttributes([.font : gSmallMapFont], range: range)
+			if  zone.hasNote {
+				attributes[.underlineStyle] = 1
+			}
+
+			title.addAttributes(attributes, range: range)
 			button.showsBorderOnlyWhileMouseInside = true
 			button.setButtonType(.momentaryPushIn)
 
@@ -89,13 +95,28 @@ class ZBreadcrumbsView : ZButtonsView {
 	}
 
 	@IBAction func crumbButtonAction(_ button: ZBreadcrumbButton) {
-		let    next = gBreadcrumbs.crumbZones[button.tag]
+		let    zone = gBreadcrumbs.crumbZones[button.tag]
 		let    last = gBreadcrumbs.crumbsRootZone
 		let   flags = button.currentEvent?.modifierFlags
 		let  OPTION = flags?.isOption  ?? false
 		let COMMAND = flags?.isCommand ?? false
 
-		next.focusOn() {
+		if    zone == last, !gIsEssayMode, !COMMAND { return }
+
+		func displayEssay(_ asEssay: Bool = true) {
+			let            saved = gCreateCombinedEssay
+			gCreateCombinedEssay = (OPTION && asEssay)
+
+			if  gCreateCombinedEssay {
+				zone.noteMaybe   = nil                // forget note so essay will be constructed
+			}
+
+			gEssayView?.resetCurrentEssay(zone.note)  // note creates an essay when gCreateCombinedEssay is true
+
+			gCreateCombinedEssay = saved
+		}
+
+		zone.focusOn() {
 			switch (gWorkMode) {
 				case .wEditIdeaMode:
 					if  let edit = gCurrentlyEditingWidget?.widgetZone {
@@ -106,32 +127,25 @@ class ZBreadcrumbsView : ZButtonsView {
 					}
 				case .wMapMode:
 					if  COMMAND {
-						next.grab()
-						next.traverseAllProgeny { child in
+						displayEssay()
+						gControllers.swapMapAndEssay(force: .wEssayMode)
+
+						return
+					} else if OPTION {
+						zone.grab()
+						zone.traverseAllProgeny { child in
 							child.collapse()
 						}
 					}
 
 					gHere.asssureIsVisible()
 				case .wEssayMode:
-					if  let essayView = gEssayView {
-						let sameNext  = (next == gCurrentEssayZone)
-						if  sameNext || !(next.hasNote || OPTION) {
-							// no note in next so exit essay editor
-							essayView.setControlBarButtons(enabled: false)
-							gSetBigMapMode()
-						} else {
-							let            saved = gCreateCombinedEssay
-							gCreateCombinedEssay = (OPTION && !sameNext)
-
-							if  gCreateCombinedEssay {
-								next.noteMaybe   = nil              // forget note so essay will be constructed
-							}
-
-							essayView.resetCurrentEssay(next.note)  // note creates an essay when gCreateCombinedEssay is true
-
-							gCreateCombinedEssay = saved
-						}
+					let sameNote  = (zone == gCurrentEssayZone)
+					if  sameNote || !(zone.hasNote || COMMAND) {
+						gEssayView?.setControlBarButtons(enabled: false)
+						gSetBigMapMode()                                 // no note in zone so exit essay editor
+					} else {
+						displayEssay(!sameNote)
 					}
 				default: break
 			}

@@ -2344,11 +2344,13 @@ extension ZView {
 		print(result.joined(separator: "\r"))
 	}
 
-	func drawColoredRect(_ rect: CGRect, _ color: ZColor) {
-		let radius = CGFloat(8.0)
+	func drawColoredRect(_ rect: CGRect, _ color: ZColor, thickness: CGFloat = 2.0) {
+		let     radius = CGFloat(8.0)
+		let       path = ZBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
+		path.lineWidth = thickness
 
 		color.setStroke()
-		ZBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius).stroke()
+		path.stroke()
 	}
 
 	func drawColoredOval(_ rect: CGRect, _ color: ZColor, filled: Bool = false) {

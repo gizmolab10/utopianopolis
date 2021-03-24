@@ -18,11 +18,12 @@ import UIKit
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
 struct ZEssayDragDot {
-	var      note : ZNote?
 	var     color = kWhiteColor
 	var  dragRect = CGRect.zero
 	var  textRect = CGRect.zero
+	var  lineRect : CGRect?
 	var noteRange : NSRange?
+	var      note : ZNote?
 }
 
 class ZEssayView: ZTextView, ZTextViewDelegate {
@@ -33,7 +34,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { setSelectedRange(NSRange()) } else if oldValue != nil { eraseAttachment = oldValue } } }
 	var eraseAttachment : ZRangedAttachment?
 	var grabbedZones    : [Zone]             { return grabbedNotes.map { $0.zone! } }
-	var selectedZone    : Zone?              { return selectedNotes.first?.zone }
+	var selectedNote    : ZNote?             { return selectedNotes.first }
+	var selectedZone    : Zone?              { return selectedNote?.zone }
 	var firstGrabbedZone: Zone?              { return hasGrabbedNote ? grabbedZones[0] : nil }
 	var hasGrabbedNote  : Bool               { return grabbedNotes.count != 0 }
 	var lockedSelection : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
@@ -79,6 +81,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func done() { save(); exit() }
 
+	func save() {
+		if  let e = gCurrentEssay {
+			e.saveEssay(textStorage)
+			asssureSelectionIsVisible()
+		}
+	}
+
 	func exit() {
 		if  let e = gCurrentEssay,
 			e.lastTextIsDefault,
@@ -89,11 +98,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		gControllers.swapMapAndEssay(force: .wMapMode)
 	}
 
-	func save() {
-		if  let e = gCurrentEssay {
-			e.saveEssay(textStorage)
-			asssureSelectionIsVisible()
+	func grabDone() {
+		if  let zone = lastGrabbedDot?.note?.zone {
+			zone.grab()
+		} else {
+			gCurrentEssayZone?.grab()
 		}
+
+		done()
 	}
 
 	override func awakeFromNib() {
@@ -222,6 +234,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let  OPTION = flags.isOption
 		let SPECIAL = OPTION && COMMAND
 		let     ALL = OPTION && CONTROL
+		let FLAGGED = OPTION || COMMAND || CONTROL
 
 		if  key    != key.lowercased() {
 			key     = key.lowercased()
@@ -234,9 +247,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if  hasGrabbedNote {
 			switch key {
 				case "t":     swapWithParent()
+				case "n":     swapBetweenNoteAndEssay()
 				case "/",
 					 kEscape: if SPECIAL { gHelpController?.show(flags: flags) } else { ungrabAll(); setNeedsDisplay(); gSignal([.sDetails]) }
 				case kDelete: deleteGrabbed()
+				case kReturn: if FLAGGED { grabDone() }
 
 				default:  break
 			}
@@ -267,7 +282,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "/":      if OPTION { gHelpController?.show(flags: flags) } else { grabSelected() }
 				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
 				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
-				case kReturn:  gCurrentEssayZone?.grab(); done()
+				case kReturn:  grabDone()
 				default:       return false
 			}
 
@@ -387,7 +402,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return resizeDot != nil // true means do not further process this event
 		} else if let     dot = dragDotHit(at: rect),
 				  let    note = dot.note {
-			if  !grabbedNotes.contains(note) {
+			if  let     index = grabbedNotes.firstIndex(of: note) {
+				grabbedNotes.remove(at: index)
+			} else {
 				if !event.modifierFlags.isShift {
 					ungrabAll()
 				}
@@ -417,7 +434,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let  start = resizeDragStart {
 			let  delta = rectFromEvent(event).origin - start
 
-			updateRubberband(for: delta)
+			updateImageRubberband(for: delta)
 			setNeedsDisplay()
 		}
 	}
@@ -575,11 +592,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					let     offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2
 					let  noteRange = note.noteRange.offsetBy(offset)
 					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 17.5, dy: 2.0).insetEquallyBy(-2.0)
-					let dragOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0 + dragWidth * Double(zone.level - level), y: 7.0))
+					let     indent = zone.level - level
+					let     noLine = indent == 0
+					let lineOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0, y: 15.0))
+					let  lineWidth = dragWidth * Double(indent)
+					let   lineSize = CGSize(width: lineWidth, height: 0.5)
+					let   lineRect = noLine ? nil : CGRect(origin: lineOrigin, size: lineSize)
+					let dragOrigin = lineOrigin.offsetBy(CGPoint(x: lineWidth, y: -8.0))
 					let   dragSize = CGSize(width: dragWidth, height: 15.0)
 					let   dragRect = CGRect(origin: dragOrigin, size: dragSize)
 
-					dots.append(ZEssayDragDot(note: note, color: color, dragRect: dragRect, textRect: noteRect, noteRange: noteRange))
+					dots.append(ZEssayDragDot(color: color, dragRect: dragRect, textRect: noteRect, lineRect: lineRect, noteRange: noteRange, note: note))
 				}
 			}
 		}
@@ -594,7 +617,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
 		if  !flags.isOption {
 			if  [.up, .down].contains(arrow) {
-				grabNextNote(up: arrow == .up)
+				grabNextNote(up: arrow == .up, ungrab: !flags.isShift)
 				scrollToGrabbed()
 				gSignal([.sDetails])
 			}
@@ -606,17 +629,23 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func drawDragDecorations() {
-		for dot in dragDots {
-			if  let     zone = dot.note?.zone {
-				let  grabbed = grabbedZones.contains(zone)
-				let selected = dot.noteRange?.extendedBy(-1).inclusiveIntersection(selectedRange) != nil
-				let   filled = selected && !hasGrabbedNote
-				let    color = dot.color
+		if  gShowEssayTitles {
+			for dot in dragDots {
+				if  let     zone = dot.note?.zone {
+					let  grabbed = grabbedZones.contains(zone)
+					let selected = dot.noteRange?.extendedBy(-1).inclusiveIntersection(selectedRange) != nil
+					let   filled = selected && !hasGrabbedNote
+					let    color = dot.color
 
-				drawColoredOval(dot.dragRect, color, filled: filled || grabbed)
+					drawColoredOval(dot.dragRect, color, filled: filled || grabbed)
 
-				if  grabbed {
-					drawColoredRect(dot.textRect, color)
+					if  let lineRect = dot.lineRect {
+						drawColoredRect(lineRect, color, thickness: 0.5)
+					}
+
+					if  grabbed {
+						drawColoredRect(dot.textRect, color)
+					}
 				}
 			}
 		}
@@ -632,7 +661,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return nil
 	}
 
-	func updateRubberband(for delta: CGSize) {
+	func updateImageRubberband(for delta: CGSize) {
 
 		// compute imageDragRect from delta.width, image rect and corner
 		// preserving aspect ratio
@@ -691,13 +720,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func grabNextNote(up: Bool) {
+	func grabNextNote(up: Bool, ungrab: Bool) {
 		let       dots = dragDots
 		let     gIndex = grabbedIndex
 		let   maxIndex = dots.count - 1
 		if  let nIndex = gIndex?.next(up: up, max: maxIndex),
 			let   note = dots[nIndex].note {
-			ungrabAll()
+			if  ungrab {
+				ungrabAll()
+			}
+
 			grabbedNotes.append(note)
 			scrollToGrabbed()
 		}
@@ -783,7 +815,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idForward: gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
 				case .idBack:    gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
 				case .idSave:    save()
-				case .idHide:                          gCurrentEssayZone?.grab();       done()
+				case .idHide:                          grabDone()
 				case .idCancel:                        gCurrentEssayZone?.grab();       exit()
 				case .idDelete:  if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); exit() }
 				case .idTitles:  toggleEssayTitles()
@@ -1037,17 +1069,20 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	func swapBetweenNoteAndEssay() {
-		if  let          current = gCurrentEssay,
-			let             zone = current.zone {
-			let            count = zone.countOfNotes
-			gCreateCombinedEssay = current.isNote
+		if  let current = gCurrentEssay,
+			let    zone = current.zone {
+			let   count = zone.countOfNotes
 
-			if  gCreateCombinedEssay {
-				if  count > 1 {
-					resetCurrentEssay(current)
+			if  current.isNote {
+				if  count                > 1 {
+					gCreateCombinedEssay = true
+					gCurrentEssay        = ZEssay(zone)
+					zone.clearAllNotes()            // discard current essay text and all child note's text
+					updateText()
 				}
 			} else if count > 0,
-				let note = selectedZone?.currentNote {
+				let note = lastGrabbedDot?.note ?? selectedNote {
+				ungrabAll()
 				resetCurrentEssay(note)
 			}
 		}
