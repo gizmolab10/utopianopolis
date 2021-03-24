@@ -27,6 +27,7 @@ struct ZEssayDragDot {
 }
 
 class ZEssayView: ZTextView, ZTextViewDelegate {
+	let margin          = CGFloat(20.0)
 	let dotInset        = CGFloat(-5.0)
 	var dropped         = [String]()
 	var grabbedNotes    = [ZNote]()
@@ -116,7 +117,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		importsGraphics        = true
 		allowsImageEditing     = true
 		displaysLinkToolTips   = true
-		textContainerInset     = NSSize(width: 20, height: 0)
+		textContainerInset     = NSSize(width: margin, height: margin)
 		zlayer.backgroundColor = kClearColor.cgColor
 		backgroundColor        = kClearColor
 
@@ -410,6 +411,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				}
 
 				grabbedNotes.appendUnique(contentsOf: [note])
+				setNeedsDisplay()
 				gSignal([.sDetails])
 			}
 
@@ -548,11 +550,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- grab / drag
 	// MARK:-
 
-	var grabbedIndex: Int? {
-		for (index, dot) in dragDots.enumerated() {
+	func grabbedIndex(goingUp: Bool) -> Int? {
+		let dots = goingUp ? dragDots : dragDots.reversed()
+		let  max = dots.count - 1
+
+		for (index, dot) in dots.enumerated() {
 			if  let zone = dot.note?.zone,
 				grabbedZones.contains(zone) {
-				return index
+				return goingUp ? index : max - index
 			}
 		}
 
@@ -587,19 +592,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 						note.updatedRanges()
 					}
 
+					let dragHeight = 15.0
 					let  dragWidth = 11.75
 					let      color = zone.color ?? kDefaultIdeaColor
 					let     offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2
 					let  noteRange = note.noteRange.offsetBy(offset)
-					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 17.5, dy: 2.0).insetEquallyBy(-2.0)
+					let      inset = CGFloat(2.0)
+					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).insetEquallyBy(-inset)
 					let     indent = zone.level - level
 					let     noLine = indent == 0
-					let lineOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0, y: 15.0))
+					let lineOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0, y: dragHeight))
 					let  lineWidth = dragWidth * Double(indent)
 					let   lineSize = CGSize(width: lineWidth, height: 0.5)
 					let   lineRect = noLine ? nil : CGRect(origin: lineOrigin, size: lineSize)
 					let dragOrigin = lineOrigin.offsetBy(CGPoint(x: lineWidth, y: -8.0))
-					let   dragSize = CGSize(width: dragWidth, height: 15.0)
+					let   dragSize = CGSize(width: dragWidth, height: dragHeight)
 					let   dragRect = CGRect(origin: dragOrigin, size: dragSize)
 
 					dots.append(ZEssayDragDot(color: color, dragRect: dragRect, textRect: noteRect, lineRect: lineRect, noteRange: noteRange, note: note))
@@ -722,7 +729,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func grabNextNote(up: Bool, ungrab: Bool) {
 		let       dots = dragDots
-		let     gIndex = grabbedIndex
+		let     gIndex = grabbedIndex(goingUp: up)
 		let   maxIndex = dots.count - 1
 		if  let nIndex = gIndex?.next(up: up, max: maxIndex),
 			let   note = dots[nIndex].note {
@@ -1017,7 +1024,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				var    glyphRange = NSRange()
 
 				layoutManager.characterRange(forGlyphRange: attach.range, actualGlyphRange: &glyphRange)
-				return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer).offsetBy(dx: 20.0, dy: 0.0)
+				return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer).offsetBy(dx: margin, dy: 0.0)
 			}
 		}
 

@@ -23,9 +23,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var             children = [ZNote]()
 	var           titleRange = NSRange()
 	var            textRange = NSRange()
-	var            noteRange : NSRange   { return NSRange(location:      noteOffset, length:  textRange.upperBound) }
-	var       fullTitleRange : NSRange   { return NSRange(location: fullTitleOffset, length: titleRange.length + titleOffset + 1) }
-	var      offsetTextRange : NSRange   { return textRange .offsetBy(noteOffset) }
+	var            noteRange : NSRange   { return NSRange(location: noteOffset, length: textRange.upperBound) }
+	var      offsetTextRange : NSRange   { return textRange.offsetBy(noteOffset) }
 	var        lastTextRange : NSRange?  { return textRange }
 	var       maybeNoteTrait : ZTrait?   { return zone?.traits[  .tNote] }
 	var            noteTrait : ZTrait?   { return zone?.traitFor(.tNote) }
@@ -70,13 +69,13 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	func saveNote(_ attributedString: NSAttributedString?) {
 		if  let attributed = attributedString,
 			let       note = maybeNoteTrait {
-			let     string = attributed.string
 			let       text = attributed.attributedSubstring(from: textRange)
 			note .noteText = NSMutableAttributedString(attributedString: text)    // invokes note.needSave()
 			autoDelete     = false
 
 			if  gShowEssayTitles {
-				zone?.zoneName = string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
+				let       name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
+				zone?.zoneName = name
 			}
 
 			zone?.updateCoreDataRelationships()
@@ -159,26 +158,32 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	var noteText: NSMutableAttributedString? {
-		var      result : NSMutableAttributedString?
-		let hideTitles  = !gShowEssayTitles
+		var result : NSMutableAttributedString?
 
 		if  let (text, name) = updatedRanges() {
-			result      = NSMutableAttributedString()
-			let  spacer = kNoteIndentSpacer * titleInsets
-			let  indent = NSMutableAttributedString(string: spacer,      attributes: spacerAttributes)
-			let   title = NSMutableAttributedString(string: name + kTab, attributes: titleAttributes)
+			result = NSMutableAttributedString()
 
-			result?    .insert(text,       at: 0)
+			result?        .insert(text,       at: 0)
 
-			if !hideTitles {
-				result?.insert(gBlankLine, at: 0)
-				result?.insert(title,      at: 0)
+			if  gShowEssayTitles {
+				var      title = name + kTab
+				var attributes = titleAttributes
 
-				if  indent.length > 0 {
-					result?.insert(indent, at: 0)
+				if  titleInsets != 0 {
+					let spacer = kNoteIndentSpacer * titleInsets
+					title      = spacer + title
 				}
 
-				colorizeTitle(result)
+				if  let      z = zone, z.colorized,
+					let  color = z.color?.lighter(by: 20.0).withAlphaComponent(0.5) {
+
+					attributes?[.backgroundColor] = color
+				}
+
+				let attributedTitle = NSMutableAttributedString(string: title, attributes: attributes)
+
+				result?.insert(gBlankLine,      at: 0)
+				result?.insert(attributedTitle, at: 0)
 			}
 
 			result?.fixAllAttributes()
@@ -194,7 +199,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let  spacer = kNoteIndentSpacer * titleInsets
 			let sOffset = hideTitles ? 0 : spacer.length
 			let hasGoof = name.contains("􀅇")
-			let tOffset = hideTitles ? 0 :  sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
+			let tOffset = hideTitles ? 1 :  sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
 			titleRange  = NSRange(location: sOffset, length: name.length)
 			textRange   = NSRange(location: tOffset, length: text.length)
 			noteOffset  = 0
@@ -210,14 +215,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let level = zone?.level {
 			let difference = level - start.level
 			titleInsets = difference + 1
-		}
-	}
-
-	func colorizeTitle(_ text: NSMutableAttributedString?) {
-		if  let     z = zone, z.colorized,
-			let color = z.color?.lighter(by: 20.0).withAlphaComponent(0.5) {
-
-			text?.addAttribute(.backgroundColor, value: color, range: fullTitleRange)
 		}
 	}
 
