@@ -96,24 +96,23 @@ enum ZFillType: String {
 	case both   = "b"
 }
 
-let prefixArray = Array(repeating: "", count: 24)
-
 class ZHelpData: NSObject {
 
 	var helpMode          = ZHelpMode.noMode
 	var tabStops          = [NSTextTab]()
+	var rowHeight         :   CGFloat  { return 22.0 }
 	var noTabPrefix       :   String   { return "   " }
 	var columnStrings     : [[String]] { return [[]] }
 	var tabOffsets        :   [Int]    { return [0, 20, 85] } // default for graph shortcuts
-	var columnWidth       :    Int     { return 290 }         // "
-	var indexOfLastColumn :    Int     { return 3 }           // "
+	var columnWidth       :    Int     { return 580 }         // "
+	var indexOfLastColumn :    Int     { return 1 }           // "
 	var stringsPerRow     :    Int     { return 3 }
 	var isPro             :    Bool    { return gCurrentHelpMode == .allMode }
 	var isDots            :    Bool    { return gCurrentHelpMode == .dotMode }
 	var isBasic           :    Bool    { return gCurrentHelpMode == .basicMode }
 	var isEssay           :    Bool    { return gCurrentHelpMode == .essayMode }
 	var isMedium          :    Bool    { return gCurrentHelpMode == .mediumMode }
-	var boldFont          :    ZFont   { return kBoldFont }
+	var boldFont          :    ZFont   { return kLargeBoldFont }
 
 	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) {
 		let (first, second, _) = strings(for: row, column: column)
@@ -139,8 +138,6 @@ class ZHelpData: NSObject {
 
 		return result / stringsPerRow
 	}
-
-	var rowHeight : CGFloat { return 17.0 }
 
 	func setup(for iMode: ZHelpMode) {
 		helpMode   = iMode
@@ -328,7 +325,7 @@ class ZHelpData: NSObject {
 			}
 		}
 
-		let threshold = helpMode == .essayMode ? 14 : 12
+		let threshold = helpMode == .essayMode ? 12 : 10
 
 		if  text.length + second.length < threshold && row != 1 && !types.contains(.hPlain) {
 			appendTab() 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough final tabs

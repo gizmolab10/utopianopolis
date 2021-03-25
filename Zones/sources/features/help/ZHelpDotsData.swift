@@ -8,17 +8,15 @@
 
 import Foundation
 
+let dotsPrefixArray = Array(repeating: "", count: 24)
+
 class ZHelpDotsData: ZHelpData {
 
 	override var noTabPrefix       :   String   { return "                    " }
 	override var columnStrings     : [[String]] { return [dotsColumnOne, dotsColumnTwo] }
 	override var tabOffsets        :  [Int]     { return [0, 20, 150] }
-	override var columnWidth       :   Int      { return 580 }
-	override var indexOfLastColumn :   Int      { return 1 }
-	override var rowHeight         :   CGFloat  { return 22.0 }
-	override var boldFont          :   ZFont    { return kLargeBoldFont }
 
-	let dotsColumnOne: [String] = prefixArray + [
+	let dotsColumnOne: [String] = dotsPrefixArray + [
 		"",						"",																				"",
 		"!DRAG DOT",			"click to select, deselect or drag",											"",
 		"",						"",																				"",
@@ -31,7 +29,7 @@ class ZHelpDotsData: ZHelpData {
 		".b",					"this bookmark's target is current focus",										""
 	]
 
-	let dotsColumnTwo: [String] = prefixArray + [
+	let dotsColumnTwo: [String] = dotsPrefixArray + [
 		"",						"",																				"",
 		"!REVEAL DOT",			"click to conceal, reveal or activate",											"",
 		"",						"",																				"",

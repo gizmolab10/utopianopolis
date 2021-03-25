@@ -90,13 +90,13 @@ class ZHelpController: ZGenericTableController {
 		let   OPTION = flags.isOption
 		var nextMode = gCurrentHelpMode
 
-		if            COMMAND {
-			if       !OPTION && CONTROL {
-				nextMode = .mediumMode
-			} else if OPTION && CONTROL {
-				nextMode =    .dotMode
-			} else if OPTION {
-				nextMode =  .basicMode
+		if             COMMAND {
+			if         OPTION && !CONTROL {
+				nextMode = .basicMode
+			} else if  OPTION &&  CONTROL {
+				nextMode =   .dotMode
+			} else if !OPTION &&  CONTROL {
+				nextMode = .essayMode
 			}
 
 			show(iShow, mode: nextMode)

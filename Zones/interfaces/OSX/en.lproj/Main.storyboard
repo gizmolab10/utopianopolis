@@ -594,6 +594,12 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="GVM-4d-6re"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="Essay Keys" keyEquivalent="/" id="oQc-Cr-N61">
+                                                        <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="iJV-uu-yXo"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="Dots" keyEquivalent="/" id="W6c-6I-BEc">
                                                         <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
                                                         <connections>
