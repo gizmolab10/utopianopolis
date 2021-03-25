@@ -25,7 +25,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                     hereZone : Zone?         { return gHereMaybe }
 	override  var       allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum] }
 	@IBOutlet var           dragView : ZDragView?
-	@IBOutlet var          mapView : ZView?
+	@IBOutlet var            mapView : ZView?
 	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 	var          priorScrollLocation = CGPoint.zero

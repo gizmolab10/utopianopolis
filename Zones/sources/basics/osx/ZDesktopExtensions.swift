@@ -41,6 +41,7 @@ public typealias ZTextView                   = NSTextView
 public typealias ZTextField                  = NSTextField
 public typealias ZTableView                  = NSTableView
 public typealias ZStackView                  = NSStackView
+public typealias ZImageView                  = NSImageView
 public typealias ZColorWell                  = NSColorWell
 public typealias ZButtonCell                 = NSButtonCell
 public typealias ZBezierPath                 = NSBezierPath

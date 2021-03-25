@@ -789,6 +789,26 @@ extension CGSize {
         return sqrt(width * width + height * height)
     }
 
+	func fractionalScaleToFit(size: CGSize) -> CGFloat {
+		var fraction = CGFloat(1.0)
+
+		if  width < size.width {
+			fraction = width / size.width
+		}
+
+		if  height < size.height {
+			fraction = height * fraction / size.height
+		}
+
+		return fraction
+	}
+
+	func scaleToFit(size: CGSize) -> CGSize {
+		let fraction = fractionalScaleToFit(size: size)
+
+		return CGSize(width: width * fraction, height: height * fraction)
+	}
+
 	func isLargerThan(_ other: CGSize) -> Bool {
 		return hypontenuse > other.hypontenuse
 	}

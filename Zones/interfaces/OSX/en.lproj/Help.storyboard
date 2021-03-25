@@ -136,6 +136,9 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="198" id="ETB-M9-wQK"/>
                                         </constraints>
+                                        <connections>
+                                            <segue destination="oot-pe-OOD" kind="embed" id="lb6-W0-7Pj"/>
+                                        </connections>
                                     </containerView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="Irq-gp-pkb" userLabel="Top Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="626" width="1152" height="1"/>
@@ -228,10 +231,10 @@
             </objects>
             <point key="canvasLocation" x="1312" y="402"/>
         </scene>
-        <!--Help Dots Map Controller-->
+        <!--Help Dots Exemplar Controller-->
         <scene sceneID="PNs-6U-K92">
             <objects>
-                <viewController id="wJH-0h-8ky" customClass="ZHelpDotsMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="wJH-0h-8ky" customClass="ZHelpDotsExemplarController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="61U-DM-8bn">
                         <rect key="frame" x="0.0" y="0.0" width="601" height="152"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -281,7 +284,62 @@
                 </viewController>
                 <customObject id="pb3-EB-5uM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2343.5" y="402"/>
+            <point key="canvasLocation" x="2342" y="288"/>
+        </scene>
+        <!--Help Essay Introduction Controller-->
+        <scene sceneID="vue-cx-fsz">
+            <objects>
+                <viewController id="oot-pe-OOD" customClass="ZHelpEssayIntroductionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="Nf7-BD-4Y1">
+                        <rect key="frame" x="0.0" y="0.0" width="601" height="152"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Pud-aa-ipp">
+                                <rect key="frame" x="-1" y="116" width="604" height="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="600" id="4t3-KE-V4w"/>
+                                </constraints>
+                                <textFieldCell key="cell" selectable="YES" alignment="justified" title="Multiline Label" id="62d-zI-6e8">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="49A-vl-LCi">
+                                <rect key="frame" x="0.0" y="36" width="601" height="80"/>
+                            </customView>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="ixT-B5-8Et">
+                                <rect key="frame" x="-1" y="20" width="604" height="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="600" id="zUu-Qc-Og9"/>
+                                </constraints>
+                                <textFieldCell key="cell" selectable="YES" alignment="justified" title="Multiline Label" id="xxj-Hd-z0Z">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="49A-vl-LCi" firstAttribute="top" secondItem="Pud-aa-ipp" secondAttribute="bottom" id="7Dn-Zk-TLg"/>
+                            <constraint firstItem="ixT-B5-8Et" firstAttribute="top" secondItem="49A-vl-LCi" secondAttribute="bottom" id="ANS-ca-lVR"/>
+                            <constraint firstItem="ixT-B5-8Et" firstAttribute="centerX" secondItem="Nf7-BD-4Y1" secondAttribute="centerX" id="B1H-RU-5xd"/>
+                            <constraint firstItem="49A-vl-LCi" firstAttribute="leading" secondItem="Nf7-BD-4Y1" secondAttribute="leading" id="PSj-aW-3W5"/>
+                            <constraint firstItem="Pud-aa-ipp" firstAttribute="top" secondItem="Nf7-BD-4Y1" secondAttribute="top" constant="20" id="WXY-HB-i1N"/>
+                            <constraint firstAttribute="bottom" secondItem="ixT-B5-8Et" secondAttribute="bottom" constant="20" id="chd-hB-SSF"/>
+                            <constraint firstItem="Pud-aa-ipp" firstAttribute="centerX" secondItem="Nf7-BD-4Y1" secondAttribute="centerX" id="dXE-iI-YTd"/>
+                            <constraint firstAttribute="trailing" secondItem="49A-vl-LCi" secondAttribute="trailing" id="otj-u5-ryk"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="bottomLabel" destination="ixT-B5-8Et" id="uiM-QI-AK2"/>
+                        <outlet property="controlsView" destination="49A-vl-LCi" id="uOy-BK-pnR"/>
+                        <outlet property="topLabel" destination="Pud-aa-ipp" id="vL9-dQ-HXc"/>
+                    </connections>
+                </viewController>
+                <customObject id="BkW-rT-2wB" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2342" y="514"/>
         </scene>
     </scenes>
 </document>

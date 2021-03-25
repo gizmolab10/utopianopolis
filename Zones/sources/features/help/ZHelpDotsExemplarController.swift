@@ -1,5 +1,5 @@
 //
-//  ZHelpDotsMapController.swift
+//  ZHelpDotsExemplarController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 6/16/20.
@@ -12,7 +12,7 @@ import CoreData
 
 var gHelpHyperlinkColor: ZColor { return gIsDark ? kSystemBlue.lighter(by: 3.0) : kSystemBlue.darker(by: 4.0) }
 
-class ZHelpDotsMapController : ZMapController {
+class ZHelpDotsExemplarController : ZMapController {
 
 	override  var controllerID : ZControllerID { return .idHelpDots }
 	override  var   widgetType : ZWidgetType   { return .tExemplar }
@@ -32,7 +32,7 @@ class ZHelpDotsMapController : ZMapController {
 		setupExemplar()
 
 		topLabel?   .font = kLargeHelpFont
-		topLabel?   .text = "All ideas in Seriously have a drag dot on the left and many have a reveal dot on the right (as illustrated immediately below)"
+		topLabel?   .text = "All ideas in Seriously have a drag dot on the left. Many have a reveal dot on the right"
 		bottomLabel?.font = kLargeHelpFont
 		bottomLabel?.text = "\t• The drag dot (at left) is used to select, deselect and drag the idea\n\t• The reveal dot (at right) is used to show or hide its list, or activate the idea\n\nThese dots are sometimes decorated, concisely prividing further information about the idea. All of this is explained in detail in the table below"
 	}
@@ -40,7 +40,7 @@ class ZHelpDotsMapController : ZMapController {
 	func setupExemplar() {
 		let           name = kExemplarRootName
 		zone               = Zone.create(as: name, databaseID: .everyoneID)
-		zone?.zoneName     = "this is a typical idea, with 3 ideas in its (hidden) list"
+		zone?.zoneName     = "this is a typical idea, with three [hidden] ideas in its list"
 		zone?.parentLink   = kNullLink
 
 		for index in 1...3 {
