@@ -19,13 +19,21 @@ class ZHelpEssayData: ZHelpData {
 	override var boldFont          :   ZFont    { return kLargeBoldFont }
 
 	let essayColumnOne: [String] = prefixArray + [
-		"",						"",																				"",
-		"_drag dot",			"filled dots indicate idea is selected",										""
+		"",					"", 														"",
+		"!KEYS",			"", 														"",
+		"",					"", 														"",
+		"_COMMAND + KEY", 															"", "",
+		"",					"", 														"",
+		"0RETURN", 			"save essay (or note) and exit editor", 					""
 	]
 
 	let essayColumnTwo: [String] = prefixArray + [
-		"",						"",																				"",
-		"_no dot indicates no list and nothing to activate",												"", ""
+		"",					"",															"",
+		"!GRAPHICS",		"",															"",
+		"",					"",															"",
+		"_drag dot",		"click to grab the note",									"",
+		"",					"",															"",
+		".b",				"filled dot indicates note is grabbed or contains cursor",	""
 	]
 
 }

@@ -17,7 +17,7 @@ class ZHelpGridView: ZView {
 
 		if  !isHidden,
 			let      data  = helpData,
-			data.helpMode == .dotMode {
+			[.dotMode, .essayMode].contains(data.helpMode) {
 			drawDotsHelp(in: dirtyRect, using: data)
 		}
 	}

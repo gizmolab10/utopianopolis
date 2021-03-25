@@ -8,6 +8,96 @@
 
 import Foundation
 
+enum ZHelpDotType: String {
+	case one        = "single"
+	case ten        = "10"
+	case note       = "note"
+	case drag       = "editable"
+	case three      = "3"
+	case click      = "points"
+	case email      = "email"
+	case essay      = "filled"
+	case twelve     = "12"
+	case progeny    = "only"
+	case favorite   = "this"
+	case bookmark   = "bookmark"
+	case notemark   = "target"
+	case oneTwenty  = "120"
+	case hyperlink  = "hyperlink"
+	case twelveHund = "1200"
+	case unwritable = "not"
+
+	var isReveal    : Bool            { return ![.drag, .essay, .favorite].contains(self) && !showAccess }
+	var showAccess  : Bool            { return  [.progeny,    .unwritable].contains(self) }
+	var pointLeft   : Bool            { return self == .click }
+	var accessType  : ZDecorationType { return self == .progeny ? .sideDot : .vertical }
+
+	var size: CGSize {
+		let w = isReveal ? gDotHeight : gDotWidth
+
+		return CGSize(width: w, height: gDotHeight)
+	}
+
+	func rect(_ origin: CGPoint) -> CGRect {
+		var r = CGRect(origin: origin, size: size)
+
+		if  self == .favorite {
+			r = r.insetEquallyBy(fraction: (1.0 - kSmallMapReduction) / 2.0)
+		}
+
+		return r
+	}
+
+	var traitType: String {
+		switch self {
+			case .note,
+				 .essay:     return ZTraitType.tNote     .rawValue
+			case .email:     return ZTraitType.tEmail    .rawValue
+			case .hyperlink: return ZTraitType.tHyperlink.rawValue
+			default:         return ""
+		}
+	}
+
+	var count: Int {
+		switch self {
+			case .twelveHund: return 1200
+			case .oneTwenty:  return  120
+			case .twelve:     return   12
+			case .ten:        return   10
+			case .three:      return    3
+			case .one:        return    1
+			default:          return    0
+		}
+	}
+
+	func dotParameters(isFilled: Bool = false) -> ZDotParameters {
+		var p         = ZDotParameters()
+		p.color       = gHelpHyperlinkColor
+		p.fill        = isFilled ? p.color : gBackgroundColor
+		p.filled      = isFilled
+		p.isReveal    = isReveal
+		p.traitType   = traitType
+		p.showAccess  = showAccess
+		p.accessType  = accessType
+		p.showList    = pointLeft || !isFilled
+		p.isBookmark  = self == .bookmark
+		p.isNotemark  = self == .notemark
+		p.showSideDot = self == .favorite
+		p.childCount  = count
+
+		return p
+	}
+
+}
+
+enum ZFillType: String {
+	case filled = "f"
+	case empty  = "e"
+	case both   = "b"
+}
+
+let prefixArray = Array(repeating: "", count: 24)
+
 class ZHelpData: NSObject {
 
 	var helpMode          = ZHelpMode.noMode
@@ -21,10 +111,24 @@ class ZHelpData: NSObject {
 	var isPro             :    Bool    { return gCurrentHelpMode == .allMode }
 	var isDots            :    Bool    { return gCurrentHelpMode == .dotMode }
 	var isBasic           :    Bool    { return gCurrentHelpMode == .basicMode }
+	var isEssay           :    Bool    { return gCurrentHelpMode == .essayMode }
 	var isMedium          :    Bool    { return gCurrentHelpMode == .mediumMode }
 	var boldFont          :    ZFont   { return kBoldFont }
 
-	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) { return (nil, nil) }
+	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) {
+		let (first, second, _) = strings(for: row, column: column)
+		let     shortcutLower  = first.substring(with: NSMakeRange(0, 1)).lowercased()
+		let       filledLower  = first.substring(with: NSMakeRange(1, 2)).lowercased()
+		let            filled  = ZFillType(rawValue: filledLower)
+		var           dotType  : ZHelpDotType?
+		if  let      helpType  = ZHelpType(rawValue: shortcutLower),
+			helpType == .hDots {
+			let         value  = second.components(separatedBy: " ")[0]
+			dotType            = ZHelpDotType(rawValue: value)
+		}
+
+		return (dotType, filled)
+	}
 
 	var countOfRows : Int {
 		var result = 0
@@ -100,7 +204,7 @@ class ZHelpData: NSObject {
 						while result.count < 90 {
 							result.append("")
 						}
-					} else if isPro || isDots
+					} else if isPro || isDots || isEssay
 								||  types.contains(.hBold)
 								||  types.contains(.hEmpty)
 								||  types.contains(.hPlain)
@@ -120,8 +224,8 @@ class ZHelpData: NSObject {
 	func extractTypes(from string: String) -> (Int, [ZHelpType]) {
 		var types = [ZHelpType]()
 
-		func extract(at index: Int) {
-			let character = string.substring(with: NSMakeRange(index, 1))
+		func extract(at location: Int) {
+			let character = string.substring(with: NSMakeRange(location, 1))
 			if  let  type = ZHelpType(rawValue: character.lowercased()) {
 				types.append(type)
 			}
@@ -142,11 +246,11 @@ class ZHelpData: NSObject {
 		let      (offset, types) = extractTypes(from: first)
 		let                 text = first.substring(fromInclusive: offset)    // grab remaining characters
 		var           attributes = ZAttributesDictionary ()
-		attributes[.font]        = isDots ? kLargeHelpFont : nil
+		attributes[.font]        = isDots || isEssay ? kLargeHelpFont : nil
 		let               hasURL = !url.isEmpty
 		var               prefix = ""
 
-		if !isPro && !isDots && (types.contains(.hPro) || (!isMedium && types.contains(.hMedium))) {
+		if !isPro && !isDots && !isEssay && (types.contains(.hPro) || (!isMedium && types.contains(.hMedium))) {
 			return NSMutableAttributedString(string: kTab + kTab + kTab)
 		}
 
@@ -200,7 +304,7 @@ class ZHelpData: NSObject {
 		if  second.length > 3 {
 			appendTab()
 
-			if  isDots {
+			if  isDots || isEssay {
 				appendSecond()
 			} else {
 				for type in types {
@@ -224,7 +328,9 @@ class ZHelpData: NSObject {
 			}
 		}
 
-		if  text.length + second.length < 10 && row != 1 && !types.contains(.hPlain) {
+		let threshold = helpMode == .essayMode ? 14 : 12
+
+		if  text.length + second.length < threshold && row != 1 && !types.contains(.hPlain) {
 			appendTab() 	// KLUDGE to fix bug in first column where underlined "KEY" doesn't have enough final tabs
 		}
 

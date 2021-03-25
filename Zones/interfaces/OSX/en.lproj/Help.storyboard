@@ -348,7 +348,6 @@
                     </view>
                     <connections>
                         <outlet property="bottomLabel" destination="ixT-B5-8Et" id="uiM-QI-AK2"/>
-                        <outlet property="controlsView" destination="49A-vl-LCi" id="uOy-BK-pnR"/>
                         <outlet property="topLabel" destination="Pud-aa-ipp" id="vL9-dQ-HXc"/>
                     </connections>
                 </viewController>

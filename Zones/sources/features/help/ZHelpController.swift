@@ -71,8 +71,9 @@ class ZHelpController: ZGenericTableController {
 		let                       m = gCurrentHelpMode
 
 		super         .setup()
+		essayHelpData .setup(for: m)
 		dotsHelpData  .setup(for: m)
-		mapHelpData.setup(for: m)
+		mapHelpData   .setup(for: m)
 		setupGridViews()
 		setupTitleBar()
 
