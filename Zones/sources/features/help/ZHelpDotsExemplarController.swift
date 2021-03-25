@@ -32,9 +32,9 @@ class ZHelpDotsExemplarController : ZMapController {
 		setupExemplar()
 
 		topLabel?   .font = kLargeHelpFont
-		topLabel?   .text = "All ideas in Seriously have a drag dot on the left. Many have a reveal dot on the right"
+		topLabel?   .text = "All ideas in Seriously have a drag dot on the left. Many have a reveal dot on the right."
 		bottomLabel?.font = kLargeHelpFont
-		bottomLabel?.text = "\t• The drag dot (at left) is used to select, deselect and drag the idea\n\t• The reveal dot (at right) is used to show or hide its list, or activate the idea\n\nThese dots are sometimes decorated, concisely prividing further information about the idea. All of this is explained in detail in the table below"
+		bottomLabel?.text = "\t• The drag dot (at left) is used to select, deselect and drag the idea\n\t• The reveal dot (at right) is used to show or hide its list, or activate the idea\n\nThese dots are sometimes decorated, concisely prividing further information about the idea. Detailed explanations follow..."
 	}
 
 	func setupExemplar() {

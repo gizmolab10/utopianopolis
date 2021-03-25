@@ -97,22 +97,22 @@ class ZDataController: ZGenericController {
 	}    
 
 	var synopsisText: String {
-		guard let zone = currentZone,
+		guard let current = currentZone,
 			  gIsReadyToShowUI else {
 			return ""
 		}
 
-		zone.updateAllProgenyCounts()
+		current.updateAllProgenyCounts()
 
-		var  text = "level \(zone.level + 1)"
-		let zones = gSelecting.currentGrabs
+		var  text = "level \(current.level + 1)"
+		let grabs = gSelecting.currentGrabs
 
-		if  zones.count > 1 {
-			text.append("   (\(zones.count) selected)")
+		if  grabs.count > 1 {
+			text.append("   (\(grabs.count) selected)")
 		} else {
-			let p = zone.progenyCount
-			let c = zone.count
-			let n = zone.zonesWithNotes.count
+			let p = current.progenyCount
+			let c = current.count
+			let n = current.zonesWithNotes.count
 
 			if  c > 0 {
 				text.append("   (\(c) in list")
