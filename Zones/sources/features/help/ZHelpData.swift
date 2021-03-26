@@ -100,7 +100,7 @@ class ZHelpData: NSObject {
 
 	var helpMode          = ZHelpMode.noMode
 	var tabStops          = [NSTextTab]()
-	var rowHeight         :   CGFloat  { return 22.0 }
+	var rowHeight         :   CGFloat  { return 17.0 }
 	var noTabPrefix       :   String   { return "   " }
 	var columnStrings     : [[String]] { return [[]] }
 	var tabOffsets        :   [Int]    { return [0, 20, 85] } // default for graph shortcuts
@@ -112,7 +112,7 @@ class ZHelpData: NSObject {
 	var isBasic           :    Bool    { return gCurrentHelpMode == .basicMode }
 	var isEssay           :    Bool    { return gCurrentHelpMode == .essayMode }
 	var isMedium          :    Bool    { return gCurrentHelpMode == .mediumMode }
-	var boldFont          :    ZFont   { return kLargeBoldFont }
+	var boldFont          :    ZFont   { return kBoldFont }
 
 	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) {
 		let (first, second, _) = strings(for: row, column: column)
@@ -243,7 +243,7 @@ class ZHelpData: NSObject {
 		let      (offset, types) = extractTypes(from: first)
 		let                 text = first.substring(fromInclusive: offset)    // grab remaining characters
 		var           attributes = ZAttributesDictionary ()
-		attributes[.font]        = isDots || isEssay ? kLargeHelpFont : nil
+		attributes[.font]        = isDots ? kLargeHelpFont : nil
 		let               hasURL = !url.isEmpty
 		var               prefix = ""
 

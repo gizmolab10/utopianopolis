@@ -127,64 +127,26 @@
                                     <constraint firstItem="rdB-jZ-KsQ" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="288" id="qzD-K9-Jby"/>
                                 </constraints>
                             </customView>
-                            <customView id="hxs-Fa-Xk4" userLabel="Essay Help Grid" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <subviews>
-                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="xnX-b2-ZbK" userLabel="Essay Introduction">
-                                        <rect key="frame" x="0.0" y="627" width="1152" height="198"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="198" id="ETB-M9-wQK"/>
-                                        </constraints>
-                                        <connections>
-                                            <segue destination="oot-pe-OOD" kind="embed" id="lb6-W0-7Pj"/>
-                                        </connections>
-                                    </containerView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Irq-gp-pkb" userLabel="Top Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="626" width="1152" height="1"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="5jy-EA-JHq"/>
-                                        </constraints>
-                                    </customView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="PcV-Nl-m8i" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="576" y="0.0" width="1" height="626"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="1" id="aEd-8r-MKM"/>
-                                        </constraints>
-                                    </customView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="xnX-b2-ZbK" firstAttribute="top" secondItem="hxs-Fa-Xk4" secondAttribute="top" id="4t1-Ke-QDm"/>
-                                    <constraint firstItem="PcV-Nl-m8i" firstAttribute="top" secondItem="Irq-gp-pkb" secondAttribute="bottom" id="DBa-74-pVz"/>
-                                    <constraint firstAttribute="bottom" secondItem="PcV-Nl-m8i" secondAttribute="bottom" id="HSt-Aq-19U"/>
-                                    <constraint firstAttribute="trailing" secondItem="Irq-gp-pkb" secondAttribute="trailing" id="Iqg-Aw-Hz7"/>
-                                    <constraint firstItem="xnX-b2-ZbK" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" id="JBu-Nk-YRe"/>
-                                    <constraint firstAttribute="trailing" secondItem="xnX-b2-ZbK" secondAttribute="trailing" id="Keh-1y-vQv"/>
-                                    <constraint firstItem="Irq-gp-pkb" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" id="Ost-8C-doH"/>
-                                    <constraint firstItem="Irq-gp-pkb" firstAttribute="top" secondItem="xnX-b2-ZbK" secondAttribute="bottom" id="RI1-gj-fjl"/>
-                                    <constraint firstItem="PcV-Nl-m8i" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" constant="576" id="z6C-2h-9Bc"/>
-                                </constraints>
-                            </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
+                            <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
                                 <subviews>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="kLX-vj-I30" userLabel="Dots Exemplar">
-                                        <rect key="frame" x="0.0" y="627" width="1152" height="198"/>
+                                        <rect key="frame" x="0.0" y="620" width="1152" height="205"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="198" id="SK8-vk-X7y"/>
+                                            <constraint firstAttribute="height" constant="205" id="SK8-vk-X7y"/>
                                         </constraints>
                                         <connections>
                                             <segue destination="wJH-0h-8ky" kind="embed" id="dJ6-0b-nqa"/>
                                         </connections>
                                     </containerView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="cQI-8A-JZJ" userLabel="Top Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="626" width="1152" height="1"/>
+                                        <rect key="frame" x="0.0" y="619" width="1152" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="1DU-JW-8fi"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="xs7-TU-BUO" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="576" y="0.0" width="1" height="626"/>
+                                        <rect key="frame" x="576" y="0.0" width="1" height="619"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="a4d-aU-yzZ"/>
                                         </constraints>
@@ -200,6 +162,54 @@
                                     <constraint firstAttribute="bottom" secondItem="xs7-TU-BUO" secondAttribute="bottom" id="X4I-ZI-Got"/>
                                     <constraint firstItem="cQI-8A-JZJ" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" id="fKp-jl-sA6"/>
                                     <constraint firstItem="cQI-8A-JZJ" firstAttribute="top" secondItem="kLX-vj-I30" secondAttribute="bottom" id="yPg-L9-fFF"/>
+                                </constraints>
+                            </customView>
+                            <customView id="hxs-Fa-Xk4" userLabel="Essay Help Grid" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <subviews>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="xnX-b2-ZbK" userLabel="Essay Introduction">
+                                        <rect key="frame" x="0.0" y="589" width="1152" height="236"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="236" id="ETB-M9-wQK"/>
+                                        </constraints>
+                                        <connections>
+                                            <segue destination="oot-pe-OOD" kind="embed" id="lb6-W0-7Pj"/>
+                                        </connections>
+                                    </containerView>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="Irq-gp-pkb" userLabel="Top Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="588" width="1152" height="1"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="5jy-EA-JHq"/>
+                                        </constraints>
+                                    </customView>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="PcV-Nl-m8i" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="576" y="0.0" width="1" height="588"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="1" id="aEd-8r-MKM"/>
+                                        </constraints>
+                                    </customView>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="eYP-Bj-W4Q" userLabel="Essay Graphicals">
+                                        <rect key="frame" x="0.0" y="0.0" width="576" height="478"/>
+                                        <connections>
+                                            <segue destination="hfc-IY-bB0" kind="embed" id="4Lu-IR-AJz"/>
+                                        </connections>
+                                    </containerView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="eYP-Bj-W4Q" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" id="2FA-WD-Tw3"/>
+                                    <constraint firstItem="PcV-Nl-m8i" firstAttribute="leading" secondItem="eYP-Bj-W4Q" secondAttribute="trailing" id="3GA-FH-hPh"/>
+                                    <constraint firstItem="xnX-b2-ZbK" firstAttribute="top" secondItem="hxs-Fa-Xk4" secondAttribute="top" id="4t1-Ke-QDm"/>
+                                    <constraint firstItem="PcV-Nl-m8i" firstAttribute="top" secondItem="Irq-gp-pkb" secondAttribute="bottom" id="DBa-74-pVz"/>
+                                    <constraint firstAttribute="bottom" secondItem="PcV-Nl-m8i" secondAttribute="bottom" id="HSt-Aq-19U"/>
+                                    <constraint firstAttribute="trailing" secondItem="Irq-gp-pkb" secondAttribute="trailing" id="Iqg-Aw-Hz7"/>
+                                    <constraint firstItem="xnX-b2-ZbK" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" id="JBu-Nk-YRe"/>
+                                    <constraint firstAttribute="trailing" secondItem="xnX-b2-ZbK" secondAttribute="trailing" id="Keh-1y-vQv"/>
+                                    <constraint firstItem="Irq-gp-pkb" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" id="Ost-8C-doH"/>
+                                    <constraint firstItem="Irq-gp-pkb" firstAttribute="top" secondItem="xnX-b2-ZbK" secondAttribute="bottom" id="RI1-gj-fjl"/>
+                                    <constraint firstAttribute="bottom" secondItem="eYP-Bj-W4Q" secondAttribute="bottom" id="fVQ-zH-7Ku"/>
+                                    <constraint firstItem="eYP-Bj-W4Q" firstAttribute="top" secondItem="Irq-gp-pkb" secondAttribute="bottom" constant="110" id="vnh-wX-ftW"/>
+                                    <constraint firstItem="PcV-Nl-m8i" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" constant="576" id="z6C-2h-9Bc"/>
                                 </constraints>
                             </customView>
                         </subviews>
@@ -229,7 +239,7 @@
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="1312" y="402"/>
+            <point key="canvasLocation" x="1312" y="401.5"/>
         </scene>
         <!--Help Dots Exemplar Controller-->
         <scene sceneID="PNs-6U-K92">
@@ -284,20 +294,20 @@
                 </viewController>
                 <customObject id="pb3-EB-5uM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2342" y="288"/>
+            <point key="canvasLocation" x="2342" y="174"/>
         </scene>
         <!--Help Essay Introduction Controller-->
         <scene sceneID="vue-cx-fsz">
             <objects>
                 <viewController id="oot-pe-OOD" customClass="ZHelpEssayIntroductionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Nf7-BD-4Y1">
-                        <rect key="frame" x="0.0" y="0.0" width="601" height="152"/>
+                        <rect key="frame" x="0.0" y="0.0" width="601" height="204"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Pud-aa-ipp">
-                                <rect key="frame" x="-1" y="88" width="604" height="44"/>
+                                <rect key="frame" x="-1" y="124" width="604" height="60"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="1hg-zY-lHZ"/>
+                                    <constraint firstAttribute="height" constant="60" id="1hg-zY-lHZ"/>
                                     <constraint firstAttribute="width" constant="600" id="4t3-KE-V4w"/>
                                 </constraints>
                                 <textFieldCell key="cell" selectable="YES" alignment="justified" title="Multiline Label" id="62d-zI-6e8">
@@ -307,25 +317,27 @@
                                 </textFieldCell>
                             </textField>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="49A-vl-LCi">
-                                <rect key="frame" x="0.0" y="36" width="601" height="52"/>
+                                <rect key="frame" x="0.0" y="36" width="601" height="80"/>
                                 <subviews>
-                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Jjs-LY-Dut">
-                                        <rect key="frame" x="85" y="1" width="432" height="50"/>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="r5Z-ad-4h5">
+                                        <rect key="frame" x="152" y="0.0" width="298" height="80"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="3eO-Sa-kG3"/>
-                                            <constraint firstAttribute="width" constant="432" id="GE5-eX-GN5"/>
+                                            <constraint firstAttribute="width" constant="298" id="GAF-Oi-xrL"/>
+                                            <constraint firstAttribute="height" constant="80" id="icF-gY-U2B"/>
                                         </constraints>
-                                        <imageCell key="cell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="essay.controls" id="Qs1-9X-aMA"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="typical.note" id="pKO-e3-Hx4"/>
                                     </imageView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="Jjs-LY-Dut" firstAttribute="centerY" secondItem="49A-vl-LCi" secondAttribute="centerY" id="35G-ZF-0u3"/>
-                                    <constraint firstItem="Jjs-LY-Dut" firstAttribute="centerX" secondItem="49A-vl-LCi" secondAttribute="centerX" id="rad-up-R6l"/>
+                                    <constraint firstItem="r5Z-ad-4h5" firstAttribute="top" secondItem="49A-vl-LCi" secondAttribute="top" id="4yO-WP-oPb"/>
+                                    <constraint firstAttribute="bottom" secondItem="r5Z-ad-4h5" secondAttribute="bottom" id="RPS-pc-QHJ"/>
+                                    <constraint firstItem="r5Z-ad-4h5" firstAttribute="centerX" secondItem="49A-vl-LCi" secondAttribute="centerX" id="ZVs-yv-hEo"/>
                                 </constraints>
                             </customView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="ixT-B5-8Et">
-                                <rect key="frame" x="-1" y="20" width="604" height="16"/>
+                                <rect key="frame" x="-1" y="-12" width="604" height="40"/>
                                 <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="yKu-mz-oIj"/>
                                     <constraint firstAttribute="width" constant="600" id="zUu-Qc-Og9"/>
                                 </constraints>
                                 <textFieldCell key="cell" selectable="YES" alignment="justified" title="Multiline Label" id="xxj-Hd-z0Z">
@@ -336,27 +348,106 @@
                             </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="49A-vl-LCi" firstAttribute="top" secondItem="Pud-aa-ipp" secondAttribute="bottom" id="7Dn-Zk-TLg"/>
-                            <constraint firstItem="ixT-B5-8Et" firstAttribute="top" secondItem="49A-vl-LCi" secondAttribute="bottom" id="ANS-ca-lVR"/>
+                            <constraint firstItem="49A-vl-LCi" firstAttribute="top" secondItem="Pud-aa-ipp" secondAttribute="bottom" constant="8" id="7Dn-Zk-TLg"/>
+                            <constraint firstItem="ixT-B5-8Et" firstAttribute="top" secondItem="49A-vl-LCi" secondAttribute="bottom" constant="8" id="ANS-ca-lVR"/>
                             <constraint firstItem="ixT-B5-8Et" firstAttribute="centerX" secondItem="Nf7-BD-4Y1" secondAttribute="centerX" id="B1H-RU-5xd"/>
                             <constraint firstItem="49A-vl-LCi" firstAttribute="leading" secondItem="Nf7-BD-4Y1" secondAttribute="leading" id="PSj-aW-3W5"/>
                             <constraint firstItem="Pud-aa-ipp" firstAttribute="top" secondItem="Nf7-BD-4Y1" secondAttribute="top" constant="20" id="WXY-HB-i1N"/>
-                            <constraint firstAttribute="bottom" secondItem="ixT-B5-8Et" secondAttribute="bottom" constant="20" id="chd-hB-SSF"/>
                             <constraint firstItem="Pud-aa-ipp" firstAttribute="centerX" secondItem="Nf7-BD-4Y1" secondAttribute="centerX" id="dXE-iI-YTd"/>
                             <constraint firstAttribute="trailing" secondItem="49A-vl-LCi" secondAttribute="trailing" id="otj-u5-ryk"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="bottomLabel" destination="ixT-B5-8Et" id="uiM-QI-AK2"/>
+                        <outlet property="imageView" destination="r5Z-ad-4h5" id="LSN-Zf-bAO"/>
                         <outlet property="topLabel" destination="Pud-aa-ipp" id="vL9-dQ-HXc"/>
                     </connections>
                 </viewController>
                 <customObject id="BkW-rT-2wB" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2341.5" y="523"/>
+            <point key="canvasLocation" x="2341.5" y="421"/>
+        </scene>
+        <!--Help Essay Graphicals Controller-->
+        <scene sceneID="knn-Co-m0O">
+            <objects>
+                <viewController id="hfc-IY-bB0" customClass="ZHelpEssayGraphicalsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="3u1-0n-NPP">
+                        <rect key="frame" x="0.0" y="0.0" width="601" height="391"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GBO-t5-nZg">
+                                <rect key="frame" x="15" y="357" width="571" height="14"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="justified" title="The essay editor has a typical toolbar with some special added buttons:" id="E32-sM-jLs">
+                                    <font key="font" metaFont="system" size="11"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-WT-hfy">
+                                <rect key="frame" x="97" y="287" width="408" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="U91-dc-Y0G"/>
+                                </constraints>
+                                <imageCell key="cell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="essay.controls" id="pms-Zt-RAa"/>
+                            </imageView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OcL-aA-JRC">
+                                <rect key="frame" x="48" y="175" width="379" height="112"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="justified" id="VgY-zG-Rxh">
+                                    <font key="font" metaFont="system" size="11"/>
+                                    <mutableString key="title">                       1                      2             3           4          5                           6
+
+1  first two buttons take you to prior and next note/essay (respectively)
+2  erase all note and essay content (of all, or of grabbed)
+3  discard all changes and exit editing 4  save all changes and exit editing
+5  save all changes and resume editing
+6  toggle visibility of titles (idea text)</mutableString>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="p1n-xy-ora">
+                                <rect key="frame" x="15" y="135" width="571" height="28"/>
+                                <textFieldCell key="cell" selectable="YES" id="Lsu-2X-LiW">
+                                    <font key="font" metaFont="system" size="11"/>
+                                    <string key="title">A grabbed note (inside an essay) has a box surrounding it and the drag dot is filled (as below). You can grab or ungrab a note by clicking on its drag dot.</string>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1LF-SL-gga">
+                                <rect key="frame" x="97" y="23" width="407" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="JYh-DR-oiw"/>
+                                    <constraint firstAttribute="width" constant="407" id="rlV-fW-sN0"/>
+                                </constraints>
+                                <imageCell key="cell" controlSize="mini" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="grabbed.note" id="DKl-G4-Wem"/>
+                            </imageView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="GBO-t5-nZg" secondAttribute="trailing" constant="17" id="1wf-pv-PqH"/>
+                            <constraint firstItem="GBO-t5-nZg" firstAttribute="top" secondItem="3u1-0n-NPP" secondAttribute="top" constant="20" id="2IZ-Kt-dab"/>
+                            <constraint firstItem="p1n-xy-ora" firstAttribute="top" secondItem="OcL-aA-JRC" secondAttribute="bottom" constant="12" id="CLh-pn-295"/>
+                            <constraint firstItem="OcL-aA-JRC" firstAttribute="leading" secondItem="3u1-0n-NPP" secondAttribute="leading" constant="50" id="KD4-B7-2Us"/>
+                            <constraint firstItem="GBO-t5-nZg" firstAttribute="leading" secondItem="3u1-0n-NPP" secondAttribute="leading" constant="17" id="N8w-FR-faZ"/>
+                            <constraint firstItem="OcL-aA-JRC" firstAttribute="top" secondItem="uVC-WT-hfy" secondAttribute="bottom" id="Plf-vW-W5y"/>
+                            <constraint firstAttribute="trailing" secondItem="p1n-xy-ora" secondAttribute="trailing" constant="17" id="WdM-y6-twZ"/>
+                            <constraint firstItem="1LF-SL-gga" firstAttribute="centerX" secondItem="3u1-0n-NPP" secondAttribute="centerX" id="YBT-Ep-Bog"/>
+                            <constraint firstItem="p1n-xy-ora" firstAttribute="leading" secondItem="3u1-0n-NPP" secondAttribute="leading" constant="17" id="dqK-sY-EZj"/>
+                            <constraint firstItem="1LF-SL-gga" firstAttribute="top" secondItem="p1n-xy-ora" secondAttribute="bottom" constant="12" id="mhe-GO-wPh"/>
+                            <constraint firstItem="uVC-WT-hfy" firstAttribute="top" secondItem="GBO-t5-nZg" secondAttribute="bottom" constant="20" id="oUw-eF-yqu"/>
+                            <constraint firstItem="uVC-WT-hfy" firstAttribute="centerX" secondItem="3u1-0n-NPP" secondAttribute="centerX" id="uLL-MS-CEQ"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="OcL-aA-JRC" secondAttribute="trailing" constant="20" symbolic="YES" id="wRt-P6-xuQ"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="laJ-9X-cDL" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2342" y="789"/>
         </scene>
     </scenes>
     <resources>
-        <image name="essay.controls" width="432" height="50"/>
+        <image name="essay.controls" width="408" height="38"/>
+        <image name="grabbed.note" width="788" height="198"/>
+        <image name="typical.note" width="738" height="198"/>
     </resources>
 </document>

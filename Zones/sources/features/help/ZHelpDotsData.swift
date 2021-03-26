@@ -8,13 +8,15 @@
 
 import Foundation
 
-let dotsPrefixArray = Array(repeating: "", count: 24)
+let dotsPrefixArray = Array(repeating: "", count: 3 * 8)
 
 class ZHelpDotsData: ZHelpData {
 
-	override var noTabPrefix       :   String   { return "                    " }
-	override var columnStrings     : [[String]] { return [dotsColumnOne, dotsColumnTwo] }
-	override var tabOffsets        :  [Int]     { return [0, 20, 150] }
+	override var noTabPrefix   :   String   { return "                    " }
+	override var columnStrings : [[String]] { return [dotsColumnOne, dotsColumnTwo] }
+	override var tabOffsets    :   [Int]    { return [0, 20, 150] }
+	override var boldFont      :   ZFont    { return kLargeBoldFont }
+	override var rowHeight     :  CGFloat   { return 22.0 }
 
 	let dotsColumnOne: [String] = dotsPrefixArray + [
 		"",						"",																				"",

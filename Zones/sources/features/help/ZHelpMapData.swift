@@ -11,11 +11,9 @@ import Foundation
 class ZHelpMapData : ZHelpData {
 
 	override var columnStrings     : [[String]] { return [mapColumnOne, mapColumnTwo, mapColumnThree, mapColumnFour] }
-	override var rowHeight         :  CGFloat   { return 17.0 }
 	override var tabOffsets        :   [Int]    { return [0, 20, 85] }
 	override var columnWidth       :    Int     { return 288 }
 	override var indexOfLastColumn :    Int     { return 3 }
-	override var boldFont          :   ZFont    { return kBoldFont }
 
 	let mapColumnOne: [String] = [
 		"",				"", 												"",

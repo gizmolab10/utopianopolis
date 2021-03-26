@@ -10,9 +10,11 @@ import Foundation
 
 enum ZControllerID: Int {
     case idUndefined
+	case idHelpEssayIntroduction
+	case idHelpEssayGraphicals
     case idSearchResults
-	case idStartHere
 	case idPreferences
+	case idStartHere
     case idSmallMap
 	case idHelpDots
 	case idStartup

@@ -12,26 +12,24 @@ import CoreData
 
 class ZHelpEssayIntroductionController : ZGenericController {
 
-	override  var controllerID : ZControllerID { return .idHelpDots }
+	override  var controllerID : ZControllerID { return .idHelpEssayIntroduction }
 	override  var allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum, .sStartupProgress] }
 	@IBOutlet var     topLabel : ZTextField?
 	@IBOutlet var  bottomLabel : ZTextField?
+	@IBOutlet var    imageView : NSImageView?
 
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
-	}
-
-	override func viewDidAppear() {
-		super.viewDidAppear()
 	}
 
 	override func startup() {
 		setup()
 
 		topLabel?   .font = kLargeHelpFont
-		topLabel?   .text = "Essays and notes are well integrated into Seriously. The essay editor has a typical toolbar with some special added buttons, shown below."
+		topLabel?   .text = "Any idea can (optionally) have a note, which can be viewed, edited, saved and printed in the essay editor. Each note has a title at top (the idea text) followed by the full text of the note, like this (ignoring the grey rectangle):"
 		bottomLabel?.font = kLargeHelpFont
-		bottomLabel?.text = "Any idea can have a note. This note appears in the essay editor with a title at top (the idea text) followed by the text of the note. An essay is made from such a note when any of its listed ideas also contains a note. Notes within an essay display a drag dot to the left of the title of the note."
+		bottomLabel?.text = "An essay is made from any idea when it and any of its listed ideas also contains a note. Each note within an essay displays a drag dot to the left of its title."
+		imageView?.addBorder(thickness: 0.5, radius: 0.0, color: kDarkGrayColor.cgColor)
 	}
 
 }

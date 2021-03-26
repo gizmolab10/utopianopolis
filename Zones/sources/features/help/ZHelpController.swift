@@ -15,9 +15,9 @@ import SnapKit
     import UIKit
 #endif
 
-var gHelpController: ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
-var gHelpWindowController: NSWindowController? // instantiated once, in startupCloudAndUI
-let gAllHelpModes : [ZHelpMode] = [.basicMode, .mediumMode, .allMode, .essayMode, .dotMode]
+var gHelpWindowController       : NSWindowController?         // instantiated once, in startupCloudAndUI
+var gHelpController             : ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
+let gAllHelpModes : [ZHelpMode] = [.dotMode, .basicMode, .mediumMode, .allMode, .essayMode]
 
 class ZHelpController: ZGenericTableController {
 
@@ -85,10 +85,10 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	func show(_ iShow: Bool? = nil, flags: ZEventFlags) {
+		var nextMode = gCurrentHelpMode
  		let  COMMAND = flags.isCommand
 		let  CONTROL = flags.isControl
 		let   OPTION = flags.isOption
-		var nextMode = gCurrentHelpMode
 
 		if             COMMAND {
 			if         OPTION && !CONTROL {

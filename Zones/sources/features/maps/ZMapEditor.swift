@@ -17,7 +17,7 @@ import CloudKit
 
 let gMapEditor = ZMapEditor()
 
-// mix of zone mutations and web services requestss
+// mix of zone mutations and web services requests
 
 class ZMapEditor: ZBaseEditor {
 	override var canHandleKey: Bool       { return gIsMapOrEditIdeaMode }

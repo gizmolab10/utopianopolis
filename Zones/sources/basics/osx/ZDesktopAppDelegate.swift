@@ -91,6 +91,10 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 
 
 	var workingEditor: ZBaseEditor? {
+		if  gIsHelpFrontmost {
+			return gHelpEditor
+		}
+
 		switch gWorkMode {
 			case .wEditIdeaMode,
 				 .wMapMode:    return gMapEditor

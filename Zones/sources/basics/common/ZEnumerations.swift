@@ -123,8 +123,8 @@ enum ZHelpMode: String {
 	var title: String {
 		switch self {
 			case .mediumMode: return "intermediate keys"
+			case .essayMode:  return "notes and essays"
 			case .basicMode:  return "basic keys"
-			case .essayMode:  return "essay keys"
 			case .allMode:    return "all keys"
 			case .dotMode:    return "dots"
 			default:          return ""
@@ -412,7 +412,7 @@ enum ZEssayButtonID : Int {
 	}
 
 
-	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idDelete, .idCancel, .idSave, .idHide, .idTitles] }
+	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idDelete, .idSave, .idCancel, .idHide, .idTitles] }
 }
 
 enum ZoneAttributeType: String {
