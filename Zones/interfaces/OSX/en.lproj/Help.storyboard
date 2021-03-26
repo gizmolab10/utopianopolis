@@ -245,7 +245,7 @@
         <scene sceneID="PNs-6U-K92">
             <objects>
                 <viewController id="wJH-0h-8ky" customClass="ZHelpDotsExemplarController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="61U-DM-8bn">
+                    <view key="view" misplaced="YES" id="61U-DM-8bn">
                         <rect key="frame" x="0.0" y="0.0" width="601" height="152"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
@@ -261,7 +261,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="biU-wq-VIU">
-                                <rect key="frame" x="0.0" y="36" width="601" height="80"/>
+                                <rect key="frame" x="51" y="44" width="500" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="500" id="dRm-Nx-NZp"/>
+                                    <constraint firstAttribute="height" constant="60" id="xRG-Gk-2Jx"/>
+                                </constraints>
                             </customView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="KDc-oP-JYJ">
                                 <rect key="frame" x="-1" y="20" width="604" height="16"/>
@@ -277,13 +281,12 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="KDc-oP-JYJ" firstAttribute="centerX" secondItem="61U-DM-8bn" secondAttribute="centerX" id="6dL-MM-3e7"/>
-                            <constraint firstItem="biU-wq-VIU" firstAttribute="leading" secondItem="61U-DM-8bn" secondAttribute="leading" id="AwF-GR-d5i"/>
-                            <constraint firstItem="biU-wq-VIU" firstAttribute="top" secondItem="NcL-My-K47" secondAttribute="bottom" id="GSg-P7-j8f"/>
-                            <constraint firstAttribute="trailing" secondItem="biU-wq-VIU" secondAttribute="trailing" id="MAd-Zo-Sp3"/>
+                            <constraint firstItem="biU-wq-VIU" firstAttribute="top" secondItem="NcL-My-K47" secondAttribute="bottom" constant="12" id="D3I-Ry-qWW"/>
                             <constraint firstAttribute="bottom" secondItem="KDc-oP-JYJ" secondAttribute="bottom" constant="20" id="VXC-oF-sbS"/>
                             <constraint firstItem="NcL-My-K47" firstAttribute="top" secondItem="61U-DM-8bn" secondAttribute="top" constant="20" id="Yky-s4-T9I"/>
                             <constraint firstItem="NcL-My-K47" firstAttribute="centerX" secondItem="61U-DM-8bn" secondAttribute="centerX" id="b5k-cm-raf"/>
-                            <constraint firstItem="KDc-oP-JYJ" firstAttribute="top" secondItem="biU-wq-VIU" secondAttribute="bottom" id="iHa-nV-DBc"/>
+                            <constraint firstItem="KDc-oP-JYJ" firstAttribute="top" secondItem="biU-wq-VIU" secondAttribute="bottom" constant="8" id="j4k-5I-uKa"/>
+                            <constraint firstItem="biU-wq-VIU" firstAttribute="centerX" secondItem="61U-DM-8bn" secondAttribute="centerX" id="nBA-46-y3O"/>
                         </constraints>
                     </view>
                     <connections>
@@ -294,7 +297,7 @@
                 </viewController>
                 <customObject id="pb3-EB-5uM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2342" y="174"/>
+            <point key="canvasLocation" x="2342" y="154"/>
         </scene>
         <!--Help Essay Introduction Controller-->
         <scene sceneID="vue-cx-fsz">
@@ -365,89 +368,113 @@
                 </viewController>
                 <customObject id="BkW-rT-2wB" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2341.5" y="421"/>
+            <point key="canvasLocation" x="2342" y="401"/>
         </scene>
         <!--Help Essay Graphicals Controller-->
         <scene sceneID="knn-Co-m0O">
             <objects>
                 <viewController id="hfc-IY-bB0" customClass="ZHelpEssayGraphicalsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3u1-0n-NPP">
-                        <rect key="frame" x="0.0" y="0.0" width="601" height="391"/>
+                        <rect key="frame" x="0.0" y="0.0" width="601" height="476"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GBO-t5-nZg">
-                                <rect key="frame" x="15" y="357" width="571" height="14"/>
+                                <rect key="frame" x="15" y="442" width="571" height="14"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="justified" title="The essay editor has a typical toolbar with some special added buttons:" id="E32-sM-jLs">
                                     <font key="font" metaFont="system" size="11"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-WT-hfy">
-                                <rect key="frame" x="97" y="287" width="408" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="U91-dc-Y0G"/>
-                                </constraints>
-                                <imageCell key="cell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="essay.controls" id="pms-Zt-RAa"/>
-                            </imageView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OcL-aA-JRC">
-                                <rect key="frame" x="48" y="175" width="379" height="112"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="justified" id="VgY-zG-Rxh">
-                                    <font key="font" metaFont="system" size="11"/>
-                                    <mutableString key="title">                       1                      2             3           4          5                           6
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="EIu-cm-elS" userLabel="Buttons Explanation View">
+                                <rect key="frame" x="101" y="272" width="400" height="150"/>
+                                <subviews>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-WT-hfy">
+                                        <rect key="frame" x="0.0" y="112" width="400" height="38"/>
+                                        <imageCell key="cell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="essay.controls" id="pms-Zt-RAa"/>
+                                    </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OcL-aA-JRC">
+                                        <rect key="frame" x="-2" y="0.0" width="404" height="112"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="justified" id="VgY-zG-Rxh">
+                                            <font key="font" metaFont="system" size="11"/>
+                                            <mutableString key="title">    1                2            3            4           5          6                         7
 
-1  first two buttons take you to prior and next note/essay (respectively)
-2  erase all note and essay content (of all, or of grabbed)
-3  discard all changes and exit editing 4  save all changes and exit editing
-5  save all changes and resume editing
-6  toggle visibility of titles (idea text)</mutableString>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+1 &amp; 2  first two buttons take you to prior and next note/essay (respectively)
+   3     erase content of all, or grabbed notes
+   4     discard all changes and exit editing    5     save all changes and exit editing
+   6     save all changes and resume editing
+   7     toggle visibility of titles (idea text)</mutableString>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="OcL-aA-JRC" firstAttribute="top" secondItem="uVC-WT-hfy" secondAttribute="bottom" id="04r-Ja-bng"/>
+                                    <constraint firstAttribute="trailing" secondItem="uVC-WT-hfy" secondAttribute="trailing" id="5rM-LN-Uaw"/>
+                                    <constraint firstAttribute="bottom" secondItem="OcL-aA-JRC" secondAttribute="bottom" id="COy-MR-kAF"/>
+                                    <constraint firstAttribute="width" constant="400" id="Cfd-gX-1lF"/>
+                                    <constraint firstItem="uVC-WT-hfy" firstAttribute="top" secondItem="EIu-cm-elS" secondAttribute="top" id="KkK-rD-Lmz"/>
+                                    <constraint firstItem="uVC-WT-hfy" firstAttribute="leading" secondItem="EIu-cm-elS" secondAttribute="leading" id="Mc6-BW-qQS"/>
+                                    <constraint firstAttribute="trailing" secondItem="OcL-aA-JRC" secondAttribute="trailing" id="VKI-OY-BQr"/>
+                                    <constraint firstItem="OcL-aA-JRC" firstAttribute="leading" secondItem="EIu-cm-elS" secondAttribute="leading" id="XrZ-WS-rtu"/>
+                                </constraints>
+                            </customView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="p1n-xy-ora">
-                                <rect key="frame" x="15" y="135" width="571" height="28"/>
+                                <rect key="frame" x="15" y="174" width="571" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" id="Lsu-2X-LiW">
                                     <font key="font" metaFont="system" size="11"/>
-                                    <string key="title">A grabbed note (inside an essay) has a box surrounding it and the drag dot is filled (as below). You can grab or ungrab a note by clicking on its drag dot.</string>
+                                    <string key="title">A grabbed note (inside an essay) has a rounded rectangle surrounding it and the drag dot is filled (see below). You can grab or ungrab a note by clicking on its drag dot.</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1LF-SL-gga">
-                                <rect key="frame" x="97" y="23" width="407" height="100"/>
+                                <rect key="frame" x="97" y="62" width="407" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="JYh-DR-oiw"/>
                                     <constraint firstAttribute="width" constant="407" id="rlV-fW-sN0"/>
                                 </constraints>
                                 <imageCell key="cell" controlSize="mini" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="grabbed.note" id="DKl-G4-Wem"/>
                             </imageView>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="9uk-hO-T9t">
+                                <rect key="frame" x="15" y="214" width="571" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="k0e-JL-ylo"/>
+                                </constraints>
+                                <textFieldCell key="cell" selectable="YES" id="6bN-E5-CdH">
+                                    <font key="font" metaFont="system" size="11"/>
+                                    <string key="title">A note can be of any length. All font, color and tabbing functionalities are available. One or more images can be inserted anywhere, and later moved and resized.</string>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="9uk-hO-T9t" firstAttribute="top" secondItem="EIu-cm-elS" secondAttribute="bottom" constant="28" id="0Ey-cw-Oht"/>
                             <constraint firstAttribute="trailing" secondItem="GBO-t5-nZg" secondAttribute="trailing" constant="17" id="1wf-pv-PqH"/>
                             <constraint firstItem="GBO-t5-nZg" firstAttribute="top" secondItem="3u1-0n-NPP" secondAttribute="top" constant="20" id="2IZ-Kt-dab"/>
-                            <constraint firstItem="p1n-xy-ora" firstAttribute="top" secondItem="OcL-aA-JRC" secondAttribute="bottom" constant="12" id="CLh-pn-295"/>
-                            <constraint firstItem="OcL-aA-JRC" firstAttribute="leading" secondItem="3u1-0n-NPP" secondAttribute="leading" constant="50" id="KD4-B7-2Us"/>
+                            <constraint firstItem="p1n-xy-ora" firstAttribute="top" secondItem="9uk-hO-T9t" secondAttribute="bottom" constant="12" id="K7U-RJ-zeO"/>
+                            <constraint firstItem="9uk-hO-T9t" firstAttribute="leading" secondItem="3u1-0n-NPP" secondAttribute="leading" constant="17" id="KKi-5h-o1S"/>
                             <constraint firstItem="GBO-t5-nZg" firstAttribute="leading" secondItem="3u1-0n-NPP" secondAttribute="leading" constant="17" id="N8w-FR-faZ"/>
-                            <constraint firstItem="OcL-aA-JRC" firstAttribute="top" secondItem="uVC-WT-hfy" secondAttribute="bottom" id="Plf-vW-W5y"/>
+                            <constraint firstItem="EIu-cm-elS" firstAttribute="centerX" secondItem="3u1-0n-NPP" secondAttribute="centerX" id="Qgg-c9-CwC"/>
+                            <constraint firstItem="EIu-cm-elS" firstAttribute="top" secondItem="GBO-t5-nZg" secondAttribute="bottom" constant="20" id="R8f-6d-dtr"/>
+                            <constraint firstAttribute="trailing" secondItem="9uk-hO-T9t" secondAttribute="trailing" constant="17" id="RRj-nN-rj9"/>
                             <constraint firstAttribute="trailing" secondItem="p1n-xy-ora" secondAttribute="trailing" constant="17" id="WdM-y6-twZ"/>
                             <constraint firstItem="1LF-SL-gga" firstAttribute="centerX" secondItem="3u1-0n-NPP" secondAttribute="centerX" id="YBT-Ep-Bog"/>
                             <constraint firstItem="p1n-xy-ora" firstAttribute="leading" secondItem="3u1-0n-NPP" secondAttribute="leading" constant="17" id="dqK-sY-EZj"/>
                             <constraint firstItem="1LF-SL-gga" firstAttribute="top" secondItem="p1n-xy-ora" secondAttribute="bottom" constant="12" id="mhe-GO-wPh"/>
-                            <constraint firstItem="uVC-WT-hfy" firstAttribute="top" secondItem="GBO-t5-nZg" secondAttribute="bottom" constant="20" id="oUw-eF-yqu"/>
-                            <constraint firstItem="uVC-WT-hfy" firstAttribute="centerX" secondItem="3u1-0n-NPP" secondAttribute="centerX" id="uLL-MS-CEQ"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="OcL-aA-JRC" secondAttribute="trailing" constant="20" symbolic="YES" id="wRt-P6-xuQ"/>
                         </constraints>
                     </view>
                 </viewController>
                 <customObject id="laJ-9X-cDL" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2342" y="789"/>
+            <point key="canvasLocation" x="2341.5" y="811"/>
         </scene>
     </scenes>
     <resources>
         <image name="essay.controls" width="408" height="38"/>
-        <image name="grabbed.note" width="788" height="198"/>
+        <image name="grabbed.note" width="480" height="196"/>
         <image name="typical.note" width="738" height="198"/>
     </resources>
 </document>

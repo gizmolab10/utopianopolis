@@ -1092,6 +1092,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				ungrabAll()
 				resetCurrentEssay(note)
 			}
+
+			gSignal([.sDetails])
 		}
 	}
 

@@ -14,45 +14,45 @@ class ZHelpEssayData: ZHelpData {
 
 	override var noTabPrefix   :   String   { return "                    " }
 	override var columnStrings : [[String]] { return [essayColumnOne, essayColumnTwo] }
-	override var tabOffsets    :   [Int]    { return [0, 20, 170] }
+	override var tabOffsets    :   [Int]    { return [0, 20, 180] }
 
 	let essayColumnOne: [String] = essayPrefixArray + [
-		"",																				"",	"",
-		"!GRAPHICS",																	"",	"",
-		"",																				"",	"",
-		"_drag dot",			"click to grab the note",									"",
-		".b",					"filled dot indicates note contains cursor or is grabbed",	"",
-		"",																				"",	""
+		"",																						"",	"",
+		"!GRAPHICS",																			"",	"",
+		"",																						"",	"",
+		"_drag dot",					"click to grab or ungrab the note",							"",
+		".b",							"filled dot indicates note contains cursor or is grabbed",	"",
+		"",																						"",	""
 	]
 
 	let essayColumnTwo: [String] = essayPrefixArray + [
-		"",																				"",	"",
-		"!KEYS, ALWAYS",					 											"", "",
-		"",																				"",	"",
-		"_COMMAND + KEY", 																"", "",
-		"0RETURN", 				"save essay (or note) and exit editor", 					"",
-		"0[ or ]",				"edit the prior or next essay (or note)",					"",
-		"0S",					"save the note or essay",									"",
-		"",																				"",	"",
-		"!KEYS, WHEN NO NOTES ARE GRABBED", 											"", "",
-		"",																				"",	"",
-		"_COMMAND + KEY", 																"", "",
-		"0N",					"swap between essay and note",								"",
-		"",																				"",	"",
-		"",																				"",	"",
-		"!WHEN ONE OR MORE NOTES ARE GRABBED", 											"", "",
-		"",																				"",	"",
-		"_KEY",			 																"", "",
-		"0ARROWS (up/down)",	"grab a different note", 									"",
-		"0N",					"swap between essay and first of them",						"",
-		"",																				"",	"",
-		"_SHIFT + KEY",			 														"", "",
-		"0ARROWS (up/down)",	"grab an additional note", 									"",
-		"",																				"",	"",
-		"_OPTION + KEY", 																"", "",
-		"0DELETE", 				"erase and remove them",									"",
-		"0ARROWS",		 		"move them", 												"",
-		"",					 															"",	""
+		"",																						"",	"",
+		"!KEYS, ALWAYS",					 													"", "",
+		"",																						"",	"",
+		"_KEY",			 																		"", "",
+		"0ESCAPE", 						"discard changes and exit editor",		 					"",
+		"",																						"",	"",
+		"_COMMAND + KEY", 																		"", "",
+		"0RETURN", 						"save essay (or note) and exit editor",						"",
+		"0[ or ]",						"edit the prior or next essay (or note)",					"",
+		"0S",							"save the note or essay",									"",
+		"",																						"",	"",
+		"",																						"",	"",
+		"!KEYS, WHEN NO NOTES ARE GRABBED", 													"", "",
+		"",																						"",	"",
+		"_COMMAND + KEY", 																		"", "",
+		"0N",							"swap between essay and note",								"",
+		"",																						"",	"",
+		"",																						"",	"",
+		"!WHEN ONE OR MORE NOTES ARE GRABBED", 													"", "",
+		"",																						"",	"",
+		"_KEY",			 																		"", "",
+		"0ARROWS (vertical)",			"grab a different note", 									"",
+		"0ARROWS (vertical) + SHIFT",	"grab an additional note", 									"",
+		"0ARROWS + OPTION",				"move them", 												"",
+		"0DELETE", 						"erase and remove them",									"",
+		"0N",							"swap between essay and the first grabbed note",			"",
+		"",					 																	"",	""
 	]
 
 }

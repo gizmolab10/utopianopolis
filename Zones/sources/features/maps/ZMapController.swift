@@ -137,7 +137,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
     func layoutWidgets(for iZone: Any?, _ iKind: ZSignalKind) {
-        if doNotLayout { return }
+        if  doNotLayout { return }
 
 		let                        here = hereZone
         var specificWidget: ZoneWidget? = rootWidget
