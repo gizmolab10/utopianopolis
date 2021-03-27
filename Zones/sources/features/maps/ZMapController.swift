@@ -200,14 +200,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		if  gIsMapOrEditIdeaMode,
 			let gesture = iGesture as? ZKeyPanGestureRecognizer,
-            let (_, dropNearest, location) = widgetNearest(gesture),
+            let (_, _, location) = widgetNearest(gesture),
             let flags = gesture.modifiers {
             let state = gesture.state
 
-            dropNearest.widgetZone?.needWrite() // WHY?
-
 			if  isEditingText(at: location) {
-				restartGestureRecognition()           // let text editor consume the gesture
+				restartGestureRecognition()               // let text editor consume the gesture
 			} else {
 				if  gCurrentlyEditingWidget != nil {
 					gTextEditor.stopCurrentEdit()
@@ -371,27 +369,29 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // next four are only called by controller //
     // //////////////////////////////////////////
 
-    func dragDropMaybe(_ iGesture: ZGestureRecognizer?) -> Bool {
-        if  let draggedZone       = gDraggedZone {
+    func dragDropMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
+        if  let draggedZone        = gDraggedZone {
             if  draggedZone.userCanMove,
-                let (isMap, dropNearest, location) = widgetNearest(iGesture, forMap: false) {
-				let dropController = dropNearest.controller
-                var       dropZone = dropNearest.widgetZone
-                let  dropIsGrabbed = gSelecting.currentGrabs.contains(dropZone!)
-                let      dropIndex = dropZone?.siblingIndex
+                let (isMap, dropWidget, location) = widgetNearest(iGesture, forBigMap: false) {
+				let dropController = dropWidget.controller
+                var       dropZone = dropWidget.widgetZone
+
+				if   gSelecting.currentGrabs.contains(dropZone!) { return false } // cannot drop onto itself
+
+				let      dropIndex = dropZone?.siblingIndex
                 let           here = isMap ? gHere : gFavoritesHereMaybe
                 let       dropHere = dropZone == here
-				let       relation = dropController?.relationOf(location, to: dropNearest.textWidget) ?? .upon
+				let       relation = dropController?.relationOf(location, to: dropWidget.textWidget) ?? .upon
                 let  useDropParent = relation != .upon && !dropHere
-                ;         dropZone = dropIsGrabbed ? nil : useDropParent ? dropZone?.parentZone : dropZone
+                ;         dropZone = useDropParent ? dropZone?.parentZone : dropZone
                 let  lastDropIndex = dropZone == nil ? 0 : dropZone!.count
-                var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!gListsGrowDown || dropIsGrabbed) ? 0 :   lastDropIndex)
+                var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!gListsGrowDown) ? 0 :   lastDropIndex)
                 ;            index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
                 let      dragIndex = draggedZone.siblingIndex
                 let      sameIndex = dragIndex == index || dragIndex == index - 1
                 let   dropIsParent = dropZone?.children.contains(draggedZone) ?? false
                 let     spawnCycle = dropZone?.spawnCycle ?? false
-                let         isNoop = dropIsGrabbed || spawnCycle || (sameIndex && dropIsParent) || index < 0
+                let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0
                 let          prior = gDragDropZone?.widget
                 let        dropNow = isDoneGesture(iGesture)
                 gDragDropIndices   = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
@@ -404,7 +404,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                 }
 
                 prior?                          .displayForDrag() // erase    child lines
-                dropNearest                     .displayForDrag() // relayout child lines
+				dropWidget                      .displayForDrag() // relayout child lines
 				gMapController?    .dragView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
 				gSmallMapController?.dragView?.setNeedsDisplay()
 
@@ -441,7 +441,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // MARK:- internals
     // MARK:-
 
-	func widgetNearest(_ iGesture: ZGestureRecognizer?, forMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
+	func widgetNearest(_ iGesture: ZGestureRecognizer?, forBigMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
 		if  let     gView = iGesture?.view,
 			let    gPoint = iGesture?.location(in: gView),
 			let  location = mapView?.convert(gPoint, from: gView),
@@ -449,7 +449,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let alternate = isBigMap ? gSmallMapController : gMapController
 
 			if  !kIsPhone,
-				let alternatemapView = alternate?.mapView,
+				let alternatemapView   = alternate?.mapView,
 				let alternateLocation  = mapView?.convert(location, to: alternatemapView),
 				let alternateWidget    = alternate?.rootWidget.widgetNearestTo(alternateLocation, in: alternatemapView, alternate?.hereZone) {
 				let           dragDotW =          widget.dragDot
@@ -464,7 +464,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				// ////////////////////////////////////////////////////// //
 
                 if  distanceW > distanceA {
-					return (false, alternateWidget, forMap ? location : alternateLocation)
+					return (false, alternateWidget, forBigMap ? location : alternateLocation)
                 }
             }
 

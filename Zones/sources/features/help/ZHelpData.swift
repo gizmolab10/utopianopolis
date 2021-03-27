@@ -11,6 +11,7 @@ import Foundation
 enum ZHelpDotType: String {
 	case one        = "single"
 	case ten        = "10"
+	case has        = "has"
 	case note       = "note"
 	case drag       = "editable"
 	case three      = "3"
@@ -80,8 +81,8 @@ enum ZHelpDotType: String {
 		p.showAccess  = showAccess
 		p.accessType  = accessType
 		p.showList    = pointLeft || !isFilled
+		p.isNotemark  = self == .notemark || self == .has
 		p.isBookmark  = self == .bookmark
-		p.isNotemark  = self == .notemark
 		p.showSideDot = self == .favorite
 		p.childCount  = count
 

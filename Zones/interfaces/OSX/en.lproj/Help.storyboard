@@ -190,7 +190,7 @@
                                         </constraints>
                                     </customView>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="eYP-Bj-W4Q" userLabel="Essay Graphicals">
-                                        <rect key="frame" x="0.0" y="0.0" width="576" height="478"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="576" height="438"/>
                                         <connections>
                                             <segue destination="hfc-IY-bB0" kind="embed" id="4Lu-IR-AJz"/>
                                         </connections>
@@ -208,7 +208,7 @@
                                     <constraint firstItem="Irq-gp-pkb" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" id="Ost-8C-doH"/>
                                     <constraint firstItem="Irq-gp-pkb" firstAttribute="top" secondItem="xnX-b2-ZbK" secondAttribute="bottom" id="RI1-gj-fjl"/>
                                     <constraint firstAttribute="bottom" secondItem="eYP-Bj-W4Q" secondAttribute="bottom" id="fVQ-zH-7Ku"/>
-                                    <constraint firstItem="eYP-Bj-W4Q" firstAttribute="top" secondItem="Irq-gp-pkb" secondAttribute="bottom" constant="110" id="vnh-wX-ftW"/>
+                                    <constraint firstItem="eYP-Bj-W4Q" firstAttribute="top" secondItem="Irq-gp-pkb" secondAttribute="bottom" constant="150" id="vnh-wX-ftW"/>
                                     <constraint firstItem="PcV-Nl-m8i" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" constant="576" id="z6C-2h-9Bc"/>
                                 </constraints>
                             </customView>
@@ -245,7 +245,7 @@
         <scene sceneID="PNs-6U-K92">
             <objects>
                 <viewController id="wJH-0h-8ky" customClass="ZHelpDotsExemplarController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="61U-DM-8bn">
+                    <view key="view" id="61U-DM-8bn">
                         <rect key="frame" x="0.0" y="0.0" width="601" height="152"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
@@ -378,16 +378,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="601" height="476"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GBO-t5-nZg">
-                                <rect key="frame" x="15" y="442" width="571" height="14"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="justified" title="The essay editor has a typical toolbar with some special added buttons:" id="E32-sM-jLs">
-                                    <font key="font" metaFont="system" size="11"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="EIu-cm-elS" userLabel="Buttons Explanation View">
-                                <rect key="frame" x="101" y="272" width="400" height="150"/>
+                                <rect key="frame" x="101" y="242" width="400" height="150"/>
                                 <subviews>
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-WT-hfy">
                                         <rect key="frame" x="0.0" y="112" width="400" height="38"/>
@@ -396,14 +388,14 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OcL-aA-JRC">
                                         <rect key="frame" x="-2" y="0.0" width="404" height="112"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="justified" id="VgY-zG-Rxh">
-                                            <font key="font" metaFont="system" size="11"/>
-                                            <mutableString key="title">    1                2            3            4           5          6                         7
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <string key="title">    1                2            3            4           5          6                         7
 
 1 &amp; 2  first two buttons take you to prior and next note/essay (respectively)
    3     erase content of all, or grabbed notes
    4     discard all changes and exit editing    5     save all changes and exit editing
    6     save all changes and resume editing
-   7     toggle visibility of titles (idea text)</mutableString>
+   7     toggle visibility of titles (idea text)</string>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -421,16 +413,16 @@
                                 </constraints>
                             </customView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="p1n-xy-ora">
-                                <rect key="frame" x="15" y="174" width="571" height="28"/>
+                                <rect key="frame" x="15" y="194" width="571" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" id="Lsu-2X-LiW">
-                                    <font key="font" metaFont="system" size="11"/>
+                                    <font key="font" metaFont="smallSystem"/>
                                     <string key="title">A grabbed note (inside an essay) has a rounded rectangle surrounding it and the drag dot is filled (see below). You can grab or ungrab a note by clicking on its drag dot.</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1LF-SL-gga">
-                                <rect key="frame" x="97" y="62" width="407" height="100"/>
+                                <rect key="frame" x="97" y="82" width="407" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="JYh-DR-oiw"/>
                                     <constraint firstAttribute="width" constant="407" id="rlV-fW-sN0"/>
@@ -438,38 +430,37 @@
                                 <imageCell key="cell" controlSize="mini" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="grabbed.note" id="DKl-G4-Wem"/>
                             </imageView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="9uk-hO-T9t">
-                                <rect key="frame" x="15" y="214" width="571" height="30"/>
+                                <rect key="frame" x="15" y="396" width="571" height="60"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="k0e-JL-ylo"/>
+                                    <constraint firstAttribute="height" constant="60" id="k0e-JL-ylo"/>
                                 </constraints>
                                 <textFieldCell key="cell" selectable="YES" id="6bN-E5-CdH">
-                                    <font key="font" metaFont="system" size="11"/>
-                                    <string key="title">A note can be of any length. All font, color and tabbing functionalities are available. One or more images can be inserted anywhere, and later moved and resized.</string>
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <string key="title">A note can be of any length. All font, color and tabbing functionalities are available. One or more images can be inserted anywhere, and later moved, resized or deleted.
+
+The essay editor has a typical toolbar with some special added buttons:</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="9uk-hO-T9t" firstAttribute="top" secondItem="EIu-cm-elS" secondAttribute="bottom" constant="28" id="0Ey-cw-Oht"/>
-                            <constraint firstAttribute="trailing" secondItem="GBO-t5-nZg" secondAttribute="trailing" constant="17" id="1wf-pv-PqH"/>
-                            <constraint firstItem="GBO-t5-nZg" firstAttribute="top" secondItem="3u1-0n-NPP" secondAttribute="top" constant="20" id="2IZ-Kt-dab"/>
-                            <constraint firstItem="p1n-xy-ora" firstAttribute="top" secondItem="9uk-hO-T9t" secondAttribute="bottom" constant="12" id="K7U-RJ-zeO"/>
                             <constraint firstItem="9uk-hO-T9t" firstAttribute="leading" secondItem="3u1-0n-NPP" secondAttribute="leading" constant="17" id="KKi-5h-o1S"/>
-                            <constraint firstItem="GBO-t5-nZg" firstAttribute="leading" secondItem="3u1-0n-NPP" secondAttribute="leading" constant="17" id="N8w-FR-faZ"/>
                             <constraint firstItem="EIu-cm-elS" firstAttribute="centerX" secondItem="3u1-0n-NPP" secondAttribute="centerX" id="Qgg-c9-CwC"/>
-                            <constraint firstItem="EIu-cm-elS" firstAttribute="top" secondItem="GBO-t5-nZg" secondAttribute="bottom" constant="20" id="R8f-6d-dtr"/>
                             <constraint firstAttribute="trailing" secondItem="9uk-hO-T9t" secondAttribute="trailing" constant="17" id="RRj-nN-rj9"/>
+                            <constraint firstItem="EIu-cm-elS" firstAttribute="top" secondItem="9uk-hO-T9t" secondAttribute="bottom" constant="4" id="SOi-Uj-yyN"/>
+                            <constraint firstItem="9uk-hO-T9t" firstAttribute="top" secondItem="3u1-0n-NPP" secondAttribute="top" constant="20" symbolic="YES" id="UzH-ha-N9A"/>
                             <constraint firstAttribute="trailing" secondItem="p1n-xy-ora" secondAttribute="trailing" constant="17" id="WdM-y6-twZ"/>
                             <constraint firstItem="1LF-SL-gga" firstAttribute="centerX" secondItem="3u1-0n-NPP" secondAttribute="centerX" id="YBT-Ep-Bog"/>
                             <constraint firstItem="p1n-xy-ora" firstAttribute="leading" secondItem="3u1-0n-NPP" secondAttribute="leading" constant="17" id="dqK-sY-EZj"/>
                             <constraint firstItem="1LF-SL-gga" firstAttribute="top" secondItem="p1n-xy-ora" secondAttribute="bottom" constant="12" id="mhe-GO-wPh"/>
+                            <constraint firstItem="p1n-xy-ora" firstAttribute="top" secondItem="EIu-cm-elS" secondAttribute="bottom" constant="20" id="sm2-L6-eW9"/>
                         </constraints>
                     </view>
                 </viewController>
                 <customObject id="laJ-9X-cDL" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2341.5" y="811"/>
+            <point key="canvasLocation" x="2341.5" y="838"/>
         </scene>
     </scenes>
     <resources>

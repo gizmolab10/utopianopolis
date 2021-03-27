@@ -30,6 +30,14 @@ class ZEssay: ZNote {
 	}
 
 	override var essayText: NSMutableAttributedString? {
+		if  let z = zone, z.zonesWithNotes.count < 2 {
+			z.clearAllNotes()
+
+			gCurrentEssay = ZNote(z)
+
+			return noteText
+		}
+
 		gCreateCombinedEssay = true
 
 		setupChildren()
