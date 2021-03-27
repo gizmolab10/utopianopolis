@@ -671,26 +671,15 @@ DQ
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="myf-PZ-JAt">
                                 <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
                             </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="itU-Gt-Inh" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
-                                <connections>
-                                    <outlet property="controller" destination="XfG-lQ-9wD" id="Jq8-wW-hbN"/>
-                                </connections>
-                            </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="itU-Gt-Inh" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="2on-Rh-qaW"/>
                             <constraint firstItem="myf-PZ-JAt" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="IQP-o6-hsE"/>
                             <constraint firstItem="myf-PZ-JAt" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="cQG-96-ohP"/>
                             <constraint firstAttribute="trailing" secondItem="myf-PZ-JAt" secondAttribute="trailing" id="dLt-XS-TaK"/>
-                            <constraint firstItem="itU-Gt-Inh" firstAttribute="bottom" secondItem="m2S-Jp-Qdl" secondAttribute="bottom" id="doe-l2-P4Y"/>
-                            <constraint firstItem="itU-Gt-Inh" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="lzQ-yE-6cu"/>
-                            <constraint firstItem="itU-Gt-Inh" firstAttribute="trailing" secondItem="m2S-Jp-Qdl" secondAttribute="trailing" id="pGy-4H-4Ky"/>
                             <constraint firstAttribute="bottom" secondItem="myf-PZ-JAt" secondAttribute="bottom" id="z8m-0I-n0V"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="dragView" destination="itU-Gt-Inh" id="4nO-dp-new"/>
                         <outlet property="ideaContextualMenu" destination="4NV-a6-tte" id="idV-YI-eqw"/>
                         <outlet property="mapContextualMenu" destination="HLb-eX-LkY" id="8lR-R2-tPJ"/>
                         <outlet property="mapView" destination="myf-PZ-JAt" id="GM0-He-36T"/>
@@ -957,6 +946,9 @@ CA
                                     <constraint firstItem="58m-fY-Oaa" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" id="jSf-TE-Zs9"/>
                                 </constraints>
                             </customView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="37A-oF-Gav" userLabel="Drag View" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="451" height="256"/>
+                            </customView>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="nqD-wm-vjv">
                                 <rect key="frame" x="224" y="256" width="5" height="44"/>
                             </box>
@@ -1034,6 +1026,7 @@ CA
                         </subviews>
                         <constraints>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="yl6-st-bhl" secondAttribute="trailing" id="0hK-O4-Y9p"/>
+                            <constraint firstItem="37A-oF-Gav" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="2Ov-o8-soA"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="9Q8-HC-P7X"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="HVB-l5-rqc"/>
                             <constraint firstItem="nqD-wm-vjv" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="HbY-r2-DbF"/>
@@ -1042,6 +1035,7 @@ CA
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
                             <constraint firstItem="yl6-st-bhl" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="12" id="Lys-IS-2eI"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="QmT-ZT-tcN"/>
+                            <constraint firstAttribute="trailing" secondItem="37A-oF-Gav" secondAttribute="trailing" id="TDT-m7-nkv"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="V0U-dq-EtC"/>
                             <constraint firstItem="13C-5j-Mtw" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="YWh-p8-OqE"/>
                             <constraint firstAttribute="bottom" secondItem="5jB-w2-4Dg" secondAttribute="bottom" id="bsX-IT-HDI"/>
@@ -1050,6 +1044,7 @@ CA
                             <constraint firstAttribute="trailing" secondItem="5oi-yK-PC4" secondAttribute="trailing" id="haB-GJ-03K"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="lap-td-b4Q"/>
                             <constraint firstItem="yl6-st-bhl" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" constant="11" id="m1y-JF-jje"/>
+                            <constraint firstItem="37A-oF-Gav" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="oZ2-KH-Vdq"/>
                             <constraint firstItem="nqD-wm-vjv" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="p6d-p9-Aou"/>
                             <constraint firstItem="13C-5j-Mtw" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="pts-1n-1Ww"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="qfT-hA-eas"/>
@@ -1057,6 +1052,7 @@ CA
                             <constraint firstAttribute="trailing" secondItem="5jB-w2-4Dg" secondAttribute="trailing" id="rXH-it-XjL"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="snd-Vz-bP3"/>
                             <constraint firstItem="9jn-kU-BvC" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="swX-MJ-DaF"/>
+                            <constraint firstAttribute="bottom" secondItem="37A-oF-Gav" secondAttribute="bottom" id="tTW-BQ-dgu"/>
                             <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="trU-TG-zpc"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="nqD-wm-vjv" secondAttribute="bottom" id="uOh-iN-dOy"/>
                         </constraints>
@@ -1065,6 +1061,7 @@ CA
                         <outlet property="debugView" destination="9jn-kU-BvC" id="5ub-Jm-aCW"/>
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="fDV-lr-VDw"/>
                         <outlet property="detailsWidth" destination="us8-K9-IEo" id="J2y-Un-wue"/>
+                        <outlet property="dragView" destination="37A-oF-Gav" id="04a-KE-w1g"/>
                         <outlet property="essayContainerView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
                         <outlet property="hamburgerButton" destination="yl6-st-bhl" id="Q5Q-eo-IdC"/>
                         <outlet property="mapContainerView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
@@ -1157,7 +1154,7 @@ CA
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1067" y="598"/>
+            <point key="canvasLocation" x="1067" y="476"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -1387,7 +1384,7 @@ CA
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1067" y="488"/>
+            <point key="canvasLocation" x="1067" y="596"/>
         </scene>
         <!--Startup Controller-->
         <scene sceneID="r3B-ju-S2a">

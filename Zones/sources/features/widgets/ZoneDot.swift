@@ -180,19 +180,22 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	}
 
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-        let   thickness = CGFloat(gLineThickness)
-		var        path = ZBezierPath()
+        let  thickness = CGFloat(gLineThickness)
+		var       path = ZBezierPath()
 
 		if  parameters.isReveal {
-			let toRight = parameters.showList
-			path        = ZBezierPath.bloatedTrianglePath(aimedRight: toRight, in: iDirtyRect)
+			path       = ZBezierPath.bloatedTrianglePath(aimedRight: parameters.showList, in: iDirtyRect)
 		} else {
-			path        = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
+			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
+
+			if  parameters.filled {
+				print("hah!")
+			}
 		}
 
-		path.lineWidth  = thickness * 2.0
-		path.flatness   = 0.0001
-
+		path.lineWidth = thickness * 2.0
+		path .flatness = 0.0001
+		
 		path.stroke()
 		path.fill()
 	}

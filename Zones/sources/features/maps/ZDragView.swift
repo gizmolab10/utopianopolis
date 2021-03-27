@@ -27,8 +27,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 		// draw dashed rectangle in active color for rubberband
 
-		if  controller?.isBigMap ?? false,
-			let rect = gRubberband.rubberbandRect {
+		if  let rect = gRubberband.rubberbandRect {
 			gActiveColor.accountingForDarkMode.lighter(by: 2.0).setStroke()
 			let path = ZBezierPath(rect: rect)
 			path.lineWidth = gIsDark ? 3.0 : 2.0
@@ -39,8 +38,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 		// draw dragged dot and line in active color
 
 		if  let     widget = gDragDropZone?.widget,
-			let        dot = widget.revealDot.innerDot,
-			let          c = controller, c.isBigMap != gDragDropZone?.isInSmallMap {
+			let        dot = widget.revealDot.innerDot {
 			let parameters = widget.widgetZone?.dropDotParameters() ?? ZDotParameters()
             let  floatRect = widget.floatingDropDotRect
             let   dragRect = widget.convert(floatRect, to: self)

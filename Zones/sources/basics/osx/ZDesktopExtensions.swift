@@ -506,13 +506,17 @@ extension ZTogglingView {
 
 }
 
-extension ZDragView {
+extension ZMapView {
     
     func updateMagnification(with event: ZEvent) {
         let     deltaY = event.deltaY
         let adjustment = exp2(deltaY / 100.0)
         gScaling      *= Double(adjustment)
     }
+
+}
+
+extension ZMapView {
 
     override func scrollWheel(with event: ZEvent) {
         if  event.modifierFlags.contains(.command) {

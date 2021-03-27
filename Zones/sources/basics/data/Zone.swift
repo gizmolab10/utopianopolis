@@ -2093,7 +2093,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let   toBookmark = isBookmark                    // type 2
 		let   toSmallMap = isInSmallMap && !toBookmark   // type 3
 		let         into = bookmarkTarget ?? self        // grab bookmark AFTER travel
-		var        grabs = gSelecting.currentGrabs
+		var        grabs = gSelecting.currentMapGrabs
 		var      restore = [Zone: (Zone, Int?)] ()
 		var    cyclicals = IndexSet()
 
@@ -2159,7 +2159,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				into.expand()
 			}
 
-			into.maybeNeedChildren()
+//			into.maybeNeedChildren()
 
 			if !done {
 				done = true

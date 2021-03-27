@@ -24,8 +24,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                     isBigMap : Bool          { return true }
 	var                     hereZone : Zone?         { return gHereMaybe }
 	override  var       allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum] }
-	@IBOutlet var           dragView : ZDragView?
-	@IBOutlet var            mapView : ZView?
+	@IBOutlet var            mapView : ZMapView?
 	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 	var          priorScrollLocation = CGPoint.zero
@@ -50,17 +49,16 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
     override func setup() {
-		gestureView                      = dragView // do this before calling super setup, which uses gesture view
-		view     .layer?.backgroundColor = kClearColor.cgColor
-		dragView?.layer?.backgroundColor = kClearColor.cgColor
-		mapView? .layer?.backgroundColor = kClearColor.cgColor
+		gestureView                      = mapView // do this before calling super setup, which uses gesture view
+		view    .layer?.backgroundColor = kClearColor.cgColor
+		mapView?.layer?.backgroundColor = kClearColor.cgColor
 
 		super.setup()
 		platformSetup()
         mapView?.addSubview(rootWidget)
 
 		if  isBigMap {
-			dragView?.updateTrackingAreas()
+			mapView?.updateTrackingAreas()
 		}
     }
 
@@ -170,7 +168,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			layoutForCurrentScrollOffset()
 			layoutWidgets(for: iSignalObject, iKind)
 			mapView?.setAllSubviewsNeedDisplay()
-			dragView?.setNeedsDisplay()
         }
     }
 	
@@ -198,44 +195,46 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             gSearching.exitSearchMode()
         }
 
-		if  gIsMapOrEditIdeaMode,
+		if  gIsDraggableMode,
 			let gesture = iGesture as? ZKeyPanGestureRecognizer,
             let (_, _, location) = widgetNearest(gesture),
             let flags = gesture.modifiers {
             let state = gesture.state
 
 			if  isEditingText(at: location) {
-				restartGestureRecognition()               // let text editor consume the gesture
+				restartGestureRecognition()                       // let text editor consume the gesture
 			} else {
 				if  gCurrentlyEditingWidget != nil {
 					gTextEditor.stopCurrentEdit()
 				}
 
-				if flags.isCommand && !flags.isOption {   // shift background
+				if flags.isCommand && !flags.isOption {           // shift background
 					scrollEvent(move: state == .changed, to: location)
 				} else if gIsDragging {
-					dragMaybeStopEvent(iGesture)          // logic for drawing the drop dot, and for dropping dragged idea
-				} else if state == .changed,              // enlarge rubberband
+					dragMaybeStopEvent(iGesture)                  // logic for drawing the drop dot, and for dropping dragged idea
+				} else if state == .changed,                      // enlarge rubberband
 					gRubberband.setRubberbandEnd(location) {
 					gRubberband.updateGrabs(in: mapView)
-					dragView?  .setNeedsDisplay()
-				} else if state != .began {               // drag ended, failed or was cancelled
-					gRubberband.rubberbandRect = nil      // erase rubberband
+					gDragView? .setNeedsDisplay()
+					mapView?   .setAllSubviewsNeedDisplay()
+				} else if ![.began, .cancelled].contains(state) { // drag ended, failed or was cancelled
+					gRubberband.rubberbandRect = nil              // erase rubberband
 
 					restartGestureRecognition()
 					mapView?.setAllSubviewsNeedDisplay()
-					dragView? .setNeedsDisplay()
-					gSignal([.sDatum])                    // so color well and indicators get updated
+					gSignal([.sDatum])                            // so color well and indicators get updated
 				} else if let dot = detectDot(iGesture) {
 					if  !dot.isReveal {
-						dragStartEvent(dot, iGesture)     // start dragging a drag dot
+						dragStartEvent(dot, iGesture)             // start dragging a drag dot
 					} else if let zone = dot.widgetZone {
-						cleanupAfterDrag()                // no dragging
+						cleanupAfterDrag()                        // no dragging
 						zone.revealDotClicked(COMMAND: flags.isCommand, OPTION: flags.isOption)
 					}
-				} else {                                  // begin drag
+				} else {                                          // begin drag
 					gRubberband.rubberbandStartEvent(location, iGesture)
 				}
+
+				gDragView?.setNeedsDisplay()
 			}
 
 			return true
@@ -403,10 +402,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                     gDragDropIndices?.add(index - 1)
                 }
 
-                prior?                          .displayForDrag() // erase    child lines
-				dropWidget                      .displayForDrag() // relayout child lines
-				gMapController?    .dragView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
-				gSmallMapController?.dragView?.setNeedsDisplay()
+                prior?                       .displayForDrag()  // erase    child lines
+				dropWidget                   .displayForDrag()  // relayout child lines
+				gMapController?     .mapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
+				gSmallMapController?.mapView?.setNeedsDisplay()
 
                 if !isNoop, dropNow,
 					let         drop = dropZone {
@@ -496,17 +495,17 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         gDragPoint       = nil
 
         rootWidget.setNeedsDisplay()
-		mapView?.setNeedsDisplay()
-		dragView? .setNeedsDisplay() // erase drag: line and dot
+		mapView?  .setNeedsDisplay()
 		dot?      .setNeedsDisplay()
+		gDragView?.setNeedsDisplay() // erase drag: line and dot
     }
 
     func relationOf(_ iPoint: CGPoint, to iView: ZView?) -> ZRelation {
         var relation: ZRelation = .upon
 
-        if  let   view = iView {
+        if  let   view = iView,
+			let  point = gDragView?.convert(iPoint, to: view) {
             let margin = CGFloat(5.0)
-            let  point = dragView!.convert(iPoint, to: view)
             let   rect = view.bounds
             let      y = point.y
 

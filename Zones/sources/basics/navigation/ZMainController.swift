@@ -12,7 +12,8 @@
     import UIKit
 #endif
 
-var gMainController: ZMainController? { return gControllers.controllerForID(.idMain) as? ZMainController }
+var gMainController : ZMainController? { return gControllers.controllerForID(.idMain) as? ZMainController }
+var gDragView       : ZDragView?       { return gMainController?.dragView }
 
 class ZMainController: ZGesturesController {
 
@@ -25,6 +26,7 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var searchBoxView      : ZView?
 	@IBOutlet var detailView         : ZView?
 	@IBOutlet var debugView          : ZView?
+	@IBOutlet var dragView           : ZDragView?
     override  var controllerID       : ZControllerID { return .idMain }
 
 	override func setup() {
@@ -97,7 +99,8 @@ class ZMainController: ZGesturesController {
 				gRefusesFirstResponder          = false
 			default: break
         }
-		
+
+		dragView?.setNeedsDisplay()
 		update()
     }
 

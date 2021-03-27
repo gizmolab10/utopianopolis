@@ -66,10 +66,10 @@ class ZSelecting: NSObject {
     var firstSortedGrab :  Zone? { return firstGrab(using: sortedGrabs) }
 	var       firstGrab :  Zone? { return firstGrab() }
 	var      hasNewGrab :  Zone?
-    var      cousinList : ZoneArray { get { maybeNewGrabUpdate(); return _cousinList }                             set { _cousinList   = newValue }}
-	var     sortedGrabs : ZoneArray { get { updateSortedGrabs();  return _sortedGrabs }                            set { _sortedGrabs  = newValue }}
-	var    currentGrabs : ZoneArray { get { return gIsEssayMode ? gEssayView?.grabbedZones ?? [] : _currentGrabs } set { _currentGrabs = newValue }}
-    var   _currentGrabs = ZoneArray ()
+    var      cousinList : ZoneArray { get { maybeNewGrabUpdate(); return _cousinList }                               set { _cousinList   = newValue }}
+	var     sortedGrabs : ZoneArray { get { updateSortedGrabs();  return _sortedGrabs }                              set { _sortedGrabs  = newValue }}
+	var    currentGrabs : ZoneArray { get { return gIsEssayMode ? gEssayView?.grabbedZones ?? [] : currentMapGrabs } set { currentMapGrabs = newValue }}
+    var currentMapGrabs = ZoneArray ()
     var    _sortedGrabs = ZoneArray ()
     var     _cousinList = ZoneArray ()
 	var  pasteableZones = [Zone: (Zone?, Int?)] ()
@@ -236,7 +236,7 @@ class ZSelecting: NSObject {
     // MARK:-
 
     func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextEditor.currentlyEditedZone == zone }
-    func isGrabbed (_ zone: Zone) -> Bool { return currentGrabs.contains(zone) }
+    func isGrabbed (_ zone: Zone) -> Bool { return currentMapGrabs.contains(zone) }
     func updateBrowsingLevel()            { gCurrentBrowseLevel = currentMoveable.level }
     func clearPaste()                     { pasteableZones = [:] }
 
@@ -259,18 +259,18 @@ class ZSelecting: NSObject {
 
 
     func ungrabAll(retaining: ZoneArray? = nil) {
-        let       more = retaining ?? []
-        let    grabbed = currentGrabs
-        currentGrabs   = []
-        sortedGrabs    = []
-        cousinList     = []
+        let        more = retaining ?? []
+        let     grabbed = currentMapGrabs
+		currentMapGrabs = []
+        sortedGrabs     = []
+        cousinList      = []
 
 		if  more.count > 0 {
             hasNewGrab = more[0]
         }
 
 		updateWidgetsNeedDisplay(for: grabbed)
-		_currentGrabs.append(contentsOf: more)
+		currentMapGrabs.append(contentsOf: more)
     }
     
     
@@ -307,7 +307,7 @@ class ZSelecting: NSObject {
 
     func ungrab(_ iZone: Zone?) {
         if let zone = iZone, let index = currentGrabs.firstIndex(of: zone) {
-			_currentGrabs.remove(at: index)
+			currentMapGrabs.remove(at: index)
             updateWidgetNeedDisplay(for: zone)
             maybeClearBrowsingLevel()
         }
@@ -331,10 +331,10 @@ class ZSelecting: NSObject {
     func addOneGrab(_ iZone: Zone?) { // caller must update widgets need display
         if  let zone = iZone,
 			zone    != gFavoritesHereMaybe, // disallow grab on non-visible favorite, avoid ugly looking highlight
-            !currentGrabs.contains(zone) {
-			_currentGrabs.append(zone)
+            !currentMapGrabs.contains(zone) {
+			currentMapGrabs.append(zone)
 
-			currentGrabs = respectOrder(for: currentGrabs)
+			currentMapGrabs = respectOrder(for: currentMapGrabs)
         }
     }
     
@@ -353,10 +353,10 @@ class ZSelecting: NSObject {
 	}
 
 	@discardableResult func primitiveGrab(_ iZones: ZoneArray?) -> ZoneArray? {
-		if  let newGrabs = iZones {
-			let oldGrabs = currentGrabs
-			currentGrabs = [] // can't use ungrabAll because we need to keep cousinList
-			sortedGrabs  = []
+		if  let    newGrabs = iZones {
+			let    oldGrabs = currentMapGrabs
+			currentMapGrabs = [] // can't use ungrabAll because we need to keep cousinList
+			sortedGrabs     = []
 
 			if  newGrabs.count != 0 {
 				hasNewGrab = newGrabs[0]
@@ -410,7 +410,7 @@ class ZSelecting: NSObject {
     func deselectGrabsWithin(_ zone: Zone) {
         zone.traverseAllProgeny { iZone in
             if iZone != zone && currentGrabs.contains(iZone), let index = currentGrabs.firstIndex(of: iZone) {
-				_currentGrabs.remove(at: index)
+				currentMapGrabs.remove(at: index)
             }
         }
     }
