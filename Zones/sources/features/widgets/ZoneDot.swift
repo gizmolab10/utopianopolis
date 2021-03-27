@@ -187,15 +187,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			path       = ZBezierPath.bloatedTrianglePath(aimedRight: parameters.showList, in: iDirtyRect)
 		} else {
 			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
-
-			if  parameters.filled {
-				print("hah!")
-			}
 		}
 
 		path.lineWidth = thickness * 2.0
 		path .flatness = 0.0001
-		
+
 		path.stroke()
 		path.fill()
 	}

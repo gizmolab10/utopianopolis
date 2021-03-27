@@ -304,16 +304,16 @@ class ZoneWidget: ZView {
     // MARK:-
 
     var hitRect: CGRect? {
-        if  let start =   dragDot.innerOrigin,
-			let   end = revealDot.innerExtent {
-            return CGRect(start: convert(start, from: dragDot), end: convert(end, from: revealDot))
+        if  let  start =   dragDot.innerOrigin,
+			let extent = revealDot.innerExtent {
+            return CGRect(start: convert(start, from: dragDot), extent: convert(extent, from: revealDot))
         }
 
         return nil
     }
 
     var outerHitRect: CGRect {
-		return CGRect(start: dragDot.convert(CGPoint.zero, to: self), end: revealDot.convert(revealDot.bounds.extent, to: self))
+		return CGRect(start: dragDot.convert(CGPoint.zero, to: self), extent: revealDot.convert(revealDot.bounds.extent, to: self))
     }
 
     var floatingDropDotRect: CGRect {

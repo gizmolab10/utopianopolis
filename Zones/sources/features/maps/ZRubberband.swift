@@ -25,9 +25,9 @@ class ZRubberband: NSObject {
 		}
 	}
 
-	@discardableResult func setRubberbandEnd(_ end: CGPoint) -> Bool { // true means rect was set
+	@discardableResult func setRubberbandExtent(to extent: CGPoint) -> Bool { // true means rect was set
 		if  rubberbandStart != .zero {
-			rubberbandRect   = CGRect(start: rubberbandStart, end: end)
+			rubberbandRect   = CGRect(start: rubberbandStart, extent: extent)
 
 			return true
 		}

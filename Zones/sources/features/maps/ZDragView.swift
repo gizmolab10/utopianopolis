@@ -14,8 +14,6 @@
 
 class ZDragView: ZView, ZGestureRecognizerDelegate {
 
-	@IBOutlet var controller: ZMapController?
-	override func menu(for event: NSEvent) -> NSMenu? { return controller?.mapContextualMenu }
 	override func updateTrackingAreas() { addTracking(for: bounds) }
 
     override func draw(_ dirtyRect: CGRect) {
@@ -51,14 +49,6 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			dot.drawInnerDot(dotRect, parameters)
         }
 	}
-
-    func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
-        if  let c = controller {
-            return gestureRecognizer == c.clickGesture && otherGestureRecognizer == c.movementGesture
-        }
-
-        return false
-    }
 
 	override func mouseExited(with event: NSEvent) {
 		super.mouseExited(with: event)

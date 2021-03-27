@@ -196,10 +196,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
 
 		if  gIsDraggableMode,
-			let gesture = iGesture as? ZKeyPanGestureRecognizer,
-            let (_, _, location) = widgetNearest(gesture),
-            let flags = gesture.modifiers {
-            let state = gesture.state
+			let         gesture  = iGesture as? ZKeyPanGestureRecognizer,
+			let (_, _, location) = widgetNearest(gesture),
+			let           flags  = gesture.modifiers {
+            let           state  = gesture.state
 
 			if  isEditingText(at: location) {
 				restartGestureRecognition()                       // let text editor consume the gesture
@@ -209,19 +209,17 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				}
 
 				if flags.isCommand && !flags.isOption {           // shift background
-					scrollEvent(move: state == .changed, to: location)
+					scrollEvent(move: state == .changed,  to: location)
 				} else if gIsDragging {
 					dragMaybeStopEvent(iGesture)                  // logic for drawing the drop dot, and for dropping dragged idea
 				} else if state == .changed,                      // enlarge rubberband
-					gRubberband.setRubberbandEnd(location) {
+						  gRubberband.setRubberbandExtent(to: location) {
 					gRubberband.updateGrabs(in: mapView)
 					gDragView? .setNeedsDisplay()
-					mapView?   .setAllSubviewsNeedDisplay()
 				} else if ![.began, .cancelled].contains(state) { // drag ended, failed or was cancelled
 					gRubberband.rubberbandRect = nil              // erase rubberband
 
 					restartGestureRecognition()
-					mapView?.setAllSubviewsNeedDisplay()
 					gSignal([.sDatum])                            // so color well and indicators get updated
 				} else if let dot = detectDot(iGesture) {
 					if  !dot.isReveal {

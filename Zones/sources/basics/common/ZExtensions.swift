@@ -890,20 +890,20 @@ extension CGRect {
 		return result
 	}
 
-    public init(start: CGPoint, end: CGPoint) {
+    public init(start: CGPoint, extent: CGPoint) {
         self.init()
 
-        size   = end - start
-        origin = start
+		origin = start
+        size   = extent - origin
 
         if  size .width < 0 {
             size .width = -size.width
-            origin   .x = end.x
+            origin   .x = extent.x
         }
 
         if  size.height < 0 {
             size.height = -size.height
-            origin   .y = end.y
+            origin   .y = extent.y
         }
     }
 

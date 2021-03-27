@@ -86,7 +86,7 @@ class ZSelecting: NSObject {
 
     var snapshot : ZSnapshot {
         let          snap = ZSnapshot()
-        snap.currentGrabs = currentGrabs
+        snap.currentGrabs = currentMapGrabs
         snap  .databaseID = gDatabaseID
         snap        .here = gHereMaybe
 
@@ -96,7 +96,7 @@ class ZSelecting: NSObject {
     var writableGrabsCount: Int {
         var count = 0
 
-        for zone in currentGrabs {
+        for zone in currentMapGrabs {
             if  zone.userCanWrite {
                 count += 1
             }
@@ -106,7 +106,7 @@ class ZSelecting: NSObject {
     }
 
     var simplifiedGrabs: ZoneArray {
-        let current = currentGrabs
+        let current = currentMapGrabs
         var   grabs = ZoneArray ()
 
         for grab in current {
@@ -159,7 +159,7 @@ class ZSelecting: NSObject {
     }
 
     var currentGrabsHaveVisibleChildren: Bool {
-        for     grab in currentGrabs {
+        for     grab in currentMapGrabs {
             if  grab.count > 0 &&
                 grab.expanded {
                 return true
@@ -172,7 +172,7 @@ class ZSelecting: NSObject {
     var grabbedColor: ZColor? {
         get { return firstGrab?.color }
         set {
-            for grab in currentGrabs {
+            for grab in currentMapGrabs {
 				let  colorized = grab.colorized
                 grab.color     = newValue
 				grab.colorized = colorized
@@ -184,7 +184,7 @@ class ZSelecting: NSObject {
         var candidate = currentMovableMaybe
 
 		if  let level = candidate?.level {
-			for grabbed in currentGrabs {
+			for grabbed in currentMapGrabs {
 				if  grabbed.level < level {
 					candidate = grabbed
 				}
@@ -195,7 +195,7 @@ class ZSelecting: NSObject {
     }
     
     var currentMoveableLine: Zone? {
-        for grab in currentGrabs + [gHere] {
+        for grab in currentMapGrabs + [gHere] {
             if grab.zoneName?.isLineWithTitle ?? false {
                 return grab
             }
@@ -207,8 +207,8 @@ class ZSelecting: NSObject {
 	var currentMovableMaybe: Zone? {
         var movable: Zone?
 
-        if  currentGrabs.count > 0 {
-			movable = currentGrabs.first
+        if  currentMapGrabs.count > 0 {
+			movable = currentMapGrabs.first
         } else if let zone = gTextEditor.currentlyEditedZone {
             movable = zone
         }
@@ -248,7 +248,7 @@ class ZSelecting: NSObject {
     }
     
     func assureMinimalGrabs() {
-        if  currentGrabs.count == 0,
+        if  currentMapGrabs.count == 0,
 			let here = gHereMaybe {
             grab([here])
         }
@@ -290,7 +290,7 @@ class ZSelecting: NSObject {
     
     
     func maybeClearBrowsingLevel() {
-        if  currentGrabs.count == 0 {
+        if  currentMapGrabs.count == 0 {
             gCurrentBrowseLevel = nil
         }
     }
@@ -299,14 +299,14 @@ class ZSelecting: NSObject {
     func ungrabAssuringOne(_ iZone: Zone?) {
         ungrab(iZone)
         
-        if  currentGrabs.count == 0 {
+        if  currentMapGrabs.count == 0 {
             grab([gHere])
         }
     }
     
 
     func ungrab(_ iZone: Zone?) {
-        if let zone = iZone, let index = currentGrabs.firstIndex(of: zone) {
+        if let zone = iZone, let index = currentMapGrabs.firstIndex(of: zone) {
 			currentMapGrabs.remove(at: index)
             updateWidgetNeedDisplay(for: zone)
             maybeClearBrowsingLevel()
@@ -325,7 +325,7 @@ class ZSelecting: NSObject {
             addOneGrab(zone)
         }
 
-        updateWidgetsNeedDisplay(for: currentGrabs)
+        updateWidgetsNeedDisplay(for: currentMapGrabs)
     }
 
     func addOneGrab(_ iZone: Zone?) { // caller must update widgets need display
@@ -409,7 +409,7 @@ class ZSelecting: NSObject {
 
     func deselectGrabsWithin(_ zone: Zone) {
         zone.traverseAllProgeny { iZone in
-            if iZone != zone && currentGrabs.contains(iZone), let index = currentGrabs.firstIndex(of: iZone) {
+            if iZone != zone && currentMapGrabs.contains(iZone), let index = currentMapGrabs.firstIndex(of: iZone) {
 				currentMapGrabs.remove(at: index)
             }
         }
@@ -420,7 +420,7 @@ class ZSelecting: NSObject {
 			let fromRoot  = fromID.zRecords?.rootZone {
 			var moveThese = [Zone]()
 
-			for grab in currentGrabs {
+			for grab in currentMapGrabs {
 				if  let grabRoot = grab.root,
 					grabRoot == fromRoot {
 					moveThese.appendUnique(contentsOf: [grab])
@@ -447,7 +447,7 @@ class ZSelecting: NSObject {
     
     
     func updateCurrentBrowserLevel() {
-        if  let level = currentGrabs.rootMost?.level {
+        if  let level = currentMapGrabs.rootMost?.level {
             gCurrentBrowseLevel = level
         }
     }
@@ -467,20 +467,19 @@ class ZSelecting: NSObject {
                     _cousinList.append(iChild)
                 }
                 
-                if  currentGrabs.contains(iChild) {
+                if  currentMapGrabs.contains(iChild) {
                     _sortedGrabs.append(iChild)
                 }
             }
         }
     }
-    
-    
+
     func updateSortedGrabs() {
         _sortedGrabs.removeAll()
         
 		if  let start = traversalStart {
             start.traverseAllVisibleProgeny { iChild in
-                if  currentGrabs.contains(iChild) {
+                if  currentMapGrabs.contains(iChild) {
                     _sortedGrabs.append(iChild)
                 }
             }
