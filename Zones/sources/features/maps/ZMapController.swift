@@ -369,26 +369,25 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func dragDropMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
         if  let draggedZone        = gDraggedZone {
             if  draggedZone.userCanMove,
-                let (isMap, dropWidget, location) = widgetNearest(iGesture, forBigMap: false) {
+                let (isMap, dropWidget, location) = widgetNearest(iGesture, forBigMap: false),
+				draggedZone       != dropWidget.widgetZone {
 				let dropController = dropWidget.controller
                 var       dropZone = dropWidget.widgetZone
-
-				if   gSelecting.currentGrabs.contains(dropZone!) { return false } // cannot drop onto itself
-
+				let  dropIsGrabbed = gSelecting.currentMapGrabs.contains(dropZone!)
 				let      dropIndex = dropZone?.siblingIndex
                 let           here = isMap ? gHere : gFavoritesHereMaybe
                 let       dropHere = dropZone == here
-				let       relation = dropController?.relationOf(location, to: dropWidget.textWidget) ?? .upon
-                let  useDropParent = relation != .upon && !dropHere
-                ;         dropZone = useDropParent ? dropZone?.parentZone : dropZone
-                let  lastDropIndex = dropZone == nil ? 0 : dropZone!.count
-                var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!gListsGrowDown) ? 0 :   lastDropIndex)
-                ;            index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
-                let      dragIndex = draggedZone.siblingIndex
-                let      sameIndex = dragIndex == index || dragIndex == index - 1
-                let   dropIsParent = dropZone?.children.contains(draggedZone) ?? false
-                let     spawnCycle = dropZone?.spawnCycle ?? false
-                let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0
+				let       relation = dropController?.relationOf(location, to: dropWidget) ?? .upon
+				let  useDropParent = relation != .upon && !dropHere
+				;         dropZone = dropIsGrabbed ? nil : useDropParent ? dropZone?.parentZone : dropZone
+				let  lastDropIndex = dropZone == nil ? 0 : dropZone!.count
+				var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!gListsGrowDown || dropIsGrabbed) ? 0 :   lastDropIndex)
+				;            index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
+				let      dragIndex = draggedZone.siblingIndex
+				let      sameIndex = dragIndex == index || dragIndex == index - 1
+				let   dropIsParent = dropZone?.children.contains(draggedZone) ?? false
+				let     spawnCycle = dropZone?.spawnCycle ?? false
+				let         isNoop = dropIsGrabbed || spawnCycle || (sameIndex && dropIsParent) || index < 0
                 let          prior = gDragDropZone?.widget
                 let        dropNow = isDoneGesture(iGesture)
                 gDragDropIndices   = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
@@ -499,18 +498,18 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     }
 
     func relationOf(_ iPoint: CGPoint, to iView: ZView?) -> ZRelation {
-        var relation: ZRelation = .upon
+        var     relation = ZRelation.upon
+        if  let     view = iView,
+			let    point = gDragView?.convert(iPoint,      from: mapView),
+			let     rect = gDragView?.convert(view.bounds, from:    view).insetBy(dx: 0.0, dy: 5.0) {
+			let     minY = rect.minY
+			let     maxY = rect.maxY
+			let        y = point.y
 
-        if  let   view = iView,
-			let  point = gDragView?.convert(iPoint, to: view) {
-            let margin = CGFloat(5.0)
-            let   rect = view.bounds
-            let      y = point.y
-
-            if y < rect.minY + margin {
-                relation = .above
-            } else if y > rect.maxY - margin {
+            if         y < minY {
                 relation = .below
+            } else if  y > maxY {
+                relation = .above
             }
 		}
 

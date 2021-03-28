@@ -92,7 +92,7 @@ extension ZSimpleToolButton {
 			let    	CONTROL = flags?.isControl ?? false
 			let     addANew = "adds a new idea as "
 			let     editing = (!gIsEditing ? "edits" : "stops editing and save to")
-			let notMultiple = gSelecting.currentGrabs.count < 2
+			let notMultiple = gSelecting.currentMapGrabs.count < 2
 			let   adjective = notMultiple ? "" : "\(gListsGrowDown ? "bottom" : "top")- or left-most "
 			let currentIdea = " the \(adjective)currently selected idea"
 			let     unfocus = "from \(gCurrentSmallMapName)s, remove bookmark targeting"

@@ -105,7 +105,7 @@ class ZDataController: ZGenericController {
 		current.updateAllProgenyCounts()
 
 		var  text = "level \(current.level + 1)"
-		let grabs = gSelecting.currentGrabs
+		let grabs = gSelecting.currentMapGrabs
 
 		if  grabs.count > 1 {
 			text.append("   (\(grabs.count) selected)")

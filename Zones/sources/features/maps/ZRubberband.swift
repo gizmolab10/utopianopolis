@@ -67,7 +67,7 @@ class ZRubberband: NSObject {
 		// ///////////////////
 
 		if let gesture = iGesture, gesture.isShiftDown {
-			rubberbandPreGrabs.append(contentsOf: gSelecting.currentGrabs)
+			rubberbandPreGrabs.append(contentsOf: gSelecting.currentMapGrabs)
 		} else {
 			rubberbandPreGrabs.removeAll()
 		}

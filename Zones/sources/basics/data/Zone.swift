@@ -82,7 +82,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var             isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
 	var                 isInSmallMap :               Bool  { return isInRecents || isInFavorites }
 	var               isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || type.isExemplar }
-	var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentGrabs) }
+	var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
 	var                   spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
 	var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
 	var                     children =          ZoneArray  ()
@@ -1031,7 +1031,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func addNext(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
 		if  let parent = parentZone, parent.userCanMutateProgeny {
-			var  zones = gSelecting.currentGrabs
+			var  zones = gSelecting.currentMapGrabs
 
 			let completion: ZoneClosure = { iZone in
 				onCompletion?(iZone)
@@ -3009,7 +3009,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gTextEditor.stopCurrentEdit()
 
 		// ungrab progeny
-		for     grabbed in gSelecting.currentGrabs {
+		for     grabbed in gSelecting.currentMapGrabs {
 			if  grabbed != self && grabbed.spawnedBy(self) {
 				grabbed.ungrab()
 			}

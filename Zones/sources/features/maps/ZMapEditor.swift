@@ -387,7 +387,7 @@ class ZMapEditor: ZBaseEditor {
 		// 2) titled line selected only -> convert back to plain line
 		// 3) titled line is first of multiple -> convert titled line to plain title, selected, as parent of others
 
-		let grabs        = gSelecting.currentGrabs
+		let grabs        = gSelecting.currentMapGrabs
 		let isMultiple   = grabs.count > 1
 		if  let original = gSelecting.currentMoveableLine,
 			let name     = original.zoneName {
@@ -482,10 +482,10 @@ class ZMapEditor: ZBaseEditor {
 			}
 		} else if   COMMAND {
 			if      OPTION {
-				gRemoteStorage.assureAdoption()     // finish what fetch has done
+				gRemoteStorage.assureAdoption()         // finish what fetch has done
 				gRedrawMaps()
-			} else {                                // COMMAND alone
-				for grab in gSelecting.currentGrabs {
+			} else {                                    // COMMAND alone
+				for grab in gSelecting.currentMapGrabs {
 					if  OPTION {
 						grab.reallyNeedChildren()       // OPTION
 					} else {
@@ -530,7 +530,7 @@ class ZMapEditor: ZBaseEditor {
     }
 
     func toggleColorized() {
-        for zone in gSelecting.currentGrabs {
+        for zone in gSelecting.currentMapGrabs {
             zone.toggleColorized()
         }
 
@@ -540,7 +540,7 @@ class ZMapEditor: ZBaseEditor {
     func prefix(with iMark: String) {
         let before = "("
         let  after = ") "
-        let  zones = gSelecting.currentGrabs
+        let  zones = gSelecting.currentMapGrabs
         var  digit = 0
         let  count = iMark == "#"
 
@@ -614,7 +614,7 @@ class ZMapEditor: ZBaseEditor {
 	}
 
     func divideChildren() {
-        let grabs = gSelecting.currentGrabs
+        let grabs = gSelecting.currentMapGrabs
 
         for zone in grabs {
             zone.needChildren()
@@ -628,7 +628,7 @@ class ZMapEditor: ZBaseEditor {
     }
 
     func rotateWritable() {
-        for zone in gSelecting.currentGrabs {
+        for zone in gSelecting.currentMapGrabs {
             zone.rotateWritable()
         }
 
@@ -636,7 +636,7 @@ class ZMapEditor: ZBaseEditor {
     }
 
     func alterCase(up: Bool) {
-        for grab in gSelecting.currentGrabs {
+        for grab in gSelecting.currentMapGrabs {
             if  let tWidget = grab.widget?.textWidget {
                 tWidget.alterCase(up: up)
             }
@@ -1055,7 +1055,7 @@ class ZMapEditor: ZBaseEditor {
 			var     children = ZoneArray ()
 
 			gSelecting.clearPaste()
-			gSelecting.currentGrabs = []
+			gSelecting.currentMapGrabs = []
 
 			for grab in grabs {
 				if !convertToTitledLine {       // delete, add to paste
