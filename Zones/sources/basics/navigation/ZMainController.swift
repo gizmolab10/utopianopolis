@@ -58,6 +58,18 @@ class ZMainController: ZGesturesController {
 		detailsWidth?  .constant =  gShowDetailsView ? 226.0 :  0.0
 		detailView?    .isHidden = !gShowDetailsView
 		debugView?     .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
+
+		updateHamburgerImage()
+	}
+
+	func updateHamburgerImage() {
+		var image = ZImage(named: "settings.jpg")
+
+		if  gIsDark {
+			image = image?.invertedImage
+		}
+
+		hamburgerButton?.image = image
 	}
 
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {

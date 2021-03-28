@@ -1678,6 +1678,28 @@ extension ZImage {
 		return newImage
 	}
 
+	var invertedImage: ZImage? {
+		if  let   tiffData = tiffRepresentation,
+			let     bitMap = NSBitmapImageRep(data: tiffData) {
+			let beginImage = CIImage(bitmapImageRep: bitMap)
+
+			if  let filter = CIFilter(name: "CIColorInvert") {
+				filter.setValue(beginImage, forKey: kCIInputImageKey)
+
+				if  let filtered = filter.outputImage {
+					let imageRep = NSCIImageRep(ciImage: filtered)
+					let newImage = NSImage(size: imageRep.size)
+
+					newImage.addRepresentation(imageRep)
+
+					return newImage
+				}
+			}
+		}
+
+		return nil
+	}
+
 }
 
 extension NSTextAttachment {
