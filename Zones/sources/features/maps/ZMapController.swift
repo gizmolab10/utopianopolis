@@ -505,7 +505,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let     minY = rect.minY
 			let     maxY = rect.maxY
 			let        y = point.y
-
             if         y < minY {
                 relation = .below
             } else if  y > maxY {

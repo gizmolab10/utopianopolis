@@ -137,14 +137,16 @@ class ZDataController: ZGenericController {
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		creationDateLabel?.text = creationDateText
-		cloudStatusLabel? .text = statusText
-		recordNameLabel?  .text = zoneRecordNameText
-		totalCountLabel?  .text = totalCountsText
-		mapNameLabel?     .text = mapNameText
+		if  gShowDetailsView {
+			creationDateLabel?.text = creationDateText
+			cloudStatusLabel? .text = statusText
+			recordNameLabel?  .text = zoneRecordNameText
+			totalCountLabel?  .text = totalCountsText
+			mapNameLabel?     .text = mapNameText
 
-		if  iKind != .sStartupProgress {
-			synopsisLabel?.text = synopsisText
+			if  iKind != .sStartupProgress {
+				synopsisLabel?.text = synopsisText
+			}
 		}
 	}
 

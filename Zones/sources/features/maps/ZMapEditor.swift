@@ -161,59 +161,59 @@ class ZMapEditor: ZBaseEditor {
     }
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags, onCompletion: Closure? = nil) {
-		if  gIsExportingToAFile { return }
-        if  gTextEditorHandlesArrows || gIsEditIdeaMode {
-            gTextEditor.handleArrow(arrow, flags: flags)
-			onCompletion?()
-            
-            return
-        }
-        
-        let COMMAND = flags.isCommand
-        let  OPTION = flags.isOption
-        let   SHIFT = flags.isShift
+		if !gIsExportingToAFile {
+			if  gTextEditorHandlesArrows || gIsEditIdeaMode {
+				gTextEditor.handleArrow(arrow, flags: flags)
+			} else {
+				let COMMAND = flags.isCommand
+				let  OPTION = flags.isOption
+				let   SHIFT = flags.isShift
 
-        if ((OPTION && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) && !gIsEssayMode {
-			onCompletion?()
-            return
-        }
-
-        switch arrow {
-        case .up, .down:     move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
-        default:
-			if  let moveable = gSelecting.rootMostMoveable {
-				if !SHIFT || moveable.isInSmallMap {
+				if !((OPTION && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
 					switch arrow {
-						case .left,
-							 .right: move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
-								gSelecting.updateAfterMove()  // relayout map when travelling through a bookmark
-								onCompletion?()
+						case .up, .down:     move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
+						default:
+							if  let moveable = gSelecting.rootMostMoveable {
+								if !SHIFT || moveable.isInSmallMap {
+									switch arrow {
+										case .left,
+											 .right:
+											move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
+												gSelecting.updateAfterMove()  // relayout map when travelling through a bookmark
+												onCompletion?()
+											}
+
+											return
+
+										default: break
+									}
+								} else {
+
+									// ///////////////
+									// GENERATIONAL //
+									// ///////////////
+
+									var show = true
+
+									switch arrow {
+										case .right: break
+										case .left:  show = false
+										default:     return
+									}
+
+									if  OPTION {
+										browseBreadcrumbs(arrow == .left)
+									} else {
+										moveable.applyGenerationally(show, extreme: COMMAND)
+									}
+								}
 							}
-						default: break
 					}
-				} else {
-
-					// ///////////////
-					// GENERATIONAL //
-					// ///////////////
-
-					var show = true
-
-					switch arrow {
-						case .right: break
-						case .left:  show = false
-						default:     return
-					}
-
-					if  OPTION {
-						browseBreadcrumbs(arrow == .left)
-					} else {
-						moveable.applyGenerationally(show, extreme: COMMAND)
-					}
-
-					onCompletion?()				}
+				}
 			}
-        }
+		}
+
+		onCompletion?()
     }
 
 	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {

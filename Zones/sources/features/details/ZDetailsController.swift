@@ -22,7 +22,9 @@ class ZDetailsController: ZGesturesController {
 	override  var controllerID : ZControllerID { return .idDetails }
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		update()
+		if  gShowDetailsView {
+			update()
+		}
     }
 
     func register(id: ZDetailsViewID, for view: ZTogglingView) {

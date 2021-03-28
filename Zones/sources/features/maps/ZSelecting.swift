@@ -66,8 +66,8 @@ class ZSelecting: NSObject {
     var firstSortedGrab :  Zone? { return firstGrab(using: sortedGrabs) }
 	var       firstGrab :  Zone? { return firstGrab() }
 	var      hasNewGrab :  Zone?
-    var      cousinList : ZoneArray { get { maybeNewGrabUpdate(); return _cousinList }                               set { _cousinList   = newValue }}
-	var     sortedGrabs : ZoneArray { get { updateSortedGrabs();  return _sortedGrabs }                              set { _sortedGrabs  = newValue }}
+    var      cousinList : ZoneArray { get { maybeNewGrabUpdate(); return _cousinList }                               set { _cousinList     = newValue }}
+	var     sortedGrabs : ZoneArray { get { updateSortedGrabs();  return _sortedGrabs }                              set { _sortedGrabs    = newValue }}
 	var    currentGrabs : ZoneArray { get { return gIsEssayMode ? gEssayView?.grabbedZones ?? [] : currentMapGrabs } set { currentMapGrabs = newValue }}
     var currentMapGrabs = ZoneArray ()
     var    _sortedGrabs = ZoneArray ()

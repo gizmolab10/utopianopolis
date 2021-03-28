@@ -160,7 +160,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func updateText(restoreSelection: Int?  = nil) {
+	func updateText(restoreSelection: Int? = nil) {
 		resetForDarkMode()
 
 		if  gCurrentEssay == nil {
