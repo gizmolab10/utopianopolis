@@ -19,7 +19,7 @@ let gTimers = ZTimers()
 enum ZTimerID : Int {
 	case tTextEditorHandlesArrows
 	case tNeedCloudDriveEnabled
-	case tCoreDataAvailable
+	case tCoreDataDeferral
 	case tRecordsEveryone
 	case tNeedUserAccess
 	case tCloudAvailable
@@ -82,15 +82,15 @@ func gStartTimers(for timers: [ZTimerID]) {
 func gStartTimer(for timerID: ZTimerID?) {
 	if  let       tid = timerID {
 		var     block : TimerClosure?
-		let repeaters : [ZTimerID] = [.tCoreDataAvailable, .tCloudAvailable, .tRecount, .tSync]
+		let repeaters : [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tSync]
 		let   repeats = repeaters.contains(tid)
-		var  interval = 1.0
+		var   waitFor = 1.0                           // second
 
 		switch tid {
-			case .tSync:              interval = 15.0
-			case .tRecount:           interval = 60.0
-			case .tMouseZone:         interval =  0.5
-			case .tCloudAvailable:    interval =  0.2
+			case .tSync:              waitFor = 15.0  // seconds
+			case .tRecount:           waitFor = 60.0
+			case .tMouseZone:         waitFor =  0.5
+			case .tCloudAvailable:    waitFor =  0.2
 			default:                  break
 		}
 
@@ -99,15 +99,15 @@ func gStartTimer(for timerID: ZTimerID?) {
 			case .tMouseZone:               block = { iTimer in gCurrentMouseDownZone     = nil }
 			case .tMouseLocation:           block = { iTimer in gCurrentMouseDownLocation = nil }
 			case .tTextEditorHandlesArrows: block = { iTimer in gTextEditorHandlesArrows  = false }
-			case .tStartup:                 block = { iTimer in gIncrementStartupProgress() }
+			case .tStartup:                 block = { iTimer in gIncrementStartupProgress(waitFor) }
 			case .tSync:                    block = { iTimer in if gIsReadyToShowUI { gSaveContext(); gBatches.save { iSame in } } }
 			case .tRecount:                 block = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount() } }
 			case .tCloudAvailable:          block = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
-			case .tCoreDataAvailable:       block = { iTimer in gCoreDataStack.availabilityFire(iTimer) }
+			case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.deferralHappensMaybe(iTimer) }
 			default:                        break
 		}
 
-		gTimers.resetTimer(for: timerID, withTimeInterval: interval, repeats: repeats, block: block ?? { iTimer in })
+		gTimers.resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats, block: block ?? { iTimer in })
 	}
 }
 

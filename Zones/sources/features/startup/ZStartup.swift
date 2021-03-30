@@ -12,6 +12,22 @@ let gStartup = ZStartup()
 
 class ZStartup: NSObject {
 	var count = 0.0
+	var prior = 0.0
+
+	func addShouldDisplay(_ increment: Double) -> Bool {
+		count       += increment
+		let  display = 1.0 <= (count - prior)
+
+		if  display {
+			if  gCurrentOp == .oRestoreIdeas {
+				noop()
+			}
+
+			prior    = count
+		}
+
+		return display
+	}
 
 	func startupCloudAndUI() {
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x

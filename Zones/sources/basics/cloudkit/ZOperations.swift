@@ -67,24 +67,32 @@ enum ZOperationID: Int, CaseIterable {
 	case oResolve
 	case oTraits
 
-	var progressTime : Double {
+	var progressTime : Int {
 		switch self {
-			case .oReadFile:         return gReadFiles ? 30.0 : 0.0
-			case .oRestoreIdeas:     return gCanLoad   ?  4.0 : 0.0
-			case .oMigrateFromCloud: return 50.0
-			case .oAllTraits:        return 11.0
-			case .oOwnedTraits:      return 11.0
-			case .oAllIdeas:         return  8.0
-			case .oNewIdeas:         return  7.0
-			case .oNeededIdeas:      return  6.0
-			case .oAdopt:            return  5.0
-			case .oTraits:           return  4.0
-			case .oResolve:          return  4.0
-			case .oManifest:         return  3.0
-			case .oFinishUp:         return  3.0
-			case .oSubscribe:        return  3.0
-			case .oRecount:          return  2.0
-			default:                 return  1.0
+			case .oRestoreIdeas:      return gCanLoad      ? 160 : 0
+			case .oMigrateFromCloud:  return gNeedsMigrate ?  50 : 0
+			case .oReadFile:          return gReadFiles    ?  30 : 0
+			case .oOwnedTraits:       return 11
+			case .oCloud:             return 10
+			case .oFetchUserRecord:   return  9
+			case .oAllTraits:         return  8
+			case .oAllIdeas:          return  8
+			case .oNewIdeas:          return  7
+			case .oNeededIdeas:       return  6
+			case .oMacAddress:        return  5
+			case .oUserPermissions:   return  5
+			case .oCheckAvailability: return  4
+			case .oObserveUbiquity:   return  4
+			case .oUbiquity:          return  4
+			case .oFetchUserID:       return  4
+			case .oResolve:           return  4
+			case .oTraits:            return  4
+			case .oRecount:           return  3
+			case .oManifest:          return  3
+			case .oFinishUp:          return  3
+			case .oSubscribe:         return  3
+			case .oAdopt:             return  2
+			default:                  return  1
 		}
 	}
 
@@ -257,7 +265,7 @@ class ZOperations: NSObject {
                     // susend queue until operation function calls its onCompletion //
                     // ///////////////////////////////////////////////////////////////
 
-					gStartup.count        += 1					// every op should advance progress bar
+					gStartup.count        += 1.0					// every op should advance progress bar
                     self.queue.isSuspended = true
 					self.lastOpStart       = Date()
                     self.currentOp         = operationID        // if hung, it happened inside this op
@@ -275,7 +283,7 @@ class ZOperations: NSObject {
 								gSetProgressTime(for: operationID)
 							}
 
-							gSignal([.sStatus, .sStartupProgress]) // show change in cloud status and startup progress
+							gSignal([.sStatus])            // show change in cloud status
 
 							// /////////////////////
                             // release suspension //

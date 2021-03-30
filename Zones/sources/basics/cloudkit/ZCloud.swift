@@ -981,8 +981,6 @@ class ZCloud: ZRecords {
 			add   (states: [.needsCount],                     to: fetchNeeded)
 
             queryForZonesWith(predicate, batchSize: kMaxBatchSize) { (iRecord, iError) in
-				gIncrementStartupProgress(0.03)
-
                 if  let ckRecord = iRecord {
 					if !self.childlessParents.contains(ckRecord.recordID.recordName) { // avoid repeats
 						retrievedRecords.appendUnique(contentsOf: [ckRecord])

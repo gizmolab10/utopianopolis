@@ -786,7 +786,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					child.register() // need to wait until after child has a parent so bookmarks will be registered properly
 				}
 
-				gIncrementStartupProgress(0.01)
+				gIncrementStartupProgress(0.024)
 			}
 
 			FOREGROUND(canBeDirect: true) {

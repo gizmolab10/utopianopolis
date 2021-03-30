@@ -57,22 +57,20 @@ func gSignal(for object: Any? = nil, _ multiple: [ZSignalKind], _ onCompletion: 
 	gControllers.signalFor(object, multiple: multiple, onCompletion: onCompletion)
 }
 
-private var progressIsQueued = false
+private var canUpdate = true
 
 func gUpdateStartupProgress() {
-	if !progressIsQueued && !gHasFinishedStartup {
-		progressIsQueued     = true
-		FOREGROUND(forced:     true) {
-			progressIsQueued = false
+	if  canUpdate && !gHasFinishedStartup {
+		canUpdate     = false                // semaphore to prevent a race condition while thread switching
+		FOREGROUND(forced: true) {
+			canUpdate = true
 			gStartupController?.fullStartupUpdate()
 		}
 	}
 }
 
 func gIncrementStartupProgress(_ increment: Double = 1.0) {
-	gStartup.count += increment
-
-	if  increment < 1.0, Int(gStartup.count * 10000.0) % 10000 < Int(increment * 100.0) {
+	if  gStartup.addShouldDisplay(increment) {
 		gUpdateStartupProgress()
 	}
 }
@@ -120,6 +118,7 @@ func ^^(lhs: Bool, rhs: Bool) -> Bool {
 
 extension NSObject {
 
+	func                  noop()                                {}
     func           performance(_ iMessage: Any?)                { log(iMessage) }
     func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
 	func     printCurrentFocus()                                { gHere.widget?.printView() }

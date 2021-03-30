@@ -35,7 +35,7 @@ class ZCoreDataStack: NSObject {
 	var          statusOpID : ZCDOperationID?                 { return currentOpID ?? waitingOpID}
 	var         waitingOpID : ZCDOperationID?
 	var         currentOpID : ZCDOperationID?
-	var availabilityClosure : Closure?
+	var     deferredClosure : Closure?
 
 	// MARK:- internals
 	// MARK:-
@@ -111,26 +111,29 @@ class ZCoreDataStack: NSObject {
 		return container
 	}()
 
-	// MARK:- internal
+	// MARK:- core data prefers one operation at a time
 	// MARK:-
 
-	func availabilityFire(_ iTimer: Timer?) {
-		if  currentOpID == nil {
-			currentOpID  = waitingOpID
-			waitingOpID  = nil
+	func deferralHappensMaybe(_ iTimer: Timer?) {
+		if  currentOpID == nil {       // nil means core data is no longer doing anything
+			currentOpID  = waitingOpID // must read this first, clear it next
+			waitingOpID  = nil         // set not waiting
 
-			iTimer?.invalidate()
-			gSignal([.sData])
-			availabilityClosure?()
+			iTimer?.invalidate()       // do not fire again, deferal is only once
+			gSignal([.sData])          // tell data detail view about it
+			deferredClosure?()         // do what was deferred
 		}
 	}
 
-	func deferUntilAvailable(for opID: ZCDOperationID, _ closure: @escaping Closure) {
-		waitingOpID         = opID     // so status text can show it
-		availabilityClosure = closure  // for availabilityFire to invoke
+	func deferUntilAvailable(for opID: ZCDOperationID, _ onAvailable: @escaping Closure) {
+		waitingOpID     = opID         // so status text can show it
+		deferredClosure = onAvailable  // for deferralHappensMaybe to invoke
 
-		gStartTimer(for: .tCoreDataAvailable)
+		gStartTimer(for: .tCoreDataDeferral)
 	}
+
+	// MARK:- internal
+	// MARK:-
 
 	func predicate(entityName: String, recordName: String?, databaseID: ZDatabaseID?) -> NSPredicate? {
 		if  let          name = recordName,

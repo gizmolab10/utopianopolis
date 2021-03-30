@@ -350,8 +350,6 @@ class ZBatches: ZOnboarding {
     override func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
-		gIncrementStartupProgress()
-
 		switch identifier {
 			case .oFavorites:                                                                      gFavorites.setup(cloudCallback)
 			case .oRecents:                                                                          gRecents.setup(cloudCallback)

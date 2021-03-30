@@ -139,7 +139,7 @@ func gAssureProgressTimesAreLoaded() {
 	if !gGotProgressTimes {
 		func setit(opInt: Int, value: Double?) {
 			if  let op = ZOperationID(rawValue: opInt) {
-				let time = value ?? op.progressTime
+				let time = value ?? Double(op.progressTime)
 
 				if  time > 1 {
 					gProgressTimes[op] = time
@@ -235,6 +235,11 @@ var gCurrentHelpMode: ZHelpMode {
 	set {
 		setPreferencesString(newValue.rawValue, for: kLastChosenCheatSheet)
 	}
+}
+
+var gNeedsMigrate : Bool {
+	get { return getPreferencesBool(   for: kNeedsMigrationKey, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kNeedsMigrationKey) }
 }
 
 var gShowEssayTitles : Bool {
@@ -678,8 +683,6 @@ var gLastLocation = NSPoint.zero
 func gThrowOnUserActivity() throws {
 	if  Thread.isMainThread {
 		if  gTestForUserActivity {
-			gUpdateStartupProgress()
-
 			throw(ZInterruptionError.userInterrupted)
 		}
 	} else {
