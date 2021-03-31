@@ -77,10 +77,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return 0
 	}
 
-	// MARK:- setup
+	// MARK:- clean up
 	// MARK:-
 
-	func done() { save(); exit() }
+	func done()      { save(); exit() }
+	func exit()      { gControllers.swapMapAndEssay(force: .wMapMode) } // calls fromEssayMode (below)
+	func ungrabAll() { grabbedNotes.removeAll() }
 
 	func save() {
 		if  let e = gCurrentEssay {
@@ -89,14 +91,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func exit() {
+	func prepareToExit(_ fromEssayMode: Bool = true) {
 		if  let e = gCurrentEssay,
 			e.lastTextIsDefault,
 			e.autoDelete {
 			e.zone?.deleteNote()
 		}
 
-		gControllers.swapMapAndEssay(force: .wMapMode)
+		if  fromEssayMode,
+			let zone = gCurrentEssayZone {
+			gHere    = zone
+
+			gHere.grab()
+		}
 	}
 
 	func grabDone() {
@@ -108,6 +115,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		done()
 	}
+
+	// MARK:- setup
+	// MARK:-
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
@@ -139,10 +149,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func resetForDarkMode() {
-//		layer?.backgroundColor = (gIsDark ? kDarkestGrayColor : kWhiteColor).cgColor
-	}
-
 	func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) {
 		if  let      note = current {
 			gCurrentEssay = note
@@ -158,6 +164,20 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				}
 			}
 		}
+	}
+
+	func resetForDarkMode() {
+		usesAdaptiveColorMappingForDarkAppearance = true
+		let                       backgroundColor = (gIsDark ?  kDarkestGrayColor : kWhiteColor).cgColor
+		let                            scrollView = superview?.superview as? NSScrollView
+		let                             rulerView = scrollView?.horizontalRulerView
+		let                              scroller = scrollView?.verticalScroller
+		let modeAppearance                        = NSAppearance(named: gIsDark ? .darkAqua : .aqua)
+		appearance                                = modeAppearance
+		rulerView?                    .appearance = modeAppearance
+		scroller?                     .appearance = modeAppearance
+		scroller?.zlayer         .backgroundColor = backgroundColor
+		zlayer                   .backgroundColor = backgroundColor
 	}
 
 	func updateText(restoreSelection: Int? = nil) {
@@ -594,7 +614,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					let dragHeight = 15.0
 					let  dragWidth = 11.75
 					let      color = zone.color ?? kDefaultIdeaColor
-					let     offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2
+					let     offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2     // first and last note have altered offset (thus, range)
 					let  noteRange = note.noteRange.offsetBy(offset)
 					let      inset = CGFloat(2.0)
 					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).insetEquallyBy(-inset)
@@ -616,8 +636,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return dots
 	}
 
-	func ungrabAll() { grabbedNotes.removeAll() }
-
 	// SHIFT single note expand to essay and vice-versa
 
 	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
@@ -638,10 +656,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func drawDragDecorations() {
 		if  gShowEssayTitles {
-			for dot in dragDots {
+			for (index, dot) in dragDots.enumerated() {
 				if  let     zone = dot.note?.zone {
 					let  grabbed = grabbedZones.contains(zone)
-					let selected = dot.noteRange?.extendedBy(-1).inclusiveIntersection(selectedRange) != nil
+					let extendBy = index == 0 ? kNoteIndentSpacer.length : -1        // fixes intersection computation, first and last note have altered range
+					let selected = dot.noteRange?.extendedBy(extendBy).inclusiveIntersection(selectedRange) != nil
 					let   filled = selected && !hasGrabbedNote
 					let    color = dot.color
 
