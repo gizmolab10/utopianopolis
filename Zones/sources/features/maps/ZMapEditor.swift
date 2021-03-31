@@ -1169,7 +1169,7 @@ class ZMapEditor: ZBaseEditor {
     func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
 		priorHere     = gHere
 
-		if  let grabs = moveables{
+		if  let grabs = moveables {
 			moveUp(iMoveUp, grabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKinds in
 				gSignal(iKinds)
 			}

@@ -25,6 +25,7 @@ var               gLaunchedAt                     = Date()
 var            gProgressTimes                     = [ZOperationID : Double]()
 var             gNeedsRecount                     = false
 var            gTextCapturing                     = false
+var            gDeferringPush                     = false
 var          gIsReadyToShowUI                     = false
 var          gDeferringRedraw                     = false
 var         gGotProgressTimes                     = false
@@ -634,8 +635,11 @@ var gWorkMode: ZWorkMode = .wStartupMode {
 
 var gCurrentEssay: ZNote? {
 	didSet {
-		gRecents.push(intoNotes: true)
 		setPreferencesString(gCurrentEssay?.identifier() ?? "", for: kCurrentEssay)
+
+		if  gHasFinishedStartup { // avoid creating confused recents view
+			gRecents.push(intoNotes: true)
+		}
 	}
 }
 

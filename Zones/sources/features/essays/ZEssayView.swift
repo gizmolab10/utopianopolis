@@ -166,21 +166,20 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  gCurrentEssay == nil {
 			gWorkMode = .wMapMode // not show blank essay
 		} else {
-			essayID   = gCurrentEssayZone?.ckRecord?.recordID
-
 			setControlBarButtons(enabled: true)
 
 			if  (shouldOverwrite || restoreSelection != nil),
 				let text = gCurrentEssay?.essayText {
 				discardPriorText()
-				gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }	     // emplace text
+				gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }   // emplace text
 				select(restoreSelection: restoreSelection)
 			}
 
-			delegate = self 					    	 // set delegate after setText
+			essayID  = gCurrentEssayZone?.ckRecord?.recordID                  // do this after overwriting
+			delegate = self 					    	                      // set delegate after setText
 
 			if  gIsEssayMode {
-				gMainWindow?.makeFirstResponder(self)    // this should never happen unless already in essay mode
+				gMainWindow?.makeFirstResponder(self)                         // this should never happen unless already in essay mode
 			}
 		}
 	}
@@ -628,7 +627,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				scrollToGrabbed()
 				gSignal([.sDetails])
 			}
-		} else if (arrow == .left && relativeLevelOfFirstGrabbed > 1) || ([.up, .down, .right].contains(arrow) && relativeLevelOfFirstGrabbed > 0){
+		} else if (arrow == .left && relativeLevelOfFirstGrabbed > 1) || ([.up, .down, .right].contains(arrow) && relativeLevelOfFirstGrabbed > 0) {
+			gCurrentEssay?.saveEssay(textStorage)
+
 			gMapEditor.handleArrow(arrow, flags: flags) {
 				self.resetTextAndGrabs()
 			}
@@ -744,10 +745,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func swapWithParent() {
 		if !firstIsGrabbed {
-			let parent = firstGrabbedZone!.parentZone  // get parent before swap
+			gCurrentEssay?.saveEssay(textStorage)
 
-			firstGrabbedZone!.swapWithParent {
-				self.resetTextAndGrabs(grab: parent)
+			let parent = firstGrabbedZone!.parentZone  // get the parent before we swap
+
+			gDeferPush {
+				firstGrabbedZone!.swapWithParent {
+					self.resetTextAndGrabs(grab: parent)
+				}
 			}
 		}
 	}
@@ -768,9 +773,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func resetTextAndGrabs(grab: Zone? = nil) {
-		var grabbed = ZoneArray()
+		var   grabbed = ZoneArray()
+		essayID       = nil                             // so shouldOverwrite will return true
 
 		grabbed.append(contentsOf: grabbedZones)      // copy current grab's zones aside
+		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
 
 		if  let  zone = grab {
 			grabbed   = [zone]
@@ -782,7 +789,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		ungrabAll()
 		gCurrentEssayZone?.recount()                  // update levels
-		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
 		updateText()
 
 		for zone in grabbed {                         // re-grab notes for set aside zones
@@ -1079,6 +1085,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let current = gCurrentEssay,
 			let    zone = current.zone {
 			let   count = zone.countOfNotes
+
+			current.saveEssay(textStorage)
 
 			if  current.isNote {
 				if  count                > 1 {

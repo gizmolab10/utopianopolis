@@ -89,6 +89,14 @@ func gDeferRedraw(_ closure: Closure) {
 	}
 }
 
+func gDeferPush(_ closure: Closure) {
+	gDeferringPush = true
+
+	closure()
+
+	gDeferringPush = false   // in case closure doesn't set it
+}
+
 func gCompareZones(_ a: AnyObject, _ b: AnyObject) -> Bool {
 	if  let alpha = (a as? Zone)?.ckRecordName,
 		let  beta = (b as? Zone)?.ckRecordName {

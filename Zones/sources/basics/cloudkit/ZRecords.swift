@@ -102,11 +102,12 @@ class ZRecords: NSObject {
 
     var hereRecordName: String? {
 		set {
-			if  let         value = newValue,
-				let         index = databaseID.index {
-				var    references = allSafeHereReferences
-				references[index] = value
-				gHereRecordNames  = references.joined(separator: kColonSeparator)
+			var        references  = allSafeHereReferences
+			if  let         index  = databaseID.index,
+				let         value  = newValue,
+				references[index] != value {
+				references[index]  = value
+				gHereRecordNames   = references.joined(separator: kColonSeparator)
 			}
 		}
 
@@ -121,22 +122,16 @@ class ZRecords: NSObject {
     }
 
 	var allSafeHereReferences: [String] {
-		var    references = gHereRecordNames.components(separatedBy: kColonSeparator)
+		var     references = gHereRecordNames.components(separatedBy: kColonSeparator)
+		var     incomplete = false
 
 		while  references.count < 4 {
-			let     index = references.count
-			if  let  dbid = ZDatabaseIndex(rawValue: index)?.databaseID,
-				let  name = gRemoteStorage.zRecords(for: dbid)?.rootZone?.ckRecordName {
+			let      index = references.count
+			if  let   dbid = ZDatabaseIndex(rawValue: index)?.databaseID,
+				let   name = gRemoteStorage.zRecords(for: dbid)?.rootZone?.ckRecordName {
+				incomplete = true
 				references.append(name)
 			}
-		}
-
-		if  gRemoteStorage.maybeZoneForRecordName(references[2]) == nil {
-			references[2] = kFavoritesRootName
-		}
-
-		if  gRemoteStorage.maybeZoneForRecordName(references[3]) == nil {
-			references[3] = kRecentsRootName
 		}
 
 		// enforce difference between favorites and recents
@@ -144,9 +139,12 @@ class ZRecords: NSObject {
 		if  references[2] == references[3] {
 			references[2] = kFavoritesRootName // reset to default
 			references[3] = kRecentsRootName
+			incomplete    = true
 		}
 
-		gHereRecordNames = references.joined(separator: kColonSeparator)
+		if  incomplete {
+			gHereRecordNames = references.joined(separator: kColonSeparator)
+		}
 
 		return references
 	}
