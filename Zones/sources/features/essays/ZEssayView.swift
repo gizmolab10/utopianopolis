@@ -414,6 +414,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func handleClick(with event: ZEvent) -> Bool {
 		let              rect = rectFromEvent(event)
+		let     singleleClick = event.clickCount < 2
 		if  let        attach = attachmentHit(at: rect) {
 			resizeDot         = resizeDotHit(in: attach, at: rect)
 			resizeDragStart   = rect.origin
@@ -422,16 +423,22 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return resizeDot != nil // true means do not further process this event
 		} else if let     dot = dragDotHit(at: rect),
 				  let    note = dot.note {
-			if  let     index = grabbedNotes.firstIndex(of: note) {
+			if  let     index = grabbedNotes.firstIndex(of: note),
+				singleleClick {
 				grabbedNotes.remove(at: index)
 			} else {
-				if !event.modifierFlags.isShift {
+				if !event.modifierFlags.isShift,
+				    singleleClick {
 					ungrabAll()
 				}
 
-				grabbedNotes.appendUnique(contentsOf: [note])
-				setNeedsDisplay()
-				gSignal([.sDetails])
+				if !singleleClick {
+					swapBetweenNoteAndEssay()
+				} else {
+					grabbedNotes.appendUnique(contentsOf: [note])
+					setNeedsDisplay()
+					gSignal([.sDetails])
+				}
 			}
 
 			return true
