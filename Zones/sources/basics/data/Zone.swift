@@ -1892,6 +1892,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  COMMAND, target.invokeEssay() { // first, check if target has an essay
 				onCompletion?()
 			} else {
+				if  gIsEssayMode {
+					gControllers.swapMapAndEssay(force: .wMapMode)
+				}
+
 				focusOnBookmarkTarget() { object, kind in
 					#if os(iOS)
 					gActionsController.alignView()
@@ -1901,6 +1905,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			return true
+		}
+
+		if  gIsEssayMode {
+			gControllers.swapMapAndEssay(force: .wMapMode)
 		}
 
 		return false
@@ -1917,13 +1925,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	@discardableResult func invokeEssay() -> Bool { // false means not handled
+	func invokeEssay() -> Bool { // false means not handled
 		if  hasNote {
 			grab()
 
 			gCurrentEssay = note
 
-			gControllers.swapMapAndEssay()
+			if  gIsEssayMode {
+				gEssayView?.updateText()
+			} else {
+				gControllers.swapMapAndEssay()
+			}
 
 			return true
 		}
@@ -3005,15 +3017,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- dots
 	// MARK:-
 
-	func revealDotClicked(COMMAND: Bool, OPTION: Bool) {
-		gTextEditor.stopCurrentEdit()
-
-		// ungrab progeny
+	func ungrabProgeny() {
 		for     grabbed in gSelecting.currentMapGrabs {
 			if  grabbed != self && grabbed.spawnedBy(self) {
 				grabbed.ungrab()
 			}
 		}
+	}
+
+	func revealDotClicked(COMMAND: Bool, OPTION: Bool) {
+		gTextEditor.stopCurrentEdit()
+
+		ungrabProgeny()
 
 		if  canTravel && (COMMAND || (fetchableCount == 0 && count == 0)) {
 			invokeTravel(COMMAND) { // email, hyperlink, bookmark, essay
@@ -3021,6 +3036,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else {
 			let show = !expanded
+
+			if  gIsEssayMode {
+				gControllers.swapMapAndEssay(force: .wMapMode)
+			}
 
 			if  isInSmallMap {
 				expandInSmallMap(show)

@@ -375,12 +375,12 @@ extension ZTextView {
 		return result
 	}
 
-	@objc override func printView() {
+	@objc override func printView() { // ZTextView
 		var view: NSView = self
 		let    printInfo = NSPrintInfo.shared
 		let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
 		if  let    tView = view as? NSTextView {
-			let    frame = CGRect(origin: .zero, size: CGSize(width: 7.0 * 72.0, height: 9.5 * 72.0))
+			let    frame = CGRect(origin: .zero, size: CGSize(width: 6.5 * 72.0, height: 9.5 * 72.0))
 			let    nView = NSTextView(frame: frame)
 			view         = nView
 
@@ -472,7 +472,7 @@ extension NSView {
         return min(wScale, hScale)
     }
 
-	@objc func printView() {
+	@objc func printView() { // NSView
 		var view: NSView = self
 		var       vScale = scale
 		let      isWider = view.bounds.size.width > view.bounds.size.height

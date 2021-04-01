@@ -8,22 +8,24 @@
 
 import Foundation
 
-let essayPrefixArray = Array(repeating: "", count: 3 * 12)
+let essayPrefixArray = Array(repeating: "", count: 3 * 14)
 
 class ZHelpEssayData: ZHelpData {
 
 	override var noTabPrefix   :   String   { return "                    " }
 	override var columnStrings : [[String]] { return [essayColumnOne, essayColumnTwo] }
 	override var tabOffsets    :   [Int]    { return [0, 20, 180] }
+	override var rowHeight     :   CGFloat  { return 15.0 }
 
 	let essayColumnOne: [String] = essayPrefixArray + [
 		"",																								"",	"",
 		"!GRAPHICS",																					"",	"",
 		"",																								"",	"",
-		"_drag dot",					"click to grab or ungrab the note",									"",
-		".b",							"filled dot indicates note contains cursor or is grabbed",			"",
+		"_drag dot",					"filled dot indicates note contains cursor or is grabbed",			"",
+		".b",							"click to grab or ungrab the note",									"",
+		"0        ",					"double-click to toggle between note and essay",					"",
 		"",																								"",	"",
-		"_reveal dot",					"COMMAND-click it to edit the note or essay, when it ...",			"",
+		"_reveal dot",					"in maps: COMMAND-click it to edit the note or essay, when it ...",	"",
 		".f",							"has two tiny dots inside",											"",
 		"",																								"",	""
 	]
@@ -33,18 +35,21 @@ class ZHelpEssayData: ZHelpData {
 		"!KEYS, ALWAYS",							 													"", "",
 		"",																								"",	"",
 		"_KEY",			 																				"", "",
-		"0ESCAPE", 						"discard unsaved changes and exit editor",				 			"",
+		"0ESCAPE", 						"discard unsaved changes and exit the editor",			 			"",
 		"",																								"",	"",
 		"_COMMAND + KEY", 																				"", "",
-		"0RETURN", 						"save changes and exit editor",										"",
+		"0RETURN", 						"save changes and exit the editor",									"",
 		"0[ or ]",						"save changes and edit the prior or next essay (or note)",			"",
 		"0S",							"save changes",														"",
+		"",																								"",	"",
+		"_COMMAND + OPTION + CONTROL + KEY", 															"", "",
+		"0LEFT ARROW", 					"edit the containing essay",										"",
 		"",																								"",	"",
 		"",																								"",	"",
 		"!KEYS, WHEN NO NOTES ARE GRABBED",			 													"", "",
 		"",																								"",	"",
 		"_COMMAND + KEY", 																				"", "",
-		"0N",							"save changes and swap between essay and note",						"",
+		"0N",							"save changes and toggle between essay and note",					"",
 		"",																								"",	"",
 		"",																								"",	"",
 		"!WHEN ONE OR MORE NOTES ARE GRABBED", 															"", "",
@@ -53,6 +58,7 @@ class ZHelpEssayData: ZHelpData {
 		"0ARROWS (vertical)",			"grab a different note", 											"",
 		"0ARROWS (vertical) + SHIFT",	"grab an additional note", 											"",
 		"0ARROWS + OPTION",				"move them", 														"",
+		"0ESCAPE", 						"ungrab them",			 											"",
 		"0DELETE", 						"destroy and remove them",											"",
 		"0N",							"save changes and swap between essay and first grabbed note",		"",
 		"",					 																			"",	""

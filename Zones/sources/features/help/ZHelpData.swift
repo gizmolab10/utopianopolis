@@ -17,7 +17,7 @@ enum ZHelpDotType: String {
 	case three      = "3"
 	case click      = "points"
 	case email      = "email"
-	case essay      = "filled"
+	case essay      = "click"
 	case twelve     = "12"
 	case progeny    = "only"
 	case favorite   = "this"

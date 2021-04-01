@@ -80,9 +80,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- clean up
 	// MARK:-
 
-	func done()      { save(); exit() }
-	func exit()      { gControllers.swapMapAndEssay(force: .wMapMode) } // calls fromEssayMode (below)
-	func ungrabAll() { grabbedNotes.removeAll() }
+	func done() {
+		save()
+		exit()
+	}
+
+	func exit() {
+		ungrabAll()
+		prepareToExit()
+		gControllers.swapMapAndEssay(force: .wMapMode)
+	}
 
 	func save() {
 		if  let e = gCurrentEssay {
@@ -91,15 +98,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func prepareToExit(_ fromEssayMode: Bool = true) {
+	func prepareToExit() {
 		if  let e = gCurrentEssay,
 			e.lastTextIsDefault,
 			e.autoDelete {
 			e.zone?.deleteNote()
 		}
 
-		if  fromEssayMode,
-			let zone = gCurrentEssayZone {
+		if  let zone = gCurrentEssayZone {
 			gHere    = zone
 
 			gHere.grab()
@@ -282,7 +288,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				asssureSelectionIsVisible()
 			}
 
-			gControllers.swapMapAndEssay()
+			done()
 
 			return true
 		} else if  COMMAND {
@@ -557,7 +563,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch result {
 				case .eAlter: return true
 				case .eLock:  return false
-				case .eExit:  gControllers.swapMapAndEssay()
+				case .eExit:  exit()
 				case .eDelete:
 					FOREGROUND {										// DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
 						gCurrentEssay?.reset()
@@ -646,18 +652,28 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// SHIFT single note expand to essay and vice-versa
 
 	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
-		if  !flags.isOption {
-			if  [.up, .down].contains(arrow) {
-				grabNextNote(up: arrow == .up, ungrab: !flags.isShift)
-				scrollToGrabbed()
-				gSignal([.sDetails])
-			}
-		} else if (arrow == .left && relativeLevelOfFirstGrabbed > 1) || ([.up, .down, .right].contains(arrow) && relativeLevelOfFirstGrabbed > 0) {
-			gCurrentEssay?.saveEssay(textStorage)
+		let indents = relativeLevelOfFirstGrabbed
 
-			gMapEditor.handleArrow(arrow, flags: flags) {
-				self.resetTextAndGrabs()
+		if  flags.isOption {
+			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
+				gCurrentEssay?.saveEssay(textStorage)
+
+				gMapEditor.handleArrow(arrow, flags: flags) {
+					self.resetTextAndGrabs()
+				}
 			}
+		} else if flags.isShift {
+			if [.left, .right].contains(arrow) {
+				// conceal reveal subnotes of grabbed (NEEDS new ZEssay code)
+			}
+		} else if indents == 0 {
+			if  arrow == .left {
+				done()
+			}
+		} else if [.up, .down].contains(arrow) {
+			grabNextNote(up: arrow == .up, ungrab: !flags.isShift)
+			scrollToGrabbed()
+			gSignal([.sDetails])
 		}
 	}
 
@@ -798,12 +814,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return false
 	}
 
-	func resetTextAndGrabs(grab: Zone? = nil) {
-		var   grabbed = ZoneArray()
-		essayID       = nil                             // so shouldOverwrite will return true
+	func ungrabAll() { grabbedNotes.removeAll() }
+
+	func regrab(_ ungrabbed: ZoneArray) {
+		for zone in ungrabbed {                         // re-grab notes for set aside zones
+			if  let note = zone.note {                // note may not be same
+				grabbedNotes.appendUnique(contentsOf: [note])
+			}
+		}
+	}
+
+	func willRegrab(grab: Zone? = nil) -> ZoneArray {
+		var grabbed = ZoneArray()
 
 		grabbed.append(contentsOf: grabbedZones)      // copy current grab's zones aside
-		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
+		ungrabAll()
 
 		if  let  zone = grab {
 			grabbed   = [zone]
@@ -813,16 +838,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 		}
 
-		ungrabAll()
+		return grabbed
+	}
+
+	func resetTextAndGrabs(grab: Zone? = nil) {
+		let   grabbed = willRegrab(grab: grab)        // includes logic for optional grab parameter
+		essayID       = nil                           // so shouldOverwrite will return true
+
+		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
 		gCurrentEssayZone?.recount()                  // update levels
 		updateText()
-
-		for zone in grabbed {                         // re-grab notes for set aside zones
-			if  let note = zone.note {                // note may not be same
-				grabbedNotes.appendUnique(contentsOf: [note])
-			}
-		}
-
+		regrab(grabbed)
 		scrollToGrabbed()
 		gSignal([.sCrumbs, .sDetails])
 	}
@@ -856,7 +882,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idSave:    save()
 				case .idHide:                          grabDone()
 				case .idCancel:                        gCurrentEssayZone?.grab();       exit()
-				case .idDelete:  if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); exit() }
+				case .idDelete:  if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); done() }
 				case .idTitles:  toggleEssayTitles()
 			}
 		}
@@ -1133,7 +1159,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func popNoteAndUpdate() {
 		if  gRecents.pop() {
-			exit()
+			done()
 		} else {
 			updateText()
 		}
@@ -1179,8 +1205,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
 			} else {
-				exit()
 				child.grab()
+				done()
 
 				FOREGROUND {											// defer idea edit until after this function exits
 					child.edit()
@@ -1322,7 +1348,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 							eZone?.asssureIsVisible()
 
 							FOREGROUND {
-								gControllers.swapMapAndEssay(force: .wMapMode)
+								self.done()
 								gRedrawMaps()
 							}
 

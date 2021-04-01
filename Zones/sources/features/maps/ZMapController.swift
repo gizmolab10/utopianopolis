@@ -246,12 +246,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             gSearching.exitSearchMode()
         }
 
-		if  gIsEssayMode {
-			gEssayView?.save()
-			gControllers.swapMapAndEssay(force: .wMapMode)
-		}
-
-		if  gIsMapOrEditIdeaMode,
+		if (gIsMapOrEditIdeaMode || gIsEssayMode),
 			let    gesture = iGesture {
             let    COMMAND = gesture.isCommandDown
 			let     OPTION = gesture.isOptionDown
@@ -274,7 +269,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             }
 
             if  notInEdit {
-				gSetBigMapMode()
+
+				if !gIsEssayMode {
+					gSetBigMapMode()
+				}
+
 				gTextEditor.stopCurrentEdit()
 
 				if  let   widget = detectWidget(gesture) {
@@ -296,7 +295,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 							}
 						}
 					}
-				} else {
+				} else if gIsMapMode {
 
 					// //////////////////////
 					// click in background //
@@ -307,7 +306,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					} else if !kIsPhone {	// default reaction to click on background: select here
 						gHereMaybe?.grab()  // safe version of here prevent crash early in launch
 					}
-                }
+                } else if gIsEssayMode {
+					gControllers.swapMapAndEssay(force: .wMapMode)
+				}
+
 
                 gSignal(multiple)
             }
