@@ -666,9 +666,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if [.left, .right].contains(arrow) {
 				// conceal reveal subnotes of grabbed (NEEDS new ZEssay code)
 			}
-		} else if indents == 0 {
-			if  arrow == .left {
+		} else if arrow == .left {
+			if  indents == 0 {
 				done()
+			} else {
+				swapBetweenNoteAndEssay()
 			}
 		} else if [.up, .down].contains(arrow) {
 			grabNextNote(up: arrow == .up, ungrab: !flags.isShift)

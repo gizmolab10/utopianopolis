@@ -1709,9 +1709,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func deleteNote() {
 		removeTrait(for: .tNote)
-		gRecents.pop(self)
+		gRecents.removeBookmark(for: self)
 
-		noteMaybe = nil
+		gCurrentEssay = nil
+		noteMaybe     = nil
 
 		FOREGROUND {
 			self.recount()

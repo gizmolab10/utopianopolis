@@ -38,12 +38,12 @@ class ZSmallMapController: ZMapController {
 	}
 
 	override func startup() {
-		setup() // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
+		setup()                                                // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
 		gBreadcrumbsController?.mapControls?.setupAndRedraw()
 	}
 
-	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
-		return gMapController?.handleDragGesture(iGesture) ?? false // use drag view coordinates from big (not small) map controller
+	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {   // true means handled
+		return gMapController?.handleDragGesture(iGesture) ?? false                    // use drag view coordinates from big (not small) map controller
 	}
 
 }
