@@ -89,12 +89,12 @@ func gDeferRedraw(_ closure: Closure) {
 	}
 }
 
-func gDeferPush(_ closure: Closure) {
-	gDeferringPush = true
+func gDisablePush(_ closure: Closure) {
+	gPushIsDisabled = true
 
 	closure()
 
-	gDeferringPush = false   // in case closure doesn't set it
+	gPushIsDisabled = false
 }
 
 func gCompareZones(_ a: AnyObject, _ b: AnyObject) -> Bool {

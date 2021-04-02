@@ -35,12 +35,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { setSelectedRange(NSRange()) } else if oldValue != nil { eraseAttachment = oldValue } } }
 	var eraseAttachment : ZRangedAttachment?
 	var grabbedZones    : [Zone]             { return grabbedNotes.map { $0.zone! } }
+	var firstNote       : ZNote?             { return dragDots[0].note }
 	var selectedNote    : ZNote?             { return selectedNotes.first }
 	var selectedZone    : Zone?              { return selectedNote?.zone }
-	var firstGrabbedZone: Zone?              { return hasGrabbedNote ? grabbedZones[0] : nil }
+	var firstGrabbedNote: ZNote?             { return hasGrabbedNote ? grabbedNotes[0] : nil }
+	var firstGrabbedZone: Zone?              { return firstGrabbedNote?.zone }
 	var hasGrabbedNote  : Bool               { return grabbedNotes.count != 0 }
 	var lockedSelection : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
-	var firstIsGrabbed  : Bool               { return hasGrabbedNote && firstGrabbedZone == dragDots[0].note?.zone }
+	var firstIsGrabbed  : Bool               { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
 	var selectedNotes   : [ZNote]            { return dragDots.filter { $0.noteRange != nil && selectedRange.intersects($0.noteRange!.extendedBy(1)) } .map { $0.note! } }
 	var backwardButton  : ZButton?
@@ -190,7 +192,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		resetForDarkMode()
 
 		if  gCurrentEssay == nil {
-			gWorkMode = .wMapMode // not show blank essay
+			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
 		} else {
 			setControlBarButtons(enabled: true)
 
@@ -258,7 +260,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
 		let  OPTION = flags.isOption
-		let SPECIAL = OPTION && COMMAND
 		let     ALL = OPTION && CONTROL
 		let FLAGGED = OPTION || COMMAND || CONTROL
 
@@ -275,7 +276,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "t":     swapWithParent()
 				case "n":     swapBetweenNoteAndEssay()
 				case "/",
-					 kEscape: if SPECIAL { gHelpController?.show(flags: flags) } else { ungrabAll(); setNeedsDisplay(); gSignal([.sDetails]) }
+					 kEscape: gHelpController?.show(flags: flags)
 				case kDelete: deleteGrabbed()
 				case kReturn: if FLAGGED { grabDone() }
 
@@ -305,7 +306,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "s":      save()
 				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-				case "/":      if OPTION { gHelpController?.show(flags: flags) } else { grabSelected() }
+				case "=":      grabSelected()
+				case "/":      gHelpController?.show(flags: flags)
 				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
 				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
 				case kReturn:  grabDone()
@@ -758,16 +760,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			var ungrab = true
 
 			for note in selectedNotes {
-				if  note.zone != gCurrentEssay?.zone {   // do not grab essay
-					if  ungrab {
-						ungrab = false
-						ungrabAll()
-					}
-
-					grabbedNotes.appendUnique(contentsOf: [note])
-					scrollToGrabbed()
-					gSignal([.sDetails])
+				if  ungrab {
+					ungrab = false
+					ungrabAll()
 				}
+
+				grabbedNotes.appendUnique(contentsOf: [note])
+				scrollToGrabbed()
+				setNeedsDisplay()
+				gSignal([.sDetails])
 			}
 		}
 	}
@@ -788,13 +789,23 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func swapWithParent() {
-		if !firstIsGrabbed {
+		if !firstIsGrabbed,
+		    let note = firstGrabbedNote,
+			let zone = note.zone {
 			gCurrentEssay?.saveEssay(textStorage)
+			gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
+			gCurrentEssayZone?.recount()                  // update levels
+			ungrabAll()
 
-			let parent = firstGrabbedZone!.parentZone  // get the parent before we swap
+			let parent = zone.parentZone                  // get the parent before we swap
+			let  reset = parent == self.firstNote?.zone   // check if current esssay should change
 
-			gDeferPush {
-				firstGrabbedZone!.swapWithParent {
+			gDisablePush {
+				zone.swapWithParent {
+					if  reset {
+						gCurrentEssay = ZEssay(zone)
+					}
+
 					self.resetTextAndGrabs(grab: parent)
 				}
 			}
@@ -827,16 +838,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func willRegrab(grab: Zone? = nil) -> ZoneArray {
-		var grabbed = ZoneArray()
+		var           grabbed = ZoneArray()
 
 		grabbed.append(contentsOf: grabbedZones)      // copy current grab's zones aside
 		ungrabAll()
 
-		if  let  zone = grab {
-			grabbed   = [zone]
+		if  let          zone = grab {
+			grabbed           = [zone]
 
-			if  zone == gCurrentEssay?.zone {
-				gCurrentEssay = ZEssay(firstGrabbedZone!)
+			if  zone         == gCurrentEssay?.zone,
+				let     first = firstGrabbedZone {
+				gCurrentEssay = ZEssay(first)
 			}
 		}
 
@@ -849,7 +861,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
 		gCurrentEssayZone?.recount()                  // update levels
-		updateText()
+		updateText()                                  // assume text has been altered: re-assemble it
 		regrab(grabbed)
 		scrollToGrabbed()
 		gSignal([.sCrumbs, .sDetails])
@@ -1108,6 +1120,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- search
 	// MARK:-
 
+	func grabSelectedTextForSearch() {
+		gSearching.searchText = selectionString
+	}
+
 	func searchAgain(_ OPTION: Bool) {
 	    let    seek = gSearching.searchText
 		var  offset = selectedRange.upperBound + 1
@@ -1126,10 +1142,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			scrollToVisible(selectionRect)
 			setSelectedRange(matches![0].offsetBy(offset))
 		}
-	}
-
-	func grabSelectedTextForSearch() {
-		gSearching.searchText = selectionString
 	}
 
 	// MARK:- more

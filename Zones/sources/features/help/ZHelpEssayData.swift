@@ -55,11 +55,13 @@ class ZHelpEssayData: ZHelpData {
 		"!WHEN ONE OR MORE NOTES ARE GRABBED", 															"", "",
 		"",																								"",	"",
 		"_KEY",			 																				"", "",
+		"0ESCAPE", 						"ungrab them",			 											"",
+		"0DELETE", 						"destroy and remove them",											"",
 		"0ARROWS (vertical)",			"grab a different note", 											"",
 		"0ARROWS (vertical) + SHIFT",	"grab an additional note", 											"",
 		"0ARROWS + OPTION",				"move them", 														"",
-		"0ESCAPE", 						"ungrab them",			 											"",
-		"0DELETE", 						"destroy and remove them",											"",
+		"0LEFT ARROW",					"top is grabbed: save changes and exit the editor",					"",
+		"0         ",					"else: same as N, below",											"",
 		"0N",							"save changes and swap between essay and first grabbed note",		"",
 		"",					 																			"",	""
 	]

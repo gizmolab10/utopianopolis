@@ -53,7 +53,7 @@ class ZRecents : ZSmallMapRecords {
 	}
 
 	override func push(intoNotes: Bool = false) {
-		if !gDeferringPush,
+		if !gPushIsDisabled,
 			rootZone != nil {
 			var here  = gHereMaybe
 

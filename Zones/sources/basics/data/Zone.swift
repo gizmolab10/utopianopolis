@@ -1711,8 +1711,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		removeTrait(for: .tNote)
 		gRecents.removeBookmark(for: self)
 
-		gCurrentEssay = nil
-		noteMaybe     = nil
+		noteMaybe = nil
 
 		FOREGROUND {
 			self.recount()
