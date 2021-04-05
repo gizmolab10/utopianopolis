@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 
-
 enum ZGridID : Int {
 	case idCollapse
 	case idUp
@@ -22,30 +21,26 @@ enum ZGridID : Int {
 	case idExtend
 }
 
+// grid of buttons for easy use on iPhone
 
 class ZGridController: UICollectionViewController {
 	
-	
 	var selectionOnly = true
 	var       extends = false
-	
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		collectionView.register(ZGridCell.self, forCellWithReuseIdentifier: "gridCell")
 		update()
 	}
-	
 
 	func update() {
 		collectionView.reloadData()
 	}
-	
 
 	override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 		return 9
 	}
-	
 
 	override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "gridCell", for: indexPath as IndexPath) as! ZGridCell
@@ -83,7 +78,6 @@ class ZGridController: UICollectionViewController {
 
 		return cell
 	}
-	
 	
 	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if  let    gridIID = ZGridID(rawValue: indexPath.row) {

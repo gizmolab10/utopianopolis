@@ -113,19 +113,19 @@ enum ZWorkMode: String {
 }
 
 enum ZHelpMode: String {
-	case mediumMode = "m"
+	case middleMode = "m"
 	case basicMode  = "b"
 	case essayMode  = "e"
-	case allMode    = "a"
+	case proMode    = "a"
 	case dotMode    = "d"
 	case noMode     = " "
 
 	var title: String {
 		switch self {
-			case .mediumMode: return "intermediate keys"
-			case .essayMode:  return "notes and essays"
+			case .middleMode: return "intermediate keys"
+			case .essayMode:  return "notes & essays"
 			case .basicMode:  return "basic keys"
-			case .allMode:    return "all keys"
+			case .proMode:    return "all keys"
 			case .dotMode:    return "dots"
 			default:          return ""
 		}
@@ -142,10 +142,10 @@ enum ZHelpType: String {
 	case hBold      = "!"
 	case hDots      = "."
 	case hSkip      = "="
+	case hExtra     = "+"
 	case hEmpty     = "-"
-	case hPlain     = "0"
-	case hInsert    = "+"
-	case hMedium    = "1"
+	case hBasic     = "0"
+	case hIntermed  = "1"
 	case hUnderline = "_"
 }
 

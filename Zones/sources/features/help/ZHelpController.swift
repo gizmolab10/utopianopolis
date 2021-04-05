@@ -17,7 +17,7 @@ import SnapKit
 
 var gHelpWindowController       : NSWindowController?         // instantiated once, in startupCloudAndUI
 var gHelpController             : ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
-let gAllHelpModes : [ZHelpMode] = [.dotMode, .basicMode, .mediumMode, .allMode, .essayMode]
+let gAllHelpModes : [ZHelpMode] = [.dotMode, .basicMode, .middleMode, .proMode, .essayMode]
 
 class ZHelpController: ZGenericTableController {
 
@@ -213,7 +213,7 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	func updateGridVisibility() {
-		let graphModes: [ZHelpMode] = [.basicMode, .mediumMode, .allMode]
+		let graphModes: [ZHelpMode] = [.basicMode, .middleMode, .proMode]
 
 		func shouldShow(_ mode: ZHelpMode) -> Bool {
 			let sameMode  = mode == gCurrentHelpMode

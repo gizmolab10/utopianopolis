@@ -70,10 +70,10 @@ class ZHelpButtonsView : ZButtonsView {
 	func actuateNextButton(forward: Bool) {
 		var    mode = gCurrentHelpMode
 		switch mode {
-			case .basicMode:  mode = forward ? .mediumMode : .dotMode
-			case .mediumMode: mode = forward ? .allMode    : .basicMode
-			case .allMode:    mode = forward ? .essayMode  : .mediumMode
-			case .essayMode:  mode = forward ? .dotMode    : .allMode
+			case .basicMode:  mode = forward ? .middleMode : .dotMode
+			case .middleMode: mode = forward ? .proMode    : .basicMode
+			case .proMode:    mode = forward ? .essayMode  : .middleMode
+			case .essayMode:  mode = forward ? .dotMode    : .proMode
 			case .dotMode:    mode = forward ? .basicMode  : .essayMode
 			default:          break
 		}

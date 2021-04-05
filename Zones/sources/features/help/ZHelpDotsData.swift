@@ -22,10 +22,11 @@ class ZHelpDotsData: ZHelpData {
 		"",						"",																				"",
 		"!DRAG DOT",			"click to select, deselect or drag",											"",
 		"",						"",																				"",
-		"_drag dot",			"filled dots indicate idea is selected",										"",
+		"_drag dot",			"filled dot indicates idea is selected",										"",
 		".b",					"editable",																		"",
 		".b",					"not editable",																	"",
-		".b",					"only ideas in its list and sublists are editable",								"",
+		".b",					"only the ideas in all its sublists are editable",								"",
+		".b",					"cycle of related ideas (independent of editable)",								"",
 		"",						"",																				"",
 		"_appears only in the favorite and recent lists",													"",	"",
 		".b",					"this bookmark's target is current focus",										""
