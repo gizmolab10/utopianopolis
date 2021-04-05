@@ -26,9 +26,10 @@ struct  ZDotParameters {
 	var isDrop        : Bool            = false
 	var filled        : Bool            = false
 	var isReveal      : Bool            = false
-	var showSideDot   : Bool            = false
+	var isRelated     : Bool            = false
 	var isBookmark    : Bool            = false
 	var isNotemark    : Bool            = false
+	var showSideDot   : Bool            = false
 	var showAccess    : Bool            = false
 	var showList      : Bool            = false
 	var traitType     : String          = ""
@@ -241,15 +242,22 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		path.fill()
 	}
 
-	func drawTraitIndicator(for string: String, isFilled: Bool, color: ZColor, isForMap: Bool = true, in iDirtyRect: CGRect) {
-		let    width = CGFloat(gDotHeight - 2.0) * ratio
-		let     font = ZFont.boldSystemFont(ofSize: width)
-		let     size = string.sizeWithFont(font)
-		let    ratio = ZTraitType(rawValue: string)?.heightRatio ?? 1.0
-		let   height = size.height * ratio + (isForMap ? 1.0 : -8.0)
-		let   xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
-		let   yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
-		let     rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: (height / 12.0) - 1)
+	func drawRelatorLine(in iDirtyRect: CGRect) {
+		let rect = iDirtyRect.centeredHorizontalLine(height: 1.5)
+
+		ZBezierPath(rect: rect).fill()
+	}
+
+	func drawTraitDecorations(for parameters: ZDotParameters, color: ZColor, isForMap: Bool = true, in iDirtyRect: CGRect) {
+		let string = parameters.traitType
+		let  width = CGFloat(gDotHeight - 2.0) * ratio
+		let   font = ZFont.boldSystemFont(ofSize: width)
+		let   size = string.sizeWithFont(font)
+		let  ratio = ZTraitType(rawValue: string)?.heightRatio ?? 1.0
+		let height = size.height * ratio + (isForMap ? 1.0 : -8.0)
+		let xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
+		let yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
+		let   rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: (height / 12.0) - 1)
 
 		string.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
 	}
@@ -281,17 +289,25 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 				// TRAIT INDICATOR //
 				// //////////////////
 
-				drawTraitIndicator(for: parameters.traitType, isFilled: parameters.filled, color: decorationFillColor, in: iDirtyRect)
+				drawTraitDecorations(for: parameters, color: decorationFillColor, in: iDirtyRect)
 			}
-		} else if parameters.showAccess {
-
-			// ///////////////////////////
-			// WRITE-ACCESS DECORATIONS //
-			// ///////////////////////////
-
+		} else {
 			decorationFillColor.setFill()
-			drawWriteAccessDecoration(of: parameters.accessType, in: iDirtyRect)
+
+			if  parameters.isRelated {
+				drawRelatorLine(in: iDirtyRect)
+			}
+
+			if parameters.showAccess {
+
+				// ///////////////////////////
+				// WRITE-ACCESS DECORATIONS //
+				// ///////////////////////////
+
+				drawWriteAccessDecoration(of: parameters.accessType, in: iDirtyRect)
+			}
 		}
+
 	}
 
 	func drawOuterDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {

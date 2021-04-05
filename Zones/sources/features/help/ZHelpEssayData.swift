@@ -15,7 +15,7 @@ class ZHelpEssayData: ZHelpData {
 	override var noTabPrefix   :   String   { return "                    " }
 	override var columnStrings : [[String]] { return [essayColumnOne, essayColumnTwo] }
 	override var tabOffsets    :   [Int]    { return [0, 20, 180] }
-	override var rowHeight     :   CGFloat  { return 15.0 }
+	override var rowHeight     :  CGFloat   { return 14.55 }
 
 	let essayColumnOne: [String] = essayPrefixArray + [
 		"",																								"",	"",
@@ -57,10 +57,11 @@ class ZHelpEssayData: ZHelpData {
 		"_KEY",			 																				"", "",
 		"0ESCAPE", 						"ungrab them",			 											"",
 		"0DELETE", 						"destroy and remove them",											"",
+		"0EQAUALS",						"grab selected text, or clear grab",								"",
 		"0ARROWS (vertical)",			"grab a different note", 											"",
 		"0ARROWS (vertical) + SHIFT",	"grab an additional note", 											"",
 		"0ARROWS + OPTION",				"move them", 														"",
-		"0LEFT ARROW",					"top is grabbed: save changes and exit the editor",					"",
+		"0LEFT ARROW",					"if top is grabbed: save changes and exit the editor",				"",
 		"0         ",					"else: same as N, below",											"",
 		"0N",							"save changes and swap between essay and first grabbed note",		"",
 		"",					 																			"",	""

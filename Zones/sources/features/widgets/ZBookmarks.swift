@@ -33,16 +33,6 @@ class ZBookmarks: NSObject {
         return bookmarks
     }
 
-	func bookmarks(for iZone: Zone) -> ZoneArray? {
-		if  let dbID = iZone.databaseID,
-			let name = iZone.ckRecordName,
-			let dict = registry[dbID] {
-			return dict[name]    // returned value is an array
-		}
-
-		return nil
-	}
-
 	// MARK:- create
 	// MARK:-
 

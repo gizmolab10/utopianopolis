@@ -17,7 +17,7 @@ class ZHelpMapData : ZHelpData {
 
 	let mapColumnOne: [String] = [
 		"",				"", 												"",
-		"!EVERYWHERE:",	"", 												"",
+		"!EVERYWHERE IN MAPS:", 										"", "",
 		"",				"", 												"",
 		"_KEY", 		"", 												"",
 		"0RETURN", 		"begin or end editing idea", 						"edit-d05d18996df7",
@@ -45,6 +45,8 @@ class ZHelpMapData : ZHelpData {
 		"2X",			"clear recents",									"",
 		"",				"", 												"",
 		"",				"", 												"",
+		"",				"", 												"",
+		"",				"", 												"",
 		"+",			"", 												"",
 		"!WHILE IN THE SEARCH BAR:", 									"", "",
 		"",				"", 												"",
@@ -57,7 +59,8 @@ class ZHelpMapData : ZHelpData {
 		"0F", 			"dismisss search bar", 								"search-2a996591375a",
 		"",				"", 												"",
 		"",				"", 												"",
-		"0Legend:",														"", "",
+		"",				"", 												"",
+		"0Legend:",														"", ""
 	]
 
 	let mapColumnTwo: [String] = [
@@ -90,6 +93,8 @@ class ZHelpMapData : ZHelpData {
 		"1L", 			"convert to lowercase", 							"edit-d05d18996df7",
 		"1U", 			"convert to uppercase", 							"edit-d05d18996df7",
 		"",				"", 												"",
+		"",				"", 												"",
+		"",				"", 												"",
 		"+",			"", 												"",
 		"!WHILE IN THE SEARCH RESULTS:", 								"", "",
 		"",				"", 												"",
@@ -102,7 +107,8 @@ class ZHelpMapData : ZHelpData {
 		"0vertical", 	"browse results (wraps around)", 					"search-2a996591375a",
 		"",				"", 												"",
 		"",				"", 												"",
-		"0",	    	"IN BLUE: CLICK TO READ MORE",						"-",
+		"",				"", 												"",
+		"0",	    	"IN BLUE: CLICK TO READ MORE",						"-"
 	]
 
 	let mapColumnThree: [String] = [
@@ -122,8 +128,7 @@ class ZHelpMapData : ZHelpData {
 		"0/", 			"focus (also, manage favorite)", 					"focusing-your-thinking-a53adb16bba",
 		"0\\", 			"switch to other map", 				    			"",
 		"2'", 			"switch recents with favorites",					"focusing-your-thinking-a53adb16bba",
-		"1[", 			"focus on prior idea", 								"focusing-your-thinking-a53adb16bba",
-		"1]", 			"focus on next idea",         						"focusing-your-thinking-a53adb16bba",
+		"1[ ]", 		"focus on prior/next idea",         				"focusing-your-thinking-a53adb16bba",
 		"2B", 			"create a bookmark", 								"focusing-your-thinking-a53adb16bba",
 		"1C", 			"recenter the map", 								"",
 		"1D", 			"duplicate", 										"",
@@ -144,10 +149,7 @@ class ZHelpMapData : ZHelpData {
 		"2DELETE", 		"permanently (not into trash)", 					"organize-fcdc44ac04e4",
 		"2HYPHEN", 		"convert titled line to/from parent",			 	"lines-37426469b7c6",
 		"2O", 			"show data files in Finder", 						"cloud-vs-file-f3543f7281ac",
-		"2S", 			"save to cloud",			 						"cloud-vs-file-f3543f7281ac",
-		"",				"", 												"",
-		"",				"", 												"",
-//		"2",			"PRO FEATURE",										"",
+		"2S", 			"save to cloud",			 						"cloud-vs-file-f3543f7281ac"
 	]
 
 	let mapColumnFour: [String] = [

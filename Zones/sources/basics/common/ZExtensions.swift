@@ -168,7 +168,7 @@ extension NSObject {
     }
 
     func blankScreenDebug() {
-        if  let w = gMapController?.rootWidget.bounds.size.width, w < 1.0 {
+        if  let w = gMapController?.mapRoot.bounds.size.width, w < 1.0 {
             bam("blank map !!!!!!")
         }
     }
@@ -947,6 +947,12 @@ extension CGRect {
 
 	func offsetEquallyBy(_ offset: CGFloat) -> CGRect {
 		return offsetBy(dx: offset, dy: offset)
+	}
+
+	func centeredHorizontalLine(height: CGFloat) -> CGRect {
+		let y = center.y - (height / 2.0)
+
+		return CGRect(origin: CGPoint(x: minX, y: y), size: CGSize(width: maxX - minX, height: height))
 	}
 
 	var squareCentered: CGRect {

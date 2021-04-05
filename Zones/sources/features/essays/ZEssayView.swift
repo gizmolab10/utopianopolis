@@ -275,6 +275,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch key {
 				case "t":     swapWithParent()
 				case "n":     swapBetweenNoteAndEssay()
+				case "=":     grabSelected()
 				case "/",
 					 kEscape: gHelpController?.show(flags: flags)
 				case kDelete: deleteGrabbed()
@@ -753,31 +754,29 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// / make current grab the current essay
-
 	func grabSelected() {
-		if  gCurrentEssay?.children.count ?? 0 > 1 {     // ignore if does not have multiple children
-			var ungrab = true
+		let  hadNoGrabs = !hasGrabbedNote
+
+		ungrabAll()
+
+		if  hadNoGrabs,
+			gCurrentEssay?.children.count ?? 0 > 1 {     // ignore if does not have multiple children
 
 			for note in selectedNotes {
-				if  ungrab {
-					ungrab = false
-					ungrabAll()
-				}
-
 				grabbedNotes.appendUnique(contentsOf: [note])
-				scrollToGrabbed()
-				setNeedsDisplay()
-				gSignal([.sDetails])
 			}
+
+			scrollToGrabbed()
+			gSignal([.sDetails])
 		}
+
+		setNeedsDisplay()
 	}
 
 	func grabNextNote(up: Bool, ungrab: Bool) {
 		let       dots = dragDots
 		let     gIndex = grabbedIndex(goingUp: up)
-		let   maxIndex = dots.count - 1
-		if  let nIndex = gIndex?.next(up: up, max: maxIndex),
+		if  let nIndex = gIndex?.next(up: up, max: dots.count - 1),
 			let   note = dots[nIndex].note {
 			if  ungrab {
 				ungrabAll()
@@ -837,7 +836,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func willRegrab(grab: Zone? = nil) -> ZoneArray {
+	func willRegrab(_ grab: Zone? = nil) -> ZoneArray {
 		var           grabbed = ZoneArray()
 
 		grabbed.append(contentsOf: grabbedZones)      // copy current grab's zones aside
@@ -856,7 +855,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func resetTextAndGrabs(grab: Zone? = nil) {
-		let   grabbed = willRegrab(grab: grab)        // includes logic for optional grab parameter
+		let   grabbed = willRegrab(grab)              // includes logic for optional grab parameter
 		essayID       = nil                           // so shouldOverwrite will return true
 
 		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text

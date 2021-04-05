@@ -84,7 +84,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var               isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || type.isExemplar }
 	var               spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
 	var                   spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
-	var             fetchedBookmarks :          ZoneArray  { return gBookmarks.bookmarks(for: self) ?? [] }
+	var                    isRelator :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.relator.rawValue) ?? false }
+	var               directReadOnly :               Bool  { return directAccess == .eReadOnly || directAccess == .eProgenyWritable }
+	var                  userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
+	var                 userCanWrite :               Bool  { return userHasDirectOwnership || isIdeaEditable }
+	var         userCanMutateProgeny :               Bool  { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
+	var              inheritedAccess :         ZoneAccess  { return zoneWithInheritedAccess.directAccess }
+	var              bookmarkTargets :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
+	var              bookmarks       :          ZoneArray  { return zones(of:  .wBookmarks) }
+	var              notemarks       :          ZoneArray  { return zones(of:  .wNotemarks) }
+	var           allBookmarkProgeny :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
+	var           allNotemarkProgeny :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
+	var           all                :          ZoneArray  { return zones(of:  .wAll) }
 	var                     children =          ZoneArray  ()
 	var                       traits =   ZTraitDictionary  ()
 	var                        level =                  0
@@ -118,10 +129,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		static let       wAll = ZWorkingListType(rawValue: 0x0008)  // everything
 	}
 
-	@discardableResult func isBookmark(of type: ZWorkingListType) -> Bool {
-		return bookmarkTarget != nil && (type.contains(.wBookmarks) || (type.contains(.wNotemarks) && bookmarkTarget!.hasNote))
-	}
-
 	func zones(of type: ZWorkingListType) -> ZoneArray {
 		var result = ZoneArray()
 		if  type.contains(.wAll) {
@@ -141,12 +148,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 		return result
 	}
-
-	var    bookmarks       : ZoneArray { return zones(of:  .wBookmarks) }
-	var    notemarks       : ZoneArray { return zones(of:  .wNotemarks) }
-	var allBookmarkProgeny : ZoneArray { return zones(of: [.wBookmarks, .wProgeny]) }
-	var allNotemarkProgeny : ZoneArray { return zones(of: [.wNotemarks, .wProgeny]) }
-	var all                : ZoneArray { return zones(of:  .wAll) }
 
 	var unwrappedNameWithEllipses : String {
 		var   name = unwrappedName
@@ -183,6 +184,83 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return .tBigMap
+	}
+
+	// MARK:- bookmarks
+	// MARK:-
+
+	var fetchedBookmarks: ZoneArray {
+		if  let  dbID = databaseID,
+			let  name = ckRecordName,
+			let  dict = gBookmarks.registry[dbID],
+			let marks = dict[name] {    // marks is an array
+
+			return marks
+		}
+
+		return []
+	}
+
+	var fetchedBookmark: Zone? {
+		let    bookmarks = fetchedBookmarks
+
+		return bookmarks.count == 0 ? nil : bookmarks[0]
+	}
+
+	var crossLink: ZRecord? {
+		get {
+			if  crossLinkMaybe == nil {
+				if  zoneLink == kTrashLink {
+					return gTrash
+				}
+
+				if  zoneLink == kLostAndFoundLink {
+					return gLostAndFound
+				}
+
+				if  zoneLink?.contains("Optional(") ?? false { // repair consequences of an old, but now fixed, bookmark bug
+					zoneLink = zoneLink?.replacingOccurrences(of: "Optional(\"", with: "").replacingOccurrences(of: "\")", with: "")
+				}
+
+				crossLinkMaybe = zoneFrom(zoneLink)
+			}
+
+			return crossLinkMaybe
+		}
+
+		set {
+			crossLinkMaybe = nil
+			zoneLink       = kNullLink
+			if  let  value = newValue,
+				let   name = value.ckRecordName {
+				let   dbid = (value.databaseID ?? gDatabaseID).rawValue
+				zoneLink   = "\(dbid)::\(name)"
+			}
+		}
+	}
+
+	@discardableResult func isBookmark(of type: ZWorkingListType) -> Bool {
+		return bookmarkTarget != nil && (type.contains(.wBookmarks) || (type.contains(.wNotemarks) && bookmarkTarget!.hasNote))
+	}
+
+	func addBookmark() {
+		if  !isARoot {
+			if  gHere == self {
+				revealParentAndSiblings()
+
+				gHere = self.parentZone ?? gHere
+			}
+
+			self.invokeUsingDatabaseID(.mineID) {
+				let bookmark = gBookmarks.createBookmark(targetting: self)
+
+				bookmark.grab()
+				bookmark.needSave()
+				bookmark.markNotFetched()
+			}
+
+			gRedrawMaps()
+		}
 	}
 
 	// MARK:- setup
@@ -359,12 +437,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return values
 	}
 
-	var fetchedBookmark: Zone? {
-		let    bookmarks = fetchedBookmarks
-
-		return bookmarks.count == 0 ? nil : bookmarks[0]
-	}
-
 	var decoration: String {
 		var d = ""
 
@@ -480,16 +552,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let oldValue   = attributes.contains(type.rawValue)
 
 				if  newValue  != oldValue {
-					appendAttribute(type, clear: !newValue)
+					alterAttribute(type, remove: !newValue)
 				}
 			}
 		}
 	}
 
-	func appendAttribute(_ type: ZoneAttributeType, clear: Bool = false) {
+	func alterAttribute(_ type: ZoneAttributeType, remove: Bool = false) {
 		var attributes = zoneAttributes ?? ""
 
-		if  clear {
+		if  remove {
 			attributes = attributes.replacingOccurrences(of: type.rawValue, with: "")
 		} else if !attributes.contains(type.rawValue) {
 			attributes.append(type.rawValue)
@@ -504,38 +576,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func toggleColorized() {
 		colorized = !(zoneAttributes?.contains(ZoneAttributeType.invertColorize.rawValue) ?? false)
-	}
-
-	var crossLink: ZRecord? {
-		get {
-			if  crossLinkMaybe == nil {
-				if  zoneLink == kTrashLink {
-					return gTrash
-				}
-
-				if  zoneLink == kLostAndFoundLink {
-					return gLostAndFound
-				}
-
-				if  zoneLink?.contains("Optional(") ?? false { // repair consequences of an old, but now fixed, bookmark bug
-					zoneLink = zoneLink?.replacingOccurrences(of: "Optional(\"", with: "").replacingOccurrences(of: "\")", with: "")
-				}
-
-				crossLinkMaybe = zoneFrom(zoneLink)
-			}
-
-			return crossLinkMaybe
-		}
-
-		set {
-			crossLinkMaybe = nil
-			zoneLink       = kNullLink
-			if  let  value = newValue,
-				let   name = value.ckRecordName {
-				let   dbid = (value.databaseID ?? gDatabaseID).rawValue
-				zoneLink   = "\(dbid)::\(name)"
-			}
-		}
 	}
 
 	var order: Double {
@@ -755,7 +795,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:-
 
 	@discardableResult override func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
-		appendAttribute(ZoneAttributeType.validCoreData)
+		alterAttribute(ZoneAttributeType.validCoreData)
 		updateFromCoreDataTraitRelationships()
 		return super.convertFromCoreData(into: type, visited: visited)
 	}
@@ -847,12 +887,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// MARK:- write access
 	// MARK:-
-
-	var      inheritedAccess: ZoneAccess { return zoneWithInheritedAccess.directAccess }
-	var       directReadOnly:       Bool { return directAccess == .eReadOnly || directAccess == .eProgenyWritable }
-	var          userCanMove:       Bool { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
-	var         userCanWrite:       Bool { return userHasDirectOwnership || isIdeaEditable }
-	var userCanMutateProgeny:       Bool { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
 
 	var userHasDirectOwnership: Bool {
 		if  let    t = bookmarkTarget {
@@ -985,26 +1019,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var array = [self]
 
 		array.duplicate()
-	}
-
-	func addBookmark() {
-		if  !isARoot {
-			if  gHere == self {
-				revealParentAndSiblings()
-
-				gHere = self.parentZone ?? gHere
-			}
-
-			self.invokeUsingDatabaseID(.mineID) {
-				let bookmark = gBookmarks.createBookmark(targetting: self)
-
-				bookmark.grab()
-				bookmark.needSave()
-				bookmark.markNotFetched()
-			}
-
-			gRedrawMaps()
-		}
 	}
 
 	func revealParentAndSiblings() {
@@ -1453,7 +1467,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			grab() // narrow selection to just this one zone
 
 			if !(CLICKTWICE && self == gHere) {
-				gRecents.maybeRefocus(.eSelected) {
+				gRecents.focusOnGrab(.eSelected) {
 					gRedrawMaps()
 				}
 			}
@@ -1726,6 +1740,50 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gControllers.swapMapAndEssay(force: .wEssayMode)
 	}
 
+	// MARK:- relator
+	// MARK:-
+
+	var relator: Zone? {
+		if  isRelator {
+			return self
+		} else {
+			for bookmark in fetchedBookmarks {
+				if  let parent = bookmark.parentZone,
+					parent.isRelator {
+					return parent
+				}
+			}
+		}
+
+		return nil
+	}
+
+	func toggleRelator() {
+		if  let r = relator {
+			r.alterAttribute(.relator, remove: true)
+		} else {
+			alterAttribute  (.relator, remove: false)
+		}
+
+		gRedrawMaps()
+	}
+
+	func goToNextRelated(_ forward: Bool) {
+		if  var relateds = relator?.bookmarkTargets {
+			relateds.appendUnique(contentsOf: [self])
+
+			let max      = relateds.count - 1
+			if  max      > 0,
+				let next = relateds.firstIndex(of: self)?.next(up: forward, max: max) {
+				let zone = relateds[next]
+				gHere    = zone
+
+				zone.grab()
+				gRedrawMaps()
+			}
+		}
+	}
+
 	// MARK:- travel / focus / move
 	// MARK:-
 
@@ -1745,7 +1803,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			} else if let dbID = crossLink?.databaseID {
 				gDatabaseID = dbID
 
-				gRecents.maybeRefocus {
+				gRecents.focusOnGrab {
 					gHere.grab()
 					atArrival()
 				}
@@ -1803,7 +1861,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// ///////////////////////// //
 
 					if  let t     = target, t.isFetched { // e.g., default root favorite
-						gRecents.maybeRefocus(.eSelected) {
+						gRecents.focusOnGrab(.eSelected) {
 							gHere = t
 
 							gHere.prepareForArrival()
@@ -1816,7 +1874,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 								gHere          = newHere
 
 								newHere.prepareForArrival()
-								gRecents.maybeRefocus {
+								gRecents.focusOnGrab {
 									complete(newHere, .sRelayout)
 								}
 							} else {
@@ -1872,7 +1930,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func focusOn(_ atArrival: @escaping Closure) {
 		gHere = self // side-effect does recents push
 
-		gRecents.maybeRefocus(.eSelected) {
+		gRecents.focusOnGrab(.eSelected) {
 			self.grab()
 			gSmallMapController?.update()
 			atArrival()
@@ -3082,6 +3140,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isBookmark  = isBookmark
 		p.isNotemark  = bookmarkTarget?.hasNote ?? false
 		p.showAccess  = hasAccessDecoration
+		p.isRelated   = relator != nil
 		p.showList    = expanded
 		p.color       = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
 		p.childCount  = (gCountsMode == .progeny) ? progenyCount : indirectCount

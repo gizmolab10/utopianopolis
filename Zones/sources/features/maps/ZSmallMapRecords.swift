@@ -171,7 +171,7 @@ class ZSmallMapRecords: ZRecords {
 			}
 
 			if  gIsMapMode {
-				maybeRefocus(.eSelected) {
+				focusOnGrab(.eSelected) {
 					gSignal([.sRelayout])
 				}
 			} else if gCurrentEssayZone != tHere {

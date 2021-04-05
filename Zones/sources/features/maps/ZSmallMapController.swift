@@ -21,7 +21,7 @@ class ZSmallMapController: ZMapController {
 	override  var controllerID : ZControllerID { return .idSmallMap }
 	override  var allowedKinds : [ZSignalKind] { return [.sDetails, .sSmallMap, .sRelayout, .sAppearance] }
 	override  var     isBigMap : Bool          { return false }
-	var            isRecentMap : Bool          { return rootWidget.widgetZone?.isInRecents ?? gIsRecentlyMode }
+	var            isRecentMap : Bool          { return mapRoot.widgetZone?.isInRecents ?? gIsRecentlyMode }
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
 		if  let c = gDetailsController,

@@ -101,7 +101,7 @@ class ZHelpData: NSObject {
 
 	var helpMode          = ZHelpMode.noMode
 	var tabStops          = [NSTextTab]()
-	var rowHeight         :   CGFloat  { return 17.0 }
+	var rowHeight         :   CGFloat  { return 15.7 }
 	var noTabPrefix       :   String   { return "   " }
 	var columnStrings     : [[String]] { return [[]] }
 	var tabOffsets        :   [Int]    { return [0, 20, 85] } // default for graph shortcuts
@@ -180,7 +180,7 @@ class ZHelpData: NSObject {
 		let strings = strippedStrings(for: column)
 		let   index = row * stringsPerRow
 
-		return index >= strings.count ? ("", "", "") : (strings[index], strings[index + 1], strings[index + 2])
+		return index + 2 >= strings.count ? ("", "", "") : (strings[index], strings[index + 1], strings[index + 2])
 	}
 
 	func strippedStrings(for column: Int) -> [String] {
@@ -199,7 +199,7 @@ class ZHelpData: NSObject {
 
 				if      isPro || !types.contains(.hPro) {
 					if !isPro &&  types.contains(.hInsert) {
-						while result.count < 90 {
+						while result.count < 32 * 3 {
 							result.append("")
 						}
 					} else if isPro || isDots || isEssay

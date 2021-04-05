@@ -418,6 +418,7 @@ enum ZEssayButtonID : Int {
 enum ZoneAttributeType: String {
 	case invertColorize = "c"
 	case validCoreData  = "v"
+	case relator        = "+"
 }
 
 enum ZEssayHyperlinkType: String {

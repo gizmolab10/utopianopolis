@@ -119,17 +119,18 @@ extension ZoneArray {
 		var      candidate = first
 
 		if count > 1 {
-			var candidates = ZoneArray ()
-			var      level = candidate?.level ?? 100
+			var candidates = ZoneArray()
 			var      order = goingUp ? 1.0 : 0.0
+			var      level = candidate?.level ?? Int.max
 
 			for zone in self {
-				if  level      == zone.level {
+				let zLevel      = zone.level
+				if  level      == zLevel {
 					candidates.append(zone)
-				} else {
-					candidate   = zone
-					level       = candidate!.level
-					candidates  = [candidate!]
+				} else if level > zLevel {
+					level       = zLevel
+					candidate   =  zone
+					candidates  = [zone]
 				}
 			}
 

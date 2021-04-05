@@ -564,7 +564,7 @@ extension ZTextEditor {
 extension ZoneWidget {
 
     func dragHitFrame(in iView: ZView?, _ iHere: Zone) -> CGRect {
-        var hitRect = CGRect()
+		var hitRect = CGRect.zero
 
         if  let   view = iView,
             let    dot = dragDot.innerDot {

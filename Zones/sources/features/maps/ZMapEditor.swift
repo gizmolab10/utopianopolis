@@ -67,6 +67,11 @@ class ZMapEditor: ZBaseEditor {
                 SHIFT   = true
             }
 
+			if  "{}".contains(key) {
+				key     = (key == "{") ? "[" : "]"
+				SHIFT   = true
+			}
+
 			gCurrentKeyPressed = key
 
             if  gIsEditIdeaMode {
@@ -110,10 +115,10 @@ class ZMapEditor: ZBaseEditor {
 					gCurrentKeyPressed = key
 
 					switch key {
-						case "a":        if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMaps() }
+						case "a":        if  COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMaps() }
 						case "b":        gSelecting.firstSortedGrab?.addBookmark()
-						case "c":        if COMMAND && !OPTION { copyToPaste() } else { gMapController?.recenter(SPECIAL) }
-						case "d":        if ALL { gRemoteStorage.removeAllDuplicates() } else if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
+						case "c":        if OPTION { divideChildren() } else if  COMMAND { copyToPaste() } else { gMapController?.recenter(SPECIAL) }
+						case "d":        if  ALL { gRemoteStorage.removeAllDuplicates() } else if FLAGGED { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 						case "e":        gSelecting.firstSortedGrab?.editTrait(for: .tEmail)
 						case "f":        gSearching.showSearch(OPTION)
 						case "g":        refetch(COMMAND, OPTION, CONTROL)
@@ -131,18 +136,17 @@ class ZMapEditor: ZBaseEditor {
 						case "v":        if COMMAND { paste() }
 						case "w":        rotateWritable()
 						case "x":        if COMMAND { delete(permanently: SPECIAL && isWindow) } else { gCurrentKeyPressed = nil; return false }
-						case "z":        if !SHIFT  { gUndoManager.undo() } else { gUndoManager.redo() }
+						case "z":        if  !SHIFT { gUndoManager.undo() } else { gUndoManager.redo() }
 						case "#":        if gSelecting.hasMultipleGrab { prefix(with: key) } else { debugAnalyze() }
-						case "+":        divideChildren()
+						case "+":        gSelecting.currentMoveable.toggleRelator()
 						case "-":        return handleHyphen(COMMAND, OPTION)
 						case "'":        gSwapSmallMapMode(OPTION)
 						case "/":        if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
-						case "{", "[":   go(down: false, OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() }
-						case "}", "]":   go(down:  true, OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() }
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
+						case "[", "]":   if   SHIFT { gSelecting.currentMoveable.goToNextRelated(OPTION) } else { go(down: key == "]", OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() } }
 						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")
 						case kTab:       addSibling(OPTION)
-						case kSpace:     if OPTION || CONTROL || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
+						case kSpace:     if CONTROL || OPTION || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
 						case kEquals:    if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawMaps() } }
 						case kBackSlash: mapControl(OPTION)
 						case kBackspace,
@@ -365,7 +369,7 @@ class ZMapEditor: ZBaseEditor {
 
 			gRedrawMaps()
 		} else {
-			gRecords?.maybeRefocus(kind, COMMAND, shouldGrab: true) { // complex grab logic
+			gRecords?.focusOnGrab(kind, COMMAND, shouldGrab: true) { // complex grab logic
 				gRedrawMaps()
 			}
 		}

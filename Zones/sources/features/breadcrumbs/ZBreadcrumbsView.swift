@@ -95,62 +95,66 @@ class ZBreadcrumbsView : ZButtonsView {
 	}
 
 	@IBAction func crumbButtonAction(_ button: ZBreadcrumbButton) {
-		let    zone = gBreadcrumbs.crumbZones[button.tag]
-		let    last = gBreadcrumbs.crumbsRootZone
-		let   flags = button.currentEvent?.modifierFlags
-		let  OPTION = flags?.isOption  ?? false
-		let COMMAND = flags?.isCommand ?? false
+		let      crumbs = gBreadcrumbs.crumbZones
+		let       index = button.tag
+		if        index < crumbs.count {
+			let    zone = crumbs[button.tag]
+			let    last = gBreadcrumbs.crumbsRootZone
+			let   flags = button.currentEvent?.modifierFlags
+			let  OPTION = flags?.isOption  ?? false
+			let COMMAND = flags?.isCommand ?? false
 
-		if    zone == last, !gIsEssayMode, !COMMAND { return }
+			if    zone == last, !gIsEssayMode, !COMMAND { return }
 
-		func displayEssay(_ asEssay: Bool = true) {
-			let            saved = gCreateCombinedEssay
-			gCreateCombinedEssay = (OPTION && asEssay)
+			func displayEssay(_ asEssay: Bool = true) {
+				let            saved = gCreateCombinedEssay
+				gCreateCombinedEssay = (OPTION && asEssay)
 
-			if  gCreateCombinedEssay {
-				zone.noteMaybe   = nil                // forget note so essay will be constructed
+				if  gCreateCombinedEssay {
+					zone.noteMaybe   = nil                // forget note so essay will be constructed
+				}
+
+				gEssayView?.resetCurrentEssay(zone.note)  // note creates an essay when gCreateCombinedEssay is true
+
+				gCreateCombinedEssay = saved
 			}
 
-			gEssayView?.resetCurrentEssay(zone.note)  // note creates an essay when gCreateCombinedEssay is true
-
-			gCreateCombinedEssay = saved
-		}
-
-		zone.focusOn() {
-			switch (gWorkMode) {
-				case .wEditIdeaMode:
-					if  let edit = gCurrentlyEditingWidget?.widgetZone {
-						let span = gTextEditor.selectedRange()
-						edit.editAndSelect(range: span)
-					} else {
-						last?.grab()
-					}
-				case .wMapMode:
-					if  COMMAND {
-						displayEssay()
-						gControllers.swapMapAndEssay(force: .wEssayMode)
-
-						return
-					} else if OPTION {
-						zone.grab()
-						zone.traverseAllProgeny { child in
-							child.collapse()
+			zone.focusOn() {
+				switch (gWorkMode) {
+					case .wEditIdeaMode:
+						if  let edit = gCurrentlyEditingWidget?.widgetZone {
+							let span = gTextEditor.selectedRange()
+							edit.editAndSelect(range: span)
+						} else {
+							last?.grab()
 						}
-					}
+					case .wMapMode:
+						if  COMMAND {
+							displayEssay()
+							gControllers.swapMapAndEssay(force: .wEssayMode)
 
-					gHere.asssureIsVisible()
-				case .wEssayMode:
-					let sameNote  = (zone == gCurrentEssayZone)
-					if  sameNote || !(zone.hasNote || COMMAND) {
-						gEssayView?.setControlBarButtons(enabled: false)
-						gSetBigMapMode()                                 // no note in zone so exit essay editor
-					} else {
-						displayEssay(!sameNote)
-					}
-				default: break
+							return
+						} else if OPTION {
+							zone.grab()
+							zone.traverseAllProgeny { child in
+								child.collapse()
+							}
+						}
+
+						gHere.asssureIsVisible()
+					case .wEssayMode:
+						let sameNote  = (zone == gCurrentEssayZone)
+						if  sameNote || !(zone.hasNote || COMMAND) {
+							gEssayView?.setControlBarButtons(enabled: false)
+							gSetBigMapMode()                                 // no note in zone so exit essay editor
+						} else {
+							displayEssay(!sameNote)
+						}
+					default: break
+				}
+
+				gSignal([.sSwap, .sRelayout])
 			}
-
-			gSignal([.sSwap, .sRelayout])
 		}
 	}
 
