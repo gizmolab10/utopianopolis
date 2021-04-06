@@ -36,6 +36,8 @@ class ZBookmarks: NSObject {
 	// MARK:- create
 	// MARK:-
 
+	// designated bookmark creator
+
 	@discardableResult func createZone(withBookmark: Zone?, _ iName: String?, recordName: String? = nil) -> Zone {
 		var bookmark           = withBookmark
 		if  bookmark          == nil {
@@ -43,6 +45,9 @@ class ZBookmarks: NSObject {
 		} else if let     name = iName {
 			bookmark?.zoneName = name
 		}
+
+		persistForLookupByTarget(bookmark!)
+		bookmark?.updateCKRecordProperties()
 
 		return bookmark!
 	}
@@ -56,9 +61,6 @@ class ZBookmarks: NSObject {
 			parent.addChild(bookmark, at: insertAt) // calls update progeny count
 		}
 
-		persistForLookupByTarget(bookmark)
-		bookmark.updateCKRecordProperties()
-
 		return bookmark
 	}
 
@@ -69,8 +71,6 @@ class ZBookmarks: NSObject {
 		if  action != .aNotABookmark {
 			parent.addChild(bookmark, at: insertAt) // calls update progeny count
 		}
-
-		bookmark.updateCKRecordProperties() // is this needed?
 
 		return bookmark
 	}

@@ -90,12 +90,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                 userCanWrite :               Bool  { return userHasDirectOwnership || isIdeaEditable }
 	var         userCanMutateProgeny :               Bool  { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
 	var              inheritedAccess :         ZoneAccess  { return zoneWithInheritedAccess.directAccess }
-	var              bookmarkTargets :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
+	var           all                :          ZoneArray  { return zones(of:  .wAll) }
+	var           allNotemarkProgeny :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
+	var           allBookmarkProgeny :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
+	var     targetsOfBookmarks       :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
 	var              bookmarks       :          ZoneArray  { return zones(of:  .wBookmarks) }
 	var              notemarks       :          ZoneArray  { return zones(of:  .wNotemarks) }
-	var           allBookmarkProgeny :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
-	var           allNotemarkProgeny :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
-	var           all                :          ZoneArray  { return zones(of:  .wAll) }
 	var                     children =          ZoneArray  ()
 	var                       traits =   ZTraitDictionary  ()
 	var                        level =                  0
@@ -189,20 +189,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- bookmarks
 	// MARK:-
 
-	var bookmarksTargetingSelf: ZoneArray {
+	var bookmarksTargettingSelf: ZoneArray {
 		if  let  dbID = databaseID,
 			let  name = ckRecordName,
 			let  dict = gBookmarks.registry[dbID],
-			let marks = dict[name] {    // marks is an array
+			let array = dict[name] {
 
-			return marks
+			return array
 		}
 
 		return []
 	}
 
-	var fetchedBookmark: Zone? {
-		let    bookmarks = bookmarksTargetingSelf
+	var firstBookmarkTargettingSelf: Zone? {
+		let    bookmarks = bookmarksTargettingSelf
 
 		return bookmarks.count == 0 ? nil : bookmarks[0]
 	}
@@ -1212,7 +1212,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// RECURSE //
 					// //////////
 
-					self.bookmarksTargetingSelf.deleteZones(permanently: permanently) {
+					self.bookmarksTargettingSelf.deleteZones(permanently: permanently) {
 						onCompletion?()
 					}
 				}
@@ -1770,7 +1770,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else if let target = bookmarkTarget {
 			return target.relator
 		} else {
-			for bookmark in bookmarksTargetingSelf {
+			for bookmark in bookmarksTargettingSelf {
 				if  let    parent = parentRelator(of: bookmark) {
 					return parent
 				}
@@ -1802,33 +1802,47 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gRedrawMaps()
 	}
 
-	var relateds: ZoneArray? {
-		if  let r = relator {
-			var relateds = r.bookmarkTargets
-			relateds.appendUnique(contentsOf: [r])
+	var relateds: ZoneArray {
+		var relateds = targetsOfBookmarks
 
-			return relateds
+		func addParents(of zones: ZoneArray) {
+			for zone in zones {
+				if  let   name = zone.root?.ckRecordName,
+					let parent = zone.parentZone,
+					name      == kRootName {
+					relateds.appendUnique(contentsOf: [parent])
+				}
+			}
 		}
 
-		return nil
+		relateds.appendUnique(contentsOf: [self])
+		addParents(of: bookmarksTargettingSelf)
+
+		if  let        r = relator {
+			relateds.appendUnique(contentsOf: [r])
+			relateds.appendUnique(contentsOf: r.targetsOfBookmarks)
+			addParents(of: r.bookmarksTargettingSelf)
+		}
+
+		return relateds
 	}
 
 	var indexInRelateds: Int? {
-		if  let r = relateds {
-			if  let index = r.firstIndex(of: self) {
-				return index
-			} else if let target = bookmarkTarget,
-					  let index = r.firstIndex(of: target) {
-				return index
-			}
+		let r = relateds
+
+		if  let index = r.firstIndex(of: self) {
+			return index
+		} else if let target = bookmarkTarget,
+				  let index = r.firstIndex(of: target) {
+			return index
 		}
 
 		return nil
 	}
 
 	func goToNextRelated(_ forward: Bool) {
-		if  let    index = indexInRelateds,
-			let        r = relateds {
+		if  let    index = indexInRelateds {
+			let        r = relateds
 			let      max = r.count - 1
 			if       max > 0,
 				let next = index.next(up: forward, max: max) {
@@ -2095,7 +2109,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func moveSelectionOut(extreme: Bool = false, onCompletion: Closure?) {
-
 		if extreme {
 			if  gHere.isARoot {
 				gHere = self // reverse what the last move out extreme did
@@ -2128,13 +2141,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				p.grab()
 				gSignal([.sCrumbs])
 			}
-		} else {
-			// self is an orphan
-			// change focus to bookmark of self
-
-			if  let bookmark = self.fetchedBookmark {
-				gHere        = bookmark
-			}
+		} else if let bookmark = firstBookmarkTargettingSelf {		 // self is an orphan
+			gHere              = bookmark			                 // change focus to bookmark of self
 		}
 	}
 

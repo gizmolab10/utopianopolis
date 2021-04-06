@@ -218,7 +218,7 @@ class ZTextPack: NSObject {
                 ZTextPack(target).captureTextAndUpdateWidgets(newText)
             }
             
-            for bookmark in zone.bookmarksTargetingSelf {
+            for bookmark in zone.bookmarksTargettingSelf {
                 ZTextPack(bookmark).captureTextAndUpdateWidgets(newText)
             }
         }

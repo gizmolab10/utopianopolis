@@ -378,7 +378,7 @@ extension ZoneArray {
 							var bookmarks = ZoneArray ()
 
 							for zone in zones {
-								bookmarks += zone.bookmarksTargetingSelf
+								bookmarks += zone.bookmarksTargettingSelf
 							}
 
 							if  bookmarks.count != 0 {
