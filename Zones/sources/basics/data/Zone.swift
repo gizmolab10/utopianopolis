@@ -189,7 +189,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- bookmarks
 	// MARK:-
 
-	var fetchedBookmarks: ZoneArray {
+	var bookmarksTargetingSelf: ZoneArray {
 		if  let  dbID = databaseID,
 			let  name = ckRecordName,
 			let  dict = gBookmarks.registry[dbID],
@@ -202,7 +202,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var fetchedBookmark: Zone? {
-		let    bookmarks = fetchedBookmarks
+		let    bookmarks = bookmarksTargetingSelf
 
 		return bookmarks.count == 0 ? nil : bookmarks[0]
 	}
@@ -1212,7 +1212,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// RECURSE //
 					// //////////
 
-					self.fetchedBookmarks.deleteZones(permanently: permanently) {
+					self.bookmarksTargetingSelf.deleteZones(permanently: permanently) {
 						onCompletion?()
 					}
 				}
@@ -1442,11 +1442,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gControllers.swapMapAndEssay(force: .wMapMode)
 		gRedrawMaps()
 
-		let e = edit()
-
-		FOREGROUND(after: 0.2) {
-			e?.selectText(searchText)
-		}
+//		let e = edit()
+//
+//		FOREGROUND(after: 0.2) {
+//			e?.selectText(searchText)
+//		}
 	}
 
 	func grab(updateBrowsingLevel: Bool = true) {
@@ -1743,14 +1743,48 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- relator
 	// MARK:-
 
+	func parentRelator(of zone: Zone) -> Zone? {
+		if  let parent = zone.parentZone,
+			parent.isRelator {
+			return parent
+		}
+
+		return nil
+	}
+
+	func relator(of zone: Zone) -> Zone? {
+		if  let target = zone.bookmarkTarget {
+			if  target.isRelator {
+				return target
+			} else if let parent = parentRelator(of: zone) {
+				return parent
+			}
+		}
+
+		return nil
+	}
+
 	var relator: Zone? {
 		if  isRelator {
 			return self
+		} else if let target = bookmarkTarget {
+			return target.relator
 		} else {
-			for bookmark in fetchedBookmarks {
-				if  let parent = bookmark.parentZone,
-					parent.isRelator {
+			for bookmark in bookmarksTargetingSelf {
+				if  let    parent = parentRelator(of: bookmark) {
 					return parent
+				}
+			}
+
+			for bookmark in bookmarks {
+				if  let    relator = relator(of: bookmark) {
+					return relator
+				}
+			}
+
+			for child in children {
+				if  let    relator = relator(of: child) {
+					return relator
 				}
 			}
 		}
@@ -1768,14 +1802,37 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gRedrawMaps()
 	}
 
-	func goToNextRelated(_ forward: Bool) {
-		if  var relateds = relator?.bookmarkTargets {
-			relateds.appendUnique(contentsOf: [self])
+	var relateds: ZoneArray? {
+		if  let r = relator {
+			var relateds = r.bookmarkTargets
+			relateds.appendUnique(contentsOf: [r])
 
-			let max      = relateds.count - 1
-			if  max      > 0,
-				let next = relateds.firstIndex(of: self)?.next(up: forward, max: max) {
-				let zone = relateds[next]
+			return relateds
+		}
+
+		return nil
+	}
+
+	var indexInRelateds: Int? {
+		if  let r = relateds {
+			if  let index = r.firstIndex(of: self) {
+				return index
+			} else if let target = bookmarkTarget,
+					  let index = r.firstIndex(of: target) {
+				return index
+			}
+		}
+
+		return nil
+	}
+
+	func goToNextRelated(_ forward: Bool) {
+		if  let    index = indexInRelateds,
+			let        r = relateds {
+			let      max = r.count - 1
+			if       max > 0,
+				let next = index.next(up: forward, max: max) {
+				let zone = r[next]
 				gHere    = zone
 
 				zone.grab()

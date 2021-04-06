@@ -210,16 +210,16 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
 
     func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
-        var thickness = CGFloat(gLineThickness + 0.1) * ratio
+        var thickness = CGFloat(gLineThickness + 0.5) * ratio
         var      path = ZBezierPath(rect: CGRect.zero)
         var      rect = CGRect.zero
 
         switch type {
         case .vertical:
-            rect      = CGRect(origin: CGPoint(x: iDirtyRect.midX - (thickness / 2.0), y: iDirtyRect.minY),                   size: CGSize(width: thickness, height: iDirtyRect.size.height))
+			rect      = iDirtyRect.insetEquallyBy(fraction: 0.175).centeredVerticalLine(width: thickness)
             path      = ZBezierPath(rect: rect)
         case .sideDot:
-            thickness = (thickness + 2.5) * iDirtyRect.size.height / 12.0
+            thickness = (thickness + 2.0) * iDirtyRect.size.height / 12.0
             rect      = CGRect(origin: CGPoint(x: iDirtyRect.maxX -  thickness - 1.0,   y: iDirtyRect.midY - thickness / 2.0), size: CGSize(width: thickness, height: thickness))
             path      = ZBezierPath(ovalIn: rect)
         }
@@ -243,7 +243,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	}
 
 	func drawRelatorLine(in iDirtyRect: CGRect) {
-		let rect = iDirtyRect.centeredHorizontalLine(height: 1.5)
+		let rect = iDirtyRect.insetEquallyBy(fraction: 0.25).centeredHorizontalLine(height: 1.0)
 
 		ZBezierPath(rect: rect).fill()
 	}

@@ -955,6 +955,12 @@ extension CGRect {
 		return CGRect(origin: CGPoint(x: minX, y: y), size: CGSize(width: maxX - minX, height: height))
 	}
 
+	func centeredVerticalLine(width: CGFloat) -> CGRect {
+		let x = center.x - (width / 2.0)
+
+		return CGRect(origin: CGPoint(x: x, y: minY), size: CGSize(width: width, height: maxY - minY))
+	}
+
 	var squareCentered: CGRect {
 		let length = size.smallDimension
 		let origin = CGPoint(x: minX + (size.width - length) / 2.0, y: minY + (size.height - length) / 2.0)
