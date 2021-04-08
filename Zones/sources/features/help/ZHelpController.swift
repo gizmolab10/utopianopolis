@@ -84,7 +84,7 @@ class ZHelpController: ZGenericTableController {
 		}
 	}
 
-	func show(_ iShow: Bool? = nil, flags: ZEventFlags) {
+	func show(_ iShow: Bool? = nil, flags: ZEventFlags = ZEventFlags()) {
 		var nextMode = gCurrentHelpMode
  		let  COMMAND = flags.isCommand
 		let  CONTROL = flags.isControl
@@ -98,9 +98,9 @@ class ZHelpController: ZGenericTableController {
 			} else if !OPTION &&  CONTROL {
 				nextMode = .essayMode
 			}
-
-			show(iShow, mode: nextMode)
 		}
+
+		show(iShow, mode: nextMode)
 	}
 
 	func showHelp(for mode: ZHelpMode) {

@@ -750,9 +750,9 @@ class ZMapEditor: ZBaseEditor {
 							if  p.isInFavorites {
 								gFavorites.updateAllFavorites()
 							} else if c == 0 {
-								let bookmark = gBookmarks.createBookmark(targetting: gHere)
+								let bookmark = gBookmarks.createBookmark(targeting: gHere)
 
-								gRecents.currentHere.addChild(bookmark)  // assure at least one bookmark in recents (targetting here)
+								gRecents.currentHere.addChild(bookmark)  // assure at least one bookmark in recents (targeting here)
 							}
 
 							gHere.grab()                                 // as though user clicked on background

@@ -99,7 +99,7 @@ class ZBreadcrumbsView : ZButtonsView {
 		let       index = button.tag
 		if        index < crumbs.count {
 			let    zone = crumbs[button.tag]
-			let    last = gBreadcrumbs.crumbsRootZone
+			let    last = gBreadcrumbs.crumbTipZone
 			let   flags = button.currentEvent?.modifierFlags
 			let  OPTION = flags?.isOption  ?? false
 			let COMMAND = flags?.isCommand ?? false

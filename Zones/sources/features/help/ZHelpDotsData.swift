@@ -51,7 +51,7 @@ class ZHelpDotsData: ZHelpData {
 		"",						"",																				"",
 		"_decorated dots",		"click or select drag dot and tap the = key",									"",
 		".f",					"bookmark           focus on bookmark's target",								"",
-		".f",					"target has note  ⌘-click to view bookmark's target's note",					"",
+		".f",					"target has note  ⌘-click to view note",										"",
 		".b",					"email                   compose and send",										"",
 		".b",					"hyperlink            open a browser",											"",
 		".b",					"note or essay     view and edit",												""

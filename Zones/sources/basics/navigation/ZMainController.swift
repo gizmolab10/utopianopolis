@@ -37,6 +37,10 @@ class ZMainController: ZGesturesController {
 		update()
 	}
 
+	@IBAction func helpButtonAction(_ button: NSButton) {
+		gHelpController?.show()
+	}
+
 	@IBAction func hamburgerButtonAction(_ button: NSButton) {
 		gShowDetailsView = detailView?.isHidden ?? true
 

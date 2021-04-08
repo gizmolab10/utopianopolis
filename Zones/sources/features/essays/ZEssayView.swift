@@ -35,7 +35,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { setSelectedRange(NSRange()) } else if oldValue != nil { eraseAttachment = oldValue } } }
 	var eraseAttachment : ZRangedAttachment?
 	var grabbedZones    : [Zone]             { return grabbedNotes.map { $0.zone! } }
-	var firstNote       : ZNote?             { return dragDots[0].note }
+	var firstNote       : ZNote?             { return (dragDots.count == 0) ? nil : dragDots[0].note }
 	var selectedNote    : ZNote?             { return selectedNotes.first }
 	var selectedZone    : Zone?              { return selectedNote?.zone }
 	var firstGrabbedNote: ZNote?             { return hasGrabbedNote ? grabbedNotes[0] : nil }

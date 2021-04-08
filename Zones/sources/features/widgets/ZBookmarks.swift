@@ -52,7 +52,7 @@ class ZBookmarks: NSObject {
 		return bookmark!
 	}
 
-	func createBookmark(targetting target: Zone) -> Zone {
+	func createBookmark(targeting target: Zone) -> Zone {
 		let bookmark: Zone = createZone(withBookmark: nil, target.zoneName)
 		bookmark.crossLink =  target
 		if  let     parent =  target.parentZone {
@@ -97,8 +97,8 @@ class ZBookmarks: NSObject {
 
 	func persistForLookupByTarget(_  iBookmark : Zone?) {
 		if  let       bookmark = iBookmark,
-			let linkRecordName = bookmark.linkRecordName,
-			let linkDatabaseID = bookmark.linkDatabaseID {
+			let linkRecordName =  bookmark.linkRecordName,
+			let linkDatabaseID =  bookmark.linkDatabaseID {
 			var   byRecordName = reverseLookup[linkDatabaseID] // returns nil for first registration
 			var     registered = byRecordName?[linkRecordName]
 
@@ -114,18 +114,8 @@ class ZBookmarks: NSObject {
 
 				if  registered == nil {
 					registered  = []
-				} else if let       parentOfBookmark  = bookmark.parentZone {
-					let recordNameOfParentOfBookmark  = parentOfBookmark.ckRecordName
-					if  recordNameOfParentOfBookmark != kLostAndFoundName {
-						for     existing in registered! {
-							if  existing.parentZone?.ckRecordName == recordNameOfParentOfBookmark {
-								markBookmarkAsLost()    // bookmark is sibling to its target
-
-								return
-							}
-						}
-					}
-				} else if !gFiles.isReading(for: bookmark.databaseID) {
+				} else if bookmark.parentZone == nil,
+						  !gFiles.isReading(for: bookmark.databaseID) {
 					markBookmarkAsLost()                // bookmark has no parent
 
 					return
@@ -144,9 +134,8 @@ class ZBookmarks: NSObject {
 			var  okayToStore = false
 
 			if  let bookmark = zRecord as? Zone,
-                let     root = bookmark.root,
-				iDatabaseID != root.databaseID,
-				root.isMapRoot {       // only store cross-linked, main map bookarks
+				let     root = bookmark.root, root.isMapRoot,
+				iDatabaseID != root.databaseID {       // only store inter-db, big-map bookmarks
                 okayToStore  = true
             }
 

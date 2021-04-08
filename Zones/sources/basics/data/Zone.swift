@@ -142,9 +142,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 			}
 		} else {
-			result = children.filter { (iZone) -> Bool in
-				iZone.isBookmark(of: type)
-			}
+			result = children.filter { $0.isBookmark(of: type) }
 		}
 		return result
 	}
@@ -189,7 +187,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- bookmarks
 	// MARK:-
 
-	var bookmarksTargettingSelf: ZoneArray {
+	var bookmarksTargetingSelf: ZoneArray {
 		if  let  dbID = databaseID,
 			let  name = ckRecordName,
 			let  dict = gBookmarks.reverseLookup[dbID],
@@ -201,8 +199,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return []
 	}
 
-	var firstBookmarkTargettingSelf: Zone? {
-		let    bookmarks = bookmarksTargettingSelf
+	var parentsOfBookmarksTargetingSelf: ZoneArray {
+		return bookmarksTargetingSelf.filter { $0.parentZone != nil }.map { $0.parentZone! }
+	}
+
+	var firstBookmarkTargetingSelf: Zone? {
+		let    bookmarks = bookmarksTargetingSelf
 
 		return bookmarks.count == 0 ? nil : bookmarks[0]
 	}
@@ -252,7 +254,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			self.invokeUsingDatabaseID(.mineID) {
-				let bookmark = gBookmarks.createBookmark(targetting: self)
+				let bookmark = gBookmarks.createBookmark(targeting: self)
 
 				bookmark.grab()
 				bookmark.needSave()
@@ -330,6 +332,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let theCopy = Zone.create(databaseID: dbID, named: nil)
 
 		copy(into: theCopy)
+		gBookmarks.persistForLookupByTarget(theCopy) // only works for bookmarks
 
 		theCopy.parentZone = nil
 
@@ -407,9 +410,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	var crumbRoot: Zone? {
+	var crumbTipZone: Zone? {
 		if  isBookmark {
-			return bookmarkTarget?.crumbRoot
+			return bookmarkTarget?.crumbTipZone
 		}
 
 		return self
@@ -1212,7 +1215,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// RECURSE //
 					// //////////
 
-					self.bookmarksTargettingSelf.deleteZones(permanently: permanently) {
+					self.bookmarksTargetingSelf.deleteZones(permanently: permanently) {
 						onCompletion?()
 					}
 				}
@@ -1744,7 +1747,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:-
 
 	func toggleRelator() {
-		if  let r = relator([]) {
+		if  let r = relator {
 			r.alterAttribute(.relator, remove: true)
 		} else {
 			alterAttribute  (.relator, remove: false)
@@ -1753,32 +1756,37 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gRedrawMaps()
 	}
 
-	func relator(_ iVisited: [String]) -> Zone? {
-		guard !iVisited.contains(ckRecordName) else { return nil }
+	var relator: Zone? { if let (_, r) = relator([]) { return r } else { return nil } }
+
+	func relator(_ iVisited: [String]) -> ([String], Zone)? {
+		guard let name = ckRecordName, !iVisited.contains(name) else {
+			return nil                                          // avoid looking more than once per zone for a relator
+		}
 
 		var visited = iVisited
 
-		visited.appendUnique(item: ckRecordName)
+		visited.appendUnique(item: name)
 
-		if  isRelator {
-			return self
-		} else if let target = bookmarkTarget {
+		if  let target = bookmarkTarget {
 			return target.relator(visited)
+		} else if isRelator,
+			let sRoot = root, sRoot.isMapRoot {
+			return (visited, self)
 		} else {
-			for bookmark in bookmarksTargettingSelf {
-				if  let    parent = bookmark.parentZone,
-					let     pRoot = parent.root, pRoot.isMapRoot,
-					let         r = parent.relator(visited),
-					let     rRoot = r.root, rRoot.isMapRoot {
-					return r
+			for parent in parentsOfBookmarksTargetingSelf {
+				if  let  pRoot = parent.root, pRoot.isMapRoot,
+					let (v, r) = parent.relator(visited) {
+					visited.appendUnique(contentsOf: v)
+
+					return (visited, r)
 				}
 			}
 
-			for child in children {
-				if  let    target = child.bookmarkTarget,
-					let         r = target.relator(visited),
-					let     rRoot = r.root, rRoot.isMapRoot {
-					return r
+			for target in targetsOfBookmarks {
+				if  let (v, r) = target.relator(visited) {
+					visited.appendUnique(contentsOf: v)
+
+					return (visited, r)
 				}
 			}
 		}
@@ -1787,50 +1795,42 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func related(_ iVisited: [String]) -> ZoneArray? {
-		if  !iVisited.contains(ckRecordName) {
-			var   zones = ZoneArray()
-			var visited = iVisited
+		guard let name = ckRecordName, !iVisited.contains(name) else { return nil }
+		var   zones = ZoneArray()
+		var visited = iVisited
 
-			func append(_ zone: Zone?) {
-				if  let root = zone?.root, root.isMapRoot {    // disallow rootless, recents, trash, etc.
-					let name = zone?.ckRecordName
-					zones  .appendUnique(item: zone)
-					visited.appendUnique(item: name)
-				}
+		func append(_ zone: Zone?) {
+			if  let root = zone?.root, root.isMapRoot {    // disallow rootless, recents, trash, etc.
+				let name = zone?.ckRecordName
+				zones  .appendUnique(item: zone)
+				visited.appendUnique(item: name)
 			}
-
-			func scan(_ zone: Zone) {
-				append(zone)
-
-				for bookmark in zone.bookmarksTargettingSelf {
-					if  let   bParent = bookmark.parentZone,
-						let      root = bParent.root, root.isMapRoot,
-						!zone.spawnedBy(bParent),                   // avoid infinite recursion
-						!visited.contains(bParent.ckRecordName) {
-						append (bParent)
-						scan   (bParent)                            // recurse
-					}
-				}
-			}
-
-			scan(self)
-
-			for target in targetsOfBookmarks {
-				scan(target)
-			}
-
-			for zone in zones {
-				for target in zone.targetsOfBookmarks {
-					if !visited.contains(target.ckRecordName) {
-						scan(target)
-					}
-				}
-			}
-
-			return zones
 		}
 
-		return nil
+		func scan(_ zone: Zone) {
+			append(zone)
+
+			for parent in zone.parentsOfBookmarksTargetingSelf {
+				if  let        root = parent.root, root.isMapRoot,
+					!zone.spawnedBy  (parent),                     // avoid infinite recursion
+					!visited.contains(parent.ckRecordName) {
+					append           (parent)
+					scan             (parent)                      // recurse
+				}
+			}
+		}
+
+		scan(self)
+
+		for zone in zones {
+			for target in zone.targetsOfBookmarks {
+				if !visited.contains(target.ckRecordName) {
+					scan(target)
+				}
+			}
+		}
+
+		return zones
 	}
 
 	func indexIn(_ zones: ZoneArray) -> Int? {
@@ -1845,7 +1845,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func goToNextRelated(_ forward: Bool) {
-		if  let       rr = relator([]),
+		if  let       rr = relator,
 			let        r = rr.related([]),
 			let    index = indexIn(r) {
 			let      max = r.count - 1
@@ -1853,6 +1853,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let next = index.next(up: forward, max: max) {
 				let zone = r[next]
 				gHere    = zone
+
+				print("\(rr) : \(r) -> \(zone)") // very helpful in final debugging
 
 				zone.grab()
 				gRedrawMaps()
@@ -2146,7 +2148,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				p.grab()
 				gSignal([.sCrumbs])
 			}
-		} else if let bookmark = firstBookmarkTargettingSelf {		 // self is an orphan
+		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
 			gHere              = bookmark			                 // change focus to bookmark of self
 		}
 	}
@@ -3210,7 +3212,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isBookmark  = isBookmark
 		p.isNotemark  = bookmarkTarget?.hasNote ?? false
 		p.showAccess  = hasAccessDecoration
-		p.isRelated   = relator([]) != nil
+		p.isRelated   = relator != nil
 		p.showList    = expanded
 		p.color       = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
 		p.childCount  = (gCountsMode == .progeny) ? progenyCount : indirectCount

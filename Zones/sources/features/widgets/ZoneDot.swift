@@ -242,8 +242,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		path.fill()
 	}
 
-	func drawRelatorLine(in iDirtyRect: CGRect) {
-		let rect = iDirtyRect.insetEquallyBy(fraction: 0.25).centeredHorizontalLine(height: 1.0)
+	func drawRelatorDecoration(in iDirtyRect: CGRect) {
+		let rect = iDirtyRect.insetEquallyBy(fraction: 0.20).centeredHorizontalLine(height: 1.5)
 
 		ZBezierPath(rect: rect).fill()
 	}
@@ -295,7 +295,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			decorationFillColor.setFill()
 
 			if  parameters.isRelated {
-				drawRelatorLine(in: iDirtyRect)
+				drawRelatorDecoration(in: iDirtyRect)
 			}
 
 			if parameters.showAccess {

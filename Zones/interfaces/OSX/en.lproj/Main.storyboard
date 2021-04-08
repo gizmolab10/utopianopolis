@@ -1023,10 +1023,21 @@ CA
                                     <segue destination="ZgY-dx-Pyh" kind="embed" id="JIB-tj-ujI"/>
                                 </connections>
                             </containerView>
+                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uYG-mD-FXW">
+                                <rect key="frame" x="408" y="16" width="25" height="25"/>
+                                <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="c4d-kZ-RgI">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="helpButtonAction:" target="MXk-17-6Dz" id="4jL-i4-hFc"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="yl6-st-bhl" secondAttribute="trailing" id="0hK-O4-Y9p"/>
                             <constraint firstItem="37A-oF-Gav" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="2Ov-o8-soA"/>
+                            <constraint firstAttribute="bottom" secondItem="uYG-mD-FXW" secondAttribute="bottom" constant="20" symbolic="YES" id="75s-sV-IVf"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="9Q8-HC-P7X"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="HVB-l5-rqc"/>
                             <constraint firstItem="nqD-wm-vjv" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="HbY-r2-DbF"/>
@@ -1038,6 +1049,7 @@ CA
                             <constraint firstAttribute="trailing" secondItem="37A-oF-Gav" secondAttribute="trailing" id="TDT-m7-nkv"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="V0U-dq-EtC"/>
                             <constraint firstItem="13C-5j-Mtw" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="YWh-p8-OqE"/>
+                            <constraint firstAttribute="trailing" secondItem="uYG-mD-FXW" secondAttribute="trailing" constant="20" symbolic="YES" id="ZLr-De-wDX"/>
                             <constraint firstAttribute="bottom" secondItem="5jB-w2-4Dg" secondAttribute="bottom" id="bsX-IT-HDI"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="ewO-M2-RZg"/>
                             <constraint firstAttribute="trailing" secondItem="LQL-Kb-jgm" secondAttribute="trailing" id="fgm-OB-ttw"/>
