@@ -26,7 +26,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var           emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
 	var          isBookmark: Bool      { return ckRecord?.isBookmark ?? false }
 	var  isInPublicDatabase: Bool      { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
-	var        isBigMapRoot: Bool      { return ckRecordName == kRootName }
+	var           isMapRoot: Bool      { return ckRecordName == kRootName }
 	var         isTrashRoot: Bool      { return ckRecordName == kTrashName }
 	var       isRecentsRoot: Bool      { return ckRecordName == kRecentsRootName }
 	var  isLostAndFoundRoot: Bool      { return ckRecordName == kLostAndFoundName }

@@ -192,7 +192,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var bookmarksTargettingSelf: ZoneArray {
 		if  let  dbID = databaseID,
 			let  name = ckRecordName,
-			let  dict = gBookmarks.registry[dbID],
+			let  dict = gBookmarks.reverseLookup[dbID],
 			let array = dict[name] {
 
 			return array
@@ -1743,57 +1743,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- relator
 	// MARK:-
 
-	func parentRelator(of zone: Zone) -> Zone? {
-		if  let parent = zone.parentZone,
-			parent.isRelator {
-			return parent
-		}
-
-		return nil
-	}
-
-	func relator(of zone: Zone) -> Zone? {
-		if  let target = zone.bookmarkTarget {
-			if  target.isRelator {
-				return target
-			} else if let parent = parentRelator(of: zone) {
-				return parent
-			}
-		}
-
-		return nil
-	}
-
-	var relator: Zone? {
-		if  isRelator {
-			return self
-		} else if let target = bookmarkTarget {
-			return target.relator
-		} else {
-			for bookmark in bookmarksTargettingSelf {
-				if  let    parent = parentRelator(of: bookmark) {
-					return parent
-				}
-			}
-
-			for bookmark in bookmarks {
-				if  let    relator = relator(of: bookmark) {
-					return relator
-				}
-			}
-
-			for child in children {
-				if  let    relator = relator(of: child) {
-					return relator
-				}
-			}
-		}
-
-		return nil
-	}
-
 	func toggleRelator() {
-		if  let r = relator {
+		if  let r = relator([]) {
 			r.alterAttribute(.relator, remove: true)
 		} else {
 			alterAttribute  (.relator, remove: false)
@@ -1802,47 +1753,101 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gRedrawMaps()
 	}
 
-	var relateds: ZoneArray {
-		var relateds = targetsOfBookmarks
+	func relator(_ iVisited: [String]) -> Zone? {
+		guard !iVisited.contains(ckRecordName) else { return nil }
 
-		func addParents(of zones: ZoneArray) {
-			for zone in zones {
-				if  let   name = zone.root?.ckRecordName,
-					let parent = zone.parentZone,
-					name      == kRootName {
-					relateds.appendUnique(contentsOf: [parent])
+		var visited = iVisited
+
+		visited.appendUnique(item: ckRecordName)
+
+		if  isRelator {
+			return self
+		} else if let target = bookmarkTarget {
+			return target.relator(visited)
+		} else {
+			for bookmark in bookmarksTargettingSelf {
+				if  let    parent = bookmark.parentZone,
+					let     pRoot = parent.root, pRoot.isMapRoot,
+					let         r = parent.relator(visited),
+					let     rRoot = r.root, rRoot.isMapRoot {
+					return r
+				}
+			}
+
+			for child in children {
+				if  let    target = child.bookmarkTarget,
+					let         r = target.relator(visited),
+					let     rRoot = r.root, rRoot.isMapRoot {
+					return r
 				}
 			}
 		}
 
-		relateds.appendUnique(contentsOf: [self])
-		addParents(of: bookmarksTargettingSelf)
-
-		if  let        r = relator {
-			relateds.appendUnique(contentsOf: [r])
-			relateds.appendUnique(contentsOf: r.targetsOfBookmarks)
-			addParents(of: r.bookmarksTargettingSelf)
-		}
-
-		return relateds
+		return nil
 	}
 
-	var indexInRelateds: Int? {
-		let r = relateds
+	func related(_ iVisited: [String]) -> ZoneArray? {
+		if  !iVisited.contains(ckRecordName) {
+			var   zones = ZoneArray()
+			var visited = iVisited
 
-		if  let index = r.firstIndex(of: self) {
+			func append(_ zone: Zone?) {
+				if  let root = zone?.root, root.isMapRoot {    // disallow rootless, recents, trash, etc.
+					let name = zone?.ckRecordName
+					zones  .appendUnique(item: zone)
+					visited.appendUnique(item: name)
+				}
+			}
+
+			func scan(_ zone: Zone) {
+				append(zone)
+
+				for bookmark in zone.bookmarksTargettingSelf {
+					if  let   bParent = bookmark.parentZone,
+						let      root = bParent.root, root.isMapRoot,
+						!zone.spawnedBy(bParent),                   // avoid infinite recursion
+						!visited.contains(bParent.ckRecordName) {
+						append (bParent)
+						scan   (bParent)                            // recurse
+					}
+				}
+			}
+
+			scan(self)
+
+			for target in targetsOfBookmarks {
+				scan(target)
+			}
+
+			for zone in zones {
+				for target in zone.targetsOfBookmarks {
+					if !visited.contains(target.ckRecordName) {
+						scan(target)
+					}
+				}
+			}
+
+			return zones
+		}
+
+		return nil
+	}
+
+	func indexIn(_ zones: ZoneArray) -> Int? {
+		if  let   target = bookmarkTarget,
+		    let    index = zones.firstIndex(of: target) {
 			return index
-		} else if let target = bookmarkTarget,
-				  let index = r.firstIndex(of: target) {
-			return index
+		} else if let index = zones.firstIndex(of: self) {
+			return    index
 		}
 
 		return nil
 	}
 
 	func goToNextRelated(_ forward: Bool) {
-		if  let    index = indexInRelateds {
-			let        r = relateds
+		if  let       rr = relator([]),
+			let        r = rr.related([]),
+			let    index = indexIn(r) {
 			let      max = r.count - 1
 			if       max > 0,
 				let next = index.next(up: forward, max: max) {
@@ -3205,7 +3210,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isBookmark  = isBookmark
 		p.isNotemark  = bookmarkTarget?.hasNote ?? false
 		p.showAccess  = hasAccessDecoration
-		p.isRelated   = relator != nil
+		p.isRelated   = relator([]) != nil
 		p.showList    = expanded
 		p.color       = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
 		p.childCount  = (gCountsMode == .progeny) ? progenyCount : indirectCount

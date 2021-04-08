@@ -19,12 +19,12 @@ let gBookmarks = ZBookmarks()
 
 class ZBookmarks: NSObject {
 
-    var registry = [ZDatabaseID : [String : ZoneArray]] ()
+    var reverseLookup = [ZDatabaseID : [String : ZoneArray]] ()
 
     var allBookmarks: ZoneArray {
         var bookmarks = ZoneArray ()
 
-        for dict in registry.values {
+        for dict in reverseLookup.values {
             for zones in dict.values {
                 bookmarks += zones
             }
@@ -82,13 +82,13 @@ class ZBookmarks: NSObject {
         if  let       bookmark = iBookmark,
             let linkDatabaseID = bookmark.linkDatabaseID,
             let linkRecordName = bookmark.linkRecordName,
-            var           dict = registry[linkDatabaseID],
+            var           dict = reverseLookup[linkDatabaseID],
             var          zones = dict[linkRecordName],
             let          index = zones.firstIndex(of: bookmark) {
             zones.remove(at: index)
 
-            dict[linkRecordName]     = zones
-            registry[linkDatabaseID] = dict
+            dict         [linkRecordName] = zones
+            reverseLookup[linkDatabaseID] = dict
         }
     }
 
@@ -99,7 +99,7 @@ class ZBookmarks: NSObject {
 		if  let       bookmark = iBookmark,
 			let linkRecordName = bookmark.linkRecordName,
 			let linkDatabaseID = bookmark.linkDatabaseID {
-			var   byRecordName = registry[linkDatabaseID] // returns nil for first registration
+			var   byRecordName = reverseLookup[linkDatabaseID] // returns nil for first registration
 			var     registered = byRecordName?[linkRecordName]
 
 			if  byRecordName  == nil {
@@ -135,7 +135,7 @@ class ZBookmarks: NSObject {
 			}
 
 			byRecordName?[linkRecordName] = registered
-			registry     [linkDatabaseID] = byRecordName
+			reverseLookup[linkDatabaseID] = byRecordName
 		}
 	}
 
@@ -146,7 +146,7 @@ class ZBookmarks: NSObject {
 			if  let bookmark = zRecord as? Zone,
                 let     root = bookmark.root,
 				iDatabaseID != root.databaseID,
-				root.isBigMapRoot {       // only store cross-linked, main map bookarks
+				root.isMapRoot {       // only store cross-linked, main map bookarks
                 okayToStore  = true
             }
 

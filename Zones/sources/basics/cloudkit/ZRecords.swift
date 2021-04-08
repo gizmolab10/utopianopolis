@@ -371,7 +371,7 @@ class ZRecords: NSObject {
 			appendCKRecordsLookup(with: name) { iRecords -> (CKRecordsArray) in
 				var records = iRecords
 				
-				records.appendUnique(contentsOf: [record])
+				records.appendUnique(item: record)
 				
 				return records
 			}
@@ -407,7 +407,7 @@ class ZRecords: NSObject {
 
 			for record in iRecords {
 				if  record.matchesFilterOptions {
-					filtered.appendUnique(contentsOf: [record])
+					filtered.appendUnique(item: record)
 				}
 			}
 
@@ -420,7 +420,8 @@ class ZRecords: NSObject {
     }
 
     @discardableResult func registerZRecord(_  iRecord: ZRecord?) -> Bool {
-        if  let            zRecord  = iRecord,
+		var                created  = false
+		if  let            zRecord  = iRecord,
             let               name  = zRecord.ckRecordName {
 			if  let existingRecord  = zRecordsLookup[name] {
                 if  existingRecord != zRecord, existingRecord.ckRecord?.recordType == zRecord.ckRecord?.recordType {
@@ -429,14 +430,11 @@ class ZRecords: NSObject {
                     // if already registered, must ignore //
                     // /////////////////////////////////////
 
-					duplicates.appendUnique(contentsOf: [zRecord])
-					
-                }
-            } else {
-                if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
-                    gBookmarks.persistForLookupByTarget(bookmark)
-                }
+					duplicates.appendUnique(item: zRecord)
 
+					return false
+				}
+            } else {
                 zRecordsLookup[name] = zRecord
 
 				registerByType(zRecord)
@@ -445,11 +443,15 @@ class ZRecords: NSObject {
 					addToLocalSearchIndex(nameOf: zone)
 				}
 
-                return true
+				created = true
             }
+			
+			if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
+				gBookmarks.persistForLookupByTarget(bookmark)
+			}
         }
 
-        return false
+        return created
     }
 
 	func registerByType(_ iRecord: ZRecord?) {

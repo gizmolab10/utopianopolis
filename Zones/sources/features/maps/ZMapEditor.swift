@@ -143,7 +143,7 @@ class ZMapEditor: ZBaseEditor {
 						case "'":        gSwapSmallMapMode(OPTION)
 						case "/":        if IGNORED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-						case "[", "]":   if   SHIFT { gSelecting.currentMoveable.goToNextRelated(OPTION) } else { go(down: key == "]", OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() } }
+						case "[", "]":   if   SHIFT { gSelecting.currentMoveable.goToNextRelated(key == "]") } else { go(down: key == "]", OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() } }
 						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")
 						case kTab:       addSibling(OPTION)
 						case kSpace:     if CONTROL || OPTION || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }

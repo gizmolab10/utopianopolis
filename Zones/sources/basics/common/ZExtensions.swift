@@ -1162,23 +1162,32 @@ extension Array {
 		return result
 	}
 
-	func contains(_ other: AnyObject) -> Bool {
-		return containsCompare(with: other) { (item, another) in
+	func contains(_ other: Any?) -> Bool {
+		return (other == nil) ? false : containsCompare(with: other) { (item, another) in
 			return item === another
 		}
 	}
 
-    func containsCompare(with other: AnyObject, using: CompareClosure? = nil) -> Bool {
-        if  let compare = using {
+    func containsCompare(with other: Any?, using: CompareClosure? = nil) -> Bool {
+        if  let compare = using,
+			let to = other as AnyObject? {
             for item in self {
-                if  compare(item as AnyObject, other) {
+                if  compare(item as AnyObject, to) {
                     return true     // true means match
                 }
             }
         }
         
-        return false    // false means unique
+        return false    // false means unique / missing
     }
+
+	mutating func appendUnique(item: Any?, compare: CompareClosure? = nil) {
+		if  let e = item as? Element,
+			!self.contains(item),
+			!containsCompare(with: item, using: compare) {
+			append(e)
+		}
+	}
 
 	mutating func appendUnique(contentsOf items: Array, compare: CompareClosure? = nil) {
 		let existing = self as NSArray
@@ -1290,7 +1299,7 @@ extension ZRecordsArray {
 	}
 
 	mutating func appendUnique(_ item: ZRecord) {
-		appendUnique(contentsOf: [item]) { (a, b) -> (Bool) in
+		appendUnique(item: item) { (a, b) -> (Bool) in
 			if  let    aName  = (a as? ZRecord)?.ckRecordName,
 				let    bName  = (b as? ZRecord)?.ckRecordName {
 				return aName ==  bName
@@ -1316,7 +1325,7 @@ extension ZRecordsArray {
 extension CKRecordsArray {
 
 	mutating func appendUnique(_ item: CKRecord) {
-		appendUnique(contentsOf: [item]) { (a, b) -> (Bool) in
+		appendUnique(item: item) { (a, b) -> (Bool) in
 			if  let aRecordName = (a as? CKRecord)?.recordID.recordName,
 				let bRecordName = (b as? CKRecord)?.recordID.recordName {
 				return aRecordName == bRecordName

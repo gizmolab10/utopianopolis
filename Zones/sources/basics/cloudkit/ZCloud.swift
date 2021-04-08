@@ -687,7 +687,7 @@ class ZCloud: ZRecords {
                     }
                 }
 			} else if let ckRecord = iRecord {
-				retrieved.appendUnique(contentsOf: [ckRecord])
+				retrieved.appendUnique(item: ckRecord)
 			} else { // nil means: we already received full response from cloud for this particular fetch
                 onCompletion?(retrieved)
             }
@@ -983,7 +983,7 @@ class ZCloud: ZRecords {
             queryForZonesWith(predicate, batchSize: kMaxBatchSize) { (iRecord, iError) in
                 if  let ckRecord = iRecord {
 					if !self.childlessParents.contains(ckRecord.recordID.recordName) { // avoid repeats
-						retrievedRecords.appendUnique(contentsOf: [ckRecord])
+						retrievedRecords.appendUnique(item: ckRecord)
 					}
                 } else { // retrievedRecords is all we get for this query
                     FOREGROUND {

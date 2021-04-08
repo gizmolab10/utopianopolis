@@ -274,10 +274,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if  hasGrabbedNote {
 			switch key {
 				case "t":     swapWithParent()
-				case "n":     swapBetweenNoteAndEssay()
 				case "=":     grabSelected()
-				case "/",
-					 kEscape: gHelpController?.show(flags: flags)
+				case "/":     swapBetweenNoteAndEssay()
+				case kEscape: gHelpController?.show(flags: flags)
 				case kDelete: deleteGrabbed()
 				case kReturn: if FLAGGED { grabDone() }
 
@@ -444,7 +443,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				if !singleleClick {
 					swapBetweenNoteAndEssay()
 				} else {
-					grabbedNotes.appendUnique(contentsOf: [note])
+					grabbedNotes.appendUnique(item: note)
 					setNeedsDisplay()
 					gSignal([.sDetails])
 				}
@@ -763,7 +762,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gCurrentEssay?.children.count ?? 0 > 1 {     // ignore if does not have multiple children
 
 			for note in selectedNotes {
-				grabbedNotes.appendUnique(contentsOf: [note])
+				grabbedNotes.appendUnique(item: note)
 			}
 
 			scrollToGrabbed()
@@ -831,7 +830,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func regrab(_ ungrabbed: ZoneArray) {
 		for zone in ungrabbed {                         // re-grab notes for set aside zones
 			if  let note = zone.note {                // note may not be same
-				grabbedNotes.appendUnique(contentsOf: [note])
+				grabbedNotes.appendUnique(item: note)
 			}
 		}
 	}
