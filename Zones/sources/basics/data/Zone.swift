@@ -96,6 +96,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var     targetsOfBookmarks       :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
 	var              bookmarks       :          ZoneArray  { return zones(of:  .wBookmarks) }
 	var              notemarks       :          ZoneArray  { return zones(of:  .wNotemarks) }
+	var                      related :          ZoneArray? { if let     r  = related([]) { return r } else { return nil } }
+	var                      relator :          Zone?      { if let (_, r) = relator([]) { return r } else { return nil } }
 	var                     children =          ZoneArray  ()
 	var                       traits =   ZTraitDictionary  ()
 	var                        level =                  0
@@ -1756,8 +1758,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gRedrawMaps()
 	}
 
-	var relator: Zone? { if let (_, r) = relator([]) { return r } else { return nil } }
-
 	func relator(_ iVisited: [String]) -> ([String], Zone)? {
 		guard let name = ckRecordName, !iVisited.contains(name) else {
 			return nil                                          // avoid looking more than once per zone for a relator
@@ -1846,7 +1846,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func goToNextRelated(_ forward: Bool) {
 		if  let       rr = relator,
-			let        r = rr.related([]),
+			let        r = rr.related,
 			let    index = indexIn(r) {
 			let      max = r.count - 1
 			if       max > 0,
@@ -1854,7 +1854,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let zone = r[next]
 				gHere    = zone
 
-				print("\(rr) : \(r) -> \(zone)") // very helpful in final debugging
+//				print("\(rr) : \(r) -> \(zone)") // very helpful in final debugging
 
 				zone.grab()
 				gRedrawMaps()
@@ -2314,36 +2314,33 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				gSelecting.ungrabAll()
 
 				for grab in grabs {
-					var beingMoved = grab
+					var beingAdded = grab
 
-					if  toSmallMap && !beingMoved.isInSmallMap && !beingMoved.isBookmark && !beingMoved.isInTrash && !SPECIAL {
-						if  let bookmark = gFavorites.createBookmark(for: beingMoved, action: .aNotABookmark) {	// type 3
-							beingMoved   = bookmark
+					if  toSmallMap && !beingAdded.isInSmallMap && !beingAdded.isBookmark && !beingAdded.isInTrash && !SPECIAL {
+						if  let bookmark = gFavorites.createBookmark(for: beingAdded, action: .aNotABookmark) {	// type 3
+							beingAdded   = bookmark
 
-							beingMoved.maybeNeedSave()
+							beingAdded.maybeNeedSave()
 						}
-					} else {
-						beingMoved.orphan()
-
-						if  beingMoved.databaseID != into.databaseID {
-							beingMoved.traverseAllProgeny { iChild in
-								iChild.needDestroy()
-							}
-
-							beingMoved = beingMoved.deepCopy(dbID: into.databaseID)
+					} else if beingAdded.databaseID != into.databaseID {    // being moved to the other db
+						if  beingAdded.parentZone == nil || !beingAdded.parentZone!.children.contains(beingAdded) {
+							beingAdded.needDestroy()                        // is not a child within its parent and should be tossed
+							beingAdded.orphan()
 						}
+
+						beingAdded = beingAdded.deepCopy(dbID: into.databaseID)
 					}
 
 					if !SPECIAL {
-						beingMoved.addToGrabs()
+						beingAdded.addToGrabs()
 					}
 
 					if  toSmallMap {
 						into.expandInSmallMap(true)
 					}
 
-					into.addAndReorderChild(beingMoved, at: iIndex)
-					beingMoved.recursivelyApplyDatabaseID(into.databaseID)
+					into.addAndReorderChild(beingAdded, at: iIndex)
+					beingAdded.recursivelyApplyDatabaseID(into.databaseID)
 				}
 
 				if  toBookmark && undoManager.groupingLevel > 0 {

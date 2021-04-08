@@ -151,6 +151,7 @@ class ZCoreDataStack: NSObject {
 		return nil
 	}
 
+	// TODO: gotit!
 	func hasExisting(entityName: String, recordName: String?, databaseID: ZDatabaseID?) -> Any? {
 		if  let     predicate = predicate(entityName: entityName, recordName: recordName, databaseID: databaseID) {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
