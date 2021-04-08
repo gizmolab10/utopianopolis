@@ -126,11 +126,13 @@ class ZOnboarding : ZOperations {
     }
 
 	func fetchUserRecord(_ onCompletion: @escaping Closure) {
-		if  let          record = gUserRecord {
-			user                = ZUser.create(record: record, databaseID: gDatabaseID)
-			gCloudAccountStatus = .active
+		if  let              record = gUserRecord {
+			gCoreDataStack.deferUntilAvailable(for: .oFetch) {
+				self.user           = ZUser.create(record: record, databaseID: gDatabaseID)
+				gCloudAccountStatus = .active
 
-			onCompletion()
+				onCompletion()
+			}
 		} else if gCloudAccountStatus == .available,
             let      recordName = gUserRecordID {
             let      ckRecordID = CKRecordID(recordName: recordName)

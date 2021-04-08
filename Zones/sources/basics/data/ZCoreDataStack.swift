@@ -114,6 +114,8 @@ class ZCoreDataStack: NSObject {
 	// MARK:- core data prefers one operation at a time
 	// MARK:-
 
+	func isAvailable(for opID: ZCDOperationID) -> Bool { return currentOpID == nil || currentOpID == opID }
+
 	func deferralHappensMaybe(_ iTimer: Timer?) {
 		if  currentOpID == nil {       // nil means core data is no longer doing anything
 			currentOpID  = waitingOpID // must read this first, clear it next
@@ -151,13 +153,15 @@ class ZCoreDataStack: NSObject {
 		return nil
 	}
 
-	// TODO: gotit!
 	func hasExisting(entityName: String, recordName: String?, databaseID: ZDatabaseID?) -> Any? {
-		if  let     predicate = predicate(entityName: entityName, recordName: recordName, databaseID: databaseID) {
+		if  isAvailable(for: .oFetch),         // avoid crash due to core data fetch array being simultaneously mutated and enumerated
+			let     predicate = predicate(entityName: entityName, recordName: recordName, databaseID: databaseID) {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
 			request.predicate = predicate
+
 			do {
-				let items = try managedContext.fetch(request)
+				let     items = try self.managedContext.fetch(request)
+				currentOpID   = nil
 
 				if  items.count > 0 {
 					return items[0]

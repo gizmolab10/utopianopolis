@@ -3432,7 +3432,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> Zone {
-		if  let    has = createMaybe(record: record, entityName: kZoneType, databaseID: databaseID) as? Zone {        // first check if already exists
+		if  let    has = hasMaybe(record: record, entityName: kZoneType, databaseID: databaseID) as? Zone {        // first check if already exists
 			return has
 		}
 

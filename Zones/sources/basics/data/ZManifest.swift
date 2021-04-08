@@ -46,7 +46,7 @@ class ZManifest : ZRecord {
 	convenience init(databaseID: ZDatabaseID?) { self.init(record: CKRecord(recordType: kManifestType), databaseID: databaseID) }
 
 	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> ZManifest {
-		if  let    has = createMaybe(record: record, entityName: kManifestType, databaseID: databaseID) as? ZManifest {        // first check if already exists
+		if  let    has = hasMaybe(record: record, entityName: kManifestType, databaseID: databaseID) as? ZManifest {        // first check if already exists
 			return has
 		}
 

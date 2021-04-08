@@ -124,9 +124,19 @@ class ZRecord: ZManagedRecord { // NSObject {
 		}
 	}
 
-	static func createMaybe(record: CKRecord? = nil, entityName: String? = nil, databaseID: ZDatabaseID?) -> ZRecord? {
+	static func hasZRecord(recordName: String?, entityName: String, databaseID: ZDatabaseID?) -> ZRecord? {
+		if  let       dbid = databaseID,
+			let      cloud = gRemoteStorage.cloud(for: dbid),
+			let    zRecord = cloud.maybeZRecordForRecordName(recordName) {
+			return zRecord
+		} else {
+			return gCoreDataStack.hasExisting(entityName: entityName, recordName: recordName, databaseID: databaseID) as? ZRecord
+		}
+	}
+
+	static func hasMaybe(record: CKRecord? = nil, entityName: String? = nil, databaseID: ZDatabaseID?) -> ZRecord? {
 		if  let name = entityName,
-			let  has = gCoreDataStack.hasExisting(entityName: name, recordName: record?.recordID.recordName, databaseID: databaseID) as? ZRecord {        // first check if already exists
+			let  has = hasZRecord(recordName: record?.recordID.recordName, entityName: name, databaseID: databaseID) {        // first check if already exists
 			has.useBest(record: record)
 
 			return has

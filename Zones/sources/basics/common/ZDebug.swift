@@ -39,6 +39,7 @@ struct ZCoreDataMode: OptionSet {
 enum ZCDOperationID: Int {
 	case oLoad
 	case oSave
+	case oFetch
 	case oSearch
 	case oProgeny
 

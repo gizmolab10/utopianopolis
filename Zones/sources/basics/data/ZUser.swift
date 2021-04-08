@@ -54,7 +54,7 @@ class ZUser : ZRecord {
 	}
 
 	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> ZUser {
-		if  let    has = createMaybe(record: record, entityName: kUserEntityName, databaseID: databaseID) as? ZUser {        // first check if already exists
+		if  let    has = hasMaybe(record: record, entityName: kUserEntityName, databaseID: databaseID) as? ZUser {        // first check if already exists
 			return has
 		}
 

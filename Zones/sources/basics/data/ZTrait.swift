@@ -153,7 +153,7 @@ class ZTrait: ZTraitAssets {
 	}
 
 	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> ZTrait {
-		if  let    has = createMaybe(record: record, entityName: kTraitType, databaseID: databaseID) as? ZTrait {        // first check if already exists
+		if  let    has = hasMaybe(record: record, entityName: kTraitType, databaseID: databaseID) as? ZTrait {        // first check if already exists
 			return has
 		}
 
