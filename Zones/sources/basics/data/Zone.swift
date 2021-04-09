@@ -2324,8 +2324,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						}
 					} else if beingAdded.databaseID != into.databaseID {    // being moved to the other db
 						if  beingAdded.parentZone == nil || !beingAdded.parentZone!.children.contains(beingAdded) {
+							beingAdded.parentZone  = nil
 							beingAdded.needDestroy()                        // is not a child within its parent and should be tossed
-							beingAdded.orphan()
 						}
 
 						beingAdded = beingAdded.deepCopy(dbID: into.databaseID)
@@ -2339,6 +2339,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						into.expandInSmallMap(true)
 					}
 
+					beingAdded.orphan()
 					into.addAndReorderChild(beingAdded, at: iIndex)
 					beingAdded.recursivelyApplyDatabaseID(into.databaseID)
 				}

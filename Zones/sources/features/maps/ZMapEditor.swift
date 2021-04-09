@@ -875,38 +875,30 @@ class ZMapEditor: ZBaseEditor {
     }
 
     func actuallyMoveInto(_ move: ZoneArray?, onCompletion: Closure?) {
-		if  let zones = move,
-			zones.count > 0,
+		if  let    zones = move,
+			zones.count  > 0,
 			!gIsRecentlyMode || !zones.anyInRecently,
-			var    there = zones[0].parentZone {
-            let siblings = Array(there.children)
+			var     into = zones.rootMost?.parentZone {                          // default: move into parent of root most
+			let siblings = Array(into.children)
+			let      max = siblings.count - 1
+			var  fromTop = false
             
             for zone in zones {
-                if  let       index  = zone.siblingIndex {
-                    var cousinIndex  = index == 0 ? 1 : index - 1 // ALWAYS INSERT INTO SIBLING ABOVE, EXCEPT AT TOP
-                    
-                    if  cousinIndex >= 0 && cousinIndex < siblings.count {
-                        var newThere = siblings[cousinIndex]
-                        
-                        if !zones.contains(newThere) {
-                            there    = newThere
-                            
-                            break
-                        } else {
-                            cousinIndex += 1
-                            newThere = siblings[cousinIndex]
+				if  let       index = zone.siblingIndex {
+					fromTop         = fromTop || index == 0                     // detect when moving the top sibling
+					if  let    next = index.next(up: !fromTop, max: max) {      // always move into sibling above, except at top
+						let newInto = siblings[next]
 
-                            if !zones.contains(newThere) {
-                                there    = newThere
-                                
-                                break
-                            }
-                        }
-                    }
-                }
-            }
+						if !zones.contains(newInto) {
+							into    = newInto
+
+							break
+						}
+					}
+				}
+			}
             
-            moveZones(zones, into: there, onCompletion: onCompletion)
+            moveZones(zones, into: into, onCompletion: onCompletion)
         } else {
             onCompletion?()
         }
