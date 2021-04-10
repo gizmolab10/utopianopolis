@@ -96,7 +96,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var     targetsOfBookmarks       :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
 	var              bookmarks       :          ZoneArray  { return zones(of:  .wBookmarks) }
 	var              notemarks       :          ZoneArray  { return zones(of:  .wNotemarks) }
-	var                      related :          ZoneArray? { if let     r  = related([]) { return r } else { return nil } }
 	var                      relator :          Zone?      { if let (_, r) = relator([]) { return r } else { return nil } }
 	var                     children =          ZoneArray  ()
 	var                       traits =   ZTraitDictionary  ()
@@ -1845,8 +1844,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func goToNextRelated(_ forward: Bool) {
-		if  let       rr = relator,
-			let        r = rr.related,
+		guard   let   rr = relator else {
+			if  self    != gHere {
+				gHere.goToNextRelated(forward)
+			}
+
+			return
+		}
+
+		if  let        r = rr.related([]),
 			let    index = indexIn(r) {
 			let      max = r.count - 1
 			if       max > 0,
@@ -2217,7 +2223,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func addGrabbedZones(at iIndex: Int?, undoManager iUndoManager: UndoManager?, _ SPECIAL: Bool, onCompletion: Closure?) {
+	func addGrabbedZones(at iIndex: Int?, undoManager iUndoManager: UndoManager?, _ flags: ZEventFlags, onCompletion: Closure?) {
 
 		// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// 1. move a normal zone into another normal zone                                                            //
@@ -2234,6 +2240,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		let   toBookmark = isBookmark                    // type 2
 		let   toSmallMap = isInSmallMap && !toBookmark   // type 3
+		let      SPECIAL = flags.isSpecial
 		let         into = bookmarkTarget ?? self        // grab bookmark AFTER travel
 		var        grabs = gSelecting.currentMapGrabs
 		var      restore = [Zone: (Zone, Int?)] ()
@@ -2284,7 +2291,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			iUndoSelf.UNDO(self) { iUndoUndoSelf in
 				let zoneSelf = iUndoUndoSelf as Zone
-				zoneSelf.addGrabbedZones(at: iIndex, undoManager: undoManager, SPECIAL, onCompletion: onCompletion)
+				zoneSelf.addGrabbedZones(at: iIndex, undoManager: undoManager, flags, onCompletion: onCompletion)
 			}
 
 			onCompletion?()
@@ -2295,13 +2302,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		// /////////////
 
 		let finish = {
-			var done = false
+			var    done = false
+			let  OPTION = flags.isOption
 
 			if !SPECIAL {
 				into.expand()
 			}
-
-//			into.maybeNeedChildren()
 
 			if !done {
 				done = true
@@ -2323,9 +2329,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 							beingAdded.maybeNeedSave()
 						}
 					} else if beingAdded.databaseID != into.databaseID {    // being moved to the other db
-						if  beingAdded.parentZone == nil || !beingAdded.parentZone!.children.contains(beingAdded) {
-							beingAdded.parentZone  = nil
+						if  beingAdded.parentZone == nil || !beingAdded.parentZone!.children.contains(beingAdded) || !OPTION {
 							beingAdded.needDestroy()                        // is not a child within its parent and should be tossed
+							beingAdded.orphan()
 						}
 
 						beingAdded = beingAdded.deepCopy(dbID: into.databaseID)
@@ -3202,15 +3208,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func dotParameters(_ isFilled: Bool, _ isReveal: Bool) -> ZDotParameters {
-		let traits    = traitKeys
-		var p         = ZDotParameters()
+		let    traits = traitKeys
+		let         r = relator
+		var         p = ZDotParameters()
 		p.isDrop      = self == gDragDropZone
 		p.accessType  = directAccess == .eProgenyWritable ? .sideDot : .vertical
 		p.showSideDot = isACurrentDetailBookmark
+		p.showAccess  = hasAccessDecoration
 		p.isBookmark  = isBookmark
 		p.isNotemark  = bookmarkTarget?.hasNote ?? false
-		p.showAccess  = hasAccessDecoration
-		p.isRelated   = relator != nil
+		p.isRelator   = (r == self || r == bookmarkTarget)
+		p.isRelated   =  r != nil
 		p.showList    = expanded
 		p.color       = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
 		p.childCount  = (gCountsMode == .progeny) ? progenyCount : indirectCount

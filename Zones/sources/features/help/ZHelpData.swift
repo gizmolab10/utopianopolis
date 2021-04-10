@@ -18,8 +18,9 @@ enum ZHelpDotType: String {
 	case click      = "points"
 	case email      = "email"
 	case essay      = "click"
+	case cycle      = "cycle"
 	case twelve     = "12"
-	case relator    = "cycle"
+	case relator    = "owner"
 	case progeny    = "only"
 	case favorite   = "this"
 	case bookmark   = "bookmark"
@@ -29,8 +30,8 @@ enum ZHelpDotType: String {
 	case twelveHund = "1200"
 	case unwritable = "not"
 
-	var isReveal    : Bool            { return ![.drag, .essay, .relator, .favorite].contains(self) && !showAccess }
-	var showAccess  : Bool            { return  [.progeny,              .unwritable].contains(self) }
+	var isReveal    : Bool            { return ![.drag, .essay, .cycle, .relator, .favorite].contains(self) && !showAccess }
+	var showAccess  : Bool            { return  [.progeny,                      .unwritable].contains(self) }
 	var pointLeft   : Bool            { return self == .click }
 	var accessType  : ZDecorationType { return self == .progeny ? .sideDot : .vertical }
 
@@ -82,7 +83,8 @@ enum ZHelpDotType: String {
 		p.showAccess  = showAccess
 		p.accessType  = accessType
 		p.showList    = pointLeft || !isFilled
-		p.isRelated   = self == .relator
+		p.isRelator   = self == .relator
+		p.isRelated   = self == .relator  || self == .cycle
 		p.isNotemark  = self == .notemark || self == .has
 		p.isBookmark  = self == .bookmark
 		p.showSideDot = self == .favorite

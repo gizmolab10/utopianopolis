@@ -26,6 +26,7 @@ struct  ZDotParameters {
 	var isDrop        : Bool            = false
 	var filled        : Bool            = false
 	var isReveal      : Bool            = false
+	var isRelator     : Bool            = false
 	var isRelated     : Bool            = false
 	var isBookmark    : Bool            = false
 	var isNotemark    : Bool            = false
@@ -216,7 +217,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
         switch type {
         case .vertical:
-			rect      = iDirtyRect.insetEquallyBy(fraction: 0.175).centeredVerticalLine(width: thickness)
+			rect      = iDirtyRect.insetEquallyBy(fraction: 0.175).centeredVerticalLine(thick: thickness)
             path      = ZBezierPath(rect: rect)
         case .sideDot:
             thickness = (thickness + 2.0) * iDirtyRect.size.height / 12.0
@@ -242,10 +243,20 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		path.fill()
 	}
 
-	func drawRelatorDecoration(in iDirtyRect: CGRect) {
-		let rect = iDirtyRect.insetEquallyBy(fraction: 0.20).centeredHorizontalLine(height: 1.5)
+	func drawRelatorDecorations(for parameters: ZDotParameters, in iDirtyRect: CGRect) {
+		if  parameters.isRelated {
+			if  parameters.isRelator {
+				let (a,b) = iDirtyRect.insetEquallyBy(fraction: 0.25).twoDotsVertically(fractionalDiameter: 0.7)
+				let  path = ZBezierPath(ovalIn: a)
 
-		ZBezierPath(rect: rect).fill()
+				path.append(ZBezierPath(ovalIn: b))
+				path.fill()
+			} else {
+				let  rect = iDirtyRect.insetEquallyBy(fraction: 0.10).centeredHorizontalLine(thick: 1.25)
+
+				ZBezierPath(rect: rect).fill()
+			}
+		}
 	}
 
 	func drawTraitDecorations(for parameters: ZDotParameters, color: ZColor, isForMap: Bool = true, in iDirtyRect: CGRect) {
@@ -293,10 +304,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			}
 		} else {
 			decorationFillColor.setFill()
-
-			if  parameters.isRelated {
-				drawRelatorDecoration(in: iDirtyRect)
-			}
+			drawRelatorDecorations(for: parameters, in: iDirtyRect)
 
 			if parameters.showAccess {
 

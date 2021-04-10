@@ -949,16 +949,40 @@ extension CGRect {
 		return offsetBy(dx: offset, dy: offset)
 	}
 
-	func centeredHorizontalLine(height: CGFloat) -> CGRect {
-		let y = center.y - (height / 2.0)
-
-		return CGRect(origin: CGPoint(x: minX, y: y), size: CGSize(width: maxX - minX, height: height))
+	func centeredEquallyAround(_ center: CGPoint, diameter: CGFloat) -> CGRect {
+		return CGRect(origin: center, size: CGSize.zero).insetEquallyBy(-diameter / 2.0)
 	}
 
-	func centeredVerticalLine(width: CGFloat) -> CGRect {
-		let x = center.x - (width / 2.0)
+	func centeredRect(diameter: CGFloat) -> CGRect {
+		return centeredEquallyAround(center, diameter: diameter)
+	}
 
-		return CGRect(origin: CGPoint(x: x, y: minY), size: CGSize(width: width, height: maxY - minY))
+	func twoDotsVertically(fractionalDiameter: CGFloat) -> (CGRect, CGRect) {
+		let a = CGRect(origin: bottomCenter, size: .zero)
+		let b = CGRect(origin:    topCenter, size: .zero)
+		let d = height * fractionalDiameter
+
+		return (a.centeredRect(diameter: d), b.centeredRect(diameter: d))
+	}
+
+	func twoDotsHorizontally(fractionalDiameter: CGFloat) -> (CGRect, CGRect) {
+		let a = CGRect(origin:  leftCenter, size: .zero)
+		let b = CGRect(origin: rightCenter, size: .zero)
+		let d = width * fractionalDiameter
+
+		return (a.centeredRect(diameter: d), b.centeredRect(diameter: d))
+	}
+
+	func centeredHorizontalLine(thick: CGFloat) -> CGRect {
+		let y = center.y - (thick / 2.0)
+
+		return CGRect(origin: CGPoint(x: minX, y: y), size: CGSize(width: maxX - minX, height: thick))
+	}
+
+	func centeredVerticalLine(thick: CGFloat) -> CGRect {
+		let x = center.x - (thick / 2.0)
+
+		return CGRect(origin: CGPoint(x: x, y: minY), size: CGSize(width: thick, height: maxY - minY))
 	}
 
 	var squareCentered: CGRect {

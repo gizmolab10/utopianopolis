@@ -26,7 +26,8 @@ class ZHelpDotsData: ZHelpData {
 		".b",					"editable",																		"",
 		".b",					"not editable",																	"",
 		".b",					"only the ideas in all its sublists are editable",								"",
-		".b",					"cycle of related ideas (independent of editable)",								"",
+		".b",					"cycle of related ideas",														"",
+		".b",					"owner of cycle (one per cycle)",												"",
 		"",						"",																				"",
 		"_appears only in the favorite and recent lists",													"",	"",
 		".b",					"this bookmark's target is current focus",										""
@@ -36,7 +37,7 @@ class ZHelpDotsData: ZHelpData {
 		"",						"",																				"",
 		"!REVEAL DOT",			"click to conceal, reveal or activate",											"",
 		"",						"",																				"",
-		"_no dot indicates no list and nothing to activate",												"", "",
+		"_no dot indicates nothing to reveal (no list, note, email or hyperlink)",							"", "",
 		"",						"",																				"",
 		"_when list is visible","click to hide list",															"",
 		".e",					"points to the left",															"",

@@ -418,9 +418,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                     }
 
 					if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
-						let SPECIAL = gesture.modifiers?.isSpecial {
+						let   flags = gesture.modifiers {
 
-						drop.addGrabbedZones(at: dropAt, undoManager: undoManager, SPECIAL) {
+						drop.addGrabbedZones(at: dropAt, undoManager: undoManager, flags) {
 							gRedrawMaps()
                             gSelecting.updateBrowsingLevel()
                             gSelecting.updateCousinList()
