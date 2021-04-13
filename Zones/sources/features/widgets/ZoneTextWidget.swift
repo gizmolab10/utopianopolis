@@ -146,7 +146,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
                 gSearching.exitSearchMode()
             }
 
-			if  var prior = gSelecting.primitiveGrab([zone]) {
+			if  var prior = gSelecting.grabAndNoUI([zone]) {
 				prior.appendUnique(contentsOf: [zone])
 				gSelecting.updateWidgetsNeedDisplay(for: prior)
 			}

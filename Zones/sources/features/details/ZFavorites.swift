@@ -91,8 +91,11 @@ class ZFavorites: ZSmallMapRecords {
         }
 	}
 
-	override func push(intoNotes: Bool = false) {
-		createBookmark(for: gHere, action: .aCreateBookmark)?.grab()
+	override func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {
+		if  let pushMe = zone,
+			!findAndSetHere(asParentOf: pushMe) {
+			createBookmark(for: pushMe, action: .aCreateBookmark)?.grab()
+		}
 	}
 
     // MARK:- update
@@ -202,7 +205,7 @@ class ZFavorites: ZSmallMapRecords {
 			// //////////////////////////////////////////////
 
 			if  missingTrash {
-				let          trash = Zone.create(databaseID: .mineID, named: kTrashName, recordName: kTrashName + kFavoritesSuffix)
+				let          trash = Zone.create(named: kTrashName, recordName: kTrashName + kFavoritesSuffix, databaseID: .mineID)
 				trash    .zoneLink = kTrashLink // convert into a bookmark
 				trash.directAccess = .eProgenyWritable
 
@@ -216,7 +219,7 @@ class ZFavorites: ZSmallMapRecords {
 				var       lost = gMineCloud?.maybeZoneForRecordName(recordName)
 
 				if  lost      == nil {
-					lost       = Zone.create(databaseID: .mineID, named: kLostAndFoundName, recordName: recordName)
+					lost       = Zone.create(named: kLostAndFoundName, recordName: recordName, databaseID: .mineID)
 				}
 
 				lost?    .zoneLink = kLostAndFoundLink // convert into a bookmark

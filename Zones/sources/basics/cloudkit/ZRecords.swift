@@ -447,7 +447,7 @@ class ZRecords: NSObject {
             }
 			
 			if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
-				gBookmarks.persistForLookupByTarget(bookmark)
+				gBookmarks.addToReverseLookup(bookmark)
 			}
         }
 

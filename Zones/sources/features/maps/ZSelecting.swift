@@ -6,7 +6,6 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 
 #if os(OSX)
@@ -14,7 +13,6 @@ import Foundation
 #elseif os(iOS)
     import UIKit
 #endif
-
 
 enum ZRelation: Int {
     case above
@@ -330,7 +328,7 @@ class ZSelecting: NSObject {
 
     func addOneGrab(_ iZone: Zone?) { // caller must update widgets need display
         if  let zone = iZone,
-			zone    != gFavoritesHereMaybe, // disallow grab on non-visible favorite, avoid ugly looking highlight
+//			zone    != gFavoritesHereMaybe, // disallow grab on non-visible favorite, avoid ugly looking highlight
             !currentMapGrabs.contains(zone) {
 			currentMapGrabs.append(zone)
 
@@ -352,7 +350,7 @@ class ZSelecting: NSObject {
 		return found
 	}
 
-	@discardableResult func primitiveGrab(_ iZones: ZoneArray?) -> ZoneArray? {
+	@discardableResult func grabAndNoUI(_ iZones: ZoneArray?) -> ZoneArray? {
 		if  let    newGrabs = iZones {
 			let    oldGrabs = currentMapGrabs
 			currentMapGrabs = [] // can't use ungrabAll because we need to keep cousinList
@@ -371,7 +369,7 @@ class ZSelecting: NSObject {
 	}
     
     func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
-		if  let oldGrabs = primitiveGrab(iZones) {
+		if  let oldGrabs = grabAndNoUI(iZones) {
             updateWidgetsNeedDisplay(for: oldGrabs)
 			gSignal([.sPreferences]) // so color wells are updated
 
@@ -478,7 +476,7 @@ class ZSelecting: NSObject {
         _sortedGrabs.removeAll()
         
 		if  let start = traversalStart {
-            start.traverseAllVisibleProgeny { iChild in
+            start.traverseAllProgeny { iChild in
                 if  currentMapGrabs.contains(iChild) {
                     _sortedGrabs.append(iChild)
                 }

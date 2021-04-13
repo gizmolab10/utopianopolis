@@ -226,7 +226,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 						dragStartEvent(dot, iGesture)             // start dragging a drag dot
 					} else if let zone = dot.widgetZone {
 						cleanupAfterDrag()                        // no dragging
-						zone.revealDotClicked(COMMAND: flags.isCommand, OPTION: flags.isOption)
+						zone.revealDotClicked(flags)
 					}
 				} else {                                          // begin drag
 					gRubberband.rubberbandStartEvent(location, iGesture)
@@ -247,10 +247,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
 
 		if (gIsMapOrEditIdeaMode || gIsEssayMode),
-			let    gesture = iGesture {
-            let    COMMAND = gesture.isCommandDown
-			let     OPTION = gesture.isOptionDown
-			let      SHIFT = gesture.isShiftDown
+		    let    gesture = iGesture as? ZKeyClickGestureRecognizer,
+		    let      flags = gesture.modifiers {
+            let    COMMAND = flags.isCommand
+			let      SHIFT = flags.isShift
             let editWidget = gCurrentlyEditingWidget
             var   multiple = [ZSignalKind.sData]
             var  notInEdit = true
@@ -287,7 +287,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 							// ///////////////
 
 							if  dot.isReveal {
-								zone.revealDotClicked(COMMAND: COMMAND, OPTION: OPTION)
+								zone.revealDotClicked(flags)
 							} else {
 								multiple = [.sCrumbs] // update selection level and breadcrumbs
 
@@ -411,7 +411,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                     let   toBookmark = drop.isBookmark
                     var dropAt: Int? = index
 
-                    if toBookmark {
+                    if  toBookmark {
                         dropAt       = gListsGrowDown ? nil : 0
                     } else if dragIndex != nil && dragIndex! <= index && dropIsParent {
                         dropAt!     -= 1

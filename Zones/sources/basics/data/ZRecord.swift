@@ -13,44 +13,45 @@ class ZRecord: ZManagedRecord { // NSObject {
 	@NSManaged var             dbid: String?
 	@NSManaged var       recordName: String?
 	@NSManaged var modificationDate: Date?
-	var          databaseID: ZDatabaseID?
-	var          kvoContext: UInt8 = 1
-	var            ckRecord: CKRecord?
-	var      _tooltipRecord: Any?
-    var   writtenModifyDate: Date?
-	var             records: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
-	var               cloud: ZCloud?   { return records as? ZCloud }
-	var        ckRecordName: String?   { return ckRecord?.recordID.recordName }
-	var unwrappedRecordName: String    { return ckRecordName ?? "" }
-	var       unwrappedName: String    { return ckRecordName ?? emptyName }
-	var           emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
-	var          isBookmark: Bool      { return ckRecord?.isBookmark ?? false }
-	var  isInPublicDatabase: Bool      { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
-	var           isMapRoot: Bool      { return ckRecordName == kRootName }
-	var         isTrashRoot: Bool      { return ckRecordName == kTrashName }
-	var       isRecentsRoot: Bool      { return ckRecordName == kRecentsRootName }
-	var  isLostAndFoundRoot: Bool      { return ckRecordName == kLostAndFoundName }
-	var     isFavoritesRoot: Bool      { return ckRecordName == kFavoritesRootName }
-	var     isFavoritesHere: Bool      { return ckRecordName == gFavoritesHereMaybe?.ckRecordName }
-	var       isRecentsHere: Bool      { return ckRecordName == gRecentsHereMaybe?.ckRecordName }
-	var      isSmallMapHere: Bool      { return isFavoritesHere || isRecentsHere }
-	var      isSmallMapRoot: Bool      { return isFavoritesRoot || isRecentsRoot }
-	var canSaveWithoutFetch: Bool      { return !hasState(.requiresFetchBeforeSave) }
-	var           isFetched: Bool      { return !hasState(.notFetched) }
-	var           needsSave: Bool      { return  hasState(.needsSave) }
-	var           needsRoot: Bool      { return  hasState(.needsRoot) }
-	var          notFetched: Bool      { return  hasState(.notFetched) }
-	var          needsCount: Bool      { return  hasState(.needsCount) }
-	var          needsColor: Bool      { return  hasState(.needsColor) }
-	var          needsFetch: Bool      { return  hasState(.needsFetch) }
-	var          needsMerge: Bool      { return  hasState(.needsMerge) }
-	var         needsTraits: Bool      { return  hasState(.needsTraits) }
-	var         needsParent: Bool      { return  hasState(.needsParent) }
-	var        needsDestroy: Bool      { return  hasState(.needsDestroy) }
-	var        needsProgeny: Bool      { return  hasState(.needsProgeny) }
-	var       needsChildren: Bool      { return  hasState(.needsChildren) }
-	var       needsAdoption: Bool      { return  hasState(.needsAdoption) }
-	var      needsBookmarks: Bool      { return  hasState(.needsBookmarks) }
+	var           databaseID: ZDatabaseID?
+	var           kvoContext: UInt8 = 1
+	var             ckRecord: CKRecord?
+	var       _tooltipRecord: Any?
+	var    writtenModifyDate: Date?
+	var              records: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
+	var                cloud: ZCloud?   { return records as? ZCloud }
+	var         ckRecordName: String?   { return ckRecord?.recordID.recordName }
+	var  unwrappedRecordName: String    { return ckRecordName ?? "" }
+	var        unwrappedName: String    { return ckRecordName ?? emptyName }
+	var            emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
+	var           isBookmark: Bool      { return ckRecord?.isBookmark ?? false }
+	var   isInPublicDatabase: Bool      { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
+	var            isMapRoot: Bool      { return ckRecordName == kRootName }
+	var          isTrashRoot: Bool      { return ckRecordName == kTrashName }
+	var        isRecentsRoot: Bool      { return ckRecordName == kRecentsRootName }
+	var   isLostAndFoundRoot: Bool      { return ckRecordName == kLostAndFoundName }
+	var      isFavoritesRoot: Bool      { return ckRecordName == kFavoritesRootName }
+	var      isFavoritesHere: Bool      { return ckRecordName == gFavoritesHereMaybe?.ckRecordName }
+	var        isRecentsHere: Bool      { return ckRecordName == gRecentsHereMaybe?.ckRecordName }
+	var       isSmallMapHere: Bool      { return isFavoritesHere || isRecentsHere }
+	var       isSmallMapRoot: Bool      { return isFavoritesRoot || isRecentsRoot }
+	var      isEitherMapRoot: Bool      { return isSmallMapRoot || isMapRoot }
+	var  canSaveWithoutFetch: Bool      { return !hasState(.requiresFetchBeforeSave) }
+	var            isFetched: Bool      { return !hasState(.notFetched) }
+	var            needsSave: Bool      { return  hasState(.needsSave) }
+	var            needsRoot: Bool      { return  hasState(.needsRoot) }
+	var           notFetched: Bool      { return  hasState(.notFetched) }
+	var           needsCount: Bool      { return  hasState(.needsCount) }
+	var           needsColor: Bool      { return  hasState(.needsColor) }
+	var           needsFetch: Bool      { return  hasState(.needsFetch) }
+	var           needsMerge: Bool      { return  hasState(.needsMerge) }
+	var          needsTraits: Bool      { return  hasState(.needsTraits) }
+	var          needsParent: Bool      { return  hasState(.needsParent) }
+	var         needsDestroy: Bool      { return  hasState(.needsDestroy) }
+	var         needsProgeny: Bool      { return  hasState(.needsProgeny) }
+	var        needsChildren: Bool      { return  hasState(.needsChildren) }
+	var        needsAdoption: Bool      { return  hasState(.needsAdoption) }
+	var       needsBookmarks: Bool      { return  hasState(.needsBookmarks) }
 
 	var isARoot: Bool {
 		if  recordName == nil || ckRecordName == nil {
@@ -338,7 +339,6 @@ class ZRecord: ZManagedRecord { // NSObject {
 //	}
 
     func copy(into iCopy: ZRecord) {
-        iCopy.maybeNeedSave() // so KVO won't set needsMerge
         updateCKRecordProperties()
 		ckRecord?.copy(to: iCopy.ckRecord, properties: cloudProperties)
         iCopy.updateInstanceProperties()

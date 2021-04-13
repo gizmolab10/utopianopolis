@@ -484,4 +484,31 @@ extension ZoneArray {
 		}
 	}
 
+	func toggleRelator() {
+		var shouldAdd = false
+		let   relator = Zone.create(named: "owner", databaseID: .mineID)
+
+		for child in self {
+			if  child.isRelator {
+				child.alterAttribute(.relator, remove: true)
+				gRedrawMaps()
+
+				return
+			} else if child.isBookmark {
+				relator.addChild(child.deepCopy(dbID: .mineID))
+
+				shouldAdd = true
+			}
+		}
+
+		if  shouldAdd {
+			relator.alterAttribute(.relator, remove: false)
+			gFavorites.insertAsNext(relator)
+
+			gRedrawMaps()
+			relator.edit()
+		}
+
+	}
+
 }

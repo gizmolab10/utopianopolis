@@ -130,14 +130,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	override func awakeFromNib() {
 		super.awakeFromNib()
 
-		usesRuler              = true
-		isRulerVisible         = true
-		importsGraphics        = true
-		allowsImageEditing     = true
-		displaysLinkToolTips   = true
-		textContainerInset     = NSSize(width: margin, height: margin)
-		zlayer.backgroundColor = kClearColor.cgColor
-		backgroundColor        = kClearColor
+		usesRuler            = true
+		isRulerVisible       = true
+		importsGraphics      = true
+		allowsImageEditing   = true
+		displaysLinkToolTips = true
+		textContainerInset   = NSSize(width: margin, height: margin)
+
+		resetForDarkMode()
 
 		FOREGROUND { // wait for application to fully load the inspector bar
 			gMainWindow?.updateEssayEditorInspectorBar(show: true)
@@ -261,7 +261,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let CONTROL = flags.isControl
 		let  OPTION = flags.isOption
 		let     ALL = OPTION && CONTROL
-		let FLAGGED = OPTION || COMMAND || CONTROL
+		let     ANY = OPTION || COMMAND || CONTROL
 
 		if  key    != key.lowercased() {
 			key     = key.lowercased()
@@ -278,7 +278,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "/":     swapBetweenNoteAndEssay()
 				case kEscape: gHelpController?.show(flags: flags)
 				case kDelete: deleteGrabbed()
-				case kReturn: if FLAGGED { grabDone() }
+				case kReturn: if ANY { grabDone() }
 
 				default:  break
 			}
@@ -1204,7 +1204,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let   text = selectionString, text.length > 0,
 			let   dbID = gCurrentEssayZone?.databaseID,
 			let parent = selectedZone {
-			let  child = Zone.create(databaseID: dbID, named: text)   	// create new (to be child) zone from text
+			let  child = Zone.create(named: text, databaseID: dbID)   	// create new (to be child) zone from text
 
 			insertText("", replacementRange: selectedRange)			// remove text
 			parent.addChild(child)

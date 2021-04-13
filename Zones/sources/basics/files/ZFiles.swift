@@ -317,7 +317,7 @@ class ZFiles: NSObject {
 										if  !databaseID.isDeleted(dict: subDict) {
 											let zone = Zone(dict: subDict, in: databaseID)
 
-											gBookmarks.persistForLookupByTarget(zone)
+											gBookmarks.addToReverseLookup(zone)
 										}
 									}
 							}

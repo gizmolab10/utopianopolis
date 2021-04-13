@@ -228,7 +228,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         path.fill()
     }
 
-	func drawCenterBookmarkDot(in iDirtyRect: CGRect, hasNote: Bool = false) {
+	func drawCenterBookmarkDecorations(in iDirtyRect: CGRect, hasNote: Bool = false) {
 		var rect = iDirtyRect.insetEquallyBy(fraction: 0.3)
 		var path = ZBezierPath(ovalIn: rect)
 
@@ -244,7 +244,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	}
 
 	func drawRelatorDecorations(for parameters: ZDotParameters, in iDirtyRect: CGRect) {
-		if  parameters.isRelated {
 			if  parameters.isRelator {
 				let (a,b) = iDirtyRect.insetEquallyBy(fraction: 0.25).twoDotsVertically(fractionalDiameter: 0.7)
 				let  path = ZBezierPath(ovalIn: a)
@@ -256,7 +255,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
 				ZBezierPath(rect: rect).fill()
 			}
-		}
 	}
 
 	func drawTraitDecorations(for parameters: ZDotParameters, color: ZColor, isForMap: Bool = true, in iDirtyRect: CGRect) {
@@ -279,38 +277,46 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		parameters.color.setStroke()
 		parameters.fill .setFill()
 
-		// //////
-		// DOT //
-		// //////
+		// //////// //
+		// MAIN DOT //
+		// //////// //
 
 		drawMainDot(in: iDirtyRect, using: parameters)
 
 		if      parameters.isReveal {
 			if  parameters.isBookmark || parameters.isNotemark {
 
-				// //////////////////
-				// TINY CENTER DOT //
-				// //////////////////
+				// //////////////////////////////// //
+				// TINY CENTER BOOKMARK DECORATIONS //
+				// //////////////////////////////// //
 
 				gBackgroundColor.setFill()
-				drawCenterBookmarkDot(in: iDirtyRect, hasNote: parameters.isNotemark)
+				drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.isNotemark)
 			} else if parameters.traitType != "" {
 
-				// //////////////////
-				// TRAIT INDICATOR //
-				// //////////////////
+				// ///////////////// //
+				// TRAIT DECORATIONS //
+				// ///////////////// //
 
 				drawTraitDecorations(for: parameters, color: decorationFillColor, in: iDirtyRect)
 			}
 		} else {
 			decorationFillColor.setFill()
-			drawRelatorDecorations(for: parameters, in: iDirtyRect)
+
+			if  parameters.isRelated {
+
+				// /////////////////// //
+				// RELATED DECORATIONS //
+				// /////////////////// //
+
+				drawRelatorDecorations(for: parameters, in: iDirtyRect)
+			}
 
 			if parameters.showAccess {
 
-				// ///////////////////////////
-				// WRITE-ACCESS DECORATIONS //
-				// ///////////////////////////
+				// /////////////////////// //
+				// WRITE-ACCESS DECORATION //
+				// /////////////////////// //
 
 				drawWriteAccessDecoration(of: parameters.accessType, in: iDirtyRect)
 			}

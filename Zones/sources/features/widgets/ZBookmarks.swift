@@ -41,12 +41,11 @@ class ZBookmarks: NSObject {
 	@discardableResult func createZone(withBookmark: Zone?, _ iName: String?, recordName: String? = nil) -> Zone {
 		var bookmark           = withBookmark
 		if  bookmark          == nil {
-			bookmark           = Zone.create(databaseID: .mineID, named: iName, recordName: recordName)
+			bookmark           = Zone.create(named: iName, recordName: recordName, databaseID: .mineID)
 		} else if let     name = iName {
 			bookmark?.zoneName = name
 		}
 
-		persistForLookupByTarget(bookmark!)
 		bookmark?.updateCKRecordProperties()
 
 		return bookmark!
@@ -61,12 +60,16 @@ class ZBookmarks: NSObject {
 			parent.addChild(bookmark, at: insertAt) // calls update progeny count
 		}
 
+		addToReverseLookup(bookmark)
+
 		return bookmark
 	}
 
 	@discardableResult func create(withBookmark: Zone?, _ action: ZBookmarkAction, parent: Zone, atIndex: Int, _ name: String?, recordName: String? = nil) -> Zone {
 		let bookmark: Zone = createZone(withBookmark: withBookmark, name, recordName: recordName)
 		let insertAt: Int? = atIndex == parent.count ? nil : atIndex
+
+		addToReverseLookup(bookmark)
 
 		if  action != .aNotABookmark {
 			parent.addChild(bookmark, at: insertAt) // calls update progeny count
@@ -95,7 +98,7 @@ class ZBookmarks: NSObject {
 	// MARK:- persist
 	// MARK:-
 
-	func persistForLookupByTarget(_  iBookmark : Zone?) {
+	func addToReverseLookup(_  iBookmark : Zone?) {
 		if  let       bookmark = iBookmark,
 			let linkRecordName =  bookmark.linkRecordName,
 			let linkDatabaseID =  bookmark.linkDatabaseID {

@@ -43,6 +43,14 @@ class ZSmallMapRecords: ZRecords {
 		return next
 	}
 
+	func insertAsNext(_ zone: Zone) {
+		currentBookmark = zone
+		let      cIndex = currentBookmarkIndex ?? 0
+		let       index = nextWorkingIndex(after: cIndex, going: gListsGrowDown)
+
+		rootZone?.addChild(zone, at: index)
+	}
+
 	func bookmark(for zone: Zone? = gHereMaybe) -> Zone? {
 		if  let name = zone?.ckRecordName {
 			for bookmark in workingBookmarks {
@@ -87,17 +95,15 @@ class ZSmallMapRecords: ZRecords {
 			gRecents.push()
 		}
 
-		let  maxIndex = working.count - 1
-		var   toIndex = down ? 0 : maxIndex
-
-		if  toIndex  >= 0,
-			let target = currentBookmark?.bookmarkTarget {
-			for (iIndex, bookmark) in working.enumerated() {
+		let   maxIndex = working.count - 1
+		var    toIndex = down ? 0 : maxIndex
+		if  let target = currentBookmark?.bookmarkTarget {
+			for (index, bookmark) in working.enumerated() {
 				if  bookmark.bookmarkTarget == target {
-					if         down, iIndex < maxIndex {
-						toIndex = iIndex + 1         // go down
-					} else if !down, iIndex > 0 {
-						toIndex = iIndex - 1         // go up
+					if         down, index < maxIndex {
+						toIndex = index + 1         // go down
+					} else if !down, index > 0 {
+						toIndex = index - 1         // go up
 					}
 
 					break
@@ -165,13 +171,17 @@ class ZSmallMapRecords: ZRecords {
 			currentBookmark = iZone
 
 			if  alterHere {
-				gHere       = tHere
+				if  let    dbID = tHere.databaseID {
+					gDatabaseID = dbID        // so gRecords below will be correct
+				}
+
+				gRecords?.currentHere = tHere // avoid push
 
 				gHere.grab()
 			}
 
 			if  gIsMapMode {
-				focusOnGrab(.eSelected) {
+				focusOnGrab(.eSelected, shouldGrab: true) {
 					gSignal([.sRelayout])
 				}
 			} else if gCurrentEssayZone != tHere {
@@ -237,14 +247,14 @@ class ZSmallMapRecords: ZRecords {
 		} else if let bookmark = updateCurrentForMode() {
 			bookmark.grab()
 
-			if  let h = hereZoneMaybe,
-				let p = bookmark.parentZone,
-				p.isInSmallMap,
-				p != h {
-				h.collapse()
-				p.expand()
+			if  let p = bookmark.parentZone {
+				if  let h = hereZoneMaybe, h != p {
+					hereZoneMaybe = p
 
-				hereZoneMaybe = p
+					h.collapse()
+				}
+
+				p.expand()
 			}
 		} else {
 			push()
@@ -253,13 +263,40 @@ class ZSmallMapRecords: ZRecords {
 		return true
 	}
 
-	func push(intoNotes: Bool = false) {}
+	func findAndSetHere(asParentOf zone: Zone) -> Bool {
+		var found = gRecents   .findAndSetHereAsParentOfBookmarkTargeting(zone)
+		found     = gFavorites .findAndSetHereAsParentOfBookmarkTargeting(zone) || found
+
+		return found
+	}
+
+	func findAndSetHereAsParentOfBookmarkTargeting(_ target: Zone) -> Bool {
+		let rName = target.ckRecordName
+		var found = false
+
+		rootZone?.traverseProgeny { (bookmark) -> (ZTraverseStatus) in
+			if  let     tName = bookmark.bookmarkTarget?.ckRecordName,
+				let    parent = bookmark.parentZone,
+				tName        == rName {
+				found         = true
+				hereZoneMaybe = parent
+
+				return .eStop
+			}
+
+			return .eContinue
+		}
+
+		return found
+	}
+
+	func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {}
 
 	@discardableResult func createBookmark(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
 
 		// ////////////////////////////////////////////
-		// 1. zone not a bookmark, pass the original //
-		// 2. zone is a bookmark, pass a deep copy   //
+		// 1. zone  is a bookmark, pass a deep copy  //
+		// 2. zone not a bookmark, pass the original //
 		// ////////////////////////////////////////////
 
 		if  let       zone = iZone,
@@ -276,7 +313,7 @@ class ZSmallMapRecords: ZRecords {
 					parent         = currentHere
 
 					for workingFavorite in root.allBookmarkProgeny {
-						if  !workingFavorite.isInTrash,
+						if  workingFavorite.isInEitherMap,
 							databaseID     == workingFavorite.bookmarkTarget?.databaseID,
 							recordName     == workingFavorite.linkRecordName {
 							currentBookmark = workingFavorite
@@ -288,7 +325,7 @@ class ZSmallMapRecords: ZRecords {
 			}
 
 			if  let           count = parent?.count {
-				var bookmark: Zone? = isBookmark ? zone.deepCopy(dbID: nil) : nil               // 1. and 2.
+				var bookmark: Zone? = isBookmark ? zone.deepCopy(dbID: nil) : nil               // cases 1 and 2
 				var           index = parent?.children.firstIndex(of: zone) ?? count
 
 				if  action         == .aCreateBookmark,
@@ -308,7 +345,7 @@ class ZSmallMapRecords: ZRecords {
 				if !isBookmark {
 					bookmark?.crossLink = zone
 
-					gBookmarks.persistForLookupByTarget(bookmark!)
+					gBookmarks.addToReverseLookup(bookmark!)
 				}
 
 				return bookmark!

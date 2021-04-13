@@ -2435,7 +2435,7 @@ extension ZView {
 			result.append("\(constraint)")
 		}
 
-		print(result.joined(separator: "\r"))
+		print(result.joined(separator: kReturn))
 	}
 
 	func drawColoredRect(_ rect: CGRect, _ color: ZColor, thickness: CGFloat = 2.0) {

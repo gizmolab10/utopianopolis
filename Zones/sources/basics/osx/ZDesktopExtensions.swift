@@ -796,7 +796,7 @@ extension ZTextEditor {
 			let    CONTROL = flags.isControl
 			let    COMMAND = flags.isCommand
 			let     OPTION = flags.isOption
-			let    FLAGGED = COMMAND || OPTION || CONTROL
+			let        ANY = COMMAND || OPTION || CONTROL
 			let editedZone = currentTextWidget?.widgetZone
 			let      arrow = key.arrow
 
@@ -806,7 +806,7 @@ extension ZTextEditor {
 
 			if  let      a = arrow {
 				gTextEditor.handleArrow(a, flags: flags)
-			} else if FLAGGED {
+			} else if ANY {
 				switch key {
 					case "i": showSpecialCharactersPopup()
 					case "?": gHelpController?.show(flags: flags)
