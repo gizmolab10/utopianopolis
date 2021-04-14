@@ -143,7 +143,7 @@ class ZMapEditor: ZBaseEditor {
 						case "'":        gSwapSmallMapMode(OPTION)
 						case "/":        if   FUNKY { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-						case "[", "]":   if   SHIFT { gSelecting.currentMoveable.goToNextRelated(key == "[") } else { go(down: key == "]", OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() } }
+						case "[", "]":   go(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() }
 						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")
 						case kTab:       addSibling(OPTION)
 						case kSpace:     if CONTROL || OPTION || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
@@ -646,10 +646,14 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-	func go(down: Bool, OPTION: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, atArrival: Closure? = nil) {
-		let cloud = OPTION ? gCurrentSmallMapRecords : gRecents
+	func go(down: Bool, SHIFT: Bool, OPTION: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, atArrival: Closure? = nil) {
+		if  SHIFT || (gHere.isARelated && (gCurrentSmallMapRecords?.rootZone?.isInFavorites ?? false)) {
+			gSelecting.currentMoveable.goToNextRelated(!down)
+		} else {
+			let cloud = OPTION ? gCurrentSmallMapRecords : gRecents
 
-		cloud?.go(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent, atArrival: atArrival)
+			cloud?.go(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent, atArrival: atArrival)
+		}
 	}
 
 	func debugAnalyze() {
@@ -749,7 +753,7 @@ class ZMapEditor: ZBaseEditor {
 							if  p.isInFavorites {
 								gFavorites.updateAllFavorites()
 							} else if c == 0 {
-								let bookmark = gBookmarks.createBookmark(targeting: gHere)
+								let bookmark = gHere.createBookmark()
 
 								gRecents.currentHere.addChild(bookmark)  // assure at least one bookmark in recents (targeting here)
 							}
@@ -774,60 +778,56 @@ class ZMapEditor: ZBaseEditor {
     // MARK:-
 
     func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: Closure?) {
-
-		if  let zone: Zone = moveables?.first {
-            let parentZone = zone.parentZone
-
-            if  zone.isARoot {
-                return // cannot move out from a root
-			} else if selectionOnly {
+		if  let zone: Zone = moveables?.first, !zone.isARoot {
+			if  selectionOnly {
 
 				// /////////////////
 				// MOVE SELECTION //
 				// /////////////////
 
 				zone.moveSelectionOut(extreme: extreme, onCompletion: onCompletion)
-			} else if let p = parentZone, !p.isARoot {
-                
-                // ////////////
-                // MOVE ZONE //
-                // ////////////
-                
-                let grandParentZone = p.parentZone
-                
-                if zone == gHere && !force {
-                    let grandParentName = grandParentZone?.zoneName
-                    let   parenthetical = grandParentName == nil ? "" : " (\(grandParentName!))"
-                    
-                    // /////////////////////////////////////////////////////////////////////
-                    // present an alert asking if user really wants to move here leftward //
-                    // /////////////////////////////////////////////////////////////////////
-                    
-                    gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? "")\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
-                        if iStatus == .eStatusYes {
-                            self.moveOut(selectionOnly: selectionOnly, extreme: extreme, force: true, onCompletion: onCompletion)
-                        }
-                    }
-                } else {
-                    
-                    let moveOutToHere = { (iHere: Zone?) in
+			} else if let p = zone.parentZone, !p.isARoot {
+
+				// ////////////
+				// MOVE ZONE //
+				// ////////////
+
+				let grandParentZone = p.parentZone
+
+				if  zone == gHere && !force {
+					let grandParentName = grandParentZone?.zoneName
+					let   parenthetical = grandParentName == nil ? "" : " (\(grandParentName!))"
+
+					// /////////////////////////////////////////////////////////////////////
+					// present an alert asking if user really wants to move here leftward //
+					// /////////////////////////////////////////////////////////////////////
+
+					gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? "")\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
+						if  iStatus == .eStatusYes {
+							self.moveOut(selectionOnly: selectionOnly, extreme: extreme, force: true, onCompletion: onCompletion)
+						}
+					}
+				} else {
+					let moveOutToHere = { (iHere: Zone?) in
 						if  let here = iHere {
 							gHere = here
 
 							self.moveOut(to: gHere, onCompletion: onCompletion)
 						}
-                    }
-                    
-                    if extreme {
-                        if  gHere.isARoot {
-                            moveOut(to: gHere, onCompletion: onCompletion)
-                        } else {
+					}
+
+					if extreme {
+						if  gHere.isARoot {
+							moveOut(to: gHere, onCompletion: onCompletion)
+						} else {
 							zone.revealZonesToRoot() {
-                                moveOutToHere(gRoot)
-                                onCompletion?()
-                            }
-                        }
-                    } else if let gp = grandParentZone {
+								moveOutToHere(gRoot)
+								onCompletion?()
+							}
+
+							return
+						}
+					} else if let gp = grandParentZone {
 						let inSmallMap = p.isInSmallMap
 
 						if  inSmallMap {
@@ -839,16 +839,24 @@ class ZMapEditor: ZBaseEditor {
 						}
 
 						if  gp.spawnedBy(gHere) {
-							self.moveOut(to: gp, onCompletion: onCompletion)
+							moveOut(to: gp, onCompletion: onCompletion)
+
+							return
 						} else if inSmallMap {
-							gCurrentSmallMapRecords?.setAsCurrent(p)
+							moveOut(to: gp) {
+								zone.grab()
+								gCurrentSmallMapRecords?.setHere(to: gp)
+								onCompletion?()
+							}
+
+							return
 						} else {
 							moveOutToHere(gp)
 						}
-                    }
-                }
-            }
-        }
+					}
+				}
+			}
+		}
 
 		onCompletion?()
     }
@@ -876,7 +884,6 @@ class ZMapEditor: ZBaseEditor {
     func actuallyMoveInto(_ move: ZoneArray?, onCompletion: Closure?) {
 		if  let    zones = move,
 			zones.count  > 0,
-			!gIsRecentlyMode || !zones.anyInRecently,
 			var     into = zones.rootMost?.parentZone {                          // default: move into parent of root most
 			let siblings = Array(into.children)
 			let      max = siblings.count - 1
@@ -906,10 +913,13 @@ class ZMapEditor: ZBaseEditor {
 	func moveZones(_ zones: ZoneArray, into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
 		if  into.isInSmallMap {
 			into.parentZone?.collapse()
+
+			gCurrentSmallMapRecords?.hereZoneMaybe = into
 		}
 
 		into.expand()
 		into.needChildren()
+		gSelecting.ungrabAll()
 
 		for     zone in zones {
 			if  zone != into {
@@ -918,6 +928,7 @@ class ZMapEditor: ZBaseEditor {
 				}
 
 				into.addAndReorderChild(zone, at: iIndex)
+				zone.addToGrabs()
 			}
 		}
 

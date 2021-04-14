@@ -94,7 +94,7 @@ class ZFavorites: ZSmallMapRecords {
 	override func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {
 		if  let pushMe = zone,
 			!findAndSetHere(asParentOf: pushMe) {
-			createBookmark(for: pushMe, action: .aCreateBookmark)?.grab()
+			addNewBookmark(for: pushMe, action: .aCreateBookmark)?.grab()
 		}
 	}
 
@@ -274,7 +274,7 @@ class ZFavorites: ZSmallMapRecords {
 
 			hereZoneMaybe      = gSelecting.firstGrab?.parentZone
 			currentBookmark    = bookmark
-		} else if let bookmark = createBookmark(for: here, action: .aCreateBookmark) {  // state 3
+		} else if let bookmark = addNewBookmark(for: here, action: .aCreateBookmark) {  // state 3
 			currentBookmark    = bookmark
 
 			bookmark.asssureIsVisibleAndGrab()

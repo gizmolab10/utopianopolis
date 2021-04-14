@@ -238,6 +238,20 @@ class ZSmallMapRecords: ZRecords {
 		return nil
 	}
 
+	func grab(_ zone: Zone) {
+		zone.grab()
+
+		if  let p = zone.parentZone {
+			if  let h = hereZoneMaybe, h != p {
+				hereZoneMaybe = p
+
+				h.collapse()
+			}
+
+			p.expand()
+		}
+	}
+
 	@discardableResult func swapBetweenBookmarkAndTarget(doNotGrab: Bool = true) -> Bool {
 		if  let cb = currentBookmark,
 			cb.isGrabbed {
@@ -245,18 +259,22 @@ class ZSmallMapRecords: ZRecords {
 		} else if doNotGrab {
 			return false
 		} else if let bookmark = updateCurrentForMode() {
-			bookmark.grab()
-
-			if  let p = bookmark.parentZone {
-				if  let h = hereZoneMaybe, h != p {
-					hereZoneMaybe = p
-
-					h.collapse()
-				}
-
-				p.expand()
-			}
+			grab(bookmark)
 		} else {
+			let bookmarks = gHere.bookmarksTargetingSelf
+
+			for bookmark in bookmarks {
+				if  bookmark.isInSmallMap {
+					if  bookmark.root != rootZone {
+						gSwapSmallMapMode() // switch to other small map
+					}
+
+					gCurrentSmallMapRecords?.grab(bookmark)
+
+					return true
+				}
+			}
+
 			push()
 		}
 
@@ -292,7 +310,7 @@ class ZSmallMapRecords: ZRecords {
 
 	func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {}
 
-	@discardableResult func createBookmark(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
+	@discardableResult func addNewBookmark(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
 
 		// ////////////////////////////////////////////
 		// 1. zone  is a bookmark, pass a deep copy  //

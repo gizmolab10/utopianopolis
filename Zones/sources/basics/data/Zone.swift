@@ -87,6 +87,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                 isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || type.isExemplar }
 	var                 spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
 	var                     spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
+	var                     isARelated :               Bool  { return relator?.bookmarkTargets.contains(self) ?? false }
 	var                      isRelator :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.relator.rawValue) ?? false }
 	var                 directReadOnly :               Bool  { return directAccess == .eReadOnly || directAccess == .eProgenyWritable }
 	var                    userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
@@ -103,6 +104,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                       children =          ZoneArray  ()
 	var                         traits =   ZTraitDictionary  ()
 	var                          level =                  0
+	func               copyWithZone() ->           NSObject  { return self }
+	func             createBookmark() ->               Zone  { return gBookmarks.createBookmark(targeting: self) }
 
 	var zonesWithNotes : ZoneArray {
 		var zones = ZoneArray()
@@ -114,10 +117,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return zones
-	}
-
-	func copyWithZone() -> NSObject {
-		return self
 	}
 
 	struct ZWorkingListType: OptionSet {
@@ -254,11 +253,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			self.invokeUsingDatabaseID(.mineID) {
-				let bookmark = gBookmarks.createBookmark(targeting: self)
+				let bookmark = createBookmark()
 
 				bookmark.grab()
 				bookmark.needSave()
 				bookmark.markNotFetched()
+				parentZone?.addChild(bookmark)
 			}
 
 			gRedrawMaps()
@@ -1850,13 +1850,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 //				print("\(rr) : \(r) -> \(zone)") // very helpful in final debugging
 
+				gFavorites.show(zone)
 				zone.grab()
 				gRedrawMaps()
 			}
 		}
 	}
 
-	// MARK:- travel / focus / move
+	// MARK:- travel / focus / move / bookmarks
 	// MARK:-
 
 	@discardableResult func focusThrough(_ atArrival: @escaping Closure) -> Bool {
@@ -2315,7 +2316,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					var beingAdded = grab
 
 					if  toSmallMap && !beingAdded.isInSmallMap && !beingAdded.isBookmark && !beingAdded.isInTrash && !SPECIAL {
-						if  let bookmark = gCurrentSmallMapRecords?.createBookmark(for: beingAdded, action: .aNotABookmark) {	// case 3
+						if  let bookmark = gCurrentSmallMapRecords?.addNewBookmark(for: beingAdded, action: .aNotABookmark) {	// case 3
 							beingAdded   = bookmark
 
 							beingAdded.maybeNeedSave()
@@ -3163,9 +3164,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else {
 			let show = !expanded
 
-			if  gIsEssayMode {
-				gControllers.swapMapAndEssay(force: .wMapMode)
-			}
+//			if  gIsEssayMode {
+//				gControllers.swapMapAndEssay(force: .wMapMode)
+//			}
 
 			if  isInSmallMap {
 				expandInSmallMap(show)

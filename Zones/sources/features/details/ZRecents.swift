@@ -64,7 +64,7 @@ class ZRecents : ZSmallMapRecords {
 			if  let pushMe = here,
 				gHasFinishedStartup, // avoid confusing recents upon relaunch
 				!findAndSetHere(asParentOf: pushMe),
-				let       bookmark = createBookmark(for: pushMe, action: .aCreateBookmark) {
+				let       bookmark = addNewBookmark(for: pushMe, action: .aCreateBookmark) {
 				var    index: Int? = nil                               // assume current bookmark's parent is NOT current here, always grow down
 
 				if  let          b = currentBookmark,

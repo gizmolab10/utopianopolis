@@ -30,16 +30,6 @@ extension ZoneArray {
 		return names
 	}
 
-	var anyInRecently: Bool {
-		for     zone in self {
-			if  zone.isInRecents {
-				return true
-			}
-		}
-
-		return false
-	}
-
 	func containsMatch(to other: AnyObject) -> Bool {
 		return containsCompare(with: other) { (a, b) in
 			if  let    aName  = (a as? Zone)?.ckRecordName,
@@ -484,31 +474,32 @@ extension ZoneArray {
 		}
 	}
 
-	func toggleRelator() {
-		var shouldAdd = false
-		let   relator = Zone.create(named: "owner", databaseID: .mineID)
+	mutating func toggleRelator() {
+		let relator = Zone.create(named: "owner", databaseID: .mineID)
 
 		for child in self {
-			if  child.isRelator {
+			if  child.isRelator {                // remove .relator from attributes
 				child.alterAttribute(.relator, remove: true)
 				gRedrawMaps()
 
-				return
-			} else if child.isBookmark {
-				relator.addChild(child.deepCopy(dbID: .mineID))
+				return                           // abandon relator created above
+			}
 
-				shouldAdd = true
+			if  child.isBookmark {
+				child.orphan()                   // move from current parent
+				relator.addChild(child)          // into relator
+			} else {
+				relator.addChild(child.createBookmark())
 			}
 		}
 
-		if  shouldAdd {
-			relator.alterAttribute(.relator, remove: false)
-			gFavorites.insertAsNext(relator)
+		gSmallMapMode = .favorites			     // switch to favorites
 
-			gRedrawMaps()
-			relator.edit()
-		}
-
+		gCurrentSmallMapRecords?.showRoot()      // point here to root, and expand
+		relator.alterAttribute(.relator, remove: false)
+		gFavorites.insertAsNext(relator)
+		gRedrawMaps()
+		relator.edit()
 	}
 
 }

@@ -274,9 +274,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if  hasGrabbedNote {
 			switch key {
 				case "t":     swapWithParent()
-				case "=":     grabSelected()
 				case "/":     swapBetweenNoteAndEssay()
 				case kEscape: gHelpController?.show(flags: flags)
+				case kEquals: grabSelected()
 				case kDelete: deleteGrabbed()
 				case kReturn: if ANY { grabDone() }
 
@@ -306,11 +306,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "s":      save()
 				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-				case "=":      grabSelected()
 				case "/":      gHelpController?.show(flags: flags)
 				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
 				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
 				case kReturn:  grabDone()
+				case kEquals:  grabSelected()
 				default:       return false
 			}
 

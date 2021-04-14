@@ -54,11 +54,6 @@ class ZBookmarks: NSObject {
 	func createBookmark(targeting target: Zone) -> Zone {
 		let bookmark: Zone = createZone(withBookmark: nil, target.zoneName)
 		bookmark.crossLink =  target
-		if  let     parent =  target.parentZone {
-			let   insertAt = (target.siblingIndex ?? 0) + (gListsGrowDown ? 1 : 0)
-
-			parent.addChild(bookmark, at: insertAt) // calls update progeny count
-		}
 
 		addToReverseLookup(bookmark)
 

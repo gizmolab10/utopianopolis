@@ -50,12 +50,32 @@ class ZRecords: NSObject {
     var        hereIsValid : Bool      { return maybeZoneForRecordName(hereRecordName) != nil }
 	var         allProgeny : ZoneArray { return rootZone?.all ?? [] }
 
-	func countBy                                                  (type: String)  -> Int?       { return recordNamesByType[type]?.count }
-	func recordNamesForState                             (_ state: ZRecordState)  -> [String]   { return recordNamesByState[state] ?? [] }
-	func notRegistered                                 (_ recordID: CKRecordID?)  -> Bool       { return maybeZoneForRecordID(recordID) == nil }
-	func hasCKRecord     (_ ckRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecordForName(ckRecord.recordID.recordName, forAnyOf: iStates) != nil }
-	func hasCKRecordName      (_ iName: String, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecordForName(iName, forAnyOf: iStates) != nil }
-	func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool       { return registeredCKRecordForName(iRecordID.recordName, forAnyOf: iStates) != nil }
+	func countBy                                                  (type: String)  -> Int?     { return recordNamesByType[type]?.count }
+	func recordNamesForState                             (_ state: ZRecordState)  -> [String] { return recordNamesByState[state] ?? [] }
+	func notRegistered                                 (_ recordID: CKRecordID?)  -> Bool     { return maybeZoneForRecordID(recordID) == nil }
+	func hasCKRecord     (_ ckRecord: CKRecord, forAnyOf iStates: [ZRecordState]) -> Bool     { return registeredCKRecordForName(ckRecord.recordID.recordName, forAnyOf: iStates) != nil }
+	func hasCKRecordName      (_ iName: String, forAnyOf iStates: [ZRecordState]) -> Bool     { return registeredCKRecordForName(iName, forAnyOf: iStates) != nil }
+	func hasCKRecordID(_ iRecordID: CKRecordID, forAnyOf iStates: [ZRecordState]) -> Bool     { return registeredCKRecordForName(iRecordID.recordName, forAnyOf: iStates) != nil }
+
+	func showRoot() { setHere(to: rootZone) }
+
+	func setHere(to zone: Zone?) {
+		if  let newHere = zone {
+			hereZoneMaybe?.collapse()
+
+			hereZoneMaybe = newHere
+
+			hereZoneMaybe?.expand()
+		}
+	}
+
+	func show(_ zone: Zone) {
+		let bookmarks = allProgeny.intersection(zone.bookmarksTargetingSelf)
+		if  bookmarks.count > 0,
+			let parent = bookmarks[0].parentZone {
+			setHere(to: parent)
+		}
+	}
 
 	var allProgenyReferences: CKReferencesArray {
 		var references = CKReferencesArray()
@@ -1046,7 +1066,7 @@ class ZRecords: NSObject {
 			if  let small = gCurrentSmallMapRecords,
 				!small.swapBetweenBookmarkAndTarget(doNotGrab: !shouldGrab) {
 				if  gSmallMapMode == .favorites {
-					gFavorites.createBookmark(for: zone, action: .aCreateBookmark)
+					gFavorites.addNewBookmark(for: zone, action: .aCreateBookmark)
 				}
 			}
 

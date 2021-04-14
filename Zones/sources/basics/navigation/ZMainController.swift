@@ -97,23 +97,24 @@ class ZMainController: ZGesturesController {
 		permissionView?               .isHidden = !gIsStartupMode
 
 		switch iKind {
+			case .sSwap:
+				gRefusesFirstResponder          = true          // prevent the exit from essay from beginning an edit
+				essayContainerView?   .isHidden =  hideEssay
+				mapContainerView? 	  .isHidden = !hideEssay
+				gRefusesFirstResponder          = false
 			case .sFound:
-				mapContainerView?     .isHidden = !hideResults
+				if !gIsEssayMode {
+					mapContainerView? .isHidden = !hideResults
+				}
 				searchBoxView?        .isHidden =  hideSearch
 				searchResultsView?    .isHidden =  hideResults
 			case .sSearch:
 				searchBoxView?        .isHidden =  hideSearch
-
 				if  hideSearch {
 					searchResultsView?.isHidden =  hideSearch
 
 					assignAsFirstResponder(nil)
 				}
-			case .sSwap:
-				gRefusesFirstResponder          = true  // prevent exit from essay from beginning an edit
-				essayContainerView?   .isHidden =  hideEssay
-				mapContainerView? 	  .isHidden = !hideEssay
-				gRefusesFirstResponder          = false
 			default: break
         }
 
