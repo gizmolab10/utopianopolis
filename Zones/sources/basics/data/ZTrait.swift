@@ -14,6 +14,7 @@ enum ZTraitType: String {
 	case tMoney     = "$" //      "
 	case tAssets    = "a" // allow multiple
 	case tHyperlink = "h"
+	case tVideo     = "v"
 	case tEmail     = "e"
 	case tEssay     = "w"
 	case tDate      = "d"
@@ -111,6 +112,7 @@ class ZTrait: ZTraitAssets {
     override var emptyName: String {
         if  let tType = traitType {
             switch tType {
+				case .tVideo:     return "video file name"
 				case .tEmail:     return "email address"
 				case .tHyperlink: return "hyperlink"
 				default:          break

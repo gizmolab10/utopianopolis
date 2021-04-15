@@ -119,10 +119,9 @@ class ZMapEditor: ZBaseEditor {
 						case "b":        gSelecting.firstSortedGrab?.addBookmark()
 						case "c":        if OPTION { divideChildren() } else if  COMMAND { copyToPaste() } else { gMapController?.recenter(SPECIAL) }
 						case "d":        if  ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
-						case "e":        gSelecting.firstSortedGrab?.editTrait(for: .tEmail)
+						case "e", "h":   editTrait(for: key)
 						case "f":        gSearching.showSearch(OPTION)
 						case "g":        refetch(COMMAND, OPTION, CONTROL)
-						case "h":        gSelecting.firstSortedGrab?.editTrait(for: .tHyperlink)
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
 						case "m":        gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawMaps()
@@ -133,7 +132,7 @@ class ZMapEditor: ZBaseEditor {
 						case "s":        if CONTROL { pushAllToCloud() } else { gFiles.export(gSelecting.currentMoveable, toFileAs: OPTION ? .eOutline : .eSeriously) }
 						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-						case "v":        if COMMAND { paste() }
+						case "v":        if COMMAND { paste() } else { editTrait(for: key) }
 						case "w":        rotateWritable()
 						case "x":        if COMMAND { delete(permanently: SPECIAL && isWindow) } else { gCurrentKeyPressed = nil; return false }
 						case "z":        if  !SHIFT { gUndoManager.undo() } else { gUndoManager.redo() }
@@ -596,26 +595,6 @@ class ZMapEditor: ZBaseEditor {
         gRedrawMaps()
     }
 
-	func editIdea(_  OPTION: Bool) {
-		gSelecting.currentMoveable.edit()
-
-		if  OPTION {
-			gTextEditor.placeCursorAtEnd()
-		}
-	}
-
-	func editNote(_  OPTION: Bool, useGrabbed: Bool = true) {
-		if !gIsEssayMode {
-			gCreateCombinedEssay = !OPTION				             // default is multiple, OPTION drives it to single
-
-			if  gCurrentEssay   == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
-				gCurrentEssay    = gSelecting.firstGrab?.note
-			}
-		}
-
-		gControllers.swapMapAndEssay()
-	}
-
     func divideChildren() {
         let grabs = gSelecting.currentMapGrabs
 
@@ -667,6 +646,44 @@ class ZMapEditor: ZBaseEditor {
 		}
 
 		print(" total: \(count)")
+	}
+
+	// MARK:- edit text
+	// MARK:-
+
+	func editIdea(_  OPTION: Bool) {
+		gSelecting.currentMoveable.edit()
+
+		if  OPTION {
+			gTextEditor.placeCursorAtEnd()
+		}
+	}
+
+	func editTrait(for key: String) {
+		var traitType: ZTraitType?
+
+		switch key {
+			case "e": traitType = .tEmail
+			case "h": traitType = .tHyperlink
+			case "v": traitType = .tVideo
+			default:  break
+		}
+
+		if  let type = traitType {
+			gSelecting.firstSortedGrab?.editTrait(for: type)
+		}
+	}
+
+	func editNote(_  OPTION: Bool, useGrabbed: Bool = true) {
+		if !gIsEssayMode {
+			gCreateCombinedEssay = !OPTION				             // default is multiple, OPTION drives it to single
+
+			if  gCurrentEssay   == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
+				gCurrentEssay    = gSelecting.firstGrab?.note
+			}
+		}
+
+		gControllers.swapMapAndEssay()
 	}
 
     // MARK:- lines

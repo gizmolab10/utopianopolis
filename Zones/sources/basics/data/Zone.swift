@@ -37,6 +37,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	@NSManaged    var       parentLink :             String?
 	@NSManaged    var       zoneAuthor :             String?
 	@NSManaged    var   zoneAttributes :             String?
+	var             videoFileNameMaybe :             String?
 	var                 hyperLinkMaybe :             String?
 	var                     emailMaybe :             String?
 	var                     assetMaybe :            CKAsset?
@@ -72,9 +73,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     linkIsRoot :               Bool  { return linkRecordName == kRootName }
 	var                     isSelected :               Bool  { return gSelecting.isSelected(self) }
 	var                      isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
-	var                      canTravel :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
+	var                      canTravel :               Bool  { return isBookmark || hasHyperlink || hasVideo || hasEmail || hasNote }
 	var                       hasColor :               Bool  { return zoneColor != nil && zoneColor != "" }
 	var                       hasEmail :               Bool  { return hasTrait(for: .tEmail) && email != "" }
+	var                       hasVideo :               Bool  { return hasTrait(for: .tVideo) && videoFileName != "" }
 	var                       hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                        hasNote :               Bool  { return hasTrait(for: .tNote) }
 	var                      isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
@@ -412,6 +414,34 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 	}
+
+	var videoFileName: String? {
+		get {
+			if  videoFileNameMaybe == nil {
+				videoFileNameMaybe  = getTraitText(for: .tVideo)
+			}
+
+			return videoFileNameMaybe
+		}
+
+		set {
+			if  videoFileNameMaybe != newValue {
+				videoFileNameMaybe  = newValue
+
+				setTraitText(newValue, for: .tVideo)
+			}
+		}
+	}
+
+	var videoFileLink: String? {
+		var    parts = videoFileName?.components(separatedBy: ".")
+		let     last = parts?.removeLast()
+		let resource = parts?.joined(separator: ".")
+
+		return Bundle.main.path(forResource: resource, ofType: last)
+	}
+
+	var emailLink: String? { return email == nil ? nil : "mailTo:\(email!)" }
 
 	var crumbTipZone: Zone? {
 		if  isBookmark {
@@ -792,7 +822,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var userWantsToEdit: Bool {
-		return [kTab, kSpace, kReturn, "-", "d", "e", "h"].contains(gCurrentKeyPressed)
+		return [kTab, kSpace, kReturn, "-", "d", "e", "h", "v"].contains(gCurrentKeyPressed)
 			|| gCurrentKeyPressed?.arrow != nil
 			|| gCurrentMouseDownZone     == self
 	}
@@ -2012,9 +2042,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func invokeTravel(_ COMMAND: Bool = false, onCompletion: Closure? = nil) {
 		if !invokeBookmark(COMMAND, onCompletion: onCompletion),
-		   !invokeHyperlink(),
-		   !invokeEssay() {
-			invokeEmail()
+		   !invokeEssay(),
+		   !invokeURL(for: .tHyperlink),
+		   !invokeURL(for: .tVideo) {
+			invokeURL(for: .tEmail)
 		}
 	}
 
@@ -2045,17 +2076,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	@discardableResult func invokeHyperlink() -> Bool { // false means not traveled
-		if  let link = hyperLink,
-			link    != kNullLink {
-			link.openAsURL()
-
-			return true
-		}
-
-		return false
-	}
-
 	func invokeEssay() -> Bool { // false means not handled
 		if  hasNote {
 			grab()
@@ -2074,10 +2094,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	@discardableResult func invokeEmail() -> Bool { // false means not traveled
-		if  let  link = email {
-			let email = "mailTo:" + link
-			email.openAsURL()
+	func link(for traitType: ZTraitType) -> String? {
+		switch traitType {
+			case .tHyperlink: return hyperLink
+			case .tEmail:     return emailLink
+			case .tVideo:     return videoFileLink
+			default:          return nil
+		}
+	}
+
+	@discardableResult func invokeURL(for type: ZTraitType?) -> Bool { // false means not traveled
+		if  let    t = type,
+			let link = link(for: t),
+			link    != kNullLink {
+			link.openAsURL()
 
 			return true
 		}

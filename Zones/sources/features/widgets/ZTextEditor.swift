@@ -29,28 +29,35 @@ class ZTextPack: NSObject {
     var isEditingHyperlink :           Bool  { return packedTrait?.traitType == .tHyperlink }
     var   adequatelyPaused :           Bool  { return Date().timeIntervalSince(createdAt) > 0.1 }
 
-
     var displayType: String {
         if  let        trait = packedTrait {
             return     trait.emptyName
-        } else if let  zone = packedZone {
+        } else if let  zone  = packedZone {
             return     zone.emptyName
         }
 
         return kNoValue
     }
 
+	var emptyName: String {
+		if  let        trait = packedTrait {
+			return     trait  .emptyName
+		} else if let  zone  = packedZone {
+			return     zone   .emptyName
+		}
+
+		return kNoValue
+	}
 
     var unwrappedName: String {
         if  let        trait = packedTrait {
-            return     trait.unwrappedName
-        } else if let  zone = packedZone {
-            return     zone.unwrappedName
+            return     trait  .unwrappedName
+        } else if let  zone  = packedZone {
+            return     zone   .unwrappedName
         }
 
         return kNoValue
     }
-
 
     var textWithSuffix: String {
         var   result = displayType
@@ -85,7 +92,6 @@ class ZTextPack: NSObject {
         return result
     }
 
-    
     // MARK:- internals: editing zones and traits
     // MARK:-
 
@@ -161,7 +167,7 @@ class ZTextPack: NSObject {
         if  let components = iText?.components(separatedBy: "  (") {
             newText        = components[0]
 
-            if  newText == displayType || newText == "" {
+            if  newText == displayType || newText == kEmpty {
                 newText  = nil
             }
         }
@@ -169,22 +175,21 @@ class ZTextPack: NSObject {
         return newText
     }
 
-
     func captureTextAndUpdateWidgets(_ iText: String?) {
         capture(iText)
         updateWidgetsForEndEdit()
     }
 
 	func captureText(_ iText: String?, redrawSync: Bool = false) {
-		if                     iText == unwrappedName,
-			let                  type = packedTrait?.traitType {
+		if [emptyName, kEmpty].contains(iText),
+			let                 type  = packedTrait?.traitType {
 			packedZone?.removeTrait(for: type)                     // trait text was deleted (email, hyperlink)
 		} else if              iText != originalText {
-            let               newText = removeSuffix(from: iText)
+            let              newText  = removeSuffix(from: iText)
             gTextCapturing            = true
 
-            if  let                 w = textWidget {
-                let          original = originalText
+            if  let                w  = textWidget {
+                let         original  = originalText
                 prepareUndoForTextChange(gUndoManager) {
                     self.originalText = w.text
 
@@ -207,7 +212,6 @@ class ZTextPack: NSObject {
 		}
     }
 
-    
     func updateBookmarkAssociates() {
         if  var       zone = packedZone,
             let    newText = zone.zoneName {
@@ -228,7 +232,7 @@ class ZTextPack: NSObject {
         if  let text = textWidget?.text,
             text    != originalText {
             manager?.registerUndo(withTarget:self) { iUndoSelf in
-                let                newText = iUndoSelf.textWidget?.text ?? ""
+                let                newText = iUndoSelf.textWidget?.text ?? kEmpty
                 iUndoSelf.textWidget?.text = iUndoSelf.originalText
                 iUndoSelf.originalText     = newText
 
@@ -244,12 +248,12 @@ class ZTextEditor: ZTextView {
     var  cursorOffset: CGFloat?
     var currentOffset: CGFloat?
 	var currentEdit: ZTextPack?
-    var currentlyEditedZone: Zone? { return currentEdit?.packedZone }
+    var currentlyEditedZone: Zone?         { return currentEdit?.packedZone }
     var currentTextWidget: ZoneTextWidget? { return currentlyEditedZone?.widget?.textWidget }
-    var currentZoneName: String { return currentlyEditedZone?.zoneName ?? "" }
-    var currentFont: ZFont { return currentTextWidget?.font ?? gWidgetFont }
-    var atEnd:   Bool { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
-    var atStart: Bool { return selectedRange.upperBound == 0 }
+    var currentZoneName: String            { return currentlyEditedZone?.zoneName ?? kEmpty }
+    var currentFont: ZFont                 { return currentTextWidget?.font ?? gWidgetFont }
+    var atEnd:   Bool                      { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
+    var atStart: Bool                      { return selectedRange.upperBound == 0 }
 
     // MARK:- editing
     // MARK:-

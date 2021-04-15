@@ -85,10 +85,11 @@ let         kpModificationDate = "modificationDate"
 // MARK:- strings and dictionary keys
 // MARK:-
 
+let                       kTab = "\t"
+let                      kStop = "stop"
 let                     kLinks = "links"
 let                     kStops = "stops"
-let                      kStop = "stop"
-let                       kTab = "\t"
+let                     kEmpty = ""
 let                     kSpace = " "
 let                    kEquals = "="
 let                    kReturn = "\r"

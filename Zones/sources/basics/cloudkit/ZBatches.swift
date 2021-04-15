@@ -156,8 +156,8 @@ class ZBatches: ZOnboarding {
 	var        currentBatch : ZBatch?
     var          totalCount :    Int { return currentBatches.count + deferredBatches.count }
 	var              isLate :   Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
-	var          statusText : String { return currentOp.isDoneOp ? "" : currentOp.description + remainingOpsText }
-	var    remainingOpsText : String { let count = queue.operationCount; return count == 0 ? "" : " (and \(count) others)" }
+	var          statusText : String { return currentOp.isDoneOp ? kEmpty : currentOp.description + remainingOpsText }
+	var    remainingOpsText : String { let count = queue.operationCount; return count == 0 ? kEmpty : " (and \(count) others)" }
 
     // MARK:- API
     // MARK:-
