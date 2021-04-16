@@ -354,7 +354,7 @@ class ZCoreDataStack: NSObject {
 					BACKGROUND(canBeDirect: true) {
 						self.loadChildren(of: parents, into: dbID, acquired) { children in
 							if  children.count > 0 {
-								load(childrenOf: children) // recurse
+								load(childrenOf: children)    // get the rest recursively
 							} else {
 								FOREGROUND(canBeDirect: true) {
 									records.applyToAllProgeny { iChild in
@@ -362,17 +362,17 @@ class ZCoreDataStack: NSObject {
 										iChild.respectOrder()
 									}
 
-									loadAllTraits()
+									loadAllTraits()           // if this is the end of the fetch
 								}
 							}
 						}
 					}
 				}
 
-				if  zones.count == 0 {
-					loadAllTraits()
-				} else {
+				if  zones.count > 0 {
 					load(childrenOf: zones)
+				} else {
+					loadAllTraits()                           // if this is the end of the fetch
 				}
 			}
 		} else {

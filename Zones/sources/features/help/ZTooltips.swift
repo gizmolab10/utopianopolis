@@ -160,7 +160,7 @@ func gConcealmentString(for hide: Bool) -> String {
 extension Zone {
 
 	var revealTipText: String {
-		if  count == 0, canTravel {
+		if  count == 0, isTraveller {
 			return hasNote      ? "edit note for"   :
 				hasEmail        ? "send an email"   :
 				isBookmark      ? "change focus to" :

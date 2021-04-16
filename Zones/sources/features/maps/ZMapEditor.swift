@@ -299,7 +299,7 @@ class ZMapEditor: ZBaseEditor {
             case .eSort:      valid = (shown     && sort) || (grabs > 1 && parent)
             case .eUndo:      valid = undo.canUndo
             case .eRedo:      valid = undo.canRedo
-            case .eTravel:    valid = mover.canTravel
+            case .eTravel:    valid = mover.isTraveller
             case .eCloud:     valid = gHasInternet && gCloudStatusIsActive
             default:          break // .eAlways goes here
             }
@@ -890,7 +890,7 @@ class ZMapEditor: ZBaseEditor {
 		if  let zone  = moveables?.first {
             if !selectionOnly {
                 actuallyMoveInto(moveables, onCompletion: onCompletion)
-            } else if zone.canTravel && zone.fetchableCount == 0 && zone.count == 0 {
+            } else if zone.isTraveller && zone.fetchableCount == 0 && zone.count == 0 {
 				zone.invokeTravel(onCompletion: onCompletion)
             } else {
 				zone.addSelection(extreme: extreme, onCompletion: onCompletion)

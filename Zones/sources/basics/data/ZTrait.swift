@@ -34,6 +34,7 @@ enum ZTraitType: String {
 			case .tHyperlink: return "LINK"
 			case .tEmail:     return "EMAIL"
 			case .tEssay:     return "ESSAY"
+			case .tVideo:     return "VIDEO"
 			case .tNote:      return "NOTE"
 			default:          return nil
 		}
@@ -159,7 +160,7 @@ class ZTrait: ZTraitAssets {
 			return has
 		}
 
-		return ZTrait.init(record: record, databaseID: databaseID)
+		return ZTrait(record: record, entityName: kTraitType, databaseID: databaseID)
 	}
 
     convenience init(databaseID: ZDatabaseID?) {
@@ -211,7 +212,7 @@ class ZTrait: ZTraitAssets {
     }
 
 	func updateSearchables() {
-		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tHyperlink]
+		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tVideo, .tHyperlink]
 
 		if  let  tt = traitType, searchables.contains(tt) {
 			strings = text?.searchable.components(separatedBy: kSpace)

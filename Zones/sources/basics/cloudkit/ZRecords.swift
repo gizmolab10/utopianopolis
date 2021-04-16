@@ -914,7 +914,7 @@ class ZRecords: NSObject {
 
 				// also grab traits
 				if  let zone = maybeZoneForCKRecord(iCKRecord) {
-					for trait in zone.traitValues {
+					for trait in zone.traitsArray {
 						if  let ckTraitRecord = trait.ckRecord, !results.contains(ckTraitRecord) {
 							results.append(ckTraitRecord)
 						}

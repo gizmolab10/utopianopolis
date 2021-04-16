@@ -17,6 +17,7 @@ enum ZHelpDotType: String {
 	case three      = "3"
 	case click      = "points"
 	case email      = "email"
+	case video      = "video"
 	case essay      = "click"
 	case cycle      = "cycle"
 	case twelve     = "12"
@@ -56,6 +57,7 @@ enum ZHelpDotType: String {
 			case .note,
 				 .essay:     return ZTraitType.tNote     .rawValue
 			case .email:     return ZTraitType.tEmail    .rawValue
+			case .video:     return ZTraitType.tVideo    .rawValue
 			case .hyperlink: return ZTraitType.tHyperlink.rawValue
 			default:         return ""
 		}

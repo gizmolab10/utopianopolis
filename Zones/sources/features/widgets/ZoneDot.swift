@@ -85,7 +85,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		}
 
 		if  isReveal {
-			return isDragDrop || zone.canTravel || zone.count > 0
+			return isDragDrop || zone.isTraveller || zone.count > 0
 		}   else {
 			return !zone.isSmallMapHere
 		}
@@ -99,7 +99,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		if !isReveal {
 			return zone.isGrabbed
 		} else {
-			let childlessTraveller = zone.canTravel && zone.count == 0
+			let childlessTraveller = zone.isTraveller && zone.count == 0
 
 			return !zone.expanded || childlessTraveller
 		}
@@ -244,17 +244,17 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	}
 
 	func drawRelatorDecorations(for parameters: ZDotParameters, in iDirtyRect: CGRect) {
-			if  parameters.isRelator {
-				let (a,b) = iDirtyRect.insetEquallyBy(fraction: 0.25).twoDotsVertically(fractionalDiameter: 0.7)
-				let  path = ZBezierPath(ovalIn: a)
+		if  parameters.isRelator {
+			let (a,b) = iDirtyRect.insetEquallyBy(fraction: 0.25).twoDotsVertically(fractionalDiameter: 0.7)
+			let  path = ZBezierPath(ovalIn: a)
 
-				path.append(ZBezierPath(ovalIn: b))
-				path.fill()
-			} else {
-				let  rect = iDirtyRect.insetEquallyBy(fraction: 0.10).centeredHorizontalLine(thick: 1.25)
+			path.append(ZBezierPath(ovalIn: b))
+			path.fill()
+		} else {
+			let  rect = iDirtyRect.insetEquallyBy(fraction: 0.10).centeredHorizontalLine(thick: 1.25)
 
-				ZBezierPath(rect: rect).fill()
-			}
+			ZBezierPath(rect: rect).fill()
+		}
 	}
 
 	func drawTraitDecorations(for parameters: ZDotParameters, color: ZColor, isForMap: Bool = true, in iDirtyRect: CGRect) {

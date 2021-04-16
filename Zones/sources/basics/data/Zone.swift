@@ -68,17 +68,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                dragDotIsHidden :               Bool  { return (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && expanded) } // hide favorites root drag dot
 	var                  hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
 	var                  hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
-	var                   hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink }
+	var                   hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink && !(hyperLink?.isEmpty ?? true) }
 	var                    hasSiblings :               Bool  { return parentZone?.count ?? 0 > 1 }
 	var                     linkIsRoot :               Bool  { return linkRecordName == kRootName }
 	var                     isSelected :               Bool  { return gSelecting.isSelected(self) }
 	var                      isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
-	var                      canTravel :               Bool  { return isBookmark || hasHyperlink || hasVideo || hasEmail || hasNote }
-	var                       hasColor :               Bool  { return zoneColor != nil && zoneColor != "" }
-	var                       hasEmail :               Bool  { return hasTrait(for: .tEmail) && email != "" }
-	var                       hasVideo :               Bool  { return hasTrait(for: .tVideo) && videoFileName != "" }
+	var                       hasColor :               Bool  { return zoneColor != nil && !(zoneColor?.isEmpty ?? true) }
+	var                       hasEmail :               Bool  { return hasTrait(for: .tEmail) && !(email?.isEmpty ?? true) }
+	var                       hasVideo :               Bool  { return hasTrait(for: .tVideo) && !(videoFileName?.isEmpty ?? true) }
 	var                       hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                        hasNote :               Bool  { return hasTrait(for: .tNote) }
+	var                    isTraveller :               Bool  { return isBookmark || hasHyperlink || hasVideo || hasEmail || hasNote }
 	var                      isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
 	var                    isInRecents :               Bool  { return root?.isRecentsRoot      ?? false }
 	var                   isInSmallMap :               Bool  { return root?.isSmallMapRoot     ?? false }
@@ -164,6 +164,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return name
+	}
+
+	var traitsArray: ZRecordsArray {
+		var values = ZRecordsArray ()
+
+		for trait in traits.values {
+			values.append(trait)
+		}
+
+		return values
 	}
 
 	var traitKeys   : [String] {
@@ -344,7 +354,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		if  userCanWrite {
-			for (_, trait) in traits {
+			for trait in traits.values {
 				theCopy.addTrait(trait.deepCopy(dbID: dbID))
 			}
 		}
@@ -463,32 +473,22 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return base
 	}
 
-	var traitValues: [ZTrait] {
-		var values = [ZTrait] ()
-
-		for trait in traits.values {
-			values.append(trait)
-		}
-
-		return values
-	}
-
 	var decoration: String {
 		var d = ""
 
-		if isInTrash {
+		if  isInTrash {
 			d.append("T")
 		}
 
-		if isInFavorites {
+		if  isInFavorites {
 			d.append("F")
 		}
 
-		if isInRecents {
+		if  isInRecents {
 			d.append("R")
 		}
 
-		if isBookmark {
+		if  isBookmark {
 			d.append("B")
 		}
 
@@ -1591,13 +1591,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addTrait(_ trait: ZTrait, updateCoreData: Bool = true) {
-		if  let selfName         = ckRecordName ?? recordName,
-			let     type         = trait.traitType {
-			traits [type]        = trait
-			let ownerName        = trait.owner?.recordID.recordName
-			if   selfName       != ownerName {
-				trait .owner     = CKReference(recordID: CKRecordID(recordName: selfName), action: .none)
-				trait._ownerZone = nil
+		if  let                  type  = trait.traitType {
+			traits              [type] = trait
+			let             ownerName  = trait.owner?.recordID.recordName
+			if  let          selfName  = ckRecordName ?? recordName,
+				selfName != ownerName {
+				trait     ._ownerZone  = nil
+				trait      .owner      = CKReference(recordID: CKRecordID(recordName: selfName), action: .none)
 			}
 
 			trait.updateCKRecordProperties()
@@ -1644,9 +1644,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				traits[type] = nil
 			}
 
+			updateCoreDataRelationships()  // need to record changes in core data traits array
+
 			switch (type) {
-				case .tEmail:     emailMaybe     = nil
-				case .tHyperlink: hyperLinkMaybe = nil
+				case .tEmail:     emailMaybe         = iText
+				case .tVideo:     videoFileNameMaybe = iText
+				case .tHyperlink: hyperLinkMaybe     = iText
 				default: break
 			}
 		}
@@ -1675,7 +1678,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var trait            = traits[iType]
 		if  let            r = ckRecord,
 			trait           == nil {
-			trait            = ZTrait(databaseID: databaseID)
+			trait            = ZTrait.create(databaseID: databaseID)
 			trait?.owner     = CKReference(record: r, action: .none)
 			trait?.traitType = iType
 			traits[iType]    = trait
@@ -1721,8 +1724,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var note: ZNote? {
 		if  isBookmark {
 			return bookmarkTarget!.note
-		} else if noteMaybe == nil || !hasTrait(matching: [.tNote, .tEssay]), let note = createNote() {
-			return note
+		} else if noteMaybe == nil || !hasTrait(matching: [.tNote, .tEssay]), let emptyNote = createNote() {
+			return emptyNote
 		}
 
 		return noteMaybe
@@ -3187,7 +3190,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gTextEditor.stopCurrentEdit()
 		ungrabProgeny()
 
-		if  canTravel {
+		if  isTraveller {
 			invokeTravel(flags.isCommand) { // email, hyperlink, bookmark, essay
 				gRedrawMaps()
 			}
@@ -3424,6 +3427,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "r":     reverseChildren()
 				case "s":     gFiles.export(self, toFileAs: .eSeriously)
 				case "t":     swapWithParent { gRedrawMaps(for: self) }
+				case "v":     editTrait(for: .tVideo)
 				case "/":     focusRecent()
 				case "_":     break
 				case kEquals: break
@@ -3597,7 +3601,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			dict [.children] = childrenDict as NSObject?
 		}
 
-		if  let   traitsDict = try (traitValues as ZRecordsArray).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+		if  let   traitsDict = try traitsArray.createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 			dict   [.traits] = traitsDict as NSObject?
 		}
 

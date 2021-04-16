@@ -23,7 +23,7 @@ class ZManagedRecord: NSManagedObject {
 
 			if  let store = gCoreDataStack.persistentStore(for: databaseID) {
 				context.assign(self, to: store)
-				gSaveContext()
+//				gSaveContext()
 			}
 		} else {
 			self.init()

@@ -435,7 +435,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 			if  gUseCoreData {
 				modificationDate = Date()
 
-				gSaveContext()
+//				gSaveContext()
 			}
 
 			gNeedsRecount = true // trigger recount on next timer fire

@@ -25,8 +25,6 @@ class ZTextPack: NSObject {
     var       originalText :         String?
     var         textWidget : ZoneTextWidget? { return widget?.textWidget }
     var             widget :     ZoneWidget? { return packedZone?.widget }
-    var     isEditingEmail :           Bool  { return packedTrait?.traitType == .tEmail }
-    var isEditingHyperlink :           Bool  { return packedTrait?.traitType == .tHyperlink }
     var   adequatelyPaused :           Bool  { return Date().timeIntervalSince(createdAt) > 0.1 }
 
     var displayType: String {

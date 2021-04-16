@@ -50,12 +50,13 @@ class ZHelpDotsData: ZHelpData {
 		".f",					"120 ideas            large hollow left, 2 medium right",						"",
 		".f",					"1200 ideas          large hollow left, 2 medium hollow right",					"",
 		"",						"",																				"",
-		"_decorated dots",		"click or select drag dot and tap the = key",									"",
+		"_decorated dots",		"click to edit or select drag dot and tap the = key to ...",					"",
 		".f",					"bookmark           focus on bookmark's target",								"",
 		".f",					"target has note  ⌘-click to view note",										"",
 		".b",					"email                   compose and send",										"",
-		".b",					"hyperlink            open a browser",											"",
-		".b",					"note or essay     view and edit",												""
+		".b",					"hyperlink            open in a browser",										"",
+		".b",					"note or essay     edit",												"",
+		".b",					"video                   open in Quicktime",									""
 	]
 
 }

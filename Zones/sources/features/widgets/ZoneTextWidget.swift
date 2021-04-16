@@ -220,7 +220,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		// /////////////////////////////////////////////////////
 
         if  let zone = widgetZone,
-             zone.canTravel,
+             zone.isTraveller,
             !zone.isGrabbed,
             !isFirstResponder,
 			gIsMapOrEditIdeaMode {
