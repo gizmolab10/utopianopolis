@@ -660,16 +660,7 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func editTrait(for key: String) {
-		var traitType: ZTraitType?
-
-		switch key {
-			case "e": traitType = .tEmail
-			case "h": traitType = .tHyperlink
-			case "v": traitType = .tVideo
-			default:  break
-		}
-
-		if  let type = traitType {
+		if  let type = ZTraitType(rawValue: key) {
 			gSelecting.firstSortedGrab?.editTrait(for: type)
 		}
 	}

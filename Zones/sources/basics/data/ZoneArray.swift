@@ -475,7 +475,7 @@ extension ZoneArray {
 	}
 
 	mutating func toggleRelator() {
-		let relator = Zone.create(named: "owner", databaseID: .mineID)
+		let relator = Zone.create(named: "group name", databaseID: .mineID)
 
 		for child in self {
 			if  child.isRelator {                // remove .relator from attributes

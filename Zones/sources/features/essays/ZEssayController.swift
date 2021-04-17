@@ -25,7 +25,7 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 		gestureView = essayView    // do this before calling super setup
 
 		super.setup()
-		essayView?.updateText()
+		essayView?.setup()
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {

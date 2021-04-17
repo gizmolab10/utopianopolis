@@ -29,8 +29,7 @@ class ZEssayEditor: ZBaseEditor {
 	}
 
 	@discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
-		return super.handleKey(iKey, flags: flags, isWindow: isWindow) ||
-			gEssayView?.handleKey(iKey, flags: flags) ?? false
+		return super.handleKey(iKey, flags: flags, isWindow: isWindow) || gEssayView?.handleKey(iKey, flags: flags) ?? false
 	}
 
 }

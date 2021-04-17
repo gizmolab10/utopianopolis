@@ -88,7 +88,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func exit() {
-		ungrabAll()
 		prepareToExit()
 		gControllers.swapMapAndEssay(force: .wMapMode)
 	}
@@ -106,6 +105,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			e.autoDelete {
 			e.zone?.deleteNote()
 		}
+
+		ungrabAll()
+		undoManager?.removeAllActions()
 
 		if  let zone = gCurrentEssayZone {
 			gHere    = zone
@@ -188,7 +190,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		zlayer                   .backgroundColor = backgroundColor
 	}
 
+	func setup() {
+		updateText()
+		undoManager?.removeAllActions() // clear the undo stack of prior / disastrous information (about prior text)
+	}
+
 	func updateText(restoreSelection: Int? = nil) {
+
+		// make sure we actually have a current essay
+		// activate the buttons in the control bar
+		// grab the current essay text and put it in place
+		// grab record id of essay to indicate that essay
+		// has not been saved, avoids overwriting later
+
 		resetForDarkMode()
 
 		if  gCurrentEssay == nil {
@@ -252,7 +266,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- input
 	// MARK:-
 
-	func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
+	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		guard var key = iKey else {
 			return false
 		}
@@ -260,7 +274,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
 		let  OPTION = flags.isOption
-		let     ALL = OPTION && CONTROL
+		let   SHIFT = flags.isShift
+		let    DUAL = OPTION && CONTROL
 		let     ANY = OPTION || COMMAND || CONTROL
 
 		if  key    != key.lowercased() {
@@ -279,8 +294,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case kEquals: grabSelected()
 				case kDelete: deleteGrabbed()
 				case kReturn: if ANY { grabDone() }
-
-				default:  break
+				default:      return false
 			}
 
 			return true
@@ -295,7 +309,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if  COMMAND {
 			switch key {
 				case "a":      selectAll(nil)
-				case "d":      convertToChild(createEssay: ALL)
+				case "d":      convertToChild(createEssay: DUAL)
 				case "e":      grabSelectedTextForSearch()
 				case "f":      gSearching.showSearch(OPTION)
 				case "g":      searchAgain(OPTION)
@@ -306,6 +320,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "s":      save()
 				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
+				case "z":      if  SHIFT { undoManager?.redo() } else { undoManager?.undo() }
 				case "/":      gHelpController?.show(flags: flags)
 				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
 				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
@@ -325,7 +340,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			return true
 		}
-
 
 		return false
 	}
@@ -516,8 +530,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		super.setSelectedRange(range)
 
 		if  selectedRange.location != 0,
-			let      rect = rectForRange(selectedRange) {
-			selectionRect = rect
+			let       rect = rectForRange(selectedRange),
+			selectionRect != rect {
+			selectionRect  = rect
 		}
 	}
 
@@ -1046,7 +1061,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			clearResizing()
 			setNeedsLayout()
 			setNeedsDisplay()
-			updateText(restoreSelection: range.location)
+			updateText(restoreSelection: range.location)  // recreate essay after an image is dropped
 		}
 	}
 

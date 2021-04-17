@@ -704,7 +704,6 @@
 			isa = PBXGroup;
 			children = (
 				A7738FDF2628C3390040B9CD /* tutorial.idea.and.list.mov */,
-				A74D1BA522222FC900E69E44 /* eye.con-512.png */,
 				0C39B3981F1988380091F4D1 /* Assets.xcassets */,
 				A734EB6F21E26EE500B9475F /* Credits.rtfd */,
 				0C39B3931F1988380091F4D1 /* iPad */,
@@ -816,6 +815,7 @@
 		0CA04B0B1D2ECF1A001892E5 = {
 			isa = PBXGroup;
 			children = (
+				A74D1BA522222FC900E69E44 /* eye.con-512.png */,
 				0C39B3C11F198BAA0091F4D1 /* configuration */,
 				0C50FD2D2053467600E1D9A9 /* data */,
 				A7F5D690227E6AEE009FB225 /* documentation */,

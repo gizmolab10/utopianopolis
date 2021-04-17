@@ -67,18 +67,17 @@ class ZBaseEditor: NSObject {
 		return isValid(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
 	}
 
-	@discardableResult func handleEvent(_ iEvent: ZEvent, isWindow: Bool) -> ZEvent? {
+	@discardableResult func handleEvent(_ event: ZEvent, isWindow: Bool) -> ZEvent? {
 		if  canHandleKey,
-			!matchesPrevious(iEvent) {
-			let     flags = iEvent.modifierFlags
-			previousEvent = iEvent
+			!matchesPrevious(event) {
+			previousEvent  = event
 			
-			if  handleKey(iEvent.key, flags: flags, isWindow: isWindow) {
+			if  handleKey(event.key, flags: event.modifierFlags, isWindow: isWindow) {
 				return nil
 			}
 		}
 		
-		return iEvent
+		return event
 	}
 
 	func matchesPrevious(_ iEvent: ZEvent) -> Bool {
