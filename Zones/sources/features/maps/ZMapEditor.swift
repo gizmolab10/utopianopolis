@@ -59,7 +59,7 @@ class ZMapEditor: ZBaseEditor {
 			let SPECIAL = flags.isSpecial
 			let     ANY = COMMAND || OPTION || CONTROL
 			let     ALL = COMMAND && OPTION && CONTROL
-			let   FUNKY = 	 		 OPTION && CONTROL
+			let SCORNED = 	 		 OPTION && CONTROL
 			let SPLAYED = COMMAND &&           CONTROL
 
             if  key    != key.lowercased() {
@@ -89,7 +89,7 @@ class ZMapEditor: ZBaseEditor {
 							case "k":      toggleColorized()
 							case "n":      editNote(OPTION)
 							case "p":      printCurrentFocus()
-							case "/":      if FUNKY { return false } else { popAndUpdateRecents(CONTROL, kind: .eEdited) }
+							case "/":      if SCORNED { return false } else { popAndUpdateRecents(CONTROL, kind: .eEdited) }
 							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
 							case kTab:     addSibling(OPTION)
 							case kSpace:   gSelecting.currentMoveable.addIdea()
@@ -140,7 +140,7 @@ class ZMapEditor: ZBaseEditor {
 						case "+":        gSelecting.currentGrabs.toggleRelator()
 						case "-":        return handleHyphen(COMMAND, OPTION)
 						case "'":        gSwapSmallMapMode(OPTION)
-						case "/":        if   FUNKY { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
+						case "/":        if SCORNED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case "[", "]":   go(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() }
 						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")

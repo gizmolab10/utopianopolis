@@ -70,6 +70,7 @@ var           gIsEditIdeaMode:               Bool { return gWorkMode == .wEditId
 var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsEssayMode }
 var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEditIdeaMode }
 var          gIsDraggableMode:               Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
+var      gDetailsViewIsHidden:               Bool { return gMainController?.detailView?.isHidden ?? true }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var      gCurrentSmallMapName:             String { return gIsRecentlyMode ? "recent" : "favorite" }
 var   gCurrentSmallMapRecords:  ZSmallMapRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
@@ -109,13 +110,17 @@ let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
 
 func gSwapSmallMapMode(_ OPTION: Bool = false) {
-	let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
-	let newID     : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
+	if  gDetailsViewIsHidden {
+		gShowDetailsView = true    	// if the details view is hidden, show it
+	} else {
+		let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
+		let newID     : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
 
-	gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
+		gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
 
-	if  OPTION {			// if any grabs are in current small map, move them to other map
-		gSelecting.swapGrabsFrom(currentID, toID: newID)
+		if  OPTION {			    // if any grabs are in current small map, move them to other map
+			gSelecting.swapGrabsFrom(currentID, toID: newID)
+		}
 	}
 
 	gSignal([.sDetails, .sSmallMap])

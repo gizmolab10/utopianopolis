@@ -54,30 +54,19 @@ class ZRecents : ZSmallMapRecords {
 
 	override func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {
 		if !gPushIsDisabled,
-			rootZone != nil {
+		   rootZone != nil {
 			var here  = zone
 
 			if  intoNotes {
 				here  = gCurrentEssayZone
 			}
 
-			if  let pushMe = here,
-				gHasFinishedStartup, // avoid confusing recents upon relaunch
-				!findAndSetHere(asParentOf: pushMe),
-				let       bookmark = addNewBookmark(for: pushMe, action: .aCreateBookmark) {
-				var    index: Int? = nil                               // assume current bookmark's parent is NOT current here, always grow down
+			if  let pushMe = here, gHasFinishedStartup { // avoid confusing recents upon relaunch
+				let bookmark = bookmarkTargeting(pushMe) ?? addNewBookmark(for: pushMe, action: .aCreateBookmark)
 
-				if  let          b = currentBookmark,
-					let          p = b.parentZone,
-					hereZoneMaybe == p,                                // current bookmark's parent same as here
-					let sIndex     = b.siblingIndex {
-					index          = sIndex + (gListsGrowDown ? 1 : 0) // place new bookmark relative to current one
-				}
-
-				bookmark.moveZone(into: currentHere, at: index)
+				bookmark?.moveZone(into: currentHere, at: 0)
+				updateCurrentRecent()
 			}
-
-			updateCurrentRecent()
 		}
 	}
 

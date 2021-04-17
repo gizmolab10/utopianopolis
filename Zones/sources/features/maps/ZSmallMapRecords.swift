@@ -27,68 +27,8 @@ class ZSmallMapRecords: ZRecords {
 	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? [] }
 	var workingNotemarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.notemarks : rootZone?.allNotemarkProgeny) ?? [] }
 
-	// MARK:- switch
+	// MARK:- cycle
 	// MARK:-
-
-	func nextWorkingIndex(after index: Int, going down: Bool) -> Int {
-		let  increment = (down ? 1 : -1)
-		var       next = index + increment
-		let      count = working.count
-		if  next      >= count {
-			next       = 0
-		} else if next < 0 {
-			next       = count - 1
-		}
-
-		return next
-	}
-
-	func insertAsNext(_ zone: Zone) {
-		currentBookmark = zone
-		let      cIndex = currentBookmarkIndex ?? 0
-		let       index = nextWorkingIndex(after: cIndex, going: gListsGrowDown)
-
-		rootZone?.addChild(zone, at: index)
-	}
-
-	func bookmark(for zone: Zone? = gHereMaybe) -> Zone? {
-		if  let name = zone?.ckRecordName {
-			for bookmark in workingBookmarks {
-				if  name == bookmark.bookmarkTarget?.ckRecordName {
-					return bookmark
-				}
-			}
-		}
-
-		return nil
-	}
-
-	func removeBookmark(for zone: Zone? = gHereMaybe) {
-		if  let bookmark = bookmark(for: zone) {
-			bookmark.deleteSelf(permanently: true) {}
-		}
-	}
-
-	@discardableResult func pop(_ zone: Zone? = gHereMaybe) -> Bool {
-		if  let bookmark = bookmark(for: zone) {
-			go(down: gListsGrowDown) {
-				bookmark.deleteSelf(permanently: true) {}
-			}
-
-			return true
-		}
-
-		return false
-	}
-
-	@discardableResult func popAndUpdate() -> Zone? {
-		if  !pop(),
-			workingBookmarks.count > 0 {
-			currentBookmark = workingBookmarks[0]
-		}
-
-		return currentBookmark
-	}
 
 	func go(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
 		if  currentBookmark == nil {
@@ -133,34 +73,6 @@ class ZSmallMapRecords: ZRecords {
 		}
 	}
 
-	func revealBookmark(of target: Zone) {
-
-		// locate and make bookmark of target visible and mark it
-
-		if  let b = whichBookmarkTargets(target) {
-			makeVisibleAndMarkInSmallMap(b)
-		}
-	}
-
-	@discardableResult func makeVisibleAndMarkInSmallMap(_  iZone: Zone? = nil) -> Bool {
-		if  let zone     = iZone,
-			let parent   = zone.parentZone,
-			currentHere != parent {
-			currentHere.collapse()
-
-			currentHere = parent
-
-			currentHere.expand()
-
-			return true
-		}
-
-		return false
-	}
-
-	// MARK:- focus
-	// MARK:-
-
 	func setAsCurrent(_  iZone: Zone?, alterHere: Bool = false) {
 		if  alterHere,
 			makeVisibleAndMarkInSmallMap(iZone) {
@@ -190,12 +102,118 @@ class ZSmallMapRecords: ZRecords {
 		}
 	}
 
-	func whichBookmarkTargets(_ iTarget: Zone?, orSpawnsIt: Bool = true) -> Zone? {
-		if  let target = iTarget, target.databaseID != nil {
-			return rootZone?.allBookmarkProgeny.whoseTargetIntersects(with: [target], orSpawnsIt: orSpawnsIt)
+	func nextWorkingIndex(after index: Int, going down: Bool) -> Int {
+		let  increment = (down ? 1 : -1)
+		var       next = index + increment
+		let      count = working.count
+		if  next      >= count {
+			next       = 0
+		} else if next < 0 {
+			next       = count - 1
+		}
+
+		return next
+	}
+
+	func targeting(_ target: Zone, in array: ZoneArray?, orSpawnsIt: Bool = true) -> Zone? {
+		return array?.whoseTargetIntersects(with: [target], orSpawnsIt: orSpawnsIt)
+	}
+
+	func workingBookmark(for target: Zone) -> Zone? {
+		return targeting(target, in: workingBookmarks, orSpawnsIt: false)
+	}
+
+	func whichBookmarkTargets(_ target: Zone, orSpawnsIt: Bool = true) -> Zone? {
+		if  target.databaseID != nil {
+			return targeting(target, in: rootZone?.allBookmarkProgeny, orSpawnsIt: orSpawnsIt)
 		}
 
 		return nil
+	}
+
+	func bookmarkTargeting(_ target: Zone) -> Zone? {
+		return whichBookmarkTargets(target, orSpawnsIt: false)
+	}
+
+	// MARK:- pop and push
+	// MARK:-
+
+	func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {}
+
+	@discardableResult func pop(_ zone: Zone? = gHereMaybe) -> Bool {
+		if  let   target = zone,
+			let bookmark = workingBookmark(for: target) {
+			go (down: true) {
+				bookmark.deleteSelf(permanently: true) {}
+			}
+
+			return true
+		}
+
+		return false
+	}
+
+	@discardableResult func popAndUpdate() -> Zone? {
+		if !pop(),
+			workingBookmarks.count > 0 {
+			currentBookmark = workingBookmarks[0]
+		}
+
+		return currentBookmark
+	}
+
+	func findAndSetHereAsParentOfBookmarkTargeting(_ target: Zone) -> Bool {
+		if  let  bookmark = bookmarkTargeting(target),
+			let    parent = bookmark.parentZone {
+			hereZoneMaybe = parent
+
+			return true
+		}
+
+		return false
+	}
+
+	func insertAsNext(_ zone: Zone) {
+		currentBookmark = zone
+		let      cIndex = currentBookmarkIndex ?? 0
+		let       index = nextWorkingIndex(after: cIndex, going: gListsGrowDown)
+
+		rootZone?.addChild(zone, at: index)
+	}
+
+	func removeBookmark(for zone: Zone? = gHereMaybe) {
+		if  let   target = zone,
+			let bookmark = workingBookmark(for: target) {
+			bookmark.deleteSelf(permanently: true) {}
+		}
+	}
+
+	// MARK:- focus
+	// MARK:-
+
+	func revealBookmark(of target: Zone) {
+
+		// locate and make bookmark of target visible and mark it
+
+		if  let b = whichBookmarkTargets(target) {
+			makeVisibleAndMarkInSmallMap(b)
+		}
+	}
+
+	@discardableResult func makeVisibleAndMarkInSmallMap(_  iZone: Zone? = nil) -> Bool {
+		if  let zone     = iZone,
+			let parent   = zone.parentZone,
+			currentHere != parent {
+			currentHere.collapse()
+
+			currentHere = parent
+
+			currentHere.expand()
+
+			return true
+		}
+
+		return false
 	}
 
 	@discardableResult func updateCurrentForMode() -> Zone? {
@@ -203,9 +221,10 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	@discardableResult func updateCurrentBookmark() -> Zone? {
-		if  let    bookmark = whichBookmarkTargets(gHereMaybe, orSpawnsIt: false),
+		if  let        here = gHereMaybe,
+			let    bookmark = whichBookmarkTargets(here, orSpawnsIt: false),
 			bookmark.isInSmallMap,
-			!(bookmark.bookmarkTarget?.spawnedBy(gHere) ?? false) {
+			!(bookmark.bookmarkTarget?.spawnedBy(here) ?? false) {
 			currentBookmark = bookmark
 
 			return currentBookmark
@@ -287,28 +306,6 @@ class ZSmallMapRecords: ZRecords {
 
 		return found
 	}
-
-	func findAndSetHereAsParentOfBookmarkTargeting(_ target: Zone) -> Bool {
-		let rName = target.ckRecordName
-		var found = false
-
-		rootZone?.traverseProgeny { (bookmark) -> (ZTraverseStatus) in
-			if  let     tName = bookmark.bookmarkTarget?.ckRecordName,
-				let    parent = bookmark.parentZone,
-				tName        == rName {
-				found         = true
-				hereZoneMaybe = parent
-
-				return .eStop
-			}
-
-			return .eContinue
-		}
-
-		return found
-	}
-
-	func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {}
 
 	@discardableResult func addNewBookmark(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
 

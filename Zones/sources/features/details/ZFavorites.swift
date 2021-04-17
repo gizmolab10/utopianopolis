@@ -102,7 +102,8 @@ class ZFavorites: ZSmallMapRecords {
     // MARK:-
 
     func updateCurrentFavorite(_ currentZone: Zone? = nil) {
-        if  let     bookmark = whichBookmarkTargets(currentZone ?? gHereMaybe),
+        if  let         zone = currentZone ?? gHereMaybe,
+			let     bookmark = whichBookmarkTargets(zone),
             let       target = bookmark.bookmarkTarget,
             (gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)),
 			!gIsRecentlyMode {
@@ -268,7 +269,7 @@ class ZFavorites: ZSmallMapRecords {
         // 3. not in favorites           -> create and grab new favorite (its target is here) //
 		// /////////////////////////////////////////////////////////////////////////////////////
 
-		if  let       bookmark = whichBookmarkTargets(here, orSpawnsIt: false) {
+		if  let       bookmark = bookmarkTargeting(here) {
 			hereZoneMaybe?.collapse()
 			bookmark.asssureIsVisibleAndGrab()                                          // state 1
 
