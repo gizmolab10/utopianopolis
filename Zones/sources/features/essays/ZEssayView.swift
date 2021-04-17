@@ -309,6 +309,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if  COMMAND {
 			switch key {
 				case "a":      selectAll(nil)
+				case "b":      applyToSelection(BOLD: true)
 				case "d":      convertToChild(createEssay: DUAL)
 				case "e":      grabSelectedTextForSearch()
 				case "f":      gSearching.showSearch(OPTION)
@@ -1247,6 +1248,35 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let replacement = up ? text.uppercased() : text.lowercased()
 
 			insertText(replacement, replacementRange: selectedRange)
+		}
+	}
+
+	func applyToSelection(BOLD: Bool = false, ITALICS: Bool = false) {
+		if  let dict = textStorage?.fontAttributes(in: selectedRange),
+			let font = dict[.font] as? ZFont {
+			var desc = font.fontDescriptor
+			var traz = desc.symbolicTraits
+
+			if  BOLD {
+				if  traz.contains(.bold) {
+					traz  .remove(.bold)
+				} else {
+					traz  .insert(.bold)
+				}
+			}
+
+			if  ITALICS {
+				if  traz.contains(.italic) {
+					traz  .remove(.italic)
+				} else {
+					traz  .insert(.italic)
+				}
+			}
+
+			desc = desc.withSymbolicTraits(traz)
+			let bold = ZFont(descriptor: desc, size: font.pointSize) as Any
+
+			textStorage?.setAttributes([.font : bold], range: selectedRange)
 		}
 	}
 
