@@ -120,7 +120,9 @@ class ZEssay: ZNote {
 
 	override func isLocked(within range: NSRange) -> Bool {
 		let     child = noteIn(range)
-		return (child == self) ? super.isLocked(within: range) : child.isLocked(within: range)
+		let lockRange = range.offsetBy(-child.noteOffset)
+
+		return (child == self) ? super.isLocked(within: range) : child.isLocked(within: lockRange)
 	}
 
 	override func saveEssay(_ attributedString: NSAttributedString?) {
@@ -147,15 +149,15 @@ class ZEssay: ZNote {
 
 		for child in children {
 			if  equal {
-				adjust    -= child.noteRange.length
+				adjust        -= child.noteRange.length
 
 				child.zone?.deleteNote()
 			} else {
-				let (alter,  delta) = child.shouldAlterNote(range, replacementLength: replacementLength, adjustment: adjust)
-				adjust    += delta
+				let (alter,  delta) = child.shouldAlterNote(inRange: range, replacementLength: replacementLength, adjustment: adjust)
 
-				if  alter != .eLock {
-					result = .eAlter
+				if  alter     != .eLock {
+					result     = .eAlter
+					adjust    +=  delta
 
 					if  alter == .eDelete {
 						offset = child.noteOffset

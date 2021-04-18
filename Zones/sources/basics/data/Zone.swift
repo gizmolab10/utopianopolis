@@ -875,10 +875,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let        set = mutableSetValue(forKeyPath: kTraitArray) as? Set<ZTrait>, set.count > 0 {
 			let traitArray = ZTraitArray(set: set)
 
-			if  zoneName == "my gosh I feel lost" {
-				print("foobleyedee")
-			}
-
 			for trait in traitArray {
 				trait.convertFromCoreData(into: kTraitType, visited: [])
 
@@ -3193,24 +3189,24 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gTextEditor.stopCurrentEdit()
 		ungrabProgeny()
 
-		if  isTraveller {
-			invokeTravel(flags.isCommand) { // email, hyperlink, bookmark, essay
-				gRedrawMaps()
-			}
-		} else {
-			let show = !expanded
+		let  COMMAND = flags.isCommand
+		let   OPTION = flags.isOption
 
-//			if  gIsEssayMode {
-//				gControllers.swapMapAndEssay(force: .wMapMode)
-//			}
+		if  count    > 0, !OPTION {
+			let show = !expanded
 
 			if  isInSmallMap {
 				expandInSmallMap(show)
 				gRedrawMaps()
 			} else {
-				generationalUpdate(show: show) {
+				let goal = (COMMAND && show) ? Int.max : nil
+				generationalUpdate(show: show, to: goal) {
 					gRedrawMaps(for: self)
 				}
+			}
+		} else if isTraveller {
+			invokeTravel(COMMAND) { // note, email, video, bookmark, hyperlink
+				gRedrawMaps()
 			}
 		}
 	}

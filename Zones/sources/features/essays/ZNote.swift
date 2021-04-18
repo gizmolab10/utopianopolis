@@ -238,29 +238,29 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	func isLocked(within range: NSRange) -> Bool {
-		let titleEnd = titleRange.upperBound + noteOffset
-		let   tStart = textRange .lowerBound + noteOffset
-		let     rEnd = range     .upperBound
-		let   rStart = range     .lowerBound
-		let  atLimit = rStart == titleEnd || rEnd == titleEnd	
-		let    first = NSMakeRange(noteOffset, titleRange.lowerBound)
-		let   second = NSMakeRange(titleEnd,   tStart - titleEnd)
-		let  inFirst = first .intersects(range)
-		let inSecond = second.intersects(range)
-		let straddle = range .intersects(second)
-		let   locked = (inFirst || inSecond || straddle) && !atLimit
+		let    titEnd = titleRange.upperBound
+		let  texStart = textRange .lowerBound
+		let    ranEnd = range     .upperBound
+		let  ranStart = range     .lowerBound
+		let  atTitEnd = titEnd == ranStart || titEnd == ranEnd	           // range begins or ends at end of title
+		let beforeTit = NSMakeRange(0, titleRange.lowerBound)
+		let   between = NSMakeRange(titEnd,   texStart - titEnd)
+		let  isBefore = beforeTit.intersects(range)                        // before title
+		let isBetween = between  .intersects(range)                        // between title and text
+		let straddles = range    .intersects(between)                      // begins in title ends in text
+		let  isLocked = (isBefore || isBetween || straddles) && !atTitEnd
 
-		return locked
+		return isLocked
 	}
 
 	// N.B. mutates title range
 
-	func shouldAlterNote(_ iRange: NSRange, replacementLength: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
+	func shouldAlterNote(inRange: NSRange, replacementLength: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
 		var 	result  	  	        = ZAlterationType.eLock
 		var      delta                  = 0
 
 		if  zone?.userCanWrite ?? false,
-		    let range 		            = iRange.inclusiveIntersection(noteRange)?.offsetBy(-noteOffset) {
+		    let range 		            = inRange.inclusiveIntersection(noteRange)?.offsetBy(-noteOffset) {
 			if  range                  == noteRange.offsetBy(-noteOffset) {
 				result				    = .eDelete
 
@@ -287,7 +287,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	func shouldAlterEssay(_ range: NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
-		var (result, delta) = shouldAlterNote(range, replacementLength: replacementLength)
+		var (result, delta) = shouldAlterNote(inRange: range, replacementLength: replacementLength)
 
 		if  result == .eDelete {
 			result  = .eExit

@@ -234,6 +234,8 @@
 		A7948CA92486CBD700CDA302 /* ZStartupController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7948CA82486CBD700CDA302 /* ZStartupController.swift */; };
 		A7948CAA2486CBD700CDA302 /* ZStartupController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7948CA82486CBD700CDA302 /* ZStartupController.swift */; };
 		A7948CAB2486CBD700CDA302 /* ZStartupController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7948CA82486CBD700CDA302 /* ZStartupController.swift */; };
+		A79F023A262CC5D000E87742 /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = A79F0238262CC5D000E87742 /* test.swift */; };
+		A79F023B262CC5D000E87742 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A79F0239262CC5D000E87742 /* Info.plist */; };
 		A7A4B52624E08E710092D6E0 /* ZStartup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A4B52524E08E710092D6E0 /* ZStartup.swift */; };
 		A7A4B52724E08E710092D6E0 /* ZStartup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A4B52524E08E710092D6E0 /* ZStartup.swift */; };
 		A7A4B52824E08E710092D6E0 /* ZStartup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A4B52524E08E710092D6E0 /* ZStartup.swift */; };
@@ -358,6 +360,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = EEBCC9E219CC627E0083B827;
 			remoteInfo = "SnapKit Tests";
+		};
+		A79F023F262CC88100E87742 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0CA04B0C1D2ECF1A001892E5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0CA04B131D2ECF1A001892E5;
+			remoteInfo = Seriously;
 		};
 		A7FC59BB2262798B005280D2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -514,6 +523,9 @@
 		A793722D25BE2EE0008C98AE /* ZSimpleToolsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSimpleToolsController.swift; sourceTree = "<group>"; };
 		A793722E25BE2EE0008C98AE /* ZSimpleToolButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSimpleToolButton.swift; sourceTree = "<group>"; };
 		A7948CA82486CBD700CDA302 /* ZStartupController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZStartupController.swift; sourceTree = "<group>"; };
+		A79F022E262CC5A300E87742 /* test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = test.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A79F0238262CC5D000E87742 /* test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
+		A79F0239262CC5D000E87742 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A7A4B52524E08E710092D6E0 /* ZStartup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZStartup.swift; sourceTree = "<group>"; };
 		A7B48A7923E0E80C00654DBD /* ZEssayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEssayView.swift; sourceTree = "<group>"; };
 		A7B48A7A23E0E80C00654DBD /* ZMobileKeyInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMobileKeyInput.swift; sourceTree = "<group>"; };
@@ -575,6 +587,13 @@
 			files = (
 				A7FDB3DD2276459500033337 /* CloudKit.framework in Frameworks */,
 				A7FDB3DF227648B800033337 /* SnapKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A79F022B262CC5A300E87742 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -823,6 +842,7 @@
 				0C39B3921F1988380091F4D1 /* interfaces */,
 				0CA04B151D2ECF1A001892E5 /* products */,
 				0C39B21E1F182EBB0091F4D1 /* sources */,
+				A79F0237262CC5D000E87742 /* test */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
@@ -833,6 +853,7 @@
 				0CA04B491D2ECF41001892E5 /* iPad.app */,
 				A746D466219F637A00123A0A /* Seriously.app */,
 				A7D3C25F21FAB6ED00B64B83 /* iFocus.app */,
+				A79F022E262CC5A300E87742 /* test.xctest */,
 			);
 			name = products;
 			sourceTree = "<group>";
@@ -894,6 +915,15 @@
 				A786C6F025DF5F9F00B23FBF /* ZDebugController.swift */,
 			);
 			path = debug;
+			sourceTree = "<group>";
+		};
+		A79F0237262CC5D000E87742 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				A79F0238262CC5D000E87742 /* test.swift */,
+				A79F0239262CC5D000E87742 /* Info.plist */,
+			);
+			path = test;
 			sourceTree = "<group>";
 		};
 		A7D2D65224902F8F00F652B0 /* help */ = {
@@ -1074,13 +1104,31 @@
 			productReference = 0CA04B491D2ECF41001892E5 /* iPad.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A79F022D262CC5A300E87742 /* test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A79F0233262CC5A300E87742 /* Build configuration list for PBXNativeTarget "test" */;
+			buildPhases = (
+				A79F022A262CC5A300E87742 /* Sources */,
+				A79F022B262CC5A300E87742 /* Frameworks */,
+				A79F022C262CC5A300E87742 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A79F0240262CC88100E87742 /* PBXTargetDependency */,
+			);
+			name = test;
+			productName = test;
+			productReference = A79F022E262CC5A300E87742 /* test.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		0CA04B0C1D2ECF1A001892E5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0930;
+				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = Zones;
 				TargetAttributes = {
@@ -1128,6 +1176,11 @@
 							};
 						};
 					};
+					A79F022D262CC5A300E87742 = {
+						CreatedOnToolsVersion = 12.4;
+						DevelopmentTeam = F8M94NY2TV;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 0CA04B0F1D2ECF1A001892E5 /* Build configuration list for PBXProject "Seriously" */;
@@ -1153,6 +1206,7 @@
 				0C69C9861F09CD95004D026D /* iFocus */,
 				0CA04B481D2ECF41001892E5 /* iPad */,
 				0CA04B131D2ECF1A001892E5 /* Seriously */,
+				A79F022D262CC5A300E87742 /* test */,
 			);
 		};
 /* End PBXProject section */
@@ -1215,6 +1269,14 @@
 				A7B48A7323E0D1DC00654DBD /* Main.storyboard in Resources */,
 				0C1ABAAB1FB144E300D62947 /* Assets.xcassets in Resources */,
 				0C39B3A31F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A79F022C262CC5A300E87742 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A79F023B262CC5D000E87742 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1562,9 +1624,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A79F022A262CC5A300E87742 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A79F023A262CC5D000E87742 /* test.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		A79F0240262CC88100E87742 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0CA04B131D2ECF1A001892E5 /* Seriously */;
+			targetProxy = A79F023F262CC88100E87742 /* PBXContainerItemProxy */;
+		};
 		A7FC59BC2262798B005280D2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SnapKit;
@@ -1944,6 +2019,54 @@
 			};
 			name = Release;
 		};
+		A79F0234262CC5A300E87742 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = F8M94NY2TV;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = test/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 11.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.test;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A79F0235262CC5A300E87742 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = F8M94NY2TV;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = test/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 11.1;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.test;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1979,6 +2102,15 @@
 			buildConfigurations = (
 				0CA04B711D2ECF41001892E5 /* Debug */,
 				0CA04B721D2ECF41001892E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A79F0233262CC5A300E87742 /* Build configuration list for PBXNativeTarget "test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A79F0234262CC5A300E87742 /* Debug */,
+				A79F0235262CC5A300E87742 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
