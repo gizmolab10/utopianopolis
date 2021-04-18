@@ -45,7 +45,7 @@ class ZManifest : ZRecord {
 	override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deletedRecordNames)] }
 	convenience init(databaseID: ZDatabaseID?) { self.init(record: CKRecord(recordType: kManifestType), databaseID: databaseID) }
 
-	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> ZManifest {
+	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZManifest {
 		if  let    has = hasMaybe(record: record, entityName: kManifestType, databaseID: databaseID) as? ZManifest {        // first check if already exists
 			return has
 		}

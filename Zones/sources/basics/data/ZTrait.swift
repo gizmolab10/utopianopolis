@@ -54,6 +54,54 @@ class ZTrait: ZTraitAssets {
 	var             _ownerZone :  Zone?
 	var             _traitType :  ZTraitType?
 
+	// MARK:- initialize
+	// MARK:-
+
+	func deepCopy(dbID: ZDatabaseID?) -> ZTrait {
+		let theRecord = CKRecord(recordType: kTraitType)
+		let theCopy   = ZTrait.create(record: theRecord, databaseID: dbID)
+
+		copyIntoZRecord(theCopy)
+		theCopy.maybeNeedSave() // so KVO won't set needsMerge
+
+		return theCopy
+	}
+
+	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZTrait {
+		if  let    has = hasMaybe(record: record, entityName: kTraitType, databaseID: databaseID) as? ZTrait {        // first check if already exists
+			return has
+		}
+
+		return ZTrait(record: record, entityName: kTraitType, databaseID: databaseID)
+	}
+
+	convenience init(databaseID: ZDatabaseID?) {
+		self.init(record: CKRecord(recordType: kTraitType), databaseID: databaseID)
+	}
+
+	convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
+		self.init(entityName: kTraitType, databaseID: dbID)
+
+		try extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
+	}
+
+	override var cloudProperties: [String] { return ZTrait.cloudProperties }
+	override var optionalCloudProperties: [String] { return ZTrait.optionalCloudProperties }
+
+	override class var cloudProperties: [String] {
+		return [#keyPath(type),
+				#keyPath(text),
+				#keyPath(strings)] +
+			optionalCloudProperties +
+			super.cloudProperties
+	}
+
+	override class var optionalCloudProperties: [String] {
+		return [#keyPath(owner),
+				#keyPath(format)] +
+			super.optionalCloudProperties
+	}
+
 	// MARK:- text
 	// MARK:-
 
@@ -102,14 +150,6 @@ class ZTrait: ZTraitAssets {
 		}
 	}
 
-	func deepCopy(dbID: ZDatabaseID?) -> ZTrait {
-		let theCopy = ZTrait.create(databaseID: dbID)
-
-        copy(into: theCopy)
-
-        return theCopy
-    }
-
     override var emptyName: String {
         if  let tType = traitType {
             switch tType {
@@ -153,41 +193,6 @@ class ZTrait: ZTraitAssets {
 		gCurrentTrait = self
 		during()
 		gCurrentTrait = prior
-	}
-
-	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> ZTrait {
-		if  let    has = hasMaybe(record: record, entityName: kTraitType, databaseID: databaseID) as? ZTrait {        // first check if already exists
-			return has
-		}
-
-		return ZTrait(record: record, entityName: kTraitType, databaseID: databaseID)
-	}
-
-    convenience init(databaseID: ZDatabaseID?) {
-        self.init(record: CKRecord(recordType: kTraitType), databaseID: databaseID)
-    }
-
-    convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
-        self.init(entityName: kTraitType, databaseID: dbID)
-
-        try extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
-    }
-
-	override var cloudProperties: [String] { return ZTrait.cloudProperties }
-	override var optionalCloudProperties: [String] { return ZTrait.optionalCloudProperties }
-
-    override class var cloudProperties: [String] {
-        return [#keyPath(type),
-                #keyPath(text),
-			    #keyPath(strings)] +
-			optionalCloudProperties +
-			super.cloudProperties
-    }
-
-	override class var optionalCloudProperties: [String] {
-		return [#keyPath(owner),
-				#keyPath(format)] +
-			super.optionalCloudProperties
 	}
 
     override func orphan() {

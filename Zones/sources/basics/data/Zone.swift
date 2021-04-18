@@ -343,9 +343,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func deepCopy(dbID: ZDatabaseID?) -> Zone {
 		let theCopy = Zone.create(named: nil, databaseID: dbID)
 
-		copy(into: theCopy)
+		copyIntoZRecord(theCopy)
+		gBookmarks.addToReverseLookup(theCopy)   // only works for bookmarks
 		theCopy.maybeNeedSave() // so KVO won't set needsMerge
-		gBookmarks.addToReverseLookup(theCopy) // only works for bookmarks
 
 		theCopy.parentZone = nil
 
@@ -353,10 +353,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			theCopy.addChild(child.deepCopy(dbID: dbID))
 		}
 
-		if  userCanWrite {
-			for trait in traits.values {
-				theCopy.addTrait(trait.deepCopy(dbID: dbID))
-			}
+		for trait in traits.values {
+			theCopy.addTrait(trait.deepCopy(dbID: dbID))
 		}
 
 		return theCopy
@@ -877,12 +875,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let        set = mutableSetValue(forKeyPath: kTraitArray) as? Set<ZTrait>, set.count > 0 {
 			let traitArray = ZTraitArray(set: set)
 
+			if  zoneName == "my gosh I feel lost" {
+				print("foobleyedee")
+			}
+
 			for trait in traitArray {
 				trait.convertFromCoreData(into: kTraitType, visited: [])
 
 				if  let type = trait.traitType,
 					!hasTrait(for: type) {
-					addTrait(trait, updateCoreData: false) // we got here because core data already exists
+					addTrait(trait, updateCoreData: false) // we got here because this is not a first-time launch and thus core data already exists
 				}
 
 				trait.register()
@@ -1678,7 +1680,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var trait            = traits[iType]
 		if  let            r = ckRecord,
 			trait           == nil {
-			trait            = ZTrait.create(databaseID: databaseID)
+			let  traitRecord = CKRecord(recordType: kTraitType)
+			trait            = ZTrait.create(record: traitRecord, databaseID: databaseID)
 			trait?.owner     = CKReference(record: r, action: .none)
 			trait?.traitType = iType
 			traits[iType]    = trait
@@ -3469,7 +3472,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return created
 	}
 
-	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> Zone {
+	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> Zone {
 		if  let    has = hasMaybe(record: record, entityName: kZoneType, databaseID: databaseID) as? Zone {        // first check if already exists
 			return has
 		}

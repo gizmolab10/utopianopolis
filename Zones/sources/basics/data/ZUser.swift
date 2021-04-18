@@ -53,7 +53,7 @@ class ZUser : ZRecord {
 		needSave()
 	}
 
-	static func create(record: CKRecord? = nil, databaseID: ZDatabaseID?) -> ZUser {
+	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZUser {
 		if  let    has = hasMaybe(record: record, entityName: kUserEntityName, databaseID: databaseID) as? ZUser {        // first check if already exists
 			return has
 		}
