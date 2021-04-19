@@ -57,6 +57,16 @@ class ZMainController: ZGesturesController {
 		update()
 	}
 
+	func updateForState() {
+		switch gSearching.state {
+			case .sList:
+				searchBoxView?.isHidden = true
+			case .sEntry, .sFind:
+				searchBoxView?.isHidden = false
+			default: break
+		}
+	}
+
 	func update() {
 		hamburgerButton?.toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
 		detailsWidth?  .constant =  gShowDetailsView ? 226.0 :  0.0
@@ -91,23 +101,12 @@ class ZMainController: ZGesturesController {
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		let   hideEssay = !gIsEssayMode
-		let  hideSearch = !gIsSearchMode || gSearching.state != .sEntry
+		let  hideSearch = !gIsSearchMode || gSearching.state == .sList
         let hideResults = !gIsSearchMode || !(gSearchResultsController?.hasResults ?? false)
 
 		permissionView?               .isHidden = !gIsStartupMode
 
 		switch iKind {
-			case .sSwap:
-				gRefusesFirstResponder          = true          // prevent the exit from essay from beginning an edit
-				essayContainerView?   .isHidden =  hideEssay
-				mapContainerView? 	  .isHidden = !hideEssay
-				gRefusesFirstResponder          = false
-			case .sFound:
-				if !gIsEssayMode {
-					mapContainerView? .isHidden = !hideResults
-				}
-				searchBoxView?        .isHidden =  hideSearch
-				searchResultsView?    .isHidden =  hideResults
 			case .sSearch:
 				searchBoxView?        .isHidden =  hideSearch
 				if  hideSearch {
@@ -115,11 +114,22 @@ class ZMainController: ZGesturesController {
 
 					assignAsFirstResponder(nil)
 				}
+			case .sFound:
+				if !gIsEssayMode {
+					mapContainerView? .isHidden = !hideResults
+				}
+				searchBoxView?        .isHidden =  hideSearch
+				searchResultsView?    .isHidden =  hideResults
+			case .sSwap:
+				gRefusesFirstResponder          = true          // prevent the exit from essay from beginning an edit
+				essayContainerView?   .isHidden =  hideEssay
+				mapContainerView? 	  .isHidden = !hideEssay
+				gRefusesFirstResponder          = false
+
+				dragView?.setNeedsDisplay()
+				update()
 			default: break
         }
-
-		dragView?.setNeedsDisplay()
-		update()
     }
 
 }

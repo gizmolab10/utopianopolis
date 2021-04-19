@@ -112,10 +112,12 @@ let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
 func gSwapSmallMapMode(_ OPTION: Bool = false) {
 	if  gDetailsViewIsHidden {
 		gShowDetailsView = true    	// if the details view is hidden, show it
+
+		gDetailsController?.showViewFor(.vSmallMap)
+		gMainController?.update()
 	} else {
 		let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
 		let newID     : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
-
 		gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
 
 		if  OPTION {			    // if any grabs are in current small map, move them to other map

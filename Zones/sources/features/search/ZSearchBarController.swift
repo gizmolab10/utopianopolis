@@ -46,18 +46,25 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		return false
 	}
 
+	func updateForState() {
+		switch gSearching.state {
+			case .sList:
+				searchBox?.isHidden = true
+			case .sEntry, .sFind:
+				searchBox?.isHidden = false
+				searchBox?.becomeFirstResponder()
+			default: break
+		}
+	}
+
 	// MARK:- events
 	// MARK:-
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		if  iKind == .sSearch && gIsSearchMode {
-			gSearching.state = .sEntry
+			gSearching.setStateTo(.sEntry)
 
 			updateSearchOptions()
-
-			FOREGROUND(after: 0.2) {
-				self.searchBox?.becomeFirstResponder()
-			}
 		}
 	}
 

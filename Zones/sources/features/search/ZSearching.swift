@@ -38,28 +38,31 @@ class ZSearching: NSObject {
 	var state = ZSearchState.sNot
 	var priorWorkMode: ZWorkMode?
 	var hasResults: Bool { return gSearchResultsController?.hasResults ?? false }
+	func switchToList()  { setStateTo(hasResults ? .sList : .sNot) }
+	func handleEvent(_ event: ZEvent) -> ZEvent? { return gSearchBarController?.handleEvent(event) }
 
 	var searchText: String? {
 		get { return gSearchBarController?.searchBox?.text }
 		set { gSearchBarController?.searchBox?.text = newValue }
 	}
 
-	func switchToList() {
-		let responder = hasResults ? gSearchResultsController?.genericTableView : nil
-		assignAsFirstResponder(responder)
-		state = hasResults ? .sList : .sNot
-	}
-
-    func handleEvent(_ event: ZEvent) -> ZEvent? {
-		return gSearchBarController?.handleEvent(event)
-    }
-
 	func exitSearchMode() {
 		state = .sNot
 
 		swapModes()
-		gSignal([.sFound])
-		gSignal([.sSearch])
+		gSignal([.sFound, .sSearch])
+	}
+
+	func setStateTo(_ iState: ZSearchState) {
+		state = iState
+
+		gMainController?         .updateForState()
+		gSearchBarController?    .updateForState()
+		gSearchResultsController?.updateForState()
+
+		if  state == .sFind {
+			gSignal([.sSearch])
+		}
 	}
 
 	func swapModes() {
@@ -69,10 +72,8 @@ class ZSearching: NSObject {
 	}
 
 	func showSearch(_ OPTION: Bool = false) {
-		if  gDatabaseID != .favoritesID {
-			swapModes()
-			gSignal([OPTION ? .sFound : .sSearch])
-		}
+		swapModes()
+		gSignal([OPTION ? .sFound : .sSearch])
 	}
 
 	func performSearch(for searchString: String) {
@@ -82,8 +83,7 @@ class ZSearching: NSObject {
 		let doneMaybe : Closure = {
 			if  remaining == 0 {   // done fetching records, transfer them to results controller
 				gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: CKRecordsArray] ?? [:]
-				self.state = (self.hasResults ? .sList : .sFind)
-
+				self.setStateTo(self.hasResults ? .sList : .sFind)
 				gSignal([.sFound])
 			}
 		}

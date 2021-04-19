@@ -149,12 +149,6 @@ class ZSearchResultsController: ZGenericTableController {
     // MARK:- user feel
     // MARK:-
 
-	func switchToSearchBox() {
-		gSearching.state = .sFind
-		gSearchBarController?.searchBox?.becomeFirstResponder()
-		gSignal([.sSearch])
-	}
-
     func identifierAndRecord(at iIndex: Int) -> (ZDatabaseID, CKRecord)? {
         var index = iIndex
         var count = 0
@@ -163,7 +157,7 @@ class ZSearchResultsController: ZGenericTableController {
             index -= count
             count  = records.count
 
-            if  count > index {
+            if  index >= 0, index < count  {
                 return (dbID, records[index])
             }
         }
@@ -235,6 +229,12 @@ class ZSearchResultsController: ZGenericTableController {
 		}
 	}
 
+	func updateForState() {
+		if  gSearching.state == .sList {
+			genericTableView?.becomeFirstResponder()
+		}
+	}
+
     func clear() {
         resultsAreVisible = false
         
@@ -282,8 +282,7 @@ class ZSearchResultsController: ZGenericTableController {
     }
 
 	func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-		gSearching.state = .sList
-
+		gSearching.setStateTo(.sList)
 		tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
 		gSignal([.sCrumbs])
 		return true
@@ -338,7 +337,7 @@ class ZSearchResultsController: ZGenericTableController {
 
 	@discardableResult func handleKey(_ key: String, flags: ZEventFlags) -> Bool { // false means not handled
 		switch key {
-			case "f", kTab: switchToSearchBox()
+			case "f", kTab: gSearching.setStateTo(.sFind)
 			case   kReturn: if !resolve() { return false }
 			case   kEscape: clear()
 			default:
@@ -358,7 +357,7 @@ class ZSearchResultsController: ZGenericTableController {
 			case    .up: moveSelection(up: true,  extreme: COMMAND)
 			case  .down: moveSelection(up: false, extreme: COMMAND)
 			case .right: if !resolve() { return false }
-			case  .left: switchToSearchBox()
+			case  .left: gSearching.setStateTo(.sFind)
 		}
 
 		return true

@@ -119,6 +119,8 @@ class ZBreadcrumbsView : ZButtonsView {
 
 			zone.focusOn() {
 				switch (gWorkMode) {
+					case .wSearchMode:
+						gSearching.exitSearchMode()
 					case .wEditIdeaMode:
 						if  let edit = gCurrentlyEditingWidget?.widgetZone {
 							let span = gTextEditor.selectedRange()
