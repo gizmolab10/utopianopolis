@@ -419,11 +419,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 			if  gUseCoreData {
 				modificationDate = Date()
-
-//				gSaveContext()
 			}
-
-			gNeedsRecount = true // trigger recount on next timer fire
 
 			needWrite()
         }

@@ -808,11 +808,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let zone = note.zone {
 			gCurrentEssay?.saveEssay(textStorage)
 			gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
-			gCurrentEssayZone?.recount()                  // update levels
 			ungrabAll()
 
-			let parent = zone.parentZone                  // get the parent before we swap
-			let  reset = parent == self.firstNote?.zone   // check if current esssay should change
+			gNeedsRecount = true
+			let    parent = zone.parentZone                  // get the parent before we swap
+			let     reset = parent == self.firstNote?.zone   // check if current esssay should change
 
 			gDisablePush {
 				zone.swapWithParent {
@@ -874,7 +874,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		essayID       = nil                           // so shouldOverwrite will return true
 
 		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
-		gCurrentEssayZone?.recount()                  // update levels
 		updateText()                                  // assume text has been altered: re-assemble it
 		regrab(grabbed)
 		scrollToGrabbed()

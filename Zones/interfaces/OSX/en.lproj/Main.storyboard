@@ -1407,10 +1407,10 @@ CA
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="K0u-LY-9eo" userLabel="Outer View">
-                                <rect key="frame" x="0.0" y="31" width="450" height="400"/>
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="461"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CFf-mN-uMu">
-                                        <rect key="frame" x="112" y="372" width="227" height="28"/>
+                                        <rect key="frame" x="112" y="433" width="227" height="28"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Welcome to Seriously" id="t0K-HT-RDq">
                                             <font key="font" metaFont="system" size="24"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1418,10 +1418,10 @@ CA
                                         </textFieldCell>
                                     </textField>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="wVW-5S-6K5" userLabel="Lower View">
-                                        <rect key="frame" x="0.0" y="0.0" width="450" height="352"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="450" height="413"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="NGd-6W-C0X">
-                                                <rect key="frame" x="0.0" y="304" width="450" height="48"/>
+                                                <rect key="frame" x="0.0" y="365" width="450" height="48"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="xlc-Yd-hnd" userLabel="apple id">
                                                         <rect key="frame" x="-2" y="32" width="454" height="16"/>
@@ -1461,6 +1461,7 @@ DQ
                                                         </subviews>
                                                         <constraints>
                                                             <constraint firstAttribute="bottom" secondItem="bWe-Ul-jBd" secondAttribute="bottom" id="1D2-ob-psE"/>
+                                                            <constraint firstItem="bWe-Ul-jBd" firstAttribute="leading" secondItem="gqY-tc-UwL" secondAttribute="trailing" constant="24" id="AQs-bs-qhu"/>
                                                             <constraint firstItem="gqY-tc-UwL" firstAttribute="leading" secondItem="qwy-Fq-9BT" secondAttribute="leading" id="Bdq-hd-IP0"/>
                                                             <constraint firstItem="bWe-Ul-jBd" firstAttribute="top" secondItem="qwy-Fq-9BT" secondAttribute="top" id="F0T-j1-wsg"/>
                                                             <constraint firstItem="gqY-tc-UwL" firstAttribute="top" secondItem="qwy-Fq-9BT" secondAttribute="top" id="MPm-3Y-jaS"/>
@@ -1480,7 +1481,7 @@ DQ
                                                 </constraints>
                                             </customView>
                                             <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pg2-h7-6ux" userLabel="Enable Cloud Drive">
-                                                <rect key="frame" x="0.0" y="304" width="450" height="48"/>
+                                                <rect key="frame" x="0.0" y="365" width="450" height="48"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="O6S-Dv-mLT" userLabel="cloud drive">
                                                         <rect key="frame" x="-2" y="32" width="454" height="16"/>
@@ -1514,10 +1515,10 @@ DQ
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="rmD-x7-RtA" userLabel="Please Wait">
-                                                <rect key="frame" x="0.0" y="216" width="450" height="136"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="450" height="413"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="kKM-9B-fW0">
-                                                        <rect key="frame" x="-2" y="120" width="454" height="16"/>
+                                                        <rect key="frame" x="-2" y="397" width="454" height="16"/>
                                                         <textFieldCell key="cell" selectable="YES" alignment="justified" id="3XW-gG-Hxw">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1525,10 +1526,10 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <progressIndicator wantsLayer="YES" maxValue="100" doubleValue="1" displayedWhenStopped="NO" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="2xi-Mf-riK" customClass="ZStartupProgressBar" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="93" width="450" height="20"/>
+                                                        <rect key="frame" x="0.0" y="370" width="450" height="20"/>
                                                     </progressIndicator>
                                                     <textField verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ab6-2E-Tk7">
-                                                        <rect key="frame" x="-2" y="78" width="454" height="16"/>
+                                                        <rect key="frame" x="-2" y="355" width="454" height="16"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="4iQ-Bz-ATj">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1536,15 +1537,15 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Bpe-so-Utw">
-                                                        <rect key="frame" x="-2" y="50" width="454" height="16"/>
+                                                        <rect key="frame" x="-2" y="56" width="454" height="16"/>
                                                         <textFieldCell key="cell" selectable="YES" id="UeP-8V-XHo">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GXv-wU-eO3" customClass="ZHelpButtonsView" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="8" width="450" height="34"/>
+                                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="GXv-wU-eO3" customClass="ZHelpButtonsView" customModule="Seriously" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="14" width="450" height="34"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="34" id="ery-1s-BIX"/>
                                                         </constraints>
@@ -1556,15 +1557,15 @@ DQ
                                                     <constraint firstAttribute="trailing" secondItem="ab6-2E-Tk7" secondAttribute="trailing" id="9aB-1d-uJ7"/>
                                                     <constraint firstItem="kKM-9B-fW0" firstAttribute="top" secondItem="rmD-x7-RtA" secondAttribute="top" id="AQM-Sx-kce"/>
                                                     <constraint firstItem="ab6-2E-Tk7" firstAttribute="top" secondItem="2xi-Mf-riK" secondAttribute="bottom" id="DyG-bD-3nL"/>
-                                                    <constraint firstItem="Bpe-so-Utw" firstAttribute="top" secondItem="ab6-2E-Tk7" secondAttribute="bottom" constant="12" id="ELO-1f-CGL"/>
                                                     <constraint firstItem="Bpe-so-Utw" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="Fjz-mY-LvT"/>
                                                     <constraint firstItem="2xi-Mf-riK" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="UgY-DM-pFT"/>
                                                     <constraint firstItem="2xi-Mf-riK" firstAttribute="top" secondItem="kKM-9B-fW0" secondAttribute="bottom" constant="8" id="ckq-Yb-bP4"/>
-                                                    <constraint firstAttribute="bottom" secondItem="GXv-wU-eO3" secondAttribute="bottom" constant="8" id="dI2-H3-BuL"/>
+                                                    <constraint firstAttribute="bottom" secondItem="GXv-wU-eO3" secondAttribute="bottom" constant="14" id="dI2-H3-BuL"/>
                                                     <constraint firstItem="GXv-wU-eO3" firstAttribute="top" secondItem="Bpe-so-Utw" secondAttribute="bottom" constant="8" id="eLN-Jp-aZL"/>
                                                     <constraint firstAttribute="trailing" secondItem="2xi-Mf-riK" secondAttribute="trailing" id="fNg-Gi-UtW"/>
                                                     <constraint firstItem="kKM-9B-fW0" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="ggn-Vd-Fw6"/>
                                                     <constraint firstItem="ab6-2E-Tk7" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="t9F-Pw-VJN"/>
+                                                    <constraint firstItem="GXv-wU-eO3" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="tel-TX-yu7"/>
                                                     <constraint firstAttribute="trailing" secondItem="Bpe-so-Utw" secondAttribute="trailing" id="v9Q-bx-OJi"/>
                                                     <constraint firstItem="GXv-wU-eO3" firstAttribute="centerX" secondItem="rmD-x7-RtA" secondAttribute="centerX" id="wDF-tk-EUz"/>
                                                 </constraints>
@@ -1574,6 +1575,7 @@ DQ
                                             <constraint firstItem="NGd-6W-C0X" firstAttribute="top" secondItem="wVW-5S-6K5" secondAttribute="top" id="0gK-NZ-bQU"/>
                                             <constraint firstAttribute="trailing" secondItem="Pg2-h7-6ux" secondAttribute="trailing" id="DAX-Ab-3a1"/>
                                             <constraint firstItem="Pg2-h7-6ux" firstAttribute="top" secondItem="wVW-5S-6K5" secondAttribute="top" id="Qae-L1-enX"/>
+                                            <constraint firstAttribute="bottom" secondItem="rmD-x7-RtA" secondAttribute="bottom" id="TS3-Jt-qEQ"/>
                                             <constraint firstItem="rmD-x7-RtA" firstAttribute="top" secondItem="wVW-5S-6K5" secondAttribute="top" id="b5x-zn-daU"/>
                                             <constraint firstItem="rmD-x7-RtA" firstAttribute="centerX" secondItem="wVW-5S-6K5" secondAttribute="centerX" id="bwm-WI-3yq"/>
                                             <constraint firstAttribute="trailing" secondItem="rmD-x7-RtA" secondAttribute="trailing" id="cZw-Nk-DgZ"/>
@@ -1586,7 +1588,6 @@ DQ
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="wVW-5S-6K5" firstAttribute="leading" secondItem="K0u-LY-9eo" secondAttribute="leading" id="0Kl-ZN-xXx"/>
-                                    <constraint firstAttribute="height" constant="400" id="8i2-ga-Fa2"/>
                                     <constraint firstItem="CFf-mN-uMu" firstAttribute="top" secondItem="K0u-LY-9eo" secondAttribute="top" id="A3o-1X-Joe"/>
                                     <constraint firstItem="wVW-5S-6K5" firstAttribute="top" secondItem="CFf-mN-uMu" secondAttribute="bottom" constant="20" id="KRa-RL-JPj"/>
                                     <constraint firstAttribute="bottom" secondItem="wVW-5S-6K5" secondAttribute="bottom" id="cgG-JM-etw"/>
@@ -1597,6 +1598,7 @@ DQ
                             </customView>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="K0u-LY-9eo" secondAttribute="bottom" id="I1A-DN-xht"/>
                             <constraint firstItem="K0u-LY-9eo" firstAttribute="centerX" secondItem="7Q5-tK-Og4" secondAttribute="centerX" id="R06-9N-BA5"/>
                             <constraint firstItem="K0u-LY-9eo" firstAttribute="centerY" secondItem="7Q5-tK-Og4" secondAttribute="centerY" id="Sok-E0-ft5"/>
                         </constraints>

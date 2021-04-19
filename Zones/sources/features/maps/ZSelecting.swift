@@ -238,9 +238,12 @@ class ZSelecting: NSObject {
     func updateBrowsingLevel()            { gCurrentBrowseLevel = currentMoveable.level }
     func clearPaste()                     { pasteableZones = [:] }
 
-    func updateAfterMove() {
-		currentMoveable.recount()
-        updateBrowsingLevel()
+	func updateAfterMove(_ selectionOnly: Bool = true) {
+		if !selectionOnly {
+			currentMoveable.recount()
+		}
+
+		updateBrowsingLevel()
         updateCousinList()
         gFavorites.updateFavoritesAndRedraw()
     }

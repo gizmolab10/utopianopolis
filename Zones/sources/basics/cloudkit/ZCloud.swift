@@ -40,12 +40,6 @@ class ZCloud: ZRecords {
         return nil
 	}
 
-	@discardableResult override func recount() -> Int {
-		maxLevel = super.recount()
-
-		return maxLevel
-	}
-
     func start(_ operation: CKDatabaseOperation) {
         currentOperation = operation
 
@@ -758,7 +752,7 @@ class ZCloud: ZRecords {
 
 		fetch(for: kZoneType, properties: Zone.cloudProperties, since: date) { iZoneCKRecords in                    // start the fetch: first zones
 			self.createZRecords(from: iZoneCKRecords, title: date != nil ? " NEW" : " ALL") {
-				self.recount()
+				gNeedsRecount = true
 
 				self.fetch(for: kTraitType, properties: ZTrait.cloudProperties, since: date) { iTraitCKRecords in   // on async response: then traits
 					FOREGROUND {
@@ -781,7 +775,8 @@ class ZCloud: ZRecords {
 			fetchIdeas(needed: needed) { iCKRecords in
 				FOREGROUND {
 					if  iCKRecords.count == 0 {
-						self.recount()
+						gNeedsRecount = true
+
 						onCompletion?(0)
 					} else {
 						self.createZRecords(from: iCKRecords) {
@@ -1030,8 +1025,6 @@ class ZCloud: ZRecords {
 										}
 
 										parent.addChildAndRespectOrder(retrievedZone)
-
-										retrievedZone.level = parent.level + 1
 
 										if  trackingLevels {
 											let                     level = retrievedZone.level

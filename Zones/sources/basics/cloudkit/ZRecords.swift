@@ -307,15 +307,13 @@ class ZRecords: NSObject {
         lastSyncDate = date
     }
 
-    @discardableResult func recount() -> Int {  // all progenyCounts for all progeny in all roots
-		let c = rootZone?.recount() ?? 0
+    func recount() {  // all progenyCounts for all progeny in all roots
+		rootZone?        .recount()
 		trashZone?       .recount()
 		destroyZone?     .recount()
 		recentsZone?     .recount()
 		favoritesZone?   .recount()
 		lostAndFoundZone?.recount()
-
-		return c
     }
 
     func className(for recordType: String?) -> String? {

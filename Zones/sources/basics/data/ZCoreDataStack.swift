@@ -242,7 +242,6 @@ class ZCoreDataStack: NSObject {
 							self.load(type: kManifestType, into: dbID, onlyNeed: 1, using: NSFetchRequest<NSFetchRequestResult>(entityName: kManifestType)) { zRecord in
 								if  zRecord == nil {
 									self.currentOpID = nil
-//									gRemoteStorage.recount()
 
 									onCompletion?(0)
 								}
@@ -343,7 +342,7 @@ class ZCoreDataStack: NSObject {
 						self.loadTraits(ownedBy: gRemoteStorage.allProgeny, into: dbID) {
 							self.currentOpID = nil
 
-							gRemoteStorage.recount()
+							gNeedsRecount = true // trigger recount on next timer fire
 							onCompletion?()
 						}
 					}

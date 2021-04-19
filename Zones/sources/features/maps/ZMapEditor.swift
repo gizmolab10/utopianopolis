@@ -128,7 +128,7 @@ class ZMapEditor: ZBaseEditor {
 						case "n":        editNote(OPTION)
 						case "o":        gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
 						case "p":        printCurrentFocus()
-						case "r":        if     ANY { gRemoteStorage.recount() } else { reverse() }
+						case "r":        if     ANY { gNeedsRecount = true } else { reverse() }
 						case "s":        if CONTROL { pushAllToCloud() } else { gFiles.export(gSelecting.currentMoveable, toFileAs: OPTION ? .eOutline : .eSeriously) }
 						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
@@ -182,7 +182,7 @@ class ZMapEditor: ZBaseEditor {
 										case .left,
 											 .right:
 											move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
-												gSelecting.updateAfterMove()  // relayout map when travelling through a bookmark
+												gSelecting.updateAfterMove(!OPTION)  // relayout map when travelling through a bookmark
 												onCompletion?()
 											}
 

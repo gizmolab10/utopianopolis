@@ -25,6 +25,20 @@ class ZDataController: ZGenericController {
     var                 currentZone: Zone?         { return gSelecting.rootMostMoveable }
     override  var      controllerID: ZControllerID { return .idData }
 
+	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+		if  gShowDetailsView, let c = gDetailsController, !c.hideableIsHidden(for: .vData) {  // don't send signal to a hidden favorites controller
+			creationDateLabel?.text = creationDateText
+			cloudStatusLabel? .text = statusText
+			recordNameLabel?  .text = zoneRecordNameText
+			totalCountLabel?  .text = totalCountsText
+			mapNameLabel?     .text = mapNameText
+
+			if  iKind != .sStartupProgress {
+				synopsisLabel?.text = synopsisText
+			}
+		}
+	}
+
     var versionText: String {
         if  let     version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
             let buildNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion")            as? String {
@@ -134,20 +148,6 @@ class ZDataController: ZGenericController {
 		}
 
 		return text
-	}
-
-	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  gShowDetailsView {
-			creationDateLabel?.text = creationDateText
-			cloudStatusLabel? .text = statusText
-			recordNameLabel?  .text = zoneRecordNameText
-			totalCountLabel?  .text = totalCountsText
-			mapNameLabel?     .text = mapNameText
-
-			if  iKind != .sStartupProgress {
-				synopsisLabel?.text = synopsisText
-			}
-		}
 	}
 
 }

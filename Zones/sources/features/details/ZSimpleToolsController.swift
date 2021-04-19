@@ -105,7 +105,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 	}
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  let c = gDetailsController, !c.hideableIsHidden(for: .vSimpleTools) { // ignore if hidden
+		if  gShowDetailsView, let c = gDetailsController, !c.hideableIsHidden(for: .vSimpleTools) { // ignore if hidden
 			update()
 		}
 	}

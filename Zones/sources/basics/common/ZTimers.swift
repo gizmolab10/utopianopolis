@@ -101,7 +101,7 @@ func gStartTimer(for timerID: ZTimerID?) {
 			case .tTextEditorHandlesArrows: block = { iTimer in gTextEditorHandlesArrows  = false }
 			case .tStartup:                 block = { iTimer in gIncrementStartupProgress(waitFor) }
 			case .tSync:                    block = { iTimer in if gIsReadyToShowUI { gSaveContext(); gBatches.save { iSame in } } }
-			case .tRecount:                 block = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount() } }
+			case .tRecount:                 block = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount(); gSignal([.sStatus]) } }
 			case .tCloudAvailable:          block = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
 			case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.deferralHappensMaybe(iTimer) }
 			default:                        break

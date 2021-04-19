@@ -84,7 +84,7 @@ class ZHelpMapData : ZHelpData {
 		"2",			"", 												"",
 		"1_COMMAND + KEY", 												"", "",
 		"2D", 			"if all selected, append to parent", 				"parent-child-tweaks-bf067abdf461",
-		"2 ", 			"if not all selected, add to list",		 			"parent-child-tweaks-bf067abdf461",
+		"2 ", 			"else, extract selection into list",	 			"parent-child-tweaks-bf067abdf461",
 		"1L, U",		"convert to lowercase, uppercase", 					"edit-d05d18996df7",
 		"+",			"", 												"",
 		"0!WHILE IN THE SEARCH RESULTS:", 								"", "",
