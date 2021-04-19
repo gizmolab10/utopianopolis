@@ -15,11 +15,18 @@ class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableV
     @IBOutlet var tableHeight: NSLayoutConstraint?
     @IBOutlet var genericTableView: NSTableView?
 
+	override func awakeFromNib() {
+		super.awakeFromNib()
+
+		genericTableView?.delegate   = self
+		genericTableView?.dataSource = self
+	}
+
     func numberOfRows(in tableView: NSTableView) -> Int { return 1 }
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) { self.genericTableUpdate() }
 
     func genericTableUpdate() {
-        if let t = genericTableView {
+        if  let t = genericTableView {
             t.reloadData()
             tableHeight?.constant = CGFloat(numberOfRows(in: t)) * t.rowHeight
         }

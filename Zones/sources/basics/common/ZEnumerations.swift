@@ -108,8 +108,8 @@ enum ZWorkMode: String {
 	case wEditIdeaMode = "i"
 	case wStartupMode  = "s"
     case wSearchMode   = "?"
-	case wMapMode      = "g"
 	case wEssayMode    = "n"
+	case wMapMode      = "g"
 }
 
 enum ZHelpMode: String {

@@ -9,8 +9,6 @@
 import Foundation
 import SnapKit
 
-var gBreadcrumbsView: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbsView }
-
 class ZBreadcrumbsView : ZButtonsView {
 
 	override  var          clipped : Bool     { return gClipBreadcrumbs }

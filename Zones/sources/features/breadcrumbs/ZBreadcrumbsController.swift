@@ -31,7 +31,7 @@ class ZBreadcrumbsController: ZGenericController {
 	}
 
 	@IBAction func search(_ sender: ZButton) {
-		gSearching.showSearch(false)
+		gSearching.showSearch()
 	}
 
 	func breadcrumbNearest(_ iGesture: ZGestureRecognizer?, forMap: Bool = true) -> (Bool, ZBreadcrumbButton, CGPoint)? {

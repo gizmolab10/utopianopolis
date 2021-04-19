@@ -91,8 +91,8 @@ class ZMainController: ZGesturesController {
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		let   hideEssay = !gIsEssayMode
-        let  hideSearch = !gIsSearchMode
-        let hideResults = !(gSearchResultsController?.hasResults ?? false) || hideSearch
+		let  hideSearch = !gIsSearchMode || gSearching.state != .sEntry
+        let hideResults = !gIsSearchMode || !(gSearchResultsController?.hasResults ?? false)
 
 		permissionView?               .isHidden = !gIsStartupMode
 

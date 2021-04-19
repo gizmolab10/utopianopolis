@@ -38,6 +38,14 @@ class ZSearchResultsController: ZGenericTableController {
         return result
     }
 
+	var selectedResult: Zone? {
+		if  let row = genericTableView?.selectedRow {
+			return zoneAt(row)
+		}
+
+		return nil
+	}
+
     var foundRecordsCount: Int {
         var count = 0
 
@@ -64,6 +72,26 @@ class ZSearchResultsController: ZGenericTableController {
         }
     }
 
+	func zRecordAt(_ row: Int) -> (ZRecord?, CKRecord?) {
+		if  let (dbID, ckRecord) = identifierAndRecord(at: row) {
+			let          zRecord = gRemoteStorage.cloud(for: dbID)?.maybeZRecordForCKRecord(ckRecord)
+
+			return (zRecord, ckRecord)
+		}
+
+		return (nil, nil)
+	}
+
+	func zoneAt(_ row: Int) -> Zone? {
+		let (zRecord, _) = zRecordAt(row)
+		var         zone = zRecord as? Zone
+		if  let    trait = zRecord as? ZTrait {
+			zone         = trait.ownerZone
+		}
+
+		return zone
+	}
+
     // MARK:- delegate
     // MARK:-
 
@@ -71,50 +99,45 @@ class ZSearchResultsController: ZGenericTableController {
 
     override func numberOfRows(in tableView: ZTableView) -> Int { return foundRecordsCount }
 
-    func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-        if  let (dbID, record) = identifierAndRecord(at: row) {
-			var string = ""
-			
-            if  let zone = gRemoteStorage.cloud(for: dbID)?.maybeZoneForRecordID(record.recordID) {
-                string =   zone.decoratedName
-            } else {
-                string = record.decoratedName
-            }
+	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+		let (_, ckRecord) = zRecordAt(row)
+		var string = ""
 
-			var result = NSMutableAttributedString(string: string)
+		if  ckRecord != nil {
+			string = ckRecord!.decoratedName
+		}
 
-			if  let searched = searchText {
-				for text in searched.components(separatedBy: " ") {
-					if  let ranges = string.rangesMatching(text) {				      // find all matching substring ranges
-						for range in ranges {
-							result.addAttribute(.backgroundColor, value: NSColor.systemTeal, range: range) // highlight matching substring in teal
-						}
+		var result = NSMutableAttributedString(string: string)
+
+		if  let searched = searchText {
+			for text in searched.components(separatedBy: " ") {
+				if  let ranges = string.rangesMatching(text) {				      // find all matching substring ranges
+					for range in ranges {
+						result.addAttribute(.backgroundColor, value: NSColor.systemTeal, range: range) // highlight matching substring in teal
 					}
 				}
-
-				if  let    ranges = string.rangesMatching(kSearchSeparator),		  // find any search separator
-					ranges.count > 0 {
-					let separator = ranges[0]
-					let     color = ZColor.systemYellow
-					let     range = NSRange(location: 0, length: separator.location)
-
-					result.replaceCharacters(in: separator, with: "")
-					result.addAttribute(.backgroundColor, value: color, range: range) // highlight trait type in yellow
-				}
 			}
 
-			if  row == tableView.selectedRow {
-				let suffix = result
-				result     = NSMutableAttributedString(string: "• ")
+			if  let    ranges = string.rangesMatching(kSearchSeparator),		  // find any search separator
+				ranges.count > 0 {
+				let separator = ranges[0]
+				let     color = ZColor.systemYellow
+				let     range = NSRange(location: 0, length: separator.location)
 
-				result.append(suffix)
+				result.replaceCharacters(in: separator, with: "")
+				result.addAttribute(.backgroundColor, value: color, range: range) // highlight trait type in yellow
 			}
+		}
 
-			return result
-        }
-		
-		return nil
-    }
+		if  row == tableView.selectedRow {
+			let suffix = result
+			result     = NSMutableAttributedString(string: "• ")
+
+			result.append(suffix)
+		}
+
+		return result
+	}
 
     #else
 
@@ -126,7 +149,11 @@ class ZSearchResultsController: ZGenericTableController {
     // MARK:- user feel
     // MARK:-
 
-	func switchToSearchBox() { gSearchBarController?.searchBox?.becomeFirstResponder() }
+	func switchToSearchBox() {
+		gSearching.state = .sFind
+		gSearchBarController?.searchBox?.becomeFirstResponder()
+		gSignal([.sSearch])
+	}
 
     func identifierAndRecord(at iIndex: Int) -> (ZDatabaseID, CKRecord)? {
         var index = iIndex
@@ -226,6 +253,9 @@ class ZSearchResultsController: ZGenericTableController {
         }
     }
 
+	// MARK:- events
+	// MARK:-
+
     func moveSelection(up: Bool, extreme: Bool) {
         if  let             t = genericTableView {
             var           row = t.selectedRow
@@ -247,11 +277,17 @@ class ZSearchResultsController: ZGenericTableController {
 
             t.selectRowIndexes(rows, byExtendingSelection: false)
             t.scrollRowToVisible(row)
+			gSignal([.sCrumbs])
         }
     }
-	
-	// MARK:- events
-	// MARK:-
+
+	func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
+		gSearching.state = .sList
+
+		tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+		gSignal([.sCrumbs])
+		return true
+	}
 
 	override func handleSignal(_ iObject: Any?, kind iKind: ZSignalKind) {
 		if iKind == .sFound {
