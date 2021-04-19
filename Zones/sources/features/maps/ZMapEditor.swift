@@ -57,8 +57,8 @@ class ZMapEditor: ZBaseEditor {
 			let  OPTION = flags.isOption
 			var   SHIFT = flags.isShift
 			let SPECIAL = flags.isSpecial
-			let     ANY = COMMAND || OPTION || CONTROL
-			let     ALL = COMMAND && OPTION && CONTROL
+			let     ALL = flags.isAll
+			let     ANY = flags.isAny
 			let SCORNED = 	 		 OPTION && CONTROL
 			let SPLAYED = COMMAND &&           CONTROL
 
@@ -89,6 +89,7 @@ class ZMapEditor: ZBaseEditor {
 							case "k":      toggleColorized()
 							case "n":      editNote(OPTION)
 							case "p":      printCurrentFocus()
+							case "t":      if COMMAND, let string = gCurrentlySelectedText { showThesaurus(for: string) }
 							case "/":      if SCORNED { return false } else { popAndUpdateRecents(CONTROL, kind: .eEdited) }
 							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
 							case kTab:     addSibling(OPTION)
@@ -130,7 +131,7 @@ class ZMapEditor: ZBaseEditor {
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else { reverse() }
 						case "s":        if CONTROL { pushAllToCloud() } else { gFiles.export(gSelecting.currentMoveable, toFileAs: OPTION ? .eOutline : .eSeriously) }
-						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
+						case "t":        if COMMAND { showThesaurus() } else if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() } else { editTrait(for: key) }
 						case "w":        rotateWritable()

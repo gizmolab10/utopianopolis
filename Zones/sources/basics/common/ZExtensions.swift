@@ -206,6 +206,11 @@ extension NSObject {
         })
     }
 
+	func showThesaurus(for string: String = "") {
+		let url = NSURL(string: "https://www.thesaurus.com/browse/\(string)")
+		url?.open()
+	}
+
     func openBrowserForFocusWebsite() {
         "https://medium.com/@sand_74696/what-you-get-d565b064be7b".openAsURL()
     }

@@ -15,7 +15,8 @@ import UIKit
 #endif
 
 let gTextEditor = ZTextEditor()
-var gCurrentlyEditingWidget: ZoneTextWidget? { return gTextEditor.currentTextWidget }
+var gCurrentlySelectedText  : String?         { return gCurrentlyEditingWidget?.text?.substring(with: gTextEditor.selectedRange) }
+var gCurrentlyEditingWidget : ZoneTextWidget? { return gTextEditor.currentTextWidget }
 
 class ZTextPack: NSObject {
 
@@ -243,15 +244,15 @@ class ZTextPack: NSObject {
 
 class ZTextEditor: ZTextView {
 
-    var  cursorOffset: CGFloat?
-    var currentOffset: CGFloat?
-	var currentEdit: ZTextPack?
-    var currentlyEditedZone: Zone?         { return currentEdit?.packedZone }
-    var currentTextWidget: ZoneTextWidget? { return currentlyEditedZone?.widget?.textWidget }
-    var currentZoneName: String            { return currentlyEditedZone?.zoneName ?? kEmpty }
-    var currentFont: ZFont                 { return currentTextWidget?.font ?? gWidgetFont }
-    var atEnd:   Bool                      { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
-    var atStart: Bool                      { return selectedRange.upperBound == 0 }
+    var  cursorOffset  	    : CGFloat?
+    var currentOffset 	    : CGFloat?
+	var currentEdit 	    : ZTextPack?
+	var currentlyEditedZone : Zone?           { return currentEdit?.packedZone }
+	var currentTextWidget   : ZoneTextWidget? { return currentlyEditedZone?.widget?.textWidget }
+	var currentZoneName	    : String          { return currentlyEditedZone?.zoneName ?? kEmpty }
+	var currentFont 	    : ZFont           { return currentTextWidget?.font ?? gWidgetFont }
+	var atEnd 	            : Bool            { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
+	var atStart  	        : Bool            { return selectedRange.upperBound == 0 }
 
     // MARK:- editing
     // MARK:-
@@ -408,11 +409,6 @@ class ZTextEditor: ZTextView {
 			selectedRange = range
 		}
 	}
-	
-
-    // MARK:- inserting special characters (popup menu)
-    // MARK:-
-	
 	
 	// MARK:- events
 	// MARK:-

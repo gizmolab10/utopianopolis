@@ -234,8 +234,10 @@ extension ZApplication {
 }
 
 extension ZEventFlags {
-    var isNumericPad: Bool { return contains(.numericPad) }
+	var isAny:        Bool { return isCommand || isOption || isControl }
+	var isAll:        Bool { return isCommand && isOption && isControl }
 	var isSpecial:    Bool { return isCommand && isOption }
+    var isNumericPad: Bool { return contains(.numericPad) }
     var isControl:    Bool { get { return contains(.control) } set { if newValue { insert(.control) } else { remove(.control) } } }
 	var isCommand:    Bool { get { return contains(.command) } set { if newValue { insert(.command) } else { remove(.command) } } }
     var isOption:     Bool { get { return contains(.option)  } set { if newValue { insert(.option)  } else { remove(.option) } } }
@@ -793,10 +795,10 @@ extension ZTextEditor {
 	
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		if  var        key = iKey {
-			let    CONTROL = flags.isControl
-			let    COMMAND = flags.isCommand
-			let     OPTION = flags.isOption
-			let        ANY = COMMAND || OPTION || CONTROL
+//			let    CONTROL = flags.isControl
+//			let    COMMAND = flags.isCommand
+//			let     OPTION = flags.isOption
+			let        ANY = flags.isAny
 			let editedZone = currentTextWidget?.widgetZone
 			let      arrow = key.arrow
 

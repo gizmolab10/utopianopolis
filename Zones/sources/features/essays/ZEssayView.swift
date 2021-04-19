@@ -275,8 +275,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let CONTROL = flags.isControl
 		let  OPTION = flags.isOption
 		let   SHIFT = flags.isShift
+		let     ANY = flags.isAny
 		let    DUAL = OPTION && CONTROL
-		let     ANY = OPTION || COMMAND || CONTROL
 
 		if  key    != key.lowercased() {
 			key     = key.lowercased()
@@ -319,7 +319,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "n":      swapBetweenNoteAndEssay()
 				case "p":      printCurrentEssay()
 				case "s":      save()
-				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
+				case "t":      if COMMAND, let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 				case "z":      if  SHIFT { undoManager?.redo() } else { undoManager?.undo() }
 				case "/":      gHelpController?.show(flags: flags)
