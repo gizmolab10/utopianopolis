@@ -3379,28 +3379,23 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else {
 			switch key {
-				case "a":     children.alphabetize()
-				case "b":     addBookmark()
-				case "c":     break
-				case "d":     duplicate()
-				case "e":     editTrait(for: .tEmail)
-				case "h":     editTrait(for: .tHyperlink)
-				case "k":     break
-				case "m":     children.sortByLength()
-				case "n":     showNote()
-				case "o":     importFromFile(.eSeriously) { gRedrawMaps(for: self) }
-				case "p":     break
-				case "r":     reverseChildren()
-				case "s":     gFiles.export(self, toFileAs: .eSeriously)
-				case "t":     swapWithParent { gRedrawMaps(for: self) }
-				case "v":     editTrait(for: .tVideo)
-				case "/":     focusRecent()
-				case "_":     break
-				case kEquals: break
-				case kSpace:  addIdea()
-				case "\u{08}",                                      // control-delete?
-					 kDelete: deleteSelf { gRedrawMaps() }
-				default:      break
+				case "a":      children.alphabetize()
+				case "b":      addBookmark()
+				case "d":      duplicate()
+				case "e":      editTrait(for: .tEmail)
+				case "h":      editTrait(for: .tHyperlink)
+				case "i":      children.sortByCount()
+				case "m":      children.sortByLength()
+				case "n":      showNote()
+				case "o":      importFromFile(.eSeriously) { gRedrawMaps(for: self) }
+				case "r":      reverseChildren()
+				case "s":      gFiles.export(self, toFileAs: .eSeriously)
+				case "t":      swapWithParent { gRedrawMaps(for: self) }
+				case "v":      editTrait(for: .tVideo)
+				case "/":      focusRecent()
+				case kSpace:   addIdea()
+				case "\u{08}", kDelete: deleteSelf { gRedrawMaps() }
+				default:       break
 			}
 		}
 	}

@@ -213,6 +213,17 @@ extension ZoneArray {
 		}
 	}
 
+	func sortByCount(_ iBackwards: Bool = false) {
+		alterOrdering { iZones -> (ZoneArray) in
+			return iZones.sorted { (a, b) -> Bool in
+				let aCount = a.count
+				let bCount = b.count
+
+				return iBackwards ? (aCount > bCount) : (aCount < bCount)
+			}
+		}
+	}
+
 	func sortByLength(_ iBackwards: Bool = false) {
 		let font = gWidgetFont
 

@@ -52,10 +52,7 @@ class ZHelpMapData : ZHelpData {
 		"0",			"", 												"",
 		"0_COMMAND + KEY", 												"", "",
 		"0A", 			"select all search text", 							"search-2a996591375a",
-		"0F", 			"dismisss search bar", 								"search-2a996591375a",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												""
+		"0F", 			"dismisss search bar", 								"search-2a996591375a"
 	]
 
 	let mapColumnTwo: [String] = [
@@ -84,8 +81,9 @@ class ZHelpMapData : ZHelpData {
 		"2",			"", 												"",
 		"1_COMMAND + KEY", 												"", "",
 		"2D", 			"if all selected, append to parent", 				"parent-child-tweaks-bf067abdf461",
-		"2 ", 			"else, extract selection into list",	 			"parent-child-tweaks-bf067abdf461",
+		"2 ", 			"else, convert selection into a child",	 			"parent-child-tweaks-bf067abdf461",
 		"1L, U",		"convert to lowercase, uppercase", 					"edit-d05d18996df7",
+		"2T",			"lookup selection in thesaurus",					"",
 		"+",			"", 												"",
 		"0!WHILE IN THE SEARCH RESULTS:", 								"", "",
 		"0",			"", 												"",
@@ -96,6 +94,7 @@ class ZHelpMapData : ZHelpData {
 		"0LEFT", 		"exit search", 										"search-2a996591375a",
 		"0RIGHT", 		"focus on selected result", 						"search-2a996591375a",
 		"0vertical", 	"browse results (wraps around)", 					"search-2a996591375a",
+		"0",			"", 												"",
 		"0",			"", 												"",
 		"0",			"", 												"",
 		"0",			"", 												"",
@@ -119,7 +118,7 @@ class ZHelpMapData : ZHelpData {
 		"0/", 			"focus (also, manage favorite)", 					"focusing-your-thinking-a53adb16bba",
 		"0\\", 			"switch to other map", 				    			"",
 		"2'", 			"switch recents with favorites",					"focusing-your-thinking-a53adb16bba",
-		"1[ ]", 		"focus on prior/next idea",         				"focusing-your-thinking-a53adb16bba",
+		"1[, ]", 		"focus on prior/next idea",         				"focusing-your-thinking-a53adb16bba",
 		"2B", 			"create a bookmark", 								"focusing-your-thinking-a53adb16bba",
 		"1C", 			"recenter the map", 								"",
 		"1D", 			"duplicate", 										"",
@@ -135,23 +134,18 @@ class ZHelpMapData : ZHelpData {
 		"2S", 			"save to a Seriously file", 						"cloud-vs-file-f3543f7281ac",
 		"2T", 			"swap selected idea with parent", 					"parent-child-tweaks-bf067abdf461",
 		"1V", 			"create/edit video file name",						"extras-2a9b1a7db21f",
+		"2",			"", 												"",
+		"2_SHIFT + KEY",												"", "",
+		"2[, ]", 		"focus on prior/next idea in group",				"",
 		"0",			"", 												"",
 		"0_SHIFT + ARROW KEY (+ COMMAND: all)",	 						"", "",
 		"0LEFT ", 		"hide list", 										"focusing-your-thinking-a53adb16bba",
 		"0RIGHT", 		"reveal list",	 									"focusing-your-thinking-a53adb16bba",
 		"2vertical", 	"extend selection", 								"selecting-ideas-cc2939720e53",
-		"2",			"", 												"",
-		"2_SHIFT + KEY",												"", "",
-		"2EQUALS", 	    "toggle relator feature for this idea",				"",
-		"2[ ]", 		"focus on prior/next related idea",					"",
 		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												""
+		"0_MOUSE CLICK + KEY",											"", "",
+		"0COMMAND", 	"drag entire map", 								    "mouse-e21b7a63020e",
+		"1SHIFT", 		"un/extend selection", 								"selecting-ideas-cc2939720e53"
 	]
 
 	let mapColumnFour: [String] = [
@@ -180,12 +174,9 @@ class ZHelpMapData : ZHelpData {
 		"2_COMMAND + OPTION + KEY", 									"", "",
 		"2DELETE", 		"permanently (not into trash)", 					"organize-fcdc44ac04e4",
 		"2HYPHEN", 		"convert titled line to/from parent",			 	"lines-37426469b7c6",
+		"2D", 			"duplicate idea only (ignore its list)",			"",
 		"2O", 			"show data files in Finder", 						"cloud-vs-file-f3543f7281ac",
 		"2S", 			"save to cloud",			 						"cloud-vs-file-f3543f7281ac",
-		"0",			"", 												"",
-		"0_MOUSE CLICK + KEY",											"", "",
-		"0COMMAND", 	"drag entire map", 								    "mouse-e21b7a63020e",
-		"1SHIFT", 		"un/extend selection", 								"selecting-ideas-cc2939720e53",
 		"2",			"", 												"",
 		"2",			"", 												"",
 		"2!MULTIPLE IDEAS SELECTED:", 									"", "",
@@ -194,15 +185,11 @@ class ZHelpMapData : ZHelpData {
 		"2HYPHEN", 		"first idea is titled line -> group",	 			"lines-37426469b7c6",
 		"2#", 			"mark with ascending numbers", 						"extras-2a9b1a7db21f",
 		"2A", 			"a to z (+ OPTION: z to a)", 						"organize-fcdc44ac04e4",
+		"2I", 			"by number of children (+ OPTION: reverse)", 		"",
 		"2M", 			"by length (+ OPTION: reverse)", 					"organize-fcdc44ac04e4",
 		"2R", 			"reverse",		 									"organize-fcdc44ac04e4",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												""
+		"2",			"", 												"",
+		"2_SHIFT + KEY",												"", "",
+		"2EQUALS",		"create favorites group from selection",			"",
 	]
 }

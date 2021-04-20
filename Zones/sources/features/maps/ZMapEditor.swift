@@ -123,6 +123,7 @@ class ZMapEditor: ZBaseEditor {
 						case "e", "h":   editTrait(for: key)
 						case "f":        gSearching.showSearch(OPTION)
 						case "g":        refetch(COMMAND, OPTION, CONTROL)
+						case "i":        gSelecting.simplifiedGrabs.sortByCount(OPTION); gRedrawMaps()
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
 						case "m":        gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawMaps()
