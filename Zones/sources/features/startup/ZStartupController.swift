@@ -70,6 +70,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		updateThermometerBar()
 		updateSubviewVisibility()
 		buttonsView?.updateAndRedraw()
+		RunLoop.main.acceptInput(forMode: .common, before: Date())		// respond if user clicked a button
 	}
 
 	func updateSubviewVisibility() {

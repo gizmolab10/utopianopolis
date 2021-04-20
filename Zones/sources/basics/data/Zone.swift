@@ -3159,7 +3159,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let  COMMAND = flags.isCommand
 		let   OPTION = flags.isOption
 
-		if  count    > 0, !OPTION {
+		if  count    > 0, !OPTION, !(COMMAND && isTraveller) {
 			let show = !expanded
 
 			if  isInSmallMap {

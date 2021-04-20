@@ -16,7 +16,7 @@ class ZStartup: NSObject {
 
 	func addShouldDisplay(_ increment: Double) -> Bool {
 		count       += increment
-		let  display = 1.0 <= (count - prior)
+		let  display = 0.5 <= (count - prior)
 
 		if  display {
 			if  gCurrentOp == .oRestoreIdeas {

@@ -84,14 +84,13 @@ func gStartTimer(for timerID: ZTimerID?) {
 		var     block : TimerClosure?
 		let repeaters : [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tSync]
 		let   repeats = repeaters.contains(tid)
-		var   waitFor = 1.0                           // second
+		var   waitFor = 1.0                                 // one second
 
 		switch tid {
-			case .tSync:              waitFor = 15.0  // seconds
-			case .tRecount:           waitFor = 60.0
-			case .tMouseZone:         waitFor =  0.5
-			case .tCloudAvailable:    waitFor =  0.2
-			default:                  break
+			case .tSync:                    waitFor = 15.0  // seconds
+			case .tRecount:                 waitFor = 60.0  // one minute
+			case .tStartup, .tMouseZone:    waitFor =  0.5  // half second
+			default:                        break
 		}
 
 		switch tid {

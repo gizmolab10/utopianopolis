@@ -63,8 +63,8 @@ func gUpdateStartupProgress() {
 	if  canUpdate && !gHasFinishedStartup {
 		canUpdate     = false                // semaphore to prevent a race condition while thread switching
 		FOREGROUND(forced: true) {
-			canUpdate = true
 			gStartupController?.fullStartupUpdate()
+			canUpdate = true
 		}
 	}
 }
