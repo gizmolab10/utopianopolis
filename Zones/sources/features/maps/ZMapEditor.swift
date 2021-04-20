@@ -148,7 +148,7 @@ class ZMapEditor: ZBaseEditor {
 						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")
 						case kTab:       addSibling(OPTION)
 						case kSpace:     if CONTROL || OPTION || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
-						case kEquals:    if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { gRedrawMaps() } }
+						case kEquals:    if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { reveal in gRedrawMaps() } }
 						case kBackSlash: mapControl(OPTION)
 						case kBackspace,
 							 kDelete:    complexDelete(COMMAND, OPTION, CONTROL, SPECIAL, ANY, isWindow)
@@ -183,9 +183,9 @@ class ZMapEditor: ZBaseEditor {
 									switch arrow {
 										case .left,
 											 .right:
-											move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) {
-												gSelecting.updateAfterMove(!OPTION)  // relayout map when travelling through a bookmark
-												onCompletion?()
+											move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) { neededReveal in
+												gSelecting.updateAfterMove(!OPTION, needsRedraw: neededReveal)  // relayout map when travelling through a bookmark
+												onCompletion?() // invoke closure from essay editor
 											}
 
 											return
@@ -398,7 +398,7 @@ class ZMapEditor: ZBaseEditor {
 			let promoteToParent: ClosureClosure = { innerClosure in
 				original.convertFromLineWithTitle()
 
-				self.moveZones(grabs, into: original) {
+				self.moveZones(grabs, into: original) { reveal in
 					original.grab()
 
 					gRedrawMaps {
@@ -787,7 +787,7 @@ class ZMapEditor: ZBaseEditor {
     // MARK:- move
     // MARK:-
 
-    func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: Closure?) {
+    func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: BoolClosure?) {
 		if  let zone: Zone = moveables?.first, !zone.isARoot {
 			if  selectionOnly {
 
@@ -796,6 +796,8 @@ class ZMapEditor: ZBaseEditor {
 				// /////////////////
 
 				zone.moveSelectionOut(extreme: extreme, onCompletion: onCompletion)
+
+				return
 			} else if let p = zone.parentZone, !p.isARoot {
 
 				// ////////////
@@ -832,7 +834,7 @@ class ZMapEditor: ZBaseEditor {
 						} else {
 							zone.revealZonesToRoot() {
 								moveOutToHere(gRoot)
-								onCompletion?()
+								onCompletion?(true)
 							}
 
 							return
@@ -853,10 +855,10 @@ class ZMapEditor: ZBaseEditor {
 
 							return
 						} else if inSmallMap {
-							moveOut(to: gp) {
+							moveOut(to: gp) { reveal in
 								zone.grab()
 								gCurrentSmallMapRecords?.setHere(to: gp)
-								onCompletion?()
+								onCompletion?(reveal)
 							}
 
 							return
@@ -866,12 +868,14 @@ class ZMapEditor: ZBaseEditor {
 					}
 				}
 			}
+
+			onCompletion?(true)
 		}
 
-		onCompletion?()
+		onCompletion?(false)
     }
     
-    func move(out: Bool, selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
+    func move(out: Bool, selectionOnly: Bool = true, extreme: Bool = false, onCompletion: BoolClosure?) {
         if  out {
             moveOut (selectionOnly: selectionOnly, extreme: extreme, onCompletion: onCompletion)
         } else {
@@ -879,19 +883,19 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-    func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: Closure?) {
+    func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: BoolClosure?) {
 		if  let zone  = moveables?.first {
             if !selectionOnly {
                 actuallyMoveInto(moveables, onCompletion: onCompletion)
             } else if zone.isTraveller && zone.fetchableCount == 0 && zone.count == 0 {
 				zone.invokeTravel(onCompletion: onCompletion)
             } else {
-				zone.addSelection(extreme: extreme, onCompletion: onCompletion)
+				zone.addToSelection(extreme: extreme, onCompletion: onCompletion)
 			}
         }
     }
 
-    func actuallyMoveInto(_ move: ZoneArray?, onCompletion: Closure?) {
+    func actuallyMoveInto(_ move: ZoneArray?, onCompletion: BoolClosure?) {
 		if  let    zones = move,
 			zones.count  > 0,
 			var     into = zones.rootMost?.parentZone {                          // default: move into parent of root most
@@ -916,11 +920,11 @@ class ZMapEditor: ZBaseEditor {
             
             moveZones(zones, into: into, onCompletion: onCompletion)
         } else {
-            onCompletion?()
+            onCompletion?(true)
         }
     }
 
-	func moveZones(_ zones: ZoneArray, into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: Closure?) {
+	func moveZones(_ zones: ZoneArray, into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: BoolClosure?) {
 		if  into.isInSmallMap {
 			into.parentZone?.collapse()
 
@@ -942,7 +946,7 @@ class ZMapEditor: ZBaseEditor {
 			}
 		}
 
-		onCompletion?()
+		onCompletion?(true)
 	}
 
     // MARK:- undoables
@@ -1115,13 +1119,13 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-    func moveOut(to: Zone, onCompletion: Closure?) {
+    func moveOut(to: Zone, onCompletion: BoolClosure?) {
 		if  let        zones = moveables?.reversed() as ZoneArray? {
 			var completedYet = false
 
 			zones.recursivelyRevealSiblings(untilReaching: to) { iRevealedZone in
 				if !completedYet && iRevealedZone == to {
-					completedYet     = true
+					completedYet = true
 
 					for zone in zones {
 						var insert: Int? = zone.parentZone?.siblingIndex // first compute insertion index
@@ -1139,7 +1143,7 @@ class ZMapEditor: ZBaseEditor {
 							let index = zone.siblingIndex
 
 							self.UNDO(self) { iUndoSelf in
-								zone.moveZone(into: from, at: index, orphan: true) { onCompletion?() }
+								zone.moveZone(into: from, at: index, orphan: true) { onCompletion?(true) }
 							}
 						}
 
@@ -1148,7 +1152,7 @@ class ZMapEditor: ZBaseEditor {
 						to.addAndReorderChild(zone, at: insert)
 					}
 
-					onCompletion?()
+					onCompletion?(true)
 				}
 			}
 		}
@@ -1280,7 +1284,7 @@ class ZMapEditor: ZBaseEditor {
                         let   newIndex = indexer.siblingIndex
                         let  moveThese = moveUp ? iZones.reversed() : iZones
                         
-                        self.moveZones(moveThese, into: intoParent, at: newIndex, orphan: true) {
+                        self.moveZones(moveThese, into: intoParent, at: newIndex, orphan: true) { reveal in
                             gSelecting.grab(moveThese)
                             intoParent.children.updateOrder()
                             onCompletion?([.sRelayout])

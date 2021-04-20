@@ -2009,7 +2009,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func invokeTravel(_ COMMAND: Bool = false, onCompletion: Closure? = nil) {
+	func invokeTravel(_ COMMAND: Bool = false, onCompletion: BoolClosure? = nil) {
 		if !invokeBookmark(COMMAND, onCompletion: onCompletion),
 		   !invokeEssay(),
 		   !invokeURL(for: .tHyperlink),
@@ -2018,10 +2018,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	@discardableResult func invokeBookmark(_ COMMAND: Bool = false, onCompletion: Closure?) -> Bool { // false means not traveled
+	@discardableResult func invokeBookmark(_ COMMAND: Bool = false, onCompletion: BoolClosure?) -> Bool { // false means not traveled
 		if  let target = bookmarkTarget {
 			if  COMMAND, target.invokeEssay() { // first, check if target has an essay
-				onCompletion?()
+				onCompletion?(false)
 			} else {
 				if  gIsEssayMode {
 					gControllers.swapMapAndEssay(force: .wMapMode)
@@ -2031,7 +2031,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					#if os(iOS)
 					gActionsController.alignView()
 					#endif
-					onCompletion?()
+					onCompletion?(true)
 				}
 			}
 
@@ -2109,7 +2109,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func moveSelectionOut(extreme: Bool = false, onCompletion: Closure?) {
+	func moveSelectionOut(extreme: Bool = false, onCompletion: BoolClosure?) {
 		if extreme {
 			if  gHere.isARoot {
 				gHere = self // reverse what the last move out extreme did
@@ -2119,7 +2119,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				grab()
 				revealZonesToRoot() {
 					here.revealSiblings(untilReaching: gRoot!)
-					onCompletion?()
+					onCompletion?(true)
 				}
 			}
 		} else if let p = parentZone {
@@ -2179,15 +2179,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func addSelection(extreme: Bool = false, onCompletion: Closure?) {
+	func addToSelection(extreme: Bool = false, onCompletion: BoolClosure?) {
 		var needReveal = false
 		var      child = self
 		var     invoke = {}
 
 		invoke = {
-			needReveal = needReveal || !child.expanded
+			let expand = !child.expanded
+			needReveal = needReveal || expand
 
-			child.expand()
+			if  expand {
+				child.expand()
+			}
 
 			if  child.count > 0,
 				let grandchild = gListsGrowDown ? child.children.last : child.children.first {
@@ -2204,7 +2207,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		invoke()
-		onCompletion?()
+		onCompletion?(needReveal)
 
 		if !needReveal {
 			gSignal([.sCrumbs])
@@ -3172,7 +3175,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 			}
 		} else if isTraveller {
-			invokeTravel(COMMAND) { // note, email, video, bookmark, hyperlink
+			invokeTravel(COMMAND) { reveal in // note, email, video, bookmark, hyperlink
 				gRedrawMaps()
 			}
 		}

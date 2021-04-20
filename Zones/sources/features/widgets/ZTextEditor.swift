@@ -431,12 +431,12 @@ class ZTextEditor: ZTextView {
 
         if  iMoveOut {
             quickStopCurrentEdit()
-            gMapEditor.moveOut {
+            gMapEditor.moveOut { reveal in
                 editAtOffset(100000000.0)
             }
         } else if currentlyEditedZone?.children.count ?? 0 > 0 {
             quickStopCurrentEdit()
-            gMapEditor.moveInto {
+            gMapEditor.moveInto { reveal in
                 editAtOffset(0.0)
             }
         }

@@ -111,8 +111,8 @@ class ZFavorites: ZSmallMapRecords {
         }
     }
     
-    func updateFavoritesAndRedraw(avoidRedraw: Bool = false, _ onCompletion: Closure? = nil) {
-        if  updateAllFavorites() || !avoidRedraw {
+    func updateFavoritesAndRedraw(needsRedraw: Bool = true, _ onCompletion: Closure? = nil) {
+        if  updateAllFavorites() || needsRedraw {
             gRedrawMaps { onCompletion?() }
         } else {
             onCompletion?()
