@@ -24,6 +24,7 @@ typealias           ZObjectsArray = [NSObject]
 typealias          CKRecordsArray = [CKRecord]
 typealias        CKRecordIDsArray = [CKRecordID]
 typealias        ZTraitDictionary = [ZTraitType : ZTrait]
+typealias        ZStoryboardSegue = NSStoryboardSegue
 typealias       CKReferencesArray = [CKReference]
 typealias       ZAssetsDictionary = [UUID : CKAsset]
 typealias       ZTinyDotTypeArray = [[ZTinyDotType]]
@@ -1905,6 +1906,14 @@ extension String {
 		return result
 	}
 
+	var asBundleResource: String? {
+		var    parts = components(separatedBy: ".")
+		let     last = parts.removeLast()
+		let resource = parts.joined(separator: ".")
+
+		return Bundle.main.path(forResource: resource, ofType: last)
+	}
+
 	subscript (r: Range<Int>) -> String {
         let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)),
                                             upper: min(length, max(0, r.upperBound))))
@@ -2375,6 +2384,16 @@ extension ZView {
 		if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
 			let     itemID = ZSimpleToolID(rawValue: identifier) {
 			return  itemID
+		}
+
+		return nil
+	}
+
+	var linkButtonType : ZLinkButtonType? {
+		let        item = self as NSUserInterfaceItemIdentification
+		if  let  itemID = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+			let    type = ZLinkButtonType(rawValue: itemID) {
+			return type
 		}
 
 		return nil

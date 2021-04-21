@@ -161,6 +161,9 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 							   "Please wait until the drawing (of ideas) appears to add new ideas to it.",
 							   "Also, you may have to relaunch if the app gets stuck (it sometimes does, and it embarrasses me that the cause is not yet known)."].joined(separator: " ")
 
-	var helpText: String = "Would you like to look at something more interesting than this progress bar?"
+	var helpText: String = ["Would you like to look at something more interesting than this progress bar?",
+							"Each of these buttons takes you to a help cheat sheet.",
+							"Some sheets contain clickable links to online explanations.",
+							"Warning, since this app is busy loading data, it may hesitate to respond to your button clicks."].joined(separator: " ")
 
 }

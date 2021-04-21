@@ -17,12 +17,16 @@ import UIKit
 var gEssayController: ZEssayController? { return gControllers.controllerForID(.idNote) as? ZEssayController }
 
 class ZEssayController: ZGesturesController, ZScrollDelegate {
-	override  var      controllerID : ZControllerID { return .idNote }
-	@IBOutlet var webLinkController : ZWebLinkController?
-	@IBOutlet var         essayView : ZEssayView?
+	override  var         controllerID : ZControllerID { return .idNote }
+	var           linkDialogController : ZLinkDialogController?
+	var                        closure : StringStringClosure?
+	var                           type : ZEssayHyperlinkType?
+	var                          shown : String?
+	@IBOutlet var            essayView : ZEssayView?
 
 	override func setup() {
 		gestureView = essayView    // do this before calling super setup
+//		linkDialogController = NSStoryboard(name: "Main", bundle: nil).instantiateController(identifier: "linkDialog", creator: nil)
 
 		super.setup()
 		essayView?.setup()
@@ -35,19 +39,17 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 		}
 	}
 
-	func modalForHyperlink(_ title: String?) -> String? {
-		if  title != nil {
-			performSegue(withIdentifier: "webLink", sender: nil)
-//			let a = ZAlert()
-//
-//			a.accessoryView = webLinkController?.view
-//
-//			a.showAlert { status in
-//				print(name)
-//			}
-		}
+	override func prepare(for segue: ZStoryboardSegue, sender: Any?) {
+		linkDialogController = segue.destinationController as? ZLinkDialogController
+		linkDialogController?.loadView()
+		linkDialogController?.setupWith(type, title: shown, onCompletion: closure)
+	}
 
-		return nil
+	func modalForHyperlink(type: ZEssayHyperlinkType, _ title: String?, onCompletion: StringStringClosure?) {
+		self.type = type
+		shown     = title
+		closure   = onCompletion
+		performSegue(withIdentifier: "webLink", sender: self)
 	}
 
 }

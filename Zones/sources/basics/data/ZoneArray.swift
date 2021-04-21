@@ -409,7 +409,7 @@ extension ZoneArray {
 		}
 	}
 
-	func whoseTargetIntersects(with iTargets: ZoneArray, orSpawnsIt: Bool = false) -> Zone? {
+	func whoseTargetIntersects(with iTargets: ZoneArray, orSpawnsIt: Bool) -> Zone? {
 		var found: Zone?
 
 		for target in iTargets {

@@ -824,7 +824,7 @@ class ZMapEditor: ZBaseEditor {
 						if  let here = iHere {
 							gHere = here
 
-							self.moveOut(to: gHere, onCompletion: onCompletion)
+							self.moveOut(to: here, onCompletion: onCompletion)
 						}
 					}
 
@@ -850,7 +850,7 @@ class ZMapEditor: ZBaseEditor {
 							p.revealParentAndSiblings()
 						}
 
-						if  gp.spawnedBy(gHere) {
+						if  gp.spawnedBy(gHere) || gp == gHere {
 							moveOut(to: gp, onCompletion: onCompletion)
 
 							return
@@ -1119,22 +1119,22 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-    func moveOut(to: Zone, onCompletion: BoolClosure?) {
+    func moveOut(to into: Zone, onCompletion: BoolClosure?) {
 		if  let        zones = moveables?.reversed() as ZoneArray? {
 			var completedYet = false
 
-			zones.recursivelyRevealSiblings(untilReaching: to) { iRevealedZone in
-				if !completedYet && iRevealedZone == to {
+			zones.recursivelyRevealSiblings(untilReaching: into) { iRevealedZone in
+				if !completedYet && iRevealedZone == into {
 					completedYet = true
 
 					for zone in zones {
 						var insert: Int? = zone.parentZone?.siblingIndex // first compute insertion index
 
-						if  zone.parentZone?.parentZone == to,
+						if  zone.parentZone?.parentZone == into,
 							let  i = insert {
 							insert = i + 1
 
-							if  insert! >= to.count {
+							if  insert! >= into.count {
 								insert   = nil // append at end
 							}
 						}
@@ -1149,7 +1149,7 @@ class ZMapEditor: ZBaseEditor {
 
 						zone.orphan()
 
-						to.addAndReorderChild(zone, at: insert)
+						into.addAndReorderChild(zone, at: insert)
 					}
 
 					onCompletion?(true)

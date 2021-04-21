@@ -103,7 +103,7 @@ class ZFavorites: ZSmallMapRecords {
 
     func updateCurrentFavorite(_ currentZone: Zone? = nil) {
         if  let         zone = currentZone ?? gHereMaybe,
-			let     bookmark = whichBookmarkTargets(zone),
+			let     bookmark = whichBookmarkTargets(zone, orSpawnsIt: true),
             let       target = bookmark.bookmarkTarget,
             (gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)),
 			!gIsRecentlyMode {

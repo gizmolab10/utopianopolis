@@ -1298,6 +1298,27 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- hyperlinks
 	// MARK:-
 
+	var currentLink: Any? {
+		var found: Any?
+		var range = selectedRange
+
+		if  let       length = textStorage?.length,
+			range.upperBound < length,
+			range.length    == 0 {
+			range.length     = 1
+		}
+
+		textStorage?.enumerateAttribute(.link, in: range, options: .reverse) { (item, inRange, flag) in
+			found = item
+		}
+
+		if  let f = found as? NSURL {
+			found = f.absoluteString
+		}
+
+		return found
+	}
+
 	func linkHit(at rect: CGRect) -> Bool {
 		if  let array = textStorage?.linkRanges {
 			for range in array {
@@ -1345,41 +1366,38 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	@objc private func handleHyperlinkPopupMenu(_ iItem: ZMenuItem) {
 		if  let type = ZEssayHyperlinkType(rawValue: iItem.keyEquivalent) {
-			var link: String? = type.linkType + kColonSeparator
+			var link : String? = type.linkType + kColonSeparator
+
+			func setLink(to value: String?) {
+				if  let v = value {
+					link?.append(v)
+				} else {
+					link  = nil  // remove existing hyperlink
+				}
+
+				if  link == nil {
+					textStorage?.removeAttribute(.link,               range: selectedRange)
+				} else {
+					textStorage?   .addAttribute(.link, value: link!, range: selectedRange)
+				}
+			}
+
+			func displayLinkDialog() {
+				let shown = textStorage?.string.substring(with: selectedRange)
+
+				gEssayController?.modalForHyperlink(type: type, shown) { path, shown in
+					setLink(to: path)
+				}
+			}
 
 			switch type {
-				case .hClear: link = nil // to remove existing hyperlink
-				case .hWeb:   link = gEssayController?.modalForHyperlink(textStorage?.string.substring(with: selectedRange))
-				default:      if let b = gSelecting.pastableRecordName { link?.append(b) } else { return }
-			}
-
-			if  link == nil {
-				textStorage?.removeAttribute(.link,               range: selectedRange)
-			} else {
-				textStorage?   .addAttribute(.link, value: link!, range: selectedRange)
+				case .hClear: setLink(to: nil)
+				case .hVideo,
+					 .hEmail,
+					 .hWeb:   displayLinkDialog()
+				default:      setLink(to: gSelecting.pastableRecordName)
 			}
 		}
-	}
-
-	var currentLink: Any? {
-		var found: Any?
-		var range = selectedRange
-
-		if  let       length = textStorage?.length,
-		    range.upperBound < length,
-			range.length    == 0 {
-			range.length     = 1
-		}
-
-		textStorage?.enumerateAttribute(.link, in: range, options: .reverse) { (item, inRange, flag) in
-			found = item
-		}
-
-		if  let f = found as? NSURL {
-			found = f.absoluteString
-		}
-
-		return found
 	}
 
 	@discardableResult private func followCurrentLink(within range: NSRange) -> Bool {
@@ -1390,16 +1408,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			if  parts.count > 1,
 				let    t = parts.first?.first,                          // first character of first part
-				let  rID = parts.last,
+				let last = parts.last,
 				let type = ZEssayHyperlinkType(rawValue: String(t)) {
-				let zone = gSelecting.zone(with: rID)	                // find zone with rID
+				let zone = gSelecting.zone(with: last)	                // find zone with last
 				switch type {
+					case .hEmail:
+						break
+					case .hVideo:
+						last.asBundleResource?.openAsURL()
+						return true
 					case .hIdea:
 						if  let  grab = zone {
-							gHere     = grab
+							gHere     = grab			                // focus on zone with last
 							let eZone = gCurrentEssayZone
 
-							grab  .grab()			                    // focus on zone with rID
+							grab  .grab()
 							grab  .asssureIsVisible()
 							eZone?.asssureIsVisible()
 

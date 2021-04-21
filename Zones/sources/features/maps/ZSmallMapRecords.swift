@@ -123,7 +123,7 @@ class ZSmallMapRecords: ZRecords {
 		return targeting(target, in: workingBookmarks, orSpawnsIt: false)
 	}
 
-	func whichBookmarkTargets(_ target: Zone, orSpawnsIt: Bool = true) -> Zone? {
+	func whichBookmarkTargets(_ target: Zone, orSpawnsIt: Bool) -> Zone? {
 		if  target.databaseID != nil {
 			return targeting(target, in: rootZone?.allBookmarkProgeny, orSpawnsIt: orSpawnsIt)
 		}
@@ -195,7 +195,7 @@ class ZSmallMapRecords: ZRecords {
 
 		// locate and make bookmark of target visible and mark it
 
-		if  let b = whichBookmarkTargets(target) {
+		if  let b = whichBookmarkTargets(target, orSpawnsIt: false) {
 			makeVisibleAndMarkInSmallMap(b)
 		}
 	}
@@ -242,10 +242,10 @@ class ZSmallMapRecords: ZRecords {
 			}
 
 			if  let here = gHereMaybe {
-				targets.appendUnique(contentsOf: [here])
+				targets.appendUnique(item: here)
 			}
 
-			if  let bookmark    = recents.whoseTargetIntersects(with: targets) {
+			if  let bookmark    = recents.whoseTargetIntersects(with: targets, orSpawnsIt: false) {
 				currentBookmark = bookmark
 
 				return bookmark

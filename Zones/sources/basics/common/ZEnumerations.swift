@@ -425,8 +425,10 @@ enum ZEssayHyperlinkType: String {
 	case hWeb   = "h"
 	case hIdea  = "i"
 	case hNote  = "n"
-	case hEssay = "e"
+	case hEssay = "s"
+	case hVideo = "v"
 	case hClear = "c"
+	case hEmail = "e"
 
 	var title: String {
 		switch self {
@@ -434,6 +436,8 @@ enum ZEssayHyperlinkType: String {
 			case .hIdea:  return "Idea"
 			case .hNote:  return "Note"
 			case .hEssay: return "Essay"
+			case .hVideo: return "Video"
+			case .hEmail: return "Email"
 			case .hClear: return "Clear"
 		}
 	}
@@ -445,7 +449,7 @@ enum ZEssayHyperlinkType: String {
 		}
 	}
 
-	static var all: [ZEssayHyperlinkType] { return [.hWeb, .hIdea, .hNote, .hEssay, .hClear] }
+	static var all: [ZEssayHyperlinkType] { return [.hWeb, .hIdea, .hEmail, .hNote, .hEssay, .hVideo, .hClear] }
 
 }
 

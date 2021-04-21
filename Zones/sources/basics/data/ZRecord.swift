@@ -106,8 +106,8 @@ class ZRecord: ZManagedRecord { // NSObject {
 				records?.maybeZRecordForRecordName(name) == nil {
 				updateCKRecordProperties()                                                      // filled
 				updateCKRecordFromCoreData()
-				converted.appendUnique(contentsOf: [name])
-				v        .appendUnique(contentsOf: [name])
+				converted.appendUnique(item: name)
+				v        .appendUnique(item: name)
 			}
 
 			converted.append(contentsOf: updateFromCoreDataHierarchyRelationships(visited: v))

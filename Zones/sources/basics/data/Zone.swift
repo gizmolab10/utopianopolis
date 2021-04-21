@@ -440,14 +440,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	var videoFileLink: String? {
-		var    parts = videoFileName?.components(separatedBy: ".")
-		let     last = parts?.removeLast()
-		let resource = parts?.joined(separator: ".")
-
-		return Bundle.main.path(forResource: resource, ofType: last)
-	}
-
 	var crumbTipZone: Zone? {
 		if  isBookmark {
 			return bookmarkTarget?.crumbTipZone
@@ -810,7 +802,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var              v = visited ?? [String]()
 
 		if  let       name = recordName {
-			v.appendUnique(contentsOf: [name])
+			v.appendUnique(item: name)
 		}
 
 		if  let        set = mutableSetValue(forKeyPath: kChildArray) as? Set<Zone>, set.count > 0 {
@@ -2067,7 +2059,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		switch traitType {
 			case .tHyperlink: return hyperLink
 			case .tEmail:     return emailLink
-			case .tVideo:     return videoFileLink
+			case .tVideo:     return videoFileName?.asBundleResource
 			default:          return nil
 		}
 	}
@@ -2941,19 +2933,27 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			// /////////////////
 
 			let  goal = iLevel ?? level + (show ? 1 : -1)
+			let grabs = gSelecting.currentGrabs
 			let apply = {
+				var grabHere = false
 				self.traverseAllProgeny { iChild in
 					if           !iChild.isBookmark {
-						if        iChild.level >= goal && !show {
-							iChild.collapse()
-						} else if iChild.level  < goal &&  show {
+						if        iChild.level  < goal &&  show {
 							iChild.expand()
+						} else if iChild.level >= goal && !show {
+							iChild.collapse()
+
+							if  iChild.children.intersects(grabs) {
+								grabHere = true
+							}
 						}
 					}
 				}
 
 				if  show {
 					gCurrentSmallMapRecords?.swapBetweenBookmarkAndTarget()
+				} else if grabHere {
+					gHere.grab()
 				}
 
 				onCompletion?()

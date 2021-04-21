@@ -424,7 +424,7 @@ class ZSelecting: NSObject {
 			for grab in currentMapGrabs {
 				if  let grabRoot = grab.root,
 					grabRoot == fromRoot {
-					moveThese.appendUnique(contentsOf: [grab])
+					moveThese.appendUnique(item: grab)
 				}
 			}
 
