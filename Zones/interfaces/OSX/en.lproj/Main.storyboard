@@ -1297,6 +1297,7 @@ CA
         <!--Choose Link-->
         <scene sceneID="yhj-YB-Xij">
             <objects>
+                <customObject id="IZh-Iz-IVH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <viewController title="Choose Link" storyboardIdentifier="linkDialog" id="S3C-PE-ZiN" customClass="ZLinkDialogController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="NY2-fD-2jz">
                         <rect key="frame" x="0.0" y="0.0" width="379" height="134"/>
@@ -1426,12 +1427,12 @@ Gw
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="applyButton" destination="2tL-oS-kZx" id="Agd-H6-Kfg"/>
                         <outlet property="label" destination="Vpw-ap-3wS" id="c5D-kn-id9"/>
                         <outlet property="link" destination="foN-VV-XU7" id="y8U-WN-GCy"/>
-                        <outlet property="shown" destination="fZI-Gm-akg" id="HWA-ng-eiz"/>
+                        <outlet property="showAs" destination="fZI-Gm-akg" id="HWA-ng-eiz"/>
                     </connections>
                 </viewController>
-                <customObject id="IZh-Iz-IVH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1545" y="1171"/>
         </scene>

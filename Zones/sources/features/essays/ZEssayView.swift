@@ -36,7 +36,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var eraseAttachment : ZRangedAttachment?
 	var grabbedZones    : [Zone]             { return grabbedNotes.map { $0.zone! } }
 	var firstNote       : ZNote?             { return (dragDots.count == 0) ? nil : dragDots[0].note }
-	var selectedNote    : ZNote?             { return selectedNotes.first }
+	var selectedNote    : ZNote?             { return selectedNotes.first ?? gCurrentEssay }
 	var selectedZone    : Zone?              { return selectedNote?.zone }
 	var firstGrabbedNote: ZNote?             { return hasGrabbedNote ? grabbedNotes[0] : nil }
 	var firstGrabbedZone: Zone?              { return firstGrabbedNote?.zone }
@@ -72,7 +72,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	var relativeLevelOfFirstGrabbed: Int {
 		if  let    e = gCurrentEssayZone,
-			let    f = grabbedZones.first {
+			let    f = firstGrabbedZone {
 			return f.level - e.level
 		}
 
@@ -288,13 +288,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return true
 		} else if  hasGrabbedNote {
 			switch key {
-				case "t":     swapWithParent()
-				case "/":     swapBetweenNoteAndEssay()
-				case kEscape: gHelpController?.show(flags: flags)
-				case kEquals: grabSelected()
-				case kDelete: deleteGrabbed()
-				case kReturn: if ANY { grabDone() }
-				default:      return false
+				case "c":      grabbedZones.copyToPaste()
+				case "t":      swapWithParent()
+				case "/":      swapBetweenNoteAndEssay()
+				case kEscape:  gHelpController?.show(flags: flags)
+				case kEquals:  grabSelected()
+				case kDelete:  deleteGrabbed()
+				case kReturn:  if ANY { grabDone() }
+				default:       return false
 			}
 
 			return true
@@ -310,7 +311,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch key {
 				case "a":      selectAll(nil)
 				case "b":      applyToSelection(BOLD: true)
-				case "d":      convertToChild(createEssay: DUAL)
+				case "d":      convertToChild(createNoteFromSelection: DUAL)
 				case "e":      grabSelectedTextForSearch()
 				case "f":      gSearching.showSearch(OPTION)
 				case "g":      searchAgain(OPTION)
@@ -333,7 +334,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return true
 		} else if CONTROL {
 			switch key {
-				case "d":      convertToChild(createEssay: true)
+				case "d":      convertToChild(createNoteFromSelection: true)
 				case "h":      showHyperlinkPopup()
 				case "/":      popNoteAndUpdate()
 				default:       return false
@@ -1215,27 +1216,31 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		gSignal([.sCrumbs])
 	}
 
-	private func convertToChild(createEssay: Bool = false) {
+	private func convertToChild(createNoteFromSelection: Bool = false) {
 		if  let   text = selectionString, text.length > 0,
 			let   dbID = gCurrentEssayZone?.databaseID,
 			let parent = selectedZone {
-			let  child = Zone.create(named: text, databaseID: dbID)   	// create new (to be child) zone from text
 
-			insertText("", replacementRange: selectedRange)			// remove text
-			parent.addChild(child)
-			child.asssureIsVisible()
-			save()
+			if  createNoteFromSelection {
+				let child = Zone.create(named: "idea", databaseID: dbID)   	// create new (to be child) zone from text
 
-			if  createEssay {
-				child.setTraitText(kEssayDefault, for: .tNote)			// create a placeholder essay in the child
+				parent.addChild(child)
+				child.setTraitText(text, for: .tNote)                       // create note from text in the child
 				gCurrentEssayZone?.createNote()
 
 				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
 			} else {
+				let child = Zone.create(named: text, databaseID: dbID)   	// create new (to be child) zone from text
+
+				insertText("", replacementRange: selectedRange)	            // remove text
+				parent.addChild(child)
+				child.asssureIsVisible()
+				save()
+
 				child.grab()
 				done()
 
-				FOREGROUND {											// defer idea edit until after this function exits
+				FOREGROUND {                                            // defer idea edit until after this function exits
 					child.edit()
 				}
 			}
@@ -1369,7 +1374,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			var link : String? = type.linkType + kColonSeparator
 
 			func setLink(to value: String?) {
-				if  let v = value {
+				if  let v = value, !v.isEmpty {
 					link?.append(v)
 				} else {
 					link  = nil  // remove existing hyperlink
@@ -1383,16 +1388,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			func displayLinkDialog() {
-				let shown = textStorage?.string.substring(with: selectedRange)
+				let showAs = textStorage?.string.substring(with: selectedRange)
 
-				gEssayController?.modalForHyperlink(type: type, shown) { path, shown in
+				gEssayController?.modalForLink(type: type, showAs) { path, showAs in
 					setLink(to: path)
 				}
 			}
 
 			switch type {
 				case .hClear: setLink(to: nil)
-				case .hVideo,
+				case .hBundled,
 					 .hEmail,
 					 .hWeb:   displayLinkDialog()
 				default:      setLink(to: gSelecting.pastableRecordName)
@@ -1413,8 +1418,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				let zone = gSelecting.zone(with: last)	                // find zone with last
 				switch type {
 					case .hEmail:
-						break
-					case .hVideo:
+						link.openAsURL()
+						return true
+					case .hBundled:
 						last.asBundleResource?.openAsURL()
 						return true
 					case .hIdea:

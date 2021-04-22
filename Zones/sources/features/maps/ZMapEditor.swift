@@ -118,7 +118,7 @@ class ZMapEditor: ZBaseEditor {
 					switch key {
 						case "a":        if  COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMaps() }
 						case "b":        gSelecting.firstSortedGrab?.addBookmark()
-						case "c":        if OPTION { divideChildren() } else if  COMMAND { copyToPaste() } else { gMapController?.recenter(SPECIAL) }
+						case "c":        if OPTION { divideChildren() } else if COMMAND { gSelecting.simplifiedGrabs.copyToPaste() } else { gMapController?.recenter(SPECIAL) }
 						case "d":        if  ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 						case "e", "h":   editTrait(for: key)
 						case "f":        gSearching.showSearch(OPTION)
@@ -718,19 +718,6 @@ class ZMapEditor: ZBaseEditor {
         }
     }
     
-    // MARK:- copy and paste
-    // MARK:-
-
-    func copyToPaste() {
-        let grabs = gSelecting.simplifiedGrabs
-
-        gSelecting.clearPaste()
-
-        for grab in grabs {
-            grab.addToPaste()
-        }
-    }
-
     // MARK:- delete
     // MARK:-
 

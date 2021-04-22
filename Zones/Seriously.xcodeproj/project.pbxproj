@@ -903,8 +903,8 @@
 				A78A6DFF23B02163000F581F /* ZEssayController.swift */,
 				A78A6E0923B021EA000F581F /* ZEssayEditor.swift */,
 				A7B48A7923E0E80C00654DBD /* ZEssayView.swift */,
-				A7229FAC23B84B4300FA2841 /* ZNote.swift */,
 				A7E096C923EB98FA0017EC32 /* ZLinkDialogController.swift */,
+				A7229FAC23B84B4300FA2841 /* ZNote.swift */,
 			);
 			path = essays;
 			sourceTree = "<group>";

@@ -422,34 +422,43 @@ enum ZoneAttributeType: String {
 }
 
 enum ZEssayHyperlinkType: String {
-	case hWeb   = "h"
-	case hIdea  = "i"
-	case hNote  = "n"
-	case hEssay = "s"
-	case hVideo = "v"
-	case hClear = "c"
-	case hEmail = "e"
+	case hWeb     = "h"
+	case hIdea    = "i"
+	case hNote    = "n"
+	case hEssay   = "e"
+	case hClear   = "c"
+	case hEmail   = "m"
+	case hBundled = "b"
 
 	var title: String {
 		switch self {
-			case .hWeb:   return "Internet"
-			case .hIdea:  return "Idea"
-			case .hNote:  return "Note"
-			case .hEssay: return "Essay"
-			case .hVideo: return "Video"
-			case .hEmail: return "Email"
-			case .hClear: return "Clear"
+			case .hIdea:    return "Idea"
+			case .hNote:    return "Note"
+			case .hEssay:   return "Essay"
+			case .hEmail:   return "Email"
+			case .hClear:   return "Clear"
+			case .hBundled: return "Bundled"
+			case .hWeb:     return "Internet"
+		}
+	}
+
+	var linkDialogLabel: String {
+		switch self {
+			case .hWeb:   return "Text of link"
+			case .hEmail: return "Email address"
+			default:      return "Name of file"
 		}
 	}
 
 	var linkType: String {
 		switch self {
-			case .hWeb: return "http"
-			default:    return title.lowercased()
+			case .hWeb:   return "http"
+			case .hEmail: return "mailto"
+			default:      return title.lowercased()
 		}
 	}
 
-	static var all: [ZEssayHyperlinkType] { return [.hWeb, .hIdea, .hEmail, .hNote, .hEssay, .hVideo, .hClear] }
+	static var all: [ZEssayHyperlinkType] { return [.hWeb, .hIdea, .hEmail, .hNote, .hEssay, .hBundled, .hClear] }
 
 }
 

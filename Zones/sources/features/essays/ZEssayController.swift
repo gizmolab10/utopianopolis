@@ -19,14 +19,11 @@ var gEssayController: ZEssayController? { return gControllers.controllerForID(.i
 class ZEssayController: ZGesturesController, ZScrollDelegate {
 	override  var         controllerID : ZControllerID { return .idNote }
 	var           linkDialogController : ZLinkDialogController?
-	var                        closure : StringStringClosure?
-	var                           type : ZEssayHyperlinkType?
-	var                          shown : String?
+	var                         params : ZEssayLinkParameters?
 	@IBOutlet var            essayView : ZEssayView?
 
 	override func setup() {
 		gestureView = essayView    // do this before calling super setup
-//		linkDialogController = NSStoryboard(name: "Main", bundle: nil).instantiateController(identifier: "linkDialog", creator: nil)
 
 		super.setup()
 		essayView?.setup()
@@ -40,15 +37,17 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 	}
 
 	override func prepare(for segue: ZStoryboardSegue, sender: Any?) {
-		linkDialogController = segue.destinationController as? ZLinkDialogController
-		linkDialogController?.loadView()
-		linkDialogController?.setupWith(type, title: shown, onCompletion: closure)
+		if  linkDialogController == nil {
+			linkDialogController  = segue.destinationController as? ZLinkDialogController
+			linkDialogController?.loadView()
+		}
+
+		linkDialogController?.setupWith(params)
 	}
 
-	func modalForHyperlink(type: ZEssayHyperlinkType, _ title: String?, onCompletion: StringStringClosure?) {
-		self.type = type
-		shown     = title
-		closure   = onCompletion
+	func modalForLink(type: ZEssayHyperlinkType, _ showAs: String?, onCompletion: StringStringClosure?) {
+		params = ZEssayLinkParameters(type: type, showAs: showAs, closure: onCompletion)
+
 		performSegue(withIdentifier: "webLink", sender: self)
 	}
 

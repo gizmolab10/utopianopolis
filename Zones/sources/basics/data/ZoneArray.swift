@@ -342,6 +342,14 @@ extension ZoneArray {
 		return nil
 	}
 
+	func copyToPaste() {
+		gSelecting.clearPaste()
+
+		for zone in self {
+			zone.addToPaste()
+		}
+	}
+
 	func deleteZones(permanently: Bool = false, in iParent: Zone? = nil, iShouldGrab: Bool = true, onCompletion: Closure?) {
 		if  count == 0 {
 			onCompletion?()

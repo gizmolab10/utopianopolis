@@ -13,34 +13,47 @@ enum ZLinkButtonType: String {
 	case tApply  = "apply"
 }
 
+struct ZEssayLinkParameters {
+	let    type : ZEssayHyperlinkType?
+	let  showAs : String?
+	let closure : StringStringClosure?
+}
+
 var gLinkDialogController : ZLinkDialogController? { return gControllers.controllerForID(.idLink) as? ZLinkDialogController }
 
 class ZLinkDialogController: ZGenericController {
 
 	@IBOutlet var         link : ZTextField?
-	@IBOutlet var        shown : ZTextField?
 	@IBOutlet var        label : ZTextField?
+	@IBOutlet var       showAs : ZTextField?
+	@IBOutlet var  applyButton : NSButton?
 	override  var controllerID : ZControllerID { return .idLink }
-	var               callback : StringStringClosure?
-	var                   type : ZEssayHyperlinkType?
+	var                 params : ZEssayLinkParameters?
 
-	func setupWith(_ iType: ZEssayHyperlinkType?, title: String?, onCompletion: StringStringClosure?) {
-		type        = iType
-		callback    = onCompletion
-		shown?.text = title ?? "click here"
-		label?.text = (type == .hWeb) ? "Text of link" : "Name of file"
+	override func awakeFromNib() {
+		applyButton?.keyEquivalent = kReturn
+
+		super.awakeFromNib()
+	}
+
+	func setupWith(_   parameters: ZEssayLinkParameters?) {
+		params       = parameters
+		showAs?.text = params?.showAs ?? "click here"
+		label? .text = params?.type?.linkDialogLabel
+
+//		view.setAllSubviewsNeedDisplay()
 	}
 
 	@IBAction func buttonAction(button: ZButton) {
 		var  linkText : String?
 		var titleText : String?
 		if  let  type = button.linkButtonType, type == .tApply {
-			titleText = shown?.text
-			linkText  = link? .text
+			titleText = showAs?.text
+			linkText  = link?  .text
 		}
 
 		dismiss(nil)
-		callback?(linkText, titleText)
+		params?.closure?(linkText, titleText)
 	}
 
 }
