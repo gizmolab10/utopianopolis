@@ -1227,7 +1227,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				} else {
 					concealAllProgeny()           // strip cloggers from gExpandedZones list
 					traverseAllProgeny { iZone in
-						if !iZone.isInTrash {
+						if !iZone.isInTrash, iZone != self {
 							iZone.needDestroy()   // gets written in file
 							iZone.orphan()
 							gManifest?.smartAppend(iZone)
@@ -3004,13 +3004,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	@discardableResult func moveChildIndex(from: Int, to: Int) -> Bool {
-		if  to < count, from < count, let child = self[from] {
+		if  from < count, to <= count, let child = self[from] {
+			func addChild() {
+				if  to < count {
+					self.children.insert(child, at: to)
+				} else {
+					self.children.append(child)
+				}
+			}
+
 			if  from > to {
 				children.remove(       at: from)
-				children.insert(child, at: to)
+				addChild()
 			} else if from < to {
-				children.insert(child, at: to)
- 				children.remove(       at: from)
+				addChild()
+				children.remove(       at: from)
 			}
 
 			return true

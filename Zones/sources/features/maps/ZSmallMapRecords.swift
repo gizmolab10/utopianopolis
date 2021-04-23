@@ -143,7 +143,7 @@ class ZSmallMapRecords: ZRecords {
 	@discardableResult func pop(_ zone: Zone? = gHereMaybe) -> Bool {
 		if  let   target = zone,
 			let bookmark = workingBookmark(for: target) {
-			go (down: true) {
+			go(down: true) {
 				bookmark.deleteSelf(permanently: true) {}
 			}
 
@@ -154,7 +154,7 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	@discardableResult func popAndUpdate() -> Zone? {
-		if !pop(),
+		if  pop(),
 			workingBookmarks.count > 0 {
 			currentBookmark = workingBookmarks[0]
 		}

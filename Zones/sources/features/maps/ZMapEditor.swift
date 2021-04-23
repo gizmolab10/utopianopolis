@@ -365,9 +365,8 @@ class ZMapEditor: ZBaseEditor {
 				gHere    = here
 
 				gHere.grab()
+				gRedrawMaps()
 			}
-
-			gRedrawMaps()
 		} else {
 			gRecords?.focusOnGrab(kind, COMMAND, shouldGrab: true) { // complex grab logic
 				gRedrawMaps()
@@ -631,9 +630,9 @@ class ZMapEditor: ZBaseEditor {
 		if  SHIFT || (gHere.isInGroup && (gCurrentSmallMapRecords?.rootZone?.isInFavorites ?? false)) {
 			gSelecting.currentMoveable.cycleToNextInGroup(!down)
 		} else {
-			let cloud = OPTION ? gCurrentSmallMapRecords : gRecents
+			let smallMap = OPTION ? gCurrentSmallMapRecords : gRecents
 
-			cloud?.go(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent, atArrival: atArrival)
+			smallMap?.go(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent, atArrival: atArrival)
 		}
 	}
 

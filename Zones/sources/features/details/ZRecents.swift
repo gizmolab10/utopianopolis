@@ -95,4 +95,46 @@ class ZRecents : ZSmallMapRecords {
 		return false
 	}
 
+	override func go(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
+		if  currentBookmark == nil {
+			gRecents.push()
+		}
+
+		let   maxIndex = working.count - 1
+		let     bottom = working[maxIndex]
+		let        top = working[0]
+
+		if  down {                         // move top to bottom
+			if  let parent = top.parentZone {
+				let    end = parent.count
+
+				parent.moveChildIndex(from: 0, to: end)
+			}
+		} else {
+			if  let parent = bottom.parentZone {
+				let    end = parent.count - 1
+
+				parent.moveChildIndex(from: end, to: 0)
+			}
+		}
+
+		if  let t = working[0].bookmarkTarget {
+			gHere = t
+		}
+
+		gRedrawMaps()
+	}
+
+	@discardableResult override func pop(_ zone: Zone? = gHereMaybe) -> Bool {
+		if  let   target = zone,
+			let bookmark = workingBookmark(for: target),
+			let    index = bookmark.siblingIndex {
+			bookmark.parentZone?.children.remove(at: index)
+
+			return true
+		}
+
+		return false
+	}
+
 }
