@@ -418,32 +418,21 @@ extension ZoneArray {
 	}
 
 	func whoseTargetIntersects(with iTargets: ZoneArray, orSpawnsIt: Bool) -> Zone? {
-		var found: Zone?
-
 		for target in iTargets {
 			if  let                dbID = target.databaseID {
-				var               level = Int.max
 				for zone in self {
-					if  let zoneTarget  = zone.bookmarkTarget,
+					if  let  zoneTarget = zone.bookmarkTarget,
 						dbID           == zoneTarget.databaseID {
-						let zoneLevel   = zoneTarget.level
 
-						if  zoneTarget == target {
+						if  zoneTarget == target || (orSpawnsIt && target.spawnedBy(zoneTarget)) {
 							return zone
-						}
-
-						if  orSpawnsIt,
-							zoneLevel   < level,
-							target.spawnedBy(zoneTarget) {
-							level       = zoneLevel
-							found       = zone
 						}
 					}
 				}
 			}
 		}
 
-		return found
+		return nil
 	}
 
 	func recursivelyRevealSiblings(untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {

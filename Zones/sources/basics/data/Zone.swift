@@ -2755,40 +2755,40 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	@discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: Closure? = nil) -> Int? {
 		if  let        child = iChild {
-			let     insertAt = validIndex(from: iIndex)
+			let      toIndex = validIndex(from: iIndex)
 			child.parentZone = self
 
-			// make sure it's not already been added
-			// NOTE: both must have a record for this to be effective
-
-			func avoidDuplicate(at index: Int) {
-				if  index != insertAt {
-					moveChildIndex(from: index, to: insertAt)
-				}
-
+			func finish() -> Int {
+				maybeNeedSave()
 				onCompletion?()
+
+				return toIndex
 			}
 
-			if  let childTarget = child.bookmarkTarget {
+			func rearange(from index: Int) -> Int {
+				if  index != toIndex {
+					moveChildIndex(from: index, to: toIndex)
+				}
+
+				return finish()
+			}
+
+			if  let childTarget = child.bookmarkTarget {           // detect if its bookmark is already added
 				for (index, sibling) in children.enumerated() {
 					if  childTarget == sibling.bookmarkTarget {
-						avoidDuplicate(at: index)
-
-						return insertAt
+						return rearange(from: index)
 					}
 				}
 			}
 
-			for (index, sibling) in children.enumerated() {
+			for (index, sibling) in children.enumerated() {        // detect if it's already added
 				if  child == sibling {
-					avoidDuplicate(at: index)
-
-					return insertAt
+					return rearange(from: index)
 				}
 			}
 
-			if  insertAt < count {
-				children.insert(child, at: insertAt)
+			if  toIndex < count {
+				children.insert(child, at: toIndex)
 			} else {
 				children.append(child)
 			}
@@ -2798,10 +2798,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			needCount()
-			maybeNeedSave()
-			onCompletion?()
 
-			return insertAt
+			return finish()
 		}
 
 		return nil

@@ -32,6 +32,10 @@ class ZSmallMapRecords: ZRecords {
 
 	func go(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
 		if  currentBookmark == nil {
+			if  self != gRecents {
+				gSwapSmallMapMode()
+			}
+
 			gRecents.push()
 		}
 
@@ -234,14 +238,18 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	@discardableResult func updateCurrentRecent() -> Zone? {
-		if  let recents  = rootZone?.allBookmarkProgeny, recents.count > 0 {
-			var targets  = ZoneArray()
+		if  let recents   = rootZone?.allBookmarkProgeny, recents.count > 0 {
+			var targets   = ZoneArray()
 
-			if  let grab = gSelecting.firstGrab {
+			if  var grab  = gSelecting.firstGrab {
+				if  let b = grab.bookmarkTarget {
+					grab  = b
+				}
+
 				targets.append(grab)
 			}
 
-			if  let here = gHereMaybe {
+			if  let here  = gHereMaybe {
 				targets.appendUnique(item: here)
 			}
 

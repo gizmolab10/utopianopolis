@@ -212,7 +212,10 @@ var gHere: Zone {
 		gRecords?.currentHere = newValue
 
 		newValue.assureAdoption()
-		gRecents.push()
+
+		if  gIsRecentlyMode {
+			gRecents.push()
+		}
 	}
 }
 
@@ -644,7 +647,8 @@ var gCurrentEssay: ZNote? {
 	didSet {
 		setPreferencesString(gCurrentEssay?.identifier() ?? "", for: kCurrentEssay)
 
-		if  gHasFinishedStartup { // avoid creating confused recents view
+		if  gHasFinishedStartup, // avoid creating confused recents view
+			gIsRecentlyMode {
 			gRecents.push(intoNotes: true)
 		}
 	}

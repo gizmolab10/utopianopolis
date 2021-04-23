@@ -375,7 +375,7 @@ class ZSelecting: NSObject {
 		var grabbed = grabs.first
 
         if  grabbed == nil || grabbed!.ckRecord == nil {
-            grabbed = gHereMaybe ?? currentMovableMaybe
+            grabbed = currentMovableMaybe ?? gHereMaybe
         }
         
         return grabbed

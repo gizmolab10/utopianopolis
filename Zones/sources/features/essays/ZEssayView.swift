@@ -166,7 +166,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gCurrentEssay?.reset()
 			updateText()
 			gCurrentEssay?.updateNoteOffsets()
-			gRecents.push(intoNotes: true)
 
 			if  let r = range {
 				FOREGROUND {
@@ -1448,13 +1447,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 						if  let target = zone {
 							let common = gCurrentEssayZone?.closestCommonParent(of: target)
 
-							if  let  c = common {
-								gHere  = c
-							}
-
 							FOREGROUND {
 								if  let  note = target.noteMaybe, gCurrentEssay?.children.contains(note) ?? false {
-									let range = note.offsetTextRange	// text range of target essay
+									let range = note.offsetTextRange	    // text range of target essay
 									let start = NSRange(location: range.location, length: 1)
 
 									self.setSelectedRange(range)
@@ -1469,10 +1464,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 								} else {
 									gCreateCombinedEssay = type == .hEssay
 
-									target .grab()					// for later, when user exits essay mode
-									target .asssureIsVisible()
+									target .asssureIsVisible()		        // for later, when user exits essay mode
 									common?.asssureIsVisible()
 									self.resetCurrentEssay(target.note)     // change current note to that of target
+									gSignal([.sSmallMap, .sCrumbs])
 								}
 							}
 

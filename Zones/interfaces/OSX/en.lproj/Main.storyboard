@@ -1643,7 +1643,7 @@ DQ
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Bpe-so-Utw">
                                                         <rect key="frame" x="-2" y="56" width="454" height="16"/>
-                                                        <textFieldCell key="cell" selectable="YES" id="UeP-8V-XHo">
+                                                        <textFieldCell key="cell" selectable="YES" alignment="justified" id="UeP-8V-XHo">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
