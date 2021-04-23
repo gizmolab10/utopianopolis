@@ -139,7 +139,7 @@ class ZMapEditor: ZBaseEditor {
 						case "x":        if COMMAND { delete(permanently: SPECIAL && isWindow) } else { gCurrentKeyPressed = nil; return false }
 						case "z":        if  !SHIFT { gUndoManager.undo() } else { gUndoManager.redo() }
 						case "#":        if gSelecting.hasMultipleGrab { prefix(with: key) } else { debugAnalyze() }
-						case "+":        gSelecting.currentGrabs.toggleRelator()
+						case "+":        gSelecting.currentGrabs.toggleGroupOwnership()
 						case "-":        return handleHyphen(COMMAND, OPTION)
 						case "'":        gSwapSmallMapMode(OPTION)
 						case "/":        if SCORNED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
@@ -628,8 +628,8 @@ class ZMapEditor: ZBaseEditor {
     }
 
 	func go(down: Bool, SHIFT: Bool, OPTION: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, atArrival: Closure? = nil) {
-		if  SHIFT || (gHere.isARelated && (gCurrentSmallMapRecords?.rootZone?.isInFavorites ?? false)) {
-			gSelecting.currentMoveable.goToNextRelated(!down)
+		if  SHIFT || (gHere.isInGroup && (gCurrentSmallMapRecords?.rootZone?.isInFavorites ?? false)) {
+			gSelecting.currentMoveable.cycleToNextInGroup(!down)
 		} else {
 			let cloud = OPTION ? gCurrentSmallMapRecords : gRecents
 

@@ -20,8 +20,8 @@ enum ZHelpDotType: String {
 	case video      = "video"
 	case essay      = "click"
 	case cycle      = "cycle"
+	case group      = "owner"
 	case twelve     = "12"
-	case relator    = "owner"
 	case progeny    = "only"
 	case favorite   = "this"
 	case bookmark   = "bookmark"
@@ -31,7 +31,7 @@ enum ZHelpDotType: String {
 	case twelveHund = "1200"
 	case unwritable = "not"
 
-	var isReveal    : Bool            { return ![.drag, .essay, .cycle, .relator, .favorite].contains(self) && !showAccess }
+	var isReveal    : Bool            { return ![.drag, .essay, .cycle, .group, .favorite].contains(self) && !showAccess }
 	var showAccess  : Bool            { return  [.progeny,                      .unwritable].contains(self) }
 	var pointLeft   : Bool            { return self == .click }
 	var accessType  : ZDecorationType { return self == .progeny ? .sideDot : .vertical }
@@ -76,21 +76,21 @@ enum ZHelpDotType: String {
 	}
 
 	func dotParameters(isFilled: Bool = false) -> ZDotParameters {
-		var p         = ZDotParameters()
-		p.color       = gHelpHyperlinkColor
-		p.fill        = isFilled ? p.color : gBackgroundColor
-		p.filled      = isFilled
-		p.isReveal    = isReveal
-		p.traitType   = traitType
-		p.showAccess  = showAccess
-		p.accessType  = accessType
-		p.showList    = pointLeft || !isFilled
-		p.isRelator   = self == .relator
-		p.isRelated   = self == .relator  || self == .cycle
-		p.isNotemark  = self == .notemark || self == .has
-		p.isBookmark  = self == .bookmark
-		p.showSideDot = self == .favorite
-		p.childCount  = count
+		var p          = ZDotParameters()
+		p.color        = gHelpHyperlinkColor
+		p.fill         = isFilled ? p.color : gBackgroundColor
+		p.filled       = isFilled
+		p.isReveal     = isReveal
+		p.traitType    = traitType
+		p.showAccess   = showAccess
+		p.accessType   = accessType
+		p.showList     = pointLeft || !isFilled
+		p.isGroupOwner = self == .group
+		p.isGrouped    = self == .group    || self == .cycle
+		p.isNotemark   = self == .notemark || self == .has
+		p.isBookmark   = self == .bookmark
+		p.showSideDot  = self == .favorite
+		p.childCount   = count
 
 		return p
 	}

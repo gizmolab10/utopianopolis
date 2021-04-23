@@ -37,14 +37,18 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		var lastClickTime: Date?
 
 		func isDoubleClick(on iZone: Zone? = nil) -> Bool {
-			let    isFast = lastClickTime?.timeIntervalSinceNow ?? -10.0 > -1.8
+			let  interval = lastClickTime?.timeIntervalSinceNow ?? -10.0
+			let    isFast = interval > -1.8
 			let  isRepeat = lastClicked == iZone
+			let  isDouble = isRepeat ? isFast : false
 			lastClickTime = Date()
 			lastClicked   = iZone
 
-			columnarReport("repeat: \(isRepeat)", "fast: \(isFast)")
+			if  isDouble {
+				columnarReport("repeat: \(isRepeat)", "fast: \(isFast)")
+			}
 
-			return isRepeat ? isFast : false
+			return isDouble
 		}
 	}
 
@@ -221,12 +225,15 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 					restartGestureRecognition()
 					gSignal([.sDatum])                            // so color well and indicators get updated
-				} else if let dot = detectDot(iGesture) {
-					if  !dot.isReveal {
-						dragStartEvent(dot, iGesture)             // start dragging a drag dot
-					} else if let zone = dot.widgetZone {
+				} else if let  dot = detectDot(iGesture),
+						  let zone = dot.widgetZone {
+					if  dot.isReveal {
 						cleanupAfterDrag()                        // no dragging
 						zone.revealDotClicked(flags)
+					} else if clickManager.isDoubleClick(on: zone) {
+						gHere = zone
+					} else {
+						dragStartEvent(dot, iGesture)             // start dragging a drag dot
 					}
 				} else {                                          // begin drag
 					gRubberband.rubberbandStartEvent(location, iGesture)

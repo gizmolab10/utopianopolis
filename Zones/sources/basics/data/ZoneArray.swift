@@ -493,32 +493,32 @@ extension ZoneArray {
 		}
 	}
 
-	mutating func toggleRelator() {
-		let relator = Zone.create(named: "group name", databaseID: .mineID)
+	mutating func toggleGroupOwnership() {
+		let groupOwner = Zone.create(named: "group name", databaseID: .mineID)
 
 		for child in self {
-			if  child.isRelator {                // remove .relator from attributes
-				child.alterAttribute(.relator, remove: true)
+			if  child.isGroupOwner {             // remove .groupOwner from attributes
+				child.alterAttribute(.groupOwner, remove: true)
 				gRedrawMaps()
 
-				return                           // abandon relator created above
+				return                           // abandon groupOwner created above
 			}
 
 			if  child.isBookmark {
 				child.orphan()                   // move from current parent
-				relator.addChild(child)          // into relator
+				groupOwner.addChild(child)       // into groupOwner
 			} else {
-				relator.addChild(child.createBookmark())
+				groupOwner.addChild(child.createBookmark())
 			}
 		}
 
 		gSmallMapMode = .favorites			     // switch to favorites
 
 		gCurrentSmallMapRecords?.showRoot()      // point here to root, and expand
-		relator.alterAttribute(.relator, remove: false)
-		gFavorites.insertAsNext(relator)
+		groupOwner.alterAttribute(.groupOwner, remove: false)
+		gFavorites.insertAsNext(groupOwner)
 		gRedrawMaps()
-		relator.edit()
+		groupOwner.edit()
 	}
 
 }

@@ -1050,7 +1050,7 @@ class ZRecords: NSObject {
 
 		let finishAndGrab = { (grabMe: Zone) in
 			gSmallMapController?.update()
-			grabMe.grab() // changes work mode !!!!!!!
+			grabMe.grab()               // NOTE: changes work mode
 			atArrival()
 		}
 
@@ -1076,9 +1076,7 @@ class ZRecords: NSObject {
 				atArrival()
 			}
 		} else {                        // state 5
-			if  shouldGrab {
-				gHere = zone
-			}
+			gHere = zone
 
 			finishAndGrab(zone)
 		}

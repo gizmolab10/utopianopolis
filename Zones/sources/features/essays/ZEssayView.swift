@@ -1373,9 +1373,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let type = ZEssayHyperlinkType(rawValue: iItem.keyEquivalent) {
 			var link : String? = type.linkType + kColonSeparator
 
-			func setLink(to value: String?) {
-				if  let v = value, !v.isEmpty {
-					link?.append(v)
+			func setLink(to appendToLink: String?, replacement: String? = nil) {
+				if  let a = appendToLink, !a.isEmpty {
+					link?.append(a)
 				} else {
 					link  = nil  // remove existing hyperlink
 				}
@@ -1385,13 +1385,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				} else {
 					textStorage?   .addAttribute(.link, value: link!, range: selectedRange)
 				}
+
+				if  let r = replacement {
+					textStorage?.replaceCharacters(in: selectedRange, with: r)
+				}
 			}
 
 			func displayLinkDialog() {
 				let showAs = textStorage?.string.substring(with: selectedRange)
 
-				gEssayController?.modalForLink(type: type, showAs) { path, showAs in
-					setLink(to: path)
+				gEssayController?.modalForLink(type: type, showAs) { path, replacement in
+					setLink(to: path, replacement: replacement)
 				}
 			}
 
@@ -1412,28 +1416,29 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let parts = link.components(separatedBy: kColonSeparator)
 
 			if  parts.count > 1,
-				let    t = parts.first?.first,                          // first character of first part
-				let last = parts.last,
-				let type = ZEssayHyperlinkType(rawValue: String(t)) {
-				let zone = gSelecting.zone(with: last)	                // find zone with last
+				let  one = parts.first?.first,                          // first character of first part
+				let name = parts.last,
+				let type = ZEssayHyperlinkType(rawValue: String(one)) {
+				let zone = gRemoteStorage.maybeZoneForRecordName(name)  // find zone whose record name == name
 				switch type {
 					case .hEmail:
 						link.openAsURL()
 						return true
 					case .hBundled:
-						last.asBundleResource?.openAsURL()
+						name.asBundleResource?.openAsURL()
 						return true
 					case .hIdea:
 						if  let  grab = zone {
-							gHere     = grab			                // focus on zone with last
 							let eZone = gCurrentEssayZone
 
-							grab  .grab()
-							grab  .asssureIsVisible()
-							eZone?.asssureIsVisible()
-
 							FOREGROUND {
-								self.done()
+								self  .done()                           // changes grabs and here, so ...
+
+								gHere = grab			                // focus on zone
+
+								grab  .grab()                           // select it, too
+								grab  .asssureIsVisible()
+								eZone?.asssureIsVisible()
 								gRedrawMaps()
 							}
 

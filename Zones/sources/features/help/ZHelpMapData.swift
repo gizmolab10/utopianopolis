@@ -181,15 +181,15 @@ class ZHelpMapData : ZHelpData {
 		"2",			"", 												"",
 		"2!MULTIPLE IDEAS SELECTED:", 									"", "",
 		"2",			"", 												"",
-		"2_KEY",		"", 												"",
+		"2_KEY",		"",													"",
 		"2HYPHEN", 		"first idea is titled line -> group",	 			"lines-37426469b7c6",
+		"2PLUS",		"create favorites group",							"",
 		"2#", 			"mark with ascending numbers", 						"extras-2a9b1a7db21f",
-		"2A", 			"a to z (+ OPTION: z to a)", 						"organize-fcdc44ac04e4",
-		"2I", 			"by number of children (+ OPTION: reverse)", 		"",
-		"2M", 			"by length (+ OPTION: reverse)", 					"organize-fcdc44ac04e4",
-		"2R", 			"reverse",		 									"organize-fcdc44ac04e4",
+		"2R", 			"reverse",							 				"organize-fcdc44ac04e4",
 		"2",			"", 												"",
-		"2_SHIFT + KEY",												"", "",
-		"2EQUALS",		"create favorites group from selection",			"",
+		"2_KEY",		"+ OPTION key: reversed sort",						"",
+		"2A", 			"sort a to z (+ OPTION: z to a)", 					"organize-fcdc44ac04e4",
+		"2I", 			"sort by number of children",				 		"",
+		"2M", 			"sort by length",					 				"organize-fcdc44ac04e4"
 	]
 }

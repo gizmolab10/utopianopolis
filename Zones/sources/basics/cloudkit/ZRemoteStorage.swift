@@ -65,8 +65,7 @@ class ZRemoteStorage: NSObject {
         
         return clouds
     }
-    
-    
+
     var allRecordsArrays:  [ZRecords] {
         var recordsArray = [ZRecords] ()
         

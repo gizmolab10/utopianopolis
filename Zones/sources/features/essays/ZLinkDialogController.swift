@@ -40,8 +40,6 @@ class ZLinkDialogController: ZGenericController {
 		params       = parameters
 		showAs?.text = params?.showAs ?? "click here"
 		label? .text = params?.type?.linkDialogLabel
-
-//		view.setAllSubviewsNeedDisplay()
 	}
 
 	@IBAction func buttonAction(button: ZButton) {

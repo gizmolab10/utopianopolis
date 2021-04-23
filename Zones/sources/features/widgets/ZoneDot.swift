@@ -26,8 +26,8 @@ struct  ZDotParameters {
 	var isDrop        : Bool            = false
 	var filled        : Bool            = false
 	var isReveal      : Bool            = false
-	var isRelator     : Bool            = false
-	var isRelated     : Bool            = false
+	var isGrouped     : Bool            = false
+	var isGroupOwner  : Bool            = false
 	var isBookmark    : Bool            = false
 	var isNotemark    : Bool            = false
 	var showSideDot   : Bool            = false
@@ -243,8 +243,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		path.fill()
 	}
 
-	func drawRelatorDecorations(for parameters: ZDotParameters, in iDirtyRect: CGRect) {
-		if  parameters.isRelator {
+	func drawGroupingDecorations(for parameters: ZDotParameters, in iDirtyRect: CGRect) {
+		if  parameters.isGroupOwner {
 			let (a,b) = iDirtyRect.insetEquallyBy(fraction: 0.25).twoDotsVertically(fractionalDiameter: 0.7)
 			let  path = ZBezierPath(ovalIn: a)
 
@@ -303,13 +303,13 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		} else {
 			decorationFillColor.setFill()
 
-			if  parameters.isRelated {
+			if  parameters.isGrouped {
 
-				// /////////////////// //
-				// RELATED DECORATIONS //
-				// /////////////////// //
+				// //////////////////// //
+				// GROUPING DECORATIONS //
+				// //////////////////// //
 
-				drawRelatorDecorations(for: parameters, in: iDirtyRect)
+				drawGroupingDecorations(for: parameters, in: iDirtyRect)
 			}
 
 			if parameters.showAccess {

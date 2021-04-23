@@ -339,20 +339,6 @@ class ZSelecting: NSObject {
         }
     }
     
-	func zone(with recordName: String) -> Zone? {
-		var found: Zone?
-
-		for records in gRemoteStorage.allRecordsArrays {
-			if  let zone = records.maybeZoneForRecordName(recordName) {
-				found = zone
-
-				break
-			}
-		}
-
-		return found
-	}
-
 	@discardableResult func grabAndNoUI(_ iZones: ZoneArray?) -> ZoneArray? {
 		if  let    newGrabs = iZones {
 			let    oldGrabs = currentMapGrabs

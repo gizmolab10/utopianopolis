@@ -45,7 +45,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                       noteMaybe :              ZNote?
 	var                  crossLinkMaybe :            ZRecord?
 	var                 parentZoneMaybe :               Zone?
-	var                         relator :               Zone? { if let (_, r) = relator([]) { return r } else { return nil } }
+	var                      groupOwner :               Zone? { if let (_, r) = groupOwner([]) { return r } else { return nil } }
 	var                  bookmarkTarget :               Zone? { return crossLink as? Zone }
 	var                     destroyZone :               Zone? { return cloud?.destroyZone }
 	var                       trashZone :               Zone? { return cloud?.trashZone }
@@ -94,8 +94,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                  isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || type.isExemplar }
 	var                  spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
 	var                      spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
-	var                      isARelated :               Bool  { return relator?.bookmarkTargets.contains(self) ?? false }
-	var                       isRelator :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.relator.rawValue) ?? false }
+	var                       isInGroup :               Bool  { return groupOwner?.bookmarkTargets.contains(self) ?? false }
+	var                    isGroupOwner :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.groupOwner.rawValue) ?? false }
 	var                  directReadOnly :               Bool  { return directAccess == .eReadOnly || directAccess == .eProgenyWritable }
 	var                     userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
 	var                    userCanWrite :               Bool  { return userHasDirectOwnership || isIdeaEditable }
@@ -1737,46 +1737,46 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gControllers.swapMapAndEssay(force: .wEssayMode)
 	}
 
-	// MARK:- relator
+	// MARK:- groupOwner
 	// MARK:-
 
-	var parentIsARelator : Zone? {
+	var parentOwnsAGroup : Zone? {
 		if  isInEitherMap,
-			let    p = parentZone, p.isRelator, p.isInEitherMap {
+			let    p = parentZone, p.isGroupOwner, p.isInEitherMap {
 			return p
 		}
 
 		return nil
 	}
 
-	private func relator(_ iVisited: [String]) -> ([String], Zone)? {
+	private func groupOwner(_ iVisited: [String]) -> ([String], Zone)? {
 		guard let name = ckRecordName, !iVisited.contains(name), gHasFinishedStartup else {
-			return nil                                          // avoid looking more than once per zone for a relator
+			return nil                                          // avoid looking more than once per zone for a group owner
 		}
 
 		var visited = iVisited
 
 		visited.appendUnique(item: name)
 
-		if  isRelator, isInEitherMap {
+		if  isGroupOwner, isInEitherMap {
 			return (visited, self)
-		} else if let p = parentIsARelator {
+		} else if let p = parentOwnsAGroup {
 			visited.appendUnique(item: p.ckRecordName)
 			return (visited, p)
 		} else if let t = bookmarkTarget {
-			return t.relator(visited)
+			return t.groupOwner(visited)
 		} else {
 			for bookmark in bookmarksTargetingSelf {
 				visited.appendUnique(item: bookmark.ckRecordName)
 				visited.appendUnique(item: bookmark.parentZone?.ckRecordName)
 
-				if  let r = bookmark.parentIsARelator {
+				if  let r = bookmark.parentOwnsAGroup {
 					return (visited, r)
 				}
 			}
 
 			for target in bookmarkTargets {
-				if  let (v, r) = target.relator(visited) {
+				if  let (v, r) = target.groupOwner(visited) {
 					visited.appendUnique(contentsOf: v)
 
 					return (visited, r)
@@ -1787,7 +1787,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	func related(_ iVisited: [String]) -> ZoneArray? {
+	func ownedGroup(_ iVisited: [String]) -> ZoneArray? {
 		guard let name = ckRecordName, !iVisited.contains(name) else { return nil }
 		var      zones = ZoneArray()
 		var    visited = iVisited
@@ -1822,16 +1822,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	func goToNextRelated(_ forward: Bool) {
-		guard   let   rr = relator else {
+	func cycleToNextInGroup(_ forward: Bool) {
+		guard   let   rr = groupOwner else {
 			if  self    != gHere {
-				gHere.goToNextRelated(forward)
+				gHere.cycleToNextInGroup(forward)
 			}
 
 			return
 		}
 
-		if  let        r = rr.related([]), r.count > 0,
+		if  let        r = rr.ownedGroup([]), r.count > 0,
 			let    index = indexIn(r) {
 			let      max = r.count - 1
 			if       max > 0,
@@ -3203,26 +3203,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func dotParameters(_ isFilled: Bool, _ isReveal: Bool) -> ZDotParameters {
-		let         c = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
-		var         p = ZDotParameters()
-		let         t = bookmarkTarget
-		let         k = traitKeys
-		let         r = relator
-		p.color       = c
-		p.isRelated   = r != nil
-		p.showList    = expanded
-		p.isReveal    = isReveal
-		p.filled      = isFilled
-		p.isBookmark  = isBookmark
-		p.showAccess  = hasAccessDecoration
-		p.isNotemark  = t?.hasNote ?? false
-		p.isRelator   = r == self || r == t
-		p.isDrop      = self == gDragDropZone
-		p.showSideDot = isCurrentSmallMapBookmark
-		p.traitType   = (k.count < 1) ? "" : k[0]
-		p.fill        = isFilled ? c.lighter(by: 2.5) : gBackgroundColor
-		p.accessType  = directAccess == .eProgenyWritable ? .sideDot : .vertical
-		p.childCount  = (gCountsMode == .progeny) ? progenyCount : indirectCount
+		let          c = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
+		var          p = ZDotParameters()
+		let          t = bookmarkTarget
+		let          k = traitKeys
+		let          g = groupOwner
+		p.color        = c
+		p.isGrouped    = g != nil
+		p.showList     = expanded
+		p.isReveal     = isReveal
+		p.filled       = isFilled
+		p.isBookmark   = isBookmark
+		p.showAccess   = hasAccessDecoration
+		p.isNotemark   = t?.hasNote ?? false
+		p.isGroupOwner = g == self || g == t
+		p.isDrop       = self == gDragDropZone
+		p.showSideDot  = isCurrentSmallMapBookmark
+		p.traitType    = (k.count < 1) ? "" : k[0]
+		p.fill         = isFilled ? c.lighter(by: 2.5) : gBackgroundColor
+		p.accessType   = directAccess == .eProgenyWritable ? .sideDot : .vertical
+		p.childCount   = (gCountsMode == .progeny) ? progenyCount : indirectCount
 
 		return p
 	}

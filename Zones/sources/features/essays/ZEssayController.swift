@@ -37,11 +37,8 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 	}
 
 	override func prepare(for segue: ZStoryboardSegue, sender: Any?) {
-		if  linkDialogController == nil {
-			linkDialogController  = segue.destinationController as? ZLinkDialogController
-			linkDialogController?.loadView()
-		}
-
+		linkDialogController  = segue.destinationController as? ZLinkDialogController
+		linkDialogController?.loadView()
 		linkDialogController?.setupWith(params)
 	}
 

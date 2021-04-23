@@ -26,8 +26,8 @@ class ZHelpDotsData: ZHelpData {
 		".b",					"editable",																		"",
 		".b",					"not editable",																	"",
 		".b",					"only the ideas in all its sublists are editable",								"",
-		".b",					"cycle of related ideas",														"",
-		".b",					"owner of cycle (one per cycle)",												"",
+		".b",					"member of a favorites group",													"",
+		".b",					"owner of group",																"",
 		"",						"",																				"",
 		"_appears only in the favorite and recent lists",													"",	"",
 		".b",					"this bookmark's target is current focus",										""
