@@ -421,24 +421,24 @@ enum ZoneAttributeType: String {
 	case groupOwner     = "+"
 }
 
-enum ZEssayHyperlinkType: String {
-	case hWeb     = "h"
-	case hIdea    = "i"
-	case hNote    = "n"
-	case hEssay   = "e"
-	case hClear   = "c"
-	case hEmail   = "m"
-	case hBundled = "b"
+enum ZEssayLinkType: String {
+	case hWeb   = "h"
+	case hFile  = "f"
+	case hIdea  = "i"
+	case hNote  = "n"
+	case hEssay = "e"
+	case hEmail = "m"
+	case hClear = "c"
 
 	var title: String {
 		switch self {
-			case .hIdea:    return "Idea"
-			case .hNote:    return "Note"
-			case .hEssay:   return "Essay"
-			case .hEmail:   return "Email"
-			case .hClear:   return "Clear"
-			case .hBundled: return "Bundled"
-			case .hWeb:     return "Internet"
+			case .hWeb:   return "Internet"
+			case .hFile:  return "Upload"
+			case .hIdea:  return "Idea"
+			case .hNote:  return "Note"
+			case .hEssay: return "Essay"
+			case .hEmail: return "Email"
+			case .hClear: return "Clear"
 		}
 	}
 
@@ -458,7 +458,7 @@ enum ZEssayHyperlinkType: String {
 		}
 	}
 
-	static var all: [ZEssayHyperlinkType] { return [.hWeb, .hIdea, .hEmail, .hNote, .hEssay, .hBundled, .hClear] }
+	static var all: [ZEssayLinkType] { return [.hWeb, .hIdea, .hEmail, .hNote, .hEssay, .hFile, .hClear] }
 
 }
 

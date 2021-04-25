@@ -96,13 +96,12 @@ class ZBreadcrumbsView : ZButtonsView {
 		let      crumbs = gBreadcrumbs.crumbZones
 		let       index = button.tag
 		if        index < crumbs.count {
-			let    zone = crumbs[button.tag]
-			let    last = gBreadcrumbs.crumbTipZone
+			let    zone = crumbs[index]
 			let   flags = button.currentEvent?.modifierFlags
 			let  OPTION = flags?.isOption  ?? false
 			let COMMAND = flags?.isCommand ?? false
 
-			if    zone == last, !gIsEssayMode, !COMMAND { return }
+			if    zone == gHere, !gIsEssayMode, !COMMAND { return }
 
 			func displayEssay(_ asEssay: Bool = true) {
 				let            saved = gCreateCombinedEssay
@@ -126,7 +125,7 @@ class ZBreadcrumbsView : ZButtonsView {
 							let span = gTextEditor.selectedRange()
 							edit.editAndSelect(range: span)
 						} else {
-							last?.grab()
+							gBreadcrumbs.crumbTipZone?.grab()
 						}
 					case .wMapMode:
 						if  COMMAND {

@@ -237,6 +237,7 @@ extension ZEventFlags {
 	var isAny:        Bool { return isCommand || isOption || isControl }
 	var isAll:        Bool { return isCommand && isOption && isControl }
 	var isSpecial:    Bool { return isCommand && isOption }
+	var isDual:       Bool { return isControl && isOption }
     var isNumericPad: Bool { return contains(.numericPad) }
     var isControl:    Bool { get { return contains(.control) } set { if newValue { insert(.control) } else { remove(.control) } } }
 	var isCommand:    Bool { get { return contains(.command) } set { if newValue { insert(.command) } else { remove(.command) } } }

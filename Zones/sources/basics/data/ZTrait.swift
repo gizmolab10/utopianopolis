@@ -137,6 +137,10 @@ class ZTrait: ZTraitAssets {
 					text 	   = string.string
 					format 	   = string.attributesAsString
 
+					if  text?.isEmpty ?? true {
+						text = kEssayDefault
+					}
+
 					// THE NEXT STATEMENT IS THE ONLY code which gathers assets for images,
 					// side-effect for a dropped image:
 					// it creates and adds an asset

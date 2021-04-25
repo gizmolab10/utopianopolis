@@ -65,7 +65,7 @@ class ZControllers: NSObject {
 	// MARK:-
 
 	func showEssay(forGuide: Bool) {
-		let recordName = forGuide ? "75F7C2D3-4493-4E30-80D8-2F1F60DA7069" : "96689264-EB25-49CC-9324-913BA5CEBD56"
+		let recordName = forGuide ? "75F7C2D3-4493-4E30-80D8-2F1F60DA7069" : "42F338C4-9055-4921-BBD8-1984DF406052"
 
 		if  let    e = gEssayView,
 			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {

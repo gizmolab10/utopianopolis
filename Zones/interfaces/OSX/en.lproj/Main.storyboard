@@ -1287,18 +1287,18 @@ CA
                     </customView>
                     <connections>
                         <outlet property="essayView" destination="WXi-Uu-tc4" id="yk5-5E-vaL"/>
-                        <segue destination="S3C-PE-ZiN" kind="modal" identifier="webLink" id="evQ-dx-xKm"/>
+                        <segue destination="S3C-PE-ZiN" kind="modal" identifier="link" id="evQ-dx-xKm"/>
                     </connections>
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1118" y="1172"/>
         </scene>
-        <!--Choose Link-->
+        <!--Create a Link-->
         <scene sceneID="yhj-YB-Xij">
             <objects>
                 <customObject id="IZh-Iz-IVH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <viewController title="Choose Link" storyboardIdentifier="linkDialog" id="S3C-PE-ZiN" customClass="ZLinkDialogController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Create a Link" storyboardIdentifier="linkDialog" id="S3C-PE-ZiN" customClass="ZLinkDialogController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="NY2-fD-2jz">
                         <rect key="frame" x="0.0" y="0.0" width="379" height="134"/>
                         <autoresizingMask key="autoresizingMask"/>

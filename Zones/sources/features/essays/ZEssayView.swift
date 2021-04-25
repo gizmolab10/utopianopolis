@@ -79,152 +79,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return 0
 	}
 
-	// MARK:- clean up
-	// MARK:-
-
-	func done() {
-		save()
-		exit()
-	}
-
-	func exit() {
-		prepareToExit()
-		gControllers.swapMapAndEssay(force: .wMapMode)
-	}
-
-	func save() {
-		if  let e = gCurrentEssay {
-			e.saveEssay(textStorage)
-			asssureSelectionIsVisible()
-		}
-	}
-
-	func prepareToExit() {
-		if  let e = gCurrentEssay,
-			e.lastTextIsDefault,
-			e.autoDelete {
-			e.zone?.deleteNote()
-		}
-
-		ungrabAll()
-		undoManager?.removeAllActions()
-
-		if  let zone = gCurrentEssayZone {
-			gHere    = zone
-
-			gHere.grab()
-		}
-	}
-
-	func grabDone() {
-		if  let zone = lastGrabbedDot?.note?.zone {
-			zone.grab()
-		} else {
-			gCurrentEssayZone?.grab()
-		}
-
-		done()
-	}
-
-	// MARK:- setup
-	// MARK:-
-
-	override func awakeFromNib() {
-		super.awakeFromNib()
-
-		usesRuler            = true
-		isRulerVisible       = true
-		importsGraphics      = true
-		allowsImageEditing   = true
-		displaysLinkToolTips = true
-		textContainerInset   = NSSize(width: margin, height: margin)
-
-		resetForDarkMode()
-
-		FOREGROUND { // wait for application to fully load the inspector bar
-			gMainWindow?.updateEssayEditorInspectorBar(show: true)
-
-			for tag in ZEssayButtonID.all {
-				self.addButtonFor(tag)
-			}
-		}
-	}
-
-	private func discardPriorText() {
-		gCurrentEssayZone?.noteMaybe = nil
-		delegate = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
-
-		if  let length = textStorage?.length, length > 0 {
-			textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
-		}
-	}
-
-	func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) {
-		if  let      note = current {
-			gCurrentEssay = note
-
-			gCurrentEssay?.reset()
-			updateText()
-			gCurrentEssay?.updateNoteOffsets()
-
-			if  let r = range {
-				FOREGROUND {
-					self.setSelectedRange(r)
-				}
-			}
-		}
-	}
-
-	func resetForDarkMode() {
-		usesAdaptiveColorMappingForDarkAppearance = true
-		let                       backgroundColor = (gIsDark ?  kDarkestGrayColor : kWhiteColor).cgColor
-		let                            scrollView = superview?.superview as? NSScrollView
-		let                             rulerView = scrollView?.horizontalRulerView
-		let                              scroller = scrollView?.verticalScroller
-		let modeAppearance                        = NSAppearance(named: gIsDark ? .darkAqua : .aqua)
-		appearance                                = modeAppearance
-		rulerView?                    .appearance = modeAppearance
-		scroller?                     .appearance = modeAppearance
-		scroller?.zlayer         .backgroundColor = backgroundColor
-		zlayer                   .backgroundColor = backgroundColor
-	}
-
-	func setup() {
-		updateText()
-		undoManager?.removeAllActions() // clear the undo stack of prior / disastrous information (about prior text)
-	}
-
-	func updateText(restoreSelection: Int? = nil) {
-
-		// make sure we actually have a current essay
-		// activate the buttons in the control bar
-		// grab the current essay text and put it in place
-		// grab record id of essay to indicate that essay
-		// has not been saved, avoids overwriting later
-
-		resetForDarkMode()
-
-		if  gCurrentEssay == nil {
-			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
-		} else {
-			setControlBarButtons(enabled: true)
-
-			if  (shouldOverwrite || restoreSelection != nil),
-				let text = gCurrentEssay?.essayText {
-				discardPriorText()
-				gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }   // emplace text
-				select(restoreSelection: restoreSelection)
-			}
-
-			essayID  = gCurrentEssayZone?.ckRecord?.recordID                  // do this after overwriting
-			delegate = self 					    	                      // set delegate after setText
-
-			if  gIsEssayMode {
-				gMainWindow?.makeFirstResponder(self)                         // this should never happen unless already in essay mode
-			}
-		}
-	}
-
 	// MARK:- output
 	// MARK:-
 
@@ -275,7 +129,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let  OPTION = flags.isOption
 		let   SHIFT = flags.isShift
 		let     ANY = flags.isAny
-		let    DUAL = OPTION && CONTROL
 
 		if  key    != key.lowercased() {
 			key     = key.lowercased()
@@ -310,7 +163,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch key {
 				case "a":      selectAll(nil)
 				case "b":      applyToSelection(BOLD: true)
-				case "d":      convertToChild(createNoteFromSelection: DUAL)
+				case "d":      convertToChild(flags)
 				case "e":      grabSelectedTextForSearch()
 				case "f":      gSearching.showSearch(OPTION)
 				case "g":      searchAgain(OPTION)
@@ -333,9 +186,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return true
 		} else if CONTROL {
 			switch key {
-				case "d":      convertToChild(createNoteFromSelection: true)
+				case "d":      convertToChild(flags)
 				case "h":      showHyperlinkPopup()
 				case "/":      popNoteAndUpdate()
+				default:       return false
+			}
+
+			return true
+		} else if OPTION {
+			switch key {
+				case "d":      convertToChild(flags)
 				default:       return false
 			}
 
@@ -451,7 +311,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				grabbedNotes.remove(at: index)
 			} else {
 				if !event.modifierFlags.isShift,
-				    singleleClick {
+				   singleleClick {
 					ungrabAll()
 				}
 
@@ -507,7 +367,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			NSCursor.arrow.set()
 		} else if let item = attachmentHit(at: rect),
-			let  imageRect = rectForRangedAttachment(item) {
+				  let  imageRect = rectForRangedAttachment(item) {
 
 			NSCursor.openHand.set()
 
@@ -564,6 +424,152 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				zone.asssureIsVisible()
 			}
 		}
+	}
+
+	// MARK:- setup
+	// MARK:-
+
+	override func awakeFromNib() {
+		super.awakeFromNib()
+
+		usesRuler            = true
+		isRulerVisible       = true
+		importsGraphics      = true
+		allowsImageEditing   = true
+		displaysLinkToolTips = true
+		textContainerInset   = NSSize(width: margin, height: margin)
+
+		resetForDarkMode()
+
+		FOREGROUND { // wait for application to fully load the inspector bar
+			gMainWindow?.updateEssayEditorInspectorBar(show: true)
+
+			for tag in ZEssayButtonID.all {
+				self.addButtonFor(tag)
+			}
+		}
+	}
+
+	private func discardPriorText() {
+		gCurrentEssayZone?.noteMaybe = nil
+		delegate                     = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
+
+		if  let length = textStorage?.length, length > 0 {
+			textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
+		}
+	}
+
+	func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) {
+		if  let      note = current {
+			gCurrentEssay = note
+
+			gCurrentEssay?.reset()
+			updateText()
+			gCurrentEssay?.updateNoteOffsets()
+
+			if  let r = range {
+				FOREGROUND {
+					self.setSelectedRange(r)
+				}
+			}
+		}
+	}
+
+	func resetForDarkMode() {
+		usesAdaptiveColorMappingForDarkAppearance = true
+		let                       backgroundColor = (gIsDark ?  kDarkestGrayColor : kWhiteColor).cgColor
+		let                            scrollView = superview?.superview as? NSScrollView
+		let                             rulerView = scrollView?.horizontalRulerView
+		let                              scroller = scrollView?.verticalScroller
+		let modeAppearance                        = NSAppearance(named: gIsDark ? .darkAqua : .aqua)
+		appearance                                = modeAppearance
+		rulerView?                    .appearance = modeAppearance
+		scroller?                     .appearance = modeAppearance
+		scroller?.zlayer         .backgroundColor = backgroundColor
+		zlayer                   .backgroundColor = backgroundColor
+	}
+
+	func setup() {
+		updateText()
+	}
+
+	func updateText(restoreSelection: Int? = nil) {
+
+		// make sure we actually have a current essay
+		// activate the buttons in the control bar
+		// grab the current essay text and put it in place
+		// grab record id of essay to indicate that essay
+		// has not been saved, avoids overwriting later
+
+		resetForDarkMode()
+
+		if  gCurrentEssay == nil {
+			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
+		} else {
+			setControlBarButtons(enabled: true)
+
+			if  (shouldOverwrite || restoreSelection != nil),
+				let text = gCurrentEssay?.essayText {
+				discardPriorText()
+				gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }   // emplace text
+				select(restoreSelection: restoreSelection)
+				undoManager?.removeAllActions()         // clear the undo stack of prior / disastrous information (about prior text)
+			}
+
+			essayID  = gCurrentEssayZone?.ckRecord?.recordID                  // do this after overwriting
+			delegate = self 					    	                      // set delegate after setText
+
+			if  gIsEssayMode {
+				gMainWindow?.makeFirstResponder(self)                         // this should never happen unless already in essay mode
+			}
+		}
+	}
+
+	// MARK:- clean up
+	// MARK:-
+
+	func done() {
+		save()
+		exit()
+	}
+
+	func exit() {
+		prepareToExit()
+		gControllers.swapMapAndEssay(force: .wMapMode)
+	}
+
+	func save() {
+		if  let e = gCurrentEssay {
+			e.saveEssay(textStorage)
+			asssureSelectionIsVisible()
+		}
+	}
+
+	func prepareToExit() {
+		if  let e = gCurrentEssay,
+			e.lastTextIsDefault,
+			e.autoDelete {
+			e.zone?.deleteNote()
+		}
+
+		ungrabAll()
+		undoManager?.removeAllActions()
+
+		if  let zone = gCurrentEssayZone {
+			gHere    = zone
+
+			gHere.grab()
+		}
+	}
+
+	func grabDone() {
+		if  let zone = lastGrabbedDot?.note?.zone {
+			zone.grab()
+		} else {
+			gCurrentEssayZone?.grab()
+		}
+
+		done()
 	}
 
 	// MARK:- locked ranges
@@ -904,8 +910,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
-				case .idForward: gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
-				case .idBack:    gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
+				case .idForward: gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
+				case .idBack:    gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
 				case .idSave:    save()
 				case .idHide:                          grabDone()
 				case .idCancel:                        gCurrentEssayZone?.grab();       exit()
@@ -1215,19 +1221,25 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		gSignal([.sCrumbs])
 	}
 
-	private func convertToChild(createNoteFromSelection: Bool = false) {
+	private func convertToChild(_ flags: ZEventFlags) {
 		if  let   text = selectionString, text.length > 0,
 			let   dbID = gCurrentEssayZone?.databaseID,
 			let parent = selectedZone {
 
-			if  createNoteFromSelection {
-				let child = Zone.create(named: "idea", databaseID: dbID)   	// create new (to be child) zone from text
+			func child(named name: String, withText: String) {
+				let child = Zone.create(named: name, databaseID: dbID)   	// create new (to be child) zone from text
 
 				parent.addChild(child)
 				child.setTraitText(text, for: .tNote)                       // create note from text in the child
 				gCurrentEssayZone?.createNote()
 
 				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
+			}
+
+			if        flags.isDual {
+				child(named: "idea", withText: text)
+			} else if flags.isOption {
+				child(named: text,   withText: "")
 			} else {
 				let child = Zone.create(named: text, databaseID: dbID)   	// create new (to be child) zone from text
 
@@ -1348,17 +1360,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func showHyperlinkPopup() {
-		let menu = NSMenu(title: "create a hyperlink")
+		let menu = NSMenu(title: "create a link")
 		menu.autoenablesItems = false
 
-		for type in ZEssayHyperlinkType.all {
+		for type in ZEssayLinkType.all {
 			menu.addItem(item(type: type))
 		}
 
 		menu.popUp(positioning: nil, at: selectionRect.origin, in: self)
 	}
 
-	private func item(type: ZEssayHyperlinkType) -> NSMenuItem {
+	private func item(type: ZEssayLinkType) -> NSMenuItem {
 		let  	  item = NSMenuItem(title: type.title, action: #selector(handleHyperlinkPopupMenu(_:)), keyEquivalent: type.rawValue)
 		item   .target = self
 		item.isEnabled = true
@@ -1369,7 +1381,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	@objc private func handleHyperlinkPopupMenu(_ iItem: ZMenuItem) {
-		if  let type = ZEssayHyperlinkType(rawValue: iItem.keyEquivalent) {
+		if  let type = ZEssayLinkType(rawValue: iItem.keyEquivalent) {
 			var link : String? = type.linkType + kColonSeparator
 
 			func setLink(to appendToLink: String?, replacement: String? = nil) {
@@ -1400,7 +1412,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			switch type {
 				case .hClear: setLink(to: nil)
-				case .hBundled,
+				case .hFile,
 					 .hEmail,
 					 .hWeb:   displayLinkDialog()
 				default:      setLink(to: gSelecting.pastableRecordName)
@@ -1417,13 +1429,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  parts.count > 1,
 				let  one = parts.first?.first,                          // first character of first part
 				let name = parts.last,
-				let type = ZEssayHyperlinkType(rawValue: String(one)) {
+				let type = ZEssayLinkType(rawValue: String(one)) {
 				let zone = gRemoteStorage.maybeZoneForRecordName(name)  // find zone whose record name == name
 				switch type {
 					case .hEmail:
 						link.openAsURL()
 						return true
-					case .hBundled:
+					case .hFile:
 						name.asBundleResource?.openAsURL()
 						return true
 					case .hIdea:

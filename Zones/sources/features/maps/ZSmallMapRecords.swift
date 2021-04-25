@@ -256,6 +256,11 @@ class ZSmallMapRecords: ZRecords {
 			if  let bookmark    = recents.whoseTargetIntersects(with: targets, orSpawnsIt: false) {
 				currentBookmark = bookmark
 
+				if  let  parent = bookmark.parentZone,
+					let   index = bookmark.siblingIndex, index != 0 {
+					parent.moveChildIndex(from: index, to: 0)
+				}
+
 				return bookmark
 			}
 		} else {

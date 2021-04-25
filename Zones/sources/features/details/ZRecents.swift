@@ -66,12 +66,7 @@ class ZRecents : ZSmallMapRecords {
 
 				bookmark?.moveZone(into: currentHere, at: 0)
 
-				let           b = updateCurrentRecent()
-
-				if  let  parent = b?.parentZone,
-					let   index = b?.siblingIndex, index != 0 {
-					parent.moveChildIndex(from: index, to: 0)
-				}
+				updateCurrentRecent()
 			}
 		}
 	}

@@ -42,10 +42,10 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 		linkDialogController?.setupWith(params)
 	}
 
-	func modalForLink(type: ZEssayHyperlinkType, _ showAs: String?, onCompletion: StringStringClosure?) {
+	func modalForLink(type: ZEssayLinkType, _ showAs: String?, onCompletion: StringStringClosure?) {
 		params = ZEssayLinkParameters(type: type, showAs: showAs, closure: onCompletion)
 
-		performSegue(withIdentifier: "webLink", sender: self)
+		performSegue(withIdentifier: "link", sender: self)
 	}
 
 }

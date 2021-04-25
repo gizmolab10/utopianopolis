@@ -110,22 +110,25 @@ let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
 
 func gSwapSmallMapMode(_ OPTION: Bool = false) {
-	if  gDetailsViewIsHidden {
-		gShowDetailsView = true    	// if the details view is hidden, show it
+	if  let c = gDetailsController {
+		if !c.viewIsVisible(for: .vSmallMap) {
+			c.showViewFor(.vSmallMap)
+		} else {
+			gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
 
-		gDetailsController?.showViewFor(.vSmallMap)
-		gMainController?.update()
-	} else {
-		let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
-		let newID     : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
-		gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
+			if  OPTION {			        // if any grabs are in current small map, move them to other map
+				let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
+				let   priorID : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
 
-		if  OPTION {			    // if any grabs are in current small map, move them to other map
-			gSelecting.swapGrabsFrom(currentID, toID: newID)
+				gSelecting.swapGrabsFrom(priorID, toID: currentID)
+			}
 		}
-	}
 
-	gSignal([.sDetails, .sSmallMap])
+		gShowDetailsView = true    	// make sure the details view is visible
+
+		gMainController?.update()
+		gSignal([.sDetails, .sSmallMap])
+	}
 }
 
 func gStoreProgressTimes() {

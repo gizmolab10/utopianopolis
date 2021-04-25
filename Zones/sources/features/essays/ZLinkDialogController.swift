@@ -14,7 +14,7 @@ enum ZLinkButtonType: String {
 }
 
 struct ZEssayLinkParameters {
-	let    type : ZEssayHyperlinkType?
+	let    type : ZEssayLinkType?
 	let  showAs : String?
 	let closure : StringStringClosure?
 }

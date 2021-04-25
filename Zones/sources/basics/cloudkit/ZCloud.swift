@@ -730,13 +730,13 @@ class ZCloud: ZRecords {
 	func fetchMap(_ onCompletion: IntClosure?) {
 		childlessParents = [] // start fresh each time
 
-		rootZone?.needProgeny()
-		trashZone?.needProgeny()
-		destroyZone?.needProgeny()
-		lostAndFoundZone?.needProgeny()
+		rootZone?         .needProgeny()
+		trashZone?        .needProgeny()
+		destroyZone?      .needProgeny()
+		lostAndFoundZone? .needProgeny()
 
 		if  databaseID == .mineID {
-			recentsZone?.needProgeny()
+			recentsZone?  .needProgeny()
 			favoritesZone?.needProgeny()
 		}
 
