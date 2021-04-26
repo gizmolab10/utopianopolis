@@ -1006,7 +1006,7 @@ extension Data {
 extension ZFiles {
 
     func showInFinder() {
-        (directoryURL as NSURL).open()
+        (filesURL as NSURL).open()
     }
     
     func saveAs() {

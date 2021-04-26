@@ -15,7 +15,11 @@ import CoreFoundation
     import UIKit
 #endif
 
-let gFiles = ZFiles()
+let gFiles    = ZFiles()
+let gFilesURL : URL = {
+	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+		.appendingPathComponent("Seriously", isDirectory: true)
+}()
 
 enum ZExportType: String {
 	case eSeriously = "seriously"
@@ -32,9 +36,10 @@ class ZFiles: NSObject {
     var   writtenRecordNames = [String] ()
     var filePaths: [String?] = [nil, nil]
     var           writeTimer : Timer?
-    var        _directoryURL : URL?
+	var           _assetsURL : URL?
+	var            _filesURL : URL?
 	var  approximatedRecords : Int { return fileSize / 900 }
-	func imageURLInAssetsFolder(for fileName: String) -> URL { return assetsDirectoryURL.appendingPathComponent(fileName) }
+	func imageURLInAssetsFolder(for fileName: String) -> URL { return assetsURL.appendingPathComponent(fileName) }
 
 	var fileSize : Int {
 		var result = 0
@@ -67,15 +72,21 @@ class ZFiles: NSObject {
         return false
     }
 
-    var directoryURL: URL {
-        get {
-            if  _directoryURL == nil {
-                _directoryURL  = createDataDirectory()
-            }
+	var filesURL: URL {
+		if  _filesURL == nil {
+			_filesURL  = createDataDirectory()
+		}
 
-            return _directoryURL!
-        }
-    }
+		return _filesURL!
+	}
+
+	var assetsURL: URL {
+		if  _assetsURL == nil {
+			_assetsURL  = createAssetsDirectory()
+		}
+
+		return _assetsURL!
+	}
 
     // MARK:- API
     // MARK:-
@@ -363,10 +374,10 @@ class ZFiles: NSObject {
             let        useGeneric = isEveryone || !gCloudStatusIsActive
             let   normalExtension = ".seriously"
             let   backupExtension = ".backup"
-            let         backupURL = directoryURL.appendingPathComponent(name + backupExtension)
-            let    genericFileURL = directoryURL.appendingPathComponent(name + normalExtension)
-            let      cloudFileURL = directoryURL.appendingPathComponent(cloudName + normalExtension)
-            let    cloudBackupURL = directoryURL.appendingPathComponent(cloudName + backupExtension)
+            let         backupURL = filesURL.appendingPathComponent(name + backupExtension)
+            let    genericFileURL = filesURL.appendingPathComponent(name + normalExtension)
+            let      cloudFileURL = filesURL.appendingPathComponent(cloudName + normalExtension)
+            let    cloudBackupURL = filesURL.appendingPathComponent(cloudName + backupExtension)
             let cloudBackupExists = manager.fileExists(atPath: cloudBackupURL.path)
             var     genericExists = manager.fileExists(atPath: genericFileURL.path)
             let      backupExists = manager.fileExists(atPath:      backupURL.path)
@@ -447,16 +458,16 @@ class ZFiles: NSObject {
 
     func createDataDirectory() -> URL {
         do {
-            try manager.createDirectory(atPath: gDataURL.path, withIntermediateDirectories: true, attributes: nil)
+            try manager.createDirectory(atPath: gFilesURL.path, withIntermediateDirectories: true, attributes: nil)
         } catch {
             printDebug(.dError, "\(error)")
         }
         
-        return gDataURL
+        return gFilesURL
     }
 
-	var assetsDirectoryURL : URL {
-		let url = directoryURL.appendingPathComponent("assets")
+	func createAssetsDirectory() -> URL {
+		let url = gFilesURL.appendingPathComponent("assets")
 
 		do {
 			try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true, attributes: nil)

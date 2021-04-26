@@ -6,7 +6,10 @@
     </entity>
     <entity name="ZFile" representedClassName="ZFile" syncable="YES">
         <attribute name="asset" optional="YES" attributeType="Binary"/>
+        <attribute name="dbid" optional="YES" attributeType="String"/>
+        <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="recordName" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
         <relationship name="owners" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ZTraitAssets" inverseName="files" inverseEntity="ZTraitAssets"/>
     </entity>
@@ -74,7 +77,7 @@
     <elements>
         <element name="SPreferences" positionX="-141.64697265625" positionY="295.1240997314453" width="128" height="43"/>
         <element name="SState" positionX="-141.5458984375" positionY="357.7412414550781" width="128" height="58"/>
-        <element name="ZFile" positionX="266.14306640625" positionY="314.0946960449219" width="128" height="103"/>
+        <element name="ZFile" positionX="266.14306640625" positionY="314.0946960449219" width="128" height="148"/>
         <element name="ZManifest" positionX="-141.881103515625" positionY="172.7405090332031" width="128" height="103"/>
         <element name="Zone" positionX="259.5447998046875" positionY="-57.4827880859375" width="128" height="284"/>
         <element name="ZTrait" positionX="45.648193359375" positionY="107.6937255859375" width="128" height="148"/>

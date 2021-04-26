@@ -117,7 +117,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                   toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
 	func                     recount()                        { updateAllProgenyCounts() }
 	func              createBookmark() ->               Zone  { return gBookmarks.createBookmark(targeting: self) }
-	class func randomZone(in dbID: ZDatabaseID) ->      Zone  { return Zone.create(named: String(arc4random()), databaseID: dbID) }
+	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.create(named: String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
 	var zonesWithNotes : ZoneArray {
@@ -2102,7 +2102,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func moveSelectionOut(extreme: Bool = false, onCompletion: BoolClosure?) {
-		if extreme {
+		if  extreme {
 			if  gHere.isARoot {
 				gHere = self // reverse what the last move out extreme did
 			} else {
@@ -2113,6 +2113,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					here.revealSiblings(untilReaching: gRoot!)
 					onCompletion?(true)
 				}
+
+				return
 			}
 		} else if let p = parentZone {
 			if  self == gHere {
@@ -2128,6 +2130,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					g.setAsSmallMapHereZone()
 					// FUBAR: parent sometimes disappears!!!!!!!!!
 				} else if p.isARoot {
+					onCompletion?(true)
 					return // do nothing if p is root of either small map
 				}
 
@@ -2137,6 +2140,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
 			gHere              = bookmark			                 // change focus to bookmark of self
 		}
+
+		onCompletion?(true)
 	}
 
 	func revealZonesToRoot(_ onCompletion: Closure?) {

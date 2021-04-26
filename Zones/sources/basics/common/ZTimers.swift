@@ -81,8 +81,8 @@ func gStartTimers(for timers: [ZTimerID]) {
 
 func gStartTimer(for timerID: ZTimerID?) {
 	if  let       tid = timerID {
-		var     block : TimerClosure?
-		let repeaters : [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tSync]
+		let repeaters : [ZTimerID]   = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tSync]
+		var     block : TimerClosure = { iTimer in }        // do nothing by default
 		let   repeats = repeaters.contains(tid)
 		var   waitFor = 1.0                                 // one second
 
@@ -102,11 +102,11 @@ func gStartTimer(for timerID: ZTimerID?) {
 			case .tSync:                    block = { iTimer in if gIsReadyToShowUI { gSaveContext(); gBatches.save { iSame in } } }
 			case .tRecount:                 block = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount(); gSignal([.sStatus]) } }
 			case .tCloudAvailable:          block = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
-			case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.deferralHappensMaybe(iTimer) }
+			case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.invokeDeferralMaybe(iTimer) }
 			default:                        break
 		}
 
-		gTimers.resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats, block: block ?? { iTimer in })
+		gTimers.resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats, block: block )
 	}
 }
 

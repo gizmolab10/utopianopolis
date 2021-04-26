@@ -1688,7 +1688,7 @@ extension NSMutableAttributedString {
 	// side-effect for a freshly dropped image:
 	// it creates and returns an additional asset
 
-	func assets(for trait: ZTrait) -> [CKAsset]? {
+	func assets(for trait: ZTraitAssets) -> [CKAsset]? {
 		var array = [CKAsset]()
 		let     i = attachedImages // grab from text attachment cells
 

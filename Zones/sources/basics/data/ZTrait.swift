@@ -142,11 +142,10 @@ class ZTrait: ZTraitAssets {
 					}
 
 					// THE NEXT STATEMENT IS THE ONLY code which gathers assets for images,
-					// side-effect for a dropped image:
-					// it creates and adds an asset
+					// side-effect for each dropped image:
+					// it creates and adds an asset and a ZFile
 
-					assets     = string.assets(for: self)
-
+					extractAssets(from: string)
 					updateSearchables()
 					updateCKRecordProperties()
 				}

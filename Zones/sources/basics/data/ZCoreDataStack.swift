@@ -12,30 +12,30 @@ func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gC
 func gSaveContext()                                                         { gCoreDataStack.saveContext() }
 let  gCoreDataStack  = ZCoreDataStack()
 var  gCoreDataIsBusy : Bool  { return gCoreDataStack.currentOpID != nil }
-let  gCoreDataURL    : URL = { return gDataURL.appendingPathComponent("data") }()
-let  gDataURL        : URL = {
-	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-		.appendingPathComponent("Seriously", isDirectory: true)
-}()
+let  gCoreDataURL    : URL = { return gFilesURL.appendingPathComponent("data") }()
+
+struct ZCDDeferred {
+	let closure : Closure?         // for deferralHappensMaybe to invoke
+	let    opID : ZCDOperationID   // so status text can show it
+}
 
 class ZCoreDataStack: NSObject {
 
+	var       deferralStack = [ZCDDeferred]()
 	let          cloudKitID = "iCloud.com.seriously.CoreData"
 	let            localURL = gCoreDataURL.appendingPathComponent("local.store")
 	let           publicURL = gCoreDataURL.appendingPathComponent("cloud.public.store")
 	let          privateURL = gCoreDataURL.appendingPathComponent("cloud.private.store")
 	lazy var          model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }()
 	lazy var    coordinator : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
-	lazy var managedContext : NSManagedObjectContext        = { return persistentContainer.viewContext }()
 	lazy var   privateStore : NSPersistentStore?            = { return persistentStore(for: privateURL) }()
 	lazy var    publicStore : NSPersistentStore?            = { return persistentStore(for: publicURL) }()
 	lazy var     localStore : NSPersistentStore?            = { return persistentStore(for: localURL) }()
+	var      managedContext : NSManagedObjectContext          { return persistentContainer.viewContext }
 	var            isDoneOp : Bool                            { return currentOpID == nil }
 	var          statusText : String                          { return statusOpID?.description ?? "" }
-	var          statusOpID : ZCDOperationID?                 { return currentOpID ?? waitingOpID}
-	var         waitingOpID : ZCDOperationID?
+	var          statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
 	var         currentOpID : ZCDOperationID?
-	var     deferredClosure : Closure?
 
 	// MARK:- internals
 	// MARK:-
@@ -104,8 +104,8 @@ class ZCoreDataStack: NSObject {
 				fatalError("Unresolved error \(error), \(error.userInfo)")
 			}
 		}
-
-		container.viewContext.mergePolicy                          = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+		
+		container.viewContext.mergePolicy                          = NSMergePolicy(merge: .overwriteMergePolicyType)
 		container.viewContext.automaticallyMergesChangesFromParent = true
 
 		return container
@@ -115,23 +115,37 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func isAvailable(for opID: ZCDOperationID) -> Bool { return currentOpID == nil || currentOpID == opID }
+	func makeAvailable()                               {        currentOpID  = nil }
 
-	func deferralHappensMaybe(_ iTimer: Timer?) {
-		if  currentOpID == nil {       // nil means core data is no longer doing anything
-			currentOpID  = waitingOpID // must read this first, clear it next
-			waitingOpID  = nil         // set not waiting
+	func invokeDeferralMaybe(_ iTimer: Timer?) {
+		if  currentOpID == nil {           // nil means core data is no longer doing anything
+			if  deferralStack.count == 0 { // check if anything is deferred
+				iTimer?.invalidate()       // do not fire again, closure is only invoked once
+			} else {
+				let waiting = deferralStack.remove(at: 0)
+				currentOpID = waiting.opID
 
-			iTimer?.invalidate()       // do not fire again, deferal is only once
-			gSignal([.sData])          // tell data detail view about it
-			deferredClosure?()         // do what was deferred
-		}
+				gSignal([.sData])          // tell data detail view about it
+				waiting.closure?()         // do what was deferred
+			}
+	}
 	}
 
 	func deferUntilAvailable(for opID: ZCDOperationID, _ onAvailable: @escaping Closure) {
-		waitingOpID     = opID         // so status text can show it
-		deferredClosure = onAvailable  // for deferralHappensMaybe to invoke
+		if  currentOpID == nil {
+			currentOpID  = opID
+			onAvailable()
+		} else {
+			for deferred in deferralStack {
+				if  deferred.opID == opID {
+					return // this op is already deferred
+				}
+			}
 
-		gStartTimer(for: .tCoreDataDeferral)
+			deferralStack.append(ZCDDeferred(closure: onAvailable, opID: opID))
+
+			gStartTimer(for: .tCoreDataDeferral)
+		}
 	}
 
 	// MARK:- internal
@@ -192,13 +206,13 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func saveContext() {
-		if  gCanSave {
-			deferUntilAvailable(for: .oSave) {
-				FOREGROUND(canBeDirect: true) {
+		if  gCanSave, gIsReadyToShowUI {
+			self.deferUntilAvailable(for: .oSave) {
+				BACKGROUND {
 					let context = self.managedContext
-
 					if  context.hasChanges {
 						self.checkCrossStore()
+						
 						do {
 							try context.save()
 						} catch {
@@ -206,7 +220,7 @@ class ZCoreDataStack: NSObject {
 						}
 					}
 
-					self.currentOpID = nil
+					self.makeAvailable()
 				}
 			}
 		}
@@ -241,7 +255,7 @@ class ZCoreDataStack: NSObject {
 						} else {
 							self.load(type: kManifestType, into: dbID, onlyNeed: 1, using: NSFetchRequest<NSFetchRequestResult>(entityName: kManifestType)) { zRecord in
 								if  zRecord == nil {
-									self.currentOpID = nil
+									self.makeAvailable()
 
 									onCompletion?(0)
 								}
@@ -250,9 +264,7 @@ class ZCoreDataStack: NSObject {
 					}
 				}
 
-				BACKGROUND(canBeDirect: true) {
-					loadFullContext()
-				}
+				loadFullContext()
 			}
 		}
 	}
@@ -338,31 +350,27 @@ class ZCoreDataStack: NSObject {
 				var acquired = [String]()
 
 				func loadAllTraits() {
-					BACKGROUND(canBeDirect: true) {
-						self.loadTraits(ownedBy: gRemoteStorage.allProgeny, into: dbID) {
-							self.currentOpID = nil
+					self.loadTraits(ownedBy: gRemoteStorage.allProgeny, into: dbID) {
+						self.makeAvailable()
 
-							gNeedsRecount = true // trigger recount on next timer fire
-							onCompletion?()
-						}
+						gNeedsRecount = true // trigger recount on next timer fire
+						onCompletion?()
 					}
 				}
 
 				func load(childrenOf parents: ZoneArray) {
 					acquired.appendUnique(contentsOf: parents.recordNames)
-					BACKGROUND(canBeDirect: true) {
-						self.loadChildren(of: parents, into: dbID, acquired) { children in
-							if  children.count > 0 {
-								load(childrenOf: children)    // get the rest recursively
-							} else {
-								FOREGROUND(canBeDirect: true) {
-									records.applyToAllProgeny { iChild in
-										iChild.updateFromCoreDataTraitRelationships()
-										iChild.respectOrder()
-									}
-
-									loadAllTraits()           // if this is the end of the fetch
+					self.loadChildren(of: parents, into: dbID, acquired) { children in
+						if  children.count > 0 {
+							load(childrenOf: children)    // get the rest recursively
+						} else {
+							FOREGROUND(canBeDirect: true) {
+								records.applyToAllProgeny { iChild in
+									iChild.updateFromCoreDataTraitRelationships()
+									iChild.respectOrder()
 								}
+
+								loadAllTraits()           // if this is the end of the fetch
 							}
 						}
 					}
@@ -418,8 +426,21 @@ class ZCoreDataStack: NSObject {
 	// MARK:- search
 	// MARK:-
 
+	func assetExists(named: String, type: String, within dbID: ZDatabaseID?, onCompletion: ZRecordClosure? = nil) {
+		if  gIsReadyToShowUI, gCanLoad,
+			let        dbid = dbID?.identifier {
+			let idPredicate = NSPredicate(format: "name = %@ and type = %@", named, type)
+
+			self.search(within: dbid, type: kFileType, using: idPredicate) { matches in
+				onCompletion?(matches.first)
+			}
+		} else {
+			onCompletion?(nil)
+		}
+	}
+
 	func search(for match: String, within dbID: ZDatabaseID?, onCompletion: ZRecordsClosure? = nil) {
-		if  gIsReadyToShowUI,
+		if  gIsReadyToShowUI, gCanLoad,
 			let        dbid = dbID?.identifier {
 			let  searchable = match.searchable
 			let idPredicate = NSPredicate(format: "zoneName like %@", searchable)
@@ -428,6 +449,8 @@ class ZCoreDataStack: NSObject {
 					onCompletion?(matches)
 				}
 			}
+		} else {
+			onCompletion?([])
 		}
 	}
 
@@ -441,27 +464,25 @@ class ZCoreDataStack: NSObject {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
 			request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, dbPredicate])
 
-			self.deferUntilAvailable(for: .oSearch) {
-				BACKGROUND(canBeDirect: true) {
-					do {
-						let items = try self.managedContext.fetch(request)
-						for item in items {
-							if  let zRecord = item as? ZRecord {
-								if  uniqueOnly {
-									result.appendUnique(zRecord)
-								} else {
-									result.append(zRecord)
-								}
+			deferUntilAvailable(for: .oSearch) {
+				do {
+					let items = try self.managedContext.fetch(request)
+					for item in items {
+						if  let zRecord = item as? ZRecord {
+							if  uniqueOnly {
+								result.appendUnique(zRecord)
+							} else {
+								result.append(zRecord)
 							}
 						}
-					} catch {
-						print("search fetch failed")
 					}
-
-					self.currentOpID = nil // before calling closure
-
-					onCompletion?(result)
+				} catch {
+					print("search fetch failed")
 				}
+
+				self.makeAvailable() // before calling closure
+
+				onCompletion?(result)
 			}
 		}
 	}

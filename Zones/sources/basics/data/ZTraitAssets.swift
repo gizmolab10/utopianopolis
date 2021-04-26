@@ -30,6 +30,20 @@ class ZTraitAssets : ZRecord {
 	// MARK:- attachment
 	// MARK:-
 
+	func extractAssets(from attributed: NSMutableAttributedString) {
+		assets = attributed.assets(for: self)
+
+		updateFilesFromAssets()
+	}
+
+	func updateFilesFromAssets() {
+		if  let a = assets {
+			for asset in a {
+				ZFile.createMaybe(from: asset, databaseID: databaseID)
+			}
+		}
+	}
+
 	// ONLY called within set noteText, in call to
 	// set attributed strings from format stored in trait
 	//

@@ -41,6 +41,7 @@ enum ZCDOperationID: Int {
 	case oSave
 	case oFetch
 	case oSearch
+	case oAssets
 	case oProgeny
 
 	var description : String {
