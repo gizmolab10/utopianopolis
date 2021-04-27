@@ -61,8 +61,12 @@ class ZRecents : ZSmallMapRecords {
 				here  = gCurrentEssayZone
 			}
 
-			if  let   pushMe = here, gHasFinishedStartup { // avoid confusing recents upon relaunch
-				let bookmark = bookmarkTargeting(pushMe) ?? addNewBookmark(for: pushMe, action: .aCreateBookmark)
+			if  let     pushMe = here, gHasFinishedStartup { // avoid confusing recents upon relaunch
+				let   bookmark = bookmarkTargeting(pushMe) ?? addNewBookmark(for: pushMe, action: .aCreateBookmark)
+
+				if  let parent = rootZone {
+					parent.moveChildIndex(from: 0, to: parent.count)
+				}
 
 				bookmark?.moveZone(into: currentHere, at: 0)
 
@@ -133,11 +137,12 @@ class ZRecents : ZSmallMapRecords {
 		gRedrawMaps()
 	}
 
-	@discardableResult override func pop(_ zone: Zone? = gHereMaybe) -> Bool {
-		if  let   target = zone,
-			let bookmark = workingBookmark(for: target),
+	@discardableResult override func pop(_ zone: Zone? = nil) -> Bool {
+		if  let bookmark = (zone != nil) ? workingBookmark(for: zone!) : workingBookmarks.first,
+			let   parent = bookmark.parentZone,
 			let    index = bookmark.siblingIndex {
-			bookmark.parentZone?.children.remove(at: index)
+
+			parent.children.remove(at: index)
 
 			return true
 		}

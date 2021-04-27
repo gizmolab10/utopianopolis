@@ -69,6 +69,7 @@ let kAllDatabaseIDs: [ZDatabaseID] = [.mineID, .everyoneID]
 // MARK:- property names
 // MARK:-
 
+let                     kpDBID = "dbid"
 let                    kpEssay = "essay"
 let                    kpOwner = "owner"
 let                   kpParent = "parent"

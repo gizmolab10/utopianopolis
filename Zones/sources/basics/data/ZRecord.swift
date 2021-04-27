@@ -67,7 +67,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var isAdoptable: Bool { return false }
 	var cloudProperties: [String] { return ZRecord.cloudProperties }
 	var optionalCloudProperties: [String] { return ZRecord.optionalCloudProperties }
-	class var cloudProperties: [String] { return [] }
+	class var   cloudProperties: [String] { return [] }
 	class var optionalCloudProperties: [String] { return [] }
 
 	func orphan() {}
@@ -170,13 +170,12 @@ class ZRecord: ZManagedRecord { // NSObject {
 	}
 
 	func updateCKRecordProperties() {
-		if  let                  r = ckRecord {
+		if  let                     r = ckRecord {
 			for keyPath in cloudProperties {
-				let    cloudValue  = r[keyPath] as! NSObject?
-				let propertyValue  = value(forKeyPath: keyPath) as! NSObject?
-
-				if  propertyValue != nil && propertyValue != cloudValue {
-					r[keyPath]     = propertyValue as? CKRecordValue
+				if  let   recordValue =        r[keyPath]          as! NSObject?,
+					let propertyValue = value(forKeyPath: keyPath) as! NSObject?,
+					recordValue      != propertyValue {
+					r[keyPath]        = propertyValue as? CKRecordValue
 				}
 			}
 		}
@@ -630,7 +629,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 		gFiles.writtenRecordNames.append(name)
 
-		let   keyPaths = cloudProperties + (includeRecordName ? [kpRecordName] : []) + [kpModificationDate]
+		let   keyPaths = cloudProperties + [kpModificationDate, kpDBID] + (includeRecordName ? [kpRecordName] : [])
 		let  optionals = optionalCloudProperties + [kpModificationDate]
 		var       dict = ZStorageDictionary()
 
@@ -681,7 +680,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 			}
 		}
 
-		for keyPath in cloudProperties + [kpModificationDate] {
+		for keyPath in cloudProperties + [kpModificationDate, kpDBID] {
 			if  let   type = type(from: keyPath),
 				let object = dict[type],
 				let  value = object as? CKRecordValue {

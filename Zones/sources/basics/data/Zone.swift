@@ -685,14 +685,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func unlinkParentAndMaybeNeedSave() {
 		if (recordName(from: parentLink) != nil ||
-				parent                       != nil) &&
+				parent                   != nil) &&
 			canSaveWithoutFetch {
 			needSave()
 		}
 
-		parent          = nil
-		parentZoneMaybe = nil
-		parentLink      = kNullLink
+		if  parentZoneMaybe != nil ||
+				parent      != nil ||
+				parentLink  != kNullLink {
+			parent           = nil
+			parentZoneMaybe  = nil
+			parentLink       = kNullLink
+		}
 	}
 
 	var resolveParent: Zone? {

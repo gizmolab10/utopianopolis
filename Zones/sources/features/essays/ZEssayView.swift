@@ -142,6 +142,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch key {
 				case "c":      grabbedZones.copyToPaste()
 				case "t":      swapWithParent()
+				case "'":      gSwapSmallMapMode(OPTION)
 				case "/":      swapBetweenNoteAndEssay()
 				case kEscape:  gHelpController?.show(flags: flags)
 				case kEquals:  grabSelected()
@@ -176,6 +177,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 				case "z":      if  SHIFT { undoManager?.redo() } else { undoManager?.undo() }
 				case "/":      gHelpController?.show(flags: flags)
+				case "'":      gSwapSmallMapMode(OPTION)
 				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
 				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
 				case kReturn:  grabDone()
@@ -910,8 +912,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
-				case .idForward: gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
-				case .idBack:    gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
+				case .idForward: save(); gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
+				case .idBack:    save(); gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
 				case .idSave:    save()
 				case .idHide:                          grabDone()
 				case .idCancel:                        gCurrentEssayZone?.grab();       exit()
@@ -1191,9 +1193,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func popNoteAndUpdate() {
-		if  gRecents.pop() {
-			done()
-		} else {
+		if  gRecents.pop(),
+			let  notemark = gRecents.rootZone?.notemarks.first,
+			let      note = notemark.bookmarkTarget?.note {
+			gCurrentEssay = note
+			gRecents.setAsCurrent(notemark)
+			gSignal([.sSmallMap, .sCrumbs])
+
 			updateText()
 		}
 	}
@@ -1457,6 +1463,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 						}
 					case .hEssay, .hNote:
 						if  let target = zone {
+
+							save()
+
 							let common = gCurrentEssayZone?.closestCommonParent(of: target)
 
 							FOREGROUND {
