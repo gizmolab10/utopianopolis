@@ -29,13 +29,15 @@ class ZFilesRegistry {
 		}
 	}
 
-	func assetExists(named: String, type: String, in dbID: ZDatabaseID?, onCompletion: ZRecordClosure? = nil) {
+	func assetExists(for descriptor: ZFileDescriptor?, onCompletion: ZRecordClosure? = nil) {
 		var file: ZRecord?
 
-		if  let    dbid = dbID,
+		if  let    dbid = descriptor?.dbID,
+			let    name = descriptor?.name,
+			let    type = descriptor?.type,
 			let    dict = lookup [dbid],
 			let subdict = dict   [type] {
-			file        = subdict[named]
+			file        = subdict[name]
 		}
 
 		onCompletion?(file)

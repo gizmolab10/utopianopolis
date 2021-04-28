@@ -14,14 +14,27 @@ let  gCoreDataStack  = ZCoreDataStack()
 var  gCoreDataIsBusy : Bool  { return gCoreDataStack.currentOpID != nil }
 let  gCoreDataURL    : URL = { return gFilesURL.appendingPathComponent("data") }()
 
-struct ZCDDeferred {
+struct ZDeferral {
 	let closure : Closure?         // for deferralHappensMaybe to invoke
 	let    opID : ZCDOperationID   // so status text can show it
 }
 
+struct ZEntityDescriptor {
+	let entityName: String
+	let recordName: String?
+	let databaseID: ZDatabaseID?
+}
+
+struct ZExistence {
+	let closure : ZRecordClosure?
+	let  entity : ZEntityDescriptor?
+	let    file : ZFileDescriptor?
+}
+
 class ZCoreDataStack: NSObject {
 
-	var       deferralStack = [ZCDDeferred]()
+	var   existenceClosures = [ZExistence]()
+	var       deferralStack = [ZDeferral]()
 	let          cloudKitID = "iCloud.com.seriously.CoreData"
 	let            localURL = gCoreDataURL.appendingPathComponent("local.store")
 	let           publicURL = gCoreDataURL.appendingPathComponent("cloud.public.store")
@@ -100,6 +113,20 @@ class ZCoreDataStack: NSObject {
 		} else {
 			onCompletion?(0)
 		}
+	}
+
+	func loadForExistence(_ onCompletion: IntClosure?) {
+		for e in existenceClosures {
+//			let closure = e.closure
+			if  let n = e.entity {
+				print("\(n)")
+			}
+			if  let f = e.file {
+				print("\(f)")
+			}
+		}
+
+		onCompletion?(0)
 	}
 
 	func loadZone(with recordName: String, into dbID: ZDatabaseID?, onCompletion: Closure? = nil) {
@@ -361,7 +388,7 @@ class ZCoreDataStack: NSObject {
 				}
 			}
 
-			deferralStack.append(ZCDDeferred(closure: onAvailable, opID: opID))
+			deferralStack.append(ZDeferral(closure: onAvailable, opID: opID))
 
 			gStartTimer(for: .tCoreDataDeferral)
 		}
@@ -386,6 +413,10 @@ class ZCoreDataStack: NSObject {
 		return nil
 	}
 
+	func asyncHasZRecord(for descriptor: ZEntityDescriptor?, onExist: ZRecordClosure?) {
+		existenceClosures.append(ZExistence(closure: onExist, entity: descriptor, file: nil))
+	}
+
 	func hasExisting(entityName: String, recordName: String?, databaseID: ZDatabaseID?) -> Any? {
 		if  isAvailable(for: .oFetch),         // avoid crash due to core data fetch array being simultaneously mutated and enumerated
 			let     predicate = predicate(entityName: entityName, recordName: recordName, databaseID: databaseID) {
@@ -393,7 +424,7 @@ class ZCoreDataStack: NSObject {
 			request.predicate = predicate
 
 			do {
-				let     items = try self.managedContext.fetch(request)
+				let     items = try managedContext.fetch(request)
 				currentOpID   = nil
 
 				if  items.count > 0 {
@@ -424,16 +455,22 @@ class ZCoreDataStack: NSObject {
 	// MARK:- search
 	// MARK:-
 
-	func assetExists(named: String, type: String, within dbID: ZDatabaseID?, onCompletion: ZRecordClosure? = nil) {
+	func assetExists(for descriptor: ZFileDescriptor?, onExistence: ZRecordClosure? = nil) {
+		existenceClosures.append(ZExistence(closure: onExistence, entity: nil, file: descriptor))
+	}
+
+	func oldAssetExists(for descriptor: ZFileDescriptor?, onExistence: ZRecordClosure? = nil) {
 		if  gIsReadyToShowUI, gCanLoad,
-			let        dbid = dbID?.identifier {
-			let idPredicate = NSPredicate(format: "name = %@ and type = %@", named, type)
+			let        name = descriptor?.name,
+			let        type = descriptor?.type,
+			let        dbid = descriptor?.dbID?.identifier {
+			let idPredicate = NSPredicate(format: "name = %@ and type = %@", name, type)
 
 			self.search(within: dbid, type: kFileType, using: idPredicate) { matches in
-				onCompletion?(matches.first)
+				onExistence?(matches.first)
 			}
 		} else {
-			onCompletion?(nil)
+			onExistence?(nil)
 		}
 	}
 

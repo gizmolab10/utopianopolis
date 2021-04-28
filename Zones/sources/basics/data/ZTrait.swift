@@ -67,6 +67,14 @@ class ZTrait: ZTraitAssets {
 		return theCopy
 	}
 
+	static func asyncCreate(record: CKRecord, databaseID: ZDatabaseID?, onCreation: @escaping ZTraitClosure) {
+		asyncHasMaybe(record: record, entityName: kZoneType, databaseID: databaseID) { zRecord in        // first check if already exists
+			let trait = zRecord as? ZTrait ?? ZTrait(record: record, databaseID: databaseID)
+
+			onCreation(trait)
+		}
+	}
+
 	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZTrait {
 		if  let    has = hasMaybe(record: record, entityName: kTraitType, databaseID: databaseID) as? ZTrait {        // first check if already exists
 			return has

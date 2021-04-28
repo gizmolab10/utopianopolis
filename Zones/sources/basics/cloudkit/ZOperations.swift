@@ -34,6 +34,7 @@ enum ZOperationID: Int, CaseIterable {
     case oHere
 	case oMigrateFromCloud
 	case oAllTraits
+	case oCoreData
 	case oStartupDone
 
     // finish

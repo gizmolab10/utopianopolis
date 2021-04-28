@@ -24,7 +24,7 @@ class ZFavorites: ZSmallMapRecords {
     // MARK:- initialization
     // MARK:-
 
-	let cloudRootTemplates = Zone.create(as: kTemplatesRootName, databaseID: .mineID)
+	let cloudRootTemplates = Zone.create(within: kTemplatesRootName, databaseID: .mineID)
 
 	var hasTrash: Bool {
 		for favorite in workingBookmarks {

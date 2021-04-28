@@ -242,6 +242,24 @@ class ZRecord: ZManagedRecord { // NSObject {
 		}
 	}
 
+	static func asyncHasZRecord(recordName: String, entityName: String, databaseID: ZDatabaseID?, onExist: ZRecordClosure? = nil) {
+		if  let       dbid = databaseID,
+			let      cloud = gRemoteStorage.cloud(for: dbid),
+			let    zRecord = cloud.maybeZRecordForRecordName(recordName) {
+			onExist?(zRecord)
+		} else {
+			let z = ZEntityDescriptor(entityName: entityName, recordName: recordName, databaseID: databaseID)
+			gCoreDataStack.asyncHasZRecord(for: z, onExist: onExist)
+		}
+	}
+
+	static func asyncHasMaybe(record: CKRecord, entityName: String, databaseID: ZDatabaseID?, onExist: ZRecordClosure? = nil) {
+		asyncHasZRecord(recordName: record.recordID.recordName, entityName: entityName, databaseID: databaseID) { has in       // first check if already exists
+			has?.useBest(record: record)
+			onExist?(has)
+		}
+	}
+
 	static func hasZRecord(recordName: String, entityName: String, databaseID: ZDatabaseID?) -> ZRecord? {
 		if  let       dbid = databaseID,
 			let      cloud = gRemoteStorage.cloud(for: dbid),

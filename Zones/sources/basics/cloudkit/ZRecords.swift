@@ -1149,7 +1149,26 @@ class ZRecords: NSObject {
 		return nil
 	}
 
-    func sureZoneForCKRecord(_ ckRecord: CKRecord, requireFetch: Bool = true, preferFetch: Bool = false) -> Zone {
+	func asyncZoneForCKRecord(_ ckRecord: CKRecord, onCompletion: @escaping ZoneClosure) {
+		if  let z = maybeZoneForCKRecord(ckRecord) {
+			z.useBest(record: ckRecord)
+			onCompletion(z)
+		} else {
+			let f = ZEntityDescriptor(entityName: kZoneType, recordName: ckRecord.recordID.recordName, databaseID: databaseID)
+			gCoreDataStack.asyncHasZRecord(for: f) { zRecord in
+				var z  = zRecord as? Zone
+				if  z == nil {
+					z  = Zone(record: ckRecord, databaseID: self.databaseID)
+				} else {
+					z?.useBest(record: ckRecord)
+				}
+
+				onCompletion(z!)
+			}
+		}
+	}
+
+    func sureZoneForCKRecord(_ ckRecord: CKRecord) -> Zone {
         var zone = maybeZoneForCKRecord(ckRecord)
 
         if  let z = zone {

@@ -1093,7 +1093,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func swapWithParent(onCompletion: Closure? = nil) {
-		let scratchZone = Zone.create(as: kScratchRootName, databaseID: databaseID ?? gDatabaseID)
+		let scratchZone = Zone.create(within: kScratchRootName, databaseID: databaseID ?? gDatabaseID)
 
 		// swap places with parent
 
@@ -3418,7 +3418,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- local persistence
+	// MARK:- initialization
 	// MARK:-
 
 	// /////////////////////////////
@@ -3436,16 +3436,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: name))
 	}
 
-	static func create(as name: String, databaseID: ZDatabaseID) -> Zone {
-		return create(within: name, for: 0, databaseID: databaseID)
-	}
+	static func asyncCreate(record: CKRecord, databaseID: ZDatabaseID?, onCreation: @escaping ZoneClosure) {
+		asyncHasMaybe(record: record, entityName: kZoneType, databaseID: databaseID) { zRecord in        // first check if already exists
+			let zone = zRecord as? Zone ?? Zone(record: record, databaseID: databaseID)
 
-	static func create(within rootName: String, for index: Int, databaseID: ZDatabaseID) -> Zone {
-		let         record = ckRecordFor(rootName, at: index)
-		let        created = create(record: record, databaseID: databaseID)
-		created.parentLink = kNullLink
-
-		return created
+			onCreation(zone)
+		}
 	}
 
 	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> Zone {
@@ -3456,17 +3452,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return Zone(record: record, databaseID: databaseID)
 	}
 
+	// never use closure
+	static func create(within rootName: String, for index: Int = 0, databaseID: ZDatabaseID) -> Zone {
+		let         record = ckRecordFor(rootName, at: index)
+		let        created = create(record: record, databaseID: databaseID)
+		created.parentLink = kNullLink
+
+		return created
+	}
+
+	// never use closure
 	static func create(named: String?, recordName: String? = nil, databaseID: ZDatabaseID?) -> Zone {
 		var newRecord : CKRecord?
 
-		if  let      rName = recordName {
-			newRecord      = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: rName))
+		if  let    rName = recordName {
+			newRecord    = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: rName))
 		} else {
-			newRecord      = CKRecord(recordType: kZoneType)
+			newRecord    = CKRecord(recordType: kZoneType)
 		}
 
 		let      created = create(record: newRecord!, databaseID: databaseID)
-
 		created.zoneName = named
 
 		created.updateCKRecordProperties()

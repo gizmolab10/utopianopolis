@@ -50,33 +50,38 @@ class ZCloud: ZRecords {
 
 	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
 		switch identifier { // inner switch
-			case .oBookmarks:     fetchBookmarks     (cloudCallback)
-			case .oCloud:         fetchCloudZones    (cloudCallback)
-			case .oEmptyTrash:    emptyTrash         (cloudCallback)
-			case .oNeededIdeas:   fetchNeededIdeas   (cloudCallback)
-			case .oParentIdeas:   fetchParentIdeas   (cloudCallback)
-			case .oChildIdeas:    fetchChildIdeas    (cloudCallback)
-			case .oFoundIdeas:    foundIdeas         (cloudCallback)
-			case .oLostIdeas:     fetchLostIdeas     (cloudCallback)
-			case .oNewIdeas:      fetchNewIdeas      (cloudCallback)
-			case .oRefetch:       refetchIdeas       (cloudCallback)
-			case .oHere:          establishHere      (cloudCallback)
-			case .oFetchAndMerge: fetchAndMerge      (cloudCallback)
-			case .oRoots:         establishRoots     (identifier, cloudCallback)
-			case .oManifest:      establishManifest  (identifier, cloudCallback)
-			case .oSaveToCloud:   save               (cloudCallback)
-			case .oMigrateFromCloud:  fetchMap           (cloudCallback)
-			case .oAllIdeas:      fetchAllIdeas      (cloudCallback)
-			case .oSubscribe:     subscribe          (cloudCallback)
-			case .oOwnedTraits:   fetchOwnedTraits   (cloudCallback)
-			case .oAllTraits:     fetchAllTraits     (cloudCallback)
-			case .oUndelete:      undeleteAll        (cloudCallback)
-			case .oResolve:       resolve            (cloudCallback)
-			case .oAdopt:         assureAdoption     (cloudCallback)
-			case .oTraits:        fetchTraits        (cloudCallback)
-			case .oRecount:       recount();          fallthrough
-			default:                                  cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
+			case .oBookmarks:        fetchBookmarks                 (cloudCallback)
+			case .oCloud:            fetchCloudZones                (cloudCallback)
+			case .oEmptyTrash:       emptyTrash                     (cloudCallback)
+			case .oNeededIdeas:      fetchNeededIdeas               (cloudCallback)
+			case .oParentIdeas:      fetchParentIdeas               (cloudCallback)
+			case .oChildIdeas:       fetchChildIdeas                (cloudCallback)
+			case .oFoundIdeas:       foundIdeas                     (cloudCallback)
+			case .oLostIdeas:        fetchLostIdeas                 (cloudCallback)
+			case .oNewIdeas:         fetchNewIdeas                  (cloudCallback)
+			case .oRefetch:          refetchIdeas                   (cloudCallback)
+			case .oHere:             establishHere                  (cloudCallback)
+			case .oFetchAndMerge:    fetchAndMerge                  (cloudCallback)
+			case .oRoots:            establishRoots     (identifier, cloudCallback)
+			case .oManifest:         establishManifest  (identifier, cloudCallback)
+			case .oSaveToCloud:      save                           (cloudCallback)
+			case .oMigrateFromCloud: fetchMap                       (cloudCallback)
+			case .oAllIdeas:         fetchAllIdeas                  (cloudCallback)
+			case .oSubscribe:        subscribe                      (cloudCallback)
+			case .oOwnedTraits:      fetchOwnedTraits               (cloudCallback)
+			case .oAllTraits:        fetchAllTraits                 (cloudCallback)
+			case .oCoreData:         processCoreData                (cloudCallback)
+			case .oUndelete:         undeleteAll                    (cloudCallback)
+			case .oResolve:          resolve                        (cloudCallback)
+			case .oAdopt:            assureAdoption                 (cloudCallback)
+			case .oTraits:           fetchTraits                    (cloudCallback)
+			case .oRecount:          recount(); fallthrough
+			default:                                                 cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
 		}
+	}
+
+	func processCoreData(_ onCompletion: IntClosure?) {
+		gCoreDataStack.loadForExistence(onCompletion)
 	}
 
     // MARK:- push to cloud
@@ -701,19 +706,19 @@ class ZCloud: ZRecords {
 				while self.recordsToProcess.count > 0 {
 					if  let      key = self.recordsToProcess.keys.first,
 						let ckRecord = self.recordsToProcess.removeValue(forKey: key) {
-						var  zRecord = self.maybeZRecordForRecordName(key)
+						let  zRecord = self.maybeZRecordForRecordName(key)
 
 						if  zRecord != nil {
 							zRecord?.useBest(record: ckRecord)   // fetched has same record id
+							zRecord?.adopt()
 						} else {
 							switch ckRecord.recordType {
-								case kZoneType:  zRecord =   Zone.create(record: ckRecord, databaseID: dbID)
-								case kTraitType: zRecord = ZTrait.create(record: ckRecord, databaseID: dbID)
+								case kZoneType:    Zone.asyncCreate(record: ckRecord, databaseID: dbID) { zone  in  zone.adopt() }
+								case kTraitType: ZTrait.asyncCreate(record: ckRecord, databaseID: dbID) { trait in trait.adopt() }
 								default: break
 							}
 						}
 
-						zRecord?.adopt()
 						try gThrowOnUserActivity()
 					}
 				}
@@ -988,53 +993,52 @@ class ZCloud: ZRecords {
 						// //////////////////////////////////////////////////// //
 
                         for retrievedRecord in retrievedRecords {
-                            let retrievedID = retrievedRecord.recordID
 
 							// ///////////////////////////////////////// //
 							// create the zone from the retrieved record //
 							// ///////////////////////////////////////// //
 
-							let retrievedZone = self.sureZoneForCKRecord(retrievedRecord, requireFetch: false)
+							if  destroyedIDs.contains(retrievedRecord.recordID) {
+								printDebug(.dFetch, "DESTROYED: \(retrievedRecord.recordID)")
+							} else {
+								self.asyncZoneForCKRecord(retrievedRecord) { retrievedZone in
+									if  let parent = retrievedZone.parentZone {
+										if  retrievedZone == parent {
+											retrievedZone.needDestroy()           // self-parenting causes infinite recursion (HANG)
+										} else if retrievedZone.isARoot {
+											retrievedZone.orphan()                // avoid infinite recursion (HANG) ... a root can NOT have a parent, by definition
+											retrievedZone.allowSaveWithoutFetch()
+											retrievedZone.needSave()
+										} else {
+											if  let parentName = parent.ckRecordName,
+												neededNames.contains(parentName) {
+												retrievedZone.needProgeny()       // for recursing
+												retrievedZone.bookmarkTarget?.needProgeny()
+											}
 
-                            if  destroyedIDs.contains(retrievedID) {
-								printDebug(.dFetch, "DESTROYED: \(retrievedZone.decoratedName)")
-                            } else {
-								if  let parent = retrievedZone.parentZone {
-									if  retrievedZone == parent {
-										retrievedZone.needDestroy()           // self-parenting causes infinite recursion (HANG)
-									} else if retrievedZone.isARoot {
-										retrievedZone.orphan()                // avoid infinite recursion (HANG) ... a root can NOT have a parent, by definition
-										retrievedZone.allowSaveWithoutFetch()
-										retrievedZone.needSave()
-									} else {
-										if  let parentName = parent.ckRecordName,
-											neededNames.contains(parentName) {
-											retrievedZone.needProgeny()       // for recursing
-											retrievedZone.bookmarkTarget?.needProgeny()
-										}
+											if  let targetOfRetrieved = retrievedZone.bookmarkTarget {
 
-										if  let targetOfRetrieved = retrievedZone.bookmarkTarget {
+												// //////////////////////////////////////////////////
+												// bookmark targets need writable, color and fetch //
+												// //////////////////////////////////////////////////
 
-											// //////////////////////////////////////////////////
-											// bookmark targets need writable, color and fetch //
-											// //////////////////////////////////////////////////
+												targetOfRetrieved.needFetch()
+												targetOfRetrieved.maybeNeedColor()
+												targetOfRetrieved.maybeNeedWritable()
+											}
 
-											targetOfRetrieved.needFetch()
-											targetOfRetrieved.maybeNeedColor()
-											targetOfRetrieved.maybeNeedWritable()
-										}
+											parent.addChildAndRespectOrder(retrievedZone)
 
-										parent.addChildAndRespectOrder(retrievedZone)
+											if  trackingLevels {
+												let                     level = retrievedZone.level
+												var                 wereAdded = self.addedToLevels[level] ?? ZRecordsArray()
 
-										if  trackingLevels {
-											let                     level = retrievedZone.level
-											var                 wereAdded = self.addedToLevels[level] ?? ZRecordsArray()
+												if !wereAdded.contains(retrievedZone) {
+													wereAdded  .append(retrievedZone)
 
-											if !wereAdded.contains(retrievedZone) {
-												wereAdded  .append(retrievedZone)
-
-												self.addedToLevels[level] = wereAdded
-												self.maxLevel             = max(level, self.maxLevel)
+													self.addedToLevels[level] = wereAdded
+													self.maxLevel             = max(level, self.maxLevel)
+												}
 											}
 										}
 									}
@@ -1042,6 +1046,7 @@ class ZCloud: ZRecords {
 							}
 						}
 
+						// for debugging
 						if  trackingLevels, retrievedRecords.count > 0 {
 							var separator = ""
 							var    string = ""
@@ -1315,7 +1320,7 @@ class ZCloud: ZRecords {
                 record  = CKRecord(recordType: kZoneType, recordID: recordID)       // will create
             }
 
-            let           zone = self.sureZoneForCKRecord(record!, requireFetch: false)   // get / create
+            let           zone = self.sureZoneForCKRecord(record!)                  // get / create
             zone       .parent = nil                                                // roots have no parent
 
             if  zone.zoneName == nil {

@@ -40,7 +40,7 @@ class ZHelpDotsExemplarController : ZMapController {
 
 	func setupExemplar() {
 		let           name = kExemplarRootName
-		zone               = Zone.create(as: name, databaseID: .everyoneID)
+		zone               = Zone.create(within: name, databaseID: .everyoneID)
 		zone?.zoneName     = "this is a typical idea, with three [hidden] ideas in its list"
 		zone?.parentLink   = kNullLink
 
