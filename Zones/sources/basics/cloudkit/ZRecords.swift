@@ -466,6 +466,8 @@ class ZRecords: NSObject {
 			
 			if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
 				gBookmarks.addToReverseLookup(bookmark)
+			} else if let file = zRecord as? ZFile {
+				gFilesRegistry.register(file, in: databaseID)
 			}
         }
 
@@ -1154,14 +1156,6 @@ class ZRecords: NSObject {
             z.useBest(record: ckRecord)
         } else {
             zone = Zone.create(record: ckRecord, databaseID: databaseID)
-
-//			if  requireFetch {
-//				zone?.fetchBeforeSave() // POTENTIALLY BAD DUMMY
-//			}
-
-//			if  preferFetch || requireFetch {
-//				zone?.needFetch()
-//			}
         }
 
         return zone!

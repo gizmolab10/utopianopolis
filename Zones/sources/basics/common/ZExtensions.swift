@@ -17,6 +17,7 @@ import CloudKit
 
 typealias               ZoneArray = [Zone]
 typealias              CKRecordID = CKRecord.ID
+typealias             ZFilesArray = [ZFile]
 typealias             ZTraitArray = [ZTrait]
 typealias             CKReference = CKRecord.Reference
 typealias           ZRecordsArray = [ZRecord]

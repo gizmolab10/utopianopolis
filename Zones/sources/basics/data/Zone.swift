@@ -307,12 +307,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	override func updateCKRecordFromCoreData() {
+		super.updateCKRecordFromCoreData()
+
 		if  gUseCoreData {
 			if  let pID = parentRID {
 				parent  = CKReference(recordID: CKRecordID(recordName: pID), action: .none)
 			}
-
-			databaseID = ZDatabaseID.convert(from: dbid)
 		}
 	}
 

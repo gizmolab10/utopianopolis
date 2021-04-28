@@ -65,9 +65,7 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func loadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure?) {
-		if !gCanLoad {
-			onCompletion?(0)
-		} else {
+		if  let dbid = dbID?.identifier, gCanLoad {
 			deferUntilAvailable(for: .oLoad) {
 				var names = [kDestroyName, kLostAndFoundName, kTrashName, kRootName]
 
@@ -76,7 +74,9 @@ class ZCoreDataStack: NSObject {
 				}
 
 				func loadType(_ type: String, onlyNeed: Int? = nil, whenAllAreLoaded: @escaping Closure) {
-					self.load(type: type, into: dbID, onlyNeed: nil, using: NSFetchRequest<NSFetchRequestResult>(entityName: type)) { zRecord in
+					let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
+					request.predicate = NSPredicate(format: "dbid = %@", dbid)
+					self.load(type: type, into: dbID, onlyNeed: nil, using: request) { zRecord in
 						if  zRecord == nil {          // detect that all needed are loaded
 							whenAllAreLoaded()
 						}
@@ -97,6 +97,8 @@ class ZCoreDataStack: NSObject {
 					}
 				}
 			}
+		} else {
+			onCompletion?(0)
 		}
 	}
 

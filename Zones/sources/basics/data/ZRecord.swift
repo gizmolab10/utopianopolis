@@ -92,8 +92,15 @@ class ZRecord: ZManagedRecord { // NSObject {
 	// MARK:- core data
 	// MARK:-
 
-	func                    updateCKRecordFromCoreData() {}
 	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] { return [String]() }
+
+	func updateCKRecordFromCoreData() {
+		if  gUseCoreData {
+			if  let    dID = dbid {
+				databaseID = ZDatabaseID.convert(from: dID)
+			}
+		}
+	}
 
 	@discardableResult func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
 		var         v = visited ?? [String]()

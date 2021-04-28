@@ -25,17 +25,31 @@ class ZFile : ZRecord {
 		return ZFile(record: record, databaseID: databaseID)
 	}
 
+	static func assetExists(named: String, type: String, in dbID: ZDatabaseID?, onCompletion: ZRecordClosure? = nil) {
+		gFilesRegistry.assetExists(named: named, type: type, in: dbID) { iZRecord in
+			if  iZRecord != nil {
+				onCompletion?(iZRecord)
+			} else {
+				gCoreDataStack.assetExists(named: named, type: type, within: dbID) { iZRecord in
+					onCompletion?(iZRecord)
+				}
+			}
+		}
+	}
+
 	static func createMaybe(from asset: CKAsset, databaseID: ZDatabaseID?) {
 		let  url = asset.fileURL
 		let name = url.deletingPathExtension().lastPathComponent
 		let type = url.pathExtension
 
-		gCoreDataStack.assetExists(named: name, type: type, within: databaseID) { iZRecord in
-			if  iZRecord  == nil {
+		assetExists(named: name, type: type, in: databaseID) { iZRecord in
+			if  iZRecord == nil {
 				let   file = ZFile.create(record: CKRecord(recordType: kFileType), databaseID: databaseID)
 				file .name = name
 				file .type = type
 				file.asset = url.dataRepresentation
+
+				gFilesRegistry.register(file, in: databaseID)
 			}
 		}
 	}
