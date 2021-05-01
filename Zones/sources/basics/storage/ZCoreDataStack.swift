@@ -20,20 +20,104 @@ struct ZDeferral {
 }
 
 struct ZEntityDescriptor {
-	let entityName: String
-	let recordName: String?
-	let databaseID: ZDatabaseID?
+	let entityName : String
+	let recordName : String?
+	let databaseID : ZDatabaseID?
 }
 
 struct ZExistence {
-	let closure : ZRecordClosure?
+	var zRecord : ZRecord? = nil
+	var closure : ZRecordClosure?
 	let  entity : ZEntityDescriptor?
 	let    file : ZFileDescriptor?
 }
 
+enum ZCDOperationID: Int {
+	case oLoad
+	case oSave
+	case oFetch
+	case oSearch
+	case oAssets
+	case oProgeny
+	case oExistence
+
+	var description : String {
+		var string = "\(self)".lowercased().substring(fromInclusive: 1)
+
+		switch self {
+			case .oProgeny: return "loading " + string
+			case .oSave:    string = "sav"
+			default:        break
+		}
+
+		return string + "ing local data"
+	}
+}
+
+typealias ZExistenceArray      =        [ZExistence]
+typealias ZExistenceDictionary = [String:ZExistenceArray]
+
+extension ZExistenceArray {
+
+	func fireClosures() -> [String] {
+		var names = [String]()
+		for e in self {
+			if  let     c = e.closure,
+				let     r = e.zRecord {
+				if  let n = r.ckRecordName {
+					names.append(n)
+				}
+
+				c(r)   // invoke closure
+			}
+		}
+		return names
+	}
+
+	mutating func updateClosureForZRecord(_ zRecord: ZRecord, of type: String) {
+		let name = (type == kFileType) ? (zRecord as? ZFile)?.name : zRecord.ckRecordName
+
+		for (index, e) in enumerated() {
+			var ee = e
+
+			if  name == e.file?.name || name == e.entity?.recordName {
+				ee.zRecord  = zRecord
+				self[index] = ee
+			}
+		}
+	}
+
+	func predicate(_ type: String) -> NSPredicate {
+		let    isFile = type == kFileType
+		let   keyPath = isFile ? "name" : "recordName"
+		var     items = ""
+		var separator = ""
+
+		for e in self {
+			if  isFile {
+				if  let  file = e.file,
+					let  name = file.name {
+					items.append("\(separator)'\(name)'")
+					separator = ","
+				}
+			} else {
+				if  let entity = e.entity,
+					let   name = entity.recordName {
+					items.append("\(separator)'\(name)'")
+					separator  = ","
+				}
+			}
+		}
+
+		let format = "\(keyPath) in { \(items) }"
+
+		return NSPredicate(format: format)
+	}
+}
+
 class ZCoreDataStack: NSObject {
 
-	var   existenceClosures = [ZExistence]()
+	var   existenceClosures = [ZDatabaseID : ZExistenceDictionary]()
 	var       deferralStack = [ZDeferral]()
 	let          cloudKitID = "iCloud.com.seriously.CoreData"
 	let            localURL = gCoreDataURL.appendingPathComponent("local.store")
@@ -113,20 +197,6 @@ class ZCoreDataStack: NSObject {
 		} else {
 			onCompletion?(0)
 		}
-	}
-
-	func loadForExistence(_ onCompletion: IntClosure?) {
-		for e in existenceClosures {
-//			let closure = e.closure
-			if  let n = e.entity {
-				print("\(n)")
-			}
-			if  let f = e.file {
-				print("\(f)")
-			}
-		}
-
-		onCompletion?(0)
 	}
 
 	func loadZone(with recordName: String, into dbID: ZDatabaseID?, onCompletion: Closure? = nil) {
@@ -390,7 +460,7 @@ class ZCoreDataStack: NSObject {
 
 			deferralStack.append(ZDeferral(closure: onAvailable, opID: opID))
 
-			gStartTimer(for: .tCoreDataDeferral)
+			gTimers.startTimer(for: .tCoreDataDeferral)
 		}
 	}
 
@@ -411,10 +481,6 @@ class ZCoreDataStack: NSObject {
 		}
 
 		return nil
-	}
-
-	func asyncHasZRecord(for descriptor: ZEntityDescriptor?, onExist: ZRecordClosure?) {
-		existenceClosures.append(ZExistence(closure: onExist, entity: descriptor, file: nil))
 	}
 
 	func hasExisting(entityName: String, recordName: String?, databaseID: ZDatabaseID?) -> Any? {
@@ -452,27 +518,116 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	// MARK:- search
+	// MARK:- existence closures
 	// MARK:-
 
-	func assetExists(for descriptor: ZFileDescriptor?, onExistence: ZRecordClosure? = nil) {
-		existenceClosures.append(ZExistence(closure: onExistence, entity: nil, file: descriptor))
+	func closures(for type: String, dbID: ZDatabaseID) -> ZExistenceArray {
+		var d  = existenceClosures[dbID]
+		var c  = d?[type]
+		if  d == nil {
+			d  = ZExistenceDictionary()
+		}
+
+		if  c == nil {
+			c  = ZExistenceArray()
+			d?[type] = c!
+		}
+
+		existenceClosures[dbID] = d!
+
+		return c!
 	}
 
-	func oldAssetExists(for descriptor: ZFileDescriptor?, onExistence: ZRecordClosure? = nil) {
-		if  gIsReadyToShowUI, gCanLoad,
-			let        name = descriptor?.name,
-			let        type = descriptor?.type,
-			let        dbid = descriptor?.dbID?.identifier {
-			let idPredicate = NSPredicate(format: "name = %@ and type = %@", name, type)
+	func setClosures(_ closures: ZExistenceArray, for type: String, dbID: ZDatabaseID) {
+		var d  = existenceClosures[dbID]
+		if  d == nil {
+			d  = ZExistenceDictionary()
+		}
 
-			self.search(within: dbid, type: kFileType, using: idPredicate) { matches in
-				onExistence?(matches.first)
-			}
+		d?[type] = closures
+		existenceClosures[dbID] = d!
+	}
+
+	func processClosures(for  type: String, dbID: ZDatabaseID, _ onCompletion: IntClosure?) {
+		var array = closures(for: type, dbID: dbID)
+
+		if  array.count == 0 {
+			onCompletion?(0)
 		} else {
-			onExistence?(nil)
+			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
+			request.predicate = array.predicate(type)
+
+			printDebug(.dTime, "\(array.count) existence closures")
+
+			deferUntilAvailable(for: .oExistence) {
+				do {
+					let items = try self.managedContext.fetch(request)
+					for item in items {
+						if  let zRecord = item as? ZRecord {           // insert zrecord into closures
+							array.updateClosureForZRecord(zRecord, of: type)
+							zRecord.needAdoption()
+						}
+					}
+				} catch {
+
+				}
+
+				FOREGROUND {
+					let names = array.fireClosures()
+					array     = array.filter { let name = $0.zRecord?.ckRecordName; return name == nil || !names.contains(name!) }
+
+					self.setClosures(array, for: type, dbID: dbID)
+					self.makeAvailable()
+					onCompletion?(0)
+				}
+			}
 		}
 	}
+
+	func processExistenceClosures(dbID: ZDatabaseID, _ onCompletion: IntClosure?) {
+		if  let  dict = existenceClosures[dbID] {
+			let types = dict.map { $0.key }
+
+			func processForTypeAtIndex(_ index: Int) {
+				if  index < 0 {
+					onCompletion?(0)                                    // exit recursive loop and let next operation begin
+				} else {
+					let type = types[index]
+
+					processClosures(for: type, dbID: dbID) { value in
+						processForTypeAtIndex(index - 1)                // recursive while loop
+					}
+				}
+			}
+
+			processForTypeAtIndex(types.count - 1)
+		} else {
+			onCompletion?(0) // so next operation can begin
+		}
+	}
+
+	func asyncExistenceFor(_ type: String, dbID: ZDatabaseID?, entity: ZEntityDescriptor?, file: ZFileDescriptor?, onExistence: @escaping ZRecordClosure) {
+		if  let                dbid = dbID {
+			var               array = closures(for: type, dbID: dbid)
+			var            typeDict = existenceClosures[dbid]
+
+			array.append(ZExistence(closure: onExistence, entity: entity, file: file))
+
+			typeDict?        [type] = array
+			existenceClosures[dbid] = typeDict
+		}
+	}
+
+	func asyncZRecordExists(for descriptor: ZEntityDescriptor, onExistence: @escaping ZRecordClosure) {
+		asyncExistenceFor(descriptor.entityName, dbID: descriptor.databaseID, entity: descriptor, file: nil, onExistence: onExistence)
+	}
+
+	func asyncFileExists(for descriptor: ZFileDescriptor?, dbID: ZDatabaseID?, onExistence: @escaping ZRecordClosure) {
+		asyncExistenceFor(kFileType, dbID: dbID, entity: nil, file: descriptor, onExistence: onExistence)
+	}
+
+	// MARK:- search
+	// MARK:-
 
 	func search(for match: String, within dbID: ZDatabaseID?, onCompletion: ZRecordsClosure? = nil) {
 		if  gIsReadyToShowUI, gCanLoad,

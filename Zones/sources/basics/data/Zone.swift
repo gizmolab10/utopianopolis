@@ -66,6 +66,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     clippedName :             String  { return !gShowToolTips ? "" : unwrappedName }
 	var                           level :                Int  { return (parentZone?.level ?? 0) + 1 }
 	var                           count :                Int  { return children.count }
+	var                      isBookmark :               Bool  { return bookmarkTarget != nil }
 	var       isCurrentSmallMapBookmark :               Bool  { return isCurrentFavorite || isCurrentRecent }
 	var                 isCurrentRecent :               Bool  { return self ==   gRecents.currentBookmark }
 	var               isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
@@ -309,10 +310,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override func updateCKRecordFromCoreData() {
 		super.updateCKRecordFromCoreData()
 
-		if  gUseCoreData {
-			if  let pID = parentRID {
-				parent  = CKReference(recordID: CKRecordID(recordName: pID), action: .none)
-			}
+		if  gUseCoreData,
+			let pID = parentRID {
+			parent  = CKReference(recordID: CKRecordID(recordName: pID), action: .none)
 		}
 	}
 
@@ -2659,8 +2659,69 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return common
 	}
 
+	// MARK:- children visibility
+	// MARK:-
+
+	var expanded: Bool {
+		if  let name = ckRecordName,
+			gExpandedZones.firstIndex(of: name) != nil {
+			return true
+		}
+
+		return false
+	}
+
+	func expand() {
+		var expansionSet = gExpandedZones
+
+		if  let name = ckRecordName, !isBookmark, !expansionSet.contains(name) {
+			expansionSet.append(name)
+
+			gExpandedZones = expansionSet
+		}
+	}
+
+	func collapse() {
+		var expansionSet = gExpandedZones
+
+		if  let name = ckRecordName {
+			while let index = expansionSet.firstIndex(of: name) {
+				expansionSet.remove(at: index)
+			}
+		}
+
+		if  gExpandedZones.count != expansionSet.count {
+			gExpandedZones        = expansionSet
+		}
+	}
+
+	func toggleChildrenVisibility() {
+		if  expanded {
+			collapse()
+		} else {
+			expand()
+		}
+	}
+
 	// MARK:- state
 	// MARK:-
+
+	func needChildren() {
+		if !isBookmark && // all bookmarks are childless, by design
+			expanded &&
+			false, // N.B., deprecated for performance ... use reallyNeedChildren
+		   !needsProgeny {
+			addState(.needsChildren)
+		}
+	}
+
+	func reallyNeedChildren() {
+		if !isBookmark && // all bookmarks are childless, by design
+			expanded &&
+			!needsProgeny {
+			addState(.needsChildren)
+		}
+	}
 
 	override func maybeNeedRoot() {
 		if !hasCompleteAncestorPath() {

@@ -537,16 +537,7 @@ class ZRecords: NSObject {
         return (uCount, nCount)
     }
 
-    var allStates: [ZRecordState] {
-        var    all = [ZRecordState] ()
-        let states = recordNamesByState.keys
-
-        for state in states {
-            all.append(state)   // funky: swift cannot convert .keys into an array
-        }
-
-        return all
-    }
+    var allStates: [ZRecordState] { return recordNamesByState.map { $0.key } }
 
     func states(for iRecord: CKRecord) -> [ZRecordState] {
         let   name = iRecord.recordID.recordName
@@ -1155,10 +1146,10 @@ class ZRecords: NSObject {
 			onCompletion(z)
 		} else {
 			let f = ZEntityDescriptor(entityName: kZoneType, recordName: ckRecord.recordID.recordName, databaseID: databaseID)
-			gCoreDataStack.asyncHasZRecord(for: f) { zRecord in
+			gCoreDataStack.asyncZRecordExists(for: f) { zRecord in
 				var z  = zRecord as? Zone
 				if  z == nil {
-					z  = Zone(record: ckRecord, databaseID: self.databaseID)
+					z  = Zone (record: ckRecord, databaseID: self.databaseID)
 				} else {
 					z?.useBest(record: ckRecord)
 				}

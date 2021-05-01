@@ -70,7 +70,6 @@ class ZCloud: ZRecords {
 			case .oSubscribe:        subscribe                      (cloudCallback)
 			case .oOwnedTraits:      fetchOwnedTraits               (cloudCallback)
 			case .oAllTraits:        fetchAllTraits                 (cloudCallback)
-			case .oCoreData:         processCoreData                (cloudCallback)
 			case .oUndelete:         undeleteAll                    (cloudCallback)
 			case .oResolve:          resolve                        (cloudCallback)
 			case .oAdopt:            assureAdoption                 (cloudCallback)
@@ -81,7 +80,10 @@ class ZCloud: ZRecords {
 	}
 
 	func processCoreData(_ onCompletion: IntClosure?) {
-		gCoreDataStack.loadForExistence(onCompletion)
+		gCoreDataStack.processExistenceClosures(dbID: databaseID) { i in
+			self.adoptAllNeedingAdoption()   // in case any orphans remain
+			onCompletion?(i)
+		}
 	}
 
     // MARK:- push to cloud
@@ -147,7 +149,7 @@ class ZCloud: ZRecords {
 
                     self.fetchAndMerge { iCount in              // process merges caused (before now) by save oplock errors
                         if iCount == 0 {
-                            self.save(onCompletion)         // process any remaining
+                            self.save(onCompletion)             // process any remaining
                         }
                     }
                 }
@@ -156,7 +158,11 @@ class ZCloud: ZRecords {
 			onCompletion?(1)
             start(operation)
         } else {
-            onCompletion?(0)
+			if  gCurrentTimerID == .tSync {  // this else clause is easiest way to detect completion
+				gCurrentTimerID  = nil       // remove "saving data" from status text in data details
+			}
+
+			onCompletion?(0)
         }
     }
 
@@ -546,7 +552,7 @@ class ZCloud: ZRecords {
     }
 
     func fetchLostIdeas(_ onCompletion: IntClosure?) {
-        let    format = kpRecordName + " != \"" + kRootName + "\""
+        let    format = kpRecordName + " != \"" + kRootName + kDoubleQuote
         let predicate = NSPredicate(format: format)
         var   fetched = CKRecordsArray ()
 
@@ -961,12 +967,12 @@ class ZCloud: ZRecords {
     }
 
     func fetchChildIdeas(_ onCompletion: IntClosure?) {
+//		onCompletion?(0); return
         let fetchNeeded = referencesWithMatchingStates([.needsChildren, .needsProgeny], batchSize: kSmallBatchSize)
         let       count = fetchNeeded.count
 
 		if  count == 0 {                     // final recursion: call closure
-			self.adoptAllNeedingAdoption()   // in case any orphans remain
-			onCompletion?(0)
+			processCoreData(onCompletion)
 		} else {
             let        predicate = NSPredicate(format: "parent IN %@", fetchNeeded)
             let     destroyedIDs = recordIDsWithMatchingStates([.needsDestroy])
@@ -1106,7 +1112,7 @@ class ZCloud: ZRecords {
 		var       retrieved = CKRecordsArray ()
 
 		if  predicate == nil {
-			onCompletion?(0)
+			processCoreData(onCompletion)
 		} else {
 			queryFor(kTraitType, with: predicate!, properties: ZTrait.cloudProperties) { (iRecord, iError) in
 				if  let ckRecord = iRecord {
@@ -1116,18 +1122,20 @@ class ZCloud: ZRecords {
 				} else { // nil means done
 					FOREGROUND {
 						for ckRecord in retrieved {
-							var zRecord  = self.maybeZRecordForCKRecord(ckRecord)
+							let zRecord  = self.maybeZRecordForCKRecord(ckRecord)
 
-							if  zRecord == nil {                                                    // if not already registered
-								zRecord  = ZTrait.create(record: ckRecord, databaseID: self.databaseID)    // register
-							} else {
-								zRecord?.useBest(record: ckRecord)
+							if  zRecord != nil {
+								zRecord?.useBest   (record: ckRecord)
+							} else {                                                    // if not already registered
+								ZTrait.asyncCreate (record: ckRecord, databaseID: self.databaseID) { iRecord in
+									iRecord.useBest(record: ckRecord)
+								}
 							}
 						}
 
 						self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
 						self.adoptAllNeedingAdoption()
-						onCompletion?(0)
+						self.processCoreData(onCompletion)
 					}
 				}
 			}

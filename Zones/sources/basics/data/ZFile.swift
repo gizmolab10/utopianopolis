@@ -31,12 +31,12 @@ class ZFile : ZRecord {
 		return ZFile(record: record, databaseID: databaseID)
 	}
 
-	static func assetExists(for descriptor: ZFileDescriptor, onCompletion: ZRecordClosure? = nil) {
+	static func assetExists(for descriptor: ZFileDescriptor, dbID: ZDatabaseID?, onCompletion: ZRecordClosure? = nil) {
 		gFilesRegistry.assetExists(for: descriptor) { iZRecord in
 			if  iZRecord != nil {
 				onCompletion?(iZRecord)
 			} else {
-				gCoreDataStack.assetExists(for: descriptor) { iZRecord in
+				gCoreDataStack.asyncFileExists(for: descriptor, dbID: dbID) { iZRecord in
 					onCompletion?(iZRecord)
 				}
 			}
@@ -49,7 +49,7 @@ class ZFile : ZRecord {
 		let type = url.pathExtension
 		let desc = ZFileDescriptor(name: name, type: type, dbID: databaseID)
 
-		assetExists(for: desc) { iZRecord in
+		assetExists(for: desc, dbID: databaseID) { iZRecord in
 			if  iZRecord == nil {
 				let   file = ZFile.create(record: CKRecord(recordType: kFileType), databaseID: databaseID)
 				file .name = name

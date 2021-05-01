@@ -15,6 +15,7 @@ import UIKit
 #endif
 
 let gTimers = ZTimers()
+var gCurrentTimerID: ZTimerID?
 
 enum ZTimerID : Int {
 	case tTextEditorHandlesArrows
@@ -73,91 +74,92 @@ enum ZTimerID : Int {
 
 }
 
-func gStartTimers(for timers: [ZTimerID]) {
-	for timer in timers {
-		gStartTimer(for: timer)
-	}
-}
-
-func gStartTimer(for timerID: ZTimerID?) {
-	if  let       tid = timerID {
-		let repeaters : [ZTimerID]   = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tSync]
-		var     block : TimerClosure = { iTimer in }        // do nothing by default
-		let   repeats = repeaters.contains(tid)
-		var   waitFor = 1.0                                 // one second
-
-		switch tid {
-			case .tSync:                    waitFor = 15.0  // seconds
-			case .tRecount:                 waitFor = 60.0  // one minute
-			case .tStartup, .tMouseZone:    waitFor =  0.5  // half second
-			default:                        break
-		}
-
-		switch tid {
-			case .tKey:                     block = { iTimer in gCurrentKeyPressed        = nil }
-			case .tMouseZone:               block = { iTimer in gCurrentMouseDownZone     = nil }
-			case .tMouseLocation:           block = { iTimer in gCurrentMouseDownLocation = nil }
-			case .tTextEditorHandlesArrows: block = { iTimer in gTextEditorHandlesArrows  = false }
-			case .tStartup:                 block = { iTimer in gIncrementStartupProgress(waitFor) }
-			case .tSync:                    block = { iTimer in if gIsReadyToShowUI { gSaveContext(); gBatches.save { iSame in } } }
-			case .tRecount:                 block = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount(); gSignal([.sStatus]) } }
-			case .tCloudAvailable:          block = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
-			case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.invokeDeferralMaybe(iTimer) }
-			default:                        break
-		}
-
-		gTimers.resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats, block: block )
-	}
-}
-
-func gStopTimer(for timerID: ZTimerID?) {
-	if  let id = timerID {
-		FOREGROUND {
-			gTimers.timers[id]?.invalidate()
-			gTimers.timers[id] = nil
-		}
-	}
-}
-
 func gTemporarilySetKey(_ key: String) {
 	gCurrentKeyPressed = key
 
-	gStartTimer(for: .tKey)
+	gTimers.startTimer(for: .tKey)
 }
 
 func gTemporarilySetMouseZone(_ zone: Zone?) {
 	gCurrentMouseDownZone = zone
 
-	gStartTimer(for: .tMouseZone)
+	gTimers.startTimer(for: .tMouseZone)
 }
 
 func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double = 1.0) {
 	gCurrentMouseDownLocation = location
 
-	gStartTimer(for: .tMouseLocation)
+	gTimers.startTimer(for: .tMouseLocation)
 }
 
 func gTemporarilySetTextEditorHandlesArrows(for seconds: Double = 1.0) {
 	gTextEditorHandlesArrows = true
 
-	gStartTimer(for: .tTextEditorHandlesArrows)
-
+	gTimers.startTimer(for: .tTextEditorHandlesArrows)
 }
 
 class ZTimers: NSObject {
 
 	var timers = [ZTimerID : Timer]()
 
-	var statusText: String {
-		let statusIDs: [ZTimerID] = [.tRecordsEveryone, .tRecordsMine, .tWriteEveryone, .tWriteMine]
+	var statusText: String { return gCurrentTimerID?.description ?? "" }
 
-		for id in timers.keys {
-			if  statusIDs.contains(id) {
-				return id.description
+	func stopTimer(for timerID: ZTimerID?) {
+		if  let id = timerID {
+			FOREGROUND {
+				self.timers[id]?.invalidate()
+				self.timers[id] = nil
+
+				if  gCurrentTimerID == id {
+					gCurrentTimerID  = nil
+				}
 			}
 		}
+	}
 
-		return ""
+	func startTimer(for timerID: ZTimerID?) {
+		if  let       tid = timerID {
+			let repeaters : [ZTimerID]   = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tSync]
+			var     block : TimerClosure = { iTimer in }        // do nothing by default
+			let   repeats = repeaters.contains(tid)
+			var   waitFor = 1.0                                 // one second
+
+			switch tid {
+				case .tSync:                    waitFor = 15.0  // seconds
+				case .tRecount:                 waitFor = 60.0  // one minute
+				case .tStartup, .tMouseZone:    waitFor =  0.5  // half second
+				default:                        break
+			}
+
+			switch tid {
+				case .tKey:                     block = { iTimer in gCurrentKeyPressed        = nil }
+				case .tMouseZone:               block = { iTimer in gCurrentMouseDownZone     = nil }
+				case .tMouseLocation:           block = { iTimer in gCurrentMouseDownLocation = nil }
+				case .tTextEditorHandlesArrows: block = { iTimer in gTextEditorHandlesArrows  = false }
+				case .tStartup:                 block = { iTimer in gIncrementStartupProgress(waitFor) }
+				case .tSync:                    block = { iTimer in if gIsReadyToShowUI { gSaveContext(); gBatches.save { iSame in } } }
+				case .tRecount:                 block = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount(); gSignal([.sStatus]) } }
+				case .tCloudAvailable:          block = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
+				case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.invokeDeferralMaybe(iTimer) }
+				default:                        break
+			}
+
+			resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats) { timer in
+				gCurrentTimerID     = timerID
+
+				block(timer)
+
+				if !repeats {
+					gCurrentTimerID = nil
+				}
+			}
+		}
+	}
+
+	func startTimers(for timers: [ZTimerID]) {
+		for timer in timers {
+			gTimers.startTimer(for: timer)
+		}
 	}
 
 	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping TimerClosure) {

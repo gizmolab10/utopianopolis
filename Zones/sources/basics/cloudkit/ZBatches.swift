@@ -192,11 +192,11 @@ class ZBatches: ZOnboarding {
                 self.setupAndRun(operations) {                  // 1.
                     batch.fireCompletions()                     // 2.
                     self.maybeRemoveFirst()
-                    self.processNextBatch()
+                    self.processNextBatch()                     // recurse
                 }
             } else if self.deferredBatches.count > 0 {
                 self.transferDeferred()                         // 3.
-                self.processNextBatch()
+                self.processNextBatch()                         // recurse
 			} else {
 				gSignal([.sData])                               // 4.
 			}

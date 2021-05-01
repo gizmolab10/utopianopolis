@@ -1316,8 +1316,6 @@ extension ZRecordsArray {
 							print("gotcha \(dict2.count)")
 						}
 					}
-				} else if !zRecord.isBookmark {
-					printDebug(.dFile, "no storage dictionary: \(zRecord)")
 				}
 			}
 

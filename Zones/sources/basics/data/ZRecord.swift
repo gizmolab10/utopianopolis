@@ -24,7 +24,6 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var  unwrappedRecordName: String    { return ckRecordName ?? "" }
 	var        unwrappedName: String    { return ckRecordName ?? emptyName }
 	var            emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
-	var           isBookmark: Bool      { return ckRecord?.isBookmark ?? false }
 	var   isInPublicDatabase: Bool      { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
 	var            isMapRoot: Bool      { return ckRecordName == kRootName }
 	var          isTrashRoot: Bool      { return ckRecordName == kTrashName }
@@ -95,10 +94,9 @@ class ZRecord: ZManagedRecord { // NSObject {
 	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] { return [String]() }
 
 	func updateCKRecordFromCoreData() {
-		if  gUseCoreData {
-			if  let    dID = dbid {
-				databaseID = ZDatabaseID.convert(from: dID)
-			}
+		if  gUseCoreData,
+			let    dID = dbid {
+			databaseID = ZDatabaseID.convert(from: dID)
 		}
 	}
 
@@ -242,21 +240,21 @@ class ZRecord: ZManagedRecord { // NSObject {
 		}
 	}
 
-	static func asyncHasZRecord(recordName: String, entityName: String, databaseID: ZDatabaseID?, onExist: ZRecordClosure? = nil) {
+	static func asyncHasZRecord(recordName: String, entityName: String, databaseID: ZDatabaseID?, onExistence: @escaping ZRecordClosure) {
 		if  let       dbid = databaseID,
 			let      cloud = gRemoteStorage.cloud(for: dbid),
 			let    zRecord = cloud.maybeZRecordForRecordName(recordName) {
-			onExist?(zRecord)
+			onExistence(zRecord)
 		} else {
 			let z = ZEntityDescriptor(entityName: entityName, recordName: recordName, databaseID: databaseID)
-			gCoreDataStack.asyncHasZRecord(for: z, onExist: onExist)
+			gCoreDataStack.asyncZRecordExists(for: z, onExistence: onExistence)
 		}
 	}
 
-	static func asyncHasMaybe(record: CKRecord, entityName: String, databaseID: ZDatabaseID?, onExist: ZRecordClosure? = nil) {
+	static func asyncHasMaybe(record: CKRecord, entityName: String, databaseID: ZDatabaseID?, onExistence: ZRecordClosure? = nil) {
 		asyncHasZRecord(recordName: record.recordID.recordName, entityName: entityName, databaseID: databaseID) { has in       // first check if already exists
 			has?.useBest(record: record)
-			onExist?(has)
+			onExistence?(has)
 		}
 	}
 
@@ -282,8 +280,8 @@ class ZRecord: ZManagedRecord { // NSObject {
 	}
 
 	func useBest(record iRecord: CKRecord?) {
-		if  let record = iRecord,
-			let   best = chooseBest(record: record) {
+		if  let    r = iRecord,
+			let best = chooseBest(record: r) {
 			setRecord(best)
 		}
 	}
@@ -300,9 +298,12 @@ class ZRecord: ZManagedRecord { // NSObject {
 	func chooseBest(record newRecord: CKRecord) -> CKRecord? {
 		var     current = ckRecord
 		let     newDate = newRecord.modificationDate
-		let currentDate = current?.modificationDate ?? writtenModifyDate
+		let currentDate = current? .modificationDate ?? writtenModifyDate
 		let      noDate = currentDate == nil
 		if  noDate || (newRecord != current && newDate != nil && newDate!.timeIntervalSince(currentDate!) > 10.0) {
+			if  current?.recordID.recordName == "3FA3E961-663F-4825-ADD1-ABD5A268D9D9" {
+				noop()
+			}
 			current     = newRecord
 		}
 
@@ -417,23 +418,6 @@ class ZRecord: ZManagedRecord { // NSObject {
         }
     }
 
-    func needChildren() {
-        if !isBookmark && // all bookmarks are childless, by design
-            expanded &&
-            false, // N.B., deprecated for performance ... use reallyNeedChildren
-            !needsProgeny {
-            addState(.needsChildren)
-        }
-    }
-
-    func reallyNeedChildren() {
-        if !isBookmark && // all bookmarks are childless, by design
-            expanded &&
-            !needsProgeny {
-            addState(.needsChildren)
-        }
-    }
-
     func maybeNeedSave() {
 		updateCKRecordProperties()    // make sure relevant data is in place to be saved
 
@@ -470,50 +454,6 @@ class ZRecord: ZManagedRecord { // NSObject {
             r.maybeMarkAsFetched(databaseID)
         }
     }
-
-	// MARK:- children visibility
-	// MARK:-
-
-	var expanded: Bool {
-		if  let name = ckRecordName,
-			gExpandedZones.firstIndex(of: name) != nil {
-			return true
-		}
-
-		return false
-	}
-
-	func expand() {
-		var expansionSet = gExpandedZones
-
-		if  let name = ckRecordName, !isBookmark, !expansionSet.contains(name) {
-			expansionSet.append(name)
-
-			gExpandedZones = expansionSet
-		}
-	}
-
-	func collapse() {
-		var expansionSet = gExpandedZones
-
-		if  let name = ckRecordName {
-			while let index = expansionSet.firstIndex(of: name) {
-				expansionSet.remove(at: index)
-			}
-		}
-
-		if  gExpandedZones.count != expansionSet.count {
-			gExpandedZones        = expansionSet
-		}
-	}
-
-	func toggleChildrenVisibility() {
-		if  expanded {
-			collapse()
-		} else {
-			expand()
-		}
-	}
 
     // MARK:- accessors and KVO
     // MARK:-
@@ -596,9 +536,9 @@ class ZRecord: ZManagedRecord { // NSObject {
 				}
 			case .text:
 				if  var string = object as? String { // plain [ causes file read to treat it as an array-starts-here symbol
-					string = string.replacingOccurrences(of:  "[",        with: "(")
-					string = string.replacingOccurrences(of:  "]",        with: ")")
-					string = string.replacingEachString (in: ["\"", "“"], with: "'")
+					string = string.replacingOccurrences(of:  "[",                with: "(")
+					string = string.replacingOccurrences(of:  "]",                with: ")")
+					string = string.replacingEachString (in: [kDoubleQuote, "“"], with: "'")
 
 					return string as NSObject
 				}
@@ -719,11 +659,11 @@ class ZRecord: ZManagedRecord { // NSObject {
 							newRecord[keyPath] = string as CKRecordValue
 						} else {
 							newRecord[keyPath] = value
-					}
+						}
 					case .date:
 						if  let      interval = object as? Double {
 							writtenModifyDate = Date(timeIntervalSince1970: interval)
-					}
+						}
 					case .assets:
 						if  let      assetStrings = (object as? String)?.componentsSeparatedAt(level: 2), assetStrings.count > 0,
 							let             trait = self as? ZTrait {
@@ -744,7 +684,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 							if  assets.count > 0 {
 								newRecord[keyPath] = assets
 							}
-					}
+						}
 
 					default:
 						newRecord[keyPath] = value

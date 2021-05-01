@@ -9,7 +9,7 @@
 import Foundation
 
 var   gDebugModes : ZDebugMode    = []
-var   gPrintModes : ZPrintMode    = [.dOps]
+var   gPrintModes : ZPrintMode    = [.dTime]
 var gCoreDataMode : ZCoreDataMode = []
 var  gUseCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var      gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gUseCoreData }
@@ -34,27 +34,6 @@ struct ZCoreDataMode: OptionSet {
 	static let dCloudKit = ZCoreDataMode() // store in cloud kit
 	static let dNotSave  = ZCoreDataMode() // save is not operational
 	static let dNotLoad  = ZCoreDataMode() // load is not operational
-}
-
-enum ZCDOperationID: Int {
-	case oLoad
-	case oSave
-	case oFetch
-	case oSearch
-	case oAssets
-	case oProgeny
-
-	var description : String {
-		var string = "\(self)".lowercased().substring(fromInclusive: 1)
-
-		switch self {
-			case .oProgeny: return "loading " + string
-			case .oSave:    string = "sav"
-			default:        break
-		}
-
-		return string + "ing local data"
-	}
 }
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {

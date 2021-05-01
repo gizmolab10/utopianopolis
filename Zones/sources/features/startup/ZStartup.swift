@@ -36,7 +36,7 @@ class ZStartup: NSObject {
 
 		gRemoteStorage.clear()
 		gSignal([.sMain, .sStartupProgress])
-		gStartTimer(for: .tStartup)
+		gTimers.startTimer(for: .tStartup)
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
@@ -57,8 +57,8 @@ class ZStartup: NSObject {
 								gHasFinishedStartup    = true
 								gRefusesFirstResponder = false
 
-								gStopTimer  (for:  .tStartup)
-								gStartTimers(for: [.tCloudAvailable, .tRecount, .tSync])
+								gTimers .stopTimer (for:  .tStartup)
+								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync])
 
 								if  gIsStartupMode {
 									gSetBigMapMode()

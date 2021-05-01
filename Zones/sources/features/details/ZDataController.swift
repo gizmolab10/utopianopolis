@@ -26,16 +26,13 @@ class ZDataController: ZGenericController {
     override  var      controllerID: ZControllerID { return .idData }
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  gShowDetailsView, let c = gDetailsController, c.viewIsVisible(for: .vData) {  // don't send signal to a hidden favorites controller
+		if  gShowDetailsView, iKind != .sStartupProgress, let c = gDetailsController, c.viewIsVisible(for: .vData) {  // don't send signal to a hidden favorites controller
 			creationDateLabel?.text = creationDateText
 			cloudStatusLabel? .text = statusText
 			recordNameLabel?  .text = zoneRecordNameText
 			totalCountLabel?  .text = totalCountsText
 			mapNameLabel?     .text = mapNameText
-
-			if  iKind != .sStartupProgress {
-				synopsisLabel?.text = synopsisText
-			}
+			synopsisLabel?    .text = synopsisText
 		}
 	}
 
@@ -71,8 +68,8 @@ class ZDataController: ZGenericController {
         let    opStatus =       gBatches.statusText
 		let timerStatus =        gTimers.statusText
 
-		return cdStatus != "" ? cdStatus :
-			opStatus    != "" ? opStatus :
+		return cdStatus != "" ? cdStatus    :
+			opStatus    != "" ? opStatus    :
 			timerStatus != "" ? timerStatus :
 			gCloudStatusIsActive ? "all data synchronized" : "all data saved locally"
     }

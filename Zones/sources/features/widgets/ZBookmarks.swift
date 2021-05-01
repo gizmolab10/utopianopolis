@@ -53,7 +53,7 @@ class ZBookmarks: NSObject {
 
 	func createBookmark(targeting target: Zone) -> Zone {
 		let bookmark: Zone = createZone(withBookmark: nil, target.zoneName)
-		bookmark.crossLink =  target
+		bookmark.crossLink = target
 
 		addToReverseLookup(bookmark)
 
