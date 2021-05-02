@@ -67,7 +67,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		return widget?.controller
 	}
 
-	override func menu(for event: NSEvent) -> NSMenu? {
+	override func menu(for event: ZEvent) -> ZMenu? {
 		let         contextualMenu = controller?.ideaContextualMenu
 		contextualMenu?.textWidget = self
 
@@ -123,7 +123,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         return nil
     }
 
-	override func mouseDown(with event: NSEvent) {
+	override func mouseDown(with event: ZEvent) {
 		if !gRefusesFirstResponder { // ignore mouse down during startup
 			gTemporarilySetMouseDownLocation(event.locationInWindow.x)
 			gTemporarilySetMouseZone(widgetZone)

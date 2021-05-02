@@ -294,8 +294,6 @@ class ZHelpData: NSObject {
 		func appendSecond() { result.append(NSAttributedString(string: second, attributes: attributes)) }
 
 		for (index, type) in types.enumerated() {
-			let isFirst = index == 0
-
 			switch type {
 				case .hDots:
 					break
@@ -306,7 +304,7 @@ class ZHelpData: NSObject {
 						appendText()
 					}
 				default:
-					if  isFirst {
+					if  index == 0 {
 						appendText()
 					}
 			}
@@ -314,6 +312,13 @@ class ZHelpData: NSObject {
 
 		if  second.length > 3 {
 			appendTab()
+
+			if  first.length == 0 {
+				appendTab()
+				if  column == 2, attributedString(for: row, column: 1).string.containsNonTabs {
+					appendTab()
+				}
+			}
 
 			if  isDots || isEssay {
 				appendSecond()
@@ -343,7 +348,7 @@ class ZHelpData: NSObject {
 
 		let    length = (first.length + second.length)
 		let   isShort = (first == "SHIFT + KEY")  // length is 10, but still too short
-		let threshold = (helpMode == .essayMode) || isShort ? 12 : 10
+		let threshold = (helpMode == .essayMode) || isShort ? 12 : 6
 
 		if  length < threshold {                  // short string: needs an extra tab
 			appendTab()

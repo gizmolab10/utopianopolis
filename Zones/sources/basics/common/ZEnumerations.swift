@@ -358,6 +358,25 @@ enum ZReorderMenuType: String {
 
 }
 
+enum ZRefetchMenuType: String {
+	case eList    = "l"
+	case eIdeas   = "i"
+	case eTraits  = "t"
+	case eProgeny = "p"
+
+	static var activeTypes: [ZRefetchMenuType] { return [.eIdeas, .eTraits] } // .eList, .eProgeny,
+
+	var title: String {
+		switch self {
+			case .eList:    return "list"
+			case .eIdeas:   return "all ideas"
+			case .eTraits:  return "all traits"
+			case .eProgeny: return "all progeny"
+		}
+	}
+
+}
+
 enum ZSpecialCharactersMenuType: String {
 	case eCommand   = "c"
 	case eOption    = "o"

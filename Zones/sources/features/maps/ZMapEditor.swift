@@ -85,7 +85,7 @@ class ZMapEditor: ZBaseEditor {
 							case "a":      gCurrentlyEditingWidget?.selectAllText()
 							case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL, SPLAYED)
 							case "f":      gSearching.showSearch(OPTION)
-							case "g":      refetch(COMMAND, OPTION, CONTROL)
+							case "g":      showRefetchPopup() // refetch(COMMAND, OPTION, CONTROL)
 							case "k":      toggleColorized()
 							case "n":      editNote(OPTION)
 							case "p":      printCurrentFocus()
@@ -122,7 +122,7 @@ class ZMapEditor: ZBaseEditor {
 						case "d":        if     ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 						case "e", "h":   editTrait(for: key)
 						case "f":        gSearching.showSearch(OPTION)
-						case "g":        refetch(COMMAND, OPTION, CONTROL)
+						case "g":        showRefetchPopup() // refetch(COMMAND, OPTION, CONTROL)
 						case "i":        gSelecting.simplifiedGrabs.sortByCount(OPTION); gRedrawMaps()
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
@@ -130,7 +130,7 @@ class ZMapEditor: ZBaseEditor {
 						case "n":        editNote(OPTION)
 						case "o":        gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
 						case "p":        printCurrentFocus()
-						case "r":        if     ANY { gNeedsRecount = true } else { gMapController?.showReorderPopup() }
+						case "r":        if     ANY { gNeedsRecount = true } else { showReorderPopup() }
 						case "s":        if CONTROL { pushAllToCloud() } else { gFiles.export(gSelecting.currentMoveable, toFileAs: OPTION ? .eOutline : .eSeriously) }
 						case "t":        if COMMAND { showThesaurus() } else if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
@@ -462,6 +462,46 @@ class ZMapEditor: ZBaseEditor {
 	func pushAllToCloud() {
 		gRemoteStorage.markAllNeedSave()
 		gBatches.save { same in
+		}
+	}
+
+	func showReorderPopup() {
+		if  let widget = gSelecting.lastGrab.widget?.textWidget {
+			var  point = widget.bounds.bottomRight
+			point      = widget.convert(point, to: gCurrentMapView).offsetBy(-160.0, -20.0)
+
+			ZMenu.reorderPopup(target: self, action: #selector(handleReorderPopupMenu(_:))).popUp(positioning: nil, at: point, in: gCurrentMapView)
+		}
+	}
+
+	@objc func handleReorderPopupMenu(_ iItem: ZMenuItem) {
+		handleReorderKey(iItem.keyEquivalent, gModifierFlags.isOption)
+	}
+
+	func showRefetchPopup() {
+		if  let wLocation = gCurrentEvent?.locationInWindow,
+			let     point = gMainWindow?.contentView?.convert(wLocation, to: gCurrentMapView) {
+
+			ZMenu.refetchPopup(target: self, action: #selector(handleRefetchPopupMenu(_:))).popUp(positioning: nil, at: point, in: gCurrentMapView)
+		}
+	}
+
+	@objc func handleRefetchPopupMenu(_ iItem: ZMenuItem) {
+		handleRefetchKey(iItem.keyEquivalent, gModifierFlags.isOption)
+	}
+
+	@objc func handleRefetchKey(_ key: String, _ OPTION: Bool) {
+		if  let type  = ZRefetchMenuType(rawValue: key) {
+			do {
+				switch type {
+					case .eIdeas:   try gBatches.invokeOperation(for: .oAllIdeas)  { iSame in gRedrawMaps() }
+					case .eTraits:  try gBatches.invokeOperation(for: .oAllTraits) { iSame in gRedrawMaps() }
+					case .eProgeny: break
+					case .eList:    break
+				}
+			} catch {
+
+			}
 		}
 	}
 
@@ -936,6 +976,17 @@ class ZMapEditor: ZBaseEditor {
 
     // MARK:- undoables
     // MARK:-
+
+	@objc func handleReorderKey(_ key: String, _ OPTION: Bool) {
+		if  let type  = ZReorderMenuType(rawValue: key) {
+			UNDO(self) { iUndoSelf in
+				iUndoSelf.handleReorderKey(key, !OPTION)
+			}
+
+			gSelecting.simplifiedGrabs.sortBy(type, OPTION)
+			gRedrawMaps()
+		}
+	}
 
     func undoDelete() {
         gSelecting.ungrabAll()

@@ -255,17 +255,6 @@ class ZSelecting: NSObject {
         }
     }
 
-	@objc func handleReorderKey(_ key: String, _ SHIFT: Bool) {
-		if  let type  = ZReorderMenuType(rawValue: key) {
-			UNDO(self) { iUndoSelf in
-				iUndoSelf.handleReorderKey(key, !SHIFT)
-			}
-
-			simplifiedGrabs.sortBy(type, SHIFT)
-			gRedrawMaps()
-		}
-	}
-
 	// MARK:- selection
 	// MARK:-
 

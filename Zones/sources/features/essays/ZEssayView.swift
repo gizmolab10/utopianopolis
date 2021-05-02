@@ -1305,7 +1305,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	private func showSpecialCharactersPopup() {
-		NSMenu.specialCharactersPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: self)
+		ZMenu.specialCharactersPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: self)
 	}
 
 	@objc private func handleSymbolsPopupMenu(_ iItem: ZMenuItem) {
@@ -1366,7 +1366,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func showHyperlinkPopup() {
-		let menu = NSMenu(title: "create a link")
+		let menu = ZMenu(title: "create a link")
 		menu.autoenablesItems = false
 
 		for type in ZEssayLinkType.all {
@@ -1376,12 +1376,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		menu.popUp(positioning: nil, at: selectionRect.origin, in: self)
 	}
 
-	private func item(type: ZEssayLinkType) -> NSMenuItem {
-		let  	  item = NSMenuItem(title: type.title, action: #selector(handleHyperlinkPopupMenu(_:)), keyEquivalent: type.rawValue)
+	private func item(type: ZEssayLinkType) -> ZMenuItem {
+		let  	  item = ZMenuItem(title: type.title, action: #selector(handleHyperlinkPopupMenu(_:)), keyEquivalent: type.rawValue)
 		item   .target = self
 		item.isEnabled = true
 
-		item.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
+		item.keyEquivalentModifierMask = ZEvent.ModifierFlags(rawValue: 0)
 
 		return item
 	}

@@ -27,6 +27,7 @@ enum ZArrowKey: Int8 {
 public typealias ZBox                        = NSBox
 public typealias ZFont                       = NSFont
 public typealias ZView                       = NSView
+public typealias ZMenu                       = NSMenu
 public typealias ZAlert                      = NSAlert
 public typealias ZEvent                      = NSEvent
 public typealias ZImage                      = NSImage
@@ -47,11 +48,12 @@ public typealias ZButtonCell                 = NSButtonCell
 public typealias ZBezierPath                 = NSBezierPath
 public typealias ZScrollView                 = NSScrollView
 public typealias ZController                 = NSViewController
-public typealias ZEventFlags                 = NSEvent.ModifierFlags
+public typealias ZEventFlags                 = ZEvent.ModifierFlags
 public typealias ZSearchField                = NSSearchField
 public typealias ZApplication                = NSApplication
 public typealias ZTableColumn                = NSTableColumn
 public typealias ZTableRowView               = NSTableRowView
+public typealias ZMenuDelegate               = NSMenuDelegate
 public typealias ZTableCellView              = NSTableCellView
 public typealias ZBitmapImageRep             = NSBitmapImageRep
 public typealias ZWindowDelegate             = NSWindowDelegate
@@ -526,23 +528,6 @@ extension ZMapView {
 
 }
 
-extension ZMapController {
-
-	func showReorderPopup() {
-		if  let widget = gSelecting.lastGrab.widget?.textWidget {
-			var  point = widget.bounds.bottomRight
-			point      = widget.convert(point, to: mapView).offsetBy(-160.0, -20.0)
-
-			NSMenu.reorderPopup(target: self, action: #selector(handleReorderPopupMenu(_:))).popUp(positioning: nil, at: point, in: mapView)
-		}
-	}
-
-	@objc func handleReorderPopupMenu(_ iItem: ZMenuItem) {
-		gSelecting.handleReorderKey(iItem.keyEquivalent, gModifierFlags.isShift)
-	}
-
-}
-
 extension ZoneWindow {
     
     override func awakeFromNib() {
@@ -778,7 +763,7 @@ extension ZTextEditor {
     func fullResign()  { assignAsFirstResponder (nil) }
 	
 	func showSpecialCharactersPopup() {
-		NSMenu.specialCharactersPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:))).popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
+		ZMenu.specialCharactersPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:))).popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
 	}
 
 	@objc func handleSpecialsPopupMenu(_ iItem: ZMenuItem) {
@@ -864,37 +849,37 @@ extension ZTextEditor {
 
 }
 
-extension NSMenu {
+extension ZMenu {
 
 	static func handleMenu() {}
 
-	static func specialCharactersPopup(target: AnyObject, action: Selector) -> NSMenu {
-		let menu = NSMenu(title: "add a special character")
+	static func specialCharactersPopup(target: AnyObject, action: Selector) -> ZMenu {
+		let menu = ZMenu(title: "add a special character")
 
 		for type in ZSpecialCharactersMenuType.activeTypes {
 			menu.addItem(specialsItem(type: type, target: target, action: action))
 		}
 
-		menu.addItem(NSMenuItem.separator())
+		menu.addItem(ZMenuItem.separator())
 		menu.addItem(specialsItem(type: .eCancel, target: target, action: action))
 
 		return menu
 	}
 
-	static func specialsItem(type: ZSpecialCharactersMenuType, target: AnyObject, action: Selector) -> NSMenuItem {
-		let  	  item = NSMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
+	static func specialsItem(type: ZSpecialCharactersMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
+		let  	  item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
 		item.isEnabled = true
 		item.target    = target
 
 		if  type != .eCancel {
-			item.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
+			item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
 		}
 
 		return item
 	}
 
-	static func reorderPopup(target: AnyObject, action: Selector) -> NSMenu {
-		let menu = NSMenu(title: "reorder")
+	static func reorderPopup(target: AnyObject, action: Selector) -> ZMenu {
+		let menu = ZMenu(title: "reorder")
 
 		for type in ZReorderMenuType.activeTypes {
 			menu.addItem(reorderingItem(type: type, target: target, action: action))
@@ -903,9 +888,28 @@ extension NSMenu {
 		return menu
 	}
 
-	static func reorderingItem(type: ZReorderMenuType, target: AnyObject, action: Selector) -> NSMenuItem {
-		let                       item = NSMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
-		item.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
+	static func reorderingItem(type: ZReorderMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
+		let                       item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
+		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
+		item                   .target = target
+		item                .isEnabled = true
+
+		return item
+	}
+
+	static func refetchPopup(target: AnyObject, action: Selector) -> ZMenu {
+		let menu = ZMenu(title: "refetch")
+
+		for type in ZRefetchMenuType.activeTypes {
+			menu.addItem(refetchingItem(type: type, target: target, action: action))
+		}
+
+		return menu
+	}
+
+	static func refetchingItem(type: ZRefetchMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
+		let                       item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
+		item.keyEquivalentModifierMask = ZEvent.ModifierFlags(rawValue: 0)
 		item                   .target = target
 		item                .isEnabled = true
 

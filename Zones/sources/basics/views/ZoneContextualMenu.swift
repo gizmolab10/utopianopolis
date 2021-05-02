@@ -13,7 +13,7 @@ class ZoneContextualMenu: ZContextualMenu {
 	var textWidget: ZoneTextWidget?
 	var zone: Zone? { return textWidget?.widgetZone }
 
-	@IBAction override func genericMenuHandler(_ iItem: NSMenuItem?) {
+	@IBAction override func genericMenuHandler(_ iItem: ZMenuItem?) {
 		if  let item = iItem,
 			let w = textWidget,
 			w.validateMenuItem(item) {

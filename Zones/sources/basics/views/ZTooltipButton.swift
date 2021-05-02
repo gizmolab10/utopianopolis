@@ -14,7 +14,7 @@ class ZTooltipButton: ZButton {
 
 	func updateTracking() { addTracking(for: frame) }
 
-	override func mouseEntered(with event: NSEvent) {
+	override func mouseEntered(with event: ZEvent) {
 		if  isEnabled,
 			let                   c = cell as? NSButtonCell {
 			originalBackgroundColor = c.backgroundColor
@@ -24,7 +24,7 @@ class ZTooltipButton: ZButton {
 		super.mouseEntered(with: event)
 	}
 
-	override func mouseExited(with event: NSEvent) {
+	override func mouseExited(with event: ZEvent) {
 		if  let             c = cell as? NSButtonCell {
 			c.backgroundColor = originalBackgroundColor
 		}
@@ -32,7 +32,7 @@ class ZTooltipButton: ZButton {
 		super.mouseExited(with: event)
 	}
 
-	override func mouseUp(with event: NSEvent) {
+	override func mouseUp(with event: ZEvent) {
 		if  let             c = cell as? NSButtonCell {
 			c.backgroundColor = originalBackgroundColor
 		}

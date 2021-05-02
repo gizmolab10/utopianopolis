@@ -1777,7 +1777,8 @@ extension String {
     var          isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
     var   isAlphabetical: Bool { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
     var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
-    var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
+	var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
+	var  containsNonTabs: Bool { return filter{ $0 != kTab.first}.count != 0 }
     var       isOpposite: Bool { return "]}>)".contains(self) }
 	var     isDashedLine: Bool { return contains(kHalfLineOfDashes) }
 

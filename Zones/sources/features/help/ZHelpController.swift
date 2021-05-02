@@ -240,7 +240,7 @@ class ZHelpController: ZGenericTableController {
 
 		if  let              table = genericTableView,
 			let                row = table.selectedRowIndexes.first {
-			let     screenLocation = NSEvent.mouseLocation
+			let     screenLocation = ZEvent.mouseLocation
 			if  let windowLocation = table.window?.convertPoint(fromScreen: screenLocation) {
 				let              l = table.convert(windowLocation, from: nil)
 				let         column = Int(floor(l.x / CGFloat(helpData.columnWidth)))

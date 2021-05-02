@@ -13,7 +13,7 @@ var gAppDelegate: ZDesktopAppDelegate?
 
 @NSApplicationMain
 
-class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
+class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 
     var needsSetup = true
 
@@ -103,7 +103,7 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, NSMenuDelegate {
 		}
 	}
     
-    @IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
+    @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) {
 		if  let item = iItem,
 			let    e = workingEditor,
 			e.validateMenuItem(item) {

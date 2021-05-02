@@ -50,7 +50,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
         }
 	}
 
-	override func mouseExited(with event: NSEvent) {
+	override func mouseExited(with event: ZEvent) {
 		super.mouseExited(with: event)
 
 		if  gRubberband.rubberbandRect != nil {

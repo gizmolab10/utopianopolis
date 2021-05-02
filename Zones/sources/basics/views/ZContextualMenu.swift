@@ -8,9 +8,9 @@
 
 import Foundation
 
-class ZContextualMenu: NSMenu {
+class ZContextualMenu: ZMenu {
 
-	@IBAction func genericMenuHandler(_ iItem: NSMenuItem?) {
+	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) {
 		if  let item = iItem {
 			let  key = item.keyEquivalent
 
