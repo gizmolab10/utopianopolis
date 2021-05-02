@@ -120,7 +120,8 @@ class ZSearching: NSObject {
 						}
 
 						for orphan in orphanedTraits {
-							if  let index = filtered.firstIndex(of: orphan) {
+							if  let index = filtered.firstIndex(of: orphan),
+								index     < records.count {
 								records.remove(at: index)
 							}
 						}

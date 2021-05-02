@@ -105,10 +105,10 @@ enum ZFillType: String {
 
 class ZHelpData: NSObject {
 
-	let linesBeforeSearch = 34
+	let linesBeforeSearch = 32
 	var helpMode          = ZHelpMode.noMode
 	var tabStops          = [NSTextTab]()
-	var rowHeight         :   CGFloat  { return 14.55 }
+	var rowHeight         :   CGFloat  { return 16.0 }
 	var noTabPrefix       :   String   { return "   " }
 	var columnStrings     : [[String]] { return [[]] }
 	var tabOffsets        :   [Int]    { return [0, 20, 85] } // default for graph shortcuts

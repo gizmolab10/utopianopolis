@@ -211,7 +211,7 @@ class ZTrait: ZTraitAssets {
 
 	override var isAdoptable: Bool { return owner != nil }
 
-	override func adopt(forceAdoption: Bool = true) {
+	override func adopt(forceAdoption: Bool = true, recursively: Bool = false) {
         if  let      o = ownerZone,
 			let traits = ownerZone?.traits,
 			let      t = traitType, traits[t] == nil {

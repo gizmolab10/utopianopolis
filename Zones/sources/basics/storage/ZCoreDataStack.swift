@@ -59,19 +59,14 @@ typealias ZExistenceDictionary = [String:ZExistenceArray]
 
 extension ZExistenceArray {
 
-	func fireClosures() -> [String] {
-		var names = [String]()
+	func fireClosures() {
 		for e in self {
-			if  let     c = e.closure,
-				let     r = e.zRecord {
-				if  let n = r.ckRecordName {
-					names.append(n)
-				}
+			if  let     c = e.closure {
+				let     r = e.zRecord
 
 				c(r)   // invoke closure
 			}
 		}
-		return names
 	}
 
 	mutating func updateClosureForZRecord(_ zRecord: ZRecord, of type: String) {
@@ -556,8 +551,10 @@ class ZCoreDataStack: NSObject {
 		} else {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
 			request.predicate = array.predicate(type)
+			let         count = "\(array.count)"  .appendingSpacesToLength(11)
+			let      database = "\(dbID.rawValue)".appendingSpacesToLength(12)
 
-			printDebug(.dTime, "\(array.count) existence closures")
+			printDebug(.dLevels, "\(count)\(database)\(type)")
 
 			deferUntilAvailable(for: .oExistence) {
 				do {
@@ -573,10 +570,8 @@ class ZCoreDataStack: NSObject {
 				}
 
 				FOREGROUND {
-					let names = array.fireClosures()
-					array     = array.filter { let name = $0.zRecord?.ckRecordName; return name == nil || !names.contains(name!) }
-
-					self.setClosures(array, for: type, dbID: dbID)
+					array.fireClosures()
+					self.setClosures([], for: type, dbID: dbID)
 					self.makeAvailable()
 					onCompletion?(0)
 				}

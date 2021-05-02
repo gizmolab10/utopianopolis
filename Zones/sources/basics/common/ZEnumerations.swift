@@ -337,6 +337,27 @@ enum ZStorageType: String {
     case deleted         = "deleted"         // ZManifest
 }
 
+enum ZReorderMenuType: String {
+	case eAlphabetical = "a"
+	case eReversed     = "r"
+	case eByLength     = "l"
+	case eBySizeOfList = "s"
+	case eByType       = "t"
+
+	static var activeTypes: [ZReorderMenuType] { return [.eAlphabetical, .eReversed, .eByLength, .eBySizeOfList, .eByType] }
+
+	var title: String {
+		switch self {
+			case .eAlphabetical: return "alphabetically"
+			case .eReversed:     return "reverse order"
+			case .eByLength:     return "by length of idea"
+			case .eBySizeOfList: return "by size of list"
+			case .eByType:       return "by type of idea"
+		}
+	}
+
+}
+
 enum ZSpecialCharactersMenuType: String {
 	case eCommand   = "c"
 	case eOption    = "o"

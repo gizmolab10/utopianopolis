@@ -116,10 +116,10 @@ class ZMapEditor: ZBaseEditor {
 					gCurrentKeyPressed = key
 
 					switch key {
-						case "a":        if  COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMaps() }
+						case "a":        if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMaps() }
 						case "b":        gSelecting.firstSortedGrab?.addBookmark()
-						case "c":        if OPTION { divideChildren() } else if COMMAND { gSelecting.simplifiedGrabs.copyToPaste() } else { gMapController?.recenter(SPECIAL) }
-						case "d":        if  ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
+						case "c":        if  OPTION { divideChildren() } else if COMMAND { gSelecting.simplifiedGrabs.copyToPaste() } else { gMapController?.recenter(SPECIAL) }
+						case "d":        if     ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 						case "e", "h":   editTrait(for: key)
 						case "f":        gSearching.showSearch(OPTION)
 						case "g":        refetch(COMMAND, OPTION, CONTROL)
@@ -130,7 +130,7 @@ class ZMapEditor: ZBaseEditor {
 						case "n":        editNote(OPTION)
 						case "o":        gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
 						case "p":        printCurrentFocus()
-						case "r":        if     ANY { gNeedsRecount = true } else { reverse() }
+						case "r":        if     ANY { gNeedsRecount = true } else { gMapController?.showReorderPopup() }
 						case "s":        if CONTROL { pushAllToCloud() } else { gFiles.export(gSelecting.currentMoveable, toFileAs: OPTION ? .eOutline : .eSeriously) }
 						case "t":        if COMMAND { showThesaurus() } else if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
@@ -250,7 +250,6 @@ class ZMapEditor: ZBaseEditor {
 				case "f":            return .eFind
 				case "k":            return .eColor
 				case "g":            return .eCloud
-				case "r":            return .eSort
 				case "z":            return .eUndo
 				case "o", "s":       return .eFiles
 				case "?", "/":       return .eHelp
@@ -937,29 +936,6 @@ class ZMapEditor: ZBaseEditor {
 
     // MARK:- undoables
     // MARK:-
-
-    func reverse() {
-		UNDO(self) { iUndoSelf in
-			iUndoSelf.reverse()
-		}
-
-		var        zones  = gSelecting.simplifiedGrabs
-		let commonParent  = zones.commonParent
-
-		if  commonParent == nil {
-			return
-		}
-
-        if  zones.count  == 1 {
-            zones         = commonParent?.children ?? []
-        }
-
-		commonParent?.respectOrder()
-		commonParent?.children.updateOrder()
-		zones.reverseOrder()
-		commonParent?.respectOrder()
-		gRedrawMaps()
-	}
 
     func undoDelete() {
         gSelecting.ungrabAll()

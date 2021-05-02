@@ -637,16 +637,21 @@ class ZRecords: NSObject {
 		}
 	}
 
-    func adoptAllNeedingAdoption() {
+    @discardableResult func adoptAllNeedingAdoption() -> Int {
         let states = [ZRecordState.needsAdoption] // just one state
+		var count = 0
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
             if  let zRecord = maybeZRecordForRecordName(iRecordName) {
 				zRecord.adopt()
-            }
+			} else {
+				count += 1
+			}
 
-			return false
+			return false // means continue
         }
+
+		return count
     }
 
 	func hasZRecord(_ iRecord: ZRecord, forAnyOf iStates: [ZRecordState]) -> Bool {
@@ -1012,6 +1017,16 @@ class ZRecords: NSObject {
 
 			return false
 		}
+	}
+
+	func countOfRecordNamesWithAnyMatchintStates(_ iStates: [ZRecordState]) -> Int {
+		var count     = 0
+		for state in iStates {
+			let names = recordNamesForState(state)
+			count    += names.count
+		}
+
+		return count
 	}
 
 	func applyToAllRecordNamesWithAnyMatchingStates(_ iStates: [ZRecordState], onEach: StateStringClosure) {

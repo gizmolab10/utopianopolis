@@ -70,7 +70,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	class var optionalCloudProperties: [String] { return [] }
 
 	func orphan() {}
-	func adopt(forceAdoption: Bool = true) {}
+	func adopt(forceAdoption: Bool = true, recursively: Bool = false) {}
 	func maybeNeedRoot() {}
 	func debug(_  iMessage: String) {}
 	func hasMissingChildren() -> Bool { return true }
@@ -141,11 +141,6 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 		if  let r = record {
 			self.setRecord(r)
-
-			if  isAdoptable {
-				needAdoption()
-				adopt()
-			}
 		}
 
 		self.setupKVO();
@@ -231,6 +226,10 @@ class ZRecord: ZManagedRecord { // NSObject {
 				bam("zone is a duplicate")
 			} else {
 				updateState()
+			}
+
+			if  isAdoptable {
+				needAdoption()
 			}
 		}
 

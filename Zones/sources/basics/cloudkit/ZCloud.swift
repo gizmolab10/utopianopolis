@@ -967,7 +967,7 @@ class ZCloud: ZRecords {
     }
 
     func fetchChildIdeas(_ onCompletion: IntClosure?) {
-//		onCompletion?(0); return
+		onCompletion?(0); return
         let fetchNeeded = referencesWithMatchingStates([.needsChildren, .needsProgeny], batchSize: kSmallBatchSize)
         let       count = fetchNeeded.count
 
@@ -1129,13 +1129,12 @@ class ZCloud: ZRecords {
 							} else {                                                    // if not already registered
 								ZTrait.asyncCreate (record: ckRecord, databaseID: self.databaseID) { iRecord in
 									iRecord.useBest(record: ckRecord)
+									iRecord.needAdoption()
 								}
 							}
 						}
 
-						self.columnarReport("TRAITS (\(retrieved.count))", String.forCKRecords(retrieved))
-						self.adoptAllNeedingAdoption()
-						self.processCoreData(onCompletion)
+						self.processCoreData(onCompletion) // calls adopt all
 					}
 				}
 			}

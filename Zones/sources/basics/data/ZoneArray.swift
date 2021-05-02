@@ -202,6 +202,35 @@ extension ZoneArray {
 		}
 	}
 
+	func sortBy(_ type: ZReorderMenuType, _ iBackwards: Bool) {
+		switch type {
+			case .eAlphabetical: alphabetize   (iBackwards)
+			case .eBySizeOfList: sortByCount   (iBackwards)
+			case .eByLength:     sortByLength  (iBackwards)
+			case .eByType:       sortByZoneType(iBackwards)
+			case .eReversed:     reverse()
+		}
+	}
+
+	func reverse() {
+		var        zones  = self
+		let commonParent  = zones.commonParent
+
+		if  commonParent == nil {
+			return
+		}
+
+		if  zones.count  == 1 {
+			zones         = commonParent?.children ?? []
+		}
+
+		commonParent?.respectOrder()
+		commonParent?.children.updateOrder()
+		zones        .reverseOrder()
+		commonParent?.respectOrder()
+		gRedrawMaps()
+	}
+
 	func alphabetize(_ iBackwards: Bool = false) {
 		alterOrdering { iZones -> (ZoneArray) in
 			return iZones.sorted { (a, b) -> Bool in
@@ -222,6 +251,10 @@ extension ZoneArray {
 				return iBackwards ? (aCount > bCount) : (aCount < bCount)
 			}
 		}
+	}
+
+	func sortByZoneType(_ iBackwards: Bool = false) {
+
 	}
 
 	func sortByLength(_ iBackwards: Bool = false) {

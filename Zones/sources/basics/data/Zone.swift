@@ -2775,7 +2775,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// adopt recursively
 
-	override func adopt(forceAdoption: Bool = true) {
+	override func adopt(forceAdoption: Bool = true, recursively: Bool = false) {
 		if  !isARoot, !needsDestroy, (forceAdoption || needsAdoption) {
 			if  let p = parentZone, p != self,      // first compute parentZone
 				!p.children.contains(self),
@@ -2783,7 +2783,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				p.maybeMarkNotFetched()
 				p.addChildAndRespectOrder(self)
 
-				if  p.parentZone == nil, !p.isARoot {
+				if  p.parentZone == nil, !p.isARoot, recursively {
 					p.adopt() // recurse on ancestor
 				}
 			}

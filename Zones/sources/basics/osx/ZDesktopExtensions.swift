@@ -513,7 +513,7 @@ extension ZMapView {
 extension ZMapView {
 
     override func scrollWheel(with event: ZEvent) {
-        if  event.modifierFlags.contains(.command) {
+        if  event.modifierFlags.isCommand {
             updateMagnification(with: event)
         } else {
             let     multiply = CGFloat(1.5 * gScaling)
@@ -523,6 +523,23 @@ extension ZMapView {
         
         gMapController?.layoutForCurrentScrollOffset()
     }
+
+}
+
+extension ZMapController {
+
+	func showReorderPopup() {
+		if  let widget = gSelecting.lastGrab.widget?.textWidget {
+			var  point = widget.bounds.bottomRight
+			point      = widget.convert(point, to: mapView).offsetBy(-160.0, -20.0)
+
+			NSMenu.reorderPopup(target: self, action: #selector(handleReorderPopupMenu(_:))).popUp(positioning: nil, at: point, in: mapView)
+		}
+	}
+
+	@objc func handleReorderPopupMenu(_ iItem: ZMenuItem) {
+		gSelecting.handleReorderKey(iItem.keyEquivalent, gModifierFlags.isShift)
+	}
 
 }
 
@@ -761,10 +778,10 @@ extension ZTextEditor {
     func fullResign()  { assignAsFirstResponder (nil) }
 	
 	func showSpecialCharactersPopup() {
-		NSMenu.specialCharactersPopup(target: self, action: #selector(handlePopupMenu(_:))).popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
+		NSMenu.specialCharactersPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:))).popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
 	}
 
-	@objc func handlePopupMenu(_ iItem: ZMenuItem) {
+	@objc func handleSpecialsPopupMenu(_ iItem: ZMenuItem) {
 		#if os(OSX)
 		if  let  type = ZSpecialCharactersMenuType(rawValue: iItem.keyEquivalent),
 			let range = selectedRanges[0] as? NSRange,
@@ -853,19 +870,18 @@ extension NSMenu {
 
 	static func specialCharactersPopup(target: AnyObject, action: Selector) -> NSMenu {
 		let menu = NSMenu(title: "add a special character")
-		menu.autoenablesItems = false
 
 		for type in ZSpecialCharactersMenuType.activeTypes {
-			menu.addItem(item(type: type, target: target, action: action))
+			menu.addItem(specialsItem(type: type, target: target, action: action))
 		}
 
 		menu.addItem(NSMenuItem.separator())
-		menu.addItem(item(type: .eCancel, target: target, action: action))
+		menu.addItem(specialsItem(type: .eCancel, target: target, action: action))
 
 		return menu
 	}
 
-	static func item(type: ZSpecialCharactersMenuType, target: AnyObject, action: Selector) -> NSMenuItem {
+	static func specialsItem(type: ZSpecialCharactersMenuType, target: AnyObject, action: Selector) -> NSMenuItem {
 		let  	  item = NSMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
 		item.isEnabled = true
 		item.target    = target
@@ -873,6 +889,25 @@ extension NSMenu {
 		if  type != .eCancel {
 			item.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
 		}
+
+		return item
+	}
+
+	static func reorderPopup(target: AnyObject, action: Selector) -> NSMenu {
+		let menu = NSMenu(title: "reorder")
+
+		for type in ZReorderMenuType.activeTypes {
+			menu.addItem(reorderingItem(type: type, target: target, action: action))
+		}
+
+		return menu
+	}
+
+	static func reorderingItem(type: ZReorderMenuType, target: AnyObject, action: Selector) -> NSMenuItem {
+		let                       item = NSMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
+		item.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: 0)
+		item                   .target = target
+		item                .isEnabled = true
 
 		return item
 	}

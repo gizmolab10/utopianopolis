@@ -861,28 +861,15 @@ extension CGSize {
 
 extension CGRect {
 
-	var       extent: CGPoint { return CGPoint(x: maxX, y: maxY) }
-	var     topRight: CGPoint { return CGPoint(x: maxX, y: minY) }
-	var    topCenter: CGPoint { return CGPoint(x: midX, y: minY) }
-	var   bottomLeft: CGPoint { return CGPoint(x: minX, y: maxY) }
-	var  rightCenter: CGPoint { return CGPoint(x: maxX, y: midY) }
-	var bottomCenter: CGPoint { return CGPoint(x: midX, y: maxY) }
-
-	var leftCenter: CGPoint {
-		get { return CGPoint(x: minX, y: midY) }
-		set {
-			origin.x = newValue.x
-			origin.y = newValue.y - (height / 2.0)
-		}
-	}
-
-	var center: CGPoint {
-		get { return CGPoint(x: midX, y: midY) }
-		set {
-			origin.x = newValue.x - (width  / 2.0)
-			origin.y = newValue.y - (height / 2.0)
-		}
-	}
+	var topRight:     CGPoint { return CGPoint(x: maxX, y: minY) }
+	var centerTop:    CGPoint { return CGPoint(x: midX, y: minY) }
+	var centerLeft:   CGPoint { return CGPoint(x: minX, y: midY) }
+	var centerRight:  CGPoint { return CGPoint(x: maxX, y: midY) }
+	var center:       CGPoint { return CGPoint(x: midX, y: midY) }
+	var centerBottom: CGPoint { return CGPoint(x: midX, y: maxY) }
+	var bottomLeft:   CGPoint { return CGPoint(x: minX, y: maxY) }
+	var bottomRight:  CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var extent:       CGPoint { return CGPoint(x: maxX, y: maxY) }
 
 	var cornerPoints: [ZDirection : CGPoint] {
 		var           result = [ZDirection : CGPoint]()
@@ -896,10 +883,10 @@ extension CGRect {
 
 	var selectionPoints: [ZDirection : CGPoint] {
 		var           result = cornerPoints
-		result[.top]         = topCenter
-		result[.left]        = leftCenter
-		result[.right]       = rightCenter
-		result[.bottom]      = bottomCenter
+		result[.top]         = centerTop
+		result[.left]        = centerLeft
+		result[.right]       = centerRight
+		result[.bottom]      = centerBottom
 
 		return result
 	}
@@ -965,16 +952,16 @@ extension CGRect {
 	}
 
 	func twoDotsVertically(fractionalDiameter: CGFloat) -> (CGRect, CGRect) {
-		let a = CGRect(origin: bottomCenter, size: .zero)
-		let b = CGRect(origin:    topCenter, size: .zero)
+		let a = CGRect(origin: centerBottom, size: .zero)
+		let b = CGRect(origin: centerTop,    size: .zero)
 		let d = height * fractionalDiameter
 
 		return (a.centeredRect(diameter: d), b.centeredRect(diameter: d))
 	}
 
 	func twoDotsHorizontally(fractionalDiameter: CGFloat) -> (CGRect, CGRect) {
-		let a = CGRect(origin:  leftCenter, size: .zero)
-		let b = CGRect(origin: rightCenter, size: .zero)
+		let a = CGRect(origin: centerLeft,  size: .zero)
+		let b = CGRect(origin: centerRight, size: .zero)
 		let d = width * fractionalDiameter
 
 		return (a.centeredRect(diameter: d), b.centeredRect(diameter: d))
@@ -2095,12 +2082,20 @@ extension String {
         return self[index].description
     }
 
-    mutating func appendSpacesToLength(_ iLength: Int) {
-        if 0 < iLength {
-            while length < iLength {
-                append(" ")
-            }
-        }
+	mutating func appendSpacesToLength(_ iLength: Int) {
+		if 0 < iLength {
+			while length < iLength {
+				append(" ")
+			}
+		}
+	}
+
+    func appendingSpacesToLength(_ iLength: Int) -> String {
+		var appending = self
+
+		appending.appendSpacesToLength(iLength)
+
+		return appending
     }
 
     var isLineWithTitle: Bool {

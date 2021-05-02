@@ -130,7 +130,7 @@ class ZHelpMapData : ZHelpData {
 		"1L, U",		"convert to lowercase, uppercase", 					"edit-d05d18996df7",
 		"1N",			"create/edit note",									"",
 		"2O", 			"import from a Seriously file",	 					"cloud-vs-file-f3543f7281ac",
-		"1R", 			"reverse order of list", 							"organize-fcdc44ac04e4",
+		"1R", 			"show reorder popup menu",	 						"organize-fcdc44ac04e4",
 		"2S", 			"save to a Seriously file", 						"cloud-vs-file-f3543f7281ac",
 		"2T", 			"swap selected idea with parent", 					"parent-child-tweaks-bf067abdf461",
 		"1V", 			"create/edit video file name",						"extras-2a9b1a7db21f",
@@ -138,14 +138,11 @@ class ZHelpMapData : ZHelpData {
 		"2_SHIFT + KEY",												"", "",
 		"2[, ]", 		"focus on prior/next idea in group",				"",
 		"0",			"", 												"",
-		"0_SHIFT + ARROW KEY (+ COMMAND: all)",	 						"", "",
+		"0_SHIFT + ARROW KEY",					 						"", "",
+		"0_",			"with COMMAND key, means all",						"",
 		"0LEFT ", 		"hide list", 										"focusing-your-thinking-a53adb16bba",
 		"0RIGHT", 		"reveal list",	 									"focusing-your-thinking-a53adb16bba",
-		"2vertical", 	"extend selection", 								"selecting-ideas-cc2939720e53",
-		"0",			"", 												"",
-		"0_MOUSE CLICK + KEY",											"", "",
-		"0COMMAND", 	"drag entire map", 								    "mouse-e21b7a63020e",
-		"1SHIFT", 		"un/extend selection", 								"selecting-ideas-cc2939720e53"
+		"2vertical", 	"extend selection", 								"selecting-ideas-cc2939720e53"
 	]
 
 	let mapColumnFour: [String] = [
@@ -177,19 +174,17 @@ class ZHelpMapData : ZHelpData {
 		"2D", 			"duplicate idea only (ignore its list)",			"",
 		"2O", 			"show data files in Finder", 						"cloud-vs-file-f3543f7281ac",
 		"2S", 			"save to cloud",			 						"cloud-vs-file-f3543f7281ac",
+		"0",			"", 												"",
+		"0_MOUSE CLICK + KEY",											"", "",
+		"0COMMAND", 	"drag entire map", 								    "mouse-e21b7a63020e",
+		"1SHIFT", 		"un/extend selection", 								"selecting-ideas-cc2939720e53",
 		"2",			"", 												"",
 		"2",			"", 												"",
-		"2!MULTIPLE IDEAS SELECTED:", 									"", "",
+		"2!WHILE MULTIPLE IDEAS ARE SELECTED:",							"", "",
 		"2",			"", 												"",
 		"2_KEY",		"",													"",
 		"2HYPHEN", 		"first idea is titled line -> group",	 			"lines-37426469b7c6",
 		"2PLUS",		"create favorites group",							"",
-		"2#", 			"mark with ascending numbers", 						"extras-2a9b1a7db21f",
-		"2R", 			"reverse",							 				"organize-fcdc44ac04e4",
-		"2",			"", 												"",
-		"2_KEY",		"+ OPTION key: reversed sort",						"",
-		"2A", 			"sort a to z (+ OPTION: z to a)", 					"organize-fcdc44ac04e4",
-		"2I", 			"sort by number of children",				 		"",
-		"2M", 			"sort by length",					 				"organize-fcdc44ac04e4"
+		"2#", 			"mark with ascending numbers", 						"extras-2a9b1a7db21f"
 	]
 }
