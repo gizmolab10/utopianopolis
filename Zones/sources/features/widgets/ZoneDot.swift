@@ -22,19 +22,20 @@ enum ZDecorationType: Int {
 
 struct  ZDotParameters {
 
+	var sideDotRadius : Double          = 4.0
+	var traitType     : String          = ""
 	var childCount    : Int             = 0
 	var isDrop        : Bool            = false
 	var filled        : Bool            = false
 	var isReveal      : Bool            = false
 	var isGrouped     : Bool            = false
 	var isGroupOwner  : Bool            = false
-	var isBookmark    : Bool            = false
-	var isNotemark    : Bool            = false
-	var showSideDot   : Bool            = false
-	var showAccess    : Bool            = false
+	var hasDuplicate  : Bool            = false
+	var hasTargetNote : Bool            = false
+	var hasTarget     : Bool            = false
 	var showList      : Bool            = false
-	var traitType     : String          = ""
-	var sideDotRadius : Double          = 4.0
+	var showAccess    : Bool            = false
+	var showSideDot   : Bool            = false
 	var fill          : ZColor          = gBackgroundColor
 	var color         : ZColor          = gDefaultTextColor
 	var accessType    : ZDecorationType = .vertical
@@ -226,6 +227,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         }
 
         path.fill()
+	}
+
+	func drawCenterDuplicatesDecorations(in iDirtyRect: CGRect) {
     }
 
 	func drawCenterBookmarkDecorations(in iDirtyRect: CGRect, hasNote: Bool = false) {
@@ -257,8 +261,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		}
 	}
 
-	func drawTraitDecorations(for parameters: ZDotParameters, color: ZColor, isForMap: Bool = true, in iDirtyRect: CGRect) {
-		let string = parameters.traitType
+	func drawStringDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, isForMap: Bool = true) {
 		let  width = CGFloat(gDotHeight - 2.0) * ratio
 		let   font = ZFont.boldSystemFont(ofSize: width)
 		let   size = string.sizeWithFont(font)
@@ -284,21 +287,22 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		drawMainDot(in: iDirtyRect, using: parameters)
 
 		if      parameters.isReveal {
-			if  parameters.isBookmark || parameters.isNotemark {
+			if  parameters.hasDuplicate {
+				drawStringDecoration(in: iDirtyRect, string: "\(widgetZone?.duplicates.count ?? 1)", color: decorationFillColor)
+			} else if parameters.hasTarget || parameters.hasTargetNote {
 
 				// //////////////////////////////// //
 				// TINY CENTER BOOKMARK DECORATIONS //
 				// //////////////////////////////// //
 
 				gBackgroundColor.setFill()
-				drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.isNotemark)
+				drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.hasTargetNote)
 			} else if parameters.traitType != "" {
 
 				// ///////////////// //
 				// TRAIT DECORATIONS //
 				// ///////////////// //
-
-				drawTraitDecorations(for: parameters, color: decorationFillColor, in: iDirtyRect)
+				drawStringDecoration(in: iDirtyRect, string: parameters.traitType, color: decorationFillColor)
 			}
 		} else {
 			decorationFillColor.setFill()
@@ -336,7 +340,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			// TINY COUNT DOTS //
 			// //////////////////
 
-			if !parameters.isBookmark,
+			if !parameters.hasTarget,
 			    gCountsMode == .dots {
 
 				drawTinyCountDots(iDirtyRect, parameters: parameters)

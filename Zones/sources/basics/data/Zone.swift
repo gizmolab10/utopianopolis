@@ -109,6 +109,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var       allNotemarkProgeny        :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
 	var       allBookmarkProgeny        :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
 	var       all                       :          ZoneArray  { return zones(of:  .wAll) }
+	var                      duplicates =          ZoneArray  ()
 	var                        children =          ZoneArray  ()
 	var                          traits =   ZTraitDictionary  ()
 	func                copyWithZone() ->           NSObject  { return self }
@@ -2835,6 +2836,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				return toIndex
 			}
 
+			func addAsDuplicate(_ duplicate: Zone) {
+				duplicates.appendUnique(item: duplicate)
+			}
+
 			func rearange(from index: Int) -> Int {
 				if  index != toIndex {
 					moveChildIndex(from: index, to: toIndex)
@@ -2846,6 +2851,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  let childTarget = child.bookmarkTarget {           // detect if its bookmark is already added
 				for (index, sibling) in children.enumerated() {
 					if  childTarget == sibling.bookmarkTarget {
+						addAsDuplicate(sibling)
+
 						return rearange(from: index)
 					}
 				}
@@ -2853,6 +2860,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			for (index, sibling) in children.enumerated() {        // detect if it's already added
 				if  child == sibling {
+					addAsDuplicate(sibling)
+
 					return rearange(from: index)
 				}
 			}
@@ -3279,26 +3288,27 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func dotParameters(_ isFilled: Bool, _ isReveal: Bool) -> ZDotParameters {
-		let          c = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
-		var          p = ZDotParameters()
-		let          t = bookmarkTarget
-		let          k = traitKeys
-		let          g = groupOwner
-		p.color        = c
-		p.isGrouped    = g != nil
-		p.showList     = expanded
-		p.isReveal     = isReveal
-		p.filled       = isFilled
-		p.isBookmark   = isBookmark
-		p.showAccess   = hasAccessDecoration
-		p.isNotemark   = t?.hasNote ?? false
-		p.isGroupOwner = g == self || g == t
-		p.isDrop       = self == gDragDropZone
-		p.showSideDot  = isCurrentSmallMapBookmark
-		p.traitType    = (k.count < 1) ? "" : k[0]
-		p.fill         = isFilled ? c.lighter(by: 2.5) : gBackgroundColor
-		p.accessType   = directAccess == .eProgenyWritable ? .sideDot : .vertical
-		p.childCount   = (gCountsMode == .progeny) ? progenyCount : indirectCount
+		let           c = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
+		var           p = ZDotParameters()
+		let           t = bookmarkTarget
+		let           k = traitKeys
+		let           g = groupOwner
+		p.color         = c
+		p.isGrouped     = g != nil
+		p.showList      = expanded
+		p.isReveal      = isReveal
+		p.filled        = isFilled
+		p.hasTarget     = isBookmark
+		p.hasDuplicate  = duplicates.count > 0
+		p.showAccess    = hasAccessDecoration
+		p.hasTargetNote = t?.hasNote ?? false
+		p.isGroupOwner  = g == self || g == t
+		p.isDrop        = self == gDragDropZone
+		p.showSideDot   = isCurrentSmallMapBookmark
+		p.traitType     = (k.count < 1) ? "" : k[0]
+		p.fill          = isFilled ? c.lighter(by: 2.5) : gBackgroundColor
+		p.accessType    = directAccess == .eProgenyWritable ? .sideDot : .vertical
+		p.childCount    = (gCountsMode == .progeny) ? progenyCount : indirectCount
 
 		return p
 	}

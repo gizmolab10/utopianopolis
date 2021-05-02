@@ -76,21 +76,21 @@ enum ZHelpDotType: String {
 	}
 
 	func dotParameters(isFilled: Bool = false) -> ZDotParameters {
-		var p          = ZDotParameters()
-		p.color        = gHelpHyperlinkColor
-		p.fill         = isFilled ? p.color : gBackgroundColor
-		p.filled       = isFilled
-		p.isReveal     = isReveal
-		p.traitType    = traitType
-		p.showAccess   = showAccess
-		p.accessType   = accessType
-		p.showList     = pointLeft || !isFilled
-		p.isGroupOwner = self == .group
-		p.isGrouped    = self == .group    || self == .cycle
-		p.isNotemark   = self == .notemark || self == .has
-		p.isBookmark   = self == .bookmark
-		p.showSideDot  = self == .favorite
-		p.childCount   = count
+		var p           = ZDotParameters()
+		p.color         = gHelpHyperlinkColor
+		p.fill          = isFilled ? p.color : gBackgroundColor
+		p.filled        = isFilled
+		p.isReveal      = isReveal
+		p.traitType     = traitType
+		p.showAccess    = showAccess
+		p.accessType    = accessType
+		p.showList      = pointLeft || !isFilled
+		p.isGroupOwner  = self == .group
+		p.isGrouped     = self == .group    || self == .cycle
+		p.hasTargetNote = self == .notemark || self == .has
+		p.hasTarget     = self == .bookmark
+		p.showSideDot   = self == .favorite
+		p.childCount    = count
 
 		return p
 	}
