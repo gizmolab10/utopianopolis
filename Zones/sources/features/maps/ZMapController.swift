@@ -152,7 +152,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
         if  let       zone = iZone as? Zone,
             let     widget = zone.widget,
-			widget.type   == zone.type {
+			widget.type   == zone.widgetType {
             specificWidget = widget
             specificIndex  = zone.siblingIndex
             specificView   = specificWidget?.superview

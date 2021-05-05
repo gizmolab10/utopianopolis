@@ -36,7 +36,7 @@ class ZFile : ZRecord {
 			if  iZRecord != nil {
 				onCompletion?(iZRecord)
 			} else {
-				gCoreDataStack.asyncFileExists(for: descriptor, dbID: dbID) { iZRecord in
+				gCoreDataStack.fileExistsAsync(for: descriptor, dbID: dbID) { iZRecord in
 					onCompletion?(iZRecord)
 				}
 			}

@@ -31,6 +31,7 @@ enum ZRecordState: String {
 
 class ZRecords: NSObject {
 
+	var           maxLevel = 0
 	var         duplicates = [                 ZRecord]       ()
     var     zRecordsLookup = [String       :   ZRecord]       ()
 	var    ckRecordsLookup = [String       :  CKRecordsArray] ()
@@ -221,6 +222,10 @@ class ZRecords: NSObject {
 		return total
 	}
 
+	func updateMaxLevel(with level: Int) {
+		maxLevel = max(level, maxLevel)
+	}
+
 	func zRecords(of type: String) -> ZRecordsArray? {
 		var result = ZRecordsArray()
 
@@ -287,7 +292,7 @@ class ZRecords: NSObject {
 	func createRandomLost() -> Zone {
         let lost = Zone.randomZone(in: databaseID)
 
-        lostAndFoundZone?.addChild(lost, at: nil)
+        lostAndFoundZone?.addChildSafely(lost, at: nil)
 
         return lost
     }
@@ -374,9 +379,7 @@ class ZRecords: NSObject {
 //				return zRecord.ckRecord != nil
 //			}
 //
-//			let records = unique.map { (zRecord) -> CKRecord in
-//				return zRecord.ckRecord!
-//			}
+//			let records = unique.map { $0.ckRecord! }
 //
 //			result.appendUnique(contentsOf: records)
 //
@@ -626,10 +629,12 @@ class ZRecords: NSObject {
 	func assureAdoption(_ onCompletion: IntClosure? = nil) {
 		FOREGROUND {
 			self.applyToAllZones { zone in
-				zone.adopt()
+				if !zone.isARoot {
+					zone.adopt(recursively: true)
 
-				if  zone.root == nil {
-					printDebug(.dAdopt, "nil root at: \(zone.ancestralString)")
+					if  zone.root == nil, !zone.isBookmark {
+						printDebug(.dAdopt, "lost child: \(zone)")
+					}
 				}
 			}
 
@@ -643,7 +648,7 @@ class ZRecords: NSObject {
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
             if  let zRecord = maybeZRecordForRecordName(iRecordName) {
-				zRecord.adopt()
+				zRecord.adopt(recursively: true)
 			} else {
 				count += 1
 			}
@@ -1134,7 +1139,7 @@ class ZRecords: NSObject {
 		if  let name = iRecordName {
 
 			if  [.recentsID, .favoritesID].contains(databaseID) {
-				return gRemoteStorage.cloud(for: .mineID)?.maybeZRecordForRecordName(iRecordName)     // there is no recents db
+				return gRemoteStorage.cloud(for: .mineID)?.maybeZRecordForRecordName(iRecordName)     // all favorites and recents are stored in mine db
 			} else if  databaseID.rawValue == name {
 				return rootZone
 			}
@@ -1155,18 +1160,18 @@ class ZRecords: NSObject {
 		return nil
 	}
 
-	func asyncZoneForCKRecord(_ ckRecord: CKRecord, onCompletion: @escaping ZoneClosure) {
+	func zoneForCKRecordAsync(_ ckRecord: CKRecord, onCompletion: @escaping ZoneClosure) {
 		if  let z = maybeZoneForCKRecord(ckRecord) {
 			z.useBest(record: ckRecord)
 			onCompletion(z)
 		} else {
 			let f = ZEntityDescriptor(entityName: kZoneType, recordName: ckRecord.recordID.recordName, databaseID: databaseID)
-			gCoreDataStack.asyncZRecordExists(for: f) { zRecord in
+			gCoreDataStack.zRecordExistsAsync(for: f) { zRecord in
 				var z  = zRecord as? Zone
-				if  z == nil {
-					z  = Zone (record: ckRecord, databaseID: self.databaseID)
+				if  z != nil {
+					z!.useBest(record: ckRecord)                               // zRecord is from core data
 				} else {
-					z?.useBest(record: ckRecord)
+					z  = Zone (record: ckRecord, databaseID: self.databaseID)  // ckRecord is from cloud
 				}
 
 				onCompletion(z!)

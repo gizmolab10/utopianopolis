@@ -16,8 +16,9 @@ import CloudKit
 #endif
 
 var gCloudStatusIsActive      : Bool { return gCloudAccountStatus == .active }
+var gCloudStatusIsAvailable   : Bool { return gCloudAccountStatus == .available }
 var gCloudAccountStatus       = ZCloudAccountStatus.begin
-var recentCloudAccountStatus  = gCloudAccountStatus
+var gRecentCloudAccountStatus = gCloudAccountStatus
 var gHasInternet              = true
 
 class ZOnboarding : ZOperations {

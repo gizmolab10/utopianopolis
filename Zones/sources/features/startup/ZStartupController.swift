@@ -159,11 +159,11 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	var loadingText: String = ["Your data is loading (it can take up to several minutes the first time).",
 							   "Please wait until the drawing (of ideas) appears to add new ideas to it.",
-							   "Also, you may have to relaunch if the app gets stuck (it sometimes does, and it embarrasses me that the cause is not yet known)."].joined(separator: " ")
+							   "Also, you may have to relaunch if the app gets stuck (it sometimes does)."].joined(separator: " ")
 
 	var helpText: String = ["Would you like to look at something more interesting than this progress bar?",
-							"Each of these buttons takes you to a help cheat sheet.",
-							"Some sheets contain clickable links to online explanations.",
-							"Warning, since this app is busy loading data, it may hesitate to respond to your button clicks."].joined(separator: " ")
+							"Each button below takes you to a chart.",
+							"Some contain clickable links to further detail.",
+							"Warning, since this app is busy loading data, it may hesitate to respond to your mouse clicks."].joined(separator: " ")
 
 }

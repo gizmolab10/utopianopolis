@@ -103,8 +103,11 @@ class ZPreferencesController: ZGenericController {
         let          selection = iControl.selectedSegment
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
 			switch (identifier) {
-				case "counts": gCountsMode = ZCountsMode    (rawValue: selection)!; gRedrawMaps()
-				default: break
+				case "counts":
+					gCountsMode = ZCountsMode(rawValue: selection)!
+					gRedrawMaps()
+				default:
+					break
 			}
         }
     }

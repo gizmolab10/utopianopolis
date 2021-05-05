@@ -67,8 +67,8 @@ class ZTrait: ZTraitAssets {
 		return theCopy
 	}
 
-	static func asyncCreate(record: CKRecord, databaseID: ZDatabaseID?, onCreation: @escaping ZTraitClosure) {
-		asyncHasMaybe(record: record, entityName: kTraitType, databaseID: databaseID) { zRecord in           // first check if already exists
+	static func createAsync(record: CKRecord, databaseID: ZDatabaseID?, onCreation: @escaping ZTraitClosure) {
+		hasMaybeAsync(record: record, entityName: kTraitType, databaseID: databaseID) { zRecord in           // first check if already exists
 			onCreation(zRecord as? ZTrait ?? ZTrait(record: record, databaseID: databaseID))
 		}
 	}
@@ -211,7 +211,7 @@ class ZTrait: ZTraitAssets {
 
 	override var isAdoptable: Bool { return owner != nil }
 
-	override func adopt(forceAdoption: Bool = true, recursively: Bool = false) {
+	override func adopt(forceAdoption: Bool = false, recursively: Bool = false) {
         if  let      o = ownerZone,
 			let traits = ownerZone?.traits,
 			let      t = traitType, traits[t] == nil {

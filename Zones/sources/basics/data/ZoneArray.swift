@@ -21,7 +21,7 @@ extension ZoneArray {
 	var recordNames: [String] {
 		var names = [String]()
 
-		for zone in self {
+		forEach { zone in
 			if  let name = zone.ckRecordName {
 				names.append(name)
 			}
@@ -47,7 +47,7 @@ extension ZoneArray {
 		var start = 1.0
 		var   end = 0.0
 
-		for zone in self {
+		forEach { zone in
 			let  order = zone.order
 			let  after = order > end
 			let before = order < start
@@ -88,13 +88,13 @@ extension ZoneArray {
 	}
 
 	func traverseAncestors(_ block: ZoneToStatusClosure) {
-		for zone in self {
+		forEach { zone in
 			zone.safeTraverseAncestors(visited: [], block)
 		}
 	}
 
 	func traverseAllAncestors(_ block: @escaping ZoneClosure) {
-		for zone in self {
+		forEach { zone in
 			zone.safeTraverseAncestors(visited: []) { iZone -> ZTraverseStatus in
 				block(iZone)
 
@@ -140,7 +140,7 @@ extension ZoneArray {
 	var rootMost: Zone? {
 		var candidate: Zone?
 
-		for zone in self {
+		forEach { zone in
 			if  candidate == nil || zone.level < candidate!.level {
 				candidate = zone
 			}
@@ -157,7 +157,7 @@ extension ZoneArray {
 			return a.order < b.order
 		}
 
-		for zone in self {
+		forEach { zone in
 			if  let     index = zone.siblingIndex {
 				let duplicate = zone.deepCopy(dbID: zone.databaseID)
 
@@ -202,12 +202,40 @@ extension ZoneArray {
 		}
 	}
 
+	func needChildren() {
+		forEach { zone in
+			zone.needChildren()
+		}
+	}
+
+	func needProgeny() {
+		forEach { zone in
+			zone.needProgeny()
+		}
+	}
+
+	func cycleToNextDuplicate() {
+		forEach { zone in
+			zone.cycleToNextDuplicate()
+		}
+
+		gRedrawMaps()
+	}
+
+	func deleteDuplicates() {
+		forEach { zone in
+			zone.deleteDuplicates()
+		}
+
+		gRedrawMaps()
+	}
+
 	func sortBy(_ type: ZReorderMenuType, _ iBackwards: Bool) {
 		switch type {
 			case .eAlphabetical: alphabetize   (iBackwards)
 			case .eBySizeOfList: sortByCount   (iBackwards)
 			case .eByLength:     sortByLength  (iBackwards)
-			case .eByType:       sortByZoneType(iBackwards)
+			case .eByKind:       sortByZoneType(iBackwards)
 			case .eReversed:     reverse()
 		}
 	}
@@ -254,7 +282,14 @@ extension ZoneArray {
 	}
 
 	func sortByZoneType(_ iBackwards: Bool = false) {
+		alterOrdering { iZones -> (ZoneArray) in
+			return iZones.sorted { (a, b) -> Bool in
+				let aType = a.zoneType.rawValue
+				let bType = b.zoneType.rawValue
 
+				return aType > bType
+			}
+		}
 	}
 
 	func sortByLength(_ iBackwards: Bool = false) {
@@ -332,6 +367,12 @@ extension ZoneArray {
 		return grabbed
 	}
 
+	func needAllProgeny() {
+		for zone in self {
+			zone.needAllProgeny()
+		}
+	}
+
 	func assureAdoption() {
 		traverseAllAncestors { ancestor in
 			ancestor.adopt()
@@ -378,7 +419,7 @@ extension ZoneArray {
 	func copyToPaste() {
 		gSelecting.clearPaste()
 
-		for zone in self {
+		forEach { zone in
 			zone.addToPaste()
 		}
 	}
@@ -394,7 +435,7 @@ extension ZoneArray {
 		let     grab = !iShouldGrab ? nil : grabAppropriate()
 		var doneOnce = false
 
-		for zone in self {
+		forEach { zone in
 			zone.needProgeny()
 		}
 

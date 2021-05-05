@@ -104,7 +104,7 @@ class ZoneWidget: ZView {
 	override var    description :     String  { return widgetZone?.description ?? kEmptyIdea }
 
 	var type : ZWidgetType {
-		var result    = widgetZone?.type
+		var result    = widgetZone?.widgetType
 
 		if  result   == nil {
 			result    = .tBigMap

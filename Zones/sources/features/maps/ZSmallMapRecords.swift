@@ -182,7 +182,7 @@ class ZSmallMapRecords: ZRecords {
 		let      cIndex = currentBookmarkIndex ?? 0
 		let       index = nextWorkingIndex(after: cIndex, going: gListsGrowDown)
 
-		rootZone?.addChild(zone, at: index)
+		rootZone?.addChildSafely(zone, at: index)
 	}
 
 	func removeBookmark(for zone: Zone? = gHereMaybe) {

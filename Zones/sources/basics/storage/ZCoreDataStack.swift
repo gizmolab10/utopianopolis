@@ -45,9 +45,10 @@ enum ZCDOperationID: Int {
 		var string = "\(self)".lowercased().substring(fromInclusive: 1)
 
 		switch self {
-			case .oProgeny: return "loading " + string
-			case .oSave:    string = "sav"
-			default:        break
+			case .oProgeny:   return   "loading " + string
+			case .oExistence: string = "checking exist"
+			case .oSave:      string = "sav"
+			default:          break
 		}
 
 		return string + "ing local data"
@@ -70,7 +71,7 @@ extension ZExistenceArray {
 	}
 
 	mutating func updateClosureForZRecord(_ zRecord: ZRecord, of type: String) {
-		let name = (type == kFileType) ? (zRecord as? ZFile)?.name : zRecord.ckRecordName
+		let name = (type == kFileType) ? (zRecord as? ZFile)?.name : (zRecord.ckRecordName ?? zRecord.recordName)
 
 		for (index, e) in enumerated() {
 			var ee = e
@@ -112,22 +113,21 @@ extension ZExistenceArray {
 
 class ZCoreDataStack: NSObject {
 
-	var   existenceClosures = [ZDatabaseID : ZExistenceDictionary]()
-	var       deferralStack = [ZDeferral]()
-	let          cloudKitID = "iCloud.com.seriously.CoreData"
-	let            localURL = gCoreDataURL.appendingPathComponent("local.store")
-	let           publicURL = gCoreDataURL.appendingPathComponent("cloud.public.store")
-	let          privateURL = gCoreDataURL.appendingPathComponent("cloud.private.store")
-	lazy var          model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }()
-	lazy var    coordinator : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
-	lazy var   privateStore : NSPersistentStore?            = { return persistentStore(for: privateURL) }()
-	lazy var    publicStore : NSPersistentStore?            = { return persistentStore(for: publicURL) }()
-	lazy var     localStore : NSPersistentStore?            = { return persistentStore(for: localURL) }()
-	var      managedContext : NSManagedObjectContext          { return persistentContainer.viewContext }
-	var            isDoneOp : Bool                            { return currentOpID == nil }
-	var          statusText : String                          { return statusOpID?.description ?? "" }
-	var          statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
-	var         currentOpID : ZCDOperationID?
+	var existenceClosures = [ZDatabaseID : ZExistenceDictionary]()
+	var     deferralStack = [ZDeferral]()
+	let          localURL = gCoreDataURL.appendingPathComponent("local.store")
+	let         publicURL = gCoreDataURL.appendingPathComponent("cloud.public.store")
+	let        privateURL = gCoreDataURL.appendingPathComponent("cloud.private.store")
+	lazy var        model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }()
+	lazy var   localStore : NSPersistentStore?            = { return persistentStore(for: localURL) }()
+	lazy var  publicStore : NSPersistentStore?            = { return persistentStore(for: publicURL) }()
+	lazy var privateStore : NSPersistentStore?            = { return persistentStore(for: privateURL) }()
+	lazy var  coordinator : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
+	var    managedContext : NSManagedObjectContext          { return persistentContainer.viewContext }
+	var          isDoneOp : Bool                            { return currentOpID == nil }
+	var        statusText : String?                         { return statusOpID?.description }
+	var        statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
+	var       currentOpID : ZCDOperationID?
 
 	// MARK:- save
 	// MARK:-
@@ -377,7 +377,7 @@ class ZCoreDataStack: NSObject {
 		let                          desc = NSPersistentStoreDescription(url: privateURL)
 		desc.configuration                = "Cloud"
 		if  gUseCloudKit {
-			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudKitID)
+			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
 			desc.cloudKitContainerOptions = options
 		}
 
@@ -388,7 +388,7 @@ class ZCoreDataStack: NSObject {
 		let                          desc = NSPersistentStoreDescription(url: publicURL)
 		desc.configuration                = "Cloud"
 		if  gUseCloudKit {
-			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudKitID)
+			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
 			options.databaseScope         = CKDatabase.Scope.public // default is private
 			desc.cloudKitContainerOptions = options
 		}
@@ -516,16 +516,26 @@ class ZCoreDataStack: NSObject {
 	// MARK:- existence closures
 	// MARK:-
 
-	func closures(for type: String, dbID: ZDatabaseID) -> ZExistenceArray {
+	func setClosures(_ closures: ZExistenceArray, for entityName: String, dbID: ZDatabaseID) {
+		var dict  = existenceClosures[dbID]
+		if  dict == nil {
+			dict  = ZExistenceDictionary()
+		}
+
+		dict?      [entityName] = closures
+		existenceClosures[dbID] = dict!
+	}
+
+	func closures(for entityName: String, dbID: ZDatabaseID) -> ZExistenceArray {
 		var d  = existenceClosures[dbID]
-		var c  = d?[type]
+		var c  = d?[entityName]
 		if  d == nil {
 			d  = ZExistenceDictionary()
 		}
 
 		if  c == nil {
 			c  = ZExistenceArray()
-			d?[type] = c!
+			d?[entityName] = c!
 		}
 
 		existenceClosures[dbID] = d!
@@ -533,35 +543,24 @@ class ZCoreDataStack: NSObject {
 		return c!
 	}
 
-	func setClosures(_ closures: ZExistenceArray, for type: String, dbID: ZDatabaseID) {
-		var d  = existenceClosures[dbID]
-		if  d == nil {
-			d  = ZExistenceDictionary()
-		}
-
-		d?[type] = closures
-		existenceClosures[dbID] = d!
-	}
-
-	func processClosures(for  type: String, dbID: ZDatabaseID, _ onCompletion: IntClosure?) {
-		var array = closures(for: type, dbID: dbID)
+	func processClosures(for  entityName: String, dbID: ZDatabaseID, _ onCompletion: IntClosure?) {
+		var array = closures(for: entityName, dbID: dbID)
 
 		if  array.count == 0 {
 			onCompletion?(0)
 		} else {
-			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
-			request.predicate = array.predicate(type)
-			let         count = "\(array.count)"  .appendingSpacesToLength(11)
-			let      database = "\(dbID.rawValue)".appendingSpacesToLength(12)
+			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+			request.predicate = array.predicate(entityName)
+			let         count = "\(array.count)".appendingSpacesToLength(6)
 
-			printDebug(.dLevels, "\(count)\(database)\(type)")
+			printDebug(.dExist, "\(dbID.identifier) 2 \(count)\(entityName)")
 
 			deferUntilAvailable(for: .oExistence) {
 				do {
 					let items = try self.managedContext.fetch(request)
 					for item in items {
 						if  let zRecord = item as? ZRecord {           // insert zrecord into closures
-							array.updateClosureForZRecord(zRecord, of: type)
+							array.updateClosureForZRecord(zRecord, of: entityName)
 							zRecord.needAdoption()
 						}
 					}
@@ -571,7 +570,7 @@ class ZCoreDataStack: NSObject {
 
 				FOREGROUND {
 					array.fireClosures()
-					self.setClosures([], for: type, dbID: dbID)
+					self.setClosures([], for: entityName, dbID: dbID)
 					self.makeAvailable()
 					onCompletion?(0)
 				}
@@ -579,46 +578,46 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func processExistenceClosures(dbID: ZDatabaseID, _ onCompletion: IntClosure?) {
-		if  let  dict = existenceClosures[dbID] {
-			let types = dict.map { $0.key }
+	func finishCreating(for dbID: ZDatabaseID, _ onCompletion: IntClosure?) {
+		guard let dict = existenceClosures[dbID] else {
+			onCompletion?(0) // so next operation can begin
 
-			func processForTypeAtIndex(_ index: Int) {
-				if  index < 0 {
-					onCompletion?(0)                                    // exit recursive loop and let next operation begin
-				} else {
-					let type = types[index]
+			return
+		}
 
-					processClosures(for: type, dbID: dbID) { value in
-						processForTypeAtIndex(index - 1)                // recursive while loop
-					}
+		let entityNames = dict.map { $0.key }
+		let  firstIndex = entityNames.count - 1
+
+		func processForEntityName(at index: Int) {
+			if  index < 0 {
+				onCompletion?(0)                                       // exit recursive loop and let next operation begin
+			} else {
+				let entityName = entityNames[index]
+
+				self.processClosures(for: entityName, dbID: dbID) { value in
+					processForEntityName(at: index - 1)                // recursive while loop
 				}
 			}
-
-			processForTypeAtIndex(types.count - 1)
-		} else {
-			onCompletion?(0) // so next operation can begin
 		}
+
+		processForEntityName(at: firstIndex)
 	}
 
-	func asyncExistenceFor(_ type: String, dbID: ZDatabaseID?, entity: ZEntityDescriptor?, file: ZFileDescriptor?, onExistence: @escaping ZRecordClosure) {
-		if  let                dbid = dbID {
-			var               array = closures(for: type, dbID: dbid)
-			var            typeDict = existenceClosures[dbid]
+	func existsForEntityNameAsync(_ entityName: String, dbID: ZDatabaseID?, entity: ZEntityDescriptor?, file: ZFileDescriptor?, onExistence: @escaping ZRecordClosure) {
+		if  let  dbid = dbID {
+			var array = closures(for: entityName, dbID: dbid) // creates dict and array
 
 			array.append(ZExistence(closure: onExistence, entity: entity, file: file))
-
-			typeDict?        [type] = array
-			existenceClosures[dbid] = typeDict
+			setClosures(array, for: entityName, dbID: dbid)
 		}
 	}
 
-	func asyncZRecordExists(for descriptor: ZEntityDescriptor, onExistence: @escaping ZRecordClosure) {
-		asyncExistenceFor(descriptor.entityName, dbID: descriptor.databaseID, entity: descriptor, file: nil, onExistence: onExistence)
+	func zRecordExistsAsync(for descriptor: ZEntityDescriptor, onExistence: @escaping ZRecordClosure) {
+		existsForEntityNameAsync(descriptor.entityName, dbID: descriptor.databaseID, entity: descriptor, file: nil, onExistence: onExistence)
 	}
 
-	func asyncFileExists(for descriptor: ZFileDescriptor?, dbID: ZDatabaseID?, onExistence: @escaping ZRecordClosure) {
-		asyncExistenceFor(kFileType, dbID: dbID, entity: nil, file: descriptor, onExistence: onExistence)
+	func fileExistsAsync(for descriptor: ZFileDescriptor?, dbID: ZDatabaseID?, onExistence: @escaping ZRecordClosure) {
+		existsForEntityNameAsync(kFileType, dbID: dbID, entity: nil, file: descriptor, onExistence: onExistence)
 	}
 
 	// MARK:- search
@@ -655,7 +654,7 @@ class ZCoreDataStack: NSObject {
 					for item in items {
 						if  let zRecord = item as? ZRecord {
 							if  uniqueOnly {
-								result.appendUnique(zRecord)
+								result.appendUnique(item: zRecord)
 							} else {
 								result.append(zRecord)
 							}

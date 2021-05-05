@@ -205,11 +205,11 @@ class ZOperations: NSObject {
     }
 
     @discardableResult func cloudStatusChanged() -> Bool {
-		let          hasInternet = ZReachability.isConnectedToNetwork()
-        let     changedConnected =              hasInternet != gHasInternet
-        let     changedStatus    = recentCloudAccountStatus != gCloudAccountStatus
-        gHasInternet             = hasInternet
-        recentCloudAccountStatus = gCloudAccountStatus
+		let           hasInternet = ZReachability.isConnectedToNetwork()
+        let      changedConnected =               hasInternet != gHasInternet
+        let      changedStatus    = gRecentCloudAccountStatus != gCloudAccountStatus
+        gHasInternet              = hasInternet
+        gRecentCloudAccountStatus = gCloudAccountStatus
 
         return changedConnected || changedStatus
     }
@@ -283,7 +283,7 @@ class ZOperations: NSObject {
 								gSetProgressTime(for: operationID)
 							}
 
-							gSignal([.sStatus])            // show change in cloud status
+							gSignal([.sStatus, .sStartupProgress])            // show change in cloud status
 
 							// /////////////////////
                             // release suspension //

@@ -342,9 +342,9 @@ enum ZReorderMenuType: String {
 	case eReversed     = "r"
 	case eByLength     = "l"
 	case eBySizeOfList = "s"
-	case eByType       = "t"
+	case eByKind       = "k"
 
-	static var activeTypes: [ZReorderMenuType] { return [.eAlphabetical, .eReversed, .eByLength, .eBySizeOfList, .eByType] }
+	static var activeTypes: [ZReorderMenuType] { return [.eAlphabetical, .eReversed, .eByLength, .eBySizeOfList, .eByKind] }
 
 	var title: String {
 		switch self {
@@ -352,7 +352,7 @@ enum ZReorderMenuType: String {
 			case .eReversed:     return "reverse order"
 			case .eByLength:     return "by length of idea"
 			case .eBySizeOfList: return "by size of list"
-			case .eByType:       return "by type of idea"
+			case .eByKind:       return "by kind of idea"
 		}
 	}
 
@@ -360,11 +360,11 @@ enum ZReorderMenuType: String {
 
 enum ZRefetchMenuType: String {
 	case eList    = "l"
-	case eIdeas   = "i"
+	case eIdeas   = "g"
 	case eTraits  = "t"
 	case eProgeny = "p"
 
-	static var activeTypes: [ZRefetchMenuType] { return [.eIdeas, .eTraits] } // .eList, .eProgeny,
+	static var activeTypes: [ZRefetchMenuType] { return [.eIdeas, .eTraits, .eProgeny, .eList] } // .eList, .eProgeny,
 
 	var title: String {
 		switch self {
@@ -504,6 +504,20 @@ enum ZEssayLinkType: String {
 
 // MARK:- option sets
 // MARK:-
+
+struct ZoneType: OptionSet {
+	let rawValue: Int
+
+	init(rawValue: Int) {
+		self.rawValue = rawValue
+	}
+
+	static let zChildless = ZoneType(rawValue: 0x0001)
+	static let zTrait     = ZoneType(rawValue: 0x0002)
+	static let zNote      = ZoneType(rawValue: 0x0004)
+	static let zDuplicate = ZoneType(rawValue: 0x0008)
+	static let zBookmark  = ZoneType(rawValue: 0x0010)
+}
 
 struct ZTinyDotType: OptionSet {
 	let rawValue: Int

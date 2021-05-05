@@ -67,7 +67,7 @@ class ZBookmarks: NSObject {
 		addToReverseLookup(bookmark)
 
 		if  action != .aNotABookmark {
-			parent.addChild(bookmark, at: insertAt) // calls update progeny count
+			parent.addChildSafely(bookmark, at: insertAt) // calls update progeny count
 		}
 
 		return bookmark

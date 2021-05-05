@@ -61,14 +61,14 @@ enum ZTimerID : Int {
 
 	var string: String { return "\(self)" }
 
-	var description: String {
+	var description: String? {
 		switch self {
 			case .tSync:            return "saving data"
 			case .tWriteEveryone:   return "writing public local data"
 			case .tWriteMine:       return "writing private local data"
 			case .tRecordsEveryone: return "acquiring public cloud data"
 			case .tRecordsMine:     return "acquiring private cloud data"
-			default:                return ""
+			default:                return nil
 		}
 	}
 
@@ -102,7 +102,7 @@ class ZTimers: NSObject {
 
 	var timers = [ZTimerID : Timer]()
 
-	var statusText: String { return gCurrentTimerID?.description ?? "" }
+	var statusText: String? { return gCurrentTimerID?.description }
 
 	func stopTimer(for timerID: ZTimerID?) {
 		if  let id = timerID {

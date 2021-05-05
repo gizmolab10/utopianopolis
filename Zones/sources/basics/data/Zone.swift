@@ -72,6 +72,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var               isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
 	var               onlyShowRevealDot :               Bool  { return expanded && ((isSmallMapHere && !(widget?.type.isBigMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
 	var                 dragDotIsHidden :               Bool  { return (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && expanded) } // hide favorites root drag dot
+	var                hasBadRecordName :               Bool  { return recordName != ckRecordName }
 	var                   hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
 	var                   hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
 	var                    hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink && !(hyperLink?.isEmpty ?? true) }
@@ -86,13 +87,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                         hasNote :               Bool  { return hasTrait(for: .tNote) }
 	var                     isTraveller :               Bool  { return isBookmark || hasHyperlink || hasVideo || hasEmail || hasNote }
 	var                       isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
+	var                     isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
 	var                     isInRecents :               Bool  { return root?.isRecentsRoot      ?? false }
 	var                    isInSmallMap :               Bool  { return root?.isSmallMapRoot     ?? false }
 	var                   isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
 	var                   isInEitherMap :               Bool  { return root?.isEitherMapRoot    ?? false }
 	var                isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
 	var            isNonRootInEitherMap :               Bool  { return !isARoot && isInEitherMap }
-	var                  isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || type.isExemplar }
+	var                  isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || widgetType.isExemplar }
 	var                  spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
 	var                      spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
 	var                       isInGroup :               Bool  { return groupOwner?.bookmarkTargets.contains(self) ?? false }
@@ -199,7 +201,33 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return results
 	}
 
-	var type : ZWidgetType {
+	var zoneType : ZoneType {
+		var type = ZoneType()
+
+		if  count == 0 {
+			type.insert(.zChildless)
+		}
+
+		if  hasNote {
+			type.insert(.zNote)
+		}
+
+		if  traits.count > 0 {
+			type.insert(.zTrait)
+		}
+
+		if  isBookmark {
+			type.insert(.zBookmark)
+		}
+
+		if  duplicates.count > 0 {
+			type.insert(.zDuplicate)
+		}
+
+		return type
+	}
+
+	var widgetType : ZWidgetType {
 		if  let    name = root?.ckRecordName {
 			switch name {
 				case   kRecentsRootName: return .tRecent
@@ -379,9 +407,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var ancestralString: String {
-		let names = ancestralPath.map { zone -> String in
-			return zone.unwrappedName.capitalized               // convert ancestors into capitalized strings
-		}
+		let names = ancestralPath.map { $0.unwrappedName.capitalized }             // convert ancestors into capitalized strings
 
 		return names.joined(separator: kColonSeparator)
 	}
@@ -1134,7 +1160,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					zone.orphan()
 				}
 
-				addChild(zone, at: iIndex)
+				addChildSafely(zone, at: iIndex)
 			}
 		}
 
@@ -1225,14 +1251,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					moveZone(to: destroyZone) {
 						deleteBookmarksClosure()
 					}
-				} else if !permanently {
+				} else if !permanently, !isInDestroy {
 					moveZone(to: trashZone) {
 						deleteBookmarksClosure()
 					}
 				} else {
 					concealAllProgeny()           // strip cloggers from gExpandedZones list
 					traverseAllProgeny { iZone in
-						if !iZone.isInTrash, iZone != self {
+						if !iZone.isInTrash {
 							iZone.needDestroy()   // gets written in file
 							iZone.orphan()
 							gManifest?.smartAppend(iZone)
@@ -1411,7 +1437,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let   dict = self.dictFromJSON(json)
 				temporarilyOverrideIgnore { // allow needs save
 					let zone = Zone(dict: dict, in: dbID)
-					addChild(zone, at: 0)
+					addChildSafely(zone, at: 0)
 				}
 
 				onCompletion?()
@@ -1430,6 +1456,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func            ungrab() { gSelecting           .ungrab(self) }
 	func       focusRecent() { focusOn() { gRedrawMaps() } }
 	func editTrait(for iType: ZTraitType) { gTextEditor.edit(traitFor(iType)) }
+
+	func needAllProgeny() {
+		traverseAllProgeny { iZone in
+			iZone.needProgeny()
+		}
+	}
 
 	@discardableResult func edit() -> ZTextEditor? {
 		gTemporarilySetMouseZone(self) // so become first responder will work
@@ -1527,6 +1559,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		colorMaybe    = nil
 
 		maybeNeedSave()
+	}
+
+	static func !== ( left: Zone, right: Zone) -> Bool {
+		return left != right
 	}
 
 	static func == ( left: Zone, right: Zone) -> Bool {
@@ -2776,16 +2812,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// adopt recursively
 
-	override func adopt(forceAdoption: Bool = true, recursively: Bool = false) {
-		if  !isARoot, !needsDestroy, (forceAdoption || needsAdoption) {
-			if  let p = parentZone, p != self,      // first compute parentZone
-				!p.children.contains(self),
-				p.ckRecord != nil {
-				p.maybeMarkNotFetched()
-				p.addChildAndRespectOrder(self)
+	override func adopt(forceAdoption: Bool = false, recursively: Bool = false) {
+		if  !isARoot, !needsDestroy {
+			if  let p = parentZone, p != self {        // first compute parentZone
+				if (forceAdoption || needsAdoption),
+				   !p.children.contains(self) {        // see if already adopted
+					p.maybeMarkNotFetched()
+					p.addChildAndRespectOrder(self)
+					updateMaxLevel()
+				}
 
-				if  p.parentZone == nil, !p.isARoot, recursively {
-					p.adopt() // recurse on ancestor
+				if  recursively && root == nil {
+					p.adopt(forceAdoption: forceAdoption, recursively: true) // recurse on ancestor
 				}
 			}
 		}
@@ -2803,12 +2841,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	@discardableResult func addChild(_ child: Zone?, updateCoreData: Bool = true) -> Int? {
-		return addChild(child, at: 0, updateCoreData: updateCoreData)
+		return addChildSafely(child, at: 0, updateCoreData: updateCoreData)
 	}
 
 	func addAndReorderChild(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: Closure? = nil) {
 		if  let child = iChild,
-			addChild(child, at: iIndex, afterAdd) != nil {
+			addChildSafely(child, at: iIndex, afterAdd) != nil {
 			children.updateOrder() // also marks children need save
 			maybeNeedSave()
 		}
@@ -2824,20 +2862,43 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return index   // count is bottom, 0 is top
 	}
 
-	@discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: Closure? = nil) -> Int? {
+	func deleteDuplicates() {
+		for d in duplicates {
+			if  d != self {
+				d.duplicates.removeAll()
+				d.moveZone(to: gDestroy)
+			}
+		}
+
+		duplicates.removeAll()
+	}
+
+	func cycleToNextDuplicate() {
+		var     d = duplicates
+		if  let p = parentZone, d.count > 0,
+			let i = siblingIndex,
+			let n = d.popLast() {     // pop next from duplicates
+
+			orphan()
+			p.addAndReorderChild(n, at: i)  // swap it into this zones sibling index
+		}
+	}
+
+	func isSameAs(_ other: Zone) {
+		// identify discrepancies and do what with them?
+	}
+
+	@discardableResult func addChildSafely(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: Closure? = nil) -> Int? {
 		if  let        child = iChild {
 			let      toIndex = validIndex(from: iIndex)
 			child.parentZone = self
 
 			func finish() -> Int {
+				updateMaxLevel()
 				maybeNeedSave()
 				onCompletion?()
 
 				return toIndex
-			}
-
-			func addAsDuplicate(_ duplicate: Zone) {
-				duplicates.appendUnique(item: duplicate)
 			}
 
 			func rearange(from index: Int) -> Int {
@@ -2851,7 +2912,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  let childTarget = child.bookmarkTarget {           // detect if its bookmark is already added
 				for (index, sibling) in children.enumerated() {
 					if  childTarget == sibling.bookmarkTarget {
-						addAsDuplicate(sibling)
+						sibling.duplicates.insertUnique(item: child)
 
 						return rearange(from: index)
 					}
@@ -2859,8 +2920,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			for (index, sibling) in children.enumerated() {        // detect if it's already added
-				if  child == sibling {
-					addAsDuplicate(sibling)
+				if  child == sibling { // same record name
+					if  child !== sibling {
+						sibling.duplicates.insertUnique(item: child)
+					}
 
 					return rearange(from: index)
 				}
@@ -2885,13 +2948,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	@discardableResult func removeChild(_ iChild: Zone?) -> Bool {
-		if  let child = iChild, let index = children.firstIndex(of: child) {
-			children.remove(at: index)
+		if  let child = iChild {
+			if  let index = children.firstIndex(of: child) {
+				children.remove(at: index)
+			}
 
 			child.parentZone = nil
 
 			child.setValue(nil, forKeyPath: kParentRef)
 			updateCoreDataRelationships()
+			updateMaxLevel()
 			needCount()
 
 			return true
@@ -3174,7 +3240,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				while gotten < size && count > 0 {
 					if  let child = children.popLast(),
 						child.progenyCount < (optimumSize / 2) {
-						holder.addChild(child, at: nil)
+						holder.addChildSafely(child, at: nil)
 					}
 
 					gotten += 1
@@ -3182,7 +3248,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			for child in holders {
-				addChild(child, at: nil)
+				addChildSafely(child, at: nil)
 			}
 		}
 	}
@@ -3227,6 +3293,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		gRedrawMaps(for: self)
+	}
+
+	func updateMaxLevel() {
+		gRemoteStorage.zRecords(for: databaseID)?.updateMaxLevel(with: level)
 	}
 
 	// MARK:- dots
@@ -3288,27 +3358,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func dotParameters(_ isFilled: Bool, _ isReveal: Bool) -> ZDotParameters {
-		let           c = type.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
-		var           p = ZDotParameters()
-		let           t = bookmarkTarget
-		let           k = traitKeys
-		let           g = groupOwner
-		p.color         = c
-		p.isGrouped     = g != nil
-		p.showList      = expanded
-		p.isReveal      = isReveal
-		p.filled        = isFilled
-		p.hasTarget     = isBookmark
-		p.hasDuplicate  = duplicates.count > 0
-		p.showAccess    = hasAccessDecoration
-		p.hasTargetNote = t?.hasNote ?? false
-		p.isGroupOwner  = g == self || g == t
-		p.isDrop        = self == gDragDropZone
-		p.showSideDot   = isCurrentSmallMapBookmark
-		p.traitType     = (k.count < 1) ? "" : k[0]
-		p.fill          = isFilled ? c.lighter(by: 2.5) : gBackgroundColor
-		p.accessType    = directAccess == .eProgenyWritable ? .sideDot : .vertical
-		p.childCount    = (gCountsMode == .progeny) ? progenyCount : indirectCount
+		let            c = widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
+		var            p = ZDotParameters()
+		let            t = bookmarkTarget
+		let            k = traitKeys
+		let            g = groupOwner
+		p.color          = c
+		p.isGrouped      = g != nil
+		p.showList       = expanded
+		p.isReveal       = isReveal
+		p.filled         = isFilled
+		p.hasTarget      = isBookmark
+		p.showAccess     = hasAccessDecoration
+		p.hasTargetNote  = t?.hasNote ?? false
+		p.isGroupOwner   = g == self || g == t
+		p.isDrop         = self == gDragDropZone
+		p.showSideDot    = isCurrentSmallMapBookmark
+		p.traitType      = (k.count < 1) ? "" : k[0]
+		p.fill           = isFilled ? c.lighter(by: 2.5) : gBackgroundColor
+		p.accessType     = directAccess == .eProgenyWritable ? .sideDot : .vertical
+		p.childCount     = (gCountsMode == .progeny) ? progenyCount : indirectCount
 
 		return p
 	}
@@ -3507,8 +3576,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: name))
 	}
 
-	static func asyncCreate(record: CKRecord, databaseID: ZDatabaseID?, onCreation: @escaping ZoneClosure) {
-		asyncHasMaybe(record: record, entityName: kZoneType, databaseID: databaseID) { zRecord in        // first check if already exists
+	static func createAsync(record: CKRecord, databaseID: ZDatabaseID?, onCreation: @escaping ZoneClosure) {
+		hasMaybeAsync(record: record, entityName: kZoneType, databaseID: databaseID) { zRecord in        // first check if already exists
 			let zone = zRecord as? Zone ?? Zone(record: record, databaseID: databaseID)
 
 			onCreation(zone)
@@ -3617,7 +3686,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let child = Zone(dict: childDict, in: iDatabaseID)
 
 				cloud?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent intentionally not being in childDict
-					addChild(child, at: nil)
+					addChildSafely(child, at: nil)
 				}
 			}
 

@@ -67,11 +67,9 @@ class ZDataController: ZGenericController {
 		let    cdStatus = gCoreDataStack.statusText
         let    opStatus =       gBatches.statusText
 		let timerStatus =        gTimers.statusText
+		let        text = cdStatus ?? opStatus ?? timerStatus ?? "all data synchronized\(gCloudStatusIsActive ? "" : " locally")"
 
-		return cdStatus != "" ? cdStatus    :
-			opStatus    != "" ? opStatus    :
-			timerStatus != "" ? timerStatus :
-			gCloudStatusIsActive ? "all data synchronized" : "all data saved locally"
+		return text
     }
 
 	var zoneRecordNameText: String {
@@ -79,7 +77,7 @@ class ZDataController: ZGenericController {
 
 		if  let zone = currentZone,
 			let name = zone.ckRecordName {
-			let type = zone.type.identifier.uppercased()
+			let type = zone.widgetType.identifier.uppercased()
 			text     = name
 
 			if  gDebugInfo, type.count > 0 {

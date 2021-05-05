@@ -154,10 +154,10 @@ class ZBatches: ZOnboarding {
     var     deferredBatches = [ZBatch] ()
     var   currentDatabaseID : ZDatabaseID?
 	var        currentBatch : ZBatch?
-    var          totalCount :    Int { return currentBatches.count + deferredBatches.count }
-	var              isLate :   Bool { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
-	var          statusText : String { return currentOp.isDoneOp ? kEmpty : currentOp.description + remainingOpsText }
-	var    remainingOpsText : String { let count = queue.operationCount; return count == 0 ? kEmpty : " (and \(count) others)" }
+	var          statusText : String? { return currentOp.isDoneOp ? nil : currentOp.description + remainingOpsText }
+	var    remainingOpsText : String  { let count = queue.operationCount; return count == 0 ? kEmpty : " (and \(count) others)" }
+	var              isLate :   Bool  { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
+	var          totalCount :    Int  { return currentBatches.count + deferredBatches.count }
 
     // MARK:- API
     // MARK:-
@@ -198,7 +198,7 @@ class ZBatches: ZOnboarding {
                 self.transferDeferred()                         // 3.
                 self.processNextBatch()                         // recurse
 			} else {
-				gSignal([.sData])                               // 4.
+				gSignal([.sData, .sStartupProgress])            // 4.
 			}
         }
     }

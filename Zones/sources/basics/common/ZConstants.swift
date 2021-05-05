@@ -37,6 +37,7 @@ let            kSmallBatchSize = 125
 let          kHalfDetailsWidth = kDetailsWidth / 2.0
 let  kDefaultEssayTextFontSize = CGFloat(18.0)
 let kDefaultEssayTitleFontSize = CGFloat(24.0)
+let      kDevelopmentStartDate = Date(timeIntervalSinceReferenceDate: 14.0 * 365.0 * 24.0 * 60.0 * 16.0) // jan 1 2015
 let       kTimeOfSystemStartup = Date.timeIntervalSinceReferenceDate
 let         kSmallMapReduction = CGFloat(kIsPhone ? 1.0 : 0.8)
 let         kDefaultWindowRect = CGRect(x:0.0, y:0.0, width: 500.0, height: 500.0) // smallest size user to which can shrink window
@@ -56,6 +57,7 @@ let                 kGridColor = ZColor.darkGray
 let               gUndoManager = UndoManager()
 
 let                 kTrashLink = kColonSeparator + kColonSeparator + kTrashName
+let               kDestroyLink = kColonSeparator + kColonSeparator + kDestroyName
 let          kLostAndFoundLink = kColonSeparator + kColonSeparator + kLostAndFoundName
 let          kHalfLineOfDashes = "-----------"
 let         kLineWithStubTitle = kHalfLineOfDashes + " | " + kHalfLineOfDashes

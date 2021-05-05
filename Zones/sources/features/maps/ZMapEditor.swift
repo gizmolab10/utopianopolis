@@ -114,24 +114,24 @@ class ZMapEditor: ZBaseEditor {
                     prefix(with: key)
                 } else if !super.handleKey(iKey, flags: flags, isWindow: isWindow) {
 					gCurrentKeyPressed = key
+					let moveable = gSelecting.currentMoveable
 
 					switch key {
-						case "a":        if COMMAND { gSelecting.currentMoveable.selectAll(progeny: OPTION) } else { gSelecting.simplifiedGrabs.alphabetize(OPTION); gRedrawMaps() }
+						case "a":        if COMMAND { moveable.selectAll(progeny: OPTION) }
 						case "b":        gSelecting.firstSortedGrab?.addBookmark()
 						case "c":        if  OPTION { divideChildren() } else if COMMAND { gSelecting.simplifiedGrabs.copyToPaste() } else { gMapController?.recenter(SPECIAL) }
 						case "d":        if     ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 						case "e", "h":   editTrait(for: key)
 						case "f":        gSearching.showSearch(OPTION)
 						case "g":        showRefetchPopup() // refetch(COMMAND, OPTION, CONTROL)
-						case "i":        gSelecting.simplifiedGrabs.sortByCount(OPTION); gRedrawMaps()
+						case "j":        if COMMAND { gSelecting.simplifiedGrabs.deleteDuplicates() } else { gSelecting.simplifiedGrabs.cycleToNextDuplicate() }
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
-						case "m":        gSelecting.simplifiedGrabs.sortByLength(OPTION); gRedrawMaps()
 						case "n":        editNote(OPTION)
-						case "o":        gSelecting.currentMoveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
+						case "o":        moveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else { showReorderPopup() }
-						case "s":        if CONTROL { pushAllToCloud() } else { gFiles.export(gSelecting.currentMoveable, toFileAs: OPTION ? .eOutline : .eSeriously) }
+						case "s":        if CONTROL { pushAllToCloud() } else { gFiles.export(moveable, toFileAs: OPTION ? .eOutline : .eSeriously) }
 						case "t":        if COMMAND { showThesaurus() } else if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() } else { editTrait(for: key) }
@@ -147,7 +147,7 @@ class ZMapEditor: ZBaseEditor {
 						case "[", "]":   go(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() }
 						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")
 						case kTab:       addSibling(OPTION)
-						case kSpace:     if CONTROL || OPTION || isWindow { gSelecting.currentMoveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
+						case kSpace:     if CONTROL || OPTION || isWindow { moveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
 						case kEquals:    if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { reveal in gRedrawMaps() } }
 						case kBackSlash: mapControl(OPTION)
 						case kBackspace,
@@ -297,11 +297,11 @@ class ZMapEditor: ZBaseEditor {
             case .ePaste:     valid =  paste > 0 && write
             case .eUseGrabs:  valid = wGrabs > 0 && write
             case .eMultiple:  valid =  grabs > 1
-            case .eSort:      valid = (shown     && sort) || (grabs > 1 && parent)
+            case .eSort:      valid = (grabs > 1 && parent) || (shown && sort)
             case .eUndo:      valid = undo.canUndo
             case .eRedo:      valid = undo.canRedo
             case .eTravel:    valid = mover.isTraveller
-            case .eCloud:     valid = gHasInternet && gCloudStatusIsActive
+            case .eCloud:     valid = gHasInternet && (gCloudStatusIsActive || gCloudStatusIsAvailable)
             default:          break // .eAlways goes here
             }
         }
@@ -353,7 +353,7 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func duplicate() {
-		var grabs = gSelecting.simplifiedGrabs
+		var grabs = gSelecting.simplifiedGrabs // convert to mutable, otherwise can't invoke duplicate
 
 		grabs.duplicate()
 	}
@@ -492,16 +492,18 @@ class ZMapEditor: ZBaseEditor {
 
 	@objc func handleRefetchKey(_ key: String, _ OPTION: Bool) {
 		if  let type  = ZRefetchMenuType(rawValue: key) {
-			do {
-				switch type {
-					case .eIdeas:   try gBatches.invokeOperation(for: .oAllIdeas)  { iSame in gRedrawMaps() }
-					case .eTraits:  try gBatches.invokeOperation(for: .oAllTraits) { iSame in gRedrawMaps() }
-					case .eProgeny: break
-					case .eList:    break
-				}
-			} catch {
-
+			var op: ZOperationID?
+			switch type {
+				case .eIdeas:   op = .oAllIdeas
+				case .eTraits:  op = .oAllTraits
+				case .eProgeny: op = .oChildIdeas; gSelecting.currentMapGrabs.needAllProgeny()
+				case .eList:    op = .oChildIdeas; gSelecting.currentMapGrabs.needChildren()
 			}
+
+			if  let o = op {
+				gBatches.invokeMultiple(for: o, restoreToID: gDatabaseID) { iSame in gRedrawMaps() }
+			}
+
 		}
 	}
 

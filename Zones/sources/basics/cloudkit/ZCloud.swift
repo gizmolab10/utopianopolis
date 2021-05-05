@@ -13,7 +13,6 @@ let gContainer = CKContainer(identifier: kCloudID)
 
 class ZCloud: ZRecords {
 
-	var         maxLevel = 0
 	var    addedToLevels = [Int             : ZRecordsArray] ()
 	var recordsToProcess = [String          : CKRecord]      () // accumulator for timer-based processing
 	var childlessParents = [String]                          () // accumulator for fetching child ideas
@@ -79,8 +78,8 @@ class ZCloud: ZRecords {
 		}
 	}
 
-	func processCoreData(_ onCompletion: IntClosure?) {
-		gCoreDataStack.processExistenceClosures(dbID: databaseID) { i in
+	func finishCreatingManagedObjects(_ onCompletion: IntClosure?) {
+		gCoreDataStack.finishCreating(for: databaseID) { i in
 			self.adoptAllNeedingAdoption()   // in case any orphans remain
 			onCompletion?(i)
 		}
@@ -672,25 +671,23 @@ class ZCloud: ZRecords {
         }
     }
 
-    func fetch(for type: String, properties: [String], since start: Date?, before end: Date? = nil, _ onCompletion: RecordsClosure?) {
+    func fetch(for type: String, properties: [String], since start: Date, before end: Date? = nil, _ onCompletion: RecordsClosure?) {
         let predicate = self.predicate(since: start, before: end)
         var retrieved = CKRecordsArray ()
 
         queryFor(type, with: predicate, properties: properties, batchSize: kBatchSize) { (iRecord, iError) in
-            if  iError    != nil {
-                if  start == nil {
-                    onCompletion?(retrieved) // NEED BETTER ERROR HANDLING
-				} else if let middle = start?.mid(to: end) {
-                    self.fetch(for: type, properties: properties, since: start, before: middle) { iCKRecords in         // error, fetch first half
-                        retrieved.appendUnique(contentsOf: iCKRecords)
+            if  iError != nil {
+				if  let middle = start.mid(to: end) {
+					self.fetch(for: type, properties: properties, since: start, before: middle) { iCKRecords in         // error, fetch first half
+						retrieved.appendUnique(contentsOf: iCKRecords)
 
-                        self.fetch(for: type, properties: properties, since: middle, before: end) { iCKRecords in       // fetch second half
-                            retrieved.appendUnique(contentsOf: iCKRecords)
+						self.fetch(for: type, properties: properties, since: middle, before: end) { iCKRecords in       // fetch second half
+							retrieved.appendUnique(contentsOf: iCKRecords)
 
-                            onCompletion?(retrieved)
-                        }
-                    }
-                }
+							onCompletion?(retrieved)
+						}
+					}
+				}
 			} else if let ckRecord = iRecord {
 				retrieved.appendUnique(item: ckRecord)
 			} else { // nil means: we already received full response from cloud for this particular fetch
@@ -699,7 +696,7 @@ class ZCloud: ZRecords {
         }
     }
 
-    func createZRecords(from iCKRecords: CKRecordsArray, title iTitle: String? = nil, _ onCompletion: Closure? = nil) {
+    func createZRecordsAsync(from iCKRecords: CKRecordsArray, _ onCompletion: Closure? = nil) {
 		let dbID = databaseID
 
 		for record in iCKRecords {
@@ -712,17 +709,11 @@ class ZCloud: ZRecords {
 				while self.recordsToProcess.count > 0 {
 					if  let      key = self.recordsToProcess.keys.first,
 						let ckRecord = self.recordsToProcess.removeValue(forKey: key) {
-						let  zRecord = self.maybeZRecordForRecordName(key)
 
-						if  zRecord != nil {
-							zRecord?.useBest(record: ckRecord)   // fetched has same record id
-							zRecord?.adopt()
-						} else {
-							switch ckRecord.recordType {
-								case kZoneType:    Zone.asyncCreate(record: ckRecord, databaseID: dbID) { zone  in  zone.adopt() }
-								case kTraitType: ZTrait.asyncCreate(record: ckRecord, databaseID: dbID) { trait in trait.adopt() }
-								default: break
-							}
+						switch ckRecord.recordType {
+							case kZoneType:    Zone.createAsync(record: ckRecord, databaseID: dbID) { zone  in  zone.adopt() }
+							case kTraitType: ZTrait.createAsync(record: ckRecord, databaseID: dbID) { trait in trait.adopt() }
+							default: break
 						}
 
 						try gThrowOnUserActivity()
@@ -732,8 +723,6 @@ class ZCloud: ZRecords {
 				self.adoptAllNeedingAdoption()
 				onCompletion?()
 			}
-
-			columnarReport("FETCH\(iTitle ?? "") (\(iCKRecords.count))", String.forCKRecords(iCKRecords))
 		}
     }
 
@@ -754,21 +743,22 @@ class ZCloud: ZRecords {
 		fetchChildIdeas(onCompletion)
 	}
 
-	func fetchAllIdeas(_ onCompletion: IntClosure?) { fetchSince(nil,          onCompletion) }
-    func fetchNewIdeas(_ onCompletion: IntClosure?) { fetchSince(lastSyncDate, onCompletion) }
+	func fetchAllIdeas(_ onCompletion: IntClosure?) { fetchSince(kDevelopmentStartDate, onCompletion) }
+    func fetchNewIdeas(_ onCompletion: IntClosure?) { fetchSince(lastSyncDate,          onCompletion) }
 
-    func fetchSince(_ date: Date?, _ onCompletion: IntClosure?) {
+    func fetchSince(_ date: Date, _ onCompletion: IntClosure?) {
         // for zones, traits, destroy
         // if date is nil, fetch all
 
 		fetch(for: kZoneType, properties: Zone.cloudProperties, since: date) { iZoneCKRecords in                    // start the fetch: first zones
-			self.createZRecords(from: iZoneCKRecords, title: date != nil ? " NEW" : " ALL") {
+			self.createZRecordsAsync(from: iZoneCKRecords) {
 				gNeedsRecount = true
 
 				self.fetch(for: kTraitType, properties: ZTrait.cloudProperties, since: date) { iTraitCKRecords in   // on async response: then traits
 					FOREGROUND {
-						self.createZRecords(from: iTraitCKRecords, title: " TRAITS")
-						onCompletion?(0)
+						self.createZRecordsAsync(from: iTraitCKRecords) {
+							self.finishCreatingManagedObjects(onCompletion)
+						}
 					}
 				}
 			}
@@ -790,7 +780,7 @@ class ZCloud: ZRecords {
 
 						onCompletion?(0)
 					} else {
-						self.createZRecords(from: iCKRecords) {
+						self.createZRecordsAsync(from: iCKRecords) {
 							self.fetchNeededIdeas(onCompletion)                            // process remaining
 						}
 					}
@@ -967,20 +957,18 @@ class ZCloud: ZRecords {
     }
 
     func fetchChildIdeas(_ onCompletion: IntClosure?) {
-		onCompletion?(0); return
+		if databaseID == .mineID { finishCreatingManagedObjects(onCompletion) }
         let fetchNeeded = referencesWithMatchingStates([.needsChildren, .needsProgeny], batchSize: kSmallBatchSize)
         let       count = fetchNeeded.count
 
 		if  count == 0 {                     // final recursion: call closure
-			processCoreData(onCompletion)
+			finishCreatingManagedObjects(onCompletion)
 		} else {
             let        predicate = NSPredicate(format: "parent IN %@", fetchNeeded)
             let     destroyedIDs = recordIDsWithMatchingStates([.needsDestroy])
 			let   trackingLevels = gPrintModes.contains(.dLevels)
             var retrievedRecords = CKRecordsArray ()
-			let      neededNames = fetchNeeded.map { (ref) -> String in
-				return ref.recordID.recordName
-			}
+			let      neededNames = fetchNeeded.map { $0.recordID.recordName }
 
 			childlessParents.appendUnique(contentsOf: neededNames)
 			remove(states: [.needsChildren, .needsProgeny], from: fetchNeeded)
@@ -991,68 +979,36 @@ class ZCloud: ZRecords {
 					if !self.childlessParents.contains(ckRecord.recordID.recordName) { // avoid repeats
 						retrievedRecords.appendUnique(item: ckRecord)
 					}
-                } else { // retrievedRecords is all we get for this query
-                    FOREGROUND {
+				} else {
+                    FOREGROUND { // retrievedRecords is all we get for this query
+						printDebug(.dFetch, "\(self.databaseID.identifier) 1 \(retrievedRecords.count)")
 
 						// //////////////////////////////////////////////////// //
 						// we are now in the foreground and can mutate the heap //
+						//              for each retrieved record               //
 						// //////////////////////////////////////////////////// //
 
-                        for retrievedRecord in retrievedRecords {
+						for (index, retrievedRecord) in retrievedRecords.enumerated() {
 
 							// ///////////////////////////////////////// //
 							// create the zone from the retrieved record //
 							// ///////////////////////////////////////// //
 
 							if  destroyedIDs.contains(retrievedRecord.recordID) {
-								printDebug(.dFetch, "DESTROYED: \(retrievedRecord.recordID)")
+								printDebug(.dCloud, "DESTROYED: \(retrievedRecord.recordID) at \(index)")
 							} else {
-								self.asyncZoneForCKRecord(retrievedRecord) { retrievedZone in
-									if  let parent = retrievedZone.parentZone {
-										if  retrievedZone == parent {
-											retrievedZone.needDestroy()           // self-parenting causes infinite recursion (HANG)
-										} else if retrievedZone.isARoot {
-											retrievedZone.orphan()                // avoid infinite recursion (HANG) ... a root can NOT have a parent, by definition
-											retrievedZone.allowSaveWithoutFetch()
-											retrievedZone.needSave()
-										} else {
-											if  let parentName = parent.ckRecordName,
-												neededNames.contains(parentName) {
-												retrievedZone.needProgeny()       // for recursing
-												retrievedZone.bookmarkTarget?.needProgeny()
-											}
+								printDebug(.dCloud, "\(index) of \(retrievedRecords.count)")
 
-											if  let targetOfRetrieved = retrievedZone.bookmarkTarget {
-
-												// //////////////////////////////////////////////////
-												// bookmark targets need writable, color and fetch //
-												// //////////////////////////////////////////////////
-
-												targetOfRetrieved.needFetch()
-												targetOfRetrieved.maybeNeedColor()
-												targetOfRetrieved.maybeNeedWritable()
-											}
-
-											parent.addChildAndRespectOrder(retrievedZone)
-
-											if  trackingLevels {
-												let                     level = retrievedZone.level
-												var                 wereAdded = self.addedToLevels[level] ?? ZRecordsArray()
-
-												if !wereAdded.contains(retrievedZone) {
-													wereAdded  .append(retrievedZone)
-
-													self.addedToLevels[level] = wereAdded
-													self.maxLevel             = max(level, self.maxLevel)
-												}
-											}
-										}
-									}
+								self.zoneForCKRecordAsync(retrievedRecord) { retrievedZone in
+									self.processChildZone(retrievedZone, neededNames)
 								}
 							}
 						}
 
-						// for debugging
+						// //////////////////// //
+						// for debugging levels //
+						// //////////////////// //
+
 						if  trackingLevels, retrievedRecords.count > 0 {
 							var separator = ""
 							var    string = ""
@@ -1075,6 +1031,49 @@ class ZCloud: ZRecords {
             }
         }
     }
+
+	func processChildZone(_ retrievedZone: Zone, _ neededNames: [String]) {
+		if  let parent = retrievedZone.parentZone {
+			if  retrievedZone == parent {
+				retrievedZone.needDestroy()           // self-parenting causes infinite recursion (HANG)
+			} else if retrievedZone.isARoot {
+				retrievedZone.orphan()                // avoid infinite recursion (HANG) ... a root can NOT have a parent, by definition
+				retrievedZone.allowSaveWithoutFetch()
+				retrievedZone.needSave()
+			} else {
+				if  let parentName = parent.ckRecordName,
+					neededNames.contains(parentName) {
+					retrievedZone.needProgeny()       // for recursing
+					retrievedZone.bookmarkTarget?.needProgeny()
+					// note: this code may be executed AFTER the on completion closure is called !!!!!!
+				}
+
+				if  let targetOfRetrieved = retrievedZone.bookmarkTarget {
+
+					// //////////////////////////////////////////////////
+					// bookmark targets need writable, color and fetch //
+					// //////////////////////////////////////////////////
+
+					targetOfRetrieved.needFetch()
+					targetOfRetrieved.maybeNeedColor()
+					targetOfRetrieved.maybeNeedWritable()
+				}
+
+				parent.addChildAndRespectOrder(retrievedZone)
+
+				let level = retrievedZone.level
+
+				self.updateMaxLevel(with: level)
+
+				if  gPrintModes.contains(.dLevels) {
+					var wereAdded = self.addedToLevels[level] ?? ZRecordsArray()
+					if  wereAdded.appendUnique(item: retrievedZone) {
+						self.addedToLevels[level] = wereAdded
+					}
+				}
+			}
+		}
+	}
 
 	func establishManifest(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
         var retrieved = CKRecordsArray ()
@@ -1109,32 +1108,21 @@ class ZCloud: ZRecords {
 	func fetchOwnedTraits(_ onCompletion: IntClosure?) { fetchTraits(using: NSPredicate(format: "owner IN %@", allProgenyReferences), onCompletion) }
 
 	func fetchTraits(using predicate: NSPredicate?, _ onCompletion: IntClosure?) {
-		var       retrieved = CKRecordsArray ()
+		var retrieved = CKRecordsArray ()
 
 		if  predicate == nil {
-			processCoreData(onCompletion)
+			onCompletion?(0)
 		} else {
 			queryFor(kTraitType, with: predicate!, properties: ZTrait.cloudProperties) { (iRecord, iError) in
 				if  let ckRecord = iRecord {
-					if !retrieved.contains(ckRecord) {
-						retrieved.append(ckRecord)
-					}
+					retrieved.appendUnique(item: ckRecord)
 				} else { // nil means done
 					FOREGROUND {
 						for ckRecord in retrieved {
-							let zRecord  = self.maybeZRecordForCKRecord(ckRecord)
-
-							if  zRecord != nil {
-								zRecord?.useBest   (record: ckRecord)
-							} else {                                                    // if not already registered
-								ZTrait.asyncCreate (record: ckRecord, databaseID: self.databaseID) { iRecord in
-									iRecord.useBest(record: ckRecord)
-									iRecord.needAdoption()
-								}
-							}
+							ZTrait.createAsync(record: ckRecord, databaseID: self.databaseID) { tRecord in }
 						}
 
-						self.processCoreData(onCompletion) // calls adopt all
+						self.finishCreatingManagedObjects(onCompletion) // calls adopt all
 					}
 				}
 			}

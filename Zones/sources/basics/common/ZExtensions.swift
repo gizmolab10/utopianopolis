@@ -1199,12 +1199,22 @@ extension Array {
         return false    // false means unique / missing
     }
 
-	mutating func appendUnique(item: Any?, compare: CompareClosure? = nil) {
+	mutating func insertUnique(item: Any?, at index: Int = 0, compare: CompareClosure? = nil) {
+		if  let e = item as? Element,
+			!self.contains(item),
+			!containsCompare(with: item, using: compare) {
+			insert(e, at: index)
+		}
+	}
+
+	@discardableResult mutating func appendUnique(item: Any?, compare: CompareClosure? = nil) -> Bool {
 		if  let e = item as? Element,
 			!self.contains(item),
 			!containsCompare(with: item, using: compare) {
 			append(e)
+			return true
 		}
+		return false
 	}
 
 	mutating func appendUnique(contentsOf items: Array, compare: CompareClosure? = nil) {
@@ -1314,8 +1324,8 @@ extension ZRecordsArray {
 		return nil
 	}
 
-	mutating func appendUnique(_ item: ZRecord) {
-		appendUnique(item: item) { (a, b) -> (Bool) in
+	@discardableResult mutating func appendUnique(item: ZRecord) -> Bool {
+		return appendUnique(item: item) { (a, b) -> (Bool) in
 			if  let    aName  = (a as? ZRecord)?.ckRecordName,
 				let    bName  = (b as? ZRecord)?.ckRecordName {
 				return aName ==  bName
@@ -1340,8 +1350,8 @@ extension ZRecordsArray {
 
 extension CKRecordsArray {
 
-	mutating func appendUnique(_ item: CKRecord) {
-		appendUnique(item: item) { (a, b) -> (Bool) in
+	@discardableResult mutating func appendUnique(item: CKRecord) -> Bool {
+		return appendUnique(item: item) { (a, b) -> (Bool) in
 			if  let aRecordName = (a as? CKRecord)?.recordID.recordName,
 				let bRecordName = (b as? CKRecord)?.recordID.recordName {
 				return aRecordName == bRecordName
@@ -1352,11 +1362,7 @@ extension CKRecordsArray {
 	}
 
 	func asZones(in dbID: ZDatabaseID) -> ZoneArray {
-		return self.filter { ckRecord -> Bool in
-			return ckRecord.recordType == kZoneType
-		}.map { ckRecord -> Zone in
-			return gRemoteStorage.cloud(for: dbID)!.sureZoneForCKRecord(ckRecord)
-		}
+		return self.filter { $0.recordType == kZoneType }.map { gRemoteStorage.cloud(for: dbID)!.sureZoneForCKRecord($0) }
 	}
 
 	var asRecordNames: [String] {
@@ -1577,9 +1583,7 @@ extension NSMutableAttributedString {
 	}
 
 	var attachedImages: [ZImage] {
-		let array: [ZImage?] = attachmentCells.map { cell -> ZImage? in
-			return cell.image
-		}
+		let array: [ZImage?] = attachmentCells.map { $0.image }
 
 		var result = [ZImage]()
 

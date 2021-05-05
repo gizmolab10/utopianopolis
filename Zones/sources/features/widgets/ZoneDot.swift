@@ -22,23 +22,23 @@ enum ZDecorationType: Int {
 
 struct  ZDotParameters {
 
-	var sideDotRadius : Double          = 4.0
-	var traitType     : String          = ""
-	var childCount    : Int             = 0
-	var isDrop        : Bool            = false
-	var filled        : Bool            = false
-	var isReveal      : Bool            = false
-	var isGrouped     : Bool            = false
-	var isGroupOwner  : Bool            = false
-	var hasDuplicate  : Bool            = false
-	var hasTargetNote : Bool            = false
-	var hasTarget     : Bool            = false
-	var showList      : Bool            = false
-	var showAccess    : Bool            = false
-	var showSideDot   : Bool            = false
-	var fill          : ZColor          = gBackgroundColor
-	var color         : ZColor          = gDefaultTextColor
-	var accessType    : ZDecorationType = .vertical
+	var childCount     = 0
+	var sideDotRadius  = 4.0
+	var traitType      = ""
+	var isDrop         = false
+	var filled         = false
+	var isReveal       = false
+	var isGrouped      = false
+	var isGroupOwner   = false
+	var badRecordName  = false
+	var hasTargetNote  = false
+	var hasTarget      = false
+	var showList       = false
+	var showAccess     = false
+	var showSideDot    = false
+	var fill           = gBackgroundColor
+	var color          = gDefaultTextColor
+	var accessType     = ZDecorationType.vertical
 
 }
 
@@ -274,6 +274,33 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		string.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
 	}
 
+	func drawInnerRevealDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		let fillColor = parameters.filled ? gBackgroundColor : parameters.color
+
+		if parameters.hasTarget || parameters.hasTargetNote {
+
+			// //////////////////////////////// //
+			// TINY CENTER BOOKMARK DECORATIONS //
+			// //////////////////////////////// //
+
+			gBackgroundColor.setFill()
+			drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.hasTargetNote)
+		} else if parameters.traitType != "" {
+
+			// ///////////////// //
+			// TRAIT DECORATIONS //
+			// ///////////////// //
+
+			drawStringDecoration(in: iDirtyRect, string: parameters.traitType, color: fillColor)
+		}
+
+//		if  parameters.hasDuplicate {
+//			let string = "\(widgetZone?.duplicates.count ?? 1)"
+//
+//			drawStringDecoration(in: iDirtyRect, string: string, color: fillColor)
+//		}
+	}
+
 	func drawInnerDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let decorationFillColor = parameters.filled ? gBackgroundColor : parameters.color
 
@@ -287,23 +314,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		drawMainDot(in: iDirtyRect, using: parameters)
 
 		if      parameters.isReveal {
-			if  parameters.hasDuplicate {
-				drawStringDecoration(in: iDirtyRect, string: "\(widgetZone?.duplicates.count ?? 1)", color: decorationFillColor)
-			} else if parameters.hasTarget || parameters.hasTargetNote {
-
-				// //////////////////////////////// //
-				// TINY CENTER BOOKMARK DECORATIONS //
-				// //////////////////////////////// //
-
-				gBackgroundColor.setFill()
-				drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.hasTargetNote)
-			} else if parameters.traitType != "" {
-
-				// ///////////////// //
-				// TRAIT DECORATIONS //
-				// ///////////////// //
-				drawStringDecoration(in: iDirtyRect, string: parameters.traitType, color: decorationFillColor)
-			}
+			drawInnerRevealDot(iDirtyRect, parameters)
 		} else {
 			decorationFillColor.setFill()
 

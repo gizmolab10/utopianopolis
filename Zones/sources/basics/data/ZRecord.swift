@@ -27,6 +27,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	var   isInPublicDatabase: Bool      { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
 	var            isMapRoot: Bool      { return ckRecordName == kRootName }
 	var          isTrashRoot: Bool      { return ckRecordName == kTrashName }
+	var        isDestroyRoot: Bool      { return ckRecordName == kDestroyName }
 	var        isRecentsRoot: Bool      { return ckRecordName == kRecentsRootName }
 	var   isLostAndFoundRoot: Bool      { return ckRecordName == kLostAndFoundName }
 	var      isFavoritesRoot: Bool      { return ckRecordName == kFavoritesRootName }
@@ -70,7 +71,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	class var optionalCloudProperties: [String] { return [] }
 
 	func orphan() {}
-	func adopt(forceAdoption: Bool = true, recursively: Bool = false) {}
+	func adopt(forceAdoption: Bool = false, recursively: Bool = false) {}
 	func maybeNeedRoot() {}
 	func debug(_  iMessage: String) {}
 	func hasMissingChildren() -> Bool { return true }
@@ -239,20 +240,21 @@ class ZRecord: ZManagedRecord { // NSObject {
 		}
 	}
 
-	static func asyncHasZRecord(recordName: String, entityName: String, databaseID: ZDatabaseID?, onExistence: @escaping ZRecordClosure) {
+	static func hasZRecordAsync(recordName: String, entityName: String, databaseID: ZDatabaseID?, onExistence: @escaping ZRecordClosure) {
 		if  let       dbid = databaseID,
 			let      cloud = gRemoteStorage.cloud(for: dbid),
 			let    zRecord = cloud.maybeZRecordForRecordName(recordName) {
 			onExistence(zRecord)
 		} else {
 			let z = ZEntityDescriptor(entityName: entityName, recordName: recordName, databaseID: databaseID)
-			gCoreDataStack.asyncZRecordExists(for: z, onExistence: onExistence)
+			gCoreDataStack.zRecordExistsAsync(for: z, onExistence: onExistence)
 		}
 	}
 
-	static func asyncHasMaybe(record: CKRecord, entityName: String, databaseID: ZDatabaseID?, onExistence: ZRecordClosure? = nil) {
-		asyncHasZRecord(recordName: record.recordID.recordName, entityName: entityName, databaseID: databaseID) { has in       // first check if already exists
+	static func hasMaybeAsync(record: CKRecord, entityName: String, databaseID: ZDatabaseID?, onExistence: ZRecordClosure? = nil) {
+		hasZRecordAsync(recordName: record.recordID.recordName, entityName: entityName, databaseID: databaseID) { has in       // first check if already exists
 			has?.useBest(record: record)
+			has?.needAdoption()
 			onExistence?(has)
 		}
 	}

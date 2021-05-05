@@ -17,6 +17,7 @@ var     gMineCloud : ZCloud?     { return gRemoteStorage.cloud(for: .mineID) }
 var         gCloud : ZCloud?     { return gRemoteStorage.currentCloud }
 var     gAllClouds : [ZCloud]    { return gRemoteStorage.allClouds }
 var  gLostAndFound : Zone?       { return gRemoteStorage.lostAndFoundZone }
+var       gDestroy : Zone?       { return gRemoteStorage.destroyZone }
 var         gTrash : Zone?       { return gRemoteStorage.trashZone }
 var          gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemoteStorage.rootZone  = newValue } }
 
@@ -145,7 +146,10 @@ class ZRemoteStorage: NSObject {
 
 	func adoptAllNeedingAdoption() {
 		for cloud in allClouds {
-			cloud.adoptAllNeedingAdoption()
+			let remaining = cloud.adoptAllNeedingAdoption()
+			if  remaining > 0 {
+				printDebug(.dAdopt, "unadopted: \(remaining)")
+			}
 		}
 	}
 

@@ -63,13 +63,19 @@ class ZTextPack: NSObject {
 
         if  let zone = packedZone {
             result   = zone.unwrappedNameWithEllipses
-            var need = 0
+			let dups = zone.duplicates.count
+			let  bad = zone.hasBadRecordName
+            var need = dups
 
-            switch gCountsMode {
-            case .fetchable: need = zone.indirectCount
-            case .progeny:   need = zone.progenyCount + 1
-            default:         return result
-            }
+			if  bad {                            // bad trumps dups
+				need = -1
+			} else if need == 0 {                // dups trump count mode
+				switch gCountsMode {
+					case .fetchable: need = zone.indirectCount
+					case .progeny:   need = zone.progenyCount + 1
+					default:         return result
+				}
+			}
 
             var suffix: String?
 
@@ -79,9 +85,17 @@ class ZTextPack: NSObject {
 
 			if  gPrintModes.contains(.dNames) && zone.ckRecord != nil {
                 suffix = zone.ckRecordName
-            } else if (need > 1) && (!zone.expanded || (gCountsMode == .progeny)) {
-                suffix = String(describing: need)
-            }
+			} else {
+				var showNeed = (need > 1) && (!zone.expanded || (gCountsMode == .progeny))
+
+				if (dups > 0 && need > 0 && gShowDuplicates) || bad {
+					showNeed = true
+				}
+
+				if  showNeed {
+					suffix = String(describing: need)
+				}
+			}
 
             if  let s = suffix {
                 result.append("  ( \(s) )")
