@@ -629,11 +629,15 @@ class ZRecords: NSObject {
 	func assureAdoption(_ onCompletion: IntClosure? = nil) {
 		FOREGROUND {
 			self.applyToAllZones { zone in
+				if  zone.databaseID == nil {
+					zone.databaseID  = self.databaseID
+				}
+
 				if !zone.isARoot {
 					zone.adopt(recursively: true)
 
 					if  zone.root == nil, !zone.isBookmark {
-						printDebug(.dAdopt, "lost child: \(zone)")
+						printDebug(.dAdopt, "lost child: (\(self.databaseID.identifier)) \(zone)")
 					}
 				}
 			}

@@ -361,14 +361,16 @@ enum ZReorderMenuType: String {
 enum ZRefetchMenuType: String {
 	case eList    = "l"
 	case eIdeas   = "g"
+	case eAdopt   = "a"
 	case eTraits  = "t"
 	case eProgeny = "p"
 
-	static var activeTypes: [ZRefetchMenuType] { return [.eIdeas, .eTraits, .eProgeny, .eList] } // .eList, .eProgeny,
+	static var activeTypes: [ZRefetchMenuType] { return [.eIdeas, .eTraits, .eProgeny, .eList, .eAdopt] }
 
 	var title: String {
 		switch self {
 			case .eList:    return "list"
+			case .eAdopt:   return "adopt"
 			case .eIdeas:   return "all ideas"
 			case .eTraits:  return "all traits"
 			case .eProgeny: return "all progeny"

@@ -71,7 +71,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	class var optionalCloudProperties: [String] { return [] }
 
 	func orphan() {}
-	func adopt(forceAdoption: Bool = false, recursively: Bool = false) {}
+	func adopt(recursively: Bool = false) {}
 	func maybeNeedRoot() {}
 	func debug(_  iMessage: String) {}
 	func hasMissingChildren() -> Bool { return true }
@@ -639,7 +639,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 		databaseID    = iDatabaseID
 
 		if  let recordName = name {
-			if  let r = cloud?.maybeCKRecordForRecordName(name) {
+			if  let r = cloud?.maybeCKRecordForRecordName(recordName) {
 				newRecord = r				        		       // case 2
 			} else {		        		        		       // case 3
 				newRecord = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: recordName)) // YIKES this may be wildly out of date

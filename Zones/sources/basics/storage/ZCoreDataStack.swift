@@ -61,12 +61,29 @@ typealias ZExistenceDictionary = [String:ZExistenceArray]
 extension ZExistenceArray {
 
 	func fireClosures() {
+		var counter = [ZDatabaseID : Int]()
+
+		func count(_ r: ZRecord?) {
+			if  let i = r?.databaseID {
+				if  let x = counter[i] {
+					counter[i] = x + 1
+				} else {
+					counter[i] = 1
+				}
+			}
+		}
+
 		for e in self {
-			if  let     c = e.closure {
+			if  let close = e.closure {
 				let     r = e.zRecord
 
-				c(r)   // invoke closure
+				count(r)
+				close(r)   // invoke closure
 			}
+		}
+
+		for (i, x) in counter {
+			printDebug(.dExist, "\(i.identifier) ! \(x)")
 		}
 	}
 
@@ -553,22 +570,22 @@ class ZCoreDataStack: NSObject {
 			request.predicate = array.predicate(entityName)
 			let         count = "\(array.count)".appendingSpacesToLength(6)
 
-			printDebug(.dExist, "\(dbID.identifier) 2 \(count)\(entityName)")
+			printDebug(.dExist, "\(dbID.identifier) = \(count)\(entityName)")
 
 			deferUntilAvailable(for: .oExistence) {
-				do {
-					let items = try self.managedContext.fetch(request)
-					for item in items {
-						if  let zRecord = item as? ZRecord {           // insert zrecord into closures
-							array.updateClosureForZRecord(zRecord, of: entityName)
-							zRecord.needAdoption()
-						}
-					}
-				} catch {
-
-				}
-
 				FOREGROUND {
+					do {
+						let items = try self.managedContext.fetch(request)
+						for item in items {
+							if  let zRecord = item as? ZRecord {           // insert zrecord into closures
+								array.updateClosureForZRecord(zRecord, of: entityName)
+								zRecord.needAdoption()
+							}
+						}
+					} catch {
+
+					}
+
 					array.fireClosures()
 					self.setClosures([], for: entityName, dbID: dbID)
 					self.makeAvailable()

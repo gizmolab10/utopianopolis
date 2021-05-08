@@ -32,7 +32,7 @@ enum ZOperationID: Int, CaseIterable {
 	case oReadFile           // LOCAL
 	case oRoots
     case oHere
-	case oMigrateFromCloud
+	case oAllIdeas
 	case oAllTraits
 	case oStartupDone
 
@@ -46,6 +46,7 @@ enum ZOperationID: Int, CaseIterable {
 
     // miscellaneous
 
+	case oMigrateFromCloud
 	case oFetchAndMerge
 	case oSaveCoreData       // LOCAL
 	case oNeededIdeas        // after children so favorite targets resolve properly
@@ -59,7 +60,6 @@ enum ZOperationID: Int, CaseIterable {
 	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
     case oLostIdeas
-	case oAllIdeas
 	case oNewIdeas
     case oUndelete
 	case oRecents  			 // MINE ONLY
@@ -268,7 +268,11 @@ class ZOperations: NSObject {
 					gStartup.count        += 1.0					// every op should advance progress bar
                     self.queue.isSuspended = true
 					self.lastOpStart       = Date()
-                    self.currentOp         = operationID        // if hung, it happened inside this op
+                    self.currentOp         = operationID            // if hung, it happened inside this op
+
+					if !gHasFinishedStartup {
+						gSignal([.sStartupProgress])                // show current op in splash view
+					}
 
                     self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
                         FOREGROUND {
@@ -283,7 +287,7 @@ class ZOperations: NSObject {
 								gSetProgressTime(for: operationID)
 							}
 
-							gSignal([.sStatus, .sStartupProgress])            // show change in cloud status
+							gSignal([.sStatus])            // show change in cloud status
 
 							// /////////////////////
                             // release suspension //

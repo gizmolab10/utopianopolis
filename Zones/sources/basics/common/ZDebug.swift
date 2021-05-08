@@ -121,7 +121,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dCloud,  "  cloud"),
 				(.dCross,  "  cross"),
 				(.dExist,  "  exist"),
-				(.dFetch,  "  fetch"),
+				(.dFetch,  "fetched"),
 				(.dAccess, " access"),
 				(.dWidget, " widget"),
 				(.dRemote, " remote"),

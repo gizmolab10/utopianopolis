@@ -842,16 +842,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			for child in childArray {
 				let c = child.convertFromCoreData(into: kZoneType, visited: v)
 
+				if  child.dbid != dbid {
+					noop()
+				}
+
 				if  let name = child.recordName,
 					(visited == nil || !visited!.contains(name)) {
 					converted.append(contentsOf: c)
 					FOREGROUND(canBeDirect: true) {
 						self.addChild(child, updateCoreData: false) // not update core data, it already exists
+						child.register() // need to wait until after child has a parent so bookmarks will be registered properly
 					}
-				}
-
-				FOREGROUND(canBeDirect: true) {
-					child.register() // need to wait until after child has a parent so bookmarks will be registered properly
 				}
 
 				gIncrementStartupProgress(0.024)
@@ -872,6 +873,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			for trait in traitArray {
 				trait.convertFromCoreData(into: kTraitType, visited: [])
 
+				if  trait.dbid != dbid {
+					noop()
+				}
+
 				if  let type = trait.traitType,
 					!hasTrait(for: type) {
 					addTrait(trait, updateCoreData: false) // we got here because this is not a first-time launch and thus core data already exists
@@ -883,22 +888,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func updateCoreDataRelationships() {
-		if  gUseCoreData {
+		if  gUseCoreData,
+			let        zID = dbid {
 			var childArray = Set<Zone>()
 			var traitArray = Set<ZTrait>()
 
 			for child in children {
-				if  let zdbid = databaseID,
-					let cdbid = child.databaseID,
-					zdbid == cdbid {                // avoid cross-store relationships
+				if  let cID = child.dbid,
+					zID    == cID {                // avoid cross-store relationships
 					childArray.insert(child)
 				}
 			}
 
 			for trait in traits.values {
-				if  let zdbID = databaseID,
-					let tdbID = trait.databaseID,
-					zdbID == tdbID {                // avoid cross-store relationships
+				if  let tID = trait.dbid,
+					zID    == tID {                // avoid cross-store relationships
 					traitArray.insert(trait)
 				}
 			}
@@ -1924,8 +1928,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func focusOnBookmarkTarget(atArrival: @escaping SignalClosure) {
 		if  let  targetZRecord = crossLink,
-			let     targetDBID = targetZRecord.databaseID,
 			let   targetRecord = targetZRecord.ckRecord {
+			let     targetDBID = targetZRecord.databaseID
 			let targetRecordID = targetRecord.recordID
 			let         target = bookmarkTarget
 
@@ -1952,14 +1956,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gRecents.push()
 				}
 
-				gShowSmallMapForIOS = targetDBID.isSmallMapDB
+				if  let tid = targetDBID {
+					gShowSmallMapForIOS = tid.isSmallMapDB
+				}
 
 				complete(target, .sRelayout)
-			} else {
-				gShowSmallMapForIOS = targetDBID.isSmallMapDB
+			} else if let tid = targetDBID {
+				gShowSmallMapForIOS = tid.isSmallMapDB
 
-				if  gDatabaseID != targetDBID {
-					gDatabaseID  = targetDBID
+				if  gDatabaseID != tid {
+					gDatabaseID  = tid
 
 					// ///////////////////////// //
 					// TRAVEL TO A DIFFERENT MAP //
@@ -2812,18 +2818,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// adopt recursively
 
-	override func adopt(forceAdoption: Bool = false, recursively: Bool = false) {
+	override func adopt(recursively: Bool = false) {
 		if  !isARoot, !needsDestroy {
 			if  let p = parentZone, p != self {        // first compute parentZone
-				if (forceAdoption || needsAdoption),
-				   !p.children.contains(self) {        // see if already adopted
+				if !p.children.contains(self) {        // see if already adopted
 					p.maybeMarkNotFetched()
 					p.addChildAndRespectOrder(self)
 					updateMaxLevel()
 				}
 
-				if  recursively && root == nil {
-					p.adopt(forceAdoption: forceAdoption, recursively: true) // recurse on ancestor
+				if  recursively {
+					p.adopt(recursively: true)         // recurse on parent
 				}
 			}
 		}
@@ -2865,7 +2870,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func deleteDuplicates() {
 		for d in duplicates {
 			if  d != self {
-				d.duplicates.removeAll()
+				d.deleteDuplicates()
 				d.moveZone(to: gDestroy)
 			}
 		}

@@ -498,6 +498,7 @@ class ZMapEditor: ZBaseEditor {
 				case .eTraits:  op = .oAllTraits
 				case .eProgeny: op = .oChildIdeas; gSelecting.currentMapGrabs.needAllProgeny()
 				case .eList:    op = .oChildIdeas; gSelecting.currentMapGrabs.needChildren()
+				case .eAdopt:   gRemoteStorage.assureAdoption(); return
 			}
 
 			if  let o = op {
@@ -509,10 +510,10 @@ class ZMapEditor: ZBaseEditor {
 
 	func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false, _ CONTROL: Bool = false) {
 
-		// plain is fetch all progeny
-		// COMMAND alone is fetch all
-		// OPTION is children
-		// both is force adoption of selected
+		// no flags      = fetch all progeny
+		// COMMAND alone = fetch all
+		// OPTION        = children
+		// both flags    = force adoption of selected
 
 		if          CONTROL {
 			if      OPTION {

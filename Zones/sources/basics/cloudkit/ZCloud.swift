@@ -15,7 +15,6 @@ class ZCloud: ZRecords {
 
 	var    addedToLevels = [Int             : ZRecordsArray] ()
 	var recordsToProcess = [String          : CKRecord]      () // accumulator for timer-based processing
-	var childlessParents = [String]                          () // accumulator for fetching child ideas
 	var   cloudZonesByID = [CKRecordZone.ID : CKRecordZone]  ()
 	var         database :  CKDatabase? { return gRemoteStorage.databaseForID(databaseID) }
 	var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
@@ -728,8 +727,6 @@ class ZCloud: ZRecords {
 
 	// N.B. this is really gawdawful slow
 	func fetchMap(_ onCompletion: IntClosure?) {
-		childlessParents = [] // start fresh each time
-
 		rootZone?         .needProgeny()
 		trashZone?        .needProgeny()
 		destroyZone?      .needProgeny()
@@ -956,32 +953,41 @@ class ZCloud: ZRecords {
         }
     }
 
-    func fetchChildIdeas(_ onCompletion: IntClosure?) {
-		if databaseID == .mineID { finishCreatingManagedObjects(onCompletion) }
-        let fetchNeeded = referencesWithMatchingStates([.needsChildren, .needsProgeny], batchSize: kSmallBatchSize)
-        let       count = fetchNeeded.count
+	func fetchChildIdeas(visited: [String] = [], final: Bool = false, _ onCompletion: IntClosure?) {
+//		if  databaseID == .mineID { onCompletion?(0) }
+		let fetchNeeded = referencesWithMatchingStates([.needsChildren, .needsProgeny], batchSize: kSmallBatchSize)
+		let  reallyNeed = fetchNeeded.filter { !visited.contains($0.recordID.recordName) }
+        let       count = reallyNeed.count
 
-		if  count == 0 {                     // final recursion: call closure
-			finishCreatingManagedObjects(onCompletion)
+		if  count == 0 {                                               // nothing more to fetch, call existence closures
+			if !final {
+				finishCreatingManagedObjects { i in                    // existence closures may mark more zones as needing progeny
+					self.fetchChildIdeas(visited: visited, final: true, onCompletion)    // recurse to process any remaining
+				}
+			} else {
+				onCompletion?(0)
+			}
 		} else {
-            let        predicate = NSPredicate(format: "parent IN %@", fetchNeeded)
+            let        predicate = NSPredicate(format: "parent IN %@", reallyNeed)
             let     destroyedIDs = recordIDsWithMatchingStates([.needsDestroy])
 			let   trackingLevels = gPrintModes.contains(.dLevels)
             var retrievedRecords = CKRecordsArray ()
-			let      neededNames = fetchNeeded.map { $0.recordID.recordName }
+			let      parentNames = reallyNeed.map { $0.recordID.recordName }
+			var                v = visited
 
-			childlessParents.appendUnique(contentsOf: neededNames)
+			v.appendUnique(contentsOf: parentNames)
+
 			remove(states: [.needsChildren, .needsProgeny], from: fetchNeeded)
-			add   (states: [.needsCount],                     to: fetchNeeded)
+			add   (states: [.needsCount],                     to: reallyNeed)
 
             queryForZonesWith(predicate, batchSize: kMaxBatchSize) { (iRecord, iError) in
                 if  let ckRecord = iRecord {
-					if !self.childlessParents.contains(ckRecord.recordID.recordName) { // avoid repeats
+					if !v.contains(ckRecord.recordID.recordName) { // avoid repeats
 						retrievedRecords.appendUnique(item: ckRecord)
 					}
-				} else {
-                    FOREGROUND { // retrievedRecords is all we get for this query
-						printDebug(.dFetch, "\(self.databaseID.identifier) 1 \(retrievedRecords.count)")
+				} else {          // retrievedRecords is all we get for this query
+                    FOREGROUND {
+						printDebug(.dFetch, "\(self.databaseID.identifier) + \(retrievedRecords.count)")
 
 						// //////////////////////////////////////////////////// //
 						// we are now in the foreground and can mutate the heap //
@@ -1000,7 +1006,13 @@ class ZCloud: ZRecords {
 								printDebug(.dCloud, "\(index) of \(retrievedRecords.count)")
 
 								self.zoneForCKRecordAsync(retrievedRecord) { retrievedZone in
-									self.processChildZone(retrievedZone, neededNames)
+
+									// ////////////////////////////////////////////////// //
+									// this block invoked by finishCreatingManagedObjects //
+									//     possibly long after onCompletion is called     //
+									// ////////////////////////////////////////////////// //
+
+									self.processChildZone(retrievedZone, parentNames)
 								}
 							}
 						}
@@ -1025,7 +1037,7 @@ class ZCloud: ZRecords {
 							}
 						}
 
-						self.fetchChildIdeas(onCompletion)    // recurse to process any remaining
+						self.fetchChildIdeas(visited: v, onCompletion)    // recurse to process any remaining
                     }
                 }
             }
