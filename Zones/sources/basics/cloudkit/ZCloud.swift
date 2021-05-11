@@ -581,7 +581,7 @@ class ZCloud: ZRecords {
                             }
 
                             return false
-                        } else if let parentLink = iCKRecord[kpZoneParentLink] as? String, self.recordName(from: parentLink) != nil {
+                        } else if let parentLink = iCKRecord[kpZoneParentLink] as? String, parentLink.maybeRecordName != nil {
                             return false // parent is in other db, therefore it can't be verified as lost
                         }
 

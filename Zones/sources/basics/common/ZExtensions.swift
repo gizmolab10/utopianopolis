@@ -226,58 +226,6 @@ extension NSObject {
 //		service?.perform(withItems: ["Something happened"])
 	}
 
-    // MARK:- bookmarks
-    // MARK:-
-
-    func isValid(_ iLink: String?) -> Bool {
-        return components(of: iLink) != nil
-    }
-
-    func components(of iLink: String?) -> [String]? {
-        if  let       link = iLink {
-            let components =  link.components(separatedBy: kColonSeparator)
-            if  components.count > 2 {
-                return components
-            }
-        }
-
-        return nil
-    }
-
-    func recordName(from iLink: String?) -> String? {
-        if  let components = components(of: iLink) {
-            let      name  = components[2]
-            return   name != "" ? name : kRootName // by design: empty component means root
-        }
-
-        return nil
-    }
-
-    func databaseID(from iLink: String?) -> ZDatabaseID? {
-        if  let components = components(of: iLink) {
-            let      dbID  = components[0]
-            return   dbID == "" ? nil : ZDatabaseID(rawValue: dbID)
-        }
-
-        return nil
-    }
-
-    func zoneFrom(_ iLink: String?) -> Zone? {
-        if  iLink                   != nil,
-            iLink                   != "",
-            let                 name = recordName(from: iLink) {
-            let components: [String] = iLink!.components(separatedBy: kColonSeparator)
-            let        rawIdentifier = components[0]
-            let   dbID: ZDatabaseID? = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
-            let             zRecords = gRemoteStorage.zRecords(for: dbID)
-            let                 zone = zRecords?.maybeZoneForRecordName(name)
-
-            return zone
-        }
-
-        return nil
-    }
-
     // MARK:- JSON
     // MARK:-
 
@@ -322,6 +270,29 @@ extension NSObject {
 }
 
 extension ZStorageDictionary {
+
+	var mainDictionary : ZStorageDictionary? {
+		for (key, value) in self {
+			switch key {
+				case .graph: return value as? ZStorageDictionary
+				default:     break
+			}
+		}
+
+		return self
+	}
+
+	var recordName : String? {
+		for (key, value) in self {
+			switch key {
+				case .graph:      return (value as? ZStorageDictionary)?.recordName
+				case .recordName: return  value as? String
+				default:          break
+			}
+		}
+
+		return nil
+	}
 
 	var jsonDict : ZStringObjectDictionary {
         var    last = ZStorageDictionary ()
@@ -507,7 +478,7 @@ extension CKRecord {
 
 		if  parentReference == nil {
 			if  let     link = self[kpZoneParentLink] as? String {
-				parentRecordName = recordName(from: link) // parent is in other db
+				parentRecordName = link.maybeRecordName // parent is in other db
 			} else {
 				parentReference  = self[kpOwner] as? CKReference
 			}
@@ -1785,6 +1756,8 @@ extension String {
 	var  containsNonTabs: Bool { return filter{ $0 != kTab.first}.count != 0 }
     var       isOpposite: Bool { return "]}>)".contains(self) }
 	var     isDashedLine: Bool { return contains(kHalfLineOfDashes) }
+	var      isValidLink: Bool { return components != nil }
+	var  components: [String]? { return components(separatedBy: kColonSeparator) }
 
     var opposite: String {
 		switch self {
@@ -1872,6 +1845,42 @@ extension String {
 		}
 
 		return newString.lowercased()
+	}
+
+	// MARK:- bookmarks
+	// MARK:-
+
+	var maybeRecordName: String? {
+		if  let   parts  = components {
+			let    name  = parts[2]
+			return name != "" ? name : kRootName // by design: empty component means root
+		}
+
+		return nil
+	}
+
+	var maybeDatabaseID: ZDatabaseID? {
+		if  let   parts  = components {
+			let    dbID  = parts[0]
+			return dbID == "" ? nil : ZDatabaseID(rawValue: dbID)
+		}
+
+		return nil
+	}
+
+	var maybeZone: Zone? {
+		if  self             != "",
+			let          name = maybeRecordName,
+			let         parts = components {
+			let rawIdentifier = parts[0]
+			let          dbID = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
+			let      zRecords = gRemoteStorage.zRecords(for: dbID)
+			let          zone = zRecords?.maybeZoneForRecordName(name)
+
+			return zone
+		}
+
+		return nil
 	}
 
 	func componentsSeparatedAt(level: Int) -> [String] {

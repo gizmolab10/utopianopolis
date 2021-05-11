@@ -532,7 +532,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 		switch iType {
 			case .link, .parentLink:
-				if  let link = object as? String, !isValid(link) {
+				if  let link = object as? String, !link.isValidLink {
 					return nil
 				}
 			case .text:

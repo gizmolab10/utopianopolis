@@ -303,10 +303,10 @@ class ZFiles: NSObject {
 			typealias  types = [ZStorageType]
 			let  keys: types = [.date, .lost, .graph, .trash, .destroy, .recent, .manifest, .favorites, .bookmarks ]
 
-			if  let   data = FileManager.default.contents(atPath: path),
-				data.count > 0,
-				let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
-				let   dict = self.dictFromJSON(json)
+			if  let     data = FileManager.default.contents(atPath: path),
+				data  .count > 0,
+				let     json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
+				let     dict = self.dictFromJSON(json)
 
 				for key in keys {
 					if  let value = dict[key] {
@@ -326,28 +326,27 @@ class ZFiles: NSObject {
 								if let array = value as? [ZStorageDictionary] {
 									for subDict in array {
 										if  !databaseID.isDeleted(dict: subDict) {
-											let zone = Zone(dict: subDict, in: databaseID)
-
-											gBookmarks.addToReverseLookup(zone)
+											Zone.createAsync(dict: subDict, in: databaseID) { zone in
+												gBookmarks.addToReverseLookup(zone)
+											}
 										}
 									}
 							}
 							default:
 								if  let subDict = value as? ZStorageDictionary,
 									!databaseID.isDeleted(dict: subDict) {
+									Zone.createAsync(dict: subDict, in: databaseID) { zone in
+										zone.updateRecordName(for: key)
 
-									let zone = Zone(dict: subDict, in: databaseID)
-
-									zone.updateRecordName(for: key)
-
-									switch key {
-										case .lost:      cloud.lostAndFoundZone = zone
-										case .graph:     cloud.rootZone         = zone
-										case .trash:     cloud.trashZone        = zone
-										case .recent:    cloud.recentsZone      = zone
-										case .destroy:   cloud.destroyZone      = zone
-										case .favorites: cloud.favoritesZone    = zone
-										default: break
+										switch key {
+											case .lost:      cloud.lostAndFoundZone = zone
+											case .graph:     cloud.rootZone         = zone
+											case .trash:     cloud.trashZone        = zone
+											case .recent:    cloud.recentsZone      = zone
+											case .destroy:   cloud.destroyZone      = zone
+											case .favorites: cloud.favoritesZone    = zone
+											default: break
+										}
 									}
 							}
 						}

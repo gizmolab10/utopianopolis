@@ -8,9 +8,14 @@
 
 import Foundation
 
-var     gDebugModes : ZDebugMode    = [.dShowDestroy, .dShowDuplicates]
+// async: start from zfiles read: create managed object zone
+//     storage dict create managed object zone and trait
+//     create zone, trait ONLY if from dict
+// NOT async: create bookmarks
+
+var     gDebugModes : ZDebugMode    = [.dReadFiles] // , .dWriteFiles]
 var     gPrintModes : ZPrintMode    = [.dExist, .dFetch, .dAdopt]
-var   gCoreDataMode : ZCoreDataMode = []
+var   gCoreDataMode : ZCoreDataMode = [.dDisabled]
 var    gUseCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var        gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gUseCoreData }
 var        gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gUseCoreData }

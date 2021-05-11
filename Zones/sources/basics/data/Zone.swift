@@ -52,11 +52,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                        manifest :          ZManifest? { return cloud?.manifest }
 	var                          widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
 	var                    widgetObject :      ZWidgetObject? { return widget?.widgetObject }
-	var                  linkDatabaseID :        ZDatabaseID? { return databaseID(from: zoneLink) }
+	var                  linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
 	var                   lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                       textColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : gDefaultTextColor }
 	var                       emailLink :             String? { return email == nil ? nil : "mailTo:\(email!)" }
-	var                  linkRecordName :             String? { return recordName(from: zoneLink) }
+	var                  linkRecordName :             String? { return zoneLink?.maybeRecordName }
 	override var        cloudProperties :            [String] { return Zone.cloudProperties }
 	override var optionalCloudProperties:            [String] { return Zone.optionalCloudProperties }
 	override var              emptyName :             String  { return kEmptyIdea }
@@ -276,7 +276,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					zoneLink = zoneLink?.replacingOccurrences(of: "Optional(\"", with: "").replacingOccurrences(of: "\")", with: "")
 				}
 
-				crossLinkMaybe = zoneFrom(zoneLink)
+				crossLinkMaybe = zoneLink?.maybeZone
 			}
 
 			return crossLinkMaybe
@@ -711,8 +711,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func unlinkParentAndMaybeNeedSave() {
-		if (recordName(from: parentLink) != nil ||
-				parent                   != nil) &&
+		if (parentLink?.maybeRecordName != nil ||
+				parent                  != nil) &&
 			canSaveWithoutFetch {
 			needSave()
 		}
@@ -729,7 +729,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var resolveParent: Zone? {
 		let     old = parentZoneMaybe
 		parentZoneMaybe = nil
-		let     new =  parentZone // recalculate _parentZone
+		let     new = parentZone // recalculate _parentZone
 
 		old?.removeChild(self)
 		new?.addChildAndRespectOrder(self)
@@ -744,7 +744,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			} else  if  parentZoneMaybe == nil {
 				if  let parentReference  = parent {
 					parentZoneMaybe      = cloud?.maybeZoneForReference(parentReference)
-				} else if let      zone  = zoneFrom(parentLink) {
+				} else if let      zone  = parentLink?.maybeZone {
 					parentZoneMaybe      = zone
 				}
 			}
@@ -3624,6 +3624,30 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return created
 	}
 
+	static func createEntityAsync(entityName: String?, ckRecordName: String?, databaseID: ZDatabaseID?, _ onCreation: ZoneClosure) {
+		// if in core data use it, else create managed object
+
+		let zone = Zone(entityName: entityName, ckRecordName: ckRecordName, databaseID: databaseID)
+
+		onCreation(zone)
+	}
+
+	static func createAsync(dict: ZStorageDictionary, in dbID: ZDatabaseID, _ onCreation: ZoneClosure) {
+		// then fill it in from dict
+
+		if  let d = dict.mainDictionary {
+			Zone.createEntityAsync(entityName: kZoneType, ckRecordName: dict.recordName, databaseID: dbID) { zone in
+				zone.temporarilyIgnoreNeeds {
+					do {
+						try zone.extractFromStorageDictionary(d, of: kZoneType, into: dbID)
+					} catch {
+						printDebug(.dError, "\(error)")    // de-serialization
+					}
+				}
+			}
+		}
+	}
+
 	convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
 
 		// //////////////////////////////////////
@@ -3632,22 +3656,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		self.init(entityName: kZoneType, ckRecordName: nil, databaseID: dbID)
 
-		var d = dict
-
-		for (index, (key, _)) in dict.enumerated() {
-			if  key == .graph,
-				var g = dict[index] as? ZStorageDictionary {
-				g[.recordName] = CKRecordID()
-				d = g // this is in an auto-saved file: only use graph data
-				print(index)
-			}
-		}
-
-		temporarilyIgnoreNeeds {
-			do {
-				try extractFromStorageDictionary(d, of: kZoneType, into: dbID)
-			} catch {
-				printDebug(.dError, "\(error)")    // de-serialization
+		if  let d = dict.mainDictionary {
+			temporarilyIgnoreNeeds {
+				do {
+					try extractFromStorageDictionary(d, of: kZoneType, into: dbID)
+				} catch {
+					printDebug(.dError, "\(error)")    // de-serialization
+				}
 			}
 		}
 	}
