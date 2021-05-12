@@ -1851,7 +1851,7 @@ extension String {
 	// MARK:-
 
 	var maybeRecordName: String? {
-		if  let   parts  = components {
+		if  let   parts  = components, parts.count > 1 {
 			let    name  = parts[2]
 			return name != "" ? name : kRootName // by design: empty component means root
 		}

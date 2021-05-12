@@ -187,15 +187,18 @@ class ZRemoteStorage: NSObject {
     }
 
 
-    func pushDatabaseID(_ dbID: ZDatabaseID) {
-        databaseIDStack.append(gDatabaseID)
+    func pushDatabaseID(_ dbID: ZDatabaseID?) {
+		if  let d = dbID {
+			databaseIDStack.append(gDatabaseID)
 
-        gDatabaseID = dbID
-    }
+			gDatabaseID = d
+		}
+	}
 
 
     func popDatabaseID() {
-        if databaseIDStack.count > 0, let dbID = databaseIDStack.popLast() {
+        if  databaseIDStack.count > 0,
+			let    dbID = databaseIDStack.popLast() {
             gDatabaseID = dbID
         }
     }

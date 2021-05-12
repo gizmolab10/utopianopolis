@@ -1440,7 +1440,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
 				let   dict = self.dictFromJSON(json)
 				temporarilyOverrideIgnore { // allow needs save
-					let zone = Zone(dict: dict, in: dbID)
+					let zone = Zone.uniqueZone(from: dict, in: dbID)
 					addChildSafely(zone, at: 0)
 				}
 
@@ -3632,23 +3632,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		onCreation(zone)
 	}
 
-	static func createAsync(dict: ZStorageDictionary, in dbID: ZDatabaseID, _ onCreation: ZoneClosure) {
-		// then fill it in from dict
+	static func uniqueZone(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> Zone? {
+		let result = uniqueObject(entityName: kZoneType, ckRecordName: dict.recordName, in: dbID) as? Zone
 
-		if  let d = dict.mainDictionary {
-			Zone.createEntityAsync(entityName: kZoneType, ckRecordName: dict.recordName, databaseID: dbID) { zone in
-				zone.temporarilyIgnoreNeeds {
-					do {
-						try zone.extractFromStorageDictionary(d, of: kZoneType, into: dbID)
-					} catch {
-						printDebug(.dError, "\(error)")    // de-serialization
-					}
-				}
+		result?.temporarilyIgnoreNeeds {
+			do {
+				try result?.extractFromStorageDictionary(dict, of: kZoneType, into: dbID)
+			} catch {
+				printDebug(.dError, "\(error)")    // de-serialization
 			}
 		}
+
+		return result
 	}
 
-	convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) {
+	convenience init(ddict: ZStorageDictionary, in dbID: ZDatabaseID) {
 
 		// //////////////////////////////////////
 		// all ideas created from reading file //
@@ -3656,7 +3654,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		self.init(entityName: kZoneType, ckRecordName: nil, databaseID: dbID)
 
-		if  let d = dict.mainDictionary {
+		if  let d = ddict.mainDictionary {
 			temporarilyIgnoreNeeds {
 				do {
 					try extractFromStorageDictionary(d, of: kZoneType, into: dbID)
@@ -3703,10 +3701,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  let childrenDicts: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
 			for childDict: ZStorageDictionary in childrenDicts {
-				let child = Zone(dict: childDict, in: iDatabaseID)
-
-				cloud?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent intentionally not being in childDict
-					addChildSafely(child, at: nil)
+				if  let child = Zone.uniqueZone(from: childDict, in: iDatabaseID) {
+					cloud?.temporarilyIgnoreAllNeeds() {        // prevent needsSave caused by child's parent intentionally not being in childDict
+						addChildSafely(child, at: nil)
+					}
 				}
 			}
 
@@ -3715,17 +3713,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  let traitsStore: [ZStorageDictionary] = dict[.traits] as! [ZStorageDictionary]? {
 			for  traitStore:  ZStorageDictionary in traitsStore {
-				let    trait = try ZTrait(dict: traitStore, in: iDatabaseID)
+				if  let trait = ZTrait.uniqueTrait(from: traitStore, in: iDatabaseID) {
+					cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait intentionally not being in traits
+						addTrait(trait)
+					}
 
-				if  gPrintModes.contains(.dNotes),
-					let   tt = trait.type,
-					let type = ZTraitType(rawValue: tt),
-					type    == .tNote {
-					printDebug(.dNotes, "trait (in " + (zoneName ?? kUnknown) + ") --> " + (trait.format ?? "empty"))
-				}
-
-				cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait intentionally not being in traits
-					addTrait(trait)
+					if  gPrintModes.contains(.dNotes),
+						let   tt = trait.type,
+						let type = ZTraitType(rawValue: tt),
+						type    == .tNote {
+						printDebug(.dNotes, "trait (in " + (zoneName ?? kUnknown) + ") --> " + (trait.format ?? "empty"))
+					}
 				}
 			}
 		}

@@ -122,7 +122,21 @@ class ZManifest : ZRecord {
         }
 
         return false
-    }
+	}
+
+	static func uniqueManifest(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZManifest? {
+		let result = uniqueObject(entityName: kManifestType, ckRecordName: dict.recordName, in: dbID) as? ZManifest
+
+		result?.temporarilyIgnoreNeeds {
+			do {
+				try result?.extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
+			} catch {
+				printDebug(.dError, "\(error)")    // de-serialization
+			}
+		}
+
+		return result
+	}
 
     convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
 		self.init(entityName: kManifestType, ckRecordName: nil, databaseID: dbID)

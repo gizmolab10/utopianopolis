@@ -12,7 +12,7 @@ let   gReferenceTransformerName = NSValueTransformerName(rawValue: "ZReferenceTr
 let  gAssetArrayTransformerName = NSValueTransformerName(rawValue: "ZAssetArrayTransformer")
 let gStringArrayTransformerName = NSValueTransformerName(rawValue: "ZStringArrayTransformer")
 
-class ZManagedRecord: NSManagedObject {
+class ZManagedObject: NSManagedObject {
 
 	convenience init(entityName: String?, ckRecordName: String?, databaseID: ZDatabaseID?) {
 		let     context = gCoreDataStack.managedContext
@@ -23,11 +23,22 @@ class ZManagedRecord: NSManagedObject {
 
 			if  let store = gCoreDataStack.persistentStore(for: databaseID) {
 				context.assign(self, to: store)
-//				gSaveContext()
 			}
 		} else {
 			self.init()
 		}
+	}
+
+	static func uniqueObject(entityName: String, ckRecordName: String?, in dbID: ZDatabaseID) -> ZManagedObject? {
+		if  let    name = ckRecordName {
+			let objects = gCoreDataStack.find(type: entityName, with: name, into: dbID)
+
+			if  objects.count > 0 {
+				return objects[0]
+			}
+		}
+
+		return ZManagedObject(entityName: entityName, ckRecordName: ckRecordName, databaseID: dbID)
 	}
 
 }

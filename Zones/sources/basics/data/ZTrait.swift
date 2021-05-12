@@ -57,6 +57,20 @@ class ZTrait: ZTraitAssets {
 	// MARK:- initialize
 	// MARK:-
 
+	static func uniqueTrait(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZTrait? {
+		let result = uniqueObject(entityName: kTraitType, ckRecordName: dict.recordName, in: dbID) as? ZTrait
+
+		result?.temporarilyIgnoreNeeds {
+			do {
+				try result?.extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
+			} catch {
+				printDebug(.dError, "\(error)")    // de-serialization
+			}
+		}
+
+		return result
+	}
+
 	func deepCopy(dbID: ZDatabaseID?) -> ZTrait {
 		let theRecord = CKRecord(recordType: kTraitType)
 		let theCopy   = ZTrait.create(record: theRecord, databaseID: dbID)

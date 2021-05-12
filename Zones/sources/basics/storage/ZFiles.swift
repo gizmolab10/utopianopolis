@@ -315,40 +315,38 @@ class ZFiles: NSObject {
 							case .date:
 								if  let date = value as? Date {
 									cloud.lastSyncDate = date
-							}
+								}
 							case .manifest:
 								if  cloud.manifest == nil,
 									let    subDict  = value as? ZStorageDictionary {
-									let   manifest  = try ZManifest(dict: subDict, in: databaseID)
+									let   manifest  = ZManifest.uniqueManifest(from: subDict, in: databaseID)
 									cloud.manifest  = manifest
-							}
+								}
 							case .bookmarks:
 								if let array = value as? [ZStorageDictionary] {
 									for subDict in array {
 										if  !databaseID.isDeleted(dict: subDict) {
-											Zone.createAsync(dict: subDict, in: databaseID) { zone in
-												gBookmarks.addToReverseLookup(zone)
-											}
+											let zone = Zone.uniqueZone(from: subDict, in: databaseID)
+											gBookmarks.addToReverseLookup(zone)
 										}
 									}
-							}
+								}
 							default:
 								if  let subDict = value as? ZStorageDictionary,
-									!databaseID.isDeleted(dict: subDict) {
-									Zone.createAsync(dict: subDict, in: databaseID) { zone in
-										zone.updateRecordName(for: key)
+									!databaseID.isDeleted(dict: subDict),
+									let zone = Zone.uniqueZone(from: subDict, in: databaseID) {
+									zone.updateRecordName(for: key)
 
-										switch key {
-											case .lost:      cloud.lostAndFoundZone = zone
-											case .graph:     cloud.rootZone         = zone
-											case .trash:     cloud.trashZone        = zone
-											case .recent:    cloud.recentsZone      = zone
-											case .destroy:   cloud.destroyZone      = zone
-											case .favorites: cloud.favoritesZone    = zone
-											default: break
-										}
+									switch key {
+										case .lost:      cloud.lostAndFoundZone = zone
+										case .graph:     cloud.rootZone         = zone
+										case .trash:     cloud.trashZone        = zone
+										case .recent:    cloud.recentsZone      = zone
+										case .destroy:   cloud.destroyZone      = zone
+										case .favorites: cloud.favoritesZone    = zone
+										default: break
 									}
-							}
+								}
 						}
 					}
 				}
@@ -358,9 +356,9 @@ class ZFiles: NSObject {
 			cloud.recount()
 
 			self.isReading[index] = false
-
-			onCompletion?(0)
 		}
+
+		onCompletion?(0)
 	}
 
     func filePath(for index: ZDatabaseIndex) -> String {

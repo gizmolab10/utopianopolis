@@ -32,8 +32,6 @@ enum ZOperationID: Int, CaseIterable {
 	case oReadFile           // LOCAL
 	case oRoots
     case oHere
-	case oAllIdeas
-	case oAllTraits
 	case oStartupDone
 
     // finish
@@ -60,6 +58,8 @@ enum ZOperationID: Int, CaseIterable {
 	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
     case oLostIdeas
+	case oAllTraits
+	case oAllIdeas
 	case oNewIdeas
     case oUndelete
 	case oRecents  			 // MINE ONLY
@@ -274,29 +274,31 @@ class ZOperations: NSObject {
 						gSignal([.sStartupProgress])                // show current op in splash view
 					}
 
-                    self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
-                        FOREGROUND {
-							if  self.currentOp == .oCompletion {
+					FOREGROUND {
+						self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
+							FOREGROUND {
+								if  self.currentOp == .oCompletion {
 
-                                // /////////////////////////////////////
-                                // done with this batch of operations //
-								// /////////////////////////////////////
+									// /////////////////////////////////////
+									// done with this batch of operations //
+									// /////////////////////////////////////
 
-                                onCompletion()
-							} else {
-								gSetProgressTime(for: operationID)
+									onCompletion()
+								} else {
+									gSetProgressTime(for: operationID)
+								}
+
+								gSignal([.sStatus])            // show change in cloud status
+
+								// /////////////////////
+								// release suspension //
+								// /////////////////////
+
+								self.queue.isSuspended = false
 							}
-
-							gSignal([.sStatus])            // show change in cloud status
-
-							// /////////////////////
-                            // release suspension //
-							// /////////////////////
-
-                            self.queue.isSuspended = false
-                        }
-                    }
-                }
+						}
+					}
+				}
             }
 
             add(blockOperation)

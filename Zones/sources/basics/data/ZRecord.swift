@@ -8,7 +8,7 @@
 import Foundation
 import CloudKit
 
-class ZRecord: ZManagedRecord { // NSObject {
+class ZRecord: ZManagedObject { // NSObject {
 
 	@NSManaged var             dbid: String?
 	@NSManaged var       recordName: String?
@@ -171,6 +171,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 	}
 
 	func updateCKRecordProperties() {
+		return
 		if  let                     r = ckRecord {
 			for keyPath in cloudProperties {
 				if  let   recordValue =        r[keyPath]          as! NSObject?,
@@ -212,9 +213,9 @@ class ZRecord: ZManagedRecord { // NSObject {
 			// old registrations are likely no longer valid //
 			// ///////////////////////////////////////////////
 
-			clearAllStates() // is this needed or wanted?
-			gBookmarks.forget(self as? Zone)
-			cloud?.unregisterCKRecord(ckRecord)
+//			clearAllStates() // is this needed or wanted?
+//			gBookmarks.forget(self as? Zone)
+//			cloud?.unregisterCKRecord(ckRecord)
 
 			if  let      r = newValue {
 				ckRecord   = r
@@ -635,7 +636,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 		let     cloud = gRemoteStorage.zRecords(for: iDatabaseID)
 		var newRecord = CKRecord(recordType: iRecordType)           // case 1
-		let      name = dict[.recordName] as? String
+		let      name = dict.recordName
 		databaseID    = iDatabaseID
 
 		if  let recordName = name {
