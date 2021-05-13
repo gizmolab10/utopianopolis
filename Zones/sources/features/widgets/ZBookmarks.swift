@@ -41,12 +41,10 @@ class ZBookmarks: NSObject {
 	@discardableResult func createZone(withBookmark: Zone?, _ iName: String?, recordName: String? = nil) -> Zone {
 		var bookmark           = withBookmark
 		if  bookmark          == nil {
-			bookmark           = Zone.create(named: iName, recordName: recordName, databaseID: .mineID)
+			bookmark           = Zone.createNamed(iName, recordName: recordName, databaseID: .mineID)
 		} else if let     name = iName {
 			bookmark?.zoneName = name
 		}
-
-		bookmark?.updateCKRecordProperties()
 
 		return bookmark!
 	}

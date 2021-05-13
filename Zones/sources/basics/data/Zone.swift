@@ -121,7 +121,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                   toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
 	func                     recount()                        { updateAllProgenyCounts() }
 	func              createBookmark() ->               Zone  { return gBookmarks.createBookmark(targeting: self) }
-	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.create(named: String(arc4random()), databaseID: dbID) }
+	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.createNamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
 	var zonesWithNotes : ZoneArray {
@@ -369,9 +369,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func deepCopy(dbID: ZDatabaseID?) -> Zone {
-		let theCopy = Zone.create(named: nil, databaseID: dbID)
+		let      id = dbID ?? databaseID ?? .mineID
+		let theCopy = Zone.createNamed("noname", databaseID: id)
 
-		copyIntoZRecord(theCopy)
+		copyInto(theCopy)
 		gBookmarks.addToReverseLookup(theCopy)   // only works for bookmarks
 		theCopy.maybeNeedSave() // so KVO won't set needsMerge
 
@@ -1176,7 +1177,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
 		if  let    dbID = databaseID,
 			dbID       != .favoritesID {
-			let newIdea = Zone.create(named: name, databaseID: dbID)
+			let newIdea = Zone.createNamed(name, databaseID: dbID)
 
 			parentZoneMaybe?.expand()
 			gTextEditor.stopCurrentEdit()
@@ -1186,8 +1187,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			    let       identity = gAuthorID {
 			    newIdea.zoneAuthor = identity
 			}
-
-			newIdea.markNotFetched()
 
 			UNDO(self) { iUndoSelf in
 				newIdea.deleteSelf {
@@ -3602,6 +3601,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let         record = ckRecordFor(rootName, at: index)
 		let        created = create(record: record, databaseID: databaseID)
 		created.parentLink = kNullLink
+
+		return created
+	}
+
+	// managed object
+	static func createNamed(_ named: String?, recordName: String? = nil, databaseID: ZDatabaseID) -> Zone {
+		let      created = uniqueObject(entityName: kZoneType, ckRecordName: recordName, in: databaseID) as! Zone
+		created.zoneName = named
 
 		return created
 	}

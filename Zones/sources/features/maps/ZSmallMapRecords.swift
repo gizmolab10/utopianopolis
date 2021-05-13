@@ -353,7 +353,7 @@ class ZSmallMapRecords: ZRecords {
 			}
 
 			if  let           count = parent?.count {
-				var bookmark: Zone? = isBookmark ? zone.deepCopy(dbID: nil) : nil               // cases 1 and 2
+				var bookmark: Zone? = isBookmark ? zone.deepCopy(dbID: .mineID) : nil               // cases 1 and 2
 				var           index = parent?.children.firstIndex(of: zone) ?? count
 
 				if  action         == .aCreateBookmark,

@@ -29,7 +29,7 @@ class ZManagedObject: NSManagedObject {
 		}
 	}
 
-	static func uniqueObject(entityName: String, ckRecordName: String?, in dbID: ZDatabaseID) -> ZManagedObject? {
+	static func uniqueObject(entityName: String, ckRecordName: String?, in dbID: ZDatabaseID) -> ZManagedObject {
 		if  let    name = ckRecordName {
 			let objects = gCoreDataStack.find(type: entityName, with: name, into: dbID)
 

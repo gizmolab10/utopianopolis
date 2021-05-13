@@ -72,11 +72,11 @@ class ZTrait: ZTraitAssets {
 	}
 
 	func deepCopy(dbID: ZDatabaseID?) -> ZTrait {
-		let theRecord = CKRecord(recordType: kTraitType)
-		let theCopy   = ZTrait.create(record: theRecord, databaseID: dbID)
+		let    name = CKRecordID().recordName
+		let      id = dbID ?? databaseID ?? .mineID
+		let theCopy = ZTrait.uniqueObject(entityName: kTraitType, ckRecordName: name, in: id) as! ZTrait
 
-		copyIntoZRecord(theCopy)
-		theCopy.maybeNeedSave() // so KVO won't set needsMerge
+		copyInto(theCopy)
 
 		return theCopy
 	}

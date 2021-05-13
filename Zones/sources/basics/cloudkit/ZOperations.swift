@@ -38,8 +38,6 @@ enum ZOperationID: Int, CaseIterable {
 
     case oFinishUp
 	case oSubscribe
-	case oAdopt
-	case oRecount
     case oDone
 
     // miscellaneous
@@ -65,7 +63,9 @@ enum ZOperationID: Int, CaseIterable {
 	case oRecents  			 // MINE ONLY
     case oRefetch            // user defaults list of record ids
 	case oResolve
+	case oRecount
 	case oTraits
+	case oAdopt
 
 	var progressTime : Int {
 		switch self {
@@ -115,12 +115,15 @@ enum ZOperationID: Int, CaseIterable {
 	var	           doneOps : ZOperationIDsArray { return [.oNone, .oDone, .oCompletion] }
 	var        mineOnlyOps : ZOperationIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
 	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe, .oRestoreIdeas, .oSaveCoreData] }
-	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oUbiquity, .oFavorites, .oFoundIdeas,
-														  .oCompletion, .oMacAddress, .oFetchUserID, .oRestoreIdeas, .oSaveCoreData,
-														  .oUserPermissions, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability] }
+	var        cloudKitOps : ZOperationIDsArray { return [.oAllIdeas, .oAllTraits, .oNewIdeas, .oNeededIdeas, .oSubscribe, .oFetchAndMerge, .oFoundIdeas,
+														  .oEmptyTrash, .oChildIdeas, .oOwnedTraits, .oLostIdeas, .oRefetch, .oTraits] }
+	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oUbiquity, .oFavorites, .oFoundIdeas, .oCompletion, .oMacAddress,
+														  .oFetchUserID, .oRestoreIdeas, .oSaveCoreData, .oUserPermissions, .oObserveUbiquity,
+														  .oFetchUserRecord, .oCheckAvailability] }
 
 	var needsActiveCloud : Bool { return needActiveCloudOps.contains(self) }
 	var isDeprecated     : Bool { return      deprecatedOps.contains(self) }
+	var isCloudKitOp     : Bool { return        cloudKitOps.contains(self) }
 	var forMineOnly      : Bool { return        mineOnlyOps.contains(self) }
 	var alwaysBoth       : Bool { return          bothDBOps.contains(self) }
 	var isLocal          : Bool { return           localOps.contains(self) }
@@ -241,17 +244,19 @@ class ZOperations: NSObject {
 	}
 
     func setupAndRun(_ operationIDs: ZOperationIDsArray, onCompletion: @escaping Closure) {
-        if  queue.operationCount > 10 {
+        if  queue.operationCount > 30 {
             gAlerts.showAlert("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
-               // onCompletion()
+                onCompletion()
             }
+
+			return
         }
 
         queue.isSuspended = true
         let         saved = gDatabaseID
 
         for operationID in operationIDs + [.oCompletion] {
-            if  operationID.isDeprecated { continue }
+			if  operationID.isDeprecated || (operationID.isCloudKitOp && gDisableCloudKit) { continue }
 
             let blockOperation = BlockOperation {
 
@@ -259,7 +264,9 @@ class ZOperations: NSObject {
                 // ignore operations that are not local when have no internet //
                 // /////////////////////////////////////////////////////////////
 
-                if  operationID.isLocal || gCloudStatusIsActive {
+				if  !operationID.isLocal && !gCloudStatusIsActive {
+					onCompletion()
+				} else {
 
                     // ///////////////////////////////////////////////////////////////
                     // susend queue until operation function calls its onCompletion //

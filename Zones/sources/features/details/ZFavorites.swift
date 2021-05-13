@@ -217,7 +217,7 @@ class ZFavorites: ZSmallMapRecords {
 				var bookmark   = gMineCloud?.maybeZoneForRecordName(recordName)
 
 				if  bookmark  == nil {
-					bookmark   = Zone.create(named: named, recordName: recordName, databaseID: .mineID)
+					bookmark   = Zone.createNamed(named, recordName: recordName, databaseID: .mineID)
 				}
 
 				bookmark?    .zoneLink =  kColonSeparator + kColonSeparator + named // convert into a bookmark

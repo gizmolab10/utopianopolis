@@ -1233,7 +1233,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let parent = selectedZone {
 
 			func child(named name: String, withText: String) {
-				let child = Zone.create(named: name, databaseID: dbID)   	// create new (to be child) zone from text
+				let child = Zone.createNamed(name, databaseID: dbID)   	// create new (to be child) zone from text
 
 				parent.addChild(child)
 				child.setTraitText(text, for: .tNote)                       // create note from text in the child
@@ -1247,8 +1247,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			} else if flags.isOption {
 				child(named: text,   withText: "")
 			} else {
-				let child = Zone.create(named: text, databaseID: dbID)   	// create new (to be child) zone from text
-
+				let child = Zone.createNamed(text, databaseID: dbID)   	// create new (to be child) zone from text
 				insertText("", replacementRange: selectedRange)	            // remove text
 				parent.addChild(child)
 				child.asssureIsVisible()

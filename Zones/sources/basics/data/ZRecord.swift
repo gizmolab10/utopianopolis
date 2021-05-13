@@ -157,6 +157,14 @@ class ZRecord: ZManagedObject { // NSObject {
 		other.updateInstanceProperties()
 	}
 
+	func copyInto(_ other: ZRecord) {
+		for keyPath in cloudProperties {
+			let copied = value(forKeyPath: keyPath)
+
+			other.setValue(copied, forKeyPath: keyPath)
+		}
+	}
+
 	func assureCKRecordAndName(for type: String) {
 		if  ckRecord         == nil {
 			if  recordName   != nil {

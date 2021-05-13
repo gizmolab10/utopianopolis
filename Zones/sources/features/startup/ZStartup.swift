@@ -42,7 +42,7 @@ class ZStartup: NSObject {
 			FOREGROUND {
 				gIsReadyToShowUI   = true
 
-				gRecents.push()
+//				gRecents.push()
 				gHereMaybe?.grab()
 				gFavorites.setup { result in
 					FOREGROUND {
