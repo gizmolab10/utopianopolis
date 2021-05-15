@@ -170,7 +170,7 @@ extension ZoneArray {
 			if  let     p = zone.parentZone {
 				index    += (gListsGrowDown ? 1 : 0)
 
-				p.addAndReorderChild(duplicate, at: index)
+				p.addChildAndReorder(duplicate, at: index)
 				duplicate.grab()
 			}
 
@@ -557,7 +557,7 @@ extension ZoneArray {
 	}
 
 	mutating func toggleGroupOwnership() {
-		let groupOwner = Zone.create(named: "group name", databaseID: .mineID)
+		let groupOwner = Zone.uniqueZone(recordName: nil, in: .mineID)
 
 		for child in self {
 			if  child.isGroupOwner {             // remove .groupOwner from attributes

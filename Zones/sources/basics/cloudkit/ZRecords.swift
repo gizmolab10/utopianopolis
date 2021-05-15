@@ -121,6 +121,8 @@ class ZRecords: NSObject {
 		return count > 1 ? count : 100
 	}
 
+
+
     var hereRecordName: String? {
 		set {
 			var        references  = allSafeHereReferences
@@ -133,9 +135,9 @@ class ZRecords: NSObject {
 		}
 
 		get {
-			if  let         index = databaseID.index {
-				let    references = allSafeHereReferences
-				return references[index]
+			if  let          index = databaseID.index {
+				let     references = allSafeHereReferences
+				return  references[index]
 			}
 			
 			return nil
@@ -143,27 +145,41 @@ class ZRecords: NSObject {
     }
 
 	var allSafeHereReferences: [String] {
-		var     references = gHereRecordNames.components(separatedBy: kColonSeparator)
-		var     incomplete = false
+		var      references = gHereRecordNames.components(separatedBy: kColonSeparator)
+		var     mustReplace = false
 
-		while  references.count < 4 {
-			let      index = references.count
-			if  let   dbid = ZDatabaseIndex(rawValue: index)?.databaseID,
-				let   name = gRemoteStorage.zRecords(for: dbid)?.rootZone?.ckRecordName {
-				incomplete = true
+		func rootFor(_ index: Int) -> Zone? {
+			if  let     dbid = ZDatabaseIndex(rawValue: index)?.databaseID,
+				let zRecords = gRemoteStorage.zRecords(for: dbid),
+				let     root = zRecords.rootZone {
+
+				return  root
+			}
+
+			return nil
+		}
+
+		while   references.count < 4 {
+			let       index = references.count
+			if  let    root = rootFor(index),
+				let    name = root.recordName {
+				mustReplace = true
 				references.append(name)
 			}
 		}
 
-		// enforce difference between favorites and recents
+		// detect and fix bad values
 
-		if  references[2] == references[3] {
-			references[2] = kFavoritesRootName // reset to default
-			references[3] = kRecentsRootName
-			incomplete    = true
+		for index in 2...3 {
+			let              name = references[index]
+			if  let          root = rootFor(index),
+				!root.allProgeny.contains(name) {
+				references[index] = index == 2 ? kFavoritesRootName : kRecentsRootName    // reset to default
+				mustReplace       = true
+			}
 		}
 
-		if  incomplete {
+		if  mustReplace {
 			gHereRecordNames = references.joined(separator: kColonSeparator)
 		}
 
@@ -172,7 +188,7 @@ class ZRecords: NSObject {
     
     var hereZoneMaybe: Zone? {
 		get { return maybeZoneForRecordName(hereRecordName) }
-		set { hereRecordName = newValue?.ckRecordName ?? rootName }
+		set { hereRecordName = newValue?.ckRecordName ?? newValue?.recordName ?? rootName }
     }
 
 	var rootName: String {

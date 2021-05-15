@@ -332,9 +332,9 @@ class ZFiles: NSObject {
 									}
 								}
 							default:
-								if  let subDict = value as? ZStorageDictionary,
-									!databaseID.isDeleted(dict: subDict),
-									let zone = Zone.uniqueZone(from: subDict, in: databaseID) {
+								if  let subDict = value as? ZStorageDictionary, !databaseID.isDeleted(dict: subDict) {
+									let    zone = Zone.uniqueZone(from: subDict, in: databaseID)
+
 									zone.updateRecordName(for: key)
 
 									switch key {

@@ -104,7 +104,7 @@ class ZTogglingView: NSStackView {
 		titleButton?.zlayer.backgroundColor =     gAccentColor.cgColor
 		extraButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
 
-		if  identity == .vSmallMap,
+		if  identity == .vSmallMap, gIsReadyToShowUI,
 			let  here = gIsRecentlyMode ? gRecentsHereMaybe : gFavoritesHereMaybe {
 
 			titleButton?.title = here.ancestralString

@@ -28,9 +28,9 @@ enum ZOperationID: Int, CaseIterable {
     // continue
 
     case oCloud
+	case oRoots
 	case oManifest
 	case oReadFile           // LOCAL
-	case oRoots
     case oHere
 	case oStartupDone
 
@@ -115,7 +115,7 @@ enum ZOperationID: Int, CaseIterable {
 	var	           doneOps : ZOperationIDsArray { return [.oNone, .oDone, .oCompletion] }
 	var        mineOnlyOps : ZOperationIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
 	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oSubscribe, .oRestoreIdeas, .oSaveCoreData] }
-	var        cloudKitOps : ZOperationIDsArray { return [.oAllIdeas, .oAllTraits, .oNewIdeas, .oNeededIdeas, .oSubscribe, .oFetchAndMerge, .oFoundIdeas,
+	var        cloudKitOps : ZOperationIDsArray { return [.oCloud, .oAllIdeas, .oAllTraits, .oNewIdeas, .oNeededIdeas, .oSubscribe, .oFetchAndMerge, .oFoundIdeas,
 														  .oEmptyTrash, .oChildIdeas, .oOwnedTraits, .oLostIdeas, .oRefetch, .oTraits] }
 	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oUbiquity, .oFavorites, .oFoundIdeas, .oCompletion, .oMacAddress,
 														  .oFetchUserID, .oRestoreIdeas, .oSaveCoreData, .oUserPermissions, .oObserveUbiquity,
@@ -279,6 +279,7 @@ class ZOperations: NSObject {
 
 					if !gHasFinishedStartup {
 						gSignal([.sStartupProgress])                // show current op in splash view
+						printDebug(.dOps, self.operationText)
 					}
 
 					FOREGROUND {

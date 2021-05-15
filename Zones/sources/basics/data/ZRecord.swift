@@ -125,9 +125,18 @@ class ZRecord: ZManagedObject { // NSObject {
 	// MARK:- initialize
 	// MARK:-
 
+	static func uniqueZRecord(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZRecord {
+		let        zRecord = uniqueObject(entityName: entityName, recordName: recordName, in: dbID) as! ZRecord
+		zRecord.recordName = recordName ?? gUniqueRecordName
+
+		return zRecord
+	}
+
+	// todo todo: eliminate this constructor, use unique z record
+
 	convenience init(record: CKRecord? = nil, entityName: String? = nil, databaseID: ZDatabaseID?) {
 		if  gUseCoreData, let eName = record?.entityName ?? entityName {
-			self.init(entityName: eName, ckRecordName: record?.recordID.recordName, databaseID: databaseID) // initialize managed object from ck record or explicit entity name
+			self.init(entityName: eName, databaseID: databaseID) // ckRecordName: record?.recordID.recordName, databaseID: databaseID) // initialize managed object from ck record or explicit entity name
 		} else {
 			self.init()
 		}

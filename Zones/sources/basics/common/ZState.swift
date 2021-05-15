@@ -72,6 +72,7 @@ var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEdit
 var          gIsDraggableMode:               Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
 var      gDetailsViewIsHidden:               Bool { return gMainController?.detailView?.isHidden ?? true }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
+var         gUniqueRecordName:             String { return CKRecordID().recordName }
 var      gCurrentSmallMapName:             String { return gIsRecentlyMode ? "recent" : "favorite" }
 var   gCurrentSmallMapRecords:  ZSmallMapRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
 var                  gRecords:          ZRecords? { return (kIsPhone && gShowSmallMapForIOS) ? gCurrentSmallMapRecords : gRemoteStorage.currentRecords }
@@ -112,7 +113,7 @@ let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
 func gSwapSmallMapMode(_ OPTION: Bool = false) {
 	if  let c = gDetailsController {
 		if !c.viewIsVisible(for: .vSmallMap) {
-			c.showViewFor(.vSmallMap)
+			c.showViewFor       (.vSmallMap)
 		} else {
 			gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
 

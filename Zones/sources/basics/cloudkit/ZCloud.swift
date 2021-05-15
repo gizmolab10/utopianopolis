@@ -540,7 +540,7 @@ class ZCloud: ZRecords {
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
             if  let zone = maybeZoneForRecordName(iRecordName) {
                 clearRecordName(iRecordName, for: states)
-                lostAndFoundZone?.addAndReorderChild(zone)
+                lostAndFoundZone?.addChildAndReorder(zone)
             }
 
 			return false
@@ -845,7 +845,7 @@ class ZCloud: ZRecords {
                                 for orphan in bad.children {
                                     orphan.orphan()
                                     orphan.needSave()
-                                    self.lostAndFoundZone?.addAndReorderChild(orphan)
+                                    self.lostAndFoundZone?.addChildAndReorder(orphan)
                                 }
                             } else {
                                 self.clearRecordName(name, for: [.needsFetch])
@@ -1226,46 +1226,11 @@ class ZCloud: ZRecords {
     }
 
     func establishHere(_ onCompletion: IntClosure?) {
-        let name  = hereRecordName ?? kRootName
-        if  name == kRootName {
+        let    name = hereRecordName ?? kRootName
+		currentHere = Zone.uniqueZone(recordName: name, in: databaseID)
 
-            // //////////////////////
-            // first time for user //
-            // //////////////////////
-
-			self.hereZoneMaybe = gRoot
-
-			gRecents.push()
-			onCompletion?(0)
-
-        } else if let here = maybeZoneForRecordName(name) {
-			self.currentHere = here
-
-			here.updateInstanceProperties()
-			gRecents.push()
-			onCompletion?(0)
-        } else {
-            let recordID = CKRecordID(recordName: name)
-
-            self.assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iHereRecord: CKRecord?) in
-                if  iHereRecord == nil || iHereRecord?[kpZoneName] == nil {
-					self.hereZoneMaybe = gRoot
-
-					gRecents.push()
-					onCompletion?(0)
-                } else {
-                    let         here = self.sureZoneForCKRecord(iHereRecord!)
-					self.currentHere = here
-
-					here.updateInstanceProperties()
-                    here.maybeNeedChildren()
-                    here.maybeNeedRoot()
-                    here.fetchBeforeSave()
-					gRecents.push()
-					onCompletion?(0)
-                }
-            }
-        }
+		gRecents.push()
+		onCompletion?(0)
     }
     
     
@@ -1296,48 +1261,27 @@ class ZCloud: ZRecords {
                 case .destroyID:   if self.destroyZone      != nil            { recurseNext(); return }
                 }
 
-                self.establishRootFor(name: name, recordName: recordName) { iZone in
-                    if  rootID != .mapID {
-                        iZone.directAccess = .eProgenyWritable
-                    }
+				let root = Zone.uniqueZoneNamed(name, recordName: recordName, databaseID: self.databaseID)
 
-					switch rootID {
-						case .favoritesID: self.favoritesZone    = iZone
-						case .recentsID:   self.recentsZone      = iZone
-						case .destroyID:   self.destroyZone      = iZone
-						case .trashID:     self.trashZone        = iZone
-						case .lostID:      self.lostAndFoundZone = iZone
-						case .mapID:       self.rootZone         = iZone
-					}
+				if  rootID != .mapID {
+					root.directAccess = .eProgenyWritable
+				}
 
-                    recurseNext()
-                }
+				switch rootID {
+					case .favoritesID: self.favoritesZone    = root
+					case .recentsID:   self.recentsZone      = root
+					case .destroyID:   self.destroyZone      = root
+					case .trashID:     self.trashZone        = root
+					case .lostID:      self.lostAndFoundZone = root
+					case .mapID:       self.rootZone         = root
+				}
+
+				recurseNext()
+
             }
         }
 
 		createFor?(0)
-    }
-
-    func establishRootFor(name: String, recordName: String, _ onCompletion: ZoneClosure?) {
-        let recordID = CKRecordID(recordName: recordName)
-
-        assureRecordExists(withRecordID: recordID, recordType: kZoneType) { (iRecord: CKRecord?) in
-            var record  = iRecord
-            if  record == nil {
-                record  = CKRecord(recordType: kZoneType, recordID: recordID)       // will create
-            }
-
-            let           zone = self.sureZoneForCKRecord(record!)                  // get / create
-            zone       .parent = nil                                                // roots have no parent
-
-            if  zone.zoneName == nil {
-                zone.zoneName  = name                                               // was created
-
-                zone.needSave()
-            }
-
-            onCompletion?(zone)
-        }
     }
 
     // MARK:- remote persistence

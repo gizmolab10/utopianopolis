@@ -14,7 +14,7 @@ let gStringArrayTransformerName = NSValueTransformerName(rawValue: "ZStringArray
 
 class ZManagedObject: NSManagedObject {
 
-	convenience init(entityName: String?, ckRecordName: String?, databaseID: ZDatabaseID?) {
+	convenience init(entityName: String?, databaseID: ZDatabaseID?) {
 		let     context = gCoreDataStack.managedContext
 
 		if  let    name = entityName,
@@ -29,16 +29,16 @@ class ZManagedObject: NSManagedObject {
 		}
 	}
 
-	static func uniqueObject(entityName: String, ckRecordName: String?, in dbID: ZDatabaseID) -> ZManagedObject {
-		if  let    name = ckRecordName {
-			let objects = gCoreDataStack.find(type: entityName, with: name, into: dbID)
+	static func uniqueObject(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZManagedObject {
+		if  let    name = recordName {
+			let objects = gCoreDataStack.find(type: entityName, recordName: name, into: dbID)
 
 			if  objects.count > 0 {
 				return objects[0]
 			}
 		}
 
-		return ZManagedObject(entityName: entityName, ckRecordName: ckRecordName, databaseID: dbID)
+		return ZManagedObject(entityName: entityName, databaseID: dbID)
 	}
 
 }

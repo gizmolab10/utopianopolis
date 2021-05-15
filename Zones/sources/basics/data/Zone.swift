@@ -108,6 +108,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var          bookmarkTargets        :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
 	var          bookmarks              :          ZoneArray  { return zones(of:  .wBookmarks) }
 	var          notemarks              :          ZoneArray  { return zones(of:  .wNotemarks) }
+	var               allProgeny        :          ZoneArray  { return zones(of:               .wProgeny)  }
 	var       allNotemarkProgeny        :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
 	var       allBookmarkProgeny        :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
 	var       all                       :          ZoneArray  { return zones(of:  .wAll) }
@@ -121,7 +122,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                   toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
 	func                     recount()                        { updateAllProgenyCounts() }
 	func              createBookmark() ->               Zone  { return gBookmarks.createBookmark(targeting: self) }
-	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.createNamed(String(arc4random()), databaseID: dbID) }
+	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
 	var zonesWithNotes : ZoneArray {
@@ -370,7 +371,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func deepCopy(dbID: ZDatabaseID?) -> Zone {
 		let      id = dbID ?? databaseID ?? .mineID
-		let theCopy = Zone.createNamed("noname", databaseID: id)
+		let theCopy = Zone.uniqueZoneNamed("noname", databaseID: id)
 
 		copyInto(theCopy)
 		gBookmarks.addToReverseLookup(theCopy)   // only works for bookmarks
@@ -1177,7 +1178,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
 		if  let    dbID = databaseID,
 			dbID       != .favoritesID {
-			let newIdea = Zone.createNamed(name, databaseID: dbID)
+			let newIdea = Zone.uniqueZoneNamed(name, databaseID: dbID)
 
 			parentZoneMaybe?.expand()
 			gTextEditor.stopCurrentEdit()
@@ -1195,7 +1196,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			ungrab()
-			addAndReorderChild(newIdea, at: iIndex, { onCompletion?(newIdea) } )
+			addChildAndReorder(newIdea, at: iIndex, { onCompletion?(newIdea) } )
 		}
 	}
 
@@ -1340,7 +1341,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			self.orphan() // in case parent was restored
 		}
 
-		into.addAndReorderChild(self, at: iIndex)
+		into.addChildAndReorder(self, at: iIndex)
 
 		if !into.isInTrash { // so grab won't disappear
 			grab()
@@ -2324,7 +2325,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		UNDO(self) { iUndoSelf in
 			for (child, (parent, index)) in restore {
 				child.orphan()
-				parent.addAndReorderChild(child, at: index)
+				parent.addChildAndReorder(child, at: index)
 			}
 
 			iUndoSelf.UNDO(self) { iUndoUndoSelf in
@@ -2380,11 +2381,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 
 					if  toSmallMap {
-						into.expandInSmallMap(true)
+						into.updateVisibilityInSmallMap(true)
 					}
 
 					beingAdded.orphan()
-					into.addAndReorderChild(beingAdded, at: iIndex)
+					into.addChildAndReorder(beingAdded, at: iIndex)
 					beingAdded.recursivelyApplyDatabaseID(into.databaseID)
 					gBookmarks.addToReverseLookup(beingAdded)
 				}
@@ -2705,8 +2706,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:-
 
 	var expanded: Bool {
-		if  let name = ckRecordName,
-			gExpandedZones.firstIndex(of: name) != nil {
+		if  let name = ckRecordName ?? recordName,
+			gExpandedZones.contains(name) {
 			return true
 		}
 
@@ -2716,7 +2717,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func expand() {
 		var expansionSet = gExpandedZones
 
-		if  let name = ckRecordName, !isBookmark, !expansionSet.contains(name) {
+		if  let name = ckRecordName ?? recordName, !isBookmark, !expansionSet.contains(name) {
 			expansionSet.append(name)
 
 			gExpandedZones = expansionSet
@@ -2726,7 +2727,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func collapse() {
 		var expansionSet = gExpandedZones
 
-		if  let name = ckRecordName {
+		if  let name = ckRecordName ?? recordName {
 			while let index = expansionSet.firstIndex(of: name) {
 				expansionSet.remove(at: index)
 			}
@@ -2848,7 +2849,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return addChildSafely(child, at: 0, updateCoreData: updateCoreData)
 	}
 
-	func addAndReorderChild(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: Closure? = nil) {
+	func addChildAndReorder(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: Closure? = nil) {
 		if  let child = iChild,
 			addChildSafely(child, at: iIndex, afterAdd) != nil {
 			children.updateOrder() // also marks children need save
@@ -2884,7 +2885,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let n = d.popLast() {     // pop next from duplicates
 
 			orphan()
-			p.addAndReorderChild(n, at: i)  // swap it into this zones sibling index
+			p.addChildAndReorder(n, at: i)  // swap it into this zones sibling index
 		}
 	}
 
@@ -3325,7 +3326,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let show = !expanded
 
 			if  isInSmallMap {
-				expandInSmallMap(show)
+				updateVisibilityInSmallMap(show)
 				gRedrawMaps()
 			} else {
 				let goal = (COMMAND && show) ? Int.max : nil
@@ -3340,22 +3341,27 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func expandInSmallMap(_ show: Bool) {
+	func updateVisibilityInSmallMap(_ show: Bool) {
 
 		// //////////////////////////////////////////////////////////
 		// avoid annoying user: treat small map non-generationally //
 		// //////////////////////////////////////////////////////////
 
-		if  !isARoot || show {
-			toggleChildrenVisibility()
+		// show -> collapse parent, expand self, here = parent
+		// hide -> collapse self, expand parent, here = self
 
-			if  let here = show ? self : parentZone {
-				here.expand()
+		if  !isARoot || show {
+			let hidden = show ? parentZone : self
+
+			hidden?.collapse()
+
+			if  let shown = show ? self : parentZone {
+				shown.expand()
 
 				if  isInFavorites {
-					gFavoritesHereMaybe = here
+					gFavoritesHereMaybe = shown
 				} else if isInRecents {
-					gRecentsHereMaybe   = here
+					gRecentsHereMaybe   = shown
 				}
 			}
 		}
@@ -3606,45 +3612,23 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	// managed object
-	static func createNamed(_ named: String?, recordName: String? = nil, databaseID: ZDatabaseID) -> Zone {
-		let      created = uniqueObject(entityName: kZoneType, ckRecordName: recordName, in: databaseID) as! Zone
+	static func uniqueZoneNamed(_ named: String?, recordName: String? = nil, databaseID: ZDatabaseID) -> Zone {
+		let      created = uniqueZone(recordName: recordName, in: databaseID)
 		created.zoneName = named
 
 		return created
 	}
 
-	// never use closure
-	static func create(named: String?, recordName: String? = nil, databaseID: ZDatabaseID?) -> Zone {
-		var newRecord : CKRecord?
-
-		if  let    rName = recordName {
-			newRecord    = CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: rName))
-		} else {
-			newRecord    = CKRecord(recordType: kZoneType)
-		}
-
-		let      created = create(record: newRecord!, databaseID: databaseID)
-		created.zoneName = named
-
-		created.updateCKRecordProperties()
-
-		return created
+	static func uniqueZone(recordName: String?, in dbID: ZDatabaseID) -> Zone {
+		return uniqueZRecord(entityName: kZoneType, recordName: recordName, in: dbID) as! Zone
 	}
 
-	static func createEntityAsync(entityName: String?, ckRecordName: String?, databaseID: ZDatabaseID?, _ onCreation: ZoneClosure) {
-		// if in core data use it, else create managed object
+	static func uniqueZone(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> Zone {
+		let result = uniqueZone(recordName: dict.recordName, in: dbID)
 
-		let zone = Zone(entityName: entityName, ckRecordName: ckRecordName, databaseID: databaseID)
-
-		onCreation(zone)
-	}
-
-	static func uniqueZone(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> Zone? {
-		let result = uniqueObject(entityName: kZoneType, ckRecordName: dict.recordName, in: dbID) as? Zone
-
-		result?.temporarilyIgnoreNeeds {
+		result.temporarilyIgnoreNeeds {
 			do {
-				try result?.extractFromStorageDictionary(dict, of: kZoneType, into: dbID)
+				try result.extractFromStorageDictionary(dict, of: kZoneType, into: dbID)
 			} catch {
 				printDebug(.dError, "\(error)")    // de-serialization
 			}
@@ -3653,24 +3637,24 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return result
 	}
 
-	convenience init(ddict: ZStorageDictionary, in dbID: ZDatabaseID) {
-
-		// //////////////////////////////////////
-		// all ideas created from reading file //
-		// //////////////////////////////////////
-
-		self.init(entityName: kZoneType, ckRecordName: nil, databaseID: dbID)
-
-		if  let d = ddict.mainDictionary {
-			temporarilyIgnoreNeeds {
-				do {
-					try extractFromStorageDictionary(d, of: kZoneType, into: dbID)
-				} catch {
-					printDebug(.dError, "\(error)")    // de-serialization
-				}
-			}
-		}
-	}
+//	convenience init(ddict: ZStorageDictionary, in dbID: ZDatabaseID) {
+//
+//		// //////////////////////////////////////
+//		// all ideas created from reading file //
+//		// //////////////////////////////////////
+//
+//		self.init(entityName: kZoneType, ckRecordName: nil, databaseID: dbID)
+//
+//		if  let d = ddict.mainDictionary {
+//			temporarilyIgnoreNeeds {
+//				do {
+//					try extractFromStorageDictionary(d, of: kZoneType, into: dbID)
+//				} catch {
+//					printDebug(.dError, "\(error)")    // de-serialization
+//				}
+//			}
+//		}
+//	}
 
 	func rootName(for type: ZStorageType) -> String? {
 		switch type {
@@ -3708,10 +3692,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  let childrenDicts: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
 			for childDict: ZStorageDictionary in childrenDicts {
-				if  let child = Zone.uniqueZone(from: childDict, in: iDatabaseID) {
-					cloud?.temporarilyIgnoreAllNeeds() {        // prevent needsSave caused by child's parent intentionally not being in childDict
-						addChildSafely(child, at: nil)
-					}
+				let child = Zone.uniqueZone(from: childDict, in: iDatabaseID)
+				cloud?.temporarilyIgnoreAllNeeds() {        // prevent needsSave caused by child's parent intentionally not being in childDict
+					addChildSafely(child, at: nil)
 				}
 			}
 
@@ -3720,17 +3703,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  let traitsStore: [ZStorageDictionary] = dict[.traits] as! [ZStorageDictionary]? {
 			for  traitStore:  ZStorageDictionary in traitsStore {
-				if  let trait = ZTrait.uniqueTrait(from: traitStore, in: iDatabaseID) {
-					cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait intentionally not being in traits
-						addTrait(trait)
-					}
+				let trait = ZTrait.uniqueTrait(from: traitStore, in: iDatabaseID)
 
-					if  gPrintModes.contains(.dNotes),
-						let   tt = trait.type,
-						let type = ZTraitType(rawValue: tt),
-						type    == .tNote {
-						printDebug(.dNotes, "trait (in " + (zoneName ?? kUnknown) + ") --> " + (trait.format ?? "empty"))
-					}
+				cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait intentionally not being in traits
+					addTrait(trait)
+				}
+
+				if  gPrintModes.contains(.dNotes),
+					let   tt = trait.type,
+					let type = ZTraitType(rawValue: tt),
+					type    == .tNote {
+					printDebug(.dNotes, "trait (in " + (zoneName ?? kUnknown) + ") --> " + (trait.format ?? "empty"))
 				}
 			}
 		}

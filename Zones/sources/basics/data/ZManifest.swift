@@ -125,7 +125,7 @@ class ZManifest : ZRecord {
 	}
 
 	static func uniqueManifest(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZManifest? {
-		let result = uniqueObject(entityName: kManifestType, ckRecordName: dict.recordName, in: dbID) as? ZManifest
+		let result = uniqueZRecord(entityName: kManifestType, recordName: dict.recordName, in: dbID) as? ZManifest
 
 		result?.temporarilyIgnoreNeeds {
 			do {
@@ -138,11 +138,11 @@ class ZManifest : ZRecord {
 		return result
 	}
 
-    convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
-		self.init(entityName: kManifestType, ckRecordName: nil, databaseID: dbID)
-
-		try extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
-    }
+//    convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
+//		self.init(entityName: kManifestType, ckRecordName: nil, databaseID: dbID)
+//
+//		try extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
+//    }
 
     override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
         try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID)

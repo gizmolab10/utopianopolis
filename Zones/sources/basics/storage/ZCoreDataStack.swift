@@ -184,7 +184,7 @@ class ZCoreDataStack: NSObject {
 		fetchedRegistry[dbID] = dict
 	}
 
-	func find(type: String, with recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> [ZManagedObject] {
+	func find(type: String, recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> [ZManagedObject] {
 		if  let     object = fetchedRegistry[dbID]?[recordName] {
 			return [object]
 		}

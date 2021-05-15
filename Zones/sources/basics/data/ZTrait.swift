@@ -57,12 +57,12 @@ class ZTrait: ZTraitAssets {
 	// MARK:- initialize
 	// MARK:-
 
-	static func uniqueTrait(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZTrait? {
-		let result = uniqueObject(entityName: kTraitType, ckRecordName: dict.recordName, in: dbID) as? ZTrait
+	static func uniqueTrait(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZTrait {
+		let result = uniqueTrait(recordName: dict.recordName, in: dbID)
 
-		result?.temporarilyIgnoreNeeds {
+		result.temporarilyIgnoreNeeds {
 			do {
-				try result?.extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
+				try result.extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
 			} catch {
 				printDebug(.dError, "\(error)")    // de-serialization
 			}
@@ -72,13 +72,16 @@ class ZTrait: ZTraitAssets {
 	}
 
 	func deepCopy(dbID: ZDatabaseID?) -> ZTrait {
-		let    name = CKRecordID().recordName
 		let      id = dbID ?? databaseID ?? .mineID
-		let theCopy = ZTrait.uniqueObject(entityName: kTraitType, ckRecordName: name, in: id) as! ZTrait
+		let theCopy = ZTrait.uniqueTrait(recordName: gUniqueRecordName, in: id)
 
 		copyInto(theCopy)
 
 		return theCopy
+	}
+
+	static func uniqueTrait(recordName: String?, in dbID: ZDatabaseID) -> ZTrait {
+		return uniqueZRecord(entityName: kTraitType, recordName: recordName, in: dbID) as! ZTrait
 	}
 
 	static func createAsync(record: CKRecord, databaseID: ZDatabaseID?, onCreation: @escaping ZTraitClosure) {

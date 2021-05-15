@@ -49,21 +49,12 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	func setup(_ onCompletion: IntClosure?) {
-		let   mine = gMineCloud
-		let finish = {
-			self.createRootTemplates()
-
-			if  let root = gFavoritesRoot {
-				root.needProgeny()
-			}
-
-			onCompletion?(0)
-		}
+		let     mine = gMineCloud
 
 		if  let root = mine?.maybeZoneForRecordName(kFavoritesRootName) {
 			gFavorites.rootZone = root
 
-			finish()
+			onCompletion?(0)
 		} else {
 			// create favorites root
 			mine?.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
@@ -73,22 +64,9 @@ class ZFavorites: ZSmallMapRecords {
 				root.zoneName       = kFavoritesRootName
 				gFavorites.rootZone = root
 
-				finish()
+				onCompletion?(0)
 			}
 		}
-	}
-
-    func createRootTemplates() {
-        if  cloudRootTemplates.count == 0 {
-            for (index, dbID) in kAllDatabaseIDs.enumerated() {
-                let          name = dbID.rawValue
-				let      bookmark = gBookmarks.create(withBookmark: nil, .aCreateBookmark, parent: cloudRootTemplates, atIndex: index, name, recordName: name + kFavoritesSuffix)
-				bookmark.zoneLink =  "\(name)\(kColonSeparator)\(kColonSeparator)"
-				bookmark   .order = Double(index) * 0.001
-                
-				bookmark.clearAllStates()
-            }
-        }
 	}
 
 	override func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {
@@ -119,8 +97,8 @@ class ZFavorites: ZSmallMapRecords {
         }
     }
 
-    @discardableResult func updateAllFavorites(_ currentZone: Zone? = nil) -> Bool {
-		var result = true
+    @discardableResult func updateAllFavorites() -> Bool {
+		var result = false
 
 		// /////////////////////////////////////////////
 		// assure at least one root favorite per db   //
@@ -131,10 +109,9 @@ class ZFavorites: ZSmallMapRecords {
 			var   hasDatabaseIDs = [ZDatabaseID] ()
 			var         discards = IndexPath()
 			var      testedSoFar = ZoneArray ()
-			var      missingLost = true
-			var     missingTrash = true
 			var   missingDestroy = true
-			var     hasDuplicate = false
+			var     missingTrash = true
+			var      missingLost = true
 
 			// //////////////////////////////////
 			// detect ids which have bookmarks //
@@ -142,7 +119,8 @@ class ZFavorites: ZSmallMapRecords {
 			// //////////////////////////////////
 
 			for bookmark in bookmarks {
-				if  let            link  = bookmark.zoneLink { // always true: all working favorites have a zone link
+				var         hasDuplicate = false
+				if  let            link  = bookmark.zoneLink {     // always true: allBookmarkProgeny have a zone link
 					if             link == kTrashLink {
 						if  missingTrash {
 							missingTrash = false
@@ -161,11 +139,11 @@ class ZFavorites: ZSmallMapRecords {
 						} else {
 							hasDuplicate   = true
 						}
-					} else if let   dbID = bookmark.linkDatabaseID, bookmark.linkIsRoot {
+					} else if let     dbID = bookmark.linkDatabaseID, bookmark.linkIsRoot {
 						if !hasDatabaseIDs.contains(dbID) {
 							hasDatabaseIDs.append(dbID)
 						} else {
-							hasDuplicate = true
+							hasDuplicate   = true
 						}
 					} else {    // target is not a root -> don't bother adding to testedSoFar
 						continue
@@ -208,60 +186,64 @@ class ZFavorites: ZSmallMapRecords {
 				}
 			}
 
-			// //////////////////////////////////////////////
-			// add missing trash + lost and found favorite //
-			// //////////////////////////////////////////////
-
-			func createRootBookmark(named: String) {
-				let recordName = named + kFavoritesSuffix
-				var bookmark   = gMineCloud?.maybeZoneForRecordName(recordName)
-
-				if  bookmark  == nil {
-					bookmark   = Zone.createNamed(named, recordName: recordName, databaseID: .mineID)
-				}
-
-				bookmark?    .zoneLink =  kColonSeparator + kColonSeparator + named // convert into a bookmark
-				bookmark?.directAccess = .eProgenyWritable
-
-				gFavoritesRoot?.addAndReorderChild(bookmark!)
-				bookmark?.clearAllStates()
-				bookmark?.markNotFetched()
-			}
-
-			if  missingTrash {
-				createRootBookmark(named: kTrashName)
-			}
-
-			if  missingLost {
-				createRootBookmark(named: kLostAndFoundName)
-			}
-
-			if  missingDestroy && gAddDestroy {
-				createRootBookmark(named: kDestroyName)
-			}
-
 			// /////////////////////////////
 			// add missing root favorites //
 			// /////////////////////////////
 
-			for template in cloudRootTemplates.children {
-				if  let          dbID = template.linkDatabaseID, !hasDatabaseIDs.contains(dbID) {
-					let      bookmark = template.deepCopy(dbID: .mineID)
-					bookmark.zoneName = template.bookmarkTarget?.zoneName
+			var roots : Zone?
 
-					gFavoritesRoot?.addChildAndRespectOrder(bookmark)
-					bookmark.clearAllStates() // erase side-effect of add
-					bookmark.markNotFetched()
+			for zone in allProgeny {
+				if  zone.recordName == kRootsName {
+					roots = zone
 				}
 			}
 
-			result = missingLost || missingTrash || hasDuplicate || (missingDestroy && gAddDestroy)
+			if  roots == nil {
+				roots  = Zone.uniqueZone(recordName: kRootsName, in: .mineID)
+
+				gFavoritesRoot?.addChildAndRespectOrder(roots)
+			}
+
+			roots?.zoneName = kRootsName
+
+			for dbID in kAllDatabaseIDs {
+				if !hasDatabaseIDs.contains(dbID) {
+					let          name = dbID.rawValue
+					let      bookmark = Zone.uniqueZone(recordName: name + kFavoritesSuffix, in: .mineID)
+					bookmark.zoneLink = name + kColonSeparator + kColonSeparator
+
+					roots?.addChildAndReorder(bookmark)
+				}
+			}
+
+			func createRootsBookmark(named: String) {
+				let      bookmark = Zone.uniqueZone(recordName: named + kFavoritesSuffix, in: .mineID)
+				bookmark.zoneLink = kColonSeparator + kColonSeparator + named                           // convert into a bookmark
+
+				roots?.addChildAndReorder(bookmark)
+			}
+
+			// //////////////////////////////////////////////
+			// add missing trash + lost and found favorite //
+			// //////////////////////////////////////////////
+
+			if  missingTrash {
+				createRootsBookmark(named: kTrashName)
+			}
+
+			if  missingLost {
+				createRootsBookmark(named: kLostAndFoundName)
+			}
+
+			if  missingDestroy && gAddDestroy {
+				createRootsBookmark(named: kDestroyName)
+			}
+
+			result = missingLost || missingTrash || (missingDestroy && gAddDestroy)
 		}
 
-        updateCurrentFavorite(currentZone)
-
 		return result
-    }
+	}
 
     // MARK:- toggle
     // MARK:-
