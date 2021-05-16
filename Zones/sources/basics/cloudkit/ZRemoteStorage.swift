@@ -80,7 +80,7 @@ class ZRemoteStorage: NSObject {
     }
     
     func cloud(for dbID: ZDatabaseID) -> ZCloud? { return zRecords(for: dbID) as? ZCloud }
-    func clear()                                 { records =    [ZDatabaseID  :   ZCloud] () }
+    func clear()                                 { records =       [ZDatabaseID : ZCloud] () }
 	func cancel()                                { currentCloud?.currentOperation?.cancel() }
 
 	func removeAllDuplicates() {
@@ -166,11 +166,11 @@ class ZRemoteStorage: NSObject {
 	}
 
     func zRecords(for iDatabaseID: ZDatabaseID?) -> ZRecords? {
-		var zRecords      : ZRecords?
-        let dbID          =  iDatabaseID ?? gDatabaseID
-		zRecords          = records[dbID]
-		if  zRecords     == nil {
-			zRecords      = ZCloud(dbID)
+		var  zRecords : ZRecords?
+        let      dbID =  iDatabaseID ?? gDatabaseID
+		zRecords      = records[dbID]
+		if  zRecords == nil {
+			zRecords = ZCloud(dbID)
 			records[dbID] = zRecords
 		}
 

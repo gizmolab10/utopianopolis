@@ -18,6 +18,12 @@ enum ZBookmarkAction: Int {
 
 let gFavorites     = ZFavorites(ZDatabaseID.favoritesID)
 var gFavoritesRoot : Zone? { return gFavorites.rootZone }
+var gFavoritesHere : Zone? { return gFavoritesHereMaybe ?? gFavoritesRoot }
+
+var gFavoritesHereMaybe: Zone? {
+	get { return gHereZoneForIDMaybe(       .favoritesID) }
+	set { gSetHereZoneForID(here: newValue, .favoritesID) }
+}
 
 class ZFavorites: ZSmallMapRecords {
 

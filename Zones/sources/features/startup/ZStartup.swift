@@ -42,8 +42,6 @@ class ZStartup: NSObject {
 			FOREGROUND {
 				gIsReadyToShowUI   = true
 
-//				gRecents.push()
-				gHereMaybe?.grab()
 				gFavorites.setup { result in
 					FOREGROUND {
 						gFavorites.updateAllFavorites()
@@ -59,6 +57,8 @@ class ZStartup: NSObject {
 
 								gTimers .stopTimer (for:  .tStartup)
 								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync])
+								gRecents.push()
+								gHereMaybe?.grab()
 
 								if  gIsStartupMode {
 									gSetBigMapMode()

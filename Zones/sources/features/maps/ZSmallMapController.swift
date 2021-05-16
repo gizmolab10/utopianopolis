@@ -12,7 +12,8 @@ import Cocoa
 import UIKit
 #endif
 
-var gSmallMapController: ZSmallMapController? { return gControllers.controllerForID(.idSmallMap) as? ZSmallMapController }
+var gSmallMapController : ZSmallMapController? { return gControllers.controllerForID(.idSmallMap) as? ZSmallMapController }
+var gSmallMapHere       : Zone?                { return gSmallMapController?.hereZone }
 
 class ZSmallMapController: ZMapController {
 

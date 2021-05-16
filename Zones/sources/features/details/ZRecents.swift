@@ -18,6 +18,11 @@ let gRecents     = ZRecents(ZDatabaseID.recentsID)
 var gRecentsRoot : Zone? { return gRecents.rootZone }
 var gRecentsHere : Zone? { return gRecentsHereMaybe ?? gRecentsRoot }
 
+var gRecentsHereMaybe: Zone? {
+	get { return gHereZoneForIDMaybe(       .recentsID) }
+	set { gSetHereZoneForID(here: newValue, .recentsID) }
+}
+
 class ZRecents : ZSmallMapRecords {
 
 	override var rootZone : Zone? {

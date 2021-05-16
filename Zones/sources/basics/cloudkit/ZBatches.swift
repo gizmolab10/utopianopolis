@@ -233,9 +233,9 @@ class ZBatches: ZOnboarding {
 				}
 			}
 		} else {
-            let     current = getBatch(iID, from: currentBatches)
-            let completions = [ZBatchCompletion(iCompletion)]
-            let   startOver = currentBatches.count == 0
+            let    current = getBatch(iID, from: currentBatches)
+            let completion = [ZBatchCompletion(iCompletion)]
+            let  startOver = currentBatches.count == 0
 
             // 1. is in deferral            -> add its completion to that deferred batch
             // 2. in neither                -> create new batch + append to current
@@ -243,13 +243,13 @@ class ZBatches: ZOnboarding {
             // 4. in current + has deferred -> create new batch + append to deferred (other batches may change the state to what it expects)
 
             if  let deferred = getBatch(iID, from: deferredBatches) {
-                deferred.completions.append(contentsOf: completions)    // 1.
+                deferred.completions.append(contentsOf: completion)         // 1.
             } else if current == nil {
-                currentBatches .append(ZBatch(iID, completions))        // 2.
+                currentBatches .append(ZBatch(iID,      completion))        // 2.
             } else if deferredBatches.count > 0 {
-                deferredBatches.append(ZBatch(iID, completions))        // 3.
+                deferredBatches.append(ZBatch(iID,      completion))        // 3.
             } else {
-                current?.completions.append(contentsOf: completions)    // 4.
+                current?.completions.append(contentsOf: completion)         // 4.
             }
 
             if  startOver {

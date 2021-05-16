@@ -385,7 +385,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                 var       dropZone = dropWidget.widgetZone
 				let  dropIsGrabbed = gSelecting.currentMapGrabs.contains(dropZone!)
 				let      dropIndex = dropZone?.siblingIndex
-                let           here = inBigMap ? gHere : gFavoritesHereMaybe
+                let           here = inBigMap ? gHere : gSmallMapHere
                 let       dropHere = dropZone == here
 				let       relation = dropController?.relationOf(location, to: dropWidget) ?? .upon
 				let  useDropParent = relation != .upon && !dropHere

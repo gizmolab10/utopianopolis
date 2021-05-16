@@ -8,6 +8,14 @@
 
 import Foundation
 
+func gHereZoneForIDMaybe(_ dbID: ZDatabaseID) -> Zone? {
+	Zone.uniqueZone(recordName: gRemoteStorage.cloud(for: dbID)?.hereRecordName, in: .mineID)
+}
+
+func gSetHereZoneForID(here: Zone?, _ dbID: ZDatabaseID) {
+	gRemoteStorage.cloud(for:  .favoritesID)?.hereZoneMaybe = here
+}
+
 // working zones depends on if we are in essay editing mode
 
 class ZSmallMapRecords: ZRecords {

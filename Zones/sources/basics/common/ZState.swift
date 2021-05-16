@@ -224,18 +224,8 @@ var gHere: Zone {
 }
 
 var gHereMaybe: Zone? {
-    get { return gRecords?.hereZoneMaybe }
+	get { return !gHasFinishedStartup ? nil : gRecords?.hereZoneMaybe }
     set { gRecords?.hereZoneMaybe = newValue }
-}
-
-var gFavoritesHereMaybe: Zone? {
-	get { return gRemoteStorage.maybeZoneForRecordName(gRemoteStorage.cloud(for: .favoritesID)?.hereRecordName) }    // all favorites are stored in mine
-	set { gRemoteStorage.cloud(for: .favoritesID)?.hereZoneMaybe = newValue }
-}
-
-var gRecentsHereMaybe: Zone? {
-	get { return gRemoteStorage.maybeZoneForRecordName(gRemoteStorage.cloud(for: .recentsID)?.hereRecordName) }    // all favorites are stored in mine
-	set { gRemoteStorage.cloud(for: .recentsID)?.hereZoneMaybe = newValue }
 }
 
 var gCurrentHelpMode: ZHelpMode {

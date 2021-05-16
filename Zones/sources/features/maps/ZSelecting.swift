@@ -330,7 +330,7 @@ class ZSelecting: NSObject {
 
     func addOneGrab(_ iZone: Zone?) { // caller must update widgets need display
         if  let zone = iZone,
-//			zone    != gFavoritesHereMaybe, // disallow grab on non-visible favorite, avoid ugly looking highlight
+//			zone    != gSmallMapHere, // disallow grab on non-visible favorite, avoid ugly looking highlight
             !currentMapGrabs.contains(zone) {
 			currentMapGrabs.append(zone)
 
