@@ -18,31 +18,20 @@ enum ZBatchID: Int {
     case bSync
     case bFocus
     case bStartUp
-    case bRefetch
-	case bChildren
     case bUndelete
     case bFinishUp
     case bUserTest
-	case bAllTraits
     case bBookmarks
-    case bFetchLost
-    case bEmptyTrash
     case bNewAppleID
-    case bResumeCloud
-	case bSaveToCloud
+	case bResumeCloud
 
     var shouldIgnore: Bool {
 		switch self {
 			case .bSync,
 				 .bStartUp,
-				 .bRefetch,
 				 .bFinishUp,
-				 .bChildren,    // refetch progeny
-				 .bAllTraits,
-				 .bNewAppleID,
-				 .bResumeCloud: return false
-			case .bSaveToCloud: return !gCloudStatusIsActive
-			default:            return true
+				 .bNewAppleID: return false
+			default:           return true
 		}
     }
 
@@ -84,20 +73,14 @@ class ZBatches: ZOnboarding {
 
         var operations: ZOperationIDsArray {
 			switch identifier {
-				case .bEmptyTrash:  return [.oEmptyTrash                                              ]
-				case .bFetchLost:   return [.oLostIdeas,                                 .oSaveToCloud]
-				case .bSaveToCloud: return [              .oSaveCoreData,                .oSaveToCloud]
-				case .bSync:        return [              .oNeededIdeas,                 .oSaveToCloud]
-				case .bRefetch:     return [              .oMigrateFromCloud, .oRecount, .oSaveToCloud]
-				case .bResumeCloud: return [              .oMigrateFromCloud,            .oSaveToCloud]
-				case .bChildren:    return [.oChildIdeas, .oNeededIdeas,                 .oSaveToCloud]
-				case .bBookmarks:   return [.oBookmarks,  .oNeededIdeas,                 .oSaveToCloud]
-				case .bUndelete:    return [.oUndelete,   .oNeededIdeas,                 .oSaveToCloud]
-				case .bRoot:        return [.oRoots,      .oManifest,                    .oSaveToCloud]
-				case .bFocus:       return [.oRoots,      .oNeededIdeas,                              ]
-				case .bAllTraits:   return [.oAllTraits                                               ]
+				case .bResumeCloud: return [              .oMigrateFromCloud           ]
+				case .bSync:        return [              .oSaveCoreData               ]
+				case .bBookmarks:   return [.oBookmarks                                ]
+				case .bUndelete:    return [.oUndelete                                 ]
+				case .bRoot:        return [.oRoots,      .oManifest                   ]
+				case .bFocus:       return [.oRoots                    ,               ]
 				case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oStartupDone)
-				case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oSubscribe, skipping: [.oReadFile])
+				case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oDone, skipping: [.oReadFile])
 				case .bFinishUp:    return operationIDs(from: .oFinishUp,          to: .oDone)
 				case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
 			}
@@ -162,20 +145,14 @@ class ZBatches: ZOnboarding {
     // MARK:- API
     // MARK:-
 
-    func       save(_ onCompletion: @escaping BooleanClosure) { batch(.bSaveToCloud, onCompletion) }
     func       root(_ onCompletion: @escaping BooleanClosure) { batch(.bRoot,        onCompletion) }
     func       sync(_ onCompletion: @escaping BooleanClosure) { batch(.bSync,        onCompletion) }
     func      focus(_ onCompletion: @escaping BooleanClosure) { batch(.bFocus,       onCompletion) }
 	func    startUp(_ onCompletion: @escaping BooleanClosure) { batch(.bStartUp,     onCompletion) }
-	func    refetch(_ onCompletion: @escaping BooleanClosure) { batch(.bRefetch,     onCompletion) }
     func   finishUp(_ onCompletion: @escaping BooleanClosure) { batch(.bFinishUp,    onCompletion) }
     func   undelete(_ onCompletion: @escaping BooleanClosure) { batch(.bUndelete,    onCompletion) }
 	func   userTest(_ onCompletion: @escaping BooleanClosure) { batch(.bUserTest,    onCompletion) }
-	func   children(_ onCompletion: @escaping BooleanClosure) { batch(.bChildren,    onCompletion) }
-	func  allTraits(_ onCompletion: @escaping BooleanClosure) { batch(.bAllTraits,   onCompletion) }
 	func  bookmarks(_ onCompletion: @escaping BooleanClosure) { batch(.bBookmarks,   onCompletion) }
-    func  fetchLost(_ onCompletion: @escaping BooleanClosure) { batch(.bFetchLost,   onCompletion) }
-    func emptyTrash(_ onCompletion: @escaping BooleanClosure) { batch(.bEmptyTrash,  onCompletion) }
 
     func processNextBatch() {
 
@@ -304,7 +281,7 @@ class ZBatches: ZOnboarding {
                 let                      isMine = restoreToID == .mineID
 				let               onlyCurrentID = (!gCloudStatusIsActive && !operationID.alwaysBoth)
 				let  databaseIDs: [ZDatabaseID] = operationID.forMineOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
-				let                      isNoop = !gCloudStatusIsActive && (operationID.needsActiveCloud || (onlyCurrentID && isMine && operationID != .oFavorites))
+				let                      isNoop = !gCloudStatusIsActive && onlyCurrentID && isMine && operationID != .oFavorites
                 var invokeForIndex: IntClosure?                // declare closure first, so compiler will let it recurse
                 invokeForIndex                  = { index in
 

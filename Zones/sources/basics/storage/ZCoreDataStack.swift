@@ -132,6 +132,7 @@ class ZCoreDataStack: NSObject {
 
 	var existenceClosures = [ZDatabaseID : ZExistenceDictionary]()
 	var   fetchedRegistry = [ZDatabaseID : [String : ZManagedObject]]()
+	var   missingRegistry = [ZDatabaseID : [String]]()
 	var     deferralStack = [ZDeferral]()
 	let          localURL = gCoreDataURL.appendingPathComponent("local.store")
 	let         publicURL = gCoreDataURL.appendingPathComponent("cloud.public.store")
@@ -174,7 +175,7 @@ class ZCoreDataStack: NSObject {
 	// MARK:- registry
 	// MARK:-
 
-	func register(_ object: ZManagedObject, recordName: String, dbID: ZDatabaseID) {
+	func registerObject(_ object: ZManagedObject, recordName: String, dbID: ZDatabaseID) {
 		var dict  = fetchedRegistry[dbID]
 		if  dict == nil {
 			dict  = [String : ZManagedObject]()
@@ -182,6 +183,23 @@ class ZCoreDataStack: NSObject {
 
 		dict?[recordName]     = object
 		fetchedRegistry[dbID] = dict
+	}
+
+	func missingFrom(_ dbID: ZDatabaseID) -> [String] {
+		var missing  = missingRegistry[dbID]
+		if  missing == nil {
+			missing  = [String]()
+		}
+
+		return missing!
+	}
+
+	func registerAsMissing(recordName: String, dbID: ZDatabaseID) {
+		var missing = missingFrom(dbID)
+
+		missing.appendUnique(item: recordName)
+
+		missingRegistry[dbID] = missing
 	}
 
 	func lookup(recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObject? {
@@ -195,6 +213,10 @@ class ZCoreDataStack: NSObject {
 	func find(type: String, recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> [ZManagedObject] {
 		if  let     object = lookup(recordName: recordName, into: dbID) {
 			return [object]
+		}
+
+		if  missingFrom(dbID).contains(recordName) {
+			return []
 		}
 
 		return fetch(type: type, with: recordName, into: dbID, onlyOne: onlyOne)
@@ -211,20 +233,24 @@ class ZCoreDataStack: NSObject {
 	// else throws mutate while enumerate error
 
 	func fetch(type: String, with recordName: String, into dbID: ZDatabaseID?, onlyOne: Bool = true) -> [ZManagedObject] {
-		var           objects = [ZManagedObject]()
-		if  let          dbid = dbID?.identifier {
-			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
-			request.predicate = predicateFor(recordName, type: type, dbid: dbid)
+		var              objects = [ZManagedObject]()
+		if  let             dbid = dbID?.identifier {
+			let          request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
+			request   .predicate = predicateFor(recordName, type: type, dbid: dbid)
 			do {
-				let items = try managedContext.fetch(request)
-				for item in items {
-					if  let object = item as? ZManagedObject {
-						register(object, recordName: recordName, dbID: dbID!)
-						objects.append(object)
-					}
+				let items        = try managedContext.fetch(request)
+				if  items.count == 0 {
+					registerAsMissing(recordName: recordName, dbID: dbID!)
+				} else {
+					for item in items {
+						if  let object = item as? ZManagedObject {
+							registerObject(object, recordName: recordName, dbID: dbID!)
+							objects.append(object)
+						}
 
-					if  onlyOne {
-						break
+						if  onlyOne {
+							break
+						}
 					}
 				}
 			} catch {

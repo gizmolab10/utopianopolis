@@ -137,7 +137,7 @@ class ZTimers: NSObject {
 				case .tMouseLocation:           block = { iTimer in gCurrentMouseDownLocation = nil }
 				case .tTextEditorHandlesArrows: block = { iTimer in gTextEditorHandlesArrows  = false }
 				case .tStartup:                 block = { iTimer in gIncrementStartupProgress(waitFor) }
-				case .tSync:                    block = { iTimer in if gIsReadyToShowUI { gSaveContext(); gBatches.save { iSame in } } }
+				case .tSync:                    block = { iTimer in if gIsReadyToShowUI { gSaveContext() } }
 				case .tRecount:                 block = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount(); gSignal([.sStatus]) } }
 				case .tCloudAvailable:          block = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
 				case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.invokeDeferralMaybe(iTimer) }

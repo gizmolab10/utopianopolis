@@ -13,14 +13,13 @@ import Foundation
 //     create zone, trait ONLY if from dict
 // NOT async: create bookmarks
 
-var      gDebugModes : ZDebugMode    = [.dReadFiles, .dDisableCloudKit] // , .dWriteFiles]
+var      gDebugModes : ZDebugMode    = [.dReadFiles] // , .dWriteFiles]
 var      gPrintModes : ZPrintMode    = [.dOps, .dExist, .dFetch, .dAdopt]
 var    gCoreDataMode : ZCoreDataMode = [.dDisabled]
 var     gUseCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var         gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gUseCoreData }
 var         gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gUseCoreData }
 var     gUseCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && gUseCoreData }
-var gDisableCloudKit : Bool { return  gDebugModes.contains(.dDisableCloudKit) }
 var  gShowDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var     gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
 var      gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
@@ -60,7 +59,6 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dDebugAccess     = ZDebugMode() // test write access by me not having full
 	static let dShowDestroy     = ZDebugMode() // add destroy bookmark to favorites
 	static let dShowDuplicates  = ZDebugMode() // report duplicates
-	static let dDisableCloudKit = ZDebugMode() // ignore cloud kit operations
 
 	var description: String {
 		return [(.dNewUser,         "arrival"),
@@ -70,8 +68,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.dWriteFiles,      "write files"),
 				(.dDebugAccess,     "debug write access"),
 				(.dShowDestroy,     "add destroy bookmark"),
-				(.dShowDuplicates,  "indicate zones with duplicates"),
-				(.dDisableCloudKit, "ignore cloud ops")]
+				(.dShowDuplicates,  "indicate zones with duplicates")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: " ")
 	}

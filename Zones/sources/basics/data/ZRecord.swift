@@ -349,9 +349,8 @@ class ZRecord: ZManagedObject { // NSObject {
 		// case 2: ck record already exists
 		// case 3: name is not nil
 
-		let     cloud = gRemoteStorage.cloud(for: iDatabaseID)
 		let      name = dict.recordName
-		var newRecord = ZRecord.uniqueObject(entityName: entityName, recordName: name, in: iDatabaseID)
+		let newRecord = ZRecord.uniqueObject(entityName: entityName, recordName: name, in: iDatabaseID)
 		databaseID    = iDatabaseID
 
 		for keyPath in cloudProperties + [kpModificationDate, kpDBID] {
