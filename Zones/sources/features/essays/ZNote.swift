@@ -28,6 +28,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var        lastTextRange : NSRange?  { return textRange }
 	var       maybeNoteTrait : ZTrait?   { return zone?.traits[  .tNote] }
 	var            noteTrait : ZTrait?   { return zone?.traitFor(.tNote) }
+	var           recordName : String?   { return zone?.recordName }
 	var               prefix : String    { return "note" }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
 	var          titleOffset : Int       { return titleInsets * kNoteIndentSpacer.length }
@@ -39,7 +40,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	func setupChildren() {}
 	func updateNoteOffsets() {}
 	func noteIn(_ range: NSRange) -> ZNote { return self }
-	func recordName() -> String? { return zone?.recordName() }
 	func saveEssay(_ attributedString: NSAttributedString?) { saveNote(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
@@ -56,8 +56,10 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	static func == ( left: ZNote, right: ZNote) -> Bool {
 		let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
 
-		if  unequal && left.zone?.ckRecord != nil && right.zone?.ckRecord != nil {
-			return left.zone?.ckRecordName == right.zone?.ckRecordName
+		if  unequal,
+			let rName = right.recordName,
+			let lName =  left.recordName {
+			return rName == lName
 		}
 
 		return !unequal
@@ -79,8 +81,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			}
 
 			zone?.updateCoreDataRelationships()
-			noteTrait?.needSave()
-			zone?.needSave()
 		}
 	}
 
@@ -233,7 +233,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK:-
 
 	func reset() {
-		maybeNoteTrait?.clearSave()
 		setupChildren()
 	}
 

@@ -83,8 +83,8 @@ class ZTextPack: NSObject {
             // add suffix for "show counts as" //
             // //////////////////////////////////
 
-			if  gPrintModes.contains(.dNames) && zone.ckRecord != nil {
-                suffix = zone.ckRecordName
+			if  gPrintModes.contains(.dNames), let name = zone.recordName {
+                suffix = name
 			} else {
 				var showNeed = (need > 1) && (!zone.expanded || (gCountsMode == .progeny))
 
@@ -169,7 +169,6 @@ class ZTextPack: NSObject {
             zone.zoneName  = text
 
             zone.records?.addToLocalSearchIndex(nameOf: zone)
-            zone.maybeNeedSave()
         }
     }
 

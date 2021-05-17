@@ -17,25 +17,11 @@ class ZManifest : ZRecord {
     class ZDeleted: NSObject {
         
         var name: String?
-        var date: Date?
-        var string: String? { if let n = name, let d = date { return ZDeleted.string(with: n, date: d) } else { return nil } }
-        class func string(with iName: String, date iDate: Date) -> String? { return iName + kColonSeparator + "\(iDate.timeIntervalSince1970)" }
 
-        init(with iName: String, date iDate: Date?) {
+        init(with iName: String) {
             name = iName
-            date = iDate ?? Date()
         }
 
-        init(with string: String) {
-            let    parts = string.components(separatedBy: kColonSeparator)
-            name         = parts[0]
-            let interval = parts[1]
-            
-            if  let    i = Double(interval) {
-                date     = Date(timeIntervalSince1970: i)
-            }
-        }
-        
     }
 
 	var zDeleted = [ZDeleted]()
@@ -43,15 +29,6 @@ class ZManifest : ZRecord {
 	override var cloudProperties: [String] { return ZManifest.cloudProperties }
 	override class var cloudProperties: [String] { return super.cloudProperties + [#keyPath(deletedRecordNames)] }
 	override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deletedRecordNames)] }
-	convenience init(databaseID: ZDatabaseID?) { self.init(record: CKRecord(recordType: kManifestType), databaseID: databaseID) }
-
-	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZManifest {
-		if  let    has = hasMaybe(record: record, entityName: kManifestType, databaseID: databaseID) as? ZManifest {        // first check if already exists
-			return has
-		}
-
-		return ZManifest.init(record: record, databaseID: databaseID)
-	}
 
     var updatedRefs: [String]? {
         if  let d = deletedRecordNames {                 // FIRST: merge deleted into zDeleted
@@ -68,7 +45,7 @@ class ZManifest : ZRecord {
             
             // create deleted from zDeleted
             for zd in zDeleted {
-                if  let s = zd.string {
+                if  let s = zd.name {
 					deletedRecordNames?.append(s)
                 }
             }
@@ -95,13 +72,11 @@ class ZManifest : ZRecord {
         let refString  = iItem as? String
         let zRecord    = iItem as? ZRecord
         var zd         = iItem as? ZDeleted
-        var name       = zd?.name ?? zRecord?.ckRecordName
-        var date       = zd?.date ?? zRecord?.ckRecord?.creationDate
+        var name       = zd?.name ?? zRecord?.recordName
 
         if  let     s  = refString {
             zd         = ZDeleted(with: s)
             name       = zd?.name
-            date       = zd?.date
         }
 
         if  let     n  = name {
@@ -112,16 +87,19 @@ class ZManifest : ZRecord {
             }
             
             if  zd == nil {
-                zd  = ZDeleted(with: n, date: date)
+                zd  = ZDeleted(with: n)
             }
             
             zDeleted.append(zd!)
-            needSave()
             
             return true
         }
 
         return false
+	}
+
+	static func uniqueManifest(recordName: String?, in dbID: ZDatabaseID) -> ZManifest {
+		return uniqueZRecord(entityName: kManifestType, recordName: recordName, in: dbID) as! ZManifest
 	}
 
 	static func uniqueManifest(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZManifest? {
@@ -137,12 +115,6 @@ class ZManifest : ZRecord {
 
 		return result
 	}
-
-//    convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
-//		self.init(entityName: kManifestType, ckRecordName: nil, databaseID: dbID)
-//
-//		try extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
-//    }
 
     override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
         try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID)

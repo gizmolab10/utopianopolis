@@ -20,7 +20,7 @@ var gSearchResultsController: ZSearchResultsController? { return gControllers.co
 class ZSearchResultsController: ZGenericTableController {
 
     var     resultsAreVisible = false
-    var          foundRecords = [ZDatabaseID: CKRecordsArray] ()
+    var          foundRecords = [ZDatabaseID: ZRecordsArray] ()
 	var            searchText : String?       { return gSearchBarController?.activeSearchBoxText }
 	override var controllerID : ZControllerID { return .idSearchResults }
 
@@ -62,8 +62,8 @@ class ZSearchResultsController: ZGenericTableController {
     func sortRecords() {
         for (mode, records) in foundRecords {
             foundRecords[mode] = records.sorted() {
-                if  let a = $0[kpZoneName] as? String,
-                    let b = $1[kpZoneName] as? String {
+				if  let a = ($0 as? Zone)?.zoneName,
+                    let b = ($1 as? Zone)?.zoneName {
                     return a.lowercased() < b.lowercased()
                 }
 
@@ -72,21 +72,19 @@ class ZSearchResultsController: ZGenericTableController {
         }
     }
 
-	func zRecordAt(_ row: Int) -> (ZRecord?, CKRecord?) {
-		if  let (dbID, ckRecord) = identifierAndRecord(at: row) {
-			let          zRecord = gRemoteStorage.cloud(for: dbID)?.maybeZRecordForCKRecord(ckRecord)
-
-			return (zRecord, ckRecord)
+	func zRecordAt(_ row: Int) -> ZRecord? {
+		if  let (_, zRecord) = identifierAndRecord(at: row) {
+			return zRecord
 		}
 
-		return (nil, nil)
+		return nil
 	}
 
 	func zoneAt(_ row: Int) -> Zone? {
-		let (zRecord, _) = zRecordAt(row)
-		var         zone = zRecord as? Zone
-		if  let    trait = zRecord as? ZTrait {
-			zone         = trait.ownerZone
+		let   zRecord = zRecordAt(row)
+		var      zone = zRecord as? Zone
+		if  let trait = zRecord as? ZTrait {
+			zone      = trait.ownerZone
 		}
 
 		return zone
@@ -100,11 +98,11 @@ class ZSearchResultsController: ZGenericTableController {
     override func numberOfRows(in tableView: ZTableView) -> Int { return foundRecordsCount }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-		let (_, ckRecord) = zRecordAt(row)
-		var string = ""
+		let zRecord  = zRecordAt(row)
+		var string   = ""
 
-		if  ckRecord != nil {
-			string = ckRecord!.decoratedName
+		if  zRecord != nil {
+			string   = zRecord!.decoratedName
 		}
 
 		var result = NSMutableAttributedString(string: string)
@@ -149,7 +147,7 @@ class ZSearchResultsController: ZGenericTableController {
     // MARK:- user feel
     // MARK:-
 
-    func identifierAndRecord(at iIndex: Int) -> (ZDatabaseID, CKRecord)? {
+    func identifierAndRecord(at iIndex: Int) -> (ZDatabaseID, ZRecord)? {
         var index = iIndex
         var count = 0
 
@@ -181,30 +179,25 @@ class ZSearchResultsController: ZGenericTableController {
         return resolved
 	}
 
-	@discardableResult func resolveRecord(_ dbID: ZDatabaseID, _ record: CKRecord) -> Bool {
+	@discardableResult func resolveRecord(_ dbID: ZDatabaseID, _ zRecord: ZRecord) -> Bool {
 		gDatabaseID = dbID
 
 		clear()
 
-		return resolveAsTrait(dbID, record)
-			|| resolveAsZone (dbID, record)
+		return resolveAsTrait(dbID, zRecord)
+			|| resolveAsZone (dbID, zRecord)
 	}
 
-	func resolveAsZone(_ dbID: ZDatabaseID, _ record: CKRecord) -> Bool {
-		var zone  = gRemoteStorage.cloud(for: dbID)?.maybeZoneForRecordID(record.recordID)
-
-		if  zone == nil, record.recordType == kZoneType {
-			zone  = Zone.create(record: record, databaseID: dbID)
-		}
+	func resolveAsZone(_ dbID: ZDatabaseID, _ zRecord: ZRecord) -> Bool {
+		let zone = zRecord as? Zone
 
 		zone?.resolveAndSelect(searchText)
 
 		return zone != nil
 	}
 
-	func resolveAsTrait(_ dbID: ZDatabaseID, _ record: CKRecord) -> Bool {
-		guard let cloud = gRemoteStorage.cloud(for: dbID),
-			let   trait = cloud.maybeTraitForRecordID(record.recordID),
+	func resolveAsTrait(_ dbID: ZDatabaseID, _ zRecord: ZRecord) -> Bool {
+		guard let trait = zRecord as? ZTrait,
 			let   owner = trait.ownerZone,
 			let    type = trait.traitType else {
 			return false
@@ -294,7 +287,7 @@ class ZSearchResultsController: ZGenericTableController {
 			
 			if  gIsSearchMode, foundRecords.count > 0 {
 				var dbID: ZDatabaseID?
-				var record: CKRecord?
+				var record: ZRecord?
 				var total = 0
 				
 				for (databaseID, records) in foundRecords {
@@ -307,8 +300,8 @@ class ZSearchResultsController: ZGenericTableController {
 					}
 				}
 				
-				if total == 1 {
-					self.resolveRecord(dbID!, record!) // not bother user if only one record found
+				if total == 1 {               // not bother user if only one record found
+					self.resolveRecord(dbID!, record!)
 				} else if total > 0 {
 					sortRecords()
 					genericTableUpdate()

@@ -345,7 +345,7 @@ class ZSmallMapRecords: ZRecords {
 			if  !actNormal {
 				let          basis = isBookmark ? zone.crossLink! : zone
 
-				if  let recordName = basis.ckRecordName {
+				if  let recordName = basis.recordName {
 					parent         = currentHere
 
 					for workingFavorite in root.allBookmarkProgeny {
@@ -370,13 +370,6 @@ class ZSmallMapRecords: ZRecords {
 				}
 
 				bookmark            = gBookmarks.create(withBookmark: bookmark, action, parent: newParent, atIndex: index, zone.zoneName)
-
-				bookmark?.maybeNeedSave()
-
-				if  actNormal {
-					parent?.updateCKRecordProperties()
-					parent?.maybeNeedMerge()
-				}
 
 				if !isBookmark {
 					bookmark?.crossLink = zone

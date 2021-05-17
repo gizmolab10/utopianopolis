@@ -36,14 +36,7 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
     }
 
 
-    public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo)
-        
-        if  note.notificationType == .query,
-            let queryNote = note as? CKQueryNotification {
-            gRemoteStorage.receiveFromCloud(queryNote)
-        }
-    }
+    public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {}
 
 
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {

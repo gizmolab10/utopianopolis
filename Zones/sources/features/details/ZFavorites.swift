@@ -30,8 +30,6 @@ class ZFavorites: ZSmallMapRecords {
     // MARK:- initialization
     // MARK:-
 
-	let cloudRootTemplates = Zone.create(within: kTemplatesRootName, databaseID: .mineID)
-
 	var hasTrash: Bool {
 		for favorite in workingBookmarks {
 			if  let target = favorite.bookmarkTarget, target.isTrashRoot {
@@ -55,24 +53,10 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	func setup(_ onCompletion: IntClosure?) {
-		let     mine = gMineCloud
+		gFavorites.rootZone = Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
 
-		if  let root = mine?.maybeZoneForRecordName(kFavoritesRootName) {
-			gFavorites.rootZone = root
+		onCompletion?(0)
 
-			onCompletion?(0)
-		} else {
-			// create favorites root
-			mine?.assureRecordExists(withRecordID: CKRecordID(recordName: kFavoritesRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-				let        ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kFavoritesRootName))
-				let            root = Zone.create(record: ckRecord, databaseID: .mineID)
-				root.directAccess   = .eProgenyWritable
-				root.zoneName       = kFavoritesRootName
-				gFavorites.rootZone = root
-
-				onCompletion?(0)
-			}
-		}
 	}
 
 	override func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {

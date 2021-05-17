@@ -82,65 +82,19 @@ class ZSearching: NSObject {
 
 		let doneMaybe : Closure = {
 			if  remaining == 0 {   // done fetching records, transfer them to results controller
-				gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: CKRecordsArray] ?? [:]
+				gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: ZRecordsArray] ?? [:]
 				self.setStateTo(self.hasResults ? .sList : .sFind)
 				gSignal([.sFound])
 			}
 		}
 
 		for cloud in gRemoteStorage.allClouds {
-			let locals = cloud.searchLocal(for: searchString)
-			let   dbID = cloud.databaseID
+			let     locals = cloud.searchLocal(for: searchString)
+			let       dbID = cloud.databaseID
+			combined[dbID] = locals
+			remaining     -= 1
 
-			if  gUser == nil || !gHasInternet {
-				combined[dbID] = locals
-				remaining -= 1
-
-				doneMaybe()
-			} else {
-				cloud.search(for: searchString) { iObject in
-					FOREGROUND {
-						remaining   -= 1
-						var orphanedTraits = CKRecordsArray()
-						var records        = iObject as! CKRecordsArray
-						var filtered       = records.filter { record -> Bool in
-							return record.matchesFilterOptions
-						}
-
-						for record in filtered {
-							if  record.recordType == kTraitType {
-								let trait = cloud.maybeZRecordForCKRecord(record) as? ZTrait ?? ZTrait.create(record: record, databaseID: dbID)
-
-								if  trait.ownerZone == nil {
-									orphanedTraits.append(record)   // remove unowned traits from records
-								} else {
-									trait.register()         // some records are being fetched first time
-								}
-							}
-						}
-
-						for orphan in orphanedTraits {
-							if  let index = filtered.firstIndex(of: orphan),
-								index     < records.count {
-								records.remove(at: index)
-							}
-						}
-
-						filtered.appendUnique(contentsOf: locals) { (a, b) in
-							if  let alpha = a as? CKRecord,
-								let  beta = b as? CKRecord {
-								return alpha.recordID.recordName == beta.recordID.recordName
-							}
-
-							return false
-						}
-
-						combined[dbID] = filtered
-
-						doneMaybe()
-					}
-				}
-			}
+			doneMaybe()
 		}
 	}
 

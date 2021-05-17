@@ -115,7 +115,6 @@ class ZTraitAssets : ZRecord {
 
 			if  appendUniquelyToAssetNames(fileName, from: asset) {
 				assets?.append(asset)
-				needSave()
 			}
 
 			return asset

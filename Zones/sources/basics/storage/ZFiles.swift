@@ -264,15 +264,12 @@ class ZFiles: NSObject {
 						dict[.bookmarks] = bookmarks as NSObject
 					}
 
-					if  let      userID  = gUserRecordID {
+					if  let      userID  = gUserRecordName {
 						dict   [.userID] = userID as NSObject
 					}
 				}
 
-				cloud.updateLastSyncDate()
-
 				BACKGROUND {
-					dict [.date] = cloud.lastSyncDate as NSObject
 					let jsonDict = dict.jsonDict
 
 					if  let data = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {
@@ -480,7 +477,7 @@ class ZFiles: NSObject {
             var name = dbID.rawValue
 
             if  dbID      == .mineID, !isGeneric,
-                let userID = gUserRecordID {
+                let userID = gUserRecordName {
                 name       = userID
             }
 

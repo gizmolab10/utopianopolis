@@ -85,7 +85,6 @@ class ZMapEditor: ZBaseEditor {
 							case "a":      gCurrentlyEditingWidget?.selectAllText()
 							case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL, SPLAYED)
 							case "f":      gSearching.showSearch(OPTION)
-							case "g":      showRefetchPopup() // refetch(COMMAND, OPTION, CONTROL)
 							case "k":      toggleColorized()
 							case "n":      editNote(OPTION)
 							case "p":      printCurrentFocus()
@@ -123,7 +122,6 @@ class ZMapEditor: ZBaseEditor {
 						case "d":        if     ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 						case "e", "h":   editTrait(for: key)
 						case "f":        gSearching.showSearch(OPTION)
-						case "g":        showRefetchPopup() // refetch(COMMAND, OPTION, CONTROL)
 						case "j":        if COMMAND { gSelecting.simplifiedGrabs.deleteDuplicates() } else { gSelecting.simplifiedGrabs.cycleToNextDuplicate() }
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
@@ -131,7 +129,7 @@ class ZMapEditor: ZBaseEditor {
 						case "o":        moveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRedrawMaps() }
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else { showReorderPopup() }
-						case "s":        if CONTROL { pushAllToCloud() } else { gFiles.export(moveable, toFileAs: OPTION ? .eOutline : .eSeriously) }
+						case "s":        gFiles.export(moveable, toFileAs: OPTION ? .eOutline : .eSeriously)
 						case "t":        if COMMAND { showThesaurus() } else if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() } else { editTrait(for: key) }
@@ -459,12 +457,6 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-	func pushAllToCloud() {
-		gRemoteStorage.markAllNeedSave()
-		gBatches.save { same in
-		}
-	}
-
 	func showReorderPopup() {
 		if  let widget = gSelecting.lastGrab.widget?.textWidget {
 			var  point = widget.bounds.bottomRight
@@ -476,83 +468,6 @@ class ZMapEditor: ZBaseEditor {
 
 	@objc func handleReorderPopupMenu(_ iItem: ZMenuItem) {
 		handleReorderKey(iItem.keyEquivalent, gModifierFlags.isOption)
-	}
-
-	func showRefetchPopup() {
-		if  let wLocation = gCurrentEvent?.locationInWindow,
-			let     point = gMainWindow?.contentView?.convert(wLocation, to: gCurrentMapView) {
-
-			ZMenu.refetchPopup(target: self, action: #selector(handleRefetchPopupMenu(_:))).popUp(positioning: nil, at: point, in: gCurrentMapView)
-		}
-	}
-
-	@objc func handleRefetchPopupMenu(_ iItem: ZMenuItem) {
-		handleRefetchKey(iItem.keyEquivalent, gModifierFlags.isOption)
-	}
-
-	@objc func handleRefetchKey(_ key: String, _ OPTION: Bool) {
-		if  let type  = ZRefetchMenuType(rawValue: key) {
-			var op: ZOperationID?
-			switch type {
-				case .eIdeas:   op = .oAllIdeas
-				case .eTraits:  op = .oAllTraits
-				case .eProgeny: op = .oChildIdeas; gSelecting.currentMapGrabs.needAllProgeny()
-				case .eList:    op = .oChildIdeas; gSelecting.currentMapGrabs.needChildren()
-				case .eAdopt:   gRemoteStorage.assureAdoption(); return
-			}
-
-			if  let o = op {
-				gBatches.invokeMultiple(for: o, restoreToID: gDatabaseID) { iSame in gRedrawMaps() }
-			}
-
-		}
-	}
-
-	func refetch(_ COMMAND: Bool = false, _ OPTION: Bool = false, _ CONTROL: Bool = false) {
-
-		// no flags      = fetch all progeny
-		// COMMAND alone = fetch all
-		// OPTION        = children
-		// both flags    = force adoption of selected
-
-		if          CONTROL {
-			if      OPTION {
-				if  let      root = gRecords?.rootZone {
-					root.convertFromCoreData(into: kZoneType, visited: [])
-				}
-			} else {
-				gBatches.refetch { iSame in
-					gRedrawMaps()
-				}
-			}
-		} else if   COMMAND {
-			if      OPTION {
-				gRemoteStorage.assureAdoption()         // finish what fetch has done
-				gRedrawMaps()
-			} else {                                    // COMMAND alone
-				for grab in gSelecting.currentMapGrabs {
-					if  OPTION {
-						grab.reallyNeedChildren()       // OPTION
-					} else {
-						gCoreDataStack.loadAllProgeny(for: gRecords?.databaseID) {
-							gRedrawMaps()
-						}
-
-						grab.needProgeny()              // no flags
-					}
-				}
-
-				gBatches.children { iSame in
-					gRedrawMaps()
-				}
-			}
-		} else {
-			gCoreDataStack.loadAllProgeny(for: gRecords?.databaseID) {
-				gCloud?.fetchMap { iSame in
-					gRedrawMaps()
-				}
-			}
-		}
 	}
 
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with COMMA: Bool) {
@@ -640,10 +555,6 @@ class ZMapEditor: ZBaseEditor {
 
     func divideChildren() {
         let grabs = gSelecting.currentMapGrabs
-
-        for zone in grabs {
-            zone.needChildren()
-        }
 
 		for zone in grabs {
 			zone.divideEvenly()
@@ -960,7 +871,6 @@ class ZMapEditor: ZBaseEditor {
 		}
 
 		into.expand()
-		into.needChildren()
 		gSelecting.ungrabAll()
 
 		for     zone in zones {
@@ -1048,22 +958,12 @@ class ZMapEditor: ZBaseEditor {
                 gFavorites.updateFavoritesAndRedraw()
             }
 
-            let prepare = {
-                for child in pastables.keys {
-                    if !child.isInTrash {
-                        child.needProgeny()
-                    }
-                }
-
-				action()
-            }
-
             if !isBookmark {
-                prepare()
+				action()
             } else {
                 undoManager.beginUndoGrouping()
 				zone.focusOnBookmarkTarget() { (iAny, iSignalKind) in
-                    prepare()
+					action()
                 }
             }
         }
@@ -1082,7 +982,6 @@ class ZMapEditor: ZBaseEditor {
         }
 
         for grab in grabs {
-            grab.needChildren()
             grab.expand()
         }
 

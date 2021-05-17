@@ -38,23 +38,9 @@ class ZRecents : ZSmallMapRecords {
 	}
 
 	func setup(_ onCompletion: IntClosure?) {
-		let        mine = gMineCloud
-		if  let newRoot = mine?.maybeZoneForRecordName(kRecentsRootName) {
-			rootZone    = newRoot
+		rootZone = Zone.uniqueZone(recordName: kRecentsRootName, in: .mineID)
 
-			newRoot.needProgeny()
-			onCompletion?(0)
-		} else {
-			mine?.assureRecordExists(withRecordID: CKRecordID(recordName: kRecentsRootName), recordType: kZoneType) { (iRecord: CKRecord?) in
-				let                ckRecord = iRecord ?? CKRecord(recordType: kZoneType, recordID: CKRecordID(recordName: kRecentsRootName))
-				self.rootZone               = Zone.create(record: ckRecord, databaseID: .mineID)
-				self.rootZone?.directAccess = .eProgenyWritable
-				self.rootZone?.zoneName     = kRecentsRootName
-
-				self.rootZone?.needProgeny()
-				onCompletion?(0)
-			}
-		}
+		onCompletion?(0)
 	}
 
 	override func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {

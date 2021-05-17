@@ -89,24 +89,12 @@ class ZRemoteStorage: NSObject {
 		}
 	}
 
-	func markAllNeedSave() {
-		for records in allRecordsArrays {
-			records.markAllNeedSave()
-		}
-	}
-
     func recount() {  // all progenyCounts for all progeny in all databases in all roots
         for cloud in allClouds {
 			cloud.recount()
         }
     }
 
-    func updateLastSyncDates() {
-        for records in allRecordsArrays {
-            records.updateLastSyncDate()
-        }
-    }
-    
     func updateNeededCounts() {
         for cloud in allClouds {
             var alsoProgenyCounts = false
@@ -115,8 +103,6 @@ class ZRemoteStorage: NSObject {
                     if  zone.fetchableCount != zone.count {
                         zone.fetchableCount  = zone.count
                         alsoProgenyCounts    = true
-                        
-                        zone.maybeNeedSave()
                     }
                 }
             }
@@ -218,45 +204,6 @@ class ZRemoteStorage: NSObject {
 
             gContainer.add(badgeResetOperation)
         }
-    }
-
-
-    // MARK:- receive from cloud
-    // MARK:-
-    
-
-    func receiveFromCloud(_ notification: CKQueryNotification) {
-        resetBadgeCounter()
-
-		FOREGROUND {
-			if  let     dbID = ZDatabaseID.convert(from: notification.databaseScope),
-				let    cloud = self.cloud(for: dbID),
-				let recordID = notification.recordID {
-				let      dbi = dbID.identifier
-				let ckRecord = cloud.maybeCKRecordForRecordName(recordID.recordName)
-				let     name = (ckRecord?["zoneName"] as String?) ?? kUnknown
-				let     type = ckRecord?.recordType   as String?  ?? kUnknown
-
-				if  type == kUnknown, ckRecord != nil {
-					print("received a record from cloud kit, with an unknown type: \(ckRecord!.recordType)")
-				}
-
-				switch (notification.queryNotificationReason) {
-					case .recordCreated,
-						 .recordUpdated:
-						cloud.addCKRecord(ckRecord, for: [.needsFetch])
-						printDebug(.dRemote, "receiving \(dbi) \"\(type)\" \(name)")
-						gRedrawMaps()
-					case .recordDeleted:
-						if  let deleted = cloud.maybeZoneForCKRecord(ckRecord) {
-							printDebug(.dRemote, "deleted \(dbi) \(name)")
-							[deleted].deleteZones(permanently: true) {
-								gRedrawMaps()
-							}
-						}
-				}
-			}
-		}
     }
 
 }

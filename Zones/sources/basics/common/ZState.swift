@@ -109,6 +109,7 @@ let            kLargeBoldFont                     = ZFont  .boldSystemFont(ofSiz
 let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
 let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
+let              gScratchZone                     = Zone.uniqueZoneNamed(kScratchRootName, recordName: kScratchRootName, databaseID: .mineID)
 
 func gSwapSmallMapMode(_ OPTION: Bool = false) {
 	if  let c = gDetailsController {
@@ -287,9 +288,9 @@ var gAuthorID: String? {    // persist for file read on launch
     set { setPreferencesString(newValue, for: kAuthorID) }
 }
 
-var gUserRecordID: String? {    // persist for file read on launch
-    get { return getPreferenceString(    for: kUserRecordID) }
-    set { setPreferencesString(newValue, for: kUserRecordID) }
+var gUserRecordName: String? {    // persist for file read on launch
+    get { return getPreferenceString(    for: kUserRecordName) }
+    set { setPreferencesString(newValue, for: kUserRecordName) }
 }
 
 var gSmallMapIsVisible: Bool {
@@ -315,22 +316,6 @@ var gFilterOption: ZFilterOption {
 var gWindowRect: CGRect {
 	get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
 	set { setPreferencesRect(newValue, for: kWindowRectKey) }
-}
-
-var gUserRecord: CKRecord? {    // persist for file read on launch
-	get {
-		if  let  recordName = gUserRecordID,
-			let    storable = getPreferenceString(for: kUserRecord) {
-			let      record = CKRecord(recordType: kUserType, recordID: CKRecordID(recordName: recordName))
-			record.storable = storable
-
-			return record
-		}
-
-		return nil
-	}
-
-	set { setPreferencesString(newValue?.storable, for: kUserRecord) }
 }
 
 var gEmailTypesSent: String {

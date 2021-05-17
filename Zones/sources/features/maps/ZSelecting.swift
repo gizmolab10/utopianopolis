@@ -224,7 +224,7 @@ class ZSelecting: NSObject {
 		if  pastables.count > 0 {
 			let (pastable, (_, _)) = pastables.first!
 
-			return pastable.ckRecordName
+			return pastable.recordName
 		}
 
 		return nil
@@ -373,7 +373,7 @@ class ZSelecting: NSObject {
 		let   grabs = (using == nil || using!.count == 0) ? currentGrabs : using!
 		var grabbed = grabs.first
 
-        if  grabbed == nil || grabbed!.ckRecord == nil {
+        if  grabbed == nil || grabbed!.recordName == nil {
             grabbed = currentMovableMaybe ?? gHereMaybe
         }
         
@@ -385,7 +385,7 @@ class ZSelecting: NSObject {
         let grabs = using == nil ? currentGrabs : using!
 		var grabbed = grabs.last
         
-        if  grabbed == nil || grabbed!.ckRecord == nil {
+        if  grabbed == nil || grabbed!.recordName == nil {
             grabbed = gHere
         }
         

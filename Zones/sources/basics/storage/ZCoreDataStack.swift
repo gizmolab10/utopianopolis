@@ -88,7 +88,7 @@ extension ZExistenceArray {
 	}
 
 	mutating func updateClosureForZRecord(_ zRecord: ZRecord, of type: String) {
-		let name = (type == kFileType) ? (zRecord as? ZFile)?.name : (zRecord.ckRecordName ?? zRecord.recordName)
+		let name = (type == kFileType) ? (zRecord as? ZFile)?.name : (zRecord.recordName)
 
 		for (index, e) in enumerated() {
 			var ee = e
@@ -184,12 +184,27 @@ class ZCoreDataStack: NSObject {
 		fetchedRegistry[dbID] = dict
 	}
 
+	func lookup(recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObject? {
+		if  let    object = fetchedRegistry[dbID]?[recordName] {
+			return object
+		}
+
+		return nil
+	}
+
 	func find(type: String, recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> [ZManagedObject] {
-		if  let     object = fetchedRegistry[dbID]?[recordName] {
+		if  let     object = lookup(recordName: recordName, into: dbID) {
 			return [object]
 		}
 
 		return fetch(type: type, with: recordName, into: dbID, onlyOne: onlyOne)
+	}
+
+	func predicateFor(_ recordName: String, type: String, dbid: String) -> NSPredicate {
+		switch type {
+			case kUserType: return NSPredicate(format: "recordName = %@", recordName)
+			default:        return NSPredicate(format: "recordName = %@ and dbid = %@", recordName, dbid)
+		}
 	}
 
 	// must call this on foreground thread
@@ -199,7 +214,7 @@ class ZCoreDataStack: NSObject {
 		var           objects = [ZManagedObject]()
 		if  let          dbid = dbID?.identifier {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
-			request.predicate = NSPredicate(format: "recordName = %@ and dbid = %@", recordName, dbid)
+			request.predicate = predicateFor(recordName, type: type, dbid: dbid)
 			do {
 				let items = try managedContext.fetch(request)
 				for item in items {
@@ -776,13 +791,12 @@ class ZCoreDataStack: NSObject {
 
 	func removeAllDuplicates(of zRecord: ZRecord) {
 		if  let      dbid = zRecord.databaseID?.identifier,
-			let  ckRecord = zRecord.ckRecord {
-			let      name = ckRecord.recordID.recordName
+			let      name = zRecord.recordName {
 			let predicate = NSPredicate(format: "recordName = %@", name)
 
 			search(within: dbid, type: kZoneType, using: predicate) { zRecords in
 				let  count = zRecords.count
-				let extras = zRecords.filter() { $0 != ckRecord }
+				let extras = zRecords.filter() { $0 != zRecord }
 
 				if  count > extras.count {
 					FOREGROUND {

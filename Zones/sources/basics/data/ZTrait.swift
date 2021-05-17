@@ -45,8 +45,8 @@ enum ZTraitType: String {
 @objc(ZTrait)
 class ZTrait: ZTraitAssets {
 
-	@NSManaged    var    owner :  CKReference?
 	@NSManaged    var  strings : [String]?
+	@NSManaged    var ownerRID :  String?
 	@NSManaged    var   format :  String?
 	@NSManaged    var     type :  String?
 	@NSManaged    var     text :  String?
@@ -84,29 +84,30 @@ class ZTrait: ZTraitAssets {
 		return uniqueZRecord(entityName: kTraitType, recordName: recordName, in: dbID) as! ZTrait
 	}
 
-	static func createAsync(record: CKRecord, databaseID: ZDatabaseID?, onCreation: @escaping ZTraitClosure) {
-		hasMaybeAsync(record: record, entityName: kTraitType, databaseID: databaseID) { zRecord in           // first check if already exists
-			onCreation(zRecord as? ZTrait ?? ZTrait(record: record, databaseID: databaseID))
-		}
-	}
+//	static func createAsync(record: CKRecord, databaseID: ZDatabaseID?, onCreation: @escaping ZTraitClosure) {
+//		hasMaybeAsync(record: record, entityName: kTraitType, databaseID: databaseID) { zRecord in           // first check if already exists
+//			onCreation(zRecord as? ZTrait ?? ZTrait(record: record, databaseID: databaseID))
+//		}
+//	}
+//
+//	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZTrait {
+//		return hasMaybe(record: record, entityName: kTraitType, databaseID: databaseID) as? ZTrait ??        // first check if already exists
+//			ZTrait(record: record, entityName: kTraitType, databaseID: databaseID)
+//	}
+//
+//	convenience init(databaseID: ZDatabaseID?) {
+//		self.init(record: CKRecord(recordType: kTraitType), databaseID: databaseID)
+//	}
+//
+//	convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
+//		self.init(entityName: kTraitType, databaseID: dbID)
+//
+//		try extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
+//	}
 
-	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZTrait {
-		return hasMaybe(record: record, entityName: kTraitType, databaseID: databaseID) as? ZTrait ??        // first check if already exists
-			ZTrait(record: record, entityName: kTraitType, databaseID: databaseID)
-	}
-
-	convenience init(databaseID: ZDatabaseID?) {
-		self.init(record: CKRecord(recordType: kTraitType), databaseID: databaseID)
-	}
-
-	convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
-		self.init(entityName: kTraitType, databaseID: dbID)
-
-		try extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
-	}
-
-	override var cloudProperties: [String] { return ZTrait.cloudProperties }
+	override var         cloudProperties: [String] { return ZTrait.cloudProperties }
 	override var optionalCloudProperties: [String] { return ZTrait.optionalCloudProperties }
+	override var           decoratedName:  String  { return kTraitType + (text ?? kNoValue) }
 
 	override class var cloudProperties: [String] {
 		return [#keyPath(type),
@@ -117,7 +118,7 @@ class ZTrait: ZTraitAssets {
 	}
 
 	override class var optionalCloudProperties: [String] {
-		return [#keyPath(owner),
+		return [#keyPath(ownerRID),
 				#keyPath(format)] +
 			super.optionalCloudProperties
 	}
@@ -167,7 +168,6 @@ class ZTrait: ZTraitAssets {
 
 					extractAssets(from: string)
 					updateSearchables()
-					updateCKRecordProperties()
 				}
 			}
 		}
@@ -205,10 +205,29 @@ class ZTrait: ZTraitAssets {
 
     var ownerZone: Zone? {
         if  _ownerZone == nil {
-            _ownerZone  = gRemoteStorage.maybeZoneForRecordName(owner?.recordID.recordName)
+            _ownerZone  = gRemoteStorage.maybeZoneForRecordName(ownerRID)
         }
 
         return _ownerZone
+    }
+
+	override var isAdoptable:          Bool { return ownerRID != nil }
+	override var matchesFilterOptions: Bool { return gFilterOption.contains(.fNotes) }
+
+    override func orphan() {
+        ownerZone?.setTraitText(nil, for: traitType)
+
+		ownerRID = nil
+    }
+
+	override func adopt(recursively: Bool = false) {
+        if  let      o = ownerZone,
+			let traits = ownerZone?.traits,
+			let      t = traitType, traits[t] == nil {
+			removeState(.needsAdoption)
+
+			o.addTrait(self)
+        }
     }
 
 	func setCurrentTrait(during: Closure) {
@@ -217,27 +236,6 @@ class ZTrait: ZTraitAssets {
 		during()
 		gCurrentTrait = prior
 	}
-
-    override func orphan() {
-        ownerZone?.setTraitText(nil, for: traitType)
-
-        owner = nil
-
-        updateCKRecordProperties()
-    }
-
-	override var isAdoptable: Bool { return owner != nil }
-
-	override func adopt(recursively: Bool = false) {
-        if  let      o = ownerZone,
-			let traits = ownerZone?.traits,
-			let      t = traitType, traits[t] == nil {
-            o.maybeMarkNotFetched()
-			removeState(.needsAdoption)
-
-			o.addTrait(self)
-        }
-    }
 
 	func updateSearchables() {
 		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tVideo, .tHyperlink]

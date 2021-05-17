@@ -112,7 +112,7 @@ class ZOnboarding : ZOperations {
 							//   also: for determining write permission   //
 							// /////////////////////////////////////////////
 
-							gUserRecordID = iRecordID?.recordName
+							gUserRecordName = iRecordID?.recordName
 
 							// ///////////////////////
 							// ONBOARDING CONTINUES //
@@ -127,53 +127,12 @@ class ZOnboarding : ZOperations {
     }
 
 	func fetchUserRecord(_ onCompletion: @escaping Closure) {
-		if  let              record = gUserRecord {
-			gCoreDataStack.deferUntilAvailable(for: .oFetch) {
-				self.user           = ZUser.create(record: record, databaseID: gDatabaseID)
-				gCloudAccountStatus = .active
+		if  let      recordName = gUserRecordName {
+			self.user           = ZUser.uniqueUser(recordName: recordName, in: gDatabaseID)
+			gCloudAccountStatus = .active
+		}
 
-				onCompletion()
-			}
-		} else if gCloudAccountStatus == .available,
-            let      recordName = gUserRecordID {
-            let      ckRecordID = CKRecordID(recordName: recordName)
-
-            gEveryoneCloud?.assureRecordExists(withRecordID: ckRecordID, recordType: kUserType) { (iUserRecord: CKRecord?) in
-                if  let          record = iUserRecord {
-                    let            user = ZUser.create(record: record, databaseID: gDatabaseID)
-                    self          .user = user
-					gUserRecord         = record
-					gCloudAccountStatus = .active
-
-                    // ///////////////////////
-                    // ONBOARDING CONTINUES //
-                    // ///////////////////////
-
-                    if  user.authorID  == nil {
-                        user.authorID   = UUID().uuidString
-
-                        user.needSave()
-                    }
-
-                    gAuthorID           = user.authorID
-                } else {
-                    let            name = ckRecordID.recordName
-                    gCloudAccountStatus = .none
-
-                    // /////////////////////
-                    //  ONBOARDING STOPS  //
-                    // /////////////////////
-
-                    // see: shouldPerform
-
-                    printDebug(.dError, "alert: user record \(name) does not exist")
-                }
-
-                onCompletion()
-            }
-        } else {
-            onCompletion()
-        }
+		onCompletion()
     }
 
 }

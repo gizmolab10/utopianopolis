@@ -32,13 +32,7 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
         }
     }
 
-
-    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
-        if  let note = CKNotification(fromRemoteNotificationDictionary: userInfo) as? CKQueryNotification {
-            gRemoteStorage.receiveFromCloud(note)
-        }
-    }
-
+    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {}
 	
     func application(_ application: NSApplication, openFiles: [String]) {
         var parent = gSelecting.currentMoveable

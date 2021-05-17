@@ -22,7 +22,7 @@ protocol ZTooltips {
 
 protocol ZIdentifiable {
 
-	func recordName() -> String?
+	var recordName: String? { get }
 	func identifier() -> String?
 	static func object(for id: String, isExpanded: Bool) -> NSObject?
 

@@ -45,7 +45,6 @@ class ZStartup: NSObject {
 				gFavorites.setup { result in
 					FOREGROUND {
 						gFavorites.updateAllFavorites()
-						gRemoteStorage.updateLastSyncDates()
 						gRefreshCurrentEssay()
 						gRefreshPersistentWorkMode()
 						gSignal([.sCrumbs, .sLaunchDone])

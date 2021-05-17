@@ -23,12 +23,8 @@ class ZFile : ZRecord {
 	override var        cloudProperties : [String] { return Zone.cloudProperties }
 	override var optionalCloudProperties: [String] { return Zone.optionalCloudProperties }
 
-	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZFile {
-		if  let    has = hasMaybe(record: record, entityName: kFileType, databaseID: databaseID) as? ZFile {        // first check if already exists
-			return has
-		}
-
-		return ZFile(record: record, databaseID: databaseID)
+	static func uniqueFile(recordName: String?, in dbID: ZDatabaseID) -> ZFile {
+		return uniqueZRecord(entityName: kFileType, recordName: recordName, in: dbID) as! ZFile
 	}
 
 	static func assetExists(for descriptor: ZFileDescriptor, dbID: ZDatabaseID?, onCompletion: ZRecordClosure? = nil) {
@@ -51,7 +47,7 @@ class ZFile : ZRecord {
 
 		assetExists(for: desc, dbID: databaseID) { iZRecord in
 			if  iZRecord == nil {
-				let   file = ZFile.create(record: CKRecord(recordType: kFileType), databaseID: databaseID)
+				let   file = ZFile.uniqueFile(recordName: nil, in: databaseID!)
 				file .name = name
 				file .type = type
 				file.asset = url.dataRepresentation

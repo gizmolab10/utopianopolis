@@ -55,14 +55,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var resizeDragStart : CGPoint?
 	var resizeDragRect  : CGRect?
 	var resizeDot       : ZDirection?
-	var essayID         : CKRecordID?
+	var essayRecordName : String?
 
 	var shouldOverwrite: Bool {
 		if  let          current = gCurrentEssay,
 			current.maybeNoteTrait?.needsSave ?? false,
 			current.essayLength != 0,
-			let i                = gCurrentEssayZone?.ckRecord?.recordID,
-			i                   == essayID {	// been here before
+			let i                = gCurrentEssayZone?.recordName,
+			i                   == essayRecordName {	// been here before
 
 			return false						// has not yet been saved. don't overwrite
 		}
@@ -518,7 +518,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				undoManager?.removeAllActions()         // clear the undo stack of prior / disastrous information (about prior text)
 			}
 
-			essayID  = gCurrentEssayZone?.ckRecord?.recordID                  // do this after overwriting
+			essayRecordName = gCurrentEssayZone?.recordName                   // do this after overwriting
 			delegate = self 					    	                      // set delegate after setText
 
 			if  gIsEssayMode {
@@ -878,8 +878,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func resetTextAndGrabs(grab: Zone? = nil) {
-		let   grabbed = willRegrab(grab)              // includes logic for optional grab parameter
-		essayID       = nil                           // so shouldOverwrite will return true
+		let     grabbed = willRegrab(grab)              // includes logic for optional grab parameter
+		essayRecordName = nil                           // so shouldOverwrite will return true
 
 		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
 		updateText()                                  // assume text has been altered: re-assemble it

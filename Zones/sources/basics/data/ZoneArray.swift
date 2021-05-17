@@ -22,7 +22,7 @@ extension ZoneArray {
 		var names = [String]()
 
 		forEach { zone in
-			if  let name = zone.ckRecordName {
+			if  let name = zone.recordName {
 				names.append(name)
 			}
 		}
@@ -32,8 +32,8 @@ extension ZoneArray {
 
 	func containsMatch(to other: AnyObject) -> Bool {
 		return containsCompare(with: other) { (a, b) in
-			if  let    aName  = (a as? Zone)?.ckRecordName,
-				let    bName  = (b as? Zone)?.ckRecordName {
+			if  let    aName  = (a as? Zone)?.recordName,
+				let    bName  = (b as? Zone)?.recordName {
 				return aName ==  bName
 			}
 
@@ -79,8 +79,6 @@ extension ZoneArray {
 
 			if  order      != newOrder {
 				child.order = newOrder
-
-				child.maybeNeedSave()
 			}
 		}
 
@@ -193,24 +191,9 @@ extension ZoneArray {
 				let   o = a.order
 				a.order = b.order
 				b.order = o
-
-				a.maybeNeedSave()
-				b.maybeNeedSave()
 			}
 
 			gSelecting.hasNewGrab = gSelecting.currentMoveable
-		}
-	}
-
-	func needChildren() {
-		forEach { zone in
-			zone.needChildren()
-		}
-	}
-
-	func needProgeny() {
-		forEach { zone in
-			zone.needProgeny()
 		}
 	}
 
@@ -367,12 +350,6 @@ extension ZoneArray {
 		return grabbed
 	}
 
-	func needAllProgeny() {
-		for zone in self {
-			zone.needAllProgeny()
-		}
-	}
-
 	func assureAdoption() {
 		traverseAllAncestors { ancestor in
 			ancestor.adopt()
@@ -434,10 +411,6 @@ extension ZoneArray {
 		let    zones = sortedByReverseOrdering()
 		let     grab = !iShouldGrab ? nil : grabAppropriate()
 		var doneOnce = false
-
-		forEach { zone in
-			zone.needProgeny()
-		}
 
 		if !doneOnce {
 			doneOnce  = true
@@ -516,22 +489,9 @@ extension ZoneArray {
 			return
 		}
 
-		var needRoot = true
-
 		traverseAllAncestors { iParent in
 			if  !self.contains(iParent) {
 				iParent.expand()
-				iParent.needChildren()
-			}
-
-			if  iParent == iAncestor {
-				needRoot = false
-			}
-		}
-
-		if  needRoot { // true means map in memory does not include root, so fetch it from iCloud
-			for descendent in self {
-				descendent.needRoot()
 			}
 		}
 

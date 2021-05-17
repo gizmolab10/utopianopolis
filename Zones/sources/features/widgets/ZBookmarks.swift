@@ -102,18 +102,10 @@ class ZBookmarks: NSObject {
 				byRecordName   = [:]
 				registered     = [bookmark]
 			} else {
-				let markBookmarkAsLost = {
-					bookmark.temporarilyMarkNeeds {
-						bookmark.needFound()
-					}
-				}
-
 				if  registered == nil {
 					registered  = []
 				} else if bookmark.parentZone == nil,
 						  !gFiles.isReading(for: bookmark.databaseID) {
-					markBookmarkAsLost()                // bookmark has no parent
-
 					return
 				}
 

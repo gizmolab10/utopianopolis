@@ -45,20 +45,12 @@ class ZUser : ZRecord {
         }
     }
 
-	func save() {
-		updateCKRecordProperties()
-
-		gUserRecord = self.ckRecord
-
-		needSave()
+	static func uniqueUser(recordName: String?, in dbID: ZDatabaseID) -> ZUser {
+		return uniqueZRecord(entityName: kUserType, recordName: recordName, in: dbID) as! ZUser
 	}
 
-	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZUser {
-		if  let    has = hasMaybe(record: record, entityName: kUserEntityName, databaseID: databaseID) as? ZUser {        // first check if already exists
-			return has
-		}
-
-		return ZUser.init(record: record, databaseID: databaseID)
+	func save() {
+		gUserRecordName = recordName
 	}
 
     override var cloudProperties: [String] { return ZUser.cloudProperties }

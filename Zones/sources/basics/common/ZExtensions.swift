@@ -100,8 +100,8 @@ func gDisablePush(_ closure: Closure) {
 }
 
 func gCompareZones(_ a: AnyObject, _ b: AnyObject) -> Bool {
-	if  let alpha = (a as? Zone)?.ckRecordName,
-		let  beta = (b as? Zone)?.ckRecordName {
+	if  let alpha = (a as? Zone)?.recordName,
+		let  beta = (b as? Zone)?.recordName {
 		return alpha == beta
 	}
 
@@ -570,42 +570,6 @@ extension CKRecord {
 		return string
 	}
 
-    var decoratedName: String {
-		switch recordType {
-			case kTraitType:
-				let text = self["text"] as? String ?? kNoValue
-
-				return "\(traitType) \(text)"
-			case kZoneType:
-				if  let      name = self[kpZoneName] as? String {
-					let separator = kSpace
-					var    prefix = ""
-					
-					if  isBookmark {
-						prefix.append("L")
-					}
-					
-					if  let fetchable = self[kpZoneCount] as? Int, fetchable > 1 {
-						if  prefix != "" {
-							prefix.append(separator)
-						}
-						
-						prefix.append("\(fetchable)")
-					}
-					
-					if  prefix != "" {
-						prefix  = "(" + prefix + ")  "
-					}
-					
-					return prefix.appending(name)
-				}
-			default:
-				return recordID.recordName
-		}
-
-        return kNoValue
-    }
-
     convenience init(for name: String) {
         self.init(recordType: kZoneType, recordID: CKRecordID(recordName: name))
     }
@@ -628,30 +592,6 @@ extension CKRecord {
         }
 
         return altered
-    }
-
-    func hasKey(_ key: String) -> Bool {
-        return allKeys().contains(key)
-    }
-
-    func index(within iReferences: CKRecordIDsArray) -> Int? {
-        for (index, identifier) in iReferences.enumerated() {
-            if  identifier == recordID {
-                return index
-            }
-        }
-
-        return nil
-    }
-
-    func maybeMarkAsFetched(_ databaseID: ZDatabaseID?) {
-        let states        = [ZRecordState.notFetched, ZRecordState.needsFetch]
-        if  creationDate != nil,
-            let dbID      = databaseID,
-            let manager   = gRemoteStorage.cloud(for: dbID),
-            manager.hasCKRecord(self, forAnyOf: states) {
-            manager.clearCKRecords([self], for: states)
-        }
     }
 
 }
@@ -1226,7 +1166,7 @@ extension ZRecordsArray {
 		var  names = [String]()
 
 		for zRecord in self {
-			if  let name = zRecord.ckRecordName {
+			if  let name = zRecord.recordName {
 				names.append(name)
 			}
 		}
@@ -1245,7 +1185,7 @@ extension CKReferencesArray {
 
 	func asZones(in dbID: ZDatabaseID) -> ZoneArray {
 		return map { ckReference -> Zone in
-			return gRemoteStorage.cloud(for: dbID)!.sureZoneForCKRecord(CKRecord(recordType: kZoneType, recordID: ckReference.recordID))
+			return Zone.uniqueZone(recordName: ckReference.recordID.recordName, in: dbID)
 		}
 	}
 
@@ -1270,8 +1210,8 @@ extension ZRecordsArray {
 //					print("hah! found it")
 //				}
 
-				if  zRecord.ckRecord == nil {
-					printDebug(.dFile, "no record: \(zRecord)")
+				if  zRecord.recordName == nil {
+					printDebug(.dFile, "no record name: \(zRecord)")
 				} else if (allowEach == nil || allowEach!(zRecord)),
 						  let dict = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 
@@ -1297,8 +1237,8 @@ extension ZRecordsArray {
 
 	@discardableResult mutating func appendUnique(item: ZRecord) -> Bool {
 		return appendUnique(item: item) { (a, b) -> (Bool) in
-			if  let    aName  = (a as? ZRecord)?.ckRecordName,
-				let    bName  = (b as? ZRecord)?.ckRecordName {
+			if  let    aName  = (a as? ZRecord)?.recordName,
+				let    bName  = (b as? ZRecord)?.recordName {
 				return aName ==  bName
 			}
 
@@ -1308,37 +1248,12 @@ extension ZRecordsArray {
 
 	func containsMatch(to other: AnyObject) -> Bool {
 		return containsCompare(with: other) { (a, b) in
-			if  let    aName  = (a as? ZRecord)?.ckRecordName,
-				let    bName  = (b as? ZRecord)?.ckRecordName {
+			if  let    aName  = (a as? ZRecord)?.recordName,
+				let    bName  = (b as? ZRecord)?.recordName {
 				return aName ==  bName
 			}
 
 			return false
-		}
-	}
-
-}
-
-extension CKRecordsArray {
-
-	@discardableResult mutating func appendUnique(item: CKRecord) -> Bool {
-		return appendUnique(item: item) { (a, b) -> (Bool) in
-			if  let aRecordName = (a as? CKRecord)?.recordID.recordName,
-				let bRecordName = (b as? CKRecord)?.recordID.recordName {
-				return aRecordName == bRecordName
-			}
-
-			return false
-		}
-	}
-
-	func asZones(in dbID: ZDatabaseID) -> ZoneArray {
-		return self.filter { $0.recordType == kZoneType }.map { gRemoteStorage.cloud(for: dbID)!.sureZoneForCKRecord($0) }
-	}
-
-	var asRecordNames: [String] {
-		return map { ckRecord -> String in
-			return ckRecord.recordID.recordName
 		}
 	}
 
@@ -1499,7 +1414,7 @@ struct ZRangedAttachment {
 
 extension NSMutableAttributedString {
 
-	var allKeys: [NSAttributedString.Key]     { return [.font, .link, .attachment, .paragraphStyle, .foregroundColor, .backgroundColor] }
+	var allKeys: [NSAttributedString.Key] { return [.font, .link, .attachment, .paragraphStyle, .foregroundColor, .backgroundColor] }
 
 	var linkRanges: [NSRange] {
 		let range = NSRange(location: 0, length: length)
@@ -2129,44 +2044,18 @@ extension String {
         return a == kHalfLineOfDashes && b == kHalfLineOfDashes
     }
 
-    static func forZones(_ zones: ZoneArray?) -> String {
-        return zones?.applyIntoString()  { object -> (String?) in
-            if  let zone  = object as? Zone {
-                let name  = zone.decoratedName
-                if  name != "" {
-                    return name
-                }
-            }
+	static func forZones(_ zones: ZoneArray?) -> String {
+		return zones?.applyIntoString()  { object -> (String?) in
+			if  let zone  = object as? Zone {
+				let name  = zone.decoratedName
+				if  name != "" {
+					return name
+				}
+			}
 
-            return nil
-            } ?? ""
-    }
-
-    static func forCKRecords(_ records: CKRecordsArray?) -> String {
-        return records?.applyIntoString() { object -> (String?) in
-            if  let  record  = object as? CKRecord {
-                let    name  = record.decoratedName
-                if     name != "" {
-                    return name
-                }
-            }
-
-            return nil
-            } ?? ""
-    }
-
-    static func forReferences(_ references: CKReferencesArray?, in databaseID: ZDatabaseID) -> String {
-        return references?.applyIntoString()  { object -> (String?) in
-            if let reference = object as? CKReference, let zone = gRemoteStorage.zRecords(for: databaseID)?.maybeZoneForReference(reference) {
-                let    name  = zone.decoratedName
-                if     name != "" {
-                    return name
-                }
-            }
-
-            return nil
-            } ?? ""
-    }
+			return nil
+		} ?? ""
+	}
 
     static func forOperationIDs (_ iIDs: ZOperationIDsArray?) -> String {
         return iIDs?.applyIntoString()  { object -> (String?) in

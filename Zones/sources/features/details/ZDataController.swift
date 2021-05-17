@@ -27,7 +27,7 @@ class ZDataController: ZGenericController {
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		if  gShowDetailsView, iKind != .sStartupProgress, let c = gDetailsController, c.viewIsVisible(for: .vData) {  // don't send signal to a hidden favorites controller
-			creationDateLabel?.text = creationDateText
+			creationDateLabel?.text = "---"
 			cloudStatusLabel? .text = statusText
 			recordNameLabel?  .text = zoneRecordNameText
 			totalCountLabel?  .text = totalCountsText
@@ -76,7 +76,7 @@ class ZDataController: ZGenericController {
 		var text = ""
 
 		if  let zone = currentZone,
-			let name = zone.ckRecordName {
+			let name = zone.recordName {
 			let type = zone.widgetType.identifier.uppercased()
 			text     = name
 
@@ -88,22 +88,6 @@ class ZDataController: ZGenericController {
 
 		return text
 	}
-
-	var creationDateText: String {
-		var   date: Date? // currentZone?.record?.modificationDate
-		var prefix = "last edited"
-
-		if  date == nil {
-			date = currentZone?.ckRecord?.creationDate
-			prefix = "created"
-		}
-
-		if  let d = date {
-			return "\(prefix) on \(d.easyToReadDate) at \(d.easyToReadTime)"
-		}
-		
-		return ""
-	}    
 
 	var synopsisText: String {
 		guard let current = currentZone,
