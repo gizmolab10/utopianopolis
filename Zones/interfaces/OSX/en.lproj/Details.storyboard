@@ -362,7 +362,7 @@ CA
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fqv-v5-z0n" userLabel="Simple Tools Triangle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="306" y="2" width="14" height="14"/>
+                                                        <rect key="frame" x="8" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="7lq-lv-VG0"/>
                                                             <constraint firstAttribute="width" constant="14" id="pgi-yq-wFw"/>
@@ -380,8 +380,8 @@ CA
                                                     <constraint firstAttribute="trailing" secondItem="uxs-aX-Fhe" secondAttribute="trailing" id="5Y3-I9-DyI"/>
                                                     <constraint firstAttribute="height" constant="18" id="8gm-Xf-qKu"/>
                                                     <constraint firstItem="uxs-aX-Fhe" firstAttribute="leading" secondItem="h9A-Dp-8sZ" secondAttribute="leading" id="CP8-oj-OXk"/>
-                                                    <constraint firstAttribute="trailing" secondItem="fqv-v5-z0n" secondAttribute="trailing" constant="8" id="av6-CT-vtM"/>
                                                     <constraint firstItem="uxs-aX-Fhe" firstAttribute="centerY" secondItem="h9A-Dp-8sZ" secondAttribute="centerY" id="trl-qE-Uyg"/>
+                                                    <constraint firstItem="fqv-v5-z0n" firstAttribute="leading" secondItem="h9A-Dp-8sZ" secondAttribute="leading" constant="8" id="yKc-de-Rr4"/>
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Start Here Hideable">
@@ -426,8 +426,25 @@ CA
                                                             <outlet property="togglingView" destination="M2W-8y-R0e" id="XRu-AH-2H9"/>
                                                         </connections>
                                                     </button>
+                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Data Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
+                                                        <rect key="frame" x="8" y="2" width="14" height="14"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="14" id="Btc-fY-AcD"/>
+                                                            <constraint firstAttribute="width" constant="14" id="j0n-Bq-iHU"/>
+                                                        </constraints>
+                                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="7oD-gH-cVi">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="cellTitle"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="toggleAction:" target="M2W-8y-R0e" id="JcK-VM-VH9"/>
+                                                        </connections>
+                                                    </button>
+                                                    <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Zkz-eb-lqR">
+                                                        <rect key="frame" x="30" y="1" width="16" height="16"/>
+                                                    </progressIndicator>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NEF-16-Rho" userLabel="Switch">
-                                                        <rect key="frame" x="6" y="1" width="44" height="15"/>
+                                                        <rect key="frame" x="278" y="1" width="44" height="15"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="44" id="qFc-7U-zYr"/>
                                                             <constraint firstAttribute="height" constant="14" id="ylm-ga-jfR"/>
@@ -441,33 +458,16 @@ CA
                                                             <action selector="extraButtonAction:" target="M2W-8y-R0e" id="1UG-Fp-aM7"/>
                                                         </connections>
                                                     </button>
-                                                    <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Zkz-eb-lqR">
-                                                        <rect key="frame" x="275" y="1" width="16" height="16"/>
-                                                    </progressIndicator>
-                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Data Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="306" y="2" width="14" height="14"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="14" id="Btc-fY-AcD"/>
-                                                            <constraint firstAttribute="width" constant="14" id="j0n-Bq-iHU"/>
-                                                        </constraints>
-                                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="7oD-gH-cVi">
-                                                            <behavior key="behavior" lightByContents="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="toggleAction:" target="M2W-8y-R0e" id="JcK-VM-VH9"/>
-                                                        </connections>
-                                                    </button>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="fsz-8k-F3y" secondAttribute="trailing" id="1U6-qO-4W4"/>
-                                                    <constraint firstAttribute="trailing" secondItem="hIy-eV-7gW" secondAttribute="trailing" constant="8" id="9pe-MS-jhP"/>
                                                     <constraint firstItem="Zkz-eb-lqR" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="Fjh-dH-wlz"/>
                                                     <constraint firstItem="NEF-16-Rho" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="G8z-T0-5RT"/>
-                                                    <constraint firstItem="hIy-eV-7gW" firstAttribute="leading" secondItem="Zkz-eb-lqR" secondAttribute="trailing" constant="15" id="ITd-M6-a8D"/>
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="JkT-Tw-HTb"/>
                                                     <constraint firstAttribute="height" constant="18" id="OPH-Ni-UYm"/>
-                                                    <constraint firstItem="NEF-16-Rho" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" constant="6" id="YBQ-a7-uyT"/>
+                                                    <constraint firstAttribute="trailing" secondItem="NEF-16-Rho" secondAttribute="trailing" constant="6" id="a8z-1s-UTc"/>
+                                                    <constraint firstItem="Zkz-eb-lqR" firstAttribute="leading" secondItem="hIy-eV-7gW" secondAttribute="trailing" constant="8" id="ct4-RT-UgC"/>
+                                                    <constraint firstItem="hIy-eV-7gW" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" constant="8" id="ebX-ft-O1W"/>
                                                     <constraint firstItem="hIy-eV-7gW" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="i6w-cL-2uR"/>
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" id="kaj-xz-Sm0"/>
                                                 </constraints>
@@ -518,7 +518,7 @@ CA
                                                         </connections>
                                                     </button>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aCk-9D-lHI" userLabel="Triangle Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="306" y="2" width="14" height="14"/>
+                                                        <rect key="frame" x="8" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="14" id="hAG-lD-Wcz"/>
                                                             <constraint firstAttribute="height" constant="14" id="pOY-vw-MiT"/>
@@ -533,8 +533,8 @@ CA
                                                     </button>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstAttribute="trailing" secondItem="aCk-9D-lHI" secondAttribute="trailing" constant="8" id="7gp-cz-BBw"/>
                                                     <constraint firstAttribute="height" constant="18" id="Lun-Vz-ROc"/>
+                                                    <constraint firstItem="aCk-9D-lHI" firstAttribute="leading" secondItem="Ul6-QC-jDi" secondAttribute="leading" constant="8" id="acn-kY-LjT"/>
                                                     <constraint firstItem="Jzv-og-1RG" firstAttribute="centerY" secondItem="Ul6-QC-jDi" secondAttribute="centerY" id="eaQ-ep-cKf"/>
                                                     <constraint firstAttribute="trailing" secondItem="Jzv-og-1RG" secondAttribute="trailing" id="me3-US-cu8"/>
                                                     <constraint firstItem="aCk-9D-lHI" firstAttribute="centerY" secondItem="Ul6-QC-jDi" secondAttribute="centerY" id="t1n-0m-22k"/>
@@ -582,8 +582,22 @@ CA
                                                             <outlet property="togglingView" destination="Utx-K3-0a0" id="Wks-zD-N6G"/>
                                                         </connections>
                                                     </button>
+                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1uw-i1-Cgo" userLabel="Small Map Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
+                                                        <rect key="frame" x="8" y="2" width="14" height="14"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="14" id="53T-LY-ZHR"/>
+                                                            <constraint firstAttribute="width" constant="14" id="b9j-Gu-XJt"/>
+                                                        </constraints>
+                                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="QJb-qX-vZc">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="cellTitle"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="toggleAction:" target="Utx-K3-0a0" id="qL7-XA-wJf"/>
+                                                        </connections>
+                                                    </button>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zUL-Q6-aba" userLabel="Switch">
-                                                        <rect key="frame" x="6" y="1" width="44" height="15"/>
+                                                        <rect key="frame" x="278" y="1" width="44" height="15"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="YSn-Az-ikL"/>
                                                             <constraint firstAttribute="width" constant="44" id="ilj-a1-1mc"/>
@@ -597,29 +611,15 @@ CA
                                                             <action selector="extraButtonAction:" target="Utx-K3-0a0" id="4pt-PI-PDy"/>
                                                         </connections>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1uw-i1-Cgo" userLabel="Small Map Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="306" y="2" width="14" height="14"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="14" id="53T-LY-ZHR"/>
-                                                            <constraint firstAttribute="width" constant="14" id="b9j-Gu-XJt"/>
-                                                        </constraints>
-                                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="yangle" imagePosition="only" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="QJb-qX-vZc">
-                                                            <behavior key="behavior" lightByContents="YES"/>
-                                                            <font key="font" metaFont="cellTitle"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="toggleAction:" target="Utx-K3-0a0" id="qL7-XA-wJf"/>
-                                                        </connections>
-                                                    </button>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="3bx-6i-bTg" firstAttribute="leading" secondItem="s1s-Ki-o6t" secondAttribute="leading" id="1u1-0s-2Wx"/>
-                                                    <constraint firstItem="zUL-Q6-aba" firstAttribute="leading" secondItem="s1s-Ki-o6t" secondAttribute="leading" constant="6" id="4nT-vi-bzW"/>
                                                     <constraint firstAttribute="trailing" secondItem="3bx-6i-bTg" secondAttribute="trailing" id="A0s-1i-Mvj"/>
                                                     <constraint firstAttribute="height" constant="18" id="J3l-tS-SXi"/>
                                                     <constraint firstItem="3bx-6i-bTg" firstAttribute="centerY" secondItem="s1s-Ki-o6t" secondAttribute="centerY" id="RmK-7b-QQG"/>
                                                     <constraint firstItem="zUL-Q6-aba" firstAttribute="centerY" secondItem="s1s-Ki-o6t" secondAttribute="centerY" id="bvL-DI-zVB"/>
-                                                    <constraint firstAttribute="trailing" secondItem="1uw-i1-Cgo" secondAttribute="trailing" constant="8" id="nw1-oo-l9x"/>
+                                                    <constraint firstAttribute="trailing" secondItem="zUL-Q6-aba" secondAttribute="trailing" constant="6" id="dHV-eH-A3m"/>
+                                                    <constraint firstItem="1uw-i1-Cgo" firstAttribute="leading" secondItem="s1s-Ki-o6t" secondAttribute="leading" constant="8" id="tym-J5-q29"/>
                                                 </constraints>
                                             </customView>
                                             <containerView wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n0Y-Iw-0NV" userLabel="Small Map Hideable">
