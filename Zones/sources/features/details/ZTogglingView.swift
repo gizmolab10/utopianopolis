@@ -87,8 +87,16 @@ class ZTogglingView: NSStackView {
         }
     }
 
+	//	extraButton?.toolTip = "\(kClickTo)show \(gOtherDatabaseID.userReadableString) ideas"
+
 	@IBAction func extraButtonAction(_ sender: Any) {
-		gSwapSmallMapMode()
+		switch identity {
+			case .vSmallMap: gSwapSmallMapMode()
+			case .vData:     gMapController?.toggleMaps()
+			default: break
+		}
+
+		gRedrawMaps()
 	}
 
 	@IBAction func toggleAction(_ sender: Any) {
@@ -104,10 +112,16 @@ class ZTogglingView: NSStackView {
 		titleButton?.zlayer.backgroundColor =     gAccentColor.cgColor
 		extraButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
 
-		if  identity == .vSmallMap, gIsReadyToShowUI,
-			let  here = gSmallMapHere {
-
-			titleButton?.title = here.ancestralString
+		if  gIsReadyToShowUI {
+			switch identity {
+				case .vSmallMap:
+					if  let here = gSmallMapHere {
+						titleButton?.title = here.ancestralString
+					}
+				case .vData:
+					titleButton?.title = gDatabaseID.userReadableString.capitalized + " Data"
+				default: break
+			}
 		}
 
 		turnOnTitleButton()

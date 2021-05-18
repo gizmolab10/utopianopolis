@@ -40,36 +40,31 @@ class ZStartup: NSObject {
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
-				gIsReadyToShowUI   = true
+				gIsReadyToShowUI = true
 
 				gFavorites.setup { result in
 					FOREGROUND {
 						gFavorites.updateAllFavorites()
 						gRefreshCurrentEssay()
 						gRefreshPersistentWorkMode()
-						gSignal([.sCrumbs, .sLaunchDone])
 
-						gBatches.finishUp { iSame in
-							FOREGROUND {
-								gHasFinishedStartup    = true
-								gRefusesFirstResponder = false
+						gHasFinishedStartup    = true
+						gRefusesFirstResponder = false
 
-								gTimers .stopTimer (for:  .tStartup)
-								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync])
-								gRecents.push()
-								gHereMaybe?.grab()
+						gTimers .stopTimer (for:  .tStartup)
+						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync])
+						gRecents.push()
+						gHereMaybe?.grab()
 
-								if  gIsStartupMode {
-									gSetBigMapMode()
-								}
+						if  gIsStartupMode {
+							gSetBigMapMode()
+						}
 
-								gSignal([.sSwap, .sMain, .sCrumbs, .sRelayout, .sPreferences])
-								self.requestFeedback()
+						gSignal([.sSwap, .sMain, .sCrumbs, .sLaunchDone, .sRelayout, .sPreferences])
+						self.requestFeedback()
 
-								FOREGROUND(after: 10.0) {
-									gFiles.writeAll()
-								}
-							}
+						FOREGROUND(after: 10.0) {
+							gFiles.writeAll()
 						}
 					}
 				}

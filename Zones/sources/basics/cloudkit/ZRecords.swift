@@ -336,9 +336,9 @@ class ZRecords: NSObject {
 	func appendZRecordsLookup(with iName: String, onEach: @escaping ZRecordsToZRecordsClosure) {
 		for name in iName.components(separatedBy: " ") {
 			if  name != "" {
-				let zRecords = searchLocal(for: name)
-
-				zRecordsArrayLookup[name] = onEach(zRecords)
+				gCoreDataStack.search(for: name, within: databaseID) { zRecords in
+					self.zRecordsArrayLookup[name] = onEach(zRecords)
+				}
 			}
 		}
 	}
@@ -561,6 +561,11 @@ class ZRecords: NSObject {
 		for zRecord in zRecordsLookup.values {
 			closure(zRecord)
 		}
+	}
+
+	func resolveMissing(_ onCompletion: IntClosure? = nil) {
+		gCoreDataStack.resolveMissing(from: databaseID)
+		onCompletion?(0)
 	}
 
 	func resolve(_ onCompletion: IntClosure? = nil) {

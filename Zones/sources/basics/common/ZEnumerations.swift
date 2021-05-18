@@ -209,8 +209,8 @@ enum ZDatabaseID: String {
 
 	var mapControlString: String {
 		switch self {
-			case .everyoneID: return "Public"
-			case     .mineID: return "Mine"
+			case .everyoneID: return "Mine"
+			case     .mineID: return "Public"
 			default:          return ""
 		}
 	}

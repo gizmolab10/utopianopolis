@@ -21,7 +21,6 @@ class ZDataController: ZGenericController {
     @IBOutlet var   totalCountLabel: ZTextField?
 	@IBOutlet var   recordNameLabel: ZTextField?
 	@IBOutlet var     synopsisLabel: ZTextField?
-    @IBOutlet var      mapNameLabel: ZTextField?
     var                 currentZone: Zone?         { return gSelecting.rootMostMoveable }
     override  var      controllerID: ZControllerID { return .idData }
 
@@ -31,7 +30,6 @@ class ZDataController: ZGenericController {
 			cloudStatusLabel? .text = statusText
 			recordNameLabel?  .text = zoneRecordNameText
 			totalCountLabel?  .text = totalCountsText
-			mapNameLabel?     .text = mapNameText
 			synopsisLabel?    .text = synopsisText
 		}
 	}
@@ -54,14 +52,6 @@ class ZDataController: ZGenericController {
 
 		return result
 	}
-
-    var mapNameText: String {
-        if  let dbID = currentZone?.databaseID {
-            return "in \(dbID.userReadableString) database"
-        }
-
-        return ""
-    }
 
     var statusText: String {
 		let    cdStatus = gCoreDataStack.statusText

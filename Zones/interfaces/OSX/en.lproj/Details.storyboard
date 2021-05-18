@@ -10,32 +10,21 @@
             <objects>
                 <viewController id="fxO-Qj-JeN" customClass="ZDataController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mbO-Ma-L1E">
-                        <rect key="frame" x="0.0" y="0.0" width="282" height="170"/>
+                        <rect key="frame" x="0.0" y="0.0" width="282" height="155"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box borderType="line" title="storage" translatesAutoresizingMaskIntoConstraints="NO" id="AUf-tY-f9E">
-                                <rect key="frame" x="5" y="87" width="272" height="79"/>
+                                <rect key="frame" x="5" y="87" width="272" height="64"/>
                                 <view key="contentView" id="uro-ap-Iux">
-                                    <rect key="frame" x="3" y="3" width="266" height="61"/>
+                                    <rect key="frame" x="3" y="3" width="266" height="46"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3v8-d2-yo8" userLabel="Total Count Label">
-                                            <rect key="frame" x="6" y="42" width="254" height="15"/>
+                                            <rect key="frame" x="6" y="27" width="254" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="iSu-QB-gpG"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="uyC-kt-DrI">
-                                                <font key="font" metaFont="message" size="11"/>
-                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
-                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f4m-8C-5H1">
-                                            <rect key="frame" x="6" y="23" width="254" height="15"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="15" id="fsf-bJ-Uu6"/>
-                                            </constraints>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="s7Z-UN-BJu">
                                                 <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -58,12 +47,9 @@
                                         <constraint firstAttribute="trailing" secondItem="3v8-d2-yo8" secondAttribute="trailing" constant="8" id="KAm-wC-4YV"/>
                                         <constraint firstItem="fy3-JT-P1F" firstAttribute="leading" secondItem="uro-ap-Iux" secondAttribute="leading" constant="8" id="PQu-S5-2Oy"/>
                                         <constraint firstItem="3v8-d2-yo8" firstAttribute="leading" secondItem="uro-ap-Iux" secondAttribute="leading" constant="8" id="XaU-zg-c3O"/>
-                                        <constraint firstItem="f4m-8C-5H1" firstAttribute="top" secondItem="3v8-d2-yo8" secondAttribute="bottom" constant="4" id="dKQ-11-bTl"/>
                                         <constraint firstAttribute="trailing" secondItem="fy3-JT-P1F" secondAttribute="trailing" constant="8" id="fDK-6v-4u3"/>
-                                        <constraint firstItem="f4m-8C-5H1" firstAttribute="leading" secondItem="uro-ap-Iux" secondAttribute="leading" constant="8" id="fRj-kz-dXa"/>
-                                        <constraint firstItem="fy3-JT-P1F" firstAttribute="top" secondItem="f4m-8C-5H1" secondAttribute="bottom" constant="4" id="jUi-DN-qLg"/>
                                         <constraint firstItem="3v8-d2-yo8" firstAttribute="top" secondItem="uro-ap-Iux" secondAttribute="top" constant="4" id="pY0-qr-pqj"/>
-                                        <constraint firstAttribute="trailing" secondItem="f4m-8C-5H1" secondAttribute="trailing" constant="8" id="uS6-hk-x1a"/>
+                                        <constraint firstItem="fy3-JT-P1F" firstAttribute="top" secondItem="3v8-d2-yo8" secondAttribute="bottom" constant="8" id="sVi-Pf-ug9"/>
                                     </constraints>
                                 </view>
                             </box>
@@ -122,7 +108,7 @@
                                 </view>
                             </box>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="4om-oY-tSH">
-                                <rect key="frame" x="279" y="0.0" width="5" height="170"/>
+                                <rect key="frame" x="279" y="0.0" width="5" height="155"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="RY0-UO-Dkf"/>
                                 </constraints>
@@ -144,7 +130,6 @@
                     <connections>
                         <outlet property="cloudStatusLabel" destination="fy3-JT-P1F" id="bJt-yR-hPf"/>
                         <outlet property="creationDateLabel" destination="JFS-Ma-Zx8" id="Fil-Mc-hrR"/>
-                        <outlet property="mapNameLabel" destination="f4m-8C-5H1" id="3Ma-Ba-KXj"/>
                         <outlet property="recordNameLabel" destination="Nr1-TP-dq5" id="6mE-FK-zJX"/>
                         <outlet property="synopsisLabel" destination="BcI-eM-ytK" id="l2l-bk-3KS"/>
                         <outlet property="totalCountLabel" destination="3v8-d2-yo8" id="8GP-Ce-9m4"/>
@@ -441,8 +426,23 @@ CA
                                                             <outlet property="togglingView" destination="M2W-8y-R0e" id="XRu-AH-2H9"/>
                                                         </connections>
                                                     </button>
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NEF-16-Rho" userLabel="Switch">
+                                                        <rect key="frame" x="6" y="1" width="44" height="15"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="44" id="qFc-7U-zYr"/>
+                                                            <constraint firstAttribute="height" constant="14" id="ylm-ga-jfR"/>
+                                                        </constraints>
+                                                        <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YF9-6k-EhW">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="miniSystem"/>
+                                                            <string key="keyEquivalent">'</string>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="extraButtonAction:" target="M2W-8y-R0e" id="1UG-Fp-aM7"/>
+                                                        </connections>
+                                                    </button>
                                                     <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Zkz-eb-lqR">
-                                                        <rect key="frame" x="126" y="1" width="16" height="16"/>
+                                                        <rect key="frame" x="275" y="1" width="16" height="16"/>
                                                     </progressIndicator>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Data Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="306" y="2" width="14" height="14"/>
@@ -463,11 +463,13 @@ CA
                                                     <constraint firstAttribute="trailing" secondItem="fsz-8k-F3y" secondAttribute="trailing" id="1U6-qO-4W4"/>
                                                     <constraint firstAttribute="trailing" secondItem="hIy-eV-7gW" secondAttribute="trailing" constant="8" id="9pe-MS-jhP"/>
                                                     <constraint firstItem="Zkz-eb-lqR" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="Fjh-dH-wlz"/>
+                                                    <constraint firstItem="NEF-16-Rho" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="G8z-T0-5RT"/>
+                                                    <constraint firstItem="hIy-eV-7gW" firstAttribute="leading" secondItem="Zkz-eb-lqR" secondAttribute="trailing" constant="15" id="ITd-M6-a8D"/>
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="JkT-Tw-HTb"/>
                                                     <constraint firstAttribute="height" constant="18" id="OPH-Ni-UYm"/>
+                                                    <constraint firstItem="NEF-16-Rho" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" constant="6" id="YBQ-a7-uyT"/>
                                                     <constraint firstItem="hIy-eV-7gW" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="i6w-cL-2uR"/>
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" id="kaj-xz-Sm0"/>
-                                                    <constraint firstItem="Zkz-eb-lqR" firstAttribute="centerX" secondItem="xwW-xc-XIh" secondAttribute="centerX" constant="-30" id="rtr-Tg-bWt"/>
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Data Hideable">
@@ -488,6 +490,7 @@ CA
                                         </constraints>
                                         <connections>
                                             <outlet property="bannerView" destination="xwW-xc-XIh" id="To1-48-Suc"/>
+                                            <outlet property="extraButton" destination="NEF-16-Rho" id="YNj-3R-umV"/>
                                             <outlet property="hideableView" destination="Chx-83-qGo" id="Qre-NM-FhC"/>
                                             <outlet property="spinner" destination="Zkz-eb-lqR" id="dxW-NG-J09"/>
                                             <outlet property="titleButton" destination="fsz-8k-F3y" id="p3H-LW-5wA"/>
@@ -581,6 +584,10 @@ CA
                                                     </button>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zUL-Q6-aba" userLabel="Switch">
                                                         <rect key="frame" x="6" y="1" width="44" height="15"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="14" id="YSn-Az-ikL"/>
+                                                            <constraint firstAttribute="width" constant="44" id="ilj-a1-1mc"/>
+                                                        </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xW1-68-JpA">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="miniSystem"/>

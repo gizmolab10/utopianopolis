@@ -202,6 +202,10 @@ class ZCoreDataStack: NSObject {
 		missingRegistry[dbID] = missing
 	}
 
+	func isMissing(recordName: String, from dbID: ZDatabaseID) -> Bool {
+		return !missingFrom(dbID).contains(recordName)
+	}
+
 	func lookup(recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObject? {
 		if  let    object = fetchedRegistry[dbID]?[recordName] {
 			return object
@@ -210,12 +214,25 @@ class ZCoreDataStack: NSObject {
 		return nil
 	}
 
-	func find(type: String, recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> [ZManagedObject] {
+	func resolveMissing(from dbID: ZDatabaseID) {
+		var missing         = missingFrom(dbID)
+		for name in missing {
+			let found       = find(type: kZoneType, recordName: name, into: dbID, trackMissing: false)
+			if  found.count > 0,
+				let   index = missing.firstIndex(of: name) {
+				missing.remove(at: index)
+			}
+		}
+
+		missingRegistry[dbID] = missing
+	}
+
+	func find(type: String, recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true, trackMissing: Bool = true) -> [ZManagedObject] {
 		if  let     object = lookup(recordName: recordName, into: dbID) {
 			return [object]
 		}
 
-		if  missingFrom(dbID).contains(recordName) {
+		if  trackMissing, missingFrom(dbID).contains(recordName) {
 			return []
 		}
 

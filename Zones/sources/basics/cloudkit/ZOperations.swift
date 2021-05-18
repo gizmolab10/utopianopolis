@@ -31,12 +31,8 @@ enum ZOperationID: Int, CaseIterable {
 	case oManifest
 	case oReadFile           // LOCAL
     case oHere
-	case oStartupDone
-
-    // finish
-
-    case oFinishUp
-    case oDone
+	case oResolveMissing
+	case oDone
 
     // miscellaneous
 
@@ -45,7 +41,6 @@ enum ZOperationID: Int, CaseIterable {
     case oCompletion
 	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
-    case oUndelete
 	case oRecents  			 // MINE ONLY
 	case oResolve
 	case oRecount
@@ -66,7 +61,6 @@ enum ZOperationID: Int, CaseIterable {
 			case .oResolve:           return  4
 			case .oRecount:           return  3
 			case .oManifest:          return  3
-			case .oFinishUp:          return  3
 			case .oAdopt:             return  2
 			default:                  return  1
 		}
@@ -83,8 +77,8 @@ enum ZOperationID: Int, CaseIterable {
 
 	var	           doneOps : ZOperationIDsArray { return [.oNone, .oDone, .oCompletion] }
 	var        mineOnlyOps : ZOperationIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
-	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oRestoreIdeas, .oSaveCoreData] }
-	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress,
+	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oRestoreIdeas, .oSaveCoreData, .oResolveMissing] }
+	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartUp,
 														  .oFetchUserID, .oRestoreIdeas, .oSaveCoreData, .oUserPermissions, .oObserveUbiquity,
 														  .oFetchUserRecord, .oCheckAvailability] }
 

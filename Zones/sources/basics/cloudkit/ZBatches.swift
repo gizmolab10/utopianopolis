@@ -18,8 +18,6 @@ enum ZBatchID: Int {
     case bSync
     case bFocus
     case bStartUp
-    case bUndelete
-    case bFinishUp
     case bUserTest
     case bBookmarks
     case bNewAppleID
@@ -29,19 +27,11 @@ enum ZBatchID: Int {
 		switch self {
 			case .bSync,
 				 .bStartUp,
-				 .bFinishUp,
 				 .bNewAppleID: return false
 			default:           return true
 		}
     }
 
-	var needsCloudDrive: Bool {
-		switch self {
-			case .bFinishUp,
-				 .bStartUp: return false
-			default:        return true
-		}
-	}
 }
 
 class ZBatches: ZOnboarding {
@@ -76,12 +66,10 @@ class ZBatches: ZOnboarding {
 				case .bResumeCloud: return [              .oMigrateFromCloud           ]
 				case .bSync:        return [              .oSaveCoreData               ]
 				case .bBookmarks:   return [.oBookmarks                                ]
-				case .bUndelete:    return [.oUndelete                                 ]
 				case .bRoot:        return [.oRoots,      .oManifest                   ]
 				case .bFocus:       return [.oRoots                    ,               ]
-				case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oStartupDone)
+				case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oDone)
 				case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oDone, skipping: [.oReadFile])
-				case .bFinishUp:    return operationIDs(from: .oFinishUp,          to: .oDone)
 				case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
 			}
         }
@@ -145,14 +133,12 @@ class ZBatches: ZOnboarding {
     // MARK:- API
     // MARK:-
 
-    func       root(_ onCompletion: @escaping BooleanClosure) { batch(.bRoot,        onCompletion) }
-    func       sync(_ onCompletion: @escaping BooleanClosure) { batch(.bSync,        onCompletion) }
-    func      focus(_ onCompletion: @escaping BooleanClosure) { batch(.bFocus,       onCompletion) }
-	func    startUp(_ onCompletion: @escaping BooleanClosure) { batch(.bStartUp,     onCompletion) }
-    func   finishUp(_ onCompletion: @escaping BooleanClosure) { batch(.bFinishUp,    onCompletion) }
-    func   undelete(_ onCompletion: @escaping BooleanClosure) { batch(.bUndelete,    onCompletion) }
-	func   userTest(_ onCompletion: @escaping BooleanClosure) { batch(.bUserTest,    onCompletion) }
-	func  bookmarks(_ onCompletion: @escaping BooleanClosure) { batch(.bBookmarks,   onCompletion) }
+    func      root(_ onCompletion: @escaping BooleanClosure) { batch(.bRoot,        onCompletion) }
+    func      sync(_ onCompletion: @escaping BooleanClosure) { batch(.bSync,        onCompletion) }
+    func     focus(_ onCompletion: @escaping BooleanClosure) { batch(.bFocus,       onCompletion) }
+	func   startUp(_ onCompletion: @escaping BooleanClosure) { batch(.bStartUp,     onCompletion) }
+	func  userTest(_ onCompletion: @escaping BooleanClosure) { batch(.bUserTest,    onCompletion) }
+	func bookmarks(_ onCompletion: @escaping BooleanClosure) { batch(.bBookmarks,   onCompletion) }
 
     func processNextBatch() {
 
@@ -197,18 +183,6 @@ class ZBatches: ZOnboarding {
 //					self.batch(iID, iCompletion)
 //				}
 //			}
-		} else if !gCloudStatusIsActive, iID.needsCloudDrive {
-			gTimers.resetTimer(for: .tNeedCloudDriveEnabled, withTimeInterval:  0.2, repeats: true) { iTimer in
-
-				// //////////////////////////////////////////////////// //
-				//  gCloudStatusIsActive becomes true during onboarding //
-				// //////////////////////////////////////////////////// //
-
-				if  gCloudStatusIsActive {
-					iTimer?.invalidate()
-					self.batch(iID, iCompletion)
-				}
-			}
 		} else {
             let    current = getBatch(iID, from: currentBatches)
             let completion = [ZBatchCompletion(iCompletion)]

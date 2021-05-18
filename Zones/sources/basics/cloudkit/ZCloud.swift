@@ -49,6 +49,7 @@ class ZCloud: ZRecords {
 			case .oHere:             establishHere                  (cloudCallback)
 			case .oRoots:            establishRoots     (identifier, cloudCallback)
 			case .oManifest:         establishManifest  (identifier, cloudCallback)
+			case .oResolveMissing:   resolveMissing                 (cloudCallback)
 			case .oResolve:          resolve                        (cloudCallback)
 			case .oAdopt:            assureAdoption                 (cloudCallback)
 			case .oRecount:          recount(); fallthrough

@@ -11,7 +11,6 @@ import Foundation
 enum ZModeButtonType: String {
 	case tConfine = "browse"
 	case tGrowth  = "grow"
-	case tDB      = "db"
 }
 
 class ZMapControlsView : ZButtonsView, ZTooltips {
@@ -23,7 +22,7 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 		removeButtons()
 
 		buttons                   = [ZButton]()
-		let t : [ZModeButtonType] = [.tGrowth, .tConfine, .tDB]
+		let t : [ZModeButtonType] = [.tGrowth, .tConfine]
 		for type in t {
 			let             title = type.rawValue
 			let            button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
@@ -46,7 +45,6 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 				switch type {
 					case .tConfine: button.title = gConfinementMode.rawValue
 					case .tGrowth:  button.title = gListGrowthMode .rawValue
-					case .tDB:      button.title = gDatabaseID.mapControlString
 				}
 			}
 
@@ -59,7 +57,6 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 			switch type {
 				case .tConfine: gConfinementMode = gBrowsingIsConfined ? .all : .list
 				case .tGrowth:  gListGrowthMode  = gListsGrowDown      ? .up  : .down
-				case .tDB:      gMapController?.toggleMaps()
 			}
 		}
 

@@ -226,7 +226,6 @@ extension ZMapControlsView {
 				switch type {
 					case .tGrowth:  button.toolTip = "Growth direction\n\n\(kClickTo)grow lists \(gListsGrowDown ? "up" : "down")ward or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
 					case .tConfine: button.toolTip = "Browsing confinement\n\n\(kClickTo)\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within current list")"
-					case .tDB:      button.toolTip = "\(kClickTo)show \(gOtherDatabaseID.userReadableString) ideas"
 				}
 			}
 		}
