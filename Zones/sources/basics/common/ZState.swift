@@ -279,8 +279,8 @@ var gShowSmallMapForIOS : Bool {
 }
 
 var gHereRecordNames: String {
-    get { return getPreferenceString(    for: kHereRecordIDs) { return kTutorialRecordName + kColonSeparator + kRootName }! }
-    set { setPreferencesString(newValue, for: kHereRecordIDs) }
+    get { return getPreferenceString(    for: kHereRecordNames) { return kTutorialRecordName + kColonSeparator + kRootName }! }
+    set { setPreferencesString(newValue, for: kHereRecordNames) }
 }
 
 var gAuthorID: String? {    // persist for file read on launch

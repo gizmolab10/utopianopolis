@@ -51,7 +51,7 @@ enum ZSignalKind: Int {
     case sAppearance
     case sPreferences
 	case sStartupButtons
-	case sStartupProgress
+	case sStartupStatus
 }
 
 let gControllers = ZControllers()
@@ -150,7 +150,7 @@ class ZControllers: NSObject {
 						case .sBigMap:          if identifier == .idBigMap         { closure() }
 						case .sSmallMap:        if identifier == .idSmallMap       { closure() }
 						case .sPreferences:     if identifier == .idPreferences    { closure() }
-						case .sStartupProgress: if startupIDs.contains(identifier) { closure() }
+						case .sStartupStatus: if startupIDs.contains(identifier) { closure() }
 						default:                                                     closure()
 					}
                 }

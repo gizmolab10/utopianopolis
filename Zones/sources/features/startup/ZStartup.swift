@@ -35,7 +35,7 @@ class ZStartup: NSObject {
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
 		gRemoteStorage.clear()
-		gSignal([.sMain, .sStartupProgress])
+		gSignal([.sMain, .sStartupStatus])
 		gTimers.startTimer(for: .tStartup)
 
 		gBatches.startUp { iSame in

@@ -161,7 +161,7 @@ class ZBatches: ZOnboarding {
                 self.transferDeferred()                         // 3.
                 self.processNextBatch()                         // recurse
 			} else {
-				gSignal([.sData, .sStartupProgress])            // 4.
+				gSignal([.sData, .sStartupStatus])            // 4.
 			}
         }
     }
@@ -245,7 +245,7 @@ class ZBatches: ZOnboarding {
 		// ///////////////////////////////////////////////////////////////
 		//     first, allow onboarding superclass to perform block      //
 		// iCompleted will be false if it does not handle the operation //
-		//     i.e., app is no longer doing onboarding operationss      //
+		//     thus app is no longer doing onboarding operationss       //
 		// ///////////////////////////////////////////////////////////////
 
 		super.invokeMultiple(for: operationID, restoreToID: restoreToID) { iCompleted in

@@ -42,7 +42,7 @@ protocol ZGeneric {
 func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
 	if  let t = test, !t() { return }
 	let fancy = (surround == nil) ? message : message.surround(with: surround!)
-	FOREGROUND {
+	FOREGROUND(canBeDirect: true) {
 		print(fancy)
 	}
 }

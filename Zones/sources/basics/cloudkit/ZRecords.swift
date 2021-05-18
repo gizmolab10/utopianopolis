@@ -109,7 +109,7 @@ class ZRecords: NSObject {
 
     var hereRecordName: String? {
 		set {
-			var        references  = allSafeHereReferences
+			var        references  = completeHereRecordNames
 			if  let         index  = databaseID.index,
 				let         value  = newValue,
 				references[index] != value {
@@ -120,7 +120,7 @@ class ZRecords: NSObject {
 
 		get {
 			if  let          index = databaseID.index {
-				let     references = allSafeHereReferences
+				let     references = completeHereRecordNames
 				return  references[index]
 			}
 			
@@ -128,9 +128,9 @@ class ZRecords: NSObject {
 		}
     }
 
-	var allSafeHereReferences: [String] {
-		var      references = gHereRecordNames.components(separatedBy: kColonSeparator)
-		var     mustReplace = false
+	var completeHereRecordNames: [String] {
+		var       references = gHereRecordNames.components(separatedBy: kColonSeparator)
+		var          changed = false
 
 		func rootFor(_ index: Int) -> Zone? {
 			if  let     dbid = ZDatabaseIndex(rawValue: index)?.databaseID,
@@ -144,10 +144,10 @@ class ZRecords: NSObject {
 		}
 
 		while   references.count < 4 {
-			let       index = references.count
-			if  let    root = rootFor(index),
-				let    name = root.recordName {
-				mustReplace = true
+			let    index = references.count
+			if  let root = rootFor(index),
+				let name = root.recordName {
+				changed  = true
 				references.append(name)
 			}
 		}
@@ -159,11 +159,11 @@ class ZRecords: NSObject {
 			if  let          root = rootFor(index),
 				!root.allProgeny.contains(name) {
 				references[index] = index == 2 ? kFavoritesRootName : kRecentsRootName    // reset to default
-				mustReplace       = true
+				changed           = true
 			}
 		}
 
-		if  mustReplace {
+		if  changed {
 			gHereRecordNames = references.joined(separator: kColonSeparator)
 		}
 

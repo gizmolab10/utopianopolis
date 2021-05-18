@@ -25,8 +25,8 @@ class ZGenericController: ZController, ZGeneric {
 
 	func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return (allowedKinds.count == 0 || allowedKinds.contains(kind))
-			&& (( gHasFinishedStartup && ![.sStartupProgress, .sError].contains(kind)) ||
-				(!gHasFinishedStartup &&  [.sStartupProgress,  .sMain].contains(kind)))
+			&& (( gHasFinishedStartup && ![.sStartupStatus, .sError].contains(kind)) ||
+				(!gHasFinishedStartup &&  [.sStartupStatus,  .sMain].contains(kind)))
 	}
 
     override func viewDidLoad() {

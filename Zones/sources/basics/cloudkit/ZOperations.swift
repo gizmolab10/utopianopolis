@@ -141,14 +141,14 @@ class ZOperations: NSObject {
 	func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
     var operationText: String {
-		let i = gBatches.currentDatabaseID?.identifier
-		let d = i == nil ? "  " : i! + " "
+//		let i = gBatches.currentDatabaseID?.identifier
+//		let d = i == nil ? "  " : i! + " "
         var s = String(describing: currentOp)
         s     = s.substring(fromInclusive: 1)
         let c = s.substring(  toExclusive: 1).lowercased()
         s     = s.substring(fromInclusive: 1)
 
-        return d + c + s
+        return c + s
     }
     
     var isConnectedToInternet: Bool {
@@ -201,6 +201,17 @@ class ZOperations: NSObject {
 		}
 	}
 
+	func updateStatus() {
+		var signals: [ZSignalKind] = [.sStatus]     // show change in cloud status
+
+		if !gHasFinishedStartup {
+			signals.append(.sStartupStatus)         // show current op in splash view
+			printDebug(.dOps, operationText)        // print db and op ids
+		}
+
+		gSignal(signals)
+	}
+
     func setupAndRun(_ operationIDs: ZOperationIDsArray, onCompletion: @escaping Closure) {
         if  queue.operationCount > 30 {
             gAlerts.showAlert("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
@@ -224,21 +235,18 @@ class ZOperations: NSObject {
 					onCompletion()
 				} else {
 
-                    // ///////////////////////////////////////////////////////////////
-                    // susend queue until operation function calls its onCompletion //
-                    // ///////////////////////////////////////////////////////////////
-
-					gStartup.count        += 1.0					// every op should advance progress bar
-                    self.queue.isSuspended = true
-					self.lastOpStart       = Date()
-                    self.currentOp         = operationID            // if hung, it happened inside this op
-
-					if !gHasFinishedStartup {
-						gSignal([.sStartupProgress])                // show current op in splash view
-						printDebug(.dOps, self.operationText)
-					}
+					// ////////////////////////////////////////////////////
+					// susend queue until operation calls its closure... //
+					// ////////////////////////////////////////////////////
 
 					FOREGROUND {
+						gStartup.count        += 1.0					// every op should advance progress bar
+						self.queue.isSuspended = true
+						self.lastOpStart       = Date()
+						self.currentOp         = operationID            // if hung, it happened inside this op
+
+						self.updateStatus()
+
 						self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
 							FOREGROUND {
 								if  self.currentOp == .oCompletion {
@@ -252,10 +260,8 @@ class ZOperations: NSObject {
 									gSetProgressTime(for: operationID)
 								}
 
-								gSignal([.sStatus])            // show change in cloud status
-
 								// /////////////////////
-								// release suspension //
+								// ...unsuspend queue //
 								// /////////////////////
 
 								self.queue.isSuspended = false
@@ -266,7 +272,6 @@ class ZOperations: NSObject {
             }
 
             add(blockOperation)
-			gSignal([.sStatus]) // show change in cloud status
         }
 
         queue.isSuspended = false
