@@ -29,7 +29,7 @@ enum ZOperationID: Int, CaseIterable {
 
 	case oRoots
 	case oManifest
-	case oReadFile           // LOCAL
+	case oLoadingFromFile    // LOCAL
     case oHere
 	case oResolveMissing
 	case oDone
@@ -50,7 +50,7 @@ enum ZOperationID: Int, CaseIterable {
 		switch self {
 			case .oRestoreIdeas:      return gCanLoad      ? 160 : 0
 			case .oMigrateFromCloud:  return gNeedsMigrate ?  50 : 0
-			case .oReadFile:          return gReadFiles    ?  30 : 0
+			case .oLoadingFromFile:   return gReadFiles    ?  30 : 0
 			case .oFetchUserRecord:   return  9
 			case .oMacAddress:        return  5
 			case .oUserPermissions:   return  5
@@ -68,26 +68,29 @@ enum ZOperationID: Int, CaseIterable {
 
 	var useTimer: Bool {
 		switch self {
-			case .oReadFile: return gReadFiles
-			case .oRestoreIdeas,
-				 .oRoots:    return true
-			default:         return false
+			case .oLoadingFromFile:       return gReadFiles
+			case .oRestoreIdeas, .oRoots: return true
+			default:                      return false
 		}
 	}
 
-	var	           doneOps : ZOperationIDsArray { return [.oNone, .oDone, .oCompletion] }
-	var        mineOnlyOps : ZOperationIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
-	var          bothDBOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oManifest, .oRestoreIdeas, .oSaveCoreData, .oResolveMissing] }
-	var           localOps : ZOperationIDsArray { return [.oHere, .oRoots, .oReadFile, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartUp,
-														  .oFetchUserID, .oRestoreIdeas, .oSaveCoreData, .oUserPermissions, .oObserveUbiquity,
-														  .oFetchUserRecord, .oCheckAvailability] }
+	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oCompletion] }
+	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
+	var   bothDBOps : ZOpIDsArray { return [.oHere, .oRoots, .oLoadingFromFile, .oManifest, .oRestoreIdeas, .oSaveCoreData, .oResolveMissing] }
+	var    localOps : ZOpIDsArray { return [.oHere, .oRoots, .oLoadingFromFile, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartUp,
+											.oFetchUserID, .oRestoreIdeas, .oSaveCoreData, .oUserPermissions, .oObserveUbiquity,
+											.oFetchUserRecord, .oCheckAvailability] }
 
-	var forMineOnly      : Bool { return        mineOnlyOps.contains(self) }
-	var alwaysBoth       : Bool { return          bothDBOps.contains(self) }
-	var isLocal          : Bool { return           localOps.contains(self) }
-	var isDoneOp         : Bool { return            doneOps.contains(self) }
+	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }
+	var alwaysBoth  : Bool   { return   bothDBOps.contains(self) }
+	var isLocal     : Bool   { return    localOps.contains(self) }
+	var isDoneOp    : Bool   { return     doneOps.contains(self) }
 
-	var description : String { return "\(self)".substring(fromInclusive: 1).unCamelcased }
+	var countText   : String { let (z, p) = gRemoteStorage.totalRecordsCounts; return "\(z) of \(p)" }     // count of z records read from file
+	var description : String { return "\(self)".substring(fromInclusive: 1).unCamelcased }                // space separated words
+	var countStatus : String { return   (self != .oLoadingFromFile) ? "" : " \(countText)" }
+	var fullStatus  : String { return description + countStatus }
+
 }
 
 func gSetProgressTime(for op: ZOperationID) {
@@ -135,21 +138,17 @@ class ZOperations: NSObject {
 	var        opDuration :   TimeInterval  { return -(lastOpStart?.timeIntervalSinceNow ?? 0.0) }
 	var      shouldCancel :           Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && (opDuration > 5.0) }
 	var     debugTimeText :         String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
-	func printOp(_ message: String)         { columnarReport(mode: .dOps, operationText, message) }
+	func printOp(_ message: String = "")    { printDebug(.dOps, operationText + message) }
 	func unHang()                           { if gStartupLevel != .firstTime { onCloudResponse?(0) } }
 	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws                                  {} 
 	func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
     var operationText: String {
-//		let i = gBatches.currentDatabaseID?.identifier
-//		let d = i == nil ? "  " : i! + " "
-        var s = String(describing: currentOp)
-        s     = s.substring(fromInclusive: 1)
-        let c = s.substring(  toExclusive: 1).lowercased()
-        s     = s.substring(fromInclusive: 1)
+//		let d = gBatches.currentDatabaseID?.identifier ?? " " // requires an extra trailing space seperator
+		let o = currentOp.description
 
-        return c + s
-    }
+        return o
+	}
     
     var isConnectedToInternet: Bool {
         var flags = SCNetworkReachabilityFlags(rawValue: 0)
@@ -206,13 +205,13 @@ class ZOperations: NSObject {
 
 		if !gHasFinishedStartup {
 			signals.append(.sStartupStatus)         // show current op in splash view
-			printDebug(.dOps, operationText)        // print db and op ids
+			printOp()
 		}
 
 		gSignal(signals)
 	}
 
-    func setupAndRun(_ operationIDs: ZOperationIDsArray, onCompletion: @escaping Closure) {
+    func setupAndRun(_ operationIDs: ZOpIDsArray, onCompletion: @escaping Closure) {
         if  queue.operationCount > 30 {
             gAlerts.showAlert("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in
                 onCompletion()

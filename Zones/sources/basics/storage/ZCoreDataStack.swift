@@ -183,6 +183,8 @@ class ZCoreDataStack: NSObject {
 
 		dict?[recordName]     = object
 		fetchedRegistry[dbID] = dict
+
+		(object as? ZRecord)?.register() // for records read from file 
 	}
 
 	func missingFrom(_ dbID: ZDatabaseID) -> [String] {

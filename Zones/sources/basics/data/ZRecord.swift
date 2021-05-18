@@ -104,8 +104,9 @@ class ZRecord: ZManagedObject { // NSObject {
 	@discardableResult func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
 		var         v = visited ?? [String]()
 		var converted = [String]()
+		databaseID    = ZDatabaseID.convert(from: dbid)
 
-		if  let name = recordName {
+		if  let name  = recordName {
 			if  v.isEmpty || !v.contains(name) {
 				converted.appendUnique(item: name)
 				v        .appendUnique(item: name)
@@ -344,6 +345,8 @@ class ZRecord: ZManagedObject { // NSObject {
 
 	func extractFromStorageDictionary(_ dict: ZStorageDictionary, of entityName: String, into iDatabaseID: ZDatabaseID) throws {
 		try gThrowOnUserActivity()
+
+		FOREGROUND(forced: true) { gStartupController?.updateOperationStatus() }
 
 		// case 1: name is nil
 		// case 2: ck record already exists

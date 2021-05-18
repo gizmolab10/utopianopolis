@@ -19,15 +19,6 @@ enum InterfaceStyle : String {
     }
 }
 
-enum ZRootID: String {
-    case mapID       = "root"
-    case trashID     = "trash"
-    case destroyID   = "destroy"
-	case recentsID   = "recents"
-    case favoritesID = "favorites"
-    case lostID      = "lost and found"
-}
-
 enum ZCloudAccountStatus: Int {
     case none
     case begin
@@ -240,12 +231,12 @@ enum ZDatabaseID: String {
 		}
     }
 
-    static func convert(from indicator: String?) -> ZDatabaseID? {
-		guard indicator != nil else {
+    static func convert(from id: String?) -> ZDatabaseID? {
+		guard id != nil else {
 			return gDatabaseID
 		}
 
-		switch indicator {
+		switch id {
 			case "f": return .favoritesID
 			case "e": return .everyoneID
 			case "r": return .recentsID

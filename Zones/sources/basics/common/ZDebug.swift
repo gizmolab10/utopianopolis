@@ -13,9 +13,9 @@ import Foundation
 //     create zone, trait ONLY if from dict
 // NOT async: create bookmarks
 
-var      gDebugModes : ZDebugMode    = [.dReadFiles] // , .dWriteFiles]
-var      gPrintModes : ZPrintMode    = [.dOps, .dExist, .dFetch, .dAdopt]
-var    gCoreDataMode : ZCoreDataMode = [.dDisabled]
+var      gDebugModes : ZDebugMode    = [] // .dReadFiles, .dWriteFiles]
+var      gPrintModes : ZPrintMode    = [.dOps, .dAdopt]
+var    gCoreDataMode : ZCoreDataMode = [] // .dDisabled
 var     gUseCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var         gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gUseCoreData }
 var         gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gUseCoreData }

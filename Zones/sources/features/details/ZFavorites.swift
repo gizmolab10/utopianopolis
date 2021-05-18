@@ -96,6 +96,7 @@ class ZFavorites: ZSmallMapRecords {
 		// /////////////////////////////////////////////
 
 		if  let        bookmarks = rootZone?.allBookmarkProgeny {
+			let       rootsGroup = rootsGroupZone
 			var   hasDatabaseIDs = [ZDatabaseID] ()
 			var         discards = IndexPath()
 			var      testedSoFar = ZoneArray ()
@@ -176,33 +177,13 @@ class ZFavorites: ZSmallMapRecords {
 				}
 			}
 
-			// /////////////////////////////
-			// add missing root favorites //
-			// /////////////////////////////
-
-			var roots : Zone?
-
-			for zone in allProgeny {
-				if  zone.recordName == kRootsName {
-					roots = zone
-				}
-			}
-
-			if  roots == nil {
-				roots  = Zone.uniqueZone(recordName: kRootsName, in: .mineID)
-
-				gFavoritesRoot?.addChildAndRespectOrder(roots)
-			}
-
-			roots?.zoneName = kRootsName
-
 			for dbID in kAllDatabaseIDs {
 				if !hasDatabaseIDs.contains(dbID) {
 					let          name = dbID.rawValue
 					let      bookmark = Zone.uniqueZone(recordName: name + kFavoritesSuffix, in: .mineID)
 					bookmark.zoneLink = name + kColonSeparator + kColonSeparator
 
-					roots?.addChildAndReorder(bookmark)
+					rootsGroup.addChildAndReorder(bookmark)
 				}
 			}
 
@@ -210,7 +191,7 @@ class ZFavorites: ZSmallMapRecords {
 				let      bookmark = Zone.uniqueZone(recordName: named + kFavoritesSuffix, in: .mineID)
 				bookmark.zoneLink = kColonSeparator + kColonSeparator + named                           // convert into a bookmark
 
-				roots?.addChildAndReorder(bookmark)
+				rootsGroup.addChildAndReorder(bookmark)
 			}
 
 			// //////////////////////////////////////////////
@@ -233,6 +214,34 @@ class ZFavorites: ZSmallMapRecords {
 		}
 
 		return result
+	}
+
+	var rootsGroupZone: Zone {
+
+		var rootsGroup : Zone?
+
+		for zone in allProgeny {
+			if  zone.recordName == kRootsName {
+				rootsGroup = zone
+			}
+		}
+
+		if  rootsGroup == nil {
+			rootsGroup  = Zone.uniqueZone(recordName: kRootsName, in: .mineID)
+
+			// /////////////////////////
+			// add missing root group //
+			// /////////////////////////
+
+			gFavoritesRoot?.addChildAndRespectOrder(rootsGroup)
+		}
+
+		rootsGroup?    .zoneName = kRootsName
+		rootsGroup?.directAccess = .eReadOnly
+
+		rootsGroup?.alterAttribute(.groupOwner, remove: false)
+
+		return rootsGroup!
 	}
 
     // MARK:- toggle

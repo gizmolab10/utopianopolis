@@ -81,12 +81,19 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		pleaseWait?      .isHidden =  hasInternet && notWait                             // .firstTime hides this
 	}
 
+	func updateOperationStatus() {
+		operationLabel?        .text = gCurrentOp.fullStatus
+		operationLabel?.needsDisplay = true
+
+		gApplication.setWindowsNeedUpdate(true)
+		gApplication.updateWindows()
+	}
+
 	func updateThermometerBar() {
 		if !gHasFinishedStartup {
+			updateOperationStatus()
 			thermometerBar?.update()
 
-			operationLabel?                  .text = gCurrentOp.description
-			operationLabel?          .needsDisplay = true
 			thermometerBar?          .needsDisplay = true
 			gMainWindow?.contentView?.needsDisplay = true
 			view                     .needsDisplay = true

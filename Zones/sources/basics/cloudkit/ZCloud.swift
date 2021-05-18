@@ -161,10 +161,19 @@ class ZCloud: ZRecords {
 		gRecents.push()
 		onCompletion?(0)
     }
-    
+
+	enum ZRootID: String {
+		case rootID      = "root"
+		case trashID     = "trash"
+		case destroyID   = "destroy"
+		case recentsID   = "recents"
+		case favoritesID = "favorites"
+		case lostID      = "lost and found"
+	}
+
     func establishRoots(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
 		var createFor: IntClosure?     // pre-declare so can recursively call from within it
-		var   rootIDs: [ZRootID] = [.mapID, .trashID, .lostID, .destroyID]
+		var   rootIDs: [ZRootID] = [.rootID, .trashID, .lostID, .destroyID]
 
 		if  databaseID == .mineID {
 			rootIDs.append(contentsOf: [.favoritesID, .recentsID])
@@ -183,7 +192,7 @@ class ZCloud: ZRecords {
                 switch rootID {
 				case .favoritesID: if self.favoritesZone    != nil || !isMine { recurseNext(); return } else { name = kFavoritesRootName }
 				case .recentsID:   if self.recentsZone      != nil || !isMine { recurseNext(); return } else { name = kRecentsRootName }
-                case .mapID:       if self.rootZone         != nil            { recurseNext(); return } else { name = kFirstIdeaTitle }
+                case .rootID:      if self.rootZone         != nil            { recurseNext(); return } else { name = kFirstIdeaTitle }
                 case .lostID:      if self.lostAndFoundZone != nil            { recurseNext(); return }
                 case .trashID:     if self.trashZone        != nil            { recurseNext(); return }
                 case .destroyID:   if self.destroyZone      != nil            { recurseNext(); return }
@@ -191,7 +200,7 @@ class ZCloud: ZRecords {
 
 				let root = Zone.uniqueZoneNamed(name, recordName: recordName, databaseID: self.databaseID)
 
-				if  rootID != .mapID {
+				if  rootID != .rootID {
 					root.directAccess = .eProgenyWritable
 				}
 
@@ -201,7 +210,7 @@ class ZCloud: ZRecords {
 					case .destroyID:   self.destroyZone      = root
 					case .trashID:     self.trashZone        = root
 					case .lostID:      self.lostAndFoundZone = root
-					case .mapID:       self.rootZone         = root
+					case .rootID:      self.rootZone         = root
 				}
 
 				recurseNext()

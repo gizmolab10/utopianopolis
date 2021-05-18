@@ -48,6 +48,7 @@ class ZRecords: NSObject {
 	var         destroyZone : Zone?
     var           trashZone : Zone?
     var            rootZone : Zone?
+	var               count : Int       { return 0 }
     var         hereIsValid : Bool      { return maybeZoneForRecordName(hereRecordName) != nil }
 	var          allProgeny : ZoneArray { return rootZone?.all ?? [] }
 
@@ -82,6 +83,16 @@ class ZRecords: NSObject {
 		}
 
 		return array
+	}
+
+	var zoneCount : Int {
+		var count = 0
+
+		applyToAllZones { zone in
+			count += 1
+		}
+
+		return count
 	}
 
 	var orphanCount : Int {

@@ -29,7 +29,7 @@ typealias        ZStoryboardSegue = NSStoryboardSegue
 typealias       CKReferencesArray = [CKReference]
 typealias       ZAssetsDictionary = [UUID : CKAsset]
 typealias       ZTinyDotTypeArray = [[ZTinyDotType]]
-typealias      ZOperationIDsArray = [ZOperationID]
+typealias      ZOpIDsArray = [ZOperationID]
 typealias      ZStorageDictionary = [ZStorageType : NSObject]
 typealias   ZAttributesDictionary = [NSAttributedString.Key : Any]
 typealias ZStringObjectDictionary = [String : NSObject]
@@ -2057,7 +2057,7 @@ extension String {
 		} ?? ""
 	}
 
-    static func forOperationIDs (_ iIDs: ZOperationIDsArray?) -> String {
+    static func forOperationIDs (_ iIDs: ZOpIDsArray?) -> String {
         return iIDs?.applyIntoString()  { object -> (String?) in
             if  let operation  = object as? ZOperationID {
                 let name  = "\(operation)"

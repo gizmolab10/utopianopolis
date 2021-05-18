@@ -29,7 +29,7 @@ class ZRemoteStorage: NSObject {
     var   currentRecords : ZRecords    { return zRecords(for: gDatabaseID)! }
     var     currentCloud : ZCloud?     { return cloud   (for: gDatabaseID) }
     var rootProgenyCount : Int         { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
-    var         manifest : ZManifest?  { return currentRecords.manifest }
+	var         manifest : ZManifest?  { return currentRecords.manifest }
     var lostAndFoundZone : Zone?       { return currentRecords.lostAndFoundZone }
     var      destroyZone : Zone?       { return currentRecords.destroyZone }
     var        trashZone : Zone?       { return currentRecords.trashZone }
@@ -45,14 +45,27 @@ class ZRemoteStorage: NSObject {
 		return total
 	}
 
-	var totalRecordsCount: Int {
-		var total = 0
-
-		for cloud in allClouds {
-			total += cloud.recordCount
+	var count: Int {
+		var sum = 0
+		for dbID in kAllDatabaseIDs {
+			if let cloud = cloud(for: dbID) {
+				sum += cloud.zRecordsLookup.count
+			}
 		}
 
-		return total
+		return sum
+	}
+
+	var totalRecordsCounts: (Int, Int) {
+		var zCount = 0
+		var pCount = 0
+
+		for cloud in allClouds {
+			zCount += cloud.zoneCount
+			pCount += cloud.rootZone?.progenyCount ?? 0
+		}
+
+		return (zCount, pCount)
 	}
 
     var allClouds: [ZCloud] {

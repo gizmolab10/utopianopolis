@@ -59,9 +59,9 @@ class ZBatches: ZOnboarding {
     class ZBatch: NSObject {
         var       completions : [ZBatchCompletion]
         var        identifier :  ZBatchID
-        var allowedOperations :  ZOperationIDsArray { return gHasInternet ? operations : localBatchOperations }
+        var allowedOperations :  ZOpIDsArray { return gHasInternet ? operations : localBatchOperations }
 
-        var operations: ZOperationIDsArray {
+        var operations: ZOpIDsArray {
 			switch identifier {
 				case .bResumeCloud: return [              .oMigrateFromCloud           ]
 				case .bSync:        return [              .oSaveCoreData               ]
@@ -69,13 +69,13 @@ class ZBatches: ZOnboarding {
 				case .bRoot:        return [.oRoots,      .oManifest                   ]
 				case .bFocus:       return [.oRoots                    ,               ]
 				case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oDone)
-				case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oDone, skipping: [.oReadFile])
+				case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oDone, skipping: [.oLoadingFromFile])
 				case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
 			}
         }
 
-        var localBatchOperations : ZOperationIDsArray {
-            var ids = ZOperationIDsArray ()
+        var localBatchOperations : ZOpIDsArray {
+            var ids = ZOpIDsArray ()
 
             for operation in operations {
                 if  operation.isLocal {
@@ -97,8 +97,8 @@ class ZBatches: ZOnboarding {
             }
         }
 
-        func operationIDs(from: ZOperationID, to: ZOperationID, skipping: ZOperationIDsArray = []) -> ZOperationIDsArray {
-            var operationIDs = ZOperationIDsArray ()
+        func operationIDs(from: ZOperationID, to: ZOperationID, skipping: ZOpIDsArray = []) -> ZOpIDsArray {
+            var operationIDs = ZOpIDsArray ()
 
             for value in from.rawValue...to.rawValue {
                 var add = true
@@ -306,7 +306,7 @@ class ZBatches: ZOnboarding {
 			case .oRecents:                                                                          gRecents.setup(cloudCallback)
 			case .oSaveCoreData: gSaveContext   ();                                                                 cloudCallback?(0)
 			case .oRestoreIdeas: gLoadContext   (into: currentDatabaseID,                             onCompletion: cloudCallback)
-			case .oReadFile: try gFiles.readFile(into: currentDatabaseID!,                            onCompletion: cloudCallback)
+			case .oLoadingFromFile: try gFiles.readFile(into: currentDatabaseID!,                     onCompletion: cloudCallback)
 			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
 		}
     }
