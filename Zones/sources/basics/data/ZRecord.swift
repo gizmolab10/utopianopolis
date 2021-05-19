@@ -125,6 +125,10 @@ class ZRecord: ZManagedObject { // NSObject {
 		let        zRecord = uniqueObject(entityName: entityName, recordName: recordName, in: dbID) as! ZRecord
 		zRecord.recordName = recordName ?? gUniqueRecordName
 
+		if  entityName    != kUserType {
+			zRecord  .dbid = dbID.identifier
+		}
+
 		return zRecord
 	}
 

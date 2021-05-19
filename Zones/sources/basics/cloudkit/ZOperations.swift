@@ -75,6 +75,7 @@ enum ZOperationID: Int, CaseIterable {
 	}
 
 	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oCompletion] }
+	var    countOps : ZOpIDsArray { return [.oLoadingFromFile, .oRestoreIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
 	var   bothDBOps : ZOpIDsArray { return [.oHere, .oRoots, .oLoadingFromFile, .oManifest, .oRestoreIdeas, .oSaveCoreData, .oResolveMissing] }
 	var    localOps : ZOpIDsArray { return [.oHere, .oRoots, .oLoadingFromFile, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartUp,
@@ -85,11 +86,16 @@ enum ZOperationID: Int, CaseIterable {
 	var alwaysBoth  : Bool   { return   bothDBOps.contains(self) }
 	var isLocal     : Bool   { return    localOps.contains(self) }
 	var isDoneOp    : Bool   { return     doneOps.contains(self) }
-
-	var countText   : String { let (z, p) = gRemoteStorage.totalRecordsCounts; return "\(z) of \(p)" }     // count of z records read from file
+	var showCount   : Bool   { return    countOps.contains(self) }
 	var description : String { return "\(self)".substring(fromInclusive: 1).unCamelcased }                // space separated words
-	var countStatus : String { return   (self != .oLoadingFromFile) ? "" : " \(countText)" }
+	var countStatus : String { return !showCount ? "" : " \(countText)" }
 	var fullStatus  : String { return description + countStatus }
+
+	var countText : String {
+		let (z, p) = gRemoteStorage.totalRecordsCounts     // count of z records
+		let suffix = p == 0 ? "" :  "of \(p)"
+		return "\(z)" + suffix
+	}
 
 }
 

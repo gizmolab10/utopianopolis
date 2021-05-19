@@ -230,15 +230,16 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func find(type: String, recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true, trackMissing: Bool = true) -> [ZManagedObject] {
-		if  let     object = lookup(recordName: recordName, into: dbID) {
+		let           dbid = dbID == .everyoneID ? dbID : .mineID
+		if  let     object = lookup(recordName: recordName, into: dbid) {
 			return [object]
 		}
 
-		if  trackMissing, missingFrom(dbID).contains(recordName) {
+		if  trackMissing, missingFrom(dbid).contains(recordName) {
 			return []
 		}
 
-		return fetch(type: type, with: recordName, into: dbID, onlyOne: onlyOne)
+		return fetch(type: type, with: recordName, into: dbid, onlyOne: onlyOne)
 	}
 
 	func predicateFor(_ recordName: String, type: String, dbid: String) -> NSPredicate {

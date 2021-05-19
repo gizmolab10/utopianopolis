@@ -8,12 +8,16 @@
 
 import Foundation
 
-func gHereZoneForIDMaybe(_ dbID: ZDatabaseID) -> Zone? {
-	Zone.uniqueZone(recordName: gRemoteStorage.cloud(for: dbID)?.hereRecordName, in: .mineID)
+func gSetHereZoneForID(here: Zone?, _ dbID: ZDatabaseID) {
+	gRemoteStorage.cloud(for: dbID)?.hereZoneMaybe = here
 }
 
-func gSetHereZoneForID(here: Zone?, _ dbID: ZDatabaseID) {
-	gRemoteStorage.cloud(for:  .favoritesID)?.hereZoneMaybe = here
+func gHereZoneForIDMaybe(_ dbID: ZDatabaseID) -> Zone? {
+	if  let    cloud = gRemoteStorage.cloud(for: dbID) {
+		return cloud.maybeZoneForRecordName(cloud.hereRecordName, trackMissing: false)
+	}
+
+	return nil
 }
 
 // working zones depends on if we are in essay editing mode

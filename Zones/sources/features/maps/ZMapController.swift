@@ -30,7 +30,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 	var          priorScrollLocation = CGPoint.zero
 	let 	            clickManager = ZClickManager()
-	let                      mapRoot = ZoneWidget   ()
+	let                   rootWidget = ZoneWidget   ()
 
 	class ZClickManager : NSObject {
 
@@ -60,7 +60,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		super.setup()
 		platformSetup()
-        mapView?.addSubview(mapRoot)
+        mapView?.addSubview(rootWidget)
 
 		if  isBigMap {
 			mapView?.updateTrackingAreas()
@@ -82,7 +82,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     #if false
 
 	private func updateMinZoomScaleForSize(_ size: CGSize) {
-        let           w = mapRoot
+        let           w = rootWidget
         let heightScale = size.height / w.bounds.height
         let  widthScale = size.width  / w.bounds.width
         let    minScale = min(widthScale, heightScale)
@@ -119,9 +119,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		let offset = isExemplar ? .zero : isBigMap ? gScrollOffset : CGPoint(x: -12.0, y: -6.0)
 
 		if  let d = mapView {
-			mapRoot.snp.setLabel("<w> \(mapRoot.widgetZone?.zoneName ?? "unknown")")
-			mapRoot.snp.removeConstraints()
-			mapRoot.snp.makeConstraints { make in
+			rootWidget.snp.setLabel("<w> \(rootWidget.widgetZone?.zoneName ?? "unknown")")
+			rootWidget.snp.removeConstraints()
+			rootWidget.snp.makeConstraints { make in
 				make.centerY.equalTo(d).offset(offset.y)
 				make.centerX.equalTo(d).offset(offset.x)
 
@@ -142,24 +142,23 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func layoutWidgets(for iZone: Any?, _ iKind: ZSignalKind) {
         if  doNotLayout { return }
 
-		let                        here = hereZone
-        var specificWidget: ZoneWidget? = mapRoot
-        var specificView:        ZView? = mapView
-        var specificIndex:         Int?
-        var                   recursing = true
-        specificWidget?     .widgetZone = here
-		gTextCapturing                  = false
-
-        if  let       zone = iZone as? Zone,
-            let     widget = zone.widget,
-			widget.type   == zone.widgetType {
-            specificWidget = widget
-            specificIndex  = zone.siblingIndex
-            specificView   = specificWidget?.superview
-            recursing      = [.sData, .sRelayout].contains(iKind)
+		var specificIndex:   Int?
+        var specificView:  ZView? = mapView
+		var specificWidget        = rootWidget
+        var             recursing = true
+		let                  here = hereZone
+        specificWidget.widgetZone = here
+		gTextCapturing            = false
+        if  let              zone = iZone as? Zone,
+            let            widget = zone.widget,
+			widget.type          == zone.widgetType {
+            specificWidget        = widget
+            specificIndex         = zone.siblingIndex
+            specificView          = specificWidget.superview
+            recursing             = [.sData, .sRelayout].contains(iKind)
         }
 
-		let total = specificWidget?.layoutInView(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, iKind, visited: []) ?? 0
+		let total = specificWidget.layoutInView(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, iKind, visited: [])
 
 		printDebug(.dWidget, "layout \(widgetType.description): \(total)")
     }
@@ -182,7 +181,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
 
 		if  kIsPhone {
-			mapRoot.isHidden = gShowSmallMapForIOS
+			rootWidget.isHidden = gShowSmallMapForIOS
 		}
 	}
 	
@@ -451,13 +450,13 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		if  let     gView = gesture?.view,
 			let    gPoint = gesture?.location(in: gView),
 			let  location = mapView?.convert(gPoint, from: gView),
-			let    widget = mapRoot.widgetNearestTo(location, in: mapView, hereZone) {
+			let    widget = rootWidget.widgetNearestTo(location, in: mapView, hereZone) {
 			let alternate = isBigMap ? gSmallMapController : gMapController
 
 			if  !kIsPhone,
 				let alternatemapView   = alternate?.mapView,
 				let alternateLocation  = mapView?.convert(location, to: alternatemapView),
-				let alternateWidget    = alternate?.mapRoot.widgetNearestTo(alternateLocation, in: alternatemapView, alternate?.hereZone) {
+				let alternateWidget    = alternate?.rootWidget.widgetNearestTo(alternateLocation, in: alternatemapView, alternate?.hereZone) {
 				let           dragDotW =          widget.dragDot
                 let           dragDotA = alternateWidget.dragDot
                 let            vectorW = dragDotW.convert(dragDotW.bounds.center, to: view) - location
@@ -501,7 +500,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         gDragRelation    = nil
         gDragPoint       = nil
 
-        mapRoot.setNeedsDisplay()
+        rootWidget.setNeedsDisplay()
 		mapView?  .setNeedsDisplay()
 		dot?      .setNeedsDisplay()
 		gDragView?.setNeedsDisplay() // erase drag: line and dot

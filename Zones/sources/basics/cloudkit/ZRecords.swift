@@ -910,12 +910,12 @@ class ZRecords: NSObject {
 	// MARK:- lookups
     // MARK:-
 
-	func     maybeZoneForRecordName (_ iRecordName:    String?) ->     Zone? { return maybeZRecordForRecordName (iRecordName) as? Zone }
-	func    maybeZRecordForRecordID (_ iRecordID:  CKRecordID?) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName) }
+	func     maybeZoneForRecordName (_ iRecordName:   String?, trackMissing: Bool = true) ->     Zone? { return maybeZRecordForRecordName (iRecordName, trackMissing: trackMissing) as? Zone }
+	func    maybeZRecordForRecordID (_ iRecordID: CKRecordID?, trackMissing: Bool = true) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName, trackMissing: trackMissing) }
 
-	func maybeZRecordForRecordName (_ recordName: String?) -> ZRecord? {
+	func maybeZRecordForRecordName (_ recordName: String?, trackMissing: Bool = true) -> ZRecord? {
 		if  let r = recordName {
-			let found = gCoreDataStack.find(type: kZoneType, recordName: r, into: databaseID)
+			let found = gCoreDataStack.find(type: kZoneType, recordName: r, into: databaseID, trackMissing: trackMissing)
 			if  found.count > 0 {
 				return found[0] as? ZRecord
 			}
