@@ -101,7 +101,7 @@ class ZRecord: ZManagedObject { // NSObject {
 		}
 	}
 
-	@discardableResult func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
+	@discardableResult func convertFromCoreData(visited: [String]?) -> [String] {
 		var         v = visited ?? [String]()
 		var converted = [String]()
 		databaseID    = ZDatabaseID.convert(from: dbid)

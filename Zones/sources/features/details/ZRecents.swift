@@ -96,32 +96,42 @@ class ZRecents : ZSmallMapRecords {
 			gRecents.push()
 		}
 
-		let   maxIndex = working.count - 1
-		let     bottom = working[maxIndex]
-		let        top = working[0]
+		let                w = working
+		let         maxIndex = w.count - 1
+		let           bottom = w[maxIndex]
+		let              top = w[0]
 
 		if  down {                         // move top to bottom
-			if  let parent = top.parentZone {
-				let    end = parent.count
+			if  let   parent = top.parentZone {
+				let      end = parent.count
 
 				parent.moveChildIndex(from: 0, to: end)
 			}
 		} else {
-			if  let parent = bottom.parentZone,
-				let    end = bottom.siblingIndex {
+			if  let   parent = bottom.parentZone,
+				let      end = bottom.siblingIndex {
 
 				parent.moveChildIndex(from: end, to: 0)
 			}
 		}
 
-		if  let t = working[0].bookmarkTarget {
-			gHere = t
+		if  let t       = working[0].bookmarkTarget {
+			if  t.root == nil { // detect orphan
+				let   w = working[0]
+				w.deleteSelf {
+					self.go(down: down)
+				}
 
-			t.grab()
+				return
+			} else {
+				gHere = t
 
-			if  gIsEssayMode,
-				let note = t.note {
-				gEssayView?.resetCurrentEssay(note)
+				t.grab()
+
+				if  gIsEssayMode,
+					let note = t.note {
+					gEssayView?.resetCurrentEssay(note)
+				}
 			}
 		}
 

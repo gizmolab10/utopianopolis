@@ -8,8 +8,8 @@
 
 import Foundation
 
-func gLoadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
-func gSaveContext()                                                         { gCoreDataStack.saveContext() }
+func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
+func gSaveContext()                                                        { gCoreDataStack.saveContext() }
 let  gCoreDataStack  = ZCoreDataStack()
 var  gCoreDataIsBusy : Bool  { return gCoreDataStack.currentOpID != nil }
 let  gCoreDataURL    : URL = { return gFilesURL.appendingPathComponent("data") }()
@@ -287,7 +287,7 @@ class ZCoreDataStack: NSObject {
 		invokeUsingDatabaseID(dbID) {
 			for object in objects {
 				if let zRecord = object as? ZRecord {
-					zRecord.convertFromCoreData(into: type, visited: [])
+					zRecord.convertFromCoreData(visited: [])
 					zRecord.register()
 				}
 			}
@@ -299,13 +299,14 @@ class ZCoreDataStack: NSObject {
 	// MARK:- load
 	// MARK:-
 
-	func loadContext(into dbID: ZDatabaseID?, onCompletion: AnyClosure?) {
-		if  let dbid = dbID?.identifier, gCanLoad {
+	func loadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure?) {
+		if  gCanLoad {
 			deferUntilAvailable(for: .oLoad) {
-				var names = [kDestroyName, kLostAndFoundName, kTrashName, kRootName]
+				let  dbid = dbID.identifier
+				var names = [kRootName, kTrashName, kDestroyName, kLostAndFoundName]
 
 				if  dbID == .mineID {
-					names.insert(contentsOf: [kRecentsRootName, kFavoritesRootName], at: 0)
+					names.insert(contentsOf: [kRecentsRootName, kFavoritesRootName], at: 1)
 				}
 
 				func loadType(_ type: String, onlyNeed: Int? = nil, whenAllAreLoaded: @escaping Closure) {
@@ -337,9 +338,9 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func loadZone(with recordName: String, into dbID: ZDatabaseID?, onCompletion: Closure? = nil) {
+	func loadZone(with recordName: String, into dbID: ZDatabaseID, onCompletion: Closure? = nil) {
 		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-		request.predicate = NSPredicate(format: "recordName = %@", recordName)
+		request.predicate = NSPredicate(format: "recordName = %@ and dbid = %@", recordName, dbID.identifier)
 		let      zRecords = gRemoteStorage.zRecords(for: dbID)
 
 		load(type: kZoneType, into: dbID, onlyNeed: 1, using: request) { (zRecord) -> (Void) in
@@ -370,22 +371,22 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func load(type: String, into dbID: ZDatabaseID?, onlyNeed: Int? = nil, using request: NSFetchRequest<NSFetchRequestResult>, onCompletion: ZRecordClosure? = nil) {
+	func load(type: String, into dbID: ZDatabaseID, onlyNeed: Int? = nil, using request: NSFetchRequest<NSFetchRequestResult>, onCompletion: ZRecordClosure? = nil) {
 		do {
 			let items        = try managedContext.fetch(request)
 			if  items.count == 0 {
 				onCompletion?(nil)
 			} else {
-				var            count   = onlyNeed ?? items.count
+				let       identifier  = dbID.identifier
+				var            count  = onlyNeed ?? items.count
 				for item in items {
-					let      zRecord   = item as! ZRecord
-					if  let     dbid   = dbID?.identifier,
-						zRecord.dbid  == dbid {
-						count         -= 1
+					let      zRecord  = item as! ZRecord
+					if  zRecord.dbid == identifier {
+						count        -= 1
 
 						FOREGROUND(canBeDirect: true) {
 							self.invokeUsingDatabaseID(dbID) {
-								zRecord.convertFromCoreData(into: type, visited: [])
+								zRecord.convertFromCoreData(visited: [])
 								zRecord.register()
 								onCompletion?(zRecord)
 							}
@@ -410,9 +411,9 @@ class ZCoreDataStack: NSObject {
 	// MARK:- missing
 	// MARK:-
 
-	func loadAllProgeny(for dbID: ZDatabaseID?, onCompletion: Closure? = nil) {
+	func loadAllProgeny(for dbID: ZDatabaseID, onCompletion: Closure? = nil) {
 		if  gCanLoad,
-			let  records = gRemoteStorage.zRecords(for: dbID!) {
+			let  records = gRemoteStorage.zRecords(for: dbID) {
 			deferUntilAvailable(for: .oProgeny) {
 				let    zones = records.allZones
 				var acquired = [String]()
@@ -455,7 +456,7 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func loadTraits(ownedBy zones: ZoneArray, into dbID: ZDatabaseID?, onCompletion: Closure? = nil) {
+	func loadTraits(ownedBy zones: ZoneArray, into dbID: ZDatabaseID, onCompletion: Closure? = nil) {
 		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kTraitType)
 		let   recordNames = zones.recordNames
 		request.predicate = NSPredicate(format: "ownerRID IN %@", recordNames)
@@ -469,7 +470,7 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func loadChildren(of zones: ZoneArray, into dbID: ZDatabaseID?, _ acquired: [String], onCompletion: ZonesClosure? = nil) {
+	func loadChildren(of zones: ZoneArray, into dbID: ZDatabaseID, _ acquired: [String], onCompletion: ZonesClosure? = nil) {
 		var     retrieved = ZoneArray()
 		var  totalAquired = acquired
 		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
@@ -826,13 +827,13 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func removeAllDuplicateZones(in dbID: ZDatabaseID?) {
-		if  let          dbid = dbID?.identifier {
-			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-			request.predicate = NSPredicate(format: "dbid = %@", dbid)
+	func removeAllDuplicateZones(in dbID: ZDatabaseID) {
+		let          dbid = dbID.identifier
+		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
+		request.predicate = NSPredicate(format: "dbid = %@", dbid)
 
-			load(type: kZoneType, into: dbID, using: request) { zRecord in }
-		}
+		load(type: kZoneType, into: dbID, using: request) { zRecord in }
+
 	}
 
 	func removeAllDuplicates(of zRecord: ZRecord) {

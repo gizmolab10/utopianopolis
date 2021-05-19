@@ -792,10 +792,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- core data
 	// MARK:-
 
-	@discardableResult override func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
+	@discardableResult override func convertFromCoreData(visited: [String]?) -> [String] {
 		alterAttribute(ZoneAttributeType.validCoreData)
 		updateFromCoreDataTraitRelationships()
-		return super.convertFromCoreData(into: type, visited: visited)
+		return super.convertFromCoreData(visited: visited)
 	}
 
 	override func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] {
@@ -810,7 +810,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let childArray = ZoneArray(set: set)
 
 			for child in childArray {
-				let c = child.convertFromCoreData(into: kZoneType, visited: v)
+				let c = child.convertFromCoreData(visited: v)
 
 				if  child.dbid != dbid {
 					noop()
@@ -841,7 +841,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let traitArray = ZTraitArray(set: set)
 
 			for trait in traitArray {
-				trait.convertFromCoreData(into: kTraitType, visited: [])
+				trait.convertFromCoreData(visited: [])
 
 				if  trait.dbid != dbid {
 					noop()

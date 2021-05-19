@@ -16,7 +16,6 @@ enum ZOperationID: Int, CaseIterable {
     // start up / onboard
 
     case oStartUp            // NB: order here is order of operations (except miscellaneous)
-	case oRestoreIdeas       // LOCAL
 	case oUserPermissions
     case oMacAddress
     case oObserveUbiquity
@@ -28,6 +27,7 @@ enum ZOperationID: Int, CaseIterable {
     // continue
 
 	case oRoots
+	case oRestoreIdeas       // LOCAL
 	case oManifest
 	case oLoadingFromFile    // LOCAL
     case oHere
@@ -93,7 +93,7 @@ enum ZOperationID: Int, CaseIterable {
 
 	var countText : String {
 		let (z, p) = gRemoteStorage.totalRecordsCounts     // count of z records
-		let suffix = p == 0 ? "" :  "of \(p)"
+		let suffix = p == 0 ? "" :  " of \(p)"
 		return "\(z)" + suffix
 	}
 
