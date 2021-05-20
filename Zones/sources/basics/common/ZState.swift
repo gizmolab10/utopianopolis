@@ -109,7 +109,7 @@ let            kLargeBoldFont                     = ZFont  .boldSystemFont(ofSiz
 let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
 let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
-let              gScratchZone                     = Zone.uniqueZoneNamed(kScratchRootName, recordName: kScratchRootName, databaseID: .mineID)
+let              gScratchZone                     = Zone.uniqueZoneMaybeRenamed(kScratchRootName, recordName: kScratchRootName, databaseID: .mineID)
 
 func gSwapSmallMapMode(_ OPTION: Bool = false) {
 	if  let c = gDetailsController {

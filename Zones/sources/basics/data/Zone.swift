@@ -122,7 +122,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                   toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
 	func                     recount()                        { updateAllProgenyCounts() }
 	func              createBookmark() ->               Zone  { return gBookmarks.createBookmark(targeting: self) }
-	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
+	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.uniqueZoneMaybeRenamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
 	var zonesWithNotes : ZoneArray {
@@ -356,7 +356,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func deepCopy(dbID: ZDatabaseID?) -> Zone {
 		let      id = dbID ?? databaseID ?? .mineID
-		let theCopy = Zone.uniqueZoneNamed("noname", databaseID: id)
+		let theCopy = Zone.uniqueZoneMaybeRenamed("noname", databaseID: id)
 
 		copyInto(theCopy)
 		gBookmarks.addToReverseLookup(theCopy)   // only works for bookmarks
@@ -1131,7 +1131,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
 		if  let    dbID = databaseID,
 			dbID       != .favoritesID {
-			let newIdea = Zone.uniqueZoneNamed(name, databaseID: dbID)
+			let newIdea = Zone.uniqueZoneMaybeRenamed(name, databaseID: dbID)
 
 			parentZoneMaybe?.expand()
 			gTextEditor.stopCurrentEdit()
@@ -3447,9 +3447,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return created
 	}
 
-	static func uniqueZoneNamed(_ named: String?, recordName: String? = nil, databaseID: ZDatabaseID) -> Zone {
-		let      created = uniqueZone(recordName: recordName, in: databaseID)
-		created.zoneName = named
+	static func uniqueZoneMaybeRenamed(_ named: String?, recordName: String? = nil, databaseID: ZDatabaseID) -> Zone {
+		let created           = uniqueZone(recordName: recordName, in: databaseID)
+		if  created.zoneName == nil || created.zoneName!.isEmpty {
+			created.zoneName  = named
+		}
 
 		return created
 	}
