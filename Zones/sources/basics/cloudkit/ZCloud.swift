@@ -149,8 +149,8 @@ class ZCloud: ZRecords {
 	}
 
 	func establishManifest(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
-		manifest = ZManifest.uniqueManifest(recordName: kManifestType, in: databaseID)
-		manifest?.apply()
+		manifest = ZManifest.uniqueManifest(recordName: kManifestRootName, in: databaseID)
+		manifest?.applyDeleted()
 		onCompletion?(op)
 	}
 

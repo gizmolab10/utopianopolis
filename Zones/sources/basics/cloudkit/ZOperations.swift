@@ -78,9 +78,8 @@ enum ZOperationID: Int, CaseIterable {
 	var    countOps : ZOpIDsArray { return [.oLoadingFromFile, .oRestoreIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
 	var   bothDBOps : ZOpIDsArray { return [.oHere, .oRoots, .oLoadingFromFile, .oManifest, .oRestoreIdeas, .oSaveCoreData, .oResolveMissing] }
-	var    localOps : ZOpIDsArray { return [.oHere, .oRoots, .oLoadingFromFile, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartUp,
-											.oFetchUserID, .oRestoreIdeas, .oSaveCoreData, .oUserPermissions, .oObserveUbiquity,
-											.oFetchUserRecord, .oCheckAvailability] }
+	var    localOps : ZOpIDsArray { return [.oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
+											.oFetchUserRecord, .oCheckAvailability] + bothDBOps }
 
 	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }
 	var alwaysBoth  : Bool   { return   bothDBOps.contains(self) }

@@ -62,7 +62,7 @@ class ZRemoteStorage: NSObject {
 
 		for cloud in allClouds {
 			zCount += cloud.zoneCount
-			pCount += cloud.rootZone?.progenyCount ?? 0
+			pCount += cloud.manifest?.count?.intValue ?? 0
 		}
 
 		return (zCount, pCount)
@@ -95,6 +95,13 @@ class ZRemoteStorage: NSObject {
     func cloud(for dbID: ZDatabaseID) -> ZCloud? { return zRecords(for: dbID) as? ZCloud }
     func clear()                                 { records =       [ZDatabaseID : ZCloud] () }
 	func cancel()                                { currentCloud?.currentOperation?.cancel() }
+
+	func updateManifestCount(for  dbID: ZDatabaseID) {
+		if  let r = zRecords(for: dbID) {
+		    let c = r.zoneCount
+			r.manifest?.count = NSNumber(value: c)
+		}
+	}
 
 	func removeAllDuplicates() {
 		for records in allRecordsArrays {

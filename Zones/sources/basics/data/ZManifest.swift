@@ -25,10 +25,11 @@ class ZManifest : ZRecord {
     }
 
 	var zDeleted = [ZDeleted]()
-    @NSManaged var deletedRecordNames: [String]?
+	@NSManaged var count: NSNumber?
+	@NSManaged var deletedRecordNames: [String]?
 	override var cloudProperties: [String] { return ZManifest.cloudProperties }
-	override class var cloudProperties: [String] { return super.cloudProperties + [#keyPath(deletedRecordNames)] }
-	override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deletedRecordNames)] }
+	override class var cloudProperties: [String] { return super.cloudProperties + [#keyPath(deletedRecordNames), #keyPath(count)] }
+//	override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deletedRecordNames)] }
 
     var updatedRefs: [String]? {
         if  let d = deletedRecordNames {                 // FIRST: merge deleted into zDeleted
@@ -54,7 +55,7 @@ class ZManifest : ZRecord {
         return deletedRecordNames
     }
 
-    func apply() {
+    func applyDeleted() {
         for deleteMe in zDeleted {
             if  let      name = deleteMe.name {
                 let   records = gRemoteStorage.cloud(for: databaseID)
