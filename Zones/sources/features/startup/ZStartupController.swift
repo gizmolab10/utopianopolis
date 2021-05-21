@@ -30,10 +30,13 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		super.awakeFromNib()
 		buttonsView?.setupAndRedraw()
 
+		gMainController?.helpButton?.isHidden = true
+		buttonsView?                .isHidden = true // stupid thing doesn't respond to clicks
+		thermometerBar?             .isHidden = true // stupid thing doesn't advance until end of event cycle
 		enableCloudLabel?.text = enableCloudDriveText
 		accessIDLabel?   .text = appleIDText
 		loadingLabel?    .text = loadingText
-		helpLabel?       .text = helpText
+//		helpLabel?       .text = helpText
 
 		if  gNewUser ||
 			gStartupLevel == .localOkay {
@@ -48,7 +51,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		switch iKind {
-			case .sStartupButtons:  buttonsView?.updateAndRedraw()
+//			case .sStartupButtons:  buttonsView?.updateAndRedraw()
 			case .sStartupStatus: updateThermometerBar(); updateSubviewVisibility()
 			default: break
 		}
@@ -71,7 +74,8 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 			updateThermometerBar()
 			updateSubviewVisibility()
 			buttonsView?.updateAndRedraw()
-			RunLoop.main.acceptInput(forMode: .default, before: Date())		// respond if user clicked a button
+//			CFRunLoopRun()
+			RunLoop.main.acceptInput(forMode: .default, before: Date().addingTimeInterval(0.1))		// respond if user clicked a button
 		}
 	}
 
@@ -84,7 +88,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	func updateThermometerBar() {
-		thermometerBar?.update()
+//		thermometerBar?.updateProgress()
 
 		operationLabel?                  .text = gCurrentOp.fullStatus
 		operationLabel?          .needsDisplay = true

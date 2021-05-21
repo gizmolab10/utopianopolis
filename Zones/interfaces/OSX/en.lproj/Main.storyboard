@@ -1076,6 +1076,7 @@ CA
                         <outlet property="dragView" destination="37A-oF-Gav" id="04a-KE-w1g"/>
                         <outlet property="essayContainerView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
                         <outlet property="hamburgerButton" destination="yl6-st-bhl" id="Q5Q-eo-IdC"/>
+                        <outlet property="helpButton" destination="uYG-mD-FXW" id="8l6-k6-vrf"/>
                         <outlet property="mapContainerView" destination="HK5-4i-dSB" id="w2w-pt-wOc"/>
                         <outlet property="permissionView" destination="5oi-yK-PC4" id="5TP-04-XLC"/>
                         <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
@@ -1515,7 +1516,7 @@ Gw
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="461"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CFf-mN-uMu">
-                                        <rect key="frame" x="112" y="433" width="227" height="28"/>
+                                        <rect key="frame" x="112" y="333" width="227" height="28"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Welcome to Seriously" id="t0K-HT-RDq">
                                             <font key="font" metaFont="system" size="24"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1523,10 +1524,10 @@ Gw
                                         </textFieldCell>
                                     </textField>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="wVW-5S-6K5" userLabel="Lower View">
-                                        <rect key="frame" x="0.0" y="0.0" width="450" height="413"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="450" height="313"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="NGd-6W-C0X">
-                                                <rect key="frame" x="0.0" y="365" width="450" height="48"/>
+                                                <rect key="frame" x="0.0" y="265" width="450" height="48"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="xlc-Yd-hnd" userLabel="apple id">
                                                         <rect key="frame" x="-2" y="32" width="454" height="16"/>
@@ -1586,7 +1587,7 @@ DQ
                                                 </constraints>
                                             </customView>
                                             <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pg2-h7-6ux" userLabel="Enable Cloud Drive">
-                                                <rect key="frame" x="0.0" y="365" width="450" height="48"/>
+                                                <rect key="frame" x="0.0" y="265" width="450" height="48"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="O6S-Dv-mLT" userLabel="cloud drive">
                                                         <rect key="frame" x="-2" y="32" width="454" height="16"/>
@@ -1620,10 +1621,10 @@ DQ
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="rmD-x7-RtA" userLabel="Please Wait">
-                                                <rect key="frame" x="0.0" y="0.0" width="450" height="413"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="450" height="313"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="kKM-9B-fW0">
-                                                        <rect key="frame" x="-2" y="397" width="454" height="16"/>
+                                                        <rect key="frame" x="-2" y="297" width="454" height="16"/>
                                                         <textFieldCell key="cell" selectable="YES" alignment="justified" id="3XW-gG-Hxw">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1631,10 +1632,10 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <progressIndicator wantsLayer="YES" maxValue="100" doubleValue="1" displayedWhenStopped="NO" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="2xi-Mf-riK" customClass="ZStartupProgressBar" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="370" width="450" height="20"/>
+                                                        <rect key="frame" x="0.0" y="270" width="450" height="20"/>
                                                     </progressIndicator>
                                                     <textField verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ab6-2E-Tk7">
-                                                        <rect key="frame" x="-2" y="355" width="454" height="16"/>
+                                                        <rect key="frame" x="-2" y="255" width="454" height="16"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="4iQ-Bz-ATj">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1693,7 +1694,7 @@ DQ
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="wVW-5S-6K5" firstAttribute="leading" secondItem="K0u-LY-9eo" secondAttribute="leading" id="0Kl-ZN-xXx"/>
-                                    <constraint firstItem="CFf-mN-uMu" firstAttribute="top" secondItem="K0u-LY-9eo" secondAttribute="top" id="A3o-1X-Joe"/>
+                                    <constraint firstItem="CFf-mN-uMu" firstAttribute="top" secondItem="K0u-LY-9eo" secondAttribute="top" constant="100" id="A3o-1X-Joe"/>
                                     <constraint firstItem="wVW-5S-6K5" firstAttribute="top" secondItem="CFf-mN-uMu" secondAttribute="bottom" constant="20" id="KRa-RL-JPj"/>
                                     <constraint firstAttribute="bottom" secondItem="wVW-5S-6K5" secondAttribute="bottom" id="cgG-JM-etw"/>
                                     <constraint firstAttribute="width" constant="450" id="dUE-hX-JfZ"/>

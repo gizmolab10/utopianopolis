@@ -27,6 +27,7 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var detailView         : ZView?
 	@IBOutlet var debugView          : ZView?
 	@IBOutlet var dragView           : ZDragView?
+	@IBOutlet var helpButton         : ZHelpButton?
     override  var controllerID       : ZControllerID { return .idMain }
 
 	override func setup() {

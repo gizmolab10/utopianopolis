@@ -17,7 +17,7 @@ class ZStartup: NSObject {
 
 	var elapsedEnough : Bool {
 		let  lapse = elapsedStartupTime
-		let enough = (lapse - prior) > 0.5
+		let enough = (lapse - prior) > 0.3
 
 		if  enough {
 			prior = lapse
@@ -47,6 +47,7 @@ class ZStartup: NSObject {
 
 						gHasFinishedStartup    = true
 						gRefusesFirstResponder = false
+						gMainController?.helpButton?.isHidden = false
 
 						gTimers .stopTimer (for:  .tStartup)
 						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync])

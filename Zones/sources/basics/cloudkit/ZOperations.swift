@@ -15,7 +15,7 @@ enum ZOperationID: Int, CaseIterable {
 
     // start up / onboard
 
-    case oStartUp            // NB: order here is order of operations (except miscellaneous)
+    case oStartingUp            // NB: order here is order of operations (except miscellaneous)
 	case oUserPermissions
     case oMacAddress
     case oObserveUbiquity
@@ -78,7 +78,7 @@ enum ZOperationID: Int, CaseIterable {
 	var    countOps : ZOpIDsArray { return [.oLoadingFromFile, .oRestoreIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
 	var   bothDBOps : ZOpIDsArray { return [.oHere, .oRoots, .oLoadingFromFile, .oManifest, .oRestoreIdeas, .oSaveCoreData, .oResolveMissing] }
-	var    localOps : ZOpIDsArray { return [.oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
+	var    localOps : ZOpIDsArray { return [.oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
 											.oFetchUserRecord, .oCheckAvailability] + bothDBOps }
 
 	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }
@@ -139,7 +139,7 @@ class ZOperations: NSObject {
 	let             queue = OperationQueue()
 	var   onCloudResponse :     AnyClosure?
     var       lastOpStart :           Date?
-	var         currentOp :   ZOperationID  = .oStartUp
+	var         currentOp :   ZOperationID  = .oStartingUp
 	var        opDuration :   TimeInterval  { return -(lastOpStart?.timeIntervalSinceNow ?? 0.0) }
 	var      shouldCancel :           Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && (opDuration > 5.0) }
 	var     debugTimeText :         String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }

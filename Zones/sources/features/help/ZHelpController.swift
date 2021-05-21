@@ -105,7 +105,7 @@ class ZHelpController: ZGenericTableController {
 
 	func showHelp(for mode: ZHelpMode) {
 		show(true, mode: mode)         // side-effect: sets gCurrentHelpMode
-		gSignal([.sStartupButtons])    // change highlight of help buttons in startup view
+//		gSignal([.sStartupButtons])    // change highlight of help buttons in startup view
 	}
 
 	func show(_ iShow: Bool? = nil, mode: ZHelpMode?) {

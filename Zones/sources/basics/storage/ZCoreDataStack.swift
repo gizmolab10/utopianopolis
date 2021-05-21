@@ -172,6 +172,74 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
+	// MARK:- load
+	// MARK:-
+
+	func loadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure?) {
+		if  gCanLoad {
+			deferUntilAvailable(for: .oLoad) {
+				var names = [kRootName, kTrashName, kDestroyName, kLostAndFoundName]
+
+				if  dbID == .mineID {
+					names.insert(contentsOf: [kRecentsRootName, kFavoritesRootName], at: 1)
+				}
+
+				for name in names {
+					self.loadZone(recordName: name, into: dbID)
+				}
+
+				self.load(type: kManifestType, into: dbID, onlyOne: false)
+				self.load(type: kFileType,     into: dbID, onlyOne: false)
+				gRemoteStorage.updateManifestCount(for: dbID)
+				self.makeAvailable()
+
+				onCompletion?(0)
+			}
+		} else {
+			onCompletion?(0)
+		}
+	}
+
+	func loadZone(recordName: String, into dbID: ZDatabaseID) {
+		if  let zRecords = gRemoteStorage.zRecords(for: dbID) {
+			let  fetched = load(type: kZoneType, recordName: recordName, into: dbID)
+
+			for zRecord in fetched {
+				if  let zone = zRecord as? Zone {
+					zone.respectOrder()
+
+					switch recordName {
+						case          kRootName: zRecords.rootZone         = zone
+						case         kTrashName: zRecords.trashZone        = zone
+						case       kDestroyName: zRecords.destroyZone      = zone
+						case   kRecentsRootName: zRecords.recentsZone      = zone
+						case kFavoritesRootName: zRecords.favoritesZone    = zone
+						case  kLostAndFoundName: zRecords.lostAndFoundZone = zone
+						default:                 break
+					}
+				}
+			}
+		}
+	}
+
+	// called by load recordName and find type, recordName
+	// fetch, extract data, register
+
+	@discardableResult func load(type: String, recordName: String = "", into dbID: ZDatabaseID, onlyOne: Bool = true) -> [ZManagedObject] {
+		let objects = fetch(type: type, recordName: recordName, into: dbID, onlyOne: onlyOne)
+
+		invokeUsingDatabaseID(dbID) {
+			for object in objects {
+				if let zRecord = object as? ZRecord {
+					zRecord.convertFromCoreData(visited: [])
+					zRecord.register()
+				}
+			}
+		}
+
+		return objects
+	}
+
 	// MARK:- registry
 	// MARK:-
 
@@ -295,71 +363,6 @@ class ZCoreDataStack: NSObject {
 		return objects
 	}
 
-	@discardableResult func load(type: String, recordName: String = "", into dbID: ZDatabaseID, onlyOne: Bool = true) -> [ZManagedObject] {
-		let objects = fetch(type: type, recordName: recordName, into: dbID, onlyOne: onlyOne)
-
-		invokeUsingDatabaseID(dbID) {
-			for object in objects {
-				if let zRecord = object as? ZRecord {
-					zRecord.convertFromCoreData(visited: [])
-					zRecord.register()
-				}
-			}
-		}
-
-		return objects
-	}
-
-	// MARK:- load
-	// MARK:-
-
-	func loadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure?) {
-		if  gCanLoad {
-			deferUntilAvailable(for: .oLoad) {
-				var names = [kRootName, kTrashName, kDestroyName, kLostAndFoundName]
-
-				if  dbID == .mineID {
-					names.insert(contentsOf: [kRecentsRootName, kFavoritesRootName], at: 1)
-				}
-
-				for name in names {
-					self.loadZone(with: name, into: dbID)
-				}
-
-				self.load(type: kManifestType, into: dbID, onlyOne: false)
-				self.load(type: kFileType,     into: dbID, onlyOne: false)
-				gRemoteStorage.updateManifestCount(for: dbID)
-				self.makeAvailable()
-
-				onCompletion?(0)
-			}
-		} else {
-			onCompletion?(0)
-		}
-	}
-
-	func loadZone(with recordName: String, into dbID: ZDatabaseID) {
-		if  let zRecords = gRemoteStorage.zRecords(for: dbID) {
-			let  fetched = load(type: kZoneType, recordName: recordName, into: dbID)
-
-			for zRecord in fetched {
-				if  let zone = zRecord as? Zone {
-					zone.respectOrder()
-
-					switch recordName {
-						case          kRootName: zRecords.rootZone         = zone
-						case         kTrashName: zRecords.trashZone        = zone
-						case       kDestroyName: zRecords.destroyZone      = zone
-						case   kRecentsRootName: zRecords.recentsZone      = zone
-						case kFavoritesRootName: zRecords.favoritesZone    = zone
-						case  kLostAndFoundName: zRecords.lostAndFoundZone = zone
-						default:                 break
-					}
-				}
-			}
-		}
-	}
-
 	// MARK:- search
 	// MARK:-
 
@@ -367,7 +370,7 @@ class ZCoreDataStack: NSObject {
 		if  gIsReadyToShowUI, gCanLoad {
 			let        dbid = dbID.identifier
 			let  searchable = match.searchable
-			let idPredicate = NSPredicate(format: "zoneName like %@", searchable)
+			let idPredicate = NSPredicate(format: "zoneName contains[cd] %@", searchable)
 			for entityName in [kZoneType] { // kTraitType
 				self.search(within: dbid, entityName: entityName, using: idPredicate) { matches in
 					onCompletion?(matches)

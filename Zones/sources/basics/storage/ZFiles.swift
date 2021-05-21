@@ -298,7 +298,7 @@ class ZFiles: NSObject {
 			let       index  = databaseID.index {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
-			let  keys: types = [.date, .lost, .graph, .trash, .destroy, .recent, .manifest, .favorites, .bookmarks ]
+			let  keys: types = [.date, .manifest, .graph, .recent, .favorites, .bookmarks, .trash, .lost, .destroy ]
 
 			if  let     data = FileManager.default.contents(atPath: path),
 				data  .count > 0,

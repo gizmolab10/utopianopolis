@@ -790,7 +790,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	@discardableResult override func convertFromCoreData(visited: [String]?) -> [String] {
 		alterAttribute(ZoneAttributeType.validCoreData)
 		updateFromCoreDataTraitRelationships()
-		return super.convertFromCoreData(visited: visited)
+		return super.convertFromCoreData(visited: visited) // call super, too
 	}
 
 	override func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] {

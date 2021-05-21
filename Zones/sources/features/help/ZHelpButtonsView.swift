@@ -62,7 +62,7 @@ class ZHelpButtonsView : ZButtonsView {
 	}
 
 	@objc private func handleButtonPress(_ button: ZButton) {
-		if  let mode = button.helpMode { // eliminate no-op cpu time
+		if  let mode = button.helpMode {
 			gHelpController?.showHelp(for: mode)
 		}
 	}

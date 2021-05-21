@@ -50,7 +50,7 @@ enum ZSignalKind: Int {
 	case sLaunchDone
     case sAppearance
     case sPreferences
-	case sStartupButtons
+//	case sStartupButtons
 	case sStartupStatus
 }
 

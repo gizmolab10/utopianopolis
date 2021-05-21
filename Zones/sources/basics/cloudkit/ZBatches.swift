@@ -68,7 +68,7 @@ class ZBatches: ZOnboarding {
 				case .bBookmarks:   return [.oBookmarks                                ]
 				case .bRoot:        return [.oRoots,      .oManifest                   ]
 				case .bFocus:       return [.oRoots                    ,               ]
-				case .bStartUp:     return operationIDs(from: .oStartUp,           to: .oDone)
+				case .bStartUp:     return operationIDs(from: .oStartingUp,        to: .oDone)
 				case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oDone, skipping: [.oLoadingFromFile])
 				case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
 			}

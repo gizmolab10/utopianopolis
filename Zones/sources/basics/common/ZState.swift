@@ -160,7 +160,7 @@ func gAssureProgressTimesAreLoaded() {
 			}
 		}
 
-		for op in ZOperationID.oStartUp.rawValue ... ZOperationID.oDone.rawValue {
+		for op in ZOperationID.oStartingUp.rawValue ... ZOperationID.oDone.rawValue {
 			setit(opInt: op, value: nil)
 		}
 
