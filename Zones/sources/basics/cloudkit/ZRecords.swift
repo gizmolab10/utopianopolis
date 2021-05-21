@@ -283,7 +283,7 @@ class ZRecords: NSObject {
 	func removeAllDuplicates() {
 		applyToAllZRecords { zRecord in
 			if  let z = zRecord {
-				gCoreDataStack.removeAllDuplicates(of: z)
+				gCoreDataStack.removeAllDuplicatesOf(z)
 			}
 		}
 
@@ -340,60 +340,15 @@ class ZRecords: NSObject {
     // MARK:- registries
     // MARK:-
 
-	// ckrecords lookup:
-	// initialized with one entry for each word in each zone's name
-	// grows with each unique search
-
 	func appendZRecordsLookup(with iName: String, onEach: @escaping ZRecordsToZRecordsClosure) {
 		for name in iName.components(separatedBy: " ") {
 			if  name != "" {
-				gCoreDataStack.search(for: name, within: databaseID) { zRecords in
+				gCoreDataStack.searchZones(for: name, within: databaseID) { zRecords in
 					self.zRecordsArrayLookup[name] = onEach(zRecords)
 				}
 			}
 		}
 	}
-
-//	func searchCoreData(for match: String, onCompletion: RecordsClosure? = nil) {
-//		onCompletion?(CKRecordsArray())
-//
-//		var   result = CKRecordsArray()
-//
-//		gCoreDataStack.search(for: match, within: databaseID) { found in
-//
-//			if  let more = self.zRecordsArrayLookup[match] {
-//				result = more
-//			}
-//
-//			let unique = found.filter { (zRecord) -> Bool in
-//				return zRecord.ckRecord != nil
-//			}
-//
-//			let records = unique.map { $0.ckRecord! }
-//
-//			result.appendUnique(contentsOf: records)
-//
-//			self.zRecordsArrayLookup[match] = result // accumulate from core data
-//		}
-//	}
-	
-	func addToLocalSearchIndex(name: String, for zone: Zone?) {
-		if  let record = zone {
-			appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
-				var records = iRecords
-				
-				records.appendUnique(item: record)
-				
-				return records
-			}
-		}
-	}
-	
-	func addToLocalSearchIndex(nameOf zone: Zone?) {
-        if  let name = zone?.zoneName {
-			addToLocalSearchIndex(name: name, for: zone)
-        }
-    }
 
     func removeFromLocalSearchIndex(nameOf zone: Zone?) {
 		if  let record = zone,
@@ -449,10 +404,6 @@ class ZRecords: NSObject {
                 zRecordsLookup[name] = zRecord
 
 				registerByType(zRecord)
-
-				if  let        zone = zRecord as? Zone {
-					addToLocalSearchIndex(nameOf: zone)
-				}
 
 				created = true
             }
@@ -622,8 +573,8 @@ class ZRecords: NSObject {
 	func assureAdoption(_ onCompletion: IntClosure? = nil) {
 		FOREGROUND {
 			self.applyToAllZones { zone in
-				if  zone.databaseID == nil {
-					zone.databaseID  = self.databaseID
+				if  zone.dbid == nil {
+					zone.dbid  = self.databaseID.identifier
 				}
 
 				if !zone.isARoot {

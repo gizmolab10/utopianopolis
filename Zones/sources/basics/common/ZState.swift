@@ -210,10 +210,7 @@ var gHere: Zone {
 	}
 
 	set {
-		if  let    dbID = newValue.databaseID {
-			gDatabaseID = dbID
-		}
-
+		gDatabaseID           = newValue.databaseID
 		gRecords?.currentHere = newValue
 
 		newValue.assureAdoption()

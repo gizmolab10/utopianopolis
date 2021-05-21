@@ -39,7 +39,7 @@ class ZTraitAssets : ZRecord {
 	func updateFilesFromAssets() {
 		if  let a = assets {
 			for asset in a {
-				ZFile.createFrom(asset, databaseID: databaseID)
+				ZFile.uniqueFile(asset, databaseID: databaseID)
 			}
 		}
 	}

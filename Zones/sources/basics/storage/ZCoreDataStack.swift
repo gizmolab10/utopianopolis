@@ -22,7 +22,7 @@ struct ZDeferral {
 struct ZEntityDescriptor {
 	let entityName : String
 	let recordName : String?
-	let databaseID : ZDatabaseID?
+	let databaseID : ZDatabaseID
 }
 
 struct ZExistence {
@@ -242,18 +242,11 @@ class ZCoreDataStack: NSObject {
 		return fetch(type: type, recordName: recordName, into: dbid, onlyOne: onlyOne)
 	}
 
-	func predicateFor(_ recordName: String, type: String, dbid: String, all: Bool) -> NSPredicate {
-		if  all {
-			return                     NSPredicate(format: "dbid = %@", dbid)
-		} else {
-			switch type {
-				case kUserType: return NSPredicate(format: "recordName = %@", recordName)
-				default:        return NSPredicate(format: "recordName = %@ and dbid = %@", recordName, dbid)
-			}
-		}
+	func dbidPredicate(from dbid: String) -> NSPredicate {
+		return NSPredicate(format: "dbid = %@", dbid)
 	}
 
-	func fetchUsing(request: NSFetchRequest<NSFetchRequestResult>, type: String, into dbID: ZDatabaseID?, onlyOne: Bool = true) -> [ZManagedObject] {
+	func fetchUsing(request: NSFetchRequest<NSFetchRequestResult>, type: String, onlyOne: Bool = true) -> [ZManagedObject] {
 		var   objects = [ZManagedObject]()
 		do {
 			let items = try managedContext.fetch(request)
@@ -281,26 +274,28 @@ class ZCoreDataStack: NSObject {
 	// must call this on foreground thread
 	// else throws mutate while enumerate error
 
-	func fetch(type: String, recordName: String = "", into dbID: ZDatabaseID?, onlyOne: Bool = true) -> [ZManagedObject] {
-		var              objects = [ZManagedObject]()
-		if  let             dbid = dbID?.identifier {
-			let          request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
-			request   .predicate = predicateFor(recordName, type: type, dbid: dbid, all: !onlyOne)
-			let items = fetchUsing(request: request, type: type, into: dbID, onlyOne: onlyOne)
-				if  items.count == 0 {
-					registerAsMissing(recordName: recordName, dbID: dbID!)
-				} else {
-					for item in items {
-						registerObject(item, recordName: recordName, dbID: dbID!)
-						objects.append(item)
-					}
-				}
+	func fetch(type: String, recordName: String = "", into dbID: ZDatabaseID, onlyOne: Bool = true) -> [ZManagedObject] {
+		var       objects = [ZManagedObject]()
+		let          dbid = dbID.identifier
+		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
+		let             r = NSPredicate(format: "recordName = %@", recordName)
+		let             d = dbidPredicate(from: dbid)
+		request.predicate = !onlyOne ? d : type == kUserType ? r : r.add(d)
+		let     items     = fetchUsing(request: request, type: type, onlyOne: onlyOne)
+		if  items.count  == 0 {
+			registerAsMissing(recordName: recordName, dbID: dbID)
+		} else {
+			for item in items {
+				registerObject(item, recordName: recordName, dbID: dbID)
+				objects.append(item)
+			}
 		}
+
 
 		return objects
 	}
 
-	@discardableResult func load(type: String, recordName: String = "", into dbID: ZDatabaseID?, onlyOne: Bool = true) -> [ZManagedObject] {
+	@discardableResult func load(type: String, recordName: String = "", into dbID: ZDatabaseID, onlyOne: Bool = true) -> [ZManagedObject] {
 		let objects = fetch(type: type, recordName: recordName, into: dbID, onlyOne: onlyOne)
 
 		invokeUsingDatabaseID(dbID) {
@@ -364,6 +359,56 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
+	// MARK:- search
+	// MARK:-
+
+	func searchZones(for match: String, within dbID: ZDatabaseID, onCompletion: ZRecordsClosure? = nil) {
+		if  gIsReadyToShowUI, gCanLoad {
+			let        dbid = dbID.identifier
+			let  searchable = match.searchable
+			let idPredicate = NSPredicate(format: "zoneName like %@", searchable)
+			for entityName in [kZoneType] { // kTraitType
+				self.search(within: dbid, entityName: entityName, using: idPredicate) { matches in
+					onCompletion?(matches)
+				}
+			}
+		} else {
+			onCompletion?([])
+		}
+	}
+
+	func search(within dbid: String, entityName: String, using predicate: NSPredicate, uniqueOnly: Bool = true, onCompletion: ZRecordsClosure? = nil) {
+		var result = ZRecordsArray()
+
+		if !gCanLoad || !gIsReadyToShowUI {
+			onCompletion?(result)
+		} else {
+			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+			request.predicate = predicate.add(dbidPredicate(from: dbid))
+
+			deferUntilAvailable(for: .oSearch) {
+				do {
+					let items = try self.managedContext.fetch(request)
+					for item in items {
+						if  let zRecord = item as? ZRecord {
+							if  uniqueOnly {
+								result.appendUnique(item: zRecord)
+							} else {
+								result.append(zRecord)
+							}
+						}
+					}
+				} catch {
+					print("search fetch failed")
+				}
+
+				self.makeAvailable() // before calling closure
+
+				onCompletion?(result)
+			}
+		}
+	}
+
 	// MARK:- missing
 	// MARK:-
 
@@ -416,7 +461,7 @@ class ZCoreDataStack: NSObject {
 		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kTraitType)
 		let   recordNames = zones.recordNames
 		request.predicate = NSPredicate(format: "ownerRID IN %@", recordNames)
-		let       fetched = fetchUsing(request: request, type: kTraitType, into: dbID)
+		let       fetched = fetchUsing(request: request, type: kTraitType)
 
 		for zRecord in fetched {
 			if  let trait = zRecord as? ZTrait {
@@ -432,7 +477,7 @@ class ZCoreDataStack: NSObject {
 		var  totalAquired = acquired
 		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
 		request.predicate = NSPredicate(format: "parentRID IN %@", zones.recordNames)
-		let       fetched = fetchUsing(request: request, type: kZoneType, into: dbID)
+		let       fetched = fetchUsing(request: request, type: kZoneType)
 
 		printDebug(.dData, "loading children from CD for \(zones.count)")
 
@@ -457,15 +502,11 @@ class ZCoreDataStack: NSObject {
 		return persistentContainer.persistentStoreCoordinator.persistentStore(for: url)
 	}
 
-	func persistentStore(for databaseID: ZDatabaseID?) -> NSPersistentStore? {
-		if  let dbid = databaseID {
-			switch dbid {
-				case .everyoneID: return  publicStore
-				default:          return privateStore
-			}
+	func persistentStore(for databaseID: ZDatabaseID) -> NSPersistentStore? {
+		switch databaseID {
+			case .everyoneID: return  publicStore
+			default:          return privateStore
 		}
-
-		return nil
 	}
 
 	lazy var localDescription: NSPersistentStoreDescription = {
@@ -564,9 +605,9 @@ class ZCoreDataStack: NSObject {
 	// MARK:- internal
 	// MARK:-
 
-	func predicate(entityName: String, recordName: String?, databaseID: ZDatabaseID?) -> NSPredicate? {
-		if  let          name = recordName,
-			let    identifier = databaseID?.identifier {
+	func predicate(entityName: String, recordName: String?, databaseID: ZDatabaseID) -> NSPredicate? {
+		if  let          name = recordName {
+			let    identifier = databaseID.identifier
 			let namePredicate = NSPredicate(format: "recordName = %@", name)
 			let dbidPredicate = NSPredicate(format: "dbid = %@", identifier)
 
@@ -580,7 +621,7 @@ class ZCoreDataStack: NSObject {
 		return nil
 	}
 
-	func hasExisting(entityName: String, recordName: String?, databaseID: ZDatabaseID?) -> Any? {
+	func hasExisting(entityName: String, recordName: String?, databaseID: ZDatabaseID) -> Any? {
 		if  isAvailable(for: .oFetch),         // avoid crash due to core data fetch array being simultaneously mutated and enumerated
 			let     predicate = predicate(entityName: entityName, recordName: recordName, databaseID: databaseID) {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
@@ -705,100 +746,38 @@ class ZCoreDataStack: NSObject {
 		processForEntityName(at: firstIndex)
 	}
 
-	func existsForEntityNameAsync(_ entityName: String, dbID: ZDatabaseID?, entity: ZEntityDescriptor?, file: ZFileDescriptor?, onExistence: @escaping ZRecordClosure) {
-		if  let  dbid = dbID {
-			var array = closures(for: entityName, dbID: dbid) // creates dict and array
+	func existsForEntityNameAsync(_ entityName: String, dbID: ZDatabaseID, entity: ZEntityDescriptor?, file: ZFileDescriptor?, onExistence: @escaping ZRecordClosure) {
+		var array = closures(for: entityName, dbID: dbID) // creates dict and array
 
-			array.append(ZExistence(closure: onExistence, entity: entity, file: file))
-			setClosures(array, for: entityName, dbID: dbid)
-		}
+		array.append(ZExistence(closure: onExistence, entity: entity, file: file))
+		setClosures(array, for: entityName, dbID: dbID)
 	}
 
 	func zRecordExistsAsync(for descriptor: ZEntityDescriptor, onExistence: @escaping ZRecordClosure) {
 		existsForEntityNameAsync(descriptor.entityName, dbID: descriptor.databaseID, entity: descriptor, file: nil, onExistence: onExistence)
 	}
 
-	func fileExistsAsync(for descriptor: ZFileDescriptor?, dbID: ZDatabaseID?, onExistence: @escaping ZRecordClosure) {
+	func fileExistsAsync(for descriptor: ZFileDescriptor?, dbID: ZDatabaseID, onExistence: @escaping ZRecordClosure) {
 		existsForEntityNameAsync(kFileType, dbID: dbID, entity: nil, file: descriptor, onExistence: onExistence)
-	}
-
-	// MARK:- search
-	// MARK:-
-
-	func search(for match: String, within dbID: ZDatabaseID?, onCompletion: ZRecordsClosure? = nil) {
-		if  gIsReadyToShowUI, gCanLoad,
-			let        dbid = dbID?.identifier {
-			let  searchable = match.searchable
-			let idPredicate = NSPredicate(format: "zoneName like %@", searchable)
-			for type in [kZoneType] { //, kTraitType] {
-				self.search(within: dbid, type: type, using: idPredicate) { matches in
-					onCompletion?(matches)
-				}
-			}
-		} else {
-			onCompletion?([])
-		}
-	}
-
-	func search(within dbid: String, type: String, using predicate: NSPredicate, uniqueOnly: Bool = true, onCompletion: ZRecordsClosure? = nil) {
-		var result = ZRecordsArray()
-
-		if !gCanLoad || !gIsReadyToShowUI {
-			onCompletion?(result)
-		} else {
-			let   dbPredicate = NSPredicate(format: "dbid = %@", dbid)
-			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
-			request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, dbPredicate])
-
-			deferUntilAvailable(for: .oSearch) {
-				do {
-					let items = try self.managedContext.fetch(request)
-					for item in items {
-						if  let zRecord = item as? ZRecord {
-							if  uniqueOnly {
-								result.appendUnique(item: zRecord)
-							} else {
-								result.append(zRecord)
-							}
-						}
-					}
-				} catch {
-					print("search fetch failed")
-				}
-
-				self.makeAvailable() // before calling closure
-
-				onCompletion?(result)
-			}
-		}
 	}
 
 	// MARK:- vaccuum
 	// MARK:-
 
-	func emptyZones(within dbID: ZDatabaseID?, onCompletion: ZRecordsClosure? = nil) {
-		if  let      dbid = dbID?.identifier {
-			let predicate = NSPredicate(format: "zoneName = NULL")
-			search(within: dbid, type: kZoneType, using: predicate) { matches in
-				onCompletion?(matches)
-			}
+	func emptyZones(within dbID: ZDatabaseID, onCompletion: ZRecordsClosure? = nil) {
+		let      dbid = dbID.identifier
+		let predicate = NSPredicate(format: "zoneName = NULL")
+		search(within: dbid, entityName: kZoneType, using: predicate) { matches in
+			onCompletion?(matches)
 		}
 	}
 
-	func removeAllDuplicateZones(in dbID: ZDatabaseID) {
-		let          dbid = dbID.identifier
-		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-		request.predicate = NSPredicate(format: "dbid = %@", dbid)
-
-		fetchUsing(request: request, type: kZoneType, into: dbID)
-	}
-
-	func removeAllDuplicates(of zRecord: ZRecord) {
-		if  let      dbid = zRecord.databaseID?.identifier,
+	func removeAllDuplicatesOf(_ zRecord: ZRecord) {
+		if  let      dbid = zRecord.dbid,
 			let      name = zRecord.recordName {
 			let predicate = NSPredicate(format: "recordName = %@", name)
 
-			search(within: dbid, type: kZoneType, using: predicate) { zRecords in
+			search(within: dbid, entityName: kZoneType, using: predicate) { zRecords in
 				let  count = zRecords.count
 				let extras = zRecords.filter() { $0 != zRecord }
 

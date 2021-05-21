@@ -14,7 +14,7 @@ let gStringArrayTransformerName = NSValueTransformerName(rawValue: "ZStringArray
 
 class ZManagedObject: NSManagedObject {
 
-	convenience init(entityName: String?, databaseID: ZDatabaseID?) {
+	convenience init(entityName: String?, databaseID: ZDatabaseID) {
 		let     context = gCoreDataStack.managedContext
 
 		if  let    name = entityName,

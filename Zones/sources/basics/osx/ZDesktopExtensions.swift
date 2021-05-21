@@ -809,7 +809,7 @@ extension ZTextEditor {
 					case "-": return editedZone?.convertToFromLine() ?? false // false means key not handled
 					default:  return false
 				}
-			} else if "|<>[]{}() \'\"".contains(key) {
+			} else if "|<>[]{}()\'\"".contains(key) {
 				return        editedZone?.surround(by: key) ?? false
 			} else {
 				switch key {

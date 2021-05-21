@@ -27,7 +27,7 @@ class ZFile : ZRecord {
 		return uniqueZRecord(entityName: kFileType, recordName: recordName, in: dbID) as! ZFile
 	}
 
-	static func assetExists(for descriptor: ZFileDescriptor, dbID: ZDatabaseID?, onCompletion: ZRecordClosure? = nil) {
+	static func assetExists(for descriptor: ZFileDescriptor, dbID: ZDatabaseID, onCompletion: ZRecordClosure? = nil) {
 		gFilesRegistry.assetExists(for: descriptor) { iZRecord in
 			if  iZRecord != nil {
 				onCompletion?(iZRecord)
@@ -39,7 +39,7 @@ class ZFile : ZRecord {
 		}
 	}
 
-	static func createFrom(_ asset: CKAsset, databaseID: ZDatabaseID?) {
+	static func uniqueFile(_ asset: CKAsset, databaseID: ZDatabaseID) {
 		let  url = asset.fileURL
 		let name = url.deletingPathExtension().lastPathComponent
 		let type = url.pathExtension
@@ -47,7 +47,7 @@ class ZFile : ZRecord {
 
 		assetExists(for: desc, dbID: databaseID) { iZRecord in
 			if  iZRecord == nil {
-				let   file = ZFile.uniqueFile(recordName: nil, in: databaseID!)
+				let   file = ZFile.uniqueFile(recordName: nil, in: databaseID)
 				file .name = name
 				file .type = type
 				file.asset = url.dataRepresentation

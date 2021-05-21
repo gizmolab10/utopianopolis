@@ -159,18 +159,18 @@ class ZTextPack: NSObject {
     }
 
     func capture(_ iText: String?) {
-        let text           = iText == displayType ? nil : iText
+		if  let text           = iText == displayType ? nil : iText {
+			if  let     trait  = packedTrait {                             // traits take logical priority
+				trait.ownerZone?.setTraitText(text, for: trait.traitType)
+			} else if let zone = packedZone {                              // ignore zone if editing a trait, above
+				zone.records?.removeFromLocalSearchIndex(nameOf: zone)
 
-        if  let     trait  = packedTrait {      // traits take logical priority
-            trait.ownerZone?.setTraitText(text, for: trait.traitType)
-        } else if let zone = packedZone {       // ignore zone if editing a trait, above
-            zone.records?.removeFromLocalSearchIndex(nameOf: zone)
+				zone.zoneName  = text
 
-            zone.zoneName  = text
-
-            zone.records?.addToLocalSearchIndex(nameOf: zone)
-        }
-    }
+				zone.addToLocalSearchIndex()
+			}
+		}
+	}
 
 
     func removeSuffix(from iText: String?) -> String? {

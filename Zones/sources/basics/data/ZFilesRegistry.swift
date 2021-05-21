@@ -17,15 +17,14 @@ class ZFilesRegistry {
 
 	var lookup = [ZDatabaseID : ZDoubleLookup]()
 
-	func register(_ file: ZFile, in dbID: ZDatabaseID?) {
-		if  let      dbid = dbID,
-			let      type = file.type,
+	func register(_ file: ZFile, in dbID: ZDatabaseID) {
+		if  let      type = file.type,
 			let      name = file.name {
-			var      dict = lookup[dbid] ?? ZDoubleLookup()
+			var      dict = lookup[dbID] ?? ZDoubleLookup()
 			var   subdict = dict  [type] ?? ZSingleLookup()
 			subdict[name] = file
 			dict   [type] = subdict
-			lookup [dbid] = dict
+			lookup [dbID] = dict
 		}
 	}
 

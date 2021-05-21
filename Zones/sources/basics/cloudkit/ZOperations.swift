@@ -27,8 +27,8 @@ enum ZOperationID: Int, CaseIterable {
     // continue
 
 	case oRoots
-	case oRestoreIdeas       // LOCAL
 	case oManifest
+	case oRestoreIdeas       // LOCAL
 	case oLoadingFromFile    // LOCAL
     case oHere
 	case oResolveMissing

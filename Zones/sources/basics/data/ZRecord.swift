@@ -13,7 +13,7 @@ class ZRecord: ZManagedObject { // NSObject {
 	@NSManaged var             dbid: String?
 	@NSManaged var       recordName: String?
 	@NSManaged var modificationDate: Date?
-	var           databaseID: ZDatabaseID?
+	var           databaseID: ZDatabaseID { return ZDatabaseID.convert(from: dbid)! }
 	var           kvoContext: UInt8 = 1
 	var       _tooltipRecord: Any?
 	var    writtenModifyDate: Date?
@@ -23,7 +23,7 @@ class ZRecord: ZManagedObject { // NSObject {
 	var        decoratedName: String    { return recordName ?? kNoValue }
 	var        unwrappedName: String    { return recordName ?? emptyName }
 	var            emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
-	var   isInPublicDatabase: Bool      { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
+	var   isInPublicDatabase: Bool      { return databaseID == .everyoneID }
 	var            isMapRoot: Bool      { return recordName == kRootName }
 	var          isTrashRoot: Bool      { return recordName == kTrashName }
 	var        isDestroyRoot: Bool      { return recordName == kDestroyName }
@@ -94,17 +94,9 @@ class ZRecord: ZManagedObject { // NSObject {
 
 	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] { return [String]() }
 
-	func updateCKRecordFromCoreData() {
-		if  gUseCoreData,
-			let    dID = dbid {
-			databaseID = ZDatabaseID.convert(from: dID)
-		}
-	}
-
 	@discardableResult func convertFromCoreData(visited: [String]?) -> [String] {
 		var         v = visited ?? [String]()
 		var converted = [String]()
-		databaseID    = ZDatabaseID.convert(from: dbid)
 
 		if  let name  = recordName {
 			if  v.isEmpty || !v.contains(name) {
@@ -121,13 +113,20 @@ class ZRecord: ZManagedObject { // NSObject {
 	// MARK:- initialize
 	// MARK:-
 
+	static func uniqueFactoryObject(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZManagedObject {
+		switch entityName {
+			case kZoneType:     return Zone     .uniqueZone    (recordName: recordName, in: dbID)
+			case kUserType:     return ZUser    .uniqueUser    (recordName: recordName, in: dbID)
+			case kTraitType:    return ZTrait   .uniqueTrait   (recordName: recordName, in: dbID)
+			case kManifestType: return ZManifest.uniqueManifest(recordName: recordName, in: dbID)
+			default:            return ZRecord  .uniqueZRecord(entityName: entityName, recordName: recordName, in: dbID)
+		}
+	}
+
 	static func uniqueZRecord(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZRecord {
 		let        zRecord = uniqueObject(entityName: entityName, recordName: recordName, in: dbID) as! ZRecord
 		zRecord.recordName = recordName ?? gUniqueRecordName
-
-		if  entityName    != kUserType {
-			zRecord  .dbid = dbID.identifier
-		}
+		zRecord      .dbid = dbID.identifier
 
 		return zRecord
 	}
@@ -338,8 +337,7 @@ class ZRecord: ZManagedObject { // NSObject {
     }
 
 	func storageDictionary() throws -> ZStorageDictionary {
-		if  let dbID = databaseID,
-			let dict = try createStorageDictionary(for: dbID, includeRecordName: false) {
+		if  let dict = try createStorageDictionary(for: databaseID, includeRecordName: false) {
 
 			return dict
 		}
@@ -357,8 +355,7 @@ class ZRecord: ZManagedObject { // NSObject {
 		// case 3: name is not nil
 
 		let      name = dict.recordName
-		let newRecord = ZRecord.uniqueObject(entityName: entityName, recordName: name, in: iDatabaseID)
-		databaseID    = iDatabaseID
+		let newRecord = ZRecord.uniqueFactoryObject(entityName: entityName, recordName: name, in: iDatabaseID)
 
 		for keyPath in cloudProperties + [kpModificationDate, kpDBID] {
 			if  let   type = type(from: keyPath),
@@ -410,9 +407,6 @@ class ZRecord: ZManagedObject { // NSObject {
 		if  let needs = dict[.needs] as? String {
 			addNeedsFromString(needs)
 		}
-
-		updateCKRecordFromCoreData()
-
 	}
 
 }

@@ -117,7 +117,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                        children =          ZoneArray  ()
 	var                          traits =   ZTraitDictionary  ()
 	func                copyWithZone() ->           NSObject  { return self }
-	func                  identifier() ->             String? { return isARoot ? databaseID?.rawValue : recordName }
+	func                  identifier() ->             String? { return isARoot ? databaseID.rawValue : recordName }
 	func                    toolName() ->             String? { return clippedName }
 	func                   toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
 	func                     recount()                        { updateAllProgenyCounts() }
@@ -245,9 +245,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:-
 
 	var bookmarksTargetingSelf: ZoneArray {
-		if  let  dbID = databaseID,
-			let  name = recordName,
-			let  dict = gBookmarks.reverseLookup[dbID],
+		if  let  name = recordName,
+			let  dict = gBookmarks.reverseLookup[databaseID],
 			let array = dict[name] {
 
 			return array
@@ -324,10 +323,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  gUseCoreData {
 			if  let    id = parentZoneMaybe?.recordName {
 				parentRID = id
-			}
-
-			if  let  dbID = databaseID {
-				dbid      = dbID.identifier
 			}
 		}
 	}
@@ -1129,15 +1124,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
-		if  let    dbID = databaseID,
-			dbID       != .favoritesID {
-			let newIdea = Zone.uniqueZoneMaybeRenamed(name, databaseID: dbID)
+		if  databaseID != .favoritesID {
+			let newIdea = Zone.uniqueZoneMaybeRenamed(name, databaseID: databaseID)
 
 			parentZoneMaybe?.expand()
 			gTextEditor.stopCurrentEdit()
 
 			if !gHasFullAccess,
-			    dbID              == .everyoneID,
+			    databaseID        == .everyoneID,
 			    let       identity = gAuthorID {
 			    newIdea.zoneAuthor = identity
 			}
@@ -1334,21 +1328,22 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			moveZone(into: there, at: gListsGrowDown ? nil : 0, orphan: true) {
 				onCompletion?()
 			}
-		} else if !there.isABookmark(spawnedBy: self) {
+		} else if !there.isABookmark(spawnedBy: self),
+				  let targetLink = there.crossLink {
 
 			// ///////////////////////////////
 			// MOVE ZONE THROUGH A BOOKMARK //
 			// ///////////////////////////////
 
 			var     movedZone = self
-			let    targetLink = there.crossLink
-			let       sameMap = databaseID == targetLink?.databaseID
+			let    targetDBID = targetLink.databaseID
+			let       sameMap = databaseID == targetDBID
 			let grabAndTravel = {
 				there.focusOnBookmarkTarget() { object, kind in
 					let there = object as! Zone
 
 					movedZone.moveZone(into: there, at: gListsGrowDown ? nil : 0) {
-						movedZone.recursivelyApplyDatabaseID(targetLink?.databaseID)
+						movedZone.recursivelyApplyDatabaseID(targetDBID)
 						movedZone.grab()
 						onCompletion?()
 					}
@@ -1362,7 +1357,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			} else {
 				movedZone.needDestroy()
 
-				movedZone = movedZone.deepCopy(dbID: targetLink?.databaseID)
+				movedZone = movedZone.deepCopy(dbID: targetDBID)
 
 				gRedrawMaps {
 					grabAndTravel()
@@ -1389,11 +1384,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		do {
 			if  let   data = FileManager.default.contents(atPath: path),
 				data.count > 0,
-				let   dbID = databaseID,
 				let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
 				let   dict = self.dictFromJSON(json)
 				temporarilyOverrideIgnore { // allow needs save
-					let zone = Zone.uniqueZone(from: dict, in: dbID)
+					let zone = Zone.uniqueZone(from: dict, in: databaseID)
 					addChildSafely(zone, at: 0)
 				}
 
@@ -1418,6 +1412,23 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gTemporarilySetMouseZone(self) // so become first responder will work
 
 		return gTextEditor.edit(self)
+	}
+
+	// ckrecords lookup:
+	// initialized with one entry for each word in each zone's name
+	// grows with each unique search
+
+	func addToLocalSearchIndex() {
+		if  let name = zoneName,
+			let   rr = records {
+			rr.appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
+				var r = iRecords
+
+				r.appendUnique(item: self)
+
+				return r
+			}
+		}
 	}
 
 	func resolveAndSelect(_ searchText: String?) {
@@ -1625,9 +1636,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func traitFor(_ iType: ZTraitType) -> ZTrait {
 		var trait            = traits[iType]
 		if  trait           == nil,
-			let         name = recordName,
-			let         dbID = databaseID {
-			trait            = ZTrait.uniqueTrait(recordName: nil, in: dbID)
+			let         name = recordName {
+			trait            = ZTrait.uniqueTrait(recordName: nil, in: databaseID)
 			trait?.ownerRID  = name
 			trait?.traitType = iType
 			traits[iType]    = trait
@@ -1895,16 +1905,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gRecents.push()
 				}
 
-				if  let tid = targetDBID {
-					gShowSmallMapForIOS = tid.isSmallMapDB
-				}
+				gShowSmallMapForIOS = targetDBID.isSmallMapDB
 
 				complete(target, .sRelayout)
-			} else if let tid = targetDBID {
-				gShowSmallMapForIOS = tid.isSmallMapDB
+			} else {
+				gShowSmallMapForIOS = targetDBID.isSmallMapDB
 
-				if  gDatabaseID != tid {
-					gDatabaseID  = tid
+				if  gDatabaseID != targetDBID {
+					gDatabaseID  = targetDBID
 
 					// ///////////////////////// //
 					// TRAVEL TO A DIFFERENT MAP //
@@ -2137,8 +2145,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  !needOp,
-				let i = databaseID,
-				let r = gRemoteStorage.cloud(for: i)?.rootZone {
+				let r = gRemoteStorage.cloud(for: databaseID)?.rootZone {
 				gHere = r
 
 				onCompletion?()
@@ -2347,19 +2354,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func isABookmark(spawnedBy: Zone) -> Bool {
-		if  let        link  = crossLink, let dbID = link.databaseID {
-			let spawnerName  = spawnedBy.recordName
-			var   probeName  = link.recordName
-			var     visited  = [String] ()
+		if  let         link = crossLink {
+			let     linkDBID = link.databaseID
+			let  spawnerName = spawnedBy.recordName
+			var    probeName = link.recordName
+			var      visited = [String] ()
 
-			while let  name  = probeName, !visited.contains(name) {
+			while let   name = probeName, !visited.contains(name) {
 				visited.append(name)
 
 				if  name    == spawnerName {
 					return true
 				}
 
-				let newProbe = gRemoteStorage.zRecords(for: dbID)?.maybeZoneForRecordName(name)
+				let newProbe = gRemoteStorage.zRecords(for: linkDBID)?.maybeZoneForRecordName(name)
 				probeName    = newProbe?.recordName
 			}
 		}
@@ -2388,8 +2396,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func asssureIsVisible() {
-		if  let dbID = databaseID,
-			let goal = gRemoteStorage.cloud(for: dbID)?.currentHere {
+		if  let goal = gRemoteStorage.cloud(for: databaseID)?.currentHere {
 
 			traverseAncestors { iAncestor -> ZTraverseStatus in
 				if  iAncestor != self {
@@ -2996,17 +3003,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func recursivelyApplyDatabaseID(_ iID: ZDatabaseID?) {
-		if  let             appliedID = iID,
-			let                  dbID = databaseID,
-			appliedID                != dbID {
+	func recursivelyApplyDatabaseID(_ iID: ZDatabaseID) {
+		let                 appliedID = iID.identifier
+		if  appliedID                != dbid {
 			traverseAllProgeny { iZone in
-				if  let         newID = iZone.databaseID,
-					newID            != appliedID {
+				if  appliedID        != iZone.dbid {
 					iZone.unregister()
 
-					let newParentZone = iZone.parentZone                                    // (1) grab new parent zone asssigned during a previous traverse (2, below)
-					iZone .databaseID = appliedID                                           // must happen BEFORE record assignment
+					let newParentZone = iZone.parentZone        // (1) grab new parent zone asssigned during a previous traverse (2, below)
+					iZone       .dbid = appliedID               // must happen BEFORE record assignment
 
 					// /////////////////////////////////////////////////////////////////
 					// (2) compute parent and parentLink using iZone's new databaseID //
@@ -3083,8 +3088,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func divideEvenly() {
 		let optimumSize     = 40
-		if  count           > optimumSize,
-			let        dbID = databaseID {
+		if  count           > optimumSize {
 			var   divisions = ((count - 1) / optimumSize) + 1
 			let        size = count / divisions
 			var     holders = ZoneArray ()
@@ -3092,7 +3096,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			while divisions > 0 {
 				divisions  -= 1
 				var gotten  = 0
-				let holder  = Zone.randomZone(in: dbID)
+				let holder  = Zone.randomZone(in: databaseID)
 
 				holders.append(holder)
 

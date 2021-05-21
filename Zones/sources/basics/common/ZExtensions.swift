@@ -2193,6 +2193,12 @@ extension String {
 
 }
 
+extension NSPredicate {
+	func add(_ predicate: NSPredicate) -> NSPredicate {
+		return NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, self])
+	}
+}
+
 extension Character {
     var asciiValue: UInt32? {
         return String(self).unicodeScalars.first?.value

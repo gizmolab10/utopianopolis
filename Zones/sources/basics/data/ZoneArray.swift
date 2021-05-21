@@ -466,10 +466,10 @@ extension ZoneArray {
 
 	func whoseTargetIntersects(with iTargets: ZoneArray, orSpawnsIt: Bool) -> Zone? {
 		for target in iTargets {
-			if  let                dbID = target.databaseID {
+			if  let                dbid = target.dbid {
 				for zone in self {
 					if  let  zoneTarget = zone.bookmarkTarget,
-						dbID           == zoneTarget.databaseID {
+						dbid           == zoneTarget.dbid {
 
 						if  zoneTarget == target || (orSpawnsIt && target.spawnedBy(zoneTarget)) {
 							return zone

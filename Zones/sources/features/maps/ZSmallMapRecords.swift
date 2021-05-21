@@ -99,10 +99,7 @@ class ZSmallMapRecords: ZRecords {
 			currentBookmark = iZone
 
 			if  alterHere {
-				if  let    dbID = tHere.databaseID {
-					gDatabaseID = dbID        // so gRecords below will be correct
-				}
-
+				gDatabaseID           = tHere.databaseID
 				gRecords?.currentHere = tHere // avoid push
 
 				gHere.grab()

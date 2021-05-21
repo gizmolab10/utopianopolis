@@ -56,9 +56,8 @@ class ZManifest : ZRecord {
 
     func apply() {
         for deleteMe in zDeleted {
-            if  let      name = deleteMe.name,
-                let      dbID = databaseID {
-                let   records = gRemoteStorage.cloud(for: dbID)
+            if  let      name = deleteMe.name {
+                let   records = gRemoteStorage.cloud(for: databaseID)
                 if  let  zone = records?.maybeZRecordForRecordName(name) as? Zone,
                     let trash = records?.trashZone {
                     zone.orphan()
@@ -103,11 +102,11 @@ class ZManifest : ZRecord {
 	}
 
 	static func uniqueManifest(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZManifest? {
-		let result = uniqueZRecord(entityName: kManifestType, recordName: dict.recordName, in: dbID) as? ZManifest
+		let result = uniqueManifest(recordName: dict.recordName, in: dbID)
 
-		result?.temporarilyIgnoreNeeds {
+		result.temporarilyIgnoreNeeds {
 			do {
-				try result?.extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
+				try result.extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
 			} catch {
 				printDebug(.dError, "\(error)")    // de-serialization
 			}
