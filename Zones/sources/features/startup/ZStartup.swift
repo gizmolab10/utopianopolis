@@ -11,22 +11,19 @@ import Foundation
 let gStartup = ZStartup()
 
 class ZStartup: NSObject {
-	var count = 0.0
-	var prior = 0.0
+	var              prior = 0.0
+	let          startedAt = Date()
+	var elapsedStartupTime : Double { return Date().timeIntervalSince(startedAt) }
 
-	func addShouldDisplay(_ increment: Double) -> Bool {
-		count       += increment
-		let  display = 0.5 <= (count - prior)
+	var elapsedEnough : Bool {
+		let  lapse = elapsedStartupTime
+		let enough = (lapse - prior) > 0.5
 
-		if  display {
-			if  gCurrentOp == .oRestoreIdeas {
-				noop()
-			}
-
-			prior    = count
+		if  enough {
+			prior = lapse
 		}
 
-		return display
+		return enough
 	}
 
 	func startupCloudAndUI() {

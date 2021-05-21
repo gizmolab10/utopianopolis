@@ -137,11 +137,7 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	func whichBookmarkTargets(_ target: Zone, orSpawnsIt: Bool) -> Zone? {
-		if  target.databaseID != nil {
-			return targeting(target, in: rootZone?.allBookmarkProgeny, orSpawnsIt: orSpawnsIt)
-		}
-
-		return nil
+		return targeting(target, in: rootZone?.allBookmarkProgeny, orSpawnsIt: orSpawnsIt)
 	}
 
 	func bookmarkTargeting(_ target: Zone) -> Zone? {

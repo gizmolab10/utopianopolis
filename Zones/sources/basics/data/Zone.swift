@@ -287,7 +287,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			zoneLink       = kNullLink
 			if  let  value = newValue,
 				let   name = value.recordName {
-				let   dbid = (value.databaseID ?? gDatabaseID).rawValue
+				let   dbid = value.databaseID.rawValue
 				zoneLink   = "\(dbid)::\(name)"
 			}
 		}
@@ -350,7 +350,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func deepCopy(dbID: ZDatabaseID?) -> Zone {
-		let      id = dbID ?? databaseID ?? .mineID
+		let      id = dbID ?? databaseID
 		let theCopy = Zone.uniqueZoneMaybeRenamed("noname", databaseID: id)
 
 		copyInto(theCopy)
@@ -359,11 +359,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		theCopy.parentZone = nil
 
 		for child in children {
-			theCopy.addChild(child.deepCopy(dbID: dbID))
+			theCopy.addChild(child.deepCopy(dbID: id))
 		}
 
 		for trait in traits.values {
-			theCopy.addTrait(trait.deepCopy(dbID: dbID))
+			theCopy.addTrait(trait.deepCopy(dbID: id))
 		}
 
 		return theCopy
@@ -819,8 +819,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						child.register() // need to wait until after child has a parent so bookmarks will be registered properly
 					}
 				}
-
-				gIncrementStartupProgress(0.024)
 			}
 
 			FOREGROUND(canBeDirect: true) {

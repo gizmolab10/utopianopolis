@@ -105,6 +105,7 @@ class ZRecord: ZManagedObject { // NSObject {
 			}
 
 			converted.append(contentsOf: updateFromCoreDataHierarchyRelationships(visited: v))
+			gStartupController?.fullStartupUpdate()
 		}
 
 		return converted
@@ -348,7 +349,7 @@ class ZRecord: ZManagedObject { // NSObject {
 	func extractFromStorageDictionary(_ dict: ZStorageDictionary, of entityName: String, into iDatabaseID: ZDatabaseID) throws {
 		try gThrowOnUserActivity()
 
-		FOREGROUND(forced: true) { gStartupController?.updateOperationStatus() }
+		FOREGROUND(forced: true) { gStartupController?.updateThermometerBar() }
 
 		// case 1: name is nil
 		// case 2: ck record already exists

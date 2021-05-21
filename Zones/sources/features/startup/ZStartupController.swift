@@ -67,10 +67,12 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	func fullStartupUpdate() {
-		updateThermometerBar()
-		updateSubviewVisibility()
-		buttonsView?.updateAndRedraw()
-		RunLoop.main.acceptInput(forMode: .default, before: Date())		// respond if user clicked a button
+		if !gHasFinishedStartup, gStartup.elapsedEnough {
+			updateThermometerBar()
+			updateSubviewVisibility()
+			buttonsView?.updateAndRedraw()
+			RunLoop.main.acceptInput(forMode: .default, before: Date())		// respond if user clicked a button
+		}
 	}
 
 	func updateSubviewVisibility() {
@@ -81,26 +83,17 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		pleaseWait?      .isHidden =  hasInternet && notWait                             // .firstTime hides this
 	}
 
-	func updateOperationStatus() {
-		operationLabel?        .text = gCurrentOp.fullStatus
-		operationLabel?.needsDisplay = true
+	func updateThermometerBar() {
+		thermometerBar?.update()
+
+		operationLabel?                  .text = gCurrentOp.fullStatus
+		operationLabel?          .needsDisplay = true
+		thermometerBar?          .needsDisplay = true
+		gMainWindow?.contentView?.needsDisplay = true
+		view                     .needsDisplay = true
 
 		gApplication.setWindowsNeedUpdate(true)
 		gApplication.updateWindows()
-	}
-
-	func updateThermometerBar() {
-		if !gHasFinishedStartup {
-			updateOperationStatus()
-			thermometerBar?.update()
-
-			thermometerBar?          .needsDisplay = true
-			gMainWindow?.contentView?.needsDisplay = true
-			view                     .needsDisplay = true
-
-			gApplication.setWindowsNeedUpdate(true)
-			gApplication.updateWindows()
-		}
 	}
 
 	@IBAction func handlePermissionAction(_ button: ZButton) {

@@ -61,22 +61,6 @@ func gSignal(for object: Any? = nil, _ multiple: [ZSignalKind], _ onCompletion: 
 
 private var canUpdate = true
 
-func gUpdateStartupProgress() {
-	if  canUpdate && !gHasFinishedStartup {
-		canUpdate     = false                // semaphore to prevent a race condition while thread switching
-		FOREGROUND(forced: true) {
-			gStartupController?.fullStartupUpdate()
-			canUpdate = true
-		}
-	}
-}
-
-func gIncrementStartupProgress(_ increment: Double = 1.0) {
-	if  gStartup.addShouldDisplay(increment) {
-		gUpdateStartupProgress()
-	}
-}
-
 func gRedrawMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
 	gSignal(for: object, [.sRelayout], onCompletion)
 }

@@ -71,9 +71,8 @@ class ZTrait: ZTraitAssets {
 		return result
 	}
 
-	func deepCopy(dbID: ZDatabaseID?) -> ZTrait {
-		let      id = dbID ?? databaseID ?? .mineID
-		let theCopy = ZTrait.uniqueTrait(recordName: gUniqueRecordName, in: id)
+	func deepCopy(dbID: ZDatabaseID) -> ZTrait {
+		let theCopy = ZTrait.uniqueTrait(recordName: gUniqueRecordName, in: databaseID)
 
 		copyInto(theCopy)
 

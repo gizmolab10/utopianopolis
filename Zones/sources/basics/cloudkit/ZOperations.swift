@@ -48,9 +48,9 @@ enum ZOperationID: Int, CaseIterable {
 
 	var progressTime : Int {
 		switch self {
-			case .oRestoreIdeas:      return gCanLoad      ? 160 : 0
-			case .oMigrateFromCloud:  return gNeedsMigrate ?  50 : 0
-			case .oLoadingFromFile:   return gReadFiles    ?  30 : 0
+			case .oRestoreIdeas:      return gCanLoad      ? 20 : 0
+			case .oMigrateFromCloud:  return gNeedsMigrate ? 50 : 0
+			case .oLoadingFromFile:   return gReadFiles    ? 30 : 0
 			case .oFetchUserRecord:   return  9
 			case .oMacAddress:        return  5
 			case .oUserPermissions:   return  5
@@ -103,7 +103,7 @@ func gSetProgressTime(for op: ZOperationID) {
 		gAssureProgressTimesAreLoaded()
 
 		let priorTime = gGetAccumulatedProgressTime(untilExcluding: op)
-		let delta     = gStartup.count - priorTime
+		let delta     = gStartup.elapsedStartupTime - priorTime
 
 		if  delta    >= 1.5 {
 			gProgressTimes[op] = delta
@@ -244,7 +244,6 @@ class ZOperations: NSObject {
 					// ////////////////////////////////////////////////////
 
 					FOREGROUND {
-						gStartup.count        += 1.0					// every op should advance progress bar
 						self.queue.isSuspended = true
 						self.lastOpStart       = Date()
 						self.currentOp         = operationID            // if hung, it happened inside this op
