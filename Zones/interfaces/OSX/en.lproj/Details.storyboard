@@ -361,7 +361,7 @@ CA
                                                             <outlet property="togglingView" destination="dSG-o4-XPL" id="qoT-1L-Vlt"/>
                                                         </connections>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fqv-v5-z0n" userLabel="Simple Tools Triangle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
+                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fqv-v5-z0n" userLabel="Simple Tools Toggle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="8" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="7lq-lv-VG0"/>
@@ -426,7 +426,7 @@ CA
                                                             <outlet property="togglingView" destination="M2W-8y-R0e" id="XRu-AH-2H9"/>
                                                         </connections>
                                                     </button>
-                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Data Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
+                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="hIy-eV-7gW" userLabel="Data Toggle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="8" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="Btc-fY-AcD"/>
@@ -444,14 +444,14 @@ CA
                                                         <rect key="frame" x="30" y="1" width="16" height="16"/>
                                                     </progressIndicator>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NEF-16-Rho" userLabel="Switch">
-                                                        <rect key="frame" x="278" y="1" width="44" height="15"/>
+                                                        <rect key="frame" x="273" y="-8" width="55" height="34"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="44" id="qFc-7U-zYr"/>
-                                                            <constraint firstAttribute="height" constant="14" id="ylm-ga-jfR"/>
+                                                            <constraint firstAttribute="width" constant="55" id="qFc-7U-zYr"/>
+                                                            <constraint firstAttribute="height" constant="33" id="ylm-ga-jfR"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YF9-6k-EhW">
+                                                        <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YF9-6k-EhW">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="miniSystem"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                             <string key="keyEquivalent">'</string>
                                                         </buttonCell>
                                                         <connections>
@@ -465,7 +465,7 @@ CA
                                                     <constraint firstItem="NEF-16-Rho" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="G8z-T0-5RT"/>
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="JkT-Tw-HTb"/>
                                                     <constraint firstAttribute="height" constant="18" id="OPH-Ni-UYm"/>
-                                                    <constraint firstAttribute="trailing" secondItem="NEF-16-Rho" secondAttribute="trailing" constant="6" id="a8z-1s-UTc"/>
+                                                    <constraint firstAttribute="trailing" secondItem="NEF-16-Rho" secondAttribute="trailing" id="a8z-1s-UTc"/>
                                                     <constraint firstItem="Zkz-eb-lqR" firstAttribute="leading" secondItem="hIy-eV-7gW" secondAttribute="trailing" constant="8" id="ct4-RT-UgC"/>
                                                     <constraint firstItem="hIy-eV-7gW" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" constant="8" id="ebX-ft-O1W"/>
                                                     <constraint firstItem="hIy-eV-7gW" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="i6w-cL-2uR"/>
@@ -517,7 +517,7 @@ CA
                                                             <outlet property="togglingView" destination="9j5-fI-wCz" id="HGX-Yo-z8h"/>
                                                         </connections>
                                                     </button>
-                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aCk-9D-lHI" userLabel="Triangle Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
+                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aCk-9D-lHI" userLabel="Preferences Toggle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="8" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="14" id="hAG-lD-Wcz"/>
@@ -582,7 +582,7 @@ CA
                                                             <outlet property="togglingView" destination="Utx-K3-0a0" id="Wks-zD-N6G"/>
                                                         </connections>
                                                     </button>
-                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1uw-i1-Cgo" userLabel="Small Map Button" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
+                                                    <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1uw-i1-Cgo" userLabel="Small Map Toggle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="8" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="14" id="53T-LY-ZHR"/>
@@ -597,14 +597,14 @@ CA
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zUL-Q6-aba" userLabel="Switch">
-                                                        <rect key="frame" x="278" y="1" width="44" height="15"/>
+                                                        <rect key="frame" x="273" y="-8" width="55" height="34"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="14" id="YSn-Az-ikL"/>
-                                                            <constraint firstAttribute="width" constant="44" id="ilj-a1-1mc"/>
+                                                            <constraint firstAttribute="height" constant="33" id="YSn-Az-ikL"/>
+                                                            <constraint firstAttribute="width" constant="55" id="ilj-a1-1mc"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xW1-68-JpA">
+                                                        <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xW1-68-JpA">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="miniSystem"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                             <string key="keyEquivalent">'</string>
                                                         </buttonCell>
                                                         <connections>
@@ -618,7 +618,7 @@ CA
                                                     <constraint firstAttribute="height" constant="18" id="J3l-tS-SXi"/>
                                                     <constraint firstItem="3bx-6i-bTg" firstAttribute="centerY" secondItem="s1s-Ki-o6t" secondAttribute="centerY" id="RmK-7b-QQG"/>
                                                     <constraint firstItem="zUL-Q6-aba" firstAttribute="centerY" secondItem="s1s-Ki-o6t" secondAttribute="centerY" id="bvL-DI-zVB"/>
-                                                    <constraint firstAttribute="trailing" secondItem="zUL-Q6-aba" secondAttribute="trailing" constant="6" id="dHV-eH-A3m"/>
+                                                    <constraint firstAttribute="trailing" secondItem="zUL-Q6-aba" secondAttribute="trailing" id="dHV-eH-A3m"/>
                                                     <constraint firstItem="1uw-i1-Cgo" firstAttribute="leading" secondItem="s1s-Ki-o6t" secondAttribute="leading" constant="8" id="tym-J5-q29"/>
                                                 </constraints>
                                             </customView>

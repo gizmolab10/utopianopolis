@@ -127,7 +127,7 @@ class ZTimers: NSObject {
 			switch tid {
 				case .tSync:                    waitFor = 15.0  // seconds
 				case .tRecount:                 waitFor = 60.0  // one minute
-				case .tStartup, .tMouseZone:    waitFor =  0.3  // three tenths second
+				case .tStartup, .tMouseZone:    waitFor =  1.0  // one second
 				default:                        break
 			}
 

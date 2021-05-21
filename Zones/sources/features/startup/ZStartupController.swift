@@ -74,8 +74,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 			updateThermometerBar()
 			updateSubviewVisibility()
 			buttonsView?.updateAndRedraw()
-//			CFRunLoopRun()
-			RunLoop.main.acceptInput(forMode: .default, before: Date().addingTimeInterval(0.1))		// respond if user clicked a button
+			RunLoop.main.acceptInput(forMode: .default, before: Date().addingTimeInterval(0.1))		// update operation label
 		}
 	}
 

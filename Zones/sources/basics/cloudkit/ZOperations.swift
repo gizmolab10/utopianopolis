@@ -28,7 +28,7 @@ enum ZOperationID: Int, CaseIterable {
 
 	case oRoots
 	case oManifest
-	case oRestoreIdeas       // LOCAL
+	case oLoadingIdeas       // LOCAL
 	case oLoadingFromFile    // LOCAL
     case oHere
 	case oResolveMissing
@@ -37,7 +37,7 @@ enum ZOperationID: Int, CaseIterable {
     // miscellaneous
 
 	case oMigrateFromCloud
-	case oSaveCoreData       // LOCAL
+	case oSavingLocalData       // LOCAL
     case oCompletion
 	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
@@ -48,7 +48,7 @@ enum ZOperationID: Int, CaseIterable {
 
 	var progressTime : Int {
 		switch self {
-			case .oRestoreIdeas:      return gCanLoad      ? 20 : 0
+			case .oLoadingIdeas:      return gCanLoad      ? 20 : 0
 			case .oMigrateFromCloud:  return gNeedsMigrate ? 50 : 0
 			case .oLoadingFromFile:   return gReadFiles    ? 30 : 0
 			case .oFetchUserRecord:   return  9
@@ -69,15 +69,15 @@ enum ZOperationID: Int, CaseIterable {
 	var useTimer: Bool {
 		switch self {
 			case .oLoadingFromFile:       return gReadFiles
-			case .oRestoreIdeas, .oRoots: return true
+			case .oLoadingIdeas, .oRoots: return true
 			default:                      return false
 		}
 	}
 
 	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oCompletion] }
-	var    countOps : ZOpIDsArray { return [.oLoadingFromFile, .oRestoreIdeas] }
+	var    countOps : ZOpIDsArray { return [.oLoadingFromFile, .oLoadingIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
-	var   bothDBOps : ZOpIDsArray { return [.oHere, .oRoots, .oLoadingFromFile, .oManifest, .oRestoreIdeas, .oSaveCoreData, .oResolveMissing] }
+	var   bothDBOps : ZOpIDsArray { return [.oHere, .oRoots, .oLoadingFromFile, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
 	var    localOps : ZOpIDsArray { return [.oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
 											.oFetchUserRecord, .oCheckAvailability] + bothDBOps }
 
@@ -92,7 +92,7 @@ enum ZOperationID: Int, CaseIterable {
 
 	var countText : String {
 		let (z, p) = gRemoteStorage.totalRecordsCounts     // count of z records
-		let suffix = p == 0 ? "" :  " of \(p)"
+		let suffix = p == 0 ? "" :  " (of \(p))"
 		return "\(z)" + suffix
 	}
 

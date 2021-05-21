@@ -64,7 +64,7 @@ class ZBatches: ZOnboarding {
         var operations: ZOpIDsArray {
 			switch identifier {
 				case .bResumeCloud: return [              .oMigrateFromCloud           ]
-				case .bSync:        return [              .oSaveCoreData               ]
+				case .bSync:        return [              .oSavingLocalData               ]
 				case .bBookmarks:   return [.oBookmarks                                ]
 				case .bRoot:        return [.oRoots,      .oManifest                   ]
 				case .bFocus:       return [.oRoots                    ,               ]
@@ -304,8 +304,8 @@ class ZBatches: ZOnboarding {
 		switch identifier {
 			case .oFavorites:                                                                      gFavorites.setup(cloudCallback)
 			case .oRecents:                                                                          gRecents.setup(cloudCallback)
-			case .oSaveCoreData: gSaveContext   ();                                                                 cloudCallback?(0)
-			case .oRestoreIdeas: gLoadContext   (into: currentDatabaseID!,                            onCompletion: cloudCallback)
+			case .oSavingLocalData: gSaveContext       ();                                                          cloudCallback?(0)
+			case .oLoadingIdeas:    gLoadContext       (into: currentDatabaseID!,                     onCompletion: cloudCallback)
 			case .oLoadingFromFile: try gFiles.readFile(into: currentDatabaseID!,                     onCompletion: cloudCallback)
 			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
 		}
