@@ -34,6 +34,7 @@ class ZStartup: NSObject {
 		gRemoteStorage.clear()
 		gSignal([.sMain, .sStartupStatus])
 		gTimers.startTimer(for: .tStartup)
+		gSearching.setStateTo(.sNot)
 
 		gBatches.startUp { iSame in
 			FOREGROUND {

@@ -23,6 +23,7 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var essayContainerView : ZView?
 	@IBOutlet var mapContainerView   : ZView?
 	@IBOutlet var permissionView     : ZView?
+	@IBOutlet var searchBoxView      : ZView?
 	@IBOutlet var detailView         : ZView?
 	@IBOutlet var debugView          : ZView?
 	@IBOutlet var dragView           : ZDragView?
@@ -89,32 +90,25 @@ class ZMainController: ZGesturesController {
 	}
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		let   hideEssay = !gIsEssayMode
-		let  hideSearch = !gIsSearchMode ||   gSearching.state == .sList
-        let hideResults = !gIsSearchMode || !(gSearchResultsController?.hasResults ?? false)
+		let   hideEssay =  !gIsEssayMode
+		let  hideSearch =  !gIsSearchMode ||   gSearching.state == .sList
+        let hideResults = (!gIsSearchMode || !(gSearchResultsController?.hasResults ?? false)) && !gIsEssayMode
 
-		permissionView?               .isHidden = !gIsStartupMode
-
-		gSearching.setStateTo(.sNot)
+		permissionView?              .isHidden = !gIsStartupMode
+		mapContainerView?            .isHidden = !hideResults
+		searchResultsView?           .isHidden =  hideResults
+		searchBoxView?               .isHidden =  hideSearch
 
 		switch iKind {
 			case .sSearch:
 				if  hideSearch {
-					searchResultsView?.isHidden =  hideSearch
-
 					assignAsFirstResponder(nil)
 				}
-			case .sFound:
-				if !gIsEssayMode {
-					mapContainerView? .isHidden = !hideResults
-				}
-				
-				searchResultsView?    .isHidden =  hideResults
 			case .sSwap:
-				gRefusesFirstResponder          = true          // prevent the exit from essay from beginning an edit
-				essayContainerView?   .isHidden =  hideEssay
-				mapContainerView? 	  .isHidden = !hideEssay
-				gRefusesFirstResponder          = false
+				gRefusesFirstResponder         = true          // prevent the exit from essay from beginning an edit
+				essayContainerView?  .isHidden =  hideEssay
+				mapContainerView?    .isHidden = !hideEssay
+				gRefusesFirstResponder         = false
 
 				dragView?.setNeedsDisplay()
 				update()

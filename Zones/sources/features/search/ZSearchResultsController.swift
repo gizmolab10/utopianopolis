@@ -284,6 +284,10 @@ class ZSearchResultsController: ZGenericTableController {
 	override func handleSignal(_ iObject: Any?, kind iKind: ZSignalKind) {
 		if iKind == .sFound {
 			resultsAreVisible = false
+
+			if  let t = genericTableView {
+				t.tableColumns[0].width = t.frame.width
+			}
 			
 			if  gIsSearchMode, foundRecords.count > 0 {
 				var dbID: ZDatabaseID?
