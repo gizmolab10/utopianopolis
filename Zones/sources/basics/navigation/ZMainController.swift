@@ -42,9 +42,11 @@ class ZMainController: ZGesturesController {
 	}
 
 	@IBAction func hamburgerButtonAction(_ button: NSButton) {
-		gShowDetailsView = gDetailsViewIsHidden
+		if !gIsSearchMode { // avoid changing state when its effects are invisible
+			gShowDetailsView = gDetailsViewIsHidden
 
-		update()
+			update()
+		}
 	}
 
 	@IBAction func debugInfoButtonAction(_ button: NSButton) {
@@ -59,7 +61,7 @@ class ZMainController: ZGesturesController {
 
 	func update() {
 		hamburgerButton?.toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
-		detailsWidth?  .constant =  gShowDetailsView ? 226.0 :  0.0
+		detailsWidth?  .constant = !gShowDetailsView || gIsSearchMode ? 0.0 : 226.0
 		detailView?    .isHidden = !gShowDetailsView
 		debugView?     .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
 
@@ -94,10 +96,10 @@ class ZMainController: ZGesturesController {
 		let  hideSearch =  !gIsSearchMode ||   gSearching.state == .sList
         let hideResults = (!gIsSearchMode || !(gSearchResultsController?.hasResults ?? false)) && !gIsEssayMode
 
-		permissionView?              .isHidden = !gIsStartupMode
-		mapContainerView?            .isHidden = !hideResults
-		searchResultsView?           .isHidden =  hideResults
-		searchBoxView?               .isHidden =  hideSearch
+		permissionView?            .isHidden = !gIsStartupMode
+		mapContainerView?          .isHidden = !hideResults
+		searchResultsView?         .isHidden =  hideResults
+		searchBoxView?             .isHidden =  hideSearch
 
 		switch iKind {
 			case .sSearch:
@@ -105,15 +107,16 @@ class ZMainController: ZGesturesController {
 					assignAsFirstResponder(nil)
 				}
 			case .sSwap:
-				gRefusesFirstResponder         = true          // prevent the exit from essay from beginning an edit
-				essayContainerView?  .isHidden =  hideEssay
-				mapContainerView?    .isHidden = !hideEssay
-				gRefusesFirstResponder         = false
+				gRefusesFirstResponder       = true          // prevent the exit from essay from beginning an edit
+				essayContainerView?.isHidden =  hideEssay
+				mapContainerView?  .isHidden = !hideEssay
+				gRefusesFirstResponder       = false
 
 				dragView?.setNeedsDisplay()
-				update()
 			default: break
         }
+
+		update()
     }
 
 }
