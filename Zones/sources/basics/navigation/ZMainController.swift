@@ -19,11 +19,10 @@ class ZMainController: ZGesturesController {
 
 	@IBOutlet var detailsWidth       : NSLayoutConstraint?
 	@IBOutlet var hamburgerButton    : ZButton?
-	@IBOutlet var essayContainerView : ZView?
 	@IBOutlet var searchResultsView  : ZView?
+	@IBOutlet var essayContainerView : ZView?
 	@IBOutlet var mapContainerView   : ZView?
 	@IBOutlet var permissionView     : ZView?
-	@IBOutlet var searchBoxView      : ZView?
 	@IBOutlet var detailView         : ZView?
 	@IBOutlet var debugView          : ZView?
 	@IBOutlet var dragView           : ZDragView?
@@ -32,7 +31,6 @@ class ZMainController: ZGesturesController {
 
 	override func setup() {
 		searchResultsView?.isHidden = true
-		searchBoxView?    .isHidden = true
 		view.gestureHandler         = self
 
 		update()
@@ -56,16 +54,6 @@ class ZMainController: ZGesturesController {
 		}
 
 		update()
-	}
-
-	func updateForState() {
-		switch gSearching.state {
-			case .sList:
-				searchBoxView?.isHidden = true
-			case .sEntry, .sFind:
-				searchBoxView?.isHidden = false
-			default: break
-		}
 	}
 
 	func update() {
@@ -102,14 +90,15 @@ class ZMainController: ZGesturesController {
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		let   hideEssay = !gIsEssayMode
-		let  hideSearch = !gIsSearchMode || gSearching.state == .sList
+		let  hideSearch = !gIsSearchMode ||   gSearching.state == .sList
         let hideResults = !gIsSearchMode || !(gSearchResultsController?.hasResults ?? false)
 
 		permissionView?               .isHidden = !gIsStartupMode
 
+		gSearching.setStateTo(.sNot)
+
 		switch iKind {
 			case .sSearch:
-				searchBoxView?        .isHidden =  hideSearch
 				if  hideSearch {
 					searchResultsView?.isHidden =  hideSearch
 
@@ -119,7 +108,7 @@ class ZMainController: ZGesturesController {
 				if !gIsEssayMode {
 					mapContainerView? .isHidden = !hideResults
 				}
-				searchBoxView?        .isHidden =  hideSearch
+				
 				searchResultsView?    .isHidden =  hideResults
 			case .sSwap:
 				gRefusesFirstResponder          = true          // prevent the exit from essay from beginning an edit

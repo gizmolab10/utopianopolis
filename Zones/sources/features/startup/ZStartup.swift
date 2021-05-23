@@ -17,7 +17,7 @@ class ZStartup: NSObject {
 
 	var elapsedEnough : Bool {
 		let  lapse = elapsedStartupTime
-		let enough = (lapse - prior) > 1.0
+		let enough = (lapse - prior) > kThreshold
 
 		if  enough {
 			prior = lapse

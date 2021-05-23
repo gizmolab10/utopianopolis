@@ -127,7 +127,7 @@ class ZTimers: NSObject {
 			switch tid {
 				case .tSync:                    waitFor = 15.0  // seconds
 				case .tRecount:                 waitFor = 60.0  // one minute
-				case .tStartup, .tMouseZone:    waitFor =  1.0  // one second
+				case .tStartup, .tMouseZone:    waitFor = kThreshold
 				default:                        break
 			}
 
@@ -136,11 +136,11 @@ class ZTimers: NSObject {
 				case .tMouseZone:               block = { iTimer in gCurrentMouseDownZone     = nil }
 				case .tMouseLocation:           block = { iTimer in gCurrentMouseDownLocation = nil }
 				case .tTextEditorHandlesArrows: block = { iTimer in gTextEditorHandlesArrows  = false }
-				case .tStartup:                 block = { iTimer in gStartupController?.fullStartupUpdate() }
 				case .tSync:                    block = { iTimer in if gIsReadyToShowUI { gSaveContext() } }
 				case .tRecount:                 block = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount(); gSignal([.sStatus]) } }
 				case .tCloudAvailable:          block = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
 				case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.invokeDeferralMaybe(iTimer) }
+				case .tStartup:                 block = { iTimer in gStartupController?.fullStartupUpdate() }
 				default:                        break
 			}
 

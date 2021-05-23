@@ -22,6 +22,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	@IBOutlet var pleaseWait        : ZView?
 	@IBOutlet var acccessToAppleID  : ZView?
 	@IBOutlet var enableCloudDrive  : ZView?
+	@IBOutlet var progressIndicator : ZTextField?
 	@IBOutlet var buttonsView       : ZHelpButtonsView?
 	@IBOutlet var thermometerBar    : ZStartupProgressBar?
 	var           startupCompletion : Closure?
@@ -86,9 +87,20 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		pleaseWait?      .isHidden =  hasInternet && notWait                             // .firstTime hides this
 	}
 
+	var progressText:String {
+		let count = Int(gStartup.elapsedStartupTime / kThreshold)
+		let total = Int(gProgressTimes.values.reduce(0, +))
+		let other = (total - count)
+		let dashes = " ".repeatOf(count) + "-".repeatOf(other)
+
+		return dashes
+	}
+
 	func updateThermometerBar() {
 //		thermometerBar?.updateProgress()
+		gAssureProgressTimesAreLoaded()
 
+		progressIndicator?               .text = progressText
 		operationLabel?                  .text = gCurrentOp.fullStatus
 		operationLabel?          .needsDisplay = true
 		thermometerBar?          .needsDisplay = true

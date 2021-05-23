@@ -2169,8 +2169,8 @@ extension String {
 		}
 	}
 
-	func smallSurround(with repeater: String) -> String {
-		let small = repeater.repeatOf(2)
+	func smallSurround(with repeater: String, repeating: Int = 2) -> String {
+		let small = repeater.repeatOf(repeating)
 
 		return "\(small)\(self)\(small)"
 	}

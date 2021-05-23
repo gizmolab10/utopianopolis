@@ -19,10 +19,8 @@ var gSearchBarController: ZSearchBarController? { return gControllers.controller
 
 class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
-	@IBOutlet var searchBox            : ZSearchField?
-	@IBOutlet var dismissButton        : ZButton?
-	@IBOutlet var searchOptionsControl : ZSegmentedControl?
-	override  var controllerID         : ZControllerID { return .idSearch }
+	@IBOutlet var searchBox    : ZSearchField?
+	override  var controllerID : ZControllerID { return .idSearch }
 
 	var activeSearchBoxText: String? {
 		let searchString = searchBox?.text?.searchable
@@ -63,8 +61,6 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		if  iKind == .sSearch && gIsSearchMode {
 			gSearching.setStateTo(.sEntry)
-
-			updateSearchOptions()
 		}
 	}
 
@@ -111,58 +107,15 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
         return nil
     }
 
-	func control(_ control: ZControl, textView: ZTextView, doCommandBy commandSelector: Selector) -> Bool { // false means not handled
-		let done = commandSelector == Selector(("noop:"))
+    func endSearch() {
+        searchBox?.resignFirstResponder()
+    }
 
-		if  done {
-			endSearch()
-		}
-
-		return done
-	}
-
-	@IBAction func searchOptionAction(sender: ZSegmentedControl) {
-		var options = ZFilterOption.fNone
-
-		for index in 0..<sender.segmentCount {
-			if  sender.isSelected(forSegment: index) {
-				let option = ZFilterOption(rawValue: Int(2.0 ** Double(index)))
-				options.insert(option)
-			}
-		}
-
-		if  options == .fNone {
-			options  = .fIdeas
-		}
-
-		gFilterOption = options
-
+	func updateSearchBox() {
 		if  let text = activeSearchBoxText,
 			text.length > 0 {
 			gSearching.performSearch(for: text)
 		}
 	}
-
-	@IBAction func dismissAction(_ sender: ZButton) {
-		endSearch()
-	}
-
-	// MARK:- private
-	// MARK:-
-
-	func updateSearchOptions() {
-		let o = gFilterOption
-
-		searchOptionsControl?.setSelected(o.contains(.fBookmarks), forSegment: 0)
-		searchOptionsControl?.setSelected(o.contains(.fNotes),     forSegment: 1)
-		searchOptionsControl?.setSelected(o.contains(.fIdeas),     forSegment: 2)
-		searchOptionsControl?.action = #selector(searchOptionAction)
-		searchOptionsControl?.target = self
-	}
-
-    func endSearch() {
-        searchBox?.resignFirstResponder()
-        gSearching.exitSearchMode()
-    }
 
 }
