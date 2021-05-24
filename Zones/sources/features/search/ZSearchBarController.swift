@@ -66,7 +66,11 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 	func handleArrow(_ arrow: ZArrowKey, with flags: ZEventFlags) {
 		#if os(OSX)
-		searchBox?.currentEditor()?.handleArrow(arrow, with: flags)
+		if  searchBoxIsFirstResponder {
+			searchBox?.currentEditor()?.handleArrow(arrow, with: flags)
+		} else if gIsSearchEssayMode {
+			gEssayView?.handleArrow(arrow, flags: flags)
+		}
 		#endif
 	}
 
@@ -84,7 +88,9 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		let   isEntry = state == .sEntry
 		let    isList = state == .sList
 
-		if  isList && !isInBox {
+		if (gIsSearchEssayMode && !isInBox) || (key == "g" && COMMAND) {
+			gEssayView?.handleKey(key, flags: flags)
+		} else if  isList && !isInBox {
 			return gSearchResultsController?.handleEvent(event)
 		} else if isReturn, isInBox, let text = activeSearchBoxText {
 			gSearching.performSearch(for: text)
@@ -96,8 +102,6 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 			gSearching.switchToList()
 		} else if let arrow = key.arrow {
 			handleArrow(arrow, with: flags)
-		} else if key == "g", gIsSearchEssayMode {
-			gEssayView?.searchAgain(false)
 		} else {
 			if !isReturn, isEntry {
 				gSearching.state = .sFind

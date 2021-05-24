@@ -66,6 +66,7 @@ class ZMainController: ZGesturesController {
 		detailView?    .isHidden = !showDetails
 		debugView?     .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
 
+		gDetailsController?.update()
 		updateHamburgerImage()
 	}
 
@@ -94,14 +95,10 @@ class ZMainController: ZGesturesController {
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		let    hideEssay = !gIsEssayMode
+		let   hasResults = gSearchResultsController?.hasResults ?? false
 		let isSearchMode = gIsSearchMode || gIsSearchEssayMode
-		let   hideSearch = !isSearchMode ||  gSearching.state == .sList
-        let  hideResults = !isSearchMode || (gSearchResultsController?.hasResults ?? false) || gIsSearchEssayMode
-
-		permissionView?            .isHidden = !gIsStartupMode
-		mapContainerView?          .isHidden = !hideResults || gIsEssayMode || gIsSearchEssayMode
-		searchResultsView?         .isHidden =  hideResults || gIsEssayMode
-		searchBoxView?             .isHidden =  hideSearch
+		let   hideSearch = !isSearchMode || gSearching.state == .sList
+		let  hideResults = !isSearchMode || gIsSearchEssayMode || !hasResults || gSearching.state == .sEntry ||  gSearching.state == .sNot
 
 		switch iKind {
 			case .sSearch:
@@ -116,6 +113,11 @@ class ZMainController: ZGesturesController {
 				dragView?.setNeedsDisplay()
 			default: break
         }
+
+		permissionView?            .isHidden = !gIsStartupMode
+		mapContainerView?          .isHidden = !hideResults || gIsEssayMode || gIsSearchEssayMode
+		searchResultsView?         .isHidden =  hideResults || gIsEssayMode
+		searchBoxView?             .isHidden =  hideSearch
 
 		update()
     }

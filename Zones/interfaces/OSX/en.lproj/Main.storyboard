@@ -1108,7 +1108,7 @@ CA
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <searchField wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bct-LL-Igg">
-                                <rect key="frame" x="8" y="12" width="170" height="22"/>
+                                <rect key="frame" x="2" y="12" width="176" height="22"/>
                                 <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="8N3-HP-82v">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -1118,7 +1118,7 @@ CA
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="bct-LL-Igg" secondAttribute="trailing" constant="20" id="8Dj-DB-JIO"/>
-                            <constraint firstItem="bct-LL-Igg" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="8" id="k59-Lm-2Cw"/>
+                            <constraint firstItem="bct-LL-Igg" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="2" id="k59-Lm-2Cw"/>
                             <constraint firstItem="bct-LL-Igg" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="neh-h0-Oac"/>
                         </constraints>
                     </view>
@@ -1421,14 +1421,14 @@ Gw
                                 </connections>
                             </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Tsd-bp-vCV" customClass="ZBreadcrumbsView" customModule="Seriously">
-                                <rect key="frame" x="8" y="0.0" width="160" height="34"/>
+                                <rect key="frame" x="2" y="0.0" width="166" height="34"/>
                                 <connections>
                                     <outlet property="clipCrumbsButton" destination="Ch1-Y5-6sD" id="dTT-6R-3f5"/>
                                 </connections>
                             </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="Tsd-bp-vCV" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" constant="8" id="5MW-QS-sfa"/>
+                            <constraint firstItem="Tsd-bp-vCV" firstAttribute="leading" secondItem="W43-uk-txK" secondAttribute="leading" constant="2" id="5MW-QS-sfa"/>
                             <constraint firstAttribute="bottom" secondItem="Tsd-bp-vCV" secondAttribute="bottom" id="AKv-Ds-L1t"/>
                             <constraint firstItem="Tsd-bp-vCV" firstAttribute="top" secondItem="W43-uk-txK" secondAttribute="top" id="L4M-7I-D1m"/>
                             <constraint firstAttribute="trailing" secondItem="Ch1-Y5-6sD" secondAttribute="trailing" constant="8" id="cGO-ML-08P"/>
@@ -1776,10 +1776,10 @@ DQ
                                 <rect key="frame" x="0.0" y="0.0" width="202" height="39"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="Rct-nF-Qx4" customClass="ZMapControlsView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="172" height="37"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="179" height="37"/>
                                     </customView>
                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bhB-1W-OBB" userLabel="Search Button">
-                                        <rect key="frame" x="175" y="12" width="15" height="15"/>
+                                        <rect key="frame" x="185" y="12" width="15" height="15"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="15" id="BF9-rd-D9E"/>
                                             <constraint firstAttribute="height" constant="9" id="vrO-8h-LnZ"/>
@@ -1794,12 +1794,12 @@ DQ
                                     </button>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="Rct-nF-Qx4" secondAttribute="trailing" constant="30" id="10c-jK-pYy"/>
                                     <constraint firstAttribute="bottom" secondItem="Rct-nF-Qx4" secondAttribute="bottom" id="K5A-Rz-mWV"/>
                                     <constraint firstItem="bhB-1W-OBB" firstAttribute="centerY" secondItem="LcE-Ba-uvs" secondAttribute="centerY" id="N4o-3i-kRi"/>
-                                    <constraint firstAttribute="trailing" secondItem="bhB-1W-OBB" secondAttribute="trailing" constant="12" id="ZiX-To-UiK"/>
+                                    <constraint firstAttribute="trailing" secondItem="bhB-1W-OBB" secondAttribute="trailing" constant="2" id="ZiX-To-UiK"/>
                                     <constraint firstAttribute="bottom" secondItem="Rct-nF-Qx4" secondAttribute="bottom" id="oLX-HV-5sJ"/>
                                     <constraint firstItem="Rct-nF-Qx4" firstAttribute="top" secondItem="LcE-Ba-uvs" secondAttribute="top" constant="2" id="ofd-wJ-o32"/>
+                                    <constraint firstItem="bhB-1W-OBB" firstAttribute="leading" secondItem="Rct-nF-Qx4" secondAttribute="trailing" constant="6" id="wZq-GO-WZH"/>
                                     <constraint firstItem="Rct-nF-Qx4" firstAttribute="leading" secondItem="LcE-Ba-uvs" secondAttribute="leading" id="ylz-Nw-BCW"/>
                                 </constraints>
                             </customView>
@@ -1838,7 +1838,7 @@ DQ
                                         <font key="titleFont" metaFont="miniSystem"/>
                                     </box>
                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NcF-tr-4S4">
-                                        <rect key="frame" x="175" y="12" width="15" height="15"/>
+                                        <rect key="frame" x="185" y="12" width="15" height="15"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="15" id="eG0-pd-dSk"/>
                                             <constraint firstAttribute="height" constant="9" id="kRY-H0-bNA"/>
@@ -1857,7 +1857,7 @@ DQ
                                     <constraint firstItem="NcF-tr-4S4" firstAttribute="centerY" secondItem="jbD-YT-XOW" secondAttribute="centerY" id="6Mf-2k-2cV"/>
                                     <constraint firstItem="G4z-oF-KkF" firstAttribute="top" secondItem="jbD-YT-XOW" secondAttribute="top" constant="4" id="Q7g-Et-L9a"/>
                                     <constraint firstAttribute="bottom" secondItem="G4z-oF-KkF" secondAttribute="bottom" id="cdM-MX-8JH"/>
-                                    <constraint firstAttribute="trailing" secondItem="NcF-tr-4S4" secondAttribute="trailing" constant="12" id="xX0-yG-Mjn"/>
+                                    <constraint firstAttribute="trailing" secondItem="NcF-tr-4S4" secondAttribute="trailing" constant="2" id="xX0-yG-Mjn"/>
                                     <constraint firstAttribute="trailing" secondItem="G4z-oF-KkF" secondAttribute="trailing" id="xcU-WQ-6d6"/>
                                 </constraints>
                             </customView>

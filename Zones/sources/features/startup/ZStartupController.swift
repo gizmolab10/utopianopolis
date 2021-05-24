@@ -91,7 +91,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		let count = Int(gStartup.elapsedStartupTime / kThreshold)
 		let total = Int(gProgressTimes.values.reduce(0, +))
 		let other = (total - count)
-		let dashes = " ".repeatOf(count) + "-".repeatOf(other)
+		let dashes = " ".repeatOf(count) + "•".repeatOf(other)
 
 		return dashes
 	}
