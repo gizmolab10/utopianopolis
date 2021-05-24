@@ -98,7 +98,7 @@ class ZMainController: ZGesturesController {
 		let   hasResults = gSearchResultsController?.hasResults ?? false
 		let isSearchMode = gIsSearchMode || gIsSearchEssayMode
 		let   hideSearch = !isSearchMode || gSearching.state == .sList
-		let  hideResults = !isSearchMode || gIsSearchEssayMode || !hasResults || gSearching.state == .sEntry ||  gSearching.state == .sNot
+		let  hideResults = !isSearchMode || gIsSearchEssayMode || !hasResults || gSearching.state == .sEntry || gIsNotSearching
 
 		switch iKind {
 			case .sSearch:

@@ -17,29 +17,27 @@ class ZControlsController: ZGenericController {
 	@IBOutlet var searchOptionsControl : ZSegmentedControl?
 	@IBOutlet var searchOptionsView    : ZView?
 	@IBOutlet var dismissButton        : ZButton?
+	@IBOutlet var searchButton         : ZButton?
 
 	@IBAction func search(_ sender: ZButton) { gSearching.showSearch() }
-	func updateForState() { searchOptionsView?.isHidden = gSearching.state == .sNot }
 	func updateOptionView() { updateForState() }
-	func update() { searchOptionsView?.isHidden = gSearching.state == .sNot }
 
 	override func setup() {
 		searchOptionsView?.zlayer.backgroundColor = kWhiteColor.cgColor
 
-		update()
+		updateForState()
 	}
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
 		mapControls?.setupAndRedraw()
 		updateSearchOptions()
-		update()
-		let hideSearch = !gIsSearchMode
+		updateForState()
+	}
 
-		switch iKind {
-			case .sSearch: searchOptionsView?.isHidden = hideSearch
-			case .sFound:  searchOptionsView?.isHidden = hideSearch
-			default: break
-		}
+	func updateForState() {
+		searchOptionsView?.isHidden =  gIsNotSearching || gIsSearchEssayMode
+		dismissButton?    .isHidden =  gIsNotSearching
+		searchButton?     .isHidden = !gIsNotSearching
 	}
 
 	func updateSearchOptions() {

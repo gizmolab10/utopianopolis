@@ -67,6 +67,7 @@ var              gIsEssayMode:               Bool { return gWorkMode == .wEssayM
 var             gIsSearchMode:               Bool { return gWorkMode == .wSearchMode }
 var            gIsStartupMode:               Bool { return gWorkMode == .wStartupMode }
 var           gIsEditIdeaMode:               Bool { return gWorkMode == .wEditIdeaMode }
+var           gIsNotSearching:               Bool { return gSearching.state == .sNot }
 var        gIsSearchEssayMode:               Bool { return gSearching.priorWorkMode == .wEssayMode }
 var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEditIdeaMode }
 var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsEssayMode }

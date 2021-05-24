@@ -1837,38 +1837,38 @@ DQ
                                         </view>
                                         <font key="titleFont" metaFont="miniSystem"/>
                                     </box>
-                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NcF-tr-4S4">
-                                        <rect key="frame" x="185" y="12" width="15" height="15"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="15" id="eG0-pd-dSk"/>
-                                            <constraint firstAttribute="height" constant="9" id="kRY-H0-bNA"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="NSStopProgressFreestandingTemplate" imagePosition="overlaps" alignment="center" controlSize="large" imageScaling="proportionallyDown" inset="2" id="Oz0-2j-Aad">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="dismissAction:" target="c3F-r9-TYw" id="CCC-I2-0VZ"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="G4z-oF-KkF" firstAttribute="leading" secondItem="jbD-YT-XOW" secondAttribute="leading" id="52f-57-Idg"/>
-                                    <constraint firstItem="NcF-tr-4S4" firstAttribute="centerY" secondItem="jbD-YT-XOW" secondAttribute="centerY" id="6Mf-2k-2cV"/>
                                     <constraint firstItem="G4z-oF-KkF" firstAttribute="top" secondItem="jbD-YT-XOW" secondAttribute="top" constant="4" id="Q7g-Et-L9a"/>
                                     <constraint firstAttribute="bottom" secondItem="G4z-oF-KkF" secondAttribute="bottom" id="cdM-MX-8JH"/>
-                                    <constraint firstAttribute="trailing" secondItem="NcF-tr-4S4" secondAttribute="trailing" constant="2" id="xX0-yG-Mjn"/>
                                     <constraint firstAttribute="trailing" secondItem="G4z-oF-KkF" secondAttribute="trailing" id="xcU-WQ-6d6"/>
                                 </constraints>
                             </customView>
+                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NcF-tr-4S4">
+                                <rect key="frame" x="185" y="12" width="15" height="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="15" id="eG0-pd-dSk"/>
+                                    <constraint firstAttribute="height" constant="9" id="kRY-H0-bNA"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="NSStopProgressFreestandingTemplate" imagePosition="overlaps" alignment="center" controlSize="large" imageScaling="proportionallyDown" inset="2" id="Oz0-2j-Aad">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="dismissAction:" target="c3F-r9-TYw" id="CCC-I2-0VZ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="jbD-YT-XOW" secondAttribute="trailing" id="1xX-R2-mGg"/>
                             <constraint firstAttribute="bottom" secondItem="jbD-YT-XOW" secondAttribute="bottom" id="IDj-f3-8jL"/>
                             <constraint firstItem="jbD-YT-XOW" firstAttribute="leading" secondItem="inW-Gh-k1T" secondAttribute="leading" id="V90-UG-ShE"/>
                             <constraint firstItem="jbD-YT-XOW" firstAttribute="top" secondItem="inW-Gh-k1T" secondAttribute="top" id="cJF-Tq-JQC"/>
+                            <constraint firstItem="NcF-tr-4S4" firstAttribute="centerY" secondItem="inW-Gh-k1T" secondAttribute="centerY" id="g3L-iy-nh2"/>
                             <constraint firstItem="LcE-Ba-uvs" firstAttribute="leading" secondItem="inW-Gh-k1T" secondAttribute="leading" id="iHc-Q4-H4D"/>
                             <constraint firstAttribute="bottom" secondItem="LcE-Ba-uvs" secondAttribute="bottom" id="k7W-9M-0fg"/>
+                            <constraint firstAttribute="trailing" secondItem="NcF-tr-4S4" secondAttribute="trailing" constant="2" id="mmH-cd-tuP"/>
                             <constraint firstAttribute="trailing" secondItem="LcE-Ba-uvs" secondAttribute="trailing" id="nym-hC-CSP"/>
                             <constraint firstItem="LcE-Ba-uvs" firstAttribute="top" secondItem="inW-Gh-k1T" secondAttribute="top" id="s2i-sH-t4y"/>
                         </constraints>
