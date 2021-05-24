@@ -19,7 +19,6 @@ var gSearchResultsController: ZSearchResultsController? { return gControllers.co
 
 class ZSearchResultsController: ZGenericTableController {
 
-    var     resultsAreVisible = false
     var          foundRecords = [ZDatabaseID: ZRecordsArray] ()
 	var            searchText : String?       { return gSearchBarController?.activeSearchBoxText }
 	override var controllerID : ZControllerID { return .idSearchResults }
@@ -223,25 +222,21 @@ class ZSearchResultsController: ZGenericTableController {
 	}
 
 	func updateForState() {
-		if  gSearching.state == .sList {
+		if  gSearchResultsVisible {
 			genericTableView?.becomeFirstResponder()
 		}
 	}
 
     func clear() {
-        resultsAreVisible = false
-        
         if  gIsSearchMode {
 			gSearching.exitSearchMode()
         }
     }
 
     func reset() {
-        if  resultsAreVisible || foundRecords.count == 0 {
+        if  gSearchResultsVisible || foundRecords.count == 0 {
             clear()
         } else {
-            resultsAreVisible = true
-
             gSignal([.sSearch])
         }
     }
@@ -283,8 +278,6 @@ class ZSearchResultsController: ZGenericTableController {
 
 	override func handleSignal(_ iObject: Any?, kind iKind: ZSignalKind) {
 		if iKind == .sFound {
-			resultsAreVisible = false
-
 			if  let t = genericTableView {
 				t.tableColumns[0].width = t.frame.width
 			}

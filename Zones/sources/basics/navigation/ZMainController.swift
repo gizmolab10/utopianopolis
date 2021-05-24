@@ -42,11 +42,9 @@ class ZMainController: ZGesturesController {
 	}
 
 	@IBAction func hamburgerButtonAction(_ button: NSButton) {
-		if !gIsSearchMode || gIsSearchEssayMode { // avoid changing state when its effects are invisible
-			gShowDetailsView = gDetailsViewIsHidden
+		gShowDetailsView = gDetailsViewIsHidden
 
-			update()
-		}
+		update()
 	}
 
 	@IBAction func debugInfoButtonAction(_ button: NSButton) {
@@ -97,8 +95,8 @@ class ZMainController: ZGesturesController {
 		let    hideEssay = !gIsEssayMode
 		let   hasResults = gSearchResultsController?.hasResults ?? false
 		let isSearchMode = gIsSearchMode || gIsSearchEssayMode
-		let   hideSearch = !isSearchMode || gSearching.state == .sList
-		let  hideResults = !isSearchMode || gIsSearchEssayMode || !hasResults || gSearching.state == .sEntry || gIsNotSearching
+		let   hideSearch = !isSearchMode || gSearchResultsVisible
+		let  hideResults = !isSearchMode || gIsSearchEssayMode || !hasResults || gWaitingForSearchEntry || gIsNotSearching
 
 		switch iKind {
 			case .sSearch:
