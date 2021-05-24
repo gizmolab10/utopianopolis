@@ -96,6 +96,8 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 			gSearching.switchToList()
 		} else if let arrow = key.arrow {
 			handleArrow(arrow, with: flags)
+		} else if key == "g", gIsSearchEssayMode {
+			gEssayView?.searchAgain(false)
 		} else {
 			if !isReturn, isEntry {
 				gSearching.state = .sFind
@@ -109,6 +111,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
     func endSearch() {
         searchBox?.resignFirstResponder()
+		gSearching.exitSearchMode()
     }
 
 	func updateSearchBox() {

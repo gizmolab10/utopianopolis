@@ -207,6 +207,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return false
 	}
 
+	func showSearch() {
+
+	}
+
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
 		let   SHIFT = flags.isShift
 		let  OPTION = flags.isOption
@@ -1143,6 +1147,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func grabSelectedTextForSearch() {
 		gSearching.searchText = selectionString
+	}
+
+	func performSearch(for searchString: String) {
+		gSearching.searchText = searchString
+
+		searchAgain(false)
 	}
 
 	func searchAgain(_ OPTION: Bool) {

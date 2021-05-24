@@ -67,8 +67,9 @@ var              gIsEssayMode:               Bool { return gWorkMode == .wEssayM
 var             gIsSearchMode:               Bool { return gWorkMode == .wSearchMode }
 var            gIsStartupMode:               Bool { return gWorkMode == .wStartupMode }
 var           gIsEditIdeaMode:               Bool { return gWorkMode == .wEditIdeaMode }
-var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsEssayMode }
+var        gIsSearchEssayMode:               Bool { return gSearching.priorWorkMode == .wEssayMode }
 var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEditIdeaMode }
+var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsEssayMode }
 var          gIsDraggableMode:               Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
 var      gDetailsViewIsHidden:               Bool { return gMainController?.detailView?.isHidden ?? true }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }

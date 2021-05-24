@@ -72,25 +72,17 @@ class ZControlsController: ZGenericController {
 	}
 
 	@IBAction func dismissAction(_ sender: ZButton) {
-		endSearch()
+		gSearchBarController?.endSearch()
 	}
 
 	func control(_ control: ZControl, textView: ZTextView, doCommandBy commandSelector: Selector) -> Bool { // false means not handled
 		let done = commandSelector == Selector(("noop:"))
 
 		if  done {
-			endSearch()
+			gSearchBarController?.endSearch()
 		}
 
 		return done
-	}
-
-	// MARK:- private
-	// MARK:-
-
-	func endSearch() {
-		gSearchBarController?.endSearch()
-		gSearching.exitSearchMode()
 	}
 
 }

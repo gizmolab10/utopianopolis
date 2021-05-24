@@ -42,7 +42,7 @@ class ZMainController: ZGesturesController {
 	}
 
 	@IBAction func hamburgerButtonAction(_ button: NSButton) {
-		if !gIsSearchMode { // avoid changing state when its effects are invisible
+		if !gIsSearchMode || gIsSearchEssayMode { // avoid changing state when its effects are invisible
 			gShowDetailsView = gDetailsViewIsHidden
 
 			update()
@@ -60,9 +60,10 @@ class ZMainController: ZGesturesController {
 	}
 
 	func update() {
+		let          showDetails = gShowDetailsView
 		hamburgerButton?.toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
-		detailsWidth?  .constant = !gShowDetailsView || gIsSearchMode ? 0.0 : 226.0
-		detailView?    .isHidden = !gShowDetailsView
+		detailsWidth?  .constant = !showDetails ? 0.0 : 226.0
+		detailView?    .isHidden = !showDetails
 		debugView?     .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
 
 		updateHamburgerImage()
@@ -92,13 +93,14 @@ class ZMainController: ZGesturesController {
 	}
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		let   hideEssay =  !gIsEssayMode
-		let  hideSearch =  !gIsSearchMode ||   gSearching.state == .sList
-        let hideResults = (!gIsSearchMode || !(gSearchResultsController?.hasResults ?? false)) && !gIsEssayMode
+		let    hideEssay = !gIsEssayMode
+		let isSearchMode = gIsSearchMode || gIsSearchEssayMode
+		let   hideSearch = !isSearchMode ||  gSearching.state == .sList
+        let  hideResults = !isSearchMode || (gSearchResultsController?.hasResults ?? false) || gIsSearchEssayMode
 
 		permissionView?            .isHidden = !gIsStartupMode
-		mapContainerView?          .isHidden = !hideResults
-		searchResultsView?         .isHidden =  hideResults
+		mapContainerView?          .isHidden = !hideResults || gIsEssayMode || gIsSearchEssayMode
+		searchResultsView?         .isHidden =  hideResults || gIsEssayMode
 		searchBoxView?             .isHidden =  hideSearch
 
 		switch iKind {
@@ -109,7 +111,6 @@ class ZMainController: ZGesturesController {
 			case .sSwap:
 				gRefusesFirstResponder       = true          // prevent the exit from essay from beginning an edit
 				essayContainerView?.isHidden =  hideEssay
-				mapContainerView?  .isHidden = !hideEssay
 				gRefusesFirstResponder       = false
 
 				dragView?.setNeedsDisplay()

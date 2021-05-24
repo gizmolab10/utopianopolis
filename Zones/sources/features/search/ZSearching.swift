@@ -49,7 +49,7 @@ class ZSearching: NSObject {
 	func exitSearchMode() {
 		state = .sNot
 
-		swapModes()
+		swapWorkMode()
 		gSignal([.sFound, .sSearch])
 	}
 
@@ -65,18 +65,26 @@ class ZSearching: NSObject {
 		}
 	}
 
-	func swapModes() {
+	func swapWorkMode() {
 		let      last = priorWorkMode ??          .wMapMode
 		priorWorkMode = gIsSearchMode ? nil  :    gWorkMode
 		gWorkMode     = gIsSearchMode ? last : .wSearchMode
 	}
 
 	func showSearch(_ OPTION: Bool = false) {
-		swapModes()
+		swapWorkMode()
 		gSignal([OPTION ? .sFound : .sSearch])
 	}
 
 	func performSearch(for searchString: String) {
+		if  gIsSearchEssayMode {
+			gEssayView?.performSearch(for: searchString)
+		} else {
+			performGlobalSearch(for: searchString)
+		}
+	}
+
+	func performGlobalSearch(for searchString: String) {
 		var remaining = kAllDatabaseIDs.count // same count as allClouds
 		var  combined = [ZDatabaseID: [Any]] ()
 
