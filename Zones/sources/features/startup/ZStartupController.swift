@@ -88,12 +88,12 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	var progressText:String {
-		let count = Int(gStartup.elapsedStartupTime / kThreshold)
-		let total = Int(gProgressTimes.values.reduce(0, +))
-		let other = (total - count)
-		let dashes = " ".repeatOf(count) + "•".repeatOf(other)
+		let   count = Int(gStartup.elapsedStartupTime / kThreshold)
+		let   total = Int(gProgressTimes.values.reduce(0, +))
+		let remains = total - count
+		let    text = " ".repeatOf(count) + "•".repeatOf(remains)
 
-		return dashes
+		return text
 	}
 
 	func updateThermometerBar() {

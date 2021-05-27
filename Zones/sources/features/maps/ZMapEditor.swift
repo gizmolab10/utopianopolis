@@ -89,7 +89,7 @@ class ZMapEditor: ZBaseEditor {
 							case "n":      editNote(OPTION)
 							case "p":      printCurrentFocus()
 							case "t":      if COMMAND, let string = gCurrentlySelectedText { showThesaurus(for: string) }
-							case "/":      if SCORNED { return false } else { popAndUpdateRecents(CONTROL, kind: .eEdited) }
+							case "/":      if SCORNED { return false } else { focusOrPopSmallMap(CONTROL, kind: .eEdited) }
 							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
 							case kTab:     addSibling(OPTION)
 							case kSpace:   gSelecting.currentMoveable.addIdea()
@@ -140,7 +140,7 @@ class ZMapEditor: ZBaseEditor {
 						case "+":        gSelecting.currentGrabs.toggleGroupOwnership()
 						case "-":        return handleHyphen(COMMAND, OPTION)
 						case "'":        gSwapSmallMapMode(OPTION)
-						case "/":        if SCORNED { gCurrentKeyPressed = nil; return false } else { popAndUpdateRecents(CONTROL, COMMAND, kind: .eSelected) }
+						case "/":        if SCORNED { gCurrentKeyPressed = nil; return false } else { focusOrPopSmallMap(CONTROL, COMMAND, kind: .eSelected) }
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case "[", "]":   go(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() }
 						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")
@@ -356,14 +356,9 @@ class ZMapEditor: ZBaseEditor {
 		grabs.duplicate()
 	}
 
-	func popAndUpdateRecents(_ CONTROL: Bool, _ COMMAND: Bool = false, kind: ZFocusKind) {
+	func focusOrPopSmallMap(_ CONTROL: Bool, _ COMMAND: Bool = false, kind: ZFocusKind) {
 		if  CONTROL {
-			if  let here = gCurrentSmallMapRecords?.popAndUpdate()?.bookmarkTarget {
-				gHere    = here
-
-				gHere.grab()
-				gRedrawMaps()
-			}
+			gCurrentSmallMapRecords?.popAndUpdateCurrent()
 		} else {
 			gRecords?.focusOnGrab(kind, COMMAND, shouldGrab: true) { // complex grab logic
 				gRedrawMaps()
@@ -834,34 +829,34 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-    func actuallyMoveInto(_ move: ZoneArray?, onCompletion: BoolClosure?) {
+	func actuallyMoveInto(_ move: ZoneArray?, onCompletion: BoolClosure?) {
 		if  let    zones = move,
 			zones.count  > 0,
 			var     into = zones.rootMost?.parentZone {                          // default: move into parent of root most
 			let siblings = Array(into.children)
 			let      max = siblings.count - 1
 			var  fromTop = false
-            
-            for zone in zones {
-				if  let       index = zone.siblingIndex {
-					fromTop         = fromTop || index == 0                     // detect when moving the top sibling
-					if  let    next = index.next(up: !fromTop, max: max) {      // always move into sibling above, except at top
-						let newInto = siblings[next]
 
-						if !zones.contains(newInto) {
-							into    = newInto
+			for zone in zones {
+				if  let   index = zone.siblingIndex {
+					fromTop     = fromTop || index == 0                          // detect when moving the top sibling
+					let    next = index.next(forward: !fromTop, max: max)        // always move into sibling above, except at top
+					let newInto = siblings[next]
 
-							break
-						}
+					if !zones.contains(newInto) {
+						into    = newInto
+
+						break
 					}
+
 				}
 			}
-            
-            moveZones(zones, into: into, onCompletion: onCompletion)
-        } else {
-            onCompletion?(true)
-        }
-    }
+
+			moveZones(zones, into: into, onCompletion: onCompletion)
+		} else {
+			onCompletion?(true)
+		}
+	}
 
 	func moveZones(_ zones: ZoneArray, into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: BoolClosure?) {
 		if  into.isInSmallMap {

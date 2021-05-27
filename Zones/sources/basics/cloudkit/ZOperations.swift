@@ -24,7 +24,7 @@ enum ZOperationID: Int, CaseIterable {
     case oFetchUserID
     case oFetchUserRecord
 
-    // continue
+    // finish up
 
 	case oRoots
 	case oManifest

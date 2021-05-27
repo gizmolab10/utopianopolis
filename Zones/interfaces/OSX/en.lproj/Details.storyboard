@@ -129,7 +129,7 @@
                     </view>
                     <connections>
                         <outlet property="cloudStatusLabel" destination="fy3-JT-P1F" id="bJt-yR-hPf"/>
-                        <outlet property="creationDateLabel" destination="JFS-Ma-Zx8" id="Fil-Mc-hrR"/>
+                        <outlet property="modificationDateLabel" destination="JFS-Ma-Zx8" id="Fil-Mc-hrR"/>
                         <outlet property="recordNameLabel" destination="Nr1-TP-dq5" id="6mE-FK-zJX"/>
                         <outlet property="synopsisLabel" destination="BcI-eM-ytK" id="l2l-bk-3KS"/>
                         <outlet property="totalCountLabel" destination="3v8-d2-yo8" id="8GP-Ce-9m4"/>
@@ -352,7 +352,7 @@ CA
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="oFz-pg-brp"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="roundRect" title="Simple Tools" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xRi-eo-teP">
+                                                        <buttonCell key="cell" type="roundRect" title="Simple Tools" alternateTitle="Simple Tools" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xRi-eo-teP">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
@@ -377,9 +377,9 @@ CA
                                                     </button>
                                                 </subviews>
                                                 <constraints>
+                                                    <constraint firstItem="uxs-aX-Fhe" firstAttribute="leading" secondItem="h9A-Dp-8sZ" secondAttribute="leading" id="08L-QE-88Q"/>
                                                     <constraint firstAttribute="trailing" secondItem="uxs-aX-Fhe" secondAttribute="trailing" id="5Y3-I9-DyI"/>
                                                     <constraint firstAttribute="height" constant="18" id="8gm-Xf-qKu"/>
-                                                    <constraint firstItem="uxs-aX-Fhe" firstAttribute="leading" secondItem="h9A-Dp-8sZ" secondAttribute="leading" id="CP8-oj-OXk"/>
                                                     <constraint firstItem="uxs-aX-Fhe" firstAttribute="centerY" secondItem="h9A-Dp-8sZ" secondAttribute="centerY" id="trl-qE-Uyg"/>
                                                     <constraint firstItem="fqv-v5-z0n" firstAttribute="leading" secondItem="h9A-Dp-8sZ" secondAttribute="leading" constant="8" id="yKc-de-Rr4"/>
                                                 </constraints>
@@ -413,7 +413,7 @@ CA
                                                 <rect key="frame" x="0.0" y="77" width="328" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y" userLabel="Data Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
+                                                        <rect key="frame" x="0.0" y="-1" width="271" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="ALV-dt-Nu6"/>
                                                         </constraints>
@@ -444,7 +444,7 @@ CA
                                                         <rect key="frame" x="30" y="1" width="16" height="16"/>
                                                     </progressIndicator>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NEF-16-Rho" userLabel="Switch">
-                                                        <rect key="frame" x="273" y="-8" width="55" height="34"/>
+                                                        <rect key="frame" x="271" y="-8" width="55" height="34"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="55" id="qFc-7U-zYr"/>
                                                             <constraint firstAttribute="height" constant="33" id="ylm-ga-jfR"/>
@@ -460,16 +460,16 @@ CA
                                                     </button>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstAttribute="trailing" secondItem="fsz-8k-F3y" secondAttribute="trailing" id="1U6-qO-4W4"/>
+                                                    <constraint firstItem="NEF-16-Rho" firstAttribute="leading" secondItem="fsz-8k-F3y" secondAttribute="trailing" id="5LM-i3-VJ7"/>
                                                     <constraint firstItem="Zkz-eb-lqR" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="Fjh-dH-wlz"/>
                                                     <constraint firstItem="NEF-16-Rho" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="G8z-T0-5RT"/>
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="JkT-Tw-HTb"/>
                                                     <constraint firstAttribute="height" constant="18" id="OPH-Ni-UYm"/>
-                                                    <constraint firstAttribute="trailing" secondItem="NEF-16-Rho" secondAttribute="trailing" id="a8z-1s-UTc"/>
+                                                    <constraint firstAttribute="trailing" secondItem="NEF-16-Rho" secondAttribute="trailing" constant="2" id="a8z-1s-UTc"/>
                                                     <constraint firstItem="Zkz-eb-lqR" firstAttribute="leading" secondItem="hIy-eV-7gW" secondAttribute="trailing" constant="8" id="ct4-RT-UgC"/>
                                                     <constraint firstItem="hIy-eV-7gW" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" constant="8" id="ebX-ft-O1W"/>
+                                                    <constraint firstItem="fsz-8k-F3y" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" id="efO-U8-scE"/>
                                                     <constraint firstItem="hIy-eV-7gW" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="i6w-cL-2uR"/>
-                                                    <constraint firstItem="fsz-8k-F3y" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" id="kaj-xz-Sm0"/>
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Chx-83-qGo" userLabel="Data Hideable">
@@ -504,11 +504,11 @@ CA
                                                 <rect key="frame" x="0.0" y="0.0" width="328" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jzv-og-1RG" userLabel="Preferences Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
+                                                        <rect key="frame" x="0.0" y="-1" width="327" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="jjE-A0-nLk"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="roundRect" title="Preferences" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TVl-I9-b5f">
+                                                        <buttonCell key="cell" type="roundRect" title="Preferences" alternateTitle="Preferences" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TVl-I9-b5f">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
@@ -536,7 +536,7 @@ CA
                                                     <constraint firstAttribute="height" constant="18" id="Lun-Vz-ROc"/>
                                                     <constraint firstItem="aCk-9D-lHI" firstAttribute="leading" secondItem="Ul6-QC-jDi" secondAttribute="leading" constant="8" id="acn-kY-LjT"/>
                                                     <constraint firstItem="Jzv-og-1RG" firstAttribute="centerY" secondItem="Ul6-QC-jDi" secondAttribute="centerY" id="eaQ-ep-cKf"/>
-                                                    <constraint firstAttribute="trailing" secondItem="Jzv-og-1RG" secondAttribute="trailing" id="me3-US-cu8"/>
+                                                    <constraint firstAttribute="trailing" secondItem="Jzv-og-1RG" secondAttribute="trailing" constant="1" id="me3-US-cu8"/>
                                                     <constraint firstItem="aCk-9D-lHI" firstAttribute="centerY" secondItem="Ul6-QC-jDi" secondAttribute="centerY" id="t1n-0m-22k"/>
                                                     <constraint firstItem="Jzv-og-1RG" firstAttribute="leading" secondItem="Ul6-QC-jDi" secondAttribute="leading" id="tgg-ic-fmn"/>
                                                 </constraints>
@@ -569,7 +569,7 @@ CA
                                                 <rect key="frame" x="0.0" y="39" width="328" height="18"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3bx-6i-bTg" userLabel="Small Map Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
+                                                        <rect key="frame" x="0.0" y="-1" width="272" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="jp1-9C-ukh"/>
                                                         </constraints>
@@ -614,8 +614,8 @@ CA
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="3bx-6i-bTg" firstAttribute="leading" secondItem="s1s-Ki-o6t" secondAttribute="leading" id="1u1-0s-2Wx"/>
-                                                    <constraint firstAttribute="trailing" secondItem="3bx-6i-bTg" secondAttribute="trailing" id="A0s-1i-Mvj"/>
                                                     <constraint firstAttribute="height" constant="18" id="J3l-tS-SXi"/>
+                                                    <constraint firstItem="zUL-Q6-aba" firstAttribute="leading" secondItem="3bx-6i-bTg" secondAttribute="trailing" constant="1" id="Qh7-rG-bSE"/>
                                                     <constraint firstItem="3bx-6i-bTg" firstAttribute="centerY" secondItem="s1s-Ki-o6t" secondAttribute="centerY" id="RmK-7b-QQG"/>
                                                     <constraint firstItem="zUL-Q6-aba" firstAttribute="centerY" secondItem="s1s-Ki-o6t" secondAttribute="centerY" id="bvL-DI-zVB"/>
                                                     <constraint firstAttribute="trailing" secondItem="zUL-Q6-aba" secondAttribute="trailing" id="dHV-eH-A3m"/>
@@ -650,10 +650,15 @@ CA
                                     <constraint firstItem="M2W-8y-R0e" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="5vd-TT-dHx"/>
                                     <constraint firstAttribute="trailing" secondItem="Utx-K3-0a0" secondAttribute="trailing" id="AoP-Ng-hhK"/>
                                     <constraint firstAttribute="trailing" secondItem="M2W-8y-R0e" secondAttribute="trailing" id="CkC-Ah-hqH"/>
+                                    <constraint firstItem="M2W-8y-R0e" firstAttribute="top" secondItem="dSG-o4-XPL" secondAttribute="bottom" constant="1" id="FH0-vu-319"/>
+                                    <constraint firstAttribute="width" constant="328" id="GCn-m2-dW7"/>
                                     <constraint firstItem="dSG-o4-XPL" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="MHM-KA-Rpi"/>
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="NFa-oz-tCT"/>
+                                    <constraint firstItem="Utx-K3-0a0" firstAttribute="top" secondItem="9j5-fI-wCz" secondAttribute="bottom" constant="1" id="Pek-DM-kni"/>
                                     <constraint firstAttribute="trailing" secondItem="dSG-o4-XPL" secondAttribute="trailing" id="iiK-ke-Ihc"/>
+                                    <constraint firstItem="dSG-o4-XPL" firstAttribute="top" secondItem="1wo-H2-e9s" secondAttribute="top" id="kAQ-Q4-Uz5"/>
                                     <constraint firstAttribute="trailing" secondItem="9j5-fI-wCz" secondAttribute="trailing" id="pCn-yA-AaQ"/>
+                                    <constraint firstItem="9j5-fI-wCz" firstAttribute="top" secondItem="M2W-8y-R0e" secondAttribute="bottom" constant="1" id="tgW-8c-ho2"/>
                                     <constraint firstItem="Utx-K3-0a0" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="uBL-Bl-K7a"/>
                                 </constraints>
                                 <visibilityPriorities>

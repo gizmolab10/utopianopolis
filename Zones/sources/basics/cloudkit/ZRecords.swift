@@ -341,11 +341,11 @@ class ZRecords: NSObject {
     // MARK:-
 
 	func appendZRecordsLookup(with iName: String, onEach: @escaping ZRecordsToZRecordsClosure) {
-		for name in iName.components(separatedBy: " ") {
-			if  name != "" {
-				gCoreDataStack.searchZones(for: name, within: databaseID) { zRecords in
-					self.zRecordsArrayLookup[name] = onEach(zRecords)
-				}
+		let names = iName.components(separatedBy: " ").filter { $0 != "" }
+
+		gCoreDataStack.searchZonesForNames(names, within: databaseID) { (dict: StringZRecordsDictionary) in
+			for (name, zRecords) in dict {
+				self.zRecordsArrayLookup[name] = onEach(zRecords)
 			}
 		}
 	}

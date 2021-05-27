@@ -803,7 +803,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func grabNextNote(up: Bool, ungrab: Bool) {
 		let       dots = dragDots
 		let     gIndex = grabbedIndex(goingUp: up)
-		if  let nIndex = gIndex?.next(up: up, max: dots.count - 1),
+		if  let nIndex = gIndex?.next(forward: up, max: dots.count - 1),
 			let   note = dots[nIndex].note {
 			if  ungrab {
 				ungrabAll()
@@ -1243,7 +1243,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let parent = selectedZone {
 
 			func child(named name: String, withText: String) {
-				let child = Zone.uniqueZoneMaybeRenamed(name, databaseID: dbID)   	// create new (to be child) zone from text
+				let child = Zone.uniqueZoneRenamed(name, databaseID: dbID)   	// create new (to be child) zone from text
 
 				parent.addChild(child)
 				child.setTraitText(text, for: .tNote)                       // create note from text in the child
@@ -1257,7 +1257,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			} else if flags.isOption {
 				child(named: text,   withText: "")
 			} else {
-				let child = Zone.uniqueZoneMaybeRenamed(text, databaseID: dbID)   	// create new (to be child) zone from text
+				let child = Zone.uniqueZoneRenamed(text, databaseID: dbID)   	// create new (to be child) zone from text
 				insertText("", replacementRange: selectedRange)	            // remove text
 				parent.addChild(child)
 				child.asssureIsVisible()

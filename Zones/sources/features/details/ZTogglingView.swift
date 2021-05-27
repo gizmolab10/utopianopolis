@@ -13,14 +13,14 @@
 #endif
 
 class ZBannerButton : ZButton {
-	@IBOutlet var   togglingView : ZTogglingView?
+	@IBOutlet var   togglingView : ZTogglingView? // point back at the container (stack view)
 }
 
-class ZTogglingView: NSStackView {
+class ZTogglingView: ZStackView {
 
 	@IBOutlet var triangleButton : ZToggleButton?
 	@IBOutlet var    titleButton : ZBannerButton?
-	@IBOutlet var    extraButton : ZBannerButton?
+	@IBOutlet var    extraButton : ZButton?
 	@IBOutlet var        spinner : ZProgressIndicator?
 	@IBOutlet var     bannerView : ZView?
     @IBOutlet var   hideableView : ZView?
@@ -111,6 +111,8 @@ class ZTogglingView: NSStackView {
     func update() {
 		titleButton?.zlayer.backgroundColor =     gAccentColor.cgColor
 		extraButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
+		let spacer = "  "
+		let title = titleButton?.alternateTitle ?? "foo"
 
 		if  gIsReadyToShowUI {
 			switch identity {
@@ -120,7 +122,8 @@ class ZTogglingView: NSStackView {
 					}
 				case .vData:
 					titleButton?.title = gDatabaseID.userReadableString.capitalized + " Data"
-				default: break
+				default:
+					titleButton?.title = title + spacer
 			}
 		}
 

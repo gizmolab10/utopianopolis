@@ -16,22 +16,33 @@ import Foundation
 
 class ZDataController: ZGenericController {
 
-	@IBOutlet var creationDateLabel: ZTextField?
-	@IBOutlet var  cloudStatusLabel: ZTextField?
-    @IBOutlet var   totalCountLabel: ZTextField?
-	@IBOutlet var   recordNameLabel: ZTextField?
-	@IBOutlet var     synopsisLabel: ZTextField?
-    var                 currentZone: Zone?         { return gSelecting.rootMostMoveable }
-    override  var      controllerID: ZControllerID { return .idData }
+	@IBOutlet var modificationDateLabel: ZTextField?
+	@IBOutlet var      cloudStatusLabel: ZTextField?
+    @IBOutlet var       totalCountLabel: ZTextField?
+	@IBOutlet var       recordNameLabel: ZTextField?
+	@IBOutlet var         synopsisLabel: ZTextField?
+    var                     currentZone: Zone?         { return gSelecting.rootMostMoveable }
+    override  var          controllerID: ZControllerID { return .idData }
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  gShowDetailsView, iKind != .sStartupStatus, let c = gDetailsController, c.viewIsVisible(for: .vData) {  // don't send signal to a hidden favorites controller
-			creationDateLabel?.text = ""
-			cloudStatusLabel? .text = statusText
-			recordNameLabel?  .text = zoneRecordNameText
-			totalCountLabel?  .text = totalCountsText
-			synopsisLabel?    .text = synopsisText
+		if  let c = gDetailsController, c.viewIsVisible(for: .vData),  // don't send signal to a hidden favorites controller
+			gShowDetailsView,    iKind != .sStartupStatus {
+			modificationDateLabel?.text = modificationDateText
+			cloudStatusLabel?     .text = statusText
+			recordNameLabel?      .text = zoneRecordNameText
+			totalCountLabel?      .text = totalCountsText
+			synopsisLabel?        .text = synopsisText
 		}
+	}
+
+	var modificationDateText: String {
+		var     text = ""
+		if  let zone = currentZone,
+			let date = zone.modificationDate {
+			text     = date.easyToReadDateTime
+		}
+
+		return text
 	}
 
     var versionText: String {

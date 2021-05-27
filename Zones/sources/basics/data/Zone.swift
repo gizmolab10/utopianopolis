@@ -122,7 +122,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                   toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
 	func                     recount()                        { updateAllProgenyCounts() }
 	func              createBookmark() ->               Zone  { return gBookmarks.createBookmark(targeting: self) }
-	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.uniqueZoneMaybeRenamed(String(arc4random()), databaseID: dbID) }
+	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.uniqueZoneRenamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
 	var zonesWithNotes : ZoneArray {
@@ -351,7 +351,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func deepCopy(dbID: ZDatabaseID?) -> Zone {
 		let      id = dbID ?? databaseID
-		let theCopy = Zone.uniqueZoneMaybeRenamed("noname", databaseID: id)
+		let theCopy = Zone.uniqueZoneRenamed("noname", databaseID: id)
 
 		copyInto(theCopy)
 		gBookmarks.addToReverseLookup(theCopy)   // only works for bookmarks
@@ -749,8 +749,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var siblingIndex: Int? {
-		if let siblings = parentZone?.children {
-			if let index = siblings.firstIndex(of: self) {
+		if  let  siblings = parentZone?.children {
+			if  let index = siblings.firstIndex(of: self) {
 				return index
 			} else {
 				for (index, sibling) in siblings.enumerated() {
@@ -1123,7 +1123,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
 		if  databaseID != .favoritesID {
-			let newIdea = Zone.uniqueZoneMaybeRenamed(name, databaseID: databaseID)
+			let newIdea = Zone.uniqueZoneRenamed(name, databaseID: databaseID)
 
 			parentZoneMaybe?.expand()
 			gTextEditor.stopCurrentEdit()
@@ -1828,8 +1828,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let        r = rr.ownedGroup([]), r.count > 0,
 			let    index = indexIn(r) {
 			let      max = r.count - 1
-			if       max > 0,
-				let next = index.next(up: forward, max: max) {
+			if       max > 0 {
+				let next = index.next(forward: forward, max: max)
 				let zone = r[next]
 				gHere    = zone
 
@@ -2117,7 +2117,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				p.grab()
-				gSignal([.sCrumbs])
+				gSignal([.sData, .sCrumbs, .sSmallMap])
 			}
 		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
 			gHere              = bookmark			                 // change focus to bookmark of self
@@ -2186,7 +2186,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		onCompletion?(needReveal)
 
 		if !needReveal {
-			gSignal([.sCrumbs])
+			gSignal([.sData, .sCrumbs, .sSmallMap])
 		}
 	}
 
@@ -3449,7 +3449,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return created
 	}
 
-	static func uniqueZoneMaybeRenamed(_ named: String?, recordName: String? = nil, databaseID: ZDatabaseID) -> Zone {
+	static func uniqueZoneRenamed(_ named: String?, recordName: String? = nil, databaseID: ZDatabaseID) -> Zone {
 		let created           = uniqueZone(recordName: recordName, in: databaseID)
 		if  created.zoneName == nil || created.zoneName!.isEmpty {
 			created.zoneName  = named

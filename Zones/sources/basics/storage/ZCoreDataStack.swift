@@ -366,10 +366,10 @@ class ZCoreDataStack: NSObject {
 	// MARK:- search
 	// MARK:-
 
-	func searchZones(for match: String, within dbID: ZDatabaseID, onCompletion: ZRecordsClosure? = nil) {
+	func searchZonesForName(_ name: String, within dbID: ZDatabaseID, onCompletion: ZRecordsClosure? = nil) {
 		if  gIsReadyToShowUI, gCanLoad {
 			let        dbid = dbID.identifier
-			let  searchable = match.searchable
+			let  searchable = name.searchable
 			let idPredicate = NSPredicate(format: "zoneName contains[cd] %@", searchable)
 			for entityName in [kZoneType] { // kTraitType
 				self.search(within: dbid, entityName: entityName, using: idPredicate) { matches in
@@ -378,6 +378,31 @@ class ZCoreDataStack: NSObject {
 			}
 		} else {
 			onCompletion?([])
+		}
+	}
+
+	func searchZonesForNames(_ names: [String], within dbID: ZDatabaseID, onCompletion: StringZRecordsDictionaryClosure? = nil) {
+		var            result = StringZRecordsDictionary()
+		if  gIsReadyToShowUI, gCanLoad {
+			let          dbid = dbID.identifier
+			let   searchables = names.map { $0.searchable }
+			var         count = searchables.count
+
+			for searchable in searchables {
+				let predicate = NSPredicate(format: "zoneName contains[cd] %@", searchable)
+
+				for entityName in [kZoneType] { // kTraitType
+					self.search(within: dbid, entityName: entityName, using: predicate) { matches in
+						result[searchable] = matches
+						count             -= 1
+						if  count         == 0 {
+							onCompletion?(result)
+						}
+					}
+				}
+			}
+		} else {
+			onCompletion?(result)
 		}
 	}
 

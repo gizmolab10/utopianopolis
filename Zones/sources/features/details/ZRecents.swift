@@ -52,15 +52,9 @@ class ZRecents : ZSmallMapRecords {
 				here  = gCurrentEssayZone
 			}
 
-			if  let     pushMe = here, gHasFinishedStartup { // avoid confusing recents upon relaunch
-				let   bookmark = bookmarkTargeting(pushMe) ?? addNewBookmark(for: pushMe, action: .aCreateBookmark)
-
-				if  let parent = rootZone {
-					parent.moveChildIndex(from: 0, to: parent.count)
-				}
-
-				bookmark?.moveZone(into: currentHere, at: 0)
-
+			if  gHasFinishedStartup, // avoid confusing recents upon relaunch
+				let pushMe = here {
+				let      _ = bookmarkTargeting(pushMe) ?? addNewBookmark(for: pushMe, action: .aCreateBookmark)
 				updateCurrentRecent()
 			}
 		}
@@ -91,10 +85,12 @@ class ZRecents : ZSmallMapRecords {
 		return false
 	}
 
-	override func go(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
+	func xgo(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
 		if  currentBookmark == nil {
 			gRecents.push()
 		}
+
+
 
 		let                w = working
 		let         maxIndex = w.count - 1
@@ -136,19 +132,6 @@ class ZRecents : ZSmallMapRecords {
 		}
 
 		gRedrawMaps()
-	}
-
-	@discardableResult override func pop(_ zone: Zone? = nil) -> Bool {
-		if  let bookmark = (zone != nil) ? workingBookmark(for: zone!) : workingBookmarks.first,
-			let   parent = bookmark.parentZone,
-			let    index = bookmark.siblingIndex {
-
-			parent.children.remove(at: index)
-
-			return true
-		}
-
-		return false
 	}
 
 }

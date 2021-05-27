@@ -15,25 +15,26 @@ import CloudKit
     import UIKit
 #endif
 
-typealias               ZoneArray = [Zone]
-typealias              CKRecordID = CKRecord.ID
-typealias             ZFilesArray = [ZFile]
-typealias             ZTraitArray = [ZTrait]
-typealias             CKReference = CKRecord.Reference
-typealias           ZRecordsArray = [ZRecord]
-typealias           ZObjectsArray = [NSObject]
-typealias          CKRecordsArray = [CKRecord]
-typealias        CKRecordIDsArray = [CKRecordID]
-typealias        ZTraitDictionary = [ZTraitType : ZTrait]
-typealias        ZStoryboardSegue = NSStoryboardSegue
-typealias       CKReferencesArray = [CKReference]
-typealias       ZAssetsDictionary = [UUID : CKAsset]
-typealias       ZTinyDotTypeArray = [[ZTinyDotType]]
-typealias      ZOpIDsArray = [ZOperationID]
-typealias      ZStorageDictionary = [ZStorageType : NSObject]
-typealias   ZAttributesDictionary = [NSAttributedString.Key : Any]
-typealias ZStringObjectDictionary = [String : NSObject]
-let                  gApplication = ZApplication.shared
+typealias                ZoneArray = [Zone]
+typealias               CKRecordID = CKRecord.ID
+typealias              ZOpIDsArray = [ZOperationID]
+typealias              ZFilesArray = [ZFile]
+typealias              ZTraitArray = [ZTrait]
+typealias              CKReference = CKRecord.Reference
+typealias            ZRecordsArray = [ZRecord]
+typealias            ZObjectsArray = [NSObject]
+typealias           CKRecordsArray = [CKRecord]
+typealias         CKRecordIDsArray = [CKRecordID]
+typealias         ZTraitDictionary = [ZTraitType : ZTrait]
+typealias         ZStoryboardSegue = NSStoryboardSegue
+typealias        CKReferencesArray = [CKReference]
+typealias        ZAssetsDictionary = [UUID : CKAsset]
+typealias        ZTinyDotTypeArray = [[ZTinyDotType]]
+typealias       ZStorageDictionary = [ZStorageType : NSObject]
+typealias    ZAttributesDictionary = [NSAttributedString.Key : Any]
+typealias  ZStringObjectDictionary = [String : NSObject]
+typealias StringZRecordsDictionary = [String : [ZRecord]]
+let                   gApplication = ZApplication.shared
 
 protocol ZGeneric {
 	func setup()
@@ -326,11 +327,10 @@ extension Int {
 		return range.contains(self)
 	}
 
-	func next(up: Bool, max: Int) -> Int? {
-		if self == 0 &&    up { return max }
-		if self == max && !up { return 0 }
-		if self > max || self < 0 { return nil }
-		return self + (up ? -1 : 1)
+	func next(forward: Bool, max: Int) -> Int {
+		if self <= 0   &&  forward { return max }
+		if self >= max && !forward { return 0 }
+		return self + (forward ? -1 : 1)
 	}
 }
 
@@ -2224,20 +2224,17 @@ extension ZColor {
 }
 
 extension Date {
-	
-	var easyToReadDate: String {
+
+	func easyToReadDateFrom(_ format: String) -> String {
 		let f = DateFormatter()
-		f.dateFormat = "MMM d, YYYY"
-		
+		f.dateFormat = format
+
 		return f.string(from: self)
 	}
-	
-	var easyToReadTime: String {
-		let f = DateFormatter()
-		f.dateFormat = "h:mm a"
-		
-		return f.string(from: self)
-	}
+
+	var easyToReadDateTime: String { return easyToReadDateFrom("h:mm a MMM d, YYYY") }
+	var easyToReadDate:     String { return easyToReadDateFrom("MMM d, YYYY") }
+	var easyToReadTime:     String { return easyToReadDateFrom("h:mm a") }
 
     func mid(to iEnd: Date?) -> Date? {
         let      end = iEnd ?? Date()
