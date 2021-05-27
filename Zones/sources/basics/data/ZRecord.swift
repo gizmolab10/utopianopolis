@@ -24,6 +24,7 @@ class ZRecord: ZManagedObject { // NSObject {
 	var        unwrappedName: String    { return recordName ?? emptyName }
 	var            emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
 	var   isInPublicDatabase: Bool      { return databaseID == .everyoneID }
+	var              isAZone: Bool      { return false }
 	var            isMapRoot: Bool      { return recordName == kRootName }
 	var          isTrashRoot: Bool      { return recordName == kTrashName }
 	var        isDestroyRoot: Bool      { return recordName == kDestroyName }

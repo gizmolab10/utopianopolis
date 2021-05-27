@@ -63,6 +63,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var          unwrappedName :             String  { return zoneName ?? smallMapRootName }
 	override var          decoratedName :             String  { return decoration + unwrappedName }
 	override var   matchesFilterOptions :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
+	override var                isAZone :               Bool  { return true }
 	var                smallMapRootName :             String  { return isFavoritesRoot ? kFavoritesRootName : isRecentsRoot ? kRecentsRootName : emptyName }
 	var                     clippedName :             String  { return !gShowToolTips ? "" : unwrappedName }
 	var                           level :                Int  { return (parentZone?.level ?? 0) + 1 }
@@ -1432,15 +1433,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func resolveAndSelect(_ searchText: String?) {
 		gHere = self
 
+		grab()
 		expand()
 		gControllers.swapMapAndEssay(force: .wMapMode)
-		gRedrawMaps()
-
-//		let e = edit()
-//
-//		FOREGROUND(after: 0.2) {
-//			e?.selectText(searchText)
-//		}
 	}
 
 	func grab(updateBrowsingLevel: Bool = true) {
