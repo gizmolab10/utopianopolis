@@ -523,7 +523,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			essayRecordName = gCurrentEssayZone?.recordName                   // do this after overwriting
-			delegate = self 					    	                      // set delegate after setText
+			delegate        = self 					    	                  // set delegate after setText
+
+			if  let    zone = gCurrentEssayZone {
+				gHere       = zone                                            // so small map is consistent
+
+				gHere.grab()
+			}
 
 			if  gIsEssayMode {
 				gMainWindow?.makeFirstResponder(self)                         // this should never happen unless already in essay mode
@@ -560,12 +566,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		ungrabAll()
 		undoManager?.removeAllActions()
-
-		if  let zone = gCurrentEssayZone {
-			gHere    = zone
-
-			gHere.grab()
-		}
 	}
 
 	func grabDone() {
@@ -897,11 +897,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func setControlBarButtons(       enabled: Bool) {
 		let      hasMultipleNotes =  gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
-		let               isEssay = (gCurrentEssay?.isNote ?? true) == false
 		let                   bar =  gMainWindow?.inspectorBar
 		backwardButton?.isEnabled =  enabled && hasMultipleNotes
 		forwardButton? .isEnabled =  enabled && hasMultipleNotes
-		titlesButton?  .isEnabled =  enabled && isEssay
+		titlesButton?  .isEnabled =  enabled
 		deleteButton?  .isEnabled =  enabled
 		cancelButton?  .isEnabled =  enabled
 		hideButton?    .isEnabled =  enabled

@@ -325,7 +325,7 @@ class ZSelecting: NSObject {
             addOneGrab(zone)
         }
 
-        updateWidgetsNeedDisplay(for: currentMapGrabs)
+        updateWidgetsNeedDisplay(for: iZones)
     }
 
     func addOneGrab(_ iZone: Zone?) { // caller must update widgets need display
@@ -359,7 +359,7 @@ class ZSelecting: NSObject {
     func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
 		if  let oldGrabs = grabAndNoUI(iZones) {
             updateWidgetsNeedDisplay(for: oldGrabs)
-			gSignal([.sPreferences]) // so color wells are updated
+			gSignal([.sCrumbs, .sPreferences])                // so color wells and breadcrumbs are updated
 
             if  updateBrowsingLevel,
                 let 		  level = iZones?.rootMost?.level {

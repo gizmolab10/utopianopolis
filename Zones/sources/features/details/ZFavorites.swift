@@ -10,12 +10,6 @@
 import Foundation
 import CloudKit
 
-enum ZBookmarkAction: Int {
-    case aBookmark
-    case aNotABookmark
-    case aCreateBookmark
-}
-
 let gFavorites     = ZFavorites(ZDatabaseID.favoritesID)
 var gFavoritesRoot : Zone? { return gFavorites.rootZone }
 var gFavoritesHere : Zone? { return gFavoritesHereMaybe ?? gFavoritesRoot }
@@ -62,7 +56,7 @@ class ZFavorites: ZSmallMapRecords {
 	override func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {
 		if  let pushMe = zone,
 			!findAndSetHere(asParentOf: pushMe) {
-			addNewBookmark(for: pushMe, action: .aCreateBookmark)?.grab()
+			createNewBookmark(for: pushMe, autoAdd: true)?.grab()
 		}
 	}
 
@@ -265,7 +259,7 @@ class ZFavorites: ZSmallMapRecords {
 
 			hereZoneMaybe      = gSelecting.firstGrab?.parentZone
 			currentBookmark    = bookmark
-		} else if let bookmark = addNewBookmark(for: here, action: .aCreateBookmark) {  // state 3
+		} else if let bookmark = createNewBookmark(for: here, autoAdd: true) {  // state 3
 			currentBookmark    = bookmark
 
 			bookmark.asssureIsVisibleAndGrab()

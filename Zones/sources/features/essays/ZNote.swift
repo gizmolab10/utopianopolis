@@ -70,7 +70,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	func saveNote(_ attributedString: NSAttributedString?) {
 		if  let attributed = attributedString,
-			let       note = maybeNoteTrait {
+			let       note = maybeNoteTrait,
+			attributed.string.length >= textRange.upperBound {
 			let       text = attributed.attributedSubstring(from: textRange)
 			note .noteText = NSMutableAttributedString(attributedString: text)    // invokes note.needSave()
 			autoDelete     = false

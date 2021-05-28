@@ -913,7 +913,7 @@ CA
                                 </connections>
                             </button>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="whm-tf-fPZ" userLabel="Controls View">
-                                <rect key="frame" x="36" y="256" width="189" height="44"/>
+                                <rect key="frame" x="42" y="256" width="189" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="189" id="XRT-oR-rMH"/>
                                 </constraints>
@@ -922,16 +922,16 @@ CA
                                 </connections>
                             </containerView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Top Bar View">
-                                <rect key="frame" x="225" y="256" width="226" height="44"/>
+                                <rect key="frame" x="231" y="256" width="220" height="44"/>
                                 <subviews>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View">
-                                        <rect key="frame" x="0.0" y="0.0" width="226" height="44"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="220" height="44"/>
                                         <connections>
                                             <segue destination="auf-AV-5qA" kind="embed" id="9wH-w7-oo9"/>
                                         </connections>
                                     </containerView>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Box View">
-                                        <rect key="frame" x="0.0" y="0.0" width="226" height="44"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="220" height="44"/>
                                         <connections>
                                             <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
                                         </connections>
@@ -1019,7 +1019,7 @@ CA
                                     <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
                                 </constraints>
                                 <connections>
-                                    <segue destination="yWa-SA-l1V" kind="embed" id="ndc-SO-JG6"/>
+                                    <segue destination="yWa-SA-l1V" kind="embed" id="zUI-P5-fnz"/>
                                 </connections>
                             </containerView>
                             <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uYG-mD-FXW">
@@ -1051,7 +1051,6 @@ CA
                             <constraint firstItem="3wl-F6-Mu5" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GgL-zJ-zYQ"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="HVB-l5-rqc"/>
                             <constraint firstAttribute="bottom" secondItem="5oi-yK-PC4" secondAttribute="bottom" id="Hxj-uH-co3"/>
-                            <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="IVq-92-EbT"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
                             <constraint firstItem="yl6-st-bhl" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="12" id="Lys-IS-2eI"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="whm-tf-fPZ" secondAttribute="trailing" id="Pjc-Nx-5dx"/>
@@ -1062,18 +1061,19 @@ CA
                             <constraint firstAttribute="bottom" secondItem="5jB-w2-4Dg" secondAttribute="bottom" id="bsX-IT-HDI"/>
                             <constraint firstItem="9jn-kU-BvC" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="dC5-A8-EDJ"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="ewO-M2-RZg"/>
+                            <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="226" identifier="alternate side view leading" id="fVF-7D-R74"/>
                             <constraint firstAttribute="trailing" secondItem="LQL-Kb-jgm" secondAttribute="trailing" id="fgm-OB-ttw"/>
                             <constraint firstAttribute="trailing" secondItem="5oi-yK-PC4" secondAttribute="trailing" id="haB-GJ-03K"/>
+                            <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="9jn-kU-BvC" secondAttribute="leading" id="hz8-n2-ks8"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="imc-ha-Ope"/>
-                            <constraint firstItem="whm-tf-fPZ" firstAttribute="leading" secondItem="yl6-st-bhl" secondAttribute="trailing" constant="2" id="iwS-Vd-HOP"/>
+                            <constraint firstItem="whm-tf-fPZ" firstAttribute="leading" secondItem="yl6-st-bhl" secondAttribute="trailing" constant="8" id="iwS-Vd-HOP"/>
+                            <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="13C-5j-Mtw" secondAttribute="leading" id="jVX-sm-H1A"/>
                             <constraint firstItem="HK5-4i-dSB" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="lap-td-b4Q"/>
                             <constraint firstItem="yl6-st-bhl" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" constant="11" id="m1y-JF-jje"/>
                             <constraint firstItem="37A-oF-Gav" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="oZ2-KH-Vdq"/>
-                            <constraint firstItem="13C-5j-Mtw" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="pts-1n-1Ww"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="qfT-hA-eas"/>
                             <constraint firstItem="13C-5j-Mtw" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="r7B-pw-fl4"/>
                             <constraint firstAttribute="trailing" secondItem="5jB-w2-4Dg" secondAttribute="trailing" id="rXH-it-XjL"/>
-                            <constraint firstItem="9jn-kU-BvC" firstAttribute="leading" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="swX-MJ-DaF"/>
                             <constraint firstAttribute="bottom" secondItem="37A-oF-Gav" secondAttribute="bottom" id="tTW-BQ-dgu"/>
                             <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="trU-TG-zpc"/>
                             <constraint firstItem="3wl-F6-Mu5" firstAttribute="top" secondItem="whm-tf-fPZ" secondAttribute="bottom" id="whz-yP-Sg6"/>
@@ -1082,9 +1082,9 @@ CA
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="alternateLeading" destination="fVF-7D-R74" id="yvC-gC-Taf"/>
                         <outlet property="debugView" destination="9jn-kU-BvC" id="5ub-Jm-aCW"/>
-                        <outlet property="detailView" destination="E8R-Lg-1Ha" id="fDV-lr-VDw"/>
-                        <outlet property="detailsWidth" destination="us8-K9-IEo" id="J2y-Un-wue"/>
+                        <outlet property="detailView" destination="E8R-Lg-1Ha" id="7ha-dY-dLB"/>
                         <outlet property="dragView" destination="37A-oF-Gav" id="04a-KE-w1g"/>
                         <outlet property="essayContainerView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
                         <outlet property="hamburgerButton" destination="yl6-st-bhl" id="Q5Q-eo-IdC"/>
@@ -1104,11 +1104,11 @@ CA
             <objects>
                 <viewController id="cYL-kx-LTL" customClass="ZSearchBarController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Vov-Ty-huu">
-                        <rect key="frame" x="0.0" y="0.0" width="198" height="46"/>
+                        <rect key="frame" x="0.0" y="0.0" width="182" height="46"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <searchField wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bct-LL-Igg">
-                                <rect key="frame" x="2" y="12" width="176" height="22"/>
+                                <rect key="frame" x="2" y="12" width="160" height="22"/>
                                 <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="8N3-HP-82v">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -1128,7 +1128,7 @@ CA
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="967" y="557"/>
+            <point key="canvasLocation" x="957" y="568"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -1403,11 +1403,11 @@ Gw
             <objects>
                 <viewController id="auf-AV-5qA" customClass="ZBreadcrumbsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="W43-uk-txK">
-                        <rect key="frame" x="0.0" y="0.0" width="198" height="34"/>
+                        <rect key="frame" x="0.0" y="0.0" width="182" height="34"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ch1-Y5-6sD" userLabel="Crumbs Clipper Button">
-                                <rect key="frame" x="176" y="10" width="14" height="14"/>
+                                <rect key="frame" x="160" y="10" width="14" height="14"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="Ch1-Y5-6sD" secondAttribute="height" multiplier="1:1" id="LnI-A6-9C4"/>
                                     <constraint firstAttribute="height" constant="14" id="N1c-fL-mHS"/>
@@ -1421,7 +1421,7 @@ Gw
                                 </connections>
                             </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Tsd-bp-vCV" customClass="ZBreadcrumbsView" customModule="Seriously">
-                                <rect key="frame" x="2" y="0.0" width="166" height="34"/>
+                                <rect key="frame" x="2" y="0.0" width="150" height="34"/>
                                 <connections>
                                     <outlet property="clipCrumbsButton" destination="Ch1-Y5-6sD" id="dTT-6R-3f5"/>
                                 </connections>
@@ -1443,7 +1443,7 @@ Gw
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="967" y="664"/>
+            <point key="canvasLocation" x="957" y="674"/>
         </scene>
         <!--Startup Controller-->
         <scene sceneID="r3B-ju-S2a">
@@ -1735,9 +1735,6 @@ DQ
                                     </subviews>
                                     <nil key="backgroundColor"/>
                                 </clipView>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="300" id="tPc-Az-5B7"/>
-                                </constraints>
                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="bL4-9a-XAT">
                                     <rect key="frame" x="-100" y="-100" width="160" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
@@ -1757,7 +1754,6 @@ DQ
                     </view>
                     <connections>
                         <outlet property="genericTableView" destination="8lm-kp-gkp" id="FpS-H9-GLo"/>
-                        <outlet property="tableHeight" destination="tPc-Az-5B7" id="kks-ev-r4o"/>
                     </connections>
                 </viewController>
                 <customObject id="RFu-gD-UY8" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -1769,17 +1765,17 @@ DQ
             <objects>
                 <viewController id="c3F-r9-TYw" userLabel="Controls Controller" customClass="ZControlsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="inW-Gh-k1T">
-                        <rect key="frame" x="0.0" y="0.0" width="202" height="39"/>
+                        <rect key="frame" x="0.0" y="0.0" width="182" height="39"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="LcE-Ba-uvs" userLabel="Map Controls">
-                                <rect key="frame" x="0.0" y="0.0" width="202" height="39"/>
+                                <rect key="frame" x="0.0" y="0.0" width="182" height="39"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="Rct-nF-Qx4" customClass="ZMapControlsView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="179" height="37"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="159" height="37"/>
                                     </customView>
                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bhB-1W-OBB" userLabel="Search Button">
-                                        <rect key="frame" x="185" y="12" width="15" height="15"/>
+                                        <rect key="frame" x="165" y="12" width="15" height="15"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="15" id="BF9-rd-D9E"/>
                                             <constraint firstAttribute="height" constant="9" id="vrO-8h-LnZ"/>
@@ -1804,16 +1800,16 @@ DQ
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="jbD-YT-XOW">
-                                <rect key="frame" x="0.0" y="0.0" width="202" height="39"/>
+                                <rect key="frame" x="0.0" y="0.0" width="182" height="39"/>
                                 <subviews>
                                     <box borderType="none" title="Search for" titlePosition="aboveTop" translatesAutoresizingMaskIntoConstraints="NO" id="G4z-oF-KkF">
-                                        <rect key="frame" x="-3" y="-4" width="208" height="41"/>
+                                        <rect key="frame" x="-3" y="-4" width="188" height="41"/>
                                         <view key="contentView" id="tbM-b3-bJc">
-                                            <rect key="frame" x="0.0" y="0.0" width="208" height="29"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="188" height="29"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="zJL-q5-otI">
-                                                    <rect key="frame" x="14" y="6" width="148" height="23"/>
+                                                    <rect key="frame" x="4" y="6" width="148" height="23"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="18" id="fuA-YK-5ve"/>
                                                     </constraints>
@@ -1846,7 +1842,7 @@ DQ
                                 </constraints>
                             </customView>
                             <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NcF-tr-4S4">
-                                <rect key="frame" x="185" y="12" width="15" height="15"/>
+                                <rect key="frame" x="165" y="12" width="15" height="15"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="15" id="eG0-pd-dSk"/>
                                     <constraint firstAttribute="height" constant="9" id="kRY-H0-bNA"/>
@@ -1883,7 +1879,7 @@ DQ
                 </viewController>
                 <customObject id="933-fU-289" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="967" y="445.5"/>
+            <point key="canvasLocation" x="957" y="466"/>
         </scene>
     </scenes>
     <resources>

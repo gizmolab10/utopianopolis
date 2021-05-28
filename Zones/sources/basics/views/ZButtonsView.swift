@@ -37,10 +37,14 @@ class ZButtonsView : ZView {
 	}
 
 	func layoutButtons() {
-		var   prior : ZButton?
-		let   array = buttons
-		let lastOne = array.count - 1
-		var   width = (bounds.size.width / CGFloat(buttons.count)) - 3.0 // use this value when distribute equally = true
+		var prior : ZButton?
+		let array = buttons
+		let count = array.count
+		let   max = count - 1
+		let space = 3.0
+		let  side = 2.0
+		let total = bounds.size.width - CGFloat(space * Double(max)) - CGFloat(side)
+		var width = total / CGFloat(count) // use this value when distribute equally = true
 
 		for (index, button) in array.enumerated() {
 			addSubview(button)
@@ -55,13 +59,13 @@ class ZButtonsView : ZView {
 				make.centerY.equalToSuperview()
 
 				if  let previous = prior {
-					make.left.equalTo(previous.snp.right).offset(3.0)
+					make.left.equalTo(previous.snp.right).offset(space)
 				} else {
-					make.left.equalTo(self).offset(2.0)
+					make.left.equalTo(self).offset(side)
 				}
 
-				if  index == lastOne { // now supply the trailing constraint
-					make.right.lessThanOrEqualTo(self).offset(distributeEqually ? 2.0 : 0.0) // force window to grow wide enough to fit all breadcrumbs
+				if  index == max { // now supply the trailing constraint
+					make.right.lessThanOrEqualTo(self) // force window to grow wide enough to fit all breadcrumbs
 				}
 			}
 

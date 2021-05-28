@@ -824,9 +824,9 @@ class ZRecords: NSObject {
 			return
 		}
 
-		let finishAndGrab = { (grabMe: Zone) in
-			gSmallMapController?.update()
-			grabMe.grab()               // NOTE: changes work mode
+		let finishAndGrabHere = {
+			gSignal([.sSmallMap])
+			gHere.grab()               // NOTE: changes work mode
 			atArrival()
 		}
 
@@ -834,19 +834,19 @@ class ZRecords: NSObject {
 			zone.focusOnBookmarkTarget() { object, kind in
 				gHere = object as! Zone
 
-				finishAndGrab(gHere)
+				finishAndGrabHere()
 			}
 		} else if zone == gHere {       // state 2
 			if  let small = gCurrentSmallMapRecords,
 				!small.swapBetweenBookmarkAndTarget(doNotGrab: !shouldGrab) {
 				if  gSmallMapMode == .favorites {
-					gFavorites.addNewBookmark(for: zone, action: .aCreateBookmark)
+					gFavorites.createNewBookmark(for: zone, autoAdd: true)
 				}
 			}
 
 			atArrival()
 		} else if zone.isInSmallMap {   // state 3
-			finishAndGrab(gHere)
+			finishAndGrabHere()
 		} else if COMMAND {             // state 4
 			gRecents.refocus {
 				atArrival()
@@ -854,7 +854,7 @@ class ZRecords: NSObject {
 		} else {                        // state 5
 			gHere = zone
 
-			finishAndGrab(zone)
+			finishAndGrabHere()
 		}
 	}
 

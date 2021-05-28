@@ -33,16 +33,16 @@ class ZPreferencesController: ZGenericController {
 		if !gHiddenDetailViewIDs.contains(.vPreferences),
 			allowedKinds.contains(iKind),
 			gShowDetailsView {
-            let                           grabbed = gSelecting.firstSortedGrab
-            countsModeControl?   .selectedSegment = gCountsMode.rawValue
-            thickness?               .doubleValue = gLineThickness
-            verticalSpacing?         .doubleValue = Double(gGenericOffset.height)
-            stretch?                 .doubleValue = Double(gGenericOffset.width)
-            activeMineColorBox?            .color = gActiveColor
-            backgroundColorBox?            .color = gAccentColor
-            zoneColorBox?                  .color =   grabbed?.color ?? kDefaultIdeaColor
-            clearColorButton?           .isHidden = !(grabbed?.hasColor ?? true)
-			colorPreferencesBox?        .isHidden = !gColorfulMode
+            let                        grabbed = gSelecting.firstSortedGrab
+            countsModeControl?.selectedSegment = gCountsMode.rawValue
+            thickness?            .doubleValue = gLineThickness
+            verticalSpacing?      .doubleValue = Double(gGenericOffset.height)
+            stretch?              .doubleValue = Double(gGenericOffset.width)
+            activeMineColorBox?         .color = gActiveColor
+            backgroundColorBox?         .color = gAccentColor
+            zoneColorBox?               .color =   grabbed?.color ?? kDefaultIdeaColor
+            clearColorButton?        .isHidden = !(grabbed?.hasColor ?? true)
+			colorPreferencesBox?     .isHidden = !gColorfulMode
 
             view.setAllSubviewsNeedDisplay()
         }

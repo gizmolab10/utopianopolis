@@ -1970,11 +1970,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func focusOn(_ atArrival: @escaping Closure) {
-		gHere = self // side-effect does recents push
+		gHere = self // side-effect does push
 
+		grab() // so the following will work correctly
 		gRecents.focusOnGrab(.eSelected) {
-			self.grab()
-			gSmallMapController?.update()
 			atArrival()
 		}
 	}
@@ -2073,8 +2072,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gHere.grab()
 				}
 
-				gSmallMapController?.update()
-				gRedrawMaps()
+				gSignal([.sSmallMap, .sRelayout])
 			}
 		}
 	}
@@ -2276,33 +2274,33 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				gSelecting.ungrabAll()
 
 				for grab in grabs {
-					var beingAdded = grab
+					var bookmark = grab
 
-					if  toSmallMap && !beingAdded.isInSmallMap && !beingAdded.isBookmark && !beingAdded.isInTrash && !SPECIAL {
-						if  let bookmark = gCurrentSmallMapRecords?.addNewBookmark(for: beingAdded, action: .aNotABookmark) {	// case 3
-							beingAdded   = bookmark
+					if  toSmallMap && !bookmark.isInSmallMap && !bookmark.isBookmark && !bookmark.isInTrash && !SPECIAL {
+						if  let    b = gCurrentSmallMapRecords?.createNewBookmark(for: bookmark, autoAdd: false) {	// case 3
+							bookmark = b
 						}
-					} else if beingAdded.databaseID != into.databaseID {    // being moved to the other db
-						if  beingAdded.parentZone == nil || !beingAdded.parentZone!.children.contains(beingAdded) || !OPTION {
-							beingAdded.needDestroy()                        // is not a child within its parent and should be tossed
-							beingAdded.orphan()
+					} else if bookmark.databaseID != into.databaseID {    // being moved to the other db
+						if  bookmark.parentZone == nil || !bookmark.parentZone!.children.contains(bookmark) || !OPTION {
+							bookmark.needDestroy()                        // is not a child within its parent and should be tossed
+							bookmark.orphan()
 						}
 
-						beingAdded = beingAdded.deepCopy(dbID: into.databaseID)
+						bookmark = bookmark.deepCopy(dbID: into.databaseID)
 					}
 
 					if !SPECIAL {
-						beingAdded.addToGrabs()
+						bookmark.addToGrabs()
 					}
 
 					if  toSmallMap {
 						into.updateVisibilityInSmallMap(true)
 					}
 
-					beingAdded.orphan()
-					into.addChildAndReorder(beingAdded, at: iIndex)
-					beingAdded.recursivelyApplyDatabaseID(into.databaseID)
-					gBookmarks.addToReverseLookup(beingAdded)
+					bookmark.orphan()
+					into.addChildAndReorder(bookmark, at: iIndex)
+					bookmark.recursivelyApplyDatabaseID(into.databaseID)
+					gBookmarks.addToReverseLookup(bookmark)
 				}
 
 				if  toBookmark && undoManager.groupingLevel > 0 {

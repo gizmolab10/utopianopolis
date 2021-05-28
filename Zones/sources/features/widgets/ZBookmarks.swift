@@ -58,13 +58,13 @@ class ZBookmarks: NSObject {
 		return bookmark
 	}
 
-	@discardableResult func create(withBookmark: Zone?, _ action: ZBookmarkAction, parent: Zone, atIndex: Int, _ name: String?, recordName: String? = nil) -> Zone {
+	@discardableResult func create(withBookmark: Zone?, _ autoAdd: Bool, parent: Zone, atIndex: Int, _ name: String?, recordName: String? = nil) -> Zone {
 		let bookmark: Zone = createZone(withBookmark: withBookmark, name, recordName: recordName)
 		let insertAt: Int? = atIndex == parent.count ? nil : atIndex
 
 		addToReverseLookup(bookmark)
 
-		if  action != .aNotABookmark {
+		if  autoAdd {
 			parent.addChildSafely(bookmark, at: insertAt) // calls update progeny count
 		}
 

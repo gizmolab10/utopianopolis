@@ -406,7 +406,7 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func search(within dbid: String, entityName: String, using predicate: NSPredicate, uniqueOnly: Bool = true, onCompletion: ZRecordsClosure? = nil) {
+	func search(within dbid: String, entityName: String, using predicate: NSPredicate, onCompletion: ZRecordsClosure? = nil) {
 		var result = ZRecordsArray()
 
 		if !gCanLoad || !gIsReadyToShowUI {
@@ -420,11 +420,7 @@ class ZCoreDataStack: NSObject {
 					let items = try self.managedContext.fetch(request)
 					for item in items {
 						if  let zRecord = item as? ZRecord {
-							if  uniqueOnly {
-								result.appendUnique(item: zRecord)
-							} else {
-								result.append(zRecord)
-							}
+							result.append(zRecord)
 						}
 					}
 				} catch {

@@ -24,17 +24,7 @@ func gHereZoneForIDMaybe(_ dbID: ZDatabaseID) -> Zone? {
 
 class ZSmallMapRecords: ZRecords {
 
-	var      currentBookmark : Zone?
-	var currentBookmarkIndex : Int? {
-		for (index, zone) in working.enumerated() {
-			if  zone == currentBookmark {
-				return index
-			}
-		}
-
-		return nil
-	}
-
+	var currentBookmark  : Zone?
 	var working          : ZoneArray { return  gIsEssayMode ? workingNotemarks : workingBookmarks }
 	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? [] }
 	var workingNotemarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.notemarks : rootZone?.allNotemarkProgeny) ?? [] }
@@ -178,8 +168,8 @@ class ZSmallMapRecords: ZRecords {
 	func insertAsNext(_ zone: Zone) {
 		if  let           r = rootZone {
 			currentBookmark = zone
-			let      cIndex = currentBookmarkIndex ?? 0
-			let       index = cIndex.next(forward: gListsGrowDown, max: r.count - 1) ?? 0
+			let      cIndex = r.children.firstIndex(of: zone) ?? 0
+			let       index = cIndex.next(forward: gListsGrowDown, max: r.count - 1)
 
 			r.addChildSafely(zone, at: index)
 		}
@@ -310,7 +300,7 @@ class ZSmallMapRecords: ZRecords {
 		return found
 	}
 
-	@discardableResult func addNewBookmark(for iZone: Zone?, action: ZBookmarkAction) -> Zone? {
+	@discardableResult func createNewBookmark(for iZone: Zone?, autoAdd: Bool) -> Zone? {
 
 		// ///////////////////////////////////////////
 		// 1. zone  is a bookmark, pass a deep copy //
@@ -322,36 +312,26 @@ class ZSmallMapRecords: ZRecords {
 			let  newParent = currentHere
 			var     parent = zone.parentZone
 			let isBookmark = zone.isBookmark
-			let  actNormal = action == .aBookmark
+			let      basis = isBookmark ? zone.crossLink! : zone
 
-			if  !actNormal {
-				let          basis = isBookmark ? zone.crossLink! : zone
+			if  let   name = basis.recordName {
+				parent     = currentHere
 
-				if  let recordName = basis.recordName {
-					parent         = currentHere
+				for workingFavorite in root.allBookmarkProgeny {
+					if  workingFavorite.isInEitherMap,
+						databaseID     == workingFavorite.bookmarkTarget?.databaseID,
+						name           == workingFavorite.linkRecordName {
+						currentBookmark = workingFavorite
 
-					for workingFavorite in root.allBookmarkProgeny {
-						if  workingFavorite.isInEitherMap,
-							databaseID     == workingFavorite.bookmarkTarget?.databaseID,
-							recordName     == workingFavorite.linkRecordName {
-							currentBookmark = workingFavorite
-
-							return workingFavorite
-						}
+						return workingFavorite
 					}
 				}
 			}
 
 			if  let           count = parent?.count {
+				let           index = parent!.children.firstIndex(of: zone) ?? count
 				var bookmark: Zone? = isBookmark ? zone.deepCopy(dbID: .mineID) : nil               // cases 1 and 2
-				var           index = parent?.children.firstIndex(of: zone) ?? count
-
-				if  action         == .aCreateBookmark,
-					let      fIndex = currentBookmarkIndex {
-					index           = fIndex.next(forward: false, max: parent!.count - 1) ?? 0
-				}
-
-				bookmark            = gBookmarks.create(withBookmark: bookmark, action, parent: newParent, atIndex: index, zone.zoneName)
+				bookmark            = gBookmarks.create(withBookmark: bookmark, autoAdd, parent: newParent, atIndex: index, zone.zoneName)
 
 				if !isBookmark {
 					bookmark?.crossLink = zone

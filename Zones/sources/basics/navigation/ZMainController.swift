@@ -17,7 +17,7 @@ var gDragView       : ZDragView?       { return gMainController?.dragView }
 
 class ZMainController: ZGesturesController {
 
-	@IBOutlet var detailsWidth       : NSLayoutConstraint?
+	@IBOutlet var alternateLeading       : NSLayoutConstraint?
 	@IBOutlet var hamburgerButton    : ZButton?
 	@IBOutlet var searchResultsView  : ZView?
 	@IBOutlet var essayContainerView : ZView?
@@ -59,13 +59,14 @@ class ZMainController: ZGesturesController {
 
 	func update() {
 		let          showDetails = gShowDetailsView
-		hamburgerButton?.toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
-		detailsWidth?  .constant = !showDetails ? 0.0 : 226.0
-		detailView?    .isHidden = !showDetails
-		debugView?     .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
+		hamburgerButton?  .toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
+		alternateLeading?.constant = !showDetails ? 0.0 : 226.0
+		detailView?      .isHidden = !showDetails
+		debugView?       .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
 
 		gDetailsController?.update()
 		updateHamburgerImage()
+		gSignal([.sSmallMap])
 	}
 
 	func updateHamburgerImage() {
