@@ -17,7 +17,6 @@ var gMapControlsView : ZMapControlsView? { return gControlsController?.mapContro
 
 class ZMapControlsView : ZButtonsView, ZTooltips {
 
-	@IBOutlet var searchButton      : ZButton?
 	override  var centered          : Bool { return true }
 	override  var distributeEqually : Bool { return true }
 

@@ -24,7 +24,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                   isExemplar : Bool          { return false }
 	var                     isBigMap : Bool          { return true }
 	var                     hereZone : Zone?         { return gHereMaybe }
-	override  var       allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum, .sAppearance] }
 	@IBOutlet var            mapView : ZMapView?
 	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?

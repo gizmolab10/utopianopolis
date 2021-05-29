@@ -23,10 +23,10 @@ typealias              ZTraitArray = [ZTrait]
 typealias              CKReference = CKRecord.Reference
 typealias            ZRecordsArray = [ZRecord]
 typealias            ZObjectsArray = [NSObject]
-typealias           CKRecordsArray = [CKRecord]
 typealias         CKRecordIDsArray = [CKRecordID]
 typealias         ZTraitDictionary = [ZTraitType : ZTrait]
 typealias         ZStoryboardSegue = NSStoryboardSegue
+typealias         ZSignalKindArray = [ZSignalKind]
 typealias        CKReferencesArray = [CKReference]
 typealias        ZAssetsDictionary = [UUID : CKAsset]
 typealias        ZTinyDotTypeArray = [[ZTinyDotType]]
@@ -56,7 +56,7 @@ func printDebug(_ mode: ZPrintMode, prefix: String = "  ", _ message: String, su
 
 func gSeparatorAt(level: Int) -> String { return " ( \(level) ) " }
 
-func gSignal(for object: Any? = nil, _ multiple: [ZSignalKind], _ onCompletion: Closure? = nil) {
+func gSignal(for object: Any? = nil, _ multiple: ZSignalKindArray, _ onCompletion: Closure? = nil) {
 	gControllers.signalFor(object, multiple: multiple, onCompletion: onCompletion)
 }
 

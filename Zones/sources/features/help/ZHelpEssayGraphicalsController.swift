@@ -12,8 +12,7 @@ import CoreData
 
 class ZHelpEssayGraphicalsController : ZGenericController {
 
-	override  var controllerID : ZControllerID { return .idHelpEssayGraphicals }
-	override  var allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum, .sStartupStatus, .sAppearance] }
+	override var controllerID : ZControllerID { return .idHelpEssayGraphicals }
 
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)

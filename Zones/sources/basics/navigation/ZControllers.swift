@@ -134,7 +134,7 @@ class ZControllers: NSObject {
 		}
 	}
 
-	func signalFor(_ object: Any? = nil, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
+	func signalFor(_ object: Any? = nil, multiple: ZSignalKindArray, onCompletion: Closure? = nil) {
 		let startupIDs : [ZControllerID] = [.idStartup, .idHelpDots]
 
 		FOREGROUND(canBeDirect: true) {

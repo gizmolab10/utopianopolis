@@ -473,7 +473,7 @@ class ZMapEditor: ZBaseEditor {
                 swapAndResumeEdit()
             }
 
-			gSignal([.sBigMap, .sMain, .sDetails, .sPreferences])
+			gSignal([.sMain, .sBigMap])
         } else if COMMA {
 			gShowDetailsView = true
 
@@ -1106,7 +1106,7 @@ class ZMapEditor: ZBaseEditor {
 		}
     }
     
-	func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, forcedResponse: [ZSignalKind]? = nil, onCompletion: SignalArrayClosure? = nil) {
+	func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, forcedResponse: ZSignalKindArray? = nil, onCompletion: SignalArrayClosure? = nil) {
 		var       response = forcedResponse ?? [ZSignalKind.sRelayout]
         let   doCousinJump = !gBrowsingIsConfined
 		let      hereMaybe = gHereMaybe

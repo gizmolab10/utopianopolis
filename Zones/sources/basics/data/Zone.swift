@@ -2110,7 +2110,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				p.grab()
-				gSignal([.sData, .sCrumbs, .sSmallMap])
+				gSignal([.sCrumbs, .sStatus, .sSmallMap])
 			}
 		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
 			gHere              = bookmark			                 // change focus to bookmark of self
@@ -2179,7 +2179,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		onCompletion?(needReveal)
 
 		if !needReveal {
-			gSignal([.sData, .sCrumbs, .sSmallMap])
+			gSignal([.sCrumbs, .sStatus, .sSmallMap])
 		}
 	}
 

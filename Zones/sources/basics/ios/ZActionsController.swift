@@ -51,7 +51,7 @@ class ZActionsController : ZGenericController {
 
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-        let ignoreThese: [ZSignalKind] = [.sSearch, .sFound]
+        let ignoreThese: ZSignalKindArray = [.sSearch, .sFound]
 
         if !ignoreThese.contains(iKind) {
 			update()

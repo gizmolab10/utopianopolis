@@ -13,7 +13,6 @@ import CoreData
 class ZHelpEssayIntroductionController : ZGenericController {
 
 	override  var controllerID : ZControllerID { return .idHelpEssayIntroduction }
-	override  var allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum, .sStartupStatus, .sAppearance] }
 	@IBOutlet var     topLabel : ZTextField?
 	@IBOutlet var  bottomLabel : ZTextField?
 	@IBOutlet var    imageView : NSImageView?

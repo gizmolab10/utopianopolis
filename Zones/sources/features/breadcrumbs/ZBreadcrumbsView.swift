@@ -152,7 +152,7 @@ class ZBreadcrumbsView : ZButtonsView {
 					default: break
 				}
 
-				gSignal([.sSwap, .sRelayout])
+				gSignal([.sSwap, .sStatus, .sRelayout])
 			}
 		}
 	}

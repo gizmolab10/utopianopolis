@@ -711,12 +711,6 @@ class ZRecords: NSObject {
         }
     }
 
-    func clearCKRecords(_ iRecords: CKRecordsArray, for states: [ZRecordState]) {
-        for record in iRecords {
-            clearRecordName(record.recordID.recordName, for: states)
-        }
-    }
-
     func clearRecordNames(_ iNames: [String], for iStates: [ZRecordState]) {
         for name in iNames {
             clearRecordName(name, for: iStates)

@@ -18,10 +18,38 @@ class ZGenericController: ZController, ZGeneric {
 
 	var     isVisible = false
 	var  controllerID : ZControllerID { return .idUndefined }
-	var  allowedKinds : [ZSignalKind] { return [] }
+	var  allowedKinds : ZSignalKindArray { return allowedKindsFor(controllerID) }
     func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}
 	func startup() {}
 	func setup() {}
+
+	func allowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
+		switch id {
+			case .idHelpEssayIntroduction,
+				 .idHelpEssayGraphicals,
+				 .idHelpDots:     return [.sData, .sDatum, .sRelayout, .sAppearance, .sStartupStatus]
+			case .idPreferences: return [.sData, .sDatum, .sMain, .sError, .sStatus, .sDetails, .sBigMap, .sSmallMap, .sPreferences, .sAppearance]
+			case .idSmallMap:    return [.sData, .sDatum, .sDetails, .sSmallMap, .sRelayout, .sAppearance]
+			case .idBigMap:      return [.sData, .sDatum, .sBigMap, .sRelayout, .sAppearance]
+
+			case .idSearchResults: break
+			case .idStartHere: break
+			case .idControls: break
+			case .idStartup: break
+			case .idDetails: break
+			case .idActions: break   // iPhone
+			case .idSearch: break
+			case .idCrumbs: break
+			case .idDebug: break
+			case .idData: break
+			case .idLink: break
+			case .idHelp: break
+			case .idNote: break
+			case .idMain: break
+			default: break
+		}
+		return []
+	}
 
 	func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return (allowedKinds.count == 0 || allowedKinds.contains(kind))

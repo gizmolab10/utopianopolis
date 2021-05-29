@@ -206,7 +206,7 @@ class ZOperations: NSObject {
 	}
 
 	func updateStatus() {
-		var signals: [ZSignalKind] = [.sStatus]     // show change in cloud status
+		var signals: ZSignalKindArray = [.sStatus]     // show change in cloud status
 
 		if !gHasFinishedStartup {
 			signals.append(.sStartupStatus)         // show current op in splash view

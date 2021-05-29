@@ -1871,7 +1871,7 @@ DQ
                     </view>
                     <connections>
                         <outlet property="dismissButton" destination="NcF-tr-4S4" id="czS-bE-hIZ"/>
-                        <outlet property="mapControls" destination="Rct-nF-Qx4" id="Mzs-Jg-TTc"/>
+                        <outlet property="mapControlsView" destination="Rct-nF-Qx4" id="oFp-OH-Ee5"/>
                         <outlet property="searchButton" destination="bhB-1W-OBB" id="R4X-oK-Sff"/>
                         <outlet property="searchOptionsControl" destination="zJL-q5-otI" id="cIz-oG-Vs7"/>
                         <outlet property="searchOptionsView" destination="jbD-YT-XOW" id="pwl-8w-hVd"/>

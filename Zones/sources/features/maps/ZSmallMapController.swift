@@ -20,7 +20,6 @@ class ZSmallMapController: ZMapController {
 	override  var     hereZone : Zone?         { return gIsRecentlyMode ?  gRecentsHere :  gFavoritesHereMaybe }
 	override  var   widgetType : ZWidgetType   { return gIsRecentlyMode ? .tRecent      : .tFavorite }
 	override  var controllerID : ZControllerID { return .idSmallMap }
-	override  var allowedKinds : [ZSignalKind] { return [.sDetails, .sSmallMap, .sRelayout, .sAppearance] }
 	override  var     isBigMap : Bool          { return false }
 	var            isRecentMap : Bool          { return rootWidget.widgetZone?.isInRecents ?? gIsRecentlyMode }
 

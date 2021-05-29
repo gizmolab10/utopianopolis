@@ -18,7 +18,6 @@ class ZHelpDotsExemplarController : ZMapController {
 	override  var   widgetType : ZWidgetType   { return .tExemplar }
 	override  var   isExemplar : Bool          { return true }
 	override  var     hereZone : Zone?         { return zone }
-	override  var allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum, .sStartupStatus, .sAppearance] }
 	var                   zone : Zone?
 	@IBOutlet var     topLabel : ZTextField?
 	@IBOutlet var  bottomLabel : ZTextField?
