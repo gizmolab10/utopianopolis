@@ -17,7 +17,7 @@ var gDragView       : ZDragView?       { return gMainController?.dragView }
 
 class ZMainController: ZGesturesController {
 
-	@IBOutlet var alternateLeading       : NSLayoutConstraint?
+	@IBOutlet var alternateLeading   : NSLayoutConstraint?
 	@IBOutlet var hamburgerButton    : ZButton?
 	@IBOutlet var searchResultsView  : ZView?
 	@IBOutlet var essayContainerView : ZView?
@@ -29,6 +29,16 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var dragView           : ZDragView?
 	@IBOutlet var helpButton         : ZHelpButton?
     override  var controllerID       : ZControllerID { return .idMain }
+
+	var hamburgerImage: ZImage? {
+		var image = ZImage(named: "settings.jpg")
+
+		if  gIsDark {
+			image = image?.invertedImage
+		}
+
+		return image
+	}
 
 	override func setup() {
 		searchResultsView?.isHidden = true
@@ -44,7 +54,7 @@ class ZMainController: ZGesturesController {
 	@IBAction func hamburgerButtonAction(_ button: NSButton) {
 		gShowDetailsView = gDetailsViewIsHidden
 
-		update()
+		gSignal([.sMain, .sDetails])
 	}
 
 	@IBAction func debugInfoButtonAction(_ button: NSButton) {
@@ -54,29 +64,16 @@ class ZMainController: ZGesturesController {
 			gDebugModes  .insert(.dDebugInfo)
 		}
 
-		update()
+		gSignal([.sMain])
 	}
 
 	func update() {
-		let          showDetails = gShowDetailsView
+		let            showDetails = gShowDetailsView
 		hamburgerButton?  .toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
 		alternateLeading?.constant = !showDetails ? 0.0 : 226.0
 		detailView?      .isHidden = !showDetails
 		debugView?       .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
-
-		gDetailsController?.update()
-		updateHamburgerImage()
-		gSignal([.sSmallMap])
-	}
-
-	func updateHamburgerImage() {
-		var image = ZImage(named: "settings.jpg")
-
-		if  gIsDark {
-			image = image?.invertedImage
-		}
-
-		hamburgerButton?.image = image
+		hamburgerButton?    .image = hamburgerImage
 	}
 
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {

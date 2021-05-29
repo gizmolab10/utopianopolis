@@ -13,6 +13,8 @@ enum ZModeButtonType: String {
 	case tGrowth  = "grow"
 }
 
+var gMapControlsView : ZMapControlsView? { return gControlsController?.mapControlsView }
+
 class ZMapControlsView : ZButtonsView, ZTooltips {
 
 	@IBOutlet var searchButton      : ZButton?

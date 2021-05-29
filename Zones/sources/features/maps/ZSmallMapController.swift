@@ -33,13 +33,13 @@ class ZSmallMapController: ZMapController {
 	}
 
 	func update() {
-		gControlsController?.mapControls?.update()
+		gMapControlsView?.update()
 		gCurrentSmallMapRecords?.updateCurrentForMode()
 	}
 
 	override func startup() {
 		setup()                                                // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
-		gControlsController?.mapControls?.setupAndRedraw()
+		gMapControlsView?.setupAndRedraw()
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {   // true means handled

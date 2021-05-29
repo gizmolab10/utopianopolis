@@ -132,8 +132,7 @@ func gSwapSmallMapMode(_ OPTION: Bool = false) {
 
 		gShowDetailsView = true    	// make sure the details view is visible
 
-		gMainController?.update()
-		gSignal([.sDetails, .sSmallMap])
+		gSignal([.sMain, .sDetails, .sSmallMap])
 	}
 }
 

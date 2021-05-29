@@ -13,7 +13,7 @@ var gControlsController: ZControlsController? { return gControllers.controllerFo
 class ZControlsController: ZGenericController {
 
 	override  var controllerID         : ZControllerID { return .idControls }
-	@IBOutlet var mapControls          : ZMapControlsView?
+	@IBOutlet var mapControlsView      : ZMapControlsView?
 	@IBOutlet var searchOptionsControl : ZSegmentedControl?
 	@IBOutlet var searchOptionsView    : ZView?
 	@IBOutlet var dismissButton        : ZButton?
@@ -29,7 +29,7 @@ class ZControlsController: ZGenericController {
 	}
 
 	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-		mapControls?.setupAndRedraw()
+		mapControlsView?.setupAndRedraw()
 		updateSearchOptions()
 		updateForState()
 	}

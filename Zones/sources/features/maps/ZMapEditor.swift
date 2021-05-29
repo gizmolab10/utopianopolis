@@ -477,7 +477,7 @@ class ZMapEditor: ZBaseEditor {
         } else if COMMA {
 			gShowDetailsView = true
 
-			gMainController?.update()
+			gSignal([.sMain])
 			gDetailsController?.toggleViewsFor(ids: [.vPreferences])
         } else if gIsEditIdeaMode {
             gTextEditor.cancel()
