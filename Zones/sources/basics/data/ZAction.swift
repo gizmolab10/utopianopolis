@@ -15,7 +15,7 @@ class ZAction : ZRecord {
     @objc var action: NSDictionary?
     @objc var  owner: Zone?
 
-    override var cloudProperties: [String] {
+    override var cloudProperties: StringsArray {
         return super.cloudProperties + [#keyPath(action), #keyPath(owner)]
     }
 

@@ -64,7 +64,7 @@ class ZCloud: ZRecords {
 		}
 	}
 
-    func queryFor(_ recordType: String, with predicate: NSPredicate, properties: [String], batchSize: Int = kBatchSize, cursor iCursor: CKQueryOperation.Cursor? = nil, onCompletion: RecordErrorClosure?) {
+    func queryFor(_ recordType: String, with predicate: NSPredicate, properties: StringsArray, batchSize: Int = kBatchSize, cursor iCursor: CKQueryOperation.Cursor? = nil, onCompletion: RecordErrorClosure?) {
         currentPredicate                 = predicate
         if  var                operation = configure(CKQueryOperation()) as? CKQueryOperation {
             if  let               cursor = iCursor {

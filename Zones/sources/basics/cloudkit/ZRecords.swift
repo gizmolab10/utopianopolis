@@ -32,12 +32,12 @@ enum ZRecordState: String {
 class ZRecords: NSObject {
 
 	var            maxLevel = 0
-	var          duplicates = [               ZRecord]       ()
-    var      zRecordsLookup = [String       : ZRecord]       ()
-	var zRecordsArrayLookup = [String       : ZRecordsArray] ()
-	var     recordsMistyped = [String       : ZRecord]       ()
-	var   recordNamesByType = [String       : [String]]      ()
-	var  recordNamesByState = [ZRecordState : [String]]      ()
+	var          duplicates =  ZRecordsArray                ()
+	var      zRecordsLookup =  StringZRecordDictionary      ()
+	var     recordsMistyped =  StringZRecordDictionary      ()
+	var zRecordsArrayLookup =  StringZRecordsDictionary     ()
+	var  recordNamesByState = [ZRecordState : StringsArray] ()
+	var   recordNamesByType = [String       : StringsArray] ()
     var        lastSyncDate = Date(timeIntervalSince1970: 0)
 	var             orphans = ZoneArray()
     var          databaseID : ZDatabaseID
@@ -53,7 +53,7 @@ class ZRecords: NSObject {
 	var          allProgeny : ZoneArray { return rootZone?.all ?? [] }
 
 	func countBy                      (type: String)  -> Int?     { return recordNamesByType[type]?.count }
-	func recordNamesForState (_ state: ZRecordState)  -> [String] { return recordNamesByState[state] ?? [] }
+	func recordNamesForState (_ state: ZRecordState)  -> StringsArray { return recordNamesByState[state] ?? [] }
 
 	func showRoot() { setHere(to: rootZone) }
 
@@ -139,7 +139,7 @@ class ZRecords: NSObject {
 		}
     }
 
-	var completeHereRecordNames: [String] {
+	var completeHereRecordNames: StringsArray {
 		var       references = gHereRecordNames.components(separatedBy: kColonSeparator)
 		var          changed = false
 
@@ -327,7 +327,7 @@ class ZRecords: NSObject {
         return name == nil ? nil : "Seriously." + name!
     }
     
-    func properties(for recordType: String?) -> [String] {
+    func properties(for recordType: String?) -> StringsArray {
         if  let   name = className(for: recordType),
             let  klass = NSClassFromString(name),
             let zClass = klass as? ZRecord.Type {
@@ -711,7 +711,7 @@ class ZRecords: NSObject {
         }
     }
 
-    func clearRecordNames(_ iNames: [String], for iStates: [ZRecordState]) {
+    func clearRecordNames(_ iNames: StringsArray, for iStates: [ZRecordState]) {
         for name in iNames {
             clearRecordName(name, for: iStates)
         }
@@ -743,7 +743,7 @@ class ZRecords: NSObject {
     // MARK:-
 
 	func fullUpdate(for states: [ZRecordState], _ onEach: StateRecordClosure) {
-        var names = [String] ()
+        var names = StringsArray ()
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iName in
             if  let record = maybeZRecordForRecordName(iName) {
@@ -833,9 +833,7 @@ class ZRecords: NSObject {
 		} else if zone == gHere {       // state 2
 			if  let small = gCurrentSmallMapRecords,
 				!small.swapBetweenBookmarkAndTarget(doNotGrab: !shouldGrab) {
-				if  gSmallMapMode == .favorites {
-					gFavorites.createNewBookmark(for: zone, autoAdd: true)
-				}
+				small.matchOrCreateBookmark(for: zone, autoAdd: true)
 			}
 
 			atArrival()

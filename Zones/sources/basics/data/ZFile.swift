@@ -20,8 +20,8 @@ class ZFile : ZRecord {
 	@NSManaged var                asset :  Data?
 	@NSManaged var                 name :  String?
 	@NSManaged var                 type :  String?
-	override var        cloudProperties : [String] { return Zone.cloudProperties }
-	override var optionalCloudProperties: [String] { return Zone.optionalCloudProperties }
+	override var        cloudProperties : StringsArray { return Zone.cloudProperties }
+	override var optionalCloudProperties: StringsArray { return Zone.optionalCloudProperties }
 
 	static func uniqueFile(recordName: String?, in dbID: ZDatabaseID) -> ZFile {
 		return uniqueZRecord(entityName: kFileType, recordName: recordName, in: dbID) as! ZFile
@@ -60,12 +60,12 @@ class ZFile : ZRecord {
 	// MARK:- properties
 	// MARK:-
 
-	override class var cloudProperties: [String] {
+	override class var cloudProperties: StringsArray {
 		return optionalCloudProperties +
 			super.cloudProperties
 	}
 
-	override class var optionalCloudProperties: [String] {
+	override class var optionalCloudProperties: StringsArray {
 		return [#keyPath(asset),
 				#keyPath(name),
 				#keyPath(type)] +

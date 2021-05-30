@@ -14,14 +14,14 @@ class ZTraitAssets : ZRecord {
 
 	@NSManaged    var     assets : [CKAsset]?
 	@NSManaged    var assetNames :  String?
-	override var cloudProperties : [String] { return ZTraitAssets.cloudProperties }
-	override var optionalCloudProperties: [String] { return ZTraitAssets.optionalCloudProperties }
+	override var cloudProperties : StringsArray { return ZTraitAssets.cloudProperties }
+	override var optionalCloudProperties: StringsArray { return ZTraitAssets.optionalCloudProperties }
 
-	override class var cloudProperties: [String] {
+	override class var cloudProperties: StringsArray {
 		return optionalCloudProperties + super.cloudProperties
 	}
 
-	override class var optionalCloudProperties: [String] {
+	override class var optionalCloudProperties: StringsArray {
 		return [#keyPath(assets),
 				#keyPath(assetNames)] +
 			super.optionalCloudProperties

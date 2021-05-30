@@ -56,8 +56,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                       textColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : gDefaultTextColor }
 	var                       emailLink :             String? { return email == nil ? nil : "mailTo:\(email!)" }
 	var                  linkRecordName :             String? { return zoneLink?.maybeRecordName }
-	override var        cloudProperties :            [String] { return Zone.cloudProperties }
-	override var optionalCloudProperties:            [String] { return Zone.optionalCloudProperties }
+	override var        cloudProperties :            StringsArray { return Zone.cloudProperties }
+	override var optionalCloudProperties:            StringsArray { return Zone.optionalCloudProperties }
 	override var              emptyName :             String  { return kEmptyIdea }
 	override var            description :             String  { return decoratedName }
 	override var          unwrappedName :             String  { return zoneName ?? smallMapRootName }
@@ -101,7 +101,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                      spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
 	var                       isInGroup :               Bool  { return groupOwner?.bookmarkTargets.contains(self) ?? false }
 	var                    isGroupOwner :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.groupOwner.rawValue) ?? false }
-	var                  directReadOnly :               Bool  { return directAccess == .eReadOnly || directAccess == .eProgenyWritable }
 	var                     userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
 	var                    userCanWrite :               Bool  { return userHasDirectOwnership || isIdeaEditable }
 	var            userCanMutateProgeny :               Bool  { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
@@ -114,7 +113,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var       allNotemarkProgeny        :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
 	var       allBookmarkProgeny        :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
 	var       all                       :          ZoneArray  { return zones(of:  .wAll) }
-	var                      duplicates =          ZoneArray  ()
+	var                  duplicateZones =          ZoneArray  ()
 	var                        children =          ZoneArray  ()
 	var                          traits =   ZTraitDictionary  ()
 	func                copyWithZone() ->           NSObject  { return self }
@@ -122,7 +121,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                    toolName() ->             String? { return clippedName }
 	func                   toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
 	func                     recount()                        { updateAllProgenyCounts() }
-	func              createBookmark() ->               Zone  { return gBookmarks.createBookmark(targeting: self) }
 	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.uniqueZoneRenamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
@@ -193,8 +191,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return values
 	}
 
-	var traitKeys   : [String] {
-		var results = [String]()
+	var traitKeys   : StringsArray {
+		var results = StringsArray()
 
 		for key in traits.keys {
 			results.append(key.rawValue)
@@ -222,7 +220,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			type.insert(.zBookmark)
 		}
 
-		if  duplicates.count > 0 {
+		if  duplicateZones.count > 0 {
 			type.insert(.zDuplicate)
 		}
 
@@ -301,18 +299,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addBookmark() {
 		if  !isARoot {
 			if  gHere == self {
+				gHere  = self.parentZone ?? gHere
+				
 				revealParentAndSiblings()
-
-				gHere = self.parentZone ?? gHere
 			}
 
-			self.invokeUsingDatabaseID(.mineID) {
-				let bookmark = createBookmark()
-
-				bookmark.grab()
-				parentZone?.addChild(bookmark)
-			}
-
+			gNewOrExistingBookmark(targeting: self, addTo: parentZone).grab()
 			gRedrawMaps()
 		}
 	}
@@ -331,12 +323,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- properties
 	// MARK:-
 
-	override class var cloudProperties: [String] {
+	override class var cloudProperties: StringsArray {
 		return optionalCloudProperties +
 			super.cloudProperties
 	}
 
-	override class var optionalCloudProperties: [String] {
+	override class var optionalCloudProperties: StringsArray {
 		return [#keyPath(zoneName),
 				#keyPath(zoneLink),
 				#keyPath(zoneOrder),
@@ -788,15 +780,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- core data
 	// MARK:-
 
-	@discardableResult override func convertFromCoreData(visited: [String]?) -> [String] {
+	@discardableResult override func convertFromCoreData(visited: StringsArray?) -> StringsArray {
 		alterAttribute(ZoneAttributeType.validCoreData)
 		updateFromCoreDataTraitRelationships()
 		return super.convertFromCoreData(visited: visited) // call super, too
 	}
 
-	override func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] {
-		var      converted = [String]()
-		var              v = visited ?? [String]()
+	override func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray {
+		var      converted = StringsArray()
+		var              v = visited ?? StringsArray()
 
 		if  let       name = recordName {
 			v.appendUnique(item: name)
@@ -905,13 +897,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		set {
-			if let t = bookmarkTarget {
+			if  let t = bookmarkTarget {
 				t.directAccess = newValue
 			} else {
-				let    value = newValue.rawValue
-				let oldValue = zoneAccess?.intValue ?? ZoneAccess.eInherit.rawValue
+				let    value   = newValue.rawValue
+				let oldValue   = zoneAccess?.intValue ?? ZoneAccess.eInherit.rawValue
 
-				if  oldValue != value {
+				if  oldValue  != value {
 					zoneAccess = NSNumber(value: value)
 				}
 			}
@@ -923,7 +915,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return t.hasAccessDecoration
 		}
 
-		return isInPublicDatabase && (directReadOnly || inheritedAccess == .eReadOnly)
+		return isInPublicDatabase && ([directAccess, inheritedAccess].contains(.eReadOnly) || directAccess == .eProgenyWritable)
 	}
 
 	var zoneWithInheritedAccess: Zone {
@@ -1738,7 +1730,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	private func groupOwner(_ iVisited: [String]) -> ([String], Zone)? {
+	private func groupOwner(_ iVisited: StringsArray) -> (StringsArray, Zone)? {
 		guard let name = recordName, !iVisited.contains(name), gHasFinishedStartup else {
 			return nil                                          // avoid looking more than once per zone for a group owner
 		}
@@ -1776,7 +1768,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	func ownedGroup(_ iVisited: [String]) -> ZoneArray? {
+	func ownedGroup(_ iVisited: StringsArray) -> ZoneArray? {
 		guard let name = recordName, !iVisited.contains(name) else { return nil }
 		var      zones = ZoneArray()
 		var    visited = iVisited
@@ -2165,7 +2157,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let grandchild = gListsGrowDown ? child.children.last : child.children.first {
 				grandchild.grab()
 
-				if  child.isInSmallMap { // narrow, so hide parent
+				if  child.isInSmallMap { // narrow, so hide former here and ignore extreme
 					child.setAsSmallMapHereZone()
 				} else if extreme {
 					child = grandchild
@@ -2256,15 +2248,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		// /////////////
 
 		let finish = {
-			var    done = false
-			let  OPTION = flags.isOption
+			var firstTime = true
+			let    OPTION = flags.isOption
 
 			if !SPECIAL {
 				into.expand()
 			}
 
-			if !done {
-				done = true
+			if  firstTime {
+				firstTime = false
 				if  let firstGrab = grabs.first,
 					let fromIndex = firstGrab.siblingIndex,
 					(firstGrab.parentZone != into || fromIndex > (iIndex ?? 1000)) {
@@ -2277,7 +2269,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					var bookmark = grab
 
 					if  toSmallMap && !bookmark.isInSmallMap && !bookmark.isBookmark && !bookmark.isInTrash && !SPECIAL {
-						if  let    b = gCurrentSmallMapRecords?.createNewBookmark(for: bookmark, autoAdd: false) {	// case 3
+						if  let    b = gCurrentSmallMapRecords?.matchOrCreateBookmark(for: bookmark, autoAdd: false) {	// case 3
 							bookmark = b
 						}
 					} else if bookmark.databaseID != into.databaseID {    // being moved to the other db
@@ -2349,7 +2341,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let     linkDBID = link.databaseID
 			let  spawnerName = spawnedBy.recordName
 			var    probeName = link.recordName
-			var      visited = [String] ()
+			var      visited = StringsArray ()
 
 			while let   name = probeName, !visited.contains(name) {
 				visited.append(name)
@@ -2735,24 +2727,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  index < 0 {
 			index = 0
+		} else if index > count {
+			index = count
 		}
 
 		return index   // count is bottom, 0 is top
 	}
 
 	func deleteDuplicates() {
-		for d in duplicates {
+		for d in duplicateZones {
 			if  d != self {
 				d.deleteDuplicates()
 				d.moveZone(to: gDestroy)
 			}
 		}
 
-		duplicates.removeAll()
+		duplicateZones.removeAll()
 	}
 
 	func cycleToNextDuplicate() {
-		var     d = duplicates
+		var     d = duplicateZones
 		if  let p = parentZone, d.count > 0,
 			let i = siblingIndex,
 			let n = d.popLast() {     // pop next from duplicates
@@ -2789,8 +2783,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  let childTarget = child.bookmarkTarget {           // detect if its bookmark is already added
 				for (index, sibling) in children.enumerated() {
 					if  childTarget == sibling.bookmarkTarget {
-						sibling.duplicates.insertUnique(item: child)
-
 						return rearange(from: index)
 					}
 				}
@@ -2798,10 +2790,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			for (index, sibling) in children.enumerated() {        // detect if it's already added
 				if  child == sibling { // same record name
-					if  child !== sibling {
-						sibling.duplicates.insertUnique(item: child)
-					}
-
 					return rearange(from: index)
 				}
 			}
@@ -3168,10 +3156,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gTextEditor.stopCurrentEdit()
 		ungrabProgeny()
 
-		let  COMMAND = flags.isCommand
-		let   OPTION = flags.isOption
+		let COMMAND = flags.isCommand
+		let  OPTION = flags.isOption
 
-		if  count    > 0, !OPTION, !(COMMAND && isTraveller) {
+		if  isTraveller {
+			invokeTravel(COMMAND) { reveal in // note, email, video, bookmark, hyperlink
+				gRedrawMaps()
+			}
+		} else if count > 0, !OPTION {
 			let show = !expanded
 
 			if  isInSmallMap {
@@ -3182,10 +3174,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				generationalUpdate(show: show, to: goal) {
 					gRedrawMaps(for: self)
 				}
-			}
-		} else if isTraveller {
-			invokeTravel(COMMAND) { reveal in // note, email, video, bookmark, hyperlink
-				gRedrawMaps()
 			}
 		}
 	}

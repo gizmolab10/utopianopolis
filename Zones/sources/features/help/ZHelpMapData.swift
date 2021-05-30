@@ -10,12 +10,12 @@ import Foundation
 
 class ZHelpMapData : ZHelpData {
 
-	override var columnStrings     : [[String]] { return [mapColumnOne, mapColumnTwo, mapColumnThree, mapColumnFour] }
-	override var tabOffsets        :   [Int]    { return [0, 20, 85] }
-	override var columnWidth       :    Int     { return 288 }
-	override var indexOfLastColumn :    Int     { return 3 }
+	override var columnStrings     : [StringsArray] { return [mapColumnOne, mapColumnTwo, mapColumnThree, mapColumnFour] }
+	override var tabOffsets        : [Int]          { return [0, 20, 85] }
+	override var columnWidth       :  Int           { return 288 }
+	override var indexOfLastColumn :  Int           { return 3 }
 
-	let mapColumnOne: [String] = [
+	let mapColumnOne: StringsArray = [
 		"0",			"", 												"",
 		"0!EVERYWHERE IN MAPS:", 										"", "",
 		"0",			"", 												"",
@@ -55,7 +55,7 @@ class ZHelpMapData : ZHelpData {
 		"0F", 			"dismisss search bar", 								"search-2a996591375a"
 	]
 
-	let mapColumnTwo: [String] = [
+	let mapColumnTwo: StringsArray = [
 		"0",			"", 												"",
 		"0!WHILE EDITING AN IDEA:", 									"", "",
 		"0",			"", 												"",
@@ -101,7 +101,7 @@ class ZHelpMapData : ZHelpData {
 		"0!legend:", 	"click on blue text to view further details",		"_" // leave underscore (invisible): applies blue color to text
 	]
 
-	let mapColumnThree: [String] = [
+	let mapColumnThree: StringsArray = [
 		"0",			"", 												"",
 		"0!WHILE NAVIGATING (SINGLE IDEA SELECTED, NOT BEING EDITED):",	"", "",
 		"2",			"", 												"",
@@ -145,7 +145,7 @@ class ZHelpMapData : ZHelpData {
 		"2vertical", 	"extend selection", 								"selecting-ideas-cc2939720e53"
 	]
 
-	let mapColumnFour: [String] = [
+	let mapColumnFour: StringsArray = [
 		"0",			"", 												"",
 		"0",			"", 												"",
 		"0",			"", 												"",

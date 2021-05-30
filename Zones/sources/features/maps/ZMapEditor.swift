@@ -697,9 +697,7 @@ class ZMapEditor: ZBaseEditor {
 							if  p.isInFavorites {
 								gFavorites.updateAllFavorites()
 							} else if c == 0 {
-								let bookmark = gHere.createBookmark()
-
-								gRecents.currentHere.addChild(bookmark)  // assure at least one bookmark in recents (targeting here)
+								gNewOrExistingBookmark(targeting: gHere, addTo: gRecentsHere)  // assure at least one bookmark in recents (targeting here)
 							}
 
 							gHere.grab()                                 // as though user clicked on background
@@ -818,7 +816,7 @@ class ZMapEditor: ZBaseEditor {
     }
 
     func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: BoolClosure?) {
-		if  let zone  = moveables?.first {
+		if  let zone = moveables?.first {
             if !selectionOnly {
                 actuallyMoveInto(moveables, onCompletion: onCompletion)
             } else if zone.isTraveller && zone.fetchableCount == 0 && zone.count == 0 {

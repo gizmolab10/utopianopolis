@@ -300,50 +300,13 @@ class ZSmallMapRecords: ZRecords {
 		return found
 	}
 
-	@discardableResult func createNewBookmark(for iZone: Zone?, autoAdd: Bool) -> Zone? {
-
-		// ///////////////////////////////////////////
-		// 1. zone  is a bookmark, pass a deep copy //
-		// 2. zone not a bookmark, bookmark it      //
-		// ///////////////////////////////////////////
-
-		if  let       zone = iZone,
-			let       root = rootZone {
-			let  newParent = currentHere
-			var     parent = zone.parentZone
-			let isBookmark = zone.isBookmark
-			let      basis = isBookmark ? zone.crossLink! : zone
-
-			if  let   name = basis.recordName {
-				parent     = currentHere
-
-				for workingFavorite in root.allBookmarkProgeny {
-					if  workingFavorite.isInEitherMap,
-						databaseID     == workingFavorite.bookmarkTarget?.databaseID,
-						name           == workingFavorite.linkRecordName {
-						currentBookmark = workingFavorite
-
-						return workingFavorite
-					}
-				}
-			}
-
-			if  let           count = parent?.count {
-				let           index = parent!.children.firstIndex(of: zone) ?? count
-				var bookmark: Zone? = isBookmark ? zone.deepCopy(dbID: .mineID) : nil               // cases 1 and 2
-				bookmark            = gBookmarks.create(withBookmark: bookmark, autoAdd, parent: newParent, atIndex: index, zone.zoneName)
-
-				if !isBookmark {
-					bookmark?.crossLink = zone
-
-					gBookmarks.addToReverseLookup(bookmark!)
-				}
-
-				return bookmark!
-			}
+	@discardableResult func matchOrCreateBookmark(for zone: Zone, autoAdd: Bool) -> Zone {
+		let           basis = zone.bookmarkTarget ?? zone
+		if  let    bookmark = basis.firstBookmarkTargetingSelf {
+			return bookmark
+		} else {
+			return gNewOrExistingBookmark(targeting: zone, addTo: autoAdd ? currentHere : nil)
 		}
-
-		return nil
 	}
 
 }

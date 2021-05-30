@@ -48,7 +48,7 @@ var             gCurrentTrait:            ZTrait?
 var             gDragDropZone:              Zone?
 var              gDraggedZone:              Zone?
 var                gDragPoint:           CGPoint?
-var                 gExpanded:          [String]?
+var                 gExpanded:          StringsArray?
 
 var                   gIsDark:               Bool { return gDarkMode == .Dark }
 var                   gIsLate:               Bool { return gBatches.isLate }
@@ -190,7 +190,7 @@ var gCurrentEvent: ZEvent? {
 	}
 }
 
-var gExpandedZones : [String] {
+var gExpandedZones : StringsArray {
     get {
         if  gExpanded == nil {
             let  value = getPreferencesString(for: kExpandedZones, defaultString: "")

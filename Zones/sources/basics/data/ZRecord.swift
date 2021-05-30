@@ -66,10 +66,10 @@ class ZRecord: ZManagedObject { // NSObject {
 
 	var isAdoptable: Bool { return false }
 	var matchesFilterOptions: Bool { return true }
-	var cloudProperties: [String] { return ZRecord.cloudProperties }
-	var optionalCloudProperties: [String] { return ZRecord.optionalCloudProperties }
-	class var   cloudProperties: [String] { return [] }
-	class var optionalCloudProperties: [String] { return [] }
+	var cloudProperties: StringsArray { return ZRecord.cloudProperties }
+	var optionalCloudProperties: StringsArray { return ZRecord.optionalCloudProperties }
+	class var   cloudProperties: StringsArray { return [] }
+	class var optionalCloudProperties: StringsArray { return [] }
 
 	func orphan() {}
 	func adopt(recursively: Bool = false) {}
@@ -77,11 +77,11 @@ class ZRecord: ZManagedObject { // NSObject {
 	func debug(_  iMessage: String) {}
 	func hasMissingChildren() -> Bool { return true }
 	func hasMissingProgeny()  -> Bool { return true }
-	func ignoreKeyPathsForStorage() -> [String] { return [kpParent, kpOwner] }
+	func ignoreKeyPathsForStorage() -> StringsArray { return [kpParent, kpOwner] }
 	func unregister() { cloud?.unregisterZRecord(self) }
 	@discardableResult func register() -> Bool { return records?.registerZRecord(self) ?? false }
 
-	class func cloudProperties(for className: String) -> [String] {
+	class func cloudProperties(for className: String) -> StringsArray {
 		switch className {
 			case kZoneType:     return Zone     .cloudProperties
 			case kTraitType:    return ZTrait   .cloudProperties
@@ -93,11 +93,11 @@ class ZRecord: ZManagedObject { // NSObject {
 	// MARK:- core data
 	// MARK:-
 
-	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] { return [String]() }
+	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray { return StringsArray() }
 
-	@discardableResult func convertFromCoreData(visited: [String]?) -> [String] {
-		var         v = visited ?? [String]()
-		var converted = [String]()
+	@discardableResult func convertFromCoreData(visited: StringsArray?) -> StringsArray {
+		var         v = visited ?? StringsArray()
+		var converted = StringsArray()
 
 		if  let name  = recordName {
 			if  v.isEmpty || !v.contains(name) {
@@ -175,7 +175,7 @@ class ZRecord: ZManagedObject { // NSObject {
 		if  let       r = recordName,
 			let manager = gRemoteStorage.cloud(for: iDatabaseID) {
 			let  states = manager.states(for: r)
-			var   marks = [String] ()
+			var   marks = StringsArray ()
 
 			for state in states {
 				marks.append("\(state.rawValue)")
@@ -273,7 +273,7 @@ class ZRecord: ZManagedObject { // NSObject {
 				}
 			case .assets:
 				if  let  assets = object as? [CKAsset] {
-					var strings = [String]()
+					var strings = StringsArray()
 
 					for asset in assets {
 						if  let base64 = asset.data?.base64EncodedString() {

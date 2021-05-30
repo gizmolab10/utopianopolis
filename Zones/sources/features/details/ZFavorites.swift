@@ -56,7 +56,7 @@ class ZFavorites: ZSmallMapRecords {
 	override func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {
 		if  let pushMe = zone,
 			!findAndSetHere(asParentOf: pushMe) {
-			createNewBookmark(for: pushMe, autoAdd: true)?.grab()
+			matchOrCreateBookmark(for: pushMe, autoAdd: true).grab()
 		}
 	}
 
@@ -204,6 +204,10 @@ class ZFavorites: ZSmallMapRecords {
 				createRootsBookmark(named: kDestroyName)
 			}
 
+			for zone in rootsGroup.children {
+				zone.directAccess = .eReadOnly
+			}
+
 			result = missingLost || missingTrash || (missingDestroy && gAddDestroy)
 		}
 
@@ -211,62 +215,28 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	var rootsGroupZone: Zone {
-
-		var rootsGroup : Zone?
-
 		for zone in allProgeny {
 			if  zone.recordName == kRootsName {
-				rootsGroup = zone
+				return zone
 			}
 		}
 
-		if  rootsGroup == nil {
-			rootsGroup  = Zone.uniqueZone(recordName: kRootsName, in: .mineID)
+		// /////////////////////////
+		// add missing root group //
+		// /////////////////////////
 
-			// /////////////////////////
-			// add missing root group //
-			// /////////////////////////
+		let          rootsGroup = Zone.uniqueZone(recordName: kRootsName, in: .mineID)
+		rootsGroup    .zoneName = kRootsName
+		rootsGroup.directAccess = .eReadOnly
 
-			gFavoritesRoot?.addChildAndRespectOrder(rootsGroup)
-		}
+		rootsGroup.alterAttribute(.groupOwner, remove: false)
+		gFavoritesRoot?.addChildAndRespectOrder(rootsGroup)
 
-		rootsGroup?    .zoneName = kRootsName
-		rootsGroup?.directAccess = .eReadOnly
-
-		rootsGroup?.alterAttribute(.groupOwner, remove: false)
-
-		return rootsGroup!
+		return rootsGroup
 	}
 
     // MARK:- toggle
     // MARK:-
-
-    func updateGrab() {
-		if  gIsRecentlyMode { return }
-
-		let here = gHere
-
-		// /////////////////////////////////////////////////////////////////////////////////////
-        // three states, for which the bookmark that targets here is...                       //
-        // 1. in favorites, not grabbed  -> grab favorite                                     //
-        // 2. in favorites, grabbed      -> doesn't invoke this method                        //
-        // 3. not in favorites           -> create and grab new favorite (its target is here) //
-		// /////////////////////////////////////////////////////////////////////////////////////
-
-		if  let       bookmark = bookmarkTargeting(here) {
-			hereZoneMaybe?.collapse()
-			bookmark.asssureIsVisibleAndGrab()                                          // state 1
-
-			hereZoneMaybe      = gSelecting.firstGrab?.parentZone
-			currentBookmark    = bookmark
-		} else if let bookmark = createNewBookmark(for: here, autoAdd: true) {  // state 3
-			currentBookmark    = bookmark
-
-			bookmark.asssureIsVisibleAndGrab()
-		}
-
-		updateAllFavorites()
-	}
 
     func delete(_ favorite: Zone) {
         favorite.moveZone(to: favorite.trashZone)

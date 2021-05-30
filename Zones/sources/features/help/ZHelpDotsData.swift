@@ -12,13 +12,13 @@ let dotsPrefixArray = Array(repeating: "", count: 3 * 8)
 
 class ZHelpDotsData: ZHelpData {
 
-	override var noTabPrefix   :   String   { return "                    " }
-	override var columnStrings : [[String]] { return [dotsColumnOne, dotsColumnTwo] }
-	override var tabOffsets    :   [Int]    { return [0, 20, 150] }
-	override var boldFont      :   ZFont    { return kLargeBoldFont }
-	override var rowHeight     :  CGFloat   { return 22.0 }
+	override var noTabPrefix   :  String        { return "                    " }
+	override var columnStrings : [StringsArray] { return [dotsColumnOne, dotsColumnTwo] }
+	override var tabOffsets    : [Int]          { return [0, 20, 150] }
+	override var boldFont      :  ZFont         { return kLargeBoldFont }
+	override var rowHeight     :  CGFloat       { return 22.0 }
 
-	let dotsColumnOne: [String] = dotsPrefixArray + [
+	let dotsColumnOne: StringsArray = dotsPrefixArray + [
 		"",						"",																				"",
 		"!DRAG DOT",			"click to select, deselect or drag",											"",
 		"",						"",																				"",
@@ -33,7 +33,7 @@ class ZHelpDotsData: ZHelpData {
 		".b",					"this bookmark's target is current focus",										""
 	]
 
-	let dotsColumnTwo: [String] = dotsPrefixArray + [
+	let dotsColumnTwo: StringsArray = dotsPrefixArray + [
 		"",						"",																				"",
 		"!REVEAL DOT",			"click to conceal, reveal or activate",											"",
 		"",						"",																				"",

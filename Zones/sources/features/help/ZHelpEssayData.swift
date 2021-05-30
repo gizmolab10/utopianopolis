@@ -12,12 +12,12 @@ let essayPrefixArray = Array(repeating: "", count: 3 * 14)
 
 class ZHelpEssayData: ZHelpData {
 
-	override var noTabPrefix   :   String   { return "                    " }
-	override var columnStrings : [[String]] { return [essayColumnOne, essayColumnTwo] }
-	override var tabOffsets    :   [Int]    { return [0, 20, 180] }
-	override var rowHeight     :  CGFloat   { return 14.55 }
+	override var noTabPrefix   :  String        { return "                    " }
+	override var columnStrings : [StringsArray] { return [essayColumnOne, essayColumnTwo] }
+	override var tabOffsets    : [Int]          { return [0, 20, 180] }
+	override var rowHeight     :  CGFloat       { return 14.55 }
 
-	let essayColumnOne: [String] = essayPrefixArray + [
+	let essayColumnOne: StringsArray = essayPrefixArray + [
 		"",																								"",	"",
 		"!GRAPHICS",																					"",	"",
 		"",																								"",	"",
@@ -30,7 +30,7 @@ class ZHelpEssayData: ZHelpData {
 		"",																								"",	""
 	]
 
-	let essayColumnTwo: [String] = essayPrefixArray + [
+	let essayColumnTwo: StringsArray = essayPrefixArray + [
 		"",																								"",	"",
 		"!KEYS, ALWAYS",							 													"", "",
 		"",																								"",	"",

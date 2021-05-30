@@ -108,19 +108,19 @@ class ZHelpData: NSObject {
 	let linesBeforeSearch = 32
 	var helpMode          = ZHelpMode.noMode
 	var tabStops          = [NSTextTab]()
-	var rowHeight         :   CGFloat  { return 16.0 }
-	var noTabPrefix       :   String   { return "   " }
-	var columnStrings     : [[String]] { return [[]] }
-	var tabOffsets        :   [Int]    { return [0, 20, 85] } // default for graph shortcuts
-	var columnWidth       :    Int     { return 580 }         // "
-	var indexOfLastColumn :    Int     { return 1 }           // "
-	var stringsPerRow     :    Int     { return 3 }
-	var isPro             :    Bool    { return gCurrentHelpMode == .proMode }
-	var isDots            :    Bool    { return gCurrentHelpMode == .dotMode }
-	var isBasic           :    Bool    { return gCurrentHelpMode == .basicMode }
-	var isEssay           :    Bool    { return gCurrentHelpMode == .essayMode }
-	var isIntermediate    :    Bool    { return gCurrentHelpMode == .middleMode }
-	var boldFont          :    ZFont   { return kBoldFont }
+	var rowHeight         :  CGFloat       { return 16.0 }
+	var noTabPrefix       :  String        { return "   " }
+	var columnStrings     : [StringsArray] { return [[]] }
+	var tabOffsets        : [Int]          { return [0, 20, 85] } // default for graph shortcuts
+	var columnWidth       :  Int           { return 580 }         // "
+	var indexOfLastColumn :  Int           { return 1 }           // "
+	var stringsPerRow     :  Int           { return 3 }
+	var isPro             :  Bool          { return gCurrentHelpMode == .proMode }
+	var isDots            :  Bool          { return gCurrentHelpMode == .dotMode }
+	var isBasic           :  Bool          { return gCurrentHelpMode == .basicMode }
+	var isEssay           :  Bool          { return gCurrentHelpMode == .essayMode }
+	var isIntermediate    :  Bool          { return gCurrentHelpMode == .middleMode }
+	var boldFont          :  ZFont         { return kBoldFont }
 
 	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) {
 		let (first, second, _) = strings(for: row, column: column)
@@ -197,8 +197,8 @@ class ZHelpData: NSObject {
 			|| (types.contains(.hIntermed) && (isIntermediate || isPro))
 	}
 
-	func strippedStrings(for column: Int) -> [String] {
-		var             result = [String]()
+	func strippedStrings(for column: Int) -> StringsArray {
+		var             result = StringsArray()
 		if              column > -1 {
 			let     rawStrings = columnStrings[column]
 			let          limit = rawStrings.count / stringsPerRow

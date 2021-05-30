@@ -29,7 +29,7 @@ struct ZEssayDragDot {
 class ZEssayView: ZTextView, ZTextViewDelegate {
 	let margin          = CGFloat(20.0)
 	let dotInset        = CGFloat(-5.0)
-	var dropped         = [String]()
+	var dropped         = StringsArray()
 	var grabbedNotes    = [ZNote]()
 	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { imageAttachment = nil } } }
 	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { setSelectedRange(NSRange()) } else if oldValue != nil { eraseAttachment = oldValue } } }

@@ -26,12 +26,12 @@ class ZManifest : ZRecord {
 
 	var zDeleted = [ZDeleted]()
 	@NSManaged var count: NSNumber?
-	@NSManaged var deletedRecordNames: [String]?
-	override var cloudProperties: [String] { return ZManifest.cloudProperties }
-	override class var cloudProperties: [String] { return super.cloudProperties + [#keyPath(deletedRecordNames), #keyPath(count)] }
-//	override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deletedRecordNames)] }
+	@NSManaged var deletedRecordNames: StringsArray?
+	override var cloudProperties: StringsArray { return ZManifest.cloudProperties }
+	override class var cloudProperties: StringsArray { return super.cloudProperties + [#keyPath(deletedRecordNames), #keyPath(count)] }
+//	override func ignoreKeyPathsForStorage() -> StringsArray { return super.ignoreKeyPathsForStorage() + [#keyPath(deletedRecordNames)] }
 
-    var updatedRefs: [String]? {
+    var updatedRefs: StringsArray? {
         if  let d = deletedRecordNames {                 // FIRST: merge deleted into zDeleted
             for ref in d {
                 smartAppend(ref)

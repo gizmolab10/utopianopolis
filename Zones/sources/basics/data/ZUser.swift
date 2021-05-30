@@ -53,9 +53,9 @@ class ZUser : ZRecord {
 		gUserRecordName = recordName
 	}
 
-    override var cloudProperties: [String] { return ZUser.cloudProperties }
+    override var cloudProperties: StringsArray { return ZUser.cloudProperties }
 
-    override class var cloudProperties: [String] {
+    override class var cloudProperties: StringsArray {
         return [#keyPath(authorID),
                 #keyPath(writeAccess),
                 #keyPath(sentEmailType)] +

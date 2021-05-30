@@ -17,6 +17,36 @@ import Foundation
 
 let gBookmarks = ZBookmarks()
 
+// MARK:- designated bookmark creator
+// MARK:-
+
+@discardableResult func gNewOrExistingBookmark(targeting target: Zone, addTo parent: Zone?) -> Zone {
+	if  let    match = parent?.children.intersection(target.bookmarksTargetingSelf), match.count > 0 {
+		return match[0]  // s bookmark for the target already exists, do nothing
+	}
+
+	if  target.isBookmark, target.parentZone == parent, parent != nil {
+		return target    // it already exists, do nothing
+	}
+
+	var bookmark: Zone
+
+	if  target.isBookmark {
+		bookmark = target.deepCopy(dbID: .mineID)                               // zone  is a bookmark, pass a deep copy
+	} else {
+		bookmark = Zone.uniqueZoneRenamed(target.zoneName, databaseID: .mineID) // zone not a bookmark, bookmark it
+		bookmark.crossLink = target
+	}
+
+	if  let p = parent {
+		p.addChildSafely(bookmark, at: target.siblingIndex)
+	}
+
+	gBookmarks.addToReverseLookup(bookmark)
+
+	return bookmark
+}
+
 class ZBookmarks: NSObject {
 
     var reverseLookup = [ZDatabaseID : [String : ZoneArray]] ()
@@ -32,44 +62,6 @@ class ZBookmarks: NSObject {
 
         return bookmarks
     }
-
-	// MARK:- create
-	// MARK:-
-
-	// designated bookmark creator
-
-	@discardableResult func createZone(withBookmark: Zone?, _ iName: String?, recordName: String? = nil) -> Zone {
-		var bookmark           = withBookmark
-		if  bookmark          == nil {
-			bookmark           = Zone.uniqueZoneRenamed(iName, recordName: recordName, databaseID: .mineID)
-		} else if let     name = iName {
-			bookmark?.zoneName = name
-		}
-
-		return bookmark!
-	}
-
-	func createBookmark(targeting target: Zone) -> Zone {
-		let bookmark: Zone = createZone(withBookmark: nil, target.zoneName)
-		bookmark.crossLink = target
-
-		addToReverseLookup(bookmark)
-
-		return bookmark
-	}
-
-	@discardableResult func create(withBookmark: Zone?, _ autoAdd: Bool, parent: Zone, atIndex: Int, _ name: String?, recordName: String? = nil) -> Zone {
-		let bookmark: Zone = createZone(withBookmark: withBookmark, name, recordName: recordName)
-		let insertAt: Int? = atIndex == parent.count ? nil : atIndex
-
-		addToReverseLookup(bookmark)
-
-		if  autoAdd {
-			parent.addChildSafely(bookmark, at: insertAt) // calls update progeny count
-		}
-
-		return bookmark
-	}
 
 	// MARK:- forget
 	// MARK:-

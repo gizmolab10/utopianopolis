@@ -45,7 +45,7 @@ enum ZTraitType: String {
 @objc(ZTrait)
 class ZTrait: ZTraitAssets {
 
-	@NSManaged    var  strings : [String]?
+	@NSManaged    var  strings : StringsArray?
 	@NSManaged    var ownerRID :  String?
 	@NSManaged    var   format :  String?
 	@NSManaged    var     type :  String?
@@ -104,11 +104,11 @@ class ZTrait: ZTraitAssets {
 //		try extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
 //	}
 
-	override var         cloudProperties: [String] { return ZTrait.cloudProperties }
-	override var optionalCloudProperties: [String] { return ZTrait.optionalCloudProperties }
+	override var         cloudProperties: StringsArray { return ZTrait.cloudProperties }
+	override var optionalCloudProperties: StringsArray { return ZTrait.optionalCloudProperties }
 	override var           decoratedName:  String  { return kTraitType + (text ?? kNoValue) }
 
-	override class var cloudProperties: [String] {
+	override class var cloudProperties: StringsArray {
 		return [#keyPath(type),
 				#keyPath(text),
 				#keyPath(strings)] +
@@ -116,7 +116,7 @@ class ZTrait: ZTraitAssets {
 			super.cloudProperties
 	}
 
-	override class var optionalCloudProperties: [String] {
+	override class var optionalCloudProperties: StringsArray {
 		return [#keyPath(ownerRID),
 				#keyPath(format)] +
 			super.optionalCloudProperties

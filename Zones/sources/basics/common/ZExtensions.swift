@@ -21,6 +21,7 @@ typealias              ZOpIDsArray = [ZOperationID]
 typealias              ZFilesArray = [ZFile]
 typealias              ZTraitArray = [ZTrait]
 typealias              CKReference = CKRecord.Reference
+typealias             StringsArray = [String]
 typealias            ZRecordsArray = [ZRecord]
 typealias            ZObjectsArray = [NSObject]
 typealias         CKRecordIDsArray = [CKRecordID]
@@ -33,7 +34,8 @@ typealias        ZTinyDotTypeArray = [[ZTinyDotType]]
 typealias       ZStorageDictionary = [ZStorageType : NSObject]
 typealias    ZAttributesDictionary = [NSAttributedString.Key : Any]
 typealias  ZStringObjectDictionary = [String : NSObject]
-typealias StringZRecordsDictionary = [String : [ZRecord]]
+typealias  StringZRecordDictionary = [String :  ZRecord]
+typealias StringZRecordsDictionary = [String :  ZRecordsArray]
 let                   gApplication = ZApplication.shared
 
 protocol ZGeneric {
@@ -481,7 +483,7 @@ extension CKRecord {
 
 	var storable: String {
 		get {
-			var pairs = [String]()
+			var pairs = StringsArray()
 			let  keys = allKeys()
 
 			for key in keys {
@@ -562,7 +564,7 @@ extension CKRecord {
         return gRemoteStorage.cloud(for: dbID)?.manifest?.deletedRecordNames?.contains(recordID.recordName) ?? false
     }
 
-    @discardableResult func copy(to iCopy: CKRecord?, properties: [String]) -> Bool {
+    @discardableResult func copy(to iCopy: CKRecord?, properties: StringsArray) -> Bool {
         var  altered = false
         if  let copy = iCopy {
             for keyPath in properties {
@@ -1124,18 +1126,18 @@ extension Array {
 	}
 
 	mutating func appendUniqueAndRemoveDuplicates(contentsOf items: Array, compare: CompareClosure? = nil) {
-		let   existing = self as NSArray
-		var duplicates = Array<Int>()
+		let    existing = self as NSArray
+		var iDuplicates = Array<Int>()
 
 		for (index, item) in items.enumerated() {
 			if  existing.contains(item) || containsCompare(with: item as AnyObject, using: compare) {
-				duplicates.insert(index, at: 0)
+				iDuplicates.insert(index, at: 0)
 			} else {
 				append(item)
 			}
 		}
 
-		for index in duplicates {
+		for index in iDuplicates {
 			if  count > index {
 				remove(at: index)
 			}
@@ -1146,8 +1148,8 @@ extension Array {
 
 extension ZRecordsArray {
 
-	var recordNames: [String] {
-		var  names = [String]()
+	var recordNames: StringsArray {
+		var  names = StringsArray()
 
 		for zRecord in self {
 			if  let name = zRecord.recordName {
@@ -1173,7 +1175,7 @@ extension CKReferencesArray {
 		}
 	}
 
-	var asRecordNames: [String] {
+	var asRecordNames: StringsArray {
 		return map { ckReference -> String in
 			return ckReference.recordID.recordName
 		}
@@ -1428,8 +1430,8 @@ extension NSMutableAttributedString {
 		return found
 	}
 
-	var imageFileNames: [String] {
-		var names = [String]()
+	var imageFileNames: StringsArray {
+		var names = StringsArray()
 
 		for rangedAttach in rangedAttachments {
 			if  let name = rangedAttach.attachment.fileWrapper?.preferredFilename {
@@ -1471,9 +1473,9 @@ extension NSMutableAttributedString {
 		set { attributeStrings = newValue.componentsSeparatedAt(level: 1) }
 	}
 
-	var attributeStrings: [String] {
+	var attributeStrings: StringsArray {
 		get {
-			var result = [String]()
+			var result = StringsArray()
 			let  range = NSRange(location: 0, length: length)
 
 			for key in allKeys {
@@ -1656,7 +1658,7 @@ extension String {
     var       isOpposite: Bool { return "]}>)".contains(self) }
 	var     isDashedLine: Bool { return contains(kHalfLineOfDashes) }
 	var      isValidLink: Bool { return components != nil }
-	var  components: [String]? { return components(separatedBy: kColonSeparator) }
+	var  components: StringsArray? { return components(separatedBy: kColonSeparator) }
 
     var opposite: String {
 		switch self {
@@ -1782,7 +1784,7 @@ extension String {
 		return nil
 	}
 
-	func componentsSeparatedAt(level: Int) -> [String] {
+	func componentsSeparatedAt(level: Int) -> StringsArray {
 		return components(separatedBy: gSeparatorAt(level: level))
 	}
 
@@ -1796,7 +1798,7 @@ extension String {
 		return result
 	}
 
-	func replacingEachString(in matchAgainst: [String], with: String) -> String {
+	func replacingEachString(in matchAgainst: StringsArray, with: String) -> String {
 		var result = self
 		for string in matchAgainst {
 			result = result.replacingOccurrences(of: string, with: with)
@@ -2334,7 +2336,7 @@ extension ZView {
     }
 
 	func printConstraints() {
-		var result = [String]()
+		var result = StringsArray()
 
 		result.append("\(identifier?.rawValue ?? "dunno") ")
 

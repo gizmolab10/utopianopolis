@@ -63,7 +63,7 @@ class ZTextPack: NSObject {
 
         if  let zone = packedZone {
             result   = zone.unwrappedNameWithEllipses
-			let dups = zone.duplicates.count
+			let dups = zone.duplicateZones.count
 			let  bad = zone.hasBadRecordName
             var need = dups
 

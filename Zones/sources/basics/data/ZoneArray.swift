@@ -18,8 +18,8 @@ extension ZoneArray {
 		}
 	}
 
-	var recordNames: [String] {
-		var names = [String]()
+	var recordNames: StringsArray {
+		var names = StringsArray()
 
 		forEach { zone in
 			if  let name = zone.recordName {
@@ -148,7 +148,7 @@ extension ZoneArray {
 	}
 
 	mutating func duplicate() {
-		var duplicates = ZoneArray ()
+		var duplicated = ZoneArray ()
 		var    indices = [Int] ()
 
 		sort { (a, b) -> Bool in
@@ -159,12 +159,12 @@ extension ZoneArray {
 			if  let     index = zone.siblingIndex {
 				let duplicate = zone.deepCopy(dbID: nil)
 
-				duplicates.append(duplicate)
+				duplicated.append(duplicate)
 				indices   .append(index)
 			}
 		}
 
-		while   var index = indices.last, let duplicate = duplicates.last, let zone = last {
+		while   var index = indices.last, let duplicate = duplicated.last, let zone = last {
 			if  let     p = zone.parentZone {
 				index    += (gListsGrowDown ? 1 : 0)
 
@@ -172,7 +172,7 @@ extension ZoneArray {
 				duplicate.grab()
 			}
 
-			duplicates.removeLast()
+			duplicated.removeLast()
 			indices   .removeLast()
 			removeLast()
 		}
@@ -531,7 +531,7 @@ extension ZoneArray {
 				child.orphan()                   // move from current parent
 				groupOwner.addChild(child)       // into groupOwner
 			} else {
-				groupOwner.addChild(child.createBookmark())
+				gNewOrExistingBookmark(targeting: child, addTo: groupOwner)
 			}
 		}
 

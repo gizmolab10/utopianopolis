@@ -132,7 +132,7 @@ class ZCoreDataStack: NSObject {
 
 	var existenceClosures = [ZDatabaseID : ZExistenceDictionary]()
 	var   fetchedRegistry = [ZDatabaseID : [String : ZManagedObject]]()
-	var   missingRegistry = [ZDatabaseID : [String]]()
+	var   missingRegistry = [ZDatabaseID : StringsArray]()
 	var     deferralStack = [ZDeferral]()
 	let          localURL = gCoreDataURL.appendingPathComponent("local.store")
 	let         publicURL = gCoreDataURL.appendingPathComponent("cloud.public.store")
@@ -255,10 +255,10 @@ class ZCoreDataStack: NSObject {
 		(object as? ZRecord)?.register() // for records read from file 
 	}
 
-	func missingFrom(_ dbID: ZDatabaseID) -> [String] {
+	func missingFrom(_ dbID: ZDatabaseID) -> StringsArray {
 		var missing  = missingRegistry[dbID]
 		if  missing == nil {
-			missing  = [String]()
+			missing  = StringsArray()
 		}
 
 		return missing!
@@ -381,7 +381,7 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func searchZonesForNames(_ names: [String], within dbID: ZDatabaseID, onCompletion: StringZRecordsDictionaryClosure? = nil) {
+	func searchZonesForNames(_ names: StringsArray, within dbID: ZDatabaseID, onCompletion: StringZRecordsDictionaryClosure? = nil) {
 		var            result = StringZRecordsDictionary()
 		if  gIsReadyToShowUI, gCanLoad {
 			let          dbid = dbID.identifier
@@ -442,7 +442,7 @@ class ZCoreDataStack: NSObject {
 			let  records = gRemoteStorage.zRecords(for: dbID) {
 			deferUntilAvailable(for: .oProgeny) {
 				let    zones = records.allZones
-				var acquired = [String]()
+				var acquired = StringsArray()
 
 				func loadAllTraits() {
 					self.loadTraits(ownedBy: gRemoteStorage.allProgeny, into: dbID) {
@@ -497,7 +497,7 @@ class ZCoreDataStack: NSObject {
 		onCompletion?()
 	}
 
-	func loadChildren(of zones: ZoneArray, into dbID: ZDatabaseID, _ acquired: [String], onCompletion: ZonesClosure? = nil) {
+	func loadChildren(of zones: ZoneArray, into dbID: ZDatabaseID, _ acquired: StringsArray, onCompletion: ZonesClosure? = nil) {
 		var     retrieved = ZoneArray()
 		var  totalAquired = acquired
 		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)

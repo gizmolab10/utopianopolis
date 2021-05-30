@@ -33,7 +33,7 @@ class ZFiles: NSObject {
 	var            isReading = [false, false]
     var            isWriting = [false, false] // not allow another save while file is being written
     var           needsWrite = [false, false]
-    var   writtenRecordNames = [String] ()
+    var   writtenRecordNames = StringsArray ()
     var filePaths: [String?] = [nil, nil]
     var           writeTimer : Timer?
 	var           _assetsURL : URL?

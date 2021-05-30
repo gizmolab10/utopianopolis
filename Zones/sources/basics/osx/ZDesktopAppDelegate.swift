@@ -34,7 +34,7 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 
     func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {}
 	
-    func application(_ application: NSApplication, openFiles: [String]) {
+    func application(_ application: NSApplication, openFiles: StringsArray) {
         var parent = gSelecting.currentMoveable
         
         if !parent.userCanWrite {
