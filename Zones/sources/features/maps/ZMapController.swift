@@ -295,7 +295,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 							if  dot.isReveal {
 								zone.revealDotClicked(flags)
 							} else { // else it is a drag dot
-								multiple = [.sCrumbs] // update selection level and breadcrumbs
+								multiple = [.spCrumbs] // update selection level and breadcrumbs
 
 								zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
 							}
@@ -354,7 +354,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             cleanupAfterDrag()
             
             if  isDoneGesture(iGesture) {
-				gSignal([.sPreferences, .sCrumbs]) // so color well gets updated
+				gSignal([.spPreferences, .spCrumbs]) // so color well gets updated
                 restartGestureRecognition()
             }
         }

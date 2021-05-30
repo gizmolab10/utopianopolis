@@ -54,7 +54,7 @@ class ZMainController: ZGesturesController {
 	@IBAction func hamburgerButtonAction(_ button: NSButton) {
 		gShowDetailsView = gDetailsViewIsHidden
 
-		gSignal([.sMain, .sDetails])
+		gSignal([.spMain, .sDetails])
 	}
 
 	@IBAction func debugInfoButtonAction(_ button: NSButton) {
@@ -64,7 +64,7 @@ class ZMainController: ZGesturesController {
 			gDebugModes  .insert(.dDebugInfo)
 		}
 
-		gSignal([.sMain])
+		gSignal([.spMain])
 	}
 
 	func update() {

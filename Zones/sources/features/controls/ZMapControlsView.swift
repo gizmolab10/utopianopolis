@@ -62,7 +62,7 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 			}
 		}
 
-		gSignal([.sDetails, .sCrumbs, .sRelayout])
+		gSignal([.sDetails, .spCrumbs, .sRelayout])
 	}
 
 	func update() {

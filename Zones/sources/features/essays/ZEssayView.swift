@@ -889,7 +889,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		updateText()                                  // assume text has been altered: re-assemble it
 		regrab(grabbed)
 		scrollToGrabbed()
-		gSignal([.sCrumbs, .sDetails])
+		gSignal([.spCrumbs, .sDetails])
 	}
 
 	// MARK:- buttons
@@ -1206,8 +1206,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let  notemark = gRecents.rootZone?.notemarks.first,
 			let      note = notemark.bookmarkTarget?.note {
 			gCurrentEssay = note
+
 			gRecents.setAsCurrent(notemark)
-			gSignal([.sSmallMap, .sCrumbs])
+			gSignal([.spSmallMap, .spCrumbs])
 
 			updateText()
 		}
@@ -1233,7 +1234,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 		}
 
-		gSignal([.sCrumbs])
+		gSignal([.spCrumbs])
 	}
 
 	private func convertToChild(_ flags: ZEventFlags) {
@@ -1496,7 +1497,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 									target .asssureIsVisible()		        // for later, when user exits essay mode
 									common?.asssureIsVisible()
 									self.resetCurrentEssay(target.note)     // change current note to that of target
-									gSignal([.sSmallMap, .sCrumbs])
+									gSignal([.spSmallMap, .spCrumbs])
 								}
 							}
 

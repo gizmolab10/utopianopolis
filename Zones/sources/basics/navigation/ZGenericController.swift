@@ -27,25 +27,24 @@ class ZGenericController: ZController, ZGeneric {
 		switch id {
 			case .idHelpEssayIntroduction,
 				 .idHelpEssayGraphicals,
-				 .idHelpDots:     return [.sData, .sDatum, .sRelayout, .sAppearance, .sStartupStatus]
-			case .idPreferences: return [.sData, .sDatum, .sMain, .sError, .sStatus, .sDetails, .sBigMap, .sSmallMap, .sPreferences, .sAppearance]
-			case .idSmallMap:    return [.sData, .sDatum, .sDetails, .sSmallMap, .sRelayout, .sAppearance]
-			case .idBigMap:      return [.sData, .sDatum, .sBigMap, .sRelayout, .sAppearance]
-
+				 .idHelpDots:      return [.sData, .sDatum, .sAppearance, .sRelayout]
+			case .idPreferences:   return [.sData, .sDatum, .sAppearance, .sDetails,  .sDetails, .spPreferences]
+			case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .sRelayout, .sDetails, .spSmallMap]
+			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .sRelayout, .spBigMap]
 			case .idSearchResults: break
-			case .idStartHere: break
-			case .idControls: break
-			case .idStartup: break
-			case .idDetails: break
-			case .idActions: break   // iPhone
-			case .idSearch: break
-			case .idCrumbs: break
-			case .idDebug: break
-			case .idData: break
-			case .idLink: break
-			case .idHelp: break
-			case .idNote: break
-			case .idMain: break
+			case .idStartHere:     break
+			case .idControls:      break
+			case .idStartup:       break
+			case .idDetails:       break
+			case .idActions:       break   // iPhone
+			case .idSearch:        break
+			case .idCrumbs:        break
+			case .idDebug:         break
+			case .idData:          break
+			case .idLink:          break
+			case .idHelp:          break
+			case .idNote:          break
+			case .idMain:          break
 			default: break
 		}
 		return []
@@ -53,8 +52,8 @@ class ZGenericController: ZController, ZGeneric {
 
 	func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return (allowedKinds.count == 0 || allowedKinds.contains(kind))
-			&& (( gHasFinishedStartup && ![.sStartupStatus, .sError].contains(kind)) ||
-				(!gHasFinishedStartup &&  [.sStartupStatus,  .sMain].contains(kind)))
+			&& (( gHasFinishedStartup && ![.spStartupStatus, .sError].contains(kind)) ||
+				(!gHasFinishedStartup &&  [.spStartupStatus,  .spMain].contains(kind)))
 	}
 
     override func viewDidLoad() {

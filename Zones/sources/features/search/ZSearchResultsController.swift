@@ -265,14 +265,14 @@ class ZSearchResultsController: ZGenericTableController {
 
             t.selectRowIndexes(rows, byExtendingSelection: false)
             t.scrollRowToVisible(row)
-			gSignal([.sCrumbs])
+			gSignal([.spCrumbs])
         }
     }
 
 	func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
 		gSearching.setStateTo(.sList)
 		tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
-		gSignal([.sCrumbs])
+		gSignal([.spCrumbs])
 		return true
 	}
 

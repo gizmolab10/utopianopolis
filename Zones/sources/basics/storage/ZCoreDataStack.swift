@@ -604,7 +604,7 @@ class ZCoreDataStack: NSObject {
 				let waiting = deferralStack.remove(at: 0)
 				currentOpID = waiting.opID
 
-				gSignal([.sStatus])          // tell data detail view about it
+				gSignal([.spData])          // tell data detail view about it
 				waiting.closure?()         // do what was deferred
 			}
 	}

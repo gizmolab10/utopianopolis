@@ -466,19 +466,22 @@ class ZMapEditor: ZBaseEditor {
 	}
 
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with COMMA: Bool) {
-        if     !COMMAND || (OPTION && COMMA) {
+        if !COMMAND || (OPTION && COMMA) {
             toggleGrowthAndConfinementModes(changesDirection:  COMMA)
             
             if  gIsEditIdeaMode    && COMMA {
                 swapAndResumeEdit()
             }
 
-			gSignal([.sMain, .sBigMap])
+			gSignal([.spMain, .sDetails, .spBigMap])
         } else if COMMA {
-			gShowDetailsView = true
+			if !gShowDetailsView {
+				gShowDetailsView = true
+			} else {
+				gDetailsController?.toggleViewsFor(ids: [.vPreferences])
+			}
 
-			gSignal([.sMain])
-			gDetailsController?.toggleViewsFor(ids: [.vPreferences])
+			gSignal([.spMain, .sDetails])
         } else if gIsEditIdeaMode {
             gTextEditor.cancel()
         }
@@ -1138,7 +1141,7 @@ class ZMapEditor: ZBaseEditor {
 
 					if  recurse {
 						if !isHere {
-							response = [.sStatus, .sCrumbs]
+							response = [.spData, .spCrumbs]
 						}
 
 						gSelecting.updateCousinList()
@@ -1252,7 +1255,7 @@ class ZMapEditor: ZBaseEditor {
 						grabThis.grab(updateBrowsingLevel: false)
 
 						if !isHere && forcedResponse == nil {
-							response = [.sStatus, .sCrumbs]
+							response = [.spData, .spCrumbs]
 						}
                     } else if !grabThis.isGrabbed || extreme {
                         var grabThese = [grabThis]
@@ -1277,7 +1280,7 @@ class ZMapEditor: ZBaseEditor {
                         gSelecting.addMultipleGrabs(grabThese)
 
 						if !isHere && forcedResponse == nil {
-							response = [.sStatus, .sCrumbs]
+							response = [.spData, .spCrumbs]
 						}
                     }
                 } else if doCousinJump,

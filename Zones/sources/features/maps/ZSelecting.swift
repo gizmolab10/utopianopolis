@@ -359,7 +359,7 @@ class ZSelecting: NSObject {
     func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
 		if  let oldGrabs = grabAndNoUI(iZones) {
             updateWidgetsNeedDisplay(for: oldGrabs)
-			gSignal([.sCrumbs, .sPreferences])                // so color wells and breadcrumbs are updated
+			gSignal([.spCrumbs, .spPreferences])                // so color wells and breadcrumbs are updated
 
             if  updateBrowsingLevel,
                 let 		  level = iZones?.rootMost?.level {

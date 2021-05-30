@@ -819,7 +819,7 @@ class ZRecords: NSObject {
 		}
 
 		let finishAndGrabHere = {
-			gSignal([.sSmallMap])
+			gSignal([.spSmallMap])
 			gHere.grab()               // NOTE: changes work mode
 			atArrival()
 		}

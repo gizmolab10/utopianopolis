@@ -53,7 +53,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		switch iKind {
 //			case .sStartupButtons:  buttonsView?.updateAndRedraw()
-			case .sStartupStatus: updateThermometerBar(); updateSubviewVisibility()
+			case .spStartupStatus: updateThermometerBar(); updateSubviewVisibility()
 			default: break
 		}
 	}

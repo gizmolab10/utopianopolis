@@ -33,26 +33,27 @@ enum ZControllerID: Int {
 }
 
 enum ZSignalKind: Int {
-    case sData
-    case sMain
+	case sAll
+	case sData
 	case sSwap
     case sDatum
     case sError
 	case sEssay
     case sFound
-	case sStatus
 	case sResize
 	case sSearch
-	case sCrumbs
-	case sBigMap
 	case sDetails
     case sRelayout
-    case sSmallMap
 	case sLaunchDone
     case sAppearance
-    case sPreferences
-//	case sStartupButtons
-	case sStartupStatus
+
+	case spMain
+	case spData
+	case spCrumbs
+	case spBigMap
+	case spSmallMap
+    case spPreferences
+	case spStartupStatus
 }
 
 let gControllers = ZControllers()
@@ -72,7 +73,7 @@ class ZControllers: NSObject {
 			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {
 			e.resetCurrentEssay(zone.note)
 			swapMapAndEssay(force: .wEssayMode)
-			gSignal([.sCrumbs, .sDetails])
+			gSignal([.spCrumbs, .sDetails])
 		}
 	}
 
@@ -82,7 +83,7 @@ class ZControllers: NSObject {
 		FOREGROUND { 	                                // avoid infinite recursion (generic menu handler invoking map editor's handle key)
 			gTextEditor.stopCurrentEdit()
 			gEssayView?.setControlBarButtons(enabled: gWorkMode == .wEssayMode)
-			gSignal([.sSwap, .sData, .sCrumbs, .sSmallMap, .sRelayout])
+			gSignal([.sSwap, .sData, .spCrumbs, .spSmallMap, .sRelayout])
 		}
 	}
 
@@ -145,14 +146,14 @@ class ZControllers: NSObject {
                     }
                     
 					switch regarding {  // these non-default cases send a signal only to the one corresponding controller
-						case .sMain:          if identifier == .idMain           { closure() }
-						case .sStatus:        if identifier == .idData           { closure() }
-						case .sCrumbs:        if identifier == .idCrumbs         { closure() }
-						case .sBigMap:        if identifier == .idBigMap         { closure() }
-						case .sSmallMap:      if identifier == .idSmallMap       { closure() }
-						case .sPreferences:   if identifier == .idPreferences    { closure() }
-						case .sStartupStatus: if startupIDs.contains(identifier) { closure() }
-						default:                                                   closure()
+						case .spMain:          if identifier == .idMain           { closure() }
+						case .spData:          if identifier == .idData           { closure() }
+						case .spCrumbs:        if identifier == .idCrumbs         { closure() }
+						case .spBigMap:        if identifier == .idBigMap         { closure() }
+						case .spSmallMap:      if identifier == .idSmallMap       { closure() }
+						case .spPreferences:   if identifier == .idPreferences    { closure() }
+						case .spStartupStatus: if startupIDs.contains(identifier) { closure() }
+						default:                                                    closure()
 					}
                 }
             }

@@ -161,7 +161,7 @@ class ZBatches: ZOnboarding {
                 self.transferDeferred()                         // 3.
                 self.processNextBatch()                         // recurse
 			} else {
-				gSignal([.sData, .sStartupStatus])              // 4.
+				gSignal([.sData, .spStartupStatus])              // 4.
 			}
         }
     }

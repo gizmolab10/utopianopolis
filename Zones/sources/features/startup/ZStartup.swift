@@ -32,7 +32,7 @@ class ZStartup: NSObject {
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
 		gRemoteStorage.clear()
-		gSignal([.sMain, .sStartupStatus])
+		gSignal([.spMain, .spStartupStatus])
 		gTimers.startTimer(for: .tStartup)
 		gSearching.setStateTo(.sNot)
 
@@ -59,7 +59,7 @@ class ZStartup: NSObject {
 							gSetBigMapMode()
 						}
 
-						gSignal([.sSwap, .sMain, .sCrumbs, .sLaunchDone, .sRelayout, .sPreferences])
+						gSignal([.sSwap, .spMain, .spCrumbs, .sLaunchDone, .sRelayout, .spPreferences])
 						self.requestFeedback()
 
 						FOREGROUND(after: 10.0) {

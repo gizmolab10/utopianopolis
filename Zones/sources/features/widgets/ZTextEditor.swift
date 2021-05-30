@@ -323,7 +323,7 @@ class ZTextEditor: ZTextView {
 					setCursor(at: at)
 				}
 
-				gSignal([.sCrumbs, .sPreferences])
+				gSignal([.spCrumbs, .spPreferences])
 			}
         }
 
