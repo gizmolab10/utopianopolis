@@ -352,7 +352,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		theCopy.parentZone = nil
 
 		for child in children {
-			theCopy.addChild(child.deepCopy(dbID: id))
+			theCopy.addChildNoDuplicate(child.deepCopy(dbID: id))
 		}
 
 		for trait in traits.values {
@@ -808,7 +808,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					(visited == nil || !visited!.contains(name)) {
 					converted.append(contentsOf: c)
 					FOREGROUND(canBeDirect: true) {
-						self.addChild(child, updateCoreData: false) // not update core data, it already exists
+						self.addChildNoDuplicate(child, updateCoreData: false) // not update core data, it already exists
 						child.register() // need to wait until after child has a parent so bookmarks will be registered properly
 					}
 				}
@@ -1107,7 +1107,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		for     zone in zones {
 			if  zone != self {
 				zone.orphan()
-				addChildSafely(zone, at: iIndex)
+				addChildNoDuplicate(zone, at: iIndex)
 			}
 		}
 
@@ -1379,7 +1379,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let   dict = self.dictFromJSON(json)
 				temporarilyOverrideIgnore { // allow needs save
 					let zone = Zone.uniqueZone(from: dict, in: databaseID)
-					addChildSafely(zone, at: 0)
+					addChildNoDuplicate(zone, at: 0)
 				}
 
 				onCompletion?()
@@ -2707,17 +2707,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addChildAndRespectOrder(_ child: Zone?) {
-		addChild(child)
+		addChildNoDuplicate(child)
 		respectOrder()
-	}
-
-	@discardableResult func addChild(_ child: Zone?, updateCoreData: Bool = true) -> Int? {
-		return addChildSafely(child, at: 0, updateCoreData: updateCoreData)
 	}
 
 	func addChildAndReorder(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: Closure? = nil) {
 		if  let child = iChild,
-			addChildSafely(child, at: iIndex, afterAdd) != nil {
+			addChildNoDuplicate(child, at: iIndex, afterAdd) != nil {
 			children.updateOrder() // also marks children need save
 		}
 	}
@@ -2760,7 +2756,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		// identify discrepancies and do what with them?
 	}
 
-	@discardableResult func addChildSafely(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: Closure? = nil) -> Int? {
+	@discardableResult func addChildNoDuplicate(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: Closure? = nil) -> Int? {
 		if  let        child = iChild {
 			let      toIndex = validIndex(from: iIndex)
 			child.parentZone = self
@@ -2794,6 +2790,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 			}
 
+			return addChild(iChild, at: iIndex, updateCoreData: updateCoreData, onCompletion)
+		}
+
+		return nil
+	}
+
+	func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: Closure? = nil) -> Int? {
+		if  let        child = iChild {
+			let      toIndex = validIndex(from: iIndex)
+			child.parentZone = self
+
 			if  toIndex < count {
 				children.insert(child, at: toIndex)
 			} else {
@@ -2805,8 +2812,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			needCount()
+			updateMaxLevel()
+			onCompletion?()
 
-			return finish()
+			return toIndex
 		}
 
 		return nil
@@ -2978,7 +2987,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func extractChildren(from: Zone) {
 		for child in from.children.reversed() {
 			child.orphan()
-			addChild(child)
+			addChildNoDuplicate(child)
 		}
 	}
 
@@ -3004,8 +3013,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	@discardableResult func moveChildIndex(from: Int, to: Int) -> Bool {
-		if  from < count, to <= count, let child = self[from] {
-			func addChild() {
+		if  from < count, to <= count, from != to,
+			let child = self[from] {
+
+			func add() {
 				if  to < count {
 					self.children.insert(child, at: to)
 				} else {
@@ -3014,11 +3025,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  from > to {
-				children.remove(       at: from)
-				addChild()
+				children.remove(at: from)
+				add()
 			} else if from < to {
-				addChild()
-				children.remove(       at: from)
+				add()
+				children.remove(at: from)
 			}
 
 			return true
@@ -3082,7 +3093,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				while gotten < size && count > 0 {
 					if  let child = children.popLast(),
 						child.progenyCount < (optimumSize / 2) {
-						holder.addChildSafely(child, at: nil)
+						holder.addChildNoDuplicate(child, at: nil)
 					}
 
 					gotten += 1
@@ -3090,7 +3101,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			for child in holders {
-				addChildSafely(child, at: nil)
+				addChildNoDuplicate(child, at: nil)
 			}
 		}
 	}
@@ -3361,7 +3372,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if  let p = parent,
 				!p.children.contains(self) {
-				p.addChild(self)
+				p.addChildNoDuplicate(self)
 			}
 
 			done()
@@ -3490,7 +3501,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			for childDict: ZStorageDictionary in childrenDicts {
 				let child = Zone.uniqueZone(from: childDict, in: iDatabaseID)
 				cloud?.temporarilyIgnoreAllNeeds() {        // prevent needsSave caused by child's parent intentionally not being in childDict
-					addChildSafely(child, at: nil)
+					addChildNoDuplicate(child, at: nil)
 				}
 			}
 

@@ -47,7 +47,7 @@ class ZHelpDotsExemplarController : ZMapController {
 			let      child = Zone.create(within: name, for: index, databaseID: .everyoneID)
 			child.zoneName = "exemplar \(index)"
 
-			zone?.addChild(child)
+			zone?.addChildNoDuplicate(child)
 		}
 	}
 

@@ -297,7 +297,7 @@ class ZRecords: NSObject {
 	func createRandomLost() -> Zone {
         let lost = Zone.randomZone(in: databaseID)
 
-        lostAndFoundZone?.addChildSafely(lost, at: nil)
+        lostAndFoundZone?.addChildNoDuplicate(lost, at: nil)
 
         return lost
     }

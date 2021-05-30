@@ -39,7 +39,7 @@ let gBookmarks = ZBookmarks()
 	}
 
 	if  let p = parent {
-		p.addChildSafely(bookmark, at: target.siblingIndex)
+		p.addChildNoDuplicate(bookmark, at: target.siblingIndex)
 	}
 
 	gBookmarks.addToReverseLookup(bookmark)

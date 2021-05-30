@@ -171,7 +171,7 @@ class ZSmallMapRecords: ZRecords {
 			let      cIndex = r.children.firstIndex(of: zone) ?? 0
 			let       index = cIndex.next(forward: gListsGrowDown, max: r.count - 1)
 
-			r.addChildSafely(zone, at: index)
+			r.addChildNoDuplicate(zone, at: index)
 		}
 	}
 

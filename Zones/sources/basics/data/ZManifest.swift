@@ -62,7 +62,7 @@ class ZManifest : ZRecord {
                 if  let  zone = records?.maybeZRecordForRecordName(name) as? Zone,
                     let trash = records?.trashZone {
                     zone.orphan()
-                    trash.addChild(zone)
+                    trash.addChildNoDuplicate(zone)
                 }
             }
         }

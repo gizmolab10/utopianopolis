@@ -168,7 +168,8 @@ extension ZoneArray {
 			if  let     p = zone.parentZone {
 				index    += (gListsGrowDown ? 1 : 0)
 
-				p.addChildAndReorder(duplicate, at: index)
+				p.addChild(duplicate, at: index)
+				p.children.updateOrder()
 				duplicate.grab()
 			}
 
@@ -520,24 +521,24 @@ extension ZoneArray {
 		let groupOwner = Zone.uniqueZone(recordName: nil, in: .mineID)
 
 		for child in self {
-			if  child.isGroupOwner {             // remove .groupOwner from attributes
+			if  child.isGroupOwner {                    // remove .groupOwner from attributes
 				child.alterAttribute(.groupOwner, remove: true)
 				gRedrawMaps()
 
-				return                           // abandon groupOwner created above
+				return                                  // abandon groupOwner created above
 			}
 
 			if  child.isBookmark {
-				child.orphan()                   // move from current parent
-				groupOwner.addChild(child)       // into groupOwner
+				child.orphan()                          // move from current parent
+				groupOwner.addChildNoDuplicate(child)   // into groupOwner
 			} else {
 				gNewOrExistingBookmark(targeting: child, addTo: groupOwner)
 			}
 		}
 
-		gSmallMapMode = .favorites			     // switch to favorites
+		gSmallMapMode = .favorites                      // switch to favorites
 
-		gCurrentSmallMapRecords?.showRoot()      // point here to root, and expand
+		gCurrentSmallMapRecords?.showRoot()             // point here to root, and expand
 		groupOwner.alterAttribute(.groupOwner, remove: false)
 		gFavorites.insertAsNext(groupOwner)
 		gRedrawMaps()
