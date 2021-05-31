@@ -130,7 +130,7 @@ class ZBreadcrumbsView : ZButtonsView {
 					case .wMapMode:
 						if  COMMAND {
 							displayEssay()
-							gControllers.swapMapAndEssay(force: .wEssayMode)
+							gMainController?.swapMapAndEssay(force: .wEssayMode)
 
 							return
 						} else if OPTION {
@@ -152,7 +152,8 @@ class ZBreadcrumbsView : ZButtonsView {
 					default: break
 				}
 
-				gSignal([.sSwap, .spData, .sRelayout])
+				gMainController?.swapMapAndEssay()
+				gSignal([.spData, .sRelayout])
 			}
 		}
 	}

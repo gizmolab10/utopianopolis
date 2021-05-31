@@ -438,10 +438,7 @@ class ZMapEditor: ZBaseEditor {
 		}
 
 		gSelecting.rootMostMoveable?.addNext(with: kLineOfDashes) { iChild in
-			iChild.colorized = true
-
 			iChild.grab()
-
 			onCompletion?()
 		}
 	}
@@ -469,8 +466,8 @@ class ZMapEditor: ZBaseEditor {
         if !COMMAND || (OPTION && COMMA) {
             toggleGrowthAndConfinementModes(changesDirection:  COMMA)
             
-            if  gIsEditIdeaMode    && COMMA {
-                swapAndResumeEdit()
+            if  gIsEditIdeaMode && COMMA {
+                swapWithSiblingAndResumeEdit()
             }
 
 			gSignal([.spMain, .sDetails, .spBigMap])
@@ -624,9 +621,9 @@ class ZMapEditor: ZBaseEditor {
 			if  gCurrentEssay   == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
 				gCurrentEssay    = gSelecting.firstGrab?.note
 			}
-		}
 
-		gControllers.swapMapAndEssay()
+			gMainController?.swapMapAndEssay()
+		}
 	}
 
     // MARK:- lines
@@ -643,7 +640,7 @@ class ZMapEditor: ZBaseEditor {
 		}
     }
 
-    func swapAndResumeEdit() {
+    func swapWithSiblingAndResumeEdit() {
         let t = gTextEditor
         
         // //////////////////////////////////////////////////////////
@@ -833,19 +830,16 @@ class ZMapEditor: ZBaseEditor {
 	func actuallyMoveInto(_ move: ZoneArray?, onCompletion: BoolClosure?) {
 		if  let    zones = move,
 			zones.count  > 0,
-			var     into = zones.rootMost?.parentZone {                          // default: move into parent of root most
+			var     into = zones.rootMost?.parentZone {                               // default: move into parent of root most
 			let siblings = Array(into.children)
-			let      max = siblings.count - 1
 			var  fromTop = false
 
 			for zone in zones {
-				if  let   index = zone.siblingIndex {
-					fromTop     = fromTop || index == 0                          // detect when moving the top sibling
-					let    next = index.next(forward: !fromTop, max: max)        // always move into sibling above, except at top
-					let newInto = siblings[next]
-
-					if !zones.contains(newInto) {
-						into    = newInto
+				if  let    index = zone.siblingIndex {
+					fromTop      = fromTop || index == 0                               // detect when moving the top sibling
+					if  let zone = siblings.next(from: index, forward: !fromTop),      // always move into sibling above, except at top
+						!zones.contains(zone) {
+						into     = zone
 
 						break
 					}

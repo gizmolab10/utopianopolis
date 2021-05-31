@@ -59,7 +59,8 @@ class ZStartup: NSObject {
 							gSetBigMapMode()
 						}
 
-						gSignal([.sSwap, .spMain, .spCrumbs, .sLaunchDone, .sRelayout, .spPreferences])
+						gMainController?.swapMapAndEssay()
+						gSignal([.spMain, .spCrumbs, .sLaunchDone, .sRelayout, .spPreferences])
 						self.requestFeedback()
 
 						FOREGROUND(after: 10.0) {

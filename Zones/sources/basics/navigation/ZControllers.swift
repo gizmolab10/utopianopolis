@@ -35,7 +35,6 @@ enum ZControllerID: Int {
 enum ZSignalKind: Int {
 	case sAll
 	case sData
-	case sSwap
     case sDatum
     case sError
 	case sEssay
@@ -72,18 +71,8 @@ class ZControllers: NSObject {
 		if  let    e = gEssayView,
 			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {
 			e.resetCurrentEssay(zone.note)
-			swapMapAndEssay(force: .wEssayMode)
-			gSignal([.spCrumbs, .sDetails])
-		}
-	}
-
-	func swapMapAndEssay(force mode: ZWorkMode? = nil) {
-		gWorkMode = mode ?? (gIsEssayMode ? .wMapMode : .wEssayMode)
-
-		FOREGROUND { 	                                // avoid infinite recursion (generic menu handler invoking map editor's handle key)
-			gTextEditor.stopCurrentEdit()
-			gEssayView?.setControlBarButtons(enabled: gWorkMode == .wEssayMode)
-			gSignal([.sSwap, .sData, .spCrumbs, .spSmallMap, .sRelayout])
+			gMainController?.swapMapAndEssay(force: .wEssayMode)
+			gSignal([.sDetails])
 		}
 	}
 

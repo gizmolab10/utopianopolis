@@ -216,7 +216,7 @@ class ZSearchResultsController: ZGenericTableController {
 			let ranges = note.noteText?.string.rangesMatching(searchText)
 			let range  = ranges == nil ? nil : ranges![0]
 
-			gControllers.swapMapAndEssay(force: .wEssayMode)
+			gMainController?.swapMapAndEssay(force: .wEssayMode)
 			gEssayView?.resetCurrentEssay(note, selecting: range)
 		}
 	}

@@ -25,7 +25,6 @@ var               gLaunchedAt                     = Date()
 var            gProgressTimes                     = [ZOperationID : Double]()
 var             gNeedsRecount                     = false
 var            gTextCapturing                     = false
-var           gPushIsDisabled                     = false
 var          gIsReadyToShowUI                     = false
 var          gDeferringRedraw                     = false
 var         gGotProgressTimes                     = false

@@ -88,7 +88,7 @@ class ZBaseEditor: NSObject {
 
 	func clearRecents() {
 		if  gIsEssayMode {
-			gControllers.swapMapAndEssay()
+			gMainController?.swapMapAndEssay()
 		}
 
 		gCurrentEssay = nil

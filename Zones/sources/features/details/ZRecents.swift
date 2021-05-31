@@ -25,6 +25,8 @@ var gRecentsHereMaybe: Zone? {
 
 class ZRecents : ZSmallMapRecords {
 
+	var pushIsDisabled = false
+
 	override var rootZone : Zone? {
 		get {
 			return gMineCloud?.recentsZone
@@ -43,8 +45,16 @@ class ZRecents : ZSmallMapRecords {
 		onCompletion?(0)
 	}
 
+	func disablePush(_ closure: Closure) {
+		pushIsDisabled = true
+
+		closure()
+
+		pushIsDisabled = false
+	}
+
 	override func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {
-		if !gPushIsDisabled,
+		if !pushIsDisabled,
 		    rootZone != nil {
 			var here  = zone
 
@@ -83,55 +93,6 @@ class ZRecents : ZSmallMapRecords {
 		}
 
 		return false
-	}
-
-	func xgo(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
-		if  currentBookmark == nil {
-			gRecents.push()
-		}
-
-
-
-		let                w = working
-		let         maxIndex = w.count - 1
-		let           bottom = w[maxIndex]
-		let              top = w[0]
-
-		if  down {                         // move top to bottom
-			if  let   parent = top.parentZone {
-				let      end = parent.count
-
-				parent.moveChildIndex(from: 0, to: end)
-			}
-		} else {
-			if  let   parent = bottom.parentZone,
-				let      end = bottom.siblingIndex {
-
-				parent.moveChildIndex(from: end, to: 0)
-			}
-		}
-
-		if  let t       = working[0].bookmarkTarget {
-			if  t.root == nil { // detect orphan
-				let   w = working[0]
-				w.deleteSelf {
-					self.go(down: down)
-				}
-
-				return
-			} else {
-				gHere = t
-
-				t.grab()
-
-				if  gIsEssayMode,
-					let note = t.note {
-					gEssayView?.resetCurrentEssay(note)
-				}
-			}
-		}
-
-		gRedrawMaps()
 	}
 
 }

@@ -124,10 +124,16 @@ class ZSmallMapRecords: ZRecords {
 	// MARK:- pop and push
 	// MARK:-
 
-	func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {}
+	func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {
+		if  let pushMe = zone,
+			!findAndSetHere(asParentOf: pushMe) {
+			matchOrCreateBookmark(for: pushMe, autoAdd: true)
+		}
+	}
 
 	@discardableResult func pop(_ zone: Zone? = gHereMaybe) -> Bool {
-		if  let bookmark = workingBookmark(for: zone) {
+		if  workingBookmarks.count > 1,
+			let bookmark = workingBookmark(for: zone) {
 			go(down: true) {
 				bookmark.deleteSelf(permanently: true) {}
 			}
@@ -141,17 +147,17 @@ class ZSmallMapRecords: ZRecords {
 	func popAndUpdateCurrent() {
 		if  let       index = currentBookmark?.siblingIndex,
 			pop(),
-			let    children = currentBookmark?.parentZone?.children {
-			let        next = index.next(forward: true, max: children.count - 1)
-			currentBookmark = children[next]
+			let    children = currentBookmark?.parentZone?.children,
+			let        next = children.next(from: index, forward: true) {
+			currentBookmark = next
 			if  let    here = currentBookmark?.bookmarkTarget {
 				gHere       = here
 
 				gHere.grab()
 			}
-
-			gRedrawMaps()
 		}
+
+		gRedrawMaps()
 	}
 
 	func findAndSetHereAsParentOfBookmarkTargeting(_ target: Zone) -> Bool {
@@ -277,10 +283,6 @@ class ZSmallMapRecords: ZRecords {
 
 			for bookmark in bookmarks {
 				if  bookmark.isInSmallMap {
-					if  bookmark.root != rootZone {
-						gSwapSmallMapMode() // switch to other small map
-					}
-
 					gCurrentSmallMapRecords?.grab(bookmark)
 
 					return true
@@ -301,12 +303,16 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	@discardableResult func matchOrCreateBookmark(for zone: Zone, autoAdd: Bool) -> Zone {
-		let           basis = zone.bookmarkTarget ?? zone
-		if  let    bookmark = basis.firstBookmarkTargetingSelf {
-			return bookmark
-		} else {
-			return gNewOrExistingBookmark(targeting: zone, addTo: autoAdd ? currentHere : nil)
+		if  zone.isBookmark, let root = rootZone, zone.root == root {
+			return zone
 		}
+
+		let          target = zone.bookmarkTarget ?? zone
+		if  let    bookmark = bookmarkTargeting(target) {
+			return bookmark
+		}
+
+		return gNewOrExistingBookmark(targeting: zone, addTo: autoAdd ? currentHere : nil)
 	}
 
 }

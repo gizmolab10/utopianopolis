@@ -1427,7 +1427,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		grab()
 		expand()
-		gControllers.swapMapAndEssay(force: .wMapMode)
+		gMainController?.swapMapAndEssay(force: .wMapMode)
 	}
 
 	func grab(updateBrowsingLevel: Bool = true) {
@@ -1715,7 +1715,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gCreateCombinedEssay = false
 		gCurrentEssay        = note
 
-		gControllers.swapMapAndEssay(force: .wEssayMode)
+		gMainController?.swapMapAndEssay(force: .wEssayMode)
 	}
 
 	// MARK:- groupOwner
@@ -1812,20 +1812,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return
 		}
 
-		if  let        r = rr.ownedGroup([]), r.count > 0,
-			let    index = indexIn(r) {
-			let      max = r.count - 1
-			if       max > 0 {
-				let next = index.next(forward: forward, max: max)
-				let zone = r[next]
-				gHere    = zone
+		if  let     r = rr.ownedGroup([]), r.count > 0,
+			let index = indexIn(r),
+			let  zone = r.next(from: index, forward: forward) {
+			gHere     = zone
 
-//				print("\(rr) : \(r) -> \(zone)") // very helpful in final debugging
+//			print("\(rr) : \(r) -> \(zone)") // very helpful in final debugging
 
-				gFavorites.show(zone)
-				zone.grab()
-				gRedrawMaps()
-			}
+			gFavorites.show(zone)
+			zone.grab()
+			gRedrawMaps()
 		}
 	}
 
@@ -1985,7 +1981,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				onCompletion?(false)
 			} else {
 				if  gIsEssayMode {
-					gControllers.swapMapAndEssay(force: .wMapMode)
+					gMainController?.swapMapAndEssay(force: .wMapMode)
 				}
 
 				focusOnBookmarkTarget() { object, kind in
@@ -2000,7 +1996,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		if  gIsEssayMode {
-			gControllers.swapMapAndEssay(force: .wMapMode)
+			gMainController?.swapMapAndEssay(force: .wMapMode)
 		}
 
 		return false
@@ -2015,7 +2011,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  gIsEssayMode {
 				gEssayView?.updateText()
 			} else {
-				gControllers.swapMapAndEssay()
+				gMainController?.swapMapAndEssay()
 			}
 
 			return true

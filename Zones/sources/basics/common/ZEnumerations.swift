@@ -89,6 +89,11 @@ enum ZSmallMapMode: String {
 	case recent    = "Recent"
 }
 
+enum ZModeButtonType: String {
+	case tConfine = "browse"
+	case tGrowth  = "grow"
+}
+
 enum ZFileMode: Int {
     case localOnly
     case cloudOnly

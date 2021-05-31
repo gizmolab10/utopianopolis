@@ -313,7 +313,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 						gHereMaybe?.grab()  // safe version of here prevent crash early in launch
 					}
                 } else if gIsEssayMode {
-					gControllers.swapMapAndEssay(force: .wMapMode)
+					gMainController?.swapMapAndEssay(force: .wMapMode)
 				}
 
 

@@ -8,11 +8,6 @@
 
 import Foundation
 
-enum ZModeButtonType: String {
-	case tConfine = "browse"
-	case tGrowth  = "grow"
-}
-
 var gMapControlsView : ZMapControlsView? { return gControlsController?.mapControlsView }
 
 class ZMapControlsView : ZButtonsView, ZTooltips {

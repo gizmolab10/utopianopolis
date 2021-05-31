@@ -763,7 +763,10 @@ extension ZTextEditor {
     func fullResign()  { assignAsFirstResponder (nil) }
 	
 	func showSpecialCharactersPopup() {
-		ZMenu.specialCharactersPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:))).popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
+		let  menu = ZMenu.specialCharactersPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:)))
+		let point = CGPoint(x: -165.0, y: -60.0)
+
+		menu.popUp(positioning: nil, at: point, in: gTextEditor.currentTextWidget)
 	}
 
 	@objc func handleSpecialsPopupMenu(_ iItem: ZMenuItem) {

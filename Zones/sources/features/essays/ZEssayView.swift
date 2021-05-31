@@ -510,7 +510,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		resetForDarkMode()
 
 		if  gCurrentEssay == nil {
-			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
+			gMainController?.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
 		} else {
 			setControlBarButtons(enabled: true)
 
@@ -547,7 +547,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func exit() {
 		prepareToExit()
-		gControllers.swapMapAndEssay(force: .wMapMode)
+		gMainController?.swapMapAndEssay(force: .wMapMode)
 	}
 
 	func save() {
@@ -801,10 +801,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func grabNextNote(up: Bool, ungrab: Bool) {
-		let       dots = dragDots
-		let     gIndex = grabbedIndex(goingUp: up)
-		if  let nIndex = gIndex?.next(forward: up, max: dots.count - 1),
-			let   note = dots[nIndex].note {
+		let      dots = dragDots
+		if  let index = grabbedIndex(goingUp: up),
+			let  note = dots.next(from: index, forward: up)?.note {
+
 			if  ungrab {
 				ungrabAll()
 			}
@@ -826,7 +826,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let    parent = zone.parentZone                  // get the parent before we swap
 			let     reset = parent == self.firstNote?.zone   // check if current esssay should change
 
-			gDisablePush {
+			gRecents.disablePush {
 				zone.swapWithParent {
 					if  reset {
 						gCurrentEssay = ZEssay(zone)
@@ -1314,13 +1314,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	private func showSpecialCharactersPopup() {
-		ZMenu.specialCharactersPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: self)
+		let  menu = ZMenu.specialCharactersPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:)))
+		let point = selectionRect.origin.offsetBy(-165.0, -60.0)
+
+		menu.popUp(positioning: nil, at: point, in: self)
 	}
 
 	@objc private func handleSymbolsPopupMenu(_ iItem: ZMenuItem) {
-		if  let  type = ZSpecialCharactersMenuType(rawValue: iItem.keyEquivalent),
-			type     != .eCancel {
-			let  text = type.text
+		if  let type = ZSpecialCharactersMenuType(rawValue: iItem.keyEquivalent),
+			type    != .eCancel {
+			let text = type.text
 
 			insertText(text, replacementRange: selectedRange)
 		}

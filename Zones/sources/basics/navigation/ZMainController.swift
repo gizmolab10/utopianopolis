@@ -84,13 +84,27 @@ class ZMainController: ZGesturesController {
 
 			if  location.x < 0.0 {				// is gesture located outside essay view?
 				eView.save()
-				gControllers.swapMapAndEssay(force: .wMapMode)
+				gMainController?.swapMapAndEssay(force: .wMapMode)
 			}
 		}
 	}
 
+	func swapMapAndEssay(force mode: ZWorkMode? = nil) {
+		FOREGROUND { 	                                // avoid infinite recursion (generic menu handler invoking map editor's handle key)
+			gTextEditor.stopCurrentEdit()
+			gEssayView?.setControlBarButtons(enabled: gWorkMode == .wEssayMode)
+
+			gWorkMode                         =  gIsEssayMode ? .wMapMode : .wEssayMode
+			gRefusesFirstResponder            =  true          // prevent the exit from essay from beginning an edit
+			self.essayContainerView?.isHidden = !gIsEssayMode
+			gRefusesFirstResponder            =  false
+
+			self.dragView?.setNeedsDisplay()
+			gSignal([.sData, .spCrumbs, .spSmallMap, .sRelayout])
+		}
+	}
+
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		let    hideEssay = !gIsEssayMode
 		let   hasResults = gSearchResultsController?.hasResults ?? false
 		let isSearchMode = gIsSearchMode || gIsSearchEssayMode
 		let   hideSearch = !isSearchMode || gSearchResultsVisible
@@ -101,12 +115,6 @@ class ZMainController: ZGesturesController {
 				if  hideSearch {
 					assignAsFirstResponder(nil)
 				}
-			case .sSwap:
-				gRefusesFirstResponder       = true          // prevent the exit from essay from beginning an edit
-				essayContainerView?.isHidden =  hideEssay
-				gRefusesFirstResponder       = false
-
-				dragView?.setNeedsDisplay()
 			default: break
         }
 
