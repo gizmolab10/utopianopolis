@@ -53,13 +53,6 @@ class ZFavorites: ZSmallMapRecords {
 
 	}
 
-	override func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {
-		if  let pushMe = zone,
-			!findAndSetHere(asParentOf: pushMe) {
-			matchOrCreateBookmark(for: pushMe, autoAdd: true).grab()
-		}
-	}
-
     // MARK:- update
     // MARK:-
 

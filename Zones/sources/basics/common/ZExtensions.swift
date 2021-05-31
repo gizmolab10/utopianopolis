@@ -329,11 +329,16 @@ extension Int {
 		return range.contains(self)
 	}
 
-	func next(forward: Bool, max: Int) -> Int {
-		if self <= 0   &&  forward { return max }
-		if self >= max && !forward { return 0 }
-		return self + (forward ? -1 : 1)
+	func next(forward: Bool, max: Int) -> Int? {
+		if  max <= 0                  { return nil }
+		if self <= 0   &&  forward    { return max }
+		if self >= max && !forward    { return 0 }
+
+		let    next = self + (forward ? -1 : 1)
+		if     next < 0 || next > max { return nil }
+		return next
 	}
+
 }
 
 extension Dictionary {
@@ -1058,6 +1063,14 @@ extension Array {
 
         return string
     }
+
+	func next(from: Int, forward: Bool) -> Element? {
+		if  let index = from.next(forward: forward, max: count - 1) {
+			return self[index]
+		}
+
+		return nil
+	}
 
 	func intersects(_ other: Array) -> Bool {
 		return intersection(other).count > 0

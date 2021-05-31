@@ -1812,20 +1812,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return
 		}
 
-		if  let        r = rr.ownedGroup([]), r.count > 0,
-			let    index = indexIn(r) {
-			let      max = r.count - 1
-			if       max > 0 {
-				let next = index.next(forward: forward, max: max)
-				let zone = r[next]
-				gHere    = zone
+		if  let     r = rr.ownedGroup([]), r.count > 0,
+			let index = indexIn(r),
+			let  zone = r.next(from: index, forward: forward) {
+			gHere     = zone
 
-//				print("\(rr) : \(r) -> \(zone)") // very helpful in final debugging
+//			print("\(rr) : \(r) -> \(zone)") // very helpful in final debugging
 
-				gFavorites.show(zone)
-				zone.grab()
-				gRedrawMaps()
-			}
+			gFavorites.show(zone)
+			zone.grab()
+			gRedrawMaps()
 		}
 	}
 
