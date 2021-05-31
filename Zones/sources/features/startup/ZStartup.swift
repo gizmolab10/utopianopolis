@@ -32,13 +32,13 @@ class ZStartup: NSObject {
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
 		gRemoteStorage.clear()
-		gSignal([.spMain, .spStartupStatus])
-		gTimers.startTimer(for: .tStartup)
+		gSignal([.spMain])
 		gSearching.setStateTo(.sNot)
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
 				gIsReadyToShowUI = true
+				gTimers.startTimer(for: .tStartup)
 
 				gFavorites.setup { result in
 					FOREGROUND {

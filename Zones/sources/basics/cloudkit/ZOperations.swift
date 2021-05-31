@@ -48,16 +48,9 @@ enum ZOperationID: Int, CaseIterable {
 
 	var progressTime : Int {
 		switch self {
-			case .oLoadingIdeas:      return gCanLoad      ? 15 : 0
 			case .oMigrateFromCloud:  return gNeedsMigrate ? 50 : 0
 			case .oLoadingFromFile:   return gReadFiles    ? 30 : 0
-			case .oFetchUserRecord:   return  9
-			case .oMacAddress:        return  5
-			case .oUserPermissions:   return  5
-			case .oCheckAvailability: return  4
-			case .oObserveUbiquity:   return  4
-			case .oUbiquity:          return  4
-			case .oFetchUserID:       return  4
+			case .oLoadingIdeas:      return coreDataLoadTime
 			case .oResolve:           return  4
 			case .oRecount:           return  3
 			case .oManifest:          return  3
@@ -65,6 +58,8 @@ enum ZOperationID: Int, CaseIterable {
 			default:                  return  1
 		}
 	}
+
+	var coreDataLoadTime: Int { return gCanLoad ? gRemoteStorage.totalManifestsCount / 140 : 0 }
 
 	var useTimer: Bool {
 		switch self {
@@ -247,8 +242,6 @@ class ZOperations: NSObject {
 						self.queue.isSuspended = true
 						self.lastOpStart       = Date()
 						self.currentOp         = operationID            // if hung, it happened inside this op
-
-						self.updateStatus()
 
 						self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
 							FOREGROUND {

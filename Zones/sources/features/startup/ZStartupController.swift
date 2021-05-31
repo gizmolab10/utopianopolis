@@ -64,10 +64,6 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		} else {
 			startupCompletion = onCompletion
 		}
-
-		FOREGROUND(canBeDirect: true) {
-			self.fullStartupUpdate()
-		}
 	}
 
 	func fullStartupUpdate() {
@@ -90,8 +86,9 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	var progressText:String {
 		let   count = Int(gStartup.elapsedStartupTime / kThreshold)
 		let   total = Int(gProgressTimes.values.reduce(0, +))
+		let  spacer = total < 28 ? " " : ""
 		let remains = total - count
-		let    text = " ".repeatOf(count) + "•".repeatOf(remains)
+		let    text = " \(spacer)".repeatOf(count) + "•\(spacer)".repeatOf(remains)
 
 		return text
 	}

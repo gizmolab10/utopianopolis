@@ -110,10 +110,10 @@ class ZMainController: ZGesturesController {
 			default: break
         }
 
-		permissionView?            .isHidden = !gIsStartupMode
-		mapContainerView?          .isHidden = !hideResults || gIsEssayMode || gIsSearchEssayMode
-		searchResultsView?         .isHidden =  hideResults || gIsEssayMode
-		searchBoxView?             .isHidden =  hideSearch
+		permissionView?   .isHidden = !gIsStartupMode
+		mapContainerView? .isHidden = !hideResults || gIsEssayMode || gIsSearchEssayMode
+		searchResultsView?.isHidden =  hideResults || gIsEssayMode
+		searchBoxView?    .isHidden =  hideSearch
 
 		update()
     }

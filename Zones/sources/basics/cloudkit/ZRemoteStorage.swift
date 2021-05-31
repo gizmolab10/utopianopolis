@@ -56,16 +56,25 @@ class ZRemoteStorage: NSObject {
 		return sum
 	}
 
+	var totalManifestsCount: Int {
+		var sum = 0
+		for cloud in allClouds {
+			sum += cloud.manifest?.count?.intValue ?? 0
+		}
+
+		return sum
+	}
+
 	var totalRecordsCounts: (Int, Int) {
 		var zCount = 0
-		var pCount = 0
+		var mCount = 0
 
 		for cloud in allClouds {
 			zCount += cloud.zoneCount
-			pCount += cloud.manifest?.count?.intValue ?? 0
+			mCount += cloud.manifest?.count?.intValue ?? 0
 		}
 
-		return (zCount, pCount)
+		return (zCount, mCount)
 	}
 
     var allClouds: [ZCloud] {

@@ -28,9 +28,9 @@ class ZGenericController: ZController, ZGeneric {
 			case .idHelpEssayIntroduction,
 				 .idHelpEssayGraphicals,
 				 .idHelpDots:      return [.sData, .sDatum, .sAppearance, .sRelayout]
-			case .idPreferences:   return [.sData, .sDatum, .sAppearance, .sDetails,  .sDetails, .spPreferences]
-			case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .sRelayout, .sDetails, .spSmallMap]
-			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .sRelayout, .spBigMap]
+			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .sRelayout,     .spBigMap, .sLaunchDone]
+			case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .sRelayout,     .sDetails, .sLaunchDone, .spSmallMap]
+			case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences, .sDetails]
 			case .idSearchResults: break
 			case .idStartHere:     break
 			case .idControls:      break
