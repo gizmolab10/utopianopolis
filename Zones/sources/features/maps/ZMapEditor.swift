@@ -122,7 +122,8 @@ class ZMapEditor: ZBaseEditor {
 						case "d":        if     ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 						case "e", "h":   editTrait(for: key)
 						case "f":        gSearching.showSearch(OPTION)
-						case "j":        if COMMAND { gSelecting.simplifiedGrabs.deleteDuplicates() } else { gSelecting.simplifiedGrabs.cycleToNextDuplicate() }
+						case "i":        grabDuplicatesAndRedraw()
+						case "j":        if SPECIAL { gRemoteStorage.recount(); gSignal([.spData]) } else { gSelecting.handleDuplicates(COMMAND) }
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
 						case "n":        editNote(OPTION)
@@ -491,6 +492,16 @@ class ZMapEditor: ZBaseEditor {
 
         gRedrawMaps()
     }
+
+	func grabDuplicatesAndRedraw() {
+		if  let zones = gSelecting.currentGrabs.forDetectingDuplicates {
+			gSelecting.ungrabAll()
+
+			if  zones.grabDuplicates() {
+				gRedrawMaps()
+			}
+		}
+	}
 
     func prefix(with iMark: String) {
         let before = "("

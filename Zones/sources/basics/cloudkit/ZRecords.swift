@@ -309,6 +309,8 @@ class ZRecords: NSObject {
 		recentsZone?     .recount()
 		favoritesZone?   .recount()
 		lostAndFoundZone?.recount()
+
+		manifest?.count = NSNumber(value: zoneCount)
     }
 
     func className(for recordType: String?) -> String? {

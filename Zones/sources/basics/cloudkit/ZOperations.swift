@@ -31,19 +31,19 @@ enum ZOperationID: Int, CaseIterable {
 	case oLoadingIdeas       // LOCAL
 	case oLoadingFromFile    // LOCAL
     case oHere
-	case oResolveMissing
+	case oRecount
 	case oDone
 
     // miscellaneous
 
 	case oMigrateFromCloud
 	case oSavingLocalData       // LOCAL
+	case oResolveMissing
     case oCompletion
 	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
 	case oRecents  			 // MINE ONLY
 	case oResolve
-	case oRecount
 	case oAdopt
 
 	var progressTime : Int {

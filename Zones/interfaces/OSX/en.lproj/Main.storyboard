@@ -70,43 +70,6 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="s1V-go-bLG"/>
-                                        <menuItem title="Resave Everything to Cloud" keyEquivalent="s" id="PXH-br-BPh">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
-                                            <connections>
-                                                <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="pbw-Iz-nSd"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Refetch from Cloud ..." id="f0s-F2-LF2">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Refetch from Cloud ..." autoenablesItems="NO" id="8DN-3Y-Czr">
-                                                <items>
-                                                    <menuItem title="Immediate Children" keyEquivalent="g" id="zJA-h5-V9Q">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="fGc-Io-AZM"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="All Progeny" keyEquivalent="g" id="gsR-6T-rn2">
-                                                        <modifierMask key="keyEquivalentModifierMask" option="YES"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="A3V-K2-TsN"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem isSeparatorItem="YES" id="wWZ-Nj-MtK"/>
-                                                    <menuItem title="All Ideas" keyEquivalent="g" id="aki-zt-Ii9">
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="1oG-Cc-NF8"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="All Traits" keyEquivalent="t" id="8l5-Eh-vTY">
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="ovN-uQ-4Wh"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                </items>
-                                            </menu>
-                                        </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="ZUb-S7-rM8"/>
                                         <menuItem title="Export to File ..." id="MEe-fC-PR1">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Export to File ..." id="LGH-w5-scL">
@@ -556,6 +519,12 @@ DQ
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Y9J-Wf-DfD"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Recount All Ideas" keyEquivalent="j" id="VGp-B4-IAz">
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="hdd-EK-PqH"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>

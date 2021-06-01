@@ -357,6 +357,67 @@ extension ZoneArray {
 		}
 	}
 
+	var forDetectingDuplicates: ZoneArray? {
+		var grabs     = ZoneArray()
+		if  count     > 1 {
+			return self
+		} else {                           // only one zone is grabbed
+			let grab  = self[0]
+
+			if  grab.count > 1 {
+				grabs = grab.children
+
+				grab.expand()
+			} else if let siblings = grab.parentZone?.children {
+				if  siblings.count == 0 {  // no siblings
+					return nil             // no chance of duplicates
+				}
+
+				grabs = siblings
+			}
+		}
+
+		return grabs
+	}
+
+	func grabDuplicates() -> Bool {
+		var originals = StringsArray()
+		var found = false
+
+		for (index, zone) in self.enumerated() {
+			if  let name = zone.zoneName {
+				if !originals.contains(name) {
+					originals  .append(name)
+				} else {
+					found = true
+
+					if zone.count < 2 {
+						gSelecting.addOneGrab(zone)
+					} else {
+						var i         = index
+						while i       > 0 {
+							i        -= 1
+							let prior = self[i]
+
+							if  name == prior.zoneName {
+								gSelecting.addOneGrab(prior)
+							}
+						}
+					}
+				}
+
+				if  zone.count > 1,
+					zone.children.grabDuplicates() {
+					zone.expand()
+
+					found = true
+				}
+			}
+		}
+
+		return found
+	}
+
 	func grabAppropriate() -> Zone? {
 		let         down = gListsGrowDown
 		let           up = !down

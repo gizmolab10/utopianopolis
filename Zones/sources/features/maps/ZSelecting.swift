@@ -247,13 +247,41 @@ class ZSelecting: NSObject {
         updateCousinList()
         gFavorites.updateFavoritesAndRedraw(needsRedraw: needsRedraw)
     }
-    
-    func assureMinimalGrabs() {
-        if  currentMapGrabs.count == 0,
-			let here = gHereMaybe {
-            grab([here])
-        }
-    }
+
+	func updateWidgetsNeedDisplay(for zones: ZoneArray) {
+		for zone in zones {
+			updateWidgetNeedDisplay(for: zone)
+		}
+	}
+
+	func updateWidgetNeedDisplay(for zone: Zone?) {
+		if  zone != nil, let widget = zone!.widget {
+			widget                  .setNeedsDisplay()
+			widget.dragDot.innerDot?.setNeedsDisplay()
+		}
+	}
+
+	func maybeClearBrowsingLevel() {
+		if  currentMapGrabs.count == 0 {
+			gCurrentBrowseLevel = nil
+		}
+	}
+
+	func respectOrder(for zones: ZoneArray) -> ZoneArray {
+		return zones.sorted { (a, b) -> Bool in
+			return a.order < b.order || a.level < b.level // compare levels from multiple parents
+		}
+	}
+
+	func handleDuplicates(_ COMMAND: Bool) {
+		let grabs = simplifiedGrabs
+
+		if  COMMAND {
+			grabs.deleteDuplicates()
+		} else {
+			grabs.cycleToNextDuplicate()
+		}
+	}
 
 	// MARK:- selection
 	// MARK:-
@@ -272,30 +300,14 @@ class ZSelecting: NSObject {
 		updateWidgetsNeedDisplay(for: grabbed)
 		currentMapGrabs.append(contentsOf: more)
     }
-    
-    
-    func updateWidgetsNeedDisplay(for zones: ZoneArray) {
-        for zone in zones {
-            updateWidgetNeedDisplay(for: zone)
-        }
-    }
 
+	func assureMinimalGrabs() {
+		if  currentMapGrabs.count == 0,
+			let here = gHereMaybe {
+			grab([here])
+		}
+	}
 
-    func updateWidgetNeedDisplay(for zone: Zone?) {
-        if  zone != nil, let widget = zone!.widget {
-            widget                  .setNeedsDisplay()
-            widget.dragDot.innerDot?.setNeedsDisplay()
-        }
-    }
-    
-    
-    func maybeClearBrowsingLevel() {
-        if  currentMapGrabs.count == 0 {
-            gCurrentBrowseLevel = nil
-        }
-    }
-
-    
     func ungrabAssuringOne(_ iZone: Zone?) {
         ungrab(iZone)
         
@@ -303,19 +315,12 @@ class ZSelecting: NSObject {
             grab([gHere])
         }
     }
-    
 
     func ungrab(_ iZone: Zone?) {
         if let zone = iZone, let index = currentMapGrabs.firstIndex(of: zone) {
 			currentMapGrabs.remove(at: index)
             updateWidgetNeedDisplay(for: zone)
             maybeClearBrowsingLevel()
-        }
-    }
-
-    func respectOrder(for zones: ZoneArray) -> ZoneArray {
-        return zones.sorted { (a, b) -> Bool in
-            return a.order < b.order || a.level < b.level // compare levels from multiple parents
         }
     }
 

@@ -90,11 +90,11 @@ class ZMainController: ZGesturesController {
 	}
 
     override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		let    hideEssay = !gIsEssayMode
 		let   hasResults = gSearchResultsController?.hasResults ?? false
 		let isSearchMode = gIsSearchMode || gIsSearchEssayMode
 		let   hideSearch = !isSearchMode || gSearchResultsVisible
-		let  hideResults = !isSearchMode || gIsSearchEssayMode || !hasResults || gWaitingForSearchEntry || gIsNotSearching
+		let  hideResults = !isSearchMode || gIsSearchEssayMode || gIsNotSearching || gWaitingForSearchEntry || !hasResults
+		let      hideMap = !hideResults  || gIsSearchEssayMode || gIsEssayMode
 
 		switch iKind {
 			case .sSearch:
@@ -103,7 +103,7 @@ class ZMainController: ZGesturesController {
 				}
 			case .sSwap:
 				gRefusesFirstResponder       = true          // prevent the exit from essay from beginning an edit
-				essayContainerView?.isHidden =  hideEssay
+				essayContainerView?.isHidden = !gIsEssayMode
 				gRefusesFirstResponder       = false
 
 				dragView?.setNeedsDisplay()
@@ -111,7 +111,7 @@ class ZMainController: ZGesturesController {
         }
 
 		permissionView?   .isHidden = !gIsStartupMode
-		mapContainerView? .isHidden = !hideResults || gIsEssayMode || gIsSearchEssayMode
+		mapContainerView? .isHidden =  hideMap
 		searchResultsView?.isHidden =  hideResults || gIsEssayMode
 		searchBoxView?    .isHidden =  hideSearch
 
