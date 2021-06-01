@@ -357,6 +357,36 @@ extension ZoneArray {
 		}
 	}
 
+	var appropriateParent: Zone? {
+		var into = rootMost?.parentZone                             // default: move into parent of root most
+		if  count > 0,
+			let siblings = into?.children {
+			var  fromTop = false
+
+			for zone in self {
+				if  let    index = zone.siblingIndex {
+					fromTop      = fromTop || index == 0                               // detect when moving the top sibling
+					if  let zone = siblings.next(from: index, forward: !fromTop),      // always move into sibling above, except at top
+						!contains(zone) {
+						into     = zone
+
+						break
+					}
+				}
+			}
+		}
+
+		return into
+	}
+
+	func actuallyMoveInto(onCompletion: BoolClosure?) {
+		if  let into = appropriateParent {
+			moveInto(into, onCompletion: onCompletion)
+		} else {
+			onCompletion?(true)
+		}
+	}
+
 	func moveInto(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: BoolClosure?) {
 		if  into.isInSmallMap {
 			into.parentZone?.collapse()
@@ -367,7 +397,9 @@ extension ZoneArray {
 		into.expand()
 		gSelecting.ungrabAll()
 
-		for     zone in self.reversed() {
+		let zones = gListsGrowDown ? self : self.reversed()
+
+		for     zone in zones {
 			if  zone != into {
 				if  orphan {
 					zone.orphan()

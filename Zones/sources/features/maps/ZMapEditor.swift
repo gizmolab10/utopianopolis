@@ -175,7 +175,7 @@ class ZMapEditor: ZBaseEditor {
 
 				if !((OPTION && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
 					switch arrow {
-						case .up, .down:     move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
+						case .up, .down: move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
 						default:
 							if  let moveable = gSelecting.rootMostMoveable {
 								if !SHIFT || moveable.isInSmallMap {
@@ -825,41 +825,15 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-    func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: BoolClosure?) {
-		if  let zone = moveables?.first {
-            if !selectionOnly {
-                actuallyMoveInto(moveables, onCompletion: onCompletion)
-            } else if zone.isTraveller && zone.fetchableCount == 0 && zone.count == 0 {
+	func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: BoolClosure?) {
+		if !selectionOnly {
+			moveables?.actuallyMoveInto(onCompletion: onCompletion)
+		} else if let zone = moveables?.first {
+			if  zone.isTraveller && zone.fetchableCount == 0 && zone.count == 0 {
 				zone.invokeTravel(onCompletion: onCompletion)
-            } else {
-				zone.addToSelection(extreme: extreme, onCompletion: onCompletion)
+			} else {
+				zone.addAGrab(extreme: extreme, onCompletion: onCompletion)
 			}
-        }
-    }
-
-	func actuallyMoveInto(_ move: ZoneArray?, onCompletion: BoolClosure?) {
-		if  let    zones = move,
-			zones.count  > 0,
-			var     into = zones.rootMost?.parentZone {                               // default: move into parent of root most
-			let siblings = Array(into.children)
-			var  fromTop = false
-
-			for zone in zones {
-				if  let    index = zone.siblingIndex {
-					fromTop      = fromTop || index == 0                               // detect when moving the top sibling
-					if  let zone = siblings.next(from: index, forward: !fromTop),      // always move into sibling above, except at top
-						!zones.contains(zone) {
-						into     = zone
-
-						break
-					}
-
-				}
-			}
-
-			zones.moveInto(into, onCompletion: onCompletion)
-		} else {
-			onCompletion?(true)
 		}
 	}
 

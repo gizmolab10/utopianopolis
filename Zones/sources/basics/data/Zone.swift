@@ -351,7 +351,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		theCopy.parentZone = nil
 
-		for child in children.reversed() {
+		let zones = gListsGrowDown ? children : children.reversed()
+
+		for child in zones {
 			theCopy.addChildNoDuplicate(child.deepCopy(dbID: id))
 		}
 
@@ -2124,7 +2126,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func addToSelection(extreme: Bool = false, onCompletion: BoolClosure?) {
+	func addAGrab(extreme: Bool = false, onCompletion: BoolClosure?) {
 		var   needReveal = false
 		var         zone = self
 		var addRecursive = {}
@@ -2138,7 +2140,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  zone.count > 0,
-				let child = gListsGrowDown ? zone.children.first : zone.children.last {
+				let child = gListsGrowDown ? zone.children.last : zone.children.first {
 
 				child.grab()
 
@@ -3155,11 +3157,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let COMMAND = flags.isCommand
 		let  OPTION = flags.isOption
 
-		if  isTraveller {
-			invokeTravel(COMMAND) { reveal in // note, email, video, bookmark, hyperlink
-				gRedrawMaps()
-			}
-		} else if count > 0, !OPTION {
+		if  count > 0, !OPTION {
 			let show = !expanded
 
 			if  isInSmallMap {
@@ -3170,6 +3168,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				generationalUpdate(show: show, to: goal) {
 					gRedrawMaps(for: self)
 				}
+			}
+		} else if isTraveller {
+			invokeTravel(COMMAND) { reveal in // note, email, video, bookmark, hyperlink
+				gRedrawMaps()
 			}
 		}
 	}
