@@ -565,7 +565,7 @@ extension ZoneArray {
 			let gotOrphan = iParent.parentZone == nil
 
 			if  gotThere || gotOrphan {
-				if !gotThere && !iParent.isFetched && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
+				if !gotThere && iParent.parentZone != nil { // reached an orphan that has not yet been fetched
 					[iParent].recursivelyRevealSiblings(untilReaching: iAncestor, onCompletion: onCompletion)
 				} else {
 					iAncestor.expand()

@@ -1899,7 +1899,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// TRAVEL TO A DIFFERENT MAP //
 					// ///////////////////////// //
 
-					if  let here = target, here.isFetched { // e.g., default root favorite
+					if  let here = target { // e.g., default root favorite
 						gRecents.focusOnGrab(.eSelected) {
 							gHere = here
 
@@ -2114,7 +2114,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			var needOp = false
 
 			traverseAncestors { iZone -> ZTraverseStatus in
-				if  let parentZone = iZone.parentZone, !parentZone.isFetched {
+				if  let parentZone = iZone.parentZone {
 					needOp = true
 
 					return .eStop

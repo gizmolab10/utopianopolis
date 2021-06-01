@@ -36,20 +36,10 @@ class ZRecord: ZManagedObject { // NSObject {
 	var       isSmallMapHere: Bool      { return isFavoritesHere || isRecentsHere }
 	var       isSmallMapRoot: Bool      { return isFavoritesRoot || isRecentsRoot }
 	var      isEitherMapRoot: Bool      { return isSmallMapRoot || isMapRoot }
-	var  canSaveWithoutFetch: Bool      { return !hasState(.requiresFetchBeforeSave) }
-	var            isFetched: Bool      { return !hasState(.notFetched) }
 	var            needsSave: Bool      { return  hasState(.needsSave) }
-	var            needsRoot: Bool      { return  hasState(.needsRoot) }
-	var           notFetched: Bool      { return  hasState(.notFetched) }
 	var           needsCount: Bool      { return  hasState(.needsCount) }
 	var           needsColor: Bool      { return  hasState(.needsColor) }
-	var           needsFetch: Bool      { return  hasState(.needsFetch) }
-	var           needsMerge: Bool      { return  hasState(.needsMerge) }
-	var          needsTraits: Bool      { return  hasState(.needsTraits) }
-	var          needsParent: Bool      { return  hasState(.needsParent) }
 	var         needsDestroy: Bool      { return  hasState(.needsDestroy) }
-	var         needsProgeny: Bool      { return  hasState(.needsProgeny) }
-	var        needsChildren: Bool      { return  hasState(.needsChildren) }
 	var        needsAdoption: Bool      { return  hasState(.needsAdoption) }
 	var       needsBookmarks: Bool      { return  hasState(.needsBookmarks) }
 
@@ -216,9 +206,7 @@ class ZRecord: ZManagedObject { // NSObject {
 	func needWrite()    { gFiles.needWrite(for: databaseID) }
 
 	func updateState() {
-		if  notFetched {
-			setupLinks()
-		}
+		setupLinks()
 	}
 
     // MARK:- files

@@ -10,23 +10,14 @@ import Foundation
 import CloudKit
 
 enum ZRecordState: String {
-    case requiresFetchBeforeSave = "requires fetch before save"     //
-    case needsFetch              = "fetch"                          //
-    case notFetched              = "not fetched"                    //
-	case needsAdoption           = "adopt"
-    case needsBookmarks          = "bookmarks"
-    case needsChildren           = "children"
-    case needsColor              = "color"
-	case needsCount              = "count"
-    case needsDestroy            = "destroy"
-	case needsFound              = "found"
-    case needsMerge              = "merge"
-    case needsParent             = "parent"
-	case needsProgeny            = "progeny"
-    case needsRoot               = "root"
-    case needsSave               = "save"
-    case needsTraits             = "traits"
-    case needsWritable           = "writable"
+	case needsAdoption  = "adopt"
+    case needsBookmarks = "bookmarks"
+    case needsColor     = "color"
+	case needsCount     = "count"
+    case needsDestroy   = "destroy"
+	case needsFound     = "found"
+    case needsSave      = "save"
+    case needsWritable  = "writable"
 }
 
 class ZRecords: NSObject {
@@ -462,26 +453,6 @@ class ZRecords: NSObject {
 
     // MARK:- record state
     // MARK:-
-
-    var undeletedCounts: (Int, Int) {
-        let zRecords = zRecordsLookup.values
-        var   uCount = zRecords.count
-        var   nCount = 0
-
-        for zRecord in zRecords {
-            if  let zone = zRecord as? Zone { // ONLY count zones
-                if !zone.canSaveWithoutFetch {
-                    nCount += 1
-                } else if let root = zone.root, !root.isTrashRoot, !root.isFavoritesRoot, !root.isLostAndFoundRoot {
-                    continue
-                }
-            }
-
-            uCount -= 1 // traits, trash, favorites, lost and found
-        }
-
-        return (uCount, nCount)
-    }
 
     var allStates: [ZRecordState] { return recordNamesByState.map { $0.key } }
 
