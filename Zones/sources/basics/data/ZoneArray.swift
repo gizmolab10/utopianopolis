@@ -357,6 +357,30 @@ extension ZoneArray {
 		}
 	}
 
+	func moveInto(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: BoolClosure?) {
+		if  into.isInSmallMap {
+			into.parentZone?.collapse()
+
+			gCurrentSmallMapRecords?.hereZoneMaybe = into
+		}
+
+		into.expand()
+		gSelecting.ungrabAll()
+
+		for     zone in self.reversed() {
+			if  zone != into {
+				if  orphan {
+					zone.orphan()
+				}
+
+				into.addChildAndReorder(zone, at: iIndex)
+				zone.addToGrabs()
+			}
+		}
+
+		onCompletion?(true)
+	}
+
 	var forDetectingDuplicates: ZoneArray? {
 		var grabs     = ZoneArray()
 		if  count     > 1 {

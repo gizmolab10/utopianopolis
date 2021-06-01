@@ -351,7 +351,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		theCopy.parentZone = nil
 
-		for child in children {
+		for child in children.reversed() {
 			theCopy.addChildNoDuplicate(child.deepCopy(dbID: id))
 		}
 
@@ -2111,59 +2111,48 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  isARoot {
 			onCompletion?()
 		} else {
-			var needOp = false
+			var here = gHere
 
-			traverseAncestors { iZone -> ZTraverseStatus in
-				if  let parentZone = iZone.parentZone {
-					needOp = true
-
-					return .eStop
-				}
-
-				return .eContinue
+			traverseAllAncestors { zone in
+				zone.expand()
+				here = zone
 			}
 
-			if  !needOp,
-				let r = gRemoteStorage.cloud(for: databaseID)?.rootZone {
-				gHere = r
+			gHere    = here
 
-				onCompletion?()
-			} else {
-				gBatches.root { iSame in
-					onCompletion?()
-				}
-			}
+			onCompletion?()
 		}
 	}
 
 	func addToSelection(extreme: Bool = false, onCompletion: BoolClosure?) {
-		var needReveal = false
-		var      child = self
-		var     invoke = {}
+		var   needReveal = false
+		var         zone = self
+		var addRecursive = {}
 
-		invoke = {
-			let expand = !child.expanded
+		addRecursive = {
+			let expand = !zone.expanded
 			needReveal = needReveal || expand
 
 			if  expand {
-				child.expand()
+				zone.expand()
 			}
 
-			if  child.count > 0,
-				let grandchild = gListsGrowDown ? child.children.last : child.children.first {
-				grandchild.grab()
+			if  zone.count > 0,
+				let child = gListsGrowDown ? zone.children.first : zone.children.last {
 
-				if  child.isInSmallMap { // narrow, so hide former here and ignore extreme
-					child.setAsSmallMapHereZone()
+				child.grab()
+
+				if  zone.isInSmallMap { // narrow, so hide former here and ignore extreme
+					zone.setAsSmallMapHereZone()
 				} else if extreme {
-					child = grandchild
+					zone = child
 
-					invoke()
+					addRecursive()
 				}
 			}
 		}
 
-		invoke()
+		addRecursive()
 		onCompletion?(needReveal)
 
 		if !needReveal {
@@ -2792,7 +2781,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: Closure? = nil) -> Int? {
+	@discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: Closure? = nil) -> Int? {
 		if  let        child = iChild {
 			let      toIndex = validIndex(from: iIndex)
 			child.parentZone = self

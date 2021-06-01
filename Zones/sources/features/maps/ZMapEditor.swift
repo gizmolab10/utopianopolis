@@ -390,7 +390,7 @@ class ZMapEditor: ZBaseEditor {
 			let promoteToParent: ClosureClosure = { innerClosure in
 				original.convertFromLineWithTitle()
 
-				self.moveZones(grabs, into: original) { reveal in
+				grabs.moveInto(original) { reveal in
 					original.grab()
 
 					gRedrawMaps {
@@ -857,34 +857,10 @@ class ZMapEditor: ZBaseEditor {
 				}
 			}
 
-			moveZones(zones, into: into, onCompletion: onCompletion)
+			zones.moveInto(into, onCompletion: onCompletion)
 		} else {
 			onCompletion?(true)
 		}
-	}
-
-	func moveZones(_ zones: ZoneArray, into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: BoolClosure?) {
-		if  into.isInSmallMap {
-			into.parentZone?.collapse()
-
-			gCurrentSmallMapRecords?.hereZoneMaybe = into
-		}
-
-		into.expand()
-		gSelecting.ungrabAll()
-
-		for     zone in zones {
-			if  zone != into {
-				if  orphan {
-					zone.orphan()
-				}
-
-				into.addChildAndReorder(zone, at: iIndex)
-				zone.addToGrabs()
-			}
-		}
-
-		onCompletion?(true)
 	}
 
     // MARK:- undoables
@@ -992,7 +968,7 @@ class ZMapEditor: ZBaseEditor {
 			gSelecting.clearPaste()
 			gSelecting.currentMapGrabs = []
 
-			for grab in grabs {
+			for grab in grabs.reversed() {
 				if !convertToTitledLine {       // delete, add to paste
 					grab.addToPaste()
 					grab.moveZone(to: grab.trashZone)
@@ -1002,13 +978,11 @@ class ZMapEditor: ZBaseEditor {
 					grab.addToGrabs()
 				}
 
-				for child in grab.children {
+				for child in grab.children.reversed() {
 					children.append(child)
 					child.addToGrabs()
 				}
 			}
-
-			children.reverse()
 
 			for child in children {
 				child.orphan()
@@ -1199,7 +1173,7 @@ class ZMapEditor: ZBaseEditor {
                         let   newIndex = indexer.siblingIndex
                         let  moveThese = moveUp ? iZones.reversed() : iZones
                         
-                        self.moveZones(moveThese, into: intoParent, at: newIndex, orphan: true) { reveal in
+                        moveThese.moveInto(intoParent, at: newIndex, orphan: true) { reveal in
                             gSelecting.grab(moveThese)
                             intoParent.children.updateOrder()
                             onCompletion?([.sRelayout])
