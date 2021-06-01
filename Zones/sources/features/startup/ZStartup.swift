@@ -38,8 +38,8 @@ class ZStartup: NSObject {
 		gBatches.startUp { iSame in
 			FOREGROUND {
 				gIsReadyToShowUI = true
-				gTimers.startTimer(for: .tStartup)
 
+				gTimers.startTimer(for: .tStartup)
 				gFavorites.setup { result in
 					FOREGROUND {
 						gFavorites.updateAllFavorites()

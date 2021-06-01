@@ -679,10 +679,9 @@ class ZMapEditor: ZBaseEditor {
                     }
                 }
             } else if let grab = gSelecting.rootMostMoveable {
-
-				let inSmall = grab.isInSmallMap  // these three values
-				let  parent = grab.parentZone    // are out of date
-				let   index = grab.siblingIndex  // after delete zones, below
+				let    inSmall = grab.isInSmallMap  // these three values
+				let     parent = grab.parentZone    // are out of date
+				let      index = grab.siblingIndex  // after delete zones, below
 
 				prepareUndoForDelete()
                 

@@ -313,7 +313,6 @@ class ZSelecting: NSObject {
         }
     }
 
-
     func respectOrder(for zones: ZoneArray) -> ZoneArray {
         return zones.sorted { (a, b) -> Bool in
             return a.order < b.order || a.level < b.level // compare levels from multiple parents
@@ -330,7 +329,6 @@ class ZSelecting: NSObject {
 
     func addOneGrab(_ iZone: Zone?) { // caller must update widgets need display
         if  let zone = iZone,
-//			zone    != gSmallMapHere, // disallow grab on non-visible favorite, avoid ugly looking highlight
             !currentMapGrabs.contains(zone) {
 			currentMapGrabs.append(zone)
 

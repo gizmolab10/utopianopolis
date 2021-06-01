@@ -358,36 +358,39 @@ extension ZoneArray {
 	}
 
 	func grabAppropriate() -> Zone? {
-		if  let     grab = gListsGrowDown ? first : last,
-			let   parent = grab.parentZone {
+		let         down = gListsGrowDown
+		let           up = !down
+		if  let   parent = first?.parentZone {
 			let siblings = parent.children
 			var    count = siblings.count
 			let      max = count - 1
 
-			if siblings.count == count {
-				for zone in self {
-					if siblings.contains(zone) {
-						count -= 1
-					}
+			for zone in self {
+				if  siblings.contains(zone) {
+					count -= 1
 				}
 			}
 
-			if  var           index  = grab.siblingIndex, max > 0, count > 0 {
-				if !grab.isGrabbed {
-					if        index == max &&   gListsGrowDown {
-						index        = 0
-					} else if index == 0   &&  !gListsGrowDown {
-						index        = max
-					}
-				} else if     index  < max &&  (gListsGrowDown || index == 0) {
-					index           += 1
-				} else if     index  > 0    && (!gListsGrowDown || index == max) {
-					index           -= 1
+			if  max <= 0 || count <= 0 {
+				return parent
+			} else if let firstX = first!.siblingIndex,
+					  let  lastX =  last!.siblingIndex {
+				var        index = up ? firstX : lastX
+				if       firstX == 0,    lastX < max {
+					index        = lastX + 1
+				} else if lastX == max, firstX > 0 {
+					index        = firstX - 1
+				} else if index == max &&  down {
+					index        = 0
+				} else if index == 0   &&  up {
+					index        = max
+				} else if index  < max && (down || index == 0) {
+					index       += 1
+				} else if index  > 0   && (up   || index == max) {
+					index       -= 1
 				}
 
 				return siblings[index]
-			} else {
-				return parent
 			}
 		}
 

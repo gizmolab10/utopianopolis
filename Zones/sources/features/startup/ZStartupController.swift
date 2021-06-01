@@ -86,9 +86,12 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	var progressText:String {
 		let   count = Int(gStartup.elapsedStartupTime / kThreshold)
 		let   total = Int(gProgressTimes.values.reduce(0, +))
-		let  spacer = total < 28 ? " " : ""
 		let remains = total - count
-		let    text = " \(spacer)".repeatOf(count) + "•\(spacer)".repeatOf(remains)
+		let   extra = total < 28
+		let   thing = "-"
+		let  spacer = extra ? " " : ""
+		let    more = extra ? thing : ""
+		let    text = " \(spacer)".repeatOf(count) + "\(thing)\(more)".repeatOf(remains)
 
 		return text
 	}
