@@ -168,6 +168,18 @@ class ZRemoteStorage: NSObject {
 		}
 	}
 
+	func maybeZRecordForRecordName (_ iRecordName: String?) -> ZRecord? {
+		if  let name = iRecordName {
+			for cloud in allClouds {
+				if  let    zRecord = cloud.maybeZRecordForRecordName(name) {
+					return zRecord
+				}
+			}
+		}
+
+		return nil
+	}
+
 	func maybeZoneForRecordName (_ iRecordName: String?) -> Zone? {
 		if  let name = iRecordName {
 			for cloud in allClouds {

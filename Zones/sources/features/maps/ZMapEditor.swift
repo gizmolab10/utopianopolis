@@ -90,7 +90,7 @@ class ZMapEditor: ZBaseEditor {
 							case "p":      printCurrentFocus()
 							case "t":      if COMMAND, let string = gCurrentlySelectedText { showThesaurus(for: string) }
 							case "/":      if SCORNED { return false } else { focusOrPopSmallMap(CONTROL, kind: .eEdited) }
-							case ",", ".": commaAndPeriod(COMMAND, OPTION, with: key == ",")
+							case ",", kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == ",")
 							case kTab:     addSibling(OPTION)
 							case kSpace:   gSelecting.currentMoveable.addIdea()
 							case kReturn:  if COMMAND { editNote(OPTION) }
@@ -144,7 +144,7 @@ class ZMapEditor: ZBaseEditor {
 						case "/":        if SCORNED { gCurrentKeyPressed = nil; return false } else { focusOrPopSmallMap(CONTROL, COMMAND, kind: .eSelected) }
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case "[", "]":   go(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() }
-						case ",", ".":   commaAndPeriod(COMMAND, OPTION, with: key == ",")
+						case ",", kDotSeparator:   commaAndPeriod(COMMAND, OPTION, with: key == ",")
 						case kTab:       addSibling(OPTION)
 						case kSpace:     if CONTROL || OPTION || isWindow { moveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
 						case kEquals:    if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { reveal in gRedrawMaps() } }
@@ -829,7 +829,9 @@ class ZMapEditor: ZBaseEditor {
 		if !selectionOnly {
 			moveables?.actuallyMoveInto(onCompletion: onCompletion)
 		} else if let zone = moveables?.first {
-			if  zone.isTraveller && zone.fetchableCount == 0 && zone.count == 0 {
+			if  zone.isBookmark {
+				zone.invokeBookmark(onCompletion: onCompletion)
+			} else if zone.isTraveller && zone.fetchableCount == 0 && zone.count == 0 {
 				zone.invokeTravel(onCompletion: onCompletion)
 			} else {
 				zone.addAGrab(extreme: extreme, onCompletion: onCompletion)

@@ -190,7 +190,7 @@ class ZSearchResultsController: ZGenericTableController {
 	func resolveAsZone(_ dbID: ZDatabaseID, _ zRecord: ZRecord) -> Bool {
 		let zone = zRecord as? Zone
 
-		zone?.resolveAndSelect(searchText)
+		zone?.resolveAsHere()
 
 		return zone != nil
 	}
@@ -205,7 +205,7 @@ class ZSearchResultsController: ZGenericTableController {
 		switch type {
 			case .tEssay,
 				 .tNote: resolveAsNote(owner)
-			default:     owner.resolveAndSelect(nil) // hyperlink or email
+			default:     owner.resolveAsHere()    // hyperlink or email
 		}
 
 		return true

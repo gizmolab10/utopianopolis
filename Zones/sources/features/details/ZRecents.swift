@@ -54,7 +54,11 @@ class ZRecents : ZSmallMapRecords {
 
 			if  gHasFinishedStartup, // avoid confusing recents upon relaunch
 				let pushMe = here {
-				let      _ = bookmarkTargeting(pushMe) ?? matchOrCreateBookmark(for: pushMe, autoAdd: true)
+
+				if  bookmarkTargeting(pushMe) == nil {
+					matchOrCreateBookmark(for: pushMe, autoAdd: true)
+				}
+
 				updateCurrentRecent()
 			}
 		}

@@ -397,16 +397,12 @@ extension URL {
 		return nil
 	}
 
-	func readImage() -> ZImage? {
-		return nil
-	}
+	func writeData(_ data: Data?) -> Bool {
+		var success = false
 
-	func writeImage(_ image: ZImage) -> Bool {
-		var  success = false
-
-		if  let data = image.jpeg {
+		if  let d = data {
 			do {
-				try data.write(to: self, options: Data.WritingOptions.atomic)
+				try d.write(to: self, options: Data.WritingOptions.atomic)
 
 				success = true
 			} catch {
@@ -416,23 +412,7 @@ extension URL {
 		return success
 	}
 
-	func testWriteImage(_ image: ZImage, addOriginalImageName: String? = nil) -> Bool {
-		if  let d = destination() {
-			let cgImage = image as! CGImage
-			var metadata = [String : Any]()
-
-			if  let name = addOriginalImageName {
-				metadata[kOrignalImageName] = name
-			}
-
-			CGImageDestinationAddImage(d, cgImage, metadata as CFDictionary)
-			CGImageDestinationFinalize(d)
-
-			return true
-		}
-
-		return false
-	}
+	func fileExists() -> Bool { return FileManager.default.fileExists(atPath: path) }
 
 }
 
@@ -1821,9 +1801,9 @@ extension String {
 	}
 
 	var asBundleResource: String? {
-		var    parts = components(separatedBy: ".")
+		var    parts = components(separatedBy: kDotSeparator)
 		let     last = parts.removeLast()
-		let resource = parts.joined(separator: ".")
+		let resource = parts.joined(separator: kDotSeparator)
 
 		return Bundle.main.path(forResource: resource, ofType: last)
 	}

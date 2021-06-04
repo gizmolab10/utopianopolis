@@ -193,9 +193,10 @@ class ZTextPack: NSObject {
     }
 
 	func captureText(_ iText: String?, redrawSync: Bool = false) {
-		if [emptyName, kEmpty].contains(iText),
-			let                 type  = packedTrait?.traitType {
-			packedZone?.removeTrait(for: type)                     // trait text was deleted (email, hyperlink)
+		if (iText == emptyName || iText == kEmpty) {
+			if  let             type  = packedTrait?.traitType {
+				packedZone?.removeTrait(for: type)                     // trait text was deleted (email, hyperlink)
+			}
 		} else if              iText != originalText {
             let              newText  = removeSuffix(from: iText)
             gTextCapturing            = true

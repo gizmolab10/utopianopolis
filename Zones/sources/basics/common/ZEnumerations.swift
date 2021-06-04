@@ -456,7 +456,7 @@ enum ZoneAttributeType: String {
 
 enum ZEssayLinkType: String {
 	case hWeb   = "h"
-	case hFile  = "f"
+	case hFile  = "u"
 	case hIdea  = "i"
 	case hNote  = "n"
 	case hEssay = "e"

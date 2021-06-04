@@ -19,20 +19,9 @@ var gSearchBarController: ZSearchBarController? { return gControllers.controller
 
 class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
-	@IBOutlet var searchBox    : ZSearchField?
+	@IBOutlet var    searchBox : ZSearchField?
 	override  var controllerID : ZControllerID { return .idSearch }
-
-	var activeSearchBoxText: String? {
-		let searchString = searchBox?.text?.searchable
-
-		if  ["", " ", "  "].contains(searchString) {
-			endSearch()
-
-			return nil
-		}
-
-		return searchString
-	}
+	var    activeSearchBoxText : String?       { return searchBox?.text?.searchable }
 
 	var searchBoxIsFirstResponder : Bool {
 		#if os(OSX)
@@ -92,9 +81,9 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 			gEssayView?.handleKey(key, flags: flags)
 		} else if  isList && !isInBox {
 			return gSearchResultsController?.handleEvent(event)
-		} else if isReturn, isInBox, let text = activeSearchBoxText {
-			gSearching.performSearch(for: text)
-        } else if  key == "a" && COMMAND {
+		} else if isReturn, isInBox {
+			updateSearchBox()
+		} else if  key == "a" && COMMAND {
             searchBox?.selectAllText()
         } else if (isReturn && isEntry) || (isExit && !isF) || (isF && COMMAND) {
             endSearch()
@@ -109,7 +98,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
             
             return event
         }
-        
+
         return nil
     }
 
@@ -120,8 +109,11 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 	func updateSearchBox() {
 		if  let text = activeSearchBoxText,
-			text.length > 0 {
+			text.length > 0,
+			!["", " ", "  "].contains(text) {
 			gSearching.performSearch(for: text)
+		} else {
+			endSearch()
 		}
 	}
 

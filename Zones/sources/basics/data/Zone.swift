@@ -1424,7 +1424,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func resolveAndSelect(_ searchText: String?) {
+	func resolveAsHere() {
 		gHere = self
 
 		grab()

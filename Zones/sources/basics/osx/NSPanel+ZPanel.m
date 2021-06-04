@@ -10,7 +10,6 @@
 
 @implementation NSPanel (ZPanel)
 
-
 - (void)setDirectoryAndExtensionFor:(NSURL *)url {
     NSSavePanel     *panel = (NSSavePanel *)self;
     NSURL               *u = url;

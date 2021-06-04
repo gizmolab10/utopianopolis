@@ -213,15 +213,27 @@ class ZSmallMapRecords: ZRecords {
 		return false
 	}
 
+	var computedCurrentForMode : Zone? {
+		return gIsRecentlyMode ? computedCurrrentRecent : computedCurrrentFavorite
+	}
+
 	@discardableResult func updateCurrentForMode() -> Zone? {
 		return gIsRecentlyMode ? updateCurrentRecent() : updateCurrentBookmark()
 	}
 
-	@discardableResult func updateCurrentBookmark() -> Zone? {
+	var computedCurrrentFavorite: Zone? {
 		if  let        here = gHereMaybe,
 			let    bookmark = whichBookmarkTargets(here, orSpawnsIt: false),
 			bookmark.isInSmallMap,
 			!(bookmark.bookmarkTarget?.spawnedBy(here) ?? false) {
+			return bookmark
+		}
+
+		return nil
+	}
+
+	@discardableResult func updateCurrentBookmark() -> Zone? {
+		if  let bookmark = computedCurrrentFavorite {
 			currentBookmark = bookmark
 
 			return currentBookmark
@@ -230,8 +242,8 @@ class ZSmallMapRecords: ZRecords {
 		return nil
 	}
 
-	@discardableResult func updateCurrentRecent() -> Zone? {
-		if  let recents   = rootZone?.allBookmarkProgeny, recents.count > 0 {
+	var computedCurrrentRecent: Zone? {
+		if  let bookmarks = rootZone?.allBookmarkProgeny, bookmarks.count > 0 {
 			var targets   = ZoneArray()
 
 			if  var grab  = gSelecting.firstGrab {
@@ -246,12 +258,17 @@ class ZSmallMapRecords: ZRecords {
 				targets.appendUnique(item: here)
 			}
 
-			if  let bookmark    = recents.whoseTargetIntersects(with: targets, orSpawnsIt: false) {
-				currentBookmark = bookmark
+			if  let bookmark = bookmarks.whoseTargetIntersects(with: targets, orSpawnsIt: false) {
+				return bookmark
 			}
-		} else {
-			currentBookmark     = nil // no recents, therefor no current bookmark
 		}
+
+		return nil
+	}
+
+
+	@discardableResult func updateCurrentRecent() -> Zone? {
+		currentBookmark = computedCurrrentRecent
 
 		return currentBookmark
 	}
@@ -276,7 +293,9 @@ class ZSmallMapRecords: ZRecords {
 			cb.bookmarkTarget?.grab() // grab target in big map
 		} else if doNotGrab {
 			return false
-		} else if let bookmark = updateCurrentForMode() {
+		} else if let bookmark = computedCurrentForMode {
+			currentBookmark = bookmark
+
 			grab(bookmark)
 		} else {
 			let bookmarks = gHere.bookmarksTargetingSelf

@@ -19,7 +19,7 @@ var gEssayController: ZEssayController? { return gControllers.controllerForID(.i
 class ZEssayController: ZGesturesController, ZScrollDelegate {
 	override  var         controllerID : ZControllerID { return .idNote }
 	var           linkDialogController : ZLinkDialogController?
-	var                         params : ZEssayLinkParameters?
+	var                     parameters : ZEssayLinkParameters?
 	@IBOutlet var            essayView : ZEssayView?
 
 	override func setup() {
@@ -39,11 +39,11 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 	override func prepare(for segue: ZStoryboardSegue, sender: Any?) {
 		linkDialogController  = segue.destinationController as? ZLinkDialogController
 		linkDialogController?.loadView()
-		linkDialogController?.setupWith(params)
+		linkDialogController?.setupWith(parameters)
 	}
 
 	func modalForLink(type: ZEssayLinkType, _ showAs: String?, onCompletion: StringStringClosure?) {
-		params = ZEssayLinkParameters(type: type, showAs: showAs, closure: onCompletion)
+		parameters = ZEssayLinkParameters(type: type, showAs: showAs, closure: onCompletion)
 
 		performSegue(withIdentifier: "link", sender: self)
 	}

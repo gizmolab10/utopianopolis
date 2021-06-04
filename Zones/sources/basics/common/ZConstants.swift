@@ -193,6 +193,7 @@ let      kSmallMapIsVisibleKey = "small map is visible"
 let      kLastChosenCheatSheet = "last chosen cheat sheet"
 let  kUnderstandsNeedForAccess = "understands need for access to apple id"
 
+let              kDotSeparator = "."
 let            kColonSeparator = ":"
 let            kCommaSeparator = ","
 let            kCrumbSeparator = "      "

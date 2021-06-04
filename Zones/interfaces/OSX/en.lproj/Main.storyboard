@@ -1234,42 +1234,8 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="379" height="134"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="PkJ-tZ-NCK">
-                                <rect key="frame" x="20" y="93" width="339" height="21"/>
-                                <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Gyc-cP-AKf">
-                                        <rect key="frame" x="-2" y="3" width="185" height="16"/>
-                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Title you want it to appear as" id="TcT-EU-6bS">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fZI-Gm-akg">
-                                        <rect key="frame" x="189" y="0.0" width="150" height="21"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="150" id="Or4-7g-msB"/>
-                                        </constraints>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="SEf-3i-iF5">
-                                            <font key="font" usesAppearanceFont="YES"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="fZI-Gm-akg" secondAttribute="trailing" id="6b6-9a-fFt"/>
-                                    <constraint firstItem="Gyc-cP-AKf" firstAttribute="leading" secondItem="PkJ-tZ-NCK" secondAttribute="leading" id="DYe-nC-Kqh"/>
-                                    <constraint firstItem="fZI-Gm-akg" firstAttribute="top" secondItem="PkJ-tZ-NCK" secondAttribute="top" id="FCM-bJ-wVY"/>
-                                    <constraint firstItem="fZI-Gm-akg" firstAttribute="leading" secondItem="Gyc-cP-AKf" secondAttribute="trailing" constant="8" symbolic="YES" id="IU8-FX-Tsp"/>
-                                    <constraint firstAttribute="bottom" secondItem="fZI-Gm-akg" secondAttribute="bottom" id="OB7-kG-4Nz"/>
-                                    <constraint firstAttribute="trailing" secondItem="fZI-Gm-akg" secondAttribute="trailing" id="SEE-Hj-MGY"/>
-                                    <constraint firstItem="fZI-Gm-akg" firstAttribute="top" secondItem="PkJ-tZ-NCK" secondAttribute="top" id="bdS-lC-9M2"/>
-                                    <constraint firstItem="Gyc-cP-AKf" firstAttribute="centerY" secondItem="PkJ-tZ-NCK" secondAttribute="centerY" id="cfL-5X-0WW"/>
-                                </constraints>
-                            </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Dbt-4u-VSe">
-                                <rect key="frame" x="20" y="64" width="339" height="21"/>
+                                <rect key="frame" x="20" y="93" width="339" height="21"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Vpw-ap-3wS">
                                         <rect key="frame" x="-2" y="3" width="185" height="16"/>
@@ -1300,6 +1266,39 @@ CA
                                     <constraint firstItem="Vpw-ap-3wS" firstAttribute="leading" secondItem="Dbt-4u-VSe" secondAttribute="leading" id="kq0-7k-9jr"/>
                                     <constraint firstItem="Vpw-ap-3wS" firstAttribute="leading" secondItem="Dbt-4u-VSe" secondAttribute="leading" id="xrZ-5z-81n"/>
                                     <constraint firstItem="foN-VV-XU7" firstAttribute="leading" secondItem="Vpw-ap-3wS" secondAttribute="trailing" constant="8" symbolic="YES" id="zF8-ZK-Ltw"/>
+                                </constraints>
+                            </customView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="PkJ-tZ-NCK">
+                                <rect key="frame" x="20" y="64" width="339" height="21"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Gyc-cP-AKf">
+                                        <rect key="frame" x="-2" y="3" width="185" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Title you want it to appear as" id="TcT-EU-6bS">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fZI-Gm-akg">
+                                        <rect key="frame" x="189" y="0.0" width="150" height="21"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="150" id="Or4-7g-msB"/>
+                                        </constraints>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="SEf-3i-iF5">
+                                            <font key="font" usesAppearanceFont="YES"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="fZI-Gm-akg" secondAttribute="trailing" id="6b6-9a-fFt"/>
+                                    <constraint firstItem="Gyc-cP-AKf" firstAttribute="leading" secondItem="PkJ-tZ-NCK" secondAttribute="leading" id="DYe-nC-Kqh"/>
+                                    <constraint firstItem="fZI-Gm-akg" firstAttribute="leading" secondItem="Gyc-cP-AKf" secondAttribute="trailing" constant="8" symbolic="YES" id="IU8-FX-Tsp"/>
+                                    <constraint firstAttribute="bottom" secondItem="fZI-Gm-akg" secondAttribute="bottom" id="OB7-kG-4Nz"/>
+                                    <constraint firstAttribute="trailing" secondItem="fZI-Gm-akg" secondAttribute="trailing" id="SEE-Hj-MGY"/>
+                                    <constraint firstItem="fZI-Gm-akg" firstAttribute="top" secondItem="PkJ-tZ-NCK" secondAttribute="top" id="bdS-lC-9M2"/>
+                                    <constraint firstItem="Gyc-cP-AKf" firstAttribute="centerY" secondItem="PkJ-tZ-NCK" secondAttribute="centerY" id="cfL-5X-0WW"/>
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="w8s-R4-Cto">
@@ -1347,14 +1346,14 @@ Gw
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="Dbt-4u-VSe" secondAttribute="trailing" constant="20" symbolic="YES" id="1YH-Cz-AtD"/>
+                            <constraint firstItem="w8s-R4-Cto" firstAttribute="top" secondItem="PkJ-tZ-NCK" secondAttribute="bottom" constant="20" id="8cD-lX-8FO"/>
                             <constraint firstAttribute="bottom" secondItem="w8s-R4-Cto" secondAttribute="bottom" constant="20" symbolic="YES" id="BGd-Hb-UZ7"/>
-                            <constraint firstItem="Dbt-4u-VSe" firstAttribute="top" secondItem="PkJ-tZ-NCK" secondAttribute="bottom" constant="8" id="DQP-je-CA8"/>
                             <constraint firstAttribute="trailing" secondItem="PkJ-tZ-NCK" secondAttribute="trailing" constant="20" symbolic="YES" id="FzV-e2-U0j"/>
                             <constraint firstItem="PkJ-tZ-NCK" firstAttribute="leading" secondItem="NY2-fD-2jz" secondAttribute="leading" constant="20" symbolic="YES" id="ZWE-OJ-f84"/>
+                            <constraint firstItem="PkJ-tZ-NCK" firstAttribute="top" secondItem="Dbt-4u-VSe" secondAttribute="bottom" constant="8" id="fH2-N9-NbF"/>
                             <constraint firstItem="w8s-R4-Cto" firstAttribute="centerX" secondItem="NY2-fD-2jz" secondAttribute="centerX" id="ikU-Nf-IGe"/>
-                            <constraint firstItem="PkJ-tZ-NCK" firstAttribute="top" secondItem="NY2-fD-2jz" secondAttribute="top" constant="20" symbolic="YES" id="jNa-1i-esl"/>
                             <constraint firstItem="Dbt-4u-VSe" firstAttribute="leading" secondItem="NY2-fD-2jz" secondAttribute="leading" constant="20" symbolic="YES" id="lf9-wi-Mms"/>
-                            <constraint firstItem="w8s-R4-Cto" firstAttribute="top" secondItem="Dbt-4u-VSe" secondAttribute="bottom" constant="20" id="qKe-uP-gIY"/>
+                            <constraint firstItem="Dbt-4u-VSe" firstAttribute="top" secondItem="NY2-fD-2jz" secondAttribute="top" constant="20" id="soB-ne-x9R"/>
                         </constraints>
                     </view>
                     <connections>

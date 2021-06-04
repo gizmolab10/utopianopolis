@@ -41,7 +41,7 @@ class ZSearching: NSObject {
 	func switchToList()  { setStateTo(hasResults ? .sList : .sNot) }
 	func handleEvent(_ event: ZEvent) -> ZEvent? { return gSearchBarController?.handleEvent(event) }
 
-	var searchText: String? {
+	var essaySearchText: String? {
 		get { return gSearchBarController?.searchBox?.text }
 		set { gSearchBarController?.searchBox?.text = newValue }
 	}

@@ -39,7 +39,7 @@ class ZTraitAssets : ZRecord {
 	func updateFilesFromAssets() {
 		if  let a = assets {
 			for asset in a {
-				ZFile.uniqueFile(asset, databaseID: databaseID)
+				let _ = ZFile.uniqueFile(asset, databaseID: databaseID)
 			}
 		}
 	}
@@ -54,7 +54,7 @@ class ZTraitAssets : ZRecord {
 	// if either exists, create a text attachment from the wrapper
 
 	func textAttachment(for fileName: String) -> NSTextAttachment? {
-		var     url = gFiles.imageURLInAssetsFolder(for: fileName)
+		var     url = gFiles.assetURL(for: fileName)
 		var wrapper : FileWrapper?
 		var  extend : String?
 
@@ -110,7 +110,7 @@ class ZTraitAssets : ZRecord {
 	func assetFromImage(_ image: ZImage, for fileName: String) -> CKAsset? {
 		if  let     asset = assetFromAssetNames(for: fileName) {
 			return  asset
-		} else if let url = writeImageIntoAssetsFolder(image, using: fileName) {
+		} else if let url = gFiles.writeImage(image, using: fileName) {
 			let     asset = CKAsset(fileURL: url)    // side-effect creates asset for dropped image
 
 			if  appendUniquelyToAssetNames(fileName, from: asset) {
@@ -176,20 +176,6 @@ class ZTraitAssets : ZRecord {
 				}
 			}
 		}
-
-		return nil
-	}
-
-	private func writeImageIntoAssetsFolder(_ image: ZImage, using originalName: String? = nil) -> URL? {
-		if  let name = originalName {
-			let url = gFiles.imageURLInAssetsFolder(for: name)
-
-			if  url.writeImage(image) {
-				return url
-			}
-		}
-
-		// check if file exists at url
 
 		return nil
 	}

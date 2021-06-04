@@ -15,20 +15,29 @@ typealias ZDoubleLookup = [String : ZSingleLookup]
 
 class ZFilesRegistry {
 
-	var lookup = [ZDatabaseID : ZDoubleLookup]()
+	var       lookup = [ZDatabaseID : ZDoubleLookup]()
+	var byRecordName = [ZDatabaseID : ZSingleLookup]()
 
 	func register(_ file: ZFile, in dbID: ZDatabaseID) {
-		if  let      type = file.type,
-			let      name = file.name {
-			var      dict = lookup[dbID] ?? ZDoubleLookup()
-			var   subdict = dict  [type] ?? ZSingleLookup()
-			subdict[name] = file
-			dict   [type] = subdict
-			lookup [dbID] = dict
+		if  let           type = file.type,
+			let           name = file.name,
+			let          rName = file.recordName {
+			var          rDict = byRecordName[dbID] ?? ZSingleLookup()
+			var          lDict = lookup      [dbID] ?? ZDoubleLookup()
+			var        subdict = lDict       [type] ?? ZSingleLookup()
+			subdict     [name] = file
+			rDict      [rName] = file
+			lDict       [type] = subdict
+			lookup      [dbID] = lDict
+			byRecordName[dbID] = rDict
 		}
 	}
 
-	func assetExists(for descriptor: ZFileDescriptor?, onCompletion: ZRecordClosure? = nil) {
+	func fileWith(_ recordName: String, in dbID: ZDatabaseID) -> ZFile? {
+		return byRecordName[dbID]?[recordName]
+	}
+
+	func assetExists(for descriptor: ZFileDescriptor?) -> ZFile? {
 		var file: ZRecord?
 
 		if  let    dbid = descriptor?.dbID,
@@ -39,6 +48,6 @@ class ZFilesRegistry {
 			file        = subdict[name]
 		}
 
-		onCompletion?(file)
+		return file as? ZFile
 	}
 }

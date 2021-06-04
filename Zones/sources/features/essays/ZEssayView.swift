@@ -145,7 +145,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "'":      gSwapSmallMapMode(OPTION)
 				case "/":      swapBetweenNoteAndEssay()
 				case kEscape:  gHelpController?.show(flags: flags)
-				case kEquals:  grabSelected()
+				case kEquals:  if SHIFT { grabSelected() } else { return followLinkInSelection() }
 				case kDelete:  deleteGrabbed()
 				case kReturn:  if ANY { grabDone() }
 				default:       return false
@@ -181,7 +181,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
 				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
 				case kReturn:  grabDone()
-				case kEquals:  grabSelected()
+				case kEquals:  if SHIFT { grabSelected() } else { return followLinkInSelection() }
 				default:       return false
 			}
 
@@ -189,7 +189,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if CONTROL {
 			switch key {
 				case "d":      convertToChild(flags)
-				case "h":      showHyperlinkPopup()
+				case "h":      showLinkPopup()
 				case "/":      popNoteAndUpdate()
 				default:       return false
 			}
@@ -1146,17 +1146,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	func grabSelectedTextForSearch() {
-		gSearching.searchText = selectionString
+		gSearching.essaySearchText = selectionString
 	}
 
 	func performSearch(for searchString: String) {
-		gSearching.searchText = searchString
+		gSearching.essaySearchText = searchString
 
 		searchAgain(false)
 	}
 
 	func searchAgain(_ OPTION: Bool) {
-	    let    seek = gSearching.searchText
+	    let    seek = gSearching.essaySearchText
 		var  offset = selectedRange.upperBound + 1
 		let    text = gCurrentEssay?.essayText?.string
 		let   first = text?.substring(toExclusive: offset)
@@ -1378,7 +1378,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return false
 	}
 
-	private func showHyperlinkPopup() {
+	private func showLinkPopup() {
 		let menu = ZMenu(title: "create a link")
 		menu.autoenablesItems = false
 
@@ -1390,7 +1390,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func item(type: ZEssayLinkType) -> ZMenuItem {
-		let  	  item = ZMenuItem(title: type.title, action: #selector(handleHyperlinkPopupMenu(_:)), keyEquivalent: type.rawValue)
+		let  	  item = ZMenuItem(title: type.title, action: #selector(handleLinkPopupMenu(_:)), keyEquivalent: type.rawValue)
 		item   .target = self
 		item.isEnabled = true
 
@@ -1399,9 +1399,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return item
 	}
 
-	@objc private func handleHyperlinkPopupMenu(_ iItem: ZMenuItem) {
-		if  let type = ZEssayLinkType(rawValue: iItem.keyEquivalent) {
-			var link : String? = type.linkType + kColonSeparator
+	@objc private func handleLinkPopupMenu(_ iItem: ZMenuItem) {
+		if  let   type = ZEssayLinkType(rawValue: iItem.keyEquivalent) {
+			let  range = selectedRange
+			let showAs = textStorage?.string.substring(with: range)
+			var   link : String? = type.linkType + kColonSeparator
 
 			func setLink(to appendToLink: String?, replacement: String? = nil) {
 				if  let a = appendToLink, !a.isEmpty {
@@ -1411,54 +1413,68 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				}
 
 				if  link == nil {
-					textStorage?.removeAttribute(.link,               range: selectedRange)
+					textStorage?.removeAttribute(.link,               range: range)
 				} else {
-					textStorage?   .addAttribute(.link, value: link!, range: selectedRange)
+					textStorage?   .addAttribute(.link, value: link!, range: range)
 				}
 
 				if  let r = replacement {
-					textStorage?.replaceCharacters(in: selectedRange, with: r)
+					textStorage?.replaceCharacters(in: range, with: r)
+				}
+
+				setSelectedRange(range)
+			}
+
+			func displayUploadDialog() {
+				ZFiles.presentOpenPanel() { (iAny) in
+					if  let      url = iAny as? URL {
+						let    asset = CKAsset(fileURL: url)
+						if  let file = ZFile.uniqueFile(asset, databaseID: gDatabaseID),
+							let name = file.recordName {
+
+							setLink(to: name, replacement: showAs)
+						}
+					} else if let panel = iAny as? NSPanel {
+						panel.title = "Import"
+					}
 				}
 			}
 
 			func displayLinkDialog() {
-				let showAs = textStorage?.string.substring(with: selectedRange)
-
 				gEssayController?.modalForLink(type: type, showAs) { path, replacement in
 					setLink(to: path, replacement: replacement)
 				}
 			}
 
 			switch type {
-				case .hClear: setLink(to: nil)
-				case .hFile,
-					 .hEmail,
+				case .hEmail,
 					 .hWeb:   displayLinkDialog()
+				case .hFile:  displayUploadDialog()
+				case .hClear: setLink(to: nil)
 				default:      setLink(to: gSelecting.pastableRecordName)
 			}
 		}
 	}
 
-	@discardableResult private func followCurrentLink(within range: NSRange) -> Bool {
-		setSelectedRange(range)
-
+	func followLinkInSelection() -> Bool {
 		if  let  link = currentLink as? String {
 			let parts = link.components(separatedBy: kColonSeparator)
 
 			if  parts.count > 1,
-				let  one = parts.first?.first,                          // first character of first part
-				let name = parts.last,
-				let type = ZEssayLinkType(rawValue: String(one)) {
-				let zone = gRemoteStorage.maybeZoneForRecordName(name)  // find zone whose record name == name
+				let     one = parts.first?.first,                          // first character of first part
+				let    name = parts.last,
+				let    type = ZEssayLinkType(rawValue: String(one)) {
+				let zRecord = gRemoteStorage.maybeZRecordForRecordName(name)  // find zone whose record name == name
 				switch type {
 					case .hEmail:
 						link.openAsURL()
 						return true
 					case .hFile:
-						name.asBundleResource?.openAsURL()
+						gFilesRegistry.fileWith(name, in: gDatabaseID)?.activate()
+
 						return true
 					case .hIdea:
-						if  let  grab = zone {
+						if  let  grab = zRecord as? Zone {
 							let eZone = gCurrentEssayZone
 
 							FOREGROUND {
@@ -1475,7 +1491,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 							return true
 						}
 					case .hEssay, .hNote:
-						if  let target = zone {
+						if  let target = zRecord as? Zone {
 
 							save()
 
@@ -1516,7 +1532,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {
-		return followCurrentLink(within: NSRange(location: charIndex, length: 0))
+		setSelectedRange(NSRange(location: charIndex, length: 0))
+
+		return followLinkInSelection()
 	}
 
 }

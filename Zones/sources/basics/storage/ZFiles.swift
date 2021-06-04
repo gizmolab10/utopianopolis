@@ -39,7 +39,7 @@ class ZFiles: NSObject {
 	var           _assetsURL : URL?
 	var            _filesURL : URL?
 	var  approximatedRecords : Int { return fileSize / 900 }
-	func imageURLInAssetsFolder(for fileName: String) -> URL { return assetsURL.appendingPathComponent(fileName) }
+	func assetURL(for fileName: String) -> URL { return assetsURL.appendingPathComponent(fileName) }
 
 	var fileSize : Int {
 		var result = 0
@@ -207,6 +207,37 @@ class ZFiles: NSObject {
 		}
 	}
 
+	func writeImage(_ image: ZImage, using originalName: String? = nil) -> URL? {
+		if  let name = originalName {
+			let url = assetURL(for: name)
+
+			if  url.writeData(image.jpeg) {
+				return url
+			}
+		}
+
+		// check if file exists at url
+
+		return nil
+	}
+
+	func unqiueAssetPath(for file: ZFile) -> String? {
+		// if it is already in the Assets folder, grab it, else create it and grab that
+
+		if  let data = file.asset,
+			let filename = file.filename {
+			let url = assetURL(for: filename)
+
+			if !url.fileExists(),
+			    url.writeData(data) {
+			}
+
+			return url.path
+		}
+
+		return nil
+	}
+
     // MARK:- heavy lifting
     // MARK:-
 
@@ -372,10 +403,10 @@ class ZFiles: NSObject {
             let    genericFileURL = filesURL.appendingPathComponent(name + normalExtension)
             let      cloudFileURL = filesURL.appendingPathComponent(cloudName + normalExtension)
             let    cloudBackupURL = filesURL.appendingPathComponent(cloudName + backupExtension)
-            let cloudBackupExists = manager.fileExists(atPath: cloudBackupURL.path)
-            var     genericExists = manager.fileExists(atPath: genericFileURL.path)
-            let      backupExists = manager.fileExists(atPath:      backupURL.path)
-            let       cloudExists = manager.fileExists(atPath:   cloudFileURL.path)
+            let cloudBackupExists = cloudBackupURL.fileExists()
+            var     genericExists = genericFileURL.fileExists()
+            let      backupExists =      backupURL.fileExists()
+            let       cloudExists =   cloudFileURL.fileExists()
             path                  = genericFileURL.path
 
             do {

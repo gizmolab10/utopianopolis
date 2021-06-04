@@ -502,11 +502,11 @@ class ZCoreDataStack: NSObject {
 		var  totalAquired = acquired
 		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
 		request.predicate = NSPredicate(format: "parentRID IN %@", zones.recordNames)
-		let       fetched = fetchUsing(request: request, type: kZoneType)
+		let      zRecords = fetchUsing(request: request, type: kZoneType)
 
 		printDebug(.dData, "loading children from CD for \(zones.count)")
 
-		for zRecord in fetched {
+		for zRecord in zRecords {
 			if  let zone = zRecord as? Zone,
 				let name = zone.recordName,
 				totalAquired.contains(name) == false {
@@ -518,6 +518,24 @@ class ZCoreDataStack: NSObject {
 
 		printDebug(.dData, "retrieved \(retrieved.count)")
 		onCompletion?(retrieved)
+	}
+
+	func loadFile(for descriptor: ZFileDescriptor) -> ZFile? {
+		if  let name = descriptor.name,
+		    let type = descriptor.type,
+		    let dbID = descriptor.dbID {
+			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kFileType)
+			request.predicate = NSPredicate(format: "name = %@ AND type = %@ AND dbid = %@", name, type, dbID.identifier)
+			let      zRecords = fetchUsing(request: request, type: kFileType)
+
+			for zRecord in zRecords {
+				if  let    file = zRecord as? ZFile {
+					return file
+				}
+			}
+		}
+
+		return nil
 	}
 
 	// MARK:- internals
@@ -778,12 +796,10 @@ class ZCoreDataStack: NSObject {
 		setClosures(array, for: entityName, dbID: dbID)
 	}
 
-	func zRecordExistsAsync(for descriptor: ZEntityDescriptor, onExistence: @escaping ZRecordClosure) {
-		existsForEntityNameAsync(descriptor.entityName, dbID: descriptor.databaseID, entity: descriptor, file: nil, onExistence: onExistence)
-	}
-
 	func fileExistsAsync(for descriptor: ZFileDescriptor?, dbID: ZDatabaseID, onExistence: @escaping ZRecordClosure) {
-		existsForEntityNameAsync(kFileType, dbID: dbID, entity: nil, file: descriptor, onExistence: onExistence)
+		let entity = ZEntityDescriptor(entityName: kFileType, recordName: nil, databaseID: dbID)
+
+		existsForEntityNameAsync(kFileType, dbID: dbID, entity: entity, file: descriptor, onExistence: onExistence)
 	}
 
 	// MARK:- vaccuum
