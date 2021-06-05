@@ -120,7 +120,7 @@ class ZSearchResultsController: ZGenericTableController {
 		result.append(NSMutableAttributedString(string: string))
 
 		if  let searched = searchText {
-			for text in searched.components(separatedBy: " ") {
+			for text in searched.components(separatedBy: kSpace) {
 				if  let ranges = string.rangesMatching(text) {				      // find all matching substring ranges
 					for range in ranges {
 						let r = range.offsetBy(size)

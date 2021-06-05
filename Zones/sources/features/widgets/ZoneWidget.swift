@@ -62,7 +62,7 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 
 	var identifier: String {
 		let parts = description.components(separatedBy: ", ")
-		var result = ""
+		var result = kEmpty
 
 		for part in parts {
 			let strip = part.spacesStripped
@@ -539,7 +539,7 @@ class ZoneWidget: ZView {
 			debug = "[DASH]   "
         }
         
-		printDebug(.dEdit, debug + (widgetZone?.unwrappedName ?? ""))
+		printDebug(.dEdit, debug + (widgetZone?.unwrappedName ?? kEmpty))
         strokeColor?.setStroke()
         fillColor?  .setFill()
         path.stroke()

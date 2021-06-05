@@ -36,7 +36,7 @@ class ZDataController: ZGenericController {
 	}
 
 	var modificationDateText: String {
-		var     text = ""
+		var     text = kEmpty
 		if  let zone = currentZone,
 			let date = zone.modificationDate {
 			text     = date.easyToReadDateTime
@@ -58,7 +58,7 @@ class ZDataController: ZGenericController {
 		let   root = gRecords?.rootZone
 		let  depth = gCloud?.maxLevel ?? 0
 		let  count = (root?.progenyCount ?? 0) + 1 // add one for root
-		let suffix =    count != 1 ? "s" : ""
+		let suffix =    count != 1 ? "s" : kEmpty
 		let result = "\(count) idea\(suffix), \(depth) deep"
 
 		return result
@@ -68,13 +68,13 @@ class ZDataController: ZGenericController {
 		let    cdStatus = gCoreDataStack.statusText
         let    opStatus =       gBatches.statusText
 		let timerStatus =        gTimers.statusText
-		let        text = cdStatus ?? opStatus ?? timerStatus ?? "all data synchronized\(gCloudStatusIsActive ? "" : " locally")"
+		let        text = cdStatus ?? opStatus ?? timerStatus ?? "all data synchronized\(gCloudStatusIsActive ? kEmpty : " locally")"
 
 		return text
     }
 
 	var zoneRecordNameText: String {
-		var text = ""
+		var text = kEmpty
 
 		if  let zone = currentZone,
 			let name = zone.recordName {
@@ -93,7 +93,7 @@ class ZDataController: ZGenericController {
 	var synopsisText: String {
 		guard let current = currentZone,
 			  gIsReadyToShowUI else {
-			return ""
+			return kEmpty
 		}
 
 		current.updateAllProgenyCounts()

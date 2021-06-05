@@ -117,7 +117,7 @@ extension NSObject {
 
 	func                  noop()                                {}
     func           performance(_ iMessage: Any?)                { log(iMessage) }
-    func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
+    func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? kEmpty)) }
 	func     printCurrentFocus()                                { gHere.widget?.printView() }
 	func     printCurrentEssay()                                { gEssayView?.printView() }
 
@@ -126,12 +126,12 @@ extension NSObject {
 	func rawColumnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
             prefix.appendSpacesToLength(kLogTabStop)
-            printDebug(mode, "\(prefix)\(iSecond ?? "")")
+            printDebug(mode, "\(prefix)\(iSecond ?? kEmpty)")
         }
     }
 
     func log(_ iMessage: Any?) {
-        if  let   message = iMessage as? String, message != "" {
+        if  let   message = iMessage as? String, message != kEmpty {
             printDebug(.dLog, message)
         }
     }
@@ -143,7 +143,7 @@ extension NSObject {
 
 		let duration = Date().timeIntervalSince(start)
 
-		printDebug(.dTime, duration.stringToTwoDecimals + " " + message)
+		printDebug(.dTime, duration.stringToTwoDecimals + kSpace + message)
 	}
 
     func time(of title: String, _ closure: Closure) {
@@ -195,7 +195,7 @@ extension NSObject {
         })
     }
 
-	func showThesaurus(for string: String = "") {
+	func showThesaurus(for string: String = kEmpty) {
 		let url = NSURL(string: "https://www.thesaurus.com/browse/\(string)")
 		url?.open()
 	}
@@ -227,7 +227,7 @@ extension NSObject {
                 if  let string       = value as? String {
                     let parts        = string.components(separatedBy: kTimeInterval + kColonSeparator)
                     if  parts.count > 1,
-                        parts[0]    == "",
+                        parts[0]    == kEmpty,
                         let interval = TimeInterval(parts[1]) {
                         goodValue    = Date(timeIntervalSinceReferenceDate: interval) as NSObject
                         translated   = true
@@ -530,7 +530,7 @@ extension CKRecord {
     }
 
 	var traitType: String {
-		var string = ""
+		var string = kEmpty
 
 		if  let        type = self["type"] as? String,
 			let       trait = ZTraitType(rawValue: type),
@@ -1026,8 +1026,8 @@ extension Array {
 	}
 
     func applyIntoString(closure: AnyToStringClosure) -> String {
-        var separator = ""
-        var    string = ""
+        var separator = kEmpty
+        var    string = kEmpty
 
         for object in self {
             if let message = closure(object) {
@@ -1365,8 +1365,8 @@ extension ZFont {
 extension NSFontDescriptor {
 
 	var string: String {
-		var result = ""
-		var separator = ""
+		var    result = kEmpty
+		var separator = kEmpty
 
 		for (name, attribute) in fontAttributes {
 			result.append(separator + name.rawValue + gSeparatorAt(level: 3) + "\(attribute)")
@@ -1725,15 +1725,15 @@ extension String {
 
 	var searchable: String {
 		return lowercased()
-			.replacingEachCharacter(in: ",;@!(){}\\\"",              with: "")
-			.replacingEachCharacter(in: ".:_-='?/\r\n",              with: " ")
-			.replacingEachString   (in: ["%2f", "%3a", "   ", "  "], with: " ")
+			.replacingEachCharacter(in: ",;@!(){}\\\"",              with: kEmpty)
+			.replacingEachCharacter(in: ".:_-='?/\r\n",              with: kSpace)
+			.replacingEachString   (in: ["%2f", "%3a", "   ", "  "], with: kSpace)
 	}
 
 	var unCamelcased: String {
 		guard self.count > 0 else { return self }
 
-		var newString: String = ""
+		var newString: String = kEmpty
 		let         uppercase = CharacterSet.uppercaseLetters
 		let             first = unicodeScalars.first!
 
@@ -1741,7 +1741,7 @@ extension String {
 
 		for scalar in unicodeScalars.dropFirst() {
 			if  uppercase.contains(scalar) {
-				newString.append(" ")
+				newString.append(kSpace)
 			}
 			let character = Character(scalar)
 			newString.append(character)
@@ -1756,7 +1756,7 @@ extension String {
 	var maybeRecordName: String? {
 		if  let   parts  = components, parts.count > 1 {
 			let    name  = parts[2]
-			return name != "" ? name : kRootName // by design: empty component means root
+			return name != kEmpty ? name : kRootName // by design: empty component means root
 		}
 
 		return nil
@@ -1765,18 +1765,18 @@ extension String {
 	var maybeDatabaseID: ZDatabaseID? {
 		if  let   parts  = components {
 			let    dbID  = parts[0]
-			return dbID == "" ? nil : ZDatabaseID(rawValue: dbID)
+			return dbID == kEmpty ? nil : ZDatabaseID(rawValue: dbID)
 		}
 
 		return nil
 	}
 
 	var maybeZone: Zone? {
-		if  self             != "",
+		if  self             != kEmpty,
 			let          name = maybeRecordName,
 			let         parts = components {
 			let rawIdentifier = parts[0]
-			let          dbID = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
+			let          dbID = rawIdentifier == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
 			let      zRecords = gRemoteStorage.zRecords(for: dbID)
 			let          zone = zRecords?.maybeZoneForRecordName(name)
 
@@ -1829,7 +1829,7 @@ extension String {
         return self[i ..< i + 1]
     }
 
-	static func pluralized(_ iValue: Int, unit: String = "", plural: String = "s", followedBy: String = "") -> String { return iValue <= 0 ? "" : "\(iValue) \(unit)\(iValue == 1 ? "" : "\(plural)")\(followedBy)" }
+	static func pluralized(_ iValue: Int, unit: String = kEmpty, plural: String = "s", followedBy: String = kEmpty) -> String { return iValue <= 0 ? kEmpty : "\(iValue) \(unit)\(iValue == 1 ? kEmpty : "\(plural)")\(followedBy)" }
     static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
     func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }
     func substring(toExclusive:   Int) -> String  { return String(self[..<index(at: toExclusive)]) }
@@ -1875,7 +1875,7 @@ extension String {
     }
 
     var color: ZColor? {
-        if self != "" {
+        if  self != kEmpty {
             let pairs = components(separatedBy: kCommaSeparator)
             var   red = 0.0
             var  blue = 0.0
@@ -1942,7 +1942,7 @@ extension String {
             after = after.substring(fromInclusive: 1) // strip starting space
         }
 
-        while before.ends(withAnyCharacterIn: kSpace) && after == "" {
+        while before.ends(withAnyCharacterIn: kSpace) && after == kEmpty {
             before = before.substring(toExclusive: before.length - 1) // strip trailing space
         }
 
@@ -2002,7 +2002,7 @@ extension String {
 	mutating func appendSpacesToLength(_ iLength: Int) {
 		if 0 < iLength {
 			while length < iLength {
-				append(" ")
+				append(kSpace)
 			}
 		}
 	}
@@ -2036,31 +2036,31 @@ extension String {
 		return zones?.applyIntoString()  { object -> (String?) in
 			if  let zone  = object as? Zone {
 				let name  = zone.decoratedName
-				if  name != "" {
+				if  name != kEmpty {
 					return name
 				}
 			}
 
 			return nil
-		} ?? ""
+		} ?? kEmpty
 	}
 
     static func forOperationIDs (_ iIDs: ZOpIDsArray?) -> String {
         return iIDs?.applyIntoString()  { object -> (String?) in
             if  let operation  = object as? ZOperationID {
                 let name  = "\(operation)"
-                if  name != "" {
+                if  name != kEmpty {
                     return name
                 }
             }
 
             return nil
-            } ?? ""
+            } ?? kEmpty
     }
 
     static func *(_ input: String, _ multiplier: Int) -> String {
         var  count = multiplier
-        var output = ""
+        var output = kEmpty
 
         while count > 0 {
             count  -= 1
@@ -2081,10 +2081,10 @@ extension String {
     }
 
     static func toRoman(number: Int) -> String {
-        let romanValues = ["m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv", "i"]
-        let arabicValues = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+        let   romanValues = ["m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv", "i"]
+        let  arabicValues = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
         var startingValue = number
-        var romanValue = ""
+        var    romanValue = kEmpty
 
         for (index, romanChar) in romanValues.enumerated() {
             let arabicValue = arabicValues[index]
@@ -2151,7 +2151,7 @@ extension String {
 
 	func repeatOf(_ length: Int) -> String {
 		var  count = length
-		var result = ""
+		var result = kEmpty
 
 		while count > 0 {
 			count -= 1
@@ -2163,10 +2163,10 @@ extension String {
 	}
 
 	func surround(with repeater: String) -> String {
-		let inner = smallSurround(with: " ").smallSurround(with: repeater)
+		let inner = smallSurround(with: kSpace).smallSurround(with: repeater)
 		let outer = repeater.repeatOf(count + 8)
 
-		if  repeater == "" {
+		if  repeater == kEmpty {
 			return "\n\(inner)\n"
 		} else {
 			return "\n\(outer)\n\(inner)\n\(outer)\n"

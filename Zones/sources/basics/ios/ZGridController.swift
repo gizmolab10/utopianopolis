@@ -47,7 +47,7 @@ class ZGridController: UICollectionViewController {
 		cell.addBorder(thickness: 0.5, radius: 5.0, color: kLightGrayColor.cgColor)
 		cell.backgroundColor = .clear
 		cell.title.textColor = .blue
-		cell.title.text = ""
+		cell.title.text = kEmpty
 		cell.title.font = ZFont.systemFont(ofSize: 24.0)
 		cell.title.isUserInteractionEnabled = false
 		

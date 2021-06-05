@@ -70,7 +70,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.dShowDestroy,     "add destroy bookmark"),
 				(.dShowDuplicates,  "indicate zones with duplicates")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
-			.joined(separator: " ")
+			.joined(separator: kSpace)
 	}
 }
 
@@ -134,7 +134,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dTimers, " timers"),
 				(.dLevels, " levels")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
-			.joined(separator: " ")
+			.joined(separator: kSpace)
 	}
 
 	static func toggle(_ mode: ZPrintMode) {

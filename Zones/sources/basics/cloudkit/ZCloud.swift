@@ -119,33 +119,33 @@ class ZCloud: ZRecords {
     }
 
     func zoneSearchPredicateFrom(_ searchString: String) -> NSPredicate? {
-        let    tokens = searchString.components(separatedBy: " ")
-        var    string = ""
-        var separator = ""
+        let    tokens = searchString.components(separatedBy: kSpace)
+        var    string = kEmpty
+        var separator = kEmpty
 
         for token in tokens {
-            if  token    != "" {
+            if  token    != kEmpty {
                 string    = "\(string)\(separator)SELF CONTAINS \"\(token.escaped)\""
                 separator = " AND "
             }
         }
 
-        return string == "" ? nil : NSPredicate(format: string)
+        return string == kEmpty ? nil : NSPredicate(format: string)
     }
 
 	func noteSearchPredicateFrom(_ searchString: String) -> NSPredicate? {
-		let    tokens = searchString.components(separatedBy: " ")
-		var    string = ""
-		var separator = ""
+		let    tokens = searchString.components(separatedBy: kSpace)
+		var    string = kEmpty
+		var separator = kEmpty
 
 		for token in tokens {
-			if  token    != "" {
+			if  token    != kEmpty {
 				string    = String(format: "%@%@SELF.strings CONTAINS \"%@\"", string, separator, token)
 				separator = " AND "
 			}
 		}
 
-		return string == "" ? nil : NSPredicate(format: string)
+		return string == kEmpty ? nil : NSPredicate(format: string)
 	}
 
 	func establishManifest(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
@@ -186,7 +186,7 @@ class ZCloud: ZRecords {
                 let       rootID = rootIDs[iIndex]
                 let   recordName = rootID.rawValue
 				let       isMine = self.databaseID == .mineID
-                var         name = self.databaseID.userReadableString + " " + recordName
+                var         name = self.databaseID.userReadableString + kSpace + recordName
                 let  recurseNext = { createFor?(iIndex + 1) }
 
                 switch rootID {

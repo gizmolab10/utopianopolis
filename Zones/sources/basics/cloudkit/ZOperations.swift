@@ -82,12 +82,12 @@ enum ZOperationID: Int, CaseIterable {
 	var isDoneOp    : Bool   { return     doneOps.contains(self) }
 	var showCount   : Bool   { return    countOps.contains(self) }
 	var description : String { return "\(self)".substring(fromInclusive: 1).unCamelcased }                // space separated words
-	var countStatus : String { return !showCount ? "" : " \(countText)" }
+	var countStatus : String { return !showCount ? kEmpty : " \(countText)" }
 	var fullStatus  : String { return description + countStatus }
 
 	var countText : String {
 		let (z, p) = gRemoteStorage.totalRecordsCounts     // count of z records
-		let suffix = p == 0 ? "" :  " (of \(p))"
+		let suffix = p == 0 ? kEmpty :  " (of \(p))"
 		return "\(z)" + suffix
 	}
 
@@ -138,13 +138,13 @@ class ZOperations: NSObject {
 	var        opDuration :   TimeInterval  { return -(lastOpStart?.timeIntervalSinceNow ?? 0.0) }
 	var      shouldCancel :           Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && (opDuration > 5.0) }
 	var     debugTimeText :         String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
-	func printOp(_ message: String = "")    { printDebug(.dOps, operationText + message) }
+	func printOp(_ message: String = kEmpty) { printDebug(.dOps, operationText + message) }
 	func unHang()                           { if gStartupLevel != .firstTime { onCloudResponse?(0) } }
 	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws                                  {} 
 	func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
     var operationText: String {
-//		let d = gBatches.currentDatabaseID?.identifier ?? " " // requires an extra trailing space seperator
+//		let d = gBatches.currentDatabaseID?.identifier ?? kSpace // requires an extra trailing space seperator
 		let o = currentOp.description
 
         return o

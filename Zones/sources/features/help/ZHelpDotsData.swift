@@ -8,7 +8,7 @@
 
 import Foundation
 
-let dotsPrefixArray = Array(repeating: "", count: 3 * 8)
+let dotsPrefixArray = Array(repeating: kEmpty, count: 3 * 8)
 
 class ZHelpDotsData: ZHelpData {
 
@@ -37,7 +37,7 @@ class ZHelpDotsData: ZHelpData {
 		"",						"",																				"",
 		"!REVEAL DOT",			"click to conceal, reveal or activate",											"",
 		"",						"",																				"",
-		"_no dot indicates nothing to reveal (no list, note, email or hyperlink)",							"", "",
+		"_no dot indicates nothing to reveal (no list, note, email or hyperlink)",							"", kEmpty,
 		"",						"",																				"",
 		"_when list is visible","click to hide list",															"",
 		".e",					"points to the left",															"",

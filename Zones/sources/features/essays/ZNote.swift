@@ -77,7 +77,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			autoDelete     = false
 
 			if  gShowEssayTitles {
-				let       name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
+				let       name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: kEmpty)
 				zone?.zoneName = name
 			}
 
@@ -195,7 +195,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	@discardableResult func updatedRanges() -> (NSMutableAttributedString, String)? {
 		let hideTitles  = !gShowEssayTitles
-		if  let    name = hideTitles ? "" : zone?.zoneName,
+		if  let    name = hideTitles ? kEmpty : zone?.zoneName,
 			let    text = noteTrait?.noteText {
 			let  spacer = kNoteIndentSpacer * titleInsets
 			let sOffset = hideTitles ? 0 : spacer.length

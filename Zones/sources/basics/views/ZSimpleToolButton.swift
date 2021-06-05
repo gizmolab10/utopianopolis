@@ -11,8 +11,8 @@ import Foundation
 class ZSimpleToolButton: ZTooltipButton {
 
 	@IBOutlet var controller: ZSimpleToolsController?
-	var downTitle = ""
-	var   upTitle = ""
+	var downTitle = kEmpty
+	var   upTitle = kEmpty
 
 	override func awakeFromNib() {
 		downTitle = alternateTitle.isEmpty ? title : alternateTitle

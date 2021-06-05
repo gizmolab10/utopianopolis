@@ -8,7 +8,7 @@
 
 import Foundation
 
-let essayPrefixArray = Array(repeating: "", count: 3 * 14)
+let essayPrefixArray = Array(repeating: kEmpty, count: 3 * 14)
 
 class ZHelpEssayData: ZHelpData {
 
@@ -32,30 +32,30 @@ class ZHelpEssayData: ZHelpData {
 
 	let essayColumnTwo: StringsArray = essayPrefixArray + [
 		"",																								"",	"",
-		"!KEYS, ALWAYS",							 													"", "",
+		"!KEYS, ALWAYS",							 													"", kEmpty,
 		"",																								"",	"",
-		"_KEY",			 																				"", "",
+		"_KEY",			 																				"", kEmpty,
 		"0ESCAPE", 						"discard unsaved changes and exit the editor",			 			"",
 		"",																								"",	"",
-		"_COMMAND + KEY", 																				"", "",
+		"_COMMAND + KEY", 																				"", kEmpty,
 		"0RETURN", 						"save changes and exit the editor",									"",
 		"0[ or ]",						"save changes and edit the prior or next essay (or note)",			"",
 		"0S",							"save changes",														"",
 		"0T",							"lookup selection in thesaurus",									"",
 		"",																								"",	"",
-		"_COMMAND + OPTION + CONTROL + KEY", 															"", "",
+		"_COMMAND + OPTION + CONTROL + KEY", 															"", kEmpty,
 		"0LEFT ARROW", 					"edit the containing essay",										"",
 		"",																								"",	"",
 		"",																								"",	"",
-		"!KEYS, WHEN NO NOTES ARE GRABBED",			 													"", "",
+		"!KEYS, WHEN NO NOTES ARE GRABBED",			 													"", kEmpty,
 		"",																								"",	"",
-		"_COMMAND + KEY", 																				"", "",
+		"_COMMAND + KEY", 																				"", kEmpty,
 		"0N",							"save changes and toggle between essay and note",					"",
 		"",																								"",	"",
 		"",																								"",	"",
-		"!WHEN ONE OR MORE NOTES ARE GRABBED (e.g., see bottom left)", 									"", "",
+		"!WHEN ONE OR MORE NOTES ARE GRABBED (e.g., see bottom left)", 									"", kEmpty,
 		"",																								"",	"",
-		"_KEY",			 																				"", "",
+		"_KEY",			 																				"", kEmpty,
 		"0ESCAPE", 						"ungrab them",			 											"",
 		"0DELETE", 						"destroy and remove them",											"",
 		"0EQAUALS",						"grab selected text, or clear grab",								"",

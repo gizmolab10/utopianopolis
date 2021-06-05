@@ -64,7 +64,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	}
 
 	func handleEvent(_ event: ZEvent) -> ZEvent? {
-		let    string = event.input ?? ""
+		let    string = event.input ?? kEmpty
 		let     flags = event.modifierFlags
 		let   COMMAND = flags.isCommand
 		let       key = string[string.startIndex].description
@@ -110,7 +110,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	func updateSearchBox() {
 		if  let text = activeSearchBoxText,
 			text.length > 0,
-			!["", " ", "  "].contains(text) {
+			![kEmpty, kSpace, "  "].contains(text) {
 			gSearching.performSearch(for: text)
 		} else {
 			endSearch()

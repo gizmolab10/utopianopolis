@@ -461,7 +461,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		delegate                     = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
 
 		if  let length = textStorage?.length, length > 0 {
-			textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
+			textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: kEmpty)
 		}
 	}
 
@@ -1256,10 +1256,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if        flags.isDual {
 				child(named: "idea", withText: text)
 			} else if flags.isOption {
-				child(named: text,   withText: "")
+				child(named: text,   withText: kEmpty)
 			} else {
 				let child = Zone.uniqueZoneRenamed(text, databaseID: dbID)   	// create new (to be child) zone from text
-				insertText("", replacementRange: selectedRange)	            // remove text
+				insertText(kEmpty, replacementRange: selectedRange)	            // remove text
 				parent.addChildNoDuplicate(child)
 				child.asssureIsVisible()
 				save()

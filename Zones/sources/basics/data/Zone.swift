@@ -65,7 +65,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var   matchesFilterOptions :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
 	override var                isAZone :               Bool  { return true }
 	var                smallMapRootName :             String  { return isFavoritesRoot ? kFavoritesRootName : isRecentsRoot ? kRecentsRootName : emptyName }
-	var                     clippedName :             String  { return !gShowToolTips ? "" : unwrappedName }
+	var                     clippedName :             String  { return !gShowToolTips ? kEmpty : unwrappedName }
 	var                           level :                Int  { return (parentZone?.level ?? 0) + 1 }
 	var                           count :                Int  { return children.count }
 	var                      isBookmark :               Bool  { return bookmarkTarget != nil }
@@ -272,7 +272,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				if  zoneLink?.contains("Optional(") ?? false { // repair consequences of an old, but now fixed, bookmark bug
-					zoneLink = zoneLink?.replacingOccurrences(of: "Optional(\"", with: "").replacingOccurrences(of: "\")", with: "")
+					zoneLink = zoneLink?.replacingOccurrences(of: "Optional(\"", with: kEmpty).replacingOccurrences(of: "\")", with: kEmpty)
 				}
 
 				crossLinkMaybe = zoneLink?.maybeZone
@@ -464,7 +464,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var decoration: String {
-		var d = ""
+		var d = kEmpty
 
 		if  isInTrash {
 			d.append("T")
@@ -483,13 +483,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		if  count != 0 {
-			let s  = d == "" ? "" : " "
+			let s  = d == kEmpty ? kEmpty : kSpace
 			let c  = s + "\(count)"
 
 			d.append(c)
 		}
 
-		if  d != "" {
+		if  d != kEmpty {
 			d  = "(\(d))  "
 		}
 
@@ -505,7 +505,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  colorMaybe == nil {
 				if  let b = bookmarkTarget {
 					return b.color
-				} else if let c = zoneColor, c != "" {
+				} else if let c = zoneColor, c != kEmpty {
 					computed    = c.color
 					colorMaybe  = computed
 				} else if let p = parentZone, p != self, hasCompleteAncestorPath(toColor: true) {
@@ -533,7 +533,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				bookmarkTarget?.color  = newValue
 			} else if      colorMaybe != computed {
 				colorMaybe             = computed
-				zoneColor              = computed?.string ?? ""
+				zoneColor              = computed?.string ?? kEmpty
 			}
 		}
 	}
@@ -567,7 +567,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  let          b = bookmarkTarget {   // changing a bookmark changes its target
 				b.colorized    = newValue           // when drawn, a bookmark gets its color from its target
 			} else {
-				let attributes = zoneAttributes ?? ""
+				let attributes = zoneAttributes ?? kEmpty
 				let       type = ZoneAttributeType.invertColorize
 				let oldValue   = attributes.contains(type.rawValue)
 
@@ -579,10 +579,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func alterAttribute(_ type: ZoneAttributeType, remove: Bool = false) {
-		var attributes = zoneAttributes ?? ""
+		var attributes = zoneAttributes ?? kEmpty
 
 		if  remove {
-			attributes = attributes.replacingOccurrences(of: type.rawValue, with: "")
+			attributes = attributes.replacingOccurrences(of: type.rawValue, with: kEmpty)
 		} else if !attributes.contains(type.rawValue) {
 			attributes.append(type.rawValue)
 		}
@@ -1412,8 +1412,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// grows with each unique search
 
 	func addToLocalSearchIndex() {
-		if  let name = zoneName,
-			let   rr = records {
+		if  let  name = zoneName,
+			let    rr = records {
 			rr.appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
 				var r = iRecords
 
@@ -1469,7 +1469,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  recordName != nil {
 
 			let isBadLink: StringToBooleanClosure = { iString -> Bool in
-				let badLinks = ["", "-", "not"]
+				let badLinks = [kEmpty, "-", "not"]
 
 				return iString == nil || badLinks.contains(iString!)
 			}
@@ -1504,8 +1504,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func clearColor() {
-		zoneColor = ""
-		colorMaybe    = nil
+		zoneColor  = kEmpty
+		colorMaybe = nil
 	}
 
 	static func !== ( left: Zone, right: Zone) -> Bool {
@@ -2860,7 +2860,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func combineIntoParent() {
 		if  let      parent = parentZone,
 			let    original = parent.zoneName {
-			let   childName = zoneName ?? ""
+			let   childName = zoneName ?? kEmpty
 			let childLength = childName.length
 			let    combined = original.stringBySmartly(appending: childName)
 			let       range = NSMakeRange(combined.length - childLength, childLength)
@@ -3100,7 +3100,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let  margin = kSpace * (4 * iInset)
 		let    type = ZOutlineLevelType(rawValue: indices.character(at: iInset % modulus))
 		let  letter = String.character(at: iIndex, for: type!)
-		var  string = margin + letter + marks.character(at: (iInset / modulus) % marks.count) + " " + unwrappedName + kReturn
+		var  string = margin + letter + marks.character(at: (iInset / modulus) % marks.count) + kSpace + unwrappedName + kReturn
 
 		for (index, child) in children.enumerated() {
 			string += child.outlineString(for: iInset + 1, at: index)
@@ -3219,7 +3219,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isGroupOwner   = g == self || g == t
 		p.isDrop         = self == gDragDropZone
 		p.showSideDot    = isCurrentSmallMapBookmark
-		p.traitType      = (k.count < 1) ? "" : k[0]
+		p.traitType      = (k.count < 1) ? kEmpty : k[0]
 		p.fill           = isFilled ? c.lighter(by: 2.5) : gBackgroundColor
 		p.accessType     = directAccess == .eProgenyWritable ? .sideDot : .vertical
 		p.childCount     = (gCountsMode == .progeny) ? progenyCount : indirectCount
@@ -3239,7 +3239,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:-
 
 	func convertToTitledLine() {
-		zoneName  = kHalfLineOfDashes + " " + unwrappedName + " " + kHalfLineOfDashes
+		zoneName  = kHalfLineOfDashes + kSpace + unwrappedName + kSpace + kHalfLineOfDashes
 		colorized = true
 	}
 

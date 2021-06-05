@@ -137,8 +137,8 @@ func gSwapSmallMapMode(_ OPTION: Bool = false) {
 }
 
 func gStoreProgressTimes() {
-	var separator = ""
-	var  storable = ""
+	var separator = kEmpty
+	var  storable = kEmpty
 
 	for (op, value) in gProgressTimes {
 		if  value >= 1.5 {
@@ -193,7 +193,7 @@ var gCurrentEvent: ZEvent? {
 var gExpandedZones : StringsArray {
     get {
         if  gExpanded == nil {
-            let  value = getPreferencesString(for: kExpandedZones, defaultString: "")
+            let  value = getPreferencesString(for: kExpandedZones, defaultString: kEmpty)
             gExpanded  = value?.components(separatedBy: kColonSeparator)
         }
 
@@ -320,7 +320,7 @@ var gWindowRect: CGRect {
 
 var gEmailTypesSent: String {
     get {
-        let pref = getPreferenceString(for: kEmailTypesSent) ?? ""
+        let pref = getPreferenceString(for: kEmailTypesSent) ?? kEmpty
         let sent = gUser?.sentEmailType ?? pref
         
         setPreferencesString(sent, for: kEmailTypesSent)
@@ -624,7 +624,7 @@ var gWorkMode: ZWorkMode = .wStartupMode {
 
 var gCurrentEssay: ZNote? {
 	didSet {
-		setPreferencesString(gCurrentEssay?.identifier() ?? "", for: kCurrentEssay)
+		setPreferencesString(gCurrentEssay?.identifier() ?? kEmpty, for: kCurrentEssay)
 
 		if  gHasFinishedStartup, // avoid creating confused recents view
 			gIsRecentlyMode {

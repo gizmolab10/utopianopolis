@@ -162,7 +162,7 @@ class ZTrait: ZTraitAssets {
             }
         }
 
-        return ""
+        return kEmpty
     }
 
     var traitType: ZTraitType? {

@@ -135,7 +135,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	}
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-		printDebug(.dEdit, " TRY     " + (widgetZone?.unwrappedName ?? ""))
+		printDebug(.dEdit, " TRY     " + (widgetZone?.unwrappedName ?? kEmpty))
 
 		if !isFirstResponder,
 			let zone = widgetZone,
@@ -186,7 +186,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
             if  range.length < original.length {
                 if  !requiresAllOrTitleSelected {
-                    text = original.stringBySmartReplacing(range, with: "")
+                    text = original.stringBySmartReplacing(range, with: kEmpty)
                     
                     gSelecting.ungrabAll()
                 } else if range.location != 0 && !original.isLineTitle(enclosing: range) {

@@ -165,7 +165,7 @@ extension String {
     func openAsURL() {
         let fileScheme = "file"
         let filePrefix = fileScheme + "://"
-        let  urlString = (replacingOccurrences(of: kBackSlash, with: "").replacingOccurrences(of: " ", with: "%20") as NSString).expandingTildeInPath
+        let  urlString = (replacingOccurrences(of: kBackSlash, with: kEmpty).replacingOccurrences(of: kSpace, with: "%20") as NSString).expandingTildeInPath
         
         if  var url = NSURL(string: urlString) {
             if  urlString.character(at: 0) == "/" {
@@ -217,7 +217,7 @@ extension NSURL {
 extension ZApplication {
 
     func clearBadge() {
-        dockTile.badgeLabel = ""
+        dockTile.badgeLabel = kEmpty
     }
     
     func showHideAbout() {
@@ -585,7 +585,7 @@ extension ZWindow {
 extension ZButtonCell {
     override open var objectValue: Any? {
         get { return title }
-        set { title = newValue as? String ?? "" }
+        set { title = newValue as? String ?? kEmpty }
     }
 }
 
@@ -644,7 +644,7 @@ extension ZAlerts {
         FOREGROUND(canBeDirect: true) {
             let             a = ZAlert()
             a    .messageText = iMessage
-            a.informativeText = iExplain ?? ""
+            a.informativeText = iExplain ?? kEmpty
             
             a.addButton(withTitle: iOKTitle)
             
@@ -667,8 +667,8 @@ extension ZAlerts {
 }
 
 extension ZTextField {
-    var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
-    var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
+    var          text:         String? { get { return stringValue } set { stringValue = newValue ?? kEmpty } }
+    var textAlignment: NSTextAlignment { get { return alignment }   set {   alignment = newValue } }
 
     func enableUndo() {
         cell?.allowsUndo = true

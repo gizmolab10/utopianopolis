@@ -334,7 +334,7 @@ class ZRecords: NSObject {
     // MARK:-
 
 	func appendZRecordsLookup(with iName: String, onEach: @escaping ZRecordsToZRecordsClosure) {
-		let names = iName.components(separatedBy: " ").filter { $0 != "" }
+		let names = iName.components(separatedBy: kSpace).filter { $0 != kEmpty }
 
 		gCoreDataStack.searchZRecordsForNames(names, within: databaseID) { (dict: StringZRecordsDictionary) in
 			for (name, zRecords) in dict {

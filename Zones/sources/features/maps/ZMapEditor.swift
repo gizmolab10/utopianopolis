@@ -750,13 +750,13 @@ class ZMapEditor: ZBaseEditor {
 
 				if  zone == gHere && !force {
 					let grandParentName = grandParentZone?.zoneName
-					let   parenthetical = grandParentName == nil ? "" : " (\(grandParentName!))"
+					let   parenthetical = grandParentName == nil ? kEmpty : " (\(grandParentName!))"
 
 					// /////////////////////////////////////////////////////////////////////
 					// present an alert asking if user really wants to move here leftward //
 					// /////////////////////////////////////////////////////////////////////
 
-					gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? "")\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
+					gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? kEmpty)\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
 						if  iStatus == .eStatusYes {
 							self.moveOut(selectionOnly: selectionOnly, extreme: extreme, force: true, onCompletion: onCompletion)
 						}

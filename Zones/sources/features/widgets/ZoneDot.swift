@@ -24,7 +24,7 @@ struct  ZDotParameters {
 
 	var childCount     = 0
 	var sideDotRadius  = 4.0
-	var traitType      = ""
+	var traitType      = kEmpty
 	var isDrop         = false
 	var filled         = false
 	var isReveal       = false
@@ -285,7 +285,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
 			gBackgroundColor.setFill()
 			drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.hasTargetNote)
-		} else if parameters.traitType != "" {
+		} else if parameters.traitType != kEmpty {
 
 			// ///////////////// //
 			// TRAIT DECORATIONS //

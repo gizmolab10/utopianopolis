@@ -93,7 +93,7 @@ extension ZSimpleToolButton {
 			let     addANew = "adds a new idea as "
 			let     editing = (!gIsEditing ? "edits" : "stops editing and save to")
 			let notMultiple = gSelecting.currentMapGrabs.count < 2
-			let   adjective = notMultiple ? "" : "\(gListsGrowDown ? "bottom" : "top")- or left-most "
+			let   adjective = notMultiple ? kEmpty : "\(gListsGrowDown ? "bottom" : "top")- or left-most "
 			let currentIdea = " the \(adjective)currently selected idea"
 			let     unfocus = "from \(gCurrentSmallMapName)s, remove bookmark targeting"
 			let       focus = (gIsHere ? "creates a \(gCurrentSmallMapName) from" : (canTravel ? "travel to target of" : "focus on"))
@@ -164,7 +164,7 @@ extension Zone {
 			return hasNote      ? "edit note for"   :
 				hasEmail        ? "send an email"   :
 				isBookmark      ? "change focus to" :
-				hasHyperlink    ? "invoke web link" : ""
+				hasHyperlink    ? "invoke web link" : kEmpty
 		}
 
 		return gConcealmentString(for: expanded) + " list for"
@@ -181,7 +181,7 @@ extension ZoneDot {
 			let zone = widgetZone,
 			let name = zone.zoneName,
 			(!isReveal || zone.isBookmark || zone.count > 0 || zone.hasNote) {
-			toolTip  = "\(isReveal ? "Reveal" : "Drag") dot\n\n\(kClickTo)\(isReveal ? zone.revealTipText : zone.isGrabbed ? "drag" : "select or drag") \"\(name)\"\(zone.isBookmark && !isReveal ? " bookmark" : "")"
+			toolTip  = "\(isReveal ? "Reveal" : "Drag") dot\n\n\(kClickTo)\(isReveal ? zone.revealTipText : zone.isGrabbed ? "drag" : "select or drag") \"\(name)\"\(zone.isBookmark && !isReveal ? " bookmark" : kEmpty)"
 		}
 	}
 

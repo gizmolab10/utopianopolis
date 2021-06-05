@@ -68,7 +68,7 @@ class ZAlerts : NSObject {
 
     private func report(error iError: Any? = nil, _ iMessage: String? = nil, _ closure: AnyClosure? = nil) {
         let   message = iMessage ?? gBatches.operationText
-        let      text = kSpace + (iMessage ?? "")
+        let      text = kSpace + (iMessage ?? kEmpty)
 
         if  let ckError: CKError = iError as? CKError {
             switch ckError.code {
@@ -79,7 +79,7 @@ class ZAlerts : NSObject {
                 closure?(true)
             }
         } else if let nsError = iError as? NSError {
-            let waitForIt = nsError.userInfo[CKErrorRetryAfterKey] as? String ?? ""
+            let waitForIt = nsError.userInfo[CKErrorRetryAfterKey] as? String ?? kEmpty
 
             alert(message, waitForIt) { iAlert, iState in
                 iAlert?.showAlert { iResponse in
@@ -87,7 +87,7 @@ class ZAlerts : NSObject {
                 }
             }
         } else {
-            let error = iError as? String ?? ""
+            let error = iError as? String ?? kEmpty
 
             printDebug(.dError, error + text)
             closure?(true)

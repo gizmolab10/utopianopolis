@@ -38,7 +38,7 @@ class ZTogglingView: ZStackView {
 			case .vSimpleTools : return "some simple tools which can get you oriented"
 			case .vSmallMap    : return "\(gCurrentSmallMapName)s map"
 			case .vData        : return "useful data about Seriously"
-			default            : return ""
+			default            : return kEmpty
 		}
 	}
 

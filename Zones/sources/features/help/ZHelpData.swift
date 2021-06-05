@@ -59,7 +59,7 @@ enum ZHelpDotType: String {
 			case .email:     return ZTraitType.tEmail    .rawValue
 			case .video:     return ZTraitType.tVideo    .rawValue
 			case .hyperlink: return ZTraitType.tHyperlink.rawValue
-			default:         return ""
+			default:         return kEmpty
 		}
 	}
 
@@ -130,7 +130,7 @@ class ZHelpData: NSObject {
 		var           dotType  : ZHelpDotType?
 		if  let      helpType  = ZHelpType(rawValue: shortcutLower),
 			helpType == .hDots {
-			let         value  = second.components(separatedBy: " ")[0]
+			let         value  = second.components(separatedBy: kSpace)[0]
 			dotType            = ZHelpDotType(rawValue: value)
 		}
 
@@ -188,7 +188,7 @@ class ZHelpData: NSObject {
 		let   index = row * stringsPerRow
 		let   final = index + 2
 
-		return final >= strings.count ? ("", "", "") : (strings[index], strings[index + 1], strings[final])
+		return final >= strings.count ? (kEmpty, kEmpty, kEmpty) : (strings[index], strings[index + 1], strings[final])
 	}
 
 	func matches(_ types: [ZHelpType]) -> Bool {
@@ -215,7 +215,7 @@ class ZHelpData: NSObject {
 				if     !types.contains(.hPro) || isPro {
 					if  types.contains(.hExtra) {
 						while result.count < linesBeforeSearch * 3 {
-							result.append("")
+							result.append(kEmpty)
 						}
 					} else if isPro || isDots || isEssay
 								||  types.intersects([.hBold, .hBasic, .hEmpty])
@@ -259,7 +259,7 @@ class ZHelpData: NSObject {
 		var           attributes = ZAttributesDictionary ()
 		attributes[.font]        = isDots ? kLargeHelpFont : nil
 		let               hasURL = !url.isEmpty
-		var               prefix = ""
+		var               prefix = kEmpty
 
 		if !isPro && !isDots && !isEssay && (types.contains(.hPro) || (!isIntermediate && types.contains(.hIntermed))) {
 			return NSMutableAttributedString(string: kTab + kTab + kTab)

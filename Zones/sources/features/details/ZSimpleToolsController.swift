@@ -30,7 +30,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 	var            canUnfocus :   Bool { return flags.isControl && (gRecentsRoot?.children.count ?? 0) > 1 }
 	var             canTravel :   Bool { return gIsMapMode && gGrabbedCanTravel }
 	var            swapDBText : String { return "switch to \(gIsMine ? "everyone's" : "my") ideas" }
-	var           expandMaybe : String { return isMixed ? "expand selection " : "" }
+	var           expandMaybe : String { return isMixed ? "expand selection " : kEmpty }
 	var                 flags = ZEventFlags()
 	var        buttonsByID    = [ZSimpleToolID  :  ZSimpleToolButton]()
 	var          boxesByID    = [ZSimpleToolID  :  ZBox]()
@@ -56,7 +56,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 		buttonFor(.right)?      .title =  isMixed          ? "reveal"       : canTravel ? "travel" : "right"
 		buttonFor(.focus)?      .title =  canUnfocus       ? "unfocus"      : canTravel ? "travel" : gIsHere ? gCurrentSmallMapName : "focus"
 		buttonFor(.tooltip)?    .title = (gShowToolTips    ? "dis"          : "en")     + "able tooltips"
-		boxFor   (.move)?       .title = (isRelocate       ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.isCommand ? " to end"  : "")
+		boxFor   (.move)?       .title = (isRelocate       ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.isCommand ? " to end"  : kEmpty)
 		boxFor   (.edit)?       .title =  gIsEditing       ? "Stop Editing" : "Edit"
 	}
 

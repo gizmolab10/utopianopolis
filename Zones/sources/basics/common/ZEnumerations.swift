@@ -118,7 +118,7 @@ enum ZHelpMode: String {
 			case .basicMode:  return "basic keys"
 			case .proMode:    return "all keys"
 			case .dotMode:    return "dots"
-			default:          return ""
+			default:          return kEmpty
 		}
 	}
 
@@ -202,7 +202,7 @@ enum ZDatabaseID: String {
 		switch self {
 			case .everyoneID: return "Mine"
 			case     .mineID: return "Public"
-			default:          return ""
+			default:          return kEmpty
 		}
 	}
 
@@ -210,7 +210,7 @@ enum ZDatabaseID: String {
 		switch self {
 			case .everyoneID: return "public"
 			case     .mineID: return "my"
-			default:          return ""
+			default:          return kEmpty
 		}
     }
 
