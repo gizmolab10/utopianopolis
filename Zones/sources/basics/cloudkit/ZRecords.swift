@@ -336,7 +336,7 @@ class ZRecords: NSObject {
 	func appendZRecordsLookup(with iName: String, onEach: @escaping ZRecordsToZRecordsClosure) {
 		let names = iName.components(separatedBy: " ").filter { $0 != "" }
 
-		gCoreDataStack.searchZonesForNames(names, within: databaseID) { (dict: StringZRecordsDictionary) in
+		gCoreDataStack.searchZRecordsForNames(names, within: databaseID) { (dict: StringZRecordsDictionary) in
 			for (name, zRecords) in dict {
 				self.zRecordsArrayLookup[name] = onEach(zRecords)
 			}
@@ -365,9 +365,14 @@ class ZRecords: NSObject {
 			var filtered = ZRecordsArray()
 
 			for record in iRecords {
-				if  record.matchesFilterOptions {
-					filtered.appendUnique(item: record)
+				if  let trait = record as? ZTrait,
+				    trait.matchesFilterOptions {
+					filtered.appendUnique(item: trait)
+				} else if  let zone = record as? Zone,
+						   zone.matchesFilterOptions {
+					filtered.appendUnique(item: zone)
 				}
+
 			}
 
 			results.appendUnique(contentsOf: filtered)

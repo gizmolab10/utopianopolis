@@ -46,13 +46,32 @@ enum ZTraitType: String {
 class ZTrait: ZTraitAssets {
 
 	@NSManaged    var  strings : StringsArray?
-	@NSManaged    var ownerRID :  String?
-	@NSManaged    var   format :  String?
-	@NSManaged    var     type :  String?
-	@NSManaged    var     text :  String?
-    override var unwrappedName :  String  { return text ?? emptyName }
-	var             _ownerZone :  Zone?
-	var             _traitType :  ZTraitType?
+	@NSManaged    var ownerRID : String?
+	@NSManaged    var   format : String?
+	@NSManaged    var     type : String?
+	@NSManaged    var     text : String?
+    override var unwrappedName : String { return text ?? emptyName }
+	override var decoratedName : String { return text ?? kNoValue }
+	override var    typePrefix : String { return traitType?.description ?? kEmpty }
+	var             _ownerZone : Zone?
+	var             _traitType : ZTraitType?
+
+	override var         cloudProperties: StringsArray { return ZTrait.cloudProperties }
+	override var optionalCloudProperties: StringsArray { return ZTrait.optionalCloudProperties }
+
+	override class var cloudProperties: StringsArray {
+		return [#keyPath(type),
+				#keyPath(text),
+				#keyPath(strings)] +
+			optionalCloudProperties +
+			super.cloudProperties
+	}
+
+	override class var optionalCloudProperties: StringsArray {
+		return [#keyPath(ownerRID),
+				#keyPath(format)] +
+			super.optionalCloudProperties
+	}
 
 	// MARK:- initialize
 	// MARK:-
@@ -81,45 +100,6 @@ class ZTrait: ZTraitAssets {
 
 	static func uniqueTrait(recordName: String?, in dbID: ZDatabaseID) -> ZTrait {
 		return uniqueZRecord(entityName: kTraitType, recordName: recordName, in: dbID) as! ZTrait
-	}
-
-//	static func createAsync(record: CKRecord, databaseID: ZDatabaseID?, onCreation: @escaping ZTraitClosure) {
-//		hasMaybeAsync(record: record, entityName: kTraitType, databaseID: databaseID) { zRecord in           // first check if already exists
-//			onCreation(zRecord as? ZTrait ?? ZTrait(record: record, databaseID: databaseID))
-//		}
-//	}
-//
-//	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZTrait {
-//		return hasMaybe(record: record, entityName: kTraitType, databaseID: databaseID) as? ZTrait ??        // first check if already exists
-//			ZTrait(record: record, entityName: kTraitType, databaseID: databaseID)
-//	}
-//
-//	convenience init(databaseID: ZDatabaseID?) {
-//		self.init(record: CKRecord(recordType: kTraitType), databaseID: databaseID)
-//	}
-//
-//	convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
-//		self.init(entityName: kTraitType, databaseID: dbID)
-//
-//		try extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
-//	}
-
-	override var         cloudProperties: StringsArray { return ZTrait.cloudProperties }
-	override var optionalCloudProperties: StringsArray { return ZTrait.optionalCloudProperties }
-	override var           decoratedName:  String  { return kTraitType + (text ?? kNoValue) }
-
-	override class var cloudProperties: StringsArray {
-		return [#keyPath(type),
-				#keyPath(text),
-				#keyPath(strings)] +
-			optionalCloudProperties +
-			super.cloudProperties
-	}
-
-	override class var optionalCloudProperties: StringsArray {
-		return [#keyPath(ownerRID),
-				#keyPath(format)] +
-			super.optionalCloudProperties
 	}
 
 	// MARK:- text

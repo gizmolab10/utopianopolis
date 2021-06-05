@@ -49,7 +49,7 @@ class ZSearching: NSObject {
 	func exitSearchMode() {
 		state = .sNot
 
-		swapWorkMode()
+		swapMapAndSearch()
 		gSignal([.sFound, .sSearch])
 	}
 
@@ -65,14 +65,14 @@ class ZSearching: NSObject {
 		}
 	}
 
-	func swapWorkMode() {
+	func swapMapAndSearch() {
 		let      last = priorWorkMode ??          .wMapMode
 		priorWorkMode = gIsSearchMode ? nil  :    gWorkMode
 		gWorkMode     = gIsSearchMode ? last : .wSearchMode
 	}
 
 	func showSearch(_ OPTION: Bool = false) {
-		swapWorkMode()
+		swapMapAndSearch()
 		gSignal([OPTION ? .sFound : .sSearch])
 	}
 

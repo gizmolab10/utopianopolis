@@ -1139,21 +1139,6 @@ extension Array {
 
 }
 
-extension ZRecordsArray {
-
-	var recordNames: StringsArray {
-		var  names = StringsArray()
-
-		for zRecord in self {
-			if  let name = zRecord.recordName {
-				names.append(name)
-			}
-		}
-
-		return names
-	}
-}
-
 extension CKReferencesArray {
 
 	func containsReference(_ reference: CKReference) -> Bool {
@@ -1178,17 +1163,23 @@ extension CKReferencesArray {
 
 extension ZRecordsArray {
 
+	var recordNames: StringsArray {
+		var  names = StringsArray()
+
+		for zRecord in self {
+			if  let name = zRecord.recordName {
+				names.append(name)
+			}
+		}
+
+		return names
+	}
+
 	func createStorageArray(from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
 		if  count > 0 {
 			var result = [ZStorageDictionary] ()
 
 			for zRecord in self {
-//				if  let      zone  = zRecord as? Zone,
-//					zone.zoneName == kLostAndFoundName,
-//					zone.isInFavorites {
-//					print("hah! found it")
-//				}
-
 				if  zRecord.recordName == nil {
 					printDebug(.dFile, "no record name: \(zRecord)")
 				} else if (allowEach == nil || allowEach!(zRecord)),
@@ -1212,6 +1203,24 @@ extension ZRecordsArray {
 		}
 
 		return nil
+	}
+
+	func appending(_ records: ZRecordsArray?) -> ZRecordsArray {
+		if  let more = records {
+			var both = ZRecordsArray()
+
+			for first in self {
+				both.appendUnique(item: first)
+			}
+
+			for second in more {
+				both.appendUnique(item: second)
+			}
+
+			return both
+		}
+
+		return self
 	}
 
 	@discardableResult mutating func appendUnique(item: ZRecord) -> Bool {
@@ -2173,15 +2182,19 @@ extension String {
 }
 
 extension NSPredicate {
-	func add(_ predicate: NSPredicate) -> NSPredicate {
+
+	func and(_ predicate: NSPredicate) -> NSPredicate {
 		return NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, self])
 	}
+
 }
 
 extension Character {
-    var asciiValue: UInt32? {
+
+	var asciiValue: UInt32? {
         return String(self).unicodeScalars.first?.value
     }
+
 }
 
 extension Data {

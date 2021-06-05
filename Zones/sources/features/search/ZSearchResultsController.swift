@@ -97,32 +97,36 @@ class ZSearchResultsController: ZGenericTableController {
     override func numberOfRows(in tableView: ZTableView) -> Int { return foundRecordsCount }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-		let zRecord  = zRecordAt(row)
-		var string   = ""
+		let    zRecord = zRecordAt(row)
+		var     string = kEmpty
+		var     prefix = NSMutableAttributedString()
+		var       size = 0
+		if  let      z = zRecord {
+			string     = z.decoratedName
+			var      p = z.typePrefix
+			size       = p.length
+			if    size > 0 {
+				let  r = NSRange(location: 0, length: size)
+				p.append(kSpace)
+				prefix = NSMutableAttributedString(string: p)
+				size  += 1
 
-		if  zRecord != nil {
-			string   = zRecord!.decoratedName
+				prefix.addAttribute(.backgroundColor, value: ZColor.systemYellow, range: r)
+			}
 		}
 
-		var result = NSMutableAttributedString(string: string)
+		var result = prefix
+
+		result.append(NSMutableAttributedString(string: string))
 
 		if  let searched = searchText {
 			for text in searched.components(separatedBy: " ") {
 				if  let ranges = string.rangesMatching(text) {				      // find all matching substring ranges
 					for range in ranges {
-						result.addAttribute(.backgroundColor, value: NSColor.systemTeal, range: range) // highlight matching substring in teal
+						let r = range.offsetBy(size)
+						result.addAttribute(.backgroundColor, value: NSColor.systemTeal, range: r) // highlight matching substring in teal
 					}
 				}
-			}
-
-			if  let    ranges = string.rangesMatching(kSearchSeparator),		  // find any search separator
-				ranges.count > 0 {
-				let separator = ranges[0]
-				let     color = ZColor.systemYellow
-				let     range = NSRange(location: 0, length: separator.location)
-
-				result.replaceCharacters(in: separator, with: "")
-				result.addAttribute(.backgroundColor, value: color, range: range) // highlight trait type in yellow
 			}
 		}
 

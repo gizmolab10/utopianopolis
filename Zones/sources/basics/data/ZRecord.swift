@@ -19,9 +19,10 @@ class ZRecord: ZManagedObject { // NSObject {
 	var    writtenModifyDate: Date?
 	var              records: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
 	var                cloud: ZCloud?   { return records as? ZCloud }
-	var  unwrappedRecordName: String    { return recordName ?? "" }
+	var  unwrappedRecordName: String    { return recordName ?? kEmpty }
 	var        decoratedName: String    { return recordName ?? kNoValue }
 	var        unwrappedName: String    { return recordName ?? emptyName }
+	var           typePrefix: String    { return kEmpty }
 	var            emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
 	var   isInPublicDatabase: Bool      { return databaseID == .everyoneID }
 	var              isAZone: Bool      { return false }

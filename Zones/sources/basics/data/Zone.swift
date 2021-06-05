@@ -56,8 +56,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                       textColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : gDefaultTextColor }
 	var                       emailLink :             String? { return email == nil ? nil : "mailTo:\(email!)" }
 	var                  linkRecordName :             String? { return zoneLink?.maybeRecordName }
-	override var        cloudProperties :            StringsArray { return Zone.cloudProperties }
-	override var optionalCloudProperties:            StringsArray { return Zone.optionalCloudProperties }
+	override var        cloudProperties :       StringsArray  { return Zone.cloudProperties }
+	override var optionalCloudProperties :      StringsArray  { return Zone.optionalCloudProperties }
 	override var              emptyName :             String  { return kEmptyIdea }
 	override var            description :             String  { return decoratedName }
 	override var          unwrappedName :             String  { return zoneName ?? smallMapRootName }
