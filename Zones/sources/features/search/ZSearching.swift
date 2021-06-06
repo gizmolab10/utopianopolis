@@ -38,7 +38,7 @@ class ZSearching: NSObject {
 	var state = ZSearchState.sNot
 	var priorWorkMode: ZWorkMode?
 	var hasResults: Bool { return gSearchResultsController?.hasResults ?? false }
-	func switchToList()  { setStateTo(hasResults ? .sList : .sNot) }
+	func switchToList()  { setSearchStateTo(hasResults ? .sList : .sNot) }
 	func handleEvent(_ event: ZEvent) -> ZEvent? { return gSearchBarController?.handleEvent(event) }
 
 	var essaySearchText: String? {
@@ -53,7 +53,7 @@ class ZSearching: NSObject {
 		gSignal([.sFound, .sSearch])
 	}
 
-	func setStateTo(_ iState: ZSearchState) {
+	func setSearchStateTo(_ iState: ZSearchState) {
 		state = iState
 
 		gControlsController?     .updateForState()
@@ -89,20 +89,26 @@ class ZSearching: NSObject {
 		var  combined = [ZDatabaseID: [Any]] ()
 
 		let doneMaybe : Closure = {
-			if  remaining == 0 {   // done fetching records, transfer them to results controller
+//			if  remaining == 0 {   // done fetching records, transfer them to results controller
 				gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: ZRecordsArray] ?? [:]
-				self.setStateTo(self.hasResults ? .sList : .sFind)
+				self.setSearchStateTo(self.hasResults ? .sList : .sFind)
 				gSignal([.sFound])
-			}
+//			}
 		}
 
 		for cloud in gRemoteStorage.allClouds {
-			let     locals = cloud.searchLocal(for: searchString)
-			let       dbID = cloud.databaseID
-			combined[dbID] = locals
-			remaining     -= 1
+			cloud.foundInSearch.removeAll()
+			cloud.searchLocal(for: searchString) {
+				let      dbID  = cloud.databaseID
+				var    results = combined[dbID] ?? ZRecordsArray()
 
-			doneMaybe()
+				results.append(contentsOf: cloud.foundInSearch)
+
+				combined[dbID] = results
+				remaining     -= 1
+
+				doneMaybe()
+			}
 		}
 	}
 

@@ -143,7 +143,6 @@ class ZCoreDataStack: NSObject {
 	lazy var privateStore : NSPersistentStore?            = { return persistentStore(for: privateURL) }()
 	lazy var  coordinator : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
 	var    managedContext : NSManagedObjectContext          { return persistentContainer.viewContext }
-//	var    privateContext : NSManagedObjectContext?
 	var          isDoneOp : Bool                            { return currentOpID == nil }
 	var        statusText : String?                         { return statusOpID?.description }
 	var        statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
@@ -410,37 +409,36 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func search(within dbID: ZDatabaseID, entityName: String, using predicate: NSPredicate, onCompletion: ZRecordsClosure? = nil) {
-		var result = ZRecordsArray()
-
 		if !gCanLoad || !gIsReadyToShowUI {
-			onCompletion?(result)
+			onCompletion?(ZRecordsArray())
 		} else {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
 			request.predicate = predicate.and(dbidPredicate(from: dbID))
 
 			deferUntilAvailable(for: .oSearch) {
-//				BACKGROUND {
-//					self.privateContext?.perform {
+				BACKGROUND {
+					self.persistentContainer.performBackgroundTask { context in
+						var objectIDs = ZObjectIDsArray()
 						do {
-							let items = try self.managedContext.fetch(request)    // TODO: do this in background task using magical record
+							let items = try context.fetch(request)
 							for item in items {
-								if  let zRecord = item as? ZRecord {
-									result.append(zRecord)
+								if  let object = item as? ZRecord {
+									objectIDs.append(object.objectID)
 								}
 							}
 
-//							try self.privateContext?.save()
+							try context.save()
 						} catch {
 							print("search fetch failed")
 						}
 
 						self.makeAvailable() // before calling closure
 
-//						FOREGROUND {
-							onCompletion?(result)  			// TODO: call this in foreground task
-//						}
-//					}
-//				}
+						FOREGROUND {
+							onCompletion?(ZRecordsArray.fromObjectIDs(objectIDs, in: self.managedContext))
+						}
+					}
+				}
 			}
 		}
 	}
@@ -511,8 +509,6 @@ class ZCoreDataStack: NSObject {
 		
 		container.viewContext.automaticallyMergesChangesFromParent = true
 		container.viewContext.mergePolicy                          = NSMergePolicy(merge: .overwriteMergePolicyType)
-//		privateContext                                             = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-//		privateContext?.parent                                     = managedContext
 
 		return container
 	}()

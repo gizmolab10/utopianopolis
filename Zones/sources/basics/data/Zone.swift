@@ -1303,7 +1303,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func maybeRestoreParent() {
-		let clouds: [ZRecords?] = [gFavorites, gRecents, records]
+		let clouds: [ZRecords?] = [gFavorites, gRecents, allCloudRecords]
 
 		for cloud in clouds {
 			restoreParentFrom(cloud?.rootZone)   // look through all records for a match with which to set parent
@@ -1413,9 +1413,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func addToLocalSearchIndex() {
 		if  let  name = zoneName,
-			let    rr = records {
-			rr.appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
-				var r = iRecords
+			let array = allCloudRecords {
+			array.appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
+				guard var r = iRecords else { return [] }
 
 				r.appendUnique(item: self)
 

@@ -69,6 +69,6 @@ typealias ObjectToStringClosure           = (NSObject)                 -> (Strin
 typealias StringToBooleanClosure          = (String?)                  -> (Bool)
 typealias ZRecordToBooleanClosure         = (ZRecord?)                 -> (Bool)
 typealias BooleanToBooleanClosure         = (ObjCBool)                 -> (ObjCBool)
-typealias ZRecordsToZRecordsClosure       = (ZRecordsArray)            -> (ZRecordsArray)
+typealias ZRecordsToZRecordsClosure       = (ZRecordsArray?)           -> (ZRecordsArray)
 typealias StringZRecordsDictionaryClosure = (StringZRecordsDictionary) -> (Void)
 

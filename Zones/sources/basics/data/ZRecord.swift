@@ -17,8 +17,8 @@ class ZRecord: ZManagedObject { // NSObject {
 	var           kvoContext: UInt8 = 1
 	var       _tooltipRecord: Any?
 	var    writtenModifyDate: Date?
-	var              records: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
-	var                cloud: ZCloud?   { return records as? ZCloud }
+	var      allCloudRecords: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
+	var                cloud: ZCloud?   { return allCloudRecords as? ZCloud }
 	var  unwrappedRecordName: String    { return recordName ?? kEmpty }
 	var        decoratedName: String    { return recordName ?? kNoValue }
 	var        unwrappedName: String    { return recordName ?? emptyName }
@@ -70,7 +70,7 @@ class ZRecord: ZManagedObject { // NSObject {
 	func hasMissingProgeny()  -> Bool { return true }
 	func ignoreKeyPathsForStorage() -> StringsArray { return [kpParent, kpOwner] }
 	func unregister() { cloud?.unregisterZRecord(self) }
-	@discardableResult func register() -> Bool { return records?.registerZRecord(self) ?? false }
+	@discardableResult func register() -> Bool { return allCloudRecords?.registerZRecord(self) ?? false }
 
 	class func cloudProperties(for className: String) -> StringsArray {
 		switch className {
@@ -195,10 +195,10 @@ class ZRecord: ZManagedObject { // NSObject {
     // MARK:- states
     // MARK:-
 
-    func    hasState(_ state: ZRecordState) -> Bool { return records?.isRegistered(self, forAnyOf:[state]) ?? false }
-    func    addState(_ state: ZRecordState)         {        records?.addZRecord  (self, for:     [state]) }
-    func removeState(_ state: ZRecordState)         {        records?.clearRecordName(recordName, for:[state]) }
-    func clearAllStates()                           {        records?.clearRecordName(recordName, for: records?.allStates ?? []) }
+    func    hasState(_ state: ZRecordState) -> Bool { return allCloudRecords?.isRegistered(self, forAnyOf:[state]) ?? false }
+    func    addState(_ state: ZRecordState)         {        allCloudRecords?.addZRecord  (self, for:     [state]) }
+    func removeState(_ state: ZRecordState)         {        allCloudRecords?.clearRecordName(recordName, for:[state]) }
+    func clearAllStates()                           {        allCloudRecords?.clearRecordName(recordName, for: allCloudRecords?.allStates ?? []) }
 
     func needCount()    {    addState(.needsCount) }
 	func needColor()    {    addState(.needsColor) }

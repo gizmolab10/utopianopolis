@@ -24,6 +24,7 @@ typealias              CKReference = CKRecord.Reference
 typealias             StringsArray = [String]
 typealias            ZRecordsArray = [ZRecord]
 typealias            ZObjectsArray = [NSObject]
+typealias          ZObjectIDsArray = [NSManagedObjectID]
 typealias         CKRecordIDsArray = [CKRecordID]
 typealias         ZTraitDictionary = [ZTraitType : ZTrait]
 typealias         ZStoryboardSegue = NSStoryboardSegue
@@ -1162,6 +1163,10 @@ extension CKReferencesArray {
 }
 
 extension ZRecordsArray {
+
+	static func fromObjectIDs(_ ids: ZObjectIDsArray, in context: NSManagedObjectContext) -> ZRecordsArray {
+		return ids.map { context.object(with: $0) as? ZRecord }.filter { $0 != nil }.map { $0! }
+	}
 
 	var recordNames: StringsArray {
 		var  names = StringsArray()

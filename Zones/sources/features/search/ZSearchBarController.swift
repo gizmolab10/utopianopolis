@@ -49,7 +49,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
 		if  iKind == .sSearch && gIsSearchMode {
-			gSearching.setStateTo(.sEntry)
+			gSearching.setSearchStateTo(.sEntry)
 		}
 	}
 

@@ -274,7 +274,7 @@ class ZSearchResultsController: ZGenericTableController {
     }
 
 	func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-		gSearching.setStateTo(.sList)
+		gSearching.setSearchStateTo(.sList)
 		tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
 		gSignal([.spCrumbs])
 		return true
@@ -331,7 +331,7 @@ class ZSearchResultsController: ZGenericTableController {
 
 	@discardableResult func handleKey(_ key: String, flags: ZEventFlags) -> Bool { // false means not handled
 		switch key {
-			case "f", kTab: gSearching.setStateTo(.sFind)
+			case "f", kTab: gSearching.setSearchStateTo(.sFind)
 			case   kReturn: if !resolve() { return false }
 			case   kEscape: clear()
 			default:
@@ -351,7 +351,7 @@ class ZSearchResultsController: ZGenericTableController {
 			case    .up: moveSelection(up: true,  extreme: COMMAND)
 			case  .down: moveSelection(up: false, extreme: COMMAND)
 			case .right: if !resolve() { return false }
-			case  .left: gSearching.setStateTo(.sFind)
+			case  .left: gSearching.setSearchStateTo(.sFind)
 		}
 
 		return true

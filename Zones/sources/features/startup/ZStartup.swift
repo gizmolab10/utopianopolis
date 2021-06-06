@@ -33,7 +33,7 @@ class ZStartup: NSObject {
 
 		gRemoteStorage.clear()
 		gSignal([.spMain])
-		gSearching.setStateTo(.sNot)
+		gSearching.setSearchStateTo(.sNot)
 
 		gBatches.startUp { iSame in
 			FOREGROUND {

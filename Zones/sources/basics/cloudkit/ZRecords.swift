@@ -24,6 +24,7 @@ class ZRecords: NSObject {
 
 	var            maxLevel = 0
 	var          duplicates =  ZRecordsArray                ()
+	var       foundInSearch =  ZRecordsArray                ()
 	var      zRecordsLookup =  StringZRecordDictionary      ()
 	var     recordsMistyped =  StringZRecordDictionary      ()
 	var zRecordsArrayLookup =  StringZRecordsDictionary     ()
@@ -338,8 +339,13 @@ class ZRecords: NSObject {
 
 		gCoreDataStack.searchZRecordsForNames(names, within: databaseID) { (dict: StringZRecordsDictionary) in
 			for (name, zRecords) in dict {
-				self.zRecordsArrayLookup[name] = onEach(zRecords)
+				let                    records = onEach(zRecords)
+				self.zRecordsArrayLookup[name] = records
+
+				self.foundInSearch.append(contentsOf: records)
 			}
+
+			let _ = onEach(nil) // indicates done
 		}
 	}
 
@@ -347,26 +353,32 @@ class ZRecords: NSObject {
 		if  let record = zone,
             let   name = record.zoneName {
 			appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
-                var records = iRecords
+				if  var records   = iRecords {
+					if  let index = records.firstIndex(of: record) {
+						records.remove(at: index)
+					}
 
-                if let index = records.firstIndex(of: record) {
-                    records.remove(at: index)
-                }
+					return records
+				}
 
-                return records
+				return []
             }
         }
     }
 
-    func searchLocal(for name: String) -> ZRecordsArray {
-        var results = ZRecordsArray()
-
+	func searchLocal(for name: String, onCompletion: @escaping Closure) {
 		appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
 			var filtered = ZRecordsArray()
 
-			for record in iRecords {
+			guard let records = iRecords else {
+				onCompletion()
+
+				return filtered
+			}
+
+			for record in records {
 				if  let trait = record as? ZTrait,
-				    trait.matchesFilterOptions {
+					trait.matchesFilterOptions {
 					filtered.appendUnique(item: trait)
 				} else if  let zone = record as? Zone,
 						   zone.matchesFilterOptions {
@@ -375,12 +387,8 @@ class ZRecords: NSObject {
 
 			}
 
-			results.appendUnique(contentsOf: filtered)
-
-            return filtered // add these to name key
-        }
-
-        return results
+			return filtered // add these to name key
+		}
     }
 
     @discardableResult func registerZRecord(_  iRecord: ZRecord?) -> Bool {
