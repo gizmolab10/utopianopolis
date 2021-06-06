@@ -85,16 +85,7 @@ class ZSearching: NSObject {
 	}
 
 	func performGlobalSearch(for searchString: String) {
-		var remaining = kAllDatabaseIDs.count // same count as allClouds
-		var  combined = [ZDatabaseID: [Any]] ()
-
-		let doneMaybe : Closure = {
-//			if  remaining == 0 {   // done fetching records, transfer them to results controller
-				gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: ZRecordsArray] ?? [:]
-				self.setSearchStateTo(self.hasResults ? .sList : .sFind)
-				gSignal([.sFound])
-//			}
-		}
+		var combined = [ZDatabaseID: [Any]] ()
 
 		for cloud in gRemoteStorage.allClouds {
 			cloud.foundInSearch.removeAll()
@@ -105,9 +96,11 @@ class ZSearching: NSObject {
 				results.append(contentsOf: cloud.foundInSearch)
 
 				combined[dbID] = results
-				remaining     -= 1
 
-				doneMaybe()
+				gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: ZRecordsArray] ?? [:]
+				
+				self.setSearchStateTo(self.hasResults ? .sList : .sFind)
+				gSignal([.sFound])
 			}
 		}
 	}
