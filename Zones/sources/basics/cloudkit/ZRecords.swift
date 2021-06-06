@@ -368,26 +368,13 @@ class ZRecords: NSObject {
 
 	func searchLocal(for name: String, onCompletion: @escaping Closure) {
 		appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
-			var filtered = ZRecordsArray()
-
 			guard let records = iRecords else {
 				onCompletion()
 
-				return filtered
+				return []
 			}
 
-			for record in records {
-				if  let trait = record as? ZTrait,
-					trait.matchesFilterOptions {
-					filtered.appendUnique(item: trait)
-				} else if  let zone = record as? Zone,
-						   zone.matchesFilterOptions {
-					filtered.appendUnique(item: zone)
-				}
-
-			}
-
-			return filtered // add these to name key
+			return records // add these to name key
 		}
     }
 

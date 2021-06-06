@@ -19,14 +19,23 @@ var gSearchResultsController: ZSearchResultsController? { return gControllers.co
 
 class ZSearchResultsController: ZGenericTableController {
 
-    var          foundRecords = [ZDatabaseID: ZRecordsArray] ()
+	var       filteredResults = ZRecordsDictionary()
+	var          foundRecords = ZRecordsDictionary()
 	var            searchText : String?       { return gSearchBarController?.activeSearchBoxText }
 	override var controllerID : ZControllerID { return .idSearchResults }
+
+	func applyFilter() {
+		filteredResults = ZRecordsDictionary()
+
+		for (dbID, records) in foundRecords {
+			filteredResults[dbID] = records.filter { $0.matchesFilterOptions }
+		}
+	}
 
     var hasResults: Bool {
         var     result = false
 
-        for     results in foundRecords.values {
+        for     results in filteredResults.values {
             if  results.count > 0 {
                 result = true
                 
@@ -45,10 +54,10 @@ class ZSearchResultsController: ZGenericTableController {
 		return nil
 	}
 
-    var foundRecordsCount: Int {
+    var filteredResultsCount: Int {
         var count = 0
 
-        for records in foundRecords.values {
+        for records in filteredResults.values {
             count += records.count
         }
 
@@ -59,8 +68,8 @@ class ZSearchResultsController: ZGenericTableController {
     // MARK:-
 
     func sortRecords() {
-        for (mode, records) in foundRecords {
-            foundRecords[mode] = records.sorted() {
+        for (mode, records) in filteredResults {
+			filteredResults[mode] = records.sorted() {
 				if  let a = ($0 as? Zone)?.zoneName,
                     let b = ($1 as? Zone)?.zoneName {
                     return a.lowercased() < b.lowercased()
@@ -94,7 +103,7 @@ class ZSearchResultsController: ZGenericTableController {
 
     #if os(OSX)
 
-    override func numberOfRows(in tableView: ZTableView) -> Int { return foundRecordsCount }
+    override func numberOfRows(in tableView: ZTableView) -> Int { return filteredResultsCount }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
 		let    zRecord = zRecordAt(row)
@@ -142,7 +151,7 @@ class ZSearchResultsController: ZGenericTableController {
 
     #else
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int            { return foundRecordsCount }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int            { return filteredResultsCount }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { return UITableViewCell() }
 
     #endif
@@ -154,7 +163,7 @@ class ZSearchResultsController: ZGenericTableController {
         var index = iIndex
         var count = 0
 
-        for (dbID, records) in foundRecords {
+        for (dbID, records) in filteredResults {
             index -= count
             count  = records.count
 
@@ -238,7 +247,7 @@ class ZSearchResultsController: ZGenericTableController {
     }
 
     func reset() {
-        if  gSearchResultsVisible || foundRecords.count == 0 {
+        if  gSearchResultsVisible || filteredResults.count == 0 {
             clear()
         } else {
             gSignal([.sSearch])
@@ -286,12 +295,12 @@ class ZSearchResultsController: ZGenericTableController {
 				t.tableColumns[0].width = t.frame.width
 			}
 			
-			if  gIsSearchMode, foundRecords.count > 0 {
+			if  gIsSearchMode, filteredResults.count > 0 {
 				var dbID: ZDatabaseID?
 				var record: ZRecord?
 				var total = 0
 				
-				for (databaseID, records) in foundRecords {
+				for (databaseID, records) in filteredResults {
 					let count  = records.count
 					total     += count
 					
