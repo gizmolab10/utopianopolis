@@ -35,7 +35,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 		// draw dragged dot and line in active color
 
-		if  let     widget = gDragDropZone?.widget,
+		if  let     widget = gDropZone?.widget,
 			let        dot = widget.revealDot.innerDot {
 			let parameters = widget.widgetZone?.dropDotParameters() ?? ZDotParameters()
             let  floatRect = widget.floatingDropDotRect
@@ -59,8 +59,8 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			setNeedsDisplay()
 		}
 
-		if  gDragDropZone != nil {
-			gDragDropZone  = nil
+		if  gDropZone != nil {
+			gDropZone  = nil
 
 			setNeedsDisplay()
 		}

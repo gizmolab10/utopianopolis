@@ -350,7 +350,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
 
     func dragMaybeStopEvent(_ iGesture: ZGestureRecognizer?) {
-        if  dragDropMaybe(iGesture) {
+        if  dropMaybe(iGesture) {
             cleanupAfterDrag()
             
             if  isDoneGesture(iGesture) {
@@ -374,7 +374,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // next four are only called by controller //
     // //////////////////////////////////////////
 
-    func dragDropMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
+    func dropMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
         if  let draggedZone        = gDraggedZone {
             if  draggedZone.userCanMove,
 				let (inBigMap, dropWidget, location) = widgetHit(by: iGesture, locatedInBigMap: isBigMap),
@@ -396,15 +396,15 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				let   dropIsParent = dropZone?.children.contains(draggedZone) ?? false
 				let     spawnCycle = dropZone?.spawnCycle ?? false
 				let         isNoop = dropIsGrabbed || spawnCycle || (sameIndex && dropIsParent) || index < 0
-                let          prior = gDragDropZone?.widget
+                let          prior = gDropZone?.widget
                 let        dropNow = isDoneGesture(iGesture)
-                gDragDropIndices   = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
-                gDragDropZone      = isNoop || dropNow ? nil : dropZone
+                gDropIndices       = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
+                gDropZone          = isNoop || dropNow ? nil : dropZone
                 gDragRelation      = isNoop || dropNow ? nil : relation
                 gDragPoint         = isNoop || dropNow ? nil : location
 
                 if !isNoop && !dropNow && !dropHere && index > 0 {
-                    gDragDropIndices?.add(index - 1)
+                    gDropIndices?.add(index - 1)
                 }
 
                 prior?                       .displayForDrag()  // erase    child lines
@@ -493,9 +493,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
         // cursor exited view, remove drag cruft
 
-        let          dot = gDragDropZone?.widget?.revealDot.innerDot // drag view does not "un"draw this
-        gDragDropIndices = nil
-        gDragDropZone    = nil
+        let          dot = gDropZone?.widget?.revealDot.innerDot // drag view does not "un"draw this
+        gDropIndices = nil
+        gDropZone    = nil
         gDragRelation    = nil
         gDragPoint       = nil
 

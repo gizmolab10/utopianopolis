@@ -553,7 +553,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func save() {
 		if  let e = gCurrentEssay {
 			e.saveEssay(textStorage)
-			asssureSelectionIsVisible()
 		}
 	}
 
@@ -1070,6 +1069,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let  range = attach.range
 
 			save()
+			asssureSelectionIsVisible()
 			clearResizing()
 			setNeedsLayout()
 			setNeedsDisplay()

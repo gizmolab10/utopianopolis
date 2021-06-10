@@ -3217,7 +3217,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.showAccess     = hasAccessDecoration
 		p.hasTargetNote  = t?.hasNote ?? false
 		p.isGroupOwner   = g == self || g == t
-		p.isDrop         = self == gDragDropZone
+		p.isDrop         = self == gDropZone
 		p.showSideDot    = isCurrentSmallMapBookmark
 		p.traitType      = (k.count < 1) ? kEmpty : k[0]
 		p.fill           = isFilled ? c.lighter(by: 2.5) : gBackgroundColor

@@ -52,7 +52,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     var       dragStart: CGPoint?
     var        isReveal: Bool    = true
     var      isInnerDot: Bool    = false
-	var      isDragDrop: Bool    { return widgetZone == gDragDropZone }
+	var      isDragDrop: Bool    { return widgetZone == gDropZone }
 	var dragDotIsHidden: Bool    { return widgetZone?.dragDotIsHidden ?? true }
     var      widgetZone: Zone?   { return widget?.widgetZone }
 	var           ratio: CGFloat { return widget?.ratio ?? 1.0 }
