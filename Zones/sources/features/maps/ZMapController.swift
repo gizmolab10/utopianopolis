@@ -446,12 +446,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // MARK:-
 
 	func widgetHit(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
-		if  let     gView = gesture?.view,
-			let    gPoint = gesture?.location(in: gView),
-			let locationW = mapView?.convert(gPoint, from: gView),
-			let   widgetW = rootWidget.widgetNearestTo(locationW, in: mapView, hereZone) {
-			let alternate = isBigMap ? gSmallMapController : gMapController
-
+		if  let         viewG = gesture?.view,
+			let     locationG = gesture?.location(in: viewG),
+			let     locationW = mapView?.convert(locationG, from: viewG),
+			let       widgetW = rootWidget.widgetNearestTo(locationW, in: mapView, hereZone) {
+			let     alternate = isBigMap ? gSmallMapController : gMapController
 			if  !kIsPhone,
 				let  mapViewA = alternate?.mapView,
 				let locationA = mapView?.convert(locationW, to: mapViewA),
