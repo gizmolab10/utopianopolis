@@ -395,28 +395,24 @@ class ZoneWidget: ZView {
         }
     }
 
-	func dragHitRect(in iView: ZView?, _ iHere: Zone) -> CGRect? {
-		if  let   view = iView {
-			let   text = textWidget
-			let isHere = widgetZone == iHere
-			let cFrame =      convert(childrenView.frame, to: view)
-			let tFrame = text.convert(       text.bounds, to: view)
-			let   left =    isHere ? 0.0 :                                  tFrame.minX - (gGenericOffset.width * 0.7)
-			let bottom =  (!isHere && widgetZone?.hasZonesBelow ?? false) ? cFrame.minY : 0.0
-			let    top = ((!isHere && widgetZone?.hasZonesAbove ?? false) ? cFrame      : view.bounds).maxY
-			let  right =                                                                  view.bounds .maxX
+	func dragHitRect(in view: ZView, _ here: Zone) -> CGRect {
+		let   text = textWidget
+		let isHere = widgetZone == here
+		let cFrame =      convert(childrenView.frame, to: view)
+		let tFrame = text.convert(       text.bounds, to: view)
+		let   left =    isHere ? 0.0                                  : tFrame.minX - (gGenericOffset.width * 0.8)
+		let bottom =  (!isHere && widgetZone?.hasZonesBelow ?? false) ? cFrame.minY : 0.0
+		let    top = ((!isHere && widgetZone?.hasZonesAbove ?? false) ? cFrame      : view.bounds).maxY
+		let  right =                                                                  view.bounds .maxX
 
-			return CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
-		}
-
-		return nil
+		return CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
 	}
 
-    func widgetNearestTo(_ point: CGPoint, in view: ZView?, _ iHere: Zone?, _ visited: [ZoneWidget] = []) -> ZoneWidget? {
+    func widgetNearestTo(_ point: CGPoint, in iView: ZView?, _ iHere: Zone?, _ visited: [ZoneWidget] = []) -> ZoneWidget? {
 		if  !visited.contains(self),
+			let view = iView,
 			let here = iHere,
-            let rect = dragHitRect(in: view, here),
-			rect.contains(point) {
+			dragHitRect(in: view, here).contains(point) {
 
 			for child in childrenWidgets {
 				if  self        != child,
@@ -425,8 +421,8 @@ class ZoneWidget: ZView {
 				}
 			}
 
-            return self
-        }
+			return self
+		}
 
         return nil
     }

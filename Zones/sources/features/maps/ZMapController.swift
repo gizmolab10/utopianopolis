@@ -377,25 +377,26 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func dropMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
         if  let draggedZone        = gDraggedZone {
             if  draggedZone.userCanMove,
-				let (inBigMap, dropWidget, location) = widgetHit(by: iGesture, locatedInBigMap: isBigMap),
-				draggedZone       != dropWidget.widgetZone {
+				let (inBigMap, zone, location) = widgetHit(by: iGesture, locatedInBigMap: isBigMap),
+				draggedZone       != zone,
+				var       dropZone = zone, !gSelecting.currentMapGrabs.contains(dropZone),
+				let     dropWidget = zone?.widget,
+				let     dropParent = dropZone.parentZone {
 				let dropController = dropWidget.controller
-                var       dropZone = dropWidget.widgetZone
-				let  dropIsGrabbed = gSelecting.currentMapGrabs.contains(dropZone!)
-				let      dropIndex = dropZone?.siblingIndex
+				let      dropIndex = dropZone.siblingIndex
                 let           here = inBigMap ? gHere : gSmallMapHere
                 let       dropHere = dropZone == here
 				let       relation = dropController?.relationOf(location, to: dropWidget) ?? .upon
 				let  useDropParent = relation != .upon && !dropHere
-				;         dropZone = dropIsGrabbed ? nil : useDropParent ? dropZone?.parentZone : dropZone
-				let  lastDropIndex = dropZone == nil ? 0 : dropZone!.count
-				var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : ((!gListsGrowDown || dropIsGrabbed) ? 0 :   lastDropIndex)
+				;         dropZone = useDropParent ? dropParent : dropZone
+				let  lastDropIndex = dropZone.count
+				var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : (!gListsGrowDown ? 0 : lastDropIndex)
 				;            index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
 				let      dragIndex = draggedZone.siblingIndex
 				let      sameIndex = dragIndex == index || dragIndex == index - 1
-				let   dropIsParent = dropZone?.children.contains(draggedZone) ?? false
-				let     spawnCycle = dropZone?.spawnCycle ?? false
-				let         isNoop = dropIsGrabbed || spawnCycle || (sameIndex && dropIsParent) || index < 0
+				let   dropIsParent = dropZone.children.contains(draggedZone)
+				let     spawnCycle = dropZone.spawnCycle
+				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0
                 let          prior = gDropZone?.widget
                 let        dropNow = isDoneGesture(iGesture)
                 gDropIndices       = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
@@ -412,9 +413,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				gMapController?     .mapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
 				gSmallMapController?.mapView?.setNeedsDisplay()
 
-                if !isNoop, dropNow,
-					let         drop = dropZone {
-                    let   toBookmark = drop.isBookmark
+                if !isNoop, dropNow {
+                    let   toBookmark = dropZone.isBookmark
                     var dropAt: Int? = index
 
                     if  toBookmark {
@@ -426,7 +426,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
 						let   flags = gesture.modifiers {
 
-						drop.addGrabbedZones(at: dropAt, undoManager: undoManager, flags) {
+						dropZone.addGrabbedZones(at: dropAt, undoManager: undoManager, flags) {
 							gRedrawMaps()
                             gSelecting.updateBrowsingLevel()
                             gSelecting.updateCousinList()
@@ -445,7 +445,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // MARK:- internals
     // MARK:-
 
-	func widgetHit(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
+	func widgetHit(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (Bool, Zone?, CGPoint)? {
 		if  let         viewG = gesture?.view,
 			let     locationG = gesture?.location(in: viewG),
 			let     locationW = mapView?.convert(locationG, from: viewG),
@@ -457,21 +457,21 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				let   widgetA = alternate?.rootWidget.widgetNearestTo(locationA, in: mapViewA, alternate?.hereZone) {
 				let  dragDotW = widgetW.dragDot
                 let  dragDotA = widgetA.dragDot
-                let   vectorW = dragDotW.convert(dragDotW.bounds.center, to: view) - locationW
-                let   vectorA = dragDotA.convert(dragDotA.bounds.center, to: view) - locationW
-                let distanceW = vectorW.hypontenuse
-                let distanceA = vectorA.hypontenuse
+                let   vectorW = dragDotW.convert(dragDotW.bounds.center, to: mapView) - locationW
+                let   vectorA = dragDotA.convert(dragDotA.bounds.center, to: mapView) - locationW
+                let   lengthW = vectorW.length
+                let   lengthA = vectorA.length
 
 				// ////////////////////////////////////////////////////// //
 				// determine which drag dot's center is closest to cursor //
 				// ////////////////////////////////////////////////////// //
 
-                if  distanceW > distanceA {
-					return (false, widgetA, locatedInBigMap ? locationW : locationA)
+                if  lengthW > lengthA {
+					return (false, widgetA.widgetZone, locatedInBigMap ? locationW : locationA)
                 }
             }
 
-            return (true, widgetW, locationW)
+            return (true, widgetW.widgetZone, locationW)
         }
 
         return nil
@@ -507,7 +507,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func relationOf(_ point: CGPoint, to iWidget: ZoneWidget?) -> ZRelation {
         var     relation = ZRelation.upon
         if  let   widget = iWidget,
-			let     rect = gDragView?.convert(widget.bounds, from:  widget).insetBy(dx: 0.0, dy: 5.0) {
+			let     rect = gDragView?.convert(widget.textWidget.bounds, from:  widget).insetBy(dx: 0.0, dy: 5.0) {
 			let     minY = rect.minY
 			let     maxY = rect.maxY
 			let        y = point.y

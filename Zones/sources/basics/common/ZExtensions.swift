@@ -683,7 +683,7 @@ extension CGSize {
 		return min(abs(height), abs(width))
 	}
 
-    var hypontenuse: CGFloat {
+    var length: CGFloat {
         return sqrt(width * width + height * height)
     }
 
@@ -708,7 +708,7 @@ extension CGSize {
 	}
 
 	func isLargerThan(_ other: CGSize) -> Bool {
-		return hypontenuse > other.hypontenuse
+		return length > other.length
 	}
 
 	func multiplyBy(_ fraction: CGFloat) -> CGSize {
