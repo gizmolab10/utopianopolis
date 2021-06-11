@@ -448,31 +448,31 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func widgetHit(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (Bool, ZoneWidget, CGPoint)? {
 		if  let     gView = gesture?.view,
 			let    gPoint = gesture?.location(in: gView),
-			let  location = mapView?.convert(gPoint, from: gView),
-			let    widget = rootWidget.widgetNearestTo(location, in: mapView, hereZone) {
+			let locationW = mapView?.convert(gPoint, from: gView),
+			let   widgetW = rootWidget.widgetNearestTo(locationW, in: mapView, hereZone) {
 			let alternate = isBigMap ? gSmallMapController : gMapController
 
 			if  !kIsPhone,
-				let alternatemapView   = alternate?.mapView,
-				let alternateLocation  = mapView?.convert(location, to: alternatemapView),
-				let alternateWidget    = alternate?.rootWidget.widgetNearestTo(alternateLocation, in: alternatemapView, alternate?.hereZone) {
-				let           dragDotW =          widget.dragDot
-                let           dragDotA = alternateWidget.dragDot
-                let            vectorW = dragDotW.convert(dragDotW.bounds.center, to: view) - location
-                let            vectorA = dragDotA.convert(dragDotA.bounds.center, to: view) - location
-                let          distanceW = vectorW.hypontenuse
-                let          distanceA = vectorA.hypontenuse
+				let  mapViewA = alternate?.mapView,
+				let locationA = mapView?.convert(locationW, to: mapViewA),
+				let   widgetA = alternate?.rootWidget.widgetNearestTo(locationA, in: mapViewA, alternate?.hereZone) {
+				let  dragDotW = widgetW.dragDot
+                let  dragDotA = widgetA.dragDot
+                let   vectorW = dragDotW.convert(dragDotW.bounds.center, to: view) - locationW
+                let   vectorA = dragDotA.convert(dragDotA.bounds.center, to: view) - locationW
+                let distanceW = vectorW.hypontenuse
+                let distanceA = vectorA.hypontenuse
 
 				// ////////////////////////////////////////////////////// //
 				// determine which drag dot's center is closest to cursor //
 				// ////////////////////////////////////////////////////// //
 
                 if  distanceW > distanceA {
-					return (false, alternateWidget, locatedInBigMap ? location : alternateLocation)
+					return (false, widgetA, locatedInBigMap ? locationW : locationA)
                 }
             }
 
-            return (true, widget, location)
+            return (true, widgetW, locationW)
         }
 
         return nil

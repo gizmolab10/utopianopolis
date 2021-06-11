@@ -563,24 +563,6 @@ extension ZTextEditor {
 
 extension ZoneWidget {
 
-    func dragHitFrame(in iView: ZView?, _ iHere: Zone) -> CGRect {
-		var hitRect = CGRect.zero
-
-        if  let   view = iView,
-            let    dot = dragDot.innerDot {
-            let isHere = widgetZone == iHere
-            let cFrame =     convert(childrenView.frame, to: view)
-            let dFrame = dot.convert(        dot.bounds, to: view)
-            let bottom =  (!isHere && widgetZone?.hasZonesBelow ?? false) ? cFrame.minY : 0.0
-            let    top = ((!isHere && widgetZone?.hasZonesAbove ?? false) ? cFrame      : view.bounds).maxY
-            let  right =                                                        view.bounds .maxX
-            let   left =    isHere ? 0.0 : dFrame.minX - gGenericOffset.width
-            hitRect    = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
-        }
-
-        return hitRect
-    }
-
     func lineRect(to rightFrame: CGRect, kind: ZLineKind?) -> CGRect {
         var frame = CGRect ()
 

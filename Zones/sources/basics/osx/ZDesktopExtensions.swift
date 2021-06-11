@@ -1095,23 +1095,6 @@ extension Zone {
 
 extension ZoneWidget {
 
-    func dragHitFrame(in iView: ZView?, _ iHere: Zone) -> CGRect {
-		var result     = CGRect.zero
-		if  let   view = iView {
-			let   text = textWidget
-            let isHere = widgetZone == iHere
-            let cFrame =      convert(childrenView.frame, to: view)
-            let tFrame = text.convert(       text.bounds, to: view)
-            let   left =    isHere ? 0.0 :                                  tFrame.minX - gGenericOffset.width - CGFloat(gDotWidth)
-            let bottom =  (!isHere && widgetZone?.hasZonesBelow ?? false) ? cFrame.minY : 0.0
-            let    top = ((!isHere && widgetZone?.hasZonesAbove ?? false) ? cFrame      : view.bounds).maxY
-            let  right =                                                                  view.bounds .maxX
-			result     = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
-        }
-
-        return result
-    }
-
     func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
         var             frame = CGRect ()
 
