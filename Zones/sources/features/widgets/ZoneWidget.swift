@@ -382,7 +382,7 @@ class ZoneWidget: ZView {
 
     func dot(at iIndex: Int) -> ZoneDot? {
         if  let zone = widgetZone {
-            if zone.count == 0 || iIndex < 0 {
+            if  zone.count == 0 || iIndex < 0 {
                 return nil
             }
 

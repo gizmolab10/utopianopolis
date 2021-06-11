@@ -15,9 +15,9 @@ import Foundation
 #endif
 
 enum ZRelation: Int {
-    case above
-    case below
-    case upon
+    case above = 0 // do not change these values
+	case below = 1
+    case upon  = 2
 }
 
 let gSelecting = ZSelecting()

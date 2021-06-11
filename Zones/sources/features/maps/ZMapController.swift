@@ -380,23 +380,34 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				let (inBigMap, zone, location) = widgetHit(by: iGesture, locatedInBigMap: isBigMap),
 				draggedZone       != zone,
 				var       dropZone = zone, !gSelecting.currentMapGrabs.contains(dropZone),
-				let     dropWidget = zone?.widget,
-				let     dropParent = dropZone.parentZone {
+				var     dropWidget = zone?.widget {
 				let dropController = dropWidget.controller
 				let      dropIndex = dropZone.siblingIndex
                 let           here = inBigMap ? gHere : gSmallMapHere
-                let       dropHere = dropZone == here
+                let    notDropHere = dropZone != here
 				let       relation = dropController?.relationOf(location, to: dropWidget) ?? .upon
-				let  useDropParent = relation != .upon && !dropHere
-				;         dropZone = useDropParent ? dropParent : dropZone
+				let      useParent = relation != .upon && notDropHere
+
+				if  useParent,
+					let dropParent = dropZone.parentZone,
+					let    pWidget = dropParent.widget {
+					dropZone       = dropParent
+					dropWidget     = pWidget
+
+					if  relation == .below {
+						noop()
+					}
+				}
+
 				let  lastDropIndex = dropZone.count
-				var          index = (useDropParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : (!gListsGrowDown ? 0 : lastDropIndex)
-				;            index = !dropHere ? index : relation != .below ? 0 : lastDropIndex
+				var          index = (useParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : (!gListsGrowDown ? 0 : lastDropIndex)
+				;            index = notDropHere ? index : relation != .below ? 0 : lastDropIndex
 				let      dragIndex = draggedZone.siblingIndex
+				let     sameParent = draggedZone.parentZone == dropZone.parentZone
 				let      sameIndex = dragIndex == index || dragIndex == index - 1
 				let   dropIsParent = dropZone.children.contains(draggedZone)
 				let     spawnCycle = dropZone.spawnCycle
-				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0
+				let         isNoop = spawnCycle || (sameIndex && sameParent && dropIsParent) || index < 0
                 let          prior = gDropZone?.widget
                 let        dropNow = isDoneGesture(iGesture)
                 gDropIndices       = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
@@ -404,7 +415,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                 gDragRelation      = isNoop || dropNow ? nil : relation
                 gDragPoint         = isNoop || dropNow ? nil : location
 
-                if !isNoop && !dropNow && !dropHere && index > 0 {
+                if !isNoop && !dropNow && notDropHere && index > 0 {
                     gDropIndices?.add(index - 1)
                 }
 
@@ -412,6 +423,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				dropWidget                   .displayForDrag()  // relayout child lines
 				gMapController?     .mapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
 				gSmallMapController?.mapView?.setNeedsDisplay()
+
+				print("\(dropIndex ?? -1) \(relation) \(zone!)")
 
                 if !isNoop, dropNow {
                     let   toBookmark = dropZone.isBookmark
@@ -506,8 +519,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
     func relationOf(_ point: CGPoint, to iWidget: ZoneWidget?) -> ZRelation {
         var     relation = ZRelation.upon
-        if  let   widget = iWidget,
-			let     rect = gDragView?.convert(widget.textWidget.bounds, from:  widget).insetBy(dx: 0.0, dy: 5.0) {
+        if  let     text = iWidget?.textWidget,
+			let     rect = gDragView?.convert(text.bounds, from: text).insetBy(dx: 0.0, dy: 5.0) {
 			let     minY = rect.minY
 			let     maxY = rect.maxY
 			let        y = point.y

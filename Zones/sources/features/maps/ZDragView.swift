@@ -37,7 +37,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 		if  let     widget = gDropZone?.widget,
 			let        dot = widget.revealDot.innerDot {
-			let parameters = widget.widgetZone?.dropDotParameters() ?? ZDotParameters()
+			let parameters = gDropZone?.dropDotParameters() ?? ZDotParameters()
             let  floatRect = widget.floatingDropDotRect
             let   dragRect = widget.convert(floatRect, to: self)
 			let    dotRect = convert(dot.bounds, from: dot)
