@@ -34,7 +34,7 @@ class ZEvents: ZGeneric {
 //    }
 
     func setup() {
-        setupGlobalEventsMonitor()
+        setupLocalEventsMonitor()
         gNotificationCenter.addObserver(self, selector: #selector(ZEvents.handleDarkModeChange), name: Notification.Name("AppleInterfaceThemeChangedNotification"), object: nil)
     }
     
@@ -61,28 +61,26 @@ class ZEvents: ZGeneric {
     }
 
 
-    func setupGlobalEventsMonitor() {
+    func setupLocalEventsMonitor() {
         #if os(OSX)
 
-            self.monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
+		self.monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
                 if !isDuplicate(event: event) {
-                    switch gWorkMode {
-						case .wSearchMode:
-							return     gSearching      .handleEvent(event)
-						case .wEssayMode:
-							if  gIsHelpFrontmost {
-								return gHelpController?.handleEvent(event) ?? nil
-							} else {
-								return gEssayEditor    .handleEvent(event, isWindow: true)
-							}
-						case .wMapMode, .wEditIdeaMode:
-							if !gIsHelpFrontmost {
-								return gMapEditor      .handleEvent(event, isWindow: true)
-							}
+					if  gIsHelpFrontmost {
+						return gHelpController?    .handleEvent(event) ?? event
+					}
 
-							fallthrough
+					let isWindow = event.window?.contentView?.frame.contains(event.locationInWindow) ?? false
+
+					switch gWorkMode {
+						case .wSearchMode:
+							return gSearching      .handleEvent(event)
+						case .wEssayMode:
+							return gEssayEditor    .handleEvent(event, isWindow: isWindow)
+						case .wMapMode, .wEditIdeaMode:
+							return gMapEditor      .handleEvent(event, isWindow: isWindow)
 						default:
-							return     gHelpController?.handleEvent(event) ?? nil
+							return gHelpController?.handleEvent(event) ?? event
 					}
 				}
 

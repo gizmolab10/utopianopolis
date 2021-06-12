@@ -35,7 +35,7 @@ class ZSmallMapRecords: ZRecords {
 	func go(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
 		if  currentBookmark == nil {
 			if  self != gRecents {
-				gSwapSmallMapMode()
+				gToggleSmallMapMode()
 			}
 
 			gRecents.push()

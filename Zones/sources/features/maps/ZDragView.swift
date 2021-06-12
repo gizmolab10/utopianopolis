@@ -55,15 +55,13 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 		if  gRubberband.rubberbandRect != nil {
 			gRubberband.rubberbandRect  = nil
-
-			setNeedsDisplay()
 		}
 
 		if  gDropZone != nil {
 			gDropZone  = nil
-
-			setNeedsDisplay()
 		}
+
+		setNeedsDisplay()
 	}
 
 }

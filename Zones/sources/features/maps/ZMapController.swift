@@ -223,7 +223,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					gRubberband.rubberbandRect = nil              // erase rubberband
 
 					restartGestureRecognition()
-					gSignal([.sDatum])                            // so color well and indicators get updated
+					gSignal([.spPreferences, .sDatum])                            // so color well and indicators get updated
 				} else if let  dot = detectDot(iGesture),
 						  let zone = dot.widgetZone {
 					if  dot.isReveal {
@@ -403,11 +403,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				var          index = (useParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : (!gListsGrowDown ? 0 : lastDropIndex)
 				;            index = notDropHere ? index : relation != .below ? 0 : lastDropIndex
 				let      dragIndex = draggedZone.siblingIndex
-				let     sameParent = draggedZone.parentZone == dropZone.parentZone
 				let      sameIndex = dragIndex == index || dragIndex == index - 1
 				let   dropIsParent = dropZone.children.contains(draggedZone)
 				let     spawnCycle = dropZone.spawnCycle
-				let         isNoop = spawnCycle || (sameIndex && sameParent && dropIsParent) || index < 0
+				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0
                 let          prior = gDropZone?.widget
                 let        dropNow = isDoneGesture(iGesture)
                 gDropIndices       = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
@@ -423,8 +422,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				dropWidget                   .displayForDrag()  // relayout child lines
 				gMapController?     .mapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
 				gSmallMapController?.mapView?.setNeedsDisplay()
-
-				print("\(dropIndex ?? -1) \(relation) \(zone!)")
 
                 if !isNoop, dropNow {
                     let   toBookmark = dropZone.isBookmark
@@ -505,16 +502,16 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
         // cursor exited view, remove drag cruft
 
-        let          dot = gDropZone?.widget?.revealDot.innerDot // drag view does not "un"draw this
-        gDropIndices = nil
-        gDropZone    = nil
-        gDragRelation    = nil
-        gDragPoint       = nil
+		gDropZone     = nil
+		gDragPoint    = nil
+        gDropIndices  = nil
+		gDragRelation = nil
+		let       dot = gDropZone?.widget?.revealDot.innerDot // drag view does not "un"draw this
 
+		gDragView?.setNeedsDisplay() // erase drag: line and dot
         rootWidget.setNeedsDisplay()
 		mapView?  .setNeedsDisplay()
 		dot?      .setNeedsDisplay()
-		gDragView?.setNeedsDisplay() // erase drag: line and dot
     }
 
     func relationOf(_ point: CGPoint, to iWidget: ZoneWidget?) -> ZRelation {

@@ -26,8 +26,8 @@ class ZHelpDotsData: ZHelpData {
 		".b",					"editable",																		"",
 		".b",					"not editable",																	"",
 		".b",					"only the ideas in all its sublists are editable",								"",
+		".b",					"owner of a favorites group",													"",
 		".b",					"member of a favorites group",													"",
-		".b",					"owner of group",																"",
 		"",						"",																				"",
 		"_appears only in the favorite and recent lists",													"",	"",
 		".b",					"this bookmark's target is current focus",										""
@@ -37,7 +37,7 @@ class ZHelpDotsData: ZHelpData {
 		"",						"",																				"",
 		"!REVEAL DOT",			"click to conceal, reveal or activate",											"",
 		"",						"",																				"",
-		"_no dot indicates nothing to reveal (no list, note, email or hyperlink)",							"", kEmpty,
+		"_no dot indicates nothing to reveal (no list, note, email or hyperlink)",							"", "",
 		"",						"",																				"",
 		"_when list is visible","click to hide list",															"",
 		".e",					"points to the left",															"",
@@ -55,8 +55,7 @@ class ZHelpDotsData: ZHelpData {
 		".f",					"target has note  ⌘-click to view note",										"",
 		".b",					"email                   compose and send",										"",
 		".b",					"hyperlink            open in a browser",										"",
-		".b",					"note or essay     edit",												"",
-		".b",					"video                   open in Quicktime",									""
+		".b",					"note or essay     edit",														""
 	]
 
 }

@@ -417,7 +417,13 @@ extension NSView {
     var recognizers: [NSGestureRecognizer]? { return gestureRecognizers }
 
     var gestureHandler: ZGesturesController? {
-        get { return nil }
+        get {
+			if  let r = recognizers, r.count > 0 {
+				return r[0].delegate as? ZGesturesController
+			}
+
+			return nil
+		}
         set {
             clearGestures()
 

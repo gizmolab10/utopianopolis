@@ -140,7 +140,7 @@ class ZMapEditor: ZBaseEditor {
 						case "#":        if gSelecting.hasMultipleGrab { prefix(with: key) } else { debugAnalyze() }
 						case "+":        gSelecting.currentGrabs.toggleGroupOwnership()
 						case "-":        return handleHyphen(COMMAND, OPTION)
-						case "'":        gSwapSmallMapMode(OPTION)
+						case "'":        gToggleSmallMapMode(OPTION)
 						case "/":        if SCORNED { gCurrentKeyPressed = nil; return false } else { focusOrPopSmallMap(CONTROL, COMMAND, kind: .eSelected) }
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case "[", "]":   go(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRedrawMaps() }

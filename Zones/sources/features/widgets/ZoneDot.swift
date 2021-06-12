@@ -293,12 +293,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
 			drawStringDecoration(in: iDirtyRect, string: parameters.traitType, color: fillColor)
 		}
-
-//		if  parameters.hasDuplicate {
-//			let string = "\(widgetZone?.duplicates.count ?? 1)"
-//
-//			drawStringDecoration(in: iDirtyRect, string: string, color: fillColor)
-//		}
 	}
 
 	func drawInnerDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {

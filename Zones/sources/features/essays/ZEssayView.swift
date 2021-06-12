@@ -142,7 +142,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch key {
 				case "c":      grabbedZones.copyToPaste()
 				case "t":      swapWithParent()
-				case "'":      gSwapSmallMapMode(OPTION)
+				case "'":      gToggleSmallMapMode(OPTION)
 				case "/":      swapBetweenNoteAndEssay()
 				case kEscape:  gHelpController?.show(flags: flags)
 				case kEquals:  if SHIFT { grabSelected() } else { return followLinkInSelection() }
@@ -177,7 +177,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 				case "z":      if  SHIFT { undoManager?.redo() } else { undoManager?.undo() }
 				case "/":      gHelpController?.show(flags: flags)
-				case "'":      gSwapSmallMapMode(OPTION)
+				case "'":      gToggleSmallMapMode(OPTION)
 				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
 				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
 				case kReturn:  grabDone()

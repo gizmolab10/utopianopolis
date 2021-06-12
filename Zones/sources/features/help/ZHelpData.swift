@@ -17,10 +17,9 @@ enum ZHelpDotType: String {
 	case three      = "3"
 	case click      = "points"
 	case email      = "email"
-	case video      = "video"
 	case essay      = "click"
-	case cycle      = "cycle"
-	case group      = "owner"
+	case owner      = "owner"
+	case member     = "member"
 	case twelve     = "12"
 	case progeny    = "only"
 	case favorite   = "this"
@@ -31,8 +30,8 @@ enum ZHelpDotType: String {
 	case twelveHund = "1200"
 	case unwritable = "not"
 
-	var isReveal    : Bool            { return ![.drag, .essay, .cycle, .group, .favorite].contains(self) && !showAccess }
-	var showAccess  : Bool            { return  [.progeny,                      .unwritable].contains(self) }
+	var isReveal    : Bool            { return ![.drag, .essay, .member, .owner, .favorite].contains(self) && !showAccess }
+	var showAccess  : Bool            { return  [.progeny,                     .unwritable].contains(self) }
 	var pointLeft   : Bool            { return self == .click }
 	var accessType  : ZDecorationType { return self == .progeny ? .sideDot : .vertical }
 
@@ -57,7 +56,6 @@ enum ZHelpDotType: String {
 			case .note,
 				 .essay:     return ZTraitType.tNote     .rawValue
 			case .email:     return ZTraitType.tEmail    .rawValue
-			case .video:     return ZTraitType.tVideo    .rawValue
 			case .hyperlink: return ZTraitType.tHyperlink.rawValue
 			default:         return kEmpty
 		}
@@ -85,8 +83,8 @@ enum ZHelpDotType: String {
 		p.showAccess    = showAccess
 		p.accessType    = accessType
 		p.showList      = pointLeft || !isFilled
-		p.isGroupOwner  = self == .group
-		p.isGrouped     = self == .group    || self == .cycle
+		p.isGroupOwner  = self == .owner
+		p.isGrouped     = self == .owner    || self == .member
 		p.hasTargetNote = self == .notemark || self == .has
 		p.hasTarget     = self == .bookmark
 		p.showSideDot   = self == .favorite

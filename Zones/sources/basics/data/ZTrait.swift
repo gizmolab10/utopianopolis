@@ -14,7 +14,6 @@ enum ZTraitType: String {
 	case tMoney     = "$" //      "
 	case tAssets    = "a" // allow multiple
 	case tHyperlink = "h"
-	case tVideo     = "v"
 	case tEmail     = "e"
 	case tEssay     = "w"
 	case tDate      = "d"
@@ -34,7 +33,6 @@ enum ZTraitType: String {
 			case .tHyperlink: return "LINK"
 			case .tEmail:     return "EMAIL"
 			case .tEssay:     return "ESSAY"
-			case .tVideo:     return "VIDEO"
 			case .tNote:      return "NOTE"
 			default:          return nil
 		}
@@ -155,7 +153,6 @@ class ZTrait: ZTraitAssets {
     override var emptyName: String {
         if  let tType = traitType {
             switch tType {
-				case .tVideo:     return "video file name"
 				case .tEmail:     return "email address"
 				case .tHyperlink: return "hyperlink"
 				default:          break
@@ -217,7 +214,7 @@ class ZTrait: ZTraitAssets {
 	}
 
 	func updateSearchables() {
-		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tVideo, .tHyperlink]
+		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tHyperlink]
 
 		if  let  tt = traitType, searchables.contains(tt) {
 			strings = text?.searchable.components(separatedBy: kSpace)

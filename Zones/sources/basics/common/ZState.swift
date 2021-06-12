@@ -115,11 +115,9 @@ let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
 let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
 let              gScratchZone                     = Zone.uniqueZoneRenamed(kScratchRootName, recordName: kScratchRootName, databaseID: .mineID)
 
-func gSwapSmallMapMode(_ OPTION: Bool = false) {
+func gToggleSmallMapMode(_ OPTION: Bool = false, forceToggle: Bool = false) {
 	if  let c = gDetailsController {
-		if !c.viewIsVisible(for: .vSmallMap) {
-			c.showViewFor       (.vSmallMap)
-		} else {
+		func toggle() {
 			gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
 
 			if  OPTION {			        // if any grabs are in current small map, move them to other map
@@ -128,6 +126,16 @@ func gSwapSmallMapMode(_ OPTION: Bool = false) {
 
 				gSelecting.swapGrabsFrom(priorID, toID: currentID)
 			}
+		}
+
+		if !c.viewIsVisible(for: .vSmallMap) {
+			c.showViewFor       (.vSmallMap)
+
+			if  forceToggle {
+				toggle()
+			}
+		} else {
+			toggle()
 		}
 
 		gShowDetailsView = true    	// make sure the details view is visible

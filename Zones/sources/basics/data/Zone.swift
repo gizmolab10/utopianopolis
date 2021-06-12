@@ -84,10 +84,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                       isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
 	var                        hasColor :               Bool  { return zoneColor != nil && !(zoneColor?.isEmpty ?? true) }
 	var                        hasEmail :               Bool  { return hasTrait(for: .tEmail) && !(email?.isEmpty ?? true) }
-	var                        hasVideo :               Bool  { return hasTrait(for: .tVideo) && !(videoFileName?.isEmpty ?? true) }
 	var                        hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                         hasNote :               Bool  { return hasTrait(for: .tNote) }
-	var                     isTraveller :               Bool  { return isBookmark || hasHyperlink || hasVideo || hasEmail || hasNote }
+	var                     isTraveller :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
 	var                       isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
 	var                     isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
 	var                     isInRecents :               Bool  { return root?.isRecentsRoot      ?? false }
@@ -421,24 +420,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				hyperLinkMaybe  = newValue
 
 				setTraitText(newValue, for: .tHyperlink)
-			}
-		}
-	}
-
-	var videoFileName: String? {
-		get {
-			if  videoFileNameMaybe == nil {
-				videoFileNameMaybe  = getTraitText(for: .tVideo)
-			}
-
-			return videoFileNameMaybe
-		}
-
-		set {
-			if  videoFileNameMaybe != newValue {
-				videoFileNameMaybe  = newValue
-
-				setTraitText(newValue, for: .tVideo)
 			}
 		}
 	}
@@ -867,10 +848,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if  childArray.count > 0 {
 				setValue(childArray as NSObject, forKeyPath: kChildArray)
+			} else {
+				setValue(nil,                    forKeyPath: kChildArray)
 			}
 
 			if  traitArray.count > 0 {
 				setValue(traitArray as NSObject, forKeyPath: kTraitArray)
+			} else {
+				setValue(nil,                    forKeyPath: kTraitArray)
 			}
 		}
 	}
@@ -1596,7 +1581,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			switch (type) {
 				case .tEmail:     emailMaybe         = iText
-				case .tVideo:     videoFileNameMaybe = iText
 				case .tHyperlink: hyperLinkMaybe     = iText
 				default: break
 			}
@@ -1971,8 +1955,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func invokeTravel(_ COMMAND: Bool = false, onCompletion: BoolClosure? = nil) {
 		if !invokeBookmark(COMMAND, onCompletion: onCompletion),
 		   !invokeEssay(),
-		   !invokeURL(for: .tHyperlink),
-		   !invokeURL(for: .tVideo) {
+		   !invokeURL(for: .tHyperlink) {
 			invokeURL(for: .tEmail)
 		}
 	}
@@ -2026,7 +2009,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		switch traitType {
 			case .tHyperlink: return hyperLink
 			case .tEmail:     return emailLink
-			case .tVideo:     return videoFileName?.asBundleResource
 			default:          return nil
 		}
 	}
@@ -2169,6 +2151,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		// 2. move a normal zone through a bookmark                                                                  //
 		// 3. move a normal zone into small map -- create a bookmark pointing at normal zone, then add it to the map //
 		// 4. move from small map into a normal zone -- convert to a bookmark, then move the bookmark                //
+		//                                                                                                           //
+		// OPTION  = copy                                                                                            //
+		// SPECIAL = don't create bookmark              (case 3)                                                     //
+		// CONTROL = don't change here or expand into                                                                //
 		// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		guard let undoManager = iUndoManager else {
@@ -2179,10 +2165,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		let   toBookmark = isBookmark                    // type 2
 		let   toSmallMap = isInSmallMap && !toBookmark   // type 3
-		let      SPECIAL = flags.isSpecial
 		let         into = bookmarkTarget ?? self        // grab bookmark AFTER travel
 		var        grabs = gSelecting.currentMapGrabs
 		var      restore = [Zone: (Zone, Int?)] ()
+		let     STAYHERE = flags.isSpecial
+		let   NOBOOKMARK = flags.isControl
+		let         COPY = flags.isOption
 		var    cyclicals = IndexSet()
 
 		// separate zones that are connected back to themselves
@@ -2235,15 +2223,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		// /////////////
 
 		let finish = {
-			var firstTime = true
-			let    OPTION = flags.isOption
+			var onlyTime = true
 
-			if !SPECIAL {
+			if !NOBOOKMARK {
 				into.expand()
 			}
 
-			if  firstTime {
-				firstTime = false
+			if  onlyTime {
+				onlyTime          = false
 				if  let firstGrab = grabs.first,
 					let fromIndex = firstGrab.siblingIndex,
 					(firstGrab.parentZone != into || fromIndex > (iIndex ?? 1000)) {
@@ -2255,12 +2242,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				for grab in grabs {
 					var bookmark = grab
 
-					if  toSmallMap && !bookmark.isInSmallMap && !bookmark.isBookmark && !bookmark.isInTrash && !SPECIAL {
+					if  toSmallMap && !bookmark.isInSmallMap && !bookmark.isBookmark && !bookmark.isInTrash && !STAYHERE {
 						if  let    b = gCurrentSmallMapRecords?.matchOrCreateBookmark(for: bookmark, autoAdd: false) {	// case 3
 							bookmark = b
 						}
 					} else if bookmark.databaseID != into.databaseID {    // being moved to the other db
-						if  bookmark.parentZone == nil || !bookmark.parentZone!.children.contains(bookmark) || !OPTION {
+						if  bookmark.parentZone == nil || !bookmark.parentZone!.children.contains(bookmark) || !COPY {
 							bookmark.needDestroy()                        // is not a child within its parent and should be tossed
 							bookmark.orphan()
 						}
@@ -2268,12 +2255,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						bookmark = bookmark.deepCopy(dbID: into.databaseID)
 					}
 
-					if !SPECIAL {
+					if !STAYHERE, !NOBOOKMARK {
 						bookmark.addToGrabs()
-					}
 
-					if  toSmallMap {
-						into.updateVisibilityInSmallMap(true)
+						if  toSmallMap {
+							into.updateVisibilityInSmallMap(true)
+						}
 					}
 
 					bookmark.orphan()
@@ -2294,7 +2281,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		// deal with target being a bookmark //
 		// ////////////////////////////////////
 
-		if !toBookmark || SPECIAL {
+		if !toBookmark || STAYHERE || NOBOOKMARK || COPY {
 			finish()
 		} else {
 			focusOnBookmarkTarget() { (iAny, iSignalKind) in
@@ -3157,7 +3144,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let COMMAND = flags.isCommand
 		let  OPTION = flags.isOption
 
-		if  count > 0, !OPTION {
+		if  count > 0, !OPTION, !isBookmark {
 			let show = !expanded
 
 			if  isInSmallMap {
@@ -3392,7 +3379,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "r":      reverseChildren()
 				case "s":      gFiles.export(self, toFileAs: .eSeriously)
 				case "t":      swapWithParent { gRedrawMaps(for: self) }
-				case "v":      editTrait(for: .tVideo)
 				case "/":      focusRecent()
 				case kSpace:   addIdea()
 				case "\u{08}", kDelete: deleteSelf { gRedrawMaps() }
