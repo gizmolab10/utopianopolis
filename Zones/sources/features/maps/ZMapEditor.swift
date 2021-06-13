@@ -174,22 +174,14 @@ class ZMapEditor: ZBaseEditor {
 				let   SHIFT = flags.isShift
 
 				if !((OPTION && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
-					switch arrow {
-						case .up, .down: move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
-						default:
+					switch arrow {          // what would life be like if we did not have to be perfect?
+						case .down,    .up: move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
+						case .left, .right:
 							if  let moveable = gSelecting.rootMostMoveable {
 								if !SHIFT || moveable.isInSmallMap {
-									switch arrow {
-										case .left,
-											 .right:
-											move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) { neededReveal in
-												gSelecting.updateAfterMove(!OPTION, needsRedraw: neededReveal)  // relayout map when travelling through a bookmark
-												onCompletion?() // invoke closure from essay editor
-											}
-
-											return
-
-										default: break
+									move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) { neededReveal in
+										gSelecting.updateAfterMove(!OPTION, needsRedraw: neededReveal)  // relayout map when travelling through a bookmark
+										onCompletion?() // invoke closure from essay editor
 									}
 								} else {
 

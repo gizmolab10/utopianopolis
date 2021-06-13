@@ -22,7 +22,7 @@ let gEvents             = ZEvents()
 
 class ZEvents: ZGeneric {
 
-    var monitor: Any?
+    var localMonitor: Any?
 
     func clear() { removeMonitorAsync() }
 
@@ -47,8 +47,8 @@ class ZEvents: ZGeneric {
     
     func removeMonitorAsync(_ closure: Closure? = nil) {
         #if os(OSX)
-            if  let save = monitor {
-                monitor  = nil
+            if  let     save = localMonitor {
+				localMonitor = nil
 
                 FOREGROUND(after: 0.001) {
                     ZEvent.removeMonitor(save)
@@ -64,12 +64,9 @@ class ZEvents: ZGeneric {
     func setupLocalEventsMonitor() {
         #if os(OSX)
 
-		self.monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
+		self.localMonitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
                 if !isDuplicate(event: event) {
-					if  gIsHelpFrontmost {
-						return gHelpController?    .handleEvent(event) ?? event
-					}
-
+					// do not detect gIsHelpFrontmost nor handle event in gHelpController except in default of work mode switch
 					let isWindow = event.window?.contentView?.frame.contains(event.locationInWindow) ?? false
 
 					switch gWorkMode {

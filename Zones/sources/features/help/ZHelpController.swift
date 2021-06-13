@@ -78,7 +78,7 @@ class ZHelpController: ZGenericTableController {
 		setupTitleBar()
 
 		if !isShowing {
-			gCurrentHelpMode = .noMode // set temporarily so show does not dismiss window
+			gCurrentHelpMode = .noMode // set temporarily so show (just below) does not dismiss window
 
 			show(mode: m)
 		}
@@ -110,20 +110,22 @@ class ZHelpController: ZGenericTableController {
 
 	func show(_ iShow: Bool? = nil, mode: ZHelpMode?) {
 		if  let         next = mode {
-			let   controller = gHelpWindowController
-			let        isKey = gHelpWindow?.isKeyWindow ?? false
+			let  isKeyWindow = gHelpWindow?.isKeyWindow ?? false
 			let         same = gCurrentHelpMode == next
-			let         show = iShow ?? !(isKey && same)
+			let       doShow = !same || !isKeyWindow
+			let         show = iShow ?? doShow
 
 			if !show  {
 				gHelpWindow?.close()
 			} else {
 				gCurrentHelpMode = next
-				isShowing        = true   // prevent infinite recursion (where show window causes view did appear, which calls update, which calls show)
+				isShowing        = true   // prevent infinite recursion (where showWindow calls viewWillAppear, which calls update, which calls show)
 
 				gHelpWindow?.close()      // workaround for dots draw method not being called (perhaps an apple bug?)
-				controller?.showWindow(nil)
+				gHelpWindowController?.showWindow(nil)
 				update()
+				print(".")
+
 				isShowing        = false
 			}
 		}
