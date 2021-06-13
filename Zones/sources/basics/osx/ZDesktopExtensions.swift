@@ -236,21 +236,32 @@ extension ZApplication {
 }
 
 extension ZEventFlags {
-	var isAny:        Bool { return isCommand || isOption || isControl }
-	var isAll:        Bool { return isCommand && isOption && isControl }
-	var isSpecial:    Bool { return isCommand && isOption }
-	var isDual:       Bool { return isControl && isOption }
-    var isNumericPad: Bool { return contains(.numericPad) }
-    var isControl:    Bool { get { return contains(.control) } set { if newValue { insert(.control) } else { remove(.control) } } }
-	var isCommand:    Bool { get { return contains(.command) } set { if newValue { insert(.command) } else { remove(.command) } } }
-    var isOption:     Bool { get { return contains(.option)  } set { if newValue { insert(.option)  } else { remove(.option) } } }
-    var isShift:      Bool { get { return contains(.shift)   } set { if newValue { insert(.shift)   } else { remove(.shift) } } }
+	var isAnyMultiple:  Bool       { return  exactlySplayed || exactlySpecial || exactlyUnusual || exactlyAll }
+	var isAny:          Bool       { return  isCommand ||  isOption ||  isControl }
+	var exactlyAll:     Bool       { return  isCommand &&  isOption &&  isControl }
+	var exactlySpecial: Bool       { return  isCommand &&  isOption && !isControl }
+	var exactlySplayed: Bool       { return  isCommand && !isOption &&  isControl }
+	var exactlyUnusual: Bool       { return !isCommand &&  isOption &&  isControl }
+    var isNumericPad:   Bool       { return  contains(.numericPad) }
+    var isControl:      Bool { get { return  contains(.control) } set { if newValue { insert(.control) } else { remove(.control) } } }
+	var isCommand:      Bool { get { return  contains(.command) } set { if newValue { insert(.command) } else { remove(.command) } } }
+    var isOption:       Bool { get { return  contains(.option)  } set { if newValue { insert(.option)  } else { remove(.option) } } }
+    var isShift:        Bool { get { return  contains(.shift)   } set { if newValue { insert(.shift)   } else { remove(.shift) } } }
 }
 
 extension ZEvent {
-    var arrow: ZArrowKey? { return key?.arrow }
-    var   key:    String? { return input?.character(at: 0) }
+
+	var arrow: ZArrowKey? { return key?.arrow }
     var input:    String? { return charactersIgnoringModifiers }
+
+	var key: String? {
+		if  let    i = input, i.length > 0 {
+			return i.character(at: 0)
+		}
+
+		return nil
+	}
+
 }
 
 extension ZColor {
@@ -798,9 +809,6 @@ extension ZTextEditor {
 	
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		if  var        key = iKey {
-//			let    CONTROL = flags.isControl
-//			let    COMMAND = flags.isCommand
-//			let     OPTION = flags.isOption
 			let        ANY = flags.isAny
 			let editedZone = currentTextWidget?.widgetZone
 			let      arrow = key.arrow

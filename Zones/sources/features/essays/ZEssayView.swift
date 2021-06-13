@@ -173,7 +173,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "n":      swapBetweenNoteAndEssay()
 				case "p":      printCurrentEssay()
 				case "s":      save()
-				case "t":      if COMMAND, let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
+				case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 				case "z":      if  SHIFT { undoManager?.redo() } else { undoManager?.undo() }
 				case "/":      gHelpController?.show(flags: flags)
@@ -215,10 +215,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let   SHIFT = flags.isShift
 		let  OPTION = flags.isOption
 		let COMMAND = flags.isCommand
+		let SPECIAL = flags.exactlySpecial
 
 		if  hasGrabbedNote {
 			handleGrabbed(arrow, flags: flags)
-		} else if  COMMAND && OPTION {
+		} else if  SPECIAL {
 			switch arrow {
 				case .left,
 					 .right: move(out: arrow == .left)
@@ -1253,7 +1254,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
 			}
 
-			if        flags.isDual {
+			if        flags.exactlyUnusual {
 				child(named: "idea", withText: text)
 			} else if flags.isOption {
 				child(named: text,   withText: kEmpty)

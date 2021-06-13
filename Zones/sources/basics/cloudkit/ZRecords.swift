@@ -776,14 +776,14 @@ class ZRecords: NSObject {
         }
     }
 
-	func focusOnGrab(_ kind: ZFocusKind = .eEdited, _ COMMAND: Bool = false, shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
+	func focusOnGrab(_ kind: ZFocusKind = .eEdited, _ NOBOOKMARK: Bool = false, shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
 
 		// regarding grabbed/edited zone, five states:
-		// 1. is a bookmark     -> target becomes here, if in big map then do as for state 2
-		// 2. is here           -> update in small map
-		// 3. in small map      -> grab here, if grabbed then do as for state 4
-		// 4. not here, COMMAND -> become here
-		// 5. not COMMAND       -> select here, create a bookmark
+		// 1. is a bookmark        -> target becomes here, if in big map then do as for state 2
+		// 2. is here              -> update in small map
+		// 3. in small map         -> grab here, if grabbed then do as for state 4
+		// 4. not here, NOBOOKMARK -> change here
+		// 5. not NOBOOKMARK       -> select here, create a bookmark
 
 		guard  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab else {
 			atArrival()
@@ -812,7 +812,7 @@ class ZRecords: NSObject {
 			atArrival()
 		} else if zone.isInSmallMap {   // state 3
 			finishAndGrabHere()
-		} else if COMMAND {             // state 4
+		} else if NOBOOKMARK {             // state 4
 			gRecents.refocus {
 				atArrival()
 			}

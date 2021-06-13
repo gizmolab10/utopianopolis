@@ -63,11 +63,11 @@ class ZHelpButtonsView : ZButtonsView {
 
 	@objc private func handleButtonPress(_ button: ZButton) {
 		if  let mode = button.helpMode {
-			gHelpController?.showHelp(for: mode)
+			gHelpController?.showHelpFor(mode)
 		}
 	}
 
-	func actuateNextButton(forward: Bool) {
+	func showNextHelp(forward: Bool) {
 		var    mode = gCurrentHelpMode
 		switch mode {
 			case .basicMode:  mode = forward ? .middleMode : .dotMode
@@ -78,7 +78,7 @@ class ZHelpButtonsView : ZButtonsView {
 			default:          break
 		}
 
-		gHelpController?.showHelp(for: mode)
+		gHelpController?.showHelpFor(mode)
 	}
 
 	func update() {

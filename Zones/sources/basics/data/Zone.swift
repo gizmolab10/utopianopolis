@@ -2168,7 +2168,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let         into = bookmarkTarget ?? self        // grab bookmark AFTER travel
 		var        grabs = gSelecting.currentMapGrabs
 		var      restore = [Zone: (Zone, Int?)] ()
-		let     STAYHERE = flags.isSpecial
+		let     STAYHERE = flags.exactlySpecial
 		let   NOBOOKMARK = flags.isControl
 		let         COPY = flags.isOption
 		var    cyclicals = IndexSet()

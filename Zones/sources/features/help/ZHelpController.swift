@@ -50,13 +50,8 @@ class ZHelpController: ZGenericTableController {
 		}
 	}
 
-	// MARK:- events
+	// MARK:- display
 	// MARK:-
-
-	override func viewWillAppear() {
-		super.viewWillAppear()
-		update()
-	}
 
 	func update() {
 		view.zlayer.backgroundColor = gBackgroundColor.cgColor
@@ -84,91 +79,6 @@ class ZHelpController: ZGenericTableController {
 		}
 	}
 
-	func show(_ iShow: Bool? = nil, flags: ZEventFlags = ZEventFlags()) {
-		var nextMode = gCurrentHelpMode
- 		let  COMMAND = flags.isCommand
-		let  CONTROL = flags.isControl
-		let   OPTION = flags.isOption
-
-		if             COMMAND {
-			if         OPTION && !CONTROL {
-				nextMode = .basicMode
-			} else if  OPTION &&  CONTROL {
-				nextMode =   .dotMode
-			} else if !OPTION &&  CONTROL {
-				nextMode = .essayMode
-			}
-		}
-
-		show(iShow, mode: nextMode)
-	}
-
-	func showHelp(for mode: ZHelpMode) {
-		show(true, mode: mode)         // side-effect: sets gCurrentHelpMode
-//		gSignal([.sStartupButtons])    // change highlight of help buttons in startup view
-	}
-
-	func show(_ iShow: Bool? = nil, mode: ZHelpMode?) {
-		if  let         next = mode {
-			let  isKeyWindow = gHelpWindow?.isKeyWindow ?? false
-			let         same = gCurrentHelpMode == next
-			let       doShow = !same || !isKeyWindow
-			let         show = iShow ?? doShow
-
-			if !show  {
-				gHelpWindow?.close()
-			} else {
-				gCurrentHelpMode = next
-				isShowing        = true   // prevent infinite recursion (where showWindow calls viewWillAppear, which calls update, which calls show)
-
-				gHelpWindow?.close()      // workaround for dots draw method not being called (perhaps an apple bug?)
-				gHelpWindowController?.showWindow(nil)
-				update()
-				print(".")
-
-				isShowing        = false
-			}
-		}
-	}
-
-	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
-		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
-	}
-
-	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		genericTableView?.reloadData()
-	}
-
-	func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
-		if  let      key = iEvent.key {
-			let    flags = iEvent.modifierFlags
-			let  COMMAND = flags.isCommand
-			let  SPECIAL = flags.isSpecial
-			switch   key {
-				case "?", "/":         show(       flags: flags)
-				case "w":              show(false, flags: flags)
-				case "p":              view.printView()
-				case "q":              gApplication.terminate(self)
-				case "a": if SPECIAL { gApplication.showHideAbout() }
-				case "r": if COMMAND { sendEmailBugReport() }
-
-				default: break
-			}
-
-			if  let arrow = key.arrow {
-				switch arrow {
-					case .left, .right: titleBarButtons.actuateNextButton(forward: arrow == .right)
-					default: break
-				}
-			}
-		}
-
-		return nil
-	}
-
-	// MARK:- title bar
-	// MARK:-
-
 	func setupTitleBar() {
 		if  let                   window = view.window {
 			let             titleBarView = window.standardWindowButton(.closeButton)!.superview!
@@ -184,6 +94,95 @@ class ZHelpController: ZGenericTableController {
 
 			titleBarButtons.updateAndRedraw()
 		}
+	}
+
+	func show(_ iShow: Bool? = nil, flags: ZEventFlags = ZEventFlags()) {
+		var     nextMode = gCurrentHelpMode
+
+		if            flags.isAnyMultiple {
+			if        flags.exactlyAll {
+				nextMode = .essayMode
+			} else if flags.exactlySpecial {
+				nextMode = .basicMode
+			} else if flags.exactlySplayed {
+				nextMode = .dotMode
+			} else if flags.exactlyUnusual {
+				nextMode = .proMode
+			}
+		}
+
+		show(iShow, mode: nextMode)
+	}
+
+	func show(_ iShow: Bool? = nil, mode: ZHelpMode?) {
+		if  let         next = mode {
+			let  isKeyWindow = gHelpWindow?.isKeyWindow ?? false
+			let         same = gCurrentHelpMode == next
+			let       doShow = !same || !isKeyWindow
+			let         show = iShow ?? doShow
+
+			if !show  {
+				gHelpWindow?.close()
+			} else {
+				gCurrentHelpMode = next
+				isShowing        = true   // prevent infinite recursion (where update (below) calls show)
+
+				gHelpWindow?.close()      // workaround for dots draw method not being called (perhaps an apple bug?)
+				gHelpWindowController?.showWindow(nil)
+				update()
+
+				isShowing        = false
+			}
+		}
+	}
+
+	func showHelpFor(_ mode: ZHelpMode) {
+		show(true, mode: mode)         // side-effect: sets gCurrentHelpMode
+//		gSignal([.sStartupButtons])    // change highlight of help buttons in startup view
+	}
+
+	// MARK:- events
+	// MARK:-
+
+	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
+		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
+	}
+
+	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+		genericTableView?.reloadData()
+	}
+
+	func handleKey(_ key: String, flags: ZEventFlags) -> Bool {   // false means key not handled
+		let  COMMAND = flags.isCommand
+		let  SPECIAL = flags.exactlySpecial
+
+		switch key {
+			case "?", "/":         show(       flags: flags)
+			case "w":              show(false, flags: flags)
+			case "p":              view.printView()
+			case "q":              gApplication.terminate(self)
+			case "a": if SPECIAL { gApplication.showHideAbout() }
+			case "r": if COMMAND { sendEmailBugReport() }
+			default: return false
+		}
+
+		if  let arrow = key.arrow {
+			switch arrow {
+				case .left, .right: titleBarButtons.showNextHelp(forward: arrow == .right)
+				default: return false
+			}
+		}
+
+		return true
+	}
+
+	func handleEvent(_ event: ZEvent) -> ZEvent? {
+		if  let   key = event.key {
+			let flags = event.modifierFlags
+			return handleKey(key, flags: flags) ? nil : event
+		}
+
+		return nil
 	}
 
 	// MARK:- grid

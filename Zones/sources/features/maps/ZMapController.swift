@@ -211,7 +211,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					gTextEditor.stopCurrentEdit()
 				}
 
-				if flags.isCommand && !flags.isOption {           // shift background
+				if  flags.isCommand && !flags.isOption {          // shift background
 					scrollEvent(move: state == .changed,  to: location)
 				} else if gIsDragging {
 					dragMaybeStopEvent(iGesture)                  // logic for drawing the drop dot, and for dropping dragged idea

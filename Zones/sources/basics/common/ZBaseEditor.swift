@@ -22,29 +22,32 @@ class ZBaseEditor: NSObject {
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gAppDelegate?.genericMenuHandler(iItem) }
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {
-		var     handled = false
-		if  var     key = iKey {
-			let COMMAND = flags.isCommand
-			let SPECIAL = flags.isSpecial
-
-			if  key    != key.lowercased() {
-				key     = key.lowercased()
+		var handled  = false
+		if  var key  = iKey {
+			if  key != key.lowercased() {
+				key  = key.lowercased()
 			}
 
 			gTemporarilySetKey(key)
 
-			switch key {
-				case "w": if COMMAND { gHelpController?.show(false, flags: flags); handled = true }
-				case "/": if SPECIAL { gHelpController?.show(       flags: flags); handled = true }
-				case "a": if SPECIAL { gApplication.showHideAbout();               handled = true }
-				case "h": if COMMAND { gApplication.hide(nil);                     handled = true }
-				case "k": if SPECIAL { toggleColorfulMode();                       handled = true }
-				case "o": if SPECIAL { gFiles.showInFinder();                      handled = true }
-				case "q": if COMMAND { gApplication.terminate(self);               handled = true }
-				case "r": if SPECIAL { sendEmailBugReport();                       handled = true }
-				case "x": if SPECIAL { clearRecents();                             handled = true }
-				case "y": if COMMAND { gToggleShowTooltips();                      handled = true }
-				default:  break
+			if  flags.exactlySpecial {
+				switch key {
+					case "/": gHelpController?.show(       flags: flags); handled = true
+					case "a": gApplication.showHideAbout();               handled = true
+					case "k": toggleColorfulMode();                       handled = true
+					case "o": gFiles.showInFinder();                      handled = true
+					case "r": sendEmailBugReport();                       handled = true
+					case "x": clearRecents();                             handled = true
+					default:  break
+				}
+			} else if flags.isCommand {
+				switch key {
+					case "w": gHelpController?.show(false, flags: flags); handled = true
+					case "h": gApplication.hide(nil);                     handled = true
+					case "q": gApplication.terminate(self);               handled = true
+					case "y": gToggleShowTooltips();                      handled = true
+					default:  break
+				}
 			}
 		}
 
