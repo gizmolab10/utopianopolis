@@ -21,7 +21,7 @@ class ZBreadcrumbsController: ZGenericController {
 	@IBOutlet var   crumbsView : ZBreadcrumbsView?
 	override  var controllerID : ZControllerID { return .idCrumbs }
 
-	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
+	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		crumbsView? .setupAndRedraw()
 	}
 

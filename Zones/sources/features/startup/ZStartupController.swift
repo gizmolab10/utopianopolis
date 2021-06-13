@@ -50,8 +50,8 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		fullStartupUpdate()
 	}
 
-	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		switch iKind {
+	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+		switch kind {
 //			case .sStartupButtons: buttonsView?.updateAndRedraw()
 			case .spStartupStatus: updateThermometerBar(); updateSubviewVisibility()
 			default: break

@@ -595,8 +595,8 @@ extension ZoneWidget {
         return frame
     }
 
-    func curvedPath(in iRect: CGRect, kind iKind: ZLineKind) -> ZBezierPath {
-        let    isBelow = iKind == .below
+    func curvedPath(in iRect: CGRect, kind: ZLineKind) -> ZBezierPath {
+        let    isBelow = kind == .below
         let startAngle = CGFloat(Double.pi)
         let deltaAngle = CGFloat(Double.pi / 2.0)
         let multiplier = CGFloat(isBelow ? -1.0 : 1.0)

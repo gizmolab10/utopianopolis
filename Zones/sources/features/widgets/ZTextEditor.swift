@@ -474,8 +474,8 @@ class ZTextEditor: ZTextView {
         }
         
         if  var original = currentZone {
-            gMapEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { iKinds in
-                gControllers.signalFor(nil, multiple: iKinds) {
+            gMapEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { kinds in
+                gControllers.signalFor(nil, multiple: kinds) {
                     if  isHere {
                         self.currentOffset = currentZone?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
                     }

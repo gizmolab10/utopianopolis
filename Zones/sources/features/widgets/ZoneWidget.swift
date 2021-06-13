@@ -147,7 +147,7 @@ class ZoneWidget: ZView {
     // MARK:- layout
     // MARK:-
 
-	func layoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ iKind: ZSignalKind, visited: ZoneArray) -> Int {
+	func layoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		var count = 1
 
 		if  let thisView = inView,
@@ -169,13 +169,13 @@ class ZoneWidget: ZView {
             let    more = widgetZone == nil ? [] : [widgetZone!]
 
             prepareChildrenWidgets()
-			count += layoutChildren(iKind, mapType: mapType, visited: visited + more)
+			count += layoutChildren(kind, mapType: mapType, visited: visited + more)
         }
 
 		return count
     }
 
-    func layoutChildren(_ iKind: ZSignalKind, mapType: ZWidgetType, visited: ZoneArray) -> Int {
+    func layoutChildren(_ kind: ZSignalKind, mapType: ZWidgetType, visited: ZoneArray) -> Int {
 		var count = 0
 
         if  let  zone = widgetZone, zone.expanded {
@@ -187,7 +187,7 @@ class ZoneWidget: ZView {
                 let childWidget        = childrenWidgets[index]
                 childWidget.widgetZone =            zone[index]
 
-				count += childWidget.layoutInView(childrenView, for: mapType, atIndex: index, recursing: true, iKind, visited: visited)
+				count += childWidget.layoutInView(childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: visited)
 				childWidget.snp.setLabel("<w> \(childWidget.widgetZone?.zoneName ?? kUnknown)")
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in
@@ -507,11 +507,11 @@ class ZoneWidget: ZView {
         return path
     }
 
-    func linePath(in iRect: CGRect, kind iKind: ZLineKind?, isDragLine: Bool) -> ZBezierPath {
-        if iKind != nil {
-            switch iKind! {
+    func linePath(in iRect: CGRect, kind: ZLineKind?, isDragLine: Bool) -> ZBezierPath {
+        if  let    k = kind {
+            switch k {
             case .straight: return straightPath(in: iRect, isDragLine)
-            default:        return   curvedPath(in: iRect, kind: iKind!)
+            default:        return   curvedPath(in: iRect, kind: k)
             }
         }
 

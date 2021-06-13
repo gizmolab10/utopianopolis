@@ -11,6 +11,7 @@ import CloudKit
 import CoreData
 
 var gHelpHyperlinkColor: ZColor { return gIsDark ? kSystemBlue.lighter(by: 3.0) : kSystemBlue.darker(by: 4.0) }
+var gHelpDotsExemplarController : ZHelpDotsExemplarController? { return gControllers.controllerForID(.idHelpDots) as? ZHelpDotsExemplarController }
 
 class ZHelpDotsExemplarController : ZMapController {
 
@@ -25,13 +26,16 @@ class ZHelpDotsExemplarController : ZMapController {
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
 	}
+	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+		super.handleSignal(object, kind: kind)
+	}
 
 	override func startup() {
 		setup()
 		setupExemplar()
 
 		topLabel?   .font = kLargeHelpFont
-		topLabel?   .text = "All ideas in Seriously have a drag dot on the left. Many have a reveal dot on the right."
+		topLabel?   .text = "ALL ideas have a DRAG dot on the left. Many have a REVEAL dot on the right. For example:"
 		bottomLabel?.font = kLargeHelpFont
 		bottomLabel?.text = "\t• The drag dot (at left) is used to select, deselect and drag the idea\n\t• The reveal dot (at right) is used to show or hide its list, or activate the idea\n\nThese dots are often decorated, providing further information about the idea (see below)."
 		mapView?.addBorder(thickness: 0.5, radius: 0.0, color: kDarkGrayColor.cgColor)

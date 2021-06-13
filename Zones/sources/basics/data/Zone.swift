@@ -1820,7 +1820,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let targetParent = bookmarkTarget?.parentZone
 
 				targetParent?.expand()
-				focusOnBookmarkTarget { (iObject: Any?, iKind: ZSignalKind) in
+				focusOnBookmarkTarget { (iObject: Any?, kind: ZSignalKind) in
 					gRecents.updateCurrentForMode()
 					atArrival()
 				}
@@ -1849,9 +1849,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let       targetDBID = targetZRecord.databaseID
 			let           target = bookmarkTarget
 
-			let complete : SignalClosure = { (iObject, iKind) in
+			let complete : SignalClosure = { (iObject, kind) in
 				self.showTopLevelFunctions()
-				atArrival(iObject, iKind)
+				atArrival(iObject, kind)
 			}
 
 			var there: Zone?

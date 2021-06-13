@@ -28,7 +28,7 @@ class ZControlsController: ZGenericController {
 		updateForState()
 	}
 
-	override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
+	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		mapControlsView?.setupAndRedraw()
 		updateSearchOptions()
 		updateForState()

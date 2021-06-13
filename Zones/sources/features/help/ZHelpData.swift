@@ -145,7 +145,7 @@ class ZHelpData: NSObject {
 		return result / stringsPerRow
 	}
 
-	func setup(for iMode: ZHelpMode) {
+	func setupForMode(_ iMode: ZHelpMode) {
 		helpMode   = iMode
 		var offset = 0
 		var values : [Int] = []

@@ -289,8 +289,8 @@ class ZSearchResultsController: ZGenericTableController {
 		return true
 	}
 
-	override func handleSignal(_ iObject: Any?, kind iKind: ZSignalKind) {
-		if iKind == .sFound {
+	override func handleSignal(_ iObject: Any?, kind: ZSignalKind) {
+		if  kind == .sFound {
 			if  let t = genericTableView {
 				t.tableColumns[0].width = t.frame.width
 			}

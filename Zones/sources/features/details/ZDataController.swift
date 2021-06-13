@@ -24,14 +24,14 @@ class ZDataController: ZGenericController {
     var                     currentZone: Zone?         { return gSelecting.rootMostMoveable }
     override  var          controllerID: ZControllerID { return .idData }
 
-	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  let c = gDetailsController, c.viewIsVisible(for: .vData),  // don't send signal to a hidden favorites controller
-			gShowDetailsView,    iKind != .spStartupStatus {
-			modificationDateLabel?.text = modificationDateText
-			cloudStatusLabel?     .text = statusText
-			recordNameLabel?      .text = zoneRecordNameText
-			totalCountLabel?      .text = totalCountsText
-			synopsisLabel?        .text = synopsisText
+			gShowDetailsView,      kind != .spStartupStatus {
+			modificationDateLabel?.text  = modificationDateText
+			cloudStatusLabel?     .text  = statusText
+			recordNameLabel?      .text  = zoneRecordNameText
+			totalCountLabel?      .text  = totalCountsText
+			synopsisLabel?        .text  = synopsisText
 		}
 	}
 

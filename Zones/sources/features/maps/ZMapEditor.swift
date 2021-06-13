@@ -670,7 +670,7 @@ class ZMapEditor: ZBaseEditor {
             
             gCurrentBrowseLevel = zone.level // so cousin list will not be empty
             
-            moveUp(upward, [zone], selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { iKind in
+            moveUp(upward, [zone], selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { kind in
                 gRedrawMaps() {
                     t.edit(zone)
                     t.setCursor(at: offset)
@@ -1058,8 +1058,8 @@ class ZMapEditor: ZBaseEditor {
 		priorHere     = gHere
 
 		if  let grabs = moveables {
-			moveUp(iMoveUp, grabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { iKinds in
-				gSignal(iKinds)
+			moveUp(iMoveUp, grabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
+				gSignal(kinds)
 			}
 		}
     }

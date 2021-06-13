@@ -65,10 +65,11 @@ class ZHelpController: ZGenericTableController {
 		view.zlayer.backgroundColor = .white
 		let                       m = gCurrentHelpMode
 
-		super         .setup()
-		essayHelpData .setup(for: m)
-		dotsHelpData  .setup(for: m)
-		mapHelpData   .setup(for: m)
+		super        .setup()
+		essayHelpData.setupForMode(m)
+		dotsHelpData .setupForMode(m)
+		mapHelpData  .setupForMode(m)
+		gSignal([.sAppearance]) // redraw dots map
 		setupGridViews()
 		setupTitleBar()
 
@@ -100,13 +101,13 @@ class ZHelpController: ZGenericTableController {
 		var     nextMode = gCurrentHelpMode
 
 		if            flags.isAnyMultiple {
-			if        flags.exactlyAll {
-				nextMode = .essayMode
-			} else if flags.exactlySpecial {
+			if        flags.exactlySpecial {
 				nextMode = .basicMode
 			} else if flags.exactlySplayed {
-				nextMode = .dotMode
+				nextMode = .essayMode
 			} else if flags.exactlyUnusual {
+				nextMode = .dotMode
+			} else if flags.exactlyAll {
 				nextMode = .proMode
 			}
 		}
@@ -148,7 +149,7 @@ class ZHelpController: ZGenericTableController {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
 	}
 
-	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		genericTableView?.reloadData()
 	}
 
@@ -163,13 +164,11 @@ class ZHelpController: ZGenericTableController {
 			case "q":              gApplication.terminate(self)
 			case "a": if SPECIAL { gApplication.showHideAbout() }
 			case "r": if COMMAND { sendEmailBugReport() }
-			default: return false
-		}
-
-		if  let arrow = key.arrow {
-			switch arrow {
-				case .left, .right: titleBarButtons.showNextHelp(forward: arrow == .right)
-				default: return false
+			default:  if  let arrow = key.arrow {
+				switch arrow {
+					case .left, .right: titleBarButtons.showNextHelp(forward: arrow == .right)
+					default: return false
+				}
 			}
 		}
 

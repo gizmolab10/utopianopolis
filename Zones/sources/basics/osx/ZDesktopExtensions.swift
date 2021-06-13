@@ -1144,13 +1144,13 @@ extension ZoneWidget {
         return frame
     }
 
-    func curvedPath(in iRect: CGRect, kind iKind: ZLineKind) -> ZBezierPath {
+    func curvedPath(in iRect: CGRect, kind: ZLineKind) -> ZBezierPath {
         ZBezierPath(rect: iRect).setClip()
 
         let      dotHeight = CGFloat(gDotHeight)
         let   halfDotWidth = CGFloat(gDotWidth) / 2.0
         let  halfDotHeight = dotHeight / 2.0
-        let        isAbove = iKind == .above
+        let        isAbove = kind == .above
         var           rect = iRect
 
         if isAbove {

@@ -146,9 +146,9 @@ class ZSmallMapRecords: ZRecords {
 
 	func popAndUpdateCurrent() {
 		if  let       index = currentBookmark?.siblingIndex,
-			pop(),
 			let    children = currentBookmark?.parentZone?.children,
-			let        next = children.next(from: index, forward: true) {
+			let        next = children.next(from: index, forward: false),
+			pop() {
 			currentBookmark = next
 			if  let    here = currentBookmark?.bookmarkTarget {
 				gHere       = here

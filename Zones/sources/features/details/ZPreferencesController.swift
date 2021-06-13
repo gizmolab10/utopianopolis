@@ -28,9 +28,9 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var              stretch : ZSlider?
     override  var         controllerID : ZControllerID { return .idPreferences }
 
-    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if !gHiddenDetailViewIDs.contains(.vPreferences),
-			allowedKinds.contains(iKind),
+			allowedKinds.contains(kind),
 			gShowDetailsView {
             let                        grabbed = gSelecting.firstSortedGrab
             countsModeControl?.selectedSegment = gCountsMode.rawValue

@@ -53,7 +53,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
     override func setup() {
-		gestureView                      = mapView // do this before calling super setup, which uses gesture view
+		gestureView                     = mapView // do this before calling super setup, which uses gesture view
 		view    .layer?.backgroundColor = kClearColor.cgColor
 		mapView?.layer?.backgroundColor = kClearColor.cgColor
 
@@ -138,7 +138,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		return (kIsPhone && (isBigMap == gShowSmallMapForIOS)) || gIsEditIdeaMode
 	}
 
-    func layoutWidgets(for iZone: Any?, _ iKind: ZSignalKind) {
+    func layoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
         if  doNotLayout { return }
 
 		var specificIndex:   Int?
@@ -154,10 +154,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             specificWidget        = widget
             specificIndex         = zone.siblingIndex
             specificView          = specificWidget.superview
-            recursing             = [.sData, .sRelayout].contains(iKind)
+            recursing             = [.sData, .sRelayout].contains(kind)
         }
 
-		let total = specificWidget.layoutInView(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, iKind, visited: [])
+		let total = specificWidget.layoutInView(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
 		printDebug(.dWidget, "layout \(widgetType.description): \(total)")
     }
@@ -165,17 +165,17 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	// MARK:- events
 	// MARK:-
 
-    override func handleSignal(_ iSignalObject: Any?, kind iKind: ZSignalKind) {
-		if  !gDeferringRedraw, iKind != .sData { // ignore the signal from the end of process next batch
-			prepare(for: iKind)
+    override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
+		if  !gDeferringRedraw, kind != .sData { // ignore the signal from the end of process next batch
+			prepare(for: kind)
 			layoutForCurrentScrollOffset()
-			layoutWidgets(for: iSignalObject, iKind)
+			layoutWidgets(for: iSignalObject, kind)
 			mapView?.setAllSubviewsNeedDisplay()
         }
     }
 	
-	func prepare(for iKind: ZSignalKind) {
-		if  iKind == .sRelayout {
+	func prepare(for kind: ZSignalKind) {
+		if  kind == .sRelayout {
 			gWidgets.clearRegistry(for: widgetType)
 		}
 

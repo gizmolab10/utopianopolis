@@ -39,10 +39,10 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     // MARK:-
 	
 
-    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         let ignore: ZSignalKindArray = [.sSearch, .sFound, .sStartup]
 
-        if !ignore.contains(iKind) {
+        if !ignore.contains(kind) {
             update()
         }
     }

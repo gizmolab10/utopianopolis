@@ -6,27 +6,21 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import UIKit
 
-
 class ZGenericTableController: ZGenericController, ZTableViewDelegate, ZTableViewDataSource {
-
 
     @IBOutlet var      tableHeight: NSLayoutConstraint?
     @IBOutlet var genericTableView: UITableView!
-
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return 1 }
     func numberOfRows(in tableView: UITableView) -> Int { return self.tableView(tableView, numberOfRowsInSection: 0) }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { return UITableViewCell() }
 
-
-    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
         self.genericTableUpdate()
     }
-    
 
     func genericTableUpdate() {
         genericTableView.reloadData()
