@@ -58,12 +58,10 @@ enum ZOperationID: Int, CaseIterable {
 	}
 
 	var dataLoadTime: Int {
-		if  gCanLoad,
-			gCoreDataStack.hasStoreFor(.mineID),
-		    gCoreDataStack.hasStoreFor(.everyoneID) {
-			return gRemoteStorage.totalManifestsCount / 140
+		switch gMigrationState {
+			case .normal: return gRemoteStorage.totalManifestsCount / 140
+			default:      return gFiles.estimatedRecordsCount / 40
 		}
-		return gFiles.migrationLoadTime
 	}
 
 	var useTimer: Bool {

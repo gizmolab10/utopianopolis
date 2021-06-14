@@ -58,12 +58,13 @@ class ZRemoteStorage: NSObject {
 
 	var totalManifestsCount: Int {
 		var sum = 0
-		for cloud in allClouds {
-			sum += cloud.manifest?.count?.intValue ?? 0
-		}
 
-		if  sum == 0 {
+		if  gMigrationState != .normal {
 			sum  = gFiles.estimatedRecordsCount
+		} else {
+			for cloud in allClouds {
+				sum += cloud.manifest?.count?.intValue ?? 0
+			}
 		}
 
 		return sum
@@ -72,13 +73,17 @@ class ZRemoteStorage: NSObject {
 	var totalRecordsCounts: (Int, Int) {
 		var zCount = 0
 		var mCount = 0
+		let normal = gMigrationState == .normal
 
 		for cloud in allClouds {
-			zCount += cloud.zoneCount
-			mCount += cloud.manifest?.count?.intValue ?? 0
+			zCount += cloud.zRecordsCount
+
+			if !normal {
+				mCount += cloud.manifest?.count?.intValue ?? 0
+			}
 		}
 
-		if  mCount == 0 {
+		if !normal {
 			mCount  = gFiles.estimatedRecordsCount
 		}
 
@@ -115,7 +120,7 @@ class ZRemoteStorage: NSObject {
 
 	func updateManifestCount(for  dbID: ZDatabaseID) {
 		if  let r = zRecords(for: dbID) {
-		    let c = r.zoneCount
+		    let c = r.zRecordsCount
 			r.manifest?.count = NSNumber(value: c)
 		}
 	}

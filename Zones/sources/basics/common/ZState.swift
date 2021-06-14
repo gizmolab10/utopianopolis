@@ -21,34 +21,35 @@ let gDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
-var            gProgressTimes                     = [ZOperationID : Double]()
-var               gLaunchedAt                     = Date()
-var             gNeedsRecount                     = false
-var            gTextCapturing                     = false
-var           gPushIsDisabled                     = false
-var          gIsReadyToShowUI                     = false
-var          gDeferringRedraw                     = false
-var         gGotProgressTimes                     = false
-var        gKeyboardIsVisible                     = false
+var  gTextEditorHandlesArrows                     = false
+var   gIsEditingStateChanging                     = false
+var    gRefusesFirstResponder                     = false
+var      gCreateCombinedEssay 			   		  = false
 var       gHasFinishedStartup                     = false
 var       gIsExportingToAFile                     = false
-var      gCreateCombinedEssay 			   		  = false
-var    gRefusesFirstResponder                     = false
-var   gIsEditingStateChanging                     = false
-var  gTextEditorHandlesArrows                     = false
+var        gKeyboardIsVisible                     = false
+var         gGotProgressTimes                     = false
+var          gIsReadyToShowUI                     = false
+var          gDeferringRedraw                     = false
+var           gPushIsDisabled                     = false
+var            gTextCapturing                     = false
+var             gNeedsRecount                     = false
+var               gLaunchedAt                     = Date()
+var            gProgressTimes                     = [ZOperationID : Double]()
 var        gInterruptionCount                     = 0
 var    gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
-var gCurrentMouseDownLocation:           CGFloat?
-var     gCurrentMouseDownZone:              Zone?
-var       gCurrentBrowseLevel:               Int?
-var        gCurrentKeyPressed:            String?
-var          gDropIndices: NSMutableIndexSet?
+var           gMigrationState:    ZMigrationState = .firstTime
 var             gDragRelation:         ZRelation?
 var             gCurrentTrait:            ZTrait?
-var             gDropZone:              Zone?
-var              gDraggedZone:              Zone?
+var              gDropIndices: NSMutableIndexSet?
 var                gDragPoint:           CGPoint?
-var                 gExpanded:          StringsArray?
+var                 gExpanded:      StringsArray?
+var                 gDropZone:              Zone?
+var              gDraggedZone:              Zone?
+var     gCurrentMouseDownZone:              Zone?
+var gCurrentMouseDownLocation:           CGFloat?
+var       gCurrentBrowseLevel:               Int?
+var        gCurrentKeyPressed:            String?
 
 var                   gIsDark:               Bool { return gDarkMode == .Dark }
 var                   gIsLate:               Bool { return gBatches.isLate }

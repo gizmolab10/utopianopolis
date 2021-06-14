@@ -39,6 +39,7 @@ class ZRecords: NSObject {
     var           trashZone : Zone?
     var            rootZone : Zone?
 	var               count : Int       { return 0 }
+	var       zRecordsCount : Int       { return zRecordsLookup.count }
     var         hereIsValid : Bool      { return maybeZoneForRecordName(hereRecordName) != nil }
 	var          allProgeny : ZoneArray { return rootZone?.all ?? [] }
 
@@ -73,16 +74,6 @@ class ZRecords: NSObject {
 		}
 
 		return array
-	}
-
-	var zoneCount : Int {
-		var count = 0
-
-		applyToAllZones { zone in
-			count += 1
-		}
-
-		return count
 	}
 
 	var orphanCount : Int {
@@ -300,7 +291,7 @@ class ZRecords: NSObject {
 		favoritesZone?   .recount()
 		lostAndFoundZone?.recount()
 
-		manifest?.count = NSNumber(value: zoneCount)
+		manifest?.count = NSNumber(value: zRecordsCount)
     }
 
     func className(for recordType: String?) -> String? {

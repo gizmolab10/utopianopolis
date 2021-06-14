@@ -32,15 +32,13 @@ class ZFiles: NSObject {
 	let               manager = FileManager.default
 	var             isReading = [false, false]
     var  filePaths: [String?] = [nil, nil]
-	var            _assetsURL : URL?
-	var             _filesURL : URL?
-	var               hasMine : Bool { return fileExistsFor(.mineIndex) }
-	var     migrationLoadTime : Int  { return fileSize / 25000 }
-	var estimatedRecordsCount : Int  { return fileSize / 900 }
+	lazy var        assetsURL : URL = { return createAssetsDirectory() }()
+	lazy var         filesURL : URL = { return createDataDirectory() }()
+	var               hasMine : Bool  { return fileExistsFor(.mineIndex) }
+	var estimatedRecordsCount : Int   { return totalFilesSize / 900 }
 	func assetURL(for fileName: String) -> URL { return assetsURL.appendingPathComponent(fileName) }
 
-
-	var fileSize : Int {
+	lazy var totalFilesSize : Int = {
 		var result = 0
 
 		do {
@@ -59,23 +57,7 @@ class ZFiles: NSObject {
 		}
 
 		return result
-	}
-
-	var filesURL: URL {
-		if  _filesURL == nil {
-			_filesURL  = createDataDirectory()
-		}
-
-		return _filesURL!
-	}
-
-	var assetsURL: URL {
-		if  _assetsURL == nil {
-			_assetsURL  = createAssetsDirectory()
-		}
-
-		return _assetsURL!
-	}
+	}()
 
     // MARK:- API
     // MARK:-
@@ -93,10 +75,10 @@ class ZFiles: NSObject {
 	}
 
 	func migrate(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  hasMine || databaseID != .mineID {
-			try readFile(into: databaseID, onCompletion: onCompletion)
+		if  !hasMine, databaseID == .mineID {
+			onCompletion?(0)                   // mine file does not exist, do nothing
 		} else {
-			onCompletion?(0)
+			try readFile(into: databaseID, onCompletion: onCompletion)
 		}
 	}
 

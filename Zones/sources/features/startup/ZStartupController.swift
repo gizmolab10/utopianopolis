@@ -83,18 +83,27 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	var progressText:String {
-		let  dTotal = gProgressTimes.values.reduce(0, +)
-		let   ratio = dTotal / 50.0
-		let   total = Int(dTotal / ratio)
-		let   count = Int(gStartup.elapsedStartupTime / ratio)
-		let remains = total - count
-		let   extra = total < 28
-		let   thing = "-"
-		let  spacer = extra ? kSpace : kEmpty
-		let    more = extra ?  thing : kEmpty
-		let    text = " \(spacer)".repeatOf(count) + "\(thing)\(more)".repeatOf(remains)
+		let       thing = "-"
+		let      dTotal = gProgressTimes.values.reduce(0, +)
+		if  gMigrationState == .normal {
+			let   total = Int(dTotal)
+			let   count = Int(gStartup.elapsedStartupTime)
+			let remains = total - count
+			let   extra = total < 28
+			let  spacer = extra ? kSpace : kEmpty
+			let    more = extra ?  thing : kEmpty
+			let    text = " \(spacer)".repeatOf(count) + "\(thing)\(more)".repeatOf(remains)
 
-		return text
+			return text
+		} else {
+			let   ratio = dTotal / 50.0
+			let   total = Int(dTotal / ratio)
+			let   count = Int(gStartup.elapsedStartupTime / ratio)
+			let remains = total - count
+			let    text = kSpace.repeatOf(count) + thing.repeatOf(remains)
+
+			return text
+		}
 	}
 
 	func updateThermometerBar() {

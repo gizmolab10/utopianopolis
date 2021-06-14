@@ -299,10 +299,9 @@ class ZBatches: ZOnboarding {
     }
 
 	func load(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  gCoreDataStack.hasStoreFor(databaseID) {
-			gLoadContext(into: databaseID, onCompletion: onCompletion)
-		} else {
-			try gFiles.migrate(into: databaseID, onCompletion: onCompletion)
+		switch gMigrationState {
+			case .normal:  gLoadContext(into: databaseID, onCompletion: onCompletion)
+			default: try gFiles.migrate(into: databaseID, onCompletion: onCompletion)
 		}
 	}
 

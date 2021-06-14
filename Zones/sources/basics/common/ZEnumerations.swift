@@ -33,6 +33,12 @@ enum ZStartupLevel: Int {
 	case pleaseEnableDrive
 }
 
+enum ZMigrationState: Int {
+	case firstTime
+	case migrate
+	case normal
+}
+
 enum ZSimpleToolID: String {
 	case up      = "up"
 	case add     = "add"
