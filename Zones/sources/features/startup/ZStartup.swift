@@ -15,9 +15,9 @@ class ZStartup: NSObject {
 	let          startedAt = Date()
 	var elapsedStartupTime : Double { return Date().timeIntervalSince(startedAt) }
 
-	var elapsedEnough : Bool {
+	var oneTimerIntervalForward : Bool {
 		let  lapse = elapsedStartupTime
-		let enough = (lapse - prior) > kThreshold
+		let enough = (lapse - prior) > kOneTimerInterval
 
 		if  enough {
 			prior = lapse
@@ -32,7 +32,7 @@ class ZStartup: NSObject {
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
 		gRemoteStorage.clear()
-		gSignal([.spMain])
+		gSignal([.spMain, .spStartupStatus])
 		gSearching.setSearchStateTo(.sNot)
 
 		gBatches.startUp { iSame in
@@ -61,10 +61,6 @@ class ZStartup: NSObject {
 
 						gSignal([.sSwap, .spMain, .spCrumbs, .sLaunchDone, .sRelayout, .spPreferences])
 						self.requestFeedback()
-
-						FOREGROUND(after: 10.0) {
-							gFiles.writeAll()
-						}
 					}
 				}
 			}

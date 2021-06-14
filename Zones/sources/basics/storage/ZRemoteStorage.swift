@@ -62,6 +62,10 @@ class ZRemoteStorage: NSObject {
 			sum += cloud.manifest?.count?.intValue ?? 0
 		}
 
+		if  sum == 0 {
+			sum  = gFiles.estimatedRecordsCount
+		}
+
 		return sum
 	}
 
@@ -72,6 +76,10 @@ class ZRemoteStorage: NSObject {
 		for cloud in allClouds {
 			zCount += cloud.zoneCount
 			mCount += cloud.manifest?.count?.intValue ?? 0
+		}
+
+		if  mCount == 0 {
+			mCount  = gFiles.estimatedRecordsCount
 		}
 
 		return (zCount, mCount)

@@ -13,7 +13,7 @@ import Foundation
 //     create zone, trait ONLY if from dict
 // NOT async: create bookmarks
 
-var      gDebugModes : ZDebugMode    = [] // .dReadFiles, .dWriteFiles]
+var      gDebugModes : ZDebugMode    = [.dReadFiles]
 var      gPrintModes : ZPrintMode    = [] // .dOps, .dAdopt]
 var    gCoreDataMode : ZCoreDataMode = [] // .dDisabled
 var     gUseCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
@@ -23,7 +23,7 @@ var     gUseCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && gUse
 var  gShowDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var     gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
 var      gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
-var      gWriteFiles : Bool { return  gDebugModes.contains(.dWriteFiles) }
+
 var       gDebugInfo : Bool { return  gDebugModes.contains(.dDebugInfo) }
 var       gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }
 var       gReadFiles : Bool { return  gDebugModes.contains(.dReadFiles) }
@@ -55,7 +55,6 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dReadFiles       = ZDebugMode() // read files
 	static let dDebugInfo       = ZDebugMode() // inject debugging information into UI
 	static let dDebugDraw       = ZDebugMode() // colorize rects
-	static let dWriteFiles      = ZDebugMode() // write files
 	static let dDebugAccess     = ZDebugMode() // test write access by me not having full
 	static let dShowDestroy     = ZDebugMode() // add destroy bookmark to favorites
 	static let dShowDuplicates  = ZDebugMode() // report duplicates
@@ -65,7 +64,6 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.dReadFiles,       "read files"),
 				(.dDebugInfo,       "show debug info"),
 				(.dDebugDraw,       "debug draw"),
-				(.dWriteFiles,      "write files"),
 				(.dDebugAccess,     "debug write access"),
 				(.dShowDestroy,     "add destroy bookmark"),
 				(.dShowDuplicates,  "indicate zones with duplicates")]

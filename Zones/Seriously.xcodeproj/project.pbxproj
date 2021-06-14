@@ -710,6 +710,7 @@
 				0C39B25D1F182EBB0091F4D1 /* Zone.swift */,
 				A752FC2B24512D7700603A54 /* ZoneArray.swift */,
 				0C39B25E1F182EBB0091F4D1 /* ZRecord.swift */,
+				0C43EFC921010F62000976CE /* ZRecords.swift */,
 				0C39B25F1F182EBB0091F4D1 /* ZTrait.swift */,
 				A711059625BB620500D051E9 /* ZTraitArray.swift */,
 				A7B78D3C244B768400DB2C14 /* ZTraitAssets.swift */,
@@ -823,6 +824,7 @@
 				A700F94824AFBE8F009C87AA /* ZCoreDataStack.swift */,
 				0C43EFBD21010F17000976CE /* ZFiles.swift */,
 				A7E44A2A2558CD6A00DA4B13 /* ZManagedObject.swift */,
+				0C43EFCA21010F62000976CE /* ZRemoteStorage.swift */,
 			);
 			path = storage;
 			sourceTree = "<group>";
@@ -835,8 +837,6 @@
 				0C43EFC821010F62000976CE /* ZOnboarding.swift */,
 				0C43EFCB21010F62000976CE /* ZOperations.swift */,
 				0C39B2331F182EBB0091F4D1 /* ZReachability.swift */,
-				0C43EFC921010F62000976CE /* ZRecords.swift */,
-				0C43EFCA21010F62000976CE /* ZRemoteStorage.swift */,
 			);
 			path = cloudkit;
 			sourceTree = "<group>";

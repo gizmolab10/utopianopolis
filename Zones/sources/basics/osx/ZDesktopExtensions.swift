@@ -1056,21 +1056,6 @@ extension ZFiles {
         (filesURL as NSURL).open()
     }
     
-    func saveAs() {
-        let panel = NSSavePanel()
-        panel.nameFieldStringValue = "mine.seriously"
-        panel.begin { (response: NSApplication.ModalResponse) in
-            if  let path = panel.url?.path {
-                self.needWrite(for: .mineID)
-				do {
-					try self.writeFile(at: path, from: .mineID)
-				} catch {
-					
-				}
-            }
-        }
-    }
-    
     class func presentOpenPanel(_ callback: AnyClosure? = nil) {
         if  let  window = gApplication.mainWindow {
             let   panel = NSOpenPanel()

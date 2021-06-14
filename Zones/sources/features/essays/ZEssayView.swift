@@ -59,7 +59,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	var shouldOverwrite: Bool {
 		if  let          current = gCurrentEssay,
-			current.maybeNoteTrait?.needsSave ?? false,
 			current.essayLength != 0,
 			let i                = gCurrentEssayZone?.recordName,
 			i                   == essayRecordName {	// been here before

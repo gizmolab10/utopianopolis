@@ -29,17 +29,16 @@ enum ZExportType: String {
 
 class ZFiles: NSObject {
 
-	let              manager = FileManager.default
-	var            isReading = [false, false]
-    var            isWriting = [false, false] // not allow another save while file is being written
-    var           needsWrite = [false, false]
-    var   writtenRecordNames = StringsArray ()
-    var filePaths: [String?] = [nil, nil]
-    var           writeTimer : Timer?
-	var           _assetsURL : URL?
-	var            _filesURL : URL?
-	var  approximatedRecords : Int { return fileSize / 900 }
+	let               manager = FileManager.default
+	var             isReading = [false, false]
+    var  filePaths: [String?] = [nil, nil]
+	var            _assetsURL : URL?
+	var             _filesURL : URL?
+	var               hasMine : Bool { return fileExistsFor(.mineIndex) }
+	var     migrationLoadTime : Int  { return fileSize / 25000 }
+	var estimatedRecordsCount : Int  { return fileSize / 900 }
 	func assetURL(for fileName: String) -> URL { return assetsURL.appendingPathComponent(fileName) }
+
 
 	var fileSize : Int {
 		var result = 0
@@ -62,16 +61,6 @@ class ZFiles: NSObject {
 		return result
 	}
 
-    var isWritingNow: Bool {
-        for writing in isWriting {
-            if writing {
-                return true
-            }
-        }
-
-        return false
-    }
-
 	var filesURL: URL {
 		if  _filesURL == nil {
 			_filesURL  = createDataDirectory()
@@ -91,32 +80,25 @@ class ZFiles: NSObject {
     // MARK:- API
     // MARK:-
 
-	func open() {
-//		let panel = NSOpenPanel()
+	func fileExistsFor(_ dbIndex: ZDatabaseIndex) -> Bool {
+		if  let  gName = fileName(for: dbIndex),
+			let   name = fileName(for: dbIndex, isGeneric: false) {
+			let extend = "seriously"
+			let   gURL = filesURL.appendingPathComponent(gName).appendingPathExtension(extend)
+			let    url = filesURL.appendingPathComponent( name).appendingPathExtension(extend)
+			return url.fileExists() || gURL.fileExists()
+		}
+
+		return false
 	}
 
-	func writeAll() {
-		needWrite(for: .mineID)
-		needWrite(for: .everyoneID)
+	func migrate(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
+		if  hasMine || databaseID != .mineID {
+			try readFile(into: databaseID, onCompletion: onCompletion)
+		} else {
+			onCompletion?(0)
+		}
 	}
-
-    func needWrite(for  databaseID: ZDatabaseID?) {
-        if  let  dbID = databaseID,
-            let index = dbID.index {
-
-            if !needsWrite[index] {
-                needsWrite[index] = true
-            } else if gWriteFiles, let timerID = ZTimerID.convert(from: databaseID) {
-				gTimers.assureCompletion(for:   timerID, withTimeInterval: 5.0, restartTimer: true) {
-					if  gIsEditIdeaMode {
-						throw(ZInterruptionError.userInterrupted)
-					} else {
-						try self.writeToFile(from: databaseID)
-					}
-				}
-            }
-        }
-    }
 
     func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
         if  let  dbID = iDatabaseID,
@@ -125,16 +107,6 @@ class ZFiles: NSObject {
         }
 
         return false
-	}
-
-	func writeToFile(from databaseID: ZDatabaseID?) throws {
-		if  let     dbID = databaseID,
-			dbID        != .favoritesID,
-			let    index = dbID.index,
-			let  dbIndex = ZDatabaseIndex(rawValue: index) {
-				let path = filePath(for: dbIndex)
-				try writeFile(at: path, from: databaseID)
-		}
 	}
 
 	func readFile(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
@@ -174,8 +146,6 @@ class ZFiles: NSObject {
 							printDebug(.dError, "\(error)")
 						}
 					case .eSeriously:
-						gFiles.writtenRecordNames.removeAll()
-
 						do {
 							let     dict = try zone.storageDictionary()
 							let jsonDict = dict.jsonDict
@@ -192,9 +162,6 @@ class ZFiles: NSObject {
 								let  wrapper = FileWrapper(regularFileWithContents: fileData)
 
 								try  wrapper.write(to: fileURL, options: .atomic, originalContentsURL: nil)
-
-//								let fileText = String(data: fileData, encoding: .utf8)
-//								try fileText?.write(to: fileURL, atomically: false, encoding: .utf8)
 
 							} catch {
 								printDebug(.dError, "\(error)")
@@ -240,87 +207,6 @@ class ZFiles: NSObject {
 
     // MARK:- heavy lifting
     // MARK:-
-
-	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
-		if  gWriteFiles,
-			gHasFinishedStartup, // guarantee that file read finishes before this code runs
-			let           dbID = databaseID,
-			dbID              != .recentsID,
-			dbID              != .favoritesID,
-            let          cloud = gRemoteStorage.cloud(for: dbID),
-			let        index   = dbID.index,
-			needsWrite[index] == true,
-			isWriting [index] == false {    // prevent write during write
-			isWriting [index]  = true
-			var           dict = ZStorageDictionary ()
-
-			do {
-				self.writtenRecordNames.removeAll()
-				gRemoteStorage.recount()
-
-				// //////////////////////////////////////////////
-				// take snapshots just before exit from method //
-				// //////////////////////////////////////////////
-
- 				if  let     map  = try cloud.rootZone?.createStorageDictionary(for: dbID)  {
-					dict[.graph] = map as NSObject
-				}
-
-				if  let   trash  = try cloud.trashZone?.createStorageDictionary(for: dbID) {
-					dict[.trash] = trash as NSObject
-				}
-
-				if  let   destroy  = try cloud.destroyZone?.createStorageDictionary(for: dbID) {
-					dict[.destroy] = destroy as NSObject
-				}
-
-				if  let   manifest  = try cloud.manifest?.createStorageDictionary(for: dbID) {
-					dict[.manifest] = manifest as NSObject
-				}
-
-				if  let   lost  = try cloud.lostAndFoundZone?.createStorageDictionary(for: dbID) {
-					dict[.lost] = lost as NSObject
-				}
-
-				if                 dbID == .mineID {
-					if  let   favorites  = try gFavoritesRoot?.createStorageDictionary(for: .mineID) {
-						dict[.favorites] = favorites as NSObject
-					}
-
-					if  let     recents  = try gRecentsRoot?.createStorageDictionary(for: .mineID) {
-						dict[.recent]    = recents as NSObject
-					}
-
-					if  let   bookmarks  = try gBookmarks.storageArray(for: .mineID) {
-						dict[.bookmarks] = bookmarks as NSObject
-					}
-
-					if  let      userID  = gUserRecordName {
-						dict   [.userID] = userID as NSObject
-					}
-				}
-
-				BACKGROUND {
-					let jsonDict = dict.jsonDict
-
-					if  let data = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {
-						let  url = URL(fileURLWithPath: path)
-
-						try? data.write(to: url)
-					} else {
-						printDebug(.dFile, "json error on local storage")
-					}
-
-					self.needsWrite[index] = false
-					self .isWriting[index] = false // end prevention of write during write
-				}
-			} catch {
-				self     .isWriting[index] = false // end prevention of write during write
-
-				throw(ZInterruptionError.userInterrupted)
-			}
-		}
-	}
 
 	func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
 		if  gReadFiles,
@@ -380,7 +266,6 @@ class ZFiles: NSObject {
 				}
 			}
 
-//			gRemoteStorage.zRecords(for: databaseID)?.removeDuplicates()
 			cloud.recount()
 
 			self.isReading[index] = false
@@ -391,7 +276,6 @@ class ZFiles: NSObject {
 
     func filePath(for index: ZDatabaseIndex) -> String {
         var                 path  = filePaths[index.rawValue]
-        
         if                  path == nil,
             let             name  = fileName(for: index) {
             let         cloudName = fileName(for: index, isGeneric: false)!

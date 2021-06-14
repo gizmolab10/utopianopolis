@@ -21,8 +21,8 @@ let gDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
-var               gLaunchedAt                     = Date()
 var            gProgressTimes                     = [ZOperationID : Double]()
+var               gLaunchedAt                     = Date()
 var             gNeedsRecount                     = false
 var            gTextCapturing                     = false
 var           gPushIsDisabled                     = false

@@ -15,8 +15,6 @@ enum ZRecordState: String {
     case needsColor     = "color"
 	case needsCount     = "count"
     case needsDestroy   = "destroy"
-	case needsFound     = "found"
-    case needsSave      = "save"
     case needsWritable  = "writable"
 }
 

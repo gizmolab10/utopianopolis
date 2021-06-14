@@ -69,7 +69,7 @@ class ZBatches: ZOnboarding {
 				case .bRoot:        return [.oRoots,      .oManifest                   ]
 				case .bFocus:       return [.oRoots                    ,               ]
 				case .bStartUp:     return operationIDs(from: .oStartingUp,        to: .oDone)
-				case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oDone, skipping: [.oLoadingFromFile])
+				case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oDone)
 				case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
 			}
         }
@@ -161,7 +161,7 @@ class ZBatches: ZOnboarding {
                 self.transferDeferred()                         // 3.
                 self.processNextBatch()                         // recurse
 			} else {
-				gSignal([.sData, .spStartupStatus])              // 4.
+				gSignal([.sData, .spStartupStatus])             // 4.
 			}
         }
     }
@@ -298,15 +298,22 @@ class ZBatches: ZOnboarding {
         }
     }
 
+	func load(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
+		if  gCoreDataStack.hasStoreFor(databaseID) {
+			gLoadContext(into: databaseID, onCompletion: onCompletion)
+		} else {
+			try gFiles.migrate(into: databaseID, onCompletion: onCompletion)
+		}
+	}
+
     override func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
 		switch identifier {
 			case .oFavorites:                                                                      gFavorites.setup(cloudCallback)
 			case .oRecents:                                                                          gRecents.setup(cloudCallback)
-			case .oSavingLocalData: gSaveContext       ();                                                          cloudCallback?(0)
-			case .oLoadingIdeas:    gLoadContext       (into: currentDatabaseID!,                     onCompletion: cloudCallback)
-			case .oLoadingFromFile: try gFiles.readFile(into: currentDatabaseID!,                     onCompletion: cloudCallback)
+			case .oSavingLocalData:  gSaveContext   ();                                                             cloudCallback?(0)
+			case .oLoadingIdeas:     try load(into: currentDatabaseID!,                               onCompletion: cloudCallback)
 			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
 		}
     }

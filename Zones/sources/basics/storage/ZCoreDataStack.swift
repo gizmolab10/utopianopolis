@@ -148,6 +148,17 @@ class ZCoreDataStack: NSObject {
 	var        statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
 	var       currentOpID : ZCDOperationID?
 
+	func hasStoreFor(_ databaseID: ZDatabaseID) -> Bool {
+		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
+		request.predicate = dbidPredicate(from: databaseID)
+
+		do {
+			return try managedContext.count(for: request) > 10
+		} catch {
+			return false
+		}
+	}
+
 	// MARK:- save
 	// MARK:-
 

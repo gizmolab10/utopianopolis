@@ -37,7 +37,6 @@ class ZRecord: ZManagedObject { // NSObject {
 	var       isSmallMapHere: Bool      { return isFavoritesHere || isRecentsHere }
 	var       isSmallMapRoot: Bool      { return isFavoritesRoot || isRecentsRoot }
 	var      isEitherMapRoot: Bool      { return isSmallMapRoot || isMapRoot }
-	var            needsSave: Bool      { return  hasState(.needsSave) }
 	var           needsCount: Bool      { return  hasState(.needsCount) }
 	var           needsColor: Bool      { return  hasState(.needsColor) }
 	var         needsDestroy: Bool      { return  hasState(.needsDestroy) }
@@ -112,7 +111,7 @@ class ZRecord: ZManagedObject { // NSObject {
 			case kUserType:     return ZUser    .uniqueUser    (recordName: recordName, in: dbID)
 			case kTraitType:    return ZTrait   .uniqueTrait   (recordName: recordName, in: dbID)
 			case kManifestType: return ZManifest.uniqueManifest(recordName: recordName, in: dbID)
-			default:            return ZRecord  .uniqueZRecord(entityName: entityName, recordName: recordName, in: dbID)
+			default:            return ZRecord  .uniqueZRecord (entityName: entityName, recordName: recordName, in: dbID)
 		}
 	}
 
@@ -120,6 +119,8 @@ class ZRecord: ZManagedObject { // NSObject {
 		let        zRecord = uniqueObject(entityName: entityName, recordName: recordName, in: dbID) as! ZRecord
 		zRecord.recordName = recordName ?? gUniqueRecordName
 		zRecord      .dbid = dbID.identifier
+
+		zRecord.register()
 
 		return zRecord
 	}
@@ -200,11 +201,10 @@ class ZRecord: ZManagedObject { // NSObject {
     func removeState(_ state: ZRecordState)         {        allCloudRecords?.clearRecordName(recordName, for:[state]) }
     func clearAllStates()                           {        allCloudRecords?.clearRecordName(recordName, for: allCloudRecords?.allStates ?? []) }
 
-    func needCount()    {    addState(.needsCount) }
-	func needColor()    {    addState(.needsColor) }
-	func needAdoption() {    addState(.needsAdoption) }
-	func needDestroy()  {    addState(.needsDestroy) }
-	func needWrite()    { gFiles.needWrite(for: databaseID) }
+    func needCount()    { addState(.needsCount) }
+	func needColor()    { addState(.needsColor) }
+	func needAdoption() { addState(.needsAdoption) }
+	func needDestroy()  { addState(.needsDestroy) }
 
 	func updateState() {
 		setupLinks()
@@ -292,19 +292,11 @@ class ZRecord: ZManagedObject { // NSObject {
 	func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
 		try gThrowOnUserActivity()
 
-		guard let name = recordName else {
+		guard recordName != nil else {
 			printDebug(.dFile, "fubar record name \(self)")
 
 			return nil
 		}
-
-		if  gFiles.writtenRecordNames.contains(name) {
-			printDebug(.dFile, "avoid duplicating record name \(self)")
-
-			return nil
-		}
-
-		gFiles.writtenRecordNames.append(name)
 
 		let   keyPaths = cloudProperties + [kpModificationDate, kpDBID] + (includeRecordName ? [kpRecordName] : [])
 		let  optionals = optionalCloudProperties + [kpModificationDate]
@@ -339,7 +331,7 @@ class ZRecord: ZManagedObject { // NSObject {
 	func extractFromStorageDictionary(_ dict: ZStorageDictionary, of entityName: String, into iDatabaseID: ZDatabaseID) throws {
 		try gThrowOnUserActivity()
 
-		FOREGROUND(forced: true) { gStartupController?.updateThermometerBar() }
+		FOREGROUND(forced: true) { gStartupController?.fullStartupUpdate() }
 
 		// case 1: name is nil
 		// case 2: ck record already exists

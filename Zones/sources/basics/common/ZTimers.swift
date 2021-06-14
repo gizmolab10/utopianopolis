@@ -21,13 +21,9 @@ enum ZTimerID : Int {
 	case tTextEditorHandlesArrows
 	case tNeedCloudDriveEnabled
 	case tCoreDataDeferral
-	case tRecordsEveryone
 	case tNeedUserAccess
 	case tCloudAvailable
 	case tMouseLocation
-	case tWriteEveryone
-	case tRecordsMine
-	case tWriteMine
 	case tMouseZone
 	case tOperation
 	case tRecount
@@ -35,40 +31,12 @@ enum ZTimerID : Int {
 	case tSync
 	case tKey
 
-	static func recordsTimerID(for databaseID: ZDatabaseID?) -> ZTimerID? {
-		if  let    index = databaseID?.databaseIndex {
-			switch index {
-				case .mineIndex:     return .tRecordsMine
-				case .everyoneIndex: return .tRecordsEveryone
-				default:             break
-			}
-		}
-
-		return nil
-	}
-
-	static func convert(from databaseID: ZDatabaseID?) -> ZTimerID? {
-		if  let id = databaseID {
-			switch id {
-				case .everyoneID: return .tWriteEveryone
-				case .mineID:     return .tWriteMine
-				default:          return nil
-			}
-		}
-
-		return nil
-	}
-
 	var string: String { return "\(self)" }
 
 	var description: String? {
 		switch self {
-			case .tSync:            return "saving data"
-			case .tWriteEveryone:   return "writing public local data"
-			case .tWriteMine:       return "writing private local data"
-			case .tRecordsEveryone: return "acquiring public cloud data"
-			case .tRecordsMine:     return "acquiring private cloud data"
-			default:                return nil
+			case .tSync: return "saving data"
+			default:     return nil
 		}
 	}
 
@@ -127,7 +95,7 @@ class ZTimers: NSObject {
 			switch tid {
 				case .tSync:                    waitFor = 15.0  // seconds
 				case .tRecount:                 waitFor = 60.0  // one minute
-				case .tStartup, .tMouseZone:    waitFor = kThreshold
+				case .tStartup, .tMouseZone:    waitFor = kOneTimerInterval
 				default:                        break
 			}
 

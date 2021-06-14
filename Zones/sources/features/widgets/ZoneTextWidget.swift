@@ -88,7 +88,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		updateTooltips()
         applyConstraints()
         widget?.setNeedsDisplay()
-		widget?.widgetZone?.needWrite()
     }
 
     func applyConstraints() {

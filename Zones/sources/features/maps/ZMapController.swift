@@ -261,8 +261,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             var   multiple = [ZSignalKind.sData]
             var  notInEdit = true
 
-			editWidget?.widgetZone?.needWrite()
-
 			if  editWidget != nil {
 
 				// ////////////////////////////////////////

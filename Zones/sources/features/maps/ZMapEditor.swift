@@ -103,8 +103,6 @@ class ZMapEditor: ZBaseEditor {
             } else if isValid(key, flags) {
 				let   zone = gSelecting.currentMovableMaybe
                 let widget = gWidgets.widgetForZone(zone)
-
-				zone?.needWrite()
                 
                 if  let a = arrow, isWindow {
                     handleArrow(a, flags: flags)

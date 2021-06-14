@@ -29,7 +29,6 @@ enum ZOperationID: Int, CaseIterable {
 	case oRoots
 	case oManifest
 	case oLoadingIdeas       // LOCAL
-	case oLoadingFromFile    // LOCAL
     case oHere
 	case oRecount
 	case oDone
@@ -49,8 +48,7 @@ enum ZOperationID: Int, CaseIterable {
 	var progressTime : Int {
 		switch self {
 			case .oMigrateFromCloud:  return gNeedsMigrate ? 50 : 0
-			case .oLoadingFromFile:   return gReadFiles    ? 30 : 0
-			case .oLoadingIdeas:      return coreDataLoadTime
+			case .oLoadingIdeas:      return dataLoadTime
 			case .oResolve:           return  4
 			case .oRecount:           return  3
 			case .oManifest:          return  3
@@ -59,20 +57,26 @@ enum ZOperationID: Int, CaseIterable {
 		}
 	}
 
-	var coreDataLoadTime: Int { return gCanLoad ? gRemoteStorage.totalManifestsCount / 140 : 0 }
+	var dataLoadTime: Int {
+		if  gCanLoad,
+			gCoreDataStack.hasStoreFor(.mineID),
+		    gCoreDataStack.hasStoreFor(.everyoneID) {
+			return gRemoteStorage.totalManifestsCount / 140
+		}
+		return gFiles.migrationLoadTime
+	}
 
 	var useTimer: Bool {
 		switch self {
-			case .oLoadingFromFile:       return gReadFiles
 			case .oLoadingIdeas, .oRoots: return true
 			default:                      return false
 		}
 	}
 
 	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oCompletion] }
-	var    countOps : ZOpIDsArray { return [.oLoadingFromFile, .oLoadingIdeas] }
+	var    countOps : ZOpIDsArray { return [.oLoadingIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
-	var   bothDBOps : ZOpIDsArray { return [.oHere, .oRoots, .oLoadingFromFile, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
+	var   bothDBOps : ZOpIDsArray { return [.oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
 	var    localOps : ZOpIDsArray { return [.oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
 											.oFetchUserRecord, .oCheckAvailability] + bothDBOps }
 

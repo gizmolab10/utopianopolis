@@ -37,7 +37,6 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		enableCloudLabel?.text = enableCloudDriveText
 		accessIDLabel?   .text = appleIDText
 		loadingLabel?    .text = loadingText
-//		helpLabel?       .text = helpText
 
 		if  gNewUser ||
 			gStartupLevel == .localOkay {
@@ -67,7 +66,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	func fullStartupUpdate() {
-		if !gHasFinishedStartup, gStartup.elapsedEnough {
+		if !gHasFinishedStartup, gStartup.oneTimerIntervalForward {
 			updateThermometerBar()
 			updateSubviewVisibility()
 			buttonsView?.updateAndRedraw()
@@ -84,13 +83,15 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	var progressText:String {
-		let   count = Int(gStartup.elapsedStartupTime / kThreshold)
-		let   total = Int(gProgressTimes.values.reduce(0, +))
+		let  dTotal = gProgressTimes.values.reduce(0, +)
+		let   ratio = dTotal / 50.0
+		let   total = Int(dTotal / ratio)
+		let   count = Int(gStartup.elapsedStartupTime / ratio)
 		let remains = total - count
 		let   extra = total < 28
 		let   thing = "-"
 		let  spacer = extra ? kSpace : kEmpty
-		let    more = extra ? thing : kEmpty
+		let    more = extra ?  thing : kEmpty
 		let    text = " \(spacer)".repeatOf(count) + "\(thing)\(more)".repeatOf(remains)
 
 		return text
@@ -172,7 +173,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 										 "Check the box next to it."].joined(separator: kSpace),
 										"Then return here and click Continue, below."].joined(separator: "\n\n")
 
-	var loadingText: String = ["Your data is loading (it can take up to several minutes the first time).",
+	var loadingText: String = ["Your data is loading (it can take up to a minute the first time).",
 							   "Please wait until the drawing (of ideas) appears to add new ideas to it.",
 							   "Also, you may have to relaunch if the app gets stuck (it sometimes does)."].joined(separator: kSpace)
 
