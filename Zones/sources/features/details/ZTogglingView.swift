@@ -96,7 +96,7 @@ class ZTogglingView: ZStackView {
 			default: break
 		}
 
-		gRedrawMaps()
+		gRelayoutMaps()
 	}
 
 	@IBAction func toggleAction(_ sender: Any) {

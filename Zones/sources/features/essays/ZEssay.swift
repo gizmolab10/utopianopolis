@@ -138,7 +138,7 @@ class ZEssay: ZNote {
 			}
 		}
 
-		gRedrawMaps()
+		gRelayoutMaps()
 	}
 
 	override func shouldAlterEssay(_ range:NSRange, replacementLength: Int) -> (ZAlterationType, Int) {

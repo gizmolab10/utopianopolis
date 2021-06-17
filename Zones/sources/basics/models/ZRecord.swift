@@ -17,8 +17,8 @@ class ZRecord: ZManagedObject { // NSObject {
 	var           kvoContext: UInt8 = 1
 	var       _tooltipRecord: Any?
 	var    writtenModifyDate: Date?
-	var      allCloudRecords: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
-	var                cloud: ZCloud?   { return allCloudRecords as? ZCloud }
+	var             zRecords: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
+	var                cloud: ZCloud?   { return zRecords as? ZCloud }
 	var  unwrappedRecordName: String    { return recordName ?? kEmpty }
 	var        decoratedName: String    { return recordName ?? kNoValue }
 	var        unwrappedName: String    { return recordName ?? emptyName }
@@ -69,7 +69,7 @@ class ZRecord: ZManagedObject { // NSObject {
 	func hasMissingProgeny()  -> Bool { return true }
 	func ignoreKeyPathsForStorage() -> StringsArray { return [kpParent, kpOwner] }
 	func unregister() { cloud?.unregisterZRecord(self) }
-	@discardableResult func register() -> Bool { return allCloudRecords?.registerZRecord(self) ?? false }
+	func register() { zRecords?.registerZRecord(self) }
 
 	class func cloudProperties(for className: String) -> StringsArray {
 		switch className {
@@ -196,13 +196,12 @@ class ZRecord: ZManagedObject { // NSObject {
     // MARK:- states
     // MARK:-
 
-    func    hasState(_ state: ZRecordState) -> Bool { return allCloudRecords?.isRegistered(self, forAnyOf:[state]) ?? false }
-    func    addState(_ state: ZRecordState)         {        allCloudRecords?.addZRecord  (self, for:     [state]) }
-    func removeState(_ state: ZRecordState)         {        allCloudRecords?.clearRecordName(recordName, for:[state]) }
-    func clearAllStates()                           {        allCloudRecords?.clearRecordName(recordName, for: allCloudRecords?.allStates ?? []) }
+    func    hasState(_ state: ZRecordState) -> Bool { return zRecords?.isRegistered(self, forAnyOf:[state]) ?? false }
+    func    addState(_ state: ZRecordState)         {        zRecords?.addZRecord  (self, for:     [state]) }
+    func removeState(_ state: ZRecordState)         {        zRecords?.clearRecordName(recordName, for:[state]) }
+    func clearAllStates()                           {        zRecords?.clearRecordName(recordName, for: zRecords?.allStates ?? []) }
 
     func needCount()    { addState(.needsCount) }
-	func needColor()    { addState(.needsColor) }
 	func needAdoption() { addState(.needsAdoption) }
 	func needDestroy()  { addState(.needsDestroy) }
 
@@ -290,8 +289,6 @@ class ZRecord: ZManagedObject { // NSObject {
     }
 
 	func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
-		try gThrowOnUserActivity()
-
 		guard recordName != nil else {
 			printDebug(.dFile, "fubar record name \(self)")
 
@@ -329,16 +326,11 @@ class ZRecord: ZManagedObject { // NSObject {
 	}
 
 	func extractFromStorageDictionary(_ dict: ZStorageDictionary, of entityName: String, into iDatabaseID: ZDatabaseID) throws {
-		try gThrowOnUserActivity()
-
 		FOREGROUND(forced: true) { gStartupController?.fullStartupUpdate() }
 
 		// case 1: name is nil
 		// case 2: ck record already exists
 		// case 3: name is not nil
-
-		let      name = dict.recordName
-		let newRecord = ZRecord.uniqueFactoryObject(entityName: entityName, recordName: name, in: iDatabaseID)
 
 		for keyPath in cloudProperties + [kpModificationDate, kpDBID] {
 			if  let   type = type(from: keyPath),
@@ -351,9 +343,9 @@ class ZRecord: ZManagedObject { // NSObject {
 							let trait = ZTraitType(rawValue: string),
 							trait == .tEssay {
 							string = ZTraitType.tNote.rawValue
-							newRecord.setValue(string, forKeyPath: keyPath)
+							setValue(string, forKeyPath: keyPath)
 						} else {
-							newRecord.setValue(value,  forKeyPath: keyPath)
+							setValue(value,  forKeyPath: keyPath)
 						}
 					case .date:
 						if  let      interval = object as? Double {
@@ -377,12 +369,16 @@ class ZRecord: ZManagedObject { // NSObject {
 							}
 
 							if  assets.count > 0 {
-								newRecord.setValue(assets, forKeyPath: keyPath)
+								setValue(assets, forKeyPath: keyPath)
 							}
 						}
-
 					default:
-						newRecord.setValue(value,  forKeyPath: keyPath)
+						setValue(value, forKeyPath: keyPath)
+
+//						if  keyPath == "zoneColor",
+//							(dict[.name] as? String) == "jonathan" {
+//							noop()
+//						}
 				}
 			}
 		}

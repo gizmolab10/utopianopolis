@@ -27,6 +27,7 @@ var    gRefusesFirstResponder                     = false
 var      gCreateCombinedEssay 			   		  = false
 var       gHasFinishedStartup                     = false
 var       gIsExportingToAFile                     = false
+var       gProgressTimesReady                     = false
 var        gKeyboardIsVisible                     = false
 var         gGotProgressTimes                     = false
 var          gIsReadyToShowUI                     = false
@@ -160,8 +161,16 @@ func gStoreProgressTimes() {
 	setPreferencesString(storable, for: kProgressTimes)
 }
 
-func gAssureProgressTimesAreLoaded() {
-	if !gGotProgressTimes {
+var gTotalTime : Double {
+	if  gAssureProgressTimesAreLoaded() {
+		return gProgressTimes.values.reduce(0, +)
+	}
+
+	return 0.0
+}
+
+func gAssureProgressTimesAreLoaded() -> Bool {
+	if  gProgressTimesReady, !gGotProgressTimes {
 		func setit(opInt: Int, value: Double?) {
 			if  let op = ZOperationID(rawValue: opInt) {
 				let time = value ?? Double(op.progressTime)
@@ -190,6 +199,15 @@ func gAssureProgressTimesAreLoaded() {
 		}
 
 		gGotProgressTimes = true
+	}
+
+	return gGotProgressTimes
+}
+
+var gTimePerRecord : Int {
+	switch gMigrationState {         // TODO: adjust for cpu speed
+		case .normal: return 300
+		default:      return 130
 	}
 }
 

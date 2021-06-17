@@ -52,7 +52,6 @@ class ZCloud: ZRecords {
 			case .oResolveMissing:   resolveMissing                 (cloudCallback)
 			case .oResolve:          resolve                        (cloudCallback)
 			case .oAdopt:            assureAdoption                 (cloudCallback)
-			case .oRecount:          recount(); fallthrough
 			default:                                                 cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
 		}
 	}

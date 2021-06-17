@@ -51,7 +51,7 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 
         for file in openFiles {
 			parent.importFile(from: file) {
-				gRedrawMaps()
+				gRelayoutMaps()
 			}
         }
     }

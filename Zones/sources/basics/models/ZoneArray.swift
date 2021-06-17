@@ -203,7 +203,7 @@ extension ZoneArray {
 			zone.cycleToNextDuplicate()
 		}
 
-		gRedrawMaps()
+		gRelayoutMaps()
 	}
 
 	func deleteDuplicates() {
@@ -211,7 +211,7 @@ extension ZoneArray {
 			zone.deleteDuplicates()
 		}
 
-		gRedrawMaps()
+		gRelayoutMaps()
 	}
 
 	func sortBy(_ type: ZReorderMenuType, _ iBackwards: Bool) {
@@ -240,7 +240,7 @@ extension ZoneArray {
 		commonParent?.children.updateOrder()
 		zones        .reverseOrder()
 		commonParent?.respectOrder()
-		gRedrawMaps()
+		gRelayoutMaps()
 	}
 
 	func alphabetize(_ iBackwards: Bool = false) {
@@ -307,7 +307,7 @@ extension ZoneArray {
 				zones.updateOrdering(start: start, end: end)
 				parent.respectOrder()
 				parent.children.updateOrder()
-				gRedrawMaps()
+				gRelayoutMaps()
 			}
 
 			gSelecting.hasNewGrab = gSelecting.currentMoveable
@@ -643,7 +643,7 @@ extension ZoneArray {
 		for child in self {
 			if  child.isGroupOwner {                    // remove .groupOwner from attributes
 				child.alterAttribute(.groupOwner, remove: true)
-				gRedrawMaps()
+				gRelayoutMaps()
 
 				return                                  // abandon groupOwner created above
 			}
@@ -661,7 +661,7 @@ extension ZoneArray {
 		gCurrentSmallMapRecords?.showRoot()             // point here to root, and expand
 		groupOwner.alterAttribute(.groupOwner, remove: false)
 		gFavorites.insertAsNext(groupOwner)
-		gRedrawMaps()
+		gRelayoutMaps()
 		groupOwner.edit()
 	}
 

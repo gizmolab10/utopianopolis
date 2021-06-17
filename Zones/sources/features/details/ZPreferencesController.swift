@@ -61,7 +61,7 @@ class ZPreferencesController: ZGenericController {
 				default:           break
 			}
 
-            gRedrawMaps()
+            gRelayoutMaps()
         }
     }
 
@@ -77,7 +77,7 @@ class ZPreferencesController: ZGenericController {
 				default:             break
 			}
 
-			gRedrawMaps()
+			gSignal([.sDatum])
         }
     }
 
@@ -88,12 +88,12 @@ class ZPreferencesController: ZGenericController {
                 UNDO(self) { iUndoSelf in
                     grab.color = color
 
-					gRedrawMaps(for: grab)
+					gRelayoutMaps(for: grab)
                 }
             }
             
             grab.clearColor()
-			gRedrawMaps(for: grab)
+			gRelayoutMaps(for: grab)
         }
     }
 
@@ -104,7 +104,7 @@ class ZPreferencesController: ZGenericController {
 			switch (identifier) {
 				case "counts":
 					gCountsMode = ZCountsMode(rawValue: selection)!
-					gRedrawMaps()
+					gRelayoutMaps()
 				default:
 					break
 			}

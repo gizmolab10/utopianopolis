@@ -68,7 +68,7 @@ class ZFavorites: ZSmallMapRecords {
     
     func updateFavoritesAndRedraw(needsRedraw: Bool = true, _ onCompletion: Closure? = nil) {
         if  updateAllFavorites() || needsRedraw {
-            gRedrawMaps { onCompletion?() }
+            gRelayoutMaps { onCompletion?() }
         } else {
             onCompletion?()
         }

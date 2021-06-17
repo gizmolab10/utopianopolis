@@ -82,7 +82,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                      linkIsRoot :               Bool  { return linkRecordName == kRootName }
 	var                      isSelected :               Bool  { return gSelecting.isSelected(self) }
 	var                       isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
-	var                        hasColor :               Bool  { return zoneColor != nil && !(zoneColor?.isEmpty ?? true) }
+	var                        hasColor :               Bool  { return zoneColor != nil && !zoneColor!.isEmpty }
 	var                        hasEmail :               Bool  { return hasTrait(for: .tEmail) && !(email?.isEmpty ?? true) }
 	var                        hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                         hasNote :               Bool  { return hasTrait(for: .tNote) }
@@ -304,7 +304,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			gNewOrExistingBookmark(targeting: self, addTo: parentZone).grab()
-			gRedrawMaps()
+			gRelayoutMaps()
 		}
 	}
 
@@ -481,15 +481,19 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		get {
 			if !gColorfulMode { return gDefaultTextColor }
 
-			var computed = colorMaybe
+			var     computed    = colorMaybe
 
-			if  colorMaybe == nil {
-				if  let b = bookmarkTarget {
-					return b.color
+			if  zoneName == "jonathan" {
+				noop()
+			}
+
+			if  colorMaybe     == nil {
+				if  let       b = bookmarkTarget {
+					return    b.color
 				} else if let c = zoneColor, c != kEmpty {
 					computed    = c.color
 					colorMaybe  = computed
-				} else if let p = parentZone, p != self, hasCompleteAncestorPath(toColor: true) {
+				} else if let p = parentZone, p != self {
 					return p.color
 				} else {
 					computed    = kDefaultIdeaColor
@@ -1046,12 +1050,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			parent.addIdea(at: index, with: name) { iChild in
 				if  let child = iChild {
 					if !containing {
-						gRedrawMaps(for: parent) {
+						gRelayoutMaps(for: parent) {
 							completion(child)
 						}
 					} else {
 						child.acquireZones(zones)
-						gRedrawMaps(for: parent) {
+						gRelayoutMaps(for: parent) {
 							completion(child)
 						}
 					}
@@ -1212,7 +1216,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			addNext(containing: containing) { iChild in
 				gDeferringRedraw = false
 
-				gRedrawMaps(for: self) {
+				gRelayoutMaps(for: self) {
 					onCompletion?(iChild)
 					iChild.edit()
 				}
@@ -1238,7 +1242,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			gDeferRedraw {
 				parent.addIdea(at: index, with: childName) { iChild in
 					self.moveZone(to: iChild) {
-						gRedrawMaps()
+						gRelayoutMaps()
 
 						gDeferringRedraw = false
 
@@ -1288,7 +1292,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func maybeRestoreParent() {
-		let clouds: [ZRecords?] = [gFavorites, gRecents, allCloudRecords]
+		let clouds: [ZRecords?] = [gFavorites, gRecents, zRecords]
 
 		for cloud in clouds {
 			restoreParentFrom(cloud?.rootZone)   // look through all records for a match with which to set parent
@@ -1337,7 +1341,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				movedZone = movedZone.deepCopy(dbID: targetDBID)
 
-				gRedrawMaps {
+				gRelayoutMaps {
 					grabAndTravel()
 				}
 			}
@@ -1383,7 +1387,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func        addToGrabs() { gSelecting.addMultipleGrabs([self]) }
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
-	func       focusRecent() { focusOn() { gRedrawMaps() } }
+	func       focusRecent() { focusOn() { gRelayoutMaps() } }
 	func editTrait(for iType: ZTraitType) { gTextEditor.edit(traitFor(iType)) }
 
 	@discardableResult func edit() -> ZTextEditor? {
@@ -1398,7 +1402,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func addToLocalSearchIndex() {
 		if  let  name = zoneName,
-			let array = allCloudRecords {
+			let array = zRecords {
 			array.appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
 				guard var r = iRecords else { return [] }
 
@@ -1436,7 +1440,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if !(CLICKTWICE && self == gHere) {
 				gRecents.focusOnGrab(.eSelected) {
-					gRedrawMaps()
+					gRelayoutMaps()
 				}
 			}
 		} else if isGrabbed && gCurrentlyEditingWidget == nil {
@@ -1447,7 +1451,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			grab()
 		}
 
-		gRedrawMaps(for: self)
+		gRelayoutMaps(for: self)
 	}
 
 	override func setupLinks() {
@@ -1807,7 +1811,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			gFavorites.show(zone)
 			zone.grab()
-			gRedrawMaps()
+			gRelayoutMaps()
 		}
 	}
 
@@ -2293,39 +2297,22 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- traverse ancestors
 	// MARK:-
 
-	func hasCompleteAncestorPath(toColor: Bool = false, toWritable: Bool = false) -> Bool {
-		var      isComplete = false
-		var ancestor: Zone?
-
-		traverseAllAncestors { iZone in
-			let  isReciprocal = ancestor == nil  || iZone.children.contains(ancestor!)
-
-			if  (isReciprocal && iZone.isARoot) || (toColor && iZone.hasColor) || (toWritable && iZone.directAccess != .eInherit) {
-				isComplete = true
-			}
-
-			ancestor = iZone
-		}
-
-		return isComplete
-	}
-
 	func isABookmark(spawnedBy: Zone) -> Bool {
-		if  let         link = crossLink {
-			let     linkDBID = link.databaseID
-			let  spawnerName = spawnedBy.recordName
-			var    probeName = link.recordName
-			var      visited = StringsArray ()
+		if  let          link = crossLink {
+			let      linkDBID = link.databaseID
+			var      linkName = link.recordName
+			let spawnedByName = spawnedBy.recordName
+			var       visited = StringsArray ()
 
-			while let   name = probeName, !visited.contains(name) {
+			while let    name = linkName, !visited.contains(name) {
 				visited.append(name)
 
-				if  name    == spawnerName {
+				if  name     == spawnedByName {
 					return true
 				}
 
-				let newProbe = gRemoteStorage.zRecords(for: linkDBID)?.maybeZoneForRecordName(name)
-				probeName    = newProbe?.recordName
+				let newLink   = gRemoteStorage.zRecords(for: linkDBID)?.maybeZoneForRecordName(name)
+				linkName      = newLink?.recordName
 			}
 		}
 
@@ -2628,15 +2615,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- state
 	// MARK:-
 
-	func maybeNeedColor() {
-		if !hasCompleteAncestorPath(toColor: true) {
-			needColor()
-		}
-	}
-
 	func prepareForArrival() {
 		expand()
-		maybeNeedColor()
 		grab()
 	}
 
@@ -2833,7 +2813,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 							if  let child = iChild {
 								self.expand()
-								gRedrawMaps(for: self) {
+								gRelayoutMaps(for: self) {
 									child.editAndSelect()
 								}
 							}
@@ -2860,7 +2840,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				gDeferringRedraw = false
 
-				gRedrawMaps(for: parent) {
+				gRelayoutMaps(for: parent) {
 					parent.editAndSelect(range: range)
 				}
 			}
@@ -2879,7 +2859,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		generationalUpdate(show: show, to: goal) {
-			gRedrawMaps(for: self)
+			gRelayoutMaps(for: self)
 		}
 	}
 
@@ -3025,7 +3005,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func reverseChildren() {
 		children.reverse()
 		respectOrder()
-		gRedrawMaps()
+		gRelayoutMaps()
 	}
 
 	func respectOrder() {
@@ -3119,7 +3099,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		gRedrawMaps(for: self)
+		gRelayoutMaps(for: self)
 	}
 
 	func updateMaxLevel() {
@@ -3149,16 +3129,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if  isInSmallMap {
 				updateVisibilityInSmallMap(show)
-				gRedrawMaps()
+				gRelayoutMaps()
 			} else {
 				let goal = (COMMAND && show) ? Int.max : nil
 				generationalUpdate(show: show, to: goal) {
-					gRedrawMaps(for: self)
+					gRelayoutMaps(for: self)
 				}
 			}
 		} else if isTraveller {
 			invokeTravel(COMMAND) { reveal in // note, email, video, bookmark, hyperlink
-				gRedrawMaps()
+				gRelayoutMaps()
 			}
 		}
 	}
@@ -3375,13 +3355,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "i":      children.sortByCount()
 				case "m":      children.sortByLength()
 				case "n":      showNote()
-				case "o":      importFromFile(.eSeriously) { gRedrawMaps(for: self) }
+				case "o":      importFromFile(.eSeriously) { gRelayoutMaps(for: self) }
 				case "r":      reverseChildren()
 				case "s":      gFiles.export(self, toFileAs: .eSeriously)
-				case "t":      swapWithParent { gRedrawMaps(for: self) }
+				case "t":      swapWithParent { gRelayoutMaps(for: self) }
 				case "/":      focusRecent()
 				case kSpace:   addIdea()
-				case "\u{08}", kDelete: deleteSelf { gRedrawMaps() }
+				case "\u{08}", kDelete: deleteSelf { gRelayoutMaps() }
 				default:       break
 			}
 		}

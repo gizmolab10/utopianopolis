@@ -23,7 +23,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                   widgetType : ZWidgetType   { return .tBigMap }
 	var                   isExemplar : Bool          { return false }
 	var                     isBigMap : Bool          { return true }
-	var                     hereZone : Zone?         { return gHereMaybe }
+	var                     hereZone : Zone?         { return gHereMaybe ?? gCloud?.rootZone }
 	@IBOutlet var            mapView : ZMapView?
 	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
@@ -435,7 +435,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 						let   flags = gesture.modifiers {
 
 						dropZone.addGrabbedZones(at: dropAt, undoManager: undoManager, flags) {
-							gRedrawMaps()
+							gRelayoutMaps()
                             gSelecting.updateBrowsingLevel()
                             gSelecting.updateCousinList()
                             self.restartGestureRecognition()

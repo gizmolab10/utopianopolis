@@ -699,7 +699,7 @@
 			path = osx;
 			sourceTree = "<group>";
 		};
-		0C39B2541F182EBB0091F4D1 /* data */ = {
+		0C39B2541F182EBB0091F4D1 /* models */ = {
 			isa = PBXGroup;
 			children = (
 				0C39B25B1F182EBB0091F4D1 /* ZAction.swift */,
@@ -716,7 +716,7 @@
 				A7B78D3C244B768400DB2C14 /* ZTraitAssets.swift */,
 				0C3ECC221FA3023500F085EA /* ZUser.swift */,
 			);
-			path = data;
+			path = models;
 			sourceTree = "<group>";
 		};
 		0C39B2851F182EBB0091F4D1 /* views */ = {
@@ -1013,7 +1013,7 @@
 			children = (
 				0C43EFC621010F62000976CE /* cloudkit */,
 				0C39B22E1F182EBB0091F4D1 /* common */,
-				0C39B2541F182EBB0091F4D1 /* data */,
+				0C39B2541F182EBB0091F4D1 /* models */,
 				A786C6EE25DF5F7400B23FBF /* debug */,
 				0C43EFBC21010F17000976CE /* storage */,
 				0C39B2361F182EBB0091F4D1 /* ios */,

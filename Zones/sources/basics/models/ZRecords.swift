@@ -367,12 +367,13 @@ class ZRecords: NSObject {
 		}
     }
 
-    @discardableResult func registerZRecord(_  iRecord: ZRecord?) -> Bool {
+    @discardableResult func registerZRecord(_  iRecord: ZRecord?) -> Bool { // false means did not register
 		var                created  = false
 		if  let            zRecord  = iRecord,
             let               name  = zRecord.recordName {
 			if  let existingRecord  = zRecordsLookup[name] {
-                if  existingRecord != zRecord, existingRecord.emptyName == zRecord.emptyName {
+                if  existingRecord != zRecord,
+					existingRecord.entity.name == zRecord.entity.name {
 
                     // /////////////////////////////////////
                     // if already registered, must ignore //
@@ -820,7 +821,11 @@ class ZRecords: NSObject {
 
 	func maybeZRecordForRecordName (_ recordName: String?, trackMissing: Bool = true) -> ZRecord? {
 		if  let r = recordName {
-			let found = gCoreDataStack.find(type: kZoneType, recordName: r, into: databaseID, trackMissing: trackMissing)
+			if  let record = zRecordsLookup[r] {
+				return record
+			}
+
+			let found = gCoreDataStack.find(type: kZoneType, recordName: r, in: databaseID, trackMissing: trackMissing)
 			if  found.count > 0 {
 				return found[0] as? ZRecord
 			}

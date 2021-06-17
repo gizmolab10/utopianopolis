@@ -157,7 +157,7 @@ class ZSmallMapRecords: ZRecords {
 			}
 		}
 
-		gRedrawMaps()
+		gRelayoutMaps()
 	}
 
 	func findAndSetHereAsParentOfBookmarkTargeting(_ target: Zone) -> Bool {

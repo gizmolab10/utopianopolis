@@ -26,11 +26,10 @@ enum ZOperationID: Int, CaseIterable {
 
     // finish up
 
-	case oRoots
 	case oManifest
 	case oLoadingIdeas       // LOCAL
+	case oRoots
     case oHere
-	case oRecount
 	case oDone
 
     // miscellaneous
@@ -47,27 +46,20 @@ enum ZOperationID: Int, CaseIterable {
 
 	var progressTime : Int {
 		switch self {
-			case .oMigrateFromCloud:  return gNeedsMigrate ? 50 : 0
-			case .oLoadingIdeas:      return dataLoadTime
-			case .oResolve:           return  4
-			case .oRecount:           return  3
-			case .oManifest:          return  3
-			case .oAdopt:             return  2
-			default:                  return  1
-		}
-	}
-
-	var dataLoadTime: Int {
-		switch gMigrationState {
-			case .normal: return gRemoteStorage.totalManifestsCount / 140
-			default:      return gFiles.estimatedRecordsCount / 40
+			case .oMigrateFromCloud: return gNeedsMigrate ? 50 : 0
+			case .oLoadingIdeas:     return gRemoteStorage.dataLoadTime
+			case .oResolve:          return  4
+			case .oManifest:         return  3
+			case .oAdopt:            return  2
+			default:                 return  1
 		}
 	}
 
 	var useTimer: Bool {
 		switch self {
-			case .oLoadingIdeas, .oRoots: return true
-			default:                      return false
+			case .oLoadingIdeas,
+				 .oRoots: return true
+			default:      return false
 		}
 	}
 
@@ -84,51 +76,9 @@ enum ZOperationID: Int, CaseIterable {
 	var isDoneOp    : Bool   { return     doneOps.contains(self) }
 	var showCount   : Bool   { return    countOps.contains(self) }
 	var description : String { return "\(self)".substring(fromInclusive: 1).unCamelcased }                // space separated words
-	var countStatus : String { return !showCount ? kEmpty : " \(countText)" }
+	var countStatus : String { return !showCount ? kEmpty : " \(gRemoteStorage.countStatus)" }
 	var fullStatus  : String { return description + countStatus }
 
-	var countText : String {
-		let (z, p) = gRemoteStorage.totalRecordsCounts     // count of z records
-		let suffix = p == 0 ? kEmpty :  " (of \(p))"
-		return "\(z)" + suffix
-	}
-
-}
-
-func gSetProgressTime(for op: ZOperationID) {
-	if !gHasFinishedStartup, op != .oUserPermissions {
-		gAssureProgressTimesAreLoaded()
-
-		let priorTime = gGetAccumulatedProgressTime(untilExcluding: op)
-		let delta     = gStartup.elapsedStartupTime - priorTime
-
-		if  delta    >= 1.5 {
-			gProgressTimes[op] = delta
-		}
-
-		gStoreProgressTimes()
-	}
-}
-
-func gGetAccumulatedProgressTime(untilExcluding op: ZOperationID) -> Double {
-	gAssureProgressTimesAreLoaded()
-
-	let opValue = op.rawValue
-	var     sum = 0.0
-
-	for opID in ZOperationID.allCases {
-		if  opValue > opID.rawValue {          // all ops prior to op parameter
-			sum += gProgressTimes[opID] ?? 1.0
-		}
-	}
-
-	return sum
-}
-
-var gTotalTime : Double {
-	gAssureProgressTimesAreLoaded()
-
-	return gProgressTimes.values.reduce(0, +)
 }
 
 class ZOperations: NSObject {
@@ -196,7 +146,7 @@ class ZOperations: NSObject {
 						gFavorites.updateAllFavorites()
 					}
 
-					gRedrawMaps()
+					gRelayoutMaps()
 				}
 			}
 		}
@@ -255,7 +205,7 @@ class ZOperations: NSObject {
 
 									onCompletion()
 								} else {
-									gSetProgressTime(for: operationID)
+									self.setProgressTime(for: operationID)
 								}
 
 								// /////////////////////
@@ -275,6 +225,37 @@ class ZOperations: NSObject {
         queue.isSuspended = false
     }
 
+	private func setProgressTime(for op: ZOperationID) {
+		if  !gHasFinishedStartup, op != .oUserPermissions,
+		    gAssureProgressTimesAreLoaded() {
+
+			let priorTime = getAccumulatedProgressTime(untilExcluding: op)
+			let delta     = gStartup.elapsedStartupTime - priorTime
+
+			if  delta    >= 1.5 {
+				gProgressTimes[op] = delta
+			}
+
+			gStoreProgressTimes()
+		}
+	}
+
+
+	private func getAccumulatedProgressTime(untilExcluding op: ZOperationID) -> Double {
+		var sum = 0.0
+
+		if  gAssureProgressTimesAreLoaded() {
+			let opValue = op.rawValue
+
+			for opID in ZOperationID.allCases {
+				if  opValue > opID.rawValue {          // all ops prior to op parameter
+					sum += gProgressTimes[opID] ?? 1.0
+				}
+			}
+		}
+
+		return sum
+	}
     func add(_ operation: Operation) {
 		if  let prior: Operation = queue.operations.last {
             operation.addDependency(prior)

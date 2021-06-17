@@ -30,8 +30,8 @@ class ZManagedObject: NSManagedObject {
 	}
 
 	static func uniqueObject(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZManagedObject {
-		if  let    name = recordName {
-			let objects = gCoreDataStack.find(type: entityName, recordName: name, into: dbID)
+		if  let    name = recordName, gUseCoreData, gMigrationState == .normal {
+			let objects = gCoreDataStack.find(type: entityName, recordName: name, in: dbID)
 
 			if  objects.count > 0 {
 				return objects[0]

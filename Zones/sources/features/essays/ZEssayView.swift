@@ -177,8 +177,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "z":      if  SHIFT { undoManager?.redo() } else { undoManager?.undo() }
 				case "/":      gHelpController?.show(flags: flags)
 				case "'":      gToggleSmallMapMode(OPTION)
-				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
-				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
+				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRelayoutMaps() }
+				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRelayoutMaps() }
 				case kReturn:  grabDone()
 				case kEquals:  if SHIFT { grabSelected() } else { return followLinkInSelection() }
 				default:       return false
@@ -915,8 +915,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
-				case .idForward: save(); gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
-				case .idBack:    save(); gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
+				case .idForward: save(); gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRelayoutMaps() }
+				case .idBack:    save(); gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRelayoutMaps() }
 				case .idSave:    save()
 				case .idHide:                          grabDone()
 				case .idCancel:                        gCurrentEssayZone?.grab();       exit()
@@ -1485,7 +1485,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 								grab  .grab()                           // select it, too
 								grab  .asssureIsVisible()
 								eZone?.asssureIsVisible()
-								gRedrawMaps()
+								gRelayoutMaps()
 							}
 
 							return true

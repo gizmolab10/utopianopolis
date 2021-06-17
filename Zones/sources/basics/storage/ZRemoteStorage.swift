@@ -29,11 +29,13 @@ class ZRemoteStorage: NSObject {
     var   currentRecords : ZRecords    { return zRecords(for: gDatabaseID)! }
     var     currentCloud : ZCloud?     { return cloud   (for: gDatabaseID) }
     var rootProgenyCount : Int         { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
+	var     dataLoadTime : Int         { return totalLoadableRecordsCount / gTimePerRecord }
 	var         manifest : ZManifest?  { return currentRecords.manifest }
     var lostAndFoundZone : Zone?       { return currentRecords.lostAndFoundZone }
     var      destroyZone : Zone?       { return currentRecords.destroyZone }
     var        trashZone : Zone?       { return currentRecords.trashZone }
     var         rootZone : Zone? { get { return currentRecords.rootZone }  set { currentRecords.rootZone  = newValue } }
+
 
 	var allProgeny : ZoneArray {
 		var total = ZoneArray()
@@ -56,38 +58,39 @@ class ZRemoteStorage: NSObject {
 		return sum
 	}
 
-	var totalManifestsCount: Int {
+	var totalManifestCount: Int {
 		var sum = 0
-
-		if  gMigrationState != .normal {
-			sum  = gFiles.estimatedRecordsCount
-		} else {
-			for cloud in allClouds {
-				sum += cloud.manifest?.count?.intValue ?? 0
-			}
+		for cloud in allClouds {
+			sum += cloud.manifest?.count?.intValue ?? 0
 		}
 
 		return sum
 	}
 
-	var totalRecordsCounts: (Int, Int) {
-		var zCount = 0
-		var mCount = 0
-		let normal = gMigrationState == .normal
+	var totalRecordsCount: Int {
+		var count = 0
 
 		for cloud in allClouds {
-			zCount += cloud.zRecordsCount
-
-			if !normal {
-				mCount += cloud.manifest?.count?.intValue ?? 0
-			}
+			count += cloud.zRecordsCount
 		}
 
-		if !normal {
-			mCount  = gFiles.estimatedRecordsCount
-		}
+		return count
+	}
 
-		return (zCount, mCount)
+
+	var totalLoadableRecordsCount: Int {
+		switch gMigrationState {
+			case .normal: return totalManifestCount
+			default:      return gFiles.migrationFilesSize / kFileRecordSize
+		}
+	}
+
+	var countStatus : String {
+		let rCount = totalRecordsCount
+		let lCount = totalLoadableRecordsCount
+		let suffix = lCount == 0 ? kEmpty :  " (of \(lCount))"
+
+		return "\(rCount)" + suffix
 	}
 
     var allClouds: [ZCloud] {

@@ -40,7 +40,7 @@ class ZEvents: ZGeneric {
     
     
     @objc func handleDarkModeChange(iNote: Notification) {
-        gRedrawMaps()
+        gRelayoutMaps()
 		gEssayView?.resetForDarkMode()
     }
     

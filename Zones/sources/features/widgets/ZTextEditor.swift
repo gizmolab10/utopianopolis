@@ -163,7 +163,7 @@ class ZTextPack: NSObject {
 			if  let     trait  = packedTrait {                             // traits take logical priority
 				trait.ownerZone?.setTraitText(text, for: trait.traitType)
 			} else if let zone = packedZone {                              // ignore zone if editing a trait, above
-				zone.allCloudRecords?.removeFromLocalSearchIndex(nameOf: zone)
+				zone.zRecords?.removeFromLocalSearchIndex(nameOf: zone)
 
 				zone.zoneName  = text
 
@@ -221,7 +221,7 @@ class ZTextPack: NSObject {
 		gTextCapturing = false
 
 		if  redrawSync {
-			gRedrawMaps()
+			gRelayoutMaps()
 		}
     }
 
@@ -374,7 +374,7 @@ class ZTextEditor: ZTextView {
 			zone?.grab()
 
 			if  andRedraw {
-				gRedrawMaps(for: zone)
+				gRelayoutMaps(for: zone)
 			}
         }
     }

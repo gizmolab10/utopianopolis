@@ -66,7 +66,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	func fullStartupUpdate() {
-		if !gHasFinishedStartup, gStartup.oneTimerIntervalForward {
+		if !gHasFinishedStartup, gStartup.oneTimerIntervalElapsed {
 			updateThermometerBar()
 			updateSubviewVisibility()
 			buttonsView?.updateAndRedraw()
@@ -83,42 +83,34 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	var progressText:String {
-		let       thing = "-"
-		let      dTotal = gProgressTimes.values.reduce(0, +)
-		if  gMigrationState == .normal {
-			let   total = Int(dTotal)
-			let   count = Int(gStartup.elapsedStartupTime)
-			let remains = total - count
-			let   extra = total < 28
-			let  spacer = extra ? kSpace : kEmpty
-			let    more = extra ?  thing : kEmpty
-			let    text = " \(spacer)".repeatOf(count) + "\(thing)\(more)".repeatOf(remains)
-
-			return text
-		} else {
-			let   ratio = dTotal / 50.0
-			let   total = Int(dTotal / ratio)
+		if  gGotProgressTimes {
+			let  dTotal = gTotalTime
+			let   ratio = dTotal / 54.0
 			let   count = Int(gStartup.elapsedStartupTime / ratio)
-			let remains = total - count
-			let    text = kSpace.repeatOf(count) + thing.repeatOf(remains)
+			let remains = 54 - count
 
-			return text
+			if  remains > 0, count > 0 {
+				let    text = kSpace.repeatOf(count) + "-".repeatOf(remains)
+				return text
+			}
 		}
+
+		return ""
 	}
 
 	func updateThermometerBar() {
-//		thermometerBar?.updateProgress()
-		gAssureProgressTimesAreLoaded()
+		if  gAssureProgressTimesAreLoaded() {
+			progressIndicator?     .text = progressText
+			operationLabel?        .text = gCurrentOp.fullStatus
+			operationLabel?.needsDisplay = true
 
-		progressIndicator?               .text = progressText
-		operationLabel?                  .text = gCurrentOp.fullStatus
-		operationLabel?          .needsDisplay = true
-		thermometerBar?          .needsDisplay = true
-		gMainWindow?.contentView?.needsDisplay = true
-		view                     .needsDisplay = true
-
-		gApplication.setWindowsNeedUpdate(true)
-		gApplication.updateWindows()
+			gMainWindow?.contentView?.setNeedsDisplay()
+			thermometerBar?          .setNeedsDisplay()
+			view                     .setNeedsDisplay()
+//			thermometerBar?          .updateProgress()
+			gApplication             .setWindowsNeedUpdate(true)
+			gApplication             .updateWindows()
+		}
 	}
 
 	@IBAction func handlePermissionAction(_ button: ZButton) {

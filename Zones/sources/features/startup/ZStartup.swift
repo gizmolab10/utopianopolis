@@ -15,7 +15,7 @@ class ZStartup: NSObject {
 	let          startedAt = Date()
 	var elapsedStartupTime : Double { return Date().timeIntervalSince(startedAt) }
 
-	var oneTimerIntervalForward : Bool {
+	var oneTimerIntervalElapsed : Bool {
 		let  lapse = elapsedStartupTime
 		let enough = (lapse - prior) > kOneTimerInterval
 
@@ -29,7 +29,7 @@ class ZStartup: NSObject {
 	func startupCloudAndUI() {
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
 		gWorkMode              = .wStartupMode
-		gMigrationState        = gCoreDataStack.hasStoreFor(.mineID) ? .normal : gFiles.hasMine ? .migrate : .firstTime
+		gMigrationState        = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrate : .firstTime
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
 
 		gRemoteStorage.clear()
@@ -44,24 +44,33 @@ class ZStartup: NSObject {
 				gFavorites.setup { result in
 					FOREGROUND {
 						gFavorites.updateAllFavorites()
-						gRefreshCurrentEssay()
 						gRefreshPersistentWorkMode()
+						gRemoteStorage.recount()
+						gRefreshCurrentEssay()
 
-						gHasFinishedStartup    = true
-						gRefusesFirstResponder = false
+						gRefusesFirstResponder                = false
 						gMainController?.helpButton?.isHidden = false
+						gHasFinishedStartup                   = true
 
-						gTimers .stopTimer (for:  .tStartup)
 						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync])
 						gRecents.push()
 						gHereMaybe?.grab()
+
+						if  gMigrationState == .normal, gWriteFiles {
+							do {
+								for dbID in kAllDatabaseIDs {
+									try gFiles.writeToFile(from: dbID)
+								}
+							} catch {}
+						}
 
 						if  gIsStartupMode {
 							gSetBigMapMode()
 						}
 
-						gSignal([.sSwap, .spMain, .spCrumbs, .sLaunchDone, .sRelayout, .spPreferences])
+						gSignal([.sSwap, .spMain, .spCrumbs, .sLaunchDone, .spPreferences])
 						self.requestFeedback()
+						gTimers.stopTimer (for: .tStartup)
 					}
 				}
 			}

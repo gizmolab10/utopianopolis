@@ -22,7 +22,6 @@ class ZBaseEditor: NSObject {
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gAppDelegate?.genericMenuHandler(iItem) }
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {
-		var handled  = false
 		if  var key  = iKey {
 			if  key != key.lowercased() {
 				key  = key.lowercased()
@@ -32,26 +31,26 @@ class ZBaseEditor: NSObject {
 
 			if  flags.exactlySpecial {
 				switch key {
-					case "/": gHelpController?.show(       flags: flags); handled = true
-					case "a": gApplication.showHideAbout();               handled = true
-					case "k": toggleColorfulMode();                       handled = true
-					case "o": gFiles.showInFinder();                      handled = true
-					case "r": sendEmailBugReport();                       handled = true
-					case "x": clearRecents();                             handled = true
+					case "/": gHelpController?.show(       flags: flags); return true
+					case "a": gApplication.showHideAbout();               return true
+					case "k": toggleColorfulMode();                       return true
+					case "o": gFiles.showInFinder();                      return true
+					case "r": sendEmailBugReport();                       return true
+					case "x": clearRecents();                             return true
 					default:  break
 				}
 			} else if flags.isCommand {
 				switch key {
-					case "w": gHelpController?.show(false, flags: flags); handled = true
-					case "h": gApplication.hide(nil);                     handled = true
-					case "q": gApplication.terminate(self);               handled = true
-					case "y": gToggleShowTooltips();                      handled = true
+					case "w": gHelpController?.show(false, flags: flags); return true
+					case "h": gApplication.hide(nil);                     return true
+					case "q": gApplication.terminate(self);               return true
+					case "y": gToggleShowTooltips();                      return true
 					default:  break
 				}
 			}
 		}
 
-		return handled
+		return false
 	}
 
 	func handleMenuItem(_ iItem: ZMenuItem?) {

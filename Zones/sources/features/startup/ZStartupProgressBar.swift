@@ -11,10 +11,10 @@ import Foundation
 class ZStartupProgressBar: NSProgressIndicator {
 
 	func updateProgress() {
-		if  gCurrentOp    != .oCompletion {
-			gAssureProgressTimesAreLoaded()
+		if  gCurrentOp    != .oCompletion,
+			gAssureProgressTimesAreLoaded() {
 
-			let  totalTime = gProgressTimes.values.reduce(0, +)
+			let  totalTime = gTotalTime
 			let multiplier = maxValue - minValue
 			let      value = multiplier * gStartup.elapsedStartupTime / totalTime
 			doubleValue    = value + minValue

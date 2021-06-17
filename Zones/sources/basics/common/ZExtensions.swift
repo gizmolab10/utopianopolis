@@ -66,7 +66,7 @@ func gSignal(for object: Any? = nil, _ multiple: ZSignalKindArray, _ onCompletio
 
 private var canUpdate = true
 
-func gRedrawMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
+func gRelayoutMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
 	gSignal(for: object, [.sRelayout], onCompletion)
 }
 
@@ -1093,7 +1093,6 @@ extension Array {
 
 	mutating func insertUnique(item: Any?, at index: Int = 0, compare: CompareClosure? = nil) {
 		if  let e = item as? Element,
-			!self.contains(item),
 			!containsCompare(with: item, using: compare) {
 			insert(e, at: index)
 		}
@@ -1101,7 +1100,6 @@ extension Array {
 
 	@discardableResult mutating func appendUnique(item: Any?, compare: CompareClosure? = nil) -> Bool {
 		if  let e = item as? Element,
-			!self.contains(item),
 			!containsCompare(with: item, using: compare) {
 			append(e)
 			return true

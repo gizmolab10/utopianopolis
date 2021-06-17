@@ -148,15 +148,18 @@ class ZCoreDataStack: NSObject {
 	var        statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
 	var       currentOpID : ZCDOperationID?
 
-	func hasStoreFor(_ databaseID: ZDatabaseID) -> Bool {
-		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-		request.predicate = dbidPredicate(from: databaseID)
+	func hasStore(for databaseID: ZDatabaseID = .mineID) -> Bool {
+		if  gUseCoreData {
+			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
+			request.predicate = dbidPredicate(from: databaseID)
 
-		do {
-			return try managedContext.count(for: request) > 10
-		} catch {
-			return false
+			do {
+				return try managedContext.count(for: request) > 10
+			} catch {
+			}
 		}
+
+		return false
 	}
 
 	// MARK:- save
@@ -189,6 +192,9 @@ class ZCoreDataStack: NSObject {
 	func loadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure?) {
 		if  gCanLoad {
 			deferUntilAvailable(for: .oLoad) {
+				self.load(type: kManifestType, into: dbID, onlyOne: false)
+
+				gProgressTimesReady = true
 				var names = [kRootName, kTrashName, kDestroyName, kLostAndFoundName]
 
 				if  dbID == .mineID {
@@ -199,7 +205,6 @@ class ZCoreDataStack: NSObject {
 					self.loadZone(recordName: name, into: dbID)
 				}
 
-				self.load(type: kManifestType, into: dbID, onlyOne: false)
 				self.load(type: kFileType,     into: dbID, onlyOne: false)
 				gRemoteStorage.updateManifestCount(for: dbID)
 				self.makeAvailable()
@@ -305,18 +310,10 @@ class ZCoreDataStack: NSObject {
 		return !missingFrom(dbID).contains(recordName)
 	}
 
-	func lookup(recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObject? {
-		if  let    object = fetchedRegistry[dbID]?[recordName] {
-			return object
-		}
-
-		return nil
-	}
-
 	func resolveMissing(from dbID: ZDatabaseID) {
 		var missing         = missingFrom(dbID)
 		for name in missing {
-			let found       = find(type: kZoneType, recordName: name, into: dbID, trackMissing: false)
+			let found       = find(type: kZoneType, recordName: name, in: dbID, trackMissing: false)
 			if  found.count > 0,
 				let   index = missing.firstIndex(of: name) {
 				missing.remove(at: index)
@@ -326,9 +323,9 @@ class ZCoreDataStack: NSObject {
 		missingRegistry[dbID] = missing
 	}
 
-	func find(type: String, recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true, trackMissing: Bool = true) -> [ZManagedObject] {
+	func find(type: String, recordName: String, in dbID: ZDatabaseID, onlyOne: Bool = true, trackMissing: Bool = true) -> [ZManagedObject] {
 		let           dbid = dbID == .everyoneID ? dbID : .mineID
-		if  let     object = lookup(recordName: recordName, into: dbid) {
+		if  let     object = fetchedRegistry[dbid]?[recordName] {
 			return [object]
 		}
 

@@ -159,6 +159,7 @@ class ZoneWidget: ZView {
             backgroundColor = kClearColor
         #endif
 
+		gStartupController?.fullStartupUpdate()
 		gWidgets.setWidgetForZone(self, for: mapType)
         addTextView()
         textWidget.layoutText()

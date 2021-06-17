@@ -47,6 +47,8 @@ enum ZSignalKind: Int {
 	case sLaunchDone
     case sAppearance
 
+	// these are filtered below, in signalFor
+
 	case spMain
 	case spData
 	case spCrumbs
