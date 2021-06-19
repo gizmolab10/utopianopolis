@@ -123,6 +123,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return false
 		}
 
+		let enabled = gLicense.isEnabled
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
 		let  OPTION = flags.isOption
@@ -160,21 +161,28 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			return true
 		} else if  COMMAND {
+			if  enabled {
+				switch key {
+					case "b":      applyToSelection(BOLD: true)
+					case "d":      convertToChild(flags)
+					case "e":      grabSelectedTextForSearch()
+					case "f":      gSearching.showSearch(OPTION)
+					case "g":      searchAgain(OPTION)
+					case "i":      showSpecialCharactersPopup()
+					case "l":      alterCase(up: false)
+					case "p":      printCurrentEssay()
+					case "s":      save()
+					case "u":      if !OPTION { alterCase(up: true) }
+					case "z":      if  SHIFT { undoManager?.redo() } else { undoManager?.undo() }
+					default:       return false
+				}
+			}
+
 			switch key {
 				case "a":      selectAll(nil)
-				case "b":      applyToSelection(BOLD: true)
-				case "d":      convertToChild(flags)
-				case "e":      grabSelectedTextForSearch()
-				case "f":      gSearching.showSearch(OPTION)
-				case "g":      searchAgain(OPTION)
-				case "i":      showSpecialCharactersPopup()
-				case "l":      alterCase(up: false)
 				case "n":      swapBetweenNoteAndEssay()
-				case "p":      printCurrentEssay()
-				case "s":      save()
 				case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
-				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-				case "z":      if  SHIFT { undoManager?.redo() } else { undoManager?.undo() }
+				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) }
 				case "/":      gHelpController?.show(flags: flags)
 				case "'":      gToggleSmallMapMode(OPTION)
 				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRelayoutMaps() }
@@ -186,15 +194,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			return true
 		} else if CONTROL {
+			if  enabled {
+				switch key {
+					case "d":      convertToChild(flags)
+					case "h":      showLinkPopup()
+					default:       return false
+				}
+			}
+
 			switch key {
-				case "d":      convertToChild(flags)
-				case "h":      showLinkPopup()
 				case "/":      popNoteAndUpdate()
 				default:       return false
 			}
 
 			return true
-		} else if OPTION {
+		} else if OPTION, enabled {
 			switch key {
 				case "d":      convertToChild(flags)
 				default:       return false
@@ -204,10 +218,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		return false
-	}
-
-	func showSearch() {
-
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {

@@ -35,6 +35,7 @@ typealias        ZTinyDotTypeArray = [[ZTinyDotType]]
 typealias       ZRecordsDictionary = [ZDatabaseID: ZRecordsArray]
 typealias       ZStorageDictionary = [ZStorageType : NSObject]
 typealias    ZAttributesDictionary = [NSAttributedString.Key : Any]
+typealias     ZStringAnyDictionary = [String :      Any]
 typealias  ZStringObjectDictionary = [String : NSObject]
 typealias  StringZRecordDictionary = [String :  ZRecord]
 typealias StringZRecordsDictionary = [String :  ZRecordsArray]
@@ -421,7 +422,7 @@ extension URL {
 extension CGImageSource {
 
 	class func readFrom(_ url: URL) -> CGImageSource? { return CGImageSourceCreateWithURL(url as CFURL, nil) }
-	var metadata: [String : Any]? { return CGImageSourceCopyPropertiesAtIndex(self, 0, nil) as? [String : Any] }
+	var metadata: ZStringAnyDictionary? { return CGImageSourceCopyPropertiesAtIndex(self, 0, nil) as? ZStringAnyDictionary }
 	var originalImageName: String? { return metadata?[kOrignalImageName] as? String }
 
 }
@@ -1833,6 +1834,34 @@ extension String {
         return self[i ..< i + 1]
     }
 
+	func splitToken() -> (Date, ZLicenseState, ZLicenseType, String?)? {
+		let array           = components(separatedBy: kColonSeparator)
+		if  array.count     > 2,
+			let   dateValue = Double(array[0]) {
+			let  stateValue = array[1]
+			let   typeValue = array[2]
+			let valueString = array[3]
+			let        date = Date(timeIntervalSinceReferenceDate: dateValue)
+			let       state = ZLicenseState(rawValue: stateValue) ?? .sTimedout
+			let        type = ZLicenseType (rawValue:  typeValue) ?? .tNone
+			let       value : String? = valueString == "-" ? nil : valueString
+			return (date, state, type, value)
+		}
+
+		return nil
+	}
+
+	static func createToken(_ date: Date, _ state: ZLicenseState, _ type: ZLicenseType, _ value: String? = nil) -> String {
+		var array = StringsArray()
+
+		array.append("\(date.timeIntervalSinceReferenceDate)")
+		array.append("\(state.rawValue)")
+		array.append("\(type .rawValue)")
+		array.append(value ?? "-")
+
+		return array.joined(separator: kColonSeparator)
+	}
+
 	static func pluralized(_ iValue: Int, unit: String = kEmpty, plural: String = "s", followedBy: String = kEmpty) -> String { return iValue <= 0 ? kEmpty : "\(iValue) \(unit)\(iValue == 1 ? kEmpty : "\(plural)")\(followedBy)" }
     static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
     func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }
@@ -2213,6 +2242,32 @@ extension Data {
 				return s
 			}
 		} catch {}
+
+		return nil
+	}
+
+	func storeFor(_ key: String) {
+		let query = [
+			kSecValueData   as String : self,
+			kSecAttrAccount as String : key,
+			kSecClass       as String : kSecClassGenericPassword as String ] as CFDictionary
+
+		SecItemDelete(query)
+		SecItemAdd   (query, nil)
+	}
+
+	static func loadFor(_ key: String) -> Data? {
+		let query = [
+			kSecClass       as String : kSecClassGenericPassword as String,
+			kSecAttrAccount as String : kLicenseToken,
+			kSecReturnData  as String : kCFBooleanTrue!,
+			kSecMatchLimit  as String : kSecMatchLimitOne ] as CFDictionary
+
+		var dataTypeRef : AnyObject? = nil
+
+		if  SecItemCopyMatching(query as CFDictionary, &dataTypeRef) == noErr {
+			return dataTypeRef as! Data?
+		}
 
 		return nil
 	}

@@ -26,6 +26,7 @@ enum ZTimerID : Int {
 	case tMouseLocation
 	case tMouseZone
 	case tOperation
+	case tLicense
 	case tRecount
 	case tStartup
 	case tSync
@@ -88,13 +89,14 @@ class ZTimers: NSObject {
 	func startTimer(for timerID: ZTimerID?) {
 		if  let       tid = timerID {
 			let repeaters : [ZTimerID]   = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tSync]
-			var     block : TimerClosure = { iTimer in }        // do nothing by default
+			var     block : TimerClosure = { iTimer in }          // do nothing by default
 			let   repeats = repeaters.contains(tid)
-			var   waitFor = 1.0                                 // one second
+			var   waitFor = 1.0                                   // one second
 
 			switch tid {
-				case .tSync:                    waitFor = 15.0  // seconds
-				case .tRecount:                 waitFor = 60.0  // one minute
+				case .tLicense:                 waitFor =  1.0
+				case .tSync:                    waitFor = 15.0    // seconds
+				case .tRecount:                 waitFor = 60.0    // one minute
 				case .tStartup, .tMouseZone:    waitFor = kOneTimerInterval
 				default:                        break
 			}
@@ -109,6 +111,7 @@ class ZTimers: NSObject {
 				case .tCloudAvailable:          block = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
 				case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.invokeDeferralMaybe(iTimer) }
 				case .tStartup:                 block = { iTimer in gStartupController?.fullStartupUpdate() }
+				case .tLicense:                 block = { iTimer in gLicense.update() }
 				default:                        break
 			}
 

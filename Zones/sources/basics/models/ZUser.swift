@@ -26,10 +26,11 @@ class ZUser : ZRecord {
 	@NSManaged var      authorID: String?
 	@NSManaged var   writeAccess: NSNumber?
 	@NSManaged var sentEmailType: String?
+	var                 isExempt: Bool { return authorID == "38AC7308-C627-4F83-B4E0-CAC3FFEAA142" }
 
 	var access: ZUserAccess {
         get {
-			if  authorID    == "38AC7308-C627-4F83-B4E0-CAC3FFEAA142" {
+			if  isExempt {
 				writeAccess  = NSNumber(value: ZUserAccess.eFull.rawValue)
 			}
 

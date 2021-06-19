@@ -497,7 +497,7 @@ extension ZAlert {
 
         gControllers.currentController?.present(self, animated: true) {
             self.dismiss(animated: false) {
-                closure?(.eStatusShown)
+                closure?(.sShown)
             }
         }
     }
@@ -515,7 +515,7 @@ extension ZAlerts {
     func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
         alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { iAlert, iState in
 			switch iState {
-				case .eStatusShow:
+				case .sShow:
 					iAlert?.showAlert { iResponse in
 						closure?(iResponse)
 				}
@@ -529,12 +529,12 @@ extension ZAlerts {
         FOREGROUND(canBeDirect: true) {
             let        a = ZAlert(title: iMessage, message: iExplain, preferredStyle: .alert)
             let okAction = UIAlertAction(title: iOKTitle, style: .default) { iAction in
-                closure?(a, .eStatusYes)
+                closure?(a, .sYes)
             }
             
             a.addAction(okAction)
             
-            closure?(a, .eStatusShow)
+            closure?(a, .sShow)
         }
     }
 

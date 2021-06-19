@@ -758,7 +758,7 @@ class ZMapEditor: ZBaseEditor {
 					// /////////////////////////////////////////////////////////////////////
 
 					gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? kEmpty)\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
-						if  iStatus == .eStatusYes {
+						if  iStatus == .sYes {
 							self.moveOut(selectionOnly: selectionOnly, extreme: extreme, force: true, onCompletion: onCompletion)
 						}
 					}

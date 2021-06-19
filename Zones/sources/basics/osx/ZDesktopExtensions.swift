@@ -123,8 +123,7 @@ extension String {
 
 	func heightForFont(_ font: ZFont, options: NSString.DrawingOptions = .usesDeviceMetrics) -> CGFloat { return sizeWithFont(font, options: options).height }
     func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
-    
-    
+
     func  rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
         return self.boundingRect(with: CGSize.big, options: options, attributes: [.font : font])
     }
@@ -160,8 +159,7 @@ extension String {
         
         return nil
     }
-    
-    
+
     func openAsURL() {
         let fileScheme = "file"
         let filePrefix = fileScheme + "://"
@@ -190,12 +188,10 @@ extension NSURL {
         return nil
     }
 
-    
     func open() {
         NSWorkspace.shared.open(self as URL)
     }
 
-    
     func openAsFile() {
         if !self.openSecurely() {
             ZFiles.presentOpenPanel() { (iAny) in
@@ -392,22 +388,24 @@ extension ZTextView {
 	}
 
 	@objc override func printView() { // ZTextView
-		var view: NSView = self
-		let    printInfo = NSPrintInfo.shared
-		let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
-		if  let    tView = view as? NSTextView {
-			let    frame = CGRect(origin: .zero, size: CGSize(width: 6.5 * 72.0, height: 9.5 * 72.0))
-			let    nView = NSTextView(frame: frame)
-			view         = nView
+		if  gLicense.isEnabled {
+			var view: NSView = self
+			let    printInfo = NSPrintInfo.shared
+			let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
+			if  let    tView = view as? NSTextView {
+				let    frame = CGRect(origin: .zero, size: CGSize(width: 6.5 * 72.0, height: 9.5 * 72.0))
+				let    nView = NSTextView(frame: frame)
+				view         = nView
 
-			nView.insertText(tView.textStorage as Any, replacementRange: NSRange())
+				nView.insertText(tView.textStorage as Any, replacementRange: NSRange())
+			}
+
+			PMSetScale(pmPageFormat, 100.0)
+			PMSetOrientation(pmPageFormat, PMOrientation(kPMPortrait), false)
+			printInfo.updateFromPMPrintSettings()
+			printInfo.updateFromPMPageFormat()
+			NSPrintOperation(view: view, printInfo: printInfo).run()
 		}
-
-		PMSetScale(pmPageFormat, 100.0)
-		PMSetOrientation(pmPageFormat, PMOrientation(kPMPortrait), false)
-		printInfo.updateFromPMPrintSettings()
-		printInfo.updateFromPMPageFormat()
-		NSPrintOperation(view: view, printInfo: printInfo).run()
 	}
 
 }
@@ -421,6 +419,7 @@ extension CALayer {
 			}
 		}
 	}
+
 }
 
 extension NSView {
@@ -495,18 +494,20 @@ extension NSView {
     }
 
 	@objc func printView() { // NSView
-		let view: NSView = self
-		let    printInfo = NSPrintInfo.shared
-		let      isWider = view.bounds.size.width > view.bounds.size.height
-		let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
-		let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
+		if  gLicense.isEnabled {
+			let view: NSView = self
+			let    printInfo = NSPrintInfo.shared
+			let      isWider = view.bounds.size.width > view.bounds.size.height
+			let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
+			let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
 
-        PMSetScale(pmPageFormat, 100.0)
-        PMSetOrientation(pmPageFormat, orientation, false)
-        printInfo.updateFromPMPrintSettings()
-        printInfo.updateFromPMPageFormat()
-        NSPrintOperation(view: view, printInfo: printInfo).run()
-    }
+			PMSetScale(pmPageFormat, 100.0)
+			PMSetOrientation(pmPageFormat, orientation, false)
+			printInfo.updateFromPMPrintSettings()
+			printInfo.updateFromPMPageFormat()
+			NSPrintOperation(view: view, printInfo: printInfo).run()
+		}
+	}
         
 }
 
@@ -619,44 +620,37 @@ extension ZButton {
 
 extension ZAlert {
 
-    func showAlert(closure: AlertStatusClosure? = nil) {
-        let             response = runModal()
-        let              success = response == NSApplication.ModalResponse.alertFirstButtonReturn
-        let status: ZAlertStatus = success ? .eStatusYes : .eStatusNo
-
-        closure?(status)
+    func showModal(closure: AlertStatusClosure? = nil) {
+        closure?((runModal() == .alertFirstButtonReturn) ? ZAlertStatus.sYes : ZAlertStatus.sNo)
     }
 
 }
 
 extension ZAlerts {
     
-    
     func openSystemPreferences() {
         if  let url = NSURL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
             url.open()
         }
     }
-    
-    
-    func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
-        alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { iAlert, iState in
-            switch iState {
-            case .eStatusShow:
-                iAlert?.showAlert { iResponse in
-                    let window = iAlert?.window
+
+	func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
+        alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { alert, status in
+            switch status {
+            case .sShow:
+                alert?.showModal { status in
+                    let window = alert?.window
                     
                     gApplication.abortModal()
-                    window?.orderOut(iAlert)
-                    closure?(iResponse)
+                    window?.orderOut(alert)
+                    closure?(status)
                 }
             default:
-                closure?(iState)
+                closure?(status)
             }
         }
     }
-    
-    
+
     func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertClosure? = nil) {
         FOREGROUND(canBeDirect: true) {
             let             a = ZAlert()
@@ -677,7 +671,7 @@ extension ZAlerts {
                 a.layout()
             }
             
-            closure?(a, .eStatusShow)
+            closure?(a, .sShow)
         }
     }
     
@@ -690,8 +684,7 @@ extension ZTextField {
     func enableUndo() {
         cell?.allowsUndo = true
     }
-    
-    
+
     func select(range: NSRange) {
         select(from: range.lowerBound, to: range.upperBound)
     }
@@ -701,8 +694,7 @@ extension ZTextField {
             select(withFrame: bounds, editor: editor, delegate: self, start: from, length: to - from)
         }
     }
-    
-    
+
     func selectFromStart(toEnd: Bool = false) {
         if  let t = text {
             select(from: 0, to: toEnd ? t.length : 0)
@@ -1162,8 +1154,7 @@ extension ZOnboarding {
             IOObjectRelease(intfIterator)
         }
     }
-    
-    
+
     func findEthernetInterfaces() -> io_iterator_t? {
         
         let matchingDict = IOServiceMatching("IOEthernetInterface") as NSMutableDictionary
@@ -1176,8 +1167,7 @@ extension ZOnboarding {
         
         return matchingServices
     }
-    
-    
+
     func getMACAddress(_ intfIterator : io_iterator_t) -> [UInt8]? {
         
         var macAddress : [UInt8]?
