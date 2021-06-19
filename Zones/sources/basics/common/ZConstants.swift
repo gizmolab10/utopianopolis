@@ -27,6 +27,7 @@ let kUnselectBrightness: CGFloat = 0.98
 
 #endif
 
+let                  kOneMonth = 60 * 60 * 24 * 30 
 let                 kRingWidth = 130.0
 let                 kBatchSize = 250
 let                kLogTabStop = 25

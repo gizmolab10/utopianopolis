@@ -18,7 +18,7 @@ var      gDebugModes : ZDebugMode    = [.dReadFiles]
 var      gPrintModes : ZPrintMode    = []
 var    gCoreDataMode : ZCoreDataMode = [] // [.dDisabled]
 #else      // normal && update file
-var      gDebugModes : ZDebugMode    = [.dReadFiles, .dWriteFiles]
+var      gDebugModes : ZDebugMode    = [.dWriteFiles, .dUserLicensing, .dLicenseTimeout]
 var      gPrintModes : ZPrintMode    = []
 var    gCoreDataMode : ZCoreDataMode = []
 #endif
@@ -31,6 +31,8 @@ var  gShowDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var     gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
 var      gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
 
+var  gLicenseTimeout : Bool { return  gDebugModes.contains(.dLicenseTimeout) }
+var   gUserLicensing : Bool { return  gDebugModes.contains(.dUserLicensing) }
 var      gWriteFiles : Bool { return  gDebugModes.contains(.dWriteFiles) }
 var       gDebugInfo : Bool { return  gDebugModes.contains(.dDebugInfo) }
 var       gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }
@@ -67,6 +69,8 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dDebugAccess     = ZDebugMode() // test write access by me not having full
 	static let dShowDestroy     = ZDebugMode() // add destroy bookmark to favorites
 	static let dShowDuplicates  = ZDebugMode() // report duplicates
+	static let dUserLicensing  = ZDebugMode() // ignore user exemption
+	static let dLicenseTimeout  = ZDebugMode() // super short timeout
 
 	var description: String {
 		return [(.dNewUser,         "arrival"),

@@ -12,9 +12,9 @@ let gStartup = ZStartup()
 
 class ZStartup: NSObject {
 	var              prior = 0.0
-	var          startedAt = Date()
-	var elapsedStartupTime : Double { if let s = startedAt { return Date().timeIntervalSince(s) } else { return 0.0 } }
-
+	let          startedAt = Date()
+	var elapsedStartupTime : Double { return Date().timeIntervalSince(startedAt) }
+	
 	var oneTimerIntervalElapsed : Bool {
 		let  lapse = elapsedStartupTime
 		let enough = (lapse - prior) > kOneTimerInterval
@@ -28,9 +28,9 @@ class ZStartup: NSObject {
 
 	func startupCloudAndUI() {
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
-		gWorkMode              = .wStartupMode
-		gMigrationState        = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrate : .firstTime
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController // instantiated once
+		gMigrationState        = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrate : .firstTime
+		gWorkMode              = .wStartupMode
 
 		gRemoteStorage.clear()
 		gSearching.setSearchStateTo(.sNot)
@@ -41,7 +41,7 @@ class ZStartup: NSObject {
 				gIsReadyToShowUI = true
 
 				gLicense.setup()
-				gTimers.startTimer(for: .tStartup)
+				gTimers.startTimers(for: [.tStartup, .tLicense])
 				gFavorites.setup { result in
 					FOREGROUND {
 						gFavorites.updateAllFavorites()

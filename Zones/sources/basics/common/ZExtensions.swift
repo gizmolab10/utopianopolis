@@ -1834,7 +1834,7 @@ extension String {
         return self[i ..< i + 1]
     }
 
-	func splitToken() -> (Date, ZLicenseState, ZLicenseType, String?)? {
+	var asZToken: ZToken? {
 		let array           = components(separatedBy: kColonSeparator)
 		if  array.count     > 2,
 			let   dateValue = Double(array[0]) {
@@ -1845,21 +1845,11 @@ extension String {
 			let       state = ZLicenseState(rawValue: stateValue) ?? .sTimedout
 			let        type = ZLicenseType (rawValue:  typeValue) ?? .tNone
 			let       value : String? = valueString == "-" ? nil : valueString
-			return (date, state, type, value)
+
+			return ZToken(date: date, type: type, state: state, value: value)
 		}
 
 		return nil
-	}
-
-	static func createToken(_ date: Date, _ state: ZLicenseState, _ type: ZLicenseType, _ value: String? = nil) -> String {
-		var array = StringsArray()
-
-		array.append("\(date.timeIntervalSinceReferenceDate)")
-		array.append("\(state.rawValue)")
-		array.append("\(type .rawValue)")
-		array.append(value ?? "-")
-
-		return array.joined(separator: kColonSeparator)
 	}
 
 	static func pluralized(_ iValue: Int, unit: String = kEmpty, plural: String = "s", followedBy: String = kEmpty) -> String { return iValue <= 0 ? kEmpty : "\(iValue) \(unit)\(iValue == 1 ? kEmpty : "\(plural)")\(followedBy)" }
