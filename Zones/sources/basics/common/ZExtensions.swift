@@ -1834,24 +1834,6 @@ extension String {
         return self[i ..< i + 1]
     }
 
-	var asZToken: ZToken? {
-		let array           = components(separatedBy: kColonSeparator)
-		if  array.count     > 2,
-			let   dateValue = Double(array[0]) {
-			let  stateValue = array[1]
-			let   typeValue = array[2]
-			let valueString = array[3]
-			let        date = Date(timeIntervalSinceReferenceDate: dateValue)
-			let       state = ZLicenseState(rawValue: stateValue) ?? .sTimedout
-			let        type = ZLicenseType (rawValue:  typeValue) ?? .tNone
-			let       value : String? = valueString == "-" ? nil : valueString
-
-			return ZToken(date: date, type: type, state: state, value: value)
-		}
-
-		return nil
-	}
-
 	static func pluralized(_ iValue: Int, unit: String = kEmpty, plural: String = "s", followedBy: String = kEmpty) -> String { return iValue <= 0 ? kEmpty : "\(iValue) \(unit)\(iValue == 1 ? kEmpty : "\(plural)")\(followedBy)" }
     static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
     func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }

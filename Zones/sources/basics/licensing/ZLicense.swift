@@ -56,34 +56,43 @@ class ZLicense: NSObject {
 		if  licenseToken == nil {
 			let    token  = ZToken(date: Date(), type: ZLicenseType.tNone, state: ZLicenseState.sInitial, value: nil)
 			licenseToken  = token.asString
+		} else if var   t = licenseToken?.asZToken {
+			t     .state  = .sInitial
+			licenseToken  = t.asString
 		}
 	}
 
-	func stateFrom(_ zToken: ZToken) -> ZLicenseState {
-		let duration  = Int(Date().timeIntervalSince(zToken.date))
+	func stateFrom(_ token: ZToken) -> ZLicenseState {
+		let  duration = Int(Date().timeIntervalSince(token.date))
 		let threshold = gLicenseTimeout ? 100 : kOneMonth
-		var     state = ZLicenseState.sTimedout
-		if  duration  < threshold || userIsExempt {
-			state     = .sWaiting
+		let    isGood = duration < threshold || userIsExempt
+		return isGood ? .sWaiting : .sTimedout
+	}
+
+	func stateChangedWithin(_ token: ZToken) -> Bool {
+		let newState = stateFrom(token)
+		let changed  = newState != token.state
+		if  changed  {
+			var        t = token
+			t.state      = newState
+			licenseToken = t.asString         // state changed, reconstruct token
 		}
 
-		return state
+		return changed
 	}
 
 	@discardableResult func update() -> ZLicenseState {  // called once a minute from timer started in setup above
-		if  var     token         = licenseToken?.asZToken {
-			let     newState      = stateFrom(token)
-			if  !userIsExempt {
-				if  newState     != token.state {
-					token.state   = newState
-					licenseToken  = token.asString           // state changed, reconstruct token
-					if  newState == .sTimedout {
-						showExpirationAlert()                // license timed out, show expired alert
-					}
-
-					return newState
+		if  let        token  = licenseToken?.asZToken {
+			if  !userIsExempt, stateChangedWithin(token),
+				let newState  = licenseToken?.asZToken?.state {
+				if  newState == .sTimedout {
+					showExpirationAlert()                // license timed out, show expired alert
 				}
+
+				return newState
 			}
+
+			return token.state
 		}
 
 		return ZLicenseState.sInitial
@@ -93,8 +102,13 @@ class ZLicense: NSObject {
 		gAlerts.showAlert("Please forgive my interruption", [
 							"I hope you are enjoying Seriously.", [
 								"I also hope you can appreciate the loving work I've put into it and my wish to generate an income by it.",
-								"Because I do see the value of letting you try before you buy, this alert is being shown to you only after a free period of use. During this period all features of Seriously have been enabled."].joined(separator: " "),
-							"If you wish to continue using Seriously for free, some features [editing notes, search and print] will be disabled. If these features are important to you, you can retain them by purchasing a license."].joined(separator: "\n\n"),
+								"Because I do see the value of letting you try before you buy,",
+								"this alert is being shown to you only after a free period of use.",
+								"During this period all features of Seriously have been enabled."].joined(separator: " "), [
+									"If you wish to continue using Seriously for free,",
+									"some features [editing notes, search and print] will be disabled.",
+									"If these features are important to you,",
+									"you can retain them by purchasing a license."].joined(separator: " ")].joined(separator: "\n\n"),
 						  "Purchase a license",
 						  "No thanks, the limited features are perfect") { status in
 			if  status == .sYes {
@@ -120,6 +134,28 @@ extension ZToken {
 		array.append(value ?? "-")
 
 		return array.joined(separator: kColonSeparator)
+	}
+
+}
+
+extension String {
+
+	var asZToken: ZToken? {
+		let array           = components(separatedBy: kColonSeparator)
+		if  array.count     > 2,
+			let   dateValue = Double(array[0]) {
+			let  stateValue = array[1]
+			let   typeValue = array[2]
+			let valueString = array[3]
+			let        date = Date(timeIntervalSinceReferenceDate: dateValue)
+			let       state = ZLicenseState(rawValue: stateValue) ?? .sTimedout
+			let        type = ZLicenseType (rawValue:  typeValue) ?? .tNone
+			let       value : String? = valueString == "-" ? nil : valueString
+
+			return ZToken(date: date, type: type, state: state, value: value)
+		}
+
+		return nil
 	}
 
 }
