@@ -715,6 +715,10 @@ func gThrowOnUserActivity() throws {
 	}
 }
 
+func gDetailsViewIsVisible(for id: ZDetailsViewID) -> Bool {
+	return gShowDetailsView && gDetailsController?.viewIsVisible(for: id) ?? false
+}
+
 func gRefreshCurrentEssay() {
 	if  let identifier = getPreferencesString(for: kCurrentEssay, defaultString: kTutorialRecordName),
 		let      essay = gRecents.object(for: identifier) as? ZNote {

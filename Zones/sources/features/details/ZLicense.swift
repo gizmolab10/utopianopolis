@@ -12,17 +12,40 @@ import CryptoKit
 let gLicense = ZLicense()
 
 enum ZLicenseState: String {
+
+	case sReady    = "r"
 	case sInitial  = "i"
 	case sWaiting  = "w"
 	case sTimedout = "t"
 	case sLicensed = "l"
+
+	var title: String {
+		switch self {
+			case .sTimedout: return "expired"
+			case .sLicensed: return "licensed"
+			case .sReady:    return "ready for purchase"
+			default:         return "no license"
+		}
+	}
+
 }
 
 enum ZLicenseType: String {
+
 	case tNone     = "-"
 	case tMonthly  = "m"
 	case tAnnual   = "y"
 	case tLifetime = "!"
+
+	var title: String {
+		switch self {
+			case .tAnnual:   return "one year"
+			case .tMonthly:  return "one month"
+			case .tLifetime: return "forever"
+			default:         return "no license"
+		}
+	}
+
 }
 
 struct ZToken {
@@ -56,9 +79,9 @@ class ZLicense: NSObject {
 		if  licenseToken == nil {
 			let    token  = ZToken(date: Date(), type: ZLicenseType.tNone, state: ZLicenseState.sInitial, value: nil)
 			licenseToken  = token.asString
-		} else if var   t = licenseToken?.asZToken {
-			t     .state  = .sInitial
-			licenseToken  = t.asString
+//		} else if var   t = licenseToken?.asZToken {
+//			t     .state  = .sInitial
+//			licenseToken  = t.asString
 		}
 	}
 
@@ -112,13 +135,11 @@ class ZLicense: NSObject {
 						  "Purchase a license",
 						  "No thanks, the limited features are perfect") { status in
 			if  status == .sYes {
-				self.purchaseLicense()
+				gShowDetailsView = true
+
+				gDetailsController?.toggleViewsFor(ids: [.vPreferences])
 			}
 		}
-	}
-
-	func purchaseLicense() {
-		licenseToken = ZToken(date: Date(), type: .tMonthly, state: .sLicensed, value: nil).asString
 	}
 
 }

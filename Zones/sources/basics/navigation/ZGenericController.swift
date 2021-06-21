@@ -16,12 +16,26 @@ import Foundation
 
 class ZGenericController: ZController, ZGeneric {
 
-	var     isVisible = false
-	var  controllerID : ZControllerID { return .idUndefined }
-	var  allowedKinds : ZSignalKindArray { return allowedKindsFor(controllerID) }
+	var        isVisible = false
+	var     controllerID : ZControllerID { return .idUndefined }
+	var     allowedKinds : ZSignalKindArray { return allowedKindsFor(controllerID) }
+	var  disallowedKinds : ZSignalKindArray { return disallowedKindsFor(controllerID) }
     func handleSignal(_ object: Any?, kind: ZSignalKind) {}
 	func startup() {}
 	func setup() {}
+
+	func disallowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
+		switch id {
+			case .idData,
+				 .idLicense: return [.spStartupStatus]
+			case .idMain:    return [.spStartupStatus, .sFound]
+			case .idActions: return [.sSearch, .sFound]
+			case .idBigMap:  return [.sData]             // ignore the signal from the end of process next batch
+			default: break
+		}
+
+		return []
+	}
 
 	func allowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
 		switch id {
@@ -31,28 +45,20 @@ class ZGenericController: ZController, ZGeneric {
 			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .sRelayout,     .spBigMap, .sLaunchDone]
 			case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .sRelayout,     .sDetails, .sLaunchDone, .spSmallMap]
 			case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences, .sDetails]
-			case .idSearchResults: break
-			case .idStartHere:     break
-			case .idControls:      break
-			case .idStartup:       break
-			case .idDetails:       break
-			case .idActions:       break   // iPhone
-			case .idSearch:        break
-			case .idCrumbs:        break
-			case .idDebug:         break
-			case .idData:          break
-			case .idLink:          break
-			case .idHelp:          break
-			case .idNote:          break
-			case .idMain:          break
+			case .idSearchResults: return [.sFound]
+			case .idSearch:        return [.sSearch]
+			case .idStartup:       return [.spStartupStatus] // .sStartupButtons
+			case .idNote:          return [.sEssay, .sAppearance]             // ignore the signal from the end of process next batch
 			default: break
 		}
+
 		return []
 	}
 
 	func shouldHandle(_ kind: ZSignalKind) -> Bool {
-		return (allowedKinds.count == 0 || allowedKinds                      .contains(kind))
-			&& ((gHasFinishedStartup && ![.spStartupStatus, .sError]         .contains(kind))
+		return    (allowedKinds.count == 0 ||                    allowedKinds.contains(kind))
+			&& (disallowedKinds.count == 0 ||                !disallowedKinds.contains(kind))
+			&& ((gHasFinishedStartup && ![.spStartupStatus,          .sError].contains(kind))
 			|| (!gHasFinishedStartup &&  [.spStartupStatus,  .spMain, .sData].contains(kind)))
 	}
 

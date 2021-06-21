@@ -25,8 +25,7 @@ class ZDataController: ZGenericController {
     override  var          controllerID: ZControllerID { return .idData }
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		if  let c = gDetailsController, c.viewIsVisible(for: .vData),  // don't send signal to a hidden favorites controller
-			gShowDetailsView,      kind != .spStartupStatus {
+		if  gDetailsViewIsVisible(for: .vData) {
 			modificationDateLabel?.text  = modificationDateText
 			cloudStatusLabel?     .text  = statusText
 			recordNameLabel?      .text  = zoneRecordNameText

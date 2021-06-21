@@ -18,6 +18,7 @@ enum ZControllerID: Int {
     case idSmallMap
 	case idHelpDots
 	case idControls
+	case idLicense
 	case idStartup
     case idDetails
     case idActions   // iPhone

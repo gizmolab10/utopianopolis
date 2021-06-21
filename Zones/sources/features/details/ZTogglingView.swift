@@ -37,6 +37,7 @@ class ZTogglingView: ZStackView {
 			case .vPreferences : return "preference controls"
 			case .vSimpleTools : return "some simple tools which can get you oriented"
 			case .vSmallMap    : return "\(gCurrentSmallMapName)s map"
+			case .vLicense     : return "license details"
 			case .vData        : return "useful data about Seriously"
 			default            : return kEmpty
 		}
@@ -48,6 +49,7 @@ class ZTogglingView: ZStackView {
 				case "preferences": return .vPreferences
 				case "startHere":   return .vSimpleTools
 				case "smallMap":    return .vSmallMap
+				case "license":     return .vLicense
 				case "data":        return .vData
 				default:            return .vAll
 			}
@@ -87,8 +89,6 @@ class ZTogglingView: ZStackView {
         }
     }
 
-	//	extraButton?.toolTip = "\(kClickTo)show \(gOtherDatabaseID.userReadableString) ideas"
-
 	@IBAction func extraButtonAction(_ sender: Any) {
 		switch identity {
 			case .vSmallMap: gToggleSmallMapMode(forceToggle: true)
@@ -112,7 +112,7 @@ class ZTogglingView: ZStackView {
 		titleButton?.zlayer.backgroundColor =     gAccentColor.cgColor
 		extraButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
 		let spacer = "  "
-		let title = titleButton?.alternateTitle ?? "foo"
+		let title = titleButton?.alternateTitle ?? "gargleblaster"
 
 		if  gIsReadyToShowUI {
 			switch identity {
@@ -123,7 +123,7 @@ class ZTogglingView: ZStackView {
 				case .vData:
 					titleButton?.title = gDatabaseID.userReadableString.capitalized + " Data"
 				default:
-					titleButton?.title = title + spacer
+					titleButton?.title = spacer + title
 			}
 		}
 
@@ -170,4 +170,5 @@ class ZTogglingView: ZStackView {
 			}
 		}
     }
+
 }

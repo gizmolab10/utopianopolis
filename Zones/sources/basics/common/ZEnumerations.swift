@@ -555,5 +555,6 @@ struct ZDetailsViewID: OptionSet {
 	static let        vData = ZDetailsViewID(rawValue: 0x0002)
 	static let vSimpleTools = ZDetailsViewID(rawValue: 0x0004)
 	static let    vSmallMap = ZDetailsViewID(rawValue: 0x0008)
-	static let         vAll = ZDetailsViewID(rawValue: 0x000F)
+	static let     vLicense = ZDetailsViewID(rawValue: 0x0010)
+	static let         vAll = ZDetailsViewID(rawValue: 0x001F)
 }

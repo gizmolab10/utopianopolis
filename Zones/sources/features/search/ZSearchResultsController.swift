@@ -290,39 +290,37 @@ class ZSearchResultsController: ZGenericTableController {
 	}
 
 	override func handleSignal(_ iObject: Any?, kind: ZSignalKind) {
-		if  kind == .sFound {
-			if  let t = genericTableView {
-				t.tableColumns[0].width = t.frame.width
+		if  let t = genericTableView {
+			t.tableColumns[0].width = t.frame.width
+		}
+
+		if  gIsSearchMode, filteredResults.count > 0 {
+			var dbID: ZDatabaseID?
+			var record: ZRecord?
+			var total = 0
+
+			for (databaseID, records) in filteredResults {
+				let count  = records.count
+				total     += count
+
+				if  count == 1 {
+					record = records[0]
+					dbID   = databaseID
+				}
 			}
-			
-			if  gIsSearchMode, filteredResults.count > 0 {
-				var dbID: ZDatabaseID?
-				var record: ZRecord?
-				var total = 0
-				
-				for (databaseID, records) in filteredResults {
-					let count  = records.count
-					total     += count
-					
-					if  count == 1 {
-						record = records[0]
-						dbID   = databaseID
-					}
+
+			if total == 1 {               // not bother user if only one record found
+				self.resolveRecord(dbID!, record!)
+			} else if total > 0 {
+				sortRecords()
+				genericTableUpdate()
+
+				#if os(OSX)
+				FOREGROUND {
+					self.assignAsFirstResponder(nil)
+					self.genericTableView?.selectRowIndexes(IndexSet([0]), byExtendingSelection: false)
 				}
-				
-				if total == 1 {               // not bother user if only one record found
-					self.resolveRecord(dbID!, record!)
-				} else if total > 0 {
-					sortRecords()
-					genericTableUpdate()
-					
-					#if os(OSX)
-					FOREGROUND {
-						self.assignAsFirstResponder(nil)
-						self.genericTableView?.selectRowIndexes(IndexSet([0]), byExtendingSelection: false)
-					}
-					#endif
-				}
+				#endif
 			}
 		}
 	}

@@ -50,13 +50,9 @@ class ZActionsController : ZGenericController {
     // MARK:-
 
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-        let ignoreThese: ZSignalKindArray = [.sSearch, .sFound]
-
-        if !ignoreThese.contains(kind) {
-			update()
-        }
-    }
+	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+		update()
+	}
 	
 	
 	@IBAction func actionsVisibilityButtonAction(iButton: UIButton) {

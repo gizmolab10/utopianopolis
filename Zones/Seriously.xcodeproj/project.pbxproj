@@ -302,6 +302,9 @@
 		A7CC539F267BE3C400370BC0 /* ZLicense.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CC539D267BE3C400370BC0 /* ZLicense.swift */; };
 		A7CC53A0267BE3C400370BC0 /* ZLicense.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CC539D267BE3C400370BC0 /* ZLicense.swift */; };
 		A7CC53AD267C2A7F00370BC0 /* CryptoKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7CC53AC267C2A7F00370BC0 /* CryptoKit.framework */; };
+		A7CC53AF267FD07300370BC0 /* ZLicenseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CC53AE267FD07300370BC0 /* ZLicenseController.swift */; };
+		A7CC53B0267FD07300370BC0 /* ZLicenseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CC53AE267FD07300370BC0 /* ZLicenseController.swift */; };
+		A7CC53B1267FD07300370BC0 /* ZLicenseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CC53AE267FD07300370BC0 /* ZLicenseController.swift */; };
 		A7CF3205260D737B00285A03 /* ZHelpEssayGraphicalsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CF3203260D737B00285A03 /* ZHelpEssayGraphicalsController.swift */; };
 		A7CF3206260D737B00285A03 /* ZHelpEssayGraphicalsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CF3203260D737B00285A03 /* ZHelpEssayGraphicalsController.swift */; };
 		A7CF3207260D737B00285A03 /* ZHelpEssayGraphicalsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CF3203260D737B00285A03 /* ZHelpEssayGraphicalsController.swift */; };
@@ -564,9 +567,8 @@
 		A7C344DF25FD4AA900ACB6A3 /* ZTooltipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTooltipButton.swift; sourceTree = "<group>"; };
 		A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssay.swift; sourceTree = "<group>"; };
 		A7CC539D267BE3C400370BC0 /* ZLicense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZLicense.swift; sourceTree = "<group>"; };
-		A7CC53A3267C296800370BC0 /* ZKeyStoreError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZKeyStoreError.swift; sourceTree = "<group>"; };
-		A7CC53A4267C296800370BC0 /* ZSecKeyStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZSecKeyStore.swift; sourceTree = "<group>"; };
 		A7CC53AC267C2A7F00370BC0 /* CryptoKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoKit.framework; path = System/Library/Frameworks/CryptoKit.framework; sourceTree = SDKROOT; };
+		A7CC53AE267FD07300370BC0 /* ZLicenseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZLicenseController.swift; sourceTree = "<group>"; };
 		A7CF3203260D737B00285A03 /* ZHelpEssayGraphicalsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZHelpEssayGraphicalsController.swift; sourceTree = "<group>"; };
 		A7CF3208260D7D9B00285A03 /* ZHelpEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpEditor.swift; sourceTree = "<group>"; };
 		A7D2D646248F119A00F652B0 /* ZHelpEssayData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpEssayData.swift; sourceTree = "<group>"; };
@@ -653,6 +655,8 @@
 				0C39B2291F182EBB0091F4D1 /* ZDataController.swift */,
 				0C39B22B1F182EBB0091F4D1 /* ZDetailsController.swift */,
 				0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */,
+				A7CC539D267BE3C400370BC0 /* ZLicense.swift */,
+				A7CC53AE267FD07300370BC0 /* ZLicenseController.swift */,
 				0C39B22A1F182EBB0091F4D1 /* ZPreferencesController.swift */,
 				A706444E247316DA00F90B86 /* ZRecents.swift */,
 				A793722D25BE2EE0008C98AE /* ZSimpleToolsController.swift */,
@@ -964,16 +968,6 @@
 			path = test;
 			sourceTree = "<group>";
 		};
-		A7CC53A2267C296800370BC0 /* licensing */ = {
-			isa = PBXGroup;
-			children = (
-				A7CC539D267BE3C400370BC0 /* ZLicense.swift */,
-				A7CC53A3267C296800370BC0 /* ZKeyStoreError.swift */,
-				A7CC53A4267C296800370BC0 /* ZSecKeyStore.swift */,
-			);
-			path = licensing;
-			sourceTree = "<group>";
-		};
 		A7D2D65224902F8F00F652B0 /* help */ = {
 			isa = PBXGroup;
 			children = (
@@ -1033,7 +1027,6 @@
 			children = (
 				0C43EFC621010F62000976CE /* cloudkit */,
 				0C39B22E1F182EBB0091F4D1 /* common */,
-				A7CC53A2267C296800370BC0 /* licensing */,
 				0C39B2541F182EBB0091F4D1 /* models */,
 				A786C6EE25DF5F7400B23FBF /* debug */,
 				0C43EFBC21010F17000976CE /* storage */,
@@ -1376,6 +1369,7 @@
 				0C4118DE1FA8110200A58004 /* ZAlerts.swift in Sources */,
 				A7229FAF23B84B4300FA2841 /* ZNote.swift in Sources */,
 				A7B48AB123E0E80C00654DBD /* ZoneDot.swift in Sources */,
+				A7CC53AF267FD07300370BC0 /* ZLicenseController.swift in Sources */,
 				A700F94E24AFBFFB009C87AA /* seriously.xcdatamodel in Sources */,
 				A706443B246F720700F90B86 /* ZMapControlsView.swift in Sources */,
 				A7B48AB423E0E80C00654DBD /* ZGridCell.swift in Sources */,
@@ -1516,6 +1510,7 @@
 				A7395BB121B877B600F5759F /* ZTextEditor.swift in Sources */,
 				0CAC18E32006A84800D641C4 /* ZBookmarks.swift in Sources */,
 				A706443D246F720700F90B86 /* ZMapControlsView.swift in Sources */,
+				A7CC53B1267FD07300370BC0 /* ZLicenseController.swift in Sources */,
 				A764067E23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */,
 				A7B48A8C23E0E80C00654DBD /* ZEssayView.swift in Sources */,
 				A752FC34245222D200603A54 /* ZoneContextualMenu.swift in Sources */,
@@ -1602,6 +1597,7 @@
 				0C39B28D1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
 				A7D2D648248F119A00F652B0 /* ZHelpEssayData.swift in Sources */,
 				A764067923F7E37600D9EA3A /* ZBreadcrumbsView.swift in Sources */,
+				A7CC53B0267FD07300370BC0 /* ZLicenseController.swift in Sources */,
 				A700F94F24AFBFFB009C87AA /* seriously.xcdatamodel in Sources */,
 				0C39B2AE1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C2E22D31F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,

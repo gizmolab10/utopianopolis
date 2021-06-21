@@ -22,7 +22,7 @@ class ZBreadcrumbsController: ZGenericController {
 	override  var controllerID : ZControllerID { return .idCrumbs }
 
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
-		crumbsView? .setupAndRedraw()
+		crumbsView?.setupAndRedraw()
 	}
 
 	func breadcrumbNearest(_ iGesture: ZGestureRecognizer?, forMap: Bool = true) -> (Bool, ZBreadcrumbButton, CGPoint)? {

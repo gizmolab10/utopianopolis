@@ -30,8 +30,7 @@ class ZEssayController: ZGesturesController, ZScrollDelegate {
 	}
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		if  gIsEssayMode,
-			[.sEssay, .sAppearance].contains(kind) {        // ignore the signal from the end of process next batch
+		if  gIsEssayMode {
 			essayView?.updateText()
 		}
 	}

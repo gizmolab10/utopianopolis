@@ -24,8 +24,7 @@ class ZSmallMapController: ZMapController {
 	var            isRecentMap : Bool          { return rootWidget.widgetZone?.isInRecents ?? gIsRecentlyMode }
 
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
-		if  let c = gDetailsController, c.viewIsVisible(for: .vSmallMap),  // don't send signal to a hidden favorites controller
-			gShowDetailsView {
+		if  gDetailsViewIsVisible(for: .vSmallMap) {  // don't send signal to a hidden controller
 			update()
 			super.handleSignal(iSignalObject, kind: kind)
 		}
