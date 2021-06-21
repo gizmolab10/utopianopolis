@@ -54,12 +54,12 @@ var        gCurrentKeyPressed:            String?
 
 var                   gIsDark:               Bool { return gDarkMode == .Dark }
 var                   gIsLate:               Bool { return gBatches.isLate }
-var                   gIsHere:               Bool { return gSelecting.currentMovableMaybe == gHere }
+var                   gIsHere:               Bool { return gSelecting.currentMoveableMaybe == gHere }
 var                   gIsMine:               Bool { return gDatabaseID == .mineID }
 var                gIsEditing:               Bool { return gIsEditIdeaMode || gIsEssayMode }
 var               gIsDragging:               Bool { return gDraggedZone != nil }
 var          gIsHelpFrontmost:               Bool { return gHelpWindow?.isKeyWindow ?? false }
-var         gGrabbedCanTravel:               Bool { return gSelecting.currentMovableMaybe?.isBookmark ?? false }
+var         gGrabbedCanTravel:               Bool { return gSelecting.currentMoveableMaybe?.isBookmark ?? false }
 var       gBrowsingIsConfined:               Bool { return gConfinementMode == .list }
 var           gIsRecentlyMode:               Bool { return gSmallMapMode    == .recent }
 var            gListsGrowDown:               Bool { return gListGrowthMode  == .down }

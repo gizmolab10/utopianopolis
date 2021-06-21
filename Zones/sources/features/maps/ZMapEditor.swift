@@ -88,7 +88,7 @@ class ZMapEditor: ZBaseEditor {
 							case "n":      editNote(OPTION)
 							case "p":      printCurrentFocus()
 							case "t":      if COMMAND, let string = gCurrentlySelectedText { showThesaurus(for: string) }
-							case "/":      return specialSlash(flags)
+							case "/":      return handleSlash(flags)
 							case ",", kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == ",")
 							case kTab:     addSibling(OPTION)
 							case kSpace:   gSelecting.currentMoveable.addIdea()
@@ -101,12 +101,12 @@ class ZMapEditor: ZBaseEditor {
 					}
 				}
             } else if isValid(key, flags) {
-				let   zone = gSelecting.currentMovableMaybe
+				let   zone = gSelecting.currentMoveableMaybe
                 let widget = gWidgets.widgetForZone(zone)
                 
                 if  let a = arrow, isWindow {
                     handleArrow(a, flags: flags)
-                } else if kMarkingCharacters.contains(key), !COMMAND, !CONTROL {
+				} else if kMarkingCharacters.contains(key), !COMMAND, !CONTROL, !OPTION {
                     prefix(with: key)
                 } else if !super.handleKey(iKey, flags: flags, isWindow: isWindow) {
 					gCurrentKeyPressed = key
@@ -132,22 +132,23 @@ class ZMapEditor: ZBaseEditor {
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() } else { editTrait(for: key) }
 						case "w":        rotateWritable()
-						case "x":        if COMMAND { delete(permanently: SPECIAL && isWindow) } else { gCurrentKeyPressed = nil; return false }
+						case "x":        return handleX(flags)
 						case "z":        if  !SHIFT { gUndoManager.undo() } else { gUndoManager.redo() }
 						case "#":        if gSelecting.hasMultipleGrab { prefix(with: key) } else { debugAnalyze() }
 						case "+":        gSelecting.currentGrabs.toggleGroupOwnership()
 						case "-":        return handleHyphen(COMMAND, OPTION)
 						case "'":        gToggleSmallMapMode(OPTION)
-						case "/":        return specialSlash(flags)
+						case "/":        return handleSlash(flags)
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case "[", "]":   go(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRelayoutMaps() }
-						case ",", kDotSeparator:   commaAndPeriod(COMMAND, OPTION, with: key == ",")
+						case kDotSeparator,
+							 ",":        commaAndPeriod(COMMAND, OPTION, with: key == ",")
 						case kTab:       addSibling(OPTION)
 						case kSpace:     if CONTROL || OPTION || isWindow { moveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
 						case kEquals:    if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { reveal in gRelayoutMaps() } }
 						case kBackSlash: mapControl(OPTION)
 						case kBackspace,
-							 kDelete:    complexDelete(COMMAND, OPTION, CONTROL, SPECIAL, ANY, isWindow)
+							 kDelete:    handleDelete(flags, isWindow)
 						case kReturn:    if COMMAND { editNote(OPTION) } else { editIdea(OPTION) }
 						case kEscape:    editNote(OPTION, useGrabbed: false)
 						default:         return false // indicate key was not handled
@@ -160,20 +161,6 @@ class ZMapEditor: ZBaseEditor {
 
 		return true // indicate key was handled
     }
-
-	func specialSlash(_ flags: ZEventFlags) -> Bool {                                // false means not handled here
-		if !flags.isAnyMultiple {
-			focusOrPopSmallMap(flags.isControl, flags.isCommand, kind: .eSelected)
-
-			return true
-		} else if let controller = gHelpController {                                 // should always succeed
-			controller.show(flags: flags)
-
-			return true
-		}
-
-		return false
-	}
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags, onCompletion: Closure? = nil) {
 		if !gIsExportingToAFile {
@@ -222,20 +209,6 @@ class ZMapEditor: ZBaseEditor {
 
 		onCompletion?()
     }
-
-	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {
-		if  COMMAND && OPTION {
-			convertToTitledLineAndRearrangeChildren()
-		} else if OPTION {
-			return gSelecting.currentMoveable.convertToFromLine()
-		} else if COMMAND {
-			updateSize(up: false)
-		} else {
-			addDashedLine()
-		}
-
-		return true
-	}
 
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
         let alterers = "ehlnuw#" + kMarkingCharacters + kReturn
@@ -309,16 +282,95 @@ class ZMapEditor: ZBaseEditor {
         return valid
     }
 
-	// MARK:- features
-	// MARK:-
+	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {
+		if  COMMAND && OPTION {
+			convertToTitledLineAndRearrangeChildren()
+		} else if OPTION {
+			return gSelecting.currentMoveable.convertToFromLine()
+		} else if COMMAND {
+			updateSize(up: false)
+		} else {
+			addDashedLine()
+		}
 
-	func complexDelete(_ COMMAND: Bool, _ OPTION: Bool, _ CONTROL: Bool, _ SPECIAL: Bool, _ ANY: Bool, _ isWindow: Bool) {
+		return true
+	}
+
+	func handleX(_ flags: ZEventFlags) -> Bool {
+		let OPTION = flags.isOption
+		if  flags.isCommand {
+			delete(permanently: OPTION)
+
+			return true
+		} else if OPTION {
+			return moveToDone()
+		} else {
+			gCurrentKeyPressed = nil
+
+			return false
+		}
+	}
+
+	func moveToDone() -> Bool {
+		if  let parent = gSelecting.currentMoveableMaybe?.parentZone {
+			let  grabs = gSelecting.currentGrabs
+			let   name = "done"
+			var   done : Zone?
+			parent.children.apply { sibling in
+				if  let s = sibling as? Zone,
+					s.zoneName == name {
+					done = s
+				}
+			}
+
+			if  done == nil {
+				done  = Zone.uniqueZone(recordName: nil, in: parent.databaseID)
+				done?.zoneName = name
+
+				done?.moveZone(to: parent)
+			}
+
+			grabs.moveInto(done!) { good in
+				done?.grab()
+				gRelayoutMaps()
+			}
+
+			return true
+		}
+
+		return false
+	}
+
+	func handleSlash(_ flags: ZEventFlags) -> Bool {                                // false means not handled here
+		if !flags.isAnyMultiple {
+			focusOrPopSmallMap(flags, kind: .eSelected)
+
+			return true
+		} else if let controller = gHelpController {                                 // should always succeed
+			controller.show(flags: flags)
+
+			return true
+		}
+
+		return false
+	}
+
+	func handleDelete(_ flags: ZEventFlags, _ isWindow: Bool) {
+		let CONTROL = flags.isControl
+		let SPECIAL = flags.exactlySpecial
+		let COMMAND = flags.isCommand
+		let  OPTION = flags.isOption
+		let     ANY = flags.isAny
+
 		if  CONTROL {
 			focusOnTrash()
 		} else if OPTION || isWindow || COMMAND {
 			delete(permanently: SPECIAL && isWindow, preserveChildren: ANY && isWindow, convertToTitledLine: SPECIAL)
 		}
 	}
+
+	// MARK:- features
+	// MARK:-
 
 	func mapControl(_ OPTION: Bool) {
 		if !OPTION {
@@ -358,11 +410,11 @@ class ZMapEditor: ZBaseEditor {
 		grabs.duplicate()
 	}
 
-	func focusOrPopSmallMap(_ NOGRAB: Bool, _ COMMAND: Bool = false, kind: ZFocusKind) {
-		if  NOGRAB {
+	func focusOrPopSmallMap(_ flags: ZEventFlags, kind: ZFocusKind) {
+		if  flags.isControl {
 			gCurrentSmallMapRecords?.popAndUpdateCurrent()
 		} else {
-			gRecords?.focusOnGrab(kind, COMMAND, shouldGrab: true) { // complex grab logic
+			gRecords?.focusOnGrab(kind, flags.isCommand, shouldGrab: true) { // complex grab logic
 				gRelayoutMaps()
 			}
 		}

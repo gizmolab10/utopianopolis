@@ -58,7 +58,7 @@ class ZSelecting: NSObject {
 
 	var         hasGrab :  Bool  { return  currentGrabs.count > 0 }
 	var hasMultipleGrab :  Bool  { return  currentGrabs.count > 1 }
-	var currentMoveable :  Zone  { return  currentMovableMaybe ?? gHere }
+	var currentMoveable :  Zone  { return  currentMoveableMaybe ?? gHere }
     var        lastGrab :  Zone  { return  lastGrab() }
     var  lastSortedGrab :  Zone  { return  lastGrab(using: sortedGrabs) }
     var firstSortedGrab :  Zone? { return firstGrab(using: sortedGrabs) }
@@ -179,7 +179,7 @@ class ZSelecting: NSObject {
     }
 
     var rootMostMoveable: Zone? {
-        var candidate = currentMovableMaybe
+        var candidate = currentMoveableMaybe
 
 		if  let level = candidate?.level {
 			for grabbed in currentMapGrabs {
@@ -202,7 +202,7 @@ class ZSelecting: NSObject {
         return nil
     }
 
-	var currentMovableMaybe: Zone? {
+	var currentMoveableMaybe: Zone? {
         var movable: Zone?
 
         if  currentMapGrabs.count > 0 {
@@ -377,7 +377,7 @@ class ZSelecting: NSObject {
 		var grabbed = grabs.first
 
         if  grabbed == nil || grabbed!.recordName == nil {
-            grabbed = currentMovableMaybe ?? gHereMaybe
+            grabbed = currentMoveableMaybe ?? gHereMaybe
         }
         
         return grabbed

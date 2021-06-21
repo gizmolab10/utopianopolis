@@ -381,6 +381,7 @@ extension ZoneArray {
 
 	func actuallyMoveInto(onCompletion: BoolClosure?) {
 		if  let into = appropriateParent {
+			into.expand()
 			moveInto(into, onCompletion: onCompletion)
 		} else {
 			onCompletion?(true)
@@ -394,7 +395,6 @@ extension ZoneArray {
 			gCurrentSmallMapRecords?.hereZoneMaybe = into
 		}
 
-		into.expand()
 		gSelecting.ungrabAll()
 
 		let zones = gListsGrowDown ? self : self.reversed()
