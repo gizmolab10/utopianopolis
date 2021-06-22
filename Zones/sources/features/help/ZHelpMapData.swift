@@ -96,8 +96,6 @@ class ZHelpMapData : ZHelpData {
 		"0vertical", 	"browse results (wraps around)", 					"search-2a996591375a",
 		"0",			"", 												"",
 		"0",			"", 												"",
-		"0",			"", 												"",
-		"0",			"", 												"",
 		"0!legend:", 	"click on blue text to view further details",		"_" // leave underscore (invisible): applies blue color to text
 	]
 
@@ -134,6 +132,7 @@ class ZHelpMapData : ZHelpData {
 		"2S", 			"save to a Seriously file", 						"cloud-vs-file-f3543f7281ac",
 		"2T", 			"swap selected idea with parent", 					"parent-child-tweaks-bf067abdf461",
 		"1V", 			"create/edit video file name",						"extras-2a9b1a7db21f",
+		"1X", 			"move into done (creating it if missing)",			"",
 		"2",			"", 												"",
 		"2_SHIFT + KEY",												"", "",
 		"2[, ]", 		"focus on prior/next idea in group",				"",

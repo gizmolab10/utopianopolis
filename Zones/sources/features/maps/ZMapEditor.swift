@@ -297,48 +297,13 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func handleX(_ flags: ZEventFlags) -> Bool {
-		let OPTION = flags.isOption
 		if  flags.isCommand {
-			delete(permanently: OPTION)
-
-			return true
-		} else if OPTION {
-			return moveToDone()
-		} else {
-			gCurrentKeyPressed = nil
-
-			return false
-		}
-	}
-
-	func moveToDone() -> Bool {
-		if  let parent = gSelecting.currentMoveableMaybe?.parentZone {
-			let  grabs = gSelecting.currentGrabs
-			let   name = "done"
-			var   done : Zone?
-			parent.children.apply { sibling in
-				if  let s = sibling as? Zone,
-					s.zoneName == name {
-					done = s
-				}
-			}
-
-			if  done == nil {
-				done  = Zone.uniqueZone(recordName: nil, in: parent.databaseID)
-				done?.zoneName = name
-
-				done?.moveZone(to: parent)
-			}
-
-			grabs.moveInto(done!) { good in
-				done?.grab()
-				gRelayoutMaps()
-			}
+			delete(permanently: flags.isOption)
 
 			return true
 		}
 
-		return false
+		return moveToDone()
 	}
 
 	func handleSlash(_ flags: ZEventFlags) -> Bool {                                // false means not handled here
@@ -371,6 +336,36 @@ class ZMapEditor: ZBaseEditor {
 
 	// MARK:- features
 	// MARK:-
+
+	func moveToDone() -> Bool {
+		if  let parent = gSelecting.currentMoveableMaybe?.parentZone {
+			let  grabs = gSelecting.currentGrabs
+			let   name = "done"
+			var   done : Zone?
+			parent.children.apply { sibling in
+				if  let s = sibling as? Zone,
+					s.zoneName == name {
+					done = s
+				}
+			}
+
+			if  done == nil {
+				done  = Zone.uniqueZone(recordName: nil, in: parent.databaseID)
+				done?.zoneName = name
+
+				done?.moveZone(to: parent)
+			}
+
+			grabs.moveIntoAndGrab(done!) { good in
+				done?.grab()
+				gRelayoutMaps()
+			}
+
+			return true
+		}
+
+		return false
+	}
 
 	func mapControl(_ OPTION: Bool) {
 		if !OPTION {
@@ -443,7 +438,7 @@ class ZMapEditor: ZBaseEditor {
 			let promoteToParent: ClosureClosure = { innerClosure in
 				original.convertFromLineWithTitle()
 
-				grabs.moveInto(original) { reveal in
+				grabs.moveIntoAndGrab(original) { reveal in
 					original.grab()
 
 					gRelayoutMaps {
@@ -1202,7 +1197,7 @@ class ZMapEditor: ZBaseEditor {
                         let   newIndex = indexer.siblingIndex
                         let  moveThese = moveUp ? iZones.reversed() : iZones
                         
-                        moveThese.moveInto(intoParent, at: newIndex, orphan: true) { reveal in
+                        moveThese.moveIntoAndGrab(intoParent, at: newIndex, orphan: true) { reveal in
                             gSelecting.grab(moveThese)
                             intoParent.children.updateOrder()
                             onCompletion?([.sRelayout])

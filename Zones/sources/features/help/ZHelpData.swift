@@ -103,12 +103,13 @@ enum ZFillType: String {
 
 class ZHelpData: NSObject {
 
-	let linesBeforeSearch = 32
+	let rowsBeforeSearch  = 33
 	var helpMode          = ZHelpMode.noMode
 	var tabStops          = [NSTextTab]()
+	var strippedStrings   = [StringsArray]()
+	var columnStrings     : [StringsArray] { return [[]] }
 	var rowHeight         :  CGFloat       { return 16.0 }
 	var noTabPrefix       :  String        { return "   " }
-	var columnStrings     : [StringsArray] { return [[]] }
 	var tabOffsets        : [Int]          { return [0, 20, 85] } // default for graph shortcuts
 	var columnWidth       :  Int           { return 580 }         // "
 	var indexOfLastColumn :  Int           { return 1 }           // "
@@ -136,13 +137,15 @@ class ZHelpData: NSObject {
 	}
 
 	var countOfRows : Int {
-		var result = 0
+		var count = 0
 
-		for array in columnStrings {
-			result = max(result, array.count)
+		for column in 0...indexOfLastColumn {
+			let a = strippedStrings[column]
+			let c = a.count / stringsPerRow
+			count = max(count, c)
 		}
 
-		return result / stringsPerRow
+		return count
 	}
 
 	func setupForMode(_ iMode: ZHelpMode) {
@@ -166,27 +169,33 @@ class ZHelpData: NSObject {
 	}
 
 	func objectValueFor(_ row: Int) -> NSMutableAttributedString {
-		let         result = NSMutableAttributedString()
+		let    objectValue = NSMutableAttributedString()
 		let      paragraph = NSMutableParagraphStyle()
 		paragraph.tabStops = tabStops
 
 		for column in 0...indexOfLastColumn {
 			let a = attributedString(for: row, column: column)
 
-			result.append(a)
+			objectValue.append(a)
 		}
 
-		result.addAttribute(.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, result.length))
+		objectValue.addAttribute(.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, objectValue.length))
 
-		return result
+		return objectValue
 	}
 
 	func strings(for row: Int, column: Int) -> (String, String, String) {
-		let strings = strippedStrings(for: column)
-		let   index = row * stringsPerRow
-		let   final = index + 2
+		let strings = strippedStrings[column]
+		let index   = row * stringsPerRow
+		if  index   > (strings.count - 2) {
+			return (kEmpty, kEmpty, kEmpty)
+		}
 
-		return final >= strings.count ? (kEmpty, kEmpty, kEmpty) : (strings[index], strings[index + 1], strings[final])
+		if  strings[index] == "0!legend" {
+			noop()
+		}
+
+		return (strings[index], strings[index + 1], strings[index + 2])
 	}
 
 	func matches(_ types: [ZHelpType]) -> Bool {
@@ -195,39 +204,39 @@ class ZHelpData: NSObject {
 			|| (types.contains(.hIntermed) && (isIntermediate || isPro))
 	}
 
-	func strippedStrings(for column: Int) -> StringsArray {
-		var             result = StringsArray()
-		if              column > -1 {
+	func prepareStrings() {
+		for column in 0...indexOfLastColumn {
+			var       prepared = StringsArray()
 			let     rawStrings = columnStrings[column]
 			let          limit = rawStrings.count / stringsPerRow
 			var            row = 0
 			while          row < limit {
-				let     offset = row * stringsPerRow
-				let      first = rawStrings[offset]
-				let     second = rawStrings[offset + 1]
-				let      third = rawStrings[offset + 2]
+				let      index = row * stringsPerRow
+				let      first = rawStrings[index]
+				let     second = rawStrings[index + 1]
+				let      third = rawStrings[index + 2]
 				let (_, types) = extractTypes(from: first)
 				let    isMatch = matches(types)
 				row           += 1
 
 				if     !types.contains(.hPro) || isPro {
 					if  types.contains(.hExtra) {
-						while result.count < linesBeforeSearch * 3 {
-							result.append(kEmpty)
+						while prepared.count < rowsBeforeSearch * 3 {
+							prepared.append(kEmpty)
 						}
 					} else if isPro || isDots || isEssay
 								||  types.intersects([.hBold, .hBasic, .hEmpty])
 								||  types.contains(.hUnderline) && isMatch
 								|| (types.contains(.hIntermed)  && isIntermediate) {
-						result.append(first)
-						result.append(second)
-						result.append(third)
+						prepared.append(first)
+						prepared.append(second)
+						prepared.append(third)
 					}
 				}
 			}
-		}
 
-		return result
+			strippedStrings.append(prepared)
+		}
 	}
 
 	func extractTypes(from string: String) -> (Int, [ZHelpType]) {

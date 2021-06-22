@@ -67,7 +67,7 @@ class ZEvents: ZGeneric {
 		self.localMonitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
                 if !isDuplicate(event: event) {
 					// do not detect gIsHelpFrontmost nor handle event in gHelpController except in default of work mode switch
-					let isWindow = event.window?.contentView?.frame.contains(event.locationInWindow) ?? false
+					let isWindow = event.type == .keyDown || (event.window?.contentView?.frame.contains(event.locationInWindow) ?? false)
 
 					switch gWorkMode {
 						case .wSearchMode:

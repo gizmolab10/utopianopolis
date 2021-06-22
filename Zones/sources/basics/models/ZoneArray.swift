@@ -382,13 +382,13 @@ extension ZoneArray {
 	func actuallyMoveInto(onCompletion: BoolClosure?) {
 		if  let into = appropriateParent {
 			into.expand()
-			moveInto(into, onCompletion: onCompletion)
+			moveIntoAndGrab(into, onCompletion: onCompletion)
 		} else {
 			onCompletion?(true)
 		}
 	}
 
-	func moveInto(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: BoolClosure?) {
+	func moveIntoAndGrab(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: BoolClosure?) {
 		if  into.isInSmallMap {
 			into.parentZone?.collapse()
 

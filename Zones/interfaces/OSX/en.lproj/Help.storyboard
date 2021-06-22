@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="olH-Ix-aMb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="olH-Ix-aMb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -71,7 +71,7 @@
                                     <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
                                 </clipView>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="825" id="JkF-QK-zNX"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="830" id="JkF-QK-zNX"/>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="1152" id="Mj8-Ir-XUr"/>
                                 </constraints>
                                 <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
@@ -88,27 +88,27 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="rdB-jZ-KsQ" userLabel="Short Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="288" y="265" width="1" height="560"/>
+                                        <rect key="frame" x="288" y="249" width="1" height="576"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="5Gm-ni-LIH"/>
-                                            <constraint firstAttribute="height" constant="560" id="QjB-vW-W62"/>
+                                            <constraint firstAttribute="height" constant="576" id="QjB-vW-W62"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="Fa1-hb-kUk" userLabel="Search Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="264" width="576" height="1"/>
+                                        <rect key="frame" x="0.0" y="248" width="576" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="Mym-7j-1Mo"/>
                                             <constraint firstAttribute="width" constant="576" id="nfu-53-PXo"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="4RI-nR-wiK" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="576" y="56" width="1" height="769"/>
+                                        <rect key="frame" x="576" y="40" width="1" height="785"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="OGt-RE-RO4"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="siD-my-zaI" userLabel="Legend Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="55" width="1152" height="1"/>
+                                        <rect key="frame" x="0.0" y="39" width="1152" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="bt8-la-b3w"/>
                                         </constraints>

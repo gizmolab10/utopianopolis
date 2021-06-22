@@ -129,6 +129,7 @@ class ZHelpController: ZGenericTableController {
 				isShowing        = true   // prevent infinite recursion (where update (below) calls show)
 
 				gHelpWindow?.close()      // workaround for dots draw method not being called (perhaps an apple bug?)
+				gHelpController?.helpData.prepareStrings()
 				gHelpWindowController?.showWindow(nil)
 				update()
 
@@ -257,6 +258,8 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	override func numberOfRows(in tableView: ZTableView) -> Int {
+		helpData.prepareStrings()
+
 		return helpData.countOfRows
     }
 

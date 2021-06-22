@@ -2666,7 +2666,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addChildAndReorder(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: Closure? = nil) {
-		if  let child = iChild,
+		if  isBookmark {
+			bookmarkTarget?.addChildAndReorder(iChild, at: iIndex, afterAdd)
+		} else if let child = iChild,
 			addChildNoDuplicate(child, at: iIndex, afterAdd) != nil {
 			children.updateOrder() // also marks children need save
 		}
