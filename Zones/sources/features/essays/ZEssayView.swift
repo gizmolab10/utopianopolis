@@ -123,7 +123,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return false
 		}
 
-		let enabled = gLicense.isEnabled
+		let enabled = gSubscription.isEnabled
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
 		let  OPTION = flags.isOption

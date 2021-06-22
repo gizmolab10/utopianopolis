@@ -111,7 +111,7 @@ class ZTimers: NSObject {
 				case .tCloudAvailable:          block = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
 				case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.invokeDeferralMaybe(iTimer) }
 				case .tStartup:                 block = { iTimer in gStartupController?.fullStartupUpdate() }
-				case .tLicense:                 block = { iTimer in gLicense.update() }
+				case .tLicense:                 block = { iTimer in gSubscription.update() }
 				default:                        break
 			}
 

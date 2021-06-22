@@ -18,7 +18,7 @@ var      gDebugModes : ZDebugMode    = [.dReadFiles]
 var      gPrintModes : ZPrintMode    = []
 var    gCoreDataMode : ZCoreDataMode = [] // [.dDisabled]
 #else      // normal && update file
-var      gDebugModes : ZDebugMode    = [.dWriteFiles, .dUserLicensing, .dLicenseTimeout]
+var      gDebugModes : ZDebugMode    = [.dUserLicensing, .dLicenseTimeout] // , .dWriteFiles]
 var      gPrintModes : ZPrintMode    = []
 var    gCoreDataMode : ZCoreDataMode = []
 #endif

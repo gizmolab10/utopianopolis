@@ -1,5 +1,5 @@
 //
-//  ZLicenseController.swift
+//  ZSubscriptionController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 6/20/21.
@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-class ZLicenseController: ZGenericController {
+class ZSubscriptionController: ZGenericController {
 
 	override  var   controllerID: ZControllerID { return .idLicense }
 	@IBOutlet var      typeLabel: ZTextField?
@@ -28,16 +28,16 @@ class ZLicenseController: ZGenericController {
 	}
 
 	func update() {
-		if  let        token = gLicense.licenseToken?.asZToken {
+		if  let        token = gSubscription.licenseToken?.asZToken {
 			let        state = token.state
+			typeLabel? .text = token.type.title
 			stateLabel?.text = state.title
-			typeLabel? .text = token .type.title
 			purchaseButton?.isEnabled = (state == .sReady)
 		}
 	}
 
 	@IBAction func handlePurchaseButton(_ sender: ZButton) {
-		gLicense.licenseToken = ZToken(date: Date(), type: .tMonthly, state: .sLicensed, value: nil).asString
+		gSubscription.licenseToken = ZToken(date: Date(), type: .tMonthly, state: .sLicensed, value: nil).asString
 
 		update()
 	}

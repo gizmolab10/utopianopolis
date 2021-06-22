@@ -39,8 +39,7 @@ class ZStartup: NSObject {
 			FOREGROUND {
 				gIsReadyToShowUI = true
 
-				gLicense.setup()
-				gTimers.startTimers(for: [.tStartup, .tLicense])
+				gTimers.startTimers(for: [.tStartup])
 				gFavorites.setup { result in
 					FOREGROUND {
 						gFavorites.updateAllFavorites()
@@ -54,7 +53,6 @@ class ZStartup: NSObject {
 						gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
 						gHelpWindowController                 = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
 
-						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync])
 						gRecents.push()
 						gHereMaybe?.grab()
 
@@ -70,32 +68,41 @@ class ZStartup: NSObject {
 							gSetBigMapMode()
 						}
 
-						gSignal([.sSwap, .spMain, .spCrumbs, .sLaunchDone, .spPreferences])
-						self.requestFeedback()
-						gTimers.stopTimer (for: .tStartup)
+						FOREGROUND(after: 0.1) {
+							self.requestFeedback() {
+								gSubscription.setup()
+								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tLicense])
+								gSignal([.sSwap, .spMain, .spCrumbs, .sLaunchDone, .spPreferences])
+								gTimers.stopTimer (for: .tStartup)
+							}
+						}
 					}
 				}
 			}
 		}
 	}
 
-	func requestFeedback() {
+	func requestFeedback(_ onCompletion: @escaping Closure) {
 		if       !emailSent(for: .eBetaTesting) {
 			recordEmailSent(for: .eBetaTesting)
 
-			FOREGROUND(after: 0.1) {
-				let image = ZImage(named: kHelpMenuImageName)
+			let image = ZImage(named: kHelpMenuImageName)
 
-				gAlerts.showAlert("Please forgive my interruption",
-								  "Thank you for downloading Seriously. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)?\n\nYou can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below.",
-								  "Reply in an email",
-								  "Dismiss",
-								  image) { status in
-									if  status != .sNo {
-										self.sendEmailBugReport()
-									}
+			gAlerts.showAlert(
+				"Please forgive my interruption",
+				"Thank you for downloading Seriously. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)?\n\nYou can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below.",
+				"Reply in an email",
+				"Dismiss",
+				image) { status in
+
+				if  status != .sNo {
+					self.sendEmailBugReport()
 				}
+
+				onCompletion()
 			}
+		} else {
+			onCompletion()
 		}
 	}
 

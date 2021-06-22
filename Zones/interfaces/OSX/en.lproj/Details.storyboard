@@ -406,21 +406,21 @@ CA
                                             <outlet property="triangleButton" destination="aCk-9D-lHI" id="Vqs-0u-WA3"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="license" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t4I-OM-7sJ" userLabel="License View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="license" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t4I-OM-7sJ" userLabel="Subscription View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1257" width="328" height="50"/>
                                         <subviews>
-                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9WV-8S-PYA" userLabel="License Hideable">
+                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9WV-8S-PYA" userLabel="Subscription Hideable">
                                                 <rect key="frame" x="0.0" y="-9" width="328" height="49"/>
                                                 <connections>
                                                     <segue destination="QiZ-aW-i5G" kind="embed" id="gwd-bw-rLb"/>
                                                 </connections>
                                             </containerView>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="avu-F1-Lm0" userLabel="License Banner">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="avu-F1-Lm0" userLabel="Subscription Banner">
                                                 <rect key="frame" x="0.0" y="40" width="328" height="19"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ay8-Kf-2wF" userLabel="License Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ay8-Kf-2wF" userLabel="Subscription Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="-1" width="328" height="19"/>
-                                                        <buttonCell key="cell" type="roundRect" title="License" alternateTitle="License" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4Dz-Zl-Ruw" userLabel="License">
+                                                        <buttonCell key="cell" type="roundRect" title="Subscription" alternateTitle="Subscription" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4Dz-Zl-Ruw" userLabel="License">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
@@ -429,7 +429,7 @@ CA
                                                             <outlet property="togglingView" destination="t4I-OM-7sJ" id="MWM-eR-mZc"/>
                                                         </connections>
                                                     </button>
-                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="T49-G0-zNT" userLabel="License Toggle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
+                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="T49-G0-zNT" userLabel="Subscription Toggle" customClass="ZToggleButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="8" y="2" width="14" height="14"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="14" id="PYc-b5-U0n"/>
@@ -1411,10 +1411,10 @@ CA
             </objects>
             <point key="canvasLocation" x="-95" y="1544"/>
         </scene>
-        <!--License Controller-->
+        <!--Subscription Controller-->
         <scene sceneID="xLe-8e-5dF">
             <objects>
-                <viewController id="QiZ-aW-i5G" customClass="ZLicenseController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="QiZ-aW-i5G" customClass="ZSubscriptionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" misplaced="YES" id="Ll0-dF-GDQ">
                         <rect key="frame" x="0.0" y="0.0" width="289" height="86"/>
                         <autoresizingMask key="autoresizingMask"/>
