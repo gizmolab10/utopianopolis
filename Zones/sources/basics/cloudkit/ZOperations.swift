@@ -30,6 +30,7 @@ enum ZOperationID: Int, CaseIterable {
 	case oLoadingIdeas       // LOCAL
 	case oRoots
     case oHere
+	case oWrite
 	case oDone
 
     // miscellaneous
@@ -48,6 +49,7 @@ enum ZOperationID: Int, CaseIterable {
 		switch self {
 			case .oMigrateFromCloud: return gNeedsMigrate ? 50 : 0
 			case .oLoadingIdeas:     return gRemoteStorage.dataLoadTime
+			case .oWrite:            return 40
 			case .oResolve:          return  4
 			case .oManifest:         return  3
 			case .oAdopt:            return  2
@@ -57,7 +59,7 @@ enum ZOperationID: Int, CaseIterable {
 
 	var useTimer: Bool {
 		switch self {
-			case .oLoadingIdeas,
+			case .oLoadingIdeas, .oWrite,
 				 .oRoots: return true
 			default:      return false
 		}
@@ -66,8 +68,8 @@ enum ZOperationID: Int, CaseIterable {
 	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oCompletion] }
 	var    countOps : ZOpIDsArray { return [.oLoadingIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
-	var   bothDBOps : ZOpIDsArray { return [.oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
-	var    localOps : ZOpIDsArray { return [.oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
+	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
+	var    localOps : ZOpIDsArray { return [.oWrite, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
 											.oFetchUserRecord, .oCheckAvailability] + bothDBOps }
 
 	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }

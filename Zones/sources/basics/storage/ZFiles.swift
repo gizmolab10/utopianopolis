@@ -108,7 +108,9 @@ class ZFiles: NSObject {
 	}
 
 	func writeToFile(from databaseID: ZDatabaseID?) throws {
-		if  let     dbID = databaseID,
+		if  gWriteFiles,
+			gMigrationState == .normal,
+			let     dbID = databaseID,
 			dbID        != .favoritesID,
 			let    index = dbID.index,
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {

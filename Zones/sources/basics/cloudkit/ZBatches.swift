@@ -10,8 +10,9 @@ import Foundation
 
 let gBatches       = ZBatches()
 var gUser          :       ZUser? { return gBatches.user }
-var gHasFullAccess :         Bool { return gBatches.hasFullAccess }
 var gCurrentOp     : ZOperationID { return gBatches.currentOp }
+var gHasFullAccess :         Bool { return gBatches.hasFullAccess }
+var gUserIsExempt  :         Bool { return gUserSubscription ? false : gUser?.isExempt ?? false }
 
 enum ZBatchID: Int {
     case bRoot
@@ -311,7 +312,8 @@ class ZBatches: ZOnboarding {
 		switch identifier {
 			case .oFavorites:                                                                      gFavorites.setup(cloudCallback)
 			case .oRecents:                                                                          gRecents.setup(cloudCallback)
-			case .oSavingLocalData:  gSaveContext   ();                                                             cloudCallback?(0)
+			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                               cloudCallback?(0)
+			case .oSavingLocalData:  gSaveContext();                                                                cloudCallback?(0)
 			case .oLoadingIdeas:     try load(into: currentDatabaseID!,                               onCompletion: cloudCallback)
 			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
 		}

@@ -22,7 +22,7 @@ class ZSubscriptionController: ZGenericController {
 	@IBOutlet var purchaseButton: NSButton?
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		if  gDetailsViewIsVisible(for: .vLicense) { // ignore if hidden
+		if  gDetailsViewIsVisible(for: .vSubscribe) { // ignore if hidden
 			update()
 		}
 	}
@@ -37,7 +37,7 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	@IBAction func handlePurchaseButton(_ sender: ZButton) {
-		gSubscription.licenseToken = ZToken(date: Date(), type: .tMonthly, state: .sLicensed, value: nil).asString
+		gSubscription.licenseToken = ZToken(date: Date(), type: .tMonthly, state: .sSubscribed, value: nil).asString
 
 		update()
 	}

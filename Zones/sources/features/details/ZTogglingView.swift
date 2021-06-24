@@ -37,7 +37,7 @@ class ZTogglingView: ZStackView {
 			case .vPreferences : return "preference controls"
 			case .vSimpleTools : return "some simple tools which can get you oriented"
 			case .vSmallMap    : return "\(gCurrentSmallMapName)s map"
-			case .vLicense     : return "license details"
+			case .vSubscribe     : return "license details"
 			case .vData        : return "useful data about Seriously"
 			default            : return kEmpty
 		}
@@ -49,7 +49,7 @@ class ZTogglingView: ZStackView {
 				case "preferences": return .vPreferences
 				case "startHere":   return .vSimpleTools
 				case "smallMap":    return .vSmallMap
-				case "license":     return .vLicense
+				case "license":     return .vSubscribe
 				case "data":        return .vData
 				default:            return .vAll
 			}

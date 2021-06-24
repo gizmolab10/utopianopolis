@@ -14,30 +14,30 @@ import Foundation
 // NOT async: create bookmarks
 
 #if false  // just read, not touch core data
-var      gDebugModes : ZDebugMode    = [.dReadFiles]
-var      gPrintModes : ZPrintMode    = []
-var    gCoreDataMode : ZCoreDataMode = [] // [.dDisabled]
+var          gDebugModes : ZDebugMode    = [.dReadFiles]
+var          gPrintModes : ZPrintMode    = []
+var        gCoreDataMode : ZCoreDataMode = [] // [.dDisabled]
 #else      // normal && update file
-var      gDebugModes : ZDebugMode    = [.dUserLicensing, .dLicenseTimeout] // , .dWriteFiles]
-var      gPrintModes : ZPrintMode    = []
-var    gCoreDataMode : ZCoreDataMode = []
+var          gDebugModes : ZDebugMode    = []//.dUserSubscription, .dSubscriptionTimeout] // , .dWriteFiles]
+var          gPrintModes : ZPrintMode    = []
+var        gCoreDataMode : ZCoreDataMode = []
 #endif
 
-var     gUseCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
-var         gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gUseCoreData }
-var         gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gUseCoreData }
-var     gUseCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && gUseCoreData }
-var  gShowDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
-var     gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
-var      gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
+var         gUseCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
+var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gUseCoreData }
+var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gUseCoreData }
+var         gUseCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && gUseCoreData }
+var      gShowDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
+var         gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
+var          gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
 
-var  gLicenseTimeout : Bool { return  gDebugModes.contains(.dLicenseTimeout) }
-var   gUserLicensing : Bool { return  gDebugModes.contains(.dUserLicensing) }
-var      gWriteFiles : Bool { return  gDebugModes.contains(.dWriteFiles) }
-var       gDebugInfo : Bool { return  gDebugModes.contains(.dDebugInfo) }
-var       gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }
-var       gReadFiles : Bool { return  gDebugModes.contains(.dReadFiles) }
-var         gNewUser : Bool { return  gDebugModes.contains(.dNewUser) }
+var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
+var    gUserSubscription : Bool { return  gDebugModes.contains(.dUserSubscription) }
+var          gWriteFiles : Bool { return  gDebugModes.contains(.dWriteFiles) }
+var           gDebugInfo : Bool { return  gDebugModes.contains(.dDebugInfo) }
+var           gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }
+var           gReadFiles : Bool { return  gDebugModes.contains(.dReadFiles) }
+var             gNewUser : Bool { return  gDebugModes.contains(.dNewUser) }
 
 struct ZCoreDataMode: OptionSet {
 	static var structValue = 0
@@ -61,16 +61,16 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	init() { rawValue = ZDebugMode.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let dNewUser         = ZDebugMode() // exercise new-user, first-time arrival code
-	static let dReadFiles       = ZDebugMode() // read files
-	static let dDebugInfo       = ZDebugMode() // inject debugging information into UI
-	static let dDebugDraw       = ZDebugMode() // colorize rects
-	static let dWriteFiles      = ZDebugMode() // write files
-	static let dDebugAccess     = ZDebugMode() // test write access by me not having full
-	static let dShowDestroy     = ZDebugMode() // add destroy bookmark to favorites
-	static let dShowDuplicates  = ZDebugMode() // report duplicates
-	static let dUserLicensing  = ZDebugMode() // ignore user exemption
-	static let dLicenseTimeout  = ZDebugMode() // super short timeout
+	static let dNewUser             = ZDebugMode() // exercise new-user, first-time arrival code
+	static let dReadFiles           = ZDebugMode() // read files
+	static let dDebugInfo           = ZDebugMode() // inject debugging information into UI
+	static let dDebugDraw           = ZDebugMode() // colorize rects
+	static let dWriteFiles          = ZDebugMode() // write files
+	static let dDebugAccess         = ZDebugMode() // test write access by me not having full
+	static let dShowDestroy         = ZDebugMode() // add destroy bookmark to favorites
+	static let dShowDuplicates      = ZDebugMode() // report duplicates
+	static let dUserSubscription    = ZDebugMode() // ignore user exemption
+	static let dSubscriptionTimeout = ZDebugMode() // super short timeout
 
 	var description: String {
 		return [(.dNewUser,         "arrival"),

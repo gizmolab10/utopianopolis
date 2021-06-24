@@ -1211,18 +1211,14 @@ extension ZRecordsArray {
 	}
 
 	func appending(_ records: ZRecordsArray?) -> ZRecordsArray {
-		if  let more = records {
-			var both = ZRecordsArray()
-
-			for first in self {
-				both.appendUnique(item: first)
+		if  let  more = records {
+			var union = ZRecordsArray()
+			union.append(contentsOf: self)
+			for other in more {
+				union.appendUnique(item: other) // calls the method below this one, for stricter uniqueness
 			}
 
-			for second in more {
-				both.appendUnique(item: second)
-			}
-
-			return both
+			return union
 		}
 
 		return self
@@ -2231,7 +2227,7 @@ extension Data {
 	static func loadFor(_ key: String) -> Data? {
 		let query = [
 			kSecClass       as String : kSecClassGenericPassword as String,
-			kSecAttrAccount as String : kLicenseToken,
+			kSecAttrAccount as String : kSubscriptionToken,
 			kSecReturnData  as String : kCFBooleanTrue!,
 			kSecMatchLimit  as String : kSecMatchLimitOne ] as CFDictionary
 

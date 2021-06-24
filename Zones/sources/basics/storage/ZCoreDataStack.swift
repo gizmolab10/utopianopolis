@@ -399,14 +399,13 @@ class ZCoreDataStack: NSObject {
 			for searchable in searchables {
 				for entity in entities {
 					if  let predicate = searchPredicate(entityName: entity, string: searchable) {
-
 						self.search(within: dbID, entityName: entity, using: predicate.and(dbPredicate)) { matches in
 							if  matches.count > 0 {
 								result[searchable] = matches.appending(result[searchable])
 							}
 
-							count             -= 1
-							if  count         == 0 {
+							count     -= 1
+							if  count == 0 {
 								onCompletion?(result)
 							}
 						}

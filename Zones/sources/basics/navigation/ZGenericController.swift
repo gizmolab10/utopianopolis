@@ -28,7 +28,7 @@ class ZGenericController: ZController, ZGeneric {
 		switch id {
 			case .idData,
 				 .idLicense: return [.spStartupStatus]
-			case .idMain:    return [.spStartupStatus, .sFound]
+			case .idMain:    return [.spStartupStatus]
 			case .idActions: return [.sSearch, .sFound]
 			case .idBigMap:  return [.sData]             // ignore the signal from the end of process next batch
 			default: break
@@ -74,11 +74,6 @@ class ZGenericController: ZController, ZGeneric {
             }
         }
     }
-
-	override func viewDidLayout() {
-		super.viewDidLayout()
-		gMainWindow?.updateEssayEditorInspectorBar(show: gIsEssayMode)
-	}
 
 #if os(OSX)
 

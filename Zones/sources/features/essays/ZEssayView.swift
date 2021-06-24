@@ -126,12 +126,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let enabled = gSubscription.isEnabled
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
-		let  OPTION = flags.isOption
-		let   SHIFT = flags.isShift
-		let     ANY = flags.isAny
-
+		let OPTION  = flags.isOption
+		var SHIFT   = flags.isShift
+		let ANY     = flags.isAny
 		if  key    != key.lowercased() {
 			key     = key.lowercased()
+			SHIFT   = true
 		}
 
 		if  let arrow = key.arrow {
@@ -163,18 +163,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if  COMMAND {
 			if  enabled {
 				switch key {
-					case "b":      applyToSelection(BOLD: true)
-					case "d":      convertToChild(flags)
-					case "e":      grabSelectedTextForSearch()
-					case "f":      gSearching.showSearch(OPTION)
-					case "g":      searchAgain(OPTION)
-					case "i":      showSpecialCharactersPopup()
-					case "l":      alterCase(up: false)
-					case "p":      printCurrentEssay()
-					case "s":      save()
-					case "u":      if !OPTION { alterCase(up: true) }
-					case "z":      if  SHIFT { undoManager?.redo() } else { undoManager?.undo() }
-					default:       return false
+					case "b":  applyToSelection(BOLD: true)
+					case "d":  convertToChild(flags)
+					case "e":  grabSelectedTextForSearch()
+					case "f":  gSearching.showSearch(OPTION)
+					case "g":  searchAgain(OPTION)
+					case "i":  showSpecialCharactersPopup()
+					case "l":  alterCase(up: false)
+					case "p":  printCurrentEssay()
+					case "s":  save()
+					case "u":  if !OPTION { alterCase(up: true) }
+					case "z":  if  SHIFT  { undoManager?.redo() } else { undoManager?.undo() }
+					default:   break
 				}
 			}
 
@@ -196,9 +196,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if CONTROL {
 			if  enabled {
 				switch key {
-					case "d":      convertToChild(flags)
-					case "h":      showLinkPopup()
-					default:       return false
+					case "d":  convertToChild(flags)
+					case "h":  showLinkPopup()
+					default:   break
 				}
 			}
 
@@ -458,7 +458,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		resetForDarkMode()
 
 		FOREGROUND { // wait for application to fully load the inspector bar
-			gMainWindow?.updateEssayEditorInspectorBar(show: true)
+			gMainWindow?.updateEssayEditorInspectorBar(show: false)
 
 			for tag in ZEssayButtonID.all {
 				self.addButtonFor(tag)

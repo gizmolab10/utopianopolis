@@ -55,14 +55,7 @@ class ZStartup: NSObject {
 
 						gRecents.push()
 						gHereMaybe?.grab()
-
-						if  gMigrationState == .normal, gWriteFiles {
-							do {
-								for dbID in kAllDatabaseIDs {
-									try gFiles.writeToFile(from: dbID)
-								}
-							} catch {}
-						}
+						gSignal([.sLaunchDone])
 
 						if  gIsStartupMode {
 							gSetBigMapMode()
@@ -72,7 +65,7 @@ class ZStartup: NSObject {
 							self.requestFeedback() {
 								gSubscription.setup()
 								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tLicense])
-								gSignal([.sSwap, .spMain, .spCrumbs, .sLaunchDone, .spPreferences])
+								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences])
 								gTimers.stopTimer (for: .tStartup)
 							}
 						}
