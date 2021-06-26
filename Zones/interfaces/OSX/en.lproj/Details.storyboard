@@ -144,17 +144,17 @@
             <objects>
                 <viewController title="favorites" id="bl3-7n-UyN" userLabel="Small Map" customClass="ZSmallMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="sgs-hY-cUq">
-                        <rect key="frame" x="0.0" y="0.0" width="291" height="156"/>
+                        <rect key="frame" x="0.0" y="0.0" width="293" height="156"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="FRa-h5-v7h">
-                                <rect key="frame" x="0.0" y="0.0" width="291" height="148"/>
+                                <rect key="frame" x="0.0" y="0.0" width="293" height="148"/>
                             </customView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="YCv-YN-HVE">
-                                <rect key="frame" x="0.0" y="-2" width="291" height="5"/>
+                                <rect key="frame" x="0.0" y="-2" width="293" height="5"/>
                             </box>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="pEz-hB-ZvT">
-                                <rect key="frame" x="288" y="0.0" width="5" height="156"/>
+                                <rect key="frame" x="290" y="0.0" width="5" height="156"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="DvJ-uK-BbF"/>
                                 </constraints>
@@ -328,7 +328,7 @@ CA
                 </menu>
                 <customObject id="834-xy-QTs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-97" y="2071"/>
+            <point key="canvasLocation" x="-96.5" y="2071"/>
         </scene>
         <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
@@ -409,10 +409,11 @@ CA
                                     <customView identifier="license" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t4I-OM-7sJ" userLabel="Subscription View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1257" width="328" height="50"/>
                                         <subviews>
-                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9WV-8S-PYA" userLabel="Subscription Hideable">
-                                                <rect key="frame" x="0.0" y="-9" width="328" height="49"/>
+                                            <containerView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ytv-8G-7v7" userLabel="Subscription Hideable">
+                                                <rect key="frame" x="51" y="-50" width="225" height="150"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <connections>
-                                                    <segue destination="QiZ-aW-i5G" kind="embed" id="gwd-bw-rLb"/>
+                                                    <segue destination="8OT-8w-eeZ" kind="embed" id="4Ds-kQ-EQn"/>
                                                 </connections>
                                             </containerView>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="avu-F1-Lm0" userLabel="Subscription Banner">
@@ -456,17 +457,13 @@ CA
                                             </customView>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstItem="9WV-8S-PYA" firstAttribute="leading" secondItem="t4I-OM-7sJ" secondAttribute="leading" id="1cU-lB-HUd"/>
                                             <constraint firstItem="avu-F1-Lm0" firstAttribute="top" secondItem="t4I-OM-7sJ" secondAttribute="top" id="DDp-N9-WRf"/>
                                             <constraint firstAttribute="trailing" secondItem="avu-F1-Lm0" secondAttribute="trailing" id="LrJ-hg-fcf"/>
-                                            <constraint firstAttribute="trailing" secondItem="9WV-8S-PYA" secondAttribute="trailing" id="QMQ-Ja-XCZ"/>
-                                            <constraint firstAttribute="bottom" secondItem="9WV-8S-PYA" secondAttribute="bottom" id="R8s-Gl-ZH4"/>
-                                            <constraint firstItem="9WV-8S-PYA" firstAttribute="top" secondItem="avu-F1-Lm0" secondAttribute="bottom" id="sm8-gc-CJl"/>
                                             <constraint firstItem="avu-F1-Lm0" firstAttribute="leading" secondItem="t4I-OM-7sJ" secondAttribute="leading" id="xKh-Au-U7T"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="bannerView" destination="avu-F1-Lm0" id="gKQ-bm-DuD"/>
-                                            <outlet property="hideableView" destination="9WV-8S-PYA" id="E4B-qw-F6J"/>
+                                            <outlet property="hideableView" destination="ytv-8G-7v7" id="Qa7-FI-NVq"/>
                                             <outlet property="titleButton" destination="ay8-Kf-2wF" id="V94-TH-8Dc"/>
                                             <outlet property="triangleButton" destination="T49-G0-zNT" id="N0k-5m-ebX"/>
                                         </connections>
@@ -1088,7 +1085,7 @@ CA
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-97" y="1043"/>
+            <point key="canvasLocation" x="-95" y="1044"/>
         </scene>
         <!--Simple Tools Controller-->
         <scene sceneID="uRy-JP-y7m">
@@ -1411,62 +1408,40 @@ CA
             </objects>
             <point key="canvasLocation" x="-95" y="1544"/>
         </scene>
-        <!--Subscription Controller-->
-        <scene sceneID="xLe-8e-5dF">
+        <!--Subscriptions-->
+        <scene sceneID="h1I-uz-EaF">
             <objects>
-                <viewController id="QiZ-aW-i5G" customClass="ZSubscriptionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="Ll0-dF-GDQ">
-                        <rect key="frame" x="0.0" y="0.0" width="289" height="86"/>
+                <viewController id="8OT-8w-eeZ" userLabel="Subscriptions" customClass="ZSubscriptionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="cE1-k3-slr">
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="99"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f3s-VV-vTd">
-                                <rect key="frame" x="74" y="1" width="141" height="32"/>
-                                <buttonCell key="cell" type="push" title="Purchase License" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Qnf-zn-f9j">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="handlePurchaseButton:" target="QiZ-aW-i5G" id="wDt-NW-gIk"/>
-                                </connections>
-                            </button>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WCk-VS-zr5">
-                                <rect key="frame" x="-2" y="58" width="293" height="14"/>
-                                <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="Label" id="9nM-zz-j8r">
-                                    <font key="font" metaFont="smallSystem"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BeG-tN-KQp">
-                                <rect key="frame" x="-2" y="36" width="293" height="14"/>
-                                <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="Label" id="m6b-WY-HKg">
-                                    <font key="font" metaFont="smallSystem"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="m4R-cN-QaR">
+                                <rect key="frame" x="0.0" y="0.0" width="290" height="99"/>
+                            </customView>
+                            <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dLO-Ko-BEx">
+                                <rect key="frame" x="0.0" y="0.0" width="290" height="99"/>
+                            </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="BeG-tN-KQp" firstAttribute="leading" secondItem="Ll0-dF-GDQ" secondAttribute="leading" id="6y1-DW-vVF"/>
-                            <constraint firstAttribute="bottom" secondItem="f3s-VV-vTd" secondAttribute="bottom" constant="8" id="F6v-eZ-tAT"/>
-                            <constraint firstItem="WCk-VS-zr5" firstAttribute="top" secondItem="Ll0-dF-GDQ" secondAttribute="top" constant="12" id="FPc-Bi-OOO"/>
-                            <constraint firstItem="f3s-VV-vTd" firstAttribute="top" secondItem="BeG-tN-KQp" secondAttribute="bottom" constant="8" id="KHn-yd-8HJ"/>
-                            <constraint firstItem="f3s-VV-vTd" firstAttribute="centerX" secondItem="Ll0-dF-GDQ" secondAttribute="centerX" id="eik-jf-BF7"/>
-                            <constraint firstAttribute="trailing" secondItem="BeG-tN-KQp" secondAttribute="trailing" id="l8S-XP-JWK"/>
-                            <constraint firstItem="BeG-tN-KQp" firstAttribute="top" secondItem="WCk-VS-zr5" secondAttribute="bottom" constant="8" id="mNY-S1-KfQ"/>
-                            <constraint firstAttribute="trailing" secondItem="WCk-VS-zr5" secondAttribute="trailing" id="sED-wA-bYH"/>
-                            <constraint firstItem="WCk-VS-zr5" firstAttribute="leading" secondItem="Ll0-dF-GDQ" secondAttribute="leading" id="xzv-DT-gEg"/>
+                            <constraint firstItem="dLO-Ko-BEx" firstAttribute="top" secondItem="cE1-k3-slr" secondAttribute="top" id="1nT-bg-guk"/>
+                            <constraint firstItem="m4R-cN-QaR" firstAttribute="leading" secondItem="cE1-k3-slr" secondAttribute="leading" id="55u-2z-Tgs"/>
+                            <constraint firstAttribute="trailing" secondItem="m4R-cN-QaR" secondAttribute="trailing" id="D1e-bC-0pK"/>
+                            <constraint firstAttribute="bottom" secondItem="dLO-Ko-BEx" secondAttribute="bottom" id="JmC-Tl-GNr"/>
+                            <constraint firstAttribute="trailing" secondItem="dLO-Ko-BEx" secondAttribute="trailing" id="QvO-de-9Rj"/>
+                            <constraint firstItem="m4R-cN-QaR" firstAttribute="top" secondItem="cE1-k3-slr" secondAttribute="top" id="Y32-4b-kEw"/>
+                            <constraint firstItem="dLO-Ko-BEx" firstAttribute="leading" secondItem="cE1-k3-slr" secondAttribute="leading" id="xRJ-Ym-mcf"/>
+                            <constraint firstAttribute="bottom" secondItem="m4R-cN-QaR" secondAttribute="bottom" id="zim-cu-Mg5"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="purchaseButton" destination="f3s-VV-vTd" id="PN5-Oi-sMU"/>
-                        <outlet property="stateLabel" destination="WCk-VS-zr5" id="Kqn-KA-FmA"/>
-                        <outlet property="typeLabel" destination="BeG-tN-KQp" id="h8j-FB-AE8"/>
+                        <outlet property="subscriptionButtonsView" destination="m4R-cN-QaR" id="LLW-bv-2ac"/>
+                        <outlet property="subscriptionStatusView" destination="dLO-Ko-BEx" id="9sY-qo-SZa"/>
                     </connections>
                 </viewController>
-                <customObject id="xGW-V4-91w" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="xup-2U-YzY" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-97" y="1274"/>
+            <point key="canvasLocation" x="-95" y="1274.5"/>
         </scene>
     </scenes>
     <resources>

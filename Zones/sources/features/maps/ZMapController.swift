@@ -118,7 +118,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		let offset = isExemplar ? .zero : isBigMap ? gScrollOffset : CGPoint(x: -12.0, y: -6.0)
 
 		if  let d = mapView {
-			rootWidget.snp.setLabel("<w> \(rootWidget.widgetZone?.zoneName ?? kUnknown)")
+			rootWidget.snp.setLabel("<o> \(rootWidget.widgetZone?.zoneName ?? kUnknown)")
 			rootWidget.snp.removeConstraints()
 			rootWidget.snp.makeConstraints { make in
 				make.centerY.equalTo(d).offset(offset.y)

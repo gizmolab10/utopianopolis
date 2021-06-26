@@ -130,7 +130,7 @@ class ZoneWidget: ZView {
 		set {
 			widgetObject          .zone = newValue
 			if  let                name = widgetZone?.zoneName {
-				identifier              = NSUserInterfaceItemIdentifier("<w> \(name)") // gosh. i wish these would help with snap kit errors !!!!!!!!!!!
+				identifier              = NSUserInterfaceItemIdentifier("<z> \(name)") // gosh. i wish these would help with snap kit errors !!!!!!!!!!!
 				childrenView.identifier = NSUserInterfaceItemIdentifier("<c> \(name)")
 				textWidget  .identifier = NSUserInterfaceItemIdentifier("<t> \(name)")
 				revealDot   .identifier = NSUserInterfaceItemIdentifier("<r> \(name)")
@@ -189,7 +189,7 @@ class ZoneWidget: ZView {
                 childWidget.widgetZone =            zone[index]
 
 				count += childWidget.layoutInView(childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: visited)
-				childWidget.snp.setLabel("<w> \(childWidget.widgetZone?.zoneName ?? kUnknown)")
+				childWidget.snp.setLabel("<p> \(childWidget.widgetZone?.zoneName ?? kUnknown)")
                 childWidget.snp.removeConstraints()
                 childWidget.snp.makeConstraints { make in
                     if  previous == nil {
@@ -202,8 +202,7 @@ class ZoneWidget: ZView {
                         make.top.equalTo(childrenView).priority(ConstraintPriority(250))
                     }
 
-                    make.left.equalTo(childrenView)
-                    make.right.equalTo(childrenView)
+                    make.left.right.equalTo(childrenView)
                 }
 
                 previous = childWidget

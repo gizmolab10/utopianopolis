@@ -23,16 +23,16 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	@IBOutlet var acccessToAppleID  : ZView?
 	@IBOutlet var enableCloudDrive  : ZView?
 	@IBOutlet var progressIndicator : ZTextField?
-	@IBOutlet var buttonsView       : ZHelpButtonsView?
+//	@IBOutlet var helpButtonsView   : ZHelpButtonsView?
 	@IBOutlet var thermometerBar    : ZStartupProgressBar?
 	var           startupCompletion : Closure?
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
-		buttonsView?.setupAndRedraw()
+//		helpButtonsView?.setupAndRedraw()
 
 		gMainController?.helpButton?.isHidden = true
-		buttonsView?                .isHidden = true // stupid thing doesn't respond to clicks
+//		helpButtonsView?            .isHidden = true // stupid thing doesn't respond to clicks
 		thermometerBar?             .isHidden = true // stupid thing doesn't advance until end of event cycle
 		enableCloudLabel?.text = enableCloudDriveText
 		accessIDLabel?   .text = appleIDText
@@ -69,7 +69,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		if !gHasFinishedStartup, gStartup.oneTimerIntervalElapsed {
 			updateThermometerBar()
 			updateSubviewVisibility()
-			buttonsView?.updateAndRedraw()
+//			helpButtonsView?.updateAndRedraw()
 			RunLoop.main.acceptInput(forMode: .default, before: Date().addingTimeInterval(0.1))		// update operation label
 		}
 	}
@@ -86,7 +86,8 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		if  gGotProgressTimes {
 			let  dTotal = gTotalTime
 			let   ratio = dTotal / 54.0
-			let   count = Int(gStartup.elapsedStartupTime / ratio)
+			let elapsed = gStartup.elapsedStartupTime
+			let   count = Int(elapsed / ratio)
 			let remains = 54 - count
 
 			if  remains > 0, count > 0 {

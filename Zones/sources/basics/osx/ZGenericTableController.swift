@@ -24,11 +24,12 @@ class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableV
 
     func numberOfRows(in tableView: NSTableView) -> Int { return 1 }
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) { self.genericTableUpdate() }
+	var rowHeight: CGFloat { return genericTableView?.rowHeight ?? 17.0 }
 
     func genericTableUpdate() {
         if  let t = genericTableView {
             t.reloadData()
-            tableHeight?.constant = CGFloat(numberOfRows(in: t)) * t.rowHeight
+			tableHeight?.constant = CGFloat(numberOfRows(in: t)) * rowHeight
         }
     }
 

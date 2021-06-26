@@ -658,8 +658,6 @@
 				0C39B22A1F182EBB0091F4D1 /* ZPreferencesController.swift */,
 				A706444E247316DA00F90B86 /* ZRecents.swift */,
 				A793722D25BE2EE0008C98AE /* ZSimpleToolsController.swift */,
-				A7CC539D267BE3C400370BC0 /* ZSubscription.swift */,
-				A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */,
 				A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */,
 				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
 			);
@@ -959,6 +957,15 @@
 			path = controls;
 			sourceTree = "<group>";
 		};
+		A796A7BC2686715A00B36F5D /* subscribe */ = {
+			isa = PBXGroup;
+			children = (
+				A7CC539D267BE3C400370BC0 /* ZSubscription.swift */,
+				A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */,
+			);
+			path = subscribe;
+			sourceTree = "<group>";
+		};
 		A79F0237262CC5D000E87742 /* test */ = {
 			isa = PBXGroup;
 			children = (
@@ -1049,6 +1056,7 @@
 				A7D2D65224902F8F00F652B0 /* help */,
 				A7DF486D249C10F0008B35AC /* widgets */,
 				A7DF4868249B1A3E008B35AC /* search */,
+				A796A7BC2686715A00B36F5D /* subscribe */,
 				A7DF4867249B19C6008B35AC /* startup */,
 			);
 			path = features;
