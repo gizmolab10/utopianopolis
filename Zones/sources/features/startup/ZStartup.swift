@@ -63,10 +63,10 @@ class ZStartup: NSObject {
 
 						FOREGROUND(after: 0.1) {
 							self.requestFeedback() {
-								gSubscription.setup()
 								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tLicense])
 								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences])
 								gTimers.stopTimer (for: .tStartup)
+								gSubscription.setup()
 							}
 						}
 					}

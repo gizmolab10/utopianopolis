@@ -91,9 +91,10 @@ class ZTogglingView: ZStackView {
 
 	@IBAction func extraButtonAction(_ sender: Any) {
 		switch identity {
-			case .vSmallMap: gToggleSmallMapMode(forceToggle: true)
-			case .vData:     gMapController?.toggleMaps()
-			default: break
+			case .vSmallMap:  gToggleSmallMapMode(forceToggle: true)
+			case .vSubscribe: gSubscriptionController?.toggleViews(); gSignal([.sDetails])
+			case .vData:      gMapController?.toggleMaps()
+			default:          return
 		}
 
 		gRelayoutMaps()
@@ -111,8 +112,8 @@ class ZTogglingView: ZStackView {
     func update() {
 		titleButton?.zlayer.backgroundColor =     gAccentColor.cgColor
 		extraButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
+		let  title = titleButton?.alternateTitle ?? "gargleblaster"
 		let spacer = "  "
-		let title = titleButton?.alternateTitle ?? "gargleblaster"
 
 		if  gIsReadyToShowUI {
 			switch identity {
@@ -122,6 +123,8 @@ class ZTogglingView: ZStackView {
 					}
 				case .vData:
 					titleButton?.title = gDatabaseID.userReadableString.capitalized + " Data"
+				case .vSubscribe:
+					titleButton?.title = gSubscriptionController?.bannerTitle ?? kSubscribe
 				default:
 					titleButton?.title = spacer + title
 			}

@@ -18,7 +18,7 @@ var          gDebugModes : ZDebugMode    = [.dReadFiles]
 var          gPrintModes : ZPrintMode    = []
 var        gCoreDataMode : ZCoreDataMode = [] // [.dDisabled]
 #else      // normal && update file
-var          gDebugModes : ZDebugMode    = []//.dUserSubscription, .dSubscriptionTimeout] // , .dWriteFiles]
+var          gDebugModes : ZDebugMode    = [.dSubscriptionTimeout, .dUserSubscription] //, .dWriteFiles]
 var          gPrintModes : ZPrintMode    = []
 var        gCoreDataMode : ZCoreDataMode = []
 #endif
@@ -73,14 +73,16 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dSubscriptionTimeout = ZDebugMode() // super short timeout
 
 	var description: String {
-		return [(.dNewUser,         "arrival"),
-				(.dReadFiles,       "read files"),
-				(.dDebugInfo,       "show debug info"),
-				(.dDebugDraw,       "debug draw"),
-				(.dWriteFiles,      "write files"),
-				(.dDebugAccess,     "debug write access"),
-				(.dShowDestroy,     "add destroy bookmark"),
-				(.dShowDuplicates,  "indicate zones with duplicates")]
+		return [(.dNewUser,             "arrival"),
+				(.dReadFiles,           "read files"),
+				(.dDebugInfo,           "show debug info"),
+				(.dDebugDraw,           "debug draw"),
+				(.dWriteFiles,          "write files"),
+				(.dDebugAccess,         "debug write access"),
+				(.dShowDestroy,         "add destroy bookmark"),
+				(.dShowDuplicates,      "indicate zones with duplicates"),
+				(.dUserSubscription,    "ignore user exemption"),
+				(.dSubscriptionTimeout, "ignore subscription duration")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: kSpace)
 	}

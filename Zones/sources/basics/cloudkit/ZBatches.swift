@@ -12,7 +12,6 @@ let gBatches       = ZBatches()
 var gUser          :       ZUser? { return gBatches.user }
 var gCurrentOp     : ZOperationID { return gBatches.currentOp }
 var gHasFullAccess :         Bool { return gBatches.hasFullAccess }
-var gUserIsExempt  :         Bool { return gUserSubscription ? false : gUser?.isExempt ?? false }
 
 enum ZBatchID: Int {
     case bRoot

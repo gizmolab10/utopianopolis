@@ -14,14 +14,25 @@ import Cocoa
 import UIKit
 #endif
 
+var gSubscriptionController: ZSubscriptionController? { return gControllers.controllerForID(.idSubscribe) as? ZSubscriptionController }
+
 class ZSubscriptionController: ZGenericController {
 
 	override var controllerID: ZControllerID { return .idSubscribe }
-	@IBOutlet var subscriptionButtonsView: NSView?
-	@IBOutlet var subscriptionStatusView: NSView?
+	@IBOutlet var height: NSLayoutConstraint?
+	@IBOutlet var subscriptionButtonsView: ZView?
+	@IBOutlet var subscriptionStatusView:  ZView?
 
+	var rows : Int { return ZSubscriptionType.varieties }
 	var rowsChanged = true
-	var rows : Int { return 4 }
+	var showSubscriptions = false
+	var bannerTitle: String { return showSubscriptions ? kSubscriptions : kSubscribe }
+
+	func toggleViews() {
+		showSubscriptions = !showSubscriptions
+
+		gSignal([.sDetails])
+	}
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vSubscribe) { // ignore if hidden
@@ -30,18 +41,21 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	func update() {
-		updateCells()
-	}
+		subscriptionButtonsView?.isHidden = showSubscriptions
+		height?.constant = showSubscriptions ? 54.0 : CGFloat(rows) * 22.0 - 5.0
 
-	func updateCells() {
-		if  rowsChanged {
+		if  showSubscriptions {
+
+
+		} else if rowsChanged {
 			rowsChanged = false
 			var prior: ZSubscriptionButton?
 			subscriptionButtonsView?.removeAllSubviews()
 			for index in 0..<rows {
 				let        button = ZSubscriptionButton()
+				let          type = ZSubscriptionType.typeFor(index)
 				button.bezelStyle = .roundRect
-				button.title      = "foo"
+				button.title      = type.title
 				button.tag        = index
 				button.target     = self
 				button.action     = #selector(buttonAction)
@@ -55,11 +69,8 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	@objc func buttonAction(button: ZSubscriptionButton) {
-		let tag = button.tag
-	}
-
-	@IBAction func handlePurchaseButton(_ sender: ZButton) {
-		gSubscription.licenseToken = ZToken(date: Date(), type: .tMonthly, state: .sSubscribed, value: nil).asString
+		let                   type = ZSubscriptionType.typeFor(button.tag)
+		gSubscription.licenseToken = ZToken(date: Date(), type: type, state: .sSubscribed, value: nil).asString
 
 		update()
 	}
@@ -84,4 +95,5 @@ class ZSubscriptionButton: ZButton {
 			}
 		}
 	}
+
 }

@@ -10,6 +10,7 @@ import Foundation
 import StoreKit
 
 let gSubscription = ZSubscription()
+var gUserIsExempt : Bool { return gUserSubscription ? false : gUser?.isExempt ?? false }
 
 class ZSubscription: NSObject {
 
@@ -32,8 +33,8 @@ class ZSubscription: NSObject {
 	func setup() {
 		if  licenseToken == nil {
 			licenseToken  = ZToken(date: Date(), type: .tNone, state: .sStartup, value: nil).asString
-		} else if var   t = licenseToken?.asZToken {
-			t     .state  = .sStartup
+		} else if var  t  = licenseToken?.asZToken {
+			t     .state  = .sExpired
 			licenseToken  = t.asString
 		}
 	}
@@ -68,7 +69,7 @@ class ZSubscription: NSObject {
 									"some features [editing notes, search and print] will be disabled.",
 									"If these features are important to you,",
 									"you can retain them by purchasing a license."].joined(separator: " ")].joined(separator: "\n\n"),
-						  "Purchase a license",
+						  "Purchase a subscription",
 						  "No thanks, the limited features are perfect") { status in
 			if  status == .sYes {
 				gShowDetailsView = true
@@ -106,12 +107,34 @@ enum ZSubscriptionType: String {
 	case tAnnual   = "y"
 	case tLifetime = "!"
 
-	var title: String {
+	var title: String { return "\(duration) ($\(cost))" }
+
+	var duration: String {
 		switch self {
-			case .tAnnual:   return "one year"
-			case .tMonthly:  return "one month"
-			case .tLifetime: return "forever"
-			default:         return "no license"
+			case .tAnnual:   return "One Year"
+			case .tMonthly:  return "One Month"
+			case .tLifetime: return "Lifetime"
+			default:         return "Expired"
+		}
+	}
+
+	var cost: String {
+		switch self {
+			case .tAnnual:   return "20.00"
+			case .tMonthly:  return "2.50"
+			case .tLifetime: return "65"
+			default:         return "Free"
+		}
+	}
+
+	static let varieties = 3
+
+	static func typeFor(_ index: Int) -> ZSubscriptionType {
+		switch index {
+			case 0:  return .tMonthly
+			case 1:  return .tAnnual
+			case 2:  return .tLifetime
+			default: return .tNone
 		}
 	}
 
