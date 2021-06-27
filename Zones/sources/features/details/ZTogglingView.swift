@@ -92,7 +92,7 @@ class ZTogglingView: ZStackView {
 	@IBAction func extraButtonAction(_ sender: Any) {
 		switch identity {
 			case .vSmallMap:  gToggleSmallMapMode(forceToggle: true)
-			case .vSubscribe: gSubscriptionController?.toggleViews(); gSignal([.sDetails])
+			case .vSubscribe: gSubscriptionController?.toggleViews()
 			case .vData:      gMapController?.toggleMaps()
 			default:          return
 		}

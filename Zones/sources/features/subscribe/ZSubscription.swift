@@ -17,10 +17,29 @@ class ZSubscription: NSObject {
 	var    isEnabled: Bool { return update() != .sExpired || gUserIsExempt }
 //	private let productIdentifiers: Set<ProductIdentifier>?
 
+	var status: String {
+		if  let z = zToken {
+			let s = z.state.title
+			let t = z.type.duration
+			let d = z.date.easyToReadDateTime
+			let r = "Purchased \(d)\n\n\(t) Subscription"
+			if  z.state == .sSubscribed {
+				return r
+			}
+
+			return "\(r) (\(s))"
+		}
+
+		return "Unsubscribed"
+	}
+
+	var zToken: ZToken? {
+		get { return licenseToken?.asZToken }
+		set { licenseToken = newValue?.asString }
+	}
+
 	var licenseToken: String? {
-
 		set { newValue?.data(using: .utf8)?.storeFor(kSubscriptionToken) }
-
 		get {
 			if  let d = Data.loadFor(kSubscriptionToken) {
 				return String(decoding: d, as: UTF8.self)
@@ -31,20 +50,20 @@ class ZSubscription: NSObject {
 	}
 
 	func setup() {
-		if  licenseToken == nil {
-			licenseToken  = ZToken(date: Date(), type: .tNone, state: .sStartup, value: nil).asString
-		} else if var  t  = licenseToken?.asZToken {
-			t     .state  = .sExpired
-			licenseToken  = t.asString
+		if  var   t = zToken {
+			t.state = .sExpired
+			zToken  = t
+		} else {
+			zToken  = ZToken(date: Date(), type: .tNone, state: .sStartup, value: nil)
 		}
 	}
 
 	@discardableResult func update() -> ZSubscriptionState {  // called once a minute from timer started in setup above
-		if  let        token  = licenseToken?.asZToken {
+		if  let        token  = zToken {
 			if  !gUserIsExempt,
-				let    zToken = token.newToken {
-				licenseToken  = zToken.asString
-				let newState  = zToken.state
+				let  changed  = token.newToken { // non-nil means changed
+				zToken        = changed
+				let newState  = changed.state
 				if  newState == .sExpired {
 					showExpirationAlert()                // license timed out, show expired alert
 				}
@@ -86,7 +105,7 @@ enum ZSubscriptionState: String {
 	case sReady      = "r"
 	case sStartup    = "-"
 	case sWaiting    = "w"
-	case sExpired   = "t"
+	case sExpired    = "x"
 	case sSubscribed = "s"
 
 	var title: String {

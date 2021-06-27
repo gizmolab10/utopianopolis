@@ -1430,28 +1430,41 @@ CA
         <scene sceneID="h1I-uz-EaF">
             <objects>
                 <viewController id="8OT-8w-eeZ" userLabel="Subscriptions" customClass="ZSubscriptionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="cE1-k3-slr">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="54"/>
+                    <view key="view" misplaced="YES" id="cE1-k3-slr">
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="70"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="1ff-Zq-eZn">
-                                <rect key="frame" x="0.0" y="0.0" width="290" height="54"/>
+                                <rect key="frame" x="0.0" y="0.0" width="290" height="70"/>
                                 <subviews>
-                                    <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dLO-Ko-BEx">
-                                        <rect key="frame" x="0.0" y="0.0" width="290" height="54"/>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="dLO-Ko-BEx">
+                                        <rect key="frame" x="0.0" y="40" width="290" height="30"/>
+                                        <subviews>
+                                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="asd-Sj-6m0">
+                                                <rect key="frame" x="6" y="8" width="278" height="14"/>
+                                                <textFieldCell key="cell" selectable="YES" enabled="NO" refusesFirstResponder="YES" allowsUndo="NO" focusRingType="none" alignment="center" title="Multiline Label" id="DGy-Af-LMx">
+                                                    <font key="font" metaFont="smallSystem"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                        </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="54" id="WMD-ym-iti"/>
+                                            <constraint firstItem="asd-Sj-6m0" firstAttribute="top" secondItem="dLO-Ko-BEx" secondAttribute="top" constant="8" id="6Ot-no-6o6"/>
+                                            <constraint firstItem="asd-Sj-6m0" firstAttribute="leading" secondItem="dLO-Ko-BEx" secondAttribute="leading" constant="8" id="BeI-Yi-rOI"/>
+                                            <constraint firstAttribute="trailing" secondItem="asd-Sj-6m0" secondAttribute="trailing" constant="8" id="mAV-TV-oLk"/>
+                                            <constraint firstAttribute="bottom" secondItem="asd-Sj-6m0" secondAttribute="bottom" constant="8" id="o3E-D2-ASV"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="m4R-cN-QaR">
-                                        <rect key="frame" x="0.0" y="0.0" width="290" height="54"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="290" height="70"/>
                                     </customView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="dLO-Ko-BEx" secondAttribute="trailing" id="DYF-VG-NZx"/>
                                     <constraint firstItem="m4R-cN-QaR" firstAttribute="leading" secondItem="1ff-Zq-eZn" secondAttribute="leading" id="E7Z-e7-MIu"/>
                                     <constraint firstAttribute="bottom" secondItem="m4R-cN-QaR" secondAttribute="bottom" id="KlV-Fj-Eo1"/>
-                                    <constraint firstAttribute="height" constant="54" id="RaU-ED-7Nb"/>
+                                    <constraint firstAttribute="height" constant="70" id="RaU-ED-7Nb"/>
                                     <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="dLO-Ko-BEx" secondAttribute="bottom" id="UVW-cs-LHj"/>
                                     <constraint firstItem="dLO-Ko-BEx" firstAttribute="leading" secondItem="1ff-Zq-eZn" secondAttribute="leading" id="feq-dk-vKc"/>
                                     <constraint firstItem="dLO-Ko-BEx" firstAttribute="top" secondItem="1ff-Zq-eZn" secondAttribute="top" id="jOO-jh-aIu"/>
@@ -1468,9 +1481,10 @@ CA
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="height" destination="RaU-ED-7Nb" id="hZD-PH-afF"/>
+                        <outlet property="height" destination="RaU-ED-7Nb" id="FXf-CE-6e4"/>
                         <outlet property="subscriptionButtonsView" destination="m4R-cN-QaR" id="LLW-bv-2ac"/>
-                        <outlet property="subscriptionStatusView" destination="dLO-Ko-BEx" id="9sY-qo-SZa"/>
+                        <outlet property="subscriptionStatusLabel" destination="asd-Sj-6m0" id="ehJ-oi-tSJ"/>
+                        <outlet property="subscriptionStatusView" destination="dLO-Ko-BEx" id="Jjw-fr-8WK"/>
                     </connections>
                 </viewController>
                 <customObject id="xup-2U-YzY" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

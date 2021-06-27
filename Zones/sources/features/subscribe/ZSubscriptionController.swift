@@ -19,14 +19,15 @@ var gSubscriptionController: ZSubscriptionController? { return gControllers.cont
 class ZSubscriptionController: ZGenericController {
 
 	override var controllerID: ZControllerID { return .idSubscribe }
-	@IBOutlet var height: NSLayoutConstraint?
-	@IBOutlet var subscriptionButtonsView: ZView?
+	@IBOutlet var subscriptionStatusLabel: ZTextField?
 	@IBOutlet var subscriptionStatusView:  ZView?
+	@IBOutlet var subscriptionButtonsView: ZView?
+	@IBOutlet var height: NSLayoutConstraint?
 
-	var rows : Int { return ZSubscriptionType.varieties }
-	var rowsChanged = true
+	var        rows :    Int { return ZSubscriptionType.varieties }
+	var bannerTitle : String { return showSubscriptions ? kSubscriptions : kSubscribe }
 	var showSubscriptions = false
-	var bannerTitle: String { return showSubscriptions ? kSubscriptions : kSubscribe }
+	var       rowsChanged = true
 
 	func toggleViews() {
 		showSubscriptions = !showSubscriptions
@@ -41,12 +42,12 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	func update() {
-		subscriptionButtonsView?.isHidden = showSubscriptions
-		height?.constant = showSubscriptions ? 54.0 : CGFloat(rows) * 22.0 - 5.0
+		subscriptionStatusView? .isHidden = !showSubscriptions
+		subscriptionButtonsView?.isHidden =  showSubscriptions
+		height?                 .constant =  showSubscriptions ? 60.0 : CGFloat(rows) * 22.0 - 5.0
 
 		if  showSubscriptions {
-
-
+			subscriptionStatusLabel?.text = gSubscription.status
 		} else if rowsChanged {
 			rowsChanged = false
 			var prior: ZSubscriptionButton?
