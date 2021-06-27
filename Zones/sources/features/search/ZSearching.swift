@@ -72,7 +72,7 @@ class ZSearching: NSObject {
 	}
 
 	func showSearch(_ OPTION: Bool = false) {
-		if  gSubscription.isEnabled {
+		if  ZSubscription.shared.isEnabled {
 			swapMapAndSearch()
 			gSignal([OPTION ? .sFound : .sSearch])
 		}

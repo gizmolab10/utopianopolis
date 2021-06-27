@@ -7,22 +7,20 @@
 //
 
 import Foundation
-import StoreKit
-
-let gSubscription = ZSubscription()
-var gUserIsExempt : Bool { return gUserSubscription ? false : gUser?.isExempt ?? false }
 
 class ZSubscription: NSObject {
 
-	var    isEnabled: Bool { return update() != .sExpired || gUserIsExempt }
-//	private let productIdentifiers: Set<ProductIdentifier>?
+	static let shared = ZSubscription()
+	var  userIsExempt : Bool { return gUserSubscription ? false : gUser?.isExempt ?? false }
+	var     isEnabled : Bool { return update() != .sExpired || userIsExempt }
+	func purchaseProduct(at index: Int) { zToken = ZProducts.shared.purchaseProduct(at: index) }
 
 	var status: String {
 		if  let z = zToken {
 			let s = z.state.title
 			let t = z.type.duration
 			let d = z.date.easyToReadDateTime
-			let r = "Purchased \(d)\n\n\(t) Subscription"
+			let r = "Purchased \(d)\n\n\(t)"
 			if  z.state == .sSubscribed {
 				return r
 			}
@@ -50,17 +48,18 @@ class ZSubscription: NSObject {
 	}
 
 	func setup() {
+		ZProducts.shared.fetch()
 		if  var   t = zToken {
 			t.state = .sExpired
 			zToken  = t
 		} else {
-			zToken  = ZToken(date: Date(), type: .tNone, state: .sStartup, value: nil)
+			zToken  = ZToken(date: Date(), type: .pFree, state: .sStartup, value: nil)
 		}
 	}
 
 	@discardableResult func update() -> ZSubscriptionState {  // called once a minute from timer started in setup above
 		if  let        token  = zToken {
-			if  !gUserIsExempt,
+			if  !userIsExempt,
 				let  changed  = token.newToken { // non-nil means changed
 				zToken        = changed
 				let newState  = changed.state
@@ -119,57 +118,17 @@ enum ZSubscriptionState: String {
 
 }
 
-enum ZSubscriptionType: String {
-
-	case tNone     = "-"
-	case tMonthly  = "m"
-	case tAnnual   = "y"
-	case tLifetime = "!"
-
-	var title: String { return "\(duration) ($\(cost))" }
-
-	var duration: String {
-		switch self {
-			case .tAnnual:   return "One Year"
-			case .tMonthly:  return "One Month"
-			case .tLifetime: return "Lifetime"
-			default:         return "Expired"
-		}
-	}
-
-	var cost: String {
-		switch self {
-			case .tAnnual:   return "20.00"
-			case .tMonthly:  return "2.50"
-			case .tLifetime: return "65"
-			default:         return "Free"
-		}
-	}
-
-	static let varieties = 3
-
-	static func typeFor(_ index: Int) -> ZSubscriptionType {
-		switch index {
-			case 0:  return .tMonthly
-			case 1:  return .tAnnual
-			case 2:  return .tLifetime
-			default: return .tNone
-		}
-	}
-
-}
-
 struct ZToken {
 
 	var  date: Date
-	var  type: ZSubscriptionType
+	var  type: ZProductType
 	var state: ZSubscriptionState
 	var value: String?
 
 	var newState: ZSubscriptionState {
 		let  duration = Int(Date().timeIntervalSince(date))
 		let threshold = gSubscriptionTimeout ? 100 : kOneMonth
-		let    isGood = duration < threshold || gUserIsExempt
+		let    isGood = duration < threshold || ZSubscription.shared.userIsExempt
 		return isGood ? .sWaiting : .sExpired
 	}
 
@@ -210,7 +169,7 @@ extension String {
 			let valueString = array[3]
 			let        date = Date(timeIntervalSinceReferenceDate: dateValue)
 			let       state = ZSubscriptionState(rawValue: stateValue) ?? .sExpired
-			let        type = ZSubscriptionType (rawValue:  typeValue) ?? .tNone
+			let        type = ZProductType      (rawValue:  typeValue) ?? .pFree
 			let       value : String? = valueString == "-" ? nil : valueString
 
 			return ZToken(date: date, type: type, state: state, value: value)

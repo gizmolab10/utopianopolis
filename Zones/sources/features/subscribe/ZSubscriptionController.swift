@@ -14,18 +14,16 @@ import Cocoa
 import UIKit
 #endif
 
-var gSubscriptionController: ZSubscriptionController? { return gControllers.controllerForID(.idSubscribe) as? ZSubscriptionController }
-
 class ZSubscriptionController: ZGenericController {
 
-	override var controllerID: ZControllerID { return .idSubscribe }
-	@IBOutlet var subscriptionStatusLabel: ZTextField?
-	@IBOutlet var subscriptionStatusView:  ZView?
-	@IBOutlet var subscriptionButtonsView: ZView?
-	@IBOutlet var height: NSLayoutConstraint?
-
-	var        rows :    Int { return ZSubscriptionType.varieties }
-	var bannerTitle : String { return showSubscriptions ? kSubscriptions : kSubscribe }
+	@IBOutlet var subscriptionStatusLabel : ZTextField?
+	@IBOutlet var subscriptionStatusView  : ZView?
+	@IBOutlet var subscriptionButtonsView : ZView?
+	@IBOutlet var height       : NSLayoutConstraint?
+	override  var controllerID : ZControllerID { return .idSubscribe }
+	static    var  shared : ZSubscriptionController? { return gControllers.controllerForID(.idSubscribe) as? ZSubscriptionController }
+	var              rows : Int    { return ZProducts.shared.products.count }
+	var       bannerTitle : String { return showSubscriptions ? kSubscription : kSubscribe }
 	var showSubscriptions = false
 	var       rowsChanged = true
 
@@ -44,22 +42,22 @@ class ZSubscriptionController: ZGenericController {
 	func update() {
 		subscriptionStatusView? .isHidden = !showSubscriptions
 		subscriptionButtonsView?.isHidden =  showSubscriptions
-		height?                 .constant =  showSubscriptions ? 60.0 : CGFloat(rows) * 22.0 - 5.0
+		height?                 .constant =  showSubscriptions ? 60.0 : CGFloat(rows) * 21.0 - 1.0
 
 		if  showSubscriptions {
-			subscriptionStatusLabel?.text = gSubscription.status
+			subscriptionStatusLabel?.text = ZSubscription.shared.status
 		} else if rowsChanged {
 			rowsChanged = false
 			var prior: ZSubscriptionButton?
 			subscriptionButtonsView?.removeAllSubviews()
 			for index in 0..<rows {
 				let        button = ZSubscriptionButton()
-				let          type = ZSubscriptionType.typeFor(index)
+				let          type = ZProducts.shared.typeFor(index)
+				button.action     = #selector(buttonAction)
 				button.bezelStyle = .roundRect
 				button.title      = type.title
 				button.tag        = index
 				button.target     = self
-				button.action     = #selector(buttonAction)
 
 				subscriptionButtonsView?.addSubview(button)
 				button.layoutWithin(self, below: prior)
@@ -70,8 +68,7 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	@objc func buttonAction(button: ZSubscriptionButton) {
-		let                   type = ZSubscriptionType.typeFor(button.tag)
-		gSubscription.licenseToken = ZToken(date: Date(), type: type, state: .sSubscribed, value: nil).asString
+		ZSubscription.shared.purchaseProduct(at: button.tag)
 
 		update()
 	}

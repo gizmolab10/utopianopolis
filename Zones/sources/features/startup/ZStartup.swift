@@ -66,7 +66,7 @@ class ZStartup: NSObject {
 								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tLicense])
 								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences])
 								gTimers.stopTimer (for: .tStartup)
-								gSubscription.setup()
+								ZSubscription.shared.setup()
 							}
 						}
 					}
