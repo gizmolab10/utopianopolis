@@ -21,14 +21,14 @@ class ZSubscriptionController: ZGenericController {
 	@IBOutlet var subscriptionButtonsView : ZView?
 	@IBOutlet var height       : NSLayoutConstraint?
 	override  var controllerID : ZControllerID { return .idSubscribe }
-	static    var  shared : ZSubscriptionController? { return gControllers.controllerForID(.idSubscribe) as? ZSubscriptionController }
-	var              rows : Int    { return ZProducts.shared.products.count }
-	var       bannerTitle : String { return showSubscriptions ? kSubscription : kSubscribe }
-	var showSubscriptions = false
-	var       rowsChanged = true
+	static    var   shared : ZSubscriptionController? { return gControllers.controllerForID(.idSubscribe) as? ZSubscriptionController }
+	var               rows : Int    { return ZProducts.shared.products.count }
+	var        bannerTitle : String { return showMySubscription ? kSubscription : kSubscribe }
+	var showMySubscription = true
+	var        rowsChanged = true
 
 	func toggleViews() {
-		showSubscriptions = !showSubscriptions
+		showMySubscription = !showMySubscription
 
 		gSignal([.sDetails])
 	}
@@ -40,11 +40,11 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	func update() {
-		subscriptionStatusView? .isHidden = !showSubscriptions
-		subscriptionButtonsView?.isHidden =  showSubscriptions
-		height?                 .constant =  showSubscriptions ? 60.0 : CGFloat(rows) * 21.0 - 1.0
+		subscriptionStatusView? .isHidden = !showMySubscription
+		subscriptionButtonsView?.isHidden =  showMySubscription
+		height?                 .constant =  showMySubscription ? 60.0 : CGFloat(rows) * 21.0 - 1.0
 
-		if  showSubscriptions {
+		if  showMySubscription {
 			subscriptionStatusLabel?.text = ZSubscription.shared.status
 		} else if rowsChanged {
 			rowsChanged = false
@@ -68,7 +68,7 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	@objc func buttonAction(button: ZSubscriptionButton) {
-		ZSubscription.shared.purchaseProduct(at: button.tag)
+		ZProducts.shared.purchaseProduct(at: button.tag)
 
 		update()
 	}

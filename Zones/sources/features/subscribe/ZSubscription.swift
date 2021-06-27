@@ -11,9 +11,8 @@ import Foundation
 class ZSubscription: NSObject {
 
 	static let shared = ZSubscription()
-	var  userIsExempt : Bool { return gUserSubscription ? false : gUser?.isExempt ?? false }
 	var     isEnabled : Bool { return update() != .sExpired || userIsExempt }
-	func purchaseProduct(at index: Int) { zToken = ZProducts.shared.purchaseProduct(at: index) }
+	var  userIsExempt : Bool { return gUserSubscription ? false : gUser?.isExempt ?? false }
 
 	var status: String {
 		if  let z = zToken {
