@@ -100,8 +100,7 @@ class ZMapEditor: ZBaseEditor {
 					}
 				}
             } else if isValid(key, flags) {
-				let   zone = gSelecting.currentMoveableMaybe
-                let widget = gWidgets.widgetForZone(zone)
+                let widget = gWidgets.widgetForZone(gSelecting.currentMoveableMaybe)
                 
                 if  let a = arrow, isWindow {
                     handleArrow(a, flags: flags)
@@ -109,7 +108,7 @@ class ZMapEditor: ZBaseEditor {
                     prefix(with: key)
                 } else if !super.handleKey(iKey, flags: flags, isWindow: isWindow) {
 					gCurrentKeyPressed = key
-					let moveable = gSelecting.currentMoveable
+					let       moveable = gSelecting.currentMoveable
 
 					switch key {
 						case "a":        if COMMAND { moveable.selectAll(progeny: OPTION) }
@@ -133,6 +132,7 @@ class ZMapEditor: ZBaseEditor {
 						case "w":        rotateWritable()
 						case "x":        return handleX(flags)
 						case "z":        if  !SHIFT { gUndoManager.undo() } else { gUndoManager.redo() }
+						case "8":        if  OPTION { prefix(with: kSoftArrow, withParentheses: false) } // option-8 is a dot
 						case "#":        if gSelecting.hasMultipleGrab { prefix(with: key) } else { debugAnalyze() }
 						case "+":        gSelecting.currentGrabs.toggleGroupOwnership()
 						case "-":        return handleHyphen(COMMAND, OPTION)
@@ -337,22 +337,25 @@ class ZMapEditor: ZBaseEditor {
 	// MARK:-
 
 	func moveToDone() -> Bool {
-		if  let parent = gSelecting.currentMoveableMaybe?.parentZone {
+		if  let parent = gSelecting.rootMostMoveable?.parentZone {
 			let  grabs = gSelecting.currentGrabs
-			let   name = "done"
 			var   done : Zone?
-			parent.children.apply { sibling in
-				if  let s = sibling as? Zone,
-					s.zoneName == name {
-					done = s
+
+			for sibling in parent.children {
+				if  sibling.zoneName == kDone {
+					done = sibling
 				}
 			}
 
 			if  done == nil {
 				done  = Zone.uniqueZone(recordName: nil, in: parent.databaseID)
-				done?.zoneName = name
+				done?.zoneName = kDone
 
 				done?.moveZone(to: parent)
+			}
+
+			for zone in grabs {
+				zone.orphan()
 			}
 
 			grabs.moveIntoAndGrab(done!) { good in
@@ -550,9 +553,9 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-    func prefix(with iMark: String) {
-        let before = "("
-        let  after = ") "
+	func prefix(with iMark: String, withParentheses: Bool = true) {
+		let before = withParentheses ? "("  : kEmpty
+		let  after = withParentheses ? ") " : kSpace
         let  zones = gSelecting.currentMapGrabs
         var  digit = 0
         let  count = iMark == "#"
@@ -566,17 +569,17 @@ class ZMapEditor: ZBaseEditor {
                     let         nameParts = name.components(separatedBy: prefix)
                     name                  = nameParts[1]                // remove prefix
                 } else {
-                    if  name.starts(with: before) {
+                    if  withParentheses,
+						name.starts(with: before) {
                         let     nameParts = name.components(separatedBy: after)
                         var         index = 0
-
-                        while nameParts.count > index + 1 {
-                            let      mark = nameParts[index]            // found: "(x"
-                            let markParts = mark.components(separatedBy: before) // markParts[1] == x
+                        while       index < nameParts.count - 1 {
+                            let      mark = nameParts[index]                        // found: "(m"
+                            let markParts = mark.components(separatedBy: before)    // markParts[1] == m
+							index        += 1
 
                             if  markParts.count > 1 && markParts[0].count == 0 {
                                 let  part = markParts[1]
-                                index    += 1
 
                                 if  part.count <= 2 && part.isDigit {
                                     add   = false
@@ -585,7 +588,7 @@ class ZMapEditor: ZBaseEditor {
                             }
                         }
 
-                        name              = nameParts[index]            // remove all (x) where x is any character
+                        name              = nameParts[index]            // remove all (m) where m is any character
                     }
 
                     if  add {

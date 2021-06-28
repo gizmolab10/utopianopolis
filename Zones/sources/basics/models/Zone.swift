@@ -491,20 +491,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			var computed: ZColor? = kDefaultIdeaColor
 
 			if  gColorfulMode,
-			    colorMaybe         == nil {
+			    colorMaybe          == nil {
 				traverseAncestors { ancestor -> ZTraverseStatus in
-					if  let       b = ancestor.bookmarkTarget {
-						computed    = b.color
-					} else if let c = zoneColor?.color {
-						computed    = c
+					if  let        b = ancestor.bookmarkTarget {
+						if  let    c = b.color {
+							computed = c
+						}
+					} else if let  c = ancestor.zoneColor?.color {
+						computed     = c
 					} else {
 						return .eContinue
 					}
 
 					return .eStop
-
 				}
-
 			}
 
 			if  gIsDark {

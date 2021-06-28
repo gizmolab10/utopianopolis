@@ -151,6 +151,7 @@ class ZHelpMapData : ZHelpData {
 		"2HYPHEN", 		"convert text to/from 'titled line'", 				"lines-37426469b7c6",
 		"2TAB", 		"new idea containing", 								"edit-d05d18996df7",
 		"2'", 			"move ideas between small maps",					"",
+		"28",			"prefix with an arrow",								"",
 		"2S", 			"export to a outline file", 						"cloud-vs-file-f3543f7281ac",
 		"1",			"", 												"",
 		"1_COMMAND + KEY", 												"", "",
