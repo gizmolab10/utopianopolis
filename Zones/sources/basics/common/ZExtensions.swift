@@ -1876,7 +1876,9 @@ extension String {
     }
 
     var color: ZColor? {
-        if  self != kEmpty {
+		if  self == kEmpty {
+			return nil
+		} else {
             let pairs = components(separatedBy: kCommaSeparator)
             var   red = 0.0
             var  blue = 0.0
@@ -1897,8 +1899,6 @@ extension String {
 
             return ZColor(red: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0)
         }
-
-        return nil
     }
 
     func index(at: Int) -> Index {

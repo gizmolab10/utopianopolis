@@ -14,6 +14,8 @@ import Cocoa
 import UIKit
 #endif
 
+var gSubscriptionController : ZSubscriptionController? { return gControllers.controllerForID(.idSubscribe) as? ZSubscriptionController }
+
 class ZSubscriptionController: ZGenericController {
 
 	@IBOutlet var subscriptionStatusLabel : ZTextField?
@@ -21,14 +23,12 @@ class ZSubscriptionController: ZGenericController {
 	@IBOutlet var subscriptionButtonsView : ZView?
 	@IBOutlet var height       : NSLayoutConstraint?
 	override  var controllerID : ZControllerID { return .idSubscribe }
-	static    var   shared : ZSubscriptionController? { return gControllers.controllerForID(.idSubscribe) as? ZSubscriptionController }
-	var               rows : Int    { return ZProducts.shared.products.count }
-	var        bannerTitle : String { return showMySubscription ? kSubscription : kSubscribe }
-	var showMySubscription = true
+	var               rows : Int    { return gProducts.products.count }
+	var        bannerTitle : String { return gShowMySubscriptions ? kSubscription : kSubscribe }
 	var        rowsChanged = true
 
 	func toggleViews() {
-		showMySubscription = !showMySubscription
+		gShowMySubscriptions = !gShowMySubscriptions
 
 		gSignal([.sDetails])
 	}
@@ -40,20 +40,21 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	func update() {
-		subscriptionStatusView? .isHidden = !showMySubscription
-		subscriptionButtonsView?.isHidden =  showMySubscription
-		height?                 .constant =  showMySubscription ? 60.0 : CGFloat(rows) * 21.0 - 1.0
+		subscriptionStatusView? .isHidden = !gShowMySubscriptions
+		subscriptionButtonsView?.isHidden =  gShowMySubscriptions
+		height?                 .constant =  gShowMySubscriptions ? 54.0 : CGFloat(rows) * 29.0 - 3.0
 
-		if  showMySubscription {
-			subscriptionStatusLabel?.text = ZSubscription.shared.status
+		if  gShowMySubscriptions {
+			subscriptionStatusLabel?.text = gSubscription.status
 		} else if rowsChanged {
 			rowsChanged = false
 			var prior: ZSubscriptionButton?
 			subscriptionButtonsView?.removeAllSubviews()
 			for index in 0..<rows {
 				let        button = ZSubscriptionButton()
-				let          type = ZProducts.shared.typeFor(index)
+				let          type = gProducts.typeFor(index)
 				button.action     = #selector(buttonAction)
+				button.bezelColor = gAccentColor
 				button.bezelStyle = .roundRect
 				button.title      = type.title
 				button.tag        = index
@@ -68,7 +69,7 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	@objc func buttonAction(button: ZSubscriptionButton) {
-		ZProducts.shared.purchaseProduct(at: button.tag)
+		gProducts.purchaseProduct(at: button.tag)
 
 		update()
 	}
@@ -78,20 +79,27 @@ class ZSubscriptionController: ZGenericController {
 class ZSubscriptionButton: ZButton {
 
 	func layoutWithin(_ controller: ZSubscriptionController, below prior: ZSubscriptionButton?) {
+		let   last = controller.rows - 1
+		let margin = 8.0
+
 		snp.makeConstraints { make in
-			make.right.equalToSuperview()
-			make.left .equalToSuperview().offset( 1.0)
+			make.left .equalToSuperview().offset(margin)
+			make.right.equalToSuperview() .inset(margin)
 
-			if  prior == nil {
-				make.top.equalToSuperview().offset(2.0)
-			} else {
-				make.top.equalTo(prior!.snp.bottom).offset(2.0)
+			if  let p = prior {
+				make.top.equalTo(p.snp.bottom)
 
-				if  tag + 1 == controller.rows {
-					make.bottom.equalToSuperview().offset(-2.0)
+				if  tag == last {
+					make.bottom.equalToSuperview().inset(margin)
 				}
+			} else {
+				make.top.equalToSuperview().offset(margin)
 			}
 		}
+
+		heightAnchor.constraint(equalToConstant: 26.0).isActive = true
+
+		setNeedsLayout()
 	}
 
 }

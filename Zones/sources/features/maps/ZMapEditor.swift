@@ -75,29 +75,28 @@ class ZMapEditor: ZBaseEditor {
 
             if  gIsEditIdeaMode {
 				if !gTextEditor.handleKey(iKey, flags: flags) {
-					if !ANY {
-						return false
-					} else {
-						gCurrentKeyPressed = key
+					if !ANY { return false } // ignore key events which have no modifier keys
 
-						switch key {
-							case "a":      gCurrentlyEditingWidget?.selectAllText()
-							case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL, SPLAYED)
-							case "f":      gSearching.showSearch(OPTION)
-							case "k":      toggleColorized()
-							case "n":      editNote(OPTION)
-							case "p":      printCurrentFocus()
-							case "t":      if COMMAND, let string = gCurrentlySelectedText { showThesaurus(for: string) }
-							case "/":      return handleSlash(flags)
-							case ",", kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == ",")
-							case kTab:     addSibling(OPTION)
-							case kSpace:   gSelecting.currentMoveable.addIdea()
-							case kReturn:  if COMMAND { editNote(OPTION) }
-							case kEscape:               editNote(OPTION, useGrabbed: false)
-							case kBackspace,
-								 kDelete:  if CONTROL { focusOnTrash() }
-							default:       return false // false means key not handled
-						}
+					gCurrentKeyPressed = key
+
+					switch key {
+						case "a":      gCurrentlyEditingWidget?.selectAllText()
+						case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL, SPLAYED)
+						case "f":      gSearching.showSearch(OPTION)
+						case "k":      toggleColorized()
+						case "n":      editNote(OPTION)
+						case "p":      printCurrentFocus()
+						case "t":      if COMMAND, let string = gCurrentlySelectedText { showThesaurus(for: string) }
+						case "/":      return handleSlash(flags)
+						case kDotSeparator,
+							 ",":      commaAndPeriod(COMMAND, OPTION, with: key == ",")
+						case kTab:     addSibling(OPTION)
+						case kSpace:   gSelecting.currentMoveable.addIdea()
+						case kReturn:  if COMMAND { editNote(OPTION) }
+						case kEscape:               editNote(OPTION, useGrabbed: false)
+						case kBackspace,
+							 kDelete:  if CONTROL { focusOnTrash() }
+						default:       return false // false means key not handled
 					}
 				}
             } else if isValid(key, flags) {

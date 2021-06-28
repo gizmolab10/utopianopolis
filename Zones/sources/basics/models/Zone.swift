@@ -66,7 +66,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var                isAZone :               Bool  { return true }
 	var                smallMapRootName :             String  { return isFavoritesRoot ? kFavoritesRootName : isRecentsRoot ? kRecentsRootName : emptyName }
 	var                     clippedName :             String  { return !gShowToolTips ? kEmpty : unwrappedName }
-	var                           level :                Int  { return (parentZone?.level ?? 0) + 1 }
 	var                           count :                Int  { return children.count }
 	var                      isBookmark :               Bool  { return bookmarkTarget != nil }
 	var       isCurrentSmallMapBookmark :               Bool  { return isCurrentFavorite || isCurrentRecent }
@@ -146,6 +145,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		static let wNotemarks = ZWorkingListType(rawValue: 0x0002)
 		static let   wProgeny = ZWorkingListType(rawValue: 0x0004)  //
 		static let       wAll = ZWorkingListType(rawValue: 0x0008)  // everything
+	}
+
+	var level: Int {
+		var level = 0
+
+		parentZone?.traverseAllAncestors { ancestor in
+			level += 1
+		}
+
+		return level
 	}
 
 	func zones(of type: ZWorkingListType) -> ZoneArray {
@@ -479,32 +488,30 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var color: ZColor? {
 		get {
-			if !gColorfulMode { return gDefaultTextColor }
+			var computed: ZColor? = kDefaultIdeaColor
 
-			var     computed    = colorMaybe
+			if  gColorfulMode,
+			    colorMaybe         == nil {
+				traverseAncestors { ancestor -> ZTraverseStatus in
+					if  let       b = ancestor.bookmarkTarget {
+						computed    = b.color
+					} else if let c = zoneColor?.color {
+						computed    = c
+					} else {
+						return .eContinue
+					}
 
-			if  zoneName == "jonathan" {
-				noop()
-			}
+					return .eStop
 
-			if  colorMaybe     == nil {
-				if  let       b = bookmarkTarget {
-					return    b.color
-				} else if let c = zoneColor, c != kEmpty {
-					computed    = c.color
-					colorMaybe  = computed
-				} else if let p = parentZone, p != self {
-					return p.color
-				} else {
-					computed    = kDefaultIdeaColor
 				}
+
 			}
 
 			if  gIsDark {
-				computed        = computed?.inverted.lighter(by: 3.0)
+				computed = computed?.inverted.lighter(by: 3.0)
 			}
 
-			return computed!
+			return computed
 		}
 
 		set {

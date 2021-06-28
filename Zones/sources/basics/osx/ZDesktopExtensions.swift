@@ -388,7 +388,7 @@ extension ZTextView {
 	}
 
 	@objc override func printView() { // ZTextView
-		if  ZSubscription.shared.isEnabled {
+		if  gIsSubscriptionEnabled {
 			var view: NSView = self
 			let    printInfo = NSPrintInfo.shared
 			let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
@@ -494,7 +494,7 @@ extension NSView {
     }
 
 	@objc func printView() { // NSView
-		if  ZSubscription.shared.isEnabled {
+		if  gIsSubscriptionEnabled {
 			let view: NSView = self
 			let    printInfo = NSPrintInfo.shared
 			let      isWider = view.bounds.size.width > view.bounds.size.height

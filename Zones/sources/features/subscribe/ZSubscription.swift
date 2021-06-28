@@ -8,11 +8,39 @@
 
 import Foundation
 
+let gSubscription = ZSubscription()
+var gIsSubscriptionEnabled : Bool { return gUserIsExempt || gSubscription.update() != .sExpired }
+
 class ZSubscription: NSObject {
 
-	static let shared = ZSubscription()
-	var     isEnabled : Bool { return update() != .sExpired || userIsExempt }
-	var  userIsExempt : Bool { return gUserSubscription ? false : gUser?.isExempt ?? false }
+	func setup() {
+		gProducts.fetch()
+		if  var   t = zToken {
+			t.state = .sExpired
+			zToken  = t
+		} else {
+			zToken  = ZToken(date: Date(), type: .pFree, state: .sStartup, value: nil)
+		}
+	}
+
+	@discardableResult func update() -> ZSubscriptionState {  // called once a minute from timer started in setup above
+		if  let        token  = zToken {
+			if  !gUserIsExempt,
+				let  changed  = token.newToken { // non-nil means changed
+				zToken        = changed
+				let newState  = changed.state
+				if  newState == .sExpired {
+					showExpirationAlert()                // license timed out, show expired alert
+				}
+
+				return newState
+			}
+
+			return token.state
+		}
+
+		return .sStartup
+	}
 
 	var status: String {
 		if  let z = zToken {
@@ -46,35 +74,6 @@ class ZSubscription: NSObject {
 		}
 	}
 
-	func setup() {
-		ZProducts.shared.fetch()
-		if  var   t = zToken {
-			t.state = .sExpired
-			zToken  = t
-		} else {
-			zToken  = ZToken(date: Date(), type: .pFree, state: .sStartup, value: nil)
-		}
-	}
-
-	@discardableResult func update() -> ZSubscriptionState {  // called once a minute from timer started in setup above
-		if  let        token  = zToken {
-			if  !userIsExempt,
-				let  changed  = token.newToken { // non-nil means changed
-				zToken        = changed
-				let newState  = changed.state
-				if  newState == .sExpired {
-					showExpirationAlert()                // license timed out, show expired alert
-				}
-
-				return newState
-			}
-
-			return token.state
-		}
-
-		return .sStartup
-	}
-
 	func showExpirationAlert() {
 		gAlerts.showAlert("Please forgive my interruption", [
 							"I hope you are enjoying Seriously.", [
@@ -88,10 +87,11 @@ class ZSubscription: NSObject {
 									"you can retain them by purchasing a license."].joined(separator: " ")].joined(separator: "\n\n"),
 						  "Purchase a subscription",
 						  "No thanks, the limited features are perfect") { status in
-			if  status == .sYes {
-				gShowDetailsView = true
+			if  status              == .sYes {
+				gShowDetailsView     = true
+				gShowMySubscriptions = false
 
-				gDetailsController?.toggleViewsFor(ids: [.vSubscribe])
+				gDetailsController?.showViewFor(.vSubscribe)
 			}
 		}
 	}
@@ -126,8 +126,8 @@ struct ZToken {
 
 	var newState: ZSubscriptionState {
 		let  duration = Int(Date().timeIntervalSince(date))
-		let threshold = gSubscriptionTimeout ? 100 : kOneMonth
-		let    isGood = duration < threshold || ZSubscription.shared.userIsExempt
+		let threshold = gSubscriptionTimeout ? kOneMinute : type.threshold
+		let    isGood = duration < threshold || gUserIsExempt
 		return isGood ? .sWaiting : .sExpired
 	}
 

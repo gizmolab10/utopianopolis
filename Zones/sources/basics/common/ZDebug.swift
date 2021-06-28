@@ -18,7 +18,7 @@ var          gDebugModes : ZDebugMode    = [.dReadFiles]
 var          gPrintModes : ZPrintMode    = []
 var        gCoreDataMode : ZCoreDataMode = [] // [.dDisabled]
 #else      // normal && update file
-var          gDebugModes : ZDebugMode    = [.dSubscriptionTimeout, .dUserSubscription] //, .dWriteFiles]
+var          gDebugModes : ZDebugMode    = [.dSubscriptionTimeout, .dIgnoreExemption] //, .dWriteFiles]
 var          gPrintModes : ZPrintMode    = []
 var        gCoreDataMode : ZCoreDataMode = []
 #endif
@@ -32,7 +32,7 @@ var         gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
 var          gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
 
 var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
-var    gUserSubscription : Bool { return  gDebugModes.contains(.dUserSubscription) }
+var     gIgnoreExemption : Bool { return  gDebugModes.contains(.dIgnoreExemption) }
 var          gWriteFiles : Bool { return  gDebugModes.contains(.dWriteFiles) }
 var           gDebugInfo : Bool { return  gDebugModes.contains(.dDebugInfo) }
 var           gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }
@@ -69,7 +69,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dDebugAccess         = ZDebugMode() // test write access by me not having full
 	static let dShowDestroy         = ZDebugMode() // add destroy bookmark to favorites
 	static let dShowDuplicates      = ZDebugMode() // report duplicates
-	static let dUserSubscription    = ZDebugMode() // ignore user exemption
+	static let dIgnoreExemption     = ZDebugMode() // ignore user exemption
 	static let dSubscriptionTimeout = ZDebugMode() // super short timeout
 
 	var description: String {
@@ -81,7 +81,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.dDebugAccess,         "debug write access"),
 				(.dShowDestroy,         "add destroy bookmark"),
 				(.dShowDuplicates,      "indicate zones with duplicates"),
-				(.dUserSubscription,    "ignore user exemption"),
+				(.dIgnoreExemption,     "ignore user exemption"),
 				(.dSubscriptionTimeout, "ignore subscription duration")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator: kSpace)

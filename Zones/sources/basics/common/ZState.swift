@@ -77,6 +77,7 @@ var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEdit
 var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsEssayMode }
 var          gIsDraggableMode:               Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
 var      gDetailsViewIsHidden:               Bool { return gMainController?.detailView?.isHidden ?? true }
+var             gUserIsExempt:               Bool { return gIgnoreExemption ? false : gUser?.isExempt ?? false } // discard this?
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var         gUniqueRecordName:             String { return CKRecordID().recordName }
 var      gCurrentSmallMapName:             String { return gIsRecentlyMode ? "recent" : "favorite" }
@@ -268,6 +269,11 @@ var gCurrentHelpMode: ZHelpMode {
 	set {
 		setPreferencesString(newValue.rawValue, for: kLastChosenCheatSheet)
 	}
+}
+
+var gShowMySubscriptions : Bool {
+	get { return getPreferencesBool(   for: kShowMySubscriptions, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kShowMySubscriptions) }
 }
 
 var gNeedsMigrate : Bool {

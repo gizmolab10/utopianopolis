@@ -1430,7 +1430,7 @@ CA
         <scene sceneID="h1I-uz-EaF">
             <objects>
                 <viewController id="8OT-8w-eeZ" userLabel="Subscriptions" customClass="ZSubscriptionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="cE1-k3-slr">
+                    <view key="view" id="cE1-k3-slr">
                         <rect key="frame" x="0.0" y="0.0" width="290" height="70"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
@@ -1438,10 +1438,13 @@ CA
                                 <rect key="frame" x="0.0" y="0.0" width="290" height="70"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="dLO-Ko-BEx">
-                                        <rect key="frame" x="0.0" y="40" width="290" height="30"/>
+                                        <rect key="frame" x="0.0" y="-4" width="290" height="74"/>
                                         <subviews>
                                             <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="asd-Sj-6m0">
-                                                <rect key="frame" x="6" y="8" width="278" height="14"/>
+                                                <rect key="frame" x="6" y="12" width="278" height="50"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="50" id="SVh-fS-TFs"/>
+                                                </constraints>
                                                 <textFieldCell key="cell" selectable="YES" enabled="NO" refusesFirstResponder="YES" allowsUndo="NO" focusRingType="none" alignment="center" title="Multiline Label" id="DGy-Af-LMx">
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1450,10 +1453,10 @@ CA
                                             </textField>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstItem="asd-Sj-6m0" firstAttribute="top" secondItem="dLO-Ko-BEx" secondAttribute="top" constant="8" id="6Ot-no-6o6"/>
+                                            <constraint firstItem="asd-Sj-6m0" firstAttribute="centerY" secondItem="dLO-Ko-BEx" secondAttribute="centerY" id="7RO-qG-bPO"/>
                                             <constraint firstItem="asd-Sj-6m0" firstAttribute="leading" secondItem="dLO-Ko-BEx" secondAttribute="leading" constant="8" id="BeI-Yi-rOI"/>
+                                            <constraint firstItem="asd-Sj-6m0" firstAttribute="top" secondItem="dLO-Ko-BEx" secondAttribute="top" constant="12" id="OY8-kJ-Vso"/>
                                             <constraint firstAttribute="trailing" secondItem="asd-Sj-6m0" secondAttribute="trailing" constant="8" id="mAV-TV-oLk"/>
-                                            <constraint firstAttribute="bottom" secondItem="asd-Sj-6m0" secondAttribute="bottom" constant="8" id="o3E-D2-ASV"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="m4R-cN-QaR">
@@ -1464,8 +1467,6 @@ CA
                                     <constraint firstAttribute="trailing" secondItem="dLO-Ko-BEx" secondAttribute="trailing" id="DYF-VG-NZx"/>
                                     <constraint firstItem="m4R-cN-QaR" firstAttribute="leading" secondItem="1ff-Zq-eZn" secondAttribute="leading" id="E7Z-e7-MIu"/>
                                     <constraint firstAttribute="bottom" secondItem="m4R-cN-QaR" secondAttribute="bottom" id="KlV-Fj-Eo1"/>
-                                    <constraint firstAttribute="height" constant="70" id="RaU-ED-7Nb"/>
-                                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="dLO-Ko-BEx" secondAttribute="bottom" id="UVW-cs-LHj"/>
                                     <constraint firstItem="dLO-Ko-BEx" firstAttribute="leading" secondItem="1ff-Zq-eZn" secondAttribute="leading" id="feq-dk-vKc"/>
                                     <constraint firstItem="dLO-Ko-BEx" firstAttribute="top" secondItem="1ff-Zq-eZn" secondAttribute="top" id="jOO-jh-aIu"/>
                                     <constraint firstAttribute="trailing" secondItem="m4R-cN-QaR" secondAttribute="trailing" id="jj1-hx-9uM"/>
@@ -1481,7 +1482,6 @@ CA
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="height" destination="RaU-ED-7Nb" id="FXf-CE-6e4"/>
                         <outlet property="subscriptionButtonsView" destination="m4R-cN-QaR" id="LLW-bv-2ac"/>
                         <outlet property="subscriptionStatusLabel" destination="asd-Sj-6m0" id="ehJ-oi-tSJ"/>
                         <outlet property="subscriptionStatusView" destination="dLO-Ko-BEx" id="Jjw-fr-8WK"/>

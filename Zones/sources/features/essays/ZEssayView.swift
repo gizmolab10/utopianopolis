@@ -123,7 +123,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return false
 		}
 
-		let enabled = ZSubscription.shared.isEnabled
+		let enabled = gIsSubscriptionEnabled
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
 		let OPTION  = flags.isOption
@@ -217,7 +217,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return true
 		}
 
-		return false
+		return !enabled
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {

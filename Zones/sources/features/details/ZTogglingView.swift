@@ -92,7 +92,7 @@ class ZTogglingView: ZStackView {
 	@IBAction func extraButtonAction(_ sender: Any) {
 		switch identity {
 			case .vSmallMap:  gToggleSmallMapMode(forceToggle: true)
-			case .vSubscribe: ZSubscriptionController.shared?.toggleViews()
+			case .vSubscribe: gSubscriptionController?.toggleViews()
 			case .vData:      gMapController?.toggleMaps()
 			default:          return
 		}
@@ -124,7 +124,7 @@ class ZTogglingView: ZStackView {
 				case .vData:
 					titleButton?.title = gDatabaseID.userReadableString.capitalized + " Data"
 				case .vSubscribe:
-					titleButton?.title = ZSubscriptionController.shared?.bannerTitle ?? kSubscribe
+					titleButton?.title = gSubscriptionController?.bannerTitle ?? kSubscribe
 				default:
 					titleButton?.title = spacer + title
 			}

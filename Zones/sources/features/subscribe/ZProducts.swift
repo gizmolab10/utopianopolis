@@ -9,15 +9,26 @@
 import Foundation
 import StoreKit
 
+let gProducts = ZProducts()
+
 class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate {
 
-	static let shared = ZProducts()
 	var      products = [SKProduct]()
 
-	func typeFor(_ index: Int) -> ZProductType {
-		let p = products[index]
+	func productFor(_ index: Int) -> SKProduct? {
+		if index >= products.count { return nil }
 
-		return ZProductType(rawValue: p.productIdentifier) ?? .pFree
+		return products[index]
+	}
+
+	func typeFor(_ index: Int) -> ZProductType {
+		var type  = ZProductType.pFree
+		if  let i = productFor(index)?.productIdentifier,
+			let t = ZProductType(rawValue: i) {
+			type  = t
+		}
+
+		return type
 	}
 
 	func paymentQueue(_ paymentQueue: SKPaymentQueue, shouldContinue transaction: SKPaymentTransaction, in newStorefront: SKStorefront) -> Bool {
@@ -28,7 +39,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate {
 
 	func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
 		products = response.products
-		ZSubscriptionController.shared?.rowsChanged = true
+		gSubscriptionController?.rowsChanged = true
 
 		gSignal([.sDetails])
 	}
@@ -42,15 +53,20 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate {
 	}
 
 	func purchaseProduct(at index: Int) {    // send purchase request
-		if  index  >= products.count {
-			return                           // no such product, should NEVER happen
+		if  let product = productFor(index),
+			let    type = product.type {
+
+//			SKPaymentQueue.default().add(SKMutablePayment(product: product))
+
+			gSubscription.zToken = ZToken(date: Date(), type: type, state: .sSubscribed, value: nil)
 		}
-
-		let product = products[index]
-		let payment = SKMutablePayment(product: product)
-
-		SKPaymentQueue.default().add(payment)
 	}
+
+}
+
+extension SKProduct {
+
+	var type: ZProductType? { return ZProductType(rawValue: productIdentifier) }
 
 }
 
@@ -74,6 +90,15 @@ enum ZProductType: String {
 			case .pMonthly:  return "One Month"
 			case .pLifetime: return "Lifetime"
 			default:         return "Introductory"
+		}
+	}
+
+	var threshold: Int {
+		switch self {
+			case .pDaily:    return kOneDay
+			case .pAnnual:   return kOneYear
+			case .pMonthly:  return kOneMonth
+			default:         return Int.max
 		}
 	}
 

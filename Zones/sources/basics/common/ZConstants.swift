@@ -27,9 +27,13 @@ let kUnselectBrightness: CGFloat = 0.98
 
 #endif
 
-let                  kOneMonth = 60 * 60 * 24 * 30 
+let                    kOneDay = kOneHour * 24
+let                   kOneHour = kOneMinute * 60
+let                   kOneYear = kOneDay * 365
+let                  kOneMonth = kOneDay * 30
 let                 kRingWidth = 130.0
 let                 kBatchSize = 250
+let                 kOneMinute = 60
 let                kLogTabStop = 25
 let              kMaxBatchSize = 1000
 let              kDetailsWidth = 226.0
@@ -194,6 +198,7 @@ let        kHasAccessToAppleID = "has access to apple id"
 let        kTutorialRecordName = "essay:96689264-EB25-49CC-9324-913BA5CEBD56"
 let       kCloudDriveIsEnabled = "cloud drive is enabled"
 let       kProductionEmailSent = "production email sent"
+let       kShowMySubscriptions = "show my subscriptions"
 let      kSmallMapIsVisibleKey = "small map is visible"
 let      kLastChosenCheatSheet = "last chosen cheat sheet"
 let  kUnderstandsNeedForAccess = "understands need for access to apple id"
