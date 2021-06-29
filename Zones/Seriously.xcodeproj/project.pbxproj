@@ -581,6 +581,7 @@
 		A7D2D65C2492E12900F652B0 /* ZHelpGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpGridView.swift; sourceTree = "<group>"; };
 		A7D3C25F21FAB6ED00B64B83 /* iFocus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iFocus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7D507CB2688F2BA001CEA9F /* ZProducts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZProducts.swift; sourceTree = "<group>"; };
+		A7D507D0268AFA0B001CEA9F /* Products.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Products.plist; sourceTree = "<group>"; };
 		A7DF7DBB247AFE2800F03060 /* ZRubberband.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZRubberband.swift; sourceTree = "<group>"; };
 		A7E096C923EB98FA0017EC32 /* ZLinkDialogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZLinkDialogController.swift; sourceTree = "<group>"; };
 		A7E44A2A2558CD6A00DA4B13 /* ZManagedObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZManagedObject.swift; sourceTree = "<group>"; };
@@ -829,6 +830,7 @@
 				0C1651EC2101204F003FF76C /* Zones-Bridging-Header.h */,
 				0C39B3C01F1989830091F4D1 /* Zones.entitlements */,
 				0C39B3BF1F1989830091F4D1 /* Info.plist */,
+				A7D507D0268AFA0B001CEA9F /* Products.plist */,
 			);
 			name = desktop;
 			sourceTree = "<group>";

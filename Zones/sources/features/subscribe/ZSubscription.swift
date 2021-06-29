@@ -37,7 +37,7 @@ class ZSubscription: NSObject {
 			let s = z.state.title
 			let t = z.type.duration
 			let d = z.date.easyToReadDateTime
-			let r = "Purchased \(d)\n\n\(t)"
+			let r = "Acquired \(d)\n\n\(t)"
 			if  z.state == .sSubscribed {
 				return r
 			}
@@ -93,8 +93,8 @@ class ZSubscription: NSObject {
 
 	}
 
-	func purchaseSucceeded(type: ZProductType, on date: Date?) {
-		zToken = ZToken(date: date ?? Date(), type: type, state: .sSubscribed, value: nil)
+	func purchaseSucceeded(type: ZProductType, state: ZSubscriptionState, on date: Date?) {
+		zToken = ZToken(date: date ?? Date(), type: type, state: state, value: nil)
 
 		gSignal([.spSubscription])
 	}
@@ -112,13 +112,15 @@ enum ZSubscriptionState: Int {
 
 	case sExpired    = -1
 	case sWaiting    =  0
-	case sSubscribed =  1
+	case sDeferred   =  1
+	case sSubscribed =  2
 
 	var title: String {
 		switch self {
 			case .sExpired:    return "expired"
+			case .sDeferred:   return "deferred"
 			case .sSubscribed: return "subscribed"
-			default:           return "no subscription"
+			default:           return "try before you buy"
 		}
 	}
 

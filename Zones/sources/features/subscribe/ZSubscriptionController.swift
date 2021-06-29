@@ -42,7 +42,7 @@ class ZSubscriptionController: ZGenericController {
 	func update() {
 		subscriptionStatusView? .isHidden = !gShowMySubscriptions
 		subscriptionButtonsView?.isHidden =  gShowMySubscriptions
-		height?                 .constant =  gShowMySubscriptions ? 54.0 : CGFloat(rows) * 29.0 - 3.0
+		height?                 .constant =  gShowMySubscriptions ? 54.0 : CGFloat(rows) * 26.0 - 3.0
 
 		if  gShowMySubscriptions {
 			subscriptionStatusLabel?.text = gSubscription.status
@@ -79,7 +79,7 @@ class ZSubscriptionController: ZGenericController {
 class ZSubscriptionButton: ZButton {
 
 	func layoutWithin(_ controller: ZSubscriptionController, below prior: ZSubscriptionButton?) {
-		let   last = controller.rows - 1
+		let   last = tag == controller.rows - 1
 		let margin = 8.0
 
 		snp.makeConstraints { make in
@@ -89,7 +89,7 @@ class ZSubscriptionButton: ZButton {
 			if  let p = prior {
 				make.top.equalTo(p.snp.bottom)
 
-				if  tag == last {
+				if  last {
 					make.bottom.equalToSuperview().inset(margin)
 				}
 			} else {
@@ -97,7 +97,7 @@ class ZSubscriptionButton: ZButton {
 			}
 		}
 
-		heightAnchor.constraint(equalToConstant: 26.0).isActive = true
+		heightAnchor.constraint(equalToConstant: 21.0).isActive = true
 
 		setNeedsLayout()
 	}

@@ -130,7 +130,7 @@ class ZoneWidget: ZView {
 		set {
 			widgetObject          .zone = newValue
 			if  let                name = widgetZone?.zoneName {
-				identifier              = NSUserInterfaceItemIdentifier("<z> \(name)") // gosh. i wish these would help with snap kit errors !!!!!!!!!!!
+				identifier              = NSUserInterfaceItemIdentifier("<z> \(name)")
 				childrenView.identifier = NSUserInterfaceItemIdentifier("<c> \(name)")
 				textWidget  .identifier = NSUserInterfaceItemIdentifier("<t> \(name)")
 				revealDot   .identifier = NSUserInterfaceItemIdentifier("<r> \(name)")

@@ -46,6 +46,7 @@ class ZStartup: NSObject {
 						gRefreshPersistentWorkMode()
 						gRemoteStorage.recount()
 						gRefreshCurrentEssay()
+						gProducts.setup()
 
 						gRefusesFirstResponder                = false
 						gMainController?.helpButton?.isHidden = false
@@ -66,7 +67,6 @@ class ZStartup: NSObject {
 								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tLicense])
 								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences])
 								gTimers.stopTimer (for: .tStartup)
-								gProducts.setup()
 							}
 						}
 					}
