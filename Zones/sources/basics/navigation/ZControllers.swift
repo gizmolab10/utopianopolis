@@ -13,9 +13,9 @@ enum ZControllerID: Int {
 	case idHelpEssayIntroduction
 	case idHelpEssayGraphicals
     case idSearchResults
+	case idSubscription
 	case idPreferences
 	case idStartHere
-	case idSubscribe
     case idSmallMap
 	case idHelpDots
 	case idControls
@@ -56,6 +56,7 @@ enum ZSignalKind: Int {
 	case spBigMap
 	case spSmallMap
     case spPreferences
+	case spSubscription
 	case spStartupStatus
 }
 
@@ -160,6 +161,7 @@ class ZControllers: NSObject {
 						case .spBigMap:        if identifier == .idBigMap         { closure() }
 						case .spSmallMap:      if identifier == .idSmallMap       { closure() }
 						case .spPreferences:   if identifier == .idPreferences    { closure() }
+						case .spSubscription:  if identifier == .idSubscription   { closure() }
 						case .spStartupStatus: if startupIDs.contains(identifier) { closure() }
 						default:                                                    closure()
 					}

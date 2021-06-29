@@ -11,11 +11,38 @@ import StoreKit
 
 let gProducts = ZProducts()
 
-class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate {
+class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SKPaymentTransactionObserver {
 
-	var      products = [SKProduct]()
+	let                   queue = SKPaymentQueue.default()
+	var                products = [SKProduct]()
+	var isSubscriptionAvailable = false
 
-	func productFor(_ index: Int) -> SKProduct? {
+	func setup() {   // fetch product data
+		let          ids = Set<String>(ZProductType.all.map {$0.rawValue} )
+		let      request = SKProductsRequest(productIdentifiers: ids)
+		request.delegate = self
+
+		queue.add(self)
+		queue.restoreCompletedTransactions()
+		request.start()
+	}
+
+	func purchaseProduct(at index: Int) {    // send purchase request
+		if  let product = productAt(index) {
+			let payment = SKMutablePayment(product: product)
+			payment.simulatesAskToBuyInSandbox = true
+
+			queue.add(payment)
+
+			//			if  let type = product.type {
+			//				gSubscription.zToken = ZToken(date: Date(), type: type, state: .sSubscribed, value: nil)
+		}
+	}
+
+	// MARK:- internals
+	// MARK:-
+
+	func productAt(_ index: Int) -> SKProduct? {
 		if index >= products.count { return nil }
 
 		return products[index]
@@ -23,7 +50,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate {
 
 	func typeFor(_ index: Int) -> ZProductType {
 		var type  = ZProductType.pFree
-		if  let i = productFor(index)?.productIdentifier,
+		if  let i = productAt(index)?.productIdentifier,
 			let t = ZProductType(rawValue: i) {
 			type  = t
 		}
@@ -31,35 +58,80 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate {
 		return type
 	}
 
-	func paymentQueue(_ paymentQueue: SKPaymentQueue, shouldContinue transaction: SKPaymentTransaction, in newStorefront: SKStorefront) -> Bool {
-		gSignal([.sDetails])                 // update subscription controller
+	// MARK:- delegation
+	// MARK:-
+
+	func paymentQueue(_ queue: SKPaymentQueue, shouldContinue transaction: SKPaymentTransaction, in newStorefront: SKStorefront) -> Bool {
+		gSignal([.spSubscription])                 // update subscription controller
 
 		return false
+	}
+
+	func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions: [SKPaymentTransaction]) {
+		for transaction in updatedTransactions {
+			let  payment = transaction.payment
+			let     date = transaction.transactionDate
+			if  let type = ZProductType(rawValue: payment.productIdentifier) {
+				switch transaction.transactionState {
+					case .purchasing:
+						gSubscription.purchaseStarted()
+					case .failed:
+						gSubscription.purchaseFailed(transaction.error)
+						queue.finishTransaction(transaction)
+					case .purchased:
+						queue.finishTransaction(transaction)
+						updateSubscriptionStatus()
+						gSubscription.purchaseSucceeded(type: type, on: date)
+					case .restored:
+						queue.finishTransaction(transaction)
+						updateSubscriptionStatus()
+						gSubscription.purchaseSucceeded(type: type, on: date)
+					case .deferred:
+						gSubscription.purchaseSucceeded(type: type, on: date)
+				}
+			}
+		}
+	}
+
+	func checkSubscriptionAvailability(_ completionHandler: @escaping (Bool) -> Void) {
+		guard let receiptUrl = Bundle.main.appStoreReceiptURL,
+			  let receipt = try? Data(contentsOf: receiptUrl).base64EncodedString() as AnyObject else {
+			completionHandler(false)
+			return
+		}
+
+//		let sandboxURL = "https:sandbox.itunes.apple.com"
+
+//		let _ = Router.User.sendReceipt(receipt: receipt).request(baseUrl: sandboxURL).responseObject { (response: DataResponse<RTSubscriptionResponse>) in
+//			switch response.result {
+//				case .success(let value):
+//					guard let expirationDate = value.expirationDate,
+//						  let productId = value.productId else {completionHandler(false); return}
+//					self.expirationDate = expirationDate
+//					self.isTrialPurchased = value.isTrial
+//					self.purchasedProduct = ProductType(rawValue: productId)
+//					completionHandler(Date().timeIntervalSince1970 < expirationDate.timeIntervalSince1970)
+//				case .failure(let error):
+//					completionHandler(false)
+//			}
+//		}
+	}
+
+	func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
+		gSubscription.purchaseFailed(error)
+	}
+
+	func updateSubscriptionStatus() {
+		checkSubscriptionAvailability { [weak self] (isSubscribed) in
+			self?.isSubscriptionAvailable = isSubscribed
+		}
 	}
 
 	func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
 		products = response.products
 		gSubscriptionController?.rowsChanged = true
 
-		gSignal([.sDetails])
-	}
-
-	func fetch() {   // fetch product data
-		let          ids = Set<String>(ZProductType.all.map {$0.rawValue} )
-		let      request = SKProductsRequest(productIdentifiers: ids)
-		request.delegate = self
-
-		request.start()
-	}
-
-	func purchaseProduct(at index: Int) {    // send purchase request
-		if  let product = productFor(index),
-			let    type = product.type {
-
-//			SKPaymentQueue.default().add(SKMutablePayment(product: product))
-
-			gSubscription.zToken = ZToken(date: Date(), type: type, state: .sSubscribed, value: nil)
-		}
+		gSignal([.spSubscription])
 	}
 
 }
@@ -113,7 +185,7 @@ enum ZProductType: String {
 
 }
 
-enum ZProductError: Swift.Error {
+enum ZProductError : Error {
 	case noSubscriptionPurchased
 	case noProductsAvailable
 

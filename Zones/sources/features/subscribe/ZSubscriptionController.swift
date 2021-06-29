@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-var gSubscriptionController : ZSubscriptionController? { return gControllers.controllerForID(.idSubscribe) as? ZSubscriptionController }
+var gSubscriptionController : ZSubscriptionController? { return gControllers.controllerForID(.idSubscription) as? ZSubscriptionController }
 
 class ZSubscriptionController: ZGenericController {
 
@@ -22,7 +22,7 @@ class ZSubscriptionController: ZGenericController {
 	@IBOutlet var subscriptionStatusView  : ZView?
 	@IBOutlet var subscriptionButtonsView : ZView?
 	@IBOutlet var height       : NSLayoutConstraint?
-	override  var controllerID : ZControllerID { return .idSubscribe }
+	override  var controllerID : ZControllerID { return .idSubscription }
 	var               rows : Int    { return gProducts.products.count }
 	var        bannerTitle : String { return gShowMySubscriptions ? kSubscription : kSubscribe }
 	var        rowsChanged = true
@@ -30,7 +30,7 @@ class ZSubscriptionController: ZGenericController {
 	func toggleViews() {
 		gShowMySubscriptions = !gShowMySubscriptions
 
-		gSignal([.sDetails])
+		update()
 	}
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {

@@ -9,19 +9,9 @@
 import Foundation
 
 let gSubscription = ZSubscription()
-var gIsSubscriptionEnabled : Bool { return gUserIsExempt || gSubscription.update() != .sExpired }
+var gIsSubscriptionEnabled : Bool { return gSubscription.zToken?.state != .sExpired }
 
 class ZSubscription: NSObject {
-
-	func setup() {
-		gProducts.fetch()
-		if  var   t = zToken {
-			t.state = .sExpired
-			zToken  = t
-		} else {
-			zToken  = ZToken(date: Date(), type: .pFree, state: .sStartup, value: nil)
-		}
-	}
 
 	@discardableResult func update() -> ZSubscriptionState {  // called once a minute from timer started in setup above
 		if  let        token  = zToken {
@@ -39,7 +29,7 @@ class ZSubscription: NSObject {
 			return token.state
 		}
 
-		return .sStartup
+		return .sWaiting
 	}
 
 	var status: String {
@@ -96,21 +86,38 @@ class ZSubscription: NSObject {
 		}
 	}
 
+	// MARK:- delegation
+	// MARK:-
+
+	func purchaseStarted() {
+
+	}
+
+	func purchaseSucceeded(type: ZProductType, on date: Date?) {
+		zToken = ZToken(date: date ?? Date(), type: type, state: .sSubscribed, value: nil)
+
+		gSignal([.spSubscription])
+	}
+
+	func purchaseFailed(_ error: Error?) {
+		noop()
+	}
+
 }
 
-enum ZSubscriptionState: String {
+// MARK:- state and tokens
+// MARK:-
 
-	case sReady      = "r"
-	case sStartup    = "-"
-	case sWaiting    = "w"
-	case sExpired    = "x"
-	case sSubscribed = "s"
+enum ZSubscriptionState: Int {
+
+	case sExpired    = -1
+	case sWaiting    =  0
+	case sSubscribed =  1
 
 	var title: String {
 		switch self {
 			case .sExpired:    return "expired"
 			case .sSubscribed: return "subscribed"
-			case .sReady:      return "ready for purchase"
 			default:           return "no subscription"
 		}
 	}
@@ -126,7 +133,7 @@ struct ZToken {
 
 	var newState: ZSubscriptionState {
 		let  duration = Int(Date().timeIntervalSince(date))
-		let threshold = gSubscriptionTimeout ? kOneMinute : type.threshold
+		let threshold = type.threshold
 		let    isGood = duration < threshold || gUserIsExempt
 		return isGood ? .sWaiting : .sExpired
 	}
@@ -162,10 +169,10 @@ extension String {
 	var asZToken: ZToken? {
 		let array           = components(separatedBy: kColonSeparator)
 		if  array.count     > 2,
-			let   dateValue = Double(array[0]) {
-			let  stateValue = array[1]
-			let   typeValue = array[2]
-			let valueString = array[3]
+			let   dateValue = Double(array[0]),
+			let  stateValue =    Int(array[1]) {
+			let   typeValue =        array[2]
+			let valueString =        array[3]
 			let        date = Date(timeIntervalSinceReferenceDate: dateValue)
 			let       state = ZSubscriptionState(rawValue: stateValue) ?? .sExpired
 			let        type = ZProductType      (rawValue:  typeValue) ?? .pFree
