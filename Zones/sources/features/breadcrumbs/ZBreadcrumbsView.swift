@@ -9,6 +9,8 @@
 import Foundation
 import SnapKit
 
+var gBreadcrumbsView: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbsView }
+
 class ZBreadcrumbsView : ZButtonsView {
 
 	override  var          clipped : Bool     { return gClipBreadcrumbs }
@@ -22,6 +24,19 @@ class ZBreadcrumbsView : ZButtonsView {
 		}
 
 		return width
+	}
+
+	func detectCrumb(_ iGesture: ZGestureRecognizer?) -> ZBreadcrumbButton? {
+		if  let location = iGesture?.location(in: self), bounds.contains(location) {
+			for button in buttons {
+				let rect = button.frame
+				if  rect.contains(location) {
+					return button as? ZBreadcrumbButton
+				}
+			}
+		}
+
+		return nil
 	}
 
 	func fitBreadcrumbsToWindow() {

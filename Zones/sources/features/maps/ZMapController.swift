@@ -348,7 +348,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
 
     func dragMaybeStopEvent(_ iGesture: ZGestureRecognizer?) {
-        if  dropMaybe(iGesture) {
+		if  let drop = gBreadcrumbsView?.detectCrumb(iGesture) {
+			print(drop.zone)
+		} else if dropMaybe(iGesture) {
             cleanupAfterDrag()
             
             if  isDoneGesture(iGesture) {

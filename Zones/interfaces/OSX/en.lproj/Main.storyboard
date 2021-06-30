@@ -866,6 +866,42 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="451" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="37A-oF-Gav" userLabel="Drag View" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="451" height="300"/>
+                            </customView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="5jB-w2-4Dg" userLabel="Alternate Side View">
+                                <rect key="frame" x="226" y="0.0" width="225" height="255"/>
+                                <subviews>
+                                    <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
+                                        <rect key="frame" x="0.0" y="0.0" width="225" height="255"/>
+                                        <connections>
+                                            <segue destination="8gW-F6-R6g" kind="embed" id="X02-Jc-hfC"/>
+                                        </connections>
+                                    </containerView>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
+                                        <rect key="frame" x="0.0" y="0.0" width="225" height="255"/>
+                                        <connections>
+                                            <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
+                                        </connections>
+                                    </containerView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="xfO-CE-WwN" secondAttribute="trailing" id="RoH-8Y-VTR"/>
+                                    <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="TdN-hi-z6x"/>
+                                    <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="5jB-w2-4Dg" secondAttribute="top" id="Wer-DQ-0Io"/>
+                                    <constraint firstAttribute="bottom" secondItem="xfO-CE-WwN" secondAttribute="bottom" id="YOS-85-fBT"/>
+                                    <constraint firstItem="xfO-CE-WwN" firstAttribute="leading" secondItem="5jB-w2-4Dg" secondAttribute="leading" id="da6-Zd-sXb"/>
+                                    <constraint firstItem="xfO-CE-WwN" firstAttribute="top" secondItem="5jB-w2-4Dg" secondAttribute="top" id="eKC-Uu-0A7"/>
+                                    <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="5jB-w2-4Dg" secondAttribute="leading" id="oO5-Vh-f8Y"/>
+                                    <constraint firstAttribute="trailing" secondItem="cYx-gW-vNV" secondAttribute="trailing" id="rde-p1-TdC"/>
+                                </constraints>
+                            </customView>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
+                                <rect key="frame" x="0.0" y="0.0" width="451" height="300"/>
+                                <connections>
+                                    <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
+                                </connections>
+                            </containerView>
                             <button translatesAutoresizingMaskIntoConstraints="NO" id="yl6-st-bhl" userLabel="Hamburger Button">
                                 <rect key="frame" x="12" y="267" width="22" height="22"/>
                                 <constraints>
@@ -921,42 +957,6 @@ CA
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="3wl-F6-Mu5">
                                 <rect key="frame" x="0.0" y="253" width="451" height="5"/>
                             </box>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="37A-oF-Gav" userLabel="Drag View" customClass="ZDragView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="451" height="255"/>
-                            </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="5jB-w2-4Dg" userLabel="Alternate Side View">
-                                <rect key="frame" x="226" y="0.0" width="225" height="255"/>
-                                <subviews>
-                                    <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
-                                        <rect key="frame" x="0.0" y="0.0" width="225" height="255"/>
-                                        <connections>
-                                            <segue destination="8gW-F6-R6g" kind="embed" id="X02-Jc-hfC"/>
-                                        </connections>
-                                    </containerView>
-                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
-                                        <rect key="frame" x="0.0" y="0.0" width="225" height="255"/>
-                                        <connections>
-                                            <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
-                                        </connections>
-                                    </containerView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="xfO-CE-WwN" secondAttribute="trailing" id="RoH-8Y-VTR"/>
-                                    <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="TdN-hi-z6x"/>
-                                    <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="5jB-w2-4Dg" secondAttribute="top" id="Wer-DQ-0Io"/>
-                                    <constraint firstAttribute="bottom" secondItem="xfO-CE-WwN" secondAttribute="bottom" id="YOS-85-fBT"/>
-                                    <constraint firstItem="xfO-CE-WwN" firstAttribute="leading" secondItem="5jB-w2-4Dg" secondAttribute="leading" id="da6-Zd-sXb"/>
-                                    <constraint firstItem="xfO-CE-WwN" firstAttribute="top" secondItem="5jB-w2-4Dg" secondAttribute="top" id="eKC-Uu-0A7"/>
-                                    <constraint firstItem="cYx-gW-vNV" firstAttribute="leading" secondItem="5jB-w2-4Dg" secondAttribute="leading" id="oO5-Vh-f8Y"/>
-                                    <constraint firstAttribute="trailing" secondItem="cYx-gW-vNV" secondAttribute="trailing" id="rde-p1-TdC"/>
-                                </constraints>
-                            </customView>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
-                                <rect key="frame" x="0.0" y="0.0" width="451" height="255"/>
-                                <connections>
-                                    <segue destination="XfG-lQ-9wD" kind="embed" id="YW4-lD-nFy"/>
-                                </connections>
-                            </containerView>
                             <containerView focusRingType="none" translatesAutoresizingMaskIntoConstraints="NO" id="9jn-kU-BvC" userLabel="Debug View">
                                 <rect key="frame" x="226" y="105" width="200" height="150"/>
                                 <constraints>
@@ -1020,14 +1020,15 @@ CA
                             <constraint firstItem="3wl-F6-Mu5" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GgL-zJ-zYQ"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="HVB-l5-rqc"/>
                             <constraint firstAttribute="bottom" secondItem="5oi-yK-PC4" secondAttribute="bottom" id="Hxj-uH-co3"/>
+                            <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="I6A-Gy-gg5"/>
                             <constraint firstAttribute="bottom" secondItem="HK5-4i-dSB" secondAttribute="bottom" id="Jf7-tG-M0F"/>
                             <constraint firstItem="yl6-st-bhl" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="12" id="Lys-IS-2eI"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="whm-tf-fPZ" secondAttribute="trailing" id="Pjc-Nx-5dx"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="RZc-HF-3xb"/>
-                            <constraint firstItem="HK5-4i-dSB" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="ScM-U8-du8"/>
                             <constraint firstAttribute="trailing" secondItem="37A-oF-Gav" secondAttribute="trailing" id="TDT-m7-nkv"/>
                             <constraint firstAttribute="trailing" secondItem="uYG-mD-FXW" secondAttribute="trailing" constant="20" symbolic="YES" id="ZLr-De-wDX"/>
                             <constraint firstAttribute="bottom" secondItem="5jB-w2-4Dg" secondAttribute="bottom" id="bsX-IT-HDI"/>
+                            <constraint firstItem="37A-oF-Gav" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="cNp-32-ivs"/>
                             <constraint firstItem="9jn-kU-BvC" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="dC5-A8-EDJ"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="ewO-M2-RZg"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="226" identifier="alternate side view leading" id="fVF-7D-R74"/>
@@ -1046,7 +1047,6 @@ CA
                             <constraint firstAttribute="bottom" secondItem="37A-oF-Gav" secondAttribute="bottom" id="tTW-BQ-dgu"/>
                             <constraint firstAttribute="trailing" secondItem="HK5-4i-dSB" secondAttribute="trailing" id="trU-TG-zpc"/>
                             <constraint firstItem="3wl-F6-Mu5" firstAttribute="top" secondItem="whm-tf-fPZ" secondAttribute="bottom" id="whz-yP-Sg6"/>
-                            <constraint firstItem="37A-oF-Gav" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="wyp-Na-8dF"/>
                             <constraint firstItem="whm-tf-fPZ" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="ySC-me-doN"/>
                         </constraints>
                     </view>
@@ -1111,7 +1111,7 @@ CA
                                 <rect key="frame" x="20" y="20" width="259" height="269"/>
                                 <clipView key="contentView" id="xkU-Kc-9TS">
                                     <rect key="frame" x="1" y="1" width="257" height="267"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" id="z27-6x-Roi">
                                             <rect key="frame" x="0.0" y="0.0" width="257" height="267"/>
@@ -1185,7 +1185,7 @@ CA
                                 <rect key="frame" x="0.0" y="0.0" width="278" height="289"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="DDT-jd-TI8">
                                     <rect key="frame" x="0.0" y="0.0" width="263" height="289"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" incrementalSearchingEnabled="YES" continuousSpellChecking="YES" allowsUndo="YES" allowsImageEditing="YES" usesRuler="YES" quoteSubstitution="YES" linkDetection="YES" dashSubstitution="YES" textReplacement="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4" customClass="ZEssayView" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="263" height="289"/>
@@ -1662,7 +1662,7 @@ DQ
                                 <rect key="frame" x="0.0" y="0.0" width="160" height="300"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="n13-pi-a65">
                                     <rect key="frame" x="0.0" y="0.0" width="160" height="300"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" enabled="NO" rowHeight="16" id="8lm-kp-gkp">
                                             <rect key="frame" x="0.0" y="0.0" width="210" height="300"/>
