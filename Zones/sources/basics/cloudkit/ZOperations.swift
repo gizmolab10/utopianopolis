@@ -36,9 +36,9 @@ enum ZOperationID: Int, CaseIterable {
     // miscellaneous
 
 	case oMigrateFromCloud
-	case oSavingLocalData       // LOCAL
+	case oSavingLocalData    // LOCAL
 	case oResolveMissing
-    case oCompletion
+    case oFinishing
 	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
 	case oRecents  			 // MINE ONLY
@@ -65,11 +65,11 @@ enum ZOperationID: Int, CaseIterable {
 		}
 	}
 
-	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oCompletion] }
+	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oFinishing] }
 	var    countOps : ZOpIDsArray { return [.oLoadingIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
 	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
-	var    localOps : ZOpIDsArray { return [.oWrite, .oUbiquity, .oFavorites, .oCompletion, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
+	var    localOps : ZOpIDsArray { return [.oWrite, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
 											.oFetchUserRecord, .oCheckAvailability] + bothDBOps }
 
 	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }
@@ -177,7 +177,7 @@ class ZOperations: NSObject {
         queue.isSuspended = true
         let         saved = gDatabaseID
 
-        for operationID in operationIDs + [.oCompletion] {
+        for operationID in operationIDs + [.oFinishing] {
             let blockOperation = BlockOperation {
 
                 // /////////////////////////////////////////////////////////////
@@ -199,7 +199,7 @@ class ZOperations: NSObject {
 
 						self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
 							FOREGROUND {
-								if  self.currentOp == .oCompletion {
+								if  self.currentOp == .oFinishing {
 
 									// /////////////////////////////////////
 									// done with this batch of operations //

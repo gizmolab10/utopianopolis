@@ -345,21 +345,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
     }
 
-	func isDoneGesture(_ iGesture: ZGestureRecognizer?) -> Bool { return doneStates.contains(iGesture!.state) }
-
-    func dragMaybeStopEvent(_ iGesture: ZGestureRecognizer?) {
-		if  let drop = gBreadcrumbsView?.detectCrumb(iGesture) {
-			print(drop.zone)
-		} else if dropMaybe(iGesture) {
-            cleanupAfterDrag()
-            
-            if  isDoneGesture(iGesture) {
-				gSignal([.spPreferences, .spCrumbs]) // so color well gets updated
-                restartGestureRecognition()
-            }
-        }
-    }
-    
     func scrollEvent(move: Bool, to location: CGPoint) {
         if move {
             gScrollOffset   = CGPoint(x: gScrollOffset.x + location.x - priorScrollLocation.x, y: gScrollOffset.y + priorScrollLocation.y - location.y)
@@ -374,7 +359,30 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // next four are only called by controller //
     // //////////////////////////////////////////
 
-    func dropMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
+	func dragMaybeStopEvent(_ iGesture: ZGestureRecognizer?) {
+		if  gDraggedZone == nil ||
+				dropOnCrumbButtonMaybe(iGesture) ||
+				dropOnWidgetMaybe(iGesture) {
+
+			if  iGesture?.isDone ?? false {
+				cleanupAfterDrag()
+				gSignal([.spPreferences, .spCrumbs]) // so color well gets updated
+				restartGestureRecognition()
+			}
+		}
+	}
+
+	func dropOnCrumbButtonMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
+		if  let   drop = gBreadcrumbsView?.detectCrumb(iGesture) {
+			gDropCrumb = drop
+
+			return true
+		}
+
+		return false
+	}
+
+    func dropOnWidgetMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
         if  let draggedZone        = gDraggedZone {
             if  draggedZone.userCanMove,
 				let (inBigMap, zone, location) = widgetHit(by: iGesture, locatedInBigMap: isBigMap),
@@ -407,10 +415,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				let   dropIsParent = dropZone.children.contains(draggedZone)
 				let     spawnCycle = dropZone.spawnCycle
 				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0
-                let          prior = gDropZone?.widget
-                let        dropNow = isDoneGesture(iGesture)
+                let          prior = gDropWidget
+				let        dropNow = iGesture?.isDone ?? false
                 gDropIndices       = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
-                gDropZone          = isNoop || dropNow ? nil : dropZone
+				gDropWidget        = isNoop || dropNow ? nil : dropWidget
                 gDragRelation      = isNoop || dropNow ? nil : relation
                 gDragPoint         = isNoop || dropNow ? nil : location
 
@@ -443,13 +451,13 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                             self.restartGestureRecognition()
                         }
                     }
-                }
 
-                return dropNow
+					return true
+                }
             }
         }
 
-        return true
+        return false
     }
 
     // MARK:- internals
@@ -502,11 +510,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
         // cursor exited view, remove drag cruft
 
-		gDropZone     = nil
-		gDragPoint    = nil
-        gDropIndices  = nil
+		let       dot = gDropWidget?.revealDot.innerDot // drag view does not "un"draw this
 		gDragRelation = nil
-		let       dot = gDropZone?.widget?.revealDot.innerDot // drag view does not "un"draw this
+		gDropIndices  = nil
+		gDropWidget   = nil
+		gDropCrumb    = nil
+		gDragPoint    = nil
 
 		gDragView?.setNeedsDisplay() // erase drag: line and dot
         rootWidget.setNeedsDisplay()

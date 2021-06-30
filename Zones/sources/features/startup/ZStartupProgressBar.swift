@@ -11,7 +11,7 @@ import Foundation
 class ZStartupProgressBar: NSProgressIndicator {
 
 	func updateProgress() {
-		if  gCurrentOp    != .oCompletion,
+		if  gCurrentOp    != .oFinishing,
 			gAssureProgressTimesAreLoaded() {
 
 			let  totalTime = gTotalTime

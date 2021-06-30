@@ -89,6 +89,7 @@ class ZBreadcrumbsView : ZButtonsView {
 	override func setupAndRedraw() {
 		super.setupAndRedraw()   // side effect: updates clipped, used below
 
+		layer?.backgroundColor  = kClearColor.cgColor
 		clipCrumbsButton?.image = !clipped ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
 	}
 

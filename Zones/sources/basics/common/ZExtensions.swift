@@ -2289,11 +2289,13 @@ extension ZGestureRecognizer {
     @objc var isShiftDown:   Bool { return false }
     @objc var isOptionDown:  Bool { return false }
     @objc var isCommandDown: Bool { return false }
+	var       isDone:        Bool { return [.ended, .cancelled, .failed, .possible].contains(state) }
 
     func cancel() {
-        isEnabled = false
+        isEnabled = false // Apple says "when changed to NO the gesture recognizer will be cancelled [and] will not receive events"
         isEnabled = true
     }
+
 }
 
 extension ZView {

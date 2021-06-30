@@ -35,9 +35,9 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 		// draw dragged dot and line in active color
 
-		if  let     widget = gDropZone?.widget,
+		if  let     widget = gDropWidget,
 			let        dot = widget.revealDot.innerDot {
-			let parameters = gDropZone?.dropDotParameters() ?? ZDotParameters()
+			let parameters = widget.widgetZone?.dropDotParameters() ?? ZDotParameters()
             let  floatRect = widget.floatingDropDotRect
             let   dragRect = widget.convert(floatRect, to: self)
 			let    dotRect = convert(dot.bounds, from: dot)
@@ -48,6 +48,15 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			widget.drawDragLine(to: floatRect, in: self)
 			dot.drawInnerDot(dotRect, parameters)
         }
+
+		if  let      crumb = gDropCrumb {
+//			let parameters = crumb.zone.dropDotParameters()
+			let       rect = convert(crumb.bounds, from: crumb)
+
+			gActiveColor.setStroke()
+			ZBezierPath(ovalIn: rect).stroke()
+		}
+
 	}
 
 	override func mouseExited(with event: ZEvent) {
@@ -57,8 +66,12 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			gRubberband.rubberbandRect  = nil
 		}
 
-		if  gDropZone != nil {
-			gDropZone  = nil
+		if  gDropWidget != nil {
+			gDropWidget  = nil
+		}
+
+		if  gDropCrumb != nil {
+			gDropCrumb  = nil
 		}
 
 		setNeedsDisplay()

@@ -43,9 +43,10 @@ var           gMigrationState:    ZMigrationState = .firstTime
 var             gDragRelation:         ZRelation?
 var             gCurrentTrait:            ZTrait?
 var              gDropIndices: NSMutableIndexSet?
+var               gDropWidget:        ZoneWidget?
+var                gDropCrumb: ZBreadcrumbButton?
 var                gDragPoint:           CGPoint?
 var                 gExpanded:      StringsArray?
-var                 gDropZone:              Zone?
 var              gDraggedZone:              Zone?
 var     gCurrentMouseDownZone:              Zone?
 var gCurrentMouseDownLocation:           CGFloat?

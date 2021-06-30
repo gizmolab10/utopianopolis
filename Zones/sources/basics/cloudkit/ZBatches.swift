@@ -249,7 +249,7 @@ class ZBatches: ZOnboarding {
 		// ///////////////////////////////////////////////////////////////
 
 		super.invokeMultiple(for: operationID, restoreToID: restoreToID) { iCompleted in
-            if  iCompleted || operationID == .oCompletion {
+            if  iCompleted || operationID == .oFinishing {
                 onCompletion(true)
             } else {
                 let                      isMine = restoreToID == .mineID
@@ -263,7 +263,7 @@ class ZBatches: ZOnboarding {
                     // always called in foreground //
                     // //////////////////////////////
 
-                    if  operationID == .oCompletion || isNoop || index >= databaseIDs.count {
+                    if  operationID == .oFinishing || isNoop || index >= databaseIDs.count {
                         onCompletion(true)
                     } else {
                         self.currentDatabaseID = databaseIDs[index]      // if hung, it happened in currentDatabaseID

@@ -1441,26 +1441,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		grab(updateBrowsingLevel: updateBrowsingLevel)
 	}
 
-	func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool, _ CLICKTWICE: Bool) {
-		if  COMMAND || (CLICKTWICE && isGrabbed) {
-			grab() // narrow selection to just this one zone
-
-			if !(CLICKTWICE && self == gHere) {
-				gRecents.focusOnGrab(.eSelected) {
-					gRelayoutMaps()
-				}
-			}
-		} else if isGrabbed && gCurrentlyEditingWidget == nil {
-			ungrabAssuringOne()
-		} else if SHIFT {
-			addToGrabs()
-		} else {
-			grab()
-		}
-
-		gRelayoutMaps(for: self)
-	}
-
 	override func setupLinks() {
 		if  recordName != nil {
 
@@ -3126,6 +3106,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool, _ CLICKTWICE: Bool) {
+		if  COMMAND || (CLICKTWICE && isGrabbed) {
+			grab() // narrow selection to just this one zone
+
+			if !(CLICKTWICE && self == gHere) {
+				gRecents.focusOnGrab(.eSelected) {
+					gRelayoutMaps()
+				}
+			}
+		} else if isGrabbed && gCurrentlyEditingWidget == nil {
+			ungrabAssuringOne()
+		} else if SHIFT {
+			addToGrabs()
+		} else {
+			grab()
+		}
+
+		gRelayoutMaps(for: self)
+	}
+
 	func revealDotClicked(_ flags: ZEventFlags) {
 		gTextEditor.stopCurrentEdit()
 		ungrabProgeny()
@@ -3193,7 +3193,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.showAccess     = hasAccessDecoration
 		p.hasTargetNote  = t?.hasNote ?? false
 		p.isGroupOwner   = g == self || g == t
-		p.isDrop         = self == gDropZone
+		p.isDrop         = self == gDropWidget?.widgetZone
 		p.showSideDot    = isCurrentSmallMapBookmark
 		p.traitType      = (k.count < 1) ? kEmpty : k[0]
 		p.fill           = isFilled ? c.lighter(by: 2.5) : gBackgroundColor

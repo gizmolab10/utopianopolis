@@ -17,10 +17,10 @@ var gDragView       : ZDragView?       { return gMainController?.dragView }
 
 class ZMainController: ZGesturesController {
 
+	override  var controllerID       : ZControllerID { return .idMain }
 	@IBOutlet var alternateLeading   : NSLayoutConstraint?
-	@IBOutlet var hamburgerButton    : ZButton?
-	@IBOutlet var searchResultsView  : ZView?
 	@IBOutlet var essayContainerView : ZView?
+	@IBOutlet var searchResultsView  : ZView?
 	@IBOutlet var mapContainerView   : ZView?
 	@IBOutlet var permissionView     : ZView?
 	@IBOutlet var searchBoxView      : ZView?
@@ -28,7 +28,7 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var debugView          : ZView?
 	@IBOutlet var dragView           : ZDragView?
 	@IBOutlet var helpButton         : ZHelpButton?
-    override  var controllerID       : ZControllerID { return .idMain }
+	@IBOutlet var hamburgerButton    : ZButton?
 
 	var hamburgerImage: ZImage? {
 		var image = ZImage(named: "settings.jpg")

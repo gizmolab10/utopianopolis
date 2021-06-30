@@ -246,16 +246,12 @@ class ZSmallMapRecords: ZRecords {
 		if  let bookmarks = rootZone?.allBookmarkProgeny, bookmarks.count > 0 {
 			var targets   = ZoneArray()
 
-			if  var grab  = gSelecting.firstGrab {
-				if  let b = grab.bookmarkTarget {
-					grab  = b
-				}
-
+			if  let grab  = gSelecting.firstGrab {
 				targets.append(grab)
 			}
 
-			if  let here  = gHereMaybe {
-				targets.appendUnique(item: here)
+			if  let here  = gHereMaybe, !targets.contains(here) {
+				targets.append(here)
 			}
 
 			if  let bookmark = bookmarks.whoseTargetIntersects(with: targets, orSpawnsIt: false) {
