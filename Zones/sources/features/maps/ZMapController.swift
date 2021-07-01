@@ -359,6 +359,20 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // next four are only called by controller //
     // //////////////////////////////////////////
 
+	func drop(_ zone: Zone, at dropAt: Int? = nil, _ iGesture: ZGestureRecognizer?) {
+		if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
+			let   flags = gesture.modifiers {
+
+			zone.addGrabbedZones(at: dropAt, undoManager: undoManager, flags) {
+				gRelayoutMaps()
+				gSelecting.updateBrowsingLevel()
+				gSelecting.updateCousinList()
+				self.restartGestureRecognition()
+			}
+		}
+
+	}
+
 	func dragMaybeStopEvent(_ iGesture: ZGestureRecognizer?) {
 		if  gDraggedZone == nil ||
 				dropOnCrumbButtonMaybe(iGesture) ||
@@ -377,7 +391,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let    crumb = gBreadcrumbsView?.detectCrumb(iGesture),
 			crumb.zone != dragged.parentZone,
 			crumb.zone != dragged {
-			crumb.highlight(true)
+
+			if  iGesture?.isDone ?? false {
+				drop(crumb.zone, iGesture)
+			} else {
+				crumb.highlight(true)
+			}
 
 			return true
 		}
@@ -444,16 +463,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                         dropAt!     -= 1
                     }
 
-					if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
-						let   flags = gesture.modifiers {
-
-						dropZone.addGrabbedZones(at: dropAt, undoManager: undoManager, flags) {
-							gRelayoutMaps()
-                            gSelecting.updateBrowsingLevel()
-                            gSelecting.updateCousinList()
-                            self.restartGestureRecognition()
-                        }
-                    }
+					drop(dropZone, at: dropAt, iGesture)
 
 					return true
                 }
