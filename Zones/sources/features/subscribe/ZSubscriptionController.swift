@@ -18,10 +18,12 @@ var gSubscriptionController : ZSubscriptionController? { return gControllers.con
 
 class ZSubscriptionController: ZGenericController {
 
-	@IBOutlet var subscriptionStatusLabel : ZTextField?
-	@IBOutlet var subscriptionStatusView  : ZView?
-	@IBOutlet var subscriptionButtonsView : ZView?
-	@IBOutlet var height       : NSLayoutConstraint?
+	@IBOutlet var cancelButton : ZButton?
+	@IBOutlet var  buttonsView : ZView?
+	@IBOutlet var   statusView : ZView?
+	@IBOutlet var  statusLabel : ZTextField?
+	@IBOutlet var    dateLabel : ZTextField?
+	@IBOutlet var       height : NSLayoutConstraint?
 	override  var controllerID : ZControllerID { return .idSubscription }
 	var               rows : Int    { return gProducts.products.count }
 	var        bannerTitle : String { return gShowMySubscriptions ? kSubscription : kSubscribe }
@@ -40,16 +42,17 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	func update() {
-		subscriptionStatusView? .isHidden = !gShowMySubscriptions
-		subscriptionButtonsView?.isHidden =  gShowMySubscriptions
-		height?                 .constant =  gShowMySubscriptions ? 54.0 : CGFloat(rows) * 26.0 - 3.0
+		statusView? .isHidden = !gShowMySubscriptions
+		buttonsView?.isHidden =  gShowMySubscriptions
+		height?     .constant =  gShowMySubscriptions ? 84.0 : CGFloat(rows) * 26.0 - 3.0
 
 		if  gShowMySubscriptions {
-			subscriptionStatusLabel?.text = gSubscription.status
+			dateLabel?  .text = gSubscription.acquired
+			statusLabel?.text = gSubscription.status
 		} else if rowsChanged {
 			rowsChanged = false
 			var prior: ZSubscriptionButton?
-			subscriptionButtonsView?.removeAllSubviews()
+			buttonsView?.removeAllSubviews()
 			for index in 0..<rows {
 				let        button = ZSubscriptionButton()
 				let          type = gProducts.typeFor(index)
@@ -60,7 +63,7 @@ class ZSubscriptionController: ZGenericController {
 				button.tag        = index
 				button.target     = self
 
-				subscriptionButtonsView?.addSubview(button)
+				buttonsView?.addSubview(button)
 				button.layoutWithin(self, below: prior)
 
 				prior             = button

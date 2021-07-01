@@ -137,6 +137,7 @@ let                 kFullFetch = "full fetch"
 let                 kThickness = "line thickness"
 let                 kUsersType =  CKRecord.SystemType.userRecord
 let                kDatabaseID = "current database identifier"
+let                kTryThenBuy = "try before you buy"
 let                kUserRecord = "user record"
 let                kCountsMode = "counts mode"
 let                kCurrentMap = "current map"

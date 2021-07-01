@@ -137,7 +137,7 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-95" y="1815"/>
+            <point key="canvasLocation" x="-95" y="1825"/>
         </scene>
         <!--Small Map-->
         <scene sceneID="6c8-8d-0Jq">
@@ -1417,39 +1417,57 @@ CA
             <objects>
                 <viewController id="8OT-8w-eeZ" userLabel="Subscriptions" customClass="ZSubscriptionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="cE1-k3-slr">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="70"/>
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="84"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="1ff-Zq-eZn">
-                                <rect key="frame" x="0.0" y="0.0" width="290" height="70"/>
+                                <rect key="frame" x="0.0" y="0.0" width="290" height="84"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="dLO-Ko-BEx">
-                                        <rect key="frame" x="0.0" y="-4" width="290" height="74"/>
+                                        <rect key="frame" x="0.0" y="4" width="290" height="80"/>
                                         <subviews>
-                                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="asd-Sj-6m0">
-                                                <rect key="frame" x="6" y="12" width="278" height="50"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="50" id="SVh-fS-TFs"/>
-                                                </constraints>
-                                                <textFieldCell key="cell" selectable="YES" enabled="NO" refusesFirstResponder="YES" allowsUndo="NO" focusRingType="none" alignment="center" title="Multiline Label" id="DGy-Af-LMx">
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7TP-X8-yTZ">
+                                                <rect key="frame" x="6" y="58" width="278" height="14"/>
+                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="7k9-np-EMp">
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LMu-5O-o9h">
+                                                <rect key="frame" x="6" y="36" width="278" height="14"/>
+                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="OfC-14-FUY">
+                                                    <font key="font" metaFont="smallSystem"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="raV-jm-PNg">
+                                                <rect key="frame" x="56" y="1" width="178" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Cancel My Subscription" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mme-M7-oqI">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                            </button>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstItem="asd-Sj-6m0" firstAttribute="centerY" secondItem="dLO-Ko-BEx" secondAttribute="centerY" id="7RO-qG-bPO"/>
-                                            <constraint firstItem="asd-Sj-6m0" firstAttribute="leading" secondItem="dLO-Ko-BEx" secondAttribute="leading" constant="8" id="BeI-Yi-rOI"/>
-                                            <constraint firstItem="asd-Sj-6m0" firstAttribute="top" secondItem="dLO-Ko-BEx" secondAttribute="top" constant="12" id="OY8-kJ-Vso"/>
-                                            <constraint firstAttribute="trailing" secondItem="asd-Sj-6m0" secondAttribute="trailing" constant="8" id="mAV-TV-oLk"/>
+                                            <constraint firstItem="LMu-5O-o9h" firstAttribute="leading" secondItem="dLO-Ko-BEx" secondAttribute="leading" constant="8" id="L47-PQ-byt"/>
+                                            <constraint firstAttribute="bottom" secondItem="raV-jm-PNg" secondAttribute="bottom" constant="8" id="NgS-rG-Zwl"/>
+                                            <constraint firstItem="7TP-X8-yTZ" firstAttribute="leading" secondItem="dLO-Ko-BEx" secondAttribute="leading" constant="8" id="TH1-3y-Xje"/>
+                                            <constraint firstItem="raV-jm-PNg" firstAttribute="top" secondItem="LMu-5O-o9h" secondAttribute="bottom" constant="8" id="Xdn-hh-8RY"/>
+                                            <constraint firstItem="7TP-X8-yTZ" firstAttribute="top" secondItem="dLO-Ko-BEx" secondAttribute="top" constant="8" id="cgk-W0-stp"/>
+                                            <constraint firstItem="raV-jm-PNg" firstAttribute="centerX" secondItem="dLO-Ko-BEx" secondAttribute="centerX" id="d4U-sf-BKJ"/>
+                                            <constraint firstAttribute="trailing" secondItem="LMu-5O-o9h" secondAttribute="trailing" constant="8" id="g02-Ji-O7I"/>
+                                            <constraint firstItem="LMu-5O-o9h" firstAttribute="top" secondItem="7TP-X8-yTZ" secondAttribute="bottom" constant="8" id="jgX-k6-9ru"/>
+                                            <constraint firstAttribute="trailing" secondItem="7TP-X8-yTZ" secondAttribute="trailing" constant="8" id="mf4-il-qq2"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="m4R-cN-QaR">
-                                        <rect key="frame" x="0.0" y="0.0" width="290" height="70"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="290" height="84"/>
                                     </customView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstAttribute="height" constant="84" id="56D-tP-jfI"/>
                                     <constraint firstAttribute="trailing" secondItem="dLO-Ko-BEx" secondAttribute="trailing" id="DYF-VG-NZx"/>
                                     <constraint firstItem="m4R-cN-QaR" firstAttribute="leading" secondItem="1ff-Zq-eZn" secondAttribute="leading" id="E7Z-e7-MIu"/>
                                     <constraint firstAttribute="bottom" secondItem="m4R-cN-QaR" secondAttribute="bottom" id="KlV-Fj-Eo1"/>
@@ -1468,14 +1486,17 @@ CA
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="subscriptionButtonsView" destination="m4R-cN-QaR" id="LLW-bv-2ac"/>
-                        <outlet property="subscriptionStatusLabel" destination="asd-Sj-6m0" id="ehJ-oi-tSJ"/>
-                        <outlet property="subscriptionStatusView" destination="dLO-Ko-BEx" id="Jjw-fr-8WK"/>
+                        <outlet property="buttonsView" destination="m4R-cN-QaR" id="LLW-bv-2ac"/>
+                        <outlet property="cancelButton" destination="raV-jm-PNg" id="cIf-Ny-umv"/>
+                        <outlet property="dateLabel" destination="7TP-X8-yTZ" id="3W1-cO-sWe"/>
+                        <outlet property="height" destination="56D-tP-jfI" id="868-F6-yrH"/>
+                        <outlet property="statusLabel" destination="LMu-5O-o9h" id="AHB-Ao-VNj"/>
+                        <outlet property="statusView" destination="dLO-Ko-BEx" id="Jjw-fr-8WK"/>
                     </connections>
                 </viewController>
                 <customObject id="xup-2U-YzY" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-95" y="1643"/>
+            <point key="canvasLocation" x="-95" y="1648"/>
         </scene>
     </scenes>
     <resources>

@@ -377,9 +377,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		if  gDraggedZone == nil ||
 				dropOnCrumbButtonMaybe(iGesture) ||
 				dropOnWidgetMaybe(iGesture) {
+			cleanupAfterDrag()
 
 			if  iGesture?.isDone ?? false {
-				cleanupAfterDrag()
 				gSignal([.spPreferences, .spCrumbs]) // so color well gets updated
 				restartGestureRecognition()
 			}

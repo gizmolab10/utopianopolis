@@ -14,38 +14,35 @@ var gIsSubscriptionEnabled : Bool { return gSubscription.zToken?.state != .sExpi
 class ZSubscription: NSObject {
 
 	@discardableResult func update() -> ZSubscriptionState {  // called once a minute from timer started in setup above
-		if  let        token  = zToken {
-			if  !gUserIsExempt,
-				let  changed  = token.newToken { // non-nil means changed
-				zToken        = changed
-				let newState  = changed.state
-				if  newState == .sExpired {
-					showExpirationAlert()                // license timed out, show expired alert
-				}
-
-				return newState
-			}
-
+		if  let token  = zToken {
 			return token.state
 		}
 
 		return .sWaiting
 	}
 
+	var acquired: String {
+		if  let z = zToken {
+			let d = z.date.easyToReadDateTime
+
+			return "Acquired \(d)"
+		}
+
+		return kEmpty
+	}
+
 	var status: String {
 		if  let z = zToken {
 			let s = z.state.title
 			let t = z.type.duration
-			let d = z.date.easyToReadDateTime
-			let r = "Acquired \(d)\n\n\(t)"
 			if  z.state == .sSubscribed {
-				return r
+				return t
 			}
 
-			return "\(r) (\(s))"
+			return "\(t) (\(s))"
 		}
 
-		return "Unsubscribed"
+		return kTryThenBuy
 	}
 
 	var zToken: ZToken? {
@@ -68,7 +65,7 @@ class ZSubscription: NSObject {
 		gAlerts.showAlert("Please forgive my interruption", [
 							"I hope you are enjoying Seriously.", [
 								"I also hope you can appreciate the loving work I've put into it and my wish to generate an income by it.",
-								"Because I do see the value of letting you try before you buy,",
+								"Because I do see the value of letting you \(kTryThenBuy),",
 								"this alert is being shown to you only after a free period of use.",
 								"During this period all features of Seriously have been enabled."].joined(separator: " "), [
 									"If you wish to continue using Seriously for free,",
@@ -120,7 +117,7 @@ enum ZSubscriptionState: Int {
 			case .sExpired:    return "expired"
 			case .sDeferred:   return "deferred"
 			case .sSubscribed: return "subscribed"
-			default:           return "try before you buy"
+			default:           return kTryThenBuy
 		}
 	}
 
@@ -132,26 +129,6 @@ struct ZToken {
 	var  type: ZProductType
 	var state: ZSubscriptionState
 	var value: String?
-
-	var newState: ZSubscriptionState {
-		let  duration = Int(Date().timeIntervalSince(date))
-		let threshold = type.threshold
-		let    isGood = duration < threshold || gUserIsExempt
-		return isGood ? .sWaiting : .sExpired
-	}
-
-	var newToken: ZToken? {
-		let   nState = newState
-		let changed  = nState != state
-		if  changed  {
-			var    t = self
-			t.state  = nState
-
-			return t         // state changed, reconstruct token
-		}
-
-		return nil
-	}
 
 	var asString: String {
 		var array = StringsArray()

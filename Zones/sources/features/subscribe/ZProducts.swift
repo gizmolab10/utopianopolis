@@ -39,7 +39,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	func purchaseProduct(at index: Int) {    // send purchase request
 		if  let product = productAt(index) {
 			let payment = SKMutablePayment(product: product)
-			payment.simulatesAskToBuyInSandbox = true
+			payment.simulatesAskToBuyInSandbox = false
 
 			queue.add(payment) // always fails!
 
