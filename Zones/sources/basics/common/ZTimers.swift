@@ -94,8 +94,8 @@ class ZTimers: NSObject {
 			var   waitFor = 1.0                                   // one second
 
 			switch tid {
-				case .tLicense:                 waitFor =  1.0
 				case .tSync:                    waitFor = 15.0    // seconds
+				case .tLicense:                 waitFor = 60.0
 				case .tRecount:                 waitFor = 60.0    // one minute
 				case .tStartup, .tMouseZone:    waitFor = kOneTimerInterval
 				default:                        break
@@ -111,7 +111,7 @@ class ZTimers: NSObject {
 				case .tCloudAvailable:          block = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
 				case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.invokeDeferralMaybe(iTimer) }
 				case .tStartup:                 block = { iTimer in gStartupController?.fullStartupUpdate() }
-				case .tLicense:                 block = { iTimer in gSubscription.update() }
+				case .tLicense:                 block = { iTimer in gProducts.updateSubscriptionStatus() }
 				default:                        break
 			}
 

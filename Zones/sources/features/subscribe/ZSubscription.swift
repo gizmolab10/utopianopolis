@@ -13,38 +13,6 @@ var gIsSubscriptionEnabled : Bool { return gSubscription.zToken?.state != .sExpi
 
 class ZSubscription: NSObject {
 
-	@discardableResult func update() -> ZSubscriptionState {  // called once a minute from timer started in setup above
-		if  let token  = zToken {
-			return token.state
-		}
-
-		return .sWaiting
-	}
-
-	var acquired: String {
-		if  let z = zToken {
-			let d = z.date.easyToReadDateTime
-
-			return "Acquired \(d)"
-		}
-
-		return kEmpty
-	}
-
-	var status: String {
-		if  let z = zToken {
-			let s = z.state.title
-			let t = z.type.duration
-			if  z.state == .sSubscribed {
-				return t
-			}
-
-			return "\(t) (\(s))"
-		}
-
-		return kTryThenBuy
-	}
-
 	var zToken: ZToken? {
 		get { return licenseToken?.asZToken }
 		set { licenseToken = newValue?.asString }
@@ -58,28 +26,6 @@ class ZSubscription: NSObject {
 			}
 
 			return nil
-		}
-	}
-
-	func showExpirationAlert() {
-		gAlerts.showAlert("Please forgive my interruption", [
-							"I hope you are enjoying Seriously.", [
-								"I also hope you can appreciate the loving work I've put into it and my wish to generate an income by it.",
-								"Because I do see the value of letting you \(kTryThenBuy),",
-								"this alert is being shown to you only after a free period of use.",
-								"During this period all features of Seriously have been enabled."].joined(separator: " "), [
-									"If you wish to continue using Seriously for free,",
-									"some features [editing notes, search and print] will be disabled.",
-									"If these features are important to you,",
-									"you can retain them by purchasing a license."].joined(separator: " ")].joined(separator: "\n\n"),
-						  "Purchase a subscription",
-						  "No thanks, the limited features are perfect") { status in
-			if  status              == .sYes {
-				gShowDetailsView     = true
-				gShowMySubscriptions = false
-
-				gDetailsController?.showViewFor(.vSubscribe)
-			}
 		}
 	}
 
@@ -98,69 +44,6 @@ class ZSubscription: NSObject {
 
 	func purchaseFailed(_ error: Error?) {
 		noop()
-	}
-
-}
-
-// MARK:- state and tokens
-// MARK:-
-
-enum ZSubscriptionState: Int {
-
-	case sExpired    = -1
-	case sWaiting    =  0
-	case sDeferred   =  1
-	case sSubscribed =  2
-
-	var title: String {
-		switch self {
-			case .sExpired:    return "expired"
-			case .sDeferred:   return "deferred"
-			case .sSubscribed: return "subscribed"
-			default:           return kTryThenBuy
-		}
-	}
-
-}
-
-struct ZToken {
-
-	var  date: Date
-	var  type: ZProductType
-	var state: ZSubscriptionState
-	var value: String?
-
-	var asString: String {
-		var array = StringsArray()
-
-		array.append("\(date.timeIntervalSinceReferenceDate)")
-		array.append("\(state.rawValue)")
-		array.append("\(type .rawValue)")
-		array.append(value ?? "-")
-
-		return array.joined(separator: kColonSeparator)
-	}
-
-}
-
-extension String {
-
-	var asZToken: ZToken? {
-		let array           = components(separatedBy: kColonSeparator)
-		if  array.count     > 2,
-			let   dateValue = Double(array[0]),
-			let  stateValue =    Int(array[1]) {
-			let   typeValue =        array[2]
-			let valueString =        array[3]
-			let        date = Date(timeIntervalSinceReferenceDate: dateValue)
-			let       state = ZSubscriptionState(rawValue: stateValue) ?? .sExpired
-			let        type = ZProductType      (rawValue:  typeValue) ?? .pFree
-			let       value : String? = valueString == "-" ? nil : valueString
-
-			return ZToken(date: date, type: type, state: state, value: value)
-		}
-
-		return nil
 	}
 
 }

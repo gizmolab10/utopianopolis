@@ -47,8 +47,8 @@ class ZSubscriptionController: ZGenericController {
 		height?     .constant =  gShowMySubscriptions ? 84.0 : CGFloat(rows) * 26.0 - 3.0
 
 		if  gShowMySubscriptions {
-			dateLabel?  .text = gSubscription.acquired
-			statusLabel?.text = gSubscription.status
+			dateLabel?  .text = gProducts.acquired
+			statusLabel?.text = gProducts.status
 		} else if rowsChanged {
 			rowsChanged = false
 			var prior: ZSubscriptionButton?

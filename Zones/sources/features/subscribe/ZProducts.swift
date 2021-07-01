@@ -10,12 +10,31 @@ import Foundation
 import StoreKit
 
 let gProducts = ZProducts()
+var gIsSubscriptionEnabled : Bool { return gProducts.zToken?.state != .sExpired }
 
 class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SKPaymentTransactionObserver {
 
 	let        queue = SKPaymentQueue.default()
 	var     products = [SKProduct]()
 	var areAvailable = false
+	var     acquired : String { return zToken?.acquired ?? kEmpty }
+	var       status : String { return zToken?.status ?? kTryThenBuy }
+
+	var zToken: ZToken? {
+		get { return licenseToken?.asZToken }
+		set { licenseToken = newValue?.asString }
+	}
+
+	var licenseToken: String? {
+		set { newValue?.data(using: .utf8)?.storeFor(kSubscriptionToken) }
+		get {
+			if  let d = Data.loadFor(kSubscriptionToken) {
+				return String(decoding: d, as: UTF8.self)
+			}
+
+			return nil
+		}
+	}
 
 	func setup() {   // fetch product data
 		queue.add(self) // for paymentQueue callbacks
@@ -39,13 +58,36 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	func purchaseProduct(at index: Int) {    // send purchase request
 		if  let product = productAt(index) {
 			let payment = SKMutablePayment(product: product)
-			payment.simulatesAskToBuyInSandbox = false
 
 			queue.add(payment) // always fails!
+		}
+	}
 
-//			if  let type = product.type {
-//				gSubscription.zToken = ZToken(date: Date(), type: type, state: .sSubscribed, value: nil)
-//			}
+	func updateSubscriptionStatus() {
+		checkReceipt { [weak self] isSubscribed in
+			self?.areAvailable   = isSubscribed
+		}
+	}
+
+	func showExpirationAlert() {
+		gAlerts.showAlert("Please forgive my interruption", [
+							"I hope you are enjoying Seriously.", [
+								"I also hope you can appreciate the loving work I've put into it and my wish to generate an income by it.",
+								"Because I do see the value of letting you \(kTryThenBuy),",
+								"this alert is being shown to you only after a free period of use.",
+								"During this period all features of Seriously have been enabled."].joined(separator: " "), [
+									"If you wish to continue using Seriously for free,",
+									"some features [editing notes, search and print] will be disabled.",
+									"If these features are important to you,",
+									"you can retain them by purchasing a license."].joined(separator: " ")].joined(separator: "\n\n"),
+						  "Purchase a subscription",
+						  "No thanks, the limited features are perfect") { status in
+			if  status              == .sYes {
+				gShowDetailsView     = true
+				gShowMySubscriptions = false
+
+				gDetailsController?.showViewFor(.vSubscribe)
+			}
 		}
 	}
 
@@ -60,7 +102,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	}
 
 	func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
-		gSubscription.purchaseFailed(error)
+		purchaseFailed(error)
 	}
 
 	func paymentQueue(_ queue: SKPaymentQueue, shouldContinue transaction: SKPaymentTransaction, in newStorefront: SKStorefront) -> Bool {
@@ -76,29 +118,34 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 			if  let type = ZProductType(rawValue: payment.productIdentifier) {
 				switch transaction.transactionState {
 					case .purchasing:
-						gSubscription.purchaseStarted()
+						break
+//						purchaseStarted()
 					case .failed:
-						gSubscription.purchaseFailed(transaction.error)
+						purchaseFailed(transaction.error)
 						queue.finishTransaction(transaction)
 					case .purchased:
 						queue.finishTransaction(transaction)
 						updateSubscriptionStatus()
-						gSubscription.purchaseSucceeded(type: type, state: .sSubscribed, on: date)
+						purchaseSucceeded(type: type, state: .sSubscribed, on: date)
 					case .restored:
 						queue.finishTransaction(transaction)
 						updateSubscriptionStatus()
-						gSubscription.purchaseSucceeded(type: type, state: .sSubscribed, on: date)
+						purchaseSucceeded(type: type, state: .sSubscribed, on: date)
 					case .deferred:
-						gSubscription.purchaseSucceeded(type: type, state: .sDeferred,   on: date)
+						purchaseSucceeded(type: type, state: .sDeferred,   on: date)
 				}
 			}
 		}
 	}
 
-	func updateSubscriptionStatus() {
-		checkReceipt { [weak self] isSubscribed in
-			self?.areAvailable   = isSubscribed
-		}
+	func purchaseSucceeded(type: ZProductType, state: ZSubscriptionState, on date: Date?) {
+		zToken = ZToken(date: date ?? Date(), type: type, state: state, value: nil)
+
+		gSignal([.spSubscription])
+	}
+
+	func purchaseFailed(_ error: Error?) {
+		noop()
 	}
 
 	func loadReceipt() -> String? {
@@ -154,6 +201,9 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 
 }
 
+// MARK:- state and tokens
+// MARK:-
+
 extension SKProduct {
 
 	var type: ZProductType? { return ZProductType(rawValue: productIdentifier) }
@@ -200,6 +250,78 @@ enum ZProductType: String {
 			case .pLifetime: return "$64.99"
 			default:         return   "Free"
 		}
+	}
+
+}
+
+enum ZSubscriptionState: Int {
+
+	case sExpired    = -1
+	case sWaiting    =  0
+	case sDeferred   =  1
+	case sSubscribed =  2
+
+	var title: String {
+		switch self {
+			case .sExpired:    return "expired"
+			case .sDeferred:   return "deferred"
+			case .sSubscribed: return "subscribed"
+			default:           return kTryThenBuy
+		}
+	}
+
+}
+
+struct ZToken {
+
+	var     date: Date
+	var     type: ZProductType
+	var    state: ZSubscriptionState
+	var    value: String?
+	var acquired: String { return "Acquired \(date.easyToReadDateTime)" }
+
+	var asString: String {
+		var array = StringsArray()
+
+		array.append("\(date.timeIntervalSinceReferenceDate)")
+		array.append("\(state.rawValue)")
+		array.append("\(type .rawValue)")
+		array.append(value ?? "-")
+
+		return array.joined(separator: kColonSeparator)
+	}
+
+
+	var status: String {
+		let s = state.title
+		let t = type.duration
+		if  state == .sSubscribed {
+			return t
+		}
+
+		return "\(t) (\(s))"
+	}
+
+}
+
+extension String {
+
+	var asZToken: ZToken? {
+		let array           = components(separatedBy: kColonSeparator)
+		if  array.count     > 2,
+			let   dateValue = Double(array[0]),
+			let  stateValue =    Int(array[1]) {
+			let   typeValue =        array[2]
+			let valueString =        array[3]
+			let        date = Date(timeIntervalSinceReferenceDate: dateValue)
+			let       state = ZSubscriptionState(rawValue: stateValue) ?? .sExpired
+			let        type = ZProductType      (rawValue:  typeValue) ?? .pFree
+			let       value : String? = valueString == "-" ? nil : valueString
+
+			return ZToken(date: date, type: type, state: state, value: value)
+		}
+
+		return nil
 	}
 
 }
