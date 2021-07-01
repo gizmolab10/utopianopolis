@@ -25,7 +25,4 @@ class ZBreadcrumbsController: ZGenericController {
 		crumbsView?.setupAndRedraw()
 	}
 
-	func breadcrumbNearest(_ iGesture: ZGestureRecognizer?, forMap: Bool = true) -> (Bool, ZBreadcrumbButton, CGPoint)? {
-		return nil
-	}
 }

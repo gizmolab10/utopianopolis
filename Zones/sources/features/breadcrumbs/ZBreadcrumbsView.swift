@@ -27,16 +27,18 @@ class ZBreadcrumbsView : ZButtonsView {
 	}
 
 	func detectCrumb(_ iGesture: ZGestureRecognizer?) -> ZBreadcrumbButton? {
+		var detected: ZBreadcrumbButton?
 		if  let location = iGesture?.location(in: self), bounds.contains(location) {
 			for button in buttons {
+				button.highlight(false)
 				let rect = button.frame
 				if  rect.contains(location) {
-					return button as? ZBreadcrumbButton
+					detected = button as? ZBreadcrumbButton
 				}
 			}
 		}
 
-		return nil
+		return detected
 	}
 
 	func fitBreadcrumbsToWindow() {

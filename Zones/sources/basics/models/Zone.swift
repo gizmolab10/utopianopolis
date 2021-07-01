@@ -570,6 +570,30 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	var crumbFillColor: ZColor { // not used
+		let visible = ancestralPath.contains(gHere)
+
+		if  gColorfulMode {
+			return visible ? gActiveColor .lighter(by: 4.0) : gAccentColor
+		} else if  gIsDark {
+			return visible ? kDarkGrayColor.darker(by: 6.0) : kDarkGrayColor.darker(by: 4.0)
+		} else {
+			return visible ? kDarkGrayColor.darker(by: 3.0) : kLighterGrayColor
+		}
+	}
+
+	var crumbBorderColor: ZColor { // not used
+		let visible = ancestralPath.contains(gHere)
+
+		if  gColorfulMode {
+			return visible ? gActiveColor .lighter(by: 4.0) : gAccentColor
+		} else if  gIsDark {
+			return visible ? kDarkGrayColor.darker(by: 6.0) : kDarkGrayColor.darker(by: 4.0)
+		} else {
+			return visible ? kDarkGrayColor.darker(by: 3.0) : kLighterGrayColor
+		}
+	}
+
 	func alterAttribute(_ type: ZoneAttributeType, remove: Bool = false) {
 		var attributes = zoneAttributes ?? kEmpty
 

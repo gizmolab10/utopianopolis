@@ -373,8 +373,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func dropOnCrumbButtonMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
-		if  let   drop = gBreadcrumbsView?.detectCrumb(iGesture) {
-			gDropCrumb = drop
+		if  let  dragged = gDraggedZone, !dragged.isARoot,
+			let    crumb = gBreadcrumbsView?.detectCrumb(iGesture),
+			crumb.zone != dragged.parentZone,
+			crumb.zone != dragged {
+			crumb.highlight(true)
 
 			return true
 		}
@@ -383,7 +386,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
     func dropOnWidgetMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
-        if  let draggedZone        = gDraggedZone {
+        if  let draggedZone        = gDraggedZone, !draggedZone.isARoot {
             if  draggedZone.userCanMove,
 				let (inBigMap, zone, location) = widgetHit(by: iGesture, locatedInBigMap: isBigMap),
 				draggedZone       != zone,
@@ -514,7 +517,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gDragRelation = nil
 		gDropIndices  = nil
 		gDropWidget   = nil
-		gDropCrumb    = nil
 		gDragPoint    = nil
 
 		gDragView?.setNeedsDisplay() // erase drag: line and dot

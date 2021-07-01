@@ -44,7 +44,6 @@ var             gDragRelation:         ZRelation?
 var             gCurrentTrait:            ZTrait?
 var              gDropIndices: NSMutableIndexSet?
 var               gDropWidget:        ZoneWidget?
-var                gDropCrumb: ZBreadcrumbButton?
 var                gDragPoint:           CGPoint?
 var                 gExpanded:      StringsArray?
 var              gDraggedZone:              Zone?
