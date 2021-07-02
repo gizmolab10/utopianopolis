@@ -7,25 +7,28 @@
 //
 
 import Foundation
+import CryptoKit
 import StoreKit
 
 let gProducts = ZProducts()
-var gIsSubscriptionEnabled : Bool { return gProducts.zToken?.state != .sExpired }
 
 class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SKPaymentTransactionObserver {
 
-	let        queue = SKPaymentQueue.default()
-	var     products = [SKProduct]()
-	var areAvailable = false
-	var     acquired : String { return zToken?.acquired ?? kEmpty }
-	var       status : String { return zToken?.status ?? kTryThenBuy }
+	let    queue = SKPaymentQueue.default()
+	var products = [SKProduct]()
+	var acquired : String { return zToken?.acquired ?? kEmpty }
+	var   status : String { return zToken?.status   ?? kTryThenBuy }
 
-	var zToken: ZToken? {
-		get { return licenseToken?.asZToken }
-		set { licenseToken = newValue?.asString }
+	var hasEnabledSubscription: Bool {
+		return zToken?.state != .sExpired
 	}
 
-	var licenseToken: String? {
+	var zToken: ZToken? {
+		get { return zTokenString?.asZToken }
+		set { zTokenString = newValue?.asString }
+	}
+
+	var zTokenString: String? {
 		set { newValue?.data(using: .utf8)?.storeFor(kSubscriptionToken) }
 		get {
 			if  let d = Data.loadFor(kSubscriptionToken) {
@@ -36,15 +39,27 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 		}
 	}
 
-	func setup() {   // fetch product data
-		queue.add(self) // for paymentQueue callbacks
-		queue.restoreCompletedTransactions()
-		updateSubscriptionStatus()
-		fetchProducts()
+	var currentReceipt: String? {
+		if  let  receiptUrl = Bundle.main.appStoreReceiptURL,
+			let receiptData = try? Data(contentsOf: receiptUrl) {
+			return receiptData.base64EncodedString()
+		}
+
+		return nil
 	}
 
 	func teardown() {
 		queue.remove(self)
+	}
+
+	func setup() {   // fetch product data
+		queue.add(self) // for paymentQueue callbacks
+		queue.restoreCompletedTransactions()
+		fetchProducts()
+	}
+
+	func updateForSubscriptionChange() { // called every hour by a timer started in startup
+		// examine newly arrived data
 	}
 
 	func fetchProducts() {
@@ -60,12 +75,6 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 			let payment = SKMutablePayment(product: product)
 
 			queue.add(payment) // always fails!
-		}
-	}
-
-	func updateSubscriptionStatus() {
-		checkReceipt { [weak self] isSubscribed in
-			self?.areAvailable   = isSubscribed
 		}
 	}
 
@@ -98,7 +107,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 		products = response.products
 		gSubscriptionController?.rowsChanged = true
 
-		gSignal([.spSubscription])
+		gSignal([.spSubscription])                 // update subscription controller
 	}
 
 	func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
@@ -113,71 +122,44 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 
 	func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions: [SKPaymentTransaction]) {
 		for transaction in updatedTransactions {
-			let  payment = transaction.payment
-			let     date = transaction.transactionDate
-			if  let type = ZProductType(rawValue: payment.productIdentifier) {
-				switch transaction.transactionState {
-					case .purchasing:
-						break
-//						purchaseStarted()
-					case .failed:
-						purchaseFailed(transaction.error)
-						queue.finishTransaction(transaction)
-					case .purchased:
-						queue.finishTransaction(transaction)
-						updateSubscriptionStatus()
-						purchaseSucceeded(type: type, state: .sSubscribed, on: date)
-					case .restored:
-						queue.finishTransaction(transaction)
-						updateSubscriptionStatus()
-						purchaseSucceeded(type: type, state: .sSubscribed, on: date)
-					case .deferred:
-						purchaseSucceeded(type: type, state: .sDeferred,   on: date)
+			let   payment = transaction.payment
+			let      date = transaction.transactionDate
+			if  let  type = ZProductType(rawValue: payment.productIdentifier) {
+				let state = transaction.transactionState
+
+				switch state {
+					case .deferred,
+						 .purchasing: break
+					default:          queue.finishTransaction(transaction)
+				}
+
+				switch state {
+					case .purchasing: purchaseStarted()
+					case .failed:     purchaseFailed(transaction.error)
+					case .deferred:   purchaseSucceeded(type: type, state: .sDeferred,   on: date)
+					default:          purchaseSucceeded(type: type, state: .sSubscribed, on: date, value: currentReceipt)
 				}
 			}
 		}
 	}
 
-	func purchaseSucceeded(type: ZProductType, state: ZSubscriptionState, on date: Date?) {
-		zToken = ZToken(date: date ?? Date(), type: type, state: state, value: nil)
+	func purchaseSucceeded(type: ZProductType, state: ZSubscriptionState, on date: Date?, value: String? = nil) {
+		zToken = ZToken(date: date ?? Date(), type: type, state: state, value: value)
 
 		gSignal([.spSubscription])
 	}
 
+	func purchaseStarted() {
+		print("purchaseStarted")
+	}
+
 	func purchaseFailed(_ error: Error?) {
-		noop()
-	}
-
-	func loadReceipt() -> String? {
-		if  let  receiptUrl = Bundle.main.appStoreReceiptURL,
-			let receiptData = try? Data(contentsOf: receiptUrl) {
-			return receiptData.base64EncodedString()
+		var suffix  = ""
+		if  let e   = error {
+			suffix  = ": \(e)"
 		}
 
-		return nil
-	}
-
-	func checkReceipt(_ onCompletion: @escaping (Bool) -> Void) {
-		guard let receipt = loadReceipt() else {
-			onCompletion(false)
-			return
-		}
-
-//		let sandboxURL = "https:sandbox.itunes.apple.com"
-
-//		let _ = Router.User.sendReceipt(receipt: receipt).request(baseUrl: sandboxURL).responseObject { (response: DataResponse<RTSubscriptionResponse>) in
-//			switch response.result {
-//				case .success(let value):
-//					guard let expirationDate = value.expirationDate,
-//						  let productId = value.productId else {completionHandler(false); return}
-//					self.expirationDate = expirationDate
-//					self.isTrialPurchased = value.isTrial
-//					self.purchasedProduct = ProductType(rawValue: productId)
-//					onCompletion(Date().timeIntervalSince1970 < expirationDate.timeIntervalSince1970)
-//				case .failure(let error):
-//					onCompletion(false)
-//			}
-//		}
+		print("purchaseFailed" + suffix)
 	}
 
 	// MARK:- internals
@@ -199,6 +181,56 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 		return type
 	}
 
+	// MARK:- receipts
+	// MARK:-
+
+	func validateCurrentReceipt(_ onCompletion: BoolClosure? = nil) {
+		if  let       receipt = currentReceipt {
+			let    sandboxURL = "sandbox.itunes.apple.com"
+			let productionURL = "buy.itunes.apple.com"
+
+			for baseURL in [productionURL, sandboxURL] {
+				if  let     url = URL(string: "https://\(baseURL)/verifyReceipt") {
+					let session = URLSession(configuration: .default)
+					let    dict = ["receipt-data": receipt, "password": kSubscriptionSecret] as [String : Any]
+					var request = URLRequest(url: url)
+					request.httpMethod = "POST"
+
+					do {
+						request.httpBody = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+					} catch {
+						print("ERROR: " + error.localizedDescription)
+					}
+
+					let task : URLSessionDataTask = session.dataTask(with: request) { data, response, error in
+						do {
+							let jsonData = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! NSDictionary
+							print(jsonData.allKeys)
+						} catch {
+							print("ERROR: " + error.localizedDescription)
+						}
+					}
+
+					task.resume()
+				}
+			}
+		}
+
+		//		let _ = Router.User.sendReceipt(receipt: receipt).request(baseUrl: sandboxURL).responseObject { (response: DataResponse<RTSubscriptionResponse>) in
+		//			switch response.result {
+		//				case .success(let value):
+		//					guard let expirationDate = value.expirationDate,
+		//						  let productId = value.productId else {completionHandler(false); return}
+		//					self.expirationDate = expirationDate
+		//					self.isTrialPurchased = value.isTrial
+		//					self.purchasedProduct = ProductType(rawValue: productId)
+		//					onCompletion(Date().timeIntervalSince1970 < expirationDate.timeIntervalSince1970)
+		//				case .failure(let error):
+		//					onCompletion(false)
+		//			}
+		//		}
+	}
+
 }
 
 // MARK:- state and tokens
@@ -212,13 +244,21 @@ extension SKProduct {
 
 enum ZProductType: String {
 	case     pFree = "com.seriously.promotion"    // missing?
-	case    pDaily = "com.seriously.daily"        // missing?
+	case    pDaily = "com.seriously.daily"
 	case   pAnnual = "com.seriously.annual"
 	case  pMonthly = "com.seriously.monthly"
-	case pLifetime = "com.seriously.lifetime"     // missing?
+	case pLifetime = "com.seriously.lifetime"
 
 	static var all: [ZProductType] {
 		return [.pFree, .pDaily, .pAnnual, .pMonthly, .pLifetime]
+	}
+
+	var isAutoRenew: Bool {
+		switch self {
+			case .pMonthly,
+				 .pAnnual: return true
+			default:       return false
+		}
 	}
 
 	var title: String { return "\(duration) (\(cost))" }
@@ -274,11 +314,11 @@ enum ZSubscriptionState: Int {
 
 struct ZToken {
 
-	var     date: Date
-	var     type: ZProductType
-	var    state: ZSubscriptionState
-	var    value: String?
-	var acquired: String { return "Acquired \(date.easyToReadDateTime)" }
+	var        date: Date
+	var        type: ZProductType
+	var       state: ZSubscriptionState
+	var       value: String?
+	var    acquired: String { return "Acquired \(date.easyToReadDateTime)" }
 
 	var asString: String {
 		var array = StringsArray()
@@ -291,15 +331,13 @@ struct ZToken {
 		return array.joined(separator: kColonSeparator)
 	}
 
-
 	var status: String {
-		let s = state.title
-		let t = type.duration
+		let time   = type.duration
 		if  state == .sSubscribed {
-			return t
+			return time
 		}
 
-		return "\(t) (\(s))"
+		return "\(time) (\(state.title))"
 	}
 
 }

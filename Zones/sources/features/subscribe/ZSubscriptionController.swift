@@ -42,26 +42,27 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	func update() {
-		statusView? .isHidden = !gShowMySubscriptions
-		buttonsView?.isHidden =  gShowMySubscriptions
-		height?     .constant =  gShowMySubscriptions ? 84.0 : CGFloat(rows) * 26.0 - 3.0
+		statusView?      .isHidden = !gShowMySubscriptions
+		buttonsView?     .isHidden =  gShowMySubscriptions
+		height?          .constant =  gShowMySubscriptions ? 84.0 : CGFloat(rows) * 26.0 - 3.0
 
 		if  gShowMySubscriptions {
-			dateLabel?  .text = gProducts.acquired
-			statusLabel?.text = gProducts.status
+			dateLabel?       .text = gProducts.acquired
+			statusLabel?     .text = gProducts.status
+//			cancelButton?.isHidden = !(gProducts.zToken?.type.isAutoRenew ?? false)
 		} else if rowsChanged {
 			rowsChanged = false
 			var prior: ZSubscriptionButton?
 			buttonsView?.removeAllSubviews()
 			for index in 0..<rows {
-				let        button = ZSubscriptionButton()
-				let          type = gProducts.typeFor(index)
-				button.action     = #selector(buttonAction)
-				button.bezelColor = gAccentColor
-				button.bezelStyle = .roundRect
-				button.title      = type.title
-				button.tag        = index
-				button.target     = self
+				let         button = ZSubscriptionButton()
+				let           type = gProducts.typeFor(index)
+				button.action      = #selector(buttonAction)
+				button.bezelColor  = gAccentColor
+				button.bezelStyle  = .roundRect
+				button.title       = type.title
+				button.tag         = index
+				button.target      = self
 
 				buttonsView?.addSubview(button)
 				button.layoutWithin(self, below: prior)
@@ -69,6 +70,10 @@ class ZSubscriptionController: ZGenericController {
 				prior             = button
 			}
 		}
+	}
+
+	@IBAction func handleCancelAction(button: ZButton) {
+		gProducts.validateCurrentReceipt()
 	}
 
 	@objc func buttonAction(button: ZSubscriptionButton) {

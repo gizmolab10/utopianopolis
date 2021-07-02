@@ -1448,6 +1448,9 @@ CA
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
+                                                <connections>
+                                                    <action selector="handleCancelActionWithButton:" target="8OT-8w-eeZ" id="hGB-li-r4K"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>

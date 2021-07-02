@@ -566,7 +566,6 @@
 		A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbButton.swift; sourceTree = "<group>"; };
 		A7C344DF25FD4AA900ACB6A3 /* ZTooltipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTooltipButton.swift; sourceTree = "<group>"; };
 		A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssay.swift; sourceTree = "<group>"; };
-		A7CC539D267BE3C400370BC0 /* ZSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSubscription.swift; sourceTree = "<group>"; };
 		A7CC53AC267C2A7F00370BC0 /* CryptoKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoKit.framework; path = System/Library/Frameworks/CryptoKit.framework; sourceTree = SDKROOT; };
 		A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSubscriptionController.swift; sourceTree = "<group>"; };
 		A7CF3203260D737B00285A03 /* ZHelpEssayGraphicalsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZHelpEssayGraphicalsController.swift; sourceTree = "<group>"; };
@@ -964,7 +963,6 @@
 			isa = PBXGroup;
 			children = (
 				A7D507CB2688F2BA001CEA9F /* ZProducts.swift */,
-				A7CC539D267BE3C400370BC0 /* ZSubscription.swift */,
 				A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */,
 			);
 			path = subscribe;
