@@ -144,8 +144,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	}
 
 	func purchaseSucceeded(type: ZProductType, state: ZSubscriptionState, on date: Date?, value: String? = nil) {
-		zToken = ZToken(date: date ?? Date(), type: type, state: state, value: value)
-
+		validateCurrentReceipt()
 		gSignal([.spSubscription])
 	}
 
@@ -190,45 +189,83 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 			let productionURL = "buy.itunes.apple.com"
 
 			for baseURL in [productionURL, sandboxURL] {
-				if  let     url = URL(string: "https://\(baseURL)/verifyReceipt") {
-					let session = URLSession(configuration: .default)
-					let    dict = ["receipt-data": receipt, "password": kSubscriptionSecret] as [String : Any]
-					var request = URLRequest(url: url)
-					request.httpMethod = "POST"
-
-					do {
-						request.httpBody = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-					} catch {
-						print("ERROR: " + error.localizedDescription)
-					}
-
-					let task : URLSessionDataTask = session.dataTask(with: request) { data, response, error in
-						do {
-							let jsonData = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! NSDictionary
-							print(jsonData.allKeys)
-						} catch {
-							print("ERROR: " + error.localizedDescription)
+				sendReceipt(receipt, to: baseURL) { responseDict in
+					if  let status  = (responseDict["status"] as? NSNumber)?.intValue {
+						if  status == 0 {
+							self.unravelReceiptDict(responseDict, receipt)
 						}
 					}
-
-					task.resume()
 				}
 			}
 		}
+	}
 
-		//		let _ = Router.User.sendReceipt(receipt: receipt).request(baseUrl: sandboxURL).responseObject { (response: DataResponse<RTSubscriptionResponse>) in
-		//			switch response.result {
-		//				case .success(let value):
-		//					guard let expirationDate = value.expirationDate,
-		//						  let productId = value.productId else {completionHandler(false); return}
-		//					self.expirationDate = expirationDate
-		//					self.isTrialPurchased = value.isTrial
-		//					self.purchasedProduct = ProductType(rawValue: productId)
-		//					onCompletion(Date().timeIntervalSince1970 < expirationDate.timeIntervalSince1970)
-		//				case .failure(let error):
-		//					onCompletion(false)
-		//			}
-		//		}
+	func sendReceipt(_ receipt: String, to baseURL: String, _ onCompletion: ZDictionaryClosure? = nil) {
+		if  let     url = URL(string: "https://\(baseURL)/verifyReceipt") {
+			let session = URLSession(configuration: .default)
+			let    dict = ["receipt-data": receipt, "password": kSubscriptionSecret] as [String : Any]
+			var request = URLRequest(url: url)
+			request.httpMethod = "POST"
+
+			do {
+				request.httpBody = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+			} catch {
+				print("ERROR: " + error.localizedDescription)
+			}
+
+			let task : URLSessionDataTask = session.dataTask(with: request) { data, response, error in
+				do {
+					let jsonDict = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! ZStringAnyDictionary
+
+					onCompletion?(jsonDict)
+
+				} catch {
+					print("ERROR: " + error.localizedDescription)
+				}
+			}
+
+			task.resume()
+		}
+	}
+
+	func unravelReceiptDict(_ dict: ZStringAnyDictionary, _ receipt: String) {
+		guard let          t = zToken,
+			let            i = dict.transactionID,
+			t.transactionID == i else {
+			zToken           = dict.createZToken(receipt)
+
+			return
+		}
+	}
+
+}
+
+extension ZStringAnyDictionary {
+
+	var transactionID: String? { return inAppDict?["original_transaction_id"] as? String }
+
+	var inAppDict: ZStringAnyDictionary? {
+		if  let  receipt =    self["receipt"]   as? ZStringAnyDictionary,
+			let bundleID = receipt["bundle_id"] as? String, bundleID == "com.seriously.mac",
+			let    inApp = receipt["in_app"]    as? [ZStringAnyDictionary], inApp.count > 0 {
+			return inApp[0]
+		}
+
+		return nil
+	}
+
+	func createZToken(_ receipt: String) -> ZToken? {
+		if  let        dict = inAppDict,
+			let   productID = dict["product_id"] as? String,
+			let productType = ZProductType(rawValue: productID),
+			let  dateString = dict["original_purchase_date_ms"] as? String,
+			let   dateValue = Double(dateString) {
+			let receiptDate = Date(timeIntervalSince1970: dateValue / 1000.0)
+
+			return ZToken(date: receiptDate, type: productType, state: .sSubscribed, transactionID: transactionID, value: receipt)
+		}
+
+		return nil
 	}
 
 }
@@ -314,11 +351,12 @@ enum ZSubscriptionState: Int {
 
 struct ZToken {
 
-	var        date: Date
-	var        type: ZProductType
-	var       state: ZSubscriptionState
-	var       value: String?
-	var    acquired: String { return "Acquired \(date.easyToReadDateTime)" }
+	var          date : Date
+	var          type : ZProductType
+	var         state : ZSubscriptionState
+	var transactionID : String?
+	var         value : String?
+	var      acquired : String { return "Acquired \(date.easyToReadDateTime)" }
 
 	var asString: String {
 		var array = StringsArray()
@@ -326,7 +364,8 @@ struct ZToken {
 		array.append("\(date.timeIntervalSinceReferenceDate)")
 		array.append("\(state.rawValue)")
 		array.append("\(type .rawValue)")
-		array.append(value ?? "-")
+		array.append(transactionID ?? "-")
+		array.append(value         ?? "-")
 
 		return array.joined(separator: kColonSeparator)
 	}
@@ -346,17 +385,19 @@ extension String {
 
 	var asZToken: ZToken? {
 		let array           = components(separatedBy: kColonSeparator)
-		if  array.count     > 2,
+		if  array.count     > 4,
 			let   dateValue = Double(array[0]),
 			let  stateValue =    Int(array[1]) {
 			let   typeValue =        array[2]
-			let valueString =        array[3]
+			let    idString =        array[3]
+			let valueString =        array[4]
 			let        date = Date(timeIntervalSinceReferenceDate: dateValue)
 			let       state = ZSubscriptionState(rawValue: stateValue) ?? .sExpired
 			let        type = ZProductType      (rawValue:  typeValue) ?? .pFree
 			let       value : String? = valueString == "-" ? nil : valueString
+			let     xtranID : String? = idString == "-" ? nil : idString
 
-			return ZToken(date: date, type: type, state: state, value: value)
+			return ZToken(date: date, type: type, state: state, transactionID: xtranID, value: value)
 		}
 
 		return nil
