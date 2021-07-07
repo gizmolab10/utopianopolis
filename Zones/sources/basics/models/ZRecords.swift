@@ -802,7 +802,7 @@ class ZRecords: NSObject {
 			atArrival()
 		} else if zone.isInSmallMap {   // state 3
 			finishAndGrabHere()
-		} else if NOBOOKMARK {             // state 4
+		} else if NOBOOKMARK {          // state 4
 			gRecents.refocus {
 				atArrival()
 			}

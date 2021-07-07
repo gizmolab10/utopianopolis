@@ -39,15 +39,6 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 		}
 	}
 
-	var currentReceipt: String? {
-		if  let  receiptUrl = Bundle.main.appStoreReceiptURL,
-			let receiptData = try? Data(contentsOf: receiptUrl) {
-			return receiptData.base64EncodedString()
-		}
-
-		return nil
-	}
-
 	func teardown() {
 		queue.remove(self)
 	}
@@ -96,6 +87,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 				gShowMySubscriptions = false
 
 				gDetailsController?.showViewFor(.vSubscribe)
+				gSignal([.spSubscription, .sDetails])
 			}
 		}
 	}
@@ -136,20 +128,32 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 				switch state {
 					case .purchasing: purchaseStarted()
 					case .failed:     purchaseFailed(transaction.error)
-					case .deferred:   purchaseSucceeded(type: type, state: .sDeferred,   on: date)
-					default:          purchaseSucceeded(type: type, state: .sSubscribed, on: date, value: currentReceipt)
+					case .deferred:   purchaseDeferred()
+					default:          purchaseSucceeded(type: type, state: .sSubscribed, on: date)
 				}
 			}
 		}
 	}
 
-	func purchaseSucceeded(type: ZProductType, state: ZSubscriptionState, on date: Date?, value: String? = nil) {
-		validateCurrentReceipt()
-		gSignal([.spSubscription])
+	func validateCurrentReceipt() {
+		gReceipt.validateForID(zToken?.transactionID) { token in
+			if  let  t = token {
+				self.zToken = t
+
+				gSignal([.spSubscription])
+			}
+		}
+	}
+
+	func purchaseSucceeded(type: ZProductType, state: ZSubscriptionState, on date: Date?) {
 	}
 
 	func purchaseStarted() {
 		print("purchaseStarted")
+	}
+
+	func purchaseDeferred() {
+		print("purchaseDeferred")
 	}
 
 	func purchaseFailed(_ error: Error?) {
@@ -178,94 +182,6 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 		}
 
 		return type
-	}
-
-	// MARK:- receipts
-	// MARK:-
-
-	func validateCurrentReceipt(_ onCompletion: BoolClosure? = nil) {
-		if  let       receipt = currentReceipt {
-			let    sandboxURL = "sandbox.itunes.apple.com"
-			let productionURL = "buy.itunes.apple.com"
-
-			for baseURL in [productionURL, sandboxURL] {
-				sendReceipt(receipt, to: baseURL) { responseDict in
-					if  let status  = (responseDict["status"] as? NSNumber)?.intValue {
-						if  status == 0 {
-							self.unravelReceiptDict(responseDict, receipt)
-						}
-					}
-				}
-			}
-		}
-	}
-
-	func sendReceipt(_ receipt: String, to baseURL: String, _ onCompletion: ZDictionaryClosure? = nil) {
-		if  let     url = URL(string: "https://\(baseURL)/verifyReceipt") {
-			let session = URLSession(configuration: .default)
-			let    dict = ["receipt-data": receipt, "password": kSubscriptionSecret] as [String : Any]
-			var request = URLRequest(url: url)
-			request.httpMethod = "POST"
-
-			do {
-				request.httpBody = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-			} catch {
-				print("ERROR: " + error.localizedDescription)
-			}
-
-			let task : URLSessionDataTask = session.dataTask(with: request) { data, response, error in
-				do {
-					let jsonDict = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! ZStringAnyDictionary
-
-					onCompletion?(jsonDict)
-
-				} catch {
-					print("ERROR: " + error.localizedDescription)
-				}
-			}
-
-			task.resume()
-		}
-	}
-
-	func unravelReceiptDict(_ dict: ZStringAnyDictionary, _ receipt: String) {
-		guard let          t = zToken,
-			let            i = dict.transactionID,
-			t.transactionID == i else {
-			zToken           = dict.createZToken(receipt)
-
-			return
-		}
-	}
-
-}
-
-extension ZStringAnyDictionary {
-
-	var transactionID: String? { return inAppDict?["original_transaction_id"] as? String }
-
-	var inAppDict: ZStringAnyDictionary? {
-		if  let  receipt =    self["receipt"]   as? ZStringAnyDictionary,
-			let bundleID = receipt["bundle_id"] as? String, bundleID == "com.seriously.mac",
-			let    inApp = receipt["in_app"]    as? [ZStringAnyDictionary], inApp.count > 0 {
-			return inApp[0]
-		}
-
-		return nil
-	}
-
-	func createZToken(_ receipt: String) -> ZToken? {
-		if  let        dict = inAppDict,
-			let   productID = dict["product_id"] as? String,
-			let productType = ZProductType(rawValue: productID),
-			let  dateString = dict["original_purchase_date_ms"] as? String,
-			let   dateValue = Double(dateString) {
-			let receiptDate = Date(timeIntervalSince1970: dateValue / 1000.0)
-
-			return ZToken(date: receiptDate, type: productType, state: .sSubscribed, transactionID: transactionID, value: receipt)
-		}
-
-		return nil
 	}
 
 }

@@ -214,7 +214,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				if  flags.isCommand && !flags.isOption {          // shift background
 					scrollEvent(move: state == .changed,  to: location)
 				} else if gIsDragging {
-					dragMaybeStopEvent(iGesture)                  // logic for drawing the drop dot, and for dropping dragged idea
+					dropMaybeGesture(iGesture)                    // logic for drawing the drop dot, and for dropping dragged idea
 				} else if state == .changed,                      // enlarge rubberband
 						  gRubberband.setRubberbandExtent(to: location) {
 					gRubberband.updateGrabs(in: mapView)
@@ -355,28 +355,22 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         priorScrollLocation = location
     }
 
-    // //////////////////////////////////////////
-    // next four are only called by controller //
-    // //////////////////////////////////////////
+	// MARK:- drop
+	// MARK:-
 
-	func drop(_ zone: Zone, at dropAt: Int? = nil, _ iGesture: ZGestureRecognizer?) {
-		if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
-			let   flags = gesture.modifiers {
-
-			zone.addGrabbedZones(at: dropAt, undoManager: undoManager, flags) {
-				gRelayoutMaps()
-				gSelecting.updateBrowsingLevel()
-				gSelecting.updateCousinList()
-				self.restartGestureRecognition()
-			}
+	func dropOnto(_ zone: Zone, at dropAt: Int? = nil) {
+		gDraggedZone?.moveZone(into: zone, at: dropAt) {
+			gSelecting.updateBrowsingLevel()
+			gSelecting.updateCousinList()
+			self.restartGestureRecognition()
+			gRelayoutMaps()
 		}
-
 	}
 
-	func dragMaybeStopEvent(_ iGesture: ZGestureRecognizer?) {
+	func dropMaybeGesture(_ iGesture: ZGestureRecognizer?) {
 		if  gDraggedZone == nil ||
-				dropOnCrumbButtonMaybe(iGesture) ||
-				dropOnWidgetMaybe(iGesture) {
+				dropMaybeOntoCrumbButton(iGesture) ||
+				dropMaybeOntoWidget(iGesture) {
 			cleanupAfterDrag()
 
 			if  iGesture?.isDone ?? false {
@@ -386,14 +380,14 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
 	}
 
-	func dropOnCrumbButtonMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
+	func dropMaybeOntoCrumbButton(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
 		if  let  dragged = gDraggedZone, !dragged.isARoot,
 			let    crumb = gBreadcrumbsView?.detectCrumb(iGesture),
 			crumb.zone != dragged.parentZone,
 			crumb.zone != dragged {
 
 			if  iGesture?.isDone ?? false {
-				drop(crumb.zone, iGesture)
+				dropOnto(crumb.zone)
 			} else {
 				crumb.highlight(true)
 			}
@@ -404,7 +398,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		return false
 	}
 
-    func dropOnWidgetMaybe(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
+    func dropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
         if  let draggedZone        = gDraggedZone, !draggedZone.isARoot {
             if  draggedZone.userCanMove,
 				let (inBigMap, zone, location) = widgetHit(by: iGesture, locatedInBigMap: isBigMap),
@@ -463,7 +457,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                         dropAt!     -= 1
                     }
 
-					drop(dropZone, at: dropAt, iGesture)
+					dropOnto(dropZone, at: dropAt)
 
 					return true
                 }

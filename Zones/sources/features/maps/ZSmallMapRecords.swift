@@ -213,8 +213,10 @@ class ZSmallMapRecords: ZRecords {
 		return false
 	}
 
-	var computedCurrentForMode : Zone? {
-		return gIsRecentlyMode ? computedCurrrentRecent : computedCurrrentFavorite
+	var isRecents : Bool { return databaseID == .recentsID }
+
+	var computedCurrent : Zone? {
+		return isRecents ? computedCurrrentRecent : computedCurrrentFavorite
 	}
 
 	@discardableResult func updateCurrentForMode() -> Zone? {
@@ -289,7 +291,7 @@ class ZSmallMapRecords: ZRecords {
 			cb.bookmarkTarget?.grab() // grab target in big map
 		} else if doNotGrab {
 			return false
-		} else if let bookmark = computedCurrentForMode {
+		} else if let bookmark = computedCurrent {
 			currentBookmark = bookmark
 
 			grab(bookmark)
@@ -298,7 +300,18 @@ class ZSmallMapRecords: ZRecords {
 
 			for bookmark in bookmarks {
 				if  bookmark.isInSmallMap {
-					gCurrentSmallMapRecords?.grab(bookmark)
+					if  bookmark.root == rootZone {
+						grab(bookmark)
+					} else {
+						gSmallMapMode = bookmark.databaseID == .recentsID ? .recent : .favorites
+
+						bookmark.grab()
+					}
+
+					gShowDetailsView = true
+
+					gDetailsController?.showViewFor(.vSmallMap)
+					gSignal([.spMain, .sDetails, .spSmallMap, .sRelayout])
 
 					return true
 				}
