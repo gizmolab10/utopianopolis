@@ -30,6 +30,39 @@ extension ZoneArray {
 		return names
 	}
 
+	var containsARoot : Bool {
+		return applyBooleanToZone { zone in
+			return zone.isARoot
+		}
+	}
+
+	var userCanMoveAll: Bool {
+		return applyBooleanToZone(requiresAll: true) { zone in
+			return zone.userCanMove
+		}
+	}
+
+	func applyBooleanToZone(requiresAll: Bool = false, closure: ZoneToBooleanClosure) -> Bool {
+		var result = false
+		for 	zone in self {
+			if  closure(zone) {
+				result = true
+
+				if !requiresAll {
+					break
+				}
+			}
+		}
+		return result
+	}
+
+	func anyParentMatches(_ zone: Zone) -> Bool {
+		return applyBooleanToZone(requiresAll: true) { zone in
+			return zone.parentZone == zone
+		}
+
+	}
+
 	func containsMatch(to other: AnyObject) -> Bool {
 		return containsCompare(with: other) { (a, b) in
 			if  let    aName  = (a as? Zone)?.recordName,
@@ -414,14 +447,14 @@ extension ZoneArray {
 	}
 
 	var forDetectingDuplicates: ZoneArray? {
-		var grabs     = ZoneArray()
-		if  count     > 1 {
+		var grabs          = ZoneArray()
+		if  count          > 1 {
 			return self
-		} else {                           // only one zone is grabbed
-			let grab  = self[0]
+		} else if count    > 0 {                           // only one zone is grabbed
+			let grab       = self[0]
 
-			if  grab.count > 1 {
-				grabs = grab.children
+			if  grab.count > 1 { // has children
+				grabs      = grab.children
 
 				grab.expand()
 			} else if let siblings = grab.parentZone?.children {

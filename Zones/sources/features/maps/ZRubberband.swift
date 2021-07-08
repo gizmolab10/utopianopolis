@@ -60,7 +60,8 @@ class ZRubberband: NSObject {
 
 	func rubberbandStartEvent(_ location: CGPoint, _ iGesture: ZGestureRecognizer?) {
 		rubberbandStart = location
-		gDraggedZone    = nil
+
+		gDraggedZones.removeAll()
 
 		// ///////////////////
 		// detect SHIFT key //

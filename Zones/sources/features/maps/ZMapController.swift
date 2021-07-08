@@ -28,29 +28,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 	var          priorScrollLocation = CGPoint.zero
-	let 	            clickManager = ZClickManager()
 	let                   rootWidget = ZoneWidget   ()
-
-	class ZClickManager : NSObject {
-
-		var lastClicked:   Zone?
-		var lastClickTime: Date?
-
-		func isDoubleClick(on iZone: Zone? = nil) -> Bool {
-			let  interval = lastClickTime?.timeIntervalSinceNow ?? -10.0
-			let    isFast = interval > -1.8
-			let  isRepeat = lastClicked == iZone
-			let  isDouble = isRepeat ? isFast : false
-			lastClickTime = Date()
-			lastClicked   = iZone
-
-			if  isDouble {
-				columnarReport("repeat: \(isRepeat)", "fast: \(isFast)")
-			}
-
-			return isDouble
-		}
-	}
 
     override func setup() {
 		gestureView                     = mapView // do this before calling super setup, which uses gesture view
@@ -190,7 +168,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	override func restartGestureRecognition() {
 		gestureView?.gestureHandler = self
-		gDraggedZone				= nil
+
+		gDraggedZones.removeAll()
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
@@ -229,8 +208,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					if  dot.isReveal {
 						cleanupAfterDrag()                        // no dragging
 						zone.revealDotClicked(flags)
-					} else if clickManager.isDoubleClick(on: zone) {
-						gHere = zone
 					} else {
 						dragStartEvent(dot, iGesture)             // start dragging a drag dot
 					}
@@ -295,7 +272,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 							} else { // else it is a drag dot
 								multiple = [.spCrumbs] // update selection level and breadcrumbs
 
-								zone.dragDotClicked(COMMAND, SHIFT, clickManager.isDoubleClick(on: zone))
+								zone.dragDotClicked(COMMAND, SHIFT)
 							}
 						}
 					}
@@ -305,9 +282,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					// click in background //
 					// //////////////////////
 
-					if  clickManager.isDoubleClick() {
-						recenter()
-					} else if !kIsPhone {	// default reaction to click on background: select here
+					if !kIsPhone {	// default reaction to click on background: select here
 						gHereMaybe?.grab()  // safe version of here prevent crash early in launch
 					}
                 } else if gIsEssayMode {
@@ -340,7 +315,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             
             if  let location  = iGesture?.location(in: dot) {
                 dot.dragStart = location
-                gDraggedZone  = zone
+				gDraggedZones = gSelecting.currentGrabs
             }
         }
     }
@@ -359,7 +334,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	// MARK:-
 
 	func dropOnto(_ zone: Zone, at dropAt: Int? = nil) {
-		gDraggedZone?.moveZone(into: zone, at: dropAt, orphan: true) {
+		gDraggedZones.moveIntoAndGrab(zone, at: dropAt, orphan: true) { flag in
 			gSelecting.updateBrowsingLevel()
 			gSelecting.updateCousinList()
 			self.restartGestureRecognition()
@@ -368,7 +343,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func dropMaybeGesture(_ iGesture: ZGestureRecognizer?) {
-		if  gDraggedZone == nil ||
+		if  gDraggedZones.isEmpty ||
 				dropMaybeOntoCrumbButton(iGesture) ||
 				dropMaybeOntoWidget(iGesture) {
 			cleanupAfterDrag()
@@ -381,10 +356,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func dropMaybeOntoCrumbButton(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
-		if  let  dragged = gDraggedZone, !dragged.isARoot,
-			let    crumb = gBreadcrumbsView?.detectCrumb(iGesture),
-			crumb.zone != dragged.parentZone,
-			crumb.zone != dragged {
+		if  !gDraggedZones.containsARoot,
+			let   crumb = gBreadcrumbsView?.detectCrumb(iGesture),
+			!gDraggedZones.contains(crumb.zone),
+			gDraggedZones.anyParentMatches(crumb.zone) {
 
 			if  iGesture?.isDone ?? false {
 				dropOnto(crumb.zone)
@@ -399,10 +374,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
     func dropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
-        if  let draggedZone        = gDraggedZone, !draggedZone.isARoot {
-            if  draggedZone.userCanMove,
+        if  !gDraggedZones.containsARoot {
+            if  gDraggedZones.userCanMoveAll,
 				let (inBigMap, zone, location) = widgetHit(by: iGesture, locatedInBigMap: isBigMap),
-				draggedZone       != zone,
+				!gDraggedZones.contains(zone),
 				var       dropZone = zone, !gSelecting.currentMapGrabs.contains(dropZone),
 				var     dropWidget = zone?.widget {
 				let dropController = dropWidget.controller
@@ -426,9 +401,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				let  lastDropIndex = dropZone.count
 				var          index = (useParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : (!gListsGrowDown ? 0 : lastDropIndex)
 				;            index = notDropHere ? index : relation != .below ? 0 : lastDropIndex
-				let      dragIndex = draggedZone.siblingIndex
+				let      dragIndex = gDraggedZones[0].siblingIndex
 				let      sameIndex = dragIndex == index || dragIndex == index - 1
-				let   dropIsParent = dropZone.children.contains(draggedZone)
+				let   dropIsParent = dropZone.children.contains(gDraggedZones)
 				let     spawnCycle = dropZone.spawnCycle
 				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0
                 let          prior = gDropWidget

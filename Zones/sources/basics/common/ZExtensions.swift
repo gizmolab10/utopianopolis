@@ -1028,6 +1028,17 @@ extension Array {
 		}
 	}
 
+	func applyBoolean(closure: AnyObjectToBooleanClosure) -> Bool {
+		var result = false
+		for element in self {
+			if  closure(element as AnyObject) {
+				result = true
+				break
+			}
+		}
+		return result
+	}
+
     func applyIntoString(closure: AnyToStringClosure) -> String {
         var separator = kEmpty
         var    string = kEmpty

@@ -376,7 +376,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var dropCycle: Bool {
-		if  let target = bookmarkTarget, let dragged = gDraggedZone, (target == dragged || target.spawnedBy(dragged) || target.children.contains(dragged)) {
+		if  let target = bookmarkTarget, (gDraggedZones.contains(target) || target.spawnedByAny(of: gDraggedZones)) {
 			return true
 		}
 
@@ -3144,11 +3144,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool, _ CLICKTWICE: Bool) {
-		if  COMMAND || (CLICKTWICE && isGrabbed) {
+	func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool) {
+		if  COMMAND {
 			grab() // narrow selection to just this one zone
 
-			if !(CLICKTWICE && self == gHere) {
+			if  self != gHere {
 				gRecents.focusOnGrab(.eSelected) {
 					gRelayoutMaps()
 				}

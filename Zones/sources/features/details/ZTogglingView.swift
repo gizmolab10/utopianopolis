@@ -112,21 +112,13 @@ class ZTogglingView: ZStackView {
     func update() {
 		titleButton?.zlayer.backgroundColor =     gAccentColor.cgColor
 		extraButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
-		let  title = titleButton?.alternateTitle ?? "gargleblaster"
-		let spacer = "  "
 
 		if  gIsReadyToShowUI {
 			switch identity {
-				case .vSmallMap:
-					if  let here = gSmallMapHere {
-						titleButton?.title = here.ancestralString
-					}
-				case .vData:
-					titleButton?.title = gDatabaseID.userReadableString.capitalized + " Data"
-				case .vSubscribe:
-					titleButton?.title = gSubscriptionController?.bannerTitle ?? kSubscribe
-				default:
-					titleButton?.title = spacer + title
+				case .vSmallMap:  titleButton?.title = gSmallMapHere?.ancestralString ?? "gerglagaster"
+				case .vData:      titleButton?.title = gDatabaseID.userReadableString.capitalized + " Data"
+				case .vSubscribe: titleButton?.title = gSubscriptionController?.bannerTitle ?? kSubscribe
+				default:          titleButton?.title = titleButton?.alternateTitle ?? "gargleblaster"
 			}
 		}
 
