@@ -34,7 +34,7 @@ let gBookmarks = ZBookmarks()
 	if  target.isBookmark {
 		bookmark = target.deepCopy(dbID: .mineID)                               // zone  is a bookmark, pass a deep copy
 	} else {
-		bookmark = Zone.uniqueZoneRenamed(target.zoneName, databaseID: .mineID) // zone not a bookmark, bookmark it
+		bookmark = Zone.uniqueZoneNamed(target.zoneName, databaseID: .mineID) // zone not a bookmark, bookmark it
 		bookmark.crossLink = target
 	}
 

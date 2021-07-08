@@ -89,7 +89,7 @@ class ZTrait: ZTraitAssets {
 	}
 
 	func deepCopy(dbID: ZDatabaseID) -> ZTrait {
-		let theCopy = ZTrait.uniqueTrait(recordName: gUniqueRecordName, in: databaseID)
+		let theCopy = ZTrait.uniqueTrait(recordName: gUniqueRecordName, in: dbID)
 
 		copyInto(theCopy)
 
@@ -98,6 +98,35 @@ class ZTrait: ZTraitAssets {
 
 	static func uniqueTrait(recordName: String?, in dbID: ZDatabaseID) -> ZTrait {
 		return uniqueZRecord(entityName: kTraitType, recordName: recordName, in: dbID) as! ZTrait
+	}
+
+	// MARK:- owner
+	// MARK:-
+
+	var ownerZone: Zone? {
+		if  _ownerZone == nil {
+			_ownerZone  = gRemoteStorage.maybeZoneForRecordName(ownerRID)
+		}
+
+		return _ownerZone
+	}
+
+	override var isAdoptable: Bool { return ownerRID != nil }
+
+	override func orphan() {
+		ownerZone?.setTraitText(nil, for: traitType)
+
+		ownerRID = nil
+	}
+
+	override func adopt(recursively: Bool = false) {
+		if  let      o = ownerZone,
+			let traits = ownerZone?.traits,
+			let      t = traitType, traits[t] == nil {
+			removeState(.needsAdoption)
+
+			o.addTrait(self)
+		}
 	}
 
 	// MARK:- text
@@ -179,32 +208,7 @@ class ZTrait: ZTraitAssets {
         }
     }
 
-    var ownerZone: Zone? {
-        if  _ownerZone == nil {
-            _ownerZone  = gRemoteStorage.maybeZoneForRecordName(ownerRID)
-        }
-
-        return _ownerZone
-    }
-
-	override var isAdoptable:          Bool { return ownerRID != nil }
 	override var matchesFilterOptions: Bool { return gFilterOption.contains(.fNotes) }
-
-    override func orphan() {
-        ownerZone?.setTraitText(nil, for: traitType)
-
-		ownerRID = nil
-    }
-
-	override func adopt(recursively: Bool = false) {
-        if  let      o = ownerZone,
-			let traits = ownerZone?.traits,
-			let      t = traitType, traits[t] == nil {
-			removeState(.needsAdoption)
-
-			o.addTrait(self)
-        }
-    }
 
 	func setCurrentTrait(during: Closure) {
 		let     prior = gCurrentTrait // can be called within recursive traversal of notes within notes, etc.

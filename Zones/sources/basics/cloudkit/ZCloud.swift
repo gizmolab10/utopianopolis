@@ -197,7 +197,7 @@ class ZCloud: ZRecords {
                 case .destroyID:   if self.destroyZone      != nil            { recurseNext(); return }
                 }
 
-				let root = Zone.uniqueZoneRenamed(name, recordName: recordName, databaseID: self.databaseID)
+				let root = Zone.uniqueZoneNamed(name, recordName: recordName, databaseID: self.databaseID)
 
 				if  rootID != .rootID {
 					root.directAccess = .eProgenyWritable

@@ -359,7 +359,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	// MARK:-
 
 	func dropOnto(_ zone: Zone, at dropAt: Int? = nil) {
-		gDraggedZone?.moveZone(into: zone, at: dropAt) {
+		gDraggedZone?.moveZone(into: zone, at: dropAt, orphan: true) {
 			gSelecting.updateBrowsingLevel()
 			gSelecting.updateCousinList()
 			self.restartGestureRecognition()

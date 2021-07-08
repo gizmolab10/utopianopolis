@@ -119,7 +119,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                    toolName() ->             String? { return clippedName }
 	func                   toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
 	func                     recount()                        { updateAllProgenyCounts() }
-	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.uniqueZoneRenamed(String(arc4random()), databaseID: dbID) }
+	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
 	var zonesWithNotes : ZoneArray {
@@ -352,7 +352,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func deepCopy(dbID: ZDatabaseID?) -> Zone {
 		let      id = dbID ?? databaseID
-		let theCopy = Zone.uniqueZoneRenamed("noname", databaseID: id)
+		let theCopy = Zone.uniqueZoneNamed("noname", databaseID: id)
 
 		copyInto(theCopy)
 		gBookmarks.addToReverseLookup(theCopy)   // only works for bookmarks
@@ -366,7 +366,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		for trait in traits.values {
-			theCopy.addTrait(trait.deepCopy(dbID: id))
+			let  traitCopy = trait.deepCopy(dbID: id)
+			traitCopy.dbid = id.identifier
+
+			theCopy.addTrait(traitCopy)
 		}
 
 		return theCopy
@@ -1138,7 +1141,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
 		if  databaseID != .favoritesID {
-			let newIdea = Zone.uniqueZoneRenamed(name, databaseID: databaseID)
+			let newIdea = Zone.uniqueZoneNamed(name, databaseID: databaseID)
 
 			parentZoneMaybe?.expand()
 			gTextEditor.stopCurrentEdit()
@@ -1156,7 +1159,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			ungrab()
-			addChildAndReorder(newIdea, at: iIndex, { onCompletion?(newIdea) } )
+			addChildAndReorder(newIdea, at: iIndex, { addedChild in onCompletion?(newIdea) } )
 		}
 	}
 
@@ -1301,13 +1304,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			self.orphan() // in case parent was restored
 		}
 
-		into.addChildAndReorder(self, at: iIndex)
+		into.addChildAndReorder(self, at: iIndex) { addedChild in
 
-		if !into.isInTrash { // so grab won't disappear
-			grab()
+			if !addedChild.isInTrash { // so grab won't disappear
+				addedChild.grab()
+			}
+
+			onCompletion?()
 		}
-
-		onCompletion?()
 	}
 
 	func restoreParentFrom(_ root: Zone?) {
@@ -2676,7 +2680,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		respectOrder()
 	}
 
-	func addChildAndReorder(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: Closure? = nil) {
+	func addChildAndReorder(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: ZoneClosure? = nil) {
 		if  isBookmark {
 			bookmarkTarget?.addChildAndReorder(iChild, at: iIndex, afterAdd)
 		} else if let child = iChild,
@@ -2723,14 +2727,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		// identify discrepancies and do what with them?
 	}
 
-	@discardableResult func addChildNoDuplicate(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: Closure? = nil) -> Int? {
+	@discardableResult func addChildNoDuplicate(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: ZoneClosure? = nil) -> Int? {
 		if  let        child = iChild {
 			let      toIndex = validIndex(from: iIndex)
 			child.parentZone = self
 
 			func finish() -> Int {
 				updateMaxLevel()
-				onCompletion?()
+				onCompletion?(child)
 
 				return toIndex
 			}
@@ -2763,9 +2767,19 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	@discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: Closure? = nil) -> Int? {
-		if  let        child = iChild {
+	@discardableResult func addChild(_ iChild: Zone? = nil, at iIndex: Int? = nil, updateCoreData: Bool = true, _ onCompletion: ZoneClosure? = nil) -> Int? {
+		if  var        child = iChild {
 			let      toIndex = validIndex(from: iIndex)
+
+			// prevent cross-db family relation
+
+			if  databaseID  != child.databaseID {
+				let        c = child
+				child        = child.deepCopy(dbID: databaseID)
+
+				c.deleteSelf(onCompletion: nil)
+			}
+
 			child.parentZone = self
 
 			if  toIndex < count {
@@ -2780,7 +2794,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			needCount()
 			updateMaxLevel()
-			onCompletion?()
+			onCompletion?(child)
 
 			return toIndex
 		}
@@ -3427,7 +3441,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return created
 	}
 
-	static func uniqueZoneRenamed(_ named: String?, recordName: String? = nil, databaseID: ZDatabaseID) -> Zone {
+	static func uniqueZoneNamed(_ named: String?, recordName: String? = nil, databaseID: ZDatabaseID) -> Zone {
 		let created           = uniqueZone(recordName: recordName, in: databaseID)
 		if  created.zoneName == nil || created.zoneName!.isEmpty {
 			created.zoneName  = named
