@@ -14,9 +14,9 @@ enum ZControlType {
 	case eToolTips
 }
 
-protocol ZTooltips {
+@objc protocol ZTooltips {
 
-	func updateTooltips()
+	@objc func updateTooltips()
 
 }
 
@@ -233,9 +233,22 @@ extension ZMapControlsView {
 
 }
 
-extension ZBreadcrumbButton {
+extension ZTooltipButton {
 
 	func updateTooltips() {
+		toolTip = nil
+
+		if  gShowToolTips,
+			let tagID = ZEssayButtonID(rawValue: tag) {
+			toolTip   = "\(kClickTo)\(tagID.tooltipString)"
+		}
+	}
+
+}
+
+extension ZBreadcrumbButton {
+
+	override func updateTooltips() {
 		toolTip = nil
 
 		if  gShowToolTips {

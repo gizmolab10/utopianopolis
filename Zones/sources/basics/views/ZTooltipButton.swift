@@ -8,9 +8,14 @@
 
 import Foundation
 
-class ZTooltipButton: ZButton {
+class ZTooltipButton: ZButton, ZTooltips {
 
 	var originalBackgroundColor: ZColor?
+
+	override var isEnabled: Bool {
+		get { return super.isEnabled }
+		set { super.isEnabled = newValue; updateTooltips() }
+	}
 
 	func updateTracking() { addTracking(for: frame) }
 

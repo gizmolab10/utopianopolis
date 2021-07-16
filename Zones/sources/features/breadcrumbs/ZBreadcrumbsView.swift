@@ -74,6 +74,7 @@ class ZBreadcrumbsView : ZButtonsView {
 			title.addAttributes(attributes, range: range)
 			button.showsBorderOnlyWhileMouseInside = true
 			button.setButtonType(.momentaryPushIn)
+			button.updateTracking()
 
 			if  let color = zone.color {
 				title.addAttributes([.foregroundColor : color], range: range)

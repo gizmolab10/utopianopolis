@@ -890,25 +890,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func updateButtonTitles() {
-		for tag in ZEssayButtonID.all {
-			var button :ZButton?
-			switch tag {
-				case .idBack:    button = backwardButton
-				case .idForward: button =  forwardButton
-				case .idCancel:  button =   cancelButton
-				case .idDelete:  button =   deleteButton
-				case .idTitles:  button =   titlesButton
-				case .idHide:    button =     hideButton
-				case .idSave:    button =     saveButton
-			}
-
-			if  button?.image == nil {
-				button?.title = tag.title
-			}
-		}
-	}
-
 	func toggleEssayTitles() {
 		gShowEssayTitles    = !gShowEssayTitles
 		var        location = selectedRange().location
@@ -930,22 +911,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				// Apple bug: subviews are not located where expected //
 				// ////////////////////////////////////////////////// //
 
-				var final = inspectorBar.subviews[0].frame
-				var prior = final
+				var rect           = inspectorBar.subviews[0].frame
+				var prior          = rect
 
 				for index in 1...target {
-					let subview      = inspectorBar.subviews[index]
-					let frame        = subview.frame
-					subview.isHidden = false
-					final.origin.x  += prior.size.width
-					final.origin.y   = 3.0
-					final.size       = frame.size
-					prior            = final
+					let tool       = inspectorBar.subviews[index]
+					tool.isHidden  = false
+					rect.size      = tool.frame.size
+					rect.origin.x += prior.size.width
+					rect.origin.y  = 3.0
+					prior          = rect
 				}
 
-				final.origin.x      += 5.0
+				rect.origin.x     += 25.0
 
-				return final
+				return rect
 			}
 
 			func buttonWith(_ title: String) -> ZTooltipButton {
@@ -968,14 +948,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				let        button = buttonWith(title)
 				frame       .size = button.bounds.size
 				frame             = frame.insetBy(dx: 12.0, dy: 6.0)
-				button   .toolTip = "\(kClickTo)\(tag.tooltipString)"
 				button       .tag = tag.rawValue
 				button     .frame = frame
 				button .isEnabled = false
-				button.isBordered = false
+				button.isBordered = true
 				button.bezelStyle = .texturedRounded
 
 				button.setButtonType(.momentaryChange)
+				button.updateTracking()
 
 				return button
 			}

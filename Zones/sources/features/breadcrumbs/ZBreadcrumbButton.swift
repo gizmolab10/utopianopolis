@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZBreadcrumbButton: ZButton, ZTooltips {
+class ZBreadcrumbButton: ZTooltipButton {
 
 	var         zone : Zone = gHere
 	var currentEvent : ZEvent?
