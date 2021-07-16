@@ -724,6 +724,12 @@ extension CGSize {
 		CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height)
 	}
 
+	func fractionPreservingRatio(_ delta: CGSize) -> CGSize {
+		let ratio = (width - delta.width) / width
+
+		return CGSize(width: ratio, height: ratio)
+	}
+
 	func offsetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
 		return CGSize(width: width + x, height: height + y)
 	}

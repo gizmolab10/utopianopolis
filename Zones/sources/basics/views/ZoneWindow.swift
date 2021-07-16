@@ -72,11 +72,12 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 		if  let         tools = inspectorBar?.subviews {
 			for index in 1..<tools.count {
 				let      tool = tools[index]
-				let     prior = tools[index - 1].frame.maxX
+				let     prior = tools[index - 1]
 				tool.isHidden = false
 
-				if  tool.frame.minX < prior {
-					tool.frame.origin.x = prior
+				tool.snp.makeConstraints { make in
+					make.left.equalTo(prior.snp.right).offset(5.0)
+					make.centerY.equalTo(prior)
 				}
 			}
 		}

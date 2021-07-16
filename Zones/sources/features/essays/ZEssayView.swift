@@ -442,6 +442,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		usesRuler            = true
 		isRulerVisible       = true
 		importsGraphics      = true
+		usesInspectorBar     = true
 		allowsImageEditing   = true
 		displaysLinkToolTips = true
 		textContainerInset   = NSSize(width: margin, height: margin)
@@ -937,11 +938,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					let frame        = subview.frame
 					subview.isHidden = false
 					final.origin.x  += prior.size.width
+					final.origin.y   = 3.0
 					final.size       = frame.size
-					prior            = frame
+					prior            = final
 				}
 
-				final.origin.x      += 70.0
+				final.origin.x      += 5.0
 
 				return final
 			}
@@ -1054,14 +1056,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			var    origin = rect.origin
 			var  fraction = size.fraction(delta)
 
-			if  COMMAND { // apply original ratio to fraction
-				var ratio = fraction.width
-
-				if  fraction.width < fraction.height {
-					ratio = fraction.height
-				}
-
-				fraction = CGSize(width: ratio, height: 1.0 / ratio)
+			if  COMMAND, [ZDirection.topLeft, ZDirection.bottomRight].contains(direction) { // apply original ratio to fraction
+				fraction  = size.fractionPreservingRatio(delta)
 			}
 
 			let     wGrow = size.width  * (1.0 - fraction.width)
