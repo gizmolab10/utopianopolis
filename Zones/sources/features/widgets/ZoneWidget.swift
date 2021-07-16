@@ -313,7 +313,7 @@ class ZoneWidget: ZView {
     }
 
     var outerHitRect: CGRect {
-		return CGRect(start: dragDot.convert(CGPoint.zero, to: self), extent: revealDot.convert(revealDot.bounds.extent, to: self))
+		return CGRect(start: dragDot.convert(.zero, to: self), extent: revealDot.convert(revealDot.bounds.extent, to: self))
     }
 
     var floatingDropDotRect: CGRect {

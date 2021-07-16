@@ -1637,7 +1637,7 @@ extension ZImage {
 
 extension NSTextAttachment {
 
-	var image: ZImage? {
+	var cellImage: ZImage? {
 		get {
 			if  let cell = attachmentCell as? NSTextAttachmentCell {
 				return cell.image
@@ -2454,7 +2454,7 @@ extension ZView {
 	}
 
 	func rectFromEvent(_ event: ZEvent) -> CGRect {
-		return convert(CGRect(origin: event.locationInWindow, size: CGSize.zero), from: nil)
+		return convert(CGRect(origin: event.locationInWindow, size: .zero), from: nil)
 	}
 
 	func analyze(_ object: AnyObject?) -> (Bool, Bool, Bool, Bool, Bool) {

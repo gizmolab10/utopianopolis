@@ -705,7 +705,7 @@ var gTestForUserActivity: Bool {
 	return false
 }
 
-var gLastLocation = NSPoint.zero
+var gLastLocation = CGPoint.zero
 
 func gThrowOnUserActivity() throws {
 	if  Thread.isMainThread {
@@ -771,19 +771,19 @@ func setPreferencesFloat(_ iFloat: CGFloat = 0.0, for key: String) {
 	setPreferencesString("\(iFloat)", for: key)
 }
 
-func getPreferencesSize(for key: String, defaultSize: CGSize = CGSize.zero) -> CGSize {
+func getPreferencesSize(for key: String, defaultSize: CGSize = .zero) -> CGSize {
     return getPreferenceString(for: key) { return NSStringFromSize(defaultSize) }?.cgSize ?? defaultSize
 }
 
-func setPreferencesSize(_ iSize: CGSize = CGSize.zero, for key: String) {
+func setPreferencesSize(_ iSize: CGSize = .zero, for key: String) {
     setPreferencesString(NSStringFromSize(iSize), for: key)
 }
 
-func getPreferencesRect(for key: String, defaultRect: CGRect = CGRect.zero) -> CGRect {
+func getPreferencesRect(for key: String, defaultRect: CGRect = .zero) -> CGRect {
     return getPreferenceString(for: key) { return NSStringFromRect(defaultRect) }?.cgRect ?? defaultRect
 }
 
-func setPreferencesRect(_ iRect: CGRect = CGRect.zero, for key: String) {
+func setPreferencesRect(_ iRect: CGRect = .zero, for key: String) {
     setPreferencesString(NSStringFromRect(iRect), for: key)
 }
 

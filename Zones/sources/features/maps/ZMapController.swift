@@ -87,7 +87,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	func recenter(_ SPECIAL: Bool = false) {
 		gScaling      = 1.0
-		gScrollOffset = !SPECIAL ? CGPoint.zero : CGPoint(x: kHalfDetailsWidth, y: 0.0)
+		gScrollOffset = !SPECIAL ? .zero : CGPoint(x: kHalfDetailsWidth, y: 0.0)
 		
 		layoutForCurrentScrollOffset()
 	}
@@ -491,7 +491,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     }
 
     func cleanupAfterDrag() {
-		gRubberband.rubberbandStart = CGPoint.zero
+		gRubberband.rubberbandStart = .zero
 
         // cursor exited view, remove drag cruft
 

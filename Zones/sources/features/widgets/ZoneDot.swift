@@ -213,7 +213,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
     func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
         var thickness = CGFloat(gLineThickness + 0.5) * ratio
-        var      path = ZBezierPath(rect: CGRect.zero)
+        var      path = ZBezierPath(rect: .zero)
         var      rect = CGRect.zero
 
         switch type {

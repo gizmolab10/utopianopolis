@@ -232,6 +232,7 @@ extension ZApplication {
 }
 
 extension ZEventFlags {
+
 	var isAnyMultiple:  Bool       { return  exactlySplayed || exactlySpecial || exactlyUnusual || exactlyAll }
 	var isAny:          Bool       { return  isCommand ||  isOption ||  isControl }
 	var exactlyAll:     Bool       { return  isCommand &&  isOption &&  isControl }
@@ -243,6 +244,7 @@ extension ZEventFlags {
 	var isCommand:      Bool { get { return  contains(.command) } set { if newValue { insert(.command) } else { remove(.command) } } }
     var isOption:       Bool { get { return  contains(.option)  } set { if newValue { insert(.option)  } else { remove(.option) } } }
     var isShift:        Bool { get { return  contains(.shift)   } set { if newValue { insert(.shift)   } else { remove(.shift) } } }
+
 }
 
 extension ZEvent {
@@ -321,7 +323,8 @@ extension ZColor {
 }
 
 extension NSBezierPath {
-    public var cgPath: CGPath {
+
+	public var cgPath: CGPath {
         let   path = CGMutablePath()
         var points = [CGPoint](repeating: .zero, count: 3)
 
@@ -344,6 +347,7 @@ extension NSBezierPath {
     public convenience init(roundedRect rect: CGRect, cornerRadius: CGFloat) {
         self.init(roundedRect: rect, xRadius: cornerRadius, yRadius: cornerRadius)
     }
+
 }
 
 extension ZTextView {
@@ -991,14 +995,45 @@ public extension ZImage {
 	var  png: Data? { return tiffRepresentation?.bitmap?.png }
 	var jpeg: Data? { return tiffRepresentation?.bitmap?.jpeg }
 
-	func resizedTo(_ newSize: CGSize) -> ZImage {
+	func oldResizedTo(_ newSize: CGSize) -> ZImage {
 		let newImage = ZImage(size: newSize)
+		let fromRect = CGRect(origin: CGPoint(), size: size)
+		let   inRect = CGRect(origin: CGPoint(), size: newSize)
+
 		newImage.lockFocus()
-		draw(in: CGRect(origin: CGPoint(), size: newSize), from: CGRect(origin: CGPoint(), size: size), operation: .sourceOver, fraction: CGFloat(1))
+		draw(in: inRect, from: fromRect, operation: .copy, fraction: CGFloat(1))
 		newImage.unlockFocus()
-		newImage.size = newSize
 
 		return newImage
+	}
+
+	func resizedTo(_ newSize: NSSize) -> ZImage? {
+		if  let bitmapRep = NSBitmapImageRep(
+				bitmapDataPlanes      : nil,
+				pixelsWide            : Int(newSize.width),
+				pixelsHigh            : Int(newSize.height),
+				bitsPerSample         : 8,
+				samplesPerPixel       : 4,
+				hasAlpha              : true,
+				isPlanar              : false,
+				colorSpaceName        : .calibratedRGB,
+				bytesPerRow           : 0,
+				bitsPerPixel          : 0 ) {
+			NSGraphicsContext.saveGraphicsState()
+
+			let              newImage = ZImage(size: newSize)
+			let               newRect = CGRect(origin: CGPoint(), size: newSize)
+			bitmapRep           .size = newSize
+			NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: bitmapRep)
+
+			draw(in: newRect, from: .zero, operation: .copy, fraction: 1.0)
+			NSGraphicsContext.restoreGraphicsState()
+			newImage.addRepresentation(bitmapRep)
+
+			return newImage
+		}
+
+		return nil
 	}
 
     func imageRotatedByDegrees(_ degrees: CGFloat) -> ZImage {
