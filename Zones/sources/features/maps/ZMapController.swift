@@ -333,17 +333,20 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	// MARK:- drop
 	// MARK:-
 
-	func dropOnto(_ zone: Zone, at dropAt: Int? = nil) {
-		gDraggedZones.moveIntoAndGrab(zone, at: dropAt, orphan: true) { flag in
-			gSelecting.updateBrowsingLevel()
-			gSelecting.updateCousinList()
-			self.restartGestureRecognition()
-			gRelayoutMaps()
+	func dropOnto(_ zone: Zone, at dropAt: Int? = nil, _ iGesture: ZGestureRecognizer?) {
+		if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
+			let   flags = gesture.modifiers {
+			zone.addZones(gDraggedZones, at: dropAt, undoManager: undoManager, flags) {
+				gSelecting.updateBrowsingLevel()
+				gSelecting.updateCousinList()
+				self.restartGestureRecognition()
+				gRelayoutMaps()
+			}
 		}
 	}
 
 	func dropMaybeGesture(_ iGesture: ZGestureRecognizer?) {
-		if  gDraggedZones.isEmpty ||
+		if      gDraggedZones.isEmpty ||
 				dropMaybeOntoCrumbButton(iGesture) ||
 				dropMaybeOntoWidget(iGesture) {
 			cleanupAfterDrag()
@@ -362,7 +365,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			gDraggedZones.anyParentMatches(crumb.zone) {
 
 			if  iGesture?.isDone ?? false {
-				dropOnto(crumb.zone)
+				dropOnto(crumb.zone, iGesture)
 			} else {
 				crumb.highlight(true)
 			}
@@ -432,7 +435,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                         dropAt!     -= 1
                     }
 
-					dropOnto(dropZone, at: dropAt)
+					dropOnto(dropZone, at: dropAt, iGesture)
 
 					return true
                 }

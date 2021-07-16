@@ -956,9 +956,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func toggleEssayTitles() {
-		gShowEssayTitles = !gShowEssayTitles
+		gShowEssayTitles    = !gShowEssayTitles
+		var        location = selectedRange().location
 
-		updateText()
+		if  let        note = selectedNote,
+			let titleLength = note.zone?.zoneName?.length {
+			location       += (gShowEssayTitles ? 1 : -1) * (titleLength + 2)
+		}
+
+		updateText(restoreSelection: location)
 	}
 
 	private func addButtonFor(_ tag: ZEssayButtonID) {

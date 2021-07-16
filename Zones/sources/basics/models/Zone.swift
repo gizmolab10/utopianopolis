@@ -2163,7 +2163,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func addGrabbedZones(at iIndex: Int?, undoManager iUndoManager: UndoManager?, _ flags: ZEventFlags, onCompletion: Closure?) {
+	func addZones(_ iZones: ZoneArray, at iIndex: Int?, undoManager iUndoManager: UndoManager?, _ flags: ZEventFlags, onCompletion: Closure?) {
 
 		// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// 1. move a normal zone into another normal zone                                                            //
@@ -2185,7 +2185,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let   toBookmark = isBookmark                    // type 2
 		let   toSmallMap = isInSmallMap && !toBookmark   // type 3
 		let         into = bookmarkTarget ?? self        // grab bookmark AFTER travel
-		var        grabs = gSelecting.currentMapGrabs
+		var        zones = iZones
 		var      restore = [Zone: (Zone, Int?)] ()
 		let     STAYHERE = flags.exactlySpecial
 		let   NOBOOKMARK = flags.isControl
@@ -2194,7 +2194,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		// separate zones that are connected back to themselves
 
-		for (index, zone) in grabs.enumerated() {
+		for (index, zone) in zones.enumerated() {
 			if  spawnedBy(zone) {
 				cyclicals.insert(index)
 			} else if let parent = zone.parentZone {
@@ -2205,12 +2205,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		while let index = cyclicals.last {
 			cyclicals.remove(index)
-			grabs.remove(at: index)
+			zones.remove(at: index)
 		}
 
 		// case 4
 
-		grabs.sort { (a, b) -> Bool in
+		zones.sort { (a, b) -> Bool in
 			return a.order < b.order
 		}
 
@@ -2231,7 +2231,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			iUndoSelf.UNDO(self) { iUndoUndoSelf in
 				let zoneSelf = iUndoUndoSelf as Zone
-				zoneSelf.addGrabbedZones(at: iIndex, undoManager: undoManager, flags, onCompletion: onCompletion)
+				zoneSelf.addZones(zones, at: iIndex, undoManager: undoManager, flags, onCompletion: onCompletion)
 			}
 
 			onCompletion?()
@@ -2250,15 +2250,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if  onlyTime {
 				onlyTime          = false
-				if  let firstGrab = grabs.first,
+				if  let firstGrab = zones.first,
 					let fromIndex = firstGrab.siblingIndex,
 					(firstGrab.parentZone != into || fromIndex > (iIndex ?? 1000)) {
-					grabs = grabs.reversed()
+					zones = zones.reversed()
 				}
 
 				gSelecting.ungrabAll()
 
-				for grab in grabs {
+				for grab in zones {
 					var bookmark = grab
 
 					if  toSmallMap && !bookmark.isInSmallMap && !bookmark.isBookmark && !bookmark.isInTrash && !STAYHERE {
