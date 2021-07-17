@@ -346,27 +346,31 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func dropMaybeGesture(_ iGesture: ZGestureRecognizer?) {
-		if      gDraggedZones.isEmpty ||
-				dropMaybeOntoCrumbButton(iGesture) ||
-				dropMaybeOntoWidget(iGesture) {
-			cleanupAfterDrag()
+		cleanupAfterDrag()
 
-			if  iGesture?.isDone ?? false {
-				gSignal([.spPreferences, .spCrumbs]) // so color well gets updated
-				restartGestureRecognition()
-			}
+		if  gDraggedZones.isEmpty ||
+			dropMaybeOntoCrumbButton(iGesture) ||
+			dropMaybeOntoWidget(iGesture) {
+		}
+
+		if  iGesture?.isDone ?? false {
+			cleanupAfterDrag()
+			gSignal([.spPreferences, .spCrumbs]) // so color well gets updated
+			restartGestureRecognition()
 		}
 	}
 
 	func dropMaybeOntoCrumbButton(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
-		if  !gDraggedZones.containsARoot,
-			let   crumb = gBreadcrumbsView?.detectCrumb(iGesture),
+		if  let crumb = gBreadcrumbsView?.detectCrumb(iGesture),
+			!gDraggedZones.containsARoot,
 			!gDraggedZones.contains(crumb.zone),
-			gDraggedZones.anyParentMatches(crumb.zone) {
+			!gDraggedZones.anyParentMatches(crumb.zone) {
 
 			if  iGesture?.isDone ?? false {
 				dropOnto(crumb.zone, iGesture)
 			} else {
+				gDropCrumb = crumb
+
 				crumb.highlight(true)
 			}
 
@@ -378,11 +382,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
     func dropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
         if  !gDraggedZones.containsARoot {
+			let         totalGrabs = gDraggedZones + gSelecting.currentMapGrabs
             if  gDraggedZones.userCanMoveAll,
 				let (inBigMap, zone, location) = widgetHit(by: iGesture, locatedInBigMap: isBigMap),
-				!gDraggedZones.containsAnyOf(zone),
-				var       dropZone = zone, !gSelecting.currentMapGrabs.contains(dropZone),
-				var     dropWidget = zone?.widget {
+				var       dropZone = zone, !totalGrabs.contains(dropZone),
+				var     dropWidget = dropZone.widget {
 				let dropController = dropWidget.controller
 				let      dropIndex = dropZone.siblingIndex
                 let           here = inBigMap ? gHere : gSmallMapHere
@@ -408,15 +412,16 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				let      sameIndex = dragIndex == index || dragIndex == index - 1
 				let   dropIsParent = dropZone.children.intersects(gDraggedZones)
 				let     spawnCycle = dropZone.spawnCycle
+				let          prior = gDropWidget
 				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0
-                let          prior = gDropWidget
-				let        dropNow = iGesture?.isDone ?? false
-                gDropIndices       = isNoop || dropNow ? nil : NSMutableIndexSet(index: index)
-				gDropWidget        = isNoop || dropNow ? nil : dropWidget
-                gDragRelation      = isNoop || dropNow ? nil : relation
-                gDragPoint         = isNoop || dropNow ? nil : location
+				let         isDone = iGesture?.isDone ?? false
+				let      forgetAll = isNoop || isDone
+                gDropIndices       = forgetAll ? nil : NSMutableIndexSet(index: index)
+				gDropWidget        = forgetAll ? nil : dropWidget
+                gDragRelation      = forgetAll ? nil : relation
+                gDragPoint         = forgetAll ? nil : location
 
-                if !isNoop && !dropNow && notDropHere && index > 0 {
+                if !forgetAll && notDropHere && index > 0 {
                     gDropIndices?.add(index - 1)
                 }
 
@@ -425,7 +430,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				gMapController?     .mapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
 				gSmallMapController?.mapView?.setNeedsDisplay()
 
-                if !isNoop, dropNow {
+                if !isNoop, isDone {
                     let   toBookmark = dropZone.isBookmark
                     var dropAt: Int? = index
 
@@ -493,14 +498,18 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     }
 
     func cleanupAfterDrag() {
-		gRubberband.rubberbandStart = .zero
+		
+		// cursor exited view, remove drag cruft
 
-        // cursor exited view, remove drag cruft
+		gDropCrumb?.highlight(false)
+
+		gRubberband.rubberbandStart = .zero
 
 		let       dot = gDropWidget?.revealDot.innerDot // drag view does not "un"draw this
 		gDragRelation = nil
 		gDropIndices  = nil
 		gDropWidget   = nil
+		gDropCrumb    = nil
 		gDragPoint    = nil
 
 		gDragView?.setNeedsDisplay() // erase drag: line and dot

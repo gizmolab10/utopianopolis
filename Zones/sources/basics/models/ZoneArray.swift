@@ -43,21 +43,17 @@ extension ZoneArray {
 	}
 
 	func applyBooleanToZone(requiresAll: Bool = false, closure: ZoneToBooleanClosure) -> Bool {
-		var result = false
-		for 	zone in self {
-			if  closure(zone) {
-				result = true
-
-				if !requiresAll {
-					break
-				}
+		for zone in self {
+			if  closure(zone) != requiresAll {
+				return !requiresAll
 			}
 		}
-		return result
+
+		return requiresAll
 	}
 
 	func anyParentMatches(_ zone: Zone) -> Bool {
-		return applyBooleanToZone(requiresAll: true) { zone in
+		return applyBooleanToZone { zone in
 			return zone.parentZone == zone
 		}
 
