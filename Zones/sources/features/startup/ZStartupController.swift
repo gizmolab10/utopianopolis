@@ -84,8 +84,8 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	var progressText:String {
 		if  gGotProgressTimes {
-			let  dTotal = gTotalTime
-			let   ratio = dTotal / 54.0
+			let   total = gTotalTime
+			let   ratio = total / 54.0
 			let elapsed = gStartup.elapsedStartupTime
 			let   count = Int(elapsed / ratio)
 			let remains = 54 - count

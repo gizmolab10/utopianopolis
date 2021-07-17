@@ -373,8 +373,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			NSCursor.arrow.set()
-		} else if let item = hitTestForAttachment(in: rect),
-				  let  imageRect = rectForRangedAttachment(item) {
+		} else if let    attach = hitTestForAttachment(in: rect),
+				  let imageRect = rectForRangedAttachment(attach) {
 
 			NSCursor.openHand.set()
 

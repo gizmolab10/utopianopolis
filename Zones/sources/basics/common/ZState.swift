@@ -208,7 +208,7 @@ func gAssureProgressTimesAreLoaded() -> Bool {
 
 var gTimePerRecord : Int {
 	switch gMigrationState {         // TODO: adjust for cpu speed
-		case .normal: return 250
+		case .normal: return 350
 		default:      return 130
 	}
 }

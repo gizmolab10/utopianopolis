@@ -47,9 +47,9 @@ enum ZOperationID: Int, CaseIterable {
 
 	var progressTime : Int {
 		switch self {
-			case .oMigrateFromCloud: return gNeedsMigrate ? 50 : 0
 			case .oLoadingIdeas:     return gRemoteStorage.dataLoadTime
-			case .oWrite:            return 40
+			case .oMigrateFromCloud: return gNeedsMigrate ? 50 : 0
+			case .oWrite:            return gWriteFiles   ? 40 : 0
 			case .oResolve:          return  4
 			case .oManifest:         return  3
 			case .oAdopt:            return  2
