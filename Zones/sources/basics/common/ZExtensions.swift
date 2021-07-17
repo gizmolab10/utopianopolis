@@ -688,6 +688,10 @@ extension CGSize {
         return sqrt(width * width + height * height)
     }
 
+	func absoluteDifferenceInLengths(comparedTo other: CGSize) -> CGFloat {
+		return abs(length - other.length)
+	}
+
 	func fractionalScaleToFit(size: CGSize) -> CGFloat {
 		var fraction = CGFloat(1.0)
 
@@ -1416,6 +1420,26 @@ extension NSFontDescriptor {
 struct ZRangedAttachment {
 	let range: NSRange
 	let attachment: NSTextAttachment
+
+	func glyphRect(for textStorage: NSTextStorage?, margin: CGFloat) -> CGRect? {
+		if  let          managers = textStorage?.layoutManagers, managers.count > 0 {
+			let     layoutManager = managers[0] as NSLayoutManager
+			let        containers = layoutManager.textContainers
+			if  containers .count > 0 {
+				let textContainer = containers[0]
+				var    glyphRange = NSRange()
+
+				layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &glyphRange)
+
+				let          rect = layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer).offsetBy(dx: margin, dy: margin)
+
+				return rect
+			}
+		}
+
+		return nil
+	}
+
 }
 
 extension NSMutableAttributedString {

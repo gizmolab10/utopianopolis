@@ -1120,31 +1120,24 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return nil
 	}
 
-	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {
-		if  let      managers = textStorage?.layoutManagers, managers.count > 0 {
-			let layoutManager = managers[0] as NSLayoutManager
-			let    containers = layoutManager.textContainers
+	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {      // return nil if image is clipped
+		if  let  rect = attach.glyphRect(for: textStorage, margin: margin),
+			let image = imageAttachment?.attachment.cellImage,
+			rect.size.absoluteDifferenceInLengths(comparedTo: image.size) < 2.0 {
 
-			if  containers.count > 0 {
-				let textContainer = containers[0]
-				var    glyphRange = NSRange()
-
-				layoutManager.characterRange(forGlyphRange: attach.range, actualGlyphRange: &glyphRange)
-
-				return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer).offsetBy(dx: margin, dy: margin)
-			}
+			return rect
 		}
 
 		return nil
 	}
 
 	func hitTestForAttachment(in rect: CGRect) -> ZRangedAttachment? {
-		if  let array = textStorage?.rangedAttachments {
-			for item in array {
-				if  let imageRect = rectForRangedAttachment(item)?.insetEquallyBy(dotInset),
+		if  let attaches = textStorage?.rangedAttachments {
+			for attach in attaches {
+				if  let imageRect = attach.glyphRect(for: textStorage, margin: margin)?.insetEquallyBy(dotInset),
 					imageRect.intersects(rect) {
 
-					return item
+					return attach
 				}
 			}
 		}

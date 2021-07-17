@@ -1083,15 +1083,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			parent.addIdea(at: index, with: name) { iChild in
 				if  let child = iChild {
-					if !containing {
-						gRelayoutMaps(for: parent) {
-							completion(child)
-						}
-					} else {
-						child.acquireZones(zones)
-						gRelayoutMaps(for: parent) {
-							completion(child)
-						}
+					if  containing {
+						child.acquireZones(zones.reversed())
+					}
+
+					gRelayoutMaps(for: parent) {
+						completion(child)
 					}
 				}
 			}
