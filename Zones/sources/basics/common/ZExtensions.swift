@@ -1090,7 +1090,7 @@ extension Array {
 		return result
 	}
 
-	func contains(_ other: Any?) -> Bool {
+	func containsAnyOf(_ other: Any?) -> Bool {
 		return (other == nil) ? false : containsCompare(with: other) { (item, another) in
 			return item === another
 		}
@@ -1101,12 +1101,12 @@ extension Array {
 			let to = other as AnyObject? {
             for item in self {
                 if  compare(item as AnyObject, to) {
-                    return true     // true means match
+                    return true     // true means has a match
                 }
             }
         }
         
-        return false    // false means unique / missing
+        return false    // false means has no match
     }
 
 	mutating func insertUnique(item: Any?, at index: Int = 0, compare: CompareClosure? = nil) {

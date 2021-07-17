@@ -380,7 +380,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         if  !gDraggedZones.containsARoot {
             if  gDraggedZones.userCanMoveAll,
 				let (inBigMap, zone, location) = widgetHit(by: iGesture, locatedInBigMap: isBigMap),
-				!gDraggedZones.contains(zone),
+				!gDraggedZones.containsAnyOf(zone),
 				var       dropZone = zone, !gSelecting.currentMapGrabs.contains(dropZone),
 				var     dropWidget = zone?.widget {
 				let dropController = dropWidget.controller
@@ -406,7 +406,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				;            index = notDropHere ? index : relation != .below ? 0 : lastDropIndex
 				let      dragIndex = gDraggedZones[0].siblingIndex
 				let      sameIndex = dragIndex == index || dragIndex == index - 1
-				let   dropIsParent = dropZone.children.contains(gDraggedZones)
+				let   dropIsParent = dropZone.children.intersects(gDraggedZones)
 				let     spawnCycle = dropZone.spawnCycle
 				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0
                 let          prior = gDropWidget
@@ -431,7 +431,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
                     if  toBookmark {
                         dropAt       = gListsGrowDown ? nil : 0
-                    } else if dragIndex != nil && dragIndex! <= index && dropIsParent {
+                    } else if dropIsParent,
+							  dragIndex  != nil,
+							  dragIndex! <= index {
                         dropAt!     -= 1
                     }
 

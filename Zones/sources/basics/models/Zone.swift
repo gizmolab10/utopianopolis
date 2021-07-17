@@ -1789,7 +1789,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		for bookmark in bookmarks {
 			if  let target = bookmark.bookmarkTarget,
-				!visited.contains(target.recordName) {
+				!visited.containsAnyOf(target.recordName) {
 				append(target)
 			}
 		}
