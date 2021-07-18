@@ -298,7 +298,7 @@ class ZSmallMapRecords: ZRecords {
 					if  bookmark.root == rootZone {
 						grab(bookmark)
 					} else {
-						gSmallMapMode = bookmark.databaseID == .recentsID ? .recent : .favorites
+						gSmallMapMode = bookmark.root?.recordName == kRecentsRootName ? .recent : .favorites
 
 						bookmark.grab()
 					}
