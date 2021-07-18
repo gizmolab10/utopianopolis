@@ -326,7 +326,8 @@ class ZRecord: ZManagedObject { // NSObject {
 	}
 
 	func extractFromStorageDictionary(_ dict: ZStorageDictionary, of entityName: String, into iDatabaseID: ZDatabaseID) throws {
-		FOREGROUND(forced: true) { gStartupController?.fullStartupUpdate() }
+
+		gStartupController?.fullStartupUpdate()
 
 		// case 1: name is nil
 		// case 2: ck record already exists

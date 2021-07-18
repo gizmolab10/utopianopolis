@@ -142,7 +142,7 @@ class ZCoreDataStack: NSObject {
 	lazy var  publicStore : NSPersistentStore?            = { return persistentStore(for: publicURL) }()
 	lazy var privateStore : NSPersistentStore?            = { return persistentStore(for: privateURL) }()
 	lazy var  coordinator : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
-	var    managedContext : NSManagedObjectContext          { return persistentContainer.viewContext }
+	lazy var      context : NSManagedObjectContext        = { return persistentContainer.newBackgroundContext() }()
 	var          isDoneOp : Bool                            { return currentOpID == nil }
 	var        statusText : String?                         { return statusOpID?.description }
 	var        statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
@@ -154,7 +154,7 @@ class ZCoreDataStack: NSObject {
 			request.predicate = dbidPredicate(from: databaseID)
 
 			do {
-				return try managedContext.count(for: request) > 10
+				return try context.count(for: request) > 10
 			} catch {
 			}
 		}
@@ -169,7 +169,7 @@ class ZCoreDataStack: NSObject {
 		if  gCanSave, gIsReadyToShowUI {
 			self.deferUntilAvailable(for: .oSave) {
 				BACKGROUND {
-					let context = self.managedContext
+					let context = self.context
 					if  context.hasChanges {
 						self.checkCrossStore()
 
@@ -190,29 +190,33 @@ class ZCoreDataStack: NSObject {
 	// MARK:-
 
 	func loadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure?) {
-		if  gCanLoad {
-			deferUntilAvailable(for: .oLoad) {
-				self.load(type: kManifestType, into: dbID, onlyOne: false)
-
-				gProgressTimesReady = true
-				var names = [kRootName, kTrashName, kDestroyName, kLostAndFoundName]
-
-				if  dbID == .mineID {
-					names.insert(contentsOf: [kRecentsRootName, kFavoritesRootName], at: 1)
-				}
-
-				for name in names {
-					self.loadZone(recordName: name, into: dbID)
-				}
-
-				self.load(type: kFileType,     into: dbID, onlyOne: false)
-				gRemoteStorage.updateManifestCount(for: dbID)
-				self.makeAvailable()
-
-				onCompletion?(0)
-			}
-		} else {
+		if !gCanLoad {
 			onCompletion?(0)
+		} else {
+			deferUntilAvailable(for: .oLoad) {
+				BACKGROUND {
+					self.load(type: kManifestType, into: dbID, onlyOne: false)
+
+					gProgressTimesReady = true
+					var names = [kRootName, kTrashName, kDestroyName, kLostAndFoundName]
+
+					if  dbID == .mineID {
+						names.insert(contentsOf: [kRecentsRootName, kFavoritesRootName], at: 1)
+					}
+
+					for name in names {
+						self.loadZone(recordName: name, into: dbID)
+					}
+
+					self.load(type: kFileType,     into: dbID, onlyOne: false)
+					gRemoteStorage.updateManifestCount(for: dbID)
+
+					FOREGROUND {
+						self.makeAvailable()
+						onCompletion?(0)
+					}
+				}
+			}
 		}
 	}
 
@@ -339,7 +343,7 @@ class ZCoreDataStack: NSObject {
 	func fetchUsing(request: NSFetchRequest<NSFetchRequestResult>, type: String, onlyOne: Bool = true) -> [ZManagedObject] {
 		var   objects = [ZManagedObject]()
 		do {
-			let items = try managedContext.fetch(request)
+			let items = try context.fetch(request)
 			for item in items {
 				if  let object = item as? ZManagedObject {
 					objects.append(object)
@@ -442,7 +446,7 @@ class ZCoreDataStack: NSObject {
 						self.makeAvailable() // before calling closure
 
 						FOREGROUND {
-							onCompletion?(ZRecordsArray.fromObjectIDs(objectIDs, in: self.managedContext))
+							onCompletion?(ZRecordsArray.fromObjectIDs(objectIDs, in: self.context))
 						}
 					}
 				}
@@ -534,15 +538,16 @@ class ZCoreDataStack: NSObject {
 				let waiting = deferralStack.remove(at: 0)
 				currentOpID = waiting.opID
 
-				gSignal([.spData])          // tell data detail view about it
-				waiting.closure?()         // do what was deferred
+				gSignal([.spData])         // tell data detail view about it
+				waiting.closure?()     // do what was deferred
 			}
-	}
+		}
 	}
 
 	func deferUntilAvailable(for opID: ZCDOperationID, _ onAvailable: @escaping Closure) {
 		if  currentOpID == nil {
 			currentOpID  = opID
+
 			onAvailable()
 		} else {
 			for deferred in deferralStack {
@@ -605,7 +610,7 @@ class ZCoreDataStack: NSObject {
 			request.predicate = predicate
 
 			do {
-				let     items = try managedContext.fetch(request)
+				let     items = try context.fetch(request)
 				currentOpID   = nil
 
 				if  items.count > 0 {
@@ -621,7 +626,7 @@ class ZCoreDataStack: NSObject {
 
 	func checkCrossStore() {
 		if  gPrintModes.contains(.dCross) {
-			for updated in self.managedContext.updatedObjects {
+			for updated in self.context.updatedObjects {
 				if  let  zone  = updated as? Zone,
 					let zdbid  = zone.dbid,
 					let pdbid  = zone.parentZone?.dbid {
@@ -676,23 +681,26 @@ class ZCoreDataStack: NSObject {
 			printDebug(.dExist, "\(dbID.identifier) = \(count)\(entityName)")
 
 			deferUntilAvailable(for: .oExistence) {
-				FOREGROUND {
+				BACKGROUND {
 					do {
-						let items = try self.managedContext.fetch(request)
-						for item in items {
-							if  let zRecord = item as? ZRecord {           // insert zrecord into closures
-								array.updateClosureForZRecord(zRecord, of: entityName)
-								zRecord.needAdoption()
+						let items = try self.context.fetch(request)
+
+						FOREGROUND {
+							for item in items {
+								if  let zRecord = item as? ZRecord {           // insert zrecord into closures
+									array.updateClosureForZRecord(zRecord, of: entityName)
+									zRecord.needAdoption()
+								}
 							}
+
+							array.fireClosures()
+							self.setClosures([], for: entityName, dbID: dbID)
+							self.makeAvailable()
+							onCompletion?(0)
 						}
 					} catch {
 
 					}
-
-					array.fireClosures()
-					self.setClosures([], for: entityName, dbID: dbID)
-					self.makeAvailable()
-					onCompletion?(0)
 				}
 			}
 		}
@@ -746,7 +754,7 @@ class ZCoreDataStack: NSObject {
 				if  count > extras.count {
 					FOREGROUND {
 						for extra in extras {
-							self.managedContext.delete(extra)
+							self.context.delete(extra)
 						}
 					}
 				}

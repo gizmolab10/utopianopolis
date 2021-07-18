@@ -492,20 +492,25 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		get {
 			var computed: ZColor? = kDefaultIdeaColor
 
-			if  gColorfulMode,
-			    colorMaybe          == nil {
-				traverseAncestors { ancestor -> ZTraverseStatus in
-					if  let        b = ancestor.bookmarkTarget {
-						if  let    c = b.color {
-							computed = c
+			if  gColorfulMode {
+				if  colorMaybe          != nil {
+					computed             = colorMaybe
+				} else {
+					traverseAncestors { ancestor -> ZTraverseStatus in
+						if  let        b = ancestor.bookmarkTarget {
+							if  let    c = b.color {
+								computed = c
+
+								return .eStop
+							}
+						} else if let  c = ancestor.zoneColor?.color {
+							computed     = c
+
+							return .eStop
 						}
-					} else if let  c = ancestor.zoneColor?.color {
-						computed     = c
-					} else {
+
 						return .eContinue
 					}
-
-					return .eStop
 				}
 			}
 
@@ -523,11 +528,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				computed = computed?.inverted
 			}
 
-			if  isBookmark {
-				bookmarkTarget?.color  = newValue
-			} else if      colorMaybe != computed {
-				colorMaybe             = computed
-				zoneColor              = computed?.string ?? kEmpty
+			if  let             b = bookmarkTarget {
+				b.color           = newValue
+			} else if colorMaybe != computed {
+				colorMaybe        = computed
+				zoneColor         = computed?.string ?? kEmpty
 			}
 		}
 	}
@@ -1640,7 +1645,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		trait?.needDestroy()
 
 		if  let t = trait {
-			gCoreDataStack.managedContext.delete(t)
+			gCoreDataStack.context.delete(t)
 		}
 	}
 

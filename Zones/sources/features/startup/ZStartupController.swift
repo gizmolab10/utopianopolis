@@ -67,10 +67,11 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	func fullStartupUpdate() {
 		if !gHasFinishedStartup, gStartup.oneTimerIntervalElapsed {
-			updateThermometerBar()
-			updateSubviewVisibility()
-//			helpButtonsView?.updateAndRedraw()
-			RunLoop.main.acceptInput(forMode: .default, before: Date().addingTimeInterval(0.1))		// update operation label
+			FOREGROUND(forced: true) {
+				self.updateThermometerBar()
+				self.updateSubviewVisibility()
+				RunLoop.main.acceptInput(forMode: .default, before: Date().addingTimeInterval(0.1))		// update operation label
+			}
 		}
 	}
 
