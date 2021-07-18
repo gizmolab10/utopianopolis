@@ -56,6 +56,13 @@ class ZFavorites: ZSmallMapRecords {
     // MARK:- update
     // MARK:-
 
+	override func push(_ zone: Zone? = gHere) {
+		if  let pushMe = zone,
+			!findAndSetHere(asParentOf: pushMe) {
+			matchOrCreateBookmark(for:  pushMe, autoAdd: true)
+		}
+	}
+
     func updateCurrentFavorite(_ currentZone: Zone? = nil) {
         if  let         zone = currentZone ?? gHereMaybe,
 			let     bookmark = whichBookmarkTargets(zone, orSpawnsIt: true),

@@ -26,7 +26,7 @@ class ZRecord: ZManagedObject { // NSObject {
 	var            emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
 	var   isInPublicDatabase: Bool      { return databaseID == .everyoneID }
 	var              isAZone: Bool      { return false }
-	var            isMapRoot: Bool      { return recordName == kRootName }
+	var         isBigMapRoot: Bool      { return recordName == kRootName }
 	var          isTrashRoot: Bool      { return recordName == kTrashName }
 	var        isDestroyRoot: Bool      { return recordName == kDestroyName }
 	var        isRecentsRoot: Bool      { return recordName == kRecentsRootName }
@@ -36,7 +36,7 @@ class ZRecord: ZManagedObject { // NSObject {
 	var        isRecentsHere: Bool      { return recordName == gRecentsHereMaybe?.recordName }
 	var       isSmallMapHere: Bool      { return isFavoritesHere || isRecentsHere }
 	var       isSmallMapRoot: Bool      { return isFavoritesRoot || isRecentsRoot }
-	var      isEitherMapRoot: Bool      { return isSmallMapRoot || isMapRoot }
+	var         isAnyMapRoot: Bool      { return isSmallMapRoot  || isBigMapRoot }
 	var           needsCount: Bool      { return  hasState(.needsCount) }
 	var           needsColor: Bool      { return  hasState(.needsColor) }
 	var         needsDestroy: Bool      { return  hasState(.needsDestroy) }

@@ -43,24 +43,17 @@ class ZRecents : ZSmallMapRecords {
 		onCompletion?(0)
 	}
 
-	override func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {
+	override func push(_ zone: Zone? = gHere) {
 		if !gPushIsDisabled,
-		    rootZone != nil {
-			var here  = zone
+		    gHasFinishedStartup, // avoid confusing recents upon relaunch
+		    rootZone != nil,
+			let pushMe = zone {
 
-			if  intoNotes {
-				here  = gCurrentEssayZone
+			if  bookmarkTargeting(pushMe) == nil {
+				matchOrCreateBookmark(for: pushMe, autoAdd: true)
 			}
 
-			if  gHasFinishedStartup, // avoid confusing recents upon relaunch
-				let pushMe = here {
-
-				if  bookmarkTargeting(pushMe) == nil {
-					matchOrCreateBookmark(for: pushMe, autoAdd: true)
-				}
-
-				updateCurrentRecent()
-			}
+			updateCurrentRecent()
 		}
 	}
 

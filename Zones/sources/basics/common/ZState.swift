@@ -62,6 +62,7 @@ var               gIsDragging:               Bool { return !gDraggedZones.isEmpt
 var          gIsHelpFrontmost:               Bool { return gHelpWindow?.isKeyWindow ?? false }
 var         gGrabbedCanTravel:               Bool { return gSelecting.currentMoveableMaybe?.isBookmark ?? false }
 var       gBrowsingIsConfined:               Bool { return gConfinementMode == .list }
+var          gIsFavoritesMode:               Bool { return gSmallMapMode    == .favorites }
 var           gIsRecentlyMode:               Bool { return gSmallMapMode    == .recent }
 var            gListsGrowDown:               Bool { return gListGrowthMode  == .down }
 var           gDuplicateEvent:               Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
@@ -246,9 +247,10 @@ var gHere: Zone {
 		gRecords?.currentHere = newValue
 
 		newValue.assureAdoption()
+		gRecents.push()
 
-		if  gIsRecentlyMode {
-			gRecents.push()
+		if  gIsFavoritesMode {
+			gFavorites.push()
 		}
 	}
 }
@@ -662,7 +664,7 @@ var gCurrentEssay: ZNote? {
 
 		if  gHasFinishedStartup, // avoid creating confused recents view
 			gIsRecentlyMode {
-			gRecents.push(intoNotes: true)
+			gRecents.push(gCurrentEssayZone)
 		}
 	}
 }

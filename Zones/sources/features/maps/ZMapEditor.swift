@@ -636,7 +636,7 @@ class ZMapEditor: ZBaseEditor {
     }
 
 	func go(down: Bool, SHIFT: Bool, OPTION: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, atArrival: Closure? = nil) {
-		if  SHIFT || (gHere.isInGroup && (gCurrentSmallMapRecords?.rootZone?.isInFavorites ?? false)) {
+		if  SHIFT || (gHere.isInAGroup && gIsFavoritesMode) {
 			gSelecting.currentMoveable.cycleToNextInGroup(!down)
 		} else {
 			let smallMap = OPTION ? gCurrentSmallMapRecords : gRecents

@@ -114,7 +114,7 @@ class ZBookmarks: NSObject {
 			var  okayToStore = false
 
 			if  let bookmark = zRecord as? Zone,
-				let     root = bookmark.root, root.isMapRoot,
+				let     root = bookmark.root, root.isBigMapRoot,
 				iDatabaseID != root.databaseID {       // only store inter-db, big-map bookmarks
                 okayToStore  = true
             }

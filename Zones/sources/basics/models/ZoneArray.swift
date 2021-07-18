@@ -670,7 +670,7 @@ extension ZoneArray {
 		let groupOwner = Zone.uniqueZone(recordName: nil, in: .mineID)
 
 		for child in self {
-			if  child.isGroupOwner {                    // remove .groupOwner from attributes
+			if  child.isAGroupOwner {                    // remove .groupOwner from attributes
 				child.alterAttribute(.groupOwner, remove: true)
 				gRelayoutMaps()
 

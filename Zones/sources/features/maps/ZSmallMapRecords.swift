@@ -124,12 +124,7 @@ class ZSmallMapRecords: ZRecords {
 	// MARK:- pop and push
 	// MARK:-
 
-	func push(_ zone: Zone? = gHere, intoNotes: Bool = false) {
-		if  let pushMe = zone,
-			!findAndSetHere(asParentOf: pushMe) {
-			matchOrCreateBookmark(for: pushMe, autoAdd: true)
-		}
-	}
+	func push(_ zone: Zone? = gHere) {}
 
 	@discardableResult func pop(_ zone: Zone? = gHereMaybe) -> Bool {
 		if  workingBookmarks.count > 1,

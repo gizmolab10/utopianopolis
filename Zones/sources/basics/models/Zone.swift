@@ -87,18 +87,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                         hasNote :               Bool  { return hasTrait(for: .tNote) }
 	var                     isTraveller :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
 	var                       isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
+	var                      isInAnyMap :               Bool  { return root?.isAnyMapRoot       ?? false }
 	var                     isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
 	var                     isInRecents :               Bool  { return root?.isRecentsRoot      ?? false }
 	var                    isInSmallMap :               Bool  { return root?.isSmallMapRoot     ?? false }
 	var                   isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
-	var                   isInEitherMap :               Bool  { return root?.isEitherMapRoot    ?? false }
 	var                isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
-	var            isNonRootInEitherMap :               Bool  { return !isARoot && isInEitherMap }
 	var                  isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || widgetType.isExemplar }
 	var                  spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
 	var                      spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
-	var                       isInGroup :               Bool  { return groupOwner?.bookmarkTargets.contains(self) ?? false }
-	var                    isGroupOwner :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.groupOwner.rawValue) ?? false }
+	var                      isInAGroup :               Bool  { return groupOwner?.bookmarkTargets.contains(self) ?? false }
+	var                   isAGroupOwner :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.groupOwner.rawValue) ?? false }
 	var                     userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
 	var                    userCanWrite :               Bool  { return userHasDirectOwnership || isIdeaEditable }
 	var            userCanMutateProgeny :               Bool  { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
@@ -1724,8 +1723,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:-
 
 	var parentOwnsAGroup : Zone? {
-		if  isInEitherMap,
-			let    p = parentZone, p.isGroupOwner, p.isInEitherMap {
+		if  isInAnyMap,
+			let    p = parentZone, p.isAGroupOwner, p.isInAnyMap, p.count > 1 {
 			return p
 		}
 
@@ -1733,37 +1732,42 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	private func groupOwner(_ iVisited: StringsArray) -> (StringsArray, Zone)? {
-		guard let name = recordName, !iVisited.contains(name), gHasFinishedStartup else {
-			return nil                                          // avoid looking more than once per zone for a group owner
+		guard let name = recordName, gHasFinishedStartup, !iVisited.contains(name) else {
+			return nil      // avoid looking more than once per zone for a group owner
 		}
 
 		var visited = iVisited
 
 		visited.appendUnique(item: name)
 
-		if  isGroupOwner, isInEitherMap {
+		if  isAGroupOwner, isInAnyMap, count > 1 {
 			return (visited, self)
-		} else if let p = parentOwnsAGroup {
-			visited.appendUnique(item: p.recordName)
-			return (visited, p)
-		} else if let t = bookmarkTarget {
+		}
+
+		if  let t = bookmarkTarget {
 			return t.groupOwner(visited)
-		} else {
-			for bookmark in bookmarksTargetingSelf {
-				visited.appendUnique(item: bookmark.recordName)
-				visited.appendUnique(item: bookmark.parentZone?.recordName)
+		}
 
-				if  let r = bookmark.parentOwnsAGroup {
-					return (visited, r)
-				}
+		if  let p = parentOwnsAGroup {
+			visited.appendUnique(item: p.recordName)
+
+			return (visited, p)
+		}
+
+		for b in bookmarksTargetingSelf {
+			visited.appendUnique(item: b.recordName)
+			visited.appendUnique(item: b.parentZone?.recordName)
+
+			if  let g = b.parentOwnsAGroup {
+				return (visited, g)
 			}
+		}
 
-			for target in bookmarkTargets {
-				if  let (v, r) = target.groupOwner(visited) {
-					visited.appendUnique(contentsOf: v)
+		for target in bookmarkTargets {
+			if  let (v, r) = target.groupOwner(visited) {
+				visited.appendUnique(contentsOf: v)
 
-					return (visited, r)
-				}
+				return (visited, r)
 			}
 		}
 
@@ -1776,7 +1780,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var    visited = iVisited
 
 		func append(_ zone: Zone?) {
-			if  isInEitherMap {    // disallow rootless, trash, etc.
+			if  isInAnyMap {    // disallow rootless, trash, etc.
 				zones  .appendUnique(item: zone)
 				visited.appendUnique(item: zone?.recordName)
 			}
@@ -1814,7 +1818,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return
 		}
 
-		if  let     r = rr.ownedGroup([]), r.count > 0,
+		if  let     r = rr.ownedGroup([]), r.count > 1,
 			let index = indexIn(r),
 			let  zone = r.next(from: index, forward: forward) {
 			gHere     = zone
