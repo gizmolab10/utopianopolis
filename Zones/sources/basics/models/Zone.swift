@@ -121,6 +121,24 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	class  func randomZone(in dbID: ZDatabaseID) ->     Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 
+	var visibleDoneZone: Zone? {
+		var done: Zone?
+
+		traverseAncestors { ancestor in
+			ancestor.traverseProgeny { child in
+				if  child.zoneName == kDone, child.isVisible {
+					done = child
+				}
+
+				return done == nil ? .eContinue : .eStop
+			}
+
+			return done == nil ? .eContinue : .eStop
+		}
+
+		return done
+	}
+
 	var zonesWithNotes : ZoneArray {
 		var zones = ZoneArray()
 
