@@ -11,8 +11,7 @@ import Foundation
 class ZStartupProgressBar: NSProgressIndicator {
 
 	func updateProgress() {
-		if  gCurrentOp    != .oFinishing,
-			gAssureProgressTimesAreLoaded() {
+		if  gAssureProgressTimesAreLoaded() {
 
 			let  totalTime = gTotalTime
 			let multiplier = maxValue - minValue

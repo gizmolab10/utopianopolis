@@ -22,7 +22,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	@IBOutlet var pleaseWait        : ZView?
 	@IBOutlet var acccessToAppleID  : ZView?
 	@IBOutlet var enableCloudDrive  : ZView?
-	@IBOutlet var progressIndicator : ZTextField?
+//	@IBOutlet var progressIndicator : ZTextField?
 //	@IBOutlet var helpButtonsView   : ZHelpButtonsView?
 	@IBOutlet var thermometerBar    : ZStartupProgressBar?
 	var           startupCompletion : Closure?
@@ -33,7 +33,6 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 		gMainController?.helpButton?.isHidden = true
 //		helpButtonsView?            .isHidden = true // stupid thing doesn't respond to clicks
-		thermometerBar?             .isHidden = true // stupid thing doesn't advance until end of event cycle
 		enableCloudLabel?.text = enableCloudDriveText
 		accessIDLabel?   .text = appleIDText
 		loadingLabel?    .text = loadingText
@@ -102,14 +101,14 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	func updateThermometerBar() {
 		if  gAssureProgressTimesAreLoaded() {
-			progressIndicator?     .text = progressText
+//			progressIndicator?     .text = progressText
 			operationLabel?        .text = gCurrentOp.fullStatus
 			operationLabel?.needsDisplay = true
 
 			gMainWindow?.contentView?.setNeedsDisplay()
 			thermometerBar?          .setNeedsDisplay()
 			view                     .setNeedsDisplay()
-//			thermometerBar?          .updateProgress()
+			thermometerBar?          .updateProgress()
 			gApplication             .setWindowsNeedUpdate(true)
 			gApplication             .updateWindows()
 		}

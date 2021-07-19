@@ -1543,7 +1543,7 @@ DQ
                                                     <progressIndicator wantsLayer="YES" maxValue="100" doubleValue="1" displayedWhenStopped="NO" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="2xi-Mf-riK" customClass="ZStartupProgressBar" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="270" width="450" height="20"/>
                                                     </progressIndicator>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="b5J-39-GIU">
+                                                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="b5J-39-GIU">
                                                         <rect key="frame" x="-2" y="275" width="454" height="16"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="16" id="kZb-Jr-cC8"/>
@@ -1642,7 +1642,6 @@ DQ
                         <outlet property="loadingLabel" destination="kKM-9B-fW0" id="c49-Qv-BEM"/>
                         <outlet property="operationLabel" destination="ab6-2E-Tk7" id="UWg-bo-ff3"/>
                         <outlet property="pleaseWait" destination="rmD-x7-RtA" id="Pgi-uv-g7c"/>
-                        <outlet property="progressIndicator" destination="b5J-39-GIU" id="Ql5-Az-Dp0"/>
                         <outlet property="thermometerBar" destination="2xi-Mf-riK" id="GCP-V7-8ij"/>
                     </connections>
                 </viewController>
