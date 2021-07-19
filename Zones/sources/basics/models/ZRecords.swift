@@ -384,8 +384,7 @@ class ZRecords: NSObject {
 					return false
 				}
             } else {
-                zRecordsLookup[name] = zRecord
-
+                zRecordsLookup.updateValue(zRecord, forKey: name)
 				registerByType(zRecord)
 
 				created = true

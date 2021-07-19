@@ -249,7 +249,7 @@ class ZBatches: ZOnboarding {
 		// ///////////////////////////////////////////////////////////////
 
 		super.invokeMultiple(for: operationID, restoreToID: restoreToID) { iCompleted in
-            if  iCompleted || operationID == .oFinishing {
+            if  iCompleted {
                 onCompletion(true)
             } else {
                 let                      isMine = restoreToID == .mineID

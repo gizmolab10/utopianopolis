@@ -69,7 +69,7 @@ enum ZOperationID: Int, CaseIterable {
 	var    countOps : ZOpIDsArray { return [.oLoadingIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
 	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
-	var    localOps : ZOpIDsArray { return [.oWrite, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
+	var    localOps : ZOpIDsArray { return [.oWrite, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
 											.oFetchUserRecord, .oCheckAvailability] + bothDBOps }
 
 	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }
@@ -187,35 +187,32 @@ class ZOperations: NSObject {
 				if  !operationID.isLocal && !gCloudStatusIsActive {
 					onCompletion()
 				} else {
+					self.currentOp         = operationID            // if hung, it happened inside this op
 
 					// ////////////////////////////////////////////////////
 					// susend queue until operation calls its closure... //
 					// ////////////////////////////////////////////////////
 
-					FOREGROUND {
-						self.queue.isSuspended = true
-						self.lastOpStart       = Date()
-						self.currentOp         = operationID            // if hung, it happened inside this op
+					self.queue.isSuspended = true
+					self.lastOpStart       = Date()
 
-						self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
-							FOREGROUND {
-								if  self.currentOp == .oFinishing {
+					self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
 
-									// /////////////////////////////////////
-									// done with this batch of operations //
-									// /////////////////////////////////////
+						// /////////////////////
+						// ...unsuspend queue //
+						// /////////////////////
 
-									onCompletion()
-								} else {
-									self.setProgressTime(for: operationID)
-								}
+						self.queue.isSuspended = false
 
-								// /////////////////////
-								// ...unsuspend queue //
-								// /////////////////////
+						if  self.currentOp == .oFinishing {
 
-								self.queue.isSuspended = false
-							}
+							// //////////// //
+							// end of batch //
+							// //////////// //
+
+							onCompletion()
+						} else {
+							self.setProgressTime(for: operationID)
 						}
 					}
 				}

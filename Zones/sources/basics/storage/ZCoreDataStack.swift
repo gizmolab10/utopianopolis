@@ -209,9 +209,12 @@ class ZCoreDataStack: NSObject {
 					}
 
 					self.load(type: kFileType,     into: dbID, onlyOne: false)
-					gRemoteStorage.updateManifestCount(for: dbID)
 
 					FOREGROUND {
+						gRemoteStorage.updateManifestCount(for: dbID)
+						gRemoteStorage.recount()
+						gHere.grab()
+						gSignal([.sRelayout, .spData, .spCrumbs])
 						self.makeAvailable()
 						onCompletion?(0)
 					}
