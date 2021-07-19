@@ -302,8 +302,6 @@ extension UIView {
 extension ZStackableView {
     
     var identity: ZDetailsViewID { return .All }    
-
-    func turnOnTitleButton() {}
     
 }
 

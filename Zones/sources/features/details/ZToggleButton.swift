@@ -25,11 +25,6 @@ class ZToggleButton : ZButton {
         offStateImage = onStateImage?.imageRotatedByDegrees(180.0)
     }
 
-    func setup(onImage: String, offImage: String) {
-        offStateImage = ZImage(named: offImage)
-        onStateImage  = ZImage(named: onImage)
-    }
-
     func setState(_ on: Bool) {
         #if os(OSX)
         self.image = on ? onStateImage : offStateImage

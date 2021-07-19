@@ -515,15 +515,6 @@ extension NSView {
         
 }
 
-extension ZTogglingView {
-	
-    func turnOnTitleButton() {
-        titleButton?.state = .on
-		titleButton?.highlight(false)
-    }
-
-}
-
 extension ZMapView {
     
     func updateMagnification(with event: ZEvent) {

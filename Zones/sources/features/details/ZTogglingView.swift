@@ -13,17 +13,30 @@
 #endif
 
 class ZBannerButton : ZButton {
-	@IBOutlet var   togglingView : ZTogglingView? // point back at the container (stack view)
+	@IBOutlet var   togglingView : ZTogglingView? // point back at the container (specific stack view)
+	var                       on : Bool { return togglingView?.hideHideable ?? false }
+	var            offStateImage : ZImage?
+	var             onStateImage : ZImage?
+
+	func setup() {
+		imagePosition = .imageLeft
+		onStateImage  = NSImage(named: kTriangleImageName)?.resize(CGSize(width: 13, height: 14))
+		offStateImage = onStateImage?.imageRotatedByDegrees(180.0)
+	}
+
+	func updateImage() {
+		image = on ? onStateImage : offStateImage
+	}
+
 }
 
 class ZTogglingView: ZStackView {
 
-	@IBOutlet var triangleButton : ZToggleButton?
-	@IBOutlet var    titleButton : ZBannerButton?
-	@IBOutlet var    extraButton : ZButton?
-	@IBOutlet var        spinner : ZProgressIndicator?
-	@IBOutlet var     bannerView : ZView?
-    @IBOutlet var   hideableView : ZView?
+	@IBOutlet var      spinner : ZProgressIndicator?
+	@IBOutlet var  titleButton : ZBannerButton?
+	@IBOutlet var  extraButton : ZButton?
+    @IBOutlet var hideableView : ZView?
+	@IBOutlet var   bannerView : ZView?
 
     // MARK:- identity
     // MARK:-
@@ -37,7 +50,7 @@ class ZTogglingView: ZStackView {
 			case .vPreferences : return "preference controls"
 			case .vSimpleTools : return "some simple tools which can get you oriented"
 			case .vSmallMap    : return "\(gCurrentSmallMapName)s map"
-			case .vSubscribe     : return "license details"
+			case .vSubscribe   : return "license details"
 			case .vData        : return "useful data about Seriously"
 			default            : return kEmpty
 		}
@@ -69,6 +82,8 @@ class ZTogglingView: ZStackView {
             } else {
                 gHiddenDetailViewIDs.remove(identity)
             }
+
+			titleButton?.updateImage()
         }
     }
 
@@ -77,16 +92,18 @@ class ZTogglingView: ZStackView {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        update()
+		titleButton?.setup()
 
-		zlayer              .backgroundColor =  kClearColor.cgColor
-		hideableView?.zlayer.backgroundColor =  kClearColor.cgColor
+		zlayer              .backgroundColor = kClearColor.cgColor
+		hideableView?.zlayer.backgroundColor = kClearColor.cgColor
 
         repeatUntil({ () -> (Bool) in
             return gDetailsController != nil
         }) {
             gDetailsController?.register(id: self.identity, for: self)
         }
+
+		update()
     }
 
 	@IBAction func extraButtonAction(_ sender: Any) {
@@ -122,8 +139,7 @@ class ZTogglingView: ZStackView {
 			}
 		}
 
-		turnOnTitleButton()
-		triangleButton?.setState(!hideHideable)
+		titleButton?.updateImage()
 		updateHideableView()
 		updateSpinner()
     }
