@@ -76,8 +76,8 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 				tool.isHidden = false
 
 				tool.snp.makeConstraints { make in
-					make.left.equalTo(prior.snp.right).offset(5.0)
 					make.centerY.equalTo(prior)
+					make.left.equalTo(prior.snp.right).offset(9.0)
 				}
 			}
 		}

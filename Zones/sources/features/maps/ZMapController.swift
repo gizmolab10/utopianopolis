@@ -93,7 +93,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
     func layoutForCurrentScrollOffset() {
-		let offset = isExemplar ? .zero : isBigMap ? gScrollOffset : CGPoint(x: -12.0, y: -6.0)
+		let offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(0.0, 20.0) : CGPoint(x: -12.0, y: -6.0)
 
 		if  let d = mapView {
 			rootWidget.snp.setLabel("<o> \(rootWidget.widgetZone?.zoneName ?? kUnknown)")

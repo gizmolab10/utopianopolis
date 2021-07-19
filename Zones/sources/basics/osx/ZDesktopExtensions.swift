@@ -505,7 +505,7 @@ extension NSView {
 			let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
 			let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
 
-			PMSetScale(pmPageFormat, 100.0)
+			PMSetScale(pmPageFormat, 80.0)
 			PMSetOrientation(pmPageFormat, orientation, false)
 			printInfo.updateFromPMPrintSettings()
 			printInfo.updateFromPMPageFormat()

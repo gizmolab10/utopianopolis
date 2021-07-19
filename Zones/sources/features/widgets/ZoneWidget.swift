@@ -164,14 +164,15 @@ class ZoneWidget: ZView {
         addTextView()
         textWidget.layoutText()
         layoutDots()
-        addChildrenView()
 
-        if  recursing && (widgetZone == nil || !visited.contains(widgetZone!)) {
-            let    more = widgetZone == nil ? [] : [widgetZone!]
+		if  let zone = widgetZone, zone.expanded, zone.count > 0, recursing, !visited.contains(zone) {
+			addChildrenView()
+			prepareChildrenWidgets()
 
-            prepareChildrenWidgets()
-			count += layoutChildren(kind, mapType: mapType, visited: visited + more)
-        }
+			count += layoutChildren(kind, mapType: mapType, visited: visited + [zone])
+		} else {
+			childrenView.removeFromSuperview()
+		}
 
 		return count
     }
