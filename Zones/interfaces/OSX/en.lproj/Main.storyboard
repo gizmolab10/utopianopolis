@@ -1637,7 +1637,6 @@ DQ
                         <outlet property="accessIDLabel" destination="xlc-Yd-hnd" id="6A8-OE-0yH"/>
                         <outlet property="enableCloudDrive" destination="Pg2-h7-6ux" id="0m3-bv-2c5"/>
                         <outlet property="enableCloudLabel" destination="O6S-Dv-mLT" id="Mgk-EK-qtL"/>
-                        <outlet property="helpButtonsView" destination="GXv-wU-eO3" id="QfY-aZ-8wh"/>
                         <outlet property="helpLabel" destination="Bpe-so-Utw" id="7Al-CQ-DAy"/>
                         <outlet property="loadingLabel" destination="kKM-9B-fW0" id="c49-Qv-BEM"/>
                         <outlet property="operationLabel" destination="ab6-2E-Tk7" id="UWg-bo-ff3"/>

@@ -314,7 +314,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func handleClick(with event: ZEvent) -> Bool {
 		let              rect = rectFromEvent(event)
-		let     singleleClick = event.clickCount < 2
 		if  let        attach = hitTestForAttachment(in: rect) {
 			resizeDot         = hitTestForResizeDot(in: rect, for: attach)
 			resizeDragStart   = rect.origin
@@ -323,22 +322,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return resizeDot != nil // true means do not further process this event
 		} else if let     dot = dragDotHit(at: rect),
 				  let    note = dot.note {
-			if  let     index = grabbedNotes.firstIndex(of: note),
-				singleleClick {
+			if  let     index = grabbedNotes.firstIndex(of: note) {
 				grabbedNotes.remove(at: index)
 			} else {
-				if !event.modifierFlags.isShift,
-				   singleleClick {
+				if !event.modifierFlags.isShift {
 					ungrabAll()
 				}
 
-				if !singleleClick {
-					swapBetweenNoteAndEssay()
-				} else {
-					grabbedNotes.appendUnique(item: note)
-					setNeedsDisplay()
-					gSignal([.sDetails])
-				}
+				grabbedNotes.appendUnique(item: note)
+				setNeedsDisplay()
+				gSignal([.sDetails])
 			}
 
 			return true
@@ -354,14 +347,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	override func mouseDown(with event: ZEvent) {
 		if  !handleClick   (with: event) {
 			super.mouseDown(with: event)
+			updateCursor    (for: event)
 		}
+	}
+
+	override func mouseMoved(with event: ZEvent) {
+		updateCursor(for: event)
 	}
 
 	// change cursor to
 	// indicate action possible on what's under cursor
 	// and possibly display a tool tip
 
-	override func mouseMoved(with event: ZEvent) {
+	func updateCursor(for event: ZEvent) {
 		let rect = rectFromEvent(event)
 
 		if  linkHit(at: rect) {
