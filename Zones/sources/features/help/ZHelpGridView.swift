@@ -46,7 +46,7 @@ class ZHelpGridView: ZView {
 
 						let p = CGPoint(x: x, y: y)
 						let r = c.rect(p)
-						let m = c.dotParameters()
+						let m = c.helpDotParameters()
 
 						d.drawInnerDot(r, m)
 
@@ -61,7 +61,7 @@ class ZHelpGridView: ZView {
 
 						let p = CGPoint(x: x + 20.0, y: y)
 						let r = c.rect(p)
-						let m = c.dotParameters(isFilled: true)
+						let m = c.helpDotParameters(isFilled: true)
 
 						d.drawInnerDot(r, m)
 						d.drawOuterDot(r, m)

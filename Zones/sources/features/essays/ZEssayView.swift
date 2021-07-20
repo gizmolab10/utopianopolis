@@ -512,7 +512,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  gCurrentEssay == nil {
 			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
 		} else {
-			setControlBarButtons(enabled: true)
+			enableEssayControlButtons(enabled: true)
 
 			if  (shouldOverwrite || restoreSelection != nil),
 				let text = gCurrentEssay?.essayText {
@@ -857,7 +857,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- buttons
 	// MARK:-
 
-	func setControlBarButtons(       enabled: Bool) {
+	func enableEssayControlButtons(       enabled: Bool) {
 		let      hasMultipleNotes =  gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
 		let                   bar =  gMainWindow?.inspectorBar
 		backwardButton?.isEnabled =  enabled && hasMultipleNotes
@@ -897,6 +897,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			location       += (gShowEssayTitles ? 1 : -1) * (titleLength + 2)
 		}
 
+		if  let  b = titlesButton,
+			let id = ZEssayButtonID(rawValue: b.tag) {
+			b.title = id.title
+		}
+
+		save()
 		updateText(restoreSelection: location)
 	}
 
@@ -916,12 +922,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					let tool       = inspectorBar.subviews[index]
 					tool.isHidden  = false
 					rect.size      = tool.frame.size
-					rect.origin.x += prior.size.width
+					rect.origin.x += prior.size.width + 4.0
 					rect.origin.y  = 3.0
 					prior          = rect
 				}
 
-				rect.origin.x     += 25.0
+				rect.origin.x     += 35.0
 
 				return rect
 			}
@@ -958,7 +964,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				return button
 			}
 
-			func setButton(_ button: ZButton) {
+			func assignButton(_ button: ZButton) {
 				if  let    tag = ZEssayButtonID(rawValue: button.tag) {
 					switch tag {
 						case .idBack:   backwardButton = button
@@ -975,7 +981,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let b = buttonFor(tag)
 
 			inspectorBar.addSubview(b)
-			setButton(b)
+			assignButton(b)
 		}
 
 	}

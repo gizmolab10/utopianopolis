@@ -50,6 +50,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     weak var     widget: ZoneWidget?
     var        innerDot: ZoneDot?
     var       dragStart: CGPoint?
+	var         isHover: Bool    = false
     var        isReveal: Bool    = true
     var      isInnerDot: Bool    = false
 	var dragDotIsHidden: Bool    { return widgetZone?.dragDotIsHidden ?? true }
@@ -153,8 +154,28 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
         updateConstraints()
         setNeedsDisplay()
+		updateTracking()
 		updateTooltips()
     }
+
+	// MARK:- hover
+	// MARK:-
+
+	func updateTracking() { if !isInnerDot { addTracking(for: frame) } }
+
+	override func mouseEntered(with event: ZEvent) {
+		innerDot?.isHover = true
+
+		super.mouseEntered(with: event)
+		innerDot?.setNeedsDisplay()
+	}
+
+	override func mouseExited(with event: ZEvent) {
+		innerDot?.isHover = false
+
+		super.mouseExited(with: event)
+		innerDot?.setNeedsDisplay()
+	}
 
     // MARK:- draw
     // MARK:-
@@ -210,7 +231,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		}
 	}
 
-
     func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
         var thickness = CGFloat(gLineThickness + 0.5) * ratio
         var      path = ZBezierPath(rect: .zero)
@@ -228,9 +248,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
         path.fill()
 	}
-
-	func drawCenterDuplicatesDecorations(in iDirtyRect: CGRect) {
-    }
 
 	func drawCenterBookmarkDecorations(in iDirtyRect: CGRect, hasNote: Bool = false) {
 		var rect = iDirtyRect.insetEquallyBy(fraction: 0.3)
@@ -278,12 +295,13 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		let fillColor = parameters.filled ? gBackgroundColor : parameters.color
 
 		if parameters.hasTarget || parameters.hasTargetNote {
+//			let fillColor = parameters.filled ? parameters.color : gBackgroundColor
 
 			// //////////////////////////////// //
 			// TINY CENTER BOOKMARK DECORATIONS //
 			// //////////////////////////////// //
 
-			gBackgroundColor.setFill()
+			fillColor.setFill()
 			drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.hasTargetNote)
 		} else if parameters.traitType != kEmpty {
 
@@ -368,7 +386,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         super.draw(iDirtyRect)
 
 		if  isVisible(iDirtyRect),
-			let parameters = widgetZone?.dotParameters(isFilled, isReveal) {
+			let parameters = widgetZone?.plainDotParameters(isFilled != isHover, isReveal) {
 			if  isInnerDot {
 				drawInnerDot(iDirtyRect, parameters)
 			} else if  innerDot != nil,

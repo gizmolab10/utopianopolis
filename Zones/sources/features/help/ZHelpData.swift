@@ -73,7 +73,7 @@ enum ZHelpDotType: String {
 		}
 	}
 
-	func dotParameters(isFilled: Bool = false) -> ZDotParameters {
+	func helpDotParameters(isFilled: Bool = false) -> ZDotParameters {
 		var p           = ZDotParameters()
 		p.color         = gHelpHyperlinkColor
 		p.fill          = isFilled ? p.color : gBackgroundColor

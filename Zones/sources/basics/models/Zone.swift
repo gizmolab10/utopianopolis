@@ -3240,7 +3240,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func dotParameters(_ isFilled: Bool, _ isReveal: Bool) -> ZDotParameters {
+	func plainDotParameters(_ isFilled: Bool, _ isReveal: Bool) -> ZDotParameters {
 		let            c = widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
 		var            p = ZDotParameters()
 		let            t = bookmarkTarget
@@ -3250,23 +3250,23 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isGrouped      = g != nil
 		p.showList       = expanded
 		p.isReveal       = isReveal
-		p.filled         = isFilled
 		p.hasTarget      = isBookmark
+		p.traitType      = k.first ?? kEmpty
 		p.showAccess     = hasAccessDecoration
 		p.hasTargetNote  = t?.hasNote ?? false
 		p.isGroupOwner   = g == self || g == t
-		p.isDrop         = self == gDropWidget?.widgetZone
+		p.filled         = isFilled || (!isReveal && isGrabbed)
 		p.showSideDot    = isCurrentSmallMapBookmark
-		p.traitType      = (k.count < 1) ? kEmpty : k[0]
-		p.fill           = isFilled ? c.lighter(by: 2.5) : gBackgroundColor
-		p.accessType     = directAccess == .eProgenyWritable ? .sideDot : .vertical
+		p.isDrop         = self == gDropWidget?.widgetZone
+		p.fill           = p.filled ? c.lighter(by: 2.5) : gBackgroundColor
 		p.childCount     = (gCountsMode == .progeny) ? progenyCount : indirectCount
+		p.accessType     = (directAccess == .eProgenyWritable) ? .sideDot : .vertical
 
 		return p
 	}
 
 	func dropDotParameters() -> ZDotParameters {
-		var      p = dotParameters(true, true)
+		var      p = plainDotParameters(true, true)
 		p.fill     = gActiveColor
 		p.isReveal = true
 
