@@ -23,7 +23,6 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	@IBOutlet var acccessToAppleID  : ZView?
 	@IBOutlet var enableCloudDrive  : ZView?
 //	@IBOutlet var progressIndicator : ZTextField?
-//	@IBOutlet var helpButtonsView   : ZHelpButtonsView?
 	@IBOutlet var thermometerBar    : ZStartupProgressBar?
 	var           startupCompletion : Closure?
 
@@ -50,7 +49,6 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		switch kind {
-//			case .sStartupButtons: buttonsView?.updateAndRedraw()
 			case .spStartupStatus: updateThermometerBar(); updateSubviewVisibility()
 			default: break
 		}
@@ -69,7 +67,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 			FOREGROUND(forced: true) {
 				self.updateThermometerBar()
 				self.updateSubviewVisibility()
-				RunLoop.main.acceptInput(forMode: .default, before: Date().addingTimeInterval(0.1))		// update operation label
+//				RunLoop.main.acceptInput(forMode: .default, before: Date().addingTimeInterval(0.1))		// update operation label
 			}
 		}
 	}

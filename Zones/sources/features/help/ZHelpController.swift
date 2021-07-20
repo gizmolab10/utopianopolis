@@ -15,9 +15,9 @@ import SnapKit
     import UIKit
 #endif
 
-var gHelpWindowController       : NSWindowController?         // instantiated once, in startupCloudAndUI
-var gHelpController             : ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
-let gAllHelpModes : [ZHelpMode] = [.dotMode, .basicMode, .middleMode, .proMode, .essayMode]
+var gHelpWindowController : NSWindowController?         // instantiated once, in startupCloudAndUI
+var gHelpController       : ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
+let gAllHelpModes         : [ZHelpMode] = [.dotMode, .basicMode, .middleMode, .proMode, .essayMode]
 
 class ZHelpController: ZGenericTableController {
 
@@ -126,11 +126,11 @@ class ZHelpController: ZGenericTableController {
 				gHelpWindow?.close()
 			} else {
 				gCurrentHelpMode = next
-				isShowing        = true   // prevent infinite recursion (where update (below) calls show)
+				isShowing        = true                   // prevent infinite recursion (where update (below) calls show)
 
-				gHelpWindow?.close()      // workaround for dots draw method not being called (perhaps an apple bug?)
+				gHelpWindow?.close()                      // workaround to force a call to the dots draw method (perhaps an apple bug?)
 				gHelpController?.helpData.prepareStrings()
-				gHelpWindowController?.showWindow(nil)
+				gHelpWindowController?.showWindow(self)   // bring to front
 				update()
 
 				isShowing        = false
@@ -140,7 +140,6 @@ class ZHelpController: ZGenericTableController {
 
 	func showHelpFor(_ mode: ZHelpMode) {
 		show(true, mode: mode)         // side-effect: sets gCurrentHelpMode
-//		gSignal([.sStartupButtons])    // change highlight of help buttons in startup view
 	}
 
 	// MARK:- events
@@ -151,7 +150,7 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		genericTableView?.reloadData()
+		genericTableUpdate()
 	}
 
 	func handleKey(_ key: String, flags: ZEventFlags) -> Bool {   // false means key not handled

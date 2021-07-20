@@ -18,8 +18,11 @@ class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableV
 	override func awakeFromNib() {
 		super.awakeFromNib()
 
-		genericTableView?.delegate   = self
-		genericTableView?.dataSource = self
+		if  let                 t = genericTableView {
+			t.delegate            = self
+			t.dataSource          = self
+			tableHeight?.constant = CGFloat(numberOfRows(in: t)) * rowHeight
+		}
 	}
 
     func numberOfRows(in tableView: NSTableView) -> Int { return 1 }
@@ -29,7 +32,6 @@ class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableV
     func genericTableUpdate() {
         if  let t = genericTableView {
             t.reloadData()
-			tableHeight?.constant = CGFloat(numberOfRows(in: t)) * rowHeight
         }
     }
 

@@ -127,43 +127,6 @@
                                     <constraint firstItem="rdB-jZ-KsQ" firstAttribute="leading" secondItem="zAE-6p-uHR" secondAttribute="leading" constant="288" id="qzD-K9-Jby"/>
                                 </constraints>
                             </customView>
-                            <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
-                                <subviews>
-                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="kLX-vj-I30" userLabel="Dots Exemplar">
-                                        <rect key="frame" x="0.0" y="620" width="1152" height="205"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="205" id="SK8-vk-X7y"/>
-                                        </constraints>
-                                        <connections>
-                                            <segue destination="wJH-0h-8ky" kind="embed" id="dJ6-0b-nqa"/>
-                                        </connections>
-                                    </containerView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="cQI-8A-JZJ" userLabel="Top Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="619" width="1152" height="1"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="1DU-JW-8fi"/>
-                                        </constraints>
-                                    </customView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="xs7-TU-BUO" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="576" y="0.0" width="1" height="619"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="1" id="a4d-aU-yzZ"/>
-                                        </constraints>
-                                    </customView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="kLX-vj-I30" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" id="3Yu-Ei-4U2"/>
-                                    <constraint firstAttribute="trailing" secondItem="kLX-vj-I30" secondAttribute="trailing" id="7dy-1h-txB"/>
-                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" constant="576" id="8YD-QZ-Q9V"/>
-                                    <constraint firstAttribute="trailing" secondItem="cQI-8A-JZJ" secondAttribute="trailing" id="JdW-Iu-bAZ"/>
-                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="top" secondItem="cQI-8A-JZJ" secondAttribute="bottom" id="OFL-O8-Sq1"/>
-                                    <constraint firstItem="kLX-vj-I30" firstAttribute="top" secondItem="xVv-mR-0mE" secondAttribute="top" id="WR1-Ws-aYA"/>
-                                    <constraint firstAttribute="bottom" secondItem="xs7-TU-BUO" secondAttribute="bottom" id="X4I-ZI-Got"/>
-                                    <constraint firstItem="cQI-8A-JZJ" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" id="fKp-jl-sA6"/>
-                                    <constraint firstItem="cQI-8A-JZJ" firstAttribute="top" secondItem="kLX-vj-I30" secondAttribute="bottom" id="yPg-L9-fFF"/>
-                                </constraints>
-                            </customView>
                             <customView id="hxs-Fa-Xk4" userLabel="Essay Help Grid" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -212,6 +175,43 @@
                                     <constraint firstItem="PcV-Nl-m8i" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" constant="576" id="z6C-2h-9Bc"/>
                                 </constraints>
                             </customView>
+                            <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xVv-mR-0mE" customClass="ZHelpGridView" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
+                                <subviews>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="kLX-vj-I30" userLabel="Dots Exemplar">
+                                        <rect key="frame" x="0.0" y="603" width="1152" height="222"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="222" id="SK8-vk-X7y"/>
+                                        </constraints>
+                                        <connections>
+                                            <segue destination="wJH-0h-8ky" kind="embed" id="dJ6-0b-nqa"/>
+                                        </connections>
+                                    </containerView>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="cQI-8A-JZJ" userLabel="Top Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="602" width="1152" height="1"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="1DU-JW-8fi"/>
+                                        </constraints>
+                                    </customView>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="xs7-TU-BUO" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="576" y="0.0" width="1" height="602"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="1" id="a4d-aU-yzZ"/>
+                                        </constraints>
+                                    </customView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="kLX-vj-I30" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" id="3Yu-Ei-4U2"/>
+                                    <constraint firstAttribute="trailing" secondItem="kLX-vj-I30" secondAttribute="trailing" id="7dy-1h-txB"/>
+                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" constant="576" id="8YD-QZ-Q9V"/>
+                                    <constraint firstAttribute="trailing" secondItem="cQI-8A-JZJ" secondAttribute="trailing" id="JdW-Iu-bAZ"/>
+                                    <constraint firstItem="xs7-TU-BUO" firstAttribute="top" secondItem="cQI-8A-JZJ" secondAttribute="bottom" id="OFL-O8-Sq1"/>
+                                    <constraint firstItem="kLX-vj-I30" firstAttribute="top" secondItem="xVv-mR-0mE" secondAttribute="top" id="WR1-Ws-aYA"/>
+                                    <constraint firstAttribute="bottom" secondItem="xs7-TU-BUO" secondAttribute="bottom" id="X4I-ZI-Got"/>
+                                    <constraint firstItem="cQI-8A-JZJ" firstAttribute="leading" secondItem="xVv-mR-0mE" secondAttribute="leading" id="fKp-jl-sA6"/>
+                                    <constraint firstItem="cQI-8A-JZJ" firstAttribute="top" secondItem="kLX-vj-I30" secondAttribute="bottom" id="yPg-L9-fFF"/>
+                                </constraints>
+                            </customView>
                         </subviews>
                         <constraints>
                             <constraint firstItem="zAE-6p-uHR" firstAttribute="top" secondItem="xVv-mR-0mE" secondAttribute="top" id="60s-7B-AUN"/>
@@ -246,12 +246,13 @@
             <objects>
                 <viewController id="wJH-0h-8ky" customClass="ZHelpDotsExemplarController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="61U-DM-8bn">
-                        <rect key="frame" x="0.0" y="0.0" width="601" height="152"/>
+                        <rect key="frame" x="0.0" y="0.0" width="601" height="222"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="NcL-My-K47">
-                                <rect key="frame" x="-1" y="116" width="604" height="16"/>
+                                <rect key="frame" x="-1" y="186" width="604" height="16"/>
                                 <constraints>
+                                    <constraint firstAttribute="height" constant="16" id="XoJ-jw-0Lg"/>
                                     <constraint firstAttribute="width" constant="600" id="YM9-Eo-a1g"/>
                                 </constraints>
                                 <textFieldCell key="cell" selectable="YES" alignment="justified" title="Multiline Label" id="afp-y5-tx0">
@@ -261,16 +262,17 @@
                                 </textFieldCell>
                             </textField>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="biU-wq-VIU">
-                                <rect key="frame" x="51" y="44" width="500" height="60"/>
+                                <rect key="frame" x="51" y="124" width="500" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="500" id="dRm-Nx-NZp"/>
-                                    <constraint firstAttribute="height" constant="60" id="xRG-Gk-2Jx"/>
+                                    <constraint firstAttribute="height" constant="50" id="xRG-Gk-2Jx"/>
                                 </constraints>
                             </customView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="KDc-oP-JYJ">
-                                <rect key="frame" x="-1" y="20" width="604" height="16"/>
+                                <rect key="frame" x="-1" y="20" width="604" height="96"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="600" id="bME-Wr-IUc"/>
+                                    <constraint firstAttribute="height" constant="96" id="d0n-zS-Xkz"/>
                                 </constraints>
                                 <textFieldCell key="cell" selectable="YES" alignment="justified" title="Multiline Label" id="Zii-0U-vau">
                                     <font key="font" metaFont="system"/>
@@ -282,7 +284,7 @@
                         <constraints>
                             <constraint firstItem="KDc-oP-JYJ" firstAttribute="centerX" secondItem="61U-DM-8bn" secondAttribute="centerX" id="6dL-MM-3e7"/>
                             <constraint firstItem="biU-wq-VIU" firstAttribute="top" secondItem="NcL-My-K47" secondAttribute="bottom" constant="12" id="D3I-Ry-qWW"/>
-                            <constraint firstAttribute="bottom" secondItem="KDc-oP-JYJ" secondAttribute="bottom" constant="20" id="VXC-oF-sbS"/>
+                            <constraint firstAttribute="bottom" secondItem="KDc-oP-JYJ" secondAttribute="bottom" constant="20" id="XII-Hs-TK2"/>
                             <constraint firstItem="NcL-My-K47" firstAttribute="top" secondItem="61U-DM-8bn" secondAttribute="top" constant="20" id="Yky-s4-T9I"/>
                             <constraint firstItem="NcL-My-K47" firstAttribute="centerX" secondItem="61U-DM-8bn" secondAttribute="centerX" id="b5k-cm-raf"/>
                             <constraint firstItem="KDc-oP-JYJ" firstAttribute="top" secondItem="biU-wq-VIU" secondAttribute="bottom" constant="8" id="j4k-5I-uKa"/>
@@ -297,7 +299,7 @@
                 </viewController>
                 <customObject id="pb3-EB-5uM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2342" y="154"/>
+            <point key="canvasLocation" x="2342" y="90"/>
         </scene>
         <!--Help Essay Introduction Controller-->
         <scene sceneID="vue-cx-fsz">

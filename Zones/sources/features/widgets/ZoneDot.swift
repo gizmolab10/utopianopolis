@@ -295,7 +295,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		let fillColor = parameters.filled ? gBackgroundColor : parameters.color
 
 		if parameters.hasTarget || parameters.hasTargetNote {
-//			let fillColor = parameters.filled ? parameters.color : gBackgroundColor
 
 			// //////////////////////////////// //
 			// TINY CENTER BOOKMARK DECORATIONS //
@@ -325,7 +324,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
 		drawMainDot(in: iDirtyRect, using: parameters)
 
-		if      parameters.isReveal {
+		if  parameters.isReveal {
 			drawInnerRevealDot(iDirtyRect, parameters)
 		} else {
 			decorationFillColor.setFill()
@@ -339,7 +338,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 				drawGroupingDecorations(for: parameters, in: iDirtyRect)
 			}
 
-			if parameters.showAccess {
+			if  parameters.showAccess {
 
 				// /////////////////////// //
 				// WRITE-ACCESS DECORATION //

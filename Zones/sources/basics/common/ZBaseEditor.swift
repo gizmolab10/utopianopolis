@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-class ZBaseEditor: NSObject {
+class ZBaseEditor : NSObject {
 	var previousEvent: ZEvent?
 	var canHandleKey: Bool { return false }   // filter whether menu and event handlers will call handle key
 

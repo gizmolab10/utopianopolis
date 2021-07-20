@@ -8,7 +8,8 @@
 
 import Foundation
 
-let dotsPrefixArray = Array(repeating: kEmpty, count: 3 * 8)
+let emptyTopRowsCount = 9
+let dotsPrefixArray = Array(repeating: kEmpty, count: 3 * emptyTopRowsCount)
 
 class ZHelpDotsData: ZHelpData {
 
@@ -22,7 +23,7 @@ class ZHelpDotsData: ZHelpData {
 		"",						"",																				"",
 		"!DRAG DOT",			"click to select, deselect or drag",											"",
 		"",						"",																				"",
-		"_drag dot",			"filled dot indicates idea is selected",										"",
+		"_drag dot",			"filled dot indicates idea is selected, or cursor is hovering over",			"",
 		".b",					"editable",																		"",
 		".b",					"not editable",																	"",
 		".b",					"only the ideas in all its sublists are editable",								"",
@@ -51,8 +52,8 @@ class ZHelpDotsData: ZHelpData {
 		".f",					"1200 ideas          large hollow left, 2 medium hollow right",					"",
 		"",						"",																				"",
 		"_bookmark dots",		"click to change focus", 														"",
-		".f",					"bookmark           focus on bookmark's target",								"",
-		".f",					"target has note  same, or ⌘-click to view note",								"",
+		".b",					"bookmark           focus on bookmark's target",								"",
+		".b",					"target has note  same, or ⌘-click to view note",								"",
 		"",						"",																				"",
 		"_trait dots",			"click to edit, or select the drag dot and tap = to:",							"",
 		".b",					"email                   compose and send",										"",

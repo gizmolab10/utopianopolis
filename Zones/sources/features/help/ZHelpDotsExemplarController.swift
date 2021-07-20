@@ -37,7 +37,7 @@ class ZHelpDotsExemplarController : ZMapController {
 		topLabel?   .font = kLargeHelpFont
 		topLabel?   .text = "ALL ideas have a DRAG dot on the left. Many have a REVEAL dot on the right. For example:"
 		bottomLabel?.font = kLargeHelpFont
-		bottomLabel?.text = "\t• The drag dot (at left) is used to select, deselect and drag the idea\n\t• The reveal dot (at right) is used to show or hide its list, or activate the idea\n\nThese dots are often decorated, providing further information about the idea (see below)."
+		bottomLabel?.text = "\t• The drag dot (at left) is used to select, deselect and drag the idea\n\t• The reveal dot (at right) is used to show or hide its list, or activate the idea\n\nWhen the cursor hovers over a dot, the fill in color reverses (try the dots above). Dots are often decorated, providing further information about their idea (see below)."
 		mapView?.addBorder(thickness: 0.5, radius: 0.0, color: kDarkGrayColor.cgColor)
 	}
 

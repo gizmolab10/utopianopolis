@@ -28,6 +28,7 @@ class ZStartup: NSObject {
 
 	func startupCloudAndUI() {
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
+		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
 		gMigrationState        = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrate : .firstTime
 		gWorkMode              = .wStartupMode
 
@@ -52,7 +53,6 @@ class ZStartup: NSObject {
 						gMainController?.helpButton?.isHidden = false
 						gHasFinishedStartup                   = true
 						gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
-						gHelpWindowController                 = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
 
 						gRecents.push()
 						gHereMaybe?.grab()

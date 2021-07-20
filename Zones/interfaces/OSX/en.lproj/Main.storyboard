@@ -557,22 +557,28 @@ DQ
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Cheat Sheets" id="TET-FJ-Mmt">
                                                 <items>
+                                                    <menuItem title="Dots" keyEquivalent="/" id="W6c-6I-BEc">
+                                                        <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="vLz-Yr-nvb"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="Basic Keys" keyEquivalent="/" id="RQA-tZ-jdg">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="GVM-4d-6re"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="All Keys" keyEquivalent="/" id="kBS-48-x8v">
+                                                        <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="ygH-CY-mzq"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="Essay Keys" keyEquivalent="/" id="oQc-Cr-N61">
                                                         <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="iJV-uu-yXo"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Dots" keyEquivalent="/" id="W6c-6I-BEc">
-                                                        <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="vLz-Yr-nvb"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>

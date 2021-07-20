@@ -68,7 +68,7 @@ class ZControlsController: ZGenericController {
 
 		gSearchBarController?.updateSearchBox()
 		gSearchResultsController?.applyFilter()
-		gSearchResultsController?.genericTableView?.reloadData()
+		gSearchResultsController?.genericTableUpdate()
 	}
 
 	@IBAction func dismissAction(_ sender: ZButton) {

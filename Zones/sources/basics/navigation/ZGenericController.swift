@@ -47,7 +47,7 @@ class ZGenericController: ZController, ZGeneric {
 			case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences, .sDetails]
 			case .idSearchResults: return [.sFound]
 			case .idSearch:        return [.sSearch]
-			case .idStartup:       return [.spStartupStatus] // .sStartupButtons
+			case .idStartup:       return [.spStartupStatus]
 			case .idNote:          return [.sEssay, .sAppearance]             // ignore the signal from the end of process next batch
 			default: break
 		}
@@ -56,10 +56,10 @@ class ZGenericController: ZController, ZGeneric {
 	}
 
 	func shouldHandle(_ kind: ZSignalKind) -> Bool {
-		return    (allowedKinds.count == 0 ||                    allowedKinds.contains(kind))
-			&& (disallowedKinds.count == 0 ||                !disallowedKinds.contains(kind))
-			&& ((gHasFinishedStartup && ![.spStartupStatus,          .sError].contains(kind))
-			|| (!gHasFinishedStartup &&  [.spStartupStatus,  .spMain, .sData].contains(kind)))
+		return    (allowedKinds.count == 0 ||                   allowedKinds.contains(kind))
+			&& (disallowedKinds.count == 0 ||               !disallowedKinds.contains(kind))
+			&& ((gHasFinishedStartup && ![.spStartupStatus,         .sError].contains(kind))
+			|| (!gHasFinishedStartup &&  [.spStartupStatus, .spMain, .sData].contains(kind)))
 	}
 
     override func viewDidLoad() {

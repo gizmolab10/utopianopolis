@@ -70,14 +70,10 @@ class ZEvents: ZGeneric {
 					let isWindow = event.type == .keyDown || (event.window?.contentView?.frame.contains(event.locationInWindow) ?? false)
 
 					switch gWorkMode {
-						case .wSearchMode:
-							return gSearching      .handleEvent(event)
-						case .wEssayMode:
-							return gEssayEditor    .handleEvent(event, isWindow: isWindow)
-						case .wMapMode, .wEditIdeaMode:
-							return gMapEditor      .handleEvent(event, isWindow: isWindow)
-						default:
-							return gHelpController?.handleEvent(event) ?? event
+						case .wSearchMode:              return gSearching      .handleEvent(event)
+						case .wEssayMode:               return gEssayEditor    .handleEvent(event, isWindow: isWindow)
+						case .wMapMode, .wEditIdeaMode: return gMapEditor      .handleEvent(event, isWindow: isWindow)
+						default:                        return gHelpController?.handleEvent(event) ?? event
 					}
 				}
 
