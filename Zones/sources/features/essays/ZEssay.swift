@@ -42,7 +42,7 @@ class ZEssay: ZNote {
 
 		setupChildren()
 
-		var result: NSMutableAttributedString?
+		var result : NSMutableAttributedString?
 		var index  = children.count
 		let    max = index - 1
 

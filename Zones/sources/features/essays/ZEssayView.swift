@@ -517,7 +517,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  (shouldOverwrite || restoreSelection != nil),
 				let text = gCurrentEssay?.essayText {
 				discardPriorText()
-				gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }   // emplace text
+				gCurrentEssay?.noteTrait?.whileCurrentTraitIsSelf { setText(text) }   // emplace text
 				select(restoreSelection: restoreSelection)
 				undoManager?.removeAllActions()         // clear the undo stack of prior / disastrous information (about prior text)
 			}
@@ -877,32 +877,33 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
+				case .idTitles:  save(); toggleTitles()
 				case .idForward: save(); gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRelayoutMaps() }
 				case .idBack:    save(); gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRelayoutMaps() }
 				case .idSave:    save()
 				case .idHide:                          grabDone()
 				case .idCancel:                        gCurrentEssayZone?.grab();       exit()
 				case .idDelete:  if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); done() }
-				case .idTitles:  toggleEssayTitles()
 			}
 		}
 	}
 
-	func toggleEssayTitles() {
+	func toggleTitles() {
 		gShowEssayTitles    = !gShowEssayTitles
 		var        location = selectedRange().location
+
+		if  let      button = titlesButton,
+			let    buttonID = ZEssayButtonID(rawValue: button.tag) {
+			button   .title = buttonID.title
+		}
 
 		if  let        note = selectedNote,
 			let titleLength = note.zone?.zoneName?.length {
 			location       += (gShowEssayTitles ? 1 : -1) * (titleLength + 2)
+
+			note.updatedRanges()
 		}
 
-		if  let  b = titlesButton,
-			let id = ZEssayButtonID(rawValue: b.tag) {
-			b.title = id.title
-		}
-
-		save()
 		updateText(restoreSelection: location)
 	}
 

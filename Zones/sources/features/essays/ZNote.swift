@@ -198,10 +198,11 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		if  let    name = hideTitles ? kEmpty : zone?.zoneName,
 			let    text = noteTrait?.noteText {
 			let  spacer = kNoteIndentSpacer * titleInsets
+			let tLength = hideTitles ? 0 : name.length
 			let sOffset = hideTitles ? 0 : spacer.length
 			let hasGoof = name.contains("􀅇")
-			let tOffset = hideTitles ? 1 :  sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
-			titleRange  = NSRange(location: sOffset, length: name.length)
+			let tOffset = hideTitles ? 0 :  sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
+			titleRange  = NSRange(location: sOffset, length: tLength)
 			textRange   = NSRange(location: tOffset, length: text.length)
 			noteOffset  = 0
 
