@@ -136,7 +136,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			snp.setLabel("<\(isReveal ? "r" : "d")> \(widgetZone?.zoneName ?? kUnknown)")
             snp.removeConstraints()
             snp.makeConstraints { make in
-                var   width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
+                var   width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + innerDotWidth - 48.0
                 let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
 
 				if !iWidget.type.isBigMap {
