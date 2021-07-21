@@ -319,6 +319,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			resizeDragStart   = rect.origin
 			imageAttachment   = attach
 
+			setSelectedRange(attach.range)
+			setNeedsDisplay()
+
 			return resizeDot != nil // true means do not further process this event
 		} else if let     dot = dragDotHit(at: rect),
 				  let    note = dot.note {

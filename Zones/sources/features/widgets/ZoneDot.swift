@@ -177,6 +177,13 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		innerDot?.setNeedsDisplay()
 	}
 
+	override func mouseUp(with event: ZEvent) {
+		innerDot?.isHover = false
+
+		super.mouseUp(with: event)
+		innerDot?.setNeedsDisplay()
+	}
+
     // MARK:- draw
     // MARK:-
 

@@ -1099,7 +1099,7 @@ class ZMapEditor: ZBaseEditor {
 		priorHere     = gHere
 
 		if  let grabs = moveables {
-			moveUp(iMoveUp, grabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
+			moveUp(iMoveUp, grabs.reversed(), selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
 				gSignal(kinds)
 			}
 		}
