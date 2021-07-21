@@ -82,6 +82,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	override func draw(_ dirtyRect: NSRect) {
+		let         attach  = imageAttachment ?? eraseAttachment
 		if  resizeDragRect == nil {
 			let        path = ZBezierPath(rect: bounds)
 
@@ -91,7 +92,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		super.draw(dirtyRect)
 
-		if  imageAttachment != nil {
+		if  attach != nil {
 			gActiveColor.setStroke()
 			gActiveColor.setFill()
 		} else {
@@ -108,8 +109,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			path.setLineDash(pattern, count: 2, phase: 4.0)
 			path.stroke()
 			drawImageResizeDots(onBorderOf: rect)
-		} else if let attach = imageAttachment ?? eraseAttachment,
-				  let   rect = rectForRangedAttachment(attach) {
+		} else if let    a = attach,
+				  let rect = rectForRangedAttachment(a) {
 			drawImageResizeDots(onBorderOf: rect)
 		}
 
@@ -277,12 +278,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		setNeedsDisplay() // to update which drag dot is filled
 	}
 
-	func scrollToGrabbed() {
-		if  let range = lastGrabbedDot?.noteRange {
-			scrollRangeToVisible(range)
-		}
-	}
-
 	func handlePlainArrow(_ arrow: ZArrowKey, permitAnotherRecurse: Bool = true) {
 		let horizontal = [.left, .right].contains(arrow)
 		var canRecurse = true
@@ -358,6 +353,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		updateCursor(for: event)
 	}
 
+	func textView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
+		setNeedsDisplay()
+
+		return true
+	}
+
 	// change cursor to
 	// indicate action possible on what's under cursor
 	// and possibly display a tool tip
@@ -431,6 +432,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  let zone = note.zone {
 				zone.asssureIsVisible()
 			}
+		}
+	}
+
+	func scrollToGrabbed() {
+		if  let range = lastGrabbedDot?.noteRange {
+			scrollRangeToVisible(range)
 		}
 	}
 
@@ -1129,8 +1136,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {      // return nil if image is clipped
-		if  let  rect = attach.glyphRect(for: textStorage, margin: margin),
-			let image = imageAttachment?.attachment.cellImage,
+		if  let image = attach.attachment.cellImage,
+			let  rect = attach.glyphRect(for: textStorage, margin: margin),
 			rect.size.absoluteDifferenceInLengths(comparedTo: image.size) < 2.0 {
 
 			return rect
