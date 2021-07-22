@@ -26,7 +26,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var            noteRange : NSRange   { return NSRange(location: noteOffset, length: textRange.upperBound) }
 	var      offsetTextRange : NSRange   { return textRange.offsetBy(noteOffset) }
 	var        lastTextRange : NSRange?  { return textRange }
-	var       maybeNoteTrait : ZTrait?   { return zone?.traits[  .tNote] }
+	var       maybeNoteTrait : ZTrait?   { return zone?.traits  [.tNote] }
 	var            noteTrait : ZTrait?   { return zone?.traitFor(.tNote) }
 	var           recordName : String?   { return zone?.recordName }
 	var               prefix : String    { return "note" }
@@ -40,7 +40,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	func setupChildren() {}
 	func updateNoteOffsets() {}
 	func noteIn(_ range: NSRange) -> ZNote { return self }
-	func saveEssay(_ attributedString: NSAttributedString?) { saveNote(attributedString) }
+	func injectIntoEssay(_ attributedString: NSAttributedString?) { injectIntoNote(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
 
@@ -68,17 +68,22 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK:- persistency
 	// MARK:-
 
-	func saveNote(_ attributedString: NSAttributedString?) {
-		if  let attributed = attributedString,
-			let       note = maybeNoteTrait,
-			attributed.string.length >= textRange.upperBound {
-			let       text = attributed.attributedSubstring(from: textRange)
-			note .noteText = NSMutableAttributedString(attributedString: text)    // invokes note.needSave()
-			autoDelete     = false
+	func injectIntoNote(_ attributedString: NSAttributedString?) {
+		if  let            trait  = maybeNoteTrait,
+			let       attributed  = attributedString {
+			let            delta  = attributed.string.length - textRange.upperBound
+			autoDelete            = false
+
+			if  delta != 0 {
+				textRange.length += delta      // correct text range to match
+			}
+
+			let             text  = attributed.attributedSubstring(from: textRange)
+			trait      .noteText  = NSMutableAttributedString(attributedString: text)    // invokes note.needSave()
 
 			if  gShowEssayTitles {
-				let       name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: kEmpty)
-				zone?.zoneName = name
+				let          name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: kEmpty)
+				zone?   .zoneName = name
 			}
 
 			zone?.updateCoreDataRelationships()
@@ -195,13 +200,13 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	@discardableResult func updatedRanges() -> (NSMutableAttributedString, String)? {
 		let hideTitles  = !gShowEssayTitles
-		if  let    name = hideTitles ? kEmpty : zone?.zoneName,
-			let    text = noteTrait?.noteText {
+		if  let    text = noteTrait?.noteText,
+			let    name = hideTitles ? kEmpty : zone?.zoneName {
 			let  spacer = kNoteIndentSpacer * titleInsets
-			let tLength = hideTitles ? 0 : name.length
-			let sOffset = hideTitles ? 0 : spacer.length
 			let hasGoof = name.contains("􀅇")
-			let tOffset = hideTitles ? 0 :  sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
+			let tLength = hideTitles ? 0 : name  .length
+			let sOffset = hideTitles ? 0 : spacer.length
+			let tOffset = hideTitles ? 0 :  sOffset + tLength + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
 			titleRange  = NSRange(location: sOffset, length: tLength)
 			textRange   = NSRange(location: tOffset, length: text.length)
 			noteOffset  = 0

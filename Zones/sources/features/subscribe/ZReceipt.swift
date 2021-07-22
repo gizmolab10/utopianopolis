@@ -7,6 +7,7 @@
 //
 
 import Foundation
+//import ASN1Swift
 
 let gReceipt = ZReceipt()
 
@@ -21,7 +22,15 @@ class ZReceipt: NSObject {
 		return nil
 	}
 
-	func validateForID(_ transactionID: String?, _ onCompletion: ZTokenClosure? = nil) {
+	func localValidateForID(_ transactionID: String?, _ onCompletion: ZTokenClosure? = nil) {
+		if  let  receipt = currentReceipt,
+			let  derData = Data(base64Encoded: receipt, options: .ignoreUnknownCharacters),
+			let     cert = SecCertificateCreateWithData(nil, derData as CFData) {
+			print(cert)
+		}
+	}
+
+	func remoteValidateForID(_ transactionID: String?, _ onCompletion: ZTokenClosure? = nil) {
 		if  let       receipt = currentReceipt {
 			let    sandboxURL = "sandbox.itunes.apple.com"
 			let productionURL = "buy.itunes.apple.com"

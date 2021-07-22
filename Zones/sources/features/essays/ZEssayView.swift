@@ -354,7 +354,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func textView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
-		setNeedsDisplay()
+		setNeedsDisplay() // so dots selecting image will be redrawn
 
 		return true
 	}
@@ -562,7 +562,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func save() {
 		if  let e = gCurrentEssay {
-			e.saveEssay(textStorage)
+			e.injectIntoEssay(textStorage)
 		}
 	}
 
@@ -610,7 +610,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					}
 			}
 
-			gCurrentEssay?.essayLength += delta							// compensate for change
+			gCurrentEssay?     .essayLength += delta					// compensate for change
+			gCurrentEssay?.textRange.length += delta
 
 			return true
 		}
@@ -658,7 +659,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let     c = textContainer {
 			for (index, zone) in zones.enumerated() {
 				if  var note   = zone.note {
-					if  index == 0 {
+					if  index == 0 { // huh?
 						note   = ZNote(zone)
 						note.updatedRanges()
 					}
@@ -695,7 +696,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  flags.isOption {
 			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
-				gCurrentEssay?.saveEssay(textStorage)
+				gCurrentEssay?.injectIntoEssay(textStorage)
 
 				gMapEditor.handleArrow(arrow, flags: flags) {
 					self.resetTextAndGrabs()
@@ -790,7 +791,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if !firstIsGrabbed,
 		    let note = firstGrabbedNote,
 			let zone = note.zone {
-			gCurrentEssay?.saveEssay(textStorage)
+			gCurrentEssay?.injectIntoEssay(textStorage)
 			gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
 			ungrabAll()
 
@@ -910,8 +911,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let        note = selectedNote,
 			let titleLength = note.zone?.zoneName?.length {
 			location       += (gShowEssayTitles ? 1 : -1) * (titleLength + 2)
-
-			note.updatedRanges()
 		}
 
 		updateText(restoreSelection: location)
@@ -1201,7 +1200,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let    zone = current.zone {
 			let   count = zone.countOfNotes
 
-			current.saveEssay(textStorage)
+			current.injectIntoEssay(textStorage)
 
 			if  current.isNote {
 				if  count                > 1 {

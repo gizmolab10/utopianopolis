@@ -125,7 +125,7 @@ class ZEssay: ZNote {
 		return (child == self) ? super.isLocked(within: range) : child.isLocked(within: lockRange)
 	}
 
-	override func saveEssay(_ attributedString: NSAttributedString?) {
+	override func injectIntoEssay(_ attributedString: NSAttributedString?) {
 		if  let attributed  = attributedString {
 			for child in children {
 				let range   = child.noteRange
@@ -133,7 +133,7 @@ class ZEssay: ZNote {
 				if  range.upperBound <= attributed.length {
 					let sub = attributed.attributedSubstring(from: range)
 
-					child.saveNote(sub)
+					child.injectIntoNote(sub)
 				}
 			}
 		}

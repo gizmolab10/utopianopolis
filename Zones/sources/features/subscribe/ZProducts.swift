@@ -136,7 +136,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	}
 
 	func validateCurrentReceipt() {
-		gReceipt.validateForID(zToken?.transactionID) { token in
+		gReceipt.localValidateForID(zToken?.transactionID) { token in
 			if  let  t = token {
 				self.zToken = t
 
