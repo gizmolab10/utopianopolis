@@ -406,19 +406,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	private func select(restoreSelection: Int? = nil) {
-		var point = CGPoint()                     // scroll to top
+	private func select(restoreSelection: NSRange? = nil) {
+		var        point = CGPoint()                                     // scroll to top
+		if  let    essay = gCurrentEssay,
+			(essay.lastTextIsDefault || restoreSelection != nil),
+			let range    = restoreSelection ?? essay.lastTextRange {     // default: select entire text of final essay
 
-		if  let e = gCurrentEssay,
-			(e.lastTextIsDefault || restoreSelection != nil),
-			var range      = e.lastTextRange {    // select entire text of final essay
-			if  let offset = restoreSelection {
-				range      = NSRange(location: offset, length: 0)
-			}
-
-			if  let   r = rectForRange(range) {
-				point   = r.origin
-				point.y = max(0.0, point.y - 100.0)
+			if  let rect = rectForRange(range) {
+				point    = rect.origin
+				point .y = max(0.0, point.y - 100.0)
 			}
 
 			setSelectedRange(range)
@@ -509,7 +505,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		updateText()
 	}
 
-	func updateText(restoreSelection: Int? = nil) {
+	func updateText(restoreSelection: NSRange? = nil) {
 
 		// make sure we actually have a current essay
 		// activate the buttons in the control bar
@@ -606,7 +602,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .eDelete:
 					FOREGROUND {										// DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
 						gCurrentEssay?.reset()
-						self.updateText(restoreSelection: delta)		// recreate essay text and restore cursor position within it
+						self.updateText(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
 					}
 			}
 
@@ -901,7 +897,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func toggleTitles() {
 		gShowEssayTitles    = !gShowEssayTitles
-		var        location = selectedRange().location
+		var           range = selectedRange()
 
 		if  let      button = titlesButton,
 			let    buttonID = ZEssayButtonID(rawValue: button.tag) {
@@ -910,10 +906,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  let        note = selectedNote,
 			let titleLength = note.zone?.zoneName?.length {
-			location       += (gShowEssayTitles ? 1 : -1) * (titleLength + 2)
+			range.location += (gShowEssayTitles ? 1 : -1) * (titleLength + 2)
 		}
 
-		updateText(restoreSelection: location)
+		updateText(restoreSelection: range)
 	}
 
 	private func addButtonFor(_ tag: ZEssayButtonID) {
@@ -1092,7 +1088,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			clearResizing()
 			setNeedsLayout()
 			setNeedsDisplay()
-			updateText(restoreSelection: range.location)  // recreate essay after an image is dropped
+			updateText(restoreSelection: range)  // recreate essay after an image is dropped
 		}
 	}
 
