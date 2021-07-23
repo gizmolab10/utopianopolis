@@ -903,7 +903,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func titleLengthsUpTo(_ note: ZNote) -> Int {
 		if  let zones = gCurrentEssay?.zone?.zonesWithNotes,
 			let nZone = note.zone {
-			var total = -2
+			let isOne = zones.count == 1
+			var total = isOne ? -4 : -2
 
 			for zone in zones {
 				if  let length = zone.zoneName?.length {
