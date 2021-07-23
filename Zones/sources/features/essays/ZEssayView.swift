@@ -44,7 +44,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var lockedSelection : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
 	var firstIsGrabbed  : Bool               { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
-	var selectedNotes   : [ZNote]            { return dragDots.filter { $0.noteRange != nil && selectedRange.intersects($0.noteRange!.extendedBy(1)) } .map { $0.note! } }
+	var selectedNotes   : [ZNote]            { return (gCurrentEssay?.zone?.zonesWithNotes.filter { $0.note?.noteRange != nil && selectedRange.intersects($0.note!.noteRange.extendedBy(1)) } .map { $0.note! })! }
 	var backwardButton  : ZButton?
 	var forwardButton   : ZButton?
 	var cancelButton    : ZButton?
@@ -351,6 +351,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	override func mouseMoved(with event: ZEvent) {
+		super.mouseMoved(with: event)
 		updateCursor(for: event)
 	}
 
@@ -899,6 +900,25 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
+	func titleLengthsUpTo(_ note: ZNote) -> Int {
+		if  let zones = gCurrentEssay?.zone?.zonesWithNotes,
+			let nZone = note.zone {
+			var total = -2
+
+			for zone in zones {
+				if  let length = zone.zoneName?.length {
+					total     += length + 6
+				}
+
+				if  zone == nZone {
+					return total
+				}
+			}
+		}
+
+		return note.titleRange.length
+	}
+
 	func toggleTitles() {
 		gShowEssayTitles    = !gShowEssayTitles
 		var           range = selectedRange()
@@ -909,8 +929,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		if  let        note = selectedNote {
-			let titleLength = note.titleRange.length
-			range.location += (gShowEssayTitles ? 1 : -1) * (titleLength + 4)
+			let titleLength = titleLengthsUpTo(note)
+			range.location += (gShowEssayTitles ? 1 : -1) * titleLength
 		}
 
 		updateText(restoreSelection: range)
@@ -1029,6 +1049,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	override func mouseDragged(with event: ZEvent) {
+		super.mouseDragged(with: event)
+
 		if  resizeDot    != nil,
 			let     start = resizeDragStart {
 			let     flags = event.modifierFlags
@@ -1083,6 +1105,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	override func mouseUp(with event: ZEvent) {
+		super.mouseUp(with: event)
+
 		if  resizeDot != nil,
 			updateImage(),
 			let attach = imageAttachment {

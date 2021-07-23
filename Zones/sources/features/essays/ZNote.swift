@@ -244,21 +244,25 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	func isLocked(within range: NSRange) -> Bool {
-		let     ranEnd = range     .upperBound
-		let     titEnd = titleRange.upperBound
-		let   titStart = titleRange.lowerBound
-		let  textStart = textRange .lowerBound
-		let   ranStart = range     .lowerBound
-		let atTitStart = titStart == ranStart                               // range begins at beginning of title
-		let   atTitEnd = titEnd   == ranEnd                                 // range ends at end of title
-		let  beforeTit = NSMakeRange(0, titleRange.lowerBound)
-		let    between = NSMakeRange(titEnd, textStart - titEnd)
-		let   isBefore = beforeTit.intersects(range)         // before title
-		let  isBetween = between  .intersects(range)                        // between title and text
-		let  straddles = range    .intersects(between)                      // begins in title ends in text
-		let   isLocked = ((straddles || isBetween) && !atTitEnd) || (isBefore && !atTitStart)
+		if !gShowEssayTitles {
+			return false
+		} else {
+			let     ranEnd = range     .upperBound
+			let     titEnd = titleRange.upperBound
+			let   titStart = titleRange.lowerBound
+			let  textStart = textRange .lowerBound
+			let   ranStart = range     .lowerBound
+			let atTitStart = titStart == ranStart                               // range begins at beginning of title
+			let   atTitEnd = titEnd   == ranEnd                                 // range ends at end of title
+			let  beforeTit = NSMakeRange(0, titleRange.lowerBound)
+			let    between = NSMakeRange(titEnd, textStart - titEnd)
+			let   isBefore = beforeTit.intersects(range)         // before title
+			let  isBetween = between  .intersects(range)                        // between title and text
+			let  straddles = range    .intersects(between)                      // begins in title ends in text
+			let     locked = ((straddles || isBetween) && !atTitEnd) || (isBefore && !atTitStart)
 
-		return isLocked
+			return locked
+		}
 	}
 
 	// N.B. mutates title range
@@ -269,7 +273,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 		if  zone?.userCanWrite ?? false,
 		    let range 		            = inRange.inclusiveIntersection(noteRange)?.offsetBy(-noteOffset) {
-			if  range                  == noteRange.offsetBy(-noteOffset) {
+			if  range                  == noteRange.offsetBy(-noteOffset),
+				replacementLength      == 0 {
 				result				    = .eDelete
 
 				zone?.deleteNote()
