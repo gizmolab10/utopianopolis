@@ -137,6 +137,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		if  let arrow = key.arrow {
+			clearResizing()
 			handleArrow(arrow, flags: flags)
 
 			return true
@@ -353,12 +354,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		updateCursor(for: event)
 	}
 
-	func textView(_ textView: NSTextView, shouldChangeTextInRanges affectedRanges: [NSValue], replacementStrings: [String]?) -> Bool {
-		setNeedsDisplay() // so dots selecting image will be redrawn
-
-		return true
-	}
-
 	// change cursor to
 	// indicate action possible on what's under cursor
 	// and possibly display a tool tip
@@ -523,7 +518,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  (shouldOverwrite || restoreSelection != nil),
 				let text = gCurrentEssay?.essayText {
 				discardPriorText()
-				gCurrentEssay?.noteTrait?.whileCurrentTraitIsSelf { setText(text) }   // emplace text
+				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // emplace text
 				select(restoreSelection: restoreSelection)
 				undoManager?.removeAllActions()         // clear the undo stack of prior / disastrous information (about prior text)
 			}
@@ -593,30 +588,65 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString replacement: String?) -> Bool {
+		setNeedsDisplay()        // so dots selecting image will be redrawn
+
 		if  let   replacementLength = replacement?.length,
 			let   (result,   delta) = gCurrentEssay?.shouldAlterEssay(range, replacementLength: replacementLength) {
 			switch result {
-				case .eAlter: return true
-				case .eLock:  return false
-				case .eExit:  exit()
+				case .eAlter:
+					break
+				case .eLock:
+					return false
+				case .eExit:
+					exit()
+
+					return false
 				case .eDelete:
-					FOREGROUND {										// DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
+					FOREGROUND {                          // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
 						gCurrentEssay?.reset()
 						self.updateText(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
 					}
 			}
 
-			gCurrentEssay?     .essayLength += delta					// compensate for change
-			gCurrentEssay?.textRange.length += delta
-
-			return true
+			gCurrentEssay?.essayLength += delta           // compensate for change
 		}
 
-		return replacement == nil
+		return true // yes, change text
 	}
 
 	// MARK:- grab / drag
 	// MARK:-
+
+	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
+
+		// SHIFT single note expand to essay and vice-versa
+
+		let indents = relativeLevelOfFirstGrabbed
+
+		if  flags.isOption {
+			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
+				gCurrentEssay?.injectIntoEssay(textStorage)
+
+				gMapEditor.handleArrow(arrow, flags: flags) {
+					self.resetTextAndGrabs()
+				}
+			}
+		} else if flags.isShift {
+			if [.left, .right].contains(arrow) {
+				// conceal reveal subnotes of grabbed (NEEDS new ZEssay code)
+			}
+		} else if arrow == .left {
+			if  indents == 0 {
+				done()
+			} else {
+				swapBetweenNoteAndEssay()
+			}
+		} else if [.up, .down].contains(arrow) {
+			grabNextNote(up: arrow == .up, ungrab: !flags.isShift)
+			scrollToGrabbed()
+			gSignal([.sDetails])
+		}
+	}
 
 	func grabbedIndex(goingUp: Bool) -> Int? {
 		let dots = goingUp ? dragDots : dragDots.reversed()
@@ -649,15 +679,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		var dots = [ZEssayDragDot]()
 
 		if  let essay = gCurrentEssay, !essay.isNote,
-			let zones = essay.zone?.zonesWithNotes,
-			let level = essay.zone?.level,
+			let  zone = essay.zone,
 			let     l = layoutManager,
 			let     c = textContainer {
+			let zones = zone.zonesWithNotes
+			let level = zone.level
 			for (index, zone) in zones.enumerated() {
 				if  var note   = zone.note {
-					if  index == 0 { // huh?
-						note   = ZNote(zone)
-						note.updatedRanges()
+					if  index == 0 { //,           // huh?
+//						let  s = textStorage, essay.noteRange.upperBound <= s.string.length,
+//						let  t = s.attributedSubstring(from: essay.noteRange) as? NSMutableAttributedString {
+						note   = essay
+
+//						note.updatedRangesFrom(t)
 					}
 
 					let dragHeight = 15.0
@@ -683,36 +717,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		return dots
-	}
-
-	// SHIFT single note expand to essay and vice-versa
-
-	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
-		let indents = relativeLevelOfFirstGrabbed
-
-		if  flags.isOption {
-			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
-				gCurrentEssay?.injectIntoEssay(textStorage)
-
-				gMapEditor.handleArrow(arrow, flags: flags) {
-					self.resetTextAndGrabs()
-				}
-			}
-		} else if flags.isShift {
-			if [.left, .right].contains(arrow) {
-				// conceal reveal subnotes of grabbed (NEEDS new ZEssay code)
-			}
-		} else if arrow == .left {
-			if  indents == 0 {
-				done()
-			} else {
-				swapBetweenNoteAndEssay()
-			}
-		} else if [.up, .down].contains(arrow) {
-			grabNextNote(up: arrow == .up, ungrab: !flags.isShift)
-			scrollToGrabbed()
-			gSignal([.sDetails])
-		}
 	}
 
 	func drawDragDecorations() {
@@ -904,9 +908,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			button   .title = buttonID.title
 		}
 
-		if  let        note = selectedNote,
-			let titleLength = note.zone?.zoneName?.length {
-			range.location += (gShowEssayTitles ? 1 : -1) * (titleLength + 2)
+		if  let        note = selectedNote {
+			let titleLength = note.titleRange.length
+			range.location += (gShowEssayTitles ? 1 : -1) * (titleLength + 4)
 		}
 
 		updateText(restoreSelection: range)
@@ -1017,6 +1021,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func clearResizing() {
+		eraseAttachment = nil
 		imageAttachment = nil
 		resizeDragStart = nil
 		resizeDragRect  = nil

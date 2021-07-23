@@ -70,7 +70,7 @@ class ZEssay: ZNote {
 
 					if  index > 0 {
 						result?.insert(gBlankLine, at: 0)
-						child.bumpRanges(by: bump)
+						child.bumpLocations(by: bump)
 					}
 				}
 			}

@@ -137,7 +137,7 @@ class ZTrait: ZTraitAssets {
 			var        string : NSMutableAttributedString?
 			let       isEmpty = text == nil || text!.isEmpty || text! == kEssayDefault
 
-			whileCurrentTraitIsSelf {
+			whileSelfIsCurrentTrait {
 				if  isEmpty {
 					text      = kEssayDefault
 
@@ -159,7 +159,7 @@ class ZTrait: ZTraitAssets {
 		}
 
 		set {
-			whileCurrentTraitIsSelf {
+			whileSelfIsCurrentTrait {
 				if  let string = newValue {
 					text 	   = string.string
 					format 	   = string.attributesAsString
@@ -210,7 +210,7 @@ class ZTrait: ZTraitAssets {
 
 	override var matchesFilterOptions: Bool { return gFilterOption.contains(.fNotes) }
 
-	func whileCurrentTraitIsSelf(during: Closure) {
+	func whileSelfIsCurrentTrait(during: Closure) {
 		let     prior = gCurrentTrait // can be called within recursive traversal of notes within notes, etc.
 		gCurrentTrait = self
 		during()

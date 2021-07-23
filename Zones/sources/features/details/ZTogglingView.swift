@@ -60,9 +60,9 @@ class ZTogglingView: ZStackView {
 		if  let    k = kind {
 			switch k {
 				case "preferences": return .vPreferences
-				case "startHere":   return .vSimpleTools
+				case "simpleTools": return .vSimpleTools
+				case "subscribe":   return .vSubscribe
 				case "smallMap":    return .vSmallMap
-				case "license":     return .vSubscribe
 				case "data":        return .vData
 				default:            return .vAll
 			}

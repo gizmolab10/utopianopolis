@@ -340,7 +340,7 @@ CA
                             <stackView hidden="YES" wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
                                 <rect key="frame" x="0.0" y="2" width="226" height="3033"/>
                                 <subviews>
-                                    <customView identifier="license" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t4I-OM-7sJ" userLabel="Subscription View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="subscribe" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t4I-OM-7sJ" userLabel="Subscription View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="2983" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="avu-F1-Lm0" userLabel="Subscription Banner">
@@ -404,7 +404,7 @@ CA
                                             <outlet property="titleButton" destination="ay8-Kf-2wF" id="V94-TH-8Dc"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="Simple Tools" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Simple Tools View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="simpleTools" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Simple Tools View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1828" width="226" height="1154"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Simple Tools Banner">

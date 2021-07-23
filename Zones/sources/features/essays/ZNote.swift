@@ -75,11 +75,11 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			autoDelete            = false
 
 			if  delta != 0 {
-				textRange.length += delta      // correct text range to match
+				textRange.length += delta      // correct text range, to avoid out of range for substring, on next line
 			}
 
 			let             text  = attributed.attributedSubstring(from: textRange)
-			trait      .noteText  = NSMutableAttributedString(attributedString: text)    // invokes note.needSave()
+			trait      .noteText  = NSMutableAttributedString(attributedString: text)
 
 			if  gShowEssayTitles {
 				let          name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: kEmpty)
@@ -166,7 +166,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var noteText: NSMutableAttributedString? {
 		var result : NSMutableAttributedString?
 
-		if  let (text, name) = updatedRanges() {
+		if  let (text, name) = updatedRangesFrom(noteTrait?.noteText) {
 			result = NSMutableAttributedString()
 
 			result?        .insert(text,       at: 0)
@@ -198,9 +198,9 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return result
 	}
 
-	@discardableResult func updatedRanges() -> (NSMutableAttributedString, String)? {
+	@discardableResult func updatedRangesFrom(_ fromText: NSMutableAttributedString?) -> (NSMutableAttributedString, String)? {
 		let hideTitles  = !gShowEssayTitles
-		if  let    text = noteTrait?.noteText,
+		if  let    text = fromText,
 			let    name = hideTitles ? kEmpty : zone?.zoneName {
 			let  spacer = kNoteIndentSpacer * titleInsets
 			let hasGoof = name.contains("􀅇")
@@ -225,13 +225,13 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func bumpRanges(by offset: Int) {
-		titleRange = titleRange.offsetBy(offset)
-		textRange  = textRange .offsetBy(offset)
+	func bumpLocations(by offset: Int) {
+		titleRange.location += offset
+		textRange .location += offset
 	}
 
 	func upperBoundForNoteIn(_ range: NSRange) -> Int {
-		let    note = noteIn(range)
+		let note = noteIn(range)
 
 		return note.noteRange.upperBound + note.noteOffset
 	}

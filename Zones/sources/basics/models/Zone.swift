@@ -1694,7 +1694,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  isBookmark {
 			return bookmarkTarget!.note
 		} else if noteMaybe == nil || !hasTrait(matching: [.tNote, .tEssay]), let emptyNote = createNote() {
-			return emptyNote
+			return emptyNote // might be note from "child"
 		}
 
 		return noteMaybe
@@ -1703,7 +1703,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	@discardableResult func createNote() -> ZNote? {
 		let zones = zonesWithNotes
 		let count = zones.count
-		var note : ZNote?
+		var  note : ZNote?
 
 		if  count > 1, gCreateCombinedEssay, zones.contains(self) {
 			note      = ZEssay(self)
@@ -1713,7 +1713,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else if count == 0 || !gCreateCombinedEssay {
 			note      = ZNote(self)
 			noteMaybe = note
-		} else {
+		} else {  // if count == 1 and gCreateCombinedEssay
 			let  zone = zones[0]
 			note      = ZNote(zone)
 			zone.noteMaybe = note
