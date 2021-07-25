@@ -50,9 +50,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     weak var     widget: ZoneWidget?
     var        innerDot: ZoneDot?
     var       dragStart: CGPoint?
-	var         isHover: Bool    = false
-    var        isReveal: Bool    = true
+	var        isReveal: Bool    = true
     var      isInnerDot: Bool    = false
+	var      isHovering: Bool    = false
 	var dragDotIsHidden: Bool    { return widgetZone?.dragDotIsHidden ?? true }
 	var      isDragDrop: Bool    { return widget == gDropWidget }
     var      widgetZone: Zone?   { return widget?.widgetZone }
@@ -136,11 +136,11 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			snp.setLabel("<\(isReveal ? "r" : "d")> \(widgetZone?.zoneName ?? kUnknown)")
             snp.removeConstraints()
             snp.makeConstraints { make in
-                var   width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + innerDotWidth - 48.0
-                let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
+				let height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
+                var width  = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + innerDotWidth - 53.0
 
 				if !iWidget.type.isBigMap {
-                    width  *= kSmallMapReduction
+                    width *= kSmallMapReduction
                 }
 
                 make.size.equalTo(CGSize(width: width, height: height))
@@ -164,21 +164,21 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	func updateTracking() { if !isInnerDot { addTracking(for: frame) } }
 
 	override func mouseEntered(with event: ZEvent) {
-		innerDot?.isHover = true
+		innerDot?.isHovering = true
 
 		super.mouseEntered(with: event)
 		innerDot?.setNeedsDisplay()
 	}
 
 	override func mouseExited(with event: ZEvent) {
-		innerDot?.isHover = false
+		innerDot?.isHovering = false
 
 		super.mouseExited(with: event)
 		innerDot?.setNeedsDisplay()
 	}
 
 	override func mouseUp(with event: ZEvent) {
-		innerDot?.isHover = false
+		innerDot?.isHovering = false
 
 		super.mouseUp(with: event)
 		innerDot?.setNeedsDisplay()
@@ -392,7 +392,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         super.draw(iDirtyRect)
 
 		if  isVisible(iDirtyRect),
-			let parameters = widgetZone?.plainDotParameters(isFilled != isHover, isReveal) {
+			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
 			if  isInnerDot {
 				drawInnerDot(iDirtyRect, parameters)
 			} else if  innerDot != nil,

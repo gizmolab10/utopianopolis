@@ -26,8 +26,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	override var preferredFont : ZFont { return (widget?.type.isBigMap ?? true) ? gWidgetFont : gSmallMapFont }
     var             widgetZone : Zone? { return  widget?.widgetZone }
     weak var            widget : ZoneWidget?
-    var                   type = ZTextType.name
-
+	var                   type = ZTextType.name
+	var             isHovering = false
+	
     var selectionRange: NSRange {
         var range = gTextEditor.selectedRange
 
@@ -61,6 +62,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         #else
             isEditable             = widgetZone?.userCanWrite ?? false
         #endif
+
+		updateTracking()
     }
 
 	var controller: ZMapController? {
@@ -121,6 +124,24 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         
         return nil
     }
+
+	func updateTracking() { addTracking(for: frame) }
+
+	override func mouseEntered(with event: ZEvent) {
+		if  isEnabled {
+			isHovering   = true
+			needsDisplay = true
+		}
+
+		super.mouseEntered(with: event)
+	}
+
+	override func mouseExited(with event: ZEvent) {
+		isHovering   = false
+		needsDisplay = true
+
+		super.mouseExited(with: event)
+	}
 
 	override func mouseDown(with event: ZEvent) {
 		if !gRefusesFirstResponder { // ignore mouse down during startup
@@ -214,26 +235,32 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         updateTextColor()
         super.draw(dirtyRect)
 
-		// /////////////////////////////////////////////////////
-		// draw line underneath text indicating it can travel //
-		// /////////////////////////////////////////////////////
+		var   path : ZBezierPath?
+		let  inset = CGFloat(0.5)
+		let deltaX = min(3.0, dirtyRect.width / 2.0)
 
-        if  let zone = widgetZone,
-             zone.isTraveller,
-            !zone.isGrabbed,
-            !isFirstResponder,
-			gIsMapOrEditIdeaMode {
+		if  !isFirstResponder, gIsMapOrEditIdeaMode,
+			let zone = widgetZone, !zone.isGrabbed {
+			zone.color?.setStroke()
+			if  isHovering {
+				let         rect = dirtyRect.insetBy(dx: inset, dy: inset)
+				path             = ZBezierPath(roundedRect: rect, cornerRadius: rect.maxY / 2.0)
+			} else if zone.isTraveller {
 
-			let       deltaX = min(3.0, dirtyRect.width / 2.0)
-            var         rect = dirtyRect.insetBy(dx: deltaX, dy: 0.0)
-            rect.size.height = 0.0
-            rect.origin.y    = dirtyRect.maxY - 1.0
-            let path         = ZBezierPath(rect: rect)
-            path  .lineWidth = 0.4
+				// /////////////////////////////////////////////////////
+				// draw line underneath text indicating it can travel //
+				// /////////////////////////////////////////////////////
 
-            zone.color?.setStroke()
-            path.stroke()
-        }
-    }
+				var         rect = dirtyRect.insetBy(dx: deltaX, dy: inset)
+				rect.size.height = 0.0
+				rect.origin.y    = dirtyRect.maxY - 1.0
+				path             = ZBezierPath(rect: rect)
+			}
+
+			path?     .lineWidth = 0.5
+
+			path?.stroke()
+		}
+	}
 
 }

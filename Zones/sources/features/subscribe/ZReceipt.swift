@@ -7,16 +7,26 @@
 //
 
 import Foundation
-//import ASN1Swift
+import Security // CMSDecode
 
 let gReceipt = ZReceipt()
 
 class ZReceipt: NSObject {
 
+//	let d = CMSDecoder()
+
 	var currentReceipt: String? {
 		if  let  receiptUrl = Bundle.main.appStoreReceiptURL,
 			let receiptData = try? Data(contentsOf: receiptUrl) {
 			return receiptData.base64EncodedString()
+		}
+
+		return nil
+	}
+
+	func unravelReceiptDict(_ dict: ZStringAnyDictionary, transactionID: String?, _ receipt: String) -> ZToken? {
+		if  transactionID == nil || transactionID != dict.transactionID {
+			return dict.createZToken(with: receipt)
 		}
 
 		return nil
@@ -71,14 +81,6 @@ class ZReceipt: NSObject {
 
 			task.resume()
 		}
-	}
-
-	func unravelReceiptDict(_ dict: ZStringAnyDictionary, transactionID: String?, _ receipt: String) -> ZToken? {
-		if  transactionID == nil || transactionID != dict.transactionID {
-			return dict.createZToken(with: receipt)
-		}
-
-		return nil
 	}
 
 }
