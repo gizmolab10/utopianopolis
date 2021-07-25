@@ -1069,7 +1069,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  let direction = resizeDot,
 			let    attach = imageAttachment,
-			let      rect = rectForRangedAttachment(attach) {
+			let      rect = rectForUnclippedRangedAttachment(attach, orientedFrom: direction) {
 			var      size = rect.size
 			var    origin = rect.origin
 			var  fraction = size.fraction(delta)
@@ -1160,11 +1160,28 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return nil
 	}
 
-	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {      // return nil if image is clipped
-		if  let image = attach.attachment.cellImage,
-			let  rect = attach.glyphRect(for: textStorage, margin: margin),
-			rect.size.absoluteDifferenceInLengths(comparedTo: image.size) < 2.0 {
+	func rectForUnclippedRangedAttachment(_ attach: ZRangedAttachment, orientedFrom direction: ZDirection) -> CGRect? {      // return nil if image is clipped
+		if  let image       = attach.attachment.cellImage,
+			var rect        = rectForRangedAttachment(attach) {
+			if  rect.size.absoluteDifferenceInDiagonals(relativeTo: image.size) > 2.0 {
+				let  yDelta = image.size.height - rect.height
+				rect  .size = image.size
+				switch direction {
+					case .topRight,
+						 .topLeft,
+						 .top: rect.origin.y -= yDelta
+					default:   break
+				}
+			}
 
+			return rect
+		}
+
+		return nil
+	}
+
+	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {
+		if  let    rect = attach.glyphRect(for: textStorage, margin: margin) {
 			return rect
 		}
 
@@ -1174,7 +1191,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func hitTestForAttachment(in rect: CGRect) -> ZRangedAttachment? {
 		if  let attaches = textStorage?.rangedAttachments {
 			for attach in attaches {
-				if  let imageRect = attach.glyphRect(for: textStorage, margin: margin)?.insetEquallyBy(dotInset),
+				if  let imageRect = rectForRangedAttachment(attach)?.insetEquallyBy(dotInset),
 					imageRect.intersects(rect) {
 
 					return attach

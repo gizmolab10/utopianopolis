@@ -688,7 +688,7 @@ extension CGSize {
         return sqrt(width * width + height * height)
     }
 
-	func absoluteDifferenceInLengths(comparedTo other: CGSize) -> CGFloat {
+	func absoluteDifferenceInDiagonals(relativeTo other: CGSize) -> CGFloat {
 		return abs(length - other.length)
 	}
 
