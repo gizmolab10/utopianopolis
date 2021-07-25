@@ -371,17 +371,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			NSCursor.arrow.set()
-		} else if let    attach = hitTestForAttachment(in: rect),
-				  let imageRect = rectForRangedAttachment(attach) {
-
-			NSCursor.openHand.set()
-
-			for point in imageRect.selectionPoints.values {
-				let cornerRect = CGRect(origin: point, size: .zero).insetEquallyBy(dotInset)
-
-				if  cornerRect.intersects(rect) {
-					NSCursor.crosshair.set()
-				}
+		} else if let attach = hitTestForAttachment(in: rect) {
+			if  let      dot = hitTestForResizeDot(in: rect, for: attach) {
+				dot.cursor.set()
+			} else {
+				NSCursor.openHand.set()
 			}
 		} else {
 			toolTip = nil
@@ -1141,18 +1135,23 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return false
 	}
 
-	func hitTestForResizeDot(in rect: CGRect, for attachment: ZRangedAttachment?) -> ZDirection? {
-		if  let      item = attachment,
-			let imageRect = rectForRangedAttachment(item) {
+	func hitTestForResizeDot(in selectionRect: CGRect, for attachment: ZRangedAttachment?) -> ZDirection? {
+		if  let    attach = attachment,
+			let imageRect = rectForRangedAttachment(attach) {
 			let    points = imageRect.selectionPoints
 
-			for dot in points.keys {
-				if  let point = points[dot] {
-					let selectionRect = CGRect(origin: point, size: .zero).insetEquallyBy(dotInset)
+			for (direction, point) in points {
+				var  rect = CGRect(origin: point, size: .zero).insetEquallyBy(dotInset)
+				let  size = imageRect.size.multiplyBy(-0.5).insetBy(dotInset, dotInset)
 
-					if  selectionRect.intersects(rect) {
-						return dot
-					}
+				switch direction {
+					case .bottom, .top: rect = rect.insetBy(dx: size.width, dy: 0.0)  // extend width
+					case .right, .left: rect = rect.insetBy(dx: 0.0, dy: size.height) // extend height
+					default:            break
+				}
+
+				if  selectionRect.intersects(rect) {
+					return direction
 				}
 			}
 		}

@@ -734,6 +734,10 @@ extension CGSize {
 		return CGSize(width: ratio, height: ratio)
 	}
 
+	func insetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
+		return CGSize(width: width - (x * 2.0), height: height - (y * 2.0))
+	}
+
 	func offsetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
 		return CGSize(width: width + x, height: height + y)
 	}
@@ -1299,6 +1303,20 @@ extension NSRange {
 			return NSRange(location: location, length: 0)
 		}
 
+		return nil
+	}
+
+}
+
+extension NSCursor {
+
+	class func fourArrows() -> NSCursor? {
+		let length = 20
+		let halfLength = length / 2
+		let size = CGSize(width: length, height: length)
+		if  let image = ZImage(named: "four.arrows")?.resize(size) {
+			return NSCursor(image: image, hotSpot: CGPoint(x: halfLength, y: halfLength))
+		}
 		return nil
 	}
 

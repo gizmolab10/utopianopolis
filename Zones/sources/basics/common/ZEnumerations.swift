@@ -281,6 +281,7 @@ enum ZInterruptionError : Error {
 }
 
 enum ZDirection : Int {
+
 	case top
 	case left
 	case right
@@ -289,6 +290,17 @@ enum ZDirection : Int {
 	case topRight
 	case bottomLeft
 	case bottomRight
+
+	var cursor: NSCursor {
+		switch self {
+			case .bottom,
+				 .top:  return .resizeUpDown
+			case .right,
+				 .left: return .resizeLeftRight
+			default:    return NSCursor.fourArrows() ?? .crosshair
+		}
+	}
+
 }
 
 enum ZStorageType: String {
