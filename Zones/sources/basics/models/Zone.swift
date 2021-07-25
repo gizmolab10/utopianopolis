@@ -124,18 +124,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var visibleDoneZone: Zone? {
 		var done: Zone?
 
-		traverseAncestors { ancestor in
-			ancestor.traverseProgeny { child in
-				if !child.isVisible || child == self {
-					return .eSkip
-				} else if  child.zoneName == kDone {
-					done = child
-				}
-
-				return done == nil ? .eContinue : .eStop
+		gHere.traverseProgeny { child in
+			if !child.isVisible || child == self {
+				return .eSkip
+			} else if  child.zoneName == kDone {
+				done = child
 			}
 
-			return (done == nil && ancestor.isVisible) ? .eContinue : .eStop
+			return done == nil ? .eContinue : .eStop
 		}
 
 		return done

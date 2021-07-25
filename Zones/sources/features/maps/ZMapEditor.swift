@@ -337,9 +337,10 @@ class ZMapEditor: ZBaseEditor {
 	// MARK:-
 
 	func moveToDone() -> Bool {
-		if  let parent = gSelecting.rootMostMoveable?.parentZone {
+		if  let   zone = gSelecting.rootMostMoveable,
+			let parent = zone.parentZone {
 			let  grabs = gSelecting.currentGrabs
-			var   done = parent.visibleDoneZone
+			var   done = zone.visibleDoneZone
 
 			if  done == nil {
 				done  = Zone.uniqueZone(recordName: nil, in: parent.databaseID)
