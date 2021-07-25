@@ -137,7 +137,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
             snp.removeConstraints()
             snp.makeConstraints { make in
 				let height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
-                var width  = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + innerDotWidth - 53.0
+				var width  = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + innerDotWidth - (isReveal ? 48.0 : 53.0)
 
 				if !iWidget.type.isBigMap {
                     width *= kSmallMapReduction
