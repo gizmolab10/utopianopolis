@@ -810,6 +810,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
+	var offsetFromMiddle : Double {
+		var index = ((Double(parentZone?.count ?? 0) / 2.0) - Double(siblingIndex ?? 0)) * 0.8
+		let limit = 6.0
+		if  index < 0.0 {
+			index = max(index, -limit)
+		} else {
+			index = min(index,  limit)
+		}
+
+		return index
+	}
+
 	var canEditNow: Bool {   // workaround recently introduced change in become first responder invocation logic [aka: fucked it up]
 		return !gRefusesFirstResponder
 			&&  userWantsToEdit
@@ -3257,10 +3269,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.showAccess     = hasAccessDecoration
 		p.hasTargetNote  = t?.hasNote ?? false
 		p.isGroupOwner   = g == self || g == t
-		p.filled         = isFilled || (!isReveal && isGrabbed)
 		p.showSideDot    = isCurrentSmallMapBookmark
 		p.isDrop         = self == gDropWidget?.widgetZone
+		p.filled         = isFilled || (!isReveal && isGrabbed)
 		p.fill           = p.filled ? c.lighter(by: 2.5) : gBackgroundColor
+		p.verticleOffset = offsetFromMiddle / (Double(gGenericOffset.width) - 27.0) * 3.0
 		p.childCount     = (gCountsMode == .progeny) ? progenyCount : indirectCount
 		p.accessType     = (directAccess == .eProgenyWritable) ? .sideDot : .vertical
 

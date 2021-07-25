@@ -297,7 +297,7 @@ enum ZDirection : Int {
 				 .top:  return .resizeUpDown
 			case .right,
 				 .left: return .resizeLeftRight
-			default:    return NSCursor.fourArrows() ?? .crosshair
+			default:    return kFourArrowsCursor ?? .crosshair
 		}
 	}
 

@@ -23,6 +23,7 @@ enum ZDecorationType: Int {
 struct  ZDotParameters {
 
 	var childCount     = 0
+	var verticleOffset = 0.0
 	var sideDotRadius  = 4.0
 	var traitType      = kEmpty
 	var isDrop         = false
@@ -137,7 +138,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
             snp.removeConstraints()
             snp.makeConstraints { make in
 				let height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
-				var width  = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + innerDotWidth - (isReveal ? 48.0 : 53.0)
+				var width  = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + innerDotWidth - 48.0
 
 				if !iWidget.type.isBigMap {
                     width *= kSmallMapReduction
@@ -196,8 +197,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		let   tinyRadius =     radius * 0.7
 		let tinyDiameter = tinyRadius * 2.0
 		let       center = iDirtyRect.center
-		let            x = center.x - CGFloat(tinyDiameter + radius)
-		let            y = center.y - CGFloat(tinyRadius)
+		let            x = center.x - CGFloat(tinyRadius + radius + 1.0)
+		let            y = center.y - CGFloat(tinyRadius + parameters.verticleOffset)
 		let         rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
 		let         path = ZBezierPath(ovalIn: rect)
 		path.lineWidth   = CGFloat(gLineThickness * 1.2)
@@ -323,7 +324,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		let decorationFillColor = parameters.filled ? gBackgroundColor : parameters.color
 
 		parameters.color.setStroke()
-		parameters.fill .setFill()
+		parameters.fill.setFill()
 
 		// //////// //
 		// MAIN DOT //

@@ -226,7 +226,7 @@ class ZoneWidget: ZView {
 			dragDot.innerDot?.snp.setLabel("<d> \(widgetZone?.zoneName ?? kUnknown)")
 			dragDot.setupForWidget(self, asReveal: false)
 			dragDot.innerDot?.snp.makeConstraints { make in
-				make.right.equalTo(textWidget.snp.left).offset(-4.0)
+				make.right.equalTo(textWidget.snp.left).offset(-6.0)
 				make.centerY.equalTo(textWidget).offset(verticalDotOffset)
 			}
 		}

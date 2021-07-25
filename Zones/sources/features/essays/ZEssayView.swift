@@ -1020,7 +1020,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let      path = ZBezierPath(ovalIn: dotRect)
 			path.flatness = 0.0001
 
-			path.fill()
+			path.stroke()
 		}
 	}
 
