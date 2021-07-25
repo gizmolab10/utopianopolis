@@ -530,7 +530,7 @@ class ZoneWidget: ZView {
         }
     }
 
-    func drawSelectionHighlight(_ dashes: Bool) {
+	func drawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
         let            gap = gGenericOffset.height
         let       gapInset =  gap         /  8.0
 		let     widthInset = (gap + 32.0) / -2.0
@@ -552,8 +552,10 @@ class ZoneWidget: ZView {
         if  dashes {
             path.addDashes()
 			debug = "[DASH]   "
-        }
-        
+        } else if thin {
+			path.lineWidth = CGFloat(0.8)
+		}
+
 		printDebug(.dEdit, debug + (widgetZone?.unwrappedName ?? kEmpty))
         strokeColor?.setStroke()
         fillColor?  .setFill()
@@ -591,10 +593,11 @@ class ZoneWidget: ZView {
         super.draw(iDirtyRect)
 
 		if (gIsMapOrEditIdeaMode || !type.isBigMap),
-			let      zone = widgetZone {
-            let isGrabbed = zone.isGrabbed
-            let isEditing = textWidget.isFirstResponder
-			let  expanded = zone.expanded
+			let       zone = widgetZone {
+            let  isGrabbed = zone.isGrabbed
+            let  isEditing = textWidget.isFirstResponder
+			let isHovering = textWidget.isHovering
+			let   expanded = zone.expanded
 
 			if !nowDrawLines {
 				nowDrawLines = true
@@ -605,8 +608,8 @@ class ZoneWidget: ZView {
 
 				textWidget.updateTextColor()
 
-				if  (isGrabbed || isEditing) && !gIsPrinting {
-					drawSelectionHighlight(isEditing)
+				if  (isGrabbed || isEditing || isHovering) && !gIsPrinting {
+					drawSelectionHighlight(isEditing, isHovering)
 				}
 
 				if    expanded {

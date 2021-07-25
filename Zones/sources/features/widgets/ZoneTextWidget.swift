@@ -129,16 +129,16 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
 	override func mouseEntered(with event: ZEvent) {
 		if  isEnabled {
-			isHovering   = true
-			needsDisplay = true
+			isHovering           = true
+			widget?.needsDisplay = true
 		}
 
 		super.mouseEntered(with: event)
 	}
 
 	override func mouseExited(with event: ZEvent) {
-		isHovering   = false
-		needsDisplay = true
+		isHovering           = false
+		widget?.needsDisplay = true
 
 		super.mouseExited(with: event)
 	}
@@ -239,26 +239,23 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		let  inset = CGFloat(0.5)
 		let deltaX = min(3.0, dirtyRect.width / 2.0)
 
-		if  !isFirstResponder, gIsMapOrEditIdeaMode,
-			let zone = widgetZone, !zone.isGrabbed {
+		if  !isFirstResponder,
+			gIsMapOrEditIdeaMode,
+			let zone = widgetZone,
+			!zone.isGrabbed,
+			zone.isTraveller {
+
+			// /////////////////////////////////////////////////////
+			// draw line underneath text indicating it can travel //
+			// /////////////////////////////////////////////////////
+
+			var         rect = dirtyRect.insetBy(dx: deltaX, dy: inset)
+			rect.size.height = 0.0
+			rect.origin.y    = dirtyRect.maxY - 1.0
+			path             = ZBezierPath(rect: rect)
+			path? .lineWidth = 0.4
+
 			zone.color?.setStroke()
-			if  isHovering {
-				let         rect = dirtyRect.insetBy(dx: inset, dy: inset)
-				path             = ZBezierPath(roundedRect: rect, cornerRadius: rect.maxY / 2.0)
-			} else if zone.isTraveller {
-
-				// /////////////////////////////////////////////////////
-				// draw line underneath text indicating it can travel //
-				// /////////////////////////////////////////////////////
-
-				var         rect = dirtyRect.insetBy(dx: deltaX, dy: inset)
-				rect.size.height = 0.0
-				rect.origin.y    = dirtyRect.maxY - 1.0
-				path             = ZBezierPath(rect: rect)
-			}
-
-			path?     .lineWidth = 0.5
-
 			path?.stroke()
 		}
 	}
