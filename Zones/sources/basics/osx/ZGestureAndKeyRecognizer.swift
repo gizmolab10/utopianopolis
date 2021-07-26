@@ -23,7 +23,6 @@ class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
     override var isOptionDown:  Bool { return modifiers?.contains(.option)  ?? false }
     override var isCommandDown: Bool { return modifiers?.contains(.command) ?? false }
 
-
     override open func reset() {
         modifiers = nil
 

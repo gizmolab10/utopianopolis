@@ -3199,7 +3199,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func revealDotClicked(_ flags: ZEventFlags) {
-		gTextEditor.stopCurrentEdit()
+//		gTextEditor.stopCurrentEdit()
 		ungrabProgeny()
 
 		let COMMAND = flags.isCommand

@@ -2517,7 +2517,7 @@ extension ZView {
 			}
 		}
 
-		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect, .cursorUpdate]
+		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .mouseMoved, .activeAlways, .inVisibleRect, .cursorUpdate]
 		let tracker = NSTrackingArea(rect:rect, options: options, owner:self, userInfo: nil)
 
 		addTrackingArea(tracker)

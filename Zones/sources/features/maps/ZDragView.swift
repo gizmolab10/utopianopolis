@@ -14,7 +14,10 @@
 
 class ZDragView: ZView, ZGestureRecognizerDelegate {
 
-	override func updateTrackingAreas() { addTracking(for: bounds) }
+	override func updateTrackingAreas() {
+		super.updateTrackingAreas()
+		addTracking(for: bounds)
+	}
 
     override func draw(_ dirtyRect: CGRect) {
         super.draw(dirtyRect)

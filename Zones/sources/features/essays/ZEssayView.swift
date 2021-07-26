@@ -126,6 +126,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		let enabled = gProducts.hasEnabledSubscription
+		let SPECIAL = flags.exactlySpecial
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl
 		let OPTION  = flags.isOption
@@ -146,8 +147,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "c":      grabbedZones.copyToPaste()
 				case "t":      swapWithParent()
 				case "'":      gToggleSmallMapMode(OPTION)
-				case "/":      swapBetweenNoteAndEssay()
-				case kEscape:  gHelpController?.show(flags: flags)
+				case "/":      if SPECIAL { gHelpController?.show(flags: flags) } else { swapBetweenNoteAndEssay() }
+				case kEscape:  done()
 				case kEquals:  if SHIFT { grabSelected() } else { return followLinkInSelection() }
 				case kDelete:  deleteGrabbed()
 				case kReturn:  if ANY { grabDone() }
@@ -163,7 +164,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			done()
 
 			return true
-		} else if  COMMAND {
+		} else if COMMAND {
 			if  enabled {
 				switch key {
 					case "b":  applyToSelection(BOLD: true)

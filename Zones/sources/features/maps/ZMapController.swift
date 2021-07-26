@@ -38,10 +38,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		super.setup()
 		platformSetup()
         mapView?.addSubview(rootWidget)
-
-		if  isBigMap {
-			mapView?.updateTrackingAreas()
-		}
     }
 
     #if os(OSX)

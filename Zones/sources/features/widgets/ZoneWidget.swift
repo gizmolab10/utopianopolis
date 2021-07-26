@@ -547,16 +547,15 @@ class ZoneWidget: ZView {
         let           path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
         path    .lineWidth = CGFloat(gDotWidth) / 3.5
         path     .flatness = 0.0001
-		var          debug = "[UNDASH] "
 
-        if  dashes {
+        if  dashes || thin {
             path.addDashes()
-			debug = "[DASH]   "
-        } else if thin {
-			path.lineWidth = CGFloat(0.8)
+
+			if thin {
+				path.lineWidth = CGFloat(1.5)
+			}
 		}
 
-		printDebug(.dEdit, debug + (widgetZone?.unwrappedName ?? kEmpty))
         strokeColor?.setStroke()
         fillColor?  .setFill()
         path.stroke()
@@ -609,7 +608,7 @@ class ZoneWidget: ZView {
 				textWidget.updateTextColor()
 
 				if  (isGrabbed || isEditing || isHovering) && !gIsPrinting {
-					drawSelectionHighlight(isEditing, isHovering)
+					drawSelectionHighlight(isEditing, isHovering && !isGrabbed)
 				}
 
 				if    expanded {

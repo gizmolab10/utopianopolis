@@ -12,6 +12,5 @@ class ZMapView: ZView {
 
 	@IBOutlet var controller: ZMapController?
 	override func menu(for event: ZEvent) -> ZMenu? { return controller?.mapContextualMenu }
-	override func updateTrackingAreas() { addTracking(for: bounds) }
 
 }

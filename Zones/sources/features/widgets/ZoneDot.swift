@@ -165,24 +165,23 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	func updateTracking() { if !isInnerDot { addTracking(for: frame) } }
 
 	override func mouseEntered(with event: ZEvent) {
-		innerDot?.isHovering = true
-
 		super.mouseEntered(with: event)
-		innerDot?.setNeedsDisplay()
+		gHovering.declareHover(innerDot)
+	}
+
+	override func mouseMoved(with event: ZEvent) {
+		super.mouseMoved(with: event)
+		gHovering.declareHover(innerDot)
 	}
 
 	override func mouseExited(with event: ZEvent) {
-		innerDot?.isHovering = false
-
 		super.mouseExited(with: event)
-		innerDot?.setNeedsDisplay()
+		gHovering.clear()
 	}
 
 	override func mouseUp(with event: ZEvent) {
-		innerDot?.isHovering = false
-
 		super.mouseUp(with: event)
-		innerDot?.setNeedsDisplay()
+		gHovering.clear()
 	}
 
     // MARK:- draw

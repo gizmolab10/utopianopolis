@@ -523,10 +523,6 @@ extension ZMapView {
         gScaling      *= Double(adjustment)
     }
 
-}
-
-extension ZMapView {
-
     override func scrollWheel(with event: ZEvent) {
         if  event.modifierFlags.isCommand {
             updateMagnification(with: event)

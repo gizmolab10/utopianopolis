@@ -128,19 +128,24 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	func updateTracking() { addTracking(for: frame) }
 
 	override func mouseEntered(with event: ZEvent) {
-		if  isEnabled {
-			isHovering           = true
-			widget?.needsDisplay = true
-		}
-
 		super.mouseEntered(with: event)
+
+		if  isEnabled {
+			gHovering.declareHover(self)
+		}
+	}
+
+	override func mouseMoved(with event: ZEvent) {
+		super.mouseMoved(with: event)
+
+		if  isEnabled {
+			gHovering.declareHover(self)
+		}
 	}
 
 	override func mouseExited(with event: ZEvent) {
-		isHovering           = false
-		widget?.needsDisplay = true
-
 		super.mouseExited(with: event)
+		gHovering.clear()
 	}
 
 	override func mouseDown(with event: ZEvent) {
