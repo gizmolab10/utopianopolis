@@ -2360,6 +2360,8 @@ extension ZGestureRecognizer {
 
 extension ZView {
 
+	@objc var size: CGSize { return bounds.size }
+
 	var simpleToolID : ZSimpleToolID? {
 		let           item = self as NSUserInterfaceItemIdentification
 		if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),

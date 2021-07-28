@@ -289,6 +289,11 @@ var gShowEssayTitles : Bool {
 	set { setPreferencesBool(newValue, for: kShowEssayTitles) }
 }
 
+var gShowEssayDragDots : Bool {
+	get { return getPreferencesBool(   for: kShowEssayDragDots, defaultBool: true) }
+	set { setPreferencesBool(newValue, for: kShowEssayDragDots) }
+}
+
 var gShowDetailsView : Bool {
 	get { return getPreferencesBool(   for: kShowDetails, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kShowDetails) }

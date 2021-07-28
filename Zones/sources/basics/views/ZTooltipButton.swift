@@ -17,6 +17,18 @@ class ZTooltipButton: ZButton, ZTooltips {
 		set { super.isEnabled = newValue; updateTooltips() }
 	}
 
+	override var size: CGSize {
+		var result      = frame.size
+//		if  let size    = image?.size {
+//			result      = size.offsetBy(20.0, 6.0)
+//		} else
+		if let f = font {
+			result      = title.sizeWithFont(f).offsetBy(13.0, 7.0)
+		}
+
+		return result
+	}
+
 	func updateTracking() { addTracking(for: frame) }
 
 	override func mouseEntered(with event: ZEvent) {

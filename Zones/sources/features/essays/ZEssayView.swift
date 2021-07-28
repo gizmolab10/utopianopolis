@@ -52,6 +52,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var titlesButton    : ZButton?
 	var hideButton      : ZButton?
 	var saveButton      : ZButton?
+	var dotsButton      : ZButton?
 	var resizeDragStart : CGPoint?
 	var resizeDragRect  : CGRect?
 	var resizeDot       : ZDirection?
@@ -716,7 +717,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func drawDragDecorations() {
-		if  gShowEssayTitles {
+		if  gShowEssayTitles, gShowEssayDragDots {
 			for (index, dot) in dragDots.enumerated() {
 				if  let     zone = dot.note?.zone {
 					let  grabbed = grabbedZones.contains(zone)
@@ -874,6 +875,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		cancelButton?  .isEnabled =  enabled
 		hideButton?    .isEnabled =  enabled
 		saveButton?    .isEnabled =  enabled
+		dotsButton?    .isEnabled =  enabled
 		bar?            .isHidden = !enabled
 
 		if  let b = bar {
@@ -884,6 +886,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
+				case .idDots:    save(); toggleDragDots()
 				case .idTitles:  save(); toggleTitles()
 				case .idForward: save(); gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRelayoutMaps() }
 				case .idBack:    save(); gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRelayoutMaps() }
@@ -893,43 +896,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idDelete:  if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); done() }
 			}
 		}
-	}
-
-	func titleLengthsUpTo(_ note: ZNote) -> Int {
-		if  let zones = gCurrentEssay?.zone?.zonesWithNotes,
-			let nZone = note.zone {
-			let isOne = zones.count == 1
-			var total = isOne ? -4 : -2
-
-			for zone in zones {
-				if  let length = zone.zoneName?.length {
-					total     += length + 6
-				}
-
-				if  zone == nZone {
-					return total
-				}
-			}
-		}
-
-		return note.titleRange.length
-	}
-
-	func toggleTitles() {
-		gShowEssayTitles    = !gShowEssayTitles
-		var           range = selectedRange()
-
-		if  let      button = titlesButton,
-			let    buttonID = ZEssayButtonID(rawValue: button.tag) {
-			button   .title = buttonID.title
-		}
-
-		if  let        note = selectedNote {
-			let titleLength = titleLengthsUpTo(note)
-			range.location += (gShowEssayTitles ? 1 : -1) * titleLength
-		}
-
-		updateText(restoreSelection: range)
 	}
 
 	private func addButtonFor(_ tag: ZEssayButtonID) {
@@ -947,13 +913,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				for index in 1...target {
 					let tool       = inspectorBar.subviews[index]
 					tool.isHidden  = false
-					rect.size      = tool.frame.size
+					rect.size      = tool.size
 					rect.origin.x += prior.size.width + 4.0
 					rect.origin.y  = 3.0
 					prior          = rect
 				}
 
-				rect.origin.x     += 35.0
+				rect.origin.x     += 25.0
 
 				return rect
 			}
@@ -976,7 +942,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				var         frame = rect(at: index).offsetBy(dx: 2.0, dy: -5.0)
 				let         title = tag.title
 				let        button = buttonWith(title)
-				frame       .size = button.bounds.size
+				frame       .size = button.size
 				frame             = frame.insetBy(dx: 12.0, dy: 6.0)
 				button       .tag = tag.rawValue
 				button     .frame = frame
@@ -1000,6 +966,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 						case .idTitles:   titlesButton = button
 						case .idHide:       hideButton = button
 						case .idSave:       saveButton = button
+						case .idDots:       dotsButton = button
 					}
 				}
 			}
@@ -1235,140 +1202,56 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- more
+	// MARK:- toggle titles
 	// MARK:-
 
-	func swapBetweenNoteAndEssay() {
-		if  let current = gCurrentEssay,
-			let    zone = current.zone {
-			let   count = zone.countOfNotes
+	func titleLengthsUpTo(_ note: ZNote, withNames: Bool = true) -> Int {
+		if  let zones = gCurrentEssay?.zone?.zonesWithNotes,
+			let nZone = note.zone {
+			let isOne = zones.count == 1
+			var total = isOne ? -4 : -2
 
-			current.injectIntoEssay(textStorage)
+			for zone in zones {
+				total += 4
 
-			if  current.isNote {
-				if  count                > 1 {
-					gCreateCombinedEssay = true
-					gCurrentEssay        = ZEssay(zone)
-					zone.clearAllNotes()            // discard current essay text and all child note's text
-					updateText()
-				}
-			} else if count > 0,
-				let note = lastGrabbedDot?.note ?? selectedNote {
-				ungrabAll()
-				resetCurrentEssay(note)
-			}
-
-			gSignal([.sDetails])
-		}
-	}
-
-	func popNoteAndUpdate() {
-		if  gRecents.pop(),
-			let  notemark = gRecents.rootZone?.notemarks.first,
-			let      note = notemark.bookmarkTarget?.note {
-			gCurrentEssay = note
-
-			gRecents.setAsCurrent(notemark)
-			gSignal([.spSmallMap, .spCrumbs])
-
-			updateText()
-		}
-	}
-
-	func move(out: Bool) {
-		gCreateCombinedEssay = true
-		let        selection = selectedNotes
-
-		save()
-
-		if !out, let last = selection.last {
-			resetCurrentEssay(last)
-		} else if out {
-			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
-				if  ancestor != gCurrentEssayZone, ancestor.hasNote {
-					self.resetCurrentEssay(ancestor.note)
-
-					return .eStop
+				if  withNames, let length = zone.zoneName?.length {
+					total += length + 2
 				}
 
-				return .eContinue
-			}
-		}
-
-		gSignal([.spCrumbs])
-	}
-
-	private func convertToChild(_ flags: ZEventFlags) {
-		if  let   text = selectionString, text.length > 0,
-			let   dbID = gCurrentEssayZone?.databaseID,
-			let parent = selectedZone {
-
-			func child(named name: String, withText: String) {
-				let child = Zone.uniqueZoneNamed(name, databaseID: dbID)   	// create new (to be child) zone from text
-
-				parent.addChildNoDuplicate(child)
-				child.setTraitText(text, for: .tNote)                       // create note from text in the child
-				gCurrentEssayZone?.createNote()
-
-				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
-			}
-
-			if        flags.exactlyUnusual {
-				child(named: "idea", withText: text)
-			} else if flags.isOption {
-				child(named: text,   withText: kEmpty)
-			} else {
-				let child = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new (to be child) zone from text
-				insertText(kEmpty, replacementRange: selectedRange)	            // remove text
-				parent.addChildNoDuplicate(child)
-				child.asssureIsVisible()
-				save()
-
-				child.grab()
-				done()
-
-				FOREGROUND {                                            // defer idea edit until after this function exits
-					child.edit()
+				if  zone == nZone {
+					return total
 				}
 			}
 		}
+
+		return note.titleRange.length
 	}
 
-	private func alterCase(up: Bool) {
-		if  let        text = selectionString {
-			let replacement = up ? text.uppercased() : text.lowercased()
-
-			insertText(replacement, replacementRange: selectedRange)
+	func adjust(withNames: Bool = true) {
+		var           range = selectedRange()
+		if  let      button = dotsButton,
+			let    buttonID = ZEssayButtonID(rawValue: button.tag) {
+			button   .title = buttonID.title
 		}
+
+		if  let        note = selectedNote {
+			let titleLength = titleLengthsUpTo(note, withNames: false)
+			range.location += (gShowEssayDragDots ? 1 : -1) * titleLength
+		}
+
+		updateText(restoreSelection: range)
 	}
 
-	func applyToSelection(BOLD: Bool = false, ITALICS: Bool = false) {
-		if  let dict = textStorage?.fontAttributes(in: selectedRange),
-			let font = dict[.font] as? ZFont {
-			var desc = font.fontDescriptor
-			var traz = desc.symbolicTraits
+	func toggleDragDots() {
+		gShowEssayDragDots = !gShowEssayDragDots
 
-			if  BOLD {
-				if  traz.contains(.bold) {
-					traz  .remove(.bold)
-				} else {
-					traz  .insert(.bold)
-				}
-			}
+		adjust(withNames: false)
+	}
 
-			if  ITALICS {
-				if  traz.contains(.italic) {
-					traz  .remove(.italic)
-				} else {
-					traz  .insert(.italic)
-				}
-			}
+	func toggleTitles() {
+		gShowEssayTitles = !gShowEssayTitles
 
-			desc = desc.withSymbolicTraits(traz)
-			let bold = ZFont(descriptor: desc, size: font.pointSize) as Any
-
-			textStorage?.setAttributes([.font : bold], range: selectedRange)
-		}
+		adjust()
 	}
 
 	// MARK:- special characters
@@ -1595,6 +1478,142 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		setSelectedRange(NSRange(location: charIndex, length: 0))
 
 		return followLinkInSelection()
+	}
+
+	// MARK:- more
+	// MARK:-
+
+	func swapBetweenNoteAndEssay() {
+		if  let current = gCurrentEssay,
+			let    zone = current.zone {
+			let   count = zone.countOfNotes
+
+			current.injectIntoEssay(textStorage)
+
+			if  current.isNote {
+				if  count                > 1 {
+					gCreateCombinedEssay = true
+					gCurrentEssay        = ZEssay(zone)
+					zone.clearAllNotes()            // discard current essay text and all child note's text
+					updateText()
+				}
+			} else if count > 0,
+					  let note = lastGrabbedDot?.note ?? selectedNote {
+				ungrabAll()
+				resetCurrentEssay(note)
+			}
+
+			gSignal([.sDetails])
+		}
+	}
+
+	func popNoteAndUpdate() {
+		if  gRecents.pop(),
+			let  notemark = gRecents.rootZone?.notemarks.first,
+			let      note = notemark.bookmarkTarget?.note {
+			gCurrentEssay = note
+
+			gRecents.setAsCurrent(notemark)
+			gSignal([.spSmallMap, .spCrumbs])
+
+			updateText()
+		}
+	}
+
+	func move(out: Bool) {
+		gCreateCombinedEssay = true
+		let        selection = selectedNotes
+
+		save()
+
+		if !out, let last = selection.last {
+			resetCurrentEssay(last)
+		} else if out {
+			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
+				if  ancestor != gCurrentEssayZone, ancestor.hasNote {
+					self.resetCurrentEssay(ancestor.note)
+
+					return .eStop
+				}
+
+				return .eContinue
+			}
+		}
+
+		gSignal([.spCrumbs])
+	}
+
+	private func convertToChild(_ flags: ZEventFlags) {
+		if  let   text = selectionString, text.length > 0,
+			let   dbID = gCurrentEssayZone?.databaseID,
+			let parent = selectedZone {
+
+			func child(named name: String, withText: String) {
+				let child = Zone.uniqueZoneNamed(name, databaseID: dbID)   	// create new (to be child) zone from text
+
+				parent.addChildNoDuplicate(child)
+				child.setTraitText(text, for: .tNote)                       // create note from text in the child
+				gCurrentEssayZone?.createNote()
+
+				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
+			}
+
+			if        flags.exactlyUnusual {
+				child(named: "idea", withText: text)
+			} else if flags.isOption {
+				child(named: text,   withText: kEmpty)
+			} else {
+				let child = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new (to be child) zone from text
+				insertText(kEmpty, replacementRange: selectedRange)	            // remove text
+				parent.addChildNoDuplicate(child)
+				child.asssureIsVisible()
+				save()
+
+				child.grab()
+				done()
+
+				FOREGROUND {                                            // defer idea edit until after this function exits
+					child.edit()
+				}
+			}
+		}
+	}
+
+	private func alterCase(up: Bool) {
+		if  let        text = selectionString {
+			let replacement = up ? text.uppercased() : text.lowercased()
+
+			insertText(replacement, replacementRange: selectedRange)
+		}
+	}
+
+	func applyToSelection(BOLD: Bool = false, ITALICS: Bool = false) {
+		if  let dict = textStorage?.fontAttributes(in: selectedRange),
+			let font = dict[.font] as? ZFont {
+			var desc = font.fontDescriptor
+			var traz = desc.symbolicTraits
+
+			if  BOLD {
+				if  traz.contains(.bold) {
+					traz  .remove(.bold)
+				} else {
+					traz  .insert(.bold)
+				}
+			}
+
+			if  ITALICS {
+				if  traz.contains(.italic) {
+					traz  .remove(.italic)
+				} else {
+					traz  .insert(.italic)
+				}
+			}
+
+			desc = desc.withSymbolicTraits(traz)
+			let bold = ZFont(descriptor: desc, size: font.pointSize) as Any
+
+			textStorage?.setAttributes([.font : bold], range: selectedRange)
+		}
 	}
 
 }

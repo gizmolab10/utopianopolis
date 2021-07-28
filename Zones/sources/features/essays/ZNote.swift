@@ -175,7 +175,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 				var      title = name + kTab
 				var attributes = titleAttributes
 
-				if  titleInsets != 0 {
+				if  titleInsets != 0, gShowEssayDragDots {
 					let spacer = kNoteIndentSpacer * titleInsets
 					title      = spacer + title
 				}
@@ -202,7 +202,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		let hideTitles  = !gShowEssayTitles
 		if  let    text = fromText,
 			let    name = hideTitles ? kEmpty : zone?.zoneName {
-			let  spacer = kNoteIndentSpacer * titleInsets
+			let  spacer = !gShowEssayDragDots ? kEmpty : kNoteIndentSpacer * titleInsets
 			let hasGoof = name.contains("􀅇")
 			let tLength = hideTitles ? 0 : name  .length
 			let sOffset = hideTitles ? 0 : spacer.length
