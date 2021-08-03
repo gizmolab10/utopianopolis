@@ -14,7 +14,7 @@ class ZoneSegmentedControl : ZSegmentedControl {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        let image = ZImage(named: "segmented control divider.jpg")
+        let image = kSegmentDividerImage
 
         setDividerImage(image, forLeftSegmentState:   .normal, rightSegmentState:   .normal, barMetrics: .default)
         setDividerImage(image, forLeftSegmentState:   .normal, rightSegmentState: .selected, barMetrics: .default)

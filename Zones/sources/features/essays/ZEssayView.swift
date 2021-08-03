@@ -49,14 +49,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var forwardButton   : ZButton?
 	var cancelButton    : ZButton?
 	var deleteButton    : ZButton?
-	var titlesButton    : ZButton?
 	var hideButton      : ZButton?
 	var saveButton      : ZButton?
-	var dotsButton      : ZButton?
 	var resizeDragStart : CGPoint?
 	var resizeDragRect  : CGRect?
 	var resizeDot       : ZDirection?
 	var essayRecordName : String?
+
+	@IBOutlet var titlesControl : ZSegmentedControl?
 
 	var shouldOverwrite: Bool {
 		if  let          current = gCurrentEssay,
@@ -83,14 +83,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	override func draw(_ dirtyRect: NSRect) {
-		let         attach  = imageAttachment ?? eraseAttachment
-		if  resizeDragRect == nil {
-			let        path = ZBezierPath(rect: bounds)
+		let attach = imageAttachment ?? eraseAttachment
 
-			kClearColor.setFill()
-			path.fill() // erase rubberband
-		}
-
+		clearImageResizeRubberband()
 		super.draw(dirtyRect)
 
 		if  attach != nil {
@@ -101,21 +96,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			kClearColor .setFill()
 		}
 
-		if  let       rect = resizeDragRect {
-			let       path = ZBezierPath(rect: rect)
-			let    pattern : [CGFloat] = [4.0, 4.0]
-			path.lineWidth = CGFloat(gLineThickness * 3.0)
-			path.flatness  = 0.0001
+		drawImageResizeDots(around: attach)
 
-			path.setLineDash(pattern, count: 2, phase: 4.0)
-			path.stroke()
-			drawImageResizeDots(onBorderOf: rect)
-		} else if let    a = attach,
-				  let rect = rectForRangedAttachment(a) {
-			drawImageResizeDots(onBorderOf: rect)
+		if  gEssayTitleMode == .sBoth {
+			drawDragDecorations()
 		}
-
-		drawDragDecorations()
 	}
 
 	// MARK:- input
@@ -451,6 +436,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			for tag in ZEssayButtonID.all {
 				self.addButtonFor(tag)
 			}
+
+			self.addTitleControl()
 		}
 	}
 
@@ -684,11 +671,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			for (index, zone) in zones.enumerated() {
 				if  var note   = zone.note {
 					if  index == 0 { //,           // huh?
-//						let  s = textStorage, essay.noteRange.upperBound <= s.string.length,
-//						let  t = s.attributedSubstring(from: essay.noteRange) as? NSMutableAttributedString {
 						note   = essay
-
-//						note.updatedRangesFrom(t)
 					}
 
 					let dragHeight = 15.0
@@ -717,24 +700,22 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func drawDragDecorations() {
-		if  gShowEssayTitles, gShowEssayDragDots {
-			for (index, dot) in dragDots.enumerated() {
-				if  let     zone = dot.note?.zone {
-					let  grabbed = grabbedZones.contains(zone)
-					let extendBy = index == 0 ? kNoteIndentSpacer.length : -1        // fixes intersection computation, first and last note have altered range
-					let selected = dot.noteRange?.extendedBy(extendBy).inclusiveIntersection(selectedRange) != nil
-					let   filled = selected && !hasGrabbedNote
-					let    color = dot.color
+		for (index, dot) in dragDots.enumerated() {
+			if  let     zone = dot.note?.zone {
+				let  grabbed = grabbedZones.contains(zone)
+				let extendBy = index == 0 ? kNoteIndentSpacer.length : -1        // fixes intersection computation, first and last note have altered range
+				let selected = dot.noteRange?.extendedBy(extendBy).inclusiveIntersection(selectedRange) != nil
+				let   filled = selected && !hasGrabbedNote
+				let    color = dot.color
 
-					drawColoredOval(dot.dragRect, color, filled: filled || grabbed)
+				drawColoredOval(dot.dragRect, color, filled: filled || grabbed)
 
-					if  let lineRect = dot.lineRect {
-						drawColoredRect(lineRect, color, thickness: 0.5)
-					}
+				if  let lineRect = dot.lineRect {
+					drawColoredRect(lineRect, color, thickness: 0.5)
+				}
 
-					if  grabbed {
-						drawColoredRect(dot.textRect, color)
-					}
+				if  grabbed {
+					drawColoredRect(dot.textRect, color)
 				}
 			}
 		}
@@ -865,18 +846,28 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- buttons
 	// MARK:-
 
-	func enableEssayControlButtons(       enabled: Bool) {
-		let      hasMultipleNotes =  gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
-		let                   bar =  gMainWindow?.inspectorBar
-		backwardButton?.isEnabled =  enabled && hasMultipleNotes
-		forwardButton? .isEnabled =  enabled && hasMultipleNotes
-		titlesButton?  .isEnabled =  enabled
-		deleteButton?  .isEnabled =  enabled
-		cancelButton?  .isEnabled =  enabled
-		hideButton?    .isEnabled =  enabled
-		saveButton?    .isEnabled =  enabled
-		dotsButton?    .isEnabled =  enabled
-		bar?            .isHidden = !enabled
+	func enableEssayControlButtons(  enabled: Bool) {
+		let           hasMultipleNotes =  gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
+		let                     isNote =  gCurrentEssay?.isNote ?? true
+		let                        bar =  gMainWindow?.inspectorBar
+		backwardButton?     .isEnabled =  enabled && hasMultipleNotes
+		forwardButton?      .isEnabled =  enabled && hasMultipleNotes
+		titlesControl?      .isEnabled =  enabled
+		deleteButton?       .isEnabled =  enabled
+		cancelButton?       .isEnabled =  enabled
+		hideButton?         .isEnabled =  enabled
+		saveButton?         .isEnabled =  enabled
+		bar?                 .isHidden = !enabled
+		titlesControl?   .segmentCount = isNote ? 2 : 3
+		titlesControl?.selectedSegment = gEssayTitleMode.rawValue
+
+		if  isNote, gEssayTitleMode == .sBoth {
+			gEssayTitleMode = .sTitle
+		} else {
+			let image = ZImage(named: "show.drag.dot")?.resize(CGSize(width: 16, height: 16	))
+			titlesControl?.setImage(image, forSegment: 2)
+		}
+
 
 		if  let b = bar {
 			b.draw(b.bounds)
@@ -886,43 +877,57 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	@objc private func handleButtonPress(_ iButton: ZButton) {
 		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
-				case .idDots:    save(); toggleDragDots()
-				case .idTitles:  save(); toggleTitles()
 				case .idForward: save(); gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRelayoutMaps() }
 				case .idBack:    save(); gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRelayoutMaps() }
 				case .idSave:    save()
 				case .idHide:                          grabDone()
 				case .idCancel:                        gCurrentEssayZone?.grab();       exit()
 				case .idDelete:  if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); done() }
+				default:         break
 			}
 		}
 	}
 
+	@IBAction func handleSegmentedControlAction(_ iControl: ZSegmentedControl) {
+		if  let       mode  = ZEssayTitleMode(rawValue: iControl.selectedSegment) {
+			var      range  = selectedRange()
+			range.location += deltaForTransitioningTo(mode)
+
+			titlesControl?.needsDisplay = true
+
+			updateText(restoreSelection: range)
+			gSignal([.sEssay])
+		}
+	}
+
+	private func controlRect(at target: Int) -> CGRect? {
+		var rect : CGRect?
+		if  let   inspectorBar = gMainWindow?.inspectorBar {
+
+			// ////////////////////////////////////////////////// //
+			// Apple bug: subviews are not located where expected //
+			// ////////////////////////////////////////////////// //
+
+			rect                = inspectorBar.subviews[0].frame
+			var prior           = rect!
+
+			for index in 1...target {
+				let tool        = inspectorBar.subviews[index]
+				tool.isHidden   = false
+				rect?.size      = tool.size
+				rect?.origin.x += prior.size.width + 4.0
+				rect?.origin.y  = -2.0
+				prior           = rect!
+			}
+
+			rect?.origin.x     += 23.0
+		}
+
+		return rect
+	}
+
 	private func addButtonFor(_ tag: ZEssayButtonID) {
 		if  let inspectorBar = gMainWindow?.inspectorBar {
-
-			func rect(at target: Int) -> CGRect {
-
-				// ////////////////////////////////////////////////// //
-				// Apple bug: subviews are not located where expected //
-				// ////////////////////////////////////////////////// //
-
-				var rect           = inspectorBar.subviews[0].frame
-				var prior          = rect
-
-				for index in 1...target {
-					let tool       = inspectorBar.subviews[index]
-					tool.isHidden  = false
-					rect.size      = tool.size
-					rect.origin.x += prior.size.width + 4.0
-					rect.origin.y  = 3.0
-					prior          = rect
-				}
-
-				rect.origin.x     += 25.0
-
-				return rect
-			}
 
 			func buttonWith(_ title: String) -> ZTooltipButton {
 				let    action = #selector(handleButtonPress)
@@ -937,23 +942,25 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				return button
 			}
 
-			func buttonFor(_ tag: ZEssayButtonID) -> ZTooltipButton {
-				let         index = inspectorBar.subviews.count - 1
-				var         frame = rect(at: index).offsetBy(dx: 2.0, dy: -5.0)
-				let         title = tag.title
-				let        button = buttonWith(title)
-				frame       .size = button.size
-				frame             = frame.insetBy(dx: 12.0, dy: 6.0)
-				button       .tag = tag.rawValue
-				button     .frame = frame
-				button .isEnabled = false
-				button.isBordered = true
-				button.bezelStyle = .texturedRounded
+			func buttonFor(_ tag: ZEssayButtonID) -> ZTooltipButton? {
+				if  var         frame = controlRect(at: inspectorBar.subviews.count - 1) {
+					let         title = tag.title
+					let        button = buttonWith(title)
+					frame       .size = button.size
+					frame             = frame.insetBy(dx: 12.0, dy: 6.0)
+					button       .tag = tag.rawValue
+					button     .frame = frame
+					button .isEnabled = false
+					button.isBordered = true
+					button.bezelStyle = .texturedRounded
 
-				button.setButtonType(.momentaryChange)
-				button.updateTracking()
+					button.setButtonType(.momentaryChange)
+					button.updateTracking()
 
-				return button
+					return button
+				}
+
+				return nil
 			}
 
 			func assignButton(_ button: ZButton) {
@@ -963,24 +970,60 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 						case .idForward: forwardButton = button
 						case .idCancel:   cancelButton = button
 						case .idDelete:   deleteButton = button
-						case .idTitles:   titlesButton = button
 						case .idHide:       hideButton = button
 						case .idSave:       saveButton = button
-						case .idDots:       dotsButton = button
+						default: break
 					}
 				}
 			}
 
-			let b = buttonFor(tag)
-
-			inspectorBar.addSubview(b)
-			assignButton(b)
+			if  let b = buttonFor(tag) {
+				inspectorBar.addSubview(b)
+				assignButton(b)
+			}
 		}
+	}
 
+	func addTitleControl() {
+		if  let  inspectorBar = gMainWindow?.inspectorBar,
+			let       control = titlesControl,
+			var         frame = controlRect(at: inspectorBar.subviews.count - 1) {
+			frame       .size = control.size
+			control    .frame = frame.offsetBy(dx: 14.0, dy: 6.0)
+			control.isEnabled = false
+
+
+			inspectorBar.addSubview(control)
+		}
 	}
 
 	// MARK:- images
 	// MARK:-
+
+	func clearImageResizeRubberband() {
+		if  resizeDragRect == nil {
+			let        path = ZBezierPath(rect: bounds)
+
+			kClearColor.setFill()
+			path.fill() // erase rubberband
+		}
+	}
+
+	func drawImageResizeDots(around attach: ZRangedAttachment?) {
+		if  let       rect = resizeDragRect {
+			let       path = ZBezierPath(rect: rect)
+			let    pattern : [CGFloat] = [4.0, 4.0]
+			path.lineWidth = CGFloat(gLineThickness * 3.0)
+			path.flatness  = 0.0001
+
+			path.setLineDash(pattern, count: 2, phase: 4.0)
+			path.stroke()
+			drawImageResizeDots(onBorderOf: rect)
+		} else if let    a = attach,
+				  let rect = rectForRangedAttachment(a) {
+			drawImageResizeDots(onBorderOf: rect)
+		}
+	}
 
 	func drawImageResizeDots(onBorderOf rect: CGRect) {
 		for point in rect.selectionPoints.values {
@@ -1205,53 +1248,56 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:- toggle titles
 	// MARK:-
 
-	func titleLengthsUpTo(_ note: ZNote, withNames: Bool = true) -> Int {
+	func deltaForTransitioningTo(_ mode: ZEssayTitleMode) -> Int {
+		if  let        note = selectedNote {
+			let      before = titleLengthUpTo(note)
+			gEssayTitleMode = mode
+			let       after = titleLengthUpTo(note)
+
+			return after - before
+		}
+
+		return 0
+	}
+
+	func titleLengthUpTo(_ note: ZNote) -> Int {
+		let (tLength, sLength) = titleLengthsUpTo(note)
+
+		switch gEssayTitleMode {
+			case .sNone:  return 0
+			case .sBoth:  return sLength
+			case .sTitle: return tLength
+		}
+	}
+
+	func titleLengthsUpTo(_ note: ZNote) -> (Int, Int) {
+		var titlTotal = 0
+		var bothTotal = 0
+
 		if  let zones = gCurrentEssay?.zone?.zonesWithNotes,
 			let nZone = note.zone {
 			let isOne = zones.count == 1
-			var total = isOne ? -4 : -2
+			bothTotal = isOne ? -4 : -2
+			titlTotal = 0
 
 			for zone in zones {
-				total += 4
+				titlTotal += 2
+				bothTotal += 6
 
-				if  withNames, let length = zone.zoneName?.length {
-					total += length + 2
+				if  let length = zone.zoneName?.length {
+					bothTotal += length
+					titlTotal += length
 				}
 
 				if  zone == nZone {
-					return total
+					return (titlTotal, bothTotal)
 				}
 			}
 		}
 
-		return note.titleRange.length
-	}
+		let total = note.titleRange.length
 
-	func adjust(withNames: Bool = true) {
-		var           range = selectedRange()
-		if  let      button = dotsButton,
-			let    buttonID = ZEssayButtonID(rawValue: button.tag) {
-			button   .title = buttonID.title
-		}
-
-		if  let        note = selectedNote {
-			let titleLength = titleLengthsUpTo(note, withNames: false)
-			range.location += (gShowEssayDragDots ? 1 : -1) * titleLength
-		}
-
-		updateText(restoreSelection: range)
-	}
-
-	func toggleDragDots() {
-		gShowEssayDragDots = !gShowEssayDragDots
-
-		adjust(withNames: false)
-	}
-
-	func toggleTitles() {
-		gShowEssayTitles = !gShowEssayTitles
-
-		adjust()
+		return (total, total)
 	}
 
 	// MARK:- special characters

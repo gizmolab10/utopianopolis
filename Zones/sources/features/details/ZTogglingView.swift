@@ -20,7 +20,7 @@ class ZBannerButton : ZButton {
 
 	func setup() {
 		imagePosition = .imageLeft
-		onStateImage  = NSImage(named: kTriangleImageName)?.resize(CGSize(width: 11, height: 12))
+		onStateImage  = kTriangleImage?.resize(CGSize(width: 11, height: 12))
 		offStateImage = onStateImage?.imageRotatedByDegrees(180.0)
 	}
 

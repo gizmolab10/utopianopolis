@@ -436,18 +436,18 @@ enum ZEssayButtonID : Int {
 	case idBack
 	case idSave
 	case idHide
-	case idDots
+
+	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idSave, .idHide, .idDelete, .idCancel] }
 
 	var title: String {
 		switch self {
-			case .idForward: return "⇨"
+			case .idBack:    return "left.arrow"
+			case .idForward: return "right.arrow"
 			case .idCancel:  return "cancel"
 			case .idDelete:  return "trash"
-			case .idTitles:  return "\(gShowEssayTitles   ? "Hide" : "Show") Titles"
-			case .idDots:    return "\(gShowEssayDragDots ? "Hide" : "Show") Drag Dots"
+			case .idTitles:  return kEmpty
 			case .idHide:    return "exit"
 			case .idSave:    return "save"
-			case .idBack:    return "⇦"
 		}
 	}
 
@@ -457,16 +457,19 @@ enum ZEssayButtonID : Int {
 			case .idForward: return "show next"
 			case .idCancel:  return "cancel editing of \(kind)"
 			case .idDelete:  return "delete"
-			case .idTitles:  return "\(gShowEssayTitles   ? "hide" : "show") all titles"
-			case .idDots:    return "\(gShowEssayDragDots ? "hide" : "show") all drag dots"
+			case .idTitles:  return kEmpty
 			case .idHide:    return "hide \(kind)"
 			case .idBack:    return "show previous"
 			case .idSave:    return "save"
 		}
 	}
 
+}
 
-	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idDelete, .idSave, .idCancel, .idHide, .idTitles, .idDots] }
+enum ZEssayTitleMode: Int {
+	case sNone
+	case sTitle
+	case sBoth
 }
 
 enum ZoneAttributeType: String {

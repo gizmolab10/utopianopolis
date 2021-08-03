@@ -21,8 +21,8 @@ class ZToggleButton : ZButton {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        onStateImage  = ZImage(named: kTriangleImageName)
-        offStateImage = onStateImage?.imageRotatedByDegrees(180.0)
+        onStateImage  = kTriangleImage
+        offStateImage = kTriangleImage?.imageRotatedByDegrees(180.0)
     }
 
     func setState(_ on: Bool) {

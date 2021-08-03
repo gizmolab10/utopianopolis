@@ -1315,7 +1315,7 @@ extension NSCursor {
 		let halfLength = length / 2
 		let       size = CGSize(width: length, height: length)
 		let    hotSpot = CGPoint(x: halfLength, y: halfLength)
-		if  let  image = ZImage(named: "four.arrows")?.resize(size) {
+		if  let  image = kFourArrowsImage?.resize(size) {
 			return NSCursor(image: image, hotSpot: hotSpot)
 		}
 		return nil

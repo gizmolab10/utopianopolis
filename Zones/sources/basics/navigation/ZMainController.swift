@@ -31,7 +31,7 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var hamburgerButton    : ZButton?
 
 	var hamburgerImage: ZImage? {
-		var image = ZImage(named: "settings.jpg")
+		var image = kHamburgerImage
 
 		if  gIsDark {
 			image = image?.invertedImage

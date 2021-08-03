@@ -284,16 +284,6 @@ var gNeedsMigrate : Bool {
 	set { setPreferencesBool(newValue, for: kNeedsMigrationKey) }
 }
 
-var gShowEssayTitles : Bool {
-	get { return getPreferencesBool(   for: kShowEssayTitles, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kShowEssayTitles) }
-}
-
-var gShowEssayDragDots : Bool {
-	get { return getPreferencesBool(   for: kShowEssayDragDots, defaultBool: true) }
-	set { setPreferencesBool(newValue, for: kShowEssayDragDots) }
-}
-
 var gShowDetailsView : Bool {
 	get { return getPreferencesBool(   for: kShowDetails, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kShowDetails) }
@@ -305,8 +295,13 @@ var gClipBreadcrumbs : Bool {
 }
 
 var gStartupLevel : ZStartupLevel {
-	get { return  ZStartupLevel(rawValue: getPreferencesInt(for: kStartupLevel, defaultInt: kFirstTimeStartupLevel)) ?? ZStartupLevel.firstTime }
+	get { return  ZStartupLevel(rawValue: getPreferencesInt(for: kStartupLevel, defaultInt: kFirstTimeStartupLevel))! }
 	set { setPreferencesInt(newValue.rawValue, for: kStartupLevel) }
+}
+
+var gEssayTitleMode : ZEssayTitleMode {
+	get { return ZEssayTitleMode(rawValue: getPreferencesInt(for: kEssayTitleMode, defaultInt: ZEssayTitleMode.sBoth.rawValue))! }
+	set { setPreferencesInt(newValue.rawValue, for: kEssayTitleMode) }
 }
 
 var gColorfulMode : Bool {

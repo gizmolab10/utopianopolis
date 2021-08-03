@@ -1187,6 +1187,23 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="278" height="289"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
+                            <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a5S-OQ-l6Y">
+                                <rect key="frame" x="113" y="133" width="96" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="rwX-zm-gqJ">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <segments>
+                                        <segment toolTip="show all titles" image="show.note" width="28" selected="YES"/>
+                                        <segment toolTip="hide drag dots" image="show.title" width="28" tag="1"/>
+                                        <segment toolTip="hide all titles" image="show.drag.dot" width="28">
+                                            <nil key="label"/>
+                                        </segment>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="handleSegmentedControlAction:" target="WXi-Uu-tc4" id="Dev-Gi-GUY"/>
+                                </connections>
+                            </segmentedControl>
                             <scrollView appearanceType="aqua" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hqm-9J-YF3">
                                 <rect key="frame" x="0.0" y="0.0" width="278" height="289"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="DDT-jd-TI8">
@@ -1201,6 +1218,9 @@ CA
                                             <size key="minSize" width="263" height="289"/>
                                             <size key="maxSize" width="435" height="10000000"/>
                                             <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <connections>
+                                                <outlet property="titlesControl" destination="a5S-OQ-l6Y" id="jWV-8z-JTd"/>
+                                            </connections>
                                         </textView>
                                     </subviews>
                                     <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1858,5 +1878,8 @@ DQ
         <image name="NSRevealFreestandingTemplate" width="15" height="15"/>
         <image name="NSStopProgressFreestandingTemplate" width="15" height="15"/>
         <image name="settings" width="800" height="800"/>
+        <image name="show.drag.dot" width="512" height="512"/>
+        <image name="show.note" width="512" height="512"/>
+        <image name="show.title" width="512" height="512"/>
     </resources>
 </document>

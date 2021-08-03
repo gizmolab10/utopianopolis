@@ -35,11 +35,11 @@ class ZPreferencesController: ZGenericController {
             thickness?            .doubleValue = gLineThickness
             verticalSpacing?      .doubleValue = Double(gGenericOffset.height)
             stretch?              .doubleValue = Double(gGenericOffset.width)
-            activeMineColorBox?         .color = gActiveColor
-            backgroundColorBox?         .color = gAccentColor
-            zoneColorBox?               .color =   grabbed?.color ?? kDefaultIdeaColor
-            clearColorButton?        .isHidden = !(grabbed?.hasColor ?? true)
 			colorPreferencesBox?     .isHidden = !gColorfulMode
+            clearColorButton?        .isHidden = !(grabbed?.hasColor ?? true)
+			zoneColorBox?               .color =   grabbed?.color ?? kDefaultIdeaColor
+			activeMineColorBox?         .color = gActiveColor
+			backgroundColorBox?         .color = gAccentColor
 
             view.setAllSubviewsNeedDisplay()
         }
@@ -56,7 +56,7 @@ class ZPreferencesController: ZGenericController {
 				case "thickness": gLineThickness = Double(value)
 				case   "stretch": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
 				case      "size": gGenericOffset = CGSize(width: gGenericOffset.width, height: value)
-				default:           break
+				default:          break
 			}
 
             gRelayoutMaps()

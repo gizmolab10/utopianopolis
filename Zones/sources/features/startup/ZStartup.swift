@@ -79,7 +79,7 @@ class ZStartup: NSObject {
 		if       !emailSent(for: .eBetaTesting) {
 			recordEmailSent(for: .eBetaTesting)
 
-			let image = ZImage(named: kHelpMenuImageName)
+			let image = kHelpMenuImage
 
 			gAlerts.showAlert(
 				"Please forgive my interruption",
