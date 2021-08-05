@@ -1680,10 +1680,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- notes / essays
 	// MARK:-
 
-	var countOfNotes: Int {
-		return zonesWithNotes.count
-	}
-
 	var currentNote: ZNote? {
 		if  isBookmark {
 			return bookmarkTarget!.currentNote

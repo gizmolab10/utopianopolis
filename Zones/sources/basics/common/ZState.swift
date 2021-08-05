@@ -300,7 +300,7 @@ var gStartupLevel : ZStartupLevel {
 }
 
 var gEssayTitleMode : ZEssayTitleMode {
-	get { return ZEssayTitleMode(rawValue: getPreferencesInt(for: kEssayTitleMode, defaultInt: ZEssayTitleMode.sBoth.rawValue))! }
+	get { return ZEssayTitleMode(rawValue: getPreferencesInt(for: kEssayTitleMode, defaultInt: ZEssayTitleMode.sFull.rawValue))! }
 	set { setPreferencesInt(newValue.rawValue, for: kEssayTitleMode) }
 }
 

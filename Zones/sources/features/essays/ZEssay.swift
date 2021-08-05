@@ -30,7 +30,8 @@ class ZEssay: ZNote {
 	}
 
 	override var essayText: NSMutableAttributedString? {
-		if  let z = zone, z.zonesWithNotes.count < 2 {
+		if  let z = zone,
+			(z.zonesWithNotes.count < 2 || !gCreateCombinedEssay) {
 			z.clearAllNotes()
 
 			gCurrentEssay = ZNote(z)
@@ -86,9 +87,9 @@ class ZEssay: ZNote {
 	}
 
 	override func setupChildren() {
-		if  gCreateCombinedEssay {
-			children.removeAll()
+		children.removeAll()
 
+		if  gCreateCombinedEssay {
 			zone?.traverseAllProgeny { iChild in
 				if  iChild.hasTrait(for: .tNote),
 					let note = iChild.note,

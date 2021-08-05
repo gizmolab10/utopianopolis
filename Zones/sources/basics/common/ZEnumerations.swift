@@ -467,9 +467,9 @@ enum ZEssayButtonID : Int {
 }
 
 enum ZEssayTitleMode: Int {
-	case sNone
+	case sEmpty // do not change the order, storyboard and code dependencies
 	case sTitle
-	case sBoth
+	case sFull
 }
 
 enum ZoneAttributeType: String {

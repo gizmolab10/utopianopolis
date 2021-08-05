@@ -31,7 +31,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var           recordName : String?   { return zone?.recordName }
 	var               prefix : String    { return "note" }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
-	var          titleOffset : Int       { return titleInsets * kNoteIndentSpacer.length }
+	var          titleSpacer : String    { return kNoteIndentSpacer * titleInsets }
+	var          titleOffset : Int       { return titleSpacer.length }
 	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - titleOffset }
 	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kEssayDefault }
 	var               isNote : Bool      { return isMember(of: ZNote.self) }
@@ -81,7 +82,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let             text  = attributed.attributedSubstring(from: textRange)
 			trait      .noteText  = NSMutableAttributedString(attributedString: text)
 
-			if  gEssayTitleMode != .sNone {
+			if  gEssayTitleMode != .sEmpty {
 				let          name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: kEmpty)
 				zone?   .zoneName = name
 			}
@@ -171,13 +172,12 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 			result?        .insert(text,       at: 0)
 
-			if  gEssayTitleMode != .sNone {
+			if  gEssayTitleMode != .sEmpty {
 				var        title = name + kTab
 				var   attributes = titleAttributes
 
-				if  titleInsets != 0, gEssayTitleMode == .sBoth {
-					let   spacer = kNoteIndentSpacer * titleInsets
-					title        = spacer + title
+				if  titleInsets != 0, gEssayTitleMode == .sFull {
+					title        = titleSpacer + title
 				}
 
 				if  let        z = zone, z.colorized,
@@ -199,11 +199,11 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	@discardableResult func updatedRangesFrom(_ fromText: NSMutableAttributedString?) -> (NSMutableAttributedString, String)? {
-		let hideTitles  = gEssayTitleMode == .sNone
+		let hideTitles  = gEssayTitleMode == .sEmpty
 		let justTitles  = gEssayTitleMode == .sTitle
 		if  let    text = fromText,
 			let    name = hideTitles ? kEmpty : zone?.zoneName {
-			let  spacer = justTitles ? kEmpty : kNoteIndentSpacer * titleInsets
+			let  spacer = justTitles ? kEmpty : titleSpacer
 			let hasGoof = name.contains("􀅇")
 			let tLength = hideTitles ? 0 :  name  .length
 			let sOffset = hideTitles ? 0 :  spacer.length
@@ -245,7 +245,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	func isLocked(within range: NSRange) -> Bool {
-		if  gEssayTitleMode == .sNone {
+		if  gEssayTitleMode == .sEmpty {
 			return false
 		} else {
 			let     ranEnd = range     .upperBound
