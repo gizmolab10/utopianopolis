@@ -1697,7 +1697,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var note: ZNote? {
 		if  isBookmark {
 			return bookmarkTarget!.note
-		} else if noteMaybe == nil || !hasTrait(matching: [.tNote, .tEssay]), let emptyNote = createNote() {
+		} else if (noteMaybe == nil || !hasTrait(matching: [.tNote, .tEssay])), let emptyNote = createNote() {
 			return emptyNote // might be note from "child"
 		}
 
@@ -2040,7 +2040,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  hasNote {
 			grab()
 
-			gCurrentEssay = note
+			gCreateCombinedEssay = true
+			gCurrentEssay        = note
 
 			if  gIsEssayMode {
 				gEssayView?.updateText()

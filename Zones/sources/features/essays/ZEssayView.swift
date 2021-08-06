@@ -858,10 +858,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		saveButton?    .isEnabled = enabled
 
 		updateTitleControls(enabled)
-		redraw(enabled)
+		redrawInspectorBar (enabled)
 	}
 
-	func redraw(_ enabled: Bool) {
+	func redrawInspectorBar(_ enabled: Bool) {
 		if  let      bar = gMainWindow?.inspectorBar {
 			bar.isHidden = !enabled
 
@@ -1262,31 +1262,37 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func titleLengthsUpTo(_ note: ZNote, for mode: ZEssayTitleMode) -> Int {
 		let    isEmpty = mode == .sEmpty
 		let     isFull = mode == .sFull
-		let     spaces = kNoteIndentSpacer.length
+		let     common = kNoteIndentSpacer.length
 		if  let  eZone = gCurrentEssay?.zone,  // essay zones
 			let  tZone = note.zone {           // target zone
 			let eZones = eZone.zonesWithNotes
 			let  isOne = eZones.count == 1
-			var  total = isOne ? -4 : isFull ? -2 : 0
+			var  total = isOne ? -4 : isEmpty ? -2 : isFull ? -2 : 0
 
 			for zone in eZones {
-				if  let length = zone.zoneName?.length {
-					total     += length
-				}
-
-				if  let  zNote = zone.note, !isEmpty {
+				if  let zNote  = zone.note {
 					zNote.updateTitleInsets(relativeTo: eZone)
 
+					let extra  = zNote.titleInsets - common
 					let offset = zNote.titleOffset
-					total     += offset
 
-					if  isFull {
-						total += spaces * 2
+					if  isEmpty {
+						total     += common
+						if  extra  > 0 {
+							total += common * extra
+						}
+					} else {
+						total += offset
 
-						let extra = zNote.titleInsets - 2
+						if  isFull {
+							total     += common * 2
+							if  extra  > 0 {
+								total += common * extra
+							}
+						}
 
-						if  extra > 0 {
-							total += spaces * extra
+						if  let length = zone.zoneName?.length {
+							total     += length
 						}
 					}
 				}
