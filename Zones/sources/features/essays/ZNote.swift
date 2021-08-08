@@ -158,6 +158,37 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return result
 	}
 
+	func titleOffsetFor(_ mode: ZEssayTitleMode) -> Int {
+		let isNotTitle = mode != .sTitle
+		let    isEmpty = mode == .sEmpty
+		let     isFull = mode == .sFull
+		let      space = kNoteIndentSpacer.length
+		let      tween = suffix.length + noteSeparator.length
+		let      extra = indentCount - 2
+		let      start = titleOffset
+		var      total = 0
+
+		if  isEmpty {
+			total     += space
+		} else {
+			total     += start
+
+			if  isFull {
+				total += space + tween
+			}
+
+			if  let n  = zone?.zoneName?.length {
+				total += n
+			}
+		}
+
+		if  isNotTitle, extra > 0 {
+			total     += space * extra
+		}
+
+	return total
+	}
+
 	var essayText : NSMutableAttributedString? {
 		indentCount = 0
 		let  result = noteText
