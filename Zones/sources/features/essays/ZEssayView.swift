@@ -1263,8 +1263,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let isNotTitle = mode != .sTitle
 		let    isEmpty = mode == .sEmpty
 		let     isFull = mode == .sFull
-		let     prefix = kNoteIndentSpacer.length
-		let     suffix = kTab.length + kBlankLine.length
 		if  let  eZone = gCurrentEssay?.zone,  // essay zones
 			let  tZone = note.zone {           // target zone
 			let eZones = eZone.zonesWithNotes
@@ -1273,9 +1271,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			for zone in eZones {
 				if  let zNote  = zone.note {
-					zNote.updateTitleInsets(relativeTo: eZone)
+					zNote.updateIndentCount(relativeTo: eZone)
 
-					let extra  = zNote.titleInsets - prefix
+					let prefix = kNoteIndentSpacer.length
+					let suffix = zNote.suffix.length + zNote.noteSeparator.length
+					let extra  = zNote.indentCount - prefix
 					let offset = zNote.titleOffset
 
 					if  isEmpty {

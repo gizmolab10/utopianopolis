@@ -10,7 +10,7 @@ import Foundation
 
 class ZEssay: ZNote {
 	var essayRange: NSRange { return NSRange(location: 0, length: essayLength) }
-	override var prefix: String { return "essay" }
+	override var kind: String { return "essay" }
 
 	override var lastTextIsDefault: Bool {
 		if  let last = children.last,
@@ -56,21 +56,21 @@ class ZEssay: ZNote {
 		} else {
 			for child in children.reversed() {
 				index        -= 1
-				let      bump = kBlankLine.length
+				let      bump = noteSeparator.length
 
-				child.updateTitleInsets(relativeTo: zone)
+				child.updateIndentCount(relativeTo: zone)
 
 				if  let  text = child.noteText {
 					result    = result ?? NSMutableAttributedString()
 
 					if  index < max {
-						result?.insert(kBlankLine, at: 0)
+						result?.insert(noteSeparator, at: 0)
 					}
 
 					result?    .insert(text,       at: 0)
 
 					if  index > 0 {
-						result?.insert(kBlankLine, at: 0)
+						result?.insert(noteSeparator, at: 0)
 						child.bumpLocations(by: bump)
 					}
 				}
@@ -105,7 +105,7 @@ class ZEssay: ZNote {
 
 		for child in children {				// update note offsets
 			child.noteOffset = offset
-			offset           = child.offsetTextRange.upperBound + kBlankLine.length
+			offset           = child.offsetTextRange.upperBound + noteSeparator.length
 		}
 	}
 

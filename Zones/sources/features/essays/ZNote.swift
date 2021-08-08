@@ -17,7 +17,7 @@ enum ZAlterationType: Int {
 
 class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var          essayLength = 0
-	var          titleInsets = 0
+	var          indentCount = 0
 	var           noteOffset = 0
 	var           autoDelete = false		// true means delete this note on exit from essay mode
 	var             children = [ZNote]()
@@ -29,9 +29,12 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var       maybeNoteTrait : ZTrait?   { return zone?.traits  [.tNote] }
 	var            noteTrait : ZTrait?   { return zone?.traitFor(.tNote) }
 	var           recordName : String?   { return zone?.recordName }
-	var               prefix : String    { return "note" }
+	var                 kind : String    { return "note" }
+	var               prefix : String    { return titleSpacer }
+	var               suffix : String    { return kTab }
+	var        noteSeparator : NSAttributedString { return kBlankLine }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
-	var          titleSpacer : String    { return kNoteIndentSpacer * titleInsets }
+	var          titleSpacer : String    { return kNoteIndentSpacer * indentCount }
 	var          titleOffset : Int       { return titleSpacer.length }
 	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - titleOffset }
 	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kEssayDefault }
@@ -115,7 +118,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	func identifier() -> String? {
 		if  let id = zone?.identifier() {
-			return prefix + kColonSeparator + id
+			return kind + kColonSeparator + id
 		}
 
 		return nil
@@ -146,7 +149,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	var spacerAttributes: ZAttributesDictionary? {
 		var result = titleAttributes
-		let light  = CGFloat((titleInsets > 1) ? 4.0 : 20.0)
+		let light  = CGFloat((indentCount > 1) ? 4.0 : 20.0)
 		if  let  z = zone,
 			let  c = z.textColor?.lighter(by: light) {
 			result?[.foregroundColor] = c
@@ -156,7 +159,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	var essayText : NSMutableAttributedString? {
-		titleInsets = 0
+		indentCount = 0
 		let  result = noteText
 		essayLength = result?.length ?? 0
 
@@ -171,11 +174,11 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			result = NSMutableAttributedString(attributedString: text)
 
 			if  gEssayTitleMode != .sEmpty {
-				var        title = name + kTab
+				var        title = name + suffix
 				var   attributes = titleAttributes
 
-				if  titleInsets != 0, gEssayTitleMode == .sFull {
-					title        = titleSpacer + title
+				if  indentCount != 0, gEssayTitleMode == .sFull {
+					title        = prefix + title
 				}
 
 				if  let        z = zone, z.colorized,
@@ -186,7 +189,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 				let attributedTitle = NSMutableAttributedString(string: title, attributes: attributes)
 
-				result?.insert(kBlankLine,      at: 0)
+				result?.insert(noteSeparator,   at: 0)
 				result?.insert(attributedTitle, at: 0)
 			}
 
@@ -216,11 +219,11 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	func updateTitleInsets(relativeTo ancestor: Zone?) {
-		if  let start = ancestor,
-			let level = zone?.level {
+	func updateIndentCount(relativeTo ancestor: Zone?) {
+		if  let      start = ancestor,
+			let      level = zone?.level {
 			let difference = level - start.level
-			titleInsets = difference + 1
+			indentCount    = difference + 1
 		}
 	}
 
