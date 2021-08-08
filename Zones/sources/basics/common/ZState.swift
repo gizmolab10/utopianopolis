@@ -87,38 +87,26 @@ var   gCurrentSmallMapRecords:  ZSmallMapRecords? { return gIsRecentlyMode ? gRe
 var                  gRecords:          ZRecords? { return (kIsPhone && gShowSmallMapForIOS) ? gCurrentSmallMapRecords : gRemoteStorage.currentRecords }
 var                 gDarkMode:     InterfaceStyle { return InterfaceStyle() }
 var            gModifierFlags:        ZEventFlags { return ZEvent.modifierFlags } // use when don't have an event handy
-var	 			   gBlankLine: NSAttributedString { return NSMutableAttributedString(string: "\n", attributes: [.font : gEssayTitleFont]) }
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
+var   gDeciSecondsSinceLaunch:                Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
 var          gOtherDatabaseID:        ZDatabaseID { return gDatabaseID == .mineID ? .everyoneID : .mineID }
 var                 gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
 var                 gDotWidth:             Double { return gDotHeight * 0.75 }
 var                gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
 var       gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
-var   gDeciSecondsSinceLaunch:                Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
 var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
 var          gDarkAccentColor:             ZColor { return gAccentColor.darker  (by: 1.3) }
 var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
 var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kLighterGrayColor : kBlackColor }
-var          gBackgroundColor:             ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
-var         gDefaultEssayFont:              ZFont { return ZFont(name: "Times-Roman",            size: gEssayTextFontSize)  ?? ZFont.systemFont(ofSize: gEssayTextFontSize) }
-var           gEssayTitleFont:              ZFont { return ZFont(name: "TimesNewRomanPS-BoldMT", size: gEssayTitleFontSize) ?? ZFont.systemFont(ofSize: gEssayTitleFontSize) }
-var             gSmallMapFont:              ZFont { return .systemFont    (ofSize: gFontSize * kSmallMapReduction) }
-var               gWidgetFont:              ZFont { return .systemFont    (ofSize: gFontSize) }
-var                 gTinyFont:              ZFont { return .systemFont    (ofSize: gFontSize * kSmallMapReduction * kSmallMapReduction) }
+var          gBackgroundColor:             ZColor { return  gIsDark ? kDarkestGrayColor : kWhiteColor }
+var             gSmallMapFont:              ZFont { return .systemFont(ofSize: gFontSize * kSmallMapReduction) }
+var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
+var                 gTinyFont:              ZFont { return .systemFont(ofSize: gFontSize * kSmallMapReduction * kSmallMapReduction) }
 
 func      gToggleShowTooltips()                   { gShowToolTips = !gShowToolTips; gSignal([.sRelayout]) }
 func        gToggleDatabaseID()                   { gDatabaseID   = gOtherDatabaseID }
 func         gSetEditIdeaMode()                   { gWorkMode     = .wEditIdeaMode }
 func           gSetBigMapMode()                   { gWorkMode     = .wMapMode }
-
-let                 kHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize)
-let                 kBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize)
-let            kLargeHelpFont                     = ZFont  .systemFont    (ofSize: ZFont.systemFontSize + 1.0)
-let            kLargeBoldFont                     = ZFont  .boldSystemFont(ofSize: ZFont.systemFontSize + 1.0)
-let    kFirstTimeStartupLevel                     = ZStartupLevel.firstTime.rawValue
-let       gEssayTitleFontSize                     = kDefaultEssayTitleFontSize
-let        gEssayTextFontSize                     = kDefaultEssayTextFontSize
-let              gScratchZone                     = Zone.uniqueZoneNamed(kScratchRootName, recordName: kScratchRootName, databaseID: .mineID)
 
 func gToggleSmallMapMode(_ OPTION: Bool = false, forceToggle: Bool = false) {
 	if  let c = gDetailsController {

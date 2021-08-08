@@ -222,3 +222,13 @@ let         kLevelTwoSeparator = " (a|a) "
 let       kLevelThreeSeparator = " (f) "
 let        kLevelFourSeparator = " (v) "
 let   kArrayTransformSeparator = "] . ["
+
+let            kEssayTitleFont = ZFont(name: "TimesNewRomanPS-BoldMT", size: kDefaultEssayTitleFontSize) ?? ZFont.systemFont(ofSize: kDefaultEssayTitleFontSize)
+let          kDefaultEssayFont = ZFont(name: "Times-Roman",            size: kDefaultEssayTextFontSize)  ?? ZFont.systemFont(ofSize: kDefaultEssayTextFontSize)
+let                  kHelpFont = ZFont.systemFont    (ofSize: ZFont.systemFontSize)
+let                  kBoldFont = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize)
+let             kLargeHelpFont = ZFont.systemFont    (ofSize: ZFont.systemFontSize + 1.0)
+let             kLargeBoldFont = ZFont.boldSystemFont(ofSize: ZFont.systemFontSize + 1.0)
+let     kFirstTimeStartupLevel = ZStartupLevel.firstTime.rawValue
+let               kScratchZone = Zone.uniqueZoneNamed(kScratchRootName, recordName: kScratchRootName, databaseID: .mineID)
+let                 kBlankLine = NSAttributedString(string: "\n", attributes: [.font : kEssayTitleFont])

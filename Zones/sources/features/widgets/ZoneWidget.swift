@@ -537,9 +537,10 @@ class ZoneWidget: ZView {
         let    widthExpand = (gap + 24.0) /  6.0
 		let innerRevealDot = revealDot.innerDot
         let revealDotDelta = innerRevealDot?.isVisible ?? false ? CGFloat(0.0) : innerRevealDot!.bounds.size.width + 3.0      // expand around reveal dot, only if it is visible
-		var           rect = textWidget.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)     // get size from text widget
+		var           rect = textWidget.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)               // get size from text widget
 		rect.size .height += (gHighlightHeightOffset + 2.0) / ratio
         rect.size  .width += (widthExpand - revealDotDelta) / ratio
+		rect               = rect.offsetBy(dx: -1.0, dy: 0.0)
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
         let          color = widgetZone?.color
         let      fillColor = color?.withAlphaComponent(0.01)

@@ -133,8 +133,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		var result: ZAttributesDictionary?
 
 		if	let      z = zone {
-			let offset = NSNumber(floatLiteral: Double(gEssayTitleFontSize) / 7.0)
-			result     = [.font : gEssayTitleFont, .paragraphStyle : paragraphStyle, .baselineOffset : offset]
+			let offset = NSNumber(floatLiteral: Double(kDefaultEssayTitleFontSize) / 7.0)
+			result     = [.font : kEssayTitleFont, .paragraphStyle : paragraphStyle, .baselineOffset : offset]
 
 			if  let  c = z.textColor {
 				result?[.foregroundColor] = c
@@ -168,9 +168,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		var result : NSMutableAttributedString?
 
 		if  let (text, name) = updatedRangesFrom(noteTrait?.noteText) {
-			result = NSMutableAttributedString()
-
-			result?        .insert(text,       at: 0)
+			result = NSMutableAttributedString(attributedString: text)
 
 			if  gEssayTitleMode != .sEmpty {
 				var        title = name + kTab
@@ -188,7 +186,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 				let attributedTitle = NSMutableAttributedString(string: title, attributes: attributes)
 
-				result?.insert(gBlankLine,      at: 0)
+				result?.insert(kBlankLine,      at: 0)
 				result?.insert(attributedTitle, at: 0)
 			}
 
@@ -207,7 +205,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let hasGoof = name.contains("􀅇")
 			let tLength = hideTitles ? 0 :  name  .length
 			let sOffset = hideTitles ? 0 :  spacer.length
-			let tOffset = hideTitles ? 0 :  sOffset + tLength + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
+			let tOffset = hideTitles ? 0 :  sOffset + tLength + kBlankLine.length + 1 + (hasGoof ? 1 : 0)
 			titleRange  = NSRange(location: sOffset, length: tLength)
 			textRange   = NSRange(location: tOffset, length: text.length)
 			noteOffset  = 0

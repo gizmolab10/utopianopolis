@@ -150,7 +150,7 @@ class ZTrait: ZTraitAssets {
 					if  let f = format {
 						string?.attributesAsString = f
 					} else if isEmpty {
-						string?.addAttribute(.font, value: gDefaultEssayFont, range: NSRange(location: 0, length: text!.length))
+						string?.addAttribute(.font, value: kDefaultEssayFont, range: NSRange(location: 0, length: text!.length))
 					}
 				}
 			}

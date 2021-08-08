@@ -1135,13 +1135,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let  parentI = parent.siblingIndex,
 			let   grandP = parent.parentZone {
 
-			gScratchZone.children = []
+			kScratchZone.children = []
 
-			gScratchZone.acquireZones(children)
+			kScratchZone.acquireZones(children)
 			self.moveZone(into: grandP, at: parentI, orphan: true) {
 				self.acquireZones(parent.children)
 				parent.moveZone(into: self, at: grabbedI, orphan: true) {
-					parent.acquireZones(gScratchZone.children)
+					parent.acquireZones(kScratchZone.children)
 					parent.needCount()
 					parent.grab()
 

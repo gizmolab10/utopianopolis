@@ -1260,9 +1260,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK:-
 
 	func titleLengthsUpTo(_ note: ZNote, for mode: ZEssayTitleMode) -> Int {
+		let isNotTitle = mode != .sTitle
 		let    isEmpty = mode == .sEmpty
 		let     isFull = mode == .sFull
-		let     common = kNoteIndentSpacer.length
+		let     prefix = kNoteIndentSpacer.length
+		let     suffix = kTab.length + kBlankLine.length
 		if  let  eZone = gCurrentEssay?.zone,  // essay zones
 			let  tZone = note.zone {           // target zone
 			let eZones = eZone.zonesWithNotes
@@ -1273,27 +1275,25 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				if  let zNote  = zone.note {
 					zNote.updateTitleInsets(relativeTo: eZone)
 
-					let extra  = zNote.titleInsets - common
+					let extra  = zNote.titleInsets - prefix
 					let offset = zNote.titleOffset
 
 					if  isEmpty {
-						total     += common
-						if  extra  > 0 {
-							total += common * extra
-						}
+						total += prefix
 					} else {
 						total += offset
 
 						if  isFull {
-							total     += common * 2
-							if  extra  > 0 {
-								total += common * extra
-							}
+							total += prefix + suffix
 						}
 
-						if  let length = zone.zoneName?.length {
-							total     += length
+						if  let n  = zone.zoneName?.length {
+							total += n
 						}
+					}
+
+					if  isNotTitle, extra > 0 {
+						total += prefix * extra
 					}
 				}
 

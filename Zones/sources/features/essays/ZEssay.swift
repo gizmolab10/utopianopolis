@@ -56,7 +56,7 @@ class ZEssay: ZNote {
 		} else {
 			for child in children.reversed() {
 				index        -= 1
-				let      bump = gBlankLine.length
+				let      bump = kBlankLine.length
 
 				child.updateTitleInsets(relativeTo: zone)
 
@@ -64,13 +64,13 @@ class ZEssay: ZNote {
 					result    = result ?? NSMutableAttributedString()
 
 					if  index < max {
-						result?.insert(gBlankLine, at: 0)
+						result?.insert(kBlankLine, at: 0)
 					}
 
 					result?    .insert(text,       at: 0)
 
 					if  index > 0 {
-						result?.insert(gBlankLine, at: 0)
+						result?.insert(kBlankLine, at: 0)
 						child.bumpLocations(by: bump)
 					}
 				}
@@ -105,7 +105,7 @@ class ZEssay: ZNote {
 
 		for child in children {				// update note offsets
 			child.noteOffset = offset
-			offset           = child.offsetTextRange.upperBound + gBlankLine.length
+			offset           = child.offsetTextRange.upperBound + kBlankLine.length
 		}
 	}
 
