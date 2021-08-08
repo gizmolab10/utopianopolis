@@ -158,37 +158,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return result
 	}
 
-	func titleOffsetFor(_ mode: ZEssayTitleMode) -> Int {
-		let isNotTitle = mode != .sTitle
-		let    isEmpty = mode == .sEmpty
-		let     isFull = mode == .sFull
-		let      space = kNoteIndentSpacer.length
-		let      tween = suffix.length + noteSeparator.length
-		let      extra = indentCount - 2
-		let      start = titleOffset
-		var      total = 0
-
-		if  isEmpty {
-			total     += space
-		} else {
-			total     += start
-
-			if  isFull {
-				total += space + tween
-			}
-
-			if  let n  = zone?.zoneName?.length {
-				total += n
-			}
-		}
-
-		if  isNotTitle, extra > 0 {
-			total     += space * extra
-		}
-
-	return total
-	}
-
 	var essayText : NSMutableAttributedString? {
 		indentCount = 0
 		let  result = noteText
@@ -230,16 +199,47 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return result
 	}
 
+	func titleOffsetFor(_ mode: ZEssayTitleMode) -> Int {
+		let isNotTitle = mode != .sTitle
+		let    isEmpty = mode == .sEmpty
+		let     isFull = mode == .sFull
+		let      space = kNoteIndentSpacer.length
+		let      tween = suffix.length + noteSeparator.length
+		let      extra = indentCount - 2
+		let      start = titleOffset
+		var      total = 0
+
+		if  isEmpty {
+			total     += space
+		} else {
+			total     += start
+
+			if  isFull {
+				total += space + tween
+			}
+
+			if  let n  = zone?.zoneName?.length {
+				total += n
+			}
+		}
+
+		if  isNotTitle, extra > 0 {
+			total     += space * extra
+		}
+
+		return total
+	}
+
 	@discardableResult func updatedRangesFrom(_ fromText: NSMutableAttributedString?) -> (NSMutableAttributedString, String)? {
-		let hideTitles  = gEssayTitleMode == .sEmpty
-		let justTitles  = gEssayTitleMode == .sTitle
+		let   onlyTitle = gEssayTitleMode == .sTitle
+		let     noTitle = gEssayTitleMode == .sEmpty
 		if  let    text = fromText,
-			let    name = hideTitles ? kEmpty : zone?.zoneName {
-			let  spacer = justTitles ? kEmpty : titleSpacer
+			let    name = noTitle ? kEmpty : zone?.zoneName {
+			let  spacer = onlyTitle ? kEmpty : titleSpacer
 			let hasGoof = name.contains("􀅇")
-			let tLength = hideTitles ? 0 :  name  .length
-			let sOffset = hideTitles ? 0 :  spacer.length
-			let tOffset = hideTitles ? 0 :  sOffset + tLength + kBlankLine.length + 1 + (hasGoof ? 1 : 0)
+			let tLength = noTitle ? 0 :  name  .length
+			let sOffset = noTitle ? 0 :  spacer.length
+			let tOffset = noTitle ? 0 :  sOffset + tLength + kBlankLine.length + 1 + (hasGoof ? 1 : 0)
 			titleRange  = NSRange(location: sOffset, length: tLength)
 			textRange   = NSRange(location: tOffset, length: text.length)
 			noteOffset  = 0
