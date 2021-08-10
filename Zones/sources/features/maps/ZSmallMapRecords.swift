@@ -210,46 +210,27 @@ class ZSmallMapRecords: ZRecords {
 
 	var isRecents : Bool { return databaseID == .recentsID }
 
-	var computedCurrent : Zone? {
-		return isRecents ? computedCurrrentRecent : computedCurrrentFavorite
-	}
+	var currentTargets: ZoneArray {
+		var  targets = ZoneArray()
 
-	@discardableResult func updateCurrentForMode() -> Zone? {
-		return gIsRecentlyMode ? updateCurrentRecent() : updateCurrentBookmark()
-	}
+		if  gIsEssayMode,
+			let zone = gCurrentEssayZone {
+			targets.append(zone)
+		} else if let here = gHereMaybe {
+			targets.append(here)
 
-	var computedCurrrentFavorite: Zone? {
-		if  let        here = gHereMaybe,
-			let    bookmark = whichBookmarkTargets(here, orSpawnsIt: false),
-			bookmark.isInSmallMap,
-			!(bookmark.bookmarkTarget?.spawnedBy(here) ?? false) {
-			return bookmark
-		}
-
-		return nil
-	}
-
-	@discardableResult func updateCurrentBookmark() -> Zone? {
-		if  let bookmark = computedCurrrentFavorite {
-			currentBookmark = bookmark
-
-			return currentBookmark
-		}
-
-		return nil
-	}
-
-	var computedCurrrentRecent: Zone? {
-		if  let bookmarks = rootZone?.allBookmarkProgeny, bookmarks.count > 0 {
-			var targets   = ZoneArray()
-
-			if  let grab  = gSelecting.firstGrab {
+			if  let grab = gSelecting.firstGrab,
+				!targets.contains(grab) {
 				targets.append(grab)
 			}
+		}
 
-			if  let here  = gHereMaybe, !targets.contains(here) {
-				targets.append(here)
-			}
+		return targets
+	}
+
+	var computedCurrrentBookmark: Zone? {
+		if  let bookmarks = rootZone?.allBookmarkProgeny, bookmarks.count > 0 {
+			let targets   = currentTargets
 
 			if  let bookmark = bookmarks.whoseTargetIntersects(with: targets, orSpawnsIt: false) {
 				return bookmark
@@ -260,10 +241,14 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 
-	@discardableResult func updateCurrentRecent() -> Zone? {
-		currentBookmark = computedCurrrentRecent
+	@discardableResult func updateCurrentBookmark() -> Zone? {
+		if  let bookmark = computedCurrrentBookmark {
+			currentBookmark = bookmark
 
-		return currentBookmark
+			return currentBookmark
+		}
+
+		return nil
 	}
 
 	func grab(_ zone: Zone) {
@@ -286,9 +271,7 @@ class ZSmallMapRecords: ZRecords {
 			cb.bookmarkTarget?.grab() // grab target in big map
 		} else if doNotGrab {
 			return false
-		} else if let bookmark = computedCurrent {
-			currentBookmark = bookmark
-
+		} else if let bookmark = computedCurrrentBookmark {
 			grab(bookmark)
 		} else {
 			let bookmarks = gHere.bookmarksTargetingSelf

@@ -652,7 +652,6 @@ var gCurrentEssay: ZNote? {
 
 		if  gHasFinishedStartup, // avoid creating confused recents view
 			gIsRecentlyMode {
-			gRecents.push(gCurrentEssayZone)
 		}
 	}
 }

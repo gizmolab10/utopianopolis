@@ -266,26 +266,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- bookmarks
 	// MARK:-
 
-	func setBookmarksAsCurrent() {
-		for mark in bookmarksInSmallMapTargetingSelf {
-			let             smallMap = mark.isInRecents ? gRecents : gFavorites
-			smallMap.currentBookmark = mark
-		}
-	}
-
-	var bookmarksInSmallMapTargetingSelf: ZoneArray {
-		let marks = bookmarksTargetingSelf
-		var filtered = ZoneArray()
-
-		for mark in marks {
-			if  mark.root?.isInSmallMap ?? false {
-				filtered.append(mark)
-			}
-		}
-
-		return filtered
-	}
-
 	var bookmarksTargetingSelf: ZoneArray {
 		if  let  name = recordName,
 			let  dict = gBookmarks.reverseLookup[databaseID],
@@ -1890,7 +1870,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				targetParent?.expand()
 				focusOnBookmarkTarget { (iObject: Any?, kind: ZSignalKind) in
-					gRecents.updateCurrentForMode()
+					gCurrentSmallMapRecords?.updateCurrentBookmark()
 					atArrival()
 				}
 
@@ -2058,8 +2038,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func invokeEssay() -> Bool { // false means not handled
 		if  hasNote {
-			grab()
-
 			gCreateCombinedEssay = true
 			gCurrentEssay        = note
 
@@ -3216,7 +3194,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func revealDotClicked(_ flags: ZEventFlags) {
-//		gTextEditor.stopCurrentEdit()
 		ungrabProgeny()
 
 		let COMMAND = flags.isCommand

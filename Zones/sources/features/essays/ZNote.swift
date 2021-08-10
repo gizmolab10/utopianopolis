@@ -230,7 +230,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return total
 	}
 
-	@discardableResult func updatedRangesFrom(_ fromText: NSMutableAttributedString?) -> (NSMutableAttributedString, String)? {
+	@discardableResult func updatedRangesFrom(_ fromText: NSAttributedString?) -> (NSAttributedString, String)? {
 		let   onlyTitle = gEssayTitleMode == .sTitle
 		let     noTitle = gEssayTitleMode == .sEmpty
 		if  let    text = fromText,

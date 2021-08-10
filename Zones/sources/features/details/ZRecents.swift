@@ -53,7 +53,7 @@ class ZRecents : ZSmallMapRecords {
 				matchOrCreateBookmark(for: pushMe, autoAdd: true)
 			}
 
-			updateCurrentRecent()
+			updateCurrentBookmark()
 		}
 	}
 

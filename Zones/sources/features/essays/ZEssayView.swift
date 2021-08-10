@@ -502,7 +502,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
 		} else {
 			enableEssayControls(true)
-			gCurrentEssayZone?.setBookmarksAsCurrent()                        // so small map is consistent
 
 			if  (shouldOverwrite || restoreSelection != nil),
 				let text = gCurrentEssay?.essayText {
@@ -536,6 +535,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func save() {
 		if  let e = gCurrentEssay {
+			e.updatedRangesFrom(textStorage)
 			e.injectIntoEssay(textStorage)
 		}
 	}
