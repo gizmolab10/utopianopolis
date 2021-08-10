@@ -374,12 +374,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	override func setSelectedRange(_ range: NSRange) {
-		super.setSelectedRange(range)
+		if  let text = textStorage?.string,
+			NSRange(location: 0, length: text.length).contains(range) {
+			super.setSelectedRange(range)
 
-		if  selectedRange.location != 0,
-			let       rect = rectForRange(selectedRange),
-			selectionRect != rect {
-			selectionRect  = rect
+			if  selectedRange.location != 0,
+				let       rect = rectForRange(selectedRange),
+				selectionRect != rect {
+				selectionRect  = rect
+			}
 		}
 	}
 
@@ -1530,8 +1533,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let current = gCurrentEssay,
 			let    zone = current.zone {
 			let   count = current.children.count
-			let   isOne = count == 1
+			let   isOne = count < 2
+			let   range = selectedRange()
 
+			current.updatedRangesFrom(textStorage)
 			current.injectIntoEssay(textStorage)
 
 			gCreateCombinedEssay = isOne // toggle
@@ -1540,10 +1545,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				gCurrentEssay = ZEssay(zone)
 
 				zone.clearAllNotes()            // discard current essay text and all child note's text
-				updateText()
+				updateText(restoreSelection: range)
 			} else if let note = lastGrabbedDot?.note ?? selectedNote {
 				ungrabAll()
-				resetCurrentEssay(note)
+				resetCurrentEssay(note, selecting: range)
 			}
 
 			gSignal([.sDetails])
