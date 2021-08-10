@@ -266,6 +266,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- bookmarks
 	// MARK:-
 
+	func setBookmarksAsCurrent() {
+		for mark in bookmarksInSmallMapTargetingSelf {
+			let             smallMap = mark.isInRecents ? gRecents : gFavorites
+			smallMap.currentBookmark = mark
+		}
+	}
+
+	var bookmarksInSmallMapTargetingSelf: ZoneArray {
+		let marks = bookmarksTargetingSelf
+		var filtered = ZoneArray()
+
+		for mark in marks {
+			if  mark.root?.isInSmallMap ?? false {
+				filtered.append(mark)
+			}
+		}
+
+		return filtered
+	}
+
 	var bookmarksTargetingSelf: ZoneArray {
 		if  let  name = recordName,
 			let  dict = gBookmarks.reverseLookup[databaseID],

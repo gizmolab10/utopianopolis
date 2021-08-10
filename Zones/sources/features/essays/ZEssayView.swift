@@ -502,6 +502,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
 		} else {
 			enableEssayControls(true)
+			gCurrentEssayZone?.setBookmarksAsCurrent()                        // so small map is consistent
 
 			if  (shouldOverwrite || restoreSelection != nil),
 				let text = gCurrentEssay?.essayText {
@@ -513,12 +514,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			essayRecordName = gCurrentEssayZone?.recordName                   // do this after overwriting
 			delegate        = self 					    	                  // set delegate after setText
-
-			if  let    zone = gCurrentEssayZone {
-				gHere       = zone                                            // so small map is consistent
-
-				gHere.grab()
-			}
 
 			if  gIsEssayMode {
 				gMainWindow?.makeFirstResponder(self)                         // this should never happen unless already in essay mode
@@ -552,7 +547,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			e.zone?.deleteNote()
 		}
 
-		ungrabAll()
 		undoManager?.removeAllActions()
 	}
 
