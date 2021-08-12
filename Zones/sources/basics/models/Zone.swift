@@ -87,6 +87,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                         hasNote :               Bool  { return hasTrait(for: .tNote) }
 	var                     isTraveller :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
 	var                       isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
+	var                      isInBigMap :               Bool  { return root?.isBigMapRoot       ?? false }
 	var                      isInAnyMap :               Bool  { return root?.isAnyMapRoot       ?? false }
 	var                     isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
 	var                     isInRecents :               Bool  { return root?.isRecentsRoot      ?? false }
@@ -2960,7 +2961,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			// /////////////////
 
 			let  goal = iLevel ?? level + (show ? 1 : -1)
-			let grabs = gSelecting.currentGrabs
+			let grabs = gSelecting.currentMapGrabs
 			let apply = {
 				var grabHere = false
 				self.traverseAllProgeny { iChild in

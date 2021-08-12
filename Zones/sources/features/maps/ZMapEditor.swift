@@ -134,7 +134,7 @@ class ZMapEditor: ZBaseEditor {
 						case "z":        if  !SHIFT { gUndoManager.undo() } else { gUndoManager.redo() }
 						case "8":        if  OPTION { prefix(with: kSoftArrow, withParentheses: false) } // option-8 is a dot
 						case "#":        if gSelecting.hasMultipleGrab { prefix(with: key) } else { debugAnalyze() }
-						case "+":        gSelecting.currentGrabs.toggleGroupOwnership()
+						case "+":        gSelecting.currentMapGrabs.toggleGroupOwnership()
 						case "-":        return handleHyphen(COMMAND, OPTION)
 						case "'":        gToggleSmallMapMode(OPTION)
 						case "/":        return handleSlash(flags)
@@ -165,43 +165,10 @@ class ZMapEditor: ZBaseEditor {
 		if !gIsExportingToAFile {
 			if  gTextEditorHandlesArrows || gIsEditIdeaMode {
 				gTextEditor.handleArrow(arrow, flags: flags)
-			} else {
-				let COMMAND = flags.isCommand
-				let  OPTION = flags.isOption
-				let   SHIFT = flags.isShift
-
-				if !((OPTION && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
-					switch arrow {          // what would life be like if we did not have to be perfect?
-						case .down,    .up: move(up: arrow == .up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
-						case .left, .right:
-							if  let moveable = gSelecting.rootMostMoveable {
-								if !SHIFT || moveable.isInSmallMap {
-									move(out: arrow == .left, selectionOnly: !OPTION, extreme: COMMAND) { neededReveal in
-										gSelecting.updateAfterMove(!OPTION, needsRedraw: neededReveal)  // relayout map when travelling through a bookmark
-										onCompletion?() // invoke closure from essay editor
-									}
-								} else {
-
-									// ///////////////
-									// GENERATIONAL //
-									// ///////////////
-
-									var show = true
-
-									switch arrow {
-										case .right: break
-										case .left:  show = false
-										default:     return
-									}
-
-									if  OPTION {
-										browseBreadcrumbs(arrow == .left)
-									} else {
-										moveable.applyGenerationally(show, extreme: COMMAND)
-									}
-								}
-							}
-					}
+			} else if !((flags.isOption && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
+				switch arrow {
+					case .down,    .up: moveUp(arrow == .up, flags: flags)
+					case .left, .right: moveLeft(arrow == .left, flags: flags, onCompletion: onCompletion)
 				}
 			}
 		}
@@ -252,9 +219,9 @@ class ZMapEditor: ZBaseEditor {
             let     undo = undoManager
             let   select = gSelecting
             let   wGrabs = select.writableGrabsCount
-            let    paste = select.pasteableZones.count
-            let    grabs = select.currentGrabs  .count
-            let    shown = select.currentGrabsHaveVisibleChildren
+            let    paste = select.pasteableZones .count
+            let    grabs = select.currentMapGrabs.count
+            let    shown = select.currentMapGrabsHaveVisibleChildren
             let    mover = select.currentMoveable
             let canColor = mover.isReadOnlyRoot || mover.bookmarkTarget?.isReadOnlyRoot ?? false
             let    write = mover.userCanWrite
@@ -280,6 +247,24 @@ class ZMapEditor: ZBaseEditor {
 
         return valid
     }
+
+	// MARK:- handlers
+	// MARK:-
+
+	@objc func handleReorderPopupMenu(_ iItem: ZMenuItem) {
+		handleReorderKey(iItem.keyEquivalent, gModifierFlags.isOption)
+	}
+
+	@objc func handleReorderKey(_ key: String, _ OPTION: Bool) {
+		if  let type  = ZReorderMenuType(rawValue: key) {
+			UNDO(self) { iUndoSelf in
+				iUndoSelf.handleReorderKey(key, !OPTION)
+			}
+
+			gSelecting.simplifiedGrabs.sortBy(type, OPTION)
+			gRelayoutMaps()
+		}
+	}
 
 	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {
 		if  COMMAND && OPTION {
@@ -333,36 +318,27 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-	// MARK:- features
+	// MARK:- focus
 	// MARK:-
 
-	func moveToDone() -> Bool {
-		if  let   zone = gSelecting.rootMostMoveable,
-			let parent = zone.parentZone {
-			let  grabs = gSelecting.currentGrabs
-			var   done = zone.visibleDoneZone
+	func focusOnTrash() {
+		gTrash?.focusOn() {
+			gRelayoutMaps()
+		}
+	}
 
-			if  done == nil {
-				done  = Zone.uniqueZone(recordName: nil, in: parent.databaseID)
-				done?.zoneName = kDone
-
-				done?.moveZone(to: parent)
-			}
-
-			for zone in grabs {
-				zone.orphan()
-			}
-
-			grabs.moveIntoAndGrab(done!) { good in
-				done?.grab()
+	func focusOrPopSmallMap(_ flags: ZEventFlags, kind: ZFocusKind) {
+		if  flags.isControl {
+			gCurrentSmallMapRecords?.popAndUpdateCurrent()
+		} else {
+			gRecords?.focusOnGrab(kind, flags.isCommand, shouldGrab: true) { // complex grab logic
 				gRelayoutMaps()
 			}
-
-			return true
 		}
-
-		return false
 	}
+
+	// MARK:- features
+	// MARK:-
 
 	func mapControl(_ OPTION: Bool) {
 		if !OPTION {
@@ -383,7 +359,7 @@ class ZMapEditor: ZBaseEditor {
 
 	func browseBreadcrumbs(_ out: Bool) {
 		if  let here = out ? gHere.parentZone : gBreadcrumbs.nextCrumb(false) {
-			let last = gSelecting.currentGrabs
+			let last = gSelecting.currentMapGrabs
 			gHere    = here
 
 			here.traverseAllProgeny { child in
@@ -400,16 +376,6 @@ class ZMapEditor: ZBaseEditor {
 		var grabs = gSelecting.simplifiedGrabs // convert to mutable, otherwise can't invoke duplicate
 
 		grabs.duplicate()
-	}
-
-	func focusOrPopSmallMap(_ flags: ZEventFlags, kind: ZFocusKind) {
-		if  flags.isControl {
-			gCurrentSmallMapRecords?.popAndUpdateCurrent()
-		} else {
-			gRecords?.focusOnGrab(kind, flags.isCommand, shouldGrab: true) { // complex grab logic
-				gRelayoutMaps()
-			}
-		}
 	}
 
 	func updateSize(up: Bool) {
@@ -489,12 +455,6 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-    func focusOnTrash() {
-		gTrash?.focusOn() {
-			gRelayoutMaps()
-		}
-	}
-
 	func showReorderPopup() {
 		if  let widget = gSelecting.lastGrab.widget?.textWidget {
 			var  point = widget.bounds.bottomRight
@@ -502,10 +462,6 @@ class ZMapEditor: ZBaseEditor {
 
 			ZMenu.reorderPopup(target: self, action: #selector(handleReorderPopupMenu(_:))).popUp(positioning: nil, at: point, in: gCurrentMapView)
 		}
-	}
-
-	@objc func handleReorderPopupMenu(_ iItem: ZMenuItem) {
-		handleReorderKey(iItem.keyEquivalent, gModifierFlags.isOption)
 	}
 
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with COMMA: Bool) {
@@ -539,7 +495,7 @@ class ZMapEditor: ZBaseEditor {
     }
 
 	func grabDuplicatesAndRedraw() {
-		if  let zones = gSelecting.currentGrabs.forDetectingDuplicates {
+		if  let zones = gSelecting.currentMapGrabs.forDetectingDuplicates {
 			gSelecting.ungrabAll()
 
 			if  zones.grabDuplicates() {
@@ -690,7 +646,7 @@ class ZMapEditor: ZBaseEditor {
     }
 	
 	func swapWithParent() {
-		if  gSelecting.currentGrabs.count == 1,
+		if  gSelecting.currentMapGrabs.count == 1,
 			let zone = gSelecting.firstSortedGrab {
 			zone.swapWithParent { gRelayoutMaps(for: zone) }
 		}
@@ -721,8 +677,88 @@ class ZMapEditor: ZBaseEditor {
         }
     }
     
-    // MARK:- delete
+    // MARK:- cut and paste
     // MARK:-
+
+	func prepareUndoForDelete() {
+		gSelecting.clearPaste()
+
+		self.UNDO(self) { iUndoSelf in
+			iUndoSelf.undoDelete()
+		}
+	}
+
+	func undoDelete() {
+		gSelecting.ungrabAll()
+
+		for (child, (parent, index)) in gSelecting.pasteableZones {
+			child.orphan()
+			parent?.addChildAndReorder(child, at: index)
+			child.addToGrabs()
+		}
+
+		gSelecting.clearPaste()
+
+		UNDO(self) { iUndoSelf in
+			iUndoSelf.delete()
+		}
+
+		gRelayoutMaps()
+	}
+
+	func preserveChildrenOfGrabbedZones(convertToTitledLine: Bool = false, onCompletion: Closure?) {
+		let     grabs = gSelecting.simplifiedGrabs
+		let candidate = gSelecting.rootMostMoveable
+
+		if  grabs.count > 1 && convertToTitledLine {
+			addDashedLine {
+				onCompletion?()
+			}
+
+			return
+		}
+
+		for grab in grabs {
+			grab.expand()
+		}
+
+		if  let       parent = candidate?.parentZone {
+			let siblingIndex = candidate?.siblingIndex
+			var     children = ZoneArray ()
+
+			gSelecting.clearPaste()
+			gSelecting.currentMapGrabs = []
+
+			for grab in grabs.reversed() {
+				if !convertToTitledLine {       // delete, add to paste
+					grab.addToPaste()
+					grab.moveZone(to: grab.trashZone)
+				} else {                        // convert to titled line and insert above
+					grab.convertToTitledLine()
+					children.append(grab)
+					grab.addToGrabs()
+				}
+
+				for child in grab.children.reversed() {
+					children.append(child)
+					child.addToGrabs()
+				}
+			}
+
+			for child in children {
+				child.orphan()
+				parent.addChildAndReorder(child, at: siblingIndex)
+			}
+
+			self.UNDO(self) { iUndoSelf in
+				iUndoSelf.prepareUndoForDelete()
+				children .deleteZones(iShouldGrab: false) {}
+				iUndoSelf.pasteInto(parent, honorFormerParents: true)
+			}
+		}
+
+		onCompletion?()
+	}
 
     func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
         gDeferRedraw {
@@ -771,8 +807,370 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-    // MARK:- move
+	func paste() { pasteInto(gSelecting.firstSortedGrab) }
+
+	func pasteInto(_ iZone: Zone? = nil, honorFormerParents: Bool = false) {
+		let      pastables = gSelecting.pasteableZones
+
+		if pastables.count > 0, let zone = iZone {
+			let isBookmark = zone.isBookmark
+			let action = {
+				var forUndo = ZoneArray ()
+
+				gSelecting.ungrabAll()
+
+				for (pastable, (parent, index)) in pastables {
+					let  pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy(dbID: nil) // for zones not in trash, paste a deep copy
+					let insertAt = index  != nil ? index : gListsGrowDown ? nil : 0
+					let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
+
+					pasteMe.orphan()
+					into.expand()
+					into.addChildAndReorder(pasteMe, at: insertAt)
+					pasteMe.recursivelyApplyDatabaseID(into.databaseID)
+					forUndo.append(pasteMe)
+					pasteMe.addToGrabs()
+				}
+
+				self.UNDO(self) { iUndoSelf in
+					iUndoSelf.prepareUndoForDelete()
+					forUndo.deleteZones(iShouldGrab: false, onCompletion: nil)
+					zone.grab()
+					gRelayoutMaps()
+				}
+
+				if isBookmark {
+					self.undoManager.endUndoGrouping()
+				}
+
+				gFavorites.updateFavoritesAndRedraw()
+			}
+
+			if !isBookmark {
+				action()
+			} else {
+				undoManager.beginUndoGrouping()
+				zone.focusOnBookmarkTarget() { (iAny, iSignalKind) in
+					action()
+				}
+			}
+		}
+	}
+
+    // MARK:- move vertically
     // MARK:-
+
+	func moveToDone() -> Bool {
+		if  let   zone = gSelecting.rootMostMoveable,
+			let parent = zone.parentZone {
+			let  grabs = gSelecting.currentMapGrabs
+			var   done = zone.visibleDoneZone
+
+			if  done == nil {
+				done  = Zone.uniqueZone(recordName: nil, in: parent.databaseID)
+				done?.zoneName = kDone
+
+				done?.moveZone(to: parent)
+			}
+
+			for zone in grabs {
+				zone.orphan()
+			}
+
+			grabs.moveIntoAndGrab(done!) { good in
+				done?.grab()
+				gRelayoutMaps()
+			}
+
+			return true
+		}
+
+		return false
+	}
+
+	func moveUp(_ iMoveUp: Bool, flags: ZEventFlags) {
+		let COMMAND = flags.isCommand
+		let  OPTION = flags.isOption
+		let   SHIFT = flags.isShift
+
+		move(up: iMoveUp, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
+	}
+
+	func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
+		priorHere     = gHere
+
+		if  let grabs = moveables {
+			moveUp(iMoveUp, grabs.reversed(), selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
+				gSignal(kinds)
+			}
+		}
+	}
+
+	func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, forcedResponse: ZSignalKindArray? = nil, onCompletion: SignalArrayClosure? = nil) {
+		var       response = forcedResponse ?? [ZSignalKind.sRelayout]
+		let   doCousinJump = !gBrowsingIsConfined
+		let      hereMaybe = gHereMaybe
+		let         isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
+		guard let rootMost = originalGrabs.rootMost(goingUp: iMoveUp) else {
+			onCompletion?([.sData])
+
+			return
+		}
+
+		let rootMostParent = rootMost.parentZone
+
+		if  isHere {
+			if  rootMost.isARoot {
+				onCompletion?([.sData])
+			} else {
+
+				// ////////////////////////
+				// parent is not visible //
+				// ////////////////////////
+
+				let    snapshot = gSelecting.snapshot
+				let hasSiblings = rootMost.hasSiblings
+
+				rootMost.revealParentAndSiblings()
+
+				let recurse = hasSiblings && snapshot.isSame && (rootMostParent != nil)
+
+				if  let parent = rootMostParent {
+					gHere = parent
+
+					if  recurse {
+						if !isHere {
+							response = [.spData, .spCrumbs]
+						}
+
+						gSelecting.updateCousinList()
+						self.moveUp(iMoveUp, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, forcedResponse: response, onCompletion: onCompletion)
+					} else {
+						gFavorites.updateAllFavorites()
+						onCompletion?([.sRelayout])
+					}
+				}
+			}
+		} else if let    parent = rootMostParent {
+			let     targetZones = doCousinJump ? gSelecting.cousinList : parent.children
+			let     targetCount = targetZones.count
+			let       targetMax = targetCount - 1
+
+			// ////////////////////
+			// parent is visible //
+			// ////////////////////
+
+			if  let       index = targetZones.firstIndex(of: rootMost) {
+				var     toIndex = index + (iMoveUp ? -1 : 1)
+				var  allGrabbed = true
+				var soloGrabbed = false
+				var     hasGrab = false
+
+				let moveClosure: ZonesClosure = { iZones in
+					if  extreme {
+						toIndex = iMoveUp ? 0 : targetMax
+					}
+
+					var  moveUp = iMoveUp
+
+					if  !extreme {
+
+						// ///////////////////////
+						// vertical wrap around //
+						// ///////////////////////
+
+						if  toIndex > targetMax {
+							toIndex = 0
+							moveUp  = !moveUp
+						} else if toIndex < 0 {
+							toIndex = targetMax
+							moveUp  = !moveUp
+						}
+					}
+
+					let        indexer = targetZones[toIndex]
+
+					if  let intoParent = indexer.parentZone {
+						let   newIndex = indexer.siblingIndex
+						let  moveThese = moveUp ? iZones.reversed() : iZones
+
+						moveThese.moveIntoAndGrab(intoParent, at: newIndex, orphan: true) { reveal in
+							gSelecting.grab(moveThese)
+							intoParent.children.updateOrder()
+							onCompletion?([.sRelayout])
+						}
+					}
+				}
+
+				// //////////////////////////////////
+				// detect grab for extend behavior //
+				// //////////////////////////////////
+
+				for child in targetZones {
+					if !child.isGrabbed {
+						allGrabbed  = false
+					} else if hasGrab {
+						soloGrabbed = false
+					} else {
+						hasGrab     = true
+						soloGrabbed = true
+					}
+				}
+
+				// ///////////////////////
+				// vertical wrap around //
+				// ///////////////////////
+
+				if !growSelection {
+					let    aboveTop = toIndex < 0
+					let belowBottom = toIndex >= targetCount
+
+					// ///////////////////////
+					// vertical wrap around //
+					// ///////////////////////
+
+					if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && belowBottom))) || ( iMoveUp && soloGrabbed && aboveTop) {
+						toIndex = targetMax // bottom
+					} else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && aboveTop)))    || (!iMoveUp && soloGrabbed && belowBottom) {
+						toIndex = 0         // top
+					}
+				}
+
+				if  toIndex >= 0 && toIndex < targetCount {
+					var grabThis = targetZones[toIndex]
+
+					// //////////////////////////
+					// no vertical wrap around //
+					// //////////////////////////
+
+					UNDO(self) { iUndoSelf in
+						iUndoSelf.move(up: !iMoveUp, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
+					}
+
+					if !selectionOnly {
+						moveClosure(originalGrabs)
+					} else if !growSelection {
+						findChildMatching(&grabThis, iMoveUp, iOffset) // TODO: should look at siblings, not children
+						grabThis.grab(updateBrowsingLevel: false)
+
+						if !isHere && forcedResponse == nil {
+							response = [.spData, .spCrumbs]
+						}
+					} else if !grabThis.isGrabbed || extreme {
+						var grabThese = [grabThis]
+
+						if extreme {
+
+							// ////////////////
+							// expand to end //
+							// ////////////////
+
+							if iMoveUp {
+								for i in 0 ..< toIndex {
+									grabThese.append(targetZones[i])
+								}
+							} else {
+								for i in toIndex ..< targetCount {
+									grabThese.append(targetZones[i])
+								}
+							}
+						}
+
+						gSelecting.addMultipleGrabs(grabThese)
+
+						if !isHere && forcedResponse == nil {
+							response = [.spData, .spCrumbs]
+						}
+					}
+				} else if doCousinJump,
+						  var index  = targetZones.firstIndex(of: rootMost) {
+
+					// //////////////
+					// cousin jump //
+					// //////////////
+
+					index     += (iMoveUp ? -1 : 1)
+
+					if  index >= targetCount {
+						index  = growSelection ? targetMax : 0
+					} else if index < 0 {
+						index  = growSelection ? 0 : targetMax
+					}
+
+					var grab = targetZones[index]
+
+					findChildMatching(&grab, iMoveUp, iOffset)
+
+					if !selectionOnly {
+						moveClosure(originalGrabs)
+					} else if growSelection {
+						grab.addToGrabs()
+					} else {
+						grab.grab(updateBrowsingLevel: false)
+					}
+				}
+
+				onCompletion?(response)
+			}
+		}
+	}
+
+	fileprivate func findChildMatching(_ grabThis: inout Zone, _ iMoveUp: Bool, _ iOffset: CGFloat?) {
+
+		// ///////////////////////////////////////////////////////////
+		// IF text is being edited by user, grab another zone whose //
+		//                  text contains offset                    //
+		//                       else whose                         //
+		//           level equals gCurrentBrowsingLevel             //
+		// ///////////////////////////////////////////////////////////
+
+		while grabThis.expanded, grabThis.count > 0,
+			  let length = grabThis.zoneName?.length {
+			let range = NSRange(location: length, length: 0)
+			let index = iMoveUp ? grabThis.count - 1 : 0
+			let child = grabThis.children[index]
+
+			if  let   offset = iOffset,
+				let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
+				offset       > anOffset + 25.0 { // half the distance from end of parent's text field to beginning of child's text field
+				grabThis     = child
+			} else if let level = gCurrentBrowseLevel,
+					  child.level == level {
+				grabThis     = child
+			} else {
+				break // done
+			}
+		}
+	}
+
+	// MARK:- move horizontally
+	// MARK:-
+
+	func moveLeft(_ isLeft: Bool, flags: ZEventFlags, onCompletion: Closure? = nil) {
+		if  let moveable = gSelecting.rootMostMoveable {
+			let  COMMAND = flags.isCommand
+			let   OPTION = flags.isOption
+			let    SHIFT = flags.isShift
+
+			if !SHIFT || moveable.isInSmallMap {
+				move(out: isLeft, selectionOnly: !OPTION, extreme: COMMAND) { neededReveal in
+					gSelecting.updateAfterMove(!OPTION, needsRedraw: neededReveal)  // relayout map when travelling through a bookmark
+					onCompletion?() // invoke closure from essay editor
+				}
+			} else {
+
+				// ///////////////
+				// GENERATIONAL //
+				// ///////////////
+
+				if  OPTION {
+					browseBreadcrumbs(isLeft)
+				} else {
+					moveable.applyGenerationally(!isLeft, extreme: COMMAND)
+				}
+			}
+		}
+	}
 
     func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: BoolClosure?) {
 		if  let zone: Zone = moveables?.first, !zone.isARoot {
@@ -884,152 +1282,7 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-    // MARK:- undoables
-    // MARK:-
-
-	@objc func handleReorderKey(_ key: String, _ OPTION: Bool) {
-		if  let type  = ZReorderMenuType(rawValue: key) {
-			UNDO(self) { iUndoSelf in
-				iUndoSelf.handleReorderKey(key, !OPTION)
-			}
-
-			gSelecting.simplifiedGrabs.sortBy(type, OPTION)
-			gRelayoutMaps()
-		}
-	}
-
-    func undoDelete() {
-        gSelecting.ungrabAll()
-
-        for (child, (parent, index)) in gSelecting.pasteableZones {
-            child.orphan()
-            parent?.addChildAndReorder(child, at: index)
-            child.addToGrabs()
-        }
-
-        gSelecting.clearPaste()
-
-        UNDO(self) { iUndoSelf in
-            iUndoSelf.delete()
-        }
-
-        gRelayoutMaps()
-    }
-
-	func paste() { pasteInto(gSelecting.firstSortedGrab) }
-
-    func pasteInto(_ iZone: Zone? = nil, honorFormerParents: Bool = false) {
-        let      pastables = gSelecting.pasteableZones
-
-        if pastables.count > 0, let zone = iZone {
-            let isBookmark = zone.isBookmark
-            let action = {
-                var forUndo = ZoneArray ()
-
-                gSelecting.ungrabAll()
-
-                for (pastable, (parent, index)) in pastables {
-                    let  pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy(dbID: nil) // for zones not in trash, paste a deep copy
-                    let insertAt = index  != nil ? index : gListsGrowDown ? nil : 0
-                    let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
-
-                    pasteMe.orphan()
-                    into.expand()
-                    into.addChildAndReorder(pasteMe, at: insertAt)
-                    pasteMe.recursivelyApplyDatabaseID(into.databaseID)
-                    forUndo.append(pasteMe)
-                    pasteMe.addToGrabs()
-                }
-
-                self.UNDO(self) { iUndoSelf in
-                    iUndoSelf.prepareUndoForDelete()
-                    forUndo.deleteZones(iShouldGrab: false, onCompletion: nil)
-                    zone.grab()
-                    gRelayoutMaps()
-                }
-
-                if isBookmark {
-                    self.undoManager.endUndoGrouping()
-                }
-
-                gFavorites.updateFavoritesAndRedraw()
-            }
-
-            if !isBookmark {
-				action()
-            } else {
-                undoManager.beginUndoGrouping()
-				zone.focusOnBookmarkTarget() { (iAny, iSignalKind) in
-					action()
-                }
-            }
-        }
-    }
-
-    func preserveChildrenOfGrabbedZones(convertToTitledLine: Bool = false, onCompletion: Closure?) {
-        let     grabs = gSelecting.simplifiedGrabs
-		let candidate = gSelecting.rootMostMoveable
-
-        if  grabs.count > 1 && convertToTitledLine {
-            addDashedLine {
-                onCompletion?()
-            }
-         
-            return
-        }
-
-        for grab in grabs {
-            grab.expand()
-        }
-
-		if  let       parent = candidate?.parentZone {
-			let siblingIndex = candidate?.siblingIndex
-			var     children = ZoneArray ()
-
-			gSelecting.clearPaste()
-			gSelecting.currentMapGrabs = []
-
-			for grab in grabs.reversed() {
-				if !convertToTitledLine {       // delete, add to paste
-					grab.addToPaste()
-					grab.moveZone(to: grab.trashZone)
-				} else {                        // convert to titled line and insert above
-					grab.convertToTitledLine()
-					children.append(grab)
-					grab.addToGrabs()
-				}
-
-				for child in grab.children.reversed() {
-					children.append(child)
-					child.addToGrabs()
-				}
-			}
-
-			for child in children {
-				child.orphan()
-				parent.addChildAndReorder(child, at: siblingIndex)
-			}
-
-			self.UNDO(self) { iUndoSelf in
-				iUndoSelf.prepareUndoForDelete()
-				children .deleteZones(iShouldGrab: false) {}
-				iUndoSelf.pasteInto(parent, honorFormerParents: true)
-			}
-		}
-
-		onCompletion?()
-    }
-
-    
-    func prepareUndoForDelete() {
-        gSelecting.clearPaste()
-
-        self.UNDO(self) { iUndoSelf in
-            iUndoSelf.undoDelete()
-        }
-    }
-
-    func moveOut(to into: Zone, onCompletion: BoolClosure?) {
+	func moveOut(to into: Zone, onCompletion: BoolClosure?) {
 		if  let        zones = moveables?.reversed() as ZoneArray? {
 			var completedYet = false
 
@@ -1067,252 +1320,5 @@ class ZMapEditor: ZBaseEditor {
 			}
 		}
 	}
-
-	fileprivate func findChildMatching(_ grabThis: inout Zone, _ iMoveUp: Bool, _ iOffset: CGFloat?) {
-
-        // ///////////////////////////////////////////////////////////
-        // IF text is being edited by user, grab another zone whose //
-        //                  text contains offset                    //
-        //                       else whose                         //
-        //           level equals gCurrentBrowsingLevel             //
-        // ///////////////////////////////////////////////////////////
-        
-        while grabThis.expanded, grabThis.count > 0,
-            let length = grabThis.zoneName?.length {
-                let range = NSRange(location: length, length: 0)
-                let index = iMoveUp ? grabThis.count - 1 : 0
-                let child = grabThis.children[index]
-                
-                if  let   offset = iOffset,
-                    let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
-                    offset       > anOffset + 25.0 { // half the distance from end of parent's text field to beginning of child's text field
-                    grabThis     = child
-                } else if let level = gCurrentBrowseLevel,
-                    child.level == level {
-                    grabThis     = child
-                } else {
-                    break // done
-                }
-        }
-    }
-    
-    func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
-		priorHere     = gHere
-
-		if  let grabs = moveables {
-			moveUp(iMoveUp, grabs.reversed(), selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
-				gSignal(kinds)
-			}
-		}
-    }
-    
-	func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, forcedResponse: ZSignalKindArray? = nil, onCompletion: SignalArrayClosure? = nil) {
-		var       response = forcedResponse ?? [ZSignalKind.sRelayout]
-        let   doCousinJump = !gBrowsingIsConfined
-		let      hereMaybe = gHereMaybe
-        let         isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
-        guard let rootMost = originalGrabs.rootMost(goingUp: iMoveUp) else {
-			onCompletion?([.sData])
-            
-            return
-        }
-
-        let rootMostParent = rootMost.parentZone
-        
-        if  isHere {
-            if  rootMost.isARoot {
-				onCompletion?([.sData])
-            } else {
-
-                // ////////////////////////
-                // parent is not visible //
-                // ////////////////////////
-                
-                let    snapshot = gSelecting.snapshot
-                let hasSiblings = rootMost.hasSiblings
-                
-				rootMost.revealParentAndSiblings()
-
-				let recurse = hasSiblings && snapshot.isSame && (rootMostParent != nil)
-
-				if  let parent = rootMostParent {
-					gHere = parent
-
-					if  recurse {
-						if !isHere {
-							response = [.spData, .spCrumbs]
-						}
-
-						gSelecting.updateCousinList()
-						self.moveUp(iMoveUp, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, forcedResponse: response, onCompletion: onCompletion)
-					} else {
-						gFavorites.updateAllFavorites()
-						onCompletion?([.sRelayout])
-					}
-				}
-			}
-        } else if let    parent = rootMostParent {
-            let     targetZones = doCousinJump ? gSelecting.cousinList : parent.children
-            let     targetCount = targetZones.count
-            let       targetMax = targetCount - 1
-            
-            // ////////////////////
-            // parent is visible //
-            // ////////////////////
-            
-            if  let       index = targetZones.firstIndex(of: rootMost) {
-                var     toIndex = index + (iMoveUp ? -1 : 1)
-                var  allGrabbed = true
-                var soloGrabbed = false
-                var     hasGrab = false
-                
-                let moveClosure: ZonesClosure = { iZones in
-                    if  extreme {
-                        toIndex = iMoveUp ? 0 : targetMax
-                    }
-
-                    var  moveUp = iMoveUp
-                    
-                    if  !extreme {
-                        
-                        // ///////////////////////
-                        // vertical wrap around //
-                        // ///////////////////////
-                        
-                        if  toIndex > targetMax {
-                            toIndex = 0
-                            moveUp  = !moveUp
-                        } else if toIndex < 0 {
-                            toIndex = targetMax
-                            moveUp  = !moveUp
-                        }
-                    }
-
-                    let        indexer = targetZones[toIndex]
-                    
-					if  let intoParent = indexer.parentZone {
-                        let   newIndex = indexer.siblingIndex
-                        let  moveThese = moveUp ? iZones.reversed() : iZones
-                        
-                        moveThese.moveIntoAndGrab(intoParent, at: newIndex, orphan: true) { reveal in
-                            gSelecting.grab(moveThese)
-                            intoParent.children.updateOrder()
-                            onCompletion?([.sRelayout])
-                        }
-                    }
-                }
-                
-                // //////////////////////////////////
-                // detect grab for extend behavior //
-                // //////////////////////////////////
-                
-                for child in targetZones {
-                    if !child.isGrabbed {
-                        allGrabbed  = false
-                    } else if hasGrab {
-                        soloGrabbed = false
-                    } else {
-                        hasGrab     = true
-                        soloGrabbed = true
-                    }
-                }
-                
-                // ///////////////////////
-                // vertical wrap around //
-                // ///////////////////////
-                
-                if !growSelection {
-                    let    aboveTop = toIndex < 0
-                    let belowBottom = toIndex >= targetCount
-                    
-                    // ///////////////////////
-                    // vertical wrap around //
-                    // ///////////////////////
-                    
-                    if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && belowBottom))) || ( iMoveUp && soloGrabbed && aboveTop) {
-                        toIndex = targetMax // bottom
-                    } else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && aboveTop)))    || (!iMoveUp && soloGrabbed && belowBottom) {
-                        toIndex = 0         // top
-                    }
-                }
-                
-                if  toIndex >= 0 && toIndex < targetCount {
-                    var grabThis = targetZones[toIndex]
-                    
-                    // //////////////////////////
-                    // no vertical wrap around //
-                    // //////////////////////////
-                    
-                    UNDO(self) { iUndoSelf in
-                        iUndoSelf.move(up: !iMoveUp, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
-                    }
-                    
-                    if !selectionOnly {
-                        moveClosure(originalGrabs)
-                    } else if !growSelection {
-						findChildMatching(&grabThis, iMoveUp, iOffset) // TODO: should look at siblings, not children
-						grabThis.grab(updateBrowsingLevel: false)
-
-						if !isHere && forcedResponse == nil {
-							response = [.spData, .spCrumbs]
-						}
-                    } else if !grabThis.isGrabbed || extreme {
-                        var grabThese = [grabThis]
-                        
-                        if extreme {
-                            
-                            // ////////////////
-                            // expand to end //
-                            // ////////////////
-                            
-                            if iMoveUp {
-                                for i in 0 ..< toIndex {
-                                    grabThese.append(targetZones[i])
-                                }
-                            } else {
-                                for i in toIndex ..< targetCount {
-                                    grabThese.append(targetZones[i])
-                                }
-                            }
-                        }
-                        
-                        gSelecting.addMultipleGrabs(grabThese)
-
-						if !isHere && forcedResponse == nil {
-							response = [.spData, .spCrumbs]
-						}
-                    }
-                } else if doCousinJump,
-                    var index  = targetZones.firstIndex(of: rootMost) {
-                    
-                    // //////////////
-                    // cousin jump //
-                    // //////////////
-                    
-                    index     += (iMoveUp ? -1 : 1)
-                    
-                    if  index >= targetCount {
-                        index  = growSelection ? targetMax : 0
-                    } else if index < 0 {
-                        index  = growSelection ? 0 : targetMax
-                    }
-                    
-                    var grab = targetZones[index]
-                    
-                    findChildMatching(&grab, iMoveUp, iOffset)
-                    
-                    if !selectionOnly {
-                        moveClosure(originalGrabs)
-                    } else if growSelection {
-                        grab.addToGrabs()
-                    } else {
-                        grab.grab(updateBrowsingLevel: false)
-                    }
-                }
-
-				onCompletion?(response)
-            }
-        }
-    }
 
 }

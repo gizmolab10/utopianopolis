@@ -99,7 +99,7 @@ class ZoneWidget: ZView {
     let            childrenView = ZView          ()
 	let            widgetObject = ZWidgetObject  ()
     private var childrenWidgets = [ZoneWidget]   ()
-    var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
+	var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
 	var                   ratio :    CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
 	override var    description :     String  { return widgetZone?.description ?? kEmptyIdea }
 

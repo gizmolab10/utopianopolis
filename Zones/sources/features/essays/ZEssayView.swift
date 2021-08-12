@@ -506,16 +506,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  (shouldOverwrite || restoreSelection != nil),
 				let text = gCurrentEssay?.essayText {
 				discardPriorText()
-				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // emplace text
+				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
 				select(restoreSelection: restoreSelection)
-				undoManager?.removeAllActions()         // clear the undo stack of prior / disastrous information (about prior text)
+				undoManager?.removeAllActions()                               // clear the undo stack of prior / disastrous information (about prior text)
 			}
 
 			essayRecordName = gCurrentEssayZone?.recordName                   // do this after overwriting
 			delegate        = self 					    	                  // set delegate after setText
 
 			if  gIsEssayMode {
-				gMainWindow?.makeFirstResponder(self)                         // this should never happen unless already in essay mode
+				gMainWindow?.makeFirstResponder(self)                         // show cursor and respond to key input
 			}
 		}
 	}

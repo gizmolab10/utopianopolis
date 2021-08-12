@@ -24,23 +24,23 @@ let gSelecting = ZSelecting()
 
 class ZSnapshot: NSObject {
 
-    var currentGrabs = ZoneArray ()
-    var   databaseID : ZDatabaseID?
-    var         here : Zone?
-    var       isSame : Bool { return gSelecting.snapshot == self }
+    var    grabbed = ZoneArray ()
+    var databaseID : ZDatabaseID?
+    var       here : Zone?
+    var     isSame : Bool { return gSelecting.snapshot == self }
 
     static func == ( left: ZSnapshot, right: ZSnapshot) -> Bool {
         let   goodIDs = left.databaseID != nil && right.databaseID != nil
         let  goodHere = left      .here != nil && right      .here != nil
-        let sameCount = left.currentGrabs.count == right.currentGrabs.count
+        let sameCount = left.grabbed.count == right.grabbed.count
 
         if  goodHere && goodIDs && sameCount {
             let sameHere = left.here == right.here
             let  sameIDs = left.databaseID == right.databaseID
 
             if  sameHere && sameIDs {
-                for (index, grab) in left.currentGrabs.enumerated() {
-                    if  grab != right.currentGrabs[index] {
+                for (index, grab) in left.grabbed.enumerated() {
+                    if  grab != right.grabbed[index] {
                         return false
                     }
                 }
@@ -84,7 +84,7 @@ class ZSelecting: NSObject {
 
     var snapshot : ZSnapshot {
         let          snap = ZSnapshot()
-        snap.currentGrabs = currentMapGrabs
+        snap.grabbed = currentMapGrabs
         snap  .databaseID = gDatabaseID
         snap        .here = gHereMaybe
 
@@ -156,7 +156,7 @@ class ZSelecting: NSObject {
         return s
     }
 
-    var currentGrabsHaveVisibleChildren: Bool {
+    var currentMapGrabsHaveVisibleChildren: Bool {
         for     grab in currentMapGrabs {
             if  grab.count > 0 &&
                 grab.expanded {
