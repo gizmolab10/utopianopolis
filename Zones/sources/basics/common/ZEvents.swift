@@ -69,6 +69,11 @@ class ZEvents: ZGeneric {
 					// do not detect gIsHelpFrontmost nor handle event in gHelpController except in default of work mode switch
 					let isWindow = event.type == .keyDown || (event.window?.contentView?.frame.contains(event.locationInWindow) ?? false)
 
+					if  gIsEssayMode,
+						gSmallMapIsResponder {
+						return gMapEditor.handleEvent(event, isWindow: isWindow, forced: true)   // if in essay mode and first responder is in a map
+					}
+
 					switch gWorkMode {
 						case .wSearchMode:              return gSearching      .handleEvent(event)
 						case .wEssayMode:               return gEssayEditor    .handleEvent(event, isWindow: isWindow)

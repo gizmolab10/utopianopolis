@@ -86,24 +86,18 @@ enum ZOperationID: Int, CaseIterable {
 class ZOperations: NSObject {
 
 	let             queue = OperationQueue()
-	var   onCloudResponse :     AnyClosure?
-    var       lastOpStart :           Date?
-	var         currentOp :   ZOperationID  = .oStartingUp
-	var        opDuration :   TimeInterval  { return -(lastOpStart?.timeIntervalSinceNow ?? 0.0) }
-	var      shouldCancel :           Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && (opDuration > 5.0) }
-	var     debugTimeText :         String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
+	var         currentOp = ZOperationID.oStartingUp
+	var   onCloudResponse :      AnyClosure?
+    var       lastOpStart :            Date?
+	var        opDuration :    TimeInterval  { return -(lastOpStart?.timeIntervalSinceNow ?? 0.0) }
+	var      shouldCancel :            Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && (opDuration > 5.0) }
+	var     debugTimeText :          String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
+	var     operationText :          String  { return currentOp.description }
+	func unHang()                            { if gStartupLevel != .firstTime { onCloudResponse?(0) } }
 	func printOp(_ message: String = kEmpty) { printDebug(.dOps, operationText + message) }
-	func unHang()                           { if gStartupLevel != .firstTime { onCloudResponse?(0) } }
-	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws                                  {} 
+	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws                                  {}
 	func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
-    var operationText: String {
-//		let d = gBatches.currentDatabaseID?.identifier ?? kSpace // requires an extra trailing space seperator
-		let o = currentOp.description
-
-        return o
-	}
-    
     var isConnectedToInternet: Bool {
         var flags = SCNetworkReachabilityFlags(rawValue: 0)
 

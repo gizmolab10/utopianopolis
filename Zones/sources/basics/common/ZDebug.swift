@@ -13,21 +13,15 @@ import Foundation
 //     create zone, trait ONLY if from dict
 // NOT async: create bookmarks
 
-#if false  // just read, not touch core data
-var          gDebugModes : ZDebugMode    = [.dReadFiles]
 var          gPrintModes : ZPrintMode    = []
-var        gCoreDataMode : ZCoreDataMode = [] // [.dDisabled]
-#else      // normal && update file
-var          gDebugModes : ZDebugMode    = [.dIgnoreExemption] //, .dSubscriptionTimeout, .dWriteFiles]
-var          gPrintModes : ZPrintMode    = [.dCross]
+var          gDebugModes : ZDebugMode    = []
 var        gCoreDataMode : ZCoreDataMode = []
-#endif
 
-var         gUseCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
-var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gUseCoreData }
-var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gUseCoreData }
-var         gUseCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && gUseCoreData }
-var      gShowDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
+var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
+var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gIsUsingCoreData }
+var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gIsUsingCoreData }
+var     gIsUsingCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && gIsUsingCoreData }
+var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var         gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
 var          gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
 
@@ -105,6 +99,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let   dUser = ZPrintMode() // user interruption of busy loops
 	static let   dTime = ZPrintMode() // stopwatch
 	static let   dData = ZPrintMode() // core data
+	static let  dClick = ZPrintMode() // mouse click
 	static let  dSpeed = ZPrintMode() // "
 	static let  dNames = ZPrintMode() // decorate idea text with record names
 	static let  dFocus = ZPrintMode() // push, /, bookmarks
@@ -139,6 +134,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dAdopt,  "  adopt"),
 				(.dCloud,  "  cloud"),
 				(.dCross,  "  cross"),
+				(.dClick,  "  click"),
 				(.dExist,  "  exist"),
 				(.dFetch,  "fetched"),
 				(.dAccess, " access"),

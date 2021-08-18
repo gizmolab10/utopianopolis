@@ -88,7 +88,7 @@ class ZTextPack: NSObject {
 			} else {
 				var showNeed = (need > 1) && (!zone.expanded || (gCountsMode == .progeny))
 
-				if (dups > 0 && need > 0 && gShowDuplicates) || bad {
+				if (dups > 0 && need > 0 && gIsShowingDuplicates) || bad {
 					showNeed = true
 				}
 

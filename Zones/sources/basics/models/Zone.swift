@@ -337,7 +337,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:-
 
 	func updateInstanceProperties() {
-		if  gUseCoreData {
+		if  gIsUsingCoreData {
 			if  let    id = parentZoneMaybe?.recordName {
 				parentRID = id
 			}
@@ -898,7 +898,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func updateCoreDataRelationships() {
-		if  gUseCoreData,
+		if  gIsUsingCoreData,
 			let        zID = dbid {
 			var childArray = Set<Zone>()
 			var traitArray = Set<ZTrait>()
@@ -3261,6 +3261,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.hasTargetNote  = t?.hasNote ?? false
 		p.isGroupOwner   = g == self || g == t
 		p.showSideDot    = isCurrentSmallMapBookmark
+		p.isDragged      = gDraggedZones.contains(self)
 		p.isDrop         = self == gDropWidget?.widgetZone
 		p.filled         = isFilled || (!isReveal && isGrabbed)
 		p.fill           = p.filled ? c.lighter(by: 2.5) : gBackgroundColor

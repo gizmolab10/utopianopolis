@@ -20,9 +20,12 @@ let gMapEditor = ZMapEditor()
 // mix of zone mutations and web services requests
 
 class ZMapEditor: ZBaseEditor {
-	override var canHandleKey: Bool       { return gIsMapOrEditIdeaMode }
-	var             moveables: ZoneArray? { return gIsEssayMode ? gEssayView?.grabbedZones : gSelecting.sortedGrabs }
 	var             priorHere: Zone?
+	override var canHandleKey: Bool { return gIsMapOrEditIdeaMode }
+
+	var moveables: ZoneArray? {
+		
+		return (gIsEssayMode && !gSmallMapIsResponder) ? gEssayView?.grabbedZones : gSelecting.sortedGrabs }
 
 	// MARK:- events
 	// MARK:-

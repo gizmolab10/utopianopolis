@@ -21,6 +21,7 @@ let gDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
+var  gTemporaryEssayTitleMode                     = false
 var  gTextEditorHandlesArrows                     = false
 var   gIsEditingStateChanging                     = false
 var    gRefusesFirstResponder                     = false
@@ -79,6 +80,7 @@ var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEdit
 var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsEssayMode }
 var          gIsDraggableMode:               Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
 var      gDetailsViewIsHidden:               Bool { return gMainController?.detailView?.isHidden ?? true }
+var      gSmallMapIsResponder:               Bool { return gMainWindow?.firstResponder == gSmallMapController?.mapView }
 var             gUserIsExempt:               Bool { return gIgnoreExemption ? false : gUser?.isExempt ?? false } // discard this?
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var         gUniqueRecordName:             String { return CKRecordID().recordName }

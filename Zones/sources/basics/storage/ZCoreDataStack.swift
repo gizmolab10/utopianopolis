@@ -149,7 +149,7 @@ class ZCoreDataStack: NSObject {
 	var       currentOpID : ZCDOperationID?
 
 	func hasStore(for databaseID: ZDatabaseID = .mineID) -> Bool {
-		if  gUseCoreData {
+		if  gIsUsingCoreData {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
 			request.predicate = dbidPredicate(from: databaseID)
 
@@ -481,7 +481,7 @@ class ZCoreDataStack: NSObject {
 	lazy var privateDescription: NSPersistentStoreDescription = {
 		let                          desc = NSPersistentStoreDescription(url: privateURL)
 		desc.configuration                = "Cloud"
-		if  gUseCloudKit {
+		if  gIsUsingCloudKit {
 			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
 			desc.cloudKitContainerOptions = options
 		}
@@ -492,7 +492,7 @@ class ZCoreDataStack: NSObject {
 	lazy var publicDescription: NSPersistentStoreDescription = {
 		let                          desc = NSPersistentStoreDescription(url: publicURL)
 		desc.configuration                = "Cloud"
-		if  gUseCloudKit {
+		if  gIsUsingCloudKit {
 			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
 			options.databaseScope         = CKDatabase.Scope.public // default is private
 			desc.cloudKitContainerOptions = options

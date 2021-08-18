@@ -179,6 +179,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let           flags  = gesture.modifiers {
             let           state  = gesture.state
 
+			printDebug(.dClick, "drag")
+
 			if  isEditingText(at: location) {
 				restartGestureRecognition()                       // let text editor consume the gesture
 			} else {
@@ -194,9 +196,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 						  gRubberband.setRubberbandExtent(to: location) {
 					gRubberband.updateGrabs(in: mapView)
 					gDragView? .setNeedsDisplay()
-				} else if ![.began, .cancelled].contains(state) { // drag ended, failed or was cancelled
+				} else if ![.began, .cancelled].contains(state) { // drag ended or failed
 					gRubberband.rubberbandRect = nil              // erase rubberband
 
+					cleanupAfterDrag()
 					restartGestureRecognition()
 					gSignal([.spPreferences, .sDatum])                            // so color well and indicators get updated
 				} else if let  dot = detectDot(iGesture),
@@ -209,6 +212,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					}
 				} else {                                          // begin drag
 					gRubberband.rubberbandStartEvent(location, iGesture)
+					gMainWindow?.makeFirstResponder(mapView)
 				}
 
 				gDragView?.setNeedsDisplay()
@@ -226,13 +230,15 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
 
 		if (gIsMapOrEditIdeaMode || gIsEssayMode),
-		    let    gesture = iGesture as? ZKeyClickGestureRecognizer,
-		    let      flags = gesture.modifiers {
-            let    COMMAND = flags.isCommand
-			let      SHIFT = flags.isShift
-            let editWidget = gCurrentlyEditingWidget
-            var   multiple = [ZSignalKind.sData]
-            var  notInEdit = true
+		    let    gesture  = iGesture as? ZKeyClickGestureRecognizer,
+		    let      flags  = gesture.modifiers {
+            let    COMMAND  = flags.isCommand
+			let      SHIFT  = flags.isShift
+            let editWidget  = gCurrentlyEditingWidget
+            var   multiple  = [ZSignalKind.sData]
+            var  notInEdit  = true
+
+			printDebug(.dClick, "only")
 
 			if  editWidget != nil {
 
@@ -240,9 +246,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				// detect click inside text being edited //
 				// ////////////////////////////////////////
 
-                let backgroundLocation = gesture.location(in: mapView)
-                let           textRect = editWidget!.convert(editWidget!.bounds, to: mapView)
-                notInEdit              = !textRect.contains(backgroundLocation)
+                let location = gesture.location(in: mapView)
+                let textRect = editWidget!.convert(editWidget!.bounds, to: mapView)
+                notInEdit    = !textRect.contains(location)
             }
 
             if  notInEdit {
@@ -258,6 +264,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 						gTemporarilySetMouseZone(zone)
 
 						if  let dot = detectDotIn(widget, gesture) {
+
+							if  gIsEssayMode {
+								gMainWindow?.makeFirstResponder(mapView)
+							}
 
 							// ///////////////
 							// click in dot //
@@ -298,21 +308,25 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // //////////////////////////////////////////
 
     func dragStartEvent(_ dot: ZoneDot, _ iGesture: ZGestureRecognizer?) {
-        if  var zone = dot.widgetZone { // should always be true
-            if  iGesture?.isOptionDown ?? false {
+        if  var zone = dot.widgetZone,              // should always be true
+			let gesture = iGesture {
+			let location  = gesture.location(in: dot)
+			dot.dragStart = location
+			gDraggedZones = gSelecting.currentMapGrabs
+
+            if  gesture.isOptionDown {
 				zone = zone.deepCopy(dbID: .mineID) // option means drag a copy
             }
 
-            if  iGesture?.isShiftDown ?? false {
+            if  gesture.isShiftDown {
                 zone.addToGrabs()
             } else if !zone.isGrabbed {
                 zone.grab()
             }
-            
-            if  let location  = iGesture?.location(in: dot) {
-                dot.dragStart = location
-				gDraggedZones = gSelecting.currentGrabs
-            }
+
+			if  gIsEssayMode {
+				gMainWindow?.makeFirstResponder(mapView)
+			}
         }
     }
 
@@ -350,9 +364,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
 
 		if  iGesture?.isDone ?? false {
-			cleanupAfterDrag()
-			gSignal([.spPreferences, .spCrumbs]) // so color well gets updated
 			restartGestureRecognition()
+			gSignal([.sDatum, .spPreferences, .spCrumbs]) // so color well gets updated
 		}
 	}
 
@@ -409,7 +422,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				let   dropIsParent = dropZone.children.intersects(gDraggedZones)
 				let     spawnCycle = dropZone.spawnCycle
 				let          prior = gDropWidget
-				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0
+				let    isForbidden = gIsEssayMode && dropZone.isInBigMap
+				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0 || isForbidden
 				let         isDone = iGesture?.isDone ?? false
 				let      forgetAll = isNoop || isDone
                 gDropIndices       = forgetAll ? nil : NSMutableIndexSet(index: index)

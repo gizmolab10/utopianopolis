@@ -117,6 +117,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let CONTROL = flags.isControl
 		let OPTION  = flags.isOption
 		var SHIFT   = flags.isShift
+		let SEVERAL = flags.isAnyMultiple
 		let ANY     = flags.isAny
 		if  key    != key.lowercased() {
 			key     = key.lowercased()
@@ -134,10 +135,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "t":      swapWithParent()
 				case "'":      gToggleSmallMapMode(OPTION)
 				case "/":      if SPECIAL { gHelpController?.show(flags: flags) } else { swapBetweenNoteAndEssay() }
-				case kEscape:  done()
-				case kEquals:  if SHIFT { grabSelected() } else { return followLinkInSelection() }
+				case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
+				case kEscape:  if     ANY { grabDone()                          } else { done() }
+				case kReturn:  if     ANY { grabDone() }
 				case kDelete:  deleteGrabbed()
-				case kReturn:  if ANY { grabDone() }
 				default:       return false
 			}
 
@@ -147,7 +148,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				asssureSelectionIsVisible()
 			}
 
-			done()
+			if  ANY {
+				grabSelectionHereDone()
+			} else {
+				done()
+			}
 
 			return true
 		} else if COMMAND {
@@ -177,8 +182,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "'":      gToggleSmallMapMode(OPTION)
 				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRelayoutMaps() }
 				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRelayoutMaps() }
-				case kReturn:  grabDone()
-				case kEquals:  if SHIFT { grabSelected() } else { return followLinkInSelection() }
+				case kReturn:  if SEVERAL { grabSelectionHereDone() } else { grabDone() }
+				case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
 				default:       return false
 			}
 
@@ -501,7 +506,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  gCurrentEssay == nil {
 			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
 		} else {
-			enableEssayControls(true)
+			updateTitleMode()
 
 			if  (shouldOverwrite || restoreSelection != nil),
 				let text = gCurrentEssay?.essayText {
@@ -510,6 +515,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				select(restoreSelection: restoreSelection)
 				undoManager?.removeAllActions()                               // clear the undo stack of prior / disastrous information (about prior text)
 			}
+
+			enableEssayControls(true)
 
 			essayRecordName = gCurrentEssayZone?.recordName                   // do this after overwriting
 			delegate        = self 					    	                  // set delegate after setText
@@ -535,7 +542,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func save() {
 		if  let e = gCurrentEssay {
-			e.updatedRangesFrom(textStorage)
 			e.injectIntoEssay(textStorage)
 		}
 	}
@@ -548,6 +554,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		undoManager?.removeAllActions()
+	}
+
+	func grabSelectionHereDone() {
+		if  let zone = selectedZone {
+			gHere = zone
+
+			zone.grab()
+			done()
+		} else {
+			grabDone()
+		}
 	}
 
 	func grabDone() {
@@ -572,17 +589,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString replacement: String?) -> Bool {
 		setNeedsDisplay()        // so dots selecting image will be redrawn
 
-		if  let   replacementLength = replacement?.length,
-			let   (result,   delta) = gCurrentEssay?.shouldAlterEssay(range, replacementLength: replacementLength) {
+		if  let replacementLength = replacement?.length,
+			let (result,   delta) = gCurrentEssay?.shouldAlterEssay(range, replacementLength: replacementLength) {
 			switch result {
-				case .eAlter:
-					break
-				case .eLock:
-					return false
-				case .eExit:
-					exit()
-
-					return false
+				case .eAlter:         break
+				case .eLock:          return false
+				case .eExit:  exit(); return false
 				case .eDelete:
 					FOREGROUND {                          // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
 						gCurrentEssay?.reset()
@@ -607,7 +619,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  flags.isOption {
 			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
-				gCurrentEssay?.injectIntoEssay(textStorage)
+				save()
 
 				gMapEditor.handleArrow(arrow, flags: flags) {
 					self.resetTextAndGrabs()
@@ -675,7 +687,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					let dragHeight = 15.0
 					let  dragWidth = 11.75
 					let      color = zone.color ?? kDefaultIdeaColor
-					let     offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2     // first and last note have altered offset (thus, range)
+					let     offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2     // first and last note have altered offset (thus, altered range)
 					let  noteRange = note.noteRange.offsetBy(offset)
 					let      inset = CGFloat(2.0)
 					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).insetEquallyBy(-inset)
@@ -767,7 +779,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if !firstIsGrabbed,
 		    let note = firstGrabbedNote,
 			let zone = note.zone {
-			gCurrentEssay?.injectIntoEssay(textStorage)
+			save()
 			gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
 			ungrabAll()
 
@@ -866,20 +878,30 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
+	func updateTitleMode() {
+		if !(gCurrentEssay?.isNote ?? false) {
+			if  gTemporaryEssayTitleMode {
+				gTemporaryEssayTitleMode =  false
+				gEssayTitleMode          = .sFull
+			}
+		} else if gEssayTitleMode       == .sFull {
+			gTemporaryEssayTitleMode     =  true
+			gEssayTitleMode              = .sTitle
+		}
+
+		titlesControl?.selectedSegment = min((titlesControl?.segmentCount ?? 1) - 1, gEssayTitleMode.rawValue)
+	}
+
 	func updateTitleControls(_ enabled: Bool) {
-		let                  isNote = gCurrentEssay?.isNote ?? true
+		let                  isNote = (gCurrentEssay?.children.count ?? 0) == 0
 		titlesControl?.segmentCount = isNote ? 2 : 3
 		titlesControl?   .isEnabled = enabled
 
-		if  isNote, gEssayTitleMode == .sFull {
-			gEssayTitleMode = .sTitle
-		} else {
+		if !isNote {
 			let image = ZImage(named: "show.drag.dot")?.resize(CGSize(width: 16, height: 16	))
 			titlesControl?.setToolTip("show all titles", forSegment: 2)
 			titlesControl?.setImage(image,               forSegment: 2)
 		}
-
-		titlesControl?.selectedSegment = gEssayTitleMode.rawValue
 	}
 
 	@objc private func handleButtonPress(_ iButton: ZButton) {
@@ -893,18 +915,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idDelete:  if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); done() }
 				default:         break
 			}
-		}
-	}
-
-	@IBAction func handleSegmentedControlAction(_ iControl: ZSegmentedControl) {
-		if  let       mode  = ZEssayTitleMode(rawValue: iControl.selectedSegment) {
-			var      range  = selectedRange
-			range.location += deltaForTransitioningTo(mode)
-
-			titlesControl?.needsDisplay = true
-
-			updateText(restoreSelection: range)
-			gSignal([.sEssay])
 		}
 	}
 
@@ -1253,8 +1263,22 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- essay title modes (preserve selection range)
+	// MARK:- essay title controls
 	// MARK:-
+
+	@IBAction func handleSegmentedControlAction(_ iControl: ZSegmentedControl) {
+		if  let  mode = ZEssayTitleMode(rawValue: iControl.selectedSegment) {
+			var range = selectedRange
+
+			save()
+
+			titlesControl?.needsDisplay = true
+			range.location += deltaForTransitioningTo(mode)
+
+			updateText(restoreSelection: range)
+			gSignal([.sEssay])
+		}
+	}
 
 	func titleLengthsUpTo(_ note: ZNote, for mode: ZEssayTitleMode) -> Int {
 		let    isEmpty = mode == .sEmpty
@@ -1528,10 +1552,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let    zone = current.zone {
 			let   count = current.children.count
 			let   isOne = count < 2
-			let   range = selectedRange()
+			let   range = selectedRange
 
-			current.updatedRangesFrom(textStorage)
-			current.injectIntoEssay(textStorage)
+			save()
 
 			gCreateCombinedEssay = isOne // toggle
 

@@ -29,6 +29,7 @@ struct  ZDotParameters {
 	var isDrop         = false
 	var filled         = false
 	var isReveal       = false
+	var isDragged      = false
 	var isGrouped      = false
 	var isGroupOwner   = false
 	var badRecordName  = false
@@ -211,7 +212,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	}
 
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-        let  thickness = CGFloat(gLineThickness)
+		let  thickness = CGFloat(gLineThickness) * 2.0
 		var       path = ZBezierPath()
 
 		if  parameters.isReveal {
@@ -220,7 +221,12 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
 		}
 
-		path.lineWidth = thickness * 2.0
+		if  parameters.isDragged {
+			gActiveColor.setFill()
+			gActiveColor.setStroke()
+		}
+
+		path.lineWidth = thickness
 		path .flatness = 0.0001
 
 		path.stroke()
@@ -376,9 +382,9 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			}
 		} else if parameters.showSideDot {
 
-			// ////////////////////////////////
-			// HIGHLIGHT OF CURRENT FAVORITE //
-			// ////////////////////////////////
+			// ////////////////////////////////////
+			// HIGHLIGHT OF CURRENT IN SMALL MAP //
+			// ////////////////////////////////////
 
 			let color = parameters.color.withAlphaComponent(0.7)
 

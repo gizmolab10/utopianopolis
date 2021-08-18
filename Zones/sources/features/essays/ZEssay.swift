@@ -128,8 +128,6 @@ class ZEssay: ZNote {
 
 	override func injectIntoEssay(_ attributedString: NSAttributedString?) {
 		if  let attributed  = attributedString {
-			updatedRangesFrom(attributed)
-
 			for child in children {
 				let range   = child.noteRange
 
