@@ -32,28 +32,35 @@ class ZEssay: ZNote {
 	override var essayText: NSMutableAttributedString? {
 		if  let z = zone,
 			(z.zonesWithNotes.count < 2 || !gCreateCombinedEssay) {
+
+			// this is not an essay, convert it to a note
+
 			z.clearAllNotes()
 
+			gCreateCombinedEssay = false
 			gCurrentEssay = ZNote(z)
 
 			return noteText
 		}
 
-		gCreateCombinedEssay = true
-
-		setupChildren()
+		traverseAndSetupChildren()
 
 		var result : NSMutableAttributedString?
 		var index  = children.count
 		let    max = index - 1
 
-		if  index == 0 {    // empty essay
+		if  index == 0 {
+
+			// this is an empty essay, convert it to a note
+
+			gCreateCombinedEssay = false
 			let     note = ZNote(zone)
 
 			if  let text = note.noteText {
 				result?.insert(text, at: 0)
 			}
 		} else {
+			gCreateCombinedEssay = true
 			for child in children.reversed() {
 				index        -= 1
 				let      bump = noteSeparator.length
@@ -90,12 +97,17 @@ class ZEssay: ZNote {
 		children.removeAll()
 
 		if  gCreateCombinedEssay {
-			zone?.traverseAllProgeny { iChild in
-				if  iChild.hasTrait(for: .tNote),
-					let note = iChild.note,
-					!self.children.contains(note) {
-					self.children.append(note)	// do not use essayMaybe as it may not yet be initialized
-				}
+			traverseAndSetupChildren()
+		}
+	}
+
+	func traverseAndSetupChildren() {
+		children.removeAll()
+		zone?.traverseAllProgeny { iChild in
+			if  iChild.hasTrait(for: .tNote),
+				let note = iChild.note,
+				!self.children.contains(note) {
+				self.children.append(note)	// do not use essayMaybe as it may not yet be initialized
 			}
 		}
 	}
@@ -120,10 +132,15 @@ class ZEssay: ZNote {
 	}
 
 	override func isLocked(within range: NSRange) -> Bool {
-		let     child = noteIn(range)
-		let lockRange = range.offsetBy(-child.noteOffset)
+		let child = noteIn(range)
 
-		return (child == self) ? super.isLocked(within: range) : child.isLocked(within: lockRange)
+		if  child.zone == zone {
+			return super.isLocked(within: range)
+		} else {
+			let lockRange = range.offsetBy(-child.noteOffset)
+
+			return child.isLocked(within: lockRange)
+		}
 	}
 
 	override func injectIntoEssay(_ attributedString: NSAttributedString?) {
@@ -142,13 +159,13 @@ class ZEssay: ZNote {
 		gRelayoutMaps()
 	}
 
-	override func shouldAlterEssay(_ range:NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
+	override func shouldAlterEssay(in range:NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
 		let equal  = range.contains(essayRange)
 		var result = ZAlterationType.eLock
 		var adjust = 0
 		var offset : Int?
 
-		for child in children {
+		let applyTo = { (child: ZNote) in
 			if  equal {
 				adjust        -= child.noteRange.length
 
@@ -164,6 +181,14 @@ class ZEssay: ZNote {
 						offset = child.noteOffset
 					}
 				}
+			}
+		}
+
+		if  children.count == 0 {
+			applyTo(self)
+		} else {
+			for child in children {
+				applyTo(child)
 			}
 		}
 

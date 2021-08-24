@@ -272,30 +272,24 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK:- mutate
 	// MARK:-
 
-	func reset() {
-		setupChildren()
-	}
-
 	func isLocked(within range: NSRange) -> Bool {
-		if  gEssayTitleMode == .sEmpty {
-			return false
-		} else {
-			let     ranEnd = range     .upperBound
-			let     titEnd = titleRange.upperBound
-			let   titStart = titleRange.lowerBound
-			let  textStart = textRange .lowerBound
-			let   ranStart = range     .lowerBound
-			let atTitStart = titStart == ranStart                               // range begins at beginning of title
-			let   atTitEnd = titEnd   == ranEnd                                 // range ends at end of title
-			let  beforeTit = NSMakeRange(0, titleRange.lowerBound)
-			let    between = NSMakeRange(titEnd, textStart - titEnd)
-			let   isBefore = beforeTit.intersects(range)         // before title
-			let  isBetween = between  .intersects(range)                        // between title and text
-			let  straddles = range    .intersects(between)                      // begins in title ends in text
-			let     locked = ((straddles || isBetween) && !atTitEnd) || (isBefore && !atTitStart)
+		let   titStart = titleRange.lowerBound
+		let  textStart = textRange .lowerBound
+		let   ranStart = range     .lowerBound
+		let     ranEnd = range     .upperBound
+		let     titEnd = titleRange.upperBound
+		let    textEnd = textRange .upperBound
+		let atTitStart = titStart == ranStart                                   // range begins at beginning of title
+		let   atTitEnd = titEnd   == ranEnd                                     // range ends at end of title
+		let  afterText = NSMakeRange(textEnd, 0)
+		let  beforeTit = NSMakeRange(0, titStart)
+		let    between = NSMakeRange(titEnd, textStart - titEnd)
+		let    isAfter = range.intersects(afterText)
+		let   isBefore = range.intersects(beforeTit)                            // before title
+		let  isBetween = range.intersects(between)                              // between title and text
+		let     locked = isAfter || (isBefore && !atTitStart) || (isBetween && !atTitEnd)
 
-			return locked
-		}
+		return locked
 	}
 
 	// N.B. mutates title range
@@ -332,7 +326,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return 	(result, delta)
 	}
 
-	func shouldAlterEssay(_ range: NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
+	func shouldAlterEssay(in range: NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
 		var (result, delta) = shouldAlterNote(inRange: range, replacementLength: replacementLength)
 
 		if  result == .eDelete {

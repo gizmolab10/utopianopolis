@@ -460,12 +460,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) {
 		if  let        note = current {
-			gCurrentEssay   = note
 			essayRecordName = nil
 
-			gCurrentEssay?.reset()
+			note.setupChildren()
 			updateText()
-			gCurrentEssay?.updateNoteOffsets()
+			note.updateNoteOffsets()
+			note.updatedRangesFrom(note.noteTrait?.noteText)
+
+			gCurrentEssay   = note
 
 			if  let r = range {
 				FOREGROUND {
@@ -590,14 +592,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		setNeedsDisplay()        // so dots selecting image will be redrawn
 
 		if  let replacementLength = replacement?.length,
-			let (result,   delta) = gCurrentEssay?.shouldAlterEssay(range, replacementLength: replacementLength) {
+			let (result,   delta) = gCurrentEssay?.shouldAlterEssay(in: range, replacementLength: replacementLength) {
 			switch result {
 				case .eAlter:         break
 				case .eLock:          return false
 				case .eExit:  exit(); return false
 				case .eDelete:
 					FOREGROUND {                          // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
-						gCurrentEssay?.reset()
+						gCurrentEssay?.setupChildren()
 						self.updateText(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
 					}
 			}
@@ -1551,14 +1553,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let current = gCurrentEssay,
 			let    zone = current.zone {
 			let   count = current.children.count
-			let   isOne = count < 2
+			let toEssay = count < 2
 			let   range = selectedRange
 
+			current.updatedRangesFrom(textStorage)
 			save()
 
-			gCreateCombinedEssay = isOne // toggle
+			gCreateCombinedEssay = toEssay // toggle
 
-			if  isOne {
+			if  toEssay {
 				gCurrentEssay = ZEssay(zone)
 
 				zone.clearAllNotes()            // discard current essay text and all child note's text
