@@ -883,14 +883,21 @@ extension ZMenu {
 
 		for type in ZReorderMenuType.activeTypes {
 			menu.addItem(reorderingItem(type: type, target: target, action: action))
+
+			if  type != .eReversed {
+				menu.addItem(reorderingItem(type: type, target: target, action: action, flagged: true))
+			}
+
+			menu.addItem(.separator())
 		}
 
 		return menu
 	}
 
-	static func reorderingItem(type: ZReorderMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
-		let                       item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
-		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
+	static func reorderingItem(type: ZReorderMenuType, target: AnyObject, action: Selector, flagged: Bool = false) -> ZMenuItem {
+		let                      title = flagged ? "\(type.title) reversed" : type.title
+		let                       item = ZMenuItem(title: title, action: action, keyEquivalent: type.rawValue)
+		item.keyEquivalentModifierMask = flagged ? ZEventFlags.shift : ZEventFlags(rawValue: 0)
 		item                   .target = target
 		item                .isEnabled = true
 

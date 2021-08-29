@@ -255,16 +255,16 @@ class ZMapEditor: ZBaseEditor {
 	// MARK:-
 
 	@objc func handleReorderPopupMenu(_ iItem: ZMenuItem) {
-		handleReorderKey(iItem.keyEquivalent, gModifierFlags.isOption)
+		handleReorderKey(iItem.keyEquivalent, iItem.keyEquivalentModifierMask == .shift)
 	}
 
-	@objc func handleReorderKey(_ key: String, _ OPTION: Bool) {
+	@objc func handleReorderKey(_ key: String, _ reversed: Bool) {
 		if  let type  = ZReorderMenuType(rawValue: key) {
 			UNDO(self) { iUndoSelf in
-				iUndoSelf.handleReorderKey(key, !OPTION)
+				iUndoSelf.handleReorderKey(key, !reversed)
 			}
 
-			gSelecting.simplifiedGrabs.sortBy(type, OPTION)
+			gSelecting.simplifiedGrabs.sortBy(type, reversed)
 			gRelayoutMaps()
 		}
 	}

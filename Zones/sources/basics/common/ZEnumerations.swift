@@ -353,7 +353,7 @@ enum ZReorderMenuType: String {
 	case eBySizeOfList = "s"
 	case eByKind       = "k"
 
-	static var activeTypes: [ZReorderMenuType] { return [.eAlphabetical, .eReversed, .eByLength, .eBySizeOfList, .eByKind] }
+	static var activeTypes: [ZReorderMenuType] { return [.eReversed, .eByLength, .eAlphabetical, .eBySizeOfList, .eByKind] }
 
 	var title: String {
 		switch self {
