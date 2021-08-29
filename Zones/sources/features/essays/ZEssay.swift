@@ -40,7 +40,7 @@ class ZEssay: ZNote {
 			gCreateCombinedEssay = false
 			gCurrentEssay = ZNote(z)
 
-			return noteText
+			return gCurrentEssay?.noteText
 		}
 
 		traverseAndSetupChildren()
@@ -61,9 +61,9 @@ class ZEssay: ZNote {
 			}
 		} else {
 			gCreateCombinedEssay = true
+
 			for child in children.reversed() {
-				index        -= 1
-				let      bump = noteSeparator.length
+				index           -= 1
 
 				child.updateIndentCount(relativeTo: zone)
 
@@ -71,14 +71,14 @@ class ZEssay: ZNote {
 					result    = result ?? NSMutableAttributedString()
 
 					if  index < max {
-						result?.insert(noteSeparator, at: 0)
+						result?.insert(kNoteSeparator, at: 0)
 					}
 
-					result?    .insert(text,       at: 0)
+					result?    .insert(text,           at: 0)
 
 					if  index > 0 {
-						result?.insert(noteSeparator, at: 0)
-						child.bumpLocations(by: bump)
+						result?.insert(kNoteSeparator, at: 0)
+						child.bumpLocations(by: kNoteSeparator.length)
 					}
 				}
 			}
@@ -117,7 +117,7 @@ class ZEssay: ZNote {
 
 		for child in children {				// update note offsets
 			child.noteOffset = offset
-			offset           = child.offsetTextRange.upperBound + noteSeparator.length
+			offset           = child.offsetTextRange.upperBound + kNoteSeparator.length
 		}
 	}
 

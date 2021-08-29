@@ -232,3 +232,4 @@ let             kLargeBoldFont = ZFont.boldSystemFont(ofSize: ZFont.systemFontSi
 let     kFirstTimeStartupLevel = ZStartupLevel.firstTime.rawValue
 let               kScratchZone = Zone.uniqueZoneNamed(kScratchRootName, recordName: kScratchRootName, databaseID: .mineID)
 let                 kBlankLine = NSAttributedString(string: "\n", attributes: [.font : kEssayTitleFont])
+let             kNoteSeparator = kBlankLine

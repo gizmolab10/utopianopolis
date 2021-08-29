@@ -1718,7 +1718,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else if count == 0 || !gCreateCombinedEssay {
 			note      = ZNote(self)
 			noteMaybe = note
-		} else {  // if count == 1 and gCreateCombinedEssay
+		} else {
 			let  zone = zones[0]
 			note      = ZNote(zone)
 			zone.noteMaybe = note
@@ -2043,7 +2043,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			gCurrentEssay        = note
 
 			if  gIsEssayMode {
-				gEssayView?.updateText()
+				gEssayView?.updateTextStorage()
 			} else {
 				gControllers.swapMapAndEssay()
 			}

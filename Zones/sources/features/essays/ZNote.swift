@@ -32,7 +32,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var                 kind : String    { return "note" }
 	var               prefix : String    { return titleSpacer }
 	var               suffix : String    { return kTab }
-	var        noteSeparator : NSAttributedString { return kBlankLine }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
 	var          titleSpacer : String    { return kNoteIndentSpacer * indentCount }
 	var          titleOffset : Int       { return titleSpacer.length }
@@ -189,7 +188,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 				let attributedTitle = NSMutableAttributedString(string: title, attributes: attributes)
 
-				result?.insert(noteSeparator,   at: 0)
+				result?.insert(kNoteSeparator,  at: 0)
 				result?.insert(attributedTitle, at: 0)
 			}
 
@@ -204,7 +203,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		let    isEmpty = mode == .sEmpty
 		let     isFull = mode == .sFull
 		let      space = kNoteIndentSpacer.length
-		let      tween = suffix.length + noteSeparator.length
+		let      tween = suffix.length + kNoteSeparator.length
 		let      extra = indentCount - 2
 		let      start = titleOffset
 		var      total = 0

@@ -458,25 +458,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) {
-		if  let        note = current {
-			essayRecordName = nil
-
-			note.setupChildren()
-			updateText()
-			note.updateNoteOffsets()
-			note.updatedRangesFrom(note.noteTrait?.noteText)
-
-			gCurrentEssay   = note
-
-			if  let r = range {
-				FOREGROUND {
-					self.setSelectedRange(r)
-				}
-			}
-		}
-	}
-
 	func resetForDarkMode() {
 		usesAdaptiveColorMappingForDarkAppearance = true
 		let                       backgroundColor = (gIsDark ?  kDarkestGrayColor : kWhiteColor).cgColor
@@ -492,10 +473,28 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func setup() {
-		updateText()
+		updateTextStorage()
 	}
 
-	func updateText(restoreSelection: NSRange? = nil) {
+	func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) {
+		if  let        note = current {
+			essayRecordName = nil
+			gCurrentEssay   = note
+
+			note.setupChildren()
+			updateTextStorage()
+			note.updateNoteOffsets()
+			note.updatedRangesFrom(note.noteTrait?.noteText)
+
+			if  let r = range {
+				FOREGROUND {
+					self.setSelectedRange(r)
+				}
+			}
+		}
+	}
+
+	func updateTextStorage(restoreSelection: NSRange? = nil) {
 
 		// make sure we actually have a current essay
 		// activate the buttons in the control bar
@@ -600,7 +599,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .eDelete:
 					FOREGROUND {                          // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
 						gCurrentEssay?.setupChildren()
-						self.updateText(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
+						self.updateTextStorage(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
 					}
 			}
 
@@ -849,7 +848,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		essayRecordName = nil                           // so shouldOverwrite will return true
 
 		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
-		updateText()                                  // assume text has been altered: re-assemble it
+		updateTextStorage()                                  // assume text has been altered: re-assemble it
 		regrab(grabbed)
 		scrollToGrabbed()
 		gSignal([.spCrumbs, .sDetails])
@@ -1143,7 +1142,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			clearResizing()
 			setNeedsLayout()
 			setNeedsDisplay()
-			updateText(restoreSelection: range)  // recreate essay after an image is dropped
+			updateTextStorage(restoreSelection: range)  // recreate essay after an image is dropped
 		}
 	}
 
@@ -1277,7 +1276,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			titlesControl?.needsDisplay = true
 			range.location += deltaForTransitioningTo(mode)
 
-			updateText(restoreSelection: range)
+			updateTextStorage(restoreSelection: range)
 			gSignal([.sEssay])
 		}
 	}
@@ -1565,7 +1564,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				gCurrentEssay = ZEssay(zone)
 
 				zone.clearAllNotes()            // discard current essay text and all child note's text
-				updateText(restoreSelection: range)
+				updateTextStorage(restoreSelection: range)
 			} else if let note = lastGrabbedDot?.note ?? selectedNote {
 				ungrabAll()
 				resetCurrentEssay(note, selecting: range)
@@ -1584,7 +1583,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gRecents.setAsCurrent(notemark)
 			gSignal([.spSmallMap, .spCrumbs])
 
-			updateText()
+			updateTextStorage()
 		}
 	}
 
