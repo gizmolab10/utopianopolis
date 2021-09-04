@@ -2374,8 +2374,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  iAncestor == gHere || !showing {
 					isVisible = showing
 				}
-
-				return .eStop
 			}
 
 			return .eContinue

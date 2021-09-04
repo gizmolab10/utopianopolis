@@ -482,19 +482,20 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gCurrentEssay   = note
 
 			note.setupChildren()
-			updateTextStorage()
+			let delta = updateTextStorage()
 			note.updateNoteOffsets()
 			note.updatedRangesFrom(note.noteTrait?.noteText)
 
 			if  let r = range {
 				FOREGROUND {
-					self.setSelectedRange(r)
+					self.setSelectedRange(r.offsetBy(delta))
 				}
 			}
 		}
 	}
 
-	func updateTextStorage(restoreSelection: NSRange? = nil) {
+	@discardableResult func updateTextStorage(restoreSelection: NSRange? = nil) -> Int {
+		var delta = 0
 
 		// make sure we actually have a current essay
 		// activate the buttons in the control bar
@@ -507,7 +508,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  gCurrentEssay == nil {
 			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
 		} else {
-			updateTitleMode()
+			updateTitleControl()
+
+			delta = updateTitleControlAndMode()
 
 			if  (shouldOverwrite || restoreSelection != nil),
 				let text = gCurrentEssay?.essayText {
@@ -515,6 +518,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
 				select(restoreSelection: restoreSelection)
 				undoManager?.removeAllActions()                               // clear the undo stack of prior / disastrous information (about prior text)
+				matchTitleControlTo(gEssayTitleMode)
 			}
 
 			enableEssayControls(true)
@@ -526,6 +530,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				gMainWindow?.makeFirstResponder(self)                         // show cursor and respond to key input
 			}
 		}
+
+		return delta
 	}
 
 	// MARK:- clean up
@@ -867,8 +873,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		hideButton?    .isEnabled = enabled
 		saveButton?    .isEnabled = enabled
 
-		updateTitleControls(enabled)
-		redrawInspectorBar (enabled)
+		updateTitleControl(enabled)
+		redrawInspectorBar(enabled)
 	}
 
 	func redrawInspectorBar(_ enabled: Bool) {
@@ -879,21 +885,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func updateTitleMode() {
-		if !(gCurrentEssay?.isNote ?? false) {
-			if  gTemporaryEssayTitleMode {
-				gTemporaryEssayTitleMode =  false
-				gEssayTitleMode          = .sFull
-			}
-		} else if gEssayTitleMode       == .sFull {
-			gTemporaryEssayTitleMode     =  true
-			gEssayTitleMode              = .sTitle
-		}
-
-		titlesControl?.selectedSegment = min((titlesControl?.segmentCount ?? 1) - 1, gEssayTitleMode.rawValue)
-	}
-
-	func updateTitleControls(_ enabled: Bool) {
+	func updateTitleControl(_ enabled: Bool= true) {
 		let                  isNote = (gCurrentEssay?.children.count ?? 0) == 0
 		titlesControl?.segmentCount = isNote ? 2 : 3
 		titlesControl?   .isEnabled = enabled
@@ -903,6 +895,32 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			titlesControl?.setToolTip("show all titles", forSegment: 2)
 			titlesControl?.setImage(image,               forSegment: 2)
 		}
+	}
+
+	func matchTitleControlTo(_ mode: ZEssayTitleMode) {
+		let    last = (titlesControl?.segmentCount ?? 1) - 1
+		let segment = min(last, mode.rawValue)
+
+		titlesControl?.selectedSegment = segment
+	}
+
+	@discardableResult func updateTitleControlAndMode() -> Int {
+		let isNote = gCurrentEssay?.isNote ?? true
+		var   mode = gEssayTitleMode
+
+		if !isNote {
+			if  gTemporaryFullTitleMode {
+				gTemporaryFullTitleMode =  false
+				mode                    = .sFull
+			}
+		} else if gEssayTitleMode      == .sFull {
+			gTemporaryFullTitleMode     =  true
+			mode                        = .sTitle
+		}
+
+		matchTitleControlTo(mode)
+
+		return deltaForTransitioningTo(mode)  // updates gEssayTitleMode
 	}
 
 	@objc private func handleButtonPress(_ iButton: ZButton) {
@@ -1307,14 +1325,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func deltaForTransitioningTo(_ mode: ZEssayTitleMode) -> Int {
-		var delta       = 0
-		if  let    note = selectedNote {
-			let  before = titleLengthsUpTo(note, for: gEssayTitleMode)
-			let   after = titleLengthsUpTo(note, for: mode)
-			delta       = after - before
-		}
+		var delta           = 0
+		if  mode           != gEssayTitleMode {
+			if  let    note = selectedNote {
+				let  before = titleLengthsUpTo(note, for: gEssayTitleMode) // call this first
+				let   after = titleLengthsUpTo(note, for: mode)            // call this second
+				delta       = after - before
+			}
 
-		gEssayTitleMode = mode
+			gEssayTitleMode = mode
+		}
 
 		return delta
 	}
@@ -1564,9 +1584,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				gCurrentEssay = ZEssay(zone)
 
 				zone.clearAllNotes()            // discard current essay text and all child note's text
-				updateTextStorage(restoreSelection: range)
-			} else if let note = lastGrabbedDot?.note ?? selectedNote {
+				resetCurrentEssay(selecting: range)
+			} else if var note = lastGrabbedDot?.note ?? selectedNote {
 				ungrabAll()
+
+				if !note.isNote {
+					note = ZNote(note.zone)
+				}
+
 				resetCurrentEssay(note, selecting: range)
 			}
 

@@ -21,7 +21,6 @@ let gDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
-var  gTemporaryEssayTitleMode                     = false
 var  gTextEditorHandlesArrows                     = false
 var   gIsEditingStateChanging                     = false
 var    gRefusesFirstResponder                     = false
@@ -262,6 +261,11 @@ var gCurrentHelpMode: ZHelpMode {
 	set {
 		setPreferencesString(newValue.rawValue, for: kLastChosenCheatSheet)
 	}
+}
+
+var gTemporaryFullTitleMode : Bool {
+	get { return getPreferencesBool(   for: kTemporaryFullTitleMode, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kTemporaryFullTitleMode) }
 }
 
 var gShowMySubscriptions : Bool {
