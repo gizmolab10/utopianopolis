@@ -74,13 +74,11 @@ class ZMapEditor: ZBaseEditor {
 				SHIFT   = true
 			}
 
-			gCurrentKeyPressed = key
+			gTemporarilySetKey(key)
 
             if  gIsEditIdeaMode {
 				if !gTextEditor.handleKey(iKey, flags: flags) {
 					if !ANY { return false } // ignore key events which have no modifier keys
-
-					gCurrentKeyPressed = key
 
 					switch key {
 						case "a":      gCurrentlyEditingWidget?.selectAllText()
@@ -110,8 +108,7 @@ class ZMapEditor: ZBaseEditor {
 				} else if kMarkingCharacters.contains(key), !COMMAND, !CONTROL, !OPTION {
                     prefix(with: key)
                 } else if !super.handleKey(iKey, flags: flags, isWindow: isWindow) {
-					gCurrentKeyPressed = key
-					let       moveable = gSelecting.currentMoveable
+					let moveable = gSelecting.currentMoveable
 
 					switch key {
 						case "a":        if COMMAND { moveable.selectAll(progeny: OPTION) }
