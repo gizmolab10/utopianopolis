@@ -292,7 +292,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	}
 
 	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, isForMap: Bool = true) {
-		let   text = string == "h" ? "w" : string
+		let   text = string == "h" ? "w" : string == "n" ? "+" : string
 		let  width = CGFloat(gDotHeight - 2.0) * ratio
 		let   font = ZFont.boldSystemFont(ofSize: width)
 		let   size = text.sizeWithFont(font)

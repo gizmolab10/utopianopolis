@@ -247,9 +247,10 @@ extension UIView {
             clearGestures()
 
             if  let e = newValue {
-                e.clickGesture = createPointGestureRecognizer(e, action: #selector(ZMapController      .handleClickGesture),                     clicksRequired: 1)
-                gDraggedZone   = nil
-            }
+				gDraggedZones.removeAll()
+
+                e.clickGesture = createPointGestureRecognizer(e, action: #selector(ZMapController.handleClickGesture), clicksRequired: 1)
+			}
         }
     }
 

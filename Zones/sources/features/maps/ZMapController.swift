@@ -195,7 +195,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				} else if state == .changed,                      // enlarge rubberband
 						  gRubberband.setRubberbandExtent(to: location) {
 					gRubberband.updateGrabs(in: mapView)
-					gDragView? .setNeedsDisplay()
+					gDragView?.setNeedsDisplay()
 				} else if ![.began, .cancelled].contains(state) { // drag ended or failed
 					gRubberband.rubberbandRect = nil              // erase rubberband
 
@@ -308,11 +308,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // //////////////////////////////////////////
 
     func dragStartEvent(_ dot: ZoneDot, _ iGesture: ZGestureRecognizer?) {
-        if  var zone = dot.widgetZone,              // should always be true
-			let gesture = iGesture {
-			let location  = gesture.location(in: dot)
+        if  var      zone = dot.widgetZone,              // should always be true
+			let   gesture = iGesture {
+			let  location = gesture.location(in: dot)
 			dot.dragStart = location
-			gDraggedZones = gSelecting.currentMapGrabs
 
             if  gesture.isOptionDown {
 				zone = zone.deepCopy(dbID: .mineID) // option means drag a copy
@@ -323,6 +322,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             } else if !zone.isGrabbed {
                 zone.grab()
             }
+
+			gDraggedZones = gSelecting.currentMapGrabs
 
 			if  gIsEssayMode {
 				gMainWindow?.makeFirstResponder(mapView)
