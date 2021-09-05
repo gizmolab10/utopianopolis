@@ -79,7 +79,7 @@ enum ZHelpDotType: String {
 		p.fill          = isFilled ? p.color : gBackgroundColor
 		p.filled        = isFilled
 		p.isReveal      = isReveal
-		p.traitType     = traitType
+		p.typeOfTrait   = traitType
 		p.showAccess    = showAccess
 		p.accessType    = accessType
 		p.showList      = pointLeft || !isFilled

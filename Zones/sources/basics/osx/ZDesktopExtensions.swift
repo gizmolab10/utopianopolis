@@ -904,6 +904,26 @@ extension ZMenu {
 		return item
 	}
 
+	static func traitsPopup(target: AnyObject, action: Selector) -> ZMenu {
+		let menu = ZMenu(title: "traits")
+
+		for type in ZTraitType.activeTypes {
+			menu.addItem(traitsItem(type: type, target: target, action: action))
+		}
+
+		return menu
+	}
+
+	static func traitsItem(type: ZTraitType, target: AnyObject, action: Selector) -> ZMenuItem {
+		let                      title = type.title ?? ""
+		let                       item = ZMenuItem(title: title, action: action, keyEquivalent: type.rawValue)
+		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
+		item                   .target = target
+		item                .isEnabled = true
+
+		return item
+	}
+
 	static func refetchPopup(target: AnyObject, action: Selector) -> ZMenu {
 		let menu = ZMenu(title: "refetch")
 

@@ -36,7 +36,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var eraseAttachment : ZRangedAttachment?
 	var grabbedZones    : [Zone]             { return grabbedNotes.map { $0.zone! } }
 	var firstNote       : ZNote?             { return (dragDots.count == 0) ? nil : dragDots[0].note }
-	var selectedNote    : ZNote?             { return selectedNotes.first ?? gCurrentEssay }
+	var selectedNote    : ZNote?             { return selectedNotes.last ?? gCurrentEssay }
 	var selectedZone    : Zone?              { return selectedNote?.zone }
 	var firstGrabbedNote: ZNote?             { return hasGrabbedNote ? grabbedNotes[0] : nil }
 	var firstGrabbedZone: Zone?              { return firstGrabbedNote?.zone }
@@ -192,7 +192,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  enabled {
 				switch key {
 					case "d":  convertToChild(flags)
-					case "h":  showLinkPopup()
+					case "w":  showLinkPopup()
 					default:   break
 				}
 			}
@@ -476,22 +476,27 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		updateTextStorage()
 	}
 
-	func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) {
+	@discardableResult func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) -> Int {
+		var           delta = 0
 		if  let        note = current {
 			essayRecordName = nil
 			gCurrentEssay   = note
 
 			note.setupChildren()
-			let delta = updateTextStorage()
+
+			delta           = updateTextStorage()
+
 			note.updateNoteOffsets()
 			note.updatedRangesFrom(note.noteTrait?.noteText)
 
 			if  let r = range {
 				FOREGROUND {
-					self.setSelectedRange(r.offsetBy(delta))
+					self.select(restoreSelection: r.offsetBy(delta))
 				}
 			}
 		}
+
+		return delta
 	}
 
 	@discardableResult func updateTextStorage(restoreSelection: NSRange? = nil) -> Int {
@@ -885,7 +890,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func updateTitleControl(_ enabled: Bool= true) {
+	func updateTitleControl(_ enabled: Bool = true) {
 		let                  isNote = (gCurrentEssay?.children.count ?? 0) == 0
 		titlesControl?.segmentCount = isNote ? 2 : 3
 		titlesControl?   .isEnabled = enabled
@@ -1450,7 +1455,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					textStorage?.replaceCharacters(in: range, with: r)
 				}
 
-				setSelectedRange(range)
+				select(restoreSelection: range)
 			}
 
 			func displayUploadDialog() {
@@ -1614,22 +1619,39 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func move(out: Bool) {
 		gCreateCombinedEssay = true
-		let        selection = selectedNotes
+		let            range = selectedRange()
+		let             note = gCurrentEssay?.noteIn(range)
 
 		save()
 
-		if !out, let last = selection.last {
-			resetCurrentEssay(last)
-		} else if out {
+		if  out {
 			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
-				if  ancestor != gCurrentEssayZone, ancestor.hasNote {
-					self.resetCurrentEssay(ancestor.note)
+				if  ancestor != gCurrentEssayZone, ancestor.hasNote,
+					let essay = ancestor.note {
+					let delta = self.resetCurrentEssay(essay)
+
+					if  let zone = note?.zone {
+						for within in essay.children {
+							if  zone == within.zone {
+								let offset = within.noteOffset
+								let select = range.offsetBy(offset + delta - 1)
+
+								self.select(restoreSelection: select)
+							}
+						}
+					}
 
 					return .eStop
 				}
 
 				return .eContinue
 			}
+		} else if note != nil,
+			let offset = note?.noteOffset {
+			let  delta = self.resetCurrentEssay(note)
+			let select = range.offsetBy(delta - offset - 1)
+
+			self.setSelectedRange(select)
 		}
 
 		gSignal([.spCrumbs])

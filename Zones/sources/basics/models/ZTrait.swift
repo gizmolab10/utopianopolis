@@ -19,6 +19,8 @@ enum ZTraitType: String {
 	case tDate      = "d"
 	case tNote      = "n"
 
+	static var activeTypes: [ZTraitType] { return [.tEmail, .tHyperlink] }
+
 	var heightRatio: CGFloat {
 		switch self {
 			case .tHyperlink,
@@ -27,6 +29,8 @@ enum ZTraitType: String {
 			default:     return 0.66667
 		}
 	}
+
+	var title: String? { return description?.capitalized }
 
 	var description: String? {
 		switch self {

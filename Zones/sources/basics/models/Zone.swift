@@ -1453,7 +1453,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
 	func       focusRecent() { focusOn() { gRelayoutMaps() } }
-	func editTrait(for iType: ZTraitType) { gTextEditor.edit(traitFor(iType)) }
+	func editTraitForType(_ type: ZTraitType) { gTextEditor.edit(traitFor(type)) }
 
 	@discardableResult func edit() -> ZTextEditor? {
 		gTemporarilySetMouseZone(self) // so become first responder will work
@@ -3254,7 +3254,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.showList       = expanded
 		p.isReveal       = isReveal
 		p.hasTarget      = isBookmark
-		p.traitType      = k.first ?? kEmpty
+		p.typeOfTrait    = k.first ?? kEmpty
 		p.showAccess     = hasAccessDecoration
 		p.hasTargetNote  = t?.hasNote ?? false
 		p.isGroupOwner   = g == self || g == t
@@ -3426,8 +3426,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "a":      children.alphabetize()
 				case "b":      addBookmark()
 				case "d":      duplicate()
-				case "e":      editTrait(for: .tEmail)
-				case "h":      editTrait(for: .tHyperlink)
+				case "e":      editTraitForType(.tEmail)
+				case "w":      editTraitForType(.tHyperlink)
 				case "i":      children.sortByCount()
 				case "m":      children.sortByLength()
 				case "n":      showNote()

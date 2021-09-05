@@ -118,7 +118,7 @@ class ZMapEditor: ZBaseEditor {
 						case "b":        gSelecting.firstSortedGrab?.addBookmark()
 						case "c":        if  OPTION { divideChildren() } else if COMMAND { gSelecting.simplifiedGrabs.copyToPaste() } else { gMapController?.recenter(SPECIAL) }
 						case "d":        if     ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
-						case "e", "h":   editTrait(for: key)
+						case "h":        showTraitsPopup()
 						case "f":        gSearching.showSearch(OPTION)
 						case "i":        grabDuplicatesAndRedraw()
 						case "j":        if SPECIAL { gRemoteStorage.recount(); gSignal([.spData]) } else { gSelecting.handleDuplicates(COMMAND) }
@@ -131,7 +131,7 @@ class ZMapEditor: ZBaseEditor {
 						case "s":        gFiles.export(moveable, toFileAs: OPTION ? .eOutline : .eSeriously)
 						case "t":        if COMMAND { showThesaurus() } else if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-						case "v":        if COMMAND { paste() } else { editTrait(for: key) }
+						case "v":        if COMMAND { paste() }
 						case "w":        rotateWritable()
 						case "x":        return handleX(flags)
 						case "z":        if  !SHIFT { gUndoManager.undo() } else { gUndoManager.redo() }
@@ -253,6 +253,21 @@ class ZMapEditor: ZBaseEditor {
 
 	// MARK:- handlers
 	// MARK:-
+
+	@objc func handleTraitsPopupMenu(_ iItem: ZMenuItem) {
+		handleTraitsKey(iItem.keyEquivalent)
+	}
+
+	@objc func handleTraitsKey(_ key: String) {
+		if  let type = ZTraitType(rawValue: key) {
+			UNDO(self) { iUndoSelf in
+				iUndoSelf.handleTraitsKey(key)
+			}
+
+			gTemporarilySetKey(key)
+			editTraitForType(type)
+		}
+	}
 
 	@objc func handleReorderPopupMenu(_ iItem: ZMenuItem) {
 		handleReorderKey(iItem.keyEquivalent, iItem.keyEquivalentModifierMask == .shift)
@@ -458,12 +473,20 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
+	func showTraitsPopup() {
+		applyToMenu { return ZMenu .traitsPopup(target: self, action: #selector(handleTraitsPopupMenu(_:))) }
+	}
+
 	func showReorderPopup() {
+		applyToMenu { return ZMenu.reorderPopup(target: self, action: #selector(handleReorderPopupMenu(_:))) }
+	}
+
+	func applyToMenu(_ createMenu: ToMenuClosure) {
 		if  let widget = gSelecting.lastGrab.widget?.textWidget {
 			var  point = widget.bounds.bottomRight
 			point      = widget.convert(point, to: gCurrentMapView).offsetBy(-160.0, -20.0)
 
-			ZMenu.reorderPopup(target: self, action: #selector(handleReorderPopupMenu(_:))).popUp(positioning: nil, at: point, in: gCurrentMapView)
+			createMenu().popUp(positioning: nil, at: point, in: gCurrentMapView)
 		}
 	}
 
@@ -623,10 +646,8 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-	func editTrait(for key: String) {
-		if  let type = ZTraitType(rawValue: key) {
-			gSelecting.firstSortedGrab?.editTrait(for: type)
-		}
+	func editTraitForType(_ type: ZTraitType) {
+		gSelecting.firstSortedGrab?.editTraitForType(type)
 	}
 
 	func editNote(_  OPTION: Bool, useGrabbed: Bool = true) {

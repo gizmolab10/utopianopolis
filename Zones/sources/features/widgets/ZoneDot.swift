@@ -25,7 +25,7 @@ struct  ZDotParameters {
 	var childCount     = 0
 	var verticleOffset = 0.0
 	var sideDotRadius  = 4.0
-	var traitType      = kEmpty
+	var typeOfTrait    = kEmpty
 	var isDrop         = false
 	var filled         = false
 	var isReveal       = false
@@ -291,17 +291,18 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		}
 	}
 
-	func drawStringDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, isForMap: Bool = true) {
+	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, isForMap: Bool = true) {
+		let   text = string == "h" ? "w" : string
 		let  width = CGFloat(gDotHeight - 2.0) * ratio
 		let   font = ZFont.boldSystemFont(ofSize: width)
-		let   size = string.sizeWithFont(font)
-		let  ratio = ZTraitType(rawValue: string)?.heightRatio ?? 1.0
+		let   size = text.sizeWithFont(font)
+		let  ratio = ZTraitType(rawValue: text)?.heightRatio ?? 1.0
 		let height = size.height * ratio + (isForMap ? 1.0 : -8.0)
 		let xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
 		let yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
 		let   rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: (height / 12.0) - 1)
 
-		string.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
+		text.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
 	}
 
 	func drawInnerRevealDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
@@ -315,13 +316,13 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 
 			fillColor.setFill()
 			drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.hasTargetNote)
-		} else if parameters.traitType != kEmpty {
+		} else if parameters.typeOfTrait != kEmpty {
 
 			// ///////////////// //
 			// TRAIT DECORATIONS //
 			// ///////////////// //
 
-			drawStringDecoration(in: iDirtyRect, string: parameters.traitType, color: fillColor)
+			drawTraitDecoration(in: iDirtyRect, string: parameters.typeOfTrait, color: fillColor)
 		}
 	}
 
