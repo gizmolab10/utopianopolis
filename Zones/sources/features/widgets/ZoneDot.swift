@@ -291,16 +291,24 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		}
 	}
 
+	func offsetFor(_ string: String) -> CGFloat {
+		switch string {
+			case "=", "+": return 0.9
+			default:       return 0.0
+		}
+	}
+
 	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, isForMap: Bool = true) {
-		let   text = string == "h" ? "w" : string == "n" ? "+" : string
-		let  width = CGFloat(gDotHeight - 2.0) * ratio
-		let   font = ZFont.boldSystemFont(ofSize: width)
-		let   size = text.sizeWithFont(font)
-		let  ratio = ZTraitType(rawValue: text)?.heightRatio ?? 1.0
-		let height = size.height * ratio + (isForMap ? 1.0 : -8.0)
-		let xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
-		let yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
-		let   rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: (height / 12.0) - 1)
+		let    text = string == "h" ? "=" : string == "n" ? "+" : string
+		let   width = CGFloat(gDotHeight - 2.0) * ratio
+		let    font = ZFont.boldSystemFont(ofSize: width)
+		let    size = text.sizeWithFont(font)
+		let   ratio = ZTraitType(rawValue: text)?.heightRatio ?? 1.0
+		let  height = size.height * ratio + (isForMap ? 1.0 : -8.0)
+		let  xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
+		let  yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
+		let yOffset = (height / 12.0) - 1.0 + (offsetFor(text) * (isForMap ? 1.0 : kSmallMapReduction))
+		let    rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: yOffset)
 
 		text.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
 	}

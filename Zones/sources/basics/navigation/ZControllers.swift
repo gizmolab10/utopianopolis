@@ -82,12 +82,12 @@ class ZControllers: NSObject {
 	}
 
 	func swapMapAndEssay(force mode: ZWorkMode? = nil) {
-		FOREGROUND { 	                                // avoid infinite recursion (generic menu handler invoking map editor's handle key)
+		FOREGROUND { 	                                 // avoid infinite recursion (generic menu handler invoking map editor's handle key)
 			gTextEditor.stopCurrentEdit()
 
 			gWorkMode = mode ?? (gIsEssayMode ? .wMapMode : .wEssayMode)
 
-			gEssayView?.updateTitleControlAndMode()
+			gEssayView?.updateTitlesControlAndMode()     // why?
 			gEssayView?.enableEssayControls(gIsEssayMode)
 			gSignal([.sSwap, .spCrumbs, .spSmallMap])
 

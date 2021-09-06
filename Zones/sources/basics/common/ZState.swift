@@ -662,6 +662,23 @@ var gCurrentEssay: ZNote? {
 	}
 }
 
+var gAdjustedEssayTitleMode: ZEssayTitleMode {
+	let isNote = (gCurrentEssay?.children.count ?? 0) == 0
+	var   mode = gEssayTitleMode
+
+	if !isNote {
+		if  gTemporaryFullTitleMode {
+			gTemporaryFullTitleMode =  false
+			mode                    = .sFull
+		}
+	} else if gEssayTitleMode      == .sFull {
+		gTemporaryFullTitleMode     =  true
+		mode                        = .sTitle
+	}
+
+	return mode
+}
+
 // MARK:- actions
 // MARK:-
 
