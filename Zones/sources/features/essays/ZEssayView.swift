@@ -910,7 +910,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	@discardableResult func updateTitleControlAndMode() -> Int {
-		let isNote = gCurrentEssay?.isNote ?? true
+		let isNote = (gCurrentEssay?.children.count ?? 0) == 0
 		var   mode = gEssayTitleMode
 
 		if !isNote {
@@ -1634,7 +1634,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 						for within in essay.children {
 							if  zone == within.zone {
 								let offset = within.noteOffset
-								let select = range.offsetBy(offset + delta - 1)
+								let indent = within.indentCount
+								let select = range.offsetBy(offset + delta + indent - 1)
 
 								self.select(restoreSelection: select)
 							}
@@ -1646,10 +1647,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 				return .eContinue
 			}
-		} else if note != nil,
-			let offset = note?.noteOffset {
-			let  delta = self.resetCurrentEssay(note)
-			let select = range.offsetBy(delta - offset - 1)
+		} else if let n = note {
+			let  offset = n.noteOffset
+			let  indent = n.indentCount * (n.isNote ? 1 : 2)
+			let   delta = self.resetCurrentEssay(n)
+			let  select = range.offsetBy(delta - offset - indent + 1)
 
 			self.setSelectedRange(select)
 		}

@@ -9,10 +9,10 @@
 import Foundation
 import CloudKit
 
-enum ZTraitType: String {
-	case tDuration  = "+" // accumulative
+enum ZTraitType: String { // stored in database: do not change
+	case tDuration  = "!" // accumulative
 	case tMoney     = "$" //      "
-	case tAssets    = "a" // allow multiple
+	case tAssets    = "a" // can have multiple
 	case tHyperlink = "h"
 	case tEmail     = "e"
 	case tEssay     = "w"
