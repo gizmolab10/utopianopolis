@@ -384,10 +384,10 @@ class ZRecords: NSObject {
 					return false
 				}
             } else {
-                zRecordsLookup.updateValue(zRecord, forKey: name)
-				registerByType(zRecord)
+                zRecordsLookup[name] = zRecord
+				created              = true
 
-				created = true
+				registerByType(zRecord)
             }
 			
 			if  let bookmark = zRecord as? Zone, bookmark.isBookmark {

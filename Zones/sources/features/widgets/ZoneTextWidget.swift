@@ -167,9 +167,13 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 			zone.canEditNow,                 // detect if mouse down inside widget OR key pressed
 			super.becomeFirstResponder() {   // becomeFirstResponder is called first so delegate methods will be called
 
-			if !gIsMapOrEditIdeaMode {
+			if  gIsSearchMode {
                 gSearching.exitSearchMode()
-            }
+			} else if gIsEssayMode {
+				gControllers.swapMapAndEssay()
+			} else {
+				gSetEditIdeaMode()
+			}
 
 			if  var prior = gSelecting.grabAndNoUI([zone]) {
 				prior.appendUnique(item: zone)

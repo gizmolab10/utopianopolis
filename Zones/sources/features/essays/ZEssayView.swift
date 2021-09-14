@@ -379,23 +379,25 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	override func setSelectedRange(_ range: NSRange) {
-		if  let text = textStorage?.string,
-			NSRange(location: 0, length: text.length).contains(range) {
-			super.setSelectedRange(range)
+		if  let         text = textStorage?.string {
+			let storageRange = NSRange(location: 0, length: text.length)
+			let     endRange = NSRange(location: text.length, length: 0)
+			let       common = range.intersection(storageRange) ?? endRange
 
-			if  selectedRange.location != 0,
-				let               rect  = rectForRange(selectedRange),
-				selectionRect          != rect {
+			super.setSelectedRange(common)
+
+			if  let               rect  = rectForRange(common),
+				selectedRange.location != 0 {
 				selectionRect           = rect
 			}
 		}
 	}
 
-	private func selectAndScrollTo(_ selection: NSRange? = nil) {
-		var        point = CGPoint()                                     // scroll to top
+	private func selectAndScrollTo(_ range: NSRange? = nil) {
+		var        point = CGPoint()                          // scroll to top
 		if  let    essay = gCurrentEssay,
-			(essay.lastTextIsDefault || selection != nil),
-			let range    = selection ?? essay.lastTextRange {     // default: select entire text of final essay
+			(essay.lastTextIsDefault || range != nil),
+			let range    = range ?? essay.lastTextRange {     // default: select entire text of final essay
 
 			if  let rect = rectForRange(range) {
 				point    = rect.origin
@@ -1610,6 +1612,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		gCreateCombinedEssay = true
 		let            range = selectedRange()
 		let             note = gCurrentEssay?.noteIn(range)
+		let            prior = (note?.noteOffset ?? 0) + (note?.indentCount ?? 0)
 
 		save()
 
@@ -1624,7 +1627,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 							if  zone == within.zone {
 								let offset = within.noteOffset
 								let indent = within.indentCount
-								let select = range.offsetBy(offset + delta + indent - 1)
+								let select = range.offsetBy(offset + delta + indent - prior + 1)
 
 								self.selectAndScrollTo(select)
 							}
@@ -1636,13 +1639,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 				return .eContinue
 			}
-		} else if let n = note {
+		} else if let n = note, n != gCurrentEssay { // go in/right
 			let  offset = n.noteOffset
-			let  indent = n.indentCount * (n.isNote ? 1 : 2)
+			let  indent = n.indentCount
+			let  adjust = indent * (n.isNote ? 1 : 2) + ((indent < 3) ? 0 : indent - 2)
 			let   delta = self.resetCurrentEssay(n)
-			let  select = range.offsetBy(delta - offset - indent + 1)
+			let  select = range.offsetBy(delta - offset - adjust + 1)
 
-			self.setSelectedRange(select)
+			self.selectAndScrollTo(select)
 		}
 
 		gSignal([.spCrumbs])
