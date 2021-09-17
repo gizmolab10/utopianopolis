@@ -1331,14 +1331,14 @@ CA
             <objects>
                 <viewController id="8OT-8w-eeZ" userLabel="Subscriptions" customClass="ZSubscriptionController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="cE1-k3-slr">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="84"/>
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="80"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="1ff-Zq-eZn">
-                                <rect key="frame" x="0.0" y="0.0" width="290" height="84"/>
+                                <rect key="frame" x="0.0" y="0.0" width="290" height="80"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="dLO-Ko-BEx">
-                                        <rect key="frame" x="0.0" y="4" width="290" height="80"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="290" height="80"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7TP-X8-yTZ">
                                                 <rect key="frame" x="6" y="58" width="278" height="14"/>
@@ -1380,16 +1380,17 @@ CA
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="m4R-cN-QaR">
-                                        <rect key="frame" x="0.0" y="0.0" width="290" height="84"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="290" height="80"/>
                                     </customView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="84" id="56D-tP-jfI"/>
                                     <constraint firstAttribute="trailing" secondItem="dLO-Ko-BEx" secondAttribute="trailing" id="DYF-VG-NZx"/>
                                     <constraint firstItem="m4R-cN-QaR" firstAttribute="leading" secondItem="1ff-Zq-eZn" secondAttribute="leading" id="E7Z-e7-MIu"/>
+                                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="dLO-Ko-BEx" secondAttribute="bottom" id="Fd4-ZT-k3e"/>
+                                    <constraint firstItem="dLO-Ko-BEx" firstAttribute="centerY" secondItem="1ff-Zq-eZn" secondAttribute="centerY" id="JFZ-um-2ce"/>
                                     <constraint firstAttribute="bottom" secondItem="m4R-cN-QaR" secondAttribute="bottom" id="KlV-Fj-Eo1"/>
+                                    <constraint firstItem="dLO-Ko-BEx" firstAttribute="top" relation="greaterThanOrEqual" secondItem="1ff-Zq-eZn" secondAttribute="top" id="NNU-ge-15J"/>
                                     <constraint firstItem="dLO-Ko-BEx" firstAttribute="leading" secondItem="1ff-Zq-eZn" secondAttribute="leading" id="feq-dk-vKc"/>
-                                    <constraint firstItem="dLO-Ko-BEx" firstAttribute="top" secondItem="1ff-Zq-eZn" secondAttribute="top" id="jOO-jh-aIu"/>
                                     <constraint firstAttribute="trailing" secondItem="m4R-cN-QaR" secondAttribute="trailing" id="jj1-hx-9uM"/>
                                     <constraint firstItem="m4R-cN-QaR" firstAttribute="top" secondItem="1ff-Zq-eZn" secondAttribute="top" id="wEn-XP-pzR"/>
                                 </constraints>
@@ -1406,7 +1407,6 @@ CA
                         <outlet property="buttonsView" destination="m4R-cN-QaR" id="LLW-bv-2ac"/>
                         <outlet property="cancelButton" destination="raV-jm-PNg" id="cIf-Ny-umv"/>
                         <outlet property="dateLabel" destination="7TP-X8-yTZ" id="3W1-cO-sWe"/>
-                        <outlet property="height" destination="56D-tP-jfI" id="868-F6-yrH"/>
                         <outlet property="statusLabel" destination="LMu-5O-o9h" id="AHB-Ao-VNj"/>
                         <outlet property="statusView" destination="dLO-Ko-BEx" id="Jjw-fr-8WK"/>
                     </connections>
