@@ -625,8 +625,8 @@ extension ZAlerts {
         }
     }
 
-	func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
-        alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { alert, status in
+	func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, alertWidth width: CGFloat? = nil, _ closure: AlertStatusClosure? = nil) {
+		alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage, width) { alert, status in
             switch status {
             case .sShow:
                 alert?.showModal { status in
@@ -642,7 +642,7 @@ extension ZAlerts {
         }
     }
 
-    func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertClosure? = nil) {
+	func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil, _ closure: AlertClosure? = nil) {
         FOREGROUND(canBeDirect: true) {
             let             a = ZAlert()
             a    .messageText = iMessage
@@ -660,7 +660,11 @@ extension ZAlerts {
                 a.accessoryView = NSImageView(image: image)
                 a.accessoryView?.frame = frame
                 a.layout()
-            }
+            } else if let     w = width {
+				let       frame = CGRect(x: 0.0, y: 0.0, width: w, height: 0.0)
+				a.accessoryView = ZView(frame: frame)
+				a.layout()
+			}
             
             closure?(a, .sShow)
         }

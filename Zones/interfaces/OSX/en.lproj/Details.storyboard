@@ -1357,8 +1357,8 @@ CA
                                                 </textFieldCell>
                                             </textField>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="raV-jm-PNg">
-                                                <rect key="frame" x="68" y="1" width="154" height="32"/>
-                                                <buttonCell key="cell" type="push" title="Cancel Auto-Renew" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mme-M7-oqI">
+                                                <rect key="frame" x="76" y="1" width="139" height="32"/>
+                                                <buttonCell key="cell" type="push" title="How do I Cancel?" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mme-M7-oqI">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>

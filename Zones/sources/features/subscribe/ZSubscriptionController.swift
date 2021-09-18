@@ -73,6 +73,15 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	@IBAction func handleCancelAction(button: ZButton) {
+		gAlerts.showAlert(
+			"How to cancel your subscription",
+			["1. Open the App Store app.",
+			 "2. Click the sign-in button, or your name at the bottom of the sidebar.",
+			 "3. Click 'View Information' at the top of the window. You might be asked to sign in.",
+			 "4. On the page that appears, scroll until you see 'Subscriptions', then click 'Manage'.",
+			 "5. Click 'Edit' next to the subscription that you want.",
+			 "6. Click 'Cancel Subscription'. If you don’t see 'Cancel Subscription', then the subscription is already canceled and won't renew. "].joined(separator: "\n"),
+			alertWidth: CGFloat(700.0)) { status in }
 	}
 
 	@objc func buttonAction(button: ZSubscriptionButton) {
