@@ -25,7 +25,7 @@ class ZReceipt: NSObject {
 	}
 
 	func unravelReceiptDict(_ dict: ZStringAnyDictionary, transactionID: String?, _ receipt: String) -> ZToken? {
-		if  transactionID == nil || transactionID != dict.transactionID {
+		if  let i = transactionID, i == dict.transactionID {
 			return dict.createZToken(with: receipt)
 		}
 
@@ -47,8 +47,9 @@ class ZReceipt: NSObject {
 
 			for baseURL in [productionURL, sandboxURL] {
 				sendReceipt(receipt, to: baseURL) { responseDict in
-					if  let status  = (responseDict["status"] as? NSNumber)?.intValue, status == 0 {
-						onCompletion?(self.unravelReceiptDict(responseDict, transactionID: transactionID, receipt))
+					if  let status = responseDict["status"] as? NSNumber, status.intValue == 0,
+						let  token = self.unravelReceiptDict(responseDict, transactionID: transactionID, receipt) {
+						onCompletion?(token)
 					}
 				}
 			}
@@ -57,7 +58,7 @@ class ZReceipt: NSObject {
 
 	func sendReceipt(_ receipt: String, to baseURL: String, _ onCompletion: ZDictionaryClosure? = nil) {
 		if  let     url = URL(string: "https://\(baseURL)/verifyReceipt") {
-			let session = URLSession(configuration: .default)
+			let session = URLSession(configuration: .ephemeral)
 			let    dict = ["receipt-data": receipt, "password": kSubscriptionSecret] as [String : Any]
 			var request = URLRequest(url: url)
 			request.httpMethod = "POST"

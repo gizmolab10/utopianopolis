@@ -1340,17 +1340,17 @@ CA
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="dLO-Ko-BEx">
                                         <rect key="frame" x="0.0" y="0.0" width="290" height="80"/>
                                         <subviews>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7TP-X8-yTZ">
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LMu-5O-o9h">
                                                 <rect key="frame" x="6" y="58" width="278" height="14"/>
-                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="7k9-np-EMp">
+                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="OfC-14-FUY">
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LMu-5O-o9h">
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7TP-X8-yTZ">
                                                 <rect key="frame" x="6" y="36" width="278" height="14"/>
-                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="OfC-14-FUY">
+                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="7k9-np-EMp">
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1368,14 +1368,14 @@ CA
                                             </button>
                                         </subviews>
                                         <constraints>
+                                            <constraint firstItem="7TP-X8-yTZ" firstAttribute="top" secondItem="LMu-5O-o9h" secondAttribute="bottom" constant="8" id="1ei-rY-yAs"/>
+                                            <constraint firstItem="raV-jm-PNg" firstAttribute="top" secondItem="7TP-X8-yTZ" secondAttribute="bottom" constant="8" id="Fcs-pP-wpJ"/>
                                             <constraint firstItem="LMu-5O-o9h" firstAttribute="leading" secondItem="dLO-Ko-BEx" secondAttribute="leading" constant="8" id="L47-PQ-byt"/>
                                             <constraint firstAttribute="bottom" secondItem="raV-jm-PNg" secondAttribute="bottom" constant="8" id="NgS-rG-Zwl"/>
                                             <constraint firstItem="7TP-X8-yTZ" firstAttribute="leading" secondItem="dLO-Ko-BEx" secondAttribute="leading" constant="8" id="TH1-3y-Xje"/>
-                                            <constraint firstItem="raV-jm-PNg" firstAttribute="top" secondItem="LMu-5O-o9h" secondAttribute="bottom" constant="8" id="Xdn-hh-8RY"/>
-                                            <constraint firstItem="7TP-X8-yTZ" firstAttribute="top" secondItem="dLO-Ko-BEx" secondAttribute="top" constant="8" id="cgk-W0-stp"/>
                                             <constraint firstItem="raV-jm-PNg" firstAttribute="centerX" secondItem="dLO-Ko-BEx" secondAttribute="centerX" id="d4U-sf-BKJ"/>
                                             <constraint firstAttribute="trailing" secondItem="LMu-5O-o9h" secondAttribute="trailing" constant="8" id="g02-Ji-O7I"/>
-                                            <constraint firstItem="LMu-5O-o9h" firstAttribute="top" secondItem="7TP-X8-yTZ" secondAttribute="bottom" constant="8" id="jgX-k6-9ru"/>
+                                            <constraint firstItem="LMu-5O-o9h" firstAttribute="top" secondItem="dLO-Ko-BEx" secondAttribute="top" constant="8" id="g13-cN-ccT"/>
                                             <constraint firstAttribute="trailing" secondItem="7TP-X8-yTZ" secondAttribute="trailing" constant="8" id="mf4-il-qq2"/>
                                         </constraints>
                                     </customView>

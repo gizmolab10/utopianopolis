@@ -47,7 +47,7 @@ class ZSubscriptionController: ZGenericController {
 		height?          .constant =  gShowMySubscriptions ? 84.0 : CGFloat(rows) * 26.0 - 3.0
 
 		if  gShowMySubscriptions {
-			dateLabel?       .text = gProducts.acquired
+			dateLabel?       .text = gProducts.expires
 			statusLabel?     .text = gProducts.status
 //			cancelButton?.isHidden = !(gProducts.zToken?.type.isAutoRenew ?? false)
 		} else if rowsChanged {
@@ -73,7 +73,6 @@ class ZSubscriptionController: ZGenericController {
 	}
 
 	@IBAction func handleCancelAction(button: ZButton) {
-		gProducts.validateCurrentReceipt()
 	}
 
 	@objc func buttonAction(button: ZSubscriptionButton) {

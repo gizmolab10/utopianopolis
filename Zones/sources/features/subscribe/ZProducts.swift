@@ -19,8 +19,26 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	var acquired : String { return zToken?.acquired ?? kEmpty }
 	var   status : String { return zToken?.status   ?? kTryThenBuy }
 
+	var expires : String {
+		if !hasEnabledSubscription {
+			return "Expired"
+		} else if let e = expiresOn {
+			return "Expires at \(e.easyToReadDateTime)"
+		} else {
+			return "Never Expires"
+		}
+	}
+
+	var expiresOn: Date? {
+		if  let d = zToken?.type.duration {
+			return zToken?.date.advanced(by: d)
+		} else {
+			return nil
+		}
+	}
+
 	var hasEnabledSubscription: Bool {
-		return zToken?.state != .sExpired
+		return zToken != nil && zToken!.state != .sExpired
 	}
 
 	var zToken: ZToken? {
@@ -47,6 +65,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 		queue.add(self) // for paymentQueue callbacks
 		queue.restoreCompletedTransactions()
 		fetchProducts()
+		validateCurrentReceipt()
 	}
 
 	func updateForSubscriptionChange() { // called every hour by a timer started in startup
@@ -136,7 +155,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	}
 
 	func validateCurrentReceipt() {
-		gReceipt.localValidateForID(zToken?.transactionID) { token in
+		gReceipt.remoteValidateForID(zToken?.transactionID) { token in
 			if  let  t = token {
 				self.zToken = t
 
@@ -214,9 +233,18 @@ enum ZProductType: String {
 		}
 	}
 
-	var title: String { return "\(duration) (\(cost))" }
+	var title: String { return "\(durationString) (\(cost))" }
 
-	var duration: String {
+	var duration: Double {
+		switch self {
+			case .pDaily:    return Double(kOneDay)
+			case .pAnnual:   return Double(kOneYear)
+			case .pMonthly:  return Double(kOneMonth)
+			default:         return .nan
+		}
+	}
+
+	var durationString: String {
 		switch self {
 			case .pDaily:    return "One Day"
 			case .pAnnual:   return "One Year"
@@ -287,7 +315,7 @@ struct ZToken {
 	}
 
 	var status: String {
-		let time   = type.duration
+		let time   = type.durationString
 		if  state == .sSubscribed {
 			return time
 		}
