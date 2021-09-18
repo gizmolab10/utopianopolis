@@ -81,7 +81,12 @@ class ZSubscriptionController: ZGenericController {
 			 "4. On the page that appears, scroll until you see 'Subscriptions', then click 'Manage'.",
 			 "5. Click 'Edit' next to the subscription that you want.",
 			 "6. Click 'Cancel Subscription'. If you don’t see 'Cancel Subscription', then the subscription is already canceled and won't renew. "].joined(separator: "\n"),
-			alertWidth: CGFloat(700.0)) { status in }
+			"OK", "My subscription is missing!",
+			alertWidth: CGFloat(700.0)) { status in
+			if  status == .sNo {
+				"https://support.apple.com/en-us/HT212052".openAsURL()
+			}
+		}
 	}
 
 	@objc func buttonAction(button: ZSubscriptionButton) {
