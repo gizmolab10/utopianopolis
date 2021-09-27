@@ -43,7 +43,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	func setupChildren() {}
 	func updateNoteOffsets() {}
 	func noteIn(_ range: NSRange) -> ZNote { return self }
-	func injectIntoEssay(_ attributedString: NSAttributedString?) { injectIntoNote(attributedString) }
+	func saveInEssay(_ attributedString: NSAttributedString?) { saveInNote(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
 
@@ -71,7 +71,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK:- persistency
 	// MARK:-
 
-	func injectIntoNote(_ attributedString: NSAttributedString?) {
+	func saveInNote(_ attributedString: NSAttributedString?) {
 		if  let            trait  = maybeNoteTrait,
 			let       attributed  = attributedString {
 			let            delta  = attributed.string.length - textRange.upperBound
@@ -84,7 +84,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let             text  = attributed.attributedSubstring(from: textRange)
 			trait      .noteText  = NSMutableAttributedString(attributedString: text)
 
-			if  gEssayTitleMode != .sEmpty {
+			if  gEssayTitleMode  != .sEmpty {
 				let          name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: kEmpty)
 				zone?   .zoneName = name
 			}

@@ -1372,18 +1372,27 @@ extension NSMutableParagraphStyle {
 
 		for part in parts {
 			let subparts = part.componentsSeparatedAt(level: 3)
+			let    count = subparts.count
+			var    index = 1
+			var  subpart = subparts[index]
 
-			if  subparts.count > 1 {
+			if  count > 1 {
 				switch subparts[0] {
 					case kAlignment:
-						if  let   raw = subparts[1].integerValue,
-							let     a = NSTextAlignment(rawValue: raw) {
-							alignment = a
+						if  let    raw = subpart.integerValue,
+							let      a = NSTextAlignment(rawValue: raw) {
+							alignment  = a
 						}
-					case kStops:  // TODO: can have more than one stop
-						let string = subparts[1]
-						let   stop = NSTextTab(string: string)
-						tabStops   = [stop]
+					case kStops:
+						var      stops = [NSTextTab]()
+						while    index < count {
+							subpart    = subparts[index]
+							index     += 1
+
+							stops.append(NSTextTab(string: subpart))
+						}
+
+						tabStops       = stops
 					default: break
 				}
 			}

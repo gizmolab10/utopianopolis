@@ -556,7 +556,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func save() {
 		if  let e = gCurrentEssay {
-			e.injectIntoEssay(textStorage)
+			e.saveInEssay(textStorage)
 		}
 	}
 
