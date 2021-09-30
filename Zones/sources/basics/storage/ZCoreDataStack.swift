@@ -484,6 +484,8 @@ class ZCoreDataStack: NSObject {
 		if  gIsUsingCloudKit {
 			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
 			desc.cloudKitContainerOptions = options
+
+			desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
 		}
 
 		return desc
@@ -496,6 +498,8 @@ class ZCoreDataStack: NSObject {
 			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
 			options.databaseScope         = CKDatabase.Scope.public // default is private
 			desc.cloudKitContainerOptions = options
+
+			desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
 		}
 
 		return desc

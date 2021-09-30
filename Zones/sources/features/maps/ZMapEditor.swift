@@ -167,8 +167,8 @@ class ZMapEditor: ZBaseEditor {
 				gTextEditor.handleArrow(arrow, flags: flags)
 			} else if !((flags.isOption && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
 				switch arrow {
-					case .down,    .up: moveUp(arrow == .up, flags: flags)
-					case .left, .right: moveLeft(arrow == .left, flags: flags, onCompletion: onCompletion)
+					case .down,    .up: moveUp  (arrow == .up, flags: flags)
+					case .left, .right: moveLeft(arrow == .left, flags: flags, onCompletion: onCompletion); return
 				}
 			}
 		}
