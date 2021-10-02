@@ -31,7 +31,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	let dotInset        = CGFloat(-5.0)
 	var dropped         = StringsArray()
 	var grabbedNotes    = [ZNote]()
-	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != .zero { imageAttachment = nil } } }
+	var selectionRect   = CGRect()           { didSet { if selectionRect.origin == .zero { imageAttachment = nil } } }
 	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { setSelectedRange(NSRange()) } else if oldValue != nil { eraseAttachment = oldValue } } }
 	var eraseAttachment : ZRangedAttachment?
 	var grabbedZones    : [Zone]             { return grabbedNotes.map { $0.zone! } }

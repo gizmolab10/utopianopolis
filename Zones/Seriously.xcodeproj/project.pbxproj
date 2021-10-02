@@ -220,6 +220,7 @@
 		A76D19402703FEBB00E04044 /* simple.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A76D193E2703FEBB00E04044 /* simple.xcdatamodeld */; };
 		A76D19422703FEBD00E04044 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A76D19412703FEBD00E04044 /* Assets.xcassets */; };
 		A76D19452703FEBD00E04044 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A76D19432703FEBD00E04044 /* Main.storyboard */; };
+		A76D196A2706400100E04044 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F7C42D226D343400D52637 /* CloudKit.framework */; };
 		A7738FE12628C3390040B9CD /* tutorial.idea.and.list.mov in Resources */ = {isa = PBXBuildFile; fileRef = A7738FDF2628C3390040B9CD /* tutorial.idea.and.list.mov */; };
 		A774ED1A23E225A500080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
 		A774ED1D23E2268D00080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
@@ -643,6 +644,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A76D196A2706400100E04044 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1334,8 +1336,8 @@
 				0C69C9861F09CD95004D026D /* iFocus */,
 				0CA04B481D2ECF41001892E5 /* iPad */,
 				0CA04B131D2ECF1A001892E5 /* Seriously */,
-				A79F022D262CC5A300E87742 /* test */,
 				A76D19372703FEBB00E04044 /* simple */,
+				A79F022D262CC5A300E87742 /* test */,
 			);
 		};
 /* End PBXProject section */
@@ -2211,6 +2213,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = simple/simple.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
@@ -2223,6 +2226,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.simple;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 			};
@@ -2240,6 +2244,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = simple/simple.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
@@ -2251,6 +2256,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.simple;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

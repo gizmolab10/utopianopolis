@@ -8,14 +8,17 @@
 
 import Cocoa
 
+var gSimple: Simple?
+var gAppDelegate: AppDelegate?
+func gSave() { gAppDelegate?.saveAction(nil) }
+
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-    
-
-
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
+		gAppDelegate = self
+		gSimple = NSEntityDescription.insertNewObject(forEntityName: "Simple", into: persistentContainer.viewContext) as? Simple
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -60,7 +63,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if !context.commitEditing() {
             NSLog("\(NSStringFromClass(type(of: self))) unable to commit editing before saving")
         }
-        if context.hasChanges {
+
+		if  context.hasChanges {
             do {
                 try context.save()
             } catch {

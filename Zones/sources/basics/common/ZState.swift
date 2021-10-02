@@ -104,8 +104,8 @@ var             gSmallMapFont:              ZFont { return .systemFont(ofSize: g
 var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var                 gTinyFont:              ZFont { return .systemFont(ofSize: gFontSize * kSmallMapReduction * kSmallMapReduction) }
 
-func      gToggleShowTooltips()                   { gShowToolTips = !gShowToolTips; gSignal([.sRelayout]) }
-func        gToggleDatabaseID()                   { gDatabaseID   = gOtherDatabaseID }
+func      gToggleShowTooltips()                   { gShowToolTips = !gShowToolTips; gSignal([.sDetails, .sRelayout]) }
+func        gToggleDatabaseID()                   { gDatabaseID   =  gOtherDatabaseID }
 func         gSetEditIdeaMode()                   { gWorkMode     = .wEditIdeaMode }
 func           gSetBigMapMode()                   { gWorkMode     = .wMapMode }
 

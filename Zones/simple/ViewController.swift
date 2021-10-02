@@ -8,8 +8,6 @@
 
 import Cocoa
 
-var gSimple = Simple()
-
 class ViewController: NSViewController {
 
 	@IBOutlet var input: NSTextField?
@@ -27,7 +25,9 @@ class ViewController: NSViewController {
     }
 
 	@IBAction func handleTextInput(sender: NSTextField) {
-		gSimple.name = sender.stringValue
+		gSimple?.name = sender.stringValue
+
+		gSave()
 	}
 
 }
