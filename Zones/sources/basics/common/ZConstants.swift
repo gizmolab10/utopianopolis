@@ -105,6 +105,7 @@ let                       kDot = "\u{25CF}" // 233E, 25C9, 2605, 273A, 274A
 let                       kTab = "\t"
 let                      kDone = "done"
 let                      kStop = "stop"
+let                     kLists = "lists"
 let                     kLinks = "links"
 let                     kStops = "stops"
 let                     kEmpty = ""

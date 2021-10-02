@@ -1353,6 +1353,7 @@ extension NSMutableParagraphStyle {
 
 	var string: String {
 		var result = kAlignment + gSeparatorAt(level: 3) + "\(alignment.rawValue)"
+		let  lists = textLists
 
 		if  let stops = tabStops {
 			result.append(gSeparatorAt(level: 2) + kStops)
@@ -1360,6 +1361,16 @@ extension NSMutableParagraphStyle {
 			for stop in stops {
 				result.append(gSeparatorAt(level: 3) + stop.string)
 			}
+		}
+
+		result.append(gSeparatorAt(level: 2) + kLists)
+
+		for list in lists {
+			let  format = list.markerFormat.rawValue
+			let options = "\(list.listOptions.rawValue)"
+
+			result.append(gSeparatorAt(level: 3) + format)
+			result.append(gSeparatorAt(level: 4) + options)
 		}
 
 		return result
@@ -1374,20 +1385,32 @@ extension NSMutableParagraphStyle {
 			let subparts = part.componentsSeparatedAt(level: 3)
 			let    count = subparts.count
 			var    index = 1
-			var  subpart = subparts[index]
 
 			if  count > 1 {
 				switch subparts[0] {
 					case kAlignment:
-						if  let    raw = subpart.integerValue,
-							let      a = NSTextAlignment(rawValue: raw) {
-							alignment  = a
+						if  let     raw = subparts[1].integerValue,
+							let       a = NSTextAlignment(rawValue: raw) {
+							alignment   = a
 						}
+					case kLists:
+						var       lists = [NSTextList]()
+						while     index < count {
+							let subpart = subparts[index]
+							let subsubs = subpart.componentsSeparatedAt(level: 4)
+							let  format = NSTextList.MarkerFormat(subsubs[0])
+							let options = 0 // Int(subsubs[1]) ?? 0
+							index      += 1
+
+							lists.append(NSTextList(markerFormat: format, options: options))
+						}
+
+						textLists = lists
 					case kStops:
-						var      stops = [NSTextTab]()
-						while    index < count {
-							subpart    = subparts[index]
-							index     += 1
+						var       stops = [NSTextTab]()
+						while     index < count {
+							let subpart = subparts[index]
+							index      += 1
 
 							stops.append(NSTextTab(string: subpart))
 						}
