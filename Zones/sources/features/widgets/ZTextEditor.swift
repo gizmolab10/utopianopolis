@@ -403,7 +403,6 @@ class ZTextEditor: ZTextView {
     func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
         currentEdit?.prepareUndoForTextChange(manager, onUndo)
     }
-
 	
 	// MARK:- selecting
 	// MARK:-

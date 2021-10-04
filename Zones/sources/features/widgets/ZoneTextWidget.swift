@@ -95,7 +95,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     }
 
 	func setText(_ iText: String?) {
-		text      = iText
+		text = iText
+
+		updateTextWidth()
+	}
+
+	func updateTextWidth() {
 		textWidth = text?.widthForFont(preferredFont) ?? CGFloat.zero
 	}
 
