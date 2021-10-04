@@ -27,6 +27,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     var             widgetZone : Zone? { return  widget?.widgetZone }
     weak var            widget : ZoneWidget?
 	var                   type = ZTextType.name
+	var              textWidth = CGFloat.zero
 	var             isHovering = false
 	
     var selectionRange: NSRange {
@@ -93,11 +94,15 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         widget?.setNeedsDisplay()
     }
 
+	func setText(_ iText: String?) {
+		text      = iText
+		textWidth = text?.widthForFont(preferredFont) ?? CGFloat.zero
+	}
+
     func applyConstraints() {
-        if  let container = superview {
+		if  let container = superview {
 			let    offset = ((gGenericOffset.height - 2.0) / 3.0) + 5.0              // add 5 to include tiny dot below
-			let  hideText = widgetZone?.onlyShowRevealDot ?? true
-			let textWidth = text!.widthForFont(preferredFont)
+			let  hideText = widgetZone?.onlyShowRevealDot ?? true                    // only show reveal dot is for small map here
 			let     width = hideText ? 0.0 : textWidth + 1.0
 
 			snp.setLabel("<T> \(widgetZone?.zoneName ?? kUnknown)")
@@ -215,8 +220,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
             if  range.length < original.length {
                 if  !requiresAllOrTitleSelected {
-                    text = original.stringBySmartReplacing(range, with: kEmpty)
-                    
+					setText(original.stringBySmartReplacing(range, with: kEmpty))                    
                     gSelecting.ungrabAll()
                 } else if range.location != 0 && !original.isLineTitle(enclosing: range) {
                     extract = nil

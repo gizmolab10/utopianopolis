@@ -129,7 +129,7 @@ class ZTextPack: NSObject {
 			}
 		}
 
-		textWidget?.text = text
+		textWidget?.setText(text)
 	}
 
     func setup(for iZRecord: ZRecord) {
@@ -137,7 +137,7 @@ class ZTextPack: NSObject {
         packedZone   = iZRecord as? Zone ?? packedTrait?.ownerZone
         originalText = unwrappedName
 
-        textWidget?.text = originalText
+		textWidget?.setText(originalText)
     }
 
     func isEditing(_ iZRecord: ZRecord) -> Bool {
@@ -245,10 +245,10 @@ class ZTextPack: NSObject {
         if  let text = textWidget?.text,
             text    != originalText {
             manager?.registerUndo(withTarget:self) { iUndoSelf in
-                let                newText = iUndoSelf.textWidget?.text ?? kEmpty
-                iUndoSelf.textWidget?.text = iUndoSelf.originalText
-                iUndoSelf.originalText     = newText
+                let            newText = iUndoSelf.textWidget?.text ?? kEmpty
+				iUndoSelf.originalText = newText
 
+				iUndoSelf.textWidget?.setText(iUndoSelf.originalText)
                 onUndo()
             }
         }

@@ -397,10 +397,10 @@ class ZoneWidget: ZView {
     }
 
 	func dragHitRect(in view: ZView, _ here: Zone) -> CGRect {
-		let   text = textWidget
+		let widget = textWidget
 		let isHere = widgetZone == here
-		let cFrame =      convert(childrenView.frame, to: view)
-		let tFrame = text.convert(       text.bounds, to: view)
+		let cFrame =        convert(childrenView.frame, to: view)
+		let tFrame = widget.convert(     widget.bounds, to: view)
 		let   left =    isHere ? 0.0                                  : tFrame.minX - (gGenericOffset.width * 0.8)
 		let bottom =  (!isHere && widgetZone?.hasZonesBelow ?? false) ? cFrame.minY : 0.0
 		let    top = ((!isHere && widgetZone?.hasZonesAbove ?? false) ? cFrame      : view.bounds).maxY

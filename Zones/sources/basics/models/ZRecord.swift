@@ -14,7 +14,6 @@ class ZRecord: ZManagedObject { // NSObject {
 	@NSManaged var       recordName: String?
 	@NSManaged var modificationDate: Date?
 	var           databaseID: ZDatabaseID { return ZDatabaseID.convert(from: dbid)! }
-	var           kvoContext: UInt8 = 1
 	var       _tooltipRecord: Any?
 	var    writtenModifyDate: Date?
 	var             zRecords: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
@@ -64,7 +63,7 @@ class ZRecord: ZManagedObject { // NSObject {
 	func orphan() {}
 	func adopt(recursively: Bool = false) {}
 	func maybeNeedRoot() {}
-	func debug(_  iMessage: String) {}
+	func debug(_ iMessage: String) {}
 	func hasMissingChildren() -> Bool { return true }
 	func hasMissingProgeny()  -> Bool { return true }
 	func ignoreKeyPathsForStorage() -> StringsArray { return [kpParent, kpOwner] }
