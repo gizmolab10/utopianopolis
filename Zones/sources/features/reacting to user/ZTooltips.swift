@@ -167,7 +167,7 @@ extension Zone {
 				hasHyperlink    ? "invoke web link" : kEmpty
 		}
 
-		return gConcealmentString(for: expanded) + " list for"
+		return gConcealmentString(for: isExpanded) + " list for"
 	}
 
 }

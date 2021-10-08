@@ -51,6 +51,8 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			widget.drawDragLine(to: floatRect, in: self)
 			dot.drawInnerDot(dotRect, parameters)
         }
+
+		gHere.widget?.updateFrame()
 	}
 
 	override func mouseExited(with event: ZEvent) {

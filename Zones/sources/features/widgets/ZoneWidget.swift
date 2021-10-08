@@ -162,6 +162,7 @@ class ZoneWidget: ZView {
 		gStartupController?.fullStartupUpdate()
 		gWidgets.setWidgetForZone(self, for: mapType)
         addTextView()
+		addDots()
         textWidget.layoutText()
         layoutDots()
 
@@ -169,7 +170,7 @@ class ZoneWidget: ZView {
 			addChildrenView()
 			prepareChildrenWidgets()
 
-			if  recursing && !visited.contains(zone), zone.expanded, zone.count > 0 {
+			if  recursing && !visited.contains(zone), zone.isExpanded, zone.count > 0 {
 				count += layoutChildren(kind, mapType: mapType, visited: visited + [zone])
 			}
 		}
@@ -180,7 +181,7 @@ class ZoneWidget: ZView {
     func layoutChildren(_ kind: ZSignalKind, mapType: ZWidgetType, visited: ZoneArray) -> Int {
 		var count = 0
 
-        if  let  zone = widgetZone, zone.expanded {
+        if  let  zone = widgetZone, zone.isExpanded {
             var index = childrenWidgets.count
             var previous: ZoneWidget?
 
@@ -213,15 +214,24 @@ class ZoneWidget: ZView {
 		return count
     }
 
+	func addDots() {
+		let hideDragDot = widgetZone?.onlyShowRevealDot ?? false
+
+		if !hideDragDot,
+		   !subviews.contains(dragDot) {
+			insertSubview(dragDot, belowSubview: textWidget)
+		}
+
+		if !subviews.contains(revealDot) {
+			insertSubview(revealDot, belowSubview: textWidget)
+		}
+	}
+
     func layoutDots() {
-		let hideDragDot = widgetZone?.onlyShowRevealDot ?? true
+		let hideDragDot = widgetZone?.onlyShowRevealDot ?? false
 		let verticalDotOffset = 0.5
 
 		if !hideDragDot {
-			if !subviews.contains(dragDot) {
-				insertSubview(dragDot, belowSubview: textWidget)
-			}
-			
 			dragDot.innerDot?.snp.removeConstraints()
 			dragDot.innerDot?.snp.setLabel("<d> \(widgetZone?.zoneName ?? kUnknown)")
 			dragDot.setupForWidget(self, asReveal: false)
@@ -231,10 +241,6 @@ class ZoneWidget: ZView {
 			}
 		}
 
-        if !subviews.contains(revealDot) {
-            insertSubview(revealDot, belowSubview: textWidget)
-        }
-
 		revealDot.innerDot?.snp.setLabel("<r> \(widgetZone?.zoneName ?? kUnknown)")
         revealDot.innerDot?.snp.removeConstraints()
         revealDot.setupForWidget(self, asReveal: true)
@@ -243,6 +249,57 @@ class ZoneWidget: ZView {
             make.centerY.equalTo(textWidget).offset(verticalDotOffset)
         }
     }
+
+	@discardableResult func updateFrame() -> CGRect {
+		var     childrenSize : CGSize?
+		var biggestChildSize = CGSize.zero
+		var    childrenWidth = CGFloat.zero
+
+		for child in childrenWidgets {			// traverse progeny, updating their frames
+			let childSize = child.updateFrame().size
+
+			if  childSize.width  > biggestChildSize.width {
+				biggestChildSize = childSize
+			}
+		}
+
+		if  let     zone = widgetZone, zone.isExpanded {
+			let   height = biggestChildSize.height * CGFloat(childrenWidgets.count)
+			childrenSize = CGSize(width: biggestChildSize.width, height: height)
+		}
+
+		// text view
+		let textSize = textWidget.drawnSize
+		let   offset = gGenericOffset.add(width: 4.0, height: 0.5) // why?
+		let        x = offset.width  * ratio
+		var        y = offset.height * ratio
+
+		if  let      size = childrenSize {
+			childrenWidth =  size.width
+			y             = (size.height - textSize.height) / 2.0
+		}
+
+		// reveal dot x == textwidget.frame.maxX
+		// inner dot height == width ==                   14
+		// reveal dot width is related to generic offset: 25.5
+		// dot height       is related to generic offset: 25
+		// drag dot x value is:                           12
+		// drag dot widths are both 3.5 smaller:          22   and 10.5 (outer and inner)
+		// dots y values are:                             -0.5 and  5.5 "
+		// inner dots x values are:                        6   and  5.5 (reveal and drag)
+
+		let   textOrigin = CGPoint(x: x, y: y)
+		textWidget         .frame = CGRect(origin: textOrigin, size: textSize)
+		dragDot            .frame = CGRect(x:  11.5, y: -0.5, width: 22.0, height: 24.5) // why?
+		dragDot  .innerDot?.frame = CGRect(x:   6.0, y:  5.5, width: 10.5, height: 13.5) // why?
+		revealDot          .frame = CGRect(x: 109.0, y: -0.5, width: 25.5, height: 24.5) // why?
+		revealDot.innerDot?.frame = CGRect(x:   5.5, y:  5.5, width: 14.0, height: 13.5) // why?
+		childrenView       .frame = CGRect(x: 280.5, y:  0.0, width: 16.5, height: 25.0) // why?
+
+		// use all but children's view to compute frame
+
+		return CGRect.zero
+	}
 
     // MARK:- view hierarchy
     // MARK:-
@@ -275,7 +332,7 @@ class ZoneWidget: ZView {
     func prepareChildrenWidgets() {
         if  let zone = widgetZone {
 
-            if !zone.expanded {
+            if !zone.isExpanded {
                 childrenWidgets.removeAll()
 
                 for view in childrenView.subviews {
@@ -321,7 +378,7 @@ class ZoneWidget: ZView {
         var rect = CGRect()
 
         if  let zone = widgetZone {
-            if !zone.expanded || zone.count == 0 {
+            if !zone.isExpanded || zone.count == 0 {
 
                 // //////////////////////
                 // DOT IS STRAIGHT OUT //
@@ -597,7 +654,7 @@ class ZoneWidget: ZView {
             let  isGrabbed = zone.isGrabbed
             let  isEditing = textWidget.isFirstResponder
 			let isHovering = textWidget.isHovering
-			let   expanded = zone.expanded
+			let   expanded = zone.isExpanded
 
 			if !nowDrawLines {
 				nowDrawLines = true

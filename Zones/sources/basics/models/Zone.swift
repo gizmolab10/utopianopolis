@@ -83,8 +83,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var        isCurrentSmallMapBookmark :               Bool  { return isCurrentFavorite || isCurrentRecent }
 	var                  isCurrentRecent :               Bool  { return self ==   gRecents.currentBookmark }
 	var                isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
-	var                onlyShowRevealDot :               Bool  { return expanded && ((isSmallMapHere && !(widget?.type.isBigMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
-	var                  dragDotIsHidden :               Bool  { return (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && expanded) } // hide favorites root drag dot
+	var                onlyShowRevealDot :               Bool  { return isExpanded && ((isSmallMapHere && !(widget?.type.isBigMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
+	var                  dragDotIsHidden :               Bool  { return (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var                 hasBadRecordName :               Bool  { return recordName == nil }
 	var                    hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
 	var                    hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
@@ -715,7 +715,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				highest = traverseLevel
 			}
 
-			return iZone.expanded ? .eContinue : .eSkip
+			return iZone.isExpanded ? .eContinue : .eSkip
 		}
 
 		return highest
@@ -2162,7 +2162,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var addRecursive = {}
 
 		addRecursive = {
-			let expand = !zone.expanded
+			let expand = !zone.isExpanded
 			needReveal = needReveal || expand
 
 			if  expand {
@@ -2367,7 +2367,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var isVisible = true
 
 		traverseAncestors { iAncestor -> ZTraverseStatus in
-			let showing = iAncestor.expanded
+			let showing = iAncestor.isExpanded
 
 			if      iAncestor != self {
 				if  iAncestor == gHere || !showing {
@@ -2454,7 +2454,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				visible.append(w)
 			}
 
-			return iZone.expanded ? .eContinue : .eSkip
+			return iZone.isExpanded ? .eContinue : .eSkip
 		}
 
 		return visible
@@ -2482,7 +2482,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		safeTraverseProgeny(visited: []) { iZone -> ZTraverseStatus in
 			block(iZone)
 
-			return iZone.expanded ? .eContinue : .eSkip
+			return iZone.isExpanded ? .eContinue : .eSkip
 		}
 	}
 
@@ -2522,7 +2522,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if begun {
 				if iZone.level > iLevel || iZone == self {
 					return .eSkip
-				} else if iZone.level == iLevel && iZone != self && (iZone.parentZone == nil || iZone.parentZone!.expanded) {
+				} else if iZone.level == iLevel && iZone != self && (iZone.parentZone == nil || iZone.parentZone!.isExpanded) {
 					progeny.append(iZone)
 				}
 			}
@@ -2552,7 +2552,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			exposedLevel += 1
 
 			for child: Zone in progeny {
-				if  !child.expanded && child.fetchableCount != 0 {
+				if  !child.isExpanded && child.fetchableCount != 0 {
 					return exposedLevel
 				}
 			}
@@ -2613,7 +2613,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- children visibility
 	// MARK:-
 
-	var expanded: Bool {
+	var isExpanded: Bool {
 		if  let name = recordName,
 			gExpandedZones.contains(name) {
 			return true
@@ -2647,7 +2647,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func toggleChildrenVisibility() {
-		if  expanded {
+		if  isExpanded {
 			collapse()
 		} else {
 			expand()
@@ -2929,7 +2929,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func recursiveUpdate(_ show: Bool, to iLevel: Int?, onCompletion: Closure?) {
-		if !show && isGrabbed && (count == 0 || !expanded) {
+		if !show && isGrabbed && (count == 0 || !isExpanded) {
 
 			// ///////////////////////////////
 			// COLLAPSE OUTWARD INTO PARENT //
@@ -3146,7 +3146,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				return // selection has not changed
 			}
 
-			if  expanded {
+			if  isExpanded {
 				gSelecting.ungrabAll(retaining: children)
 			} else {
 				return // selection does not show its children
@@ -3198,7 +3198,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let  OPTION = flags.isOption
 
 		if  count > 0, !OPTION, !isBookmark {
-			let show = !expanded
+			let show = !isExpanded
 
 			if  isInSmallMap {
 				updateVisibilityInSmallMap(show)
@@ -3250,7 +3250,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let            g = groupOwner
 		p.color          = c
 		p.isGrouped      = g != nil
-		p.showList       = expanded
+		p.showList       = isExpanded
 		p.isReveal       = isReveal
 		p.hasTarget      = isBookmark
 		p.typeOfTrait    = k.first ?? kEmpty
@@ -3558,7 +3558,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		var dict             = try super.createStorageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
 
-		if  (includeInvisibles || expanded),
+		if  (includeInvisibles || isExpanded),
 			let childrenDict = try (children as ZRecordsArray).createStorageArray(from: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 			dict [.children] = childrenDict as NSObject?
 		}

@@ -95,10 +95,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			rootWidget.snp.setLabel("<o> \(rootWidget.widgetZone?.zoneName ?? kUnknown)")
 			rootWidget.snp.removeConstraints()
 			rootWidget.snp.makeConstraints { make in
-				make.centerY.equalTo(d).offset(offset.y)
 				make.centerX.equalTo(d).offset(offset.x)
 
-				if !isBigMap {
+				if  isBigMap {
+					make.centerY.equalTo(d).offset(offset.y)
+				} else {
 					make.top   .equalToSuperview()
 					make.bottom.equalToSuperview().offset(-12.0)
 				}

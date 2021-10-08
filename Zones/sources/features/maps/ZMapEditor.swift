@@ -1145,7 +1145,7 @@ class ZMapEditor: ZBaseEditor {
 		//           level equals gCurrentBrowsingLevel             //
 		// ///////////////////////////////////////////////////////////
 
-		while grabThis.expanded, grabThis.count > 0,
+		while grabThis.isExpanded, grabThis.count > 0,
 			  let length = grabThis.zoneName?.length {
 			let range = NSRange(location: length, length: 0)
 			let index = iMoveUp ? grabThis.count - 1 : 0

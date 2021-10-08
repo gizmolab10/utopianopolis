@@ -86,7 +86,7 @@ class ZTextPack: NSObject {
 			if  gPrintModes.contains(.dNames), let name = zone.recordName {
                 suffix = name
 			} else {
-				var showNeed = (need > 1) && (!zone.expanded || (gCountsMode == .progeny))
+				var showNeed = (need > 1) && (!zone.isExpanded || (gCountsMode == .progeny))
 
 				if (dups > 0 && need > 0 && gIsShowingDuplicates) || bad {
 					showNeed = true
@@ -148,6 +148,7 @@ class ZTextPack: NSObject {
 		if  let z = packedZone,
 			let w = gWidgets.widgetForZone(z) {
 			let t = w.textWidget
+			w.addDots()
 			w.layoutDots()
 			w.revealDot.setNeedsDisplay()
 			w.setNeedsDisplay()
@@ -429,7 +430,7 @@ class ZTextEditor: ZTextView {
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gAppDelegate?.genericMenuHandler(iItem) }
 
     func moveOut(_ iMoveOut: Bool) {
-        let revealed = currentlyEditedZone?.expanded ?? false
+        let revealed = currentlyEditedZone?.isExpanded ?? false
 
 		gTemporarilySetTextEditorHandlesArrows()   // done first, this timer is often not be needed, KLUDGE to fix a bug where arrow keys are ignored
 

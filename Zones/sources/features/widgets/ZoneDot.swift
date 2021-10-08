@@ -70,8 +70,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         }
 
         return nil
-    }
-
+	}
 
     var innerExtent: CGPoint? {
         if  let inner = innerDot {
@@ -105,7 +104,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		} else {
 			let childlessTraveller = zone.isTraveller && zone.count == 0
 
-			return !zone.expanded || childlessTraveller
+			return !zone.isExpanded || childlessTraveller
 		}
 	}
 
@@ -159,6 +158,8 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		updateTracking()
 		updateTooltips()
     }
+
+	func updateFrame() {}
 
 	// MARK:- hover
 	// MARK:-
@@ -413,7 +414,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			} else if  innerDot != nil,
 				let rect = innerDot?.frame.offsetBy(dx: -0.1, dy: -0.1),
 				let zone = widgetZone,
-				(!zone.expanded || zone.isBookmark) {
+				(!zone.isExpanded || zone.isBookmark) {
 				drawOuterDot(rect, parameters)
 			}
 		}

@@ -27,9 +27,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     var             widgetZone : Zone? { return  widget?.widgetZone }
     weak var            widget : ZoneWidget?
 	var                   type = ZTextType.name
-	var              textWidth = CGFloat.zero
+	var              drawnSize = CGSize.zero
 	var             isHovering = false
-	
+
     var selectionRange: NSRange {
         var range = gTextEditor.selectedRange
 
@@ -97,27 +97,32 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	func setText(_ iText: String?) {
 		text = iText
 
-		updateTextWidth()
+		updateSize()
 	}
 
-	func updateTextWidth() {
-		textWidth = text?.widthForFont(preferredFont) ?? CGFloat.zero
+	func updateSize() {
+		if  let        t = text {
+			let textSize = t.sizeWithFont(preferredFont)
+			let   height = textSize.height + 1.0
+			let     hide = widgetZone?.onlyShowRevealDot ?? false                     // only show reveal dot is for small map here
+			let    width = hide ? 0.0 : textSize.width + 6.0
+
+			drawnSize = CGSize(width: width, height: height)
+		}
 	}
 
     func applyConstraints() {
-		if  let container = superview {
-			let    offset = ((gGenericOffset.height - 2.0) / 3.0) + 5.0              // add 5 to include tiny dot below
-			let  hideText = widgetZone?.onlyShowRevealDot ?? true                    // only show reveal dot is for small map here
-			let     width = hideText ? 0.0 : textWidth + 1.0
+		if  let     supe = superview {
+			let   offset = (gGenericOffset.height + 13.0) / 3.0                     // add 13/3 to include tiny dot below
 
 			snp.setLabel("<T> \(widgetZone?.zoneName ?? kUnknown)")
 			snp.removeConstraints()
             snp.makeConstraints { make in
-				make  .right.lessThanOrEqualTo(container).offset(-29.0)
-				make .height.lessThanOrEqualTo(container).offset(-offset)		 	 // vertically,   make room for highlight and push siblings apart
-                make.centerY.equalTo(container)                                      //     ",        center within container (widget)
-                make   .left.equalTo(container).offset(gGenericOffset.width + 4.0)   // horizontally, inset into        "
-                make  .width.equalTo(width)										     //     ",        make room for text
+				make  .width.equalTo(drawnSize.width)										    // horizontally, make room for text
+                make   .left.equalTo(supe).offset(gGenericOffset.width + 4.0)       //     ",        inset into superview (widget)
+				make  .right.lessThanOrEqualTo(supe).offset(-29.0)
+				make .height.lessThanOrEqualTo(supe).offset(-offset)		 	    // vertically,   make room for highlight and spacing between siblings
+				make.centerY.equalTo(supe)                                          //     ",        center within superview (widget)
             }
         }
     }

@@ -159,7 +159,7 @@ class ZSelecting: NSObject {
     var currentMapGrabsHaveVisibleChildren: Bool {
         for     grab in currentMapGrabs {
             if  grab.count > 0 &&
-                grab.expanded {
+                grab.isExpanded {
                 return true
             }
         }
@@ -452,7 +452,7 @@ class ZSelecting: NSObject {
                 let  cLevel  = iChild.level
 
                 if   cLevel == level ||
-                    (cLevel  < level && (iChild.count == 0 || !iChild.expanded)) {
+                    (cLevel  < level && (iChild.count == 0 || !iChild.isExpanded)) {
                     _cousinList.append(iChild)
                 }
                 
