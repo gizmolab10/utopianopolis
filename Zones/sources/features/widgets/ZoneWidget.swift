@@ -167,7 +167,7 @@ class ZoneWidget: ZView {
         layoutDots()
 
 		if  let zone = widgetZone {
-			addChildrenView()
+			prepareChildrenView()
 			prepareChildrenWidgets()
 
 			if  recursing && !visited.contains(zone), zone.isExpanded, zone.count > 0 {
@@ -177,6 +177,10 @@ class ZoneWidget: ZView {
 
 		return count
     }
+
+	override func layout() {
+		super.layout()
+	}
 
     func layoutChildren(_ kind: ZSignalKind, mapType: ZWidgetType, visited: ZoneArray) -> Int {
 		var count = 0
@@ -314,13 +318,16 @@ class ZoneWidget: ZView {
         textWidget.setup()
     }
 
-    func addChildrenView() {
+    func prepareChildrenView() {
+		childrenView.snp.removeConstraints()
         if !subviews.contains(childrenView) {
             insertSubview(childrenView, belowSubview: textWidget)
-        }
+		} else if !(widgetZone?.isExpanded ?? false) {
+			childrenView.removeFromSuperview()
+			return
+		}
 
 		childrenView.snp.setLabel("<c> \(widgetZone?.zoneName ?? kUnknown)")
-        childrenView.snp.removeConstraints()
         childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
             let ratio = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
 

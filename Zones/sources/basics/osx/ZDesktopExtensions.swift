@@ -426,7 +426,7 @@ extension CALayer {
 
 }
 
-extension NSView {
+extension ZView {
     var      zlayer:                CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
     var recognizers: [NSGestureRecognizer]? { return gestureRecognizers }
 

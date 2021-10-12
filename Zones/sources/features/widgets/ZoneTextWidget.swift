@@ -106,8 +106,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 			let   height = textSize.height + 1.0
 			let     hide = widgetZone?.onlyShowRevealDot ?? false                     // only show reveal dot is for small map here
 			let    width = hide ? 0.0 : textSize.width + 6.0
-
-			drawnSize = CGSize(width: width, height: height)
+			drawnSize    = CGSize(width: width, height: height)
 		}
 	}
 
@@ -118,7 +117,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 			snp.setLabel("<T> \(widgetZone?.zoneName ?? kUnknown)")
 			snp.removeConstraints()
             snp.makeConstraints { make in
-				make  .width.equalTo(drawnSize.width)										    // horizontally, make room for text
+				make  .width.equalTo(drawnSize.width)								// horizontally, make room for text
                 make   .left.equalTo(supe).offset(gGenericOffset.width + 4.0)       //     ",        inset into superview (widget)
 				make  .right.lessThanOrEqualTo(supe).offset(-29.0)
 				make .height.lessThanOrEqualTo(supe).offset(-offset)		 	    // vertically,   make room for highlight and spacing between siblings
