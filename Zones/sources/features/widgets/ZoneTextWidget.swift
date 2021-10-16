@@ -104,14 +104,14 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		if  let        t = text {
 			let textSize = t.sizeWithFont(preferredFont)
 			let   height = textSize.height + 1.0
-			let     hide = widgetZone?.onlyShowRevealDot ?? false                     // only show reveal dot is for small map here
+			let     hide = widgetZone?.onlyShowRevealDot ?? false                   // only show reveal dot is for small map here
 			let    width = hide ? 0.0 : textSize.width + 6.0
 			drawnSize    = CGSize(width: width, height: height)
 		}
 	}
 
     func applyConstraints() {
-		if  let     supe = superview {
+		if  let     supe = superview, gAutoLayoutMaps {
 			let   offset = (gGenericOffset.height + 13.0) / 3.0                     // add 13/3 to include tiny dot below
 
 			snp.setLabel("<T> \(widgetZone?.zoneName ?? kUnknown)")

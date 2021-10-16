@@ -88,10 +88,21 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		layoutForCurrentScrollOffset()
 	}
 
-    func layoutForCurrentScrollOffset() {
-		let offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(0.0, 20.0) : CGPoint(x: -12.0, y: -6.0)
+	func applyOffset(to widget: ZoneWidget) {
+		if  let      d = mapView {
+			let offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(0.0, 20.0) : CGPoint(x: -12.0, y: -6.0)
+			let  wSize = widget.drawnSize
+			let  vSize = view.frame.size
+			let  delta = (vSize - wSize).multiplyBy(0.5) - offset
+			widget.frame = CGRect(origin: delta, size: wSize)
+		}
 
-		if  let d = mapView {
+	}
+
+    func layoutForCurrentScrollOffset() {
+		if  let      d = mapView, (gAutoLayoutMaps || isExemplar) {
+			let offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(0.0, 20.0) : CGPoint(x: -12.0, y: -6.0)
+
 			rootWidget.snp.setLabel("<o> \(rootWidget.widgetZone?.zoneName ?? kUnknown)")
 			rootWidget.snp.removeConstraints()
 			rootWidget.snp.makeConstraints { make in
@@ -133,6 +144,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
 
 		let total = specificWidget.layoutInView(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
+
+		if !gAutoLayoutMaps {
+			specificWidget.updateAllFrames()
+			applyOffset(to: specificWidget)
+		}
 
 		printDebug(.dWidget, "layout \(widgetType.description): \(total)")
     }

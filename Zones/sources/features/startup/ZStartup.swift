@@ -27,6 +27,7 @@ class ZStartup: NSObject {
 	}
 
 	func startupCloudAndUI() {
+		gAutoLayoutMaps        = false
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
 		gMigrationState        = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrate : .firstTime

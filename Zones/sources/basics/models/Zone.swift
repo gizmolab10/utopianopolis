@@ -2478,18 +2478,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return safeTraverseProgeny(visited: [], block)
 	}
 
-	func traverseAllVisibleProgeny(_ block: ZoneClosure) {
-		safeTraverseProgeny(visited: []) { iZone -> ZTraverseStatus in
+	func traverseAllVisibleProgeny(inReverse: Bool = false, _ block: ZoneClosure) {
+		safeTraverseProgeny(visited: [], inReverse: inReverse) { iZone -> ZTraverseStatus in
 			block(iZone)
 
 			return iZone.isExpanded ? .eContinue : .eSkip
 		}
 	}
 
-	// first call block on self, then recurse on each child
+	@discardableResult func safeTraverseProgeny(visited: ZoneArray, inReverse: Bool = false, _ block: ZoneToStatusClosure) -> ZTraverseStatus {
+		var status  = ZTraverseStatus.eContinue
 
-	@discardableResult func safeTraverseProgeny(visited: ZoneArray, _ block: ZoneToStatusClosure) -> ZTraverseStatus {
-		var status  = block(self)
+		if !inReverse {
+			status  = block(self)               // first call block on self, then recurse on each child
+		}
 
 		if  status == .eContinue {
 			for child in children {
@@ -2503,6 +2505,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					break						// halt traversal
 				}
 			}
+		}
+
+		if  inReverse {
+			status  = block(self)
 		}
 
 		return status
@@ -2612,6 +2618,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// MARK:- children visibility
 	// MARK:-
+
+	var hasVisibleChildren: Bool {
+		return isExpanded && count > 0
+	}
 
 	var isExpanded: Bool {
 		if  let name = recordName,

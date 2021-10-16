@@ -99,7 +99,11 @@ class ZoneWidget: ZView {
     let            childrenView = ZView          ()
 	let            widgetObject = ZWidgetObject  ()
     private var childrenWidgets = [ZoneWidget]   ()
+	var               drawnSize = CGSize.zero
+	var   childrenViewDrawnSize = CGSize.zero
 	var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
+	var      hasVisibleChildren :       Bool  { return widgetZone?.hasVisibleChildren ?? false }
+	var             hideDragDot :       Bool  { return widgetZone?.onlyShowRevealDot ?? false }
 	var                   ratio :    CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
 	override var    description :     String  { return widgetZone?.description ?? kEmptyIdea }
 
@@ -144,10 +148,18 @@ class ZoneWidget: ZView {
 		removeAllSubviews()
     }
 
-    // MARK:- layout
+    // MARK:- auto layout
     // MARK:-
 
 	func layoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
+		if  gAutoLayoutMaps {
+			return oldLayoutInView(inView, for: mapType, atIndex: atIndex, recursing: recursing, kind, visited: visited)
+		} else {
+			return newLayoutInView(inView, for: mapType, atIndex: atIndex, recursing: recursing, kind, visited: visited)
+		}
+	}
+
+	func oldLayoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		var count = 1
 
 		if  let thisView = inView,
@@ -164,54 +176,85 @@ class ZoneWidget: ZView {
         addTextView()
 		addDots()
         textWidget.layoutText()
-        layoutDots()
+        autoLayoutDots()
 
 		if  let zone = widgetZone {
-			prepareChildrenView()
-			prepareChildrenWidgets()
+			addChildrenView()
+			addChildrenWidgets()
 
-			if  recursing && !visited.contains(zone), zone.isExpanded, zone.count > 0 {
-				count += layoutChildren(kind, mapType: mapType, visited: visited + [zone])
+			if  recursing && !visited.contains(zone), zone.hasVisibleChildren {
+				count += layoutChildrenWidgets(kind, mapType: mapType, visited: visited + [zone])
 			}
 		}
 
 		return count
     }
 
-	override func layout() {
-		super.layout()
+	func newLayoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
+		var count = 1
+
+		if  let thisView = inView,
+			!thisView.subviews.contains(self) {
+			thisView.addSubview(self)
+		}
+
+		#if os(iOS)
+		backgroundColor = kClearColor
+		#endif
+
+		gStartupController?.fullStartupUpdate()
+		gWidgets.setWidgetForZone(self, for: mapType)
+		addTextView()
+		addDots()
+
+		if  let zone = widgetZone {
+			addChildrenView()
+			addChildrenWidgets()
+
+			if  recursing && !visited.contains(zone), zone.hasVisibleChildren {
+				count += layoutChildrenWidgets(kind, mapType: mapType, visited: visited + [zone])
+			}
+		}
+
+		textWidget.layoutText()
+		autoLayoutDots()
+		updateSize()
+
+		return count
 	}
 
-    func layoutChildren(_ kind: ZSignalKind, mapType: ZWidgetType, visited: ZoneArray) -> Int {
+    func layoutChildrenWidgets(_ kind: ZSignalKind, mapType: ZWidgetType, visited: ZoneArray) -> Int {
 		var count = 0
 
-        if  let  zone = widgetZone, zone.isExpanded {
+        if  let  zone = widgetZone, zone.hasVisibleChildren {
             var index = childrenWidgets.count
             var previous: ZoneWidget?
 
-            while index > 0 {
-                index                 -= 1 // go backwards down the children arrays, bottom and top constraints expect it
-                let childWidget        = childrenWidgets[index]
-                childWidget.widgetZone =            zone[index]
+            while index           > 0 {
+                index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
+                let child         = childrenWidgets[index]
+				child.widgetZone  =            zone[index]
+				count            += child.layoutInView(childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: visited)
 
-				count += childWidget.layoutInView(childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: visited)
-				childWidget.snp.setLabel("<p> \(childWidget.widgetZone?.zoneName ?? kUnknown)")
-                childWidget.snp.removeConstraints()
-                childWidget.snp.makeConstraints { make in
-                    if  previous == nil {
-                        make.bottom.equalTo(childrenView)
-                    } else {
-                        make.bottom.equalTo(previous!.snp.top)
-                    }
+				if  gAutoLayoutMaps {
+					child.snp.setLabel("<p> \(child.widgetZone?.zoneName ?? kUnknown)")
+					child.snp.removeConstraints()
+					child.snp.makeConstraints { make in
+						make.left.right.equalTo(childrenView)
 
-                    if  index == 0 {
-                        make.top.equalTo(childrenView).priority(ConstraintPriority(250))
-                    }
+						if  index == 0 {
+							make.top.equalTo(childrenView).priority(ConstraintPriority(250))
+						}
 
-                    make.left.right.equalTo(childrenView)
-                }
+						if  previous == nil {
+							make.bottom.equalTo(childrenView)
+						} else {
+							make.bottom.equalTo(previous!.snp.top)
+						}
+					}
+				}
 
-                previous = childWidget
+                previous = child
             }
         }
 
@@ -219,69 +262,136 @@ class ZoneWidget: ZView {
     }
 
 	func addDots() {
-		let hideDragDot = widgetZone?.onlyShowRevealDot ?? false
-
 		if !hideDragDot,
 		   !subviews.contains(dragDot) {
 			insertSubview(dragDot, belowSubview: textWidget)
+			dragDot.setupForWidget(self, asReveal: false)
 		}
 
 		if !subviews.contains(revealDot) {
 			insertSubview(revealDot, belowSubview: textWidget)
+			revealDot.setupForWidget(self, asReveal: true)
 		}
 	}
 
-    func layoutDots() {
-		let hideDragDot = widgetZone?.onlyShowRevealDot ?? false
+    func autoLayoutDots() {
 		let verticalDotOffset = 0.5
 
-		if !hideDragDot {
-			dragDot.innerDot?.snp.removeConstraints()
-			dragDot.innerDot?.snp.setLabel("<d> \(widgetZone?.zoneName ?? kUnknown)")
-			dragDot.setupForWidget(self, asReveal: false)
-			dragDot.innerDot?.snp.makeConstraints { make in
-				make.right.equalTo(textWidget.snp.left).offset(-6.0)
+		if  gAutoLayoutMaps {
+			if !hideDragDot {
+				dragDot.innerDot?.snp.removeConstraints()
+				dragDot.innerDot?.snp.setLabel("<d> \(widgetZone?.zoneName ?? kUnknown)")
+				dragDot.innerDot?.snp.makeConstraints { make in
+					make.right.equalTo(textWidget.snp.left).offset(-6.0)
+					make.centerY.equalTo(textWidget).offset(verticalDotOffset)
+				}
+			}
+
+			revealDot.innerDot?.snp.setLabel("<r> \(widgetZone?.zoneName ?? kUnknown)")
+			revealDot.innerDot?.snp.removeConstraints()
+			revealDot.innerDot?.snp.makeConstraints { make in
+				make.left.equalTo(textWidget.snp.right).offset(6.0)
 				make.centerY.equalTo(textWidget).offset(verticalDotOffset)
 			}
 		}
+	}
 
-		revealDot.innerDot?.snp.setLabel("<r> \(widgetZone?.zoneName ?? kUnknown)")
-        revealDot.innerDot?.snp.removeConstraints()
-        revealDot.setupForWidget(self, asReveal: true)
-        revealDot.innerDot?.snp.makeConstraints { make in
-            make.left.equalTo(textWidget.snp.right).offset(6.0)
-            make.centerY.equalTo(textWidget).offset(verticalDotOffset)
-        }
-    }
+	// MARK:- computed layout
+	// MARK:-
 
-	@discardableResult func updateFrame() -> CGRect {
-		var     childrenSize : CGSize?
-		var biggestChildSize = CGSize.zero
-		var    childrenWidth = CGFloat.zero
+	func updateSize() {
+		updateChildrenViewDrawnSize()
 
-		for child in childrenWidgets {			// traverse progeny, updating their frames
-			let childSize = child.updateFrame().size
+		var   width = childrenViewDrawnSize.width
+		var  height = childrenViewDrawnSize.height
+		width      += textWidget.drawnSize.width
+		let dSize   = dragDot.drawnSize
+		let dheight = dSize.height
+		width      += dSize.width
 
-			if  childSize.width  > biggestChildSize.width {
-				biggestChildSize = childSize
+		if  height  < dheight {
+			height  = dheight
+		}
+
+		drawnSize = CGSize(width: width, height: height)
+	}
+
+	func updateChildrenViewDrawnSize() {
+		if  hasVisibleChildren {
+			var           height = CGFloat.zero
+			var biggestChildSize = CGSize.zero
+
+			for child in childrenWidgets {			// traverse progeny, updating their frames
+				let    childSize = child.drawnSize
+				height          += childSize.height
+
+				if  childSize.width  > biggestChildSize.width {
+					biggestChildSize = childSize
+				}
+			}
+
+			childrenViewDrawnSize = CGSize(width: biggestChildSize.width, height: height)
+		}
+	}
+
+	func updateAllFrames() {
+		widgetZone?.traverseAllVisibleProgeny(inReverse: true) { iZone in
+			if  let child = iZone.widget {
+				child.updateFrame()
 			}
 		}
+	}
 
-		if  let     zone = widgetZone, zone.isExpanded {
-			let   height = biggestChildSize.height * CGFloat(childrenWidgets.count)
-			childrenSize = CGSize(width: biggestChildSize.width, height: height)
+	func updateFrame() {
+		updateChildrenFrames()
+		updateTextViewFrame()
+
+		let childrenHeight = childrenViewDrawnSize.height
+
+		if !hideDragDot {
+			dragDot.updateFrame(childrenHeight)
 		}
 
-		// text view
-		let textSize = textWidget.drawnSize
-		let   offset = gGenericOffset.add(width: 4.0, height: 0.5) // why?
-		let        x = offset.width  * ratio
-		var        y = offset.height * ratio
+		revealDot.updateFrame(childrenHeight)
+		updateChildrenViewFrame()
+	}
 
-		if  let      size = childrenSize {
-			childrenWidth =  size.width
-			y             = (size.height - textSize.height) / 2.0
+	func updateChildrenFrames() {
+		if !gAutoLayoutMaps {
+			if  hasVisibleChildren {
+				var height = CGFloat.zero
+				var  index = childrenWidgets.count
+
+				while index    > 0 {
+					index     -= 1 // go backwards down the children arrays, bottom and top constraints expect it
+					let  child = childrenWidgets[index]
+					let   size = child.drawnSize
+					let origin = CGPoint(x: .zero, y: height)
+					height    += size.height
+					child.frame = CGRect(origin: origin, size: size)
+				}
+			}
 		}
+	}
+
+	func updateTextViewFrame() {
+		let     textSize = textWidget.drawnSize
+		let       offset = gGenericOffset.add(width: 4.0, height: 0.5).multiplyBy(ratio) // why?
+		let            y = (childrenViewDrawnSize.height - textSize.height) / 2.0
+		let   textOrigin = CGPoint(x: offset.width, y: y)
+		textWidget.frame = CGRect(origin: textOrigin, size: textSize)
+	}
+
+	func updateChildrenViewFrame() {
+		if  hasVisibleChildren {
+			let      textFrame = textWidget.frame
+			let         origin = CGPoint(x: textFrame.maxX, y: CGFloat.zero)
+			let  childrenFrame = CGRect(origin: origin, size: childrenViewDrawnSize)
+			childrenView.frame = childrenFrame
+		}
+	}
+
+	@discardableResult func notesOnUpdateFrame() -> CGRect {
 
 		// reveal dot x == textwidget.frame.maxX
 		// inner dot height == width ==                   14
@@ -292,12 +402,11 @@ class ZoneWidget: ZView {
 		// dots y values are:                             -0.5 and  5.5 "
 		// inner dots x values are:                        6   and  5.5 (reveal and drag)
 
-		let   textOrigin = CGPoint(x: x, y: y)
-		textWidget         .frame = CGRect(origin: textOrigin, size: textSize)
-		dragDot            .frame = CGRect(x:  11.5, y: -0.5, width: 22.0, height: 24.5) // why?
-		dragDot  .innerDot?.frame = CGRect(x:   6.0, y:  5.5, width: 10.5, height: 13.5) // why?
-		revealDot          .frame = CGRect(x: 109.0, y: -0.5, width: 25.5, height: 24.5) // why?
-		revealDot.innerDot?.frame = CGRect(x:   5.5, y:  5.5, width: 14.0, height: 13.5) // why?
+
+//		dragDot            .frame = CGRect(x:  11.5, y: -0.5, width: 22.0, height: 24.5) // why?
+//		dragDot  .innerDot?.frame = CGRect(x:   6.0, y:  5.5, width: 10.5, height: 13.5) // why?
+//		revealDot          .frame = CGRect(x: 109.0, y: -0.5, width: 25.5, height: 24.5) // why?
+//		revealDot.innerDot?.frame = CGRect(x:   5.5, y:  5.5, width: 14.0, height: 13.5) // why?
 		childrenView       .frame = CGRect(x: 280.5, y:  0.0, width: 16.5, height: 25.0) // why?
 
 		// use all but children's view to compute frame
@@ -318,25 +427,27 @@ class ZoneWidget: ZView {
         textWidget.setup()
     }
 
-    func prepareChildrenView() {
-		childrenView.snp.removeConstraints()
-        if !subviews.contains(childrenView) {
-            insertSubview(childrenView, belowSubview: textWidget)
-		} else if !(widgetZone?.isExpanded ?? false) {
+    func addChildrenView() {
+		if  let zone = widgetZone, !zone.hasVisibleChildren {
 			childrenView.removeFromSuperview()
 			return
+		} else if !subviews.contains(childrenView) {
+            insertSubview(childrenView, belowSubview: textWidget)
 		}
 
-		childrenView.snp.setLabel("<c> \(widgetZone?.zoneName ?? kUnknown)")
-        childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-            let ratio = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
+		if  gAutoLayoutMaps {
+			childrenView.snp.removeConstraints()
+			childrenView.snp.setLabel("<c> \(widgetZone?.zoneName ?? kUnknown)")
+			childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
+				let ratio = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
 
-            make.left.equalTo(textWidget.snp.right).offset(gChildrenViewOffset * Double(ratio))
-            make.bottom.top.right.equalTo(self)
-        }
-    }
+				make.left.equalTo(textWidget.snp.right).offset(gChildrenViewOffset * Double(ratio))
+				make.bottom.top.right.equalTo(self)
+			}
+		}
+	}
 
-    func prepareChildrenWidgets() {
+    func addChildrenWidgets() {
         if  let zone = widgetZone {
 
             if !zone.isExpanded {
@@ -385,7 +496,7 @@ class ZoneWidget: ZView {
         var rect = CGRect()
 
         if  let zone = widgetZone {
-            if !zone.isExpanded || zone.count == 0 {
+            if !zone.hasVisibleChildren {
 
                 // //////////////////////
                 // DOT IS STRAIGHT OUT //

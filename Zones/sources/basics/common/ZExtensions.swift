@@ -696,6 +696,18 @@ extension CGSize {
 		return size
 	}
 
+	public static func - (lhs: CGSize, rhs: CGSize) -> CGSize {
+		var    size  = lhs
+		size.height -= rhs.height
+		size.width  -= rhs.width
+
+		return size
+	}
+
+	public static func - (lhs: CGSize, rhs: CGPoint) -> CGPoint {
+		return CGPoint(CGPoint(lhs) - rhs)
+	}
+
 	func add(width: CGFloat, height: CGFloat) -> CGSize {
 		return self + CGSize(width: width, height: height)
 	}

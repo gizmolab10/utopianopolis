@@ -49,18 +49,19 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     // MARK:- properties
     // MARK:-
 
-    weak var     widget: ZoneWidget?
-    var        innerDot: ZoneDot?
-    var       dragStart: CGPoint?
-	var        isReveal: Bool    = true
-    var      isInnerDot: Bool    = false
-	var      isHovering: Bool    = false
-	var dragDotIsHidden: Bool    { return widgetZone?.dragDotIsHidden ?? true }
-	var      isDragDrop: Bool    { return widget == gDropWidget }
-    var      widgetZone: Zone?   { return widget?.widgetZone }
-	var           ratio: CGFloat { return widget?.ratio ?? 1.0 }
-	var   innerDotWidth: CGFloat { return ratio * CGFloat(isReveal ? gDotHeight : dragDotIsHidden ? 0.0 : gDotWidth) }
-	var  innerDotHeight: CGFloat { return ratio * CGFloat(gDotHeight) }
+    weak var     widget : ZoneWidget?
+    var        innerDot : ZoneDot?
+    var       dragStart : CGPoint?
+	var       drawnSize = CGSize.zero
+	var        isReveal = true
+    var      isInnerDot = false
+	var      isHovering = false
+	var dragDotIsHidden : Bool    { return widgetZone?.dragDotIsHidden ?? true }
+	var      isDragDrop : Bool    { return widget == gDropWidget }
+    var      widgetZone : Zone?   { return widget?.widgetZone }
+	var           ratio : CGFloat { return widget?.ratio ?? 1.0 }
+	var   innerDotWidth : CGFloat { return ratio * CGFloat(isReveal ? gDotHeight : dragDotIsHidden ? 0.0 : gDotWidth) }
+	var  innerDotHeight : CGFloat { return ratio * CGFloat(gDotHeight) }
 
     var innerOrigin: CGPoint? {
         if  let inner = innerDot {
@@ -111,43 +112,72 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     // MARK:- initialization
     // MARK:-
 
+	@discardableResult func updateSize() -> CGSize {
+		var height = innerDotHeight
+		var  width = innerDotWidth
+
+		if !isInnerDot {
+			height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
+			width  = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + innerDotWidth - 48.0
+
+			if  let w = widget, !w.type.isBigMap {
+				width *= kSmallMapReduction
+			}
+		}
+
+		drawnSize = CGSize(width: width, height: height)
+
+		return drawnSize
+	}
+
+	func updateFrame(_ childrenViewHeight : CGFloat = .zero) {
+		let    drawnHeight = drawnSize.height
+		let  hasNoChildren = childrenViewHeight < drawnHeight
+		let         height = hasNoChildren ? CGFloat.zero : (childrenViewHeight - drawnHeight) / CGFloat(2.0)
+
+		if  isReveal,
+			let textWidget = widget?.textWidget {
+			let drawnWidth = drawnSize.width
+			let revealDotX = drawnWidth + textWidget.drawnSize.width
+			frame          = CGRect(origin: CGPoint(x: revealDotX,   y: height), size: drawnSize)
+		} else  {
+			frame          = CGRect(origin: CGPoint(x: CGFloat.zero, y: height), size: drawnSize)
+		}
+
+		if  let   i = innerDot {
+			let   s = i.drawnSize
+			let   o = CGPoint((drawnSize - s).multiplyBy(0.5))        // center inner dot within self
+			i.frame = CGRect(origin: o, size: s)
+		}
+	}
+
     func setupForWidget(_ iWidget: ZoneWidget, asReveal: Bool) {
         isReveal = asReveal
         widget   = iWidget
-		
-        if  isInnerDot {
+
+		updateSize()
+
+		if !isInnerDot, innerDot == nil {
+			innerDot             = ZoneDot()
+			innerDot?.isInnerDot = true
+
+			addSubview(innerDot!)
+			innerDot?.setupForWidget(iWidget, asReveal: isReveal)
+		}
+
+		if  gAutoLayoutMaps {
+			snp.removeConstraints()
 			snp.setLabel("<\(isReveal ? "r" : "d")> \(widgetZone?.zoneName ?? kUnknown)")
-            snp.removeConstraints()
-            snp.makeConstraints { make in
-                let  size = CGSize(width: innerDotWidth, height: innerDotHeight)
+			snp.makeConstraints { make in
+				make.size.equalTo(drawnSize)
+			}
 
-                make.size.equalTo(size)
-            }
-
-            setNeedsDisplay(frame)
-        } else {
-            if  innerDot            == nil {
-                innerDot             = ZoneDot()
-                innerDot!.isInnerDot = true
-
-                addSubview(innerDot!)
-            }
-
-            innerDot?.setupForWidget(iWidget, asReveal: isReveal)
-			snp.setLabel("<\(isReveal ? "r" : "d")> \(widgetZone?.zoneName ?? kUnknown)")
-            snp.removeConstraints()
-            snp.makeConstraints { make in
-				let height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
-				var width  = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + innerDotWidth - 48.0
-
-				if !iWidget.type.isBigMap {
-                    width *= kSmallMapReduction
-                }
-
-                make.size.equalTo(CGSize(width: width, height: height))
-                make.center.equalTo(innerDot!)
-            }
-        }
+			if !isInnerDot {
+				innerDot?.snp.makeConstraints { make in
+					make.center.equalTo(self)
+				}
+			}
+		}
 
 		#if os(iOS)
 		backgroundColor = kClearColor
@@ -157,9 +187,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
         setNeedsDisplay()
 		updateTracking()
 		updateTooltips()
-    }
-
-	func updateFrame() {}
+	}
 
 	// MARK:- hover
 	// MARK:-
@@ -411,7 +439,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
 			if  isInnerDot {
 				drawInnerDot(iDirtyRect, parameters)
-			} else if  innerDot != nil,
+			} else if innerDot != nil,
 				let rect = innerDot?.frame.offsetBy(dx: -0.1, dy: -0.1),
 				let zone = widgetZone,
 				(!zone.isExpanded || zone.isBookmark) {

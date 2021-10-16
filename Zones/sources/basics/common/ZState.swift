@@ -263,6 +263,11 @@ var gCurrentHelpMode: ZHelpMode {
 	}
 }
 
+var gAutoLayoutMaps : Bool {
+	get { return getPreferencesBool(   for: kAutoLayoutMaps, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kAutoLayoutMaps) }
+}
+
 var gTemporaryFullTitleMode : Bool {
 	get { return getPreferencesBool(   for: kTemporaryFullTitleMode, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kTemporaryFullTitleMode) }
