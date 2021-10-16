@@ -148,7 +148,7 @@ class ZoneWidget: ZView {
 		removeAllSubviews()
     }
 
-    // MARK:- auto layout
+    // MARK:- layout
     // MARK:-
 
 	func layoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
@@ -224,7 +224,7 @@ class ZoneWidget: ZView {
 		width      += textWidget.drawnSize.width
 		let dSize   = dragDot.drawnSize
 		let dheight = dSize.height
-		width      += dSize.width
+		width      += dSize.width * 2.0 + gGenericOffset.width
 
 		if  height  < dheight {
 			height  = dheight
@@ -291,7 +291,7 @@ class ZoneWidget: ZView {
 	func updateTextViewFrame() {
 		let     textSize = textWidget.drawnSize
 		let       offset = gGenericOffset.add(width: 4.0, height: 0.5).multiplyBy(ratio) // why?
-		let            y = (childrenViewDrawnSize.height - textSize.height) / 2.0
+		let            y = (drawnSize.height - textSize.height) / 2.0
 		let   textOrigin = CGPoint(x: offset.width, y: y)
 		textWidget.frame = CGRect(origin: textOrigin, size: textSize)
 	}
